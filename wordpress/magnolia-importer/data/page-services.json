@@ -7,32 +7,32 @@
    "content_width": "boxed",
    "boxed_width": {
     "unit": "px",
-    "size": 1224,
+    "size": 1300,
     "sizes": []
    },
    "flex_direction": "column",
    "padding": {
     "unit": "px",
     "top": "110",
-    "right": "28",
+    "right": "40",
     "bottom": "70",
-    "left": "28",
+    "left": "40",
     "isLinked": false
    },
    "padding_tablet": {
     "unit": "px",
     "top": "90",
-    "right": "28",
+    "right": "40",
     "bottom": "70",
-    "left": "28",
+    "left": "40",
     "isLinked": false
    },
    "padding_mobile": {
     "unit": "px",
     "top": "72",
-    "right": "20",
+    "right": "40",
     "bottom": "56",
-    "left": "20",
+    "left": "40",
     "isLinked": false
    },
    "overflow": "hidden",
@@ -265,32 +265,32 @@
    "content_width": "boxed",
    "boxed_width": {
     "unit": "px",
-    "size": 1224,
+    "size": 1300,
     "sizes": []
    },
    "flex_direction": "column",
    "padding": {
     "unit": "px",
     "top": "0",
-    "right": "28",
+    "right": "40",
     "bottom": "0",
-    "left": "28",
+    "left": "40",
     "isLinked": false
    },
    "padding_tablet": {
     "unit": "px",
     "top": "0",
-    "right": "28",
+    "right": "40",
     "bottom": "0",
-    "left": "28",
+    "left": "40",
     "isLinked": false
    },
    "padding_mobile": {
     "unit": "px",
     "top": "10",
-    "right": "20",
+    "right": "40",
     "bottom": "10",
-    "left": "20",
+    "left": "40",
     "isLinked": false
    },
    "overflow": "hidden",
@@ -562,32 +562,32 @@
    "content_width": "boxed",
    "boxed_width": {
     "unit": "px",
-    "size": 1224,
+    "size": 1300,
     "sizes": []
    },
    "flex_direction": "column",
    "padding": {
     "unit": "px",
     "top": "110",
-    "right": "28",
+    "right": "40",
     "bottom": "90",
-    "left": "28",
+    "left": "40",
     "isLinked": false
    },
    "padding_tablet": {
     "unit": "px",
     "top": "80",
-    "right": "28",
+    "right": "40",
     "bottom": "70",
-    "left": "28",
+    "left": "40",
     "isLinked": false
    },
    "padding_mobile": {
     "unit": "px",
     "top": "64",
-    "right": "20",
+    "right": "40",
     "bottom": "56",
-    "left": "20",
+    "left": "40",
     "isLinked": false
    },
    "overflow": "hidden",
@@ -2454,32 +2454,32 @@
    "content_width": "boxed",
    "boxed_width": {
     "unit": "px",
-    "size": 1224,
+    "size": 1300,
     "sizes": []
    },
    "flex_direction": "column",
    "padding": {
     "unit": "px",
     "top": "100",
-    "right": "28",
+    "right": "40",
     "bottom": "100",
-    "left": "28",
+    "left": "40",
     "isLinked": false
    },
    "padding_tablet": {
     "unit": "px",
     "top": "80",
-    "right": "28",
+    "right": "40",
     "bottom": "70",
-    "left": "28",
+    "left": "40",
     "isLinked": false
    },
    "padding_mobile": {
     "unit": "px",
     "top": "64",
-    "right": "20",
+    "right": "40",
     "bottom": "56",
-    "left": "20",
+    "left": "40",
     "isLinked": false
    },
    "overflow": "hidden",
@@ -2827,32 +2827,32 @@
    "content_width": "boxed",
    "boxed_width": {
     "unit": "px",
-    "size": 1224,
+    "size": 1300,
     "sizes": []
    },
    "flex_direction": "column",
    "padding": {
     "unit": "px",
     "top": "100",
-    "right": "28",
+    "right": "40",
     "bottom": "100",
-    "left": "28",
+    "left": "40",
     "isLinked": false
    },
    "padding_tablet": {
     "unit": "px",
     "top": "80",
-    "right": "28",
+    "right": "40",
     "bottom": "70",
-    "left": "28",
+    "left": "40",
     "isLinked": false
    },
    "padding_mobile": {
     "unit": "px",
     "top": "64",
-    "right": "20",
+    "right": "40",
     "bottom": "56",
-    "left": "20",
+    "left": "40",
     "isLinked": false
    },
    "overflow": "hidden",
@@ -3200,32 +3200,32 @@
    "content_width": "boxed",
    "boxed_width": {
     "unit": "px",
-    "size": 1224,
+    "size": 1300,
     "sizes": []
    },
    "flex_direction": "column",
    "padding": {
     "unit": "px",
     "top": "100",
-    "right": "28",
+    "right": "40",
     "bottom": "100",
-    "left": "28",
+    "left": "40",
     "isLinked": false
    },
    "padding_tablet": {
     "unit": "px",
     "top": "80",
-    "right": "28",
+    "right": "40",
     "bottom": "70",
-    "left": "28",
+    "left": "40",
     "isLinked": false
    },
    "padding_mobile": {
     "unit": "px",
     "top": "64",
-    "right": "20",
+    "right": "40",
     "bottom": "56",
-    "left": "20",
+    "left": "40",
     "isLinked": false
    },
    "overflow": "hidden",
@@ -3689,32 +3689,32 @@
    "content_width": "boxed",
    "boxed_width": {
     "unit": "px",
-    "size": 1224,
+    "size": 1300,
     "sizes": []
    },
    "flex_direction": "row",
    "padding": {
     "unit": "px",
     "top": "80",
-    "right": "28",
+    "right": "40",
     "bottom": "80",
-    "left": "28",
+    "left": "40",
     "isLinked": false
    },
    "padding_tablet": {
     "unit": "px",
     "top": "70",
-    "right": "28",
+    "right": "40",
     "bottom": "70",
-    "left": "28",
+    "left": "40",
     "isLinked": false
    },
    "padding_mobile": {
     "unit": "px",
     "top": "56",
-    "right": "20",
+    "right": "40",
     "bottom": "56",
-    "left": "20",
+    "left": "40",
     "isLinked": false
    },
    "overflow": "hidden",

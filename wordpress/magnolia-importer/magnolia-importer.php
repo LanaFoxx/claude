@@ -261,11 +261,25 @@ function magnolia_importer_theme_part( $type, $title, $elements, &$warnings ) {
 	);
 	magnolia_importer_save_document( $id, $elements );
 
-	if ( class_exists( '\ElementorPro\Modules\ThemeBuilder\Module' ) ) {
-		\ElementorPro\Modules\ThemeBuilder\Module::instance()->get_conditions_manager()->save_conditions( $id, array( 'include/general' ) );
-	}
 	$ids[ $type ] = $id;
 	update_option( 'magnolia_importer_parts', $ids );
+
+	update_post_meta( $id, '_elementor_conditions', array( 'include/general' ) );
+	try {
+		\ElementorPro\Modules\ThemeBuilder\Module::instance()->get_conditions_manager()->save_conditions(
+			$id,
+			array(
+				array(
+					'type'     => 'include',
+					'name'     => 'general',
+					'sub_name' => '',
+					'sub_id'   => '',
+				),
+			)
+		);
+	} catch ( \Throwable $e ) {
+		$warnings[] = 'Display conditions for ' . $title . ': ' . $e->getMessage() . ' (' . basename( $e->getFile() ) . ':' . $e->getLine() . ')';
+	}
 }
 
 function magnolia_importer_run() {
@@ -408,10 +422,40 @@ function magnolia_importer_run() {
 		);
 	}
 
-	// 7. Theme Builder header and footer.
+	// 7. Theme Builder header and footer. Older headers/footers would compete with
+	// ours for the "entire site" condition, so they go to the Trash (restorable).
 	if ( $has_pro ) {
-		magnolia_importer_theme_part( 'header', 'Magnolia Header', magnolia_importer_data( 'header', $ctx, $media ), $warnings );
-		magnolia_importer_theme_part( 'footer', 'Magnolia Footer', magnolia_importer_data( 'footer', $ctx, $media ), $warnings );
+		$ours = array_map( 'intval', array_values( get_option( 'magnolia_importer_parts', array() ) ) );
+		$old  = get_posts(
+			array(
+				'post_type'      => 'elementor_library',
+				'post_status'    => array( 'publish', 'draft', 'private' ),
+				'posts_per_page' => -1,
+				'exclude'        => $ours,
+				'meta_key'       => '_elementor_template_type', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+				'meta_value'     => array( 'header', 'footer' ), // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
+				'meta_compare'   => 'IN',
+			)
+		);
+		foreach ( $old as $template ) {
+			wp_trash_post( $template->ID );
+		}
+
+		foreach ( array( 'header' => 'Magnolia Header', 'footer' => 'Magnolia Footer' ) as $type => $title ) {
+			try {
+				magnolia_importer_theme_part( $type, $title, magnolia_importer_data( $type, $ctx, $media ), $warnings );
+			} catch ( \Throwable $e ) {
+				$warnings[] = $title . ' failed: ' . $e->getMessage() . ' (' . basename( $e->getFile() ) . ':' . $e->getLine() . ')';
+			}
+		}
+		try {
+			$manager = \ElementorPro\Modules\ThemeBuilder\Module::instance()->get_conditions_manager();
+			if ( method_exists( $manager, 'get_cache' ) ) {
+				$manager->get_cache()->regenerate();
+			}
+		} catch ( \Throwable $e ) {
+			$warnings[] = 'Conditions cache: ' . $e->getMessage() . ' (' . basename( $e->getFile() ) . ':' . $e->getLine() . ')';
+		}
 	} else {
 		$warnings[] = 'Elementor Pro is not active, so the header, footer and estimate form were not built. Activate Elementor Pro and run the importer again.';
 	}

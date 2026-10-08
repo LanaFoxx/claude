@@ -7,7 +7,7 @@
    "content_width": "boxed",
    "boxed_width": {
     "unit": "px",
-    "size": 1224,
+    "size": 1300,
     "sizes": []
    },
    "flex_direction": "row",
@@ -41,17 +41,25 @@
    "padding": {
     "unit": "px",
     "top": "0",
-    "right": "28",
+    "right": "40",
     "bottom": "0",
-    "left": "28",
+    "left": "40",
+    "isLinked": false
+   },
+   "padding_tablet": {
+    "unit": "px",
+    "top": "0",
+    "right": "40",
+    "bottom": "0",
+    "left": "40",
     "isLinked": false
    },
    "padding_mobile": {
     "unit": "px",
     "top": "0",
-    "right": "20",
+    "right": "40",
     "bottom": "0",
-    "left": "20",
+    "left": "40",
     "isLinked": false
    },
    "background_background": "classic",
@@ -112,22 +120,6 @@
       "is_external": "",
       "nofollow": ""
      },
-     "_margin": {
-      "unit": "px",
-      "top": "0",
-      "right": "0",
-      "bottom": "0",
-      "left": "-14",
-      "isLinked": false
-     },
-     "_margin_mobile": {
-      "unit": "px",
-      "top": "0",
-      "right": "0",
-      "bottom": "0",
-      "left": "-10",
-      "isLinked": false
-     },
      "_flex_size": "none",
      "__globals__": {}
     },
@@ -186,7 +178,7 @@
      "background_color_dropdown_item_active": "#1D2B26",
      "padding_horizontal_dropdown_item": {
       "unit": "px",
-      "size": 28,
+      "size": 40,
       "sizes": []
      },
      "padding_vertical_dropdown_item": {

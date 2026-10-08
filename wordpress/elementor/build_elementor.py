@@ -35,6 +35,8 @@ WHITE = '#FFFFFF'
 SERIF = 'Marcellus'
 SANS = 'Jost'
 PHONE = '(336) 583-9398'
+SIDE = 40  # minimum left/right padding at every breakpoint
+MAX = 1300  # maximum content width
 TEL = 'tel:3365839398'
 EMAIL = 'heys@magnoliaproperty.care'
 
@@ -100,16 +102,16 @@ def container(children, inner=True, **s):
     return {'id': eid(), 'elType': 'container', 'isInner': inner, 'settings': s, 'elements': children}
 
 
-def section(children, bg=None, pad=(110, 90), pad_t=(80, 70), pad_m=(64, 56), width=1224,
+def section(children, bg=None, pad=(110, 90), pad_t=(80, 70), pad_m=(64, 56), width=1300,
             direction='column', gap=None, element_id=None, extra=None):
-    """Full-width band with a boxed (max 1280px incl. gutters) inner area."""
+    """Full-width band: content max 1300px wide, at least 40px side padding."""
     s = {
         'content_width': 'boxed',
         'boxed_width': px(width),
         'flex_direction': direction,
-        'padding': box(pad[0], 28, pad[1], 28),
-        'padding_tablet': box(pad_t[0], 28, pad_t[1], 28),
-        'padding_mobile': box(pad_m[0], 20, pad_m[1], 20),
+        'padding': box(pad[0], SIDE, pad[1], SIDE),
+        'padding_tablet': box(pad_t[0], SIDE, pad_t[1], SIDE),
+        'padding_mobile': box(pad_m[0], SIDE, pad_m[1], SIDE),
         'overflow': 'hidden',
     }
     if gap is not None:
@@ -243,7 +245,7 @@ def image(asset, alt='', ratio=None, width=None, link=None, extra_classes='', **
     return widget('image', s)
 
 
-def watermark(width=(42, 46, 70), opacity=0.38, h='end', x=-6, v='end', y=-14):
+def watermark(width=(42, 46, 70), opacity=0.38, h='end', x=-6, v='end', y=-14, center=False):
     """Large faded magnolia icon pinned to a corner of a band."""
     s = {
         'image': {'url': '%%IMG:icon-olive.png%%', 'id': '%%IMGID:icon-olive.png%%', 'alt': '',
@@ -258,6 +260,8 @@ def watermark(width=(42, 46, 70), opacity=0.38, h='end', x=-6, v='end', y=-14):
     }
     s['_offset_x_end' if h == 'end' else '_offset_x'] = px(x, '%')
     s['_offset_y_end' if v == 'end' else '_offset_y'] = px(y, '%')
+    if center:
+        s['_css_classes'] += ' mpc-watermark-center'
     return widget('image', s)
 
 
@@ -457,7 +461,7 @@ def home():
     ], IVORY, gap=48, extra={'flex_gap_mobile': gaps(36)})
 
     about = section([
-        watermark((30, 40, 70), 0.1, 'end', -4, 'end', -10),
+        watermark((30, 40, 70), 0.1, center=True),
         stack([eyebrow('About Us', align='center'),
                display('Owner-led. Every job, every time.', align='center'),
                text('Magnolia Property Care is owned and operated by Heys McMath, who left a ten-year career in '
@@ -811,7 +815,7 @@ def header():
         'color_dropdown_item': SAND, 'background_color_dropdown_item': FOREST,
         'color_dropdown_item_hover': WHITE, 'background_color_dropdown_item_hover': DEEP,
         'color_dropdown_item_active': WHITE, 'background_color_dropdown_item_active': DEEP,
-        'padding_horizontal_dropdown_item': px(28), 'padding_vertical_dropdown_item': px(16),
+        'padding_horizontal_dropdown_item': px(SIDE), 'padding_vertical_dropdown_item': px(16),
         'dropdown_divider_border': 'solid', 'dropdown_divider_color': 'rgba(213,212,190,0.1)',
         'dropdown_divider_width': px(1), 'dropdown_top_distance': px(20),
         'toggle_color': SAND, 'toggle_background_color': 'rgba(0,0,0,0)', 'toggle_size': px(22),
@@ -829,14 +833,14 @@ def header():
     right['elements'][0]['settings']['title_hover_color'] = WHITE
     logo = image('logo-h-olive-ivory.png', 'Magnolia Property Care', link='%%URL:home%%',
                  width={'width': px(191), 'width_tablet': px(170), 'width_mobile': px(150)},
-                 _margin=box(0, 0, 0, -14), _margin_mobile=box(0, 0, 0, -10), _flex_size='none')
+                 _flex_size='none')
     bar = container([logo, widget('nav-menu', nav, ('menu_typography_typography', 'dropdown_typography_typography',
                                                     'color_menu_item', 'color_menu_item_hover')), right],
-                    inner=False, content_width='boxed', boxed_width=px(1224),
+                    inner=False, content_width='boxed', boxed_width=px(MAX),
                     flex_direction='row', flex_justify_content='space-between', flex_align_items='center',
                     flex_wrap='nowrap', flex_gap=gaps(24), flex_gap_mobile=gaps(12),
                     min_height=px(84), min_height_mobile=px(72),
-                    padding=box(0, 28), padding_mobile=box(0, 20),
+                    padding=box(0, SIDE), padding_tablet=box(0, SIDE), padding_mobile=box(0, SIDE),
                     background_background='classic', background_color=FOREST,
                     border_border='solid', border_width=box(0, 0, 1, 0), border_color='rgba(213,212,190,0.12)',
                     sticky='top', sticky_on=['desktop', 'tablet', 'mobile'], sticky_offset=0, z_index=50,
@@ -848,7 +852,7 @@ def footer():
     def col_head(t):
         return heading(t, 'h3', MOSS, size=11, weight=600, ls=0.2, transform='uppercase')
     brand = stack([image('logo-stacked-olive-ivory.png', 'Magnolia Property Care', link='%%URL:home%%',
-                         width={'width': px(200), 'width_mobile': px(180)}, _margin=box(0, 0, 0, -20)),
+                         width={'width': px(200), 'width_mobile': px(180)}),
                    text('White glove outdoor and exterior maintenance for the North Carolina Piedmont and Southside '
                         'Virginia.', '#B8B9A4', 15, m=15, weight=400, lh=1.6),
                    display('Care for Every Corner.', 'p', SAND, 17, 17, 17, lh=1.3)], gap=12)
@@ -886,6 +890,7 @@ KIT_CSS = '''/* Magnolia Property Care */
 .mpc-band { position: relative; }
 .mpc-above { position: relative; z-index: 1; }
 .mpc-watermark { pointer-events: none; user-select: none; }
+.elementor-widget.mpc-watermark-center { left: 50% !important; right: auto !important; top: 50% !important; bottom: auto !important; transform: translate(-50%, -50%); }
 .mpc-link .elementor-heading-title a { display: inline-block; padding-bottom: 6px; transition: color .2s; }
 .mpc-underline .elementor-heading-title a { border-bottom: 1.5px solid #738238; }
 .mpc-bullets .elementor-icon-list-icon i, .mpc-bullets .elementor-icon-list-icon svg { transform: rotate(45deg); }
@@ -929,7 +934,7 @@ def kit():
                               font('text', 'Body', SANS, 300), font('accent', 'Buttons', SANS, 500)],
         'body_background_background': 'classic', 'body_background_color': IVORY,
         'body_color': INK, 'link_normal_color': OLIVE_DARK, 'link_hover_color': FOREST,
-        'container_width': px(1280), 'container_padding': box(0),
+        'container_width': px(MAX), 'container_padding': box(0),
         'space_between_widgets': px(0),
         'custom_css': KIT_CSS,
     }
