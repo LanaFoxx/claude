@@ -1,0 +1,2144 @@
+[
+ {
+  "id": "84b5a81",
+  "elType": "container",
+  "isInner": false,
+  "settings": {
+   "content_width": "boxed",
+   "boxed_width": {
+    "unit": "px",
+    "size": 1224,
+    "sizes": []
+   },
+   "flex_direction": "column",
+   "padding": {
+    "unit": "px",
+    "top": "110",
+    "right": "28",
+    "bottom": "90",
+    "left": "28",
+    "isLinked": false
+   },
+   "padding_tablet": {
+    "unit": "px",
+    "top": "90",
+    "right": "28",
+    "bottom": "70",
+    "left": "28",
+    "isLinked": false
+   },
+   "padding_mobile": {
+    "unit": "px",
+    "top": "72",
+    "right": "20",
+    "bottom": "56",
+    "left": "20",
+    "isLinked": false
+   },
+   "overflow": "hidden",
+   "flex_gap": {
+    "column": "22",
+    "row": "22",
+    "isLinked": true,
+    "unit": "px",
+    "size": 22
+   },
+   "background_background": "classic",
+   "background_color": "#283A33",
+   "css_classes": "mpc-band"
+  },
+  "elements": [
+   {
+    "id": "dd02de9",
+    "elType": "widget",
+    "widgetType": "image",
+    "isInner": false,
+    "settings": {
+     "image": {
+      "url": "%%IMG:icon-olive.png%%",
+      "id": "%%IMGID:icon-olive.png%%",
+      "alt": "",
+      "source": "library"
+     },
+     "image_size": "full",
+     "opacity": {
+      "unit": "px",
+      "size": 0.12,
+      "sizes": []
+     },
+     "_position": "absolute",
+     "_z_index": 0,
+     "_css_classes": "mpc-watermark",
+     "_element_width": "initial",
+     "_element_custom_width": {
+      "unit": "vw",
+      "size": 34,
+      "sizes": []
+     },
+     "_element_custom_width_tablet": {
+      "unit": "vw",
+      "size": 44,
+      "sizes": []
+     },
+     "_element_custom_width_mobile": {
+      "unit": "vw",
+      "size": 70,
+      "sizes": []
+     },
+     "_offset_orientation_h": "end",
+     "_offset_orientation_v": "start",
+     "_offset_x_end": {
+      "unit": "%",
+      "size": -4,
+      "sizes": []
+     },
+     "_offset_y": {
+      "unit": "%",
+      "size": -6,
+      "sizes": []
+     },
+     "__globals__": {}
+    },
+    "elements": []
+   },
+   {
+    "id": "42d8720",
+    "elType": "container",
+    "isInner": true,
+    "settings": {
+     "content_width": "full",
+     "flex_direction": "column",
+     "flex_gap": {
+      "column": "22",
+      "row": "22",
+      "isLinked": true,
+      "unit": "px",
+      "size": 22
+     },
+     "padding": {
+      "unit": "px",
+      "top": "0",
+      "right": "0",
+      "bottom": "0",
+      "left": "0",
+      "isLinked": true
+     },
+     "width": {
+      "unit": "px",
+      "size": 900,
+      "sizes": []
+     },
+     "width_tablet": {
+      "unit": "%",
+      "size": 100,
+      "sizes": []
+     },
+     "width_mobile": {
+      "unit": "%",
+      "size": 100,
+      "sizes": []
+     },
+     "css_classes": "mpc-above"
+    },
+    "elements": [
+     {
+      "id": "174c77a",
+      "elType": "widget",
+      "widgetType": "heading",
+      "isInner": false,
+      "settings": {
+       "title": "Past Projects",
+       "header_size": "p",
+       "title_color": "#A9B86A",
+       "typography_typography": "custom",
+       "typography_font_family": "Jost",
+       "typography_font_size": {
+        "unit": "px",
+        "size": 12,
+        "sizes": []
+       },
+       "typography_font_weight": "500",
+       "typography_line_height": {
+        "unit": "em",
+        "size": 1.4,
+        "sizes": []
+       },
+       "typography_letter_spacing": {
+        "unit": "em",
+        "size": 0.22,
+        "sizes": []
+       },
+       "typography_text_transform": "uppercase",
+       "__globals__": {
+        "title_color": "",
+        "typography_typography": ""
+       }
+      },
+      "elements": []
+     },
+     {
+      "id": "b239f3c",
+      "elType": "widget",
+      "widgetType": "heading",
+      "isInner": false,
+      "settings": {
+       "title": "The work speaks for itself.",
+       "header_size": "h1",
+       "title_color": "#F4F2EA",
+       "typography_typography": "custom",
+       "typography_font_family": "Marcellus",
+       "typography_font_size": {
+        "unit": "px",
+        "size": 68,
+        "sizes": []
+       },
+       "typography_font_size_tablet": {
+        "unit": "px",
+        "size": 52,
+        "sizes": []
+       },
+       "typography_font_size_mobile": {
+        "unit": "px",
+        "size": 40,
+        "sizes": []
+       },
+       "typography_font_weight": "400",
+       "typography_line_height": {
+        "unit": "em",
+        "size": 1.05,
+        "sizes": []
+       },
+       "__globals__": {
+        "title_color": "",
+        "typography_typography": ""
+       }
+      },
+      "elements": []
+     },
+     {
+      "id": "d86f40f",
+      "elType": "widget",
+      "widgetType": "text-editor",
+      "isInner": false,
+      "settings": {
+       "editor": "A selection of recent projects across our service area, from full site development to ongoing property care.",
+       "text_color": "#D5D4BE",
+       "typography_typography": "custom",
+       "typography_font_family": "Jost",
+       "typography_font_size": {
+        "unit": "px",
+        "size": 19,
+        "sizes": []
+       },
+       "typography_font_size_tablet": {
+        "unit": "px",
+        "size": 18,
+        "sizes": []
+       },
+       "typography_font_size_mobile": {
+        "unit": "px",
+        "size": 17,
+        "sizes": []
+       },
+       "typography_font_weight": "300",
+       "typography_line_height": {
+        "unit": "em",
+        "size": 1.6,
+        "sizes": []
+       },
+       "__globals__": {
+        "text_color": "",
+        "typography_typography": ""
+       }
+      },
+      "elements": []
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": "a49636a",
+  "elType": "container",
+  "isInner": false,
+  "settings": {
+   "content_width": "boxed",
+   "boxed_width": {
+    "unit": "px",
+    "size": 1224,
+    "sizes": []
+   },
+   "flex_direction": "column",
+   "padding": {
+    "unit": "px",
+    "top": "90",
+    "right": "28",
+    "bottom": "90",
+    "left": "28",
+    "isLinked": false
+   },
+   "padding_tablet": {
+    "unit": "px",
+    "top": "80",
+    "right": "28",
+    "bottom": "70",
+    "left": "28",
+    "isLinked": false
+   },
+   "padding_mobile": {
+    "unit": "px",
+    "top": "64",
+    "right": "20",
+    "bottom": "56",
+    "left": "20",
+    "isLinked": false
+   },
+   "overflow": "hidden",
+   "flex_gap": {
+    "column": "40",
+    "row": "40",
+    "isLinked": true,
+    "unit": "px",
+    "size": 40
+   },
+   "background_background": "classic",
+   "background_color": "#F4F2EA"
+  },
+  "elements": [
+   {
+    "id": "4c4f9b0",
+    "elType": "widget",
+    "widgetType": "html",
+    "isInner": false,
+    "settings": {
+     "html": "<div class=\"mpc-filters\" role=\"group\" aria-label=\"Filter projects\">\n  <button type=\"button\" data-filter=\"all\" aria-pressed=\"true\">All</button>\n  <button type=\"button\" data-filter=\"site-preparation\" aria-pressed=\"false\">Site Preparation</button>\n  <button type=\"button\" data-filter=\"landscape-development\" aria-pressed=\"false\">Landscape Development</button>\n  <button type=\"button\" data-filter=\"tree-care\" aria-pressed=\"false\">Tree Care</button>\n  <button type=\"button\" data-filter=\"power-washing\" aria-pressed=\"false\">Power Washing</button>\n  <button type=\"button\" data-filter=\"property-care\" aria-pressed=\"false\">Property Care</button>\n</div>\n<script>\n(function () {\n  var wrap = document.currentScript.previousElementSibling;\n  var buttons = wrap.querySelectorAll('button');\n  buttons.forEach(function (b) {\n    b.addEventListener('click', function () {\n      var cat = b.getAttribute('data-filter');\n      buttons.forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });\n      document.querySelectorAll('.mpc-project').forEach(function (p) {\n        p.style.display = (cat === 'all' || p.classList.contains('mpc-cat-' + cat)) ? '' : 'none';\n      });\n    });\n  });\n})();\n</script>",
+     "__globals__": {}
+    },
+    "elements": []
+   },
+   {
+    "id": "fa7f0ea",
+    "elType": "container",
+    "isInner": true,
+    "settings": {
+     "content_width": "full",
+     "container_type": "grid",
+     "padding": {
+      "unit": "px",
+      "top": "0",
+      "right": "0",
+      "bottom": "0",
+      "left": "0",
+      "isLinked": true
+     },
+     "grid_columns_grid": {
+      "unit": "fr",
+      "size": 3,
+      "sizes": []
+     },
+     "grid_columns_grid_tablet": {
+      "unit": "fr",
+      "size": 2,
+      "sizes": []
+     },
+     "grid_columns_grid_mobile": {
+      "unit": "fr",
+      "size": 1,
+      "sizes": []
+     },
+     "grid_rows_grid": {
+      "unit": "custom",
+      "size": "auto",
+      "sizes": []
+     },
+     "grid_rows_grid_tablet": {
+      "unit": "custom",
+      "size": "auto",
+      "sizes": []
+     },
+     "grid_rows_grid_mobile": {
+      "unit": "custom",
+      "size": "auto",
+      "sizes": []
+     },
+     "grid_gaps": {
+      "column": "28",
+      "row": "36",
+      "isLinked": false,
+      "unit": "px",
+      "size": 28
+     },
+     "grid_gaps_tablet": {
+      "column": "24",
+      "row": "36",
+      "isLinked": false,
+      "unit": "px",
+      "size": 24
+     },
+     "grid_gaps_mobile": {
+      "column": "24",
+      "row": "40",
+      "isLinked": false,
+      "unit": "px",
+      "size": 24
+     }
+    },
+    "elements": [
+     {
+      "id": "4093f6d",
+      "elType": "container",
+      "isInner": true,
+      "settings": {
+       "content_width": "full",
+       "flex_direction": "column",
+       "flex_gap": {
+        "column": "18",
+        "row": "18",
+        "isLinked": true,
+        "unit": "px",
+        "size": 18
+       },
+       "padding": {
+        "unit": "px",
+        "top": "0",
+        "right": "0",
+        "bottom": "0",
+        "left": "0",
+        "isLinked": true
+       },
+       "css_classes": "mpc-project mpc-cat-site-preparation"
+      },
+      "elements": [
+       {
+        "id": "1200339",
+        "elType": "widget",
+        "widgetType": "image",
+        "isInner": false,
+        "settings": {
+         "image": {
+          "url": "%%IMG:photos/forestry-mulcher.jpg%%",
+          "id": "%%IMGID:photos/forestry-mulcher.jpg%%",
+          "alt": "Wooded Lot to Build-Ready Homesite",
+          "source": "library"
+         },
+         "image_size": "full",
+         "align": "start",
+         "width": {
+          "unit": "%",
+          "size": 100,
+          "sizes": []
+         },
+         "_css_classes": "mpc-ratio-43",
+         "__globals__": {}
+        },
+        "elements": []
+       },
+       {
+        "id": "a268aa8",
+        "elType": "container",
+        "isInner": true,
+        "settings": {
+         "content_width": "full",
+         "flex_direction": "column",
+         "flex_gap": {
+          "column": "8",
+          "row": "8",
+          "isLinked": true,
+          "unit": "px",
+          "size": 8
+         },
+         "padding": {
+          "unit": "px",
+          "top": "0",
+          "right": "0",
+          "bottom": "0",
+          "left": "0",
+          "isLinked": true
+         }
+        },
+        "elements": [
+         {
+          "id": "9d33a01",
+          "elType": "container",
+          "isInner": true,
+          "settings": {
+           "content_width": "full",
+           "flex_direction": "row",
+           "flex_gap": {
+            "column": "16",
+            "row": "16",
+            "isLinked": true,
+            "unit": "px",
+            "size": 16
+           },
+           "flex_justify_content": "space-between",
+           "flex_align_items": "center",
+           "flex_wrap": "wrap",
+           "padding": {
+            "unit": "px",
+            "top": "0",
+            "right": "0",
+            "bottom": "0",
+            "left": "0",
+            "isLinked": true
+           }
+          },
+          "elements": [
+           {
+            "id": "dfd43f3",
+            "elType": "widget",
+            "widgetType": "heading",
+            "isInner": false,
+            "settings": {
+             "title": "Person County, NC",
+             "header_size": "span",
+             "title_color": "#738238",
+             "typography_typography": "custom",
+             "typography_font_family": "Jost",
+             "typography_font_size": {
+              "unit": "px",
+              "size": 11,
+              "sizes": []
+             },
+             "typography_font_weight": "500",
+             "typography_letter_spacing": {
+              "unit": "em",
+              "size": 0.2,
+              "sizes": []
+             },
+             "typography_text_transform": "uppercase",
+             "__globals__": {
+              "title_color": "",
+              "typography_typography": ""
+             }
+            },
+            "elements": []
+           },
+           {
+            "id": "353c631",
+            "elType": "widget",
+            "widgetType": "heading",
+            "isInner": false,
+            "settings": {
+             "title": "Site Preparation",
+             "header_size": "span",
+             "title_color": "#8A918C",
+             "typography_typography": "custom",
+             "typography_font_family": "Jost",
+             "typography_font_size": {
+              "unit": "px",
+              "size": 11,
+              "sizes": []
+             },
+             "typography_font_weight": "500",
+             "typography_letter_spacing": {
+              "unit": "em",
+              "size": 0.2,
+              "sizes": []
+             },
+             "typography_text_transform": "uppercase",
+             "__globals__": {
+              "title_color": "",
+              "typography_typography": ""
+             }
+            },
+            "elements": []
+           }
+          ]
+         },
+         {
+          "id": "6050914",
+          "elType": "widget",
+          "widgetType": "heading",
+          "isInner": false,
+          "settings": {
+           "title": "Wooded Lot to Build-Ready Homesite",
+           "header_size": "h3",
+           "title_color": "#283A33",
+           "typography_typography": "custom",
+           "typography_font_family": "Marcellus",
+           "typography_font_size": {
+            "unit": "px",
+            "size": 24,
+            "sizes": []
+           },
+           "typography_font_size_tablet": {
+            "unit": "px",
+            "size": 22,
+            "sizes": []
+           },
+           "typography_font_size_mobile": {
+            "unit": "px",
+            "size": 22,
+            "sizes": []
+           },
+           "typography_font_weight": "400",
+           "typography_line_height": {
+            "unit": "em",
+            "size": 1.2,
+            "sizes": []
+           },
+           "__globals__": {
+            "title_color": "",
+            "typography_typography": ""
+           }
+          },
+          "elements": []
+         },
+         {
+          "id": "2607679",
+          "elType": "widget",
+          "widgetType": "text-editor",
+          "isInner": false,
+          "settings": {
+           "editor": "Forestry mulching, land clearing, rough and finish grading, culvert and gravel drive installation.",
+           "text_color": "#5B655F",
+           "typography_typography": "custom",
+           "typography_font_family": "Jost",
+           "typography_font_size": {
+            "unit": "px",
+            "size": 15,
+            "sizes": []
+           },
+           "typography_font_size_mobile": {
+            "unit": "px",
+            "size": 15,
+            "sizes": []
+           },
+           "typography_font_weight": "400",
+           "typography_line_height": {
+            "unit": "em",
+            "size": 1.55,
+            "sizes": []
+           },
+           "__globals__": {
+            "text_color": "",
+            "typography_typography": ""
+           }
+          },
+          "elements": []
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "id": "d953ee2",
+      "elType": "container",
+      "isInner": true,
+      "settings": {
+       "content_width": "full",
+       "flex_direction": "column",
+       "flex_gap": {
+        "column": "18",
+        "row": "18",
+        "isLinked": true,
+        "unit": "px",
+        "size": 18
+       },
+       "padding": {
+        "unit": "px",
+        "top": "0",
+        "right": "0",
+        "bottom": "0",
+        "left": "0",
+        "isLinked": true
+       },
+       "css_classes": "mpc-project mpc-cat-landscape-development"
+      },
+      "elements": [
+       {
+        "id": "f4998d7",
+        "elType": "widget",
+        "widgetType": "image",
+        "isInner": false,
+        "settings": {
+         "image": {
+          "url": "%%IMG:photos/drainage.jpg%%",
+          "id": "%%IMGID:photos/drainage.jpg%%",
+          "alt": "Hillside Drainage & Retaining Wall",
+          "source": "library"
+         },
+         "image_size": "full",
+         "align": "start",
+         "width": {
+          "unit": "%",
+          "size": 100,
+          "sizes": []
+         },
+         "_css_classes": "mpc-ratio-43",
+         "__globals__": {}
+        },
+        "elements": []
+       },
+       {
+        "id": "1d87cec",
+        "elType": "container",
+        "isInner": true,
+        "settings": {
+         "content_width": "full",
+         "flex_direction": "column",
+         "flex_gap": {
+          "column": "8",
+          "row": "8",
+          "isLinked": true,
+          "unit": "px",
+          "size": 8
+         },
+         "padding": {
+          "unit": "px",
+          "top": "0",
+          "right": "0",
+          "bottom": "0",
+          "left": "0",
+          "isLinked": true
+         }
+        },
+        "elements": [
+         {
+          "id": "5d39d0a",
+          "elType": "container",
+          "isInner": true,
+          "settings": {
+           "content_width": "full",
+           "flex_direction": "row",
+           "flex_gap": {
+            "column": "16",
+            "row": "16",
+            "isLinked": true,
+            "unit": "px",
+            "size": 16
+           },
+           "flex_justify_content": "space-between",
+           "flex_align_items": "center",
+           "flex_wrap": "wrap",
+           "padding": {
+            "unit": "px",
+            "top": "0",
+            "right": "0",
+            "bottom": "0",
+            "left": "0",
+            "isLinked": true
+           }
+          },
+          "elements": [
+           {
+            "id": "58ee857",
+            "elType": "widget",
+            "widgetType": "heading",
+            "isInner": false,
+            "settings": {
+             "title": "Orange County, NC",
+             "header_size": "span",
+             "title_color": "#738238",
+             "typography_typography": "custom",
+             "typography_font_family": "Jost",
+             "typography_font_size": {
+              "unit": "px",
+              "size": 11,
+              "sizes": []
+             },
+             "typography_font_weight": "500",
+             "typography_letter_spacing": {
+              "unit": "em",
+              "size": 0.2,
+              "sizes": []
+             },
+             "typography_text_transform": "uppercase",
+             "__globals__": {
+              "title_color": "",
+              "typography_typography": ""
+             }
+            },
+            "elements": []
+           },
+           {
+            "id": "9a2ef80",
+            "elType": "widget",
+            "widgetType": "heading",
+            "isInner": false,
+            "settings": {
+             "title": "Landscape Development",
+             "header_size": "span",
+             "title_color": "#8A918C",
+             "typography_typography": "custom",
+             "typography_font_family": "Jost",
+             "typography_font_size": {
+              "unit": "px",
+              "size": 11,
+              "sizes": []
+             },
+             "typography_font_weight": "500",
+             "typography_letter_spacing": {
+              "unit": "em",
+              "size": 0.2,
+              "sizes": []
+             },
+             "typography_text_transform": "uppercase",
+             "__globals__": {
+              "title_color": "",
+              "typography_typography": ""
+             }
+            },
+            "elements": []
+           }
+          ]
+         },
+         {
+          "id": "7961fd9",
+          "elType": "widget",
+          "widgetType": "heading",
+          "isInner": false,
+          "settings": {
+           "title": "Hillside Drainage &amp; Retaining Wall",
+           "header_size": "h3",
+           "title_color": "#283A33",
+           "typography_typography": "custom",
+           "typography_font_family": "Marcellus",
+           "typography_font_size": {
+            "unit": "px",
+            "size": 24,
+            "sizes": []
+           },
+           "typography_font_size_tablet": {
+            "unit": "px",
+            "size": 22,
+            "sizes": []
+           },
+           "typography_font_size_mobile": {
+            "unit": "px",
+            "size": 22,
+            "sizes": []
+           },
+           "typography_font_weight": "400",
+           "typography_line_height": {
+            "unit": "em",
+            "size": 1.2,
+            "sizes": []
+           },
+           "__globals__": {
+            "title_color": "",
+            "typography_typography": ""
+           }
+          },
+          "elements": []
+         },
+         {
+          "id": "1f7296a",
+          "elType": "widget",
+          "widgetType": "text-editor",
+          "isInner": false,
+          "settings": {
+           "editor": "French drain system, segmental retaining wall, regrading and sod installation.",
+           "text_color": "#5B655F",
+           "typography_typography": "custom",
+           "typography_font_family": "Jost",
+           "typography_font_size": {
+            "unit": "px",
+            "size": 15,
+            "sizes": []
+           },
+           "typography_font_size_mobile": {
+            "unit": "px",
+            "size": 15,
+            "sizes": []
+           },
+           "typography_font_weight": "400",
+           "typography_line_height": {
+            "unit": "em",
+            "size": 1.55,
+            "sizes": []
+           },
+           "__globals__": {
+            "text_color": "",
+            "typography_typography": ""
+           }
+          },
+          "elements": []
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "id": "15fc899",
+      "elType": "container",
+      "isInner": true,
+      "settings": {
+       "content_width": "full",
+       "flex_direction": "column",
+       "flex_gap": {
+        "column": "18",
+        "row": "18",
+        "isLinked": true,
+        "unit": "px",
+        "size": 18
+       },
+       "padding": {
+        "unit": "px",
+        "top": "0",
+        "right": "0",
+        "bottom": "0",
+        "left": "0",
+        "isLinked": true
+       },
+       "css_classes": "mpc-project mpc-cat-tree-care"
+      },
+      "elements": [
+       {
+        "id": "7cf2072",
+        "elType": "widget",
+        "widgetType": "image",
+        "isInner": false,
+        "settings": {
+         "image": {
+          "url": "%%IMG:photos/tree-removal.jpg%%",
+          "id": "%%IMGID:photos/tree-removal.jpg%%",
+          "alt": "Lake Property Treeline Clearing",
+          "source": "library"
+         },
+         "image_size": "full",
+         "align": "start",
+         "width": {
+          "unit": "%",
+          "size": 100,
+          "sizes": []
+         },
+         "_css_classes": "mpc-ratio-43",
+         "__globals__": {}
+        },
+        "elements": []
+       },
+       {
+        "id": "4fd58db",
+        "elType": "container",
+        "isInner": true,
+        "settings": {
+         "content_width": "full",
+         "flex_direction": "column",
+         "flex_gap": {
+          "column": "8",
+          "row": "8",
+          "isLinked": true,
+          "unit": "px",
+          "size": 8
+         },
+         "padding": {
+          "unit": "px",
+          "top": "0",
+          "right": "0",
+          "bottom": "0",
+          "left": "0",
+          "isLinked": true
+         }
+        },
+        "elements": [
+         {
+          "id": "774b15d",
+          "elType": "container",
+          "isInner": true,
+          "settings": {
+           "content_width": "full",
+           "flex_direction": "row",
+           "flex_gap": {
+            "column": "16",
+            "row": "16",
+            "isLinked": true,
+            "unit": "px",
+            "size": 16
+           },
+           "flex_justify_content": "space-between",
+           "flex_align_items": "center",
+           "flex_wrap": "wrap",
+           "padding": {
+            "unit": "px",
+            "top": "0",
+            "right": "0",
+            "bottom": "0",
+            "left": "0",
+            "isLinked": true
+           }
+          },
+          "elements": [
+           {
+            "id": "fe3bfad",
+            "elType": "widget",
+            "widgetType": "heading",
+            "isInner": false,
+            "settings": {
+             "title": "Halifax County, VA",
+             "header_size": "span",
+             "title_color": "#738238",
+             "typography_typography": "custom",
+             "typography_font_family": "Jost",
+             "typography_font_size": {
+              "unit": "px",
+              "size": 11,
+              "sizes": []
+             },
+             "typography_font_weight": "500",
+             "typography_letter_spacing": {
+              "unit": "em",
+              "size": 0.2,
+              "sizes": []
+             },
+             "typography_text_transform": "uppercase",
+             "__globals__": {
+              "title_color": "",
+              "typography_typography": ""
+             }
+            },
+            "elements": []
+           },
+           {
+            "id": "fa529ba",
+            "elType": "widget",
+            "widgetType": "heading",
+            "isInner": false,
+            "settings": {
+             "title": "Tree Care",
+             "header_size": "span",
+             "title_color": "#8A918C",
+             "typography_typography": "custom",
+             "typography_font_family": "Jost",
+             "typography_font_size": {
+              "unit": "px",
+              "size": 11,
+              "sizes": []
+             },
+             "typography_font_weight": "500",
+             "typography_letter_spacing": {
+              "unit": "em",
+              "size": 0.2,
+              "sizes": []
+             },
+             "typography_text_transform": "uppercase",
+             "__globals__": {
+              "title_color": "",
+              "typography_typography": ""
+             }
+            },
+            "elements": []
+           }
+          ]
+         },
+         {
+          "id": "7afb2c6",
+          "elType": "widget",
+          "widgetType": "heading",
+          "isInner": false,
+          "settings": {
+           "title": "Lake Property Treeline Clearing",
+           "header_size": "h3",
+           "title_color": "#283A33",
+           "typography_typography": "custom",
+           "typography_font_family": "Marcellus",
+           "typography_font_size": {
+            "unit": "px",
+            "size": 24,
+            "sizes": []
+           },
+           "typography_font_size_tablet": {
+            "unit": "px",
+            "size": 22,
+            "sizes": []
+           },
+           "typography_font_size_mobile": {
+            "unit": "px",
+            "size": 22,
+            "sizes": []
+           },
+           "typography_font_weight": "400",
+           "typography_line_height": {
+            "unit": "em",
+            "size": 1.2,
+            "sizes": []
+           },
+           "__globals__": {
+            "title_color": "",
+            "typography_typography": ""
+           }
+          },
+          "elements": []
+         },
+         {
+          "id": "7bdc968",
+          "elType": "widget",
+          "widgetType": "text-editor",
+          "isInner": false,
+          "settings": {
+           "editor": "Selective tree removal for a water view, brush removal, stump grinding and hydroseeding.",
+           "text_color": "#5B655F",
+           "typography_typography": "custom",
+           "typography_font_family": "Jost",
+           "typography_font_size": {
+            "unit": "px",
+            "size": 15,
+            "sizes": []
+           },
+           "typography_font_size_mobile": {
+            "unit": "px",
+            "size": 15,
+            "sizes": []
+           },
+           "typography_font_weight": "400",
+           "typography_line_height": {
+            "unit": "em",
+            "size": 1.55,
+            "sizes": []
+           },
+           "__globals__": {
+            "text_color": "",
+            "typography_typography": ""
+           }
+          },
+          "elements": []
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "id": "d42fddb",
+      "elType": "container",
+      "isInner": true,
+      "settings": {
+       "content_width": "full",
+       "flex_direction": "column",
+       "flex_gap": {
+        "column": "18",
+        "row": "18",
+        "isLinked": true,
+        "unit": "px",
+        "size": 18
+       },
+       "padding": {
+        "unit": "px",
+        "top": "0",
+        "right": "0",
+        "bottom": "0",
+        "left": "0",
+        "isLinked": true
+       },
+       "css_classes": "mpc-project mpc-cat-site-preparation"
+      },
+      "elements": [
+       {
+        "id": "24e4e25",
+        "elType": "widget",
+        "widgetType": "image",
+        "isInner": false,
+        "settings": {
+         "image": {
+          "url": "%%IMG:photos/gravel-drive.jpg%%",
+          "id": "%%IMGID:photos/gravel-drive.jpg%%",
+          "alt": "Farm Driveway Rebuild",
+          "source": "library"
+         },
+         "image_size": "full",
+         "align": "start",
+         "width": {
+          "unit": "%",
+          "size": 100,
+          "sizes": []
+         },
+         "_css_classes": "mpc-ratio-43",
+         "__globals__": {}
+        },
+        "elements": []
+       },
+       {
+        "id": "7a86f7a",
+        "elType": "container",
+        "isInner": true,
+        "settings": {
+         "content_width": "full",
+         "flex_direction": "column",
+         "flex_gap": {
+          "column": "8",
+          "row": "8",
+          "isLinked": true,
+          "unit": "px",
+          "size": 8
+         },
+         "padding": {
+          "unit": "px",
+          "top": "0",
+          "right": "0",
+          "bottom": "0",
+          "left": "0",
+          "isLinked": true
+         }
+        },
+        "elements": [
+         {
+          "id": "57b6fb7",
+          "elType": "container",
+          "isInner": true,
+          "settings": {
+           "content_width": "full",
+           "flex_direction": "row",
+           "flex_gap": {
+            "column": "16",
+            "row": "16",
+            "isLinked": true,
+            "unit": "px",
+            "size": 16
+           },
+           "flex_justify_content": "space-between",
+           "flex_align_items": "center",
+           "flex_wrap": "wrap",
+           "padding": {
+            "unit": "px",
+            "top": "0",
+            "right": "0",
+            "bottom": "0",
+            "left": "0",
+            "isLinked": true
+           }
+          },
+          "elements": [
+           {
+            "id": "1a28f7b",
+            "elType": "widget",
+            "widgetType": "heading",
+            "isInner": false,
+            "settings": {
+             "title": "Caswell County, NC",
+             "header_size": "span",
+             "title_color": "#738238",
+             "typography_typography": "custom",
+             "typography_font_family": "Jost",
+             "typography_font_size": {
+              "unit": "px",
+              "size": 11,
+              "sizes": []
+             },
+             "typography_font_weight": "500",
+             "typography_letter_spacing": {
+              "unit": "em",
+              "size": 0.2,
+              "sizes": []
+             },
+             "typography_text_transform": "uppercase",
+             "__globals__": {
+              "title_color": "",
+              "typography_typography": ""
+             }
+            },
+            "elements": []
+           },
+           {
+            "id": "bfeaa15",
+            "elType": "widget",
+            "widgetType": "heading",
+            "isInner": false,
+            "settings": {
+             "title": "Site Preparation",
+             "header_size": "span",
+             "title_color": "#8A918C",
+             "typography_typography": "custom",
+             "typography_font_family": "Jost",
+             "typography_font_size": {
+              "unit": "px",
+              "size": 11,
+              "sizes": []
+             },
+             "typography_font_weight": "500",
+             "typography_letter_spacing": {
+              "unit": "em",
+              "size": 0.2,
+              "sizes": []
+             },
+             "typography_text_transform": "uppercase",
+             "__globals__": {
+              "title_color": "",
+              "typography_typography": ""
+             }
+            },
+            "elements": []
+           }
+          ]
+         },
+         {
+          "id": "bd87a86",
+          "elType": "widget",
+          "widgetType": "heading",
+          "isInner": false,
+          "settings": {
+           "title": "Farm Driveway Rebuild",
+           "header_size": "h3",
+           "title_color": "#283A33",
+           "typography_typography": "custom",
+           "typography_font_family": "Marcellus",
+           "typography_font_size": {
+            "unit": "px",
+            "size": 24,
+            "sizes": []
+           },
+           "typography_font_size_tablet": {
+            "unit": "px",
+            "size": 22,
+            "sizes": []
+           },
+           "typography_font_size_mobile": {
+            "unit": "px",
+            "size": 22,
+            "sizes": []
+           },
+           "typography_font_weight": "400",
+           "typography_line_height": {
+            "unit": "em",
+            "size": 1.2,
+            "sizes": []
+           },
+           "__globals__": {
+            "title_color": "",
+            "typography_typography": ""
+           }
+          },
+          "elements": []
+         },
+         {
+          "id": "43c71b9",
+          "elType": "widget",
+          "widgetType": "text-editor",
+          "isInner": false,
+          "settings": {
+           "editor": "Quarter-mile gravel drive repair, crowning, new culverts and ditch trenching.",
+           "text_color": "#5B655F",
+           "typography_typography": "custom",
+           "typography_font_family": "Jost",
+           "typography_font_size": {
+            "unit": "px",
+            "size": 15,
+            "sizes": []
+           },
+           "typography_font_size_mobile": {
+            "unit": "px",
+            "size": 15,
+            "sizes": []
+           },
+           "typography_font_weight": "400",
+           "typography_line_height": {
+            "unit": "em",
+            "size": 1.55,
+            "sizes": []
+           },
+           "__globals__": {
+            "text_color": "",
+            "typography_typography": ""
+           }
+          },
+          "elements": []
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "id": "873be07",
+      "elType": "container",
+      "isInner": true,
+      "settings": {
+       "content_width": "full",
+       "flex_direction": "column",
+       "flex_gap": {
+        "column": "18",
+        "row": "18",
+        "isLinked": true,
+        "unit": "px",
+        "size": 18
+       },
+       "padding": {
+        "unit": "px",
+        "top": "0",
+        "right": "0",
+        "bottom": "0",
+        "left": "0",
+        "isLinked": true
+       },
+       "css_classes": "mpc-project mpc-cat-power-washing"
+      },
+      "elements": [
+       {
+        "id": "b12aa1f",
+        "elType": "widget",
+        "widgetType": "image",
+        "isInner": false,
+        "settings": {
+         "image": {
+          "url": "%%IMG:photos/power-wash-1.jpg%%",
+          "id": "%%IMGID:photos/power-wash-1.jpg%%",
+          "alt": "Retail Center Exterior Refresh",
+          "source": "library"
+         },
+         "image_size": "full",
+         "align": "start",
+         "width": {
+          "unit": "%",
+          "size": 100,
+          "sizes": []
+         },
+         "_css_classes": "mpc-ratio-43",
+         "__globals__": {}
+        },
+        "elements": []
+       },
+       {
+        "id": "f3b7a50",
+        "elType": "container",
+        "isInner": true,
+        "settings": {
+         "content_width": "full",
+         "flex_direction": "column",
+         "flex_gap": {
+          "column": "8",
+          "row": "8",
+          "isLinked": true,
+          "unit": "px",
+          "size": 8
+         },
+         "padding": {
+          "unit": "px",
+          "top": "0",
+          "right": "0",
+          "bottom": "0",
+          "left": "0",
+          "isLinked": true
+         }
+        },
+        "elements": [
+         {
+          "id": "05e999f",
+          "elType": "container",
+          "isInner": true,
+          "settings": {
+           "content_width": "full",
+           "flex_direction": "row",
+           "flex_gap": {
+            "column": "16",
+            "row": "16",
+            "isLinked": true,
+            "unit": "px",
+            "size": 16
+           },
+           "flex_justify_content": "space-between",
+           "flex_align_items": "center",
+           "flex_wrap": "wrap",
+           "padding": {
+            "unit": "px",
+            "top": "0",
+            "right": "0",
+            "bottom": "0",
+            "left": "0",
+            "isLinked": true
+           }
+          },
+          "elements": [
+           {
+            "id": "29540a6",
+            "elType": "widget",
+            "widgetType": "heading",
+            "isInner": false,
+            "settings": {
+             "title": "Guilford County, NC",
+             "header_size": "span",
+             "title_color": "#738238",
+             "typography_typography": "custom",
+             "typography_font_family": "Jost",
+             "typography_font_size": {
+              "unit": "px",
+              "size": 11,
+              "sizes": []
+             },
+             "typography_font_weight": "500",
+             "typography_letter_spacing": {
+              "unit": "em",
+              "size": 0.2,
+              "sizes": []
+             },
+             "typography_text_transform": "uppercase",
+             "__globals__": {
+              "title_color": "",
+              "typography_typography": ""
+             }
+            },
+            "elements": []
+           },
+           {
+            "id": "842e7fc",
+            "elType": "widget",
+            "widgetType": "heading",
+            "isInner": false,
+            "settings": {
+             "title": "Power Washing",
+             "header_size": "span",
+             "title_color": "#8A918C",
+             "typography_typography": "custom",
+             "typography_font_family": "Jost",
+             "typography_font_size": {
+              "unit": "px",
+              "size": 11,
+              "sizes": []
+             },
+             "typography_font_weight": "500",
+             "typography_letter_spacing": {
+              "unit": "em",
+              "size": 0.2,
+              "sizes": []
+             },
+             "typography_text_transform": "uppercase",
+             "__globals__": {
+              "title_color": "",
+              "typography_typography": ""
+             }
+            },
+            "elements": []
+           }
+          ]
+         },
+         {
+          "id": "3488f87",
+          "elType": "widget",
+          "widgetType": "heading",
+          "isInner": false,
+          "settings": {
+           "title": "Retail Center Exterior Refresh",
+           "header_size": "h3",
+           "title_color": "#283A33",
+           "typography_typography": "custom",
+           "typography_font_family": "Marcellus",
+           "typography_font_size": {
+            "unit": "px",
+            "size": 24,
+            "sizes": []
+           },
+           "typography_font_size_tablet": {
+            "unit": "px",
+            "size": 22,
+            "sizes": []
+           },
+           "typography_font_size_mobile": {
+            "unit": "px",
+            "size": 22,
+            "sizes": []
+           },
+           "typography_font_weight": "400",
+           "typography_line_height": {
+            "unit": "em",
+            "size": 1.2,
+            "sizes": []
+           },
+           "__globals__": {
+            "title_color": "",
+            "typography_typography": ""
+           }
+          },
+          "elements": []
+         },
+         {
+          "id": "f373ca5",
+          "elType": "widget",
+          "widgetType": "text-editor",
+          "isInner": false,
+          "settings": {
+           "editor": "Storefront facades, sidewalks and parking areas on a recurring quarterly schedule.",
+           "text_color": "#5B655F",
+           "typography_typography": "custom",
+           "typography_font_family": "Jost",
+           "typography_font_size": {
+            "unit": "px",
+            "size": 15,
+            "sizes": []
+           },
+           "typography_font_size_mobile": {
+            "unit": "px",
+            "size": 15,
+            "sizes": []
+           },
+           "typography_font_weight": "400",
+           "typography_line_height": {
+            "unit": "em",
+            "size": 1.55,
+            "sizes": []
+           },
+           "__globals__": {
+            "text_color": "",
+            "typography_typography": ""
+           }
+          },
+          "elements": []
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "id": "87322e2",
+      "elType": "container",
+      "isInner": true,
+      "settings": {
+       "content_width": "full",
+       "flex_direction": "column",
+       "flex_gap": {
+        "column": "18",
+        "row": "18",
+        "isLinked": true,
+        "unit": "px",
+        "size": 18
+       },
+       "padding": {
+        "unit": "px",
+        "top": "0",
+        "right": "0",
+        "bottom": "0",
+        "left": "0",
+        "isLinked": true
+       },
+       "css_classes": "mpc-project mpc-cat-property-care"
+      },
+      "elements": [
+       {
+        "id": "5c9bcf3",
+        "elType": "widget",
+        "widgetType": "image",
+        "isInner": false,
+        "settings": {
+         "image": {
+          "url": "%%IMG:photos/landscape-bed.jpg%%",
+          "id": "%%IMGID:photos/landscape-bed.jpg%%",
+          "alt": "Second Home Seasonal Care",
+          "source": "library"
+         },
+         "image_size": "full",
+         "align": "start",
+         "width": {
+          "unit": "%",
+          "size": 100,
+          "sizes": []
+         },
+         "_css_classes": "mpc-ratio-43",
+         "__globals__": {}
+        },
+        "elements": []
+       },
+       {
+        "id": "c215a82",
+        "elType": "container",
+        "isInner": true,
+        "settings": {
+         "content_width": "full",
+         "flex_direction": "column",
+         "flex_gap": {
+          "column": "8",
+          "row": "8",
+          "isLinked": true,
+          "unit": "px",
+          "size": 8
+         },
+         "padding": {
+          "unit": "px",
+          "top": "0",
+          "right": "0",
+          "bottom": "0",
+          "left": "0",
+          "isLinked": true
+         }
+        },
+        "elements": [
+         {
+          "id": "8b0d590",
+          "elType": "container",
+          "isInner": true,
+          "settings": {
+           "content_width": "full",
+           "flex_direction": "row",
+           "flex_gap": {
+            "column": "16",
+            "row": "16",
+            "isLinked": true,
+            "unit": "px",
+            "size": 16
+           },
+           "flex_justify_content": "space-between",
+           "flex_align_items": "center",
+           "flex_wrap": "wrap",
+           "padding": {
+            "unit": "px",
+            "top": "0",
+            "right": "0",
+            "bottom": "0",
+            "left": "0",
+            "isLinked": true
+           }
+          },
+          "elements": [
+           {
+            "id": "2587be6",
+            "elType": "widget",
+            "widgetType": "heading",
+            "isInner": false,
+            "settings": {
+             "title": "Granville County, NC",
+             "header_size": "span",
+             "title_color": "#738238",
+             "typography_typography": "custom",
+             "typography_font_family": "Jost",
+             "typography_font_size": {
+              "unit": "px",
+              "size": 11,
+              "sizes": []
+             },
+             "typography_font_weight": "500",
+             "typography_letter_spacing": {
+              "unit": "em",
+              "size": 0.2,
+              "sizes": []
+             },
+             "typography_text_transform": "uppercase",
+             "__globals__": {
+              "title_color": "",
+              "typography_typography": ""
+             }
+            },
+            "elements": []
+           },
+           {
+            "id": "b0a844e",
+            "elType": "widget",
+            "widgetType": "heading",
+            "isInner": false,
+            "settings": {
+             "title": "Property Care",
+             "header_size": "span",
+             "title_color": "#8A918C",
+             "typography_typography": "custom",
+             "typography_font_family": "Jost",
+             "typography_font_size": {
+              "unit": "px",
+              "size": 11,
+              "sizes": []
+             },
+             "typography_font_weight": "500",
+             "typography_letter_spacing": {
+              "unit": "em",
+              "size": 0.2,
+              "sizes": []
+             },
+             "typography_text_transform": "uppercase",
+             "__globals__": {
+              "title_color": "",
+              "typography_typography": ""
+             }
+            },
+            "elements": []
+           }
+          ]
+         },
+         {
+          "id": "ea05754",
+          "elType": "widget",
+          "widgetType": "heading",
+          "isInner": false,
+          "settings": {
+           "title": "Second Home Seasonal Care",
+           "header_size": "h3",
+           "title_color": "#283A33",
+           "typography_typography": "custom",
+           "typography_font_family": "Marcellus",
+           "typography_font_size": {
+            "unit": "px",
+            "size": 24,
+            "sizes": []
+           },
+           "typography_font_size_tablet": {
+            "unit": "px",
+            "size": 22,
+            "sizes": []
+           },
+           "typography_font_size_mobile": {
+            "unit": "px",
+            "size": 22,
+            "sizes": []
+           },
+           "typography_font_weight": "400",
+           "typography_line_height": {
+            "unit": "em",
+            "size": 1.2,
+            "sizes": []
+           },
+           "__globals__": {
+            "title_color": "",
+            "typography_typography": ""
+           }
+          },
+          "elements": []
+         },
+         {
+          "id": "06ec41a",
+          "elType": "widget",
+          "widgetType": "text-editor",
+          "isInner": false,
+          "settings": {
+           "editor": "Monthly visits, deck repairs, gutter and grounds upkeep, arrival-ready prep before each stay.",
+           "text_color": "#5B655F",
+           "typography_typography": "custom",
+           "typography_font_family": "Jost",
+           "typography_font_size": {
+            "unit": "px",
+            "size": 15,
+            "sizes": []
+           },
+           "typography_font_size_mobile": {
+            "unit": "px",
+            "size": 15,
+            "sizes": []
+           },
+           "typography_font_weight": "400",
+           "typography_line_height": {
+            "unit": "em",
+            "size": 1.55,
+            "sizes": []
+           },
+           "__globals__": {
+            "text_color": "",
+            "typography_typography": ""
+           }
+          },
+          "elements": []
+         }
+        ]
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": "8857f9a",
+  "elType": "container",
+  "isInner": false,
+  "settings": {
+   "content_width": "boxed",
+   "boxed_width": {
+    "unit": "px",
+    "size": 1224,
+    "sizes": []
+   },
+   "flex_direction": "row",
+   "padding": {
+    "unit": "px",
+    "top": "80",
+    "right": "28",
+    "bottom": "80",
+    "left": "28",
+    "isLinked": false
+   },
+   "padding_tablet": {
+    "unit": "px",
+    "top": "70",
+    "right": "28",
+    "bottom": "70",
+    "left": "28",
+    "isLinked": false
+   },
+   "padding_mobile": {
+    "unit": "px",
+    "top": "56",
+    "right": "20",
+    "bottom": "56",
+    "left": "20",
+    "isLinked": false
+   },
+   "overflow": "hidden",
+   "flex_direction_tablet": "column",
+   "flex_justify_content": "space-between",
+   "flex_align_items": "center",
+   "flex_align_items_tablet": "flex-start",
+   "flex_gap": {
+    "column": "32",
+    "row": "32",
+    "isLinked": true,
+    "unit": "px",
+    "size": 32
+   },
+   "background_background": "gradient",
+   "background_color": "#8A9A48",
+   "background_color_stop": {
+    "unit": "%",
+    "size": 0,
+    "sizes": []
+   },
+   "background_color_b": "#5E6B2D",
+   "background_color_b_stop": {
+    "unit": "%",
+    "size": 100,
+    "sizes": []
+   },
+   "background_gradient_type": "linear",
+   "background_gradient_angle": {
+    "unit": "deg",
+    "size": 120,
+    "sizes": []
+   }
+  },
+  "elements": [
+   {
+    "id": "2ac3444",
+    "elType": "container",
+    "isInner": true,
+    "settings": {
+     "content_width": "full",
+     "flex_direction": "column",
+     "flex_gap": {
+      "column": "12",
+      "row": "12",
+      "isLinked": true,
+      "unit": "px",
+      "size": 12
+     },
+     "padding": {
+      "unit": "px",
+      "top": "0",
+      "right": "0",
+      "bottom": "0",
+      "left": "0",
+      "isLinked": true
+     },
+     "_flex_size": "grow",
+     "width": {
+      "unit": "px",
+      "size": 640,
+      "sizes": []
+     },
+     "width_tablet": {
+      "unit": "%",
+      "size": 100,
+      "sizes": []
+     },
+     "width_mobile": {
+      "unit": "%",
+      "size": 100,
+      "sizes": []
+     }
+    },
+    "elements": [
+     {
+      "id": "5de0099",
+      "elType": "widget",
+      "widgetType": "heading",
+      "isInner": false,
+      "settings": {
+       "title": "Ready to make one call?",
+       "header_size": "h2",
+       "title_color": "#F4F2EA",
+       "typography_typography": "custom",
+       "typography_font_family": "Marcellus",
+       "typography_font_size": {
+        "unit": "px",
+        "size": 46,
+        "sizes": []
+       },
+       "typography_font_size_tablet": {
+        "unit": "px",
+        "size": 38,
+        "sizes": []
+       },
+       "typography_font_size_mobile": {
+        "unit": "px",
+        "size": 32,
+        "sizes": []
+       },
+       "typography_font_weight": "400",
+       "typography_line_height": {
+        "unit": "em",
+        "size": 1.1,
+        "sizes": []
+       },
+       "__globals__": {
+        "title_color": "",
+        "typography_typography": ""
+       }
+      },
+      "elements": []
+     },
+     {
+      "id": "e883a1d",
+      "elType": "widget",
+      "widgetType": "text-editor",
+      "isInner": false,
+      "settings": {
+       "editor": "Tell us about your property and we will schedule a site visit and estimate.",
+       "text_color": "#EEF0DC",
+       "typography_typography": "custom",
+       "typography_font_family": "Jost",
+       "typography_font_size": {
+        "unit": "px",
+        "size": 18,
+        "sizes": []
+       },
+       "typography_font_size_mobile": {
+        "unit": "px",
+        "size": 17,
+        "sizes": []
+       },
+       "typography_font_weight": "300",
+       "typography_line_height": {
+        "unit": "em",
+        "size": 1.55,
+        "sizes": []
+       },
+       "__globals__": {
+        "text_color": "",
+        "typography_typography": ""
+       }
+      },
+      "elements": []
+     }
+    ]
+   },
+   {
+    "id": "3908f22",
+    "elType": "container",
+    "isInner": true,
+    "settings": {
+     "content_width": "full",
+     "flex_direction": "row",
+     "flex_gap": {
+      "column": "22",
+      "row": "22",
+      "isLinked": true,
+      "unit": "px",
+      "size": 22
+     },
+     "flex_justify_content": "flex-start",
+     "flex_align_items": "center",
+     "flex_wrap": "wrap",
+     "padding": {
+      "unit": "px",
+      "top": "0",
+      "right": "0",
+      "bottom": "0",
+      "left": "0",
+      "isLinked": true
+     },
+     "_flex_size": "none",
+     "width": {
+      "unit": "custom",
+      "size": "auto",
+      "sizes": []
+     },
+     "width_tablet": {
+      "unit": "%",
+      "size": 100,
+      "sizes": []
+     },
+     "width_mobile": {
+      "unit": "%",
+      "size": 100,
+      "sizes": []
+     }
+    },
+    "elements": [
+     {
+      "id": "5b0ee76",
+      "elType": "widget",
+      "widgetType": "button",
+      "isInner": false,
+      "settings": {
+       "text": "Request an Estimate",
+       "link": {
+        "url": "%%URL:contact%%",
+        "is_external": "",
+        "nofollow": ""
+       },
+       "background_background": "classic",
+       "background_color": "#283A33",
+       "button_background_hover_background": "classic",
+       "button_background_hover_color": "#1D2B26",
+       "button_text_color": "#F4F2EA",
+       "hover_color": "#FFFFFF",
+       "border_radius": {
+        "unit": "px",
+        "top": "0",
+        "right": "0",
+        "bottom": "0",
+        "left": "0",
+        "isLinked": true
+       },
+       "text_padding": {
+        "unit": "px",
+        "top": "17",
+        "right": "30",
+        "bottom": "17",
+        "left": "30",
+        "isLinked": false
+       },
+       "typography_typography": "custom",
+       "typography_font_family": "Jost",
+       "typography_font_size": {
+        "unit": "px",
+        "size": 13,
+        "sizes": []
+       },
+       "typography_font_weight": "500",
+       "typography_line_height": {
+        "unit": "em",
+        "size": 1.2,
+        "sizes": []
+       },
+       "typography_letter_spacing": {
+        "unit": "em",
+        "size": 0.16,
+        "sizes": []
+       },
+       "typography_text_transform": "uppercase",
+       "__globals__": {
+        "background_color": "",
+        "button_text_color": "",
+        "typography_typography": ""
+       }
+      },
+      "elements": []
+     },
+     {
+      "id": "c59db91",
+      "elType": "widget",
+      "widgetType": "heading",
+      "isInner": false,
+      "settings": {
+       "title": "(336) 583-9398",
+       "header_size": "p",
+       "title_color": "#F4F2EA",
+       "typography_typography": "custom",
+       "typography_font_family": "Jost",
+       "typography_font_size": {
+        "unit": "px",
+        "size": 17,
+        "sizes": []
+       },
+       "typography_font_weight": "500",
+       "typography_line_height": {
+        "unit": "em",
+        "size": 1.2,
+        "sizes": []
+       },
+       "link": {
+        "url": "tel:3365839398",
+        "is_external": "",
+        "nofollow": ""
+       },
+       "__globals__": {
+        "title_color": "",
+        "typography_typography": ""
+       }
+      },
+      "elements": []
+     }
+    ]
+   }
+  ]
+ }
+]

@@ -1,0 +1,912 @@
+[
+ {
+  "id": "6377140",
+  "elType": "container",
+  "isInner": false,
+  "settings": {
+   "content_width": "boxed",
+   "boxed_width": {
+    "unit": "px",
+    "size": 1224,
+    "sizes": []
+   },
+   "flex_direction": "column",
+   "padding": {
+    "unit": "px",
+    "top": "44",
+    "right": "28",
+    "bottom": "32",
+    "left": "28",
+    "isLinked": false
+   },
+   "padding_tablet": {
+    "unit": "px",
+    "top": "44",
+    "right": "28",
+    "bottom": "32",
+    "left": "28",
+    "isLinked": false
+   },
+   "padding_mobile": {
+    "unit": "px",
+    "top": "40",
+    "right": "20",
+    "bottom": "28",
+    "left": "20",
+    "isLinked": false
+   },
+   "overflow": "hidden",
+   "background_background": "classic",
+   "background_color": "#1D2B26",
+   "css_classes": "mpc-band"
+  },
+  "elements": [
+   {
+    "id": "1eb2010",
+    "elType": "widget",
+    "widgetType": "image",
+    "isInner": false,
+    "settings": {
+     "image": {
+      "url": "%%IMG:icon-olive.png%%",
+      "id": "%%IMGID:icon-olive.png%%",
+      "alt": "",
+      "source": "library"
+     },
+     "image_size": "full",
+     "opacity": {
+      "unit": "px",
+      "size": 0.07,
+      "sizes": []
+     },
+     "_position": "absolute",
+     "_z_index": 0,
+     "_css_classes": "mpc-watermark",
+     "_element_width": "initial",
+     "_element_custom_width": {
+      "unit": "vw",
+      "size": 36,
+      "sizes": []
+     },
+     "_element_custom_width_tablet": {
+      "unit": "vw",
+      "size": 50,
+      "sizes": []
+     },
+     "_element_custom_width_mobile": {
+      "unit": "vw",
+      "size": 90,
+      "sizes": []
+     },
+     "_offset_orientation_h": "end",
+     "_offset_orientation_v": "end",
+     "_offset_x_end": {
+      "unit": "%",
+      "size": -6,
+      "sizes": []
+     },
+     "_offset_y_end": {
+      "unit": "%",
+      "size": -25,
+      "sizes": []
+     },
+     "__globals__": {}
+    },
+    "elements": []
+   },
+   {
+    "id": "e8e7278",
+    "elType": "container",
+    "isInner": true,
+    "settings": {
+     "content_width": "full",
+     "container_type": "grid",
+     "padding": {
+      "unit": "px",
+      "top": "0",
+      "right": "0",
+      "bottom": "0",
+      "left": "0",
+      "isLinked": true
+     },
+     "grid_columns_grid": {
+      "unit": "fr",
+      "size": 4,
+      "sizes": []
+     },
+     "grid_columns_grid_tablet": {
+      "unit": "fr",
+      "size": 2,
+      "sizes": []
+     },
+     "grid_columns_grid_mobile": {
+      "unit": "fr",
+      "size": 1,
+      "sizes": []
+     },
+     "grid_rows_grid": {
+      "unit": "custom",
+      "size": "auto",
+      "sizes": []
+     },
+     "grid_rows_grid_tablet": {
+      "unit": "custom",
+      "size": "auto",
+      "sizes": []
+     },
+     "grid_rows_grid_mobile": {
+      "unit": "custom",
+      "size": "auto",
+      "sizes": []
+     },
+     "grid_gaps": {
+      "column": "32",
+      "row": "32",
+      "isLinked": true,
+      "unit": "px",
+      "size": 32
+     },
+     "grid_gaps_tablet": {
+      "column": "32",
+      "row": "40",
+      "isLinked": false,
+      "unit": "px",
+      "size": 32
+     },
+     "grid_gaps_mobile": {
+      "column": "24",
+      "row": "32",
+      "isLinked": false,
+      "unit": "px",
+      "size": 24
+     },
+     "css_classes": "mpc-above"
+    },
+    "elements": [
+     {
+      "id": "1a26f88",
+      "elType": "container",
+      "isInner": true,
+      "settings": {
+       "content_width": "full",
+       "flex_direction": "column",
+       "flex_gap": {
+        "column": "12",
+        "row": "12",
+        "isLinked": true,
+        "unit": "px",
+        "size": 12
+       },
+       "padding": {
+        "unit": "px",
+        "top": "0",
+        "right": "0",
+        "bottom": "0",
+        "left": "0",
+        "isLinked": true
+       }
+      },
+      "elements": [
+       {
+        "id": "5d58c70",
+        "elType": "widget",
+        "widgetType": "image",
+        "isInner": false,
+        "settings": {
+         "image": {
+          "url": "%%IMG:logo-stacked-olive-ivory.png%%",
+          "id": "%%IMGID:logo-stacked-olive-ivory.png%%",
+          "alt": "Magnolia Property Care",
+          "source": "library"
+         },
+         "image_size": "full",
+         "align": "start",
+         "width": {
+          "unit": "px",
+          "size": 200,
+          "sizes": []
+         },
+         "width_mobile": {
+          "unit": "px",
+          "size": 180,
+          "sizes": []
+         },
+         "link_to": "custom",
+         "link": {
+          "url": "%%URL:home%%",
+          "is_external": "",
+          "nofollow": ""
+         },
+         "_margin": {
+          "unit": "px",
+          "top": "0",
+          "right": "0",
+          "bottom": "0",
+          "left": "-20",
+          "isLinked": false
+         },
+         "__globals__": {}
+        },
+        "elements": []
+       },
+       {
+        "id": "149e259",
+        "elType": "widget",
+        "widgetType": "text-editor",
+        "isInner": false,
+        "settings": {
+         "editor": "White glove outdoor and exterior maintenance for the North Carolina Piedmont and Southside Virginia.",
+         "text_color": "#B8B9A4",
+         "typography_typography": "custom",
+         "typography_font_family": "Jost",
+         "typography_font_size": {
+          "unit": "px",
+          "size": 15,
+          "sizes": []
+         },
+         "typography_font_size_mobile": {
+          "unit": "px",
+          "size": 15,
+          "sizes": []
+         },
+         "typography_font_weight": "400",
+         "typography_line_height": {
+          "unit": "em",
+          "size": 1.6,
+          "sizes": []
+         },
+         "__globals__": {
+          "text_color": "",
+          "typography_typography": ""
+         }
+        },
+        "elements": []
+       },
+       {
+        "id": "3870380",
+        "elType": "widget",
+        "widgetType": "heading",
+        "isInner": false,
+        "settings": {
+         "title": "Care for Every Corner.",
+         "header_size": "p",
+         "title_color": "#D5D4BE",
+         "typography_typography": "custom",
+         "typography_font_family": "Marcellus",
+         "typography_font_size": {
+          "unit": "px",
+          "size": 17,
+          "sizes": []
+         },
+         "typography_font_size_tablet": {
+          "unit": "px",
+          "size": 17,
+          "sizes": []
+         },
+         "typography_font_size_mobile": {
+          "unit": "px",
+          "size": 17,
+          "sizes": []
+         },
+         "typography_font_weight": "400",
+         "typography_line_height": {
+          "unit": "em",
+          "size": 1.3,
+          "sizes": []
+         },
+         "__globals__": {
+          "title_color": "",
+          "typography_typography": ""
+         }
+        },
+        "elements": []
+       }
+      ]
+     },
+     {
+      "id": "fc39472",
+      "elType": "container",
+      "isInner": true,
+      "settings": {
+       "content_width": "full",
+       "flex_direction": "column",
+       "flex_gap": {
+        "column": "8",
+        "row": "8",
+        "isLinked": true,
+        "unit": "px",
+        "size": 8
+       },
+       "padding": {
+        "unit": "px",
+        "top": "0",
+        "right": "0",
+        "bottom": "0",
+        "left": "0",
+        "isLinked": true
+       }
+      },
+      "elements": [
+       {
+        "id": "3a12917",
+        "elType": "widget",
+        "widgetType": "heading",
+        "isInner": false,
+        "settings": {
+         "title": "Pages",
+         "header_size": "h3",
+         "title_color": "#A9B86A",
+         "typography_typography": "custom",
+         "typography_font_family": "Jost",
+         "typography_font_size": {
+          "unit": "px",
+          "size": 11,
+          "sizes": []
+         },
+         "typography_font_weight": "600",
+         "typography_letter_spacing": {
+          "unit": "em",
+          "size": 0.2,
+          "sizes": []
+         },
+         "typography_text_transform": "uppercase",
+         "__globals__": {
+          "title_color": "",
+          "typography_typography": ""
+         }
+        },
+        "elements": []
+       },
+       {
+        "id": "9fc2d0a",
+        "elType": "widget",
+        "widgetType": "icon-list",
+        "isInner": false,
+        "settings": {
+         "view": "traditional",
+         "icon_list": [
+          {
+           "_id": "7857297",
+           "text": "Home",
+           "link": {
+            "url": "%%URL:home%%",
+            "is_external": "",
+            "nofollow": ""
+           },
+           "selected_icon": {
+            "value": "",
+            "library": ""
+           }
+          },
+          {
+           "_id": "325b55d",
+           "text": "About Us",
+           "link": {
+            "url": "%%URL:about%%",
+            "is_external": "",
+            "nofollow": ""
+           },
+           "selected_icon": {
+            "value": "",
+            "library": ""
+           }
+          },
+          {
+           "_id": "5675f6a",
+           "text": "Services",
+           "link": {
+            "url": "%%URL:services%%",
+            "is_external": "",
+            "nofollow": ""
+           },
+           "selected_icon": {
+            "value": "",
+            "library": ""
+           }
+          },
+          {
+           "_id": "3451d01",
+           "text": "Past Projects",
+           "link": {
+            "url": "%%URL:projects%%",
+            "is_external": "",
+            "nofollow": ""
+           },
+           "selected_icon": {
+            "value": "",
+            "library": ""
+           }
+          },
+          {
+           "_id": "7b8f2ab",
+           "text": "Contact Us",
+           "link": {
+            "url": "%%URL:contact%%",
+            "is_external": "",
+            "nofollow": ""
+           },
+           "selected_icon": {
+            "value": "",
+            "library": ""
+           }
+          }
+         ],
+         "text_color": "#D5D4BE",
+         "text_color_hover": "#FFFFFF",
+         "space_between": {
+          "unit": "px",
+          "size": 8,
+          "sizes": []
+         },
+         "icon_typography_typography": "custom",
+         "icon_typography_font_family": "Jost",
+         "icon_typography_font_size": {
+          "unit": "px",
+          "size": 15,
+          "sizes": []
+         },
+         "icon_typography_font_weight": "400",
+         "icon_typography_line_height": {
+          "unit": "em",
+          "size": 1.5,
+          "sizes": []
+         },
+         "__globals__": {
+          "text_color": "",
+          "icon_typography_typography": ""
+         }
+        },
+        "elements": []
+       }
+      ]
+     },
+     {
+      "id": "a72991b",
+      "elType": "container",
+      "isInner": true,
+      "settings": {
+       "content_width": "full",
+       "flex_direction": "column",
+       "flex_gap": {
+        "column": "8",
+        "row": "8",
+        "isLinked": true,
+        "unit": "px",
+        "size": 8
+       },
+       "padding": {
+        "unit": "px",
+        "top": "0",
+        "right": "0",
+        "bottom": "0",
+        "left": "0",
+        "isLinked": true
+       }
+      },
+      "elements": [
+       {
+        "id": "e67a9b7",
+        "elType": "widget",
+        "widgetType": "heading",
+        "isInner": false,
+        "settings": {
+         "title": "Services",
+         "header_size": "h3",
+         "title_color": "#A9B86A",
+         "typography_typography": "custom",
+         "typography_font_family": "Jost",
+         "typography_font_size": {
+          "unit": "px",
+          "size": 11,
+          "sizes": []
+         },
+         "typography_font_weight": "600",
+         "typography_letter_spacing": {
+          "unit": "em",
+          "size": 0.2,
+          "sizes": []
+         },
+         "typography_text_transform": "uppercase",
+         "__globals__": {
+          "title_color": "",
+          "typography_typography": ""
+         }
+        },
+        "elements": []
+       },
+       {
+        "id": "e8c1474",
+        "elType": "widget",
+        "widgetType": "icon-list",
+        "isInner": false,
+        "settings": {
+         "view": "traditional",
+         "icon_list": [
+          {
+           "_id": "9c3a23c",
+           "text": "Landscape Development &amp; Site Prep",
+           "link": {
+            "url": "%%URL:services%%#services-development",
+            "is_external": "",
+            "nofollow": ""
+           },
+           "selected_icon": {
+            "value": "",
+            "library": ""
+           }
+          },
+          {
+           "_id": "d726c86",
+           "text": "Tree Care",
+           "link": {
+            "url": "%%URL:services%%#services-tree",
+            "is_external": "",
+            "nofollow": ""
+           },
+           "selected_icon": {
+            "value": "",
+            "library": ""
+           }
+          },
+          {
+           "_id": "007d103",
+           "text": "Commercial Power Washing",
+           "link": {
+            "url": "%%URL:services%%#services-washing",
+            "is_external": "",
+            "nofollow": ""
+           },
+           "selected_icon": {
+            "value": "",
+            "library": ""
+           }
+          },
+          {
+           "_id": "7abec53",
+           "text": "Property Care Subscription",
+           "link": {
+            "url": "%%URL:services%%#services-care",
+            "is_external": "",
+            "nofollow": ""
+           },
+           "selected_icon": {
+            "value": "",
+            "library": ""
+           }
+          }
+         ],
+         "text_color": "#D5D4BE",
+         "text_color_hover": "#FFFFFF",
+         "space_between": {
+          "unit": "px",
+          "size": 8,
+          "sizes": []
+         },
+         "icon_typography_typography": "custom",
+         "icon_typography_font_family": "Jost",
+         "icon_typography_font_size": {
+          "unit": "px",
+          "size": 15,
+          "sizes": []
+         },
+         "icon_typography_font_weight": "400",
+         "icon_typography_line_height": {
+          "unit": "em",
+          "size": 1.5,
+          "sizes": []
+         },
+         "__globals__": {
+          "text_color": "",
+          "icon_typography_typography": ""
+         }
+        },
+        "elements": []
+       }
+      ]
+     },
+     {
+      "id": "a91c243",
+      "elType": "container",
+      "isInner": true,
+      "settings": {
+       "content_width": "full",
+       "flex_direction": "column",
+       "flex_gap": {
+        "column": "8",
+        "row": "8",
+        "isLinked": true,
+        "unit": "px",
+        "size": 8
+       },
+       "padding": {
+        "unit": "px",
+        "top": "0",
+        "right": "0",
+        "bottom": "0",
+        "left": "0",
+        "isLinked": true
+       }
+      },
+      "elements": [
+       {
+        "id": "5810d60",
+        "elType": "widget",
+        "widgetType": "heading",
+        "isInner": false,
+        "settings": {
+         "title": "Contact",
+         "header_size": "h3",
+         "title_color": "#A9B86A",
+         "typography_typography": "custom",
+         "typography_font_family": "Jost",
+         "typography_font_size": {
+          "unit": "px",
+          "size": 11,
+          "sizes": []
+         },
+         "typography_font_weight": "600",
+         "typography_letter_spacing": {
+          "unit": "em",
+          "size": 0.2,
+          "sizes": []
+         },
+         "typography_text_transform": "uppercase",
+         "__globals__": {
+          "title_color": "",
+          "typography_typography": ""
+         }
+        },
+        "elements": []
+       },
+       {
+        "id": "15b40ae",
+        "elType": "widget",
+        "widgetType": "icon-list",
+        "isInner": false,
+        "settings": {
+         "view": "traditional",
+         "icon_list": [
+          {
+           "_id": "ccb573d",
+           "text": "(336) 583-9398",
+           "link": {
+            "url": "tel:3365839398",
+            "is_external": "",
+            "nofollow": ""
+           },
+           "selected_icon": {
+            "value": "",
+            "library": ""
+           }
+          },
+          {
+           "_id": "a4a45ef",
+           "text": "heys@magnoliaproperty.care",
+           "link": {
+            "url": "mailto:heys@magnoliaproperty.care",
+            "is_external": "",
+            "nofollow": ""
+           },
+           "selected_icon": {
+            "value": "",
+            "library": ""
+           }
+          }
+         ],
+         "text_color": "#D5D4BE",
+         "text_color_hover": "#FFFFFF",
+         "space_between": {
+          "unit": "px",
+          "size": 8,
+          "sizes": []
+         },
+         "icon_typography_typography": "custom",
+         "icon_typography_font_family": "Jost",
+         "icon_typography_font_size": {
+          "unit": "px",
+          "size": 15,
+          "sizes": []
+         },
+         "icon_typography_font_weight": "400",
+         "icon_typography_line_height": {
+          "unit": "em",
+          "size": 1.5,
+          "sizes": []
+         },
+         "__globals__": {
+          "text_color": "",
+          "icon_typography_typography": ""
+         }
+        },
+        "elements": []
+       },
+       {
+        "id": "d5ab8b4",
+        "elType": "widget",
+        "widgetType": "text-editor",
+        "isInner": false,
+        "settings": {
+         "editor": "Mon – Sat, 7 AM – 5 PM<br>Person County, North Carolina",
+         "text_color": "#B8B9A4",
+         "typography_typography": "custom",
+         "typography_font_family": "Jost",
+         "typography_font_size": {
+          "unit": "px",
+          "size": 15,
+          "sizes": []
+         },
+         "typography_font_size_mobile": {
+          "unit": "px",
+          "size": 15,
+          "sizes": []
+         },
+         "typography_font_weight": "400",
+         "typography_line_height": {
+          "unit": "em",
+          "size": 1.6,
+          "sizes": []
+         },
+         "__globals__": {
+          "text_color": "",
+          "typography_typography": ""
+         }
+        },
+        "elements": []
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": "330698a",
+  "elType": "container",
+  "isInner": false,
+  "settings": {
+   "content_width": "boxed",
+   "boxed_width": {
+    "unit": "px",
+    "size": 1224,
+    "sizes": []
+   },
+   "flex_direction": "column",
+   "padding": {
+    "unit": "px",
+    "top": "16",
+    "right": "28",
+    "bottom": "16",
+    "left": "28",
+    "isLinked": false
+   },
+   "padding_tablet": {
+    "unit": "px",
+    "top": "16",
+    "right": "28",
+    "bottom": "16",
+    "left": "28",
+    "isLinked": false
+   },
+   "padding_mobile": {
+    "unit": "px",
+    "top": "16",
+    "right": "20",
+    "bottom": "20",
+    "left": "20",
+    "isLinked": false
+   },
+   "overflow": "hidden",
+   "background_background": "classic",
+   "background_color": "#1D2B26",
+   "border_border": "solid",
+   "border_width": {
+    "unit": "px",
+    "top": "1",
+    "right": "0",
+    "bottom": "0",
+    "left": "0",
+    "isLinked": false
+   },
+   "border_color": "rgba(213,212,190,0.12)"
+  },
+  "elements": [
+   {
+    "id": "c009349",
+    "elType": "container",
+    "isInner": true,
+    "settings": {
+     "content_width": "full",
+     "flex_direction": "row",
+     "flex_gap": {
+      "column": "12",
+      "row": "12",
+      "isLinked": true,
+      "unit": "px",
+      "size": 12
+     },
+     "flex_justify_content": "space-between",
+     "flex_align_items": "center",
+     "flex_wrap": "wrap",
+     "padding": {
+      "unit": "px",
+      "top": "0",
+      "right": "0",
+      "bottom": "0",
+      "left": "0",
+      "isLinked": true
+     },
+     "flex_direction_mobile": "column",
+     "flex_align_items_mobile": "flex-start"
+    },
+    "elements": [
+     {
+      "id": "c845007",
+      "elType": "widget",
+      "widgetType": "text-editor",
+      "isInner": false,
+      "settings": {
+       "editor": "© 2026 Magnolia Property Care. All rights reserved.",
+       "text_color": "#8F9A8F",
+       "typography_typography": "custom",
+       "typography_font_family": "Jost",
+       "typography_font_size": {
+        "unit": "px",
+        "size": 13,
+        "sizes": []
+       },
+       "typography_font_size_mobile": {
+        "unit": "px",
+        "size": 13,
+        "sizes": []
+       },
+       "typography_font_weight": "400",
+       "typography_line_height": {
+        "unit": "em",
+        "size": 1.5,
+        "sizes": []
+       },
+       "__globals__": {
+        "text_color": "",
+        "typography_typography": ""
+       }
+      },
+      "elements": []
+     },
+     {
+      "id": "b624677",
+      "elType": "widget",
+      "widgetType": "text-editor",
+      "isInner": false,
+      "settings": {
+       "editor": "Fully licensed &amp; insured · COI available on request",
+       "text_color": "#8F9A8F",
+       "typography_typography": "custom",
+       "typography_font_family": "Jost",
+       "typography_font_size": {
+        "unit": "px",
+        "size": 13,
+        "sizes": []
+       },
+       "typography_font_size_mobile": {
+        "unit": "px",
+        "size": 13,
+        "sizes": []
+       },
+       "typography_font_weight": "400",
+       "typography_line_height": {
+        "unit": "em",
+        "size": 1.5,
+        "sizes": []
+       },
+       "__globals__": {
+        "text_color": "",
+        "typography_typography": ""
+       }
+      },
+      "elements": []
+     }
+    ]
+   }
+  ]
+ }
+]

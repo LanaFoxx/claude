@@ -1,28 +1,51 @@
-# Magnolia Property Care — WordPress theme
+# Magnolia Property Care — Elementor Pro site
 
-Built from the Claude Design project `Magnolia Property Care.dc.html`.
+Built from the Claude Design project `Magnolia Property Care.dc.html` for the
+**Hello Elementor** theme and **Elementor Pro**.
 
 ## Install
 
-1. In WordPress go to **Appearance → Themes → Add New → Upload Theme**, choose
-   `magnolia-property-care.zip` and click **Install Now**, then **Activate**.
-2. Go to **Appearance → Magnolia Setup**. It lists the pages already on the site.
-   Leave "Move all of these pages to the Trash" ticked, check the estimate email
-   address, and click **Set up Magnolia site**.
+1. Make sure **Hello Elementor** is the active theme and **Elementor** and
+   **Elementor Pro** are active.
+2. **Plugins → Add New → Upload Plugin**, choose `magnolia-importer.zip`,
+   **Install Now**, then **Activate**.
+3. **Tools → Magnolia Importer**. Leave "Delete all of these pages" ticked, check
+   the email address for estimate requests, and click **Build the site**.
+4. When it says Done, deactivate and delete the importer plugin. Everything it
+   built lives in Elementor.
 
-Setup:
+The importer:
 - moves the existing pages to the Trash (restorable from Pages → Trash)
 - imports the logos and photos into the Media Library
-- creates Home, About Us, Services, Past Projects and Contact, and sets Home as the front page
+- builds Home, About Us, Services, Past Projects and Contact with native
+  Elementor widgets (Elementor Full Width template, title hidden) and sets Home
+  as the front page
+- creates a Theme Builder **header** (sticky, hamburger menu on tablet and
+  mobile) and **footer**, both set to show on the entire site
+- creates the "Magnolia Main" menu used by the header
+- adds the "Request an Estimate" **Elementor Pro form** on the Contact page
+  (submissions also appear under Elementor → Submissions)
+- sets the global colours, fonts (Marcellus + Jost) and custom CSS in
+  Site Settings
+- sets the site title to **Magnolia Property Care** and the favicon to the
+  magnolia icon
 - switches permalinks to `/page-name/` if they were plain
-- sets the site title to "Magnolia Property Care" (optional)
 
-The Contact page form emails requests to the address set on the setup screen.
-Page content is stored as Custom HTML blocks, so text can be edited in the page editor.
+Every section has tablet (≤1024px) and mobile (≤767px) settings.
 
-## Rebuilding from the design
+## Things to finish by hand
 
-`tools/` holds the conversion scripts: `unpack.py` extracts the exported
-Claude Design HTML, `render2.js` renders each screen with Playwright, and
-`build.py` writes the generated theme files (content, header, footer, form,
-stylesheet). The PHP in `functions.php`, `inc/`, `page.php`, etc. is hand-written.
+- **About Us:** the owner portrait is an Elementor placeholder image. Replace it
+  with a photo of Heys.
+
+## Rebuilding the data
+
+`elementor/build_elementor.py` generates `magnolia-importer/data/*.json` (the
+Elementor page, header, footer and kit data). Edit it and run:
+
+```
+python3 elementor/build_elementor.py magnolia-importer/data
+```
+
+`elementor/unpack_design.py` extracts the assets from an exported Claude Design
+HTML file.
