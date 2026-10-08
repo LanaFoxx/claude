@@ -1,0 +1,147 @@
+/*
+Theme Name: Magnolia Property Care
+Description: Site for Magnolia Property Care, built from the Claude Design project. Go to Appearance → Magnolia Setup to create the pages.
+Version: 1.0.0
+Requires at least: 6.0
+Requires PHP: 7.4
+Text Domain: magnolia
+*/
+
+/* Fonts: Jost + Marcellus (bundled) */
+@font-face {
+  font-family: 'Jost';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("assets/fonts/13485562-591c-476d-af15-b765c8a2837c.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Jost';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("assets/fonts/26f157cb-5db1-49ca-89d3-d31fccc8f0b3.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Jost';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("assets/fonts/dde8510e-5108-4e63-a745-a7254596d38a.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Jost';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("assets/fonts/7aa27075-b61a-441c-aaa7-033038317f8f.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Jost';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("assets/fonts/dde8510e-5108-4e63-a745-a7254596d38a.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Jost';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("assets/fonts/7aa27075-b61a-441c-aaa7-033038317f8f.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Jost';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("assets/fonts/dde8510e-5108-4e63-a745-a7254596d38a.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Jost';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("assets/fonts/7aa27075-b61a-441c-aaa7-033038317f8f.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Jost';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("assets/fonts/dde8510e-5108-4e63-a745-a7254596d38a.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Jost';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("assets/fonts/7aa27075-b61a-441c-aaa7-033038317f8f.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Marcellus';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("assets/fonts/1edc399a-9f56-4e1c-b8d7-2f0bf71e3a40.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Marcellus';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("assets/fonts/4eb047f2-0320-4314-875d-d36a54c1e131.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* Base styles from the design */
+html,body{margin:0;padding:0;background:#f4f2ea;color:#1f2a25;font-family:'Jost',sans-serif;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#5e6b2d;text-decoration:none}a:hover{color:#283a33}
+input,select,textarea,button{font-family:inherit}
+input::placeholder,textarea::placeholder{color:#8a918c}
+input:focus,select:focus,textarea:focus{outline:2px solid #738238;outline-offset:0}
+h1,h2,h3,h4,p{margin:0}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* Hover states from the design */
+.scp0:hover { color: rgb(255, 255, 255) !important; }
+.scp1:hover { background: rgb(94, 107, 45) !important; color: rgb(255, 255, 255) !important; }
+.scp2:hover { background: rgba(244, 242, 234, 0.12) !important; color: rgb(255, 255, 255) !important; }
+.scp3:hover { color: rgb(115, 130, 56) !important; }
+.scp4:hover { color: rgb(255, 255, 255) !important; border-bottom: 2px solid rgb(115, 130, 56) !important; }
+.scp5:hover { background: rgb(115, 130, 56) !important; color: rgb(255, 255, 255) !important; }
+.scp6:hover { background: rgb(255, 255, 255) !important; }
+.scp7:hover { background: rgb(40, 58, 51) !important; color: rgb(244, 242, 234) !important; }
+.scp8:hover { background: rgb(29, 43, 38) !important; color: rgb(255, 255, 255) !important; }
+
+/* WordPress integration */
+body.admin-bar .mpc-header { top: 32px !important; }
+@media (max-width: 782px) { body.admin-bar .mpc-header { top: 46px !important; } }
+.mpc-page { min-height: 100vh; display: flex; flex-direction: column; background: #f4f2ea; }
+.mpc-page > main { flex: 1; }
+.mpc-menu-toggle { display: none; }
+#mpc-mobile-nav[hidden] { display: none !important; }
+@media (max-width: 999px) {
+  .mpc-nav-wide { display: none !important; }
+  .mpc-menu-toggle { display: inline-block; }
+}
+@media (min-width: 1000px) {
+  #mpc-mobile-nav { display: none !important; }
+}
+.mpc-project[hidden] { display: none !important; }
+.screen-reader-text { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(1px, 1px, 1px, 1px); white-space: nowrap; }
+.mpc-default-content { max-width: 820px; margin: 0 auto; padding: 80px 28px; font-size: 18px; line-height: 1.7; color: #3f4a44; }
+.mpc-default-content h1 { font-family: 'Marcellus', serif; font-size: 44px; color: #283a33; margin-bottom: 24px; }
+.mpc-default-content p { margin-bottom: 1em; }
