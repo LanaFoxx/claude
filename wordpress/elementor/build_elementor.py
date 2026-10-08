@@ -587,6 +587,8 @@ def services():
                        background_background='classic', background_color=IVORY,
                        background_hover_background='classic', background_hover_color=WHITE)
                  for n, d in dev_items]
+    # 13 cards leave the last row short: stretch the final card across it.
+    dev_cards[-1]['settings'].update(grid_column='4', grid_column_tablet='2', grid_column_mobile='1')
     dev = section([
         grid([stack([eyebrow('01 · Our Specialty'),
                      display('Landscape Development &amp; Site Preparation'),

@@ -2365,7 +2365,10 @@
        "background_background": "classic",
        "background_color": "#F4F2EA",
        "background_hover_background": "classic",
-       "background_hover_color": "#FFFFFF"
+       "background_hover_color": "#FFFFFF",
+       "grid_column": "4",
+       "grid_column_tablet": "2",
+       "grid_column_mobile": "1"
       },
       "elements": [
        {
