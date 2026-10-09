@@ -1,0 +1,28 @@
+<script>
+/* RecordFLOW feature switcher (Product Overview "Inside the app" section).
+   Clicking a box with class "rf-feature" shows the matching phone screen ("rf-screen"), matched by order.
+   Lives in Elementor > Custom Code; does nothing on pages without a ".rf-switcher" section. */
+(function () {
+  function init() {
+    document.querySelectorAll('.rf-switcher').forEach(function (sec) {
+      if (sec.classList.contains('rf-ready')) return;
+      var boxes = Array.prototype.slice.call(sec.querySelectorAll('.rf-feature'));
+      var shots = Array.prototype.slice.call(sec.querySelectorAll('.rf-screen'));
+      if (!boxes.length || !shots.length) return;
+      function show(i) {
+        boxes.forEach(function (b, j) { b.classList.toggle('is-active', i === j); b.setAttribute('aria-pressed', i === j ? 'true' : 'false'); });
+        shots.forEach(function (s, j) { s.classList.toggle('is-active', i === j); s.setAttribute('aria-hidden', i === j ? 'false' : 'true'); });
+      }
+      boxes.forEach(function (b, i) {
+        b.setAttribute('role', 'button');
+        b.setAttribute('tabindex', '0');
+        b.addEventListener('click', function () { show(i); });
+        b.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); show(i); } });
+      });
+      sec.classList.add('rf-ready');
+      show(0);
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();
+</script>
