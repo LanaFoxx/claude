@@ -78,7 +78,9 @@ async function setConditions(p, postId, conditions) {
   // editor_post_id is required, otherwise the request "succeeds" without saving anything.
   return p.evaluate(([conditions, id]) => new Promise((resolve, reject) => {
     elementorCommon.ajax.addRequest('pro_theme_builder_save_conditions', {
-      data: { conditions, editor_post_id: id }, success: () => resolve('ok'), error: (e) => reject(new Error(JSON.stringify(e))),
+      data: { conditions, editor_post_id: id }, success: () => resolve('ok'),
+      // WordPress reports re-saving identical meta as a failure.
+      error: (e) => (/Error while saving conditions/.test(JSON.stringify(e)) ? resolve('unchanged') : reject(new Error(JSON.stringify(e)))),
     }, true);
   }), [conditions, postId]);
 }

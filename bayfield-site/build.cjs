@@ -151,26 +151,26 @@ function header(m, menuId) {
   return [container({
     content_width: 'boxed', boxed_width: px(1480), flex_direction: 'row', flex_wrap: 'nowrap',
     flex_justify_content: 'space-between', flex_align_items: 'center', flex_gap: gap(24), flex_gap_mobile: gap(12),
-    min_height: px(80), min_height_mobile: px(68), padding: box(0, 48, 0, 48), padding_tablet: box(0, 32, 0, 32), padding_mobile: box(0, 20, 0, 20),
+    min_height: px(96), min_height_tablet: px(88), min_height_mobile: px(76), padding: box(0, 48, 0, 48), padding_tablet: box(0, 32, 0, 32), padding_mobile: box(0, 20, 0, 20),
     background_background: 'classic', background_color: 'rgba(255,255,255,0.92)',
     border_border: 'solid', border_width: box(0, 0, 1, 0), border_color: C.line,
     sticky: 'top', sticky_on: ['desktop', 'tablet', 'mobile'], z_index: 30,
     custom_css: 'selector { backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }',
   }, [
-    image(m.logo, { width: [106, 106, 88], link: '/', align: 'left', settings: { _element_width: 'initial', _element_custom_width: px(106), _element_custom_width_mobile: px(88), _flex_size: 'none' } }),
+    image(m.logo, { width: [140, 128, 104], link: '/', align: 'left', settings: { _element_width: 'initial', _element_custom_width: px(140), _element_custom_width_tablet: px(128), _element_custom_width_mobile: px(104), _flex_size: 'none' } }),
     widget('nav-menu', {
       menu: menuId, layout: 'horizontal', align_items: 'center', pointer: 'underline', animation_line: 'fade',
       dropdown: 'tablet', toggle: 'burger', toggle_align: 'right', full_width: 'stretch',
-      ...typo('menu_typography', SANS, 13, 500, { lh: 1.4, ls: 0.26 }),
+      ...typo('menu_typography', SERIF, 18, 400, { lh: 1.3, ls: 0.2 }),
       color_menu_item: C.ink, color_menu_item_hover: C.ink, color_menu_item_active: C.ink,
       pointer_color_menu_item_hover: C.green, pointer_color_menu_item_active: C.green, pointer_width: px(1),
-      padding_horizontal_menu_item: px(18), padding_vertical_menu_item: px(6),
-      ...typo('dropdown_typography', SANS, 15, 500, { ls: 0.3 }),
+      padding_horizontal_menu_item: px(20), padding_vertical_menu_item: px(8),
+      ...typo('dropdown_typography', SERIF, 20, 400, { ls: 0.2 }),
       color_dropdown_item: C.ink, background_color_dropdown_item: C.white,
       color_dropdown_item_hover: C.cream, background_color_dropdown_item_hover: C.green,
       color_dropdown_item_active: C.cream, background_color_dropdown_item_active: C.green,
       padding_horizontal_dropdown_item: px(28), padding_vertical_dropdown_item: px(16),
-      dropdown_top_distance: px(23), dropdown_top_distance_mobile: px(17),
+      dropdown_top_distance: px(31), dropdown_top_distance_mobile: px(21),
       toggle_color: C.green, toggle_background_color: 'rgba(0,0,0,0)', toggle_size: px(24),
       _flex_size: 'grow', _flex_size_tablet: 'none', _flex_size_mobile: 'none',
       _flex_order_tablet: 'end', _flex_order_mobile: 'end',
@@ -180,9 +180,9 @@ function header(m, menuId) {
       flex_direction: 'row', flex_align_items: 'center', flex_gap: gap(18), flex_gap_mobile: gap(10),
       flex_justify_content: 'flex-end', _flex_size: 'none', _flex_size_tablet: 'grow', _flex_size_mobile: 'grow', padding: box(0),
     }, [
-      button('715.779.3363', 'tel:7157793363', 'text', { color: 'rgba(22,27,23,0.8)', size: 13, upper: false, pad: box(10, 0, 10, 0),
+      button('715.779.3363', 'tel:7157793363', 'text', { color: 'rgba(22,27,23,0.8)', size: 14, upper: false, pad: box(10, 0, 10, 0),
         settings: { hover_color: C.ink, hide_mobile: 'hidden-mobile', typography_letter_spacing: px(0) } }),
-      button('Book a Room', EXT.book, 'dark', { size: 12.5, upper: false, pad: box(13, 22, 13, 22),
+      button('Book a Room', EXT.book, 'dark', { size: 13.5, upper: false, pad: box(15, 26, 15, 26),
         settings: { text_padding_mobile: box(11, 16, 11, 16), typography_letter_spacing: px(0.5) } }),
     ]),
   ], false)];
@@ -301,8 +301,8 @@ function home(m) {
       slides_padding: box(20, 24, 22, 24), slides_padding_mobile: box(16, 20, 22, 20),
       heading_color: C.cream, heading_spacing: px(0), ...typo('heading_typography', SANS, 12, 400, { lh: 1.4, ls: 0.5 }),
       arrows_size: px(13), arrows_color: C.cream, dots_color: C.cream, dots_size: px(3),
-      custom_css: `/* Fill the hero height on desktop, like the design (100vh minus the header, 600–900px). */
-@media (min-width: 1025px) { selector .elementor-slides .swiper-slide, selector .elementor-slides-wrapper { height: clamp(600px, calc(100vh - 80px), 900px) !important; } }
+      custom_css: `/* Fill the hero height on desktop, (100vh minus the header, 600–900px). */
+@media (min-width: 1025px) { selector .elementor-slides .swiper-slide, selector .elementor-slides-wrapper { height: clamp(600px, calc(100vh - 96px), 900px) !important; } }
 selector .swiper-slide::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 120px; background: linear-gradient(to top, rgba(22,27,23,.55), rgba(22,27,23,0)); pointer-events: none; z-index: 1; }
 selector .swiper-slide-inner { z-index: 2; }
 selector .swiper-pagination { left: auto !important; right: 120px !important; bottom: 34px !important; width: auto !important; z-index: 3; line-height: 0; }
