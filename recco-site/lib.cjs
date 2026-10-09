@@ -101,9 +101,17 @@ function grid(children, o = {}) {
 }
 
 /* --------------------------------------------------------------- widgets */
-// Small green arch from the logo, used above every section eyebrow.
+// Small green arch from the logo, used above every section eyebrow. It "draws" itself left to
+// right when scrolled into view, like the design's SVG stroke: Elementor's entrance animation
+// (Advanced > Motion Effects) supplies the in-view trigger, the custom CSS swaps the fade for a wipe.
 const arch = (m, w = 56, align = 'left') => widget('image', {
   image: m.arch, image_size: 'full', align, width: px(w), _element_width: 'initial', _element_custom_width: px(w), _title: 'Arch accent',
+  _animation: 'fadeIn', _animation_mobile: 'fadeIn', _animation_tablet: 'fadeIn', _animation_delay: 150,
+  custom_css: [
+    'selector.animated { animation-name: none; }',
+    'selector.animated img { animation: reccoArchDraw 1.1s cubic-bezier(.4, 0, .2, 1) both; }',
+    '@keyframes reccoArchDraw { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }',
+  ].join('\n'),
 });
 
 const eyebrowText = (text, align = 'left', color = C.green) => widget('heading', {
