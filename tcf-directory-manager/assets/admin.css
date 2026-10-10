@@ -4,7 +4,11 @@
 .tcfd .tcfd-steps b{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#0B2E40;color:#fff;margin-right:8px;font-size:12px}
 .tcfd .tcfd-opts{border:0;padding:0;margin:12px 0;line-height:2}
 .tcfd .tcfd-summary{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0 16px}
-.tcfd .tcfd-summary>div{background:#fff;border:1px solid #dcdcde;border-radius:8px;padding:10px 16px;min-width:120px;color:#50575e}
+.tcfd .tcfd-summary>.tcfd-stat{background:#fff;border:1px solid #dcdcde;border-radius:8px;padding:10px 16px;min-width:120px;color:#50575e;text-align:left;font:inherit;cursor:pointer;transition:border-color .15s,box-shadow .15s}
+.tcfd .tcfd-summary>.tcfd-stat:hover:not(:disabled),.tcfd .tcfd-summary>.tcfd-stat:focus-visible{border-color:#95AB3B;box-shadow:0 2px 8px rgba(11,46,64,.08);outline:none}
+.tcfd .tcfd-summary>.tcfd-stat.is-active{border-color:#0B2E40;box-shadow:inset 0 0 0 1px #0B2E40;background:#F3F5E6}
+.tcfd .tcfd-summary>.tcfd-stat:disabled{cursor:default;opacity:.6}
+.tcfd .tcfd-filtering{margin:-6px 0 10px;color:#50575e}
 .tcfd .tcfd-summary b{display:block;font-size:24px;color:#0B2E40;line-height:1.2}
 .tcfd .tcfd-summary .warn{border-color:#dba617;background:#fcf9e8}
 .tcfd .tcfd-preview td{vertical-align:top}

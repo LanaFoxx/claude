@@ -104,6 +104,7 @@ final class TCFD_Importer {
             case 'bool': return ($v === '' ? '' : (empty($v) ? '0' : '1'));
             case 'number': return ($v === '' || !is_numeric($v)) ? '' : (string) (0 + $v);
             case 'date': return $v === '' ? '' : (TCFD_Normalizer::date($v) ?? (string) $v);
+            case 'url': return rtrim(strtolower(trim((string) $v)), '/');
             default: return trim((string) $v);
         }
     }

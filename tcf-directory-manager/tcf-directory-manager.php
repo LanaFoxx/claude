@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Tax Course Finder – Directory Manager
  * Description: Manage every CTEC provider listing (20-hour CE and 60-hour QE): prices, coupons and sales, course format, materials, support and device features. Import research from ChatGPT (JSON or CSV) with a preview, change log and one-click undo, or edit any listing by hand. Feeds the site directory through /wp-json/tcf/v1/providers.
- * Version: 2.0.3
+ * Version: 2.0.6
  * Author: Tax Course Finder
  * Requires at least: 6.4
  * Requires PHP: 8.0
@@ -11,7 +11,7 @@
 
 defined('ABSPATH') || exit;
 
-define('TCFD_VERSION', '2.0.3');
+define('TCFD_VERSION', '2.0.6');
 define('TCFD_FILE', __FILE__);
 define('TCFD_DIR', plugin_dir_path(__FILE__));
 define('TCFD_URL', plugin_dir_url(__FILE__));

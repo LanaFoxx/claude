@@ -18,8 +18,37 @@
       document.querySelectorAll('.tcfd-preview tbody td.check input:not(:disabled)').forEach(function (cb) { if (cb.closest('tr').offsetParent !== null) cb.checked = all.checked; });
     });
     var only = document.getElementById('tcfd-only-changes');
-    var sync = function () { document.querySelectorAll('.tcfd-preview tr.nochange').forEach(function (tr) { tr.style.display = only.checked ? 'none' : ''; }); };
-    if (only) { only.addEventListener('change', sync); sync(); }
+    var stats = document.querySelectorAll('.tcfd-stat');
+    var bar = document.querySelector('.tcfd-filtering');
+    var active = '';
+    var sync = function () {
+      document.querySelectorAll('.tcfd-preview > tbody > tr').forEach(function (tr) {
+        var show;
+        if (active === 'changes') show = tr.dataset.changes === '1';
+        else if (active) show = tr.dataset.cat === active;
+        else show = !(only && only.checked && tr.classList.contains('nochange'));
+        tr.style.display = show ? '' : 'none';
+        if (active) tr.querySelectorAll('details').forEach(function (d) { if (show) d.open = true; });
+      });
+      stats.forEach(function (b) { var on = b.dataset.filter === active; b.classList.toggle('is-active', on); b.setAttribute('aria-pressed', on ? 'true' : 'false'); });
+      if (bar) {
+        bar.hidden = !active;
+        var cur = document.querySelector('.tcfd-stat.is-active');
+        if (cur) bar.querySelector('strong').textContent = cur.textContent.replace(/^\s*\d+/, function (n) { return n + ' '; }).trim();
+      }
+    };
+    stats.forEach(function (b) {
+      b.addEventListener('click', function () {
+        active = active === b.dataset.filter ? '' : b.dataset.filter;
+        sync();
+        var t = document.querySelector('.tcfd-preview');
+        if (active && t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+    var clr = document.querySelector('.tcfd-clear-filter');
+    if (clr) clr.addEventListener('click', function (e) { e.preventDefault(); active = ''; sync(); });
+    if (only) only.addEventListener('change', function () { active = ''; sync(); });
+    sync();
     var ex = document.getElementById('tcfd-expand');
     if (ex) ex.addEventListener('click', function () {
       var open = ex.dataset.open !== '1';

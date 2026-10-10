@@ -196,10 +196,13 @@ final class TCFD_Admin {
             $rows[] = [$i, $it, $d, $n];
         }
         printf('<p class="tcfd-meta">Import: <strong>%s</strong> · %d providers in the data · mode: %s</p>', esc_html($pv['label']), count($pv['items']), $opts['mode'] === 'fill_empty' ? 'fill gaps only' : 'update');
-        echo '<div class="tcfd-summary">';
-        printf('<div><b>%d</b>to update</div><div><b>%d</b>new providers</div><div><b>%d</b>already up to date</div><div class="%s"><b>%d</b>need your choice</div><div><b>%d</b>changes</div>',
-            $sum['update'], $sum['new'], $sum['same'], $sum['check'] ? 'warn' : '', $sum['check'], $sum['changes']);
+        echo '<div class="tcfd-summary" role="group" aria-label="Filter the preview">';
+        foreach ([['update', $sum['update'], 'to update', ''], ['new', $sum['new'], 'new providers', ''], ['same', $sum['same'], 'already up to date', ''],
+                  ['check', $sum['check'], 'need your choice', $sum['check'] ? 'warn' : ''], ['changes', $sum['changes'], 'changes', '']] as [$k, $num, $label, $extra]) {
+            printf('<button type="button" class="tcfd-stat %s" data-filter="%s" aria-pressed="false"%s><b>%d</b>%s</button>', esc_attr($extra), esc_attr($k), $num ? '' : ' disabled', $num, esc_html($label));
+        }
         echo '</div>';
+        echo '<p class="tcfd-filtering" hidden>Showing <strong></strong> · <a href="#" class="tcfd-clear-filter">Show all</a></p>';
         if (!empty($pv['warnings'])) echo '<div class="notice notice-warning inline"><p>' . implode('<br>', array_map('esc_html', $pv['warnings'])) . '</p></div>';
         if ($opts['draft_missing']) echo '<div class="notice notice-warning inline"><p><strong>Heads up:</strong> every published provider that is not in this import will be hidden.</p></div>';
 
@@ -216,7 +219,8 @@ final class TCFD_Admin {
             $default = $status === 'matched' ? (string) $m['post_id'] : ($status === 'new' ? ($opts['create'] ? 'new' : 'skip') : 'skip');
             $include = $status !== 'duplicate' && $default !== 'skip' && ($n > 0 || $status === 'new');
             $cls = 'st-' . $status . ($n === 0 && $status === 'matched' ? ' nochange' : '');
-            echo '<tr class="' . esc_attr($cls) . '">';
+            $cat = $status === 'matched' ? ($n ? 'update' : 'same') : ($status === 'new' ? 'new' : 'check');
+            echo '<tr class="' . esc_attr($cls) . '" data-cat="' . esc_attr($cat) . '" data-changes="' . (($n > 0 || $status === 'new') ? '1' : '0') . '">';
             printf('<td class="check"><input type="checkbox" name="include[%d]" value="1" %s %s></td>', $i, checked($include, true, false), $status === 'duplicate' ? 'disabled' : '');
             echo '<td><strong>' . esc_html($rec['name'] ?: $rec['website']) . '</strong>';
             if ($rec['website']) echo '<br><span class="description">' . esc_html(TCFD_Importer::domain($rec['website'])) . '</span>';
@@ -233,7 +237,17 @@ final class TCFD_Admin {
             }
             echo '</td><td>';
             if ($status === 'new') {
-                echo '<em>New listing with ' . count($rec['fields']) . ' fields' . (is_array($rec['offers']) && $rec['offers'] ? ' and ' . count($rec['offers']) . ' offer(s)' : '') . '.</em>';
+                $offers = is_array($rec['offers']) ? $rec['offers'] : [];
+                echo '<details open><summary>New listing · ' . count($d['fields']) . ' details' . ($offers ? ' · ' . count($offers) . ' offer(s)' : '') . '</summary><table class="tcfd-diff">';
+                foreach ($d['fields'] as $c) {
+                    printf('<tr><th>%s</th><td class="new" colspan="3">%s</td></tr>', esc_html($c['label']), esc_html(TCFD_Importer::display($c['field'], $c['new'])));
+                }
+                foreach ($offers as $o) {
+                    $desc = trim(($o['offer_type'] ?? '') . ' · ' . ($o['offer_course_scope'] ?? '') . ($o['coupon_code'] ? ' · code ' . $o['coupon_code'] : '') . ' · ' . ($o['offer_title'] ?? ''), ' ·');
+                    printf('<tr><th>Offer</th><td class="new" colspan="3">%s</td></tr>', esc_html($desc));
+                }
+                if ($rec['aliases']) printf('<tr><th>Also known as</th><td colspan="3">%s</td></tr>', esc_html(implode(', ', $rec['aliases'])));
+                echo '</table></details>';
             } elseif (!$n) {
                 echo '<span class="description">No changes</span>';
             } else {
