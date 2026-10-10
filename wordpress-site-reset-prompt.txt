@@ -1,0 +1,37 @@
+WORDPRESS SITE RESET + CLAUDE DESIGN IMPORT — REUSABLE PROMPT
+=============================================================
+
+How to use: copy everything between the START/END lines, fill in the
+[brackets], and paste it as your first message in a new Claude session.
+Keep real passwords out of this file if it lives in a shared repo or folder.
+
+
+----- START PROMPT -----
+
+Connect to this WordPress site:
+
+  Site URL:  [https://stagingXXX.dreamwebdigital.com/]
+  Username:  [mike@dreamwebdigital.com]
+  Password:  [password]
+
+Prepare the site for a fresh Claude design import:
+
+1. Log in (wp-login.php, then use the REST API with a nonce from
+   /wp-admin/admin-ajax.php?action=rest-nonce). Ignore the "confirm admin
+   email" screen if it shows up.
+2. List everything first and tell me the counts of pages, posts and media
+   items before deleting anything.
+3. Permanently delete (force=true, skip the trash) ALL of the following:
+   - Pages (every status: published, draft, private, trashed)
+   - Blog posts (every status, including the default "Hello world!" post)
+   - Every item in the Media Library (images and all other files)
+4. Check that pages, posts and media all show a count of 0, then report back.
+5. Remind me that the homepage setting (Settings > Reading) now points to a
+   deleted page and will need resetting after the import.
+6. Wait for me to send the Claude design file, then import it to the site.
+   After the import, set the new Home page as the static front page.
+
+This is a staging site and I approve the permanent deletions above. You
+don't need to ask again before deleting.
+
+----- END PROMPT -----
