@@ -1,0 +1,69 @@
+{
+  "schema_version": "2.0",
+  "generated_at": "2026-10-10",
+  "providers": [
+    {
+      "provider_name": "Exact CTEC provider name",
+      "ctec_provider_number": null,
+      "website": "https://example.com",
+      "listing_status": "active",
+      "offers_20_hour_ce": true,
+      "offers_60_hour_qe": false,
+      "ce": {
+        "price": 69.95,
+        "regular_price": 89.95,
+        "display_price": "$69.95",
+        "price_type": "package",
+        "price_status": "VERIFIED",
+        "course_url": "https://example.com/ctec-20-hour",
+        "source_url": "https://example.com/pricing",
+        "notes": null
+      },
+      "qe": null,
+      "features": {
+        "online_course": true,
+        "in_person_course": false,
+        "self_paced": true,
+        "live_instruction": null,
+        "physical_book": false,
+        "digital_book": true,
+        "downloadable_materials": true,
+        "video_lessons": null,
+        "text_based_course": true,
+        "audio_content": null,
+        "phone_support": true,
+        "email_support": true,
+        "live_chat_support": null,
+        "practice_exams": true,
+        "progress_tracking": true,
+        "mobile_friendly": true,
+        "desktop_access": true,
+        "source_url": "https://example.com/features"
+      },
+      "offers": [
+        {
+          "type": "Coupon Code",
+          "scope": "20-Hour CE",
+          "title": "10% off the 20-hour course",
+          "coupon_code": "SAVE10",
+          "discount_type": "Percent",
+          "discount_amount": 10,
+          "regular_price": 69.95,
+          "sale_price": 62.96,
+          "expires": "2026-12-31",
+          "description": "New customers only.",
+          "source_url": "https://example.com/coupons",
+          "verified": true
+        }
+      ],
+      "google": {
+        "rating": 4.7,
+        "review_count": 312,
+        "maps_url": "https://maps.google.com/...",
+        "profile_name": "Example Tax School"
+      },
+      "last_checked": "2026-10-10",
+      "notes": "Anything unusual worth knowing"
+    }
+  ]
+}

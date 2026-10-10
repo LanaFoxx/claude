@@ -1,0 +1,96 @@
+You are researching California CTEC-approved tax education providers for the website taxcoursefinder.com. Today is {{DATE}}.
+
+STEP 1 – Provider list
+Use CTEC's official list of approved education providers (https://ctec.org/taxpreparers/find-education-provider/) to find every provider that offers the 20-hour continuing education (CE) course, the 60-hour qualifying education (QE) course, or both. Use the exact provider name CTEC lists.
+{{SCOPE}}
+
+STEP 2 – Research each provider on its own website (and Google Maps for ratings)
+For every provider collect:
+- website, CTEC provider number (if shown), and whether it offers the 20-hour CE and/or the 60-hour QE course
+- for each course: current price, regular price (if on sale), the page URL for the course, and the URL where you saw the price
+- every coupon code or sale that is publicly listed right now (code, discount, sale price, expiry, terms, and the URL where it is published)
+- course features (true / false / null):
+  Delivery / Format: online_course, in_person_course, self_paced, live_instruction
+  Course Materials: physical_book, digital_book, downloadable_materials
+  Video / Learning Format: video_lessons, text_based_course, audio_content
+  Support: phone_support, email_support, live_chat_support
+  Study Features: practice_exams, progress_tracking
+  Device / Access: mobile_friendly, desktop_access
+- Google Business Profile rating and review count, only if you are confident the profile belongs to this provider
+
+ACCURACY RULES (very important)
+- Never guess or invent anything. If you cannot confirm a value, use null. null means "unknown" and will not overwrite existing data.
+- Use false only when the provider clearly does NOT offer something.
+- Never invent a coupon code. Only include codes you can see published on a real page, and always include that page as source_url. Set "verified": true only when you saw it yourself on that page today.
+- A sale that applies automatically is type "Sale", not a coupon.
+- price must be the price of the complete 20-hour or 60-hour package. If the provider only sells per credit hour, by membership, or as part of a bigger program, put the price in display_price as text (for example "$46/unit + fees") and set price_type to per_unit, membership, career_program, or other, with price null.
+- If no public price exists, set price null, display_price "Contact provider" and price_type "not_public".
+- price_status: "VERIFIED" if you saw the price on the provider's own site today, otherwise "REVIEW".
+- If a provider is no longer on CTEC's list, include it with "listing_status": "removed".
+- Dates use YYYY-MM-DD.
+
+OUTPUT FORMAT
+Reply with ONLY a JSON code block, no other text, in exactly this shape:
+
+{
+  "schema_version": "2.0",
+  "generated_at": "{{DATE}}",
+  "providers": [
+    {
+      "provider_name": "Exact CTEC provider name",
+      "ctec_provider_number": null,
+      "website": "https://example.com",
+      "listing_status": "active",
+      "offers_20_hour_ce": true,
+      "offers_60_hour_qe": false,
+      "ce": {
+        "price": 69.95,
+        "regular_price": 89.95,
+        "display_price": "$69.95",
+        "price_type": "package",
+        "price_status": "VERIFIED",
+        "course_url": "https://example.com/ctec-20-hour",
+        "source_url": "https://example.com/pricing",
+        "notes": null
+      },
+      "qe": null,
+      "features": {
+        "online_course": true, "in_person_course": false, "self_paced": true, "live_instruction": null,
+        "physical_book": false, "digital_book": true, "downloadable_materials": true,
+        "video_lessons": null, "text_based_course": true, "audio_content": null,
+        "phone_support": true, "email_support": true, "live_chat_support": null,
+        "practice_exams": true, "progress_tracking": true,
+        "mobile_friendly": true, "desktop_access": true,
+        "source_url": "https://example.com/features"
+      },
+      "offers": [
+        {
+          "type": "Coupon Code",
+          "scope": "20-Hour CE",
+          "title": "10% off the 20-hour course",
+          "coupon_code": "SAVE10",
+          "discount_type": "Percent",
+          "discount_amount": 10,
+          "regular_price": 69.95,
+          "sale_price": 62.96,
+          "expires": "2026-12-31",
+          "description": "New customers only.",
+          "source_url": "https://example.com/coupons",
+          "verified": true
+        }
+      ],
+      "google": { "rating": 4.7, "review_count": 312, "maps_url": "https://maps.google.com/...", "profile_name": "Example Tax School" },
+      "last_checked": "{{DATE}}",
+      "notes": "Anything unusual worth knowing"
+    }
+  ]
+}
+
+Allowed values
+- offers[].type: "Coupon Code", "Sale", "Special Offer", "Member Offer"
+- offers[].scope: "20-Hour CE", "60-Hour QE", "Both"
+- offers[].discount_type: "Percent", "Dollar", "Sale Price", "Text Offer"
+- price_type: package, package_sale, per_unit, membership, membership_benefit, credit_package, subscription_non_ctec_specific, career_program, free_partial_ce, custom_quote, not_public, other
+- Use "qe": null when the provider does not offer the 60-hour course, and "ce": null when it does not offer the 20-hour course.
+
+If the full list is too long for one reply, do 15 providers per reply, in alphabetical order, and wait for me to say "continue". Each reply must be a complete, valid JSON block on its own.

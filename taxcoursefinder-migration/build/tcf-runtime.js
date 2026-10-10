@@ -136,7 +136,8 @@
   function mapProvider(r) {
     var offers = (r.offers || []).map(function (o, i) {
       var sc = o.offer_course_scope || '';
-      return { id: r.id + '-' + i, active: !!o.offer_active, type: o.offer_type || '', scope: /60|\bQE\b/i.test(sc) && !/20/.test(sc) ? 'qe' : 'ce', scopeText: sc,
+      var scope = o.scope || (/both/i.test(sc) || (/20/.test(sc) && /60/.test(sc)) ? 'both' : /60|\bQE\b/i.test(sc) ? 'qe' : 'ce');
+      return { id: r.id + '-' + i, active: !!o.offer_active, type: o.offer_type || '', scope: scope, scopeText: sc,
         title: o.offer_title || '', code: o.coupon_code || '', description: o.offer_description || '', regularPrice: num(o.offer_regular_price), salePrice: num(o.offer_sale_price),
         expires: o.offer_expiration_date || '', importStatus: o.offer_import_status || '', sourceUrl: o.offer_source_url || '', lastVerified: o.offer_last_verified || '' };
     });
@@ -149,7 +150,7 @@
   }
   function liveOffers(p, qe, today) {
     today = today || new Date().toISOString().slice(0, 10);
-    return p.offers.filter(function (o) { return o.active && /^VERIFIED/.test(o.importStatus) && !(o.expires && o.expires < today) && o.scope === (qe ? 'qe' : 'ce'); })
+    return p.offers.filter(function (o) { return o.active && /^VERIFIED/.test(o.importStatus) && !(o.expires && o.expires < today) && (o.scope === 'both' || o.scope === (qe ? 'qe' : 'ce')); })
       .map(function (o) { var member = /MEMBER/.test(o.importStatus); return Object.assign({}, o, { label: member ? 'Member Offer' : OFFER_LABEL[o.type] || 'Special Offer', memberOnly: member, isCoupon: o.type === 'Coupon Code' && !!o.code, isSale: o.type === 'Sale' && o.salePrice != null,
         regularFmt: o.regularPrice != null ? money(o.regularPrice) : '', saleFmt: o.salePrice != null ? money(o.salePrice) : '', saveFmt: o.regularPrice != null && o.salePrice != null ? 'Save ' + money(o.regularPrice - o.salePrice) : '',
         expiresFmt: o.expires ? 'Expires ' + new Date(o.expires + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '' }); });
