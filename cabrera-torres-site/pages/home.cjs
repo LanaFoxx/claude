@@ -18,7 +18,7 @@ const hero = (m) => container({
     width: 720, settings: {
       _position: 'absolute', _element_width: 'initial', _element_custom_width: px(720), _element_custom_width_mobile: px(420), _z_index: 0,
       _offset_orientation_h: 'start', _offset_x: px(14, '%'), _offset_orientation_v: 'start', _offset_y: px(50, '%'),
-      custom_css: 'selector { transform: translate(-50%, -50%); pointer-events: none; max-width: 90vw; }\nselector img { filter: brightness(.22) saturate(.7); }',
+      custom_css: 'selector { transform: translate(-50%, -50%); pointer-events: none; max-width: 90vw; }\nselector img { opacity: .05; } /* translucent so the gold pattern shows through */',
     },
   }),
   container({
@@ -180,12 +180,12 @@ const areaPanel = (m) => ([name, desc, items, key]) => {
     plusList(items, solo),
     button('Talk to us about your case', '#contact', 'underline', { align: solo ? 'center' : 'left', settings: { _margin: box(12, 0, 0, 0) } }),
   ], { gap: 14, align: solo ? 'center' : undefined });
-  if (solo) return container({ content_width: 'full', flex_direction: 'column', flex_align_items: 'center', padding: box(56, 0, 0, 0), width: px(760), width_tablet: px(100, '%'), width_mobile: px(100, '%'), margin: box(0, 'auto', 0, 'auto') }, [copy]);
+  if (solo) return container({ content_width: 'full', flex_direction: 'column', flex_align_items: 'center', padding: box(56, 0, 0, 0), width: px(760), width_tablet: px(100, '%'), width_mobile: px(100, '%') }, [copy]);
   return container({
     container_type: 'grid', content_width: 'full', padding: box(56, 0, 0, 0), padding_mobile: box(36, 0, 0, 0),
     grid_columns_grid: { unit: 'custom', size: 'minmax(0,1.5fr) minmax(0,1fr)' }, grid_columns_grid_tablet: px(1, 'fr'), grid_columns_grid_mobile: px(1, 'fr'),
     grid_rows_grid: L.auto, grid_rows_grid_tablet: L.auto, grid_rows_grid_mobile: L.auto, grid_gaps: gap(60, 48), grid_align_items: 'center',
-    width: px(1040), width_tablet: px(100, '%'), width_mobile: px(100, '%'), margin: box(0, 'auto', 0, 'auto'),
+    width: px(1040), width_tablet: px(100, '%'), width_mobile: px(100, '%'),
   }, [
     copy,
     image(m[`area_${key}`], {
@@ -221,7 +221,7 @@ const practice = (m) => band(C.cream, [
       _margin: box(48, 0, 0, 0),
       custom_css: 'selector .e-n-tabs-heading { flex-wrap: wrap; row-gap: 12px; }\nselector .e-n-tab-title { white-space: nowrap; }',
     },
-    elements: AREAS.map((a) => container({ content_width: 'full', flex_direction: 'column', padding: box(0) }, [areaPanel(m)(a)])),
+    elements: AREAS.map((a) => container({ content_width: 'full', flex_direction: 'column', flex_align_items: 'center', padding: box(0) }, [areaPanel(m)(a)])),
   },
 ], { anchor: 'practice', align: 'center' });
 
@@ -278,7 +278,7 @@ const faq = () => band(C.cream, [
       text('Plain answers about Georgia personal injury claims. Every case is different, so call us for advice specific to yours.', { color: C.body, settings: { _margin: box(6, 0, 0, 0) } }),
     ], { gap: 18 }),
     faqAccordion(),
-  ], { cols: ['minmax(0,1fr) minmax(0,1.6fr)', 1, 1], gap: 60, rowGap: 40, align: 'start' }),
+  ], { cols: ['minmax(0,1fr) minmax(0,1.6fr)', 1, 1], gap: 60, rowGap: 40, align: 'center' }),
 ], { anchor: 'faq' });
 
 /* ---------------------------------------------------------------- blog */
@@ -308,7 +308,7 @@ const contact = (m) => band(C.black, [
     width: 620, settings: {
       _position: 'absolute', _element_width: 'initial', _element_custom_width: px(620), _z_index: 0, hide_mobile: 'hidden-mobile',
       _offset_orientation_h: 'start', _offset_x: px(-160), _offset_orientation_v: 'end', _offset_y_end: px(-80),
-      custom_css: 'selector { pointer-events: none; }\nselector img { filter: brightness(.22) saturate(.7); }',
+      custom_css: 'selector { pointer-events: none; }\nselector img { opacity: .05; } /* translucent so the gold pattern shows through */',
     },
   }),
   grid([
