@@ -23,7 +23,9 @@ const hero = (m) => container({
   }),
   container({
     content_width: 'full', flex_direction: 'column', flex_justify_content: 'flex-end', flex_align_items: 'center',
-    padding: box(56, 0, 0, 0), min_height: px(520), min_height_tablet: px(0), min_height_mobile: px(0), _flex_size: 'none',
+    padding: box(56, 0, 0, 0), padding_tablet: box(16, 0, 0, 0), padding_mobile: box(16, 0, 0, 0),
+    min_height: px(520), min_height_tablet: px(0), min_height_mobile: px(0), _flex_size: 'none',
+    _flex_order_tablet: 'end', _flex_order_mobile: 'end', // stacked layouts: copy first, portrait below
     z_index: 1,
   }, [
     image(m.jennifer, {
