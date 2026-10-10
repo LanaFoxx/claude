@@ -1,0 +1,17 @@
+import { chromium } from '/opt/node-tools/node_modules/playwright/index.mjs';
+const base = process.argv[2] || 'http://127.0.0.1:8765/__';
+const sfx = process.argv[3] ?? '.html';
+const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' });
+const p = await b.newPage({ viewport: { width: 1440, height: 900 } });
+p.on('pageerror', e => console.log('ERR', e.message));
+await p.goto(base + (sfx === '' ? '' : 'home' + sfx), { waitUntil: 'networkidle' });
+const cnt = () => p.evaluate(() => document.querySelector('.tcf-root h2')?.textContent);
+console.log('initial', await cnt());
+await p.fill('.tcf-root input[placeholder^="Search"]', 'tax');
+console.log('search tax', await cnt(), 'input value kept:', await p.inputValue('.tcf-root input[placeholder^="Search"]'));
+await p.fill('.tcf-root input[placeholder^="Search"]', '');
+await p.getByText('60-Hour QE · Getting started').first().click();
+console.log('after QE', await cnt());
+await p.getByText(/^Show 10 more providers/).first().click().catch(e => console.log('no more btn', e.message.slice(0, 80)));
+console.log('rows', await p.evaluate(() => document.querySelectorAll('.tcf-root [style*="grid-template-columns:56px minmax(0,1fr) 200px"]').length));
+await b.close();
