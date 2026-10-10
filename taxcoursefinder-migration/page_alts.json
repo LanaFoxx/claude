@@ -1,0 +1,20 @@
+{
+"home": {"tax-study-workspace-federal-tax-law.webp": ["Study desk with laptop, calculator, tax forms and a Federal Tax Law book for a 60 hour or 20 hour CTEC course"],
+         "ctec-renewal-records.webp": ["Checking a provider on CTEC.org before enrolling in a 20 hour or 60 hour CTEC course"]},
+"ctec-20-hour-course": {"02-ctec-20-hour-tax-review.webp": ["Tax preparer taking a 20 hour CTEC course to renew CTEC registration", "Reviewing a tax form while completing a 20 hour CTEC continuing education course"]},
+"ctec-60-hour-course": {"01-ctec-60-hour-learner.webp": ["Student taking a 60 hour CTEC course online to become a California tax preparer", "Studying federal and California tax law in a 60 hour CTEC qualifying education course"]},
+"ctec-requirements": {"ctec-org-desktop.webp": ["CTEC.org website listing the 60 hour and 20 hour CTEC course requirements"],
+                      "04-tax-forms-calculator-closeup.webp": ["Calculator and tax forms used while completing CTEC education requirements"]},
+"how-to-become-a-ctec-registered-tax-preparer": {"01-ctec-60-hour-learner.webp": ["New tax preparer taking the 60 hour CTEC course to become a CTEC Registered Tax Preparer"]},
+"how-to-renew-ctec-registration": {"ctec-renewal-records.webp": ["Checking CTEC renewal status after finishing a 20 hour CTEC course"],
+                                   "02-ctec-20-hour-tax-review.webp": ["Tax preparer completing the 20 hour CTEC course before the October 31 renewal deadline"]},
+"how-to-choose-a-ctec-course": {"ctec-course-comparison-laptop.webp": ["Comparing 20 hour and 60 hour CTEC course options on a laptop with a course checklist"],
+                                "03-online-tax-course-desktop.webp": ["Online CTEC course with video lessons on a desktop computer"]},
+"how-we-compare-providers": {"comparing-ctec-courses.webp": ["Comparing CTEC course providers online by price, format and offers"]},
+"faqs": {"comparing-ctec-courses.webp": ["Researching answers about 20 hour and 60 hour CTEC courses online"]},
+"about": {"tax-study-workspace-federal-tax-law.webp": ["California Tax Course Finder, the directory of 20 hour and 60 hour CTEC courses"]},
+"provider-rights": {"ctec-renewal-records.webp": ["CTEC-approved course provider reviewing its listing details"]},
+"provider-application": {"03-online-tax-course-desktop.webp": ["Online CTEC course offered by an approved education provider"]},
+"privacy-policy": {"04-tax-forms-calculator-closeup.webp": ["Tax forms and a calculator on a desk"]},
+"terms-of-use": {"04-tax-forms-calculator-closeup.webp": ["Tax forms and a calculator on a desk"]}
+}

@@ -61,12 +61,35 @@ def lazy(h):
         return t
     return re.sub(r'<img\b[^>]*>', rep, h)
 
+PAGE_ALTS = json.load(open(S + '/page_alts.json'))
+
+def page_alts(slug, h):
+    # Page-specific, keyword-aware alt text; nth occurrence of a file gets the nth alt (last one repeats).
+    alts = PAGE_ALTS.get(slug, {})
+    seen = {}
+    def rep(m):
+        tag = m.group(0)
+        src = re.search(r'src="([^"]+)"', tag)
+        if not src: return tag
+        f = src.group(1).rsplit('/', 1)[-1]
+        if f not in alts: return tag
+        n = seen.get(f, 0); seen[f] = n + 1
+        alt = alts[f][min(n, len(alts[f]) - 1)].replace('"', '&quot;')
+        return re.sub(r'alt="[^"]*"', 'alt="%s"' % alt, tag) if 'alt="' in tag else tag.replace('<img ', '<img alt="%s" ' % alt, 1)
+    # template copies render the same images again: number them separately
+    parts = re.split(r'(<template\b.*?</template>)', h, flags=re.S)
+    out = []
+    for part in parts:
+        seen = {}
+        out.append(re.sub(r'<img\b[^>]*>', rep, part))
+    return ''.join(out)
+
 def page_html(pg):
     w = pg['widget']
     if not pg['runtime']:
         w = re.sub(r'<template id="[^"]+-tpl">.*?</template>', '', w, flags=re.S)
     w = w.replace('@@SSR@@', lazy(pg['ssr']))
-    return fix_media(w)
+    return page_alts(pg['slug'], fix_media(w))
 
 if STEP == 'trash':
     old = [608, 609, 610, 611, 507, 494, 165, 126, 127, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 3]

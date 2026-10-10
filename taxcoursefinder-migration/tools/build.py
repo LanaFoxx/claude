@@ -35,6 +35,19 @@ def media(s):  # placeholder, resolved at publish time
 def clean(s):
     return media(links(s))
 
+def seo_tweaks(name, body):
+    # Anchor every provider row so structured data (and shared links) can point at it.
+    body = re.sub(r'(as="p" hint-placeholder-count="\d+">\s*<div )', r'\1id="provider-{{ p.id }}" ', body)
+    # Primary keywords in the course-page H1s.
+    h1 = {
+        'CTEC 20 Hour Course': ('20-Hour CE</span> course before you renew.', '20 Hour CTEC Course</span> before you renew.'),
+        'CTEC 60 Hour Course': ('60-Hour QE</span> course before you enroll.', '60 Hour CTEC Course</span> before you enroll.'),
+    }.get(name)
+    if h1:
+        assert h1[0] in body, name
+        body = body.replace(h1[0], h1[1], 1)
+    return body
+
 def code_for(d):
     c = d['code']
     c = c.replace("await import('./providers.js')", 'await TCF.data()')
@@ -55,6 +68,7 @@ for name, (slug, url, title) in PAGES.items():
     d = json.load(open(EXT + '/' + name + '.json'))
     body = clean(d['body'])
     body = body.replace('style="min-width:1100px"', 'class="tcf-screen"', 1)
+    body = seo_tweaks(name, body)
     rid = 'tcf-' + slug
     parts = ['<div class="tcf-page tcf-scope tcf-p-%s"><div id="%s-root" class="tcf-root">@@SSR@@</div></div>' % (slug, rid)]
     if name in RUNTIME:
@@ -69,7 +83,7 @@ for name, (slug, url, title) in PAGES.items():
             assert kids[0].name == 'sc-if' and 'Independent comparisons' in kids[-1].get_text()
             kids[0].decompose(); kids[-1].decompose()
             mroot['style'] = 'background:#fff;position:relative;overflow:hidden'
-            mbody = clean(str(ms))
+            mbody = seo_tweaks('mobile', clean(str(ms)))
             # mobile homepage: drop its own header/footer pieces are kept (design is self-contained); header stays from theme
             parts.append('<template id="%s-mtpl">%s</template>' % (rid, mbody))
             mob = ('var M=(function(){%s\nreturn Component;})();var useM=window.matchMedia&&matchMedia("(max-width: 760px)").matches&&document.getElementById("%s-mtpl");'
