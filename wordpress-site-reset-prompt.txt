@@ -19,7 +19,7 @@ Every project uses a different URL. Work ONLY on the Site URL above, never
 on a site from an earlier project. Before you delete anything, confirm the
 site name and URL you are logged into.
 
-Prepare the site for a fresh Claude design import:
+Prepare the site for a fresh Claude design import, then build it:
 
 1. Log in (wp-login.php, then use the REST API with a nonce from
    /wp-admin/admin-ajax.php?action=rest-nonce). Ignore the "confirm admin
@@ -33,8 +33,25 @@ Prepare the site for a fresh Claude design import:
 4. Check that pages, posts and media all show a count of 0, then report back.
 5. Remind me that the homepage setting (Settings > Reading) now points to a
    deleted page and will need resetting after the import.
-6. Wait for me to send the Claude design file, then import it to the site.
-   After the import, set the new Home page as the static front page.
+6. Wait for me to send the Claude design file, then import it to the site
+   as native Elementor content (no HTML widgets), the same way as the
+   earlier builds in this repo (recordflow-site/, cabrera-torres-site/):
+   - Header and footer as Elementor Theme Builder templates (Entire Site);
+     unassign (don't delete) any old header/footer templates.
+   - Set the new Home page as the static front page.
+7. SEO and site setup:
+   - Install and activate Yoast SEO; set it up as the business
+     (organization name + logo).
+   - Give every page a Yoast SEO title, meta description and focus keyphrase.
+   - Exactly one H1 per page, H2 for each section title, H3 for card,
+     tab and FAQ titles. Turn on FAQ schema for FAQ accordions.
+   - Upload every image to the Media Library with a descriptive file name,
+     alt text, title and description. Convert photos to WebP. No image
+     without alt text.
+   - Change the site title (and tagline) to the business name, and make a
+     favicon (site icon) from the logo.
+8. Purge the site caches, check the live site on desktop and mobile,
+   and tell me anything from the design that couldn't be carried over.
 
 This is a staging site and I approve the permanent deletions above. You
 don't need to ask again before deleting.
