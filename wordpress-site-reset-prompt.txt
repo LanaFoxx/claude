@@ -2,7 +2,8 @@ WORDPRESS SITE RESET + CLAUDE DESIGN IMPORT — REUSABLE PROMPT
 =============================================================
 
 How to use: copy everything between the START/END lines, fill in the
-[brackets], and paste it as your first message in a new Claude session.
+[brackets] (always put in the new project's Site URL), and paste it as your
+first message in a new Claude session.
 Keep real passwords out of this file if it lives in a shared repo or folder.
 
 
@@ -10,9 +11,13 @@ Keep real passwords out of this file if it lives in a shared repo or folder.
 
 Connect to this WordPress site:
 
-  Site URL:  [https://stagingXXX.dreamwebdigital.com/]
+  Site URL:  [NEW PROJECT URL, e.g. https://stagingXXX.dreamwebdigital.com/]
   Username:  [mike@dreamwebdigital.com]
   Password:  [password]
+
+Every project uses a different URL. Work ONLY on the Site URL above, never
+on a site from an earlier project. Before you delete anything, confirm the
+site name and URL you are logged into.
 
 Prepare the site for a fresh Claude design import:
 
