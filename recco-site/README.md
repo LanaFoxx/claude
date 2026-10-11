@@ -10,7 +10,8 @@ color is a normal Elementor control the client can edit.
 | --- | --- |
 | Home (front page) | Hero, proof band, Services, Platforms, AI News, About, How we work, Contact form |
 | **Recco Header** | Theme Builder header (Entire Site): logo, Nav Menu (**Recco Main Menu**), "Contact us" button, sticky |
-| **Recco Footer** | Theme Builder footer (Entire Site): logo, links, copyright |
+| Privacy policy / Terms of use | `/privacy-policy/`, `/terms-of-use/`: sticky title block + one Text Editor holding the policy (placeholder copy from the design, to be reviewed by counsel) |
+| **Recco Footer** | Theme Builder footer (Entire Site): logo + section links; Emissions Reduction Program badge, Privacy/Terms links, copyright |
 | Site Settings | Title "Recco Consulting", tagline, favicon = logo arch, global colors + fonts set to the brand |
 
 Menu items are anchor links (`/#services`, `/#platforms`, `/#news`, `/#about`); the section IDs are set
@@ -40,12 +41,13 @@ h2 46/38/32), section padding and gutters shrink, and the nav becomes a hamburge
 
 * `lib.cjs` – design tokens, layout helpers, header, footer, page CSS.
 * `home.cjs` – the homepage sections.
+* `legal.cjs` – Privacy policy and Terms of use.
 * `prep.cjs` – one-time setup: `cleanup` (deletes old pages/images, trashes old templates), uploads
   media, creates the menu, sets the site title/tagline/favicon. Writes `prep.json` (media + menu IDs).
 * `font.cjs` – uploads the variable font and creates the Custom Font.
 * `deploy.cjs` – opens each document in the Elementor editor, replaces its content and publishes;
   creates the header/footer templates and their conditions, sets the front page, updates the Kit.
-  `node deploy.cjs [chrome] [home] [kit]` (no args = everything).
+  `node deploy.cjs [chrome] [home] [legal] [kit]` (no args = everything).
 
 All scripts need a logged-in Playwright storage state (`STATE`). SiteGround's bot check challenges
 Playwright's own HTTP client, so every REST call runs inside the logged-in admin page.

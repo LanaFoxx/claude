@@ -9,6 +9,7 @@ const C = {
 };
 const SERIF = 'Source Serif 4', SANS = 'Manrope';
 const EMAIL = 'info@reccoconsulting.com';
+const U = { privacy: '/privacy-policy/', terms: '/terms-of-use/' };
 const A = { services: '/#services', platforms: '/#platforms', news: '/#news', about: '/#about', approach: '/#approach', contact: '/#contact' };
 
 const id = () => crypto.randomBytes(4).toString('hex').slice(0, 7);
@@ -230,20 +231,44 @@ function header(m, menuId) {
 
 /* ---------------------------------------------------------------- footer */
 function footer(m) {
+  const rowBox = (children, extra = {}) => container({
+    content_width: 'full', flex_direction: 'row', flex_direction_mobile: 'column', flex_wrap: 'wrap',
+    flex_justify_content: 'space-between', flex_align_items: 'center', flex_gap: gap(24), flex_gap_mobile: gap(18), padding: box(0),
+    ...extra,
+  }, children);
   return [container({
-    content_width: 'boxed', boxed_width: px(1216), flex_direction: 'row', flex_direction_mobile: 'column',
-    flex_wrap: 'wrap', flex_justify_content: 'space-between', flex_align_items: 'center',
-    flex_gap: gap(24), flex_gap_mobile: gap(20),
-    padding: box(40, 32, 40, 32), padding_mobile: box(36, 20, 36, 20),
+    content_width: 'boxed', boxed_width: px(1216), flex_direction: 'column', flex_gap: gap(32), flex_gap_mobile: gap(28),
+    padding: box(48, 32, 40, 32), padding_mobile: box(40, 20, 36, 20),
     background_background: 'classic', background_color: C.white,
     border_border: 'solid', border_width: box(1, 0, 0, 0), border_color: C.lineSoft, _title: 'Footer',
   }, [
-    image(m.logo, { width: 100, link: '/', settings: { _element_width: 'initial', _element_custom_width: px(100), _flex_size: 'none', _title: 'Logo' } }),
-    iconList([['Services', A.services], ['Platforms', A.platforms], ['AI News', A.news], ['About', A.about], ['Contact', A.contact]], {
-      inline: true, space: 28, size: 13.5, weight: 500, color: C.slate,
-      settings: { space_between_mobile: px(20), icon_align_mobile: 'center', icon_align_tablet: 'center', _element_width: 'auto', _title: 'Footer links' },
-    }),
-    text('© 2026 Recco Consulting. All rights reserved.', { color: C.gray, size: 12.5, lh: 1.5, settings: { _element_width: 'auto', align_mobile: 'center' } }),
+    rowBox([
+      image(m.logo, { width: 100, link: '/', settings: { _element_width: 'initial', _element_custom_width: px(100), _flex_size: 'none', _title: 'Logo' } }),
+      iconList([['Services', A.services], ['Platforms', A.platforms], ['AI News', A.news], ['About', A.about], ['Contact', A.contact]], {
+        inline: true, space: 28, size: 13.5, weight: 500, color: C.slate,
+        settings: { space_between_mobile: px(20), icon_align_mobile: 'center', _element_width: 'auto', _title: 'Footer links' },
+      }),
+    ], { _title: 'Footer top' }),
+    rowBox([
+      container({
+        content_width: 'full', width: auto, width_tablet: auto, width_mobile: auto, flex_direction: 'row', flex_wrap: 'nowrap',
+        flex_align_items: 'center', flex_gap: gap(14), padding: box(0), _title: 'ERP badge',
+      }, [
+        image(m.erpBadge, { width: 56, settings: { _element_width: 'initial', _element_custom_width: px(56), _flex_size: 'none' } }),
+        text('Emissions Reduction Program, Level 1 · Action 2026. Validated by RyeStrategy.', {
+          color: C.gray, size: 12, lh: 1.5, settings: { _element_width: 'initial', _element_custom_width: px(280), _element_custom_width_mobile: px(220) },
+        }),
+      ]),
+      container({
+        content_width: 'full', width: auto, width_tablet: auto, width_mobile: auto, flex_direction: 'row', flex_wrap: 'wrap',
+        flex_justify_content: 'flex-end', flex_justify_content_mobile: 'center', flex_align_items: 'center', flex_gap: gap(20, 8), padding: box(0), _title: 'Legal links',
+      }, [
+        iconList([['Privacy policy', U.privacy], ['Terms of use', U.terms]], {
+          inline: true, space: 20, size: 12.5, weight: 400, color: C.gray, hover: C.green, settings: { _element_width: 'auto', icon_align_mobile: 'center' },
+        }),
+        text('© 2026 Recco Consulting. All rights reserved.', { color: C.gray, size: 12.5, lh: 1.5, settings: { _element_width: 'auto', align_mobile: 'center' } }),
+      ]),
+    ], { border_border: 'solid', border_width: box(1, 0, 0, 0), border_color: C.lineSoft, padding: box(24, 0, 0, 0), _title: 'Footer bottom' }),
   ], false)];
 }
 
@@ -259,7 +284,7 @@ const pageSettings = {
 };
 
 module.exports = {
-  C, SERIF, SANS, EMAIL, A, id, px, box, gap, auto, link, resp, typo, fa, container, widget,
+  C, SERIF, SANS, EMAIL, A, U, id, px, box, gap, auto, link, resp, typo, fa, container, widget,
   band, overlayColor, overlayGradient, stack, row, grid, arch, eyebrowText, eyebrow, heading, H2, H3, text, button, image, iconList,
   header, footer, pageSettings,
 };

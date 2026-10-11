@@ -13,6 +13,7 @@ const MENU = [['Services', '/#services'], ['Platforms', '/#platforms'], ['AI New
 const ALT = {
   'recco-consulting-logo.png': 'Recco Consulting', 'recco-hero-tower.jpg': 'Glass office tower', 'recco-dome.jpg': 'Glass and steel dome',
   'recco-team.jpg': 'Recco Consulting team', 'recco-city-data.jpg': 'City skyline with data overlay', 'recco-office-bokeh.jpg': 'Office',
+  'recco-erp-badge.png': 'Emissions Reduction Program, Level 1 Action, validated by RyeStrategy',
 };
 
 (async () => {

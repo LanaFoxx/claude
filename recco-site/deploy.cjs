@@ -1,11 +1,13 @@
 // Deploys the Recco Consulting site through the Elementor editor (so Elementor validates the
 // data and regenerates CSS). Usage:
-//   WP_URL=... STATE=playwright-state.json PREP=prep.json node deploy.cjs [chrome] [home] [kit]
-// "chrome" = header + footer templates, "kit" = global colors/fonts. No args = everything.
+//   WP_URL=... STATE=playwright-state.json PREP=prep.json node deploy.cjs [chrome] [home] [legal] [kit]
+// "chrome" = header + footer templates, "legal" = privacy + terms pages, "kit" = global colors/fonts.
+// No args = everything.
 const { chromium } = require('playwright');
 const fs = require('fs');
 const L = require('./lib.cjs');
 const home = require('./home.cjs');
+const legal = require('./legal.cjs');
 
 const SITE = process.env.WP_URL || 'https://staging154.dreamweb.digital';
 const prep = JSON.parse(fs.readFileSync(process.env.PREP, 'utf8'));
@@ -23,6 +25,7 @@ const m = {
   icSnowflake: md('recco-icon-snowflake.png'), icAws: md('recco-icon-aws.png'), icWorkday: md('recco-icon-workday.png'),
   logoOpenai: md('recco-logo-openai.png'), logoAnthropic: md('recco-logo-anthropic.png'), logoSalesforce: md('recco-logo-salesforce.png'),
   logoServicenow: md('recco-logo-servicenow.png'), logoMicrosoft: md('recco-logo-microsoft.png'),
+  erpBadge: md('recco-erp-badge.png'),
 };
 
 const args = process.argv.slice(2);
@@ -134,6 +137,15 @@ async function updateKit(p) {
     const s = await rest(p, '/wp/v2/settings', { method: 'POST', data: { show_on_front: 'page', page_on_front: pg.id } });
     console.log('front page:', s.page_on_front);
     out.home = pg;
+  }
+
+  for (const def of [legal.privacy, legal.terms]) {
+    if (!want('legal') && !want(def.slug)) continue;
+    await p.goto(`${SITE}/wp-admin/`, { waitUntil: 'domcontentloaded' });
+    const pg = await ensurePage(p, def);
+    await openEditor(p, pg.id);
+    console.log(def.slug, pg.id, 'elements saved:', await replaceContent(p, def.build(m), L.pageSettings));
+    out[def.slug] = pg;
   }
 
   if (want('kit')) {
