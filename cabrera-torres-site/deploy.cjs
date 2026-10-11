@@ -20,7 +20,7 @@ const m = {
   jennifer: md('jennifer-cabrera-torres-personal-injury-attorney-norcross-ga.webp'),
   area_mva: md('car-accident-lawyer-norcross-ga.webp'), area_dog: md('dog-bite-lawyer-georgia.webp'), area_fall: md('slip-and-fall-lawyer-georgia.webp'),
   post_car: md('what-to-do-after-a-car-crash-georgia.webp'), post_dog: md('georgia-dog-bite-law-explained.webp'), post_fall: md('store-slip-and-fall-premises-liability.webp'),
-  jenDesk: md('jennifer-cabrera-torres-attorney-office-portrait.webp'), jenArms: md('jennifer-cabrera-torres-norcross-injury-lawyer.webp'),
+  jenDesk: md('jennifer-cabrera-torres-attorney-office-portrait.webp'), jenArms: md('jennifer-cabrera-torres-norcross-injury-lawyer-cutout.webp'),
   jenSuit: md('jennifer-cabrera-torres-cabrera-torres-law-founder.webp'), jenDress: md('jennifer-cabrera-torres-managing-partner.webp'),
 };
 

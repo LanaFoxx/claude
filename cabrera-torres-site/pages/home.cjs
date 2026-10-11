@@ -126,7 +126,7 @@ const about = (m) => band(C.black, [
       image(m.jenArms, {
         settings: {
           _position: 'absolute', _offset_orientation_h: 'start', _offset_x: px(0), _offset_orientation_v: 'start', _offset_y: px(0), _element_width: 'initial', _element_custom_width: px(100, '%'),
-          custom_css: 'selector { height: 100%; }\nselector .elementor-widget-container { height: 100%; }\nselector img { width: 100%; height: 100%; object-fit: cover; object-position: center top; -webkit-mask-image: linear-gradient(90deg,#000 70%,transparent); mask-image: linear-gradient(90deg,#000 70%,transparent); }',
+          custom_css: 'selector { height: 100%; }\nselector .elementor-widget-container { height: 100%; }\nselector img { width: 100%; height: 100%; object-fit: cover; object-position: center top; } /* background removed, so the gold pattern shows behind her */',
         },
       }),
     ]),
