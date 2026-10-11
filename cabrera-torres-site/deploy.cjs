@@ -1,7 +1,8 @@
 // Deploys the Cabrera Torres Law site to WordPress through the Elementor editor (so Elementor validates
 // the data and regenerates CSS). Usage:
-//   WP_URL=... STATE=playwright-state.json PREP=prep.json node deploy.cjs [chrome] [home] [seo] [unassign:<id>,<id>]
-// "chrome" = header + footer templates, "seo" = Yoast title/description/keyphrase. No args = chrome + pages + seo.
+//   WP_URL=... STATE=playwright-state.json PREP=prep.json node deploy.cjs [chrome] [menu] [<page-or-post-slug> ...] [pages] [posts] [seo] [unassign:<id>,<id>]
+// "chrome" = header + footer templates, "menu" = rebuild the main menu from the pages, "seo" = Yoast fields for the
+// selected pages/posts (all when none selected). No args = everything.
 const { chromium } = require('playwright');
 const fs = require('fs');
 const L = require('./lib.cjs');
@@ -19,12 +20,21 @@ const m = {
   jennifer: md('jennifer-cabrera-torres-personal-injury-attorney-norcross-ga.webp'),
   area_mva: md('car-accident-lawyer-norcross-ga.webp'), area_dog: md('dog-bite-lawyer-georgia.webp'), area_fall: md('slip-and-fall-lawyer-georgia.webp'),
   post_car: md('what-to-do-after-a-car-crash-georgia.webp'), post_dog: md('georgia-dog-bite-law-explained.webp'), post_fall: md('store-slip-and-fall-premises-liability.webp'),
+  jenDesk: md('jennifer-cabrera-torres-attorney-office-portrait.webp'), jenArms: md('jennifer-cabrera-torres-norcross-injury-lawyer.webp'),
+  jenSuit: md('jennifer-cabrera-torres-cabrera-torres-law-founder.webp'), jenDress: md('jennifer-cabrera-torres-managing-partner.webp'),
 };
 
-const PAGES = ['home'].map((s) => require(`./pages/${s}.cjs`));
+const PAGE_SLUGS = ['home', 'about', 'meet-jennifer', 'practice-areas', 'case-results', 'testimonials', 'faq', 'blog', 'contact'];
+const PAGES = PAGE_SLUGS.map((s) => require(`./pages/${s}.cjs`));
+const POSTS = require('./posts.cjs');
+// Main menu order (labels from the design).
+const MENU = [['About', 'about'], ['Jennifer', 'meet-jennifer'], ['Practice Areas', 'practice-areas'], ['Results', 'case-results'], ['FAQ', 'faq'], ['Resources', 'blog'], ['Contact', 'contact']];
 
 const args = process.argv.slice(2);
+const selected = (def) => args.includes(def.slug) || args.includes(def.type === 'post' ? 'posts' : 'pages');
+const anyDocs = [...PAGES, ...POSTS].some(selected);
 const want = (key) => args.length === 0 || args.includes(key);
+const wantDoc = (def) => args.length === 0 || selected(def) || (args.includes('seo') && !anyDocs);
 const restNonce = () => window.wpApiSettings?.nonce || window.elementorCommon?.config?.rest?.nonce;
 
 async function ensurePage(p, def) {
@@ -36,6 +46,35 @@ async function ensurePage(p, def) {
     const j = await r.json();
     return { id: j.id, link: j.link };
   }, [{ slug: def.slug, title: def.title }, restNonce.toString()]);
+}
+
+async function ensurePost(p, def, featured) {
+  return p.evaluate(async ([def, featured, nonceFn]) => {
+    const h = { 'X-WP-Nonce': eval(`(${nonceFn})`)(), 'Content-Type': 'application/json' };
+    const cats = await (await fetch(`/wp-json/wp/v2/categories?search=${encodeURIComponent(def.category)}&_fields=id,name`, { headers: h })).json();
+    let cat = cats.find((c) => c.name.toLowerCase() === def.category.toLowerCase())?.id;
+    if (!cat) cat = (await (await fetch('/wp-json/wp/v2/categories', { method: 'POST', headers: h, body: JSON.stringify({ name: def.category }) })).json()).id;
+    const body = { title: def.title, slug: def.slug, status: 'publish', excerpt: def.excerpt, categories: [cat], featured_media: featured, template: 'elementor_header_footer' };
+    const ex = await (await fetch(`/wp-json/wp/v2/posts?slug=${def.slug}&status=publish,draft,private&_fields=id`, { headers: h })).json();
+    const r = await fetch(`/wp-json/wp/v2/posts${ex.length ? '/' + ex[0].id : ''}`, { method: 'POST', headers: h, body: JSON.stringify(body) });
+    const j = await r.json();
+    return { id: j.id, link: j.link };
+  }, [def, featured, restNonce.toString()]);
+}
+
+// Rebuild the main menu as page links (so WordPress marks the current page and links follow slug changes).
+async function rebuildMenu(p, menuId, pageIds) {
+  return p.evaluate(async ([menuId, items, nonceFn]) => {
+    const h = { 'X-WP-Nonce': eval(`(${nonceFn})`)(), 'Content-Type': 'application/json' };
+    const old = await (await fetch(`/wp-json/wp/v2/menu-items?menus=${menuId}&per_page=100&_fields=id`, { headers: h })).json();
+    for (const it of old) await fetch(`/wp-json/wp/v2/menu-items/${it.id}?force=true`, { method: 'DELETE', headers: h });
+    const out = [];
+    for (const [i, [title, id]] of items.entries()) {
+      const r = await fetch('/wp-json/wp/v2/menu-items', { method: 'POST', headers: h, body: JSON.stringify({ title, menus: menuId, menu_order: i + 1, status: 'publish', type: 'post_type', object: 'page', object_id: id }) });
+      out.push((await r.json()).url);
+    }
+    return out;
+  }, [menuId, pageIds, restNonce.toString()]);
 }
 
 async function findOrCreateTemplate(p, type, title) {
@@ -131,14 +170,21 @@ async function setYoast(p, seo) {
     }
   }
 
-  for (const def of PAGES) {
-    if (!want(def.slug) && !want('seo')) continue;
+  for (const def of [...PAGES, ...POSTS]) {
+    if (!wantDoc(def)) continue;
     await p.goto(`${SITE}/wp-admin/`, { waitUntil: 'domcontentloaded' });
-    const pg = await ensurePage(p, def);
-    await openEditor(p, pg.id);
-    if (want(def.slug)) console.log(def.slug, pg.id, 'elements saved:', await replaceContent(p, def.build(m), L.pageSettings));
+    const doc = def.type === 'post' ? await ensurePost(p, def, m[def.imageKey].id) : await ensurePage(p, def);
+    await openEditor(p, doc.id);
+    if (args.length === 0 || selected(def)) console.log(def.slug, doc.id, 'elements saved:', await replaceContent(p, def.build(m), L.pageSettings));
     if (want('seo') && def.seo) console.log(def.slug, 'yoast:', await setYoast(p, def.seo));
-    out[def.slug] = pg;
+    out[def.slug] = doc;
+  }
+
+  if (want('menu')) {
+    await p.goto(`${SITE}/wp-admin/`, { waitUntil: 'domcontentloaded' });
+    const ids = [];
+    for (const [label, slug] of MENU) ids.push([label, (await ensurePage(p, PAGES.find((d) => d.slug === slug))).id]);
+    console.log('menu:', (await rebuildMenu(p, prep.menu.id, ids)).join(' '));
   }
   fs.writeFileSync(process.env.PREP.replace('prep.json', 'deployed.json'), JSON.stringify(out, null, 1));
   await b.close();

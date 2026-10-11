@@ -1,0 +1,45 @@
+// Meet Jennifer: quote, bio, bar admissions, education, specialties card.
+const L = require('../lib.cjs');
+const P = require('../parts.cjs');
+const { jennifer: jen, heroes, quote } = require('../content.json');
+const { C, px, box, gap, container, band, stack, grid, eyebrow, text } = L;
+const JEN_EMAIL = 'jennifer@cabreratorres.com';
+
+module.exports = {
+  slug: 'meet-jennifer', title: 'Meet Jennifer',
+  seo: {
+    title: 'Jennifer Cabrera-Torres, Esq. | Norcross Injury Attorney',
+    description: 'Meet Jennifer Cabrera-Torres, Managing Partner: nearly two decades in personal injury law, millions recovered and cases tried to verdict.',
+    focus: 'Jennifer Cabrera-Torres',
+  },
+  build: (m) => [
+    P.pageHero(m, heroes.jennifer),
+    band(C.cream, [
+      grid([
+        stack([
+          text(quote, {
+            color: C.black, size: [24, 22, 20], weight: 300, lh: 1.35,
+            settings: { _padding: box(0, 0, 0, 22), _border_border: 'solid', _border_width: box(0, 0, 0, 3), _border_color: C.gold, _margin: box(0, 0, 14, 0) },
+          }),
+          ...jen.bio.map((p) => text(p, { size: 17 })),
+          grid([
+            stack([eyebrow(jen.barLbl, C.goldDark, 'left', { tag: 'h2' }), P.plusList(jen.bar, { cols: 1, size: 16, rowGap: 8 })], { gap: 14 }),
+            stack([eyebrow(jen.eduLbl, C.goldDark, 'left', { tag: 'h2' }), P.plusList(jen.edu, { cols: 1, size: 16, rowGap: 8 })], { gap: 14 }),
+          ], { cols: [2, 2, 1], gap: 32, align: 'start', settings: { margin: box(30, 0, 0, 0) } }),
+        ], { gap: 18 }),
+        stack([
+          P.framedPhoto(m.jenDress, { tilt: 2 }),
+          container({ content_width: 'full', flex_direction: 'column', flex_gap: gap(14), padding: box(32, 28, 32, 28), background_background: 'classic', background_color: C.black }, [
+            eyebrow(jen.specLbl, C.goldLight, 'left', { tag: 'h2' }),
+            P.plusList(jen.spec, { cols: 1, size: 15, rowGap: 8, color: C.paper }),
+            text(`<p><a href="${L.TEL}" style="color:${C.goldLight};font-weight:500">${L.PHONE}</a><br><a href="mailto:${JEN_EMAIL}">${JEN_EMAIL}</a></p>`, {
+              color: C.paper, size: 15, linkColor: C.cream, linkHover: C.goldLight,
+              settings: { _margin: box(10, 0, 0, 0), _padding: box(20, 0, 0, 0), _border_border: 'solid', _border_width: box(1, 0, 0, 0), _border_color: C.goldLine },
+            }),
+          ]),
+        ], { gap: 28 }),
+      ], { cols: ['minmax(0,2fr) minmax(0,1fr)', 1, 1], gap: 60, rowGap: 56, align: 'start' }),
+    ], { pad: [100, 110] }),
+    P.ctaBand(),
+  ],
+};

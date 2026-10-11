@@ -10,7 +10,12 @@ const C = {
   goldLine: 'rgba(201,162,74,0.25)', rule: 'rgba(11,11,11,0.12)',
 };
 const FONT = 'Jost';
-const PHONE = '678.490.0000', TEL = 'tel:+16784900000', EMAIL = 'a_torres978@yahoo.com';
+const PHONE = '678.490.0000', TEL = 'tel:+16784900000', EMAIL = 'info@cabreratorres.com';
+const URL = {
+  home: '/', about: '/about/', jennifer: '/meet-jennifer/', practice: '/practice-areas/', results: '/case-results/',
+  testimonials: '/testimonials/', faq: '/faq/', blog: '/blog/', contact: '/contact/',
+  maps: 'https://maps.google.com/?q=1770+Indian+Trail+Lilburn+Rd+NW+Norcross+GA+30093',
+};
 const ADDRESS = '1770 Indian Trail Lilburn Rd NW<br>Norcross, GA 30093';
 
 const id = () => crypto.randomBytes(4).toString('hex').slice(0, 7);
@@ -231,7 +236,7 @@ function header(m, menuId) {
       menu: menuId, layout: 'horizontal', align_items: 'center', pointer: 'none',
       dropdown: 'tablet', toggle: 'burger', toggle_align: 'right', full_width: 'stretch',
       ...typo('menu_typography', 12, 400, { lh: 1.4, ls: 0.16, transform: 'uppercase' }),
-      color_menu_item: C.cream, color_menu_item_hover: C.goldLight, color_menu_item_active: C.cream,
+      color_menu_item: C.cream, color_menu_item_hover: C.goldLight, color_menu_item_active: C.goldLight,
       padding_horizontal_menu_item: px(14), padding_vertical_menu_item: px(8),
       ...typo('dropdown_typography', 14, 500, { ls: 0.14, transform: 'uppercase' }),
       color_dropdown_item: C.cream, background_color_dropdown_item: C.black,
@@ -244,7 +249,7 @@ function header(m, menuId) {
       _flex_order_tablet: 'end', _flex_order_mobile: 'end',
       custom_css: 'selector .elementor-nav-menu--main .elementor-item { white-space: nowrap; }',
     }),
-    button('Free Case Evaluation', '/#contact', 'gold', {
+    button('Free Case Evaluation', URL.contact, 'gold', {
       pad: box(12, 22, 12, 22), ls: 0.14,
       settings: { _flex_size: 'none', _flex_size_tablet: 'grow', hide_mobile: 'hidden-mobile', align_tablet: 'right' },
     }),
@@ -279,11 +284,11 @@ function footer(m) {
       ], { gap: 14 }),
       stack([
         label('Practice areas'),
-        links([['Motor Vehicle Accidents', '/#practice'], ['Dog Bites', '/#practice'], ['Slip & Fall', '/#practice'], ['Wrongful Death', '/#practice']]),
+        links([['Motor Vehicle Accidents', URL.practice], ['Dog Bites', URL.practice], ['Slip & Fall', URL.practice], ['Wrongful Death', URL.practice]]),
       ], { gap: 14 }),
       stack([
         label('Firm'),
-        links([['About', '/#about'], ['Results', '/#results'], ['Client testimonials', '/#testimonials'], ['FAQ', '/#faq'], ['Resources', '/#blog']]),
+        links([['About', URL.about], ['Jennifer', URL.jennifer], ['Results', URL.results], ['Client testimonials', URL.testimonials], ['FAQ', URL.faq], ['Resources', URL.blog]]),
       ], { gap: 14 }),
     ]),
     container({
@@ -314,7 +319,7 @@ selector [id] { scroll-margin-top: 90px; }
 };
 
 module.exports = {
-  C, FONT, PHONE, TEL, EMAIL, ADDRESS, id, px, box, gap, auto, link, resp, typo, container, widget, fa,
+  C, FONT, PHONE, TEL, EMAIL, ADDRESS, URL, id, px, box, gap, auto, link, resp, typo, container, widget, fa,
   band, patternOverlay, stack, row, grid, eyebrow, heading, accent, H2, H3, text, button, image, iconList, glass,
   header, footer, pageSettings,
 };

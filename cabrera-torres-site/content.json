@@ -1,0 +1,439 @@
+{
+ "heroes": {
+  "about": {
+   "kicker": "About the firm",
+   "title1": "More than a firm.",
+   "title2": "A purpose.",
+   "intro": "Cabrera Torres Law is a bilingual personal injury firm in Norcross, Georgia. We believe justice should be accessible to everyone, no matter their background or circumstances.",
+   "photo": "assets/jen-desk.png"
+  },
+  "jennifer": {
+   "kicker": "Meet your attorney",
+   "title1": "Jennifer Cabrera-Torres, Esq.",
+   "title2": "Managing Partner",
+   "intro": "Nearly two decades in personal injury law, millions recovered, and multiple cases tried to verdict. Fluent in Spanish.",
+   "photo": "assets/jen-desk.png"
+  },
+  "practice": {
+   "kicker": "Practice areas",
+   "title1": "Personal injury,",
+   "title2": "focused and thorough",
+   "intro": "When someone else’s carelessness causes an injury, Georgia law lets you demand financial accountability. Here is what we handle and how a claim works.",
+   "photo": "assets/jen-desk.png"
+  },
+  "results": {
+   "kicker": "Case results",
+   "title1": "Over $15 million",
+   "title2": "recovered for our clients",
+   "intro": "A selection of recent settlements and verdicts in car, truck and serious-injury cases across metro Atlanta.",
+   "photo": "assets/jen-desk.png"
+  },
+  "testimonials": {
+   "kicker": "Client testimonials",
+   "title1": "Our clients",
+   "title2": "said it best",
+   "intro": "Verified Google reviews from people we have represented.",
+   "photo": "assets/jen-profile.png"
+  },
+  "faq": {
+   "kicker": "Frequently asked questions",
+   "title1": "Questions injured people",
+   "title2": "ask us most",
+   "intro": "Plain answers about Georgia personal injury claims. Every case is different, so call us for advice specific to yours.",
+   "photo": "assets/jen-desk.png"
+  },
+  "blog": {
+   "kicker": "Legal resources",
+   "title1": "Know your rights",
+   "title2": "after an accident",
+   "intro": "Short, plain-language guides on crashes, dog bites, falls, and how Georgia injury claims actually work.",
+   "photo": "assets/jen-desk.png"
+  },
+  "contact": {
+   "kicker": "Free case evaluation",
+   "title1": "Injured?",
+   "title2": "Call Jen.",
+   "intro": "Tell us what happened. We respond quickly, keep everything confidential, and you pay nothing unless we recover for you.",
+   "photo": "assets/jen-desk.png"
+  }
+ },
+ "about": {
+  "h1": "Client-centered representation, prepared like it’s going to trial.",
+  "p1": "Based in Gwinnett County, Cabrera Torres Law is dedicated to representing people injured by someone else’s negligence. We handle every case personally from start to finish; we do not refer cases out.",
+  "p2": "We prepare every case as if it will be tried. Most resolve before that, but insurers make fair offers when they know they are up against a team ready to litigate. In the meantime we take on the calls, the paperwork and the negotiations so you can focus on recovering.",
+  "whyKicker": "Why choose us",
+  "why": [
+   {
+    "n": "01",
+    "h": "Trial-tested advocates",
+    "p": "We handle every case from start to finish. If litigation is necessary, we are ready to fight in court."
+   },
+   {
+    "n": "02",
+    "h": "Client-centered",
+    "p": "If you can’t get to our office, we come to you: at home, in the hospital, or wherever you are."
+   },
+   {
+    "n": "03",
+    "h": "Trusted, bilingual guidance",
+    "p": "Our team works in Spanish and English so you fully understand your case, your options and your rights."
+   }
+  ]
+ },
+ "jennifer": {
+  "bio": [
+   "Jennifer Cabrera-Torres brings nearly two decades of personal injury experience to her role as Managing Partner. She spent more than 15 years as a personal injury paralegal before becoming an attorney, and has always believed in the power of advocacy to change lives.",
+   "Born in Atlanta and raised in Gwinnett County by immigrant parents, Jennifer was the first in her family to graduate from college and law school, overcoming the loss of her father days after graduation and becoming a mother during law school. That journey drives her commitment to people who are too often overlooked or underestimated.",
+   "Jennifer handles serious injury cases involving car accidents, tractor-trailers, wrongful death and slip-and-fall incidents. She has recovered millions of dollars for her clients and tried multiple cases to verdict. Her litigation experience, combined with personal dedication to each client, makes her a formidable advocate in and out of the courtroom.",
+   "Fluent in Spanish, she makes sure every client feels heard, understood and supported throughout the process."
+  ],
+  "barLbl": "Bar admissions",
+  "bar": [
+   "Georgia Trial Courts",
+   "Georgia Supreme Court",
+   "Georgia Court of Appeals",
+   "U.S. District Court, Northern District of Georgia"
+  ],
+  "eduLbl": "Education",
+  "edu": [
+   "John Marshall Law School, J.D.",
+   "Kennesaw State University, B.S., Political Science & International Affairs"
+  ],
+  "specLbl": "Attorney specialties",
+  "spec": [
+   "All personal injury",
+   "Car crashes",
+   "Semi-truck accidents",
+   "Pedestrian accidents",
+   "Bicycle accidents",
+   "Motorcycle crash victims",
+   "Drunk driving victims",
+   "Slip & fall, wrongful death"
+  ]
+ },
+ "quote": "“Treat every case like it’s personal, because for me, it is.”",
+ "areasFull": [
+  {
+   "key": "mva",
+   "name": "Motor Vehicle Accidents",
+   "desc": "Crashes are the most common cause of serious injury in Georgia. We investigate fault, deal with the insurers so you don’t have to, and pursue every available policy, including your own underinsured coverage.",
+   "items": [
+    "Car accidents",
+    "Truck & tractor-trailer",
+    "Motorcycle accidents",
+    "Pedestrian & bicycle",
+    "Uber & Lyft rideshare",
+    "Drunk driving victims",
+    "Hit-and-run",
+    "Reckless driving"
+   ]
+  },
+  {
+   "key": "dog",
+   "name": "Dog Bites",
+   "desc": "Georgia holds owners responsible when they knew their dog was dangerous or let it run loose in violation of a local leash ordinance. Bites often mean scarring, infection and lasting trauma, especially for children.",
+   "items": [
+    "Facial injuries & scarring",
+    "Infections & surgery",
+    "Injuries to children",
+    "Homeowner’s insurance claims",
+    "Attacks on another’s property",
+    "Emotional trauma"
+   ]
+  },
+  {
+   "key": "fall",
+   "name": "Slip & Fall",
+   "desc": "Property owners must keep their premises reasonably safe. When a wet floor, broken stair or poor lighting causes a fall, the business’s commercial liability insurance is where the claim goes.",
+   "items": [
+    "Wet floors in stores",
+    "Parking lots & sidewalks",
+    "Stairs & railings",
+    "Negligent security",
+    "Apartment complexes",
+    "Fractures & head injuries"
+   ]
+  },
+  {
+   "key": "cat",
+   "name": "Catastrophic Injury & Wrongful Death",
+   "desc": "When an injury changes a life or ends one, the claim has to account for the whole future: lifetime care, lost income, and the full value of a life.",
+   "items": [
+    "Traumatic brain injury",
+    "Spinal cord injuries",
+    "Severe burns",
+    "Amputations",
+    "Wrongful death",
+    "Lost earning capacity"
+   ]
+  }
+ ],
+ "process": {
+  "kicker": "How a claim works",
+  "title1": "The process,",
+  "title2": "step by step",
+  "steps": [
+   {
+    "n": "01",
+    "h": "We investigate",
+    "p": "We gather photos, video, police reports, medical records and witness statements to establish fault."
+   },
+   {
+    "n": "02",
+    "h": "We present the claim",
+    "p": "We send the insurer a demand with a carefully calculated accounting of all of your damages."
+   },
+   {
+    "n": "03",
+    "h": "We negotiate",
+    "p": "We negotiate with the adjuster. Nearly 95% of injury cases resolve by settlement without a trial."
+   },
+   {
+    "n": "04",
+    "h": "We recover",
+    "p": "If the offer isn’t fair, we file suit and take your case to a jury."
+   }
+  ],
+  "whoH": "Who pays the compensation?",
+  "whoP": "Almost always an insurance company: the at-fault driver’s policy, a business’s commercial liability coverage after a fall, or a dog owner’s homeowner’s policy. We examine every available policy, including your own uninsured and underinsured motorist coverage.",
+  "recH": "What can you recover?",
+  "rec": [
+   "Current medical expenses",
+   "Future medical care",
+   "Lost wages",
+   "Reduced earning capacity",
+   "Out-of-pocket costs",
+   "Pain and suffering",
+   "Scarring and disfigurement",
+   "Diminished quality of life"
+  ]
+ },
+ "results": [
+  {
+   "type": "Truck collision",
+   "amount": "$1.2M",
+   "desc": "A commercial truck struck our client, causing a shoulder injury that required surgery. We recovered $1.2 million from the trucking company for medical costs, pain and suffering, and the long-term impact on his ability to work."
+  },
+  {
+   "type": "Truck accident",
+   "amount": "$550K",
+   "desc": "A tractor-trailer turned unlawfully into our client’s lane at a Gwinnett County intersection. Strategic litigation and mediation produced a $550,000 settlement against the trucking company and its insurer."
+  },
+  {
+   "type": "Rear-end crash",
+   "amount": "$500K",
+   "desc": "A highway rear-end collision left our client with debilitating neck pain and spinal damage requiring cervical disc replacement. We secured $500,000 for his recovery and lost income."
+  },
+  {
+   "type": "Car accident",
+   "amount": "$495K",
+   "desc": "A driver who failed to yield while turning left caused significant back and knee injuries, including an ACL tear. We recovered $495,000 for medical bills, physical limitations and hardship."
+  },
+  {
+   "type": "Multi-car wreck",
+   "amount": "$490K",
+   "desc": "In a multi-vehicle crash, our client sustained herniated discs in his neck and lower back and underwent spine surgery. We recovered $490,000 for treatment and lasting effects."
+  },
+  {
+   "type": "DUI crash",
+   "amount": "$425K",
+   "desc": "A head-on crash caused by a drunk driver resulted in catastrophic spine injuries and a 65% permanent impairment rating. We obtained $425,000 for lost income and quality of life."
+  },
+  {
+   "type": "Car crash",
+   "amount": "$278K",
+   "desc": "Another driver failed to yield while turning across traffic, totaling our client’s vehicle and causing serious spinal injuries. After months of treatment, we secured $277,908."
+  },
+  {
+   "type": "Hit-and-run",
+   "amount": "$245K",
+   "desc": "After being struck by a drunk driver who fled the scene, our client was left with chronic pain and disc herniations. Despite policy limits, we secured $245,000 by pursuing all available coverage."
+  }
+ ],
+ "disclaimer": "Prior results do not guarantee a similar outcome. Each case is different and is judged on its own facts.",
+ "reviews": [
+  {
+   "text": "I cannot stress how incredible they have been from start to finish with my personal injury case. They explained the whole process, kept me informed, and got the result we wanted.",
+   "name": "Tanner R."
+  },
+  {
+   "text": "When I got into a car accident I was confused and unsure what to do. I called them from my car and they guided me every step of the way. I felt heard and looked after.",
+   "name": "Carlos C."
+  },
+  {
+   "text": "I hired Jennifer after an accident. She demonstrated exceptional knowledge, stayed transparent about the possible outcomes, and fought for the best result. 100% satisfied.",
+   "name": "Illene S."
+  },
+  {
+   "text": "They got my case settled and closed really quickly. I am very happy with the results and the care they provided. I felt seen and heard every step of the way.",
+   "name": "Luzdaliz R."
+  },
+  {
+   "text": "My daughter and I were in a car accident. They coordinated my medical visits, made sure I had transportation, and consistently kept me updated on my case.",
+   "name": "Janessa S."
+  },
+  {
+   "text": "They kept us informed every step of the way. There was never a time when we didn’t know what was going on. I can’t recommend this firm enough.",
+   "name": "Stephanie P."
+  },
+  {
+   "text": "Considerate, caring, and accessible. Great attorneys that will fight for you and get you what you deserve.",
+   "name": "Ed C."
+  },
+  {
+   "text": "A warm, professional team that explained every aspect of my situation clearly. I left the office confident and knowing exactly what the next steps were.",
+   "name": "Reynaldo J."
+  },
+  {
+   "text": "If you’re looking for a firm that will get the job done, it starts here. I can’t thank the team enough for all they went through to get us to the end. 10/10.",
+   "name": "Melissa R."
+  }
+ ],
+ "faqs": [
+  {
+   "q": "How much does it cost to hire a personal injury lawyer?",
+   "a": "Nothing up front. We work on a contingency fee, which means we are paid a percentage only if we recover money for you. The initial consultation is free."
+  },
+  {
+   "q": "How long do I have to file a claim in Georgia?",
+   "a": "Generally two years from the date of injury for most personal injury cases. Exceptions can shorten or extend that deadline, so it is important to call early."
+  },
+  {
+   "q": "What can I recover through a personal injury claim?",
+   "a": "Current and future medical expenses, lost wages, reduced earning capacity, out-of-pocket costs, pain and suffering, and in some cases compensation for scarring or diminished quality of life."
+  },
+  {
+   "q": "Who actually pays the compensation?",
+   "a": "Almost always an insurance company: the at-fault driver’s policy, a business’s commercial liability coverage, or a homeowner’s policy. We examine every available policy, including your own."
+  },
+  {
+   "q": "Will my case go to court?",
+   "a": "The large majority of cases resolve by settlement. We prepare every case as if it will be tried because that produces better offers, and when needed, Jennifer has taken cases to verdict."
+  },
+  {
+   "q": "What should I do right after an accident?",
+   "a": "Get medical care, call the police, photograph the scene and the vehicles, collect witness information, and do not give a recorded statement to the other side’s insurer before speaking with a lawyer."
+  },
+  {
+   "q": "Should I talk to the other driver’s insurance adjuster?",
+   "a": "You are not required to. Adjusters are looking for statements that lower the value of your claim. Let us handle those conversations."
+  },
+  {
+   "q": "What if I was partly at fault?",
+   "a": "Georgia follows modified comparative negligence: you can recover as long as you are less than 50% at fault, and your compensation is reduced by your share of the blame."
+  },
+  {
+   "q": "What if the at-fault driver has no insurance?",
+   "a": "Your own uninsured or underinsured motorist (UM/UIM) coverage may pay your damages. We review every available policy to find coverage."
+  },
+  {
+   "q": "Do you speak Spanish?",
+   "a": "Yes. Jennifer and our team work in Spanish and English, so you understand every step of your case."
+  }
+ ],
+ "contact": {
+  "directions": "Get directions",
+  "hoursLbl": "Office hours",
+  "hours": "Monday to Friday, 9:00 a.m. – 6:00 p.m.",
+  "hours2": "Calls answered 24/7 · Home and hospital visits available",
+  "map": "Google Map embed goes here"
+ },
+ "articles": [
+  {
+   "slug": "first-7-days",
+   "src": "assets/post-car.png",
+   "tag": "Car accidents",
+   "read": "4 min read",
+   "title": "What to do in the first 7 days after a crash",
+   "excerpt": "The steps that protect your health and your claim, and the mistakes insurers are counting on you to make.",
+   "body": [
+    "The first week after a crash shapes much of your claim. Adrenaline hides injuries, insurers call fast, and evidence disappears. Here is what we recommend.",
+    "Day 1: get medical care even if you feel fine. Neck, back and head injuries can take days to show up, and an early medical record ties the injury to the crash. Call the police and get the report number.",
+    "Days 1 to 3: save photos of the vehicles, the scene and your injuries. Write down witness contact information. Do not post about the accident on social media; insurers look.",
+    "Days 3 to 7: the other side’s insurer will probably call asking for a recorded statement. You are not required to give one. Talk to a lawyer first. Keep your medical appointments: gaps in treatment are used to argue your injuries are minor."
+   ]
+  },
+  {
+   "slug": "georgia-dog-bite-law",
+   "src": "assets/post-dog.png",
+   "tag": "Dog bites",
+   "read": "3 min read",
+   "title": "Georgia’s dog bite law, explained",
+   "excerpt": "When an owner is liable, how leash ordinances factor in, and what homeowner’s insurance covers.",
+   "body": [
+    "Georgia does not follow a strict-liability rule for dog bites. Under O.C.G.A. §51-2-7, an owner is liable if the dog was dangerous or vicious and the owner carelessly managed it or let it go at liberty.",
+    "The second half is the key. A dog running loose in violation of a local leash ordinance is treated as “vicious” under the statute. In most metro Atlanta counties, including Gwinnett, that means an unleashed dog off its owner’s property already meets the test.",
+    "Compensation usually comes from the owner’s homeowner’s or renter’s insurance, which typically covers dog bites. Damages include treatment, reconstructive surgery, scarring and emotional trauma, especially for children.",
+    "You have two years from the bite to file suit. Photograph the wounds, get the owner’s name, and report the incident to animal control."
+   ]
+  },
+  {
+   "slug": "fell-in-a-store",
+   "src": "assets/post-fall.png",
+   "tag": "Slip & fall",
+   "read": "3 min read",
+   "title": "I fell in a store. Do I have a case?",
+   "excerpt": "What has to be proven in a premises liability claim and why surveillance video matters so much.",
+   "body": [
+    "Falling in a business does not automatically create a case. Georgia requires proof that the owner had “superior knowledge” of the hazard: they knew or should have known about the wet floor, loose tile or poor lighting, and you did not.",
+    "That is why timing matters. If an employee spilled something minutes earlier, the store may not have had a reasonable chance to clean it. If the puddle had been there for hours or was a recurring problem, liability is much clearer.",
+    "Surveillance video is often the best evidence, and it is often overwritten within 30 days or less. A lawyer can send a preservation letter immediately so the business must keep it.",
+    "Report the fall to the manager before you leave, ask for a copy of the incident report, photograph the area and your footwear, and get medical care the same day."
+   ]
+  },
+  {
+   "slug": "what-is-my-case-worth",
+   "src": "assets/area-mva.webp",
+   "tag": "Claims",
+   "read": "4 min read",
+   "title": "What is my injury case worth?",
+   "excerpt": "The factors that actually move a claim’s value, and why no one can give you a number on day one.",
+   "body": [
+    "There is no formula. A claim’s value depends on the severity of the injury, the cost of treatment, time missed from work, the effect on your daily life and, decisively, how much insurance coverage exists.",
+    "Economic damages are the measurable ones: medical bills, future care, lost wages and reduced earning capacity. Non-economic damages cover pain, suffering and diminished quality of life; a Georgia jury decides those based on its “enlightened conscience.”",
+    "Available coverage is often the ceiling. If the at-fault driver carries a $25,000 minimum policy, we look for other sources: your UM/UIM coverage, the driver’s employer, or umbrella policies.",
+    "Be wary of anyone who promises a number before your treatment is finished. The real value is known when the prognosis is known."
+   ]
+  },
+  {
+   "slug": "truck-accidents-different",
+   "src": "assets/area-mva.webp",
+   "tag": "Truck accidents",
+   "read": "3 min read",
+   "title": "Why truck accident cases are different",
+   "excerpt": "Federal regulations, multiple liable parties, and evidence that disappears fast.",
+   "body": [
+    "A crash with a tractor-trailer is not just a bigger car wreck. Trucking companies are governed by federal FMCSA regulations on hours of service, maintenance and driver qualification, and every violation can be evidence of negligence.",
+    "There are also more potential defendants: the driver, the trucking company, the trailer’s owner, whoever loaded the cargo, and the maintenance shop. Each may carry its own policy.",
+    "Key evidence lives on the truck: electronic logging device data, dash cameras and maintenance records. Carriers have rapid-response teams at the scene within hours. An early preservation letter is essential.",
+    "We have recovered $1.2 million and $550,000 in Gwinnett County truck cases. Call early; the first days matter."
+   ]
+  },
+  {
+   "slug": "contingency-fees",
+   "src": "assets/post-fall.png",
+   "tag": "Fees",
+   "read": "2 min read",
+   "title": "How contingency fees work",
+   "excerpt": "What “no fee unless we win” actually means, and what to ask before you sign.",
+   "body": [
+    "A contingency fee means the lawyer is paid a percentage of what is recovered, and nothing if there is no recovery. You pay nothing up front, and the initial consultation is free.",
+    "The typical percentage in Georgia is one-third if the case settles before a lawsuit is filed, and somewhat more if litigation is required, because the work and risk increase.",
+    "Ask about case costs too: medical records, expert witnesses, filing fees. Ask whether they are deducted before or after the percentage, and who bears them if there is no recovery.",
+    "A good fee agreement is clear, in writing, and explained to you in your language. If something is unclear, ask before you sign."
+   ]
+  }
+ ],
+ "articleCta": {
+  "h": "Have questions about your case?",
+  "p": "The consultation is free and confidential. No fee unless we win."
+ },
+ "home": {
+  "a1h": "Nearly two decades in injury law",
+  "a1p": "Jennifer spent more than 15 years as a personal injury paralegal before becoming an attorney and managing partner. She has recovered millions for clients and tried multiple cases to verdict.",
+  "a2h": "Raised in Gwinnett County",
+  "a2p": "Born in Atlanta to immigrant parents and the first in her family to finish college and law school. She fights for people who are too often overlooked or underestimated.",
+  "a3h": "Bilingual, hands-on representation",
+  "a3p": "Fluent in Spanish, Jennifer handles your case herself. If you can’t come to us, we come to you, at home or in the hospital."
+ }
+}
