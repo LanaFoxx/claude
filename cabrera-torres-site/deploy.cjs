@@ -59,7 +59,7 @@ async function ensurePost(p, def, featured) {
     const r = await fetch(`/wp-json/wp/v2/posts${ex.length ? '/' + ex[0].id : ''}`, { method: 'POST', headers: h, body: JSON.stringify(body) });
     const j = await r.json();
     return { id: j.id, link: j.link };
-  }, [def, featured, restNonce.toString()]);
+  }, [{ slug: def.slug, title: def.title, excerpt: def.excerpt, category: def.category }, featured, restNonce.toString()]);
 }
 
 // Rebuild the main menu as page links (so WordPress marks the current page and links follow slug changes).
