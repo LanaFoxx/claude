@@ -12,6 +12,7 @@ if (!invite) { console.error('usage: node markup-check.cjs <invite-url> [seen.js
   const p = await b.newPage({ viewport: { width: 1440, height: 900 } });
   const byId = new Map();
   p.on('response', async (r) => {
+    if (process.env.DEBUG && /markup\.io/.test(r.url()) && /json/.test(r.headers()['content-type'] || '')) console.error('api', r.status(), r.url().slice(0, 160));
     if (!/\/project\/[^/]+\/thread\?/.test(r.url())) return;
     try {
       const mode = new URL(r.url()).searchParams.get('viewMode');
@@ -19,8 +20,10 @@ if (!invite) { console.error('usage: node markup-check.cjs <invite-url> [seen.js
       for (const t of (await r.json()).data?.threads || []) byId.set(t.id, { ...t, _viewMode: mode, _resolved: resolved });
     } catch { /* ignore */ }
   });
-  await p.goto(invite, { waitUntil: 'networkidle', timeout: 120000 });
-  await p.waitForTimeout(12000);
+  // The Markup page keeps polling (and loads the reviewed site in a frame), so it never goes network-idle.
+  await p.goto(invite, { waitUntil: 'domcontentloaded', timeout: 120000 });
+  await p.waitForTimeout(25000);
+  if (process.env.DEBUG) console.error('landed on', p.url(), 'threads seen', byId.size);
   await b.close();
 
   const simplify = (t) => ({
