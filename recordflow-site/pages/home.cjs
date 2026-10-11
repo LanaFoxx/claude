@@ -145,7 +145,7 @@ const quote = (t) => label(t, C.ink, 19, 600, { family: HEAD, lh: 1.4, settings:
   typography_font_style: 'italic', _border_border: 'solid', _border_width: box(0, 0, 0, 3), _border_color: C.blue,
   _padding: box(4, 0, 4, 20), _margin: box(6, 0, 0, 0) } });
 
-const founder = (m) => band(C.cream, [
+const founder = (m) => band(C.white, [
   grid([
     container({ content_width: 'full', flex_direction: 'column', padding: box(0), width: px(460), width_tablet: px(100, '%'), width_mobile: px(100, '%') }, [
       decoMark(m.iconBlue, 220, pos.tr(-70, -80), 0.18),
@@ -167,23 +167,24 @@ const founder = (m) => band(C.cream, [
 ], { gap: 0, anchor: 'about' });
 
 /* 7. LEGACY BAND ------------------------------------------------------- */
-const legacy = (m) => band(C.ink, [
-  decoMark(m.iconWhite, 420, pos.bl(-80, -100), 0.04),
+// Light version: it now sits directly above the navy trial band.
+const legacy = (m) => band(C.white, [
+  decoMark(m.iconBlue, 420, pos.bl(-80, -100), 0.05),
   grid([
-    image(m.phoneProps, { width: px(100, '%'), maxW: 260, shadow: '0 20px 40px rgba(0,0,0,0.5)' }),
+    image(m.phoneProps, { width: px(100, '%'), maxW: 260, shadow: '0 20px 40px rgba(16,24,40,0.25)' }),
     stack([
       image(m.iconBlue, { width: 64 }),
       text('Every gate turn is a decision. RecordFLOW keeps the reading, the photo, and the reason, so the next water manager understands why the system runs the way it does.',
-        { family: HEAD, size: [30, 26, 22], weight: 500, lh: 1.3, color: C.white, align: 'center' }),
-      text('"1 turn will raise water 1 inch." Notes like these used to live on the headgate. Now they live in the record.', { size: 14, color: C.eyebrowLight, align: 'center' }),
+        { family: HEAD, size: [30, 26, 22], weight: 500, lh: 1.3, color: C.ink, align: 'center' }),
+      text('"1 turn will raise water 1 inch." Notes like these used to live on the headgate. Now they live in the record.', { size: 14, color: C.slate, align: 'center' }),
     ], { gap: 22, align: 'center' }),
     image(m.geospatial, { width: px(100, '%'), maxW: 340, radius: 10, settings: {
-      image_box_shadow_box_shadow_type: 'yes', image_box_shadow_box_shadow: { horizontal: 0, vertical: 20, blur: 40, spread: 0, color: 'rgba(0,0,0,0.5)' } } }),
+      image_box_shadow_box_shadow_type: 'yes', image_box_shadow_box_shadow: { horizontal: 0, vertical: 20, blur: 40, spread: 0, color: 'rgba(16,24,40,0.25)' } } }),
   ], { cols: [3, 1, 1], gap: 40 }),
 ], { pad: [88, 88], gap: 0 });
 
 /* 8. WHO USES ---------------------------------------------------------- */
-const whoUses = (m) => band(C.white, [
+const whoUses = (m) => band(C.cream, [
   grid([
     stack([
       eyebrow('Who uses RecordFLOW'),
@@ -354,5 +355,5 @@ const faq = () => band(C.white, [
 
 module.exports = {
   slug: 'home', title: 'Home',
-  build: (m) => [hero(m), logos(m), principles(), problem(m), product(m), founder(m), legacy(m), whoUses(m), roi(m), flowsense(m), trial(m), faq()],
+  build: (m) => [hero(m), logos(m), principles(), problem(m), roi(m), founder(m), product(m), whoUses(m), flowsense(m), legacy(m), trial(m), faq()],
 };

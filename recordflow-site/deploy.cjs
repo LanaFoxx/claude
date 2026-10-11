@@ -21,7 +21,8 @@ const m = {
   geospatial: md('recordflow-geospatial.webp'), flowsenseDevice: md('recordflow-flowsense-device.webp'),
   phoneMap: md('recordflow-phone-map-cut.webp'), phoneReadings: md('recordflow-phone-readings-cut.png'),
   phoneDashboard: md('recordflow-phone-dashboard-cut.png'), phoneProps: md('recordflow-phone-props-cut.webp'),
-  phoneAddAsset: md('recordflow-phone-add-asset-cut.png'), phoneLogin: md('recordflow-phone-login.png'), teamPortrait: md('recordflow-team-portrait.png'),
+  phoneAddAsset: md('recordflow-phone-add-asset-cut.png'), phoneLogin: md('recordflow-phone-login.png'), transparent: md('recordflow-transparent-16x9.png'),
+  desktop: ['create', 'collect', 'dashboards', 'asset-records', 'flowsense-sensors', 'sharing-control'].map((k) => md(`recordflow-desktop-${k}.png`)), teamPortrait: md('recordflow-team-portrait.png'),
   partnerLogos: [1, 2, 3, 4, 5, 6, 7, 8].map((i) => { const x = md(`recordflow-partner-logo-${i}.png`); return { id: x.id, url: x.url }; }),
 };
 

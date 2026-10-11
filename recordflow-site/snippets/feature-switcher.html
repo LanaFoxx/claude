@@ -1,23 +1,36 @@
 <script>
 /* RecordFLOW feature switcher (Product Overview "Inside the app" section).
-   Clicking a box with class "rf-feature" shows the matching phone screen ("rf-screen"), matched by order.
+   Clicking a box with class "rf-feature" shows the matching screen, matched by order:
+   phone screens have class "rf-screen-mobile", desktop screens "rf-screen-desktop".
+   Buttons "rf-mode-mobile" / "rf-mode-desktop" switch between the two sets.
    Lives in Elementor > Custom Code; does nothing on pages without a ".rf-switcher" section. */
 (function () {
   function init() {
     document.querySelectorAll('.rf-switcher').forEach(function (sec) {
       if (sec.classList.contains('rf-ready')) return;
       var boxes = Array.prototype.slice.call(sec.querySelectorAll('.rf-feature'));
-      var shots = Array.prototype.slice.call(sec.querySelectorAll('.rf-screen'));
-      if (!boxes.length || !shots.length) return;
+      var sets = [sec.querySelectorAll('.rf-screen-mobile'), sec.querySelectorAll('.rf-screen-desktop')];
+      if (!boxes.length) return;
+      var current = 0;
       function show(i) {
+        current = i;
         boxes.forEach(function (b, j) { b.classList.toggle('is-active', i === j); b.setAttribute('aria-pressed', i === j ? 'true' : 'false'); });
-        shots.forEach(function (s, j) { s.classList.toggle('is-active', i === j); s.setAttribute('aria-hidden', i === j ? 'false' : 'true'); });
+        sets.forEach(function (list) { Array.prototype.forEach.call(list, function (s, j) { s.classList.toggle('is-active', i === j); }); });
       }
       boxes.forEach(function (b, i) {
         b.setAttribute('role', 'button');
         b.setAttribute('tabindex', '0');
         b.addEventListener('click', function () { show(i); });
         b.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); show(i); } });
+      });
+      sec.querySelectorAll('.rf-mode-btn').forEach(function (btn) {
+        var desktop = btn.classList.contains('rf-mode-desktop');
+        btn.addEventListener('click', function (e) {
+          e.preventDefault();
+          sec.classList.toggle('rf-mode-desktop', desktop);
+          sec.querySelectorAll('.rf-mode-btn').forEach(function (o) { o.classList.toggle('is-active', o === btn); });
+          show(current);
+        });
       });
       sec.classList.add('rf-ready');
       show(0);
