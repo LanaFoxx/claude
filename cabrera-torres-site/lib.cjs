@@ -229,7 +229,7 @@ function header(m, menuId) {
     sticky: 'top', sticky_on: ['desktop', 'tablet', 'mobile'], z_index: 50,
     custom_css: 'selector { backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }',
   }, [
-    image(m.logo, { width: [200, 190, 160], link: '/', align: 'left', settings: { _element_width: 'initial', _element_custom_width: px(200), _element_custom_width_tablet: px(190), _element_custom_width_mobile: px(160), _flex_size: 'none' } }),
+    image(m.logo, { width: [270, 240, 190], link: '/', align: 'left', settings: { _element_width: 'initial', _element_custom_width: px(270), _element_custom_width_tablet: px(240), _element_custom_width_mobile: px(190), _flex_size: 'none' } }),
     widget('nav-menu', {
       menu: menuId, layout: 'horizontal', align_items: 'center', pointer: 'none',
       dropdown: 'tablet', toggle: 'burger', toggle_align: 'right', full_width: 'stretch',

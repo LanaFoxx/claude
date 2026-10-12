@@ -149,8 +149,9 @@ const quote = () => container({
   border_border: 'solid', border_width: box(1, 0, 1, 0), border_color: C.goldLine,
 }, [
   stack([
-    text('“Treat every case like it’s personal, because for me, it is.”', { color: C.cream, size: [30, 26, 22], weight: 300, lh: 1.35 }),
-    eyebrow('Jennifer Cabrera-Torres, Esq.', C.gold, 'left', { size: 12, ls: 0.2 }),
+    // Break after "personal," so the second line is never a lone "is." (collapses on phones).
+    text('<p>“Treat every case like it’s personal,<br class="ct-br"> because for me, it is.”</p>', { color: C.cream, size: [40, 34, 28], weight: 300, lh: 1.3, settings: { custom_css: '@media (max-width: 767px) { selector .ct-br { display: none; } }' } }),
+    eyebrow('Jennifer Cabrera-Torres, Esq.', C.gold, 'left', { size: 15, ls: 0.2 }),
   ], { gap: 14 }),
   button('Free Case Evaluation', URL.contact, 'gold', { pad: box(18, 34, 18, 34), align: 'right', settings: { align_tablet: 'left', align_mobile: 'left' } }),
 ], false);
@@ -230,7 +231,7 @@ const testimonials = (m) => band(C.black, [
   eyebrow('Client testimonials', C.goldLight, 'center', { settings: { _margin: box(0, 0, 18, 0) } }),
   H2('Our clients', 'said it best', true),
   grid(REVIEWS.map(([q, who]) => glass([
-    text('★★★★★', { color: C.goldLight, size: 14, ls: 0.2 }),
+    text('★★★★★', { color: C.goldLight, size: 24, ls: 0.12, lh: 1 }),
     text(`“${q}”`, { color: C.cream, size: 21, weight: 300, lh: 1.4, settings: { _flex_size: 'grow' } }),
     eyebrow(who, C.sand, 'left', { size: 12, ls: 0.2 }),
   ], { gap: 18 })), { cols: [3, 1, 1], gap: 24, settings: { margin: box(64, 0, 0, 0) } }),
