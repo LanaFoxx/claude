@@ -123,6 +123,16 @@ for name, (slug, url, title) in PAGES.items():
 # header/footer
 d = json.load(open(EXT + '/About.json'))
 hdr = clean(d['header'])
+# Drop the California / Federal jurisdiction dropdown next to the logo (site covers California only).
+def drop_block(h, start):
+    i = h.index(start); depth = 0; j = i
+    for m in re.finditer(r'<(/?)div\b', h[i:]):
+        depth += -1 if m.group(1) else 1
+        if depth == 0:
+            j = i + m.end(); j = h.index('>', j) + 1; break
+    return h[:i] + h[j:]
+hdr = drop_block(hdr, '<div class="dd" tabindex="0"')
+assert 'Jurisdiction' not in hdr and 'Coming soon' not in hdr
 hdr = hdr.replace('<div style="background:#fff;border-bottom:1px solid #E3E9EB;position:sticky;top:0;z-index:10">', '<header id="top" class="tcf-header tcf-scope" style="background:#fff;border-bottom:1px solid #E3E9EB;position:sticky;top:0;z-index:50">', 1)
 assert hdr.startswith('<header')
 hdr = hdr[:hdr.rfind('</div>')] + '</header>'
