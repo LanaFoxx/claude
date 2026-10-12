@@ -48,6 +48,49 @@ def seo_tweaks(name, body):
     # Hero search bar: fully rounded to match its Search button.
     body = body.replace('max-width:1200px;background:#fff;border-radius:14px;padding:8px;gap:8px;box-shadow:0 30px 70px',
                         'max-width:1200px;background:#fff;border-radius:999px;padding:8px 8px 8px 18px;gap:8px;box-shadow:0 30px 70px', 1)
+    # Method page: "The same facts, the same way" cards get icons and a preview of how each fact looks on a listing.
+    if name == 'How We Compare Providers':
+        start = '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">'
+        i = body.index(start); depth = 0
+        for m in re.finditer(r'<(/?)div\b', body[i:]):
+            depth += -1 if m.group(1) else 1
+            if depth == 0: j = body.index('>', i + m.end()) + 1; break
+        svg = lambda d: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#7E9330" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + d + '</svg>'
+        pill = lambda t: '<span style="font:600 14px/1 Manrope,sans-serif;padding:6px 11px;border-radius:999px;border:1px solid #D7DFE2;background:#fff;color:#2F4652;white-space:nowrap">' + t + '</span>'
+        cap = lambda t: '<span style="font:700 12px Manrope,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#8A9AA3">' + t + '</span>'
+        facts = [
+            ('CTEC approval', '<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z"></path><path d="m9 12 2 2 4-4"></path>',
+             'Every school is matched to CTEC&#8217;s approved-provider registry before it appears, with the course types (20-hour CE, 60-hour QE) its approval covers.',
+             '<span style="font:700 16px Manrope,sans-serif;color:#0B2E40">CE &#183; QE</span>' + cap('CTEC approved')),
+            ('Course bundle price', '<path d="M3 12V4a1 1 0 0 1 1-1h8l9 9-9 9-9-9z"></path><circle cx="7.5" cy="7.5" r="1.5"></circle>',
+             'The price on the provider&#8217;s own website for the complete course. If a school publishes no flat price, the row says so instead of estimating.',
+             '<span style="font:700 20px Manrope,sans-serif;color:#0B2E40;font-variant-numeric:tabular-nums">$49.95</span>' + cap('Course bundle price')),
+            ('Current offers', '<path d="M19 5 5 19"></path><circle cx="7" cy="7" r="2.5"></circle><circle cx="17" cy="17" r="2.5"></circle>',
+             'Coupon codes and sales are recorded only when found on the provider&#8217;s site or supplied by the provider, with the date checked. Expired offers are removed.',
+             '<span style="font:700 15px ui-monospace,Menlo,monospace;color:#7E9330;background:#F3F5E6;border:1.5px dashed #95AB3B;border-radius:6px;padding:4px 9px">SAVE10</span>' + cap('Coupon code')),
+            ('Course format', '<rect x="3" y="4" width="18" height="12" rx="2"></rect><path d="M8 20h8M12 16v4"></path><path d="m10.5 8 3.5 2-3.5 2z"></path>',
+             'Online, in-person, self-paced and live classes, plus printed books, PDFs and online videos, shown once confirmed by the provider or our review.',
+             pill('Online') + pill('Self-paced') + pill('Online videos')),
+            ('Student support', '<path d="M4 14v-2a8 8 0 0 1 16 0v2"></path><rect x="3" y="14" width="4" height="6" rx="1.5"></rect><rect x="17" y="14" width="4" height="6" rx="1.5"></rect>',
+             'Phone, email and live chat support, shown only when verified, so you know how to get help before you enroll.',
+             pill('Phone support') + pill('Email support') + pill('Live chat')),
+            ('Website link', '<path d="M14 4h6v6"></path><path d="M20 4 11 13"></path><path d="M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"></path>',
+             'A direct link to the provider&#8217;s course page. You enroll with the school, not with us.',
+             '<span style="display:inline-flex;align-items:center;gap:6px;font:700 15px Manrope,sans-serif;background:#95AB3B;color:#fff;border-radius:999px;padding:8px 16px">View course<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></span>'),
+        ]
+        cards = ''.join(
+            '<div class="tcf-fact" style="position:relative;background:#fff;border:1px solid #D7DFE2;border-radius:18px;padding:28px 28px 24px;display:flex;flex-direction:column;gap:14px;overflow:hidden">'
+            '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px"><div style="width:52px;height:52px;border-radius:14px;background:#F3F5E6;display:grid;place-items:center;flex:none">' + svg(icon) + '</div>'
+            '<span style="font:700 13px Manrope,sans-serif;letter-spacing:.12em;color:#B5BECB">0' + str(n + 1) + '</span></div>'
+            '<h3 style="margin:4px 0 0;font:800 22px Manrope,sans-serif;color:#0B2E40">' + title + '</h3>'
+            '<p style="margin:0;font-size:19px;line-height:1.6;color:#2F4652;flex:1">' + text + '</p>'
+            '<div style="margin-top:6px;padding-top:16px;border-top:1px dashed #D7DFE2;display:flex;flex-direction:column;gap:10px">' + cap('On the listing')
+            + '<div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px">' + demo + '</div></div></div>'
+            for n, (title, icon, text, demo) in enumerate(facts))
+        style = ('<style>.tcf-fact{transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}'
+                 '.tcf-fact::before{content:"";position:absolute;left:0;top:0;right:0;height:3px;background:#95AB3B;transform:scaleX(0);transform-origin:left;transition:transform .25s ease}'
+                 '.tcf-fact:hover{transform:translateY(-3px);box-shadow:0 18px 40px rgba(11,46,64,.10);border-color:#C9D58F!important}.tcf-fact:hover::before{transform:scaleX(1)}</style>')
+        body = body[:i] + style + '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px">' + cards + '</div>' + body[j:]
     # Mid-page call to action on the method page: send readers to the school directory.
     if name == 'How We Compare Providers':
         arrow = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg>'
