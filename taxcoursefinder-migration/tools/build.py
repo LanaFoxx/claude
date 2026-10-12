@@ -43,6 +43,9 @@ def seo_tweaks(name, body):
         'CTEC 20 Hour Course': ('20-Hour CE</span> course before you renew.', '20 Hour CTEC Course</span> before you renew.'),
         'CTEC 60 Hour Course': ('60-Hour QE</span> course before you enroll.', '60 Hour CTEC Course</span> before you enroll.'),
     }.get(name)
+    if name == 'TaxCourse Finder Home':
+        # block-level spans inside the H1 need real spaces for text-only readers (crawlers, AI tools)
+        body = body.replace('Compare every<span', 'Compare every <span', 1).replace('</span>before you enroll.', '</span> before you enroll.', 1)
     if h1:
         assert h1[0] in body, name
         body = body.replace(h1[0], h1[1], 1)
@@ -115,5 +118,14 @@ i = hdr.rfind('</div>'); j = hdr.rfind('</div>', 0, i)
 hdr = hdr[:j] + '</nav>' + hdr[j + 6:]
 ftr = clean(d['footer']).replace('<div id="site-footer" style=', '<footer id="site-footer" class="tcf-footer tcf-scope" style=', 1)
 ftr = ftr[:ftr.rfind('</div>')] + '</footer>'
+# Menu links for guides that exist only on WordPress (not in the design files).
+EXTRA_GUIDES = [('/ctec-live-scan-background-check/', 'CTEC Live Scan Background Check', 'Live Scan Background Check'),
+                ('/ctec-experience-in-lieu-15-hour-course/', 'Experience in Lieu (15-Hour)', 'Experience in Lieu')]
+m = re.search(r'<a href="/how-to-renew-ctec-registration/"[^>]*>[^<]*</a>', hdr)
+assert m, 'renew link missing in header'
+hdr = hdr.replace(m.group(0), m.group(0) + ''.join(re.sub(r'href="[^"]*"', 'href="%s"' % u, m.group(0)).replace('>' + re.sub('<[^>]+>', '', m.group(0)) + '<', '>' + t + '<') for u, t, _ in EXTRA_GUIDES), 1)
+m = re.search(r'<a href="/how-to-renew-ctec-registration/"[^>]*>[^<]*</a>', ftr)
+assert m, 'renew link missing in footer'
+ftr = ftr.replace(m.group(0), m.group(0) + ''.join(re.sub(r'href="[^"]*"', 'href="%s"' % u, m.group(0)).replace('>' + re.sub('<[^>]+>', '', m.group(0)) + '<', '>' + t + '<') for u, _, t in EXTRA_GUIDES), 1)
 json.dump({'header': hdr, 'footer': ftr}, open(OUT + '/hf.json', 'w'), indent=1)
 print('ok')

@@ -9,8 +9,9 @@ const media = s => s.replace(/@@MEDIA:([^@]+)@@/g, '/assets/$1');
 for (const f of fs.readdirSync(S + '/build/pages')) {
   if (only && !f.startsWith(only)) continue;
   const pg = JSON.parse(fs.readFileSync(S + '/build/pages/' + f));
+  if (!pg.code) { console.log('skip (hand-built)', pg.slug); continue; }
   const doc = (ssr) => `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${pg.title}</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;500;600;700;800&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=Source+Serif+4:opsz,wght@8..60,200;8..60,300;8..60,400&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/site.css"><style>${hover}</style><script>window.TCF={api:'/api.json'};</script><script src="/tcf-runtime.js"></script></head><body>
 ${media(hf.header)}<main>${media(pg.widget.replace('@@SSR@@', ssr))}</main>${media(hf.footer)}</body></html>`;
   fs.writeFileSync(S + '/pre/__' + pg.slug + '.html', doc(''));

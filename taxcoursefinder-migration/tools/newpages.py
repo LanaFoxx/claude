@@ -9,9 +9,9 @@ def hero(eyebrow, h1a, h1b, lead, img, cta1, cta2):
 <div style="position:absolute;inset:0;background-image:linear-gradient(135deg,rgba(255,255,255,.07) 0%,rgba(255,255,255,0) 55%);"></div>
 <div style="position:relative;max-width:1200px;margin:0 auto;display:flex;flex-direction:column;gap:20px">
 <div style="font:700 22px Manrope,sans-serif;letter-spacing:1.6px;text-transform:uppercase;color:#95AB3B">{e(eyebrow)}</div>
-<h1 style="margin:0;font:300 52px/1.05 Manrope,sans-serif;letter-spacing:-.03em;max-width:900px">{e(h1a)} <span style="display:block;font-weight:800">{e(h1b)}</span></h1>
+<h1 style="margin:0;font:300 52px/1.05 'Source Serif 4',Georgia,serif;max-width:900px">{e(h1a)} <span style="display:block;font-weight:300">{e(h1b)}</span></h1>
 <p style="margin:0;font-size:22px;line-height:1.6;color:rgba(255,255,255,.88);max-width:660px;text-wrap:pretty">{lead}</p>
-<div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:6px"><a data-hv="4" href="{cta1[1]}" style="background:#95AB3B;color:#fff;font:700 22px Manrope,sans-serif;padding:15px 28px;border-radius:8px">{e(cta1[0])}</a><a data-hv="14" href="{cta2[1]}" style="border:1.5px solid rgba(255,255,255,.45);color:#fff;font:700 22px Manrope,sans-serif;padding:13.5px 26px;border-radius:8px">{e(cta2[0])}</a></div>
+<div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:6px"><a data-hv="4" href="{cta1[1]}" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;font:700 19px Manrope,sans-serif;letter-spacing:0;border-radius:999px;white-space:nowrap;text-decoration:none;cursor:pointer;transition:background .15s,border-color .15s,color .15s;line-height:1.2;background:#95AB3B;color:#fff;padding:14px 28px;border:1.5px solid #95AB3B">{e(cta1[0])}<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-left:2px"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></a><a data-hv="17" href="{cta2[1]}" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;font:700 19px Manrope,sans-serif;letter-spacing:0;border-radius:999px;white-space:nowrap;text-decoration:none;cursor:pointer;transition:background .15s,border-color .15s,color .15s;line-height:1.2;background:transparent;color:#fff;padding:14px 28px;border:1.5px solid rgba(255,255,255,.5)">{e(cta2[0])}</a></div>
 </div>
 </div>
 <div style="height:6px;background:linear-gradient(90deg,#95AB3B,#7E9330)"></div>'''
@@ -25,7 +25,7 @@ def steps(anchor, eyebrow, h2a, h2b, intro, items, bg='#fff'):
 <div style="max-width:1200px;margin:0 auto;display:flex;flex-direction:column;gap:30px">
 <div style="max-width:760px;display:flex;flex-direction:column;gap:12px">
 <div style="font:700 19px Manrope,sans-serif;letter-spacing:1.6px;text-transform:uppercase;color:#7E9330">{e(eyebrow)}</div>
-<h2 style="margin:0;font:300 52px/1.12 Manrope,sans-serif;letter-spacing:-.02em">{e(h2a)} <span style="font-weight:800">{e(h2b)}</span></h2>
+<h2 style="margin:0;font:300 52px/1.12 'Source Serif 4',Georgia,serif;">{e(h2a)} <span style="font-weight:300">{e(h2b)}</span></h2>
 <p style="margin:0;font-size:22px;line-height:1.65;color:#2F4652;text-wrap:pretty">{intro}</p>
 </div>
 <div style="display:flex;flex-direction:column">{rows}</div>
@@ -38,7 +38,7 @@ def dark(eyebrow, h2, text, link, total, rows):
 <div style="max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1.1fr;gap:56px;align-items:center">
 <div style="display:flex;flex-direction:column;gap:14px">
 <div style="font:700 19px Manrope,sans-serif;letter-spacing:1.6px;text-transform:uppercase;color:#95AB3B">{e(eyebrow)}</div>
-<h2 style="margin:0;font:300 52px/1.12 Manrope,sans-serif;letter-spacing:-.02em;color:#fff">{e(h2)}</h2>
+<h2 style="margin:0;font:300 52px/1.12 'Source Serif 4',Georgia,serif;color:#fff">{e(h2)}</h2>
 <p style="margin:0;font-size:22px;line-height:1.65;color:rgba(255,255,255,.88);text-wrap:pretty">{text}</p>
 <a href="{link[1]}" style="align-self:flex-start;font:700 22px Manrope,sans-serif;color:#95AB3B;margin-top:2px">{e(link[0])} →</a>
 </div>
@@ -53,7 +53,7 @@ def faq(items, bg='#F4F6F7'):
     cards = ''.join(f'''<div style="background:#fff;border:1px solid #E3E9EB;border-radius:14px;padding:22px 26px"><h3 style="margin:0 0 7px;font:800 22px Manrope,sans-serif">{e(q)}</h3><p style="margin:0;font-size:22px;line-height:1.62;color:#2F4652">{a}</p></div>''' for q, a in items)
     return f'''<div style="padding:80px 56px;background:{bg}">
 <div style="max-width:1200px;margin:0 auto;display:grid;grid-template-columns:300px 1fr;gap:56px;align-items:start">
-<div><div style="font:700 19px Manrope,sans-serif;letter-spacing:1.6px;text-transform:uppercase;color:#7E9330;margin-bottom:10px">Questions</div><h2 style="margin:0;font:300 34px/1.12 Manrope,sans-serif;letter-spacing:-.02em">Common questions</h2></div>
+<div><div style="font:700 19px Manrope,sans-serif;letter-spacing:1.6px;text-transform:uppercase;color:#7E9330;margin-bottom:10px">Questions</div><h2 style="margin:0;font:300 34px/1.12 'Source Serif 4',Georgia,serif;">Common questions</h2></div>
 <div style="display:flex;flex-direction:column;gap:12px">{cards}</div>
 </div>
 </div>'''
@@ -61,8 +61,8 @@ def faq(items, bg='#F4F6F7'):
 def cta(h, p, btn):
     return f'''<div style="position:relative;overflow:hidden;padding:56px 56px;background:#fff;border-top:1px solid #E3E9EB">
 <div style="position:relative;max-width:1200px;margin:0 auto;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:18px;color:#0B2E40">
-<div><h2 style="margin:0;font:800 34px/1.15 Manrope,sans-serif;letter-spacing:-.02em;color:#0B2E40">{e(h)}</h2><p style="margin:8px 0 0;font-size:22px;color:#0B2E40">{p}</p></div>
-<a data-hv="4" href="{btn[1]}" style="flex:none;background:#95AB3B;color:#fff;font:700 22px Manrope,sans-serif;padding:16px 30px;border-radius:8px">{e(btn[0])}</a>
+<div><h2 style="margin:0;font:300 34px/1.15 'Source Serif 4',Georgia,serif;color:#0B2E40">{e(h)}</h2><p style="margin:8px 0 0;font-size:22px;color:#0B2E40">{p}</p></div>
+<a data-hv="4" href="{btn[1]}" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;font:700 19px Manrope,sans-serif;letter-spacing:0;border-radius:999px;white-space:nowrap;text-decoration:none;cursor:pointer;transition:background .15s,border-color .15s,color .15s;line-height:1.2;background:#95AB3B;color:#fff;padding:14px 28px;border:1.5px solid #95AB3B;flex:none">{e(btn[0])}<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-left:2px"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></a>
 </div>
 </div>'''
 
