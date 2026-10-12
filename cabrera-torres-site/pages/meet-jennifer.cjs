@@ -9,7 +9,7 @@ module.exports = {
   slug: 'meet-jennifer', title: 'Meet Jennifer',
   seo: {
     title: 'Jennifer Cabrera-Torres, Esq. | Norcross Injury Attorney',
-    description: 'Meet Jennifer Cabrera-Torres, Managing Partner: nearly two decades in personal injury law, millions recovered and cases tried to verdict.',
+    description: 'Meet Jennifer Cabrera-Torres, Founder and Managing Attorney: nearly two decades in personal injury law and millions recovered for clients.',
     focus: 'Jennifer Cabrera-Torres',
   },
   build: (m) => [

@@ -46,7 +46,7 @@ const hero = (m) => container({
       button('Free Case Evaluation', URL.contact, 'gold'),
       button(`Call ${L.PHONE}`, L.TEL, 'outline'),
     ], { gap: 16, settings: { flex_justify_content_tablet: 'center', flex_justify_content_mobile: 'center' } }),
-    iconList(['No fee unless we win', 'Nearly 20 years of experience', 'Se habla español'], {
+    iconList(['No fee unless we win', 'Nearly 20 years of experience', 'Hablamos Español'], {
       inline: true, color: C.sand, size: 13, weight: 500, ls: 0.13, transform: 'uppercase', space: 18,
       settings: { _margin: box(26, 0, 0, 0), icon_align_tablet: 'center', icon_align_mobile: 'center' },
     }),

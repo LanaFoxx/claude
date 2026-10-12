@@ -10,8 +10,8 @@
   "jennifer": {
    "kicker": "Meet your attorney",
    "title1": "Jennifer Cabrera-Torres, Esq.",
-   "title2": "Managing Partner",
-   "intro": "Nearly two decades in personal injury law, millions recovered, and multiple cases tried to verdict. Fluent in Spanish.",
+   "title2": "Founder and Managing Attorney",
+   "intro": "Nearly two decades in personal injury law and millions recovered for clients. Fluent in Spanish.",
    "photo": "assets/jen-desk.png"
   },
   "practice": {
@@ -82,9 +82,9 @@
  },
  "jennifer": {
   "bio": [
-   "Jennifer Cabrera-Torres brings nearly two decades of personal injury experience to her role as Managing Partner. She spent more than 15 years as a personal injury paralegal before becoming an attorney, and has always believed in the power of advocacy to change lives.",
+   "Jennifer Cabrera-Torres brings nearly two decades of personal injury experience to her role as Managing Attorney. She spent more than 15 years as a personal injury paralegal before becoming an attorney, and has always believed in the power of advocacy to change lives.",
    "Born in Atlanta and raised in Gwinnett County by immigrant parents, Jennifer was the first in her family to graduate from college and law school, overcoming the loss of her father days after graduation and becoming a mother during law school. That journey drives her commitment to people who are too often overlooked or underestimated.",
-   "Jennifer handles serious injury cases involving car accidents, tractor-trailers, wrongful death and slip-and-fall incidents. She has recovered millions of dollars for her clients and tried multiple cases to verdict. Her litigation experience, combined with personal dedication to each client, makes her a formidable advocate in and out of the courtroom.",
+   "Jennifer handles serious injury cases involving car accidents, tractor-trailers, wrongful death and slip-and-fall incidents. She has recovered millions of dollars for her clients. Her litigation experience, combined with personal dedication to each client, makes her a formidable advocate in and out of the courtroom.",
    "Fluent in Spanish, she makes sure every client feels heard, understood and supported throughout the process."
   ],
   "barLbl": "Bar admissions",
@@ -96,7 +96,7 @@
   ],
   "eduLbl": "Education",
   "edu": [
-   "John Marshall Law School, J.D.",
+   "Atlanta’s John Marshall Law School, J.D.",
    "Kennesaw State University, B.S., Political Science & International Affairs"
   ],
   "specLbl": "Attorney specialties",
@@ -308,7 +308,7 @@
   },
   {
    "q": "Will my case go to court?",
-   "a": "The large majority of cases resolve by settlement. We prepare every case as if it will be tried because that produces better offers, and when needed, Jennifer has taken cases to verdict."
+   "a": "The large majority of cases resolve by settlement. We prepare every case as if it will be tried because that produces better offers, and we are ready to go to court when it is needed."
   },
   {
    "q": "What should I do right after an accident?",
@@ -430,7 +430,7 @@
  },
  "home": {
   "a1h": "Nearly two decades in injury law",
-  "a1p": "Jennifer spent more than 15 years as a personal injury paralegal before becoming an attorney and managing partner. She has recovered millions for clients and tried multiple cases to verdict.",
+  "a1p": "Jennifer spent more than 15 years as a personal injury paralegal before becoming an attorney and founding the firm. She has recovered millions for her clients.",
   "a2h": "Raised in Gwinnett County",
   "a2p": "Born in Atlanta to immigrant parents and the first in her family to finish college and law school. She fights for people who are too often overlooked or underestimated.",
   "a3h": "Bilingual, hands-on representation",

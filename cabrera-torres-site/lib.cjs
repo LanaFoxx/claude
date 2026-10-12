@@ -213,7 +213,7 @@ function header(m, menuId) {
     background_background: 'classic', background_color: C.pure,
     border_border: 'solid', border_width: box(0, 0, 1, 0), border_color: C.goldLine,
   }, [
-    topText('Se habla español · Free consultation · No fee unless we win', C.cream, { size: 13, settings: { typography_font_size_mobile: px(11), align_mobile: 'center' } }),
+    topText('Hablamos Español · Free consultation · No fee unless we win', C.cream, { size: 13, settings: { typography_font_size_mobile: px(11), align_mobile: 'center' } }),
     row([
       topText('Norcross, GA', C.sand, { settings: { hide_mobile: 'hidden-mobile' } }),
       topText(`<a href="${TEL}">${PHONE}</a>`, C.goldLight, { ls: 0.18, linkColor: C.goldLight, linkHover: C.cream, settings: { typography_font_size_mobile: px(12) } }),
