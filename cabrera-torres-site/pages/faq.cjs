@@ -7,7 +7,7 @@ const { C, band } = L;
 module.exports = {
   slug: 'faq', title: 'FAQ',
   seo: {
-    title: 'Georgia Personal Injury FAQ | Cabrera Torres Law',
+    title: 'Georgia Personal Injury FAQ | Cabrera-Torres Law Firm',
     description: 'Plain answers about Georgia injury claims: what a lawyer costs, filing deadlines, what you can recover, who pays and uninsured drivers.',
     focus: 'Georgia personal injury FAQ',
   },

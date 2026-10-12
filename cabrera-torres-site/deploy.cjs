@@ -1,4 +1,4 @@
-// Deploys the Cabrera Torres Law site to WordPress through the Elementor editor (so Elementor validates
+// Deploys the Cabrera-Torres Law Firm site to WordPress through the Elementor editor (so Elementor validates
 // the data and regenerates CSS). Usage:
 //   WP_URL=... STATE=playwright-state.json PREP=prep.json node deploy.cjs [chrome] [menu] [<page-or-post-slug> ...] [pages] [posts] [seo] [unassign:<id>,<id>]
 // "chrome" = header + footer templates, "menu" = rebuild the main menu from the pages, "seo" = Yoast fields for the
@@ -16,11 +16,11 @@ const md = (f) => {
   return { id: x.id, url: x.source_url, alt: '', source: 'library' };
 };
 const m = {
-  logo: md('cabrera-torres-law-logo.webp'), emblem: md('cabrera-torres-law-emblem.webp'), pattern: md('cabrera-torres-law-art-deco-pattern-seamless.png'),
+  logo: md('cabrera-torres-law-firm-logo.webp'), emblem: md('cabrera-torres-law-firm-mark.webp'), pattern: md('cabrera-torres-law-art-deco-pattern-seamless.png'),
   jennifer: md('jennifer-cabrera-torres-personal-injury-attorney-norcross-ga.webp'),
   area_mva: md('car-accident-lawyer-norcross-ga.webp'), area_dog: md('dog-bite-lawyer-georgia.webp'), area_fall: md('slip-and-fall-lawyer-georgia.webp'),
   post_car: md('what-to-do-after-a-car-crash-georgia.webp'), post_dog: md('georgia-dog-bite-law-explained.webp'), post_fall: md('store-slip-and-fall-premises-liability.webp'),
-  jenDesk: md('jennifer-cabrera-torres-attorney-office-portrait.webp'), jenArms: md('jennifer-cabrera-torres-norcross-injury-lawyer-cutout.webp'),
+  jenDesk: md('jennifer-cabrera-torres-attorney-office-portrait.webp'), jenArms: md('jennifer-cabrera-torres-attorney-black-dress.webp'),
   jenSuit: md('jennifer-cabrera-torres-cabrera-torres-law-founder.webp'), jenDress: md('jennifer-cabrera-torres-managing-partner.webp'),
 };
 

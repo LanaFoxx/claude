@@ -1,13 +1,13 @@
-// Shared building blocks for the Cabrera Torres Law Elementor build.
+// Shared building blocks for the Cabrera-Torres Law Firm Elementor build.
 // Everything here produces native Elementor containers + widgets (no HTML widgets),
 // so every text, link, image and color stays editable in the Elementor panel.
 const crypto = require('crypto');
 
 const C = {
-  black: '#0B0B0B', pure: '#000000', panel: '#161411', cream: '#F6F1E8', white: '#FFFFFF',
-  gold: '#C9A24A', goldLight: '#E2C27A', goldDark: '#8A6E2E', goldDeep: '#B8873A',
-  sand: '#D9CFBC', paper: '#E8E1D3', body: '#3A352E', ink2: '#2A2520', slate: '#4A443C', fine: '#6B645A', foot: '#B5AC9C',
-  goldLine: 'rgba(201,162,74,0.25)', rule: 'rgba(11,11,11,0.12)',
+  black: '#1E2123', pure: '#191C1E', panel: '#2D3133', cream: '#F8F5F0', white: '#FFFFFF',
+  gold: '#A3854C', goldLight: '#C9AE78', goldDark: '#7A6232', goldDeep: '#8F7440',
+  sand: '#C8B89A', paper: '#E6DFD2', body: '#3A352E', ink2: '#2A2520', slate: '#4A443C', fine: '#6B645A', foot: '#B5AC9C',
+  goldLine: 'rgba(163,133,76,0.25)', rule: 'rgba(30,33,35,0.12)',
 };
 const FONT = 'Jost';
 const PHONE = '678.490.0000', TEL = 'tel:+16784900000', EMAIL = 'info@cabreratorres.com';
@@ -138,8 +138,7 @@ function text(html, o = {}) {
   });
 }
 
-// Buttons. variant: 'gold' (gradient fill) | 'outline' (gold hairline) | 'underline' (text link with gold rule)
-const GOLD_GRADIENT = 'linear-gradient(135deg,#B8873A,#E2C27A 55%,#B8873A)';
+// Buttons. variant: 'gold' (flat gold fill) | 'outline' (gold hairline) | 'underline' (text link with gold rule)
 function button(label, url, variant = 'gold', o = {}) {
   const base = {
     text: label, link: link(url), align: o.align || '', ...(o.alignM ? { align_mobile: o.alignM } : {}),
@@ -148,15 +147,14 @@ function button(label, url, variant = 'gold', o = {}) {
   };
   if (variant === 'gold') Object.assign(base, {
     button_text_color: C.black, hover_color: C.black,
-    background_background: 'gradient', background_color: C.goldDeep, background_color_b: C.goldLight, background_gradient_angle: { unit: 'deg', size: 135, sizes: [] },
-    button_background_hover_background: 'gradient', button_background_hover_color: C.goldDeep, button_background_hover_color_b: C.goldLight,
-    custom_css: `selector .elementor-button { background: ${GOLD_GRADIENT}; transition: filter .2s; }\nselector .elementor-button:hover { filter: brightness(1.08); }`,
+    background_background: 'classic', background_color: C.gold,
+    button_background_hover_background: 'classic', button_background_hover_color: C.goldDeep,
   });
   if (variant === 'outline') Object.assign(base, {
     button_text_color: C.cream, hover_color: C.goldLight,
     background_background: 'classic', background_color: 'rgba(0,0,0,0)',
     button_background_hover_background: 'classic', button_background_hover_color: 'rgba(0,0,0,0)',
-    border_border: 'solid', border_width: box(1), border_color: 'rgba(201,162,74,0.6)', button_hover_border_color: C.goldLight,
+    border_border: 'solid', border_width: box(1), border_color: 'rgba(163,133,76,0.6)', button_hover_border_color: C.goldLight,
     text_padding: o.pad || box(15, 28, 15, 28),
   });
   if (variant === 'underline') Object.assign(base, {
@@ -200,8 +198,8 @@ const glassCSS = `selector { backdrop-filter: blur(14px); -webkit-backdrop-filte
 selector:hover { border-color: ${C.gold}; }`;
 const glass = (children, o = {}) => container({
   content_width: 'full', flex_direction: 'column', flex_gap: gap(o.gap ?? 0), padding: o.pad || box(36, 32, 36, 32), padding_mobile: box(30, 24, 30, 24),
-  background_background: 'classic', background_color: 'rgba(22,20,17,0.72)',
-  border_border: 'solid', border_width: box(1), border_color: 'rgba(201,162,74,0.15)',
+  background_background: 'classic', background_color: 'rgba(45,49,51,0.72)',
+  border_border: 'solid', border_width: box(1), border_color: 'rgba(163,133,76,0.15)',
   custom_css: glassCSS, ...(o.settings || {}),
 }, children);
 
@@ -226,12 +224,12 @@ function header(m, menuId) {
     content_width: 'boxed', boxed_width: px(1216), flex_direction: 'row', flex_wrap: 'nowrap',
     flex_justify_content: 'space-between', flex_align_items: 'center', flex_gap: gap(24), flex_gap_mobile: gap(12),
     padding: box(14, 32, 14, 32), padding_mobile: box(12, 16, 12, 16),
-    background_background: 'classic', background_color: 'rgba(11,11,11,0.92)',
+    background_background: 'classic', background_color: 'rgba(30,33,35,0.92)',
     border_border: 'solid', border_width: box(0, 0, 1, 0), border_color: 'rgba(255,255,255,0.06)',
     sticky: 'top', sticky_on: ['desktop', 'tablet', 'mobile'], z_index: 50,
     custom_css: 'selector { backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }',
   }, [
-    image(m.logo, { width: [250, 220, 180], link: '/', align: 'left', settings: { _element_width: 'initial', _element_custom_width: px(250), _element_custom_width_tablet: px(220), _element_custom_width_mobile: px(180), _flex_size: 'none' } }),
+    image(m.logo, { width: [200, 190, 160], link: '/', align: 'left', settings: { _element_width: 'initial', _element_custom_width: px(200), _element_custom_width_tablet: px(190), _element_custom_width_mobile: px(160), _flex_size: 'none' } }),
     widget('nav-menu', {
       menu: menuId, layout: 'horizontal', align_items: 'center', pointer: 'none',
       dropdown: 'tablet', toggle: 'burger', toggle_align: 'right', full_width: 'stretch',
@@ -297,7 +295,7 @@ function footer(m) {
       padding: box(0, 32, 36, 32), padding_mobile: box(0, 20, 28, 20),
       custom_css: 'selector > .e-con-inner { border-top: 1px solid rgba(255,255,255,0.06); padding-top: 22px; }',
     }, [
-      text('© 2026 Cabrera Torres Law. All rights reserved.', { color: C.foot, size: 13, settings: { _element_width: 'auto' } }),
+      text('© 2026 Cabrera-Torres Law Firm. All rights reserved.', { color: C.foot, size: 13, settings: { _element_width: 'auto' } }),
       iconList([['Privacy Policy', '#'], ['Disclaimer', '#']], { inline: true, color: C.foot, hover: C.goldLight, size: 13, space: 22, settings: { _element_width: 'auto' } }),
     ]),
   ], false)];

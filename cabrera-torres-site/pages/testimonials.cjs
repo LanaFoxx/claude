@@ -7,9 +7,9 @@ const { C, band, grid, eyebrow, text, glass } = L;
 module.exports = {
   slug: 'testimonials', title: 'Testimonials',
   seo: {
-    title: 'Client Reviews & Testimonials | Cabrera Torres Law',
-    description: 'Verified Google reviews from clients of Cabrera Torres Law, a bilingual personal injury firm in Norcross, Georgia led by Jennifer Cabrera-Torres.',
-    focus: 'Cabrera Torres Law reviews',
+    title: 'Client Reviews & Testimonials | Cabrera-Torres Law Firm',
+    description: 'Verified Google reviews from clients of Cabrera-Torres Law Firm, a bilingual personal injury firm in Norcross, Georgia led by Jennifer Cabrera-Torres.',
+    focus: 'Cabrera-Torres Law Firm reviews',
   },
   build: (m) => [
     P.pageHero(m, heroes.testimonials, { photo: m.jenDress }),

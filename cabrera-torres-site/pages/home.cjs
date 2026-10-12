@@ -13,7 +13,7 @@ const hero = (m) => container({
   grid_gaps: gap(40, 0), grid_align_items: 'end', min_height: px(640), min_height_tablet: px(0), min_height_mobile: px(0),
   padding: box(0, 32, 0, 32), padding_mobile: box(0, 20, 0, 20),
   background_background: 'classic', background_color: C.black, ...L.patternOverlay(m.pattern), overflow: 'hidden',
-  custom_css: 'selector { background-image: radial-gradient(ellipse at 70% 40%, #1C1A16 0%, #0B0B0B 60%); }',
+  custom_css: 'selector { background-image: radial-gradient(ellipse at 70% 40%, #262A2C 0%, #1E2123 60%); }',
 }, [
   // dimmed emblem watermark behind the portrait
   image(m.emblem, {
@@ -73,7 +73,7 @@ const trustStrip = () => container({
       inline: true, icon: 'fas fa-balance-scale', iconSize: 20, indent: 12, iconColor: C.gold, color: C.ink2, size: 15, weight: 500, ls: 0.08, transform: 'uppercase', space: 0,
       settings: {
         custom_css: `selector .elementor-icon-list-items { display: flex; flex-wrap: nowrap; width: max-content; animation: ct-marquee 28s linear infinite; }
-selector .elementor-icon-list-item { white-space: nowrap; padding: 0 36px !important; margin: 0 !important; border-left: 1px solid rgba(11,11,11,.12); }
+selector .elementor-icon-list-item { white-space: nowrap; padding: 0 36px !important; margin: 0 !important; border-left: 1px solid rgba(30,33,35,.12); }
 selector .elementor-icon-list-item::after { display: none !important; }`,
       },
     }),
@@ -99,7 +99,7 @@ const results = () => band(C.cream, [
 const sideText = (side) => {
   const run = Array.from({ length: 6 }, () => 'Advocate • Protect • Deliver').join('   •   ');
   const up = side === 'left';
-  return heading(`${run}   •   ${run}`, 'div', 48, 'rgba(201,162,74,0.12)', 'left', {
+  return heading(`${run}   •   ${run}`, 'div', 48, 'rgba(163,133,76,0.12)', 'left', {
     lh: 1.67, ls: 0.06, settings: {
       typography_text_transform: 'uppercase', hide_tablet: 'hidden-tablet', hide_mobile: 'hidden-mobile', css_classes: 'ct-anim',
       _position: 'absolute', _element_width: 'initial', _element_custom_width: px(80), _z_index: 0,
@@ -112,7 +112,7 @@ selector .elementor-heading-title { writing-mode: vertical-rl; white-space: nowr
 const numberedRow = (n, h, p, last) => container({
   container_type: 'grid', content_width: 'full', grid_columns_grid: { unit: 'custom', size: '64px 1fr' }, grid_columns_grid_tablet: { unit: 'custom', size: '64px 1fr' }, grid_columns_grid_mobile: { unit: 'custom', size: '48px 1fr' },
   grid_rows_grid: auto, grid_rows_grid_tablet: auto, grid_rows_grid_mobile: auto, grid_gaps: gap(20), grid_align_items: 'start', padding: box(26, 0, 26, 0),
-  border_border: 'solid', border_width: box(1, 0, last ? 1 : 0, 0), border_color: 'rgba(201,162,74,0.3)',
+  border_border: 'solid', border_width: box(1, 0, last ? 1 : 0, 0), border_color: 'rgba(163,133,76,0.3)',
 }, [
   heading(n, 'p', 28, C.gold, 'left', { lh: 1, ls: 0 }),
   stack([H3(h, C.cream, [22, 22, 20]), text(p, { color: C.paper })], { gap: 8 }),
@@ -187,7 +187,7 @@ const areaPanel = (m) => ([name, desc, items, key]) => {
       settings: {
         _background_background: 'classic', _background_color: C.white, _padding: box(14),
         _element_width_tablet: 'initial', _element_custom_width_tablet: px(420), _element_custom_width_mobile: px(100, '%'),
-        custom_css: 'selector { transform: rotate(2deg); box-shadow: 0 30px 60px rgba(11,11,11,.12); margin-left: auto; margin-right: auto; }\nselector img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; display: block; }',
+        custom_css: 'selector { transform: rotate(2deg); box-shadow: 0 30px 60px rgba(30,33,35,.12); margin-left: auto; margin-right: auto; }\nselector img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; display: block; }',
       },
     }),
   ]);
@@ -206,9 +206,9 @@ const practice = (m) => band(C.cream, [
       ...L.typo('title_typography', 12, 500, { lh: 1.2, ls: 0.16, transform: 'uppercase' }),
       title_text_color: C.black, title_text_color_hover: C.black, title_text_color_active: C.goldLight,
       tabs_title_background_color_background: 'classic', tabs_title_background_color_color: 'rgba(0,0,0,0)',
-      tabs_title_background_color_hover_background: 'classic', tabs_title_background_color_hover_color: 'rgba(11,11,11,0.04)',
+      tabs_title_background_color_hover_background: 'classic', tabs_title_background_color_hover_color: 'rgba(30,33,35,0.04)',
       tabs_title_background_color_active_background: 'classic', tabs_title_background_color_active_color: C.black,
-      tabs_title_border_border: 'solid', tabs_title_border_width: box(1), tabs_title_border_color: 'rgba(11,11,11,0.25)',
+      tabs_title_border_border: 'solid', tabs_title_border_width: box(1), tabs_title_border_color: 'rgba(30,33,35,0.25)',
       tabs_title_border_hover_border: 'solid', tabs_title_border_hover_width: box(1), tabs_title_border_hover_color: C.black,
       tabs_title_border_active_border: 'solid', tabs_title_border_active_width: box(1), tabs_title_border_active_color: C.black,
       tabs_title_border_radius: box(999), padding: box(14, 24, 14, 24),
@@ -255,7 +255,7 @@ const blog = (m) => band(C.white, [
   H2('Know your rights', 'after an accident', false, 'left', { sizes: [54, 44, 34] }),
   grid(CONTENT.articles.slice(0, 3).map((a) => P.blogCard(m, a, { gap: 18, hSizes: [26, 24, 22], pColor: C.slate })),
     { cols: [3, 1, 1], gap: 32, rowGap: 48, align: 'start', settings: { margin: box(56, 0, 0, 0) } }),
-], { anchor: 'blog', settings: { border_border: 'solid', border_width: box(1, 0, 0, 0), border_color: 'rgba(11,11,11,0.08)' } });
+], { anchor: 'blog', settings: { border_border: 'solid', border_width: box(1, 0, 0, 0), border_color: 'rgba(30,33,35,0.08)' } });
 
 /* ------------------------------------------------------------- contact */
 const contact = (m) => band(C.black, [
@@ -275,7 +275,7 @@ const contact = (m) => band(C.black, [
 module.exports = {
   slug: 'home', title: 'Home',
   seo: {
-    title: 'Personal Injury Lawyer in Norcross, GA | Cabrera Torres Law',
+    title: 'Personal Injury Lawyer Norcross, GA | Cabrera-Torres Law Firm',
     description: 'Injured in Norcross or Gwinnett County? Attorney Jennifer Cabrera-Torres handles car, truck, dog bite and slip and fall cases. Free consultation.',
     focus: 'personal injury lawyer Norcross GA',
   },

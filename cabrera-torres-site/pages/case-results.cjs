@@ -8,7 +8,7 @@ const TILT = [[-2, 0], [1.5, 14], [-1, 0], [2, 14], [1, 0], [-2, 14], [1.5, 0], 
 module.exports = {
   slug: 'case-results', title: 'Case Results',
   seo: {
-    title: 'Case Results | $15M+ Recovered | Cabrera Torres Law',
+    title: 'Case Results | $15M+ Recovered | Cabrera-Torres Law Firm',
     description: 'Recent settlements and verdicts in car, truck and serious-injury cases across metro Atlanta, including $1.2M, $550K and $500K recoveries.',
     focus: 'personal injury settlements Georgia',
   },

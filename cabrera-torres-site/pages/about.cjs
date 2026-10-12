@@ -7,8 +7,8 @@ const { C, box, band, stack, grid, eyebrow, heading, text } = L;
 module.exports = {
   slug: 'about', title: 'About',
   seo: {
-    title: 'About Cabrera Torres Law | Norcross, GA Personal Injury Firm',
-    description: 'Cabrera Torres Law is a bilingual personal injury firm in Norcross, GA. Client-centered representation, every case prepared for trial.',
+    title: 'About Us | Cabrera-Torres Law Firm, Norcross GA',
+    description: 'Cabrera-Torres Law Firm is a bilingual personal injury firm in Norcross, GA. Client-centered representation, every case prepared for trial.',
     focus: 'Norcross personal injury law firm',
   },
   build: (m) => [

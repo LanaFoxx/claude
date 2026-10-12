@@ -25,11 +25,13 @@ function pageHero(m, ph, o = {}) {
       custom_css: 'selector { top: 0; pointer-events: none; }\nselector .elementor-widget-container, selector img { height: 100%; }\nselector img { width: 100%; object-fit: cover; object-position: center top; -webkit-mask-image: linear-gradient(90deg,transparent,#000 25%); mask-image: linear-gradient(90deg,transparent,#000 25%); }',
     },
   }));
+  // Centered, except where a portrait sits on the right of the header.
+  const al = o.photo ? 'left' : 'center';
   kids.push(stack([
-    eyebrow(ph.kicker, C.goldLight),
-    heading(`${ph.title1}${ph.title2 ? ' ' + L.accent(ph.title2, C.goldLight) : ''}`, 'h1', [64, 50, 38], C.cream, 'left', { lh: 1.12, maxW: 900 }),
-    ...(ph.intro ? [text(ph.intro, { color: C.paper, size: 17, maxW: 640, settings: { _margin: box(4, 0, 0, 0) } })] : []),
-  ], { gap: 18, settings: { z_index: 1 } }));
+    eyebrow(ph.kicker, C.goldLight, al),
+    heading(`${ph.title1}${ph.title2 ? ' ' + L.accent(ph.title2, C.goldLight) : ''}`, 'h1', [64, 50, 38], C.cream, al, { lh: 1.12, maxW: 900 }),
+    ...(ph.intro ? [text(ph.intro, { color: C.paper, size: 17, maxW: 640, align: al, settings: { _margin: box(4, 0, 0, 0) } })] : []),
+  ], { gap: 18, align: o.photo ? undefined : 'center', settings: { z_index: 1 } }));
   return band(C.black, kids, {
     pad: [80, 64], pattern: m.pattern,
     settings: { border_border: 'solid', border_width: box(0, 0, 1, 0), border_color: C.goldLine, ...(o.photo ? { min_height: px(330) } : {}) },
@@ -70,15 +72,15 @@ selector .elementor-icon-list-item { margin: 0 !important; padding: 0 !important
 
 /* ------------------------------------------------------- result notes */
 // The gold "pin" is drawn on the first label with CSS, so each note stays plain editable widgets.
-const pinCSS = (padTop) => `selector::before { content: ""; position: absolute; left: 50%; top: -${padTop + 26}px; width: 22px; height: 22px; transform: translateX(-50%); border: 3px solid #8A6E2E; border-bottom: 0; border-radius: 11px 11px 0 0; box-sizing: border-box; }
-selector::after { content: ""; position: absolute; left: 50%; top: -${padTop + 10}px; width: 52px; height: 24px; transform: translateX(-50%); background: linear-gradient(180deg,#E2C27A,#B8873A 55%,#8A6E2E); clip-path: polygon(0 100%,14% 0,86% 0,100% 100%); filter: drop-shadow(0 3px 6px rgba(11,11,11,.25)); }`;
+const pinCSS = (padTop) => `selector::before { content: ""; position: absolute; left: 50%; top: -${padTop + 26}px; width: 22px; height: 22px; transform: translateX(-50%); border: 3px solid #7A6232; border-bottom: 0; border-radius: 11px 11px 0 0; box-sizing: border-box; }
+selector::after { content: ""; position: absolute; left: 50%; top: -${padTop + 10}px; width: 52px; height: 24px; transform: translateX(-50%); background: #A3854C; clip-path: polygon(0 100%,14% 0,86% 0,100% 100%); filter: drop-shadow(0 3px 6px rgba(30,33,35,.25)); }`;
 function resultNote(r, tilt, drop, o = {}) {
   const pad = o.pad || [44, 34, 40, 34];
   return container({
     content_width: 'full', flex_direction: 'column', flex_gap: gap(0), padding: box(...pad), padding_mobile: box(pad[0], 26, pad[2], 26),
     background_background: 'classic', background_color: C.white, overflow: 'visible',
     margin: box(drop, 0, 0, 0), margin_tablet: box(0), margin_mobile: box(0),
-    custom_css: `selector { transform: rotate(${tilt}deg); box-shadow: 0 1px 0 rgba(11,11,11,.06), 0 24px 40px -18px rgba(11,11,11,.35), 0 10px 18px -10px rgba(11,11,11,.2); }`,
+    custom_css: `selector { transform: rotate(${tilt}deg); box-shadow: 0 1px 0 rgba(30,33,35,.06), 0 24px 40px -18px rgba(30,33,35,.35), 0 10px 18px -10px rgba(30,33,35,.2); }`,
   }, [
     eyebrow(r.type, C.goldDark, 'center', { size: 12, ls: 0.26, settings: { _margin: box(0, 0, o.compact ? 12 : 14, 0), custom_css: pinCSS(pad[0]) } }),
     heading(r.amount, 'h3', o.amountSizes || [58, 54, 50], C.black, 'center', { lh: 1.1, ls: 0 }),
@@ -91,7 +93,7 @@ function resultNote(r, tilt, drop, o = {}) {
 // White card with a big gold number (About "why choose us", Practice "how a claim works").
 const numberCard = (n, h, p, o = {}) => container({
   content_width: 'full', flex_direction: 'column', flex_gap: gap(0), padding: o.pad || box(36, 32, 36, 32), padding_mobile: box(30, 24, 30, 24),
-  background_background: 'classic', background_color: C.white, border_border: 'solid', border_width: box(1), border_color: 'rgba(11,11,11,0.08)',
+  background_background: 'classic', background_color: C.white, border_border: 'solid', border_width: box(1), border_color: 'rgba(30,33,35,0.08)',
 }, [
   heading(n, 'p', 40, C.gold, 'left', { lh: 1, ls: 0, settings: { _margin: box(0, 0, o.nGap ?? 18, 0) } }),
   H3(h, C.black, o.hSizes || [22, 22, 20], { settings: { _margin: box(0, 0, 10, 0) } }),
@@ -101,9 +103,9 @@ const numberCard = (n, h, p, o = {}) => container({
 // Photo in a white mat, slightly rotated (About, Jennifer, Practice pages).
 const framedPhoto = (media, o = {}) => image(media, {
   settings: {
-    _background_background: 'classic', _background_color: C.white, _padding: box(o.mat ?? 14),
+    _background_background: 'classic', _background_color: o.matColor || C.white, _padding: box(o.mat ?? 14),
     ...(o.maxW ? { _element_width: 'initial', _element_custom_width: px(o.maxW), _element_custom_width_mobile: px(100, '%') } : {}),
-    custom_css: `selector { transform: rotate(${o.tilt ?? 2}deg); box-shadow: 0 30px 60px rgba(11,11,11,.12); margin-left: auto; margin-right: auto; }
+    custom_css: `selector { transform: rotate(${o.tilt ?? 2}deg); box-shadow: 0 30px 60px rgba(30,33,35,.12); margin-left: auto; margin-right: auto; }
 selector img { width: 100%; aspect-ratio: ${o.ratio || '4 / 5'}; object-fit: cover; object-position: ${o.pos || 'center top'}; display: block; }`,
   },
 });
@@ -145,8 +147,8 @@ const emailDetail = () => detail('Email', text(`<a href="mailto:${L.EMAIL}">${L.
 function contactForm(rows = 4) {
   return container({
     content_width: 'full', flex_direction: 'column', padding: box(40), padding_mobile: box(24),
-    background_background: 'classic', background_color: 'rgba(22,20,17,0.72)',
-    border_border: 'solid', border_width: box(1), border_color: 'rgba(201,162,74,0.15)',
+    background_background: 'classic', background_color: 'rgba(45,49,51,0.72)',
+    border_border: 'solid', border_width: box(1), border_color: 'rgba(163,133,76,0.15)',
     custom_css: 'selector { backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.08); }',
   }, [
     widget('form', {
@@ -158,16 +160,16 @@ function contactForm(rows = 4) {
         fld('email', 'email', 'Email *', '50', { required: 'true' }),
         fld('accident_date', 'text', 'Date of accident / injury', '100'),
         fld('message', 'textarea', 'Describe your case', '100', { rows }),
-        { ...fld('sms_consent', 'acceptance', 'Text message consent', '100'), acceptance_text: 'By providing my phone number, I agree to receive text messages from Cabrera Torres Law.' },
+        { ...fld('sms_consent', 'acceptance', 'Text message consent', '100'), acceptance_text: 'By providing my phone number, I agree to receive text messages from Cabrera-Torres Law Firm.' },
       ],
       show_labels: '', mark_required: '', input_size: 'md', button_text: 'Submit request', button_size: 'md', button_width: '', button_align: 'start',
-      submit_actions: ['email'], email_subject: 'New free case evaluation request – Cabrera Torres Law',
+      submit_actions: ['email'], email_subject: 'New free case evaluation request – Cabrera-Torres Law Firm',
       success_message: 'Thank you, we’ll be in touch shortly.',
       column_gap: px(16), row_gap: px(16),
-      field_text_color: C.cream, field_background_color: C.black, field_border_color: 'rgba(201,162,74,0.3)', field_border_width: box(1), field_border_radius: box(0),
+      field_text_color: C.cream, field_background_color: C.black, field_border_color: 'rgba(163,133,76,0.3)', field_border_width: box(1), field_border_radius: box(0),
       ...L.typo('field_typography', 14, 300, { lh: 1.5 }),
       label_color: C.sand, ...L.typo('label_typography', 13, 300, { lh: 1.5 }),
-      button_background_color: C.goldDeep, button_text_color: C.black, button_background_hover_color: C.goldLight, button_hover_color: C.black,
+      button_background_color: C.gold, button_text_color: C.black, button_background_hover_color: C.goldDeep, button_hover_color: C.black,
       button_border_radius: box(0), ...L.typo('button_typography', 12, 600, { lh: 1.2, ls: 0.16, transform: 'uppercase' }), button_text_padding: box(16, 34, 16, 34),
       success_message_color: C.goldLight,
       custom_css: `selector .elementor-field-textual { padding: 14px 16px; min-height: 0; }
@@ -175,8 +177,7 @@ selector .elementor-field-textual::placeholder { color: #A69D8D; opacity: 1; }
 selector .elementor-field-textual:focus { border-color: ${C.gold} !important; box-shadow: none; }
 selector .elementor-field-type-acceptance .elementor-field-subgroup label { color: ${C.sand}; font-size: 13px; line-height: 1.5; }
 selector .elementor-field-type-acceptance input { accent-color: ${C.gold}; }
-selector .elementor-button { background: linear-gradient(135deg,#B8873A,#E2C27A 55%,#B8873A) !important; }
-selector .elementor-button:hover { filter: brightness(1.08); }`,
+selector .elementor-button { transition: background-color .2s; }`,
     }),
   ]);
 }
@@ -188,7 +189,7 @@ const articleUrl = (a) => `/${a.slug}/`;
 const blogCard = (m, a, o = {}) => container({
   content_width: 'full', flex_direction: 'column', flex_gap: gap(o.gap ?? 16), padding: box(0),
   html_tag: 'a', link: L.link(articleUrl(a)),
-  custom_css: 'selector:hover h3 { color: #8A6E2E !important; }\nselector h3 { transition: color .2s; }',
+  custom_css: 'selector:hover h3 { color: #7A6232 !important; }\nselector h3 { transition: color .2s; }',
 }, [
   image(m[ART_IMG[a.src]], { settings: { custom_css: 'selector img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; display: block; }' } }),
   eyebrow(o.meta ? `${a.tag} · ${a.read}` : a.tag, C.goldDark, 'left', { size: 12, ls: 0.24 }),

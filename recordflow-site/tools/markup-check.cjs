@@ -19,8 +19,9 @@ if (!invite) { console.error('usage: node markup-check.cjs <invite-url> [seen.js
       for (const t of (await r.json()).data?.threads || []) byId.set(t.id, { ...t, _viewMode: mode, _resolved: resolved });
     } catch { /* ignore */ }
   });
-  await p.goto(invite, { waitUntil: 'networkidle', timeout: 120000 });
-  await p.waitForTimeout(12000);
+  // Markup keeps a live socket open, so the page never goes network-idle; wait a fixed time for the thread lists instead.
+  await p.goto(invite, { waitUntil: 'domcontentloaded', timeout: 120000 });
+  await p.waitForTimeout(20000);
   await b.close();
 
   const simplify = (t) => ({
