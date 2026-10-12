@@ -33,7 +33,10 @@ function pageHero(m, ph, o = {}) {
   kids.push(stack([
     eyebrow(ph.kicker, C.goldLight, al),
     // With a portrait on the right, keep the text column narrow enough to never run under her.
-    heading(`${ph.title1}${ph.title2 ? ' ' + L.accent(ph.title2, C.goldLight) : ''}`, 'h1', [64, 50, 38], C.cream, al, { lh: 1.12, maxW: o.photo ? 600 : 900 }),
+    o.photo
+      // Bold phrase, then the light gold phrase on its own unbroken line (sized to fit beside the portrait).
+      ? heading(`${ph.title1}<br><span style="font-weight:200;color:${C.goldLight};white-space:nowrap">${ph.title2}</span>`, 'h1', [56, 50, 34], C.cream, al, { lh: 1.12 })
+      : heading(`${ph.title1}${ph.title2 ? ' ' + L.accent(ph.title2, C.goldLight) : ''}`, 'h1', [64, 50, 38], C.cream, al, { lh: 1.12, maxW: 900 }),
     ...(ph.intro ? [text(ph.intro, { color: C.paper, size: 17, maxW: o.photo ? 540 : 640, align: al, settings: { _margin: box(4, 0, 0, 0) } })] : []),
   ], { gap: 18, align: o.photo ? undefined : 'center', settings: { z_index: 1 } }));
   return band(C.black, kids, {
