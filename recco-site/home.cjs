@@ -1,6 +1,9 @@
-// Recco Consulting homepage (single page): hero, proof band, services, platforms, AI news,
-// about, approach, contact. Section anchors match the menu: #services #platforms #news #about #contact.
+// Recco Consulting homepage: hero, proof band, value proposition (cards to the inner pages),
+// SEED overview, services, platforms, AI news, about, approach, contact.
+// Section anchors used by the menu/footer: #services #about #contact.
 const L = require('./lib.cjs');
+const { U } = L;
+const B = require('./blocks.cjs');
 const { C, SERIF, SANS, EMAIL, A, id, px, box, gap, auto, link, typo, fa, container, widget, band, stack, row, grid, eyebrow, H2, H3, text, button, image } = L;
 
 const SERVICES = [
@@ -9,9 +12,11 @@ const SERVICES = [
   ['03', 'Value realization', 'For platforms you already own. We find where adoption stalled, what is underused, and the shortest path to the return you were promised.'],
   ['04', 'Program and vendor oversight', 'A seat on your side of the table during implementation. We keep partners accountable to scope, quality and the business case.'],
 ];
-const PLATFORMS = [
-  ['OpenAI', 'icOpenai'], ['Anthropic', 'icAnthropic'], ['Microsoft Azure AI', 'icAzure'], ['Google Cloud', 'icGoogle'],
-  ['Salesforce', 'icSalesforce'], ['ServiceNow', 'icServicenow'], ['Snowflake', 'icSnowflake'], ['AWS', 'icAws'], ['Workday', 'icWorkday'],
+// Split per Eric's Markup note (12 Oct): Enterprise Apps vs AI Platforms. He is sending a fuller list.
+const PLATFORM_GROUPS = [
+  ['Enterprise Apps', [['Salesforce', 'icSalesforce'], ['ServiceNow', 'icServicenow'], ['Dynamics 365', 'icDynamics'], ['Workday', 'icWorkday'], ['Snowflake', 'icSnowflake']]],
+  ['AI Platforms', [['OpenAI', 'icOpenai'], ['Anthropic', 'icAnthropic'], ['Microsoft Copilot', 'icCopilot'], ['Microsoft Copilot Studio', 'icCopilotStudio'],
+    ['Microsoft Azure AI', 'icAzure'], ['Google Cloud', 'icGoogle'], ['AWS', 'icAws'], ['Replit', 'icReplit'], ['Lovable', 'icLovable']]],
 ];
 const NEWS = [
   ['logoAnthropic', 110, 'One sentence on what shipped and why it matters to enterprise buyers.', 'Today'],
@@ -36,17 +41,17 @@ const small = (title, size, color, o = {}) => widget('heading', {
 const hero = (m) => band([
   eyebrow(m, 'Technology advisory', { align: 'center', archW: 120 }),
   widget('heading', {
-    title: 'We help companies make the right technology investments and realize more value from them.', header_size: 'h1',
+    title: 'Empirical Vendor Analysis & Performance Benchmarking for Enterprise Generative AI', header_size: 'h1',
     title_color: C.white, align: 'center',
     ...typo('typography', SERIF, [64, 50, 38], 300, { lh: 1.06, ls: -0.96 }),
     _element_width: 'initial', _element_custom_width: px(980), _element_custom_width_tablet: px(100, '%'),
   }),
-  text('Independent advice on AI and enterprise platforms, from the first decision to measurable results. We have no vendor to sell. Only your outcome.', {
-    align: 'center', color: 'rgba(255,255,255,0.86)', size: 18, lh: 1.6, maxW: 620, settings: { typography_font_size_mobile: px(17) },
+  text('Move beyond marketing claims and generic test tenants. Recco evaluates enterprise generative AI solutions inside live, fully provisioned production environments\u2014measuring real-world prompt performance, true per-task costs, and architectural capabilities across Microsoft Copilot, Claude Enterprise, Google Gemini Enterprise, and ChatGPT Enterprise.', {
+    align: 'center', color: 'rgba(255,255,255,0.86)', size: 18, lh: 1.6, maxW: 780, settings: { typography_font_size_mobile: px(16) },
   }),
   row([
-    button('Start a conversation', A.contact, 'green', { arrow: true }),
-    button('What we do', A.services, 'ghostWhite'),
+    button('Explore the SEED Lab', U.seed, 'green', { arrow: true }),
+    button('Compare AI Platforms', U.platforms, 'ghostWhite', { arrow: true }),
   ], { gap: 14, justify: 'center', settings: { width: auto } }),
 ], {
   pad: [120, 112], gap: 30, image: m.heroTower, imagePos: 'center center', title: 'Hero',
@@ -68,9 +73,29 @@ const proof = () => band([
   grid([
     proofItem('Since 2012', 'Advising enterprise technology leaders'),
     proofItem('Vendor neutral', 'No resale, no referral fees, no quotas'),
-    proofItem('AI first', 'Grounded in Salesforce and ServiceNow depth'),
+    proofItem('AI first', 'Grounded in enterprise application and AI platform depth'),
   ], { cols: [3, 3, 1], gap: [40, 28], gapT: [24, 24], gapM: [28, 28], align: 'stretch' }),
 ], { pad: [40, 40], bg: C.navy, title: 'Proof band', settings: { padding_mobile: box(36, 20, 36, 20) } });
+
+/* ------------------------------------------------- value proposition */
+const valueProp = (m) => band([
+  B.head(m, 'Platform analysis', 'Objective Platform Analysis Grounded in Production Reality',
+    'Enterprise AI procurement and technical roadmaps demand verifiable, reproducible data. Generic \u201cgolden tenants\u201d only show basic baseline operations; they cannot validate how enterprise platforms handle complex, multi-turn prompts, cross-application workflows, or compliance controls under actual organizational conditions.',
+    { maxW: 820 }),
+  B.numberedCards([
+    ['Enterprise Apps', 'Evaluate how line-of-business applications orchestrate AI agents, contextual data, and enterprise systems.', 'Explore Enterprise Apps', U.apps],
+    ['AI Platforms', 'Deep, side-by-side performance, telemetry, and governance evaluations across the leading enterprise foundation models and platforms.', 'Explore AI Platforms', U.platforms],
+    ['SEED Environment', 'Our proprietary Synthetic Enterprise Environment Data testing ground, powered by real-time FinOps telemetry and custom hydration packs.', 'Explore SEED', U.seed],
+  ]),
+], { bg: C.white, gap: 56, anchor: 'platform-analysis', title: 'Value proposition' });
+
+/* --------------------------------------------------------- SEED overview */
+const seedOverview = (m) => B.seedBand(m, {
+  label: 'SEED Lab', title: 'Powered by SEED: Synthetic Enterprise Environment Data',
+  sub: 'The independent proving ground for enterprise AI.',
+  body: 'We pair live enterprise-tier vendor environments with Recco-Tuned data hydration and custom OpenTelemetry instrumentation. SEED delivers repeatable, signal-rich benchmarks to give enterprise leaders empirical clarity across cost, quality, and architecture.',
+  cta: 'Discover How SEED Works', url: U.seed, anchor: 'seed-lab',
+});
 
 /* -------------------------------------------------------------- services */
 const serviceRow = ([n, title, body]) => container({
@@ -125,7 +150,10 @@ const platforms = (m) => band([
       eyebrow(m, 'Platform expertise'),
       H2('Deep on the platforms that run the enterprise.', C.white, { sizes: [40, 34, 28], lh: 1.12 }),
     ], { gap: 14 }),
-    row(PLATFORMS.map((p) => chip(m, p)), { gap: 12, settings: { flex_gap_mobile: gap(10) } }),
+    stack(PLATFORM_GROUPS.map(([label, items]) => stack([
+      L.eyebrowText(label, 'left', 'rgba(255,255,255,0.72)'),
+      row(items.map((p) => chip(m, p)), { gap: 12, settings: { flex_gap_mobile: gap(10) } }),
+    ], { gap: 14 })), { gap: 32 }),
   ], { cols: [2, 1, 1], gap: [72, 40], gapT: [40, 36], gapM: [32, 32], align: 'center' }),
 ], {
   pad: [80, 80], image: m.cityData, anchor: 'platforms', title: 'Platforms',
@@ -317,5 +345,5 @@ const contact = (m) => band([
 
 module.exports = {
   slug: 'home', title: 'Home',
-  build: (m) => [hero(m), proof(), services(m), platforms(m), news(m), about(m), approach(m), contact(m)],
+  build: (m) => [hero(m), proof(), valueProp(m), seedOverview(m), services(m), platforms(m), news(m), about(m), approach(m), contact(m)],
 };

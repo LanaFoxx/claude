@@ -1,13 +1,14 @@
 // Deploys the Recco Consulting site through the Elementor editor (so Elementor validates the
 // data and regenerates CSS). Usage:
-//   WP_URL=... STATE=playwright-state.json PREP=prep.json node deploy.cjs [chrome] [home] [legal] [kit]
-// "chrome" = header + footer templates, "legal" = privacy + terms pages, "kit" = global colors/fonts.
+//   WP_URL=... STATE=playwright-state.json PREP=prep.json node deploy.cjs [chrome] [home] [pages] [legal] [kit]
+// "chrome" = header + footer templates, "pages" = Enterprise Apps / AI Platforms / SEED, "legal" = privacy + terms, "kit" = global colors/fonts.
 // No args = everything.
 const { chromium } = require('playwright');
 const fs = require('fs');
 const L = require('./lib.cjs');
 const home = require('./home.cjs');
 const legal = require('./legal.cjs');
+const pages = require('./pages.cjs');
 
 const SITE = process.env.WP_URL || 'https://staging154.dreamweb.digital';
 const prep = JSON.parse(fs.readFileSync(process.env.PREP, 'utf8'));
@@ -25,7 +26,9 @@ const m = {
   icSnowflake: md('recco-icon-snowflake.png'), icAws: md('recco-icon-aws.png'), icWorkday: md('recco-icon-workday.png'),
   logoOpenai: md('recco-logo-openai.png'), logoAnthropic: md('recco-logo-anthropic.png'), logoSalesforce: md('recco-logo-salesforce.png'),
   logoServicenow: md('recco-logo-servicenow.png'), logoMicrosoft: md('recco-logo-microsoft.png'),
-  erpBadge: md('recco-erp-badge.png'),
+  erpBadge: md('recco-erp-badge.png'), serverBlur: md('recco-server-blur.jpg'),
+  icDynamics: md('recco-icon-dynamics365.png'), icCopilot: md('recco-icon-copilot.png'), icCopilotStudio: md('recco-icon-copilot-studio.png'),
+  icReplit: md('recco-icon-replit.png'), icLovable: md('recco-icon-lovable.png'),
 };
 
 const args = process.argv.slice(2);
@@ -139,8 +142,9 @@ async function updateKit(p) {
     out.home = pg;
   }
 
-  for (const def of [legal.privacy, legal.terms]) {
-    if (!want('legal') && !want(def.slug)) continue;
+  for (const def of [pages.enterpriseApps, pages.aiPlatforms, pages.seed, legal.privacy, legal.terms]) {
+    const group = def.slug.endsWith('-policy') || def.slug.endsWith('-of-use') ? 'legal' : 'pages';
+    if (!want(group) && !want(def.slug)) continue;
     await p.goto(`${SITE}/wp-admin/`, { waitUntil: 'domcontentloaded' });
     const pg = await ensurePage(p, def);
     await openEditor(p, pg.id);

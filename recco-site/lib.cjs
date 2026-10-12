@@ -9,7 +9,9 @@ const C = {
 };
 const SERIF = 'Source Serif 4', SANS = 'Manrope';
 const EMAIL = 'info@reccoconsulting.com';
-const U = { privacy: '/privacy-policy/', terms: '/terms-of-use/' };
+const U = { privacy: '/privacy-policy/', terms: '/terms-of-use/', apps: '/enterprise-apps/', platforms: '/ai-platforms/', seed: '/seed/' };
+// Site navigation, shared by the footer (the header uses the WordPress menu "Recco Main Menu").
+const NAV = [['Home', '/'], ['Services', '/#services'], ['Enterprise Apps', U.apps], ['AI Platforms', U.platforms], ['SEED', U.seed], ['About Us', '/#about'], ['Contact', '/#contact']];
 const A = { services: '/#services', platforms: '/#platforms', news: '/#news', about: '/#about', approach: '/#approach', contact: '/#contact' };
 
 const id = () => crypto.randomBytes(4).toString('hex').slice(0, 7);
@@ -75,7 +77,8 @@ const stack = (children, o = {}) => container({
   content_width: 'full', flex_direction: 'column', padding: box(0), flex_gap: gap(o.gap ?? 18),
   ...(o.align ? { flex_align_items: o.align } : {}),
   ...(o.justify ? { flex_justify_content: o.justify } : {}),
-  ...(o.maxW ? { width: px(o.maxW), width_tablet: px(100, '%'), width_mobile: px(100, '%') } : {}),
+  // A cap, not a fixed width, so the block can shrink in narrow columns (e.g. small laptops).
+  ...(o.maxW ? { width: px(100, '%'), custom_css: `selector { max-width: ${o.maxW}px; }` } : {}),
   ...(o.settings || {}),
 }, children);
 
@@ -210,7 +213,7 @@ function header(m, menuId) {
       dropdown: 'tablet', toggle: 'burger', toggle_align: 'right', full_width: 'stretch',
       ...typo('menu_typography', SANS, 14, 600, { lh: 1.4, ls: 0.28 }),
       color_menu_item: C.navy, color_menu_item_hover: C.green, color_menu_item_active: C.navy,
-      padding_horizontal_menu_item: px(0), padding_vertical_menu_item: px(6), menu_space_between: px(36),
+      padding_horizontal_menu_item: px(0), padding_vertical_menu_item: px(6), menu_space_between: px(32),
       ...typo('dropdown_typography', SANS, 16, 600),
       color_dropdown_item: C.navy, background_color_dropdown_item: C.white,
       color_dropdown_item_hover: C.white, background_color_dropdown_item_hover: C.navy,
@@ -221,6 +224,7 @@ function header(m, menuId) {
       toggle_color: C.navy, toggle_color_hover: C.green, toggle_background_color: 'rgba(0,0,0,0)', toggle_size: px(26),
       _flex_size: 'grow', _flex_size_tablet: 'none', _flex_size_mobile: 'none',
       _flex_order_tablet: 'end', _flex_order_mobile: 'end', _title: 'Main menu',
+      custom_css: '@media (min-width: 1025px) and (max-width: 1240px) { selector { --e-nav-menu-horizontal-menu-item-margin: 20px; } selector .elementor-nav-menu--main .elementor-item { font-size: 13px; } }',
     }),
     button('Contact us', A.contact, 'outlineNavy', {
       size: 14, pad: box(11, 22, 11, 22),
@@ -244,8 +248,8 @@ function footer(m) {
   }, [
     rowBox([
       image(m.logo, { width: 100, link: '/', settings: { _element_width: 'initial', _element_custom_width: px(100), _flex_size: 'none', _title: 'Logo' } }),
-      iconList([['Services', A.services], ['Platforms', A.platforms], ['AI News', A.news], ['About', A.about], ['Contact', A.contact]], {
-        inline: true, space: 28, size: 13.5, weight: 500, color: C.slate,
+      iconList(NAV, {
+        inline: true, space: 26, size: 13.5, weight: 500, color: C.slate,
         settings: { space_between_mobile: px(20), icon_align_mobile: 'center', _element_width: 'auto', _title: 'Footer links' },
       }),
     ], { _title: 'Footer top' }),
@@ -284,7 +288,7 @@ const pageSettings = {
 };
 
 module.exports = {
-  C, SERIF, SANS, EMAIL, A, U, id, px, box, gap, auto, link, resp, typo, fa, container, widget,
+  C, SERIF, SANS, EMAIL, A, U, NAV, id, px, box, gap, auto, link, resp, typo, fa, container, widget,
   band, overlayColor, overlayGradient, stack, row, grid, arch, eyebrowText, eyebrow, heading, H2, H3, text, button, image, iconList,
   header, footer, pageSettings,
 };

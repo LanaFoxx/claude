@@ -9,10 +9,12 @@ const fs = require('fs');
 const path = require('path');
 
 const SITE = process.env.WP_URL || 'https://staging154.dreamweb.digital';
-const MENU = [['Services', '/#services'], ['Platforms', '/#platforms'], ['AI News', '/#news'], ['About', '/#about']];
+// Contact is the outline button at the end of the header, so it is not a menu item.
+const MENU = [['Home', '/'], ['Services', '/#services'], ['Enterprise Apps', '/enterprise-apps/'], ['AI Platforms', '/ai-platforms/'], ['SEED', '/seed/'], ['About Us', '/#about']];
 const ALT = {
   'recco-consulting-logo.png': 'Recco Consulting', 'recco-hero-tower.jpg': 'Glass office tower', 'recco-dome.jpg': 'Glass and steel dome',
   'recco-team.jpg': 'Recco Consulting team', 'recco-city-data.jpg': 'City skyline with data overlay', 'recco-office-bokeh.jpg': 'Office',
+  'recco-server-blur.jpg': 'Server room',
   'recco-erp-badge.png': 'Emissions Reduction Program, Level 1 Action, validated by RyeStrategy',
 };
 
@@ -78,12 +80,16 @@ const ALT = {
 
   // Menu
   let menu = (await api('/wp/v2/menus?_fields=id,name')).find((x) => x.name === 'Recco Main Menu');
-  if (!menu) {
-    menu = await api('/wp/v2/menus', { method: 'POST', data: { name: 'Recco Main Menu' } });
+  if (!menu) menu = await api('/wp/v2/menus', { method: 'POST', data: { name: 'Recco Main Menu' } });
+  // Sync the items to MENU (titles, links and order) when they differ.
+  const items = (await all(`/wp/v2/menu-items?menus=${menu.id}&_fields=id,title,url,menu_order`)).sort((a, b) => a.menu_order - b.menu_order);
+  const same = items.length === MENU.length && items.every((it, i) => it.title.rendered === MENU[i][0] && new URL(it.url, 'https://x').pathname + new URL(it.url, 'https://x').hash === MENU[i][1]);
+  if (!same) {
+    for (const it of items) await api(`/wp/v2/menu-items/${it.id}?force=true`, { method: 'DELETE' });
     for (const [i, [title, url]] of MENU.entries()) {
       await api('/wp/v2/menu-items', { method: 'POST', data: { title, url, menus: menu.id, menu_order: i + 1, status: 'publish', type: 'custom' } });
     }
-    console.log('menu created', menu.id);
+    console.log('menu synced', menu.id, MENU.map((x) => x[0]).join(' | '));
   }
 
   // Site identity
