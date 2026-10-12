@@ -45,6 +45,9 @@ def seo_tweaks(name, body):
     body = body.replace('{{ p.offeringLabel }} · {{ p.domain }}</div>',
         '{{ p.offeringLabel }} · {{ p.domain }}</div><sc-if value="{{ p.hasPills }}"><ul class="tcf-pills" aria-label="Course features" style="list-style:none;margin:10px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px">'
         '<sc-for list="{{ p.pills }}" as="f"><li style="font:600 13px/1 Manrope,sans-serif;padding:5px 10px;border-radius:999px;border:1px solid {{ f.border }};background:{{ f.bg }};color:{{ f.color }};white-space:nowrap">{{ f.label }}</li></sc-for></ul></sc-if>')
+    # Hero search bar: fully rounded to match its Search button.
+    body = body.replace('max-width:1200px;background:#fff;border-radius:14px;padding:8px;gap:8px;box-shadow:0 30px 70px',
+                        'max-width:1200px;background:#fff;border-radius:999px;padding:8px 8px 8px 18px;gap:8px;box-shadow:0 30px 70px', 1)
     # Primary keywords in the course-page H1s.
     h1 = {
         'CTEC 20 Hour Course': ('20-Hour CE</span> course before you renew.', '20 Hour CTEC Course</span> before you renew.'),
