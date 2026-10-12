@@ -41,6 +41,10 @@ def seo_tweaks(name, body):
     # Provider name links to its school page only when one is live; otherwise plain text.
     body = re.sub(r'<a href="\{\{ p\.schoolUrl \}\}" style="([^"]*)"[^>]*>\{\{ p\.name \}\}</a>',
                   r'<sc-if value="{{ p.hasSchool }}"><a href="{{ p.schoolUrl }}" style="\1" data-hv="9">{{ p.name }}</a></sc-if><sc-if value="{{ p.noSchool }}"><div style="\1">{{ p.name }}</div></sc-if>', body)
+    # Feature pills under each provider's name (online, video, book, support…), from the listing's feature switches.
+    body = body.replace('{{ p.offeringLabel }} · {{ p.domain }}</div>',
+        '{{ p.offeringLabel }} · {{ p.domain }}</div><sc-if value="{{ p.hasPills }}"><ul class="tcf-pills" aria-label="Course features" style="list-style:none;margin:10px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px">'
+        '<sc-for list="{{ p.pills }}" as="f"><li style="font:600 13px/1 Manrope,sans-serif;padding:5px 10px;border-radius:999px;border:1px solid {{ f.border }};background:{{ f.bg }};color:{{ f.color }};white-space:nowrap">{{ f.label }}</li></sc-for></ul></sc-if>')
     # Primary keywords in the course-page H1s.
     h1 = {
         'CTEC 20 Hour Course': ('20-Hour CE</span> course before you renew.', '20 Hour CTEC Course</span> before you renew.'),

@@ -144,7 +144,7 @@
     var g = r.google || null;
     var dates = offers.map(function (o) { return o.lastVerified; }).filter(Boolean).sort();
     return { id: slug(r.name) || String(r.id), wpId: r.id, name: r.name, website: r.website || '', offering: r.ctec_offering || '', ce: !!r.offers_20_hour_ce, qe: !!r.offers_60_hour_qe,
-      verified: !!r.verified, logoUrl: r.logo_url || '', cePrice: r.offers_20_hour_ce ? price(r.ce) : null, qePrice: r.offers_60_hour_qe ? price(r.qe) : null,
+      verified: !!r.verified, logoUrl: r.logo_url || '', schoolUrl: r.school_url || '', cePrice: r.offers_20_hour_ce ? price(r.ce) : null, qePrice: r.offers_60_hour_qe ? price(r.qe) : null,
       google: g && g.rating != null ? { rating: Number(g.rating), count: g.review_count != null ? Number(g.review_count) : null, status: 'Verified', mapsUrl: g.maps_url || '' } : { rating: null, count: null, status: '', mapsUrl: '' },
       offers: offers, features: r.features || {}, lastChecked: r.last_checked || dates[dates.length - 1] || '' };
   }
@@ -158,6 +158,17 @@
   function sortablePrice(pr) { return pr && pr.status === 'VERIFIED' && /^package/.test(pr.type) && pr.current != null ? pr.current : null; }
   var FEATURES = [["Delivery / Format", [["online_course_available", "Online Course"], ["in_person_course_available", "In-Person Course"], ["self_paced", "Self-Paced"], ["live_instruction_available", "Live Instruction"]]], ["Course Materials", [["physical_book_available", "Physical Book"], ["digital_book_available", "Digital Book"], ["downloadable_materials", "Downloadable Materials"]]], ["Video / Learning Format", [["video_lessons_available", "Video Lessons"], ["text_based_course_available", "Text-Based Course"], ["audio_content_available", "Audio Content"]]], ["Support", [["phone_support", "Phone Support"], ["email_support", "Email Support"], ["live_chat_support", "Live Chat Support"]]], ["Study Features", [["practice_exams", "Practice Exams"], ["progress_tracking", "Progress Tracking"]]], ["Device / Access", [["mobile_friendly", "Mobile Friendly"], ["desktop_access", "Desktop Access"]]]];
   function hasFeature(p, name) { return !!(p.features && p.features[name]); }
+  // Short labels for the feature pills on each directory row: format/materials first (olive), then support/study/access (grey).
+  var PILLS = [['online_course_available', 'Online', 1], ['in_person_course_available', 'In-person', 1], ['self_paced', 'Self-paced', 1], ['live_instruction_available', 'Live classes', 1],
+    ['video_lessons_available', 'Video', 1], ['text_based_course_available', 'Text-based', 1], ['audio_content_available', 'Audio', 1],
+    ['physical_book_available', 'Printed book', 1], ['digital_book_available', 'eBook', 1], ['downloadable_materials', 'Downloadable', 1],
+    ['practice_exams', 'Practice exams', 0], ['progress_tracking', 'Progress tracking', 0], ['mobile_friendly', 'Mobile friendly', 0], ['desktop_access', 'Desktop', 0],
+    ['phone_support', 'Phone support', 0], ['email_support', 'Email support', 0], ['live_chat_support', 'Live chat', 0]];
+  function pills(p) {
+    return PILLS.filter(function (x) { return hasFeature(p, x[0]); }).map(function (x) {
+      return { key: x[0], label: x[1], bg: x[2] ? '#F3F5E6' : '#fff', border: x[2] ? '#C9D58F' : '#D7DFE2', color: x[2] ? '#5E6F22' : '#2F4652' };
+    });
+  }
   function decorate(list, qe) {
     return list.filter(function (p) { return qe ? p.qe : p.ce; }).map(function (p) {
       var pr = qe ? p.qePrice : p.cePrice;
@@ -166,14 +177,16 @@
       var g = p.google, gOk = g.status === 'Verified' && g.rating != null;
       var live = liveOffers(p, qe), coupon = live.find(function (o) { return o.isCoupon; }), sale = live.find(function (o) { return o.isSale; });
       var domain = ''; try { domain = new URL(p.website).hostname.replace(/^www\./, ''); } catch (e) {}
+      var pl = pills(p);
       return Object.assign({}, p, { domain: domain, initials: p.name.replace(/[^A-Za-z ]/g, '').trim().split(/\s+/).slice(0, 2).map(function (w) { return w[0] || ''; }).join('').toUpperCase() || '#',
         offeringLabel: p.offering === 'QE + CE' ? 'CE · QE' : p.offering,
         priceText: captured ? pr.text : 'Price not published', priceCaptured: captured, priceNote: captured ? (PRICE_TYPE_NOTE[pr.type] || (pr.status === 'REVIEW' ? 'See provider' : '')) : 'Check provider site', priceMuted: !captured, priceComparable: sortable != null, sortable: sortable,
         googleShown: gOk, googleRating: gOk ? g.rating.toFixed(1) : '', googleCount: gOk && g.count != null ? g.count.toLocaleString() + ' Google reviews' : (gOk ? 'Google rating' : ''), googleUrl: g.mapsUrl,
         liveOffers: live, hasOffers: live.length > 0, coupon: coupon ? coupon.code : '', couponLabel: coupon ? (coupon.memberOnly ? 'Member code' : 'Coupon code') : '', hasCoupon: !!coupon, sale: sale, hasSale: !!sale && !coupon, saleText: sale ? sale.saleFmt + ' sale' : '', saleSub: sale && sale.regularFmt ? 'reg. ' + sale.regularFmt : '', noOffer: live.length === 0,
-        both: p.ce && p.qe, features: p.features || {} });
+        both: p.ce && p.qe, features: p.features || {}, pills: pl, hasPills: pl.length > 0 });
     });
   }
+  TCF.mapProvider = mapProvider; TCF.decorate = decorate;
   var dataPromise = null;
   TCF.data = function () {
     if (!dataPromise) dataPromise = fetch((TCF.api || '/wp-json/tcf/v1/providers'), { credentials: 'same-origin' })
