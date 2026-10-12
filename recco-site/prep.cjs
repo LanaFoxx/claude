@@ -15,6 +15,7 @@ const ALT = {
   'recco-consulting-logo.png': 'Recco Consulting', 'recco-hero-tower.jpg': 'Glass office tower', 'recco-dome.jpg': 'Glass and steel dome',
   'recco-team.jpg': 'Recco Consulting team', 'recco-city-data.jpg': 'City skyline with data overlay', 'recco-office-bokeh.jpg': 'Office',
   'recco-server-blur.jpg': 'Server room',
+  'recco-erp-banner.png': 'Emissions Reduction Program 2026, Level 1 Action, validated by RyeStrategy: calculated previous year\'s Scope 1 and 2 emissions; formed an internal sustainability committee',
   'recco-erp-badge.png': 'Emissions Reduction Program, Level 1 Action, validated by RyeStrategy',
 };
 

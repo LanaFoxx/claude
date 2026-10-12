@@ -250,6 +250,23 @@ const about = (m) => container({
   ]),
 ]);
 
+/* --------------------------------------------------------- sustainability */
+// Facts come from the RyeStrategy Emissions Reduction Program 2026 banner; update yearly.
+const sustainability = (m) => band([
+  grid([
+    stack([
+      eyebrow(m, 'Sustainability'),
+      H2('Sustainability progress', C.navy, { ls: -0.46 }),
+      text('Recco Consulting takes part in RyeStrategy\u2019s Emissions Reduction Program. Our 2026 progress is validated at Level 1 \u00b7 Action.'),
+      B.checkList([
+        'Calculated previous year\u2019s Scope 1 & 2 emissions',
+        'Formed an internal sustainability committee to implement mitigation strategies',
+      ], { color: C.navy }),
+    ], { gap: 18 }),
+    image(m.erpBanner, { width: px(100, '%'), align: 'center', settings: { _title: 'ERP banner' } }),
+  ], { cols: ['minmax(0,0.85fr) minmax(0,1.15fr)', 1, 1], gap: [64, 40], gapT: [40, 40], gapM: [28, 28], align: 'center' }),
+], { bg: C.tint, anchor: 'sustainability', title: 'Sustainability' });
+
 /* -------------------------------------------------------------- approach */
 const step = ([n, title, body]) => container({
   content_width: 'full', flex_direction: 'column', flex_gap: gap(14), padding: box(36, 28, 36, 28), padding_mobile: box(28, 20, 28, 20),
@@ -345,5 +362,5 @@ const contact = (m) => band([
 
 module.exports = {
   slug: 'home', title: 'Home',
-  build: (m) => [hero(m), proof(), valueProp(m), seedOverview(m), services(m), platforms(m), news(m), about(m), approach(m), contact(m)],
+  build: (m) => [hero(m), proof(), valueProp(m), seedOverview(m), services(m), platforms(m), news(m), about(m), sustainability(m), approach(m), contact(m)],
 };

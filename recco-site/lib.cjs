@@ -258,7 +258,7 @@ function footer(m) {
         content_width: 'full', width: auto, width_tablet: auto, width_mobile: auto, flex_direction: 'row', flex_wrap: 'nowrap',
         flex_align_items: 'center', flex_gap: gap(14), padding: box(0), _title: 'ERP badge',
       }, [
-        image(m.erpBadge, { width: 56, settings: { _element_width: 'initial', _element_custom_width: px(56), _flex_size: 'none' } }),
+        image(m.erpBadge, { width: 56, link: '/#sustainability', settings: { _element_width: 'initial', _element_custom_width: px(56), _flex_size: 'none' } }),
         text('Emissions Reduction Program, Level 1 · Action 2026. Validated by RyeStrategy.', {
           color: C.gray, size: 12, lh: 1.5, settings: { _element_width: 'initial', _element_custom_width: px(280), _element_custom_width_mobile: px(220) },
         }),
