@@ -20,7 +20,7 @@ const m = {
   jennifer: md('jennifer-cabrera-torres-personal-injury-attorney-norcross-ga.webp'),
   area_mva: md('car-accident-lawyer-norcross-ga.webp'), area_dog: md('dog-bite-lawyer-georgia.webp'), area_fall: md('slip-and-fall-lawyer-georgia.webp'),
   post_car: md('what-to-do-after-a-car-crash-georgia.webp'), post_dog: md('georgia-dog-bite-law-explained.webp'), post_fall: md('store-slip-and-fall-premises-liability.webp'),
-  jenDesk: md('jennifer-cabrera-torres-attorney-office-portrait.webp'), jenArms: md('jennifer-cabrera-torres-attorney-black-dress.webp'),
+  jenDesk: md('jennifer-cabrera-torres-attorney-office-portrait.webp'), jenDeskCut: md('jennifer-cabrera-torres-attorney-desk-cutout.webp'), jenArms: md('jennifer-cabrera-torres-attorney-black-dress.webp'),
   jenSuit: md('jennifer-cabrera-torres-cabrera-torres-law-founder.webp'), jenDress: md('jennifer-cabrera-torres-managing-partner.webp'),
 };
 
@@ -52,12 +52,18 @@ async function ensurePost(p, def, featured) {
   return p.evaluate(async ([def, featured, nonceFn]) => {
     const h = { 'X-WP-Nonce': eval(`(${nonceFn})`)(), 'Content-Type': 'application/json' };
     const cats = await (await fetch(`/wp-json/wp/v2/categories?search=${encodeURIComponent(def.category)}&_fields=id,name`, { headers: h })).json();
-    let cat = cats.find((c) => c.name.toLowerCase() === def.category.toLowerCase())?.id;
-    if (!cat) cat = (await (await fetch('/wp-json/wp/v2/categories', { method: 'POST', headers: h, body: JSON.stringify({ name: def.category }) })).json()).id;
+    // WordPress returns names HTML-encoded ("Slip &amp; fall"), so decode before comparing.
+    const decode = (t) => { const el = document.createElement('textarea'); el.innerHTML = t; return el.value; };
+    let cat = cats.find((c) => decode(c.name).toLowerCase() === def.category.toLowerCase())?.id;
+    if (!cat) {
+      const made = await (await fetch('/wp-json/wp/v2/categories', { method: 'POST', headers: h, body: JSON.stringify({ name: def.category }) })).json();
+      cat = made.id || made.data?.term_id; // term_exists error still carries the existing id
+    }
     const body = { title: def.title, slug: def.slug, status: 'publish', excerpt: def.excerpt, categories: [cat], featured_media: featured, template: 'elementor_header_footer' };
     const ex = await (await fetch(`/wp-json/wp/v2/posts?slug=${def.slug}&status=publish,draft,private&_fields=id`, { headers: h })).json();
     const r = await fetch(`/wp-json/wp/v2/posts${ex.length ? '/' + ex[0].id : ''}`, { method: 'POST', headers: h, body: JSON.stringify(body) });
     const j = await r.json();
+    if (!j.id) throw new Error(`Saving post ${def.slug} failed: ${JSON.stringify(j).slice(0, 200)}`);
     return { id: j.id, link: j.link };
   }, [{ slug: def.slug, title: def.title, excerpt: def.excerpt, category: def.category }, featured, restNonce.toString()]);
 }

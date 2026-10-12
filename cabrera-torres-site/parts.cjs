@@ -22,7 +22,10 @@ function pageHero(m, ph, o = {}) {
       _position: 'absolute', _element_width: 'initial', _element_custom_width: px(34, '%'), _z_index: 0,
       _offset_orientation_h: 'end', _offset_x_end: px(6, '%'), _offset_orientation_v: 'end', _offset_y_end: px(0),
       hide_tablet: 'hidden-tablet', hide_mobile: 'hidden-mobile',
-      custom_css: 'selector { top: 0; pointer-events: none; }\nselector .elementor-widget-container, selector img { height: 100%; }\nselector img { width: 100%; object-fit: cover; object-position: center top; -webkit-mask-image: linear-gradient(90deg,transparent,#000 25%); mask-image: linear-gradient(90deg,transparent,#000 25%); }',
+      custom_css: o.cutout
+        // Background-removed portrait: whole figure, standing on the bottom edge, pattern visible around her.
+        ? 'selector { top: 24px; pointer-events: none; }\nselector .elementor-widget-container, selector img { height: 100%; }\nselector img { width: 100%; object-fit: contain; object-position: center bottom; }'
+        : 'selector { top: 0; pointer-events: none; }\nselector .elementor-widget-container, selector img { height: 100%; }\nselector img { width: 100%; object-fit: cover; object-position: center top; -webkit-mask-image: linear-gradient(90deg,transparent,#000 25%); mask-image: linear-gradient(90deg,transparent,#000 25%); }',
     },
   }));
   // Centered, except where a portrait sits on the right of the header.

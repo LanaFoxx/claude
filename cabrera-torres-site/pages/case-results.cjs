@@ -13,7 +13,7 @@ module.exports = {
     focus: 'personal injury settlements Georgia',
   },
   build: (m) => [
-    P.pageHero(m, heroes.results, { photo: m.jenDesk }),
+    P.pageHero(m, heroes.results, { photo: m.jenDeskCut, cutout: true }),
     band(C.cream, [
       grid(results.map((r, i) => P.resultNote(r, ...TILT[i], { compact: true, pad: [40, 26, 32, 26], amountSizes: [46, 46, 44] })),
         { cols: [4, 2, 1], gap: 28, rowGap: 64, align: 'start' }),

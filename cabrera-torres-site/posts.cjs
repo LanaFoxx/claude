@@ -9,7 +9,7 @@ const SEO = {
   'georgia-dog-bite-law': ['Georgia Dog Bite Law, Explained | Cabrera-Torres Law Firm', 'When is a dog owner liable in Georgia? How leash ordinances factor in and what homeowner’s insurance covers after a dog bite.', 'Georgia dog bite law'],
   'fell-in-a-store': ['I Fell in a Store. Do I Have a Case? | Georgia Slip and Fall', 'What has to be proven in a Georgia premises liability claim after a fall in a store, and why surveillance video matters so much.', 'slip and fall in a store Georgia'],
   'what-is-my-case-worth': ['What Is My Injury Case Worth? | Cabrera-Torres Law Firm', 'The factors that actually move a personal injury claim’s value in Georgia, and why no one can give you a number on day one.', 'what is my injury case worth'],
-  'truck-accidents-different': ['Why Truck Accident Cases Are Different | Cabrera Torres', 'Federal trucking regulations, multiple liable parties and evidence that disappears fast: why Georgia truck accident cases need quick action.', 'truck accident lawyer Georgia'],
+  'truck-accidents-different': ['Why Truck Accident Cases Are Different | Cabrera-Torres', 'Federal trucking regulations, multiple liable parties and evidence that disappears fast: why Georgia truck accident cases need quick action.', 'truck accident lawyer Georgia'],
   'contingency-fees': ['How Contingency Fees Work | No Fee Unless We Win', 'What “no fee unless we win” actually means for a personal injury case, and what to ask a lawyer before you sign.', 'how contingency fees work'],
 };
 
