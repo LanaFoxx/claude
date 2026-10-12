@@ -2,7 +2,7 @@
 const L = require('../lib.cjs');
 const P = require('../parts.cjs');
 const { jennifer: jen, heroes, quote } = require('../content.json');
-const { C, px, box, gap, container, band, stack, grid, eyebrow, text } = L;
+const { C, px, box, gap, container, band, stack, row, grid, eyebrow, heading, text, button } = L;
 const JEN_EMAIL = 'jennifer@cabreratorres.com';
 
 module.exports = {
@@ -26,6 +26,21 @@ module.exports = {
             stack([eyebrow(jen.barLbl, C.goldDark, 'left', { tag: 'h2' }), P.plusList(jen.bar, { cols: 1, size: 16, rowGap: 8 })], { gap: 14 }),
             stack([eyebrow(jen.eduLbl, C.goldDark, 'left', { tag: 'h2' }), P.plusList(jen.edu, { cols: 1, size: 16, rowGap: 8 })], { gap: 14 }),
           ], { cols: [2, 2, 1], gap: 32, align: 'start', settings: { margin: box(30, 0, 0, 0) } }),
+          // CTA box filling the space under the credentials, beside the specialties card.
+          container({
+            content_width: 'full', flex_direction: 'column', flex_gap: gap(14), padding: box(40, 40, 40, 40), padding_mobile: box(30, 24, 30, 24),
+            margin: box(30, 0, 0, 0), background_background: 'classic', background_color: C.white,
+            border_border: 'solid', border_width: box(0, 0, 0, 3), border_color: C.gold,
+            custom_css: 'selector { box-shadow: 0 24px 50px -24px rgba(30,33,35,.25); }',
+          }, [
+            eyebrow('Free case evaluation', C.goldDark),
+            heading(`Talk to Jennifer ${L.accent('about your case', C.goldDark)}`, 'h2', [34, 30, 26], C.black, 'left', { lh: 1.15 }),
+            text('Jennifer reviews every case herself. Tell her what happened and she will explain your options, in English or Spanish, at no cost and with no obligation. You pay nothing unless we win.', { size: 17, maxW: 620 }),
+            row([
+              button('Free Case Evaluation', L.URL.contact, 'gold'),
+              button(`Call ${L.PHONE}`, L.TEL, 'outline', { settings: { button_text_color: C.black, hover_color: C.goldDark, border_color: C.gold, button_hover_border_color: C.goldDark } }),
+            ], { gap: 14, settings: { margin: box(8, 0, 0, 0) } }),
+          ]),
         ], { gap: 18 }),
         stack([
           P.framedPhoto(m.jenDress, { tilt: 2 }),
