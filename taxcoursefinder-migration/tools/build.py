@@ -65,6 +65,7 @@ def code_for(d):
                    r"schoolUrl: p.schoolUrl ? p.schoolUrl + '?course=' + \1 : '', hasSchool: !!p.schoolUrl, noSchool: !p.schoolUrl,", c)
     assert 'School Page.dc.html' not in c, 'unhandled school link'
     c = c.replace("await import('./providers.js')", 'await TCF.data()')
+    c = c.replace("'Progress Tracking', ", '')  # not offered as a feature anywhere on the site
     c = re.sub(r'subInit\(\)\s*\{', 'subInit() { return;', c)  # newsletter popup has no backend: keep it off
     props = {}
     for k, v in json.loads(d['props']).items():

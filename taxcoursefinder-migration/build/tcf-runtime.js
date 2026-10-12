@@ -156,17 +156,17 @@
         expiresFmt: o.expires ? 'Expires ' + new Date(o.expires + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '' }); });
   }
   function sortablePrice(pr) { return pr && pr.status === 'VERIFIED' && /^package/.test(pr.type) && pr.current != null ? pr.current : null; }
-  var FEATURES = [["Delivery / Format", [["online_course_available", "Online Course"], ["in_person_course_available", "In-Person Course"], ["self_paced", "Self-Paced"], ["live_instruction_available", "Live Instruction"]]], ["Course Materials", [["physical_book_available", "Physical Book"], ["digital_book_available", "Digital Book"], ["downloadable_materials", "Downloadable Materials"]]], ["Video / Learning Format", [["video_lessons_available", "Video Lessons"], ["text_based_course_available", "Text-Based Course"], ["audio_content_available", "Audio Content"]]], ["Support", [["phone_support", "Phone Support"], ["email_support", "Email Support"], ["live_chat_support", "Live Chat Support"]]], ["Study Features", [["practice_exams", "Practice Exams"], ["progress_tracking", "Progress Tracking"]]], ["Device / Access", [["mobile_friendly", "Mobile Friendly"], ["desktop_access", "Desktop Access"]]]];
+  var FEATURES = [["Delivery / Format", [["online_course_available", "Online Course"], ["in_person_course_available", "In-Person Course"], ["self_paced", "Self-Paced"], ["live_instruction_available", "Live Instruction"]]], ["Course Materials", [["physical_book_available", "Physical Book"], ["digital_book_available", "Digital Book"], ["downloadable_materials", "Downloadable Materials"]]], ["Video / Learning Format", [["video_lessons_available", "Video Lessons"], ["text_based_course_available", "Text-Based Course"], ["audio_content_available", "Audio Content"]]], ["Support", [["phone_support", "Phone Support"], ["email_support", "Email Support"], ["live_chat_support", "Live Chat Support"]]], ["Study Features", [["practice_exams", "Practice Exams"]]], ["Device / Access", [["mobile_friendly", "Mobile Friendly"], ["desktop_access", "Desktop Access"]]]];
   function hasFeature(p, name) { return !!(p.features && p.features[name]); }
-  // Short labels for the feature pills on each directory row: format/materials first (olive), then support/study/access (grey).
+  // Short labels for the feature pills on each directory row (one neutral style; format/materials listed first).
   var PILLS = [['online_course_available', 'Online', 1], ['in_person_course_available', 'In-person', 1], ['self_paced', 'Self-paced', 1], ['live_instruction_available', 'Live classes', 1],
     ['video_lessons_available', 'Video', 1], ['text_based_course_available', 'Text-based', 1], ['audio_content_available', 'Audio', 1],
     ['physical_book_available', 'Printed book', 1], ['digital_book_available', 'eBook', 1], ['downloadable_materials', 'Downloadable', 1],
-    ['practice_exams', 'Practice exams', 0], ['progress_tracking', 'Progress tracking', 0], ['mobile_friendly', 'Mobile friendly', 0], ['desktop_access', 'Desktop', 0],
+    ['practice_exams', 'Practice exams', 0], ['mobile_friendly', 'Mobile friendly', 0], ['desktop_access', 'Desktop', 0],
     ['phone_support', 'Phone support', 0], ['email_support', 'Email support', 0], ['live_chat_support', 'Live chat', 0]];
   function pills(p) {
     return PILLS.filter(function (x) { return hasFeature(p, x[0]); }).map(function (x) {
-      return { key: x[0], label: x[1], bg: x[2] ? '#F3F5E6' : '#fff', border: x[2] ? '#C9D58F' : '#D7DFE2', color: x[2] ? '#5E6F22' : '#2F4652' };
+      return { key: x[0], label: x[1], bg: '#fff', border: '#D7DFE2', color: '#2F4652' };
     });
   }
   function decorate(list, qe) {
