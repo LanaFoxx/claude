@@ -128,6 +128,7 @@ final class TCFD_Store {
             'offers' => $offers,
             'google' => null,
             'last_checked' => self::ymd(self::raw($post_id, 'provider_data_last_checked')),
+            'school_url' => class_exists('TCFD_School') ? TCFD_School::url($post_id) : '',
         ];
         if ((string) self::raw($post_id, 'google_rating_status') === 'Verified' && self::num(self::raw($post_id, 'google_rating'))) {
             $payload['google'] = [

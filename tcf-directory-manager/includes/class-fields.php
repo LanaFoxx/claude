@@ -140,6 +140,7 @@ final class TCFD_Fields {
     public static function key(string $name): string {
         $s = self::scalars();
         if (isset($s[$name])) return $s[$name][0];
+        if (class_exists('TCFD_School') && isset(TCFD_School::scalar_keys()[$name])) return TCFD_School::scalar_keys()[$name];
         if ($name === 'provider_offers') return 'field_tcf_provider_offers';
         if ($name === 'provider_aliases') return 'field_tcf_provider_aliases';
         return $name;

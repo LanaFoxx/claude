@@ -23,7 +23,7 @@ final class TCFD_Admin {
     }
 
     public static function maybe_upgrade(): void {
-        if (get_option('tcfd_db_version') !== TCFD_VERSION) TCFD_Importer::install_tables();
+        if (get_option('tcfd_db_version') !== TCFD_VERSION) { TCFD_Importer::install_tables(); flush_rewrite_rules(false); }
         if (!get_option('tcfd_migrated_offer_choices') && function_exists('update_field')) self::migrate_offer_choices();
     }
 
@@ -463,6 +463,7 @@ final class TCFD_Admin {
                 $out['tcfd_features'] = 'Features';
                 $out['tcfd_google'] = 'Google';
                 $out['tcfd_checked'] = 'Checked';
+                $out['tcfd_school'] = 'School page';
             }
         }
         return $out;
@@ -504,6 +505,10 @@ final class TCFD_Admin {
                 break;
             case 'tcfd_google':
                 echo $r('google_rating_status') === 'Verified' && $r('google_rating') ? esc_html($r('google_rating')) . ' ★ <span class="description">(' . (int) $r('google_review_count') . ')</span>' : '—';
+                break;
+            case 'tcfd_school':
+                $live = TCFD_School::is_live($id);
+                printf('<a href="%s" target="_blank">%s</a>', esc_url(get_permalink($id)), $live ? '<strong style="color:#00a32a">Live</strong>' : '<span class="description">Off · preview</span>');
                 break;
             case 'tcfd_checked':
                 echo esc_html(TCFD_Importer::display('provider_data_last_checked', $r('provider_data_last_checked')));
@@ -576,6 +581,7 @@ final class TCFD_Admin {
         $items[] = [$on > 0, 'Course features (' . $on . ' set)'];
         $items[] = [(bool) $r('provider_logo'), 'Logo'];
         $items[] = [(bool) $r('provider_data_last_checked'), 'Last checked date'];
+        $items[] = [TCFD_School::is_live($id), 'School page live (Status tab of “School Page”)'];
         echo '<ul class="tcfd-health">';
         foreach ($items as [$ok, $label]) echo '<li class="' . ($ok ? 'ok' : 'no') . '"><span class="dashicons dashicons-' . ($ok ? 'yes' : 'minus') . '"></span>' . esc_html($label) . '</li>';
         echo '</ul><p class="description">Changes show in the directory as soon as you click Update.</p>';

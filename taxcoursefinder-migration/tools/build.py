@@ -38,6 +38,9 @@ def clean(s):
 def seo_tweaks(name, body):
     # Anchor every provider row so structured data (and shared links) can point at it.
     body = re.sub(r'(as="p" hint-placeholder-count="\d+">\s*<div )', r'\1id="provider-{{ p.id }}" ', body)
+    # Provider name links to its school page only when one is live; otherwise plain text.
+    body = re.sub(r'<a href="\{\{ p\.schoolUrl \}\}" style="([^"]*)"[^>]*>\{\{ p\.name \}\}</a>',
+                  r'<sc-if value="{{ p.hasSchool }}"><a href="{{ p.schoolUrl }}" style="\1" data-hv="9">{{ p.name }}</a></sc-if><sc-if value="{{ p.noSchool }}"><div style="\1">{{ p.name }}</div></sc-if>', body)
     # Primary keywords in the course-page H1s.
     h1 = {
         'CTEC 20 Hour Course': ('20-Hour CE</span> course before you renew.', '20 Hour CTEC Course</span> before you renew.'),
@@ -53,6 +56,10 @@ def seo_tweaks(name, body):
 
 def code_for(d):
     c = d['code']
+    # School pages: link a provider only when its page is live (school_url comes from the provider feed).
+    c, n = re.subn(r"schoolUrl: 'School Page\.dc\.html\?provider=' \+ encodeURIComponent\(p\.id\) \+ '&course=' \+ (\([^()]*\)|'[^']*'),",
+                   r"schoolUrl: p.schoolUrl ? p.schoolUrl + '?course=' + \1 : '', hasSchool: !!p.schoolUrl, noSchool: !p.schoolUrl,", c)
+    assert 'School Page.dc.html' not in c, 'unhandled school link'
     c = c.replace("await import('./providers.js')", 'await TCF.data()')
     c = re.sub(r'subInit\(\)\s*\{', 'subInit() { return;', c)  # newsletter popup has no backend: keep it off
     props = {}
