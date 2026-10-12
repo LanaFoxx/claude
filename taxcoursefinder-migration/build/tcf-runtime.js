@@ -125,7 +125,7 @@
 
   // ---------- Provider data: maps /wp-json/tcf/v1/providers onto the design's data model ----------
   var OFFER_LABEL = { 'Coupon Code': 'Coupon', 'Sale': 'Sale', 'Bundle': 'Bundle', 'Free Course': 'Free Course', 'Text Offer': 'Special Offer' };
-  var PRICE_TYPE_NOTE = { package: 'Package price', package_sale: 'Sale price', per_unit: 'Per credit hour', membership: 'Membership', membership_benefit: 'Member benefit', subscription_non_ctec_specific: 'Subscription', credit_package: 'Credit package', credit_package_sale: 'Credit package sale', bundle_non_ctec_specific: 'Bundle', event_partial_ce: 'Partial CE event', free_partial_ce: 'Partial CE' };
+  var PRICE_TYPE_NOTE = { package: 'Course bundle price', package_sale: 'Sale price', per_unit: 'Per credit hour', membership: 'Membership', membership_benefit: 'Member benefit', subscription_non_ctec_specific: 'Subscription', credit_package: 'Credit package', credit_package_sale: 'Credit package sale', bundle_non_ctec_specific: 'Bundle', event_partial_ce: 'Partial CE event', free_partial_ce: 'Partial CE' };
   function money(n) { n = Number(n); return '$' + (Number.isInteger(n) ? n : n.toFixed(2)); }
   function num(v) { return v === '' || v == null || isNaN(Number(v)) ? null : Number(v); }
   function slug(s) { return String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
@@ -156,14 +156,13 @@
         expiresFmt: o.expires ? 'Expires ' + new Date(o.expires + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '' }); });
   }
   function sortablePrice(pr) { return pr && pr.status === 'VERIFIED' && /^package/.test(pr.type) && pr.current != null ? pr.current : null; }
-  var FEATURES = [["Delivery / Format", [["online_course_available", "Online Course"], ["in_person_course_available", "In-Person Course"], ["self_paced", "Self-Paced"], ["live_instruction_available", "Live Instruction"]]], ["Course Materials", [["physical_book_available", "Physical Book"], ["digital_book_available", "Digital Book"], ["downloadable_materials", "Downloadable Materials"]]], ["Video / Learning Format", [["video_lessons_available", "Video Lessons"], ["text_based_course_available", "Text-Based Course"], ["audio_content_available", "Audio Content"]]], ["Support", [["phone_support", "Phone Support"], ["email_support", "Email Support"], ["live_chat_support", "Live Chat Support"]]], ["Study Features", [["practice_exams", "Practice Exams"]]], ["Device / Access", [["mobile_friendly", "Mobile Friendly"], ["desktop_access", "Desktop Access"]]]];
+  var FEATURES = [["Delivery / Format", [["online_course_available", "Online Course"], ["in_person_course_available", "In-Person Course"], ["self_paced", "Self-Paced"], ["live_instruction_available", "Live Instruction"]]], ["Course Materials", [["physical_book_available", "Physical Book"], ["digital_book_available", "PDF"], ["downloadable_materials", "Downloadable Materials"], ["video_lessons_available", "Online Videos"]]], ["Learning Format", [["text_based_course_available", "Text-Based Course"], ["audio_content_available", "Audio Content"]]], ["Support", [["phone_support", "Phone Support"], ["email_support", "Email Support"], ["live_chat_support", "Live Chat Support"]]]];
   function hasFeature(p, name) { return !!(p.features && p.features[name]); }
-  // Short labels for the feature pills on each directory row (one neutral style; format/materials listed first).
-  var PILLS = [['online_course_available', 'Online', 1], ['in_person_course_available', 'In-person', 1], ['self_paced', 'Self-paced', 1], ['live_instruction_available', 'Live classes', 1],
-    ['video_lessons_available', 'Video', 1], ['text_based_course_available', 'Text-based', 1], ['audio_content_available', 'Audio', 1],
-    ['physical_book_available', 'Printed book', 1], ['digital_book_available', 'eBook', 1], ['downloadable_materials', 'Downloadable', 1],
-    ['practice_exams', 'Practice exams', 0], ['mobile_friendly', 'Mobile friendly', 0], ['desktop_access', 'Desktop', 0],
-    ['phone_support', 'Phone support', 0], ['email_support', 'Email support', 0], ['live_chat_support', 'Live chat', 0]];
+  // Short labels for the feature pills on each directory row (one neutral style), in filter-panel order.
+  var PILLS = [['online_course_available', 'Online'], ['in_person_course_available', 'In-person'], ['self_paced', 'Self-paced'], ['live_instruction_available', 'Live classes'],
+    ['physical_book_available', 'Printed book'], ['digital_book_available', 'PDF'], ['downloadable_materials', 'Downloadable'], ['video_lessons_available', 'Online videos'],
+    ['text_based_course_available', 'Text-based'], ['audio_content_available', 'Audio'],
+    ['phone_support', 'Phone support'], ['email_support', 'Email support'], ['live_chat_support', 'Live chat']];
   function pills(p) {
     return PILLS.filter(function (x) { return hasFeature(p, x[0]); }).map(function (x) {
       return { key: x[0], label: x[1], bg: '#fff', border: '#D7DFE2', color: '#2F4652' };

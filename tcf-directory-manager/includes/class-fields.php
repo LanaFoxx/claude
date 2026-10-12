@@ -17,11 +17,11 @@ final class TCFD_Fields {
         ],
         'Course Materials' => [
             'physical_book_available' => 'Physical Book',
-            'digital_book_available' => 'Digital Book',
+            'digital_book_available' => 'PDF',
             'downloadable_materials' => 'Downloadable Materials',
+            'video_lessons_available' => 'Online Videos',
         ],
-        'Video / Learning Format' => [
-            'video_lessons_available' => 'Video Lessons',
+        'Learning Format' => [
             'text_based_course_available' => 'Text-Based Course',
             'audio_content_available' => 'Audio Content',
         ],

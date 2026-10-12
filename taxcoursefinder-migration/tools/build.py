@@ -66,6 +66,10 @@ def code_for(d):
     assert 'School Page.dc.html' not in c, 'unhandled school link'
     c = c.replace("await import('./providers.js')", 'await TCF.data()')
     c = c.replace("'Progress Tracking', ", '')  # not offered as a feature anywhere on the site
+    c = c.replace("'Practice Exams', ", '')  # no study-feature options on the site
+    c = c.replace("'Published package price'", "'Course bundle price'")
+    # no device-access options (mobile / desktop) on the site
+    c = c.replace(", 'mobile_friendly']", ']').replace("['mobile_friendly', 'Mobile friendly'], ", '').replace("'Mobile-Friendly Course', 'Dedicated Mobile App', ", '')
     c = re.sub(r'subInit\(\)\s*\{', 'subInit() { return;', c)  # newsletter popup has no backend: keep it off
     props = {}
     for k, v in json.loads(d['props']).items():
