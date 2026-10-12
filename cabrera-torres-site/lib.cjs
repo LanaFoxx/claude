@@ -249,7 +249,11 @@ function header(m, menuId) {
     }),
     button('Free Case Evaluation', URL.contact, 'gold', {
       pad: box(12, 22, 12, 22), ls: 0.14,
-      settings: { _flex_size: 'none', _flex_size_tablet: 'grow', hide_mobile: 'hidden-mobile', align_tablet: 'right' },
+      settings: {
+        _flex_size: 'none', _flex_size_tablet: 'grow', hide_mobile: 'hidden-mobile', align_tablet: 'right',
+        // As in the design: no room for the button next to the full menu between 1025px and 1140px.
+        _css_classes: 'ct-hdr-cta', custom_css: '@media (min-width: 1025px) and (max-width: 1140px) { selector { display: none; } }',
+      },
     }),
   ], false);
   return [topbar, nav];

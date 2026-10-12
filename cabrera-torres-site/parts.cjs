@@ -32,8 +32,9 @@ function pageHero(m, ph, o = {}) {
   const al = o.photo ? 'left' : 'center';
   kids.push(stack([
     eyebrow(ph.kicker, C.goldLight, al),
-    heading(`${ph.title1}${ph.title2 ? ' ' + L.accent(ph.title2, C.goldLight) : ''}`, 'h1', [64, 50, 38], C.cream, al, { lh: 1.12, maxW: 900 }),
-    ...(ph.intro ? [text(ph.intro, { color: C.paper, size: 17, maxW: 640, align: al, settings: { _margin: box(4, 0, 0, 0) } })] : []),
+    // With a portrait on the right, keep the text column narrow enough to never run under her.
+    heading(`${ph.title1}${ph.title2 ? ' ' + L.accent(ph.title2, C.goldLight) : ''}`, 'h1', [64, 50, 38], C.cream, al, { lh: 1.12, maxW: o.photo ? 600 : 900 }),
+    ...(ph.intro ? [text(ph.intro, { color: C.paper, size: 17, maxW: o.photo ? 540 : 640, align: al, settings: { _margin: box(4, 0, 0, 0) } })] : []),
   ], { gap: 18, align: o.photo ? undefined : 'center', settings: { z_index: 1 } }));
   return band(C.black, kids, {
     pad: [80, 64], pattern: m.pattern,
