@@ -27,7 +27,7 @@ const m = {
   logoOpenai: md('recco-logo-openai.png'), logoAnthropic: md('recco-logo-anthropic.png'), logoSalesforce: md('recco-logo-salesforce.png'),
   logoServicenow: md('recco-logo-servicenow.png'), logoMicrosoft: md('recco-logo-microsoft.png'),
   erpBadge: md('recco-erp-badge.png'), serverBlur: md('recco-server-blur.jpg'),
-  icDynamics: md('recco-icon-dynamics365.png'), icCopilot: md('recco-icon-copilot.png'), icCopilotStudio: md('recco-icon-copilot-studio.png'),
+  icDynamics: md('recco-icon-dynamics-365.png'), icCopilot: md('recco-icon-copilot.png'), icCopilotStudio: md('recco-icon-copilot-studio.png'),
   icReplit: md('recco-icon-replit.png'), icLovable: md('recco-icon-lovable.png'),
 };
 
