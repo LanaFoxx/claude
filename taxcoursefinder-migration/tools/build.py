@@ -48,6 +48,23 @@ def seo_tweaks(name, body):
     # Hero search bar: fully rounded to match its Search button.
     body = body.replace('max-width:1200px;background:#fff;border-radius:14px;padding:8px;gap:8px;box-shadow:0 30px 70px',
                         'max-width:1200px;background:#fff;border-radius:999px;padding:8px 8px 8px 18px;gap:8px;box-shadow:0 30px 70px', 1)
+    # Mid-page call to action on the method page: send readers to the school directory.
+    if name == 'How We Compare Providers':
+        arrow = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg>'
+        btn = 'display:inline-flex;align-items:center;justify-content:center;gap:8px;font:700 19px Manrope,sans-serif;border-radius:999px;white-space:nowrap;text-decoration:none;cursor:pointer;transition:background .15s,border-color .15s,color .15s;line-height:1.2;padding:14px 28px;'
+        cta_html = ('<div class="tcf-cta" style="background:#0B2E40;padding:64px 56px;color:#fff"><div style="max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:28px 48px">'
+            '<div style="flex:1 1 520px;display:flex;flex-direction:column;gap:12px">'
+            '<div style="display:flex;align-items:center;gap:12px;font:700 17px Manrope,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#AEC25A"><span style="width:28px;height:2px;background:#95AB3B"></span>Find your course</div>'
+            '<h2 style="margin:0;font:300 44px/1.1 \'Source Serif 4\',Georgia,serif;text-wrap:balance">Search our directory of CTEC-approved schools</h2>'
+            '<p style="margin:0;font-size:20px;line-height:1.6;color:rgba(255,255,255,.78);max-width:640px">See every provider side by side: prices, current coupons, course format and support. Then go straight to the school&#8217;s course page.</p></div>'
+            '<div style="display:flex;flex-wrap:wrap;gap:12px;flex:0 1 auto">'
+            '<a href="/#find-schools" style="' + btn + 'background:#95AB3B;color:#fff;border:1.5px solid #95AB3B" data-hv="4">Search the school directory' + arrow + '</a>'
+            '<a href="/ctec-20-hour-course/" style="' + btn + 'background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.45)" data-hv="5">20 Hour CTEC Courses</a>'
+            '<a href="/ctec-60-hour-course/" style="' + btn + 'background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.45)" data-hv="5">60 Hour CTEC Courses</a>'
+            '</div></div></div>')
+        anchor = '<div style="background:#fff;padding:72px 56px">'
+        assert body.count(anchor) >= 1, 'compare page section not found'
+        body = body.replace(anchor, cta_html + anchor, 1)
     # Primary keywords in the course-page H1s.
     h1 = {
         'CTEC 20 Hour Course': ('20-Hour CE</span> course before you renew.', '20 Hour CTEC Course</span> before you renew.'),
