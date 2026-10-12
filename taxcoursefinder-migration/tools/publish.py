@@ -84,12 +84,23 @@ def page_alts(slug, h):
         out.append(re.sub(r'<img\b[^>]*>', rep, part))
     return ''.join(out)
 
+# In-content links to the newer guides.
+LINKS = {
+    'how-to-become-a-ctec-registered-tax-preparer': [('follow CTEC’s current instructions for submitting your results.', 'follow CTEC’s current instructions for submitting your results. <a href="/ctec-live-scan-background-check/" style="color:#7E9330;font-weight:700">How the CTEC Live Scan works</a>.')],
+    'ctec-requirements': [('Pass a Live Scan background check', '<a href="/ctec-live-scan-background-check/" style="color:inherit;text-decoration:underline;text-decoration-color:#95AB3B">Pass a Live Scan background check</a>')],
+}
+
+def add_links(slug, h):
+    for old, new in LINKS.get(slug, []):
+        h = h.replace(old, new, 1)
+    return h
+
 def page_html(pg):
     w = pg['widget']
     if not pg['runtime']:
         w = re.sub(r'<template id="[^"]+-tpl">.*?</template>', '', w, flags=re.S)
     w = w.replace('@@SSR@@', lazy(pg['ssr']))
-    return page_alts(pg['slug'], fix_media(w))
+    return add_links(pg['slug'], page_alts(pg['slug'], fix_media(w)))
 
 if STEP == 'trash':
     old = [608, 609, 610, 611, 507, 494, 165, 126, 127, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 3]

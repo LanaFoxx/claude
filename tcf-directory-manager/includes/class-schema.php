@@ -13,15 +13,64 @@ final class TCFD_Schema {
         return apply_filters('tcfd_schema_pages', ['ctec-20-hour-course' => 'ce', 'ctec-60-hour-course' => 'qe']);
     }
 
+    /** Guide pages marked up as Articles (slug list filterable). */
+    public static function guides(): array {
+        return apply_filters('tcfd_schema_guides', ['ctec-requirements', 'how-to-become-a-ctec-registered-tax-preparer', 'how-to-renew-ctec-registration',
+            'how-to-choose-a-ctec-course', 'how-we-compare-providers', 'ctec-live-scan-background-check', 'ctec-experience-in-lieu-15-hour-course']);
+    }
+
     public static function boot(): void {
         add_action('wp_head', [__CLASS__, 'course_list'], 30);
         add_filter('wpseo_schema_organization', [__CLASS__, 'organization']);
+        add_filter('wpseo_schema_webpage_type', [__CLASS__, 'webpage_type']);
+        add_filter('wpseo_schema_graph', [__CLASS__, 'article'], 10, 2);
+    }
+
+    private static function slug(): string {
+        return is_singular() ? (string) get_post_field('post_name', get_queried_object_id()) : '';
+    }
+
+    public static function webpage_type($type) {
+        if (is_front_page() || isset(self::pages()[self::slug()])) return ['WebPage', 'CollectionPage'];
+        if (self::slug() === 'about') return ['WebPage', 'AboutPage'];
+        return $type;
+    }
+
+    /** Article piece for guides, tied to Yoast's WebPage, Organization and primary image. */
+    public static function article($graph, $context) {
+        if (!is_array($graph) || !is_page() || !in_array(self::slug(), self::guides(), true)) return $graph;
+        $id = get_queried_object_id();
+        $url = get_permalink($id);
+        $piece = [
+            '@type' => 'Article',
+            '@id' => $url . '#article',
+            'isPartOf' => ['@id' => $url],
+            'mainEntityOfPage' => ['@id' => $url],
+            'headline' => wp_strip_all_tags(get_the_title($id)),
+            'datePublished' => get_post_time('c', true, $id),
+            'dateModified' => get_post_modified_time('c', true, $id),
+            'author' => ['@id' => home_url('/#organization')],
+            'publisher' => ['@id' => home_url('/#organization')],
+            'inLanguage' => get_bloginfo('language') ?: 'en-US',
+            'about' => [['@type' => 'Thing', 'name' => 'California Tax Education Council (CTEC)', 'sameAs' => 'https://www.ctec.org/'],
+                        ['@type' => 'Thing', 'name' => 'California Registered Tax Preparer (CRTP)']],
+        ];
+        $desc = isset($context->presentation->meta_description) ? (string) $context->presentation->meta_description : '';
+        if ($desc !== '') $piece['description'] = $desc;
+        if (has_post_thumbnail($id)) $piece['image'] = ['@id' => $url . '#primaryimage'];
+        $graph[] = $piece;
+        return $graph;
     }
 
     public static function organization($data) {
         if (!is_array($data)) return $data;
         $data['knowsAbout'] = ['20 hour CTEC course', '60 hour CTEC course', 'CTEC continuing education', 'CTEC qualifying education', 'California Registered Tax Preparer (CRTP) requirements'];
         $data['areaServed'] = ['@type' => 'State', 'name' => 'California'];
+        $data['email'] = 'hello@taxcoursefinder.com';
+        $data['contactPoint'] = [
+            ['@type' => 'ContactPoint', 'contactType' => 'customer support', 'email' => 'hello@taxcoursefinder.com', 'areaServed' => 'US-CA', 'availableLanguage' => 'English'],
+            ['@type' => 'ContactPoint', 'contactType' => 'provider listings and corrections', 'email' => 'providers@taxcoursefinder.com', 'areaServed' => 'US-CA'],
+        ];
         return $data;
     }
 
