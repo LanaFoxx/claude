@@ -36,3 +36,28 @@ Requires ACF Pro (already on the site).
 ## Data feed
 
 `GET /wp-json/tcf/v1/providers` returns published listings (cached, cleared automatically on every save and import). Each provider includes `features` (17 booleans), `offers` with a normalized `scope` (`ce` / `qe` / `both`), `logo_url` and `last_checked`.
+
+## School pages (`/schools/{slug}/`)
+
+Every provider has a school page built from the School Page design. It stays private until you switch
+**School page live** on (School Page box → Status tab): until then visitors get a 404, it is `noindex`,
+it is left out of the sitemap and the directory does not link to it. Editors always see a preview with a
+yellow banner. Empty fields show "Not confirmed".
+
+## Private provider profile form (`/provider-profile/`)
+
+Schools fill in their own details here. The page is unlisted: not in any menu, footer or sitemap,
+`noindex, nofollow`, no canonical or social tags, never cached.
+
+- **Per-school link:** each provider's edit screen has a *School profile form* box with a private link
+  (`/provider-profile/?t=…`). It pre-fills what we already have and ties the submission to that listing.
+  *New link* replaces the token if a link gets passed around.
+- **General link:** `/provider-profile/` with no token works for schools not yet listed; submissions are
+  matched by CTEC number or name.
+- **Review queue:** Providers → *Profile Submissions* (menu badge = awaiting review). You also get an email
+  at the site admin address. Each submission shows *Listing now* vs *Submitted*; changed rows are pre-checked.
+  Pick the listing (or create a new draft listing) and click **Apply checked fields to listing**.
+- Applying never turns the school page live. School-reported prices are saved with status `REVIEW` and a
+  note; mark them `VERIFIED` after you check them. A course marked "not offered" stores nothing else.
+- Uploads: logo + up to 3 screenshots (PNG/JPG/WebP/GIF, 5 MB each) go to the Media Library with alt text.
+- Spam controls: hidden honeypot field, a minimum fill time, and 6 submissions per hour per connection.
