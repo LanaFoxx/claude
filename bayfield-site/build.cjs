@@ -1,6 +1,6 @@
 // Bayfield Inn homepage (Claude Design handoff) as native Elementor content.
-// Containers + Heading / Text Editor / Button / Image / Slides / Divider / Icon List /
-// Social Icons / Nav Menu widgets only (no HTML widgets), so every text, link, image and
+// Containers + Heading / Text Editor / Button / Image / Icon / Icon List / Social Icons /
+// Nav Menu widgets only (no HTML widgets), so every text, link, image and
 // color stays editable in the Elementor panel. Breakpoints: tablet <=1024, mobile <=767.
 const crypto = require('crypto');
 
@@ -16,6 +16,7 @@ const EXT = {
   gallery: 'https://bayfieldinn.com/relax/lobby-gallery/', facebook: 'http://facebook.com/BayfieldInn',
   instagram: 'https://www.instagram.com/thebayfieldinn/', tripadvisor: 'https://www.tripadvisor.com/',
   privacy: 'https://bayfieldinn.com/privacy-policy', terms: 'https://bayfieldinn.com/terms-of-use',
+  giftCards: 'https://bayfieldinn.com/gift-cards/', webcam: 'https://bayfieldlive.com',
 };
 
 const id = () => crypto.randomBytes(4).toString('hex').slice(0, 7);
@@ -74,14 +75,15 @@ const vGradient = (top, bottom) => ({
 
 /* --------------------------------------------------------------- widgets */
 // Small uppercase label with a hairline before it (and after it when centered).
+const alpha = (hex, a) => `rgba(${parseInt(hex.slice(1, 3), 16)},${parseInt(hex.slice(3, 5), 16)},${parseInt(hex.slice(5, 7), 16)},${a})`;
 function eyebrow(text, color, o = {}) {
   const center = o.align === 'center';
+  if (o.opacity) color = alpha(color, o.opacity);
   return widget('heading', {
     title: text, header_size: 'p', title_color: color, align: o.align || 'left',
     ...typo('typography', SANS, 12, 500, { lh: 1.3, ls: 2.6, transform: 'uppercase' }),
     custom_css: `selector .elementor-heading-title { display: flex; align-items: center; gap: 14px;${center ? ' justify-content: center;' : ''} }
 selector .elementor-heading-title::before${center ? ', selector .elementor-heading-title::after' : ''} { content: ""; flex: none; width: 36px; height: 1px; background: currentColor; opacity: .75; }`,
-    ...(o.opacity ? { _opacity: px(o.opacity) } : {}),
   });
 }
 
@@ -146,34 +148,66 @@ function image(media, o = {}) {
   });
 }
 
+// Linked container (renders as <a>) — the whole card is clickable.
+const linked = (url) => ({ html_tag: 'a', link: link(url) });
+const zoomOnHover = 'selector .bi-photo img, selector .bi-photo-bg { transition: transform .8s ease; }\nselector:hover .bi-photo img { transform: scale(1.03); }';
+
 /* ---------------------------------------------------------------- header */
+// Promo bar (dismissible: the "Bayfield interactions" Custom Code snippet remembers the
+// dismissal for the session) + sticky header. The header logo fades in once the visitor
+// scrolls past the hero logo (always visible in the Elementor editor).
 function header(m, menuId) {
-  return [container({
+  const promo = container({
+    content_width: 'full', flex_direction: 'row', flex_wrap: 'wrap', flex_justify_content: 'center', flex_align_items: 'center',
+    flex_gap: gap(18, 6), flex_gap_mobile: gap(10, 4), padding: box(10, 56, 10, 48), padding_tablet: box(10, 56, 10, 32), padding_mobile: box(10, 48, 10, 20),
+    background_background: 'classic', background_color: '#0F2113',
+    border_border: 'solid', border_width: box(0, 0, 1, 0), border_color: 'rgba(245,242,236,0.12)', z_index: 31,
+    _css_classes: 'bi-promo', custom_css: 'html.bi-promo-off selector { display: none !important; }',
+  }, [
+    widget('heading', { title: 'Black Friday', header_size: 'p', title_color: 'rgba(245,242,236,0.7)', _element_width: 'auto',
+      ...typo('typography', SANS, 10.5, 500, { lh: 1.4, ls: 2.3, transform: 'uppercase' }) }),
+    text('Gift cards for the lake lover on your list. Buy now, stay next summer.', { color: C.cream, size: 13, lh: 1.45, align: 'center', inline: true, ls: 0.26 }),
+    button('Buy gift cards →', EXT.giftCards, 'text', { color: C.cream, size: 13, upper: false, pad: box(0, 0, 1, 0), settings: {
+      _element_width: 'auto', typography_letter_spacing: px(0.26), hover_color: 'rgba(245,242,236,0.8)',
+      border_border: 'solid', border_width: box(0, 0, 1, 0), border_color: C.cream60, border_radius: box(0),
+    } }),
+    button('×', '#', 'text', { color: 'rgba(245,242,236,0.7)', size: 20, upper: false, pad: box(6, 10, 6, 10), settings: {
+      _css_classes: 'bi-promo-close', _position: 'absolute', _offset_orientation_h: 'end', _offset_x_end: px(16), _offset_x_end_mobile: px(8),
+      _offset_orientation_v: 'start', _offset_y: px(50, '%'), _element_width: 'auto', typography_line_height: px(1, 'em'),
+      hover_color: C.cream, custom_css: 'selector { transform: translateY(-50%); }',
+    } }),
+  ], false);
+
+  const bar = container({
     content_width: 'boxed', boxed_width: px(1480), flex_direction: 'row', flex_wrap: 'nowrap',
     flex_justify_content: 'space-between', flex_align_items: 'center', flex_gap: gap(24), flex_gap_mobile: gap(12),
     min_height: px(96), min_height_tablet: px(88), min_height_mobile: px(76), padding: box(0, 48, 0, 48), padding_tablet: box(0, 32, 0, 32), padding_mobile: box(0, 20, 0, 20),
     background_background: 'classic', background_color: 'rgba(255,255,255,0.92)',
     border_border: 'solid', border_width: box(0, 0, 1, 0), border_color: C.line,
     sticky: 'top', sticky_on: ['desktop', 'tablet', 'mobile'], z_index: 30,
-    custom_css: 'selector { backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }',
+    custom_css: `selector { backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+body:not(.elementor-editor-active) selector .bi-header-logo { opacity: 0; transform: translateY(6px); pointer-events: none; transition: opacity .4s ease, transform .4s ease; }
+body.bi-scrolled selector .bi-header-logo { opacity: 1; transform: none; pointer-events: auto; }`,
   }, [
-    image(m.logo, { width: [140, 128, 104], link: '/', align: 'left', settings: { _element_width: 'initial', _element_custom_width: px(140), _element_custom_width_tablet: px(128), _element_custom_width_mobile: px(104), _flex_size: 'none' } }),
+    image(m.logo, { width: [140, 128, 104], link: '/', align: 'left', settings: { _css_classes: 'bi-header-logo', _element_width: 'initial', _element_custom_width: px(140), _element_custom_width_tablet: px(128), _element_custom_width_mobile: px(104), _flex_size: 'none' } }),
     widget('nav-menu', {
       menu: menuId, layout: 'horizontal', align_items: 'center', pointer: 'underline', animation_line: 'fade',
       dropdown: 'tablet', toggle: 'burger', toggle_align: 'right', full_width: 'stretch',
       ...typo('menu_typography', SERIF, 18, 400, { lh: 1.3, ls: 0.2 }),
       color_menu_item: C.ink, color_menu_item_hover: C.ink, color_menu_item_active: C.ink,
       pointer_color_menu_item_hover: C.green, pointer_color_menu_item_active: C.green, pointer_width: px(1),
-      padding_horizontal_menu_item: px(20), padding_vertical_menu_item: px(8),
-      ...typo('dropdown_typography', SERIF, 20, 400, { ls: 0.2 }),
-      color_dropdown_item: C.ink, background_color_dropdown_item: C.white,
-      color_dropdown_item_hover: C.cream, background_color_dropdown_item_hover: C.green,
-      color_dropdown_item_active: C.cream, background_color_dropdown_item_active: C.green,
-      padding_horizontal_dropdown_item: px(28), padding_vertical_dropdown_item: px(16),
+      padding_horizontal_menu_item: px(18), padding_vertical_menu_item: px(8),
+      // Tablet/mobile menu: green panel with large serif links, as in the design.
+      ...typo('dropdown_typography', SERIF, [28, 28, 26], 400, { lh: 1 }),
+      color_dropdown_item: C.cream, background_color_dropdown_item: C.green,
+      color_dropdown_item_hover: C.cream, background_color_dropdown_item_hover: C.deep,
+      color_dropdown_item_active: C.cream, background_color_dropdown_item_active: C.deep,
+      padding_horizontal_dropdown_item: px(32), padding_horizontal_dropdown_item_mobile: px(20), padding_vertical_dropdown_item: px(18),
       dropdown_top_distance: px(31), dropdown_top_distance_mobile: px(21),
       toggle_color: C.green, toggle_background_color: 'rgba(0,0,0,0)', toggle_size: px(24),
       _flex_size: 'grow', _flex_size_tablet: 'none', _flex_size_mobile: 'none',
       _flex_order_tablet: 'end', _flex_order_mobile: 'end',
+      custom_css: 'selector .elementor-nav-menu--dropdown { padding-bottom: 20px; background: #17301B; }\nselector .elementor-nav-menu--dropdown a { border-bottom: 1px solid rgba(245,242,236,.15); }',
     }),
     container({
       content_width: 'full', width: auto, width_tablet: auto, width_mobile: auto,
@@ -183,9 +217,10 @@ function header(m, menuId) {
       button('715.779.3363', 'tel:7157793363', 'text', { color: 'rgba(22,27,23,0.8)', size: 14, upper: false, pad: box(10, 0, 10, 0),
         settings: { hover_color: C.ink, hide_mobile: 'hidden-mobile', typography_letter_spacing: px(0) } }),
       button('Book a Room', EXT.book, 'dark', { size: 13.5, upper: false, pad: box(15, 26, 15, 26),
-        settings: { text_padding_mobile: box(11, 16, 11, 16), typography_letter_spacing: px(0.5) } }),
+        settings: { text_padding_mobile: box(11, 16, 11, 16), typography_letter_spacing: px(0.5), button_background_hover_color: '#0F2113' } }),
     ]),
-  ], false)];
+  ], false);
+  return [promo, bar];
 }
 
 /* ---------------------------------------------------------------- footer */
@@ -225,7 +260,7 @@ function footer(m) {
       ], { gap: 14 }),
       stack([
         label('Explore'),
-        list([['Rooms', '/#rooms'], ['Dining', '/#dining'], ['Events', '/#events'], ['Gallery', EXT.gallery], ['Contact', '/#contact']],
+        list([['Rooms', '/#rooms'], ['Dining', '/#dining'], ['Events', '/#events'], ['Live Cam', '/#webcam'], ['Gallery', EXT.gallery], ['Contact', '/#contact']],
           { size: 13, weight: 500, ls: 1, transform: 'uppercase', color: 'rgba(245,242,236,0.9)' }),
       ], { gap: 14 }),
       stack([
@@ -261,64 +296,166 @@ function footer(m) {
 /* -------------------------------------------------------------- homepage */
 function home(m) {
   const section = (settings, children) => container({ content_width: 'full', padding: box(0), flex_gap: gap(0), ...settings }, children, false);
+  const bigPad = { padding: box(130, 48, 130, 48), padding_tablet: box(96, 32, 96, 32), padding_mobile: box(72, 20, 72, 20) };
+  const smallEyebrow = (t, color, o) => {
+    const w = eyebrow(t, color, o);
+    Object.assign(w.settings, { typography_font_size: px(11.5), typography_letter_spacing: px(2.76) });
+    return w;
+  };
+  // Section intro: eyebrow + two-line h2 on the left, a button on the right (wraps under on mobile).
+  const intro = (eb, title, btn, dark) => row([
+    stack([smallEyebrow(eb, dark ? C.cream : C.green, { opacity: dark ? 0.8 : undefined }),
+      heading(title, 'h2', [54, 44, 34], dark ? C.cream : C.green, { lh: 1, ls: -1 })], { gap: 16, settings: { width: auto, width_tablet: auto, width_mobile: px(100, '%') } }),
+    btn,
+  ], { gap: 24, align: 'flex-end', justify: 'space-between', settings: { flex_gap: gap(40, 24), z_index: 1 } });
 
-  // Hero: copy on a radial green panel + full-height fading slider with caption, bars and arrows.
-  const slides = [
-    [m.heroDeck, 'The Deck, Bayfield’s only rooftop', 'center 60%'],
-    [m.heroDining, 'Lakeside Dining Room', 'center center'],
-    [m.lakeview, 'Lakeview room', 'center center'],
-    [m.sunset, 'Sunset over the harbor', 'center center'],
-  ];
+  // Photo card (Rooms, Dining). badge: { text } number tag or { logo, bg } round logo.
+  const photoCard = (img, title, body, url, o = {}) => {
+    const dark = !!o.dark;
+    const badge = o.badge?.text
+      ? widget('heading', {
+        title: o.badge.text, header_size: 'span', title_color: C.green, ...typo('typography', SANS, 11, 400, { lh: 1.2, ls: 2.2 }),
+        _position: 'absolute', _offset_orientation_h: 'start', _offset_x: px(16), _offset_orientation_v: 'start', _offset_y: px(16), _element_width: 'auto',
+        _background_background: 'classic', _background_color: C.cream, _padding: box(6, 10, 6, 10), _border_radius: box(2), _z_index: 2,
+      })
+      : o.badge?.logo ? image(o.badge.logo, { width: 64, settings: {
+        _position: 'absolute', _offset_orientation_h: 'start', _offset_x: px(14), _offset_orientation_v: 'start', _offset_y: px(14),
+        _element_width: 'initial', _element_custom_width: px(64), _background_background: 'classic', _background_color: o.badge.bg,
+        _border_radius: box(50, 50, 50, 50, '%'), _z_index: 2, alt_text: '',
+        _box_shadow_box_shadow_type: 'yes', _box_shadow_box_shadow: { horizontal: 0, vertical: 6, blur: 16, spread: -8, color: 'rgba(0,0,0,0.5)' },
+        custom_css: 'selector { overflow: hidden; line-height: 0; }\nselector img { width: 64px; height: 64px; object-fit: contain; }',
+      } }) : null;
+    return container({
+      content_width: 'full', flex_direction: 'column', padding: box(0), flex_gap: gap(dark ? 14 : 16), ...linked(url), custom_css: zoomOnHover,
+    }, [
+      container({
+        content_width: 'full', padding: box(0), overflow: 'hidden', border_radius: box(4), background_background: 'classic', background_color: C.line,
+        ...(dark ? {} : { box_shadow_box_shadow_type: 'yes', box_shadow_box_shadow: { horizontal: 0, vertical: 40, blur: 60, spread: -40, color: 'rgba(23,48,27,0.5)' } }),
+      }, [
+        image(img, { settings: { _css_classes: 'bi-photo', alt_text: o.alt || title,
+          custom_css: `selector { overflow: hidden; line-height: 0; }\nselector img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; object-position: ${o.pos || 'center center'}; }` } }),
+        ...(badge ? [badge] : []),
+      ]),
+      container({
+        content_width: 'full', flex_direction: 'row', flex_wrap: 'nowrap', flex_justify_content: 'space-between', flex_align_items: 'flex-end', flex_gap: gap(12),
+        padding: box(0, 0, dark ? 10 : 12, 0), border_border: 'solid', border_width: box(0, 0, 1, 0), border_color: dark ? 'rgba(245,242,236,0.25)' : 'rgba(23,48,27,0.25)',
+      }, [
+        widget('heading', { title, header_size: 'h3', title_color: dark ? C.cream : C.green, ...typo('typography', SERIF, dark ? [24, 24, 24] : [28, 24, 28], 400, { lh: 1 }) }),
+        widget('icon', { selected_icon: fa('fas fa-arrow-right'), primary_color: dark ? C.cream : C.green, size: px(14), _flex_size: 'none',
+          custom_css: 'selector { transition: transform .25s; }\na:hover selector { transform: translateX(4px); }' }),
+      ]),
+      text(body, { color: dark ? 'rgba(245,242,236,0.8)' : C.muted, size: dark ? 13.5 : 14, lh: 1.5 }),
+    ]);
+  };
+
+  // Full-bleed photo half of a split section (background image, so it is swapped in the Style tab).
+  const photo = (img, posn, extra = [], settings = {}) => container({
+    content_width: 'full', padding: box(0), min_height: px(280), overflow: 'hidden',
+    background_background: 'classic', background_color: C.line, background_image: img, background_size: 'cover', background_position: posn, background_repeat: 'no-repeat',
+    custom_css: 'selector { aspect-ratio: 16 / 10; }', ...settings,
+  }, extra);
+  const copy = (children) => container({
+    content_width: 'full', flex_direction: 'column', flex_justify_content: 'center', flex_gap: gap(22),
+    padding: box(48, 80, 48, 80), padding_tablet: box(48, 40, 48, 40), padding_mobile: box(48, 20, 56, 20),
+  }, children);
+
+  // Booking bar: Elementor Form that redirects to eviivo with the chosen dates, guests and rooms.
+  const bookingForm = () => {
+    const opts = (n) => Array.from({ length: n }, (_, i) => String(i + 1)).join('\n');
+    const cell = (custom_id, field_type, field_label, extra = {}) => ({
+      _id: id(), custom_id, field_type, field_label, width: '25', width_tablet: '25', width_mobile: '50', ...extra,
+    });
+    return container({
+      content_width: 'full', padding: box(0), width: px(600), width_tablet: px(600), width_mobile: px(100, '%'), _margin: box(8, 0, 0, 0),
+      border_border: 'solid', border_width: box(1), border_color: 'rgba(245,242,236,0.35)', border_radius: box(3),
+      background_background: 'classic', background_color: 'rgba(15,33,19,0.5)',
+      box_shadow_box_shadow_type: 'yes', box_shadow_box_shadow: { horizontal: 0, vertical: 30, blur: 50, spread: -40, color: 'rgba(0,0,0,0.6)' },
+      custom_css: 'selector { max-width: 100%; backdrop-filter: blur(6px); }',
+    }, [
+      widget('form', {
+        form_name: 'Check availability',
+        form_fields: [
+          cell('checkin', 'date', 'Check in', { use_native_date: 'yes', required: 'true' }),
+          cell('checkout', 'date', 'Check out', { use_native_date: 'yes', required: 'true' }),
+          cell('guests', 'select', 'Guests', { field_options: opts(6), field_value: '2' }),
+          cell('rooms', 'select', 'Rooms', { field_options: opts(4), field_value: '1' }),
+        ],
+        show_labels: 'true', input_size: 'sm', button_text: 'Check availability', button_size: 'sm', button_width: '', button_align: 'end',
+        selected_button_icon: fa('fas fa-arrow-right'), button_icon_align: 'row-reverse', button_icon_indent: px(10),
+        submit_actions: ['redirect'],
+        redirect_to: `${EXT.book}&from=[field id="checkin"]&to=[field id="checkout"]&guests=[field id="guests"]&rooms=[field id="rooms"]`,
+        column_gap: px(0), row_gap: px(0), label_spacing: px(6),
+        label_color: 'rgba(245,242,236,0.65)', ...typo('label_typography', SANS, 10.5, 500, { lh: 1.2, ls: 2.1, transform: 'uppercase' }),
+        field_text_color: C.cream, field_background_color: 'rgba(0,0,0,0)', field_border_color: 'rgba(0,0,0,0)', field_border_width: box(0), field_border_radius: box(0),
+        ...typo('field_typography', SANS, [15, 14, 15], 300, { lh: 1.4 }),
+        button_background_color: C.cream, button_text_color: C.green, button_background_hover_color: C.white, button_hover_color: C.green,
+        button_border_radius: box(2), ...typo('button_typography', SANS, 13, 500, { lh: 1.2, ls: 0.5 }), button_text_padding: box(14, 26, 14, 26),
+        required_field_color: 'rgba(0,0,0,0)', success_message: 'Opening availability…',
+        custom_css: `/* Four bordered cells over a button row. */
+selector .elementor-field-group:not(.elementor-field-type-submit) { padding: 14px 16px !important; border-right: 1px solid rgba(245,242,236,.2); border-bottom: 1px solid rgba(245,242,236,.2); margin: 0 !important; }
+selector .elementor-field-group:nth-child(4) { border-right: 0; }
+selector .elementor-field-group .elementor-field { padding: 0 !important; min-height: 24px; color-scheme: dark; min-width: 0; }
+selector input[type=date]::-webkit-calendar-picker-indicator { opacity: .55; margin-left: 2px; }
+selector .elementor-field-group select.elementor-field { cursor: pointer; }
+selector .elementor-field-group select option { color: #161B17; }
+selector .elementor-select-wrapper::before { color: rgba(245,242,236,.6); font-size: 11px; right: 0; }
+selector .elementor-field-type-submit { padding: 12px !important; margin: 0 !important; }
+selector .elementor-button { background: linear-gradient(to bottom, #FFFFFF, #F0ECE3); box-shadow: 0 10px 24px -14px rgba(0,0,0,.6); }
+selector .elementor-message { color: #F5F2EC; padding: 0 18px 12px; margin: 0; font-size: 13px; }
+@media (max-width: 767px) { selector .elementor-field-group:nth-child(2) { border-right: 0; } selector .elementor-field-type-submit .elementor-button { width: 100%; } }`,
+      }),
+      text('Best rate guaranteed', { color: 'rgba(245,242,236,0.75)', size: 12.5, lh: 1.4, settings: {
+        _position: 'absolute', _offset_orientation_h: 'start', _offset_x: px(18), _offset_orientation_v: 'end', _offset_y_end: px(26),
+        _element_width: 'auto', hide_mobile: 'hidden-mobile',
+      } }),
+    ]);
+  };
+
+  // Hero: green panel with the white logo + one full-height photo with caption.
   const hero = section({
     ...gridSettings(['5fr 7fr', 1, 1]), _element_id: 'book', background_background: 'classic', background_color: C.green,
     grid_gaps: gap(0, 0), grid_align_items: 'stretch',
+    custom_css: '/* Desktop: at least the screen height under the promo bar + header. */\n@media (min-width: 1025px) { selector { min-height: calc(100vh - 136px); } }',
   }, [
     container({
       content_width: 'full', flex_direction: 'column', flex_justify_content: 'center', flex_gap: gap(24), flex_gap_mobile: gap(20),
       padding: box(80, 64, 80, 72), padding_tablet: box(72, 48, 64, 48), padding_mobile: box(56, 20, 48, 20),
-      min_height: px(600), min_height_tablet: px(0), min_height_mobile: px(0),
       ...radial('bottom left', C.mid, null, C.deep), z_index: 1,
     }, [
-      eyebrow('Bayfield, Wisconsin · Est. 1898', C.cream, { opacity: 0.8 }),
-      heading('The best darn view on Lake Superior.', 'h1', [68, 56, 42], C.cream, { lh: 0.98, ls: -1.4, settings: { typography_letter_spacing_mobile: px(-0.8) } }),
+      image(m.logoWhite, { width: [300, 280, 220], align: 'left', settings: { _element_width: 'initial', _element_custom_width: px(300), _element_custom_width_tablet: px(280), _element_custom_width_mobile: px(220),
+        _element_custom_width_unit: 'px', alt_text: 'Bayfield Inn — Est. 1898', _margin: box(0, 0, 8, 0), custom_css: 'selector { max-width: 70%; }' } }),
+      heading('The best darn view on Lake Superior.', 'h1', [56, 48, 36], C.cream, { lh: 1, ls: -1.1, settings: { typography_letter_spacing_mobile: px(-0.7) } }),
       text('A 21-room boutique hotel on the waterfront in Bayfield, overlooking the Apostle Islands. Three restaurants on property, a bar across the street, and a rooftop deck you’ll remember.',
         { color: 'rgba(245,242,236,0.9)', size: 16, maxW: 440 }),
-      row([
-        button('Book a Room', EXT.book, 'light', { size: 13, pad: box(15, 26, 15, 26), icon: 'fas fa-arrow-right' }),
-        button('See the rooms', '#rooms', 'outline', { size: 13, upper: false, pad: box(15, 26, 15, 26), settings: { border_color: C.cream60 } }),
-      ], { gap: 12, settings: { padding: box(8, 0, 0, 0) } }),
+      bookingForm(),
+      button('See the rooms', '#rooms', 'text', { color: 'rgba(245,242,236,0.8)', size: 12.5, icon: 'fas fa-arrow-right', pad: box(0, 0, 3, 0), settings: {
+        typography_letter_spacing: px(0.75), border_border: 'solid', border_width: box(0, 0, 1, 0), border_color: 'rgba(245,242,236,0.4)', border_radius: box(0), icon_indent: px(8) } }),
     ]),
-    widget('slides', {
-      slides: slides.map(([img, caption, posn]) => ({
-        _id: id(), heading: caption, description: '', button_text: '', background_color: '#DCD7CC',
-        background_image: img, background_size: 'cover', background_position: posn,
-      })),
-      slides_height: px(820), slides_height_tablet: px(520), slides_height_mobile: px(360),
-      navigation: 'both', autoplay: 'yes', pause_on_hover: 'yes', pause_on_interaction: 'yes', infinite: 'yes',
-      autoplay_speed: 5000, transition: 'fade', transition_speed: 900, content_animation: '',
-      slides_horizontal_position: 'left', slides_vertical_position: 'bottom', slides_text_align: 'left',
-      content_max_width: px(60, '%'), content_max_width_mobile: px(70, '%'),
-      slides_padding: box(20, 24, 22, 24), slides_padding_mobile: box(16, 20, 22, 20),
-      heading_color: C.cream, heading_spacing: px(0), ...typo('heading_typography', SANS, 12, 400, { lh: 1.4, ls: 0.5 }),
-      arrows_size: px(13), arrows_color: C.cream, dots_color: C.cream, dots_size: px(3),
-      custom_css: `/* Fill the hero height on desktop, (100vh minus the header, 600–900px). */
-@media (min-width: 1025px) { selector .elementor-slides .swiper-slide, selector .elementor-slides-wrapper { height: clamp(600px, calc(100vh - 96px), 900px) !important; } }
-selector .swiper-slide::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 120px; background: linear-gradient(to top, rgba(22,27,23,.55), rgba(22,27,23,0)); pointer-events: none; z-index: 1; }
-selector .swiper-slide-inner { z-index: 2; }
-selector .swiper-pagination { left: auto !important; right: 120px !important; bottom: 34px !important; width: auto !important; z-index: 3; line-height: 0; }
-selector .swiper-pagination .swiper-pagination-bullet { width: 28px; height: 3px; border-radius: 0; margin: 0 3px !important; opacity: .4; background: ${C.cream}; }
-selector .swiper-pagination .swiper-pagination-bullet-active { opacity: 1; }
-selector .elementor-swiper-button { top: auto !important; bottom: 18px; transform: none !important; width: 36px; height: 36px; border: 1px solid ${C.cream60}; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 3; transition: background .25s; }
-selector .elementor-swiper-button:hover { background: rgba(245,242,236,.15); }
-selector .elementor-swiper-button-prev { left: auto !important; right: 68px !important; }
-selector .elementor-swiper-button-next { right: 24px !important; }
-@media (max-width: 767px) { selector .swiper-pagination { display: none; } selector .elementor-swiper-button-prev { right: 60px !important; } selector .elementor-swiper-button-next { right: 16px !important; } }`,
-    }),
+    container({
+      content_width: 'full', padding: box(0), flex_direction: 'column', flex_justify_content: 'flex-end',
+      min_height: px(600), min_height_tablet: px(480), min_height_mobile: px(320),
+      background_background: 'classic', background_color: C.line, background_image: m.heroDeck, background_size: 'cover', background_position: 'center center',
+      custom_css: 'selector { background-position: center 60%; }',
+    }, [
+      container({
+        content_width: 'full', flex_direction: 'row', flex_wrap: 'wrap', flex_justify_content: 'space-between', flex_align_items: 'center', flex_gap: gap(16, 8),
+        padding: box(36, 24, 20, 24), padding_mobile: box(32, 20, 16, 20),
+        background_background: 'gradient', background_color: 'rgba(22,27,23,0.55)', background_color_stop: px(0, '%'),
+        background_color_b: 'rgba(22,27,23,0)', background_color_b_stop: px(100, '%'), background_gradient_type: 'linear', background_gradient_angle: px(0, 'deg'),
+      }, [
+        text('The Deck, Bayfield’s only rooftop', { color: C.cream, size: 12, weight: 400, lh: 1.4, ls: 0.5, inline: true }),
+        widget('icon-list', {
+          view: 'inline', icon_list: [{ _id: id(), text: 'Film coming soon', selected_icon: fa('fas fa-play') }],
+          icon_size: px(9), icon_color: C.cream85, text_color: C.cream85, text_indent: px(10), _element_width: 'auto',
+          ...typo('icon_typography', SANS, 12, 400, { lh: 1.4, ls: 0.5 }),
+          custom_css: 'selector .elementor-icon-list-icon { width: 36px; height: 36px; border-radius: 50%; border: 1px solid rgba(245,242,236,.6); display: inline-flex; align-items: center; justify-content: center; padding-left: 2px; }',
+        }),
+      ]),
+    ]),
   ]);
 
   const about = section({
-    _element_id: 'about', background_background: 'classic', background_color: C.cream, flex_align_items: 'center',
-    padding: box(130, 48, 130, 48), padding_tablet: box(96, 32, 96, 32), padding_mobile: box(72, 20, 72, 20),
+    _element_id: 'about', background_background: 'classic', background_color: C.white, flex_align_items: 'center', ...bigPad,
   }, [
     stack([
       eyebrow('Est. 1898', C.green, { align: 'center' }),
@@ -328,96 +465,111 @@ selector .elementor-swiper-button-next { right: 24px !important; }
     ], { gap: 22, align: 'center', maxW: 680 }),
   ]);
 
-  const card = (img, title, body, alt) => container({
-    content_width: 'full', flex_direction: 'column', padding: box(0), flex_gap: gap(0), overflow: 'hidden',
-    border_radius: box(4), background_background: 'classic', background_color: C.green,
-    box_shadow_box_shadow_type: 'yes', box_shadow_box_shadow: { horizontal: 0, vertical: 30, blur: 50, spread: -40, color: 'rgba(23,48,27,0.5)' },
-    custom_css: 'selector .elementor-widget-image img { transition: transform .8s; }\nselector:hover .elementor-widget-image img { transform: scale(1.04); }',
-  }, [
-    image(img, { settings: {
-      _background_background: 'classic', _background_color: C.line, alt_text: alt,
-      custom_css: 'selector { overflow: hidden; line-height: 0; }\nselector img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }',
-    } }),
-    container({
-      content_width: 'full', flex_direction: 'column', flex_align_items: 'center', flex_gap: gap(12), flex_grow: 1, _flex_size: 'grow',
-      padding: box(30, 24, 32, 24), padding_mobile: box(26, 20, 28, 20),
-    }, [
-      widget('heading', { title, header_size: 'h3', align: 'center', title_color: C.cream, ...typo('typography', SERIF, [24, 22, 24], 400, { lh: 1.1 }) }),
-      text(body, { align: 'center', color: C.cream85, size: 14, maxW: 240 }),
-      // margin-top:auto keeps the three buttons aligned when descriptions wrap differently.
-      button('View details', EXT.rooms, 'outline', { pad: box(11, 20, 11, 20), align: 'center', settings: { custom_css: 'selector { margin-top: auto; padding-top: 6px; }' } }),
-    ]),
-  ]);
   const rooms = section({
-    _element_id: 'rooms', background_background: 'classic', background_color: C.white, flex_direction: 'column',
-    border_border: 'solid', border_width: box(1, 0, 0, 0), border_color: C.line,
-    padding: box(130, 48, 130, 48), padding_tablet: box(96, 32, 96, 32), padding_mobile: box(72, 20, 72, 20),
-    content_width: 'boxed', boxed_width: px(1480), flex_gap: gap(64), flex_gap_tablet: gap(48), flex_gap_mobile: gap(40),
+    _element_id: 'rooms', background_background: 'classic', background_color: C.cream, flex_direction: 'column', overflow: 'hidden',
+    border_border: 'solid', border_width: box(1, 0, 0, 0), border_color: C.line, ...bigPad,
+    content_width: 'boxed', boxed_width: px(1480), flex_gap: gap(56), flex_gap_tablet: gap(44), flex_gap_mobile: gap(36),
   }, [
-    stack([
-      heading('Rooms & Suites', 'h2', [46, 38, 30], C.green, { align: 'center', ls: 1.8, transform: 'uppercase' }),
-      widget('divider', {
-        style: 'solid', weight: px(1), color: C.green, width: px(110), align: 'center', look: 'line_icon',
-        icon: fa('fas fa-circle'), icon_view: 'default', primary_color: C.green, icon_size: px(5), icon_padding: px(4), gap: px(0),
-      }),
-    ], { gap: 12, align: 'center' }),
-    container({ ...gridSettings([3, 3, 1]), content_width: 'full', padding: box(0), grid_gaps: gap(28, 28), grid_gaps_tablet: gap(16, 16), grid_gaps_mobile: gap(24, 24), grid_align_items: 'stretch' }, [
-      card(m.lakeview, 'Lakeview Rooms', 'Wake up to stunning views of Lake Superior.', 'Lakeview room with a window onto Lake Superior'),
-      card(m.suite, 'Suites', 'Spacious accommodations with extra comfort and elegance.', 'Suite sitting area at sunrise'),
-      card(m.placeholder, 'Standard Rooms', 'Comfortable and inviting rooms for every traveler.', 'Standard room'),
+    // Faint oversized "Stay" behind the section heading.
+    widget('heading', {
+      title: 'Stay', header_size: 'span', title_color: 'rgba(23,48,27,0.06)', ...typo('typography', SERIF, [320, 220, 160], 400, { lh: 1, ls: -12 }),
+      _position: 'absolute', _offset_orientation_h: 'start', _offset_x: px(38), _offset_x_tablet: px(22), _offset_x_mobile: px(10),
+      _offset_orientation_v: 'start', _offset_y: px(40), _offset_y_tablet: px(36), _offset_y_mobile: px(30),
+      _element_width: 'auto', _z_index: 0, custom_css: 'selector { pointer-events: none; user-select: none; }',
+    }),
+    intro('Rooms & Suites', 'Fourteen rooms.<br>One shoreline.', button('See all rooms & rates', EXT.rooms, 'dark', { settings: { button_background_hover_color: '#0F2113' } })),
+    container({ ...gridSettings([3, 3, 1]), content_width: 'full', padding: box(0), grid_gaps: gap(28, 28), grid_gaps_tablet: gap(20, 20), grid_gaps_mobile: gap(36, 36), grid_align_items: 'start', z_index: 1 }, [
+      photoCard(m.lakeview, 'Lakeview Rooms', 'Lake-facing, king bed, the sunrise included.', EXT.rooms, { badge: { text: '01' }, alt: 'Lakeview room with a window onto Lake Superior' }),
+      photoCard(m.suite, 'Suites', 'Sitting room and a second balcony.', EXT.rooms, { badge: { text: '02' }, alt: 'Suite sitting area at sunrise' }),
+      photoCard(m.placeholder, 'Standard Rooms', 'Classic comfort, steps from The Deck.', EXT.rooms, { badge: { text: '03' }, alt: 'Standard room' }),
     ]),
   ]);
 
-  const photo = (img, posn, extra = []) => container({
-    content_width: 'full', padding: box(0), min_height: px(520), min_height_tablet: px(420), min_height_mobile: px(320),
-    background_background: 'classic', background_color: C.line, background_image: img, background_size: 'cover', background_position: posn, background_repeat: 'no-repeat',
-    overflow: 'hidden',
-  }, extra);
-  const copy = (children, settings = {}) => container({
-    content_width: 'full', flex_direction: 'column', flex_justify_content: 'center', flex_gap: gap(20),
-    padding: box(96, 80, 96, 80), padding_tablet: box(64, 40, 64, 40), padding_mobile: box(56, 20, 56, 20), ...settings,
-  }, children);
-
-  const dining = section({ ...gridSettings([2, 2, 1]), _element_id: 'dining', background_background: 'classic', background_color: C.deep, grid_gaps: gap(0, 0), grid_align_items: 'stretch' }, [
-    photo(m.deckDining, 'center center', [
-      image(m.deckBadge, { width: [76, 64, 60], settings: {
-        _position: 'absolute', _offset_orientation_h: 'start', _offset_x: px(22), _offset_orientation_v: 'start', _offset_y: px(22),
-        _element_width: 'initial', _element_custom_width: px(76), _element_custom_width_tablet: px(64), _element_custom_width_mobile: px(60),
-        alt_text: 'The Deck', custom_css: 'selector img { filter: drop-shadow(0 2px 8px rgba(0,0,0,.4)); }',
-      } }),
+  const dining = section({
+    _element_id: 'dining', flex_direction: 'column', ...radial('top right', C.mid, null, C.deep), ...bigPad,
+    content_width: 'boxed', boxed_width: px(1480), flex_gap: gap(56), flex_gap_tablet: gap(44), flex_gap_mobile: gap(36),
+  }, [
+    intro('Dine', 'Four places to eat and drink,<br>all with the lake in view.', button('View menus', EXT.dine, 'outline'), true),
+    container({ ...gridSettings([4, 2, 1]), content_width: 'full', padding: box(0), grid_gaps: gap(28, 36), grid_gaps_tablet: gap(20, 32), grid_gaps_mobile: gap(36, 36), grid_align_items: 'start' }, [
+      photoCard(m.deckDining, 'The Deck', 'Rooftop. Lunch and dinner, weather permitting.', EXT.dine, { dark: true, pos: 'center 55%', alt: 'Blue umbrellas on The Deck', badge: { logo: m.deckBadge, bg: 'rgba(15,33,19,0.88)' } }),
+      photoCard(m.lakesideDining, 'Lakeside Dining Room', 'Breakfast and dinner at the water’s edge.', EXT.dine, { dark: true, alt: 'Crab cakes and cocktails by the window of the Lakeside Dining Room' }),
+      photoCard(m.lounge, 'The Lounge', 'Cocktails, a proper old fashioned, and the game.', EXT.dine, { dark: true, alt: 'Bartender finishing a martini in The Lounge' }),
+      photoCard(m.placeholder, 'The Creamery', 'Our bar across the street. Tacos, pints, live music.', EXT.dine, { dark: true, alt: 'The Creamery', badge: { logo: m.creameryLogo, bg: 'rgba(245,242,236,0.92)' } }),
     ]),
+  ]);
+
+  const pulseDot = (size, color) => `selector .elementor-heading-title { display: flex; align-items: center; gap: ${size + 6}px; }
+selector .elementor-heading-title::before { content: ""; flex: none; width: ${size}px; height: ${size}px; border-radius: 50%; background: ${color}; animation: bi-pulse 1.6s ease-in-out infinite; }`;
+  const webcam = section({ ...gridSettings([2, 2, 1]), _element_id: 'webcam', background_background: 'classic', background_color: C.white, grid_gaps: gap(0, 0), grid_align_items: 'stretch' }, [
     copy([
-      eyebrow('Unmatched views of', C.cream, { opacity: 0.8 }),
-      heading('Lake Superior', 'h2', [66, 50, 42], C.cream, { lh: 0.98, ls: 1.4, transform: 'uppercase' }),
-      text('Lunch and dinner on The Deck, Bayfield’s only rooftop, or a table by the water in the Lakeside Dining Room.', { color: C.cream85, size: 15.5, maxW: 440 }),
-      row([
-        button('Reserve a table', EXT.dine, 'outline'),
-        button('View menus', EXT.dine, 'text', { icon: 'fas fa-arrow-right' }),
-      ], { gap: 12, settings: { padding: box(8, 0, 0, 0) } }),
-    ], { ...radial('top right', C.mid, null, C.deep), flex_gap: gap(18) }),
+      widget('heading', { title: 'Live from the Inn', header_size: 'p', title_color: C.green, ...typo('typography', SANS, 12, 500, { lh: 1.3, ls: 2.6, transform: 'uppercase' }), custom_css: pulseDot(8, '#C0392B') }),
+      heading('See the lake right now.', 'h2', [49, 40, 32], C.green, { ls: -1 }),
+      text('Our rooftop camera looks out over the marina, the ferry dock and Madeline Island, around the clock and in every season. Check the weather, watch the ferry come in, or just look at the water for a while.', { size: 15.5, lh: 1.7, maxW: 500 }),
+      button('Watch the live cam', EXT.webcam, 'dark', { icon: 'fas fa-arrow-right', settings: { button_background_hover_color: '#0F2113' } }),
+    ]),
+    photo(m.marina, 'center center', [
+      widget('heading', {
+        title: 'Live', header_size: 'span', title_color: C.cream, ...typo('typography', SANS, 11, 500, { lh: 1.2, ls: 2, transform: 'uppercase' }),
+        _position: 'absolute', _offset_orientation_h: 'start', _offset_x: px(20), _offset_orientation_v: 'start', _offset_y: px(20), _element_width: 'auto', _z_index: 2,
+        _background_background: 'classic', _background_color: 'rgba(15,33,19,0.75)', _padding: box(7, 12, 7, 12), _border_radius: box(2),
+        custom_css: pulseDot(7, '#E74C3C') + '\nselector { backdrop-filter: blur(6px); }',
+      }),
+      widget('icon', {
+        selected_icon: fa('fas fa-play'), view: 'stacked', shape: 'circle', primary_color: 'rgba(245,242,236,0.92)', secondary_color: C.green,
+        size: px(22), icon_padding: px(31), _z_index: 2,
+        custom_css: 'selector .elementor-icon { box-shadow: 0 20px 40px -20px rgba(0,0,0,.6); transition: transform .3s; }\nselector .elementor-icon i, selector .elementor-icon svg { margin-left: 4px; }\na:hover selector .elementor-icon { transform: scale(1.06); }',
+      }),
+      text('Bayfield Harbor · bayfieldlive.com', { color: C.cream, size: 12, weight: 400, lh: 1.4, ls: 0.5, settings: {
+        _position: 'absolute', _offset_orientation_h: 'start', _offset_x: px(0), _offset_orientation_v: 'end', _offset_y_end: px(0),
+        _element_width: 'initial', _element_custom_width: px(100, '%'), _padding: box(28, 22, 18, 22), _z_index: 2,
+        _background_background: 'gradient', _background_color: 'rgba(22,27,23,0.6)', _background_color_stop: px(0, '%'), _background_color_b: 'rgba(22,27,23,0)',
+        _background_color_b_stop: px(100, '%'), _background_gradient_type: 'linear', _background_gradient_angle: px(0, 'deg'),
+      } }),
+    ], { ...linked(EXT.webcam), flex_direction: 'column', flex_justify_content: 'center', flex_align_items: 'center',
+      custom_css: 'selector { aspect-ratio: 16 / 10; background-position: center 40%; transition: background-size .8s; }' }),
   ]);
 
   const events = section({ ...gridSettings([2, 2, 1]), _element_id: 'events', background_background: 'classic', background_color: C.cream, grid_gaps: gap(0, 0), grid_align_items: 'stretch' }, [
+    photo(m.eventsLawn, 'center center'),
     copy([
       eyebrow('Weddings & Events', C.green),
       heading('Host unforgettable gatherings.', 'h2', [49, 40, 32], C.green, { ls: -1 }),
       text('From intimate celebrations to corporate retreats, Bayfield Inn is the perfect setting for your next event. Our dedicated team will help you create memories that last.', { size: 15.5, lh: 1.7, maxW: 520 }),
-      button('Plan your event', EXT.events, 'dark', { settings: { _margin: box(4, 0, 0, 0) } }),
-    ], { flex_gap: gap(22) }),
-    photo(m.eventsLawn, 'center center'),
+      button('Plan your event', EXT.events, 'dark', { settings: { button_background_hover_color: '#0F2113' } }),
+    ]),
   ]);
 
-  return [hero, about, rooms, dining, events];
+  return [hero, about, rooms, dining, webcam, events];
 }
 
-// Page Settings > Custom CSS: the design's fine film-grain overlay and smooth anchor scrolling.
+// Page Settings > Custom CSS: the design's fine film-grain overlay, smooth anchor scrolling and
+// the pulse used by the "Live" dots.
 const grain = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E";
 const pageSettings = {
   background_background: 'classic', background_color: C.cream,
   custom_css: `html { scroll-behavior: smooth; }
 body::after { content: ""; position: fixed; inset: 0; z-index: 40; pointer-events: none; background-image: url("${grain}"); opacity: .38; mix-blend-mode: multiply; }
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+@keyframes bi-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { animation: none !important; transition: none !important; } }
 `,
 };
 
-module.exports = { C, header, footer, home, pageSettings };
+// Custom Code (end of <body>, Entire Site): promo bar dismissal + header logo fade-in on scroll.
+const interactionsJs = `<script>
+(function () {
+  var KEY = 'bi-promo-dismissed', root = document.documentElement;
+  try { if (sessionStorage.getItem(KEY) === '1') root.classList.add('bi-promo-off'); } catch (e) {}
+  document.addEventListener('click', function (ev) {
+    var btn = ev.target.closest && ev.target.closest('.bi-promo-close');
+    if (!btn) return;
+    ev.preventDefault();
+    try { sessionStorage.setItem(KEY, '1'); } catch (e) {}
+    root.classList.add('bi-promo-off');
+  });
+  function onScroll() { document.body.classList.toggle('bi-scrolled', window.scrollY > 120); }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>`;
+
+module.exports = { C, header, footer, home, pageSettings, interactionsJs };

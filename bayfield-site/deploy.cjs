@@ -16,7 +16,7 @@ const PREP = path.join(path.dirname(process.env.STATE), 'bayfield-prep.json');
 const args = process.argv.slice(2);
 const want = (k) => args.length === 0 || args.includes(k);
 const FONTS = '<link rel="preconnect" href="https://fonts.googleapis.com">\n<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">';
-const MENU = [['Rooms', '/#rooms'], ['Dining', '/#dining'], ['Events', '/#events'], ['Gallery', 'https://bayfieldinn.com/relax/lobby-gallery/'], ['Contact', '/#contact']];
+const MENU = [['Rooms', '/#rooms'], ['Dining', '/#dining'], ['Events', '/#events'], ['Live Cam', '/#webcam'], ['Gallery', 'https://bayfieldinn.com/relax/lobby-gallery/'], ['Contact', '/#contact']];
 
 const api = (p, method, url, body) => p.evaluate(async ([method, url, body]) => {
   const r = await fetch(url, { method, headers: { 'X-WP-Nonce': wpApiSettings.nonce, 'Content-Type': 'application/json' }, body: body ? JSON.stringify(body) : undefined });
@@ -37,10 +37,10 @@ async function upload(p, file) {
   }, [f, type, fs.readFileSync(file).toString('base64')]);
 }
 
-async function fontSnippet(p) {
-  // Elementor Pro "Custom Code" snippet in <head>, Entire Site. Its meta is exposed over REST.
-  const ex = await api(p, 'GET', '/wp-json/wp/v2/elementor_snippet?status=any&search=Bayfield%20fonts&_fields=id');
-  const body = { title: 'Bayfield fonts (Geist + Newsreader)', status: 'publish', meta: { _elementor_location: 'elementor_head', _elementor_priority: 1, _elementor_code: FONTS } };
+async function snippet(p, search, title, location, code) {
+  // Elementor Pro "Custom Code" snippet, Entire Site. Its meta is exposed over REST.
+  const ex = await api(p, 'GET', `/wp-json/wp/v2/elementor_snippet?status=any&search=${encodeURIComponent(search)}&_fields=id`);
+  const body = { title, status: 'publish', meta: { _elementor_location: location, _elementor_priority: 1, _elementor_code: code } };
   const r = await api(p, 'POST', ex.length ? `/wp-json/wp/v2/elementor_snippet/${ex[0].id}` : '/wp-json/wp/v2/elementor_snippet', body);
   if (!r.id) throw new Error('snippet: ' + JSON.stringify(r));
   // No display conditions = Entire Site for Custom Code.
@@ -101,28 +101,34 @@ async function setConditions(p, postId, conditions) {
     }
     const menus = await api(p, 'GET', '/wp-json/wp/v2/menus?_fields=id,name');
     let menu = menus.find((x) => x.name === 'Bayfield Main Menu');
-    if (!menu) {
-      menu = await api(p, 'POST', '/wp-json/wp/v2/menus', { name: 'Bayfield Main Menu' });
+    if (!menu) menu = await api(p, 'POST', '/wp-json/wp/v2/menus', { name: 'Bayfield Main Menu' });
+    // Rebuild the items when they differ from MENU.
+    const items = await api(p, 'GET', `/wp-json/wp/v2/menu-items?menus=${menu.id}&per_page=100&_fields=id,title,menu_order`);
+    const have = items.sort((a, b) => a.menu_order - b.menu_order).map((i) => i.title.rendered).join('|');
+    if (have !== MENU.map(([t]) => t).join('|')) {
+      for (const i of items) await api(p, 'DELETE', `/wp-json/wp/v2/menu-items/${i.id}?force=true`);
       let order = 1;
       for (const [title, url] of MENU) await api(p, 'POST', '/wp-json/wp/v2/menu-items', { title, url: /^https?:/.test(url) ? url : SITE + url, menus: menu.id, status: 'publish', menu_order: order++ });
     }
     prep.menu = menu.id;
-    prep.fonts = await fontSnippet(p);
+    prep.fonts = await snippet(p, 'Bayfield fonts', 'Bayfield fonts (Geist + Newsreader)', 'elementor_head', FONTS);
+    prep.interactions = await snippet(p, 'Bayfield interactions', 'Bayfield interactions (promo bar, header logo)', 'elementor_body_end', B.interactionsJs);
     await p.goto(`${SITE}/wp-admin/`, { waitUntil: 'domcontentloaded' });
     const s = await api(p, 'POST', '/wp-json/wp/v2/settings', {
       title: 'Bayfield Inn', description: 'The best darn view on Lake Superior', site_icon: prep.media['bayfield-inn-favicon.png'].id,
     });
-    console.log('prep: media', Object.keys(prep.media).length, '| menu', prep.menu, '| fonts snippet', prep.fonts, '| title', s.title, '| icon', s.site_icon);
+    console.log('prep: media', Object.keys(prep.media).length, '| menu', prep.menu, '| snippets', prep.fonts, prep.interactions, '| title', s.title, '| icon', s.site_icon);
     fs.writeFileSync(PREP, JSON.stringify(prep, null, 1));
   }
 
   const md = (f) => ({ id: prep.media[f].id, url: prep.media[f].url, alt: '', source: 'library' });
   const m = {
-    logo: md('bayfield-inn-logo.png'), logoWhite: md('bayfield-inn-logo-white.png'),
-    heroDeck: md('bayfield-hero-the-deck.jpg'), heroDining: md('bayfield-hero-lakeside-dining.jpg'),
-    lakeview: md('bayfield-lakeview-room.jpg'), sunset: md('bayfield-harbor-sunset.jpg'), suite: md('bayfield-suite.jpg'),
-    deckDining: md('bayfield-deck-dining.jpg'), deckBadge: md('bayfield-the-deck-badge.png'), eventsLawn: md('bayfield-events-lawn.jpg'),
-    // The design has an empty "Drop a Standard Room photo" slot: Elementor's placeholder until a photo is chosen.
+    logo: md('bayfield-inn-logo-green-trim.png'), logoWhite: md('bayfield-inn-logo-white-trim.png'),
+    heroDeck: md('bayfield-hero-the-deck.jpg'), lakeview: md('bayfield-lakeview-room.jpg'), suite: md('bayfield-suite.jpg'),
+    deckDining: md('bayfield-deck-dining.jpg'), deckBadge: md('bayfield-the-deck-badge.png'), creameryLogo: md('bayfield-creamery-logo.png'),
+    lakesideDining: md('bayfield-lakeside-dining-room.jpg'), lounge: md('bayfield-the-lounge.jpg'), marina: md('bayfield-marina-webcam.jpg'),
+    eventsLawn: md('bayfield-events-lawn.jpg'),
+    // The design has empty photo slots (Standard Room, The Creamery): Elementor's placeholder until a photo is chosen.
     placeholder: { id: '', url: `${SITE}/wp-content/plugins/elementor/assets/images/placeholder.png`, alt: '', source: 'library' },
   };
 
