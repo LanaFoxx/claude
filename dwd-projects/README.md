@@ -30,3 +30,10 @@ day), capture width, default project notes, and the call-to-action text.
 
 **Projects → Import** moved the original hand-built project pages into Projects (old pages
 were set to Draft, not deleted).
+
+## Blog
+Write posts in the normal WordPress editor. The plugin styles each article to match the site
+(navy header, featured image, author box, call-to-action band and related posts).
+- `[dwd_blog limit="12"]` — grid of the latest articles (used on /blog/ and the home page)
+
+The plugin also adds the business phone number (from Settings) to Yoast's Organization schema.
