@@ -114,6 +114,13 @@ def seo_tweaks(name, body):
         'CTEC 60 Hour Course': ('60-Hour QE</span> course before you enroll.', '60 Hour CTEC Course</span> before you enroll.'),
     }.get(name)
     if name == 'TaxCourse Finder Home':
+        # Exact target keywords in the home course cards (headings + copy), wording unchanged otherwise.
+        for old, new in [('CTEC 20-Hour <span style="font-weight:800">CE Course</span>', '20 Hour <span style="font-weight:800">CTEC Course</span>'),
+                         ('CTEC 60-Hour <span style="font-weight:800">QE Course</span>', '60 Hour <span style="font-weight:800">CTEC Course</span>'),
+                         ('Compare every approved 20-hour course', 'Compare every approved 20 hour CTEC course'),
+                         ('The 60-hour qualifying education course is required', 'The 60 hour CTEC course (qualifying education) is required')]:
+            assert old in body, old
+            body = body.replace(old, new, 1)
         # block-level spans inside the H1 need real spaces for text-only readers (crawlers, AI tools)
         body = body.replace('Compare every<span', 'Compare every <span', 1).replace('</span>before you enroll.', '</span> before you enroll.', 1)
     if h1:
