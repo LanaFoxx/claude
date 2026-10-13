@@ -12,15 +12,14 @@ const hero = (m) => container({
   grid_rows_grid: L.auto, grid_rows_grid_tablet: L.auto, grid_rows_grid_mobile: L.auto,
   grid_gaps: gap(40, 0), grid_align_items: 'end', min_height: px(640), min_height_tablet: px(0), min_height_mobile: px(0),
   padding: box(0, 32, 0, 32), padding_mobile: box(0, 20, 0, 20),
-  background_background: 'classic', background_color: C.black, ...L.patternOverlay(m.pattern), overflow: 'hidden',
-  custom_css: 'selector { background-image: radial-gradient(ellipse at 70% 40%, #262A2C 0%, #1E2123 60%); }',
+  background_background: 'classic', background_color: C.ivory, ...L.patternOverlay(m.pattern), overflow: 'hidden',
 }, [
-  // dimmed emblem watermark behind the portrait
+  // faint monogram watermark behind the portrait
   image(m.emblem, {
     width: 720, settings: {
       _position: 'absolute', _element_width: 'initial', _element_custom_width: px(720), _element_custom_width_mobile: px(420), _z_index: 0,
       _offset_orientation_h: 'start', _offset_x: px(14, '%'), _offset_orientation_v: 'start', _offset_y: px(50, '%'),
-      custom_css: 'selector { transform: translate(-50%, -50%); pointer-events: none; max-width: 90vw; }\nselector img { opacity: .05; } /* translucent so the gold pattern shows through */',
+      custom_css: 'selector { transform: translate(-50%, -50%); pointer-events: none; max-width: 90vw; }\nselector img { opacity: .05; } /* faint monogram watermark */',
     },
   }),
   container({
@@ -38,16 +37,16 @@ const hero = (m) => container({
     }),
   ]),
   stack([
-    eyebrow('Personal Injury Lawyer · Norcross, Georgia', C.goldLight, 'left', { tag: 'h1', alignM: 'center' }),
-    heading(`People First.<br>${L.accent('Justice Always.', C.goldLight)}`, 'p', [68, 56, 42], C.cream, 'left', { lh: 1.12, ls: 0.01, alignM: 'center', settings: { _margin: box(4, 0, 10, 0) } }),
+    eyebrow('Personal Injury Lawyer · Norcross, Georgia', C.roseDeep, 'left', { tag: 'h1', alignM: 'center' }),
+    heading(`People First.<br>${L.accent('Justice Always.', C.roseDeep)}`, 'p', [68, 56, 42], C.ink, 'left', { lh: 1.12, ls: 0.01, alignM: 'center', settings: { _margin: box(4, 0, 10, 0) } }),
     text('We have the experience to help injured clients get the most ideal outcome possible. Car wrecks, truck collisions, dog bites and falls, handled personally from start to finish.',
-      { color: C.paper, size: 17, maxW: 460, alignM: 'center', settings: { _margin: box(0, 0, 18, 0) } }),
+      { color: C.inkSoft, size: 17, maxW: 460, alignM: 'center', settings: { _margin: box(0, 0, 18, 0) } }),
     row([
       button('Free Case Evaluation', URL.contact, 'gold'),
       button(`Call ${L.PHONE}`, L.TEL, 'outline'),
     ], { gap: 16, settings: { flex_justify_content_tablet: 'center', flex_justify_content_mobile: 'center' } }),
     iconList(['No fee unless we win', 'Nearly 20 years of experience', 'Hablamos Español'], {
-      inline: true, color: C.sand, size: 13, weight: 500, ls: 0.13, transform: 'uppercase', space: 18,
+      inline: true, color: C.inkMuted, size: 13, weight: 500, ls: 0.13, transform: 'uppercase', space: 18,
       settings: { _margin: box(26, 0, 0, 0), icon_align_tablet: 'center', icon_align_mobile: 'center' },
     }),
   ], { gap: 18, settings: { padding: box(90, 0, 110, 0), padding_tablet: box(40, 0, 20, 0), padding_mobile: box(40, 0, 10, 0), z_index: 1, flex_align_items_tablet: 'center', flex_align_items_mobile: 'center' } }),
@@ -57,23 +56,23 @@ const hero = (m) => container({
 const BADGES = ['National Trial Lawyers', 'State Bar of Georgia', 'Georgia Trial Lawyers Association', 'Best of Georgia', 'Best of Gwinnett'];
 const trustStrip = () => container({
   content_width: 'full', flex_direction: 'row', flex_wrap: 'nowrap', flex_align_items: 'stretch', flex_gap: gap(0), padding: box(0),
-  background_background: 'classic', background_color: C.white,
-  border_border: 'solid', border_width: box(3, 0, 0, 0), border_color: C.gold, overflow: 'hidden',
+  background_background: 'classic', background_color: C.blush,
+  border_border: 'solid', border_width: box(3, 0, 0, 0), border_color: C.rose, overflow: 'hidden',
 }, [
   container({
     content_width: 'full', width: auto, _flex_size: 'none', flex_justify_content: 'center', padding: box(22, 32, 22, 32), hide_mobile: 'hidden-mobile',
-    border_border: 'solid', border_width: box(0, 1, 0, 0), border_color: C.rule, z_index: 1,
-    background_background: 'classic', background_color: C.white,
-  }, [eyebrow('Recognized by', C.goldDark, 'left', { size: 12 })]),
+    border_border: 'solid', border_width: box(0, 1, 0, 0), border_color: C.line, z_index: 1,
+    background_background: 'classic', background_color: C.blush,
+  }, [eyebrow('Recognized by', C.roseDeep, 'left', { size: 12 })]),
   container({
     content_width: 'full', _flex_size: 'grow', padding: box(22, 0, 22, 0), overflow: 'hidden', css_classes: 'ct-anim',
     custom_css: 'selector { -webkit-mask-image: linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent); mask-image: linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent); }',
   }, [
     iconList([...BADGES, ...BADGES], {
-      inline: true, icon: 'fas fa-balance-scale', iconSize: 20, indent: 12, iconColor: C.gold, color: C.ink2, size: 15, weight: 500, ls: 0.08, transform: 'uppercase', space: 0,
+      inline: true, icon: 'fas fa-balance-scale', iconSize: 20, indent: 12, iconColor: C.rose, color: C.inkSoft, size: 15, weight: 500, ls: 0.08, transform: 'uppercase', space: 0,
       settings: {
         custom_css: `selector .elementor-icon-list-items { display: flex; flex-wrap: nowrap; width: max-content; animation: ct-marquee 28s linear infinite; }
-selector .elementor-icon-list-item { white-space: nowrap; padding: 0 36px !important; margin: 0 !important; border-left: 1px solid rgba(30,33,35,.12); }
+selector .elementor-icon-list-item { white-space: nowrap; padding: 0 36px !important; margin: 0 !important; border-left: 1px solid rgba(42,27,22,.12); }
 selector .elementor-icon-list-item::after { display: none !important; }`,
       },
     }),
@@ -86,20 +85,20 @@ const RESULTS = [
   ['Truck accident', '$550K', 'A tractor-trailer turned unlawfully into our client’s lane at a Gwinnett County intersection. Litigation and mediation produced a $550,000 settlement.', 1.5, 18],
   ['Rear-end crash', '$500K', 'A highway rear-end collision left our client with spinal damage and a cervical disc replacement. We secured $500,000 for recovery and lost income.', -1.5, 0],
 ];
-const resultNote = ([type, amount, desc, tilt, drop]) => P.resultNote({ type, amount, desc }, tilt, drop);
-const results = () => band(C.cream, [
-  eyebrow('Case results', C.goldDark, 'center', { settings: { _margin: box(0, 0, 18, 0) } }),
+const resultNote = ([type, amount, desc, tilt, drop]) => P.resultNote({ type, amount, desc }, tilt, drop, { bg: C.ivory });
+const results = () => band(C.white, [
+  eyebrow('Case results', C.roseDeep, 'center', { settings: { _margin: box(0, 0, 18, 0) } }),
   H2('Over $15 million', 'recovered for our clients', false),
   grid(RESULTS.map(resultNote), { cols: [3, 1, 1], gap: 40, rowGap: 64, align: 'start', settings: { margin: box(84, 0, 0, 0), padding: box(0, 0, 0, 0), padding_tablet: box(0, 60, 0, 60), padding_mobile: box(0, 4, 0, 4) } }),
   text('Prior results do not guarantee a similar outcome. Each case is different and is judged on its own facts.',
-    { color: C.fine, size: 13, align: 'center', settings: { _margin: box(48, 0, 0, 0) } }),
+    { color: C.inkMuted, size: 13, align: 'center', settings: { _margin: box(48, 0, 0, 0) } }),
 ], { anchor: 'results', align: 'center' });
 
 /* --------------------------------------------------------------- about */
 const sideText = (side) => {
   const run = Array.from({ length: 6 }, () => 'Advocate • Protect • Deliver').join('   •   ');
   const up = side === 'left';
-  return heading(`${run}   •   ${run}`, 'div', 48, 'rgba(163,133,76,0.12)', 'left', {
+  return heading(`${run}   •   ${run}`, 'div', 48, 'rgba(191,142,116,0.12)', 'left', {
     lh: 1.67, ls: 0.06, settings: {
       typography_text_transform: 'uppercase', hide_tablet: 'hidden-tablet', hide_mobile: 'hidden-mobile', css_classes: 'ct-anim',
       _position: 'absolute', _element_width: 'initial', _element_custom_width: px(80), _z_index: 0,
@@ -112,14 +111,14 @@ selector .elementor-heading-title { writing-mode: vertical-rl; white-space: nowr
 const numberedRow = (n, h, p, last) => container({
   container_type: 'grid', content_width: 'full', grid_columns_grid: { unit: 'custom', size: '64px 1fr' }, grid_columns_grid_tablet: { unit: 'custom', size: '64px 1fr' }, grid_columns_grid_mobile: { unit: 'custom', size: '48px 1fr' },
   grid_rows_grid: auto, grid_rows_grid_tablet: auto, grid_rows_grid_mobile: auto, grid_gaps: gap(20), grid_align_items: 'start', padding: box(26, 0, 26, 0),
-  border_border: 'solid', border_width: box(1, 0, last ? 1 : 0, 0), border_color: 'rgba(163,133,76,0.3)',
+  border_border: 'solid', border_width: box(1, 0, last ? 1 : 0, 0), border_color: 'rgba(191,142,116,0.35)',
 }, [
-  heading(n, 'p', 28, C.gold, 'left', { lh: 1, ls: 0 }),
-  stack([H3(h, C.cream, [22, 22, 20]), text(p, { color: C.paper })], { gap: 8 }),
+  heading(n, 'p', 28, C.rose, 'left', { lh: 1, ls: 0 }),
+  stack([H3(h, C.ink, [22, 22, 20]), text(p, { color: C.inkSoft })], { gap: 8 }),
 ]);
-const about = (m) => band(C.black, [
+const about = (m) => band(C.blush, [
   sideText('left'), sideText('right'),
-  eyebrow('Meet your attorney', C.goldLight, 'center', { settings: { _margin: box(0, 0, 18, 0) } }),
+  eyebrow('Meet your attorney', C.roseDeep, 'center', { settings: { _margin: box(0, 0, 18, 0) } }),
   H2('Jennifer Cabrera-Torres', 'treats every case like it’s personal', true, 'center', { maxW: 820, settings: { _element_width_mobile: 'inherit' } }),
   grid([
     container({ content_width: 'full', padding: box(0), min_height: px(720), min_height_tablet: px(520), min_height_mobile: px(420), overflow: 'hidden' }, [
@@ -137,7 +136,7 @@ const about = (m) => band(C.black, [
       button('Meet Jennifer', URL.jennifer, 'outline', { pad: box(14, 26, 14, 26), settings: { _margin: box(40, 0, 0, 0) } }),
     ], { gap: 0, settings: { padding: box(40, 48, 90, 20), padding_tablet: box(40, 0, 90, 0), padding_mobile: box(24, 0, 70, 0) } }),
   ], { cols: [2, 1, 1], gap: 0, rowGap: 0, align: 'stretch', settings: { margin: box(48, 0, 0, 0) } }),
-], { anchor: 'about', align: 'center', pattern: m.pattern, pad: [110, 0] });
+], { anchor: 'about', align: 'center', pad: [110, 0] });
 
 /* ---------------------------------------------------------- quote band */
 const quote = () => container({
@@ -145,13 +144,13 @@ const quote = () => container({
   grid_columns_grid: { unit: 'custom', size: 'minmax(0,1fr) auto' }, grid_columns_grid_tablet: px(1, 'fr'), grid_columns_grid_mobile: px(1, 'fr'),
   grid_rows_grid: L.auto, grid_rows_grid_tablet: L.auto, grid_rows_grid_mobile: L.auto, grid_gaps: gap(40, 28), grid_align_items: 'center',
   padding: box(64, 32, 64, 32), padding_mobile: box(52, 20, 52, 20),
-  background_background: 'classic', background_color: C.panel,
-  border_border: 'solid', border_width: box(1, 0, 1, 0), border_color: C.goldLine,
+  background_background: 'classic', background_color: C.ivory,
+  border_border: 'solid', border_width: box(1, 0, 1, 0), border_color: 'rgba(191,142,116,0.25)',
 }, [
   stack([
     // Break after "personal," so the second line is never a lone "is." (collapses on phones).
-    text('<p>“Treat every case like it’s personal,<br class="ct-br"> because for me, it is.”</p>', { color: C.cream, size: [40, 34, 28], weight: 300, lh: 1.3, settings: { custom_css: '@media (max-width: 767px) { selector .ct-br { display: none; } }' } }),
-    eyebrow('Jennifer Cabrera-Torres, Esq.', C.gold, 'left', { size: 15, ls: 0.2 }),
+    text('<p>“Treat every case like it’s personal,<br class="ct-br"> because for me, it is.”</p>', { color: C.ink, size: [40, 34, 28], weight: 300, lh: 1.3, settings: { custom_css: '@media (max-width: 767px) { selector .ct-br { display: none; } }' } }),
+    eyebrow('Jennifer Cabrera-Torres, Esq.', C.rose, 'left', { size: 15, ls: 0.2 }),
   ], { gap: 14 }),
   button('Free Case Evaluation', URL.contact, 'gold', { pad: box(18, 34, 18, 34), align: 'right', settings: { align_tablet: 'left', align_mobile: 'left' } }),
 ], false);
@@ -171,8 +170,8 @@ const plusList = (items, solo) => P.plusList(items, solo ? { width: 520 } : {});
 const areaPanel = (m) => ([name, desc, items, key]) => {
   const solo = !key;
   const copy = stack([
-    H3(name, C.black, [34, 30, 26], { lh: 1.1, align: solo ? 'center' : 'left', settings: { _margin: box(0, 0, 2, 0) } }),
-    text(desc, { color: C.body, align: solo ? 'center' : 'left', settings: { _margin: box(0, 0, 8, 0) } }),
+    H3(name, C.ink, [34, 30, 26], { lh: 1.1, align: solo ? 'center' : 'left', settings: { _margin: box(0, 0, 2, 0) } }),
+    text(desc, { color: C.inkSoft, align: solo ? 'center' : 'left', settings: { _margin: box(0, 0, 8, 0) } }),
     plusList(items, solo),
     button('Talk to us about your case', URL.contact, 'underline', { align: solo ? 'center' : 'left', settings: { _margin: box(12, 0, 0, 0) } }),
   ], { gap: 14, align: solo ? 'center' : undefined });
@@ -188,16 +187,16 @@ const areaPanel = (m) => ([name, desc, items, key]) => {
       settings: {
         _background_background: 'classic', _background_color: C.white, _padding: box(14),
         _element_width_tablet: 'initial', _element_custom_width_tablet: px(420), _element_custom_width_mobile: px(100, '%'),
-        custom_css: 'selector { transform: rotate(2deg); box-shadow: 0 30px 60px rgba(30,33,35,.12); margin-left: auto; margin-right: auto; }\nselector img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; display: block; }',
+        custom_css: 'selector { transform: rotate(2deg); box-shadow: 0 30px 60px rgba(42,27,22,.12); margin-left: auto; margin-right: auto; }\nselector img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; display: block; }',
       },
     }),
   ]);
 };
-const practice = (m) => band(C.cream, [
-  eyebrow('Practice areas', C.goldDark, 'center', { settings: { _margin: box(0, 0, 18, 0) } }),
+const practice = (m) => band(C.white, [
+  eyebrow('Practice areas', C.roseDeep, 'center', { settings: { _margin: box(0, 0, 18, 0) } }),
   H2('Personal injury,', 'focused and thorough', false, 'center', { maxW: 640, settings: { _element_width_mobile: 'inherit' } }),
   text('When someone else’s carelessness causes an injury, Georgia law lets you demand financial accountability. We prepare every case as if it will go to trial, which is exactly why most settle well.',
-    { color: C.body, align: 'center', maxW: 640, settings: { _margin: box(24, 0, 0, 0) } }),
+    { color: C.inkSoft, align: 'center', maxW: 640, settings: { _margin: box(24, 0, 0, 0) } }),
   {
     id: L.id(), elType: 'widget', widgetType: 'nested-tabs',
     settings: {
@@ -205,13 +204,13 @@ const practice = (m) => band(C.cream, [
       tabs_direction: 'block-start', tabs_justify_horizontal: 'center', title_alignment: 'center',
       breakpoint_selector: 'mobile', tabs_title_space_between: px(12), tabs_title_spacing: px(0),
       ...L.typo('title_typography', 12, 500, { lh: 1.2, ls: 0.16, transform: 'uppercase' }),
-      title_text_color: C.black, title_text_color_hover: C.black, title_text_color_active: C.goldLight,
+      title_text_color: C.ink, title_text_color_hover: C.ink, title_text_color_active: C.roseDeep,
       tabs_title_background_color_background: 'classic', tabs_title_background_color_color: 'rgba(0,0,0,0)',
-      tabs_title_background_color_hover_background: 'classic', tabs_title_background_color_hover_color: 'rgba(30,33,35,0.04)',
-      tabs_title_background_color_active_background: 'classic', tabs_title_background_color_active_color: C.black,
-      tabs_title_border_border: 'solid', tabs_title_border_width: box(1), tabs_title_border_color: 'rgba(30,33,35,0.25)',
-      tabs_title_border_hover_border: 'solid', tabs_title_border_hover_width: box(1), tabs_title_border_hover_color: C.black,
-      tabs_title_border_active_border: 'solid', tabs_title_border_active_width: box(1), tabs_title_border_active_color: C.black,
+      tabs_title_background_color_hover_background: 'classic', tabs_title_background_color_hover_color: 'rgba(42,27,22,0.04)',
+      tabs_title_background_color_active_background: 'classic', tabs_title_background_color_active_color: C.ink,
+      tabs_title_border_border: 'solid', tabs_title_border_width: box(1), tabs_title_border_color: 'rgba(42,27,22,0.25)',
+      tabs_title_border_hover_border: 'solid', tabs_title_border_hover_width: box(1), tabs_title_border_hover_color: C.ink,
+      tabs_title_border_active_border: 'solid', tabs_title_border_active_width: box(1), tabs_title_border_active_color: C.ink,
       tabs_title_border_radius: box(999), padding: box(14, 24, 14, 24),
       box_background_color_background: 'classic', box_background_color_color: 'rgba(0,0,0,0)', box_border_border: 'none', box_padding: box(0),
       _margin: box(48, 0, 0, 0),
@@ -227,47 +226,47 @@ const REVIEWS = [
   ['Considerate, caring, and accessible. Great attorneys that will fight for you and get you what you deserve.', 'Ed C. · Google'],
   ['I would recommend them to everyone looking for a professional, reliable, and client-focused team. Simply the best.', 'Google reviewer · Google'],
 ];
-const testimonials = (m) => band(C.black, [
-  eyebrow('Client testimonials', C.goldLight, 'center', { settings: { _margin: box(0, 0, 18, 0) } }),
+const testimonials = (m) => band(C.blush, [
+  eyebrow('Client testimonials', C.roseDeep, 'center', { settings: { _margin: box(0, 0, 18, 0) } }),
   H2('Our clients', 'said it best', true),
   grid(REVIEWS.map(([q, who]) => glass([
-    text('★★★★★', { color: C.goldLight, size: 24, ls: 0.12, lh: 1 }),
-    text(`“${q}”`, { color: C.cream, size: 21, weight: 300, lh: 1.4, settings: { _flex_size: 'grow' } }),
-    eyebrow(who, C.sand, 'left', { size: 12, ls: 0.2 }),
+    text('★★★★★', { color: C.rose, size: 24, ls: 0.12, lh: 1 }),
+    text(`“${q}”`, { color: C.ink, size: 21, weight: 300, lh: 1.4, settings: { _flex_size: 'grow' } }),
+    eyebrow(who, C.inkMuted, 'left', { size: 12, ls: 0.2 }),
   ], { gap: 18 })), { cols: [3, 1, 1], gap: 24, settings: { margin: box(64, 0, 0, 0) } }),
-], { anchor: 'testimonials', align: 'center', pattern: m.pattern });
+], { anchor: 'testimonials', align: 'center' });
 
 /* ------------------------------------------------------------------ faq */
 const faqAccordion = () => P.faqAccordion(CONTENT.faqs.slice(0, 5));
-const faq = () => band(C.cream, [
+const faq = () => band(C.white, [
   grid([
     stack([
-      eyebrow('FAQ', C.goldDark),
+      eyebrow('FAQ', C.roseDeep),
       H2('Questions injured people', 'ask us most', false, 'left', { sizes: [54, 44, 34] }),
-      text('Plain answers about Georgia personal injury claims. Every case is different, so call us for advice specific to yours.', { color: C.body, settings: { _margin: box(6, 0, 0, 0) } }),
+      text('Plain answers about Georgia personal injury claims. Every case is different, so call us for advice specific to yours.', { color: C.inkSoft, settings: { _margin: box(6, 0, 0, 0) } }),
     ], { gap: 18 }),
     faqAccordion(),
   ], { cols: ['minmax(0,1fr) minmax(0,1.6fr)', 1, 1], gap: 60, rowGap: 40, align: 'center' }),
 ], { anchor: 'faq' });
 
 /* ---------------------------------------------------------------- blog */
-const blog = (m) => band(C.white, [
-  eyebrow('Legal resources', C.goldDark, 'left', { settings: { _margin: box(0, 0, 18, 0) } }),
+const blog = (m) => band(C.ivory, [
+  eyebrow('Legal resources', C.roseDeep, 'left', { settings: { _margin: box(0, 0, 18, 0) } }),
   H2('Know your rights', 'after an accident', false, 'left', { sizes: [54, 44, 34] }),
-  grid(CONTENT.articles.slice(0, 3).map((a) => P.blogCard(m, a, { gap: 18, hSizes: [26, 24, 22], pColor: C.slate })),
+  grid(CONTENT.articles.slice(0, 3).map((a) => P.blogCard(m, a, { gap: 18, hSizes: [26, 24, 22], pColor: C.inkMuted })),
     { cols: [3, 1, 1], gap: 32, rowGap: 48, align: 'start', settings: { margin: box(56, 0, 0, 0) } }),
-], { anchor: 'blog', settings: { border_border: 'solid', border_width: box(1, 0, 0, 0), border_color: 'rgba(30,33,35,0.08)' } });
+], { anchor: 'blog', settings: { border_border: 'solid', border_width: box(1, 0, 0, 0), border_color: 'rgba(42,27,22,0.08)' } });
 
 /* ------------------------------------------------------------- contact */
-const contact = (m) => band(C.black, [
+const contact = (m) => band(C.white, [
   P.emblem(m, 620, { _offset_orientation_h: 'start', _offset_x: px(-160), _offset_orientation_v: 'end', _offset_y_end: px(-80), hide_mobile: 'hidden-mobile' }),
   grid([
     stack([
-      eyebrow('Free case evaluation', C.goldLight),
+      eyebrow('Free case evaluation', C.roseDeep),
       H2('Injured?', 'Call Jen.', true, 'left', { br: true }),
-      text('Tell us what happened. We respond quickly, keep everything confidential, and you pay nothing unless we recover for you.', { color: C.paper, maxW: 440, settings: { _margin: box(6, 0, 22, 0) } }),
+      text('Tell us what happened. We respond quickly, keep everything confidential, and you pay nothing unless we recover for you.', { color: C.inkSoft, maxW: 440, settings: { _margin: box(6, 0, 22, 0) } }),
       P.phoneDetail(), P.emailDetail(),
-      P.detail('Norcross office', text(`<p>${L.ADDRESS}</p>`, { color: C.sand, size: 15 })),
+      P.detail('Norcross office', text(`<p>${L.ADDRESS}</p>`, { color: C.inkMuted, size: 15 })),
     ], { gap: 18 }),
     P.contactForm(4),
   ], { cols: ['minmax(0,1fr) minmax(0,1.2fr)', 1, 1], gap: 60, rowGap: 48, align: 'start', settings: { z_index: 1 } }),

@@ -14,10 +14,10 @@ module.exports = {
   },
   build: (m) => [
     P.pageHero(m, heroes.results, { photo: m.jenCreamCut, cutout: true }),
-    band(C.cream, [
+    band(C.white, [
       grid(results.map((r, i) => P.resultNote(r, ...TILT[i], { compact: true, pad: [40, 26, 32, 26], amountSizes: [46, 46, 44] })),
         { cols: [4, 2, 1], gap: 28, rowGap: 64, align: 'start' }),
-      text(disclaimer, { color: C.fine, size: 13, align: 'center', settings: { _margin: box(64, 0, 0, 0) } }),
+      text(disclaimer, { color: C.inkMuted, size: 13, align: 'center', settings: { _margin: box(64, 0, 0, 0) } }),
     ], { pad: [110, 110], align: 'center' }),
     P.ctaBand(),
   ],

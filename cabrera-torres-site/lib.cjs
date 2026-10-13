@@ -4,10 +4,11 @@
 const crypto = require('crypto');
 
 const C = {
-  black: '#1E2123', pure: '#191C1E', panel: '#2D3133', cream: '#F8F5F0', white: '#FFFFFF',
-  gold: '#A3854C', goldLight: '#C9AE78', goldDark: '#7A6232', goldDeep: '#8F7440',
-  sand: '#C8B89A', paper: '#E6DFD2', body: '#3A352E', ink2: '#2A2520', slate: '#4A443C', fine: '#6B645A', foot: '#B5AC9C',
-  goldLine: 'rgba(163,133,76,0.25)', rule: 'rgba(30,33,35,0.12)',
+  // Light rebrand (README handoff): no dark backgrounds anywhere; ivory -> white -> blush rhythm, rose-gold accent.
+  ivory: '#F8F4EE', white: '#FFFFFF', blush: '#F3E7DF',
+  rose: '#BF8E74', roseDeep: '#8E5F47', roseHover: '#A8775D',
+  ink: '#2A1B16', inkSoft: '#4A352D', inkMuted: '#6B5248', placeholder: '#A69D8D',
+  line: 'rgba(191,142,116,0.35)', lineStrong: 'rgba(191,142,116,0.6)', hair: 'rgba(42,27,22,0.08)', rule: 'rgba(42,27,22,0.12)',
 };
 const FONT = 'Jost';
 const PHONE = '678.490.0000', TEL = 'tel:+16784900000', EMAIL = 'info@cabreratorres.com';
@@ -65,11 +66,11 @@ function band(bg, children, o = {}) {
   }, children, false);
 }
 
-// The faint gold art-deco pattern behind dark sections (5% opacity, 1400px tiles).
+// The faint rose-gold art-deco pattern texture (3.5% opacity, 1400px tiles).
 const patternOverlay = (media) => ({
   background_overlay_background: 'classic', background_overlay_image: media,
   background_overlay_position: 'center center', background_overlay_repeat: 'repeat',
-  background_overlay_size: 'initial', background_overlay_bg_width: px(1400), background_overlay_opacity: px(0.05),
+  background_overlay_size: 'initial', background_overlay_bg_width: px(1400), background_overlay_opacity: px(0.035),
 });
 
 const stack = (children, o = {}) => container({
@@ -105,7 +106,7 @@ function grid(children, o = {}) {
 
 /* --------------------------------------------------------------- widgets */
 // Small uppercase gold label above headings
-const eyebrow = (text, color = C.goldDark, align = 'left', o = {}) => widget('heading', {
+const eyebrow = (text, color = C.roseDeep, align = 'left', o = {}) => widget('heading', {
   title: text, header_size: o.tag || 'p', title_color: color, align, ...(o.alignM ? { align_mobile: o.alignM } : {}),
   ...typo('typography', o.size || 13, o.weight || 500, { lh: 1.4, ls: o.ls ?? 0.3, transform: 'uppercase' }),
   ...(o.settings || {}),
@@ -123,7 +124,7 @@ function heading(text, tag, sizes, color, align = 'left', o = {}) {
 // Section title with the light-weight gold second phrase from the design
 const accent = (t, color) => `<span style="font-weight:200;color:${color}">${t}</span>`;
 const H2 = (bold, light, dark, align = 'center', o = {}) => heading(
-  `${bold}${o.br ? '<br>' : ' '}${accent(light, dark ? C.goldLight : C.goldDark)}`, 'h2', o.sizes || [58, 44, 36], dark ? C.cream : C.black, align, o,
+  `${bold}${o.br ? '<br>' : ' '}${accent(light, C.roseDeep)}`, 'h2', o.sizes || [58, 44, 36], C.ink, align, o, // `dark` kept for call compatibility; no dark sections any more
 );
 const H3 = (text, color, sizes, o = {}) => heading(text, 'h3', sizes, color, o.align || 'left', { lh: o.lh || 1.2, ls: 0, ...o });
 
@@ -131,14 +132,14 @@ function text(html, o = {}) {
   const body = /^\s*</.test(html) ? html : `<p>${html}</p>`;
   return widget('text-editor', {
     editor: body, paragraph_spacing: px(o.pSpace ?? 0), align: o.align || 'left', ...(o.alignM ? { align_mobile: o.alignM } : {}),
-    text_color: o.color || C.body, link_color: o.linkColor || C.goldLight, link_hover_color: o.linkHover || C.goldLight,
+    text_color: o.color || C.inkSoft, link_color: o.linkColor || C.roseDeep, link_hover_color: o.linkHover || C.roseDeep,
     ...typo('typography', o.size || 16, o.weight || 300, { lh: o.lh || 1.6, ls: o.ls, transform: o.transform, style: o.style }),
     ...(o.maxW ? { _element_width: 'initial', _element_custom_width: px(o.maxW), _element_custom_width_tablet: px(100, '%') } : {}),
     ...(o.settings || {}),
   });
 }
 
-// Buttons. variant: 'gold' (flat gold fill) | 'outline' (gold hairline) | 'underline' (text link with gold rule)
+// Buttons. variant: 'gold' (rose-gold fill, white text) | 'outline' (rose hairline) | 'underline' (text link with rose rule)
 function button(label, url, variant = 'gold', o = {}) {
   const base = {
     text: label, link: link(url), align: o.align || '', ...(o.alignM ? { align_mobile: o.alignM } : {}),
@@ -146,23 +147,23 @@ function button(label, url, variant = 'gold', o = {}) {
     border_radius: box(0), text_padding: o.pad || box(16, 30, 16, 30),
   };
   if (variant === 'gold') Object.assign(base, {
-    button_text_color: C.black, hover_color: C.black,
-    background_background: 'classic', background_color: C.gold,
-    button_background_hover_background: 'classic', button_background_hover_color: C.goldDeep,
+    button_text_color: C.white, hover_color: C.white,
+    background_background: 'classic', background_color: C.rose,
+    button_background_hover_background: 'classic', button_background_hover_color: C.roseHover,
   });
   if (variant === 'outline') Object.assign(base, {
-    button_text_color: C.cream, hover_color: C.goldLight,
+    button_text_color: C.ink, hover_color: C.roseDeep,
     background_background: 'classic', background_color: 'rgba(0,0,0,0)',
     button_background_hover_background: 'classic', button_background_hover_color: 'rgba(0,0,0,0)',
-    border_border: 'solid', border_width: box(1), border_color: 'rgba(163,133,76,0.6)', button_hover_border_color: C.goldLight,
+    border_border: 'solid', border_width: box(1), border_color: 'rgba(191,142,116,0.6)', button_hover_border_color: C.roseDeep,
     text_padding: o.pad || box(15, 28, 15, 28),
   });
   if (variant === 'underline') Object.assign(base, {
     ...typo('typography', 12, 500, { lh: 1.2, ls: 0.18, transform: 'uppercase' }),
-    button_text_color: C.black, hover_color: C.goldDark,
+    button_text_color: C.ink, hover_color: C.roseDeep,
     background_background: 'classic', background_color: 'rgba(0,0,0,0)',
     button_background_hover_background: 'classic', button_background_hover_color: 'rgba(0,0,0,0)',
-    border_border: 'solid', border_width: box(0, 0, 1, 0), border_color: C.gold, text_padding: box(0, 0, 6, 0),
+    border_border: 'solid', border_width: box(0, 0, 1, 0), border_color: C.rose, text_padding: box(0, 0, 6, 0),
   });
   return widget('button', { ...base, ...(o.settings || {}) });
 }
@@ -187,19 +188,19 @@ function iconList(items, o = {}) {
       return { _id: id(), text: t, selected_icon: o.icon ? fa(o.icon) : { value: '', library: '' }, ...(u ? { link: link(u) } : {}) };
     }),
     space_between: px(o.space ?? 8), icon_size: px(o.iconSize ?? 0), text_indent: px(o.indent ?? (o.icon ? 10 : 0)),
-    icon_color: o.iconColor || C.gold, text_color: o.color || C.sand, text_color_hover: o.hover || o.color || C.sand,
+    icon_color: o.iconColor || C.rose, text_color: o.color || C.inkMuted, text_color_hover: o.hover || o.color || C.inkMuted,
     ...typo('icon_typography', o.size || 14, o.weight || 300, { lh: o.lh || 1.5, ls: o.ls, transform: o.transform }),
     ...(o.settings || {}),
   });
 }
 
-// Frosted dark card used in About and Testimonials
-const glassCSS = `selector { backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.08); transition: border-color .2s; }
-selector:hover { border-color: ${C.gold}; }`;
+// White card with a rose hairline and soft shadow (replaces the old frosted dark card)
+const glassCSS = `selector { box-shadow: 0 10px 30px rgba(42,27,22,0.05); transition: border-color .2s; }
+selector:hover { border-color: ${C.rose}; }`;
 const glass = (children, o = {}) => container({
   content_width: 'full', flex_direction: 'column', flex_gap: gap(o.gap ?? 0), padding: o.pad || box(36, 32, 36, 32), padding_mobile: box(30, 24, 30, 24),
-  background_background: 'classic', background_color: 'rgba(45,49,51,0.72)',
-  border_border: 'solid', border_width: box(1), border_color: 'rgba(163,133,76,0.15)',
+  background_background: 'classic', background_color: '#FFFFFF',
+  border_border: 'solid', border_width: box(1), border_color: 'rgba(191,142,116,0.35)',
   custom_css: glassCSS, ...(o.settings || {}),
 }, children);
 
@@ -210,13 +211,13 @@ function header(m, menuId) {
     content_width: 'boxed', boxed_width: px(1216), flex_direction: 'row', flex_wrap: 'wrap',
     flex_justify_content: 'space-between', flex_justify_content_mobile: 'center', flex_align_items: 'center', flex_gap: gap(16, 4),
     padding: box(10, 32, 10, 32), padding_mobile: box(8, 16, 8, 16),
-    background_background: 'classic', background_color: C.pure,
-    border_border: 'solid', border_width: box(0, 0, 1, 0), border_color: C.goldLine,
+    background_background: 'classic', background_color: C.ivory,
+    border_border: 'solid', border_width: box(0, 0, 1, 0), border_color: C.line,
   }, [
-    topText('Hablamos Español · Free consultation · No fee unless we win', C.cream, { size: 13, settings: { typography_font_size_mobile: px(11), align_mobile: 'center' } }),
+    topText('Hablamos Español · Free consultation · No fee unless we win', C.roseDeep, { size: 12, settings: { typography_font_size_mobile: px(11), align_mobile: 'center' } }),
     row([
-      topText('Norcross, GA', C.sand, { settings: { hide_mobile: 'hidden-mobile' } }),
-      topText(`<a href="${TEL}">${PHONE}</a>`, C.goldLight, { ls: 0.18, linkColor: C.goldLight, linkHover: C.cream, settings: { typography_font_size_mobile: px(12) } }),
+      topText('Norcross, GA', C.inkMuted, { settings: { hide_mobile: 'hidden-mobile' } }),
+      topText(`<a href="${TEL}">${PHONE}</a>`, C.ink, { weight: 600, ls: 0.18, linkColor: C.ink, linkHover: C.roseDeep, settings: { typography_font_size_mobile: px(12) } }),
     ], { gap: 20, settings: { width: auto, width_mobile: auto, _flex_size: 'none' } }),
   ], false);
 
@@ -224,25 +225,26 @@ function header(m, menuId) {
     content_width: 'boxed', boxed_width: px(1216), flex_direction: 'row', flex_wrap: 'nowrap',
     flex_justify_content: 'space-between', flex_align_items: 'center', flex_gap: gap(24), flex_gap_mobile: gap(12),
     padding: box(14, 32, 14, 32), padding_mobile: box(12, 16, 12, 16),
-    background_background: 'classic', background_color: 'rgba(30,33,35,0.92)',
-    border_border: 'solid', border_width: box(0, 0, 1, 0), border_color: 'rgba(255,255,255,0.06)',
+    background_background: 'classic', background_color: 'rgba(255,255,255,0.96)',
+    border_border: 'solid', border_width: box(0, 0, 1, 0), border_color: C.hair,
     sticky: 'top', sticky_on: ['desktop', 'tablet', 'mobile'], z_index: 50,
     custom_css: 'selector { backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }',
   }, [
-    image(m.logo, { width: [270, 240, 190], link: '/', align: 'left', settings: { _element_width: 'initial', _element_custom_width: px(270), _element_custom_width_tablet: px(240), _element_custom_width_mobile: px(190), _flex_size: 'none' } }),
+    // New lockup at 48px tall (1255x260 artwork -> ~232px wide).
+    image(m.logo, { width: [232, 212, 174], link: '/', align: 'left', settings: { _element_width: 'initial', _element_custom_width: px(232), _element_custom_width_tablet: px(212), _element_custom_width_mobile: px(174), _flex_size: 'none' } }),
     widget('nav-menu', {
       menu: menuId, layout: 'horizontal', align_items: 'center', pointer: 'none',
       dropdown: 'tablet', toggle: 'burger', toggle_align: 'right', full_width: 'stretch',
-      ...typo('menu_typography', 12, 400, { lh: 1.4, ls: 0.16, transform: 'uppercase' }),
-      color_menu_item: C.cream, color_menu_item_hover: C.goldLight, color_menu_item_active: C.goldLight,
+      ...typo('menu_typography', 12, 500, { lh: 1.4, ls: 0.16, transform: 'uppercase' }),
+      color_menu_item: C.ink, color_menu_item_hover: C.roseDeep, color_menu_item_active: C.roseDeep,
       padding_horizontal_menu_item: px(14), padding_vertical_menu_item: px(8),
       ...typo('dropdown_typography', 14, 500, { ls: 0.14, transform: 'uppercase' }),
-      color_dropdown_item: C.cream, background_color_dropdown_item: C.black,
-      color_dropdown_item_hover: C.black, background_color_dropdown_item_hover: C.goldLight,
-      color_dropdown_item_active: C.goldLight, background_color_dropdown_item_active: C.black,
+      color_dropdown_item: C.ink, background_color_dropdown_item: C.white,
+      color_dropdown_item_hover: C.white, background_color_dropdown_item_hover: C.rose,
+      color_dropdown_item_active: C.roseDeep, background_color_dropdown_item_active: C.ivory,
       padding_horizontal_dropdown_item: px(24), padding_vertical_dropdown_item: px(16),
       dropdown_top_distance: px(15),
-      toggle_color: C.goldLight, toggle_background_color: 'rgba(0,0,0,0)', toggle_size: px(26),
+      toggle_color: C.ink, toggle_background_color: 'rgba(0,0,0,0)', toggle_size: px(26),
       _flex_size: 'grow', _flex_size_tablet: 'none', _flex_size_mobile: 'none',
       _flex_order_tablet: 'end', _flex_order_mobile: 'end',
       custom_css: 'selector .elementor-nav-menu--main .elementor-item { white-space: nowrap; }',
@@ -261,12 +263,12 @@ function header(m, menuId) {
 
 /* ---------------------------------------------------------------- footer */
 function footer(m) {
-  const label = (t) => eyebrow(t, C.gold, 'left', { size: 12, ls: 0.24 });
-  const links = (items) => iconList(items, { color: C.sand, hover: C.goldLight, size: 14, weight: 300, space: 8 });
+  const label = (t) => eyebrow(t, C.roseDeep, 'left', { size: 12, ls: 0.24 });
+  const links = (items) => iconList(items, { color: C.inkMuted, hover: C.roseDeep, size: 14, weight: 300, space: 8 });
   return [container({
     content_width: 'full', flex_direction: 'column', padding: box(0), flex_gap: gap(0),
-    background_background: 'classic', background_color: C.pure,
-    border_border: 'solid', border_width: box(1, 0, 0, 0), border_color: C.goldLine,
+    background_background: 'classic', background_color: C.ivory,
+    border_border: 'solid', border_width: box(3, 0, 0, 0), border_color: C.rose,
   }, [
     container({
       container_type: 'grid', content_width: 'boxed', boxed_width: px(1216),
@@ -276,13 +278,13 @@ function footer(m) {
       padding: box(70, 32, 40, 32), padding_mobile: box(56, 20, 32, 20),
     }, [
       stack([
-        image(m.logo, { width: 260, link: '/', align: 'left', settings: { _element_width: 'initial', _element_custom_width: px(260) } }),
-        eyebrow('Advocate. Protect. Deliver.', C.gold, 'left', { size: 12, weight: 400, ls: 0.22 }),
-        text('Más que una firma. Un propósito.', { color: C.sand, size: 18, weight: 200, style: 'italic', lh: 1.4 }),
+        image(m.logo, { width: 260, link: '/', align: 'left', settings: { _element_width: 'initial', _element_custom_width: px(260), _element_custom_width_mobile: px(100, '%'), custom_css: 'selector img { max-width: 260px; }' } }),
+        eyebrow('Advocate. Protect. Deliver.', C.roseDeep, 'left', { size: 12, weight: 400, ls: 0.22 }),
+        text('Más que una firma. Un propósito.', { color: C.inkMuted, size: 18, weight: 200, style: 'italic', lh: 1.4 }),
       ], { gap: 12 }),
       stack([
         label('Norcross office'),
-        text(`<p>${ADDRESS}<br><a href="${TEL}">${PHONE}</a></p>`, { color: C.sand, size: 14, lh: 1.7, linkColor: C.goldLight, linkHover: C.cream }),
+        text(`<p>${ADDRESS}<br><a href="${TEL}">${PHONE}</a></p>`, { color: C.inkMuted, size: 14, lh: 1.7, linkColor: C.roseDeep, linkHover: C.ink }),
       ], { gap: 14 }),
       stack([
         label('Practice areas'),
@@ -296,19 +298,19 @@ function footer(m) {
     container({
       content_width: 'boxed', boxed_width: px(1216), flex_direction: 'row', flex_direction_mobile: 'column',
       flex_justify_content: 'space-between', flex_align_items: 'center', flex_align_items_mobile: 'flex-start', flex_wrap: 'wrap', flex_gap: gap(16, 10),
-      padding: box(0, 32, 36, 32), padding_mobile: box(0, 20, 28, 20),
-      custom_css: 'selector > .e-con-inner { border-top: 1px solid rgba(255,255,255,0.06); padding-top: 22px; }',
+      padding: box(22, 32, 30, 32), padding_mobile: box(20, 20, 24, 20),
+      background_background: 'classic', background_color: C.blush, border_border: 'solid', border_width: box(1, 0, 0, 0), border_color: C.hair,
     }, [
-      text('© 2026 Cabrera-Torres Law Firm. All rights reserved.', { color: C.foot, size: 13, settings: { _element_width: 'auto' } }),
-      iconList([['Privacy Policy', '#'], ['Disclaimer', '#']], { inline: true, color: C.foot, hover: C.goldLight, size: 13, space: 22, settings: { _element_width: 'auto' } }),
+      text('© 2026 Cabrera-Torres Law Firm. All rights reserved.', { color: C.inkMuted, size: 13, settings: { _element_width: 'auto' } }),
+      iconList([['Privacy Policy', '#'], ['Disclaimer', '#']], { inline: true, color: C.inkMuted, hover: C.roseDeep, size: 13, space: 22, settings: { _element_width: 'auto' } }),
     ]),
   ], false)];
 }
 
-// Page Settings: dark canvas, hidden WP title, smooth anchor scrolling past the sticky nav, shared keyframes.
+// Page Settings: ivory canvas, hidden WP title, smooth anchor scrolling past the sticky nav, shared keyframes.
 const pageSettings = {
   hide_title: 'yes', template: 'elementor_header_footer',
-  background_background: 'classic', background_color: C.black,
+  background_background: 'classic', background_color: C.ivory,
   custom_css: `/* Let Elementor's Boxed Width control win over any older site CSS. */
 selector .e-con.e-con-boxed > .e-con-inner { max-width: var(--content-width); }
 html { scroll-behavior: smooth; }

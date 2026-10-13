@@ -16,7 +16,7 @@ const md = (f) => {
   return { id: x.id, url: x.source_url, alt: '', source: 'library' };
 };
 const m = {
-  logo: md('cabrera-torres-law-firm-logo.webp'), emblem: md('cabrera-torres-law-firm-mark.webp'), pattern: md('cabrera-torres-law-art-deco-pattern-seamless.png'),
+  logo: md('cabrera-torres-law-firm-logo-rose.webp'), emblem: md('cabrera-torres-law-firm-monogram-rose.webp'), pattern: md('cabrera-torres-law-art-deco-pattern-seamless.png'),
   jennifer: md('jennifer-cabrera-torres-personal-injury-attorney-norcross-ga.webp'),
   area_mva: md('car-accident-lawyer-norcross-ga.webp'), area_dog: md('dog-bite-lawyer-georgia.webp'), area_fall: md('slip-and-fall-lawyer-georgia.webp'),
   post_car: md('what-to-do-after-a-car-crash-georgia.webp'), post_dog: md('georgia-dog-bite-law-explained.webp'), post_fall: md('store-slip-and-fall-premises-liability.webp'),

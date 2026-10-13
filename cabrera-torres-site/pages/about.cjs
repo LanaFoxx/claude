@@ -13,16 +13,16 @@ module.exports = {
   },
   build: (m) => [
     P.pageHero(m, heroes.about),
-    band(C.cream, [
+    band(C.white, [
       grid([
         stack([
-          heading(ab.h1, 'h2', [42, 36, 30], C.black, 'left', { lh: 1.15 }),
+          heading(ab.h1, 'h2', [42, 36, 30], C.ink, 'left', { lh: 1.15 }),
           text(ab.p1, { size: 17, settings: { _margin: box(4, 0, 0, 0) } }),
           text(ab.p2, { size: 17 }),
         ], { gap: 18 }),
         P.framedPhoto(m.jenSuit, { tilt: -2, maxW: 420 }),
       ], { cols: [2, 1, 1], gap: 60, rowGap: 56, align: 'start' }),
-      eyebrow(ab.whyKicker, C.goldDark, 'center', { settings: { _margin: box(100, 0, 28, 0) } }),
+      eyebrow(ab.whyKicker, C.roseDeep, 'center', { settings: { _margin: box(100, 0, 28, 0) } }),
       grid(ab.why.map((w) => P.numberCard(w.n, w.h, w.p)), { cols: [3, 1, 1], gap: 24 }),
     ], { pad: [100, 110] }),
     P.ctaBand(),
