@@ -10,18 +10,27 @@ const fld = (custom_id, field_type, placeholder, width, extra = {}) => ({
   _id: id(), custom_id, field_type, field_label: placeholder, placeholder, width, width_tablet: width, width_mobile: extra.widthM || width, ...extra,
 });
 
+// Live site: the real contact details from the old myrecordflow.com contact page.
+const INFO = L.LIVE ? {
+  lede: "Whether you've got a question, a challenge, or just want to explore how RecordFLOW can support your water system, we're here to help. Real people. Real conversations. No runaround.",
+  email: 'contact@myrecordflow.com', phone: '(719) 429-1099', tel: '+17194291099', mail: '1721 Willow St.<br>Canon City, CO 81212',
+} : {
+  lede: 'Placeholder: questions about plans, FlowSENSE, or getting your district set up. We reply within one business day.',
+  email: 'info@myrecordflow.com', phone: '(XXX) XXX-XXXX', tel: '', mail: 'Placeholder Street<br>City, CO 80XXX',
+};
+
 module.exports = {
   slug: 'contact-us', title: 'Contact Us',
   build: (m) => [
     subHero(m, 'Contact Us', 'Talk to a water manager.',
-      'Placeholder: questions about plans, FlowSENSE, or getting your district set up. We reply within one business day.'),
+      INFO.lede),
     band(C.white, [grid([
       stack([
         eyebrow('Reach us'), H2('Colorado, USA'),
         stack([
-          detail('Email', '<p><a href="mailto:info@myrecordflow.com">info@myrecordflow.com</a></p>'),
-          detail('Phone', '(XXX) XXX-XXXX'),
-          detail('Mail', '<p>Placeholder Street<br>City, CO 80XXX</p>', C.slate, 400),
+          detail('Email', `<p><a href="mailto:${INFO.email}">${INFO.email}</a></p>`),
+          detail('Phone', INFO.tel ? `<p><a href="tel:${INFO.tel}">${INFO.phone}</a></p>` : INFO.phone),
+          detail('Mail', `<p>${INFO.mail}</p>`, C.slate, 400),
           detail('Hours', 'Mon–Fri, 8am–5pm MT', C.slate, 400),
         ], { gap: 18 }),
         iconList([['YouTube', URL.youtube], ['X', URL.x], ['Facebook', URL.facebook], ['LinkedIn', URL.linkedin]],
@@ -37,9 +46,10 @@ module.exports = {
             fld('email', 'email', 'Email', '100', { required: 'true' }), fld('phone', 'tel', 'Phone (optional)', '100'),
             fld('topic', 'select', "I'm asking about…", '100', { field_options: "I'm asking about…|\nPlans & pricing\nFlowSENSE hardware\nSetting up a district\nSupport\nOther" }),
             fld('message', 'textarea', "Tell us about your system and what you're keeping track of today", '100', { rows: 4 }),
+            ...L.recaptchaField(),
           ],
           show_labels: '', input_size: 'sm', button_text: 'Send message', button_width: '100', button_size: 'sm',
-          submit_actions: ['email'], email_subject: 'New RecordFLOW contact form message',
+          ...L.formSetup('New message from "RecordFLOW"'),
           success_message: 'Thanks! A water manager will reply within one business day.',
           field_text_color: C.ink, field_background_color: C.white, field_border_color: C.borderDark, field_border_width: box(1), field_border_radius: box(6),
           ...typo('field_typography', BODY, 14, 400), column_gap: px(10), row_gap: px(10),

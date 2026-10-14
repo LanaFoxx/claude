@@ -10,15 +10,39 @@ const C = {
   fieldBorder: '#2A3650', white: '#FFFFFF',
 };
 const HEAD = 'Saira', BODY = 'Figtree';
+
+// Which WordPress site we are building for. RF_SITE=live → myrecordflow.com (real contact details,
+// existing URLs, form recipients); anything else → the staging review copy.
+const LIVE = process.env.RF_SITE === 'live';
+const SITE = LIVE ? {
+  videosPath: '/instructional-videos/',
+  formEmail: 'blake@myrecordflow.com', newsletterEmail: 'contact@myrecordflow.com',
+  formActions: ['save-to-database', 'email'], recaptcha: true,
+} : {
+  videosPath: '/how-to-videos/', formEmail: '', newsletterEmail: '', formActions: ['email'], recaptcha: false,
+};
+// On the live site, drop the "Placeholder:" labels the design used to mark draft copy.
+const cap = (_, lead, ch) => lead + ch.toUpperCase();
+const clean = (t) => (LIVE && typeof t === 'string')
+  ? t.replace(/Placeholder answer:\s*/g, '').replace(/Placeholder reading/g, 'Example reading').replace(/Placeholder:\s*/g, '').replace(/\s*\(placeholder\)/g, '')
+    .replace(/(^\s*(?:<p>)?|[.?!]\s+)([a-z])/g, cap) // re-capitalise sentences that began after a removed label
+  : t;
+// Elementor form settings shared by every form (recipient, actions, spam protection).
+const formSetup = (subject, newsletter = false) => ({
+  submit_actions: SITE.formActions, email_subject: subject,
+  ...((newsletter ? SITE.newsletterEmail : SITE.formEmail) ? { email_to: newsletter ? SITE.newsletterEmail : SITE.formEmail } : {}),
+});
+const recaptchaField = () => (SITE.recaptcha ? [{ _id: id(), custom_id: 'recaptcha', field_type: 'recaptcha_v3', field_label: 'reCAPTCHA', width: '100', recaptcha_badge: 'bottomright' }] : []);
 const APP = 'https://app.myrecordflow.com';
 const URL = {
-  home: '/', product: '/product-overview/', flowsense: '/flowsense/', videos: '/how-to-videos/',
+  home: '/', product: '/product-overview/', flowsense: '/flowsense/', videos: SITE.videosPath,
   about: '/about-us/', contact: '/contact-us/', terms: '/terms-of-service/', privacy: '/privacy-policy/',
   youtube: 'https://www.youtube.com/@myrecordflow', x: 'https://x.com/myrecordflow',
   facebook: 'https://www.facebook.com/profile.php?id=61580314045608', linkedin: 'https://www.linkedin.com/company/108422183',
 };
 
-const id = () => crypto.randomBytes(4).toString('hex').slice(0, 7);
+function id() { return crypto.randomBytes(4).toString('hex').slice(0, 7); }
+
 const px = (size, unit = 'px') => ({ unit, size, sizes: [] });
 const box = (t, r = t, b = t, l = r, unit = 'px') => ({ unit, top: String(t), right: String(r), bottom: String(b), left: String(l), isLinked: false });
 const gap = (n, r = n) => ({ unit: 'px', size: n, column: String(n), row: String(r), isLinked: n === r });
@@ -108,7 +132,7 @@ const eyebrow = (text, color = C.blue, align = 'left', o = {}) => widget('headin
 
 function heading(text, tag, sizes, color = C.ink, align = 'left', o = {}) {
   return widget('heading', {
-    title: text, header_size: tag, title_color: color, align,
+    title: clean(text), header_size: tag, title_color: color, align,
     ...typo('typography', HEAD, sizes, o.weight || 800, { lh: o.lh || 1.08, ls: o.ls ?? -0.4, style: o.style }),
     ...(o.maxW ? { _element_width: 'initial', _element_custom_width: px(o.maxW), _element_custom_width_tablet: px(100, '%') } : {}),
     ...(o.link ? { link: link(o.link) } : {}),
@@ -120,6 +144,7 @@ const H2 = (text, color, align = 'left', o = {}) => heading(text, 'h2', o.sizes 
 const H3 = (text, color, o = {}) => heading(text, 'h3', o.sizes || [22, 21, 20], color, o.align || 'left', { weight: 700, lh: 1.2, ls: 0, ...o });
 
 function text(html, o = {}) {
+  html = clean(html);
   const body = /^\s*</.test(html) ? html : `<p>${html}</p>`;
   return widget('text-editor', {
     editor: body, paragraph_spacing: px(o.pSpace ?? 0), align: o.align || 'left',
@@ -350,7 +375,7 @@ function footer(m) {
           form_name: 'Newsletter',
           form_fields: [{ _id: id(), custom_id: 'email', field_type: 'email', field_label: 'Email', placeholder: 'Email', required: 'true', width: '70', width_tablet: '70', width_mobile: '70' }],
           show_labels: '', input_size: 'sm', button_text: 'Submit', button_size: 'sm', button_width: '30', button_width_tablet: '30', button_width_mobile: '30',
-          submit_actions: ['email'], email_subject: 'New RecordFLOW newsletter sign-up',
+          ...formSetup('New RecordFLOW Newsletter Sign-up', true),
           column_gap: px(8), row_gap: px(8),
           field_text_color: C.white, field_background_color: C.ink, field_border_color: C.fieldBorder, field_border_width: box(1), field_border_radius: box(6),
           ...typo('field_typography', BODY, 14, 400),
@@ -381,6 +406,7 @@ const pageSettings = {
 };
 
 module.exports = {
+  LIVE, SITE, clean, formSetup, recaptchaField,
   C, HEAD, BODY, APP, URL, id, px, box, gap, auto, link, resp, typo, container, widget, fa,
   band, stack, row, grid, eyebrow, heading, H1, H2, H3, text, button, btnPrimary, textLink, image, decoMark, pos,
   iconList, checkList, pillLabel, tag, darkCard, sectionHead, subHero, ctaBand, header, footer, pageSettings,

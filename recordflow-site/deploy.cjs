@@ -1,6 +1,8 @@
 // Deploys the RecordFLOW site to WordPress through the Elementor editor (so Elementor validates
 // the data and regenerates CSS). Usage:
 //   WP_URL=... STATE=playwright-state.json PREP=prep.json node deploy.cjs [chrome] [page-slug ...]
+// Live site: RF_SITE=live PAGE_IDS='{"home":27,...}' maps design pages onto existing WordPress pages
+// (their URLs and Yoast SEO stay untouched); unmapped pages are created.
 // "chrome" = header + footer templates. No args = everything.
 const { chromium } = require('playwright');
 const fs = require('fs');
@@ -13,6 +15,8 @@ const md = (f) => {
   if (!x || !x.id) throw new Error(`Missing media ${f}`);
   return { id: x.id, url: x.source_url, alt: '', source: 'library' };
 };
+const PAGE_IDS = JSON.parse(process.env.PAGE_IDS || '{}');
+const opt = (f) => (prep.media[f]?.id ? { id: prep.media[f].id, url: prep.media[f].source_url, alt: '', source: 'library' } : null);
 const m = {
   logoBlack: md('recordflow-logo-black.png'), logoWhite: md('recordflow-logo-white.png'),
   iconBlue: md('recordflow-icon-blue.png'), iconWhite: md('recordflow-icon-white.png'), dots: md('recordflow-dot-pattern.png'),
@@ -23,6 +27,8 @@ const m = {
   phoneDashboard: md('recordflow-phone-dashboard-cut.png'), phoneProps: md('recordflow-phone-props-cut.webp'),
   phoneAddAsset: md('recordflow-phone-add-asset-cut.png'), phoneLogin: md('recordflow-phone-login.png'), transparent: md('recordflow-transparent-16x9.png'),
   desktop: ['create', 'collect', 'dashboards', 'asset-records', 'flowsense-sensors', 'sharing-control'].map((k) => md(`recordflow-desktop-${k}.png`)), teamPortrait: md('recordflow-team-portrait.png'),
+  // Real staff photos already in the live media library (About page team grid)
+  ...(opt('live-staff-blake') ? { blakeTeam: opt('live-staff-blake'), bailey: opt('live-staff-bailey'), ian: opt('live-staff-ian') } : {}),
   partnerLogos: [1, 2, 3, 4, 5, 6, 7, 8].map((i) => { const x = md(`recordflow-partner-logo-${i}.png`); return { id: x.id, url: x.url }; }),
 };
 
@@ -34,6 +40,15 @@ const want = (key) => args.length === 0 || args.includes(key);
 const restNonce = () => window.wpApiSettings?.nonce || window.elementorCommon?.config?.rest?.nonce;
 
 async function ensurePage(p, def) {
+  if (PAGE_IDS[def.slug]) {
+    // Existing page: keep its slug/URL and SEO; only make sure it uses Elementor's full-width template.
+    return p.evaluate(async ([id, nonceFn]) => {
+      const h = { 'X-WP-Nonce': eval(`(${nonceFn})`)(), 'Content-Type': 'application/json' };
+      const r = await fetch(`/wp-json/wp/v2/pages/${id}`, { method: 'POST', headers: h, body: JSON.stringify({ template: 'elementor_header_footer' }) });
+      const j = await r.json();
+      return { id: j.id, link: j.link };
+    }, [PAGE_IDS[def.slug], restNonce.toString()]);
+  }
   return p.evaluate(async ([def, nonceFn]) => {
     const h = { 'X-WP-Nonce': eval(`(${nonceFn})`)(), 'Content-Type': 'application/json' };
     const ex = await (await fetch(`/wp-json/wp/v2/pages?slug=${def.slug}&status=publish,draft,private&_fields=id,link`, { headers: h })).json();
@@ -91,6 +106,7 @@ async function setConditions(p, postId, conditions) {
   const b = await chromium.launch();
   const ctx = await b.newContext({ storageState: process.env.STATE, viewport: { width: 1440, height: 900 } });
   const p = await ctx.newPage();
+  p.setDefaultTimeout(180000); p.setDefaultNavigationTimeout(180000);
   p.on('dialog', (d) => d.accept());
   await p.goto(`${SITE}/wp-admin/`, { waitUntil: 'domcontentloaded' });
   const out = {};

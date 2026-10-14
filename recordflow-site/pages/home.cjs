@@ -300,7 +300,7 @@ const trial = (m) => band(C.ink, [
           fld('message', 'textarea', "Tell us about your system and what you're keeping track of today", '100', { rows: 3 }),
         ],
         show_labels: '', input_size: 'sm', button_text: 'Send message', button_width: '100', button_size: 'sm',
-        submit_actions: ['email'], email_subject: 'New question from the RecordFLOW homepage',
+        ...L.formSetup('New question from the RecordFLOW homepage'),
         success_message: 'Thanks! A water manager will reply soon.',
         ...fieldStyle, ...formButton(C.ink, C.blue),
       }),
