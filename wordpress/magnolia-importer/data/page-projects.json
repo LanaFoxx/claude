@@ -1,6 +1,6 @@
 [
  {
-  "id": "84b5a81",
+  "id": "7a86f7a",
   "elType": "container",
   "isInner": false,
   "settings": {
@@ -49,7 +49,7 @@
   },
   "elements": [
    {
-    "id": "dd02de9",
+    "id": "1a28f7b",
     "elType": "widget",
     "widgetType": "image",
     "isInner": false,
@@ -102,7 +102,7 @@
     "elements": []
    },
    {
-    "id": "42d8720",
+    "id": "43c71b9",
     "elType": "container",
     "isInner": true,
     "settings": {
@@ -142,7 +142,7 @@
     },
     "elements": [
      {
-      "id": "174c77a",
+      "id": "bfeaa15",
       "elType": "widget",
       "widgetType": "heading",
       "isInner": false,
@@ -177,7 +177,7 @@
       "elements": []
      },
      {
-      "id": "b239f3c",
+      "id": "57b6fb7",
       "elType": "widget",
       "widgetType": "heading",
       "isInner": false,
@@ -216,7 +216,7 @@
       "elements": []
      },
      {
-      "id": "d86f40f",
+      "id": "bd87a86",
       "elType": "widget",
       "widgetType": "text-editor",
       "isInner": false,
@@ -258,7 +258,7 @@
   ]
  },
  {
-  "id": "a49636a",
+  "id": "24e4e25",
   "elType": "container",
   "isInner": false,
   "settings": {
@@ -306,18 +306,18 @@
   },
   "elements": [
    {
-    "id": "4c4f9b0",
+    "id": "4fd58db",
     "elType": "widget",
     "widgetType": "html",
     "isInner": false,
     "settings": {
-     "html": "<div class=\"mpc-filters\" role=\"group\" aria-label=\"Filter projects\">\n  <button type=\"button\" data-filter=\"all\" aria-pressed=\"true\">All</button>\n  <button type=\"button\" data-filter=\"site-preparation\" aria-pressed=\"false\">Site Preparation</button>\n  <button type=\"button\" data-filter=\"landscape-development\" aria-pressed=\"false\">Landscape Development</button>\n  <button type=\"button\" data-filter=\"tree-care\" aria-pressed=\"false\">Tree Care</button>\n  <button type=\"button\" data-filter=\"power-washing\" aria-pressed=\"false\">Power Washing</button>\n  <button type=\"button\" data-filter=\"property-care\" aria-pressed=\"false\">Property Care</button>\n</div>\n<script>\n(function () {\n  var wrap = document.currentScript.previousElementSibling;\n  var buttons = wrap.querySelectorAll('button');\n  buttons.forEach(function (b) {\n    b.addEventListener('click', function () {\n      var cat = b.getAttribute('data-filter');\n      buttons.forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });\n      document.querySelectorAll('.mpc-project').forEach(function (p) {\n        p.style.display = (cat === 'all' || p.classList.contains('mpc-cat-' + cat)) ? '' : 'none';\n      });\n    });\n  });\n})();\n</script>",
+     "html": "<div class=\"mpc-filters\" role=\"group\" aria-label=\"Filter projects\">\n  <button type=\"button\" data-filter=\"all\" aria-pressed=\"true\">All</button>\n  <button type=\"button\" data-filter=\"site-preparation\" aria-pressed=\"false\">Site Preparation</button>\n  <button type=\"button\" data-filter=\"landscape-development\" aria-pressed=\"false\">Landscape Development</button>\n  <button type=\"button\" data-filter=\"tree-care\" aria-pressed=\"false\">Tree Care</button>\n  <button type=\"button\" data-filter=\"property-care\" aria-pressed=\"false\">Property Care</button>\n</div>\n<script>\n(function () {\n  var wrap = document.currentScript.previousElementSibling;\n  var buttons = wrap.querySelectorAll('button');\n  buttons.forEach(function (b) {\n    b.addEventListener('click', function () {\n      var cat = b.getAttribute('data-filter');\n      buttons.forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });\n      document.querySelectorAll('.mpc-project').forEach(function (p) {\n        p.style.display = (cat === 'all' || p.classList.contains('mpc-cat-' + cat)) ? '' : 'none';\n      });\n    });\n  });\n})();\n</script>",
      "__globals__": {}
     },
     "elements": []
    },
    {
-    "id": "fa7f0ea",
+    "id": "15fc899",
     "elType": "container",
     "isInner": true,
     "settings": {
@@ -385,7 +385,7 @@
     },
     "elements": [
      {
-      "id": "4093f6d",
+      "id": "0d75985",
       "elType": "container",
       "isInner": true,
       "settings": {
@@ -410,7 +410,7 @@
       },
       "elements": [
        {
-        "id": "1200339",
+        "id": "fc132d0",
         "elType": "widget",
         "widgetType": "image",
         "isInner": false,
@@ -434,7 +434,7 @@
         "elements": []
        },
        {
-        "id": "a268aa8",
+        "id": "99c9430",
         "elType": "container",
         "isInner": true,
         "settings": {
@@ -458,7 +458,7 @@
         },
         "elements": [
          {
-          "id": "9d33a01",
+          "id": "298cb3a",
           "elType": "container",
           "isInner": true,
           "settings": {
@@ -485,7 +485,7 @@
           },
           "elements": [
            {
-            "id": "dfd43f3",
+            "id": "3571810",
             "elType": "widget",
             "widgetType": "heading",
             "isInner": false,
@@ -515,7 +515,7 @@
             "elements": []
            },
            {
-            "id": "353c631",
+            "id": "70ccec3",
             "elType": "widget",
             "widgetType": "heading",
             "isInner": false,
@@ -547,7 +547,7 @@
           ]
          },
          {
-          "id": "6050914",
+          "id": "1c2442f",
           "elType": "widget",
           "widgetType": "heading",
           "isInner": false,
@@ -586,7 +586,7 @@
           "elements": []
          },
          {
-          "id": "2607679",
+          "id": "570dc19",
           "elType": "widget",
           "widgetType": "text-editor",
           "isInner": false,
@@ -623,7 +623,7 @@
       ]
      },
      {
-      "id": "d953ee2",
+      "id": "5d158a2",
       "elType": "container",
       "isInner": true,
       "settings": {
@@ -648,7 +648,7 @@
       },
       "elements": [
        {
-        "id": "f4998d7",
+        "id": "1a358ca",
         "elType": "widget",
         "widgetType": "image",
         "isInner": false,
@@ -672,7 +672,7 @@
         "elements": []
        },
        {
-        "id": "1d87cec",
+        "id": "f2ee4e4",
         "elType": "container",
         "isInner": true,
         "settings": {
@@ -696,7 +696,7 @@
         },
         "elements": [
          {
-          "id": "5d39d0a",
+          "id": "26b94c7",
           "elType": "container",
           "isInner": true,
           "settings": {
@@ -723,7 +723,7 @@
           },
           "elements": [
            {
-            "id": "58ee857",
+            "id": "000f49c",
             "elType": "widget",
             "widgetType": "heading",
             "isInner": false,
@@ -753,7 +753,7 @@
             "elements": []
            },
            {
-            "id": "9a2ef80",
+            "id": "9118bb1",
             "elType": "widget",
             "widgetType": "heading",
             "isInner": false,
@@ -785,7 +785,7 @@
           ]
          },
          {
-          "id": "7961fd9",
+          "id": "895fd7b",
           "elType": "widget",
           "widgetType": "heading",
           "isInner": false,
@@ -824,7 +824,7 @@
           "elements": []
          },
          {
-          "id": "1f7296a",
+          "id": "19f9919",
           "elType": "widget",
           "widgetType": "text-editor",
           "isInner": false,
@@ -861,7 +861,7 @@
       ]
      },
      {
-      "id": "15fc899",
+      "id": "2607679",
       "elType": "container",
       "isInner": true,
       "settings": {
@@ -886,7 +886,7 @@
       },
       "elements": [
        {
-        "id": "7cf2072",
+        "id": "9d1de2a",
         "elType": "widget",
         "widgetType": "image",
         "isInner": false,
@@ -910,7 +910,7 @@
         "elements": []
        },
        {
-        "id": "4fd58db",
+        "id": "6050914",
         "elType": "container",
         "isInner": true,
         "settings": {
@@ -934,7 +934,7 @@
         },
         "elements": [
          {
-          "id": "774b15d",
+          "id": "dfd43f3",
           "elType": "container",
           "isInner": true,
           "settings": {
@@ -961,7 +961,7 @@
           },
           "elements": [
            {
-            "id": "fe3bfad",
+            "id": "068739f",
             "elType": "widget",
             "widgetType": "heading",
             "isInner": false,
@@ -991,7 +991,7 @@
             "elements": []
            },
            {
-            "id": "fa529ba",
+            "id": "1200339",
             "elType": "widget",
             "widgetType": "heading",
             "isInner": false,
@@ -1023,7 +1023,7 @@
           ]
          },
          {
-          "id": "7afb2c6",
+          "id": "353c631",
           "elType": "widget",
           "widgetType": "heading",
           "isInner": false,
@@ -1062,7 +1062,7 @@
           "elements": []
          },
          {
-          "id": "7bdc968",
+          "id": "9d33a01",
           "elType": "widget",
           "widgetType": "text-editor",
           "isInner": false,
@@ -1099,7 +1099,7 @@
       ]
      },
      {
-      "id": "d42fddb",
+      "id": "1f7296a",
       "elType": "container",
       "isInner": true,
       "settings": {
@@ -1124,7 +1124,7 @@
       },
       "elements": [
        {
-        "id": "24e4e25",
+        "id": "a268aa8",
         "elType": "widget",
         "widgetType": "image",
         "isInner": false,
@@ -1148,7 +1148,7 @@
         "elements": []
        },
        {
-        "id": "7a86f7a",
+        "id": "7961fd9",
         "elType": "container",
         "isInner": true,
         "settings": {
@@ -1172,7 +1172,7 @@
         },
         "elements": [
          {
-          "id": "57b6fb7",
+          "id": "58ee857",
           "elType": "container",
           "isInner": true,
           "settings": {
@@ -1199,7 +1199,7 @@
           },
           "elements": [
            {
-            "id": "1a28f7b",
+            "id": "4093f6d",
             "elType": "widget",
             "widgetType": "heading",
             "isInner": false,
@@ -1229,7 +1229,7 @@
             "elements": []
            },
            {
-            "id": "bfeaa15",
+            "id": "f4998d7",
             "elType": "widget",
             "widgetType": "heading",
             "isInner": false,
@@ -1261,7 +1261,7 @@
           ]
          },
          {
-          "id": "bd87a86",
+          "id": "9a2ef80",
           "elType": "widget",
           "widgetType": "heading",
           "isInner": false,
@@ -1300,7 +1300,7 @@
           "elements": []
          },
          {
-          "id": "43c71b9",
+          "id": "5d39d0a",
           "elType": "widget",
           "widgetType": "text-editor",
           "isInner": false,
@@ -1337,245 +1337,7 @@
       ]
      },
      {
-      "id": "873be07",
-      "elType": "container",
-      "isInner": true,
-      "settings": {
-       "content_width": "full",
-       "flex_direction": "column",
-       "flex_gap": {
-        "column": "18",
-        "row": "18",
-        "isLinked": true,
-        "unit": "px",
-        "size": 18
-       },
-       "padding": {
-        "unit": "px",
-        "top": "0",
-        "right": "0",
-        "bottom": "0",
-        "left": "0",
-        "isLinked": true
-       },
-       "css_classes": "mpc-project mpc-cat-power-washing"
-      },
-      "elements": [
-       {
-        "id": "b12aa1f",
-        "elType": "widget",
-        "widgetType": "image",
-        "isInner": false,
-        "settings": {
-         "image": {
-          "url": "%%IMG:photos/power-wash-1.jpg%%",
-          "id": "%%IMGID:photos/power-wash-1.jpg%%",
-          "alt": "Retail Center Exterior Refresh",
-          "source": "library"
-         },
-         "image_size": "full",
-         "align": "start",
-         "width": {
-          "unit": "%",
-          "size": 100,
-          "sizes": []
-         },
-         "_css_classes": "mpc-ratio-43",
-         "__globals__": {}
-        },
-        "elements": []
-       },
-       {
-        "id": "f3b7a50",
-        "elType": "container",
-        "isInner": true,
-        "settings": {
-         "content_width": "full",
-         "flex_direction": "column",
-         "flex_gap": {
-          "column": "8",
-          "row": "8",
-          "isLinked": true,
-          "unit": "px",
-          "size": 8
-         },
-         "padding": {
-          "unit": "px",
-          "top": "0",
-          "right": "0",
-          "bottom": "0",
-          "left": "0",
-          "isLinked": true
-         }
-        },
-        "elements": [
-         {
-          "id": "05e999f",
-          "elType": "container",
-          "isInner": true,
-          "settings": {
-           "content_width": "full",
-           "flex_direction": "row",
-           "flex_gap": {
-            "column": "16",
-            "row": "16",
-            "isLinked": true,
-            "unit": "px",
-            "size": 16
-           },
-           "flex_justify_content": "space-between",
-           "flex_align_items": "center",
-           "flex_wrap": "wrap",
-           "padding": {
-            "unit": "px",
-            "top": "0",
-            "right": "0",
-            "bottom": "0",
-            "left": "0",
-            "isLinked": true
-           }
-          },
-          "elements": [
-           {
-            "id": "29540a6",
-            "elType": "widget",
-            "widgetType": "heading",
-            "isInner": false,
-            "settings": {
-             "title": "Guilford County, NC",
-             "header_size": "span",
-             "title_color": "#738238",
-             "typography_typography": "custom",
-             "typography_font_family": "Jost",
-             "typography_font_size": {
-              "unit": "px",
-              "size": 11,
-              "sizes": []
-             },
-             "typography_font_weight": "500",
-             "typography_letter_spacing": {
-              "unit": "em",
-              "size": 0.2,
-              "sizes": []
-             },
-             "typography_text_transform": "uppercase",
-             "__globals__": {
-              "title_color": "",
-              "typography_typography": ""
-             }
-            },
-            "elements": []
-           },
-           {
-            "id": "842e7fc",
-            "elType": "widget",
-            "widgetType": "heading",
-            "isInner": false,
-            "settings": {
-             "title": "Power Washing",
-             "header_size": "span",
-             "title_color": "#8A918C",
-             "typography_typography": "custom",
-             "typography_font_family": "Jost",
-             "typography_font_size": {
-              "unit": "px",
-              "size": 11,
-              "sizes": []
-             },
-             "typography_font_weight": "500",
-             "typography_letter_spacing": {
-              "unit": "em",
-              "size": 0.2,
-              "sizes": []
-             },
-             "typography_text_transform": "uppercase",
-             "__globals__": {
-              "title_color": "",
-              "typography_typography": ""
-             }
-            },
-            "elements": []
-           }
-          ]
-         },
-         {
-          "id": "3488f87",
-          "elType": "widget",
-          "widgetType": "heading",
-          "isInner": false,
-          "settings": {
-           "title": "Retail Center Exterior Refresh",
-           "header_size": "h3",
-           "title_color": "#283A33",
-           "typography_typography": "custom",
-           "typography_font_family": "Marcellus",
-           "typography_font_size": {
-            "unit": "px",
-            "size": 24,
-            "sizes": []
-           },
-           "typography_font_size_tablet": {
-            "unit": "px",
-            "size": 22,
-            "sizes": []
-           },
-           "typography_font_size_mobile": {
-            "unit": "px",
-            "size": 22,
-            "sizes": []
-           },
-           "typography_font_weight": "400",
-           "typography_line_height": {
-            "unit": "em",
-            "size": 1.2,
-            "sizes": []
-           },
-           "__globals__": {
-            "title_color": "",
-            "typography_typography": ""
-           }
-          },
-          "elements": []
-         },
-         {
-          "id": "f373ca5",
-          "elType": "widget",
-          "widgetType": "text-editor",
-          "isInner": false,
-          "settings": {
-           "editor": "Storefront facades, sidewalks and parking areas on a recurring quarterly schedule.",
-           "text_color": "#5B655F",
-           "typography_typography": "custom",
-           "typography_font_family": "Jost",
-           "typography_font_size": {
-            "unit": "px",
-            "size": 15,
-            "sizes": []
-           },
-           "typography_font_size_mobile": {
-            "unit": "px",
-            "size": 15,
-            "sizes": []
-           },
-           "typography_font_weight": "400",
-           "typography_line_height": {
-            "unit": "em",
-            "size": 1.55,
-            "sizes": []
-           },
-           "__globals__": {
-            "text_color": "",
-            "typography_typography": ""
-           }
-          },
-          "elements": []
-         }
-        ]
-       }
-      ]
-     },
-     {
-      "id": "87322e2",
+      "id": "7bdc968",
       "elType": "container",
       "isInner": true,
       "settings": {
@@ -1600,7 +1362,7 @@
       },
       "elements": [
        {
-        "id": "5c9bcf3",
+        "id": "1d87cec",
         "elType": "widget",
         "widgetType": "image",
         "isInner": false,
@@ -1624,7 +1386,7 @@
         "elements": []
        },
        {
-        "id": "c215a82",
+        "id": "7afb2c6",
         "elType": "container",
         "isInner": true,
         "settings": {
@@ -1648,7 +1410,7 @@
         },
         "elements": [
          {
-          "id": "8b0d590",
+          "id": "fe3bfad",
           "elType": "container",
           "isInner": true,
           "settings": {
@@ -1675,7 +1437,7 @@
           },
           "elements": [
            {
-            "id": "2587be6",
+            "id": "d953ee2",
             "elType": "widget",
             "widgetType": "heading",
             "isInner": false,
@@ -1705,7 +1467,7 @@
             "elements": []
            },
            {
-            "id": "b0a844e",
+            "id": "7cf2072",
             "elType": "widget",
             "widgetType": "heading",
             "isInner": false,
@@ -1737,7 +1499,7 @@
           ]
          },
          {
-          "id": "ea05754",
+          "id": "fa529ba",
           "elType": "widget",
           "widgetType": "heading",
           "isInner": false,
@@ -1776,7 +1538,7 @@
           "elements": []
          },
          {
-          "id": "06ec41a",
+          "id": "774b15d",
           "elType": "widget",
           "widgetType": "text-editor",
           "isInner": false,
@@ -1817,7 +1579,7 @@
   ]
  },
  {
-  "id": "8857f9a",
+  "id": "f373ca5",
   "elType": "container",
   "isInner": false,
   "settings": {
@@ -1886,7 +1648,7 @@
   },
   "elements": [
    {
-    "id": "2ac3444",
+    "id": "29540a6",
     "elType": "container",
     "isInner": true,
     "settings": {
@@ -1926,7 +1688,7 @@
     },
     "elements": [
      {
-      "id": "5de0099",
+      "id": "d42fddb",
       "elType": "widget",
       "widgetType": "heading",
       "isInner": false,
@@ -1965,7 +1727,7 @@
       "elements": []
      },
      {
-      "id": "e883a1d",
+      "id": "b12aa1f",
       "elType": "widget",
       "widgetType": "text-editor",
       "isInner": false,
@@ -2000,7 +1762,7 @@
     ]
    },
    {
-    "id": "3908f22",
+    "id": "3488f87",
     "elType": "container",
     "isInner": true,
     "settings": {
@@ -2043,7 +1805,7 @@
     },
     "elements": [
      {
-      "id": "5b0ee76",
+      "id": "842e7fc",
       "elType": "widget",
       "widgetType": "button",
       "isInner": false,
@@ -2104,7 +1866,7 @@
       "elements": []
      },
      {
-      "id": "c59db91",
+      "id": "05e999f",
       "elType": "widget",
       "widgetType": "heading",
       "isInner": false,

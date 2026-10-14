@@ -1,6 +1,6 @@
 [
  {
-  "id": "9118bb1",
+  "id": "64e50ca",
   "elType": "container",
   "isInner": false,
   "settings": {
@@ -49,7 +49,7 @@
   },
   "elements": [
    {
-    "id": "570dc19",
+    "id": "cc4169a",
     "elType": "widget",
     "widgetType": "image",
     "isInner": false,
@@ -102,7 +102,7 @@
     "elements": []
    },
    {
-    "id": "000f49c",
+    "id": "66237a0",
     "elType": "container",
     "isInner": true,
     "settings": {
@@ -142,7 +142,7 @@
     },
     "elements": [
      {
-      "id": "99c9430",
+      "id": "8f2c6ec",
       "elType": "widget",
       "widgetType": "heading",
       "isInner": false,
@@ -177,7 +177,7 @@
       "elements": []
      },
      {
-      "id": "0d75985",
+      "id": "6472f1a",
       "elType": "widget",
       "widgetType": "heading",
       "isInner": false,
@@ -216,12 +216,12 @@
       "elements": []
      },
      {
-      "id": "1a358ca",
+      "id": "65e7e42",
       "elType": "widget",
       "widgetType": "text-editor",
       "isInner": false,
       "settings": {
-       "editor": "Four service lines, one team. Most clients start with a development or clearing project and stay with us for everything that follows.",
+       "editor": "Three service lines, one team. Most clients start with a development or clearing project and stay with us for everything that follows.",
        "text_color": "#D5D4BE",
        "typography_typography": "custom",
        "typography_font_family": "Jost",
@@ -258,7 +258,7 @@
   ]
  },
  {
-  "id": "1df9fd7",
+  "id": "7631a99",
   "elType": "container",
   "isInner": false,
   "settings": {
@@ -309,7 +309,7 @@
   },
   "elements": [
    {
-    "id": "9c65393",
+    "id": "f0ce583",
     "elType": "container",
     "isInner": true,
     "settings": {
@@ -343,7 +343,7 @@
     },
     "elements": [
      {
-      "id": "f0ce583",
+      "id": "ab2cd31",
       "elType": "widget",
       "widgetType": "heading",
       "isInner": false,
@@ -395,7 +395,7 @@
       "elements": []
      },
      {
-      "id": "7631a99",
+      "id": "58d5563",
       "elType": "widget",
       "widgetType": "heading",
       "isInner": false,
@@ -447,59 +447,7 @@
       "elements": []
      },
      {
-      "id": "5affb22",
-      "elType": "widget",
-      "widgetType": "heading",
-      "isInner": false,
-      "settings": {
-       "title": "Power Washing",
-       "header_size": "p",
-       "title_color": "#D5D4BE",
-       "typography_typography": "custom",
-       "typography_font_family": "Jost",
-       "typography_font_size": {
-        "unit": "px",
-        "size": 13,
-        "sizes": []
-       },
-       "typography_font_weight": "500",
-       "typography_letter_spacing": {
-        "unit": "em",
-        "size": 0.16,
-        "sizes": []
-       },
-       "typography_text_transform": "uppercase",
-       "link": {
-        "url": "#services-washing",
-        "is_external": "",
-        "nofollow": ""
-       },
-       "__globals__": {
-        "title_color": "",
-        "typography_typography": ""
-       },
-       "title_hover_color": "#FFFFFF",
-       "_padding": {
-        "unit": "px",
-        "top": "20",
-        "right": "0",
-        "bottom": "20",
-        "left": "0",
-        "isLinked": false
-       },
-       "_padding_mobile": {
-        "unit": "px",
-        "top": "10",
-        "right": "0",
-        "bottom": "10",
-        "left": "0",
-        "isLinked": false
-       }
-      },
-      "elements": []
-     },
-     {
-      "id": "2b0537e",
+      "id": "05c6af0",
       "elType": "widget",
       "widgetType": "heading",
       "isInner": false,
@@ -555,7 +503,7 @@
   ]
  },
  {
-  "id": "482c9cb",
+  "id": "d4c28c2",
   "elType": "container",
   "isInner": false,
   "settings": {
@@ -611,7 +559,7 @@
   },
   "elements": [
    {
-    "id": "2eae05c",
+    "id": "0316909",
     "elType": "container",
     "isInner": true,
     "settings": {
@@ -680,7 +628,7 @@
     },
     "elements": [
      {
-      "id": "d4c28c2",
+      "id": "a8948c8",
       "elType": "container",
       "isInner": true,
       "settings": {
@@ -704,7 +652,7 @@
       },
       "elements": [
        {
-        "id": "3b61867",
+        "id": "26a2c0b",
         "elType": "widget",
         "widgetType": "heading",
         "isInner": false,
@@ -739,7 +687,7 @@
         "elements": []
        },
        {
-        "id": "a8948c8",
+        "id": "153e7c2",
         "elType": "widget",
         "widgetType": "heading",
         "isInner": false,
@@ -778,7 +726,7 @@
         "elements": []
        },
        {
-        "id": "3bbbe9e",
+        "id": "2d1c9af",
         "elType": "widget",
         "widgetType": "text-editor",
         "isInner": false,
@@ -811,7 +759,7 @@
         "elements": []
        },
        {
-        "id": "0316909",
+        "id": "26bb7db",
         "elType": "widget",
         "widgetType": "text-editor",
         "isInner": false,
@@ -844,7 +792,7 @@
         "elements": []
        },
        {
-        "id": "7c26847",
+        "id": "3b61867",
         "elType": "widget",
         "widgetType": "button",
         "isInner": false,
@@ -907,7 +855,7 @@
       ]
      },
      {
-      "id": "96d0cc5",
+      "id": "3bbbe9e",
       "elType": "widget",
       "widgetType": "image",
       "isInner": false,
@@ -933,7 +881,7 @@
     ]
    },
    {
-    "id": "43435cc",
+    "id": "7c26847",
     "elType": "container",
     "isInner": true,
     "settings": {
@@ -1013,7 +961,7 @@
     },
     "elements": [
      {
-      "id": "37dc76f",
+      "id": "9c65393",
       "elType": "container",
       "isInner": true,
       "settings": {
@@ -1049,7 +997,7 @@
       },
       "elements": [
        {
-        "id": "7e62aa0",
+        "id": "5affb22",
         "elType": "widget",
         "widgetType": "heading",
         "isInner": false,
@@ -1088,7 +1036,7 @@
         "elements": []
        },
        {
-        "id": "0f17a30",
+        "id": "2b0537e",
         "elType": "widget",
         "widgetType": "text-editor",
         "isInner": false,
@@ -1123,7 +1071,7 @@
       ]
      },
      {
-      "id": "211c70c",
+      "id": "0f17a30",
       "elType": "container",
       "isInner": true,
       "settings": {
@@ -1159,7 +1107,7 @@
       },
       "elements": [
        {
-        "id": "c4aaeac",
+        "id": "1df9fd7",
         "elType": "widget",
         "widgetType": "heading",
         "isInner": false,
@@ -1198,7 +1146,7 @@
         "elements": []
        },
        {
-        "id": "4995239",
+        "id": "7e62aa0",
         "elType": "widget",
         "widgetType": "text-editor",
         "isInner": false,
@@ -1233,7 +1181,7 @@
       ]
      },
      {
-      "id": "65dc9f5",
+      "id": "4995239",
       "elType": "container",
       "isInner": true,
       "settings": {
@@ -1269,7 +1217,7 @@
       },
       "elements": [
        {
-        "id": "bd0561e",
+        "id": "37dc76f",
         "elType": "widget",
         "widgetType": "heading",
         "isInner": false,
@@ -1308,7 +1256,7 @@
         "elements": []
        },
        {
-        "id": "3f63af8",
+        "id": "c4aaeac",
         "elType": "widget",
         "widgetType": "text-editor",
         "isInner": false,
@@ -1343,7 +1291,7 @@
       ]
      },
      {
-      "id": "df1582b",
+      "id": "3f63af8",
       "elType": "container",
       "isInner": true,
       "settings": {
@@ -1379,7 +1327,7 @@
       },
       "elements": [
        {
-        "id": "6415479",
+        "id": "211c70c",
         "elType": "widget",
         "widgetType": "heading",
         "isInner": false,
@@ -1418,7 +1366,7 @@
         "elements": []
        },
        {
-        "id": "eab477d",
+        "id": "bd0561e",
         "elType": "widget",
         "widgetType": "text-editor",
         "isInner": false,
@@ -1453,7 +1401,7 @@
       ]
      },
      {
-      "id": "2a96fb1",
+      "id": "eab477d",
       "elType": "container",
       "isInner": true,
       "settings": {
@@ -1489,7 +1437,7 @@
       },
       "elements": [
        {
-        "id": "7f1b103",
+        "id": "65dc9f5",
         "elType": "widget",
         "widgetType": "heading",
         "isInner": false,
@@ -1528,7 +1476,7 @@
         "elements": []
        },
        {
-        "id": "14a0f9e",
+        "id": "6415479",
         "elType": "widget",
         "widgetType": "text-editor",
         "isInner": false,
@@ -1563,7 +1511,7 @@
       ]
      },
      {
-      "id": "8ca8181",
+      "id": "14a0f9e",
       "elType": "container",
       "isInner": true,
       "settings": {
@@ -1599,7 +1547,7 @@
       },
       "elements": [
        {
-        "id": "72fdf20",
+        "id": "df1582b",
         "elType": "widget",
         "widgetType": "heading",
         "isInner": false,
@@ -1638,7 +1586,7 @@
         "elements": []
        },
        {
-        "id": "66d2287",
+        "id": "7f1b103",
         "elType": "widget",
         "widgetType": "text-editor",
         "isInner": false,
@@ -1673,7 +1621,7 @@
       ]
      },
      {
-      "id": "230d977",
+      "id": "66d2287",
       "elType": "container",
       "isInner": true,
       "settings": {
@@ -1709,7 +1657,7 @@
       },
       "elements": [
        {
-        "id": "4720771",
+        "id": "2a96fb1",
         "elType": "widget",
         "widgetType": "heading",
         "isInner": false,
@@ -1748,7 +1696,7 @@
         "elements": []
        },
        {
-        "id": "e225715",
+        "id": "72fdf20",
         "elType": "widget",
         "widgetType": "text-editor",
         "isInner": false,
@@ -1783,7 +1731,7 @@
       ]
      },
      {
-      "id": "dd2e160",
+      "id": "e225715",
       "elType": "container",
       "isInner": true,
       "settings": {
@@ -1819,7 +1767,7 @@
       },
       "elements": [
        {
-        "id": "d1bc52d",
+        "id": "8ca8181",
         "elType": "widget",
         "widgetType": "heading",
         "isInner": false,
@@ -1858,7 +1806,7 @@
         "elements": []
        },
        {
-        "id": "6e36aab",
+        "id": "4720771",
         "elType": "widget",
         "widgetType": "text-editor",
         "isInner": false,
@@ -1893,7 +1841,7 @@
       ]
      },
      {
-      "id": "b4d66a3",
+      "id": "6e36aab",
       "elType": "container",
       "isInner": true,
       "settings": {
@@ -1929,7 +1877,7 @@
       },
       "elements": [
        {
-        "id": "8cdb305",
+        "id": "230d977",
         "elType": "widget",
         "widgetType": "heading",
         "isInner": false,
@@ -1968,7 +1916,7 @@
         "elements": []
        },
        {
-        "id": "47469a4",
+        "id": "d1bc52d",
         "elType": "widget",
         "widgetType": "text-editor",
         "isInner": false,
@@ -2003,7 +1951,7 @@
       ]
      },
      {
-      "id": "5bd86d4",
+      "id": "47469a4",
       "elType": "container",
       "isInner": true,
       "settings": {
@@ -2039,7 +1987,7 @@
       },
       "elements": [
        {
-        "id": "6a50df4",
+        "id": "dd2e160",
         "elType": "widget",
         "widgetType": "heading",
         "isInner": false,
@@ -2078,7 +2026,7 @@
         "elements": []
        },
        {
-        "id": "fc891b4",
+        "id": "8cdb305",
         "elType": "widget",
         "widgetType": "text-editor",
         "isInner": false,
@@ -2113,7 +2061,7 @@
       ]
      },
      {
-      "id": "616499c",
+      "id": "fc891b4",
       "elType": "container",
       "isInner": true,
       "settings": {
@@ -2149,7 +2097,7 @@
       },
       "elements": [
        {
-        "id": "aec6f02",
+        "id": "b4d66a3",
         "elType": "widget",
         "widgetType": "heading",
         "isInner": false,
@@ -2188,7 +2136,7 @@
         "elements": []
        },
        {
-        "id": "e25a760",
+        "id": "6a50df4",
         "elType": "widget",
         "widgetType": "text-editor",
         "isInner": false,
@@ -2223,7 +2171,7 @@
       ]
      },
      {
-      "id": "26a2c0b",
+      "id": "e25a760",
       "elType": "container",
       "isInner": true,
       "settings": {
@@ -2259,7 +2207,7 @@
       },
       "elements": [
        {
-        "id": "f52ddf5",
+        "id": "5bd86d4",
         "elType": "widget",
         "widgetType": "heading",
         "isInner": false,
@@ -2298,7 +2246,7 @@
         "elements": []
        },
        {
-        "id": "3b1287f",
+        "id": "aec6f02",
         "elType": "widget",
         "widgetType": "text-editor",
         "isInner": false,
@@ -2333,7 +2281,7 @@
       ]
      },
      {
-      "id": "26bb7db",
+      "id": "3b1287f",
       "elType": "container",
       "isInner": true,
       "settings": {
@@ -2372,7 +2320,7 @@
       },
       "elements": [
        {
-        "id": "153e7c2",
+        "id": "616499c",
         "elType": "widget",
         "widgetType": "heading",
         "isInner": false,
@@ -2411,7 +2359,7 @@
         "elements": []
        },
        {
-        "id": "2d1c9af",
+        "id": "f52ddf5",
         "elType": "widget",
         "widgetType": "text-editor",
         "isInner": false,
@@ -2450,7 +2398,7 @@
   ]
  },
  {
-  "id": "f341e07",
+  "id": "2020362",
   "elType": "container",
   "isInner": false,
   "settings": {
@@ -2492,7 +2440,7 @@
   },
   "elements": [
    {
-    "id": "83f73f1",
+    "id": "f3fe39c",
     "elType": "container",
     "isInner": true,
     "settings": {
@@ -2561,7 +2509,7 @@
     },
     "elements": [
      {
-      "id": "010c475",
+      "id": "96d0cc5",
       "elType": "widget",
       "widgetType": "image",
       "isInner": false,
@@ -2585,7 +2533,7 @@
       "elements": []
      },
      {
-      "id": "dbf4a8b",
+      "id": "519088f",
       "elType": "container",
       "isInner": true,
       "settings": {
@@ -2609,7 +2557,7 @@
       },
       "elements": [
        {
-        "id": "254b0c4",
+        "id": "2eae05c",
         "elType": "widget",
         "widgetType": "heading",
         "isInner": false,
@@ -2644,7 +2592,7 @@
         "elements": []
        },
        {
-        "id": "6b4013e",
+        "id": "43435cc",
         "elType": "widget",
         "widgetType": "heading",
         "isInner": false,
@@ -2683,7 +2631,7 @@
         "elements": []
        },
        {
-        "id": "88daf40",
+        "id": "482c9cb",
         "elType": "widget",
         "widgetType": "text-editor",
         "isInner": false,
@@ -2716,7 +2664,7 @@
         "elements": []
        },
        {
-        "id": "b0c4312",
+        "id": "90fbbd1",
         "elType": "widget",
         "widgetType": "icon-list",
         "isInner": false,
@@ -2724,7 +2672,7 @@
          "view": "traditional",
          "icon_list": [
           {
-           "_id": "5e8766e",
+           "_id": "010c475",
            "text": "Tree removal",
            "selected_icon": {
             "value": "fas fa-square-full",
@@ -2732,7 +2680,7 @@
            }
           },
           {
-           "_id": "9c1caaf",
+           "_id": "254b0c4",
            "text": "Pruning &amp; trimming",
            "selected_icon": {
             "value": "fas fa-square-full",
@@ -2740,7 +2688,7 @@
            }
           },
           {
-           "_id": "90fbbd1",
+           "_id": "6b4013e",
            "text": "Storm damage cleanup",
            "selected_icon": {
             "value": "fas fa-square-full",
@@ -2748,7 +2696,7 @@
            }
           },
           {
-           "_id": "519088f",
+           "_id": "88daf40",
            "text": "Brush removal &amp; haul-off",
            "selected_icon": {
             "value": "fas fa-square-full",
@@ -2756,7 +2704,7 @@
            }
           },
           {
-           "_id": "f3fe39c",
+           "_id": "5e8766e",
            "text": "Treeline &amp; view clearing",
            "selected_icon": {
             "value": "fas fa-square-full",
@@ -2764,7 +2712,7 @@
            }
           },
           {
-           "_id": "2020362",
+           "_id": "9c1caaf",
            "text": "Stump grinding",
            "selected_icon": {
             "value": "fas fa-square-full",
@@ -2823,380 +2771,7 @@
   ]
  },
  {
-  "id": "8f2c6ec",
-  "elType": "container",
-  "isInner": false,
-  "settings": {
-   "content_width": "boxed",
-   "boxed_width": {
-    "unit": "px",
-    "size": 1300,
-    "sizes": []
-   },
-   "flex_direction": "column",
-   "padding": {
-    "unit": "px",
-    "top": "100",
-    "right": "40",
-    "bottom": "100",
-    "left": "40",
-    "isLinked": false
-   },
-   "padding_tablet": {
-    "unit": "px",
-    "top": "80",
-    "right": "40",
-    "bottom": "70",
-    "left": "40",
-    "isLinked": false
-   },
-   "padding_mobile": {
-    "unit": "px",
-    "top": "64",
-    "right": "40",
-    "bottom": "56",
-    "left": "40",
-    "isLinked": false
-   },
-   "overflow": "hidden",
-   "background_background": "classic",
-   "background_color": "#F4F2EA",
-   "_element_id": "services-washing"
-  },
-  "elements": [
-   {
-    "id": "cc4169a",
-    "elType": "container",
-    "isInner": true,
-    "settings": {
-     "content_width": "full",
-     "container_type": "grid",
-     "padding": {
-      "unit": "px",
-      "top": "0",
-      "right": "0",
-      "bottom": "0",
-      "left": "0",
-      "isLinked": true
-     },
-     "grid_columns_grid": {
-      "unit": "fr",
-      "size": 2,
-      "sizes": []
-     },
-     "grid_columns_grid_tablet": {
-      "unit": "fr",
-      "size": 1,
-      "sizes": []
-     },
-     "grid_columns_grid_mobile": {
-      "unit": "fr",
-      "size": 1,
-      "sizes": []
-     },
-     "grid_rows_grid": {
-      "unit": "custom",
-      "size": "auto",
-      "sizes": []
-     },
-     "grid_rows_grid_tablet": {
-      "unit": "custom",
-      "size": "auto",
-      "sizes": []
-     },
-     "grid_rows_grid_mobile": {
-      "unit": "custom",
-      "size": "auto",
-      "sizes": []
-     },
-     "grid_gaps": {
-      "column": "80",
-      "row": "48",
-      "isLinked": false,
-      "unit": "px",
-      "size": 80
-     },
-     "grid_gaps_tablet": {
-      "column": "80",
-      "row": "48",
-      "isLinked": false,
-      "unit": "px",
-      "size": 80
-     },
-     "grid_gaps_mobile": {
-      "column": "28",
-      "row": "40",
-      "isLinked": false,
-      "unit": "px",
-      "size": 28
-     },
-     "grid_align_items": "center"
-    },
-    "elements": [
-     {
-      "id": "dfe0189",
-      "elType": "container",
-      "isInner": true,
-      "settings": {
-       "content_width": "full",
-       "flex_direction": "column",
-       "flex_gap": {
-        "column": "22",
-        "row": "22",
-        "isLinked": true,
-        "unit": "px",
-        "size": 22
-       },
-       "padding": {
-        "unit": "px",
-        "top": "0",
-        "right": "0",
-        "bottom": "0",
-        "left": "0",
-        "isLinked": true
-       }
-      },
-      "elements": [
-       {
-        "id": "9e1a8ef",
-        "elType": "widget",
-        "widgetType": "heading",
-        "isInner": false,
-        "settings": {
-         "title": "03",
-         "header_size": "p",
-         "title_color": "#738238",
-         "typography_typography": "custom",
-         "typography_font_family": "Jost",
-         "typography_font_size": {
-          "unit": "px",
-          "size": 12,
-          "sizes": []
-         },
-         "typography_font_weight": "500",
-         "typography_line_height": {
-          "unit": "em",
-          "size": 1.4,
-          "sizes": []
-         },
-         "typography_letter_spacing": {
-          "unit": "em",
-          "size": 0.22,
-          "sizes": []
-         },
-         "typography_text_transform": "uppercase",
-         "__globals__": {
-          "title_color": "",
-          "typography_typography": ""
-         }
-        },
-        "elements": []
-       },
-       {
-        "id": "a7abe1c",
-        "elType": "widget",
-        "widgetType": "heading",
-        "isInner": false,
-        "settings": {
-         "title": "Commercial Power Washing",
-         "header_size": "h2",
-         "title_color": "#283A33",
-         "typography_typography": "custom",
-         "typography_font_family": "Marcellus",
-         "typography_font_size": {
-          "unit": "px",
-          "size": 50,
-          "sizes": []
-         },
-         "typography_font_size_tablet": {
-          "unit": "px",
-          "size": 40,
-          "sizes": []
-         },
-         "typography_font_size_mobile": {
-          "unit": "px",
-          "size": 34,
-          "sizes": []
-         },
-         "typography_font_weight": "400",
-         "typography_line_height": {
-          "unit": "em",
-          "size": 1.1,
-          "sizes": []
-         },
-         "__globals__": {
-          "title_color": "",
-          "typography_typography": ""
-         }
-        },
-        "elements": []
-       },
-       {
-        "id": "ad1b72d",
-        "elType": "widget",
-        "widgetType": "text-editor",
-        "isInner": false,
-        "settings": {
-         "editor": "First impressions for storefronts, offices, rental properties and HOA common areas. We use the right pressure and solutions for each surface, scheduled around your hours of operation.",
-         "text_color": "#3F4A44",
-         "typography_typography": "custom",
-         "typography_font_family": "Jost",
-         "typography_font_size": {
-          "unit": "px",
-          "size": 18,
-          "sizes": []
-         },
-         "typography_font_size_mobile": {
-          "unit": "px",
-          "size": 17,
-          "sizes": []
-         },
-         "typography_font_weight": "300",
-         "typography_line_height": {
-          "unit": "em",
-          "size": 1.65,
-          "sizes": []
-         },
-         "__globals__": {
-          "text_color": "",
-          "typography_typography": ""
-         }
-        },
-        "elements": []
-       },
-       {
-        "id": "f3aed0b",
-        "elType": "widget",
-        "widgetType": "icon-list",
-        "isInner": false,
-        "settings": {
-         "view": "traditional",
-         "icon_list": [
-          {
-           "_id": "bd62888",
-           "text": "Building exteriors",
-           "selected_icon": {
-            "value": "fas fa-square-full",
-            "library": "fa-solid"
-           }
-          },
-          {
-           "_id": "0dd27a6",
-           "text": "Sidewalks &amp; entryways",
-           "selected_icon": {
-            "value": "fas fa-square-full",
-            "library": "fa-solid"
-           }
-          },
-          {
-           "_id": "74e69a5",
-           "text": "Parking areas &amp; drive-thrus",
-           "selected_icon": {
-            "value": "fas fa-square-full",
-            "library": "fa-solid"
-           }
-          },
-          {
-           "_id": "e647cb8",
-           "text": "Patios, decks &amp; hardscape",
-           "selected_icon": {
-            "value": "fas fa-square-full",
-            "library": "fa-solid"
-           }
-          },
-          {
-           "_id": "def8833",
-           "text": "Dumpster pads &amp; loading areas",
-           "selected_icon": {
-            "value": "fas fa-square-full",
-            "library": "fa-solid"
-           }
-          },
-          {
-           "_id": "c7ac149",
-           "text": "Recurring maintenance schedules",
-           "selected_icon": {
-            "value": "fas fa-square-full",
-            "library": "fa-solid"
-           }
-          }
-         ],
-         "icon_color": "#738238",
-         "icon_size": {
-          "unit": "px",
-          "size": 7,
-          "sizes": []
-         },
-         "text_color": "#283A33",
-         "text_indent": {
-          "unit": "px",
-          "size": 12,
-          "sizes": []
-         },
-         "space_between": {
-          "unit": "px",
-          "size": 12,
-          "sizes": []
-         },
-         "_css_classes": "mpc-bullets mpc-bullets-2col",
-         "icon_typography_typography": "custom",
-         "icon_typography_font_family": "Jost",
-         "icon_typography_font_size": {
-          "unit": "px",
-          "size": 16,
-          "sizes": []
-         },
-         "icon_typography_font_size_mobile": {
-          "unit": "px",
-          "size": 16,
-          "sizes": []
-         },
-         "icon_typography_font_weight": "400",
-         "icon_typography_line_height": {
-          "unit": "em",
-          "size": 1.5,
-          "sizes": []
-         },
-         "__globals__": {
-          "icon_color": "",
-          "text_color": "",
-          "icon_typography_typography": ""
-         }
-        },
-        "elements": []
-       }
-      ]
-     },
-     {
-      "id": "ae3a2b7",
-      "elType": "widget",
-      "widgetType": "image",
-      "isInner": false,
-      "settings": {
-       "image": {
-        "url": "%%IMG:photos/power-wash-2.jpg%%",
-        "id": "%%IMGID:photos/power-wash-2.jpg%%",
-        "alt": "Power washing a commercial brick building",
-        "source": "library"
-       },
-       "image_size": "full",
-       "align": "start",
-       "width": {
-        "unit": "%",
-        "size": 100,
-        "sizes": []
-       },
-       "_css_classes": "mpc-ratio-43",
-       "__globals__": {}
-      },
-      "elements": []
-     }
-    ]
-   }
-  ]
- },
- {
-  "id": "1c2442f",
+  "id": "ae3a2b7",
   "elType": "container",
   "isInner": false,
   "settings": {
@@ -3239,7 +2814,7 @@
   },
   "elements": [
    {
-    "id": "6472f1a",
+    "id": "b0c4312",
     "elType": "widget",
     "widgetType": "image",
     "isInner": false,
@@ -3292,7 +2867,7 @@
     "elements": []
    },
    {
-    "id": "298cb3a",
+    "id": "dfe0189",
     "elType": "container",
     "isInner": true,
     "settings": {
@@ -3362,7 +2937,7 @@
     },
     "elements": [
      {
-      "id": "65e7e42",
+      "id": "dbf4a8b",
       "elType": "widget",
       "widgetType": "image",
       "isInner": false,
@@ -3386,7 +2961,7 @@
       "elements": []
      },
      {
-      "id": "70ccec3",
+      "id": "f3aed0b",
       "elType": "container",
       "isInner": true,
       "settings": {
@@ -3410,12 +2985,12 @@
       },
       "elements": [
        {
-        "id": "66237a0",
+        "id": "83f73f1",
         "elType": "widget",
         "widgetType": "heading",
         "isInner": false,
         "settings": {
-         "title": "04 · For Second Home Owners &amp; Property Managers",
+         "title": "03 · For Second Home Owners &amp; Property Managers",
          "header_size": "p",
          "title_color": "#A9B86A",
          "typography_typography": "custom",
@@ -3445,7 +3020,7 @@
         "elements": []
        },
        {
-        "id": "64e50ca",
+        "id": "f341e07",
         "elType": "widget",
         "widgetType": "heading",
         "isInner": false,
@@ -3484,7 +3059,7 @@
         "elements": []
        },
        {
-        "id": "1a81682",
+        "id": "9e1a8ef",
         "elType": "widget",
         "widgetType": "text-editor",
         "isInner": false,
@@ -3517,7 +3092,7 @@
         "elements": []
        },
        {
-        "id": "fc132d0",
+        "id": "def8833",
         "elType": "widget",
         "widgetType": "icon-list",
         "isInner": false,
@@ -3525,7 +3100,7 @@
          "view": "traditional",
          "icon_list": [
           {
-           "_id": "7b45145",
+           "_id": "a7abe1c",
            "text": "Scheduled property check-ins",
            "selected_icon": {
             "value": "fas fa-square-full",
@@ -3533,15 +3108,15 @@
            }
           },
           {
-           "_id": "a260cd0",
-           "text": "Exterior &amp; grounds upkeep",
+           "_id": "ad1b72d",
+           "text": "Exterior upkeep &amp; power washing",
            "selected_icon": {
             "value": "fas fa-square-full",
             "library": "fa-solid"
            }
           },
           {
-           "_id": "6683688",
+           "_id": "bd62888",
            "text": "Handyman repairs &amp; small projects",
            "selected_icon": {
             "value": "fas fa-square-full",
@@ -3549,7 +3124,7 @@
            }
           },
           {
-           "_id": "0fef792",
+           "_id": "0dd27a6",
            "text": "Seasonal prep &amp; storm follow-up",
            "selected_icon": {
             "value": "fas fa-square-full",
@@ -3557,7 +3132,7 @@
            }
           },
           {
-           "_id": "30cbc97",
+           "_id": "74e69a5",
            "text": "Arrival-ready visits before you come in",
            "selected_icon": {
             "value": "fas fa-square-full",
@@ -3565,7 +3140,7 @@
            }
           },
           {
-           "_id": "113db17",
+           "_id": "e647cb8",
            "text": "Photo report after each visit",
            "selected_icon": {
             "value": "fas fa-square-full",
@@ -3618,7 +3193,7 @@
         "elements": []
        },
        {
-        "id": "3571810",
+        "id": "c7ac149",
         "elType": "widget",
         "widgetType": "button",
         "isInner": false,
@@ -3685,7 +3260,7 @@
   ]
  },
  {
-  "id": "068739f",
+  "id": "113db17",
   "elType": "container",
   "isInner": false,
   "settings": {
@@ -3754,7 +3329,7 @@
   },
   "elements": [
    {
-    "id": "19f9919",
+    "id": "a260cd0",
     "elType": "container",
     "isInner": true,
     "settings": {
@@ -3794,7 +3369,7 @@
     },
     "elements": [
      {
-      "id": "26b94c7",
+      "id": "1a81682",
       "elType": "widget",
       "widgetType": "heading",
       "isInner": false,
@@ -3833,7 +3408,7 @@
       "elements": []
      },
      {
-      "id": "895fd7b",
+      "id": "7b45145",
       "elType": "widget",
       "widgetType": "text-editor",
       "isInner": false,
@@ -3868,7 +3443,7 @@
     ]
    },
    {
-    "id": "9d1de2a",
+    "id": "30cbc97",
     "elType": "container",
     "isInner": true,
     "settings": {
@@ -3911,7 +3486,7 @@
     },
     "elements": [
      {
-      "id": "f2ee4e4",
+      "id": "6683688",
       "elType": "widget",
       "widgetType": "button",
       "isInner": false,
@@ -3972,7 +3547,7 @@
       "elements": []
      },
      {
-      "id": "5d158a2",
+      "id": "0fef792",
       "elType": "widget",
       "widgetType": "heading",
       "isInner": false,

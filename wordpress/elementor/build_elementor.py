@@ -392,7 +392,7 @@ def home():
         image('photos/landscape-bed.jpg', 'Finished landscape bed with stone edging and lighting', '43'),
     ], (2, 1, 1), (80, 56), flex_align_items='center', grid_align_items='center')], IVORY)
 
-    def card(img, alt, title, body, label=None, big=False, bg=DEEP, anchor=''):
+    def card(img, alt, title, body, label=None, big=False, bg=DEEP, anchor='', span=False):
         kids = []
         if label:
             kids.append(heading(label, 'span', MOSS, size=11, weight=500, ls=0.2, transform='uppercase'))
@@ -412,7 +412,8 @@ def home():
                          background_overlay_color_b='rgba(29,43,38,0.92)', background_overlay_color_b_stop=px(100, '%'),
                          background_overlay_gradient_angle=px(180, 'deg'),
                          background_overlay_opacity=px(1),
-                         _css_classes='mpc-card')
+                         _css_classes='mpc-card',
+                         **(dict(grid_column='2', grid_column_tablet='2', grid_column_mobile='1') if span else {}))
 
     services = section([
         watermark((36, 44, 80), 0.07, 'start', -10, 'start', -6),
@@ -424,11 +425,9 @@ def home():
                    'Landscape Development &amp; Site Preparation',
                    'Forestry mulching, land clearing, grading, drainage, retaining walls, hardscaping, gravel '
                    'driveways and more. Raw land to finished grounds.', 'Our Specialty', True,
-                   anchor='#services-development'),
+                   anchor='#services-development', span=True),
               card('photos/tree-removal.jpg', 'Tree removal with a compact loader', 'Tree Care',
                    'Removal, pruning, storm cleanup and brush removal.', anchor='#services-tree'),
-              card('photos/power-wash-1.jpg', 'Commercial power washing a brick facade', 'Commercial Power Washing',
-                   'Buildings, hardscapes, lots and storefronts.', anchor='#services-washing'),
               card('photos/sod-install.jpg', 'Laying fresh sod', 'Property Care Subscription',
                    'Scheduled visits, seasonal upkeep and handyman repairs from one trusted contact, so your '
                    'property is ready whenever you are.', 'For Second Home Owners &amp; Property Managers', True,
@@ -514,7 +513,7 @@ def about():
         stack([eyebrow('The Magnolia Standard'), display('What white glove means to us.')], gap=18,
               **resp('width', px(700), px(100, '%'), px(100, '%'))),
         grid([standard('01', 'Full scope, one contract',
-                       'Clearing, grading, drainage, hardscape, trees, washing and repairs. You sign once and we '
+                       'Clearing, grading, drainage, hardscape, trees and repairs. You sign once and we '
                        'coordinate the rest.'),
               standard('02', 'Owner on every job',
                        'You will not be handed off. Heys walks the site, writes the estimate and is on the property '
@@ -560,7 +559,6 @@ def services():
         w['settings']['_padding_mobile'] = box(10, 0)
         return w
     jumps = section([row([jump('Landscape Development', 'services-development'), jump('Tree Care', 'services-tree'),
-                          jump('Power Washing', 'services-washing'),
                           jump('Property Care Subscription', 'services-care')],
                          gap=40, justify='flex-start', flex_gap_mobile=gaps(24, 0))],
                     FOREST, pad=(0, 0), pad_t=(0, 0), pad_m=(10, 10),
@@ -617,26 +615,17 @@ def services():
                         'Treeline &amp; view clearing', 'Stump grinding'])], gap=22),
     ], (2, 1, 1), (80, 48), grid_align_items='center')], STONE, pad=(100, 100), element_id='services-tree')
 
-    wash = section([grid([
-        stack([eyebrow('03'), display('Commercial Power Washing'),
-               text('First impressions for storefronts, offices, rental properties and HOA common areas. We use the '
-                    'right pressure and solutions for each surface, scheduled around your hours of operation.'),
-               bullets(['Building exteriors', 'Sidewalks &amp; entryways', 'Parking areas &amp; drive-thrus',
-                        'Patios, decks &amp; hardscape', 'Dumpster pads &amp; loading areas',
-                        'Recurring maintenance schedules'])], gap=22),
-        image('photos/power-wash-2.jpg', 'Power washing a commercial brick building', '43'),
-    ], (2, 1, 1), (80, 48), grid_align_items='center')], IVORY, pad=(100, 100), element_id='services-washing')
 
     care = section([
         watermark((32, 44, 80), 0.08, 'start', -8, 'end', -12),
         grid([image('photos/firepit-home.jpg', 'Well-kept home with paver patio', '43'),
-              stack([eyebrow('04 · For Second Home Owners &amp; Property Managers', MOSS),
+              stack([eyebrow('03 · For Second Home Owners &amp; Property Managers', MOSS),
                      display('Property Care Subscription', 'h2', IVORY),
                      text('A standing arrangement for owners who are not always on site. We visit on a schedule, handle '
                           'the seasonal and handyman work that comes up, and send you a short report so you always know '
                           'the state of your property. One trusted contact, instead of a list of numbers to call when '
                           'something breaks.', SAND),
-                     bullets(['Scheduled property check-ins', 'Exterior &amp; grounds upkeep',
+                     bullets(['Scheduled property check-ins', 'Exterior upkeep &amp; power washing',
                               'Handyman repairs &amp; small projects', 'Seasonal prep &amp; storm follow-up',
                               'Arrival-ready visits before you come in', 'Photo report after each visit'],
                              IVORY, MOSS),
@@ -645,8 +634,8 @@ def services():
     ], FOREST, pad=(100, 100), element_id='services-care', extra={'_css_classes': 'mpc-band'})
 
     return page_hero('Services', 'From raw land to a property that takes care of itself.',
-                     'Four service lines, one team. Most clients start with a development or clearing project and '
-                     'stay with us for everything that follows.', jumps) + [dev, tree, wash, care, cta_band()]
+                     'Three service lines, one team. Most clients start with a development or clearing project and '
+                     'stay with us for everything that follows.', jumps) + [dev, tree, care, cta_band()]
 
 
 # ---- Past Projects ----------------------------------------------------------------
@@ -659,12 +648,10 @@ PROJECTS = [
      'Selective tree removal for a water view, brush removal, stump grinding and hydroseeding.'),
     ('photos/gravel-drive.jpg', 'Farm Driveway Rebuild', 'Caswell County, NC', 'Site Preparation',
      'Quarter-mile gravel drive repair, crowning, new culverts and ditch trenching.'),
-    ('photos/power-wash-1.jpg', 'Retail Center Exterior Refresh', 'Guilford County, NC', 'Power Washing',
-     'Storefront facades, sidewalks and parking areas on a recurring quarterly schedule.'),
     ('photos/landscape-bed.jpg', 'Second Home Seasonal Care', 'Granville County, NC', 'Property Care',
      'Monthly visits, deck repairs, gutter and grounds upkeep, arrival-ready prep before each stay.'),
 ]
-CATEGORIES = ['Site Preparation', 'Landscape Development', 'Tree Care', 'Power Washing', 'Property Care']
+CATEGORIES = ['Site Preparation', 'Landscape Development', 'Tree Care', 'Property Care']
 
 
 def slug(s):
@@ -730,7 +717,7 @@ def form_widget():
             ['As soon as possible', 'Within 1–3 months', '3–6 months', 'Planning ahead'])),
         field('services', 'checkbox', 'Services Needed', '100', field_options='\n'.join(
             ['Land clearing / forestry mulching', 'Grading & drainage', 'Retaining walls & hardscape',
-             'Gravel driveway / culvert', 'Landscape design & install', 'Tree care', 'Commercial power washing',
+             'Gravel driveway / culvert', 'Landscape design & install', 'Tree care',
              'Property care subscription']), inline_list='elementor-subgroup-inline'),
         field('details', 'textarea', 'Tell Us About the Project', '100', rows=5,
               placeholder="Acreage, current condition, what you'd like the finished property to look like, access notes…"),
@@ -865,7 +852,6 @@ def footer():
     servs = stack([col_head('Services'), link_list([
         ('Landscape Development &amp; Site Prep', '%%URL:services%%#services-development'),
         ('Tree Care', '%%URL:services%%#services-tree'),
-        ('Commercial Power Washing', '%%URL:services%%#services-washing'),
         ('Property Care Subscription', '%%URL:services%%#services-care')])], gap=8)
     contact_col = stack([col_head('Contact'), link_list([(PHONE, TEL), (EMAIL, 'mailto:' + EMAIL)]),
                          text('Mon – Sat, 7 AM – 5 PM<br>Person County, North Carolina', '#B8B9A4', 15, m=15,
