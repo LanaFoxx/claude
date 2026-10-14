@@ -204,7 +204,7 @@ const practice = (m) => band(C.white, [
       tabs_direction: 'block-start', tabs_justify_horizontal: 'center', title_alignment: 'center',
       breakpoint_selector: 'mobile', tabs_title_space_between: px(12), tabs_title_spacing: px(0),
       ...L.typo('title_typography', 12, 500, { lh: 1.2, ls: 0.16, transform: 'uppercase' }),
-      title_text_color: C.ink, title_text_color_hover: C.ink, title_text_color_active: C.roseDeep,
+      title_text_color: C.ink, title_text_color_hover: C.ink, title_text_color_active: C.white,
       tabs_title_background_color_background: 'classic', tabs_title_background_color_color: 'rgba(0,0,0,0)',
       tabs_title_background_color_hover_background: 'classic', tabs_title_background_color_hover_color: 'rgba(42,27,22,0.04)',
       tabs_title_background_color_active_background: 'classic', tabs_title_background_color_active_color: C.ink,

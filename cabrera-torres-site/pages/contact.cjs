@@ -8,7 +8,7 @@ module.exports = {
   slug: 'contact', title: 'Contact',
   seo: {
     title: 'Contact Us | Free Case Evaluation | Cabrera-Torres Law Firm',
-    description: 'Injured? Call Jen at 678.490.0000 or request a free, confidential case evaluation. 1770 Indian Trail Lilburn Rd NW, Norcross, GA 30093.',
+    description: 'Injured? Call Jen at 678-730-0061 or request a free, confidential case evaluation. 1770 Indian Trail Lilburn Rd NW, Norcross, GA 30093.',
     focus: 'free case evaluation Norcross',
   },
   build: (m) => [

@@ -11,7 +11,7 @@ const C = {
   line: 'rgba(191,142,116,0.35)', lineStrong: 'rgba(191,142,116,0.6)', hair: 'rgba(42,27,22,0.08)', rule: 'rgba(42,27,22,0.12)',
 };
 const FONT = 'Jost';
-const PHONE = '678.490.0000', TEL = 'tel:+16784900000', EMAIL = 'info@cabreratorres.com';
+const PHONE = '678-730-0061', TEL = 'tel:+16787300061', EMAIL = 'info@cabreratorres.com';
 const URL = {
   home: '/', about: '/about/', jennifer: '/meet-jennifer/', practice: '/practice-areas/', results: '/case-results/',
   testimonials: '/testimonials/', faq: '/faq/', blog: '/blog/', contact: '/contact/',
