@@ -138,6 +138,9 @@ def code_for(d):
     c = c.replace("'Progress Tracking', ", '')  # not offered as a feature anywhere on the site
     c = c.replace("'Practice Exams', ", '')  # no study-feature options on the site
     c = c.replace("'Published package price'", "'Course bundle price'")
+    # FAQ page: answer the "best CTEC course" question (also in faqs-ld.json).
+    c = c.replace("{ eyebrow: 'Using this site', title: 'Comparing providers', items: [",
+                  "{ eyebrow: 'Using this site', title: 'Comparing providers', items: [\n        { q: 'What is the best CTEC course?', a: 'The best CTEC course is the one that fits how you learn and what you need: the price, whether you want self-paced online study or live classes, a printed book, PDF or online videos, the support available, and how quickly the school reports your hours to CTEC. Tax Course Finder lists every CTEC-approved provider side by side so you can filter by those features, compare current prices and coupon codes, and go straight to the school’s course page to enroll.' },")
     # no device-access options (mobile / desktop) on the site
     c = c.replace(", 'mobile_friendly']", ']').replace("['mobile_friendly', 'Mobile friendly'], ", '').replace("'Mobile-Friendly Course', 'Dedicated Mobile App', ", '')
     c = re.sub(r'subInit\(\)\s*\{', 'subInit() { return;', c)  # newsletter popup has no backend: keep it off

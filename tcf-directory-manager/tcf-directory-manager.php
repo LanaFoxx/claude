@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Tax Course Finder – Directory Manager
  * Description: Manage every CTEC provider listing (20-hour CE and 60-hour QE): prices, coupons and sales, course format, materials, support and device features. Import research from ChatGPT (JSON or CSV) with a preview, change log and one-click undo, or edit any listing by hand. Feeds the site directory through /wp-json/tcf/v1/providers.
- * Version: 2.4.0
+ * Version: 2.5.0
  * Author: Tax Course Finder
  * Requires at least: 6.4
  * Requires PHP: 8.0
@@ -11,7 +11,7 @@
 
 defined('ABSPATH') || exit;
 
-define('TCFD_VERSION', '2.4.0');
+define('TCFD_VERSION', '2.5.0');
 define('TCFD_FILE', __FILE__);
 define('TCFD_DIR', plugin_dir_path(__FILE__));
 define('TCFD_URL', plugin_dir_url(__FILE__));
@@ -24,6 +24,7 @@ require_once TCFD_DIR . 'includes/class-rest.php';
 require_once TCFD_DIR . 'includes/class-schema.php';
 require_once TCFD_DIR . 'includes/class-school.php';
 require_once TCFD_DIR . 'includes/class-profile.php';
+require_once TCFD_DIR . 'includes/class-ai.php';
 require_once TCFD_DIR . 'includes/class-admin.php';
 
 final class TCFD_Plugin {
@@ -37,6 +38,7 @@ final class TCFD_Plugin {
         TCFD_Schema::boot();
         TCFD_School::boot();
         TCFD_Profile::boot();
+        TCFD_AI::boot();
         // The site's fonts load from the header template; Elementor's default Roboto files are unused.
         add_filter('elementor/frontend/print_google_fonts', '__return_false');
         add_action('save_post_' . self::POST_TYPE, ['TCFD_Store', 'flush_cache']);
@@ -60,6 +62,7 @@ final class TCFD_Plugin {
         TCFD_Importer::install_tables();
         self::register_post_type();
         TCFD_Profile::register();
+        TCFD_AI::rewrites();
         flush_rewrite_rules(false);
         TCFD_Store::flush_cache();
     }

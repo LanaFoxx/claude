@@ -64,6 +64,7 @@ final class TCFD_Schema {
 
     public static function organization($data) {
         if (!is_array($data)) return $data;
+        $data['description'] = 'Independent comparison directory of every CTEC-approved 20 hour and 60 hour CTEC course in California, showing prices, coupon codes, course format, materials and support side by side.';
         $data['knowsAbout'] = ['20 hour CTEC course', '60 hour CTEC course', 'CTEC continuing education', 'CTEC qualifying education', 'California Registered Tax Preparer (CRTP) requirements'];
         $data['areaServed'] = ['@type' => 'State', 'name' => 'California'];
         $data['email'] = 'hello@taxcoursefinder.com';
