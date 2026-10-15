@@ -38,14 +38,18 @@ def clean(s):
 
 TABLE_CSS = ("<style>"
   ".tcf-table{border:1px solid #E3E9EB;border-radius:14px;overflow:hidden;background:#fff;font-family:'DM Sans',Manrope,sans-serif}"
-  ".tcf-thead,.tcf-trow{display:grid;grid-template-columns:minmax(0,2.3fr) minmax(100px,.9fr) minmax(130px,1.15fr) minmax(130px,1.15fr) minmax(100px,.95fr) auto;gap:20px;align-items:center}"
-  ".tcf-thead{background:#0B2E40;color:rgba(255,255,255,.88);font:700 14px 'DM Sans',Manrope,sans-serif;letter-spacing:.1em;text-transform:uppercase;padding:18px 28px}"
-  ".tcf-trow{padding:20px 28px;border-top:1px solid #E3E9EB;background:#fff;transition:background .15s}"
+  ".tcf-thead,.tcf-trow{display:grid;grid-template-columns:minmax(220px,2.3fr) minmax(120px,1fr) minmax(120px,1.1fr) minmax(130px,1.1fr) minmax(100px,.9fr) 160px;gap:18px;align-items:center}"
+  ".tcf-thead{background:#0B2E40;color:rgba(255,255,255,.88);font:700 12px 'DM Sans',Manrope,sans-serif;letter-spacing:.1em;text-transform:uppercase;padding:16px 28px}"
+  ".tcf-trow{padding:18px 28px;border-top:1px solid #E3E9EB;background:#fff;transition:background .15s}"
   ".tcf-tbody>.tcf-trow:first-child{border-top:0}.tcf-tbody>.tcf-trow:nth-child(even){background:#F7F9FA}.tcf-tbody>.tcf-trow:hover{background:#F3F5E6}"
+  ".tcf-trow [data-label=Price]>div:first-child{font-size:18px!important}.tcf-trow [data-label=Price]>div+div{font-size:10.5px!important;letter-spacing:.08em!important;white-space:nowrap;margin-top:3px!important}.tcf-thead>span:last-child,.tcf-cell-offer{justify-self:end;text-align:right}"
   ".tcf-trow [data-label]::before{display:none}"
-  "@media (max-width:900px){.tcf-thead{display:none}.tcf-trow{grid-template-columns:1fr 1fr;gap:14px 18px;padding:18px}"
-  ".tcf-trow .tcf-cell-provider,.tcf-trow .tcf-cell-offer{grid-column:1 / -1}.tcf-trow .tcf-cell-offer{justify-self:stretch!important}.tcf-trow .tcf-cell-offer a{width:100%}"
-  ".tcf-trow [data-label]::before{content:attr(data-label);display:block;font:700 11px 'DM Sans',Manrope,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#8A9AA3;margin-bottom:4px}}"
+  "@media (max-width:1100px){.tcf-thead{display:none}"
+  ".tcf-trow{grid-template-columns:repeat(4,minmax(0,1fr)) auto;gap:14px 18px;padding:20px 22px;align-items:start}.tcf-trow .tcf-cell-offer{align-self:center}"
+  ".tcf-trow .tcf-cell-provider{grid-column:1 / -1}"
+  ".tcf-trow [data-label]::before{content:attr(data-label);display:block;font:700 11px 'DM Sans',Manrope,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#8A9AA3;margin-bottom:5px}}"
+  "@media (max-width:760px){.tcf-trow{grid-template-columns:1fr 1fr;padding:18px;align-items:start}"
+  ".tcf-trow .tcf-cell-offer{grid-column:1 / -1;justify-self:stretch!important}.tcf-trow .tcf-cell-offer a{width:100%}}"
   "</style>")
 
 def comparison_table(body):
@@ -58,22 +62,22 @@ def comparison_table(body):
     chunk = body[i:end]
     logo_start = '<div style="width:56px;height:56px;border:1px solid #E3E9EB;border-radius:8px;background:#fff;display:grid;place-items:center;overflow:hidden">'
     a = chunk.index(logo_start); logo = chunk[a:chunk.index('</sc-if></div>', a) + len('</sc-if></div>')]
-    logo = logo.replace(logo_start, '<div style="flex:none;width:48px;height:48px;border:1px solid #E3E9EB;border-radius:10px;background:#fff;display:grid;place-items:center;overflow:hidden">', 1).replace('width:26px;height:26px', 'width:22px;height:22px')
+    logo = logo.replace(logo_start, '<div style="flex:none;width:44px;height:44px;border:1px solid #E3E9EB;border-radius:10px;background:#fff;display:grid;place-items:center;overflow:hidden">', 1).replace('width:26px;height:26px', 'width:22px;height:22px')
     pstart = '<div style="min-width:0"><div style="font:{{ p.priceWeight }} 20px/1.2 Manrope,sans-serif'
     b = chunk.index(pstart); price = chunk[b:chunk.index('</sc-if></div>', b) + len('</sc-if></div>')]
     price = price.replace('<div style="min-width:0">', '<div style="min-width:0" data-label="Price">', 1).replace('Manrope,sans-serif', "'DM Sans',Manrope,sans-serif")
     head = ('<div class="tcf-thead" role="row"><span>Provider</span><span>{{ courseShort }} price</span><span>Format</span><span>Reports to CTEC</span><span>Rating</span><span>Offer</span></div>')
     row = ('<div class="tcf-trow" role="row">'
            '<div class="tcf-cell-provider" style="display:flex;align-items:center;gap:16px;min-width:0">' + logo +
-           '<div style="min-width:0"><a href="{{ p.schoolUrl }}" style="display:block;font:700 19px/1.25 \'DM Sans\',Manrope,sans-serif;color:#0B2E40;text-wrap:pretty" data-hv="9">{{ p.name }}</a>'
-           '<div style="font-size:14px;color:#5A6E78;margin-top:4px;line-height:1.4">{{ p.offeringLabel }} · {{ p.domain }}{{ p.ctecLine }}</div></div></div>'
+           '<div style="min-width:0"><a href="{{ p.schoolUrl }}" style="display:block;font:700 17px/1.25 \'DM Sans\',Manrope,sans-serif;color:#0B2E40;text-wrap:pretty" data-hv="9">{{ p.name }}</a>'
+           '<div style="font-size:13px;color:#5A6E78;margin-top:3px;line-height:1.4">{{ p.offeringLabel }} · {{ p.domain }}{{ p.ctecLine }}</div></div></div>'
            + price +
-           '<div data-label="Format" style="min-width:0;line-height:1.35"><div style="font-size:16px;color:{{ p.formatColor }}">{{ p.formatL1 }}</div><div style="font-size:15px;color:#8A9AA3;margin-top:2px">{{ p.formatL2 }}</div></div>'
-           '<div data-label="Reports to CTEC" style="min-width:0;font-size:16px;font-weight:{{ p.reportWeight }};color:{{ p.reportColor }}">{{ p.reportText }}</div>'
-           '<div data-label="Rating" style="min-width:0;font-size:16px;font-weight:600;color:{{ p.ratingColor }}">{{ p.ratingText }} <span style="font-weight:400;color:#8A9AA3">{{ p.ratingCount }}</span></div>'
+           '<div data-label="Format" style="min-width:0;line-height:1.35"><div style="font-size:15px;color:{{ p.formatColor }}">{{ p.formatL1 }}</div><div style="font-size:14px;color:#8A9AA3;margin-top:2px">{{ p.formatL2 }}</div></div>'
+           '<div data-label="Reports to CTEC" style="min-width:0;font-size:15px;font-weight:{{ p.reportWeight }};color:{{ p.reportColor }}">{{ p.reportText }}</div>'
+           '<div data-label="Rating" style="min-width:0;font-size:15px;font-weight:600;color:{{ p.ratingColor }}">{{ p.ratingText }} <span style="font-weight:400;color:#8A9AA3">{{ p.ratingCount }}</span></div>'
            '<div class="tcf-cell-offer" style="justify-self:end"><sc-if value="{{ p.hasWebsite }}"><a href="{{ p.courseLink }}" target="_blank" rel="noopener" data-tcf-copy-go="{{ p.couponCode }}" '
-           'style="display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:150px;font:700 16px \'DM Sans\',Manrope,sans-serif;border-radius:999px;white-space:nowrap;text-decoration:none;'
-           'background:#95AB3B;color:#fff;padding:12px 22px;border:1.5px solid #95AB3B;transition:background .15s,border-color .15s" data-hv="4"><span data-tcf-offer-label="">{{ p.offerLabel }}</span></a></sc-if>'
+           'style="display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:140px;font:700 15px \'DM Sans\',Manrope,sans-serif;border-radius:999px;white-space:nowrap;text-decoration:none;'
+           'background:#95AB3B;color:#fff;padding:11px 18px;border:1.5px solid #95AB3B;transition:background .15s,border-color .15s" data-hv="4"><span data-tcf-offer-label="">{{ p.offerLabel }}</span></a></sc-if>'
            '<sc-if value="{{ p.noWebsite }}"><div style="font-size:15px;color:#8A9AA3">No website listed</div></sc-if></div>'
            '</div>')
     table = (TABLE_CSS + '<div class="tcf-table" role="table" aria-label="CTEC course providers compared">' + head +

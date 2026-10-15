@@ -9,7 +9,7 @@ for (const [w, t] of [[1440, 'd'], [1000, 't'], [390, 'm']]) {
   const tbl = p.locator('.tcf-table').first(); await tbl.scrollIntoViewIfNeeded();
   const box = await tbl.boundingBox();
   console.log(t, 'rows', await p.locator('.tcf-trow').count(), 'font', await p.evaluate(() => getComputedStyle(document.querySelector('.tcf-trow a')).fontFamily.slice(0, 30)), 'sw', await p.evaluate(() => document.documentElement.scrollWidth));
-  await p.screenshot({ path: `${S}/shots/table-${t}.png`, clip: { x: 0, y: box.y - 10, width: w, height: Math.min(t === 'm' ? 1300 : 760, box.height + 20) }, fullPage: true });
+  await tbl.screenshot({ path: `${S}/shots/table-${t}.png` });
   if (t === 'd') {
     const btn = p.locator('[data-tcf-copy-go]:not([data-tcf-copy-go=""])').first();
     const code = await btn.getAttribute('data-tcf-copy-go');
