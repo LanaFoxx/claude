@@ -168,6 +168,15 @@
       return { key: x[0], label: x[1], bg: '#fff', border: '#D7DFE2', color: '#2F4652' };
     });
   }
+  // Same pills grouped for the listing footer: Format / Materials / Learning / Support.
+  var PILL_GROUPS = [['Format', ['online_course_available', 'in_person_course_available', 'self_paced', 'live_instruction_available']],
+    ['Materials', ['physical_book_available', 'digital_book_available', 'downloadable_materials', 'video_lessons_available']],
+    ['Learning', ['text_based_course_available', 'audio_content_available']],
+    ['Support', ['phone_support', 'email_support', 'live_chat_support']]];
+  function pillGroups(pl) {
+    return PILL_GROUPS.map(function (g) { return { label: g[0], items: pl.filter(function (x) { return g[1].indexOf(x.key) >= 0; }) }; })
+      .filter(function (g) { return g.items.length; });
+  }
   function decorate(list, qe) {
     return list.filter(function (p) { return qe ? p.qe : p.ce; }).map(function (p) {
       var pr = qe ? p.qePrice : p.cePrice;
@@ -182,7 +191,7 @@
         priceText: captured ? pr.text : 'Price not published', priceCaptured: captured, priceNote: captured ? (PRICE_TYPE_NOTE[pr.type] || (pr.status === 'REVIEW' ? 'See provider' : '')) : 'Check provider site', priceMuted: !captured, priceComparable: sortable != null, sortable: sortable,
         googleShown: gOk, googleRating: gOk ? g.rating.toFixed(1) : '', googleCount: gOk && g.count != null ? g.count.toLocaleString() + ' Google reviews' : (gOk ? 'Google rating' : ''), googleUrl: g.mapsUrl,
         liveOffers: live, hasOffers: live.length > 0, coupon: coupon ? coupon.code : '', couponLabel: coupon ? (coupon.memberOnly ? 'Member code' : 'Coupon code') : '', hasCoupon: !!coupon, sale: sale, hasSale: !!sale && !coupon, saleText: sale ? sale.saleFmt + ' sale' : '', saleSub: sale && sale.regularFmt ? 'reg. ' + sale.regularFmt : '', noOffer: live.length === 0,
-        both: p.ce && p.qe, features: p.features || {}, pills: pl, hasPills: pl.length > 0 });
+        both: p.ce && p.qe, features: p.features || {}, pills: pl, hasPills: pl.length > 0, pillGroups: pillGroups(pl) });
     });
   }
   TCF.mapProvider = mapProvider; TCF.decorate = decorate;

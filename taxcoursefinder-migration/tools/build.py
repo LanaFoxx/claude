@@ -138,11 +138,20 @@ def seo_tweaks(name, body):
         title = body[k + len('<div style="min-width:0">'):pills_at]
         pills = body[pills_at:end - len('</div>')].replace('margin:10px 0 0;', 'margin:14px 0 0;', 1)
         head = ('<div class="tcf-rowhead" style="grid-column:1 / span 2;min-width:0"><div style="display:flex;align-items:center;gap:16px;min-width:0">'
-                + logo + '<div style="min-width:0">' + title + '</div></div>' + pills + '</div>')
+                + logo + '<div style="min-width:0">' + title + '</div></div></div>')
         body = body[:i] + head + body[end:]
+        # Feature pills: a full-width footer under a divider, grouped by category.
+        pill = '<span style="font:600 13px/1 Manrope,sans-serif;padding:5px 10px;border-radius:999px;border:1px solid #D7DFE2;background:#fff;color:#2F4652;white-space:nowrap">{{ f.label }}</span>'
+        foot = ('<sc-if value="{{ p.hasPills }}"><div class="tcf-rowfoot" aria-label="Course features" style="grid-column:1 / -1;border-top:1px solid #E3E9EB;padding-top:16px;display:flex;flex-wrap:wrap;align-items:center;gap:10px 30px">'
+                '<sc-for list="{{ p.pillGroups }}" as="g"><div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px">'
+                '<span style="font:700 12px Manrope,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#8A9AA3;margin-right:4px">{{ g.label }}</span>'
+                '<sc-for list="{{ g.items }}" as="f">' + pill + '</sc-for></div></sc-for></div></sc-if>')
+        close = '\n        </div>\n      </sc-for>'
+        c = body.index(close, i)
+        body = body[:c] + foot + body[c:]
         g = '.tcf-scope.tcf-scope:not(.tcf-mobile) [style*="grid-template-columns:56px minmax(0,1fr) 200px 180px 120px"]'
         body = ('<style>@media (max-width:760px){' + g + '>.tcf-rowhead{width:auto!important;height:auto!important;grid-column:1 / -1!important}'
-                + g + '>*:not(.tcf-rowhead){grid-column:1 / -1!important}' + g + ' .tcf-rowhead>div>div:first-child{width:44px!important;height:44px!important}}</style>') + body
+                + g + '>*:not(.tcf-rowhead){grid-column:1 / -1!important}' + g + ' .tcf-rowhead>div>div:first-child{width:44px!important;height:44px!important}' + g + '>.tcf-rowfoot{flex-direction:column;align-items:flex-start!important;gap:10px!important}}</style>') + body
     # Primary keywords in the course-page H1s.
     h1 = {
         'CTEC 20 Hour Course': ('20-Hour CE</span> course before you renew.', '20 Hour CTEC Course</span> before you renew.'),
