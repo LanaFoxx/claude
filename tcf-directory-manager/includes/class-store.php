@@ -3,7 +3,7 @@ defined('ABSPATH') || exit;
 
 /** Reading/writing provider data and building the public payload. */
 final class TCFD_Store {
-    const CACHE_KEY = 'tcfd_providers_payload_v2';
+    const CACHE_KEY = 'tcfd_providers_payload_v3';
 
     public static function flush_cache($post_id = 0): void {
         if ($post_id && is_numeric($post_id) && get_post_type((int) $post_id) === TCFD_Plugin::POST_TYPE) {
@@ -129,6 +129,7 @@ final class TCFD_Store {
             'google' => null,
             'last_checked' => self::ymd(self::raw($post_id, 'provider_data_last_checked')),
             'school_url' => class_exists('TCFD_School') ? TCFD_School::url($post_id) : '',
+            'reporting' => self::reporting($post_id),
         ];
         if ((string) self::raw($post_id, 'google_rating_status') === 'Verified' && self::num(self::raw($post_id, 'google_rating'))) {
             $payload['google'] = [
@@ -138,6 +139,18 @@ final class TCFD_Store {
             ];
         }
         return $payload;
+    }
+
+    /** How fast each course's completions reach CTEC (School Page fields), as display labels. */
+    private static function reporting(int $post_id): array {
+        $out = ['ce' => '', 'qe' => ''];
+        if (!class_exists('TCFD_School')) return $out;
+        foreach (['ce', 'qe'] as $c) {
+            $g = self::get($post_id, 'school_' . $c);
+            $k = is_array($g) ? (string) ($g['reporting_time'] ?? '') : '';
+            if ($k !== '' && isset(TCFD_School::REPORTING[$k])) $out[$c] = TCFD_School::REPORTING[$k][0];
+        }
+        return $out;
     }
 
     public static function all_payload(): array {

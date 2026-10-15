@@ -14,7 +14,7 @@ final class TCFD_School {
     const EXAMS = ['quizzes_final' => 'Chapter quizzes plus a final exam', 'final_only' => 'One final exam', 'chapter_only' => 'Chapter quizzes only', 'none' => 'No exam'];
     const TIMERS = ['none' => 'No timed tests and no lesson timers', 'lesson' => 'Lesson timers apply', 'exam' => 'Timed exams', 'both' => 'Timed exams and lesson timers'];
     const WHO = ['school' => 'The school reports your completion to CTEC.', 'school_irs' => 'The school reports your completion to CTEC and the IRS.', 'student' => 'You submit proof of completion yourself.'];
-    const REPORTING = ['same_day' => ['Same day', 'Same', 'day'], '24h' => ['Within 24 hours', '24', 'hours'], '1_2_days' => ['1–2 business days', '1–2', 'business days'],
+    const REPORTING = ['same_day' => ['Same day', 'Same', 'day'], '24h' => ['Within 24 hours', '24', 'hours'], 'next_day' => ['Next business day', '1', 'business day'], '1_2_days' => ['1–2 business days', '1–2', 'business days'],
                        '3_5_days' => ['3–5 business days', '3–5', 'business days'], 'weekly' => ['Weekly', '7', 'days'], 'longer' => ['More than a week', '7+', 'days']];
     const CERT = ['immediate' => 'Certificate available immediately after the final exam', 'emailed' => 'Certificate emailed after completion', 'mailed' => 'Certificate mailed after completion', '24h' => 'Certificate available within 24 hours', 'after_report' => 'Certificate issued after the school reports to CTEC', 'none' => 'No certificate issued'];
     const CHAT = ['staffed' => 'Live chat with staff', 'automated' => 'Automated chat', 'none' => 'No live chat'];

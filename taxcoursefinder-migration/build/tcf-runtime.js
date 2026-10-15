@@ -146,7 +146,7 @@
     return { id: slug(r.name) || String(r.id), wpId: r.id, name: r.name, website: r.website || '', offering: r.ctec_offering || '', ce: !!r.offers_20_hour_ce, qe: !!r.offers_60_hour_qe,
       verified: !!r.verified, logoUrl: r.logo_url || '', schoolUrl: r.school_url || '', cePrice: r.offers_20_hour_ce ? price(r.ce) : null, qePrice: r.offers_60_hour_qe ? price(r.qe) : null,
       google: g && g.rating != null ? { rating: Number(g.rating), count: g.review_count != null ? Number(g.review_count) : null, status: 'Verified', mapsUrl: g.maps_url || '' } : { rating: null, count: null, status: '', mapsUrl: '' },
-      offers: offers, features: r.features || {}, lastChecked: r.last_checked || dates[dates.length - 1] || '' };
+      offers: offers, features: r.features || {}, ctecNumber: r.ctec_number || '', reporting: r.reporting || {}, lastChecked: r.last_checked || dates[dates.length - 1] || '' };
   }
   function liveOffers(p, qe, today) {
     today = today || new Date().toISOString().slice(0, 10);
@@ -177,6 +177,21 @@
     return PILL_GROUPS.map(function (g) { return { label: g[0], items: pl.filter(function (x) { return g[1].indexOf(x.key) >= 0; }) }; })
       .filter(function (g) { return g.items.length; });
   }
+  // Comparison-table summaries built only from confirmed data.
+  function formatLines(p) {
+    var f = p.features || {}, m = [];
+    if (f.video_lessons_available) m.push('video');
+    if (f.text_based_course_available) m.push('text');
+    if (f.physical_book_available) m.push('textbook');
+    if (f.digital_book_available) m.push('PDF');
+    if (f.audio_content_available) m.push('audio');
+    var l1 = m.slice(0, 2).join(' + ');
+    if (!l1 && f.online_course_available) l1 = 'online course';
+    if (!l1 && f.in_person_course_available) l1 = 'in-person';
+    var l2 = f.self_paced && f.live_instruction_available ? 'Self-paced or live' : f.self_paced ? 'Self-paced' : f.live_instruction_available ? 'Live classes' : (f.in_person_course_available && l1 !== 'in-person' ? 'In-person option' : '');
+    if (l1) l1 = l1.charAt(0).toUpperCase() + l1.slice(1);
+    return { l1: l1 || l2 || 'Not confirmed', l2: l1 ? l2 : '', known: !!(l1 || l2) };
+  }
   function decorate(list, qe) {
     return list.filter(function (p) { return qe ? p.qe : p.ce; }).map(function (p) {
       var pr = qe ? p.qePrice : p.cePrice;
@@ -184,6 +199,7 @@
       var sortable = sortablePrice(pr);
       var g = p.google, gOk = g.status === 'Verified' && g.rating != null;
       var live = liveOffers(p, qe), coupon = live.find(function (o) { return o.isCoupon; }), sale = live.find(function (o) { return o.isSale; });
+      var fmt = formatLines(p), rep = (p.reporting || {})[qe ? 'qe' : 'ce'] || '';
       var domain = ''; try { domain = new URL(p.website).hostname.replace(/^www\./, ''); } catch (e) {}
       var pl = pills(p);
       return Object.assign({}, p, { domain: domain, initials: p.name.replace(/[^A-Za-z ]/g, '').trim().split(/\s+/).slice(0, 2).map(function (w) { return w[0] || ''; }).join('').toUpperCase() || '#',
@@ -191,7 +207,12 @@
         priceText: captured ? pr.text : 'Price not published', priceCaptured: captured, priceNote: captured ? (PRICE_TYPE_NOTE[pr.type] || (pr.status === 'REVIEW' ? 'See provider' : '')) : 'Check provider site', priceMuted: !captured, priceComparable: sortable != null, sortable: sortable,
         googleShown: gOk, googleRating: gOk ? g.rating.toFixed(1) : '', googleCount: gOk && g.count != null ? g.count.toLocaleString() + ' Google reviews' : (gOk ? 'Google rating' : ''), googleUrl: g.mapsUrl,
         liveOffers: live, hasOffers: live.length > 0, coupon: coupon ? coupon.code : '', couponLabel: coupon ? (coupon.memberOnly ? 'Member code' : 'Coupon code') : '', hasCoupon: !!coupon, sale: sale, hasSale: !!sale && !coupon, saleText: sale ? sale.saleFmt + ' sale' : '', saleSub: sale && sale.regularFmt ? 'reg. ' + sale.regularFmt : '', noOffer: live.length === 0,
-        both: p.ce && p.qe, features: p.features || {}, pills: pl, hasPills: pl.length > 0, pillGroups: pillGroups(pl) });
+        both: p.ce && p.qe, features: p.features || {}, pills: pl, hasPills: pl.length > 0, pillGroups: pillGroups(pl),
+        formatL1: fmt.l1, formatL2: fmt.l2, formatColor: fmt.known ? '#0B2E40' : '#8A9AA3',
+        reportText: rep || 'Not confirmed', reportColor: rep ? '#7E9330' : '#8A9AA3', reportWeight: rep ? 700 : 500,
+        ratingText: gOk ? '\u2605 ' + g.rating.toFixed(1) : 'Not verified', ratingCount: gOk && g.count != null ? '(' + g.count.toLocaleString() + ')' : '', ratingColor: gOk ? '#0B2E40' : '#8A9AA3',
+        courseLink: (pr && pr.sourceUrl) || p.website, offerLabel: coupon ? coupon.code + ' \u00b7 View' : (sale ? 'On sale \u00b7 View' : 'View course'),
+        couponCode: coupon ? coupon.code : '', ctecLine: p.ctecNumber ? ' \u00b7 CTEC #' + p.ctecNumber : '' });
     });
   }
   TCF.mapProvider = mapProvider; TCF.decorate = decorate;
@@ -229,6 +250,20 @@
       el.style.background = ''; el.removeAttribute('aria-label');
     }, 2200);
   }
+  function onCopyGo(e) {
+    var a = e.target.closest && e.target.closest('[data-tcf-copy-go]');
+    if (!a) return;
+    var code = a.getAttribute('data-tcf-copy-go');
+    if (!code) return;
+    var lab = a.querySelector('[data-tcf-offer-label]');
+    copyText(code).then(function () {
+      if (!lab) return;
+      clearTimeout(a.__tcfT); if (a.__orig == null) a.__orig = lab.textContent;
+      lab.textContent = 'Code ' + code + ' copied';
+      a.__tcfT = setTimeout(function () { lab.textContent = a.__orig; a.__orig = null; }, 2600);
+    }, function () {});
+  }
+  document.addEventListener('click', onCopyGo);
   function onCopy(e) {
     var el = e.target.closest && e.target.closest('[data-tcf-copy]');
     if (!el || (e.type === 'keydown' && e.key !== 'Enter' && e.key !== ' ')) return;
