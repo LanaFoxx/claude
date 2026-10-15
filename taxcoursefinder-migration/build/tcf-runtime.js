@@ -197,6 +197,39 @@
     return dataPromise;
   };
 
+  // Coupon codes: click (or Enter/Space) copies the code and the label below confirms it.
+  function copyText(t) {
+    if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(t);
+    return new Promise(function (ok, fail) {
+      var ta = document.createElement('textarea'); ta.value = t; ta.setAttribute('readonly', ''); ta.style.cssText = 'position:fixed;top:-1000px;opacity:0';
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy') ? ok() : fail(); } catch (e) { fail(e); } finally { document.body.removeChild(ta); }
+    });
+  }
+  function copied(el) {
+    var lab = el.parentNode && el.parentNode.querySelector('[data-tcf-copy-label]');
+    clearTimeout(el.__tcfCopyT);
+    if (lab) {
+      if (lab.__orig == null) { lab.__orig = lab.textContent; lab.__color = lab.style.color; }
+      lab.textContent = 'Code copied ✓'; lab.style.color = '#5E6F22';
+    }
+    el.style.background = '#E4EBC4';
+    el.setAttribute('aria-label', 'Code copied');
+    el.__tcfCopyT = setTimeout(function () {
+      if (lab && lab.__orig != null) { lab.textContent = lab.__orig; lab.style.color = lab.__color; lab.__orig = null; }
+      el.style.background = ''; el.removeAttribute('aria-label');
+    }, 2200);
+  }
+  function onCopy(e) {
+    var el = e.target.closest && e.target.closest('[data-tcf-copy]');
+    if (!el || (e.type === 'keydown' && e.key !== 'Enter' && e.key !== ' ')) return;
+    e.preventDefault();
+    var code = el.getAttribute('data-tcf-copy') || el.textContent.trim();
+    copyText(code).then(function () { copied(el); }, function () { copied(el); });
+  }
+  document.addEventListener('click', onCopy);
+  document.addEventListener('keydown', onCopy);
+
   // Mobile header menu
   document.addEventListener('click', function (e) {
     var t = e.target.closest && e.target.closest('[data-tcf-menu-toggle]');

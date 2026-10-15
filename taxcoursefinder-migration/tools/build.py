@@ -124,6 +124,25 @@ def seo_tweaks(name, body):
                 + sel + '>*:last-child a{padding:12px 18px!important;font-size:17px!important}}'
                 '@media (max-width:760px){' + sel + '>*:last-child a{padding:12px 22px!important;font-size:17px!important}}'
                 '</style>') + body
+    # Coupon codes are click-to-copy (handled in tcf-runtime.js).
+    body = re.sub(r'<span style="display:inline-block;border:1.5px dashed #95AB3B;([^"]*)">\{\{ ([\w.]+) \}\}</span>',
+                  lambda m: '<span data-tcf-copy="{{ %s }}" role="button" tabindex="0" title="Click to copy code" style="cursor:pointer;display:inline-block;border:1.5px dashed #95AB3B;%s">{{ %s }}</span>' % (m.group(2), m.group(1), m.group(2)), body)
+    body = re.sub(r'<span (style="[^"]*")>\{\{ ([\w.]*couponLabel) \}\}</span>', r'<span data-tcf-copy-label="" \1>{{ \2 }}</span>', body)
+    # Directory rows: logo box sits beside the school name; domain under the name; feature pills run full width below.
+    logo_start = '<div style="width:56px;height:56px;border:1px solid #E3E9EB;border-radius:8px;background:#fff;display:grid;place-items:center;overflow:hidden">'
+    if logo_start in body and 'tcf-rowhead' not in body:
+        i = body.index(logo_start); j = body.index('</sc-if></div>', i) + len('</sc-if></div>')
+        logo = body[i:j].replace(logo_start, logo_start.replace('<div style="', '<div style="flex:none;'), 1)
+        k = body.index('<div style="min-width:0">', j); pills_at = body.index('<sc-if value="{{ p.hasPills }}">', k)
+        end = body.index('</ul></sc-if></div>', pills_at) + len('</ul></sc-if></div>')
+        title = body[k + len('<div style="min-width:0">'):pills_at]
+        pills = body[pills_at:end - len('</div>')].replace('margin:10px 0 0;', 'margin:14px 0 0;', 1)
+        head = ('<div class="tcf-rowhead" style="grid-column:1 / span 2;min-width:0"><div style="display:flex;align-items:center;gap:16px;min-width:0">'
+                + logo + '<div style="min-width:0">' + title + '</div></div>' + pills + '</div>')
+        body = body[:i] + head + body[end:]
+        g = '.tcf-scope.tcf-scope:not(.tcf-mobile) [style*="grid-template-columns:56px minmax(0,1fr) 200px 180px 120px"]'
+        body = ('<style>@media (max-width:760px){' + g + '>.tcf-rowhead{width:auto!important;height:auto!important;grid-column:1 / -1!important}'
+                + g + '>*:not(.tcf-rowhead){grid-column:1 / -1!important}' + g + ' .tcf-rowhead>div>div:first-child{width:44px!important;height:44px!important}}</style>') + body
     # Primary keywords in the course-page H1s.
     h1 = {
         'CTEC 20 Hour Course': ('20-Hour CE</span> course before you renew.', '20 Hour CTEC Course</span> before you renew.'),
