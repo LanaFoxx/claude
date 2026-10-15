@@ -108,6 +108,22 @@ def seo_tweaks(name, body):
         anchor = '<div style="background:#fff;padding:72px 56px">'
         assert body.count(anchor) >= 1, 'compare page section not found'
         body = body.replace(anchor, cta_html + anchor, 1)
+    # Directory rows: give the "View course" button its own room on desktop (it overflowed into the offer column)
+    # and present a sale like a coupon: badge + small caps label. Mobile rules key off the inline grid string, so it stays.
+    old_sale = '<div style="font-weight:700">On sale</div><div style="color:#8A9AA3;font-size:19px;margin-top:2px">No code needed</div>'
+    if old_sale in body:
+        tag = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12V4a1 1 0 0 1 1-1h8l9 9-9 9-9-9z"></path><circle cx="7.5" cy="7.5" r="1.5"></circle></svg>'
+        body = body.replace(old_sale, '<div style="display:flex;flex-direction:column;gap:6px;align-items:flex-start">'
+            '<span style="display:inline-flex;align-items:center;gap:6px;font:700 16px/1 Manrope,sans-serif;color:#5E6F22;background:#F3F5E6;border:1px solid #C9D58F;border-radius:999px;padding:6px 12px;white-space:nowrap">' + tag + 'On sale</span>'
+            '<span style="font:700 13px Manrope,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#8A9AA3;white-space:nowrap">No code needed</span></div>')
+        grid = 'grid-template-columns:56px minmax(0,1fr) 200px 180px 120px'
+        sel = '.tcf-scope [style*="' + grid + '"]'
+        body = ('<style>'
+                '@media (min-width:1101px){' + sel + '{grid-template-columns:56px minmax(0,1fr) 190px 200px auto!important}}'
+                '@media (min-width:761px) and (max-width:1100px){' + sel + '{grid-template-columns:48px minmax(0,1fr) 130px 150px auto!important;gap:18px!important;padding-left:20px!important;padding-right:20px!important}'
+                + sel + '>*:last-child a{padding:12px 18px!important;font-size:17px!important}}'
+                '@media (max-width:760px){' + sel + '>*:last-child a{padding:12px 22px!important;font-size:17px!important}}'
+                '</style>') + body
     # Primary keywords in the course-page H1s.
     h1 = {
         'CTEC 20 Hour Course': ('20-Hour CE</span> course before you renew.', '20 Hour CTEC Course</span> before you renew.'),
