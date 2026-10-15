@@ -1,0 +1,661 @@
+{
+ "schema_version": "2.0",
+ "generated_at": "2026-10-12",
+ "providers": [
+  {
+   "provider_name": "101 Education Services Inc.",
+   "website": "https://www.irstaxtraining.com/",
+   "ctec_provider_number": "6224",
+   "listing_status": "active",
+   "offers_20_hour_ce": true,
+   "offers_60_hour_qe": true,
+   "ce": {
+    "price": 69.95,
+    "regular_price": 89.95,
+    "display_price": "$69.95 electronic; $109.95 printed",
+    "price_type": null,
+    "price_status": "VERIFIED",
+    "notes": null
+   },
+   "qe": {
+    "price": 224.95,
+    "regular_price": null,
+    "display_price": "$224.95 electronic; $274.95 printed",
+    "price_type": null,
+    "price_status": "VERIFIED",
+    "notes": null
+   },
+   "features": {
+    "online_course": true,
+    "physical_book": true,
+    "phone_support": true,
+    "live_chat_support": true
+   },
+   "offers": [
+    {
+     "type": "Sale",
+     "scope": "20-Hour CE",
+     "title": "20-hour electronic course on sale",
+     "discount_type": "Sale Price",
+     "regular_price": 89.95,
+     "sale_price": 69.95,
+     "verified": true,
+     "source_url": "https://www.irstaxtraining.com/"
+    }
+   ],
+   "replace_offers": true,
+   "last_checked": "2026-10-12",
+   "notes": "One free exam retake; 70% passing grade; conditional 60-day refund; CTEC reporting. 20-hour: Electronic edition on sale (regular $89.95); printed edition $109.95 on sale."
+  },
+  {
+   "provider_name": "1 0 4 0 and More Continuing Education",
+   "website": "https://www.taxcoursesonline.com/",
+   "ctec_provider_number": "6203",
+   "listing_status": "active",
+   "offers_20_hour_ce": true,
+   "offers_60_hour_qe": false,
+   "ce": {
+    "price": 49.95,
+    "regular_price": null,
+    "display_price": "$49.95",
+    "price_type": null,
+    "price_status": "VERIFIED",
+    "notes": null
+   },
+   "qe": null,
+   "features": {
+    "online_course": true,
+    "self_paced": true,
+    "phone_support": false,
+    "live_chat_support": false
+   },
+   "offers": [
+    {
+     "type": "Special Offer",
+     "scope": "20-Hour CE",
+     "title": "Free two-credit course with a new account",
+     "verified": true,
+     "source_url": "https://www.taxcoursesonline.com/"
+    }
+   ],
+   "replace_offers": true,
+   "last_checked": "2026-10-12",
+   "notes": "Unlimited final exam attempts, 70% passing; immediate certificates; one-time purchase; access through Jan 15, 2027."
+  },
+  {
+   "provider_name": "1 1 1 Accelerated Continuing Education dba My Tax Courses Online",
+   "website": "https://mytaxcoursesonline.com/",
+   "ctec_provider_number": "6260",
+   "listing_status": "active",
+   "offers_20_hour_ce": true,
+   "offers_60_hour_qe": false,
+   "ce": {
+    "price": 139.97,
+    "regular_price": 159.97,
+    "display_price": "$139.97",
+    "price_type": null,
+    "price_status": "VERIFIED",
+    "notes": null
+   },
+   "qe": null,
+   "features": {
+    "online_course": true,
+    "video_lessons": true,
+    "phone_support": true,
+    "live_chat_support": true
+   },
+   "offers": [
+    {
+     "type": "Sale",
+     "scope": "20-Hour CE",
+     "title": "20-hour package on sale",
+     "discount_type": "Sale Price",
+     "regular_price": 159.97,
+     "sale_price": 139.97,
+     "verified": true,
+     "source_url": "https://mytaxcoursesonline.com/"
+    },
+    {
+     "type": "Special Offer",
+     "scope": "20-Hour CE",
+     "title": "Free one-credit course preview",
+     "verified": true,
+     "source_url": "https://mytaxcoursesonline.com/"
+    }
+   ],
+   "replace_offers": true,
+   "last_checked": "2026-10-12",
+   "notes": "Video-based; free preview; immediate access; 30-day satisfaction guarantee. 20-hour: Sale price (regular $159.97)."
+  },
+  {
+   "provider_name": "@ 1st Attempt (At Your Pace Online)",
+   "website": "https://www.taxce.com/",
+   "ctec_provider_number": "6258",
+   "listing_status": "active",
+   "offers_20_hour_ce": true,
+   "offers_60_hour_qe": false,
+   "ce": {
+    "price": 55,
+    "regular_price": null,
+    "display_price": "$55",
+    "price_type": "package",
+    "price_status": "VERIFIED",
+    "notes": null
+   },
+   "qe": null,
+   "features": {
+    "online_course": true,
+    "self_paced": true,
+    "text_based_course": true,
+    "mobile_friendly": true,
+    "phone_support": true,
+    "live_chat_support": true
+   },
+   "offers": [
+    {
+     "type": "Coupon Code",
+     "scope": "20-Hour CE",
+     "title": "Published TaxCE discount code",
+     "coupon_code": "PACE10",
+     "discount_type": null,
+     "discount_amount": null,
+     "expires": null,
+     "description": null,
+     "verified": true,
+     "source_url": "https://www.taxce.com/"
+    }
+   ],
+   "replace_offers": true,
+   "last_checked": "2026-10-12",
+   "notes": "Next-business-day CTEC reporting; conditional 30-day refund before attempting exams."
+  },
+  {
+   "provider_name": "A & B Office, Income Tax Training School",
+   "website": "https://abeducate.com/",
+   "ctec_provider_number": "1057",
+   "listing_status": "active",
+   "offers_20_hour_ce": true,
+   "offers_60_hour_qe": true,
+   "ce": {
+    "price": 55.95,
+    "regular_price": null,
+    "display_price": "$55.95\u2013$134.95",
+    "price_type": "package",
+    "price_status": "VERIFIED",
+    "notes": null
+   },
+   "qe": {
+    "price": 388.95,
+    "regular_price": 459.99,
+    "display_price": "$388.95",
+    "price_type": null,
+    "price_status": "VERIFIED",
+    "notes": null
+   },
+   "features": {
+    "phone_support": true,
+    "live_chat_support": false
+   },
+   "offers": [
+    {
+     "type": "Sale",
+     "scope": "60-Hour QE",
+     "title": "60-hour course on sale",
+     "discount_type": "Sale Price",
+     "regular_price": 459.99,
+     "sale_price": 388.95,
+     "verified": true,
+     "source_url": "https://abeducate.com/"
+    }
+   ],
+   "replace_offers": true,
+   "last_checked": "2026-10-12",
+   "notes": "2026 pre-season tax law update $20.95 on sale. 20-hour: Several 20-hour packages from $55.95 to $134.95. Retake fee $13.99. 60-hour: Sale price (regular $459.99)."
+  },
+  {
+   "provider_name": "Aardvark Tax Online",
+   "website": "https://www.aardvarktax.com/",
+   "ctec_provider_number": "3083",
+   "listing_status": "active",
+   "offers_20_hour_ce": true,
+   "offers_60_hour_qe": false,
+   "ce": {
+    "price": 59.99,
+    "regular_price": null,
+    "display_price": "$59.99",
+    "price_type": "package",
+    "price_status": "VERIFIED",
+    "notes": null
+   },
+   "qe": null,
+   "features": {
+    "phone_support": false,
+    "live_chat_support": false
+   },
+   "offers": [],
+   "replace_offers": true,
+   "last_checked": "2026-10-12",
+   "notes": "No complete 60-hour course found."
+  },
+  {
+   "provider_name": "California Tax Courses",
+   "website": "https://cataxcourses.com",
+   "ctec_provider_number": null,
+   "listing_status": "active",
+   "offers_20_hour_ce": true,
+   "offers_60_hour_qe": true,
+   "ce": {
+    "price": 69.95,
+    "regular_price": null,
+    "display_price": "$69.95",
+    "price_type": null,
+    "price_status": "VERIFIED",
+    "notes": null
+   },
+   "qe": {
+    "price": 179.95,
+    "regular_price": null,
+    "display_price": "$179.95",
+    "price_type": null,
+    "price_status": "VERIFIED",
+    "notes": null
+   },
+   "features": {
+    "online_course": true,
+    "self_paced": true,
+    "video_lessons": true,
+    "digital_book": true,
+    "physical_book": true,
+    "phone_support": true,
+    "live_chat_support": true
+   },
+   "offers": [],
+   "replace_offers": true,
+   "last_checked": "2026-10-12",
+   "notes": "PDF included, physical book optional; unlimited exam attempts; CTEC reporting within 24 hours."
+  },
+  {
+   "provider_name": "California Tax Institute",
+   "website": "https://www.californiataxinstitute.com",
+   "ctec_provider_number": null,
+   "listing_status": "active",
+   "offers_20_hour_ce": true,
+   "offers_60_hour_qe": false,
+   "ce": {
+    "price": 98,
+    "regular_price": 137,
+    "display_price": "$98 digital bundle",
+    "price_type": null,
+    "price_status": "VERIFIED",
+    "notes": null
+   },
+   "qe": null,
+   "features": {
+    "downloadable_materials": true,
+    "physical_book": true,
+    "phone_support": true,
+    "live_chat_support": false
+   },
+   "offers": [
+    {
+     "type": "Sale",
+     "scope": "20-Hour CE",
+     "title": "20-hour digital download on sale",
+     "discount_type": "Sale Price",
+     "regular_price": 137,
+     "sale_price": 98,
+     "verified": true,
+     "source_url": "https://www.californiataxinstitute.com"
+    }
+   ],
+   "replace_offers": true,
+   "last_checked": "2026-10-12",
+   "notes": "The 60-hour product found was general CPE, not a CTEC qualifying course. 20-hour: Digital download on sale (regular $137); printed textbook $137."
+  },
+  {
+   "provider_name": "Cal Tax School",
+   "website": "https://www.caltaxschool.org",
+   "ctec_provider_number": null,
+   "listing_status": "active",
+   "offers_20_hour_ce": true,
+   "offers_60_hour_qe": false,
+   "ce": {
+    "price": 49,
+    "regular_price": null,
+    "display_price": "$49",
+    "price_type": "package",
+    "price_status": "VERIFIED",
+    "notes": null
+   },
+   "qe": null,
+   "features": {
+    "phone_support": false,
+    "live_chat_support": false
+   },
+   "offers": [],
+   "replace_offers": true,
+   "last_checked": "2026-10-12",
+   "notes": "20-hour CTEC + IRS renewal; \"study first, pay later\"; conditions apply to refunds and retakes."
+  },
+  {
+   "provider_name": "CountingWorks, Inc.",
+   "website": "https://www.taxcpe.com",
+   "ctec_provider_number": null,
+   "listing_status": "active",
+   "offers_20_hour_ce": true,
+   "offers_60_hour_qe": false,
+   "ce": {
+    "price": 99.95,
+    "regular_price": null,
+    "display_price": "$99.95 online / $159.95 print",
+    "price_type": null,
+    "price_status": "VERIFIED",
+    "notes": null
+   },
+   "qe": null,
+   "features": {
+    "online_course": true,
+    "self_paced": true,
+    "physical_book": true,
+    "phone_support": true,
+    "live_chat_support": false
+   },
+   "offers": [],
+   "replace_offers": true,
+   "last_checked": "2026-10-12",
+   "notes": "Unlimited exam retakes; 70% passing; 10-day money-back guarantee."
+  },
+  {
+   "provider_name": "Fast Forward Academy",
+   "website": "https://fastforwardacademy.com",
+   "ctec_provider_number": null,
+   "listing_status": "active",
+   "offers_20_hour_ce": true,
+   "offers_60_hour_qe": false,
+   "ce": null,
+   "qe": null,
+   "features": {
+    "phone_support": false,
+    "live_chat_support": true
+   },
+   "last_checked": "2026-10-12",
+   "notes": "20 Hour CA Bundle advertised; confirm eligible package and checkout price."
+  },
+  {
+   "provider_name": "Golden State Tax Training Institute, Inc.",
+   "website": "https://www.goldenstatetaxtraining.com",
+   "ctec_provider_number": null,
+   "listing_status": "active",
+   "offers_20_hour_ce": true,
+   "offers_60_hour_qe": true,
+   "ce": {
+    "price": 34.95,
+    "regular_price": null,
+    "display_price": "$34.95 electronic / $69.95 book",
+    "price_type": null,
+    "price_status": "VERIFIED",
+    "notes": null
+   },
+   "qe": {
+    "price": 129.95,
+    "regular_price": null,
+    "display_price": "$129.95 electronic / $179.95 book",
+    "price_type": null,
+    "price_status": "VERIFIED",
+    "notes": null
+   },
+   "features": {
+    "online_course": true,
+    "physical_book": true,
+    "phone_support": true,
+    "live_chat_support": false
+   },
+   "offers": [],
+   "replace_offers": true,
+   "last_checked": "2026-10-12",
+   "notes": "English and Spanish; conditional 60-day guarantee."
+  },
+  {
+   "provider_name": "Hera's Income Tax School",
+   "website": "https://herasincometaxschool.com",
+   "ctec_provider_number": null,
+   "listing_status": "active",
+   "offers_20_hour_ce": true,
+   "offers_60_hour_qe": false,
+   "ce": {
+    "price": 39.2,
+    "regular_price": null,
+    "display_price": "$39.20",
+    "price_type": null,
+    "price_status": "VERIFIED",
+    "notes": null
+   },
+   "qe": null,
+   "features": {
+    "phone_support": true,
+    "live_chat_support": false
+   },
+   "offers": [],
+   "replace_offers": true,
+   "last_checked": "2026-10-12",
+   "notes": "Separate 14-hour course $22.14 with a free 6-hour course. 70% passing score."
+  },
+  {
+   "provider_name": "Latin American Business Institute",
+   "website": "https://www.labitax.com",
+   "ctec_provider_number": null,
+   "listing_status": "active",
+   "offers_20_hour_ce": true,
+   "offers_60_hour_qe": true,
+   "ce": {
+    "price": 115,
+    "regular_price": null,
+    "display_price": "$115",
+    "price_type": "package",
+    "price_status": "VERIFIED",
+    "notes": null
+   },
+   "qe": {
+    "price": null,
+    "regular_price": null,
+    "display_price": "Price not listed",
+    "price_type": "not_public",
+    "price_status": "VERIFIED",
+    "notes": null
+   },
+   "features": {
+    "phone_support": true,
+    "live_chat_support": true
+   },
+   "offers": [],
+   "replace_offers": true,
+   "last_checked": "2026-10-12",
+   "notes": "Spanish-focused site; check updates, exam availability and CTEC reporting before enrolling."
+  },
+  {
+   "provider_name": "Latino Tax Professionals Association",
+   "website": "https://latinotaxpro.com",
+   "ctec_provider_number": null,
+   "listing_status": "active",
+   "offers_20_hour_ce": false,
+   "offers_60_hour_qe": true,
+   "ce": null,
+   "qe": {
+    "price": 345.06,
+    "regular_price": null,
+    "display_price": "$345.06 self-study",
+    "price_type": null,
+    "price_status": "VERIFIED",
+    "notes": null
+   },
+   "features": {
+    "self_paced": true,
+    "live_instruction": true,
+    "in_person_course": true,
+    "phone_support": true,
+    "live_chat_support": false
+   },
+   "offers": [],
+   "replace_offers": true,
+   "last_checked": "2026-10-12",
+   "notes": "Spanish/bilingual options. No standalone 20-hour renewal package found."
+  },
+  {
+   "provider_name": "Platinum Professional Services, Inc.",
+   "website": "https://www.platinumprostudies.com",
+   "ctec_provider_number": null,
+   "listing_status": "active",
+   "offers_20_hour_ce": true,
+   "offers_60_hour_qe": true,
+   "ce": {
+    "price": 50,
+    "regular_price": null,
+    "display_price": "$50 per current 20-hour CTEC class",
+    "price_type": null,
+    "price_status": "VERIFIED",
+    "notes": null
+   },
+   "qe": {
+    "price": 150,
+    "regular_price": null,
+    "display_price": "$150",
+    "price_type": "package",
+    "price_status": "VERIFIED",
+    "notes": null
+   },
+   "features": {
+    "digital_book": true,
+    "video_lessons": true,
+    "phone_support": true,
+    "live_chat_support": false
+   },
+   "offers": [
+    {
+     "type": "Coupon Code",
+     "scope": "60-Hour QE",
+     "title": "$30 off the 60-hour course (limited time)",
+     "coupon_code": "FLASH",
+     "discount_type": "Dollar",
+     "discount_amount": 30,
+     "expires": null,
+     "description": null,
+     "verified": true,
+     "source_url": "https://www.platinumprostudies.com"
+    }
+   ],
+   "replace_offers": true,
+   "last_checked": "2026-10-12",
+   "notes": "Unlimited free exam/quiz retakes; 70% passing; six-month access; instructor support; conditional 30-day refund."
+  },
+  {
+   "provider_name": "Pronto Tax School, Inc.",
+   "website": "https://prontotaxschool.com",
+   "ctec_provider_number": null,
+   "listing_status": "active",
+   "offers_20_hour_ce": true,
+   "offers_60_hour_qe": true,
+   "ce": {
+    "price": 39,
+    "regular_price": null,
+    "display_price": "$39/month membership",
+    "price_type": null,
+    "price_status": "VERIFIED",
+    "notes": null
+   },
+   "qe": {
+    "price": 297,
+    "regular_price": null,
+    "display_price": "$297",
+    "price_type": null,
+    "price_status": "VERIFIED",
+    "notes": null
+   },
+   "features": {
+    "online_course": true,
+    "digital_book": true,
+    "video_lessons": true,
+    "phone_support": true,
+    "live_chat_support": true
+   },
+   "offers": [],
+   "replace_offers": true,
+   "last_checked": "2026-10-12",
+   "notes": "Conditional 14-day refund. 20-hour: 20-hour CE through the Forever Edition membership (cancel monthly); not a one-time course price."
+  },
+  {
+   "provider_name": "The Income Tax School",
+   "website": "https://www.theincometaxschool.com",
+   "ctec_provider_number": null,
+   "listing_status": "active",
+   "offers_20_hour_ce": true,
+   "offers_60_hour_qe": true,
+   "ce": {
+    "price": 89,
+    "regular_price": null,
+    "display_price": "$89/year",
+    "price_type": "subscription_non_ctec_specific",
+    "price_status": "VERIFIED",
+    "notes": null
+   },
+   "qe": {
+    "price": 497,
+    "regular_price": null,
+    "display_price": "$497",
+    "price_type": "package",
+    "price_status": "VERIFIED",
+    "notes": null
+   },
+   "features": {
+    "online_course": true,
+    "self_paced": true,
+    "physical_book": true,
+    "phone_support": true,
+    "live_chat_support": false
+   },
+   "offers": [],
+   "replace_offers": true,
+   "last_checked": "2026-10-12",
+   "notes": "Printed books optional; conditional 10-day refunds. 20-hour: 20-hour California CE package; references 2025 materials. 60-hour: Sold as the Comprehensive Tax Course (California qualifying edition)."
+  },
+  {
+   "provider_name": "WebCE",
+   "website": "https://www.webce.com/cpe/tax-ce/ctec-ce",
+   "ctec_provider_number": null,
+   "listing_status": "active",
+   "offers_20_hour_ce": true,
+   "offers_60_hour_qe": null,
+   "ce": {
+    "price": 49.95,
+    "regular_price": null,
+    "display_price": "$49.95 before coupon",
+    "price_type": null,
+    "price_status": "VERIFIED",
+    "notes": null
+   },
+   "qe": null,
+   "features": {
+    "audio_content": true,
+    "mobile_friendly": true,
+    "phone_support": true,
+    "live_chat_support": true
+   },
+   "offers": [
+    {
+     "type": "Coupon Code",
+     "scope": "20-Hour CE",
+     "title": "10% off",
+     "coupon_code": "2026SAVE10",
+     "discount_type": "Percent",
+     "discount_amount": 10,
+     "expires": "2026-12-31",
+     "description": null,
+     "verified": true,
+     "source_url": "https://www.webce.com/cpe/tax-ce/ctec-ce"
+    }
+   ],
+   "replace_offers": true,
+   "last_checked": "2026-10-12",
+   "notes": "Confirm the advertised 60-hour course is a complete qualifying course before listing a price."
+  }
+ ]
+}

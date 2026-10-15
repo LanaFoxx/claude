@@ -126,7 +126,7 @@ final class TCFD_AI {
         $L[] = '';
         $L[] = '## Directory at a glance';
         $L[] = '';
-        $L[] = '- CTEC-approved providers listed: ' . $s['total'];
+        $L[] = '- Schools listed (CTEC-approved, selling a complete 20-hour or 60-hour course online): ' . $s['total'];
         $L[] = '- Offer the 20 hour CTEC course (continuing education): ' . $s['ce'];
         $L[] = '- Offer the 60 hour CTEC course (qualifying education): ' . $s['qe'];
         $L[] = '- Offer both: ' . $s['both'];
@@ -168,9 +168,9 @@ final class TCFD_AI {
 
         if ($full) {
             $L[] = '';
-            $L[] = '## Every CTEC-approved provider';
+            $L[] = '## Every school in the directory';
             $L[] = '';
-            $L[] = 'Listed alphabetically, as on the site. Only verified facts are shown; anything not yet confirmed is left out rather than guessed.';
+            $L[] = 'Every CTEC-approved provider that sells a complete 20-hour or 60-hour course online, listed alphabetically as on the site. Only verified facts are shown; anything not yet confirmed is left out rather than guessed.';
             foreach ($all as $p) {
                 $L[] = '';
                 $L[] = '### ' . $p['name'];
@@ -252,7 +252,7 @@ final class TCFD_AI {
             '@type' => 'Dataset',
             '@id' => home_url('/#ctec-provider-comparison'),
             'name' => 'California CTEC course provider comparison',
-            'description' => 'Side-by-side comparison of all ' . $s['total'] . ' CTEC-approved education providers in California: which offer the 20 hour CTEC course and the 60 hour CTEC course, course bundle prices, current coupon codes and sales, delivery format, course materials and student support. Prices and offers are taken from each provider\'s own website.',
+            'description' => 'Side-by-side comparison of the ' . $s['total'] . ' CTEC-approved providers in California that sell a complete 20 hour or 60 hour CTEC course online: which offer the 20 hour CTEC course and the 60 hour CTEC course, course bundle prices, current coupon codes and sales, delivery format, course materials and student support. Prices and offers are taken from each provider\'s own website.',
             'url' => home_url('/'),
             'creator' => ['@id' => home_url('/#organization')],
             'publisher' => ['@id' => home_url('/#organization')],
