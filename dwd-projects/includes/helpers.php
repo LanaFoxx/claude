@@ -17,6 +17,12 @@ function dwdp_settings() {
 		'def_scope'      => 'Custom design & full development — no pre-made themes',
 		'def_responsive' => 'Desktop, tablet, and mobile',
 		'def_aftercare'  => 'Security setup, 1-on-1 training, 2 months post-launch support',
+		'biz_summary'    => 'Dream Web Digital is a one-on-one web design business run by Michael, an experienced designer and developer in the Stuart and Jensen Beach area of South Florida who works with clients nationwide. He personally designs, builds and hosts premium custom WordPress websites, gives every project his full attention, offers unlimited revisions and 2 months of aftercare, and is rated 5.0 stars on Google with 100% Job Success on Upwork.',
+		'biz_city'       => 'Stuart',
+		'biz_areas'      => "Stuart, FL\nJensen Beach, FL\nPalm City, FL\nPort St. Lucie, FL\nMartin County, FL\nTreasure Coast, FL\nSouth Florida",
+		'biz_industries' => "Attorneys and law firms\nDoctors and medical practices\nConstruction companies\nRoofing companies\nRemodeling contractors\nAccounting firms\nFinancial advisors\nMental health practices\nFitness and training brands\nFlight schools\nRetail stores\nVending services\nMedical records services",
+		'biz_services'   => "Custom website design\nWordPress website development\nElementor website design\nWebsite redesign\nSmall business website design\nManaged WordPress hosting\nWebsite maintenance and support\nSEO-ready website builds",
+		'biz_promises'   => "One-on-one: you work directly with Michael, never a large agency, rotating team or overseas outsourcing\nFull time and attention on every project\nThe job gets done exactly as the client asks\nUnlimited revisions\nNo surprise charges: the project is finished as agreed, never paused midway to ask for more money\nCustom design, no templates\nFully responsive on desktop, tablet and mobile\nWordPress security setup and 1-on-1 training\n2 months of aftercare after launch, plus a lifetime workmanship warranty\nLong-term client relationships",
 	);
 	$saved = get_option( 'dwdp_settings', array() );
 	return wp_parse_args( is_array( $saved ) ? $saved : array(), $defaults );

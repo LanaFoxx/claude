@@ -268,7 +268,7 @@ add_action( 'admin_init', function () {
 			'sanitize_callback' => function ( $in ) {
 				$out = array();
 				foreach ( (array) $in as $k => $val ) {
-					$out[ sanitize_key( $k ) ] = 'cta_text' === $k ? sanitize_textarea_field( $val ) : sanitize_text_field( $val );
+					$out[ sanitize_key( $k ) ] = ( 'cta_text' === $k || 0 === strpos( $k, 'biz_' ) ) ? sanitize_textarea_field( $val ) : sanitize_text_field( $val );
 				}
 				$out['capture_width'] = max( 800, min( 2560, absint( isset( $out['capture_width'] ) ? $out['capture_width'] : 1440 ) ) );
 				if ( isset( $out['base_slug'] ) && sanitize_title( $out['base_slug'] ) !== dwdp_base_slug() ) {
@@ -301,6 +301,14 @@ function dwdp_settings_page() {
 			'def_responsive' => array( 'Responsive', '' ),
 			'def_aftercare'  => array( 'Aftercare', '' ),
 		),
+		'Business profile (AI search)' => array(
+			'biz_summary'    => array( 'Business summary', 'How AI assistants and search engines describe you. Used in structured data and llms.txt — not shown on pages.' ),
+			'biz_city'       => array( 'City', '' ),
+			'biz_areas'      => array( 'Local service areas', 'One per line. Nationwide service is always included.' ),
+			'biz_industries' => array( 'Industries', 'One per line.' ),
+			'biz_services'   => array( 'Services', 'One per line.' ),
+			'biz_promises'   => array( 'What every project includes', 'One per line.' ),
+		),
 		'Call to action band'  => array(
 			'cta_title'  => array( 'Heading', '' ),
 			'cta_text'   => array( 'Text', '' ),
@@ -321,8 +329,8 @@ function dwdp_settings_page() {
 						<tr>
 							<th><label for="dwdp-s-<?php echo esc_attr( $k ); ?>"><?php echo esc_html( $f[0] ); ?></label></th>
 							<td>
-								<?php if ( 'cta_text' === $k ) : ?>
-									<textarea id="dwdp-s-<?php echo esc_attr( $k ); ?>" name="dwdp_settings[<?php echo esc_attr( $k ); ?>]" rows="2" class="large-text"><?php echo esc_textarea( $s[ $k ] ); ?></textarea>
+								<?php if ( 'cta_text' === $k || ( 0 === strpos( $k, 'biz_' ) && 'biz_city' !== $k ) ) : ?>
+									<textarea id="dwdp-s-<?php echo esc_attr( $k ); ?>" name="dwdp_settings[<?php echo esc_attr( $k ); ?>]" rows="<?php echo 'cta_text' === $k ? 2 : 5; ?>" class="large-text"><?php echo esc_textarea( $s[ $k ] ); ?></textarea>
 								<?php else : ?>
 									<input id="dwdp-s-<?php echo esc_attr( $k ); ?>" name="dwdp_settings[<?php echo esc_attr( $k ); ?>]" value="<?php echo esc_attr( $s[ $k ] ); ?>" class="regular-text" <?php echo 'microlink_key' === $k ? 'type="password" autocomplete="off"' : ''; ?>>
 								<?php endif; ?>

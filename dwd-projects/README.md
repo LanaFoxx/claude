@@ -37,3 +37,13 @@ Write posts in the normal WordPress editor. The plugin styles each article to ma
 - `[dwd_blog limit="12"]` — grid of the latest articles (used on /blog/ and the home page)
 
 The plugin also adds the business phone number (from Settings) to Yoast's Organization schema.
+
+## AI search (background only — nothing visible changes)
+- **Structured data:** the Yoast Organization becomes a `ProfessionalService` with founder, location
+  (Stuart / Jensen Beach, FL), nationwide service area, services, industries and profile links; the
+  founder's `Person` entity is shared with article authorship.
+- **`/llms.txt` and `/llms-full.txt`:** written for AI assistants (Yoast's own llms.txt is turned off).
+- **robots.txt:** explicitly allows the major AI search crawlers.
+- **IndexNow:** pings Bing and others when a page, post or project is published or updated.
+
+Edit the wording under **Projects → Settings → Business profile (AI search)**.
