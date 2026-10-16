@@ -73,7 +73,7 @@ async function uploadMedia(p) {
 
 async function openEditor(p, postId) {
   await p.goto(`${SITE}/wp-admin/post.php?post=${postId}&action=elementor`, { waitUntil: 'load', timeout: 180000 });
-  await p.waitForFunction(() => window.elementor && window.$e && elementor.documents?.getCurrent?.()?.container && elementor.loaded, null, { timeout: 180000 });
+  await p.waitForFunction(() => window.elementor && window.$e && elementor.loaded && elementor.documents?.getCurrent?.()?.container?.model?.get?.('elements') && elementor.$previewContents?.find('.elementor-edit-area').length, null, { timeout: 240000 });
   await p.waitForTimeout(3000);
 }
 
