@@ -3,7 +3,7 @@ defined('ABSPATH') || exit;
 
 /** Reading/writing provider data and building the public payload. */
 final class TCFD_Store {
-    const CACHE_KEY = 'tcfd_providers_payload_v3';
+    const CACHE_KEY = 'tcfd_providers_payload_v4';
 
     public static function flush_cache($post_id = 0): void {
         if ($post_id && is_numeric($post_id) && get_post_type((int) $post_id) === TCFD_Plugin::POST_TYPE) {
@@ -131,7 +131,8 @@ final class TCFD_Store {
             'school_url' => class_exists('TCFD_School') ? TCFD_School::url($post_id) : '',
             'reporting' => self::reporting($post_id),
         ];
-        if ((string) self::raw($post_id, 'google_rating_status') === 'Verified' && self::num(self::raw($post_id, 'google_rating'))) {
+        // Review ratings are not shown anywhere on the site, so they are not published in the feed.
+        if (apply_filters('tcfd_publish_ratings', false) && (string) self::raw($post_id, 'google_rating_status') === 'Verified' && self::num(self::raw($post_id, 'google_rating'))) {
             $payload['google'] = [
                 'rating' => (float) self::raw($post_id, 'google_rating'),
                 'review_count' => (int) self::raw($post_id, 'google_review_count'),
