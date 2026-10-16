@@ -103,16 +103,12 @@ const practice = (m) => band(C.ivory, [
 const RESULTS = [['$4.8M', 'Truck Accident'], ['$2.3M', 'Car Accident'], ['$1.5M', 'Serious Injury'], ['$1.2M', 'Wrongful Death']];
 const results = () => band(C.wood, [
   grid([
-    stack([
-      eyebrow('Proven Results<br>for Our Clients', C.sand, 'left', { size: 14, ls: 0.3, alignM: 'center', settings: { typography_line_height: px(1.9, 'em') } }),
-      widget('divider', { width: px(60), align: 'left', align_tablet: 'center', align_mobile: 'center', color: C.rose, weight: px(1), gap: px(2) }),
-    ], { gap: 8 }),
     grid(RESULTS.map(([amt, type]) => stack([
       heading(amt, 'p', [40, 36, 32], C.white, 'center', { lh: 1 }),
       eyebrow(type, C.sand, 'center', { size: 13, ls: 0.22 }),
     ], { gap: 12, settings: { padding: box(6, 16, 6, 16), padding_mobile: box(6, 8, 18, 8), custom_css: DIVIDERS(C.roseLine) } })), { cols: [4, 2, 2], gap: 0, rowGap: 24 }),
-    button('View more results  →', URL.results, 'outlineDark', { align: 'center', pad: box(16, 24, 16, 24) }),
-  ], { cols: ['minmax(0,1.1fr) minmax(0,2.6fr) auto', 1, 1], gap: 40, rowGap: 36, align: 'center' }),
+    button('View more results  →', URL.results, 'outlineDark', { align: 'center', pad: box(16, 24, 16, 24), settings: { custom_css: 'selector .elementor-button { white-space: nowrap; }' } }),
+  ], { cols: ['minmax(0,1fr) auto', 1, 1], gap: 48, rowGap: 36, align: 'center' }),
 ], { pad: [56, 56], width: 1320, anchor: 'results' });
 
 /* --------------------------------------------------------------- my story */
@@ -132,9 +128,9 @@ const story = (m) => container({
   ]),
   stack([
     kicker('My Story', C.roseDeep, { settings: { typography_font_weight: '600' } }),
-    twoLine('Resilience Is Personal.', 'So Is My Commitment to You.', [44, 36, 30], C.ink, 'left', { lh: 1.15 }),
+    twoLine('Resilience Is Personal.', 'So Is My Commitment to&nbsp;You.', [44, 36, 30], C.ink, 'left', { lh: 1.15 }),
     stack([
-      ...STORY.map((p) => text(p, { color: C.inkSoft, size: 15.5, lh: 1.75 })),
+      ...STORY.map((p) => text(p, { color: C.inkSoft, size: 16, lh: 1.75 })),
       text('Before founding Cabrera Torres Law Firm, Jennifer served as Managing Partner of Gonzalez Torres Law, where she led the Personal Injury Litigation practice.', {
         color: C.inkSoft, size: 15, lh: 1.75,
         settings: { _padding: box(22, 26, 22, 26), _background_background: 'classic', _background_color: C.ivory, _border_border: 'solid', _border_width: box(0, 0, 0, 2), _border_color: C.rose },
