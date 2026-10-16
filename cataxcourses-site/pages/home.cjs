@@ -31,12 +31,12 @@ const ARTICLES = [
   ['04', 'Tools', 'How To Get Tax Preparer Software', 'How professional tax software works, what to compare, and how to get set up before tax season.', URL.news],
 ];
 
-const badges = (m, h) => row([
+const badges = (m, h, extra = {}) => row([
   image(m.ctec, { height: [h[0], h[0], Math.round(h[0] * 0.8)], settings: { width: auto, _element_width: 'auto' } }),
   image(m.irs, { height: [h[1], h[1], Math.round(h[1] * 0.8)], settings: { width: auto, _element_width: 'auto' } }),
   image(m.trustpilot, { height: [h[2], h[2], Math.round(h[2] * 0.8)], link: URL.trustpilot, settings: { width: auto, _element_width: 'auto' } }),
   image(m.bca, { height: [h[3], h[3], Math.round(h[3] * 0.8)], link: URL.bca, settings: { width: auto, _element_width: 'auto' } }),
-], { gap: h[4], rowGap: 20, justify: 'center', cls: 'ctc-badge-slider' });
+], { gap: h[4], rowGap: 20, justify: 'center', cls: 'ctc-badge-slider', settings: extra });
 
 function hero(m) {
   return band(C.cream, [
@@ -52,6 +52,7 @@ function hero(m) {
           ctaCard('Need to renew?', '20 Hour CE Course →', URL.c20, 'navy'),
           ctaCard('Becoming a preparer?', '60 Hour QE Course →', URL.c60, 'gold'),
         ]),
+        badges(m, [40, 48, 44, 56, 28], { hide_desktop: 'hidden-desktop', hide_tablet: 'hidden-tablet', margin: box(36, 0, 0, 0) }),
       ]),
       stack([
         pill('CTEC <span class="ctc-gold">&amp;</span> IRS Approved', { color: C.white, bg: C.navy, size: [15, 14, 12], ls: 0.1, radius: box(6), pad: box(7, 12, 7, 12),
@@ -60,7 +61,7 @@ function hero(m) {
           video_type: 'hosted', hosted_url: { url: m.laptopVideo.url, id: m.laptopVideo.id }, autoplay: 'yes', play_on_mobile: 'yes', mute: 'yes', loop: 'yes', controls: '',
           preload: 'auto', aspect_ratio: '32', poster: { url: m.laptopPoster.url, id: m.laptopPoster.id }, ...wcls('ctc-laptop'),
         }),
-        badges(m, [40, 48, 44, 56, 28]),
+        badges(m, [40, 48, 44, 56, 28], { hide_mobile: 'hidden-mobile' }),
       ], { gap: 28, settings: { _z_index: 1, _flex_order_mobile: 'start' } }),
     ], { cols: [2, 1, 1], gap: 56, gapM: 40, align: 'center' }),
   ], { pad: [88, 96], cls: 'ctc-dots-cream' });
