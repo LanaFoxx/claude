@@ -6,9 +6,9 @@ const { C, px, box, container, band, stack, grid, eyebrow, heading, H2, H3, text
 
 // Each area gets its own full-width band, alternating white and blush so the page reads as separate sections.
 const AREA_STYLE = {
-  mva: { bg: C.white, photo: ['area_mva', 2, 'right'] },
+  mva: { bg: C.light, photo: ['area_mva', 2, 'right'] },
   dog: { bg: C.blush, photo: ['area_dog', -2, 'left'] },
-  fall: { bg: C.white, photo: ['area_fall', 2, 'right'] },
+  fall: { bg: C.light, photo: ['area_fall', 2, 'right'] },
   cat: { bg: C.blush },
 };
 const areaCopy = (a, dark, center) => stack([
@@ -18,7 +18,7 @@ const areaCopy = (a, dark, center) => stack([
 ], { gap: 14, align: center ? 'center' : undefined });
 function areaBand(m, a) {
   const st = AREA_STYLE[a.key];
-  const opts = { pad: [96, 96], settings: { border_border: 'solid', border_width: box(0, 0, 1, 0), border_color: C.line } };
+  const opts = { pad: [96, 96], anchor: a.key, settings: { border_border: 'solid', border_width: box(0, 0, 1, 0), border_color: C.line } };
   if (!st.photo) return band(st.bg, [container({ content_width: 'full', padding: box(0), width: px(820), width_tablet: px(100, '%'), width_mobile: px(100, '%') }, [areaCopy(a, st.dark, true)])], { ...opts, align: 'center' });
   const [key, tilt, side] = st.photo;
   const photo = P.framedPhoto(m[key], { tilt, mat: 12, ratio: '4 / 3', pos: 'center center' });
@@ -33,13 +33,13 @@ module.exports = {
   slug: 'practice-areas', title: 'Practice Areas',
   seo: {
     title: 'Practice Areas | Car Accident & Injury Lawyer Norcross GA',
-    description: 'Car and truck accidents, dog bites, slip and fall and wrongful death: what Cabrera-Torres Law Firm handles and how a Georgia injury claim works.',
+    description: 'Car and truck accidents, dog bites, slip and fall and wrongful death: what Cabrera Torres Law Firm handles and how a Georgia injury claim works.',
     focus: 'car accident lawyer Norcross',
   },
   build: (m) => [
     P.pageHero(m, heroes.practice),
     ...areasFull.map((a) => areaBand(m, a)),
-    band(C.white, [
+    band(C.light, [
       eyebrow(edu.kicker, C.roseDeep, 'center', { settings: { _margin: box(0, 0, 18, 0) } }),
       H2(edu.title1.replace(/,$/, ','), edu.title2, false, 'center', { sizes: [48, 40, 32] }),
       grid(edu.steps.map((s) => P.numberCard(s.n, s.h, s.p, { pad: box(32, 28, 32, 28), nGap: 16, hSizes: [20, 20, 20], pSize: 15 })), { cols: [4, 2, 1], gap: 24, settings: { margin: box(56, 0, 0, 0) } }),

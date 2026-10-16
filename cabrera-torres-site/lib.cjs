@@ -1,17 +1,19 @@
-// Shared building blocks for the Cabrera-Torres Law Firm Elementor build.
+// Shared building blocks for the Cabrera Torres Law Firm Elementor build.
 // Everything here produces native Elementor containers + widgets (no HTML widgets),
 // so every text, link, image and color stays editable in the Elementor panel.
 const crypto = require('crypto');
 
 const C = {
-  // Light rebrand (README handoff): no dark backgrounds anywhere; ivory -> white -> blush rhythm, rose-gold accent.
-  ivory: '#F8F4EE', white: '#FFFFFF', blush: '#F3E7DF',
-  rose: '#BF8E74', roseDeep: '#8E5F47', roseHover: '#A8775D',
-  ink: '#2A1B16', inkSoft: '#4A352D', inkMuted: '#6B5248', placeholder: '#A69D8D',
-  line: 'rgba(191,142,116,0.35)', lineStrong: 'rgba(191,142,116,0.6)', hair: 'rgba(42,27,22,0.08)', rule: 'rgba(42,27,22,0.12)',
+  // Homepage-v2 palette: cream / light sections, espresso "wood" bands, black footer, rose-gold accent.
+  ivory: '#F6F1EA', light: '#FBF8F4', white: '#FFFFFF', blush: '#F6F1EA',
+  wood: '#2B1D17', black: '#000000', lit: '#141414',
+  rose: '#C4A08D', roseDeep: '#4A362F', roseHover: '#4A362F', sand: '#E6D6CB', mist: '#EDE3DA', smoke: '#9C8B80',
+  ink: '#2B1D17', inkSoft: '#4A3F39', inkMuted: '#5A4A42', placeholder: '#A69D8D',
+  line: 'rgba(74,54,47,0.15)', lineStrong: 'rgba(196,160,141,0.6)', hair: 'rgba(74,54,47,0.12)', rule: 'rgba(74,54,47,0.12)',
+  roseLine: 'rgba(196,160,141,0.4)',
 };
-const FONT = 'Jost';
-const PHONE = '678-730-0061', TEL = 'tel:+16787300061', EMAIL = 'info@cabreratorres.com';
+const FONT = 'Montserrat', HFONT = 'Cinzel', QFONT = 'Cormorant Garamond';
+const PHONE = '770-777-HURT', TEL = 'tel:+17707774878', EMAIL = 'info@cabreratorres.com';
 const URL = {
   home: '/', about: '/about/', jennifer: '/meet-jennifer/', practice: '/practice-areas/', results: '/case-results/',
   testimonials: '/testimonials/', faq: '/faq/', blog: '/blog/', contact: '/contact/',
@@ -36,7 +38,7 @@ const resp = (key, [d, t, m], fn = (v) => v) => {
 // Typography. sizes = number or [desktop, tablet, mobile]; ls in em (converted to px from the font size).
 function typo(prefix, sizes, weight, extra = {}) {
   const arr = Array.isArray(sizes) ? sizes : [sizes];
-  const s = { [`${prefix}_typography`]: 'custom', [`${prefix}_font_family`]: FONT, [`${prefix}_font_weight`]: String(weight) };
+  const s = { [`${prefix}_typography`]: 'custom', [`${prefix}_font_family`]: extra.family || FONT, [`${prefix}_font_weight`]: String(weight) };
   Object.assign(s, resp(`${prefix}_font_size`, arr, (v) => px(v)));
   if (extra.lh) s[`${prefix}_line_height`] = px(extra.lh, 'em');
   if (extra.ls !== undefined) s[`${prefix}_letter_spacing`] = px(+(extra.ls * arr[0]).toFixed(2));
@@ -115,16 +117,16 @@ const eyebrow = (text, color = C.roseDeep, align = 'left', o = {}) => widget('he
 function heading(text, tag, sizes, color, align = 'left', o = {}) {
   return widget('heading', {
     title: text, header_size: tag, title_color: color, align, ...(o.alignM ? { align_mobile: o.alignM } : {}),
-    ...typo('typography', sizes, o.weight || 700, { lh: o.lh || 1.12, ls: o.ls ?? -0.01, style: o.style }),
+    ...typo('typography', sizes, o.weight || 400, { lh: o.lh || 1.12, ls: o.ls ?? 0, style: o.style, family: o.family || HFONT }),
     ...(o.link ? { link: link(o.link) } : {}),
     ...(o.maxW ? { _element_width: 'initial', _element_custom_width: px(o.maxW), _element_custom_width_tablet: px(100, '%') } : {}),
     ...(o.settings || {}),
   });
 }
-// Section title with the light-weight gold second phrase from the design
-const accent = (t, color) => `<span style="font-weight:200;color:${color}">${t}</span>`;
+// Section title: Cinzel first phrase, rose-gold second phrase (design's .ct-i).
+const accent = (t, color = C.rose) => `<span style="color:${color === C.roseDeep ? C.rose : color}">${t}</span>`;
 const H2 = (bold, light, dark, align = 'center', o = {}) => heading(
-  `${bold}${o.br ? '<br>' : ' '}${accent(light, C.roseDeep)}`, 'h2', o.sizes || [58, 44, 36], C.ink, align, o, // `dark` kept for call compatibility; no dark sections any more
+  `${bold}${o.br ? '<br>' : ' '}${accent(light, C.rose)}`, 'h2', o.sizes || [44, 36, 30], dark === 'dark' ? C.white : C.ink, align, { lh: 1.15, ...o },
 );
 const H3 = (text, color, sizes, o = {}) => heading(text, 'h3', sizes, color, o.align || 'left', { lh: o.lh || 1.2, ls: 0, ...o });
 
@@ -132,38 +134,39 @@ function text(html, o = {}) {
   const body = /^\s*</.test(html) ? html : `<p>${html}</p>`;
   return widget('text-editor', {
     editor: body, paragraph_spacing: px(o.pSpace ?? 0), align: o.align || 'left', ...(o.alignM ? { align_mobile: o.alignM } : {}),
-    text_color: o.color || C.inkSoft, link_color: o.linkColor || C.roseDeep, link_hover_color: o.linkHover || C.roseDeep,
-    ...typo('typography', o.size || 16, o.weight || 300, { lh: o.lh || 1.6, ls: o.ls, transform: o.transform, style: o.style }),
+    text_color: o.color || C.inkSoft, link_color: o.linkColor || C.roseDeep, link_hover_color: o.linkHover || C.rose,
+    ...typo('typography', o.size || 16, o.weight || 400, { lh: o.lh || 1.7, ls: o.ls, transform: o.transform, style: o.style, family: o.family }),
     ...(o.maxW ? { _element_width: 'initial', _element_custom_width: px(o.maxW), _element_custom_width_tablet: px(100, '%') } : {}),
     ...(o.settings || {}),
   });
 }
 
-// Buttons. variant: 'gold' (rose-gold fill, white text) | 'outline' (rose hairline) | 'underline' (text link with rose rule)
+// Buttons. variant: 'gold' (rose-gold fill, espresso text) | 'outline' (rose hairline) | 'outlineDark' (on wood)
+// | 'underline' (text link with rose rule). o.dark = button sits on a dark band (hover turns cream).
 function button(label, url, variant = 'gold', o = {}) {
   const base = {
     text: label, link: link(url), align: o.align || '', ...(o.alignM ? { align_mobile: o.alignM } : {}),
-    ...typo('typography', 12, variant === 'gold' ? 600 : 500, { lh: 1.2, ls: o.ls ?? 0.16, transform: 'uppercase' }),
-    border_radius: box(0), text_padding: o.pad || box(16, 30, 16, 30),
+    ...typo('typography', o.size || 13, 600, { lh: 1.2, ls: o.ls ?? 0.2, transform: 'uppercase' }),
+    border_radius: box(0), text_padding: o.pad || box(18, 30, 18, 30),
   };
   if (variant === 'gold') Object.assign(base, {
-    button_text_color: C.white, hover_color: C.white,
+    button_text_color: C.wood, hover_color: o.dark ? C.wood : C.ivory,
     background_background: 'classic', background_color: C.rose,
-    button_background_hover_background: 'classic', button_background_hover_color: C.roseHover,
+    button_background_hover_background: 'classic', button_background_hover_color: o.dark ? C.ivory : C.roseHover,
   });
-  if (variant === 'outline') Object.assign(base, {
-    button_text_color: C.ink, hover_color: C.roseDeep,
+  if (variant === 'outline' || variant === 'outlineDark') Object.assign(base, {
+    button_text_color: variant === 'outlineDark' ? C.ivory : C.ink, hover_color: variant === 'outlineDark' ? C.wood : C.ivory,
     background_background: 'classic', background_color: 'rgba(0,0,0,0)',
-    button_background_hover_background: 'classic', button_background_hover_color: 'rgba(0,0,0,0)',
-    border_border: 'solid', border_width: box(1), border_color: 'rgba(191,142,116,0.6)', button_hover_border_color: C.roseDeep,
-    text_padding: o.pad || box(15, 28, 15, 28),
+    button_background_hover_background: 'classic', button_background_hover_color: variant === 'outlineDark' ? C.rose : C.roseDeep,
+    border_border: 'solid', border_width: box(1), border_color: C.rose, button_hover_border_color: variant === 'outlineDark' ? C.rose : C.roseDeep,
+    text_padding: o.pad || box(17, 26, 17, 26),
   });
   if (variant === 'underline') Object.assign(base, {
-    ...typo('typography', 12, 500, { lh: 1.2, ls: 0.18, transform: 'uppercase' }),
-    button_text_color: C.ink, hover_color: C.roseDeep,
+    ...typo('typography', 13, 600, { lh: 1.2, ls: 0.22, transform: 'uppercase' }),
+    button_text_color: C.roseDeep, hover_color: C.rose,
     background_background: 'classic', background_color: 'rgba(0,0,0,0)',
     button_background_hover_background: 'classic', button_background_hover_color: 'rgba(0,0,0,0)',
-    border_border: 'solid', border_width: box(0, 0, 1, 0), border_color: C.rose, text_padding: box(0, 0, 6, 0),
+    border_border: 'solid', border_width: box(0, 0, 1, 0), border_color: C.rose, text_padding: box(0, 0, 4, 0),
   });
   return widget('button', { ...base, ...(o.settings || {}) });
 }
@@ -199,49 +202,34 @@ const glassCSS = `selector { box-shadow: 0 10px 30px rgba(42,27,22,0.05); transi
 selector:hover { border-color: ${C.rose}; }`;
 const glass = (children, o = {}) => container({
   content_width: 'full', flex_direction: 'column', flex_gap: gap(o.gap ?? 0), padding: o.pad || box(36, 32, 36, 32), padding_mobile: box(30, 24, 30, 24),
-  background_background: 'classic', background_color: '#FFFFFF',
-  border_border: 'solid', border_width: box(1), border_color: 'rgba(191,142,116,0.35)',
+  background_background: 'classic', background_color: C.light,
+  border_border: 'solid', border_width: box(1), border_color: 'rgba(74,54,47,0.1)',
   custom_css: glassCSS, ...(o.settings || {}),
 }, children);
 
 /* ---------------------------------------------------------------- header */
+// Homepage-v2 nav: cream bar, dark lockup (46px tall), uppercase links, phone + rose "Free Consultation" button.
 function header(m, menuId) {
-  const topText = (t, color, o = {}) => text(t, { color, size: 13, weight: 500, ls: o.ls ?? 0.14, transform: 'uppercase', lh: 1.4, ...o });
-  const topbar = container({
-    content_width: 'boxed', boxed_width: px(1216), flex_direction: 'row', flex_wrap: 'wrap',
-    flex_justify_content: 'space-between', flex_justify_content_mobile: 'center', flex_align_items: 'center', flex_gap: gap(16, 4),
-    padding: box(10, 32, 10, 32), padding_mobile: box(8, 16, 8, 16),
-    background_background: 'classic', background_color: C.ivory,
-    border_border: 'solid', border_width: box(0, 0, 1, 0), border_color: C.line,
-  }, [
-    topText('Hablamos Español · Free consultation · No fee unless we win', C.roseDeep, { size: 12, settings: { typography_font_size_mobile: px(11), align_mobile: 'center' } }),
-    row([
-      topText('Norcross, GA', C.inkMuted, { settings: { hide_mobile: 'hidden-mobile' } }),
-      topText(`<a href="${TEL}">${PHONE}</a>`, C.ink, { weight: 600, ls: 0.18, linkColor: C.ink, linkHover: C.roseDeep, settings: { typography_font_size_mobile: px(12) } }),
-    ], { gap: 20, settings: { width: auto, width_mobile: auto, _flex_size: 'none' } }),
-  ], false);
-
   const nav = container({
-    content_width: 'boxed', boxed_width: px(1216), flex_direction: 'row', flex_wrap: 'nowrap',
-    flex_justify_content: 'space-between', flex_align_items: 'center', flex_gap: gap(24), flex_gap_mobile: gap(12),
-    padding: box(14, 32, 14, 32), padding_mobile: box(12, 16, 12, 16),
-    background_background: 'classic', background_color: 'rgba(255,255,255,0.96)',
+    content_width: 'boxed', boxed_width: px(1400), flex_direction: 'row', flex_wrap: 'nowrap',
+    flex_justify_content: 'space-between', flex_align_items: 'center', flex_gap: gap(28), flex_gap_mobile: gap(12),
+    padding: box(14, 40, 14, 40), padding_tablet: box(14, 24, 14, 24), padding_mobile: box(12, 16, 12, 16),
+    background_background: 'classic', background_color: C.ivory,
     border_border: 'solid', border_width: box(0, 0, 1, 0), border_color: C.hair,
     sticky: 'top', sticky_on: ['desktop', 'tablet', 'mobile'], z_index: 50,
-    custom_css: 'selector { backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }',
   }, [
-    // New lockup at 48px tall (1255x260 artwork -> ~232px wide).
-    image(m.logo, { width: [232, 212, 174], link: '/', align: 'left', settings: { _element_width: 'initial', _element_custom_width: px(232), _element_custom_width_tablet: px(212), _element_custom_width_mobile: px(174), _flex_size: 'none' } }),
+    // 1255x260 lockup at 46px tall -> 222px wide.
+    image(m.logoDark, { width: [222, 200, 170], link: '/', align: 'left', settings: { _element_width: 'initial', _element_custom_width: px(222), _element_custom_width_tablet: px(200), _element_custom_width_mobile: px(170), _flex_size: 'none' } }),
     widget('nav-menu', {
       menu: menuId, layout: 'horizontal', align_items: 'center', pointer: 'none',
       dropdown: 'tablet', toggle: 'burger', toggle_align: 'right', full_width: 'stretch',
-      ...typo('menu_typography', 12, 500, { lh: 1.4, ls: 0.16, transform: 'uppercase' }),
-      color_menu_item: C.ink, color_menu_item_hover: C.roseDeep, color_menu_item_active: C.roseDeep,
-      padding_horizontal_menu_item: px(14), padding_vertical_menu_item: px(8),
-      ...typo('dropdown_typography', 14, 500, { ls: 0.14, transform: 'uppercase' }),
-      color_dropdown_item: C.ink, background_color_dropdown_item: C.white,
-      color_dropdown_item_hover: C.white, background_color_dropdown_item_hover: C.rose,
-      color_dropdown_item_active: C.roseDeep, background_color_dropdown_item_active: C.ivory,
+      ...typo('menu_typography', 12, 500, { lh: 1.4, ls: 0.1, transform: 'uppercase' }),
+      color_menu_item: C.roseDeep, color_menu_item_hover: C.rose, color_menu_item_active: C.rose,
+      padding_horizontal_menu_item: px(11), padding_vertical_menu_item: px(8),
+      ...typo('dropdown_typography', 14, 500, { ls: 0.12, transform: 'uppercase' }),
+      color_dropdown_item: C.ink, background_color_dropdown_item: C.ivory,
+      color_dropdown_item_hover: C.wood, background_color_dropdown_item_hover: C.rose,
+      color_dropdown_item_active: C.wood, background_color_dropdown_item_active: C.sand,
       padding_horizontal_dropdown_item: px(24), padding_vertical_dropdown_item: px(16),
       dropdown_top_distance: px(15),
       toggle_color: C.ink, toggle_background_color: 'rgba(0,0,0,0)', toggle_size: px(26),
@@ -249,60 +237,56 @@ function header(m, menuId) {
       _flex_order_tablet: 'end', _flex_order_mobile: 'end',
       custom_css: 'selector .elementor-nav-menu--main .elementor-item { white-space: nowrap; }',
     }),
-    button('Free Case Evaluation', URL.contact, 'gold', {
-      pad: box(12, 22, 12, 22), ls: 0.14,
-      settings: {
-        _flex_size: 'none', _flex_size_tablet: 'grow', hide_mobile: 'hidden-mobile', align_tablet: 'right',
-        // As in the design: no room for the button next to the full menu between 1025px and 1140px.
-        _css_classes: 'ct-hdr-cta', custom_css: '@media (min-width: 1025px) and (max-width: 1140px) { selector { display: none; } }',
-      },
+    text(`<a href="${TEL}">${PHONE}</a>`, {
+      color: C.roseDeep, size: 14, weight: 600, ls: 0.04, lh: 1.2, linkColor: C.roseDeep, linkHover: C.rose,
+      settings: { _element_width: 'auto', _flex_size: 'none', hide_tablet: 'hidden-tablet', hide_mobile: 'hidden-mobile', custom_css: 'selector { white-space: nowrap; }\n@media (max-width: 1300px) { selector { display: none; } }' },
+    }),
+    button('Free Consultation  →', URL.contact, 'gold', {
+      size: 12, ls: 0.12, pad: box(14, 20, 14, 20),
+      settings: { _flex_size: 'none', _flex_size_tablet: 'grow', hide_mobile: 'hidden-mobile', align_tablet: 'right', custom_css: 'selector .elementor-button { white-space: nowrap; }' },
     }),
   ], false);
-  return [topbar, nav];
+  return [nav];
 }
 
 /* ---------------------------------------------------------------- footer */
+// Black footer: light lockup + tagline, Office / Contact / Firm columns, legal line.
 function footer(m) {
-  const label = (t) => eyebrow(t, C.roseDeep, 'left', { size: 12, ls: 0.24 });
-  const links = (items) => iconList(items, { color: C.inkMuted, hover: C.roseDeep, size: 14, weight: 300, space: 8 });
+  const label = (t) => eyebrow(t, C.rose, 'left', { size: 13, weight: 600, ls: 0.24 });
+  const links = (items) => iconList(items, { color: C.sand, hover: C.rose, size: 15, weight: 400, space: 4, lh: 1.8 });
   return [container({
     content_width: 'full', flex_direction: 'column', padding: box(0), flex_gap: gap(0),
-    background_background: 'classic', background_color: C.ivory,
-    border_border: 'solid', border_width: box(3, 0, 0, 0), border_color: C.rose,
+    background_background: 'classic', background_color: C.black,
   }, [
     container({
-      container_type: 'grid', content_width: 'boxed', boxed_width: px(1216),
-      grid_columns_grid: { unit: 'custom', size: '1.3fr 1fr 1fr 1fr' }, grid_columns_grid_tablet: px(2, 'fr'), grid_columns_grid_mobile: px(1, 'fr'),
+      container_type: 'grid', content_width: 'boxed', boxed_width: px(1320),
+      grid_columns_grid: { unit: 'custom', size: 'minmax(0,1.4fr) repeat(3,minmax(0,1fr))' }, grid_columns_grid_tablet: px(2, 'fr'), grid_columns_grid_mobile: px(1, 'fr'),
       grid_rows_grid: auto, grid_rows_grid_tablet: auto, grid_rows_grid_mobile: auto,
       grid_gaps: gap(40), grid_gaps_mobile: gap(36), grid_align_items: 'start',
-      padding: box(70, 32, 40, 32), padding_mobile: box(56, 20, 32, 20),
+      padding: box(64, 40, 40, 40), padding_mobile: box(56, 24, 32, 24),
     }, [
       stack([
-        image(m.logo, { width: 260, link: '/', align: 'left', settings: { _element_width: 'initial', _element_custom_width: px(260), _element_custom_width_mobile: px(100, '%'), custom_css: 'selector img { max-width: 260px; }' } }),
-        eyebrow('Advocate. Protect. Deliver.', C.roseDeep, 'left', { size: 12, weight: 400, ls: 0.22 }),
-        text('Más que una firma. Un propósito.', { color: C.inkMuted, size: 18, weight: 200, style: 'italic', lh: 1.4 }),
-      ], { gap: 12 }),
+        image(m.logoLight, { width: 250, link: '/', align: 'left', settings: { _element_width: 'initial', _element_custom_width: px(250), _element_custom_width_mobile: px(100, '%'), custom_css: 'selector img { max-width: 250px; }' } }),
+        eyebrow('Advocate. Protect. Deliver.', C.rose, 'left', { size: 13, weight: 500, ls: 0.24 }),
+      ], { gap: 18 }),
+      stack([label('Office'), text(`<p>${ADDRESS}</p>`, { color: C.sand, size: 15, lh: 1.8 })], { gap: 10 }),
       stack([
-        label('Norcross office'),
-        text(`<p>${ADDRESS}<br><a href="${TEL}">${PHONE}</a></p>`, { color: C.inkMuted, size: 14, lh: 1.7, linkColor: C.roseDeep, linkHover: C.ink }),
-      ], { gap: 14 }),
-      stack([
-        label('Practice areas'),
-        links([['Motor Vehicle Accidents', URL.practice], ['Dog Bites', URL.practice], ['Slip & Fall', URL.practice], ['Wrongful Death', URL.practice]]),
-      ], { gap: 14 }),
+        label('Contact'),
+        text(`<p><a href="${TEL}" style="color:${C.ivory};font-weight:600">${PHONE}</a><br><a href="mailto:${EMAIL}">${EMAIL}</a><br>Hablamos Español</p>`, { color: C.sand, size: 15, lh: 1.8, linkColor: C.sand, linkHover: C.rose }),
+      ], { gap: 10 }),
       stack([
         label('Firm'),
-        links([['About', URL.about], ['Jennifer', URL.jennifer], ['Results', URL.results], ['Client testimonials', URL.testimonials], ['FAQ', URL.faq], ['Resources', URL.blog]]),
-      ], { gap: 14 }),
+        links([['About', URL.about], ['Meet Jennifer', URL.jennifer], ['Practice Areas', URL.practice], ['Results', URL.results], ['Testimonials', URL.testimonials], ['FAQ', URL.faq], ['Resources', URL.blog], ['Contact', URL.contact]]),
+      ], { gap: 10 }),
     ]),
     container({
-      content_width: 'boxed', boxed_width: px(1216), flex_direction: 'row', flex_direction_mobile: 'column',
-      flex_justify_content: 'space-between', flex_align_items: 'center', flex_align_items_mobile: 'flex-start', flex_wrap: 'wrap', flex_gap: gap(16, 10),
-      padding: box(22, 32, 30, 32), padding_mobile: box(20, 20, 24, 20),
-      background_background: 'classic', background_color: C.blush, border_border: 'solid', border_width: box(1, 0, 0, 0), border_color: C.hair,
+      content_width: 'boxed', boxed_width: px(1320), flex_direction: 'row', flex_direction_mobile: 'column',
+      flex_justify_content: 'space-between', flex_align_items: 'center', flex_align_items_mobile: 'flex-start', flex_wrap: 'wrap', flex_gap: gap(12, 10),
+      padding: box(20, 40, 36, 40), padding_mobile: box(20, 24, 28, 24),
+      border_border: 'solid', border_width: box(1, 0, 0, 0), border_color: 'rgba(196,160,141,0.2)',
     }, [
-      text('© 2026 Cabrera-Torres Law Firm. All rights reserved.', { color: C.inkMuted, size: 13, settings: { _element_width: 'auto' } }),
-      iconList([['Privacy Policy', '#'], ['Disclaimer', '#']], { inline: true, color: C.inkMuted, hover: C.roseDeep, size: 13, space: 22, settings: { _element_width: 'auto' } }),
+      text('© 2026 Cabrera Torres Law Firm. All rights reserved.', { color: C.smoke, size: 13, settings: { _element_width: 'auto' } }),
+      text('Attorney advertising. Prior results do not guarantee a similar outcome.', { color: C.smoke, size: 13, settings: { _element_width: 'auto' } }),
     ]),
   ], false)];
 }
@@ -323,7 +307,7 @@ selector [id] { scroll-margin-top: 90px; }
 };
 
 module.exports = {
-  C, FONT, PHONE, TEL, EMAIL, ADDRESS, URL, id, px, box, gap, auto, link, resp, typo, container, widget, fa,
+  C, FONT, HFONT, QFONT, PHONE, TEL, EMAIL, ADDRESS, URL, id, px, box, gap, auto, link, resp, typo, container, widget, fa,
   band, patternOverlay, stack, row, grid, eyebrow, heading, accent, H2, H3, text, button, image, iconList, glass,
   header, footer, pageSettings,
 };

@@ -7,7 +7,7 @@ const { C, band, grid } = L;
 module.exports = {
   slug: 'blog', title: 'Resources',
   seo: {
-    title: 'Legal Resources After an Accident | Cabrera-Torres Law Firm',
+    title: 'Legal Resources After an Accident | Cabrera Torres Law Firm',
     description: 'Plain-language guides on car crashes, truck accidents, dog bites, slip and falls, case value and contingency fees from a Norcross injury firm.',
     focus: 'Georgia accident legal resources',
   },

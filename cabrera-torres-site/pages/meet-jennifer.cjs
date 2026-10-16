@@ -14,7 +14,7 @@ module.exports = {
   },
   build: (m) => [
     P.pageHero(m, heroes.jennifer),
-    band(C.white, [
+    band(C.light, [
       grid([
         stack([
           text(quote, {

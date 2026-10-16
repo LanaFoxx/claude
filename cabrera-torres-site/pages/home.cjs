@@ -1,283 +1,221 @@
-// Home page: the full Claude Design one-pager (hero, recognition strip, results, about, quote,
-// practice areas, testimonials, FAQ, resources, contact).
+// Home page: homepage-v2 design (office hero, practice areas, results band, my story, our approach,
+// litigation banner, testimonials, consultation band).
 const L = require('../lib.cjs');
 const P = require('../parts.cjs');
-const CONTENT = require('../content.json');
-const { C, px, box, gap, auto, container, widget, fa, band, stack, row, grid, eyebrow, heading, H2, H3, text, button, image, iconList, glass, URL } = L;
+const { C, px, box, gap, auto, container, widget, band, stack, row, grid, eyebrow, heading, H3, text, button, image, URL } = L;
+
+/* -------------------------------------------------------------- helpers */
+// Thin rose rule drawn after (or around) a kicker label, as in the design.
+const RULE = (w) => `<span style="display:inline-block;width:${w}px;height:1px;background:${C.rose};vertical-align:middle"></span>`;
+const kicker = (t, color = C.sand, o = {}) => eyebrow(`${t}<span style="display:inline-block;width:18px"></span>${RULE(56)}`, color, o.align || 'left', { size: 13, weight: 500, ls: 0.32, alignM: o.alignM, settings: o.settings });
+// Centered section label with a rule on each side (an h2, so each section keeps a heading).
+const centerLabel = (t) => eyebrow(`${RULE(60)}<span style="display:inline-block;width:22px"></span>${t}<span style="display:inline-block;width:22px"></span>${RULE(60)}`, C.roseDeep, 'center', {
+  tag: 'h2', size: 13, weight: 600, ls: 0.34,
+  settings: { custom_css: '@media (max-width: 767px) { selector span[style*="height:1px"] { width: 28px !important; } }' },
+});
+// Line icons from the design (48x48 viewBox, 1.4px rose stroke), inline so they stay crisp at any size.
+const svg = (paths, size) => text(
+  `<svg viewBox="0 0 48 48" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths.map((d) => `<path d="${d}"/>`).join('')}</svg>`,
+  { color: C.rose, size: 16, lh: 1, settings: { _element_width: 'auto', custom_css: 'selector svg { display: block; }' } },
+);
+const ICON = {
+  car: ['M8 28l4-10h24l4 10', 'M6 28h36v8H6z', 'M12 36v3M36 36v3', 'M12 32h4M32 32h4'],
+  truck: ['M4 14h26v18H4z', 'M30 20h8l6 7v5H30z', 'M10 38a3 3 0 100-6 3 3 0 000 6zM38 38a3 3 0 100-6 3 3 0 000 6z'],
+  fall: ['M24 6a18 18 0 110 36 18 18 0 010-36z', 'M24 14v20M14 24h20'],
+  dog: ['M24 8v32', 'M10 16h28', 'M10 16l-6 12h12zM38 16l-6 12h12z', 'M16 40h16'],
+  trial: ['M14 30l12-12', 'M20 12l8 8', 'M12 20l8 8', 'M8 40h20', 'M30 30l8 8'],
+  person: ['M24 22a6 6 0 100-12 6 6 0 000 12z', 'M12 38a12 12 0 0124 0'],
+  chat: ['M8 10h32v22H20l-8 8v-8H8z', 'M16 18h16M16 24h10'],
+  doc: ['M12 6h24v36H12z', 'M18 14h12M18 20h12M18 26h8', 'M18 34h6'],
+};
+const twoLine = (a, b, sizes, color = C.white, align = 'left', o = {}) => heading(`${a}<br>${L.accent(b)}`, o.tag || 'h2', sizes, color, align, { lh: o.lh || 1.15, alignM: o.alignM });
 
 /* ------------------------------------------------------------------ hero */
+const HERO_SHADE = 'linear-gradient(90deg,rgba(43,29,23,.96) 0%,rgba(43,29,23,.88) 32%,rgba(43,29,23,.45) 58%,rgba(43,29,23,.15) 100%),linear-gradient(180deg,rgba(43,29,23,.25),rgba(43,29,23,0) 30%,rgba(43,29,23,.5) 100%)';
 const hero = (m) => container({
-  content_width: 'boxed', boxed_width: px(1216), container_type: 'grid',
-  grid_columns_grid: { unit: 'custom', size: 'minmax(0,5fr) minmax(0,6fr)' }, grid_columns_grid_tablet: px(1, 'fr'), grid_columns_grid_mobile: px(1, 'fr'),
-  grid_rows_grid: L.auto, grid_rows_grid_tablet: L.auto, grid_rows_grid_mobile: L.auto,
-  grid_gaps: gap(40, 0), grid_align_items: 'end', min_height: px(640), min_height_tablet: px(0), min_height_mobile: px(0),
-  padding: box(0, 32, 0, 32), padding_mobile: box(0, 20, 0, 20),
-  background_background: 'classic', background_color: C.ivory, ...L.patternOverlay(m.pattern), overflow: 'hidden',
+  content_width: 'boxed', boxed_width: px(1320), container_type: 'grid',
+  grid_columns_grid: { unit: 'custom', size: 'minmax(0,1.05fr) minmax(0,.95fr)' }, grid_columns_grid_tablet: px(1, 'fr'), grid_columns_grid_mobile: px(1, 'fr'),
+  grid_rows_grid: auto, grid_rows_grid_tablet: auto, grid_rows_grid_mobile: auto,
+  grid_gaps: gap(32, 0), grid_align_items: 'end', min_height: px(680), min_height_tablet: px(0), min_height_mobile: px(0),
+  padding: box(0, 40, 0, 40), padding_tablet: box(0, 32, 0, 32), padding_mobile: box(0, 24, 0, 24),
+  background_background: 'classic', background_color: C.wood, background_image: m.office,
+  background_position: 'initial', background_xpos: px(70, '%'), background_ypos: px(50, '%'), background_size: 'cover', background_repeat: 'no-repeat',
+  overflow: 'hidden',
+  custom_css: `selector { position: relative; }
+selector::before { content: ""; position: absolute; inset: 0; background: ${HERO_SHADE}; pointer-events: none; z-index: 0; }
+selector > .e-con-inner { position: relative; z-index: 1; }
+@media (max-width: 1024px) { selector::before { background: rgba(43,29,23,.86); } }`,
 }, [
-  // faint monogram watermark behind the portrait
-  image(m.emblem, {
-    width: 720, settings: {
-      _position: 'absolute', _element_width: 'initial', _element_custom_width: px(720), _element_custom_width_mobile: px(420), _z_index: 0,
-      _offset_orientation_h: 'start', _offset_x: px(14, '%'), _offset_orientation_v: 'start', _offset_y: px(50, '%'),
-      custom_css: 'selector { transform: translate(-50%, -50%); pointer-events: none; max-width: 90vw; }\nselector img { opacity: .05; } /* faint monogram watermark */',
-    },
-  }),
-  container({
-    content_width: 'full', flex_direction: 'column', flex_justify_content: 'flex-end', flex_align_items: 'center',
-    padding: box(56, 0, 0, 0), padding_tablet: box(16, 0, 0, 0), padding_mobile: box(16, 0, 0, 0),
-    min_height: px(520), min_height_tablet: px(0), min_height_mobile: px(0), _flex_size: 'none',
-    _flex_order_tablet: 'end', _flex_order_mobile: 'end', // stacked layouts: copy first, portrait below
-    z_index: 1,
-  }, [
-    image(m.jennifer, {
-      width: { unit: '%', size: 100, sizes: [] }, settings: {
-        _element_width: 'inherit',
-        custom_css: 'selector img { width: 100%; max-height: 640px; object-fit: contain; object-position: bottom; display: block; }\n@media (max-width: 1024px) { selector img { max-height: 520px; } }',
-      },
-    }),
-  ]),
   stack([
-    eyebrow('Personal Injury Lawyer · Norcross, Georgia', C.roseDeep, 'left', { tag: 'h1', alignM: 'center' }),
-    heading(`People First.<br>${L.accent('Justice Always.', C.roseDeep)}`, 'p', [68, 56, 42], C.ink, 'left', { lh: 1.12, ls: 0.01, alignM: 'center', settings: { _margin: box(4, 0, 10, 0) } }),
-    text('We have the experience to help injured clients get the most ideal outcome possible. Car wrecks, truck collisions, dog bites and falls, handled personally from start to finish.',
-      { color: C.inkSoft, size: 17, maxW: 460, alignM: 'center', settings: { _margin: box(0, 0, 18, 0) } }),
+    kicker('Personal Injury Attorney', C.sand, { alignM: 'center' }),
+    heading(`There's Strength in Your Story.<br>${L.accent('And Purpose Behind Ours.')}`, 'h1', [66, 52, 40], C.white, 'left', { lh: 1.08, alignM: 'center', settings: { _margin: box(8, 0, 0, 0) } }),
+    text('At Cabrera Torres Law Firm, we represent people who have been injured and whose lives have changed unexpectedly. We fight for your rights with resilience, compassion, and a deep commitment to helping you move forward.', {
+      color: C.mist, size: 17, weight: 300, lh: 1.7, maxW: 520, alignM: 'center', settings: { _margin: box(12, 0, 0, 0) },
+    }),
     row([
-      button('Free Case Evaluation', URL.contact, 'gold'),
-      button(`Call ${L.PHONE}`, L.TEL, 'outline'),
-    ], { gap: 16, settings: { flex_justify_content_tablet: 'center', flex_justify_content_mobile: 'center' } }),
-    iconList(['No fee unless we win', 'Nearly 20 years of experience', 'Hablamos Español'], {
-      inline: true, color: C.inkMuted, size: 13, weight: 500, ls: 0.13, transform: 'uppercase', space: 18,
-      settings: { _margin: box(26, 0, 0, 0), icon_align_tablet: 'center', icon_align_mobile: 'center' },
-    }),
-  ], { gap: 18, settings: { padding: box(90, 0, 110, 0), padding_tablet: box(40, 0, 20, 0), padding_mobile: box(40, 0, 10, 0), z_index: 1, flex_align_items_tablet: 'center', flex_align_items_mobile: 'center' } }),
-], false);
-
-/* ---------------------------------------------------- recognition strip */
-const BADGES = ['National Trial Lawyers', 'State Bar of Georgia', 'Georgia Trial Lawyers Association', 'Best of Georgia', 'Best of Gwinnett'];
-const trustStrip = () => container({
-  content_width: 'full', flex_direction: 'row', flex_wrap: 'nowrap', flex_align_items: 'stretch', flex_gap: gap(0), padding: box(0),
-  background_background: 'classic', background_color: C.blush,
-  border_border: 'solid', border_width: box(3, 0, 0, 0), border_color: C.rose, overflow: 'hidden',
-}, [
+      button('Free Consultation  →', URL.contact, 'gold', { dark: true, size: 14, pad: box(18, 32, 18, 32) }),
+      text(`Hablamos Español <span style="color:${C.rose};margin:0 10px">|</span> No fee unless we win`, {
+        color: C.sand, size: 13, weight: 500, ls: 0.22, transform: 'uppercase', lh: 1.4, alignM: 'center',
+        settings: { _element_width: 'auto', _padding: box(0, 0, 0, 20), _border_border: 'solid', _border_width: box(0, 0, 0, 1), _border_width_mobile: box(0), _padding_mobile: box(0), _border_color: 'rgba(196,160,141,0.5)' },
+      }),
+    ], { gap: 28, rowGap: 20, settings: { margin: box(26, 0, 0, 0), flex_justify_content_tablet: 'center', flex_justify_content_mobile: 'center' } }),
+  ], { gap: 18, align: 'flex-start', settings: { padding: box(96, 0, 96, 0), padding_tablet: box(72, 0, 40, 0), padding_mobile: box(64, 0, 32, 0), flex_align_items_tablet: 'center', flex_align_items_mobile: 'center' } }),
+  // Portrait stands on the bottom edge; on tablet/phone it drops below the copy.
   container({
-    content_width: 'full', width: auto, _flex_size: 'none', flex_justify_content: 'center', padding: box(22, 32, 22, 32), hide_mobile: 'hidden-mobile',
-    border_border: 'solid', border_width: box(0, 1, 0, 0), border_color: C.line, z_index: 1,
-    background_background: 'classic', background_color: C.blush,
-  }, [eyebrow('Recognized by', C.roseDeep, 'left', { size: 12 })]),
-  container({
-    content_width: 'full', _flex_size: 'grow', padding: box(22, 0, 22, 0), overflow: 'hidden', css_classes: 'ct-anim',
-    custom_css: 'selector { -webkit-mask-image: linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent); mask-image: linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent); }',
+    content_width: 'full', flex_direction: 'column', flex_justify_content: 'flex-end', flex_align_items: 'flex-start', flex_align_items_tablet: 'center', flex_align_items_mobile: 'center',
+    padding: box(40, 0, 0, 0), padding_tablet: box(0), padding_mobile: box(0), min_height: px(560), min_height_tablet: px(0), min_height_mobile: px(0),
   }, [
-    iconList([...BADGES, ...BADGES], {
-      inline: true, icon: 'fas fa-balance-scale', iconSize: 20, indent: 12, iconColor: C.rose, color: C.inkSoft, size: 15, weight: 500, ls: 0.08, transform: 'uppercase', space: 0,
-      settings: {
-        custom_css: `selector .elementor-icon-list-items { display: flex; flex-wrap: nowrap; width: max-content; animation: ct-marquee 28s linear infinite; }
-selector .elementor-icon-list-item { white-space: nowrap; padding: 0 36px !important; margin: 0 !important; border-left: 1px solid rgba(42,27,22,.12); }
-selector .elementor-icon-list-item::after { display: none !important; }`,
+    image(m.heroJen, {
+      align: 'left', settings: {
+        align_tablet: 'center', align_mobile: 'center',
+        custom_css: 'selector img { display: block; width: 100%; max-width: 520px; height: auto; max-height: 700px; object-fit: contain; object-position: bottom; filter: drop-shadow(0 30px 50px rgba(0,0,0,.55)); }\n@media (max-width: 1024px) { selector img { max-width: 360px; } }',
       },
     }),
   ]),
-]);
-
-/* ------------------------------------------------------------- results */
-const RESULTS = [
-  ['Truck collision', '$1.2M', 'A commercial truck struck our client, causing a shoulder injury that required surgery. We recovered $1.2 million from the trucking company for medical costs, pain and suffering, and lost earning ability.', -3, 0],
-  ['Truck accident', '$550K', 'A tractor-trailer turned unlawfully into our client’s lane at a Gwinnett County intersection. Litigation and mediation produced a $550,000 settlement.', 1.5, 18],
-  ['Rear-end crash', '$500K', 'A highway rear-end collision left our client with spinal damage and a cervical disc replacement. We secured $500,000 for recovery and lost income.', -1.5, 0],
-];
-const resultNote = ([type, amount, desc, tilt, drop]) => P.resultNote({ type, amount, desc }, tilt, drop, { bg: C.ivory });
-const results = () => band(C.white, [
-  eyebrow('Case results', C.roseDeep, 'center', { settings: { _margin: box(0, 0, 18, 0) } }),
-  H2('Over $15 million', 'recovered for our clients', false),
-  grid(RESULTS.map(resultNote), { cols: [3, 1, 1], gap: 40, rowGap: 64, align: 'start', settings: { margin: box(84, 0, 0, 0), padding: box(0, 0, 0, 0), padding_tablet: box(0, 60, 0, 60), padding_mobile: box(0, 4, 0, 4) } }),
-  text('Prior results do not guarantee a similar outcome. Each case is different and is judged on its own facts.',
-    { color: C.inkMuted, size: 13, align: 'center', settings: { _margin: box(48, 0, 0, 0) } }),
-], { anchor: 'results', align: 'center' });
-
-/* --------------------------------------------------------------- about */
-const sideText = (side) => {
-  const run = Array.from({ length: 6 }, () => 'Advocate • Protect • Deliver').join('   •   ');
-  const up = side === 'left';
-  return heading(`${run}   •   ${run}`, 'div', 48, 'rgba(191,142,116,0.12)', 'left', {
-    lh: 1.67, ls: 0.06, settings: {
-      typography_text_transform: 'uppercase', hide_tablet: 'hidden-tablet', hide_mobile: 'hidden-mobile', css_classes: 'ct-anim',
-      _position: 'absolute', _element_width: 'initial', _element_custom_width: px(80), _z_index: 0,
-      _offset_orientation_h: up ? 'start' : 'end', _offset_x: px(0), _offset_x_end: px(0), _offset_orientation_v: 'start', _offset_y: px(0),
-      custom_css: `selector { height: 100%; overflow: hidden; pointer-events: none; user-select: none; }
-selector .elementor-heading-title { writing-mode: vertical-rl; white-space: nowrap; ${up ? 'transform: rotate(180deg);' : ''} animation: ${up ? 'ct-up' : 'ct-down'} 90s linear infinite; }`,
-    },
-  });
-};
-const numberedRow = (n, h, p, last) => container({
-  container_type: 'grid', content_width: 'full', grid_columns_grid: { unit: 'custom', size: '64px 1fr' }, grid_columns_grid_tablet: { unit: 'custom', size: '64px 1fr' }, grid_columns_grid_mobile: { unit: 'custom', size: '48px 1fr' },
-  grid_rows_grid: auto, grid_rows_grid_tablet: auto, grid_rows_grid_mobile: auto, grid_gaps: gap(20), grid_align_items: 'start', padding: box(26, 0, 26, 0),
-  border_border: 'solid', border_width: box(1, 0, last ? 1 : 0, 0), border_color: 'rgba(191,142,116,0.35)',
-}, [
-  heading(n, 'p', 28, C.rose, 'left', { lh: 1, ls: 0 }),
-  stack([H3(h, C.ink, [22, 22, 20]), text(p, { color: C.inkSoft })], { gap: 8 }),
-]);
-const about = (m) => band(C.blush, [
-  sideText('left'), sideText('right'),
-  eyebrow('Meet your attorney', C.roseDeep, 'center', { settings: { _margin: box(0, 0, 18, 0) } }),
-  H2('Jennifer Cabrera-Torres', 'treats every case like it’s personal', true, 'center', { maxW: 820, settings: { _element_width_mobile: 'inherit' } }),
-  grid([
-    container({ content_width: 'full', padding: box(0), min_height: px(720), min_height_tablet: px(520), min_height_mobile: px(420), overflow: 'hidden' }, [
-      image(m.jenArms, {
-        settings: {
-          _position: 'absolute', _offset_orientation_h: 'start', _offset_x: px(0), _offset_orientation_v: 'start', _offset_y: px(0), _element_width: 'initial', _element_custom_width: px(100, '%'),
-          custom_css: 'selector { height: 100%; }\nselector .elementor-widget-container { height: 100%; }\nselector img { width: 100%; height: 100%; object-fit: cover; object-position: center top; } /* background removed, so the gold pattern shows behind her */',
-        },
-      }),
-    ]),
-    stack([
-      container({ content_width: 'full', flex_direction: 'column', padding: box(0), flex_gap: gap(0) }, [
-        numberedRow('01', CONTENT.home.a1h, CONTENT.home.a1p), numberedRow('02', CONTENT.home.a2h, CONTENT.home.a2p), numberedRow('03', CONTENT.home.a3h, CONTENT.home.a3p, true),
-      ]),
-      button('Meet Jennifer', URL.jennifer, 'outline', { pad: box(14, 26, 14, 26), settings: { _margin: box(40, 0, 0, 0) } }),
-    ], { gap: 0, settings: { padding: box(40, 48, 90, 20), padding_tablet: box(40, 0, 90, 0), padding_mobile: box(24, 0, 70, 0) } }),
-  ], { cols: [2, 1, 1], gap: 0, rowGap: 0, align: 'stretch', settings: { margin: box(48, 0, 0, 0) } }),
-], { anchor: 'about', align: 'center', pad: [110, 0] });
-
-/* ---------------------------------------------------------- quote band */
-const quote = () => container({
-  content_width: 'boxed', boxed_width: px(1216), container_type: 'grid',
-  grid_columns_grid: { unit: 'custom', size: 'minmax(0,1fr) auto' }, grid_columns_grid_tablet: px(1, 'fr'), grid_columns_grid_mobile: px(1, 'fr'),
-  grid_rows_grid: L.auto, grid_rows_grid_tablet: L.auto, grid_rows_grid_mobile: L.auto, grid_gaps: gap(40, 28), grid_align_items: 'center',
-  padding: box(64, 32, 64, 32), padding_mobile: box(52, 20, 52, 20),
-  background_background: 'classic', background_color: C.ivory,
-  border_border: 'solid', border_width: box(1, 0, 1, 0), border_color: 'rgba(191,142,116,0.25)',
-}, [
-  stack([
-    // Break after "personal," so the second line is never a lone "is." (collapses on phones).
-    text('<p>“Treat every case like it’s personal,<br class="ct-br"> because for me, it is.”</p>', { color: C.ink, size: [40, 34, 28], weight: 300, lh: 1.3, settings: { custom_css: '@media (max-width: 767px) { selector .ct-br { display: none; } }' } }),
-    eyebrow('Jennifer Cabrera-Torres, Esq.', C.rose, 'left', { size: 15, ls: 0.2 }),
-  ], { gap: 14 }),
-  button('Free Case Evaluation', URL.contact, 'gold', { pad: box(18, 34, 18, 34), align: 'right', settings: { align_tablet: 'left', align_mobile: 'left' } }),
 ], false);
 
-/* ------------------------------------------------------- practice areas */
+/* -------------------------------------------------------- practice areas */
 const AREAS = [
-  ['Motor Vehicle Accidents', 'Crashes are the most common cause of serious injury in Georgia. We investigate fault, deal with the insurers so you don’t have to, and pursue every available policy, including your own underinsured coverage.',
-    ['Car accidents', 'Truck & tractor-trailer', 'Motorcycle accidents', 'Pedestrian & bicycle', 'Uber & Lyft rideshare', 'Drunk driving victims', 'Hit-and-run', 'Reckless driving'], 'mva'],
-  ['Dog Bites', 'Georgia holds owners responsible when they knew their dog was dangerous or let it run loose in violation of a local leash ordinance. Bites often mean scarring, infection and lasting trauma, especially for children.',
-    ['Facial injuries & scarring', 'Infections & surgery', 'Injuries to children', 'Homeowner’s insurance claims', 'Attacks on another’s property', 'Emotional trauma'], 'dog'],
-  ['Slip & Fall', 'Property owners must keep their premises reasonably safe. When a wet floor, broken stair or poor lighting causes a fall, the business’s commercial liability insurance is where the claim goes.',
-    ['Wet floors in stores', 'Parking lots & sidewalks', 'Stairs & railings', 'Negligent security', 'Apartment complexes', 'Fractures & head injuries'], 'fall'],
-  ['Catastrophic Injury & Wrongful Death', 'When an injury changes a life or ends one, the claim has to account for the whole future: lifetime care, lost income, and the full value of a life.',
-    ['Traumatic brain injury', 'Spinal cord injuries', 'Severe burns', 'Amputations', 'Wrongful death', 'Lost earning capacity'], null],
+  { name: 'Car Accidents', desc: 'Representation for people injured in collisions involving cars, trucks, and rideshares.', photo: 'area_mva', icon: 'car', href: `${URL.practice}#mva` },
+  { name: 'Truck Accidents', desc: 'We hold trucking companies and their insurers accountable for serious, life-changing injuries.', photo: 'post_car', icon: 'truck', href: `${URL.practice}#mva` },
+  { name: 'Slip & Fall', desc: 'Property owners must keep premises safe. We hold them accountable when someone is hurt.', photo: 'area_fall', icon: 'fall', href: `${URL.practice}#fall` },
+  { name: 'Dog Bites', desc: 'Georgia law protects dog attack victims. We pursue owners for medical bills, scarring, and trauma.', photo: 'area_dog', icon: 'dog', href: `${URL.practice}#dog` },
 ];
-const plusList = (items, solo) => P.plusList(items, solo ? { width: 520 } : {});
-const areaPanel = (m) => ([name, desc, items, key]) => {
-  const solo = !key;
-  const copy = stack([
-    H3(name, C.ink, [34, 30, 26], { lh: 1.1, align: solo ? 'center' : 'left', settings: { _margin: box(0, 0, 2, 0) } }),
-    text(desc, { color: C.inkSoft, align: solo ? 'center' : 'left', settings: { _margin: box(0, 0, 8, 0) } }),
-    plusList(items, solo),
-    button('Talk to us about your case', URL.contact, 'underline', { align: solo ? 'center' : 'left', settings: { _margin: box(12, 0, 0, 0) } }),
-  ], { gap: 14, align: solo ? 'center' : undefined });
-  if (solo) return container({ content_width: 'full', flex_direction: 'column', flex_align_items: 'center', padding: box(56, 0, 0, 0), width: px(760), width_tablet: px(100, '%'), width_mobile: px(100, '%') }, [copy]);
-  return container({
-    container_type: 'grid', content_width: 'full', padding: box(56, 0, 0, 0), padding_mobile: box(36, 0, 0, 0),
-    grid_columns_grid: { unit: 'custom', size: 'minmax(0,1.5fr) minmax(0,1fr)' }, grid_columns_grid_tablet: px(1, 'fr'), grid_columns_grid_mobile: px(1, 'fr'),
-    grid_rows_grid: L.auto, grid_rows_grid_tablet: L.auto, grid_rows_grid_mobile: L.auto, grid_gaps: gap(60, 48), grid_align_items: 'center',
-    width: px(1040), width_tablet: px(100, '%'), width_mobile: px(100, '%'),
+const DIVIDERS = (color) => `selector { border-left: 1px solid ${color}; }
+selector:first-child { border-left: 0; }
+@media (max-width: 1024px) { selector:nth-child(odd) { border-left: 0; } }
+@media (max-width: 767px) { selector { border-left: 0; } }`;
+const practice = (m) => band(C.ivory, [
+  centerLabel('Our Practice Areas'),
+  grid(AREAS.map((a) => container({
+    content_width: 'full', flex_direction: 'column', flex_align_items: 'center', flex_gap: gap(16),
+    padding: box(8, 28, 0, 28), padding_mobile: box(0, 4, 0, 4), custom_css: DIVIDERS('rgba(74,54,47,0.15)'),
   }, [
-    copy,
-    image(m[`area_${key}`], {
-      settings: {
-        _background_background: 'classic', _background_color: C.white, _padding: box(14),
-        _element_width_tablet: 'initial', _element_custom_width_tablet: px(420), _element_custom_width_mobile: px(100, '%'),
-        custom_css: 'selector { transform: rotate(2deg); box-shadow: 0 30px 60px rgba(42,27,22,.12); margin-left: auto; margin-right: auto; }\nselector img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; display: block; }',
-      },
-    }),
-  ]);
-};
-const practice = (m) => band(C.white, [
-  eyebrow('Practice areas', C.roseDeep, 'center', { settings: { _margin: box(0, 0, 18, 0) } }),
-  H2('Personal injury,', 'focused and thorough', false, 'center', { maxW: 640, settings: { _element_width_mobile: 'inherit' } }),
-  text('When someone else’s carelessness causes an injury, Georgia law lets you demand financial accountability. We prepare every case as if it will go to trial, which is exactly why most settle well.',
-    { color: C.inkSoft, align: 'center', maxW: 640, settings: { _margin: box(24, 0, 0, 0) } }),
-  {
-    id: L.id(), elType: 'widget', widgetType: 'nested-tabs',
-    settings: {
-      tabs: AREAS.map(([name]) => ({ _id: L.id(), tab_title: name })),
-      tabs_direction: 'block-start', tabs_justify_horizontal: 'center', title_alignment: 'center',
-      breakpoint_selector: 'mobile', tabs_title_space_between: px(12), tabs_title_spacing: px(0),
-      ...L.typo('title_typography', 12, 500, { lh: 1.2, ls: 0.16, transform: 'uppercase' }),
-      title_text_color: C.ink, title_text_color_hover: C.ink, title_text_color_active: C.white,
-      tabs_title_background_color_background: 'classic', tabs_title_background_color_color: 'rgba(0,0,0,0)',
-      tabs_title_background_color_hover_background: 'classic', tabs_title_background_color_hover_color: 'rgba(42,27,22,0.04)',
-      tabs_title_background_color_active_background: 'classic', tabs_title_background_color_active_color: C.ink,
-      tabs_title_border_border: 'solid', tabs_title_border_width: box(1), tabs_title_border_color: 'rgba(42,27,22,0.25)',
-      tabs_title_border_hover_border: 'solid', tabs_title_border_hover_width: box(1), tabs_title_border_hover_color: C.ink,
-      tabs_title_border_active_border: 'solid', tabs_title_border_active_width: box(1), tabs_title_border_active_color: C.ink,
-      tabs_title_border_radius: box(999), padding: box(14, 24, 14, 24),
-      box_background_color_background: 'classic', box_background_color_color: 'rgba(0,0,0,0)', box_border_border: 'none', box_padding: box(0),
-      _margin: box(48, 0, 0, 0),
-      custom_css: 'selector .e-n-tabs-heading { flex-wrap: wrap; row-gap: 12px; }\nselector .e-n-tab-title { white-space: nowrap; }',
-    },
-    elements: AREAS.map((a) => container({ content_width: 'full', flex_direction: 'column', flex_align_items: 'center', padding: box(0) }, [areaPanel(m)(a)])),
-  },
-], { anchor: 'practice', align: 'center' });
+    svg(ICON[a.icon], 64),
+    H3(a.name, C.ink, [19, 19, 19], { align: 'center', ls: 0.06, lh: 1.3 }),
+    text(a.desc, { color: C.inkMuted, size: 16, lh: 1.65, align: 'center', settings: { _flex_size: 'grow' } }),
+    image(m[a.photo], { settings: { _margin: box(8, 0, 0, 0), custom_css: 'selector { width: 100%; }\nselector img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; }' } }),
+    button('Learn more  →', a.href, 'underline', { align: 'center' }),
+  ])), { cols: [4, 2, 1], gap: 0, rowGap: 56, settings: { margin: box(64, 0, 0, 0), margin_mobile: box(40, 0, 0, 0) } }),
+], { pad: [96, 100], width: 1320, anchor: 'practice' });
 
-/* --------------------------------------------------------- testimonials */
-const REVIEWS = [
-  ['From the beginning to the end I felt heard, and that my best interests were being looked after. Thank you to the wonderful staff.', 'Carlos C. · Google'],
-  ['Considerate, caring, and accessible. Great attorneys that will fight for you and get you what you deserve.', 'Ed C. · Google'],
-  ['I would recommend them to everyone looking for a professional, reliable, and client-focused team. Simply the best.', 'Google reviewer · Google'],
+/* ---------------------------------------------------------- results band */
+const RESULTS = [['$4.8M', 'Truck Accident'], ['$2.3M', 'Car Accident'], ['$1.5M', 'Serious Injury'], ['$1.2M', 'Wrongful Death']];
+const results = () => band(C.wood, [
+  grid([
+    stack([
+      eyebrow('Proven Results<br>for Our Clients', C.sand, 'left', { size: 14, ls: 0.3, alignM: 'center', settings: { typography_line_height: px(1.9, 'em') } }),
+      widget('divider', { width: px(60), align: 'left', align_tablet: 'center', align_mobile: 'center', color: C.rose, weight: px(1), gap: px(2) }),
+    ], { gap: 8 }),
+    grid(RESULTS.map(([amt, type]) => stack([
+      heading(amt, 'p', [40, 36, 32], C.white, 'center', { lh: 1 }),
+      eyebrow(type, C.sand, 'center', { size: 13, ls: 0.22 }),
+    ], { gap: 12, settings: { padding: box(6, 16, 6, 16), padding_mobile: box(6, 8, 18, 8), custom_css: DIVIDERS(C.roseLine) } })), { cols: [4, 2, 2], gap: 0, rowGap: 24 }),
+    button('View more results  →', URL.results, 'outlineDark', { align: 'center', pad: box(16, 24, 16, 24) }),
+  ], { cols: ['minmax(0,1.1fr) minmax(0,2.6fr) auto', 1, 1], gap: 40, rowGap: 36, align: 'center' }),
+], { pad: [56, 56], width: 1320, anchor: 'results' });
+
+/* --------------------------------------------------------------- my story */
+const STORY = [
+  'Three days after graduating college, I lost my father. In the midst of that unimaginable loss, I still had to find the strength to move forward and prepare for the LSAT.',
+  'Years later, during the COVID-19 pandemic, I completed my law school final exams at 40 weeks pregnant and became a mother the very next day.',
+  'These experiences shaped the attorney I am today — resilient, compassionate, and determined. I understand what it means for life to change unexpectedly, and I bring that same strength, empathy, and commitment to every client I represent.',
 ];
-const testimonials = (m) => band(C.blush, [
-  eyebrow('Client testimonials', C.roseDeep, 'center', { settings: { _margin: box(0, 0, 18, 0) } }),
-  H2('Our clients', 'said it best', true),
-  grid(REVIEWS.map(([q, who]) => glass([
-    text('★★★★★', { color: C.rose, size: 24, ls: 0.12, lh: 1 }),
-    text(`“${q}”`, { color: C.ink, size: 21, weight: 300, lh: 1.4, settings: { _flex_size: 'grow' } }),
-    eyebrow(who, C.inkMuted, 'left', { size: 12, ls: 0.2 }),
-  ], { gap: 18 })), { cols: [3, 1, 1], gap: 24, settings: { margin: box(64, 0, 0, 0) } }),
-], { anchor: 'testimonials', align: 'center' });
-
-/* ------------------------------------------------------------------ faq */
-const faqAccordion = () => P.faqAccordion(CONTENT.faqs.slice(0, 5));
-const faq = () => band(C.white, [
-  grid([
+const story = (m) => container({
+  content_width: 'boxed', boxed_width: px(1320), container_type: 'grid',
+  grid_columns_grid: { unit: 'custom', size: 'minmax(0,.9fr) minmax(0,1.1fr)' }, grid_columns_grid_tablet: px(1, 'fr'), grid_columns_grid_mobile: px(1, 'fr'),
+  grid_rows_grid: auto, grid_rows_grid_tablet: auto, grid_rows_grid_mobile: auto, grid_gaps: gap(0), grid_align_items: 'stretch',
+  padding: box(0), background_background: 'classic', background_color: C.light, overflow: 'hidden', _element_id: 'story',
+}, [
+  container({ content_width: 'full', flex_direction: 'column', flex_justify_content: 'flex-end', flex_align_items: 'center', padding: box(48, 24, 0, 24) }, [
+    image(m.storyJen, { settings: { custom_css: 'selector img { display: block; width: auto; max-width: 100%; max-height: 780px; object-fit: contain; object-position: bottom; }\n@media (max-width: 1024px) { selector img { max-width: 420px; width: 100%; height: auto; } }' } }),
+  ]),
+  stack([
+    kicker('My Story', C.roseDeep, { settings: { typography_font_weight: '600' } }),
+    twoLine('Resilience Is Personal.', 'So Is My Commitment to You.', [44, 36, 30], C.ink, 'left', { lh: 1.15 }),
     stack([
-      eyebrow('FAQ', C.roseDeep),
-      H2('Questions injured people', 'ask us most', false, 'left', { sizes: [54, 44, 34] }),
-      text('Plain answers about Georgia personal injury claims. Every case is different, so call us for advice specific to yours.', { color: C.inkSoft, settings: { _margin: box(6, 0, 0, 0) } }),
-    ], { gap: 18 }),
-    faqAccordion(),
-  ], { cols: ['minmax(0,1fr) minmax(0,1.6fr)', 1, 1], gap: 60, rowGap: 40, align: 'center' }),
-], { anchor: 'faq' });
+      ...STORY.map((p) => text(p, { color: C.inkSoft, size: 15.5, lh: 1.75 })),
+      text('Before founding Cabrera Torres Law Firm, Jennifer served as Managing Partner of Gonzalez Torres Law, where she led the Personal Injury Litigation practice.', {
+        color: C.inkSoft, size: 15, lh: 1.75,
+        settings: { _padding: box(22, 26, 22, 26), _background_background: 'classic', _background_color: C.ivory, _border_border: 'solid', _border_width: box(0, 0, 0, 2), _border_color: C.rose },
+      }),
+    ], { gap: 18, settings: { margin: box(10, 0, 0, 0) } }),
+    button('Read more about my story  →', URL.jennifer, 'gold', { size: 14, settings: { _margin: box(18, 0, 0, 0) } }),
+  ], { gap: 16, align: 'flex-start', justify: 'center', settings: { padding: box(88, 40, 88, 64), padding_tablet: box(56, 32, 72, 32), padding_mobile: box(48, 24, 64, 24) } }),
+], false);
 
-/* ---------------------------------------------------------------- blog */
-const blog = (m) => band(C.ivory, [
-  eyebrow('Legal resources', C.roseDeep, 'left', { settings: { _margin: box(0, 0, 18, 0) } }),
-  H2('Know your rights', 'after an accident', false, 'left', { sizes: [54, 44, 34] }),
-  grid(CONTENT.articles.slice(0, 3).map((a) => P.blogCard(m, a, { gap: 18, hSizes: [26, 24, 22], pColor: C.inkMuted })),
-    { cols: [3, 1, 1], gap: 32, rowGap: 48, align: 'start', settings: { margin: box(56, 0, 0, 0) } }),
-], { anchor: 'blog', settings: { border_border: 'solid', border_width: box(1, 0, 0, 0), border_color: 'rgba(42,27,22,0.08)' } });
-
-/* ------------------------------------------------------------- contact */
-const contact = (m) => band(C.white, [
-  P.emblem(m, 620, { _offset_orientation_h: 'start', _offset_x: px(-160), _offset_orientation_v: 'end', _offset_y_end: px(-80), hide_mobile: 'hidden-mobile' }),
-  grid([
+/* ------------------------------------------------------------ our approach */
+const PILLARS = [
+  ['Trial Experience', 'A skilled advocate in and out of the courtroom.', 'trial'],
+  ['Personal Attention', "You're never just a case. You're a person.", 'person'],
+  ['Direct Communication', 'Clear answers. Honest guidance. Always.', 'chat'],
+  ['No Fee Unless We Win', 'You pay nothing unless we obtain a recovery for you.', 'doc'],
+];
+const approach = () => band(C.ivory, [
+  grid(PILLARS.map(([t, d, ic]) => container({
+    content_width: 'full', flex_direction: 'row', flex_wrap: 'nowrap', flex_align_items: 'flex-start', flex_gap: gap(16),
+    padding: box(0, 0, 0, 24), padding_mobile: box(0), custom_css: DIVIDERS('rgba(74,54,47,0.15)').replace('selector:first-child { border-left: 0; }', 'selector:first-child { border-left: 0; padding-left: 0; }'),
+  }, [
+    svg(ICON[ic], 56),
     stack([
-      eyebrow('Free case evaluation', C.roseDeep),
-      H2('Injured?', 'Call Jen.', true, 'left', { br: true }),
-      text('Tell us what happened. We respond quickly, keep everything confidential, and you pay nothing unless we recover for you.', { color: C.inkSoft, maxW: 440, settings: { _margin: box(6, 0, 22, 0) } }),
-      P.phoneDetail(), P.emailDetail(),
-      P.detail('Norcross office', text(`<p>${L.ADDRESS}</p>`, { color: C.inkMuted, size: 15 })),
-    ], { gap: 18 }),
-    P.contactForm(4),
-  ], { cols: ['minmax(0,1fr) minmax(0,1.2fr)', 1, 1], gap: 60, rowGap: 48, align: 'start', settings: { z_index: 1 } }),
-], { anchor: 'contact', pattern: m.pattern });
+      heading(t, 'h3', 13, C.ink, 'left', { family: L.FONT, weight: 600, ls: 0.2, lh: 1.4, settings: { typography_text_transform: 'uppercase', custom_css: '@media (min-width: 1200px) { selector .elementor-heading-title { white-space: nowrap; } }' } }),
+      text(d, { color: C.inkMuted, size: 15, lh: 1.6 }),
+    ], { gap: 6 }),
+  ])), { cols: [4, 2, 1], gap: 32, rowGap: 32 }),
+], { pad: [56, 56], width: 1320, anchor: 'approach', settings: { border_border: 'solid', border_width: box(1, 0, 1, 0), border_color: C.hair } });
+
+/* ------------------------------------------------------------- litigation */
+const LIT = [
+  ['Investigation', 'Evidence preserved early, experts retained when the case calls for it.'],
+  ['Negotiation', 'Demands built on documented damages, not guesswork.'],
+  ['Trial', 'When insurers refuse to be fair, we are ready to present your case to a jury.'],
+];
+const litigation = (m) => container({
+  content_width: 'full', flex_direction: 'row', flex_justify_content: 'flex-end', flex_align_items: 'center',
+  min_height: px(560), padding: box(64, 0, 64, 0), padding_tablet: box(96, 32, 96, 32), padding_mobile: box(80, 24, 80, 24),
+  background_background: 'classic', background_color: C.lit, background_image: m.litJen,
+  background_position: 'center left', background_size: 'cover', background_repeat: 'no-repeat',
+  background_overlay_background: 'classic', background_overlay_color: C.lit, background_overlay_opacity: px(0), background_overlay_opacity_tablet: px(0.72), background_overlay_opacity_mobile: px(0.72),
+  css_classes: 'e-no-lazyload', // Elementor's lazy background loading left this banner black
+  custom_css: 'selector { aspect-ratio: 3 / 1; }\n@media (max-width: 1024px) { selector { aspect-ratio: auto; background-position: 20% 50% !important; } }',
+}, [
+  container({ content_width: 'full', flex_direction: 'column', padding: box(0, 0, 0, 0), width: px(50, '%'), width_tablet: px(100, '%'), width_mobile: px(100, '%'), z_index: 1 }, [
+    stack([
+      kicker('Litigation Experience', C.sand),
+      twoLine('Prepared for Trial.', 'From the First Call.', [44, 36, 30], C.white, 'left'),
+      text("Insurance companies know which firms are willing to go to court. We prepare every case as if it will be tried, so when it's time to negotiate, you negotiate from a position of strength.", { color: C.mist, size: 16, weight: 300, lh: 1.75 }),
+      grid(LIT.map(([t, d]) => stack([
+        eyebrow(t, C.rose, 'left', { size: 13, weight: 600, ls: 0.2 }),
+        text(d, { color: C.mist, size: 15, weight: 300, lh: 1.6 }),
+      ], { gap: 8, settings: { padding: box(16, 0, 0, 0), border_border: 'solid', border_width: box(1, 0, 0, 0), border_color: C.rose } })), { cols: [3, 3, 1], gap: 24, settings: { margin: box(22, 0, 0, 0) } }),
+    ], { gap: 18, maxW: 560 }),
+  ]),
+], false);
+
+/* ----------------------------------------------------------- testimonials */
+const QUOTES = [
+  'Jennifer and her team were incredible. They not only fought for me, but they genuinely cared about me and my family throughout the entire process.',
+  'She is compassionate, responsive, and truly goes above and beyond. I always felt heard, supported, and confident knowing they had my back.',
+  "Professional, knowledgeable, and relentless in the pursuit of justice. I'm so grateful for everything they did for me.",
+];
+const testimonials = () => band(C.ivory, [
+  centerLabel('What Our Clients Say'),
+  grid(QUOTES.map((q) => container({
+    content_width: 'full', flex_direction: 'column', flex_gap: gap(20), padding: box(40, 36, 40, 36), padding_mobile: box(32, 26, 32, 26),
+    background_background: 'classic', background_color: C.light, border_border: 'solid', border_width: box(1), border_color: 'rgba(74,54,47,0.1)',
+  }, [
+    text('★★★★★', { color: C.rose, size: 26, ls: 0.12, lh: 1 }),
+    text(q, { color: C.ink, size: 21, lh: 1.5, style: 'italic', weight: 400, family: L.QFONT, settings: { _flex_size: 'grow' } }),
+    text(`${'<span style="display:inline-block;width:28px;height:1px;background:' + C.rose + ';vertical-align:middle;margin-right:14px"></span>'}Actual Client`, { color: C.roseDeep, size: 13, weight: 600, ls: 0.2, transform: 'uppercase', lh: 1.4 }),
+  ])), { cols: [3, 1, 1], gap: 28, settings: { margin: box(56, 0, 0, 0), margin_mobile: box(40, 0, 0, 0) } }),
+], { pad: [96, 100], width: 1320, anchor: 'testimonials' });
 
 module.exports = {
   slug: 'home', title: 'Home',
   seo: {
-    title: 'Personal Injury Lawyer Norcross, GA | Cabrera-Torres Law Firm',
+    title: 'Personal Injury Lawyer Norcross, GA | Cabrera Torres Law Firm',
     description: 'Injured in Norcross or Gwinnett County? Attorney Jennifer Cabrera-Torres handles car, truck, dog bite and slip and fall cases. Free consultation.',
     focus: 'personal injury lawyer Norcross GA',
   },
-  build: (m) => [hero(m), trustStrip(), results(), about(m), quote(), practice(m), testimonials(m), faq(), blog(m), contact(m)],
+  build: (m) => [hero(m), practice(m), results(), story(m), approach(), litigation(m), testimonials(), P.ctaBand()],
 };

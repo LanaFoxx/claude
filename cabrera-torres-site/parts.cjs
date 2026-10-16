@@ -12,7 +12,7 @@ const emblem = (m, width, pos, extra = {}) => image(m.emblem, {
 });
 
 /* ------------------------------------------------------- inner page hero */
-// Dark band at the top of every inner page: kicker, H1 (bold + light gold phrase), intro.
+// Espresso "wood" band at the top of every inner page: kicker, H1 (white + rose-gold phrase), intro.
 function pageHero(m, ph, o = {}) {
   const kids = [
     emblem(m, 520, { _offset_orientation_h: 'end', _offset_x_end: px(-140), _offset_orientation_v: 'start', _offset_y: px(50, '%'), hide_mobile: 'hidden-mobile' }, { css: 'transform: translateY(-50%);' }),
@@ -23,46 +23,42 @@ function pageHero(m, ph, o = {}) {
       _offset_orientation_h: 'end', _offset_x_end: px(6, '%'), _offset_orientation_v: 'end', _offset_y_end: px(0),
       hide_tablet: 'hidden-tablet', hide_mobile: 'hidden-mobile',
       custom_css: o.cutout
-        // Background-removed portrait: whole figure, standing on the bottom edge, pattern visible around her.
-        ? 'selector { top: 24px; pointer-events: none; }\nselector .elementor-widget-container, selector img { height: 100%; }\nselector img { width: 100%; object-fit: contain; object-position: center bottom; }'
+        ? 'selector { top: 24px; pointer-events: none; }\nselector .elementor-widget-container, selector img { height: 100%; }\nselector img { width: 100%; object-fit: contain; object-position: center bottom; filter: drop-shadow(0 30px 50px rgba(0,0,0,.55)); }'
         : 'selector { top: 0; pointer-events: none; }\nselector .elementor-widget-container, selector img { height: 100%; }\nselector img { width: 100%; object-fit: cover; object-position: center top; -webkit-mask-image: linear-gradient(90deg,transparent,#000 25%); mask-image: linear-gradient(90deg,transparent,#000 25%); }',
     },
   }));
-  // Centered, except where a portrait sits on the right of the header.
   const al = o.photo ? 'left' : 'center';
   kids.push(stack([
-    eyebrow(ph.kicker, C.roseDeep, al),
-    // With a portrait on the right, keep the text column narrow enough to never run under her.
+    eyebrow(ph.kicker, C.sand, al),
     o.photo
-      // Bold phrase, then the light gold phrase on its own unbroken line (sized to fit beside the portrait).
-      ? heading(`${ph.title1}<br><span style="font-weight:200;color:${C.roseDeep};white-space:nowrap">${ph.title2}</span>`, 'h1', [56, 50, 34], C.ink, al, { lh: 1.12 })
-      : heading(`${ph.title1}${ph.title2 ? ' ' + L.accent(ph.title2, C.roseDeep) : ''}`, 'h1', [64, 50, 38], C.ink, al, { lh: 1.12, maxW: 900 }),
-    ...(ph.intro ? [text(ph.intro, { color: C.inkSoft, size: 17, maxW: o.photo ? 540 : 640, align: al, settings: { _margin: box(4, 0, 0, 0) } })] : []),
-  ], { gap: 18, align: o.photo ? undefined : 'center', settings: { z_index: 1 } }));
-  return band(C.ivory, kids, {
-    pad: [80, 64], pattern: m.pattern,
-    settings: { border_border: 'solid', border_width: box(0, 0, 3, 0), border_color: C.rose, ...(o.photo ? { min_height: px(330) } : {}) },
+      ? heading(`${ph.title1}<br><span style="color:${C.rose};white-space:nowrap">${ph.title2}</span>`, 'h1', [50, 44, 32], C.white, al, { lh: 1.12 })
+      : heading(`${ph.title1}${ph.title2 ? ' ' + L.accent(ph.title2) : ''}`, 'h1', [56, 46, 34], C.white, al, { lh: 1.12, maxW: 900 }),
+    ...(ph.intro ? [text(ph.intro, { color: C.mist, size: 17, weight: 300, maxW: o.photo ? 540 : 640, align: al, settings: { _margin: box(4, 0, 0, 0) } })] : []),
+  ], { gap: 20, align: o.photo ? undefined : 'center', settings: { z_index: 1 } }));
+  return band(C.wood, kids, {
+    pad: [88, 72], pattern: m.pattern,
+    settings: { ...(o.photo ? { min_height: px(340) } : {}) },
   });
 }
 
 /* --------------------------------------------------------- CTA band */
-// "Injured? Call Jen." band shown above the footer on inner pages.
+// "Let's talk about your case" espresso band shown above the footer (design's CTA band).
 const ctaBand = () => container({
-  content_width: 'boxed', boxed_width: px(1216), container_type: 'grid',
-  grid_columns_grid: { unit: 'custom', size: 'minmax(0,1fr) auto' }, grid_columns_grid_tablet: px(1, 'fr'), grid_columns_grid_mobile: px(1, 'fr'),
-  grid_rows_grid: auto, grid_rows_grid_tablet: auto, grid_rows_grid_mobile: auto, grid_gaps: gap(40, 28), grid_align_items: 'center',
-  padding: box(64, 32, 64, 32), padding_mobile: box(52, 20, 52, 20),
-  background_background: 'classic', background_color: C.blush,
-  border_border: 'solid', border_width: box(1, 0, 0, 0), border_color: 'rgba(191,142,116,0.25)',
+  content_width: 'boxed', boxed_width: px(1320), container_type: 'grid',
+  grid_columns_grid: { unit: 'custom', size: 'auto minmax(0,1fr) auto' }, grid_columns_grid_tablet: px(1, 'fr'), grid_columns_grid_mobile: px(1, 'fr'),
+  grid_rows_grid: auto, grid_rows_grid_tablet: auto, grid_rows_grid_mobile: auto, grid_gaps: gap(48, 28), grid_align_items: 'center',
+  padding: box(72, 40, 72, 40), padding_mobile: box(56, 24, 56, 24),
+  background_background: 'classic', background_color: C.wood,
 }, [
   stack([
-    H2('Injured?', 'Call Jen.', true, 'left', { sizes: [38, 32, 28], lh: 1.15 }),
-    text('Tell us what happened. We respond quickly, keep everything confidential, and you pay nothing unless we recover for you.', { color: C.inkSoft, maxW: 560 }),
-  ], { gap: 12 }),
-  row([
-    button('Free Case Evaluation', URL.contact, 'gold', { pad: box(18, 34, 18, 34) }),
-    button(L.PHONE, L.TEL, 'outline', { pad: box(17, 30, 17, 30) }),
-  ], { gap: 16, settings: { flex_justify_content: 'flex-end', flex_justify_content_tablet: 'flex-start', flex_justify_content_mobile: 'flex-start' } }),
+    eyebrow("Let's talk about<br>your case", C.sand, 'left', { size: 14, ls: 0.3, alignM: 'center', settings: { typography_line_height: px(1.9, 'em') } }),
+    widget('divider', { width: px(60), align: 'left', align_mobile: 'center', color: C.rose, weight: px(1), gap: px(2) }),
+  ], { gap: 10, settings: { padding: box(0, 48, 0, 0), padding_tablet: box(0), border_border: 'solid', border_width: box(0, 1, 0, 0), border_width_tablet: box(0), border_color: C.roseLine } }),
+  stack([
+    heading('Schedule Your Free Consultation.', 'h2', [36, 32, 26], C.white, 'left', { lh: 1.2, alignM: 'center' }),
+    text(`We're here to listen, answer your questions, and help you understand your options. Call <a href="${L.TEL}" style="font-weight:600">${L.PHONE}</a>.`, { color: C.mist, size: 18, weight: 300, lh: 1.75, linkColor: C.rose, linkHover: C.ivory, alignM: 'center' }),
+  ], { gap: 14 }),
+  button('Free Consultation  →', URL.contact, 'gold', { dark: true, align: 'center', size: 14 }),
 ], false);
 
 /* ------------------------------------------------------------- lists */
@@ -79,8 +75,8 @@ selector .elementor-icon-list-item { margin: 0 !important; padding: 0 !important
 
 /* ------------------------------------------------------- result notes */
 // The gold "pin" is drawn on the first label with CSS, so each note stays plain editable widgets.
-const pinCSS = (padTop) => `selector::before { content: ""; position: absolute; left: 50%; top: -${padTop + 26}px; width: 22px; height: 22px; transform: translateX(-50%); border: 3px solid #8E5F47; border-bottom: 0; border-radius: 11px 11px 0 0; box-sizing: border-box; }
-selector::after { content: ""; position: absolute; left: 50%; top: -${padTop + 10}px; width: 52px; height: 24px; transform: translateX(-50%); background: #BF8E74; clip-path: polygon(0 100%,14% 0,86% 0,100% 100%); filter: drop-shadow(0 3px 6px rgba(42,27,22,.25)); }`;
+const pinCSS = (padTop) => `selector::before { content: ""; position: absolute; left: 50%; top: -${padTop + 26}px; width: 22px; height: 22px; transform: translateX(-50%); border: 3px solid #4A362F; border-bottom: 0; border-radius: 11px 11px 0 0; box-sizing: border-box; }
+selector::after { content: ""; position: absolute; left: 50%; top: -${padTop + 10}px; width: 52px; height: 24px; transform: translateX(-50%); background: #C4A08D; clip-path: polygon(0 100%,14% 0,86% 0,100% 100%); filter: drop-shadow(0 3px 6px rgba(42,27,22,.25)); }`;
 function resultNote(r, tilt, drop, o = {}) {
   const pad = o.pad || [44, 34, 40, 34];
   return container({
@@ -101,7 +97,7 @@ function resultNote(r, tilt, drop, o = {}) {
 const numberCard = (n, h, p, o = {}) => container({
   content_width: 'full', flex_direction: 'column', flex_gap: gap(0), padding: o.pad || box(36, 32, 36, 32), padding_mobile: box(30, 24, 30, 24),
   background_background: 'classic', background_color: C.white, border_border: 'solid', border_width: box(1), border_color: C.line,
-  custom_css: 'selector { box-shadow: 0 10px 30px rgba(42,27,22,0.05); transition: border-color .2s; }\nselector:hover { border-color: #BF8E74; }',
+  custom_css: 'selector { box-shadow: 0 10px 30px rgba(42,27,22,0.05); transition: border-color .2s; }\nselector:hover { border-color: #C4A08D; }',
 }, [
   heading(n, 'p', 40, C.rose, 'left', { lh: 1, ls: 0, settings: { _margin: box(0, 0, o.nGap ?? 18, 0) } }),
   H3(h, C.ink, o.hSizes || [22, 22, 20], { settings: { _margin: box(0, 0, 10, 0) } }),
@@ -156,7 +152,7 @@ function contactForm(rows = 4) {
   return container({
     content_width: 'full', flex_direction: 'column', padding: box(40), padding_mobile: box(24),
     background_background: 'classic', background_color: '#FFFFFF',
-    border_border: 'solid', border_width: box(1), border_color: 'rgba(191,142,116,0.35)',
+    border_border: 'solid', border_width: box(1), border_color: 'rgba(196,160,141,0.35)',
     custom_css: 'selector { box-shadow: 0 10px 30px rgba(42,27,22,0.05); }',
   }, [
     widget('form', {
@@ -168,17 +164,17 @@ function contactForm(rows = 4) {
         fld('email', 'email', 'Email *', '50', { required: 'true' }),
         fld('accident_date', 'text', 'Date of accident / injury', '100'),
         fld('message', 'textarea', 'Describe your case', '100', { rows }),
-        { ...fld('sms_consent', 'acceptance', 'Text message consent', '100'), acceptance_text: 'By providing my phone number, I agree to receive text messages from Cabrera-Torres Law Firm.' },
+        { ...fld('sms_consent', 'acceptance', 'Text message consent', '100'), acceptance_text: 'By providing my phone number, I agree to receive text messages from Cabrera Torres Law Firm.' },
       ],
       show_labels: '', mark_required: '', input_size: 'md', button_text: 'Submit request', button_size: 'md', button_width: '', button_align: 'start',
-      submit_actions: ['email'], email_subject: 'New free case evaluation request – Cabrera-Torres Law Firm',
+      submit_actions: ['email'], email_subject: 'New free case evaluation request – Cabrera Torres Law Firm',
       success_message: 'Thank you, we’ll be in touch shortly.',
       column_gap: px(16), row_gap: px(16),
-      field_text_color: C.ink, field_background_color: C.ivory, field_border_color: 'rgba(191,142,116,0.35)', field_border_width: box(1), field_border_radius: box(0),
+      field_text_color: C.ink, field_background_color: C.ivory, field_border_color: 'rgba(74,54,47,0.15)', field_border_width: box(1), field_border_radius: box(0),
       ...L.typo('field_typography', 14, 300, { lh: 1.5 }),
       label_color: C.inkMuted, ...L.typo('label_typography', 13, 300, { lh: 1.5 }),
-      button_background_color: C.rose, button_text_color: C.white, button_background_hover_color: C.roseHover, button_hover_color: C.white,
-      button_border_radius: box(0), ...L.typo('button_typography', 12, 600, { lh: 1.2, ls: 0.16, transform: 'uppercase' }), button_text_padding: box(16, 34, 16, 34),
+      button_background_color: C.rose, button_text_color: C.wood, button_background_hover_color: C.roseHover, button_hover_color: C.ivory,
+      button_border_radius: box(0), ...L.typo('button_typography', 13, 600, { lh: 1.2, ls: 0.2, transform: 'uppercase' }), button_text_padding: box(18, 34, 18, 34),
       success_message_color: C.roseDeep,
       custom_css: `selector .elementor-field-textual { padding: 14px 16px; min-height: 0; }
 selector .elementor-field-textual::placeholder { color: #A69D8D; opacity: 1; }
@@ -197,7 +193,7 @@ const articleUrl = (a) => `/${a.slug}/`;
 const blogCard = (m, a, o = {}) => container({
   content_width: 'full', flex_direction: 'column', flex_gap: gap(o.gap ?? 16), padding: box(0),
   html_tag: 'a', link: L.link(articleUrl(a)),
-  custom_css: 'selector:hover h3 { color: #8E5F47 !important; }\nselector h3 { transition: color .2s; }',
+  custom_css: 'selector:hover h3 { color: #4A362F !important; }\nselector h3 { transition: color .2s; }',
 }, [
   image(m[ART_IMG[a.src]], { settings: { custom_css: 'selector img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; display: block; }' } }),
   eyebrow(o.meta ? `${a.tag} · ${a.read}` : a.tag, C.roseDeep, 'left', { size: 12, ls: 0.24 }),

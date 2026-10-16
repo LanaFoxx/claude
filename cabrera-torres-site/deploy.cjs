@@ -22,13 +22,17 @@ const m = {
   post_car: md('what-to-do-after-a-car-crash-georgia.webp'), post_dog: md('georgia-dog-bite-law-explained.webp'), post_fall: md('store-slip-and-fall-premises-liability.webp'),
   jenDesk: md('jennifer-cabrera-torres-attorney-office-portrait.webp'), jenDeskCut: md('jennifer-cabrera-torres-attorney-desk-cutout.webp'), jenCreamCut: md('jennifer-cabrera-torres-cream-dress-cutout.webp'), jenArms: md('jennifer-cabrera-torres-attorney-black-dress.webp'),
   jenSuit: md('jennifer-cabrera-torres-cabrera-torres-law-founder.webp'), jenDress: md('jennifer-cabrera-torres-managing-partner.webp'),
+  // homepage-v2
+  logoDark: md('cabrera-torres-law-firm-logo-dark.webp'), logoLight: md('cabrera-torres-law-firm-logo-light.webp'),
+  office: md('cabrera-torres-law-firm-office-norcross-ga.webp'), heroJen: md('jennifer-cabrera-torres-personal-injury-lawyer-hero.webp'),
+  storyJen: md('jennifer-cabrera-torres-attorney-story-portrait.webp'), litJen: md('jennifer-cabrera-torres-trial-attorney-georgia.webp'),
 };
 
 const PAGE_SLUGS = ['home', 'about', 'meet-jennifer', 'practice-areas', 'case-results', 'testimonials', 'faq', 'blog', 'contact'];
 const PAGES = PAGE_SLUGS.map((s) => require(`./pages/${s}.cjs`));
 const POSTS = require('./posts.cjs');
-// Main menu order (labels from the design).
-const MENU = [['About', 'about'], ['Jennifer', 'meet-jennifer'], ['Practice Areas', 'practice-areas'], ['Results', 'case-results'], ['FAQ', 'faq'], ['Resources', 'blog'], ['Contact', 'contact']];
+// Main menu order (labels from homepage-v2). A leading "/" means a custom link instead of a page.
+const MENU = [['About', 'about'], ['Practice Areas', 'practice-areas'], ['Results', 'case-results'], ['Our Approach', '/#approach'], ['Testimonials', 'testimonials'], ['Contact', 'contact']];
 
 const args = process.argv.slice(2);
 const selected = (def) => args.includes(def.slug) || args.includes(def.type === 'post' ? 'posts' : 'pages');
@@ -76,7 +80,8 @@ async function rebuildMenu(p, menuId, pageIds) {
     for (const it of old) await fetch(`/wp-json/wp/v2/menu-items/${it.id}?force=true`, { method: 'DELETE', headers: h });
     const out = [];
     for (const [i, [title, id]] of items.entries()) {
-      const r = await fetch('/wp-json/wp/v2/menu-items', { method: 'POST', headers: h, body: JSON.stringify({ title, menus: menuId, menu_order: i + 1, status: 'publish', type: 'post_type', object: 'page', object_id: id }) });
+      const item = typeof id === 'string' ? { type: 'custom', url: id } : { type: 'post_type', object: 'page', object_id: id };
+      const r = await fetch('/wp-json/wp/v2/menu-items', { method: 'POST', headers: h, body: JSON.stringify({ title, menus: menuId, menu_order: i + 1, status: 'publish', ...item }) });
       out.push((await r.json()).url);
     }
     return out;
@@ -189,7 +194,7 @@ async function setYoast(p, seo) {
   if (want('menu')) {
     await p.goto(`${SITE}/wp-admin/`, { waitUntil: 'domcontentloaded' });
     const ids = [];
-    for (const [label, slug] of MENU) ids.push([label, (await ensurePage(p, PAGES.find((d) => d.slug === slug))).id]);
+    for (const [label, slug] of MENU) ids.push([label, slug.startsWith('/') ? slug : (await ensurePage(p, PAGES.find((d) => d.slug === slug))).id]);
     console.log('menu:', (await rebuildMenu(p, prep.menu.id, ids)).join(' '));
   }
   fs.writeFileSync(process.env.PREP.replace('prep.json', 'deployed.json'), JSON.stringify(out, null, 1));

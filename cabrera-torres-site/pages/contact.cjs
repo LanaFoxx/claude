@@ -7,13 +7,13 @@ const { C, px, box, band, stack, grid, text, widget, image } = L;
 module.exports = {
   slug: 'contact', title: 'Contact',
   seo: {
-    title: 'Contact Us | Free Case Evaluation | Cabrera-Torres Law Firm',
+    title: 'Contact Us | Free Case Evaluation | Cabrera Torres Law Firm',
     description: 'Injured? Call Jen at 678-730-0061 or request a free, confidential case evaluation. 1770 Indian Trail Lilburn Rd NW, Norcross, GA 30093.',
     focus: 'free case evaluation Norcross',
   },
   build: (m) => [
     P.pageHero(m, heroes.contact),
-    band(C.white, [
+    band(C.light, [
       grid([
         stack([
           P.phoneDetail(32), P.emailDetail(),
