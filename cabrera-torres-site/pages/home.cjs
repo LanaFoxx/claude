@@ -65,10 +65,11 @@ selector > .e-con-inner { position: relative; z-index: 1; }
     content_width: 'full', flex_direction: 'column', flex_justify_content: 'flex-end', flex_align_items: 'flex-start', flex_align_items_tablet: 'center', flex_align_items_mobile: 'center',
     padding: box(40, 0, 0, 0), padding_tablet: box(0), padding_mobile: box(0), min_height: px(560), min_height_tablet: px(0), min_height_mobile: px(0),
   }, [
-    image(m.heroJen, {
+    // Jen (Markup): the design's retouched hero photo was "too AI / too exaggerated"; use her untouched cream-dress photo.
+    image(m.jenCreamCut, {
       align: 'left', settings: {
         align_tablet: 'center', align_mobile: 'center',
-        custom_css: 'selector img { display: block; width: 100%; max-width: 520px; height: auto; max-height: 700px; object-fit: contain; object-position: bottom; filter: drop-shadow(0 30px 50px rgba(0,0,0,.55)); }\n@media (max-width: 1024px) { selector img { max-width: 360px; } }',
+        custom_css: 'selector img { display: block; width: 100%; max-width: 640px; height: auto; max-height: 620px; object-fit: contain; object-position: bottom; filter: drop-shadow(0 30px 50px rgba(0,0,0,.55)); }\n@media (max-width: 1024px) { selector img { max-width: 360px; } }',
       },
     }),
   ]),
@@ -100,7 +101,8 @@ const practice = (m) => band(C.ivory, [
 ], { pad: [96, 100], width: 1320, anchor: 'practice' });
 
 /* ---------------------------------------------------------- results band */
-const RESULTS = [['$4.8M', 'Truck Accident'], ['$2.3M', 'Car Accident'], ['$1.5M', 'Serious Injury'], ['$1.2M', 'Wrongful Death']];
+// Jen (Markup): the design's figures were examples; show her actual results (the first four on the Case Results page).
+const RESULTS = require('../content.json').results.slice(0, 4).map((r) => [r.amount, r.type]);
 const results = () => band(C.wood, [
   grid([
     grid(RESULTS.map(([amt, type]) => stack([
