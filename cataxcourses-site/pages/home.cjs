@@ -45,7 +45,7 @@ function hero(m) {
       stack([
         pill('CTEC &amp; IRS Approved Tax Education', { settings: { hide_mobile: 'hidden-mobile' } }),
         heading('<span class="ctc-thin ctc-block" style="font-size:.6em">California Tax Education</span><span class="ctc-block ctc-hero-big" style="font-size:1.25em;line-height:1.05;margin-top:6px">Made Simple<span class="ctc-gold">.</span></span>',
-          'h1', [77, 64, 46], C.navy, 'left', { lh: 1.05, settings: { _margin: box(18, 0, 22, 0) } }),
+          'h1', [77, 64, 46], C.navy, 'left', { lh: 1.05, settings: { _margin: box(18, 0, 22, 0), _margin_mobile: box(0, 0, 22, 0) } }),
         text('California Tax Courses is a CTEC Approved Continuing Education and Qualifying Education Provider. Our courses are offered online and can be accessed from a computer or smartphone, 24/7 anywhere you have access to the internet! We offer a 20 hour continuing education course for those who want to renew their CTEC registration, and a 60 Hour Qualifying Education Course for those who want to become a registered tax preparer.',
           { maxW: 560, settings: { _margin: box(0, 0, 30, 0) } }),
         row([
@@ -64,7 +64,7 @@ function hero(m) {
         }),
         badges(m, [40, 48, 44, 56, 28], { hide_mobile: 'hidden-mobile' }),
       ], { gap: 28, settings: { _z_index: 1, _flex_order_mobile: 'start' } }),
-    ], { cols: [2, 1, 1], gap: 56, gapM: 40, align: 'center' }),
+    ], { cols: [2, 1, 1], gap: 56, gapM: 0, align: 'center' }),
   ], { pad: [88, 96], cls: 'ctc-dots-cream', settings: { padding_mobile: box(29, 20, 63, 20) } });
 }
 
