@@ -44,7 +44,10 @@ TABLE_CSS = ("<style>"
   ".tcf-tbody>.tcf-trow:first-child{border-top:0}.tcf-tbody>.tcf-trow:nth-child(even){background:#F7F9FA}.tcf-tbody>.tcf-trow:hover{background:#F3F5E6}"
   ".tcf-trow [data-label=Price]>div:first-child{font-size:18px!important}.tcf-trow [data-label=Price]>div+div{font-size:10.5px!important;letter-spacing:.08em!important;white-space:nowrap;margin-top:3px!important}.tcf-thead>span:last-child,.tcf-cell-offer{justify-self:end;text-align:right}"
   ".tcf-trow [data-label]::before{display:none}"
-  "@media (max-width:1100px){.tcf-thead{display:none}"
+  ".tcf-sortbar{display:none}.tcf-thead button:hover{color:#fff!important}"
+  "@media (max-width:1100px){.tcf-thead{display:none}.tcf-sortbar{display:flex;justify-content:flex-end;padding:12px 18px;background:#0B2E40}"
+  ".tcf-sortbar label{display:flex;align-items:center;gap:10px;font:700 12px 'DM Sans',Manrope,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.85)}"
+  ".tcf-sortbar select{font:600 15px 'DM Sans',Manrope,sans-serif;letter-spacing:0;text-transform:none;color:#0B2E40;background:#fff;border:0;border-radius:999px;padding:7px 12px}"
   ".tcf-trow{grid-template-columns:repeat(3,minmax(0,1fr)) auto;gap:14px 18px;padding:20px 22px;align-items:start}.tcf-trow .tcf-cell-offer{align-self:center}"
   ".tcf-trow .tcf-cell-provider{grid-column:1 / -1}"
   ".tcf-trow [data-label]::before{content:attr(data-label);display:block;font:700 11px 'DM Sans',Manrope,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#8A9AA3;margin-bottom:5px}}"
@@ -66,7 +69,10 @@ def comparison_table(body):
     pstart = '<div style="min-width:0"><div style="font:{{ p.priceWeight }} 20px/1.2 Manrope,sans-serif'
     b = chunk.index(pstart); price = chunk[b:chunk.index('</sc-if></div>', b) + len('</sc-if></div>')]
     price = price.replace('<div style="min-width:0">', '<div style="min-width:0" data-label="Price">', 1).replace('Manrope,sans-serif', "'DM Sans',Manrope,sans-serif")
-    head = ('<div class="tcf-thead" role="row"><span>Provider</span><span>{{ courseShort }} price</span><span>Format</span><span>Coupon</span><span></span></div>')
+    sbtn = 'style="all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;font:inherit;letter-spacing:inherit;text-transform:inherit;color:inherit"'
+    head = ('<div class="tcf-sortbar"><label>Sort <select value="{{ sort }}" onchange="{{ setSort }}"><option value="name">Name A–Z</option><option value="name_desc">Name Z–A</option><option value="price">Price: low to high</option><option value="price_desc">Price: high to low</option></select></label></div>'
+            '<div class="tcf-thead" role="row"><button type="button" onclick="{{ sortName }}" title="Sort by name" ' + sbtn + '>Provider <span style="opacity:{{ nameOn }}">{{ nameArrow }}</span></button>'
+            '<button type="button" onclick="{{ sortPrice }}" title="Sort by price" ' + sbtn + '>Price <span style="opacity:{{ priceOn }}">{{ priceArrow }}</span></button><span>Format</span><span>Coupon</span><span></span></div>')
     row = ('<div class="tcf-trow" role="row">'
            '<div class="tcf-cell-provider" style="display:flex;align-items:center;gap:16px;min-width:0">' + logo +
            '<div style="min-width:0"><a href="{{ p.schoolUrl }}" style="display:block;font:700 17px/1.25 \'DM Sans\',Manrope,sans-serif;color:#0B2E40;text-wrap:pretty" data-hv="9">{{ p.name }}</a>'
@@ -92,6 +98,8 @@ def comparison_table(body):
 
 def seo_tweaks(name, body):
     body = comparison_table(body)
+    body = body.replace('<option value="name">Name A–Z</option><option value="price">Price: low to high</option>',
+                        '<option value="name">Name A–Z</option><option value="name_desc">Name Z–A</option><option value="price">Price: low to high</option><option value="price_desc">Price: high to low</option>')
     # Anchor every provider row so structured data (and shared links) can point at it.
     body = re.sub(r'(as="p" hint-placeholder-count="\d+">\s*<div )', r'\1id="provider-{{ p.id }}" ', body)
     # Provider name links to its school page only when one is live; otherwise plain text.
@@ -235,6 +243,14 @@ def code_for(d):
                    r"schoolUrl: p.schoolUrl ? p.schoolUrl + '?course=' + \1 : '', hasSchool: !!p.schoolUrl, noSchool: !p.schoolUrl,", c)
     assert 'School Page.dc.html' not in c, 'unhandled school link'
     c = c.replace("await import('./providers.js')", 'await TCF.data()')
+    # Sorting: reverse orders + click-to-sort table headings (Provider A–Z/Z–A, Price low/high).
+    if 'const sorters = {' in c:
+        c = c.replace('const sorters = {', "const sorters = { name_desc: (a, b) => b.name.localeCompare(a.name), price_desc: (a, b) => (b.sortable ?? -1) - (a.sortable ?? -1) || a.name.localeCompare(b.name),", 1)
+        c = c.replace('setSort: ev => this.setState({ sort: ev.target.value }),',
+                      "setSort: ev => this.setState({ sort: ev.target.value }), sortName: () => this.setState({ sort: this.state.sort === 'name' ? 'name_desc' : 'name' }), sortPrice: () => this.setState({ sort: this.state.sort === 'price' ? 'price_desc' : 'price' }), "
+                      "nameArrow: sort === 'name' ? '\\u2191' : sort === 'name_desc' ? '\\u2193' : '\\u2195', priceArrow: sort === 'price' ? '\\u2191' : sort === 'price_desc' ? '\\u2193' : '\\u2195', "
+                      "nameOn: /^name/.test(sort) ? 1 : .45, priceOn: /^price/.test(sort) ? 1 : .45,", 1)
+        assert 'sortName' in c and 'name_desc' in c
     c = c.replace("'Progress Tracking', ", '')  # not offered as a feature anywhere on the site
     c = c.replace("'Practice Exams', ", '')  # no study-feature options on the site
     c = c.replace("'Published package price'", "'Course bundle price'")
