@@ -133,8 +133,8 @@ def seo_tweaks(name, body):
              'Coupon codes and sales are recorded only when found on the provider&#8217;s site or supplied by the provider, with the date checked. Expired offers are removed.',
              '<span style="font:700 15px ui-monospace,Menlo,monospace;color:#7E9330;background:#F3F5E6;border:1.5px dashed #95AB3B;border-radius:6px;padding:4px 9px">SAVE10</span>' + cap('Coupon code')),
             ('Course format', '<rect x="3" y="4" width="18" height="12" rx="2"></rect><path d="M8 20h8M12 16v4"></path><path d="m10.5 8 3.5 2-3.5 2z"></path>',
-             'Online, in-person, self-paced and live classes, plus printed books, PDFs and online videos, shown once confirmed by the provider or our review.',
-             pill('Online') + pill('Self-paced') + pill('Online videos')),
+             'Online, in-person and live classes, plus printed books, PDFs and online videos, shown once confirmed by the provider or our review.',
+             pill('Online') + pill('PDF') + pill('Online videos')),
             ('Student support', '<path d="M4 14v-2a8 8 0 0 1 16 0v2"></path><rect x="3" y="14" width="4" height="6" rx="1.5"></rect><rect x="17" y="14" width="4" height="6" rx="1.5"></rect>',
              'Phone, email and live chat support, shown only when verified, so you know how to get help before you enroll.',
              pill('Phone support') + pill('Email support') + pill('Live chat')),
@@ -216,6 +216,9 @@ def seo_tweaks(name, body):
         g = '.tcf-scope.tcf-scope:not(.tcf-mobile) [style*="grid-template-columns:56px minmax(0,1fr) 200px 180px 120px"]'
         body = ('<style>@media (max-width:760px){' + g + '>.tcf-rowhead{width:auto!important;height:auto!important;grid-column:1 / -1!important}'
                 + g + '>*:not(.tcf-rowhead){grid-column:1 / -1!important}' + g + ' .tcf-rowhead>div>div:first-child{width:44px!important;height:44px!important}' + g + '>.tcf-rowfoot{flex-direction:column;align-items:flex-start!important;gap:10px!important}}</style>') + body
+    # No self-paced descriptions in page copy.
+    body = body.replace('Confirm whether the course is self-paced or scheduled, how lessons and exams work', 'Confirm how lessons are scheduled, how exams work')
+    body = body.replace('Self-paced courses are commonly finished in a few weeks of part-time study.', 'Online courses are commonly finished in a few weeks of part-time study.')
     # Primary keywords in the course-page H1s.
     h1 = {
         'CTEC 20 Hour Course': ('20-Hour CE</span> course before you renew.', '20 Hour CTEC Course</span> before you renew.'),
@@ -254,9 +257,12 @@ def code_for(d):
     c = c.replace("'Progress Tracking', ", '')  # not offered as a feature anywhere on the site
     c = c.replace("'Practice Exams', ", '')  # no study-feature options on the site
     c = c.replace("'Published package price'", "'Course bundle price'")
+    # Self-paced is not used to describe or organize schools anywhere on the site.
+    c = c.replace("'Online Self-Study', ", "'Online Course', ")
+    c = c.replace("'online_course_available', 'self_paced', ", "'online_course_available', ").replace("['self_paced', 'Self-paced'], ", '')
     # FAQ page: answer the "best CTEC course" question (also in faqs-ld.json).
     c = c.replace("{ eyebrow: 'Using this site', title: 'Comparing providers', items: [",
-                  "{ eyebrow: 'Using this site', title: 'Comparing providers', items: [\n        { q: 'What is the best CTEC course?', a: 'The best CTEC course is the one that fits how you learn and what you need: the price, whether you want self-paced online study or live classes, a printed book, PDF or online videos, the support available, and how quickly the school reports your hours to CTEC. Tax Course Finder lists every CTEC-approved provider side by side so you can filter by those features, compare current prices and coupon codes, and go straight to the school’s course page to enroll.' },")
+                  "{ eyebrow: 'Using this site', title: 'Comparing providers', items: [\n        { q: 'What is the best CTEC course?', a: 'The best CTEC course is the one that fits how you learn and what you need: the price, whether you want online study or live classes, a printed book, PDF or online videos, the support available, and how quickly the school reports your hours to CTEC. Tax Course Finder lists every CTEC-approved provider side by side so you can filter by those features, compare current prices and coupon codes, and go straight to the school’s course page to enroll.' },")
     # no device-access options (mobile / desktop) on the site
     c = c.replace(", 'mobile_friendly']", ']').replace("['mobile_friendly', 'Mobile friendly'], ", '').replace("'Mobile-Friendly Course', 'Dedicated Mobile App', ", '')
     c = re.sub(r'subInit\(\)\s*\{', 'subInit() { return;', c)  # newsletter popup has no backend: keep it off

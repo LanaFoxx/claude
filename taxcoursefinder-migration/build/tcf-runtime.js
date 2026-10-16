@@ -156,10 +156,10 @@
         expiresFmt: o.expires ? 'Expires ' + new Date(o.expires + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '' }); });
   }
   function sortablePrice(pr) { return pr && pr.status === 'VERIFIED' && /^package/.test(pr.type) && pr.current != null ? pr.current : null; }
-  var FEATURES = [["Delivery / Format", [["online_course_available", "Online Course"], ["in_person_course_available", "In-Person Course"], ["self_paced", "Self-Paced"], ["live_instruction_available", "Live Instruction"]]], ["Course Materials", [["physical_book_available", "Physical Book"], ["digital_book_available", "PDF"], ["downloadable_materials", "Downloadable Materials"], ["video_lessons_available", "Online Videos"]]], ["Learning Format", [["text_based_course_available", "Text-Based Course"], ["audio_content_available", "Audio Content"]]], ["Support", [["phone_support", "Phone Support"], ["email_support", "Email Support"], ["live_chat_support", "Live Chat Support"]]]];
+  var FEATURES = [["Delivery / Format", [["online_course_available", "Online Course"], ["in_person_course_available", "In-Person Course"], ["live_instruction_available", "Live Instruction"]]], ["Course Materials", [["physical_book_available", "Physical Book"], ["digital_book_available", "PDF"], ["downloadable_materials", "Downloadable Materials"], ["video_lessons_available", "Online Videos"]]], ["Learning Format", [["text_based_course_available", "Text-Based Course"], ["audio_content_available", "Audio Content"]]], ["Support", [["phone_support", "Phone Support"], ["email_support", "Email Support"], ["live_chat_support", "Live Chat Support"]]]];
   function hasFeature(p, name) { return !!(p.features && p.features[name]); }
   // Short labels for the feature pills on each directory row (one neutral style), in filter-panel order.
-  var PILLS = [['online_course_available', 'Online'], ['in_person_course_available', 'In-person'], ['self_paced', 'Self-paced'], ['live_instruction_available', 'Live classes'],
+  var PILLS = [['online_course_available', 'Online'], ['in_person_course_available', 'In-person'], ['live_instruction_available', 'Live classes'],
     ['physical_book_available', 'Printed book'], ['digital_book_available', 'PDF'], ['downloadable_materials', 'Downloadable'], ['video_lessons_available', 'Online videos'],
     ['text_based_course_available', 'Text-based'], ['audio_content_available', 'Audio'],
     ['phone_support', 'Phone support'], ['email_support', 'Email support'], ['live_chat_support', 'Live chat']];
@@ -169,7 +169,7 @@
     });
   }
   // Same pills grouped for the listing footer: Format / Materials / Learning / Support.
-  var PILL_GROUPS = [['Format', ['online_course_available', 'in_person_course_available', 'self_paced', 'live_instruction_available']],
+  var PILL_GROUPS = [['Format', ['online_course_available', 'in_person_course_available', 'live_instruction_available']],
     ['Materials', ['physical_book_available', 'digital_book_available', 'downloadable_materials', 'video_lessons_available']],
     ['Learning', ['text_based_course_available', 'audio_content_available']],
     ['Support', ['phone_support', 'email_support', 'live_chat_support']]];
@@ -188,7 +188,7 @@
     var l1 = m.slice(0, 2).join(' + ');
     if (!l1 && f.online_course_available) l1 = 'online course';
     if (!l1 && f.in_person_course_available) l1 = 'in-person';
-    var l2 = f.self_paced && f.live_instruction_available ? 'Self-paced or live' : f.self_paced ? 'Self-paced' : f.live_instruction_available ? 'Live classes' : (f.in_person_course_available && l1 !== 'in-person' ? 'In-person option' : '');
+    var l2 = f.live_instruction_available ? 'Live classes' : (f.in_person_course_available && l1 !== 'in-person' ? 'In-person option' : '');
     if (l1) l1 = l1.charAt(0).toUpperCase() + l1.slice(1);
     return { l1: l1 || l2 || 'Not confirmed', l2: l1 ? l2 : '', known: !!(l1 || l2) };
   }

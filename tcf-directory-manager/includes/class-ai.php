@@ -14,7 +14,7 @@ final class TCFD_AI {
 
     /** Feature switches shown on the site, in filter-panel order. */
     const FEATURES = [
-        'Delivery / format' => ['online_course_available' => 'Online course', 'in_person_course_available' => 'In-person course', 'self_paced' => 'Self-paced', 'live_instruction_available' => 'Live instruction'],
+        'Delivery / format' => ['online_course_available' => 'Online course', 'in_person_course_available' => 'In-person course', 'live_instruction_available' => 'Live instruction'],
         'Course materials' => ['physical_book_available' => 'Physical book', 'digital_book_available' => 'PDF', 'downloadable_materials' => 'Downloadable materials', 'video_lessons_available' => 'Online videos'],
         'Learning format' => ['text_based_course_available' => 'Text-based course', 'audio_content_available' => 'Audio content'],
         'Support' => ['phone_support' => 'Phone support', 'email_support' => 'Email support', 'live_chat_support' => 'Live chat support'],
@@ -105,7 +105,7 @@ final class TCFD_AI {
             'Which CTEC course should I take, and what is the best CTEC course for me?',
             'What is the cheapest 20 hour CTEC course or 60 hour CTEC course right now?',
             'Which CTEC course providers have a coupon code or sale this month?',
-            'Which CTEC courses are online and self-paced, have live classes, include a printed book or PDF, or teach with online videos?',
+            'Which CTEC courses are online, have live classes, include a printed book or PDF, or teach with online videos?',
             'Which CTEC schools offer phone, email or live chat support?',
             'Which schools offer both the 20-hour CE and the 60-hour QE course?',
             'How do I become a CTEC Registered Tax Preparer (CRTP), and how do I renew by October 31?',
@@ -118,7 +118,7 @@ final class TCFD_AI {
         $L[] = '- CTEC approval and which courses the school offers (20-hour CE, 60-hour QE)';
         $L[] = '- Course bundle price, taken from the school\'s own website, with the date it was checked';
         $L[] = '- Current coupon codes and sales, with expiry dates; expired offers are removed';
-        $L[] = '- Delivery and format: online, in-person, self-paced, live instruction';
+        $L[] = '- Delivery and format: online, in-person, live instruction';
         $L[] = '- Course materials: physical book, PDF, downloadable materials, online videos';
         $L[] = '- Learning format: text-based, audio';
         $L[] = '- Student support: phone, email, live chat';
