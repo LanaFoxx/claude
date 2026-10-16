@@ -1,14 +1,22 @@
 /**
- * CTC Elementor preview (temporary, remove at go-live).
- * While Oxygen is active it renders every page itself. For PRIVATE pages that use an
- * Elementor page template, render Elementor's canvas instead, wrapped in the draft
- * header/footer library templates. Public pages are never affected.
+ * CTC Elementor preview + page-by-page go-live (temporary, remove when Oxygen is switched off).
+ * While Oxygen is active it renders every page itself. This bypasses Oxygen and renders Elementor
+ * canvas, wrapped in the Elementor header/footer library templates, for:
+ *   - PRIVATE pages that use an Elementor page template (previews, admins only), and
+ *   - pages whose IDs are listed in the option `ctc_live_pages` (pages switched live one at a time,
+ *     e.g. the homepage). Every other page keeps rendering with Oxygen.
+ * Header/footer template IDs: options `ctc_preview_header` / `ctc_preview_footer`.
  */
 function ctc_is_elementor_preview_page() {
-	if ( ! is_singular( 'page' ) ) return false;
+	if ( ! is_singular( 'page' ) && ! is_front_page() ) return false;
 	$id = get_queried_object_id();
-	if ( 'private' !== get_post_status( $id ) && ! isset( $_GET['elementor-preview'] ) ) return false;
-	return in_array( get_post_meta( $id, '_wp_page_template', true ), array( 'elementor_canvas', 'elementor_header_footer' ), true );
+	if ( ! $id ) return false;
+	$tpl = get_post_meta( $id, '_wp_page_template', true );
+	if ( ! in_array( $tpl, array( 'elementor_canvas', 'elementor_header_footer' ), true ) ) return false;
+	if ( 'builder' !== get_post_meta( $id, '_elementor_edit_mode', true ) ) return false;
+	$live = array_map( 'intval', (array) get_option( 'ctc_live_pages', array() ) );
+	if ( in_array( $id, $live, true ) ) return true;
+	return 'private' === get_post_status( $id ) || isset( $_GET['elementor-preview'] );
 }
 add_filter( 'template_include', function ( $template ) {
 	if ( ! defined( 'ELEMENTOR_PATH' ) || ! ctc_is_elementor_preview_page() ) return $template;
