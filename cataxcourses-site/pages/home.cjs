@@ -36,7 +36,7 @@ const badges = (m, h) => row([
   image(m.irs, { height: [h[1], h[1], Math.round(h[1] * 0.8)], settings: { width: auto, _element_width: 'auto' } }),
   image(m.trustpilot, { height: [h[2], h[2], Math.round(h[2] * 0.8)], link: URL.trustpilot, settings: { width: auto, _element_width: 'auto' } }),
   image(m.bca, { height: [h[3], h[3], Math.round(h[3] * 0.8)], link: URL.bca, settings: { width: auto, _element_width: 'auto' } }),
-], { gap: h[4], rowGap: 20, justify: 'center' });
+], { gap: h[4], rowGap: 20, justify: 'center', cls: 'ctc-badge-slider' });
 
 function hero(m) {
   return band(C.cream, [
@@ -61,7 +61,7 @@ function hero(m) {
           preload: 'auto', aspect_ratio: '32', poster: { url: m.laptopPoster.url, id: m.laptopPoster.id }, ...wcls('ctc-laptop'),
         }),
         badges(m, [40, 48, 44, 56, 28]),
-      ], { gap: 28, settings: { _z_index: 1 } }),
+      ], { gap: 28, settings: { _z_index: 1, _flex_order_mobile: 'start' } }),
     ], { cols: [2, 1, 1], gap: 56, gapM: 40, align: 'center' }),
   ], { pad: [88, 96], cls: 'ctc-dots-cream' });
 }
@@ -126,12 +126,12 @@ function credentials(m) {
 }
 
 function students(m) {
-  const frame = (img) => container({ content_width: 'full', padding: box(10), background_background: 'classic', background_color: C.white, border_radius: box(14) }, [
+  const frame = (img) => container({ content_width: 'full', padding: box(10), padding_mobile: box(5), background_background: 'classic', background_color: C.white, border_radius: box(14) }, [
     image(img, { settings: { image_border_radius: box(8), width: px(100, '%') } }),
   ]);
   return band(C.navy, [
     eyebrow('Our Students', C.gold, 'center'),
-    H2('<span class="ctc-thin ctc-block">Our students showcasing their official</span><span class="ctc-block">California Tax Courses Coffee Mug!</span>', C.white, 'center', { settings: { _margin: box(12, 0, 22, 0) } }),
+    H2('<span class="ctc-thin ctc-block">Our students showcasing their official</span><span class="ctc-block">California Tax Courses Coffee Mug!</span>', C.white, 'center', { sizes: [55, 44, 30], settings: { _margin: box(12, 0, 22, 0) } }),
     text('Real CTEC-registered preparers across California who completed their course with us.', { align: 'center', color: C.muted, size: [24, 21, 19], lh: 1.6, maxW: 720 }),
     grid(m.mugs.map(frame), { cols: [4, 2, 2], gap: 20, gapM: 12, settings: { margin: box(48, 0, 0, 0), _margin: box(48, 0, 0, 0) } }),
     stack([

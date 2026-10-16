@@ -7,6 +7,12 @@ const STYLE = `<style id="ctc-design">
 body:has(.ctc-header){background:#fff;margin:0;color:${C.navy};font-family:${BODY},system-ui,sans-serif}
 .elementor:has(> .ctc-header){position:sticky;top:calc(var(--wp-admin--admin-bar--height,0px) - 41px);z-index:100}
 .ctc-thin{font-weight:300}.ctc-gold{color:${C.gold}}.ctc-block{display:block}
+@media (max-width:767px){
+ .ctc-badge-slider{flex-wrap:nowrap!important;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;justify-content:flex-start!important;gap:0!important}
+ .ctc-badge-slider::-webkit-scrollbar{display:none}
+ .ctc-badge-slider>.elementor-widget{flex:0 0 100%!important;width:100%!important;max-width:100%!important;scroll-snap-align:center;display:flex;justify-content:center}
+ .ctc-badge-slider>.elementor-widget img{height:56px!important;width:auto!important;max-width:80%;object-fit:contain}
+}
 @media (max-width:767px){.ctc-hero-big{white-space:nowrap;font-size:min(1.25em,13.5vw)!important}.ctc-fit-line{white-space:nowrap;font-size:min(1em,7.6vw)}}
 .ctc-header a,.ctc-page a,.ctc-footer a{text-decoration:none}
 .ctc-page a[href^="tel:"],.ctc-footer a[href^="tel:"]{white-space:nowrap}
@@ -85,7 +91,11 @@ body:has(.ctc-header){background:#fff;margin:0;color:${C.navy};font-family:${BOD
 document.addEventListener('click',function(e){var b=e.target.closest('.ctc-burger,.ctc-menu-close');if(b){e.preventDefault();var open=document.body.classList.toggle('ctc-menu-open');if(!open)closeAll();return;}
 var t=e.target.closest('.ctc-dd>.ctc-navlink a');if(t&&mob.matches){e.preventDefault();var d=t.closest('.ctc-dd'),was=d.classList.contains('ctc-dd-open');closeAll();if(!was)d.classList.add('ctc-dd-open');return;}
 if(e.target.closest('.ctc-navlinks a')&&!e.target.closest('.ctc-menu-close')){document.body.classList.remove('ctc-menu-open');closeAll();}});
-window.addEventListener('pageshow',function(){document.body.classList.remove('ctc-menu-open');closeAll();});})();</script>`;
+window.addEventListener('pageshow',function(){document.body.classList.remove('ctc-menu-open');closeAll();});
+/* mobile badge sliders: one logo at a time, auto-advance, pause while touched */
+function initSliders(){document.querySelectorAll('.ctc-badge-slider').forEach(function(el){if(el._ctc)return;el._ctc=1;var hold=false;el.addEventListener('touchstart',function(){hold=true;},{passive:true});el.addEventListener('touchend',function(){setTimeout(function(){hold=false;},3000);});
+setInterval(function(){if(hold||!window.matchMedia('(max-width:767px)').matches||el.scrollWidth<=el.clientWidth+2)return;var n=Math.round(el.scrollLeft/el.clientWidth)+1,c=el.children.length;el.scrollTo({left:(n>=c?0:n)*el.clientWidth,behavior:'smooth'});},2800);});}
+if(document.readyState!=='loading')initSliders();else document.addEventListener('DOMContentLoaded',initSliders);})();</script>`;
 
 const navLink = (label, url) => widget('heading', {
   title: label, header_size: 'span', link: link(url), title_color: C.navy,
