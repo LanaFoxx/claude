@@ -7,7 +7,9 @@ const STYLE = `<style id="ctc-design">
 body:has(.ctc-header){background:#fff;margin:0;color:${C.navy};font-family:${BODY},system-ui,sans-serif}
 .elementor:has(> .ctc-header){position:sticky;top:calc(var(--wp-admin--admin-bar--height,0px) - 41px);z-index:100}
 .ctc-thin{font-weight:300}.ctc-gold{color:${C.gold}}.ctc-block{display:block}
+@media (max-width:767px){.ctc-hero-big{white-space:nowrap;font-size:min(1.25em,13.5vw)!important}.ctc-fit-line{white-space:nowrap;font-size:min(1em,7.6vw)}}
 .ctc-header a,.ctc-page a,.ctc-footer a{text-decoration:none}
+.ctc-page a[href^="tel:"],.ctc-footer a[href^="tel:"]{white-space:nowrap}
 .ctc-header .elementor-widget-text-editor p:last-child,.ctc-page .elementor-widget-text-editor p:last-child,.ctc-footer .elementor-widget-text-editor p:last-child{margin-bottom:0}
 .ctc-header .elementor-widget-text-editor p,.ctc-page .elementor-widget-text-editor p,.ctc-footer .elementor-widget-text-editor p{margin-top:0}
 .ctc-dots-cream{background-image:radial-gradient(#e6e1d2 1px,transparent 1px)!important;background-size:22px 22px!important}
@@ -19,7 +21,8 @@ body:has(.ctc-header){background:#fff;margin:0;color:${C.navy};font-family:${BOD
 .ctc-caret{font-size:12px;color:${C.goldText};margin-left:6px}
 .ctc-dd{position:relative}
 .ctc-dd-menu{position:absolute!important;top:100%;left:-16px;padding-top:12px!important;display:none!important;z-index:30;min-width:270px}
-.ctc-dd:hover>.ctc-dd-menu,.ctc-dd:focus-within>.ctc-dd-menu{display:flex!important}
+@media (min-width:1025px){.ctc-dd:hover>.ctc-dd-menu,.ctc-dd:focus-within>.ctc-dd-menu{display:flex!important}}
+.ctc-menu-phone,.ctc-menu-logo,.ctc-menu-close{display:none!important}
 .ctc-dd-card{border-top-color:${C.gold}!important}
 .ctc-dd-list .elementor-icon-list-item>a{display:block!important;padding:12px 14px;border-radius:8px}
 .ctc-dd-list .elementor-icon-list-item>a:hover{background:${C.sand}}
@@ -27,17 +30,35 @@ body:has(.ctc-header){background:#fff;margin:0;color:${C.navy};font-family:${BOD
 .ctc-burger .elementor-icon{cursor:pointer}
 @media (max-width:1024px){
  .ctc-burger{display:block!important}
+ .ctc-nav>.e-con-inner{justify-content:space-between!important}
+ .ctc-nav>.e-con-inner>.e-con{margin-left:auto!important;justify-content:flex-end!important}
  .ctc-navlinks{display:none!important}
  .ctc-nav{position:relative}.ctc-nav .e-con:not(.ctc-nav){position:static}
- body.ctc-menu-open .ctc-navlinks{display:flex!important;position:absolute!important;top:100%;left:0;right:0;flex-direction:column!important;align-items:stretch!important;gap:4px!important;background:#fff;padding:12px 20px 20px!important;border-bottom:1px solid ${C.light};box-shadow:0 20px 40px -20px rgba(28,35,51,.35)}
- body.ctc-menu-open .ctc-navlinks .ctc-navlink{padding:10px 0;border-bottom:1px solid ${C.sand}}
- .ctc-dd-menu{position:static!important;display:flex!important;padding-top:0!important;min-width:0}
- .ctc-dd-menu>.e-con-inner,.ctc-dd-card{border:0!important;box-shadow:none!important;padding:0 0 6px 12px!important}
+ body.ctc-menu-open{overflow:hidden}
+ body.ctc-menu-open .ctc-navlinks{display:flex!important;position:fixed!important;top:var(--wp-admin--admin-bar--height,0px);left:0;right:0;bottom:0;z-index:9999;width:auto!important;flex-direction:column!important;flex-wrap:nowrap!important;justify-content:space-between!important;align-items:center!important;gap:24px!important;background:#fff;padding:28px 24px 110px!important;overflow-y:auto}
+ .ctc-navlinks .ctc-menu-close{position:absolute!important;top:22px;right:20px;width:auto!important}
+ .ctc-menu-close .elementor-icon{cursor:pointer}
+ body.ctc-menu-open .ctc-menu-items{flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:6px!important;margin:auto 0;width:100%!important}
+ body.ctc-menu-open .ctc-menu-items .ctc-navlink{padding:10px 0;text-align:center}
+ body.ctc-menu-open .ctc-menu-items .ctc-navlink .elementor-heading-title{font-size:24px!important}
+ .ctc-dd{align-items:center;width:100%!important}
+ .ctc-dd-list .elementor-icon-list-item{justify-content:center!important;text-align:center}
+ .ctc-dd-list .elementor-icon-list-item>a{justify-content:center;padding:9px 14px!important}
+ .ctc-dd-menu{position:static!important;display:none!important;padding-top:0!important;min-width:0}
+ .ctc-dd.ctc-dd-open>.ctc-dd-menu{display:flex!important}
+ .ctc-caret{display:inline-block;transition:transform .2s}.ctc-dd.ctc-dd-open .ctc-caret{transform:rotate(180deg)}
+ .ctc-nav-phone{display:none!important}
+ body.ctc-menu-open .ctc-navlinks .ctc-menu-phone{display:block!important}
+ body.ctc-menu-open .ctc-navlinks .ctc-menu-logo{display:block!important}
+ body.ctc-menu-open .ctc-navlinks .ctc-menu-close{display:block!important}
+ .ctc-dd-menu>.e-con-inner,.ctc-dd-card{border:0!important;box-shadow:none!important;padding:0 0 6px 0!important;background:transparent!important}
 }
 /* course cards, articles, CTAs */
 .ctc-checks .elementor-icon-list-item{align-items:flex-start!important}
 .ctc-checks .elementor-icon-list-icon{flex:none;width:20px;height:20px;border-radius:50%;background:${C.gold};display:inline-flex!important;align-items:center;justify-content:center;margin-top:4px}
-.ctc-checks .elementor-icon-list-icon svg{width:11px!important;height:11px!important;fill:#fff!important}
+.ctc-checks .elementor-icon-list-icon{padding:0!important;margin-right:0!important;line-height:1!important}
+.ctc-checks .elementor-icon-list-icon i,.ctc-checks .elementor-icon-list-icon svg{font-size:11px!important;width:11px!important;height:11px!important;line-height:1!important;color:#fff!important;fill:#fff!important;margin:0!important;position:static!important;display:block;text-align:center}
+.ctc-checks .elementor-icon-list-text{padding-left:10px!important}
 .ctc-pricebar,.ctc-article,.ctc-cta{transition:background-color .2s}
 .ctc-pricebar:hover,.ctc-article:hover{background-color:${C.sandHover}!important}
 .ctc-cta-gold:hover{background-color:${C.goldHover}!important}.ctc-cta-navy:hover{background-color:${C.navy2}!important}
@@ -48,18 +69,23 @@ body:has(.ctc-header){background:#fff;margin:0;color:${C.navy};font-family:${BOD
 @media (max-width:767px){.ctc-article-arrow{display:none}.ctc-nowrap-d p{white-space:normal!important}}
 .ctc-nowrap-d p{white-space:nowrap}
 @media (max-width:1024px){.ctc-nowrap-d p{white-space:normal}}
-/* FAQ accordion */
-.ctc-faq .elementor-accordion-item{background:${C.navy2};border:1px solid ${C.navyLine}!important;border-radius:10px;overflow:hidden;margin-bottom:10px}
-.ctc-faq .elementor-accordion-item+.elementor-accordion-item{border-top:1px solid ${C.navyLine}!important}
-.ctc-faq .elementor-tab-title{display:flex!important;flex-direction:row-reverse;justify-content:space-between;align-items:center;gap:16px}
-.ctc-faq .elementor-accordion-icon{flex:none;width:26px!important;height:26px;border-radius:50%;background:${C.gold};display:inline-flex!important;align-items:center;justify-content:center;float:none!important;font-size:12px!important;line-height:1!important}
-.ctc-faq .elementor-accordion-icon span{display:inline-flex!important;width:auto!important}
-.ctc-faq .elementor-tab-title:not(.elementor-active) .elementor-accordion-icon-opened,.ctc-faq .elementor-tab-title.elementor-active .elementor-accordion-icon-closed{display:none!important}
-.ctc-faq .elementor-accordion-icon svg{width:12px!important;height:12px!important;fill:${C.navy}!important}
+/* FAQ (toggle widget: all closed by default) */
+.ctc-faq .elementor-toggle-item{background:${C.navy2};border:1px solid ${C.navyLine}!important;border-radius:10px;overflow:hidden;margin-bottom:10px!important}
+.ctc-faq .elementor-tab-title{display:flex!important;flex-direction:row-reverse;justify-content:space-between;align-items:center;gap:16px;border:0!important}
+.ctc-faq .elementor-tab-title a{color:inherit}
+.ctc-faq .elementor-toggle-icon{flex:none;width:26px!important;height:26px;border-radius:50%;background:${C.gold};display:inline-flex!important;align-items:center;justify-content:center;float:none!important;font-size:12px!important;line-height:1!important;margin:0!important}
+.ctc-faq .elementor-toggle-icon span{display:inline-flex!important;width:auto!important}
+.ctc-faq .elementor-tab-title:not(.elementor-active) .elementor-toggle-icon-opened,.ctc-faq .elementor-tab-title.elementor-active .elementor-toggle-icon-closed{display:none!important}
+.ctc-faq .elementor-toggle-icon i,.ctc-faq .elementor-toggle-icon svg{font-size:12px!important;width:12px!important;height:12px!important;color:${C.navy}!important;fill:${C.navy}!important}
+.ctc-faq .elementor-tab-content{border:0!important}
 .ctc-faq .elementor-tab-content p{margin:0 0 12px}.ctc-faq .elementor-tab-content p:last-child{margin:0}
 .ctc-faq .elementor-tab-content a{color:${C.gold};word-break:break-word}
 </style>
-<script>document.addEventListener('click',function(e){var b=e.target.closest('.ctc-burger');if(!b)return;e.preventDefault();document.body.classList.toggle('ctc-menu-open');});</script>`;
+<script>(function(){var mob=window.matchMedia('(max-width:1024px)');function closeAll(){document.querySelectorAll('.ctc-dd.ctc-dd-open').forEach(function(d){d.classList.remove('ctc-dd-open');});}
+document.addEventListener('click',function(e){var b=e.target.closest('.ctc-burger,.ctc-menu-close');if(b){e.preventDefault();var open=document.body.classList.toggle('ctc-menu-open');if(!open)closeAll();return;}
+var t=e.target.closest('.ctc-dd>.ctc-navlink a');if(t&&mob.matches){e.preventDefault();var d=t.closest('.ctc-dd'),was=d.classList.contains('ctc-dd-open');closeAll();if(!was)d.classList.add('ctc-dd-open');return;}
+if(e.target.closest('.ctc-navlinks a')&&!e.target.closest('.ctc-menu-close')){document.body.classList.remove('ctc-menu-open');closeAll();}});
+window.addEventListener('pageshow',function(){document.body.classList.remove('ctc-menu-open');closeAll();});})();</script>`;
 
 const navLink = (label, url) => widget('heading', {
   title: label, header_size: 'span', link: link(url), title_color: C.navy,
@@ -111,19 +137,32 @@ function header(m) {
         content_width: 'full', width: auto, flex_direction: 'row', flex_align_items: 'center', flex_gap: gap(28), flex_gap_tablet: gap(14),
         padding: box(0), flex_wrap: 'nowrap',
       }, [
+        // Desktop: inline nav row. Mobile (<=1024px): full-screen overlay – logo top, items middle, call button bottom.
         container({ content_width: 'full', width: auto, flex_direction: 'row', flex_align_items: 'center', flex_gap: gap(28), padding: box(0), flex_wrap: 'nowrap', ...cls('ctc-navlinks') }, [
-          navLink('Home', URL.home),
-          dropdown('CTEC Courses', URL.c60, [
-            ['CTEC 60 Hour Qualifying Education', URL.c60], ['CTEC 20 Hour Continuing Education', URL.c20],
-            ['CTEC 15 Hour In Lieu of Experience', URL.c15], ['California Tax Law - 5 Hours', URL.caLaw],
-            ['20 Hour Book Add-On', URL.book20], ['60 Hour Book Add-On', URL.book60],
+          image(m.logo, { width: 200, link: URL.home, align: 'center', cls: 'ctc-menu-logo', settings: { _element_width: 'initial', _element_custom_width: px(200) } }),
+          widget('icon', { selected_icon: { value: 'fas fa-times', library: 'fa-solid' }, link: link('#close'), primary_color: C.navy, size: px(28), ...wcls('ctc-menu-close') }),
+          container({ content_width: 'full', width: auto, flex_direction: 'row', flex_align_items: 'center', flex_gap: gap(28), padding: box(0), flex_wrap: 'nowrap', ...cls('ctc-menu-items') }, [
+            navLink('Home', URL.home),
+            dropdown('CTEC Courses', URL.c60, [
+              ['CTEC 60 Hour Qualifying Education', URL.c60], ['CTEC 20 Hour Continuing Education', URL.c20],
+              ['CTEC 15 Hour In Lieu of Experience', URL.c15], ['California Tax Law - 5 Hours', URL.caLaw],
+              ['20 Hour Book Add-On', URL.book20], ['60 Hour Book Add-On', URL.book60],
+            ]),
+            dropdown('Info', URL.become, [
+              ['How to Become a CTEC Registered Tax Preparer', URL.become], ['How To Renew Your CTEC Registration', URL.renew],
+              ['Frequently Asked Questions', URL.faq], ['Tax News', URL.news], ['Need A Website?', URL.website],
+            ]),
+            navLink('Help', URL.contact),
+            navLink('Login', URL.login),
           ]),
-          dropdown('Info', URL.become, [
-            ['How to Become a CTEC Registered Tax Preparer', URL.become], ['How To Renew Your CTEC Registration', URL.renew],
-            ['Frequently Asked Questions', URL.faq], ['Tax News', URL.news], ['Need A Website?', URL.website],
-          ]),
-          navLink('Help', URL.contact),
-          navLink('Login', URL.login),
+          widget('button', {
+            text: `${PHONE.label} →`, link: link(PHONE.tel), align: 'center',
+            ...typo('typography', HEAD, [20, 20, 20], 700, { lh: 1.2, ls: 0 }), border_radius: box(12),
+            text_padding: box(16, 28, 16, 28),
+            button_text_color: C.white, background_background: 'classic', background_color: C.gold,
+            hover_color: C.white, button_background_hover_background: 'classic', button_background_hover_color: C.goldHover,
+            ...wcls('ctc-menu-phone'),
+          }),
         ]),
         widget('button', {
           text: `${PHONE.label} →`, link: link(PHONE.tel),
@@ -131,7 +170,7 @@ function header(m) {
           text_padding: box(10, 18, 10, 18), text_padding_mobile: box(9, 12, 9, 12),
           button_text_color: C.white, background_background: 'classic', background_color: C.gold,
           hover_color: C.white, button_background_hover_background: 'classic', button_background_hover_color: C.goldHover,
-          _flex_size: 'none',
+          _flex_size: 'none', ...wcls('ctc-nav-phone'),
         }),
         widget('icon', {
           selected_icon: { value: 'fas fa-bars', library: 'fa-solid' }, link: link('#menu'), primary_color: C.navy, size: px(26),

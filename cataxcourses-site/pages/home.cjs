@@ -44,7 +44,7 @@ function hero(m) {
     grid([
       stack([
         pill('CTEC &amp; IRS Approved Tax Education'),
-        heading('<span class="ctc-thin ctc-block" style="font-size:.6em">California Tax Education</span><span class="ctc-block" style="font-size:1.25em;line-height:1.05;margin-top:6px">Made Simple<span class="ctc-gold">.</span></span>',
+        heading('<span class="ctc-thin ctc-block" style="font-size:.6em">California Tax Education</span><span class="ctc-block ctc-hero-big" style="font-size:1.25em;line-height:1.05;margin-top:6px">Made Simple<span class="ctc-gold">.</span></span>',
           'h1', [77, 64, 46], C.navy, 'left', { lh: 1.05, settings: { _margin: box(18, 0, 22, 0) } }),
         text('California Tax Courses is a CTEC Approved Continuing Education and Qualifying Education Provider. Our courses are offered online and can be accessed from a computer or smartphone, 24/7 anywhere you have access to the internet! We offer a 20 hour continuing education course for those who want to renew their CTEC registration, and a 60 Hour Qualifying Education Course for those who want to become a registered tax preparer.',
           { maxW: 560, settings: { _margin: box(0, 0, 30, 0) } }),
@@ -75,7 +75,7 @@ function courseCard(c) {
   }, [
     container({ content_width: 'full', flex_direction: 'column', padding: box(60, 60, 0, 60), padding_mobile: box(36, 24, 0, 24), flex_gap: gap(0), _flex_size: 'grow' }, [
       widget('icon', { selected_icon: { value: c.icon, library: 'fa-solid' }, primary_color: C.gold, size: px(c.iconSize), size_mobile: px(Math.round(c.iconSize * 0.6)),
-        _position: 'absolute', _offset_orientation_h: 'end', _offset_x_end: px(40), _offset_orientation_v: 'start', _offset_y: px(16), _z_index: 0, ...wcls('ctc-deco ctc-o18') }),
+        _position: 'absolute', _offset_orientation_h: 'end', _offset_x_end: px(40), _offset_orientation_v: 'start', _offset_y: px(16), _z_index: 0, hide_mobile: 'hidden-mobile', ...wcls('ctc-deco ctc-o18') }),
       eyebrow(c.kind, C.goldText, 'left', { size: 16, ls: 0.12 }),
       heading(`${c.bold} <span class="ctc-thin">Hour Course</span>`, 'h3', [40, 36, 30], C.navy, 'left', { lh: 1.1, ls: -0.01, link: c.url, settings: { _margin: box(8, 0, 0, 0) } }),
       text(c.tagline, { size: [21, 20, 18], lh: 1.5, settings: { _margin: box(12, 0, 0, 0) } }),
@@ -102,7 +102,7 @@ function courses() {
     row([
       stack([
         eyebrow('CTEC Courses', C.gold),
-        H2('<span class="ctc-thin">Online. Self-paced.</span><br>Reported within 24 hours.', C.white, 'left', { settings: { _margin: box(12, 0, 0, 0) } }),
+        H2('<span class="ctc-thin ctc-block">Online. Self-paced.</span><span class="ctc-block ctc-fit-line">Reported within 24 hours.</span>', C.white, 'left', { settings: { _margin: box(12, 0, 0, 0) } }),
       ], { settings: { width: auto, width_mobile: px(100, '%') } }),
       text(`Questions before enrolling? Call us at <a href="${PHONE.tel}"><strong>${PHONE.label}</strong></a>`, {
         color: C.light, linkColor: C.gold, linkHover: C.goldHover, size: [18, 17, 16], lh: 1.4,
@@ -117,7 +117,7 @@ function credentials(m) {
   return band(C.white, [
     stack([
       eyebrow('Credentials', C.goldText, 'center'),
-      H2('<span class="ctc-thin">School</span> Credentials &amp; Reviews', C.navy, 'center', { lh: 1.05, settings: { _margin: box(12, 0, 16, 0) } }),
+      H2('<span class="ctc-thin ctc-block">School Credentials &amp;</span><span class="ctc-block">Reviews</span>', C.navy, 'center', { lh: 1.05, settings: { _margin: box(12, 0, 16, 0) } }),
       text('California Tax Courses is a CTEC &amp; IRS Approved Education Provider. We are also a Proud Member of the Business Consumer Alliance and TrustPilot.', { align: 'center' }),
     ], { maxW: 820, align: 'center', settings: { margin: box(0, 'auto', 48, 'auto'), _margin: box(0, 0, 48, 0) } }),
     container({ content_width: 'full', padding: box(40, 0, 40, 0), border_border: 'solid', border_width: box(1, 0, 1, 0), border_color: C.line }, [badges(m, [60, 68, 64, 68, 64])]),
@@ -175,11 +175,11 @@ function faq() {
         H2('<span class="ctc-thin">Frequently Asked</span> Questions', C.white, 'left', { settings: { _margin: box(12, 0, 18, 0) } }),
         text(`Still have a question? Call <br><a href="${PHONE.tel}"><strong>${PHONE.label}</strong></a>, <br>Monday – Friday, 9am – 4pm PST.`, { color: C.muted, linkColor: C.gold, linkHover: C.goldHover, size: [20, 19, 18], lh: 1.6 }),
       ]),
-      widget('accordion', {
+      widget('toggle', {
         tabs: FAQS.map(([q, ps]) => ({ _id: L.id(), tab_title: q, tab_content: ps.map((p) => `<p>${p}</p>`).join('') })),
         selected_icon: { value: 'fas fa-plus', library: 'fa-solid' }, selected_active_icon: { value: 'fas fa-minus', library: 'fa-solid' },
         title_html_tag: 'h3', icon_align: 'right', faq_schema: '',
-        border_width: px(0), title_background: C.navy2, title_color: C.white, tab_active_color: C.white,
+        border_width: px(0), space_between: px(10), title_background: C.navy2, title_color: C.white, tab_active_color: C.white,
         ...typo('title_typography', BODY, [21, 20, 18], 700, { lh: 1.4 }), title_padding: box(18, 22, 18, 22),
         icon_color: C.navy, icon_active_color: C.navy, icon_space: px(0),
         content_background_color: C.navy2, content_color: C.light, ...typo('content_typography', BODY, [20, 19, 17], 400, { lh: 1.65 }), content_padding: box(0, 22, 22, 22),
@@ -194,7 +194,7 @@ function finalCta() {
     stack([
       eyebrow('Get Started', C.goldText, 'center'),
       H2('<span class="ctc-thin ctc-block">Ready to start?</span>Enroll Today &amp; Save', C.navy, 'center', { sizes: [60, 48, 38], lh: 1.05, settings: { _margin: box(14, 0, 18, 0) } }),
-      text(`Online, self-paced, CTEC &amp; IRS approved. Questions before enrolling? Call <a href="${PHONE.tel}"><strong>${PHONE.label}</strong></a>.`, { align: 'center', size: [21, 20, 18], cls: 'ctc-nowrap-d', settings: { _margin: box(0, 0, 36, 0) } }),
+      text(`Online, self-paced, CTEC &amp; IRS approved. Questions before enrolling? <span style="white-space:nowrap">Call <a href="${PHONE.tel}"><strong>${PHONE.label}</strong></a>.</span>`, { align: 'center', size: [21, 20, 18], cls: 'ctc-nowrap-d', settings: { _margin: box(0, 0, 36, 0) } }),
       row([
         ctaCard('Need to renew?', '20 Hour CE Course →', URL.c20, 'navy', { smallSize: 16, bigSize: 22 }),
         ctaCard('Becoming a preparer?', '60 Hour QE Course →', URL.c60, 'gold', { smallSize: 16, bigSize: 22 }),
