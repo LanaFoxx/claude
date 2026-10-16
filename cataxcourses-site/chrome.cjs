@@ -14,10 +14,10 @@ body:has(.ctc-header){background:#fff;margin:0;color:${C.navy};font-family:${BOD
  .ctc-badge-slider>.elementor-widget img{width:auto!important;max-width:250px!important;object-fit:contain}
  /* equal visual size: wide logos shorter, square Alliance taller */
  .ctc-badge-slider>.elementor-widget:nth-child(1) img{height:48px!important}
- .ctc-badge-slider>.elementor-widget:nth-child(2) img{height:120px!important}
- .ctc-badge-slider>.elementor-widget:nth-child(3) img{height:108px!important}
- .ctc-badge-slider>.elementor-widget:nth-child(4) img{height:124px!important}
- .ctc-badge-slider{min-height:128px;align-items:center!important}
+ .ctc-badge-slider>.elementor-widget:nth-child(2) img{height:90px!important}
+ .ctc-badge-slider>.elementor-widget:nth-child(3) img{height:81px!important}
+ .ctc-badge-slider>.elementor-widget:nth-child(4) img{height:93px!important}
+ .ctc-badge-slider{min-height:100px;align-items:center!important}
 }
 @media (max-width:767px){.ctc-hero-big{white-space:nowrap;font-size:min(1.25em,13.5vw)!important}.ctc-fit-line{white-space:nowrap;font-size:min(1em,7.6vw)}}
 .ctc-header a,.ctc-page a,.ctc-footer a{text-decoration:none}
