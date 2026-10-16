@@ -66,17 +66,24 @@ def comparison_table(body):
     pstart = '<div style="min-width:0"><div style="font:{{ p.priceWeight }} 20px/1.2 Manrope,sans-serif'
     b = chunk.index(pstart); price = chunk[b:chunk.index('</sc-if></div>', b) + len('</sc-if></div>')]
     price = price.replace('<div style="min-width:0">', '<div style="min-width:0" data-label="Price">', 1).replace('Manrope,sans-serif', "'DM Sans',Manrope,sans-serif")
-    head = ('<div class="tcf-thead" role="row"><span>Provider</span><span>{{ courseShort }} price</span><span>Format</span><span>Reports to CTEC</span><span>Offer</span></div>')
+    head = ('<div class="tcf-thead" role="row"><span>Provider</span><span>{{ courseShort }} price</span><span>Format</span><span>Coupon</span><span></span></div>')
     row = ('<div class="tcf-trow" role="row">'
            '<div class="tcf-cell-provider" style="display:flex;align-items:center;gap:16px;min-width:0">' + logo +
            '<div style="min-width:0"><a href="{{ p.schoolUrl }}" style="display:block;font:700 17px/1.25 \'DM Sans\',Manrope,sans-serif;color:#0B2E40;text-wrap:pretty" data-hv="9">{{ p.name }}</a>'
            '<div style="font-size:13px;color:#5A6E78;margin-top:3px;line-height:1.4">{{ p.offeringLabel }} · {{ p.domain }}{{ p.ctecLine }}</div></div></div>'
            + price +
            '<div data-label="Format" style="min-width:0;line-height:1.35"><div style="font-size:15px;color:{{ p.formatColor }}">{{ p.formatL1 }}</div><div style="font-size:14px;color:#8A9AA3;margin-top:2px">{{ p.formatL2 }}</div></div>'
-           '<div data-label="Reports to CTEC" style="min-width:0;font-size:15px;font-weight:{{ p.reportWeight }};color:{{ p.reportColor }}">{{ p.reportText }}</div>'
+           '<div data-label="Coupon" style="min-width:0">'
+           '<sc-if value="{{ p.hasCoupon }}"><div style="display:flex;flex-direction:column;gap:5px;align-items:flex-start">'
+           '<span data-tcf-copy="{{ p.coupon }}" role="button" tabindex="0" title="Click to copy code" style="cursor:pointer;display:inline-block;border:1.5px dashed #95AB3B;color:#7E9330;font:700 15px ui-monospace,Menlo,monospace;padding:4px 10px;border-radius:6px;background:#F3F5E6">{{ p.coupon }}</span>'
+           '<span data-tcf-copy-label="" style="font:700 10.5px \'DM Sans\',Manrope,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#8A9AA3;white-space:nowrap">Click to copy</span></div></sc-if>'
+           '<sc-if value="{{ p.hasSale }}"><div style="display:flex;flex-direction:column;gap:5px;align-items:flex-start">'
+           '<span style="display:inline-flex;align-items:center;gap:6px;font:700 14px/1 \'DM Sans\',Manrope,sans-serif;color:#5E6F22;background:#F3F5E6;border:1px solid #C9D58F;border-radius:999px;padding:6px 11px;white-space:nowrap"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12V4a1 1 0 0 1 1-1h8l9 9-9 9-9-9z"></path><circle cx="7.5" cy="7.5" r="1.5"></circle></svg>On sale</span>'
+           '<span style="font:700 10.5px \'DM Sans\',Manrope,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#8A9AA3;white-space:nowrap">No code needed</span></div></sc-if>'
+           '<sc-if value="{{ p.noCouponOrSale }}"><div style="font-size:15px;color:#B5BECB">No current coupon</div></sc-if></div>'
                       '<div class="tcf-cell-offer" style="justify-self:end"><sc-if value="{{ p.hasWebsite }}"><a href="{{ p.courseLink }}" target="_blank" rel="noopener" data-tcf-copy-go="{{ p.couponCode }}" '
            'style="display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:140px;font:700 15px \'DM Sans\',Manrope,sans-serif;border-radius:999px;white-space:nowrap;text-decoration:none;'
-           'background:#95AB3B;color:#fff;padding:11px 18px;border:1.5px solid #95AB3B;transition:background .15s,border-color .15s" data-hv="4"><span data-tcf-offer-label="">{{ p.offerLabel }}</span></a></sc-if>'
+           'background:#95AB3B;color:#fff;padding:11px 18px;border:1.5px solid #95AB3B;transition:background .15s,border-color .15s" data-hv="4"><span data-tcf-offer-label="">View course</span></a></sc-if>'
            '<sc-if value="{{ p.noWebsite }}"><div style="font-size:15px;color:#8A9AA3">No website listed</div></sc-if></div>'
            '</div>')
     table = (TABLE_CSS + '<div class="tcf-table" role="table" aria-label="CTEC course providers compared">' + head +

@@ -212,7 +212,7 @@
         reportText: rep || 'Not confirmed', reportColor: rep ? '#7E9330' : '#8A9AA3', reportWeight: rep ? 700 : 500,
         ratingText: gOk ? '\u2605 ' + g.rating.toFixed(1) : 'Not verified', ratingCount: gOk && g.count != null ? '(' + g.count.toLocaleString() + ')' : '', ratingColor: gOk ? '#0B2E40' : '#8A9AA3',
         courseLink: (pr && pr.sourceUrl) || p.website, offerLabel: coupon ? coupon.code + ' \u00b7 View' : (sale ? 'On sale \u00b7 View' : 'View course'),
-        couponCode: coupon ? coupon.code : '', ctecLine: p.ctecNumber ? ' \u00b7 CTEC #' + p.ctecNumber : '' });
+        couponCode: coupon ? coupon.code : '', noCouponOrSale: !coupon && !sale, ctecLine: p.ctecNumber ? ' \u00b7 CTEC #' + p.ctecNumber : '' });
     });
   }
   TCF.mapProvider = mapProvider; TCF.decorate = decorate;
