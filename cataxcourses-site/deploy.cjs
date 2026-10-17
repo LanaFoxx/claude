@@ -11,7 +11,8 @@ const { chromium } = require('playwright');
 const fs = require('fs');
 const path = require('path');
 const chrome = require('./chrome.cjs');
-const home = require('./pages/home.cjs');
+const mod = (name) => require(`./pages/${name}.cjs`);
+const home = mod('home');
 
 const SITE = 'https://cataxcourses.com';
 const PREP = process.env.PREP;
@@ -37,6 +38,7 @@ function mediaMap() {
     trustpilot: md('ctc-badge-trustpilot.png'), bca: md('ctc-badge-business-consumer-alliance.png'),
     mugs: [1, 2, 3, 4].map((i) => md(`ctc-student-mug-${i}.jpg`)),
     laptopVideo: md('ctc-laptop-animation.mp4'), laptopPoster: md('ctc-laptop-animation-poster.jpg'),
+    file: (f) => md(f),
   };
 }
 
@@ -45,11 +47,13 @@ async function admin(p) {
   if (p.url().includes('wp-login')) throw new Error('Not logged in (refresh STATE)');
 }
 
-async function uploadMedia(p) {
+async function uploadMedia(p, sub) {
   await admin(p);
-  for (const f of FILES) {
+  const dir = sub ? path.join(process.env.MEDIA_DIR, sub) : process.env.MEDIA_DIR;
+  const list = sub ? (fs.existsSync(dir) ? fs.readdirSync(dir).filter((f) => /\.(png|jpe?g|webp|mp4)$/i.test(f)) : []) : FILES;
+  for (const f of list) {
     if (prep.media[f]) continue;
-    const b64 = fs.readFileSync(path.join(process.env.MEDIA_DIR, f)).toString('base64');
+    const b64 = fs.readFileSync(path.join(dir, f)).toString('base64');
     const r = await p.evaluate(async ([f, b64, alt, nonceFn]) => {
       const h = { 'X-WP-Nonce': eval(`(${nonceFn})`)() };
       const slug = f.replace(/\.[a-z0-9]+$/, '');
@@ -57,7 +61,7 @@ async function uploadMedia(p) {
       const hit = ex.find((x) => x.source_url.split('/').pop() === f);
       if (hit) return { id: hit.id, url: hit.source_url, existed: true };
       const bin = Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
-      const type = f.endsWith('.mp4') ? 'video/mp4' : f.endsWith('.jpg') ? 'image/jpeg' : 'image/png';
+      const type = f.endsWith('.mp4') ? 'video/mp4' : /\.jpe?g$/i.test(f) ? 'image/jpeg' : f.endsWith('.webp') ? 'image/webp' : 'image/png';
       const res = await fetch('/wp-json/wp/v2/media', { method: 'POST', headers: { ...h, 'Content-Type': type, 'Content-Disposition': `attachment; filename="${f}"` }, body: bin });
       const j = await res.json();
       if (!j.id) return { error: JSON.stringify(j).slice(0, 300) };
@@ -119,7 +123,8 @@ async function buildChrome(p) {
 async function installSnippet(p) {
   const code = fs.readFileSync(path.join(__dirname, 'wp/preview-snippet.php'), 'utf8')
     .replace('__CTC_HEADER_ID__', String(prep.header || 0)).replace('__CTC_FOOTER_ID__', String(prep.footer || 0))
-    .replace('__CTC_LIVE_PAGES__', (prep.live || []).join(', '));
+    .replace('__CTC_LIVE_PAGES__', (prep.live || []).join(', '))
+    .replace('__CTC_PRODUCT_TEMPLATES__', Object.entries(prep.products || {}).map(([pid, tid]) => `${pid} => ${tid}`).join(', '));
   await admin(p);
   const r = await p.evaluate(async ([code, nonceFn]) => {
     const h = { 'X-WP-Nonce': eval(`(${nonceFn})`)(), 'Content-Type': 'application/json' };
@@ -147,30 +152,47 @@ async function ensurePage(p, slug, title, status) {
 
 const PAGE_SETTINGS = { template: 'elementor_header_footer', hide_title: 'yes', background_background: 'classic', background_color: '#FFFFFF' };
 
-async function buildPreview(p) {
-  const pid = await ensurePage(p, home.slug, home.title, 'private');
-  prep.preview = pid; save();
+async function buildPreview(p, name = 'home') {
+  const M = mod(name);
+  const pid = await ensurePage(p, M.slug, M.title, 'private');
+  prep.previews = { ...(prep.previews || {}), [name]: pid }; if (name === 'home') prep.preview = pid; save();
   await openEditor(p, pid);
-  console.log('preview page', pid, 'elements', await replaceContent(p, home.build(mediaMap()), 'private', PAGE_SETTINGS));
+  console.log('preview', name, pid, 'elements', await replaceContent(p, M.build(mediaMap()), 'private', PAGE_SETTINGS));
+  return pid;
 }
 
-async function liveHome(p) {
-  const pid = home.liveId;
+async function seoSnapshot(p, type, id) {
+  return p.evaluate(async ([type, id, nonceFn]) => {
+    const h = { 'X-WP-Nonce': eval(`(${nonceFn})`)() };
+    const x = await (await fetch(`/wp-json/wp/v2/${type}/${id}?context=edit&_fields=slug,status,link,template,yoast_head_json`, { headers: h })).json();
+    return { slug: x.slug, status: x.status, link: x.link, template: x.template, title: x.yoast_head_json?.title, desc: x.yoast_head_json?.description, canonical: x.yoast_head_json?.canonical };
+  }, [type, id, nonce.toString()]);
+}
+
+async function goLive(p, name) {
+  const M = mod(name);
   await admin(p);
-  // Let the editor preview of page 65 render with Elementor (public view unaffected until it is in the live list).
-  const r = await p.evaluate(async ([pid, nonceFn]) => {
-    const h = { 'X-WP-Nonce': eval(`(${nonceFn})`)(), 'Content-Type': 'application/json' };
-    const before = await (await fetch(`/wp-json/wp/v2/pages/${pid}?context=edit&_fields=slug,status,link,template,yoast_head_json`, { headers: h })).json();
-    const res = await fetch(`/wp-json/wp/v2/pages/${pid}`, { method: 'POST', headers: h, body: JSON.stringify({ template: 'elementor_header_footer', meta: { _elementor_edit_mode: 'builder' } }) });
-    return { before: { slug: before.slug, status: before.status, link: before.link, template: before.template, title: before.yoast_head_json?.title, desc: before.yoast_head_json?.description }, status: res.status };
-  }, [pid, nonce.toString()]);
-  console.log('page 65 before', r);
-  fs.writeFileSync(PREP.replace(/\.json$/, '-home-before.json'), JSON.stringify(r.before, null, 1));
-  await openEditor(p, pid);
-  console.log('homepage elements', await replaceContent(p, home.build(mediaMap()), 'publish', PAGE_SETTINGS));
-  prep.live = [...new Set([...(prep.live || []), pid])]; save();
+  if (M.kind === 'product') {
+    console.log('product before', JSON.stringify(await seoSnapshot(p, 'product', M.liveId)));
+    const tid = await findOrCreateTemplate(p, `CTC Product ${M.liveId} (new design)`);
+    await openEditor(p, tid);
+    console.log('product template', tid, 'elements', await replaceContent(p, M.build(mediaMap()), 'publish'));
+    prep.products = { ...(prep.products || {}), [M.liveId]: tid }; save();
+  } else {
+    const pid = M.liveId;
+    const before = await seoSnapshot(p, 'pages', pid);
+    console.log('page before', JSON.stringify(before));
+    fs.writeFileSync(PREP.replace(/\.json$/, `-${name}-before.json`), JSON.stringify(before, null, 1));
+    // Let the editor preview render with Elementor (public view unaffected until the page is in the live list).
+    await p.evaluate(async ([pid, nonceFn]) => fetch(`/wp-json/wp/v2/pages/${pid}`, { method: 'POST', headers: { 'X-WP-Nonce': eval(`(${nonceFn})`)(), 'Content-Type': 'application/json' }, body: JSON.stringify({ template: 'elementor_header_footer', meta: { _elementor_edit_mode: 'builder' } }) }), [pid, nonce.toString()]);
+    await openEditor(p, pid);
+    console.log('live page', name, pid, 'elements', await replaceContent(p, M.build(mediaMap()), 'publish', PAGE_SETTINGS));
+    prep.live = [...new Set([...(prep.live || []), pid])]; save();
+  }
   await installSnippet(p);
 }
+
+const liveHome = (p) => goLive(p, 'home');
 
 (async () => {
   const steps = process.argv.slice(2);
@@ -179,7 +201,11 @@ async function liveHome(p) {
   const p = await ctx.newPage();
   p.on('pageerror', (e) => { if (!/Failed to fetch/.test(e.message)) console.log('PAGEERR', e.message.slice(0, 200)); });
   for (const s of steps) {
-    if (s === 'media') await uploadMedia(p);
+    const [cmd, arg] = s.split(':');
+    if (cmd === 'media' && arg) await uploadMedia(p, arg);
+    else if (cmd === 'preview' && arg) await buildPreview(p, arg);
+    else if (cmd === 'live' && arg) await goLive(p, arg);
+    else if (s === 'media') await uploadMedia(p);
     else if (s === 'chrome') await buildChrome(p);
     else if (s === 'snippet') await installSnippet(p);
     else if (s === 'preview') await buildPreview(p);

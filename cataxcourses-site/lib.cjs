@@ -26,7 +26,11 @@ const URL = {
   terms: `${SITE}/terms-and-conditions/`, privacy: `${SITE}/privacy-policy/`, refund: `${SITE}/refund-policy/`,
   facebook: 'https://www.facebook.com/cataxcourses', trustpilot: 'https://www.trustpilot.com/review/cataxcourses.com',
   bca: 'https://www.checkbca.org/report/california-tax-courses-156593271/reviews',
+  // Order buttons: add the package and go straight to checkout (WooCommerce product / variation id).
+  order: (id) => `${SITE}/checkout/?add-to-cart=${id}`,
 };
+// Pages designed but not published yet: temporary targets until they go live.
+Object.assign(URL, { TODO_guides: URL.news, TODO_after60: URL.become, TODO_after20: URL.renew, TODO_books: URL.book20, TODO_courses: URL.home });
 
 const id = () => crypto.randomBytes(4).toString('hex').slice(0, 7);
 const px = (size, unit = 'px') => ({ unit, size, sizes: [] });
