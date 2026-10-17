@@ -33,7 +33,7 @@ function cards() {
       ]),
       container({ content_width: 'full', flex_direction: 'column', flex_gap: gap(10), padding: box(36, 32, 36, 32), background_background: 'classic', background_color: C.sand, border_radius: box(16) }, [
         icon('fas fa-clock'), label('Hours of Operation', C.goldText),
-        big('Monday - Friday:<br>9am - 2pm PST', [26, 25, 24], C.navy, 700), note('Saturday - Sunday: Closed', C.gray),
+        big('Monday - Friday:<br>9am - 4pm PST', [26, 25, 24], C.navy, 700), note('Saturday - Sunday: Closed', C.gray),
       ]),
     ], { cols: [4, 2, 1], gap: 20 }),
   ], { pad: [40, 88] });
