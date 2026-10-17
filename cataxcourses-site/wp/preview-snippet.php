@@ -79,3 +79,46 @@ add_action( 'woocommerce_cart_is_empty', function () {
 	if ( wc_get_page_id( 'shop' ) > 0 ) return;
 	echo '<p class="return-to-shop"><a class="button wc-backward" href="' . esc_url( home_url( '/product/ctec-60-hours-course/' ) ) . '">Browse CTEC Courses →</a></p>';
 }, 20 );
+/* ---------------------------------------------------------------- store pages (cart / checkout design) */
+function ctc_store_preview_slug() {
+	$id = get_queried_object_id();
+	return ( $id && is_page() ) ? get_post_field( 'post_name', $id ) : '';
+}
+// Private preview pages render the real cart/checkout shortcodes: let WooCommerce treat them as such.
+add_filter( 'woocommerce_is_checkout', function ( $v ) { return $v || 'new-checkout' === ctc_store_preview_slug(); } );
+add_filter( 'woocommerce_is_cart', function ( $v ) { return $v || 'new-cart' === ctc_store_preview_slug(); } );
+function ctc_checkout_design() {
+	if ( ! function_exists( 'is_checkout' ) || ! is_checkout() || is_wc_endpoint_url() ) return false;
+	return 'new-checkout' === ctc_store_preview_slug() || in_array( (int) wc_get_page_id( 'checkout' ), array_map( 'intval', ctc_live_pages() ), true );
+}
+function ctc_cart_design() {
+	if ( ! function_exists( 'is_cart' ) || ! is_cart() ) return false;
+	return 'new-cart' === ctc_store_preview_slug() || in_array( (int) wc_get_page_id( 'cart' ), array_map( 'intval', ctc_live_pages() ), true );
+}
+add_action( 'wp', function () {
+	if ( ctc_checkout_design() ) {
+		// Payment moves from the order-summary column to its own step card under the student details.
+		remove_action( 'woocommerce_checkout_order_review', 'woocommerce_checkout_payment', 20 );
+		add_action( 'woocommerce_checkout_after_customer_details', function () {
+			$step = ( WC()->cart && WC()->cart->needs_shipping() ) ? 3 : 2;
+			echo '<div class="ctc-card ctc-pay-card"><span class="ctc-step-eyebrow">Step ' . $step . '</span><h3 class="ctc-card-title">Payment</h3>';
+			woocommerce_checkout_payment();
+			echo '</div>';
+		} );
+		add_action( 'woocommerce_after_checkout_billing_form', function () {
+			echo '<p class="ctc-note">Your login details will be emailed to this address immediately after payment.</p>';
+		} );
+		add_action( 'woocommerce_checkout_order_review', function () { // inside #order_review, above the order table
+			echo '<span class="ctc-step-eyebrow">Order Summary</span><h3 class="ctc-card-title">Your Order</h3>';
+		}, 5 );
+		add_action( 'woocommerce_checkout_order_review', function () {
+			echo '<div class="ctc-next"><strong>What happens next</strong><ol><li>Login details emailed instantly</li><li>Start your course right away, 24/7</li><li>Hours reported to CTEC within 24 hours</li></ol><a href="' . esc_url( home_url( '/refund-policy/' ) ) . '">30-day money-back guarantee</a></div>';
+		}, 30 );
+	}
+} );
+add_filter( 'gettext', function ( $t, $orig, $domain ) {
+	if ( 'woocommerce' !== $domain ) return $t;
+	if ( in_array( $orig, array( 'Billing details', 'Billing &amp; Shipping' ), true ) && ctc_checkout_design() ) return 'Student Information';
+	if ( 'Cart totals' === $orig && ctc_cart_design() ) return 'Your Order';
+	return $t;
+}, 20, 3 );
