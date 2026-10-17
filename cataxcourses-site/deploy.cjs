@@ -101,7 +101,7 @@ async function replaceContent(p, elements, status, pageSettings) {
   return r.n;
 }
 
-async function findOrCreateTemplate(p, title) {
+async function findOrCreateTemplate(p, title, type = 'section') {
   await p.goto(`${SITE}/wp-admin/edit.php?post_type=elementor_library&tabs_group=library`, { waitUntil: 'domcontentloaded', timeout: 120000 });
   const existing = await p.evaluate(async ([title, nonceFn]) => {
     const r = await fetch('/wp-json/wp/v2/elementor_library?per_page=100&status=any&search=' + encodeURIComponent(title) + '&_fields=id,title', { headers: { 'X-WP-Nonce': eval(`(${nonceFn})`)() } });
@@ -109,7 +109,7 @@ async function findOrCreateTemplate(p, title) {
   }, [title, nonce.toString()]);
   if (existing) return existing;
   const n = (await p.content()).match(/name="action" value="elementor_new_post">\s*<input type="hidden" name="_wpnonce" value="([0-9a-f]+)"/)[1];
-  await p.goto(`${SITE}/wp-admin/edit.php?action=elementor_new_post&post_type=elementor_library&template_type=section&post_data%5Bpost_title%5D=${encodeURIComponent(title)}&_wpnonce=${n}`, { waitUntil: 'domcontentloaded', timeout: 180000 });
+  await p.goto(`${SITE}/wp-admin/edit.php?action=elementor_new_post&post_type=elementor_library&template_type=${type}&post_data%5Bpost_title%5D=${encodeURIComponent(title)}&_wpnonce=${n}`, { waitUntil: 'domcontentloaded', timeout: 180000 });
   return Number(new URL(p.url()).searchParams.get('post'));
 }
 
@@ -120,6 +120,23 @@ async function buildChrome(p) {
     prep[key] = tid; save();
     await openEditor(p, tid);
     console.log(key, tid, 'elements', await replaceContent(p, els, 'publish'));
+  }
+}
+
+// Elementor Pro Theme Builder header/footer ("Entire Site") for everything not drawn by the snippet's canvas pages:
+// blog posts, 404, search, archives. Same content as the CTC header/footer templates.
+async function buildThemeBuilder(p) {
+  const m = mediaMap();
+  for (const [key, type, title, els] of [['tbHeader', 'header', 'CTC Site Header (Theme Builder)', chrome.header(m)], ['tbFooter', 'footer', 'CTC Site Footer (Theme Builder)', chrome.footer(m)]]) {
+    const tid = await findOrCreateTemplate(p, title, type);
+    prep[key] = tid; save();
+    await openEditor(p, tid);
+    console.log(key, tid, 'elements', await replaceContent(p, els, 'publish'));
+    const r = await p.evaluate(() => new Promise((resolve) => elementorCommon.ajax.addRequest('pro_theme_builder_save_conditions', {
+      data: { conditions: [{ type: 'include', name: 'general', sub_name: '', sub_id: '' }] },
+      success: (d) => resolve({ ok: true, d }), error: (e) => resolve({ ok: false, e: String(e && (e.message || e.statusText || e)) }),
+    })));
+    console.log(key, 'conditions', JSON.stringify(r).slice(0, 200));
   }
 }
 
@@ -224,6 +241,7 @@ async function publishNew(p, name) {
     else if (cmd === 'publish' && arg) await publishNew(p, arg);
     else if (s === 'media') await uploadMedia(p);
     else if (s === 'chrome') await buildChrome(p);
+    else if (s === 'themebuilder') await buildThemeBuilder(p);
     else if (s === 'snippet') await installSnippet(p);
     else if (s === 'preview') await buildPreview(p);
     else if (s === 'live-home') await liveHome(p);

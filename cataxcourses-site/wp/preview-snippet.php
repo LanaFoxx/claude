@@ -6,7 +6,6 @@
  *   - pages listed in ctc_live_pages() (switched live one at a time),
  *   - WooCommerce products listed in ctc_product_templates() (product id => Elementor template id;
  *     the product itself is not modified, its design lives in the template),
- *   - Elementor library templates while they are open in the Elementor editor.
  * Every other page keeps rendering with Oxygen. ROLLBACK: remove the page / product ID below.
  */
 if ( ! defined( 'CTC_HEADER_ID' ) ) define( 'CTC_HEADER_ID', __CTC_HEADER_ID__ );
@@ -24,7 +23,7 @@ function ctc_is_elementor_preview_page() {
 	$id = get_queried_object_id();
 	if ( ! $id ) return false;
 	if ( ctc_product_template_id() ) return true;
-	if ( is_singular( 'elementor_library' ) ) return isset( $_GET['elementor-preview'] ) && current_user_can( 'edit_post', $id );
+	if ( is_singular( 'elementor_library' ) ) return false; // Oxygen is gone: Elementor (and Pro's Theme Builder) preview templates natively
 	if ( ! is_singular( 'page' ) && ! is_front_page() ) return false;
 	$tpl = get_post_meta( $id, '_wp_page_template', true );
 	if ( ! in_array( $tpl, array( 'elementor_canvas', 'elementor_header_footer' ), true ) ) return false;
