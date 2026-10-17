@@ -6,7 +6,7 @@ const { C, HEAD, BODY, PHONE, URL, px, box, gap, auto, link, typo, container, wi
 const STYLE = `<style id="ctc-design">
 body:has(.ctc-header){background:#fff;margin:0;color:${C.navy};font-family:${BODY},system-ui,sans-serif}
 .elementor:has(> .ctc-header){position:sticky;top:calc(var(--wp-admin--admin-bar--height,0px) - 41px);z-index:100}
-.ctc-thin{font-weight:300}.ctc-gold{color:${C.gold}}.ctc-block{display:block}.ctc-thin.ctc-block{line-height:1.2}.ctc-balance{text-wrap:balance}
+.ctc-thin{font-weight:300}.ctc-gold{color:${C.gold}}.ctc-block{display:block;line-height:1.2}.ctc-balance{text-wrap:balance}
 @media (max-width:767px){
  .ctc-badge-slider{flex-wrap:nowrap!important;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;justify-content:flex-start!important;gap:0!important}
  .ctc-badge-slider::-webkit-scrollbar{display:none}
