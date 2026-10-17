@@ -3,12 +3,15 @@
 const L = require('../lib.cjs');
 const { C, HEAD, BODY, PHONE, px, box, gap, auto, typo, container, widget, cls, wcls, band, stack, grid, eyebrow, heading, H2, text, button, pill } = L;
 
-function hero(thin, bold) {
-  return band(C.cream, [
-    pill('Step by Step Guide'),
-    heading(`<span class="ctc-thin ctc-block" style="font-size:.6em">${thin}</span>${bold}<span class="ctc-gold">.</span>`, 'h1', [68, 56, 44], C.navy, 'left',
+// o.label (pill text), o.dark (navy hero, "Next Steps" pages), o.intro (paragraph under the H1).
+function hero(thin, bold, o = {}) {
+  const dark = !!o.dark;
+  return band(dark ? C.navy : C.cream, [
+    pill(o.label || 'Step by Step Guide', dark ? { color: C.gold, bg: C.navy2, settings: { _border_border: 'solid', _border_width: box(1), _border_color: C.navyLine } } : {}),
+    heading(`<span class="ctc-thin ctc-block" style="font-size:.6em">${thin}</span>${bold}<span class="ctc-gold">.</span>`, 'h1', [68, 56, 44], dark ? C.white : C.navy, 'left',
       { lh: 1.05, settings: { _margin: box(18, 0, 0, 0), _element_width: 'initial', _element_custom_width: px(1000), _element_custom_width_tablet: px(100, '%'), _element_custom_width_mobile: px(100, '%') } }),
-  ], { pad: [88, 80], cls: 'ctc-dots-cream' });
+    ...(o.intro ? [text(o.intro, { color: C.muted, size: [19, 19, 18], lh: 1.65, maxW: 820, settings: { _margin: box(24, 0, 0, 0) } })] : []),
+  ], { pad: [88, 80], cls: dark ? 'ctc-dots-dark' : 'ctc-dots-cream' });
 }
 
 // White sub-step row with the gold check circle.
@@ -50,16 +53,17 @@ function steps(list) {
   return band(C.white, [stack(list.map(step), { gap: 20 })]);
 }
 
-function callBand() {
+// o.callThin (light first line of the H2), o.callPlain (no dots, small top padding – "Next Steps" pages).
+function callBand(o = {}) {
   return band(C.white, [
     eyebrow('Questions?', C.goldText, 'center'),
-    H2('<span class="ctc-thin">Have Questions Before Enrolling?</span><br>Call Us Today', C.navy, 'center', { sizes: [52, 44, 36], lh: 1.1, settings: { _margin: box(14, 0, 24, 0) } }),
+    H2(`<span class="ctc-thin">${o.callThin || 'Have Questions Before Enrolling?'}</span><br>Call Us Today`, C.navy, 'center', { sizes: [52, 44, 36], lh: 1.1, settings: { _margin: box(14, 0, 24, 0) } }),
     button(`${PHONE.label} →`, PHONE.tel, { align: 'center', size: [24, 23, 21], pad: box(18, 32, 18, 32) }),
-  ], { pad: [96, 96], align: 'center', cls: 'ctc-dots-white' });
+  ], o.callPlain ? { pad: [8, 96], align: 'center' } : { pad: [96, 96], align: 'center', cls: 'ctc-dots-white' });
 }
 
-const guidePage = ({ thin, bold, steps: list }) => (m) => [container({ content_width: 'full', padding: box(0), flex_gap: gap(0), ...cls('ctc-page') }, [
-  hero(thin, bold), steps(list), callBand(),
+const guidePage = ({ thin, bold, steps: list, ...o }) => (m) => [container({ content_width: 'full', padding: box(0), flex_gap: gap(0), ...cls('ctc-page') }, [
+  hero(thin, bold, o), steps(list), callBand(o),
 ], false)];
 
 module.exports = { guidePage };
