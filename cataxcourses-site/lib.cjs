@@ -31,7 +31,7 @@ const URL = {
   order: (id) => `${SITE}/checkout/?add-to-cart=${id}`,
 };
 // Pages designed but not published yet: temporary targets until they go live.
-Object.assign(URL, { TODO_guides: URL.guides, TODO_after60: `${SITE}/what-to-do-after-completing-the-60-hour-course/`, TODO_after20: `${SITE}/what-to-do-after-completing-the-20-hour-course/`, TODO_books: URL.books, TODO_courses: URL.home });
+Object.assign(URL, { TODO_guides: URL.guides, TODO_after60: URL.become, TODO_after20: URL.renew, TODO_books: URL.books, TODO_courses: URL.home });
 
 const id = () => crypto.randomBytes(4).toString('hex').slice(0, 7);
 const px = (size, unit = 'px') => ({ unit, size, sizes: [] });
