@@ -151,3 +151,16 @@ add_action( 'elementor/page_templates/canvas/before_content', function () {
 add_action( 'elementor/page_templates/canvas/after_content', function () {
 	if ( ctc_is_thankyou() ) ctc_render_template( CTC_FOOTER_ID );
 } );
+// Order links land on checkout with WooCommerce's "… has been added to your cart. [View cart]" notice: drop it (the
+// order summary already shows the item). Other notices (coupon applied, errors) are kept.
+// Runs when checkout renders: the order link's add-to-cart request redirects first, so the notice arrives via the session.
+add_action( 'template_redirect', function () {
+	if ( ! function_exists( 'is_checkout' ) || ! is_checkout() || is_wc_endpoint_url() || ! WC()->session ) return;
+	$notices = wc_get_notices();
+	if ( empty( $notices['success'] ) ) return;
+	$notices['success'] = array_values( array_filter( $notices['success'], function ( $n ) {
+		$text = wp_strip_all_tags( is_array( $n ) ? ( $n['notice'] ?? '' ) : (string) $n );
+		return ! preg_match( '/added to your cart/i', $text );
+	} ) );
+	wc_set_notices( $notices );
+} );

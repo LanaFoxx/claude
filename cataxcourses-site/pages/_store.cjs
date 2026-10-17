@@ -2,7 +2,7 @@
 const L = require('../lib.cjs');
 const { C, HEAD, BODY, px, box, gap, auto, typo, container, widget, cls, band, stack, row, heading } = L;
 
-// Dark dotted hero with an optional navy pill (pillText null = none) and the thin + bold H1 used on every store page.
+// Dark dotted hero with an optional navy pill and thin line (null = none) and the bold H1 used on every store page.
 function storeHero(pillText, thin, bold) {
   return band(C.navy, [
     ...(pillText ? [widget('heading', {
@@ -11,7 +11,7 @@ function storeHero(pillText, thin, bold) {
       _element_width: 'auto', _flex_align_self: 'flex-start', _background_background: 'classic', _background_color: C.navy2,
       _border_border: 'solid', _border_width: box(1), _border_color: C.navyLine, _border_radius: box(999), _padding: box(6, 12, 6, 12),
     })] : []),
-    heading(`<span class="ctc-thin ctc-block" style="font-size:.6em">${thin}</span>${bold}<span class="ctc-gold">.</span>`, 'h1', [68, 56, 44], C.white, 'left',
+    heading(`${thin ? `<span class="ctc-thin ctc-block" style="font-size:.6em">${thin}</span>` : ''}${bold}<span class="ctc-gold">.</span>`, 'h1', [68, 56, 44], C.white, 'left',
       { lh: 1.05, settings: { _margin: box(pillText ? 18 : 0, 0, 0, 0) } }),
   ], { pad: [64, 56], cls: 'ctc-dots-dark' });
 }
