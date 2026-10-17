@@ -9,7 +9,7 @@ const { storeHero, storeBody } = require('./_store.cjs');
 module.exports = {
   slug: 'new-checkout', title: 'Checkout (new design preview)', liveId: 23, kind: 'page',
   build: () => [container({ content_width: 'full', padding: box(0), flex_gap: gap(0), ...cls('ctc-page') }, [
-    storeHero('Checkout', 'Secure enrollment in under two minutes.', 'Checkout'),
-    storeBody(['done', 'current', 'todo'], '[woocommerce_checkout]', 'ctc-checkout'),
+    storeHero(null, 'Secure enrollment in under two minutes.', 'Checkout'),
+    storeBody('[woocommerce_checkout]', 'ctc-checkout'),
   ], false)],
 };

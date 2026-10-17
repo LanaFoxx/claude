@@ -8,7 +8,7 @@ module.exports = {
   slug: 'new-cart', title: 'Cart (new design preview)', liveId: 22, kind: 'page',
   build: () => [container({ content_width: 'full', padding: box(0), flex_gap: gap(0), ...cls('ctc-page') }, [
     storeHero('Cart', 'Review your enrollment before checkout.', 'Your Cart'),
-    storeBody(['current', 'todo', 'todo'], '[woocommerce_cart]', 'ctc-cart', [
+    storeBody('[woocommerce_cart]', 'ctc-cart', [
       text(`Questions before enrolling? Call <a href="${PHONE.tel}"><strong>${PHONE.label}</strong></a>`, { align: 'center', color: C.gray, size: [17, 16, 15], lh: 1.5, settings: { _margin: box(28, 0, 0, 0) } }),
     ]),
   ], false)],
