@@ -481,7 +481,7 @@ selector .elementor-message { color: #F5F2EC; padding: 0 18px 12px; margin: 0; f
     container({ ...gridSettings([3, 3, 1]), content_width: 'full', padding: box(0), grid_gaps: gap(28, 28), grid_gaps_tablet: gap(20, 20), grid_gaps_mobile: gap(36, 36), grid_align_items: 'start', z_index: 1 }, [
       photoCard(m.lakeview, 'Lakeview Rooms', 'Lake-facing, king bed, the sunrise included.', EXT.rooms, { badge: { text: '01' }, alt: 'Lakeview room with a window onto Lake Superior' }),
       photoCard(m.suite, 'Suites', 'Sitting room and a second balcony.', EXT.rooms, { badge: { text: '02' }, alt: 'Suite sitting area at sunrise' }),
-      photoCard(m.placeholder, 'Standard Rooms', 'Classic comfort, steps from The Deck.', EXT.rooms, { badge: { text: '03' }, alt: 'Standard room' }),
+      photoCard(m.standardRoom, 'Standard Rooms', 'Classic comfort, steps from The Deck.', EXT.rooms, { badge: { text: '03' }, alt: 'Standard room' }),
     ]),
   ]);
 
@@ -494,7 +494,7 @@ selector .elementor-message { color: #F5F2EC; padding: 0 18px 12px; margin: 0; f
       photoCard(m.deckDining, 'The Deck', 'Rooftop. Lunch and dinner, weather permitting.', EXT.dine, { dark: true, pos: 'center 55%', alt: 'Blue umbrellas on The Deck', badge: { logo: m.deckBadge, bg: 'rgba(15,33,19,0.88)' } }),
       photoCard(m.lakesideDining, 'Lakeside Dining Room', 'Breakfast and dinner at the water’s edge.', EXT.dine, { dark: true, alt: 'Crab cakes and cocktails by the window of the Lakeside Dining Room' }),
       photoCard(m.lounge, 'The Lounge', 'Cocktails, a proper old fashioned, and the game.', EXT.dine, { dark: true, alt: 'Bartender finishing a martini in The Lounge' }),
-      photoCard(m.placeholder, 'The Creamery', 'Our bar across the street. Tacos, pints, live music.', EXT.dine, { dark: true, alt: 'The Creamery', badge: { logo: m.creameryLogo, bg: 'rgba(245,242,236,0.92)' } }),
+      photoCard(m.creameryPhoto, 'The Creamery', 'Our bar across the street. Tacos, pints, live music.', EXT.dine, { dark: true, alt: 'The Creamery', badge: { logo: m.creameryLogo, bg: 'rgba(245,242,236,0.92)' } }),
     ]),
   ]);
 

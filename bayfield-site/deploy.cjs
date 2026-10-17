@@ -128,7 +128,8 @@ async function setConditions(p, postId, conditions) {
     deckDining: md('bayfield-deck-dining.jpg'), deckBadge: md('bayfield-the-deck-badge.png'), creameryLogo: md('bayfield-creamery-logo.png'),
     lakesideDining: md('bayfield-lakeside-dining-room.jpg'), lounge: md('bayfield-the-lounge.jpg'), marina: md('bayfield-marina-webcam.jpg'),
     eventsLawn: md('bayfield-events-lawn.jpg'),
-    // The design has empty photo slots (Standard Room, The Creamery): Elementor's placeholder until a photo is chosen.
+    standardRoom: md('bayfield-standard-room.jpg'), creameryPhoto: md('bayfield-the-creamery.jpg'),
+    // Elementor's placeholder image, for any slot still waiting on a photo.
     placeholder: { id: '', url: `${SITE}/wp-content/plugins/elementor/assets/images/placeholder.png`, alt: '', source: 'library' },
   };
 
