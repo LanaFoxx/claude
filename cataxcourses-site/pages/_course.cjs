@@ -111,7 +111,10 @@ function pkg(p) {
     heading(p.name, 'h3', [28, 26, 24], C.navy, 'center', { weight: 700, lh: 1.2, ls: 0 }),
     widget('heading', { title: `<span class="ctc-thin ctc-gold">$</span>${p.price}${was}`, header_size: 'span', title_color: C.navy, align: 'center', ...typo('typography', HEAD, [68, 60, 52], 800, { lh: 1, ls: 0 }) }),
     text(p.desc, { align: 'center', size: [19, 18, 17], lh: 1.65, maxW: 520, settings: { _flex_size: 'grow' } }),
-    button(p.label, p.url, { variant: p.variant, align: 'center', size: [22, 21, 19], pad: box(18, 36, 18, 36), settings: { _margin: box(4, 0, 0, 0) } }),
+    p.soldOut // product out of stock in WooCommerce: no order link (an order link would only error at checkout)
+      ? widget('heading', { title: 'Out of Stock', header_size: 'span', align: 'center', title_color: C.gray, ...typo('typography', HEAD, [22, 21, 19], 700, { lh: 1.2, ls: 0 }),
+        _element_width: 'auto', _flex_align_self: 'center', _background_background: 'classic', _background_color: C.sand, _border_radius: box(12), _padding: box(18, 36, 18, 36), _margin: box(4, 0, 0, 0) })
+      : button(p.label, p.url, { variant: p.variant, align: 'center', size: [22, 21, 19], pad: box(18, 36, 18, 36), settings: { _margin: box(4, 0, 0, 0) } }),
   ], { gap: 14, align: 'center' });
 }
 
