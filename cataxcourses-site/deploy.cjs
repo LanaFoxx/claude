@@ -140,6 +140,20 @@ async function buildThemeBuilder(p) {
   }
 }
 
+// Tax News article template: Theme Builder "Single Post" applied to all posts.
+async function buildSinglePost(p) {
+  const M = mod('post-single');
+  const tid = await findOrCreateTemplate(p, M.title, 'single-post');
+  prep.singlePost = tid; save();
+  await openEditor(p, tid);
+  console.log('singlePost', tid, 'elements', await replaceContent(p, M.build(mediaMap()), 'publish'));
+  const r = await p.evaluate(() => new Promise((resolve) => elementorCommon.ajax.addRequest('pro_theme_builder_save_conditions', {
+    data: { conditions: [{ type: 'include', name: 'singular', sub_name: 'post', sub_id: '' }] },
+    success: (d) => resolve({ ok: true, d }), error: (e) => resolve({ ok: false, e: String(e && (e.message || e.statusText || e)) }),
+  })));
+  console.log('singlePost conditions', JSON.stringify(r).slice(0, 200));
+}
+
 async function installSnippet(p) {
   const code = fs.readFileSync(path.join(__dirname, 'wp/preview-snippet.php'), 'utf8')
     .replace('__CTC_HEADER_ID__', String(prep.header || 0)).replace('__CTC_FOOTER_ID__', String(prep.footer || 0))
@@ -242,6 +256,7 @@ async function publishNew(p, name) {
     else if (s === 'media') await uploadMedia(p);
     else if (s === 'chrome') await buildChrome(p);
     else if (s === 'themebuilder') await buildThemeBuilder(p);
+    else if (s === 'singlepost') await buildSinglePost(p);
     else if (s === 'snippet') await installSnippet(p);
     else if (s === 'preview') await buildPreview(p);
     else if (s === 'live-home') await liveHome(p);

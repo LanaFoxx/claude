@@ -76,6 +76,11 @@ body:has(.ctc-header){background:#fff;margin:0;color:${C.navy};font-family:${BOD
 .ctc-pricebar:hover,.ctc-article:hover{background-color:${C.sandHover}!important}
 .ctc-cta-gold:hover{background-color:${C.goldHover}!important}.ctc-cta-navy:hover{background-color:${C.navy2}!important}
 .ctc-link-gold a:hover,.ctc-link-gold a:focus{color:${C.white}!important}
+/* Tax News article body (Theme Builder single-post template, pages/post-single.cjs) */
+.ctc-post-body p{margin:0 0 22px}.ctc-post-body a{color:${C.goldText};font-weight:700}.ctc-post-body a:hover{color:${C.goldDeep}}
+.ctc-post-body h2,.ctc-post-body h3,.ctc-post-body h4{font-family:Outfit,sans-serif;color:${C.navy};font-weight:700;line-height:1.2;margin:36px 0 14px}.ctc-post-body h2{font-size:32px}.ctc-post-body h3{font-size:26px}
+.ctc-post-body img{max-width:100%;height:auto;border-radius:12px;margin:8px 0 22px}.ctc-post-body figure{margin:0 0 22px}.ctc-post-body ul,.ctc-post-body ol{margin:0 0 22px;padding-left:24px}.ctc-post-body li{margin:0 0 8px}
+.ctc-post-body strong{color:${C.navy}}
 /* Thank-you page (rendered by wp/preview-snippet.php around the Moodle plugin's [moodleauth] output) */
 .ctc-thankyou{font-family:Manrope,sans-serif}.ctc-ty-inner{max-width:1392px;margin:0 auto;padding:0 24px}
 .ctc-ty-hero{background-color:${C.navy};padding:64px 0 56px;color:#fff}
