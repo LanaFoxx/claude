@@ -38,6 +38,6 @@ module.exports = {
   slug: 'new-tax-news', title: 'Tax News (new design preview)', liveId: 117, kind: 'page',
   build: (m) => [container({ content_width: 'full', padding: box(0), flex_gap: gap(0), ...cls('ctc-page') }, [
     pageHero('Info', 'Updates for California tax preparers.', 'Tax News Blog'),
-    band(C.white, [stack(POSTS.map(card), { gap: 16 })]),
+    band(C.white, [stack(POSTS.map(card), { gap: 16 })], { pad: [40, 88] }),
   ], false)],
 };

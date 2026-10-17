@@ -19,7 +19,7 @@ const URL = {
   home: `${SITE}/`, cart: `${SITE}/cart/`, contact: `${SITE}/contact-us/`, login: 'https://learn.cataxcourses.com/login/index.php',
   c60: `${SITE}/product/ctec-60-hours-course/`, c20: `${SITE}/product/ctec-20-hours-renewal-course/`,
   c15: `${SITE}/product/15-hour-in-lieu-of-experience-course/`, caLaw: `${SITE}/product/california-tax-law-5-hours/`,
-  book20: `${SITE}/product/20-hour-book-addon/`, book60: `${SITE}/product/60-hour-book-addon-new/`,
+  book20: `${SITE}/product/20-hour-book-addon/`, book60: `${SITE}/product/60-hour-book-addon-new/`, books: `${SITE}/book-add-ons/`,
   mug: `${SITE}/product/official-california-tax-preparer-coffee-mug/`,
   become: `${SITE}/how-to-become-a-ctec-registered-tax-preparer/`, renew: `${SITE}/how-to-renew-your-ctec-registration/`,
   faq: `${SITE}/frequently-asked-questions/`, news: `${SITE}/tax-news/`, website: 'http://taxprodesign.com/',
@@ -31,7 +31,7 @@ const URL = {
   order: (id) => `${SITE}/checkout/?add-to-cart=${id}`,
 };
 // Pages designed but not published yet: temporary targets until they go live.
-Object.assign(URL, { TODO_guides: URL.guides, TODO_after60: URL.become, TODO_after20: URL.renew, TODO_books: URL.book20, TODO_courses: URL.home });
+Object.assign(URL, { TODO_guides: URL.guides, TODO_after60: URL.become, TODO_after20: URL.renew, TODO_books: URL.books, TODO_courses: URL.home });
 
 const id = () => crypto.randomBytes(4).toString('hex').slice(0, 7);
 const px = (size, unit = 'px') => ({ unit, size, sizes: [] });

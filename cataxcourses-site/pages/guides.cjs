@@ -32,6 +32,6 @@ module.exports = {
   slug: 'helpful-guides-and-how-tos', title: 'Helpful Guides & How-Tos', kind: 'newpage',
   build: () => [container({ content_width: 'full', padding: box(0), flex_gap: gap(0), ...cls('ctc-page') }, [
     pageHero('Info', 'Step-by-step help for California tax preparers.', 'Helpful Guides &amp; How-Tos'),
-    band(C.white, [stack(GUIDES.map(card), { gap: 16 })]),
+    band(C.white, [stack(GUIDES.map(card), { gap: 16 })], { pad: [40, 88] }),
   ], false)],
 };

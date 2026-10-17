@@ -11,7 +11,7 @@ function hero(thin, bold, o = {}) {
     heading(`<span class="ctc-thin ctc-block" style="font-size:.6em">${thin}</span>${bold}<span class="ctc-gold">.</span>`, 'h1', [68, 56, 44], dark ? C.white : C.navy, 'left',
       { lh: 1.05, settings: { _margin: box(18, 0, 0, 0), _element_width: 'initial', _element_custom_width: px(1000), _element_custom_width_tablet: px(100, '%'), _element_custom_width_mobile: px(100, '%') } }),
     ...(o.intro ? [text(o.intro, { color: C.muted, size: [19, 19, 18], lh: 1.65, maxW: 820, settings: { _margin: box(24, 0, 0, 0) } })] : []),
-  ], { pad: [88, 80], cls: dark ? 'ctc-dots-dark' : 'ctc-dots-cream' });
+  ], { pad: [88, 56], cls: dark ? 'ctc-dots-dark' : 'ctc-dots-cream' });
 }
 
 // White sub-step row with the gold check circle.
@@ -50,7 +50,7 @@ function step(s) {
 }
 
 function steps(list) {
-  return band(C.white, [stack(list.map(step), { gap: 20 })]);
+  return band(C.white, [stack(list.map(step), { gap: 20 })], { pad: [40, 88] });
 }
 
 // o.callThin (light first line of the H2), o.callPlain (no dots, small top padding – "Next Steps" pages).

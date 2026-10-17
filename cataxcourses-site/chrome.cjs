@@ -290,7 +290,7 @@ function header(m) {
             dropdown('CTEC Courses', URL.c60, [
               ['CTEC 60 Hour Qualifying Education', URL.c60], ['CTEC 20 Hour Continuing Education', URL.c20],
               ['CTEC 15 Hour In Lieu of Experience', URL.c15], ['California Tax Law - 5 Hours', URL.caLaw],
-              ['20 Hour Book Add-On', URL.book20], ['60 Hour Book Add-On', URL.book60],
+              ['Book Add-Ons', URL.books],
             ]),
             dropdown('Info', URL.become, [
               ['Helpful Guides &amp; How-Tos', URL.guides], ['How to Become a CTEC Registered Tax Preparer', URL.become], ['How To Renew Your CTEC Registration', URL.renew],
@@ -347,7 +347,7 @@ function footer(m) {
       stack([head('CTEC Courses'), linkList([
         ['CTEC 60 Hour Qualifying Education', URL.c60], ['CTEC 20 Hour Continuing Education Course', URL.c20],
         ['CTEC 15 Hour In Lieu of Experience Course', URL.c15], ['California Tax Law - 5 Hours', URL.caLaw],
-        ['20 Hour Book Add-On', URL.book20], ['60 Hour Book Add-On', URL.book60],
+        ['Book Add-Ons', URL.books],
       ], { space: 8 })]),
       stack([head('Info'), linkList([
         ['Helpful Guides &amp; How-Tos', URL.guides], ['How to Become a CTEC Registered Tax Preparer', URL.become], ['How To Renew Your CTEC Registration', URL.renew],

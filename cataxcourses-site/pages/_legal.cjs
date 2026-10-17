@@ -16,7 +16,7 @@ function hero(thin, bold) {
     pill('Legal'),
     heading(`<span class="ctc-thin ctc-block" style="font-size:.6em">${thin}</span>${bold}<span class="ctc-gold">.</span>`, 'h1', [68, 56, 44], C.navy, 'left',
       { lh: 1.05, settings: { _margin: box(18, 0, 0, 0), _element_width: 'initial', _element_custom_width: px(1000), _element_custom_width_tablet: px(100, '%'), _element_custom_width_mobile: px(100, '%') } }),
-  ], { pad: [88, 80], cls: 'ctc-dots-cream' });
+  ], { pad: [88, 56], cls: 'ctc-dots-cream' });
 }
 
 const navPill = (t, url) => widget('heading', {
@@ -48,7 +48,7 @@ function policy(sections) {
   return band(C.white, [
     grid([aside(), stack(sections.map(section), { gap: 36 })],
       { cols: ['minmax(0,1fr) minmax(0,2.2fr)', 'minmax(0,1fr)', 'minmax(0,1fr)'], gap: 64, gapT: 32, gapM: 32, align: 'start' }),
-  ], { settings: { overflow: '' } }); // no overflow:hidden, so the aside can be sticky
+  ], { pad: [48, 88], settings: { overflow: '' } }); // no overflow:hidden, so the aside can be sticky
 }
 
 const legalPage = ({ thin, bold, sections }) => (m) => [container({ content_width: 'full', padding: box(0), flex_gap: gap(0), ...cls('ctc-page') }, [

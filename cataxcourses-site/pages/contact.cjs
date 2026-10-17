@@ -36,7 +36,7 @@ function cards() {
         big('Monday - Friday:<br>9am - 2pm PST', [26, 25, 24], C.navy, 700), note('Saturday - Sunday: Closed', C.gray),
       ]),
     ], { cols: [4, 2, 1], gap: 20 }),
-  ]);
+  ], { pad: [40, 88] });
 }
 
 module.exports = {

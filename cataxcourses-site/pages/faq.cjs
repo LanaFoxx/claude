@@ -43,7 +43,7 @@ function pageHero(label, thin, bold, dark = false) {
     pill(label, dark ? { color: C.gold, bg: C.navy2, settings: { _border_border: 'solid', _border_width: box(1), _border_color: C.navyLine } } : {}),
     heading(`<span class="ctc-thin ctc-block" style="font-size:.6em">${thin}</span>${bold}<span class="ctc-gold">.</span>`,
       'h1', [68, 56, 44], dark ? C.white : C.navy, 'left', { lh: 1.05, settings: { _margin: box(18, 0, 0, 0), _element_width: 'initial', _element_custom_width: px(1000), _element_custom_width_tablet: px(100, '%'), _element_custom_width_mobile: px(100, '%') } }),
-  ], { pad: [88, 80], cls: dark ? 'ctc-dots-dark' : 'ctc-dots-cream' });
+  ], { pad: [88, 56], cls: dark ? 'ctc-dots-dark' : 'ctc-dots-cream' });
 }
 
 // Dark FAQ band (same as home.cjs faq(), but all questions, top-aligned + sticky intro column).

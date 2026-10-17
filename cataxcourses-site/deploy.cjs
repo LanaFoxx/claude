@@ -28,6 +28,7 @@ const ALT = {
   'ctc-badge-trustpilot.png': 'Trustpilot', 'ctc-badge-business-consumer-alliance.png': 'Proud Member Business Consumer Alliance',
   'ctc-student-mug-1.jpg': 'Student with California Tax Courses mug', 'ctc-student-mug-2.jpg': 'Student with California Tax Courses mug',
   'ctc-student-mug-3.jpg': 'Student with California Tax Courses mug', 'ctc-student-mug-4.jpg': 'Student with California Tax Courses mug',
+  'ctc-book-20-hour.jpg': 'CTEC 20 Hour Course Book', 'ctc-book-60-hour.jpg': 'CTEC 60 Hour Course Book',
 };
 
 function mediaMap() {

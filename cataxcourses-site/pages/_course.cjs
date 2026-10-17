@@ -62,9 +62,12 @@ function heroMedia(m, d) {
       ]),
     ]);
   }
+  // Laptop animation; d.laptop picks a course-specific recording (e.g. '20' → ctc-laptop-animation-20.mp4).
+  const vid = d.laptop ? m.file(`ctc-laptop-animation-${d.laptop}.mp4`) : m.laptopVideo;
+  const poster = d.laptop ? m.file(`ctc-laptop-animation-${d.laptop}-poster.jpg`) : m.laptopPoster;
   return widget('video', {
-    video_type: 'hosted', hosted_url: { url: m.laptopVideo.url, id: m.laptopVideo.id }, autoplay: 'yes', play_on_mobile: 'yes', mute: 'yes', loop: 'yes', controls: '',
-    preload: 'auto', aspect_ratio: '32', poster: { url: m.laptopPoster.url, id: m.laptopPoster.id }, ...wcls('ctc-laptop'),
+    video_type: 'hosted', hosted_url: { url: vid.url, id: vid.id }, autoplay: 'yes', play_on_mobile: 'yes', mute: 'yes', loop: 'yes', controls: '',
+    preload: 'auto', aspect_ratio: '32', poster: { url: poster.url, id: poster.id }, ...wcls('ctc-laptop'),
   });
 }
 
