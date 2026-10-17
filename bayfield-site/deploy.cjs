@@ -4,11 +4,13 @@
 // prep   = upload images, nav menu, Google Fonts snippet, site title + favicon
 // chrome = header + footer Theme Builder templates (Entire Site)
 // home   = homepage, set as the static front page
+// pages  = sub-pages from the sitemap (pages.cjs); add page:<slug> to deploy only some
 // No args = everything. State (IDs) is kept in $STATE_DIR/bayfield-prep.json.
 const { chromium } = require('playwright');
 const fs = require('fs');
 const path = require('path');
 const B = require('./build.cjs');
+const { PAGES } = require('./pages.cjs');
 
 const SITE = process.env.WP_URL;
 const MEDIA = process.env.MEDIA;
@@ -16,7 +18,8 @@ const PREP = path.join(path.dirname(process.env.STATE), 'bayfield-prep.json');
 const args = process.argv.slice(2);
 const want = (k) => args.length === 0 || args.includes(k);
 const FONTS = '<link rel="preconnect" href="https://fonts.googleapis.com">\n<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">';
-const MENU = [['Rooms', '/#rooms'], ['Dining', '/#dining'], ['Events', '/#events'], ['Live Cam', '/#webcam'], ['Gallery', 'https://bayfieldinn.com/relax/lobby-gallery/'], ['Contact', '/#contact']];
+// Header links from the client's sitemap. Third value = menu item CSS class.
+const MENU = [['History', '/history/'], ['Gallery', '/gallery/'], ['Webcam', '/webcam/', 'bi-menu-cam'], ['Merchandise', '/merchandise/'], ['Gift Cards', '/gift-cards/'], ['Employment', '/employment/']];
 
 const api = (p, method, url, body) => p.evaluate(async ([method, url, body]) => {
   const r = await fetch(url, { method, headers: { 'X-WP-Nonce': wpApiSettings.nonce, 'Content-Type': 'application/json' }, body: body ? JSON.stringify(body) : undefined });
@@ -108,7 +111,7 @@ async function setConditions(p, postId, conditions) {
     if (have !== MENU.map(([t]) => t).join('|')) {
       for (const i of items) await api(p, 'DELETE', `/wp-json/wp/v2/menu-items/${i.id}?force=true`);
       let order = 1;
-      for (const [title, url] of MENU) await api(p, 'POST', '/wp-json/wp/v2/menu-items', { title, url: /^https?:/.test(url) ? url : SITE + url, menus: menu.id, status: 'publish', menu_order: order++ });
+      for (const [title, url, cls] of MENU) await api(p, 'POST', '/wp-json/wp/v2/menu-items', { title, url: /^https?:/.test(url) ? url : SITE + url, menus: menu.id, status: 'publish', menu_order: order++, classes: cls ? [cls] : [] });
     }
     prep.menu = menu.id;
     prep.fonts = await snippet(p, 'Bayfield fonts', 'Bayfield fonts (Geist + Newsreader)', 'elementor_head', FONTS);
@@ -124,11 +127,13 @@ async function setConditions(p, postId, conditions) {
   const md = (f) => ({ id: prep.media[f].id, url: prep.media[f].url, alt: '', source: 'library' });
   const m = {
     logo: md('bayfield-inn-logo-green-trim.png'), logoWhite: md('bayfield-inn-logo-white-trim.png'),
-    heroDeck: md('bayfield-hero-the-deck.jpg'), lakeview: md('bayfield-lakeview-room.jpg'), suite: md('bayfield-suite.jpg'),
+    heroDeck: md('bayfield-hero-the-deck.jpg'), lakeview: md('bayfield-lake-view-room.jpg'), suite: md('bayfield-suite-jacuzzi.jpg'),
     deckDining: md('bayfield-deck-dining.jpg'), deckBadge: md('bayfield-the-deck-badge.png'), creameryLogo: md('bayfield-creamery-logo.png'),
     lakesideDining: md('bayfield-lakeside-dining-room.jpg'), lounge: md('bayfield-the-lounge.jpg'), marina: md('bayfield-marina-webcam.jpg'),
     eventsLawn: md('bayfield-events-lawn.jpg'),
     standardRoom: md('bayfield-standard-room.jpg'), creameryPhoto: md('bayfield-the-creamery.jpg'),
+    exterior: md('bayfield-inn-exterior.jpg'), deckBar: md('bayfield-the-deck-bar.jpg'), diningWindow: md('bayfield-dining-room-window.jpg'),
+    file: md,
     // Elementor's placeholder image, for any slot still waiting on a photo.
     placeholder: { id: '', url: `${SITE}/wp-content/plugins/elementor/assets/images/placeholder.png`, alt: '', source: 'library' },
   };
@@ -160,6 +165,19 @@ async function setConditions(p, postId, conditions) {
     console.log('front page:', s.show_on_front, s.page_on_front);
     prep.home = pg.id;
   }
+  if (want('pages')) {
+    prep.pages = prep.pages || {};
+    for (const def of PAGES) {
+      if (args.some((a) => a.startsWith('page:')) && !args.includes(`page:${def.slug}`)) continue;
+      await p.goto(`${SITE}/wp-admin/`, { waitUntil: 'domcontentloaded' });
+      let pg = (await api(p, 'GET', `/wp-json/wp/v2/pages?slug=${def.slug}&status=publish,draft,private&_fields=id,link`))[0];
+      if (!pg) pg = await api(p, 'POST', '/wp-json/wp/v2/pages', { title: def.title, slug: def.slug, status: 'publish', template: 'elementor_header_footer' });
+      await openEditor(p, pg.id);
+      console.log(def.slug, pg.id, 'elements saved:', await replaceContent(p, def.build(m), B.pageSettings));
+      prep.pages[def.slug] = pg.id;
+    }
+  }
+
   fs.writeFileSync(PREP, JSON.stringify(prep, null, 1));
   await b.close();
 })().catch((e) => { console.error(e); process.exit(1); });

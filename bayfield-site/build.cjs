@@ -16,7 +16,12 @@ const EXT = {
   gallery: 'https://bayfieldinn.com/relax/lobby-gallery/', facebook: 'http://facebook.com/BayfieldInn',
   instagram: 'https://www.instagram.com/thebayfieldinn/', tripadvisor: 'https://www.tripadvisor.com/',
   privacy: 'https://bayfieldinn.com/privacy-policy', terms: 'https://bayfieldinn.com/terms-of-use',
-  giftCards: 'https://bayfieldinn.com/gift-cards/', webcam: 'https://bayfieldlive.com',
+  giftCards: '/gift-cards/', webcam: 'https://bayfieldlive.com',
+};
+
+const PAGE = {
+  history: '/history/', gallery: '/gallery/', webcam: '/webcam/', merch: '/merchandise/', giftCards: '/gift-cards/', employment: '/employment/',
+  deck: '/the-deck/', lakeside: '/lakeside-dining-room/', lounge: '/the-lounge/', creamery: '/the-creamery/',
 };
 
 const id = () => crypto.randomBytes(4).toString('hex').slice(0, 7);
@@ -83,7 +88,8 @@ function eyebrow(text, color, o = {}) {
     title: text, header_size: 'p', title_color: color, align: o.align || 'left',
     ...typo('typography', SANS, 12, 500, { lh: 1.3, ls: 2.6, transform: 'uppercase' }),
     custom_css: `selector .elementor-heading-title { display: flex; align-items: center; gap: 14px;${center ? ' justify-content: center;' : ''} }
-selector .elementor-heading-title::before${center ? ', selector .elementor-heading-title::after' : ''} { content: ""; flex: none; width: 36px; height: 1px; background: currentColor; opacity: .75; }`,
+selector .elementor-heading-title::before${center && !o.live ? ', selector .elementor-heading-title::after' : ''} { content: ""; flex: none; width: 36px; height: 1px; background: currentColor; opacity: .75; }${o.live ? `
+selector .elementor-heading-title::before { width: 8px; height: 8px; border-radius: 50%; background: #E74C3C; opacity: 1; animation: bi-pulse 1.6s ease-in-out infinite; }` : ''}`,
   });
 }
 
@@ -207,7 +213,14 @@ body.bi-scrolled selector .bi-header-logo { opacity: 1; transform: none; pointer
       toggle_color: C.green, toggle_background_color: 'rgba(0,0,0,0)', toggle_size: px(24),
       _flex_size: 'grow', _flex_size_tablet: 'none', _flex_size_mobile: 'none',
       _flex_order_tablet: 'end', _flex_order_mobile: 'end',
-      custom_css: 'selector .elementor-nav-menu--dropdown { padding-bottom: 20px; background: #17301B; }\nselector .elementor-nav-menu--dropdown a { border-bottom: 1px solid rgba(245,242,236,.15); }',
+      custom_css: `selector .elementor-nav-menu--dropdown { padding-bottom: 20px; background: #17301B; }
+selector .elementor-nav-menu--dropdown a { border-bottom: 1px solid rgba(245,242,236,.15); }
+/* Webcam stands out (client sitemap): green pill with a live dot. */
+@keyframes bi-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+selector .bi-menu-cam > a::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #E74C3C; margin-right: 9px; animation: bi-pulse 1.6s ease-in-out infinite; position: static; opacity: 1; transform: none; }
+selector .elementor-nav-menu--main .bi-menu-cam > a { background: #17301B; color: #F5F2EC !important; border-radius: 2px; padding: 8px 16px !important; margin: 0 6px; }
+selector .elementor-nav-menu--main .bi-menu-cam > a:hover { background: #0F2113; }
+selector .elementor-nav-menu--main .bi-menu-cam > a::after { display: none; }`,
     }),
     container({
       content_width: 'full', width: auto, width_tablet: auto, width_mobile: auto,
@@ -260,7 +273,7 @@ function footer(m) {
       ], { gap: 14 }),
       stack([
         label('Explore'),
-        list([['Rooms', '/#rooms'], ['Dining', '/#dining'], ['Events', '/#events'], ['Live Cam', '/#webcam'], ['Gallery', EXT.gallery], ['Contact', '/#contact']],
+        list([['Rooms', '/#rooms'], ['Dining', '/#dining'], ['History', PAGE.history], ['Gallery', PAGE.gallery], ['Webcam', PAGE.webcam], ['Gift Cards', PAGE.giftCards], ['Employment', PAGE.employment], ['Contact', '/#contact']],
           { size: 13, weight: 500, ls: 1, transform: 'uppercase', color: 'rgba(245,242,236,0.9)' }),
       ], { gap: 14 }),
       stack([
@@ -477,11 +490,12 @@ selector .elementor-message { color: #F5F2EC; padding: 0 18px 12px; margin: 0; f
       _offset_orientation_v: 'start', _offset_y: px(40), _offset_y_tablet: px(36), _offset_y_mobile: px(30),
       _element_width: 'auto', _z_index: 0, custom_css: 'selector { pointer-events: none; user-select: none; }',
     }),
-    intro('Rooms & Suites', 'Fourteen rooms.<br>One shoreline.', button('See all rooms & rates', EXT.rooms, 'dark', { settings: { button_background_hover_color: '#0F2113' } })),
-    container({ ...gridSettings([3, 3, 1]), content_width: 'full', padding: box(0), grid_gaps: gap(28, 28), grid_gaps_tablet: gap(20, 20), grid_gaps_mobile: gap(36, 36), grid_align_items: 'start', z_index: 1 }, [
-      photoCard(m.lakeview, 'Lakeview Rooms', 'Lake-facing, king bed, the sunrise included.', EXT.rooms, { badge: { text: '01' }, alt: 'Lakeview room with a window onto Lake Superior' }),
-      photoCard(m.suite, 'Suites', 'Sitting room and a second balcony.', EXT.rooms, { badge: { text: '02' }, alt: 'Suite sitting area at sunrise' }),
-      photoCard(m.standardRoom, 'Standard Rooms', 'Classic comfort, steps from The Deck.', EXT.rooms, { badge: { text: '03' }, alt: 'Standard room' }),
+    intro('Rooms & Suites', 'Twenty-one rooms,<br>plus condos next door.', button('See all rooms & rates', EXT.rooms, 'dark', { settings: { button_background_hover_color: '#0F2113' } })),
+    container({ ...gridSettings([4, 2, 1]), content_width: 'full', padding: box(0), grid_gaps: gap(24, 36), grid_gaps_tablet: gap(20, 36), grid_gaps_mobile: gap(36, 36), grid_align_items: 'start', z_index: 1 }, [
+      photoCard(m.suite, 'Suites', 'Room to spread out, with a jetted tub.', EXT.rooms, { badge: { text: '01' }, alt: 'Suite with a sitting area and jetted tub' }),
+      photoCard(m.lakeview, 'Lake View Rooms', 'Lake-facing, the sunrise included.', EXT.rooms, { badge: { text: '02' }, alt: 'Lake view room with a window onto Lake Superior' }),
+      photoCard(m.standardRoom, 'City View Rooms', 'Classic comfort, steps from The Deck.', EXT.rooms, { badge: { text: '03' }, alt: 'City view room' }),
+      photoCard(m.placeholder, 'Condos', 'Neighboring condos for longer stays and bigger groups.', EXT.rooms, { badge: { text: '04' }, alt: 'Condo' }),
     ]),
   ]);
 
@@ -491,10 +505,10 @@ selector .elementor-message { color: #F5F2EC; padding: 0 18px 12px; margin: 0; f
   }, [
     intro('Dine', 'Four places to eat and drink,<br>all with the lake in view.', button('View menus', EXT.dine, 'outline'), true),
     container({ ...gridSettings([4, 2, 1]), content_width: 'full', padding: box(0), grid_gaps: gap(28, 36), grid_gaps_tablet: gap(20, 32), grid_gaps_mobile: gap(36, 36), grid_align_items: 'start' }, [
-      photoCard(m.deckDining, 'The Deck', 'Rooftop. Lunch and dinner, weather permitting.', EXT.dine, { dark: true, pos: 'center 55%', alt: 'Blue umbrellas on The Deck', badge: { logo: m.deckBadge, bg: 'rgba(15,33,19,0.88)' } }),
-      photoCard(m.lakesideDining, 'Lakeside Dining Room', 'Breakfast and dinner at the water’s edge.', EXT.dine, { dark: true, alt: 'Crab cakes and cocktails by the window of the Lakeside Dining Room' }),
-      photoCard(m.lounge, 'The Lounge', 'Cocktails, a proper old fashioned, and the game.', EXT.dine, { dark: true, alt: 'Bartender finishing a martini in The Lounge' }),
-      photoCard(m.creameryPhoto, 'The Creamery', 'Our bar across the street. Tacos, pints, live music.', EXT.dine, { dark: true, alt: 'The Creamery', badge: { logo: m.creameryLogo, bg: 'rgba(245,242,236,0.92)' } }),
+      photoCard(m.deckDining, 'The Deck', 'Rooftop. Lunch and dinner, weather permitting.', PAGE.deck, { dark: true, pos: 'center 55%', alt: 'Blue umbrellas on The Deck', badge: { logo: m.deckBadge, bg: 'rgba(15,33,19,0.88)' } }),
+      photoCard(m.lakesideDining, 'Lakeside Dining Room', 'Breakfast and dinner at the water’s edge.', PAGE.lakeside, { dark: true, alt: 'Crab cakes and cocktails by the window of the Lakeside Dining Room' }),
+      photoCard(m.lounge, 'The Lounge', 'Cocktails, a proper old fashioned, and the game.', PAGE.lounge, { dark: true, alt: 'Bartender finishing a martini in The Lounge' }),
+      photoCard(m.creameryPhoto, 'The Creamery', 'Our bar across the street. Tacos, pints, live music.', PAGE.creamery, { dark: true, alt: 'The Creamery', badge: { logo: m.creameryLogo, bg: 'rgba(245,242,236,0.92)' } }),
     ]),
   ]);
 
@@ -505,7 +519,7 @@ selector .elementor-heading-title::before { content: ""; flex: none; width: ${si
       widget('heading', { title: 'Live from the Inn', header_size: 'p', title_color: C.green, ...typo('typography', SANS, 12, 500, { lh: 1.3, ls: 2.6, transform: 'uppercase' }), custom_css: pulseDot(8, '#C0392B') }),
       heading('See the lake right now.', 'h2', [49, 40, 32], C.green, { ls: -1 }),
       text('Our rooftop camera looks out over the marina, the ferry dock and Madeline Island, around the clock and in every season. Check the weather, watch the ferry come in, or just look at the water for a while.', { size: 15.5, lh: 1.7, maxW: 500 }),
-      button('Watch the live cam', EXT.webcam, 'dark', { icon: 'fas fa-arrow-right', settings: { button_background_hover_color: '#0F2113' } }),
+      button('Watch the live cam', PAGE.webcam, 'dark', { icon: 'fas fa-arrow-right', settings: { button_background_hover_color: '#0F2113' } }),
     ]),
     photo(m.marina, 'center center', [
       widget('heading', {
@@ -525,7 +539,7 @@ selector .elementor-heading-title::before { content: ""; flex: none; width: ${si
         _background_background: 'gradient', _background_color: 'rgba(22,27,23,0.6)', _background_color_stop: px(0, '%'), _background_color_b: 'rgba(22,27,23,0)',
         _background_color_b_stop: px(100, '%'), _background_gradient_type: 'linear', _background_gradient_angle: px(0, 'deg'),
       } }),
-    ], { ...linked(EXT.webcam), flex_direction: 'column', flex_justify_content: 'center', flex_align_items: 'center',
+    ], { ...linked(PAGE.webcam), flex_direction: 'column', flex_justify_content: 'center', flex_align_items: 'center',
       custom_css: 'selector { aspect-ratio: 16 / 10; background-position: center 40%; transition: background-size .8s; }' }),
   ]);
 
@@ -535,11 +549,42 @@ selector .elementor-heading-title::before { content: ""; flex: none; width: ${si
       eyebrow('Weddings & Events', C.green),
       heading('Host unforgettable gatherings.', 'h2', [49, 40, 32], C.green, { ls: -1 }),
       text('From intimate celebrations to corporate retreats, Bayfield Inn is the perfect setting for your next event. Our dedicated team will help you create memories that last.', { size: 15.5, lh: 1.7, maxW: 520 }),
+      text('<strong>Chair rental</strong> is available for weddings and events around Bayfield. Ask our events team.', { size: 14, lh: 1.6, maxW: 520, settings: { _margin: box(-6, 0, 0, 0) } }),
       button('Plan your event', EXT.events, 'dark', { settings: { button_background_hover_color: '#0F2113' } }),
     ]),
   ]);
 
-  return [hero, about, rooms, dining, webcam, events];
+  // Mini gallery: three favorites (swapped through the year), each opening the full gallery.
+  const galleryTile = (img, alt) => container({ content_width: 'full', padding: box(0), ...linked(PAGE.gallery), overflow: 'hidden', border_radius: box(4), custom_css: zoomOnHover }, [
+    image(img, { settings: { _css_classes: 'bi-photo', alt_text: alt, custom_css: 'selector { overflow: hidden; line-height: 0; }\nselector img { display: block; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }' } }),
+  ]);
+  const gallery = section({
+    _element_id: 'gallery', background_background: 'classic', background_color: C.white, flex_direction: 'column', ...bigPad,
+    content_width: 'boxed', boxed_width: px(1480), flex_gap: gap(56), flex_gap_tablet: gap(44), flex_gap_mobile: gap(36),
+  }, [
+    intro('Gallery', 'A few favorites<br>from this season.', button('View the full gallery', PAGE.gallery, 'dark', { settings: { button_background_hover_color: '#0F2113' } })),
+    container({ ...gridSettings([3, 3, 1]), content_width: 'full', padding: box(0), grid_gaps: gap(24, 24), grid_gaps_tablet: gap(16, 16), grid_gaps_mobile: gap(16, 16) }, [
+      galleryTile(m.exterior, 'Bayfield Inn on the waterfront'),
+      galleryTile(m.deckBar, 'The Deck rooftop bar'),
+      galleryTile(m.diningWindow, 'Dinner by the window in the Lakeside Dining Room'),
+    ]),
+  ]);
+
+  // Social: Facebook and Instagram, highlighted per the sitemap.
+  const socialBtn = (label, icon, url) => button(label, url, 'outline', { size: 13, icon, upper: false, pad: box(16, 28, 16, 28), settings: { icon_align: 'row', typography_letter_spacing: px(0.5) } });
+  const social = section({
+    _element_id: 'follow', flex_direction: 'column', flex_align_items: 'center', ...radial('top right', C.mid, null, C.deep),
+    padding: box(96, 48, 96, 48), padding_tablet: box(80, 32, 80, 32), padding_mobile: box(64, 20, 64, 20), flex_gap: gap(22),
+  }, [
+    eyebrow('Follow along', C.cream, { align: 'center', opacity: 0.8 }),
+    heading('Sunrises, specials and what’s happening on the waterfront.', 'h2', [44, 36, 30], C.cream, { align: 'center', ls: -0.8, maxW: 760 }),
+    row([
+      socialBtn('Facebook', 'fab fa-facebook-f', EXT.facebook),
+      socialBtn('Instagram', 'fab fa-instagram', EXT.instagram),
+    ], { gap: 12, justify: 'center', settings: { padding: box(8, 0, 0, 0) } }),
+  ]);
+
+  return [hero, about, rooms, dining, webcam, events, gallery, social];
 }
 
 // Page Settings > Custom CSS: the design's fine film-grain overlay, smooth anchor scrolling and
@@ -572,4 +617,7 @@ const interactionsJs = `<script>
 })();
 </script>`;
 
-module.exports = { C, header, footer, home, pageSettings, interactionsJs };
+module.exports = {
+  C, SERIF, SANS, EXT, PAGE, id, px, box, gap, auto, link, fa, typo, container, widget, stack, row, gridSettings, radial,
+  eyebrow, heading, text, button, image, linked, zoomOnHover, header, footer, home, pageSettings, interactionsJs,
+};
