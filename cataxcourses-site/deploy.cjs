@@ -194,6 +194,17 @@ async function goLive(p, name) {
 
 const liveHome = (p) => goLive(p, 'home');
 
+// Brand-new pages (kind 'newpage'): built private at their final slug, then published after testing.
+async function publishNew(p, name) {
+  const M = mod(name);
+  const pid = await ensurePage(p, M.slug, M.title, 'private');
+  prep.previews = { ...(prep.previews || {}), [name]: pid }; save();
+  await openEditor(p, pid);
+  console.log('publish', name, pid, 'elements', await replaceContent(p, M.build(mediaMap()), 'publish', PAGE_SETTINGS));
+  prep.live = [...new Set([...(prep.live || []), pid])]; save();
+  await installSnippet(p);
+}
+
 (async () => {
   const steps = process.argv.slice(2);
   const b = await chromium.launch({ proxy: process.env.HTTPS_PROXY ? { server: process.env.HTTPS_PROXY } : undefined });
@@ -205,6 +216,7 @@ const liveHome = (p) => goLive(p, 'home');
     if (cmd === 'media' && arg) await uploadMedia(p, arg);
     else if (cmd === 'preview' && arg) await buildPreview(p, arg);
     else if (cmd === 'live' && arg) await goLive(p, arg);
+    else if (cmd === 'publish' && arg) await publishNew(p, arg);
     else if (s === 'media') await uploadMedia(p);
     else if (s === 'chrome') await buildChrome(p);
     else if (s === 'snippet') await installSnippet(p);

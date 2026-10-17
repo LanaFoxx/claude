@@ -163,7 +163,7 @@ function articles() {
   return band(C.white, [
     row([
       stack([eyebrow('Info', C.goldText), H2('<span class="ctc-thin">Helpful</span> Articles:', C.navy, 'left', { lh: 1.05, settings: { _margin: box(12, 0, 0, 0) } })], { settings: { width: auto } }),
-      widget('heading', { title: 'All guides &amp; how-tos →', header_size: 'span', link: link(URL.news), title_color: C.goldText, ...typo('typography', HEAD, [22, 21, 19], 700, { lh: 1.3, ls: 0 }) }),
+      widget('heading', { title: 'All guides &amp; how-tos →', header_size: 'span', link: link(URL.guides), title_color: C.goldText, ...typo('typography', HEAD, [22, 21, 19], 700, { lh: 1.3, ls: 0 }) }),
     ], { justify: 'space-between', align: 'flex-end', gap: 24, settings: { margin: box(0, 0, 40, 0), _margin: box(0, 0, 40, 0) } }),
     stack(ARTICLES.map(item), { gap: 16 }),
   ], { cls: 'ctc-dots-white' });

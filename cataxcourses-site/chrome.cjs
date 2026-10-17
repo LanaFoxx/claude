@@ -33,7 +33,8 @@ body:has(.ctc-header){background:#fff;margin:0;color:${C.navy};font-family:${BOD
 .ctc-caret{font-size:12px;color:${C.goldText};margin-left:6px}
 .ctc-dd{position:relative}
 .ctc-dd-menu{position:absolute!important;top:100%;left:-16px;padding-top:12px!important;display:none!important;z-index:30;min-width:270px}
-@media (min-width:1025px){.ctc-dd:hover>.ctc-dd-menu,.ctc-dd:focus-within>.ctc-dd-menu{display:flex!important}}
+@media (min-width:1025px){.ctc-dd:hover>.ctc-dd-menu,.ctc-dd:focus-within>.ctc-dd-menu,.ctc-dd.ctc-dd-open>.ctc-dd-menu{display:flex!important}}
+.ctc-dd>.ctc-navlink{cursor:pointer;user-select:none}.ctc-dd>.ctc-navlink .elementor-heading-title{color:#1C2333}.ctc-dd:hover>.ctc-navlink .elementor-heading-title,.ctc-dd.ctc-dd-open>.ctc-navlink .elementor-heading-title{color:#B8901F}
 .ctc-menu-phone,.ctc-menu-logo,.ctc-menu-close{display:none!important}
 .ctc-dd-card{border-top-color:${C.gold}!important}
 .ctc-dd-list .elementor-icon-list-item>a{display:block!important;padding:12px 14px;border-radius:8px}
@@ -221,7 +222,7 @@ body:has(.ctc-header){background:#fff;margin:0;color:${C.navy};font-family:${BOD
 </style>
 <script>(function(){var mob=window.matchMedia('(max-width:1024px)');function closeAll(){document.querySelectorAll('.ctc-dd.ctc-dd-open').forEach(function(d){d.classList.remove('ctc-dd-open');});}
 document.addEventListener('click',function(e){var b=e.target.closest('.ctc-burger,.ctc-menu-close');if(b){e.preventDefault();var open=document.body.classList.toggle('ctc-menu-open');if(!open)closeAll();return;}
-var t=e.target.closest('.ctc-dd>.ctc-navlink a');if(t&&mob.matches){e.preventDefault();var d=t.closest('.ctc-dd'),was=d.classList.contains('ctc-dd-open');closeAll();if(!was)d.classList.add('ctc-dd-open');return;}
+var t=e.target.closest('.ctc-dd>.ctc-navlink');if(t){e.preventDefault();var d=t.closest('.ctc-dd'),was=d.classList.contains('ctc-dd-open');closeAll();if(!was)d.classList.add('ctc-dd-open');return;}if(!e.target.closest('.ctc-dd'))closeAll();
 var chat=e.target.closest('.ctc-open-chat');if(chat){e.preventDefault();try{if(window.LiveChatWidget)window.LiveChatWidget.call('maximize');else if(window.LC_API)window.LC_API.open_chat_window();}catch(x){}return;}
 if(e.target.closest('.ctc-navlinks a')&&!e.target.closest('.ctc-menu-close')){document.body.classList.remove('ctc-menu-open');closeAll();}});
 window.addEventListener('pageshow',function(){document.body.classList.remove('ctc-menu-open');closeAll();});
@@ -237,7 +238,7 @@ const navLink = (label, url) => widget('heading', {
 function dropdown(label, url, items) {
   return container({ content_width: 'full', width: auto, padding: box(0), flex_direction: 'column', ...cls('ctc-dd') }, [
     widget('heading', {
-      title: `${label}<span class="ctc-caret">▾</span>`, header_size: 'span', link: link(url), title_color: C.navy,
+      title: `${label}<span class="ctc-caret">▾</span>`, header_size: 'span', title_color: C.navy,
       ...typo('typography', BODY, [18, 18, 17], 600, { lh: 1.3, ls: 0 }), ...wcls('ctc-navlink'),
     }),
     container({ content_width: 'full', padding: box(12, 0, 0, 0), flex_direction: 'column', ...cls('ctc-dd-menu') }, [
@@ -292,7 +293,7 @@ function header(m) {
               ['20 Hour Book Add-On', URL.book20], ['60 Hour Book Add-On', URL.book60],
             ]),
             dropdown('Info', URL.become, [
-              ['How to Become a CTEC Registered Tax Preparer', URL.become], ['How To Renew Your CTEC Registration', URL.renew],
+              ['Helpful Guides &amp; How-Tos', URL.guides], ['How to Become a CTEC Registered Tax Preparer', URL.become], ['How To Renew Your CTEC Registration', URL.renew],
               ['Frequently Asked Questions', URL.faq], ['Tax News', URL.news], ['Need A Website?', URL.website],
             ]),
             navLink('Help', URL.contact),
@@ -349,7 +350,7 @@ function footer(m) {
         ['20 Hour Book Add-On', URL.book20], ['60 Hour Book Add-On', URL.book60],
       ], { space: 8 })]),
       stack([head('Info'), linkList([
-        ['How to Become a CTEC Registered Tax Preparer', URL.become], ['How To Renew Your CTEC Registration', URL.renew],
+        ['Helpful Guides &amp; How-Tos', URL.guides], ['How to Become a CTEC Registered Tax Preparer', URL.become], ['How To Renew Your CTEC Registration', URL.renew],
         ['Frequently Asked Questions', URL.faq], ['Tax News', URL.news], ['Need A Website?', URL.website],
         ['Help', URL.contact], ['Login', URL.login],
       ], { space: 8 })]),
