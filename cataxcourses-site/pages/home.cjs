@@ -5,7 +5,7 @@ const { C, HEAD, BODY, PHONE, URL, px, box, gap, auto, link, typo, container, wi
 
 const COURSES = [
   { kind: 'Qualifying Education', bold: 'CTEC 60', tagline: 'Becoming a California tax preparer? Start here.', amount: '179.95', label: 'CTEC 60 Hour Course', url: URL.c60, icon: 'fas fa-graduation-cap', iconSize: 150,
-    features: ['2025-2026 Tax Laws', 'Everything You Need To Know To Prepare Taxes', 'Online Video Course with complimentary PDF', 'Book Available as an additional study aid', 'Online Exam with Immediate Results', '24/7 Course Access', 'Hours Reported within 24 hours!', 'Unlimited Exam Attempts', 'Student Support Available Via Phone, Live Chat, and Email'] },
+    features: ['Updated with the Latest Tax Laws', 'Everything You Need To Know To Prepare Taxes', 'Online Video Course with complimentary PDF', 'Book Available as an additional study aid', 'Online Exam with Immediate Results', '24/7 Course Access', 'Hours Reported within 24 hours!', 'Unlimited Exam Attempts', 'Student Support Available Via Phone, Live Chat, and Email'] },
   { kind: 'Continuing Education', bold: 'CTEC 20', tagline: 'Renewing your CTEC registration? Start here.', amount: '69.95', label: 'CTEC 20 Hour Course', url: URL.c20, icon: 'fas fa-redo-alt', iconSize: 110,
     features: ['Meets CTEC 20 Hour Renewal Requirement', 'Online Video Course with complimentary PDF', 'Book Available as an additional study aid', 'Online Exam with Immediate Results', '24/7 Course Access', 'Hours Reported within 24 hours!', 'Most Current and Up To Date Tax Laws', 'Unlimited Exam Attempts', 'Student Support Available Via Phone, Live Chat, and Email'] },
 ];

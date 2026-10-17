@@ -28,7 +28,7 @@ const FAQS = [
 const FEATURE_ICONS = [
   ['CTEC', 'fas fa-landmark'], ['Completion Reported', 'fas fa-clock'], ['Unlimited Attempts', 'fas fa-redo-alt'],
   ['Fully Online Video Course', 'fas fa-laptop'], ['Access from computer', 'fas fa-mobile-alt'],
-  ['Instant Enrollment', 'fas fa-graduation-cap'], ['Updated with Latest', 'fas fa-calendar-alt'],
+  ['Instant Enrollment', 'fas fa-graduation-cap'], ['Updated with', 'fas fa-calendar-alt'],
 ];
 const featureIcon = (title) => (FEATURE_ICONS.find(([k]) => title.startsWith(k)) || [0, 'fas fa-check'])[1];
 

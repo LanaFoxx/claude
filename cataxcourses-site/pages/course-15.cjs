@@ -21,7 +21,7 @@ module.exports = coursePage({
   ],
   features: [
     ["CTEC Approved", "California Tax Courses is Approved by the California Tax Education Council (CTEC) offer In Lieu Education. Our CTEC Provider number is 6280."],
-    ["Updated with Latest 2025-2026 Tax Laws", "All of our courses are updated each year to reflect all of the latest tax law changes."],
+    ["Updated with the Latest Tax Laws", "All of our courses are updated each year to reflect all of the latest tax law changes."],
     ["Completion Reported To CTEC In 24 Hours", "We know how important it is that your hours are reported to CTEC in order for you to renew your CTEC Registration. We make sure all students course completions are reported directly to CTEC within 24 Hours."],
     ["Fully Online Video Course", "Includes 24/7 access to the online courses and exam."],
     ["Access from computer or smartphone", "Our CTEC Approved courses can all be accessed online via a computer, laptop, tablet, or even smartphone. As long as you have internet access on your device, you can access your course! Courses are available 24/7 to be taken at your own pace. All progress is tracked and saved, so you can log off and return to where you left off."],

@@ -40,7 +40,7 @@ function mediaMap() {
     seal: md('ctc-seal-mark.png'), ctec: md('ctc-badge-ctec-approved-provider.png'), irs: md('ctc-badge-irs-approved-ce.png'),
     trustpilot: md('ctc-badge-trustpilot.png'), bca: md('ctc-badge-business-consumer-alliance.png'),
     mugs: [1, 2, 3, 4].map((i) => md(`ctc-student-mug-${i}.jpg`)),
-    laptopVideo: md('ctc-laptop-animation.mp4'), laptopPoster: md('ctc-laptop-animation-poster.jpg'),
+    laptopVideo: md('ctc-laptop-animation-v2.mp4'), laptopPoster: md('ctc-laptop-animation-v2-poster.jpg'), // v2: no tax years on screen
     file: (f) => md(f),
   };
 }

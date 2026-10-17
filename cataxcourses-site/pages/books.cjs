@@ -4,8 +4,8 @@ const L = require('../lib.cjs');
 const { C, HEAD, BODY, URL, px, box, gap, auto, typo, container, widget, cls, band, stack, row, grid, eyebrow, heading, text, button, image, pill } = L;
 
 const BOOKS = [
-  { num: '20', sub: 'CTEC Continuing Education · Tax Year 2026', img: 'ctc-book-20-hour.jpg', alt: 'CTEC 20 Hour Course Book', price: '80.00', save: 'Save $40 · was $120.00', url: URL.order(14174) },
-  { num: '60', sub: 'CTEC Qualifying Education · Tax Year 2026', img: 'ctc-book-60-hour.jpg', alt: 'CTEC 60 Hour Course Book', price: '100.00', save: 'Save $50 · was $150.00', url: URL.order(21204) },
+  { num: '20', sub: 'CTEC Continuing Education · Updated with the Latest Tax Laws', img: 'ctc-book-20-hour.jpg', alt: 'CTEC 20 Hour Course Book', price: '80.00', save: 'Save $40 · was $120.00', url: URL.order(14174) },
+  { num: '60', sub: 'CTEC Qualifying Education · Updated with the Latest Tax Laws', img: 'ctc-book-60-hour.jpg', alt: 'CTEC 60 Hour Course Book', price: '100.00', save: 'Save $50 · was $150.00', url: URL.order(21204) },
 ];
 
 function hero() {
