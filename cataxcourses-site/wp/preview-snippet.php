@@ -71,3 +71,11 @@ add_filter( 'woocommerce_add_to_cart_validation', function ( $passed, $product_i
 	}
 	return $passed;
 }, 20, 4 );
+// Empty cart: "Browse CTEC Courses →" instead of WooCommerce's /shop/ link (the site has no shop page).
+add_filter( 'woocommerce_return_to_shop_redirect', function () { return home_url( '/product/ctec-60-hours-course/' ); } );
+add_filter( 'woocommerce_return_to_shop_text', function () { return 'Browse CTEC Courses →'; } );
+// The site has no Shop page, so WooCommerce hides its empty-cart button: add the design's button instead.
+add_action( 'woocommerce_cart_is_empty', function () {
+	if ( wc_get_page_id( 'shop' ) > 0 ) return;
+	echo '<p class="return-to-shop"><a class="button wc-backward" href="' . esc_url( home_url( '/product/ctec-60-hours-course/' ) ) . '">Browse CTEC Courses →</a></p>';
+}, 20 );
