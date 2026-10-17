@@ -42,6 +42,6 @@ function cards() {
 module.exports = {
   slug: 'new-contact', title: 'Contact Us (new design preview)', liveId: 108, kind: 'page',
   build: (m) => [container({ content_width: 'full', padding: box(0), flex_gap: gap(0), ...cls('ctc-page') }, [
-    pageHero('Help', 'We are here to answer your questions!', 'Contact Us', true), cards(), faqSection(),
+    pageHero('Help', 'We are here to answer your questions!', 'Contact Us', true, true), cards(), faqSection(),
   ], false)],
 };

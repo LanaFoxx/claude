@@ -38,10 +38,12 @@ const FAQS = [
 ];
 
 // Inner-page hero (pill + two-part H1). dark=true → navy band (Contact Us).
-function pageHero(label, thin, bold, dark = false) {
+function pageHero(label, thin, bold, dark = false, below = false) {
   return band(dark ? C.navy : C.cream, [
     pill(label, dark ? { color: C.gold, bg: C.navy2, settings: { _border_border: 'solid', _border_width: box(1), _border_color: C.navyLine } } : {}),
-    heading(`<span class="ctc-thin ctc-block" style="font-size:.6em">${thin}</span>${bold}<span class="ctc-gold">.</span>`,
+    heading(below // below=true: subtitle under the title, wrapped into two even lines
+      ? `${bold}<span class="ctc-gold">.</span><span class="ctc-thin ctc-block ctc-balance" style="font-size:.6em;max-width:12em;margin-top:.3em">${thin}</span>`
+      : `<span class="ctc-thin ctc-block" style="font-size:.6em">${thin}</span>${bold}<span class="ctc-gold">.</span>`,
       'h1', [68, 56, 44], dark ? C.white : C.navy, 'left', { lh: 1.05, settings: { _margin: box(18, 0, 0, 0), _element_width: 'initial', _element_custom_width: px(1000), _element_custom_width_tablet: px(100, '%'), _element_custom_width_mobile: px(100, '%') } }),
   ], { pad: [88, 56], cls: dark ? 'ctc-dots-dark' : 'ctc-dots-cream' });
 }

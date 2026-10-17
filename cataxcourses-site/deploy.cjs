@@ -29,6 +29,8 @@ const ALT = {
   'ctc-student-mug-1.jpg': 'Student with California Tax Courses mug', 'ctc-student-mug-2.jpg': 'Student with California Tax Courses mug',
   'ctc-student-mug-3.jpg': 'Student with California Tax Courses mug', 'ctc-student-mug-4.jpg': 'Student with California Tax Courses mug',
   'ctc-book-20-hour.jpg': 'CTEC 20 Hour Course Book', 'ctc-book-60-hour.jpg': 'CTEC 60 Hour Course Book',
+  'ctc-tpd-northstar.jpg': 'Northstar website design', 'ctc-tpd-tidewater-tax.jpg': 'Tidewater Tax website design', 'ctc-tpd-harlow.jpg': 'Harlow website design',
+  'ctc-tpd-ember-tax-advisory.jpg': 'Ember Tax Advisory website design', 'ctc-tpd-keel-tax.jpg': 'Keel Tax website design', 'ctc-tpd-meridian.jpg': 'Meridian website design',
 };
 
 function mediaMap() {

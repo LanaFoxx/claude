@@ -6,7 +6,7 @@ const { C, HEAD, BODY, PHONE, URL, px, box, gap, auto, link, typo, container, wi
 const STYLE = `<style id="ctc-design">
 body:has(.ctc-header){background:#fff;margin:0;color:${C.navy};font-family:${BODY},system-ui,sans-serif}
 .elementor:has(> .ctc-header){position:sticky;top:calc(var(--wp-admin--admin-bar--height,0px) - 41px);z-index:100}
-.ctc-thin{font-weight:300}.ctc-gold{color:${C.gold}}.ctc-block{display:block}
+.ctc-thin{font-weight:300}.ctc-gold{color:${C.gold}}.ctc-block{display:block}.ctc-thin.ctc-block{line-height:1.2}.ctc-balance{text-wrap:balance}
 @media (max-width:767px){
  .ctc-badge-slider{flex-wrap:nowrap!important;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;justify-content:flex-start!important;gap:0!important}
  .ctc-badge-slider::-webkit-scrollbar{display:none}
@@ -75,6 +75,7 @@ body:has(.ctc-header){background:#fff;margin:0;color:${C.navy};font-family:${BOD
 .ctc-pricebar,.ctc-article,.ctc-cta{transition:background-color .2s}
 .ctc-pricebar:hover,.ctc-article:hover{background-color:${C.sandHover}!important}
 .ctc-cta-gold:hover{background-color:${C.goldHover}!important}.ctc-cta-navy:hover{background-color:${C.navy2}!important}
+.ctc-link-gold a:hover,.ctc-link-gold a:focus{color:${C.white}!important}
 .ctc-deco{pointer-events:none}.ctc-o18{opacity:.18}
 .ctc-laptop .elementor-wrapper{--video-aspect-ratio:1.5357!important;aspect-ratio:860/560}
 .ctc-laptop video{object-fit:cover}
@@ -326,44 +327,35 @@ function header(m) {
 }
 
 function footer(m) {
-  const head = (t) => eyebrow(t, C.gold, 'left', { size: 15, settings: { _margin: box(0, 0, 6, 0) } });
+  // Claude Design "Footer": logo + blurb left, "Call Us Today" right; copyright + policy links underneath.
   return [container({
     content_width: 'full', flex_direction: 'column', padding: box(0), flex_gap: gap(0),
     background_background: 'classic', background_color: C.footer,
     border_border: 'solid', border_width: box(3, 0, 0, 0), border_color: C.gold, ...cls('ctc-footer'),
   }, [
     container({
-      container_type: 'grid', content_width: 'boxed', boxed_width: px(1392),
-      grid_columns_grid: px(4, 'fr'), grid_columns_grid_tablet: px(2, 'fr'), grid_columns_grid_mobile: px(1, 'fr'),
-      grid_rows_grid: auto, grid_rows_grid_tablet: auto, grid_rows_grid_mobile: auto,
-      grid_gaps: gap(40), grid_gaps_mobile: gap(32), grid_align_items: 'start',
-      padding: box(64, 24, 32, 24), padding_mobile: box(48, 20, 24, 20),
+      content_width: 'boxed', boxed_width: px(1392), flex_direction: 'row', flex_wrap: 'wrap', flex_justify_content: 'space-between', flex_align_items: 'center',
+      flex_gap: gap(32), padding: box(56, 24, 40, 24), padding_mobile: box(44, 20, 32, 20),
     }, [
       stack([
-        image(m.logo, { width: 168, link: URL.home, align: 'left', settings: { _element_width: 'initial', _element_custom_width: px(168), _margin: box(0, 0, 18, 0) } }),
-        text('A CTEC &amp; IRS Approved Education Provider. Proud Member of Business Consumer Alliance and TrustPilot', { color: C.muted, size: [18, 17, 16], lh: 1.6, settings: { _margin: box(0, 0, 18, 0) } }),
-        linkList([['Terms &amp; Conditions', URL.terms], ['Privacy Policy', URL.privacy], ['Refund Policy', URL.refund]], { inline: true, space: 16, size: 17 }),
-      ]),
-      stack([head('CTEC Courses'), linkList([
-        ['CTEC 60 Hour Qualifying Education', URL.c60], ['CTEC 20 Hour Continuing Education Course', URL.c20],
-        ['CTEC 15 Hour In Lieu of Experience Course', URL.c15], ['California Tax Law - 5 Hours', URL.caLaw],
-        ['Book Add-Ons', URL.books],
-      ], { space: 8 })]),
-      stack([head('Info'), linkList([
-        ['Helpful Guides &amp; How-Tos', URL.guides], ['How to Become a CTEC Registered Tax Preparer', URL.become], ['How To Renew Your CTEC Registration', URL.renew],
-        ['Frequently Asked Questions', URL.faq], ['Tax News', URL.news], ['Need A Website?', URL.website],
-        ['Help', URL.contact], ['Login', URL.login],
-      ], { space: 8 })]),
+        image(m.logo, { width: 168, link: URL.home, align: 'left', settings: { _element_width: 'initial', _element_custom_width: px(168) } }),
+        text('A CTEC &amp; IRS Approved Education Provider. Proud Member of Business Consumer Alliance and TrustPilot.', { color: C.muted, size: 16, lh: 1.6, maxW: 420 }),
+      ], { gap: 14, settings: { width: auto, width_mobile: px(100, '%') } }),
       stack([
-        head('Call Us Today!'),
-        widget('heading', { title: PHONE.label, header_size: 'span', link: link(PHONE.tel), title_color: C.white, ...typo('typography', BODY, [32, 30, 28], 800, { lh: 1.2, ls: 0 }) }),
-        linkList([['Visit our Facebook', URL.facebook]], { size: 18, settings: { _margin: box(10, 0, 0, 0) } }),
-      ], { gap: 4 }),
+        eyebrow('Call Us Today', C.gold, 'right', { size: 14, settings: { align_mobile: 'left' } }),
+        widget('heading', { title: PHONE.label, header_size: 'span', link: link(PHONE.tel), title_color: C.white, align: 'right', align_mobile: 'left', ...typo('typography', HEAD, 32, 800, { lh: 1, ls: 0 }) }),
+        text('Monday – Friday, 9am – 4pm PST', { color: '#8A8F99', size: 15, lh: 1.5, align: 'right', settings: { align_mobile: 'left' } }),
+      ], { gap: 8, settings: { width: auto, width_mobile: px(100, '%') } }),
     ]),
     container({
-      content_width: 'boxed', boxed_width: px(1392), flex_direction: 'row', padding: box(20, 24, 28, 24), padding_mobile: box(18, 20, 24, 20),
+      content_width: 'boxed', boxed_width: px(1392), flex_direction: 'row', flex_wrap: 'wrap', flex_justify_content: 'space-between', flex_align_items: 'center',
+      flex_gap: gap(16), padding: box(20, 24, 28, 24), padding_mobile: box(18, 20, 24, 20),
       border_border: 'solid', border_width: box(1, 0, 0, 0), border_color: C.navy2,
-    }, [text('© California Tax Courses 2026', { color: C.muted, size: 17, lh: 1.5 })]),
+    }, [
+      text('© California Tax Courses 2026', { color: C.muted, size: 15, lh: 1.5, settings: { _element_width: 'auto' } }),
+      linkList([['Terms &amp; Conditions', URL.terms], ['Privacy Policy', URL.privacy], ['Refund Policy', URL.refund], ['Facebook', URL.facebook]],
+        { inline: true, space: 20, size: 15, settings: { _element_width: 'auto' } }),
+    ]),
   ], false)];
 }
 

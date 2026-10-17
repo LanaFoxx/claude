@@ -76,11 +76,13 @@ function hero(m, d) {
     size: [17, 17, 16], lh: 1.6, color: bold ? C.navy : C.gray, weight: bold ? 700 : 400,
     settings: { _margin: box(i === 0 ? 22 : 14, 0, 0, 0) },
   });
+  const videoFirst = !d.productImage; // 60 / 20 hour: on mobile the pill + laptop video come first, as on the homepage
+  const mobileOnly = { hide_desktop: 'hidden-desktop', hide_tablet: 'hidden-tablet' };
   return band(C.cream, [
     image(m.seal, { width: 560, cls: 'ctc-deco', settings: { _position: 'absolute', _element_width: 'initial', _element_custom_width: px(560), opacity: px(0.1), _offset_orientation_h: 'end', _offset_x_end: px(-140), _offset_orientation_v: 'end', _offset_y_end: px(-200), _z_index: 0, hide_mobile: 'hidden-mobile' } }),
     grid([
       stack([
-        pill(d.pill),
+        pill(d.pill, videoFirst ? { settings: { hide_mobile: 'hidden-mobile' } } : {}),
         heading(d.h1, 'h1', [64, 52, 38], C.navy, 'left', { lh: 1.05, settings: { _margin: box(18, 0, 0, 0) } }),
         ...d.intro.map(para),
         row([
@@ -89,9 +91,10 @@ function hero(m, d) {
         ], { gap: 16, settings: { margin: box(30, 0, 0, 0), _margin: box(30, 0, 0, 0) } }),
       ]),
       stack([
+        ...(videoFirst ? [pill(d.pill, { settings: { ...mobileOnly, _margin_mobile: box(0, 0, 18, 0) } })] : []),
         heroMedia(m, d),
         text(d.caption, { align: 'center', size: [15, 15, 14], lh: 1.6, settings: { _margin: box(18, 0, 0, 0) } }),
-      ], { settings: { _z_index: 1 } }),
+      ], { settings: { _z_index: 1, ...(videoFirst ? { _flex_order_mobile: 'start' } : {}) } }),
     ], { cols: [2, 1, 1], gap: 56, gapM: 40, align: 'center', settings: { _z_index: 1 } }),
   ], { pad: [88, 96], cls: 'ctc-dots-cream' });
 }
@@ -112,13 +115,28 @@ function pkg(p) {
   ], { gap: 14, align: 'center' });
 }
 
+// Mobile only: "—— OR ——" between the two packages (stacked on phones).
+function orDivider() {
+  const rule = () => container({ content_width: 'full', width: px(34, '%'), width_tablet: px(34, '%'), width_mobile: px(34, '%'), padding: box(0), min_height: px(1), min_height_mobile: px(1), height: px(1), background_background: 'classic', background_color: C.line });
+  return container({
+    content_width: 'full', flex_direction: 'row', flex_wrap: 'nowrap', flex_align_items: 'center', flex_justify_content: 'center', flex_gap: gap(16), padding: box(0),
+    hide_desktop: 'hidden-desktop', hide_tablet: 'hidden-tablet',
+  }, [
+    rule(),
+    widget('heading', { title: 'OR', header_size: 'span', title_color: C.goldText, align: 'center', ...typo('typography', HEAD, 18, 800, { lh: 1, ls: 0.12 }),
+      _element_width: 'auto', _flex_size: 'none', _background_background: 'classic', _background_color: C.goldPale, _border_radius: box(999), _padding: box(12, 18, 12, 18) }),
+    rule(),
+  ]);
+}
+
 function enroll(d) {
   const body = d.packages.length > 1
     ? grid([
       pkg(d.packages[0]),
       container({ content_width: 'full', padding: box(0), background_background: 'classic', background_color: C.line, hide_mobile: 'hidden-mobile' }),
+      orDivider(),
       pkg(d.packages[1]),
-    ], { cols: ['minmax(0,1fr) 1px minmax(0,1fr)', 'minmax(0,1fr) 1px minmax(0,1fr)', '1fr'], gap: 64, rowGap: 0, gapT: 32, gapM: 48 })
+    ], { cols: ['minmax(0,1fr) 1px minmax(0,1fr)', 'minmax(0,1fr) 1px minmax(0,1fr)', '1fr'], gap: 64, rowGap: 0, gapT: 32, gapM: 32 })
     : stack([pkg(d.packages[0])], { maxW: 720, settings: { margin: box(0, 'auto', 0, 'auto') } });
   return band(C.white, [
     stack([
@@ -133,10 +151,10 @@ function enroll(d) {
 /* -------------------------------------------------------------- features */
 function features(d) {
   const item = (f, right) => stack([
-    widget('icon', { selected_icon: fa(featureIcon(f.title)), view: 'framed', shape: 'circle', primary_color: C.gold, size: px(34), icon_padding: px(17), border_width: box(2), align: right ? 'right' : 'left', align_mobile: 'left' }),
-    heading(f.title, 'h3', [27, 25, 23], C.white, right ? 'right' : 'left', { weight: 700, lh: 1.15, ls: 0, settings: { _margin: box(4, 0, 0, 0), align_mobile: 'left' } }),
-    text(f.body, { size: [18, 17, 16], lh: 1.65, color: C.muted, align: right ? 'right' : 'left', settings: { align_mobile: 'left' } }),
-  ], { gap: 12, align: right ? 'flex-end' : 'flex-start', settings: { flex_align_items_mobile: 'flex-start' } });
+    widget('icon', { selected_icon: fa(featureIcon(f.title)), view: 'framed', shape: 'circle', primary_color: C.gold, size: px(34), icon_padding: px(17), border_width: box(2), align: right ? 'right' : 'left', align_mobile: 'center' }),
+    heading(f.title, 'h3', [27, 25, 23], C.white, right ? 'right' : 'left', { weight: 700, lh: 1.15, ls: 0, settings: { _margin: box(4, 0, 0, 0), align_mobile: 'center' } }),
+    text(f.body, { size: [18, 17, 16], lh: 1.65, color: C.muted, align: right ? 'right' : 'left', settings: { align_mobile: 'center' } }),
+  ], { gap: 12, align: right ? 'flex-end' : 'flex-start', settings: { flex_align_items_mobile: 'center' } });
   const half = Math.ceil(d.features.length / 2);
   return band(C.navy, [
     stack([
@@ -149,7 +167,7 @@ function features(d) {
       stack([
         ...d.features.slice(half).map((f) => item(f, false)),
         enrollBtn('Enroll Now →', { pad: box(18, 32, 18, 32) }),
-      ], { gap: 44, align: 'flex-start' }),
+      ], { gap: 44, align: 'flex-start', settings: { flex_align_items_mobile: 'center' } }),
     ], { cols: ['minmax(0,1fr) 2px minmax(0,1fr)', 'minmax(0,1fr) 2px minmax(0,1fr)', '1fr'], gap: 64, rowGap: 0, gapT: 32, gapM: 40 }),
   ], { cls: 'ctc-dots-dark' });
 }
