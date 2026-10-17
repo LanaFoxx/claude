@@ -201,6 +201,8 @@ async function publishNew(p, name) {
   prep.previews = { ...(prep.previews || {}), [name]: pid }; save();
   await openEditor(p, pid);
   console.log('publish', name, pid, 'elements', await replaceContent(p, M.build(mediaMap()), 'publish', PAGE_SETTINGS));
+  // Elementor keeps the page's previous 'private' status in its settings; publish explicitly.
+  await p.evaluate(async ([pid, nonceFn]) => fetch(`/wp-json/wp/v2/pages/${pid}`, { method: 'POST', headers: { 'X-WP-Nonce': eval(`(${nonceFn})`)(), 'Content-Type': 'application/json' }, body: JSON.stringify({ status: 'publish' }) }), [pid, nonce.toString()]);
   prep.live = [...new Set([...(prep.live || []), pid])]; save();
   await installSnippet(p);
 }
