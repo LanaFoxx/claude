@@ -26,6 +26,8 @@ mobile, phone number hidden on mobile; headings and section padding step down.
 ## Files
 
 * `build.cjs` – design tokens, helpers, header, footer, homepage element trees.
-* `deploy.cjs` – `node deploy.cjs [prep] [chrome] [home]` (no args = everything). Needs
+* `pages.cjs` – sub-pages from the client sitemap: History, Gallery, Webcam, Merchandise, Gift Cards,
+  Employment, The Deck, Lakeside Dining Room, The Lounge, The Creamery.
+* `deploy.cjs` – `node deploy.cjs [prep] [chrome] [home] [pages] [page:<slug>]` (no args = everything). Needs
   `WP_URL`, a logged-in Playwright storage state (`STATE`) and `MEDIA` (folder with the images
   extracted from the design bundle). IDs are cached next to the state file.

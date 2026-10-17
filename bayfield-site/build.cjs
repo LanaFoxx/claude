@@ -192,8 +192,9 @@ function header(m, menuId) {
     border_border: 'solid', border_width: box(0, 0, 1, 0), border_color: C.line,
     sticky: 'top', sticky_on: ['desktop', 'tablet', 'mobile'], z_index: 30,
     custom_css: `selector { backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
-body:not(.elementor-editor-active) selector .bi-header-logo { opacity: 0; transform: translateY(6px); pointer-events: none; transition: opacity .4s ease, transform .4s ease; }
-body.bi-scrolled selector .bi-header-logo { opacity: 1; transform: none; pointer-events: auto; }`,
+/* Homepage only: the hero shows the big logo, so the header logo waits for a scroll. */
+body.home:not(.elementor-editor-active) selector .bi-header-logo { opacity: 0; transform: translateY(6px); pointer-events: none; transition: opacity .4s ease, transform .4s ease; }
+body.home.bi-scrolled selector .bi-header-logo { opacity: 1; transform: none; pointer-events: auto; }`,
   }, [
     image(m.logo, { width: [140, 128, 104], link: '/', align: 'left', settings: { _css_classes: 'bi-header-logo', _element_width: 'initial', _element_custom_width: px(140), _element_custom_width_tablet: px(128), _element_custom_width_mobile: px(104), _flex_size: 'none' } }),
     widget('nav-menu', {
