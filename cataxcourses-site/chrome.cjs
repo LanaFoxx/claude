@@ -76,6 +76,16 @@ body:has(.ctc-header){background:#fff;margin:0;color:${C.navy};font-family:${BOD
 .ctc-pricebar:hover,.ctc-article:hover{background-color:${C.sandHover}!important}
 .ctc-cta-gold:hover{background-color:${C.goldHover}!important}.ctc-cta-navy:hover{background-color:${C.navy2}!important}
 .ctc-link-gold a:hover,.ctc-link-gold a:focus{color:${C.white}!important}
+/* Thank-you page (rendered by wp/preview-snippet.php around the Moodle plugin's [moodleauth] output) */
+.ctc-thankyou{font-family:Manrope,sans-serif}.ctc-ty-inner{max-width:1392px;margin:0 auto;padding:0 24px}
+.ctc-ty-hero{background-color:${C.navy};padding:64px 0 56px;color:#fff}
+.ctc-ty-pill{display:inline-block;background:${C.navy2};color:${C.gold};border:1px solid ${C.navyLine};border-radius:999px;padding:6px 12px;font-size:16px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.ctc-ty-hero h1{font-family:Outfit,sans-serif;font-size:68px;font-weight:800;line-height:1.05;letter-spacing:-.02em;color:#fff;margin:18px 0 0}.ctc-ty-hero h1 .ctc-thin{font-size:.6em}
+.ctc-ty-body{background:${C.sand};padding:64px 0 88px}
+.ctc-ty-card{background:#fff;border-radius:16px;border-top:6px solid ${C.gold};padding:40px;max-width:820px;box-shadow:0 30px 60px -30px rgba(28,35,51,.25);color:${C.gray};font-size:19px;line-height:1.65}
+.ctc-ty-card #response_text{margin-left:0!important}.ctc-ty-card p{margin:0 0 12px}.ctc-ty-card a{color:${C.goldText};font-weight:700}.ctc-ty-card h1,.ctc-ty-card h2,.ctc-ty-card h3,.ctc-ty-card strong{color:${C.navy}}
+.ctc-ty-help{margin:24px 0 0;color:${C.gray};font-size:17px}.ctc-ty-help a{color:${C.goldText}}
+@media (max-width:767px){.ctc-ty-inner{padding:0 20px}.ctc-ty-hero{padding:42px 0 37px}.ctc-ty-hero h1{font-size:44px}.ctc-ty-body{padding:42px 0 58px}.ctc-ty-card{padding:24px 20px;font-size:17px}}
 .ctc-deco{pointer-events:none}.ctc-o18{opacity:.18}
 .ctc-laptop .elementor-wrapper{--video-aspect-ratio:1.5357!important;aspect-ratio:860/560}
 .ctc-laptop video{object-fit:cover}

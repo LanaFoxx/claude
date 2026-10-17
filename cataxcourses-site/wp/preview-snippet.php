@@ -122,3 +122,33 @@ add_filter( 'gettext', function ( $t, $orig, $domain ) {
 	if ( 'Cart totals' === $orig && ctc_cart_design() ) return 'Your Order';
 	return $t;
 }, 20, 3 );
+/* ---------------------------------------------------------------- thank-you page (Moodle enrollment) */
+// The Moodle plugin's thankyou.php page template redeclares getassigntime(), which the plugin itself already declares,
+// so it fatals now that Oxygen no longer draws this page. Render the plugin's [moodleauth] shortcode instead (the same
+// enrollment code: reads ?order=, creates the Moodle user via AJAX, prints the login into #response_text) inside the
+// site header/footer. The page keeps its thankyou.php template so the plugin's order-received redirect still finds it.
+function ctc_is_thankyou() {
+	return is_page() && 'thankyou.php' === get_page_template_slug( get_queried_object_id() );
+}
+add_filter( 'template_include', function ( $template ) {
+	if ( ! defined( 'ELEMENTOR_PATH' ) || ! ctc_is_thankyou() ) return $template;
+	return ELEMENTOR_PATH . 'modules/page-templates/templates/canvas.php';
+}, 1001 );
+add_action( 'elementor/page_templates/canvas/before_content', function () {
+	if ( ! ctc_is_thankyou() ) return;
+	ctc_render_template( CTC_HEADER_ID );
+	echo '<div class="ctc-page ctc-thankyou">';
+	echo '<section class="ctc-ty-hero ctc-dots-dark"><div class="ctc-ty-inner"><span class="ctc-ty-pill">Order Confirmed</span>'
+		. '<h1><span class="ctc-thin ctc-block">Your enrollment is complete.</span>Thank You For Your Purchase<span class="ctc-gold">.</span></h1></div></section>';
+	echo '<section class="ctc-ty-body"><div class="ctc-ty-inner"><div class="ctc-ty-card">';
+	ob_start(); // the shortcode may echo its markup instead of returning it
+	$ret  = function_exists( 'moodleauthuser' ) ? do_shortcode( '[moodleauth]' ) : '';
+	$html = ob_get_clean() . $ret;
+	// The plugin's script writes the Moodle login into #response_text; add the box when the shortcode doesn't print one.
+	if ( ! preg_match( '/id=["\']response_text["\']/', $html ) ) $html .= '<div id="response_text"><p>Thank you for enrolling for our course</p></div>';
+	echo $html;
+	echo '</div><p class="ctc-ty-help">Need help? Call <a href="tel:8882291994"><strong>(888) 229-1994</strong></a> · Mon – Fri, 9am – 4pm PST</p></div></section></div>';
+} );
+add_action( 'elementor/page_templates/canvas/after_content', function () {
+	if ( ctc_is_thankyou() ) ctc_render_template( CTC_FOOTER_ID );
+} );
