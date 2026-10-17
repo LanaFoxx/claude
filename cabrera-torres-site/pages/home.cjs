@@ -65,11 +65,11 @@ selector > .e-con-inner { position: relative; z-index: 1; }
     content_width: 'full', flex_direction: 'column', flex_justify_content: 'flex-end', flex_align_items: 'flex-start', flex_align_items_tablet: 'center', flex_align_items_mobile: 'center',
     padding: box(40, 0, 0, 0), padding_tablet: box(0), padding_mobile: box(0), min_height: px(560), min_height_tablet: px(0), min_height_mobile: px(0),
   }, [
-    // Jen (Markup): the design's retouched hero photo was "too AI / too exaggerated"; use her untouched cream-dress photo.
-    image(m.jenCreamCut, {
+    // Jen (Markup): the design's retouched photo was "too AI"; she picked her original hand-to-chin cream-dress photo.
+    image(m.heroJenReal, {
       align: 'left', settings: {
         align_tablet: 'center', align_mobile: 'center',
-        custom_css: 'selector img { display: block; width: 100%; max-width: 640px; height: auto; max-height: 620px; object-fit: contain; object-position: bottom; filter: drop-shadow(0 30px 50px rgba(0,0,0,.55)); }\n@media (max-width: 1024px) { selector img { max-width: 360px; } }',
+        custom_css: 'selector img { display: block; width: auto; max-width: 100%; height: 600px; max-height: 600px; object-fit: contain; object-position: bottom; filter: drop-shadow(0 30px 50px rgba(0,0,0,.55)); }\n@media (max-width: 1024px) { selector img { height: auto; max-height: none; max-width: 300px; width: 100%; } }',
       },
     }),
   ]),
@@ -114,10 +114,13 @@ const results = () => band(C.wood, [
 ], { pad: [56, 56], width: 1320, anchor: 'results' });
 
 /* --------------------------------------------------------------- my story */
+// Jen's own wording (Markup), with the Gonzalez Torres paragraph folded into the story instead of a separate box.
 const STORY = [
-  'Three days after graduating college, I lost my father. In the midst of that unimaginable loss, I still had to find the strength to move forward and prepare for the LSAT.',
-  'Years later, during the COVID-19 pandemic, I completed my law school final exams at 40 weeks pregnant and became a mother the very next day.',
-  'These experiences shaped the attorney I am today — resilient, compassionate, and determined. I understand what it means for life to change unexpectedly, and I bring that same strength, empathy, and commitment to every client I represent.',
+  'Three days after graduating from college, I lost my father. In a moment that should have been filled with celebration and excitement for the future, I found myself navigating an unimaginable loss while preparing for the LSAT and the next chapter of my life.',
+  'Years later, during the uncertainty of the COVID-19 pandemic, I completed my law school final exams at 40 weeks pregnant. The very next day, I welcomed my first child into the world.',
+  'These experiences taught me that life rarely unfolds according to plan. They also reinforced something I carry into my practice every day: when circumstances become difficult, determination matters, but so do compassion, preparation, and the people standing beside you.',
+  'Before founding Cabrera Torres Law Firm, I served as Managing Partner of Gonzalez Torres Law, where I led the personal injury litigation practice. My experience in personal injury law has taught me that behind every case is someone facing a difficult and often unexpected chapter of their own.',
+  'I approach that responsibility with the same determination that has carried me through my own challenges—combined with the experience, preparation, and personal attention every client deserves.',
 ];
 const story = (m) => container({
   content_width: 'boxed', boxed_width: px(1320), container_type: 'grid',
@@ -126,17 +129,15 @@ const story = (m) => container({
   padding: box(0), background_background: 'classic', background_color: C.light, overflow: 'hidden', _element_id: 'story',
 }, [
   container({ content_width: 'full', flex_direction: 'column', flex_justify_content: 'flex-end', flex_align_items: 'center', padding: box(48, 24, 0, 24) }, [
-    image(m.storyJen, { settings: { custom_css: 'selector img { display: block; width: auto; max-width: 100%; max-height: 780px; object-fit: contain; object-position: bottom; }\n@media (max-width: 1024px) { selector img { max-width: 420px; width: 100%; height: auto; } }' } }),
+    // Jen (Markup): "Let's do this pic here" -> her desk portrait.
+    image(m.jenDeskCut, { settings: { custom_css: 'selector img { display: block; width: auto; max-width: 100%; max-height: 780px; object-fit: contain; object-position: bottom; }\n@media (max-width: 1024px) { selector img { max-width: 420px; width: 100%; height: auto; } }' } }),
   ]),
   stack([
-    kicker('My Story', C.roseDeep, { settings: { typography_font_weight: '600' } }),
+    kicker('The Story Behind the Firm', C.roseDeep, { settings: { typography_font_weight: '600' } }),
     twoLine('Resilience Is Personal.', 'So Is My Commitment to&nbsp;You.', [44, 36, 30], C.ink, 'left', { lh: 1.15 }),
     stack([
       ...STORY.map((p) => text(p, { color: C.inkSoft, size: 16, lh: 1.75 })),
-      text('Before founding Cabrera Torres Law Firm, Jennifer served as Managing Partner of Gonzalez Torres Law, where she led the Personal Injury Litigation practice.', {
-        color: C.inkSoft, size: 15, lh: 1.75,
-        settings: { _padding: box(22, 26, 22, 26), _background_background: 'classic', _background_color: C.ivory, _border_border: 'solid', _border_width: box(0, 0, 0, 2), _border_color: C.rose },
-      }),
+      text('Because there’s strength in every story. Including yours.', { color: C.ink, size: 24, lh: 1.4, style: 'italic', weight: 500, family: L.QFONT }),
     ], { gap: 18, settings: { margin: box(10, 0, 0, 0) } }),
     button('Read more about my story  →', URL.jennifer, 'gold', { size: 14, settings: { _margin: box(18, 0, 0, 0) } }),
   ], { gap: 16, align: 'flex-start', justify: 'center', settings: { padding: box(88, 40, 88, 64), padding_tablet: box(56, 32, 72, 32), padding_mobile: box(48, 24, 64, 24) } }),
