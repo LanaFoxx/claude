@@ -28,6 +28,9 @@ mobile, phone number hidden on mobile; headings and section padding step down.
 * `build.cjs` – design tokens, helpers, header, footer, homepage element trees.
 * `pages.cjs` – sub-pages from the client sitemap: History, Gallery, Webcam, Merchandise, Gift Cards,
   Employment, The Deck, Lakeside Dining Room, The Lounge, The Creamery.
+* `shop.cjs` – gift card store pages with placeholder content (product `/gift-card/`, `/cart/`, `/checkout/`,
+  `/order-received/`). When WooCommerce is installed, assign the cart and checkout pages in WooCommerce settings and
+  replace these layouts with Elementor Pro's WooCommerce widgets in the same design.
 * `deploy.cjs` – `node deploy.cjs [prep] [chrome] [home] [pages] [page:<slug>]` (no args = everything). Needs
   `WP_URL`, a logged-in Playwright storage state (`STATE`) and `MEDIA` (folder with the images
   extracted from the design bundle). IDs are cached next to the state file.

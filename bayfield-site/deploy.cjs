@@ -133,7 +133,7 @@ async function setConditions(p, postId, conditions) {
     eventsLawn: md('bayfield-events-lawn.jpg'),
     standardRoom: md('bayfield-standard-room.jpg'), creameryPhoto: md('bayfield-the-creamery.jpg'),
     exterior: md('bayfield-inn-exterior.jpg'), deckBar: md('bayfield-the-deck-bar.jpg'), diningWindow: md('bayfield-dining-room-window.jpg'),
-    file: md,
+    file: md, site: SITE,
     // Elementor's placeholder image, for any slot still waiting on a photo.
     placeholder: { id: '', url: `${SITE}/wp-content/plugins/elementor/assets/images/placeholder.png`, alt: '', source: 'library' },
   };

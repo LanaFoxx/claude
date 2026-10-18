@@ -4,7 +4,7 @@ const B = require('./build.cjs');
 const { C, SERIF, SANS, EXT, PAGE, id, px, box, gap, auto, link, fa, typo, container, widget, stack, row, gridSettings, radial,
   eyebrow, heading, text, button, image, linked, zoomOnHover } = B;
 
-const GIFT_SHOP = 'https://bayfieldinn.com/gift-cards/';
+const GIFT_SHOP = '/gift-card/'; // gift card product page (shop.cjs)
 const PHONE = 'tel:7157793363';
 const EMAIL = 'mailto:info@thebayfieldinn.com';
 
@@ -253,6 +253,8 @@ const RESTAURANTS = [
     photos: [] },
 ];
 
+const { SHOP_PAGES } = require('./shop.cjs');
+
 const PAGES = [
   { slug: 'history', title: 'History', build: history },
   { slug: 'gallery', title: 'Gallery', build: gallery },
@@ -261,6 +263,7 @@ const PAGES = [
   { slug: 'gift-cards', title: 'Gift Cards', build: giftCards },
   { slug: 'employment', title: 'Employment', build: employment },
   ...RESTAURANTS.map((r) => ({ slug: r.slug, title: r.name, build: (m) => restaurant(m, r) })),
+  ...SHOP_PAGES,
 ];
 
 module.exports = { PAGES };
