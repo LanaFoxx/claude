@@ -12,7 +12,7 @@ function dwdp_settings() {
 		'cta_text'       => "Every one of these started with a quick Zoom call. Tell me what you're dreaming up.",
 		'cta_button'     => 'Schedule a Zoom',
 		'cta_url'        => 'https://calendly.com/dreamwebdigital/dream-web-digital-consultation-call',
-		'cta_phone'      => '(561) 425-0734',
+		'cta_phone'      => '(772) 210-1728',
 		'def_platform'   => 'WordPress · Elementor',
 		'def_scope'      => 'Custom design & full development — no pre-made themes',
 		'def_responsive' => 'Desktop, tablet, and mobile',
