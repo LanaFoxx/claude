@@ -128,9 +128,13 @@ const story = (m) => container({
   grid_rows_grid: auto, grid_rows_grid_tablet: auto, grid_rows_grid_mobile: auto, grid_gaps: gap(0), grid_align_items: 'stretch',
   padding: box(0), background_background: 'classic', background_color: C.light, overflow: 'hidden', _element_id: 'story',
 }, [
-  container({ content_width: 'full', flex_direction: 'column', flex_justify_content: 'flex-end', flex_align_items: 'center', padding: box(48, 24, 0, 24) }, [
-    // Jen (Markup): "Let's do this pic here" -> her desk portrait.
-    image(m.jenDeskCut, { settings: { custom_css: 'selector img { display: block; width: auto; max-width: 100%; max-height: 780px; object-fit: contain; object-position: bottom; }\n@media (max-width: 1024px) { selector img { max-width: 420px; width: 100%; height: auto; } }' } }),
+  // Jen (Markup): her desk portrait, shown as the full photo on its own dark backdrop. The background-removed
+  // cutout left a dark fringe around her hair that "didn't blend" with the cream section.
+  container({
+    content_width: 'full', flex_direction: 'column', padding: box(0), min_height: px(640), min_height_tablet: px(520), min_height_mobile: px(400),
+    background_background: 'classic', background_color: '#121212',
+  }, [
+    image(m.jenDesk, { settings: { custom_css: 'selector { position: absolute; inset: 0; margin: 0; }\nselector .elementor-widget-container, selector img { width: 100%; height: 100%; }\nselector img { display: block; object-fit: cover; object-position: 45% center; }\n@media (max-width: 767px) { selector img { object-position: 45% top; } }' } }),
   ]),
   stack([
     kicker('The Story Behind the Firm', C.roseDeep, { settings: { typography_font_weight: '600' } }),
