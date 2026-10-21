@@ -76,6 +76,8 @@ body:has(.ctc-header){background:#fff;margin:0;color:${C.navy};font-family:${BOD
 .ctc-pricebar:hover,.ctc-article:hover{background-color:${C.sandHover}!important}
 .ctc-cta-gold:hover{background-color:${C.goldHover}!important}.ctc-cta-navy:hover{background-color:${C.navy2}!important}
 .ctc-link-gold a:hover,.ctc-link-gold a:focus{color:${C.white}!important}
+/* Text alerts (SMS opt-in) form */
+.ctc-sms-form a{color:${C.goldText}!important;font-weight:700}.ctc-sms-form .elementor-field-type-acceptance .elementor-field-option{display:flex;gap:10px;align-items:flex-start}.ctc-sms-form input[type=checkbox]{width:20px;height:20px;flex:none;margin-top:3px;accent-color:${C.gold}}.ctc-sms-form .elementor-field-type-acceptance label{font-weight:400!important;font-size:15px;line-height:1.6;color:${C.gray}}
 /* Tax News article body (Theme Builder single-post template, pages/post-single.cjs) */
 .ctc-post-body p{margin:0 0 22px}.ctc-post-body a{color:${C.goldText};font-weight:700}.ctc-post-body a:hover{color:${C.goldDeep}}
 .ctc-post-body h2,.ctc-post-body h3,.ctc-post-body h4{font-family:Outfit,sans-serif;color:${C.navy};font-weight:700;line-height:1.2;margin:36px 0 14px}.ctc-post-body h2{font-size:32px}.ctc-post-body h3{font-size:26px}
