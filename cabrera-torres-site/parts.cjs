@@ -164,7 +164,7 @@ function contactForm(rows = 4) {
         fld('email', 'email', 'Email *', '50', { required: 'true' }),
         fld('accident_date', 'text', 'Date of accident / injury', '100'),
         fld('message', 'textarea', 'Describe your case', '100', { rows }),
-        { ...fld('sms_consent', 'acceptance', 'Text message consent', '100'), acceptance_text: 'By providing my phone number, I agree to receive text messages from Cabrera Torres Law Firm.' },
+        { ...fld('sms_consent', 'acceptance', 'Text message consent (optional)', '100'), acceptance_text: 'Optional: Yes, I agree to receive text messages from Cabrera Torres Law Firm about my case, including case updates, appointment reminders, and document requests. Message frequency varies. Msg &amp; data rates may apply. Reply STOP to opt out or HELP for help. Consent is not required to hire us. See our <a href="/privacy-policy/" target="_blank">Privacy Policy</a> and <a href="/sms-terms/" target="_blank">SMS Terms</a>.' },
       ],
       show_labels: '', mark_required: '', input_size: 'md', button_text: 'Submit request', button_size: 'md', button_width: '', button_align: 'start',
       submit_actions: ['email'], email_subject: 'New free case evaluation request – Cabrera Torres Law Firm',

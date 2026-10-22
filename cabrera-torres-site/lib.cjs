@@ -286,7 +286,7 @@ function footer(m) {
       border_border: 'solid', border_width: box(1, 0, 0, 0), border_color: 'rgba(196,160,141,0.2)',
     }, [
       text('© 2026 Cabrera Torres Law Firm. All rights reserved.', { color: C.smoke, size: 13, settings: { _element_width: 'auto' } }),
-      text('Attorney advertising. Prior results do not guarantee a similar outcome.', { color: C.smoke, size: 13, settings: { _element_width: 'auto' } }),
+      text(`Attorney advertising. Prior results do not guarantee a similar outcome. <a href="/privacy-policy/">Privacy Policy</a> · <a href="/sms-terms/">SMS Terms</a>`, { color: C.smoke, size: 13, linkColor: C.sand, linkHover: C.rose, settings: { _element_width: 'auto' } }),
     ]),
   ], false)];
 }
