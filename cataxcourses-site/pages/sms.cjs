@@ -1,5 +1,5 @@
 // Text Message Alerts (new page, /text-alerts/) – single-page SMS opt-in form for carrier (10DLC / toll-free)
-// registration of the business texting number. No separate design: inner-page hero + a white form card. The form is
+// registration of the business texting number (conversational use case: no marketing wording). No separate design: inner-page hero + a white form card. The form is
 // Elementor Pro's Form widget (submissions saved in Elementor > Submissions and emailed to the site admin); the
 // consent checkbox is unchecked and required, and its label is the full carrier disclosure.
 const L = require('../lib.cjs');
@@ -8,7 +8,7 @@ const { pageHero } = require('./faq.cjs');
 
 const BRAND = 'California Tax Courses';
 const DISCLOSURE = `By checking this box, I agree to receive text messages from ${BRAND} at the mobile number provided, `
-  + 'including course and enrollment updates, CTEC deadline reminders, support replies and promotional offers. '
+  + 'including replies to my questions, course and enrollment support, and CTEC deadline reminders. '
   + 'Message frequency varies. Message and data rates may apply. Reply STOP to opt out at any time. '
   + `Reply HELP for help or call ${PHONE.label}. Consent is not a condition of purchase. `
   + `See our <a href="${URL.privacy}" target="_blank">Privacy Policy</a> and <a href="${URL.terms}" target="_blank">Terms &amp; Conditions</a>.`;
@@ -45,7 +45,7 @@ const wc = (c) => ({ _css_classes: c });
 module.exports = {
   slug: 'text-alerts', title: 'Text Message Alerts', kind: 'newpage',
   build: () => [container({ content_width: 'full', padding: box(0), flex_gap: gap(0), ...cls('ctc-page') }, [
-    pageHero('Text Alerts', `Course updates and reminders from ${BRAND}.`, 'Text Message Alerts'),
+    pageHero('Text Alerts', `Course support and reminders from ${BRAND}.`, 'Text Message Alerts'),
     band(C.sand, [
       container({
         content_width: 'full', width: px(760), width_tablet: px(100, '%'), width_mobile: px(100, '%'), flex_gap: gap(18),
@@ -53,9 +53,9 @@ module.exports = {
         border_radius: box(16), border_border: 'solid', border_width: box(6, 0, 0, 0), border_color: C.gold,
       }, [
         widget('heading', { title: 'Sign up for text messages', header_size: 'h2', title_color: C.navy, ...typo('typography', HEAD, [34, 30, 26], 800, { lh: 1.15, ls: -0.01 }) }),
-        text(`Get course and enrollment updates, CTEC deadline reminders, support replies and occasional promotional offers from ${BRAND} by text. Enter your mobile number and check the box below to give permission.`, { size: [18, 17, 16], lh: 1.6 }),
+        text(`Text with ${BRAND}: get replies to your questions, help with your course and enrollment, and CTEC deadline reminders. Enter your mobile number and check the box below to give permission.`, { size: [18, 17, 16], lh: 1.6 }),
         form(),
-        text(`<strong>${BRAND}</strong> text messages: message frequency varies. Message and data rates may apply. Reply <strong>STOP</strong> to unsubscribe, <strong>HELP</strong> for help, or call <a href="${PHONE.tel}">${PHONE.label}</a>. Mobile numbers and SMS opt-in consent are never sold or shared with third parties for marketing. <a href="${URL.privacy}">Privacy Policy</a> · <a href="${URL.terms}">Terms &amp; Conditions</a>.`,
+        text(`<strong>${BRAND}</strong> text messages: message frequency varies. Message and data rates may apply. Reply <strong>STOP</strong> to unsubscribe, <strong>HELP</strong> for help, or call <a href="${PHONE.tel}">${PHONE.label}</a>. Mobile numbers and SMS opt-in consent are never sold or shared with third parties or affiliates. <a href="${URL.privacy}">Privacy Policy</a> · <a href="${URL.terms}">Terms &amp; Conditions</a>.`,
           { size: 14, lh: 1.6, linkColor: C.goldText }),
       ]),
     ], { pad: [40, 88], align: 'center' }),
