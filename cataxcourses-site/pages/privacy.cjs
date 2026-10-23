@@ -1,5 +1,6 @@
 // Privacy Policy (page 124) – Claude Design "Privacy Policy" layout. The design only had placeholder sections,
-// so the text is the live site's real policy (cataxcourses.com/privacy-policy/), split at its bold section titles.
+// so the text is the live site's real policy (cataxcourses.com/privacy-policy/), split at its bold section titles,
+// plus the SMS / TEXT MESSAGING section added for SMS (10DLC) registration.
 const { legalPage } = require('./_legal.cjs');
 
 const SECTIONS = [
@@ -30,6 +31,10 @@ const SECTIONS = [
  {
   "title": "HOW WE SHARE INFORMATION",
   "html": "<p>Information about our customers is an important part of our business, and we are not in the business of selling it to others. We share customer information only as described below.</p><p><strong>Third-Party Service Providers.</strong>&nbsp;We employ other companies and individuals to perform functions on our behalf. Examples include, process payments (PayPal, Stripe), sending email, analyzing data, providing marketing assistance, providing search results and links. They have access to personal information needed to perform their functions, but may not use it for other purposes.</p><p><strong>Business Transfers</strong>.&nbsp;In the event that California Tax Courses creates, merges with, or is acquired by another entity, your information will most likely be transferred. California Tax Courses will email you or place a prominent notice on our Website before your information becomes subject to another privacy policy.</p><p><strong>Protection of&nbsp;California Tax Courses&nbsp;and others</strong>.&nbsp;We release personal information when we believe release is appropriate to comply with the law, enforce or apply our Terms and conditions and other agreements, or protect the rights, property, or safety of California Tax Courses, our users or others. This includes exchanging information with other companies and organizations for fraud protection and credit risk reduction.</p><p><strong>With Your Consent</strong>.&nbsp;Other than as set out above, you will receive notice when personally identifiable information about you might go to third parties, and you will have an opportunity to choose not to share the information.</p><p><strong>Anonymous Information.&nbsp;</strong>California Tax Courses uses the anonymous browsing information collected automatically by our servers primarily to help us administer and improve the Website. We may also use aggregated anonymous information to provide information about the Website to potential business partners and other unaffiliated entities. This information is not personally identifiable.</p><p><strong>Email Address</strong>.&nbsp;The email address that you supply to us for purposes of receiving our email communications will never be rented or sold to a third party.</p>"
+ },
+ {
+  "title": "SMS / TEXT MESSAGING",
+  "html": "<p>If you opt in to receive text messages from California Tax Courses (for example at <a href=\"https://cataxcourses.com/text-alerts/\">cataxcourses.com/text-alerts</a>), we use your mobile phone number only to send the messages you agreed to receive, such as replies to your questions, course and enrollment support, and CTEC deadline reminders. Message frequency varies, and message and data rates may apply. You can opt out at any time by replying STOP, or reply HELP for help.</p><p><strong>Mobile phone numbers and SMS opt-in consent are never shared with or sold to third parties or affiliates for marketing or promotional purposes.</strong> Text messaging originator opt-in data and consent will not be shared with any third parties.</p>"
  },
  {
   "title": "PROTECTING YOUR INFORMATION",
