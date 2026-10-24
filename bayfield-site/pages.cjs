@@ -124,32 +124,20 @@ function gallery(m) {
 }
 
 function webcam(m) {
+  // Live player: the "Bayfield interactions" snippet loads Angelcam into #player_bayfieldlive.
+  // The marina photo shows until the stream starts (and in the Elementor editor).
   const cam = container({
-    content_width: 'full', padding: box(0), ...linked(EXT.webcam), flex_direction: 'column', flex_justify_content: 'center', flex_align_items: 'center',
-    min_height: px(320), overflow: 'hidden', border_radius: box(4),
+    content_width: 'full', padding: box(0), _element_id: 'player_bayfieldlive', overflow: 'hidden', border_radius: box(4),
     background_background: 'classic', background_color: C.line, background_image: m.file('bayfield-marina-webcam.jpg'), background_size: 'cover', background_position: 'center center',
-    custom_css: 'selector { aspect-ratio: 16 / 9; }',
-  }, [
-    widget('heading', {
-      title: 'Live', header_size: 'span', title_color: C.cream, ...typo('typography', SANS, 11, 500, { lh: 1.2, ls: 2, transform: 'uppercase' }),
-      _position: 'absolute', _offset_orientation_h: 'start', _offset_x: px(20), _offset_orientation_v: 'start', _offset_y: px(20), _element_width: 'auto',
-      _background_background: 'classic', _background_color: 'rgba(15,33,19,0.75)', _padding: box(7, 12, 7, 12), _border_radius: box(2),
-      custom_css: 'selector .elementor-heading-title { display: flex; align-items: center; gap: 13px; }\nselector .elementor-heading-title::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #E74C3C; animation: bi-pulse 1.6s ease-in-out infinite; }',
-    }),
-    widget('icon', { selected_icon: fa('fas fa-play'), view: 'stacked', shape: 'circle', primary_color: 'rgba(245,242,236,0.92)', secondary_color: C.green, size: px(26), icon_padding: px(36),
-      custom_css: 'selector .elementor-icon { box-shadow: 0 20px 40px -20px rgba(0,0,0,.6); }\nselector .elementor-icon i, selector .elementor-icon svg { margin-left: 5px; }' }),
-    text('Open the live camera · bayfieldlive.com', { color: C.cream, size: 13, weight: 400, ls: 0.5, settings: {
-      _position: 'absolute', _offset_orientation_h: 'start', _offset_x: px(0), _offset_orientation_v: 'end', _offset_y_end: px(0), _element_width: 'initial', _element_custom_width: px(100, '%'),
-      _padding: box(32, 24, 20, 24), _background_background: 'gradient', _background_color: 'rgba(22,27,23,0.6)', _background_color_stop: px(0, '%'),
-      _background_color_b: 'rgba(22,27,23,0)', _background_color_b_stop: px(100, '%'), _background_gradient_type: 'linear', _background_gradient_angle: px(0, 'deg'),
-    } }),
-  ]);
+    box_shadow_box_shadow_type: 'yes', box_shadow_box_shadow: { horizontal: 0, vertical: 40, blur: 60, spread: -40, color: 'rgba(23,48,27,0.5)' },
+    custom_css: 'selector:not(:has(iframe, video)) { aspect-ratio: 16 / 9; }\nselector iframe { display: block; width: 100%; border: 0; }',
+  }, []);
   return [
     pageHero('Live from the Inn', 'See the lake right now.', 'Our rooftop camera looks out over the marina, the ferry dock and Madeline Island, around the clock and in every season.', null,
-      { live: true, buttons: [light('Watch the live cam', EXT.webcam)] }),
+      { live: true, buttons: [light('Watch it live', '#player_bayfieldlive')] }),
     section({ background_background: 'classic', background_color: C.cream, ...pad, ...boxed, flex_direction: 'column', flex_gap: gap(28) }, [
       cam,
-      text('Check the weather, watch the ferry come in, or just look at the water for a while.', { align: 'center', size: 16 }),
+      text('Check the weather, watch the ferry come in, or just look at the water for a while. Also on <a href="https://bayfieldlive.com" target="_blank" rel="noopener">bayfieldlive.com</a>.', { align: 'center', size: 16 }),
     ]),
     ctaBand('Like what you see?', 'The view is even better from your room.', [light('Book a Room', EXT.book)]),
   ];
@@ -214,17 +202,62 @@ function employment(m) {
   ];
 }
 
+// Menu: each category is an Elementor Price List (name, price, description) the client can edit.
+const MENUS = require('./menus.cjs');
+function menuBlock([title, note, items]) {
+  const priced = items.some(([, price]) => price);
+  return stack([
+    widget('heading', { title, header_size: 'h3', title_color: C.green, ...typo('typography', SERIF, [30, 28, 26], 400, { lh: 1.1 }) }),
+    ...(note ? [text(note, { size: 13.5, lh: 1.55, style: 'italic', family: SERIF, weight: 400, color: C.muted })] : []),
+    widget('price-list', {
+      price_list: items.map(([t, price, desc]) => ({ _id: id(), title: t, price: price || '', item_description: desc || '', link: { url: '', is_external: '', nofollow: '' } })),
+      heading_color: C.green, price_color: C.green, description_color: C.muted,
+      ...typo('heading_typography', SERIF, [19, 19, 18], 400, { lh: 1.25 }), ...typo('price_typography', SERIF, [19, 19, 18], 400, { lh: 1.25 }),
+      ...typo('description_typography', SANS, 14, 300, { lh: 1.55 }),
+      separator_style: priced ? 'dotted' : 'none', separator_weight: px(1), separator_color: 'rgba(23,48,27,0.3)', separator_spacing: px(8),
+      row_gap: px(18), _margin: box(4, 0, 0, 0),
+    }),
+  ], { gap: 10 });
+}
+function menuSection(m, r) {
+  const data = MENUS[r.slug];
+  if (!data && r.barBites) {
+    return section({ _element_id: 'menus', background_background: 'classic', background_color: C.cream, ...pad, ...boxed, flex_direction: 'column', flex_align_items: 'center', flex_gap: gap(20) }, [
+      eyebrow('At the bar', C.green, { align: 'center' }),
+      heading(r.barBites.title, 'h2', [44, 38, 30], C.green, { align: 'center', ls: -0.9, maxW: 760 }),
+      text(r.barBites.body, { align: 'center', size: 16.5, maxW: 600 }),
+    ]);
+  }
+  if (!data) return null;
+  const many = data.menus.length > 1;
+  const children = [
+    stack([
+      eyebrow(many ? 'Menus' : 'Menu', C.green, { align: 'center' }),
+      heading(`${r.name} ${many ? 'menus' : 'menu'}`, 'h2', [48, 40, 32], C.green, { align: 'center', ls: -1 }),
+      row(data.menus.map((mn) => button(`Download ${many ? mn.title.toLowerCase() + ' ' : ''}menu (PDF)`, m.file(mn.pdf).url, 'outline', { upper: false, size: 13, icon: 'far fa-file-pdf', pad: box(13, 22, 13, 22),
+        settings: { icon_align: 'row', button_text_color: C.green, border_color: 'rgba(23,48,27,0.45)', hover_color: C.cream, button_background_hover_color: C.green, link: { url: m.file(mn.pdf).url, is_external: 'on', nofollow: '' } } })),
+      { gap: 10, justify: 'center', settings: { padding: box(6, 0, 0, 0) } }),
+    ], { gap: 16, align: 'center' }),
+  ];
+  for (const mn of data.menus) {
+    if (many) children.push(stack([widget('divider', { style: 'solid', weight: px(1), color: C.line, look: 'line_text', text: mn.title, text_align: 'center', text_color: C.green,
+      ...typo('text_typography', SANS, 12, 500, { ls: 2.6, transform: 'uppercase' }), gap: px(18) })], { gap: 0 }));
+    children.push(container({ ...gridSettings([2, 2, 1]), content_width: 'full', padding: box(0), grid_gaps: gap(80, 56), grid_gaps_tablet: gap(40, 48), grid_gaps_mobile: gap(0, 48), grid_align_items: 'start' },
+      mn.sections.map(menuBlock)));
+  }
+  children.push(stack([
+    ...(data.footer ? [text(data.footer, { align: 'center', size: 16, family: SERIF, style: 'italic', weight: 400, color: C.green, maxW: 720 })] : []),
+    ...data.notes.map((n) => text(n, { align: 'center', size: 12.5, color: C.muted, maxW: 720 })),
+  ], { gap: 10, align: 'center' }));
+  return section({ _element_id: 'menus', background_background: 'classic', background_color: C.cream, ...pad, ...boxed, flex_direction: 'column', flex_gap: gap(56), flex_gap_mobile: gap(40) }, children);
+}
+
 // Restaurant page: hero, about, menus, photos, reserve.
 function restaurant(m, r) {
   return [
     pageHero(r.eb, r.title, r.intro, m.file(r.hero), { pos: r.pos, buttons: [light(r.cta || 'Reserve a table', PHONE), button('View menus', '#menus', 'outline', { upper: false, size: 13, pad: box(16, 28, 16, 28) })] }),
     story('About', r.aboutTitle, r.about, r.aboutImg ? m.file(r.aboutImg) : null, { bg: C.white, alt: r.title }),
-    section({ _element_id: 'menus', background_background: 'classic', background_color: C.cream, ...pad, ...boxed, flex_direction: 'column', flex_align_items: 'center', flex_gap: gap(20) }, [
-      eyebrow('Menus', C.green, { align: 'center' }),
-      heading(`${r.name} menus`, 'h2', [44, 38, 30], C.green, { align: 'center', ls: -0.9 }),
-      text('Menus change with the season. Current menus are on their way to this page; until then, see them here or give us a call.', { align: 'center', size: 16, maxW: 560 }),
-      row([darkBtn('Current menus', EXT.dine, { icon: 'fas fa-arrow-right' })], { justify: 'center', settings: { padding: box(6, 0, 0, 0) } }),
-    ]),
+    ...[menuSection(m, r)].filter(Boolean),
     ...(r.photos?.length ? [section({ background_background: 'classic', background_color: C.white, ...pad, ...boxed, flex_direction: 'column' }, [galleryWidget(r.photos.map(m.file), [3, 3, 1])])] : []),
     ctaBand(r.eb, 'Save your seat by the water.', [light(r.cta || 'Call to reserve', PHONE), outline('Book a Room', EXT.book)]),
   ];
@@ -246,11 +279,11 @@ const RESTAURANTS = [
     aboutTitle: 'Pull up a stool', aboutImg: 'bayfield-dining-cheers.jpg',
     about: ['The Lounge is where Bayfield meets for a drink, before dinner, after a day on the water, or for the game.', 'Ask the bartender for an old fashioned the way it should be made.'],
     photos: ['bayfield-the-lounge.jpg', 'bayfield-dining-cheers.jpg'] },
-  { slug: 'the-creamery', name: 'The Creamery', eb: 'The bar across the street', title: 'Tacos, pints and live music.', hero: 'bayfield-the-creamery.jpg',
+  { slug: 'the-creamery', name: 'The Creamery', eb: 'The bar across the street', title: 'Pints, pizza and live music.', hero: 'bayfield-the-creamery.jpg',
     intro: 'Our bar across the street from the Inn. Casual, friendly, and the place to be when the band is playing.',
     aboutTitle: 'Right across the street', aboutImg: null,
-    about: ['The Creamery is the Bayfield Inn’s bar across the street: tacos, cold pints and live music.', 'Check our Facebook and Instagram for who’s playing this week.'],
-    photos: [] },
+    about: ['The Creamery is the Bayfield Inn’s bar across the street: cold pints, good company and live music.', 'Check our Facebook and Instagram for who’s playing this week.'],
+    photos: [], barBites: { title: 'A bar first, with a little something to eat.', body: 'No full menu here: just frozen pizzas and Milwaukee soft pretzels to go with your drink.' } },
 ];
 
 const { SHOP_PAGES } = require('./shop.cjs');

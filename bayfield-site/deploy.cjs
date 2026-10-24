@@ -28,7 +28,7 @@ const api = (p, method, url, body) => p.evaluate(async ([method, url, body]) => 
 
 async function upload(p, file) {
   const f = path.basename(file);
-  const type = f.endsWith('.png') ? 'image/png' : 'image/jpeg';
+  const type = f.endsWith('.png') ? 'image/png' : f.endsWith('.pdf') ? 'application/pdf' : 'image/jpeg';
   // Upload from inside the logged-in page: SiteGround's bot check blocks non-browser requests.
   return p.evaluate(async ([f, type, b64]) => {
     const ex = await (await fetch(`/wp-json/wp/v2/media?search=${encodeURIComponent(f.replace(/\.\w+$/, ''))}&_fields=id,source_url,slug`, { headers: { 'X-WP-Nonce': wpApiSettings.nonce } })).json();
@@ -97,7 +97,7 @@ async function setConditions(p, postId, conditions) {
   const prep = fs.existsSync(PREP) ? JSON.parse(fs.readFileSync(PREP, 'utf8')) : { media: {} };
 
   if (want('prep')) {
-    for (const f of fs.readdirSync(MEDIA).filter((f) => /\.(png|jpe?g)$/.test(f))) {
+    for (const f of fs.readdirSync(MEDIA).filter((f) => /\.(png|jpe?g|pdf)$/.test(f))) {
       const j = await upload(p, path.join(MEDIA, f));
       if (!j.id) throw new Error(`${f}: ${JSON.stringify(j)}`);
       prep.media[f] = { id: j.id, url: j.source_url };

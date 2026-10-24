@@ -391,13 +391,15 @@ function home(m) {
         form_fields: [
           cell('checkin', 'date', 'Check in', { use_native_date: 'yes', required: 'true' }),
           cell('checkout', 'date', 'Check out', { use_native_date: 'yes', required: 'true' }),
-          cell('guests', 'select', 'Guests', { field_options: opts(6), field_value: '2' }),
-          cell('rooms', 'select', 'Rooms', { field_options: opts(4), field_value: '1' }),
+          cell('adults', 'select', 'Adults', { field_options: opts(14), field_value: '2' }),
+          cell('children', 'select', 'Children', { field_options: ['0', ...opts(10).split('\n')].join('\n'), field_value: '0' }),
         ],
         show_labels: 'true', input_size: 'sm', button_text: 'Check availability', button_size: 'sm', button_width: '', button_align: 'end',
         selected_button_icon: fa('fas fa-arrow-right'), button_icon_align: 'row-reverse', button_icon_indent: px(10),
         submit_actions: ['redirect'],
-        redirect_to: `${EXT.book}&from=[field id="checkin"]&to=[field id="checkout"]&guests=[field id="guests"]&rooms=[field id="rooms"]`,
+        // Fallback only: the "Bayfield interactions" snippet sends the search to eviivo with the
+        // parameter names and mm-dd-yyyy dates of eviivo's own search widget.
+        redirect_to: `${EXT.book}&startdate=[field id="checkin"]&enddate=[field id="checkout"]&adults1=[field id="adults"]&children1=[field id="children"]`,
         column_gap: px(0), row_gap: px(0), label_spacing: px(6),
         label_color: 'rgba(245,242,236,0.65)', ...typo('label_typography', SANS, 10.5, 500, { lh: 1.2, ls: 2.1, transform: 'uppercase' }),
         field_text_color: C.cream, field_background_color: 'rgba(0,0,0,0)', field_border_color: 'rgba(0,0,0,0)', field_border_width: box(0), field_border_radius: box(0),
@@ -509,7 +511,7 @@ selector .elementor-message { color: #F5F2EC; padding: 0 18px 12px; margin: 0; f
       photoCard(m.deckDining, 'The Deck', 'Rooftop. Lunch and dinner, weather permitting.', PAGE.deck, { dark: true, pos: 'center 55%', alt: 'Blue umbrellas on The Deck', badge: { logo: m.deckBadge, bg: 'rgba(15,33,19,0.88)' } }),
       photoCard(m.lakesideDining, 'Lakeside Dining Room', 'Breakfast and dinner at the water’s edge.', PAGE.lakeside, { dark: true, alt: 'Crab cakes and cocktails by the window of the Lakeside Dining Room' }),
       photoCard(m.lounge, 'The Lounge', 'Cocktails, a proper old fashioned, and the game.', PAGE.lounge, { dark: true, alt: 'Bartender finishing a martini in The Lounge' }),
-      photoCard(m.creameryPhoto, 'The Creamery', 'Our bar across the street. Tacos, pints, live music.', PAGE.creamery, { dark: true, alt: 'The Creamery', badge: { logo: m.creameryLogo, bg: 'rgba(245,242,236,0.92)' } }),
+      photoCard(m.creameryPhoto, 'The Creamery', 'Our bar across the street. Pints, pizza, pretzels, live music.', PAGE.creamery, { dark: true, alt: 'The Creamery', badge: { logo: m.creameryLogo, bg: 'rgba(245,242,236,0.92)' } }),
     ]),
   ]);
 
@@ -615,6 +617,37 @@ const interactionsJs = `<script>
   function onScroll() { document.body.classList.toggle('bi-scrolled', window.scrollY > 120); }
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
+
+  // Booking bar -> eviivo (parameter names and mm-dd-yyyy dates from eviivo's search widget).
+  var BOOK = '${EXT.book}';
+  function bookingForms() { return document.querySelectorAll('form[name="Check availability"]'); }
+  function field(f, id) { return f.querySelector('[name="form_fields[' + id + ']"]'); }
+  function iso(d) { return d.toISOString().slice(0, 10); }
+  function mdy(v) { var p = (v || '').split('-'); return p.length === 3 ? p[1] + '-' + p[2] + '-' + p[0] : ''; }
+  bookingForms().forEach(function (f) {
+    var a = field(f, 'checkin'), b = field(f, 'checkout'); if (!a || !b) return;
+    var today = new Date(); a.min = iso(today);
+    function sync() { if (!a.value) return; var n = new Date(a.value + 'T12:00:00'); n.setDate(n.getDate() + 1); b.min = iso(n); if (b.value && b.value <= a.value) b.value = iso(n); }
+    a.addEventListener('change', sync);
+  });
+  document.addEventListener('submit', function (ev) {
+    var f = ev.target; if (!f || f.getAttribute('name') !== 'Check availability') return;
+    ev.preventDefault(); ev.stopImmediatePropagation();
+    var a = field(f, 'checkin'), b = field(f, 'checkout');
+    if (!a.value) { a.focus(); a.reportValidity && a.reportValidity(); return; }
+    if (!b.value || b.value <= a.value) { b.setCustomValidity('Choose a check-out date after check-in.'); b.reportValidity(); b.setCustomValidity(''); return; }
+    var q = 'startdate=' + mdy(a.value) + '&enddate=' + mdy(b.value) + '&adults1=' + (field(f, 'adults') || {}).value + '&children1=' + ((field(f, 'children') || {}).value || '0');
+    window.location.href = BOOK + (BOOK.indexOf('?') > -1 ? '&' : '?') + q;
+  }, true);
+
+  // Live webcam (Angelcam): loads the player wherever the page has #player_bayfieldlive.
+  var CAM = 'v8ypjjj8y6';
+  if (document.getElementById('player_bayfieldlive')) {
+    var sdk = document.createElement('script');
+    sdk.src = 'https://v.angelcam.com/js_sdk';
+    sdk.onload = function () { new Angelcam.player('player_bayfieldlive', { id: CAM }); };
+    document.head.appendChild(sdk);
+  }
 })();
 </script>`;
 
