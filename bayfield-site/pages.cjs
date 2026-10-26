@@ -124,20 +124,45 @@ function gallery(m) {
 }
 
 function webcam(m) {
-  // Live player: the "Bayfield interactions" snippet loads Angelcam into #player_bayfieldlive.
-  // The marina photo shows until the stream starts (and in the Elementor editor).
+  // Live player: the "Bayfield interactions" snippet loads Angelcam into #player_bayfieldlive
+  // and fills the weather card (.bi-wx-*) from Open-Meteo. The marina photo and "—" values
+  // show until those load (and in the Elementor editor).
   const cam = container({
     content_width: 'full', padding: box(0), _element_id: 'player_bayfieldlive', overflow: 'hidden', border_radius: box(4),
-    background_background: 'classic', background_color: C.line, background_image: m.file('bayfield-marina-webcam.jpg'), background_size: 'cover', background_position: 'center center',
-    box_shadow_box_shadow_type: 'yes', box_shadow_box_shadow: { horizontal: 0, vertical: 40, blur: 60, spread: -40, color: 'rgba(23,48,27,0.5)' },
+    background_background: 'classic', background_color: '#0F2113', background_image: m.file('bayfield-marina-webcam.jpg'), background_size: 'cover', background_position: 'center center',
     custom_css: 'selector:not(:has(iframe, video)) { aspect-ratio: 16 / 9; }\nselector iframe { display: block; width: 100%; border: 0; }',
   }, []);
+  const wxText = (cls, t, o = {}) => widget('heading', { title: t, header_size: o.tag || 'p', title_color: o.color || C.cream, _css_classes: cls,
+    ...typo('typography', o.serif ? SERIF : SANS, o.size, o.weight || 400, { lh: o.lh || 1.2, ls: o.ls, transform: o.transform }) });
+  const weather = container({
+    content_width: 'full', width: px(230), width_tablet: px(210), width_mobile: px(100, '%'), flex_direction: 'column', flex_gap: gap(4),
+    padding: box(16, 18, 16, 18), border_radius: box(4), background_background: 'classic', background_color: 'rgba(15,33,19,0.78)',
+    position: 'absolute', _offset_orientation_h: 'end', _offset_x_end: px(20), _offset_orientation_v: 'start', _offset_y: px(20), z_index: 3, css_classes: 'bi-weather', // container keys (no underscore)
+    custom_css: 'selector { backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); pointer-events: none; }\n@media (max-width: 767px) { selector { position: static !important; margin-top: 10px; pointer-events: auto; } }',
+  }, [
+    wxText('bi-wx-place', 'Bayfield, WI · now', { size: 10.5, weight: 500, ls: 1.8, transform: 'uppercase', color: 'rgba(245,242,236,0.7)' }),
+    container({ content_width: 'full', flex_direction: 'row', flex_align_items: 'flex-end', flex_gap: gap(10), padding: box(2, 0, 0, 0) }, [
+      wxText('bi-wx-temp', '—°', { serif: true, size: 44, weight: 300, lh: 1 }),
+      wxText('bi-wx-cond', 'Current weather', { size: 13.5, lh: 1.3 }),
+    ]),
+    wxText('bi-wx-meta', 'Feels like — · Wind —', { size: 12.5, color: 'rgba(245,242,236,0.8)', lh: 1.4 }),
+  ]);
+  const stage = container({ content_width: 'full', padding: box(0), flex_direction: 'column', flex_gap: gap(0),
+    box_shadow_box_shadow_type: 'yes', box_shadow_box_shadow: { horizontal: 0, vertical: 40, blur: 70, spread: -40, color: 'rgba(0,0,0,0.6)' }, border_radius: box(4) }, [cam, weather]);
   return [
-    pageHero('Live from the Inn', 'See the lake right now.', 'Our rooftop camera looks out over the marina, the ferry dock and Madeline Island, around the clock and in every season.', null,
-      { live: true, buttons: [light('Watch it live', '#player_bayfieldlive')] }),
-    section({ background_background: 'classic', background_color: C.cream, ...pad, ...boxed, flex_direction: 'column', flex_gap: gap(28) }, [
-      cam,
-      text('Check the weather, watch the ferry come in, or just look at the water for a while. Also on <a href="https://bayfieldlive.com" target="_blank" rel="noopener">bayfieldlive.com</a>.', { align: 'center', size: 16 }),
+    // Stream first: a short title row, then the player, all above the fold.
+    section({ ...radial('bottom left', C.mid, null, C.deep), padding: box(32, 48, 64, 48), padding_tablet: box(28, 32, 56, 32), padding_mobile: box(24, 16, 40, 16),
+      ...boxed, flex_direction: 'column', flex_gap: gap(22), flex_gap_mobile: gap(16) }, [
+      row([
+        stack([
+          eyebrow('Live from the Inn', C.cream, { opacity: 0.85, live: true }),
+          heading('See the lake right now.', 'h1', [40, 36, 30], C.cream, { lh: 1, ls: -0.8 }),
+        ], { gap: 12, settings: { width: auto, width_tablet: auto, width_mobile: px(100, '%') } }),
+        text('The marina, the ferry dock and Madeline Island, around the clock and in every season.', { color: 'rgba(245,242,236,0.8)', size: 15, maxW: 420 }),
+      ], { gap: 24, align: 'flex-end', justify: 'space-between', settings: { flex_gap: gap(40, 12) } }),
+      stage,
+      text('Also on <a href="https://bayfieldlive.com" target="_blank" rel="noopener">bayfieldlive.com</a> · Weather from Open-Meteo', { color: 'rgba(245,242,236,0.6)', size: 12.5, align: 'center',
+        linkColor: 'rgba(245,242,236,0.85)', settings: { link_hover_color: C.cream } }),
     ]),
     ctaBand('Like what you see?', 'The view is even better from your room.', [light('Book a Room', EXT.book)]),
   ];

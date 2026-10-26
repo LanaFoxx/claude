@@ -168,7 +168,7 @@ function header(m, menuId) {
     flex_gap: gap(18, 6), flex_gap_mobile: gap(10, 4), padding: box(10, 56, 10, 48), padding_tablet: box(10, 56, 10, 32), padding_mobile: box(10, 48, 10, 20),
     background_background: 'classic', background_color: '#0F2113',
     border_border: 'solid', border_width: box(0, 0, 1, 0), border_color: 'rgba(245,242,236,0.12)', z_index: 31,
-    _css_classes: 'bi-promo', custom_css: 'html.bi-promo-off selector { display: none !important; }',
+    css_classes: 'bi-promo', custom_css: 'html.bi-promo-off selector { display: none !important; }',
   }, [
     widget('heading', { title: 'Black Friday', header_size: 'p', title_color: 'rgba(245,242,236,0.7)', _element_width: 'auto',
       ...typo('typography', SANS, 10.5, 500, { lh: 1.4, ls: 2.3, transform: 'uppercase' }) }),
@@ -648,6 +648,28 @@ const interactionsJs = `<script>
     sdk.onload = function () { new Angelcam.player('player_bayfieldlive', { id: CAM }); };
     document.head.appendChild(sdk);
   }
+
+  // Current weather on the webcam (Open-Meteo, free, no API key). Bayfield, WI.
+  var WX = { lat: 46.811, lon: -90.818 };
+  var WX_TEXT = { 0: 'Clear', 1: 'Mostly clear', 2: 'Partly cloudy', 3: 'Overcast', 45: 'Fog', 48: 'Freezing fog', 51: 'Light drizzle', 53: 'Drizzle', 55: 'Heavy drizzle',
+    56: 'Freezing drizzle', 57: 'Freezing drizzle', 61: 'Light rain', 63: 'Rain', 65: 'Heavy rain', 66: 'Freezing rain', 67: 'Freezing rain', 71: 'Light snow', 73: 'Snow',
+    75: 'Heavy snow', 77: 'Snow grains', 80: 'Rain showers', 81: 'Rain showers', 82: 'Heavy showers', 85: 'Snow showers', 86: 'Heavy snow showers', 95: 'Thunderstorms',
+    96: 'Thunderstorms, hail', 99: 'Thunderstorms, hail' };
+  function compass(d) { return ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'][Math.round(d / 45) % 8]; }
+  function setText(cls, t) { document.querySelectorAll('.' + cls + ' .elementor-heading-title').forEach(function (el) { el.textContent = t; }); }
+  function loadWeather() {
+    fetch('https://api.open-meteo.com/v1/forecast?latitude=' + WX.lat + '&longitude=' + WX.lon +
+      '&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,wind_direction_10m&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=America%2FChicago')
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        var c = d.current; if (!c) return;
+        setText('bi-wx-temp', Math.round(c.temperature_2m) + '°');
+        setText('bi-wx-cond', WX_TEXT[c.weather_code] || '');
+        setText('bi-wx-meta', 'Feels like ' + Math.round(c.apparent_temperature) + '° · Wind ' + Math.round(c.wind_speed_10m) + ' mph ' + compass(c.wind_direction_10m));
+      })
+      .catch(function () {});
+  }
+  if (document.querySelector('.bi-weather')) { loadWeather(); setInterval(loadWeather, 10 * 60 * 1000); }
 })();
 </script>`;
 
