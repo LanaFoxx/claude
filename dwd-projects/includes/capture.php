@@ -105,8 +105,10 @@ function dwdp_ajax_capture() {
 		'meta'                        => 'false',
 		'screenshot'                  => 'true',
 		'type'                        => 'jpeg',
-		'waitForTimeout'              => 2500,
+		'waitForTimeout'              => 4500,
 		'styles'                      => dwdp_capture_css(),
+		// Loaded by URL: inline JavaScript in the query is blocked by the service's firewall.
+		'scripts'                     => DWDP_URL . 'assets/capture-prep.js?ver=' . DWDP_VERSION,
 		'viewport.width'              => $mobile ? 390 : $width,
 		'viewport.height'             => $mobile ? 844 : 900,
 		'viewport.deviceScaleFactor'  => $mobile ? 2 : 1,
