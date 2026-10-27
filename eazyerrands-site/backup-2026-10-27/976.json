@@ -1,0 +1,6032 @@
+{
+ "settings": {
+  "hide_title": "yes",
+  "template": "default",
+  "post_title": "Services",
+  "post_status": "publish",
+  "post_excerpt": "",
+  "post_featured_image": {
+   "url": "",
+   "id": 0,
+   "size": ""
+  },
+  "menu_order": 0,
+  "comment_status": "closed",
+  "margin": {
+   "unit": "px",
+   "top": "",
+   "right": "",
+   "bottom": "",
+   "left": "",
+   "isLinked": true
+  },
+  "padding": {
+   "unit": "px",
+   "top": "",
+   "right": "",
+   "bottom": "",
+   "left": "",
+   "isLinked": true
+  },
+  "background_background": "",
+  "background_color": "",
+  "background_color_stop": {
+   "unit": "%",
+   "size": 0,
+   "sizes": []
+  },
+  "background_color_b": "#f2295b",
+  "background_color_b_stop": {
+   "unit": "%",
+   "size": 100,
+   "sizes": []
+  },
+  "background_gradient_type": "linear",
+  "background_gradient_angle": {
+   "unit": "deg",
+   "size": 180,
+   "sizes": []
+  },
+  "background_gradient_position": "center center",
+  "background_image": {
+   "url": "",
+   "id": "",
+   "size": ""
+  },
+  "background_position": "",
+  "background_xpos": {
+   "unit": "px",
+   "size": 0,
+   "sizes": []
+  },
+  "background_ypos": {
+   "unit": "px",
+   "size": 0,
+   "sizes": []
+  },
+  "background_attachment": "",
+  "background_repeat": "",
+  "background_size": "",
+  "background_bg_width": {
+   "unit": "%",
+   "size": 100,
+   "sizes": []
+  },
+  "background_video_link": "",
+  "background_video_start": "",
+  "background_video_end": "",
+  "background_play_once": "",
+  "background_play_on_mobile": "",
+  "background_privacy_mode": "",
+  "background_video_fallback": {
+   "url": "",
+   "id": "",
+   "size": ""
+  },
+  "background_slideshow_gallery": [],
+  "background_slideshow_loop": "yes",
+  "background_slideshow_slide_duration": 5000,
+  "background_slideshow_slide_transition": "fade",
+  "background_slideshow_transition_duration": 500,
+  "background_slideshow_background_size": "",
+  "background_slideshow_background_position": "",
+  "background_slideshow_lazyload": "",
+  "background_slideshow_ken_burns": "",
+  "background_slideshow_ken_burns_zoom_direction": "in",
+  "custom_css": "",
+  "scroll_snap": "",
+  "scroll_snap_position": "",
+  "scroll_snap_padding": {
+   "unit": "px",
+   "size": "",
+   "sizes": []
+  },
+  "force_stop": "",
+  "margin_tablet": {
+   "unit": "px",
+   "top": "",
+   "right": "",
+   "bottom": "",
+   "left": "",
+   "isLinked": true
+  },
+  "margin_mobile": {
+   "unit": "px",
+   "top": "",
+   "right": "",
+   "bottom": "",
+   "left": "",
+   "isLinked": true
+  },
+  "padding_tablet": {
+   "unit": "px",
+   "top": "",
+   "right": "",
+   "bottom": "",
+   "left": "",
+   "isLinked": true
+  },
+  "padding_mobile": {
+   "unit": "px",
+   "top": "",
+   "right": "",
+   "bottom": "",
+   "left": "",
+   "isLinked": true
+  },
+  "background_color_stop_tablet": {
+   "unit": "%"
+  },
+  "background_color_stop_mobile": {
+   "unit": "%"
+  },
+  "background_color_b_stop_tablet": {
+   "unit": "%"
+  },
+  "background_color_b_stop_mobile": {
+   "unit": "%"
+  },
+  "background_gradient_angle_tablet": {
+   "unit": "deg"
+  },
+  "background_gradient_angle_mobile": {
+   "unit": "deg"
+  },
+  "background_gradient_position_tablet": "",
+  "background_gradient_position_mobile": "",
+  "background_image_tablet": {
+   "url": "",
+   "id": "",
+   "size": ""
+  },
+  "background_image_mobile": {
+   "url": "",
+   "id": "",
+   "size": ""
+  },
+  "background_position_tablet": "",
+  "background_position_mobile": "",
+  "background_xpos_tablet": {
+   "unit": "px",
+   "size": 0,
+   "sizes": []
+  },
+  "background_xpos_mobile": {
+   "unit": "px",
+   "size": 0,
+   "sizes": []
+  },
+  "background_ypos_tablet": {
+   "unit": "px",
+   "size": 0,
+   "sizes": []
+  },
+  "background_ypos_mobile": {
+   "unit": "px",
+   "size": 0,
+   "sizes": []
+  },
+  "background_repeat_tablet": "",
+  "background_repeat_mobile": "",
+  "background_size_tablet": "",
+  "background_size_mobile": "",
+  "background_bg_width_tablet": {
+   "unit": "px",
+   "size": "",
+   "sizes": []
+  },
+  "background_bg_width_mobile": {
+   "unit": "px",
+   "size": "",
+   "sizes": []
+  },
+  "background_slideshow_background_size_tablet": "",
+  "background_slideshow_background_size_mobile": "",
+  "background_slideshow_background_position_tablet": "",
+  "background_slideshow_background_position_mobile": "",
+  "scroll_snap_position_tablet": "",
+  "scroll_snap_position_mobile": "",
+  "scroll_snap_padding_tablet": {
+   "unit": "px",
+   "size": "",
+   "sizes": []
+  },
+  "scroll_snap_padding_mobile": {
+   "unit": "px",
+   "size": "",
+   "sizes": []
+  },
+  "force_stop_tablet": "",
+  "force_stop_mobile": ""
+ },
+ "elements": [
+  {
+   "id": "2c0d1dd8",
+   "elType": "container",
+   "isInner": false,
+   "isLocked": false,
+   "settings": {
+    "flex_direction": "column",
+    "flex_gap": {
+     "column": "70",
+     "row": "70",
+     "isLinked": true,
+     "unit": "px",
+     "size": 70
+    },
+    "background_background": "classic",
+    "padding": {
+     "unit": "px",
+     "top": "80",
+     "right": "80",
+     "bottom": "80",
+     "left": "80",
+     "isLinked": true
+    },
+    "padding_tablet": {
+     "unit": "px",
+     "top": "80",
+     "right": "40",
+     "bottom": "80",
+     "left": "40",
+     "isLinked": false
+    },
+    "padding_mobile": {
+     "unit": "px",
+     "top": "60",
+     "right": "20",
+     "bottom": "60",
+     "left": "20",
+     "isLinked": false
+    },
+    "_title": "k276",
+    "__globals__": {
+     "background_color": "globals/colors?id=4ad8384"
+    },
+    "min_height": {
+     "unit": "px",
+     "size": 544,
+     "sizes": []
+    },
+    "flex_justify_content": "center",
+    "flex_gap_tablet": {
+     "column": "60",
+     "row": "60",
+     "isLinked": true,
+     "unit": "px",
+     "size": 60
+    },
+    "flex_gap_mobile": {
+     "column": "50",
+     "row": "50",
+     "isLinked": true,
+     "unit": "px",
+     "size": 50
+    }
+   },
+   "interactions": {},
+   "elements": [
+    {
+     "id": "6388ab7",
+     "elType": "container",
+     "isInner": true,
+     "isLocked": false,
+     "settings": {
+      "boxed_width": {
+       "unit": "px",
+       "size": 1290,
+       "sizes": []
+      },
+      "flex_direction": "column",
+      "flex_gap": {
+       "column": "35",
+       "row": "35",
+       "isLinked": true,
+       "unit": "px",
+       "size": 35
+      },
+      "background_color": "#ECC5C5",
+      "padding": {
+       "unit": "px",
+       "top": "0",
+       "right": "0",
+       "bottom": "0",
+       "left": "0",
+       "isLinked": false
+      },
+      "flex_justify_content": "flex-start",
+      "flex_align_items": "center",
+      "flex_gap_tablet": {
+       "column": "30",
+       "row": "30",
+       "isLinked": true,
+       "unit": "px",
+       "size": 30
+      },
+      "flex_gap_mobile": {
+       "column": "30",
+       "row": "30",
+       "isLinked": true,
+       "unit": "px",
+       "size": 30
+      },
+      "padding_tablet": {
+       "unit": "px",
+       "top": "0",
+       "right": "0",
+       "bottom": "60",
+       "left": "0",
+       "isLinked": false
+      },
+      "padding_mobile": {
+       "unit": "px",
+       "top": "0",
+       "right": "0",
+       "bottom": "50",
+       "left": "0",
+       "isLinked": false
+      },
+      "animation": "fadeIn",
+      "animation_duration": "fast",
+      "animation_delay": 500
+     },
+     "interactions": {},
+     "elements": [
+      {
+       "id": "33c5f653",
+       "elType": "widget",
+       "isInner": false,
+       "isLocked": false,
+       "settings": {
+        "title": "Our Services",
+        "header_size": "h1",
+        "align": "center",
+        "_margin": {
+         "unit": "px",
+         "top": "0",
+         "right": "0",
+         "bottom": "0",
+         "left": "0",
+         "isLinked": false
+        },
+        "__globals__": {
+         "typography_typography": "",
+         "title_color": "globals/colors?id=eedc3fc"
+        },
+        "align_mobile": "center",
+        "typography_typography": "custom",
+        "typography_font_family": "nexa",
+        "typography_font_size": {
+         "unit": "px",
+         "size": 66,
+         "sizes": []
+        },
+        "typography_font_size_mobile": {
+         "unit": "px",
+         "size": 39,
+         "sizes": []
+        },
+        "typography_font_weight": "800",
+        "typography_line_height": {
+         "unit": "px",
+         "size": 53,
+         "sizes": []
+        },
+        "typography_line_height_mobile": {
+         "unit": "em",
+         "size": 1,
+         "sizes": []
+        },
+        "typography_letter_spacing": {
+         "unit": "px",
+         "size": -2.2,
+         "sizes": []
+        },
+        "typography_letter_spacing_mobile": {
+         "unit": "px",
+         "size": -0.9,
+         "sizes": []
+        }
+       },
+       "interactions": {},
+       "elements": [],
+       "widgetType": "heading"
+      },
+      {
+       "id": "419ca11",
+       "elType": "widget",
+       "isInner": false,
+       "isLocked": false,
+       "settings": {
+        "tabs": [
+         {
+          "tab_title": "APPOINTMENT TRANSPORTATION",
+          "_id": "fecfe9f"
+         },
+         {
+          "tab_title": "CLEANING / HOME RESET",
+          "_id": "5c48238"
+         },
+         {
+          "tab_title": "CONCIERGE / MULTIPLE TASKS",
+          "_id": "64f354e"
+         },
+         {
+          "tab_title": "ERRAND & DELIVERY",
+          "_id": "3cb1f35"
+         },
+         {
+          "tab_title": "GROCERY SHOPPING & DELIVERY",
+          "_id": "89dfa1b"
+         },
+         {
+          "tab_title": "HOME & PROPERTY SERVICES",
+          "_id": "f22606f"
+         },
+         {
+          "tab_title": "PET ASSISTANCE",
+          "_id": "4378b15"
+         },
+         {
+          "tab_title": "PRESCRIPTION PICKUP",
+          "_id": "0ee1605"
+         },
+         {
+          "tab_title": "SENIOR / COMPANION VISITS",
+          "_id": "3c4335c"
+         },
+         {
+          "tab_title": "VACATION HOME VISITS",
+          "_id": "d4acfd9"
+         }
+        ],
+        "tabs_justify_horizontal": "stretch",
+        "tabs_title_spacing": {
+         "unit": "px",
+         "size": 50,
+         "sizes": []
+        },
+        "tabs_title_background_color_hover_color": "#FFFFFF",
+        "tabs_title_background_color_active_color": "#7DAC01",
+        "tabs_title_border_radius": {
+         "unit": "px",
+         "top": "10",
+         "right": "10",
+         "bottom": "10",
+         "left": "10",
+         "isLinked": true
+        },
+        "padding": {
+         "unit": "px",
+         "top": "15",
+         "right": "15",
+         "bottom": "15",
+         "left": "15",
+         "isLinked": true
+        },
+        "title_text_color": "#000000",
+        "title_text_color_hover": "#000000",
+        "__globals__": {
+         "title_text_color": "",
+         "tabs_title_background_color_hover_color": "",
+         "tabs_title_background_color_active_color": "globals/colors?id=eedc3fc"
+        },
+        "title_alignment": "center"
+       },
+       "interactions": {},
+       "widgetType": "nested-tabs",
+       "elements": [
+        {
+         "id": "c25fbe2",
+         "elType": "container",
+         "isInner": true,
+         "isLocked": true,
+         "settings": {
+          "_title": "Tab #1",
+          "content_width": "full"
+         },
+         "interactions": {},
+         "elements": [
+          {
+           "id": "8b0b720",
+           "elType": "widget",
+           "isInner": false,
+           "isLocked": false,
+           "settings": {
+            "items": [
+             {
+              "item_title": "Doctor Appointments — Starting at $35",
+              "_id": "ea9da2d"
+             },
+             {
+              "item_title": "Multi-Stop Appointments — Starting at $55",
+              "_id": "ad21184"
+             },
+             {
+              "item_title": "Non-Medical Transportation — Starting at $30",
+              "_id": "158dea1"
+             },
+             {
+              "item_title": "Pharmacy Stop After Appointment — Starting at $15 Add-On",
+              "_id": "4368831"
+             },
+             {
+              "item_title": "Therapy & Medical Visits — Starting at $40",
+              "_id": "ca2a0bb"
+             },
+             {
+              "item_title": "Wait & Return Service — Starting at $65",
+              "_id": "dd29dd5"
+             }
+            ],
+            "accordion_item_title_position_horizontal": "start",
+            "accordion_item_title_icon_position": "start",
+            "default_state": "all_collapsed",
+            "n_accordion_animation_duration": {
+             "unit": "ms",
+             "size": 300,
+             "sizes": []
+            },
+            "accordion_item_title_space_between": {
+             "unit": "px",
+             "size": 10,
+             "sizes": []
+            },
+            "accordion_background_normal_background": "classic",
+            "accordion_border_normal_border": "none",
+            "accordion_border_normal_width": {
+             "unit": "px",
+             "top": "0",
+             "right": "0",
+             "bottom": "1",
+             "left": "0",
+             "isLinked": false
+            },
+            "accordion_padding": {
+             "unit": "px",
+             "top": "30",
+             "right": "30",
+             "bottom": "30",
+             "left": "30",
+             "isLinked": true
+            },
+            "__globals__": {
+             "title_typography_typography": "",
+             "normal_title_color": "globals/colors?id=eedc3fc",
+             "hover_title_color": "",
+             "active_title_color": "",
+             "accordion_border_normal_color": "",
+             "accordion_background_normal_color": ""
+            },
+            "_animation": "fadeIn",
+            "animation_duration": "fast",
+            "_animation_delay": 500,
+            "accordion_background_normal_color": "#FFFFFF",
+            "title_typography_typography": "custom",
+            "title_typography_font_family": "nexa",
+            "title_typography_font_size": {
+             "unit": "px",
+             "size": 24,
+             "sizes": []
+            },
+            "content_background_background": "classic",
+            "content_background_color": "#FFFFFF",
+            "accordion_border_radius": {
+             "unit": "px",
+             "top": "0",
+             "right": "0",
+             "bottom": "0",
+             "left": "0",
+             "isLinked": true
+            },
+            "title_typography_font_weight": "700",
+            "title_typography_line_height_mobile": {
+             "unit": "em",
+             "size": 1.2,
+             "sizes": []
+            }
+           },
+           "interactions": {},
+           "widgetType": "nested-accordion",
+           "elements": [
+            {
+             "id": "e5dca13",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "0858ad1",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Reliable non-medical transportation to and from doctor appointments designed to help clients travel safely, comfortably, and stress-free.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "3003140",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "c279394",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Convenient transportation services for clients needing assistance with multiple stops, errands, or appointments during one scheduled trip.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "b9593ea",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "02f2800",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Dependable local transportation for errands, appointments, shopping, and everyday activities throughout the Treasure Coast.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "7a7255a",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "86d6701",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Convenient pharmacy pickup services following appointments to help save time and simplify daily routines.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "3d280d9",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "85ef9e5",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Transportation assistance for therapy sessions, wellness appointments, rehabilitation visits, and other non-emergency medical-related appointments.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "1ad1ed8",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "cea377a",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>A convenient service where we wait during your appointment or errand and provide transportation back home afterward.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            }
+           ],
+           "supportRepeaterChildren": true
+          }
+         ],
+         "dataIndex": 1
+        },
+        {
+         "id": "4d1766c",
+         "elType": "container",
+         "isInner": true,
+         "isLocked": true,
+         "settings": {
+          "_title": "Tab #1",
+          "content_width": "full"
+         },
+         "interactions": {},
+         "elements": [
+          {
+           "id": "ac06006",
+           "elType": "widget",
+           "isInner": false,
+           "isLocked": false,
+           "settings": {
+            "items": [
+             {
+              "item_title": "Kitchen Reset — Starting at $45",
+              "_id": "ea9da2d"
+             },
+             {
+              "item_title": "Light Home Reset — Starting at $65",
+              "_id": "ad21184"
+             },
+             {
+              "item_title": "Move-In / Move-Out Cleanup — Starting at $175",
+              "_id": "158dea1"
+             },
+             {
+              "item_title": "Oven & Refrigerator Deep Cleaning — Starting at $85",
+              "_id": "4368831"
+             },
+             {
+              "item_title": "Post-Vacation Reset — Starting at $95",
+              "_id": "ca2a0bb"
+             }
+            ],
+            "accordion_item_title_position_horizontal": "start",
+            "accordion_item_title_icon_position": "start",
+            "default_state": "all_collapsed",
+            "n_accordion_animation_duration": {
+             "unit": "ms",
+             "size": 300,
+             "sizes": []
+            },
+            "accordion_item_title_space_between": {
+             "unit": "px",
+             "size": 10,
+             "sizes": []
+            },
+            "accordion_background_normal_background": "classic",
+            "accordion_border_normal_border": "none",
+            "accordion_border_normal_width": {
+             "unit": "px",
+             "top": "0",
+             "right": "0",
+             "bottom": "1",
+             "left": "0",
+             "isLinked": false
+            },
+            "accordion_padding": {
+             "unit": "px",
+             "top": "30",
+             "right": "30",
+             "bottom": "30",
+             "left": "30",
+             "isLinked": true
+            },
+            "__globals__": {
+             "title_typography_typography": "",
+             "normal_title_color": "globals/colors?id=eedc3fc",
+             "hover_title_color": "",
+             "active_title_color": "",
+             "accordion_border_normal_color": "",
+             "accordion_background_normal_color": ""
+            },
+            "_animation": "fadeIn",
+            "animation_duration": "fast",
+            "_animation_delay": 500,
+            "accordion_background_normal_color": "#FFFFFF",
+            "title_typography_typography": "custom",
+            "title_typography_font_family": "nexa",
+            "title_typography_font_size": {
+             "unit": "px",
+             "size": 24,
+             "sizes": []
+            },
+            "content_background_background": "classic",
+            "content_background_color": "#FFFFFF",
+            "accordion_border_radius": {
+             "unit": "px",
+             "top": "0",
+             "right": "0",
+             "bottom": "0",
+             "left": "0",
+             "isLinked": true
+            },
+            "title_typography_font_weight": "700"
+           },
+           "interactions": {},
+           "widgetType": "nested-accordion",
+           "elements": [
+            {
+             "id": "50b772f",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "bee3520",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Light kitchen tidying and organization services designed to refresh and maintain a clean, comfortable space.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "120ec0c",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "2b45fe4",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>General home refreshing services including tidying, organizing, and restoring order to frequently used living areas.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "8154bcc",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "6988d9e",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Cleaning and reset services designed to help prepare homes before moving in or after moving out.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "0f94e40",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "216a90c",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Detailed deep cleaning of ovens and refrigerators to help maintain cleanliness and freshness.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "a98a4ec",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "b2725e2",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Home refresh services following travel or vacations to help homeowners return to a clean and organized home.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            }
+           ],
+           "supportRepeaterChildren": true
+          }
+         ],
+         "dataIndex": 2
+        },
+        {
+         "id": "8a862ae",
+         "elType": "container",
+         "isInner": true,
+         "isLocked": true,
+         "settings": {
+          "_title": "Tab #1",
+          "content_width": "full"
+         },
+         "interactions": {},
+         "elements": [
+          {
+           "id": "944b4fb",
+           "elType": "widget",
+           "isInner": false,
+           "isLocked": false,
+           "settings": {
+            "items": [
+             {
+              "item_title": "Custom Requests — Starting at $40",
+              "_id": "ea9da2d"
+             },
+             {
+              "item_title": "Gift & Event Assistance — Starting at $55",
+              "_id": "ad21184"
+             },
+             {
+              "item_title": "Home Setup & Preparation — Starting at $85",
+              "_id": "158dea1"
+             },
+             {
+              "item_title": "Multiple Errands — Starting at $65",
+              "_id": "4368831"
+             },
+             {
+              "item_title": "Personal Assistant Tasks — Starting at $45 Per Hour",
+              "_id": "ca2a0bb"
+             },
+             {
+              "item_title": "Travel Prep & Return Setup — Starting at $95",
+              "_id": "3242b45"
+             }
+            ],
+            "accordion_item_title_position_horizontal": "start",
+            "accordion_item_title_icon_position": "start",
+            "default_state": "all_collapsed",
+            "n_accordion_animation_duration": {
+             "unit": "ms",
+             "size": 300,
+             "sizes": []
+            },
+            "accordion_item_title_space_between": {
+             "unit": "px",
+             "size": 10,
+             "sizes": []
+            },
+            "accordion_background_normal_background": "classic",
+            "accordion_border_normal_border": "none",
+            "accordion_border_normal_width": {
+             "unit": "px",
+             "top": "0",
+             "right": "0",
+             "bottom": "1",
+             "left": "0",
+             "isLinked": false
+            },
+            "accordion_padding": {
+             "unit": "px",
+             "top": "30",
+             "right": "30",
+             "bottom": "30",
+             "left": "30",
+             "isLinked": true
+            },
+            "__globals__": {
+             "title_typography_typography": "",
+             "normal_title_color": "globals/colors?id=eedc3fc",
+             "hover_title_color": "",
+             "active_title_color": "",
+             "accordion_border_normal_color": "",
+             "accordion_background_normal_color": ""
+            },
+            "_animation": "fadeIn",
+            "animation_duration": "fast",
+            "_animation_delay": 500,
+            "accordion_background_normal_color": "#FFFFFF",
+            "title_typography_typography": "custom",
+            "title_typography_font_family": "nexa",
+            "title_typography_font_size": {
+             "unit": "px",
+             "size": 24,
+             "sizes": []
+            },
+            "content_background_background": "classic",
+            "content_background_color": "#FFFFFF",
+            "accordion_border_radius": {
+             "unit": "px",
+             "top": "0",
+             "right": "0",
+             "bottom": "0",
+             "left": "0",
+             "isLinked": true
+            },
+            "title_typography_font_weight": "700"
+           },
+           "interactions": {},
+           "widgetType": "nested-accordion",
+           "elements": [
+            {
+             "id": "4705310",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "d143d32",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Personalized concierge assistance tailored to each client’s unique lifestyle and everyday needs.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "be800f5",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "265d9c7",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Help with gift pickups, event preparation, shopping, and special occasion assistance.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "87468b4",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "5085dc4",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Preparation services designed to help organize and prepare homes before arrival or special occasions.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "c7c2c80",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "6f3d861",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Convenient assistance with completing several errands or tasks during one scheduled service visit.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "16dc375",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "1c461ee",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Lifestyle support services designed to assist with day-to-day responsibilities and time-saving tasks.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "b98367e",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "b34e8ee",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Services designed to help prepare your home before travel and reset it upon your return.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            }
+           ],
+           "supportRepeaterChildren": true
+          }
+         ],
+         "dataIndex": 3
+        },
+        {
+         "id": "2b86791",
+         "elType": "container",
+         "isInner": true,
+         "isLocked": true,
+         "settings": {
+          "_title": "Tab #1",
+          "content_width": "full"
+         },
+         "interactions": {},
+         "elements": [
+          {
+           "id": "b2505a3",
+           "elType": "widget",
+           "isInner": false,
+           "isLocked": false,
+           "settings": {
+            "items": [
+             {
+              "item_title": "Bank Deposits & Payments — Starting at $25",
+              "_id": "ea9da2d"
+             },
+             {
+              "item_title": "Package Pickup — Starting at $25",
+              "_id": "ad21184"
+             },
+             {
+              "item_title": "Post Office & Returns — Starting at $35",
+              "_id": "158dea1"
+             },
+             {
+              "item_title": "Retail Store Runs — Starting at $40",
+              "_id": "4368831"
+             }
+            ],
+            "accordion_item_title_position_horizontal": "start",
+            "accordion_item_title_icon_position": "start",
+            "default_state": "all_collapsed",
+            "n_accordion_animation_duration": {
+             "unit": "ms",
+             "size": 300,
+             "sizes": []
+            },
+            "accordion_item_title_space_between": {
+             "unit": "px",
+             "size": 10,
+             "sizes": []
+            },
+            "accordion_background_normal_background": "classic",
+            "accordion_border_normal_border": "none",
+            "accordion_border_normal_width": {
+             "unit": "px",
+             "top": "0",
+             "right": "0",
+             "bottom": "1",
+             "left": "0",
+             "isLinked": false
+            },
+            "accordion_padding": {
+             "unit": "px",
+             "top": "30",
+             "right": "30",
+             "bottom": "30",
+             "left": "30",
+             "isLinked": true
+            },
+            "__globals__": {
+             "title_typography_typography": "",
+             "normal_title_color": "globals/colors?id=eedc3fc",
+             "hover_title_color": "",
+             "active_title_color": "",
+             "accordion_border_normal_color": "",
+             "accordion_background_normal_color": ""
+            },
+            "_animation": "fadeIn",
+            "animation_duration": "fast",
+            "_animation_delay": 500,
+            "accordion_background_normal_color": "#FFFFFF",
+            "title_typography_typography": "custom",
+            "title_typography_font_family": "nexa",
+            "title_typography_font_size": {
+             "unit": "px",
+             "size": 24,
+             "sizes": []
+            },
+            "content_background_background": "classic",
+            "content_background_color": "#FFFFFF",
+            "accordion_border_radius": {
+             "unit": "px",
+             "top": "0",
+             "right": "0",
+             "bottom": "0",
+             "left": "0",
+             "isLinked": true
+            },
+            "title_typography_font_weight": "700"
+           },
+           "interactions": {},
+           "widgetType": "nested-accordion",
+           "elements": [
+            {
+             "id": "1c8c853",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "b472b18",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Convenient assistance with local bank deposits, payment drop-offs, and simple banking errands.</p><p> </p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "bedc094",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "107e180",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Reliable pickup and delivery of packages, orders, and local items throughout the Treasure Coast.</p><p> </p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "5691bdf",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "0c28947",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Assistance with mailing packages, shipping items, and handling store returns.</p><p> </p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "7f7b2a5",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "15f716b",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Convenient shopping and pickup services from local retail stores and businesses.</p><p> </p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            }
+           ],
+           "supportRepeaterChildren": true
+          }
+         ],
+         "dataIndex": 4
+        },
+        {
+         "id": "8a7bbd4",
+         "elType": "container",
+         "isInner": true,
+         "isLocked": true,
+         "settings": {
+          "_title": "Tab #1",
+          "content_width": "full"
+         },
+         "interactions": {},
+         "elements": [
+          {
+           "id": "6ba7672",
+           "elType": "widget",
+           "isInner": false,
+           "isLocked": false,
+           "settings": {
+            "items": [
+             {
+              "item_title": "Grocery Delivery Only — Starting at $20",
+              "_id": "ea9da2d"
+             },
+             {
+              "item_title": "Grocery Pickup (Pre-Ordered) — Starting at $25",
+              "_id": "ad21184"
+             },
+             {
+              "item_title": "Grocery Shopping (We Shop for You) — Starting at $45",
+              "_id": "158dea1"
+             },
+             {
+              "item_title": "Multiple Store Shopping — Starting at $65",
+              "_id": "4368831"
+             },
+             {
+              "item_title": "Weekly Grocery Restocking — Starting at $85 Weekly",
+              "_id": "ca2a0bb"
+             }
+            ],
+            "accordion_item_title_position_horizontal": "start",
+            "accordion_item_title_icon_position": "start",
+            "default_state": "all_collapsed",
+            "n_accordion_animation_duration": {
+             "unit": "ms",
+             "size": 300,
+             "sizes": []
+            },
+            "accordion_item_title_space_between": {
+             "unit": "px",
+             "size": 10,
+             "sizes": []
+            },
+            "accordion_background_normal_background": "classic",
+            "accordion_border_normal_border": "none",
+            "accordion_border_normal_width": {
+             "unit": "px",
+             "top": "0",
+             "right": "0",
+             "bottom": "1",
+             "left": "0",
+             "isLinked": false
+            },
+            "accordion_padding": {
+             "unit": "px",
+             "top": "30",
+             "right": "30",
+             "bottom": "30",
+             "left": "30",
+             "isLinked": true
+            },
+            "__globals__": {
+             "title_typography_typography": "",
+             "normal_title_color": "globals/colors?id=eedc3fc",
+             "hover_title_color": "",
+             "active_title_color": "",
+             "accordion_border_normal_color": "",
+             "accordion_background_normal_color": ""
+            },
+            "_animation": "fadeIn",
+            "animation_duration": "fast",
+            "_animation_delay": 500,
+            "accordion_background_normal_color": "#FFFFFF",
+            "title_typography_typography": "custom",
+            "title_typography_font_family": "nexa",
+            "title_typography_font_size": {
+             "unit": "px",
+             "size": 24,
+             "sizes": []
+            },
+            "content_background_background": "classic",
+            "content_background_color": "#FFFFFF",
+            "accordion_border_radius": {
+             "unit": "px",
+             "top": "0",
+             "right": "0",
+             "bottom": "0",
+             "left": "0",
+             "isLinked": true
+            },
+            "title_typography_font_weight": "700"
+           },
+           "interactions": {},
+           "widgetType": "nested-accordion",
+           "elements": [
+            {
+             "id": "c45fac1",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "df8c250",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Delivery of pre-purchased grocery orders directly to your home.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "086ca02",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "8d396d1",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Pickup services for grocery orders that have already been placed online or by phone.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "914a7bf",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "88ffe0f",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Personal grocery shopping services customized to your shopping list and preferences.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "ef74cbf",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "49f10cb",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Convenient shopping assistance across multiple grocery or retail locations during one service visit.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "c06d3f4",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "f2d32b1",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Recurring grocery shopping and restocking services designed to keep homes fully supplied.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            }
+           ],
+           "supportRepeaterChildren": true
+          }
+         ],
+         "dataIndex": 5
+        },
+        {
+         "id": "44cfe7a",
+         "elType": "container",
+         "isInner": true,
+         "isLocked": true,
+         "settings": {
+          "_title": "Tab #1",
+          "content_width": "full"
+         },
+         "interactions": {},
+         "elements": [
+          {
+           "id": "94814e8",
+           "elType": "widget",
+           "isInner": false,
+           "isLocked": false,
+           "settings": {
+            "items": [
+             {
+              "item_title": "Trash Bin In & Out Service — Starting at $15 Per Visit",
+              "_id": "ea9da2d"
+             },
+             {
+              "item_title": "Home Check Visits — Starting at $35 Per Visit",
+              "_id": "ad21184"
+             },
+             {
+              "item_title": "Mail & Package Bring-In — Starting at $20",
+              "_id": "158dea1"
+             },
+             {
+              "item_title": "Plant Watering — Starting at $25",
+              "_id": "4368831"
+             },
+             {
+              "item_title": "Vendor Access Coordination — Starting at $45",
+              "_id": "ca2a0bb"
+             },
+             {
+              "item_title": "Hurricane Preparation — Starting at $95",
+              "_id": "5a2ab6d"
+             }
+            ],
+            "accordion_item_title_position_horizontal": "start",
+            "accordion_item_title_icon_position": "start",
+            "default_state": "all_collapsed",
+            "n_accordion_animation_duration": {
+             "unit": "ms",
+             "size": 300,
+             "sizes": []
+            },
+            "accordion_item_title_space_between": {
+             "unit": "px",
+             "size": 10,
+             "sizes": []
+            },
+            "accordion_background_normal_background": "classic",
+            "accordion_border_normal_border": "none",
+            "accordion_border_normal_width": {
+             "unit": "px",
+             "top": "0",
+             "right": "0",
+             "bottom": "1",
+             "left": "0",
+             "isLinked": false
+            },
+            "accordion_padding": {
+             "unit": "px",
+             "top": "30",
+             "right": "30",
+             "bottom": "30",
+             "left": "30",
+             "isLinked": true
+            },
+            "__globals__": {
+             "title_typography_typography": "",
+             "normal_title_color": "globals/colors?id=eedc3fc",
+             "hover_title_color": "",
+             "active_title_color": "",
+             "accordion_border_normal_color": "",
+             "accordion_background_normal_color": ""
+            },
+            "_animation": "fadeIn",
+            "animation_duration": "fast",
+            "_animation_delay": 500,
+            "accordion_background_normal_color": "#FFFFFF",
+            "title_typography_typography": "custom",
+            "title_typography_font_family": "nexa",
+            "title_typography_font_size": {
+             "unit": "px",
+             "size": 24,
+             "sizes": []
+            },
+            "content_background_background": "classic",
+            "content_background_color": "#FFFFFF",
+            "accordion_border_radius": {
+             "unit": "px",
+             "top": "0",
+             "right": "0",
+             "bottom": "0",
+             "left": "0",
+             "isLinked": true
+            },
+            "title_typography_font_weight": "700"
+           },
+           "interactions": {},
+           "widgetType": "nested-accordion",
+           "elements": [
+            {
+             "id": "4d0073d",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "a390aa0",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Convenient placement and return of trash and recycling bins on scheduled collection days.</p><p> </p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "30565d4",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "2f81db3",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Scheduled visits designed to help monitor homes and provide peace of mind while homeowners are away.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "465e90b",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "83da6b5",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Collection and secure placement of mail and delivered packages inside the home when requested.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "1d6e8e4",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "d250e89",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Indoor and outdoor plant watering services designed to help maintain healthy plants while clients are away.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "44e1c32",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "935fb2c",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Assistance coordinating access for approved vendors, maintenance workers, and service providers.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "85b2578",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "8f029f3",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Storm preparation services designed to help homeowners and seasonal residents prepare their property before severe weather or hurricane conditions. Services may include securing outdoor furniture, bringing in trash bins, checking doors and windows, moving lightweight outdoor items, basic storm preparation assistance, and helping provide added peace of mind before a storm approaches.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            }
+           ],
+           "supportRepeaterChildren": true
+          }
+         ],
+         "dataIndex": 6
+        },
+        {
+         "id": "c9ff885",
+         "elType": "container",
+         "isInner": true,
+         "isLocked": true,
+         "settings": {
+          "_title": "Tab #1",
+          "content_width": "full"
+         },
+         "interactions": {},
+         "elements": [
+          {
+           "id": "ee45b7b",
+           "elType": "widget",
+           "isInner": false,
+           "isLocked": false,
+           "settings": {
+            "items": [
+             {
+              "item_title": "Pet Feeding Visits — Starting at $25",
+              "_id": "ea9da2d"
+             },
+             {
+              "item_title": "Dog Walking — Starting at $30",
+              "_id": "ad21184"
+             },
+             {
+              "item_title": "Pet Supply Pickup — Starting at $25",
+              "_id": "158dea1"
+             },
+             {
+              "item_title": "Vet Transportation — Starting at $45",
+              "_id": "4368831"
+             },
+             {
+              "item_title": "Companion Pet Visits — Starting at $25",
+              "_id": "ca2a0bb"
+             },
+             {
+              "item_title": "Vacation Pet Check-Ins — Starting at $35",
+              "_id": "5a2ab6d"
+             },
+             {
+              "item_title": "Litter Box / Food Refresh — Starting at $25",
+              "_id": "65d44ad"
+             },
+             {
+              "item_title": "Pet Medication Pickup — Starting at $20",
+              "_id": "e4d6e4f"
+             },
+             {
+              "item_title": "Backyard Let-Out Visits — Starting at $20",
+              "_id": "0026131"
+             }
+            ],
+            "accordion_item_title_position_horizontal": "start",
+            "accordion_item_title_icon_position": "start",
+            "default_state": "all_collapsed",
+            "n_accordion_animation_duration": {
+             "unit": "ms",
+             "size": 300,
+             "sizes": []
+            },
+            "accordion_item_title_space_between": {
+             "unit": "px",
+             "size": 10,
+             "sizes": []
+            },
+            "accordion_background_normal_background": "classic",
+            "accordion_border_normal_border": "none",
+            "accordion_border_normal_width": {
+             "unit": "px",
+             "top": "0",
+             "right": "0",
+             "bottom": "1",
+             "left": "0",
+             "isLinked": false
+            },
+            "accordion_padding": {
+             "unit": "px",
+             "top": "30",
+             "right": "30",
+             "bottom": "30",
+             "left": "30",
+             "isLinked": true
+            },
+            "__globals__": {
+             "title_typography_typography": "",
+             "normal_title_color": "globals/colors?id=eedc3fc",
+             "hover_title_color": "",
+             "active_title_color": "",
+             "accordion_border_normal_color": "",
+             "accordion_background_normal_color": ""
+            },
+            "_animation": "fadeIn",
+            "animation_duration": "fast",
+            "_animation_delay": 500,
+            "accordion_background_normal_color": "#FFFFFF",
+            "title_typography_typography": "custom",
+            "title_typography_font_family": "nexa",
+            "title_typography_font_size": {
+             "unit": "px",
+             "size": 24,
+             "sizes": []
+            },
+            "content_background_background": "classic",
+            "content_background_color": "#FFFFFF",
+            "accordion_border_radius": {
+             "unit": "px",
+             "top": "0",
+             "right": "0",
+             "bottom": "0",
+             "left": "0",
+             "isLinked": true
+            },
+            "title_typography_font_weight": "700"
+           },
+           "interactions": {},
+           "widgetType": "nested-accordion",
+           "elements": [
+            {
+             "id": "3963847",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "1aa4aeb",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Reliable visits to feed and check on pets while owners are away from home.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "9d23571",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "5ad8b24",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Friendly dog walking services designed to help pets stay active, comfortable, and cared for.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "cc9e5b9",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "99e911d",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Convenient pickup and delivery of pet food, supplies, medications, and essentials.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "1233998",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "f458f0d",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Non-medical transportation assistance for veterinary or grooming appointments.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "6a27f8f",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "457ec6d",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Friendly check-in visits designed to provide pets with comfort, companionship, and attention.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "cf0dc22",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "2c061f4",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Scheduled pet visits during vacations or travel to help ensure pets remain safe and cared for.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "84573f7",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "1aabb36",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Basic pet care assistance including litter box refreshing and food or water replenishment.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "f46f12f",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "808d102",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Convenient pickup and delivery of pet medications and veterinary prescriptions.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "d3bc1e0",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "1b6abe4",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Quick outdoor let-out visits for pets needing bathroom breaks or fresh air during the day.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            }
+           ],
+           "supportRepeaterChildren": true
+          }
+         ],
+         "dataIndex": 7
+        },
+        {
+         "id": "358ffb4",
+         "elType": "container",
+         "isInner": true,
+         "isLocked": true,
+         "settings": {
+          "_title": "Tab #1",
+          "content_width": "full"
+         },
+         "interactions": {},
+         "elements": [
+          {
+           "id": "d3699cd",
+           "elType": "widget",
+           "isInner": false,
+           "isLocked": false,
+           "settings": {
+            "items": [
+             {
+              "item_title": "Pharmacy Wait & Return — Starting at $35",
+              "_id": "ea9da2d"
+             },
+             {
+              "item_title": "Prescription Pickup & Delivery — Starting at $25",
+              "_id": "ad21184"
+             },
+             {
+              "item_title": "Prescription & Grocery Combo — Starting at $55",
+              "_id": "158dea1"
+             },
+             {
+              "item_title": "Prescription Pickup Only — Starting at $20",
+              "_id": "4368831"
+             },
+             {
+              "item_title": "Urgent / Same-Day Pickup — Starting at $45",
+              "_id": "ca2a0bb"
+             }
+            ],
+            "accordion_item_title_position_horizontal": "start",
+            "accordion_item_title_icon_position": "start",
+            "default_state": "all_collapsed",
+            "n_accordion_animation_duration": {
+             "unit": "ms",
+             "size": 300,
+             "sizes": []
+            },
+            "accordion_item_title_space_between": {
+             "unit": "px",
+             "size": 10,
+             "sizes": []
+            },
+            "accordion_background_normal_background": "classic",
+            "accordion_border_normal_border": "none",
+            "accordion_border_normal_width": {
+             "unit": "px",
+             "top": "0",
+             "right": "0",
+             "bottom": "1",
+             "left": "0",
+             "isLinked": false
+            },
+            "accordion_padding": {
+             "unit": "px",
+             "top": "30",
+             "right": "30",
+             "bottom": "30",
+             "left": "30",
+             "isLinked": true
+            },
+            "__globals__": {
+             "title_typography_typography": "",
+             "normal_title_color": "globals/colors?id=eedc3fc",
+             "hover_title_color": "",
+             "active_title_color": "",
+             "accordion_border_normal_color": "",
+             "accordion_background_normal_color": ""
+            },
+            "_animation": "fadeIn",
+            "animation_duration": "fast",
+            "_animation_delay": 500,
+            "accordion_background_normal_color": "#FFFFFF",
+            "title_typography_typography": "custom",
+            "title_typography_font_family": "nexa",
+            "title_typography_font_size": {
+             "unit": "px",
+             "size": 24,
+             "sizes": []
+            },
+            "content_background_background": "classic",
+            "content_background_color": "#FFFFFF",
+            "accordion_border_radius": {
+             "unit": "px",
+             "top": "0",
+             "right": "0",
+             "bottom": "0",
+             "left": "0",
+             "isLinked": true
+            },
+            "title_typography_font_weight": "700"
+           },
+           "interactions": {},
+           "widgetType": "nested-accordion",
+           "elements": [
+            {
+             "id": "07921f1",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "2e698e0",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Convenient pharmacy pickup service including waiting assistance and return delivery.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "0788493",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "0103779",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Safe and dependable prescription pickup and delivery services throughout the Treasure Coast.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "35dec58",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "66e2d5a",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Combined grocery shopping and prescription pickup services completed during one visit.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "44c55c3",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "b51c292",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Simple prescription pickup and delivery service for routine pharmacy needs.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "ced5903",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "1777480",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Priority same-day prescription pickup services based on availability and scheduling.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            }
+           ],
+           "supportRepeaterChildren": true
+          }
+         ],
+         "dataIndex": 8
+        },
+        {
+         "id": "0744542",
+         "elType": "container",
+         "isInner": true,
+         "isLocked": true,
+         "settings": {
+          "_title": "Tab #1",
+          "content_width": "full"
+         },
+         "interactions": {},
+         "elements": [
+          {
+           "id": "a25f907",
+           "elType": "widget",
+           "isInner": false,
+           "isLocked": false,
+           "settings": {
+            "items": [
+             {
+              "item_title": "Appointment Reminders — Starting at $20",
+              "_id": "ea9da2d"
+             },
+             {
+              "item_title": "Assistance & Errands — Starting at $45",
+              "_id": "ad21184"
+             },
+             {
+              "item_title": "Friendly Check-In Visits — Starting at $35",
+              "_id": "158dea1"
+             },
+             {
+              "item_title": "Family Updates After Visits — Included Upon Request",
+              "_id": "4368831"
+             },
+             {
+              "item_title": "Organization Assistance — Starting at $45",
+              "_id": "ca2a0bb"
+             },
+             {
+              "item_title": "Senior Support Visits — Starting at $45",
+              "_id": "5a2ab6d"
+             },
+             {
+              "item_title": "Transportation Assistance — Starting at $35",
+              "_id": "3668a02"
+             },
+             {
+              "item_title": "Technology Assistance — Starting at $40",
+              "_id": "dc1a75c"
+             },
+             {
+              "item_title": "Waiting Services — Starting at $30 Per Hour",
+              "_id": "9286ca2"
+             }
+            ],
+            "accordion_item_title_position_horizontal": "start",
+            "accordion_item_title_icon_position": "start",
+            "default_state": "all_collapsed",
+            "n_accordion_animation_duration": {
+             "unit": "ms",
+             "size": 300,
+             "sizes": []
+            },
+            "accordion_item_title_space_between": {
+             "unit": "px",
+             "size": 10,
+             "sizes": []
+            },
+            "accordion_background_normal_background": "classic",
+            "accordion_border_normal_border": "none",
+            "accordion_border_normal_width": {
+             "unit": "px",
+             "top": "0",
+             "right": "0",
+             "bottom": "1",
+             "left": "0",
+             "isLinked": false
+            },
+            "accordion_padding": {
+             "unit": "px",
+             "top": "30",
+             "right": "30",
+             "bottom": "30",
+             "left": "30",
+             "isLinked": true
+            },
+            "__globals__": {
+             "title_typography_typography": "",
+             "normal_title_color": "globals/colors?id=eedc3fc",
+             "hover_title_color": "",
+             "active_title_color": "",
+             "accordion_border_normal_color": "",
+             "accordion_background_normal_color": ""
+            },
+            "_animation": "fadeIn",
+            "animation_duration": "fast",
+            "_animation_delay": 500,
+            "accordion_background_normal_color": "#FFFFFF",
+            "title_typography_typography": "custom",
+            "title_typography_font_family": "nexa",
+            "title_typography_font_size": {
+             "unit": "px",
+             "size": 24,
+             "sizes": []
+            },
+            "content_background_background": "classic",
+            "content_background_color": "#FFFFFF",
+            "accordion_border_radius": {
+             "unit": "px",
+             "top": "0",
+             "right": "0",
+             "bottom": "0",
+             "left": "0",
+             "isLinked": true
+            },
+            "title_typography_font_weight": "700"
+           },
+           "interactions": {},
+           "widgetType": "nested-accordion",
+           "elements": [
+            {
+             "id": "5a03628",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "fb76f88",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Friendly reminder services designed to help clients stay organized and prepared for appointments.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "7e645e2",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "319e285",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Personalized support with errands, shopping, and everyday lifestyle assistance.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "741a577",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "7cfccfa",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Companion visits designed to provide reassurance, conversation, and social interaction.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "6e13e92",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "428da54",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Optional updates provided to family members following scheduled visits or wellness checks.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "c148e3d",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "9c80fc3",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Light organizing assistance designed to help maintain comfortable and manageable living spaces.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "cd70020",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "99f10ad",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Dependable non-medical support visits tailored to seniors needing additional everyday assistance.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "d1b4934",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "8b9d8af",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Reliable transportation support for appointments, shopping, errands, and local outings.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "7250c48",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "14635de",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Basic help with phones, tablets, video calls, apps, and simple technology-related tasks.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "4819bcf",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "7282151",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Companion support and waiting assistance during appointments, errands, or scheduled visits.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            }
+           ],
+           "supportRepeaterChildren": true
+          }
+         ],
+         "dataIndex": 9
+        },
+        {
+         "id": "641352e",
+         "elType": "container",
+         "isInner": true,
+         "isLocked": true,
+         "settings": {
+          "_title": "Tab #1",
+          "content_width": "full"
+         },
+         "interactions": {},
+         "elements": [
+          {
+           "id": "b210760",
+           "elType": "widget",
+           "isInner": false,
+           "isLocked": false,
+           "settings": {
+            "items": [
+             {
+              "item_title": "Peace of Mind Visits — Starting at $40",
+              "_id": "ea9da2d"
+             },
+             {
+              "item_title": "Post-Vacation Reset — Starting at $95",
+              "_id": "ad21184"
+             },
+             {
+              "item_title": "Pre-Arrival Setup — Starting at $85",
+              "_id": "158dea1"
+             },
+             {
+              "item_title": "Vacation Home Checks — Starting at $40 Per Visit",
+              "_id": "4368831"
+             },
+             {
+              "item_title": "Welcome Home Package — Starting at $125",
+              "_id": "ca2a0bb"
+             }
+            ],
+            "accordion_item_title_position_horizontal": "start",
+            "accordion_item_title_icon_position": "start",
+            "default_state": "all_collapsed",
+            "n_accordion_animation_duration": {
+             "unit": "ms",
+             "size": 300,
+             "sizes": []
+            },
+            "accordion_item_title_space_between": {
+             "unit": "px",
+             "size": 10,
+             "sizes": []
+            },
+            "accordion_background_normal_background": "classic",
+            "accordion_border_normal_border": "none",
+            "accordion_border_normal_width": {
+             "unit": "px",
+             "top": "0",
+             "right": "0",
+             "bottom": "1",
+             "left": "0",
+             "isLinked": false
+            },
+            "accordion_padding": {
+             "unit": "px",
+             "top": "30",
+             "right": "30",
+             "bottom": "30",
+             "left": "30",
+             "isLinked": true
+            },
+            "__globals__": {
+             "title_typography_typography": "",
+             "normal_title_color": "globals/colors?id=eedc3fc",
+             "hover_title_color": "",
+             "active_title_color": "",
+             "accordion_border_normal_color": "",
+             "accordion_background_normal_color": ""
+            },
+            "_animation": "fadeIn",
+            "animation_duration": "fast",
+            "_animation_delay": 500,
+            "accordion_background_normal_color": "#FFFFFF",
+            "title_typography_typography": "custom",
+            "title_typography_font_family": "nexa",
+            "title_typography_font_size": {
+             "unit": "px",
+             "size": 24,
+             "sizes": []
+            },
+            "content_background_background": "classic",
+            "content_background_color": "#FFFFFF",
+            "accordion_border_radius": {
+             "unit": "px",
+             "top": "0",
+             "right": "0",
+             "bottom": "0",
+             "left": "0",
+             "isLinked": true
+            },
+            "title_typography_font_weight": "700"
+           },
+           "interactions": {},
+           "widgetType": "nested-accordion",
+           "elements": [
+            {
+             "id": "982f86b",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "4770aab",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Routine home visits designed to help monitor properties while homeowners are away.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "14dfe2c",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "bf96239",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Home refresh services completed before homeowners return from travel or seasonal absences.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "29d0bd0",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "0c8e8f9",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Preparation services designed to help ensure homes are ready prior to homeowner arrival.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "33365a9",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "ad97fd0",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Scheduled inspections and property checks for seasonal or vacation homes.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            },
+            {
+             "id": "e08b54e",
+             "elType": "container",
+             "isInner": true,
+             "isLocked": true,
+             "settings": {
+              "_title": "item #1",
+              "content_width": "full",
+              "flex_direction": "column",
+              "flex_justify_content": "flex-start",
+              "flex_gap": {
+               "column": "0",
+               "row": "0",
+               "isLinked": true,
+               "unit": "px",
+               "size": 0
+              },
+              "background_background": "classic",
+              "border_border": "none",
+              "border_width": {
+               "unit": "px",
+               "top": "0",
+               "right": "0",
+               "bottom": "1",
+               "left": "0",
+               "isLinked": false
+              },
+              "padding": {
+               "unit": "px",
+               "top": "0",
+               "right": "30",
+               "bottom": "30",
+               "left": "30",
+               "isLinked": false
+              },
+              "__globals__": {
+               "border_color": "globals/colors?id=8b349b7",
+               "background_color": "globals/colors?id=d88298d"
+              }
+             },
+             "interactions": {},
+             "elements": [
+              {
+               "id": "6ed0b68",
+               "elType": "widget",
+               "isInner": false,
+               "isLocked": false,
+               "settings": {
+                "editor": "<p>Personalized home preparation services designed to help homeowners return to a comfortable and welcoming environment.</p>",
+                "paragraph_spacing": {
+                 "unit": "px",
+                 "size": 0,
+                 "sizes": []
+                },
+                "_margin": {
+                 "unit": "px",
+                 "top": "-7",
+                 "right": "0",
+                 "bottom": "-7",
+                 "left": "0",
+                 "isLinked": false
+                },
+                "__globals__": {
+                 "typography_typography": "globals/typography?id=text",
+                 "text_color": "globals/colors?id=secondary"
+                }
+               },
+               "interactions": {},
+               "elements": [],
+               "widgetType": "text-editor"
+              }
+             ]
+            }
+           ],
+           "supportRepeaterChildren": true
+          }
+         ],
+         "dataIndex": 10
+        }
+       ],
+       "supportRepeaterChildren": true
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}
