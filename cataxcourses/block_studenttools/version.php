@@ -4,7 +4,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'block_studenttools';
-$plugin->version   = 2026102903;
+$plugin->version   = 2026102905;
 $plugin->requires  = 2019052000; // Moodle 3.7.
 $plugin->maturity  = MATURITY_STABLE;
 $plugin->release   = '1.0';

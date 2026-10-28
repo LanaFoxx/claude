@@ -5,6 +5,9 @@ defined('MOODLE_INTERNAL') || die();
 
 class block_studenttools extends block_base {
 
+    /** Set once the selected student has been shown inside the search results. */
+    protected $shownstudent = false;
+
     public function init() {
         $this->title = get_string('pluginname', 'block_studenttools');
     }
@@ -85,11 +88,22 @@ class block_studenttools extends block_base {
         if (!$users) {
             return $html . html_writer::div('No students match “' . s($q) . '”. Add them as a new student below.', 'stt-muted');
         }
+        $stu = optional_param('stu', 0, PARAM_INT);
         $list = '';
         foreach ($users as $u) {
-            $list .= html_writer::link(new moodle_url('/my/', ['stu' => $u->id, 'stq' => $q]),
+            $selected = (int)$u->id === $stu;
+            // Clicking the open student again closes their details.
+            $url = new moodle_url('/my/', $selected ? ['stq' => $q] : ['stu' => $u->id, 'stq' => $q]);
+            $url->set_anchor($selected ? 'stt-search' : 'stt-sel');
+            $list .= html_writer::link($url,
                 html_writer::tag('span', fullname($u), ['class' => 'stt-name']) .
-                html_writer::tag('span', s($u->email), ['class' => 'stt-email']), ['class' => 'stt-result']);
+                html_writer::tag('span', s($u->email), ['class' => 'stt-email']),
+                ['class' => 'stt-result' . ($selected ? ' stt-result-open' : ''), 'id' => $selected ? 'stt-sel' : null]);
+            if ($selected) {
+                // The student's details open right under their name.
+                $list .= html_writer::div($this->student_panel($u->id), 'stt-inline-panel');
+                $this->shownstudent = true;
+            }
         }
         return $html . html_writer::div($list, 'stt-results');
     }
@@ -107,7 +121,8 @@ class block_studenttools extends block_base {
                 'stt-detail') .
             html_writer::div(
                 html_writer::link(new moodle_url('/user/profile.php', ['id' => $user->id]), 'Profile', ['class' => 'stt-btn']) .
-                html_writer::link(new moodle_url('/my/'), 'Close', ['class' => 'stt-btn']), 'stt-actions stt-actions-top');
+                html_writer::link(new moodle_url('/my/', ($q = optional_param('stq', '', PARAM_NOTAGS)) !== '' ? ['stq' => $q] : []),
+                    'Close', ['class' => 'stt-btn']), 'stt-actions stt-actions-top');
 
         $courses = enrol_get_all_users_courses($user->id, false, 'id, fullname, shortname');
         $rows = '';
@@ -177,9 +192,10 @@ class block_studenttools extends block_base {
         if (!has_capability('moodle/site:config', context_system::instance())) {
             return $this->content;
         }
-        $html = self::styles() . html_writer::div($this->search_panel(), 'stt-card');
+        $html = self::styles() . html_writer::div($this->search_panel(), 'stt-card', ['id' => 'stt-search']);
         $stu = optional_param('stu', 0, PARAM_INT);
-        if ($stu) {
+        if ($stu && !$this->shownstudent) {
+            // Opened without a search (e.g. just added or enrolled): show the details on their own.
             $html .= html_writer::div($this->student_panel($stu), 'stt-card');
         }
         $html .= html_writer::div($this->add_panel(), 'stt-card');
@@ -214,9 +230,14 @@ class block_studenttools extends block_base {
 .stt-btn:hover{border-color:var(--gold);background:#fffbea}
 .stt-btn-primary{background:#d4af37;border-color:#d4af37;color:#fff!important;height:38px}
 .stt-btn-primary:hover{background:#c09c2c;border-color:#c09c2c}
-.stt-results{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px;margin-top:12px}
+.stt-results{display:flex;flex-direction:column;gap:8px;margin-top:12px}
 .stt-result{display:block;padding:10px 12px;border:1px solid var(--line);border-radius:8px;text-decoration:none!important}
 .stt-result:hover{border-color:var(--gold);background:#fffbea}
+.stt-result-open{border-color:var(--gold);background:#fffbea;border-bottom-left-radius:0;border-bottom-right-radius:0}
+.stt-inline-panel{border:1px solid var(--gold);border-top:0;border-radius:0 0 8px 8px;padding:12px;margin-top:-8px;background:#fff}
+#stt-sel{scroll-margin-top:90px}
+.stt-inline-panel .stt-student>h4:first-child,.stt-inline-panel .stt-student>h4:first-child+.stt-detail{display:none}
+.stt-inline-panel .stt-actions-top{margin-top:0}
 .stt-name{display:block;font-weight:600;color:var(--ink)}
 .stt-email{display:block;font-size:.8rem;color:var(--muted)}
 .stt-muted{color:var(--muted);font-size:.85rem;margin-top:8px}
