@@ -83,13 +83,50 @@ add_shortcode( 'dwd_portfolio', function ( $atts ) {
 	return $out . '</div>';
 } );
 
-/** [dwd_project_slider] — the homepage browser carousel (projects marked "Show on homepage"). */
-add_shortcode( 'dwd_project_slider', function () {
+/**
+ * [dwd_project_slider] — homepage showcase. A slow, continuous upward "film" of every project's
+ * full hero (projects marked "Show on homepage"). Hover pauses it; each hero links to its project.
+ * Use [dwd_project_slider style="classic"] for the older one-at-a-time browser slider.
+ */
+add_shortcode( 'dwd_project_slider', function ( $atts ) {
+	$atts     = shortcode_atts( array( 'style' => 'film', 'speed' => 14 ), $atts );
 	$projects = dwdp_projects( true );
 	if ( ! $projects ) {
 		return '';
 	}
 	dwdp_enqueue_front();
+	if ( 'classic' === $atts['style'] ) {
+		return dwdp_classic_slider( $projects );
+	}
+	$items = '';
+	$count = 0;
+	foreach ( $projects as $p ) {
+		$hero = absint( dwdp_get( $p->ID, 'cover' ) );
+		if ( ! $hero ) {
+			continue;
+		}
+		$items .= sprintf(
+			'<a class="dwdp-film-item" href="%1$s" aria-label="%2$s"><span class="dwdp-film-bar"><span class="dw-bdots"><i></i><i></i><i></i></span><span class="dwdp-film-url">%3$s</span></span>%4$s</a>',
+			esc_url( get_permalink( $p ) ),
+			esc_attr( 'View the ' . get_the_title( $p ) . ' project' ),
+			esc_html( dwdp_domain( $p->ID ) ),
+			dwdp_img( $hero, get_the_title( $p ) . ' website design', array( 'loading' => $count < 2 ? 'eager' : 'lazy' ) )
+		);
+		$count++;
+	}
+	if ( ! $count ) {
+		return '';
+	}
+	// The list is repeated once so the upward loop is seamless.
+	$dur = max( 20, $count * max( 3, (float) $atts['speed'] ) );
+	return '<div class="dwdp-film" style="--dwdp-film-dur:' . esc_attr( $dur ) . 's"><div class="dwdp-film-track">'
+		. '<div class="dwdp-film-set">' . $items . '</div>'
+		. '<div class="dwdp-film-set" aria-hidden="true">' . str_replace( '<a ', '<a tabindex="-1" ', $items ) . '</div>'
+		. '</div></div>';
+} );
+
+/** The original one-at-a-time browser slider. */
+function dwdp_classic_slider( $projects ) {
 	$imgs = '';
 	foreach ( $projects as $i => $p ) {
 		$cover = absint( dwdp_get( $p->ID, 'cover' ) );
@@ -116,7 +153,7 @@ add_shortcode( 'dwd_project_slider', function () {
 		. '</div>'
 		. '<div class="dw-browser"><div class="dw-bscreen">' . $imgs . '</div></div>'
 		. '</div>';
-} );
+}
 
 /** Shared "Yours could be next" call to action. */
 function dwdp_cta_html() {
