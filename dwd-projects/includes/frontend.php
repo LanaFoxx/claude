@@ -86,10 +86,12 @@ add_shortcode( 'dwd_portfolio', function ( $atts ) {
 /**
  * [dwd_project_slider] — homepage showcase of every project's full hero (projects marked
  * "Show on homepage"). One design at a time; up/down buttons slide vertically between them.
- * Each hero links to its project. Use style="classic" for the older one-at-a-time slider.
+ * Each hero links to its project. The heroes sit on a large laptop screen that runs off the
+ * right edge of the section; use frame="none" for a plain screen, or style="classic" for the
+ * older one-at-a-time slider.
  */
 add_shortcode( 'dwd_project_slider', function ( $atts ) {
-	$atts     = shortcode_atts( array( 'style' => 'vertical' ), $atts );
+	$atts     = shortcode_atts( array( 'style' => 'vertical', 'frame' => 'laptop' ), $atts );
 	$projects = dwdp_projects( true );
 	if ( ! $projects ) {
 		return '';
@@ -119,13 +121,17 @@ add_shortcode( 'dwd_project_slider', function ( $atts ) {
 	if ( ! $count ) {
 		return '';
 	}
-	$chev = '<svg viewBox="0 0 22 22" aria-hidden="true"><path d="%s"></path></svg>';
-	return '<div class="dwdp-vslider">'
+	$chev   = '<svg viewBox="0 0 22 22" aria-hidden="true"><path d="%s"></path></svg>';
+	$screen = '<div class="dwdp-vview"><div class="dwdp-vtrack">' . $items . '</div></div>';
+	if ( 'laptop' === $atts['frame'] ) {
+		$screen = '<div class="dwdp-laptop"><div class="dwdp-lid"><i class="dwdp-cam"></i>' . $screen . '</div><div class="dwdp-base"></div></div>';
+	}
+	return '<div class="dwdp-vslider' . ( 'laptop' === $atts['frame'] ? ' is-laptop' : '' ) . '">'
 		. '<div class="dwdp-vnav">'
 		. '<button type="button" class="dwdp-vbtn dwdp-up" aria-label="Previous design">' . sprintf( $chev, 'M4 14 L11 7 L18 14' ) . '</button>'
 		. '<button type="button" class="dwdp-vbtn dwdp-down" aria-label="Next design">' . sprintf( $chev, 'M4 8 L11 15 L18 8' ) . '</button>'
 		. '</div>'
-		. '<div class="dwdp-vview"><div class="dwdp-vtrack">' . $items . '</div></div>'
+		. $screen
 		. '</div>';
 } );
 

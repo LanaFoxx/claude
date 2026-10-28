@@ -172,5 +172,14 @@
 .dwdp-vtrack{display:flex;flex-direction:column;transition:transform .7s cubic-bezier(.65,0,.35,1);will-change:transform}
 .dwdp-vitem{display:block;text-decoration:none!important;aspect-ratio:1/.58;overflow:hidden;background:#fff}
 .dwdp-vitem img{display:block;width:100%;height:100%;object-fit:cover;object-position:center top}
+/* Laptop frame: about 1.55x the slider wide, so roughly a third runs off the page; the section clips it. */
+.elementor>.e-con:has(.dwdp-laptop),.elementor>.elementor-section:has(.dwdp-laptop){overflow:hidden}
+.dwdp-vslider.is-laptop{gap:26px}
+.dwdp-laptop{flex:none;width:155%;min-width:0;position:relative;filter:drop-shadow(0 50px 70px rgba(0,0,0,.5))}
+.dwdp-lid{position:relative;background:#0b0d10;border-radius:22px 22px 0 0;padding:2.6% 2.4% 2.2%;box-shadow:inset 0 0 0 1.5px #3a4049,inset 0 0 0 4px #15181c}
+.dwdp-cam{position:absolute;top:1.1%;left:50%;width:7px;height:7px;margin-left:-3.5px;border-radius:50%;background:#1d2228;box-shadow:inset 0 0 0 1.5px #2c333b}
+.dwdp-laptop .dwdp-vview{border-radius:3px;box-shadow:none}
+.dwdp-base{position:relative;width:112%;margin-left:-6%;height:0;padding-bottom:3.2%;background:linear-gradient(#e3e7ec 0%,#c4cad2 45%,#8f96a0 100%);border-radius:2px 2px 26px 26px / 2px 2px 70% 70%;box-shadow:inset 0 1px 0 #fff}
+.dwdp-base:before{content:"";position:absolute;top:0;left:50%;width:15%;height:38%;transform:translateX(-50%);background:linear-gradient(#a8afb8,#c9ced5);border-radius:0 0 10px 10px}
 @media (prefers-reduced-motion:reduce){.dwdp-vview,.dwdp-vtrack{transition:none}}
-@media(max-width:767px){.dwdp-vslider{flex-direction:column-reverse}.dwdp-vnav{flex-direction:row}.dwdp-vview{flex:none;width:100%;align-self:stretch}}
+@media(max-width:767px){.dwdp-vslider{flex-direction:column-reverse}.dwdp-vnav{flex-direction:row}.dwdp-vview{flex:none;width:100%;align-self:stretch}.dwdp-vslider.is-laptop{align-items:flex-start}.dwdp-laptop{width:125%}.dwdp-lid{border-radius:12px 12px 0 0}.dwdp-laptop .dwdp-vview{width:100%}}
