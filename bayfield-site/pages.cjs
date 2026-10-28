@@ -112,13 +112,45 @@ function history(m) {
   ];
 }
 
+// Gallery: one Elementor Pro Gallery in "multiple" mode, so visitors filter by section
+// (All, General, Rooms, ...). Each section is its own image list, edited in the widget.
+const GALLERY = [
+  ['General', ['bayfield-inn-exterior.jpg', 'bayfield-events-lawn.jpg']],
+  ['Rooms', ['bayfield-lake-view-room.jpg', 'bayfield-suite-jacuzzi.jpg', 'bayfield-standard-room.jpg', 'bayfield-lakeview-room.jpg']],
+  ['Condos', ['bayfield-condos-cover.jpg', 'bayfield-condo-botl-unit-100-img-7635.jpg', 'bayfield-condo-iwh-house-img-3809.jpg', 'bayfield-condo-botl-unit-301-img-7677.jpg',
+    'bayfield-condo-iwh-emerald-img-8198.jpg', 'bayfield-condo-botl-unit-102-img-7622.jpg', 'bayfield-condo-iwh-qe-ii-img-3794.jpg', 'bayfield-condo-botl-unit-100-img-7638.jpg',
+    'bayfield-condo-iwh-phoenix-img-0211-2.jpg', 'bayfield-condo-botl-unit-202-img-7610.jpg', 'bayfield-condo-iwh-blue-img-1180.jpg', 'bayfield-condo-botl-unit-101-img-7655.jpg',
+    'bayfield-condo-iwh-house-exterior-1.jpg', 'bayfield-condo-botl-unit-100-img-7645.jpg', 'bayfield-condo-iwh-common-area-img-8205.jpg', 'bayfield-condo-botl-unit-301-img-7676.jpg',
+    'bayfield-condo-iwh-crows-nest-img-5968.jpg', 'bayfield-condo-botl-unit-102-img-7629.jpg', 'bayfield-condo-iwh-qe-ii-img-3476.jpg', 'bayfield-condo-botl-unit-101-img-7660.jpg',
+    'bayfield-condo-iwh-emerald-img-8193.jpg', 'bayfield-condo-botl-unit-202-img-7602.jpg', 'bayfield-condo-iwh-blue-img-0174.jpg', 'bayfield-condo-botl-unit-301-img-7688.jpg',
+    'bayfield-condo-iwh-qe-ii-img-3807.jpg', 'bayfield-condo-botl-unit-102-img-7621.jpg', 'bayfield-condo-iwh-common-area-img-1184.jpg', 'bayfield-condo-botl-unit-101-img-7666.jpg',
+    'bayfield-condo-iwh-house-img-3629.jpg']],
+  ['The Deck', ['bayfield-hero-the-deck.jpg', 'bayfield-the-deck-bar.jpg', 'bayfield-deck-dining.jpg']],
+  ['The Lounge', ['bayfield-the-lounge.jpg']],
+  ['Lakeside Dining Room', ['bayfield-dining-room-window.jpg', 'bayfield-lakeside-dining-room.jpg', 'bayfield-dining-cheers.jpg', 'bayfield-dining-shrimp.jpg']],
+  ['The Creamery', ['bayfield-the-creamery.jpg']],
+  ['The View & Vibe', ['bayfield-marina-webcam.jpg', 'bayfield-suite.jpg', 'bayfield-condo-botl-unit-100-img-7641.jpg', 'bayfield-harbor-sunset.jpg',
+    'bayfield-condo-iwh-phoenix-img-8225.jpg', 'bayfield-events-lawn.jpg']],
+];
 function gallery(m) {
-  const files = ['bayfield-inn-exterior.jpg', 'bayfield-hero-the-deck.jpg', 'bayfield-the-deck-bar.jpg', 'bayfield-deck-dining.jpg', 'bayfield-lake-view-room.jpg',
-    'bayfield-suite-jacuzzi.jpg', 'bayfield-standard-room.jpg', 'bayfield-dining-room-window.jpg', 'bayfield-lakeside-dining-room.jpg', 'bayfield-dining-cheers.jpg',
-    'bayfield-the-lounge.jpg', 'bayfield-the-creamery.jpg', 'bayfield-marina-webcam.jpg', 'bayfield-events-lawn.jpg', 'bayfield-lakeview-room.jpg', 'bayfield-suite.jpg'];
+  const filtered = widget('gallery', {
+    gallery_type: 'multiple', show_all_galleries: 'yes', show_all_galleries_label: 'All',
+    galleries: GALLERY.map(([title, files]) => ({ _id: id(), gallery_title: title, multiple_gallery: files.map((f) => { const x = m.file(f); return { id: x.id, url: x.url }; }) })),
+    gallery_layout: 'masonry', columns: 3, columns_tablet: 2, columns_mobile: 1, gap: px(16), gap_tablet: px(14), gap_mobile: px(12),
+    link_to: 'file', open_lightbox: 'yes', image_size: 'large', image_hover_animation: 'grow', image_border_radius: box(4),
+    // Filter bar
+    galleries_align: 'center', galleries_pointer: 'underline', galleries_animation_line: 'fade',
+    ...typo('galleries_titles_typography', SANS, [13, 13, 12], 500, { lh: 1.2, ls: 1.4, transform: 'uppercase' }),
+    galleries_title_color_normal: C.muted, galleries_title_color_hover: C.green, galleries_title_color_active: C.green,
+    galleries_pointer_color_hover: C.green, galleries_pointer_color_active: C.green, galleries_pointer_width: px(1),
+    galleries_titles_space_between: px(26), galleries_titles_space_between_mobile: px(14), galleries_titles_gap: px(40), galleries_titles_gap_mobile: px(24),
+    custom_css: `selector .elementor-gallery__titles-container { flex-wrap: wrap; row-gap: 10px; }
+@media (max-width: 767px) { selector .elementor-gallery__titles-container { justify-content: flex-start; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 6px; -webkit-overflow-scrolling: touch; }
+  selector .elementor-gallery-title { white-space: nowrap; flex: none; } }`,
+  });
   return [
-    pageHero('Gallery', 'The Inn, the lake and the season.', 'Rooms, restaurants, the rooftop and the harbor. Click any photo to see it full size.'),
-    section({ background_background: 'classic', background_color: C.cream, ...pad, ...boxed, flex_direction: 'column' }, [galleryWidget(files.map(m.file))]),
+    pageHero('Gallery', 'The Inn, the lake and the season.', 'Pick a section, or browse them all. Click any photo to see it full size.'),
+    section({ background_background: 'classic', background_color: C.cream, padding: box(56, 48, 110, 48), padding_tablet: box(48, 32, 88, 32), padding_mobile: box(36, 16, 64, 16), ...boxed, flex_direction: 'column' }, [filtered]),
     ctaBand('Stay with us', 'See it for yourself.', [light('Book a Room', EXT.book), outline('Follow on Instagram', EXT.instagram, { icon: 'fab fa-instagram', settings: { icon_align: 'row' } })]),
   ];
 }

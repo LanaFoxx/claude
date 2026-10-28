@@ -498,7 +498,7 @@ selector .elementor-message { color: #F5F2EC; padding: 0 18px 12px; margin: 0; f
       photoCard(m.suite, 'Suites', 'Room to spread out, with a jetted tub.', EXT.rooms, { badge: { text: '01' }, alt: 'Suite with a sitting area and jetted tub' }),
       photoCard(m.lakeview, 'Lake View Rooms', 'Lake-facing, the sunrise included.', EXT.rooms, { badge: { text: '02' }, alt: 'Lake view room with a window onto Lake Superior' }),
       photoCard(m.standardRoom, 'City View Rooms', 'Classic comfort, steps from The Deck.', EXT.rooms, { badge: { text: '03' }, alt: 'City view room' }),
-      photoCard(m.placeholder, 'Condos', 'Neighboring condos for longer stays and bigger groups.', EXT.rooms, { badge: { text: '04' }, alt: 'Condo' }),
+      photoCard(m.condoCover, 'Condos', 'Bayfield on the Lake Condominiums and the Isaac Wing House, for longer stays and bigger groups.', EXT.rooms, { badge: { text: '04' }, alt: 'Condo living room and kitchen' }),
     ]),
   ]);
 
