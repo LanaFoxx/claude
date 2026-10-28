@@ -13,10 +13,11 @@ function dwdp_settings() {
 		'cta_button'     => 'Schedule a Zoom',
 		'cta_url'        => 'https://calendly.com/dreamwebdigital/dream-web-digital-consultation-call',
 		'cta_phone'      => '(772) 210-1728',
-		'def_platform'   => 'WordPress · Elementor',
-		'def_scope'      => 'Custom design & full development — no pre-made themes',
+		'def_together'   => 'Client was a pleasure to work with. Had all the assets needed to get the job done and was quick to reply when I needed them.',
+		'def_platform'   => 'WordPress and Elementor',
+		'def_scope'      => 'Full custom website design, no premade themes or templates.',
 		'def_responsive' => 'Desktop, tablet, and mobile',
-		'def_aftercare'  => 'Security setup, 1-on-1 training, 2 months post-launch support',
+		'def_aftercare'  => 'Security setup, one-on-one training, and 2 months of post-launch support',
 		'biz_summary'    => 'Dream Web Digital is a one-on-one web design business run by Michael, an experienced designer and developer in the Stuart and Jensen Beach area of South Florida who works with clients nationwide. He personally designs, builds and hosts premium custom WordPress websites, gives every project his full attention, offers unlimited revisions and 2 months of aftercare, and is rated 5.0 stars on Google with 100% Job Success on Upwork.',
 		'biz_city'       => 'Stuart',
 		'biz_areas'      => "Stuart, FL\nJensen Beach, FL\nPalm City, FL\nPort St. Lucie, FL\nMartin County, FL\nTreasure Coast, FL\nSouth Florida",
@@ -52,6 +53,7 @@ function dwdp_fields() {
 		'responsive' => '',
 		'aftercare'  => '',
 		'on_home'    => '1',
+		'pinned'     => '0', // '1' = always first, whatever the order number
 		'sections'   => '', // comma-separated attachment IDs, in order
 		'cover'      => '', // attachment ID used on portfolio cards + homepage carousel
 		'mockup'     => '', // attachment ID of the phone mockup
@@ -87,6 +89,9 @@ function dwdp_projects( $only_home = false ) {
 			'orderby'        => array( 'menu_order' => 'ASC', 'date' => 'ASC' ),
 		)
 	);
+	// Pinned projects always come first; the rest keep their order.
+	$pinned = array_filter( $q, function ( $p ) { return '1' === (string) dwdp_get( $p->ID, 'pinned' ); } );
+	$q      = array_merge( array_values( $pinned ), array_values( array_diff_key( $q, $pinned ) ) );
 	if ( $only_home ) {
 		$q = array_values( array_filter( $q, function ( $p ) { return '1' === (string) dwdp_get( $p->ID, 'on_home' ); } ) );
 	}

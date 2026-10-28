@@ -408,14 +408,30 @@
 		if (note) { $li.append($('<em>').text(' — ' + note)); }
 	}
 
+	/* Fill the project name, industry and short description from the client's site (empty fields only). */
+	function setIfEmpty($el, val) {
+		if (val && !$.trim($el.val())) { $el.val(val).trigger('input'); }
+	}
+	function autofill(url) {
+		var host = '';
+		try { host = new URL(url).hostname.replace(/^www\./, ''); } catch (e) {}
+		post('dwdp_site_info', { url: url }).then(function (info) {
+			setIfEmpty($('#title'), info.name || host);
+			setIfEmpty($('#dwdp-industry'), info.industry);
+			setIfEmpty($('#dwdp-summary'), info.summary);
+		}, function () {
+			setIfEmpty($('#title'), host);
+		}).always(function () {
+			if ($.trim($('#title').val())) { $('#title-prompt-text').addClass('screen-reader-text'); }
+		});
+	}
+
 	$('#dwdp-capture').on('click', function () {
 		var url = $.trim($('#dwdp-url').val());
 		if (!/^https?:\/\/[^.\s]+\.[^\s]+/i.test(url)) {
 			if (/^[^\s]+\.[^\s]+$/.test(url)) { url = 'https://' + url; $('#dwdp-url').val(url); } else { alert('Please enter the website address, like https://clientsite.com'); return; }
 		}
-		if (!$.trim($('#title').val())) {
-			try { $('#title').val(new URL(url).hostname.replace(/^www\./, '')).trigger('input'); $('#title-prompt-text').addClass('screen-reader-text'); } catch (e) {}
-		}
+		autofill(url);
 		var $btn = $(this).prop('disabled', true).text('Capturing…');
 		progress([['desk', 'Full-page desktop screenshot'], ['sec', 'Finding the page sections'], ['mob', 'Phone screenshot']]);
 		['desk', 'sec', 'mob'].forEach(function (k) { mark(k, 'is-run'); });

@@ -51,13 +51,13 @@ add_filter( 'request', function ( $vars ) {
 	return ( $page && 'publish' === $page->post_status ) ? array( 'pagename' => $path ) : $vars;
 } );
 
-/** Browser-framed card used on the Portfolio page. */
+/** Project card used on the Portfolio page: screenshot, then name and industry. */
 function dwdp_card_html( $p ) {
 	$label = dwdp_number( $p->ID ) . ' · ' . dwdp_get( $p->ID, 'industry' );
 	$name  = get_the_title( $p );
 	$img   = dwdp_img( dwdp_get( $p->ID, 'cover' ), $name . ' website', array( 'loading' => 'lazy' ) );
 	return sprintf(
-		'<a class="dw-pcard" href="%1$s"><span class="dw-pbar"><span class="dw-bdots"><i></i><i></i><i></i></span><span class="dw-pburl">%2$s</span></span><span class="dw-pshot">%3$s</span><span class="dw-pfoot"><span class="dw-pmeta"><b>%2$s</b><em>%4$s</em></span><span class="dw-pbtn">View project →</span></span></a>',
+		'<a class="dw-pcard" href="%1$s"><span class="dw-pshot">%3$s</span><span class="dw-pfoot"><span class="dw-pmeta"><b>%2$s</b><em>%4$s</em></span><span class="dw-pbtn">View project →</span></span></a>',
 		esc_url( get_permalink( $p ) ),
 		esc_html( $name ),
 		$img,

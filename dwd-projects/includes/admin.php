@@ -121,27 +121,30 @@ function dwdp_box_details( $post ) {
 		return get_post_meta( $post->ID, '_dwdp_' . $k, true );
 	};
 	$on_home = '' === $v( 'on_home' ) ? '1' : $v( 'on_home' );
+	// New projects start with the default "Working together" note; older ones keep what they have.
+	$together = ( '' === $v( 'together' ) && 'auto-draft' === $post->post_status ) ? dwdp_setting( 'def_together' ) : $v( 'together' );
 	?>
 	<table class="form-table dwdp-details">
 		<tr><th><label for="dwdp-industry">Industry label</label></th><td><input id="dwdp-industry" name="dwdp[industry]" class="regular-text" value="<?php echo esc_attr( $v( 'industry' ) ); ?>" placeholder="Flight school"><p class="description">Shown as “01 · Flight school”. The number comes from the project order.</p></td></tr>
 		<tr><th><label for="dwdp-summary">Short description</label></th><td><textarea id="dwdp-summary" name="dwdp[summary]" rows="3" class="large-text" placeholder="Flight training school with course info and enrollment. Built to get new students booking intro flights."><?php echo esc_textarea( $v( 'summary' ) ); ?></textarea></td></tr>
-		<tr><th><label for="dwdp-together">Working together</label></th><td><textarea id="dwdp-together" name="dwdp[together]" rows="4" class="large-text" placeholder="How the project went, in your words."><?php echo esc_textarea( $v( 'together' ) ); ?></textarea></td></tr>
+		<tr><th><label for="dwdp-together">Working together</label></th><td><textarea id="dwdp-together" name="dwdp[together]" rows="4" class="large-text" placeholder="How the project went, in your words."><?php echo esc_textarea( $together ); ?></textarea></td></tr>
 		<tr><th><label for="dwdp-review">Client review</label></th><td><textarea id="dwdp-review" name="dwdp[review]" rows="3" class="large-text" placeholder="Leave empty to hide the review box."><?php echo esc_textarea( $v( 'review' ) ); ?></textarea></td></tr>
 		<tr><th><label for="dwdp-review_by">Review by</label></th><td><input id="dwdp-review_by" name="dwdp[review_by]" class="regular-text" value="<?php echo esc_attr( $v( 'review_by' ) ); ?>" placeholder="Defaults to the project name"></td></tr>
 		<?php
 		foreach ( array( 'platform' => 'Platform', 'scope' => 'Scope', 'responsive' => 'Responsive', 'aftercare' => 'Aftercare' ) as $k => $label ) {
 			printf(
-				'<tr><th><label for="dwdp-%1$s">%2$s</label></th><td><input id="dwdp-%1$s" name="dwdp[%1$s]" class="large-text" value="%3$s" placeholder="%4$s"></td></tr>',
+				'<tr><th><label for="dwdp-%1$s">%2$s</label></th><td><input id="dwdp-%1$s" name="dwdp[%1$s]" class="large-text" value="%3$s"></td></tr>',
 				esc_attr( $k ),
 				esc_html( $label ),
-				esc_attr( $v( $k ) ),
-				esc_attr( dwdp_setting( 'def_' . $k ) )
+				esc_attr( dwdp_get( $post->ID, $k ) )
 			);
 		}
 		?>
 		<tr><th>Homepage</th><td><label><input type="hidden" name="dwdp[on_home]" value="0"><input type="checkbox" name="dwdp[on_home]" value="1" <?php checked( '1', (string) $on_home ); ?>> Show in the homepage carousel</label></td></tr>
+		<tr><th>Pin</th><td><label><input type="hidden" name="dwdp[pinned]" value="0"><input type="checkbox" name="dwdp[pinned]" value="1" <?php checked( '1', (string) $v( 'pinned' ) ); ?>> Always show first in the portfolio and homepage carousel</label></td></tr>
 	</table>
-	<p class="description">Set the position in the portfolio with <strong>Order</strong> in the Project Attributes box (1 = first).</p>
+	<p class="description">Working together, Platform, Scope, Responsive and Aftercare start with your defaults (change them under Projects → Settings). Industry and Short description are filled in from the client's site when you capture screenshots; the client review is always yours to add.</p>
+	<p class="description">Set the position in the portfolio with <strong>Order</strong> in the Project Attributes box (lowest first). New projects go to the top, under any pinned project.</p>
 	<?php
 }
 
@@ -166,8 +169,10 @@ add_action( 'save_post_' . DWDP_CPT, function ( $post_id ) {
 	if ( isset( $in['url'] ) ) {
 		update_post_meta( $post_id, '_dwdp_url', esc_url_raw( $in['url'] ) );
 	}
-	if ( isset( $in['on_home'] ) ) {
-		update_post_meta( $post_id, '_dwdp_on_home', '1' === (string) $in['on_home'] ? '1' : '0' );
+	foreach ( array( 'on_home', 'pinned' ) as $k ) {
+		if ( isset( $in[ $k ] ) ) {
+			update_post_meta( $post_id, '_dwdp_' . $k, '1' === (string) $in[ $k ] ? '1' : '0' );
+		}
 	}
 	if ( isset( $in['sections'] ) ) {
 		update_post_meta( $post_id, '_dwdp_sections', implode( ',', dwdp_ids( $in['sections'] ) ) );
@@ -179,12 +184,12 @@ add_action( 'save_post_' . DWDP_CPT, function ( $post_id ) {
 	}
 } );
 
-/** New projects go to the end of the portfolio. */
+/** New projects go to the top of the portfolio; everything else keeps its order. */
 add_filter( 'wp_insert_post_data', function ( $data, $postarr ) {
 	if ( DWDP_CPT === $data['post_type'] && empty( $postarr['ID'] ) && empty( $data['menu_order'] ) ) {
 		global $wpdb;
-		$max                = (int) $wpdb->get_var( $wpdb->prepare( "SELECT MAX(menu_order) FROM {$wpdb->posts} WHERE post_type = %s AND post_status NOT IN ('trash','auto-draft')", DWDP_CPT ) );
-		$data['menu_order'] = $max + 1;
+		$min                = $wpdb->get_var( $wpdb->prepare( "SELECT MIN(menu_order) FROM {$wpdb->posts} WHERE post_type = %s AND post_status NOT IN ('trash','auto-draft')", DWDP_CPT ) );
+		$data['menu_order'] = null === $min ? 1 : (int) $min - 1;
 	}
 	return $data;
 }, 10, 2 );
@@ -237,7 +242,7 @@ add_action( 'manage_' . DWDP_CPT . '_posts_custom_column', function ( $col, $pos
 			echo esc_html( dwdp_number( $post_id ) );
 			break;
 		case 'dwdp_industry':
-			echo esc_html( dwdp_get( $post_id, 'industry' ) );
+			echo esc_html( dwdp_get( $post_id, 'industry' ) ) . ( '1' === (string) dwdp_get( $post_id, 'pinned' ) ? ' <strong>· Pinned first</strong>' : '' );
 			break;
 		case 'dwdp_images':
 			echo count( dwdp_ids( dwdp_get( $post_id, 'sections' ) ) );
@@ -268,7 +273,7 @@ add_action( 'admin_init', function () {
 			'sanitize_callback' => function ( $in ) {
 				$out = array();
 				foreach ( (array) $in as $k => $val ) {
-					$out[ sanitize_key( $k ) ] = ( 'cta_text' === $k || 0 === strpos( $k, 'biz_' ) ) ? sanitize_textarea_field( $val ) : sanitize_text_field( $val );
+					$out[ sanitize_key( $k ) ] = ( in_array( $k, array( 'cta_text', 'def_together' ), true ) || 0 === strpos( $k, 'biz_' ) ) ? sanitize_textarea_field( $val ) : sanitize_text_field( $val );
 				}
 				$out['capture_width'] = max( 800, min( 2560, absint( isset( $out['capture_width'] ) ? $out['capture_width'] : 1440 ) ) );
 				if ( isset( $out['base_slug'] ) && sanitize_title( $out['base_slug'] ) !== dwdp_base_slug() ) {
@@ -296,6 +301,7 @@ function dwdp_settings_page() {
 			'portfolio_url' => array( '“Back to portfolio” link', '' ),
 		),
 		'Default project notes' => array(
+			'def_together'   => array( 'Working together', 'Filled in on every new project. Edit per project as needed.' ),
 			'def_platform'   => array( 'Platform', '' ),
 			'def_scope'      => array( 'Scope', '' ),
 			'def_responsive' => array( 'Responsive', '' ),
@@ -329,8 +335,8 @@ function dwdp_settings_page() {
 						<tr>
 							<th><label for="dwdp-s-<?php echo esc_attr( $k ); ?>"><?php echo esc_html( $f[0] ); ?></label></th>
 							<td>
-								<?php if ( 'cta_text' === $k || ( 0 === strpos( $k, 'biz_' ) && 'biz_city' !== $k ) ) : ?>
-									<textarea id="dwdp-s-<?php echo esc_attr( $k ); ?>" name="dwdp_settings[<?php echo esc_attr( $k ); ?>]" rows="<?php echo 'cta_text' === $k ? 2 : 5; ?>" class="large-text"><?php echo esc_textarea( $s[ $k ] ); ?></textarea>
+								<?php if ( 'cta_text' === $k || 'def_together' === $k || ( 0 === strpos( $k, 'biz_' ) && 'biz_city' !== $k ) ) : ?>
+									<textarea id="dwdp-s-<?php echo esc_attr( $k ); ?>" name="dwdp_settings[<?php echo esc_attr( $k ); ?>]" rows="<?php echo in_array( $k, array( 'cta_text', 'def_together' ), true ) ? 3 : 5; ?>" class="large-text"><?php echo esc_textarea( $s[ $k ] ); ?></textarea>
 								<?php else : ?>
 									<input id="dwdp-s-<?php echo esc_attr( $k ); ?>" name="dwdp_settings[<?php echo esc_attr( $k ); ?>]" value="<?php echo esc_attr( $s[ $k ] ); ?>" class="regular-text" <?php echo 'microlink_key' === $k ? 'type="password" autocomplete="off"' : ''; ?>>
 								<?php endif; ?>
