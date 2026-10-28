@@ -1,0 +1,16 @@
+import { chromium } from '/opt/node-tools/node_modules/playwright/index.mjs';
+const S = process.argv[2];
+const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', proxy: { server: process.env.HTTPS_PROXY } });
+const p = await b.newPage({ viewport: { width: 1440, height: 1000 } });
+await p.goto('https://taxcoursefinder.com/?n=' + Date.now(), { waitUntil: 'networkidle' }); await p.waitForTimeout(1200);
+const t = await p.evaluate(() => document.body.innerText);
+console.log('eyebrow gone:', !/CTEC-approved providers · /i.test(t), '| two courses gone:', !/Two courses, one registration/i.test(t), '| EARLY2026 shown:', /EARLY2026/.test(t));
+console.log('disclaimer gap px:', await p.evaluate(() => { const d = [...document.querySelectorAll('div')].find(x => x.textContent.startsWith('Prices and offers are collected')); return d ? getComputedStyle(d).marginTop : 'none'; }));
+await p.screenshot({ path: `${S}/shots/final-hero.png`, clip: { x: 0, y: 0, width: 1440, height: 560 } });
+const ft = p.locator('footer').first(); await ft.scrollIntoViewIfNeeded(); await ft.screenshot({ path: `${S}/shots/final-footer.png` });
+await p.goto('https://taxcoursefinder.com/ctec-requirements/?n=' + Date.now(), { waitUntil: 'networkidle' }); await p.waitForTimeout(1000);
+const btn = p.getByText('Compare 60-hour courses').first(); await btn.scrollIntoViewIfNeeded(); const bb = await btn.boundingBox();
+await p.screenshot({ path: `${S}/shots/final-buttons.png`, clip: { x: 0, y: Math.max(0, bb.y - 380), width: 1440, height: 460 } });
+const kd = p.getByText('The renewal timeline').first(); await kd.scrollIntoViewIfNeeded(); const kb = await kd.boundingBox();
+await p.screenshot({ path: `${S}/shots/final-timeline.png`, clip: { x: 0, y: Math.max(0, kb.y - 120), width: 1440, height: 760 } });
+await b.close();

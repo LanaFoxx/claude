@@ -180,15 +180,15 @@
   // Comparison-table summaries built only from confirmed data.
   function formatLines(p) {
     var f = p.features || {}, m = [];
-    if (f.video_lessons_available) m.push('video');
-    if (f.text_based_course_available) m.push('text');
-    if (f.physical_book_available) m.push('textbook');
+    if (f.video_lessons_available) m.push('Video');
+    if (f.text_based_course_available) m.push('Text');
+    if (f.physical_book_available) m.push('Book');
     if (f.digital_book_available) m.push('PDF');
-    if (f.audio_content_available) m.push('audio');
-    var l1 = m.slice(0, 2).join(' + ');
-    if (!l1 && f.online_course_available) l1 = 'online course';
-    if (!l1 && f.in_person_course_available) l1 = 'in-person';
-    var l2 = f.live_instruction_available ? 'Live classes' : (f.in_person_course_available && l1 !== 'in-person' ? 'In-person option' : '');
+    if (f.audio_content_available) m.push('Audio');
+    var l1 = m.slice(0, 3).join(' + ');
+    if (!l1 && f.online_course_available) l1 = 'Online course';
+    if (!l1 && f.in_person_course_available) l1 = 'In-person';
+    var l2 = f.live_instruction_available ? 'Live classes' : (f.in_person_course_available && l1 !== 'In-person' ? 'In-person option' : '');
     if (l1) l1 = l1.charAt(0).toUpperCase() + l1.slice(1);
     return { l1: l1 || l2 || 'Not confirmed', l2: l1 ? l2 : '', known: !!(l1 || l2) };
   }
@@ -273,6 +273,13 @@
   }
   document.addEventListener('click', onCopy);
   document.addEventListener('keydown', onCopy);
+
+  // Compact sticky header once the page is scrolled (styles in site.css, desktop only).
+  (function () {
+    var on = false, de = document.documentElement;
+    function check() { var y = window.scrollY || 0; if (!on && y > 140) { on = true; de.classList.add('tcf-compact-head'); } else if (on && y < 60) { on = false; de.classList.remove('tcf-compact-head'); } }
+    window.addEventListener('scroll', check, { passive: true }); check();
+  })();
 
   // Mobile header menu
   document.addEventListener('click', function (e) {

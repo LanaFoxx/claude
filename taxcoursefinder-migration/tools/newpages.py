@@ -21,7 +21,7 @@ def steps(anchor, eyebrow, h2a, h2b, intro, items, bg='#fff'):
 <div style="font:300 52px/1 Manrope,sans-serif;letter-spacing:-.03em;color:#7E9330">{i+1:02d}</div>
 <div><h3 style="margin:0;font:800 26px Manrope,sans-serif;letter-spacing:-.01em">{e(t)}</h3><p style="margin:6px 0 0;font-size:22px;line-height:1.6;color:#2F4652;max-width:760px;text-wrap:pretty">{b}</p></div>
 </div>''' for i, (t, b) in enumerate(items))
-    return f'''<div id="{anchor}" style="padding:80px 56px;background:{bg};scroll-margin-top:110px">
+    return f'''<div id="{anchor}" style="padding:80px 56px;background:{bg};scroll-margin-top:var(--tcf-head,110px)">
 <div style="max-width:1200px;margin:0 auto;display:flex;flex-direction:column;gap:30px">
 <div style="max-width:760px;display:flex;flex-direction:column;gap:12px">
 <div style="font:700 19px Manrope,sans-serif;letter-spacing:1.6px;text-transform:uppercase;color:#7E9330">{e(eyebrow)}</div>

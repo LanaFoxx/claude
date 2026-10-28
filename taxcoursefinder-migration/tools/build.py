@@ -98,6 +98,21 @@ def comparison_table(body):
 
 def seo_tweaks(name, body):
     body = comparison_table(body)
+    body = body.replace('top:110px', 'top:var(--tcf-head,110px)')  # follow the compact sticky header
+    body = body.replace('<div style="font:700 17px Manrope,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#7E9330">Two courses, one registration</div>', '')
+    # No provider-count / updated-date line above the hero headline.
+    body = re.sub(r'\s*<div data-hero-eyebrow=""[^>]*>.*?</div>', '', body, count=1, flags=re.S)
+    # Breathing room above the pricing disclaimer under the directory.
+    body = body.replace('max-width:820px;margin:8px auto 0">Prices and offers are collected', 'max-width:820px;margin:32px auto 0">Prices and offers are collected')
+    # The design omits ';' before a few properties (e.g. '#0B2E40margin-top:auto'), so those rules never applied.
+    body = re.sub(r'(#[0-9A-Fa-f]{6})(?=(?:margin|flex|width|align|justify)[a-z-]*:)', r'\1;', body)
+    if name == 'CTEC Requirements':
+        k = body.index('>Key dates<'); sec = body.rfind('<div style="background:#fff;padding:88px 56px">', 0, k)
+        assert sec >= 0
+        body = body[:sec] + '<div style="background:#F4F6F7;padding:88px 56px">' + body[sec + len('<div style="background:#fff;padding:88px 56px">'):]
+        d = body.index('Hour breakdowns, fees and dates', sec); box = body.rfind('<div style="background:#F4F6F7;border:1px solid #D7DFE2', sec, d)
+        assert box >= 0
+        body = body[:box] + '<div style="background:#fff;border:1px solid #D7DFE2' + body[box + len('<div style="background:#F4F6F7;border:1px solid #D7DFE2'):]
     body = body.replace('<option value="name">Name A–Z</option><option value="price">Price: low to high</option>',
                         '<option value="name">Name A–Z</option><option value="name_desc">Name Z–A</option><option value="price">Price: low to high</option><option value="price_desc">Price: high to low</option>')
     # Anchor every provider row so structured data (and shared links) can point at it.
@@ -225,6 +240,10 @@ def seo_tweaks(name, body):
         'CTEC 60 Hour Course': ('60-Hour QE</span> course before you enroll.', '60 Hour CTEC Course</span> before you enroll.'),
     }.get(name)
     if name == 'TaxCourse Finder Home':
+        # Headline highlight in the same serif as the rest of the H1 (colour only), like the course pages.
+        old_h = '<span style="display:block;font-family:\'Plus Jakarta Sans\',sans-serif;font-weight:700;font-size:.88em;letter-spacing:-.025em;color:#95AB3B">CTEC Approved Tax Course</span>'
+        assert old_h in body, 'home h1 span'
+        body = body.replace(old_h, '<span style="display:block;color:#95AB3B">CTEC Approved Tax Course</span>', 1)
         # Exact target keywords in the home course cards (headings + copy), wording unchanged otherwise.
         for old, new in [('CTEC 20-Hour <span style="font-weight:800">CE Course</span>', '20 Hour <span style="font-weight:800">CTEC Course</span>'),
                          ('CTEC 60-Hour <span style="font-weight:800">QE Course</span>', '60 Hour <span style="font-weight:800">CTEC Course</span>'),

@@ -44,7 +44,7 @@ html{scrollbar-gutter:stable}
   .tcf-menu-open .tcf-burger span:nth-child(2){opacity:0}
   .tcf-menu-open .tcf-burger span:nth-child(3){transform:translateY(-7.4px) rotate(-45deg)}
   .tcf-header>div{height:76px!important;padding:0 16px!important;position:relative}
-  .tcf-header>div>div:first-child img{height:56px!important}
+  .tcf-header>div>div:first-child img{height:54px!important}
   .tcf-header nav.tcf-nav{display:none!important}
   .tcf-header.tcf-menu-open nav.tcf-nav{display:flex!important;flex-direction:column;align-items:stretch!important;position:absolute;top:100%;left:0;right:0;background:#fff;border-bottom:1px solid #E3E9EB;box-shadow:0 16px 40px rgba(11,46,64,.14);padding:8px 16px 16px;white-space:normal!important;max-height:calc(100vh - 76px);overflow:auto}
   .tcf-header.tcf-menu-open nav.tcf-nav>a,.tcf-header.tcf-menu-open nav.tcf-nav .dd>div:first-child{font-size:19px!important;padding:14px 8px!important;min-height:44px;box-sizing:border-box}
@@ -104,3 +104,8 @@ html{scrollbar-gutter:stable}
 }
 .tcf-scope input{max-width:100%;min-width:0}
 @media (max-width:760px){.tcf-scope:not(.tcf-mobile) [style*="padding:110px 56px 150px"]{padding-bottom:120px!important}}
+
+/* Compact sticky header on scroll (desktop): no logo, centred menu, 44px tall */
+:root{--tcf-head:110px}
+@media (min-width:901px){.tcf-header>div{transition:height .2s ease}.tcf-header{transition:box-shadow .2s ease}html.tcf-compact-head{--tcf-head:44px}html.tcf-compact-head .tcf-header>div{height:44px!important;justify-content:center!important}html.tcf-compact-head .tcf-header>div>div:first-child{display:none!important}html.tcf-compact-head .tcf-header nav{font-size:17px!important}html.tcf-compact-head .tcf-header{box-shadow:0 4px 18px rgba(11,46,64,.08)}}
+@media (max-width:900px){:root{--tcf-head:76px}}
