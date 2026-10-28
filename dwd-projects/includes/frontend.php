@@ -100,13 +100,18 @@ add_shortcode( 'dwd_project_slider', function ( $atts ) {
 	}
 	$items = '';
 	$count = 0;
+	$ratio = 0; // every design shares one frame, shaped to fit the tallest hero
 	foreach ( $projects as $p ) {
 		$hero = absint( dwdp_get( $p->ID, 'cover' ) );
 		if ( ! $hero ) {
 			continue;
 		}
+		$meta = wp_get_attachment_metadata( $hero );
+		if ( ! empty( $meta['width'] ) && ! empty( $meta['height'] ) ) {
+			$ratio = max( $ratio, $meta['height'] / $meta['width'] );
+		}
 		$items .= sprintf(
-			'<a class="dwdp-vitem" href="%1$s" aria-label="%2$s"><span class="dwdp-vbar"><span class="dw-bdots"><i></i><i></i><i></i></span></span>%3$s</a>',
+			'<a class="dwdp-vitem" href="%1$s" aria-label="%2$s">%3$s</a>',
 			esc_url( get_permalink( $p ) ),
 			esc_attr( 'View the ' . get_the_title( $p ) . ' project' ),
 			dwdp_img( $hero, get_the_title( $p ) . ' website design', array( 'loading' => $count < 2 ? 'eager' : 'lazy' ) )
@@ -122,7 +127,7 @@ add_shortcode( 'dwd_project_slider', function ( $atts ) {
 		. '<button type="button" class="dwdp-vbtn dwdp-up" aria-label="Previous design">' . sprintf( $chev, 'M4 14 L11 7 L18 14' ) . '</button>'
 		. '<button type="button" class="dwdp-vbtn dwdp-down" aria-label="Next design">' . sprintf( $chev, 'M4 8 L11 15 L18 8' ) . '</button>'
 		. '</div>'
-		. '<div class="dwdp-vview"><div class="dwdp-vtrack">' . $items . '</div></div>'
+		. '<div class="dwdp-vview" style="--dwdp-ratio:' . esc_attr( round( $ratio ? $ratio : 0.6, 4 ) ) . '"><div class="dwdp-vtrack">' . $items . '</div></div>'
 		. '</div>';
 } );
 
