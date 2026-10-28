@@ -43,11 +43,11 @@ class block_studenttools extends block_base {
         return html_writer::tag('select', $html, ['name' => $name, 'class' => 'stt-input']);
     }
 
-    protected static function form($action, $fields, $button, $class = '') {
+    protected static function form($action, $fields, $button, $class = '', $buttonclass = 'stt-btn stt-btn-primary') {
         return html_writer::tag('form',
             html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()]) .
             html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'action', 'value' => $action]) .
-            $fields . html_writer::tag('button', $button, ['type' => 'submit', 'class' => 'stt-btn stt-btn-primary']),
+            $fields . html_writer::tag('button', $button, ['type' => 'submit', 'class' => $buttonclass]),
             ['method' => 'post', 'action' => (new moodle_url('/blocks/studenttools/action.php'))->out(false),
              'class' => 'stt-form ' . $class]);
     }
@@ -101,13 +101,13 @@ class block_studenttools extends block_base {
         if (!$user) {
             return '';
         }
-        $html = html_writer::div(
-            html_writer::div(html_writer::tag('h4', fullname($user), ['class' => 'stt-h mb-0']) .
-                html_writer::tag('div', s($user->email) . ' &middot; username ' . s($user->username) . ' &middot; last seen ' .
-                    ($user->lastaccess ? userdate($user->lastaccess, get_string('strftimedatefullshort')) : 'never'), ['class' => 'stt-muted'])) .
-            html_writer::link(new moodle_url('/user/profile.php', ['id' => $user->id]), 'Profile', ['class' => 'stt-btn']) .
-            html_writer::link(new moodle_url('/my/'), 'Close', ['class' => 'stt-btn']),
-            'stt-student-head');
+        $html = html_writer::tag('h4', fullname($user), ['class' => 'stt-h mb-1']) .
+            html_writer::div(s($user->email), 'stt-detail') .
+            html_writer::div('Last seen ' . ($user->lastaccess ? userdate($user->lastaccess, get_string('strftimedatefullshort')) : 'never'),
+                'stt-detail') .
+            html_writer::div(
+                html_writer::link(new moodle_url('/user/profile.php', ['id' => $user->id]), 'Profile', ['class' => 'stt-btn']) .
+                html_writer::link(new moodle_url('/my/'), 'Close', ['class' => 'stt-btn']), 'stt-actions stt-actions-top');
 
         $courses = enrol_get_all_users_courses($user->id, false, 'id, fullname, shortname');
         $rows = '';
@@ -127,7 +127,7 @@ class block_studenttools extends block_base {
                     self::form('emailcert',
                         html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'cmid', 'value' => $cm->id]) .
                         html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'userid', 'value' => $user->id]),
-                        'Email certificate', 'stt-inline');
+                        'Email certificate', 'stt-inline', 'stt-btn');
             }
             if ($certs && !$completed) {
                 $certs .= html_writer::div('Certificate already issued, but no completion date on record, so its date will be blank.', 'stt-warn-text');
@@ -135,15 +135,14 @@ class block_studenttools extends block_base {
             if (!$certs && !$completed) {
                 $certs = html_writer::tag('span', 'Available once the course is completed', ['class' => 'stt-muted']);
             }
-            $rows .= html_writer::tag('tr',
-                html_writer::tag('td', html_writer::link(new moodle_url('/course/view.php', ['id' => $c->id]), format_string($c->fullname))) .
-                html_writer::tag('td', $status) .
-                html_writer::tag('td', $certs ?: html_writer::tag('span', 'No certificate in this course', ['class' => 'stt-muted'])));
+            $rows .= html_writer::div(
+                html_writer::link(new moodle_url('/course/view.php', ['id' => $c->id]), format_string($c->fullname), ['class' => 'stt-course-name']) .
+                html_writer::div($status, 'stt-course-status') .
+                html_writer::div($certs ?: html_writer::tag('span', 'No certificate in this course', ['class' => 'stt-muted']), 'stt-actions'),
+                'stt-course');
         }
-        $html .= $rows ? html_writer::div(html_writer::tag('table',
-                html_writer::tag('thead', html_writer::tag('tr', '<th>Course</th><th>Status</th><th>Certificate</th>')) .
-                html_writer::tag('tbody', $rows), ['class' => 'stt-table']), 'stt-table-wrap')
-            : html_writer::div('Not enrolled in any courses yet.', 'stt-muted');
+        $html .= html_writer::tag('h5', 'Courses', ['class' => 'stt-h stt-h-sm']) .
+            ($rows ?: html_writer::div('Not enrolled in any courses yet.', 'stt-muted'));
 
         $options = array_diff_key(self::course_options(), $courses);
         if ($options) {
@@ -193,7 +192,7 @@ class block_studenttools extends block_base {
 @media (min-width: 1100px) {
   [data-blockregion="content"]:has(.block_studenttools):has(.block_ctecreport),
   #block-region-content:has(.block_studenttools):has(.block_ctecreport) {
-    display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 16px; align-items: start;
+    display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 7fr); gap: 16px; align-items: start;
   }
 }
 .stt{--line:#e4e7ec;--muted:#667085;--ink:#1d2939;--gold:#c9a227;--ok:#1f7a4d;--ok-bg:#e6f4ec;color:var(--ink);font-size:.9rem}
@@ -202,7 +201,7 @@ class block_studenttools extends block_base {
 .stt-h-sm{font-size:.9rem;margin-top:16px}
 .stt-form{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0}
 .stt-stack{display:block;margin-top:12px}
-.stt-inline{display:inline-flex;margin:0 0 0 6px}
+.stt-inline{display:inline-flex;margin:0}
 .stt-input{height:38px;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:#fff;font-size:.9rem;min-width:0}
 .stt-input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,162,39,.2)}
 .stt-grow{flex:1 1 260px}
@@ -231,6 +230,13 @@ class block_studenttools extends block_base {
 .stt-pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:.75rem;font-weight:600;white-space:nowrap}
 .stt-ok{background:var(--ok-bg);color:var(--ok)}
 .stt-muted-pill{background:#f2f4f7;color:var(--muted)}
+.stt-detail{color:var(--muted);font-size:.82rem;overflow-wrap:anywhere}
+.stt-actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.stt-actions-top{margin:10px 0 4px}
+.stt-course{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px}
+.stt-course-name{display:block;font-weight:600;color:var(--ink)!important;line-height:1.3}
+.stt-course-status{margin-top:6px}
+.stt-form select,.stt-form .stt-input{flex:1 1 160px}
 .stt-warn-text{color:#8a5a00;font-size:.78rem;margin-top:6px}
 .stt-add>summary{list-style:none;display:flex;justify-content:space-between;align-items:center;cursor:pointer}
 .stt-add>summary::-webkit-details-marker{display:none}
