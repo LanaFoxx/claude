@@ -1,0 +1,112 @@
+<script>
+/* California Tax Courses: check the CTEC ID on "Enter Your CTEC ID and PTIN" feedback forms before it can be submitted.
+   Format: one letter + 6 digits (e.g. A123456), then CTEC's public lookup confirms the ID exists. */
+(function () {
+  function init() {
+    var form = document.getElementById('feedback_complete_form');
+    if (!form) { return; }
+    var input = null;
+    var labels = form.querySelectorAll('label');
+    for (var i = 0; i < labels.length; i++) {
+      if (/CTEC\s*ID/i.test(labels[i].textContent) && labels[i].htmlFor) {
+        input = document.getElementById(labels[i].htmlFor);
+        break;
+      }
+    }
+    if (!input) { return; }
+
+    var EXAMPLE = 'A123456';
+    var msg = document.createElement('div');
+    msg.style.marginTop = '6px';
+    msg.style.width = '100%';
+    msg.setAttribute('role', 'alert');
+    input.parentNode.appendChild(msg);
+    var hint = document.createElement('div');
+    hint.className = 'small text-muted';
+    hint.style.width = '100%';
+    hint.textContent = 'Format: the letter A followed by 6 digits, for example ' + EXAMPLE + '.';
+    input.parentNode.appendChild(hint);
+
+    var state = 'unknown'; // unknown | badformat | checking | valid | notfound | unverified
+    var checkedId = '';
+
+    function show(text, ok) {
+      msg.textContent = text;
+      msg.className = ok ? 'alert alert-success py-1 px-2 mb-0' : 'alert alert-danger py-1 px-2 mb-0';
+      msg.style.display = text ? '' : 'none';
+    }
+    function normalise() {
+      var v = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+      if (v !== input.value) { input.value = v; }
+      return v;
+    }
+    function check() {
+      var id = normalise();
+      if (!/^[A-Z]\d{6}$/.test(id)) {
+        state = 'badformat';
+        checkedId = '';
+        show(id === '' ? '' : 'Invalid CTEC ID. It must be the letter A followed by 6 digits, for example ' + EXAMPLE + '.', false);
+        return;
+      }
+      if (id === checkedId && state !== 'checking') { return; }
+      checkedId = id;
+      state = 'checking';
+      show('', true);
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', 'https://provider.ctec.org/api/CTECIDLookup/' + encodeURIComponent(id));
+      xhr.timeout = 8000;
+      xhr.onload = function () {
+        if (checkedId !== id) { return; }
+        var body = xhr.responseText || '';
+        var name = body.match(/Name associated with CTECID [A-Z0-9]+:\s*(.+)/i);
+        if (xhr.status === 200 && name) {
+          state = 'valid';
+          show('CTEC ID found: ' + name[1].replace(/["}]+$/, '').trim() + '. If this is not you, please correct your CTEC ID.', true);
+        } else if (/No CTEC record found|Invalid CTECID/i.test(body)) {
+          state = 'notfound';
+          show('Invalid CTEC ID. CTEC has no record of ' + id + '. Please check it and enter it as the letter A followed by 6 digits, for example ' + EXAMPLE + '.', false);
+        } else {
+          state = 'unverified'; // CTEC lookup unavailable: do not block the student.
+          show('', true);
+        }
+      };
+      xhr.onerror = xhr.ontimeout = function () {
+        if (checkedId === id) { state = 'unverified'; show('', true); }
+      };
+      xhr.send();
+    }
+
+    var timer = null;
+    input.addEventListener('input', function () {
+      clearTimeout(timer);
+      timer = setTimeout(check, 600);
+    });
+    input.addEventListener('blur', check);
+
+    form.addEventListener('submit', function (e) {
+      // Only the final submit or page change carries the answers; cancel buttons are left alone.
+      var submitter = e.submitter || document.activeElement;
+      if (submitter && /cancel/i.test(submitter.name || '')) { return; }
+      check();
+      if (state === 'badformat' || state === 'notfound' || state === 'checking') {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        if (state === 'checking') {
+          show('Checking your CTEC ID with CTEC, please click Submit again in a moment.', false);
+        } else if (state === 'badformat' && input.value === '') {
+          show('Please enter your CTEC ID: the letter A followed by 6 digits, for example ' + EXAMPLE + '.', false);
+        }
+        input.focus();
+        input.scrollIntoView({block: 'center'});
+      }
+    }, true);
+
+    if (input.value) { check(); }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
