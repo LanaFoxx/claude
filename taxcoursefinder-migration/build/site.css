@@ -111,3 +111,5 @@ html{scrollbar-gutter:stable}
 @media (max-width:900px){:root{--tcf-head:76px}}
 /* Fixed hero background (desktop with a mouse; phones scroll normally) */
 @media (min-width:901px) and (hover:hover){.tcf-hero-fixed{clip-path:inset(0)}.tcf-hero-fixed>.tcf-hero-bg{position:fixed!important;inset:auto!important;top:0!important;left:0!important;width:100vw!important;height:100vh!important}}
+/* 'For Providers' as an outlined button in the desktop menu */
+@media (min-width:901px){.tcf-header nav.tcf-nav .dd>div.tcf-nav-btn{border:1.5px solid #0B2E40;border-radius:8px;padding:9px 20px!important;font-weight:700!important;margin-left:10px;transition:background .15s,color .15s}.tcf-header nav.tcf-nav .dd>div.tcf-nav-btn svg{display:none}.tcf-header nav.tcf-nav .dd:hover>div.tcf-nav-btn,.tcf-header nav.tcf-nav .dd:focus-within>div.tcf-nav-btn{background:#0B2E40;color:#fff!important}}

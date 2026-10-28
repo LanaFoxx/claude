@@ -1,0 +1,13 @@
+import { chromium } from '/opt/node-tools/node_modules/playwright/index.mjs';
+const S = process.argv[2];
+const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', proxy: { server: process.env.HTTPS_PROXY } });
+const p = await b.newPage({ viewport: { width: 1440, height: 600 }, deviceScaleFactor: 2 });
+await p.goto('https://taxcoursefinder.com/?n=' + Date.now(), { waitUntil: 'networkidle' }); await p.waitForTimeout(600);
+await p.screenshot({ path: `${S}/shots/navbtn.png`, clip: { x: 800, y: 0, width: 640, height: 112 } });
+await p.locator('.tcf-nav-btn').hover(); await p.waitForTimeout(400);
+await p.screenshot({ path: `${S}/shots/navbtn-hover.png`, clip: { x: 800, y: 0, width: 640, height: 300 } });
+const m = await b.newPage({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+await m.goto('https://taxcoursefinder.com/?n=' + Date.now(), { waitUntil: 'networkidle' }); await m.waitForTimeout(600);
+await m.locator('.tcf-burger').first().tap(); await m.waitForTimeout(400);
+await m.screenshot({ path: `${S}/shots/navbtn-mobile.png` });
+await b.close();
