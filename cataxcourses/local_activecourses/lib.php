@@ -4,8 +4,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Active courses: visible, in a visible non-test category, and not named outdated/expired.
- * Sorted by the latest year in the course name (newest first), then by name.
+ * Active courses for the newest year: visible, in a visible non-test category, not named outdated/expired,
+ * and carrying the latest year found in any active course name. 60 Hour first, then 20 Hour, then by name.
  *
  * @return array of course records
  */
@@ -24,8 +24,23 @@ function local_activecourses_list() {
         $c->year = $m[1] ? max(array_map('intval', $m[1])) : 0;
         $courses[] = $c;
     }
-    usort($courses, function($a, $b) {
-        return $a->year != $b->year ? $b->year - $a->year : strcasecmp($a->fullname, $b->fullname);
+    if (!$courses) {
+        return [];
+    }
+    $latest = max(array_map(function($c) {
+        return $c->year;
+    }, $courses));
+    $courses = array_filter($courses, function($c) use ($latest) {
+        return $c->year == $latest;
+    });
+    $rank = function($c) {
+        if (stripos($c->fullname, '60 Hour') !== false) {
+            return 0;
+        }
+        return stripos($c->fullname, '20 Hour') !== false ? 1 : 2;
+    };
+    usort($courses, function($a, $b) use ($rank) {
+        return $rank($a) != $rank($b) ? $rank($a) - $rank($b) : strcasecmp($a->fullname, $b->fullname);
     });
     return $courses;
 }
