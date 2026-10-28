@@ -165,6 +165,16 @@ if STEP == 'hf':
     hdr = hdr.replace('<div style="display:flex;align-items:center;gap:6px;padding:10px 12px;border-radius:8px;cursor:pointer;color:#0B2E40;font:600 19px Manrope,sans-serif;white-space:nowrap" data-hv="2">For CTEC Providers<svg',
                       '<div class="tcf-nav-btn" style="display:flex;align-items:center;gap:6px;padding:10px 12px;border-radius:8px;cursor:pointer;color:#0B2E40;font:600 19px Manrope,sans-serif;white-space:nowrap">For Providers<svg', 1)
     assert 'tcf-nav-btn' in hdr, 'providers button'
+    # Primary call to action: filled button, shown last in the desktop menu (CSS order).
+    hdr = hdr.replace('<a href="/" style="display:flex;align-items:center;gap:6px;padding:10px 12px;border-radius:8px;color:#0B2E40" data-hv="2">Find &amp; Compare Courses</a>',
+                      '<a href="/#find-schools" class="tcf-nav-cta" style="display:flex;align-items:center;gap:6px;padding:10px 12px;border-radius:8px;color:#0B2E40">Compare Courses</a>', 1)
+    assert 'tcf-nav-cta' in hdr, 'cta'
+    # Deadline top bar above the header (text filled live by tcf-runtime.js, California time).
+    topbar = ('<div class="tcf-topbar" role="note"><div class="tcf-topbar-in"><span class="tcf-topbar-dot" aria-hidden="true"></span>'
+              '<span data-tcf-cd><span>CTEC renewal deadline: October 31</span></span>'
+              '<a class="tcf-topbar-link" href="/ctec-20-hour-course/">Compare 20-hour courses <span aria-hidden="true">&rarr;</span></a></div></div>')
+    hdr = hdr.replace('<header id="top"', topbar + '<header id="top"', 1)
+    assert 'tcf-topbar' in hdr
     hdr = hdr.replace('style="height:80px;width:auto;display:block"', 'width="210" height="76" style="height:76px;width:auto;display:block"', 1)
     hdr = hdr.replace('<img ', '<img fetchpriority="high" width="193" height="80" ', 1)
     ftr = fix_media(hf['footer']).replace('style="height:58px;width:auto;display:block"', 'style="height:68px;width:auto;display:block"', 1).replace("<img ", "<img width=\"188\" height=\"68\" ", 1)

@@ -98,6 +98,10 @@ def comparison_table(body):
 
 def seo_tweaks(name, body):
     body = comparison_table(body)
+    body = (body.replace('CTEC renewal deadline · Oct 31', '{{ cdTitle }} · {{ cdShort }}')
+                .replace('CTEC renewal deadline: October 31, 2026', '{{ cdTitle }}: {{ cdLong }}')
+                .replace('>Time left to renew<', '>{{ cdLeftLabel }}<'))
+    body = body.replace('CTEC renewal deadline: <span style="color:#7E9330">October 31, 2026</span>', '{{ cdTitle }}: <span style="color:#7E9330">{{ cdLong }}</span>')
     # Hero photo stays fixed while the page scrolls (desktop; styles in site.css).
     hero_img = 'alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">'
     hi = body.find(hero_img)
@@ -272,6 +276,9 @@ def code_for(d):
                    r"schoolUrl: p.schoolUrl ? p.schoolUrl + '?course=' + \1 : '', hasSchool: !!p.schoolUrl, noSchool: !p.schoolUrl,", c)
     assert 'School Page.dc.html' not in c, 'unhandled school link'
     c = c.replace("await import('./providers.js')", 'await TCF.data()')
+    # Countdowns: one California-time clock (Oct 31 deadline, then the Jan 15 late window) from tcf-runtime.js.
+    c = re.sub(r"\.\.\.\(\(\) => \{ const ms = Math\.max\(0, new Date\('[\dT:\-]+'\) - new Date\(\)\);.*?\}; \}\)\(\),", "...TCF.countdownVals(),", c, flags=re.S)
+    assert "new Date('2026-10-31" not in c, 'countdown not replaced'
     # Sorting: reverse orders + click-to-sort table headings (Provider A–Z/Z–A, Price low/high).
     if 'const sorters = {' in c:
         c = c.replace('const sorters = {', "const sorters = { name_desc: (a, b) => b.name.localeCompare(a.name), price_desc: (a, b) => (b.sortable ?? -1) - (a.sortable ?? -1) || a.name.localeCompare(b.name),", 1)
