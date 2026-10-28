@@ -96,8 +96,9 @@ body:has(.ctc-header){background:#fff;margin:0;color:${C.navy};font-family:${BOD
 .ctc-ty-help{margin:24px 0 0;color:${C.gray};font-size:17px}.ctc-ty-help a{color:${C.goldText}}
 @media (max-width:767px){.ctc-ty-inner{padding:0 20px}.ctc-ty-hero{padding:42px 0 37px}.ctc-ty-hero h1{font-size:44px}.ctc-ty-body{padding:42px 0 58px}.ctc-ty-card{padding:24px 20px;font-size:17px}}
 .ctc-deco{pointer-events:none}.ctc-o18{opacity:.18}
-.ctc-laptop .elementor-wrapper{--video-aspect-ratio:1.5357!important;aspect-ratio:860/560}
-.ctc-laptop video{object-fit:cover}
+.ctc-laptop .elementor-wrapper{--video-aspect-ratio:1.5!important;aspect-ratio:3/2;background:transparent!important}
+/* laptop videos (v3, 1770x1180 with margin): show only the laptop + its shadow so the section background (dots) shows around it */
+.ctc-laptop video{object-fit:contain;background:transparent!important;-webkit-mask-image:url(https://cataxcourses.com/wp-content/uploads/2026/10/ctc-laptop-mask-v2.png);mask-image:url(https://cataxcourses.com/wp-content/uploads/2026/10/ctc-laptop-mask-v2.png);-webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}
 .ctc-article-arrow .elementor-icon{display:inline-flex}
 @media (max-width:767px){.ctc-article-arrow{display:none}.ctc-nowrap-d p{white-space:normal!important}}
 .ctc-nowrap-d p{white-space:nowrap}

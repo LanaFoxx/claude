@@ -179,7 +179,7 @@ function features(d) {
 const badges = (m, h, extra = {}) => row([
   image(m.ctec, { height: [h[0], h[0], Math.round(h[0] * 0.8)], settings: { width: auto, _element_width: 'auto' } }),
   image(m.irs, { height: [h[1], h[1], Math.round(h[1] * 0.8)], settings: { width: auto, _element_width: 'auto' } }),
-  image(m.trustpilot, { height: [h[2], h[2], Math.round(h[2] * 0.8)], link: URL.trustpilot, settings: { width: auto, _element_width: 'auto' } }),
+  image(m.trustpilot, { height: [h[2], h[2], Math.round(h[2] * 0.8)], /* no link (Trustpilot link removed on request) */ settings: { width: auto, _element_width: 'auto' } }),
   image(m.bca, { height: [h[3], h[3], Math.round(h[3] * 0.8)], link: URL.bca, settings: { width: auto, _element_width: 'auto' } }),
 ], { gap: h[4], rowGap: 20, justify: 'center', cls: 'ctc-badge-slider', settings: extra });
 
