@@ -175,7 +175,7 @@ if STEP == 'hf':
               '<a class="tcf-topbar-link" href="/ctec-20-hour-course/">Compare 20-hour courses <span aria-hidden="true">&rarr;</span></a></div></div>')
     hdr = hdr.replace('<header id="top"', topbar + '<header id="top"', 1)
     assert 'tcf-topbar' in hdr
-    hdr = hdr.replace('style="height:80px;width:auto;display:block"', 'width="210" height="76" style="height:76px;width:auto;display:block"', 1)
+    hdr = hdr.replace('style="height:80px;width:auto;display:block"', 'width="188" height="68" style="height:68px;width:auto;display:block"', 1)
     hdr = hdr.replace('<img ', '<img fetchpriority="high" width="193" height="80" ', 1)
     ftr = fix_media(hf['footer']).replace('style="height:58px;width:auto;display:block"', 'style="height:68px;width:auto;display:block"', 1).replace("<img ", "<img width=\"188\" height=\"68\" ", 1)
     for tid, html in ((40, hdr), (41, ftr)):
