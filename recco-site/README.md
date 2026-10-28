@@ -44,6 +44,7 @@ h2 46/38/32), section padding and gutters shrink, and the nav becomes a hamburge
 * `home.cjs` – the homepage sections.
 * `blocks.cjs` – inner-page building blocks: page hero, section head, numbered cards, checklist, SEED band, comparison table.
 * `pages.cjs` – Enterprise Apps, AI Platforms and SEED.
+* `platforms.cjs` – platform lists (AI Services, Enterprise App Services by category) and chip components shared by Home and Enterprise Apps. AI captions show as hover tooltips and icon alt text.
 * `legal.cjs` – Privacy policy and Terms of use.
 * `prep.cjs` – one-time setup: `cleanup` (deletes old pages/images, trashes old templates), uploads
   media, creates the menu, sets the site title/tagline/favicon. Writes `prep.json` (media + menu IDs).

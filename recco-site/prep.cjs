@@ -7,6 +7,7 @@
 const { chromium } = require('playwright');
 const fs = require('fs');
 const path = require('path');
+const { ICON_FILES, ICON_ALT } = require('./platforms.cjs');
 
 const SITE = process.env.WP_URL || 'https://staging154.dreamweb.digital';
 // Contact is the outline button at the end of the header, so it is not a menu item.
@@ -20,6 +21,11 @@ const ALT = {
   'recco-logo-microsoft-official.png': 'Microsoft',
   'recco-erp-badge.png': 'Emissions Reduction Program, Level 1 Action, validated by RyeStrategy',
 };
+// Platform icons: new ones from platforms.cjs, plus the earlier files the V3 list reuses.
+const ICON_KEYS = { ...ICON_FILES, icCopilot: 'recco-icon-copilot.png', icOpenai: 'recco-icon-openai.png', icCopilotStudio: 'recco-icon-copilot-studio.png',
+  icLovable: 'recco-icon-lovable.png', icReplit: 'recco-icon-replit.png', icSalesforce: 'recco-icon-salesforce.png', icDynamics: 'recco-icon-dynamics-365.png',
+  icServicenow: 'recco-icon-servicenow.png', icAws: 'recco-icon-aws.png' };
+for (const [k, f] of Object.entries(ICON_KEYS)) if (ICON_ALT[k]) ALT[f] = ICON_ALT[k];
 
 (async () => {
   const b = await chromium.launch();
@@ -68,11 +74,15 @@ const ALT = {
   }
 
   // Media
-  const existing = await all('/wp/v2/media?_fields=id,source_url,media_details');
+  const existing = await all('/wp/v2/media?_fields=id,source_url,alt_text');
   const byName = Object.fromEntries(existing.map((x) => [path.basename(x.source_url).replace(/-scaled(?=\.)/, ''), x]));
   const media = {};
   for (const f of fs.readdirSync(process.env.UPLOADS).sort()) {
-    if (byName[f]) { media[f] = { id: byName[f].id, source_url: byName[f].source_url }; continue; }
+    if (byName[f]) {
+      const x = byName[f];
+      if (ALT[f] && x.alt_text !== ALT[f]) { await api(`/wp/v2/media/${x.id}`, { method: 'POST', data: { alt_text: ALT[f] } }); console.log('alt updated', f); }
+      media[f] = { id: x.id, source_url: x.source_url }; continue;
+    }
     const b64 = fs.readFileSync(path.join(process.env.UPLOADS, f)).toString('base64');
     const type = f.endsWith('.png') ? 'image/png' : 'image/jpeg';
     const j = await api('/wp/v2/media', { method: 'POST', headers: { 'Content-Type': type, 'Content-Disposition': `attachment; filename="${f}"` }, b64 });

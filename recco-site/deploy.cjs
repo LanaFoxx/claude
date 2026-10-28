@@ -9,6 +9,7 @@ const L = require('./lib.cjs');
 const home = require('./home.cjs');
 const legal = require('./legal.cjs');
 const pages = require('./pages.cjs');
+const { ICON_FILES } = require('./platforms.cjs');
 
 const SITE = process.env.WP_URL || 'https://staging154.dreamweb.digital';
 const prep = JSON.parse(fs.readFileSync(process.env.PREP, 'utf8'));
@@ -29,6 +30,7 @@ const m = {
   erpBadge: md('recco-erp-badge.png'), erpBanner: md('recco-erp-banner.png'), serverBlur: md('recco-server-blur.jpg'),
   icDynamics: md('recco-icon-dynamics-365.png'), icCopilot: md('recco-icon-copilot.png'), icCopilotStudio: md('recco-icon-copilot-studio.png'),
   icReplit: md('recco-icon-replit.png'), icLovable: md('recco-icon-lovable.png'),
+  ...Object.fromEntries(Object.entries(ICON_FILES).map(([k, f]) => [k, md(f)])),
 };
 
 const args = process.argv.slice(2);
