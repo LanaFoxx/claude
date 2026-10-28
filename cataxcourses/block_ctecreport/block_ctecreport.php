@@ -64,6 +64,41 @@ class block_ctecreport extends block_base {
         return html_writer::table($table);
     }
 
+    /** Everyone reported to the live CTEC roster, newest first, 10 per page. */
+    protected function reported_list() {
+        global $DB, $OUTPUT, $PAGE;
+        $perpage = 10;
+        $page = optional_param('ctecreportpage', 0, PARAM_INT);
+        $where = "l.status IN ('sent', 'duplicate') AND l.endpoint = 'live'";
+        $total = $DB->count_records_sql("SELECT COUNT(1) FROM {local_ctecreport_log} l WHERE $where");
+        $html = $OUTPUT->heading("Reported to CTEC ($total)", 5, 'mt-3');
+        if (!$total) {
+            return $html . html_writer::tag('p', 'No one has been reported yet.', ['class' => 'text-muted']);
+        }
+        $namefields = get_all_user_name_fields(true, 'u');
+        $rows = $DB->get_records_sql("SELECT l.*, $namefields, c.shortname, c.fullname
+                                        FROM {local_ctecreport_log} l
+                                        JOIN {user} u ON u.id = l.userid
+                                        JOIN {course} c ON c.id = l.courseid
+                                       WHERE $where
+                                    ORDER BY l.timemodified DESC, l.id DESC", [], $page * $perpage, $perpage);
+        $table = new html_table();
+        $table->attributes['class'] = 'generaltable table-sm mb-1';
+        $table->head = ['Reported', 'Student', 'Course', 'CTEC ID', 'Result'];
+        foreach ($rows as $r) {
+            $table->data[] = [
+                userdate($r->timemodified, get_string('strftimedatetimeshort')),
+                html_writer::link(new moodle_url('/user/view.php', ['id' => $r->userid, 'course' => $r->courseid]), fullname($r)),
+                html_writer::tag('span', s($r->shortname), ['title' => s($r->fullname)]),
+                s($r->ctecid),
+                $r->status === 'sent' ? 'Added to roster' : 'Already on roster',
+            ];
+        }
+        $html .= html_writer::table($table);
+        $html .= $OUTPUT->paging_bar($total, $page, $perpage, new moodle_url($PAGE->url), 'ctecreportpage');
+        return $html;
+    }
+
     public function get_content() {
         global $DB, $OUTPUT;
         if ($this->content !== null) {
@@ -123,6 +158,7 @@ class block_ctecreport extends block_base {
                 $html .= html_writer::tag('p', 'Showing the latest ' . count($rows) . " of $total.", ['class' => 'small']);
             }
         }
+        $html .= $this->reported_list();
         $this->content->text = $html;
         $this->content->footer = html_writer::link($logurl, 'Open the CTEC reporting log to fix and resend');
         return $this->content;
