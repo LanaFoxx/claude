@@ -1,0 +1,74 @@
+<script>
+/* California Tax Courses: H5P YouTube videos start with captions OFF.
+   H5P.Video 1.5.12 loads YouTube's captions module, which switches auto-generated captions on and hides the CC button.
+   This turns them off, offers the auto track under H5P's CC button, and follows the student's CC choice. */
+(function () {
+  function patchVideo(win, video, player) {
+    if (video.__cxcCaptions) { return; }
+    video.__cxcCaptions = true;
+    var wantOn = false;   // the student turned captions on from the CC button
+    var autoTrack = null; // YouTube's auto-generated track, once known
+    var offered = false;
+
+    video.setCaptionsTrack = function (track) {
+      try {
+        if (track) {
+          wantOn = true;
+          player.loadModule('captions');
+          setTimeout(function () { try { player.setOption('captions', 'track', {languageCode: track.value}); } catch (e) {} }, 400);
+        } else {
+          wantOn = false;
+          player.setOption('captions', 'track', {});
+          player.unloadModule('captions');
+        }
+      } catch (e) {}
+    };
+    video.getCaptionsTrack = function () {
+      if (!wantOn) { return null; }
+      try {
+        var t = player.getOption('captions', 'track');
+        return t && t.languageCode ? new win.H5P.Video.LabelValue(t.displayName, t.languageCode) : null;
+      } catch (e) { return null; }
+    };
+
+    setInterval(function () {
+      var track = null, list = null;
+      try { track = player.getOption('captions', 'track'); } catch (e) {}
+      try { list = player.getOption('captions', 'tracklist'); } catch (e) {}
+      if (track && track.languageCode && !autoTrack) { autoTrack = track; }
+      if (!wantOn && track && track.languageCode) {
+        try { player.setOption('captions', 'track', {}); player.unloadModule('captions'); } catch (e) {}
+      }
+      // YouTube does not list its auto track, so H5P shows no CC button: offer it ourselves.
+      if (!offered && autoTrack && !(list && list.length)) {
+        offered = true;
+        try { video.trigger('captions', [new win.H5P.Video.LabelValue(autoTrack.displayName, autoTrack.languageCode)]); } catch (e) {}
+      }
+    }, 500);
+  }
+
+  function scan(win) {
+    try {
+      if (!win || !win.H5P || !win.H5P.instances || !win.YT || !win.YT.get) { return; }
+      var frames = win.document.querySelectorAll('iframe[id^="h5p-youtube-"]');
+      var videos = [];
+      win.H5P.instances.forEach(function (inst) {
+        var v = inst && inst.video;
+        if (v && typeof v.getHandlerName === 'function' && v.getHandlerName() === 'YouTube') { videos.push(v); }
+      });
+      for (var i = 0; i < frames.length && i < videos.length; i++) {
+        var player = win.YT.get(frames[i].id);
+        if (player && typeof player.getOption === 'function') { patchVideo(win, videos[i], player); }
+      }
+    } catch (e) {}
+  }
+
+  setInterval(function () {
+    scan(window);
+    var iframes = document.querySelectorAll('iframe.h5p-iframe');
+    for (var i = 0; i < iframes.length; i++) {
+      try { scan(iframes[i].contentWindow); } catch (e) {}
+    }
+  }, 700);
+})();
+</script>
