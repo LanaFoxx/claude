@@ -7,6 +7,9 @@ class block_ctecreport extends block_base {
 
     const PERPAGE = 10;
 
+    /** Students whose 6-digit entry was confirmed by CTEC and will be sent with the A added. */
+    protected $autofixed = 0;
+
     public function init() {
         $this->title = get_string('pluginname', 'block_ctecreport');
     }
@@ -130,8 +133,15 @@ class block_ctecreport extends block_base {
             }
             $seen[$key] = true;
             if (\local_ctecreport\reporter::normalise_ctecid($a->value) !== ''
-                    || $DB->record_exists('local_ctecreport_log', ['userid' => $a->userid, 'courseid' => $a->course])
-                    || \local_ctecreport\reporter::find_ctecid($a->userid, $a->course) !== '') {
+                    || $DB->record_exists('local_ctecreport_log', ['userid' => $a->userid, 'courseid' => $a->course])) {
+                continue;
+            }
+            // Cache only: CTEC is never called while the dashboard loads.
+            if (\local_ctecreport\reporter::repair_ctecid($a->userid, $a->value, false) !== '') {
+                $this->autofixed++;
+                continue;
+            }
+            if (\local_ctecreport\reporter::find_ctecid($a->userid, $a->course, false) !== '') {
                 continue;
             }
             $bad[] = $a;
@@ -184,19 +194,25 @@ class block_ctecreport extends block_base {
         foreach ($problems as $r) {
             $u = (object)(['id' => $r->userid] + (array)$r);
             $tone = $r->status === 'error' ? 'bad' : 'warn';
+            $markurl = new moodle_url('/local/ctecreport/index.php', ['action' => 'markreported', 'id' => $r->id,
+                'sesskey' => sesskey(), 'returnurl' => (new moodle_url($PAGE->url))->out_as_local_url(false)]);
             $rows[] = [
                 userdate($r->timecompleted, get_string('strftimedatefullshort')),
                 self::student_cell($u, $r->courseid),
                 self::course_label($r),
                 self::pill($r->status === 'error' ? 'Needs fixing' : 'Retrying', $tone) .
                     html_writer::div(s(self::explain($r)), 'ctecr-problem'),
+                html_writer::link($markurl, 'Already reported &ndash; ignore', ['class' => 'ctecr-btn',
+                    'title' => 'Use this if the student is already on the CTEC roster. It stops retrying and removes them from this list.',
+                    'onclick' => "return confirm('Mark this student as already reported to CTEC?');"]),
             ];
         }
-        $body = $rows ? self::table(['Completed', 'Student', 'Course', 'Problem'], $rows) .
-                html_writer::tag('p', 'To fix one, open the reporting log, type the correct CTEC ID next to the student and click Send.',
+        $body = $rows ? self::table(['Completed', 'Student', 'Course', 'Problem', ''], $rows) .
+                html_writer::tag('p', 'To fix a wrong CTEC ID, open the reporting log, type the correct ID next to the student and click Send. ' .
+                    'If the student is already on the CTEC roster, click Already reported.',
                     ['class' => 'ctecr-help'])
             : html_writer::div('&#10004; Nothing to fix. Every completion has been reported.', 'ctecr-empty');
-        $cards = [['ctecr-problems', 'Needs attention', count($problems), 'bad', $body, (bool)$problems,
+        $cards = [['ctecr-problems', 'Needs attention', count($problems), 'bad', $body, false,
             'Completed, but CTEC has not accepted the report']];
 
         // Bad CTEC IDs from students still taking a course (paged, collapsed by default).
@@ -217,16 +233,20 @@ class block_ctecreport extends block_base {
                 ];
             }
         }
-        $body = $bad ? html_writer::tag('p', 'These students typed something that is not a CTEC ID (A followed by 6 digits). ' .
-                'Ask them to correct it before they finish, or the report will fail.', ['class' => 'ctecr-help']) .
+        $fixednote = $this->autofixed ? html_writer::div('&#10004; ' . $this->autofixed . ' more typed only the 6 digits; CTEC confirmed ' .
+                'their IDs match their names, so the A is added automatically. Nothing to do for them.', 'ctecr-fixed') : '';
+        $body = $bad ? $fixednote . html_writer::tag('p', 'These students typed something that is not a CTEC ID (A followed by 6 digits), ' .
+                'and it could not be fixed automatically. Ask them to correct it before they finish, or the report will fail.',
+                ['class' => 'ctecr-help']) .
                 self::table(['Entered', 'Student', 'Course', 'What they typed'], $rows) .
                 $OUTPUT->paging_bar(count($bad), $page, self::PERPAGE, new moodle_url($PAGE->url, ['ctecopen' => 'badids']), 'ctecbadidpage')
-            : html_writer::div('&#10004; None.', 'ctecr-empty');
-        $cards[] = ['ctecr-badids', 'Incorrect CTEC IDs', count($bad), 'warn', $body, true,
+            : $fixednote . html_writer::div('&#10004; None.', 'ctecr-empty');
+        $cards[] = ['ctecr-badids', 'Incorrect CTEC IDs', count($bad), 'warn', $body,
+            optional_param('ctecopen', '', PARAM_ALPHA) === 'badids',
             'Course not finished yet: fix before they complete'];
 
         // Everyone reported (paged).
-        $where = "l.status IN ('sent', 'duplicate') AND l.endpoint = 'live'";
+        $where = "(l.status IN ('sent', 'duplicate') AND l.endpoint = 'live') OR l.status = 'manual'";
         $total = $DB->count_records_sql("SELECT COUNT(1) FROM {local_ctecreport_log} l WHERE $where");
         $page = optional_param('ctecreportpage', 0, PARAM_INT);
         $reported = $DB->get_records_sql("SELECT l.*, u.email, $namefields, c.shortname, c.fullname
@@ -243,7 +263,8 @@ class block_ctecreport extends block_base {
                 self::student_cell($u, $r->courseid),
                 self::course_label($r),
                 html_writer::tag('code', s($r->ctecid)),
-                $r->status === 'sent' ? self::pill('Added to roster', 'ok') : self::pill('Already on roster', 'info'),
+                $r->status === 'sent' ? self::pill('Added to roster', 'ok') :
+                    ($r->status === 'manual' ? self::pill('Marked as reported', 'muted') : self::pill('Already on roster', 'info')),
             ];
         }
         $body = $total ? self::table(['Reported', 'Student', 'Course', 'CTEC ID', 'Result'], $rows) .
@@ -252,23 +273,12 @@ class block_ctecreport extends block_base {
         $cards[] = ['ctecr-reported', 'Reported to CTEC', $total, 'ok', $body,
             optional_param('ctecopen', '', PARAM_ALPHA) === 'reported' || !$problems, 'Newest first'];
 
-        // Jump links.
-        $nav = '';
-        foreach ($cards as $c) {
-            $nav .= html_writer::link('#' . $c[0], $c[1] . ' ' . self::pill($c[2], $c[2] ? $c[3] : 'muted'),
-                ['class' => 'ctecr-jump', 'data-target' => $c[0]]);
-        }
-        $nav .= html_writer::link(new moodle_url('/local/ctecreport/index.php'), 'Open full reporting log &rarr;',
-            ['class' => 'ctecr-jump ctecr-jump-log']);
-        $html .= html_writer::div($nav, 'ctecr-nav');
-
         foreach ($cards as $c) {
             $html .= self::card($c[0], $c[1], $c[2], $c[3], $c[4], $c[5], $c[6]);
         }
-        // Jump links open the card they point to.
-        $html .= html_writer::script("document.querySelectorAll('.ctecr-jump[data-target]').forEach(function(a){" .
-            "a.addEventListener('click',function(){var d=document.getElementById(a.getAttribute('data-target'));if(d){d.open=true;}});});");
 
+        $html .= html_writer::div(html_writer::link(new moodle_url('/local/ctecreport/index.php'),
+            'Open the full CTEC reporting log &rarr;', ['class' => 'ctecr-btn']), 'ctecr-foot');
         $this->content->text = html_writer::div($html, 'ctecr');
         return $this->content;
     }
@@ -319,6 +329,10 @@ class block_ctecreport extends block_base {
 .ctecr-problem{color:var(--muted);font-size:.8rem;margin-top:4px}
 .ctecr code{background:var(--muted-bg);color:var(--ink);padding:1px 6px;border-radius:4px;font-size:.8rem}
 .ctecr-help{color:var(--muted);font-size:.82rem;margin:10px 0 0}
+.ctecr-fixed{background:var(--ok-bg);color:var(--ok);border-radius:8px;padding:8px 12px;margin:10px 0 0;font-size:.85rem}
+.ctecr-btn{display:inline-block;white-space:nowrap;padding:5px 10px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink)!important;font-size:.8rem;font-weight:500;text-decoration:none!important}
+.ctecr-btn:hover{border-color:#c9a227;background:#fffbea}
+.ctecr-foot{margin-top:4px;text-align:right}
 .ctecr-empty{color:var(--ok);padding:12px 0 2px;font-weight:500}
 .ctecr .paging{margin:8px 0 0}
 </style>';

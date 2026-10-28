@@ -30,5 +30,20 @@
         <INDEX NAME="status" UNIQUE="false" FIELDS="status"/>
       </INDEXES>
     </TABLE>
+    <TABLE NAME="local_ctecreport_idcheck" COMMENT="Cached CTEC ID lookups used to repair IDs typed without the leading A">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="ctecid" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="status" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="found or notfound"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Preparer name CTEC returned"/>
+        <FIELD NAME="timechecked" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="ctecid" UNIQUE="true" FIELDS="ctecid"/>
+      </INDEXES>
+    </TABLE>
   </TABLES>
 </XMLDB>

@@ -67,7 +67,7 @@ class reporter {
      * Find the student's CTEC ID: a 'ctecid' profile field if the site has one, otherwise their latest
      * answer to a "CTEC ID" question in a feedback form in this course, then in any course.
      */
-    public static function find_ctecid($userid, $courseid) {
+    public static function find_ctecid($userid, $courseid, $allowlookup = true) {
         global $DB;
         $sql = "SELECT d.data
                   FROM {user_info_data} d
@@ -98,7 +98,94 @@ class reporter {
                 }
             }
         }
+        // No valid answer: try repairing one typed without the leading A, if CTEC confirms it is this student.
+        foreach ([true, false] as $samecourse) {
+            foreach ($rows as $row) {
+                if ($samecourse && (int)$row->course !== (int)$courseid) {
+                    continue;
+                }
+                if ($id = self::repair_ctecid($userid, $row->value, $allowlookup)) {
+                    return $id;
+                }
+            }
+        }
         return '';
+    }
+
+    /** "A" + the digits when the answer is just 6 digits (e.g. 353408 or 353-408), otherwise ''. */
+    public static function add_missing_a($value) {
+        $plain = strtoupper(preg_replace('/[^A-Za-z0-9]/', '', (string)$value));
+        return preg_match('/^\d{6}$/', $plain) ? 'A' . $plain : '';
+    }
+
+    /**
+     * Look a CTEC ID up with CTEC's public API, cached. Returns ['status' => found|notfound|error, 'name' => ...].
+     * With $allowlookup false only the cache is used (status 'unknown' when not cached).
+     */
+    public static function lookup($ctecid, $allowlookup = true) {
+        global $DB, $CFG;
+        $cached = $DB->get_record('local_ctecreport_idcheck', ['ctecid' => $ctecid]);
+        if ($cached && $cached->timechecked > time() - 30 * DAYSECS) {
+            return ['status' => $cached->status, 'name' => (string)$cached->name];
+        }
+        if (!$allowlookup) {
+            return ['status' => 'unknown', 'name' => ''];
+        }
+        require_once($CFG->libdir . '/filelib.php');
+        $curl = new \curl(['ignoresecurity' => true]);
+        $body = (string)$curl->get('https://provider.ctec.org/api/CTECIDLookup/' . rawurlencode($ctecid), [],
+            ['CURLOPT_TIMEOUT' => 15, 'CURLOPT_CONNECTTIMEOUT' => 10]);
+        $info = $curl->get_info();
+        if (!$curl->get_errno() && !empty($info['http_code']) && $info['http_code'] == 200
+                && preg_match('/Name associated with CTECID [A-Z0-9]+:\s*(.+)/i', $body, $m)) {
+            $result = ['status' => 'found', 'name' => trim($m[1], " \t\n\r\"}")];
+        } else if (preg_match('/No CTEC record found|Invalid CTECID/i', $body)) {
+            $result = ['status' => 'notfound', 'name' => ''];
+        } else {
+            return ['status' => 'error', 'name' => ''];
+        }
+        $rec = (object)['ctecid' => $ctecid, 'status' => $result['status'], 'name' => $result['name'], 'timechecked' => time()];
+        if ($cached) {
+            $rec->id = $cached->id;
+            $DB->update_record('local_ctecreport_idcheck', $rec);
+        } else {
+            $DB->insert_record('local_ctecreport_idcheck', $rec);
+        }
+        return $result;
+    }
+
+    /** Uppercase letter words of a name, accents and punctuation removed. */
+    protected static function name_words($name) {
+        $name = \core_text::strtoupper(\core_text::specialtoascii((string)$name));
+        return array_values(array_filter(preg_split('/[^A-Z]+/', $name), function($w) {
+            return strlen($w) >= 2;
+        }));
+    }
+
+    /** True when CTEC's preparer name shares the student's first name and one of their last-name words. */
+    public static function name_matches($user, $ctecname) {
+        $ctec = self::name_words($ctecname);
+        $first = self::name_words($user->firstname);
+        $last = self::name_words($user->lastname);
+        if (!$ctec || !$first || !$last) {
+            return false;
+        }
+        return in_array($first[0], $ctec) && (bool)array_intersect($last, $ctec);
+    }
+
+    /** The repaired ID for an answer typed without its leading A, only if CTEC says it belongs to this student. */
+    public static function repair_ctecid($userid, $value, $allowlookup = true) {
+        global $DB;
+        $candidate = self::add_missing_a($value);
+        if ($candidate === '') {
+            return '';
+        }
+        $result = self::lookup($candidate, $allowlookup);
+        if ($result['status'] !== 'found') {
+            return '';
+        }
+        $user = $DB->get_record('user', ['id' => $userid], 'id, firstname, lastname');
+        return $user && self::name_matches($user, $result['name']) ? $candidate : '';
     }
 
     /** Best grade on each exam, as a whole-number percentage, keyed state/federal/ethics. */

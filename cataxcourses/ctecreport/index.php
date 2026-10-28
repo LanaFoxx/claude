@@ -15,7 +15,19 @@ $baseurl = new moodle_url('/local/ctecreport/index.php', ['filter' => $filter]);
 $notice = '';
 
 if ($action && confirm_sesskey()) {
-    if ($action === 'send' && $id) {
+    if ($action === 'markreported' && $id) {
+        // An admin confirms the student is already on the CTEC roster (e.g. reported by hand): stop retrying.
+        $rec = $DB->get_record('local_ctecreport_log', ['id' => $id], '*', MUST_EXIST);
+        $rec->status = 'manual';
+        $rec->response = 'Marked as reported by ' . fullname($USER) . ' on ' . userdate(time(), get_string('strftimedatetimeshort'));
+        $rec->timemodified = time();
+        $DB->update_record('local_ctecreport_log', $rec);
+        $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
+        if ($returnurl) {
+            redirect(new moodle_url($returnurl), 'Marked as reported.', null, \core\output\notification::NOTIFY_SUCCESS);
+        }
+        $notice = 'Marked as reported.';
+    } else if ($action === 'send' && $id) {
         $rec = $DB->get_record('local_ctecreport_log', ['id' => $id], '*', MUST_EXIST);
         $manual = optional_param('ctecid', '', PARAM_RAW_TRIMMED);
         if ($manual !== '') {
@@ -107,7 +119,11 @@ foreach ($rows as $r) {
             'placeholder' => 'CTEC ID', 'class' => 'form-control form-control-sm mr-1']) .
         html_writer::empty_tag('input', ['type' => 'submit', 'value' => 'Send', 'class' => 'btn btn-sm btn-secondary']) .
         html_writer::end_tag('form');
-    $done = in_array($r->status, ['sent', 'duplicate']);
+    $done = in_array($r->status, ['sent', 'duplicate', 'manual']);
+    if (!$done) {
+        $form .= html_writer::link(new moodle_url($baseurl, ['action' => 'markreported', 'id' => $r->id, 'sesskey' => sesskey()]),
+            'Already reported &ndash; ignore', ['class' => 'btn btn-sm btn-link px-0']);
+    }
     $table->data[] = [
         userdate($r->timecompleted, get_string('strftimedatetimeshort')),
         html_writer::link(new moodle_url('/user/view.php', ['id' => $r->userid, 'course' => $r->courseid]), fullname($r)),
