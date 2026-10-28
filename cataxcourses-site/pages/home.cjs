@@ -5,9 +5,9 @@ const { C, HEAD, BODY, PHONE, URL, px, box, gap, auto, link, typo, container, wi
 
 const COURSES = [
   { kind: 'Qualifying Education', bold: 'CTEC 60', tagline: 'Becoming a California tax preparer? Start here.', amount: '179.95', label: 'CTEC 60 Hour Course', url: URL.c60, icon: 'fas fa-graduation-cap', iconSize: 150,
-    features: ['Updated with the Latest Tax Laws', 'Everything You Need To Know To Prepare Taxes', 'Online Video Course with complimentary PDF', 'Book Available as an additional study aid', 'Online Exam with Immediate Results', '24/7 Course Access', 'Hours Reported within 24 hours!', 'Unlimited Exam Attempts', 'Student Support Available Via Phone, Live Chat, and Email'] },
+    features: ['Updated with the Latest Tax Laws', 'Everything You Need To Know To Prepare Taxes', 'Online Video Course with complimentary PDF', 'Book Available as an additional study aid', 'Online Exam with Immediate Results', '24/7 Course Access', 'Instant Reporting To CTEC!', 'Unlimited Exam Attempts', 'Student Support Available Via Phone, Live Chat, and Email'] },
   { kind: 'Continuing Education', bold: 'CTEC 20', tagline: 'Renewing your CTEC registration? Start here.', amount: '69.95', label: 'CTEC 20 Hour Course', url: URL.c20, icon: 'fas fa-redo-alt', iconSize: 110,
-    features: ['Meets CTEC 20 Hour Renewal Requirement', 'Online Video Course with complimentary PDF', 'Book Available as an additional study aid', 'Online Exam with Immediate Results', '24/7 Course Access', 'Hours Reported within 24 hours!', 'Most Current and Up To Date Tax Laws', 'Unlimited Exam Attempts', 'Student Support Available Via Phone, Live Chat, and Email'] },
+    features: ['Meets CTEC 20 Hour Renewal Requirement', 'Online Video Course with complimentary PDF', 'Book Available as an additional study aid', 'Online Exam with Immediate Results', '24/7 Course Access', 'Instant Reporting To CTEC!', 'Most Current and Up To Date Tax Laws', 'Unlimited Exam Attempts', 'Student Support Available Via Phone, Live Chat, and Email'] },
 ];
 const a = (href, t = href) => `<a href="${href}">${t}</a>`;
 const FAQS = [
@@ -104,7 +104,7 @@ function courses() {
     row([
       stack([
         eyebrow('CTEC Courses', C.gold),
-        H2('<span class="ctc-thin ctc-block">Online. Self-paced.</span><span class="ctc-block ctc-fit-line">Reported within 24 hours.</span>', C.white, 'left', { settings: { _margin: box(12, 0, 0, 0) } }),
+        H2('<span class="ctc-thin ctc-block">Online. Self-paced.</span><span class="ctc-block ctc-fit-line">Instant reporting to CTEC.</span>', C.white, 'left', { settings: { _margin: box(12, 0, 0, 0) } }),
       ], { settings: { width: auto, width_mobile: px(100, '%') } }),
       text(`Questions before enrolling? Call us at <a href="${PHONE.tel}"><strong>${PHONE.label}</strong></a>`, {
         color: C.light, linkColor: C.gold, linkHover: C.goldHover, size: [18, 17, 16], lh: 1.4,
@@ -112,7 +112,7 @@ function courses() {
       }),
     ], { justify: 'space-between', align: 'flex-end', gap: 24, settings: { _margin: box(0, 0, 44, 0), margin: box(0, 0, 44, 0) } }),
     grid(COURSES.map(courseCard), { cols: [2, 1, 1], gap: 24 }),
-  ], { cls: 'ctc-dots-dark' });
+  ]); // no dots: sits under the dotted hero
 }
 
 function credentials(m) {
@@ -166,7 +166,7 @@ function articles() {
       widget('heading', { title: 'All guides &amp; how-tos →', header_size: 'span', link: link(URL.guides), title_color: C.goldText, ...typo('typography', HEAD, [22, 21, 19], 700, { lh: 1.3, ls: 0 }) }),
     ], { justify: 'space-between', align: 'flex-end', gap: 24, settings: { margin: box(0, 0, 40, 0), _margin: box(0, 0, 40, 0) } }),
     stack(ARTICLES.map(item), { gap: 16 }),
-  ], { cls: 'ctc-dots-white' });
+  ]); // no dots: between dotted students + FAQ sections
 }
 
 function faq() {
@@ -202,7 +202,7 @@ function finalCta() {
         ctaCard('Becoming a preparer?', '60 Hour QE Course →', URL.c60, 'gold', { smallSize: 16, bigSize: 22 }),
       ], { justify: 'center' }),
     ], { maxW: 1100, align: 'center' }),
-  ], { pad: [110, 110], align: 'center', cls: 'ctc-dots-white' });
+  ], { pad: [110, 110], align: 'center' }); // no dots: under the dotted FAQ
 }
 
 module.exports = {

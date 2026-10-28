@@ -51,7 +51,7 @@ function bookCard(m, b) {
 function books(m, list = BOOKS) {
   return band(C.navy, [
     grid(list.map((b) => bookCard(m, b)), { cols: list.length > 1 ? [2, 2, 1] : [1, 1, 1], gap: 24, settings: { width: px(list.length > 1 ? 1000 : 488), width_tablet: px(list.length > 1 ? 100 : 60, '%'), width_mobile: px(100, '%') } }),
-  ], { align: 'center', cls: 'ctc-dots-dark' });
+  ], { align: 'center' }); // no dots: sits under the dotted hero
 }
 
 function note() {

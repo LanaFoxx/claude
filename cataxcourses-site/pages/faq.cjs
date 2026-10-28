@@ -27,8 +27,8 @@ const FAQS = [
       `When you are finished with the 60 hour qualifying education course, complete the remaining steps in the CTEC registration process (click ${a(URL.become, 'HERE')} for more information). When these steps are done and you receive your certification, from CTEC, you are ready to begin!`,
       'You must complete 20 hours of continuing education and pay your renewal fees to CTEC every year in order to stay registered.']],
   ['How long will it take your school to report my course completion hours to CTEC and the IRS?',
-    ['California Tax Courses will report their students course completion to CTEC and/or the IRS typically within 1-3 hours, depending on the day and time you complete your course. If your course is completed on the weekend, it will be reported between 9am-1pm Monday morning.',
-      'We also stay up late on October 31st and the January late deadline, till midnight to make sure everyone who completes their course last minute has their hours reported before the Midnight deadline. Be sure to pay your fees owed to CTEC in order to complete your registration!']],
+    ['There is no delay. Our system automatically reports your completion to CTEC instantly upon your completion, any day and any time, including weekends.',
+      'Be sure to pay your fees owed to CTEC in order to complete your registration!']],
   ['Do the courses expire? Do you offer refunds?',
     ['The CTEC 60 Hour Qualifying Education Course is valid for 1 year after purchase date. This means you have up to 1 year to complete the course for valid CTEC credit. The course will expire 1 year after the time of purchase and will no longer be valid for CTEC credit, which means we cannot report your course completion to CTEC if you took more than 1 year to finish the course. You are not entitled to a refund or a new course if your course has expired. You will need to re purchase the latest version of the 60 hour course.']],
   ['Where is your school located?',
@@ -68,7 +68,7 @@ function faqSection() {
         ...wcls('ctc-faq'),
       }),
     ], { cols: ['minmax(0,1fr) minmax(0,2fr)', '1fr', '1fr'], gap: 48, gapM: 32, align: 'start' }),
-  ], { cls: 'ctc-dots-dark' });
+  ]); // no dots: sits under the dotted page hero
 }
 
 // Two-line CTA, big line on top (phone / Contact Us buttons).

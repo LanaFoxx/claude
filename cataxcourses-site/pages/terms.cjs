@@ -86,7 +86,7 @@ const SECTIONS = [
  {
   "title": "COURSE COMPLETION",
   "ps": [
-   "Once students complete the courses, we will report the completion of the course to CTEC and the IRS within 3 days of the course completion.",
+   "Once students complete the courses, our system automatically reports the completion of the course to CTEC instantly upon completion, and to the IRS.",
    "Students must provide their PTIN, CTEC ID, or the last six SSNs on their student profile in order to receive credit with CTEC and/or the IRS.",
    "Click on the link below to add your PTIN, CTEC ID, or the last six SSN numbers to your student profile: https://learn.cataxcourses.com/user/edit.php",
    "Remember that California Tax Courses will not be able to report a student’s course completion without that information.",

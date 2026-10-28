@@ -7,7 +7,7 @@ const STEPS = [
   "num": "01",
   "title": "Confirm your hours were reported to CTEC and the IRS",
   "paragraphs": [
-   "California Tax Courses reports course completions directly to CTEC and the IRS, typically within 24 hours (up to three days). You can also download your completion certificate at any time from your student account.",
+   "Our system automatically reports your completion to CTEC instantly upon your completion, with no delay. Your completion is also reported to the IRS. You can also download your completion certificate at any time from your student account.",
    "Log in to your CTEC account at ctec.org to confirm your 20 hours of Continuing Education are showing. Make sure your PTIN, CTEC ID, or last six SSN digits are on your student profile, as we cannot report your completion without that information. If you need your hours reported sooner, reach out to our support team by email, phone, or live chat."
   ],
   "ctaHref": URL.login,
@@ -55,7 +55,7 @@ module.exports = {
   build: guidePage({
     thin: 'What To Do After Completing the', bold: '20 Hour Continuing Education Course', steps: STEPS,
     label: 'Next Steps', dark: true,
-    intro: "Congratulations on finishing your CTEC 20 Hour Continuing Education Course! Your hours are reported to CTEC and the IRS within 24 hours. Here is what to do next to complete your CTEC registration renewal before the October 31st deadline.",
+    intro: "Congratulations on finishing your CTEC 20 Hour Continuing Education Course! Your hours are reported to CTEC instantly, with no delay, and to the IRS. Here is what to do next to complete your CTEC registration renewal before the October 31st deadline.",
     callThin: 'Still have questions about your next steps?', callPlain: true,
   }),
 };

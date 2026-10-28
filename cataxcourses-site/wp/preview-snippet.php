@@ -111,7 +111,7 @@ add_action( 'wp', function () {
 			echo '<span class="ctc-step-eyebrow">Order Summary</span><h3 class="ctc-card-title">Your Order</h3>';
 		}, 5 );
 		add_action( 'woocommerce_checkout_order_review', function () {
-			echo '<div class="ctc-next"><strong>What happens next</strong><ol><li>Login details emailed instantly</li><li>Start your course right away, 24/7</li><li>Hours reported to CTEC within 24 hours</li></ol><a href="' . esc_url( home_url( '/refund-policy/' ) ) . '">30-day money-back guarantee</a></div>';
+			echo '<div class="ctc-next"><strong>What happens next</strong><ol><li>Login details emailed instantly</li><li>Start your course right away, 24/7</li><li>Hours reported to CTEC instantly</li></ol><a href="' . esc_url( home_url( '/refund-policy/' ) ) . '">30-day money-back guarantee</a></div>';
 		}, 30 );
 	}
 } );

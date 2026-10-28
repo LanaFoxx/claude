@@ -26,7 +26,7 @@ const FAQS = [
 
 // Design SVG icons → Font Awesome 5 solid (matched by feature title prefix).
 const FEATURE_ICONS = [
-  ['CTEC', 'fas fa-landmark'], ['Completion Reported', 'fas fa-clock'], ['Unlimited Attempts', 'fas fa-redo-alt'],
+  ['CTEC', 'fas fa-landmark'], ['Instant Reporting', 'fas fa-bolt'], ['Unlimited Attempts', 'fas fa-redo-alt'],
   ['Fully Online Video Course', 'fas fa-laptop'], ['Access from computer', 'fas fa-mobile-alt'],
   ['Instant Enrollment', 'fas fa-graduation-cap'], ['Updated with', 'fas fa-calendar-alt'],
 ];
@@ -269,7 +269,7 @@ function finalCta(d) {
       cta2('Enroll Now →', d.finalSmall, '#enroll', 'gold'),
       cta2(PHONE.label, 'Mon – Fri, 9am – 4pm PST', PHONE.tel, 'navy'),
     ], { gap: 16, justify: 'center', settings: { margin: box(40, 0, 0, 0), _margin: box(40, 0, 0, 0) } }),
-  ], { pad: [110, 110], align: 'center', cls: 'ctc-dots-white' });
+  ], { pad: [110, 110], align: 'center' }); // no dots: under the dotted FAQ
 }
 
 // d: page data (see pages/course-*.cjs).

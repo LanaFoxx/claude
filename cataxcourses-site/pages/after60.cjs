@@ -7,7 +7,7 @@ const STEPS = [
   "num": "01",
   "title": "Confirm your hours were reported to CTEC",
   "paragraphs": [
-   "California Tax Courses reports course completions directly to CTEC, typically within 24 hours (up to three days). You can also download your completion certificate at any time from your student account.",
+   "Our system automatically reports your completion to CTEC instantly upon your completion, with no delay. You can also download your completion certificate at any time from your student account.",
    "Log in to your CTEC account at ctec.org to confirm your 60 hours of Qualifying Education are showing. If you need your hours reported sooner, reach out to our support team by email, phone, or live chat."
   ],
   "ctaHref": URL.login,
@@ -66,7 +66,7 @@ module.exports = {
   build: guidePage({
     thin: 'What To Do After Completing the', bold: '60 Hour Qualifying Education Course', steps: STEPS,
     label: 'Next Steps', dark: true,
-    intro: "Congratulations on finishing your CTEC 60 Hour Qualifying Education Course! Your hours are reported to CTEC within 24 hours. Here is what to do next to finish your CTEC registration and start preparing tax returns in California.",
+    intro: "Congratulations on finishing your CTEC 60 Hour Qualifying Education Course! Your hours are reported to CTEC instantly, with no delay. Here is what to do next to finish your CTEC registration and start preparing tax returns in California.",
     callThin: 'Still have questions about your next steps?', callPlain: true,
   }),
 };
