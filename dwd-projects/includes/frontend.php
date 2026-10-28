@@ -84,12 +84,12 @@ add_shortcode( 'dwd_portfolio', function ( $atts ) {
 } );
 
 /**
- * [dwd_project_slider] — homepage showcase. A slow, continuous upward "film" of every project's
- * full hero (projects marked "Show on homepage"). Hover pauses it; each hero links to its project.
- * Use [dwd_project_slider style="classic"] for the older one-at-a-time browser slider.
+ * [dwd_project_slider] — homepage showcase of every project's full hero (projects marked
+ * "Show on homepage"). One design at a time; up/down buttons slide vertically between them.
+ * Each hero links to its project. Use style="classic" for the older one-at-a-time slider.
  */
 add_shortcode( 'dwd_project_slider', function ( $atts ) {
-	$atts     = shortcode_atts( array( 'style' => 'film', 'speed' => 14 ), $atts );
+	$atts     = shortcode_atts( array( 'style' => 'vertical' ), $atts );
 	$projects = dwdp_projects( true );
 	if ( ! $projects ) {
 		return '';
@@ -106,10 +106,9 @@ add_shortcode( 'dwd_project_slider', function ( $atts ) {
 			continue;
 		}
 		$items .= sprintf(
-			'<a class="dwdp-film-item" href="%1$s" aria-label="%2$s"><span class="dwdp-film-bar"><span class="dw-bdots"><i></i><i></i><i></i></span><span class="dwdp-film-url">%3$s</span></span>%4$s</a>',
+			'<a class="dwdp-vitem" href="%1$s" aria-label="%2$s"><span class="dwdp-vbar"><span class="dw-bdots"><i></i><i></i><i></i></span></span>%3$s</a>',
 			esc_url( get_permalink( $p ) ),
 			esc_attr( 'View the ' . get_the_title( $p ) . ' project' ),
-			esc_html( dwdp_domain( $p->ID ) ),
 			dwdp_img( $hero, get_the_title( $p ) . ' website design', array( 'loading' => $count < 2 ? 'eager' : 'lazy' ) )
 		);
 		$count++;
@@ -117,12 +116,14 @@ add_shortcode( 'dwd_project_slider', function ( $atts ) {
 	if ( ! $count ) {
 		return '';
 	}
-	// The list is repeated once so the upward loop is seamless.
-	$dur = max( 20, $count * max( 3, (float) $atts['speed'] ) );
-	return '<div class="dwdp-film" style="--dwdp-film-dur:' . esc_attr( $dur ) . 's"><div class="dwdp-film-track">'
-		. '<div class="dwdp-film-set">' . $items . '</div>'
-		. '<div class="dwdp-film-set" aria-hidden="true">' . str_replace( '<a ', '<a tabindex="-1" ', $items ) . '</div>'
-		. '</div></div>';
+	$chev = '<svg viewBox="0 0 22 22" aria-hidden="true"><path d="%s"></path></svg>';
+	return '<div class="dwdp-vslider">'
+		. '<div class="dwdp-vnav">'
+		. '<button type="button" class="dwdp-vbtn dwdp-up" aria-label="Previous design">' . sprintf( $chev, 'M4 14 L11 7 L18 14' ) . '</button>'
+		. '<button type="button" class="dwdp-vbtn dwdp-down" aria-label="Next design">' . sprintf( $chev, 'M4 8 L11 15 L18 8' ) . '</button>'
+		. '</div>'
+		. '<div class="dwdp-vview"><div class="dwdp-vtrack">' . $items . '</div></div>'
+		. '</div>';
 } );
 
 /** The original one-at-a-time browser slider. */
