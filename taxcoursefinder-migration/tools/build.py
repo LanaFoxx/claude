@@ -250,7 +250,7 @@ def seo_tweaks(name, body):
         # Headline highlight in the same serif as the rest of the H1 (colour only), like the course pages.
         old_h = '<span style="display:block;font-family:\'Plus Jakarta Sans\',sans-serif;font-weight:700;font-size:.88em;letter-spacing:-.025em;color:#95AB3B">CTEC Approved Tax Course</span>'
         assert old_h in body, 'home h1 span'
-        body = body.replace(old_h, '<span style="display:block;color:#95AB3B">CTEC Approved Tax Course</span>', 1)
+        body = body.replace(old_h, '<span style="display:block;color:#fff">CTEC Approved Tax Course</span>', 1)
         # Exact target keywords in the home course cards (headings + copy), wording unchanged otherwise.
         for old, new in [('CTEC 20-Hour <span style="font-weight:800">CE Course</span>', '20 Hour <span style="font-weight:800">CTEC Course</span>'),
                          ('CTEC 60-Hour <span style="font-weight:800">QE Course</span>', '60 Hour <span style="font-weight:800">CTEC Course</span>'),
