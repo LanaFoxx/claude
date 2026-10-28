@@ -164,3 +164,24 @@ add_action( 'template_redirect', function () {
 	} ) );
 	wc_set_notices( $notices );
 } );
+/* ---------------------------------------------------------------- SMS consent at checkout (10DLC) */
+// Checkout collects a phone number, so it carries the SMS opt-in: optional, unchecked, full carrier disclaimer, right
+// under the phone field. WooCommerce stores the custom billing field on the order as _ctc_sms_consent (1 = opted in).
+add_filter( 'woocommerce_checkout_fields', function ( $fields ) {
+	$after = isset( $fields['billing']['billing_phone']['priority'] ) ? (int) $fields['billing']['billing_phone']['priority'] : 100;
+	$fields['billing']['ctc_sms_consent'] = array(
+		'type'     => 'checkbox',
+		'required' => false,
+		'default'  => 0,
+		'priority' => $after + 1,
+		'class'    => array( 'form-row-wide', 'ctc-sms-consent' ),
+		'label'    => 'Yes, I agree to receive text messages from California Tax Courses at the phone number provided, including replies to my questions, course and enrollment support, and CTEC deadline reminders. Message frequency varies. Message and Data Rates May Apply. Reply STOP to opt out. Reply HELP for more information. Consent is not a condition of purchase. '
+			. '<a href="' . esc_url( home_url( '/sms-privacy-policy/' ) ) . '" target="_blank">SMS Privacy Policy</a> · <a href="' . esc_url( home_url( '/sms-terms-and-conditions/' ) ) . '" target="_blank">SMS Terms</a>',
+	);
+	return $fields;
+} );
+// Show the choice on the order screen in wp-admin.
+add_action( 'woocommerce_admin_order_data_after_billing_address', function ( $order ) {
+	$v = $order->get_meta( '_ctc_sms_consent' );
+	echo '<p><strong>SMS consent:</strong> ' . ( $v ? 'Yes (opted in at checkout)' : 'No' ) . '</p>';
+} );

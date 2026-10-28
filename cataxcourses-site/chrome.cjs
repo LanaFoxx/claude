@@ -76,6 +76,8 @@ body:has(.ctc-header){background:#fff;margin:0;color:${C.navy};font-family:${BOD
 .ctc-pricebar:hover,.ctc-article:hover{background-color:${C.sandHover}!important}
 .ctc-cta-gold:hover{background-color:${C.goldHover}!important}.ctc-cta-navy:hover{background-color:${C.navy2}!important}
 .ctc-link-gold a:hover,.ctc-link-gold a:focus{color:${C.white}!important}
+/* Checkout SMS consent checkbox (wp/preview-snippet.php) */
+.ctc-checkout .ctc-sms-consent label{display:block!important;position:relative;padding-left:30px;font-weight:400!important;font-size:14px!important;line-height:1.55;color:${C.gray}}.ctc-checkout .ctc-sms-consent input[type=checkbox]{position:absolute;left:0;top:2px;width:18px;height:18px;margin:0;accent-color:${C.gold}}.ctc-checkout .ctc-sms-consent a{color:${C.goldText};font-weight:700}.ctc-checkout .ctc-sms-consent .optional{display:none}
 /* Text alerts (SMS opt-in) form */
 .ctc-sms-form a{color:${C.goldText}!important;font-weight:700}.ctc-sms-form .elementor-field-type-acceptance .elementor-field-option{display:flex;gap:10px;align-items:flex-start}.ctc-sms-form input[type=checkbox]{width:20px;height:20px;flex:none;margin-top:3px;accent-color:${C.gold}}.ctc-sms-form .elementor-field-type-acceptance label{font-weight:400!important;font-size:15px;line-height:1.6;color:${C.gray}}
 /* Tax News article body (Theme Builder single-post template, pages/post-single.cjs) */

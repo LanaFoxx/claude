@@ -9,8 +9,8 @@ const { pageHero } = require('./faq.cjs');
 const BRAND = 'California Tax Courses';
 const DISCLOSURE = `By checking this box, I agree to receive text messages from ${BRAND} at the mobile number provided, `
   + 'including replies to my questions, course and enrollment support, and CTEC deadline reminders. '
-  + 'Message frequency varies. Message and data rates may apply. Reply STOP to opt out at any time. '
-  + `Reply HELP for help or call ${PHONE.label}. Consent is not a condition of purchase. `
+  + 'Message frequency varies. Message and Data Rates May Apply. Reply STOP to opt out. Reply HELP for more information. '
+  + `Consent is not a condition of purchase. `
   + `See our <a href="${URL.privacy}" target="_blank">Privacy Policy</a> and <a href="${URL.terms}" target="_blank">Terms &amp; Conditions</a>.`;
 
 const field = (o) => ({ _id: id().slice(0, 7), width: '100', ...o });
@@ -55,7 +55,7 @@ module.exports = {
         widget('heading', { title: 'Sign up for text messages', header_size: 'h2', title_color: C.navy, ...typo('typography', HEAD, [34, 30, 26], 800, { lh: 1.15, ls: -0.01 }) }),
         text(`Text with ${BRAND}: get replies to your questions, help with your course and enrollment, and CTEC deadline reminders. Enter your mobile number and check the box below to give permission.`, { size: [18, 17, 16], lh: 1.6 }),
         form(),
-        text(`<strong>${BRAND}</strong> text messages: message frequency varies. Message and data rates may apply. Reply <strong>STOP</strong> to unsubscribe, <strong>HELP</strong> for help, or call <a href="${PHONE.tel}">${PHONE.label}</a>. Mobile numbers and SMS opt-in consent are never sold or shared with third parties or affiliates. <a href="${URL.privacy}">Privacy Policy</a> · <a href="${URL.terms}">Terms &amp; Conditions</a>.`,
+        text(`<strong>${BRAND}</strong> text messages: Message frequency varies. Message and Data Rates May Apply. Reply <strong>STOP</strong> to opt out. Reply <strong>HELP</strong> for more information, or call <a href="${PHONE.tel}">${PHONE.label}</a>. Mobile numbers and SMS opt-in consent are never sold or shared with third parties or affiliates. <a href="${URL.privacy}">Privacy Policy</a> · <a href="${URL.terms}">Terms &amp; Conditions</a>.`,
           { size: 14, lh: 1.6, linkColor: C.goldText }),
       ]),
     ], { pad: [40, 88], align: 'center' }),
