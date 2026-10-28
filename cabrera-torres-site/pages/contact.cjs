@@ -8,7 +8,7 @@ module.exports = {
   slug: 'contact', title: 'Contact',
   seo: {
     title: 'Contact Us | Free Case Evaluation | Cabrera Torres Law Firm',
-    description: 'Injured? Call Jen at 678-730-0061 or request a free, confidential case evaluation. 1770 Indian Trail Lilburn Rd NW, Norcross, GA 30093.',
+    description: 'Injured? Call Jen at 770-777-HURT or request a free, confidential case evaluation. 1770 Indian Trail Lilburn Rd NW, Suite 350, Norcross, GA 30093.',
     focus: 'free case evaluation Norcross',
   },
   build: (m) => [
@@ -30,7 +30,7 @@ module.exports = {
         stack([
           P.contactForm(5),
           widget('google_maps', {
-            address: '1770 Indian Trail Lilburn Rd NW, Norcross, GA 30093', zoom: { unit: 'px', size: 14, sizes: [] },
+            address: '1770 Indian Trail Lilburn Rd NW, Suite 350, Norcross, GA 30093', zoom: { unit: 'px', size: 14, sizes: [] },
             height: px(300), height_mobile: px(240),
             _border_border: 'solid', _border_width: box(1), _border_color: C.line,
             custom_css: 'selector iframe { filter: grayscale(1) invert(.92) contrast(.9); }',

@@ -25,7 +25,7 @@ const m = {
   // homepage-v2
   logoDark: md('cabrera-torres-law-firm-logo-dark.webp'), logoLight: md('cabrera-torres-law-firm-logo-light.webp'),
   office: md('cabrera-torres-law-firm-office-norcross-ga.webp'), heroJen: md('jennifer-cabrera-torres-personal-injury-lawyer-hero.webp'),
-  storyJen: md('jennifer-cabrera-torres-attorney-story-portrait.webp'), heroJenReal: md('jennifer-cabrera-torres-attorney-cream-dress-portrait.webp'), litJen: md('jennifer-cabrera-torres-trial-attorney-georgia.webp'),
+  storyJen: md('jennifer-cabrera-torres-attorney-story-portrait.webp'), heroJenReal: md('jennifer-cabrera-torres-attorney-cream-dress-portrait.webp'), jenDeskPortrait: md('jennifer-cabrera-torres-attorney-desk-portrait.webp'), litJen: md('jennifer-cabrera-torres-trial-attorney-georgia.webp'),
 };
 
 const PAGE_SLUGS = ['home', 'about', 'meet-jennifer', 'practice-areas', 'case-results', 'testimonials', 'faq', 'blog', 'contact'];

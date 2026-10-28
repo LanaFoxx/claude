@@ -130,11 +130,13 @@ const story = (m) => container({
 }, [
   // Jen (Markup): her desk portrait, shown as the full photo on its own dark backdrop. The background-removed
   // cutout left a dark fringe around her hair that "didn't blend" with the cream section.
+  // Jen (Markup): her desk portrait. Shown at (or below) its native size so it never upscales ("looks pixelated"):
+  // a portrait crop of the 1200x744 original, standing on the bottom of a panel that matches its near-black backdrop.
   container({
-    content_width: 'full', flex_direction: 'column', padding: box(0), min_height: px(640), min_height_tablet: px(520), min_height_mobile: px(400),
-    background_background: 'classic', background_color: '#121212',
+    content_width: 'full', flex_direction: 'column', flex_justify_content: 'flex-end', flex_align_items: 'center', padding: box(48, 0, 0, 0), padding_mobile: box(24, 0, 0, 0),
+    background_background: 'classic', background_color: '#030303',
   }, [
-    image(m.jenDesk, { settings: { custom_css: 'selector { position: absolute; inset: 0; margin: 0; }\nselector .elementor-widget-container, selector img { width: 100%; height: 100%; }\nselector img { display: block; object-fit: cover; object-position: 45% center; }\n@media (max-width: 767px) { selector img { object-position: 45% top; } }' } }),
+    image(m.jenDeskPortrait, { settings: { custom_css: 'selector { width: 100%; }\nselector img { display: block; width: 100%; max-width: 640px; height: auto; margin: 0 auto; -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 35%); mask-image: linear-gradient(180deg, transparent 0, #000 35%); }' } }),
   ]),
   stack([
     kicker('The Story Behind the Firm', C.roseDeep, { settings: { typography_font_weight: '600' } }),

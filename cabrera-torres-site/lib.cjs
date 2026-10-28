@@ -19,7 +19,7 @@ const URL = {
   testimonials: '/testimonials/', faq: '/faq/', blog: '/blog/', contact: '/contact/',
   maps: 'https://maps.google.com/?q=1770+Indian+Trail+Lilburn+Rd+NW+Norcross+GA+30093',
 };
-const ADDRESS = '1770 Indian Trail Lilburn Rd NW<br>Norcross, GA 30093';
+const ADDRESS = '1770 Indian Trail Lilburn Rd NW, Suite 350<br>Norcross, GA 30093';
 
 const id = () => crypto.randomBytes(4).toString('hex').slice(0, 7);
 const px = (size, unit = 'px') => ({ unit, size, sizes: [] });
