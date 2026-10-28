@@ -4,7 +4,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Active courses for the newest year: visible, in a visible non-test category, not named outdated/expired,
+ * Active courses for the newest year (plus last year's 60 Hour): visible, in a visible non-test category, not named outdated/expired,
  * and carrying the latest year found in any active course name. 60 Hour first, then 20 Hour, then by name.
  *
  * @return array of course records
@@ -30,8 +30,9 @@ function local_activecourses_list() {
     $latest = max(array_map(function($c) {
         return $c->year;
     }, $courses));
+    // 60 Hour QE courses stay valid for two years, so last year's version is kept too.
     $courses = array_filter($courses, function($c) use ($latest) {
-        return $c->year == $latest;
+        return $c->year == $latest || ($c->year == $latest - 1 && stripos($c->fullname, '60 Hour') !== false);
     });
     $rank = function($c) {
         if (stripos($c->fullname, '60 Hour') !== false) {
@@ -40,7 +41,10 @@ function local_activecourses_list() {
         return stripos($c->fullname, '20 Hour') !== false ? 1 : 2;
     };
     usort($courses, function($a, $b) use ($rank) {
-        return $rank($a) != $rank($b) ? $rank($a) - $rank($b) : strcasecmp($a->fullname, $b->fullname);
+        if ($rank($a) != $rank($b)) {
+            return $rank($a) - $rank($b);
+        }
+        return $a->year != $b->year ? $b->year - $a->year : strcasecmp($a->fullname, $b->fullname);
     });
     return $courses;
 }

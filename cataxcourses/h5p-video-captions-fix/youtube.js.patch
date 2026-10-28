@@ -1,0 +1,95 @@
+--- orig/scripts/youtube.js	2026-10-28 19:04:33.793242202 +0000
++++ build/H5P.Video-1.5/scripts/youtube.js	2026-10-28 19:13:11.744604539 +0000
+@@ -14,6 +14,11 @@
+ 
+     var player;
+     var playbackRate = 1;
++    // California Tax Courses captions state (see onApiChange and setCaptionsTrack).
++    var captionsOffPending = false;
++    var captionsOff = false;
++    var autoCaptionsTrack = null;
++    var wantedCaptionsTrack = null;
+     var id = 'h5p-youtube-' + numInstances;
+     numInstances++;
+ 
+@@ -83,6 +88,10 @@
+ 
+               // Always load captions
+               player.loadModule('captions');
++
++              // California Tax Courses: YouTube switches its auto-generated captions on when this module
++              // loads and does not list them, so H5P showed no CC button. Start with captions off.
++              captionsOffPending = true;
+             }
+ 
+             var trackList;
+@@ -91,6 +100,34 @@
+               trackList = player.getOption('captions', 'tracklist');
+             }
+             catch (err) {}
++            var currentTrack;
++            try {
++              currentTrack = player.getOption('captions', 'track');
++            }
++            catch (err) {}
++            if (currentTrack && currentTrack.languageCode && !autoCaptionsTrack) {
++              autoCaptionsTrack = currentTrack;
++            }
++            if (wantedCaptionsTrack) {
++              // A student picked a track while the module was loading.
++              try {
++                player.setOption('captions', 'track', wantedCaptionsTrack);
++              }
++              catch (err) {}
++              wantedCaptionsTrack = null;
++            }
++            else if (captionsOffPending && currentTrack && currentTrack.languageCode) {
++              captionsOffPending = false;
++              captionsOff = true;
++              try {
++                player.setOption('captions', 'track', {});
++                player.unloadModule('captions');
++              }
++              catch (err) {}
++            }
++            if ((!trackList || !trackList.length) && autoCaptionsTrack) {
++              trackList = [autoCaptionsTrack];
++            }
+             if (trackList && trackList.length) {
+ 
+               // Format track list into valid track options
+@@ -433,7 +470,23 @@
+      * @param {H5P.Video.LabelValue} Captions track to show during playback
+      */
+     self.setCaptionsTrack = function (track) {
+-      player.setOption('captions', 'track', track ? {languageCode: track.value} : {});
++      captionsOffPending = false;
++      if (!track) {
++        captionsOff = true;
++        player.setOption('captions', 'track', {});
++        try {
++          player.unloadModule('captions');
++        }
++        catch (err) {}
++        return;
++      }
++      if (captionsOff) {
++        // Captions module was unloaded; reload it and apply the track once YouTube is ready.
++        captionsOff = false;
++        wantedCaptionsTrack = {languageCode: track.value};
++        player.loadModule('captions');
++      }
++      player.setOption('captions', 'track', {languageCode: track.value});
+     };
+ 
+     /**
+@@ -442,6 +495,9 @@
+      * @return {H5P.Video.LabelValue} Captions track
+      */
+     self.getCaptionsTrack = function () {
++      if (captionsOff) {
++        return null;
++      }
+       var track = player.getOption('captions', 'track');
+       return (track.languageCode ? new H5P.Video.LabelValue(track.displayName, track.languageCode) : null);
+     };

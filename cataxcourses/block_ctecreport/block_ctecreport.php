@@ -64,6 +64,80 @@ class block_ctecreport extends block_base {
         return html_writer::table($table);
     }
 
+    /**
+     * Students still taking a course whose CTEC ID answer is missing a usable ID, so it can be fixed
+     * before they complete. Completed students show in the problems list instead.
+     */
+    protected function bad_ids_list() {
+        global $DB, $OUTPUT, $PAGE;
+        $perpage = 10;
+        $page = optional_param('ctecbadidpage', 0, PARAM_INT);
+        $map = \local_ctecreport\reporter::course_map();
+        $html = '';
+        $bad = [];
+        if ($map) {
+            list($insql, $params) = $DB->get_in_or_equal(array_keys($map), SQL_PARAMS_NAMED);
+            $like = $DB->sql_like('fi.name', ':pattern', false);
+            $params['pattern'] = '%CTEC ID%';
+            $answers = $DB->get_records_sql("SELECT fv.id, fc.userid, f.course, fv.value, fc.timemodified
+                                               FROM {feedback_value} fv
+                                               JOIN {feedback_item} fi ON fi.id = fv.item
+                                               JOIN {feedback} f ON f.id = fi.feedback
+                                               JOIN {feedback_completed} fc ON fc.id = fv.completed
+                                              WHERE f.course $insql AND $like
+                                           ORDER BY fc.timemodified DESC, fv.id DESC", $params);
+            $seen = [];
+            foreach ($answers as $a) {
+                $key = $a->userid . '-' . $a->course;
+                if (isset($seen[$key])) {
+                    continue; // Only the student's latest answer in each course counts.
+                }
+                $seen[$key] = true;
+                if (\local_ctecreport\reporter::normalise_ctecid($a->value) !== '') {
+                    continue;
+                }
+                if ($DB->record_exists('local_ctecreport_log', ['userid' => $a->userid, 'courseid' => $a->course])) {
+                    continue;
+                }
+                if (\local_ctecreport\reporter::find_ctecid($a->userid, $a->course) !== '') {
+                    continue; // A valid ID given elsewhere will be used.
+                }
+                $bad[] = $a;
+            }
+        }
+        $total = count($bad);
+        $html .= $OUTPUT->heading("CTEC IDs entered incorrectly, course not finished yet ($total)", 5, 'mt-3');
+        if (!$total) {
+            return $html . html_writer::tag('p', '&#10004; None.', ['class' => 'text-success mb-1']);
+        }
+        $html .= html_writer::tag('p', 'These students typed something that is not a CTEC ID (A followed by 6 digits). ' .
+            'Ask them to correct it, or it will fail when they complete the course.', ['class' => 'small mb-1']);
+        $slice = array_slice($bad, $page * $perpage, $perpage);
+        $users = $DB->get_records_list('user', 'id', array_unique(array_map(function($a) {
+            return $a->userid;
+        }, $slice)));
+        $courses = $DB->get_records_list('course', 'id', array_unique(array_map(function($a) {
+            return $a->course;
+        }, $slice)), '', 'id, shortname, fullname');
+        $table = new html_table();
+        $table->attributes['class'] = 'generaltable table-sm mb-1';
+        $table->head = ['Entered', 'Student', 'Course', 'What they typed'];
+        foreach ($slice as $a) {
+            $u = $users[$a->userid];
+            $c = $courses[$a->course];
+            $table->data[] = [
+                userdate($a->timemodified, get_string('strftimedatefullshort')),
+                html_writer::link(new moodle_url('/user/view.php', ['id' => $u->id, 'course' => $c->id]), fullname($u)) .
+                    html_writer::empty_tag('br') . html_writer::link('mailto:' . $u->email, s($u->email), ['class' => 'small']),
+                html_writer::tag('span', s($c->shortname), ['title' => s($c->fullname)]),
+                trim($a->value) === '' ? html_writer::tag('em', '(left blank)') : s($a->value),
+            ];
+        }
+        $html .= html_writer::table($table);
+        $html .= $OUTPUT->paging_bar($total, $page, $perpage, new moodle_url($PAGE->url), 'ctecbadidpage');
+        return $html;
+    }
+
     /** Everyone reported to the live CTEC roster, newest first, 10 per page. */
     protected function reported_list() {
         global $DB, $OUTPUT, $PAGE;
@@ -134,8 +208,9 @@ class block_ctecreport extends block_base {
                                     ORDER BY l.timecompleted DESC", [], 0, self::LIMIT);
 
         $html .= $this->stats_table();
+        $html .= $OUTPUT->heading("Completions CTEC could not accept ($total)", 5, 'mt-3');
         if (!$rows) {
-            $html .= html_writer::tag('p', '&#10004; Nothing needs attention.', ['class' => 'text-success mb-1']);
+            $html .= html_writer::tag('p', '&#10004; None. Every completion has been reported.', ['class' => 'text-success mb-1']);
         } else {
             $html .= html_writer::tag('p', html_writer::tag('strong', "$total completion(s) could not be reported to CTEC.") .
                 ' Fix the CTEC ID on the reporting log and click Send.', ['class' => 'mb-2']);
@@ -158,6 +233,7 @@ class block_ctecreport extends block_base {
                 $html .= html_writer::tag('p', 'Showing the latest ' . count($rows) . " of $total.", ['class' => 'small']);
             }
         }
+        $html .= $this->bad_ids_list();
         $html .= $this->reported_list();
         $this->content->text = $html;
         $this->content->footer = html_writer::link($logurl, 'Open the CTEC reporting log to fix and resend');
