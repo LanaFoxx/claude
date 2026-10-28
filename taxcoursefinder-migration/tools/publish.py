@@ -161,6 +161,7 @@ if STEP == 'hf':
             '<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Manrope:wght@300;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=Source+Serif+4:opsz,wght@8..60,200;8..60,300;8..60,400&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">'
             '<style id="tcf-site-css">' + css + '.tcf-hidden-form{display:none!important}</style><script>' + rt + '</script>')
     hdr = fix_media(head + hf['header'])
+    hdr = hdr.replace('max-width:1200px;margin:0 auto;padding:0 56px;height:110px', 'max-width:none;margin:0;padding:0 48px;height:110px', 1)  # full-width header: logo left, menu right
     hdr = hdr.replace('style="height:80px;width:auto;display:block"', 'width="210" height="76" style="height:76px;width:auto;display:block"', 1)
     hdr = hdr.replace('<img ', '<img fetchpriority="high" width="193" height="80" ', 1)
     ftr = fix_media(hf['footer']).replace('style="height:58px;width:auto;display:block"', 'style="height:68px;width:auto;display:block"', 1).replace("<img ", "<img width=\"188\" height=\"68\" ", 1)

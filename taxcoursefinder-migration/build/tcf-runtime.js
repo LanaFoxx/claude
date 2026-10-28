@@ -274,13 +274,6 @@
   document.addEventListener('click', onCopy);
   document.addEventListener('keydown', onCopy);
 
-  // Compact sticky header once the page is scrolled (styles in site.css, desktop only).
-  (function () {
-    var on = false, de = document.documentElement;
-    function check() { var y = window.scrollY || 0; if (!on && y > 140) { on = true; de.classList.add('tcf-compact-head'); } else if (on && y < 60) { on = false; de.classList.remove('tcf-compact-head'); } }
-    window.addEventListener('scroll', check, { passive: true }); check();
-  })();
-
   // Mobile header menu
   document.addEventListener('click', function (e) {
     var t = e.target.closest && e.target.closest('[data-tcf-menu-toggle]');
