@@ -188,7 +188,8 @@ add_action( 'save_post_' . DWDP_CPT, function ( $post_id ) {
 add_filter( 'wp_insert_post_data', function ( $data, $postarr ) {
 	if ( DWDP_CPT === $data['post_type'] && empty( $postarr['ID'] ) && empty( $data['menu_order'] ) ) {
 		global $wpdb;
-		$min                = $wpdb->get_var( $wpdb->prepare( "SELECT MIN(menu_order) FROM {$wpdb->posts} WHERE post_type = %s AND post_status NOT IN ('trash','auto-draft')", DWDP_CPT ) );
+		// Pinned projects don't count: new ones go right under them, above everything else.
+		$min                = $wpdb->get_var( $wpdb->prepare( "SELECT MIN(p.menu_order) FROM {$wpdb->posts} p LEFT JOIN {$wpdb->postmeta} m ON m.post_id = p.ID AND m.meta_key = '_dwdp_pinned' WHERE p.post_type = %s AND p.post_status NOT IN ('trash','auto-draft') AND ( m.meta_value IS NULL OR m.meta_value <> '1' )", DWDP_CPT ) );
 		$data['menu_order'] = null === $min ? 1 : (int) $min - 1;
 	}
 	return $data;
@@ -258,6 +259,15 @@ add_action( 'pre_get_posts', function ( $q ) {
 		$q->set( 'orderby', array( 'menu_order' => 'ASC', 'date' => 'ASC' ) );
 	}
 } );
+
+/** In the admin list, pinned projects come first too, matching the site. */
+add_filter( 'the_posts', function ( $posts, $q ) {
+	if ( ! is_admin() || ! $q->is_main_query() || DWDP_CPT !== $q->get( 'post_type' ) || ! in_array( $q->get( 'orderby' ), array( '', array( 'menu_order' => 'ASC', 'date' => 'ASC' ) ), true ) ) {
+		return $posts;
+	}
+	$pinned = array_filter( $posts, function ( $p ) { return '1' === (string) dwdp_get( $p->ID, 'pinned' ); } );
+	return array_merge( array_values( $pinned ), array_values( array_diff_key( $posts, $pinned ) ) );
+}, 10, 2 );
 
 /* ---------- settings ---------- */
 
