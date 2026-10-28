@@ -170,7 +170,7 @@
 .dwdp-vbtn svg{width:20px;height:20px;stroke:#fff;stroke-width:3.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
 .dwdp-vview{flex:1;min-width:0;overflow:hidden;border-radius:12px;background:#fff;box-shadow:0 40px 90px rgba(0,0,0,.55);transition:height .7s cubic-bezier(.65,0,.35,1)}
 .dwdp-vtrack{display:flex;flex-direction:column;transition:transform .7s cubic-bezier(.65,0,.35,1);will-change:transform}
-.dwdp-vitem{display:block;text-decoration:none!important;aspect-ratio:1440/900;overflow:hidden;background:#fff}
-.dwdp-vitem img{display:block;width:100%;height:auto}
+.dwdp-vitem{display:block;text-decoration:none!important;aspect-ratio:1/.58;overflow:hidden;background:#fff}
+.dwdp-vitem img{display:block;width:100%;height:100%;object-fit:cover;object-position:center top}
 @media (prefers-reduced-motion:reduce){.dwdp-vview,.dwdp-vtrack{transition:none}}
 @media(max-width:767px){.dwdp-vslider{flex-direction:column-reverse}.dwdp-vnav{flex-direction:row}.dwdp-vview{flex:none;width:100%;align-self:stretch}}

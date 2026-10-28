@@ -105,26 +105,14 @@ add_shortcode( 'dwd_project_slider', function ( $atts ) {
 		if ( ! $hero ) {
 			continue;
 		}
-		// Every design is shown as the site's first screen (1440x900): the hero, continued by the
-		// top of the next section when the hero is shorter than the screen.
-		$sections = dwdp_ids( dwdp_get( $p->ID, 'sections' ) );
-		$next     = 0;
-		foreach ( $sections as $k => $sid ) {
-			if ( $sid === $hero ) {
-				$next = isset( $sections[ $k + 1 ] ) ? $sections[ $k + 1 ] : 0;
-				break;
-			}
-		}
-		if ( ! $next && $sections && $sections[0] !== $hero ) {
-			$next = $sections[0];
-		}
+		// One shared frame; each hero fills it from the top (short heroes lose a little of their
+		// empty side margins, tall ones a sliver of their bottom edge).
 		$lazy   = $count < 2 ? 'eager' : 'lazy';
 		$items .= sprintf(
-			'<a class="dwdp-vitem" href="%1$s" aria-label="%2$s">%3$s%4$s</a>',
+			'<a class="dwdp-vitem" href="%1$s" aria-label="%2$s">%3$s</a>',
 			esc_url( get_permalink( $p ) ),
 			esc_attr( 'View the ' . get_the_title( $p ) . ' project' ),
-			dwdp_img( $hero, get_the_title( $p ) . ' website design', array( 'loading' => $lazy ) ),
-			$next ? dwdp_img( $next, '', array( 'loading' => $lazy, 'alt' => '', 'aria-hidden' => 'true' ) ) : ''
+			dwdp_img( $hero, get_the_title( $p ) . ' website design', array( 'loading' => $lazy ) )
 		);
 		$count++;
 	}
