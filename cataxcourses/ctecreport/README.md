@@ -11,3 +11,9 @@ CTEC Education API (`/api/CTECEducation`, or `/api/CTECEducationTest` in Test mo
 - A scheduled task retries pending/temporary failures every 15 minutes.
 
 Install: zip the `ctecreport` folder and upload it as a "local" plugin.
+
+## Dashboard block (`cataxcourses/block_ctecreport`)
+
+`block_ctecreport` ("CTEC reports needing attention") shows site admins counts of completions reported in the
+last hour/day/week/month and every report CTEC rejected or that has not gone through, with a plain-English reason.
+Install by zipping the folder as `ctecreport/` and uploading it as a "block" plugin, then add it to the Dashboard.
