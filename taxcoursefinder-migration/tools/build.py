@@ -98,6 +98,13 @@ def comparison_table(body):
 
 def seo_tweaks(name, body):
     body = comparison_table(body)
+    # Hero photo stays fixed while the page scrolls (desktop; styles in site.css).
+    hero_img = 'alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">'
+    hi = body.find(hero_img)
+    if 0 <= hi < 4000:
+        hs = body.rfind('<div ', 0, hi)
+        if 'position:relative;overflow:hidden' in body[hs:hs + 200]:
+            body = body[:hs] + '<div class="tcf-hero-fixed" ' + body[hs + 5:hi] + 'alt="" class="tcf-hero-bg" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">' + body[hi + len(hero_img):]
     body = body.replace('top:110px', 'top:var(--tcf-head,110px)')  # follow the compact sticky header
     body = body.replace('<div style="font:700 17px Manrope,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#7E9330">Two courses, one registration</div>', '')
     # No provider-count / updated-date line above the hero headline.
