@@ -63,9 +63,12 @@
     } catch (e) {}
   }
 
-  setInterval(function () {
-    scan(window);
+  var ticks = 0;
+  var timer = setInterval(function () {
     var iframes = document.querySelectorAll('iframe.h5p-iframe');
+    // Pages without H5P content: stop looking after about 30 seconds.
+    if (++ticks > 45 && !iframes.length && !window.H5P) { clearInterval(timer); return; }
+    scan(window);
     for (var i = 0; i < iframes.length; i++) {
       try { scan(iframes[i].contentWindow); } catch (e) {}
     }
