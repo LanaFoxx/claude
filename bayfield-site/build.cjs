@@ -218,7 +218,7 @@ body.home.bi-scrolled selector .bi-header-logo { opacity: 1; transform: none; po
 selector .elementor-nav-menu--dropdown a { border-bottom: 1px solid rgba(245,242,236,.15); }
 /* Webcam stands out (client sitemap): green pill with a live dot. */
 @keyframes bi-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
-selector .bi-menu-cam > a::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #E74C3C; margin-right: 9px; animation: bi-pulse 1.6s ease-in-out infinite; position: static; opacity: 1; transform: none; }
+selector .bi-menu-cam > a::before { content: "" !important; display: inline-block !important; width: 7px !important; height: 7px !important; border-radius: 50%; background: #E74C3C !important; margin: 0 9px 0 0 !important; vertical-align: 2px; position: static !important; transform: none !important; animation: bi-pulse 1.6s ease-in-out infinite; }
 selector .elementor-nav-menu--main .bi-menu-cam > a { background: #17301B; color: #F5F2EC !important; border-radius: 2px; padding: 8px 16px !important; margin: 0 6px; }
 selector .elementor-nav-menu--main .bi-menu-cam > a:hover { background: #0F2113; }
 selector .elementor-nav-menu--main .bi-menu-cam > a::after { display: none; }`,
@@ -250,6 +250,7 @@ function footer(m) {
     icon_color: 'rgba(245,242,236,0.6)', icon_self_vertical_align: 'flex-start', icon_vertical_offset: px(3),
     text_color: o.color || C.cream, text_color_hover: C.white,
     ...typo('icon_typography', SANS, o.size || 14, o.weight || 400, { lh: 1.5, ls: o.ls, transform: o.transform }),
+    ...(o.twoCol ? { custom_css: 'selector .elementor-icon-list-items { display: grid; grid-template-columns: repeat(2, max-content); column-gap: 36px; row-gap: 10px; }\nselector .elementor-icon-list-item { margin: 0 !important; padding: 0 !important; }' } : {}),
   });
   return [container({
     content_width: 'full', flex_direction: 'column', padding: box(0), flex_gap: gap(0), _element_id: 'contact',
@@ -275,7 +276,7 @@ function footer(m) {
       stack([
         label('Explore'),
         list([['Rooms', '/#rooms'], ['Dining', '/#dining'], ['History', PAGE.history], ['Gallery', PAGE.gallery], ['Webcam', PAGE.webcam], ['Gift Cards', PAGE.giftCards], ['Employment', PAGE.employment], ['Contact', '/#contact']],
-          { size: 13, weight: 500, ls: 1, transform: 'uppercase', color: 'rgba(245,242,236,0.9)' }),
+          { size: 13, weight: 500, ls: 1, transform: 'uppercase', color: 'rgba(245,242,236,0.9)', twoCol: true }),
       ], { gap: 14 }),
       stack([
         label('Follow us'),
@@ -574,13 +575,14 @@ selector .elementor-heading-title::before { content: ""; flex: none; width: ${si
   ]);
 
   // Social: Facebook and Instagram, highlighted per the sitemap.
-  const socialBtn = (label, icon, url) => button(label, url, 'outline', { size: 13, icon, upper: false, pad: box(16, 28, 16, 28), settings: { icon_align: 'row', typography_letter_spacing: px(0.5) } });
+  const socialBtn = (label, icon, url) => button(label, url, 'outline', { size: 13, icon, upper: false, pad: box(16, 28, 16, 28), settings: { icon_align: 'row', typography_letter_spacing: px(0.5), button_text_color: C.green, border_color: 'rgba(23,48,27,0.45)', button_hover_border_color: C.green, hover_color: C.cream, button_background_hover_color: C.green } });
   const social = section({
-    _element_id: 'follow', flex_direction: 'column', flex_align_items: 'center', ...radial('top right', C.mid, null, C.deep),
+    _element_id: 'follow', flex_direction: 'column', flex_align_items: 'center', background_background: 'classic', background_color: C.cream,
+    border_border: 'solid', border_width: box(1, 0, 0, 0), border_color: C.line,
     padding: box(96, 48, 96, 48), padding_tablet: box(80, 32, 80, 32), padding_mobile: box(64, 20, 64, 20), flex_gap: gap(22),
   }, [
-    eyebrow('Follow along', C.cream, { align: 'center', opacity: 0.8 }),
-    heading('Sunrises, specials and what’s happening on the waterfront.', 'h2', [44, 36, 30], C.cream, { align: 'center', ls: -0.8, maxW: 760 }),
+    eyebrow('Follow along', C.green, { align: 'center' }),
+    heading('Sunrises, specials and what’s happening on the waterfront.', 'h2', [44, 36, 30], C.green, { align: 'center', ls: -0.8, maxW: 760 }),
     row([
       socialBtn('Facebook', 'fab fa-facebook-f', EXT.facebook),
       socialBtn('Instagram', 'fab fa-instagram', EXT.instagram),

@@ -56,13 +56,25 @@ const photoBlock = (img, alt, ratio = '4 / 3') => image(img, { settings: {
 } });
 
 // Closing call to action band.
+// Closing call to action band: off-white, so it never stacks green on the green footer.
+// Buttons passed in are restyled for the light background: first solid green, the rest green outline.
+const onLight = (btn, i) => {
+  if (i === 0) Object.assign(btn.settings, {
+    background_background: 'gradient', background_color: '#1B3A21', background_color_b: C.green, button_text_color: C.cream, hover_color: C.cream,
+    button_background_hover_background: 'classic', button_background_hover_color: '#0F2113', border_border: '',
+    button_box_shadow_box_shadow: { horizontal: 0, vertical: 10, blur: 24, spread: -14, color: 'rgba(23,48,27,0.6)' },
+  });
+  else Object.assign(btn.settings, { button_text_color: C.green, border_color: 'rgba(23,48,27,0.45)', button_hover_border_color: C.green, hover_color: C.cream, button_background_hover_color: C.green });
+  return btn;
+};
 const ctaBand = (eb, title, buttons) => section({
-  flex_direction: 'column', flex_align_items: 'center', flex_gap: gap(22), ...radial('top right', C.mid, null, C.deep),
+  flex_direction: 'column', flex_align_items: 'center', flex_gap: gap(22), background_background: 'classic', background_color: C.cream,
+  border_border: 'solid', border_width: box(1, 0, 0, 0), border_color: C.line,
   padding: box(96, 48, 96, 48), padding_tablet: box(80, 32, 80, 32), padding_mobile: box(64, 20, 64, 20),
 }, [
-  eyebrow(eb, C.cream, { align: 'center', opacity: 0.8 }),
-  heading(title, 'h2', [44, 36, 30], C.cream, { align: 'center', ls: -0.8, maxW: 760 }),
-  row(buttons, { gap: 12, justify: 'center', settings: { padding: box(8, 0, 0, 0) } }),
+  eyebrow(eb, C.green, { align: 'center' }),
+  heading(title, 'h2', [44, 36, 30], C.green, { align: 'center', ls: -0.8, maxW: 760 }),
+  row(buttons.map(onLight), { gap: 12, justify: 'center', settings: { padding: box(8, 0, 0, 0) } }),
 ]);
 const outline = (label, url, o = {}) => button(label, url, 'outline', { upper: false, size: 13, pad: box(16, 28, 16, 28), ...o });
 const light = (label, url, o = {}) => button(label, url, 'light', { size: 13, pad: box(16, 28, 16, 28), icon: 'fas fa-arrow-right', ...o });
