@@ -178,7 +178,7 @@ add_action( 'wp_head', function () {
 		. '}</style>' . "\n";
 	// Footer icons everywhere: small, no circles. Review cards: equal space above and below.
 	echo '<style id="dwdp-footer-icons">.dwf .dwf-call-ic{display:none!important}.dwf .dwf-call-t{align-items:center!important;text-align:center!important}.dwf-icons{gap:20px!important;align-items:center}.dwf-ico,.dwf-ico:hover,.dwf-call-ic{width:auto!important;height:auto!important;border:0!important;border-radius:0!important;background:none!important}'
-		. '.dwf-ico svg{width:15px!important;height:15px!important}.dwf-ico:hover svg{fill:#fff}.dwf-call-ic svg{width:15px!important;height:15px!important}'
+		. '.dwf-ico svg{width:15px!important;height:15px!important}.dwf-ico:hover svg{fill:#fff}.dwf-ico[href*="linkedin"] svg{width:18px!important;height:18px!important}.dwf-call-ic svg{width:15px!important;height:15px!important}'
 		. '.elementor-element-dw0001t>.e-con .elementor-widget:last-child p:last-child{margin-bottom:0!important}.elementor-element-dw0001t>.e-con{padding-top:34px!important;padding-bottom:30px!important}</style>' . "\n";
 }, 99 );
 
