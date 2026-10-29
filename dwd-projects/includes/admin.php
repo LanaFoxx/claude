@@ -196,6 +196,36 @@ add_filter( 'wp_insert_post_data', function ( $data, $postarr ) {
 	return $data;
 }, 10, 2 );
 
+/** Save the text details of a project from the editor or a script (same rules as the Update button). */
+add_action( 'wp_ajax_dwdp_set_fields', function () {
+	$post_id = dwdp_check_request();
+	$in      = isset( $_POST['fields'] ) ? (array) json_decode( wp_unslash( $_POST['fields'] ), true ) : array(); // phpcs:ignore
+	foreach ( array( 'industry', 'review_by', 'platform', 'scope', 'responsive', 'aftercare' ) as $k ) {
+		if ( isset( $in[ $k ] ) ) {
+			update_post_meta( $post_id, '_dwdp_' . $k, sanitize_text_field( $in[ $k ] ) );
+		}
+	}
+	foreach ( array( 'summary', 'together', 'review' ) as $k ) {
+		if ( isset( $in[ $k ] ) ) {
+			update_post_meta( $post_id, '_dwdp_' . $k, sanitize_textarea_field( $in[ $k ] ) );
+		}
+	}
+	if ( isset( $in['url'] ) ) {
+		update_post_meta( $post_id, '_dwdp_url', esc_url_raw( $in['url'] ) );
+	}
+	foreach ( array( 'on_home', 'pinned' ) as $k ) {
+		if ( isset( $in[ $k ] ) ) {
+			update_post_meta( $post_id, '_dwdp_' . $k, '1' === (string) $in[ $k ] ? '1' : '0' );
+		}
+	}
+	foreach ( array( 'seo_title' => '_yoast_wpseo_title', 'seo_desc' => '_yoast_wpseo_metadesc', 'seo_kw' => '_yoast_wpseo_focuskw' ) as $k => $meta ) {
+		if ( isset( $in[ $k ] ) ) {
+			update_post_meta( $post_id, $meta, sanitize_text_field( $in[ $k ] ) );
+		}
+	}
+	wp_send_json_success();
+} );
+
 /** Keep the image list saved even before the user clicks Update. */
 add_action( 'wp_ajax_dwdp_set_media', function () {
 	$post_id = dwdp_check_request();
