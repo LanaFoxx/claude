@@ -16,9 +16,9 @@ const DINING = [
     ['The Cobb', '19', 'Greens, tomatoes, egg, bacon, blue cheese. Choice of fire-braised chicken, blackened whitefish or panko-breaded whitefish. Dressings: blue cheese, ranch, French, Italian, Asian vinaigrette, maple vinaigrette'],
     ['Spicy Veggie Rice Bowl', '16', 'Sautéed fresh veggie blend, coconut rice, spicy coconut curry sauce, scallions, sesame seeds'],
   ]],
-  ['Fresh Lake Superior Fish', 'Locally sourced: Halvorsen Fisheries, Cornucopia, and Bodin’s in Bayfield. Served with house rice and fresh sautéed vegetables. Broiled, spicy blackened, cedar-planked or deep fried.', [
+  ['Fresh Lake Superior Fish', 'Fresh fish only when available. Locally sourced: Halvorsen Fisheries, Cornucopia, and Bodin’s in Bayfield. Served with house rice and fresh sautéed vegetables. Broiled, spicy blackened, cedar-planked or deep fried.', [
     ['Lake Superior Whitefish', '21', ''],
-    ['Lake Trout', '23', 'Fresh trout only when available'],
+    ['Lake Trout', '23', ''],
   ]],
   ['Entrées', 'Served with sautéed fresh vegetable du jour and a choice of garlic mashed baby potatoes, seasoned fried potato medley or house coconut rice', [
     ['Sea Scallops', '35', 'Pan-seared, lemon oil, garlic'],

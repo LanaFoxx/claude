@@ -2,6 +2,8 @@
 // validates the data and regenerates CSS). Usage:
 //   WP_URL=https://... STATE=playwright-state.json MEDIA=dir-with-images node deploy.cjs [prep] [chrome] [home]
 // prep   = upload images, nav menu, Google Fonts snippet, site title + favicon
+// plugin = install/update the Bayfield Inn Manager plugin (menus + gallery dashboard)
+// data   = starter content for that dashboard (only if empty; FORCE_DATA=1 to overwrite)
 // chrome = header + footer Theme Builder templates (Entire Site)
 // home   = homepage, set as the static front page
 // pages  = sub-pages from the sitemap (pages.cjs); add page:<slug> to deploy only some
@@ -18,8 +20,17 @@ const PREP = path.join(path.dirname(process.env.STATE), 'bayfield-prep.json');
 const args = process.argv.slice(2);
 const want = (k) => args.length === 0 || args.includes(k);
 const FONTS = '<link rel="preconnect" href="https://fonts.googleapis.com">\n<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">';
-// Header links from the client's sitemap. Third value = menu item CSS class.
-const MENU = [['History', '/history/'], ['Gallery', '/gallery/'], ['Webcam', '/webcam/', 'bi-menu-cam'], ['Merchandise', '/merchandise/'], ['Gift Cards', '/gift-cards/'], ['Employment', '/employment/']];
+// Header menu: [label, link, css class, sub-items]. Employment lives in the footer.
+const MENU = [
+  ['Stay', '/gallery/#rooms', '', [['Suites', '/gallery/#suites'], ['Lake View Rooms', '/gallery/#lake-view'], ['City View Rooms', '/gallery/#city-view'],
+    ['Bayfield on the Lake', '/gallery/#bayfield-on-the-lake'], ['Isaac Wing House', '/gallery/#isaac-wing-house']]],
+  ['Restaurants & Bars', '/#dining', '', [['The Deck', '/the-deck/'], ['The Lounge', '/the-lounge/'], ['Lakeside Dining Room', '/lakeside-dining-room/'], ['The Creamery', '/the-creamery/']]],
+  ['Webcam', '/webcam/', 'bi-menu-cam'],
+  ['Shop', '/gift-card/', '', [['Gift Cards', '/gift-card/'], ['Merchandise', '/merchandise/']]],
+  ['History', '/history/'],
+  ['Gallery', '/gallery/'],
+];
+const menuSignature = (list) => list.map(([t, , , kids]) => t + (kids ? '(' + menuSignature(kids) + ')' : '')).join('|');
 
 const api = (p, method, url, body) => p.evaluate(async ([method, url, body]) => {
   const r = await fetch(url, { method, headers: { 'X-WP-Nonce': wpApiSettings.nonce, 'Content-Type': 'application/json' }, body: body ? JSON.stringify(body) : undefined });
@@ -106,12 +117,19 @@ async function setConditions(p, postId, conditions) {
     let menu = menus.find((x) => x.name === 'Bayfield Main Menu');
     if (!menu) menu = await api(p, 'POST', '/wp-json/wp/v2/menus', { name: 'Bayfield Main Menu' });
     // Rebuild the items when they differ from MENU.
-    const items = await api(p, 'GET', `/wp-json/wp/v2/menu-items?menus=${menu.id}&per_page=100&_fields=id,title,menu_order`);
-    const have = items.sort((a, b) => a.menu_order - b.menu_order).map((i) => i.title.rendered).join('|');
-    if (have !== MENU.map(([t]) => t).join('|')) {
+    const items = await api(p, 'GET', `/wp-json/wp/v2/menu-items?menus=${menu.id}&per_page=100&_fields=id,title,menu_order,parent`);
+    const byParent = (pid) => items.filter((i) => i.parent === pid).sort((a, b) => a.menu_order - b.menu_order);
+    const sig = (pid) => byParent(pid).map((i) => i.title.rendered.replace(/&amp;/g, '&') + (byParent(i.id).length ? '(' + sig(i.id) + ')' : '')).join('|');
+    if (sig(0) !== menuSignature(MENU)) {
       for (const i of items) await api(p, 'DELETE', `/wp-json/wp/v2/menu-items/${i.id}?force=true`);
       let order = 1;
-      for (const [title, url, cls] of MENU) await api(p, 'POST', '/wp-json/wp/v2/menu-items', { title, url: /^https?:/.test(url) ? url : SITE + url, menus: menu.id, status: 'publish', menu_order: order++, classes: cls ? [cls] : [] });
+      const add = async (list, parent) => {
+        for (const [title, url, cls, kids] of list) {
+          const it = await api(p, 'POST', '/wp-json/wp/v2/menu-items', { title, url: /^https?:/.test(url) ? url : SITE + url, menus: menu.id, parent, status: 'publish', menu_order: order++, classes: cls ? [cls] : [] });
+          if (kids) await add(kids, it.id);
+        }
+      };
+      await add(MENU, 0);
     }
     prep.menu = menu.id;
     prep.fonts = await snippet(p, 'Bayfield fonts', 'Bayfield fonts (Geist + Newsreader)', 'elementor_head', FONTS);
@@ -124,6 +142,24 @@ async function setConditions(p, postId, conditions) {
     fs.writeFileSync(PREP, JSON.stringify(prep, null, 1));
   }
 
+  if (want('plugin')) {
+    // Upload plugin/bayfield-inn-manager as a zip (replaces an older copy) and activate it.
+    const zip = path.join(path.dirname(process.env.STATE), 'bayfield-inn-manager.zip');
+    require('child_process').execSync(`rm -f "${zip}" && cd "${path.join(__dirname, 'plugin')}" && zip -qr "${zip}" bayfield-inn-manager`);
+    await p.goto(`${SITE}/wp-admin/plugin-install.php?tab=upload`, { waitUntil: 'domcontentloaded' });
+    await p.setInputFiles('#pluginzip', zip);
+    await Promise.all([p.waitForNavigation({ waitUntil: 'load', timeout: 120000 }), p.click('#install-plugin-submit')]);
+    // Already installed: WordPress asks to replace the current version.
+    const overwrite = p.locator('a.update-from-upload-overwrite');
+    if (await overwrite.count()) await Promise.all([p.waitForNavigation({ waitUntil: 'load', timeout: 120000 }), overwrite.first().click()]);
+    console.log('plugin upload:', (await p.locator('.wrap').first().innerText()).replace(/\s+/g, ' ').slice(0, 160));
+    await p.goto(`${SITE}/wp-admin/plugins.php`, { waitUntil: 'domcontentloaded' });
+    const activate = p.locator('a#activate-bayfield-inn-manager, tr[data-slug="bayfield-inn-manager"] .activate a');
+    if (await activate.count()) await Promise.all([p.waitForLoadState('domcontentloaded'), activate.first().click()]);
+    const active = await p.locator('tr[data-slug="bayfield-inn-manager"].active').count();
+    console.log('plugin:', active ? 'active' : 'NOT active');
+  }
+
   const md = (f) => ({ id: prep.media[f].id, url: prep.media[f].url, alt: '', source: 'library' });
   const m = {
     logo: md('bayfield-inn-logo-green-trim.png'), logoWhite: md('bayfield-inn-logo-white-trim.png'),
@@ -133,11 +169,26 @@ async function setConditions(p, postId, conditions) {
     eventsLawn: md('bayfield-events-lawn.jpg'),
     standardRoom: md('bayfield-standard-room.jpg'), creameryPhoto: md('bayfield-the-creamery.jpg'),
     exterior: md('bayfield-inn-exterior.jpg'), deckBar: md('bayfield-the-deck-bar.jpg'), diningWindow: md('bayfield-dining-room-window.jpg'),
-    condoCover: md('bayfield-condos-cover.jpg'),
+    condoCover: md('bayfield-condos-cover.jpg'), sunset: md('bayfield-harbor-sunset.jpg'),
     file: md, site: SITE,
     // Elementor's placeholder image, for any slot still waiting on a photo.
     placeholder: { id: '', url: `${SITE}/wp-content/plugins/elementor/assets/images/placeholder.png`, alt: '', source: 'library' },
   };
+
+  if (want('data')) {
+    // Starter menus + galleries for the dashboard. Only fills empty data unless FORCE_DATA=1,
+    // so the client's own edits are never overwritten.
+    const S = require('./seed.cjs');
+    await p.goto(`${SITE}/wp-admin/`, { waitUntil: 'domcontentloaded' });
+    const force = process.env.FORCE_DATA === '1';
+    for (const [kind, payload] of [['menus', S.menus(md)], ['galleries', S.galleries(md)]]) {
+      console.log('data', kind, JSON.stringify(await api(p, 'POST', `/wp-json/bayfield/v1/data/${kind}`, { data: payload, force })));
+    }
+    for (const [mid, cap] of S.captions(md)) await api(p, 'POST', `/wp-json/wp/v2/media/${mid}`, { caption: cap, title: cap, alt_text: cap });
+    // The separate Gift Cards info page is retired: links go straight to the product page.
+    const old = (await api(p, 'GET', '/wp-json/wp/v2/pages?slug=gift-cards&status=publish&_fields=id'))[0];
+    if (old) console.log('gift-cards page ->', (await api(p, 'POST', `/wp-json/wp/v2/pages/${old.id}`, { status: 'draft' })).status);
+  }
 
   if (want('chrome')) {
     // Publish both templates first, then set their conditions: publishing one template in the

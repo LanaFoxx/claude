@@ -16,11 +16,11 @@ const EXT = {
   gallery: 'https://bayfieldinn.com/relax/lobby-gallery/', facebook: 'http://facebook.com/BayfieldInn',
   instagram: 'https://www.instagram.com/thebayfieldinn/', tripadvisor: 'https://www.tripadvisor.com/',
   privacy: 'https://bayfieldinn.com/privacy-policy', terms: 'https://bayfieldinn.com/terms-of-use',
-  giftCards: '/gift-cards/', webcam: 'https://bayfieldlive.com',
+  giftCards: '/gift-card/', webcam: 'https://bayfieldlive.com',
 };
 
 const PAGE = {
-  history: '/history/', gallery: '/gallery/', webcam: '/webcam/', merch: '/merchandise/', giftCards: '/gift-cards/', employment: '/employment/',
+  history: '/history/', gallery: '/gallery/', webcam: '/webcam/', merch: '/merchandise/', giftCards: '/gift-card/', employment: '/employment/',
   deck: '/the-deck/', lakeside: '/lakeside-dining-room/', lounge: '/the-lounge/', creamery: '/the-creamery/',
 };
 
@@ -205,11 +205,11 @@ body.home.bi-scrolled selector .bi-header-logo { opacity: 1; transform: none; po
       pointer_color_menu_item_hover: C.green, pointer_color_menu_item_active: C.green, pointer_width: px(1),
       padding_horizontal_menu_item: px(18), padding_vertical_menu_item: px(8),
       // Tablet/mobile menu: green panel with large serif links, as in the design.
-      ...typo('dropdown_typography', SERIF, [28, 28, 26], 400, { lh: 1 }),
+      ...typo('dropdown_typography', SERIF, [17, 26, 24], 400, { lh: 1.1 }),
       color_dropdown_item: C.cream, background_color_dropdown_item: C.green,
       color_dropdown_item_hover: C.cream, background_color_dropdown_item_hover: C.deep,
       color_dropdown_item_active: C.cream, background_color_dropdown_item_active: C.deep,
-      padding_horizontal_dropdown_item: px(32), padding_horizontal_dropdown_item_mobile: px(20), padding_vertical_dropdown_item: px(18),
+      padding_horizontal_dropdown_item: px(22), padding_horizontal_dropdown_item_tablet: px(32), padding_horizontal_dropdown_item_mobile: px(20), padding_vertical_dropdown_item: px(13), padding_vertical_dropdown_item_tablet: px(18),
       dropdown_top_distance: px(31), dropdown_top_distance_mobile: px(21),
       toggle_color: C.green, toggle_background_color: 'rgba(0,0,0,0)', toggle_size: px(24),
       _flex_size: 'grow', _flex_size_tablet: 'none', _flex_size_mobile: 'none',
@@ -312,6 +312,7 @@ function footer(m) {
 function home(m) {
   const section = (settings, children) => container({ content_width: 'full', padding: box(0), flex_gap: gap(0), ...settings }, children, false);
   const bigPad = { padding: box(130, 48, 130, 48), padding_tablet: box(96, 32, 96, 32), padding_mobile: box(72, 20, 72, 20) };
+  const darkBtn = (label, url, o = {}) => button(label, url, 'dark', { ...o, settings: { button_background_hover_color: '#0F2113', ...(o.settings || {}) } });
   const smallEyebrow = (t, color, o) => {
     const w = eyebrow(t, color, o);
     Object.assign(w.settings, { typography_font_size: px(11.5), typography_letter_spacing: px(2.76) });
@@ -428,58 +429,49 @@ selector .elementor-message { color: #F5F2EC; padding: 0 18px 12px; margin: 0; f
     ]);
   };
 
-  // Hero: green panel with the white logo + one full-height photo with caption.
+  // Hero: full-width photo slideshow (swap photos in the container's Background › Slideshow).
+  // Logo, headline and the booking bar sit over a soft dark fade on the left.
   const hero = section({
-    ...gridSettings(['5fr 7fr', 1, 1]), _element_id: 'book', background_background: 'classic', background_color: C.green,
-    grid_gaps: gap(0, 0), grid_align_items: 'stretch',
-    custom_css: '/* Desktop: at least the screen height under the promo bar + header. */\n@media (min-width: 1025px) { selector { min-height: calc(100vh - 136px); } }',
+    _element_id: 'book', flex_direction: 'column', flex_justify_content: 'center',
+    background_background: 'slideshow', background_slideshow_gallery: [m.exterior, m.heroDeck, m.marina, m.sunset].map((x) => ({ id: x.id, url: x.url })),
+    background_slideshow_slide_duration: 6000, background_slideshow_transition_duration: 1200, background_slideshow_slide_transition: 'fade',
+    background_slideshow_background_size: 'cover', background_slideshow_background_position: 'center center', background_slideshow_ken_burns: 'yes', background_slideshow_loop: 'yes',
+    background_overlay_background: 'gradient', background_overlay_color: 'rgba(12,26,15,0.86)', background_overlay_color_stop: px(0, '%'),
+    background_overlay_color_b: 'rgba(12,26,15,0)', background_overlay_color_b_stop: px(75, '%'), background_overlay_gradient_type: 'linear',
+    background_overlay_gradient_angle: px(90, 'deg'), background_overlay_gradient_angle_tablet: px(180, 'deg'), background_overlay_gradient_angle_mobile: px(180, 'deg'),
+    background_overlay_opacity: px(1),
+    padding: box(72, 48, 72, 48), padding_tablet: box(64, 32, 64, 32), padding_mobile: box(48, 20, 48, 20),
+    min_height: px(640), min_height_tablet: px(560), min_height_mobile: px(0),
+    custom_css: '@media (min-width: 1025px) { selector { min-height: calc(100vh - 136px); } }\n@media (max-width: 1024px) { selector > .elementor-background-overlay { background-image: linear-gradient(180deg, rgba(12,26,15,.55) 0%, rgba(12,26,15,.82) 100%) !important; } }',
   }, [
-    container({
-      content_width: 'full', flex_direction: 'column', flex_justify_content: 'center', flex_gap: gap(24), flex_gap_mobile: gap(20),
-      padding: box(80, 64, 80, 72), padding_tablet: box(72, 48, 64, 48), padding_mobile: box(56, 20, 48, 20),
-      ...radial('bottom left', C.mid, null, C.deep), z_index: 1,
-    }, [
+    container({ content_width: 'full', padding: box(0), flex_direction: 'column', flex_gap: gap(24), flex_gap_mobile: gap(20), width: px(640), width_tablet: px(640), width_mobile: px(100, '%'), z_index: 2,
+      custom_css: 'selector { max-width: 100%; }' }, [
       image(m.logoWhite, { width: [300, 280, 220], align: 'left', settings: { _element_width: 'initial', _element_custom_width: px(300), _element_custom_width_tablet: px(280), _element_custom_width_mobile: px(220),
-        _element_custom_width_unit: 'px', alt_text: 'Bayfield Inn — Est. 1898', _margin: box(0, 0, 8, 0), custom_css: 'selector { max-width: 70%; }' } }),
-      heading('The best darn view on Lake Superior.', 'h1', [56, 48, 36], C.cream, { lh: 1, ls: -1.1, settings: { typography_letter_spacing_mobile: px(-0.7) } }),
-      text('A 21-room boutique hotel on the waterfront in Bayfield, overlooking the Apostle Islands. Three restaurants on property, a bar across the street, and a rooftop deck you’ll remember.',
-        { color: 'rgba(245,242,236,0.9)', size: 16, maxW: 440 }),
+        alt_text: 'Bayfield Inn — Est. 1898', _margin: box(0, 0, 8, 0), custom_css: 'selector { max-width: 70%; }' } }),
+      heading('The best darn view on Lake Superior.', 'h1', [58, 48, 36], C.cream, { lh: 1, ls: -1.1, settings: { typography_letter_spacing_mobile: px(-0.7),
+        custom_css: 'selector .elementor-heading-title { text-wrap: balance; text-shadow: 0 2px 24px rgba(0,0,0,.25); }' } }),
       bookingForm(),
-      button('See the rooms', '#rooms', 'text', { color: 'rgba(245,242,236,0.8)', size: 12.5, icon: 'fas fa-arrow-right', pad: box(0, 0, 3, 0), settings: {
+      button('See the rooms', '#rooms', 'text', { color: 'rgba(245,242,236,0.85)', size: 12.5, icon: 'fas fa-arrow-right', pad: box(0, 0, 3, 0), settings: {
         typography_letter_spacing: px(0.75), border_border: 'solid', border_width: box(0, 0, 1, 0), border_color: 'rgba(245,242,236,0.4)', border_radius: box(0), icon_indent: px(8) } }),
-    ]),
-    container({
-      content_width: 'full', padding: box(0), flex_direction: 'column', flex_justify_content: 'flex-end',
-      min_height: px(600), min_height_tablet: px(480), min_height_mobile: px(320),
-      background_background: 'classic', background_color: C.line, background_image: m.heroDeck, background_size: 'cover', background_position: 'center center',
-      custom_css: 'selector { background-position: center 60%; }',
-    }, [
-      container({
-        content_width: 'full', flex_direction: 'row', flex_wrap: 'wrap', flex_justify_content: 'space-between', flex_align_items: 'center', flex_gap: gap(16, 8),
-        padding: box(36, 24, 20, 24), padding_mobile: box(32, 20, 16, 20),
-        background_background: 'gradient', background_color: 'rgba(22,27,23,0.55)', background_color_stop: px(0, '%'),
-        background_color_b: 'rgba(22,27,23,0)', background_color_b_stop: px(100, '%'), background_gradient_type: 'linear', background_gradient_angle: px(0, 'deg'),
-      }, [
-        text('The Deck, Bayfield’s only rooftop', { color: C.cream, size: 12, weight: 400, lh: 1.4, ls: 0.5, inline: true }),
-        widget('icon-list', {
-          view: 'inline', icon_list: [{ _id: id(), text: 'Film coming soon', selected_icon: fa('fas fa-play') }],
-          icon_size: px(9), icon_color: C.cream85, text_color: C.cream85, text_indent: px(10), _element_width: 'auto',
-          ...typo('icon_typography', SANS, 12, 400, { lh: 1.4, ls: 0.5 }),
-          custom_css: 'selector .elementor-icon-list-icon { width: 36px; height: 36px; border-radius: 50%; border: 1px solid rgba(245,242,236,.6); display: inline-flex; align-items: center; justify-content: center; padding-left: 2px; }',
-        }),
-      ]),
     ]),
   ]);
 
-  const about = section({
-    _element_id: 'about', background_background: 'classic', background_color: C.white, flex_align_items: 'center', ...bigPad,
-  }, [
-    stack([
-      eyebrow('Est. 1898', C.green, { align: 'center' }),
-      heading('A timeless lakeside escape blending historic charm with modern comfort.', 'h2', [49, 40, 32], C.green, { align: 'center', ls: -1 }),
+  // Green and white, side by side: the welcome right under the hero photo.
+  const about = section({ ...gridSettings(['5fr 7fr', 1, 1]), _element_id: 'about', grid_gaps: gap(0, 0), grid_align_items: 'stretch' }, [
+    container({ content_width: 'full', flex_direction: 'column', flex_justify_content: 'center', flex_gap: gap(20),
+      padding: box(96, 64, 96, 72), padding_tablet: box(64, 40, 56, 40), padding_mobile: box(56, 20, 48, 20), ...radial('bottom left', C.mid, null, C.deep) }, [
+      eyebrow('Est. 1898', C.cream, { opacity: 0.8 }),
+      heading('A timeless lakeside escape, historic charm with modern comfort.', 'h2', [44, 38, 30], C.cream, { ls: -0.9 }),
+    ]),
+    container({ content_width: 'full', flex_direction: 'column', flex_justify_content: 'center', flex_gap: gap(18),
+      padding: box(96, 72, 96, 72), padding_tablet: box(56, 40, 64, 40), padding_mobile: box(44, 20, 56, 20), background_background: 'classic', background_color: C.white }, [
+      text('A 21-room boutique hotel on the waterfront in Bayfield, overlooking the Apostle Islands. Three restaurants on property, a bar across the street, and a rooftop deck you’ll remember.',
+        { size: 18, lh: 1.65, color: C.ink, maxW: 620 }),
       text('Perched on the shores of Lake Superior, Bayfield Inn has welcomed guests for over a century. Whether you’re here to relax, explore, or celebrate, our warm hospitality and unmatched views create an unforgettable experience.',
-        { align: 'center', size: 15.5, lh: 1.7 }),
-    ], { gap: 22, align: 'center', maxW: 680 }),
+        { size: 15.5, lh: 1.7, maxW: 620 }),
+      row([darkBtn('Book a Room', EXT.book), button('See the rooms', '#rooms', 'text', { color: C.green, upper: false, size: 13, icon: 'fas fa-arrow-right', pad: box(14, 4, 14, 4), settings: { hover_color: '#0F2113' } })],
+        { gap: 12, settings: { padding: box(6, 0, 0, 0) } }),
+    ]),
   ]);
 
   const rooms = section({
@@ -494,12 +486,12 @@ selector .elementor-message { color: #F5F2EC; padding: 0 18px 12px; margin: 0; f
       _offset_orientation_v: 'start', _offset_y: px(40), _offset_y_tablet: px(36), _offset_y_mobile: px(30),
       _element_width: 'auto', _z_index: 0, custom_css: 'selector { pointer-events: none; user-select: none; }',
     }),
-    intro('Rooms & Suites', 'Twenty-one rooms,<br>plus condos next door.', button('See all rooms & rates', EXT.rooms, 'dark', { settings: { button_background_hover_color: '#0F2113' } })),
+    intro('Rooms & Suites', 'Twenty-one rooms,<br>plus condos next door.', button('Check rates & availability', EXT.book, 'dark', { settings: { button_background_hover_color: '#0F2113' } })),
     container({ ...gridSettings([4, 2, 1]), content_width: 'full', padding: box(0), grid_gaps: gap(24, 36), grid_gaps_tablet: gap(20, 36), grid_gaps_mobile: gap(36, 36), grid_align_items: 'start', z_index: 1 }, [
-      photoCard(m.suite, 'Suites', 'Room to spread out, with a jetted tub.', EXT.rooms, { badge: { text: '01' }, alt: 'Suite with a sitting area and jetted tub' }),
-      photoCard(m.lakeview, 'Lake View Rooms', 'Lake-facing, the sunrise included.', EXT.rooms, { badge: { text: '02' }, alt: 'Lake view room with a window onto Lake Superior' }),
-      photoCard(m.standardRoom, 'City View Rooms', 'Classic comfort, steps from The Deck.', EXT.rooms, { badge: { text: '03' }, alt: 'City view room' }),
-      photoCard(m.condoCover, 'Condos', 'Bayfield on the Lake Condominiums and the Isaac Wing House, for longer stays and bigger groups.', EXT.rooms, { badge: { text: '04' }, alt: 'Condo living room and kitchen' }),
+      photoCard(m.suite, 'Suites', 'Room to spread out, with a jetted tub.', '/gallery/#suites', { badge: { text: '01' }, alt: 'Suite with a sitting area and jetted tub' }),
+      photoCard(m.lakeview, 'Lake View Rooms', 'Lake-facing, the sunrise included.', '/gallery/#lake-view', { badge: { text: '02' }, alt: 'Lake view room with a window onto Lake Superior' }),
+      photoCard(m.standardRoom, 'City View Rooms', 'Classic comfort, steps from The Deck.', '/gallery/#city-view', { badge: { text: '03' }, alt: 'City view room' }),
+      photoCard(m.condoCover, 'Condos', 'Bayfield on the Lake Condominiums and the Isaac Wing House, for longer stays and bigger groups.', '/gallery/#condos', { badge: { text: '04' }, alt: 'Condo living room and kitchen' }),
     ]),
   ]);
 

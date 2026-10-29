@@ -1,0 +1,50 @@
+.bi-wrap { max-width: 1180px; }
+.bi-lead { font-size: 14px; max-width: 760px; color: #50575e; }
+.bi-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 18px 0 0; border-bottom: 1px solid #c3c4c7; }
+.bi-tab { border: 1px solid #c3c4c7; border-bottom: 0; background: #f0f0f1; padding: 10px 18px; font-size: 14px; cursor: pointer; border-radius: 4px 4px 0 0; margin-bottom: -1px; }
+.bi-tab.is-active { background: #fff; font-weight: 600; color: #17301B; }
+.bi-body { background: #fff; border: 1px solid #c3c4c7; border-top: 0; padding: 20px; margin-bottom: 90px; }
+.bi-card { border: 1px solid #dcdcde; border-radius: 6px; padding: 16px; margin: 0 0 16px; background: #fff; }
+.bi-card--plain { background: #f6f7f7; }
+.bi-card h3 { margin: 0 0 10px; }
+.bi-menu { border-left: 4px solid #17301B; }
+.bi-row { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; }
+.bi-row--head { align-items: center; margin-bottom: 12px; }
+.bi-grow { flex: 1 1 220px; } .bi-grow2 { flex: 2 1 280px; }
+.bi-field { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: #50575e; }
+.bi-field > span:empty { display: none; }
+.bi-input { width: 100%; }
+.bi-strong { font-size: 15px !important; font-weight: 600; }
+.bi-inline { margin-top: 6px !important; align-self: flex-start; }
+.bi-section { border: 1px solid #e0e0e0; border-radius: 6px; padding: 12px; margin: 0 0 12px; background: #fbfbfb; }
+.bi-items-head, .bi-item { display: grid; grid-template-columns: 24px minmax(160px, 1.2fr) 90px minmax(200px, 2fr) 32px; gap: 8px; align-items: start; }
+.bi-items-head { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: #8c8f94; margin: 0 0 4px; }
+.bi-item { padding: 6px 0; border-top: 1px solid #eee; background: #fbfbfb; }
+.bi-item textarea { min-height: 32px; resize: vertical; }
+.bi-handle { cursor: move; color: #8c8f94; padding-top: 6px; }
+.bi-remove { border: 0; background: none; color: #b32d2e; cursor: pointer; padding: 6px; }
+.bi-remove:hover { color: #8a1f1f; }
+.bi-small { margin-top: 8px !important; }
+.button .dashicons { vertical-align: text-bottom; margin-right: 4px; font-size: 17px; }
+.bi-placeholder { border: 2px dashed #8c8f94; background: #f6f7f7; min-height: 40px; margin-bottom: 12px; border-radius: 6px; visibility: visible !important; }
+.bi-savebar { position: fixed; left: 160px; right: 0; bottom: 0; z-index: 99; display: flex; align-items: center; gap: 16px; padding: 12px 24px; background: #fff; border-top: 1px solid #c3c4c7; box-shadow: 0 -4px 12px rgba(0,0,0,.06); }
+.folded .bi-savebar { left: 36px; }
+@media (max-width: 960px) { .bi-savebar { left: 36px; } }
+@media (max-width: 782px) { .bi-savebar { left: 0; } .bi-items-head { display: none; } .bi-item { grid-template-columns: 24px 1fr 70px 32px; } .bi-item .bi-field:nth-of-type(3) { grid-column: 2 / 4; } }
+.bi-status { font-size: 14px; color: #17301B; font-weight: 600; }
+/* Gallery */
+.bi-gsection { border-left: 4px solid #17301B; }
+.bi-gsection--sub { border-left-color: #8c8f94; background: #fbfbfb; }
+.bi-linkwrap { font-size: 12px; color: #50575e; }
+.bi-check { display: block; margin: 0 0 12px; font-weight: 600; }
+.bi-gsection[data-has-subs="1"] > .bi-leaf { display: none; }
+.bi-gsection[data-has-subs="0"] > .bi-subwrap { display: none; }
+.bi-subwrap { padding-left: 20px; }
+.bi-images { display: flex; flex-wrap: wrap; gap: 10px; margin: 0 0 14px; }
+.bi-img { position: relative; width: 120px; height: 90px; border-radius: 4px; overflow: hidden; background: #f0f0f1; padding: 0; }
+.bi-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.bi-img__x { position: absolute; top: 4px; right: 4px; width: 24px; height: 24px; border-radius: 50%; border: 0; background: rgba(0,0,0,.65); color: #fff; font-size: 16px; line-height: 22px; cursor: pointer; }
+.bi-img__x:hover { background: #b32d2e; }
+.bi-img-add { width: 120px; height: 90px; border: 2px dashed #8c8f94; border-radius: 4px; background: #fff; cursor: pointer; color: #2271b1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
+.bi-img-add:hover { border-color: #2271b1; }
+.bi-tip { width: 100%; margin: 0; }

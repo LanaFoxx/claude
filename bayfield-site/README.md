@@ -34,3 +34,21 @@ mobile, phone number hidden on mobile; headings and section padding step down.
 * `deploy.cjs` – `node deploy.cjs [prep] [chrome] [home] [pages] [page:<slug>]` (no args = everything). Needs
   `WP_URL`, a logged-in Playwright storage state (`STATE`) and `MEDIA` (folder with the images
   extracted from the design bundle). IDs are cached next to the state file.
+
+## Bayfield Inn dashboard (client editing)
+
+`plugin/bayfield-inn-manager` is a small WordPress plugin, installed by `node deploy.cjs plugin`.
+It adds a **Bayfield Inn** item to wp-admin (Administrators and Editors):
+
+* **Restaurant Menus**: per restaurant, menus (e.g. Food / Drinks) → categories → dishes
+  (name, price, description). Drag to reorder, add/remove rows, attach a PDF, edit the fine print.
+* **Gallery**: sections and sub-sections (Rooms → Suites…, Condos → Bayfield on the Lake…),
+  photos from the Media Library (add, drag, remove), and an optional button under each section.
+  A second tab holds the **History archive** photos (captions come from each photo's Caption).
+
+Saving clears the Elementor and SiteGround caches, so the site updates immediately. The pages
+show this data through two Elementor widgets in the "Bayfield Inn" category: **Restaurant Menu**
+and **Bayfield Gallery**. Gallery sections can be linked directly, e.g. `/gallery/#suites`.
+
+`node deploy.cjs data` loads the starter content from `seed.cjs` only when the dashboard is empty
+(`FORCE_DATA=1` overwrites, which would discard the client's edits).

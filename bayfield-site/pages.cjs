@@ -89,19 +89,6 @@ const galleryWidget = (imgs, cols = [3, 2, 1]) => widget('gallery', {
 
 /* ---------------------------------------------------------------- pages */
 function history(m) {
-  const H = [
-    ['01-1890-opera-house', '1890 · The Opera House'], ['02-1890-opera-house', '1890 · The Opera House'],
-    ['03-1930s-bracken-hotel', '1930s · The Bracken Hotel'], ['04-hotel-bayfield-late-30s-early-40s', 'Late 1930s · Hotel Bayfield'],
-    ['05-1940s-hotel-bayfield', '1940s · Hotel Bayfield'], ['06-hotel-bayfield-early-50s', 'Early 1950s · Hotel Bayfield'],
-    ['07-late-50s-early-60s', 'Late 1950s · Rittenhouse Avenue'], ['08-late-50s-early-60s', 'Late 1950s · Bayfield Inn'],
-    ['09-1964-fire', '1964 · The fire'], ['10-1964-fire', '1964 · The fire'], ['11-1964-fire', '1964 · The fire'],
-    ['12-late-1960s-postcard', 'Late 1960s · Postcard'], ['13-bayfield-inn-1960s', '1960s · The rebuilt Inn'],
-  ];
-  const fig = ([f, cap]) => stack([
-    image(m.file(`bayfield-history-${f}.jpg`), { settings: { link_to: 'file', open_lightbox: 'yes', alt_text: cap,
-      custom_css: 'selector { overflow: hidden; line-height: 0; border-radius: 4px; background: #DCD7CC; }\nselector img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; filter: sepia(.08); transition: transform .8s; }\nselector:hover img { transform: scale(1.03); }' } }),
-    text(cap, { size: 13.5, weight: 400, color: C.muted, lh: 1.4 }),
-  ], { gap: 10 });
   return [
     pageHero('Since 1898', 'More than 125 years on Bayfield’s waterfront.', 'From the Opera House to the Dittus Hotel, the Bracken Hotel, Hotel Bayfield and, since the 1950s, the Bayfield Inn.', m.file('bayfield-history-06-hotel-bayfield-early-50s.jpg')),
     story('Our story', 'From Opera House to Bayfield Inn', [
@@ -118,52 +105,22 @@ function history(m) {
     ], m.file('bayfield-history-09-1964-fire.jpg'), { alt: 'The 1964 fire' }),
     section({ background_background: 'classic', background_color: C.white, ...pad, ...boxed, flex_direction: 'column', flex_gap: gap(44) }, [
       stack([eyebrow('From the archive', C.green), heading('The Inn through the years', 'h2', [44, 38, 30], C.green, { ls: -0.9 })], { gap: 16 }),
-      container({ ...gridSettings([3, 2, 1]), content_width: 'full', padding: box(0), grid_gaps: gap(24, 36), grid_gaps_mobile: gap(16, 28), grid_align_items: 'start' }, H.map(fig)),
+      text('Use the arrows or pick a photo below.', { size: 15, settings: { _margin: box(-24, 0, 0, 0) } }),
+      // Photos + captions are managed under Bayfield Inn › Gallery › History archive.
+      widget('bi-gallery', { set: 'history', captions: 'yes' }),
       text('<em>With special thanks to the Bayfield Heritage Association for the photos.</em>', { family: SERIF, size: 17, weight: 400, color: C.green, align: 'center' }),
     ]),
   ];
 }
 
-// Gallery: one Elementor Pro Gallery in "multiple" mode, so visitors filter by section
-// (All, General, Rooms, ...). Each section is its own image list, edited in the widget.
-const GALLERY = [
-  ['General', ['bayfield-inn-exterior.jpg', 'bayfield-events-lawn.jpg']],
-  ['Rooms', ['bayfield-lake-view-room.jpg', 'bayfield-suite-jacuzzi.jpg', 'bayfield-standard-room.jpg', 'bayfield-lakeview-room.jpg']],
-  ['Condos', ['bayfield-condos-cover.jpg', 'bayfield-condo-botl-unit-100-img-7635.jpg', 'bayfield-condo-iwh-house-img-3809.jpg', 'bayfield-condo-botl-unit-301-img-7677.jpg',
-    'bayfield-condo-iwh-emerald-img-8198.jpg', 'bayfield-condo-botl-unit-102-img-7622.jpg', 'bayfield-condo-iwh-qe-ii-img-3794.jpg', 'bayfield-condo-botl-unit-100-img-7638.jpg',
-    'bayfield-condo-iwh-phoenix-img-0211-2.jpg', 'bayfield-condo-botl-unit-202-img-7610.jpg', 'bayfield-condo-iwh-blue-img-1180.jpg', 'bayfield-condo-botl-unit-101-img-7655.jpg',
-    'bayfield-condo-iwh-house-exterior-1.jpg', 'bayfield-condo-botl-unit-100-img-7645.jpg', 'bayfield-condo-iwh-common-area-img-8205.jpg', 'bayfield-condo-botl-unit-301-img-7676.jpg',
-    'bayfield-condo-iwh-crows-nest-img-5968.jpg', 'bayfield-condo-botl-unit-102-img-7629.jpg', 'bayfield-condo-iwh-qe-ii-img-3476.jpg', 'bayfield-condo-botl-unit-101-img-7660.jpg',
-    'bayfield-condo-iwh-emerald-img-8193.jpg', 'bayfield-condo-botl-unit-202-img-7602.jpg', 'bayfield-condo-iwh-blue-img-0174.jpg', 'bayfield-condo-botl-unit-301-img-7688.jpg',
-    'bayfield-condo-iwh-qe-ii-img-3807.jpg', 'bayfield-condo-botl-unit-102-img-7621.jpg', 'bayfield-condo-iwh-common-area-img-1184.jpg', 'bayfield-condo-botl-unit-101-img-7666.jpg',
-    'bayfield-condo-iwh-house-img-3629.jpg']],
-  ['The Deck', ['bayfield-hero-the-deck.jpg', 'bayfield-the-deck-bar.jpg', 'bayfield-deck-dining.jpg']],
-  ['The Lounge', ['bayfield-the-lounge.jpg']],
-  ['Lakeside Dining Room', ['bayfield-dining-room-window.jpg', 'bayfield-lakeside-dining-room.jpg', 'bayfield-dining-cheers.jpg', 'bayfield-dining-shrimp.jpg']],
-  ['The Creamery', ['bayfield-the-creamery.jpg']],
-  ['The View & Vibe', ['bayfield-marina-webcam.jpg', 'bayfield-suite.jpg', 'bayfield-condo-botl-unit-100-img-7641.jpg', 'bayfield-harbor-sunset.jpg',
-    'bayfield-condo-iwh-phoenix-img-8225.jpg', 'bayfield-events-lawn.jpg']],
-];
-function gallery(m) {
-  const filtered = widget('gallery', {
-    gallery_type: 'multiple', show_all_galleries: 'yes', show_all_galleries_label: 'All',
-    galleries: GALLERY.map(([title, files]) => ({ _id: id(), gallery_title: title, multiple_gallery: files.map((f) => { const x = m.file(f); return { id: x.id, url: x.url }; }) })),
-    gallery_layout: 'masonry', columns: 3, columns_tablet: 2, columns_mobile: 1, gap: px(16), gap_tablet: px(14), gap_mobile: px(12),
-    link_to: 'file', open_lightbox: 'yes', image_size: 'large', image_hover_animation: 'grow', image_border_radius: box(4),
-    // Filter bar
-    galleries_align: 'center', galleries_pointer: 'underline', galleries_animation_line: 'fade',
-    ...typo('galleries_titles_typography', SANS, [13, 13, 12], 500, { lh: 1.2, ls: 1.4, transform: 'uppercase' }),
-    galleries_title_color_normal: C.muted, galleries_title_color_hover: C.green, galleries_title_color_active: C.green,
-    galleries_pointer_color_hover: C.green, galleries_pointer_color_active: C.green, galleries_pointer_width: px(1),
-    galleries_titles_space_between: px(26), galleries_titles_space_between_mobile: px(14), galleries_titles_gap: px(40), galleries_titles_gap_mobile: px(24),
-    custom_css: `selector .elementor-gallery__titles-container { flex-wrap: wrap; row-gap: 10px; }
-@media (max-width: 767px) { selector .elementor-gallery__titles-container { justify-content: flex-start; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 6px; -webkit-overflow-scrolling: touch; }
-  selector .elementor-gallery-title { white-space: nowrap; flex: none; } }`,
-  });
+// Gallery: sections, sub-sections and photos are managed under Bayfield Inn › Gallery
+// (plugin/bayfield-inn-manager). Link to a section with /gallery/#suites, #condos, ...
+function gallery() {
   return [
-    pageHero('Gallery', 'The Inn, the lake and the season.', 'Pick a section, or browse them all. Click any photo to see it full size.'),
-    section({ background_background: 'classic', background_color: C.cream, padding: box(56, 48, 110, 48), padding_tablet: box(48, 32, 88, 32), padding_mobile: box(36, 16, 64, 16), ...boxed, flex_direction: 'column' }, [filtered]),
-    ctaBand('Stay with us', 'See it for yourself.', [light('Book a Room', EXT.book), outline('Follow on Instagram', EXT.instagram, { icon: 'fab fa-instagram', settings: { icon_align: 'row' } })]),
+    pageHero('Gallery', 'The Inn, the lake and the season.', 'Pick a section, then a photo. Click the big photo to see it full screen.'),
+    section({ background_background: 'classic', background_color: C.cream, padding: box(48, 48, 110, 48), padding_tablet: box(40, 32, 88, 32), padding_mobile: box(28, 16, 64, 16), ...boxed, flex_direction: 'column' }, [
+      widget('bi-gallery', { set: 'main' }),
+    ]),
   ];
 }
 
@@ -195,20 +152,24 @@ function webcam(m) {
     box_shadow_box_shadow_type: 'yes', box_shadow_box_shadow: { horizontal: 0, vertical: 40, blur: 70, spread: -40, color: 'rgba(0,0,0,0.6)' }, border_radius: box(4) }, [cam, weather]);
   return [
     // Stream first: a short title row, then the player, all above the fold.
-    section({ ...radial('bottom left', C.mid, null, C.deep), padding: box(32, 48, 64, 48), padding_tablet: box(28, 32, 56, 32), padding_mobile: box(24, 16, 40, 16),
-      ...boxed, flex_direction: 'column', flex_gap: gap(22), flex_gap_mobile: gap(16) }, [
+    // Green bar: live label + headline on the left, "book a room" on the right.
+    section({ ...radial('bottom left', C.mid, null, C.deep), padding: box(26, 48, 26, 48), padding_tablet: box(24, 32, 24, 32), padding_mobile: box(22, 16, 22, 16), ...boxed }, [
       row([
         stack([
           eyebrow('Live from the Inn', C.cream, { opacity: 0.85, live: true }),
-          heading('See the lake right now.', 'h1', [40, 36, 30], C.cream, { lh: 1, ls: -0.8 }),
-        ], { gap: 12, settings: { width: auto, width_tablet: auto, width_mobile: px(100, '%') } }),
-        text('The marina, the ferry dock and Madeline Island, around the clock and in every season.', { color: 'rgba(245,242,236,0.8)', size: 15, maxW: 420 }),
-      ], { gap: 24, align: 'flex-end', justify: 'space-between', settings: { flex_gap: gap(40, 12) } }),
-      stage,
-      text('Also on <a href="https://bayfieldlive.com" target="_blank" rel="noopener">bayfieldlive.com</a> · Weather from Open-Meteo', { color: 'rgba(245,242,236,0.6)', size: 12.5, align: 'center',
-        linkColor: 'rgba(245,242,236,0.85)', settings: { link_hover_color: C.cream } }),
+          heading('The view is even better from your room.', 'h1', [34, 30, 26], C.cream, { lh: 1.05, ls: -0.6 }),
+        ], { gap: 10, settings: { width: auto, width_tablet: auto, width_mobile: px(100, '%') } }),
+        light('Book a Room', EXT.book),
+      ], { gap: 20, align: 'center', justify: 'space-between' }),
     ]),
-    ctaBand('Like what you see?', 'The view is even better from your room.', [light('Book a Room', EXT.book)]),
+    // Stream, centered with side margins (room for sponsor spots later).
+    section({ background_background: 'classic', background_color: C.cream, padding: box(36, 48, 72, 48), padding_tablet: box(28, 32, 56, 32), padding_mobile: box(16, 12, 40, 12),
+      flex_direction: 'column', flex_align_items: 'center', flex_gap: gap(14), _element_id: 'live' }, [
+      container({ content_width: 'full', padding: box(0), width: px(76, '%'), width_tablet: px(100, '%'), width_mobile: px(100, '%'),
+        custom_css: 'selector { max-width: 1180px; }' }, [stage]),
+      text('The marina, the ferry dock and Madeline Island, around the clock. Also on <a href="https://bayfieldlive.com" target="_blank" rel="noopener">bayfieldlive.com</a> · Weather from Open-Meteo',
+        { color: C.muted, size: 13, align: 'center' }),
+    ]),
   ];
 }
 
@@ -245,7 +206,7 @@ function employment(m) {
       field('message', 'textarea', 'Tell us about yourself', { width: '100', width_tablet: '100', rows: 5 }),
     ],
     show_labels: 'true', input_size: 'md', button_text: 'Send', button_size: 'md', button_width: '', button_align: 'start',
-    submit_actions: ['email', 'save-to-database'], email_to: 'matt@thebayfieldinn.com', email_subject: 'Employment inquiry from the Bayfield Inn website',
+    submit_actions: ['email', 'save-to-database'], email_to: 'info@thebayfieldinn.com', email_subject: 'Employment inquiry from the Bayfield Inn website',
     email_reply_to: '[field id="email"]', email_content: '[all-fields]',
     success_message: 'Thanks! We’ll be in touch.',
     column_gap: px(16), row_gap: px(18), label_spacing: px(6),
@@ -271,23 +232,8 @@ function employment(m) {
   ];
 }
 
-// Menu: each category is an Elementor Price List (name, price, description) the client can edit.
+// Menus (dishes, prices, PDFs) are managed under Bayfield Inn › Restaurant Menus.
 const MENUS = require('./menus.cjs');
-function menuBlock([title, note, items]) {
-  const priced = items.some(([, price]) => price);
-  return stack([
-    widget('heading', { title, header_size: 'h3', title_color: C.green, ...typo('typography', SERIF, [30, 28, 26], 400, { lh: 1.1 }) }),
-    ...(note ? [text(note, { size: 13.5, lh: 1.55, style: 'italic', family: SERIF, weight: 400, color: C.muted })] : []),
-    widget('price-list', {
-      price_list: items.map(([t, price, desc]) => ({ _id: id(), title: t, price: price || '', item_description: desc || '', link: { url: '', is_external: '', nofollow: '' } })),
-      heading_color: C.green, price_color: C.green, description_color: C.muted,
-      ...typo('heading_typography', SERIF, [19, 19, 18], 400, { lh: 1.25 }), ...typo('price_typography', SERIF, [19, 19, 18], 400, { lh: 1.25 }),
-      ...typo('description_typography', SANS, 14, 300, { lh: 1.55 }),
-      separator_style: priced ? 'dotted' : 'none', separator_weight: px(1), separator_color: 'rgba(23,48,27,0.3)', separator_spacing: px(8),
-      row_gap: px(18), _margin: box(4, 0, 0, 0),
-    }),
-  ], { gap: 10 });
-}
 function menuSection(m, r) {
   const data = MENUS[r.slug];
   if (!data && r.barBites) {
@@ -299,43 +245,41 @@ function menuSection(m, r) {
   }
   if (!data) return null;
   const many = data.menus.length > 1;
-  const children = [
+  return section({ _element_id: 'menus', background_background: 'classic', background_color: C.cream, ...pad, ...boxed, flex_direction: 'column', flex_gap: gap(24) }, [
     stack([
       eyebrow(many ? 'Menus' : 'Menu', C.green, { align: 'center' }),
       heading(`${r.name} ${many ? 'menus' : 'menu'}`, 'h2', [48, 40, 32], C.green, { align: 'center', ls: -1 }),
-      row(data.menus.map((mn) => button(`Download ${many ? mn.title.toLowerCase() + ' ' : ''}menu (PDF)`, m.file(mn.pdf).url, 'outline', { upper: false, size: 13, icon: 'far fa-file-pdf', pad: box(13, 22, 13, 22),
-        settings: { icon_align: 'row', button_text_color: C.green, border_color: 'rgba(23,48,27,0.45)', hover_color: C.cream, button_background_hover_color: C.green, link: { url: m.file(mn.pdf).url, is_external: 'on', nofollow: '' } } })),
-      { gap: 10, justify: 'center', settings: { padding: box(6, 0, 0, 0) } }),
     ], { gap: 16, align: 'center' }),
-  ];
-  for (const mn of data.menus) {
-    if (many) children.push(stack([widget('divider', { style: 'solid', weight: px(1), color: C.line, look: 'line_text', text: mn.title, text_align: 'center', text_color: C.green,
-      ...typo('text_typography', SANS, 12, 500, { ls: 2.6, transform: 'uppercase' }), gap: px(18) })], { gap: 0 }));
-    children.push(container({ ...gridSettings([2, 2, 1]), content_width: 'full', padding: box(0), grid_gaps: gap(80, 56), grid_gaps_tablet: gap(40, 48), grid_gaps_mobile: gap(0, 48), grid_align_items: 'start' },
-      mn.sections.map(menuBlock)));
-  }
-  children.push(stack([
-    ...(data.footer ? [text(data.footer, { align: 'center', size: 16, family: SERIF, style: 'italic', weight: 400, color: C.green, maxW: 720 })] : []),
-    ...data.notes.map((n) => text(n, { align: 'center', size: 12.5, color: C.muted, maxW: 720 })),
-  ], { gap: 10, align: 'center' }));
-  return section({ _element_id: 'menus', background_background: 'classic', background_color: C.cream, ...pad, ...boxed, flex_direction: 'column', flex_gap: gap(56), flex_gap_mobile: gap(40) }, children);
+    widget('bi-restaurant-menu', { restaurant: r.slug, show_pdf: 'yes' }),
+  ]);
 }
 
-// Restaurant page: hero, about, menus, photos, reserve.
+// Slim "what's on" bar for The Creamery; the client swaps the text for this week's events.
+const eventsBar = (r) => section({ _element_id: 'events', ...radial('bottom left', C.mid, null, C.deep), padding: box(28, 24, 28, 24), flex_direction: 'row', flex_wrap: 'wrap',
+  flex_justify_content: 'center', flex_align_items: 'center', flex_gap: gap(18, 8) }, [
+  widget('heading', { title: 'Events', header_size: 'p', title_color: 'rgba(245,242,236,0.7)', _element_width: 'auto',
+    ...typo('typography', SANS, 11, 500, { lh: 1.3, ls: 2.4, transform: 'uppercase' }) }),
+  text(r.barBites.events, { color: C.cream, size: 16, family: SERIF, weight: 400, inline: true, align: 'center' }),
+]);
+
+// Restaurant page: hero, about, menus, photos.
 function restaurant(m, r) {
   return [
-    pageHero(r.eb, r.title, r.intro, m.file(r.hero), { pos: r.pos, buttons: [light(r.cta || 'Reserve a table', PHONE), button('View menus', '#menus', 'outline', { upper: false, size: 13, pad: box(16, 28, 16, 28) })] }),
+    pageHero(r.eb, r.title, r.intro, m.file(r.hero), { pos: r.pos, buttons: r.barBites
+      ? [light('What’s on', '#events'), outline('Call (715) 779-3363', PHONE)]
+      : [light(MENUS[r.slug]?.menus.length > 1 ? 'View menus' : 'View menu', '#menus'), outline('Call (715) 779-3363', PHONE)] }),
+    ...(r.barBites ? [eventsBar(r)] : []),
     story('About', r.aboutTitle, r.about, r.aboutImg ? m.file(r.aboutImg) : null, { bg: C.white, alt: r.title }),
     ...[menuSection(m, r)].filter(Boolean),
     ...(r.photos?.length ? [section({ background_background: 'classic', background_color: C.white, ...pad, ...boxed, flex_direction: 'column' }, [galleryWidget(r.photos.map(m.file), [3, 3, 1])])] : []),
-    ctaBand(r.eb, 'Save your seat by the water.', [light(r.cta || 'Call to reserve', PHONE), outline('Book a Room', EXT.book)]),
+    ctaBand('Stay with us', r.barBites ? 'Your room is right across the street.' : 'Dinner downstairs, a lake view upstairs.', [light('Book a Room', EXT.book), outline('See the gallery', '/gallery/')]),
   ];
 }
 
 const RESTAURANTS = [
   { slug: 'the-deck', name: 'The Deck', eb: 'Seasonal rooftop', title: 'The Deck, Bayfield’s only rooftop.', hero: 'bayfield-deck-dining.jpg', pos: 'center 55%',
     intro: 'Lunch and dinner under the blue umbrellas, with the marina and Madeline Island in front of you. Open in season, weather permitting.',
-    aboutTitle: 'Up on the roof', aboutImg: 'bayfield-the-deck-bar.jpg', cta: 'Call The Deck',
+    aboutTitle: 'Up on the roof', aboutImg: 'bayfield-the-deck-bar.jpg',
     about: ['The Deck is our seasonal rooftop restaurant and bar, the only rooftop in Bayfield.', 'Come for lunch, stay for the sunset. Hours follow the season and the weather; give us a call before you head up.'],
     photos: ['bayfield-hero-the-deck.jpg', 'bayfield-the-deck-bar.jpg', 'bayfield-deck-dining.jpg'] },
   { slug: 'lakeside-dining-room', name: 'Lakeside Dining Room', eb: 'Lakeside Dining Room', title: 'Breakfast and dinner at the water’s edge.', hero: 'bayfield-dining-room-window.jpg',
@@ -352,7 +296,8 @@ const RESTAURANTS = [
     intro: 'Our bar across the street from the Inn. Casual, friendly, and the place to be when the band is playing.',
     aboutTitle: 'Right across the street', aboutImg: null,
     about: ['The Creamery is the Bayfield Inn’s bar across the street: cold pints, good company and live music.', 'Check our Facebook and Instagram for who’s playing this week.'],
-    photos: [], barBites: { title: 'A bar first, with a little something to eat.', body: 'No full menu here: just frozen pizzas and Milwaukee soft pretzels to go with your drink.' } },
+    photos: ['bayfield-the-creamery.jpg'], barBites: { title: 'A bar first, with a little something to eat.', body: 'No full menu here: just frozen pizzas and Milwaukee soft pretzels to go with your drink.',
+      events: 'Bingo, trivia, Derby Day and more. Check back here for special events.' } },
 ];
 
 const { SHOP_PAGES } = require('./shop.cjs');
@@ -362,7 +307,6 @@ const PAGES = [
   { slug: 'gallery', title: 'Gallery', build: gallery },
   { slug: 'webcam', title: 'Webcam', build: webcam },
   { slug: 'merchandise', title: 'Merchandise', build: merchandise },
-  { slug: 'gift-cards', title: 'Gift Cards', build: giftCards },
   { slug: 'employment', title: 'Employment', build: employment },
   ...RESTAURANTS.map((r) => ({ slug: r.slug, title: r.name, build: (m) => restaurant(m, r) })),
   ...SHOP_PAGES,
