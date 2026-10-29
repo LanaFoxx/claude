@@ -255,6 +255,10 @@ def seo_tweaks(name, body):
         old_h = '<span style="display:block;font-family:\'Plus Jakarta Sans\',sans-serif;font-weight:700;font-size:.88em;letter-spacing:-.025em;color:#95AB3B">CTEC Approved Tax Course</span>'
         assert old_h in body, 'home h1 span'
         body = body.replace(old_h, '<span style="display:block;color:#fff">CTEC Approved Tax Course</span>', 1)
+        # Short one-line headline: "Compare CTEC Approved Tax Courses".
+        body, n = re.subn(r'max-width:min\(980px,100%\)">\s*Compare every\s*<span style="display:block;color:#fff">CTEC Approved Tax Course</span>\s*before you enroll\.\s*</h1>',
+                          'max-width:100%" class="tcf-home-h1">Compare CTEC Approved Tax Courses</h1>', body)
+        assert n >= 1, 'home h1'
         # Exact target keywords in the home course cards (headings + copy), wording unchanged otherwise.
         for old, new in [('CTEC 20-Hour <span style="font-weight:800">CE Course</span>', '20 Hour <span style="font-weight:800">CTEC Course</span>'),
                          ('CTEC 60-Hour <span style="font-weight:800">QE Course</span>', '60 Hour <span style="font-weight:800">CTEC Course</span>'),

@@ -123,3 +123,5 @@ html{scrollbar-gutter:stable}
 .tcf-header nav.tcf-nav .dd>div.tcf-nav-btn,.tcf-header nav.tcf-nav>a.tcf-nav-cta{border-radius:999px!important;padding:11px 22px!important;box-shadow:none!important}
 .tcf-header nav.tcf-nav>a.tcf-nav-cta::after{content:none!important}
 .tcf-mmenu .tcf-nav-btn,.tcf-mmenu .tcf-nav-cta{border-radius:999px!important}
+/* home headline: one line on desktop/tablet */
+@media (min-width:768px){.tcf-home-h1{white-space:nowrap;font-size:clamp(34px,4.4vw,68px)!important}}
