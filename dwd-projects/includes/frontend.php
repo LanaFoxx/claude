@@ -114,6 +114,20 @@ add_action( 'wp_footer', function () {
 	echo "<script>document.querySelectorAll('a[href^=\"tel:\"]').forEach(function(a){var p=a.parentElement;if(!p||a.querySelector('svg,img,i'))return;var t=p.textContent.replace(a.textContent,'');if(!/[A-Za-z]/.test(t))a.classList.add('dw-phone-ico');});</script>\n";
 }, 99 );
 
+// Phones: the reviews row advances one card every 4 seconds and loops; a swipe pauses it for a moment.
+add_action( 'wp_footer', function () {
+	echo "<script>(function(){var r=document.querySelector('.elementor-element-dw0001t');if(!r)return;var hold=0;['touchstart','pointerdown','wheel'].forEach(function(e){r.addEventListener(e,function(){hold=Date.now()+8000;},{passive:true});});"
+		. "setInterval(function(){if(!matchMedia('(max-width:767px)').matches||Date.now()<hold)return;var c=r.children;if(!c.length)return;var w=c[0].getBoundingClientRect().width+parseFloat(getComputedStyle(r).columnGap||0),i=Math.round(r.scrollLeft/w)+1;if(i>=c.length)i=0;r.scrollTo({left:i*w,behavior:'smooth'});},4000);})();</script>\n";
+}, 99 );
+
+/**
+ * Inner-page hero titles: one size on every page (as large as the homepage headline).
+ */
+add_action( 'wp_head', function () {
+	$h = '.elementor-element-7e6232a .elementor-heading-title,.elementor-element-dw0008r .elementor-heading-title,.elementor-element-dw0005k .elementor-heading-title,.elementor-element-18a049b .elementor-heading-title,.elementor-element-4bbde7c .elementor-heading-title';
+	echo '<style id="dwdp-h1">' . $h . '{font-size:49px!important;line-height:1.12!important}@media(max-width:1024px){' . $h . '{font-size:42px!important}}@media(max-width:767px){' . $h . '{font-size:34px!important}}</style>' . "\n";
+}, 99 );
+
 /**
  * Header: frosted glass on every page. A mostly-white background with a blur, so the page shows
  * faintly through it as it scrolls underneath.
@@ -149,7 +163,7 @@ add_action( 'wp_head', function () {
 		. '.elementor-element-dw00009 .dwdp-laptop{width:100%!important}.dwdp-vslider.is-laptop{align-items:center!important}'
 		// "What's included" heading centered; less space around "See how the process works".
 		. '.elementor-element-dw0000f{align-items:center!important;text-align:center}.elementor-element-dw0000f .elementor-heading-title,.elementor-element-dw0000f .elementor-widget-text-editor{text-align:center!important}'
-		. '.elementor-element-dw0000g{margin-top:4px!important}.elementor-element-9e67fb33{padding-bottom:48px!important}'
+		. '.elementor-element-dw0000g{margin-top:0!important}.elementor-element-9e67fb33{padding-bottom:36px!important}.elementor-element-9e67fb33>.e-con-inner{row-gap:14px!important;gap:14px!important}.elementor-element-dw0000f{padding-bottom:0!important;margin-bottom:0!important}.elementor-element-dw00016{padding-bottom:14px!important}'
 		// Homepage FAQ intro and "Let's build your website": centered, buttons stacked in the middle.
 		. '.elementor-element-b7671e0,.elementor-element-dw0002c{align-items:center!important;text-align:center!important}'
 		. '.elementor-element-b7671e0 .elementor-heading-title,.elementor-element-b7671e0 .elementor-widget-text-editor,.elementor-element-b7671e0 .elementor-button-wrapper,.elementor-element-dw0002c .elementor-heading-title,.elementor-element-dw0002c .elementor-widget-text-editor,.elementor-element-dw0002c .elementor-button-wrapper{text-align:center!important}'
@@ -158,12 +172,14 @@ add_action( 'wp_head', function () {
 		// Footer: everything centered, "Call today" above the number with a small phone icon beside it.
 		. '.dwf{flex-direction:column!important;justify-content:center!important;gap:20px!important}'
 		. '.dwf .dwf-phone{display:grid!important;grid-template-columns:auto auto;justify-content:center;align-items:center;column-gap:8px;row-gap:2px}.dwf .dwf-call-t{display:contents!important}'
-		. '.dwf .dwf-call-t small{grid-column:1/-1;grid-row:1;text-align:center}.dwf .dwf-call-ic{grid-column:1;grid-row:2}.dwf .dwf-call-t b{grid-column:2;grid-row:2;margin-top:0!important}'
+		. '.dwf .dwf-call-t small{grid-column:1/-1;grid-row:1;text-align:center}.dwf .dwf-call-ic{grid-column:1;grid-row:2}.dwf .dwf-call-t b{grid-column:1/-1;grid-row:2;margin-top:0!important}'
+		// Reviews: one full-width card at a time, centered (auto-advances every 4 seconds, below).
+		. '.elementor-element-dw0001t>.e-con{flex:0 0 100%!important;width:100%!important;max-width:100%!important;scroll-snap-align:center;justify-content:center!important;align-items:center!important;text-align:center}'
 		. '}</style>' . "\n";
 	// Footer icons everywhere: small, no circles. Review cards: equal space above and below.
-	echo '<style id="dwdp-footer-icons">.dwf-icons{gap:20px!important;align-items:center}.dwf-ico,.dwf-ico:hover,.dwf-call-ic{width:auto!important;height:auto!important;border:0!important;border-radius:0!important;background:none!important}'
+	echo '<style id="dwdp-footer-icons">.dwf .dwf-call-ic{display:none!important}.dwf .dwf-call-t{align-items:center!important;text-align:center!important}.dwf-icons{gap:20px!important;align-items:center}.dwf-ico,.dwf-ico:hover,.dwf-call-ic{width:auto!important;height:auto!important;border:0!important;border-radius:0!important;background:none!important}'
 		. '.dwf-ico svg{width:15px!important;height:15px!important}.dwf-ico:hover svg{fill:#fff}.dwf-call-ic svg{width:15px!important;height:15px!important}'
-		. '.elementor-element-dw0001t>.e-con .elementor-widget:last-child p:last-child{margin-bottom:0!important}.elementor-element-dw0001t>.e-con{padding-bottom:30px!important}</style>' . "\n";
+		. '.elementor-element-dw0001t>.e-con .elementor-widget:last-child p:last-child{margin-bottom:0!important}.elementor-element-dw0001t>.e-con{padding-top:34px!important;padding-bottom:30px!important}</style>' . "\n";
 }, 99 );
 
 /** Case-study pages use the plugin template (inside the site's header/footer). */
