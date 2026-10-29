@@ -16,6 +16,20 @@ function dwdp_enqueue_front() {
 	wp_enqueue_script( 'dwdp-front' );
 }
 
+/**
+ * Dotted backgrounds only on the dark sections, so a dotted section never sits directly
+ * against another one. The light sections (dw-dots-light, plus the Elementor sections that
+ * got the same dots by ID) become plain.
+ */
+add_action( 'wp_head', function () {
+	$ids = array( '9e67fb33', '89a6760f', '7d8e8aa3', '7f41de1b', '969108eb', '9ec54d3c', 'b8fbd2ba', '51ae0a9b', 'a5de6e96', '8fc7c8a7', 'c33bf56b', '28747d18', 'f5415e51', 'bbaddbd9', '8b5f9ec2', 'a1ecfee3', '96459fde' );
+	$sel = array( 'html body .dw-dots-light' );
+	foreach ( $ids as $id ) {
+		$sel[] = 'html body .elementor-element-' . $id;
+	}
+	echo '<style id="dwdp-no-light-dots">' . implode( ',', $sel ) . '{background-image:none!important}</style>' . "\n";
+}, 99 );
+
 /** Case-study pages use the plugin template (inside the site's header/footer). */
 add_filter( 'template_include', function ( $template ) {
 	if ( is_singular( DWDP_CPT ) ) {
