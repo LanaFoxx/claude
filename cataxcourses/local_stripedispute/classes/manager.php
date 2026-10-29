@@ -74,16 +74,24 @@ class manager {
         $billing = isset($charge['billing_details']) && is_array($charge['billing_details']) ? $charge['billing_details'] : [];
         $customer = isset($charge['customer']) && is_array($charge['customer']) ? $charge['customer'] : [];
         $emails = [];
-        foreach ([$meta['customer_email'] ?? null, $billing['email'] ?? null, $charge['receipt_email'] ?? null,
-                  $customer['email'] ?? null] as $email) {
+        // This store's WooCommerce Stripe gateway labels it "Billing Email"; newer versions use customer_email.
+        foreach ([$meta['Billing Email'] ?? null, $meta['customer_email'] ?? null, $billing['email'] ?? null,
+                  $charge['receipt_email'] ?? null, $customer['email'] ?? null] as $email) {
             $email = \core_text::strtolower(trim((string)$email));
             if ($email !== '' && validate_email($email) && !in_array($email, $emails)) {
                 $emails[] = $email;
             }
         }
-        $name = trim((string)($meta['customer_name'] ?? $billing['name'] ?? $customer['name'] ?? ''));
+        $name = '';
+        foreach ([$meta['customer_name'] ?? null, $billing['name'] ?? null, $customer['name'] ?? null] as $candidate) {
+            if (trim((string)$candidate) !== '') {
+                $name = trim((string)$candidate);
+                break;
+            }
+        }
         $order = trim((string)($meta['order_id'] ?? ''));
-        return ['emails' => $emails, 'name' => $name, 'orderid' => $order];
+        $products = trim((string)($meta['Products'] ?? ''));
+        return ['emails' => $emails, 'name' => $name, 'orderid' => $order, 'products' => $products];
     }
 
     /** Moodle accounts (not deleted) with any of these emails, keyed by id. */
@@ -148,6 +156,44 @@ class manager {
         return self::process($rec);
     }
 
+    /**
+     * Load disputes that already exist in Stripe (before the webhook was set up). Nobody is suspended.
+     * Returns the number imported.
+     */
+    public static function import_existing() {
+        global $DB;
+        $count = 0;
+        $after = null;
+        do {
+            $page = self::stripe_get('disputes?limit=100' . ($after ? '&starting_after=' . rawurlencode($after) : ''));
+            if (!$page || empty($page['data'])) {
+                break;
+            }
+            foreach ($page['data'] as $dispute) {
+                $after = $dispute['id'];
+                if ($DB->record_exists('local_stripedispute', ['disputeid' => $dispute['id']])) {
+                    continue;
+                }
+                $created = !empty($dispute['created']) ? (int)$dispute['created'] : time();
+                $rec = (object)[
+                    'disputeid' => $dispute['id'],
+                    'chargeid' => is_string($dispute['charge'] ?? null) ? $dispute['charge'] : ($dispute['charge']['id'] ?? null),
+                    'amount' => $dispute['amount'] ?? null,
+                    'currency' => $dispute['currency'] ?? null,
+                    'reason' => $dispute['reason'] ?? null,
+                    'status' => $dispute['status'] ?? null,
+                    'outcome' => 'pending',
+                    'timecreated' => $created,
+                    'timemodified' => time(),
+                ];
+                $rec->id = $DB->insert_record('local_stripedispute', $rec);
+                self::process($rec, true);
+                $count++;
+            }
+        } while (!empty($page['has_more']));
+        return $count;
+    }
+
     /** Find the buyer for a recorded dispute and suspend their account if exactly one match. */
     public static function process($rec, $dryrun = false) {
         global $DB;
@@ -160,6 +206,7 @@ class manager {
             $rec->email = $buyer['emails'] ? $buyer['emails'][0] : null;
             $rec->name = $buyer['name'];
             $rec->orderid = $buyer['orderid'];
+            $products = $buyer['products'] !== '' ? ' Order: ' . $buyer['products'] . '.' : '';
             $users = self::find_users($buyer['emails']);
             if (!$users) {
                 $rec->outcome = 'nomatch';
@@ -179,11 +226,12 @@ class manager {
                     $rec->note = 'Account was already suspended.';
                 } else if ($dryrun || !get_config('local_stripedispute', 'enabled')) {
                     $rec->outcome = 'dryrun';
-                    $rec->note = 'Automatic suspension is off, so the account was not suspended.';
+                    $rec->note = ($dryrun ? 'Imported from Stripe; not suspended. Use Remove access to suspend.'
+                        : 'Automatic suspension is off, so the account was not suspended.') . $products;
                 } else {
                     self::suspend($user);
                     $rec->outcome = 'suspended';
-                    $rec->note = 'Account suspended automatically.';
+                    $rec->note = 'Account suspended automatically.' . $products;
                 }
             }
         }

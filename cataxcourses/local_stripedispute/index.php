@@ -13,7 +13,12 @@ $id = optional_param('id', 0, PARAM_INT);
 $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 $notice = '';
 
-if ($action && $id && confirm_sesskey()) {
+if ($action === 'import' && confirm_sesskey()) {
+    core_php_time_limit::raise(600);
+    $n = manager::import_existing();
+    $notice = "Imported $n dispute(s) from Stripe. Nobody was suspended.";
+}
+if ($action && $action !== 'import' && $id && confirm_sesskey()) {
     $rec = $DB->get_record('local_stripedispute', ['id' => $id], '*', MUST_EXIST);
     if ($action === 'restore' && $rec->userid) {
         manager::unsuspend($rec->userid);
@@ -45,10 +50,14 @@ echo html_writer::tag('p', 'Webhook address for Stripe: ' .
 if ($notice) {
     echo $OUTPUT->notification(s($notice), 'info');
 }
+echo $OUTPUT->single_button(new moodle_url('/local/stripedispute/index.php', ['action' => 'import']),
+    'Import existing disputes from Stripe (nobody is suspended)', 'post');
 $labels = ['suspended' => 'Access removed', 'restored' => 'Access restored', 'nomatch' => 'No matching account',
     'multiple' => 'Several accounts match', 'admin' => 'Admin account (skipped)', 'alreadysuspended' => 'Already suspended',
-    'dryrun' => 'Recorded only (auto-suspend off)', 'error' => 'Could not read payment', 'pending' => 'Processing'];
-$rows = $DB->get_records('local_stripedispute', null, 'timecreated DESC', '*', 0, 300);
+    'dryrun' => 'Not suspended', 'error' => 'Could not read payment', 'pending' => 'Processing'];
+$rows = $DB->get_records_sql("SELECT * FROM {local_stripedispute}
+                              ORDER BY CASE WHEN status IN ('needs_response', 'under_review', 'warning_needs_response',
+                                       'warning_under_review') THEN 0 ELSE 1 END, timecreated DESC", [], 0, 500);
 $table = new html_table();
 $table->head = ['Opened', 'Buyer', 'Order', 'Amount', 'Reason', 'Stripe status', 'Result', ''];
 foreach ($rows as $r) {
