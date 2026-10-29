@@ -1,7 +1,7 @@
 /* ===== Dream Web Digital — site.css (v1) ===== */
 .e-con{--container-max-width:1280px!important}
 body .e-con.e-con-boxed>.e-con-inner{max-width:1280px}
-body{font-family:Poppins,sans-serif}
+body{font-family:Urbanist,sans-serif}
 
 /* sticky glass header */
 .dw-header,.elementor-element-2b90aaa9{position:sticky;top:0;z-index:999;box-shadow:0 1px 0 rgba(18,41,62,.07)}
@@ -12,7 +12,7 @@ body{font-family:Poppins,sans-serif}
 .elementor-widget-wp-widget-nav_menu .widget-title,.elementor-widget-wp-widget-nav_menu h2{display:none!important}
 .elementor-widget-wp-widget-nav_menu ul{display:flex;gap:28px;list-style:none!important;margin:0!important;padding:0!important}
 .elementor-widget-wp-widget-nav_menu li{list-style:none!important;margin:0!important;padding:0!important}
-.elementor-widget-wp-widget-nav_menu a{font:500 17.5px/1.4 Poppins,sans-serif!important;color:#3D4660!important;text-decoration:none!important;background:none!important}
+.elementor-widget-wp-widget-nav_menu a{font:500 17.5px/1.4 Urbanist,sans-serif!important;color:#3D4660!important;text-decoration:none!important;background:none!important}
 .elementor-widget-wp-widget-nav_menu a:hover,.elementor-widget-wp-widget-nav_menu .current-menu-item>a,.elementor-widget-wp-widget-nav_menu .current_page_item>a{color:#1B7EC3!important}
 
 /* dot textures */
@@ -40,16 +40,16 @@ body{font-family:Poppins,sans-serif}
 .dw-check path{stroke:#fff;stroke-width:2.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
 .dw-checkw{margin-top:2px}
 .dw-cardtop{display:flex;justify-content:space-between;align-items:flex-start;width:100%}
-.dw-num{font:600 15px Poppins,sans-serif;color:#1B7EC3}
+.dw-num{font:600 15px Urbanist,sans-serif;color:#1B7EC3}
 
 /* hero badge pill */
-.dw-badge{display:inline-block;border:1px solid rgba(255,255,255,0.22);border-radius:100px;padding:9px 18px;font:500 15.5px/1.5 Poppins,sans-serif;color:#C9DAE8;letter-spacing:.02em}
+.dw-badge{display:inline-block;border:1px solid rgba(255,255,255,0.22);border-radius:100px;padding:9px 18px;font:500 15.5px/1.5 Urbanist,sans-serif;color:#C9DAE8;letter-spacing:.02em}
 
 /* marquee */
 @keyframes dwMarquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 .dw-mq{display:flex;width:max-content;animation:dwMarquee 36s linear infinite}
 .dw-mg{display:flex;align-items:center;gap:54px;padding-right:54px}
-.dw-mi{display:flex;align-items:center;gap:13px;white-space:nowrap;color:#E3EDF5;font:600 16.5px Poppins,sans-serif;letter-spacing:.08em}
+.dw-mi{display:flex;align-items:center;gap:13px;white-space:nowrap;color:#E3EDF5;font:600 16.5px Urbanist,sans-serif;letter-spacing:.08em}
 
 /* browser slider */
 .dw-slider{display:flex;gap:18px;align-items:center}
@@ -62,7 +62,7 @@ body{font-family:Poppins,sans-serif}
 .dw-bdots{display:flex;gap:6px}
 .dw-bdots i{width:9px;height:9px;border-radius:50%;display:block}
 .dw-bdots i:nth-child(1){background:#FF5F57}.dw-bdots i:nth-child(2){background:#FEBC2E}.dw-bdots i:nth-child(3){background:#28C840}
-.dw-burl{flex:1;background:#fff;border-radius:100px;padding:6px 14px;font:400 13px Poppins,sans-serif;color:#4A5470}
+.dw-burl{flex:1;background:#fff;border-radius:100px;padding:6px 14px;font:400 13px Urbanist,sans-serif;color:#4A5470}
 .dw-burl em{font-style:normal}
 .dw-bscreen{position:relative;aspect-ratio:607/330;background:#0A1622}
 .dw-bscreen img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;opacity:0;transition:opacity .5s ease;display:block}
@@ -72,38 +72,38 @@ body{font-family:Poppins,sans-serif}
 /* founder photo composition */
 .dw-photo{position:relative;display:block}
 .dw-photo img{position:relative;z-index:1;width:100%;display:block;border-radius:14px;box-shadow:0 24px 55px rgba(18,41,62,0.25)}
-.dw-photo .dw-chip{position:absolute;z-index:2;bottom:18px;left:18px;background:#12293E;color:#fff;font:600 15px Poppins,sans-serif;padding:9px 17px;border-radius:8px}
+.dw-photo .dw-chip{position:absolute;z-index:2;bottom:18px;left:18px;background:#12293E;color:#fff;font:600 15px Urbanist,sans-serif;padding:9px 17px;border-radius:8px}
 .dw-photo-dots::before,.dw-photo-dots::after{content:"";position:absolute;width:144px;height:144px;background-image:radial-gradient(#1B7EC3 2px,transparent 2px);background-size:16px 16px;opacity:.55;z-index:0}
 .dw-photo-dots::before{left:-16px;top:-16px}
 .dw-photo-dots::after{right:-16px;bottom:-16px}
 
 /* pull-quote */
 .dw-quote{border-left:3px solid #1B7EC3;padding:4px 0 4px 22px}
-.dw-quote p{margin:0;font:600 italic 20px/1.55 Poppins,sans-serif;color:#0E1526;font-style:italic}
-.dw-quote span{display:block;margin-top:8px;font:600 15px Poppins,sans-serif;letter-spacing:.08em;color:#7A86A0}
+.dw-quote p{margin:0;font:600 italic 20px/1.55 Urbanist,sans-serif;color:#0E1526;font-style:italic}
+.dw-quote span{display:block;margin-top:8px;font:600 15px Urbanist,sans-serif;letter-spacing:.08em;color:#7A86A0}
 
 /* proof badges */
 .dw-blogo{width:auto!important;display:inline-block}
 
 /* pills */
 .dw-pills{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
-.dw-pill{background:#fff;border:1px solid #CDE0EF;border-radius:100px;padding:10px 19px;font:600 15.5px Poppins,sans-serif;color:#12293E}
+.dw-pill{background:#fff;border:1px solid #CDE0EF;border-radius:100px;padding:10px 19px;font:600 15.5px Urbanist,sans-serif;color:#12293E}
 
 /* form */
 .dw-form{display:flex;flex-direction:column;gap:14px}
-.dw-form input,.dw-form textarea{border:1px solid #CDE0EF;border-radius:8px;padding:14px 17px;font:400 17px Poppins,sans-serif;color:#0E1526;outline:none;background:#FAFBFE;width:100%;box-sizing:border-box}
+.dw-form input,.dw-form textarea{border:1px solid #CDE0EF;border-radius:8px;padding:14px 17px;font:300 17px Urbanist,sans-serif;color:#0E1526;outline:none;background:#FAFBFE;width:100%;box-sizing:border-box}
 .dw-form input::placeholder,.dw-form textarea::placeholder{color:#939DB5}
 .dw-form textarea{resize:vertical;min-height:110px}
-.dw-form button{background:#1B7EC3;color:#fff;font:600 18px Poppins,sans-serif;padding:16px;border:none;border-radius:8px;cursor:pointer}
+.dw-form button{background:#1B7EC3;color:#fff;font:600 18px Urbanist,sans-serif;padding:16px;border:none;border-radius:8px;cursor:pointer}
 .dw-form button:hover{background:#166AA6}
-.dw-fnote{text-align:center;font:400 15px Poppins,sans-serif;color:#7A86A0}
+.dw-fnote{text-align:center;font:300 15px Urbanist,sans-serif;color:#7A86A0}
 
 /* footer */
-.dw-fbrand{font:700 22px Poppins,sans-serif;color:#fff}
+.dw-fbrand{font:700 22px Urbanist,sans-serif;color:#fff}
 .dw-fbrand span{color:#1B7EC3}
-.dw-fbrand em{font:500 14px Poppins,sans-serif;font-style:normal;letter-spacing:.3em;color:#7A86A0}
+.dw-fbrand em{font:500 14px Urbanist,sans-serif;font-style:normal;letter-spacing:.3em;color:#7A86A0}
 .dw-fnav{display:flex;gap:26px;flex-wrap:wrap;justify-content:center}
-.dw-fnav a{font:400 16px Poppins,sans-serif;color:#AFC6D8;text-decoration:none}
+.dw-fnav a{font:300 16px Urbanist,sans-serif;color:#AFC6D8;text-decoration:none}
 .dw-fnav a:hover{color:#fff}
 
 /* sticky process rail */
@@ -124,7 +124,7 @@ body{font-family:Poppins,sans-serif}
   body.dw-menu-open .dw-close{display:flex}
   body.dw-menu-open{overflow:hidden}
   .elementor-widget-wp-widget-nav_menu ul{position:absolute!important;top:50%!important;left:50%!important;transform:translate(-50%,-50%)!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:26px!important}
-  .elementor-widget-wp-widget-nav_menu a{font:600 23px Poppins,sans-serif!important;color:#fff!important;display:block;padding:10px 20px;text-align:center}
+  .elementor-widget-wp-widget-nav_menu a{font:600 23px Urbanist,sans-serif!important;color:#fff!important;display:block;padding:10px 20px;text-align:center}
   .elementor-widget-wp-widget-nav_menu a:hover{color:#7FBEEA!important}
   /* buttons full width */
   .elementor-widget-button .elementor-button{width:100%}
@@ -132,19 +132,19 @@ body{font-family:Poppins,sans-serif}
 }
 /* ===== project detail pages (v3) ===== */
 .dw-wt{border-left:3px solid #1B7EC3;padding:2px 0 2px 18px}
-.dw-wt span{display:block;font:600 14px Poppins,sans-serif;letter-spacing:.12em;color:#7A86A0;margin-bottom:6px}
-.dw-wt p{margin:0;font:400 17px/1.75 Poppins,sans-serif;color:#4A5470}
+.dw-wt span{display:block;font:600 14px Urbanist,sans-serif;letter-spacing:.12em;color:#7A86A0;margin-bottom:6px}
+.dw-wt p{margin:0;font:300 17px/1.75 Urbanist,sans-serif;color:#4A5470}
 .dw-notes{width:100%;box-sizing:border-box;background:#fff;border:1px solid #E4E9F5;border-radius:12px;padding:8px 22px 6px;box-shadow:0 10px 30px rgba(18,41,62,.07)}
 .dw-notes>div{display:grid;grid-template-columns:110px 1fr;gap:14px;padding:13px 0;border-bottom:1px solid #E9EDF7}
 .dw-notes>div:last-child{border-bottom:0}
-.dw-notes span:first-child{font:600 14px Poppins,sans-serif;letter-spacing:.1em;color:#7A86A0;text-transform:uppercase;padding-top:2px}
-.dw-notes span:last-child{font:400 16.5px/1.6 Poppins,sans-serif;color:#303B58}
+.dw-notes span:first-child{font:600 14px Urbanist,sans-serif;letter-spacing:.1em;color:#7A86A0;text-transform:uppercase;padding-top:2px}
+.dw-notes span:last-child{font:300 16.5px/1.6 Urbanist,sans-serif;color:#303B58}
 .dw-review{width:100%;box-sizing:border-box;background:#fff;border:1px solid #E4E9F5;border-radius:12px;padding:20px 22px;box-shadow:0 10px 30px rgba(18,41,62,.07);display:flex;flex-direction:column;gap:10px}
-.dw-review .dw-rl{font:600 14px Poppins,sans-serif;letter-spacing:.12em;color:#7A86A0}
+.dw-review .dw-rl{font:600 14px Urbanist,sans-serif;letter-spacing:.12em;color:#7A86A0}
 .dw-stars{display:flex;gap:3px}
 .dw-stars i{width:17px;height:17px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23F5B942' d='M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z'/%3E%3C/svg%3E") no-repeat center/contain}
-.dw-review p{margin:0;font:italic 400 17px/1.75 Poppins,sans-serif;color:#303B58}
-.dw-review .dw-rby{font:600 15.5px Poppins,sans-serif;color:#7A86A0}
+.dw-review p{margin:0;font:italic 400 17px/1.75 Urbanist,sans-serif;color:#303B58}
+.dw-review .dw-rby{font:600 15.5px Urbanist,sans-serif;color:#7A86A0}
 .dw-shot img{width:100%;border-radius:12px;box-shadow:0 14px 40px rgba(18,41,62,.12)}
 .dw-mob img{max-width:360px;width:100%;margin-top:12px}
 /* portfolio project grid */
@@ -154,19 +154,19 @@ body{font-family:Poppins,sans-serif}
 .dw-parrow svg{stroke:#12293E;stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round;display:block}
 .dw-parrow:hover{background:#1B7EC3!important;border-color:#1B7EC3!important}
 .dw-parrow:hover svg{stroke:#fff}
-.dw-pcount{margin-top:20px;text-align:center;font:600 16px Poppins,sans-serif;letter-spacing:.12em;color:#7A86A0}
+.dw-pcount{margin-top:20px;text-align:center;font:600 16px Urbanist,sans-serif;letter-spacing:.12em;color:#7A86A0}
 @media(max-width:767px){.dw-pslider{gap:10px}.dw-parrow{width:44px;height:44px}}
 .dw-pcard{display:none;flex-direction:column;border:1px solid #D3DEEC;border-radius:12px;overflow:hidden;box-shadow:0 26px 60px rgba(18,41,62,.26);background:#fff;text-decoration:none}
 .dw-pcard.on{display:flex}
 .dw-pbar{background:#EEF3F9;display:flex;align-items:center;gap:10px;padding:9px 13px}
 .dw-pbar .dw-bdots i{width:8px;height:8px}
-.dw-pburl{flex:1;background:#fff;border-radius:100px;padding:4px 12px;font:400 14px Poppins,sans-serif;color:#4A5470}
+.dw-pburl{flex:1;background:#fff;border-radius:100px;padding:4px 12px;font:300 14px Urbanist,sans-serif;color:#4A5470}
 .dw-pshot{display:block;border-bottom:1px solid #E4E9F5}
 .dw-pshot img{width:100%;display:block;aspect-ratio:16/9;object-fit:cover;object-position:top}
 .dw-pfoot{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:18px 22px}
-.dw-pmeta b{display:block;font:900 18px Archivo,sans-serif;color:#0E1526;letter-spacing:.02em;text-transform:uppercase}
-.dw-pmeta em{font:400 15px Poppins,sans-serif;font-style:normal;color:#7A86A0}
-.dw-pbtn{background:#1B7EC3;color:#fff;font:600 15.5px Poppins,sans-serif;padding:12px 19px;border-radius:8px;white-space:nowrap}
+.dw-pmeta b{display:block;font:900 18px Urbanist,sans-serif;color:#0E1526;letter-spacing:.02em;text-transform:uppercase}
+.dw-pmeta em{font:300 15px Urbanist,sans-serif;font-style:normal;color:#7A86A0}
+.dw-pbtn{background:#1B7EC3;color:#fff;font:600 15.5px Urbanist,sans-serif;padding:12px 19px;border-radius:8px;white-space:nowrap}
 .dw-pcard:hover .dw-pbtn{background:#166AA6}
 
 /* ===== process v2 ===== */
@@ -177,4 +177,4 @@ body{font-family:Poppins,sans-serif}
 @media(max-width:767px){.dw-inc{grid-template-columns:1fr}}
 .dw-inc>div{display:flex;align-items:center;gap:14px;background:#F4F9FE;border:1px solid #E4E9F5;border-radius:12px;padding:17px 22px}
 .dw-inc svg{flex:none}
-.dw-inc span{font:600 18px Poppins,sans-serif;color:#0E1526}
+.dw-inc span{font:600 18px Urbanist,sans-serif;color:#0E1526}

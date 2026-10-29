@@ -272,20 +272,20 @@ body.woocommerce-page{background:#12293E}
 body.woocommerce-page main#content.site-main{max-width:none;width:100%;margin:0;padding:100px 32px 100px;background-color:#12293E;background-image:radial-gradient(ellipse 700px 380px at 50% 0,rgba(27,126,195,.35),transparent 70%),radial-gradient(rgba(255,255,255,.12) 1px,transparent 1px);background-size:auto,22px 22px}
 body.woocommerce-page main#content .page-header{display:none}
 .dww-hero{text-align:center;max-width:920px;margin:0 auto 40px}
-.dww-eyebrow{display:inline-block;border:1px solid rgba(255,255,255,0.22);border-radius:100px;padding:9px 18px;font:500 15.5px/1.5 Poppins,sans-serif;color:#C9DAE8;letter-spacing:.02em}
-.dww-title{margin:14px 0 0;font:900 44px/1.12 Archivo,sans-serif;text-transform:uppercase;color:#fff}
+.dww-eyebrow{display:inline-block;border:1px solid rgba(255,255,255,0.22);border-radius:100px;padding:9px 18px;font:500 15.5px/1.5 Urbanist,sans-serif;color:#C9DAE8;letter-spacing:.02em}
+.dww-title{margin:14px 0 0;font:900 52px/1.04 Urbanist,sans-serif;letter-spacing:.01em;text-transform:uppercase;color:#fff}
 .dww-title::after{content:"";display:block;width:170px;height:12px;margin:14px auto 0;background:' . $swoosh . ' no-repeat center/contain}
 .dww-pills{display:flex;justify-content:center;flex-wrap:wrap;gap:18px;margin-top:30px}
-.dww-pill{display:inline-flex;align-items:center;gap:12px;background:#fff;border-radius:10px;padding:16px 20px;font:400 16px Poppins,sans-serif;color:#0E1526}
-.dww-pill i{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:#1B7EC3;color:#fff;font:600 14px Poppins,sans-serif;font-style:normal}
-.dww-card{max-width:920px;margin:0 auto;background:#fff;border-radius:14px;padding:48px 52px 40px;box-shadow:0 30px 70px rgba(0,0,0,.25);font:400 16px/1.6 Poppins,sans-serif;color:#4A5470}
-.dww-card h2,.dww-card h3{font:900 24px/1.25 Archivo,sans-serif;text-transform:uppercase;color:#0E1526;margin:0 0 18px}
+.dww-pill{display:inline-flex;align-items:center;gap:12px;background:#fff;border-radius:10px;padding:16px 20px;font:300 16px Urbanist,sans-serif;color:#0E1526}
+.dww-pill i{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:#1B7EC3;color:#fff;font:600 14px Urbanist,sans-serif;font-style:normal}
+.dww-card{max-width:920px;margin:0 auto;background:#fff;border-radius:14px;padding:48px 52px 40px;box-shadow:0 30px 70px rgba(0,0,0,.25);font:300 16px/1.6 Urbanist,sans-serif;color:#4A5470}
+.dww-card h2,.dww-card h3{font:900 24px/1.25 Urbanist,sans-serif;text-transform:uppercase;color:#0E1526;margin:0 0 18px}
 .dww-card .woocommerce-billing-fields>h3{display:block}
 .dww-card .woocommerce form .form-row,.dww-card form .form-row{padding:0;margin:0 0 20px}
 .dww-card form .form-row-first,.dww-card form .form-row-last{width:calc(50% - 10px)}
-.dww-card label{display:block;margin-bottom:8px;font:600 15px Poppins,sans-serif;color:#0E1526}
+.dww-card label{display:block;margin-bottom:8px;font:600 15px Urbanist,sans-serif;color:#0E1526}
 .dww-card label .required,.dww-card abbr.required{color:#1B7EC3;text-decoration:none;border:0}
-.dww-card input.input-text,.dww-card input[type=text],.dww-card input[type=email],.dww-card input[type=tel],.dww-card input[type=password],.dww-card select,.dww-card textarea{width:100%!important;height:52px!important;box-sizing:border-box!important;background:#FAFBFE!important;border:1px solid #CDE0EF!important;border-radius:8px!important;padding:13px 16px!important;font:400 16px Poppins,sans-serif!important;color:#0E1526!important;box-shadow:none!important;outline:0!important}
+.dww-card input.input-text,.dww-card input[type=text],.dww-card input[type=email],.dww-card input[type=tel],.dww-card input[type=password],.dww-card select,.dww-card textarea{width:100%!important;height:52px!important;box-sizing:border-box!important;background:#FAFBFE!important;border:1px solid #CDE0EF!important;border-radius:8px!important;padding:13px 16px!important;font:400 16px Urbanist,sans-serif!important;color:#0E1526!important;box-shadow:none!important;outline:0!important}
 .dww-card input.input-text:focus{border-color:#1B7EC3!important;box-shadow:0 0 0 3px rgba(27,126,195,.15)!important}
 .dww-card ::placeholder{color:#A9B6CB}
 .dww-card .col2-set{width:100%;float:none;display:block}.dww-card .col2-set .col-1,.dww-card .col2-set .col-2{width:100%;float:none}.dww-card .col2-set .col-2:empty,.dww-card .woocommerce-shipping-fields,.dww-card .woocommerce-additional-fields{display:none}
@@ -293,34 +293,34 @@ body.woocommerce-page main#content .page-header{display:none}
 .dww-card .woocommerce-billing-fields__field-wrapper .form-row-wide{width:100%}
 .dww-card #order_review_heading{margin-top:12px;padding-top:28px;border-top:1px solid #E4E9F5}
 .dww-card table.shop_table{width:100%;border:1px solid #E4E9F5;border-radius:10px;border-collapse:separate;border-spacing:0;overflow:hidden;margin:0 0 24px}
-.dww-card table.shop_table th,.dww-card table.shop_table td{padding:16px 18px;border:0;border-top:1px solid #E4E9F5;background:#fff;font:400 15.5px Poppins,sans-serif;color:#0E1526;text-align:left}
-.dww-card table.shop_table thead th{border-top:0;background:#F4F9FE;font:600 13px Poppins,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#4A5470}
+.dww-card table.shop_table th,.dww-card table.shop_table td{padding:16px 18px;border:0;border-top:1px solid #E4E9F5;background:#fff;font:300 15.5px Urbanist,sans-serif;color:#0E1526;text-align:left}
+.dww-card table.shop_table thead th{border-top:0;background:#F4F9FE;font:600 13px Urbanist,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#4A5470}
 .dww-card table.shop_table td:last-child,.dww-card table.shop_table th:last-child{text-align:right}
 .dww-card table.shop_table .order-total th,.dww-card table.shop_table .order-total td{font-weight:700;font-size:17px}
 .dww-renew{display:flex;gap:14px;align-items:flex-start;background:#EAF4FC;border:1px solid #CDE0EF;border-radius:10px;padding:18px 20px;margin:0 0 20px}
 .dww-renew-ic{flex:none;display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:#1B7EC3;color:#fff;font-size:18px;line-height:1}
-.dww-renew b{display:block;font:600 16px Poppins,sans-serif;color:#0E1526;margin-bottom:4px}
-.dww-renew p{margin:0;font:400 15px/1.6 Poppins,sans-serif;color:#303B58}
+.dww-renew b{display:block;font:600 16px Urbanist,sans-serif;color:#0E1526;margin-bottom:4px}
+.dww-renew p{margin:0;font:300 15px/1.6 Urbanist,sans-serif;color:#303B58}
 .dww-card #payment{background:#F4F9FE;border-radius:10px;padding:0}
 .dww-card #payment ul.payment_methods{padding:20px;border-bottom:1px solid #E4E9F5;margin:0}
 .dww-card #payment div.payment_box{background:#fff;border-radius:8px}
 .dww-card #payment div.payment_box::before{display:none}
 .dww-card #payment fieldset{border:0!important;padding:0!important;margin:0!important;min-width:0}.dww-card #payment div.payment_box{padding:0!important;background:transparent!important}
 .dww-card #payment .place-order{padding:20px;margin:0}
-.dww-agree label{display:flex;gap:10px;align-items:flex-start;font:400 15px/1.5 Poppins,sans-serif;color:#0E1526;margin:0 0 18px}
+.dww-agree label{display:flex;gap:10px;align-items:flex-start;font:300 15px/1.5 Urbanist,sans-serif;color:#0E1526;margin:0 0 18px}
 .dww-agree input{margin-top:4px;width:18px;height:18px;flex:none}
 .dww-card .woocommerce-privacy-policy-text p{font-size:13.5px;color:#7A86A0}
-.dww-card button.button,.dww-card a.button,.dww-card #place_order{display:inline-flex;align-items:center;justify-content:center;height:52px;padding:0 32px;border:0;border-radius:8px;background:#1B7EC3;color:#fff;font:300 14px Poppins,sans-serif;letter-spacing:.16em;text-transform:uppercase;cursor:pointer}
+.dww-card button.button,.dww-card a.button,.dww-card #place_order{display:inline-flex;align-items:center;justify-content:center;height:52px;padding:0 32px;border:0;border-radius:8px;background:#1B7EC3;color:#fff;font:300 14px Urbanist,sans-serif;letter-spacing:.16em;text-transform:uppercase;cursor:pointer}
 .dww-card #place_order{width:100%}
 .dww-card button.button:hover,.dww-card #place_order:hover{background:#166AA6}
-.dww-card .woocommerce-error,.dww-card .woocommerce-info,.dww-card .woocommerce-message{list-style:none;margin:0 0 24px;padding:16px 20px 16px 20px;border:0;border-left:4px solid #1B7EC3;border-radius:8px;background:#EAF4FC;color:#0E1526;font:400 15px Poppins,sans-serif}
+.dww-card .woocommerce-error,.dww-card .woocommerce-info,.dww-card .woocommerce-message{list-style:none;margin:0 0 24px;padding:16px 20px 16px 20px;border:0;border-left:4px solid #1B7EC3;border-radius:8px;background:#EAF4FC;color:#0E1526;font:300 15px Urbanist,sans-serif}
 .dww-card .woocommerce-error{border-left-color:#D63638;background:#FDEDED}
 .dww-card .woocommerce-error::before,.dww-card .woocommerce-info::before,.dww-card .woocommerce-message::before{display:none}
 .dww-card .woocommerce-order-overview{display:flex;flex-wrap:wrap;gap:12px;padding:0;margin:0 0 28px;list-style:none}
-.dww-card .woocommerce-order-overview li{flex:1 1 160px;background:#F4F9FE;border-radius:10px;padding:14px 16px;border:0;margin:0;font:400 13px Poppins,sans-serif;text-transform:uppercase;letter-spacing:.08em;color:#4A5470}
-.dww-card .woocommerce-order-overview li strong{display:block;margin-top:4px;font:600 16px Poppins,sans-serif;text-transform:none;letter-spacing:0;color:#0E1526}
+.dww-card .woocommerce-order-overview li{flex:1 1 160px;background:#F4F9FE;border-radius:10px;padding:14px 16px;border:0;margin:0;font:400 13px Urbanist,sans-serif;text-transform:uppercase;letter-spacing:.08em;color:#4A5470}
+.dww-card .woocommerce-order-overview li strong{display:block;margin-top:4px;font:600 16px Urbanist,sans-serif;text-transform:none;letter-spacing:0;color:#0E1526}
 .dww-card .woocommerce-MyAccount-navigation ul{list-style:none;padding:0;margin:0 0 24px;display:flex;flex-wrap:wrap;gap:8px}
-.dww-card .woocommerce-MyAccount-navigation a{display:block;padding:10px 16px;border-radius:8px;background:#F4F9FE;color:#0E1526;text-decoration:none;font:500 15px Poppins,sans-serif}
+.dww-card .woocommerce-MyAccount-navigation a{display:block;padding:10px 16px;border-radius:8px;background:#F4F9FE;color:#0E1526;text-decoration:none;font:500 15px Urbanist,sans-serif}
 .dww-card .woocommerce-MyAccount-navigation .is-active a{background:#1B7EC3;color:#fff}
 .dww-card .woocommerce-MyAccount-navigation,.dww-card .woocommerce-MyAccount-content{float:none;width:100%}
 .dww-card a{color:#1B7EC3}
@@ -454,14 +454,14 @@ function dwdp_send_reminder( $lead, $n ) {
 		. '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F4F9FE"><tr><td align="center" style="padding:32px 16px">'
 		. '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border-radius:14px;overflow:hidden;border:1px solid #E4E9F5">'
 		. '<tr><td align="center" style="background:#12293E;padding:30px 24px"><img src="' . $logo . '" width="170" alt="Dream Web Digital" style="display:block;width:170px;height:auto;border:0"></td></tr>'
-		. '<tr><td style="padding:40px 40px 12px;font-family:Poppins,Helvetica,Arial,sans-serif">'
+		. '<tr><td style="padding:40px 40px 12px;font-family:Urbanist,Helvetica,Arial,sans-serif">'
 		. '<p style="margin:0 0 6px;font-size:13px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#1B7EC3">Server hosting · $500/year</p>'
-		. '<h1 style="margin:0 0 20px;font-family:Archivo,\'Arial Black\',Helvetica,Arial,sans-serif;font-size:26px;line-height:1.2;font-weight:900;text-transform:uppercase;color:#0E1526">' . esc_html( $title ) . '</h1>'
+		. '<h1 style="margin:0 0 20px;font-family:Urbanist,\'Arial Black\',Helvetica,Arial,sans-serif;font-size:26px;line-height:1.2;font-weight:900;text-transform:uppercase;color:#0E1526">' . esc_html( $title ) . '</h1>'
 		. '<p style="margin:0 0 14px;font-size:16px;line-height:1.7;color:#303B58">' . $hi . '</p>'
 		. '<p style="margin:0 0 28px;font-size:16px;line-height:1.7;color:#303B58">' . esc_html( $body ) . '</p>'
-		. '<table role="presentation" cellpadding="0" cellspacing="0"><tr><td style="border-radius:8px;background:#1B7EC3"><a href="' . $url . '" style="display:inline-block;padding:16px 34px;font-size:14px;letter-spacing:2px;text-transform:uppercase;color:#ffffff;text-decoration:none;font-family:Poppins,Helvetica,Arial,sans-serif">Finish my order</a></td></tr></table>'
+		. '<table role="presentation" cellpadding="0" cellspacing="0"><tr><td style="border-radius:8px;background:#1B7EC3"><a href="' . $url . '" style="display:inline-block;padding:16px 34px;font-size:14px;letter-spacing:2px;text-transform:uppercase;color:#ffffff;text-decoration:none;font-family:Urbanist,Helvetica,Arial,sans-serif">Finish my order</a></td></tr></table>'
 		. '</td></tr>'
-		. '<tr><td style="padding:24px 40px 36px;font-family:Poppins,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.7;color:#7A86A0">Questions? Reply to this email or call <a href="tel:+17722101728" style="color:#1B7EC3;text-decoration:none;font-weight:600">(772) 210-1728</a>.<br>Michael Tarr, Dream Web Digital</td></tr>'
+		. '<tr><td style="padding:24px 40px 36px;font-family:Urbanist,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.7;color:#7A86A0">Questions? Reply to this email or call <a href="tel:+17722101728" style="color:#1B7EC3;text-decoration:none;font-weight:600">(772) 210-1728</a>.<br>Michael Tarr, Dream Web Digital</td></tr>'
 		. '</table>'
 		. '<p style="margin:18px 0 0;font-family:Helvetica,Arial,sans-serif;font-size:12px;color:#9AA6BC">Dream Web Digital LLC · Charlotte, NC</p>'
 		. '</td></tr></table></body></html>';

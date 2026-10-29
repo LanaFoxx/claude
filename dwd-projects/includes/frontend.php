@@ -2,8 +2,9 @@
 defined( 'ABSPATH' ) || exit;
 
 add_action( 'wp_enqueue_scripts', function () {
-	// Same fonts as the rest of the site (Elementor only loads them on Elementor-built pages).
-	wp_register_style( 'dwdp-fonts', 'https://fonts.googleapis.com/css2?family=Archivo:wght@700;900&family=Poppins:ital,wght@0,400;0,500;0,600;1,400&display=swap', array(), null );
+	// The site's one typeface, Urbanist, loaded on every page (Elementor's own Google Fonts are switched off below).
+	wp_register_style( 'dwdp-fonts', 'https://fonts.googleapis.com/css2?family=Urbanist:wght@200;300;400;500;600;700;900&display=swap', array(), null );
+	wp_enqueue_style( 'dwdp-fonts' );
 	wp_register_style( 'dwdp-front', DWDP_URL . 'assets/front.css', array( 'dwdp-fonts' ), DWDP_VERSION );
 	wp_register_script( 'dwdp-front', DWDP_URL . 'assets/front.js', array(), DWDP_VERSION, true );
 	if ( is_singular( DWDP_CPT ) ) {
@@ -91,7 +92,7 @@ add_action( 'wp_head', function () {
 	$btn = 'a.elementor-button,button.elementor-button,.elementor-button[type=submit],.dwdp-btn,.dwf-zoom,.dw-pbtn,.dw-form button,.dw-host-btn';
 	$txt = '.elementor-button .elementor-button-text,.elementor-button .elementor-button-content-wrapper';
 	echo '<style id="dwdp-buttons">'
-		. $btn . ',' . $txt . '{text-transform:uppercase!important;letter-spacing:.16em!important;font-family:Poppins,sans-serif!important;font-size:14px!important;font-weight:300!important;line-height:1.2!important}'
+		. $btn . ',' . $txt . '{text-transform:uppercase!important;letter-spacing:.16em!important;font-family:Urbanist,sans-serif!important;font-size:14px!important;font-weight:600!important;line-height:1.2!important}'
 		. $btn . '{display:inline-flex!important;align-items:center;justify-content:center;box-sizing:border-box;height:52px!important;padding:0 32px!important;min-width:232px;border-radius:8px!important;white-space:nowrap}'
 		. '@media(max-width:480px){' . $btn . '{min-width:0;padding:0 26px!important}}'
 		// Shared closing band: dark, dots, glow, even spacing (class dw-cta-band on an Elementor container).
@@ -125,7 +126,7 @@ add_action( 'wp_footer', function () {
  */
 add_action( 'wp_head', function () {
 	$h = '.elementor-element-7e6232a .elementor-heading-title,.elementor-element-dw0008r .elementor-heading-title,.elementor-element-dw0005k .elementor-heading-title,.elementor-element-18a049b .elementor-heading-title,.elementor-element-4bbde7c .elementor-heading-title';
-	echo '<style id="dwdp-h1">' . $h . '{font-size:49px!important;line-height:1.12!important}@media(max-width:1024px){' . $h . '{font-size:42px!important}}@media(max-width:767px){' . $h . '{font-size:34px!important}}</style>' . "\n";
+	echo '<style id="dwdp-h1">' . $h . '{font-size:52px!important;line-height:1.04!important}@media(max-width:1024px){' . $h . '{font-size:42px!important}}@media(max-width:767px){' . $h . '{font-size:34px!important}}</style>' . "\n";
 }, 99 );
 
 /**
@@ -141,10 +142,40 @@ add_action( 'wp_head', function () {
  */
 add_action( 'wp_head', function () {
 	$e = '.elementor-element-a9c373f .elementor-heading-title,.elementor-element-dw0008q .elementor-heading-title,.elementor-element-dw0005j .elementor-heading-title,.elementor-element-3b3802c .elementor-heading-title,.elementor-element-20d4377 .elementor-heading-title';
-	echo '<style id="dwdp-eyebrow-pill">' . $e . '{display:inline-block!important;border:1px solid rgba(255,255,255,0.22)!important;border-radius:100px!important;padding:9px 18px!important;font:500 15.5px/1.5 Poppins,sans-serif!important;color:#C9DAE8!important;letter-spacing:.02em!important;text-transform:none!important}'
+	echo '<style id="dwdp-eyebrow-pill">' . $e . '{display:inline-block!important;border:1px solid rgba(255,255,255,0.22)!important;border-radius:100px!important;padding:9px 18px!important;font:500 15.5px/1.5 Urbanist,sans-serif!important;color:#C9DAE8!important;letter-spacing:.02em!important;text-transform:none!important}'
 		// Same height on every page (the blog's): pull up the eyebrows that sit lower.
 		. '@media(min-width:1025px){.elementor-element-a9c373f{margin-top:-18px!important}.elementor-element-dw0008q{margin-top:-20px!important}.elementor-element-3b3802c{margin-top:-28px!important}}</style>' . "\n";
 }, 99 );
+
+// Elementor would otherwise load six unused Google Fonts families (Roboto, Karla, Archivo, Poppins...) in every weight.
+add_filter( 'elementor/frontend/print_google_fonts', '__return_false' );
+
+/**
+ * Typography: Urbanist everywhere. Headings 900, body 300, nav 500 (active 600), buttons 600.
+ * Small text (under 14px) and inputs stay at 400 for legibility; those weights are set where each style is defined.
+ */
+add_action( 'wp_head', function () {
+	$not_icons = ':not(i):not(svg):not(svg *):not([class*="eicon"]):not([class*="fa-"]):not(.fa):not(.fas):not(.far):not(.fab)';
+	echo '<style id="dwdp-type">'
+		. 'body,body *' . $not_icons . ',input,select,textarea,button{font-family:"Urbanist",sans-serif!important}'
+		. 'h1,h2,h3,h4{font-weight:900;letter-spacing:.01em}'
+		. 'body{font-weight:300}.elementor-widget-html h1,.elementor-widget-html h2,.elementor-widget-html h3,.elementor-widget-html h4{font-weight:900!important}'
+		. '.elementor-field-subgroup label,.elementor-field-option label,.screen-reader-text{font-weight:400}'
+		. '.elementor-element-90f59da .elementor-tab-content,.elementor-element-90f59da .elementor-tab-content p{font-weight:300!important}'
+		. 'h1,h1.elementor-heading-title,.elementor-element-2460b52 .elementor-heading-title{line-height:1.04!important}'
+		. 'h2,h2.elementor-heading-title{line-height:1.08!important}'
+		. '.elementor-widget-heading h1.elementor-heading-title,.elementor-widget-heading h2.elementor-heading-title,.elementor-widget-heading h3.elementor-heading-title,.elementor-widget-heading h4.elementor-heading-title,.elementor-element-2460b52 .elementor-heading-title{letter-spacing:.01em!important}'
+		. '.dwb-article h2,.dwb-article h3,.dwb-related-title{font-weight:900!important}'
+		// Nav links.
+		. '.elementor-nav-menu a.elementor-item,.elementor-nav-menu--dropdown a{font-weight:500!important}'
+		. '.elementor-nav-menu a.elementor-item-active,.elementor-nav-menu .current-menu-item>a{font-weight:600!important}'
+		// Hero: "You dream it." thin, "I build it." heavy in light blue.
+		. '.elementor-element-dw00002 .elementor-heading-title{font-weight:200!important}'
+		. '.elementor-element-2460b52 .elementor-heading-title{font-weight:900!important;color:#4BA3DC!important}'
+		. '.elementor-element-dw00003,.elementor-element-dw00003 p{color:#C9DAE8!important;font-weight:300!important}'
+		. '@media(min-width:1025px){.elementor-element-dw00002 .elementor-heading-title{font-size:52px!important}.elementor-element-dw00003,.elementor-element-dw00003 p{font-size:16.5px!important}}'
+		. '</style>' . "\n";
+}, 999 );
 
 /**
  * Header: frosted glass on every page. A mostly-white background with a blur, so the page shows
