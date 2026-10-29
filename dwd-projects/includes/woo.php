@@ -344,8 +344,10 @@ add_action( 'wp_footer', function () {
 	}
 	$svg = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.4 11.2a1.5 1.5 0 0 0 1.5 1.2h8.7a1.5 1.5 0 0 0 1.5-1.1L21 8H6.2"/><circle cx="9.5" cy="20" r="1.4"/><circle cx="17.5" cy="20" r="1.4"/></svg>';
 	echo '<a class="dww-cart" href="' . esc_url( wc_get_checkout_url() ) . '" aria-label="Finish your order" hidden>' . $svg . '<span class="dww-cart-dot"></span></a>'; // phpcs:ignore WordPress.Security.EscapeOutput
-	echo '<style>.dww-cart{position:relative;display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;margin-right:6px;color:#0E1526!important;align-self:center}.dww-cart[hidden]{display:none}.dww-cart svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.dww-cart:hover{color:#1B7EC3!important}.dww-cart-dot{position:absolute;top:6px;right:5px;width:9px;height:9px;border-radius:50%;background:#1B7EC3;box-shadow:0 0 0 2px #fff}.dw-navwrap{align-items:center}</style>';
-	echo "<script>(function(){var c=document.querySelector('.dww-cart');if(!c||!/(^|; )woocommerce_items_in_cart=1/.test(document.cookie))return;var w=document.querySelector('.dw-header .dw-navwrap');if(w){w.insertBefore(c,w.firstChild);}c.hidden=false;})();</script>\n";
+	echo '<style>.dww-cart{position:relative;display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;margin-left:18px;color:#0E1526!important;align-self:center;order:99}.dww-cart[hidden]{display:none}.dww-cart svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.dww-cart:hover{color:#1B7EC3!important}.dww-cart-dot{position:absolute;top:6px;right:5px;width:9px;height:9px;border-radius:50%;background:#1B7EC3;box-shadow:0 0 0 2px #fff}.dw-navwrap{align-items:center}</style>';
+	echo "<script>(function(){var c=document.querySelector('.dww-cart');if(!c||!/(^|; )woocommerce_items_in_cart=1/.test(document.cookie))return;var w=document.querySelector('.dw-header .dw-navwrap');if(w){w.appendChild(c);}"
+		// The cookie can outlive the cart, so ask the store how many items are really in it before showing the icon.
+		. "fetch('" . esc_url_raw( rest_url( 'wc/store/v1/cart' ) ) . "',{credentials:'same-origin'}).then(function(r){return r.json();}).then(function(d){if(d&&d.items_count>0)c.hidden=false;}).catch(function(){});})();</script>\n";
 }, 20 );
 
 /* ---------- Unfinished checkout reminders: 1 hour and 1 day later ---------- */
