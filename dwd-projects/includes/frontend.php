@@ -141,7 +141,29 @@ add_action( 'wp_head', function () {
 		. $rows . ',.dwc-steps{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;overflow-x:auto!important;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;gap:14px!important;margin-left:-20px!important;margin-right:-20px!important;padding:6px 20px 26px!important;width:calc(100% + 40px)!important;max-width:none!important;scroll-padding:0 20px}'
 		. $rows . ',.dwc-steps{}' . str_replace( ',', '::-webkit-scrollbar,', $rows ) . '::-webkit-scrollbar,.dwc-steps::-webkit-scrollbar{display:none}'
 		. $cards . ',.dwc-steps>.dwc-step{flex:0 0 82%!important;width:82%!important;max-width:82%!important;scroll-snap-align:start;margin:0!important}'
+		// No tinted band behind the swipe rows: drop the row backgrounds and the clipped card shadows.
+		. $rows . ',.dwc-steps{background:transparent!important}' . $cards . ',.dwc-steps>.dwc-step{box-shadow:0 1px 0 rgba(18,41,62,.04)!important}'
+		// Homepage hero: everything centered and the laptop fully on screen.
+		. '.elementor-element-dw00007{align-items:center!important;text-align:center}.elementor-element-dw00007 .elementor-heading-title,.elementor-element-dw00007 .elementor-widget-text-editor{text-align:center!important}'
+		. '.elementor-element-dw00007 .elementor-widget-html{align-self:center}.elementor-element-dw00006{justify-content:center!important;flex-direction:column!important;align-items:center!important}'
+		. '.elementor-element-dw00009 .dwdp-laptop{width:100%!important}.dwdp-vslider.is-laptop{align-items:center!important}'
+		// "What's included" heading centered; less space around "See how the process works".
+		. '.elementor-element-dw0000f{align-items:center!important;text-align:center}.elementor-element-dw0000f .elementor-heading-title,.elementor-element-dw0000f .elementor-widget-text-editor{text-align:center!important}'
+		. '.elementor-element-dw0000g{margin-top:4px!important}.elementor-element-9e67fb33{padding-bottom:48px!important}'
+		// Homepage FAQ intro and "Let's build your website": centered, buttons stacked in the middle.
+		. '.elementor-element-b7671e0,.elementor-element-dw0002c{align-items:center!important;text-align:center!important}'
+		. '.elementor-element-b7671e0 .elementor-heading-title,.elementor-element-b7671e0 .elementor-widget-text-editor,.elementor-element-b7671e0 .elementor-button-wrapper,.elementor-element-dw0002c .elementor-heading-title,.elementor-element-dw0002c .elementor-widget-text-editor,.elementor-element-dw0002c .elementor-button-wrapper{text-align:center!important}'
+		. '.elementor-element-b7671e0 .elementor-heading-title::after,.elementor-element-dw0002c .elementor-heading-title::after{margin-left:auto!important;margin-right:auto!important;background-position:center!important}'
+		. '.elementor-element-dw0002b{flex-direction:column!important;align-items:center!important;justify-content:center!important}'
+		// Footer: everything centered, "Call today" above the number with a small phone icon beside it.
+		. '.dwf{flex-direction:column!important;justify-content:center!important;gap:20px!important}'
+		. '.dwf .dwf-phone{display:grid!important;grid-template-columns:auto auto;justify-content:center;align-items:center;column-gap:8px;row-gap:2px}.dwf .dwf-call-t{display:contents!important}'
+		. '.dwf .dwf-call-t small{grid-column:1/-1;grid-row:1;text-align:center}.dwf .dwf-call-ic{grid-column:1;grid-row:2}.dwf .dwf-call-t b{grid-column:2;grid-row:2;margin-top:0!important}'
 		. '}</style>' . "\n";
+	// Footer icons everywhere: small, no circles. Review cards: equal space above and below.
+	echo '<style id="dwdp-footer-icons">.dwf-icons{gap:20px!important;align-items:center}.dwf-ico,.dwf-ico:hover,.dwf-call-ic{width:auto!important;height:auto!important;border:0!important;border-radius:0!important;background:none!important}'
+		. '.dwf-ico svg{width:15px!important;height:15px!important}.dwf-ico:hover svg{fill:#fff}.dwf-call-ic svg{width:15px!important;height:15px!important}'
+		. '.elementor-element-dw0001t>.e-con .elementor-widget:last-child p:last-child{margin-bottom:0!important}.elementor-element-dw0001t>.e-con{padding-bottom:30px!important}</style>' . "\n";
 }, 99 );
 
 /** Case-study pages use the plugin template (inside the site's header/footer). */
