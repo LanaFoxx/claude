@@ -55,8 +55,16 @@
 .dw-bdots i:nth-child(1){background:#FF5F57}.dw-bdots i:nth-child(2){background:#FEBC2E}.dw-bdots i:nth-child(3){background:#28C840}
 .dw-pbar .dw-bdots i{width:8px;height:8px}
 .dw-pburl{flex:1;background:#fff;border-radius:100px;padding:4px 12px;font:400 14px Poppins,sans-serif;color:#4A5470}
-.dw-pshot{display:block;border-bottom:1px solid #E4E9F5}
-.dw-pshot img{width:100%;height:auto;display:block;aspect-ratio:16/9;object-fit:cover;object-position:top}
+.dw-pshot{display:flex;justify-content:center;padding:34px 0 30px;background:radial-gradient(120% 90% at 50% 0%,#F4F8FC 0%,#E3ECF6 100%);border-bottom:1px solid #E4E9F5;overflow:hidden}
+/* Laptop in the card: 16:10 screen, the shape of every project cover, so the whole hero shows. */
+.dw-pshot .dwdp-laptop,.dw-pshot .dwdp-lid,.dw-pshot .dwdp-base{display:block}
+.dw-pshot .dwdp-laptop{width:80%;filter:drop-shadow(0 18px 22px rgba(18,41,62,.28));transition:transform .3s ease}
+.dw-pshot .dwdp-lid{border-radius:12px 12px 0 0;padding:3% 2.8% 2.6%}
+.dw-pshot .dwdp-cam{width:4px;height:4px;margin-left:-2px;top:1.2%}
+.dwdp-lscreen{display:block;overflow:hidden;border-radius:2px;background:#fff}
+.dw-pshot img{width:100%;height:auto;display:block;aspect-ratio:1.6/1;object-fit:cover;object-position:center top}
+.dw-pcard:hover .dwdp-laptop{transform:translateY(-4px)}
+@media(max-width:767px){.dw-pshot{padding:22px 0 20px}.dw-pshot .dwdp-laptop{width:84%}}
 .dw-pfoot{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:18px 22px}
 .dw-pmeta b{display:block;font:900 18px Archivo,sans-serif;color:#0E1526;letter-spacing:.02em;text-transform:uppercase}
 .dw-pmeta em{font:400 15px Poppins,sans-serif;font-style:normal;color:#7A86A0}
