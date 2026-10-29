@@ -202,7 +202,7 @@ class block_studenttools extends block_base {
                     ($r->orderid ? ' &middot; order #' . s($r->orderid) : '') .
                     (isset($stripe[$r->status]) ? ' &middot; ' . $stripe[$r->status] : ''), 'stt-detail') .
                 html_writer::div(html_writer::tag('span', $label, ['class' => "stt-pill $tone"]) . ' ' . $btn, 'stt-actions'),
-                'stt-course');
+                'stt-course stt-dispute');
         };
         $recent = $DB->get_records('local_stripedispute', null, 'timecreated DESC', '*', 0, 5);
         $html = html_writer::tag('h4', 'Payment disputes', ['class' => 'stt-h']);
@@ -313,6 +313,12 @@ class block_studenttools extends block_base {
 .stt-add>summary .stt-h{margin:0}
 .stt-chevron{width:9px;height:9px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);transition:transform .15s}
 .stt-add[open] .stt-chevron{transform:rotate(225deg)}
+.stt-dispute{padding:8px 10px;margin-bottom:6px}
+.stt-dispute .stt-course-name{font-size:.85rem}
+.stt-dispute .stt-detail{font-size:.75rem;white-space:normal;overflow-wrap:anywhere}
+.stt-dispute .stt-actions{margin-top:4px;gap:4px;align-items:center}
+.stt-dispute .stt-pill{font-size:.68rem;padding:1px 7px}
+.stt-dispute .stt-btn{height:22px;padding:0 8px;font-size:.7rem;border-radius:6px}
 .stt-past{border-top:1px solid var(--line);padding-top:12px;margin-top:4px}
 </style>';
     }
