@@ -214,8 +214,11 @@ body.home.bi-scrolled selector .bi-header-logo { opacity: 1; transform: none; po
       toggle_color: C.green, toggle_background_color: 'rgba(0,0,0,0)', toggle_size: px(24),
       _flex_size: 'grow', _flex_size_tablet: 'none', _flex_size_mobile: 'none',
       _flex_order_tablet: 'end', _flex_order_mobile: 'end',
-      custom_css: `selector .elementor-nav-menu--dropdown { padding-bottom: 20px; background: #17301B; }
+      custom_css: `selector .elementor-nav-menu--dropdown { background: #17301B; }
+selector nav.elementor-nav-menu--dropdown.elementor-nav-menu__container { padding-bottom: 20px; }
 selector .elementor-nav-menu--dropdown a { border-bottom: 1px solid rgba(245,242,236,.15); }
+selector .elementor-nav-menu--main .sub-menu { padding: 0 !important; }
+selector .elementor-nav-menu--main .sub-menu > li:last-child > a { border-bottom: 0; }
 /* Webcam stands out (client sitemap): green pill with a live dot. */
 @keyframes bi-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
 selector .bi-menu-cam > a::before { content: "" !important; display: inline-block !important; width: 7px !important; height: 7px !important; border-radius: 50%; background: #E74C3C !important; margin: 0 9px 0 0 !important; vertical-align: 2px; position: static !important; transform: none !important; animation: bi-pulse 1.6s ease-in-out infinite; }
@@ -442,7 +445,17 @@ selector .elementor-message { color: #F5F2EC; padding: 0 18px 12px; margin: 0; f
     background_overlay_opacity: px(1),
     padding: box(72, 48, 72, 48), padding_tablet: box(64, 32, 64, 32), padding_mobile: box(48, 20, 48, 20),
     min_height: px(640), min_height_tablet: px(560), min_height_mobile: px(0),
-    custom_css: '@media (min-width: 1025px) { selector { min-height: calc(100vh - 136px); } }\n@media (max-width: 1024px) { selector > .elementor-background-overlay { background-image: linear-gradient(180deg, rgba(12,26,15,.55) 0%, rgba(12,26,15,.82) 100%) !important; } }',
+    custom_css: `@media (min-width: 1025px) { selector { min-height: calc(100vh - 136px); } }
+@media (max-width: 1024px) { selector > .elementor-background-overlay { background-image: linear-gradient(180deg, rgba(12,26,15,.55) 0%, rgba(12,26,15,.82) 100%) !important; } }
+/* Photo controls added by the "Bayfield interactions" snippet. */
+selector .bi-hero-dots { position: absolute; left: 50%; bottom: 26px; transform: translateX(-50%); z-index: 3; display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 999px; background: rgba(12,26,15,.45); backdrop-filter: blur(6px); }
+selector .bi-hero-dots button, selector .bi-hero-dots button:hover, selector .bi-hero-dots button:focus { padding: 0; border: 0; cursor: pointer; color: #F5F2EC; }
+selector .bi-hero-dots__dot { width: 9px; height: 9px; border-radius: 50%; background: rgba(245,242,236,.45) !important; transition: background .25s, transform .25s; }
+selector .bi-hero-dots__dot:hover { background: rgba(245,242,236,.8) !important; }
+selector .bi-hero-dots__dot.is-active { background: #F5F2EC !important; transform: scale(1.25); }
+selector .bi-hero-dots__arrow { width: 28px; height: 28px; border-radius: 50%; background: transparent !important; font-size: 15px; line-height: 28px; opacity: .85; }
+selector .bi-hero-dots__arrow:hover { opacity: 1; background: rgba(245,242,236,.15) !important; }
+@media (max-width: 767px) { selector { padding-bottom: 84px !important; } selector .bi-hero-dots { bottom: 18px; } }`,
   }, [
     container({ content_width: 'full', padding: box(0), flex_direction: 'column', flex_gap: gap(24), flex_gap_mobile: gap(20), width: px(640), width_tablet: px(640), width_mobile: px(100, '%'), z_index: 2,
       custom_css: 'selector { max-width: 100%; }' }, [
@@ -633,6 +646,28 @@ const interactionsJs = `<script>
     var q = 'startdate=' + mdy(a.value) + '&enddate=' + mdy(b.value) + '&adults1=' + (field(f, 'adults') || {}).value + '&children1=' + ((field(f, 'children') || {}).value || '0');
     window.location.href = BOOK + (BOOK.indexOf('?') > -1 ? '&' : '?') + q;
   }, true);
+
+  // Hero photo controls: arrows + one dot per photo, bottom center of the homepage hero.
+  // Built from the hero's background slideshow, so they follow whatever photos it has.
+  (function heroDots(tries) {
+    var hero = document.getElementById('book');
+    if (!hero) return;
+    // Elementor builds the slideshow after load: wait for it (up to ~15s).
+    var show = hero.querySelector('.elementor-background-slideshow');
+    var sw = show && show.swiper;
+    if (!sw) { if (tries < 60) setTimeout(function () { heroDots(tries + 1); }, 250); return; }
+    var n = show.querySelectorAll('.swiper-slide:not(.swiper-slide-duplicate)').length;
+    if (n < 2 || hero.querySelector('.bi-hero-dots')) return;
+    var bar = document.createElement('div'); bar.className = 'bi-hero-dots'; bar.setAttribute('aria-label', 'Hero photos');
+    function mk(cls, label, html, fn) { var b = document.createElement('button'); b.type = 'button'; b.className = cls; b.setAttribute('aria-label', label); b.innerHTML = html; b.addEventListener('click', fn); return b; }
+    bar.appendChild(mk('bi-hero-dots__arrow', 'Previous photo', '&#8592;', function () { sw.slidePrev(); }));
+    var dots = [];
+    for (var i = 0; i < n; i++) (function (k) { var d = mk('bi-hero-dots__dot', 'Photo ' + (k + 1), '', function () { sw.slideToLoop ? sw.slideToLoop(k) : sw.slideTo(k); }); dots.push(d); bar.appendChild(d); })(i);
+    bar.appendChild(mk('bi-hero-dots__arrow', 'Next photo', '&#8594;', function () { sw.slideNext(); }));
+    function sync() { var r = sw.realIndex || 0; dots.forEach(function (d, k) { d.classList.toggle('is-active', k === r); d.setAttribute('aria-current', k === r ? 'true' : 'false'); }); }
+    sw.on('slideChange', sync); sync();
+    hero.appendChild(bar);
+  })(0);
 
   // Live webcam (Angelcam): loads the player wherever the page has #player_bayfieldlive.
   var CAM = 'v8ypjjj8y6';
