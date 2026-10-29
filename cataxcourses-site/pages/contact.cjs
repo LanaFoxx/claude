@@ -10,7 +10,7 @@ const note = (t, color = C.muted) => text(t, { color, size: 17, lh: 1.5 });
 
 // Navy card with gold top bar (same frame as home course cards).
 const cardSettings = {
-  content_width: 'full', flex_direction: 'column', flex_gap: gap(10), padding: box(36, 32, 36, 32),
+  content_width: 'full', flex_direction: 'column', flex_justify_content: 'center', flex_gap: gap(10), padding: box(36, 32, 36, 32),
   background_background: 'classic', background_color: C.navy, border_radius: box(16),
   border_border: 'solid', border_width: box(6, 0, 0, 0), border_color: C.gold,
   box_shadow_box_shadow_type: 'yes', box_shadow_box_shadow: { horizontal: 0, vertical: 30, blur: 60, spread: -30, color: 'rgba(0,0,0,0.6)' },
@@ -25,13 +25,13 @@ function cards() {
       linkBox('mailto:help@cataxcourses.com', { ...cardSettings, ...cls('ctc-cta ctc-cta-navy') }, [
         icon('fas fa-envelope'), label('Email', C.gold), big('help@cataxcourses.com', [22, 22, 20]), note('We reply during business hours'),
       ]),
-      // Live chat: the "Start a chat" button carries .ctc-open-chat (wired to open the LiveChat widget).
-      container(cardSettings, [
+      // Live chat: the whole card carries .ctc-open-chat (chrome.cjs click handler opens the LiveChat window).
+      container({ ...cardSettings, ...cls('ctc-cta ctc-cta-navy ctc-open-chat ctc-chat-card') }, [
         icon('fas fa-comments'), label('Live Chat', C.gold), big('chat with us'),
         button('Start a chat →', '#chat', { size: 17, pad: box(0), cls: 'ctc-open-chat',
           settings: { typography_font_family: BODY, background_color: 'transparent', button_background_hover_color: 'transparent', button_text_color: C.gold, hover_color: C.goldHover, border_radius: box(0) } }),
       ]),
-      container({ content_width: 'full', flex_direction: 'column', flex_gap: gap(10), padding: box(36, 32, 36, 32), background_background: 'classic', background_color: C.sand, border_radius: box(16) }, [
+      container({ content_width: 'full', flex_direction: 'column', flex_justify_content: 'center', flex_gap: gap(10), padding: box(36, 32, 36, 32), background_background: 'classic', background_color: C.sand, border_radius: box(16) }, [
         icon('fas fa-clock'), label('Hours of Operation', C.goldText),
         big('Monday - Friday:<br>9am - 4pm PST', [26, 25, 24], C.navy, 700), note('Saturday - Sunday: Closed', C.gray),
       ]),

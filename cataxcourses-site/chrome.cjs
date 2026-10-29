@@ -243,13 +243,16 @@ body:has(.ctc-header){background:#fff;margin:0;color:${C.navy};font-family:${BOD
 .ctc-store table.shop_table th{font-size:16px!important;font-weight:600!important;color:#4B5058!important;text-transform:none!important;letter-spacing:0!important}
 .ctc-store table.shop_table .order-total th{font-family:Outfit,sans-serif!important;font-size:22px!important;font-weight:800!important;color:#1C2333!important}
 /* Live chat: LiveChat's own launcher bar is hidden; this site-styled button opens the same chat window */
-.ctc-chat-btn{position:fixed;right:24px;bottom:14px;z-index:2147483000;display:inline-flex;align-items:center;gap:10px;padding:14px 22px 14px 18px;border:0;border-radius:999px;background:${C.gold};color:#fff;font-family:Outfit,sans-serif;font-size:17px;font-weight:700;line-height:1;cursor:pointer;box-shadow:0 12px 28px -10px rgba(28,35,51,.55);transition:background-color .2s,transform .2s}
+.ctc-chat-btn{position:fixed;right:24px;bottom:19px;z-index:2147483000;display:inline-flex;align-items:center;gap:10px;padding:14px 22px 14px 18px;border:0;border-radius:999px;background:${C.gold};color:#fff;font-family:Outfit,sans-serif;font-size:17px;font-weight:700;line-height:1;cursor:pointer;box-shadow:0 12px 28px -10px rgba(28,35,51,.55);transition:background-color .2s,transform .2s}
 .ctc-chat-btn:hover{background:${C.goldHover};transform:translateY(-2px)}.ctc-chat-btn svg{width:22px;height:22px;flex:none}
 .ctc-chat-btn.ctc-chat-hidden{display:none}
 @media (max-width:767px){.ctc-chat-btn{right:16px;bottom:16px;padding:0;width:56px;height:56px;justify-content:center}.ctc-chat-btn span{display:none}}
-/* footer's last row: links stop short of the chat button (same footer height) */
-.ctc-footer>.e-con:last-child>.e-con-inner{padding-right:200px}
-@media (max-width:767px){.ctc-footer>.e-con:last-child>.e-con-inner{padding-right:68px}}
+/* footer's last row: © + links left-aligned in one line (desktop); stacked left on tablet/phone, clear of the chat button */
+.ctc-footer>.e-con:last-child>.e-con-inner{justify-content:flex-start!important;column-gap:28px!important;padding-right:200px}
+.ctc-footer>.e-con:last-child .elementor-icon-list-items{justify-content:flex-start}
+@media (max-width:1024px){.ctc-footer>.e-con:last-child>.e-con-inner{flex-direction:column!important;align-items:flex-start!important;row-gap:10px!important;text-align:left}}
+@media (max-width:767px){.ctc-footer>.e-con:last-child>.e-con-inner{padding-right:64px}}
+.ctc-chat-card{cursor:pointer}
 </style>
 <script>(function(){var mob=window.matchMedia('(max-width:1024px)');function closeAll(){document.querySelectorAll('.ctc-dd.ctc-dd-open').forEach(function(d){d.classList.remove('ctc-dd-open');});}
 document.addEventListener('click',function(e){var b=e.target.closest('.ctc-burger,.ctc-menu-close');if(b){e.preventDefault();var open=document.body.classList.toggle('ctc-menu-open');if(!open)closeAll();return;}
@@ -270,6 +273,10 @@ W.on('ready',function(){try{var st=W.get('state');if(!st||st.visibility!=='maxim
 W.on('visibility_changed',function(d){if(d.visibility==='minimized'){W.call('hide');btn.classList.remove('ctc-chat-hidden');}else if(d.visibility==='maximized'){btn.classList.add('ctc-chat-hidden');}});
 try{var st0=W.get('state');if(st0&&st0.visibility!=='maximized'){W.call('hide');btn.classList.remove('ctc-chat-hidden');}}catch(x){}},500);}
 if(document.readyState!=='loading')initChat();else document.addEventListener('DOMContentLoaded',initChat);
+/* chat button: right edge lines up with the footer's phone number (desktop; on tablet/phone the number moves left) */
+function alignChat(){var b=document.querySelector('.ctc-chat-btn'),t=document.querySelector('.ctc-footer a[href^="tel:"]');if(!b)return;if(!t||window.matchMedia('(max-width:1024px)').matches){b.style.right='';return;}
+var w=t.closest('.elementor-widget')||t,r=w.getBoundingClientRect();var title=t.querySelector('.elementor-heading-title')||t;var rt=title.getBoundingClientRect();var right=Math.max(r.right,rt.right);b.style.right=Math.max(12,Math.round(document.documentElement.clientWidth-right))+'px';}
+window.addEventListener('resize',alignChat);window.addEventListener('load',alignChat);setTimeout(alignChat,800);setTimeout(alignChat,3000);
 })();</script>`;
 
 const navLink = (label, url) => widget('heading', {
@@ -382,14 +389,14 @@ function footer(m) {
         text('A CTEC &amp; IRS Approved Education Provider. Proud Member of Business Consumer Alliance and TrustPilot.', { color: C.muted, size: 16, lh: 1.6, maxW: 420 }),
       ], { gap: 14, settings: { width: auto, width_mobile: px(100, '%') } }),
       stack([
-        eyebrow('Call Us Today', C.gold, 'right', { size: 14, settings: { align_mobile: 'left' } }),
-        widget('heading', { title: PHONE.label, header_size: 'span', link: link(PHONE.tel), title_color: C.white, align: 'right', align_mobile: 'left', ...typo('typography', HEAD, 32, 800, { lh: 1, ls: 0 }) }),
-        text('Monday – Friday, 9am – 4pm PST', { color: '#8A8F99', size: 15, lh: 1.5, align: 'right', settings: { align_mobile: 'left' } }),
+        eyebrow('Call Us Today', C.gold, 'right', { size: 14, settings: { align_tablet: 'left', align_mobile: 'left' } }),
+        widget('heading', { title: PHONE.label, header_size: 'span', link: link(PHONE.tel), title_color: C.white, align: 'right', align_tablet: 'left', align_mobile: 'left', ...typo('typography', HEAD, 32, 800, { lh: 1, ls: 0 }) }),
+        text('Monday – Friday, 9am – 4pm PST', { color: '#8A8F99', size: 15, lh: 1.5, align: 'right', settings: { align_tablet: 'left', align_mobile: 'left' } }),
       ], { gap: 8, settings: { width: auto, width_mobile: px(100, '%') } }),
     ]),
     container({
       content_width: 'boxed', boxed_width: px(1392), flex_direction: 'row', flex_wrap: 'wrap', flex_justify_content: 'space-between', flex_align_items: 'center',
-      flex_gap: gap(16), padding: box(20, 24, 28, 24), padding_mobile: box(18, 20, 24, 20),
+      flex_gap: gap(16), padding: box(32, 24, 32, 24), padding_mobile: box(22, 20, 22, 20), // equal top/bottom; 86px tall row = 50px chat button + 18px above/below
       border_border: 'solid', border_width: box(1, 0, 0, 0), border_color: C.navy2,
     }, [
       text('© California Tax Courses 2026', { color: C.muted, size: 15, lh: 1.5, settings: { _element_width: 'auto' } }),
