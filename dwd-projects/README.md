@@ -6,12 +6,16 @@ the Portfolio grid, the homepage browser carousel, and its own case-study page a
 ## Adding a project
 1. **Projects → Add Project**, enter the project name and the live site URL.
 2. Click **Capture screenshots**. The plugin (via the Microlink API) takes a full-page desktop
-   screenshot, a phone screenshot, and reads the page's real section boundaries.
+   screenshot and a phone screenshot, both at double (retina) resolution so text stays sharp,
+   and reads the page's real section boundaries.
 3. Review the sections: every image is previewed; click **Skip** on ones you don't want, drag a
    blue cut line to adjust, click the page to add a cut, or × to remove one.
 4. **Save selected images** creates the section images, the cover image (portfolio card +
    carousel) and a phone mockup, and adds them to the project. Reorder or remove them anytime.
-5. Fill in the details (industry, description, working together, review) and **Publish**.
+5. Check the details: Working together, Platform, Scope, Responsive and Aftercare start with your
+   defaults, and Industry and Short description are read from the client's site. Add the client
+   review and **Publish**. New projects go to the top of the portfolio, under any project marked
+   **Always show first**.
 
 ## How sections are cut
 Section edges come from the live page's layout (Elementor top-level containers/sections, or

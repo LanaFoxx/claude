@@ -35,6 +35,7 @@ add_action( 'admin_enqueue_scripts', function ( $hook ) {
 			'fullshot' => $full ? array( 'id' => $full, 'url' => dwdp_original_url( $full ), 'width' => isset( $fmeta['width'] ) ? $fmeta['width'] : 0, 'height' => isset( $fmeta['height'] ) ? $fmeta['height'] : 0 ) : null,
 			'mobile'   => $mobile ? array( 'id' => $mobile, 'url' => dwdp_original_url( $mobile ) ) : null,
 			'cuts'     => json_decode( (string) dwdp_get( $post_id, 'cuts' ), true ),
+			'captureW' => max( 800, min( 2560, absint( dwdp_setting( 'capture_width' ) ) ) ),
 		)
 	);
 } );

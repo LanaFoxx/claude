@@ -8,7 +8,6 @@
 		mobile: DWDP.mobile,     // {id,url}
 		img: null,               // loaded full-page <img>
 		mobileImg: null,
-		heroImg: null,           // first screen at 2x, for a sharp cover
 		detected: [],            // cuts found automatically
 		cuts: [],                // current cuts (px from top)
 		skipped: {},             // section start y -> true
@@ -109,6 +108,7 @@
 	/** Fallback: find section edges from background colour changes in the image itself. */
 	function cutsFromImage(img) {
 		var W = img.naturalWidth, H = img.naturalHeight, aw = 360, s = W / aw, ah = Math.floor(H / s);
+		var d = Math.max(1, W / (DWDP.captureW || 1440)); // image pixels per page pixel (2 for retina captures)
 		var c = canvasFor(aw, ah), ctx = c.getContext('2d');
 		ctx.drawImage(img, 0, 0, aw, ah);
 		var px = ctx.getImageData(0, 0, aw, ah).data, m = Math.max(4, Math.round(aw * 0.04));
@@ -151,7 +151,7 @@
 			changed = false;
 			var b2 = [0].concat(cuts, [H]);
 			for (var q = 0; q < b2.length - 1; q++) {
-				if (b2[q + 1] - b2[q] >= MIN_SECTION * 1.8) { continue; }
+				if (b2[q + 1] - b2[q] >= MIN_SECTION * 1.8 * d) { continue; }
 				if (q === 0) { cuts.shift(); } else if (q === b2.length - 2) { cuts.pop(); } else {
 					var prev = b2[q] - b2[q - 1], next = b2[q + 2] - b2[q + 1];
 					cuts.splice(cuts.indexOf(prev <= next ? b2[q] : b2[q + 1]), 1);
@@ -164,9 +164,9 @@
 		var extra = [], bounds = [0].concat(cuts, [H]);
 		for (q = 0; q < bounds.length - 1; q++) {
 			var t = bounds[q], bt = bounds[q + 1];
-			while (bt - t > 1600) {
-				var parts = Math.ceil((bt - t) / 1600), target = t + (bt - t) / parts;
-				var lo = Math.floor((target - 200) / s), hi = Math.floor((target + 200) / s), quiet = lo;
+			while (bt - t > 1600 * d) {
+				var parts = Math.ceil((bt - t) / (1600 * d)), target = t + (bt - t) / parts;
+				var lo = Math.floor((target - 200 * d) / s), hi = Math.floor((target + 200 * d) / s), quiet = lo;
 				for (j = lo; j < hi; j++) { if (act[j] < act[quiet]) { quiet = j; } }
 				t = Math.round(quiet * s);
 				extra.push(t);
@@ -419,17 +419,12 @@
 		}
 		autofill(url);
 		var $btn = $(this).prop('disabled', true).text('Capturing…');
-		progress([['desk', 'Full-page desktop screenshot'], ['sec', 'Finding the page sections'], ['mob', 'Phone screenshot'], ['hero', 'High-resolution hero']]);
-		['desk', 'sec', 'mob', 'hero'].forEach(function (k) { mark(k, 'is-run'); });
+		progress([['desk', 'Full-page desktop screenshot'], ['sec', 'Finding the page sections'], ['mob', 'Phone screenshot']]);
+		['desk', 'sec', 'mob'].forEach(function (k) { mark(k, 'is-run'); });
 
 		var desk = post('dwdp_capture', { step: 'desktop', url: url }).then(function (d) { mark('desk', 'is-ok'); return d; }, function (m) { mark('desk', 'is-err', m); return $.Deferred().reject(m); });
 		var sec = post('dwdp_capture', { step: 'sections', url: url }).then(function (d) { mark('sec', 'is-ok'); return d; }, function (m) { mark('sec', 'is-err', m); return null; });
 		var mob = post('dwdp_capture', { step: 'mobile', url: url }).then(function (d) { mark('mob', 'is-ok'); return d; }, function (m) { mark('mob', 'is-err', m); return null; });
-		// Optional: without it the cover is cut from the full-page screenshot as before.
-		state.heroImg = null;
-		post('dwdp_capture', { step: 'hero', url: url }).then(function (d) {
-			return loadImage(d.url).then(function (im) { state.heroImg = im; mark('hero', 'is-ok'); });
-		}).fail(function (m) { mark('hero', 'is-err', (m || 'not available') + ' (cover uses the regular screenshot)'); });
 
 		$.when(desk, sec, mob).always(function () { $btn.prop('disabled', false).text('Capture again'); });
 		$.when(desk, sec, mob).done(function (d, s, m) {
@@ -503,18 +498,9 @@
 		var cover = null, mockup = null;
 		if (state.useCover) {
 			chain = chain.then(function () {
-				// The complete hero exactly as cut, never a fixed crop that could clip it.
-				var hh = heroHeight(), hi = state.heroImg, c;
-				if (hi && hi.naturalWidth >= W) {
-					// Same layout at 2x: crop the hero (up to the captured first screen) at full sharpness.
-					var k = hi.naturalWidth / W, sh = Math.min(Math.round(hh * k), hi.naturalHeight);
-					c = canvasFor(hi.naturalWidth, sh);
-					c.getContext('2d').drawImage(hi, 0, 0, hi.naturalWidth, sh, 0, 0, hi.naturalWidth, sh);
-				} else {
-					var ch = Math.round(hh * 1200 / W);
-					c = canvasFor(1200, ch);
-					c.getContext('2d').drawImage(state.img, 0, 0, W, hh, 0, 0, 1200, ch);
-				}
+				// The complete hero at full resolution, exactly as cut (never a fixed crop that could clip it).
+				var hh = heroHeight(), c = canvasFor(W, hh);
+				c.getContext('2d').drawImage(state.img, 0, 0, W, hh, 0, 0, W, hh);
 				return toBlob(c, 'image/jpeg', 0.9).then(function (b) {
 					return upload(b, base + '-cover.jpg', name + ' cover', name + ' website');
 				}).then(function (r) { cover = r; tick(); });
