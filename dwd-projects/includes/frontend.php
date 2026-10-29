@@ -30,6 +30,50 @@ add_action( 'wp_head', function () {
 	echo '<style id="dwdp-no-light-dots">' . implode( ',', $sel ) . '{background-image:none!important}</style>' . "\n";
 }, 99 );
 
+/**
+ * Tablet and small-laptop layout fixes for the Elementor header and homepage hero:
+ * - 1025-1280px: tighter menu so it never wraps onto two lines; buttons never wrap.
+ * - up to 1180px: the hero stacks, text centred on top and the laptop underneath at full width.
+ */
+add_action( 'wp_head', function () {
+	echo '<style id="dwdp-tablet">'
+		. '.elementor-location-header .elementor-button,.elementor-location-header .elementor-button-text{white-space:nowrap}'
+		. '.elementor-location-header .elementor-menu-toggle{background:transparent!important;border:0!important}'
+		. '@media(min-width:1025px) and (max-width:1280px){'
+		. '.elementor-element-0df6828 .elementor-nav-menu{flex-wrap:nowrap!important}'
+		. '.elementor-element-0df6828 .elementor-nav-menu .elementor-item{padding-left:11px!important;padding-right:11px!important;font-size:15.5px!important;white-space:nowrap}'
+		. '.elementor-location-header .elementor-button{padding-left:18px!important;padding-right:18px!important}}'
+		. '@media(min-width:768px) and (max-width:1180px){'
+		. '.elementor-element-dw0000a{flex-direction:column!important;align-items:center!important;gap:46px!important}'
+		. '.elementor-element-dw00007{width:100%!important;max-width:680px;align-items:center!important;text-align:center}'
+		. '.elementor-element-dw00007 .elementor-heading-title,.elementor-element-dw00007 .elementor-widget-text-editor{text-align:center!important}'
+		. '.elementor-element-dw00009{width:100%!important;max-width:860px}'
+		. '.elementor-element-dw00009 .dwdp-laptop{width:90%}}'
+		. '</style>' . "\n";
+	// Reusable hero glow for dark sections (class "dw-glow" on an Elementor container).
+	echo '<style id="dwdp-glow">.dw-glow{position:relative;overflow:hidden}.dw-glow::before{content:"";position:absolute;top:-180px;left:50%;transform:translateX(-50%);width:820px;max-width:120%;height:620px;background:radial-gradient(circle,rgba(27,126,195,.32),transparent 65%);pointer-events:none}.dw-glow>.e-con-inner,.dw-glow>.elementor-widget{position:relative;z-index:1}</style>' . "\n";
+}, 99 );
+
+/** The About page was retired; its content lives in the homepage "Why Dream Web" section. */
+add_action( 'template_redirect', function () {
+	$path = trim( (string) wp_parse_url( isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '', PHP_URL_PATH ), '/' ); // phpcs:ignore
+	if ( 'about' === $path ) {
+		wp_safe_redirect( home_url( '/#about' ), 301 );
+		exit;
+	}
+}, 1 );
+
+/**
+ * Buttons: all caps with wide letter spacing, for a more upscale feel. Covers Elementor
+ * buttons and form submits plus the plugin's own buttons.
+ */
+add_action( 'wp_head', function () {
+	echo '<style id="dwdp-buttons">'
+		. '.elementor-button,.elementor-button .elementor-button-text,.elementor-field-type-submit .elementor-button,.dwdp-btn,.dwf-zoom,.dw-pbtn,.dw-form button,.dwdp-cta .dwdp-btn{text-transform:uppercase!important;letter-spacing:.16em!important;font-size:14px!important;font-weight:600!important}'
+		. '.elementor-button{padding-left:30px!important;padding-right:30px!important}'
+		. '</style>' . "\n";
+}, 99 );
+
 /** Case-study pages use the plugin template (inside the site's header/footer). */
 add_filter( 'template_include', function ( $template ) {
 	if ( is_singular( DWDP_CPT ) ) {

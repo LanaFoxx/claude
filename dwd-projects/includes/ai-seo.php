@@ -76,7 +76,7 @@ function dwdp_enrich_person( $data ) {
 	$data['description'] = 'Michael is the founder of Dream Web Digital. He personally designs, builds and hosts custom WordPress websites for small businesses, working one-on-one with every client from the first call through launch and aftercare.';
 	$data['knowsAbout']  = array( 'Web design', 'WordPress', 'Elementor', 'Custom CSS and code', 'SEO', 'Website hosting', 'Small business websites' );
 	$data['homeLocation'] = array( '@type' => 'Place', 'name' => $b['city'] . ', Florida' );
-	$data['url']         = home_url( '/about/' );
+	$data['url']         = home_url( '/#about' );
 	$data['image']       = array( '@type' => 'ImageObject', 'url' => $b['photo'] );
 	$data['sameAs']      = array( 'https://www.upwork.com/freelancers/dreamwebdigital' );
 	return $data;
@@ -139,7 +139,6 @@ function dwdp_llms_txt( $full = false ) {
 	$o .= "## How to hire\n\n- Schedule a Zoom call: https://calendly.com/dreamwebdigital/dream-web-digital-consultation-call\n- Call or text: " . $b['phone'] . "\n- Contact form: " . home_url( '/contact/' ) . "\n\n";
 	$o .= "## Key pages\n\n";
 	$o .= $link( 'Home', $h, 'Custom WordPress website design for small businesses' );
-	$o .= $link( 'About Michael', home_url( '/about/' ), 'Who builds your website and how he works' );
 	$o .= $link( 'Process', home_url( '/process/' ), 'Six steps, with client approval of every page' );
 	$o .= $link( 'Portfolio', home_url( '/portfolio/' ), 'Real websites designed and built for clients' );
 	$o .= $link( 'Hosting', home_url( '/hosting/' ), 'Managed WordPress hosting from the person who built the site' );

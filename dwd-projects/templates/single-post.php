@@ -24,7 +24,7 @@ while ( have_posts() ) :
 				</nav>
 				<h1 class="dwb-title"><?php the_title(); ?></h1>
 				<div class="dwb-meta">
-					By <a href="<?php echo esc_url( home_url( '/about/' ) ); ?>">Michael</a>
+					By <a href="<?php echo esc_url( home_url( '/#about' ) ); ?>">Michael</a>
 					<span>·</span><time datetime="<?php echo esc_attr( get_the_date( 'c' ) ); ?>"><?php echo esc_html( get_the_date() ); ?></time>
 					<span>·</span><?php echo esc_html( dwdp_reading_time() ); ?> min read
 				</div>
@@ -45,7 +45,7 @@ while ( have_posts() ) :
 						<span class="dwb-author-k">Written by</span>
 						<strong>Michael, founder of Dream Web Digital</strong>
 						<p>Michael has designed and built websites for more than 12 years. He builds custom WordPress websites for small businesses and hosts them himself, with 5-star Google reviews and 100% Job Success on Upwork.</p>
-						<a href="<?php echo esc_url( home_url( '/about/' ) ); ?>">More about Michael →</a>
+						<a href="<?php echo esc_url( home_url( '/#about' ) ); ?>">More about Michael →</a>
 					</div>
 				</aside>
 			</article>
