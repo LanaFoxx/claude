@@ -55,16 +55,19 @@
 .dw-bdots i:nth-child(1){background:#FF5F57}.dw-bdots i:nth-child(2){background:#FEBC2E}.dw-bdots i:nth-child(3){background:#28C840}
 .dw-pbar .dw-bdots i{width:8px;height:8px}
 .dw-pburl{flex:1;background:#fff;border-radius:100px;padding:4px 12px;font:400 14px Poppins,sans-serif;color:#4A5470}
-.dw-pshot{display:flex;justify-content:center;padding:34px 0 30px;background:radial-gradient(120% 90% at 50% 0%,#F4F8FC 0%,#E3ECF6 100%);border-bottom:1px solid #E4E9F5;overflow:hidden}
+.dw-pshot{position:relative;display:flex;justify-content:flex-start;padding:34px 0 30px 6%;background:radial-gradient(120% 90% at 50% 0%,#F4F8FC 0%,#E3ECF6 100%);border-bottom:1px solid #E4E9F5;overflow:hidden}
 /* Laptop in the card: 16:10 screen, the shape of every project cover, so the whole hero shows. */
 .dw-pshot .dwdp-laptop,.dw-pshot .dwdp-lid,.dw-pshot .dwdp-base{display:block}
-.dw-pshot .dwdp-laptop{width:80%;filter:drop-shadow(0 18px 22px rgba(18,41,62,.28));transition:transform .3s ease}
-.dw-pshot .dwdp-lid{border-radius:12px 12px 0 0;padding:3% 2.8% 2.6%}
-.dw-pshot .dwdp-cam{width:4px;height:4px;margin-left:-2px;top:1.2%}
+.dw-pshot .dwdp-laptop{width:74%;filter:drop-shadow(0 18px 22px rgba(18,41,62,.28));transition:transform .3s ease}
+.dw-pshot .dwdp-lid{border-radius:10px 10px 0 0;padding:1.5% 1.4% 1.3%}
+.dw-pshot .dwdp-cam{width:3px;height:3px;margin-left:-1.5px;margin-top:calc(.75% - 1.5px)}
+.dw-pphone{position:absolute;right:5%;bottom:20px;width:19%;filter:drop-shadow(0 16px 20px rgba(18,41,62,.32));transition:transform .3s ease}
+.dw-pphone img{display:block;width:100%!important;height:auto!important;max-height:none;aspect-ratio:auto 1 / 2!important;object-fit:contain!important;contain-intrinsic-size:none}
+.dw-pcard:hover .dw-pphone{transform:translateY(-6px)}
 .dwdp-lscreen{display:block;overflow:hidden;border-radius:2px;background:#fff}
-.dw-pshot img{width:100%;height:auto;display:block;aspect-ratio:1.6/1;object-fit:cover;object-position:center top}
+.dwdp-lscreen img{width:100%;height:auto;display:block;aspect-ratio:1.6/1;object-fit:cover;object-position:center top}
 .dw-pcard:hover .dwdp-laptop{transform:translateY(-4px)}
-@media(max-width:767px){.dw-pshot{padding:22px 0 20px}.dw-pshot .dwdp-laptop{width:84%}}
+@media(max-width:767px){.dw-pshot{padding:22px 0 20px 5%}.dw-pshot .dwdp-laptop{width:76%}.dw-pphone{bottom:14px;width:20%}}
 .dw-pfoot{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:18px 22px}
 .dw-pmeta b{display:block;font:900 18px Archivo,sans-serif;color:#0E1526;letter-spacing:.02em;text-transform:uppercase}
 .dw-pmeta em{font:400 15px Poppins,sans-serif;font-style:normal;color:#7A86A0}
@@ -184,8 +187,9 @@
 .elementor>.e-con:has(.dwdp-laptop),.elementor>.elementor-section:has(.dwdp-laptop){overflow:hidden}
 .dwdp-vslider.is-laptop{gap:26px}
 .dwdp-laptop{flex:none;width:155%;min-width:0;position:relative;filter:drop-shadow(0 50px 70px rgba(0,0,0,.5))}
-.dwdp-lid{position:relative;background:#0b0d10;border-radius:22px 22px 0 0;padding:2.6% 2.4% 2.2%;box-shadow:inset 0 0 0 1.5px #3a4049,inset 0 0 0 4px #15181c}
-.dwdp-cam{position:absolute;top:1.1%;left:50%;width:7px;height:7px;margin-left:-3.5px;border-radius:50%;background:#1d2228;box-shadow:inset 0 0 0 1.5px #2c333b}
+.dwdp-lid{position:relative;background:#0b0d10;border-radius:18px 18px 0 0;padding:1.3% 1.2% 1.1%;box-shadow:inset 0 0 0 1.5px #3a4049,inset 0 0 0 3px #15181c}
+/* Centred in the top bezel (margin % is measured on the width, like the padding). */
+.dwdp-cam{position:absolute;top:0;margin-top:calc(.65% - 2.5px);left:50%;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:#1d2228;box-shadow:inset 0 0 0 1px #2c333b}
 .dwdp-laptop .dwdp-vview{border-radius:3px;box-shadow:none}
 .dwdp-base{position:relative;width:112%;margin-left:-6%;height:0;padding-bottom:3.2%;background:linear-gradient(#e3e7ec 0%,#c4cad2 45%,#8f96a0 100%);border-radius:2px 2px 26px 26px / 2px 2px 70% 70%;box-shadow:inset 0 1px 0 #fff}
 .dwdp-base:before{content:"";position:absolute;top:0;left:50%;width:15%;height:38%;transform:translateX(-50%);background:linear-gradient(#a8afb8,#c9ced5);border-radius:0 0 10px 10px}

@@ -51,17 +51,20 @@ add_filter( 'request', function ( $vars ) {
 	return ( $page && 'publish' === $page->post_status ) ? array( 'pagename' => $path ) : $vars;
 } );
 
-/** Project card used on the Portfolio page: the hero on a laptop, then name and industry. */
+/** Project card used on the Portfolio page: the hero on a laptop with the phone view beside it, then name and industry. */
 function dwdp_card_html( $p ) {
+	$mock  = absint( dwdp_get( $p->ID, 'mockup' ) );
+	$phone = $mock ? '<span class="dw-pphone">' . dwdp_img( $mock, get_the_title( $p ) . ' website on mobile', array( 'loading' => 'lazy' ) ) . '</span>' : '';
 	$label = dwdp_number( $p->ID ) . ' · ' . dwdp_get( $p->ID, 'industry' );
 	$name  = get_the_title( $p );
 	$img   = dwdp_img( dwdp_get( $p->ID, 'cover' ), $name . ' website', array( 'loading' => 'lazy' ) );
 	return sprintf(
-		'<a class="dw-pcard" href="%1$s"><span class="dw-pshot"><span class="dwdp-laptop"><span class="dwdp-lid"><i class="dwdp-cam"></i><span class="dwdp-lscreen">%3$s</span></span><span class="dwdp-base"></span></span></span><span class="dw-pfoot"><span class="dw-pmeta"><b>%2$s</b><em>%4$s</em></span><span class="dw-pbtn">View project →</span></span></a>',
+		'<a class="dw-pcard" href="%1$s"><span class="dw-pshot"><span class="dwdp-laptop"><span class="dwdp-lid"><i class="dwdp-cam"></i><span class="dwdp-lscreen">%3$s</span></span><span class="dwdp-base"></span></span>%5$s</span><span class="dw-pfoot"><span class="dw-pmeta"><b>%2$s</b><em>%4$s</em></span><span class="dw-pbtn">View project →</span></span></a>',
 		esc_url( get_permalink( $p ) ),
 		esc_html( $name ),
 		$img,
-		esc_html( $label )
+		esc_html( $label ),
+		$phone
 	);
 }
 
