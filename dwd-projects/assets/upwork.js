@@ -92,7 +92,8 @@
 				var url = URL.createObjectURL(b), kb = Math.round(b.size / 1024);
 				$('#dwdp-up-list').append(
 					$('<li>').append($('<img alt="">').attr('src', url))
-						.append($('<a class="button">').attr({ href: url, download: name }).text('Download ' + name + ' (' + kb + ' KB)'))
+						.append($('<a class="button">').attr({ href: url, download: name }).text('Download (' + kb + ' KB)'))
+						.append($('<small>').text(name))
 				);
 				resolve();
 			}, type, q);

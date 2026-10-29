@@ -33,7 +33,7 @@ function dwdp_upwork_text( $post_id ) {
 	$together = dwdp_get( $post_id, 'together' );
 	$platform = dwdp_get( $post_id, 'platform' );
 
-	$title = $name . ( $industry ? ' | ' . $industry . ' Website Design' : ' | Custom Website Design' );
+	$title = $name . ( $industry ? ' | ' . ucwords( $industry ) . ' Website Design' : ' | Custom Website Design' );
 	if ( mb_strlen( $title ) > 70 ) {
 		$title = $name . ' | Custom Website';
 	}
@@ -122,6 +122,6 @@ add_action( 'admin_enqueue_scripts', function ( $hook ) {
 		'dwdp-admin',
 		'.dwdp-up-field{margin:14px 0}.dwdp-up-label{display:flex;align-items:center;gap:10px;margin-bottom:5px}.dwdp-up-count{color:#646970;font-size:12px;margin-left:auto}.dwdp-up-count.is-over{color:#d63638;font-weight:600}'
 		. '.dwdp-up-images{margin-top:18px;padding-top:16px;border-top:1px solid #dcdcde}.dwdp-up-status{margin-left:10px;color:#646970}'
-		. '.dwdp-up-list{display:flex;flex-wrap:wrap;gap:16px;margin:16px 0 0}.dwdp-up-list li{width:220px;margin:0}.dwdp-up-list img{display:block;width:100%;height:150px;object-fit:cover;object-position:top;border:1px solid #dcdcde;border-radius:4px;background:#fff}.dwdp-up-list a{display:block;margin-top:6px}'
+		. '.dwdp-up-list{display:flex;flex-wrap:wrap;gap:16px;margin:16px 0 0}.dwdp-up-list li{width:220px;margin:0}.dwdp-up-list img{display:block;width:100%;height:150px;object-fit:cover;object-position:top;border:1px solid #dcdcde;border-radius:4px;background:#fff}.dwdp-up-list a.button{display:block;margin-top:8px;white-space:normal;height:auto;line-height:1.4;padding:6px 10px;text-align:center}.dwdp-up-list small{display:block;margin-top:4px;color:#646970;word-break:break-all}'
 	);
 } );
