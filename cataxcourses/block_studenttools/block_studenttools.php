@@ -174,33 +174,57 @@ class block_studenttools extends block_base {
         if (!$DB->get_manager()->table_exists('local_stripedispute')) {
             return '';
         }
-        $recs = $DB->get_records('local_stripedispute', null, 'timecreated DESC', '*', 0, 5);
         $labels = ['suspended' => ['Access removed', 'stt-bad'], 'restored' => ['Access restored', 'stt-ok'],
             'nomatch' => ['No matching account', 'stt-warnp'], 'multiple' => ['Several accounts match', 'stt-warnp'],
             'admin' => ['Admin skipped', 'stt-muted-pill'], 'alreadysuspended' => ['Already suspended', 'stt-bad'],
-            'dryrun' => ['Recorded only', 'stt-muted-pill'], 'error' => ['Needs review', 'stt-warnp'], 'pending' => ['Processing', 'stt-muted-pill']];
-        $html = '';
-        foreach ($recs as $r) {
+            'dryrun' => ['Not suspended', 'stt-muted-pill'], 'error' => ['Needs review', 'stt-warnp'], 'pending' => ['Processing', 'stt-muted-pill']];
+        $stripe = ['needs_response' => 'Needs response', 'under_review' => 'Under review', 'warning_needs_response' => 'Needs response',
+            'warning_under_review' => 'Under review', 'won' => 'Won', 'lost' => 'Lost', 'warning_closed' => 'Closed'];
+        $render = function($r) use ($labels, $stripe, $PAGE) {
             list($label, $tone) = $labels[$r->outcome] ?? [$r->outcome, 'stt-muted-pill'];
             $btn = '';
             if ($r->userid && in_array($r->outcome, ['suspended', 'alreadysuspended'])) {
                 $url = new moodle_url('/local/stripedispute/index.php', ['action' => 'restore', 'id' => $r->id, 'sesskey' => sesskey(),
                     'returnurl' => (new moodle_url($PAGE->url))->out_as_local_url(false)]);
                 $btn = html_writer::link($url, 'Restore access', ['class' => 'stt-btn',
-                    'onclick' => "return confirm('Restore this student\'s access to the site?');"]);
+                    'onclick' => "return confirm('Restore this student\\'s access to the site?');"]);
+            } else if ($r->userid && in_array($r->outcome, ['restored', 'dryrun'])) {
+                $url = new moodle_url('/local/stripedispute/index.php', ['action' => 'suspend', 'id' => $r->id, 'sesskey' => sesskey(),
+                    'returnurl' => (new moodle_url($PAGE->url))->out_as_local_url(false)]);
+                $btn = html_writer::link($url, 'Remove access', ['class' => 'stt-btn',
+                    'onclick' => "return confirm('Remove this student\\'s access to the site?');"]);
             }
             $who = trim($r->name . ' ' . ($r->email ? '(' . $r->email . ')' : '')) ?: 'Unknown buyer';
-            $html .= html_writer::div(
+            return html_writer::div(
                 html_writer::div(s($who), 'stt-course-name') .
                 html_writer::div(userdate($r->timecreated, get_string('strftimedatefullshort')) .
                     ($r->amount !== null ? ' &middot; ' . format_float($r->amount / 100, 2) . ' ' . core_text::strtoupper((string)$r->currency) : '') .
-                    ($r->orderid ? ' &middot; order #' . s($r->orderid) : ''), 'stt-detail') .
+                    ($r->orderid ? ' &middot; order #' . s($r->orderid) : '') .
+                    (isset($stripe[$r->status]) ? ' &middot; ' . $stripe[$r->status] : ''), 'stt-detail') .
                 html_writer::div(html_writer::tag('span', $label, ['class' => "stt-pill $tone"]) . ' ' . $btn, 'stt-actions'),
                 'stt-course');
+        };
+        $open = "('needs_response', 'under_review', 'warning_needs_response', 'warning_under_review')";
+        $new = $DB->get_records_select('local_stripedispute', "status IN $open", null, 'timecreated DESC');
+        $pasttotal = $DB->count_records_select('local_stripedispute', "status NOT IN $open OR status IS NULL");
+        $past = $DB->get_records_select('local_stripedispute', "status NOT IN $open OR status IS NULL", null, 'timecreated DESC', '*', 0, 10);
+
+        $html = html_writer::tag('h4', 'Payment disputes', ['class' => 'stt-h']);
+        $html .= html_writer::tag('h5', 'New disputes ' . html_writer::tag('span', count($new), ['class' => 'stt-pill ' . ($new ? 'stt-bad' : 'stt-muted-pill')]),
+            ['class' => 'stt-h stt-h-sm mt-0']);
+        $html .= $new ? implode('', array_map($render, $new))
+            : html_writer::div('No open disputes. If one comes in, the student\'s access is removed automatically.', 'stt-muted mb-2');
+        if ($pasttotal) {
+            $html .= html_writer::tag('details',
+                html_writer::tag('summary', html_writer::tag('span', 'Past disputes ' .
+                    html_writer::tag('span', $pasttotal, ['class' => 'stt-pill stt-muted-pill']), ['class' => 'stt-h stt-h-sm m-0']) .
+                    html_writer::tag('span', '', ['class' => 'stt-chevron'])) .
+                html_writer::div(implode('', array_map($render, $past)) .
+                    ($pasttotal > count($past) ? html_writer::div('Showing the 10 most recent of ' . $pasttotal . '.', 'stt-muted mb-2') : ''),
+                    'mt-2'),
+                ['class' => 'stt-add stt-past']);
         }
-        return html_writer::tag('h4', 'Payment disputes', ['class' => 'stt-h']) .
-            ($html ?: html_writer::div('No Stripe disputes. If one comes in, the student\'s access is removed automatically.', 'stt-muted')) .
-            html_writer::link(new moodle_url('/local/stripedispute/index.php'), 'All disputes &rarr;', ['class' => 'stt-btn mt-2']);
+        return $html . html_writer::link(new moodle_url('/local/stripedispute/index.php'), 'All disputes &rarr;', ['class' => 'stt-btn mt-2']);
     }
 
     /** New student form. */
@@ -304,6 +328,7 @@ class block_studenttools extends block_base {
 .stt-add>summary .stt-h{margin:0}
 .stt-chevron{width:9px;height:9px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);transition:transform .15s}
 .stt-add[open] .stt-chevron{transform:rotate(225deg)}
+.stt-past{border-top:1px solid var(--line);padding-top:12px;margin-top:4px}
 </style>';
     }
 }
