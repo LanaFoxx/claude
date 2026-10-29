@@ -183,6 +183,8 @@
 @media(max-width:767px){
 	.dwb-grid{grid-template-columns:1fr}
 	.dwb-hero{padding:56px 20px 160px}
+	.dw-pfoot{flex-direction:column;align-items:stretch;text-align:center;gap:16px;padding:20px 20px 22px}
+	.dw-pfoot .dw-pbtn{width:100%;height:48px!important;padding:0 16px!important;font-size:13px!important;letter-spacing:.12em!important}
 	.dwb-title{font-size:28px}
 	.dwb-body{padding:0 16px 56px}
 	.dwb-feature{margin-top:-80px;border-radius:12px}
