@@ -61,13 +61,13 @@
 .dw-pshot .dwdp-laptop{width:74%;filter:drop-shadow(0 18px 22px rgba(18,41,62,.28));transition:transform .3s ease}
 .dw-pshot .dwdp-lid{border-radius:10px 10px 0 0;padding:1.5% 1.4% 1.3%}
 .dw-pshot .dwdp-cam{width:3px;height:3px;margin-left:-1.5px;margin-top:calc(.75% - 1.5px)}
-.dw-pphone{position:absolute;right:5%;bottom:20px;width:19%;filter:drop-shadow(0 16px 20px rgba(18,41,62,.32));transition:transform .3s ease}
+.dw-pphone{position:absolute;right:5%;bottom:30px;width:19%;filter:drop-shadow(0 16px 20px rgba(18,41,62,.32));transition:transform .3s ease}
 .dw-pphone img{display:block;width:100%!important;height:auto!important;max-height:none;aspect-ratio:auto 1 / 2!important;object-fit:contain!important;contain-intrinsic-size:none}
 .dw-pcard:hover .dw-pphone{transform:translateY(-6px)}
 .dwdp-lscreen{display:block;overflow:hidden;border-radius:2px;background:#fff}
 .dwdp-lscreen img{width:100%;height:auto;display:block;aspect-ratio:1.6/1;object-fit:cover;object-position:center top}
 .dw-pcard:hover .dwdp-laptop{transform:translateY(-4px)}
-@media(max-width:767px){.dw-pshot{padding:22px 0 20px 5%}.dw-pshot .dwdp-laptop{width:76%}.dw-pphone{bottom:14px;width:20%}}
+@media(max-width:767px){.dw-pshot{padding:22px 0 20px 5%}.dw-pshot .dwdp-laptop{width:76%}.dw-pphone{bottom:20px;width:20%}}
 .dw-pfoot{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:18px 22px}
 .dw-pmeta b{display:block;font:900 18px Archivo,sans-serif;color:#0E1526;letter-spacing:.02em;text-transform:uppercase}
 .dw-pmeta em{font:400 15px Poppins,sans-serif;font-style:normal;color:#7A86A0}
