@@ -370,7 +370,7 @@ function dwdp_cta_html( $context = '' ) {
 	$s     = dwdp_settings();
 	if ( 'blog' === $context ) {
 		$s['cta_title'] = 'Need help with your website?';
-		$s['cta_text']  = 'If you’re planning a new site or a redesign, I’m happy to talk it through. A quick Zoom call gets you a quote and a timeline.';
+		$s['cta_text']  = 'If you’re planning a new website or a redesign, I’d be glad to discuss it. A brief Zoom call is all it takes to receive a quote and timeline.';
 	}
 	$phone = trim( $s['cta_phone'] );
 	$tel   = preg_replace( '/[^0-9+]/', '', $phone );

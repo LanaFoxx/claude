@@ -84,3 +84,25 @@ function dwdp_migrate_copy_2026_10() {
 
 	update_option( 'dwdp_copy_2026_10', array( 'time' => time(), 'log' => $log ), false );
 }
+
+/* 2026-10 tone pass: saved settings still holding the old call-to-action wording get the new defaults. */
+add_action( 'admin_init', function () {
+	if ( get_option( 'dwdp_copy_2026_10_tone' ) || ! current_user_can( 'manage_options' ) ) {
+		return;
+	}
+	$old   = array(
+		'cta_title'    => 'Yours could be next.',
+		'cta_text'     => 'Every one of these started with a quick Zoom call. Tell me what you have in mind.',
+		'def_together' => 'Client was a pleasure to work with. Had all the assets needed to get the job done and was quick to reply when I needed them.',
+	);
+	$saved = get_option( 'dwdp_settings', array() );
+	if ( is_array( $saved ) ) {
+		foreach ( $old as $k => $v ) {
+			if ( isset( $saved[ $k ] ) && trim( $saved[ $k ] ) === $v ) {
+				unset( $saved[ $k ] );
+			}
+		}
+		update_option( 'dwdp_settings', $saved );
+	}
+	update_option( 'dwdp_copy_2026_10_tone', time(), false );
+} );
