@@ -1,0 +1,84 @@
+{
+ "projects": {
+  "mojos-flight-school": {
+   "industry": "Flight training",
+   "seo_kw": "flight school website design",
+   "seo_title": "Flight School Website Design | Mojo’s Flight School",
+   "seo_desc": "Custom WordPress website for Mojo’s Flight School, a paramotor school in Maiden, NC, built to get new students booking intro flights.",
+   "summary": "Paramotor flight school with course info and enrollment, built to get new students booking intro flights.",
+   "together": "This one’s personal. I’m part owner and an instructor at Mojo’s, so I built the site I’d want to find as a new student: one that shows how fun flying is and makes booking an intro flight dead simple. Mojo and I went through a couple of quick design rounds, and he had the final say on every page before it went live.",
+   "remove_review": true
+  },
+  "framework-accounting": {
+   "industry": "Accounting",
+   "seo_kw": "accounting firm website design",
+   "seo_title": "Accounting Firm Website Design | Framework Accounting",
+   "seo_desc": "Conversion-focused WordPress website for a construction accounting firm, designed to turn visitors into consultation requests.",
+   "summary": "Construction accounting firm, with a site built to turn visitors into consultation requests.",
+   "together": "The Framework team knew exactly who they wanted to reach: construction business owners tired of doing their own books. We built the messaging and design around that one reader and refined it page by page until it was right. Great people to work with from the first call to launch."
+  },
+  "finesse-by-whitney": {
+   "title": "Finesse by Witney",
+   "new_slug": "finesse-by-witney",
+   "review_by": "Finesse by Witney",
+   "fix_spelling": [
+    "Whitney",
+    "Witney"
+   ],
+   "industry": "Fitness & training",
+   "seo_kw": "fitness website design",
+   "seo_title": "Fitness Website Design | Finesse by Witney",
+   "seo_desc": "Bold WordPress website for a dance-inspired strength training program for women, built to turn visitors into free-trial signups.",
+   "summary": "Dance-inspired strength training for women. A bold, high-energy site built to get free-trial signups, with programs, pricing and app downloads one click away.",
+   "together": "Witney wanted the site to feel as polished as her training: strong, feminine and easy to sign up for. We tried a few design directions, she picked the one that felt most like her, and we refined it together page by page until launch."
+  },
+  "the-goods-vending": {
+   "industry": "Vending services",
+   "seo_kw": "vending company website design",
+   "seo_title": "Vending Company Website Design | The Goods Vending",
+   "seo_desc": "Bold, product-focused WordPress website for The Goods Vending, a healthy vending machine company, built from scratch on Elementor.",
+   "summary": "Healthy vending machine company with a bold, product-forward site.",
+   "together": "The Goods team wanted a site as bold as their machines, and they trusted the process from day one. We locked in the home page design in the first round of reviews and carried that look through the rest of the site. Quick approvals made this one of the smoothest launches I’ve had."
+  },
+  "brian-apple": {
+   "industry": "Retirement planning",
+   "seo_kw": "financial advisor website design",
+   "seo_title": "Financial Advisor Website Design | Brian Apple",
+   "seo_desc": "WordPress website for a fiduciary retirement planner, built to turn questions into scheduled calls, with audiobook and webinar lead capture.",
+   "summary": "Retirement planning site for a fiduciary advisor, built to move visitors from questions to a scheduled call, with an audiobook download and webinar signups capturing leads along the way.",
+   "together": "Retirement planning runs on trust, so the site needed to feel calm, credible and easy to read. Brian and I worked through the copy and layout over a few short calls, and nothing went live until he was happy with every page."
+  },
+  "mentel-health": {
+   "industry": "Mental health care",
+   "seo_kw": "mental health website design",
+   "seo_title": "Mental Health Website Design | Mentel Health",
+   "seo_desc": "Calm, welcoming WordPress website for men’s mental health care, written in plain language to help visitors get past the stigma and into care.",
+   "summary": "Mental health care for men. Structured, clinically grounded and designed to help visitors get past the stigma and into care.",
+   "together": "A mental health site has to feel safe before anything else. We kept the design calm and unhurried, wrote everything in plain language, and the Mentel team reviewed each page before it went live."
+  },
+  "express-records": {
+   "industry": "Medical records",
+   "seo_kw": "medical records website design",
+   "seo_title": "Medical Records Website Design | Express Records",
+   "seo_desc": "WordPress website for a medical record retrieval service for injury law firms, built around transparency, integrations and trust.",
+   "summary": "Medical record retrieval for injury law firms, with a site built around transparency, integrations and trust.",
+   "together": "Express Records came to me with a clear vision and deep knowledge of their industry, so this one was a real collaboration. We refined the home page until it clicked, then built out the rest page by page with same-week revisions. They still reach out for updates, and I’m always glad to help."
+  },
+  "talize": {
+   "industry": "Thrift retail",
+   "seo_kw": "retail website design",
+   "seo_title": "Retail Website Design | Talize Thrift Stores",
+   "seo_desc": "A fun, energetic WordPress website for a thrift retail chain, with weekly deals, donation info and a store locator.",
+   "summary": "Thrift store chain with weekly deals, donation info and a store locator, on a site as fun as the stores.",
+   "together": "Talize already had a strong brand and a clear voice. My job was to make the website live up to both. We built it section by section (deals, donations and impact) until it felt as energetic as their stores. Their team gave quick, clear feedback, which made this a really fun build."
+  },
+  "recco-consulting": {
+   "industry": "Consulting",
+   "seo_kw": "consulting website redesign",
+   "seo_title": "Consulting Website Redesign | Recco Consulting",
+   "seo_desc": "Full WordPress website redesign for Recco Consulting, taking an outdated site to a modern, custom design built on Elementor.",
+   "summary": "Consulting firm with an outdated website that needed a modern redesign.",
+   "together": "Recco was great to work with. They had their content and assets ready to go and answered quickly whenever I needed something, which kept the project moving."
+  }
+ }
+}

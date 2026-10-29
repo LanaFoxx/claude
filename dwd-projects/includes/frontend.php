@@ -276,9 +276,13 @@ function dwdp_classic_slider( $projects ) {
 		. '</div>';
 }
 
-/** Shared "Yours could be next" call to action. */
-function dwdp_cta_html() {
+/** Shared closing call to action. $context "blog" uses wording that fits articles instead of the portfolio. */
+function dwdp_cta_html( $context = '' ) {
 	$s     = dwdp_settings();
+	if ( 'blog' === $context ) {
+		$s['cta_title'] = 'Need help with your website?';
+		$s['cta_text']  = 'If you’re planning a new site or a redesign, I’m happy to talk it through. A quick Zoom call gets you a quote and a timeline.';
+	}
 	$phone = trim( $s['cta_phone'] );
 	$tel   = preg_replace( '/[^0-9+]/', '', $phone );
 	ob_start();
@@ -298,7 +302,8 @@ function dwdp_cta_html() {
 	<?php
 	return ob_get_clean();
 }
-add_shortcode( 'dwd_projects_cta', function () {
+add_shortcode( 'dwd_projects_cta', function ( $atts ) {
+	$atts = shortcode_atts( array( 'context' => '' ), $atts );
 	dwdp_enqueue_front();
-	return dwdp_cta_html();
+	return dwdp_cta_html( $atts['context'] );
 } );

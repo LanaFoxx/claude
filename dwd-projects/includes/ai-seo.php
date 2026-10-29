@@ -16,17 +16,17 @@ function dwdp_business() {
 	return array(
 		'name'       => 'Dream Web Digital',
 		'legal'      => 'Dream Web Digital LLC',
-		'person'     => 'Michael',
+		'person'     => 'Michael Tarr',
 		'summary'    => $s['biz_summary'],
 		'city'       => $s['biz_city'],
-		'region'     => 'FL',
+		'region'     => 'NC',
 		'areas'      => $lines( $s['biz_areas'] ),
 		'industries' => $lines( $s['biz_industries'] ),
 		'services'   => $lines( $s['biz_services'] ),
 		'promises'   => $lines( $s['biz_promises'] ),
 		'phone'      => $s['cta_phone'],
-		'lat'        => 27.1926958,
-		'lng'        => -80.2550448,
+		'lat'        => 35.2270869,
+		'lng'        => -80.8431267,
 		'sameas'     => array( 'https://www.upwork.com/freelancers/dreamwebdigital', 'https://maps.app.goo.gl/z4HfYnTZaqccWhhy9' ),
 		'photo'      => content_url( '/uploads/2026/08/photo-michael.jpg' ),
 	);
@@ -75,7 +75,7 @@ function dwdp_enrich_person( $data ) {
 	$data['worksFor']    = array( '@id' => trailingslashit( home_url() ) . '#organization' );
 	$data['description'] = 'Michael is the founder of Dream Web Digital. He personally designs, builds and hosts custom WordPress websites for small businesses, working one-on-one with every client from the first call through launch and aftercare.';
 	$data['knowsAbout']  = array( 'Web design', 'WordPress', 'Elementor', 'Custom CSS and code', 'SEO', 'Website hosting', 'Small business websites' );
-	$data['homeLocation'] = array( '@type' => 'Place', 'name' => $b['city'] . ', Florida' );
+	$data['homeLocation'] = array( '@type' => 'Place', 'name' => $b['city'] . ', North Carolina' );
 	$data['url']         = home_url( '/#about' );
 	$data['image']       = array( '@type' => 'ImageObject', 'url' => $b['photo'] );
 	$data['sameAs']      = array( 'https://www.upwork.com/freelancers/dreamwebdigital' );
@@ -134,7 +134,7 @@ function dwdp_llms_txt( $full = false ) {
 	foreach ( $b['industries'] as $i ) {
 		$o .= '- ' . $i . "\n";
 	}
-	$o .= "\n## Location and service area\n\nBased in " . $b['city'] . ', Florida, in the Stuart and Jensen Beach area of South Florida (Martin County and the Treasure Coast). Works with clients nationwide across the United States, by Zoom and phone.' . "\n\n";
+	$o .= "\n## Location and service area\n\nBased in " . $b['city'] . ', North Carolina. Works with clients nationwide across the United States, by Zoom and phone.' . "\n\n";
 	$o .= "## Reputation\n\n- 5.0-star Google reviews\n- 100% Job Success on Upwork: https://www.upwork.com/freelancers/dreamwebdigital\n- Google Business Profile: https://maps.app.goo.gl/z4HfYnTZaqccWhhy9\n\n";
 	$o .= "## How to hire\n\n- Schedule a Zoom call: https://calendly.com/dreamwebdigital/dream-web-digital-consultation-call\n- Call or text: " . $b['phone'] . "\n- Contact form: " . home_url( '/contact/' ) . "\n\n";
 	$o .= "## Key pages\n\n";
@@ -165,7 +165,7 @@ function dwdp_llms_txt( $full = false ) {
 			'How many revisions are included?'       => 'Unlimited. The home page is designed first and refined until the client loves it, then every other page is approved before the next is built.',
 			'Will the price change in the middle of the project?' => 'No. The project is finished as agreed. Michael does not stop partway through and ask for more money.',
 			'What happens after launch?'             => 'Two months of free aftercare for changes and questions, a lifetime workmanship warranty, and 1-on-1 training. Many clients continue working with Michael long term.',
-			'Do you only work with local businesses?' => 'No. Dream Web Digital is based in the Stuart and Jensen Beach area of South Florida and works with clients across the United States.',
+			'Do you only work with local businesses?' => 'No. Dream Web Digital is based in Charlotte, North Carolina and works with clients across the United States.',
 			'What industries do you build for?'      => 'Any industry, including attorneys and law firms, doctors and medical practices, construction companies, roofing companies, remodeling contractors, accounting firms, financial advisors, fitness brands, retail and more.',
 			'Do I have to host with you?'            => 'No. Managed WordPress hosting is available, but Michael is happy to launch on the client\'s existing host.',
 		);
