@@ -174,7 +174,7 @@ add_action( 'wp_head', function () {
 		. '.dwf .dwf-phone{display:grid!important;grid-template-columns:auto auto;justify-content:center;align-items:center;column-gap:8px;row-gap:2px}.dwf .dwf-call-t{display:contents!important}'
 		. '.dwf .dwf-call-t small{grid-column:1/-1;grid-row:1;text-align:center}.dwf .dwf-call-ic{grid-column:1;grid-row:2}.dwf .dwf-call-t b{grid-column:1/-1;grid-row:2;margin-top:0!important}'
 		// Reviews: one full-width card at a time, centered (auto-advances every 4 seconds, below).
-		. '.elementor-element-dw0001t>.e-con{flex:0 0 100%!important;width:100%!important;max-width:100%!important;scroll-snap-align:center;justify-content:center!important;align-items:center!important;text-align:center}'
+		. '.elementor-element-dw0001t{padding-top:6px!important;padding-bottom:6px!important}.elementor-element-dw0001t>.e-con{flex:0 0 100%!important;width:100%!important;max-width:100%!important;scroll-snap-align:center;justify-content:center!important;align-items:center!important;text-align:center}'
 		. '}</style>' . "\n";
 	// Footer icons everywhere: small, no circles. Review cards: equal space above and below.
 	echo '<style id="dwdp-footer-icons">.dwf .dwf-call-ic{display:none!important}.dwf .dwf-call-t{align-items:center!important;text-align:center!important}.dwf-icons{gap:20px!important;align-items:center}.dwf-ico,.dwf-ico:hover,.dwf-call-ic{width:auto!important;height:auto!important;border:0!important;border-radius:0!important;background:none!important}'
