@@ -100,6 +100,9 @@ function dwdp_ajax_capture() {
 	}
 
 	$mobile = 'mobile' === $step;
+	// "hero" = the first screen again at double resolution, so covers stay sharp on retina screens
+	// and in the large homepage laptop. It isn't stored on the project; the editor crops it.
+	$hero   = 'hero' === $step;
 	$params = array(
 		'url'                         => $url,
 		'meta'                        => 'false',
@@ -111,8 +114,11 @@ function dwdp_ajax_capture() {
 		'scripts'                     => DWDP_URL . 'assets/capture-prep.js?ver=' . DWDP_VERSION,
 		'viewport.width'              => $mobile ? 390 : $width,
 		'viewport.height'             => $mobile ? 680 : 900, // 680 = what Safari shows on an iPhone between its status bar and address bar
-		'viewport.deviceScaleFactor'  => $mobile ? 2 : 1,
+		'viewport.deviceScaleFactor'  => $mobile || $hero ? 2 : 1,
 	);
+	if ( $hero ) {
+		$params['type'] = 'png';
+	}
 	if ( $mobile ) {
 		$params['viewport.isMobile'] = 'true';
 		$params['viewport.hasTouch'] = 'true';
@@ -129,14 +135,16 @@ function dwdp_ajax_capture() {
 	$id = dwdp_sideload(
 		$data['screenshot']['url'],
 		$post_id,
-		$slug . ( $mobile ? '-mobile-capture.jpg' : '-full-page.jpg' ),
-		$name . ( $mobile ? ' mobile capture' : ' full page capture' )
+		$slug . ( $hero ? '-hero-2x.png' : ( $mobile ? '-mobile-capture.jpg' : '-full-page.jpg' ) ),
+		$name . ( $hero ? ' hero capture' : ( $mobile ? ' mobile capture' : ' full page capture' ) )
 	);
 	if ( is_wp_error( $id ) ) {
 		wp_send_json_error( array( 'message' => $id->get_error_message() ) );
 	}
-	update_post_meta( $post_id, $mobile ? '_dwdp_mobileshot' : '_dwdp_fullshot', $id );
-	if ( ! $mobile ) {
+	if ( ! $hero ) {
+		update_post_meta( $post_id, $mobile ? '_dwdp_mobileshot' : '_dwdp_fullshot', $id );
+	}
+	if ( ! $mobile && ! $hero ) {
 		update_post_meta( $post_id, '_dwdp_url', $url );
 	}
 	$meta = wp_get_attachment_metadata( $id );
