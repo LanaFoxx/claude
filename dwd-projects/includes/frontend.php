@@ -129,6 +129,14 @@ add_action( 'wp_head', function () {
 }, 99 );
 
 /**
+ * Homepage "What's included": less space above and below "See how the process works".
+ */
+add_action( 'wp_head', function () {
+	echo '<style id="dwdp-included-space">.elementor-element-9e67fb33{padding-bottom:0!important}.elementor-element-9e67fb33>.e-con-inner{padding-bottom:52px!important}'
+		. '@media(min-width:768px){.elementor-element-dw0000g{margin-top:-20px!important}.elementor-element-9e67fb33>.e-con-inner{padding-bottom:44px!important}}@media(max-width:767px){.elementor-element-9e67fb33>.e-con-inner{padding-bottom:40px!important}.elementor-element-dw0000g{margin-top:8px!important}}</style>' . "\n";
+}, 99 );
+
+/**
  * Page header eyebrows ("Step by step", "Hosting", "My work"...) in the same outlined pill as the blog's.
  */
 add_action( 'wp_head', function () {
@@ -173,7 +181,7 @@ add_action( 'wp_head', function () {
 		. '.elementor-element-dw00009 .dwdp-laptop{width:100%!important}.dwdp-vslider.is-laptop{align-items:center!important}'
 		// "What's included" heading centered; less space around "See how the process works".
 		. '.elementor-element-dw0000f{align-items:center!important;text-align:center}.elementor-element-dw0000f .elementor-heading-title,.elementor-element-dw0000f .elementor-widget-text-editor{text-align:center!important}'
-		. '.elementor-element-dw0000g{margin-top:0!important}.elementor-element-9e67fb33{padding-bottom:36px!important}.elementor-element-9e67fb33>.e-con-inner{row-gap:14px!important;gap:14px!important}.elementor-element-dw0000f{padding-bottom:0!important;margin-bottom:0!important}.elementor-element-dw00016{padding-bottom:14px!important}'
+		. '.elementor-element-dw0000g{margin-top:0!important}.elementor-element-9e67fb33>.e-con-inner{row-gap:14px!important;gap:14px!important}.elementor-element-dw0000f{padding-bottom:0!important;margin-bottom:0!important}.elementor-element-dw00016{padding-bottom:14px!important}'
 		// Homepage FAQ intro and "Let's build your website": centered, buttons stacked in the middle.
 		. '.elementor-element-b7671e0,.elementor-element-dw0002c{align-items:center!important;text-align:center!important}'
 		. '.elementor-element-b7671e0 .elementor-heading-title,.elementor-element-b7671e0 .elementor-widget-text-editor,.elementor-element-b7671e0 .elementor-button-wrapper,.elementor-element-dw0002c .elementor-heading-title,.elementor-element-dw0002c .elementor-widget-text-editor,.elementor-element-dw0002c .elementor-button-wrapper{text-align:center!important}'
