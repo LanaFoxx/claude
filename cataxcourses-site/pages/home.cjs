@@ -191,6 +191,53 @@ function faq() {
   ], { cls: 'ctc-dots-dark' });
 }
 
+// Email newsletter signup (coupon codes + CTEC deadline reminders). Elementor Pro form: signups are saved in
+// Elementor > Submissions and emailed to the site admin; add the Mailchimp action once the audience is connected.
+function newsletter() {
+  const field = (o) => ({ _id: L.id().slice(0, 7), width: '100', ...o });
+  const perk = (icon, t) => row([
+    widget('icon', { selected_icon: { value: icon, library: 'fa-solid' }, view: 'stacked', shape: 'circle', primary_color: C.goldPale, secondary_color: C.goldDeep, size: px(16), icon_padding: px(10), _flex_size: 'none' }),
+    text(t, { color: C.navy, size: [18, 17, 16], weight: 600, lh: 1.4 }),
+  ], { gap: 12, settings: { flex_wrap: 'nowrap' } });
+  return band(C.sand, [
+    grid([
+      stack([
+        eyebrow('Newsletter', C.goldText),
+        H2('<span class="ctc-thin ctc-block">Coupon codes &amp;</span><span class="ctc-block">CTEC deadline reminders.</span>', C.navy, 'left', { lh: 1.05, settings: { _margin: box(12, 0, 16, 0) } }),
+        text('Join our email list and be the first to get discount codes on CTEC courses, plus reminders before every CTEC renewal deadline so you never miss October 31st.', { size: [20, 19, 18], maxW: 560 }),
+        stack([perk('fas fa-tag', 'Exclusive coupon codes'), perk('fas fa-calendar-check', 'CTEC deadline reminders'), perk('fas fa-envelope-open-text', 'Tax law updates for preparers')], { gap: 12, settings: { margin: box(24, 0, 0, 0) } }),
+      ]),
+      container({
+        content_width: 'full', flex_gap: gap(16), padding: box(36, 36, 36, 36), padding_mobile: box(24, 20, 24, 20),
+        background_background: 'classic', background_color: C.white, border_radius: box(16),
+        border_border: 'solid', border_width: box(6, 0, 0, 0), border_color: C.gold,
+        box_shadow_box_shadow_type: 'yes', box_shadow_box_shadow: { horizontal: 0, vertical: 30, blur: 60, spread: -30, color: 'rgba(28,35,51,0.35)' },
+      }, [
+        widget('heading', { title: 'Get coupon codes by email', header_size: 'h3', title_color: C.navy, ...typo('typography', HEAD, [28, 26, 24], 800, { lh: 1.15, ls: -0.01 }) }),
+        widget('form', {
+          form_name: 'Newsletter Signup (homepage)',
+          form_fields: [
+            field({ custom_id: 'first_name', field_type: 'text', field_label: 'First Name', placeholder: 'First name' }),
+            field({ custom_id: 'email', field_type: 'email', field_label: 'Email', placeholder: 'you@example.com', required: 'true' }),
+          ],
+          show_labels: '', input_size: 'md', column_gap: px(12), row_gap: px(14),
+          button_text: 'Sign Me Up →', button_size: 'md', button_width: '100',
+          submit_actions: ['save-to-database', 'email'],
+          email_subject: 'New newsletter signup – California Tax Courses', email_content: '[all-fields]', email_from_name: 'California Tax Courses',
+          success_message: "You're on the list! Watch your inbox for coupon codes and CTEC deadline reminders.",
+          error_message: 'Something went wrong. Please try again or call us at (888) 229-1994.', required_field_message: 'Please enter your email.',
+          field_text_color: C.navy, field_background_color: C.white, field_border_color: C.line, field_border_width: box(1), field_border_radius: box(10),
+          ...typo('field_typography', BODY, 17, 400, { lh: 1.5 }),
+          button_background_color: C.gold, button_hover_background_color: C.goldHover, button_text_color: C.white, button_hover_color: C.white,
+          button_border_radius: box(12), button_text_padding: box(16, 28, 16, 28), ...typo('button_typography', HEAD, [21, 20, 19], 700, { lh: 1.2, ls: 0 }),
+          message_color: C.navy, _css_classes: 'ctc-news-form',
+        }),
+        text(`No spam. Unsubscribe anytime. See our <a href="${URL.privacy}">Privacy Policy</a>.`, { size: 14, lh: 1.5, linkColor: C.goldText, align: 'center' }),
+      ]),
+    ], { cols: ['minmax(0,1.1fr) minmax(0,1fr)', '1fr', '1fr'], gap: 56, gapM: 32, align: 'center' }),
+  ]);
+}
+
 function finalCta() {
   return band(C.white, [
     stack([
@@ -208,6 +255,6 @@ function finalCta() {
 module.exports = {
   slug: 'new-home', title: 'Home (new design preview)', liveId: 65,
   build: (m) => [container({ content_width: 'full', padding: box(0), flex_gap: gap(0), ...cls('ctc-page') }, [
-    hero(m), courses(), credentials(m), students(m), articles(), faq(), finalCta(),
+    hero(m), courses(), credentials(m), students(m), articles(), faq(), newsletter(), finalCta(),
   ], false)],
 };
