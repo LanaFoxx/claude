@@ -1,0 +1,30 @@
+{
+ "home": {
+  "id": 55,
+  "url": "https://staging156.dreamweb.digital/"
+ },
+ "services": {
+  "id": 531,
+  "url": "https://staging156.dreamweb.digital/services/"
+ },
+ "about": {
+  "id": 532,
+  "url": "https://staging156.dreamweb.digital/about/"
+ },
+ "faq": {
+  "id": 533,
+  "url": "https://staging156.dreamweb.digital/faqs/"
+ },
+ "contact": {
+  "id": 534,
+  "url": "https://staging156.dreamweb.digital/contact/"
+ },
+ "legal": {
+  "id": 535,
+  "url": "https://staging156.dreamweb.digital/legal-compliance/"
+ },
+ "signup": {
+  "id": 536,
+  "url": "https://staging156.dreamweb.digital/free-resources/"
+ }
+}
