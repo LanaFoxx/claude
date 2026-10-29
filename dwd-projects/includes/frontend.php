@@ -17,6 +17,20 @@ function dwdp_enqueue_front() {
 }
 
 /**
+ * The site-wide design styles (layout, header, menu, cards, forms, dots). They used to be printed
+ * from outside this plugin; keeping them here means they always load. Printed early in <head>,
+ * in the same place and with the same ids as before, so later rules still override them.
+ */
+add_action( 'wp_head', function () {
+	foreach ( array( 'dw-site', 'dwd-site' ) as $name ) {
+		$file = DWDP_DIR . 'assets/' . $name . '.css';
+		if ( is_readable( $file ) ) {
+			echo '<style id="' . esc_attr( $name ) . '-css">' . file_get_contents( $file ) . '</style>' . "\n"; // phpcs:ignore
+		}
+	}
+}, 9 );
+
+/**
  * Dotted backgrounds only on the dark sections, so a dotted section never sits directly
  * against another one. The light sections (dw-dots-light, plus the Elementor sections that
  * got the same dots by ID) become plain.
