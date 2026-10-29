@@ -34,9 +34,10 @@ const ALT = {
 };
 
 function mediaMap() {
-  const md = (f) => { const x = prep.media[f]; if (!x) throw new Error(`Missing media ${f}`); return { id: x.id, url: x.url, alt: ALT[f] || '', source: 'library' }; };
+  // Prefer the WebP copy of a PNG/JPG when one was uploaded (media:webp), keeping the original's alt text.
+  const md = (f) => { const w = f.replace(/\.(png|jpe?g)$/i, '.webp'); const x = prep.media[w] || prep.media[f]; if (!x) throw new Error(`Missing media ${f}`); return { id: x.id, url: x.url, alt: ALT[f] || '', source: 'library' }; };
   return {
-    logo: { id: 5615, url: `${SITE}/wp-content/uploads/2020/09/California-Tax-Courses-Logo-Gold-500px.png`, alt: 'California Tax Courses', source: 'library' },
+    logo: prep.media['ctc-logo-gold.webp'] ? { ...md('ctc-logo-gold.webp'), alt: 'California Tax Courses' } : { id: 5615, url: `${SITE}/wp-content/uploads/2020/09/California-Tax-Courses-Logo-Gold-500px.png`, alt: 'California Tax Courses', source: 'library' },
     seal: md('ctc-seal-mark.png'), ctec: md('ctc-badge-ctec-approved-provider.png'), irs: md('ctc-badge-irs-approved-ce.png'),
     trustpilot: md('ctc-badge-trustpilot.png'), bca: md('ctc-badge-business-consumer-alliance.png'),
     mugs: [1, 2, 3, 4].map((i) => md(`ctc-student-mug-${i}.jpg`)),

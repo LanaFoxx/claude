@@ -76,6 +76,17 @@ body:has(.ctc-header){background:#fff;margin:0;color:${C.navy};font-family:${BOD
 .ctc-pricebar:hover,.ctc-article:hover{background-color:${C.sandHover}!important}
 .ctc-cta-gold:hover{background-color:${C.goldHover}!important}.ctc-cta-navy:hover{background-color:${C.navy2}!important}
 .ctc-link-gold a:hover,.ctc-link-gold a:focus{color:${C.white}!important}
+/* Checkout fields on a 6-column grid: email full width, first|last, street|city, state|ZIP|phone */
+@media (min-width:768px){.ctc-checkout .woocommerce-billing-fields__field-wrapper,.ctc-checkout .woocommerce-shipping-fields__field-wrapper{display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr));column-gap:16px}
+.ctc-checkout .woocommerce-billing-fields__field-wrapper>.form-row,.ctc-checkout .woocommerce-shipping-fields__field-wrapper>.form-row{grid-column:span 6;width:auto!important;float:none!important;margin-right:0!important;margin-left:0!important}
+.ctc-checkout #billing_first_name_field,.ctc-checkout #billing_last_name_field,.ctc-checkout #shipping_first_name_field,.ctc-checkout #shipping_last_name_field{grid-column:span 3}
+.ctc-checkout #billing_address_1_field,.ctc-checkout #shipping_address_1_field{grid-column:span 4}.ctc-checkout #billing_address_2_field,.ctc-checkout #shipping_address_2_field{grid-column:span 2;align-self:end}
+.ctc-checkout #billing_city_field,.ctc-checkout #billing_state_field,.ctc-checkout #billing_postcode_field,.ctc-checkout #billing_phone_field,.ctc-checkout #shipping_city_field,.ctc-checkout #shipping_state_field,.ctc-checkout #shipping_postcode_field{grid-column:span 2}}
+@media (max-width:767px){.ctc-checkout .woocommerce-billing-fields__field-wrapper,.ctc-checkout .woocommerce-shipping-fields__field-wrapper{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:12px}
+.ctc-checkout .woocommerce-billing-fields__field-wrapper>.form-row,.ctc-checkout .woocommerce-shipping-fields__field-wrapper>.form-row{grid-column:span 2;width:auto!important;float:none!important;margin-right:0!important}
+.ctc-checkout #billing_first_name_field,.ctc-checkout #billing_last_name_field,.ctc-checkout #shipping_first_name_field,.ctc-checkout #shipping_last_name_field,.ctc-checkout #billing_city_field,.ctc-checkout #billing_state_field,.ctc-checkout #billing_postcode_field,.ctc-checkout #billing_phone_field,.ctc-checkout #shipping_city_field,.ctc-checkout #shipping_state_field,.ctc-checkout #shipping_postcode_field{grid-column:span 1}}
+/* Terms checkbox: box and text vertically centered on one line */
+.ctc-checkout .woocommerce-terms-and-conditions-wrapper .form-row label.checkbox,.ctc-checkout .woocommerce-terms-and-conditions-wrapper label.woocommerce-form__label-for-checkbox{display:flex!important;align-items:center;gap:10px;margin:0}.ctc-checkout .woocommerce-terms-and-conditions-wrapper input[type=checkbox]{margin:0!important;flex:none;width:18px;height:18px;accent-color:${C.gold}}.ctc-checkout .woocommerce-terms-and-conditions-wrapper .required{margin-left:4px}
 /* Checkout SMS consent checkbox (wp/preview-snippet.php) */
 .ctc-checkout .ctc-sms-consent label{display:block!important;position:relative;padding-left:30px;font-weight:400!important;font-size:14px!important;line-height:1.55;color:${C.gray}}.ctc-checkout .ctc-sms-consent input[type=checkbox]{position:absolute;left:0;top:2px;width:18px;height:18px;margin:0;accent-color:${C.gold}}.ctc-checkout .ctc-sms-consent a{color:${C.goldText};font-weight:700}.ctc-checkout .ctc-sms-consent .optional{display:none}
 /* Text alerts (SMS opt-in) form */

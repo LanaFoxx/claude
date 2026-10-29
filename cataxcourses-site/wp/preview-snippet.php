@@ -166,9 +166,9 @@ add_action( 'template_redirect', function () {
 } );
 /* ---------------------------------------------------------------- SMS consent at checkout (10DLC) */
 // Checkout collects a phone number, so it carries the SMS opt-in: optional, unchecked, full carrier disclaimer, right
-// under the phone field. WooCommerce stores the custom billing field on the order as _ctc_sms_consent (1 = opted in).
+// under the phone + email row. WooCommerce stores the custom billing field on the order as _ctc_sms_consent (1 = opted in).
 add_filter( 'woocommerce_checkout_fields', function ( $fields ) {
-	$after = isset( $fields['billing']['billing_phone']['priority'] ) ? (int) $fields['billing']['billing_phone']['priority'] : 100;
+	$after = max( isset( $fields['billing']['billing_phone']['priority'] ) ? (int) $fields['billing']['billing_phone']['priority'] : 100, isset( $fields['billing']['billing_email']['priority'] ) ? (int) $fields['billing']['billing_email']['priority'] : 110 ); // after phone + email (they share a row)
 	$fields['billing']['ctc_sms_consent'] = array(
 		'type'     => 'checkbox',
 		'required' => false,
