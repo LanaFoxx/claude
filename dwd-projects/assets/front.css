@@ -48,6 +48,20 @@
 /* ---------- portfolio grid ---------- */
 .dw-pgrid{display:grid;grid-template-columns:1fr 1fr;gap:30px;width:100%}
 .dwdp-grid .dw-pcard{display:flex}
+/* Portfolio carousel: native horizontal scrolling with snap, driven by the buttons (and swipe). */
+.dwdp-pcarousel{width:100%}
+.dwdp-pnav{display:flex;justify-content:flex-end;gap:12px;margin:0 0 22px}
+.dwdp-pbtn{width:52px;height:52px;border-radius:50%;background:#fff!important;border:1.5px solid #CDDBEA!important;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;box-shadow:0 8px 20px rgba(18,41,62,.12)!important;transition:background .2s,border-color .2s,transform .2s}
+.dwdp-pbtn svg{width:20px;height:20px;stroke:#12293E;stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round;transition:stroke .2s}
+.dwdp-pbtn:hover,.dwdp-pbtn:focus-visible{background:#1B7EC3!important;border-color:#1B7EC3!important}
+.dwdp-pbtn:hover svg,.dwdp-pbtn:focus-visible svg{stroke:#fff}
+.dwdp-ptrack{display:grid;grid-auto-flow:column;grid-auto-columns:calc((100% - 56px) / 3);gap:28px;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scroll-behavior:smooth;scrollbar-width:none;padding:6px 4px 46px;margin:0 -4px -40px}
+.dwdp-ptrack::-webkit-scrollbar{display:none}
+.dwdp-ptrack .dw-pcard{display:flex;scroll-snap-align:start;min-width:0}
+.dwdp-ptrack .dw-pfoot{flex-wrap:wrap;margin-top:auto}
+@media(max-width:1100px){.dwdp-ptrack{grid-auto-columns:calc((100% - 28px) / 2)}}
+@media(max-width:767px){.dwdp-ptrack{grid-auto-columns:88%;gap:16px}.dwdp-pbtn{width:46px;height:46px}}
+@media (prefers-reduced-motion:reduce){.dwdp-ptrack{scroll-behavior:auto}}
 .dw-pcard{flex-direction:column;border:1px solid #D3DEEC;border-radius:12px;overflow:hidden;box-shadow:0 26px 60px rgba(18,41,62,.26);background:#fff;text-decoration:none}
 .dw-pbar{background:#EEF3F9;display:flex;align-items:center;gap:10px;padding:9px 13px}
 .dw-bdots{display:flex;gap:6px}

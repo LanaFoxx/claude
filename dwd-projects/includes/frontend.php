@@ -68,9 +68,12 @@ function dwdp_card_html( $p ) {
 	);
 }
 
-/** [dwd_portfolio] — grid of every published project. Optional: limit="4". */
+/**
+ * [dwd_portfolio] — grid of every published project. Optional: limit="4", and style="carousel"
+ * for a sliding row (three cards on desktop, two on tablets, one on phones) with buttons above.
+ */
 add_shortcode( 'dwd_portfolio', function ( $atts ) {
-	$atts     = shortcode_atts( array( 'limit' => 0 ), $atts );
+	$atts     = shortcode_atts( array( 'limit' => 0, 'style' => 'grid' ), $atts );
 	$projects = dwdp_projects();
 	if ( $atts['limit'] ) {
 		$projects = array_slice( $projects, 0, absint( $atts['limit'] ) );
@@ -79,11 +82,21 @@ add_shortcode( 'dwd_portfolio', function ( $atts ) {
 		return '';
 	}
 	dwdp_enqueue_front();
-	$out = '<div class="dw-pgrid dwdp-grid">';
+	$cards = '';
 	foreach ( $projects as $p ) {
-		$out .= dwdp_card_html( $p );
+		$cards .= dwdp_card_html( $p );
 	}
-	return $out . '</div>';
+	if ( 'carousel' !== $atts['style'] ) {
+		return '<div class="dw-pgrid dwdp-grid">' . $cards . '</div>';
+	}
+	$arrow = '<svg viewBox="0 0 22 22" aria-hidden="true"><path d="%s"></path></svg>';
+	return '<div class="dwdp-pcarousel">'
+		. '<div class="dwdp-pnav">'
+		. '<button type="button" class="dwdp-pbtn dwdp-prev" aria-label="Previous projects">' . sprintf( $arrow, 'M14 4 L7 11 L14 18' ) . '</button>'
+		. '<button type="button" class="dwdp-pbtn dwdp-next" aria-label="Next projects">' . sprintf( $arrow, 'M8 4 L15 11 L8 18' ) . '</button>'
+		. '</div>'
+		. '<div class="dwdp-ptrack" tabindex="0" aria-label="Projects">' . $cards . '</div>'
+		. '</div>';
 } );
 
 /**

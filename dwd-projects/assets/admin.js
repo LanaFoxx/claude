@@ -259,7 +259,7 @@
 			$('<div class="dwdp-extra-img">').append(cov)
 		));
 		if (state.mobileImg) {
-			var m = drawPhone(state.mobileImg, 150, domainOf());
+			var m = drawPhone(state.mobileImg, 150);
 			$x.append($('<label class="dwdp-extra">').append(
 				$('<input type="checkbox" id="dwdp-use-mockup">').prop('checked', state.useMockup),
 				$('<span>').text(' Phone mockup'),
@@ -322,17 +322,12 @@
 
 	/* ---------- phone mockup ---------- */
 
-	/** Site domain shown in the phone mockup's Safari address bar. */
-	function domainOf(u) {
-		try { return new URL(u || $('#dwdp-url').val()).hostname.replace(/^www\./, ''); } catch (e) { return ''; }
-	}
-
 	/**
-	 * Draws an iPhone with the mobile screenshot inside, laid out like Safari:
-	 * status bar, the page (390x680 capture), then Safari's bottom address bar.
+	 * Draws an iPhone with the mobile screenshot inside: status bar, then the page
+	 * (390x764 capture) down to the bottom edge, with no browser bar or web address.
 	 * width = output width in px.
 	 */
-	function drawPhone(shot, width, domain) {
+	function drawPhone(shot, width) {
 		var k = width / 720, W = 720, H = 1432;
 		var c = canvasFor(W * k, H * k), x = c.getContext('2d');
 		x.scale(k, k);
@@ -353,8 +348,7 @@
 		x.save(); rr(sx, sy, sw, sh, 86); x.clip();
 		var scale = sw / shot.naturalWidth;          // page pixels -> mockup pixels
 		var bar = 80;                                  // iOS status bar (47pt)
-		var tool = 142;                                // Safari bottom bar (84pt)
-		var page = sh - bar - tool;                    // visible page area (680pt)
+		var page = sh - bar;                           // the page runs to the bottom edge: no browser bar or address
 		// status bar takes the colour of the top of the page
 		var probe = canvasFor(1, 1).getContext('2d');
 		probe.drawImage(shot, 0, 0, shot.naturalWidth, 4, 0, 0, 1, 1);
@@ -363,21 +357,12 @@
 		x.fillRect(sx, sy, sw, bar);
 		// the page itself
 		var srcH = Math.min(shot.naturalHeight, Math.round(page / scale));
+		// if the capture is a little short, continue its bottom colour
+		probe.drawImage(shot, 0, srcH - 4, shot.naturalWidth, 4, 0, 0, 1, 1);
+		var q = probe.getImageData(0, 0, 1, 1).data, lightBottom = (q[0] * 299 + q[1] * 587 + q[2] * 114) / 1000 > 150;
+		x.fillStyle = 'rgb(' + q[0] + ',' + q[1] + ',' + q[2] + ')';
+		x.fillRect(sx, sy + bar, sw, page);
 		x.drawImage(shot, 0, 0, shot.naturalWidth, srcH, sx, sy + bar, sw, srcH * scale);
-		// Safari bottom bar with the address pill
-		var ty = sy + bar + page;
-		x.fillStyle = '#F2F2F4'; x.fillRect(sx, ty, sw, tool + 10);
-		x.fillStyle = 'rgba(0,0,0,.12)'; x.fillRect(sx, ty, sw, 1.5);
-		rr(sx + 26, ty + 14, sw - 52, 60, 18); x.fillStyle = '#fff'; x.fill();
-		x.font = '500 27px -apple-system, "SF Pro Text", Helvetica, Arial, sans-serif';
-		x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillStyle = '#111';
-		var label = domain || domainOf();
-		x.fillText(label, W / 2 + 12, ty + 45);
-		// padlock before the domain
-		var lw = x.measureText(label).width, lx = W / 2 + 12 - lw / 2 - 26, ly = ty + 45;
-		x.fillStyle = '#555'; rr(lx - 8, ly - 3, 16, 13, 3); x.fill();
-		x.beginPath(); x.lineWidth = 3; x.strokeStyle = '#555'; x.arc(lx, ly - 4, 5.5, Math.PI, 0); x.stroke();
-		x.textAlign = 'left';
 		// status bar content
 		x.fillStyle = light ? '#111' : '#fff';
 		x.font = '600 30px -apple-system, "SF Pro Text", Helvetica, Arial, sans-serif';
@@ -391,8 +376,8 @@
 		rr(bx + 86, by - 6, 36, 14, 3); x.fill();
 		// dynamic island
 		rr(W / 2 - 104, sy + 16, 208, 58, 29); x.fillStyle = '#000'; x.fill();
-		// home indicator
-		rr(W / 2 - 110, H - 50, 220, 9, 5); x.fillStyle = '#111'; x.fill();
+		// home indicator, drawn over the page like iOS does
+		rr(W / 2 - 110, H - 50, 220, 9, 5); x.fillStyle = lightBottom ? 'rgba(0,0,0,.85)' : 'rgba(255,255,255,.9)'; x.fill();
 		x.restore();
 		return c;
 	}
@@ -537,7 +522,7 @@
 		}
 		if (state.useMockup && state.mobileImg) {
 			chain = chain.then(function () {
-				return toBlob(drawPhone(state.mobileImg, 720, domainOf()), 'image/png').then(function (b) {
+				return toBlob(drawPhone(state.mobileImg, 720), 'image/png').then(function (b) {
 					return upload(b, base + '-mobile-mockup.png', name + ' mobile mockup', name + ' website on mobile');
 				}).then(function (r) { mockup = r; tick(); });
 			});

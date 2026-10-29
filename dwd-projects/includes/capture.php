@@ -113,7 +113,7 @@ function dwdp_ajax_capture() {
 		// Loaded by URL: inline JavaScript in the query is blocked by the service's firewall.
 		'scripts'                     => DWDP_URL . 'assets/capture-prep.js?ver=' . DWDP_VERSION,
 		'viewport.width'              => $mobile ? 390 : $width,
-		'viewport.height'             => $mobile ? 680 : 900, // 680 = what Safari shows on an iPhone between its status bar and address bar
+		'viewport.height'             => $mobile ? 764 : 900, // 764 = an iPhone screen below the status bar (the mockup has no browser bar)
 		'viewport.deviceScaleFactor'  => $mobile || $hero ? 2 : 1,
 	);
 	if ( $hero ) {
