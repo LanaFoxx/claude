@@ -27,7 +27,9 @@ add_action( 'wp_head', function () {
 	foreach ( $ids as $id ) {
 		$sel[] = 'html body .elementor-element-' . $id;
 	}
-	echo '<style id="dwdp-no-light-dots">' . implode( ',', $sel ) . '{background-image:none!important}</style>' . "\n";
+	echo '<style id="dwdp-no-light-dots">' . implode( ',', $sel ) . '{background-image:none!important}'
+		// Anything marked dark gets the white dots, even if an old rule lists it as a light section.
+		. 'html body .dw-dots-dark.dw-dots-dark{background-image:radial-gradient(rgba(255,255,255,0.12) 1px,transparent 1px)!important;background-size:22px 22px!important}</style>' . "\n";
 }, 99 );
 
 /**
@@ -68,9 +70,16 @@ add_action( 'template_redirect', function () {
  * buttons and form submits plus the plugin's own buttons.
  */
 add_action( 'wp_head', function () {
+	// One button style everywhere: same thin uppercase type, same height, padding and minimum width.
+	$btn = 'a.elementor-button,button.elementor-button,.elementor-button[type=submit],.dwdp-btn,.dwf-zoom,.dw-pbtn,.dw-form button';
+	$txt = '.elementor-button .elementor-button-text,.elementor-button .elementor-button-content-wrapper';
 	echo '<style id="dwdp-buttons">'
-		. '.elementor-button,.elementor-button .elementor-button-text,.elementor-field-type-submit .elementor-button,.dwdp-btn,.dwf-zoom,.dw-pbtn,.dw-form button,.dwdp-cta .dwdp-btn{text-transform:uppercase!important;letter-spacing:.16em!important;font-size:14px!important;font-weight:600!important}'
-		. '.elementor-button{padding-left:30px!important;padding-right:30px!important}'
+		. $btn . ',' . $txt . '{text-transform:uppercase!important;letter-spacing:.16em!important;font-family:Poppins,sans-serif!important;font-size:14px!important;font-weight:300!important;line-height:1.2!important}'
+		. $btn . '{display:inline-flex!important;align-items:center;justify-content:center;box-sizing:border-box;height:52px!important;padding:0 32px!important;min-width:232px;border-radius:8px!important;white-space:nowrap}'
+		. '@media(max-width:480px){' . $btn . '{min-width:0;padding:0 26px!important}}'
+		// Shared closing band: dark, dots, glow, even spacing (class dw-cta-band on an Elementor container).
+		. '.dw-cta-band{border-top:1px solid rgba(255,255,255,.07)}.dw-cta-band>.e-con-inner{gap:0!important}'
+		. '.dw-cta-band>.e-con-inner>.elementor-widget-heading{margin-bottom:16px!important}.dw-cta-band>.e-con-inner>.elementor-widget-text-editor{margin-bottom:32px!important}.dw-cta-band .elementor-widget-text-editor p{margin:0}'
 		. '</style>' . "\n";
 }, 99 );
 
@@ -246,7 +255,7 @@ function dwdp_cta_html() {
 	$tel   = preg_replace( '/[^0-9+]/', '', $phone );
 	ob_start();
 	?>
-	<section class="dwdp-cta dw-dots-dark">
+	<section class="dwdp-cta dw-dots-dark dw-glow">
 		<div class="dwdp-cta-inner">
 			<h2 class="dwdp-cta-title"><?php echo esc_html( $s['cta_title'] ); ?></h2>
 			<p class="dwdp-cta-text"><?php echo esc_html( $s['cta_text'] ); ?></p>
