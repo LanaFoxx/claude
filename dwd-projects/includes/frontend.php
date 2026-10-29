@@ -67,6 +67,9 @@ add_action( 'wp_head', function () {
 		. '.elementor-element-dw00009 .dwdp-laptop{width:90%}}'
 		. '</style>' . "\n";
 	// Reusable hero glow for dark sections (class "dw-glow" on an Elementor container).
+	// Homepage hero glow sits behind the headline (left column on desktop, centered when the hero stacks).
+	echo '<style id="dwdp-hero-glow">.elementor-element-f28e5483::before{top:-60px!important;right:auto!important;left:calc(50% - 760px)!important;width:820px!important;height:720px!important;background:radial-gradient(circle,rgba(27,126,195,.38),transparent 64%)!important}'
+		. '@media(max-width:1180px){.elementor-element-f28e5483::before{left:50%!important;transform:translateX(-50%);top:-120px!important}}</style>' . "\n";
 	echo '<style id="dwdp-glow">.dw-glow{position:relative;overflow:hidden}.dw-glow::before{content:"";position:absolute;top:-180px;left:50%;transform:translateX(-50%);width:820px;max-width:120%;height:620px;background:radial-gradient(circle,rgba(27,126,195,.32),transparent 65%);pointer-events:none}.dw-glow>*{position:relative;z-index:1}</style>' . "\n";
 }, 99 );
 
@@ -109,6 +112,59 @@ add_action( 'wp_head', function () {
  */
 add_action( 'wp_footer', function () {
 	echo "<script>document.querySelectorAll('a[href^=\"tel:\"]').forEach(function(a){var p=a.parentElement;if(!p||a.querySelector('svg,img,i'))return;var t=p.textContent.replace(a.textContent,'');if(!/[A-Za-z]/.test(t))a.classList.add('dw-phone-ico');});</script>\n";
+}, 99 );
+
+/**
+ * Transparent header over dark heroes: on pages that open with a dark section the header floats
+ * over it with a clear background, white menu and the white logo, then turns solid white once the
+ * visitor scrolls. Pages that open on a light section keep the normal white header.
+ */
+add_action( 'wp_head', function () {
+	echo '<style id="dwdp-header-over">'
+		// The glass lives on a pseudo-element: a backdrop-filter on the header itself would trap the fixed mobile menu.
+		. 'body.dw-hdr-over .dw-header{background:transparent!important;box-shadow:none!important;transition:box-shadow .7s ease}'
+		. 'body.dw-hdr-over .dw-header::before{content:"";position:absolute;inset:0;z-index:-1;background:rgba(255,255,255,.86);-webkit-backdrop-filter:blur(16px) saturate(160%);backdrop-filter:blur(16px) saturate(160%);opacity:0;transition:opacity .7s ease}'
+		. 'body.dw-hdr-over.dw-scrolled .dw-header::before{opacity:1}'
+		. 'body.dw-hdr-over.dw-scrolled .dw-header{box-shadow:0 6px 24px rgba(18,41,62,.08)!important}'
+		. 'body.dw-hdr-over .dw-header .elementor-item,body.dw-hdr-over .dw-header .dw-nav-burger span,body.dw-hdr-over .dw-header .elementor-widget-image img{transition:color .7s ease,background-color .7s ease,opacity .35s ease}'
+		. 'body.dw-hdr-over:not(.dw-scrolled) .dw-header .elementor-nav-menu--main .elementor-item{color:#fff!important}'
+		. 'body.dw-hdr-over:not(.dw-scrolled) .dw-header .elementor-nav-menu--main .elementor-item.elementor-item-active,body.dw-hdr-over:not(.dw-scrolled) .dw-header .elementor-nav-menu--main .elementor-item:hover{color:#4BA3DC!important}'
+		. 'body.dw-hdr-over:not(.dw-scrolled) .dw-header .dw-nav-burger span{background:#fff!important}'
+		. '.dw-header .elementor-menu-toggle{background:transparent!important}'
+		// Logo lines up with the left edge of the page content.
+		. '.dw-header .elementor-widget-image{margin-left:20px!important}@media(max-width:767px){.dw-header .elementor-widget-image{margin-left:24px!important}}'
+		. 'body.dw-hdr-over:not(.dw-scrolled) .dw-header .elementor-menu-toggle,body.dw-hdr-over:not(.dw-scrolled) .dw-header .elementor-menu-toggle svg{color:#fff!important;fill:#fff!important}'
+		. '</style>' . "\n";
+}, 99 );
+add_action( 'wp_footer', function () {
+	$white = content_url( '/uploads/2025/10/Asset-2-1.png' );
+	?>
+	<script>
+	(function () {
+		var hdr = document.querySelector('.dw-header');
+		if (!hdr) { return; }
+		var first = document.querySelector('[data-elementor-type="wp-page"] > .e-con, [data-elementor-type="wp-page"] > .elementor-section, main > section, .dwb-hero, .dwdp-single > section');
+		if (!first) { return; }
+		var m = getComputedStyle(first).backgroundColor.match(/\d+/g);
+		if (!m || (m[0] * 299 + m[1] * 587 + m[2] * 114) / 1000 > 90) { return; }
+		document.body.classList.add('dw-hdr-over');
+		// The header is fixed: pull the dark section up under it and keep its content clear of the menu.
+		var h = hdr.offsetHeight, spacer = hdr.parentElement.querySelector('.elementor-sticky__spacer');
+		var top = first.getBoundingClientRect().top + window.scrollY - (document.getElementById('wpadminbar') ? document.getElementById('wpadminbar').offsetHeight : 0);
+		if (top > 1) { first.style.marginTop = (-top) + 'px'; }
+		first.style.paddingTop = (parseFloat(getComputedStyle(first).paddingTop) + (top > 1 ? top : 0)) + 'px';
+		var logo = hdr.querySelector('.elementor-widget-image img'), dark = logo && logo.getAttribute('src'), white = '<?php echo esc_url( $white ); ?>';
+		if (logo) { logo.removeAttribute('srcset'); }
+		function update() {
+			var on = window.scrollY > 10;
+			document.body.classList.toggle('dw-scrolled', on);
+			if (logo) { logo.src = on ? dark : white; }
+		}
+		update();
+		window.addEventListener('scroll', update, { passive: true });
+	})();
+	</script>
+	<?php
 }, 99 );
 
 /** Case-study pages use the plugin template (inside the site's header/footer). */
