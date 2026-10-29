@@ -88,7 +88,7 @@ function helpCta(big, small, url, variant) {
 function help() {
   return band(C.white, [
     eyebrow('Help', C.goldText, 'center'),
-    H2('<span class="ctc-thin">Didn\'t find your answer?</span> We are here to help.', C.navy, 'center', { lh: 1.05,
+    H2('<span class="ctc-thin ctc-block">Didn\'t find your answer?</span><span class="ctc-block">We are here to help.</span>', C.navy, 'center', { lh: 1.05,
       settings: { _margin: box(12, 0, 0, 0), _element_width: 'initial', _element_custom_width: px(900), _element_custom_width_tablet: px(100, '%'), _element_custom_width_mobile: px(100, '%') } }),
     row([
       helpCta(PHONE.label, 'Mon – Fri, 9am – 4pm PST', PHONE.tel, 'gold'),

@@ -98,7 +98,7 @@ body:has(.ctc-header){background:#fff;margin:0;color:${C.navy};font-family:${BOD
 .ctc-deco{pointer-events:none}.ctc-o18{opacity:.18}
 .ctc-laptop .elementor-wrapper{--video-aspect-ratio:1.5!important;aspect-ratio:3/2;background:transparent!important}
 /* laptop videos (v3, 1770x1180 with margin): show only the laptop + its shadow so the section background (dots) shows around it */
-.ctc-laptop video{object-fit:contain;background:transparent!important;-webkit-mask-image:url(https://cataxcourses.com/wp-content/uploads/2026/10/ctc-laptop-mask-v2.png);mask-image:url(https://cataxcourses.com/wp-content/uploads/2026/10/ctc-laptop-mask-v2.png);-webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}
+.ctc-laptop video{object-fit:contain;background:transparent!important;-webkit-mask-image:url(https://cataxcourses.com/wp-content/uploads/2026/10/ctc-laptop-mask-v3.png);mask-image:url(https://cataxcourses.com/wp-content/uploads/2026/10/ctc-laptop-mask-v3.png);-webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}
 .ctc-article-arrow .elementor-icon{display:inline-flex}
 @media (max-width:767px){.ctc-article-arrow{display:none}.ctc-nowrap-d p{white-space:normal!important}}
 .ctc-nowrap-d p{white-space:nowrap}
@@ -242,6 +242,14 @@ body:has(.ctc-header){background:#fff;margin:0;color:${C.navy};font-family:${BOD
 .ctc-store table.shop_table .order-total .amount,.ctc-store table.shop_table .order-total bdi{font-size:24px!important;font-weight:800!important}
 .ctc-store table.shop_table th{font-size:16px!important;font-weight:600!important;color:#4B5058!important;text-transform:none!important;letter-spacing:0!important}
 .ctc-store table.shop_table .order-total th{font-family:Outfit,sans-serif!important;font-size:22px!important;font-weight:800!important;color:#1C2333!important}
+/* Live chat: LiveChat's own launcher bar is hidden; this site-styled button opens the same chat window */
+.ctc-chat-btn{position:fixed;right:24px;bottom:14px;z-index:2147483000;display:inline-flex;align-items:center;gap:10px;padding:14px 22px 14px 18px;border:0;border-radius:999px;background:${C.gold};color:#fff;font-family:Outfit,sans-serif;font-size:17px;font-weight:700;line-height:1;cursor:pointer;box-shadow:0 12px 28px -10px rgba(28,35,51,.55);transition:background-color .2s,transform .2s}
+.ctc-chat-btn:hover{background:${C.goldHover};transform:translateY(-2px)}.ctc-chat-btn svg{width:22px;height:22px;flex:none}
+.ctc-chat-btn.ctc-chat-hidden{display:none}
+@media (max-width:767px){.ctc-chat-btn{right:16px;bottom:16px;padding:0;width:56px;height:56px;justify-content:center}.ctc-chat-btn span{display:none}}
+/* footer's last row: links stop short of the chat button (same footer height) */
+.ctc-footer>.e-con:last-child>.e-con-inner{padding-right:200px}
+@media (max-width:767px){.ctc-footer>.e-con:last-child>.e-con-inner{padding-right:68px}}
 </style>
 <script>(function(){var mob=window.matchMedia('(max-width:1024px)');function closeAll(){document.querySelectorAll('.ctc-dd.ctc-dd-open').forEach(function(d){d.classList.remove('ctc-dd-open');});}
 document.addEventListener('click',function(e){var b=e.target.closest('.ctc-burger,.ctc-menu-close');if(b){e.preventDefault();var open=document.body.classList.toggle('ctc-menu-open');if(!open)closeAll();return;}
@@ -252,7 +260,17 @@ window.addEventListener('pageshow',function(){document.body.classList.remove('ct
 /* mobile badge sliders: one logo at a time, auto-advance, pause while touched */
 function initSliders(){document.querySelectorAll('.ctc-badge-slider').forEach(function(el){if(el._ctc)return;el._ctc=1;var hold=false;el.addEventListener('touchstart',function(){hold=true;},{passive:true});el.addEventListener('touchend',function(){setTimeout(function(){hold=false;},3000);});
 setInterval(function(){if(hold||!window.matchMedia('(max-width:767px)').matches||el.scrollWidth<=el.clientWidth+2)return;var n=Math.round(el.scrollLeft/el.clientWidth)+1,c=el.children.length;el.scrollTo({left:(n>=c?0:n)*el.clientWidth,behavior:'smooth'});},2800);});}
-if(document.readyState!=='loading')initSliders();else document.addEventListener('DOMContentLoaded',initSliders);})();</script>`;
+if(document.readyState!=='loading')initSliders();else document.addEventListener('DOMContentLoaded',initSliders);
+/* live chat: hide LiveChat's launcher bar, show the site-styled button; reopen-on-click via the LiveChat API */
+function initChat(){if(document.querySelector('.ctc-chat-btn'))return;var btn=document.createElement('button');btn.type='button';btn.className='ctc-chat-btn ctc-chat-hidden';btn.setAttribute('aria-label','Chat with us');
+btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg><span>Chat with us</span>';
+btn.addEventListener('click',function(){try{if(window.LiveChatWidget){window.LiveChatWidget.call('maximize');}else if(window.LC_API){window.LC_API.open_chat_window();}}catch(x){}});document.body.appendChild(btn);
+var tries=0,t=setInterval(function(){var W=window.LiveChatWidget;if(!W){if(++tries>60)clearInterval(t);return;}clearInterval(t);
+W.on('ready',function(){try{var st=W.get('state');if(!st||st.visibility!=='maximized'){W.call('hide');btn.classList.remove('ctc-chat-hidden');}}catch(x){W.call('hide');btn.classList.remove('ctc-chat-hidden');}});
+W.on('visibility_changed',function(d){if(d.visibility==='minimized'){W.call('hide');btn.classList.remove('ctc-chat-hidden');}else if(d.visibility==='maximized'){btn.classList.add('ctc-chat-hidden');}});
+try{var st0=W.get('state');if(st0&&st0.visibility!=='maximized'){W.call('hide');btn.classList.remove('ctc-chat-hidden');}}catch(x){}},500);}
+if(document.readyState!=='loading')initChat();else document.addEventListener('DOMContentLoaded',initChat);
+})();</script>`;
 
 const navLink = (label, url) => widget('heading', {
   title: label, header_size: 'span', link: link(url), title_color: C.navy,

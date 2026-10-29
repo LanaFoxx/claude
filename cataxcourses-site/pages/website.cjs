@@ -50,7 +50,7 @@ function why() {
   return band(C.white, [
     stack([
       eyebrow('Why Tax Pro Design', C.goldText, 'center'),
-      H2('<span class="ctc-thin">Your clients search</span> before they call.', C.navy, 'center', { lh: 1.05, settings: { _margin: box(12, 0, 16, 0) } }),
+      H2('<span class="ctc-thin ctc-block">Your clients search</span><span class="ctc-block">before they call.</span>', C.navy, 'center', { lh: 1.05, settings: { _margin: box(12, 0, 16, 0) } }),
       text('A professional website is the first thing a new client checks. Tax Pro Design builds sites that answer their questions, collect their info, and book the appointment while you\'re busy preparing returns.',
         { align: 'center', size: [21, 20, 18] }),
     ], { align: 'center', maxW: 820, settings: { margin: box(0, 0, 56, 0), margin_mobile: box(0, 0, 40, 0) } }),
