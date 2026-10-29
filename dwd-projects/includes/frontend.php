@@ -53,7 +53,7 @@ add_action( 'wp_head', function () {
 		. '.elementor-element-dw00009 .dwdp-laptop{width:90%}}'
 		. '</style>' . "\n";
 	// Reusable hero glow for dark sections (class "dw-glow" on an Elementor container).
-	echo '<style id="dwdp-glow">.dw-glow{position:relative;overflow:hidden}.dw-glow::before{content:"";position:absolute;top:-180px;left:50%;transform:translateX(-50%);width:820px;max-width:120%;height:620px;background:radial-gradient(circle,rgba(27,126,195,.32),transparent 65%);pointer-events:none}.dw-glow>.e-con-inner,.dw-glow>.elementor-widget{position:relative;z-index:1}</style>' . "\n";
+	echo '<style id="dwdp-glow">.dw-glow{position:relative;overflow:hidden}.dw-glow::before{content:"";position:absolute;top:-180px;left:50%;transform:translateX(-50%);width:820px;max-width:120%;height:620px;background:radial-gradient(circle,rgba(27,126,195,.32),transparent 65%);pointer-events:none}.dw-glow>*{position:relative;z-index:1}</style>' . "\n";
 }, 99 );
 
 /** The About page was retired; its content lives in the homepage "Why Dream Web" section. */
@@ -71,7 +71,7 @@ add_action( 'template_redirect', function () {
  */
 add_action( 'wp_head', function () {
 	// One button style everywhere: same thin uppercase type, same height, padding and minimum width.
-	$btn = 'a.elementor-button,button.elementor-button,.elementor-button[type=submit],.dwdp-btn,.dwf-zoom,.dw-pbtn,.dw-form button';
+	$btn = 'a.elementor-button,button.elementor-button,.elementor-button[type=submit],.dwdp-btn,.dwf-zoom,.dw-pbtn,.dw-form button,.dw-host-btn';
 	$txt = '.elementor-button .elementor-button-text,.elementor-button .elementor-button-content-wrapper';
 	echo '<style id="dwdp-buttons">'
 		. $btn . ',' . $txt . '{text-transform:uppercase!important;letter-spacing:.16em!important;font-family:Poppins,sans-serif!important;font-size:14px!important;font-weight:300!important;line-height:1.2!important}'
