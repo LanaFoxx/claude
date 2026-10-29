@@ -205,11 +205,19 @@ class block_studenttools extends block_base {
                 'stt-course stt-dispute');
         };
         $recent = $DB->get_records('local_stripedispute', null, 'timecreated DESC', '*', 0, 5);
-        $html = html_writer::tag('h4', 'Payment disputes', ['class' => 'stt-h']);
-        $html .= $recent ? implode('', array_map($render, $recent))
+        $html = $recent ? implode('', array_map($render, $recent))
             : html_writer::div('No Stripe disputes. If one comes in, the student\'s access is removed automatically.', 'stt-muted mb-2');
-        return $html . html_writer::link(new moodle_url('/local/stripedispute/index.php'), 'View all disputes &rarr;',
+        $html .= html_writer::link(new moodle_url('/local/stripedispute/index.php'), 'View all disputes &rarr;',
             ['class' => 'stt-btn stt-btn-primary mt-2']);
+        // Closed until clicked, like "Add a new student"; the heading shows how many are still open in Stripe.
+        $open = $DB->count_records_select('local_stripedispute',
+            "status IN ('needs_response', 'under_review', 'warning_needs_response', 'warning_under_review')");
+        $badge = $open ? ' ' . html_writer::tag('span', $open . ' open', ['class' => 'stt-pill stt-bad']) : '';
+        return html_writer::tag('details',
+            html_writer::tag('summary', html_writer::tag('span', 'Payment disputes' . $badge, ['class' => 'stt-h']) .
+                html_writer::tag('span', '', ['class' => 'stt-chevron'])) .
+            html_writer::div($html, 'mt-3'),
+            ['class' => 'stt-add']);
     }
 
     /** New student form. */
