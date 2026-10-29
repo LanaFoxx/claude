@@ -115,56 +115,18 @@ add_action( 'wp_footer', function () {
 }, 99 );
 
 /**
- * Transparent header over dark heroes: on pages that open with a dark section the header floats
- * over it with a clear background, white menu and the white logo, then turns solid white once the
- * visitor scrolls. Pages that open on a light section keep the normal white header.
+ * Header: frosted glass on every page. A mostly-white background with a blur, so the page shows
+ * faintly through it as it scrolls underneath.
  */
 add_action( 'wp_head', function () {
-	echo '<style id="dwdp-header-over">'
+	echo '<style id="dwdp-header-glass">'
 		// The glass lives on a pseudo-element: a backdrop-filter on the header itself would trap the fixed mobile menu.
-		. 'body.dw-hdr-over .dw-header{background:transparent!important;box-shadow:none!important;transition:box-shadow .7s ease}'
-		. 'body.dw-hdr-over .dw-header::before{content:"";position:absolute;inset:0;z-index:-1;background:rgba(255,255,255,.86);-webkit-backdrop-filter:blur(16px) saturate(160%);backdrop-filter:blur(16px) saturate(160%);opacity:0;transition:opacity .7s ease}'
-		. 'body.dw-hdr-over.dw-scrolled .dw-header::before{opacity:1}'
-		. 'body.dw-hdr-over.dw-scrolled .dw-header{box-shadow:0 6px 24px rgba(18,41,62,.08)!important}'
-		. 'body.dw-hdr-over .dw-header .elementor-item,body.dw-hdr-over .dw-header .dw-nav-burger span,body.dw-hdr-over .dw-header .elementor-widget-image img{transition:color .7s ease,background-color .7s ease,opacity .35s ease}'
-		. 'body.dw-hdr-over:not(.dw-scrolled) .dw-header .elementor-nav-menu--main .elementor-item{color:#fff!important}'
-		. 'body.dw-hdr-over:not(.dw-scrolled) .dw-header .elementor-nav-menu--main .elementor-item.elementor-item-active,body.dw-hdr-over:not(.dw-scrolled) .dw-header .elementor-nav-menu--main .elementor-item:hover{color:#4BA3DC!important}'
-		. 'body.dw-hdr-over:not(.dw-scrolled) .dw-header .dw-nav-burger span{background:#fff!important}'
+		. '.dw-header{background:transparent!important;box-shadow:0 6px 24px rgba(18,41,62,.06)!important}'
+		. '.dw-header::before{content:"";position:absolute;inset:0;z-index:-1;background:rgba(255,255,255,.86)!important;-webkit-backdrop-filter:blur(16px) saturate(160%)!important;backdrop-filter:blur(16px) saturate(160%)!important;opacity:1!important}'
 		. '.dw-header .elementor-menu-toggle{background:transparent!important}'
 		// Logo lines up with the left edge of the page content.
 		. '.dw-header .elementor-widget-image{margin-left:20px!important}@media(max-width:767px){.dw-header .elementor-widget-image{margin-left:24px!important}}'
-		. 'body.dw-hdr-over:not(.dw-scrolled) .dw-header .elementor-menu-toggle,body.dw-hdr-over:not(.dw-scrolled) .dw-header .elementor-menu-toggle svg{color:#fff!important;fill:#fff!important}'
 		. '</style>' . "\n";
-}, 99 );
-add_action( 'wp_footer', function () {
-	$white = content_url( '/uploads/2025/10/Asset-2-1.png' );
-	?>
-	<script>
-	(function () {
-		var hdr = document.querySelector('.dw-header');
-		if (!hdr) { return; }
-		var first = document.querySelector('[data-elementor-type="wp-page"] > .e-con, [data-elementor-type="wp-page"] > .elementor-section, main > section, .dwb-hero, .dwdp-single > section');
-		if (!first) { return; }
-		var m = getComputedStyle(first).backgroundColor.match(/\d+/g);
-		if (!m || (m[0] * 299 + m[1] * 587 + m[2] * 114) / 1000 > 90) { return; }
-		document.body.classList.add('dw-hdr-over');
-		// The header is fixed: pull the dark section up under it and keep its content clear of the menu.
-		var h = hdr.offsetHeight, spacer = hdr.parentElement.querySelector('.elementor-sticky__spacer');
-		var top = first.getBoundingClientRect().top + window.scrollY - (document.getElementById('wpadminbar') ? document.getElementById('wpadminbar').offsetHeight : 0);
-		if (top > 1) { first.style.marginTop = (-top) + 'px'; }
-		first.style.paddingTop = (parseFloat(getComputedStyle(first).paddingTop) + (top > 1 ? top : 0)) + 'px';
-		var logo = hdr.querySelector('.elementor-widget-image img'), dark = logo && logo.getAttribute('src'), white = '<?php echo esc_url( $white ); ?>';
-		if (logo) { logo.removeAttribute('srcset'); }
-		function update() {
-			var on = window.scrollY > 10;
-			document.body.classList.toggle('dw-scrolled', on);
-			if (logo) { logo.src = on ? dark : white; }
-		}
-		update();
-		window.addEventListener('scroll', update, { passive: true });
-	})();
-	</script>
-	<?php
 }, 99 );
 
 /**
