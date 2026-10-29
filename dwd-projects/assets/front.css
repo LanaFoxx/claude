@@ -141,7 +141,7 @@
 .dwb-card-more{margin-top:auto;padding-top:6px;font:600 15px Poppins,sans-serif;color:#1B7EC3}
 .dwb-empty{font:400 17px Poppins,sans-serif;color:#4A5470;text-align:center}
 .dwb-single{display:block;margin:0;padding:0;max-width:none}
-.dwb-hero{background-color:#12293E;padding:90px 32px 150px;text-align:center}
+.dwb-hero{background-color:#12293E;padding:90px 32px 200px;text-align:center}
 .dw-dots-dark.dwb-hero{background-image:radial-gradient(rgba(255,255,255,0.12) 1px,transparent 1px);background-size:22px 22px}
 .dwb-hero-inner{max-width:920px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:18px}
 .dwb-crumbs{font:600 14px Poppins,sans-serif;letter-spacing:1.5px;text-transform:uppercase;color:#7FBEEA;display:flex;gap:8px}
@@ -182,7 +182,7 @@
 @media(max-width:1024px){.dwb-grid{grid-template-columns:repeat(2,1fr)}.dwb-title{font-size:36px}}
 @media(max-width:767px){
 	.dwb-grid{grid-template-columns:1fr}
-	.dwb-hero{padding:56px 20px 110px}
+	.dwb-hero{padding:56px 20px 140px}
 	.dwb-title{font-size:28px}
 	.dwb-body{padding:0 16px 56px}
 	.dwb-feature{margin-top:-80px;border-radius:12px}
