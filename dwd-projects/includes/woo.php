@@ -121,6 +121,14 @@ add_filter( 'woocommerce_checkout_fields', function ( $fields ) {
 			'autocomplete' => 'tel',
 			'priority'     => 30,
 		),
+		'billing_website'    => array(
+			'label'        => 'Your website',
+			'placeholder'  => 'yourbusiness.com',
+			'required'     => true,
+			'class'        => array( 'form-row-wide' ),
+			'autocomplete' => 'url',
+			'priority'     => 40,
+		),
 	);
 	$fields['shipping'] = array();
 	unset( $fields['order']['order_comments'] );
@@ -139,6 +147,26 @@ add_filter( 'woocommerce_checkout_posted_data', function ( $data ) {
 	}
 	return $data;
 } );
+
+// The website is saved on the order (as _billing_website) and shown in the admin order and the emails.
+add_action( 'woocommerce_checkout_create_order', function ( $order, $data ) {
+	if ( ! empty( $data['billing_website'] ) ) {
+		$order->update_meta_data( '_billing_website', sanitize_text_field( $data['billing_website'] ) );
+	}
+}, 10, 2 );
+add_action( 'woocommerce_admin_order_data_after_billing_address', function ( $order ) {
+	$site = $order->get_meta( '_billing_website' );
+	if ( $site ) {
+		echo '<p><strong>Website:</strong> ' . esc_html( $site ) . '</p>';
+	}
+} );
+add_filter( 'woocommerce_email_order_meta_fields', function ( $fields, $sent_to_admin, $order ) {
+	$site = $order->get_meta( '_billing_website' );
+	if ( $site ) {
+		$fields['dwdp_website'] = array( 'label' => 'Website', 'value' => $site );
+	}
+	return $fields;
+}, 10, 3 );
 
 add_filter( 'woocommerce_enable_order_notes_field', '__return_false' );
 add_filter( 'woocommerce_cart_needs_shipping_address', '__return_false' );
@@ -277,6 +305,7 @@ body.woocommerce-page main#content .page-header{display:none}
 .dww-card #payment ul.payment_methods{padding:20px;border-bottom:1px solid #E4E9F5;margin:0}
 .dww-card #payment div.payment_box{background:#fff;border-radius:8px}
 .dww-card #payment div.payment_box::before{display:none}
+.dww-card #payment fieldset{border:0!important;padding:0!important;margin:0!important;min-width:0}.dww-card #payment div.payment_box{padding:0!important;background:transparent!important}
 .dww-card #payment .place-order{padding:20px;margin:0}
 .dww-agree label{display:flex;gap:10px;align-items:flex-start;font:400 15px/1.5 Poppins,sans-serif;color:#0E1526;margin:0 0 18px}
 .dww-agree input{margin-top:4px;width:18px;height:18px;flex:none}
