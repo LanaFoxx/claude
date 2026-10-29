@@ -185,3 +185,39 @@ add_action( 'woocommerce_admin_order_data_after_billing_address', function ( $or
 	$v = $order->get_meta( '_ctc_sms_consent' );
 	echo '<p><strong>SMS consent:</strong> ' . ( $v ? 'Yes (opted in at checkout)' : 'No' ) . '</p>';
 } );
+/* ---------------------------------------------------------------- checkout: card title, quantity + remove in the order summary */
+add_filter( 'woocommerce_gateway_title', function ( $title, $id ) {
+	return 'stripe' === $id ? 'Credit or Debit Card' : $title;
+}, 20, 2 );
+// Order summary rows get a − qty + stepper and a Remove link (instead of WooCommerce's plain "× 1").
+add_filter( 'woocommerce_checkout_cart_item_quantity', function ( $html, $item, $key ) {
+	if ( ! ctc_checkout_design() ) return $html;
+	$q   = (int) $item['quantity'];
+	$sold_individually = $item['data'] && $item['data']->is_sold_individually();
+	$out = '<span class="ctc-qty-row" data-key="' . esc_attr( $key ) . '">';
+	if ( ! $sold_individually ) {
+		$out .= '<span class="ctc-qty"><button type="button" class="ctc-qty-btn" data-d="-1" aria-label="Decrease quantity">−</button><span class="ctc-qty-n">' . $q . '</span><button type="button" class="ctc-qty-btn" data-d="1" aria-label="Increase quantity">+</button></span>';
+	}
+	$out .= '<button type="button" class="ctc-remove">Remove</button></span>';
+	return $out;
+}, 20, 3 );
+// wc-ajax endpoint: runs on the front end, where this (front-end scoped) snippet is loaded; admin-ajax would not see it
+add_action( 'wc_ajax_ctc_co_qty', 'ctc_co_qty' );
+function ctc_co_qty() {
+	check_ajax_referer( 'ctc_co_qty', 'nonce' );
+	$key = sanitize_text_field( wp_unslash( $_POST['key'] ?? '' ) );
+	$qty = max( 0, (int) ( $_POST['qty'] ?? 0 ) );
+	if ( ! WC()->cart || ! WC()->cart->get_cart_item( $key ) ) wp_send_json_error();
+	if ( $qty < 1 ) WC()->cart->remove_cart_item( $key );
+	else WC()->cart->set_quantity( $key, min( $qty, 20 ), true );
+	WC()->cart->calculate_totals();
+	wp_send_json_success( array( 'empty' => WC()->cart->is_empty(), 'cart_url' => wc_get_cart_url() ) );
+}
+add_action( 'wp_footer', function () {
+	if ( ! function_exists( 'ctc_checkout_design' ) || ! ctc_checkout_design() ) return;
+	$ajax = esc_url( WC_AJAX::get_endpoint( 'ctc_co_qty' ) );
+	$nonce = wp_create_nonce( 'ctc_co_qty' );
+	echo "<script>(function(){function go(key,qty){var b=document.getElementById('order_review');if(b)b.style.opacity='.55';var d=new FormData();d.append('nonce','$nonce');d.append('key',key);d.append('qty',qty);
+fetch('$ajax',{method:'POST',body:d,credentials:'same-origin'}).then(function(r){return r.json();}).then(function(j){if(j&&j.success&&j.data.empty){location.href=j.data.cart_url;return;}if(window.jQuery)jQuery(document.body).trigger('update_checkout');}).catch(function(){location.reload();}).finally(function(){if(b)b.style.opacity='';});}
+document.addEventListener('click',function(e){var row=e.target.closest('.ctc-qty-row');if(!row)return;var key=row.getAttribute('data-key');if(e.target.closest('.ctc-remove')){e.preventDefault();go(key,0);return;}var btn=e.target.closest('.ctc-qty-btn');if(btn){e.preventDefault();var n=parseInt(row.querySelector('.ctc-qty-n').textContent,10)||1;go(key,Math.max(0,n+parseInt(btn.getAttribute('data-d'),10)));}});})();</script>";
+}, 30 );
