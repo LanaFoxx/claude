@@ -167,6 +167,21 @@ add_action( 'wp_footer', function () {
 	<?php
 }, 99 );
 
+/**
+ * On phones, card sections that would stack into a long column become one swipeable row
+ * (scroll snap, next card peeking in): homepage "included" cards and review badges, hosting
+ * cards and the contact steps.
+ */
+add_action( 'wp_head', function () {
+	$rows  = '.elementor-element-dw00016,.elementor-element-dw0001t,.elementor-element-dw000ad';
+	$cards = '.elementor-element-dw00016>.e-con,.elementor-element-dw0001t>.e-con,.elementor-element-dw000ad>.e-con';
+	echo '<style id="dwdp-swipe">@media(max-width:767px){'
+		. $rows . ',.dwc-steps{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;overflow-x:auto!important;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;gap:14px!important;margin-left:-20px!important;margin-right:-20px!important;padding:6px 20px 26px!important;width:calc(100% + 40px)!important;max-width:none!important;scroll-padding:0 20px}'
+		. $rows . ',.dwc-steps{}' . str_replace( ',', '::-webkit-scrollbar,', $rows ) . '::-webkit-scrollbar,.dwc-steps::-webkit-scrollbar{display:none}'
+		. $cards . ',.dwc-steps>.dwc-step{flex:0 0 82%!important;width:82%!important;max-width:82%!important;scroll-snap-align:start;margin:0!important}'
+		. '}</style>' . "\n";
+}, 99 );
+
 /** Case-study pages use the plugin template (inside the site's header/footer). */
 add_filter( 'template_include', function ( $template ) {
 	if ( is_singular( DWDP_CPT ) ) {
