@@ -24,7 +24,7 @@
 .dw-notes span:first-child{font:600 14px Poppins,sans-serif;letter-spacing:.1em;color:#7A86A0;text-transform:uppercase;padding-top:2px}
 .dw-notes span:last-child{font:400 16.5px/1.6 Poppins,sans-serif;color:#303B58}
 /* Project details box: dark blue with white values and bright blue labels. */
-.dwdp-single .dw-notes{background:linear-gradient(160deg,#1B3A57 0%,#12293E 60%,#0F2235 100%);border:0;box-shadow:0 18px 44px rgba(18,41,62,.22)}
+.dwdp-single .dw-notes{background:linear-gradient(160deg,#1B3A57 0%,#12293E 60%,#0F2235 100%);border:0;box-shadow:0 18px 44px rgba(18,41,62,.22);margin:26px 0!important}
 .dwdp-single .dw-notes>div{border-bottom-color:rgba(255,255,255,.1)}
 .dwdp-single .dw-notes span:first-child{color:#4BA3DC}
 .dwdp-single .dw-notes span:last-child{color:#fff}
