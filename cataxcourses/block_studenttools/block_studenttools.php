@@ -204,27 +204,12 @@ class block_studenttools extends block_base {
                 html_writer::div(html_writer::tag('span', $label, ['class' => "stt-pill $tone"]) . ' ' . $btn, 'stt-actions'),
                 'stt-course');
         };
-        $open = "('needs_response', 'under_review', 'warning_needs_response', 'warning_under_review')";
-        $new = $DB->get_records_select('local_stripedispute', "status IN $open", null, 'timecreated DESC');
-        $pasttotal = $DB->count_records_select('local_stripedispute', "status NOT IN $open OR status IS NULL");
-        $past = $DB->get_records_select('local_stripedispute', "status NOT IN $open OR status IS NULL", null, 'timecreated DESC', '*', 0, 10);
-
+        $recent = $DB->get_records('local_stripedispute', null, 'timecreated DESC', '*', 0, 5);
         $html = html_writer::tag('h4', 'Payment disputes', ['class' => 'stt-h']);
-        $html .= html_writer::tag('h5', 'New disputes ' . html_writer::tag('span', count($new), ['class' => 'stt-pill ' . ($new ? 'stt-bad' : 'stt-muted-pill')]),
-            ['class' => 'stt-h stt-h-sm mt-0']);
-        $html .= $new ? implode('', array_map($render, $new))
-            : html_writer::div('No open disputes. If one comes in, the student\'s access is removed automatically.', 'stt-muted mb-2');
-        if ($pasttotal) {
-            $html .= html_writer::tag('details',
-                html_writer::tag('summary', html_writer::tag('span', 'Past disputes ' .
-                    html_writer::tag('span', $pasttotal, ['class' => 'stt-pill stt-muted-pill']), ['class' => 'stt-h stt-h-sm m-0']) .
-                    html_writer::tag('span', '', ['class' => 'stt-chevron'])) .
-                html_writer::div(implode('', array_map($render, $past)) .
-                    ($pasttotal > count($past) ? html_writer::div('Showing the 10 most recent of ' . $pasttotal . '.', 'stt-muted mb-2') : ''),
-                    'mt-2'),
-                ['class' => 'stt-add stt-past']);
-        }
-        return $html . html_writer::link(new moodle_url('/local/stripedispute/index.php'), 'All disputes &rarr;', ['class' => 'stt-btn mt-2']);
+        $html .= $recent ? implode('', array_map($render, $recent))
+            : html_writer::div('No Stripe disputes. If one comes in, the student\'s access is removed automatically.', 'stt-muted mb-2');
+        return $html . html_writer::link(new moodle_url('/local/stripedispute/index.php'), 'View all disputes &rarr;',
+            ['class' => 'stt-btn stt-btn-primary mt-2']);
     }
 
     /** New student form. */
