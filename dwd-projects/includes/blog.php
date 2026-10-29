@@ -29,12 +29,12 @@ function dwdp_post_card( $p ) {
 	$cat   = $cats ? $cats[0]->name : 'Blog';
 	$thumb = get_the_post_thumbnail( $p, 'large', array( 'loading' => 'lazy', 'alt' => get_the_title( $p ) ) );
 	return sprintf(
-		'<a class="dwb-card" href="%1$s" aria-label="%5$s"><span class="dwb-card-img">%2$s</span><span class="dwb-card-body"><span class="dwb-card-cat">%3$s · %4$d min read</span><span class="dwb-card-ex">%6$s</span><span class="dwb-card-more">Read article →</span></span></a>',
+		'<a class="dwb-card" href="%1$s"><span class="dwb-card-img">%2$s</span><span class="dwb-card-body"><span class="dwb-card-cat">%3$s · %4$d min read</span><span class="dwb-card-title">%5$s</span><span class="dwb-card-ex">%6$s</span><span class="dwb-card-more">Read article →</span></span></a>',
 		esc_url( get_permalink( $p ) ),
 		$thumb,
 		esc_html( $cat ),
 		dwdp_reading_time( $p ),
-		esc_attr( get_the_title( $p ) ),
+		esc_html( get_the_title( $p ) ),
 		esc_html( wp_trim_words( get_the_excerpt( $p ), 26 ) )
 	);
 }
