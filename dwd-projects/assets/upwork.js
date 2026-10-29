@@ -44,14 +44,14 @@
 	}
 
 	/*
-	 * The thumbnail is always the same template (assets/upwork-thumb.png, 1024 x 664): the site's
+	 * The thumbnail is always the same template (assets/upwork-thumb.png, 1000 x 750): the site's
 	 * hero goes on the laptop screen and the phone view on the phone screen. Screen positions are
-	 * measured from the template. It's drawn at 2x for sharpness, then the template frame on top.
+	 * measured from the template. The output is the template's exact size.
 	 */
-	var T = { w: 1024, h: 664, scale: 2,
-		laptop: { x: 71, y: 108, w: 693, h: 433 },
-		phone: { x: 786, y: 194, w: 178, h: 371, r: 22 },
-		island: { x: 849, y: 198, w: 53, h: 15 } };
+	var T = { w: 1000, h: 750, scale: 1,
+		laptop: { x: 135, y: 179, w: 596, h: 373 },
+		phone: { x: 749, y: 253, w: 154, h: 320, r: 20 },
+		island: { x: 804, y: 258, w: 45, h: 13 } };
 
 	function thumbnail(frame, cover, mockup) {
 		var k = T.scale, c = canvas(T.w * k, T.h * k), x = c.getContext('2d');
