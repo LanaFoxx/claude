@@ -141,17 +141,7 @@ class manager {
             $DB->update_record('local_stripedispute', $rec);
             return 'updated ' . $rec->disputeid . ' status ' . $rec->status;
         }
-        $rec = (object)[
-            'disputeid' => $dispute['id'],
-            'chargeid' => is_string($dispute['charge'] ?? null) ? $dispute['charge'] : ($dispute['charge']['id'] ?? null),
-            'amount' => $dispute['amount'] ?? null,
-            'currency' => $dispute['currency'] ?? null,
-            'reason' => $dispute['reason'] ?? null,
-            'status' => $dispute['status'] ?? null,
-            'outcome' => 'pending',
-            'timecreated' => $now,
-            'timemodified' => $now,
-        ];
+        $rec = self::new_record($dispute);
         $rec->id = $DB->insert_record('local_stripedispute', $rec);
         return self::process($rec);
     }
@@ -174,20 +164,67 @@ class manager {
                 if ($DB->record_exists('local_stripedispute', ['disputeid' => $dispute['id']])) {
                     continue;
                 }
-                $created = !empty($dispute['created']) ? (int)$dispute['created'] : time();
-                $rec = (object)[
-                    'disputeid' => $dispute['id'],
-                    'chargeid' => is_string($dispute['charge'] ?? null) ? $dispute['charge'] : ($dispute['charge']['id'] ?? null),
-                    'amount' => $dispute['amount'] ?? null,
-                    'currency' => $dispute['currency'] ?? null,
-                    'reason' => $dispute['reason'] ?? null,
-                    'status' => $dispute['status'] ?? null,
-                    'outcome' => 'pending',
-                    'timecreated' => $created,
-                    'timemodified' => time(),
-                ];
+                $rec = self::new_record($dispute);
                 $rec->id = $DB->insert_record('local_stripedispute', $rec);
                 self::process($rec, true);
+                $count++;
+            }
+        } while (!empty($page['has_more']));
+        return $count;
+    }
+
+    /** A new dispute row from a Stripe dispute object (dated by Stripe's creation time). */
+    public static function new_record(array $dispute) {
+        return (object)[
+            'disputeid' => $dispute['id'],
+            'chargeid' => is_string($dispute['charge'] ?? null) ? $dispute['charge'] : ($dispute['charge']['id'] ?? null),
+            'amount' => $dispute['amount'] ?? null,
+            'currency' => $dispute['currency'] ?? null,
+            'reason' => $dispute['reason'] ?? null,
+            'status' => $dispute['status'] ?? null,
+            'outcome' => 'pending',
+            'timecreated' => !empty($dispute['created']) ? (int)$dispute['created'] : time(),
+            'timemodified' => time(),
+        ];
+    }
+
+    /**
+     * The standing rule: suspend for disputes opened within the last N days (default 120, about 4 months),
+     * except disputes the business won. Returns '' when the rule allows suspension, otherwise why not.
+     */
+    public static function rule_blocks($rec) {
+        $days = (int)get_config('local_stripedispute', 'maxagedays') ?: 120;
+        if ($rec->timecreated < time() - $days * DAYSECS) {
+            return "Dispute is older than $days days, so the account was not suspended.";
+        }
+        if ($rec->status === 'won') {
+            return 'Dispute was won, so the account was not suspended.';
+        }
+        return '';
+    }
+
+    /**
+     * Daily check: add any Stripe dispute the webhook missed and apply the rule to it.
+     * Disputes already recorded are never re-processed, so restored accounts stay restored.
+     */
+    public static function sync_new() {
+        global $DB;
+        $count = 0;
+        $since = time() - ((int)get_config('local_stripedispute', 'maxagedays') ?: 120) * DAYSECS;
+        $after = null;
+        do {
+            $page = self::stripe_get('disputes?limit=100&created[gte]=' . $since . ($after ? '&starting_after=' . rawurlencode($after) : ''));
+            if (!$page || empty($page['data'])) {
+                break;
+            }
+            foreach ($page['data'] as $dispute) {
+                $after = $dispute['id'];
+                if ($DB->record_exists('local_stripedispute', ['disputeid' => $dispute['id']])) {
+                    continue;
+                }
+                $rec = self::new_record($dispute);
+                $rec->id = $DB->insert_record('local_stripedispute', $rec);
+                self::process($rec);
                 $count++;
             }
         } while (!empty($page['has_more']));
@@ -224,6 +261,9 @@ class manager {
                 } else if ($user->suspended) {
                     $rec->outcome = 'alreadysuspended';
                     $rec->note = 'Account was already suspended.';
+                } else if (!$dryrun && ($blocked = self::rule_blocks($rec)) !== '') {
+                    $rec->outcome = 'dryrun';
+                    $rec->note = $blocked . $products;
                 } else if ($dryrun || !get_config('local_stripedispute', 'enabled')) {
                     $rec->outcome = 'dryrun';
                     $rec->note = ($dryrun ? 'Imported from Stripe; not suspended. Use Remove access to suspend.'

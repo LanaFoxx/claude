@@ -6,6 +6,8 @@ if ($hassiteconfig) {
     $endpoint = (new moodle_url('/local/stripedispute/webhook.php'))->out(false);
     $settings->add(new admin_setting_configcheckbox('local_stripedispute/enabled',
         get_string('enabled', 'local_stripedispute'), get_string('enabled_desc', 'local_stripedispute'), 1));
+    $settings->add(new admin_setting_configtext('local_stripedispute/maxagedays',
+        get_string('maxagedays', 'local_stripedispute'), get_string('maxagedays_desc', 'local_stripedispute'), 120, PARAM_INT));
     $settings->add(new admin_setting_configpasswordunmask('local_stripedispute/webhooksecret',
         get_string('webhooksecret', 'local_stripedispute'), get_string('webhooksecret_desc', 'local_stripedispute', $endpoint), ''));
     $settings->add(new admin_setting_configpasswordunmask('local_stripedispute/apikey',
