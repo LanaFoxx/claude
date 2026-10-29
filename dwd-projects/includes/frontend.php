@@ -83,6 +83,12 @@ add_action( 'wp_head', function () {
 		. '</style>' . "\n";
 }, 99 );
 
+/** A phone icon in front of every phone-number link on the site. */
+add_action( 'wp_head', function () {
+	$svg = rawurlencode( '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>' );
+	echo '<style id="dwdp-phone-icon">a[href^="tel:"]:not(.dw-no-phone-ico)::before{content:"";display:inline-block;width:.95em;height:.95em;margin-right:.45em;vertical-align:-.12em;background-color:currentColor;-webkit-mask:url("data:image/svg+xml,' . $svg . '") center/contain no-repeat;mask:url("data:image/svg+xml,' . $svg . '") center/contain no-repeat}a[href^="tel:"]:has(svg,img,i)::before{display:none}</style>' . "\n";
+}, 99 );
+
 /** Case-study pages use the plugin template (inside the site's header/footer). */
 add_filter( 'template_include', function ( $template ) {
 	if ( is_singular( DWDP_CPT ) ) {
