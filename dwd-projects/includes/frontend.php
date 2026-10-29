@@ -36,7 +36,7 @@ add_action( 'wp_head', function () {
  * got the same dots by ID) become plain.
  */
 add_action( 'wp_head', function () {
-	$ids = array( '9e67fb33', '89a6760f', '7d8e8aa3', '7f41de1b', '969108eb', '9ec54d3c', 'b8fbd2ba', '51ae0a9b', 'a5de6e96', '8fc7c8a7', 'c33bf56b', '28747d18', 'f5415e51', 'bbaddbd9', '8b5f9ec2', 'a1ecfee3', '96459fde' );
+	$ids = array( '89a6760f', '7d8e8aa3', '7f41de1b', '969108eb', '9ec54d3c', 'b8fbd2ba', '51ae0a9b', 'a5de6e96', '8fc7c8a7', 'c33bf56b', '28747d18', 'f5415e51', 'bbaddbd9', '8b5f9ec2', 'a1ecfee3', '96459fde' );
 	$sel = array( 'html body .dw-dots-light' );
 	foreach ( $ids as $id ) {
 		$sel[] = 'html body .elementor-element-' . $id;
