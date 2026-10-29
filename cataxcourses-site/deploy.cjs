@@ -154,6 +154,22 @@ async function buildSinglePost(p) {
   console.log('singlePost conditions', JSON.stringify(r).slice(0, 200));
 }
 
+// Standalone snippet from a wp/*.php file (no placeholders), created or updated by name.
+async function installFileSnippet(p, name, file, scope, desc) {
+  const code = fs.readFileSync(path.join(__dirname, file), 'utf8');
+  await admin(p);
+  const r = await p.evaluate(async ([name, code, scope, desc, nonceFn]) => {
+    const h = { 'X-WP-Nonce': eval(`(${nonceFn})`)(), 'Content-Type': 'application/json' };
+    const list = await (await fetch('/wp-json/code-snippets/v1/snippets', { headers: h })).json();
+    const ex = list.find((s) => s.name === name);
+    const res = await fetch('/wp-json/code-snippets/v1/snippets' + (ex ? '/' + ex.id : ''), { method: ex ? 'PUT' : 'POST', headers: h, body: JSON.stringify({ name, code, scope, active: true, desc }) });
+    const j = await res.json();
+    return { status: res.status, active: j.active, id: j.id, err: j.code_error || j.message };
+  }, [name, code, scope, desc, nonce.toString()]);
+  console.log('snippet', name, r);
+  if (r.status !== 200 && r.status !== 201) throw new Error('snippet failed');
+}
+
 async function installSnippet(p) {
   const code = fs.readFileSync(path.join(__dirname, 'wp/preview-snippet.php'), 'utf8')
     .replace('__CTC_HEADER_ID__', String(prep.header || 0)).replace('__CTC_FOOTER_ID__', String(prep.footer || 0))
@@ -258,6 +274,7 @@ async function publishNew(p, name) {
     else if (s === 'themebuilder') await buildThemeBuilder(p);
     else if (s === 'singlepost') await buildSinglePost(p);
     else if (s === 'snippet') await installSnippet(p);
+    else if (s === 'abandoned') await installFileSnippet(p, 'CTC Abandoned Cart Reminders', 'wp/abandoned-cart.php', 'global', 'Saves checkout carts and sends 3 reminder emails (2h, 3 days with a one-time 10% code, 7 days). List: WooCommerce > Abandoned Carts.');
     else if (s === 'preview') await buildPreview(p);
     else if (s === 'live-home') await liveHome(p);
     else throw new Error('unknown step ' + s);
