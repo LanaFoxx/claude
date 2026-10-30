@@ -16,7 +16,7 @@ FEATURES = [  # same groups, keys and labels as the directory filters (TCFD_Fiel
 REPORTING = [('same_day', 'Same day'), ('24h', 'Within 24 hours'), ('next_day', 'Next business day'), ('1_2_days', '1–2 business days'),
              ('3_5_days', '3–5 business days'), ('weekly', 'Weekly'), ('longer', 'More than a week')]
 SECTIONS = [('school', 'School & contact'), ('courses', 'Courses & prices'), ('features', 'Format & materials'), ('support', 'Student support'),
-            ('reporting', 'Reporting to CTEC'), ('coupon', 'Current coupon'), ('logo', 'Logo'), ('confirm', 'Confirm & submit')]
+            ('reporting', 'Reporting to CTEC'), ('coupon', 'Current coupons'), ('logo', 'Logo'), ('confirm', 'Confirm & submit')]
 
 CARD = 'background:#fff;border:1px solid #D7DFE2;border-radius:16px;padding:36px;display:flex;flex-direction:column;gap:22px;scroll-margin-top:calc(var(--tcf-head,108px) + 50px);box-shadow:0 2px 8px rgba(11,46,64,.06)'
 LABEL = 'display:flex;flex-direction:column;gap:6px;font:700 19px Manrope,sans-serif'
@@ -77,12 +77,14 @@ def form():
     out.append(card('reporting', n, 'Reporting to CTEC',
         '<label style="%s">How quickly are completions reported to CTEC?<select name="reporting" style="%s"><option value="">Select</option>%s</select></label>'
         % (LABEL, INPUT, ''.join('<option value="%s">%s</option>' % (k, e(l)) for k, l in REPORTING)))); n += 1
-    out.append(card('coupon', n, 'Current coupon (optional)',
-        '<p style="%s">Have a coupon code or sale running now? It will show on your listing once confirmed.</p>' % HINT
-        + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">'
-        + field('Coupon code', 'coupon_code', placeholder='e.g. SAVE10') + field('What it gives', 'coupon_details', placeholder='e.g. 10% off the course')
-        + '<label style="%s">Applies to<select name="coupon_scope" style="%s"><option value="both">Both courses</option><option value="ce">20-Hour CE</option><option value="qe">60-Hour QE</option></select></label>' % (LABEL, INPUT)
-        + field('Expires (optional)', 'coupon_expires', 'date') + '</div>')); n += 1
+    coupons = ''
+    for c, name in (('ce', '20-Hour CE course'), ('qe', '60-Hour QE course')):
+        coupons += ('<div style="border:1px solid #E3E9EB;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:16px">'
+                    '<div style="%s">Coupon for the %s</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">' % (GRP, name)
+                    + field('Coupon code', c + '_coupon_code', placeholder='e.g. SAVE10') + field('What it gives', c + '_coupon_details', placeholder='e.g. 10% off')
+                    + field('Expires (optional)', c + '_coupon_expires', 'date') + '</div></div>')
+    out.append(card('coupon', n, 'Current coupons (optional)',
+        '<p style="%s">Have a coupon code running now? Add one for each course. It will show on your listing once confirmed.</p>' % HINT + coupons)); n += 1
     out.append(card('logo', n, 'Logo',
         '<label style="%s">School logo<span style="font:400 17px \'Source Sans 3\',sans-serif;color:#5A6E78">PNG, JPG or WebP, up to 5 MB. A transparent background works best.</span>'
         '<input type="file" name="logo" accept="image/png,image/jpeg,image/webp" style="font-size:18px"></label>' % LABEL)); n += 1

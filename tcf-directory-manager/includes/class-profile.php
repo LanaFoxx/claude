@@ -363,10 +363,12 @@ final class TCFD_Profile {
         $picked = array_map('sanitize_key', (array) wp_unslash($_POST['features'] ?? []));
         $features = [];
         foreach (self::listing_features() as $items) foreach ($items as $k => $l) $features[$k] = in_array($k, $picked, true);
-        $scope = $in('coupon_scope');
-        $offer = ['code' => strtoupper(preg_replace('/\s+/', '', $in('coupon_code'))), 'details' => $in('coupon_details'),
-                  'scope' => in_array($scope, ['ce', 'qe', 'both'], true) ? $scope : 'both',
-                  'expires' => preg_match('/^\d{4}-\d{2}-\d{2}$/', $in('coupon_expires')) ? $in('coupon_expires') : ''];
+        $offers = []; // one coupon per course
+        foreach (['ce', 'qe'] as $c) {
+            $exp = $in($c . '_coupon_expires');
+            $offers[$c] = ['code' => strtoupper(preg_replace('/\s+/', '', $in($c . '_coupon_code'))), 'details' => $in($c . '_coupon_details'),
+                           'scope' => $c, 'expires' => preg_match('/^\d{4}-\d{2}-\d{2}$/', $exp) ? $exp : ''];
+        }
 
         $pid = self::match_provider($v['ctec_number'], $v['school_name']);
         $sub = wp_insert_post(['post_type' => self::CPT, 'post_status' => 'draft', 'post_title' => $v['school_name'] . ' – listing form – ' . wp_date('M j, Y')], true);
@@ -375,7 +377,7 @@ final class TCFD_Profile {
         $media = ['logo' => 0, 'screenshots' => []];
         if (!empty($_FILES['logo']['name'])) $media['logo'] = self::upload($_FILES['logo'], $sub, $v['school_name'] . ' logo');
 
-        $payload = ['kind' => 'listing', 'v' => $v, 'ce' => $courses['ce'], 'qe' => $courses['qe'], 'features' => $features, 'offer' => $offer];
+        $payload = ['kind' => 'listing', 'v' => $v, 'ce' => $courses['ce'], 'qe' => $courses['qe'], 'features' => $features, 'offers' => $offers];
         update_post_meta($sub, '_tcfd_payload', wp_slash(wp_json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)));
         update_post_meta($sub, '_tcfd_media', $media);
         update_post_meta($sub, '_tcfd_provider', $pid);
@@ -500,13 +502,19 @@ final class TCFD_Profile {
                 }
             }
         }
-        $o = $p['offer'] ?? [];
-        if (!empty($o['code']) || !empty($o['details'])) {
-            $scope = ['ce' => '20-Hour CE', 'qe' => '60-Hour QE', 'both' => 'Both'][$o['scope'] ?? 'both'] ?? 'Both';
+        $list = isset($p['offers']) ? (array) $p['offers'] : (isset($p['offer']) ? ['new' => $p['offer']] : []); // older submissions: one shared coupon
+        $names = ['ce' => '20-Hour CE', 'qe' => '60-Hour QE', 'both' => 'Both'];
+        foreach ($list as $slot => $o) {
+            if (empty($o['code']) && empty($o['details'])) continue;
+            $scope = $names[$o['scope'] ?? 'both'] ?? 'Both';
             $new = trim(($o['code'] ? $o['code'] . ' – ' : '') . ($o['details'] ?? '') . ' (' . $scope . ($o['expires'] ? ', expires ' . $o['expires'] : '') . ')');
             $cur = [];
-            if ($pid) foreach (TCFD_Store::offers($pid) as $r) if (!empty($r['offer_active'])) $cur[] = trim((string) ($r['coupon_code'] ?? '') . ' ' . (string) ($r['offer_title'] ?? ''));
-            $rows['o:new'] = ['Coupon / sale', 'New offer (added as verified and shown on the site)', implode('; ', $cur), $new, $o, true];
+            if ($pid) foreach (TCFD_Store::offers($pid) as $r) {
+                if (empty($r['offer_active'])) continue;
+                $rs = TCFD_Store::scope_code((string) ($r['offer_course_scope'] ?? ''));
+                if ($slot === 'new' || $rs === $slot || $rs === 'both') $cur[] = trim((string) ($r['coupon_code'] ?? '') . ' ' . (string) ($r['offer_title'] ?? ''));
+            }
+            $rows['o:' . $slot] = ['Coupons', $scope . ' coupon (added as verified and shown on the site)', implode('; ', $cur), $new, $o, true];
         }
         return $rows;
     }

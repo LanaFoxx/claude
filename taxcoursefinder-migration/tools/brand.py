@@ -360,6 +360,14 @@ def palette(h):
 def tidy(h):
     if COLORS_ONLY:
         h = h.replace('height:6px;background:linear-gradient(90deg,#95AB3B,#7E9330)', 'height:6px;background:%s' % CORAL)
+        # coral magnifying glass on every "View course" button
+        mag = ('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%s" stroke-width="2.8" stroke-linecap="round" aria-hidden="true" style="flex:none">'
+               '<circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>' % CORAL)
+        h = h.replace('<span data-tcf-offer-label="">View course</span>', mag + '<span data-tcf-offer-label="">View course</span>')
+        h = h.replace('padding:8px 16px">View course<svg', 'padding:8px 16px">' + mag + 'View course<svg')
+        # home course toggle: CE / QE in coral
+        h = h.replace('>20-Hour CE · Renewing<', '>20-Hour <span style="color:%s">CE</span> · Renewing<' % CORAL)
+        h = h.replace('>60-Hour QE · Getting started<', '>60-Hour <span style="color:%s">QE</span> · Getting started<' % CORAL)
     h = re.sub(r'<div style="height:6px;background:linear-gradient\(90deg,#95AB3B,#7E9330\)"></div>', '', h)  # olive stripe under the old photo heroes
     h = h.replace('Verify and list your school here →<svg', 'Verify and list your school here<svg')  # arrows were doubled (text + icon)
     h = re.sub(r'(Verify on CTEC\.org ↗)<svg[^>]*>.*?</svg>', r'\1', h, flags=re.S)
@@ -391,8 +399,10 @@ def course_paths(h):
         c = c.replace('background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:999px', 'background:#FAF7F2;border:1px solid #D9D4CC;border-radius:999px')
         c = c.replace('stroke-linejoin="round" style="flex:none"><circle cx="12" cy="12" r="9">', 'stroke-linejoin="round" style="flex:none;color:#FF6B57"><circle cx="12" cy="12" r="9">')  # coral clocks
         c = re.sub(r'<span style="[^"]*background:#FAF7F2;border-radius:999px;padding:7px 14px;color:#23272A">[^<]*</span>', '', c)  # no 'Deadline Oct 31' / 'Required once' tags
-        c = c.replace('border-top:1px solid rgba(255,255,255,.14)', 'border-top:1px solid #EEE9E1')
-        c = c.replace('border-radius:50%;background:#fff;color:#23272A;display:grid', 'border-radius:50%;background:#FF6B57;color:#fff;display:grid')
+        # footer row pinned to the card bottom (same line on both cards); plain thick coral arrow
+        c = c.replace('margin-top:8px;padding-top:22px;border-top:1px solid rgba(255,255,255,.14)', 'margin-top:auto;padding-top:22px;border-top:1px solid #EEE9E1')
+        c = re.sub(r'<span style="width:48px;height:48px;border-radius:50%;background:#fff;color:#23272A;display:grid;place-items:center;font:800 22px Manrope,sans-serif">→</span>',
+                   '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#FF6B57" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M4 12h15"></path><path d="m13 5 7 7-7 7"></path></svg>', c)
         out.append(card_new + c + rest)
     return ''.join(out)
 

@@ -18,8 +18,10 @@ await f.locator('[name=ce_regular]').fill('79');
 await f.locator('[name=ce_url]').fill('https://example.com/ce');
 for (const k of ['online_course_available', 'digital_book_available', 'email_support']) await f.locator(`[name="features[]"][value=${k}]`).check();
 await f.locator('[name=reporting]').selectOption('24h');
-await f.locator('[name=coupon_code]').fill('test10');
-await f.locator('[name=coupon_details]').fill('10% off');
+await f.locator('[name=ce_coupon_code]').fill('ce10');
+await f.locator('[name=ce_coupon_details]').fill('10% off');
+await f.locator('[name=qe_coupon_code]').fill('qe15');
+await f.locator('[name=qe_coupon_details]').fill('15% off');
 await f.locator('[name=confirm]').check();
 await p.waitForTimeout(5500); // the server rejects forms submitted within 5 seconds of loading
 await f.locator('[type=submit]').click();
@@ -35,12 +37,4 @@ await link.click(); await a.waitForLoadState('networkidle');
 const rows = await a.locator('.tcfd-rv tbody tr').allTextContents();
 console.log(rows.map(r => r.replace(/\s+/g, ' ').trim()).join('\n'));
 await a.locator('#tcfd_profile_review').screenshot({ path: S + '/shots/listing-review.png' });
-// clean up: trash then delete permanently
-const id = new URL(a.url()).searchParams.get('post');
-await a.locator('#delete-action a.submitdelete').click(); await a.waitForLoadState('networkidle');
-await a.goto('https://taxcoursefinder.com/wp-admin/edit.php?post_status=trash&post_type=tcfd_profile_sub', { waitUntil: 'networkidle' });
-const del = a.locator(`#post-${id} .delete a`);
-if (await del.count()) { await a.locator(`#post-${id}`).hover(); await del.click(); await a.waitForLoadState('networkidle'); }
-await a.goto('https://taxcoursefinder.com/wp-admin/edit.php?post_status=all&post_type=tcfd_profile_sub', { waitUntil: 'networkidle' });
-console.log('test submission left in queue:', await a.locator('a.row-title', { hasText: 'ZZ TEST SCHOOL' }).count(), '| in trash:', await (async () => { await a.goto('https://taxcoursefinder.com/wp-admin/edit.php?post_status=trash&post_type=tcfd_profile_sub'); return a.locator('a', { hasText: 'ZZ TEST SCHOOL' }).count(); })());
 await b.close();
