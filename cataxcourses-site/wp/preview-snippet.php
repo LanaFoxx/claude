@@ -264,3 +264,11 @@ fetch('$url',{method:'POST',body:d,credentials:'same-origin'}).then(function(){i
 }, 31 );
 // Belt and braces for the "added to your cart / View cart" notice: blank its text for every add-to-cart on the site.
 add_filter( 'wc_add_to_cart_message_html', '__return_empty_string', 99 );
+/* ---------------------------------------------------------------- checkout: no Mailchimp "Subscribe to our newsletter" box */
+// The Mailchimp for WooCommerce box came pre-checked. Remove it (no field posted = nobody is subscribed at checkout);
+// the homepage newsletter form is the opt-in. The script below is a fallback: hide and untick it if it still renders.
+add_filter( 'mailchimp_woocommerce_newsletter_field', '__return_empty_string', 99 );
+add_action( 'wp_footer', function () {
+	if ( ! function_exists( 'is_checkout' ) || ! is_checkout() ) return;
+	echo "<script>(function(){function off(){document.querySelectorAll('#mailchimp_woocommerce_newsletter').forEach(function(c){c.checked=false;var r=c.closest('.mailchimp-newsletter');if(r)r.style.display='none';});}off();document.addEventListener('DOMContentLoaded',off);if(window.jQuery)jQuery(document.body).on('updated_checkout',off);})();</script>";
+}, 32 );
