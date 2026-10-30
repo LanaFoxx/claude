@@ -412,6 +412,9 @@ def course_paths(h):
         end = chunk.find('</a>')
         c, rest = chunk[:end], chunk[end:]
         c = c.replace('height:5px;background:#23272A', 'height:5px;background:#FF6B57', 1)
+        # no eyebrow; the 20 / 60 hours ring sits on the left above the title
+        c = re.sub(r'<div style="font:700 15px Manrope,sans-serif;letter-spacing:\.12em;text-transform:uppercase;color:#[0-9A-Fa-f]{6};max-width:360px;line-height:1\.5">[^<]*</div>', '', c, count=1)
+        c = c.replace('display:flex;justify-content:space-between;align-items:flex-start;gap:20px', 'display:flex;justify-content:flex-start;align-items:flex-start;gap:20px', 1)
         c = c.replace('conic-gradient(#23272A 0 ', 'conic-gradient(#FF6B57 0 ').replace(',rgba(255,255,255,.12) ', ',#F1ECE4 ')
         c = c.replace('border-radius:50%;background:#23272A;display:flex', 'border-radius:50%;background:#fff;display:flex')
         c = c.replace('color:rgba(255,255,255,.6);margin-top:8px', 'color:#4B4F54;margin-top:8px')
