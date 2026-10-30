@@ -348,7 +348,9 @@ final class TCFD_Profile {
 
         $in = fn(string $k, string $kind = 'text') => self::clean(wp_unslash((string) ($_POST[$k] ?? '')), $kind);
         $v = ['school_name' => $in('school_name'), 'website' => $in('website', 'url'), 'ctec_number' => $in('ctec_number'),
-              'contact_name' => $in('contact_name'), 'contact_email' => $in('contact_email', 'email'), 'contact_phone' => $in('contact_phone')];
+              'contact_name' => $in('contact_name'), 'contact_email' => $in('contact_email', 'email'), 'contact_phone' => $in('contact_phone'),
+              // school profile page fields (same names as the private profile form, so review and apply already handle them)
+              'about' => $in('about', 'textarea'), 'phone' => $in('phone'), 'support_email' => $in('support_email', 'email'), 'hours' => $in('hours')];
         if ($v['school_name'] === '' || $v['contact_name'] === '' || !is_email($v['contact_email'])) {
             self::fail('Please fill in the school name, your name and a valid email address.');
         }
@@ -357,7 +359,9 @@ final class TCFD_Profile {
         $courses = [];
         foreach (['ce', 'qe'] as $c) {
             $courses[$c] = ['offered' => !empty($_POST[$c . '_offered']), 'price' => $in($c . '_price'), 'regular' => $in($c . '_regular'),
-                            'course_url' => $in($c . '_url', 'url'), 'reporting_time' => $reporting];
+                            'course_url' => $in($c . '_url', 'url'), 'reporting_time' => $reporting,
+                            'access_period' => $in($c . '_access_period'), 'attempts' => $in($c . '_attempts'),
+                            'refund_window' => $in('refund_window'), 'refund_url' => $in('refund_url', 'url'), 'refund_conditions' => $in('refund_conditions', 'textarea')];
         }
         if (!$courses['ce']['offered'] && !$courses['qe']['offered']) self::fail('Please choose at least one course you offer.');
         $picked = array_map('sanitize_key', (array) wp_unslash($_POST['features'] ?? []));

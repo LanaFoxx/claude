@@ -154,7 +154,7 @@ def hf_html():
     assert 'tcf-nav-btn' in hdr, 'providers button'
     # Primary call to action: filled button, shown last in the desktop menu (CSS order).
     hdr = hdr.replace('<a href="/" style="display:flex;align-items:center;gap:6px;padding:10px 12px;border-radius:8px;color:#0B2E40" data-hv="2">Find &amp; Compare Courses</a>',
-                      '<a href="/#find-schools" class="tcf-nav-cta" style="display:flex;align-items:center;gap:6px;padding:10px 12px;border-radius:8px;color:#0B2E40">' + brand.CTA + '</a>', 1)
+                      '<a href="/#find-schools" class="tcf-nav-cta" style="display:flex;align-items:center;gap:6px;padding:10px 12px;border-radius:8px;color:#0B2E40">' + (brand.MAG if brand.COLORS_ONLY else '') + brand.CTA + '</a>', 1)
     assert 'tcf-nav-cta' in hdr, 'cta'
     # Deadline top bar above the header (text filled live by tcf-runtime.js, California time).
     topbar = ('<div class="tcf-topbar" role="note"><div class="tcf-topbar-in"><span class="tcf-topbar-dot" aria-hidden="true"></span>'

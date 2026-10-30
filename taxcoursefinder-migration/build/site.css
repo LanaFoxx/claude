@@ -125,3 +125,47 @@ html{scrollbar-gutter:stable}
 .tcf-mmenu .tcf-nav-btn,.tcf-mmenu .tcf-nav-cta{border-radius:999px!important}
 /* home headline: one line on desktop/tablet */
 @media (min-width:768px){.tcf-home-h1{white-space:nowrap;font-size:clamp(34px,4vw,56px)!important;line-height:1.1!important}}
+/* ---- responsive polish: tablets and phones ---- */
+/* grid items may shrink below their content (stops '1fr' columns pushing past the screen) */
+.tcf-scope [style*="grid-template-columns"]>*{min-width:0}
+.tcf-scope img{max-width:100%}
+.tcf-scope p,.tcf-scope li,.tcf-scope h1,.tcf-scope h2,.tcf-scope h3{overflow-wrap:break-word}
+/* small captions stay readable */
+.tcf-trow [data-label=Price]>div+div,[data-tcf-copy-label]{font-size:12px!important}
+@media (max-width:1100px) and (min-width:761px){
+  .tcf-scope [style*="padding:88px 56px"],.tcf-scope [style*="padding:96px 56px"],.tcf-scope [style*="padding:80px 56px"],.tcf-scope [style*="padding:110px 56px"],.tcf-scope [style*="padding:56px 56px"],.tcf-scope [style*="padding:72px 56px"],.tcf-scope [style*="padding:64px 56px"]{padding-left:32px!important;padding-right:32px!important}
+  /* side menu + content layouts stack; the menu becomes a wrapping row of links */
+  .tcf-scope [style*="grid-template-columns:240px 1fr"],.tcf-scope [style*="grid-template-columns:260px 1fr"],.tcf-scope [style*="grid-template-columns:260px minmax(0,1fr)"],.tcf-scope [style*="grid-template-columns:280px 1fr"],.tcf-scope [style*="grid-template-columns:300px 1fr"],.tcf-scope [style*="grid-template-columns:360px minmax(0,1fr)"]{grid-template-columns:minmax(0,1fr)!important;gap:28px!important}
+  .tcf-scope [style*="position:sticky"][style*="flex-direction:column"]{position:static!important}
+  .tcf-scope [style*="position:sticky"][style*="flex-direction:column;gap:4px"]{flex-direction:row!important;flex-wrap:wrap;gap:6px!important}
+  /* wide 2-column heroes and splits get a little more room */
+  .tcf-scope [style*="gap:64px"]{gap:36px!important}
+  .tcf-scope h1{font-size:clamp(38px,5.4vw,52px)!important}
+  .tcf-scope [style*="grid-template-columns:40% 60%"]{grid-template-columns:minmax(0,1fr)!important}
+  .tcf-scope [style*="grid-template-columns:40% 60%"]>div:first-child{min-height:320px!important;border-right:0!important;border-bottom:6px solid #FF6B57}
+  .tcf-scope [style*="padding:88px 96px 88px 88px"]{padding:56px 40px!important}
+}
+@media (max-width:760px){
+  .tcf-scope [style*="grid-template-columns:40% 60%"]>div:first-child{min-height:240px!important;border-right:0!important;border-bottom:6px solid #FF6B57}
+  .tcf-scope [style*="padding:88px 96px 88px 88px"]{padding:44px 20px!important}
+  .tcf-scope [style*="position:sticky"][style*="flex-direction:column;gap:4px"]{display:none!important}
+  .tcf-scope [data-tcf-listing-form] [style*="padding:36px"]{padding:22px 18px!important}
+  .tcf-scope [data-tcf-listing-form] [style*="padding:20px"]{padding:14px!important}
+  .tcf-scope [style*="min-height:120px;box-sizing:border-box"]{min-height:0!important;padding:28px 20px!important}
+  .tcf-scope [style*="position:absolute;right:-26px;top:-26px"]{display:none!important}
+}
+/* text inside white cards: smaller and airier */
+.tcf-scope [style*="background:#fff;border:1px solid"] p[style*="font-size:22px"]{font-size:18px!important;line-height:1.65!important}
+.tcf-scope [style*="border-radius:16px;padding:32px;display:flex;flex-direction:column;gap:12px"]{gap:16px!important;padding:36px!important}
+@media (max-width:760px){
+  .tcf-scope [style*="border-radius:16px;padding:32px;display:flex;flex-direction:column;gap:12px"]{padding:24px 20px!important}
+  .tcf-scope [data-tcf-copy="providers@taxcoursefinder.com"]{font-size:15px!important;padding:10px 12px!important;max-width:100%;overflow-wrap:anywhere}
+}
+@media (max-width:900px) and (min-width:761px){
+  /* two-column heroes and side-by-side detail cards stack on tablets */
+  .tcf-scope [style*="grid-template-columns"][style*="gap:64px"]{grid-template-columns:minmax(0,1fr)!important;gap:28px!important}
+  .tcf-scope [style*="grid-template-columns:1fr 1fr;gap:24px"]{grid-template-columns:minmax(0,1fr)!important}
+}
+@media (max-width:900px) and (min-width:761px){
+  .tcf-scope [style*="grid-template-columns:1fr 1fr 1fr"]{grid-template-columns:minmax(0,1fr)!important}
+}

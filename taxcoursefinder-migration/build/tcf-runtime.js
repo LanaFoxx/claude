@@ -241,7 +241,7 @@
     clearTimeout(el.__tcfCopyT);
     if (lab) {
       if (lab.__orig == null) { lab.__orig = lab.textContent; lab.__color = lab.style.color; }
-      lab.textContent = 'Code copied ✓'; lab.style.color = '#5E6F22';
+      lab.textContent = lab.getAttribute('data-tcf-copy-done') || 'Code copied ✓'; lab.style.color = '#5E6F22';
     }
     el.style.background = '#E4EBC4';
     el.setAttribute('aria-label', 'Code copied');

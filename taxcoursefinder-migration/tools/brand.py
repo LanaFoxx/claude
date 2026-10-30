@@ -71,7 +71,7 @@ COLORS = {
     '#AEC25A': T['accent_dark'], '#D4E09B': T['accent_dark'], '#DDE3B6': BORDER_STRONG, '#C9D58F': BORDER_STRONG, '#C5D0DE': BORDER_STRONG,
     '#B5BECB': T['faint'], '#5A6E78': SECONDARY, '#8A9AA3': MUTED,
     '#D7DFE2': BORDER, '#E3E9EB': BORDER,
-    '#F3F5E6': T['tint'], '#D7EDC8': T['tint_strong'], '#E4F3DC': T['tint_soft'],
+    '#F3F5E6': T['tint'], '#E4EBC4': T['tint_strong'], '#D7EDC8': T['tint_strong'], '#E4F3DC': T['tint_soft'],
     '#F4F6F7': SOFT, '#F7F9FA': SOFT, '#F9FBFD': SOFT, '#E9EFF6': SOFT,
 }
 RGBA = {'rgba(0,0,0,.35)': T['shadow_float'], 'rgba(11,46,64,': 'rgba(%s,' % T['shadow'],
@@ -357,14 +357,34 @@ def palette(h):
     return h
 
 
+MAG = ('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%s" stroke-width="2.8" stroke-linecap="round" aria-hidden="true" style="flex:none">'
+       '<circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>' % CORAL)
+
+
 def tidy(h):
     if COLORS_ONLY:
         h = h.replace('height:6px;background:linear-gradient(90deg,#95AB3B,#7E9330)', 'height:6px;background:%s' % CORAL)
         # coral magnifying glass on every "View course" button
-        mag = ('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%s" stroke-width="2.8" stroke-linecap="round" aria-hidden="true" style="flex:none">'
+        mag = MAG
+        _unused = ('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%s" stroke-width="2.8" stroke-linecap="round" aria-hidden="true" style="flex:none">'
                '<circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>' % CORAL)
         h = h.replace('<span data-tcf-offer-label="">View course</span>', mag + '<span data-tcf-offer-label="">View course</span>')
         h = h.replace('padding:8px 16px">View course<svg', 'padding:8px 16px">' + mag + 'View course<svg')
+        # "Show more providers": smaller pill
+        h = h.replace('font:700 22px Manrope,sans-serif;padding:14px 32px;border-radius:10px', 'font:700 17px Manrope,sans-serif;padding:11px 24px;border-radius:999px')
+        h = h.replace('font:700 22px Manrope,sans-serif;padding:15px;border-radius:10px">{{ moreLabel }}', 'font:700 17px Manrope,sans-serif;padding:12px 20px;border-radius:999px">{{ moreLabel }}')
+        # small captions at least 12px
+        h = h.replace('font:700 10.5px', 'font:700 12px').replace('font-size:10.5px!important', 'font-size:12px!important')
+        # Live Scan key facts title
+        h = h.replace('>The CTEC Live Scan at a glance</h2>', '>CTEC Live Scan<br>at a glance</h2>')
+        # source notes under guides: centered, narrower
+        h = h.replace('style="max-width:1200px;margin:0 auto;font-size:17px;line-height:1.6;color:#5A6E78">', 'style="max-width:760px;margin:0 auto;text-align:center;font-size:17px;line-height:1.6;color:#5A6E78">')
+        # grey uppercase section labels -> coral like the others
+        h = h.replace('letter-spacing:.12em;text-transform:uppercase;color:#2F4652">', 'letter-spacing:.12em;text-transform:uppercase;color:%s">' % CORAL)
+        # provider email: click to copy instead of opening a mail app
+        h = re.sub(r'<a href="mailto:providers@taxcoursefinder\.com" style="display:inline-flex;align-self:flex-start;([^"]*)">providers@taxcoursefinder\.com</a>',
+                   r'<span style="display:inline-flex;flex-direction:column;align-items:flex-start;gap:6px;align-self:flex-start"><span data-tcf-copy="providers@taxcoursefinder.com" role="button" tabindex="0" title="Click to copy" style="display:inline-flex;cursor:pointer;\1">providers@taxcoursefinder.com</span>'
+                   r'<span data-tcf-copy-label="" data-tcf-copy-done="Email copied ✓" style="font:700 12px Manrope,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#8A9AA3">Click to copy</span></span>', h)
         # home course toggle: CE / QE in coral
         h = h.replace('>20-Hour CE · Renewing<', '>20-Hour <span style="color:%s">CE</span> · Renewing<' % CORAL)
         h = h.replace('>60-Hour QE · Getting started<', '>60-Hour <span style="color:%s">QE</span> · Getting started<' % CORAL)

@@ -15,8 +15,8 @@ FEATURES = [  # same groups, keys and labels as the directory filters (TCFD_Fiel
 ]
 REPORTING = [('same_day', 'Same day'), ('24h', 'Within 24 hours'), ('next_day', 'Next business day'), ('1_2_days', '1–2 business days'),
              ('3_5_days', '3–5 business days'), ('weekly', 'Weekly'), ('longer', 'More than a week')]
-SECTIONS = [('school', 'School & contact'), ('courses', 'Courses & prices'), ('features', 'Format & materials'), ('support', 'Student support'),
-            ('reporting', 'Reporting to CTEC'), ('coupon', 'Current coupons'), ('logo', 'Logo'), ('confirm', 'Confirm & submit')]
+SECTIONS = [('school', 'School & contact'), ('profile', 'School profile'), ('courses', 'Courses & prices'), ('features', 'Format & materials'), ('support', 'Student support'),
+            ('reporting', 'Reporting to CTEC'), ('refund', 'Refund policy'), ('coupon', 'Current coupons'), ('logo', 'Logo'), ('confirm', 'Confirm & submit')]
 
 CARD = 'background:#fff;border:1px solid #D7DFE2;border-radius:16px;padding:36px;display:flex;flex-direction:column;gap:22px;scroll-margin-top:calc(var(--tcf-head,108px) + 50px);box-shadow:0 2px 8px rgba(11,46,64,.06)'
 LABEL = 'display:flex;flex-direction:column;gap:6px;font:700 19px Manrope,sans-serif'
@@ -40,6 +40,12 @@ def field(label, name, kind='text', required=False, placeholder='', hint=''):
     return '<label style="%s"><span>%s%s</span>%s<input type="%s" name="%s"%s%s style="%s"></label>' % (LABEL, e(label), star, sub, kind, name, req, ph, INPUT)
 
 
+def area(label, name, placeholder='', hint='', rows=4):
+    sub = '<span style="font:400 17px \'Source Sans 3\',sans-serif;color:#5A6E78">%s</span>' % e(hint) if hint else ''
+    return ('<label style="%s"><span>%s</span>%s<textarea name="%s" rows="%d" placeholder="%s" style="border:1px solid #D7DFE2;border-radius:8px;padding:10px 14px;font:400 19px/1.5 \'Source Sans 3\',sans-serif;color:#0B2E40;resize:vertical"></textarea></label>'
+            % (LABEL, e(label), sub, name, rows, e(placeholder)))
+
+
 def check(name, value, label, big=False):
     return '<label style="%s"><input type="checkbox" name="%s" value="%s" style="%s">%s</label>' % (
         CHECK + (';font-weight:700' if big else ''), name, e(value), BOX, e(label))
@@ -58,6 +64,12 @@ def form():
         + field('CTEC provider number', 'ctec_number', placeholder='e.g. 6258') + field('Your name', 'contact_name', required=True)
         + field('Email address', 'contact_email', 'email', required=True) + field('Phone (optional)', 'contact_phone', 'tel')
         + '</div><p style="%s">Your contact details are only used to confirm the listing with you. They are not published.</p>' % HINT))
+    out.append(card('profile', 2, 'School profile',
+        '<p style="%s">This appears on your school&rsquo;s profile page on Tax Course Finder.</p>' % HINT
+        + area('About your school', 'about', 'Who you are, how long you have taught tax courses, and what makes your courses different.', rows=5)
+        + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">'
+        + field('Student support phone', 'phone', 'tel', hint='Shown on your profile.') + field('Student support email', 'support_email', 'email', hint='Shown on your profile.')
+        + field('Support hours', 'hours', placeholder='e.g. Mon–Fri 8am–5pm Pacific') + '</div>'))
     courses = ''
     for c, name in (('ce', '20-Hour CE course (renewal)'), ('qe', '60-Hour QE course (new preparers)')):
         courses += ('<div style="border:1px solid #E3E9EB;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:16px">'
@@ -65,9 +77,12 @@ def form():
                     + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">'
                     + field('Course bundle price ($)', c + '_price', placeholder='e.g. 69.95', hint='The price for the complete course.')
                     + field('Regular price ($)', c + '_regular', placeholder='If on sale', hint='Leave empty unless on sale.')
-                    + '</div>' + field('Course page URL', c + '_url', 'url', placeholder='https://') + '</div>')
-    out.append(card('courses', 2, 'Courses & prices', '<p style="%s">Tick each course you offer and add its price and the page where students enroll.</p>' % HINT + courses))
-    n = 3
+                    + '</div>' + field('Course page URL', c + '_url', 'url', placeholder='https://')
+                    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">'
+                    + field('Course access period', c + '_access_period', placeholder='e.g. 12 months') + field('Exam attempts', c + '_attempts', placeholder='e.g. Unlimited')
+                    + '</div></div>')
+    out.append(card('courses', 3, 'Courses & prices', '<p style="%s">Tick each course you offer and add its price and the page where students enroll.</p>' % HINT + courses))
+    n = 4
     for sid, title, hint, groups in FEATURES:
         inner = '<p style="%s">%s</p>' % (HINT, e(hint))
         for g, items in groups:
@@ -77,6 +92,10 @@ def form():
     out.append(card('reporting', n, 'Reporting to CTEC',
         '<label style="%s">How quickly are completions reported to CTEC?<select name="reporting" style="%s"><option value="">Select</option>%s</select></label>'
         % (LABEL, INPUT, ''.join('<option value="%s">%s</option>' % (k, e(l)) for k, l in REPORTING)))); n += 1
+    out.append(card('refund', n, 'Refund policy',
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">'
+        + field('Refund window', 'refund_window', placeholder='e.g. 30 days, if under 25% complete') + field('Refund policy URL', 'refund_url', 'url', placeholder='https://')
+        + '</div>' + area('Refund conditions (optional)', 'refund_conditions', 'Anything students should know before asking for a refund.', rows=3))); n += 1
     coupons = ''
     for c, name in (('ce', '20-Hour CE course'), ('qe', '60-Hour QE course')):
         coupons += ('<div style="border:1px solid #E3E9EB;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:16px">'

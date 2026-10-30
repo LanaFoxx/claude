@@ -76,9 +76,13 @@ def comparison_table(body):
             '<div class="tcf-thead" role="row"><button type="button" onclick="{{ sortName }}" title="Sort by name" ' + sbtn + '>Provider <span style="opacity:{{ nameOn }}">{{ nameArrow }}</span></button>'
             '<button type="button" onclick="{{ sortPrice }}" title="Sort by price" ' + sbtn + '>Price <span style="opacity:{{ priceOn }}">{{ priceArrow }}</span></button><span>Format</span><span>Coupon</span><span></span></div>')
     row = ('<div class="tcf-trow" role="row">'
-           '<div class="tcf-cell-provider" style="display:flex;align-items:center;gap:16px;min-width:0">' + logo +
+           '<div class="tcf-cell-provider" style="display:flex;align-items:center;gap:16px;min-width:0">'
+           # logo links to the school's profile when it is live
+           '<sc-if value="{{ p.hasSchool }}"><a href="{{ p.schoolUrl }}" aria-label="{{ p.name }}: school details" style="flex:none;display:block">' + logo + '</a></sc-if>'
+           '<sc-if value="{{ p.noSchool }}">' + logo + '</sc-if>' +
            '<div style="min-width:0"><a href="{{ p.schoolUrl }}" style="display:block;font:700 17px/1.25 \'DM Sans\',Manrope,sans-serif;color:#0B2E40;text-wrap:pretty" data-hv="9">{{ p.name }}</a>'
-           '<div style="font-size:13px;color:#5A6E78;margin-top:3px;line-height:1.4">{{ p.offeringLabel }} · {{ p.domain }}{{ p.ctecLine }}</div></div></div>'
+           '<div style="font-size:13px;color:#5A6E78;margin-top:3px;line-height:1.4">{{ p.offeringLabel }} · {{ p.domain }}{{ p.ctecLine }}</div>'
+           '<sc-if value="{{ p.hasSchool }}"><a href="{{ p.schoolUrl }}" style="display:inline-block;margin-top:5px;font:700 13px \'DM Sans\',Manrope,sans-serif;color:#0B2E40;text-decoration:underline;text-underline-offset:3px" data-hv="9">View School Details</a></sc-if></div></div>'
            + price +
            '<div data-label="Format" style="min-width:0;line-height:1.35"><div style="font-size:15px;color:{{ p.formatColor }}">{{ p.formatL1 }}</div><div style="font-size:14px;color:#8A9AA3;margin-top:2px">{{ p.formatL2 }}</div></div>'
            '<div data-label="Coupon" style="min-width:0">'
