@@ -83,7 +83,7 @@
         included: (C.included && C.included.length) ? C.included : [NC], extras: extras, refund: refund || NC, refundUrl: C.refund_url || p.website,
         formats: formats.filter(function (x) { return x.on; }), noFormats: !formats.some(function (x) { return x.on; }), pace: or(pace), access: access || NC, afterCompletion: has(C.after_completion) ? L.after[C.after_completion] + '.' : NC, liveSessions: or(C.live_sessions), accessibility: acc || NC,
         supportChannels: supportChannels.filter(function (c) { return c.value !== NC; }), hasSupport: supportChannels.some(function (c) { return c.value !== NC; }), creditsQ: supportChannels.some(function (c) { return c.value !== NC; }) ? 4 : 3, instructionalHelp: or(S.instructional_help), accountHelp: or(S.account_help), instructors: or(S.instructors),
-        reportingHeadline: rep ? 'Credits reported to CTEC within ' + rep[0].replace(/^Within /, '').toLowerCase() : 'Reporting timeframe not confirmed',
+        reportingHeadline: rep ? 'Reported to CTEC ' + (/^within/i.test(rep[0]) ? rep[0].toLowerCase() : 'in ' + rep[0].toLowerCase()) : 'Reporting timeframe not confirmed',
         reportingDetail: has(C.weekend_note) ? C.weekend_note : 'Ask the school how quickly it reports completions, especially near the Oct 31 deadline.',
         reportingStat: rep ? rep[1] : '?', reportingStatLabel: rep ? rep[2] : 'not confirmed',
         exams: has(C.exam_structure) ? L.exams[C.exam_structure] + '.' : NC, passing: passing || NC, timers: has(C.timers) ? L.timers[C.timers] + '.' : NC,
