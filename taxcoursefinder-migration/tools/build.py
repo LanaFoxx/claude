@@ -103,6 +103,11 @@ def comparison_table(body):
     return body[:i] + table + body[end:]
 
 def seo_tweaks(name, body):
+    # legal pages: contact email filled in, no mailing address
+    PH = r'<span style="background:#FFF3C4;color:#7A5A00;border-radius:4px;padding:1px 6px;font:600 19px Manrope,sans-serif">\[%s\]</span>'
+    body = re.sub(r'<br><strong style="color:#0B2E40">Mail:</strong> ' + PH % 'BUSINESS MAILING ADDRESS', '', body)
+    for k in ('PRIVACY EMAIL', 'CORRECTIONS EMAIL', 'LEGAL/CONTACT EMAIL'):
+        body = re.sub(PH % k, 'providers@taxcoursefinder.com', body)
     # sticky side menus sit 50px below the sticky header; section jumps land at the same spot
     body = re.sub(r'position:sticky;top:1[35][04]px', 'position:sticky;top:calc(var(--tcf-head,108px) + 50px)', body)
     body = body.replace('scroll-margin-top:134px', 'scroll-margin-top:calc(var(--tcf-head,108px) + 50px)')
@@ -407,7 +412,8 @@ ftr = clean(d['footer']).replace('<div id="site-footer" style=', '<footer id="si
 ftr = ftr[:ftr.rfind('</div>')] + '</footer>'
 # Menu links for guides that exist only on WordPress (not in the design files).
 EXTRA_GUIDES = [('/ctec-live-scan-background-check/', 'CTEC Live Scan Background Check', 'Live Scan Background Check'),
-                ('/ctec-experience-in-lieu-15-hour-course/', 'Experience in Lieu (15-Hour)', 'Experience in Lieu')]
+                ('/ctec-experience-in-lieu-15-hour-course/', 'Experience in Lieu (15-Hour)', 'Experience in Lieu'),
+                ('/your-rights-as-a-ctec-preparer/', 'Your Rights as a CTEC Preparer', 'Your Rights as a Preparer')]
 m = re.search(r'<a href="/how-to-renew-ctec-registration/"[^>]*>[^<]*</a>', hdr)
 assert m, 'renew link missing in header'
 hdr = hdr.replace(m.group(0), m.group(0) + ''.join(re.sub(r'href="[^"]*"', 'href="%s"' % u, m.group(0)).replace('>' + re.sub('<[^>]+>', '', m.group(0)) + '<', '>' + t + '<') for u, t, _ in EXTRA_GUIDES), 1)

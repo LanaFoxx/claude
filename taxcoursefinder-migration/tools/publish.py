@@ -172,6 +172,7 @@ def hf_html():
                '<span data-cd-time="" style="font:800 22px Manrope,sans-serif;color:#FF6B57"></span>'
                '<a href="/ctec-20-hour-course/" style="color:#23272A;text-decoration:underline;font-weight:700">Compare 20-hour courses</a></div></div>')
     ftr = cdstrip + ftr
+    ftr = re.sub(r'<p[^>]*>The independent directory of CTEC-approved education providers in California\.</p>', '', ftr)  # no tagline under the footer logo
     hdr, ftr = brand.brand(hdr), brand.brand(ftr)
     return hdr, ftr
 

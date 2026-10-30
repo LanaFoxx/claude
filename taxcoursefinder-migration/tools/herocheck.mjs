@@ -1,0 +1,14 @@
+import { chromium } from '/opt/node-tools/node_modules/playwright/index.mjs';
+import fs from 'fs';
+const S = process.argv[2];
+const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', proxy: { server: process.env.HTTPS_PROXY } });
+const c = await b.newContext({ viewport: { width: 1440, height: 1000 } }); await c.addCookies(JSON.parse(fs.readFileSync(S + '/pw_cookies.json', 'utf8')));
+const p = await c.newPage(); const errs = []; p.on('pageerror', e => errs.push(e.message));
+await p.goto('https://taxcoursefinder.com/schools/california-tax-courses/?v=' + Date.now(), { waitUntil: 'networkidle' });
+const intro = p.getByText(/is a CTEC-approved education provider/).first();
+console.log('intro lines:', await intro.evaluate(e => Math.round(e.getBoundingClientRect().height / parseFloat(getComputedStyle(e).lineHeight))), '| provider line:', (await p.getByText(/CTEC provider/).first().innerText()).trim(), '| errors:', errs.length);
+await p.screenshot({ path: `${S}/shots/hero.png`, clip: { x: 0, y: 0, width: 1440, height: 1000 } });
+const r = await b.newPage(); await r.goto('https://taxcoursefinder.com/your-rights-as-a-ctec-preparer/?v=' + Date.now(), { waitUntil: 'networkidle' });
+await r.screenshot({ path: `${S}/shots/rights.png`, fullPage: true });
+console.log('rights h1:', (await r.locator('h1').first().innerText()).replace(/\n/g, ' '), '| menu link:', await r.locator('header a[href*="your-rights"]').count(), '| footer link:', await r.locator('footer a[href*="your-rights"]').count());
+await b.close();

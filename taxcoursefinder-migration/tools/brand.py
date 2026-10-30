@@ -383,6 +383,8 @@ MAG = ('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%s" 
 
 
 def tidy(h):
+    h = re.sub(r'<p[^>]*>If we later add ratings or reviews, this page will describe exactly how they are gathered before they appear on the site\.</p>', '', h)  # no mention of reviews
+    h = h.replace('<span style="width:28px;height:2px;background:#95AB3B"></span>Find your course', 'Find your course')  # dash was invisible on the dark band and indented the eyebrow
     if COLORS_ONLY:
         h = h.replace('height:6px;background:linear-gradient(90deg,#95AB3B,#7E9330)', 'height:6px;background:%s' % CORAL)
         # coral magnifying glass on every "View course" button

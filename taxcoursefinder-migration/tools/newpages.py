@@ -144,6 +144,40 @@ pages['ctec-experience-in-lieu-15-hour-course'] = dict(
     + source_note([('CTEC Experience in Lieu webinar (PDF)', B), ('How to become a tax preparer in California (CTEC)', A)])
 )
 
+
+C_DIR = 'https://ctec.org/taxpreparers/find-education-provider/'
+C_CHOOSE = 'https://ctec.org/media-room/how-to-choose-approved-provider/'
+C_FAQ = 'https://ctec.org/faqs/'
+C_TP = 'https://ctec.org/taxpreparers/'
+C_POL = 'https://ctec.org/education-providers/provider-policies/'
+def src(*links):
+    return '<span style="display:block;margin-top:8px;font-size:17px;color:#5A6E78">Source: ' + ' · '.join(f'<a href="{u}" rel="noopener" target="_blank" style="color:#7E9330;font-weight:700">{e(t)}</a>' for t, u in links) + '</span>'
+rights_faq = [
+    ('How do I check that a school is CTEC-approved?', f'Search the school in CTEC’s <a href="{C_DIR}" rel="noopener" target="_blank" style="color:#7E9330;font-weight:700">Find an Education Provider</a> directory before you pay. Only hours from an approved provider count toward your registration.'),
+    ('Who reports my completed hours to CTEC?', 'Your education provider. CTEC-approved providers report completed CE and QE hours to CTEC and the IRS electronically, so your record stays current.'),
+    ('What can I do if a school does not meet CTEC standards?', f'CTEC has formal provider policies, including course evaluations and a complaint process. Review them on CTEC’s <a href="{C_POL}" rel="noopener" target="_blank" style="color:#7E9330;font-weight:700">provider policies page</a> or contact CTEC directly.'),
+]
+pages['your-rights-as-a-ctec-preparer'] = dict(
+    title='Your Rights as a CTEC Preparer',
+    seo=['Your Rights as a CTEC Preparer: CTEC-Approved Schools', 'Key rights and protections when you study with a CTEC-approved school: verified providers, correct hours, timely reporting to CTEC and the IRS, clear refunds, and complaints.', 'CTEC preparer rights'],
+    img='photos/ctec-renewal-records.webp',
+    alt='Tax preparer reviewing CTEC course records and completion certificates',
+    faq=rights_faq,
+    html=hero('Resources', 'Your Rights as a', 'CTEC Preparer',
+              'Key rights and protections you have when you study with a CTEC-approved school, whether you are taking the 60 hour course for the first time or the 20 hour course to renew.',
+              'photos/ctec-renewal-records.webp', ('Compare CTEC-approved schools', '/#find-schools'), ('See your rights', '#rights'))
+    + steps('rights', 'Key rights & protections', 'Your rights with', 'CTEC-approved schools',
+            'What you can expect from any CTEC-approved education provider, and where to check.',
+            [('Active provider verification', f'You have the right to choose from officially vetted, active education providers. Check any school’s standing in the CTEC Find Education Provider directory before you enroll.' + src(('CTEC Find Education Provider directory', C_DIR), ('How to choose an approved provider (CTEC)', C_CHOOSE))),
+             ('Accurate curriculum & hour compliance', 'Approved schools must offer courses that meet CTEC requirements: 60 hours of qualifying education (QE) for new preparers, or 20 hours of continuing education (CE) to renew, including federal tax law, ethics and California updates.' + src(('CTEC FAQs', C_FAQ), ('How to choose an approved provider (CTEC)', C_CHOOSE))),
+             ('Timely electronic reporting', 'You have the right to expect your provider to report completed CE and QE hours electronically to CTEC and the IRS in a timely manner, so your record does not lapse.' + src(('CTEC for tax preparers', C_TP), ('CTEC FAQs', C_FAQ))),
+             ('Transparent policies & refunds', 'You have the right to clear information before you pay: course costs, completion requirements such as minimum passing grades or attendance rules, and the refund policy.' + src(('How to choose an approved provider (CTEC)', C_CHOOSE))),
+             ('Filing complaints against providers', 'If a CTEC-approved school fails to meet standards, misrepresents a course or mishandles your records, CTEC has formal guidelines for course evaluations and provider complaints. Review CTEC’s provider policies or contact CTEC directly.' + src(('CTEC provider policies', C_POL)))])
+    + faq(rights_faq)
+    + cta('Ready to choose a school?', 'Compare every CTEC-approved provider by price, format and current offers.', ('Compare CTEC-approved schools', '/#find-schools'))
+    + source_note([('How to choose an approved provider (CTEC)', C_CHOOSE), ('CTEC provider policies', C_POL)])
+)
+
 for slug, p in pages.items():
     ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": html.unescape(__import__('re').sub(r'<[^>]+>', '', a))}} for q, a in p['faq']]}
     json.dump(ld, open(f'{S}/build/{slug}-ld.json', 'w'))
