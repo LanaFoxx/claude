@@ -64,10 +64,10 @@ THEMES = {
              '.tcfd-subnav{max-width:1312px!important}'
              '@media (max-width:760px){.tcfd-rep-head{white-space:normal!important;font-size:24px!important}}'
              # price card floats above the coral menu bar and sticks just below it
-             '.tcf-scope .tcfd-card-wrap{z-index:30!important}'
+             '.tcf-scope .tcfd-card-wrap{z-index:30!important;pointer-events:none}.tcf-scope .tcfd-card-wrap .tcfd-card{pointer-events:auto}'  # wrapper never blocks clicks underneath
              '.tcf-scope .tcfd-card{top:calc(var(--tcf-head,110px) + 58px + 20px)!important}'
              'body.admin-bar .tcf-scope .tcfd-card{top:calc(var(--tcf-head,110px) + 32px + 58px + 20px)!important}'  # same left edge as the content column
-             '.tcfd-subnav>a:first-of-type,.tcfd-subnav>:first-child a{padding-left:0!important}.tcfd-subnav>a:first-of-type:hover{background:none!important;text-decoration:underline}'  # first item lines up with the content below
+             '.tcfd-subnav>a:first-of-type{margin-left:-20px}@media (max-width:760px){.tcfd-subnav>a:first-of-type{margin-left:-10px}}'  # text lines up with the content; hover box like the others
              '@media (max-width:760px){.tcfd-subnav a{padding:0 14px!important}}'
              '@media (max-width:760px){.tcfd-subnav{overflow-x:auto;padding:0 10px!important;height:50px!important;white-space:nowrap;scrollbar-width:none;-webkit-overflow-scrolling:touch}'
              '.tcfd-subnav::-webkit-scrollbar{display:none}.tcfd-subnav a{flex:none;padding:6px 10px!important;font-size:15px!important}}'
