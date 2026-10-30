@@ -37,6 +37,14 @@ body:has(.ctc-header){background:#fff;margin:0;color:${C.navy};font-family:${BOD
 .ctc-lap-base{position:relative;height:18px;min-height:18px;width:100%!important;background:linear-gradient(#d9dee7,#9aa1ae);border-radius:2px 2px 20px 20px}
 .ctc-lap-base::after{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:16%;height:7px;background:#b3b9c4;border-radius:0 0 10px 10px}
 @media (prefers-reduced-motion:reduce){.ctc-lap-shot:not(.ctc-lap-shot-1){animation:none}}
+.ctc-steps{position:relative}
+.ctc-steps::before{content:"";position:absolute;top:36px;left:12.5%;width:75%;right:auto;border-top:2px dashed #d4a83a;opacity:.7;z-index:0}
+.ctc-steps>.e-con{position:relative;z-index:1}
+.ctc-steps .ctc-step-card{flex-grow:1}
+.ctc-step-icon .elementor-icon{box-shadow:0 0 0 8px #F3F1EC}
+.ctc-step-card{transition:transform .25s ease,box-shadow .25s ease}
+.ctc-step-card:hover{transform:translateY(-6px);box-shadow:0 18px 40px -18px rgba(27,34,51,.35)}
+@media (max-width:1024px){.ctc-steps::before{display:none}}
 .ctc-dots-dark{background-image:radial-gradient(rgba(255,255,255,.07) 1px,transparent 1px)!important;background-size:22px 22px!important}
 .ctc-dots-white{background-image:radial-gradient(#d6d0bd 1.3px,transparent 1.3px)!important;background-size:22px 22px!important}
 .ctc-topbar .elementor-widget-text-editor p{white-space:nowrap}

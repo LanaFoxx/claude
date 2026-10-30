@@ -115,27 +115,33 @@ function work(m) {
 }
 
 const STEPS = [
-  ['01', 'Tell us about your business', 'Share your services, background, and what you want your website to accomplish.'],
-  ['02', 'We design and build it', 'We handle the design, content, and setup, with your business and future clients in mind.'],
-  ['03', 'Review and launch', 'Review your website with us, finalize the details, and go live.'],
-  ['04', 'We keep it running', 'We take care of hosting and ongoing maintenance while you focus on your clients.'],
+  ['01', 'fas fa-comments', 'Tell us about your business', 'Share your services, background, and what you want your website to accomplish.'],
+  ['02', 'fas fa-pencil-ruler', 'We design and build it', 'We handle the design, content, and setup, with your business and future clients in mind.'],
+  ['03', 'fas fa-rocket', 'Review and launch', 'Review your website with us, finalize the details, and go live.'],
+  ['04', 'fas fa-shield-alt', 'We keep it running', 'We take care of hosting and ongoing maintenance while you focus on your clients.'],
 ];
 
 function how() {
-  const step = ([n, title, body]) => container({
-    content_width: 'full', flex_direction: 'column', flex_gap: gap(12), padding: box(36, 32, 36, 32), padding_mobile: box(28, 24, 28, 24), min_width: px(0),
-    background_background: 'classic', background_color: C.white, border_radius: box(16),
-  }, [
-    widget('heading', { title: n, header_size: 'span', title_color: C.gold, ...typo('typography', HEAD, [56, 52, 48], 800, { lh: 1, ls: 0 }) }),
-    heading(title, 'h3', [25, 24, 23], C.navy, 'left', { weight: 700, lh: 1.15, ls: 0 }),
-    text(body, { size: 17, lh: 1.6 }),
-  ]);
+  // Each step: gold icon (on the dashed timeline line, see .ctc-steps in chrome.cjs) above a white card.
+  const step = ([n, ic, title, body]) => stack([
+    widget('icon', { selected_icon: { value: ic, library: 'fa-solid' }, view: 'stacked', shape: 'circle', primary_color: C.gold, secondary_color: C.white,
+      size: px(28), icon_padding: px(22), align: 'center', ...cls('ctc-step-icon') }),
+    container({
+      content_width: 'full', flex_direction: 'column', flex_gap: gap(10), padding: box(32, 28, 34, 28), padding_mobile: box(28, 24, 28, 24), min_width: px(0),
+      flex_grow: 1, background_background: 'classic', background_color: C.white, border_radius: box(16),
+      border_border: 'solid', border_width: box(4, 0, 0, 0), border_color: C.gold, ...cls('ctc-step-card'),
+    }, [
+      eyebrow(`Step ${n}`, C.goldText, 'center', { size: 14 }),
+      heading(title, 'h3', [24, 23, 22], C.navy, 'center', { weight: 700, lh: 1.2, ls: 0 }),
+      text(body, { size: 17, lh: 1.6, align: 'center' }),
+    ]),
+  ], { gap: 22, settings: { min_width: px(0) } });
   return band(C.sand, [
     stack([
       eyebrow('How it works', C.goldText),
-      H2('<span class="ctc-thin">We make getting a</span> great website easy.', C.navy, 'left', { lh: 1.05, settings: { _margin: box(12, 0, 0, 0) } }),
+      H2('<span class="ctc-thin ctc-block">We make getting a</span><span class="ctc-block">great website easy.</span>', C.navy, 'left', { lh: 1.05, settings: { _margin: box(12, 0, 0, 0) } }),
     ], { maxW: 820, settings: { margin: box(0, 0, 44, 0), margin_mobile: box(0, 0, 32, 0) } }),
-    grid(STEPS.map(step), { cols: [4, 2, 1], gap: 20 }),
+    grid(STEPS.map(step), { cols: [4, 2, 1], gap: 24, rowGap: 40, cls: 'ctc-steps' }),
   ]);
 }
 
