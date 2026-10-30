@@ -39,9 +39,10 @@ THEMES = {
         shadow='0,0,0', shadow_float='rgba(0,0,0,.18)', accent_rgb='255,107,87',
         serif=("'Instrument Serif',serif", 400), sans="'Instrument Sans'", sans_max=700,
         logo='california-tax-course-finder-logo-hd-studio.png', logo_white='california-tax-course-finder-logo-white-hd-studio.png',
-        check='check-charcoal.png', check_dark='check-coral.png', cta='Compare Courses', colors_only=True,
-        fonts_url='https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Manrope:wght@300;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=Source+Serif+4:opsz,wght@8..60,200;8..60,300;8..60,400&family=Source+Sans+3:wght@400;600;700&display=swap',
-        css=(  # colours only: original fonts, sizes and layout are kept
+        check='check-charcoal.png', check_dark='check-coral.png', cta='Compare Courses', colors_only=True, display_sans=True,
+        fonts_url='https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Manrope:wght@200;300;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=Source+Serif+4:opsz,wght@8..60,200;8..60,300;8..60,400&family=Source+Sans+3:wght@400;600;700&display=swap',
+        css=(  # colours only (plus sans-serif headlines): original sizes and layout are kept
+             '.tcf-scope h1,.tcf-scope h2{letter-spacing:-.02em}'
              '.tcf-footer{border-top:3px solid #FF6B57}.tcf-footer a{color:rgba(250,247,242,.8)!important}.tcf-footer a:hover{color:#FAF7F2!important}'
              '.tcf-topbar-left{background:rgba(255,107,87,.16)!important;color:#FAF7F2!important;border-color:rgba(255,107,87,.55)!important}'
              '.tcf-topbar-link{color:#FF6B57!important}'
@@ -202,10 +203,12 @@ def structure(h):
                 if STUDIO and 'background:#FAF7F2' in st and 'border-radius:999px' in st:
                     attrs = re.sub(r'data-hv="\d+"', 'data-hv="16"', attrs)
         heading = any(t in ('h1', 'h2') for t, _, _ in stack)
-        if ctx not in ('skip', 'dark') and heading and tag == 'span' and OLIVE_COLOR.search(st):
+        if ctx not in ('skip', 'dark') and heading and tag == 'span' and (OLIVE_COLOR.search(st) or 'color:' + T['heading_accent'] in st):
             st = OLIVE_COLOR.sub('color:' + T['heading_accent'], st)  # accent word in a headline
             if T['accent_italic'] and not COLORS_ONLY:
                 attrs = _add_class(attrs, 'tcf-accent')
+            if T.get('display_sans'):
+                st = st.rstrip(';') + ';font-weight:800'  # bold accent word against the thin headline
         elif STUDIO and ctx not in ('skip', 'dark') and 'text-transform:uppercase' in st and OLIVE_COLOR.search(st) and 'letter-spacing' in st:
             st = OLIVE_COLOR.sub('color:' + INK, st)  # eyebrow: charcoal label
             if not COLORS_ONLY:
@@ -311,6 +314,14 @@ def scripts(h):
 
 def fonts(h):
     if COLORS_ONLY:
+        if T.get('display_sans'):  # headlines: thin sans-serif (accent words bold, see structure())
+            def display(m):  # thin for large headlines, original weight for small ones (readability)
+                size = re.search(r'(\d+)px', m.group(2))
+                big = 'clamp(' in m.group(2) or (size and int(size.group(1)) >= 32)
+                return 'font:%s %sManrope,sans-serif' % ('200' if big else m.group(1), m.group(2))
+            h = re.sub(r"font:(\d00) ([^;\"]*?)\\?'Source Serif 4\\?',\s*Georgia,\s*serif", display, h)
+            h = re.sub(r"\\?'Source Serif 4\\?',\s*Georgia,\s*serif", 'Manrope,sans-serif', h)
+            h = re.sub(r'font-weight:\s*300\b', 'font-weight:200', h)
         return h
     serif, weight = T['serif']
     sans = T['sans']

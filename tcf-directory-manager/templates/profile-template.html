@@ -10,7 +10,7 @@
   <div style="background:#23272A;padding:64px 56px;color:#fff"><div class="tcfp-hero" style="max-width:1200px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:48px;align-items:end">
     <div style="display:flex;flex-direction:column;gap:16px">
       <div style="display:flex;align-items:center;gap:12px;font:700 17px Manrope,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#FF6B57"><span style="width:28px;height:2px;background:#23272A"></span>School profile details</div>
-      <h1 style="margin:0;font:300 56px/1.08 'Source Serif 4',Georgia,serif;text-wrap:balance">Complete your school page</h1><sc-if value="{{ forName }}"><div style="font:700 19px Manrope,sans-serif;color:#FF6B57">For {{ forName }}</div></sc-if>
+      <h1 style="margin:0;font:200 56px/1.08 Manrope,sans-serif;text-wrap:balance">Complete your school page</h1><sc-if value="{{ forName }}"><div style="font:700 19px Manrope,sans-serif;color:#FF6B57">For {{ forName }}</div></sc-if>
       <p style="margin:0;font-size:21px;line-height:1.6;color:rgba(255,255,255,.78);max-width:620px">Everything you enter here appears on your school page, organized around the five questions students ask before buying. Answer per course: your CE and QE offerings can have different prices, formats and policies. Leave anything you can't confirm blank; it shows as "Not confirmed" rather than a guess.</p>
     </div>
     <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:14px;padding:22px 24px;display:flex;flex-direction:column;gap:8px"><div style="font:700 14px Manrope,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.65)">Takes about</div><div style="font:800 34px/1 Manrope,sans-serif">20 minutes</div><div style="font-size:17px;color:rgba(255,255,255,.7)">Your progress saves in this browser. We review submissions within 3 business days.</div></div>
@@ -21,13 +21,13 @@
       <sc-for list="{{ sections }}" as="s" hint-placeholder-count="9"><a href="#{{ s.id }}" style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;color:#23272A;font:600 17px Manrope,sans-serif" data-hv="19"><span style="width:26px;height:26px;border-radius:7px;background:#fff;border:1px solid #D9D4CC;display:grid;place-items:center;font:800 14px Manrope,sans-serif;color:#23272A;flex:none">{{ s.n }}</span>{{ s.label }}</a></sc-for>
     </div>
 
-    <sc-if value="{{ submitted }}" hint-placeholder-val="{{ false }}"><div style="background:#fff;border:1px solid #D9D4CC;border-top:3px solid #23272A;border-radius:16px;padding:48px;display:flex;flex-direction:column;gap:14px"><div style="font:300 40px/1.1 'Source Serif 4',Georgia,serif">Thanks. Your details are in review.</div><p style="margin:0;font-size:20px;line-height:1.6;color:#23272A">We verify prices, approval numbers and reporting timeframes against public sources, then publish the page. You'll get an email when it's live, or sooner if we have a question.</p></div></sc-if>
+    <sc-if value="{{ submitted }}" hint-placeholder-val="{{ false }}"><div style="background:#fff;border:1px solid #D9D4CC;border-top:3px solid #23272A;border-radius:16px;padding:48px;display:flex;flex-direction:column;gap:14px"><div style="font:200 40px/1.1 Manrope,sans-serif">Thanks. Your details are in review.</div><p style="margin:0;font-size:20px;line-height:1.6;color:#23272A">We verify prices, approval numbers and reporting timeframes against public sources, then publish the page. You'll get an email when it's live, or sooner if we have a question.</p></div></sc-if>
 
     <sc-if value="{{ pending }}" hint-placeholder-val="{{ true }}">
     <form onsubmit="{{ submit }}" style="display:flex;flex-direction:column;gap:24px"><div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"><label>Leave empty<input name="company_fax" tabindex="-1" autocomplete="off"></label></div>
 
       <div id="school" style="background:#fff;border:1px solid #D9D4CC;border-radius:16px;padding:36px;display:flex;flex-direction:column;gap:22px;scroll-margin-top:24px">
-        <div style="display:flex;gap:14px;align-items:center"><span style="width:36px;height:36px;border-radius:10px;background:#23272A;color:#fff;display:grid;place-items:center;font:800 20px Manrope,sans-serif">1</span><h2 style="margin:0;font:300 30px 'Source Serif 4',Georgia,serif">School &amp; CTEC approval</h2></div>
+        <div style="display:flex;gap:14px;align-items:center"><span style="width:36px;height:36px;border-radius:10px;background:#23272A;color:#fff;display:grid;place-items:center;font:800 20px Manrope,sans-serif">1</span><h2 style="margin:0;font:300 30px Manrope,sans-serif">School &amp; CTEC approval</h2></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
           <label style="display:flex;flex-direction:column;gap:6px;font:700 17px Manrope,sans-serif">School name<input name="school_name" required="" value="{{ v.school_name }}" onchange="{{ set }}" style="height:46px;border:1px solid #D9D4CC;border-radius:8px;padding:0 14px;font-size:19px;color:#23272A"></label>
           <label style="display:flex;flex-direction:column;gap:6px;font:700 17px Manrope,sans-serif">Website<input name="website" type="url" placeholder="https://" value="{{ v.website }}" onchange="{{ set }}" style="height:46px;border:1px solid #D9D4CC;border-radius:8px;padding:0 14px;font-size:19px;color:#23272A"></label>
@@ -41,7 +41,7 @@
       </div>
 
       <div id="courses" style="background:#fff;border:1px solid #D9D4CC;border-radius:16px;padding:36px;display:flex;flex-direction:column;gap:22px;scroll-margin-top:24px">
-        <div style="display:flex;gap:14px;align-items:center"><span style="width:36px;height:36px;border-radius:10px;background:#23272A;color:#fff;display:grid;place-items:center;font:800 20px Manrope,sans-serif">2</span><h2 style="margin:0;font:300 30px 'Source Serif 4',Georgia,serif">Course details</h2></div>
+        <div style="display:flex;gap:14px;align-items:center"><span style="width:36px;height:36px;border-radius:10px;background:#23272A;color:#fff;display:grid;place-items:center;font:800 20px Manrope,sans-serif">2</span><h2 style="margin:0;font:300 30px Manrope,sans-serif">Course details</h2></div>
         <p style="margin:0;font-size:18px;line-height:1.5;color:#4B4F54">Fill out each course you offer. Switch tabs to enter the other course; both are saved.</p>
         <div style="display:flex;gap:10px">
           <button type="button" onclick="{{ pickCE }}" style="display:inline-flex;align-items:center;gap:10px;padding:12px 22px;border-radius:999px;border:1.5px solid {{ ceBorder }};background:{{ ceBg }};color:{{ ceColor }};font:700 17px Manrope,sans-serif;cursor:pointer">20-Hour CE Course<span style="font:600 14px Manrope,sans-serif;opacity:.7">{{ ceState }}</span></button>
@@ -105,7 +105,7 @@
       </div>
 
       <div id="support" style="background:#fff;border:1px solid #D9D4CC;border-radius:16px;padding:36px;display:flex;flex-direction:column;gap:22px;scroll-margin-top:24px">
-        <div style="display:flex;gap:14px;align-items:center"><span style="width:36px;height:36px;border-radius:10px;background:#23272A;color:#fff;display:grid;place-items:center;font:800 20px Manrope,sans-serif">3</span><h2 style="margin:0;font:300 30px 'Source Serif 4',Georgia,serif">Student support</h2></div>
+        <div style="display:flex;gap:14px;align-items:center"><span style="width:36px;height:36px;border-radius:10px;background:#23272A;color:#fff;display:grid;place-items:center;font:800 20px Manrope,sans-serif">3</span><h2 style="margin:0;font:300 30px Manrope,sans-serif">Student support</h2></div>
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px">
           <label style="display:flex;flex-direction:column;gap:6px;font:700 17px Manrope,sans-serif">Support phone<input name="phone" value="{{ v.phone }}" onchange="{{ set }}" style="height:46px;border:1px solid #D9D4CC;border-radius:8px;padding:0 14px;font-size:19px;color:#23272A"></label>
           <label style="display:flex;flex-direction:column;gap:6px;font:700 17px Manrope,sans-serif">Support email<input name="support_email" type="email" value="{{ v.support_email }}" onchange="{{ set }}" style="height:46px;border:1px solid #D9D4CC;border-radius:8px;padding:0 14px;font-size:19px;color:#23272A"></label>
@@ -121,7 +121,7 @@
       </div>
 
       <div id="media" style="background:#fff;border:1px solid #D9D4CC;border-radius:16px;padding:36px;display:flex;flex-direction:column;gap:22px;scroll-margin-top:24px">
-        <div style="display:flex;gap:14px;align-items:center"><span style="width:36px;height:36px;border-radius:10px;background:#23272A;color:#fff;display:grid;place-items:center;font:800 20px Manrope,sans-serif">4</span><h2 style="margin:0;font:300 30px 'Source Serif 4',Georgia,serif">Logo, screenshots &amp; FAQs</h2></div>
+        <div style="display:flex;gap:14px;align-items:center"><span style="width:36px;height:36px;border-radius:10px;background:#23272A;color:#fff;display:grid;place-items:center;font:800 20px Manrope,sans-serif">4</span><h2 style="margin:0;font:300 30px Manrope,sans-serif">Logo, screenshots &amp; FAQs</h2></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
           <label style="display:flex;flex-direction:column;gap:6px;font:700 17px Manrope,sans-serif">Logo <span style="font:400 16px 'Source Sans 3',sans-serif;color:#4B4F54">PNG, JPG or WebP, transparent background preferred. Max 5 MB.</span><input type="file" name="logo" accept="image/png,image/jpeg,image/webp,image/gif" style="border:1px dashed #D9D4CC;border-radius:8px;padding:14px;font-size:17px;color:#4B4F54;background:#FAF7F2"></label>
           <label style="display:flex;flex-direction:column;gap:6px;font:700 17px Manrope,sans-serif">Course screenshots or product photos <span style="font:400 16px 'Source Sans 3',sans-serif;color:#4B4F54">Up to 3: dashboard, a video lesson, the textbook.</span><input type="file" name="screenshots" accept="image/png,image/jpeg,image/webp,image/gif" multiple="" style="border:1px dashed #D9D4CC;border-radius:8px;padding:14px;font-size:17px;color:#4B4F54;background:#FAF7F2"></label>
@@ -132,7 +132,7 @@
       </div>
 
       <div id="confirm" style="background:#fff;border:1px solid #D9D4CC;border-radius:16px;padding:36px;display:flex;flex-direction:column;gap:22px;scroll-margin-top:24px">
-        <div style="display:flex;gap:14px;align-items:center"><span style="width:36px;height:36px;border-radius:10px;background:#23272A;color:#fff;display:grid;place-items:center;font:800 20px Manrope,sans-serif">5</span><h2 style="margin:0;font:300 30px 'Source Serif 4',Georgia,serif">Confirm &amp; submit</h2></div>
+        <div style="display:flex;gap:14px;align-items:center"><span style="width:36px;height:36px;border-radius:10px;background:#23272A;color:#fff;display:grid;place-items:center;font:800 20px Manrope,sans-serif">5</span><h2 style="margin:0;font:300 30px Manrope,sans-serif">Confirm &amp; submit</h2></div>
         <label style="display:flex;align-items:flex-start;gap:12px;font-size:18px;line-height:1.5;color:#23272A"><input type="checkbox" name="confirm" required="" style="width:20px;height:20px;margin-top:4px;accent-color:#23272A;flex:none">I'm authorized to provide this information for the school, and it's accurate as of today. I understand Tax Course Finder verifies prices, approval numbers and reporting timeframes against public sources, and marks anything it can't confirm as "Not confirmed".</label>
         <label style="display:flex;align-items:flex-start;gap:12px;font-size:18px;line-height:1.5;color:#23272A"><input type="checkbox" name="notify" style="width:20px;height:20px;margin-top:4px;accent-color:#23272A;flex:none">Email me when prices or policies on my page are due for a re-check.</label>
         <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding-top:6px">
