@@ -250,6 +250,10 @@ def seo_tweaks(name, body):
         'CTEC 20 Hour Course': ('20-Hour CE</span> course before you renew.', '20 Hour CTEC Course</span> before you renew.'),
         'CTEC 60 Hour Course': ('60-Hour QE</span> course before you enroll.', '60 Hour CTEC Course</span> before you enroll.'),
     }.get(name)
+    if name == 'mobile':
+        # phone home headline: green highlight, a bit larger
+        body = body.replace('font:300 34px/1.1 \'Source Serif 4\',Georgia,serif;text-align:center;color:#fff"><span style="display:block">CTEC Approved</span>',
+                            'font:300 36px/1.1 \'Source Serif 4\',Georgia,serif;text-align:center;color:#fff"><span style="display:block;color:#AEC25A">CTEC Approved</span>', 1)
     if name == 'TaxCourse Finder Home':
         # Headline highlight in the same serif as the rest of the H1 (colour only), like the course pages.
         old_h = '<span style="display:block;font-family:\'Plus Jakarta Sans\',sans-serif;font-weight:700;font-size:.88em;letter-spacing:-.025em;color:#95AB3B">CTEC Approved Tax Course</span>'
@@ -257,7 +261,7 @@ def seo_tweaks(name, body):
         body = body.replace(old_h, '<span style="display:block;color:#fff">CTEC Approved Tax Course</span>', 1)
         # Short one-line headline: "Compare CTEC Approved Tax Courses".
         body, n = re.subn(r'max-width:min\(980px,100%\)">\s*Compare every\s*<span style="display:block;color:#fff">CTEC Approved Tax Course</span>\s*before you enroll\.\s*</h1>',
-                          'max-width:100%" class="tcf-home-h1">Compare CTEC Approved Tax Courses</h1>', body)
+                          'max-width:100%" class="tcf-home-h1">Compare <span style="color:#AEC25A">CTEC Approved</span> Tax Courses</h1>', body)
         assert n >= 1, 'home h1'
         # Exact target keywords in the home course cards (headings + copy), wording unchanged otherwise.
         for old, new in [('CTEC 20-Hour <span style="font-weight:800">CE Course</span>', '20 Hour <span style="font-weight:800">CTEC Course</span>'),
