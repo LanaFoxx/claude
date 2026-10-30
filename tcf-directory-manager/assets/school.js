@@ -67,7 +67,7 @@
         logoEl: p.logoUrl ? React.createElement('img', { src: p.logoUrl, alt: p.name + ' logo', style: { width: '100%', height: '100%', objectFit: 'contain', padding: 10, boxSizing: 'border-box' } }) : null, noLogo: !p.logoUrl,
         offeringLabel: p.offering === 'QE + CE' ? 'CE + QE provider' : (p.qe ? 'QE provider' : 'CE provider'),
         googleShown: dec.googleShown, googleRating: dec.googleRating, googleCount: dec.googleCount, googleUrl: dec.googleUrl,
-        ctecNumber: or(D.provider.ctec_number), approvedTypes: p.ce && p.qe ? 'qualifying and continuing education' : (p.qe ? 'qualifying education' : 'continuing education'),
+        ctecNumber: or(D.provider.ctec_number), ctecNumberText: has(D.provider.ctec_number) ? '#' + D.provider.ctec_number : 'Provider number not confirmed', approvedTypes: p.ce && p.qe ? 'qualifying and continuing education' : (p.qe ? 'qualifying education' : 'continuing education'),
         intro: has(S.intro) ? S.intro : shortName + ' is a CTEC-approved education provider. Details below are recorded per course; anything we have not verified is marked "Not confirmed".',
         pickCE: function () { self.pick('ce'); }, pickQE: function () { self.pick('qe'); }, noCE: !p.ce, noQE: !p.qe,
         ceBg: !qe ? '#FAF7F2' : 'transparent', ceColor: !qe ? '#23272A' : '#fff', ceBorder: !qe ? '#FAF7F2' : 'rgba(255,255,255,.5)', ceOpacity: p.ce ? 1 : .4,
