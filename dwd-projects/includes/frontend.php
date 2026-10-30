@@ -182,6 +182,11 @@ add_action( 'wp_head', function () {
 	echo '<style id="dwdp-no-arcs">.dw-swoosh .elementor-heading-title::after,.dw-swoosh.elementor-widget-heading .elementor-heading-title::after,.dw-swoosh-c .elementor-heading-title::after,.dww-title::after{display:none!important;content:none!important}</style>' . "\n";
 }, 999 );
 
+// Homepage quote: 34px on wide screens; a little smaller on small laptops so it stays on two lines.
+add_action( 'wp_head', function () {
+	echo '<style id="dwdp-quote">@media(min-width:1025px) and (max-width:1279px){.elementor-element-dw0001g,.elementor-element-dw0001g p:first-child{font-size:30px!important}}</style>' . "\n";
+}, 99 );
+
 // Review cards that link out (Google, Upwork): no underline, a slight lift on hover.
 add_action( 'wp_head', function () {
 	echo '<style id="dwdp-review-links">' . '.elementor-element-dw0001t>a.e-con{text-decoration:none!important;color:inherit;cursor:pointer;transition:transform .2s ease,box-shadow .2s ease}.elementor-element-dw0001t>a.e-con:hover{transform:translateY(-3px);box-shadow:0 14px 34px rgba(18,41,62,.12)!important}' . '</style>' . "\n";
