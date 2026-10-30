@@ -392,7 +392,8 @@ final class TCFD_Profile {
         if (is_wp_error($sub)) self::fail('Could not save your submission. Please try again.', 500);
         $sub = (int) $sub;
         $media = ['logo' => 0, 'screenshots' => []];
-        if (!empty($_FILES['logo']['name'])) $media['logo'] = self::upload($_FILES['logo'], $sub, $v['school_name'] . ' logo');
+        $logo_ok = !empty($_POST['logo_ok']); // the school must give permission before its logo is shown
+        if ($logo_ok && !empty($_FILES['logo']['name'])) $media['logo'] = self::upload($_FILES['logo'], $sub, $v['school_name'] . ' logo');
         if (!empty($_FILES['photo']['name'])) $media['photo'] = self::upload($_FILES['photo'], $sub, $v['school_name'] . ' school photo');
         if (!empty($_FILES['screenshots']['name']) && is_array($_FILES['screenshots']['name'])) {
             $n = 0;
@@ -405,7 +406,7 @@ final class TCFD_Profile {
             }
         }
 
-        $payload = ['kind' => 'listing', 'part' => $part, 'v' => $v, 'ce' => $courses['ce'], 'qe' => $courses['qe'], 'features' => $features, 'offers' => $offers];
+        $payload = ['kind' => 'listing', 'part' => $part, 'logo_permission' => $logo_ok && $media['logo'] ? wp_date('Y-m-d H:i') : '', 'v' => $v, 'ce' => $courses['ce'], 'qe' => $courses['qe'], 'features' => $features, 'offers' => $offers];
         update_post_meta($sub, '_tcfd_payload', wp_slash(wp_json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)));
         update_post_meta($sub, '_tcfd_media', $media);
         update_post_meta($sub, '_tcfd_provider', $pid);
@@ -415,6 +416,7 @@ final class TCFD_Profile {
         $to = apply_filters('tcfd_profile_notify_to', get_option('admin_email'));
         $body = "A school submitted the listing verification form.\n\n"
               . 'School: ' . $v['school_name'] . "\nCTEC number: " . $v['ctec_number'] . "\nContact: " . $v['contact_name'] . ' <' . $v['contact_email'] . '>' . ($v['contact_phone'] ? ' · ' . $v['contact_phone'] : '') . "\n"
+              . ($payload['logo_permission'] ? 'Logo: uploaded, with permission to display it (given ' . $payload['logo_permission'] . ")\n" : '')
               . 'Listing: ' . ($pid ? get_the_title($pid) . ' (matched by name/number)' : 'no matching listing yet') . "\n\n"
               . 'Review and apply to the listing: ' . admin_url('post.php?post=' . $sub . '&action=edit');
         if ($to) wp_mail($to, '[Tax Course Finder] Listing verification: ' . $v['school_name'], $body, ['Reply-To: ' . $v['contact_name'] . ' <' . $v['contact_email'] . '>']);
@@ -563,6 +565,7 @@ final class TCFD_Profile {
         echo '<p><strong>Received:</strong> ' . esc_html(get_the_date('M j, Y g:ia', $post)) . '</p>';
         echo '<p><strong>Contact:</strong> ' . esc_html($v['contact_name'] ?? '') . '<br><a href="mailto:' . esc_attr($v['contact_email'] ?? '') . '">' . esc_html($v['contact_email'] ?? '') . '</a></p>';
         echo '<p><strong>Approved for:</strong> ' . esc_html(self::APPROVED[$v['approved_types'] ?? ''] ?? 'Not given') . '</p>';
+        if (!empty($p['logo_permission'])) echo '<p><strong>Logo permission:</strong> Given ' . esc_html($p['logo_permission']) . '</p>';
         echo '<p><strong>Re-check reminders:</strong> ' . (get_post_meta($post->ID, '_tcfd_notify', true) ? 'Yes, wants emails' : 'No') . '</p>';
         echo '<p><strong>Came in via:</strong> ' . (get_post_meta($post->ID, '_tcfd_via_token', true) ? 'Private provider link' : 'General form link') . '</p>';
         echo '<p><a class="submitdelete" style="color:#b32d2e" href="' . esc_url(get_delete_post_link($post->ID)) . '">Move to Trash</a></p>';

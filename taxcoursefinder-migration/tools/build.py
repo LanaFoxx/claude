@@ -103,6 +103,22 @@ def comparison_table(body):
     return body[:i] + table + body[end:]
 
 def seo_tweaks(name, body):
+    if name == 'CTEC Requirements':  # renewal timeline cards -> the renewal calendar bar (same as the renew guide / home page)
+        src = clean(json.load(open(EXT + '/How to Renew CTEC Registration.json'))['body'])
+        k = src.index('Key dates'); a = src.rindex('<div style="max-width:1200px;margin:0 auto">', 0, k)
+        depth, j = 0, a
+        for m in re.finditer(r'<(/?)div\b', src[a:]):
+            depth += -1 if m.group(1) else 1
+            if depth == 0: j = a + m.end() + src[a + m.end():].index('>') + 1; break
+        inner = src[a:j].replace('Renew inside the green window to avoid the late fee.', 'Renew by October 31 to avoid the late fee.')
+        inner = inner[len('<div style="max-width:1200px;margin:0 auto">'):inner.rindex('</div>')]
+        x = body.index('<div style="text-align:center"><div style="font:700 17px Manrope,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#7E9330;margin-bottom:10px">Key dates</div>')
+        y = body.rindex('<div', x, body.index('Hour breakdowns, fees and dates', x))
+        body = body[:x] + '<div>' + inner + '</div>\n      ' + body[y:]
+    if name == 'CTEC Requirements':  # education requirements section: same padding below as above
+        x = '<div style="background:#fff;padding:72px 56px 0">\n    <div style="max-width:1200px;margin:0 auto;display:grid;grid-template-columns:minmax(0,55fr) minmax(0,45fr)'
+        assert body.count(x) == 1, 'requirements section'
+        body = body.replace(x, x.replace('padding:72px 56px 0', 'padding:72px 56px'), 1)
     if name == 'TaxCourse Finder Home':  # same hero photo as the 60-hour page
         body = body.replace('@@MEDIA:photos/05-tax-study-workspace-titled.png@@" alt="" class="tcf-hero-bg"', '@@MEDIA:photos/01-ctec-60-hour-learner.webp@@" alt="" class="tcf-hero-bg"', 1)
     if name == 'TaxCourse Finder Home':  # renewal calendar from the renew guide, near the bottom of the home page
@@ -113,8 +129,14 @@ def seo_tweaks(name, body):
             depth += -1 if m.group(1) else 1
             if depth == 0: j = a + m.end() + src[a + m.end():].index('>') + 1; break
         cal = src[a:j].replace('Renew inside the green window to avoid the late fee.', 'Renew by October 31 to avoid the late fee.')
+        dark = cal.replace('<div style="padding:88px 56px;background:#fff">', '<div style="padding:88px 56px;background:#0B2E40;color:#fff">', 1)  # dark band on the home page
+        for x, y in [("serif;\">The renewal", "serif;color:#fff\">The renewal"), ('color:#2F4652', 'color:rgba(255,255,255,.78)'), ('color:#8A9AA3', 'color:rgba(255,255,255,.6)'),
+                     ('#D7DFE2', 'rgba(255,255,255,.2)'), ('#E3E9EB', 'rgba(255,255,255,.2)'), ('<div style="font:700 22px Manrope,sans-serif">', '<div style="font:700 22px Manrope,sans-serif;color:#fff">'),
+                     ('background:#95AB3B;color:#fff;padding:12px 16px', 'background:#fff;color:#23272A;padding:12px 16px')]:
+            assert x in dark, x
+            dark = dark.replace(x, y)
         assert '<!-- FOR PROVIDERS -->' in body
-        body = body.replace('<!-- FOR PROVIDERS -->', '<!-- RENEWAL CALENDAR -->' + cal + ' <!-- FOR PROVIDERS -->', 1)
+        body = body.replace('<!-- FOR PROVIDERS -->', '<!-- RENEWAL CALENDAR -->' + dark + ' <!-- FOR PROVIDERS -->', 1)
     # hero/section titles that should sit on two lines
     body = body.replace('How to Become a <span style="display:block;font-weight:300">CTEC Registered Tax Preparer in California</span></h1>', 'How to Become a CTEC Registered Tax Preparer in California</h1>')
     body = body.replace("<h2 style=\"margin:0;font:300 44px/1.12 'Source Serif 4',Georgia,serif;color:#fff\">What the 20-hour <span style=\"font-weight:300\">continuing education course covers</span></h2>",
@@ -144,7 +166,7 @@ def seo_tweaks(name, body):
     # No provider-count / updated-date line above the hero headline.
     body = re.sub(r'\s*<div data-hero-eyebrow=""[^>]*>.*?</div>', '', body, count=1, flags=re.S)
     # Breathing room above the pricing disclaimer under the directory.
-    body = body.replace('max-width:820px;margin:8px auto 0">Prices and offers are collected', 'max-width:820px;margin:32px auto 0">Prices and offers are collected')
+    body = body.replace('max-width:820px;margin:8px auto 0">Prices and offers are collected', 'max-width:1120px;margin:32px auto 0;text-wrap:balance">Prices and offers are collected')  # two lines
     # The design omits ';' before a few properties (e.g. '#0B2E40margin-top:auto'), so those rules never applied.
     body = re.sub(r'(#[0-9A-Fa-f]{6})(?=(?:margin|flex|width|align|justify)[a-z-]*:)', r'\1;', body)
     if name == 'CTEC Requirements':
@@ -285,7 +307,19 @@ def seo_tweaks(name, body):
         import listing_form
         a = body.index('<form'); b = body.index('</form>', a) + len('</form>')
         body = body[:a] + listing_form.form() + body[b:]
-    if name == 'mobile':
+    if name == 'mobile':  # renewal calendar on phones: stacked, same dark band as desktop
+        row = lambda c, t, d: ('<div style="border-left:6px solid %s;padding:4px 0 4px 16px;display:flex;flex-direction:column;gap:4px"><div style="font:700 20px Manrope,sans-serif;color:#fff">%s</div>'
+                               '<p style="margin:0;font-size:18px;line-height:1.55;color:rgba(255,255,255,.78)">%s</p></div>' % (c, t, d))
+        mcal = ('<!-- RENEWAL CALENDAR --><div style="padding:56px 20px;background:#0B2E40;color:#fff"><div style="display:flex;flex-direction:column;gap:22px">'
+                '<div style="display:flex;flex-direction:column;gap:10px"><div style="font:700 17px Manrope,sans-serif;letter-spacing:1.6px;text-transform:uppercase;color:#7E9330">Key dates</div>'
+                "<h2 style=\"margin:0;font:300 36px/1.12 'Source Serif 4',Georgia,serif;color:#fff\">The renewal calendar</h2>"
+                '<p style="margin:0;font-size:18px;line-height:1.6;color:rgba(255,255,255,.78)">Registration runs November 1 to October 31. Renew by October 31 to avoid the late fee.</p></div>'
+                + row('#fff', 'On-time renewal · by Oct 31', 'Education reported, PTIN and bond current, CTEC renewal submitted and paid.')
+                + row('#E0A82E', 'Late renewal · Nov 1 – Jan 15', 'Still possible, with a late fee on top of the standard renewal fee.')
+                + row('#C0392B', 'Lapsed · after Jan 15', 'You must retake the 60-hour qualifying course and register as a new preparer.')
+                + '</div></div> ')
+        assert body.count('<!-- PROVIDER CTA -->') == 1
+        body = body.replace('<!-- PROVIDER CTA -->', mcal + '<!-- PROVIDER CTA -->', 1)
         nm = '<div style="font:700 22px/1.25 Manrope,sans-serif;min-width:0;flex:1;overflow-wrap:anywhere">{{ p.name }}</div>'
         assert nm in body, 'mobile name'
         body = body.replace(nm, '<sc-if value="{{ p.hasSchool }}"><a href="{{ p.schoolHref }}" style="font:700 22px/1.25 Manrope,sans-serif;min-width:0;flex:1;overflow-wrap:anywhere;color:inherit;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px">{{ p.name }}</a></sc-if>'
@@ -455,12 +489,24 @@ hdr = hdr.replace(m.group(0), m.group(0) + ''.join(re.sub(r'href="[^"]*"', 'href
 m = re.search(r'<a href="/how-to-renew-ctec-registration/"[^>]*>[^<]*</a>', ftr)
 assert m, 'renew link missing in footer'
 ftr = ftr.replace(m.group(0), m.group(0) + ''.join(re.sub(r'href="[^"]*"', 'href="%s"' % u, m.group(0)).replace('>' + re.sub('<[^>]+>', '', m.group(0)) + '<', '>' + t + '<') for u, _, t in EXTRA_GUIDES), 1)
+# CTEC Courses dropdown (20 and 60 hour) before Resources, built from the Resources dropdown
+i = hdr.index('<div class="dd" tabindex="0"'); depth = 0
+for m in re.finditer(r'<(/?)div\b', hdr[i:]):
+    depth += -1 if m.group(1) else 1
+    if depth == 0: j = i + m.end() + hdr[i + m.end():].index('>') + 1; break
+res = hdr[i:j]; assert '>Resources<svg' in res
+link = re.search(r'<a href="/ctec-requirements/"[^>]*>CTEC Requirements</a>', res).group(0)
+items = ''.join(link.replace('/ctec-requirements/', u).replace('>CTEC Requirements<', '>' + t + '<') for u, t in (('/ctec-20-hour-course/', '20 Hour CTEC Course'), ('/ctec-60-hour-course/', '60 Hour CTEC Course')))
+menu = re.search(r'(<div class="dd-menu"[^>]*><div[^>]*>)(.*)(</div></div></div>)$', res, re.S)
+courses = res[:menu.start()].replace('>Resources<svg', '>CTEC Courses<svg', 1) + menu.group(1) + items + menu.group(3)
+hdr = hdr[:i] + courses + hdr[i:]
 # For Providers menu: the optional profile page form sits right after the verify form
 for part in ('hdr', 'ftr'):
     h = locals()[part]
     m = re.search(r'<a href="/provider-application/"[^>]*>Verify Your Profile</a>', h)
     assert m, 'verify link missing'
-    h = h.replace(m.group(0), m.group(0) + m.group(0).replace('/provider-application/', '/create-your-school-profile/').replace('>Verify Your Profile<', '>Create Profile Page<'), 1)
+    h = h.replace(m.group(0), m.group(0) + m.group(0).replace('/provider-application/', '/create-your-school-profile/').replace('>Verify Your Profile<', '>Create Profile Page (Step 2)<'), 1)
+    h = h.replace('>Verify Your Profile</a>', '>Verify Your Profile (Step 1)</a>', 1)
     if part == 'hdr': hdr = h
     else: ftr = h
 json.dump({'header': hdr, 'footer': ftr}, open(OUT + '/hf.json', 'w'), indent=1)

@@ -1,13 +1,17 @@
 import { chromium } from '/opt/node-tools/node_modules/playwright/index.mjs';
+import fs from 'fs';
 const S = process.argv[2];
 const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', proxy: { server: process.env.HTTPS_PROXY } });
-for (const [w, mob] of [[1440, false], [390, true]]) {
-  const p = await b.newPage({ viewport: { width: w, height: 900 }, isMobile: mob });
-  await p.goto('https://taxcoursefinder.com/schools/1-0-4-0-and-more-continuing-education/?v=' + Date.now(), { waitUntil: 'networkidle' });
-  const el = p.getByText(/^Opens .* in a new tab$/).first(); await el.scrollIntoViewIfNeeded();
-  const row = el.locator('xpath=..');
-  console.log(w, 'lines:', await row.evaluate(r => [...r.children].map(c => Math.round(c.getBoundingClientRect().height)).join('/')), '| scrollW', await p.evaluate(() => document.documentElement.scrollWidth));
-  if (w === 1440) await row.locator('xpath=..').screenshot({ path: `${S}/shots/note.png` });
-  await p.close();
+for (const w of [1440, 1280]) {
+  const ctx = await b.newContext({ viewport: { width: w, height: 1000 } });
+  await ctx.route(u => u.href.includes('?pv='), r => r.fulfill({ status: 200, contentType: 'text/html; charset=utf-8', body: fs.readFileSync(`${S}/pv/ctec-20-hour-course.html`, 'utf8') }));
+  const p = await ctx.newPage(); await p.goto('https://taxcoursefinder.com/ctec-20-hour-course/?pv=1', { waitUntil: 'networkidle' });
+  const n = p.getByText('Prices and offers are collected').first(); await n.scrollIntoViewIfNeeded();
+  console.log(w, 'note lines', await n.evaluate(e => Math.round(e.getBoundingClientRect().height / parseFloat(getComputedStyle(e).lineHeight))));
+  if (w === 1440) {
+    await p.hover('text=CTEC Courses'); await p.waitForTimeout(400); await p.evaluate(() => scrollTo(0, 0)); await p.hover('text=CTEC Courses'); await p.waitForTimeout(400);
+    await p.screenshot({ path: S + '/shots/coursesmenu.png', clip: { x: 500, y: 60, width: 940, height: 300 } });
+  }
+  await ctx.close();
 }
 await b.close();

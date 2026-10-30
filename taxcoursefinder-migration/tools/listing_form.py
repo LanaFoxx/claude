@@ -89,7 +89,7 @@ def form():
                       + '</div>' + field('Course page URL', c + '_url', 'url', placeholder='https://', hint='Where the View Course button sends students.') + '</div>'
                       for c, name in COURSES)
     out.append(card('courses', 2, 'Courses & prices', '<p style="%s">Tick each course you offer.</p>' % HINT + courses))
-    out.append(card('features', 3, 'Format & materials', '<p style="%s">Tick everything your course includes.</p>' % HINT + boxes(FEATURES[0][3])))
+    out.append(card('features', 3, 'Format & materials', '<p style="%s">Tick everything your course includes.</p>' % HINT + boxes([g for g in FEATURES[0][3] if g[0] != 'Learning Format'])))
     out.append(card('reporting', 4, 'Reporting to CTEC',
         '<label style="%s">How quickly are completions reported to CTEC?<select name="reporting" style="%s"><option value="">Select</option>%s</select></label>'
         % (LABEL, INPUT, ''.join('<option value="%s">%s</option>' % (k, e(l)) for k, l in REPORTING))))
@@ -97,7 +97,8 @@ def form():
         '<p style="%s">Running a coupon code now? Add it here.</p>' % HINT
         + ''.join('<div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">' + field(name.split(' (')[0] + ' coupon code', c + '_coupon_code', placeholder='e.g. SAVE10')
                   + field('What it gives', c + '_coupon_details', placeholder='e.g. 10% off') + '</div>' for c, name in COURSES)))
-    out.append(card('logo', 6, 'Logo (optional)', IMG % (LABEL, 'School logo', 'PNG, JPG or WebP, up to 5 MB. A transparent background works best.', 'logo', '')))
+    out.append(card('logo', 6, 'Logo (optional)', IMG % (LABEL, 'School logo', 'PNG, JPG or WebP, up to 5 MB. A transparent background works best.', 'logo', '')
+        + '<label style="%s"><input type="checkbox" name="logo_ok" value="1" style="%s">I give Tax Course Finder permission to show our school&rsquo;s logo on our directory listing and school profile page so students can identify our school.</label>' % (CHECK, BOX)))
     out.append(card('confirm', 7, 'Confirm & submit', CONFIRM
         + '<p style="%s">We review every submission before it changes your listing. Listing your school is free. Want a full school page too? <a href="/create-your-school-profile/" style="color:#7E9330;text-decoration:underline;font-weight:700">Create your school profile page</a>.</p>' % HINT
         + SUBMIT % 'Submit listing details'))

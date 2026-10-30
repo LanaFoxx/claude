@@ -12,6 +12,7 @@
     var need = [['school_name', 'your school name'], ['contact_name', 'your name'], ['contact_email', 'your email address']];
     for (var i = 0; i < need.length; i++) { var el = f.elements[need[i][0]]; if (!el.value.trim()) { show('Please add ' + need[i][1] + '.'); el.focus(); return; } }
     if (f.elements.ce_offered && !f.elements.ce_offered.checked && !f.elements.qe_offered.checked) { show('Please tick at least one course you offer.'); f.elements.ce_offered.focus(); return; }
+    if (f.elements.logo_ok && f.elements.logo.files.length && !f.elements.logo_ok.checked) { show('Please tick the box giving us permission to show your logo, or remove the logo.'); f.elements.logo_ok.focus(); return; }
     if (!f.elements.confirm.checked) { show('Please tick the confirmation box.'); f.elements.confirm.focus(); return; }
     var big = [].filter.call(f.querySelectorAll('input[type=file]'), function (el) { return [].some.call(el.files, function (x) { return x.size > 5 * 1024 * 1024; }); });
     if (big.length) { show('One of your images is larger than 5 MB. Please choose a smaller image.'); return; }
