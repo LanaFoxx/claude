@@ -38,7 +38,7 @@ function pageHero(m, ph, o = {}) {
         settings: {
           custom_css: o.cutout
             ? 'selector img { display: block; width: auto; max-width: 100%; max-height: 460px; object-fit: contain; object-position: bottom; filter: drop-shadow(0 30px 50px rgba(0,0,0,.55)); }'
-            : 'selector img { display: block; width: 100%; max-width: 420px; max-height: 440px; object-fit: cover; object-position: center 20%; }',
+            : 'selector img { display: block; width: auto; max-width: 100%; height: 460px; object-fit: contain; }', // whole photo, never crops her head
         },
       }),
     ]),
@@ -58,6 +58,22 @@ const ctaBand = () => container({
   text(`We're here to listen, answer your questions, and help you understand your options. Call <a href="${L.TEL}" style="font-weight:700">${L.PHONE}</a>.`, { color: C.ivory, size: 18, lh: 1.75, align: 'center', maxW: 620, linkColor: C.rose, linkHover: C.ivory, settings: { _margin: box(18, 0, 0, 0) } }),
   button('Free Consultation  →', L.TEL, 'gold', { align: 'center', pad: box(20, 36, 20, 36), settings: { _margin: box(40, 0, 0, 0) } }),
 ], false);
+
+// Line icons from the handoff (48x48 viewBox, 1.5px stroke, currentColor).
+const svg = (paths, size, color = C.wood) => L.text(
+  `<svg viewBox="0 0 48 48" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths.map((d) => `<path d="${d}"/>`).join('')}</svg>`,
+  { color, size: 16, lh: 1, settings: { _element_width: 'auto', custom_css: 'selector svg { display: block; }' } },
+);
+const ICON = {
+  car: ['M6 30v-5l5-9h26l5 9v5', 'M6 30h36v5H6z', 'M11 24h26', 'M14 39a3 3 0 100-6 3 3 0 000 6z', 'M34 39a3 3 0 100-6 3 3 0 000 6z', 'M17 35h14'],
+  truck: ['M4 13h26v19H4z', 'M30 19h8l6 7v6H30z', 'M34 19v7h10', 'M11 38a3 3 0 100-6 3 3 0 000 6z', 'M37 38a3 3 0 100-6 3 3 0 000 6z', 'M14 32h20'],
+  fall: ['M31 11a3 3 0 100-6 3 3 0 000 6z', 'M27 15l-6 7 6 5-3 11', 'M21 22l-9 2', 'M27 27l10 5', 'M24 38l-7 4', 'M6 42h36', 'M10 38c3-2 6-2 10 0'],
+  dog: ['M24 42c-6 0-11-4-11-9 0-4 3-6 6-9 2-2 3-5 5-5s3 3 5 5c3 3 6 5 6 9 0 5-5 9-11 9z', 'M12 20a3 3.5 0 100-7 3 3.5 0 000 7z', 'M20 13a3 3.5 0 100-7 3 3.5 0 000 7z', 'M28 13a3 3.5 0 100-7 3 3.5 0 000 7z', 'M36 20a3 3.5 0 100-7 3 3.5 0 000 7z'],
+  integrity: ['M24 6v36', 'M10 14h28', 'M10 14l-6 12h12z', 'M38 14l-6 12h12z', 'M16 42h16'],
+  commitment: ['M24 42s-16-9-16-21a8 8 0 0116-4 8 8 0 0116 4c0 12-16 21-16 21z'],
+  results: ['M8 40h32', 'M12 34V22', 'M22 34V14', 'M32 34V26', 'M8 8l10 8 8-6 14 8'],
+  client: ['M24 22a6 6 0 100-12 6 6 0 000 12z', 'M12 40a12 12 0 0124 0', 'M38 18a4 4 0 100-8 4 4 0 000 8z', 'M10 18a4 4 0 100-8 4 4 0 000 8z'],
+};
 
 /* ------------------------------------------------------------- lists */
 // Gold "+" checklist in a CSS grid of `cols` columns (1 column on phones).
@@ -192,4 +208,4 @@ const blogCard = (m, a, o = {}) => container({
   text(a.excerpt, { color: o.pColor || C.inkSoft, size: 15 }),
 ]);
 
-module.exports = { emblem, pageHero, ctaBand, plusList, resultNote, numberCard, framedPhoto, faqAccordion, fld, detail, phoneDetail, emailDetail, contactForm, blogCard, articleUrl, ART_IMG };
+module.exports = { svg, ICON, emblem, pageHero, ctaBand, plusList, resultNote, numberCard, framedPhoto, faqAccordion, fld, detail, phoneDetail, emailDetail, contactForm, blogCard, articleUrl, ART_IMG };

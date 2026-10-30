@@ -13,7 +13,7 @@ module.exports = {
     focus: 'Jennifer Cabrera-Torres',
   },
   build: (m) => [
-    P.pageHero(m, heroes.jennifer, { photo: m.jenTealCut, cutout: true }),
+    P.pageHero(m, heroes.jennifer, { photo: m.jenTealClean, cutout: true }), // re-cut: the handoff cutout had white specks (Jen: "photo needs work")
     band(C.ivory, [
       grid([
         stack([

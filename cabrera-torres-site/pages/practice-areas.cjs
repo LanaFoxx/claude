@@ -5,28 +5,22 @@ const { areasFull, process: edu, heroes } = require('../content.json');
 const { C, px, box, container, band, stack, grid, eyebrow, heading, H2, H3, text } = L;
 
 // Each area gets its own full-width band, alternating ivory and espresso-mid (v3 section rhythm).
+// Jen: the stock photos were "the pictures from before". Like the homepage, each area now leads with its line icon.
 const AREA_STYLE = {
-  mva: { bg: C.ivory, photo: ['area_mva', 0, 'right'] },
-  dog: { bg: C.espMid, dark: true, photo: ['area_dog', 0, 'left'] },
-  fall: { bg: C.ivory, photo: ['area_fall', 0, 'right'] },
-  cat: { bg: C.espMid, dark: true },
+  mva: { bg: C.ivory, icon: 'car' },
+  dog: { bg: C.espMid, dark: true, icon: 'dog' },
+  fall: { bg: C.ivory, icon: 'fall' },
+  cat: { bg: C.espMid, dark: true, icon: 'commitment' },
 };
-const areaCopy = (a, dark, center) => stack([
-  heading(a.name, 'h2', [40, 34, 30], dark ? C.ivory : C.ink, center ? 'center' : 'left', { lh: 1.14 }),
-  text(a.desc, { size: 17, color: dark ? C.ivory : C.inkSoft, align: center ? 'center' : 'left', settings: { _margin: box(0, 0, 10, 0) } }),
-  P.plusList(a.items, { size: 16, color: dark ? C.ivory : C.inkSoft, ...(center ? { width: 560 } : {}) }),
-], { gap: 14, align: center ? 'center' : undefined });
+const areaCopy = (a, dark, icon) => stack([
+  P.svg(P.ICON[icon], 60, dark ? C.rose : C.wood),
+  heading(a.name, 'h2', [40, 34, 30], dark ? C.ivory : C.ink, 'center', { lh: 1.14, settings: { _margin: box(6, 0, 0, 0) } }),
+  text(a.desc, { size: 17, color: dark ? C.ivory : C.inkSoft, align: 'center', settings: { _margin: box(0, 0, 10, 0) } }),
+  P.plusList(a.items, { size: 16, color: dark ? C.ivory : C.inkSoft, width: 620 }),
+], { gap: 14, align: 'center' });
 function areaBand(m, a) {
   const st = AREA_STYLE[a.key];
-  const opts = { pad: [100, 100], width: 1240, anchor: a.key };
-  if (!st.photo) return band(st.bg, [container({ content_width: 'full', padding: box(0), width: px(820), width_tablet: px(100, '%'), width_mobile: px(100, '%') }, [areaCopy(a, st.dark, true)])], { ...opts, align: 'center' });
-  const [key, tilt, side] = st.photo;
-  const photo = P.framedPhoto(m[key], { ratio: '4 / 3', pos: 'center center' });
-  return band(st.bg, [
-    grid(side === 'right' ? [areaCopy(a, st.dark), photo] : [photo, areaCopy(a, st.dark)], {
-      cols: [side === 'right' ? 'minmax(0,1.4fr) minmax(0,1fr)' : 'minmax(0,1fr) minmax(0,1.4fr)', 1, 1], gap: 64, rowGap: 40, align: 'center',
-    }),
-  ], opts);
+  return band(st.bg, [container({ content_width: 'full', padding: box(0), width: px(820), width_tablet: px(100, '%'), width_mobile: px(100, '%') }, [areaCopy(a, st.dark, st.icon)])], { pad: [96, 96], width: 1240, anchor: a.key, align: 'center' });
 }
 
 module.exports = {

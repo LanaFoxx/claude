@@ -14,21 +14,7 @@ const centerLabel = (t, color = C.espMid, tag = 'p') => eyebrow(`${RULE(60)}${SP
   tag, size: 13, weight: 600, ls: 0.34,
   settings: { custom_css: '@media (max-width: 560px) { selector span[style*="height:1px"] { width: 24px !important; } }' },
 });
-// Line icons from the handoff (48x48 viewBox, 1.5px stroke, currentColor).
-const svg = (paths, size, color = C.wood) => text(
-  `<svg viewBox="0 0 48 48" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths.map((d) => `<path d="${d}"/>`).join('')}</svg>`,
-  { color, size: 16, lh: 1, settings: { _element_width: 'auto', custom_css: 'selector svg { display: block; }' } },
-);
-const ICON = {
-  car: ['M6 30v-5l5-9h26l5 9v5', 'M6 30h36v5H6z', 'M11 24h26', 'M14 39a3 3 0 100-6 3 3 0 000 6z', 'M34 39a3 3 0 100-6 3 3 0 000 6z', 'M17 35h14'],
-  truck: ['M4 13h26v19H4z', 'M30 19h8l6 7v6H30z', 'M34 19v7h10', 'M11 38a3 3 0 100-6 3 3 0 000 6z', 'M37 38a3 3 0 100-6 3 3 0 000 6z', 'M14 32h20'],
-  fall: ['M31 11a3 3 0 100-6 3 3 0 000 6z', 'M27 15l-6 7 6 5-3 11', 'M21 22l-9 2', 'M27 27l10 5', 'M24 38l-7 4', 'M6 42h36', 'M10 38c3-2 6-2 10 0'],
-  dog: ['M24 42c-6 0-11-4-11-9 0-4 3-6 6-9 2-2 3-5 5-5s3 3 5 5c3 3 6 5 6 9 0 5-5 9-11 9z', 'M12 20a3 3.5 0 100-7 3 3.5 0 000 7z', 'M20 13a3 3.5 0 100-7 3 3.5 0 000 7z', 'M28 13a3 3.5 0 100-7 3 3.5 0 000 7z', 'M36 20a3 3.5 0 100-7 3 3.5 0 000 7z'],
-  integrity: ['M24 6v36', 'M10 14h28', 'M10 14l-6 12h12z', 'M38 14l-6 12h12z', 'M16 42h16'],
-  commitment: ['M24 42s-16-9-16-21a8 8 0 0116-4 8 8 0 0116 4c0 12-16 21-16 21z'],
-  results: ['M8 40h32', 'M12 34V22', 'M22 34V14', 'M32 34V26', 'M8 8l10 8 8-6 14 8'],
-  client: ['M24 22a6 6 0 100-12 6 6 0 000 12z', 'M12 40a12 12 0 0124 0', 'M38 18a4 4 0 100-8 4 4 0 000 8z', 'M10 18a4 4 0 100-8 4 4 0 000 8z'],
-};
+const { svg, ICON } = P;
 // Columns divided by 1px hairlines (none on the first; reset when the grid wraps to 2 or 1 columns).
 const DIVIDERS = (color) => `selector { border-left: 1px solid ${color}; }
 selector:first-child { border-left: 0; }
@@ -118,7 +104,7 @@ const STORY = [
   'Before founding Cabrera Torres Law Firm, I served as Managing Partner of Gonzalez Torres Law, where I led the personal injury litigation practice. My experience in personal injury law has taught me that behind every case is someone facing a difficult and often unexpected chapter of their own.',
   'I approach that responsibility with the same determination that has carried me through my own challenges—combined with the experience, preparation, and personal attention every client deserves.',
 ];
-const STORY_MASK = 'linear-gradient(180deg, transparent 0, #000 22%), linear-gradient(90deg, transparent 0, #000 10%, #000 90%, transparent 100%)';
+const STORY_MASK = 'linear-gradient(180deg, transparent 0, #000 16%, #000 90%, transparent 100%), linear-gradient(90deg, transparent 0, #000 10%, #000 90%, transparent 100%)';
 const story = (m) => container({
   content_width: 'boxed', boxed_width: px(1400), container_type: 'grid',
   grid_columns_grid: { unit: 'custom', size: 'minmax(0,.95fr) minmax(0,1.05fr)' }, grid_columns_grid_tablet: px(1, 'fr'), grid_columns_grid_mobile: px(1, 'fr'),
@@ -127,8 +113,9 @@ const story = (m) => container({
 }, [
   // Jen (Markup): her desk portrait. Its dark studio backdrop blends into the near-black section; shown at or
   // below its native size so it stays sharp, edges feathered into the background.
-  container({ content_width: 'full', flex_direction: 'column', flex_justify_content: 'flex-end', flex_align_items: 'center', padding: box(64, 24, 0, 24), padding_mobile: box(40, 24, 0, 24), min_height: px(720), min_height_tablet: px(0), min_height_mobile: px(0) }, [
-    image(m.jenDeskPortrait, { settings: { custom_css: `selector img { display: block; width: auto; max-width: 100%; height: 660px; max-height: 660px; object-fit: contain; object-position: bottom; -webkit-mask-image: ${STORY_MASK}; -webkit-mask-composite: source-in; mask-image: ${STORY_MASK}; mask-composite: intersect; }\n@media (max-width: 1024px) { selector img { height: auto; max-height: none; width: 100%; max-width: 480px; } }` } }),
+  // Jen (Markup): "the picture needs to be pushed up": centered vertically beside the text, not sitting on the bottom.
+  container({ content_width: 'full', flex_direction: 'column', flex_justify_content: 'center', flex_align_items: 'center', padding: box(104, 24, 104, 48), padding_tablet: box(56, 24, 0, 24), padding_mobile: box(40, 24, 0, 24) }, [
+    image(m.jenDeskPortrait, { settings: { custom_css: `selector img { display: block; width: auto; max-width: 100%; height: 700px; max-height: 700px; object-fit: contain; -webkit-mask-image: ${STORY_MASK}; -webkit-mask-composite: source-in; mask-image: ${STORY_MASK}; mask-composite: intersect; }\n@media (max-width: 1024px) { selector img { height: auto; max-height: none; width: 100%; max-width: 480px; } }` } }),
   ]),
   stack([
     kicker('The Story Behind the Firm'),
