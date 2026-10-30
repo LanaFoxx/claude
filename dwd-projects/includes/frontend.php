@@ -187,15 +187,13 @@ add_action( 'wp_head', function () {
 	echo '<style id="dwdp-mobile-read">@media(max-width:767px){body{font-weight:400}.elementor-widget-text-editor,.elementor-widget-text-editor p:not([style*="font-weight"]),.elementor-widget-html p:not([style*="font-weight"]),li,.dwt-note,.dwt-note span,.dw-wt p,.dw-review p,.dwdp-single p,.dwb-article,.dwb-article p,.dwb-card-ex,.dww-card,.elementor-tab-content,.elementor-tab-content p{font-weight:400!important}.elementor-widget-text-editor:not(.elementor-element-dw0001g),.elementor-widget-text-editor:not(.elementor-element-dw0001g) p:not([style*="font-size"]),.elementor-widget-html p:not([style*="font-size"]):not([class*="eyebrow"]):not([class*="-k"]),.elementor-widget-html li,.dwt-card>p,.dwt-note,.elementor-tab-content p,.dwo-sec>p{font-size:17px!important;line-height:1.65!important}span[style*="font-weight:200"],.elementor-element-dw00002 .elementor-heading-title{font-weight:300!important}.elementor-widget-heading h2.elementor-heading-title{font-size:32px!important}.elementor-widget-heading h3.elementor-heading-title,.dwt-card h3,.elementor-widget-html h3,.dwo-sec h3{font-size:22px!important}}</style>' . "\n";
 }, 1000 );
 
-// Every screen: each part of a heading stays on one line; a part wider than the screen is scaled down just enough to fit.
+// Every screen: each part of a heading stays on one line; if a part is too wide, all parts scale down together (same size).
 add_action( 'wp_footer', function () {
 	?>
 <script>(function(){var mq=matchMedia('(max-width:767px)');
 function fit(){var hs=document.querySelectorAll('.elementor-heading-title,.dww-title,.dwdp-cta-title,.elementor-widget-html h2');
 hs.forEach(function(h){h.style.fontSize='';h.querySelectorAll('span').forEach(function(s){s.style.fontSize='';});
-var parts=h.querySelectorAll(':scope>span');if(!parts.length)return;var w=h.clientWidth;if(!w)return;
-parts.forEach(function(s){s.style.display='inline-block';var cs=parseFloat(getComputedStyle(s).fontSize),sw=s.scrollWidth;
-if(sw>w){s.style.fontSize=Math.max(14,Math.floor(cs*w/sw*10)/10)+'px';}s.style.display='';});});}
+var parts=h.querySelectorAll(':scope>span');if(!parts.length)return;var w=h.clientWidth;if(!w)return;var k=1;parts.forEach(function(s){s.style.display='inline-block';var sw=s.scrollWidth;if(sw>w)k=Math.min(k,w/sw);s.style.display='';});if(k<1){var fs=parseFloat(getComputedStyle(parts[0]).fontSize);var n=Math.max(14,Math.floor(fs*k*10)/10)+'px';parts.forEach(function(s){s.style.fontSize=n;});}});}
 var t;function later(){clearTimeout(t);t=setTimeout(fit,80);}
 fit();if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fit);addEventListener('resize',later);addEventListener('load',fit);})();</script>
 	<?php
