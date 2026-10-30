@@ -393,8 +393,33 @@ def course_paths(h):
     return ''.join(out)
 
 
+def verify_section(h):
+    """Home 'Only CTEC-approved providers can report your hours': white background, charcoal text, coral accents."""
+    if not (STUDIO and COLORS_ONLY):
+        return h
+    start = 'grid-template-columns:40% 60%;min-height:600px;background:#23272A'
+    out, i = [], 0
+    while True:
+        a = h.find(start, i)
+        if a < 0:
+            break
+        b = h.find('Verify on CTEC.org', a)
+        b = h.find('</a>', b) + 4
+        c = h[a:b]
+        c = c.replace(start, start.replace('#23272A', '#fff'), 1)
+        c = c.replace('background:#23272A;color:#fff;padding:88px', 'background:#fff;color:#23272A;padding:88px')
+        c = c.replace('line-height:1.6;color:rgba(255,255,255,.82)', 'line-height:1.6;color:#4B4F54')
+        c = c.replace('rgba(255,255,255,.18)', '#D9D4CC').replace('color:rgba(255,255,255,.65)', 'color:#4B4F54')
+        # button: charcoal on white (and the missing ';' that made it full width)
+        c = c.replace('background:#fff;color:#23272A;padding:14px 28px;border:1.5px solid #fffalign-self:flex-start" data-hv="22"',
+                      'background:#23272A;color:#FAF7F2;padding:14px 28px;border:1.5px solid #23272A;align-self:flex-start" data-hv="4"')
+        out.append(h[i:a] + c); i = b
+    out.append(h[i:])
+    return ''.join(out)
+
+
 def brand(h):
-    return course_paths(palette(fonts(scripts(chips(structure(course_cards(tidy(h))))))))
+    return verify_section(course_paths(palette(fonts(scripts(chips(structure(course_cards(tidy(h)))))))))
 
 
 FONTS_URL = T['fonts_url']
