@@ -201,6 +201,20 @@ fit();if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fit);add
 	<?php
 }, 70 );
 
+// Even line lengths: centered text is balanced (lines of similar length instead of long-short-long),
+// other paragraphs avoid a lone word on the last line. Headings are balanced everywhere.
+add_action( 'wp_head', function () {
+	echo '<style id="dwdp-wrap">p,li,.elementor-widget-text-editor{text-wrap:pretty}h1,h2,h3,h4,.elementor-heading-title,.dw-wrap-balance,.dw-wrap-balance p{text-wrap:balance}'
+		. '@media(max-width:767px){.elementor-element-dw0001g br{display:none}}</style>' . "\n";
+}, 99 );
+add_action( 'wp_footer', function () {
+	echo "<script>(function(){
+function lines(e){var r=document.createRange();r.selectNodeContents(e);var t={};[].forEach.call(r.getClientRects(),function(x){if(x.width>1)t[Math.round(x.top)]=1;});return Object.keys(t).length;}
+function even(e){e.style.maxWidth='';var n=lines(e);if(n<2)return;var w=e.getBoundingClientRect().width,lo=w*0.5,hi=w;for(var i=0;i<9;i++){var m=(lo+hi)/2;e.style.maxWidth=m+'px';if(lines(e)>n)lo=m;else hi=m;}e.style.maxWidth=Math.ceil(hi)+'px';e.style.marginLeft='auto';e.style.marginRight='auto';}
+function run(){document.querySelectorAll('p').forEach(function(e){if(e.closest('form,.elementor-tab-content,.dwb-article'))return;if(getComputedStyle(e).textAlign==='center'&&e.textContent.trim().length>40){e.classList.add('dw-wrap-balance');even(e);}else{e.classList.remove('dw-wrap-balance');}});}
+var go=function(){run();};if(document.fonts&&document.fonts.ready)document.fonts.ready.then(go);else go();var t;addEventListener('resize',function(){clearTimeout(t);t=setTimeout(run,150);});})();</script>\n";
+}, 70 );
+
 // Homepage quote: 34px on wide screens; a little smaller on small laptops so it stays on two lines.
 add_action( 'wp_head', function () {
 	echo '<style id="dwdp-quote">@media(min-width:1025px) and (max-width:1279px){.elementor-element-dw0001g,.elementor-element-dw0001g p:first-child{font-size:30px!important}}</style>' . "\n";
