@@ -10,7 +10,7 @@ for (const u of pages) {
     const old = new Set(); const fonts = new Set();
     for (const el of document.querySelectorAll('.tcf-scope *, .tcf-scope')) {
       const s = getComputedStyle(el);
-      for (const v of [s.color, s.backgroundColor, s.borderTopColor]) if (/rgb\((149, 171, 59|126, 147, 48|11, 46, 64|174, 194, 90)\)/.test(v)) old.add(v + ' ' + el.tagName + ' ' + (el.textContent || '').trim().slice(0, 25));
+      for (const v of [s.color, s.backgroundColor, s.borderTopColor]) if (/rgb\((149, 171, 59|126, 147, 48|11, 46, 64|174, 194, 90|26, 61, 255|11, 21, 64)\)/.test(v)) old.add(v + ' ' + el.tagName + ' ' + (el.textContent || '').trim().slice(0, 25));
       if (el.textContent.trim() && el.children.length === 0) fonts.add(s.fontFamily.split(',')[0]);
     }
     const imgs = [...document.querySelectorAll('header img, footer img')].map(i => i.src.split('/').pop() + ':' + i.naturalWidth);

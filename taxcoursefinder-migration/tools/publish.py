@@ -153,7 +153,7 @@ if STEP == 'content':
         ok = json.loads(back)[0]['elements'][0]['settings']['html'] == html
         print('content', slug, len(html), 'roundtrip-ok' if ok else 'MISMATCH')
 
-if STEP == 'hf':
+def hf_html():
     hf = json.load(open(B + '/hf.json'))
     hover = json.load(open(B + '/hover.json'))['hover_css'].replace('#7E9330', brand.COBALT_HOVER)  # darker cobalt on hover
     css = open(B + '/site.css').read() + hover + brand.CSS
@@ -181,6 +181,10 @@ if STEP == 'hf':
     hdr = hdr.replace('<img ', '<img fetchpriority="high" width="193" height="80" ', 1)
     ftr = fix_media(hf['footer']).replace('style="height:58px;width:auto;display:block"', 'style="height:68px;width:auto;display:block"', 1).replace("<img ", "<img width=\"188\" height=\"68\" ", 1)
     hdr, ftr = brand.brand(hdr), brand.brand(ftr)
+    return hdr, ftr
+
+if STEP == 'hf':
+    hdr, ftr = hf_html()
     for tid, html in ((40, hdr), (41, ftr)):
         data = el_data(html)
         api(s, 'POST', 'wp/v2/elementor_library/%d' % tid, json={'meta': {'_elementor_data': json.dumps(data, ensure_ascii=False)}})

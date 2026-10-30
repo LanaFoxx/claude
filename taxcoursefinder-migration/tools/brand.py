@@ -41,8 +41,7 @@ THEMES = {
         logo='california-tax-course-finder-logo-hd-studio.png', logo_white='california-tax-course-finder-logo-white-hd-studio.png',
         check='check-charcoal.png', check_dark='check-coral.png', cta='Find a course',
         fonts_url='https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap',
-        css=('body,.tcf-header{background:#FAF7F2!important}'
-             '.tcf-root>[data-screen-label],.tcf-screen>div[style*="background:#fff"]{background:#FAF7F2!important}'
+        css=(  # sections alternate white and off-white (#FAF7F2): old grey sections and heroes become off-white
              '.tcf-scope h1,.tcf-scope h2{font-family:\'Instrument Serif\',serif!important;font-weight:400!important;letter-spacing:-.02em}'
              '@media (min-width:768px){.tcf-home-h1{font-size:clamp(40px,6.2vw,88px)!important;line-height:.98!important}}'
              '.tcf-scope h1{line-height:1!important}.tcf-scope h1:not(.tcf-home-h1){font-size:clamp(44px,5.6vw,80px)!important}'
@@ -117,7 +116,7 @@ def _dark_style(st):
         # charcoal buttons would vanish on a charcoal band: invert them
         st = re.sub(r'background:(#95AB3B|#7E9330)\b', 'background:#FAF7F2', st)
         st = re.sub(r'border:1\.5px solid (#95AB3B|#7E9330)', 'border:1.5px solid #FAF7F2', st)
-        st = re.sub(r'(?<![-\w])color:#fff\b', 'color:' + INK, st)
+        st = re.sub(r'(?<![-\w])color:[^;]+;?', '', st).rstrip(';') + ';color:' + INK
     return st
 
 
