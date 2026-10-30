@@ -1,5 +1,5 @@
-// Need A Website? (new page, /need-a-website/) – Claude Design "Tax Pro Design". Text verbatim from the design.
-// Navy hero, six feature icons, portfolio grid (browser-frame cards), four steps, navy student-offer card.
+// Need A Website? (/need-a-website/) – Tax Pro Design. Copy supplied by the client (Oct 2026).
+// Navy hero with laptop slideshow, six feature icons, portfolio grid (browser-frame cards), four steps, navy CTA card.
 const L = require('../lib.cjs');
 const { C, HEAD, BODY, px, box, gap, auto, typo, container, widget, cls, band, stack, row, grid, linkBox, eyebrow, heading, H2, text, image, pill } = L;
 
@@ -20,24 +20,43 @@ function cta2(big, small, variant, o = {}) {
   ]);
 }
 
-function hero() {
+// Laptop (Elementor containers + CSS in chrome.cjs) cycling through the portfolio screenshots.
+function laptop(m) {
+  const shots = ['ctc-tpd-northstar.jpg', 'ctc-tpd-tidewater-tax.jpg', 'ctc-tpd-harlow.jpg', 'ctc-tpd-ember-tax-advisory.jpg', 'ctc-tpd-keel-tax.jpg', 'ctc-tpd-meridian.jpg'];
+  return stack([
+    container({ content_width: 'full', padding: box(0), ...cls('ctc-lap-screen') },
+      shots.map((f, i) => image(m.file(f), { alt: 'Tax Pro Design website example', cls: `ctc-lap-shot ctc-lap-shot-${i + 1}` }))),
+    container({ content_width: 'full', padding: box(0), ...cls('ctc-lap-base') }),
+  ], { cls: 'ctc-lap', settings: { min_width: px(0) } });
+}
+
+function hero(m) {
   return band(C.navy, [
-    pill('Need A Website?', { color: C.gold, bg: C.navy2, settings: { _border_border: 'solid', _border_width: box(1), _border_color: C.navyLine } }),
-    heading('<span class="ctc-thin ctc-block" style="font-size:.6em">The best websites for tax professionals, by</span>Tax Pro Design<span class="ctc-gold">.</span>', 'h1', [68, 56, 44], C.white, 'left',
-      { lh: 1.05, settings: { _margin: box(18, 0, 0, 0), _element_width: 'initial', _element_custom_width: px(1000), _element_custom_width_tablet: px(100, '%'), _element_custom_width_mobile: px(100, '%') } }),
-    text('You just earned your CTEC registration. Now clients need to find you. Tax Pro Design builds clean, mobile-ready websites made specifically for tax preparers, so you look established from day one.',
-      { color: C.muted, size: [19, 19, 18], maxW: 720, settings: { _margin: box(24, 0, 0, 0) } }),
-    row([cta2('Visit TaxProDesign.com →', 'See designs &amp; pricing', 'gold'), cta2('Get a Free Quote', 'No obligation', 'navy')], { gap: 16, settings: { margin: box(32, 0, 0, 0) } }),
-  ], { pad: [96, 96], cls: 'ctc-dots-dark' });
+    container({
+      container_type: 'grid', content_width: 'full', padding: box(0),
+      grid_columns_grid: { unit: 'custom', size: 'minmax(0,1.05fr) minmax(0,1fr)' }, grid_columns_grid_tablet: px(1, 'fr'), grid_columns_grid_mobile: px(1, 'fr'),
+      grid_rows_grid: auto, grid_rows_grid_tablet: auto, grid_rows_grid_mobile: auto, grid_gaps: gap(56), grid_gaps_mobile: gap(40), grid_align_items: 'center',
+    }, [
+      stack([
+        pill('Websites for Tax Professionals', { color: C.gold, bg: C.navy2, settings: { _border_border: 'solid', _border_width: box(1), _border_color: C.navyLine } }),
+        heading('<span class="ctc-thin ctc-block">Earn their trust.</span>Win their business<span class="ctc-gold">.</span>', 'h1', [64, 54, 42], C.white, 'left',
+          { lh: 1.05, settings: { _margin: box(18, 0, 0, 0) } }),
+        text('We build stunning websites that make people feel confident choosing your tax business. Outstanding design, clear information, and an easy way to contact you—all built to turn visitors into clients.',
+          { color: C.muted, size: [19, 19, 18], settings: { _margin: box(24, 0, 0, 0) } }),
+        row([cta2('Get a Free Quote →', 'No obligation', 'gold'), cta2('See Our Websites', 'Designs &amp; pricing', 'navy')], { gap: 16, settings: { margin: box(32, 0, 0, 0) } }),
+      ], { align: 'flex-start', settings: { min_width: px(0) } }),
+      laptop(m),
+    ]),
+  ], { pad: [88, 96], cls: 'ctc-dots-dark' });
 }
 
 const FEATURES = [
-  ['far fa-star', 'Designed only for tax pros', 'Every site is built around what tax clients look for: credentials, services, pricing, and a fast way to reach you.'],
-  ['fas fa-mobile-alt', 'Built for phones first', 'Most tax clients find you on a phone. Every site is responsive and fast on mobile, tablet, and desktop.'],
-  ['far fa-calendar-alt', 'Appointments &amp; intake forms', 'Let clients request an appointment, upload documents, or send a question directly from your site.'],
-  ['fas fa-search', 'Found on Google', 'Local SEO setup so "tax preparer near me" surfaces your business, not the franchise down the street.'],
-  ['fas fa-shield-alt', 'Secure &amp; maintained', 'Hosting, SSL, backups, and updates handled for you. You focus on tax season, not plugins.'],
-  ['fas fa-chart-line', 'Grow year after year', 'Add tax tips, a newsletter, or a client portal link as your practice grows. Your site grows with you.'],
+  ['far fa-star', 'Design that gets you noticed', 'A polished, custom website that makes your business stand out and gives people a reason to take a closer look.'],
+  ['fas fa-handshake', 'A business people feel comfortable choosing', 'Show clients who you are, what you offer, and why they can trust you—with your credentials, experience, and reviews clearly presented.'],
+  ['fas fa-phone-alt', 'More calls and appointment requests', 'Make it easy for interested visitors to contact you. Clear buttons and simple forms help turn that interest into new business.'],
+  ['fas fa-mobile-alt', 'Looks great on every device', 'Your website should impress whether someone finds you on their phone, tablet, or computer.'],
+  ['fas fa-search', 'Help local clients find you', 'Local SEO setup to help people searching for tax services in your area discover your business.'],
+  ['fas fa-shield-alt', 'We handle the upkeep', 'Hosting, security updates, and backups handled for you, so your website stays off your to-do list.'],
 ];
 
 function why() {
@@ -49,11 +68,11 @@ function why() {
   ], { gap: 14 });
   return band(C.white, [
     stack([
-      eyebrow('Why Tax Pro Design', C.goldText, 'center'),
-      H2('<span class="ctc-thin ctc-block">Your clients search</span><span class="ctc-block">before they call.</span>', C.navy, 'center', { lh: 1.05, settings: { _margin: box(12, 0, 16, 0) } }),
-      text('A professional website is the first thing a new client checks. Tax Pro Design builds sites that answer their questions, collect their info, and book the appointment while you\'re busy preparing returns.',
-        { align: 'center', size: [21, 20, 18] }),
-    ], { align: 'center', maxW: 820, settings: { margin: box(0, 0, 56, 0), margin_mobile: box(0, 0, 40, 0) } }),
+      eyebrow('Why your website matters', C.goldText, 'center'),
+      H2('<span class="ctc-thin ctc-block">Before they trust you with their taxes,</span><span class="ctc-block">they check you out.</span>', C.navy, 'center', { lh: 1.05, settings: { _margin: box(12, 0, 16, 0) } }),
+      text('Your website is often a client’s first impression of your business. It should make them feel they’re in good hands. We design every detail to show your professionalism, answer their questions, and give them a reason to choose you.',
+        { align: 'center', size: [21, 20, 18], maxW: 820 }),
+    ], { align: 'center', maxW: 1120, settings: { margin: box(0, 0, 56, 0), margin_mobile: box(0, 0, 40, 0) } }),
     grid(FEATURES.map(feature), { cols: [3, 2, 1], gap: 40, rowGap: 48, gapM: 36 }),
   ], { align: 'center' });
 }
@@ -86,19 +105,20 @@ function work(m) {
     row([
       stack([
         eyebrow('Our Work', C.gold),
-        H2('<span class="ctc-thin">Recent work for</span> tax professionals.', C.white, 'left', { lh: 1.05, settings: { _margin: box(12, 0, 0, 0) } }),
+        H2('<span class="ctc-thin">See the quality</span> for yourself.', C.white, 'left', { lh: 1.05, settings: { _margin: box(12, 0, 0, 0) } }),
+        text('Explore our website designs for tax professionals.', { color: C.muted, size: [19, 19, 18], settings: { _margin: box(14, 0, 0, 0) } }),
       ], { settings: { width: auto, width_mobile: px(100, '%') } }),
-      heading('See more at TaxProDesign.com →', 'span', [22, 22, 20], C.gold, 'left', { weight: 700, lh: 1.2, ls: 0, link: TPD, cls: 'ctc-link-gold' }),
+      heading('See More Websites →', 'span', [22, 22, 20], C.gold, 'left', { weight: 700, lh: 1.2, ls: 0, link: TPD, cls: 'ctc-link-gold' }),
     ], { gap: 24, align: 'flex-end', justify: 'space-between', settings: { margin: box(0, 0, 44, 0), margin_mobile: box(0, 0, 32, 0) } }),
     grid(WORK.map(card), { cols: [3, 2, 1], gap: 24 }),
   ], { cls: 'ctc-dots-dark' });
 }
 
 const STEPS = [
-  ['01', 'Tell us about your practice', 'Services, location, credentials, and the look you like. A 15-minute call or a short form.'],
-  ['02', 'We build it', 'Copy, design, photos, and setup handled by people who know what tax clients look for.'],
-  ['03', 'Review &amp; launch', 'One round of changes, then your site goes live on your own domain with hosting included.'],
-  ['04', 'We keep it running', 'Updates, security, and small edits whenever you need them, all tax season long.'],
+  ['01', 'Tell us about your business', 'Share your services, background, and what you want your website to accomplish.'],
+  ['02', 'We design and build it', 'We handle the design, content, and setup, with your business and future clients in mind.'],
+  ['03', 'Review and launch', 'Review your website with us, finalize the details, and go live.'],
+  ['04', 'We keep it running', 'We take care of hosting and ongoing maintenance while you focus on your clients.'],
 ];
 
 function how() {
@@ -113,7 +133,7 @@ function how() {
   return band(C.sand, [
     stack([
       eyebrow('How it works', C.goldText),
-      H2('<span class="ctc-thin">Live before</span> tax season.', C.navy, 'left', { lh: 1.05, settings: { _margin: box(12, 0, 0, 0) } }),
+      H2('<span class="ctc-thin">We make getting a</span> great website easy.', C.navy, 'left', { lh: 1.05, settings: { _margin: box(12, 0, 0, 0) } }),
     ], { maxW: 820, settings: { margin: box(0, 0, 44, 0), margin_mobile: box(0, 0, 32, 0) } }),
     grid(STEPS.map(step), { cols: [4, 2, 1], gap: 20 }),
   ]);
@@ -128,14 +148,14 @@ function offer() {
       background_background: 'classic', background_color: C.navy, border_radius: box(20), ...cls('ctc-dots-dark'),
     }, [
       stack([
-        eyebrow('For California Tax Courses students', C.gold),
-        heading('<span class="ctc-thin">Finished your course?</span> Launch your practice with a site that matches your new credentials.', 'h2', [46, 40, 34], C.white, 'left', { lh: 1.1, settings: { _margin: box(12, 0, 16, 0) } }),
-        text('Mention California Tax Courses when you reach out and Tax Pro Design will walk you through what a new preparer\'s site should include: CTEC and PTIN display, services, pricing, and a simple way for clients to contact you.',
+        eyebrow('Get started', C.gold),
+        heading('<span class="ctc-thin">Give clients confidence</span> before the first conversation.', 'h2', [46, 40, 34], C.white, 'left', { lh: 1.1, settings: { _margin: box(12, 0, 16, 0) } }),
+        text('Starting your practice or improving an established business? Let’s build a website that makes you proud to send people to it—and gives them a reason to hire you.',
           { color: C.muted, size: [19, 19, 18] }),
       ], { settings: { min_width: px(0) } }),
       stack([
-        cta2('Get Started at TaxProDesign.com →', 'Designs, pricing &amp; contact', 'gold', { full: true, padY: 18 }),
-        cta2('Request a Free Quote', 'Tell us about your practice', 'navy', { full: true, padY: 18 }),
+        cta2('Get a Free Quote →', 'Tell us about your practice', 'gold', { full: true, padY: 18 }),
+        cta2('Visit TaxProDesign.com', 'Designs, pricing &amp; contact', 'navy', { full: true, padY: 18 }),
       ], { gap: 14, settings: { min_width: px(0) } }),
     ]),
   ]);
@@ -144,6 +164,6 @@ function offer() {
 module.exports = {
   slug: 'need-a-website', title: 'Need A Website?', kind: 'newpage',
   build: (m) => [container({ content_width: 'full', padding: box(0), flex_gap: gap(0), ...cls('ctc-page') }, [
-    hero(), why(), work(m), how(), offer(),
+    hero(m), why(), work(m), how(), offer(),
   ], false)],
 };

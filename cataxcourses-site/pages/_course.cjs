@@ -168,10 +168,10 @@ function enroll(d) {
     stack([
       eyebrow('Enroll', C.goldText, 'center'),
       H2(d.enrollTitle, C.navy, 'center', { lh: 1.05, settings: { _margin: box(12, 0, 0, 0) } }),
+      text(`Questions before enrolling? Call us at <a href="${PHONE.tel}"><strong>${PHONE.label}</strong></a>`, { align: 'center', size: [19, 18, 17], lh: 1.5, linkColor: C.goldText, linkHover: C.goldDeep, settings: { _margin: box(14, 0, 0, 0) } }),
     ], { settings: { margin: box(0, 0, 56, 0), _margin: box(0, 0, 56, 0) } }),
     body,
     ...(d.autoRenew ? [autoRenewOffer(d.autoRenew)] : []),
-    text(`Questions before enrolling? Call us at <a href="${PHONE.tel}"><strong>${PHONE.label}</strong></a>`, { align: 'center', size: [19, 18, 17], lh: 1.5, linkColor: C.goldText, linkHover: C.goldDeep, settings: { _margin: box(48, 0, 0, 0) } }),
   ], { settings: { _element_id: 'enroll' } });
 }
 
@@ -291,8 +291,12 @@ function finalCta(d) {
     H2('<span class="ctc-thin ctc-block">Instant enrollment.</span><span class="ctc-block">Start your course today.</span>', C.navy, 'center', { lh: 1.05, settings: { _margin: box(12, 0, 0, 0) } }),
     row([
       cta2('Enroll Now →', d.finalSmall, '#enroll', 'gold'),
-      cta2(PHONE.label, 'Mon – Fri, 9am – 4pm PST', PHONE.tel, 'navy'),
-    ], { gap: 16, justify: 'center', settings: { margin: box(40, 0, 0, 0), _margin: box(40, 0, 0, 0) } }),
+      // plain text, not a button: it shouldn't look clickable
+      stack([
+        widget('heading', { title: `Or call ${PHONE.label}`, header_size: 'span', title_color: C.navy, ...typo('typography', HEAD, [24, 23, 21], 700, { lh: 1.1, ls: 0 }) }),
+        widget('heading', { title: 'Mon – Fri, 9am – 4pm PST', header_size: 'span', title_color: C.muted, ...typo('typography', HEAD, 15, 400, { lh: 1.3, ls: 0 }) }),
+      ], { gap: 4, settings: { width: auto, padding: box(0, 8, 0, 8) } }),
+    ], { gap: 24, gapM: 20, justify: 'center', align: 'center', settings: { margin: box(40, 0, 0, 0), _margin: box(40, 0, 0, 0) } }),
   ], { pad: [110, 110], align: 'center' }); // no dots: under the dotted FAQ
 }
 

@@ -25,6 +25,18 @@ body:has(.ctc-header){background:#fff;margin:0;color:${C.navy};font-family:${BOD
 .ctc-header .elementor-widget-text-editor p:last-child,.ctc-page .elementor-widget-text-editor p:last-child,.ctc-footer .elementor-widget-text-editor p:last-child{margin-bottom:0}
 .ctc-header .elementor-widget-text-editor p,.ctc-page .elementor-widget-text-editor p,.ctc-footer .elementor-widget-text-editor p{margin-top:0}
 .ctc-dots-cream{background-image:radial-gradient(#e6e1d2 1px,transparent 1px)!important;background-size:22px 22px!important}
+.ctc-lap{filter:drop-shadow(0 30px 40px rgba(0,0,0,.45))}
+.ctc-lap-screen{position:relative;width:88%!important;margin:0 auto!important;aspect-ratio:16/10;overflow:hidden;background:#0b0f17;border:12px solid #2b3142;border-bottom-width:16px;border-radius:16px 16px 0 0}
+.ctc-lap-screen>.e-con-inner{display:contents}
+.ctc-lap-screen .elementor-widget.ctc-lap-shot{position:absolute!important;inset:0;margin:0!important;width:100%!important;max-width:none!important}
+.ctc-lap-shot .elementor-widget-container,.ctc-lap-shot img{width:100%!important;height:100%!important;max-width:none!important}
+.ctc-lap-shot img{object-fit:cover;object-position:top center;display:block;border-radius:0!important}
+.ctc-lap-shot:not(.ctc-lap-shot-1){opacity:0;animation:ctcLap 24s linear infinite both}
+.ctc-lap-shot-2{animation-delay:4s!important}.ctc-lap-shot-3{animation-delay:8s!important}.ctc-lap-shot-4{animation-delay:12s!important}.ctc-lap-shot-5{animation-delay:16s!important}.ctc-lap-shot-6{animation-delay:20s!important}
+@keyframes ctcLap{0%{opacity:0}4%{opacity:1}18%{opacity:1}22%{opacity:0}100%{opacity:0}}
+.ctc-lap-base{position:relative;height:18px;min-height:18px;width:100%!important;background:linear-gradient(#d9dee7,#9aa1ae);border-radius:2px 2px 20px 20px}
+.ctc-lap-base::after{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:16%;height:7px;background:#b3b9c4;border-radius:0 0 10px 10px}
+@media (prefers-reduced-motion:reduce){.ctc-lap-shot:not(.ctc-lap-shot-1){animation:none}}
 .ctc-dots-dark{background-image:radial-gradient(rgba(255,255,255,.07) 1px,transparent 1px)!important;background-size:22px 22px!important}
 .ctc-dots-white{background-image:radial-gradient(#d6d0bd 1.3px,transparent 1.3px)!important;background-size:22px 22px!important}
 .ctc-topbar .elementor-widget-text-editor p{white-space:nowrap}
