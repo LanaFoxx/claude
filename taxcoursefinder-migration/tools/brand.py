@@ -362,8 +362,39 @@ def tidy(h):
     return h
 
 
+def course_paths(h):
+    """Home 'Which course do you need?': charcoal section, white course cards, coral accents inside."""
+    if not (STUDIO and COLORS_ONLY):
+        return h
+    sec = 'background:#fff;padding:96px 56px;display:flex;flex-direction:column;align-items:center;gap:56px'
+    h = h.replace(sec, sec.replace('background:#fff', 'background:#23272A;color:#FAF7F2'))
+    h = h.replace('do you need?</span></h2><p style="margin:0;font-size:22px;line-height:1.6;color:#23272A;',
+                  'do you need?</span></h2><p style="margin:0;font-size:22px;line-height:1.6;color:rgba(250,247,242,.8);')
+    card_old = 'background:linear-gradient(160deg,#23272A 0%,#23272A 60%);color:#fff;border-radius:22px;padding:44px 44px 40px;display:flex;flex-direction:column;gap:20px;box-shadow:0 24px 60px rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.08)'
+    card_new = 'background:#fff;color:#23272A;border-radius:22px;padding:44px 44px 40px;display:flex;flex-direction:column;gap:20px;box-shadow:0 24px 60px rgba(0,0,0,.28);border:1px solid #fff'
+    parts = h.split(card_old)
+    if len(parts) == 1:
+        return h
+    out = [parts[0]]
+    for chunk in parts[1:]:
+        end = chunk.find('</a>')
+        c, rest = chunk[:end], chunk[end:]
+        c = c.replace('height:5px;background:#23272A', 'height:5px;background:#FF6B57', 1)
+        c = c.replace('conic-gradient(#23272A 0 ', 'conic-gradient(#FF6B57 0 ').replace(',rgba(255,255,255,.12) ', ',#F1ECE4 ')
+        c = c.replace('border-radius:50%;background:#23272A;display:flex', 'border-radius:50%;background:#fff;display:flex')
+        c = c.replace('color:rgba(255,255,255,.6);margin-top:8px', 'color:#4B4F54;margin-top:8px')
+        c = c.replace('line-height:1.6;color:rgba(255,255,255,.82)', 'line-height:1.6;color:#4B4F54')
+        c = c.replace('background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:999px', 'background:#FAF7F2;border:1px solid #D9D4CC;border-radius:999px')
+        c = c.replace('stroke-linejoin="round" style="flex:none"><circle cx="12" cy="12" r="9">', 'stroke-linejoin="round" style="flex:none;color:#FF6B57"><circle cx="12" cy="12" r="9">')  # coral clocks
+        c = c.replace('background:#FAF7F2;border-radius:999px;padding:7px 14px;color:#23272A', 'background:#FF6B57;border-radius:999px;padding:7px 14px;color:#23272A')
+        c = c.replace('border-top:1px solid rgba(255,255,255,.14)', 'border-top:1px solid #EEE9E1')
+        c = c.replace('border-radius:50%;background:#fff;color:#23272A;display:grid', 'border-radius:50%;background:#FF6B57;color:#fff;display:grid')
+        out.append(card_new + c + rest)
+    return ''.join(out)
+
+
 def brand(h):
-    return palette(fonts(scripts(chips(structure(course_cards(tidy(h)))))))
+    return course_paths(palette(fonts(scripts(chips(structure(course_cards(tidy(h))))))))
 
 
 FONTS_URL = T['fonts_url']
