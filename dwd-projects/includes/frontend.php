@@ -223,6 +223,11 @@ add_action( 'wp_head', function () {
 	echo '<style id="dwdp-quote">@media(min-width:1025px) and (max-width:1279px){.elementor-element-dw0001g,.elementor-element-dw0001g p:first-child{font-size:30px!important}}</style>' . "\n";
 }, 99 );
 
+// Footer on desktop and tablet: phone on the left, logo in the middle, icons on the right.
+add_action( 'wp_head', function () {
+	echo '<style id="dwdp-footer-cols">@media(min-width:768px){.elementor-element-dw0006w{display:grid!important;grid-template-columns:1fr auto 1fr;align-items:center;column-gap:32px}.elementor-element-dwf0002{grid-column:2;grid-row:1;align-items:center!important;text-align:center;width:auto!important}.elementor-element-dwf0002 .elementor-widget-image,.elementor-element-dwf0002 .elementor-widget-image img{margin-left:auto!important;margin-right:auto!important;text-align:center}.elementor-element-dwf0002 *{text-align:center!important}.elementor-element-dwf0001,.elementor-element-dwf0001>.elementor-widget-container,.elementor-element-dwf0001 .dwf{display:contents!important}.dwf .dwf-phone{grid-column:1;grid-row:1;justify-self:start}.dwf .dwf-call-t{align-items:flex-start!important;text-align:left!important}.dwf .dwf-icons{grid-column:3;grid-row:1;justify-self:end}}</style>' . "\n";
+}, 1000 );
+
 // Review cards that link out (Google, Upwork): no underline, a slight lift on hover.
 add_action( 'wp_head', function () {
 	echo '<style id="dwdp-review-links">' . '.elementor-element-dw0001t>a.e-con{text-decoration:none!important;color:inherit;cursor:pointer;transition:transform .2s ease,box-shadow .2s ease}.elementor-element-dw0001t>a.e-con:hover{transform:translateY(-3px);box-shadow:0 14px 34px rgba(18,41,62,.12)!important}' . '</style>' . "\n";
