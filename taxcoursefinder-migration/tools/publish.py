@@ -165,6 +165,13 @@ def hf_html():
     hdr = hdr.replace('style="height:80px;width:auto;display:block"', 'width="188" height="68" style="height:68px;width:auto;display:block"', 1)
     hdr = hdr.replace('<img ', '<img fetchpriority="high" width="193" height="80" ', 1)
     ftr = fix_media(hf['footer']).replace('style="height:58px;width:auto;display:block"', 'style="height:68px;width:auto;display:block"', 1).replace("<img ", "<img width=\"188\" height=\"68\" ", 1)
+    # CTEC deadline countdown strip above the footer on every page (filled live by tcf-runtime.js, California time)
+    cdstrip = ('<div data-tcf-cdstrip="" class="tcf-cdstrip tcf-scope" style="background:#fff;color:#23272A;padding:24px 56px;min-height:120px;box-sizing:border-box;display:flex;align-items:center;border-top:1px solid #EEE9E1;visibility:hidden">'
+               '<div style="width:100%;max-width:1200px;margin:0 auto;display:flex;justify-content:center;align-items:center;gap:16px;flex-wrap:wrap;font:600 19px Manrope,sans-serif;text-align:center">'
+               '<span data-cd-title="" style="letter-spacing:.1em;text-transform:uppercase;font-size:17px;opacity:.9">CTEC renewal deadline</span>'
+               '<span data-cd-time="" style="font:800 22px Manrope,sans-serif;color:#FF6B57"></span>'
+               '<a href="/ctec-20-hour-course/" style="color:#23272A;text-decoration:underline;font-weight:700">Compare 20-hour courses</a></div></div>')
+    ftr = cdstrip + ftr
     hdr, ftr = brand.brand(hdr), brand.brand(ftr)
     return hdr, ftr
 

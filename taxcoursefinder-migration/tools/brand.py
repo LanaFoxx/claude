@@ -484,6 +484,7 @@ def countdown_strip(h):
     """Home deadline countdown: its own white section, about 120px tall."""
     if not (STUDIO and COLORS_ONLY):
         return h
+    h = re.sub(r'<!-- DEADLINE COUNTDOWN -->\s*<div style="background:#FAF7F2;color:#23272A;padding:14px 56px">.*?</div></div>', '<!-- DEADLINE COUNTDOWN: in the site footer -->', h, flags=re.S)
     h = h.replace('background:#FAF7F2;color:#23272A;padding:14px 56px"><div style="max-width:1200px;margin:0 auto;display:flex',
                      'background:#fff;color:#23272A;padding:24px 56px;min-height:120px;box-sizing:border-box;display:flex;align-items:center;border-top:1px solid #EEE9E1">'
                      '<div style="width:100%;max-width:1200px;margin:0 auto;display:flex')

@@ -346,3 +346,17 @@
   document.addEventListener('DOMContentLoaded', update);
   setTimeout(update, 600);
 })();
+
+// Countdown strip above the footer on every page (footer template has [data-tcf-cdstrip]); California time, like the top bar.
+(function () {
+  function fill() {
+    var els = document.querySelectorAll('[data-tcf-cdstrip]'); if (!els.length || !TCF.countdownVals) return;
+    var v = TCF.countdownVals();
+    Array.prototype.forEach.call(els, function (el) {
+      el.querySelector('[data-cd-title]').textContent = v.cdTitle + ' · ' + v.cdShort;
+      el.querySelector('[data-cd-time]').textContent = v.cdDays + (v.cdDays === 1 ? ' day' : ' days') + ' · ' + v.cdHours + ' hrs · ' + v.cdMins + ' min';
+      el.style.visibility = 'visible';
+    });
+  }
+  document.addEventListener('DOMContentLoaded', fill); setTimeout(fill, 300); setInterval(fill, 60000);
+})();

@@ -1,0 +1,11 @@
+import { chromium } from '/opt/node-tools/node_modules/playwright/index.mjs';
+import fs from 'fs';
+const S = process.argv[2], id = process.argv[3];
+const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', proxy: { server: process.env.HTTPS_PROXY } });
+const ctx = await b.newContext({ viewport: { width: 1440, height: 1000 } }); await ctx.addCookies(JSON.parse(fs.readFileSync(S + '/pw_cookies.json', 'utf8')));
+const p = await ctx.newPage();
+const r = await p.goto(`https://taxcoursefinder.com/wp-admin/post.php?post=${id}&action=edit`, { waitUntil: 'networkidle' });
+console.log('status', r.status(), p.url().slice(0, 90), '| title:', await p.title());
+console.log(JSON.stringify(await p.$$eval('input[name*="attempts"]', es => es.map(e => [e.name, e.value]))));
+console.log('publish btn:', await p.locator('#publish').count(), '| block editor:', await p.locator('.block-editor').count());
+await b.close();
