@@ -13,7 +13,7 @@ module.exports = {
   },
   build: (m) => [
     P.pageHero(m, heroes.contact),
-    band(C.light, [
+    band(C.ivory, [
       grid([
         stack([
           P.phoneDetail(32), P.emailDetail(),
@@ -37,6 +37,6 @@ module.exports = {
           }),
         ], { gap: 28 }),
       ], { cols: ['minmax(0,1fr) minmax(0,1.2fr)', 1, 1], gap: 60, rowGap: 48, align: 'start' }),
-    ], { pad: [90, 110], pattern: m.pattern }),
+    ], { pad: [96, 104], width: 1320 }),
   ],
 };

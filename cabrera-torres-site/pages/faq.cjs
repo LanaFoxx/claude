@@ -13,7 +13,7 @@ module.exports = {
   },
   build: (m) => [
     P.pageHero(m, heroes.faq),
-    band(C.light, [P.faqAccordion(faqs, { sizes: [22, 21, 19], aSize: 17 })], { pad: [90, 110], width: 836 }),
+    band(C.ivory, [P.faqAccordion(faqs, { sizes: [20, 20, 18], aSize: 17 })], { pad: [96, 104], width: 880 }),
     P.ctaBand(),
   ],
 };

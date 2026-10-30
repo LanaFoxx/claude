@@ -3,7 +3,6 @@ const L = require('../lib.cjs');
 const P = require('../parts.cjs');
 const { results, disclaimer, heroes } = require('../content.json');
 const { C, box, band, grid, text } = L;
-const TILT = [[-2, 0], [1.5, 14], [-1, 0], [2, 14], [1, 0], [-2, 14], [1.5, 0], [-1.5, 14]];
 
 module.exports = {
   slug: 'case-results', title: 'Case Results',
@@ -14,11 +13,10 @@ module.exports = {
   },
   build: (m) => [
     P.pageHero(m, heroes.results, { photo: m.jenCreamCut, cutout: true }),
-    band(C.light, [
-      grid(results.map((r, i) => P.resultNote(r, ...TILT[i], { compact: true, pad: [40, 26, 32, 26], amountSizes: [46, 46, 44] })),
-        { cols: [4, 2, 1], gap: 28, rowGap: 64, align: 'start' }),
-      text(disclaimer, { color: C.inkMuted, size: 13, align: 'center', settings: { _margin: box(64, 0, 0, 0) } }),
-    ], { pad: [110, 110], align: 'center' }),
+    band(C.ivory, [
+      grid(results.map((r) => P.resultNote(r)), { cols: [4, 2, 1], gap: 24, rowGap: 24, align: 'stretch' }),
+      text(disclaimer, { color: C.inkSoft, size: 13, align: 'center', settings: { _margin: box(48, 0, 0, 0) } }),
+    ], { pad: [100, 100], width: 1320, align: 'center' }),
     P.ctaBand(),
   ],
 };

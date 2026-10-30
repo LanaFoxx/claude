@@ -13,18 +13,20 @@ module.exports = {
   },
   build: (m) => [
     P.pageHero(m, heroes.about),
-    band(C.light, [
+    band(C.ivory, [
       grid([
         stack([
-          heading(ab.h1, 'h2', [42, 36, 30], C.ink, 'left', { lh: 1.15 }),
+          heading(ab.h1, 'h2', [44, 38, 32], C.ink, 'left', { lh: 1.14 }),
           text(ab.p1, { size: 17, settings: { _margin: box(4, 0, 0, 0) } }),
           text(ab.p2, { size: 17 }),
         ], { gap: 18 }),
-        P.framedPhoto(m.jenSuit, { tilt: -2, maxW: 420 }),
+        P.framedPhoto(m.jenWindow, { maxW: 420, ratio: '4 / 5', pos: 'center 30%' }),
       ], { cols: [2, 1, 1], gap: 60, rowGap: 56, align: 'start' }),
-      eyebrow(ab.whyKicker, C.roseDeep, 'center', { settings: { _margin: box(100, 0, 28, 0) } }),
-      grid(ab.why.map((w) => P.numberCard(w.n, w.h, w.p)), { cols: [3, 1, 1], gap: 24 }),
-    ], { pad: [100, 110] }),
+    ], { pad: [100, 100], width: 1320 }),
+    band(C.espMid, [
+      eyebrow(ab.whyKicker, C.ivory, 'center', { ls: 0.34, settings: { _margin: box(0, 0, 32, 0) } }),
+      grid(ab.why.map((w) => P.numberCard(w.n, w.h, w.p, { dark: true })), { cols: [3, 1, 1], gap: 24 }),
+    ], { pad: [100, 100], width: 1320 }),
     P.ctaBand(),
   ],
 };

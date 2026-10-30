@@ -13,9 +13,9 @@ module.exports = {
   },
   build: (m) => [
     P.pageHero(m, heroes.blog),
-    band(C.blush, [
+    band(C.ivory, [
       grid(articles.map((a) => P.blogCard(m, a, { meta: true })), { cols: [3, 2, 1], gap: 32, rowGap: 40, align: 'start' }),
-    ], { pad: [90, 110] }),
+    ], { pad: [96, 104], width: 1320 }),
     P.ctaBand(),
   ],
 };

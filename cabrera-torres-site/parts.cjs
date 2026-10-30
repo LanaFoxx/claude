@@ -12,59 +12,57 @@ const emblem = (m, width, pos, extra = {}) => image(m.emblem, {
 });
 
 /* ------------------------------------------------------- inner page hero */
-// Espresso "wood" band at the top of every inner page: kicker, H1 (white + rose-gold phrase), intro.
+// v3 page header: near-black, left-aligned eyebrow + Cinzel H1 + intro. Portrait pages put the photo/cutout
+// on the right, bottom-aligned like the homepage hero. No watermark, no pattern.
 function pageHero(m, ph, o = {}) {
-  const kids = [
-    emblem(m, 520, { _offset_orientation_h: 'end', _offset_x_end: px(-140), _offset_orientation_v: 'start', _offset_y: px(50, '%'), hide_mobile: 'hidden-mobile' }, { css: 'transform: translateY(-50%);' }),
-  ];
-  if (o.photo) kids.push(image(o.photo, {
-    settings: {
-      _position: 'absolute', _element_width: 'initial', _element_custom_width: px(34, '%'), _z_index: 0,
-      _offset_orientation_h: 'end', _offset_x_end: px(6, '%'), _offset_orientation_v: 'end', _offset_y_end: px(0),
-      hide_tablet: 'hidden-tablet', hide_mobile: 'hidden-mobile',
-      custom_css: o.cutout
-        ? 'selector { top: 24px; pointer-events: none; }\nselector .elementor-widget-container, selector img { height: 100%; }\nselector img { width: 100%; object-fit: contain; object-position: center bottom; filter: drop-shadow(0 30px 50px rgba(0,0,0,.55)); }'
-        : 'selector { top: 0; pointer-events: none; }\nselector .elementor-widget-container, selector img { height: 100%; }\nselector img { width: 100%; object-fit: cover; object-position: center top; -webkit-mask-image: linear-gradient(90deg,transparent,#000 25%); mask-image: linear-gradient(90deg,transparent,#000 25%); }',
-    },
-  }));
-  const al = o.photo ? 'left' : 'center';
-  kids.push(stack([
-    eyebrow(ph.kicker, C.sand, al),
-    o.photo
-      ? heading(`${ph.title1}<br><span style="color:${C.rose};white-space:nowrap">${ph.title2}</span>`, 'h1', [50, 44, 32], C.white, al, { lh: 1.12 })
-      : heading(`${ph.title1}${ph.title2 ? ' ' + L.accent(ph.title2) : ''}`, 'h1', [56, 46, 34], C.white, al, { lh: 1.12, maxW: 900 }),
-    ...(ph.intro ? [text(ph.intro, { color: C.mist, size: 17, weight: 300, maxW: o.photo ? 540 : 640, align: al, settings: { _margin: box(4, 0, 0, 0) } })] : []),
-  ], { gap: 20, align: o.photo ? undefined : 'center', settings: { z_index: 1 } }));
-  return band(C.wood, kids, {
-    pad: [88, 72], pattern: m.pattern,
-    settings: { ...(o.photo ? { min_height: px(340) } : {}) },
-  });
+  const rule = `<span style="display:inline-block;width:18px"></span><span style="display:inline-block;width:56px;height:1px;background:${C.rose};vertical-align:middle"></span>`;
+  const copy = stack([
+    eyebrow(`${ph.kicker}${rule}`, C.ivory, 'left', { size: 13, weight: 500, ls: 0.32 }),
+    heading(`${ph.title1}${ph.title2 ? ' ' + ph.title2 : ''}`, 'h1', [54, 46, 38], C.ivory, 'left', { lh: 1.08, maxW: o.photo ? 640 : 860 }),
+    ...(ph.intro ? [text(ph.intro, { color: C.ivory, size: 18, lh: 1.7, maxW: 640, settings: { _margin: box(4, 0, 0, 0) } })] : []),
+  ], { gap: 22, settings: { padding: box(120, 0, 96, 0), padding_tablet: box(96, 0, 56, 0), padding_mobile: box(80, 0, 48, 0), z_index: 1 } });
+  if (!o.photo) {
+    return band(C.nearBlack, [copy], { pad: [0, 0], width: 1320, settings: { border_border: 'solid', border_width: box(0, 0, 1, 0), border_color: 'rgba(196,160,141,0.18)' } });
+  }
+  return container({
+    content_width: 'boxed', boxed_width: px(1320), container_type: 'grid',
+    grid_columns_grid: { unit: 'custom', size: 'minmax(0,1.15fr) minmax(0,.85fr)' }, grid_columns_grid_tablet: px(1, 'fr'), grid_columns_grid_mobile: px(1, 'fr'),
+    grid_rows_grid: auto, grid_rows_grid_tablet: auto, grid_rows_grid_mobile: auto, grid_gaps: gap(32, 0), grid_align_items: 'end',
+    padding: box(0, 40, 0, 40), padding_tablet: box(0, 32, 0, 32), padding_mobile: box(0, 24, 0, 24),
+    background_background: 'classic', background_color: C.nearBlack, overflow: 'hidden',
+    border_border: 'solid', border_width: box(0, 0, 1, 0), border_color: 'rgba(196,160,141,0.18)',
+  }, [
+    copy,
+    container({ content_width: 'full', flex_direction: 'column', flex_justify_content: 'flex-end', flex_align_items: 'center', padding: box(48, 0, 0, 0), hide_mobile: 'hidden-mobile' }, [
+      image(o.photo, {
+        settings: {
+          custom_css: o.cutout
+            ? 'selector img { display: block; width: auto; max-width: 100%; max-height: 460px; object-fit: contain; object-position: bottom; filter: drop-shadow(0 30px 50px rgba(0,0,0,.55)); }'
+            : 'selector img { display: block; width: 100%; max-width: 420px; max-height: 440px; object-fit: cover; object-position: center 20%; }',
+        },
+      }),
+    ]),
+  ], false);
 }
 
 /* --------------------------------------------------------- CTA band */
-// "Let's talk about your case" espresso band shown above the footer (design's CTA band).
+// v3 CTA band (ends every page): espresso-mid, centered eyebrow, H2, copy with taupe phone, primary button.
 const ctaBand = () => container({
-  content_width: 'boxed', boxed_width: px(1320), container_type: 'grid',
-  grid_columns_grid: { unit: 'custom', size: 'auto minmax(0,1fr) auto' }, grid_columns_grid_tablet: px(1, 'fr'), grid_columns_grid_mobile: px(1, 'fr'),
-  grid_rows_grid: auto, grid_rows_grid_tablet: auto, grid_rows_grid_mobile: auto, grid_gaps: gap(48, 28), grid_align_items: 'center',
-  padding: box(72, 40, 72, 40), padding_mobile: box(56, 24, 56, 24),
-  background_background: 'classic', background_color: C.wood,
+  content_width: 'boxed', boxed_width: px(820), flex_direction: 'column', flex_align_items: 'center', flex_gap: gap(0),
+  padding: box(104, 40, 104, 40), padding_mobile: box(80, 24, 80, 24),
+  background_background: 'classic', background_color: C.espMid,
+  border_border: 'solid', border_width: box(1, 0, 0, 0), border_color: 'rgba(196,160,141,0.2)', _element_id: 'contact',
 }, [
-  stack([
-    eyebrow("Let's talk about<br>your case", C.sand, 'left', { size: 14, ls: 0.3, alignM: 'center', settings: { typography_line_height: px(1.9, 'em') } }),
-    widget('divider', { width: px(60), align: 'left', align_mobile: 'center', color: C.rose, weight: px(1), gap: px(2) }),
-  ], { gap: 10, settings: { padding: box(0, 48, 0, 0), padding_tablet: box(0), border_border: 'solid', border_width: box(0, 1, 0, 0), border_width_tablet: box(0), border_color: C.roseLine } }),
-  stack([
-    heading('Schedule Your Free Consultation.', 'h2', [36, 32, 26], C.white, 'left', { lh: 1.2, alignM: 'center' }),
-    text(`We're here to listen, answer your questions, and help you understand your options. Call <a href="${L.TEL}" style="font-weight:600">${L.PHONE}</a>.`, { color: C.mist, size: 18, weight: 300, lh: 1.75, linkColor: C.rose, linkHover: C.ivory, alignM: 'center' }),
-  ], { gap: 14 }),
-  button('Free Consultation  →', URL.contact, 'gold', { dark: true, align: 'center', size: 14 }),
+  eyebrow(`<span style="display:inline-block;width:56px;height:1px;background:${C.rose};vertical-align:middle"></span><span style="display:inline-block;width:22px"></span>Let's talk about your case<span style="display:inline-block;width:22px"></span><span style="display:inline-block;width:56px;height:1px;background:${C.rose};vertical-align:middle"></span>`, C.ivory, 'center', { size: 13, ls: 0.32, settings: { custom_css: '@media (max-width: 560px) { selector span[style*="height:1px"] { width: 24px !important; } }' } }),
+  heading('Schedule Your Free Consultation.', 'h2', [44, 38, 32], C.ivory, 'center', { lh: 1.12, settings: { _margin: box(22, 0, 0, 0) } }),
+  text(`We're here to listen, answer your questions, and help you understand your options. Call <a href="${L.TEL}" style="font-weight:700">${L.PHONE}</a>.`, { color: C.ivory, size: 18, lh: 1.75, align: 'center', maxW: 620, linkColor: C.rose, linkHover: C.ivory, settings: { _margin: box(18, 0, 0, 0) } }),
+  button('Free Consultation  →', L.TEL, 'gold', { align: 'center', pad: box(20, 36, 20, 36), settings: { _margin: box(40, 0, 0, 0) } }),
 ], false);
 
 /* ------------------------------------------------------------- lists */
 // Gold "+" checklist in a CSS grid of `cols` columns (1 column on phones).
 const plusList = (items, o = {}) => iconList(items, {
-  icon: 'fas fa-plus', iconSize: 9, indent: 10, iconColor: o.iconColor || C.rose, color: o.color || C.inkSoft, size: o.size || 15, weight: 300, space: 0,
+  icon: 'fas fa-plus', iconSize: 9, indent: 10, iconColor: o.iconColor || C.rose, color: o.color || C.inkSoft, size: o.size || 15, weight: 400, space: 0,
   settings: {
     ...(o.width ? { _element_width: 'initial', _element_custom_width: px(o.width), _element_custom_width_mobile: px(100, '%') } : {}),
     custom_css: `selector .elementor-icon-list-items { display: grid; grid-template-columns: repeat(${o.cols ?? 2}, minmax(0, 1fr)); gap: ${o.rowGap ?? 10}px 24px; }
@@ -73,22 +71,17 @@ selector .elementor-icon-list-item { margin: 0 !important; padding: 0 !important
   },
 });
 
-/* ------------------------------------------------------- result notes */
-// The gold "pin" is drawn on the first label with CSS, so each note stays plain editable widgets.
-const pinCSS = (padTop) => `selector::before { content: ""; position: absolute; left: 50%; top: -${padTop + 26}px; width: 22px; height: 22px; transform: translateX(-50%); border: 3px solid #4A362F; border-bottom: 0; border-radius: 11px 11px 0 0; box-sizing: border-box; }
-selector::after { content: ""; position: absolute; left: 50%; top: -${padTop + 10}px; width: 52px; height: 24px; transform: translateX(-50%); background: #C4A08D; clip-path: polygon(0 100%,14% 0,86% 0,100% 100%); filter: drop-shadow(0 3px 6px rgba(42,27,22,.25)); }`;
-function resultNote(r, tilt, drop, o = {}) {
-  const pad = o.pad || [44, 34, 40, 34];
+/* ------------------------------------------------------- result cards */
+// v3: square card with the Stat component (Cinzel amount, small uppercase label) and the case summary.
+function resultNote(r, _tilt, _drop, o = {}) {
   return container({
-    content_width: 'full', flex_direction: 'column', flex_gap: gap(0), padding: box(...pad), padding_mobile: box(pad[0], 26, pad[2], 26),
-    background_background: 'classic', background_color: o.bg || C.white, overflow: 'visible',
-    margin: box(drop, 0, 0, 0), margin_tablet: box(0), margin_mobile: box(0),
-    custom_css: `selector { transform: rotate(${tilt}deg); box-shadow: 0 1px 0 rgba(42,27,22,.06), 0 24px 40px -18px rgba(42,27,22,.35), 0 10px 18px -10px rgba(42,27,22,.2); }`,
+    content_width: 'full', flex_direction: 'column', flex_align_items: 'center', flex_gap: gap(0), padding: box(40, 30, 36, 30), padding_mobile: box(34, 24, 30, 24),
+    background_background: 'classic', background_color: C.light, border_border: 'solid', border_width: box(1), border_color: C.hair,
   }, [
-    eyebrow(r.type, C.roseDeep, 'center', { size: 12, ls: 0.26, settings: { _margin: box(0, 0, o.compact ? 12 : 14, 0), custom_css: pinCSS(pad[0]) } }),
-    heading(r.amount, 'h3', o.amountSizes || [58, 54, 50], C.ink, 'center', { lh: 1.1, ls: 0 }),
-    ...(o.compact ? [] : [eyebrow('Compensation', C.ink, 'center', { size: 12, settings: { _margin: box(8, 0, 4, 0) } })]),
-    text(r.desc, { color: C.inkSoft, size: o.compact ? 15 : 16, settings: { _margin: box(16, 0, 0, 0) } }),
+    heading(r.amount, 'h3', o.amountSizes || [42, 40, 38], C.ink, 'center', { lh: 1 }),
+    eyebrow(r.type, C.espMid, 'center', { size: 13, weight: 600, ls: 0.22, settings: { _margin: box(12, 0, 0, 0) } }),
+    widget('divider', { width: px(40), align: 'center', color: C.rose, weight: px(1), gap: px(14) }),
+    text(r.desc, { color: C.inkSoft, size: 15, lh: 1.7, align: 'center' }),
   ]);
 }
 
@@ -96,20 +89,19 @@ function resultNote(r, tilt, drop, o = {}) {
 // White card with a big gold number (About "why choose us", Practice "how a claim works").
 const numberCard = (n, h, p, o = {}) => container({
   content_width: 'full', flex_direction: 'column', flex_gap: gap(0), padding: o.pad || box(36, 32, 36, 32), padding_mobile: box(30, 24, 30, 24),
-  background_background: 'classic', background_color: C.white, border_border: 'solid', border_width: box(1), border_color: C.line,
-  custom_css: 'selector { box-shadow: 0 10px 30px rgba(42,27,22,0.05); transition: border-color .2s; }\nselector:hover { border-color: #C4A08D; }',
+  background_background: 'classic', background_color: o.dark ? C.cardDark : C.light, border_border: 'solid', border_width: box(1), border_color: o.dark ? C.darkLine : C.hair,
 }, [
-  heading(n, 'p', 40, C.rose, 'left', { lh: 1, ls: 0, settings: { _margin: box(0, 0, o.nGap ?? 18, 0) } }),
-  H3(h, C.ink, o.hSizes || [22, 22, 20], { settings: { _margin: box(0, 0, 10, 0) } }),
-  text(p, { color: C.inkSoft, size: o.pSize || 16 }),
+  heading(n, 'p', 34, C.rose, 'left', { lh: 1, settings: { _margin: box(0, 0, o.nGap ?? 18, 0) } }),
+  H3(h, o.dark ? C.ivory : C.ink, o.hSizes || [18, 18, 18], { ls: 0.1, settings: { _margin: box(0, 0, 10, 0) } }),
+  text(p, { color: o.dark ? C.ivory : C.inkSoft, size: o.pSize || 16 }),
 ]);
 
-// Photo in a white mat, slightly rotated (About, Jennifer, Practice pages).
+// Plain photo used on About, Jennifer and Practice pages.
+// v3: plain square-cornered photo (no mat, tilt or shadow).
 const framedPhoto = (media, o = {}) => image(media, {
   settings: {
-    _background_background: 'classic', _background_color: o.matColor || C.white, _padding: box(o.mat ?? 14),
     ...(o.maxW ? { _element_width: 'initial', _element_custom_width: px(o.maxW), _element_custom_width_mobile: px(100, '%') } : {}),
-    custom_css: `selector { transform: rotate(${o.tilt ?? 2}deg); box-shadow: 0 30px 60px rgba(42,27,22,.12); margin-left: auto; margin-right: auto; }
+    custom_css: `selector { margin-left: auto; margin-right: auto; }
 selector img { width: 100%; aspect-ratio: ${o.ratio || '4 / 5'}; object-fit: cover; object-position: ${o.pos || 'center top'}; display: block; }`,
   },
 });
@@ -128,8 +120,8 @@ function faqAccordion(faqs, o = {}) {
       accordion_border_hover_border: 'solid', accordion_border_hover_width: box(0, 0, 1, 0), accordion_border_hover_color: C.rule,
       accordion_border_active_border: 'solid', accordion_border_active_width: box(0), accordion_border_active_color: C.rule,
       accordion_border_radius: box(0), accordion_padding: box(24, 0, 24, 0),
-      ...L.typo('title_typography', o.sizes || [24, 22, 19], 700, { lh: 1.2 }),
-      normal_title_color: C.ink, hover_title_color: C.roseDeep, active_title_color: C.ink,
+      ...L.typo('title_typography', o.sizes || [20, 20, 18], 600, { lh: 1.3, ls: 0.02, family: L.HFONT }),
+      normal_title_color: C.ink, hover_title_color: C.espMid, active_title_color: C.ink,
       icon_size: px(16), icon_spacing: px(20), normal_icon_color: C.rose, hover_icon_color: C.rose, active_icon_color: C.rose,
       content_border_border: 'solid', content_border_width: box(0, 0, 1, 0), content_border_color: C.rule, content_border_radius: box(0),
       content_padding: box(0, 48, 26, 0), content_padding_mobile: box(0, 0, 22, 0),
@@ -151,9 +143,8 @@ const emailDetail = () => detail('Email', text(`<a href="mailto:${L.EMAIL}">${L.
 function contactForm(rows = 4) {
   return container({
     content_width: 'full', flex_direction: 'column', padding: box(40), padding_mobile: box(24),
-    background_background: 'classic', background_color: '#FFFFFF',
-    border_border: 'solid', border_width: box(1), border_color: 'rgba(196,160,141,0.35)',
-    custom_css: 'selector { box-shadow: 0 10px 30px rgba(42,27,22,0.05); }',
+    background_background: 'classic', background_color: C.ivory,
+    border_border: 'solid', border_width: box(1), border_color: C.hair,
   }, [
     widget('form', {
       form_name: 'Free Case Evaluation',
@@ -170,18 +161,18 @@ function contactForm(rows = 4) {
       submit_actions: ['email'], email_subject: 'New free case evaluation request – Cabrera Torres Law Firm',
       success_message: 'Thank you, we’ll be in touch shortly.',
       column_gap: px(16), row_gap: px(16),
-      field_text_color: C.ink, field_background_color: C.ivory, field_border_color: 'rgba(74,54,47,0.15)', field_border_width: box(1), field_border_radius: box(0),
-      ...L.typo('field_typography', 14, 300, { lh: 1.5 }),
+      field_text_color: C.ink, field_background_color: C.light, field_border_color: C.line, field_border_width: box(1), field_border_radius: box(0),
+      ...L.typo('field_typography', 16, 400, { lh: 1.5 }),
       label_color: C.inkMuted, ...L.typo('label_typography', 13, 300, { lh: 1.5 }),
-      button_background_color: C.rose, button_text_color: C.wood, button_background_hover_color: C.roseHover, button_hover_color: C.ivory,
-      button_border_radius: box(0), ...L.typo('button_typography', 13, 600, { lh: 1.2, ls: 0.2, transform: 'uppercase' }), button_text_padding: box(18, 34, 18, 34),
+      button_background_color: C.rose, button_text_color: C.wood, button_background_hover_color: C.espMid, button_hover_color: C.ivory,
+      button_border_radius: box(0), ...L.typo('button_typography', 14, 700, { lh: 1.2, ls: 0.2, transform: 'uppercase' }), button_text_padding: box(18, 32, 18, 32),
       success_message_color: C.roseDeep,
       custom_css: `selector .elementor-field-textual { padding: 14px 16px; min-height: 0; }
-selector .elementor-field-textual::placeholder { color: #A69D8D; opacity: 1; }
+selector .elementor-field-textual::placeholder { color: #9C8B80; opacity: 1; }
 selector .elementor-field-textual:focus { border-color: ${C.rose} !important; box-shadow: none; }
 selector .elementor-field-type-acceptance .elementor-field-subgroup label { color: ${C.inkMuted}; font-size: 13px; line-height: 1.5; }
 selector .elementor-field-type-acceptance input { accent-color: ${C.rose}; }
-selector .elementor-button { transition: background-color .2s; }`,
+selector .elementor-button { transition: background-color .15s, color .15s; }`,
     }),
   ]);
 }
@@ -193,11 +184,11 @@ const articleUrl = (a) => `/${a.slug}/`;
 const blogCard = (m, a, o = {}) => container({
   content_width: 'full', flex_direction: 'column', flex_gap: gap(o.gap ?? 16), padding: box(0),
   html_tag: 'a', link: L.link(articleUrl(a)),
-  custom_css: 'selector:hover h3 { color: #4A362F !important; }\nselector h3 { transition: color .2s; }',
+  custom_css: 'selector:hover h3 { color: #4A362F !important; }\nselector h3 { transition: color .15s; }',
 }, [
   image(m[ART_IMG[a.src]], { settings: { custom_css: 'selector img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; display: block; }' } }),
   eyebrow(o.meta ? `${a.tag} · ${a.read}` : a.tag, C.roseDeep, 'left', { size: 12, ls: 0.24 }),
-  H3(a.title, C.ink, o.hSizes || [24, 22, 22], { lh: 1.15, settings: { _margin: box(-6, 0, 0, 0) } }),
+  H3(a.title, C.ink, o.hSizes || [20, 20, 20], { lh: 1.25, ls: 0.02, settings: { _margin: box(-6, 0, 0, 0) } }),
   text(a.excerpt, { color: o.pColor || C.inkSoft, size: 15 }),
 ]);
 

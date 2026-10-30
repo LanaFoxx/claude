@@ -12,14 +12,14 @@ module.exports = {
     focus: 'Cabrera Torres Law Firm reviews',
   },
   build: (m) => [
-    P.pageHero(m, heroes.testimonials, { photo: m.jenDress }),
-    band(C.blush, [
+    P.pageHero(m, heroes.testimonials, { photo: m.jenProfile }),
+    band(C.ivory, [
       grid(reviews.map((r) => glass([
         text('★★★★★', { color: C.rose, size: 26, ls: 0.12, lh: 1 }),
-        text(r.text, { color: C.ink, size: 21, weight: 400, style: 'italic', family: L.QFONT, lh: 1.5, settings: { _flex_size: 'grow' } }),
-        text(`<span style="display:inline-block;width:28px;height:1px;background:${C.rose};vertical-align:middle;margin-right:14px"></span>${r.name} · Google`, { color: C.roseDeep, size: 13, weight: 600, ls: 0.2, transform: 'uppercase', lh: 1.4 }),
+        text(r.text, { color: C.ink, size: 18, lh: 1.75, settings: { _flex_size: 'grow' } }),
+        text(`<span style="display:inline-block;width:28px;height:1px;background:${C.rose};vertical-align:middle;margin-right:14px"></span>${r.name} · Google`, { color: C.espMid, size: 13, weight: 700, ls: 0.2, transform: 'uppercase', lh: 1.4 }),
       ], { gap: 20, pad: L.box(40, 36, 40, 36) })), { cols: [3, 2, 1], gap: 28 }),
-    ], { pad: [100, 110], pattern: m.pattern }),
+    ], { pad: [100, 100], width: 1320 }),
     P.ctaBand(),
   ],
 };

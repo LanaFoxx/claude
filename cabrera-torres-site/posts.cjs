@@ -15,17 +15,17 @@ const SEO = {
 
 const build = (a) => (m) => [
   P.pageHero(m, { kicker: `${a.tag} · ${a.read}`, title1: a.title, title2: '', intro: a.excerpt }),
-  band(C.blush, [
-    button('← Resources', L.URL.blog, 'underline', { settings: { button_text_color: C.roseDeep, border_width: box(0), text_padding: box(0) } }),
+  band(C.ivory, [
+    button('← Resources', L.URL.blog, 'underline'),
     image(m[P.ART_IMG[a.src]], { settings: { _margin: box(28, 0, 40, 0), custom_css: 'selector img { width: 100%; aspect-ratio: 2 / 1; object-fit: cover; display: block; }' } }),
     ...a.body.map((p) => text(p, { color: C.inkSoft, size: 18, lh: 1.7, settings: { _margin: box(0, 0, 22, 0) } })),
     container({
       content_width: 'full', flex_direction: 'column', flex_gap: gap(8), flex_align_items: 'flex-start', padding: box(32), margin: box(26, 0, 0, 0),
-      background_background: 'classic', background_color: C.ivory, border_border: 'solid', border_width: box(0, 0, 0, 3), border_color: C.rose,
+      background_background: 'classic', background_color: C.light, border_border: 'solid', border_width: box(1), border_color: C.hair,
     }, [
-      heading(articleCta.h, 'h2', 22, C.ink, 'left', { lh: 1.25, ls: 0 }),
+      heading(articleCta.h, 'h2', 22, C.ink, 'left', { lh: 1.25 }),
       text(articleCta.p, { settings: { _margin: box(0, 0, 10, 0) } }),
-      button('Free Case Evaluation', L.URL.contact, 'gold', { pad: box(14, 26, 14, 26) }),
+      button('Free Consultation  →', L.URL.contact, 'gold', { dark: false, pad: box(16, 28, 16, 28) }),
     ]),
   ], { pad: [80, 110], width: 716 }),
   P.ctaBand(),
