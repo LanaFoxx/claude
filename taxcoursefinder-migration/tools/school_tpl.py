@@ -45,6 +45,7 @@ b, _n = re.subn(r'<div style="display:grid;grid-template-columns:220px minmax\(0
 _a = b.find('<section id="faq"')  # no School FAQ section on profiles
 if _a >= 0: b = b[:_a] + b[b.index('</section>', _a) + len('</section>'):]
 b = re.sub(r'\s*<a href="#faq"[^>]*>FAQ</a>', '', b)  # School FAQ section removed: drop its menu tab too
+b = re.sub('<div style="border:1px solid #D7DFE2;border-radius:14px;overflow:hidden">\\s*<div[^>]*><div[^>]*>Help with course material</div>.*?<div[^>]*>Instructors</div><div[^>]*>\\{\\{ instructors \\}\\}</div></div>\\s*</div>\\s*', '', b, flags=re.S)  # no course-help / billing-help / instructors box
 b = brand.brand(b)  # Cobalt / Coral brand
 open('/home/user/claude/tcf-directory-manager/templates/school-template.html', 'w').write(b)
 print('template', len(b), 'outbound links:', len(re.findall(r'rel="nofollow sponsored', b)))

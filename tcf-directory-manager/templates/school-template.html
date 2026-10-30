@@ -91,12 +91,7 @@
         <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px">
           <sc-for list="{{ supportChannels }}" as="s" hint-placeholder-count="3"><div style="border:1px solid #D9D4CC;border-radius:14px;padding:22px;display:flex;flex-direction:column;gap:8px"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font:700 15px Manrope,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#4B4F54">{{ s.channel }}</span><span style="font:700 13px Manrope,sans-serif;letter-spacing:.08em;text-transform:uppercase;border-radius:999px;padding:3px 9px;background:{{ s.bg }};color:{{ s.color }}">{{ s.status }}</span></div><div style="font:600 19px Manrope,sans-serif;word-break:break-word">{{ s.value }}</div><div style="font-size:16px;line-height:1.45;color:#4B4F54">{{ s.hours }}</div></div></sc-for>
         </div>
-        <div style="border:1px solid #D9D4CC;border-radius:14px;overflow:hidden">
-          <div style="display:grid;grid-template-columns:220px minmax(0,1fr);gap:24px;padding:20px 26px;border-bottom:1px solid #D9D4CC"><div style="font:700 17px Manrope,sans-serif">Help with course material</div><div style="font-size:19px;line-height:1.55;color:#23272A">{{ instructionalHelp }}</div></div>
-          <div style="display:grid;grid-template-columns:220px minmax(0,1fr);gap:24px;padding:20px 26px;border-bottom:1px solid #D9D4CC"><div style="font:700 17px Manrope,sans-serif">Login &amp; billing help</div><div style="font-size:19px;line-height:1.55;color:#23272A">{{ accountHelp }}</div></div>
-          <div style="display:grid;grid-template-columns:220px minmax(0,1fr);gap:24px;padding:20px 26px"><div style="font:700 17px Manrope,sans-serif">Instructors</div><div style="font-size:19px;line-height:1.55;color:#23272A">{{ instructors }}</div></div>
-        </div>
-      </section>
+        </section>
 
       <section id="credits" style="display:flex;flex-direction:column;gap:24px;scroll-margin-top:190px">
         <div style="display:flex;flex-direction:column;gap:10px"><div style="display:flex;align-items:center;gap:12px;font:700 17px Manrope,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#FF6B57"><span style="width:28px;height:2px;background:#23272A"></span>Question 5</div><h2 style="margin:0;font:200 44px/1.12 Manrope,sans-serif">How do I receive my credits?</h2></div>
