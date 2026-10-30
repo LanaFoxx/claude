@@ -41,5 +41,6 @@ b = re.sub(r'<span (style="[^"]*")>\{\{ ([\w.]*couponLabel) \}\}</span>', r'<spa
 # sticky offsets follow the compact header (site.css --tcf-head)
 b = b.replace('top:110px', 'top:var(--tcf-head,110px)').replace('top:184px', 'top:calc(var(--tcf-head,110px) + 74px)')
 assert '.dc.html' not in b and '@@MEDIA' not in b
+b = brand.brand(b)  # Cobalt / Coral brand
 open('/home/user/claude/tcf-directory-manager/templates/school-template.html', 'w').write(b)
 print('template', len(b), 'outbound links:', len(re.findall(r'rel="nofollow sponsored', b)))

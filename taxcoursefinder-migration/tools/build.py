@@ -37,16 +37,17 @@ def clean(s):
 
 
 TABLE_CSS = ("<style>"
-  ".tcf-table{border:1px solid #E3E9EB;border-radius:14px;overflow:hidden;background:#fff;font-family:'DM Sans',Manrope,sans-serif}"
+  ".tcf-table{font-family:'DM Sans',Manrope,sans-serif}"
   ".tcf-thead,.tcf-trow{display:grid;grid-template-columns:minmax(240px,2.4fr) minmax(130px,1fr) minmax(130px,1.15fr) minmax(140px,1.15fr) 160px;gap:20px;align-items:center}"
-  ".tcf-thead{background:#0B2E40;color:rgba(255,255,255,.88);font:700 12px 'DM Sans',Manrope,sans-serif;letter-spacing:.1em;text-transform:uppercase;padding:16px 28px}"
-  ".tcf-trow{padding:18px 28px;border-top:1px solid #E3E9EB;background:#fff;transition:background .15s}"
-  ".tcf-tbody>.tcf-trow:first-child{border-top:0}.tcf-tbody>.tcf-trow:nth-child(even){background:#F7F9FA}.tcf-tbody>.tcf-trow:hover{background:#F3F5E6}"
+  ".tcf-thead{background:#1A3DFF;color:#fff;border-radius:12px;font:700 13px 'DM Sans',Manrope,sans-serif;letter-spacing:.12em;text-transform:uppercase;padding:16px 28px}"
+  ".tcf-tbody{display:flex;flex-direction:column;gap:12px;margin-top:12px}"
+  ".tcf-trow{padding:18px 28px;border:1px solid #D6DEF5;border-radius:14px;background:#fff;transition:border-color .15s,box-shadow .15s}"
+  ".tcf-tbody>.tcf-trow:hover{border-color:#1A3DFF;box-shadow:0 10px 30px -14px rgba(11,21,64,.14)}"
   ".tcf-trow [data-label=Price]>div:first-child{font-size:18px!important}.tcf-trow [data-label=Price]>div+div{font-size:10.5px!important;letter-spacing:.08em!important;white-space:nowrap;margin-top:3px!important}.tcf-thead>span:last-child,.tcf-cell-offer{justify-self:end;text-align:right}"
   ".tcf-trow [data-label]::before{display:none}"
-  ".tcf-sortbar{display:none}.tcf-thead button:hover{color:#fff!important}"
-  "@media (max-width:1100px){.tcf-thead{display:none}.tcf-sortbar{display:flex;justify-content:flex-end;padding:12px 18px;background:#0B2E40}"
-  ".tcf-sortbar label{display:flex;align-items:center;gap:10px;font:700 12px 'DM Sans',Manrope,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.85)}"
+  ".tcf-sortbar{display:none}.tcf-thead button:hover{color:#fff!important;text-decoration:underline}"
+  "@media (max-width:1100px){.tcf-thead{display:none}.tcf-sortbar{display:flex;justify-content:flex-end;padding:12px 18px;background:#1A3DFF;border-radius:12px}.tcf-tbody{margin-top:12px}"
+  ".tcf-sortbar label{display:flex;align-items:center;gap:10px;font:700 13px 'DM Sans',Manrope,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#fff}"
   ".tcf-sortbar select{font:600 15px 'DM Sans',Manrope,sans-serif;letter-spacing:0;text-transform:none;color:#0B2E40;background:#fff;border:0;border-radius:999px;padding:7px 12px}"
   ".tcf-trow{grid-template-columns:repeat(3,minmax(0,1fr)) auto;gap:14px 18px;padding:20px 22px;align-items:start}.tcf-trow .tcf-cell-offer{align-self:center}"
   ".tcf-trow .tcf-cell-provider{grid-column:1 / -1}"
@@ -65,7 +66,7 @@ def comparison_table(body):
     chunk = body[i:end]
     logo_start = '<div style="width:56px;height:56px;border:1px solid #E3E9EB;border-radius:8px;background:#fff;display:grid;place-items:center;overflow:hidden">'
     a = chunk.index(logo_start); logo = chunk[a:chunk.index('</sc-if></div>', a) + len('</sc-if></div>')]
-    logo = logo.replace(logo_start, '<div style="flex:none;width:44px;height:44px;border:1px solid #E3E9EB;border-radius:10px;background:#fff;display:grid;place-items:center;overflow:hidden">', 1).replace('width:26px;height:26px', 'width:22px;height:22px')
+    logo = logo.replace(logo_start, '<div style="flex:none;width:60px;height:60px;border:1px solid #E3E9EB;border-radius:12px;background:#F4F6F7;display:grid;place-items:center;overflow:hidden">', 1).replace('width:26px;height:26px', 'width:26px;height:26px')
     pstart = '<div style="min-width:0"><div style="font:{{ p.priceWeight }} 20px/1.2 Manrope,sans-serif'
     b = chunk.index(pstart); price = chunk[b:chunk.index('</sc-if></div>', b) + len('</sc-if></div>')]
     price = price.replace('<div style="min-width:0">', '<div style="min-width:0" data-label="Price">', 1).replace('Manrope,sans-serif', "'DM Sans',Manrope,sans-serif")

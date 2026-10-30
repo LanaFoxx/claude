@@ -67,5 +67,6 @@ tag('<div style="max-width:1200px;margin:0 auto;display:grid;grid-template-colum
 tag('<div style="position:sticky;top:24px;display:flex;flex-direction:column;gap:4px">', 'tcfp-nav')
 
 assert '.dc.html' not in b and '@@MEDIA' not in b and 'image-slot' not in b
+b = brand.brand(b)  # Cobalt / Coral brand
 open('/home/user/claude/tcf-directory-manager/templates/profile-template.html', 'w').write(b)
 print('template', len(b))

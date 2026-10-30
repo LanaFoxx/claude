@@ -1,6 +1,7 @@
 import sys, json, re, glob, random, os
 sys.path.insert(0, '/tmp/claude-0/-home-user-claude/01e6a9c1-e9a5-5bce-a8b9-5f9047196d9c/scratchpad/tools')
 from wp import *
+import brand
 s = session()
 B = S + '/build'
 STEP = sys.argv[1]
@@ -9,8 +10,8 @@ UP = BASE + '/wp-content/uploads/'
 MEDIA = {
  'check-green.png': (124, UP + '2026/09/check-green.png'),
  'check-white.png': (123, UP + '2026/09/check-white.png'),
- 'logo-teal.png': (801, 'https://taxcoursefinder.com/wp-content/uploads/2026/10/california-tax-course-finder-logo-hd.png'),
- 'logo-white-teal.png': (802, 'https://taxcoursefinder.com/wp-content/uploads/2026/10/california-tax-course-finder-logo-white-hd.png'),
+ 'logo-teal.png': (805, 'https://taxcoursefinder.com/wp-content/uploads/2026/10/california-tax-course-finder-logo-hd-cobalt.png'),
+ 'logo-white-teal.png': (806, 'https://taxcoursefinder.com/wp-content/uploads/2026/10/california-tax-course-finder-logo-white-hd-cobalt.png'),
  'photos/01-ctec-60-hour-learner.webp': (489, UP + '2026/09/01-ctec-60-hour-learner.webp'),
  'photos/02-ctec-20-hour-tax-review.webp': (490, UP + '2026/09/02-ctec-20-hour-tax-review.webp'),
  'photos/03-online-tax-course-desktop.webp': (491, UP + '2026/09/03-online-tax-course-desktop.webp'),
@@ -100,7 +101,7 @@ def page_html(pg):
     if not pg['runtime']:
         w = re.sub(r'<template id="[^"]+-tpl">.*?</template>', '', w, flags=re.S)
     w = w.replace('@@SSR@@', lazy(pg['ssr']))
-    return add_links(pg['slug'], page_alts(pg['slug'], fix_media(w)))
+    return brand.brand(add_links(pg['slug'], page_alts(pg['slug'], fix_media(w))))
 
 if STEP == 'trash':
     old = [608, 609, 610, 611, 507, 494, 165, 126, 127, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 3]
@@ -154,11 +155,12 @@ if STEP == 'content':
 
 if STEP == 'hf':
     hf = json.load(open(B + '/hf.json'))
-    css = open(B + '/site.css').read() + json.load(open(B + '/hover.json'))['hover_css']
+    hover = json.load(open(B + '/hover.json'))['hover_css'].replace('#7E9330', brand.COBALT_HOVER)  # darker cobalt on hover
+    css = open(B + '/site.css').read() + hover + brand.CSS
     css = re.sub(r'\s*\n\s*', '', css)
     rt = open(B + '/tcf-runtime.js').read()
     head = ('<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
-            '<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Manrope:wght@300;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=Source+Serif+4:opsz,wght@8..60,200;8..60,300;8..60,400&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">'
+            '<link href="' + brand.FONTS_URL + '" rel="stylesheet">'
             '<style id="tcf-site-css">' + css + '.tcf-hidden-form{display:none!important}</style><script>' + rt + '</script>')
     hdr = fix_media(head + hf['header'])
     hdr = hdr.replace('max-width:1200px;margin:0 auto;padding:0 56px;height:110px', 'max-width:none;margin:0;padding:0 48px;height:110px', 1)  # full-width header: logo left, menu right
@@ -178,6 +180,7 @@ if STEP == 'hf':
     hdr = hdr.replace('style="height:80px;width:auto;display:block"', 'width="188" height="68" style="height:68px;width:auto;display:block"', 1)
     hdr = hdr.replace('<img ', '<img fetchpriority="high" width="193" height="80" ', 1)
     ftr = fix_media(hf['footer']).replace('style="height:58px;width:auto;display:block"', 'style="height:68px;width:auto;display:block"', 1).replace("<img ", "<img width=\"188\" height=\"68\" ", 1)
+    hdr, ftr = brand.brand(hdr), brand.brand(ftr)
     for tid, html in ((40, hdr), (41, ftr)):
         data = el_data(html)
         api(s, 'POST', 'wp/v2/elementor_library/%d' % tid, json={'meta': {'_elementor_data': json.dumps(data, ensure_ascii=False)}})
