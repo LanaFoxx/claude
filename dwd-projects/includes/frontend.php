@@ -142,7 +142,7 @@ add_action( 'wp_head', function () {
  */
 add_action( 'wp_head', function () {
 	$e = '.elementor-element-a9c373f .elementor-heading-title,.elementor-element-dw0008q .elementor-heading-title,.elementor-element-dw0005j .elementor-heading-title,.elementor-element-3b3802c .elementor-heading-title,.elementor-element-20d4377 .elementor-heading-title';
-	echo '<style id="dwdp-eyebrow-pill">' . $e . '{display:inline-block!important;border:1px solid rgba(255,255,255,0.22)!important;border-radius:100px!important;padding:9px 18px!important;font:500 15.5px/1.5 Urbanist,sans-serif!important;color:#C9DAE8!important;letter-spacing:.02em!important;text-transform:none!important}'
+	echo '<style id="dwdp-eyebrow-pill">' . $e . '{display:inline-block!important;border:1px solid rgba(255,255,255,0.22)!important;border-radius:100px!important;padding:9px 18px!important;font:500 15.5px/1.5 Urbanist,sans-serif!important;color:#C9DAE8!important;letter-spacing:.02em!important;text-transform:capitalize!important}.dw-badge,.dww-eyebrow{text-transform:capitalize!important}'
 		// Same height on every page (the blog's): pull up the eyebrows that sit lower.
 		. '@media(min-width:1025px){.elementor-element-a9c373f{margin-top:-18px!important}.elementor-element-dw0008q{margin-top:-20px!important}.elementor-element-3b3802c{margin-top:-28px!important}}</style>' . "\n";
 }, 99 );

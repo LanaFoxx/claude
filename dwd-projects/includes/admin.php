@@ -79,9 +79,9 @@ function dwdp_box_capture( $post ) {
 			<button type="button" class="button button-primary button-hero" id="dwdp-capture">Capture screenshots</button>
 		</div>
 		<p class="dwdp-video-field" style="margin:14px 0 6px">
-			<label for="dwdp-video"><strong>Video walkthrough</strong></label><br>
-			<input type="url" id="dwdp-video" name="dwdp[video]" value="<?php echo esc_attr( dwdp_get( $post->ID, 'video' ) ); ?>" placeholder="https://www.loom.com/share/..." class="regular-text">
-			<span class="description">Loom or YouTube link. It plays at the top of the project page.</span>
+			<label for="dwdp-video"><strong>YouTube video walkthrough</strong></label><br>
+			<input type="url" id="dwdp-video" name="dwdp[video]" value="<?php echo esc_attr( dwdp_get( $post->ID, 'video' ) ); ?>" placeholder="https://www.youtube.com/watch?v=..." class="regular-text">
+			<span class="description">Paste the YouTube link (from Share or the address bar). It plays at the top of the project page. Leave empty for no video.</span>
 		</p>
 		<p class="description">Paste the live site address and click <em>Capture screenshots</em>. The plugin takes a full-page desktop screenshot and a phone screenshot, then finds each section of the page. It takes about a minute.</p>
 		<ol class="dwdp-progress" id="dwdp-progress" hidden></ol>
