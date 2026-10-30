@@ -402,6 +402,9 @@ for name, (slug, url, title) in PAGES.items():
     body = clean(d['body'])
     body = body.replace('style="min-width:1100px"', 'class="tcf-screen"', 1)
     body = seo_tweaks(name, body)
+    if slug == 'provider-application':  # course-comparison laptop photo behind the verify form hero
+        assert body.count('@@MEDIA:photos/03-online-tax-course-desktop.webp@@" alt="" class="tcf-hero-bg"') == 1, 'verify hero photo'
+        body = body.replace('@@MEDIA:photos/03-online-tax-course-desktop.webp@@" alt="" class="tcf-hero-bg"', '@@MEDIA:photos/ctec-course-comparison-laptop.webp@@" alt="" class="tcf-hero-bg"', 1)
     if slug == 'home':  # same hero photo as the 60-hour page (after seo_tweaks, which sets up the hero image)
         assert body.count('@@MEDIA:photos/05-tax-study-workspace-titled.png@@') == 1, 'home hero photo'
         body = body.replace('@@MEDIA:photos/05-tax-study-workspace-titled.png@@', '@@MEDIA:photos/01-ctec-60-hour-learner.webp@@', 1)
