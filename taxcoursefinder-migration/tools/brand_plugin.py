@@ -7,11 +7,16 @@ P = '/home/user/claude/tcf-directory-manager/'
 FILES = {'school-template.html': 'templates', 'profile-template.html': 'templates', 'school.js': 'assets', 'profile.js': 'assets', 'class-school.php': 'includes'}
 for f, d in FILES.items():
     s = open(S + '/orig/' + f).read()
-    if f == 'school.js':  # hero course buttons sit on the light hero
+    if f == 'school.js' and not brand.COLORS_ONLY:  # hero course buttons sit on the light hero
         for k, act in (('ce', '!qe'), ('qe', 'qe')):
             old = "%sColor: '#fff', %sBorder: %s ? '#95AB3B' : 'rgba(255,255,255,.5)'" % (k, k, act)
             assert old in s, old
             s = s.replace(old, "%sColor: %s ? '#fff' : '#0B2E40', %sBorder: %s ? '#95AB3B' : '#D7DFE2'" % (k, act, k, act))
+    if f == 'school.js' and brand.COLORS_ONLY:  # dark photo hero: selected course button is off-white with charcoal text
+        for k, act in (('ce', '!qe'), ('qe', 'qe')):
+            old = "%sBg: %s ? '#95AB3B' : 'transparent', %sColor: '#fff', %sBorder: %s ? '#95AB3B' :" % (k, act, k, k, act)
+            assert old in s, old
+            s = s.replace(old, "%sBg: %s ? '#FAF7F2' : 'transparent', %sColor: %s ? '#23272A' : '#fff', %sBorder: %s ? '#FAF7F2' :" % (k, act, k, act, k, act))
     if f.endswith('.html'):
         s = brand.brand(s)
     else:

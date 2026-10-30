@@ -175,6 +175,8 @@ def structure(h):
             ctx = 'skip'  # photo, navy overlay and sheen behind the old hero
         else:
             kind = _is_hero(st, h[i:])
+            if kind and COLORS_ONLY:
+                kind, ctx = None, 'dark'  # keep the photo hero; its colours follow the dark-band rules
             if kind:
                 ctx = 'hero'
                 if kind == 'photo':
@@ -203,8 +205,8 @@ def structure(h):
                 if STUDIO and 'background:#FAF7F2' in st and 'border-radius:999px' in st:
                     attrs = re.sub(r'data-hv="\d+"', 'data-hv="16"', attrs)
         heading = any(t in ('h1', 'h2') for t, _, _ in stack)
-        if ctx not in ('skip', 'dark') and heading and tag == 'span' and (OLIVE_COLOR.search(st) or 'color:' + T['heading_accent'] in st):
-            st = OLIVE_COLOR.sub('color:' + T['heading_accent'], st)  # accent word in a headline
+        if ctx != 'skip' and (ctx != 'dark' or COLORS_ONLY) and heading and tag == 'span' and (OLIVE_COLOR.search(st) or 'color:' + T['heading_accent'] in st):
+            st = OLIVE_COLOR.sub('color:' + (T['accent_dark'] if ctx == 'dark' else T['heading_accent']), st)  # accent word in a headline
             if T['accent_italic'] and not COLORS_ONLY:
                 attrs = _add_class(attrs, 'tcf-accent')
             if T.get('display_sans'):
@@ -282,6 +284,8 @@ def course_cards(h):
 
 def scripts(h):
     """Colour values computed in component code (home course choice, filter chips, mobile course cards)."""
+    if COLORS_ONLY:  # heroes keep their dark photo, so the original values still fit
+        return h.replace("'0 20px 50px rgba(0,0,0,.35)'", "'0 20px 50px %s'" % T['shadow_float'])
     act, on_act = T['action'], T['on_action']
     h = h.replace("const on = { bg: '#fff', color: '#0B2E40' }, off = { bg: 'transparent', color: '#fff' }",
                   "const on = { bg: '%s', color: '%s' }, off = { bg: 'transparent', color: '%s' }" % (act, on_act, INK))
@@ -340,6 +344,8 @@ def fonts(h):
 
 
 def palette(h):
+    if COLORS_ONLY:  # photo overlays: navy at .5+ alpha becomes charcoal
+        h = re.sub(r'rgba\(11,46,64,(\.[5-9]\d*)\)', r'rgba(35,39,42,\1)', h)
     for old, new in COLORS.items():
         h = re.sub(re.escape(old) + r'(?![0-9A-Fa-f])', new, h, flags=re.I)
     for old, new in RGBA.items():
@@ -348,6 +354,8 @@ def palette(h):
 
 
 def tidy(h):
+    if COLORS_ONLY:
+        h = h.replace('height:6px;background:linear-gradient(90deg,#95AB3B,#7E9330)', 'height:6px;background:%s' % CORAL)
     h = re.sub(r'<div style="height:6px;background:linear-gradient\(90deg,#95AB3B,#7E9330\)"></div>', '', h)  # olive stripe under the old photo heroes
     h = h.replace('Verify and list your school here →<svg', 'Verify and list your school here<svg')  # arrows were doubled (text + icon)
     h = re.sub(r'(Verify on CTEC\.org ↗)<svg[^>]*>.*?</svg>', r'\1', h, flags=re.S)

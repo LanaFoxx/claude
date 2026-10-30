@@ -16,7 +16,7 @@ MEDIA = {
  'photos/02-ctec-20-hour-tax-review.webp': (490, UP + '2026/09/02-ctec-20-hour-tax-review.webp'),
  'photos/03-online-tax-course-desktop.webp': (491, UP + '2026/09/03-online-tax-course-desktop.webp'),
  'photos/04-tax-forms-calculator-closeup.webp': (492, UP + '2026/09/04-tax-forms-calculator-closeup.webp'),
- 'photos/05-tax-study-workspace-titled.png': (691, UP + '2026/10/tax-study-workspace-federal-tax-law.webp'),
+ 'photos/05-tax-study-workspace-titled.png': (820, 'https://taxcoursefinder.com/wp-content/uploads/2026/10/tax-study-workspace-federal-tax-law-2026.webp'),  # title redrawn in the book's perspective
  'photos/ctec-org-desktop.webp': (621, UP + '2026/09/ctec-org-desktop.webp'),
  'photos/ctec-course-comparison-laptop.webp': (622, UP + '2026/09/ctec-course-comparison-laptop.webp'),
  'photos/comparing-ctec-courses.webp': (623, UP + '2026/09/comparing-ctec-courses.webp'),
