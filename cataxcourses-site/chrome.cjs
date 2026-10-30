@@ -147,7 +147,7 @@ body:has(.ctc-header){background:#fff;margin:0;color:${C.navy};font-family:${BOD
 .ctc-post-body h2,.ctc-post-body h3,.ctc-post-body h4{font-family:Outfit,sans-serif;color:${C.navy};font-weight:700;line-height:1.2;margin:36px 0 14px}.ctc-post-body h2{font-size:32px}.ctc-post-body h3{font-size:26px}
 .ctc-post-body img{max-width:100%;height:auto;border-radius:12px;margin:8px 0 22px}.ctc-post-body figure{margin:0 0 22px}.ctc-post-body ul,.ctc-post-body ol{margin:0 0 22px;padding-left:24px}.ctc-post-body li{margin:0 0 8px}
 .ctc-post-body strong{color:${C.navy}}
-/* Thank-you page (rendered by wp/preview-snippet.php around the Moodle plugin's [moodleauth] output) */
+/* Thank-you page (rendered by wp/preview-snippet.php around the Moodle plugin's enrollment shortcode output; never write the shortcode itself here: this CSS is in an Elementor widget and would run it on every page) */
 .ctc-thankyou{font-family:Manrope,sans-serif}.ctc-ty-inner{max-width:1392px;margin:0 auto;padding:0 24px}
 .ctc-ty-hero{background-color:${C.navy};padding:64px 0 56px;color:#fff}
 .ctc-ty-pill{display:inline-block;background:${C.navy2};color:${C.gold};border:1px solid ${C.navyLine};border-radius:999px;padding:6px 12px;font-size:16px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
