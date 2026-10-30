@@ -51,6 +51,19 @@ THEMES = {
              '.tcf-header nav.tcf-nav>a.tcf-nav-cta{color:#FAF7F2!important}'
              '.tcf-header nav.tcf-nav>a.tcf-nav-cta:hover{background:#15181A!important;border-color:#15181A!important}'
              '.tcf-thead{color:#FAF7F2!important}'
+             # school profile section menu: coral bar, sticky under the header on every screen size
+             '.tcfd-subnav-bar{background:#FF6B57!important;border-bottom:0!important;position:sticky!important;top:var(--tcf-head,82px)!important;z-index:20!important;box-shadow:0 6px 16px -10px rgba(0,0,0,.35)}'
+             '.tcf-scope .tcfd-subnav-bar.tcfd-subnav-bar.tcfd-subnav-bar[class]{position:sticky!important;top:var(--tcf-head,82px)!important}'  # beats the phone rule that turns sticky off
+             'body.admin-bar .tcf-scope .tcfd-subnav-bar.tcfd-subnav-bar.tcfd-subnav-bar[class]{top:calc(var(--tcf-head,82px) + 32px)!important}'
+             '@media (max-width:782px){body.admin-bar .tcf-scope .tcfd-subnav-bar.tcfd-subnav-bar.tcfd-subnav-bar[class]{top:calc(var(--tcf-head,82px) + 46px)!important}}'
+             '.tcfd-subnav a{color:#fff!important;font-weight:700!important}'
+             '.tcfd-subnav a:hover{background:rgba(255,255,255,.18)!important;color:#fff!important}'
+             # full-height faint white dividers between the menu items
+             '.tcfd-subnav{gap:0!important;align-items:stretch!important}.tcfd-subnav a{display:flex!important;align-items:center;border-radius:0!important;padding:0 20px!important}'
+             '.tcfd-subnav a+a{border-left:1px solid rgba(255,255,255,.35)}'
+             '@media (max-width:760px){.tcfd-subnav a{padding:0 14px!important}}'
+             '@media (max-width:760px){.tcfd-subnav{overflow-x:auto;padding:0 10px!important;height:50px!important;white-space:nowrap;scrollbar-width:none;-webkit-overflow-scrolling:touch}'
+             '.tcfd-subnav::-webkit-scrollbar{display:none}.tcfd-subnav a{flex:none;padding:6px 10px!important;font-size:15px!important}}'
              # smaller footer text
              '.tcf-footer a[style*="font-size:19px"],.tcf-footer p[style*="font-size:19px"]{font-size:16px!important}'
              '.tcf-footer [style*="text-transform:uppercase"]{font-size:14px!important}'

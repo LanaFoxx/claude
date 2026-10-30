@@ -31,7 +31,7 @@
       var dec = TCF.decorate([p], qe)[0] || TCF.decorate([p], !qe)[0] || {};
       var shortName = p.name.replace(/\s*\(.*\)\s*/, '').split(' dba ')[0];
       var F = function (k) { return p.features && p.features[k]; };
-      var fchip = function (label, on) { return { label: on ? label : label + ' · not confirmed', bg: on ? '#FFF1EE' : '#fff', border: on ? '#D9D4CC' : '#D9D4CC', color: on ? '#23272A' : '#4B4F54' }; };
+      var fchip = function (label, on) { return { on: !!on, label: on ? label : label + ' · not confirmed', bg: on ? '#FFF1EE' : '#fff', border: on ? '#D9D4CC' : '#D9D4CC', color: on ? '#23272A' : '#4B4F54' }; };
       var fm = C.formats || [];
       var formats = fm.length
         ? Object.keys(L.formats).map(function (k) { return fchip(L.formats[k], fm.indexOf(k) >= 0); })
@@ -81,8 +81,8 @@
         edition: or(C.edition), hours: (C.hours_breakdown && C.hours_breakdown.length) ? C.hours_breakdown : OFFICIAL[course], syllabus: or(C.syllabus),
         beginnerNote: C.beginner_friendly === 'yes' ? 'Beginner-friendly: written for people new to tax preparation.' : (C.beginner_friendly === 'no' ? 'Assumes prior tax preparation knowledge.' : ''),
         included: (C.included && C.included.length) ? C.included : [NC], extras: extras, refund: refund || NC, refundUrl: C.refund_url || p.website,
-        formats: formats, pace: or(pace), access: access || NC, afterCompletion: has(C.after_completion) ? L.after[C.after_completion] + '.' : NC, liveSessions: or(C.live_sessions), accessibility: acc || NC,
-        supportChannels: supportChannels, instructionalHelp: or(S.instructional_help), accountHelp: or(S.account_help), instructors: or(S.instructors),
+        formats: formats.filter(function (x) { return x.on; }), noFormats: !formats.some(function (x) { return x.on; }), pace: or(pace), access: access || NC, afterCompletion: has(C.after_completion) ? L.after[C.after_completion] + '.' : NC, liveSessions: or(C.live_sessions), accessibility: acc || NC,
+        supportChannels: supportChannels.filter(function (c) { return c.value !== NC; }), noSupport: !supportChannels.some(function (c) { return c.value !== NC; }), instructionalHelp: or(S.instructional_help), accountHelp: or(S.account_help), instructors: or(S.instructors),
         reportingHeadline: rep ? 'Credits reported to CTEC within ' + rep[0].replace(/^Within /, '').toLowerCase() : 'Reporting timeframe not confirmed',
         reportingDetail: has(C.weekend_note) ? C.weekend_note : 'Ask the school how quickly it reports completions, especially near the Oct 31 deadline.',
         reportingStat: rep ? rep[1] : '?', reportingStatLabel: rep ? rep[2] : 'not confirmed',
