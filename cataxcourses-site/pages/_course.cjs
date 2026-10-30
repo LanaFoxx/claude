@@ -242,9 +242,9 @@ function articles(d) {
   ]);
   return band(C.sand, [
     row([
-      stack([eyebrow('Info', C.goldText), H2('<span class="ctc-thin">Helpful</span> Articles:', C.navy, 'left', { lh: 1.05, settings: { _margin: box(12, 0, 0, 0) } })], { settings: { width: auto } }),
-      widget('heading', { title: 'All guides &amp; how-tos →', header_size: 'span', link: link(URL.TODO_guides), title_color: C.goldText, ...typo('typography', HEAD, [22, 21, 19], 700, { lh: 1.3, ls: 0 }) }),
-    ], { justify: 'space-between', align: 'flex-end', gap: 24, settings: { margin: box(0, 0, 40, 0), _margin: box(0, 0, 40, 0) } }),
+      stack([eyebrow('Info', C.goldText, 'center'), H2('<span class="ctc-thin">Helpful</span> Articles:', C.navy, 'center', { lh: 1.05, settings: { _margin: box(12, 0, 0, 0) } })], { settings: { width: auto } }),
+      widget('heading', { title: 'All guides &amp; how-tos →', header_size: 'span', align: 'center', link: link(URL.TODO_guides), title_color: C.goldText, ...typo('typography', HEAD, [22, 21, 19], 700, { lh: 1.3, ls: 0 }) }),
+    ], { justify: 'center', align: 'center', gap: 16, settings: { flex_direction: 'column', margin: box(0, 0, 40, 0), _margin: box(0, 0, 40, 0) } }),
     stack(list.map(item), { gap: 16 }),
   ]);
 }
@@ -254,10 +254,10 @@ function faq() {
   return band(C.navy, [
     grid([
       stack([
-        eyebrow('FAQ', C.gold),
-        H2('<span class="ctc-thin">Frequently Asked</span> Questions', C.white, 'left', { settings: { _margin: box(12, 0, 18, 0) } }),
-        text(`Still have a question? Call <br><a href="${PHONE.tel}"><strong>${PHONE.label}</strong></a>, <br>Monday – Friday, 9am – 4pm PST.`, { color: C.muted, linkColor: C.gold, linkHover: C.goldHover, size: [20, 19, 18], lh: 1.6 }),
-        button('View All FAQs →', URL.faq, { size: [20, 19, 18], pad: box(16, 28, 16, 28), settings: { _margin: box(28, 0, 0, 0) } }),
+        eyebrow('FAQ', C.gold, 'center'),
+        H2('<span class="ctc-thin">Frequently Asked</span> Questions', C.white, 'center', { settings: { _margin: box(12, 0, 18, 0) } }),
+        text(`Still have a question? Call <br><a href="${PHONE.tel}"><strong>${PHONE.label}</strong></a>, <br>Monday – Friday, 9am – 4pm PST.`, { align: 'center', color: C.muted, linkColor: C.gold, linkHover: C.goldHover, size: [20, 19, 18], lh: 1.6 }),
+        button('View All FAQs →', URL.faq, { align: 'center', size: [20, 19, 18], pad: box(16, 28, 16, 28), settings: { _margin: box(28, 0, 0, 0) } }),
       ]),
       widget('toggle', {
         tabs: FAQS.map(([q, ps]) => ({ _id: L.id(), tab_title: q, tab_content: ps.map((p) => `<p>${p}</p>`).join('') })),

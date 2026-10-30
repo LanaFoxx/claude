@@ -5,7 +5,7 @@ const { coursePage } = require('./_course.cjs');
 module.exports = coursePage({
   slug: 'new-course-60', title: 'CTEC 60 Hour Course (new design preview)', liveId: 76,
   pill: 'Qualifying Education',
-  h1: 'CTEC 60 Hour Course',
+  h1: '<span class="ctc-fit-h1">CTEC 60 Hour Course</span>',
   intro: [
     ['For those who wish to prepare tax returns for compensation in the state of California, you are required to first complete a CTEC 60 Hour Qualifying Education Course in order to become a CTEC Registered Tax Preparer. Our 60 hour qualifying education course teaches you everything you need to know about preparing California State and Federal tax returns and is approved by the California Tax Education Council.'],
     ['All earned credits will be reported to CTEC.', true],

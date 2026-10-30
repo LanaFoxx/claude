@@ -5,7 +5,7 @@ const { coursePage } = require('./_course.cjs');
 module.exports = coursePage({
   slug: 'new-course-20', title: 'CTEC 20 Hour Course (new design preview)', liveId: 48,
   pill: 'Continuing Education',
-  h1: 'CTEC 20 Hour Course<span class="ctc-block" style="font-size:.6em;margin-top:8px;color:#B8901F">Course Is Now Available To Start Today!</span>',
+  h1: '<span class="ctc-fit-h1">CTEC 20 Hour Course</span><span class="ctc-block ctc-fit-sub" style="font-size:.6em;margin-top:8px;color:#B8901F">Course Is Now Available To Start Today!</span>',
   intro: [
     ['All CTEC Registered Tax Preparers are required to complete 20 Hours of CTEC Continuing Education and renew their registration by October 31st. Our 20 Hour CTEC Renewal Course (20 hour continuing education) is fully updated with all of the latest federal and state tax laws and is good for both CTEC CE and IRS AFSP CE Credit.'],
     ['All earned credits will be reported to CTEC and the IRS.', true],

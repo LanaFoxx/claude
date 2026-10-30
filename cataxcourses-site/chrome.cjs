@@ -19,7 +19,9 @@ body:has(.ctc-header){background:#fff;margin:0;color:${C.navy};font-family:${BOD
  .ctc-badge-slider>.elementor-widget:nth-child(4) img{height:93px!important}
  .ctc-badge-slider{min-height:100px;align-items:center!important}
 }
-@media (max-width:767px){.ctc-hero-big{white-space:nowrap;font-size:min(1.25em,13.5vw)!important}.ctc-fit-line{white-space:nowrap;font-size:min(1em,7.6vw)}}
+@media (max-width:767px){.ctc-hero-big{white-space:nowrap;font-size:min(1.25em,13.5vw)!important}.ctc-fit-line{white-space:nowrap;font-size:min(1em,7.6vw)}
+/* course hero h1 + subline: one line each on phones (widths measured: title ≈10.2em, subline ≈18.6em) */
+.ctc-fit-h1{white-space:nowrap;font-size:min(1em,calc((100vw - 40px) / 10.2))}.ctc-fit-sub{white-space:nowrap;font-size:min(.6em,calc((100vw - 40px) / 18.6))!important}}
 .ctc-header a,.ctc-page a,.ctc-footer a{text-decoration:none}
 .ctc-page a[href^="tel:"],.ctc-footer a[href^="tel:"]{white-space:nowrap}
 .ctc-header .elementor-widget-text-editor p:last-child,.ctc-page .elementor-widget-text-editor p:last-child,.ctc-footer .elementor-widget-text-editor p:last-child{margin-bottom:0}

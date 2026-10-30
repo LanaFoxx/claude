@@ -103,14 +103,14 @@ function courses() {
   return band(C.navy, [
     row([
       stack([
-        eyebrow('CTEC Courses', C.gold),
-        H2('<span class="ctc-thin ctc-block">Online. Self-paced.</span><span class="ctc-block ctc-fit-line">Instant reporting to CTEC.</span>', C.white, 'left', { settings: { _margin: box(12, 0, 0, 0) } }),
+        eyebrow('CTEC Courses', C.gold, 'center'),
+        H2('<span class="ctc-thin ctc-block">Online. Self-paced.</span><span class="ctc-block ctc-fit-line">Instant reporting to CTEC.</span>', C.white, 'center', { settings: { _margin: box(12, 0, 0, 0) } }),
       ], { settings: { width: auto, width_mobile: px(100, '%') } }),
       text(`Questions before enrolling? Call us at <a href="${PHONE.tel}"><strong>${PHONE.label}</strong></a>`, {
-        color: C.light, linkColor: C.gold, linkHover: C.goldHover, size: [18, 17, 16], lh: 1.4,
+        align: 'center', color: C.light, linkColor: C.gold, linkHover: C.goldHover, size: [18, 17, 16], lh: 1.4,
         settings: { _element_width: 'auto', _background_background: 'classic', _background_color: C.navy2, _border_border: 'solid', _border_width: box(1), _border_color: C.navyLine, _border_radius: box(999), _padding: box(10, 18, 10, 18) },
       }),
-    ], { justify: 'space-between', align: 'flex-end', gap: 24, settings: { _margin: box(0, 0, 44, 0), margin: box(0, 0, 44, 0) } }),
+    ], { justify: 'center', align: 'center', gap: 20, settings: { flex_direction: 'column', _margin: box(0, 0, 44, 0), margin: box(0, 0, 44, 0) } }),
     grid(COURSES.map(courseCard), { cols: [2, 1, 1], gap: 24 }),
   ]); // no dots: sits under the dotted hero
 }
@@ -162,9 +162,9 @@ function articles() {
   ]);
   return band(C.white, [
     row([
-      stack([eyebrow('Info', C.goldText), H2('<span class="ctc-thin">Helpful</span> Articles:', C.navy, 'left', { lh: 1.05, settings: { _margin: box(12, 0, 0, 0) } })], { settings: { width: auto } }),
-      widget('heading', { title: 'All guides &amp; how-tos →', header_size: 'span', link: link(URL.guides), title_color: C.goldText, ...typo('typography', HEAD, [22, 21, 19], 700, { lh: 1.3, ls: 0 }) }),
-    ], { justify: 'space-between', align: 'flex-end', gap: 24, settings: { margin: box(0, 0, 40, 0), _margin: box(0, 0, 40, 0) } }),
+      stack([eyebrow('Info', C.goldText, 'center'), H2('<span class="ctc-thin">Helpful</span> Articles:', C.navy, 'center', { lh: 1.05, settings: { _margin: box(12, 0, 0, 0) } })], { settings: { width: auto } }),
+      widget('heading', { title: 'All guides &amp; how-tos →', header_size: 'span', align: 'center', link: link(URL.guides), title_color: C.goldText, ...typo('typography', HEAD, [22, 21, 19], 700, { lh: 1.3, ls: 0 }) }),
+    ], { justify: 'center', align: 'center', gap: 16, settings: { flex_direction: 'column', margin: box(0, 0, 40, 0), _margin: box(0, 0, 40, 0) } }),
     stack(ARTICLES.map(item), { gap: 16 }),
   ]); // no dots: between dotted students + FAQ sections
 }
@@ -173,9 +173,9 @@ function faq() {
   return band(C.navy, [
     grid([
       stack([
-        eyebrow('FAQ', C.gold),
-        H2('<span class="ctc-thin">Frequently Asked</span> Questions', C.white, 'left', { settings: { _margin: box(12, 0, 18, 0) } }),
-        text(`Still have a question? Call <br><a href="${PHONE.tel}"><strong>${PHONE.label}</strong></a>, <br>Monday – Friday, 9am – 4pm PST.`, { color: C.muted, linkColor: C.gold, linkHover: C.goldHover, size: [20, 19, 18], lh: 1.6 }),
+        eyebrow('FAQ', C.gold, 'center'),
+        H2('<span class="ctc-thin">Frequently Asked</span> Questions', C.white, 'center', { settings: { _margin: box(12, 0, 18, 0) } }),
+        text(`Still have a question? Call <br><a href="${PHONE.tel}"><strong>${PHONE.label}</strong></a>, <br>Monday – Friday, 9am – 4pm PST.`, { align: 'center', color: C.muted, linkColor: C.gold, linkHover: C.goldHover, size: [20, 19, 18], lh: 1.6 }),
       ]),
       widget('toggle', {
         tabs: FAQS.map(([q, ps]) => ({ _id: L.id(), tab_title: q, tab_content: ps.map((p) => `<p>${p}</p>`).join('') })),
@@ -202,8 +202,8 @@ function newsletter() {
   return band(C.sand, [
     grid([
       stack([
-        eyebrow('Newsletter', C.goldText),
-        H2('<span class="ctc-thin ctc-block">Coupon codes &amp;</span><span class="ctc-block">CTEC deadline reminders.</span>', C.navy, 'left', { lh: 1.05, settings: { _margin: box(12, 0, 16, 0) } }),
+        eyebrow('Newsletter', C.goldText, 'center'),
+        H2('<span class="ctc-thin ctc-block">Coupon codes &amp;</span><span class="ctc-block">CTEC deadline reminders.</span>', C.navy, 'center', { lh: 1.05, settings: { _margin: box(12, 0, 16, 0) } }),
         text('Join our email list and be the first to get discount codes on CTEC courses, plus reminders before every CTEC renewal deadline so you never miss October 31st.', { size: [20, 19, 18], maxW: 560 }),
         stack([perk('fas fa-tag', 'Exclusive coupon codes'), perk('fas fa-calendar-check', 'CTEC deadline reminders'), perk('fas fa-envelope-open-text', 'Tax law updates for preparers')], { gap: 12, settings: { margin: box(24, 0, 0, 0) } }),
       ]),
