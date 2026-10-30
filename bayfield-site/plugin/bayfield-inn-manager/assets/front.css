@@ -80,3 +80,27 @@
 
 /* Leave room for the sticky header when jumping to a gallery section. */
 .bi-gallery { scroll-margin-top: 120px; }
+
+/* Merchandise */
+.bi-shop { --bi-green: #17301B; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; }
+.bi-product { display: flex; flex-direction: column; background: #fff; border-radius: 4px; overflow: hidden; box-shadow: 0 30px 60px -44px rgba(23,48,27,.45); }
+.bi-product__media { position: relative; aspect-ratio: 4 / 5; background: #F5F2EC; overflow: hidden; }
+.bi-product__img { position: absolute; inset: 0; display: block; transition: opacity .45s ease; }
+.bi-product__img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .8s ease; }
+.bi-product__img.is-second { opacity: 0; }
+.bi-product__media:hover .bi-product__img.is-second { opacity: 1; }
+.bi-product__media:hover img { transform: scale(1.03); }
+.bi-product__placeholder { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #4B5249; font: 400 14px Geist, system-ui, sans-serif; }
+.bi-product__badge { position: absolute; top: 14px; left: 14px; z-index: 2; padding: 6px 10px; border-radius: 2px; background: #17301B; color: #F5F2EC; font: 500 11px/1 Geist, system-ui, sans-serif; letter-spacing: .14em; text-transform: uppercase; }
+.bi-product__badge--sold { background: #4B5249; }
+.bi-product.is-sold .bi-product__media img { filter: grayscale(.5); opacity: .7; }
+.bi-product__body { display: flex; flex-direction: column; gap: 8px; padding: 22px 22px 26px; flex: 1; }
+.bi-product__name { margin: 0; font: 400 24px/1.15 Newsreader, Georgia, serif; color: #17301B; }
+.bi-product__price { margin: 0; font: 400 20px/1 Newsreader, Georgia, serif; color: #17301B; }
+.bi-product__desc { margin: 4px 0 0; font: 300 14.5px/1.6 Geist, system-ui, sans-serif; color: #4B5249; }
+.bi-product .bi-btn { margin-top: auto; align-self: flex-start; }
+.bi-product__body > .bi-btn:first-of-type { margin-top: 14px; }
+.bi-btn--disabled { background: #DCD7CC !important; color: #4B5249 !important; box-shadow: none; cursor: default; }
+.bi-shop__note { margin: 28px 0 0; text-align: center; font: 400 13px/1.5 Geist, system-ui, sans-serif; color: #4B5249; }
+@media (max-width: 1024px) { .bi-shop { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; } }
+@media (max-width: 600px) { .bi-shop { grid-template-columns: 1fr; } }

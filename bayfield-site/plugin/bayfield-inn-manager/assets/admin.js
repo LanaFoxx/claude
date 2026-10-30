@@ -249,10 +249,47 @@
   }
 
   /* ---------------------------------------------------------- */
+/* =================================================== PRODUCTS ===== */
+  function productsUI() {
+    data.items = data.items || [];
+    body = h('div', { class: 'bi-body' });
+    var list = h('div', { class: 'bi-list bi-products', 'data-axis': 'y' });
+    data.items.forEach(function (p) { list.appendChild(productUI(p)); });
+    sortable(list);
+    body.appendChild(list);
+    body.appendChild(btn('Add item', '', function () { var c = productUI({ name: '' }); list.appendChild(c); c.querySelector('input').focus(); dirty = true; }, 'plus-alt2'));
+    app.innerHTML = ''; app.appendChild(body); app.appendChild(bar);
+  }
+  function productUI(p) {
+    var sold = h('input', { type: 'checkbox', 'data-k': 'soldout' }); sold.checked = !!p.soldout;
+    sold.addEventListener('change', function () { dirty = true; });
+    var card = h('div', { class: 'bi-card bi-product-card' }, [
+      h('div', { class: 'bi-row bi-row--head' }, [handle(),
+        field('Item name', p.name, { key: 'name', wrap: 'bi-grow2', cls: 'bi-strong', placeholder: 'e.g. Sweatshirt – The Deck (Pink)' }),
+        field('Price', p.price, { key: 'price', wrap: 'bi-price-wrap', placeholder: '45' }),
+        field('Label (optional)', p.badge, { key: 'badge', wrap: 'bi-price-wrap', placeholder: 'New' }),
+        removeBtn('item', function () { card.remove(); })]),
+      field('Square payment link', p.link, { key: 'link', placeholder: 'https://square.link/u/…' }),
+      field('Short description (optional)', p.desc, { key: 'desc', textarea: true, rows: 2, placeholder: 'Cozy fleece hoodie with The Deck logo. Unisex sizes S–XXL.' }),
+      h('p', { class: 'description', text: 'Photos: the first one shows on the page, the second appears when someone hovers. Drag to reorder.' }),
+      imagesUI(p.images || []),
+      h('label', { class: 'bi-check' }, [sold, ' Sold out (keeps the item on the page with a "Sold out" label)']),
+    ]);
+    return card;
+  }
+  function readProducts() {
+    return { items: Array.prototype.map.call(body.querySelectorAll('.bi-product-card'), function (c) {
+      var v = function (k) { var el = c.querySelector('[data-k="' + k + '"]'); return el ? el.value.trim() : ''; };
+      return { name: v('name'), price: v('price').replace(/^\$/, ''), badge: v('badge'), link: v('link'), desc: v('desc'),
+        images: readImages(c.querySelector('.bi-images')), soldout: c.querySelector('[data-k="soldout"]').checked };
+    }).filter(function (p) { return p.name; }) };
+  }
+
   function collect() {
     if (KIND === 'menus') { stash(); return data; }
+    if (KIND === 'products') { data = readProducts(); return data; }
     stash2(); return data;
   }
-  function render() { if (KIND === 'menus') menusUI(); else galleryUI(); }
+  function render() { if (KIND === 'menus') menusUI(); else if (KIND === 'products') productsUI(); else galleryUI(); }
   render();
 })(jQuery);

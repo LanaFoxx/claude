@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: Bayfield Inn Manager
- * Description: Simple dashboard for the Bayfield Inn team to edit restaurant menus and the photo gallery. The site's Elementor pages show whatever is saved here.
- * Version: 1.0.2
+ * Description: Simple dashboard for the Bayfield Inn team to edit restaurant menus, the photo gallery and merchandise. The site's Elementor pages show whatever is saved here.
+ * Version: 1.1.0
  * Author: Dream Web Digital
  * Requires at least: 6.0
  * Requires PHP: 7.4
@@ -10,7 +10,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'BI_MANAGER_VERSION', '1.0.2' );
+define( 'BI_MANAGER_VERSION', '1.1.0' );
 define( 'BI_MANAGER_URL', plugin_dir_url( __FILE__ ) );
 define( 'BI_MANAGER_DIR', plugin_dir_path( __FILE__ ) );
 define( 'BI_MANAGER_CAP', 'edit_pages' ); // Administrators and Editors.
@@ -34,7 +34,7 @@ function bi_clean( $value, $key = '' ) {
 	if ( is_bool( $value ) || is_int( $value ) || is_float( $value ) ) {
 		return $value;
 	}
-	if ( in_array( $key, array( 'url', 'pdf' ), true ) ) {
+	if ( in_array( $key, array( 'url', 'pdf', 'link' ), true ) ) {
 		return esc_url_raw( (string) $value );
 	}
 	if ( in_array( $key, array( 'desc', 'note', 'footer', 'notes' ), true ) ) {
@@ -44,7 +44,7 @@ function bi_clean( $value, $key = '' ) {
 }
 
 function bi_save_data( $kind, $data ) {
-	if ( ! in_array( $kind, array( 'menus', 'galleries' ), true ) ) {
+	if ( ! in_array( $kind, array( 'menus', 'galleries', 'products' ), true ) ) {
 		return false;
 	}
 	update_option( 'bi_' . $kind, bi_clean( $data ), false );
@@ -65,12 +65,16 @@ add_action( 'admin_menu', function () {
 	add_menu_page( 'Bayfield Inn', 'Bayfield Inn', BI_MANAGER_CAP, 'bi-menus', 'bi_render_admin', 'dashicons-building', 3 );
 	add_submenu_page( 'bi-menus', 'Restaurant Menus', 'Restaurant Menus', BI_MANAGER_CAP, 'bi-menus', 'bi_render_admin' );
 	add_submenu_page( 'bi-menus', 'Gallery', 'Gallery', BI_MANAGER_CAP, 'bi-gallery', 'bi_render_admin' );
+	add_submenu_page( 'bi-menus', 'Merchandise', 'Merchandise', BI_MANAGER_CAP, 'bi-merch', 'bi_render_admin' );
 } );
 
 function bi_render_admin() {
-	$kind = ( isset( $_GET['page'] ) && 'bi-gallery' === $_GET['page'] ) ? 'galleries' : 'menus';
-	$data = bi_get_data( $kind );
-	if ( 'galleries' === $kind ) {
+	$page  = isset( $_GET['page'] ) ? sanitize_key( $_GET['page'] ) : '';
+	$kind  = array( 'bi-gallery' => 'galleries', 'bi-merch' => 'products' )[ $page ] ?? 'menus';
+	$title = array( 'menus' => 'Restaurant Menus', 'galleries' => 'Gallery', 'products' => 'Merchandise' )[ $kind ];
+	$data  = bi_get_data( $kind );
+	$thumbs = array();
+	if ( 'menus' !== $kind ) {
 		// Give the editor thumbnails for every saved image.
 		$ids = array();
 		array_walk_recursive( $data, function ( $v, $k ) use ( &$ids ) {
@@ -78,7 +82,6 @@ function bi_render_admin() {
 				$ids[] = (int) $v;
 			}
 		} );
-		$thumbs = array();
 		foreach ( array_unique( $ids ) as $aid ) {
 			$src = wp_get_attachment_image_src( $aid, 'thumbnail' );
 			if ( $src ) {
@@ -88,17 +91,19 @@ function bi_render_admin() {
 	}
 	?>
 	<div class="wrap bi-wrap">
-		<h1><?php echo 'menus' === $kind ? 'Restaurant Menus' : 'Gallery'; ?></h1>
+		<h1><?php echo esc_html( $title ); ?></h1>
 		<p class="bi-lead">
 			<?php if ( 'menus' === $kind ) : ?>
 				Edit each restaurant's menu here. Drag <span class="dashicons dashicons-move"></span> to reorder. Click <strong>Save changes</strong> when you're done and the website updates right away.
+			<?php elseif ( 'products' === $kind ) : ?>
+				Each item shows on the Merchandise page with a <strong>Buy now</strong> button. Create a payment link for the item in Square (Online › Payment links), paste it here, add photos, and click <strong>Save changes</strong>. Drag <span class="dashicons dashicons-move"></span> to reorder.
 			<?php else : ?>
 				Add, remove and drag photos in each section. Sections with sub-sections (like Rooms) show their photos in the sub-sections. Click <strong>Save changes</strong> when you're done.
 			<?php endif; ?>
 		</p>
 		<div id="bi-app" data-kind="<?php echo esc_attr( $kind ); ?>"></div>
 		<script type="application/json" id="bi-data"><?php echo wp_json_encode( $data ); ?></script>
-		<?php if ( 'galleries' === $kind ) : ?>
+		<?php if ( 'menus' !== $kind ) : ?>
 			<script type="application/json" id="bi-thumbs"><?php echo wp_json_encode( (object) $thumbs ); ?></script>
 		<?php endif; ?>
 	</div>
@@ -106,7 +111,7 @@ function bi_render_admin() {
 }
 
 add_action( 'admin_enqueue_scripts', function ( $hook ) {
-	if ( false === strpos( $hook, 'bi-menus' ) && false === strpos( $hook, 'bi-gallery' ) ) {
+	if ( false === strpos( $hook, 'bi-menus' ) && false === strpos( $hook, 'bi-gallery' ) && false === strpos( $hook, 'bi-merch' ) ) {
 		return;
 	}
 	wp_enqueue_media();
@@ -133,7 +138,7 @@ add_action( 'wp_ajax_bi_save', function () {
 
 /* Admins can load starter content through the REST API (used once at setup). */
 add_action( 'rest_api_init', function () {
-	register_rest_route( 'bayfield/v1', '/data/(?P<kind>menus|galleries)', array(
+	register_rest_route( 'bayfield/v1', '/data/(?P<kind>menus|galleries|products)', array(
 		array(
 			'methods'             => 'GET',
 			'permission_callback' => function () { return current_user_can( BI_MANAGER_CAP ); },
@@ -167,8 +172,10 @@ add_action( 'wp_enqueue_scripts', function () {
 add_action( 'elementor/widgets/register', function ( $widgets ) {
 	require_once BI_MANAGER_DIR . 'widgets/class-bi-menu-widget.php';
 	require_once BI_MANAGER_DIR . 'widgets/class-bi-gallery-widget.php';
+	require_once BI_MANAGER_DIR . 'widgets/class-bi-shop-widget.php';
 	$widgets->register( new BI_Menu_Widget() );
 	$widgets->register( new BI_Gallery_Widget() );
+	$widgets->register( new BI_Shop_Widget() );
 } );
 
 add_action( 'elementor/elements/categories_registered', function ( $manager ) {

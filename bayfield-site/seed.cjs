@@ -75,4 +75,9 @@ function galleries(md) {
 // Captions shown on the History slideshow (stored on the Media Library items).
 const captions = (md) => HISTORY.map(([f, cap]) => [md(`bayfield-history-${f}.jpg`).id, cap]);
 
-module.exports = { menus, galleries, captions };
+// Merchandise: the client adds items, photos and Square payment links in the dashboard.
+const products = () => ({ items: [
+  { name: 'Sweatshirt – The Deck @ The Bayfield Inn (Pink)', price: '', badge: 'New', link: '', desc: 'Soft pink hoodie with The Deck logo on the chest.', images: [], soldout: false },
+] });
+
+module.exports = { menus, galleries, captions, products };

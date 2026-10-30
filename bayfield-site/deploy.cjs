@@ -181,7 +181,7 @@ async function setConditions(p, postId, conditions) {
     const S = require('./seed.cjs');
     await p.goto(`${SITE}/wp-admin/`, { waitUntil: 'domcontentloaded' });
     const force = process.env.FORCE_DATA === '1';
-    for (const [kind, payload] of [['menus', S.menus(md)], ['galleries', S.galleries(md)]]) {
+    for (const [kind, payload] of [['menus', S.menus(md)], ['galleries', S.galleries(md)], ['products', S.products(md)]]) {
       console.log('data', kind, JSON.stringify(await api(p, 'POST', `/wp-json/bayfield/v1/data/${kind}`, { data: payload, force })));
     }
     for (const [mid, cap] of S.captions(md)) await api(p, 'POST', `/wp-json/wp/v2/media/${mid}`, { caption: cap, title: cap, alt_text: cap });

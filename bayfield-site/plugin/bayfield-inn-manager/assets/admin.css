@@ -48,3 +48,8 @@
 .bi-img-add { width: 120px; height: 90px; border: 2px dashed #8c8f94; border-radius: 4px; background: #fff; cursor: pointer; color: #2271b1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
 .bi-img-add:hover { border-color: #2271b1; }
 .bi-tip { width: 100%; margin: 0; }
+
+/* Merchandise */
+.bi-product-card { border-left: 4px solid #17301B; }
+.bi-price-wrap { flex: 0 1 140px; }
+.bi-product-card > .bi-field { margin-bottom: 12px; }

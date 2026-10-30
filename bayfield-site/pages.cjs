@@ -178,11 +178,17 @@ const comingSoon = (eb, title, intro, body, buttons, img) => [
   story('Coming soon', body[0], body.slice(1), null, { after: [row(buttons, { gap: 12 })] }),
 ];
 
+// Merchandise: items (photos, price, Square payment link) are managed under
+// Bayfield Inn › Merchandise. "Buy now" opens Square's secure checkout.
 function merchandise(m) {
-  return comingSoon('Merchandise', 'Take a little Bayfield home.', 'Sweatshirts, hats, water bottles and more from the Bayfield Inn.',
-    ['Our online shop is on its way.', 'Until it opens, stop by the front desk or get in touch and we’ll help you find the right size and style.'],
-    [darkBtn('Email us', EMAIL), button('Call 715.779.3363', PHONE, 'outline', { upper: false, settings: { button_text_color: C.green, border_color: 'rgba(23,48,27,0.5)', hover_color: C.cream, button_background_hover_color: C.green } })],
-    m.file('bayfield-inn-exterior.jpg'));
+  return [
+    pageHero('Merchandise', 'Take a little Bayfield home.', 'Sweatshirts, hats and more from the Bayfield Inn and The Deck.', m.file('bayfield-inn-exterior.jpg')),
+    section({ _element_id: 'shop', background_background: 'classic', background_color: C.cream, ...pad, ...boxed, flex_direction: 'column', flex_gap: gap(40) }, [
+      stack([eyebrow('Shop', C.green, { align: 'center' }), heading('Bayfield Inn gear', 'h2', [44, 38, 30], C.green, { align: 'center', ls: -0.9 })], { gap: 14, align: 'center' }),
+      widget('bi-shop', { button_text: 'Buy now' }),
+    ]),
+    ctaBand('Questions?', 'Looking for a size or color you don’t see?', [darkBtn('Email us', EMAIL), outline('Call (715) 779-3363', PHONE)]),
+  ];
 }
 
 function giftCards(m) {
