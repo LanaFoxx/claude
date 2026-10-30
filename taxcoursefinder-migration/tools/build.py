@@ -119,8 +119,6 @@ def seo_tweaks(name, body):
         x = '<div style="background:#fff;padding:72px 56px 0">\n    <div style="max-width:1200px;margin:0 auto;display:grid;grid-template-columns:minmax(0,55fr) minmax(0,45fr)'
         assert body.count(x) == 1, 'requirements section'
         body = body.replace(x, x.replace('padding:72px 56px 0', 'padding:72px 56px'), 1)
-    if name == 'TaxCourse Finder Home':  # same hero photo as the 60-hour page
-        body = body.replace('@@MEDIA:photos/05-tax-study-workspace-titled.png@@" alt="" class="tcf-hero-bg"', '@@MEDIA:photos/01-ctec-60-hour-learner.webp@@" alt="" class="tcf-hero-bg"', 1)
     if name == 'TaxCourse Finder Home':  # renewal calendar from the renew guide, near the bottom of the home page
         src = clean(json.load(open(EXT + '/How to Renew CTEC Registration.json'))['body'])
         k = src.index('Key dates'); a = src.rindex('<div style="padding:88px 56px;background:#fff">', 0, k)
@@ -404,6 +402,9 @@ for name, (slug, url, title) in PAGES.items():
     body = clean(d['body'])
     body = body.replace('style="min-width:1100px"', 'class="tcf-screen"', 1)
     body = seo_tweaks(name, body)
+    if slug == 'home':  # same hero photo as the 60-hour page (after seo_tweaks, which sets up the hero image)
+        assert body.count('@@MEDIA:photos/05-tax-study-workspace-titled.png@@') == 1, 'home hero photo'
+        body = body.replace('@@MEDIA:photos/05-tax-study-workspace-titled.png@@', '@@MEDIA:photos/01-ctec-60-hour-learner.webp@@', 1)
     rid = 'tcf-' + slug
     parts = ['<div class="tcf-page tcf-scope tcf-p-%s"><div id="%s-root" class="tcf-root">@@SSR@@</div></div>' % (slug, rid)]
     if name in RUNTIME:
