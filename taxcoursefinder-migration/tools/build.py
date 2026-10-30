@@ -165,7 +165,7 @@ def seo_tweaks(name, body):
             depth += -1 if m.group(1) else 1
             if depth == 0: j = a + m.end() + src[a + m.end():].index('>') + 1; break
         cal = src[a:j].replace('Renew inside the green window to avoid the late fee.', 'Renew by October 31 to avoid the late fee.').replace('</span>Key dates</div>', '</span>CTEC renewal deadline</div>', 1)
-        dark = cal.replace('<div style="padding:88px 56px;background:#fff">', '<div style="padding:88px 56px;background:#0B2E40;color:#fff">', 1)  # dark band on the home page
+        dark = cal.replace('<div style="padding:88px 56px;background:#fff">', '<div style="padding:88px 56px;background:#0B2E40;color:#fff;border-top:6px solid #FF6B57">', 1)  # dark band on the home page, coral line above
         for x, y in [("serif;\">The renewal", "serif;color:#fff\">The renewal"), ('color:#2F4652', 'color:rgba(255,255,255,.78)'), ('color:#8A9AA3', 'color:rgba(255,255,255,.6)'),
                      ('#D7DFE2', 'rgba(255,255,255,.2)'), ('#E3E9EB', 'rgba(255,255,255,.2)'), ('<div style="font:700 22px Manrope,sans-serif">', '<div style="font:700 22px Manrope,sans-serif;color:#FF6B57">'),
                      ('background:#95AB3B;color:#fff;padding:12px 16px', 'background:#fff;color:#23272A;padding:12px 16px')]:
@@ -350,13 +350,17 @@ def seo_tweaks(name, body):
         import listing_form
         a = body.index('<form'); b = body.index('</form>', a) + len('</form>')
         body = body[:a] + listing_form.form() + body[b:]
+    if name == 'mobile':  # phone directory: same review date as every other page
+        x = 'text-align:center">Prices and offers are collected from provider websites and verified periodically; confirm on the provider site before purchasing.</div>'
+        assert body.count(x) == 1, 'mobile price note'
+        body = body.replace(x, 'text-align:center">Prices and offers are collected from provider websites and verified periodically; confirm on the provider site before purchasing. Data last checked {{ lastUpdated }}.</div>', 1)
     if name == 'mobile':  # phone directory card: the course's own page (or labelled fallback), not the school's home page
         body, n = re.subn(r'<a href="\{\{ p\.website \}\}"([^>]*)>View course →</a>', r'<a href="{{ p.courseLink }}"\1>{{ p.buttonLabel }} →</a>', body)
         assert n == 1, 'mobile view course'
     if name == 'mobile':  # renewal calendar on phones: stacked, same dark band as desktop
         row = lambda c, t, d: ('<div style="border-left:6px solid %s;padding:4px 0 4px 16px;display:flex;flex-direction:column;gap:4px"><div style="font:700 20px Manrope,sans-serif;color:#FF6B57">%s</div>'
                                '<p style="margin:0;font-size:18px;line-height:1.55;color:rgba(255,255,255,.78)">%s</p></div>' % (c, t, d))
-        mcal = ('<!-- RENEWAL CALENDAR --><div style="padding:56px 20px;background:#0B2E40;color:#fff"><div style="display:flex;flex-direction:column;gap:22px">'
+        mcal = ('<!-- RENEWAL CALENDAR --><div style="padding:56px 20px;background:#0B2E40;color:#fff;border-top:6px solid #FF6B57"><div style="display:flex;flex-direction:column;gap:22px">'
                 '<div style="display:flex;flex-direction:column;gap:10px"><div style="font:700 17px Manrope,sans-serif;letter-spacing:1.6px;text-transform:uppercase;color:#7E9330">CTEC renewal deadline</div>'
                 "<h2 style=\"margin:0;font:300 36px/1.12 'Source Serif 4',Georgia,serif;color:#fff\">The renewal calendar</h2>"
                 '<p style="margin:0;font-size:18px;line-height:1.6;color:rgba(255,255,255,.78)">Registration runs November 1 to October 31. Renew by October 31 to avoid the late fee.</p></div>'

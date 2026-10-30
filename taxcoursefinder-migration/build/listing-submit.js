@@ -19,7 +19,7 @@
   }
   function isPrice(s) { return PRICE.test(s.replace(/[,\s]/g, '')); }
   function isDate(s) { var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s); if (!m) return false; var d = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3])); return d.getUTCMonth() === +m[2] - 1 && d.getUTCDate() === +m[3]; }
-  function fieldEl(f, n) { var el = f.elements[n]; return el && el.length && !el.tagName ? el[0] : el; }
+  function fieldEl(f, n) { var el = f.elements[n] || f.elements[n + '[]']; return el && el.length && !el.tagName ? el[0] : el; }
   function clearErrors(f) {
     [].forEach.call(f.querySelectorAll('[data-tcf-err]'), function (x) { x.parentNode.removeChild(x); });
     [].forEach.call(f.querySelectorAll('[aria-invalid="true"]'), function (x) { x.removeAttribute('aria-invalid'); x.style.borderColor = ''; x.style.boxShadow = ''; });
@@ -82,18 +82,17 @@
     clearErrors(f);
     var first = null, names = Object.keys(errs);
     // first invalid field in page order
-    var order = [].map.call(f.elements, function (el) { return el.name; });
+    var order = [].map.call(f.elements, function (el) { return el.name.replace(/\[\]$/, ''); });
     names.sort(function (a, b) { return order.indexOf(a) - order.indexOf(b); });
     names.forEach(function (n) { var el = setError(f, n, errs[n]); if (el && !first) first = el; });
     status(f, names.length === 1 ? 'Please fix the highlighted field.' : 'Please fix the ' + names.length + ' highlighted fields.');
     if (first) { first.scrollIntoView({ block: 'center', behavior: 'smooth' }); setTimeout(function () { first.focus({ preventScroll: true }); }, 250); }
   }
   document.addEventListener('input', function (ev) {
-    var el = ev.target; if (!el || el.getAttribute('aria-invalid') !== 'true') return;
+    var el = ev.target; if (!el || !el.getAttribute || el.getAttribute('aria-invalid') !== 'true') return;
     el.removeAttribute('aria-invalid'); el.style.borderColor = ''; el.style.boxShadow = '';
     var m = document.getElementById(el.getAttribute('aria-describedby') || ''); if (m && m.hasAttribute('data-tcf-err')) m.parentNode.removeChild(m);
   }, true);
-  document.addEventListener('change', function (ev) { if (ev.target && ev.target.type !== 'text') document.dispatchEvent(new Event('input')) || ev.target.dispatchEvent(new Event('input', { bubbles: true })); }, true);
   document.addEventListener('submit', function (ev) {
     var f = ev.target; if (!f || !f.matches || !f.matches('[data-tcf-listing-form]')) return;
     ev.preventDefault(); ev.stopPropagation();

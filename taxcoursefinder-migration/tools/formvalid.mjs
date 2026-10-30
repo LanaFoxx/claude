@@ -1,0 +1,30 @@
+import { chromium } from '/opt/node-tools/node_modules/playwright/index.mjs';
+const S = process.argv[2];
+const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', proxy: { server: process.env.HTTPS_PROXY } });
+const p = await (await b.newContext({ viewport: { width: 1440, height: 900 } })).newPage();
+const errs = []; p.on('pageerror', e => errs.push(e.message)); let posts = 0; p.on('request', r => { if (r.url().includes('admin-ajax') && r.method() === 'POST') posts++; });
+await p.goto('https://taxcoursefinder.com/provider-application/?nc=' + Date.now(), { waitUntil: 'networkidle' });
+const f = 'form[data-tcf-listing-form]';
+await p.fill(f + ' [name=school_name]', 'Validation Test School');
+await p.fill(f + ' [name=contact_email]', 'not-an-email');
+await p.fill(f + ' [name=website]', 'www.example');
+await p.check(f + ' [name=ce_offered]');
+await p.fill(f + ' [name=ce_price]', '-5');
+await p.fill(f + ' [name=ce_url]', 'ftp://example.com/x');
+await p.fill(f + ' [name=ce_coupon_details]', '10% off');
+await p.setInputFiles(f + ' [name=logo]', S + '/testfiles/notes.txt');
+await p.click(f + ' [type=submit]'); await p.waitForTimeout(600);
+const res = await p.evaluate(() => [...document.querySelectorAll('[data-tcf-err]')].map(e => { const fld = document.querySelector('[aria-describedby="' + e.id + '"]'); return (fld && fld.name) + ': ' + e.textContent; }));
+console.log(res.join('\n'));
+console.log('focused:', await p.evaluate(() => document.activeElement && document.activeElement.name));
+console.log('values kept:', await p.evaluate(() => ['school_name', 'contact_email', 'website', 'ce_price', 'ce_coupon_details'].map(n => document.querySelector('[data-tcf-listing-form] [name=' + n + ']').value).join(' | ')));
+console.log('status:', await p.locator(f + ' [data-tcf-listing-status]').innerText());
+// fix one field: its error clears as you type
+await p.fill(f + ' [name=contact_email]', 'ok@example.com'); await p.waitForTimeout(200);
+console.log('email error cleared:', await p.evaluate(() => !document.getElementById('tcf-err-contact_email')));
+// too-large file
+await p.setInputFiles(f + ' [name=logo]', S + '/testfiles/big.png'); await p.click(f + ' [type=submit]'); await p.waitForTimeout(400);
+console.log('big file:', await p.evaluate(() => (document.getElementById('tcf-err-logo') || {}).textContent));
+console.log('POST requests sent:', posts, 'page errors:', errs);
+await p.screenshot({ path: S + '/shots/form-errors.png', fullPage: false });
+await b.close();

@@ -1,0 +1,24 @@
+import { chromium } from '/opt/node-tools/node_modules/playwright/index.mjs';
+const S = process.argv[2];
+const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', proxy: { server: process.env.HTTPS_PROXY } });
+const p = await (await b.newContext({ viewport: { width: 1440, height: 900 } })).newPage();
+const errs = []; p.on('pageerror', e => errs.push(e.message)); let posts = 0; p.on('request', r => { if (r.url().includes('admin-ajax') && r.method() === 'POST') posts++; });
+await p.goto('https://taxcoursefinder.com/create-your-school-profile/?nc=' + Date.now(), { waitUntil: 'networkidle' });
+const f = 'form[data-tcf-listing-form]', fill = (n, v) => p.fill(`${f} [name="${n}"]`, v);
+await fill('school_name', 'TCF Profile Test School (delete me)'); await fill('contact_name', 'Mike'); await fill('contact_email', 'mptarr33@gmail.com');
+await fill('intro', 'Test intro for the profile form.'); await fill('about', 'Test about text.');
+await p.setInputFiles(`${f} [name=photo]`, S + '/testfiles/photo.jpg');
+// four screenshots first: the form must refuse more than three
+await p.setInputFiles(`${f} [name="screenshots[]"]`, [1, 2, 3, 4].map(i => S + '/testfiles/shot' + i + '.png'));
+await fill('ce_opt1_label', 'Online course'); await fill('ce_opt1_price', '79.95'); await fill('ce_opt2_label', 'Online + printed book'); await fill('ce_opt2_price', '129.95');
+await p.selectOption(`${f} [name=ce_attempts]`, 'Limited');
+await p.check(`${f} [name="features[]"][value=email_support]`); await fill('support_email', 'help@example.com'); await fill('hours', 'Mon–Fri 9–5 Pacific');
+await p.check(`${f} [name=confirm]`);
+await p.waitForTimeout(6000);
+await p.click(`${f} [type=submit]`); await p.waitForTimeout(800);
+console.log('4 screenshots ->', await p.evaluate(() => (document.getElementById('tcf-err-screenshots') || {}).textContent), '| posts:', posts);
+await p.setInputFiles(`${f} [name="screenshots[]"]`, [1, 2, 3].map(i => S + '/testfiles/shot' + i + '.png'));
+await p.click(`${f} [type=submit]`);
+await p.waitForSelector(`${f} [role=status]`, { timeout: 40000 });
+console.log('result:', (await p.locator(`${f} [role=status]`).innerText()).replace(/\s+/g, ' '), '| posts:', posts, '| errors:', errs);
+await b.close();
