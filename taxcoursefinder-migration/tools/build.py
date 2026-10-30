@@ -110,7 +110,7 @@ def seo_tweaks(name, body):
         for m in re.finditer(r'<(/?)div\b', src[a:]):
             depth += -1 if m.group(1) else 1
             if depth == 0: j = a + m.end() + src[a + m.end():].index('>') + 1; break
-        inner = src[a:j].replace('Renew inside the green window to avoid the late fee.', 'Renew by October 31 to avoid the late fee.')
+        inner = src[a:j].replace('Renew inside the green window to avoid the late fee.', 'Renew by October 31 to avoid the late fee.').replace('</span>Key dates</div>', '</span>CTEC renewal deadline</div>', 1)
         inner = inner[len('<div style="max-width:1200px;margin:0 auto">'):inner.rindex('</div>')]
         x = body.index('<div style="text-align:center"><div style="font:700 17px Manrope,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#7E9330;margin-bottom:10px">Key dates</div>')
         y = body.rindex('<div', x, body.index('Hour breakdowns, fees and dates', x))
@@ -126,10 +126,10 @@ def seo_tweaks(name, body):
         for m in re.finditer(r'<(/?)div\b', src[a:]):
             depth += -1 if m.group(1) else 1
             if depth == 0: j = a + m.end() + src[a + m.end():].index('>') + 1; break
-        cal = src[a:j].replace('Renew inside the green window to avoid the late fee.', 'Renew by October 31 to avoid the late fee.')
+        cal = src[a:j].replace('Renew inside the green window to avoid the late fee.', 'Renew by October 31 to avoid the late fee.').replace('</span>Key dates</div>', '</span>CTEC renewal deadline</div>', 1)
         dark = cal.replace('<div style="padding:88px 56px;background:#fff">', '<div style="padding:88px 56px;background:#0B2E40;color:#fff">', 1)  # dark band on the home page
         for x, y in [("serif;\">The renewal", "serif;color:#fff\">The renewal"), ('color:#2F4652', 'color:rgba(255,255,255,.78)'), ('color:#8A9AA3', 'color:rgba(255,255,255,.6)'),
-                     ('#D7DFE2', 'rgba(255,255,255,.2)'), ('#E3E9EB', 'rgba(255,255,255,.2)'), ('<div style="font:700 22px Manrope,sans-serif">', '<div style="font:700 22px Manrope,sans-serif;color:#fff">'),
+                     ('#D7DFE2', 'rgba(255,255,255,.2)'), ('#E3E9EB', 'rgba(255,255,255,.2)'), ('<div style="font:700 22px Manrope,sans-serif">', '<div style="font:700 22px Manrope,sans-serif;color:#FF6B57">'),
                      ('background:#95AB3B;color:#fff;padding:12px 16px', 'background:#fff;color:#23272A;padding:12px 16px')]:
             assert x in dark, x
             dark = dark.replace(x, y)
@@ -168,7 +168,7 @@ def seo_tweaks(name, body):
     # The design omits ';' before a few properties (e.g. '#0B2E40margin-top:auto'), so those rules never applied.
     body = re.sub(r'(#[0-9A-Fa-f]{6})(?=(?:margin|flex|width|align|justify)[a-z-]*:)', r'\1;', body)
     if name == 'CTEC Requirements':
-        k = body.index('>Key dates<'); sec = body.rfind('<div style="background:#fff;padding:88px 56px">', 0, k)
+        k = body.index('Hour breakdowns, fees and dates'); sec = body.rfind('<div style="background:#fff;padding:88px 56px">', 0, k)
         assert sec >= 0
         body = body[:sec] + '<div style="background:#F4F6F7;padding:88px 56px">' + body[sec + len('<div style="background:#fff;padding:88px 56px">'):]
         d = body.index('Hour breakdowns, fees and dates', sec); box = body.rfind('<div style="background:#F4F6F7;border:1px solid #D7DFE2', sec, d)
@@ -306,10 +306,10 @@ def seo_tweaks(name, body):
         a = body.index('<form'); b = body.index('</form>', a) + len('</form>')
         body = body[:a] + listing_form.form() + body[b:]
     if name == 'mobile':  # renewal calendar on phones: stacked, same dark band as desktop
-        row = lambda c, t, d: ('<div style="border-left:6px solid %s;padding:4px 0 4px 16px;display:flex;flex-direction:column;gap:4px"><div style="font:700 20px Manrope,sans-serif;color:#fff">%s</div>'
+        row = lambda c, t, d: ('<div style="border-left:6px solid %s;padding:4px 0 4px 16px;display:flex;flex-direction:column;gap:4px"><div style="font:700 20px Manrope,sans-serif;color:#FF6B57">%s</div>'
                                '<p style="margin:0;font-size:18px;line-height:1.55;color:rgba(255,255,255,.78)">%s</p></div>' % (c, t, d))
         mcal = ('<!-- RENEWAL CALENDAR --><div style="padding:56px 20px;background:#0B2E40;color:#fff"><div style="display:flex;flex-direction:column;gap:22px">'
-                '<div style="display:flex;flex-direction:column;gap:10px"><div style="font:700 17px Manrope,sans-serif;letter-spacing:1.6px;text-transform:uppercase;color:#7E9330">Key dates</div>'
+                '<div style="display:flex;flex-direction:column;gap:10px"><div style="font:700 17px Manrope,sans-serif;letter-spacing:1.6px;text-transform:uppercase;color:#7E9330">CTEC renewal deadline</div>'
                 "<h2 style=\"margin:0;font:300 36px/1.12 'Source Serif 4',Georgia,serif;color:#fff\">The renewal calendar</h2>"
                 '<p style="margin:0;font-size:18px;line-height:1.6;color:rgba(255,255,255,.78)">Registration runs November 1 to October 31. Renew by October 31 to avoid the late fee.</p></div>'
                 + row('#fff', 'On-time renewal · by Oct 31', 'Education reported, PTIN and bond current, CTEC renewal submitted and paid.')
