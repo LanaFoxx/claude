@@ -50,7 +50,11 @@ THEMES = {
              '.tcf-header nav.tcf-nav .dd>div.tcf-nav-btn:hover{border-color:#23272A!important;background:#fff!important;color:#23272A!important}'
              '.tcf-header nav.tcf-nav>a.tcf-nav-cta{color:#FAF7F2!important}'
              '.tcf-header nav.tcf-nav>a.tcf-nav-cta:hover{background:#15181A!important;border-color:#15181A!important}'
-             '.tcf-thead{color:#FAF7F2!important}'),
+             '.tcf-thead{color:#FAF7F2!important}'
+             # smaller footer text
+             '.tcf-footer a[style*="font-size:19px"],.tcf-footer p[style*="font-size:19px"]{font-size:16px!important}'
+             '.tcf-footer [style*="text-transform:uppercase"]{font-size:14px!important}'
+             '.tcf-footer [style*="font-size:17px"]{font-size:14px!important}'),
     ),
 }
 THEME = 'studio'
@@ -212,7 +216,7 @@ def structure(h):
             if T.get('display_sans'):
                 st = st.rstrip(';') + ';font-weight:800'  # bold accent word against the thin headline
         elif STUDIO and ctx not in ('skip', 'dark') and 'text-transform:uppercase' in st and OLIVE_COLOR.search(st) and 'letter-spacing' in st:
-            st = OLIVE_COLOR.sub('color:' + INK, st)  # eyebrow: charcoal label
+            st = OLIVE_COLOR.sub('color:' + (CORAL if COLORS_ONLY else INK), st)  # eyebrow label: coral accent
             if not COLORS_ONLY:
                 attrs = _add_class(attrs, 'tcf-eyebrow')
         if 'border-radius:999px' in st and re.search(r'background:#0B2E40\b', st) and 'color:#fff' in st and ctx != 'dark':
@@ -386,7 +390,7 @@ def course_paths(h):
         c = c.replace('line-height:1.6;color:rgba(255,255,255,.82)', 'line-height:1.6;color:#4B4F54')
         c = c.replace('background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:999px', 'background:#FAF7F2;border:1px solid #D9D4CC;border-radius:999px')
         c = c.replace('stroke-linejoin="round" style="flex:none"><circle cx="12" cy="12" r="9">', 'stroke-linejoin="round" style="flex:none;color:#FF6B57"><circle cx="12" cy="12" r="9">')  # coral clocks
-        c = c.replace('background:#FAF7F2;border-radius:999px;padding:7px 14px;color:#23272A', 'background:#23272A;border-radius:999px;padding:7px 14px;color:#FF6B57')  # charcoal pill, coral text
+        c = re.sub(r'<span style="[^"]*background:#FAF7F2;border-radius:999px;padding:7px 14px;color:#23272A">[^<]*</span>', '', c)  # no 'Deadline Oct 31' / 'Required once' tags
         c = c.replace('border-top:1px solid rgba(255,255,255,.14)', 'border-top:1px solid #EEE9E1')
         c = c.replace('border-radius:50%;background:#fff;color:#23272A;display:grid', 'border-radius:50%;background:#FF6B57;color:#fff;display:grid')
         out.append(card_new + c + rest)
@@ -410,6 +414,10 @@ def verify_section(h):
         c = c.replace('background:#23272A;color:#fff;padding:88px', 'background:#fff;color:#23272A;padding:88px')
         c = c.replace('line-height:1.6;color:rgba(255,255,255,.82)', 'line-height:1.6;color:#4B4F54')
         c = c.replace('rgba(255,255,255,.18)', '#D9D4CC').replace('color:rgba(255,255,255,.65)', 'color:#4B4F54')
+        # coral divider between photo and text; step numbers in light-coral circles
+        c = c.replace('<div style="position:relative;overflow:hidden;min-height:420px">', '<div style="position:relative;overflow:hidden;min-height:420px;border-right:6px solid #FF6B57">', 1)
+        c = c.replace('flex:none;width:36px;font:800 26px Manrope,sans-serif;color:#FF6B57;line-height:1',
+                      'flex:none;width:52px;height:52px;border-radius:50%;background:#FFF1EE;border:1px solid rgba(255,107,87,.35);display:grid;place-items:center;font:800 19px Manrope,sans-serif;color:#E8563F;line-height:1')
         # button: charcoal on white (and the missing ';' that made it full width)
         c = c.replace('background:#fff;color:#23272A;padding:14px 28px;border:1.5px solid #fffalign-self:flex-start" data-hv="22"',
                       'background:#23272A;color:#FAF7F2;padding:14px 28px;border:1.5px solid #23272A;align-self:flex-start" data-hv="4"')
@@ -418,8 +426,19 @@ def verify_section(h):
     return ''.join(out)
 
 
+def countdown_strip(h):
+    """Home deadline countdown: its own white section, about 120px tall."""
+    if not (STUDIO and COLORS_ONLY):
+        return h
+    h = h.replace('background:#FAF7F2;color:#23272A;padding:14px 56px"><div style="max-width:1200px;margin:0 auto;display:flex',
+                     'background:#fff;color:#23272A;padding:24px 56px;min-height:120px;box-sizing:border-box;display:flex;align-items:center;border-top:1px solid #EEE9E1">'
+                     '<div style="width:100%;max-width:1200px;margin:0 auto;display:flex')
+    # countdown numbers in coral
+    return re.sub(r'<span style="font:800 22px Manrope,sans-serif">(\{\{ cdDays \}\}|\d+) days', r'<span style="font:800 22px Manrope,sans-serif;color:#FF6B57">\1 days', h)
+
+
 def brand(h):
-    return verify_section(course_paths(palette(fonts(scripts(chips(structure(course_cards(tidy(h)))))))))
+    return countdown_strip(verify_section(course_paths(palette(fonts(scripts(chips(structure(course_cards(tidy(h))))))))))
 
 
 FONTS_URL = T['fonts_url']

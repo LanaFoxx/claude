@@ -1,0 +1,10 @@
+import { chromium } from '/opt/node-tools/node_modules/playwright/index.mjs';
+import fs from 'fs';
+const S = process.argv[2];
+const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', proxy: { server: process.env.HTTPS_PROXY } });
+const ctx = await b.newContext({ viewport: { width: 1440, height: 1000 } });
+await ctx.route(u => u.href.includes('?pv='), r => r.fulfill({ status: 200, contentType: 'text/html; charset=utf-8', body: fs.readFileSync(`${S}/pv/home.html`, 'utf8') }));
+const p = await ctx.newPage(); await p.goto('https://taxcoursefinder.com/?pv=1', { waitUntil: 'networkidle' });
+const f = p.locator('#site-footer'); await f.scrollIntoViewIfNeeded(); await p.waitForTimeout(400);
+console.log(JSON.stringify(await f.evaluate(e => [...new Set([...e.querySelectorAll('a,p,div')].filter(x => x.children.length === 0 && x.textContent.trim()).map(x => getComputedStyle(x).fontSize))])));
+await f.screenshot({ path: `${S}/shots/pv-foot.png` }); await b.close();
