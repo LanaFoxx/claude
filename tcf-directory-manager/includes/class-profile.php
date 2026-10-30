@@ -13,6 +13,7 @@ final class TCFD_Profile {
     const TOKEN_META = '_tcfd_profile_token';
     const MAX_BYTES = 5 * MB_IN_BYTES;
     const MIMES = ['jpg|jpeg|jpe' => 'image/jpeg', 'png' => 'image/png', 'gif' => 'image/gif', 'webp' => 'image/webp'];
+    const FORM_MIMES = ['jpg|jpeg|jpe' => 'image/jpeg', 'png' => 'image/png', 'webp' => 'image/webp']; // what the public forms advertise
 
     const FORMATS = ['Video lessons' => 'video', 'Online reading' => 'reading', 'Downloadable PDF' => 'pdf', 'Physical textbook' => 'textbook',
                      'Live online classes' => 'live_online', 'Classroom instruction' => 'classroom', 'Audio' => 'audio'];
@@ -119,6 +120,13 @@ final class TCFD_Profile {
         add_action('wp_ajax_nopriv_tcfd_profile_submit', [__CLASS__, 'submit']);
         add_action('wp_ajax_tcfd_listing_submit', [__CLASS__, 'submit_listing']);
         add_action('wp_ajax_nopriv_tcfd_listing_submit', [__CLASS__, 'submit_listing']);
+        add_action('wp_ajax_tcfd_listing_receipt', [__CLASS__, 'receipt']);
+        add_action('wp_ajax_nopriv_tcfd_listing_receipt', [__CLASS__, 'receipt']);
+        add_action('tcfd_followup_retry', [__CLASS__, 'retry_followups']);
+        // The listing-verified thank-you page is only for people who just submitted: keep it out of search results.
+        add_filter('wp_robots', fn($r) => is_page('listing-verified') ? array_merge($r, ['noindex' => true, 'nofollow' => true]) : $r);
+        add_filter('wpseo_robots', fn($r) => is_page('listing-verified') ? 'noindex, nofollow' : $r);
+        add_action('init', function () { if (!wp_next_scheduled('tcfd_followup_retry')) wp_schedule_event(time() + 600, 'hourly', 'tcfd_followup_retry'); });
         if (is_admin()) {
             add_action('add_meta_boxes_' . self::CPT, [__CLASS__, 'review_box']);
             add_action('add_meta_boxes_' . TCFD_Plugin::POST_TYPE, [__CLASS__, 'link_box']);
@@ -338,89 +346,258 @@ final class TCFD_Profile {
         wp_send_json_success(['ok' => true]);
     }
 
-/** Public "verify your listing" form: only the fields the directory shows and filters on. */
+/** Public listing forms: the short "verify your listing" form and the longer school profile page form. */
     public static function submit_listing(): void {
         if (!empty($_POST['company_fax'])) wp_send_json_success(['ok' => true]); // spam trap: pretend success
+        $part = sanitize_key((string) ($_POST['part'] ?? '')) === 'profile' ? 'profile' : 'verify'; // short verify form, or the longer profile page form
+        $raw = fn(string $k) => trim((string) wp_unslash(is_scalar($_POST[$k] ?? null) ? $_POST[$k] : ''));
+        $in = fn(string $k, string $kind = 'text') => self::clean($raw($k), $kind);
+
+        // Repeat clicks and request retries carry the same key: answer them with the first result instead of saving again.
+        $key = preg_replace('/[^a-f0-9]/', '', strtolower($raw('submission_key')));
+        $key = strlen($key) >= 16 ? substr($key, 0, 40) : '';
+        if ($key !== '') {
+            $prev = get_option('tcfd_sk_' . $key);
+            if (is_array($prev) && !empty($prev['receipt'])) wp_send_json_success(['ok' => true, 'receipt' => $prev['receipt'], 'part' => $prev['part'] ?? $part, 'repeat' => true]);
+            if (is_array($prev)) self::fail('Your submission is already being saved. Please wait a moment.', 409);
+        }
+
         $started = (int) ($_POST['started'] ?? 0);
         if ($started && time() - $started < 5) self::fail('That was quick! Please review your details and submit again.');
         $ip = hash('sha256', (string) ($_SERVER['REMOTE_ADDR'] ?? '') . wp_salt('nonce'));
         $hits = (int) get_transient('tcfd_pf_' . substr($ip, 0, 32));
         if ($hits >= 6) self::fail('Too many submissions from this connection. Please wait an hour or email providers@taxcoursefinder.com.', 429);
 
-        $in = fn(string $k, string $kind = 'text') => self::clean(wp_unslash((string) ($_POST[$k] ?? '')), $kind);
+        // ---- validation: every problem is reported against its field; optional blank fields stay optional ----
+        $err = [];
+        foreach (['school_name' => 'your school name', 'contact_name' => 'your name'] as $k => $label) if ($raw($k) === '') $err[$k] = 'Please enter ' . $label . '.';
+        if ($raw('contact_email') === '') $err['contact_email'] = 'Please enter your email address.';
+        elseif (!self::valid_email($raw('contact_email'))) $err['contact_email'] = 'Please enter a valid email address, like name@school.com.';
+        foreach (['website', 'ce_url', 'qe_url'] as $k) {
+            if ($raw($k) !== '' && !self::valid_url($raw($k))) $err[$k] = 'Please enter a full web address starting with https:// or http://.';
+        }
+        if ($raw('support_email') !== '' && !self::valid_email($raw('support_email'))) $err['support_email'] = 'Please enter a valid email address.';
+        foreach (['ce', 'qe'] as $c) {
+            foreach ([$c . '_price', $c . '_regular'] as $k) if ($raw($k) !== '' && self::price_value($raw($k)) === null) $err[$k] = 'Please enter a price in dollars, like 69.95.';
+            foreach ([1, 2, 3] as $i) {
+                $l = $raw($c . '_opt' . $i . '_label'); $pr = $raw($c . '_opt' . $i . '_price'); $rg = $raw($c . '_opt' . $i . '_regular');
+                if ($pr !== '' && self::price_value($pr) === null) $err[$c . '_opt' . $i . '_price'] = 'Please enter a price in dollars, like 69.95.';
+                if ($rg !== '' && self::price_value($rg) === null) $err[$c . '_opt' . $i . '_regular'] = 'Please enter a price in dollars, like 79.95.';
+                if ($l === '' && ($pr !== '' || $rg !== '')) $err[$c . '_opt' . $i . '_label'] = 'Please name this package option.';
+                if ($l !== '' && $pr === '') $err[$c . '_opt' . $i . '_price'] = 'Please add the price for this option.';
+            }
+            $exp = $raw($c . '_coupon_expires');
+            if ($exp !== '' && !self::valid_date($exp)) $err[$c . '_coupon_expires'] = 'Please enter a valid date.';
+            if ($raw($c . '_coupon_code') === '' && ($raw($c . '_coupon_details') !== '' || $exp !== '' || $raw($c . '_coupon_applies') !== '')) $err[$c . '_coupon_code'] = 'Please add the coupon code, or clear the coupon details.';
+        }
+        if ($part === 'verify' && empty($_POST['ce_offered']) && empty($_POST['qe_offered'])) $err['ce_offered'] = 'Please tick at least one course you offer.';
+        foreach (['logo' => 1, 'photo' => 1, 'screenshots' => 3] as $f => $max) {
+            $files = self::files($f);
+            if (count($files) > $max) { $err[$f] = 'Please choose no more than ' . $max . ' images.'; continue; }
+            foreach ($files as $file) if (($m = self::file_problem($file)) !== '') { $err[$f] = $m; break; }
+        }
+        if ($part === 'verify' && self::files('logo') && empty($_POST['logo_ok'])) $err['logo_ok'] = 'Please give permission to show your logo, or remove the logo.';
+        if (empty($_POST['confirm'])) $err['confirm'] = 'Please confirm that you are authorized to submit these details.';
+        if ($err) wp_send_json_error(['message' => 'Please check the highlighted fields.', 'errors' => $err], 422);
+
+        // Claim the key before saving, so a parallel retry cannot save a second copy.
+        if ($key !== '' && !add_option('tcfd_sk_' . $key, ['t' => time(), 'part' => $part], '', 'no')) self::fail('Your submission is already being saved. Please wait a moment.', 409);
+
         $v = ['school_name' => $in('school_name'), 'website' => $in('website', 'url'), 'ctec_number' => $in('ctec_number'),
               'contact_name' => $in('contact_name'), 'contact_email' => $in('contact_email', 'email'), 'contact_phone' => $in('contact_phone'),
               // school profile page fields (same names as the private profile form, so review and apply already handle them)
               'intro' => $in('intro', 'textarea'), 'about' => $in('about', 'textarea'), 'phone' => $in('phone'), 'support_email' => $in('support_email', 'email'), 'hours' => $in('hours')];
-        if ($v['school_name'] === '' || $v['contact_name'] === '' || !is_email($v['contact_email'])) {
-            self::fail('Please fill in the school name, your name and a valid email address.');
-        }
-        if (empty($_POST['confirm'])) self::fail('Please confirm that you are authorized to submit these details.');
-        $reporting = $in('reporting', 'choice:reporting');
-        $part = sanitize_key((string) ($_POST['part'] ?? '')) === 'profile' ? 'profile' : 'verify'; // short verify form, or the longer profile page form
+        $reporting = $in('reporting', 'choice:reporting'); // '' = not stated
         $courses = [];
         foreach (['ce', 'qe'] as $c) {
-            $courses[$c] = ['offered' => !empty($_POST[$c . '_offered']), 'price' => $in($c . '_price'), 'regular' => $in($c . '_regular'),
+            $pv = self::price_value($raw($c . '_price')); $rv = self::price_value($raw($c . '_regular'));
+            $courses[$c] = ['offered' => !empty($_POST[$c . '_offered']), 'price' => $pv === null ? '' : (string) $pv, 'regular' => $rv === null ? '' : (string) $rv,
                             'course_url' => $in($c . '_url', 'url'), 'reporting_time' => $reporting,
-                            'access_period' => $in($c . '_access_period'), 'attempts' => $in($c . '_attempts'),
-                            'options' => implode("\n", array_filter(array_map(function ($i) use ($in, $c) { // "Name | price | regular" lines
-                                $l = str_replace('|', '/', $in($c . '_opt' . $i . '_label')); $pr = $in($c . '_opt' . $i . '_price');
-                                if ($l === '' || !preg_match('/\d/', $pr)) return '';
-                                $rg = $in($c . '_opt' . $i . '_regular');
-                                return $l . ' | ' . preg_replace('/[^\d.,]/', '', $pr) . (preg_match('/\d/', $rg) ? ' | ' . preg_replace('/[^\d.,]/', '', $rg) : '');
-                            }, [1, 2, 3]))),
-                            'refund_window' => $in('refund_window'), 'refund_url' => $in('refund_url', 'url'), 'refund_conditions' => $in('refund_conditions', 'textarea')];
+                            'attempts' => $in($c . '_attempts'), // '' = not stated, 'Limited' = a confirmed No
+                            'options' => implode("\n", array_filter(array_map(function ($i) use ($in, $raw, $c) { // "Name | price | regular" lines
+                                $l = str_replace('|', '/', $in($c . '_opt' . $i . '_label')); $pr = self::price_value($raw($c . '_opt' . $i . '_price'));
+                                if ($l === '' || $pr === null) return '';
+                                $rg = self::price_value($raw($c . '_opt' . $i . '_regular'));
+                                return $l . ' | ' . $pr . ($rg !== null ? ' | ' . $rg : '');
+                            }, [1, 2, 3])))];
         }
         if ($part === 'profile') { // no course checkboxes on this form: a course counts when its details are filled in
             foreach (['ce', 'qe'] as $c) $courses[$c]['offered'] = $courses[$c]['options'] !== '' || $courses[$c]['attempts'] !== '';
-        } elseif (!$courses['ce']['offered'] && !$courses['qe']['offered']) self::fail('Please choose at least one course you offer.');
+        }
+        // Features: ticked = yes. Unticked = not stated, unless the school confirms its ticks are the complete list (then unticked = no).
         $picked = array_map('sanitize_key', (array) wp_unslash($_POST['features'] ?? []));
-        $features = []; // only the feature groups this form asks about (support on the profile form, the rest on the verify form)
+        $complete = !empty($_POST['features_complete']);
+        $features = [];
         foreach (self::listing_features() as $group => $items) {
-            if (($group === 'Support') !== ($part === 'profile')) continue;
-            foreach ($items as $k => $l) $features[$k] = in_array($k, $picked, true);
+            if (($group === 'Support') !== ($part === 'profile') || $group === 'Learning Format' && $part === 'verify') continue;
+            foreach ($items as $k => $l) {
+                if (in_array($k, $picked, true)) $features[$k] = true;
+                elseif ($complete) $features[$k] = false;
+            }
         }
         $offers = []; // one coupon per course
         foreach (['ce', 'qe'] as $c) {
-            $exp = $in($c . '_coupon_expires');
             $offers[$c] = ['code' => strtoupper(preg_replace('/\s+/', '', $in($c . '_coupon_code'))), 'details' => $in($c . '_coupon_details'),
-                           'scope' => $c, 'expires' => preg_match('/^\d{4}-\d{2}-\d{2}$/', $exp) ? $exp : ''];
+                           'applies' => $in($c . '_coupon_applies'), 'scope' => $c, 'expires' => self::valid_date($raw($c . '_coupon_expires')) ? $raw($c . '_coupon_expires') : ''];
         }
 
         $pid = self::match_provider($v['ctec_number'], $v['school_name']);
         $sub = wp_insert_post(['post_type' => self::CPT, 'post_status' => 'draft', 'post_title' => $v['school_name'] . ($part === 'profile' ? ' – profile page form – ' : ' – listing form – ') . wp_date('M j, Y')], true);
-        if (is_wp_error($sub)) self::fail('Could not save your submission. Please try again.', 500);
+        if (is_wp_error($sub)) { if ($key !== '') delete_option('tcfd_sk_' . $key); self::fail('Could not save your submission. Please try again.', 500); }
         $sub = (int) $sub;
         $media = ['logo' => 0, 'screenshots' => []];
         $logo_ok = !empty($_POST['logo_ok']); // the school must give permission before its logo is shown
-        if ($logo_ok && !empty($_FILES['logo']['name'])) $media['logo'] = self::upload($_FILES['logo'], $sub, $v['school_name'] . ' logo');
-        if (!empty($_FILES['photo']['name'])) $media['photo'] = self::upload($_FILES['photo'], $sub, $v['school_name'] . ' school photo');
-        if (!empty($_FILES['screenshots']['name']) && is_array($_FILES['screenshots']['name'])) {
-            $n = 0;
-            foreach (array_keys($_FILES['screenshots']['name']) as $i) {
-                if ($n >= 3 || empty($_FILES['screenshots']['name'][$i])) continue;
-                $file = [];
-                foreach (['name', 'type', 'tmp_name', 'error', 'size'] as $k) $file[$k] = $_FILES['screenshots'][$k][$i];
-                $aid = self::upload($file, $sub, $v['school_name'] . ' CTEC course screenshot ' . (++$n));
-                if ($aid) $media['screenshots'][] = $aid;
-            }
+        if ($logo_ok && ($f = self::files('logo'))) $media['logo'] = self::upload($f[0], $sub, $v['school_name'] . ' logo');
+        if ($f = self::files('photo')) $media['photo'] = self::upload($f[0], $sub, $v['school_name'] . ' school photo');
+        foreach (array_slice(self::files('screenshots'), 0, 3) as $n => $file) {
+            $aid = self::upload($file, $sub, $v['school_name'] . ' CTEC course screenshot ' . ($n + 1));
+            if ($aid) $media['screenshots'][] = $aid;
         }
 
-        $payload = ['kind' => 'listing', 'part' => $part, 'logo_permission' => $logo_ok && $media['logo'] ? wp_date('Y-m-d H:i') : '', 'v' => $v, 'ce' => $courses['ce'], 'qe' => $courses['qe'], 'features' => $features, 'offers' => $offers];
+        $receipt = wp_generate_password(24, false);
+        $payload = ['kind' => 'listing', 'part' => $part, 'logo_permission' => $logo_ok && $media['logo'] ? wp_date('Y-m-d H:i') : '', 'features_complete' => $complete,
+                    'v' => $v, 'ce' => $courses['ce'], 'qe' => $courses['qe'], 'features' => $features, 'offers' => $offers];
         update_post_meta($sub, '_tcfd_payload', wp_slash(wp_json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)));
         update_post_meta($sub, '_tcfd_media', $media);
         update_post_meta($sub, '_tcfd_provider', $pid);
         update_post_meta($sub, '_tcfd_via_token', 0);
+        update_post_meta($sub, '_tcfd_receipt', $receipt);
+        set_transient('tcfd_rcpt_' . $receipt, $sub, 2 * DAY_IN_SECONDS);
+        if ($key !== '') update_option('tcfd_sk_' . $key, ['t' => time(), 'part' => $part, 'receipt' => $receipt, 'sub' => $sub], 'no');
         set_transient('tcfd_pf_' . substr($ip, 0, 32), $hits + 1, HOUR_IN_SECONDS);
 
         $to = apply_filters('tcfd_profile_notify_to', get_option('admin_email'));
-        $body = "A school submitted the listing verification form.\n\n"
+        $body = ($part === 'profile' ? "A school submitted the school profile page form.\n\n" : "A school submitted the listing verification form.\n\n")
               . 'School: ' . $v['school_name'] . "\nCTEC number: " . $v['ctec_number'] . "\nContact: " . $v['contact_name'] . ' <' . $v['contact_email'] . '>' . ($v['contact_phone'] ? ' · ' . $v['contact_phone'] : '') . "\n"
               . ($payload['logo_permission'] ? 'Logo: uploaded, with permission to display it (given ' . $payload['logo_permission'] . ")\n" : '')
               . 'Listing: ' . ($pid ? get_the_title($pid) . ' (matched by name/number)' : 'no matching listing yet') . "\n\n"
-              . 'Review and apply to the listing: ' . admin_url('post.php?post=' . $sub . '&action=edit');
-        if ($to) wp_mail($to, '[Tax Course Finder] Listing verification: ' . $v['school_name'], $body, ['Reply-To: ' . $v['contact_name'] . ' <' . $v['contact_email'] . '>']);
-        wp_send_json_success(['ok' => true]);
+              . 'Review and apply to the listing: ' . admin_url('post.php?post=' . $sub . '&action=edit') . "\n\nNothing changes on the site until you review and apply it.";
+        if ($to) wp_mail($to, '[Tax Course Finder] ' . ($part === 'profile' ? 'School profile page' : 'Listing verification') . ': ' . $v['school_name'], $body, ['Reply-To: ' . $v['contact_name'] . ' <' . $v['contact_email'] . '>']);
+        if ($part === 'verify') self::send_followup($sub); // the saved submission stays saved even if this email fails
+        wp_send_json_success(['ok' => true, 'receipt' => $receipt, 'part' => $part]);
+    }
+
+    /* ---------------- follow-up email after the verify form ---------------- */
+
+    const FOLLOWUP_META = '_tcfd_followup';
+    const FOLLOWUP_TRIES = 5;
+
+    /** Sends the "create your school profile" email once per submission; failures are recorded and retried by cron. */
+    public static function send_followup(int $sub): bool {
+        $state = (array) get_post_meta($sub, self::FOLLOWUP_META, true);
+        if (($state['status'] ?? '') === 'sent') return true;
+        if (!add_post_meta($sub, '_tcfd_followup_lock', time(), true)) { // another request is sending it right now
+            $t = (int) get_post_meta($sub, '_tcfd_followup_lock', true);
+            if ($t && time() - $t < 300) return false;
+            update_post_meta($sub, '_tcfd_followup_lock', time());
+        }
+        $p = self::payload($sub);
+        $v = $p['v'] ?? [];
+        $to = (string) ($v['contact_email'] ?? '');
+        $state['attempts'] = (int) ($state['attempts'] ?? 0) + 1;
+        $state['last'] = time();
+        if (!is_email($to)) {
+            $state = array_merge($state, ['status' => 'failed', 'error' => 'No valid contact email on the submission.', 'attempts' => self::FOLLOWUP_TRIES]);
+        } else {
+            $name = trim((string) ($v['contact_name'] ?? '')) ?: 'there';
+            $school = trim((string) ($v['school_name'] ?? '')) ?: 'your school';
+            $body = "Hi {$name},\n\n"
+                  . "Thank you for verifying {$school}’s listing on Tax Course Finder. We’ve received your information for review.\n\n"
+                  . "You can now create your free school profile page so prospective students can learn more about your school and courses.\n\n"
+                  . "To create your page:\n\n"
+                  . "1. Open https://taxcoursefinder.com/create-your-school-profile/\n"
+                  . "2. Enter your school information, introduction, course options, and student support details. You can also include photos or course screenshots.\n"
+                  . "3. Submit the form. We’ll review your information and follow up once your profile is published.\n\n"
+                  . "Creating your profile is optional and free.\n\n"
+                  . "If you need help, reply to this email.\n\n"
+                  . "Tax Course Finder\nproviders@taxcoursefinder.com\n";
+            $error = '';
+            $catch = function ($e) use (&$error) { if (is_wp_error($e)) $error = $e->get_error_message(); };
+            add_action('wp_mail_failed', $catch);
+            $ok = wp_mail($to, 'Create your free school profile on Tax Course Finder', $body,
+                          ['Reply-To: Tax Course Finder <providers@taxcoursefinder.com>', 'Content-Type: text/plain; charset=UTF-8']);
+            remove_action('wp_mail_failed', $catch);
+            $state['status'] = $ok ? 'sent' : 'failed';
+            if ($ok) { $state['sent'] = time(); unset($state['error']); } else $state['error'] = $error ?: 'The mail service did not accept the message.';
+        }
+        update_post_meta($sub, self::FOLLOWUP_META, $state);
+        delete_post_meta($sub, '_tcfd_followup_lock');
+        return $state['status'] === 'sent';
+    }
+
+    /** Hourly cron: retries follow-up emails that failed (up to FOLLOWUP_TRIES attempts) and clears old submission keys. */
+    public static function retry_followups(): void {
+        $ids = get_posts(['post_type' => self::CPT, 'post_status' => 'any', 'numberposts' => 50, 'fields' => 'ids',
+                          'meta_query' => [['key' => self::FOLLOWUP_META, 'value' => '"failed"', 'compare' => 'LIKE']]]);
+        foreach ($ids as $id) {
+            $s = (array) get_post_meta((int) $id, self::FOLLOWUP_META, true);
+            if (($s['status'] ?? '') === 'failed' && (int) ($s['attempts'] ?? 0) < self::FOLLOWUP_TRIES) self::send_followup((int) $id);
+        }
+        global $wpdb;
+        $old = $wpdb->get_col("SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE 'tcfd\\_sk\\_%' LIMIT 500");
+        foreach ($old as $name) {
+            $o = get_option($name);
+            if (!is_array($o) || time() - (int) ($o['t'] ?? 0) > DAY_IN_SECONDS) delete_option($name);
+        }
+    }
+
+    /** Confirmation page check: is this receipt from a saved submission? Returns only what the thank-you page shows. */
+    public static function receipt(): void {
+        $r = preg_replace('/[^A-Za-z0-9]/', '', (string) wp_unslash($_GET['receipt'] ?? $_POST['receipt'] ?? ''));
+        $sub = $r !== '' ? (int) get_transient('tcfd_rcpt_' . $r) : 0;
+        if (!$sub || get_post_meta($sub, '_tcfd_receipt', true) !== $r) wp_send_json_error(['ok' => false], 404);
+        $v = self::payload($sub)['v'] ?? [];
+        nocache_headers();
+        wp_send_json_success(['ok' => true, 'school' => (string) ($v['school_name'] ?? '')]);
+    }
+
+    /* ---------------- validation helpers ---------------- */
+
+    private static function valid_email(string $s): bool {
+        return (bool) preg_match('/^[^\s@<>()",;:]+@[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?)*\.[A-Za-z]{2,}$/', $s) && is_email($s);
+    }
+
+    private static function valid_url(string $s): bool {
+        if (strlen($s) > 500 || preg_match('/\s/', $s)) return false;
+        $u = wp_parse_url($s);
+        return is_array($u) && in_array(strtolower($u['scheme'] ?? ''), ['http', 'https'], true)
+            && !empty($u['host']) && preg_match('/^[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/', $u['host']);
+    }
+
+    /** Dollar amount: "69.95", "$1,299" or "0" -> float; anything else (negative, words, ranges) -> null. */
+    private static function price_value(string $s): ?float {
+        $s = trim(str_replace([',', ' '], '', $s));
+        if (!preg_match('/^\$?(\d{1,6})(\.\d{1,2})?$/', $s)) return null;
+        return round((float) ltrim($s, '$'), 2);
+    }
+
+    private static function valid_date(string $s): bool {
+        if (!preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $s, $m)) return false;
+        return checkdate((int) $m[2], (int) $m[3], (int) $m[1]);
+    }
+
+    /** Uploaded files for one form field, as a list of single-file arrays (empty slots dropped). */
+    private static function files(string $field): array {
+        $f = $_FILES[$field] ?? null;
+        if (!is_array($f) || !isset($f['name'])) return [];
+        if (!is_array($f['name'])) return ($f['name'] === '' || (int) ($f['error'] ?? 0) === UPLOAD_ERR_NO_FILE) ? [] : [$f];
+        $out = [];
+        foreach (array_keys($f['name']) as $i) {
+            if ($f['name'][$i] === '' || (int) ($f['error'][$i] ?? 0) === UPLOAD_ERR_NO_FILE) continue;
+            $one = [];
+            foreach (['name', 'type', 'tmp_name', 'error', 'size'] as $k) $one[$k] = $f[$k][$i] ?? '';
+            $out[] = $one;
+        }
+        return $out;
+    }
+
+    /** '' when the file is an accepted image under the size limit, otherwise a message for the provider. */
+    private static function file_problem(array $file): string {
+        if ((int) $file['error'] === UPLOAD_ERR_INI_SIZE || (int) $file['error'] === UPLOAD_ERR_FORM_SIZE || (int) $file['size'] > self::MAX_BYTES) return '“' . sanitize_file_name((string) $file['name']) . '” is larger than 5 MB. Please choose a smaller image.';
+        if ((int) $file['error'] !== UPLOAD_ERR_OK || empty($file['tmp_name']) || !is_uploaded_file($file['tmp_name'])) return 'That image could not be uploaded. Please try again.';
+        $check = wp_check_filetype_and_ext($file['tmp_name'], (string) $file['name'], self::FORM_MIMES);
+        if (empty($check['type']) || !in_array($check['type'], self::FORM_MIMES, true)) return '“' . sanitize_file_name((string) $file['name']) . '” is not a PNG, JPG or WebP image.';
+        return '';
     }
 
         private static function match_provider(string $ctec, string $name): int {
@@ -512,7 +689,7 @@ final class TCFD_Profile {
         if (!empty($media['screenshots'])) $add('m:school_screenshots', 'School', 'Screenshots', $pid ? array_map('intval', (array) TCFD_Store::raw($pid, 'school_screenshots')) : [], array_map('intval', $media['screenshots']), 'images');
         foreach (['ce' => ['20-hour course', 'offers_20_hour_ce'], 'qe' => ['60-hour course', 'offers_60_hour_qe']] as $c => [$group, $flag]) {
             $in = $p[$c] ?? [];
-            if (($p['part'] ?? '') !== 'profile') $add('f:' . $c, $group, 'Offers this course', $pid ? (bool) TCFD_Store::raw($pid, $flag) : false, !empty($in['offered']), 'bool');
+            if (($p['part'] ?? '') !== 'profile' && !empty($in['offered'])) $add('f:' . $c, $group, 'Offers this course', $pid ? (bool) TCFD_Store::raw($pid, $flag) : false, !empty($in['offered']), 'bool');
             if (empty($in['offered'])) continue; // not offered: nothing else from this course is stored
             $add('c:' . $c . ':url', $group, 'Course page URL', $pid ? (string) TCFD_Store::raw($pid, $c . '_course_url') : '', $in['course_url'] ?? '', 'url');
             $price = self::money_from_text((string) ($in['price'] ?? ''));
@@ -539,7 +716,7 @@ final class TCFD_Profile {
         foreach ($list as $slot => $o) {
             if (empty($o['code']) && empty($o['details'])) continue;
             $scope = $names[$o['scope'] ?? 'both'] ?? 'Both';
-            $new = trim(($o['code'] ? $o['code'] . ' – ' : '') . ($o['details'] ?? '') . ' (' . $scope . ($o['expires'] ? ', expires ' . $o['expires'] : '') . ')');
+            $new = trim(($o['code'] ? $o['code'] . ' – ' : '') . ($o['details'] ?? '') . ' (' . $scope . ($o['expires'] ? ', expires ' . $o['expires'] : '') . ')' . (!empty($o['applies']) ? ' · Applies to: ' . $o['applies'] : ''));
             $cur = [];
             if ($pid) foreach (TCFD_Store::offers($pid) as $r) {
                 if (empty($r['offer_active'])) continue;
@@ -566,6 +743,10 @@ final class TCFD_Profile {
         echo '<p><strong>Contact:</strong> ' . esc_html($v['contact_name'] ?? '') . '<br><a href="mailto:' . esc_attr($v['contact_email'] ?? '') . '">' . esc_html($v['contact_email'] ?? '') . '</a></p>';
         echo '<p><strong>Approved for:</strong> ' . esc_html(self::APPROVED[$v['approved_types'] ?? ''] ?? 'Not given') . '</p>';
         if (!empty($p['logo_permission'])) echo '<p><strong>Logo permission:</strong> Given ' . esc_html($p['logo_permission']) . '</p>';
+        $fu = (array) get_post_meta($post->ID, self::FOLLOWUP_META, true);
+        if (!empty($fu['status'])) echo '<p><strong>Profile invitation email:</strong> ' . ($fu['status'] === 'sent' ? 'Sent ' . esc_html(wp_date('M j, Y g:ia', (int) ($fu['sent'] ?? $fu['last'] ?? 0)))
+            : 'Not sent yet (' . esc_html((string) ($fu['error'] ?? '')) . '). Attempt ' . (int) ($fu['attempts'] ?? 0) . ' of ' . self::FOLLOWUP_TRIES . (((int) ($fu['attempts'] ?? 0)) < self::FOLLOWUP_TRIES ? '; retried automatically every hour.' : '.')) . '</p>';
+        if (!empty($p['part'])) echo '<p><strong>Form:</strong> ' . ($p['part'] === 'profile' ? 'School profile page' : 'Listing verification') . '</p>';
         echo '<p><strong>Re-check reminders:</strong> ' . (get_post_meta($post->ID, '_tcfd_notify', true) ? 'Yes, wants emails' : 'No') . '</p>';
         echo '<p><strong>Came in via:</strong> ' . (get_post_meta($post->ID, '_tcfd_via_token', true) ? 'Private provider link' : 'General form link') . '</p>';
         echo '<p><a class="submitdelete" style="color:#b32d2e" href="' . esc_url(get_delete_post_link($post->ID)) . '">Move to Trash</a></p>';
@@ -648,7 +829,7 @@ final class TCFD_Profile {
                                  'offer_import_status' => !empty($o['code']) ? 'VERIFIED PUBLIC CODE' : 'VERIFIED PUBLIC OFFER',
                                  'offer_title' => (string) ($o['details'] ?? ''), 'coupon_code' => (string) ($o['code'] ?? ''),
                                  'offer_expiration_date' => !empty($o['expires']) ? str_replace('-', '', $o['expires']) : '',
-                                 'offer_last_verified' => wp_date('Ymd'), 'offer_description' => 'Submitted by the school via the listing form on ' . wp_date('Y-m-d') . '.'];
+                                 'offer_last_verified' => wp_date('Ymd'), 'offer_description' => trim(((string) ($o['applies'] ?? '')) !== '' ? (string) $o['applies'] : 'Submitted by the school via the listing form on ' . wp_date('Y-m-d') . '.')];
                     if (function_exists('update_field')) update_field(TCFD_Fields::key('provider_offers'), $rows_o, $pid);
                     break;
                 case 'c':

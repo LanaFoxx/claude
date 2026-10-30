@@ -33,17 +33,23 @@ def head(n, title):
             '<h2 style="margin:0;font:300 26px \'Source Serif 4\',Georgia,serif;">%s</h2></div>' % (n, e(title)))
 
 
-def field(label, name, kind='text', required=False, placeholder='', hint=''):
+def field(label, name, kind='text', required=False, placeholder='', hint='', extra=''):
+    if kind == 'price':  # dollar amounts: text keyboard with decimals, checked by the form script and the server
+        kind, extra = 'text', extra + ' inputmode="decimal" data-tcf-price="" maxlength="12"'
+    elif kind in ('url', 'email'):
+        extra += ' maxlength="%d" spellcheck="false" autocapitalize="off"' % (500 if kind == 'url' else 200)
+    elif kind == 'text':
+        extra += ' maxlength="300"'
     req = ' required=""' if required else ''
     ph = ' placeholder="%s"' % e(placeholder) if placeholder else ''
     star = ' <span style="color:#7E9330">*</span>' if required else ''
     sub = '<span style="font:400 17px \'Source Sans 3\',sans-serif;color:#5A6E78">%s</span>' % e(hint) if hint else ''
-    return '<label style="%s"><span>%s%s</span>%s<input type="%s" name="%s"%s%s style="%s"></label>' % (LABEL, e(label), star, sub, kind, name, req, ph, INPUT)
+    return '<label style="%s"><span>%s%s</span>%s<input type="%s" name="%s"%s%s%s style="%s"></label>' % (LABEL, e(label), star, sub, kind, name, req, ph, extra, INPUT)
 
 
 def area(label, name, placeholder='', hint='', rows=4):
     sub = '<span style="font:400 17px \'Source Sans 3\',sans-serif;color:#5A6E78">%s</span>' % e(hint) if hint else ''
-    return ('<label style="%s"><span>%s</span>%s<textarea name="%s" rows="%d" placeholder="%s" style="border:1px solid #D7DFE2;border-radius:8px;padding:10px 14px;font:400 19px/1.5 \'Source Sans 3\',sans-serif;color:#0B2E40;resize:vertical"></textarea></label>'
+    return ('<label style="%s"><span>%s</span>%s<textarea name="%s" rows="%d" maxlength="5000" placeholder="%s" style="border:1px solid #D7DFE2;border-radius:8px;padding:10px 14px;font:400 19px/1.5 \'Source Sans 3\',sans-serif;color:#0B2E40;resize:vertical"></textarea></label>'
             % (LABEL, e(label), sub, name, rows, e(placeholder)))
 
 
@@ -85,18 +91,22 @@ def form():
     courses = ''.join('<div style="border:1px solid #E3E9EB;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:16px">'
                       + check(c + '_offered', '1', 'We offer the ' + name, big=True)
                       + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">'
-                      + field('Price ($)', c + '_price', placeholder='e.g. 69.95') + field('Regular price ($)', c + '_regular', placeholder='Only if on sale')
+                      + field('Price ($)', c + '_price', 'price', placeholder='e.g. 69.95') + field('Regular price ($)', c + '_regular', 'price', placeholder='Only if on sale')
                       + '</div>' + field('Course page URL', c + '_url', 'url', placeholder='https://', hint='Where the View Course button sends students.') + '</div>'
                       for c, name in COURSES)
     out.append(card('courses', 2, 'Courses & prices', '<p style="%s">Tick each course you offer.</p>' % HINT + courses))
-    out.append(card('features', 3, 'Format & materials', '<p style="%s">Tick everything your course includes.</p>' % HINT + boxes([g for g in FEATURES[0][3] if g[0] != 'Learning Format'])))
+    out.append(card('features', 3, 'Format & materials', '<p style="%s">Tick everything your course includes. Anything you leave unticked stays &ldquo;not confirmed&rdquo; on your listing.</p>' % HINT
+        + boxes([g for g in FEATURES[0][3] if g[0] != 'Learning Format'])
+        + check('features_complete', '1', 'These are all the formats and materials we offer (mark the unticked ones as not offered)')))
     out.append(card('reporting', 4, 'Reporting to CTEC',
         '<label style="%s">How quickly are completions reported to CTEC?<select name="reporting" style="%s"><option value="">Select</option>%s</select></label>'
         % (LABEL, INPUT, ''.join('<option value="%s">%s</option>' % (k, e(l)) for k, l in REPORTING))))
     out.append(card('coupon', 5, 'Current coupons (optional)',
         '<p style="%s">Running a coupon code now? Add it here.</p>' % HINT
         + ''.join('<div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">' + field(name.split(' (')[0] + ' coupon code', c + '_coupon_code', placeholder='e.g. SAVE10')
-                  + field('What it gives', c + '_coupon_details', placeholder='e.g. 10% off') + '</div>' for c, name in COURSES)))
+                  + field('What it gives', c + '_coupon_details', placeholder='e.g. 10% off')
+                  + field('Expires (optional)', c + '_coupon_expires', 'date', hint='Leave empty if it has no end date.')
+                  + field('Applies to (optional)', c + '_coupon_applies', placeholder='e.g. Online package only, new students', hint='Package, format or other restrictions.') + '</div>' for c, name in COURSES)))
     out.append(card('logo', 6, 'Logo (optional)', IMG % (LABEL, 'School logo', 'PNG, JPG or WebP, up to 5 MB. A transparent background works best.', 'logo', '')
         + '<label style="%s"><input type="checkbox" name="logo_ok" value="1" style="%s">I give Tax Course Finder permission to show our school&rsquo;s logo on our directory listing and school profile page so students can identify our school.</label>' % (CHECK, BOX)))
     out.append(card('confirm', 7, 'Confirm & submit', CONFIRM
@@ -125,15 +135,16 @@ def profile_form():
         opts += ('<div style="border:1px solid #E3E9EB;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:16px"><div style="%s">%s</div>' % (GRP, e(name))
                  + '<p style="%s">Sell this course more than one way (for example video only, or video + printed book)? List each option and its price.</p>' % HINT
                  + ''.join('<div class="tcf-optrow" style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr);gap:10px">'
-                           '<input type="text" name="%s_opt%d_label" placeholder="%s" aria-label="Option %d name" style="%s">'
-                           '<input type="text" name="%s_opt%d_price" placeholder="Price ($)" aria-label="Option %d price" style="%s">'
-                           '<input type="text" name="%s_opt%d_regular" placeholder="Regular (if on sale)" aria-label="Option %d regular price" style="%s"></div>'
+                           '<input type="text" name="%s_opt%d_label" placeholder="%s" aria-label="Option %d name" maxlength="120" style="%s">'
+                           '<input type="text" name="%s_opt%d_price" placeholder="Price ($)" aria-label="Option %d price" inputmode="decimal" data-tcf-price="" maxlength="12" style="%s">'
+                           '<input type="text" name="%s_opt%d_regular" placeholder="Regular (if on sale)" aria-label="Option %d regular price" inputmode="decimal" data-tcf-price="" maxlength="12" style="%s"></div>'
                            % (c, i, ['e.g. Online video course', 'e.g. Video + printed book', 'e.g. Printed book only'][i - 1], i, INPUT, c, i, i, INPUT, c, i, i, INPUT) for i in (1, 2, 3))
                  + '<label style="%s"><span>Unlimited exam attempts?</span><select name="%s_attempts" style="%s"><option value="">Select</option><option value="Unlimited">Yes</option><option value="Limited">No</option></select></label>' % (LABEL, c, INPUT)
                  + '</div>')
     out.append(card('options', 3, 'Packages & exams', '<p style="%s">Fill in the course(s) you offer. Leave the other one empty.</p>' % HINT + opts))
     out.append(card('support', 4, 'Student support',
         '<p style="%s">How students can reach you. Shown under &ldquo;Can I get help?&rdquo;.</p>' % HINT + boxes(FEATURES[1][3])
+        + check('features_complete', '1', 'These are all the ways students can reach us (mark the unticked ones as not offered)')
         + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">'
         + field('Student support phone', 'phone', 'tel') + field('Student support email', 'support_email', 'email')
         + field('Support hours', 'hours', placeholder='e.g. Mon–Fri 8am–5pm Pacific') + '</div>'))

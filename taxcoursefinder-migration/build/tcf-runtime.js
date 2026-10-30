@@ -132,6 +132,7 @@
   function price(x) {
     if (!x || (!x.display_price && !x.price_type)) return null;
     return { text: x.display_price || '', type: x.price_type || 'not_public', status: x.price_status || '', current: num(x.current_price), regular: num(x.regular_price), sourceUrl: x.course_url || '',
+      linkLabel: x.link_label || '', note: x.link_note || '', features: x.features || null, optional: x.features_optional || [],
       options: (x.options || []).map(function (o) { return { label: o.label, price: num(o.price), regular: num(o.regular), priceFmt: money(o.price), regularFmt: o.regular != null ? money(o.regular) : '' }; }) };
   }
   function mapProvider(r) {
@@ -140,7 +141,7 @@
       var scope = o.scope || (/both/i.test(sc) || (/20/.test(sc) && /60/.test(sc)) ? 'both' : /60|\bQE\b/i.test(sc) ? 'qe' : 'ce');
       return { id: r.id + '-' + i, active: !!o.offer_active, type: o.offer_type || '', scope: scope, scopeText: sc,
         title: o.offer_title || '', code: o.coupon_code || '', description: o.offer_description || '', regularPrice: num(o.offer_regular_price), salePrice: num(o.offer_sale_price),
-        expires: o.offer_expiration_date || '', importStatus: o.offer_import_status || '', sourceUrl: o.offer_source_url || '', lastVerified: o.offer_last_verified || '' };
+        expires: String(o.offer_expiration_date || '').replace(/^(\d{4})(\d{2})(\d{2})$/, '$1-$2-$3'), importStatus: o.offer_import_status || '', sourceUrl: o.offer_source_url || '', lastVerified: o.offer_last_verified || '' };
     });
     var g = r.google || null;
     var dates = offers.map(function (o) { return o.lastVerified; }).filter(Boolean).sort();
@@ -149,12 +150,32 @@
       google: g && g.rating != null ? { rating: Number(g.rating), count: g.review_count != null ? Number(g.review_count) : null, status: 'Verified', mapsUrl: g.maps_url || '' } : { rating: null, count: null, status: '', mapsUrl: '' },
       offers: offers, features: r.features || {}, ctecNumber: r.ctec_number || '', reporting: r.reporting || {}, lastChecked: r.last_checked || dates[dates.length - 1] || '' };
   }
+  // Today's date in California (YYYY-MM-DD): offers expire at the end of their last day, Pacific time.
+  function caToday() {
+    try { var f = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Los_Angeles', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(new Date()), o = {};
+      f.forEach(function (x) { o[x.type] = x.value; }); return o.year + '-' + o.month + '-' + o.day; } catch (e) { return new Date().toISOString().slice(0, 10); }
+  }
+  // A date-only value ("2026-10-12" or "20261012") shown as a calendar date: the same day in every time zone.
+  function calDate(v, style) {
+    var m = String(v || '').match(/^(\d{4})-?(\d{2})-?(\d{2})/);
+    if (!m) return '';
+    var d = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3], 12));
+    return d.toLocaleDateString('en-US', { timeZone: 'UTC', month: style === 'short' ? 'short' : 'long', day: 'numeric', year: 'numeric' });
+  }
+  TCF.calDate = calDate; TCF.caToday = caToday;
+  // The directory review date: one value set by an editor when a full data review is finished (never "today").
+  // Until an editor records one, the most recent per-school review date is used (also never "today").
+  TCF.reviewDate = function (data, style) {
+    if (!data) return '';
+    var d = data.REVIEWED || (data.providers || []).map(function (p) { return p.lastChecked; }).filter(Boolean).sort().pop();
+    return calDate(d, style);
+  };
   function liveOffers(p, qe, today) {
-    today = today || new Date().toISOString().slice(0, 10);
+    today = today || caToday();
     return p.offers.filter(function (o) { return o.active && /^VERIFIED/.test(o.importStatus) && !(o.expires && o.expires < today) && (o.scope === 'both' || o.scope === (qe ? 'qe' : 'ce')); })
       .map(function (o) { var member = /MEMBER/.test(o.importStatus); return Object.assign({}, o, { label: member ? 'Member Offer' : OFFER_LABEL[o.type] || 'Special Offer', memberOnly: member, isCoupon: o.type === 'Coupon Code' && !!o.code, isSale: o.type === 'Sale' && o.salePrice != null,
         regularFmt: o.regularPrice != null ? money(o.regularPrice) : '', saleFmt: o.salePrice != null ? money(o.salePrice) : '', saveFmt: o.regularPrice != null && o.salePrice != null ? 'Save ' + money(o.regularPrice - o.salePrice) : '',
-        expiresFmt: o.expires ? 'Expires ' + new Date(o.expires + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '' }); });
+        expiresFmt: o.expires ? 'Expires ' + calDate(o.expires, 'short') : '', appliesTo: o.description && !/^Submitted by the school/.test(o.description) ? o.description : '' }); });
   }
   function sortablePrice(pr) { return pr && pr.status === 'VERIFIED' && /^package/.test(pr.type) && pr.current != null ? pr.current : null; }
   var FEATURES = [["Delivery / Format", [["online_course_available", "Online Course"], ["in_person_course_available", "In-Person Course"], ["live_instruction_available", "Live Instruction"]]], ["Course Materials", [["physical_book_available", "Physical Book"], ["digital_book_available", "PDF"], ["downloadable_materials", "Downloadable Materials"], ["video_lessons_available", "Online Videos"]]], ["Learning Format", [["text_based_course_available", "Text-Based Course"], ["audio_content_available", "Audio Content"]]], ["Support", [["phone_support", "Phone Support"], ["email_support", "Email Support"], ["live_chat_support", "Live Chat Support"]]]];
@@ -164,9 +185,11 @@
     ['physical_book_available', 'Printed book'], ['digital_book_available', 'PDF'], ['downloadable_materials', 'Downloadable'], ['video_lessons_available', 'Online videos'],
     ['text_based_course_available', 'Text-based'], ['audio_content_available', 'Audio'],
     ['phone_support', 'Phone support'], ['email_support', 'Email support'], ['live_chat_support', 'Live chat']];
-  function pills(p) {
+  function pills(p, optional) {
+    optional = optional || [];
     return PILLS.filter(function (x) { return hasFeature(p, x[0]); }).map(function (x) {
-      return { key: x[0], label: x[1], bg: '#fff', border: '#D7DFE2', color: '#2F4652' };
+      var opt = optional.indexOf(x[0]) >= 0 && !(p.included && p.included[x[0]]);
+      return { key: x[0], label: x[1] + (opt ? ' (optional)' : ''), bg: '#fff', border: '#D7DFE2', color: opt ? '#5A6E78' : '#2F4652' };
     });
   }
   // Same pills grouped for the listing footer: Format / Materials / Learning / Support.
@@ -180,7 +203,7 @@
   }
   // Comparison-table summaries built only from confirmed data.
   function formatLines(p) {
-    var f = p.features || {}, m = [];
+    var f = p.included || p.features || {}, m = [], opt = p.optionalFeatures || [];
     if (f.video_lessons_available) m.push('Video');
     if (f.text_based_course_available) m.push('Text');
     if (f.physical_book_available) m.push('Book');
@@ -190,6 +213,7 @@
     if (!l1 && f.online_course_available) l1 = 'Online course';
     if (!l1 && f.in_person_course_available) l1 = 'In-person';
     var l2 = f.live_instruction_available ? 'Live classes' : (f.in_person_course_available && l1 !== 'In-person' ? 'In-person option' : '');
+    if (!l2 && opt.indexOf('physical_book_available') >= 0 && !f.physical_book_available) l2 = 'Printed book optional';
     if (l1) l1 = l1.charAt(0).toUpperCase() + l1.slice(1);
     return { l1: l1 || l2 || 'Not confirmed', l2: l1 ? l2 : '', known: !!(l1 || l2) };
   }
@@ -200,19 +224,23 @@
       var sortable = sortablePrice(pr);
       var g = p.google, gOk = g.status === 'Verified' && g.rating != null;
       var live = liveOffers(p, qe), coupon = live.find(function (o) { return o.isCoupon; }), sale = live.find(function (o) { return o.isSale; });
-      var fmt = formatLines(p), rep = (p.reporting || {})[qe ? 'qe' : 'ce'] || '';
+      // Features of the course and package being compared (falls back to the school-wide features).
+      var inc = pr && pr.features ? pr.features : (p.features || {}), opt = pr && pr.optional ? pr.optional : [];
+      var feats = Object.assign({}, inc); opt.forEach(function (k) { feats[k] = true; });
+      var cp = Object.assign({}, p, { features: feats, included: inc, optionalFeatures: opt });
+      var fmt = formatLines(cp), rep = (p.reporting || {})[qe ? 'qe' : 'ce'] || '';
       var domain = ''; try { domain = new URL(p.website).hostname.replace(/^www\./, ''); } catch (e) {}
-      var pl = pills(p);
+      var pl = pills(cp, opt);
       return Object.assign({}, p, { domain: domain, initials: p.name.replace(/[^A-Za-z ]/g, '').trim().split(/\s+/).slice(0, 2).map(function (w) { return w[0] || ''; }).join('').toUpperCase() || '#',
         offeringLabel: p.offering === 'QE + CE' ? 'CE · QE' : p.offering,
         priceText: captured ? pr.text : 'Price not published', priceCaptured: captured, priceNote: captured ? (PRICE_TYPE_NOTE[pr.type] || (pr.status === 'REVIEW' ? 'See provider' : '')) : 'Check provider site', priceMuted: !captured, priceComparable: sortable != null, sortable: sortable,
         googleShown: gOk, googleRating: gOk ? g.rating.toFixed(1) : '', googleCount: gOk && g.count != null ? g.count.toLocaleString() + ' Google reviews' : (gOk ? 'Google rating' : ''), googleUrl: g.mapsUrl,
-        liveOffers: live, hasOffers: live.length > 0, coupon: coupon ? coupon.code : '', couponLabel: coupon ? (coupon.memberOnly ? 'Member code' : 'Coupon code') : '', hasCoupon: !!coupon, sale: sale, hasSale: !!sale && !coupon, saleText: sale ? sale.saleFmt + ' sale' : '', saleSub: sale && sale.regularFmt ? 'reg. ' + sale.regularFmt : '', noOffer: live.length === 0,
-        both: p.ce && p.qe, features: p.features || {}, pills: pl, hasPills: pl.length > 0, pillGroups: pillGroups(pl),
+        liveOffers: live, hasOffers: live.length > 0, coupon: coupon ? coupon.code : '', couponLabel: coupon ? (coupon.memberOnly ? 'Member code' : 'Coupon code') : '', hasCoupon: !!coupon, couponNote: coupon ? [coupon.appliesTo, coupon.expiresFmt].filter(Boolean).join(' \u00b7 ') : '', hasCouponNote: !!(coupon && (coupon.appliesTo || coupon.expiresFmt)), sale: sale, hasSale: !!sale && !coupon, saleText: sale ? sale.saleFmt + ' sale' : '', saleSub: sale && sale.regularFmt ? 'reg. ' + sale.regularFmt : '', noOffer: live.length === 0,
+        both: p.ce && p.qe, features: feats, includedFeatures: inc, optionalFeatures: opt, pills: pl, hasPills: pl.length > 0, pillGroups: pillGroups(pl),
         formatL1: fmt.l1, formatL2: fmt.l2, formatColor: fmt.known ? '#0B2E40' : '#8A9AA3',
         reportText: rep || 'Not confirmed', reportColor: rep ? '#7E9330' : '#8A9AA3', reportWeight: rep ? 700 : 500,
         ratingText: gOk ? '\u2605 ' + g.rating.toFixed(1) : 'Not verified', ratingCount: gOk && g.count != null ? '(' + g.count.toLocaleString() + ')' : '', ratingColor: gOk ? '#0B2E40' : '#8A9AA3',
-        courseLink: (pr && pr.sourceUrl) || p.website, offerLabel: coupon ? coupon.code + ' \u00b7 View' : (sale ? 'On sale \u00b7 View' : 'View course'),
+        courseLink: (pr && pr.sourceUrl) || p.website, buttonLabel: (pr && pr.linkLabel) || ((pr && pr.sourceUrl) ? 'View course' : 'Visit school website'), linkNote: (pr && pr.note) || '', hasLinkNote: !!(pr && pr.note), pricePer: pr ? (/\/\s*(year|yr)\b/i.test(pr.text) ? '/year' : /\/\s*(month|mo)\b/i.test(pr.text) ? '/month' : '') : '', offerLabel: coupon ? coupon.code + ' \u00b7 View' : (sale ? 'On sale \u00b7 View' : 'View course'),
         couponCode: coupon ? coupon.code : '', noCouponOrSale: !coupon && !sale, ctecLine: p.ctecNumber ? ' \u00b7 CTEC #' + p.ctecNumber : '' });
     });
   }
@@ -223,7 +251,7 @@
       .then(function (r) { return r.json(); })
       .then(function (j) {
         var providers = (j.providers || j || []).map(mapProvider);
-        return { providers: providers, FEATURES: FEATURES, FEATURE_NAMES: FEATURES.reduce(function (a, g) { return a.concat(g[1].map(function (f) { return f[0]; })); }, []), hasFeature: hasFeature, decorate: decorate, liveOffers: liveOffers, sortablePrice: sortablePrice, LAST_CHECKED: TCF.lastChecked || '' };
+        return { providers: providers, FEATURES: FEATURES, FEATURE_NAMES: FEATURES.reduce(function (a, g) { return a.concat(g[1].map(function (f) { return f[0]; })); }, []), hasFeature: hasFeature, decorate: decorate, liveOffers: liveOffers, sortablePrice: sortablePrice, LAST_CHECKED: TCF.lastChecked || '', REVIEWED: j.directory_reviewed || '' };
       });
     return dataPromise;
   };

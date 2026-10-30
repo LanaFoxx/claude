@@ -299,6 +299,14 @@ final class TCFD_Normalizer {
             self::put($rec, $p . '_price_type', $c['price_type'] ?? null);
             self::put($rec, $p . '_price_status', $c['price_status'] ?? null);
             self::put($rec, $p . '_course_url', $c['course_url'] ?? null);
+            self::put($rec, $p . '_link_label', $c['link_label'] ?? null);
+            self::put($rec, $p . '_link_note', $c['link_note'] ?? null);
+            foreach (['features', 'features_optional'] as $fk) { // course-specific features: list of keys or names
+                if (!isset($c[$fk])) continue;
+                $keys = [];
+                foreach ((array) $c[$fk] as $name) { $k = self::feature_aliases()[self::slug((string) $name)] ?? null; if ($k) $keys[] = $k; else $rec['warnings'][] = 'Unknown feature “' . $name . '” ignored.'; }
+                $rec['fields'][$p . '_' . $fk] = implode(', ', array_unique($keys));
+            }
             self::put($rec, $p . '_price_source_url', $c['source_url'] ?? null);
             self::put($rec, $p . '_price_notes', $c['notes'] ?? null);
             if (isset($c['options'])) { // package options: [{label, price, regular_price}] or "Name | price | regular" lines

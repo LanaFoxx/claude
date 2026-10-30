@@ -24,6 +24,15 @@ final class TCFD_Schema {
         add_filter('wpseo_schema_organization', [__CLASS__, 'organization']);
         add_filter('wpseo_schema_webpage_type', [__CLASS__, 'webpage_type']);
         add_filter('wpseo_schema_graph', [__CLASS__, 'article'], 10, 2);
+        add_action('init', [__CLASS__, 'seo_meta']);
+    }
+
+    /** Lets editors read and update page SEO titles and descriptions over the REST API (used by the site build tools). */
+    public static function seo_meta(): void {
+        foreach (['_yoast_wpseo_title', '_yoast_wpseo_metadesc', '_yoast_wpseo_opengraph-description', '_yoast_wpseo_twitter-description'] as $key) {
+            register_post_meta('page', $key, ['type' => 'string', 'single' => true, 'show_in_rest' => true,
+                'sanitize_callback' => 'sanitize_text_field', 'auth_callback' => fn() => current_user_can('edit_pages')]);
+        }
     }
 
     private static function slug(): string {
@@ -64,7 +73,7 @@ final class TCFD_Schema {
 
     public static function organization($data) {
         if (!is_array($data)) return $data;
-        $data['description'] = 'Independent comparison directory of every CTEC-approved 20 hour and 60 hour CTEC course in California, showing prices, coupon codes, course format, materials and support side by side.';
+        $data['description'] = 'Independent comparison directory of 20 hour and 60 hour CTEC courses from a selected group of top CTEC-approved tax schools in California, showing prices, coupon codes, course format, materials and support side by side.';
         $data['knowsAbout'] = ['20 hour CTEC course', '60 hour CTEC course', 'CTEC continuing education', 'CTEC qualifying education', 'California Registered Tax Preparer (CRTP) requirements'];
         $data['areaServed'] = ['@type' => 'State', 'name' => 'California'];
         $data['email'] = 'hello@taxcoursefinder.com';
@@ -131,7 +140,7 @@ final class TCFD_Schema {
             '@type' => 'ItemList',
             '@id' => $page_url . '#course-list',
             'name' => ($ce ? '20 Hour CTEC Courses' : '60 Hour CTEC Courses') . ' in California',
-            'description' => 'Every CTEC-approved provider of the ' . ($ce ? '20 hour CTEC continuing education course' : '60 hour CTEC qualifying education course') . ', compared by California Tax Course Finder.',
+            'description' => 'The ' . ($ce ? '20 hour CTEC continuing education courses' : '60 hour CTEC qualifying education courses') . ' offered by the schools featured in the California Tax Course Finder directory.',
             'numberOfItems' => count($items),
             'itemListOrder' => 'https://schema.org/ItemListUnordered',
             'mainEntityOfPage' => $page_url,

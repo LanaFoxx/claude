@@ -101,6 +101,9 @@ def page_html(pg):
     if not pg['runtime']:
         w = re.sub(r'<template id="[^"]+-tpl">.*?</template>', '', w, flags=re.S)
     w = w.replace('@@SSR@@', lazy(pg['ssr']))
+    # Target of the theme's "Skip to content" link (href="#content"): the page's main content wrapper.
+    assert w.startswith('<div class="tcf-page'), pg['slug']
+    w = '<div id="content" tabindex="-1" style="outline:none" role="main"' + w[len('<div'):]
     return brand.brand(add_links(pg['slug'], page_alts(pg['slug'], fix_media(w))))
 
 if STEP == 'trash':

@@ -108,6 +108,10 @@ final class TCFD_Fields {
             $out[$p . '_price_source_url'] = ['field_tcf_' . $p . '_price_source_url', 'url', $L . ' Price Source URL'];
             $out[$p . '_price_last_checked'] = ['field_tcf_' . $p . '_price_last_checked', 'date', $L . ' Price Last Checked'];
             $out[$p . '_course_url'] = ['field_tcf_' . $p . '_course_url', 'url', $L . ' Course URL'];
+            $out[$p . '_link_label'] = ['field_tcf_' . $p . '_link_label', 'text', $L . ' Button Label'];
+            $out[$p . '_link_note'] = ['field_tcf_' . $p . '_link_note', 'text', $L . ' Note For Students'];
+            $out[$p . '_features'] = ['field_tcf_' . $p . '_features', 'text', $L . ' Course Features'];
+            $out[$p . '_features_optional'] = ['field_tcf_' . $p . '_features_optional', 'text', $L . ' Optional Package Features'];
         }
         foreach (self::feature_keys() as $k => $l) {
             $out[$k] = ['field_tcfd_feat_' . $k, 'bool', $l];
@@ -210,6 +214,14 @@ final class TCFD_Fields {
             $f[] = ['key' => 'field_tcf_' . $p . '_price_notes', 'label' => 'Price Notes', 'name' => $p . '_price_notes', 'type' => 'textarea', 'rows' => 2, 'wrapper' => ['width' => '50']];
             $f[] = ['key' => 'field_tcf_' . $p . '_price_options', 'label' => 'Package options', 'name' => $p . '_price_options', 'type' => 'textarea', 'rows' => 3,
                 'instructions' => 'One way to buy this course per line: <code>Name | price | regular price (optional)</code>, e.g. <code>Online video course | 69.95 | 79.95</code>. With options, the directory shows the lowest (“From $69.95”) and the school page lists each option.'];
+            $f[] = ['key' => 'field_tcf_' . $p . '_link_label', 'label' => 'Button label', 'name' => $p . '_link_label', 'type' => 'text', 'wrapper' => ['width' => '25'],
+                'instructions' => 'Leave empty for “View course”. Use e.g. “Browse CTEC courses” for a catalog page or “Visit school website” for the home page.'];
+            $f[] = ['key' => 'field_tcf_' . $p . '_link_note', 'label' => 'Note for students', 'name' => $p . '_link_note', 'type' => 'text', 'wrapper' => ['width' => '75'],
+                'instructions' => 'Short line shown with the price, e.g. “Select the 20-Hour CA Bundle on the school’s page” or “Billed $89 every year until cancelled”.'];
+            $f[] = ['key' => 'field_tcf_' . $p . '_features', 'label' => 'Features of the compared package', 'name' => $p . '_features', 'type' => 'text', 'wrapper' => ['width' => '50'],
+                'instructions' => 'Feature keys included in the package whose price is compared, comma separated (e.g. <code>online_course_available, digital_book_available</code>). Empty = use the Course Features tab.'];
+            $f[] = ['key' => 'field_tcf_' . $p . '_features_optional', 'label' => 'Only in some packages', 'name' => $p . '_features_optional', 'type' => 'text', 'wrapper' => ['width' => '50'],
+                'instructions' => 'Feature keys available only as a package variation or add-on (e.g. <code>physical_book_available</code>). Shown as optional, never as included.'];
         }
 
         $f[] = self::tab('field_tcfd_tab_features', 'Course Features');

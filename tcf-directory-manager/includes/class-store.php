@@ -3,7 +3,7 @@ defined('ABSPATH') || exit;
 
 /** Reading/writing provider data and building the public payload. */
 final class TCFD_Store {
-    const CACHE_KEY = 'tcfd_providers_payload_v5';
+    const CACHE_KEY = 'tcfd_providers_payload_v6';
 
     public static function flush_cache($post_id = 0): void {
         if ($post_id && is_numeric($post_id) && get_post_type((int) $post_id) === TCFD_Plugin::POST_TYPE) {
@@ -126,8 +126,16 @@ final class TCFD_Store {
                 'price_type' => (string) (self::raw($post_id, $p . '_price_type') ?: ''),
                 'price_status' => (string) (self::raw($post_id, $p . '_price_status') ?: ''),
                 'course_url' => (string) (self::raw($post_id, $p . '_affiliate_url') ?: self::raw($post_id, $p . '_course_url') ?: ''),
+                'link_label' => (string) (self::raw($post_id, $p . '_link_label') ?: ''),
+                'link_note' => (string) (self::raw($post_id, $p . '_link_note') ?: ''),
                 'options' => $opts,
             ];
+            // Course-specific features: what the compared package includes, and what only some packages include.
+            $keys = TCFD_Fields::feature_keys();
+            $list = fn(string $f) => array_values(array_intersect(array_map('trim', explode(',', (string) (self::raw($post_id, $p . '_' . $f) ?: ''))), array_keys($keys)));
+            $inc = $list('features');
+            if ($inc) $out['features'] = array_fill_keys($inc, true);
+            $out['features_optional'] = $list('features_optional');
             if ($opts) { // package options: the lowest one is the comparable price ("From $69.95" when there are several)
                 $low = $opts[0];
                 foreach ($opts as $o) if ($o['price'] < $low['price']) $low = $o;
@@ -183,13 +191,19 @@ final class TCFD_Store {
         return $out;
     }
 
+    /** The date the directory data review was completed (Y-m-d), set by an editor; one value for every page. */
+    public static function directory_reviewed(): string {
+        $d = (string) get_option('tcfd_directory_reviewed', '');
+        return preg_match('/^\d{4}-\d{2}-\d{2}$/', $d) ? $d : '';
+    }
+
     public static function all_payload(): array {
         $cached = get_transient(self::CACHE_KEY);
         if (is_array($cached)) return $cached;
         $ids = get_posts(['post_type' => TCFD_Plugin::POST_TYPE, 'post_status' => 'publish', 'numberposts' => -1, 'orderby' => 'title', 'order' => 'ASC', 'fields' => 'ids']);
         $data = [];
         foreach ($ids as $id) $data[] = self::public_payload((int) $id);
-        $out = ['providers' => $data, 'count' => count($data), 'generated_at' => current_time('c')];
+        $out = ['providers' => $data, 'count' => count($data), 'generated_at' => current_time('c'), 'directory_reviewed' => self::directory_reviewed()];
         set_transient(self::CACHE_KEY, $out, 12 * HOUR_IN_SECONDS);
         return $out;
     }

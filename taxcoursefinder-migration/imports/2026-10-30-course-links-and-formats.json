@@ -1,0 +1,104 @@
+[
+ {
+  "provider_name": "California Tax Courses", "website": "https://cataxcourses.com", "last_checked": "2026-10-30",
+  "ce": {"course_url": "https://cataxcourses.com/product/ctec-20-hours-renewal-course/",
+         "features": ["online_course_available", "self_paced", "digital_book_available", "video_lessons_available"], "features_optional": ["physical_book_available"]},
+  "qe": {"course_url": "https://cataxcourses.com/product/ctec-60-hours-course/",
+         "features": ["online_course_available", "self_paced", "digital_book_available", "video_lessons_available"], "features_optional": ["physical_book_available"]},
+  "notes": "Oct 30, 2026: direct course links; printed book is a package option (video course + book), not part of the lowest-priced package."
+ },
+ {
+  "provider_name": "California Tax Institute", "website": "https://www.californiataxinstitute.com", "last_checked": "2026-10-30",
+  "offers_20_hour_ce": true, "offers_60_hour_qe": true,
+  "features": {"online_course_available": true, "digital_book_available": true, "downloadable_materials": true, "text_based_course_available": true, "physical_book_available": false},
+  "ce": {"course_url": "https://www.californiataxinstitute.com/shop/ctec-crtp-online-courses/ctec-bundle-a-oc-2025-updated/",
+         "options": [{"label": "CTEC Bundle A, digital download", "price": 98}, {"label": "CTEC Bundle A, physical book", "price": 137}],
+         "price_status": "VERIFIED", "source_url": "https://www.californiataxinstitute.com/shop/ctec-crtp-online-courses/ctec-bundle-a-oc-2025-updated/",
+         "features": ["online_course_available", "digital_book_available", "downloadable_materials", "text_based_course_available"], "features_optional": ["physical_book_available"]},
+  "qe": {"course_url": "https://www.californiataxinstitute.com/shop/ctec-crtp-online-courses/qualifying-education-60-cpe-2025-2026-digital-download/",
+         "options": [{"label": "Qualifying Education 60 CPE, digital download", "price": 225}, {"label": "Qualifying Education 60 CPE, physical book", "price": 375}],
+         "price_type": "package", "price_status": "VERIFIED", "source_url": "https://www.californiataxinstitute.com/shop/ctec-crtp-online-courses/qualifying-education-60-cpe-2025-2026-digital-download/",
+         "features": ["online_course_available", "digital_book_available", "downloadable_materials", "text_based_course_available"], "features_optional": ["physical_book_available"]},
+  "notes": "Oct 30, 2026: 20-hour Bundle A is a digital download ($98); the physical book is a separate $137 package. 60-hour QE confirmed: CTEC's Find an Education Provider list shows QE / QE Self Study for California Tax Institute, and the digital download ($225) and physical book ($375) are on sale."
+ },
+ {
+  "provider_name": "CountingWorks, Inc.", "website": "https://www.taxcpe.com", "last_checked": "2026-10-30",
+  "features": {"physical_book_available": false, "downloadable_materials": true},
+  "ce": {"course_url": "https://www.taxcpe.com/products/2026-california-tax-return-preparer-crtp-20-hour-bundle", "price": 99.95, "display_price": "$99.95", "price_status": "VERIFIED",
+         "source_url": "https://www.taxcpe.com/products/2026-california-tax-return-preparer-crtp-20-hour-bundle",
+         "features": ["online_course_available", "self_paced", "downloadable_materials"]},
+  "notes": "Oct 30, 2026: the 2026 20-hour California bundle is online self-study with downloadable materials, $99.95; no print option on the course page."
+ },
+ {
+  "provider_name": "Fast Forward Academy", "website": "https://fastforwardacademy.com", "last_checked": "2026-10-30",
+  "ce": {"course_url": "https://fastforwardacademy.com/continuing-education-packages", "link_label": "View packages",
+         "link_note": "Choose the “20 Hour CA Bundle” on the school’s package page"},
+  "notes": "Oct 30, 2026: course link is the school's package-selection page; the 20 Hour CA Bundle ($139) is listed there."
+ },
+ {
+  "provider_name": "Preparer Training", "website": "https://www.preparertraining.com", "last_checked": "2026-10-30",
+  "ce": {"course_url": "https://www.preparertraining.com/product/ca-ctec-continuing-education-20-hour-bundle/"},
+  "qe": {"course_url": "https://www.preparertraining.com/product/ca-ctec-60-hour-qe-course-bundle/"},
+  "notes": "Oct 30, 2026: direct course links."
+ },
+ {
+  "provider_name": "Golden State Tax Training Institute, Inc.", "website": "https://www.gstti.com", "last_checked": "2026-10-30",
+  "ce": {"features": ["online_course_available"], "features_optional": ["physical_book_available"]},
+  "qe": {"features": ["online_course_available"], "features_optional": ["physical_book_available"]},
+  "notes": "Oct 30, 2026: goldenstatetaxtraining.com no longer resolves; CTEC lists www.gstti.com for this provider. Electronic and book versions are separate packages. No direct course URL (cart uses form postbacks), so the button reads Visit school website."
+ },
+ {
+  "provider_name": "Latin American Business Institute", "website": "https://www.labitax.com", "last_checked": "2026-10-30",
+  "offers_60_hour_qe": false,
+  "ce": {"course_url": "https://labitax.com/course/ctec-20h"},
+  "notes": "Oct 30, 2026: 20-hour English course link. 60-hour page (labitax.com/course/ctec-60h) says “No Reporta Horas”; removed from the 60-hour comparison until availability and CTEC reporting are confirmed by the school."
+ },
+ {
+  "provider_name": "Latino Tax Professionals Association", "website": "https://latinotaxpro.com", "last_checked": "2026-10-30",
+  "features": {"in_person_course_available": false, "live_instruction_available": false, "online_course_available": true, "self_paced": true,
+               "digital_book_available": true, "text_based_course_available": true, "physical_book_available": false},
+  "qe": {"course_url": "https://latinotaxpro.com/collections/ctec-english/products/california-60-hour-qualifying-education-ebook",
+         "options": [{"label": "Course & eBook (self-study, online exams)", "price": 345.06}, {"label": "Course, eBook & printed textbook", "price": 416.70}],
+         "price_status": "VERIFIED", "source_url": "https://latinotaxpro.com/collections/ctec-english/products/california-60-hour-qualifying-education-ebook",
+         "features": ["online_course_available", "self_paced", "digital_book_available", "text_based_course_available"], "features_optional": ["physical_book_available"]},
+  "notes": "Oct 30, 2026: the $345.06 60-hour course is self-study with an eBook and online final exams (not in-person or live). The printed textbook is a $416.70 package variation."
+ },
+ {
+  "provider_name": "Platinum Professional Services, Inc.", "website": "https://www.platinumprostudies.com", "last_checked": "2026-10-30",
+  "ce": {"course_url": "https://www.platinumprostudies.com/product-page/ctec-cpe-20-hour-personal-income-tax-return",
+         "link_note": "School’s page is labeled 2027; confirm the course year with the school before buying for a 2026 renewal"},
+  "qe": {"course_url": "https://www.platinumprostudies.com/product-page/ctec-qualifying-tax-course-60-hours",
+         "link_note": "School’s page is labeled 2027; confirm the course year with the school"},
+  "notes": "Oct 30, 2026: both product pages are titled 2027 and do not say whether they count toward the Oct 31, 2026 renewal."
+ },
+ {
+  "provider_name": "Pronto Tax School, Inc.", "website": "https://prontotaxschool.com", "last_checked": "2026-10-30",
+  "ce": {"course_url": "https://prontotaxschool.com/products/ctec-renewal-course/"},
+  "qe": {"course_url": "https://prontotaxschool.com/basic-income-tax-fed-ca/"},
+  "notes": "Oct 30, 2026: both course pages load in a regular browser (200)."
+ },
+ {
+  "provider_name": "The Income Tax School", "website": "https://www.theincometaxschool.com", "last_checked": "2026-10-30",
+  "ce": {"course_url": "https://www.surgent.com/income-tax-school/product/20-hour-california-ctec-ce-package/",
+         "link_note": "Recurring subscription: billed $89 every year until cancelled"},
+  "qe": {"course_url": "https://www.surgent.com/income-tax-school/product/comprehensive-tax-course/?attribute_course-type=Standard+%2B+California+--+Online",
+         "link_note": "Select “Standard + California -- Online” (the link preselects it)"},
+  "notes": "Oct 30, 2026: Surgent 20-hour CA package is $89/year recurring. Comprehensive course link preselects the qualifying Standard + California -- Online option ($497)."
+ },
+ {
+  "provider_name": "WebCE", "website": "https://www.webce.com", "last_checked": "2026-10-30",
+  "ce": {"course_url": "https://www.webce.com/catalog/courses/tax-ce/ctec/crtp", "link_label": "Browse CTEC courses"},
+  "notes": "Oct 30, 2026: the old CTEC URL (/cpe/tax-ce/ctec-ce) returns 404. Course link is WebCE's CTEC CRTP course catalog (Complete CE Package $49.95)."
+ },
+ {
+  "provider_name": "Cal Tax School", "website": "https://www.caltaxschool.org", "last_checked": "2026-10-30",
+  "ce": {"course_url": "https://www.caltaxschool.org/6101-ctec_continuing_education.htm"},
+  "notes": "Oct 30, 2026: the school's own 2026 CTEC continuing education page ($49, paid at the end of the course)."
+ },
+ {
+  "provider_name": "101 Education Services Inc.", "website": "https://www.irstaxtraining.com/",
+  "ce": {"features": ["online_course_available", "self_paced", "digital_book_available", "downloadable_materials", "text_based_course_available"], "features_optional": ["physical_book_available"]},
+  "qe": {"features": ["online_course_available", "self_paced", "digital_book_available", "downloadable_materials", "text_based_course_available"], "features_optional": ["physical_book_available"]},
+  "notes": "Oct 30, 2026: electronic and printed are separate packages (printed costs more), so the printed book is shown as optional."
+ }
+]

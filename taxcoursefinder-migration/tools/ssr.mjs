@@ -3,6 +3,8 @@ import fs from 'fs';
 const S = process.argv[2]; const only = process.argv[3];
 const hf = JSON.parse(fs.readFileSync(S + '/build/hf.json'));
 const hover = JSON.parse(fs.readFileSync(S + '/build/hover.json')).hover_css;
+// Render with the same runtime and stylesheet that get published.
+for (const f of ['tcf-runtime.js', 'site.css']) fs.copyFileSync(S + '/build/' + f, S + '/pre/' + f);
 const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' });
 fs.mkdirSync(S + '/shots', { recursive: true });
 const media = s => s.replace(/@@MEDIA:([^@]+)@@/g, '/assets/$1');

@@ -20,7 +20,7 @@ PAGES = {
  'Privacy Policy':                    ('privacy-policy', '/privacy-policy/', 'Privacy Policy'),
  'Terms of Use':                      ('terms-of-use', '/terms-of-use/', 'Terms of Use'),
 }
-RUNTIME = {'TaxCourse Finder Home', 'CTEC 20 Hour Course', 'CTEC 60 Hour Course', 'About', 'Provider Application'}
+RUNTIME = {'TaxCourse Finder Home', 'CTEC 20 Hour Course', 'CTEC 60 Hour Course', 'About', 'Provider Application', 'How We Compare Providers'}
 
 def links(s):
     def rep(m):
@@ -88,21 +88,59 @@ def comparison_table(body):
            '<div data-label="Coupon" style="min-width:0">'
            '<sc-if value="{{ p.hasCoupon }}"><div style="display:flex;flex-direction:column;gap:5px;align-items:flex-start">'
            '<span data-tcf-copy="{{ p.coupon }}" role="button" tabindex="0" title="Click to copy code" style="cursor:pointer;display:inline-block;border:1.5px dashed #95AB3B;color:#7E9330;font:700 15px ui-monospace,Menlo,monospace;padding:4px 10px;border-radius:6px;background:#F3F5E6">{{ p.coupon }}</span>'
-           '<span data-tcf-copy-label="" style="font:700 10.5px \'DM Sans\',Manrope,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#8A9AA3;white-space:nowrap">Click to copy</span></div></sc-if>'
+           '<span data-tcf-copy-label="" style="font:700 10.5px \'DM Sans\',Manrope,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#8A9AA3;white-space:nowrap">Click to copy</span>'
+           '<sc-if value="{{ p.hasCouponNote }}"><span style="font:500 13px/1.35 Manrope,sans-serif;color:#5A6E78;max-width:180px">{{ p.couponNote }}</span></sc-if></div></sc-if>'
            '<sc-if value="{{ p.hasSale }}"><div style="display:flex;flex-direction:column;gap:5px;align-items:flex-start">'
            '<span style="display:inline-flex;align-items:center;gap:6px;font:700 14px/1 \'DM Sans\',Manrope,sans-serif;color:#5E6F22;background:#F3F5E6;border:1px solid #C9D58F;border-radius:999px;padding:6px 11px;white-space:nowrap"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12V4a1 1 0 0 1 1-1h8l9 9-9 9-9-9z"></path><circle cx="7.5" cy="7.5" r="1.5"></circle></svg>On sale</span>'
            '<span style="font:700 10.5px \'DM Sans\',Manrope,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#8A9AA3;white-space:nowrap">No code needed</span></div></sc-if>'
            '<sc-if value="{{ p.noCouponOrSale }}"><div style="font-size:15px;color:#B5BECB">No current coupon</div></sc-if></div>'
                       '<div class="tcf-cell-offer" style="justify-self:end"><sc-if value="{{ p.hasWebsite }}"><a href="{{ p.courseLink }}" target="_blank" rel="noopener" data-tcf-copy-go="{{ p.couponCode }}" '
            'style="display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:140px;font:700 15px \'DM Sans\',Manrope,sans-serif;border-radius:999px;white-space:nowrap;text-decoration:none;'
-           'background:#95AB3B;color:#fff;padding:11px 18px;border:1.5px solid #95AB3B;transition:background .15s,border-color .15s" data-hv="4"><span data-tcf-offer-label="">View course</span></a></sc-if>'
+           'background:#95AB3B;color:#fff;padding:11px 18px;border:1.5px solid #95AB3B;transition:background .15s,border-color .15s" data-hv="4"><span data-tcf-offer-label="">{{ p.buttonLabel }}</span></a></sc-if>'
            '<sc-if value="{{ p.noWebsite }}"><div style="font-size:15px;color:#8A9AA3">No website listed</div></sc-if></div>'
            '</div>')
     table = (TABLE_CSS + '<div class="tcf-table" role="table" aria-label="CTEC course providers compared">' + head +
              '<div class="tcf-tbody"><sc-for list="{{ list }}" as="p" hint-placeholder-count="10">\n        ' + row + '\n      </sc-for></div></div>')
     return body[:i] + table + body[end:]
 
+# The directory features a selected group of schools: no claims that every approved provider or course is included.
+WORDING = [
+    ('Every approved school is listed whether or not it takes part. Verify your profile to confirm pricing, formats and contact details, and correct factual errors at any time at no charge.',
+     'Schools featured in our directory can verify and correct their information for free. Verify your profile to confirm pricing, formats and contact details at any time.'),
+    ('Every CTEC-approved school gets a profile, listed or not.', 'Listed schools can verify and correct their information for free.'),
+    ('Compare every approved 20-hour course by price, format and support.', 'Compare 20-hour courses from top tax schools by price, format and support.'),
+    ('Compare every CTEC-approved 60-hour course in one place.', 'Compare 60-hour courses from top CTEC-approved schools in one place.'),
+    ('Compare every CTEC-approved 20-hour continuing education course.', 'Compare 20-hour continuing education courses from top CTEC-approved schools.'),
+    ('California Tax Course Finder lists every CTEC-approved education provider and compares them on price, course format and current offers.',
+     'California Tax Course Finder features a selected group of top CTEC-approved schools and compares them on price, course format and current offers.'),
+    ('We put every approved provider on one page, side by side, with the same facts checked the same way. Every approved school appears, and every profile can be verified and corrected for free.',
+     'We put the schools featured in our directory on one page, side by side, with the same facts checked the same way. Listed schools can verify and correct their information for free.'),
+    ('Tax Course Finder lists every CTEC-approved education provider and shows the same facts for each.',
+     'Tax Course Finder features a selected group of CTEC-approved schools and shows the same facts for each.'),
+    ("Every CTEC-approved provider is included so students see the whole market. Basic listings are free, and correcting factual errors is always free.",
+     "We feature a selected group of CTEC-approved schools that sell a complete 20-hour or 60-hour course online, using facts from each school's own website. Listed schools can verify and correct their information for free."),
+    ('Provider websites and provider-submitted pricing, checked weekly.', "Provider websites and provider-submitted pricing, checked during each directory review (the review date is shown on the comparison pages)."),
+    ('>Compare all providers<', '>Compare listed schools<'),
+    ('>See all providers<', '>Compare listed schools<'),
+]
+WORDING_USED = set()
+
+def wording(text, js=False):
+    """js=True: the text is page script, where the copy sits in single-quoted strings."""
+    for old, new in WORDING:
+        o, n = (old.replace("'", "\\'"), new.replace("'", "\\'")) if js else (old, new)
+        if o in text:
+            text = text.replace(o, n); WORDING_USED.add(old)
+    return text
+
 def seo_tweaks(name, body):
+    # Student note from the listing (e.g. which package to pick, recurring billing), in sentence case under the price label.
+    note = ('<sc-if value="{{ p.hasLinkNote }}" hint-placeholder-val="{{ false }}"><div style="font:500 14px/1.4 Manrope,sans-serif;color:#5A6E78;margin-top:4px;max-width:220px">{{ p.linkNote }}</div></sc-if>')
+    body = re.sub(r'(<sc-if value="\{\{ p\.priceNote \}\}"[^>]*><div[^>]*>\{\{ p\.priceNote \}\}</div></sc-if>)', lambda m: m.group(1) + note, body)
+    if name == 'mobile':
+        x = '{{ p.priceText }}</sc-if></div></div>'
+        assert body.count(x) == 1, 'mobile price'
+        body = body.replace(x, x + note.replace('margin-top:4px;max-width:220px', 'margin-top:2px'), 1)
     if name == 'CTEC Requirements':  # renewal timeline cards -> the renewal calendar bar (same as the renew guide / home page)
         src = clean(json.load(open(EXT + '/How to Renew CTEC Registration.json'))['body'])
         k = src.index('Key dates'); a = src.rindex('<div style="max-width:1200px;margin:0 auto">', 0, k)
@@ -215,7 +253,7 @@ def seo_tweaks(name, body):
              'Phone, email and live chat support, shown only when verified, so you know how to get help before you enroll.',
              pill('Phone support') + pill('Email support') + pill('Live chat')),
             ('Website link', '<path d="M14 4h6v6"></path><path d="M20 4 11 13"></path><path d="M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"></path>',
-             'A direct link to the provider&#8217;s course page. You enroll with the school, not with us.',
+             'A link to the school&#8217;s own page for that course. Where a school has no page for the specific course, the button says Visit school website or Browse CTEC courses, and any extra step is noted with the price. You enroll with the school, not with us.',
              '<span style="display:inline-flex;align-items:center;gap:6px;font:700 15px Manrope,sans-serif;background:#95AB3B;color:#fff;border-radius:999px;padding:8px 16px">View course<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></span>'),
         ]
         cards = ''.join(
@@ -239,7 +277,7 @@ def seo_tweaks(name, body):
             '<div style="flex:1 1 520px;display:flex;flex-direction:column;gap:12px">'
             '<div style="display:flex;align-items:center;gap:12px;font:700 17px Manrope,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#AEC25A"><span style="width:28px;height:2px;background:#95AB3B"></span>Find your course</div>'
             '<h2 style="margin:0;font:300 44px/1.1 \'Source Serif 4\',Georgia,serif;text-wrap:balance">Search our directory of CTEC-approved schools</h2>'
-            '<p style="margin:0;font-size:20px;line-height:1.6;color:rgba(255,255,255,.78);max-width:640px">See every provider side by side: prices, current coupons, course format and support. Then go straight to the school&#8217;s course page.</p></div>'
+            '<p style="margin:0;font-size:20px;line-height:1.6;color:rgba(255,255,255,.78);max-width:640px">See the listed schools side by side: prices, current coupons, course format and support. Then go straight to the school&#8217;s course page.</p></div>'
             '<div style="display:flex;flex-wrap:wrap;gap:12px;flex:0 1 auto">'
             '<a href="/#find-schools" style="' + btn + 'background:#95AB3B;color:#fff;border:1.5px solid #95AB3B" data-hv="4">Search the school directory' + arrow + '</a>'
             '<a href="/ctec-20-hour-course/" style="' + btn + 'background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.45)" data-hv="5">20 Hour CTEC Courses</a>'
@@ -247,7 +285,14 @@ def seo_tweaks(name, body):
             '</div></div></div>')
         anchor = '<div style="background:#fff;padding:72px 56px">'
         assert body.count(anchor) >= 1, 'compare page section not found'
-        body = body.replace(anchor, cta_html + anchor, 1)
+        select_html = ('<div style="background:#F4F6F7;padding:72px 56px"><div style="max-width:1200px;margin:0 auto;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:40px 56px;align-items:start">'
+            '<div style="display:flex;flex-direction:column;gap:12px"><div style="display:flex;align-items:center;gap:12px;font:700 17px Manrope,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#7E9330"><span style="width:28px;height:2px;background:#95AB3B"></span>Which schools are listed</div>'
+            '<h2 style="margin:0;font:300 44px/1.12 \'Source Serif 4\',Georgia,serif;text-wrap:balance">A selected group of CTEC-approved schools</h2></div>'
+            '<div style="display:flex;flex-direction:column;gap:16px;font-size:20px;line-height:1.65;color:#2F4652">'
+            '<p style="margin:0">The directory features a selected group of CTEC-approved schools; it is not a list of every approved provider or every available course. We start from CTEC&#8217;s list of approved education providers and include schools that sell a complete 20-hour (CE) or 60-hour (QE) course package students can buy online. Schools are not scored or ranked: the default order is alphabetical, and you can sort by name or price.</p>'
+            '<p style="margin:0">Listed schools can verify and correct their information for free. When a school publishes a page for the specific course, its button says <strong>View course</strong> and opens that page. When it does not, the button says <strong>Visit school website</strong> or <strong>Browse CTEC courses</strong> and opens the school&#8217;s home page or CTEC course catalog, with any extra step, such as choosing a package, noted next to the price.</p>'
+            '</div></div></div>')
+        body = body.replace(anchor, select_html + cta_html + anchor, 1)
     # Directory rows: give the "View course" button its own room on desktop (it overflowed into the offer column)
     # and present a sale like a coupon: badge + small caps label. Mobile rules key off the inline grid string, so it stays.
     old_sale = '<div style="font-weight:700">On sale</div><div style="color:#8A9AA3;font-size:19px;margin-top:2px">No code needed</div>'
@@ -305,6 +350,9 @@ def seo_tweaks(name, body):
         import listing_form
         a = body.index('<form'); b = body.index('</form>', a) + len('</form>')
         body = body[:a] + listing_form.form() + body[b:]
+    if name == 'mobile':  # phone directory card: the course's own page (or labelled fallback), not the school's home page
+        body, n = re.subn(r'<a href="\{\{ p\.website \}\}"([^>]*)>View course →</a>', r'<a href="{{ p.courseLink }}"\1>{{ p.buttonLabel }} →</a>', body)
+        assert n == 1, 'mobile view course'
     if name == 'mobile':  # renewal calendar on phones: stacked, same dark band as desktop
         row = lambda c, t, d: ('<div style="border-left:6px solid %s;padding:4px 0 4px 16px;display:flex;flex-direction:column;gap:4px"><div style="font:700 20px Manrope,sans-serif;color:#FF6B57">%s</div>'
                                '<p style="margin:0;font-size:18px;line-height:1.55;color:rgba(255,255,255,.78)">%s</p></div>' % (c, t, d))
@@ -324,7 +372,8 @@ def seo_tweaks(name, body):
                                     '<sc-if value="{{ p.noSchool }}">' + nm + '</sc-if>')
         # phone home headline: green highlight, a bit larger
         body = body.replace('font:300 34px/1.1 \'Source Serif 4\',Georgia,serif;text-align:center;color:#fff"><span style="display:block">CTEC Approved</span>',
-                            'font:300 36px/1.1 \'Source Serif 4\',Georgia,serif;text-align:center;color:#fff"><span style="display:block;color:#AEC25A">CTEC Approved</span>', 1)
+                            'font:300 36px/1.1 \'Source Serif 4\',Georgia,serif;text-align:center;color:#fff"><span style="display:block;color:#AEC25A">CTEC Courses</span>', 1)
+        body = body.replace('<span style="display:block;font-weight:300">Tax Course Directory</span></h1>', '<span style="display:block;font-weight:300">from Top Tax Schools</span></h1>', 1)
     if name == 'TaxCourse Finder Home':
         # Headline highlight in the same serif as the rest of the H1 (colour only), like the course pages.
         old_h = '<span style="display:block;font-family:\'Plus Jakarta Sans\',sans-serif;font-weight:700;font-size:.88em;letter-spacing:-.025em;color:#95AB3B">CTEC Approved Tax Course</span>'
@@ -332,12 +381,12 @@ def seo_tweaks(name, body):
         body = body.replace(old_h, '<span style="display:block;color:#fff">CTEC Approved Tax Course</span>', 1)
         # Short one-line headline: "Compare CTEC Approved Tax Courses".
         body, n = re.subn(r'max-width:min\(980px,100%\)">\s*Compare every\s*<span style="display:block;color:#fff">CTEC Approved Tax Course</span>\s*before you enroll\.\s*</h1>',
-                          'max-width:100%" class="tcf-home-h1">Compare <span style="color:#AEC25A">CTEC Approved</span><br>Tax Schools &amp; Courses</h1>', body)
+                          'max-width:100%" class="tcf-home-h1">Compare <span style="color:#AEC25A">CTEC Courses</span><br>from Top Tax Schools</h1>', body)
         assert n >= 1, 'home h1'
         # Exact target keywords in the home course cards (headings + copy), wording unchanged otherwise.
         for old, new in [('CTEC 20-Hour <span style="font-weight:800">CE Course</span>', '20 Hour <span style="font-weight:800">CTEC Course</span>'),
                          ('CTEC 60-Hour <span style="font-weight:800">QE Course</span>', '60 Hour <span style="font-weight:800">CTEC Course</span>'),
-                         ('Compare every approved 20-hour course', 'Compare every approved 20 hour CTEC course'),
+                         ('Compare 20-hour courses from top tax schools', 'Compare 20 hour CTEC courses from top tax schools'),
                          ('The 60-hour qualifying education course is required', 'The 60 hour CTEC course (qualifying education) is required')]:
             assert old in body, old
             body = body.replace(old, new, 1)
@@ -350,8 +399,21 @@ def seo_tweaks(name, body):
 
 def code_for(d):
     c = d['code']
+    # (template notes) see seo_tweaks: student notes under the price
+    # Directory review date: one shared value (TCF.reviewDate), shown as a calendar date; never rolls forward on its own.
+    c, n1 = re.subn(r"lastUpdated: \(\(\) => \{ const d = new Date\(\); d\.setDate\(d\.getDate\(\) - \(\(d\.getDay\(\) \+ 6\) % 7\)\); return d\.toLocaleDateString\('en-US', \{ month: 'long', day: 'numeric', year: 'numeric' \}\); \}\)\(\)",
+                    "lastUpdated: TCF.reviewDate(data)", c)
+    c, n2 = re.subn(r"lastUpdated: \(\(\) => \{ const ds = data \? data\.providers\.map\(p => p\.lastChecked \|\| p\.provider_data_last_checked\)\.filter\(Boolean\)\.sort\(\) : \[\]; const d = ds\.length \? new Date\(ds\[ds\.length - 1\]\) : \(data && data\.LAST_CHECKED \? new Date\(data\.LAST_CHECKED\) : null\); return d && !isNaN\(d\) \? d\.toLocaleDateString\('en-US', \{ month: 'long', day: 'numeric', year: 'numeric' \}\) : 'on import'; \}\)\(\)",
+                    "lastUpdated: TCF.reviewDate(data)", c)
+    c, n3 = re.subn(r"lastChecked: lc && !isNaN\(lc\) \? lc\.toLocaleDateString\('en-US', \{ month: '(short|long)', day: 'numeric', year: 'numeric' \}\) : '([^']*)'",
+                    r"lastChecked: TCF.reviewDate(this.state.data, '\1') || '\2'", c)
+    c = re.sub(r"const ds = ps\.map\(p => p\.lastChecked\)\.filter\(Boolean\)\.sort\(\);\s*const lc = ds\.length \? new Date\(ds\[ds\.length - 1\]\) : null;\s*", '', c)
+    assert 'new Date(ds[' not in c and 'd.setDate(d.getDate()' not in c, 'review date not replaced in ' + d.get('name', '?')
     # package options: the directory shows "From $X" when a course can be bought more than one way
-    c = c.replace("const multi = cur != null && /\\/|;|\\bor\\b/.test(pr.text || '');", "const multi = cur != null && (/\\/|;|\\bor\\b|^From /.test(pr.text || '') || (pr.options || []).length > 1);")
+    c = c.replace("const multi = cur != null && /\\/|;|\\bor\\b/.test(pr.text || '');", "const multi = cur != null && (/\\/(?!\\s*(?:year|yr|month|mo)\\b)|;|\\bor\\b|^From /.test(pr.text || '') || (pr.options || []).length > 1);")
+    c = c.replace("(multi ? 'From ' : '') + '$' + (Number.isInteger(cur) ? cur : cur.toFixed(2)))", "(multi ? 'From ' : '') + '$' + (Number.isInteger(cur) ? cur : cur.toFixed(2)) + (p.pricePer || ''))")
+    # phone cards: same billing period after the number
+    c = c.replace("priceNum: ((String(p.priceText || '').match(/^\\$[\\d,]+(?:\\.\\d{2})?/) || [''])[0]).replace(/^\\$/, ''),", "priceNum: ((String(p.priceText || '').match(/^\\$[\\d,]+(?:\\.\\d{2})?/) || [''])[0]).replace(/^\\$/, '') + (p.pricePer || ''),")
     # phone directory: school name opens the school's profile when it is live
     c = c.replace("noWebsite: !p.website, priceWeight: p.priceMuted ? 500 : 800", "noWebsite: !p.website, schoolHref: p.schoolUrl || '', hasSchool: !!p.schoolUrl, noSchool: !p.schoolUrl, priceWeight: p.priceMuted ? 500 : 800")
     # provider listing form: section nav matches the new, shorter form
@@ -381,7 +443,7 @@ def code_for(d):
     c = c.replace("'online_course_available', 'self_paced', ", "'online_course_available', ").replace("['self_paced', 'Self-paced'], ", '')
     # FAQ page: answer the "best CTEC course" question (also in faqs-ld.json).
     c = c.replace("{ eyebrow: 'Using this site', title: 'Comparing providers', items: [",
-                  "{ eyebrow: 'Using this site', title: 'Comparing providers', items: [\n        { q: 'What is the best CTEC course?', a: 'The best CTEC course is the one that fits how you learn and what you need: the price, whether you want online study or live classes, a printed book, PDF or online videos, the support available, and how quickly the school reports your hours to CTEC. Tax Course Finder lists every CTEC-approved provider side by side so you can filter by those features, compare current prices and coupon codes, and go straight to the school’s course page to enroll.' },")
+                  "{ eyebrow: 'Using this site', title: 'Comparing providers', items: [\n        { q: 'What is the best CTEC course?', a: 'The best CTEC course is the one that fits how you learn and what you need: the price, whether you want online study or live classes, a printed book, PDF or online videos, the support available, and how quickly the school reports your hours to CTEC. Tax Course Finder lists the schools featured in our directory side by side so you can filter by those features, compare current prices and coupon codes, and go straight to the school’s course page to enroll.' },")
     # no device-access options (mobile / desktop) on the site
     c = c.replace(", 'mobile_friendly']", ']').replace("['mobile_friendly', 'Mobile friendly'], ", '').replace("'Mobile-Friendly Course', 'Dedicated Mobile App', ", '')
     c = re.sub(r'subInit\(\)\s*\{', 'subInit() { return;', c)  # newsletter popup has no backend: keep it off
@@ -396,9 +458,11 @@ hover_css = ''.join('[data-hv="%d"]:hover{%s}' % (i, ';'.join(x.strip() + '!impo
 json.dump({'hover_css': hover_css}, open(OUT + '/hover.json', 'w'))
 
 home_mobile = json.load(open(EXT + '/TaxCourse Finder Home Mobile.json'))
+home_mobile['body'] = wording(home_mobile['body']); home_mobile['code'] = wording(home_mobile['code'], js=True)
 
 for name, (slug, url, title) in PAGES.items():
     d = json.load(open(EXT + '/' + name + '.json'))
+    d['body'] = wording(d['body']); d['code'] = wording(d['code'], js=True)
     body = clean(d['body'])
     body = body.replace('style="min-width:1100px"', 'class="tcf-screen"', 1)
     body = seo_tweaks(name, body)
@@ -459,6 +523,39 @@ pa.update(widget=profile_page(pa['widget']), code=profile_page(pa['code'], True)
           title='Create Your School Profile Page', name='Create School Profile', rid='tcf-create-your-school-profile')
 json.dump(pa, open(OUT + '/pages/create-your-school-profile.json', 'w'), indent=1)
 
+# Thank-you page after the listing verification form (/listing-verified/): shown only for a receipt the server confirms was saved.
+BTN = ("display:inline-flex;align-items:center;justify-content:center;gap:8px;font:700 19px Manrope,sans-serif;border-radius:999px;white-space:nowrap;text-decoration:none;cursor:pointer;"
+       "transition:background .15s,border-color .15s,color .15s;line-height:1.2;background:#95AB3B;color:#fff;padding:14px 28px;border:1.5px solid #95AB3B;align-self:flex-start")
+ARROW = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg>'
+CARDV = 'background:#fff;border:1px solid #D7DFE2;border-radius:18px;padding:44px;display:flex;flex-direction:column;gap:20px;box-shadow:0 10px 30px rgba(11,46,64,.06)'
+EYE = 'display:flex;align-items:center;gap:12px;font:700 17px Manrope,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#7E9330'
+H1V = "margin:0;font:300 48px/1.1 'Source Serif 4',Georgia,serif;text-wrap:balance"
+PV = 'margin:0;font-size:21px;line-height:1.6;color:#2F4652'
+thanks = ('<div data-screen-label="Listing verified" class="tcf-screen"><div style="background:#F4F6F7;padding:96px 56px 110px;min-height:52vh"><div style="max-width:780px;margin:0 auto">'
+    '<div data-tcf-receipt-state="checking" role="status" style="' + CARDV + '"><p style="' + PV + '">Checking your submission&hellip;</p></div>'
+    '<div data-tcf-receipt-state="ok" style="display:none">'
+    '<div style="' + CARDV + '"><div style="' + EYE + '">Listing verification received</div>'
+    '<h1 style="' + H1V + '">Thank you for verifying your school!</h1>'
+    '<p style="' + PV + '">We&rsquo;ve received your listing details for review. You can now create your free school profile page, where prospective students can learn more about your school, course options, and student support.</p>'
+    '<a href="/create-your-school-profile/" style="' + BTN + '" data-hv="4">Create Your School Profile' + ARROW + '</a>'
+    '<p style="margin:0;font-size:18px;line-height:1.6;color:#5A6E78">Creating a profile is optional and free. We review every submission before your listing changes or a profile is published, and we&rsquo;ve emailed these steps to you<span data-tcf-receipt-school=""></span>.</p>'
+    '</div></div>'
+    '<div data-tcf-receipt-state="none" style="display:none"><div style="' + CARDV + '"><div style="' + EYE + '">Listing verification</div>'
+    '<h1 style="' + H1V + '">We couldn&rsquo;t find a recent submission</h1>'
+    '<p style="' + PV + '">This page confirms a listing verification once it has been saved. To verify or update your school&rsquo;s listing, please use the form.</p>'
+    '<a href="/provider-application/" style="' + BTN + '" data-hv="4">Verify your listing' + ARROW + '</a></div></div>'
+    '</div></div></div>'
+    '<script>(function(){var q=new URLSearchParams(location.search).get("receipt")||"";'
+    'function show(s){[].forEach.call(document.querySelectorAll("[data-tcf-receipt-state]"),function(e){e.style.display=e.getAttribute("data-tcf-receipt-state")===s?"":"none";});}'
+    'if(!/^[A-Za-z0-9]{10,64}$/.test(q)){show("none");return;}'
+    'fetch("/wp-admin/admin-ajax.php?action=tcfd_listing_receipt&receipt="+encodeURIComponent(q),{credentials:"same-origin",cache:"no-store"})'
+    '.then(function(r){return r.json();}).then(function(j){if(j&&j.success){var n=j.data&&j.data.school;'
+    'if(n){var el=document.querySelector("[data-tcf-receipt-school]");el.textContent=" (submission for "+n+")";}show("ok");}else show("none");})'
+    '.catch(function(){show("none");});})();</script>')
+json.dump({'name': 'Listing verified', 'slug': 'listing-verified', 'url': '/listing-verified/', 'title': 'Thank You for Verifying Your School', 'runtime': False, 'rid': 'tcf-listing-verified',
+           'widget': '<div class="tcf-page tcf-scope tcf-p-listing-verified"><div id="tcf-listing-verified-root" class="tcf-root">@@SSR@@</div></div>', 'ssr': thanks, 'css': '', 'code': '', 'props': {}},
+          open(OUT + '/pages/listing-verified.json', 'w'), indent=1)
+
 # header/footer
 d = json.load(open(EXT + '/About.json'))
 hdr = clean(d['header'])
@@ -481,7 +578,7 @@ hdr = hdr.replace('<div style="display:flex;gap:0;align-items:center;justify-con
 # close nav: the nav div is the last child of the inner bar -> its closing tag is the 2nd-to-last </div> before </header>
 i = hdr.rfind('</div>'); j = hdr.rfind('</div>', 0, i)
 hdr = hdr[:j] + '</nav>' + hdr[j + 6:]
-ftr = clean(d['footer']).replace('<div id="site-footer" style=', '<footer id="site-footer" class="tcf-footer tcf-scope" style=', 1)
+ftr = clean(wording(d['footer'])).replace('<div id="site-footer" style=', '<footer id="site-footer" class="tcf-footer tcf-scope" style=', 1)
 ftr = ftr[:ftr.rfind('</div>')] + '</footer>'
 # Menu links for guides that exist only on WordPress (not in the design files).
 EXTRA_GUIDES = [('/ctec-live-scan-background-check/', 'CTEC Live Scan Background Check', 'Live Scan Background Check'),
@@ -512,5 +609,7 @@ for part in ('hdr', 'ftr'):
     # Create Profile Page (Step 2) link hidden for now; the page stays published at /create-your-school-profile/
     if part == 'hdr': hdr = h
     else: ftr = h
+missing = [o for o, _ in WORDING if o not in WORDING_USED]
+assert not missing, 'wording not found: %r' % missing
 json.dump({'header': hdr, 'footer': ftr}, open(OUT + '/hf.json', 'w'), indent=1)
 print('ok')

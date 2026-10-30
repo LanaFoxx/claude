@@ -13,6 +13,7 @@ final class TCFD_Admin {
         add_action('admin_post_tcfd_undo', [__CLASS__, 'handle_undo']);
         add_action('admin_post_tcfd_export', [__CLASS__, 'handle_export']);
         add_action('admin_post_tcfd_sample', [__CLASS__, 'handle_sample']);
+        add_action('admin_post_tcfd_reviewed', [__CLASS__, 'handle_reviewed']);
         add_action('admin_init', [__CLASS__, 'maybe_upgrade']);
         add_filter('manage_tcf_provider_posts_columns', [__CLASS__, 'columns']);
         add_action('manage_tcf_provider_posts_custom_column', [__CLASS__, 'column'], 10, 2);
@@ -140,6 +141,18 @@ final class TCFD_Admin {
         exit;
     }
 
+    public static function handle_reviewed(): void {
+        if (!current_user_can(self::CAP)) wp_die('Not allowed.');
+        check_admin_referer('tcfd_reviewed');
+        $d = sanitize_text_field(wp_unslash((string) ($_POST['reviewed'] ?? '')));
+        if (preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $d, $m) && checkdate((int) $m[2], (int) $m[3], (int) $m[1])) {
+            update_option('tcfd_directory_reviewed', $d, false);
+            TCFD_Store::flush_cache();
+        }
+        wp_safe_redirect(self::url('tcfd-import'));
+        exit;
+    }
+
     public static function page_import(): void {
         if (!current_user_can(self::CAP)) return;
         $batch = sanitize_key($_GET['batch'] ?? '');
@@ -152,7 +165,15 @@ final class TCFD_Admin {
         }
         $last = (string) get_transient('tcfd_last_raw_' . get_current_user_id());
         delete_transient('tcfd_last_raw_' . get_current_user_id());
+        $rev = TCFD_Store::directory_reviewed();
         ?>
+        <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" class="tcfd-reviewed" style="margin:12px 0 18px;padding:12px 16px;background:#fff;border:1px solid #dcdcde;border-radius:8px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+            <?php wp_nonce_field('tcfd_reviewed'); ?><input type="hidden" name="action" value="tcfd_reviewed">
+            <label for="tcfd-reviewed-date"><strong>Directory review completed on</strong></label>
+            <input type="date" id="tcfd-reviewed-date" name="reviewed" value="<?php echo esc_attr($rev); ?>" required>
+            <button class="button button-primary">Save review date</button>
+            <span class="description">Shown as “last reviewed” on the home, course, About and methodology pages. Set it only after a full data review is finished; it never changes by itself.</span>
+        </form>
         <div class="tcfd-steps">
             <div><b>1</b> Copy the <a href="<?php echo esc_url(self::url('tcfd-prompt')); ?>">ChatGPT prompt</a> into ChatGPT.</div>
             <div><b>2</b> Paste ChatGPT's reply below (or upload the .json / .csv file it gives you).</div>

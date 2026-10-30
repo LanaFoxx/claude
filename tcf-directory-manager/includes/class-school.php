@@ -187,7 +187,7 @@ final class TCFD_School {
         $p = $data['provider'];
         $name = esc_html($p['name']);
         // Server-rendered summary for crawlers and no-JS visitors; replaced by the full page on load.
-        $ssr = '<div style="max-width:1200px;margin:0 auto;padding:110px 56px 80px"><p><a href="' . esc_url($data['links']['directory']) . '">All CTEC providers</a> / ' . $name . '</p>'
+        $ssr = '<div style="max-width:1200px;margin:0 auto;padding:110px 56px 80px"><p><a href="' . esc_url($data['links']['directory']) . '">Listed schools</a> / ' . $name . '</p>'
              . '<h1 style="font:200 52px/1.05 Manrope,sans-serif;margin:0 0 16px">' . $name . '</h1>'
              . '<p style="font-size:22px;line-height:1.6;color:#23272A;max-width:760px">' . esc_html($data['school']['intro'] ?: $p['name'] . ' is a CTEC-approved education provider.') . '</p></div>';
         $banner = $data['live'] ? '' : '<div style="background:#E0A82E;color:#23272A;text-align:center;padding:10px 16px;font:700 17px Manrope,sans-serif">Preview only – this school page is not live. Visitors get a 404 until “School page live” is switched on.</div>';
