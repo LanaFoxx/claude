@@ -39,30 +39,17 @@ THEMES = {
         shadow='0,0,0', shadow_float='rgba(0,0,0,.18)', accent_rgb='255,107,87',
         serif=("'Instrument Serif',serif", 400), sans="'Instrument Sans'", sans_max=700,
         logo='california-tax-course-finder-logo-hd-studio.png', logo_white='california-tax-course-finder-logo-white-hd-studio.png',
-        check='check-charcoal.png', check_dark='check-coral.png', cta='Find a course',
-        fonts_url='https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap',
-        css=(  # sections alternate white and off-white (#FAF7F2): old grey sections and heroes become off-white
-             '.tcf-scope h1,.tcf-scope h2{font-family:\'Instrument Serif\',serif!important;font-weight:400!important;letter-spacing:-.02em}'
-             '@media (min-width:768px){.tcf-home-h1{font-size:clamp(40px,6.2vw,88px)!important;line-height:.98!important}}'
-             '.tcf-scope h1{line-height:1!important}.tcf-scope h1:not(.tcf-home-h1){font-size:clamp(44px,5.6vw,80px)!important}'
-             '.tcf-scope h3,.tcf-scope h4{font-family:\'Instrument Sans\',sans-serif!important;letter-spacing:-.01em}'
-             '.tcf-scope h1 em,.tcf-scope h2 em,.tcf-accent{font-style:italic}'
-             '.tcf-eyebrow::before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;background:#FF6B57;margin-right:10px;vertical-align:1px;flex:none}'
-             '.tcf-scope p a:not([style*="background"]),.tcf-scope li a:not([style*="background"]){text-decoration:underline;text-underline-offset:3px}'
-             '.tcf-scope p a:not([style*="background"]):hover,.tcf-scope li a:not([style*="background"]):hover{color:#C2452F!important}'
+        check='check-charcoal.png', check_dark='check-coral.png', cta='Compare Courses', colors_only=True,
+        fonts_url='https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Manrope:wght@300;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=Source+Serif+4:opsz,wght@8..60,200;8..60,300;8..60,400&family=Source+Sans+3:wght@400;600;700&display=swap',
+        css=(  # colours only: original fonts, sizes and layout are kept
              '.tcf-footer{border-top:3px solid #FF6B57}.tcf-footer a{color:rgba(250,247,242,.8)!important}.tcf-footer a:hover{color:#FAF7F2!important}'
              '.tcf-topbar-left{background:rgba(255,107,87,.16)!important;color:#FAF7F2!important;border-color:rgba(255,107,87,.55)!important}'
              '.tcf-topbar-link{color:#FF6B57!important}'
-             '.tcf-header nav.tcf-nav>.dd>div:first-child:not(.tcf-nav-btn){font:500 16px \'Instrument Sans\',sans-serif!important}'
              '.tcf-header nav.tcf-nav .dd>div.tcf-nav-btn{background:#fff!important;border-color:#D9D4CC!important;color:#23272A!important}'
              '.tcf-header nav.tcf-nav .dd>div.tcf-nav-btn:hover{border-color:#23272A!important;background:#fff!important;color:#23272A!important}'
              '.tcf-header nav.tcf-nav>a.tcf-nav-cta{color:#FAF7F2!important}'
-             '.tcf-header nav.tcf-nav>a.tcf-nav-cta::after{content:"\\2192"!important;color:#FF6B57;margin-left:4px}'
              '.tcf-header nav.tcf-nav>a.tcf-nav-cta:hover{background:#15181A!important;border-color:#15181A!important}'
-             '.tcf-thead{color:#FAF7F2!important}'
-             '.tcf-course-cards{position:relative;display:flex;flex-direction:column;gap:10px;width:100%;max-width:620px;margin-bottom:22px}'
-             '.tcf-cc{cursor:pointer;display:flex;align-items:center;gap:14px;border:1.5px solid;border-radius:12px;padding:20px 24px;text-align:left;font:600 19px \'Instrument Sans\',sans-serif;transition:background .15s,border-color .15s}'
-             '.tcf-cc-s{font-weight:500;margin-left:2px}.tcf-cc svg{margin-left:auto;flex:none}'),
+             '.tcf-thead{color:#FAF7F2!important}'),
     ),
 }
 THEME = 'studio'
@@ -71,6 +58,7 @@ INK, COBALT, COBALT_HOVER = T['ink'], T['action'], T['action_hover']  # names ke
 SECONDARY, MUTED, SOFT, BORDER, BORDER_STRONG = T['secondary'], T['muted'], T['soft'], T['border'], T['border_strong']
 CORAL, CORAL_TEXT, CORAL_TINT = T['coral'], T['coral_text'], T['coral_tint']
 STUDIO = THEME == 'studio'
+COLORS_ONLY = T.get('colors_only', False)  # keep the original fonts and layout; change colours only
 
 COLORS = {
     '#0B2E40': INK, '#2F4652': INK, '#22365E': INK, '#082433': T['dark_hover'],
@@ -216,11 +204,12 @@ def structure(h):
         heading = any(t in ('h1', 'h2') for t, _, _ in stack)
         if ctx not in ('skip', 'dark') and heading and tag == 'span' and OLIVE_COLOR.search(st):
             st = OLIVE_COLOR.sub('color:' + T['heading_accent'], st)  # accent word in a headline
-            if T['accent_italic']:
+            if T['accent_italic'] and not COLORS_ONLY:
                 attrs = _add_class(attrs, 'tcf-accent')
         elif STUDIO and ctx not in ('skip', 'dark') and 'text-transform:uppercase' in st and OLIVE_COLOR.search(st) and 'letter-spacing' in st:
-            st = OLIVE_COLOR.sub('color:' + INK, st)  # eyebrow: charcoal label with a coral dot
-            attrs = _add_class(attrs, 'tcf-eyebrow')
+            st = OLIVE_COLOR.sub('color:' + INK, st)  # eyebrow: charcoal label
+            if not COLORS_ONLY:
+                attrs = _add_class(attrs, 'tcf-eyebrow')
         if 'border-radius:999px' in st and re.search(r'background:#0B2E40\b', st) and 'color:#fff' in st and ctx != 'dark':
             # navy-filled pill buttons use the call-to-action colour
             st = st.replace('background:#0B2E40', 'background:' + T['action']).replace('border:1.5px solid #0B2E40', 'border:1.5px solid ' + T['action'])
@@ -269,7 +258,7 @@ CARD_OFF = dict(bg='#fff', color=INK, border=BORDER, sub=T['faint'], arrow=INK)
 
 def course_cards(h):
     """Studio: the home course choice is two stacked cards (active = charcoal with a coral arrow)."""
-    if not STUDIO:
+    if not STUDIO or COLORS_ONLY:
         return h
     def card(click, label, sub, key, state):
         if state is None:  # template: bound to component state
@@ -294,7 +283,7 @@ def scripts(h):
     h = h.replace("const on = { bg: '#fff', color: '#0B2E40' }, off = { bg: 'transparent', color: '#fff' }",
                   "const on = { bg: '%s', color: '%s' }, off = { bg: 'transparent', color: '%s' }" % (act, on_act, INK))
     old_hero = "heroCeBg: qe ? 'transparent' : '#fff', heroCeColor: qe ? '#fff' : '#0B2E40', heroQeBg: qe ? '#fff' : 'transparent', heroQeColor: qe ? '#0B2E40' : '#fff'"
-    if STUDIO:
+    if STUDIO and not COLORS_ONLY:
         def props(key, active):
             return ', '.join("hero%s%s: %s ? '%s' : '%s'" % (key, f.capitalize() if f != 'bg' else 'Bg', active, CARD_ON[f], CARD_OFF[f])
                              for f in ('bg', 'color', 'border', 'sub', 'arrow'))
@@ -321,6 +310,8 @@ def scripts(h):
 
 
 def fonts(h):
+    if COLORS_ONLY:
+        return h
     serif, weight = T['serif']
     sans = T['sans']
     h = re.sub(r"font:\d00 ([^;\"]*?)\\?'Source Serif 4\\?',\s*Georgia,\s*serif", lambda m: 'font:%d %s%s' % (weight, m.group(1), serif), h)

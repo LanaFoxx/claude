@@ -159,9 +159,9 @@ final class TCFD_School {
         $name = esc_html($p['name']);
         // Server-rendered summary for crawlers and no-JS visitors; replaced by the full page on load.
         $ssr = '<div style="max-width:1200px;margin:0 auto;padding:110px 56px 80px"><p><a href="' . esc_url($data['links']['directory']) . '">All CTEC providers</a> / ' . $name . '</p>'
-             . '<h1 style="font:400 52px/1.05 \'Instrument Serif\',serif;margin:0 0 16px">' . $name . '</h1>'
+             . '<h1 style="font:300 52px/1.05 \'Source Serif 4\',Georgia,serif;margin:0 0 16px">' . $name . '</h1>'
              . '<p style="font-size:22px;line-height:1.6;color:#23272A;max-width:760px">' . esc_html($data['school']['intro'] ?: $p['name'] . ' is a CTEC-approved education provider.') . '</p></div>';
-        $banner = $data['live'] ? '' : '<div style="background:#E0A82E;color:#23272A;text-align:center;padding:10px 16px;font:700 17px \'Instrument Sans\',sans-serif">Preview only – this school page is not live. Visitors get a 404 until “School page live” is switched on.</div>';
+        $banner = $data['live'] ? '' : '<div style="background:#E0A82E;color:#23272A;text-align:center;padding:10px 16px;font:700 17px Manrope,sans-serif">Preview only – this school page is not live. Visitors get a 404 until “School page live” is switched on.</div>';
         $css = '<style id="tcfd-school-css">'
              . '@media (max-width:900px){.tcf-p-school .tcfd-hero-spacer{display:none!important}'
              . '.tcf-p-school .tcfd-card-wrap{margin-top:0!important;order:-1}'
