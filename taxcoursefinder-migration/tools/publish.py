@@ -10,8 +10,8 @@ UP = BASE + '/wp-content/uploads/'
 MEDIA = {
  'check-green.png': (124, UP + '2026/09/check-green.png'),
  'check-white.png': (123, UP + '2026/09/check-white.png'),
- 'logo-teal.png': (805, 'https://taxcoursefinder.com/wp-content/uploads/2026/10/california-tax-course-finder-logo-hd-cobalt.png'),
- 'logo-white-teal.png': (806, 'https://taxcoursefinder.com/wp-content/uploads/2026/10/california-tax-course-finder-logo-white-hd-cobalt.png'),
+ 'logo-teal.png': (805, brand.LOGO),
+ 'logo-white-teal.png': (806, brand.LOGO_WHITE),
  'photos/01-ctec-60-hour-learner.webp': (489, UP + '2026/09/01-ctec-60-hour-learner.webp'),
  'photos/02-ctec-20-hour-tax-review.webp': (490, UP + '2026/09/02-ctec-20-hour-tax-review.webp'),
  'photos/03-online-tax-course-desktop.webp': (491, UP + '2026/09/03-online-tax-course-desktop.webp'),
@@ -169,7 +169,7 @@ if STEP == 'hf':
     assert 'tcf-nav-btn' in hdr, 'providers button'
     # Primary call to action: filled button, shown last in the desktop menu (CSS order).
     hdr = hdr.replace('<a href="/" style="display:flex;align-items:center;gap:6px;padding:10px 12px;border-radius:8px;color:#0B2E40" data-hv="2">Find &amp; Compare Courses</a>',
-                      '<a href="/#find-schools" class="tcf-nav-cta" style="display:flex;align-items:center;gap:6px;padding:10px 12px;border-radius:8px;color:#0B2E40">Compare Courses</a>', 1)
+                      '<a href="/#find-schools" class="tcf-nav-cta" style="display:flex;align-items:center;gap:6px;padding:10px 12px;border-radius:8px;color:#0B2E40">' + brand.CTA + '</a>', 1)
     assert 'tcf-nav-cta' in hdr, 'cta'
     # Deadline top bar above the header (text filled live by tcf-runtime.js, California time).
     topbar = ('<div class="tcf-topbar" role="note"><div class="tcf-topbar-in"><span class="tcf-topbar-dot" aria-hidden="true"></span>'

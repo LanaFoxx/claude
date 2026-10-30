@@ -31,7 +31,7 @@
       var dec = TCF.decorate([p], qe)[0] || TCF.decorate([p], !qe)[0] || {};
       var shortName = p.name.replace(/\s*\(.*\)\s*/, '').split(' dba ')[0];
       var F = function (k) { return p.features && p.features[k]; };
-      var fchip = function (label, on) { return { label: on ? label : label + ' · not confirmed', bg: on ? '#F3F6FF' : '#fff', border: on ? '#B9C5EE' : '#D6DEF5', color: on ? '#1A3DFF' : '#5A6690' }; };
+      var fchip = function (label, on) { return { label: on ? label : label + ' · not confirmed', bg: on ? '#FFF1EE' : '#fff', border: on ? '#D9D4CC' : '#D9D4CC', color: on ? '#23272A' : '#4B4F54' }; };
       var fm = C.formats || [];
       var formats = fm.length
         ? Object.keys(L.formats).map(function (k) { return fchip(L.formats[k], fm.indexOf(k) >= 0); })
@@ -45,7 +45,7 @@
       var sup = function (channel, value, hours, verified) {
         var listed = has(value);
         return { channel: channel, value: listed ? value : NC, hours: listed ? (verified ? (hours || 'Hours not confirmed') : 'Listed contact method; staffed support not verified.') : 'Not confirmed',
-                 status: listed && verified ? 'Confirmed' : 'Not confirmed', bg: listed && verified ? '#F3F6FF' : '#F3F6FF', color: listed && verified ? '#1A3DFF' : '#5A6690' };
+                 status: listed && verified ? 'Confirmed' : 'Not confirmed', bg: listed && verified ? '#FFF1EE' : '#FAF7F2', color: listed && verified ? '#23272A' : '#4B4F54' };
       };
       var hrs = has(S.support_hours) ? S.support_hours + (has(S.support_tz) ? ' ' + S.support_tz : '') : '';
       var supportChannels = [sup('Phone', S.support_phone, hrs, S.support_phone_verified),
@@ -68,12 +68,12 @@
         ctecNumber: or(D.provider.ctec_number), approvedTypes: p.ce && p.qe ? 'qualifying and continuing education' : (p.qe ? 'qualifying education' : 'continuing education'),
         intro: has(S.intro) ? S.intro : shortName + ' is a CTEC-approved education provider. Details below are recorded per course; anything we have not verified is marked "Not confirmed".',
         pickCE: function () { self.pick('ce'); }, pickQE: function () { self.pick('qe'); }, noCE: !p.ce, noQE: !p.qe,
-        ceBg: !qe ? '#1A3DFF' : 'transparent', ceColor: !qe ? '#fff' : '#0B1540', ceBorder: !qe ? '#1A3DFF' : '#0B1540', ceOpacity: p.ce ? 1 : .4,
-        qeBg: qe ? '#1A3DFF' : 'transparent', qeColor: qe ? '#fff' : '#0B1540', qeBorder: qe ? '#1A3DFF' : '#0B1540', qeOpacity: p.qe ? 1 : .4,
+        ceBg: !qe ? '#23272A' : 'transparent', ceColor: !qe ? '#fff' : '#23272A', ceBorder: !qe ? '#23272A' : '#D9D4CC', ceOpacity: p.ce ? 1 : .4,
+        qeBg: qe ? '#23272A' : 'transparent', qeColor: qe ? '#fff' : '#23272A', qeBorder: qe ? '#23272A' : '#D9D4CC', qeOpacity: p.qe ? 1 : .4,
         tabHint: p.ce && p.qe ? (qe ? 'Qualifying education: required before your first CTEC registration.' : 'Continuing education: required every year to renew an existing registration.') : (p.qe ? 'This school offers the 60-hour qualifying course only.' : 'This school offers the 20-hour continuing education course only.'),
         courseLabel: qe ? '60-Hour QE Course' : '20-Hour CE Course', packageKind: kind,
         packageExplain: kind === 'Complete package' ? 'A complete ' + label + ' education package. One price covers all required hours for ' + (qe ? 'first-time CTEC registration' : 'annual renewal') + '.' : (dec.priceCaptured ? dec.priceText + '. ' + (dec.priceNote || '') : 'Price not published. Confirm package scope on the school website.'),
-        priceText: dec.priceText || 'Price not published', priceNote: dec.priceNote || (dec.priceCaptured ? 'Published price' : 'Check provider site'), priceWeight: dec.priceMuted ? 500 : 800, priceColor: dec.priceMuted ? '#5A6690' : '#0B1540',
+        priceText: dec.priceText || 'Price not published', priceNote: dec.priceNote || (dec.priceCaptured ? 'Published price' : 'Check provider site'), priceWeight: dec.priceMuted ? 500 : 800, priceColor: dec.priceMuted ? '#4B4F54' : '#23272A',
         priceChecked: fmt(C.price_last_checked || p.lastChecked),
         hasCoupon: !!dec.hasCoupon, coupon: dec.coupon, couponLabel: dec.couponLabel,
         formatShort: formatShort, supportShort: supportChannels.filter(function (c) { return c.status === 'Confirmed'; }).map(function (c) { return c.channel; }).join(' · ') || NC,

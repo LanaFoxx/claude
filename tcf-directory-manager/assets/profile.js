@@ -55,10 +55,10 @@
     }
     renderVals() {
       var st = this.state, v = st.v, tab = st.tab, c = st[tab] || {};
-      var pill = function (on) { return { bg: on ? '#F3F6FF' : '#fff', border: on ? '#1A3DFF' : '#D6DEF5', color: on ? '#1A3DFF' : '#0B1540' }; };
+      var pill = function (on) { return { bg: on ? '#FFF1EE' : '#fff', border: on ? '#23272A' : '#D9D4CC', color: on ? '#23272A' : '#23272A' }; };
       var toggleOpt = (key, label) => () => { var set = new Set(c[key] || []); set.has(label) ? set.delete(label) : set.add(label); this.persist({ [tab]: Object.assign({}, c, { [key]: Array.from(set) }) }); };
       var opts = (key, labels) => labels.map(function (l) { return Object.assign({ label: l, toggle: toggleOpt(key, l) }, pill((c[key] || []).indexOf(l) >= 0)); });
-      var tabStyle = function (t) { return tab === t ? { bg: '#0B1540', color: '#fff', border: '#0B1540' } : { bg: '#fff', color: '#0B1540', border: '#D6DEF5' }; };
+      var tabStyle = function (t) { return tab === t ? { bg: '#23272A', color: '#fff', border: '#23272A' } : { bg: '#fff', color: '#23272A', border: '#D9D4CC' }; };
       var stl = function (o) { return o.offered ? 'Offered' : 'Not set'; };
       var ts = tabStyle('ce'), tq = tabStyle('qe');
       return {
