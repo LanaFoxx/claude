@@ -31,6 +31,35 @@ final class TCFD_School {
         add_filter('wpseo_metadesc', [__CLASS__, 'seo_desc']);
         add_filter('wpseo_opengraph_desc', [__CLASS__, 'seo_desc']);
         add_action('wp_head', [__CLASS__, 'schema'], 31);
+        add_filter('bulk_actions-edit-' . TCFD_Plugin::POST_TYPE, [__CLASS__, 'bulk_actions']);
+        add_filter('handle_bulk_actions-edit-' . TCFD_Plugin::POST_TYPE, [__CLASS__, 'bulk_live'], 10, 3);
+        add_action('admin_notices', [__CLASS__, 'bulk_notice']);
+    }
+
+    /** Provider list bulk actions: switch school pages on or off. */
+    public static function bulk_actions(array $actions): array {
+        $actions['tcfd_school_live_on'] = 'Turn school pages on';
+        $actions['tcfd_school_live_off'] = 'Turn school pages off';
+        return $actions;
+    }
+
+    public static function bulk_live(string $redirect, string $action, array $ids): string {
+        if (!in_array($action, ['tcfd_school_live_on', 'tcfd_school_live_off'], true)) return $redirect;
+        $on = $action === 'tcfd_school_live_on';
+        $n = 0;
+        foreach ($ids as $id) {
+            if (!current_user_can('edit_post', (int) $id)) continue;
+            TCFD_Store::set((int) $id, 'school_page_live', $on ? 1 : null);
+            $n++;
+        }
+        TCFD_Store::flush_cache();
+        return add_query_arg(['tcfd_live' => $on ? 'on' : 'off', 'tcfd_live_n' => $n], $redirect);
+    }
+
+    public static function bulk_notice(): void {
+        if (empty($_GET['tcfd_live']) || !isset($_GET['tcfd_live_n'])) return;
+        $n = (int) $_GET['tcfd_live_n'];
+        echo '<div class="notice notice-success is-dismissible"><p>' . esc_html($n . ' school page' . ($n === 1 ? '' : 's') . ' turned ' . ($_GET['tcfd_live'] === 'on' ? 'on.' : 'off.')) . '</p></div>';
     }
 
     public static function is_live(int $id): bool {

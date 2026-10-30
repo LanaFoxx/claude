@@ -265,6 +265,10 @@ def seo_tweaks(name, body):
         a = body.index('<form'); b = body.index('</form>', a) + len('</form>')
         body = body[:a] + listing_form.form() + body[b:]
     if name == 'mobile':
+        nm = '<div style="font:700 22px/1.25 Manrope,sans-serif;min-width:0;flex:1;overflow-wrap:anywhere">{{ p.name }}</div>'
+        assert nm in body, 'mobile name'
+        body = body.replace(nm, '<sc-if value="{{ p.hasSchool }}"><a href="{{ p.schoolHref }}" style="font:700 22px/1.25 Manrope,sans-serif;min-width:0;flex:1;overflow-wrap:anywhere;color:inherit;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px">{{ p.name }}</a></sc-if>'
+                                    '<sc-if value="{{ p.noSchool }}">' + nm + '</sc-if>')
         # phone home headline: green highlight, a bit larger
         body = body.replace('font:300 34px/1.1 \'Source Serif 4\',Georgia,serif;text-align:center;color:#fff"><span style="display:block">CTEC Approved</span>',
                             'font:300 36px/1.1 \'Source Serif 4\',Georgia,serif;text-align:center;color:#fff"><span style="display:block;color:#AEC25A">CTEC Approved</span>', 1)
@@ -293,6 +297,8 @@ def seo_tweaks(name, body):
 
 def code_for(d):
     c = d['code']
+    # phone directory: school name opens the school's profile when it is live
+    c = c.replace("noWebsite: !p.website, priceWeight: p.priceMuted ? 500 : 800", "noWebsite: !p.website, schoolHref: p.schoolUrl || '', hasSchool: !!p.schoolUrl, noSchool: !p.schoolUrl, priceWeight: p.priceMuted ? 500 : 800")
     # provider listing form: section nav matches the new, shorter form
     import listing_form
     c = c.replace("[['company', 'Company'], ['courses', 'Courses Offered'], ['pricing', 'Pricing'], ['features', 'Course Features'], ['support', 'Student Support'], ['refund', 'Refund Policy'], ['media', 'Profile Media'], ['description', 'Description'], ['verification', 'Verification']]", listing_form.sections_js())
