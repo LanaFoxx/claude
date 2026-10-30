@@ -132,3 +132,18 @@ function dwdp_original_url( $id ) {
 	$url = function_exists( 'wp_get_original_image_url' ) ? wp_get_original_image_url( $id ) : '';
 	return $url ? $url : wp_get_attachment_url( $id );
 }
+
+/**
+ * Two-tone heading, as used across the site: the first part thin, the rest heavy in blue.
+ * Splits before the last $tail words (default: about half).
+ */
+function dwdp_two_tone( $title, $color = '#4BA3DC', $tail = 0 ) {
+	$words = preg_split( '/\s+/', trim( (string) $title ) );
+	if ( count( $words ) < 2 ) {
+		return esc_html( $title );
+	}
+	$tail = $tail ? min( $tail, count( $words ) - 1 ) : (int) floor( count( $words ) / 2 );
+	$head = array_slice( $words, 0, count( $words ) - $tail );
+	$rest = array_slice( $words, count( $words ) - $tail );
+	return '<span style="font-weight:200">' . esc_html( implode( ' ', $head ) ) . '</span> <span style="font-weight:900;color:' . esc_attr( $color ) . '">' . esc_html( implode( ' ', $rest ) ) . '</span>';
+}
