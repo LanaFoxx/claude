@@ -41,6 +41,10 @@ b = re.sub(r'<span (style="[^"]*")>\{\{ ([\w.]*couponLabel) \}\}</span>', r'<spa
 # sticky offsets follow the compact header (site.css --tcf-head)
 b = b.replace('top:110px', 'top:var(--tcf-head,110px)').replace('top:184px', 'top:calc(var(--tcf-head,110px) + 74px)')
 assert '.dc.html' not in b and '@@MEDIA' not in b
+b, _n = re.subn(r'<div style="display:grid;grid-template-columns:220px minmax\(0,1fr\);gap:24px;padding:20px 26px;border-bottom:1px solid #E3E9EB"><div style="font:700 17px Manrope,sans-serif;color:#0B2E40">Edition / tax year</div><div[^>]*>\{\{ edition \}\}</div></div>\s*', '', b)  # no edition row
+_a = b.find('<section id="faq"')  # no School FAQ section on profiles
+if _a >= 0: b = b[:_a] + b[b.index('</section>', _a) + len('</section>'):]
+b = re.sub(r'\s*<a href="#faq"[^>]*>FAQ</a>', '', b)  # School FAQ section removed: drop its menu tab too
 b = brand.brand(b)  # Cobalt / Coral brand
 open('/home/user/claude/tcf-directory-manager/templates/school-template.html', 'w').write(b)
 print('template', len(b), 'outbound links:', len(re.findall(r'rel="nofollow sponsored', b)))

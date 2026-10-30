@@ -191,6 +191,7 @@ final class TCFD_Importer {
         }
         $status = null;
         if ($post_id && $rec['listing'] === 'removed' && get_post_status($post_id) === 'publish') $status = 'draft';
+        elseif ($post_id && $rec['listing'] === 'active' && get_post_status($post_id) === 'draft') $status = 'publish'; // restore a hidden listing
         return ['fields' => $changes, 'offers' => $offers, 'aliases' => $aliases, 'status' => $status];
     }
 
@@ -280,7 +281,7 @@ final class TCFD_Importer {
                 $old = get_post_status($post_id);
                 wp_update_post(['ID' => $post_id, 'post_status' => $d['status']]);
                 self::log($batch, $post_id, $name, '__status', $old, $d['status'], '');
-                $res['drafted']++;
+                if ($d['status'] === 'publish') $res['restored'] = ($res['restored'] ?? 0) + 1; else $res['drafted']++;
                 $n++;
             }
             if ($n) {

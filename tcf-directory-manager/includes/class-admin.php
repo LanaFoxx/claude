@@ -133,8 +133,8 @@ final class TCFD_Admin {
         }
         $r = TCFD_Importer::apply($batch, $targets);
         if (!empty($r['error'])) { self::flash(esc_html($r['error'])); wp_safe_redirect(self::url('tcfd-import')); exit; }
-        $msg = sprintf('<strong>Import applied.</strong> %d providers updated, %d added, %d hidden, %d changes in total, %d skipped. The live directory is already showing the new data. <a href="%s">Review or undo this import</a>.',
-            $r['updated'], $r['created'], $r['drafted'], $r['changes'], $r['skipped'], esc_url(self::url('tcfd-history', ['batch' => $r['batch']])));
+        $msg = sprintf('<strong>Import applied.</strong> %d providers updated, %d added, %d hidden, %d restored, %d changes in total, %d skipped. The live directory is already showing the new data. <a href="%s">Review or undo this import</a>.',
+            $r['updated'], $r['created'], $r['drafted'], $r['restored'] ?? 0, $r['changes'], $r['skipped'], esc_url(self::url('tcfd-history', ['batch' => $r['batch']])));
         self::flash($msg, 'success');
         wp_safe_redirect(self::url('tcfd-import'));
         exit;
@@ -261,7 +261,7 @@ final class TCFD_Admin {
                     printf('<tr><th>Coupons &amp; sales</th><td colspan="3">%d new, %d updated%s%s</td></tr>', $o['added'], $o['updated'], $o['removed'] ? ', ' . $o['removed'] . ' removed' : '', esc_html($codes));
                 }
                 if ($d['aliases']) printf('<tr><th>Also known as</th><td colspan="3">%s</td></tr>', esc_html(implode(', ', $d['aliases'])));
-                if ($d['status']) echo '<tr><th>Listing</th><td colspan="3">Hide (no longer on CTEC list)</td></tr>';
+                if ($d['status']) echo '<tr><th>Listing</th><td colspan="3">' . ($d['status'] === 'publish' ? 'Restore (show in the directory again)' : 'Hide (no longer on CTEC list)') . '</td></tr>';
                 echo '</table></details>';
             }
             if ($rec['warnings']) echo '<div class="tcfd-warn">⚠ ' . implode('<br>⚠ ', array_map('esc_html', array_unique($rec['warnings']))) . '</div>';
