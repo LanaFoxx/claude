@@ -3,7 +3,7 @@
 // hero → enroll (packages, #enroll) → course features → credentials → helpful articles → FAQ → final CTA.
 const L = require('../lib.cjs');
 const { C, HEAD, BODY, PHONE, URL, px, box, gap, auto, link, typo, container, widget, cls, wcls, fa, band, stack, row, grid, linkBox,
-  eyebrow, heading, H2, text, button, image, pill } = L;
+  eyebrow, heading, H2, text, button, image, pill, checkList } = L;
 
 const a = (href, t = href) => `<a href="${href}">${t}</a>`;
 // Same FAQ on all four designs (the designs show the first five).
@@ -132,6 +132,29 @@ function orDivider() {
   ]);
 }
 
+// Annual Auto-Renewal offer (20 Hour page): sand card under the one-time packages. d.autoRenew = { price, was, url }.
+function autoRenewOffer(a) {
+  return container({
+    container_type: 'grid', content_width: 'full', padding: box(36, 40, 36, 40), padding_mobile: box(26, 20, 26, 20), margin: box(48, 0, 0, 0),
+    grid_columns_grid: { unit: 'custom', size: 'minmax(0,1.4fr) minmax(0,1fr)' }, grid_columns_grid_tablet: px(1, 'fr'), grid_columns_grid_mobile: px(1, 'fr'),
+    grid_rows_grid: auto, grid_rows_grid_tablet: auto, grid_rows_grid_mobile: auto, grid_gaps: gap(40), grid_gaps_mobile: gap(24), grid_align_items: 'center',
+    background_background: 'classic', background_color: C.sand, border_radius: box(16), border_border: 'solid', border_width: box(6, 0, 0, 0), border_color: C.gold,
+  }, [
+    stack([
+      pill('New · Save $5 every year'),
+      heading('<span class="ctc-thin">Annual</span> Auto-Renewal', 'h3', [36, 32, 28], C.navy, 'left', { lh: 1.1, settings: { _margin: box(14, 0, 10, 0) } }),
+      text('Never go through checkout again. We automatically enroll you in each year\'s updated CTEC 20 Hour course and email you the moment it\'s available, so you\'re not likely to forget and miss the CTEC renewal deadline.', { size: [18, 17, 16], lh: 1.6 }),
+      container({ content_width: 'full', padding: box(0), margin: box(16, 0, 0, 0) }, [checkList(['Automatically enrolled every year', 'Email as soon as the new course is ready', 'CTEC deadline reminders', 'Cancel anytime online'])]),
+      text('Auto-renewal covers the course purchase. You still complete the course and renew your CTEC registration with CTEC yourself.', { size: 14, lh: 1.5, settings: { _margin: box(14, 0, 0, 0) } }),
+    ]),
+    stack([
+      widget('heading', { title: `<span class="ctc-thin ctc-gold">$</span>${a.price} <span style="font-size:22px;font-weight:300;color:#8A8F99;text-decoration:line-through">$${a.was}</span>`, header_size: 'span', title_color: C.navy, align: 'center', ...typo('typography', HEAD, [56, 52, 46], 800, { lh: 1, ls: 0 }) }),
+      eyebrow('per year · renews automatically', C.goldText, 'center', { size: 13, ls: 0.1, settings: { _margin: box(8, 0, 18, 0) } }),
+      button('Enroll With Auto-Renewal →', a.url, { align: 'center', size: [20, 19, 18], pad: box(18, 30, 18, 30) }),
+    ], { align: 'center' }),
+  ]);
+}
+
 function enroll(d) {
   const body = d.packages.length > 1
     ? grid([
@@ -147,6 +170,7 @@ function enroll(d) {
       H2(d.enrollTitle, C.navy, 'center', { lh: 1.05, settings: { _margin: box(12, 0, 0, 0) } }),
     ], { settings: { margin: box(0, 0, 56, 0), _margin: box(0, 0, 56, 0) } }),
     body,
+    ...(d.autoRenew ? [autoRenewOffer(d.autoRenew)] : []),
     text(`Questions before enrolling? Call us at <a href="${PHONE.tel}"><strong>${PHONE.label}</strong></a>`, { align: 'center', size: [19, 18, 17], lh: 1.5, linkColor: C.goldText, linkHover: C.goldDeep, settings: { _margin: box(48, 0, 0, 0) } }),
   ], { settings: { _element_id: 'enroll' } });
 }

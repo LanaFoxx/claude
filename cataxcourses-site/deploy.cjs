@@ -275,6 +275,7 @@ async function publishNew(p, name) {
     else if (s === 'themebuilder') await buildThemeBuilder(p);
     else if (s === 'singlepost') await buildSinglePost(p);
     else if (s === 'snippet') await installSnippet(p);
+    else if (s === 'autorenew') await installFileSnippet(p, 'CTC Annual Auto-Renewal', 'wp/auto-renewal.php', 'global', 'Annual Auto-Renewal: checkout consent, confirmation/reminder/deadline emails, one-click cancel, Moodle enrollment on renewal. Admin: WooCommerce > Auto-Renewal.');
     else if (s === 'abandoned') await installFileSnippet(p, 'CTC Abandoned Cart Reminders', 'wp/abandoned-cart.php', 'global', 'Saves checkout carts and sends 3 reminder emails (2h, 3 days with a one-time 10% code, 7 days). List: WooCommerce > Abandoned Carts.');
     else if (s === 'preview') await buildPreview(p);
     else if (s === 'live-home') await liveHome(p);
