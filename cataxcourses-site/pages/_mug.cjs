@@ -24,7 +24,7 @@ function mugPage({ slug, title, liveId, name, orderUrl, images }) {
     // Photo-for-a-coupon offer (codes are sent by hand from help@).
     row([
       widget('icon', { selected_icon: { value: 'fas fa-camera', library: 'fa-solid' }, view: 'stacked', shape: 'circle', primary_color: C.gold, secondary_color: C.white, size: px(18), icon_padding: px(12), _flex_size: 'none' }),
-      text(`<strong>Send us a selfie with your mug</strong> at <a href="mailto:help@cataxcourses.com">help@cataxcourses.com</a> and we'll email you a discount coupon code.`, { size: [17, 17, 16], lh: 1.5, color: C.navy, linkColor: C.goldText, linkHover: C.goldDeep }),
+      text(`Submit a picture of you with the official California Tax Courses mug to <a href="mailto:help@cataxcourses.com">help@cataxcourses.com</a> and receive a <strong>free course coupon</strong>.`, { size: [17, 17, 16], lh: 1.5, color: C.navy, linkColor: C.goldText, linkHover: C.goldDeep }),
     ], { gap: 14, settings: { flex_wrap: 'nowrap', margin: box(24, 0, 0, 0), padding: box(14, 18, 14, 14), background_background: 'classic', background_color: C.white, border_radius: box(12), border_border: 'solid', border_width: box(1), border_color: C.line } }),
     row([
       button('Order Now →', orderUrl, { size: [22, 21, 19], pad: box(18, 32, 18, 32) }),

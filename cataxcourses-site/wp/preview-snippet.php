@@ -272,3 +272,19 @@ add_action( 'wp_footer', function () {
 	if ( ! function_exists( 'is_checkout' ) || ! is_checkout() ) return;
 	echo "<script>(function(){function off(){document.querySelectorAll('#mailchimp_woocommerce_newsletter').forEach(function(c){c.checked=false;var r=c.closest('.mailchimp-newsletter');if(r)r.style.display='none';});}off();document.addEventListener('DOMContentLoaded',off);if(window.jQuery)jQuery(document.body).on('updated_checkout',off);})();</script>";
 }, 32 );
+/* ---------------------------------------------------------------- Moodle plugin: no second (old) jQuery */
+// The Moodle enrollment plugin prints jQuery 3.2.1 from Google's CDN on every page, then its enrollment script with
+// `$(document).ready(...)`. Loading a second jQuery replaces WordPress's copy (and every plugin attached to it), which
+// broke Elementor's image carousels. Drop that tag and run the same enrollment script on WordPress's jQuery, with $
+// passed in: the enrollment AJAX call is unchanged.
+add_action( 'template_redirect', function () {
+	if ( is_admin() || wp_doing_ajax() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) return;
+	ob_start( function ( $html ) {
+		if ( strpos( $html, 'ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js' ) === false ) return $html;
+		return preg_replace(
+			'#<script src="https://ajax\.googleapis\.com/ajax/libs/jquery/3\.2\.1/jquery\.min\.js"></script>(\s*<script>\s*)\$\(document\)\.ready\(function \(\) \{#',
+			'$1jQuery(function ($) {',
+			$html
+		);
+	} );
+}, 0 );
