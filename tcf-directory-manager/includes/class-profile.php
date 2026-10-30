@@ -20,6 +20,17 @@ final class TCFD_Profile {
     const TZ = ['PT' => 'Pacific', 'MT' => 'Mountain', 'CT' => 'Central', 'ET' => 'Eastern'];
     const APPROVED = ['qe' => 'QE (60-hour)', 'ce' => 'CE (20-hour)', 'both' => 'Both QE and CE'];
 
+    /** Directory features a school can confirm on the listing form: exactly the public search filters. */
+    public static function listing_features(): array {
+        $out = [];
+        foreach (TCFD_Fields::FEATURES as $group => $items) {
+            if (in_array($group, ['Study Features', 'Device / Access'], true)) continue;
+            unset($items['self_paced']);
+            if ($items) $out[$group] = $items;
+        }
+        return $out;
+    }
+
     /** School-level form fields: form name => [label, kind, provider field]. */
     private static function school_map(): array {
         return [
@@ -105,6 +116,8 @@ final class TCFD_Profile {
         add_filter('template_include', [__CLASS__, 'template'], 99);
         add_action('wp_ajax_tcfd_profile_submit', [__CLASS__, 'submit']);
         add_action('wp_ajax_nopriv_tcfd_profile_submit', [__CLASS__, 'submit']);
+        add_action('wp_ajax_tcfd_listing_submit', [__CLASS__, 'submit_listing']);
+        add_action('wp_ajax_nopriv_tcfd_listing_submit', [__CLASS__, 'submit_listing']);
         if (is_admin()) {
             add_action('add_meta_boxes_' . self::CPT, [__CLASS__, 'review_box']);
             add_action('add_meta_boxes_' . TCFD_Plugin::POST_TYPE, [__CLASS__, 'link_box']);
@@ -324,7 +337,61 @@ final class TCFD_Profile {
         wp_send_json_success(['ok' => true]);
     }
 
-    private static function match_provider(string $ctec, string $name): int {
+/** Public "verify your listing" form: only the fields the directory shows and filters on. */
+    public static function submit_listing(): void {
+        if (!empty($_POST['company_fax'])) wp_send_json_success(['ok' => true]); // spam trap: pretend success
+        $started = (int) ($_POST['started'] ?? 0);
+        if ($started && time() - $started < 5) self::fail('That was quick! Please review your details and submit again.');
+        $ip = hash('sha256', (string) ($_SERVER['REMOTE_ADDR'] ?? '') . wp_salt('nonce'));
+        $hits = (int) get_transient('tcfd_pf_' . substr($ip, 0, 32));
+        if ($hits >= 6) self::fail('Too many submissions from this connection. Please wait an hour or email providers@taxcoursefinder.com.', 429);
+
+        $in = fn(string $k, string $kind = 'text') => self::clean(wp_unslash((string) ($_POST[$k] ?? '')), $kind);
+        $v = ['school_name' => $in('school_name'), 'website' => $in('website', 'url'), 'ctec_number' => $in('ctec_number'),
+              'contact_name' => $in('contact_name'), 'contact_email' => $in('contact_email', 'email'), 'contact_phone' => $in('contact_phone')];
+        if ($v['school_name'] === '' || $v['contact_name'] === '' || !is_email($v['contact_email'])) {
+            self::fail('Please fill in the school name, your name and a valid email address.');
+        }
+        if (empty($_POST['confirm'])) self::fail('Please confirm that you are authorized to submit these details.');
+        $reporting = $in('reporting', 'choice:reporting');
+        $courses = [];
+        foreach (['ce', 'qe'] as $c) {
+            $courses[$c] = ['offered' => !empty($_POST[$c . '_offered']), 'price' => $in($c . '_price'), 'regular' => $in($c . '_regular'),
+                            'course_url' => $in($c . '_url', 'url'), 'reporting_time' => $reporting];
+        }
+        if (!$courses['ce']['offered'] && !$courses['qe']['offered']) self::fail('Please choose at least one course you offer.');
+        $picked = array_map('sanitize_key', (array) wp_unslash($_POST['features'] ?? []));
+        $features = [];
+        foreach (self::listing_features() as $items) foreach ($items as $k => $l) $features[$k] = in_array($k, $picked, true);
+        $scope = $in('coupon_scope');
+        $offer = ['code' => strtoupper(preg_replace('/\s+/', '', $in('coupon_code'))), 'details' => $in('coupon_details'),
+                  'scope' => in_array($scope, ['ce', 'qe', 'both'], true) ? $scope : 'both',
+                  'expires' => preg_match('/^\d{4}-\d{2}-\d{2}$/', $in('coupon_expires')) ? $in('coupon_expires') : ''];
+
+        $pid = self::match_provider($v['ctec_number'], $v['school_name']);
+        $sub = wp_insert_post(['post_type' => self::CPT, 'post_status' => 'draft', 'post_title' => $v['school_name'] . ' – listing form – ' . wp_date('M j, Y')], true);
+        if (is_wp_error($sub)) self::fail('Could not save your submission. Please try again.', 500);
+        $sub = (int) $sub;
+        $media = ['logo' => 0, 'screenshots' => []];
+        if (!empty($_FILES['logo']['name'])) $media['logo'] = self::upload($_FILES['logo'], $sub, $v['school_name'] . ' logo');
+
+        $payload = ['kind' => 'listing', 'v' => $v, 'ce' => $courses['ce'], 'qe' => $courses['qe'], 'features' => $features, 'offer' => $offer];
+        update_post_meta($sub, '_tcfd_payload', wp_slash(wp_json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)));
+        update_post_meta($sub, '_tcfd_media', $media);
+        update_post_meta($sub, '_tcfd_provider', $pid);
+        update_post_meta($sub, '_tcfd_via_token', 0);
+        set_transient('tcfd_pf_' . substr($ip, 0, 32), $hits + 1, HOUR_IN_SECONDS);
+
+        $to = apply_filters('tcfd_profile_notify_to', get_option('admin_email'));
+        $body = "A school submitted the listing verification form.\n\n"
+              . 'School: ' . $v['school_name'] . "\nCTEC number: " . $v['ctec_number'] . "\nContact: " . $v['contact_name'] . ' <' . $v['contact_email'] . '>' . ($v['contact_phone'] ? ' · ' . $v['contact_phone'] : '') . "\n"
+              . 'Listing: ' . ($pid ? get_the_title($pid) . ' (matched by name/number)' : 'no matching listing yet') . "\n\n"
+              . 'Review and apply to the listing: ' . admin_url('post.php?post=' . $sub . '&action=edit');
+        if ($to) wp_mail($to, '[Tax Course Finder] Listing verification: ' . $v['school_name'], $body, ['Reply-To: ' . $v['contact_name'] . ' <' . $v['contact_email'] . '>']);
+        wp_send_json_success(['ok' => true]);
+    }
+
+        private static function match_provider(string $ctec, string $name): int {
         if ($ctec !== '') {
             $ids = get_posts(['post_type' => TCFD_Plugin::POST_TYPE, 'post_status' => 'any', 'numberposts' => 1, 'fields' => 'ids',
                               'meta_key' => 'provider_ctec_number', 'meta_value' => $ctec]);
@@ -416,12 +483,30 @@ final class TCFD_Profile {
             if (empty($in['offered'])) continue; // not offered: nothing else from this course is stored
             $add('c:' . $c . ':url', $group, 'Course page URL', $pid ? (string) TCFD_Store::raw($pid, $c . '_course_url') : '', $in['course_url'] ?? '', 'url');
             $price = self::money_from_text((string) ($in['price'] ?? ''));
-            if ($price !== null) $add('c:' . $c . ':price', $group, 'Price (school-reported, saved as REVIEW)', $pid ? (string) TCFD_Store::raw($pid, $c . '_current_price') : '', (string) $price, 'text');
+            if ($price !== null) $add('c:' . $c . ':price', $group, ($p['kind'] ?? '') === 'listing' ? 'Course bundle price (shown on the site once applied)' : 'Price (school-reported, saved as REVIEW)', $pid ? (string) TCFD_Store::raw($pid, $c . '_current_price') : '', (string) $price, 'text');
+            $regular = self::money_from_text((string) ($in['regular'] ?? ''));
+            if ($regular !== null) $add('c:' . $c . ':regular', $group, 'Regular price (when the course is on sale)', $pid ? (string) TCFD_Store::raw($pid, $c . '_regular_price') : '', (string) $regular, 'text');
             $g = $pid ? TCFD_Store::get($pid, 'school_' . $c) : [];
             $g = is_array($g) ? $g : [];
             foreach (self::course_map() as $name => [$label, $kind, $sub_field]) {
                 $add('g:' . $c . ':' . $sub_field, $group, $label, $g[$sub_field] ?? '', $in[$name] ?? '', $kind);
             }
+        }
+        if (isset($p['features']) && is_array($p['features'])) {
+            foreach (self::listing_features() as $group => $items) {
+                foreach ($items as $k => $label) {
+                    if (!array_key_exists($k, $p['features'])) continue;
+                    $add('x:' . $k, 'Directory features · ' . $group, $label, $pid ? (bool) TCFD_Store::raw($pid, $k) : false, (bool) $p['features'][$k], 'bool');
+                }
+            }
+        }
+        $o = $p['offer'] ?? [];
+        if (!empty($o['code']) || !empty($o['details'])) {
+            $scope = ['ce' => '20-Hour CE', 'qe' => '60-Hour QE', 'both' => 'Both'][$o['scope'] ?? 'both'] ?? 'Both';
+            $new = trim(($o['code'] ? $o['code'] . ' – ' : '') . ($o['details'] ?? '') . ' (' . $scope . ($o['expires'] ? ', expires ' . $o['expires'] : '') . ')');
+            $cur = [];
+            if ($pid) foreach (TCFD_Store::offers($pid) as $r) if (!empty($r['offer_active'])) $cur[] = trim((string) ($r['coupon_code'] ?? '') . ' ' . (string) ($r['offer_title'] ?? ''));
+            $rows['o:new'] = ['Coupon / sale', 'New offer (added as verified and shown on the site)', implode('; ', $cur), $new, $o, true];
         }
         return $rows;
     }
@@ -458,7 +543,9 @@ final class TCFD_Profile {
         }
         echo '</select></label>';
         if ($pid) echo ' <a href="' . esc_url(get_edit_post_link($pid)) . '">Open listing</a>';
-        echo '</p><p class="description">Checked rows are written to the listing when you click Apply. Rows that already match are unchecked and greyed out. Applying never switches the school page live, and prices are saved with status REVIEW until you verify them. If you change the listing above, click Apply once with nothing checked to refresh the comparison.</p>';
+        echo '</p><p class="description">Checked rows are written to the listing when you click Apply. Rows that already match are unchecked and greyed out. ' . ((self::payload($post->ID)['kind'] ?? '') === 'listing'
+            ? 'This came from the public listing form: the prices, coupon and directory features you apply go live in the directory right away (applying is the verification), and the listing’s “data last checked” date is set to today.'
+            : 'Applying never switches the school page live, and prices are saved with status REVIEW until you verify them.') . ' If you change the listing above, click Apply once with nothing checked to refresh the comparison.</p>';
         if (!$rows) { echo '<p>No details were submitted.</p><p><button class="button" name="tcfd_do_apply" value="1">Save listing choice</button></p>'; return; }
         echo '<table class="widefat striped tcfd-rv"><thead><tr><th style="width:28px"><input type="checkbox" onclick="document.querySelectorAll(\'.tcfd-rv tbody input[type=checkbox]\').forEach(c=>c.checked=this.checked)"></th><th>Field</th><th>Listing now</th><th>Submitted</th></tr></thead><tbody>';
         $group = '';
@@ -484,6 +571,7 @@ final class TCFD_Profile {
         $pid = (int) ($_POST['provider'] ?? 0);
         $pick = array_map('sanitize_text_field', (array) wp_unslash($_POST['apply'] ?? []));
         $p = self::payload($sub);
+        $listing = ($p['kind'] ?? '') === 'listing';
         if (!$pid && $pick) {
             $pid = (int) wp_insert_post(['post_type' => TCFD_Plugin::POST_TYPE, 'post_status' => 'draft', 'post_title' => (string) ($p['v']['school_name'] ?? 'New provider')]);
         }
@@ -508,13 +596,28 @@ final class TCFD_Profile {
                 case 'f':
                     TCFD_Store::set($pid, $parts[1] === 'ce' ? 'offers_20_hour_ce' : 'offers_60_hour_qe', $val ? 1 : 0);
                     break;
+                case 'x':
+                    TCFD_Store::set($pid, $parts[1], $val ? 1 : 0);
+                    break;
+                case 'o':
+                    $o = (array) $val;
+                    $rows_o = TCFD_Store::offers($pid);
+                    $rows_o[] = ['offer_active' => 1, 'offer_type' => !empty($o['code']) ? 'Coupon Code' : 'Special Offer',
+                                 'offer_course_scope' => ['ce' => '20-Hour CE', 'qe' => '60-Hour QE', 'both' => 'Both'][$o['scope'] ?? 'both'] ?? 'Both',
+                                 'offer_import_status' => !empty($o['code']) ? 'VERIFIED PUBLIC CODE' : 'VERIFIED PUBLIC OFFER',
+                                 'offer_title' => (string) ($o['details'] ?? ''), 'coupon_code' => (string) ($o['code'] ?? ''),
+                                 'offer_expiration_date' => !empty($o['expires']) ? str_replace('-', '', $o['expires']) : '',
+                                 'offer_last_verified' => wp_date('Ymd'), 'offer_description' => 'Submitted by the school via the listing form on ' . wp_date('Y-m-d') . '.'];
+                    if (function_exists('update_field')) update_field(TCFD_Fields::key('provider_offers'), $rows_o, $pid);
+                    break;
                 case 'c':
                     if ($parts[2] === 'url') TCFD_Store::set($pid, $parts[1] . '_course_url', $val);
+                    if ($parts[2] === 'regular') TCFD_Store::set($pid, $parts[1] . '_regular_price', (float) $val);
                     if ($parts[2] === 'price') {
                         $c = $parts[1];
                         TCFD_Store::set($pid, $c . '_current_price', (float) $val);
                         TCFD_Store::set($pid, $c . '_price_display_text', '$' . (floor((float) $val) == (float) $val ? number_format((float) $val, 0) : number_format((float) $val, 2)));
-                        TCFD_Store::set($pid, $c . '_price_status', 'REVIEW');
+                        TCFD_Store::set($pid, $c . '_price_status', $listing ? 'VERIFIED' : 'REVIEW');  // listing form: applying is the verification
                         if (!TCFD_Store::raw($pid, $c . '_price_type')) TCFD_Store::set($pid, $c . '_price_type', 'package');
                         $note = trim((string) TCFD_Store::raw($pid, $c . '_price_notes'));
                         TCFD_Store::set($pid, $c . '_price_notes', trim($note . "\nSchool-reported price $" . $val . ' via profile form on ' . wp_date('Y-m-d') . '; verify before marking VERIFIED.'));
@@ -531,6 +634,7 @@ final class TCFD_Profile {
             $cur = is_array($cur) ? $cur : [];
             if (function_exists('update_field')) update_field('field_tcfd_school_' . $c, array_merge($cur, $vals), $pid);
         }
+        if ($n && $listing) TCFD_Store::set($pid, 'provider_data_last_checked', wp_date('Ymd'));
         if ($n) {
             update_post_meta($sub, '_tcfd_applied', time());
             global $wpdb; // status change without re-running save_post

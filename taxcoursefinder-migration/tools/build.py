@@ -1,5 +1,6 @@
 import json, re, sys, os, html as H
 S = sys.argv[1]
+sys.path.insert(0, S + '/tools')
 EXT = S + '/ext'; OUT = S + '/build'
 os.makedirs(OUT + '/pages', exist_ok=True)
 
@@ -251,6 +252,11 @@ def seo_tweaks(name, body):
         'CTEC 20 Hour Course': ('20-Hour CE</span> course before you renew.', '20 Hour CTEC Course</span> before you renew.'),
         'CTEC 60 Hour Course': ('60-Hour QE</span> course before you enroll.', '60 Hour CTEC Course</span> before you enroll.'),
     }.get(name)
+    if name == 'Provider Application':
+        # Only the fields the directory shows and filters on; submissions go to the plugin's review queue.
+        import listing_form
+        a = body.index('<form'); b = body.index('</form>', a) + len('</form>')
+        body = body[:a] + listing_form.form() + body[b:]
     if name == 'mobile':
         # phone home headline: green highlight, a bit larger
         body = body.replace('font:300 34px/1.1 \'Source Serif 4\',Georgia,serif;text-align:center;color:#fff"><span style="display:block">CTEC Approved</span>',
@@ -280,6 +286,9 @@ def seo_tweaks(name, body):
 
 def code_for(d):
     c = d['code']
+    # provider listing form: section nav matches the new, shorter form
+    import listing_form
+    c = c.replace("[['company', 'Company'], ['courses', 'Courses Offered'], ['pricing', 'Pricing'], ['features', 'Course Features'], ['support', 'Student Support'], ['refund', 'Refund Policy'], ['media', 'Profile Media'], ['description', 'Description'], ['verification', 'Verification']]", listing_form.sections_js())
     # School pages: link a provider only when its page is live (school_url comes from the provider feed).
     c, n = re.subn(r"schoolUrl: 'School Page\.dc\.html\?provider=' \+ encodeURIComponent\(p\.id\) \+ '&course=' \+ (\([^()]*\)|'[^']*'),",
                    r"schoolUrl: p.schoolUrl ? p.schoolUrl + '?course=' + \1 : '', hasSchool: !!p.schoolUrl, noSchool: !p.schoolUrl,", c)

@@ -128,23 +128,8 @@ if STEP == 'content':
         html = page_html(pg)
         extra = None
         if slug == 'provider-application':
-            fid = 'a7f0c3e1'
-            js = open(B + '/apply-submit.js').read().replace('@@PAGEID@@', str(ids[slug])).replace('@@FORMID@@', fid)
-            html += '<script>' + js + '</script>'
-            extra = [{'id': fid, 'elType': 'widget', 'widgetType': 'form', 'settings': {
-                'form_name': 'Provider Application', '_css_classes': 'tcf-hidden-form',
-                'form_fields': [
-                    {'_id': 'f1', 'custom_id': 'company_name', 'field_type': 'text', 'field_label': 'Company / School Name', 'required': ''},
-                    {'_id': 'f2', 'custom_id': 'contact_name', 'field_type': 'text', 'field_label': 'Primary Contact Name', 'required': ''},
-                    {'_id': 'f3', 'custom_id': 'email', 'field_type': 'email', 'field_label': 'Email Address', 'required': ''},
-                    {'_id': 'f4', 'custom_id': 'website', 'field_type': 'text', 'field_label': 'Website URL', 'required': ''},
-                    {'_id': 'f5', 'custom_id': 'details', 'field_type': 'textarea', 'field_label': 'Application Details', 'required': ''},
-                    {'_id': 'f6', 'custom_id': 'uploads', 'field_type': 'upload', 'field_label': 'Uploaded Files', 'allow_multiple_upload': 'yes', 'max_files': 10, 'file_sizes': '10', 'file_types': 'png,jpg,jpeg,gif,webp,svg,pdf', 'required': ''},
-                ],
-                'submit_actions': ['email'], 'email_to': 'providers@taxcoursefinder.com', 'email_subject': 'Provider Application: [field id="company_name"]',
-                'email_content': '[all-fields]', 'email_from': 'no-reply@taxcoursefinder.com', 'email_from_name': 'California Tax Course Finder', 'email_reply_to': '[field id="email"]',
-                'form_metadata': ['date', 'time', 'page_url', 'remote_ip'], 'email_content_type': 'plain',
-                'success_message': 'Application received.', 'button_text': 'Send'}, 'elements': []}]
+            # listing form: submits to the plugin review queue (admin-ajax tcfd_listing_submit)
+            html += '<script>' + open(B + '/listing-submit.js').read() + '</script>'
         ldf = B + '/%s-ld.json' % slug
         if os.path.exists(ldf): html += '<script type="application/ld+json">' + open(ldf).read().replace('</', '<\\/') + '</script>'
         data = el_data(html, extra)
