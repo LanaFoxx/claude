@@ -15,10 +15,10 @@ module.exports = coursePage({
   laptop: '20-v3', // same laptop explainer as home / 60 hour, with 20 Hour CE Course screens
   caption: '24/7 Online Access to our video courses from your Computer, Laptop, Tablet, or even your smartphone. All Exams are Included. Additional Course PDF at no extra cost.',
   enrollTitle: '<span class="ctc-thin">Two ways to</span> enroll.',
-  autoRenew: { price: '64.95', was: '69.95', url: URL.order(30511) }, // Annual Auto-Renewal subscription product
+  // autoRenew: { price: '64.95', was: '69.95', url: URL.order(30511) }, // Annual Auto-Renewal offer card: switch on after the test purchase
   packages: [
     { name: 'Online Video Course', price: '69.95', was: '79.95', desc: '24/7 Online Access to our courses from your Computer, Laptop, Tablet, or even your smartphone. All Exams are Included. Additional Course PDF at no extra cost.', label: 'Order Now →', url: URL.order(9293), variant: 'navy' },
-    { book: true, name: 'Online Video Course + Book Package', price: '149.95', was: '199.95', desc: 'Access to the online course and exams, plus a physical book will be shipped to you that includes all of the same content in the online course. This is great for taking physical notes, highlighting certain topics, and studying while away from the computer.', label: 'Order With Book →', url: URL.order(9294) },
+    { book: true, name: 'Online Video Course + Book Package', price: '149.95', was: '199.95', desc: 'Everything in the online course and exams, plus a physical book shipped to you. Great for taking notes, highlighting, and studying away from the computer.', label: 'Order With Book →', url: URL.order(9294) },
   ],
   features: [
     ["CTEC &amp; IRS Approved", "California Tax Courses is Approved by the California Tax Education Council (CTEC) and the IRS to offer Continuing Education. Our CTEC Provider number is 6280. Our IRS Provider number is HPKCW."],
