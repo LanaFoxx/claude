@@ -100,7 +100,7 @@ def form():
     out.append(card('logo', 6, 'Logo (optional)', IMG % (LABEL, 'School logo', 'PNG, JPG or WebP, up to 5 MB. A transparent background works best.', 'logo', '')
         + '<label style="%s"><input type="checkbox" name="logo_ok" value="1" style="%s">I give Tax Course Finder permission to show our school&rsquo;s logo on our directory listing and school profile page so students can identify our school.</label>' % (CHECK, BOX)))
     out.append(card('confirm', 7, 'Confirm & submit', CONFIRM
-        + '<p style="%s">We review every submission before it changes your listing. Listing your school is free. Want a full school page too? <a href="/create-your-school-profile/" style="color:#7E9330;text-decoration:underline;font-weight:700">Create your school profile page</a>.</p>' % HINT
+        + '<p style="%s">We review every submission before it changes your listing. Listing your school is free.</p>' % HINT
         + SUBMIT % 'Submit listing details'))
     out.append('</form>')
     return ''.join(out)
