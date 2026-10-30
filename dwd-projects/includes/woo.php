@@ -461,7 +461,7 @@ function dwdp_send_reminder( $lead, $n ) {
 		. '<p style="margin:0 0 28px;font-size:16px;line-height:1.7;color:#303B58">' . esc_html( $body ) . '</p>'
 		. '<table role="presentation" cellpadding="0" cellspacing="0"><tr><td style="border-radius:8px;background:#1B7EC3"><a href="' . $url . '" style="display:inline-block;padding:16px 34px;font-size:14px;letter-spacing:2px;text-transform:uppercase;color:#ffffff;text-decoration:none;font-family:Urbanist,Helvetica,Arial,sans-serif">Finish my order</a></td></tr></table>'
 		. '</td></tr>'
-		. '<tr><td style="padding:24px 40px 36px;font-family:Urbanist,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.7;color:#7A86A0">Questions? Reply to this email or call <a href="tel:+17722101728" style="color:#1B7EC3;text-decoration:none;font-weight:600">(772) 210-1728</a>.<br>Michael Tarr, Dream Web Digital</td></tr>'
+		. '<tr><td style="padding:24px 40px 36px;font-family:Urbanist,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.7;color:#7A86A0">Questions? Reply to this email or call <a href="tel:+17722101728" style="color:#1B7EC3;text-decoration:none;font-weight:600">(772) 210-1728</a>.<br>Michael, Dream Web Digital</td></tr>'
 		. '</table>'
 		. '<p style="margin:18px 0 0;font-family:Helvetica,Arial,sans-serif;font-size:12px;color:#9AA6BC">Dream Web Digital LLC · Charlotte, NC</p>'
 		. '</td></tr></table></body></html>';

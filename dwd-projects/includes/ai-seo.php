@@ -16,7 +16,7 @@ function dwdp_business() {
 	return array(
 		'name'       => 'Dream Web Digital',
 		'legal'      => 'Dream Web Digital LLC',
-		'person'     => 'Michael Tarr',
+		'person'     => 'Michael',
 		'summary'    => $s['biz_summary'],
 		'city'       => $s['biz_city'],
 		'region'     => 'NC',

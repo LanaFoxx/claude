@@ -24,7 +24,7 @@ while ( have_posts() ) :
 				</nav>
 				<h1 class="dwb-title"><?php the_title(); ?></h1>
 				<div class="dwb-meta">
-					By <a href="<?php echo esc_url( home_url( '/#about' ) ); ?>">Michael Tarr</a>
+					By <a href="<?php echo esc_url( home_url( '/#about' ) ); ?>">Michael</a>
 					<span>·</span><time datetime="<?php echo esc_attr( get_the_date( 'c' ) ); ?>"><?php echo esc_html( get_the_date() ); ?></time>
 					<span>·</span><?php echo esc_html( dwdp_reading_time() ); ?> min read
 				</div>
@@ -43,7 +43,7 @@ while ( have_posts() ) :
 					<img src="<?php echo esc_url( content_url( '/uploads/2026/08/photo-michael.jpg' ) ); ?>" alt="Michael, founder of Dream Web Digital" loading="lazy" width="96" height="96">
 					<div>
 						<span class="dwb-author-k">Written by</span>
-						<strong>Michael Tarr, founder of Dream Web Digital</strong>
+						<strong>Michael, founder of Dream Web Digital</strong>
 						<p>Michael has been designing and building websites for 12+ years. He builds and hosts custom WordPress websites for small businesses and works with every client directly, from the first call through launch and after.</p>
 						<a href="<?php echo esc_url( home_url( '/#about' ) ); ?>">More about Michael →</a>
 					</div>
