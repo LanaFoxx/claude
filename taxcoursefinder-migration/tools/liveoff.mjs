@@ -1,0 +1,13 @@
+import { chromium } from '/opt/node-tools/node_modules/playwright/index.mjs';
+import fs from 'fs';
+const S = process.argv[2];
+const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', proxy: { server: process.env.HTTPS_PROXY } });
+const ctx = await b.newContext({ viewport: { width: 1440, height: 1000 } }); await ctx.addCookies(JSON.parse(fs.readFileSync(S + '/pw_cookies.json', 'utf8')));
+const p = await ctx.newPage();
+await p.goto('https://taxcoursefinder.com/wp-admin/edit.php?post_type=tcf_provider&post_status=publish&posts_per_page=200', { waitUntil: 'networkidle' });
+const n = await p.locator('#the-list input[name="post[]"]').count(); console.log('published providers listed:', n);
+await p.locator('#cb-select-all-1').check();
+await p.locator('#bulk-action-selector-top').selectOption('tcfd_school_live_off');
+await Promise.all([p.waitForNavigation({ waitUntil: 'networkidle' }), p.locator('#doaction').click()]);
+console.log('notice:', (await p.locator('.notice-success').first().textContent()).trim());
+await b.close();

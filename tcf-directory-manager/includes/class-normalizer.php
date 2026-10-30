@@ -301,6 +301,11 @@ final class TCFD_Normalizer {
             self::put($rec, $p . '_course_url', $c['course_url'] ?? null);
             self::put($rec, $p . '_price_source_url', $c['source_url'] ?? null);
             self::put($rec, $p . '_price_notes', $c['notes'] ?? null);
+            if (isset($c['options'])) { // package options: [{label, price, regular_price}] or "Name | price | regular" lines
+                $opt = $c['options'];
+                if (is_array($opt)) $opt = implode("\n", array_map(fn($o) => is_array($o) ? trim(($o['label'] ?? '') . ' | ' . ($o['price'] ?? '') . (isset($o['regular_price']) && $o['regular_price'] !== '' ? ' | ' . $o['regular_price'] : '')) : (string) $o, $opt));
+                self::put($rec, $p . '_price_options', $opt);
+            }
             $has_price_info = false;
             foreach (['price', 'current_price', 'regular_price', 'display_price', 'price_type', 'price_status'] as $pk) if (isset($c[$pk]) && $c[$pk] !== '' && $c[$pk] !== null) $has_price_info = true;
             self::put($rec, $p . '_price_last_checked', $c['last_checked'] ?? ($has_price_info ? $g('last_checked') : null));

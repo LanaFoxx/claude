@@ -78,6 +78,14 @@ def form():
                     + field('Course bundle price ($)', c + '_price', placeholder='e.g. 69.95', hint='The price for the complete course.')
                     + field('Regular price ($)', c + '_regular', placeholder='If on sale', hint='Leave empty unless on sale.')
                     + '</div>' + field('Course page URL', c + '_url', 'url', placeholder='https://')
+                    + '<div style="display:flex;flex-direction:column;gap:10px"><div style="%s">Package options (optional)</div>' % GRP
+                    + '<p style="%s">Sell this course more than one way (for example video only, or video + printed book)? List each option and its price.</p>' % HINT
+                    + ''.join('<div class="tcf-optrow" style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr);gap:10px">'
+                              '<input type="text" name="%s_opt%d_label" placeholder="%s" aria-label="Option %d name" style="%s">'
+                              '<input type="text" name="%s_opt%d_price" placeholder="Price ($)" aria-label="Option %d price" style="%s">'
+                              '<input type="text" name="%s_opt%d_regular" placeholder="Regular (if on sale)" aria-label="Option %d regular price" style="%s"></div>'
+                              % (c, i, ['e.g. Online video course', 'e.g. Video + printed book', 'e.g. Printed book only'][i - 1], i, INPUT, c, i, i, INPUT, c, i, i, INPUT) for i in (1, 2, 3))
+                    + '</div>'
                     + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">'
                     + field('Course access period', c + '_access_period', placeholder='e.g. 12 months') + ('<label style="%s"><span>Unlimited exam attempts?</span><select name="%s_attempts" style="%s"><option value="">Select</option><option value="Unlimited">Yes</option><option value="Limited">No</option></select></label>' % (LABEL, c, INPUT))
                     + '</div></div>')

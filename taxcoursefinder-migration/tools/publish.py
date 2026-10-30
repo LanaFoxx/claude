@@ -148,7 +148,7 @@ def hf_html():
             '<link href="' + brand.FONTS_URL + '" rel="stylesheet">'
             '<style id="tcf-site-css">' + css + '.tcf-hidden-form{display:none!important}</style><script>' + rt + '</script>')
     hdr = fix_media(head + hf['header'])
-    hdr = hdr.replace('max-width:1200px;margin:0 auto;padding:0 56px;height:110px', 'max-width:none;margin:0;padding:0 48px;height:110px', 1)  # full-width header: logo left, menu right
+    hdr = hdr.replace('max-width:1200px;margin:0 auto;padding:0 56px;height:110px', 'max-width:1312px;margin:0 auto;padding:0 56px;height:110px', 1)  # header lines up with the content column  # full-width header: logo left, menu right
     hdr = hdr.replace('<div style="display:flex;align-items:center;gap:6px;padding:10px 12px;border-radius:8px;cursor:pointer;color:#0B2E40;font:600 19px Manrope,sans-serif;white-space:nowrap" data-hv="2">For CTEC Providers<svg',
                       '<div class="tcf-nav-btn" style="display:flex;align-items:center;gap:6px;padding:10px 12px;border-radius:8px;cursor:pointer;color:#0B2E40;font:600 19px Manrope,sans-serif;white-space:nowrap">For Providers<svg', 1)
     assert 'tcf-nav-btn' in hdr, 'providers button'

@@ -131,7 +131,8 @@
   function slug(s) { return String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
   function price(x) {
     if (!x || (!x.display_price && !x.price_type)) return null;
-    return { text: x.display_price || '', type: x.price_type || 'not_public', status: x.price_status || '', current: num(x.current_price), regular: num(x.regular_price), sourceUrl: x.course_url || '' };
+    return { text: x.display_price || '', type: x.price_type || 'not_public', status: x.price_status || '', current: num(x.current_price), regular: num(x.regular_price), sourceUrl: x.course_url || '',
+      options: (x.options || []).map(function (o) { return { label: o.label, price: num(o.price), regular: num(o.regular), priceFmt: money(o.price), regularFmt: o.regular != null ? money(o.regular) : '' }; }) };
   }
   function mapProvider(r) {
     var offers = (r.offers || []).map(function (o, i) {

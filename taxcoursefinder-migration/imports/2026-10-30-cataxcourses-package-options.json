@@ -1,0 +1,21 @@
+[
+ {
+  "provider_name": "California Tax Courses",
+  "website": "https://cataxcourses.com",
+  "ce": {
+   "options": [
+    {"label": "Online video course", "price": 69.95, "regular_price": 79.95},
+    {"label": "Online video course + printed book", "price": 149.95, "regular_price": 199.95}
+   ],
+   "source_url": "https://cataxcourses.com/product/ctec-20-hours-renewal-course/"
+  },
+  "qe": {
+   "options": [
+    {"label": "Online video course", "price": 179.95},
+    {"label": "Online video course + printed book", "price": 279.95}
+   ],
+   "source_url": "https://cataxcourses.com/product/ctec-60-hours-course/"
+  },
+  "notes": "Package options from the school's course pages, Oct 30, 2026."
+ }
+]

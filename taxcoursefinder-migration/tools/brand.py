@@ -62,7 +62,7 @@ THEMES = {
              '.tcfd-subnav{gap:0!important;align-items:stretch!important}.tcfd-subnav a{display:flex!important;align-items:center;border-radius:0!important;padding:0 20px!important}'
              '.tcfd-subnav a+a{border-left:1px solid rgba(255,255,255,.35)}'
              '.tcfd-subnav{max-width:1312px!important}'
-             '@media (max-width:760px){.tcfd-rep-head{white-space:normal!important;font-size:24px!important}}'
+             '@media (max-width:760px){.tcfd-qtable>div,.tcfd-qtable>sc-if>div{grid-template-columns:minmax(0,1fr)!important;gap:6px!important;padding:16px 18px!important}}'
              # price card floats above the coral menu bar and sticks just below it
              '.tcf-scope .tcfd-card-wrap.tcfd-under-bar{z-index:10!important}'
              '.tcf-scope .tcfd-card-wrap{z-index:30!important;pointer-events:none}.tcf-scope .tcfd-card-wrap .tcfd-card{pointer-events:auto}'  # wrapper never blocks clicks underneath

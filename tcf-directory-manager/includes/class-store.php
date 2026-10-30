@@ -3,7 +3,7 @@ defined('ABSPATH') || exit;
 
 /** Reading/writing provider data and building the public payload. */
 final class TCFD_Store {
-    const CACHE_KEY = 'tcfd_providers_payload_v4';
+    const CACHE_KEY = 'tcfd_providers_payload_v5';
 
     public static function flush_cache($post_id = 0): void {
         if ($post_id && is_numeric($post_id) && get_post_type((int) $post_id) === TCFD_Plugin::POST_TYPE) {
@@ -72,6 +72,24 @@ final class TCFD_Store {
         return 'other';
     }
 
+    /** "Name | price | regular" lines -> [['label','price','regular'], ...] (lines without a price are skipped). */
+    public static function price_options(string $text): array {
+        $out = [];
+        foreach (preg_split('/\r?\n/', $text) as $line) {
+            $parts = array_map('trim', explode('|', $line));
+            if (count($parts) < 2 || $parts[0] === '') continue;
+            $price = preg_match('/\d[\d,]*(?:\.\d+)?/', $parts[1], $m) ? (float) str_replace(',', '', $m[0]) : null;
+            if ($price === null) continue;
+            $reg = isset($parts[2]) && preg_match('/\d[\d,]*(?:\.\d+)?/', $parts[2], $m) ? (float) str_replace(',', '', $m[0]) : null;
+            $out[] = ['label' => mb_substr($parts[0], 0, 80), 'price' => $price, 'regular' => ($reg !== null && $reg > $price) ? $reg : null];
+        }
+        return array_slice($out, 0, 3);
+    }
+
+    private static function money(float $v): string {
+        return '$' . (floor($v) == $v ? number_format($v, 0) : number_format($v, 2));
+    }
+
     private static function num($v) {
         return ($v === '' || $v === null || !is_numeric($v)) ? null : 0 + $v;
     }
@@ -100,14 +118,25 @@ final class TCFD_Store {
         }
 
         $price = function (string $p) use ($post_id): array {
-            return [
+            $opts = self::price_options((string) (self::raw($post_id, $p . '_price_options') ?: ''));
+            $out = [
                 'current_price' => self::num(self::raw($post_id, $p . '_current_price')),
                 'regular_price' => self::num(self::raw($post_id, $p . '_regular_price')),
                 'display_price' => (string) (self::raw($post_id, $p . '_price_display_text') ?: ''),
                 'price_type' => (string) (self::raw($post_id, $p . '_price_type') ?: ''),
                 'price_status' => (string) (self::raw($post_id, $p . '_price_status') ?: ''),
                 'course_url' => (string) (self::raw($post_id, $p . '_affiliate_url') ?: self::raw($post_id, $p . '_course_url') ?: ''),
+                'options' => $opts,
             ];
+            if ($opts) { // package options: the lowest one is the comparable price ("From $69.95" when there are several)
+                $low = $opts[0];
+                foreach ($opts as $o) if ($o['price'] < $low['price']) $low = $o;
+                $out['current_price'] = $low['price'];
+                $out['regular_price'] = $low['regular'];
+                $out['display_price'] = (count($opts) > 1 ? 'From ' : '') . self::money($low['price']);
+                if ($out['price_type'] === '' || $out['price_type'] === 'not_public') $out['price_type'] = 'package';
+            }
+            return $out;
         };
 
         $payload = [

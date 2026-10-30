@@ -104,6 +104,7 @@ final class TCFD_Fields {
             $out[$p . '_price_type'] = ['field_tcf_' . $p . '_price_type', 'select', $L . ' Price Type'];
             $out[$p . '_price_status'] = ['field_tcf_' . $p . '_price_status', 'select', $L . ' Price Status'];
             $out[$p . '_price_notes'] = ['field_tcf_' . $p . '_price_notes', 'textarea', $L . ' Price Notes'];
+            $out[$p . '_price_options'] = ['field_tcf_' . $p . '_price_options', 'textarea', $L . ' Price Options'];
             $out[$p . '_price_source_url'] = ['field_tcf_' . $p . '_price_source_url', 'url', $L . ' Price Source URL'];
             $out[$p . '_price_last_checked'] = ['field_tcf_' . $p . '_price_last_checked', 'date', $L . ' Price Last Checked'];
             $out[$p . '_course_url'] = ['field_tcf_' . $p . '_course_url', 'url', $L . ' Course URL'];
@@ -207,6 +208,8 @@ final class TCFD_Fields {
             $f[] = ['key' => 'field_tcf_' . $p . '_course_url', 'label' => 'Course Page URL', 'name' => $p . '_course_url', 'type' => 'url', 'instructions' => '“View course” button target.', 'wrapper' => ['width' => '25']];
             $f[] = ['key' => 'field_tcf_' . $p . '_price_source_url', 'label' => 'Price Source URL', 'name' => $p . '_price_source_url', 'type' => 'url', 'wrapper' => ['width' => '50']];
             $f[] = ['key' => 'field_tcf_' . $p . '_price_notes', 'label' => 'Price Notes', 'name' => $p . '_price_notes', 'type' => 'textarea', 'rows' => 2, 'wrapper' => ['width' => '50']];
+            $f[] = ['key' => 'field_tcf_' . $p . '_price_options', 'label' => 'Package options', 'name' => $p . '_price_options', 'type' => 'textarea', 'rows' => 3,
+                'instructions' => 'One way to buy this course per line: <code>Name | price | regular price (optional)</code>, e.g. <code>Online video course | 69.95 | 79.95</code>. With options, the directory shows the lowest (“From $69.95”) and the school page lists each option.'];
         }
 
         $f[] = self::tab('field_tcfd_tab_features', 'Course Features');

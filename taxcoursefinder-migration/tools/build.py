@@ -297,6 +297,8 @@ def seo_tweaks(name, body):
 
 def code_for(d):
     c = d['code']
+    # package options: the directory shows "From $X" when a course can be bought more than one way
+    c = c.replace("const multi = cur != null && /\\/|;|\\bor\\b/.test(pr.text || '');", "const multi = cur != null && (/\\/|;|\\bor\\b|^From /.test(pr.text || '') || (pr.options || []).length > 1);")
     # phone directory: school name opens the school's profile when it is live
     c = c.replace("noWebsite: !p.website, priceWeight: p.priceMuted ? 500 : 800", "noWebsite: !p.website, schoolHref: p.schoolUrl || '', hasSchool: !!p.schoolUrl, noSchool: !p.schoolUrl, priceWeight: p.priceMuted ? 500 : 800")
     # provider listing form: section nav matches the new, shorter form

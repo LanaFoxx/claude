@@ -361,6 +361,12 @@ final class TCFD_Profile {
             $courses[$c] = ['offered' => !empty($_POST[$c . '_offered']), 'price' => $in($c . '_price'), 'regular' => $in($c . '_regular'),
                             'course_url' => $in($c . '_url', 'url'), 'reporting_time' => $reporting,
                             'access_period' => $in($c . '_access_period'), 'attempts' => $in($c . '_attempts'),
+                            'options' => implode("\n", array_filter(array_map(function ($i) use ($in, $c) { // "Name | price | regular" lines
+                                $l = str_replace('|', '/', $in($c . '_opt' . $i . '_label')); $pr = $in($c . '_opt' . $i . '_price');
+                                if ($l === '' || !preg_match('/\d/', $pr)) return '';
+                                $rg = $in($c . '_opt' . $i . '_regular');
+                                return $l . ' | ' . preg_replace('/[^\d.,]/', '', $pr) . (preg_match('/\d/', $rg) ? ' | ' . preg_replace('/[^\d.,]/', '', $rg) : '');
+                            }, [1, 2, 3]))),
                             'refund_window' => $in('refund_window'), 'refund_url' => $in('refund_url', 'url'), 'refund_conditions' => $in('refund_conditions', 'textarea')];
         }
         if (!$courses['ce']['offered'] && !$courses['qe']['offered']) self::fail('Please choose at least one course you offer.');
@@ -492,6 +498,7 @@ final class TCFD_Profile {
             if ($price !== null) $add('c:' . $c . ':price', $group, ($p['kind'] ?? '') === 'listing' ? 'Course bundle price (shown on the site once applied)' : 'Price (school-reported, saved as REVIEW)', $pid ? (string) TCFD_Store::raw($pid, $c . '_current_price') : '', (string) $price, 'text');
             $regular = self::money_from_text((string) ($in['regular'] ?? ''));
             if ($regular !== null) $add('c:' . $c . ':regular', $group, 'Regular price (when the course is on sale)', $pid ? (string) TCFD_Store::raw($pid, $c . '_regular_price') : '', (string) $regular, 'text');
+            if (!empty($in['options'])) $add('c:' . $c . ':options', $group, 'Package options (name | price | regular)', $pid ? (string) TCFD_Store::raw($pid, $c . '_price_options') : '', (string) $in['options'], 'textarea');
             $g = $pid ? TCFD_Store::get($pid, 'school_' . $c) : [];
             $g = is_array($g) ? $g : [];
             foreach (self::course_map() as $name => [$label, $kind, $sub_field]) {
@@ -556,7 +563,7 @@ final class TCFD_Profile {
         echo '</select></label>';
         if ($pid) echo ' <a href="' . esc_url(get_edit_post_link($pid)) . '">Open listing</a>';
         echo '</p><p class="description">Checked rows are written to the listing when you click Apply. Rows that already match are unchecked and greyed out. ' . ((self::payload($post->ID)['kind'] ?? '') === 'listing'
-            ? 'This came from the public listing form: the prices, coupon and directory features you apply go live in the directory right away (applying is the verification), and the listing’s “data last checked” date is set to today.'
+            ? 'This came from the public listing form: the prices, coupon and directory features you apply go live in the directory right away (applying is the verification). The school’s profile page is switched on and the listing marked verified, and its “data last checked” date is set to today.'
             : 'Applying never switches the school page live, and prices are saved with status REVIEW until you verify them.') . ' If you change the listing above, click Apply once with nothing checked to refresh the comparison.</p>';
         if (!$rows) { echo '<p>No details were submitted.</p><p><button class="button" name="tcfd_do_apply" value="1">Save listing choice</button></p>'; return; }
         echo '<table class="widefat striped tcfd-rv"><thead><tr><th style="width:28px"><input type="checkbox" onclick="document.querySelectorAll(\'.tcfd-rv tbody input[type=checkbox]\').forEach(c=>c.checked=this.checked)"></th><th>Field</th><th>Listing now</th><th>Submitted</th></tr></thead><tbody>';
@@ -625,6 +632,10 @@ final class TCFD_Profile {
                 case 'c':
                     if ($parts[2] === 'url') TCFD_Store::set($pid, $parts[1] . '_course_url', $val);
                     if ($parts[2] === 'regular') TCFD_Store::set($pid, $parts[1] . '_regular_price', (float) $val);
+                    if ($parts[2] === 'options') {
+                        TCFD_Store::set($pid, $parts[1] . '_price_options', (string) $val);
+                        if ($listing) TCFD_Store::set($pid, $parts[1] . '_price_status', 'VERIFIED');
+                    }
                     if ($parts[2] === 'price') {
                         $c = $parts[1];
                         TCFD_Store::set($pid, $c . '_current_price', (float) $val);
@@ -646,7 +657,12 @@ final class TCFD_Profile {
             $cur = is_array($cur) ? $cur : [];
             if (function_exists('update_field')) update_field('field_tcfd_school_' . $c, array_merge($cur, $vals), $pid);
         }
-        if ($n && $listing) TCFD_Store::set($pid, 'provider_data_last_checked', wp_date('Ymd'));
+        if ($n && $listing) {
+            TCFD_Store::set($pid, 'provider_data_last_checked', wp_date('Ymd'));
+            // verified through the listing form: the school's profile page goes live
+            TCFD_Store::set($pid, 'school_page_live', 1);
+            TCFD_Store::set($pid, 'provider_verified', 1);
+        }
         if ($n) {
             update_post_meta($sub, '_tcfd_applied', time());
             global $wpdb; // status change without re-running save_post

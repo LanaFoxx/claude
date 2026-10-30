@@ -53,6 +53,8 @@
                              sup('Live chat', S.live_chat && S.live_chat !== 'none' ? L.chat[S.live_chat] : '', hrs, S.live_chat_verified)];
       var rep = has(C.reporting_time) ? L.reporting[C.reporting_time] : null;
       var price = qe ? p.qePrice : p.cePrice;
+      var opts = (price && price.options) || [];
+      var onLabels = formats.filter(function (x) { return x.on; }).map(function (x) { return x.label; });
       var kind = C.package_kind === 'complete' ? 'Complete package' : (C.package_kind === 'partial' ? 'Partial package' : (dec.priceCaptured ? (dec.sortable != null ? 'Complete package' : 'See provider') : 'Price not published'));
       var label = qe ? '60-hour qualifying' : '20-hour continuing';
       var refund = [C.refund_window ? 'Refund window: ' + C.refund_window + '.' : '', C.refund_conditions || ''].filter(Boolean).join(' ');
@@ -81,7 +83,10 @@
         edition: or(C.edition), hours: (C.hours_breakdown && C.hours_breakdown.length) ? C.hours_breakdown : OFFICIAL[course], syllabus: or(C.syllabus), attemptsKnown: has(C.attempts), unlimitedAttempts: /unlimited|^yes$/i.test(String(C.attempts || '')) ? 'Yes' : 'No',
         beginnerNote: C.beginner_friendly === 'yes' ? 'Beginner-friendly: written for people new to tax preparation.' : (C.beginner_friendly === 'no' ? 'Assumes prior tax preparation knowledge.' : ''),
         included: (C.included && C.included.length) ? C.included : [NC], extras: extras, refund: refund || NC, refundUrl: C.refund_url || p.website,
-        formats: formats.filter(function (x) { return x.on; }), noFormats: !formats.some(function (x) { return x.on; }), pace: or(pace), access: access || NC, afterCompletion: has(C.after_completion) ? L.after[C.after_completion] + '.' : NC, liveSessions: or(C.live_sessions), accessibility: acc || NC,
+        formats: formats.filter(function (x) { return x.on; }), noFormats: !formats.some(function (x) { return x.on; }),
+        options: opts, hasOptions: opts.length > 0, showAvailableAs: onLabels.length > 0, noFormatInfo: !opts.length && !onLabels.length,
+        availableAs: onLabels.length > 1 ? onLabels.slice(0, -1).join(', ') + ' or ' + onLabels[onLabels.length - 1] : (onLabels[0] || ''),
+pace: or(pace), access: access || NC, afterCompletion: has(C.after_completion) ? L.after[C.after_completion] + '.' : NC, liveSessions: or(C.live_sessions), accessibility: acc || NC,
         supportChannels: supportChannels.filter(function (c) { return c.value !== NC; }), hasSupport: supportChannels.some(function (c) { return c.value !== NC; }), creditsQ: supportChannels.some(function (c) { return c.value !== NC; }) ? 4 : 3, instructionalHelp: or(S.instructional_help), accountHelp: or(S.account_help), instructors: or(S.instructors),
         reportingHeadline: rep ? 'Reported to CTEC ' + (/^within/i.test(rep[0]) ? rep[0].toLowerCase() : 'in ' + rep[0].toLowerCase()) : 'Reporting timeframe not confirmed',
         reportingDetail: has(C.weekend_note) ? C.weekend_note : 'Ask the school how quickly it reports completions, especially near the Oct 31 deadline.',
