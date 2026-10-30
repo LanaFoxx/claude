@@ -93,13 +93,22 @@ body:has(.ctc-header){background:#fff;margin:0;color:${C.navy};font-family:${BOD
 .ctc-checkout .ctc-qty-n{min-width:20px;text-align:center;font-family:Outfit,sans-serif;font-weight:700;font-size:15px;color:${C.navy}}
 .ctc-checkout button.ctc-remove{all:unset;box-sizing:border-box!important;cursor:pointer;color:${C.goldText}!important;font-family:Manrope,sans-serif!important;font-size:14px!important;font-weight:700!important;text-decoration:underline!important;text-underline-offset:3px}
 .ctc-checkout button.ctc-remove:hover{color:${C.goldDeep}!important}
+/* No 'added to your cart / View cart' notices on checkout (they carry a .wc-forward link); also hide empty notices */
+.ctc-checkout .woocommerce-message:has(a.wc-forward),.woocommerce-checkout .woocommerce-notices-wrapper .woocommerce-message:has(a.wc-forward),.woocommerce-message:empty{display:none!important}
+/* Subscriptions recurring rows: keep only the single 'Then every year' total */
+.ctc-checkout tr.recurring-totals,.ctc-checkout tr.cart-subtotal.recurring-total{display:none!important}
+/* Checkout opt-in: switch the one-time 20 Hour course to Annual Auto-Renewal */
+.ctc-checkout tr.ctc-ar-upsell-row td{padding:14px 0!important;border:0!important}
+.ctc-checkout .ctc-ar-upsell{display:flex!important;gap:12px;align-items:flex-start;background:${C.goldPale};border:1px dashed ${C.gold};border-radius:12px;padding:14px 16px;cursor:pointer;font-weight:400!important;font-size:14px;line-height:1.5;color:${C.gray}}
+.ctc-checkout .ctc-ar-upsell strong{color:${C.navy};font-size:15px}.ctc-checkout .ctc-ar-upsell input{flex:none;width:18px;height:18px;margin:2px 0 0!important;accent-color:${C.gold}}
 /* Annual Auto-Renewal disclosure + consent at checkout (wp/auto-renewal.php) */
-.ctc-checkout .ctc-ar-box{background:${C.sand};border:1px solid ${C.line};border-left:4px solid ${C.gold};border-radius:12px;padding:18px 20px;margin:0 0 18px;font-size:15px;line-height:1.6;color:${C.gray}}
-.ctc-checkout .ctc-ar-box p{margin:0 0 10px}.ctc-checkout .ctc-ar-box strong{color:${C.navy}}.ctc-checkout .ctc-ar-box a{color:${C.goldText};font-weight:700}
-.ctc-checkout .ctc-ar-title{display:block;font-family:Outfit,sans-serif;font-size:19px;font-weight:800;color:${C.navy};margin-bottom:6px}
-.ctc-checkout .ctc-ar-consent{margin:12px 0 0!important;padding:12px 14px!important;background:#fff;border-radius:10px}
-.ctc-checkout .ctc-ar-consent label{display:flex!important;gap:10px;align-items:flex-start;font-weight:600!important;color:${C.navy};font-size:14px;line-height:1.55;margin:0}
-.ctc-checkout .ctc-ar-consent input[type=checkbox]{flex:none;width:18px;height:18px;margin:2px 0 0!important;accent-color:${C.gold}}
+.ctc-checkout .ctc-ar-box{background:${C.sand};border:1px solid ${C.line};border-left:4px solid ${C.gold};border-radius:12px;padding:20px 22px!important;margin:0 0 20px;font-size:15px;line-height:1.55;color:${C.gray}}
+.ctc-checkout .ctc-ar-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:6px}
+.ctc-checkout .ctc-ar-title{font-family:Outfit,sans-serif;font-size:19px;font-weight:800;color:${C.navy}}.ctc-checkout .ctc-ar-price{font-family:Outfit,sans-serif;font-size:17px;font-weight:700;color:${C.goldText};white-space:nowrap}
+.ctc-checkout .ctc-ar-box p{margin:0 0 14px}.ctc-checkout .ctc-ar-box a{color:${C.goldText};font-weight:700;white-space:nowrap}
+.ctc-checkout .ctc-ar-box .ctc-ar-consent{margin:0!important;padding:14px 16px!important;background:#fff;border:1px solid ${C.line};border-radius:10px}
+.ctc-checkout .ctc-ar-consent label{display:flex!important;gap:12px;align-items:flex-start;font-weight:500!important;color:${C.navy};font-size:14px!important;line-height:1.55!important;margin:0!important}
+.ctc-checkout .ctc-ar-consent input[type=checkbox]{flex:none;width:18px;height:18px;margin:2px 0 0!important;accent-color:${C.gold}}.ctc-checkout .ctc-ar-consent abbr.required{color:#b32d2e;text-decoration:none;border:0}
 /* Terms checkbox: box and text vertically centered on one line */
 .ctc-checkout .woocommerce-terms-and-conditions-wrapper .form-row label.checkbox,.ctc-checkout .woocommerce-terms-and-conditions-wrapper label.woocommerce-form__label-for-checkbox{display:flex!important;align-items:center;gap:10px;margin:0}.ctc-checkout .woocommerce-terms-and-conditions-wrapper input[type=checkbox]{margin:0!important;flex:none;width:18px;height:18px;accent-color:${C.gold}}.ctc-checkout .woocommerce-terms-and-conditions-wrapper .required{margin-left:4px}
 /* Checkout SMS consent checkbox (wp/preview-snippet.php) */

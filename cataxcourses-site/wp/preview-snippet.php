@@ -221,3 +221,46 @@ add_action( 'wp_footer', function () {
 fetch('$ajax',{method:'POST',body:d,credentials:'same-origin'}).then(function(r){return r.json();}).then(function(j){if(j&&j.success&&j.data.empty){location.href=j.data.cart_url;return;}if(window.jQuery)jQuery(document.body).trigger('update_checkout');}).catch(function(){location.reload();}).finally(function(){if(b)b.style.opacity='';});}
 document.addEventListener('click',function(e){var row=e.target.closest('.ctc-qty-row');if(!row)return;var key=row.getAttribute('data-key');if(e.target.closest('.ctc-remove')){e.preventDefault();go(key,0);return;}var btn=e.target.closest('.ctc-qty-btn');if(btn){e.preventDefault();var n=parseInt(row.querySelector('.ctc-qty-n').textContent,10)||1;go(key,Math.max(0,n+parseInt(btn.getAttribute('data-d'),10)));}});})();</script>";
 }, 30 );
+/* ---------------------------------------------------------------- checkout: optional switch to Annual Auto-Renewal */
+// When the one-time 20 Hour online course (9293) or the plan (30511) is in the cart, the order summary offers an
+// unchecked opt-in that swaps the one-time course for the plan (and back). Nothing is ever added automatically.
+if ( ! defined( 'CTC_AR_ONE_TIME' ) ) define( 'CTC_AR_ONE_TIME', 9293 );
+if ( ! defined( 'CTC_AR_PLAN' ) ) define( 'CTC_AR_PLAN', 30511 );
+function ctc_ar_cart_key( $product_id ) {
+	if ( ! WC()->cart ) return '';
+	foreach ( WC()->cart->get_cart() as $k => $it ) {
+		if ( (int) $it['product_id'] === $product_id || (int) $it['variation_id'] === $product_id ) return $k;
+	}
+	return '';
+}
+add_action( 'woocommerce_review_order_after_cart_contents', function () {
+	if ( ! function_exists( 'ctc_checkout_design' ) || ! ctc_checkout_design() ) return;
+	$plan = ctc_ar_cart_key( CTC_AR_PLAN ); $one = ctc_ar_cart_key( CTC_AR_ONE_TIME );
+	if ( ! $plan && ! $one ) return;
+	echo '<tr class="ctc-ar-upsell-row"><td colspan="2"><label class="ctc-ar-upsell"><input type="checkbox" class="ctc-ar-toggle"' . checked( (bool) $plan, true, false ) . '>'
+		. '<span><strong>Switch to Annual Auto-Renewal and save $5/year</strong><br>$64.95/year instead of $69.95. We enroll you in each year\'s updated 20 Hour course automatically and email you when it\'s ready. Cancel anytime.</span></label></td></tr>';
+} );
+add_action( 'wc_ajax_ctc_ar_toggle', function () {
+	check_ajax_referer( 'ctc_co_qty', 'nonce' );
+	$on = ! empty( $_POST['on'] );
+	if ( $on ) {
+		if ( $k = ctc_ar_cart_key( CTC_AR_ONE_TIME ) ) WC()->cart->remove_cart_item( $k );
+		if ( ! ctc_ar_cart_key( CTC_AR_PLAN ) ) WC()->cart->add_to_cart( CTC_AR_PLAN, 1 );
+	} else {
+		if ( $k = ctc_ar_cart_key( CTC_AR_PLAN ) ) WC()->cart->remove_cart_item( $k );
+		if ( ! ctc_ar_cart_key( CTC_AR_ONE_TIME ) ) {
+			$v = wc_get_product( CTC_AR_ONE_TIME );
+			WC()->cart->add_to_cart( $v ? $v->get_parent_id() : 0, 1, CTC_AR_ONE_TIME, $v ? $v->get_variation_attributes() : array() );
+		}
+	}
+	WC()->cart->calculate_totals();
+	wp_send_json_success();
+} );
+add_action( 'wp_footer', function () {
+	if ( ! function_exists( 'ctc_checkout_design' ) || ! ctc_checkout_design() ) return;
+	$url = esc_url( WC_AJAX::get_endpoint( 'ctc_ar_toggle' ) ); $nonce = wp_create_nonce( 'ctc_co_qty' );
+	echo "<script>document.addEventListener('change',function(e){var t=e.target;if(!t.classList||!t.classList.contains('ctc-ar-toggle'))return;var b=document.getElementById('order_review');if(b)b.style.opacity='.55';var d=new FormData();d.append('nonce','$nonce');if(t.checked)d.append('on','1');
+fetch('$url',{method:'POST',body:d,credentials:'same-origin'}).then(function(){if(window.jQuery)jQuery(document.body).trigger('update_checkout');else location.reload();}).catch(function(){location.reload();}).finally(function(){if(b)b.style.opacity='';});});</script>";
+}, 31 );
+// Belt and braces for the "added to your cart / View cart" notice: blank its text for every add-to-cart on the site.
+add_filter( 'wc_add_to_cart_message_html', '__return_empty_string', 99 );

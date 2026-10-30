@@ -36,14 +36,13 @@ function ctc_ar_guide_url() {
 
 /* ---------------------------------------------------------------- checkout disclosure + consent */
 function ctc_ar_consent_text() {
-	return 'I agree to Annual Auto-Renewal: I pay ' . CTC_AR_PRICE_LABEL . ' today, and California Tax Courses will automatically charge my payment method ' . CTC_AR_PRICE_LABEL . ' (plus any applicable tax) on this date every year until I cancel. I will get reminder emails 30 days and 7 days before each renewal. I can cancel anytime online using the cancel link in any of those emails, or by emailing help@cataxcourses.com, and I will not be charged again after cancelling. Auto-renewal only covers purchasing the course: I still need to complete the course and renew my CTEC registration separately with CTEC.';
+	return 'I agree to pay ' . CTC_AR_PRICE_LABEL . ' today and to be charged ' . CTC_AR_PRICE_LABEL . ' automatically on this date every year until I cancel. I\'ll get reminders 30 and 7 days before each renewal, and I can cancel anytime online (link in every email) or at help@cataxcourses.com.';
 }
 add_action( 'woocommerce_review_order_before_submit', function () {
 	if ( ! ctc_ar_cart_has_plan() ) return;
-	echo '<div class="ctc-ar-box"><strong class="ctc-ar-title">Annual Auto-Renewal: ' . esc_html( CTC_AR_PRICE_LABEL ) . '</strong>'
-		. '<p>We automatically enroll you in each year\'s updated CTEC 20 Hour Continuing Education Course and email you when it\'s available, so you don\'t have to check out again every year.</p>'
-		. '<p><strong>What auto-renewal does not do:</strong> it only handles purchasing the course. You still need to <strong>complete the course</strong> each year and <strong>renew your CTEC registration separately with CTEC</strong> (including CTEC\'s fee) by the deadline. <a href="' . esc_url( ctc_ar_guide_url() ) . '" target="_blank">How to Renew Your CTEC Registration</a></p>'
-		. '<p class="form-row validate-required ctc-ar-consent"><label class="woocommerce-form__label woocommerce-form__label-for-checkbox checkbox"><input type="checkbox" class="woocommerce-form__input woocommerce-form__input-checkbox input-checkbox" name="ctc_ar_consent" value="1"> <span>' . esc_html( ctc_ar_consent_text() ) . '</span> <span class="required">*</span></label></p></div>';
+	echo '<div class="ctc-ar-box"><div class="ctc-ar-head"><strong class="ctc-ar-title">Annual Auto-Renewal</strong><span class="ctc-ar-price">' . esc_html( CTC_AR_PRICE_LABEL ) . '</span></div>'
+		. '<p>You\'re enrolled in each year\'s updated 20 Hour course automatically. You still complete the course and renew your CTEC registration with CTEC yourself. <a href="' . esc_url( ctc_ar_guide_url() ) . '" target="_blank">How to renew&nbsp;→</a></p>'
+		. '<p class="form-row validate-required ctc-ar-consent"><label class="woocommerce-form__label woocommerce-form__label-for-checkbox checkbox"><input type="checkbox" class="woocommerce-form__input woocommerce-form__input-checkbox input-checkbox" name="ctc_ar_consent" value="1"> <span>' . esc_html( ctc_ar_consent_text() ) . '&nbsp;<abbr class="required" title="required">*</abbr></span></label></p></div>';
 } );
 add_action( 'woocommerce_checkout_process', function () {
 	if ( ctc_ar_cart_has_plan() && empty( $_POST['ctc_ar_consent'] ) ) {
@@ -59,6 +58,26 @@ add_action( 'woocommerce_checkout_subscription_created', function ( $subscriptio
 	$c = $order->get_meta( '_ctc_ar_consent' );
 	if ( $c ) { $subscription->update_meta_data( '_ctc_ar_consent', $c ); $subscription->save(); }
 }, 10, 2 );
+
+// The plan and the one-time 20 Hour online course replace each other: whichever was added last stays.
+add_action( 'woocommerce_add_to_cart', function ( $key, $product_id, $qty = 1, $variation_id = 0 ) {
+	if ( ! WC()->cart ) return;
+	$added_plan = (int) $product_id === CTC_AR_PLAN_PRODUCT;
+	$added_one  = 9293 === (int) $variation_id;
+	if ( ! $added_plan && ! $added_one ) return;
+	foreach ( WC()->cart->get_cart() as $k => $it ) {
+		if ( $k === $key ) continue;
+		if ( ( $added_plan && 9293 === (int) $it['variation_id'] ) || ( $added_one && CTC_AR_PLAN_PRODUCT === (int) $it['product_id'] ) ) WC()->cart->remove_cart_item( $k );
+	}
+}, 10, 4 );
+// Plain wording for the Subscriptions "recurring totals" rows, so next year's charge doesn't read like a second charge today.
+add_filter( 'gettext', function ( $t, $orig, $domain ) {
+	if ( 'woocommerce-subscriptions' !== $domain ) return $t;
+	if ( 'Recurring totals' === $orig ) return 'Renews yearly at';
+	if ( 'Recurring total' === $orig ) return 'Then every year';
+	if ( 'First renewal: %s' === $orig ) return 'Next charge: %s';
+	return $t;
+}, 20, 3 );
 
 /* ---------------------------------------------------------------- one-click cancel */
 function ctc_ar_cancel_url( $sub ) {
