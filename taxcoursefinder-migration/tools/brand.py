@@ -386,7 +386,7 @@ def course_paths(h):
         c = c.replace('line-height:1.6;color:rgba(255,255,255,.82)', 'line-height:1.6;color:#4B4F54')
         c = c.replace('background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:999px', 'background:#FAF7F2;border:1px solid #D9D4CC;border-radius:999px')
         c = c.replace('stroke-linejoin="round" style="flex:none"><circle cx="12" cy="12" r="9">', 'stroke-linejoin="round" style="flex:none;color:#FF6B57"><circle cx="12" cy="12" r="9">')  # coral clocks
-        c = c.replace('background:#FAF7F2;border-radius:999px;padding:7px 14px;color:#23272A', 'background:#FF6B57;border-radius:999px;padding:7px 14px;color:#23272A')
+        c = c.replace('background:#FAF7F2;border-radius:999px;padding:7px 14px;color:#23272A', 'background:#23272A;border-radius:999px;padding:7px 14px;color:#FF6B57')  # charcoal pill, coral text
         c = c.replace('border-top:1px solid rgba(255,255,255,.14)', 'border-top:1px solid #EEE9E1')
         c = c.replace('border-radius:50%;background:#fff;color:#23272A;display:grid', 'border-radius:50%;background:#FF6B57;color:#fff;display:grid')
         out.append(card_new + c + rest)
