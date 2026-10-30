@@ -507,7 +507,6 @@ for part in ('hdr', 'ftr'):
     m = re.search(r'<a href="/provider-application/"[^>]*>Verify Your Profile</a>', h)
     assert m, 'verify link missing'
     # Create Profile Page (Step 2) link hidden for now; the page stays published at /create-your-school-profile/
-    h = h.replace('>Verify Your Profile</a>', '>Verify Your Profile (Step 1)</a>', 1)
     if part == 'hdr': hdr = h
     else: ftr = h
 json.dump({'header': hdr, 'footer': ftr}, open(OUT + '/hf.json', 'w'), indent=1)
