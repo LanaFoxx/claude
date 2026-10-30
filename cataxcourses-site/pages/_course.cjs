@@ -187,7 +187,7 @@ function features(d) {
     stack([
       eyebrow('What\'s included', C.gold, 'center'),
       H2('<span class="ctc-thin">Course</span> Features:', C.white, 'center', { lh: 1.05, settings: { _margin: box(12, 0, 0, 0) } }),
-    ], { maxW: 820, align: 'center', settings: { margin: box(0, 'auto', 56, 'auto'), _margin: box(0, 0, 56, 0) } }),
+    ], { align: 'center', settings: { margin: box(0, 0, 56, 0), _margin: box(0, 0, 56, 0) } }), // full width so the centered title sits on the page center
     grid([
       stack(d.features.slice(0, half).map((f) => item(f, true)), { gap: 44 }),
       container({ content_width: 'full', padding: box(0), background_background: 'gradient', background_color: C.gold, background_color_b: 'rgba(212,169,58,0.1)', background_gradient_type: 'linear', background_gradient_angle: { unit: 'deg', size: 180 }, hide_mobile: 'hidden-mobile' }),
