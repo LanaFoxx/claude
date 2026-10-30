@@ -182,44 +182,10 @@ add_action( 'wp_head', function () {
 	echo '<style id="dwdp-no-arcs">.dw-swoosh .elementor-heading-title::after,.dw-swoosh.elementor-widget-heading .elementor-heading-title::after,.dw-swoosh-c .elementor-heading-title::after,.dww-title::after{display:none!important;content:none!important}</style>' . "\n";
 }, 999 );
 
-/**
- * Process steps as a stacking deck: each card pins near the top while the next one slides up over it;
- * the cards underneath shrink and dim a little.
- */
+// Review cards that link out (Google, Upwork): no underline, a slight lift on hover.
 add_action( 'wp_head', function () {
-	echo '<style id="dwdp-deck">'
-		. '@media(prefers-reduced-motion:no-preference){'
-		. '.dwt.is-deck{gap:34px!important}'
-		. '.dwt.is-deck .dwt-step{position:sticky;top:calc(var(--dw-deck-top,118px) + var(--i,0) * 16px);z-index:calc(1 + var(--i,0))}'
-		. '.dwt.is-deck .dwt-card{transform-origin:50% 0;will-change:transform,filter;transition:none}'
-		. '.dwt.is-deck .dwt-card:hover{transform:none}'
-		. '.elementor-element-dw0001t>a.e-con{text-decoration:none!important;color:inherit;cursor:pointer;transition:transform .2s ease,box-shadow .2s ease}.elementor-element-dw0001t>a.e-con:hover{transform:translateY(-3px);box-shadow:0 14px 34px rgba(18,41,62,.12)!important}'
-		. '@media(max-width:767px){.dwt.is-deck{--dw-deck-top:92px}.dwt.is-deck .dwt-step{top:calc(var(--dw-deck-top) + var(--i,0) * 10px)}}'
-		. '}</style>' . "\n";
+	echo '<style id="dwdp-review-links">' . '.elementor-element-dw0001t>a.e-con{text-decoration:none!important;color:inherit;cursor:pointer;transition:transform .2s ease,box-shadow .2s ease}.elementor-element-dw0001t>a.e-con:hover{transform:translateY(-3px);box-shadow:0 14px 34px rgba(18,41,62,.12)!important}' . '</style>' . "\n";
 }, 99 );
-
-add_action( 'wp_footer', function () {
-	?>
-<script>(function(){var d=document.querySelector('.dwt');if(!d||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-var steps=[].slice.call(d.querySelectorAll(':scope>.dwt-step'));if(steps.length<2)return;d.classList.add('is-deck');
-// Sticky cards can't pin inside a section that hides its overflow; clip it instead (same look, sticky still works).
-for(var a=d.parentElement;a&&a!==document.body;a=a.parentElement){if(getComputedStyle(a).overflow==='hidden')a.style.overflow='clip';}
-steps.forEach(function(s,i){s.style.setProperty('--i',i);});
-var cards=steps.map(function(s){return s.querySelector('.dwt-card');});
-function topOf(i){return parseFloat(getComputedStyle(steps[i]).top)||0;}
-var tick=false;function run(){tick=false;var vh=innerHeight;
-steps.forEach(function(s,i){var c=cards[i];if(!c)return;var r=s.getBoundingClientRect(),stick=topOf(i);
-var rot=0,shift=0;
-// Covered: shrink and dim as the next card slides over this one.
-var cover=0;if(i<steps.length-1){var n=steps[i+1].getBoundingClientRect(),nst=topOf(i+1);cover=Math.min(Math.max(1-(n.top-nst)/Math.max(r.height,1),0),1);}
-var depth=0;for(var k=i+1;k<steps.length;k++){var nr=steps[k].getBoundingClientRect();if(nr.top<=topOf(k)+1)depth++;}
-var scale=1-0.04*cover-0.03*Math.max(depth-1,0);
-c.style.transform='scale('+scale.toFixed(3)+')';
-c.style.filter=cover>0?'brightness('+(1-0.12*cover-0.05*Math.max(depth-1,0)).toFixed(3)+')':'';});}
-function on(){if(!tick){tick=true;requestAnimationFrame(run);}}
-addEventListener('scroll',on,{passive:true});addEventListener('resize',on);run();})();</script>
-	<?php
-}, 60 );
 
 /**
  * Header: frosted glass on every page. A mostly-white background with a blur, so the page shows
