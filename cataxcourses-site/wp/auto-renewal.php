@@ -256,3 +256,103 @@ add_action( 'template_redirect', function () {
 	echo $mail ? '<!-- subject: ' . esc_html( $mail['subject'] ) . ' -->' . $mail['html'] : 'Unknown email';
 	exit;
 } );
+
+/* ---------------------------------------------------------------- admin: paid students list + bulk Moodle enrollment */
+// WooCommerce > Auto-Renewal Students: everyone whose auto-renewal is paid up (active, or cancelled but still inside the
+// year they paid for), filterable by last payment date. CSV export (Moodle "Upload users" columns) and a button that
+// enrolls every listed student in a Moodle course id through the same enrollcourse.php the checkout uses (queued in
+// Action Scheduler, one request at a time; the result is saved per student and noted on the subscription).
+function ctc_ar_paid_subs( $since ) {
+	if ( ! ctc_ar_active() ) return array();
+	$out = array();
+	foreach ( wcs_get_subscriptions( array( 'subscription_status' => array( 'active', 'pending-cancel' ), 'subscriptions_per_page' => -1 ) ) as $sub ) {
+		$paid = (int) $sub->get_time( 'last_order_date_paid' ) ?: (int) $sub->get_time( 'start' );
+		if ( $paid >= $since ) $out[] = array( $sub, $paid );
+	}
+	usort( $out, function ( $a, $b ) { return $b[1] <=> $a[1]; } );
+	return $out;
+}
+function ctc_ar_student( $sub ) {
+	$u = $sub->get_user();
+	return array(
+		'user' => $u ? $u->user_login : $sub->get_billing_email(), 'email' => $u ? $u->user_email : $sub->get_billing_email(),
+		'firstname' => $sub->get_billing_first_name(), 'lastname' => $sub->get_billing_last_name(),
+		'displayname' => trim( $sub->get_billing_first_name() . ' ' . $sub->get_billing_last_name() ),
+	);
+}
+function ctc_ar_since() {
+	$d = isset( $_REQUEST['since'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['since'] ) ) : '';
+	return $d && strtotime( $d ) ? strtotime( $d . ' 00:00:00 UTC' ) : strtotime( '-1 year' );
+}
+add_action( 'admin_init', function () {
+	if ( empty( $_GET['ctc_ar_csv'] ) || ! current_user_can( 'manage_woocommerce' ) || ! check_admin_referer( 'ctc_ar_students' ) ) return;
+	$course = absint( $_GET['course'] ?? 0 );
+	header( 'Content-Type: text/csv; charset=UTF-8' );
+	header( 'Content-Disposition: attachment; filename=auto-renewal-students-' . gmdate( 'Y-m-d' ) . '.csv' );
+	$f = fopen( 'php://output', 'w' );
+	fputcsv( $f, array_merge( array( 'username', 'email', 'firstname', 'lastname' ), $course ? array( 'course1' ) : array(), array( 'last_paid', 'renews', 'status', 'subscription' ) ) );
+	foreach ( ctc_ar_paid_subs( ctc_ar_since() ) as list( $sub, $paid ) ) {
+		$s = ctc_ar_student( $sub );
+		fputcsv( $f, array_merge( array( $s['user'], $s['email'], $s['firstname'], $s['lastname'] ), $course ? array( $course ) : array(),
+			array( gmdate( 'Y-m-d', $paid ), ( $n = (int) $sub->get_time( 'next_payment' ) ) ? gmdate( 'Y-m-d', $n ) : '', $sub->get_status(), $sub->get_id() ) ) );
+	}
+	exit;
+} );
+add_action( 'ctc_ar_bulk_enroll', function ( $sub_id, $course ) {
+	global $wpdb;
+	$sub = wcs_get_subscription( $sub_id );
+	$mdl = $wpdb->get_row( "SELECT moodleurl FROM {$wpdb->prefix}moodledetail WHERE id=1" );
+	if ( ! $sub || ! $mdl || ! $mdl->moodleurl ) return;
+	$r    = wp_remote_get( add_query_arg( array_map( 'rawurlencode', ctc_ar_student( $sub ) + array( 'course' => (int) $course ) ), rtrim( $mdl->moodleurl, '/' ) . '/local/mdl_course_enroll/enrollcourse.php' ), array( 'timeout' => 45 ) );
+	$code = is_wp_error( $r ) ? 0 : (int) wp_remote_retrieve_response_code( $r );
+	$ok   = $code >= 200 && $code < 300;
+	$sub->update_meta_data( '_ctc_ar_course_' . (int) $course, $ok ? current_time( 'mysql' ) : 'failed' );
+	$sub->add_order_note( sprintf( 'Bulk enrollment in Moodle course %d: %s', $course, $ok ? 'done' : 'FAILED (' . ( is_wp_error( $r ) ? $r->get_error_message() : 'HTTP ' . $code ) . ')' ) );
+	$sub->save();
+}, 10, 2 );
+add_action( 'admin_menu', function () {
+	add_submenu_page( 'woocommerce', 'Auto-Renewal Students', 'Auto-Renewal Students', 'manage_woocommerce', 'ctc-ar-students', function () {
+		global $wpdb;
+		$since  = ctc_ar_since();
+		$course = absint( $_REQUEST['course'] ?? 0 );
+		$msg    = '';
+		if ( ! empty( $_POST['ctc_ar_enroll'] ) && $course && check_admin_referer( 'ctc_ar_students' ) ) {
+			$n = 0;
+			foreach ( ctc_ar_paid_subs( $since ) as list( $sub ) ) {
+				if ( $sub->get_meta( '_ctc_ar_course_' . $course ) && 'failed' !== $sub->get_meta( '_ctc_ar_course_' . $course ) ) continue; // already enrolled
+				as_enqueue_async_action( 'ctc_ar_bulk_enroll', array( $sub->get_id(), $course ), 'ctc-auto-renewal' );
+				$n++;
+			}
+			$msg = '<div class="notice notice-success"><p>' . $n . ' students queued for Moodle course ' . $course . '. They are enrolled one by one in the background; refresh this page to follow along.</p></div>';
+		}
+		$rows    = ctc_ar_paid_subs( $since );
+		$mapped  = $wpdb->get_col( $wpdb->prepare( "SELECT courseid FROM {$wpdb->prefix}wootomoodle WHERE productid = %d", CTC_AR_SOURCE_PRODUCT ) );
+		$sinceIn = gmdate( 'Y-m-d', $since );
+		$base    = admin_url( 'admin.php?page=ctc-ar-students' );
+		echo '<div class="wrap"><h1>Auto-Renewal Students</h1>' . $msg;
+		echo '<p>Students whose Annual Auto-Renewal is paid (active, or cancelled but still inside the year they paid for). Use this list to enroll them in the new CTEC 20 Hour course when it comes out.</p>';
+		echo '<form method="get" style="margin:16px 0"><input type="hidden" name="page" value="ctc-ar-students">';
+		echo '<label>Last paid on or after <input type="date" name="since" value="' . esc_attr( $sinceIn ) . '"></label> &nbsp; ';
+		echo '<label>Moodle course id <input type="number" name="course" min="1" style="width:110px" value="' . ( $course ?: '' ) . '"></label> ';
+		echo '<span style="color:#666">(20 Hour course currently mapped: ' . esc_html( $mapped ? implode( ', ', $mapped ) : 'none' ) . ')</span> &nbsp; <button class="button">Show</button></form>';
+		echo '<p><strong>' . count( $rows ) . '</strong> paid students. ';
+		echo '<a class="button" href="' . esc_url( wp_nonce_url( add_query_arg( array( 'ctc_ar_csv' => 1, 'since' => $sinceIn, 'course' => $course ?: null ), $base ), 'ctc_ar_students' ) ) . '">Download CSV</a>';
+		echo ' <span style="color:#666">(Moodle "Upload users" columns: username, email, firstname, lastname' . ( $course ? ', course1' : '' ) . ')</span></p>';
+		if ( $course ) {
+			echo '<form method="post" onsubmit="return confirm(\'Enroll all ' . count( $rows ) . ' listed students in Moodle course ' . $course . '?\')">';
+			wp_nonce_field( 'ctc_ar_students' );
+			echo '<input type="hidden" name="since" value="' . esc_attr( $sinceIn ) . '"><input type="hidden" name="course" value="' . $course . '"><input type="hidden" name="ctc_ar_enroll" value="1">';
+			echo '<button class="button button-primary">Enroll all listed students in Moodle course ' . $course . '</button> <span style="color:#666">Students already enrolled in this course are skipped.</span></form>';
+		}
+		echo '<table class="widefat striped" style="margin-top:16px"><thead><tr><th>Student</th><th>Email</th><th>Moodle username</th><th>Last paid</th><th>Renews</th><th>Status</th>' . ( $course ? '<th>Course ' . $course . '</th>' : '' ) . '</tr></thead><tbody>';
+		foreach ( $rows as list( $sub, $paid ) ) {
+			$s = ctc_ar_student( $sub );
+			$n = (int) $sub->get_time( 'next_payment' );
+			$e = $course ? (string) $sub->get_meta( '_ctc_ar_course_' . $course ) : '';
+			echo '<tr><td><a href="' . esc_url( $sub->get_edit_order_url() ) . '">' . esc_html( $s['displayname'] ) . '</a></td><td>' . esc_html( $s['email'] ) . '</td><td>' . esc_html( $s['user'] ) . '</td><td>' . esc_html( gmdate( 'M j, Y', $paid ) ) . '</td><td>' . esc_html( $n ? gmdate( 'M j, Y', $n ) : '—' ) . '</td><td>' . esc_html( wcs_get_subscription_status_name( $sub->get_status() ) ) . '</td>'
+				. ( $course ? '<td>' . ( '' === $e ? '—' : ( 'failed' === $e ? '<span style="color:#b32d2e">failed</span>' : '✓ ' . esc_html( mysql2date( 'M j', $e ) ) ) ) . '</td>' : '' ) . '</tr>';
+		}
+		if ( ! $rows ) echo '<tr><td colspan="7">No paid auto-renewal students in this period yet.</td></tr>';
+		echo '</tbody></table></div>';
+	} );
+} );
