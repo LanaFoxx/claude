@@ -126,7 +126,7 @@ add_action( 'wp_footer', function () {
  */
 add_action( 'wp_head', function () {
 	$h = '.elementor-element-7e6232a .elementor-heading-title,.elementor-element-dw0008r .elementor-heading-title,.elementor-element-dw0005k .elementor-heading-title,.elementor-element-18a049b .elementor-heading-title,.elementor-element-4bbde7c .elementor-heading-title';
-	echo '<style id="dwdp-h1">' . $h . '{font-size:52px!important;line-height:1.04!important}@media(max-width:1024px){' . $h . '{font-size:42px!important}}@media(max-width:767px){' . $h . '{font-size:34px!important}}</style>' . "\n";
+	echo '<style id="dwdp-h1">' . $h . '{font-size:60px!important;line-height:1.04!important}@media(max-width:1024px){' . $h . '{font-size:48px!important}}@media(max-width:767px){' . $h . '{font-size:34px!important}}</style>' . "\n";
 }, 99 );
 
 /**
@@ -161,7 +161,7 @@ add_action( 'wp_head', function () {
 		. 'h1,h2,h3,h4{font-weight:900;letter-spacing:.01em}'
 		. 'body{font-weight:300}.elementor-widget-html h1,.elementor-widget-html h2,.elementor-widget-html h3,.elementor-widget-html h4{font-weight:900!important}'
 		. '.elementor-field-subgroup label,.elementor-field-option label,.screen-reader-text{font-weight:400}'
-		. '.elementor-element-90f59da .elementor-tab-content,.elementor-element-90f59da .elementor-tab-content p{font-weight:300!important}'
+		. '.elementor-element-90f59da .elementor-tab-content,.elementor-element-90f59da .elementor-tab-content p{font-weight:400!important}'
 		. 'h1,h1.elementor-heading-title,.elementor-element-2460b52 .elementor-heading-title{line-height:1.04!important}'
 		. 'h2,h2.elementor-heading-title{line-height:1.08!important}'
 		. '.elementor-widget-heading h1.elementor-heading-title,.elementor-widget-heading h2.elementor-heading-title,.elementor-widget-heading h3.elementor-heading-title,.elementor-widget-heading h4.elementor-heading-title,.elementor-element-2460b52 .elementor-heading-title{letter-spacing:.01em!important}'
@@ -184,15 +184,15 @@ add_action( 'wp_head', function () {
 
 // Phones: easier reading. Body text at a regular weight and at least 16px, thin heading halves a touch heavier, larger section and card headings.
 add_action( 'wp_head', function () {
-	echo '<style id="dwdp-mobile-read">@media(max-width:767px){body{font-weight:400}.elementor-widget-text-editor,.elementor-widget-text-editor p:not([style*="font-weight"]),.elementor-widget-html p:not([style*="font-weight"]),li,.dwt-note,.dwt-note span,.dw-wt p,.dw-review p,.dwdp-single p,.dwb-article,.dwb-article p,.dwb-card-ex,.dww-card,.elementor-tab-content,.elementor-tab-content p{font-weight:400!important}.elementor-widget-text-editor:not(.elementor-element-dw0001g),.elementor-widget-text-editor:not(.elementor-element-dw0001g) p:not([style*="font-size"]),.elementor-widget-html p:not([style*="font-size"]):not([class*="eyebrow"]):not([class*="-k"]),.elementor-widget-html li,.dwt-card>p,.dwt-note,.elementor-tab-content p{font-size:17px!important;line-height:1.65!important}span[style*="font-weight:200"],.elementor-element-dw00002 .elementor-heading-title{font-weight:300!important}.elementor-widget-heading h2.elementor-heading-title{font-size:32px!important}.elementor-heading-title span,.elementor-widget-html h2>span,.dwdp-cta-title>span,.dww-title>span{white-space:nowrap}.dw-host-top>div{min-width:0;max-width:100%}.dw-host h2{max-width:100%!important;overflow:visible}.elementor-widget-heading h3.elementor-heading-title,.dwt-card h3,.elementor-widget-html h3{font-size:22px!important}}</style>' . "\n";
+	echo '<style id="dwdp-mobile-read">@media(max-width:767px){body{font-weight:400}.elementor-widget-text-editor,.elementor-widget-text-editor p:not([style*="font-weight"]),.elementor-widget-html p:not([style*="font-weight"]),li,.dwt-note,.dwt-note span,.dw-wt p,.dw-review p,.dwdp-single p,.dwb-article,.dwb-article p,.dwb-card-ex,.dww-card,.elementor-tab-content,.elementor-tab-content p{font-weight:400!important}.elementor-widget-text-editor:not(.elementor-element-dw0001g),.elementor-widget-text-editor:not(.elementor-element-dw0001g) p:not([style*="font-size"]),.elementor-widget-html p:not([style*="font-size"]):not([class*="eyebrow"]):not([class*="-k"]),.elementor-widget-html li,.dwt-card>p,.dwt-note,.elementor-tab-content p,.dwo-sec>p{font-size:17px!important;line-height:1.65!important}span[style*="font-weight:200"],.elementor-element-dw00002 .elementor-heading-title{font-weight:300!important}.elementor-widget-heading h2.elementor-heading-title{font-size:32px!important}.elementor-widget-heading h3.elementor-heading-title,.dwt-card h3,.elementor-widget-html h3,.dwo-sec h3{font-size:22px!important}}</style>' . "\n";
 }, 1000 );
 
-// Phones: each part of a heading stays on one line; a part wider than the screen is scaled down just enough to fit.
+// Every screen: each part of a heading stays on one line; a part wider than the screen is scaled down just enough to fit.
 add_action( 'wp_footer', function () {
 	?>
 <script>(function(){var mq=matchMedia('(max-width:767px)');
 function fit(){var hs=document.querySelectorAll('.elementor-heading-title,.dww-title,.dwdp-cta-title,.elementor-widget-html h2');
-hs.forEach(function(h){h.style.fontSize='';h.querySelectorAll('span').forEach(function(s){s.style.fontSize='';});if(!mq.matches)return;
+hs.forEach(function(h){h.style.fontSize='';h.querySelectorAll('span').forEach(function(s){s.style.fontSize='';});
 var parts=h.querySelectorAll(':scope>span');if(!parts.length)return;var w=h.clientWidth;if(!w)return;
 parts.forEach(function(s){s.style.display='inline-block';var cs=parseFloat(getComputedStyle(s).fontSize),sw=s.scrollWidth;
 if(sw>w){s.style.fontSize=Math.max(14,Math.floor(cs*w/sw*10)/10)+'px';}s.style.display='';});});}
@@ -201,10 +201,15 @@ fit();if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fit);add
 	<?php
 }, 70 );
 
+// One paragraph size everywhere (20px desktop, 18px tablet, 17px phones) and larger headings.
+add_action( 'wp_head', function () {
+	echo '<style id="dwdp-sizes">@media(min-width:1025px){.elementor-widget-text-editor:not(.elementor-element-dw0001g),.elementor-widget-text-editor:not(.elementor-element-dw0001g) p:not([style*="font-size"]),.elementor-widget-html p:not([style*="font-size"]):not([class*="eyebrow"]):not([class*="-k"]):not(.dw-fnote),.elementor-widget-html li:not(.dw-host-list li),.dwt-card>p,.dwt-note,.elementor-tab-content,.elementor-tab-content p,.dw-wt p,.dw-review p,.dwdp-summary p,.dwdp-cta-text,.dwb-article p,.dwb-article li,.dwb-card-ex,.dww-card p,.dwo-sec>p{font-size:20px!important;line-height:1.7!important;font-weight:400!important}.elementor-widget-heading h2.elementor-heading-title,.elementor-widget-html h2,.dwdp-cta-title{font-size:48px!important}.elementor-element-dw00002 .elementor-heading-title{font-size:60px!important}.elementor-element-2460b52 .elementor-heading-title{font-size:84px!important}.elementor-widget-heading h3.elementor-heading-title,.dwt-card h3,.elementor-widget-html h3,.dwo-sec h3{font-size:24px!important}.dw-pmeta b{font-size:22px!important}}@media(min-width:768px) and (max-width:1024px){.elementor-widget-text-editor:not(.elementor-element-dw0001g),.elementor-widget-text-editor:not(.elementor-element-dw0001g) p:not([style*="font-size"]),.elementor-widget-html p:not([style*="font-size"]):not([class*="eyebrow"]):not([class*="-k"]):not(.dw-fnote),.elementor-widget-html li:not(.dw-host-list li),.dwt-card>p,.dwt-note,.elementor-tab-content,.elementor-tab-content p,.dw-wt p,.dw-review p,.dwdp-summary p,.dwdp-cta-text,.dwb-article p,.dwb-article li,.dwb-card-ex,.dww-card p,.dwo-sec>p{font-size:18px!important;line-height:1.7!important;font-weight:400!important}.elementor-widget-heading h2.elementor-heading-title,.elementor-widget-html h2,.dwdp-cta-title{font-size:40px!important}.elementor-widget-heading h3.elementor-heading-title,.dwt-card h3,.elementor-widget-html h3,.dwo-sec h3{font-size:22px!important}}</style>' . "\n";
+}, 1000 );
+
 // Even line lengths: centered text is balanced (lines of similar length instead of long-short-long),
 // other paragraphs avoid a lone word on the last line. Headings are balanced everywhere.
 add_action( 'wp_head', function () {
-	echo '<style id="dwdp-wrap">p,li,.elementor-widget-text-editor{text-wrap:pretty}h1,h2,h3,h4,.elementor-heading-title,.dw-wrap-balance,.dw-wrap-balance p{text-wrap:balance}'
+	echo '<style id="dwdp-wrap">.elementor-heading-title span,.elementor-widget-html h2>span,.dwdp-cta-title>span,.dww-title>span{white-space:nowrap}.dw-host-top>div{min-width:0;max-width:100%}.dw-host h2{max-width:100%!important;overflow:visible}p,li,.elementor-widget-text-editor{text-wrap:pretty}h1,h2,h3,h4,.elementor-heading-title,.dw-wrap-balance,.dw-wrap-balance p{text-wrap:balance}'
 		. '@media(max-width:767px){.elementor-element-dw0001g br{display:none}}</style>' . "\n";
 }, 99 );
 add_action( 'wp_footer', function () {

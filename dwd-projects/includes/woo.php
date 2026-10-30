@@ -273,7 +273,7 @@ body.woocommerce-page main#content.site-main{max-width:none;width:100%;margin:0;
 body.woocommerce-page main#content .page-header{display:none}
 .dww-hero{text-align:center;max-width:920px;margin:0 auto 40px}
 .dww-eyebrow{display:inline-block;border:1px solid rgba(255,255,255,0.22);border-radius:100px;padding:9px 18px;font:500 15.5px/1.5 Urbanist,sans-serif;color:#C9DAE8;letter-spacing:.02em}
-.dww-title{margin:14px 0 0;font:900 52px/1.04 Urbanist,sans-serif;letter-spacing:.01em;text-transform:uppercase;color:#fff}
+.dww-title{margin:14px 0 0;font:900 60px/1.04 Urbanist,sans-serif;letter-spacing:.01em;text-transform:uppercase;color:#fff}
 .dww-title::after{content:"";display:block;width:170px;height:12px;margin:14px auto 0;background:' . $swoosh . ' no-repeat center/contain}
 .dww-pills{display:flex;justify-content:center;flex-wrap:wrap;gap:18px;margin-top:30px}
 .dww-pill{display:inline-flex;align-items:center;gap:12px;background:#fff;border-radius:10px;padding:16px 20px;font:300 16px Urbanist,sans-serif;color:#0E1526}
@@ -310,7 +310,7 @@ body.woocommerce-page main#content .page-header{display:none}
 .dww-agree label{display:flex;gap:10px;align-items:flex-start;font:300 15px/1.5 Urbanist,sans-serif;color:#0E1526;margin:0 0 18px}
 .dww-agree input{margin-top:4px;width:18px;height:18px;flex:none}
 .dww-card .woocommerce-privacy-policy-text p{font-size:13.5px;color:#7A86A0}
-.dww-card button.button,.dww-card a.button,.dww-card #place_order{display:inline-flex;align-items:center;justify-content:center;height:52px;padding:0 32px;border:0;border-radius:8px;background:#1B7EC3;color:#fff;font:300 14px Urbanist,sans-serif;letter-spacing:.16em;text-transform:uppercase;cursor:pointer}
+.dww-card button.button,.dww-card a.button,.dww-card #place_order{display:inline-flex;align-items:center;justify-content:center;height:52px;padding:0 32px;border:0;border-radius:8px;background:#1B7EC3;color:#fff;font:600 14px Urbanist,sans-serif!important;letter-spacing:.16em;text-transform:uppercase;cursor:pointer}
 .dww-card #place_order{width:100%}
 .dww-card button.button:hover,.dww-card #place_order:hover{background:#166AA6}
 .dww-card .woocommerce-error,.dww-card .woocommerce-info,.dww-card .woocommerce-message{list-style:none;margin:0 0 24px;padding:16px 20px 16px 20px;border:0;border-left:4px solid #1B7EC3;border-radius:8px;background:#EAF4FC;color:#0E1526;font:300 15px Urbanist,sans-serif}
