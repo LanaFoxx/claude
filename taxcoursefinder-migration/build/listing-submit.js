@@ -11,10 +11,11 @@
     status = f.querySelector('[data-tcf-listing-status]'); btn = f.querySelector('[type=submit]');
     var need = [['school_name', 'your school name'], ['contact_name', 'your name'], ['contact_email', 'your email address']];
     for (var i = 0; i < need.length; i++) { var el = f.elements[need[i][0]]; if (!el.value.trim()) { show('Please add ' + need[i][1] + '.'); el.focus(); return; } }
-    if (!f.elements.ce_offered.checked && !f.elements.qe_offered.checked) { show('Please tick at least one course you offer.'); f.elements.ce_offered.focus(); return; }
+    if (f.elements.ce_offered && !f.elements.ce_offered.checked && !f.elements.qe_offered.checked) { show('Please tick at least one course you offer.'); f.elements.ce_offered.focus(); return; }
     if (!f.elements.confirm.checked) { show('Please tick the confirmation box.'); f.elements.confirm.focus(); return; }
-    var logo = f.elements.logo && f.elements.logo.files[0];
-    if (logo && logo.size > 5 * 1024 * 1024) { show('The logo is larger than 5 MB. Please choose a smaller image.'); return; }
+    var big = [].filter.call(f.querySelectorAll('input[type=file]'), function (el) { return [].some.call(el.files, function (x) { return x.size > 5 * 1024 * 1024; }); });
+    if (big.length) { show('One of your images is larger than 5 MB. Please choose a smaller image.'); return; }
+    var profile = !!f.elements.part;
     var fd = new FormData(f); fd.append('action', 'tcfd_listing_submit'); fd.append('started', String(started));
     btn.disabled = true; btn.textContent = 'Sending…';
     fetch('/wp-admin/admin-ajax.php', { method: 'POST', body: fd, credentials: 'same-origin' })
@@ -22,7 +23,7 @@
       .then(function (j) {
         if (j && j.success) {
           var form = f;
-          form.innerHTML = '<div style="background:#fff;border:1px solid #D7DFE2;border-radius:16px;padding:36px;font:700 22px Manrope,sans-serif;color:#0B2E40">Thank you! We received your listing details. We review every submission and will update your listing, then follow up at the email address you gave.</div>';
+          form.innerHTML = '<div style="background:#fff;border:1px solid #D7DFE2;border-radius:16px;padding:36px;font:700 22px Manrope,sans-serif;color:#0B2E40">' + (profile ? 'Thank you! We received your school profile details. We review every submission and will publish your profile page, then follow up at the email address you gave.' : 'Thank you! We received your listing details. We review every submission and will update your listing, then follow up at the email address you gave.') + '</div>';
           window.scrollTo({ top: form.getBoundingClientRect().top + window.scrollY - 160, behavior: 'smooth' });
           return;
         }

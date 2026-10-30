@@ -103,6 +103,22 @@ def comparison_table(body):
     return body[:i] + table + body[end:]
 
 def seo_tweaks(name, body):
+    if name == 'TaxCourse Finder Home':  # same hero photo as the 60-hour page
+        body = body.replace('@@MEDIA:photos/05-tax-study-workspace-titled.png@@" alt="" class="tcf-hero-bg"', '@@MEDIA:photos/01-ctec-60-hour-learner.webp@@" alt="" class="tcf-hero-bg"', 1)
+    if name == 'TaxCourse Finder Home':  # renewal calendar from the renew guide, near the bottom of the home page
+        src = clean(json.load(open(EXT + '/How to Renew CTEC Registration.json'))['body'])
+        k = src.index('Key dates'); a = src.rindex('<div style="padding:88px 56px;background:#fff">', 0, k)
+        depth, j = 0, a
+        for m in re.finditer(r'<(/?)div\b', src[a:]):
+            depth += -1 if m.group(1) else 1
+            if depth == 0: j = a + m.end() + src[a + m.end():].index('>') + 1; break
+        cal = src[a:j].replace('Renew inside the green window to avoid the late fee.', 'Renew by October 31 to avoid the late fee.')
+        assert '<!-- FOR PROVIDERS -->' in body
+        body = body.replace('<!-- FOR PROVIDERS -->', '<!-- RENEWAL CALENDAR -->' + cal + ' <!-- FOR PROVIDERS -->', 1)
+    # hero/section titles that should sit on two lines
+    body = body.replace('How to Become a <span style="display:block;font-weight:300">CTEC Registered Tax Preparer in California</span></h1>', 'How to Become a CTEC Registered Tax Preparer in California</h1>')
+    body = body.replace("<h2 style=\"margin:0;font:300 44px/1.12 'Source Serif 4',Georgia,serif;color:#fff\">What the 20-hour <span style=\"font-weight:300\">continuing education course covers</span></h2>",
+                        "<h2 style=\"margin:0;font:300 38px/1.15 'Source Serif 4',Georgia,serif;color:#fff;text-wrap:balance\">What the 20-hour continuing education course covers</h2>")
     # legal pages: contact email filled in, no mailing address
     PH = r'<span style="background:#FFF3C4;color:#7A5A00;border-radius:4px;padding:1px 6px;font:600 19px Manrope,sans-serif">\[%s\]</span>'
     body = re.sub(r'<br><strong style="color:#0B2E40">Mail:</strong> ' + PH % 'BUSINESS MAILING ADDRESS', '', body)
@@ -386,6 +402,25 @@ for name, (slug, url, title) in PAGES.items():
     json.dump({'code': _c, 'props': _p, 'name': name, 'slug': slug, 'url': url, 'title': title, 'runtime': name in RUNTIME, 'rid': rid, 'widget': '\n'.join(parts), 'css': d['css']},
               open(OUT + '/pages/' + slug + '.json', 'w'), indent=1)
 
+# Second, optional provider form: the school profile page (same page design as the verify form, longer form).
+import listing_form
+pa = json.load(open(OUT + '/pages/provider-application.json'))
+def profile_page(t, code=False):
+    for x, y in [(listing_form.form(), listing_form.profile_form()), (listing_form.sections_js(), listing_form.sections_js(listing_form.PROFILE_SECTIONS)),
+                 ('tcf-provider-application-', 'tcf-create-your-school-profile-'),
+                 ('>Free listing · verification</span>', '>Optional · school profile page</span>'),
+                 ('<span style="display:block">Verify or update your</span><span style="display:block;font-weight:300">school’s <span style="color:#95AB3B">free listing</span></span>',
+                  '<span style="display:block">Create your</span><span style="display:block;font-weight:300">school’s <span style="color:#95AB3B">profile page</span></span>'),
+                 ('Your school is already eligible to appear in the directory. Use this form to confirm pricing, formats and contact details, or to correct anything that is wrong.',
+                  'Already verified your listing? Add a few more details and your school gets its own profile page: an intro, package options, exam attempts, student support and photos.'),
+                 ('There is no charge to submit or maintain accurate basic provider information.', 'There is no charge for a school profile page.')]:
+        assert code or x in t, x[:60]  # the page script carries only the section list
+        t = t.replace(x, y)
+    return t
+pa.update(widget=profile_page(pa['widget']), code=profile_page(pa['code'], True), slug='create-your-school-profile', url='/create-your-school-profile/',
+          title='Create Your School Profile Page', name='Create School Profile', rid='tcf-create-your-school-profile')
+json.dump(pa, open(OUT + '/pages/create-your-school-profile.json', 'w'), indent=1)
+
 # header/footer
 d = json.load(open(EXT + '/About.json'))
 hdr = clean(d['header'])
@@ -420,5 +455,13 @@ hdr = hdr.replace(m.group(0), m.group(0) + ''.join(re.sub(r'href="[^"]*"', 'href
 m = re.search(r'<a href="/how-to-renew-ctec-registration/"[^>]*>[^<]*</a>', ftr)
 assert m, 'renew link missing in footer'
 ftr = ftr.replace(m.group(0), m.group(0) + ''.join(re.sub(r'href="[^"]*"', 'href="%s"' % u, m.group(0)).replace('>' + re.sub('<[^>]+>', '', m.group(0)) + '<', '>' + t + '<') for u, _, t in EXTRA_GUIDES), 1)
+# For Providers menu: the optional profile page form sits right after the verify form
+for part in ('hdr', 'ftr'):
+    h = locals()[part]
+    m = re.search(r'<a href="/provider-application/"[^>]*>Verify Your Profile</a>', h)
+    assert m, 'verify link missing'
+    h = h.replace(m.group(0), m.group(0) + m.group(0).replace('/provider-application/', '/create-your-school-profile/').replace('>Verify Your Profile<', '>Create Profile Page<'), 1)
+    if part == 'hdr': hdr = h
+    else: ftr = h
 json.dump({'header': hdr, 'footer': ftr}, open(OUT + '/hf.json', 'w'), indent=1)
 print('ok')

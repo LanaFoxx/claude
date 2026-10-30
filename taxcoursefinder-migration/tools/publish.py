@@ -127,7 +127,7 @@ if STEP == 'content':
         pg = json.load(open(B + '/pages/%s.json' % slug))
         html = page_html(pg)
         extra = None
-        if slug == 'provider-application':
+        if slug in ('provider-application', 'create-your-school-profile'):
             # listing form: submits to the plugin review queue (admin-ajax tcfd_listing_submit)
             html += '<script>' + open(B + '/listing-submit.js').read() + '</script>'
         ldf = B + '/%s-ld.json' % slug

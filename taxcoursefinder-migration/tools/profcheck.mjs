@@ -1,13 +1,13 @@
 import { chromium } from '/opt/node-tools/node_modules/playwright/index.mjs';
 const S = process.argv[2];
 const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', proxy: { server: process.env.HTTPS_PROXY } });
-const p = await b.newPage({ viewport: { width: 1440, height: 900 } }); const errs = []; p.on('pageerror', e => errs.push(e.message));
-await p.goto('https://taxcoursefinder.com/schools/california-tax-courses/?v=' + Date.now(), { waitUntil: 'networkidle' });
-const t = async x => p.getByText(x, { exact: true }).count();
-console.log('Pace row:', await t('Pace'), '| "not confirmed" pills:', await p.locator('text=/· not confirmed/').count(), '| support badges:', await t('NOT CONFIRMED') + await t('Not confirmed'), '| errors:', errs.length);
-console.log('support boxes:', await p.locator('#help, section').filter({ hasText: 'Can I get help?' }).locator('[style*="border-radius:14px;padding:22px"]').count());
-for (const [name, txt] of [['learn', 'How will I learn?'], ['help', 'Can I get help?'], ['accuracy', 'Accuracy']]) {
-  const el = p.getByText(txt, { exact: true }).first(); await el.scrollIntoViewIfNeeded(); await p.waitForTimeout(300);
-  await p.screenshot({ path: `${S}/shots/prof-${name}.png`, clip: { x: 0, y: 0, width: 1440, height: 900 } });
-}
+const p = await (await b.newContext({ viewport: { width: 1440, height: 900 } })).newPage();
+const errs = []; p.on('pageerror', e => errs.push(e.message)); let posted = 0; p.on('request', r => { if (r.url().includes('admin-ajax') && r.method() === 'POST') posted++; });
+await p.goto('https://taxcoursefinder.com/create-your-school-profile/?nc=' + Date.now(), { waitUntil: 'networkidle' });
+await p.hover('.tcf-nav-btn'); await p.waitForTimeout(400);
+await p.screenshot({ path: S + '/shots/menu.png', clip: { x: 700, y: 60, width: 740, height: 360 } });
+await p.fill('[name=school_name]', 'Test'); await p.fill('[name=contact_name]', 'T'); await p.fill('[name=contact_email]', 't@example.com');
+await p.click('form[data-tcf-listing-form] [type=submit]'); await p.waitForTimeout(500);
+console.log('status:', await p.locator('[data-tcf-listing-status]').innerText(), '| posted:', posted, '| errors:', errs);
+console.log('h2s:', await p.locator('form h2').allInnerTexts());
 await b.close();

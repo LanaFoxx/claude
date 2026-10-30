@@ -9,7 +9,7 @@ def hero(eyebrow, h1a, h1b, lead, img, cta1, cta2):
 <div style="position:absolute;inset:0;background-image:linear-gradient(135deg,rgba(255,255,255,.07) 0%,rgba(255,255,255,0) 55%);"></div>
 <div style="position:relative;max-width:1200px;margin:0 auto;display:flex;flex-direction:column;gap:20px">
 <div style="font:700 22px Manrope,sans-serif;letter-spacing:1.6px;text-transform:uppercase;color:#95AB3B">{e(eyebrow)}</div>
-<h1 style="margin:0;font:300 52px/1.05 'Source Serif 4',Georgia,serif;max-width:900px">{e(h1a)} <span style="display:block;font-weight:300">{e(h1b)}</span></h1>
+<h1 style="margin:0;font:300 52px/1.05 'Source Serif 4',Georgia,serif;max-width:900px">{e(h1a)}{f' <span style="display:block;font-weight:300">{e(h1b)}</span>' if h1b else ''}</h1>
 <p style="margin:0;font-size:22px;line-height:1.6;color:rgba(255,255,255,.88);max-width:660px;text-wrap:pretty">{lead}</p>
 <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:6px"><a data-hv="4" href="{cta1[1]}" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;font:700 19px Manrope,sans-serif;letter-spacing:0;border-radius:999px;white-space:nowrap;text-decoration:none;cursor:pointer;transition:background .15s,border-color .15s,color .15s;line-height:1.2;background:#95AB3B;color:#fff;padding:14px 28px;border:1.5px solid #95AB3B">{e(cta1[0])}<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-left:2px"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></a><a data-hv="17" href="{cta2[1]}" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;font:700 19px Manrope,sans-serif;letter-spacing:0;border-radius:999px;white-space:nowrap;text-decoration:none;cursor:pointer;transition:background .15s,border-color .15s,color .15s;line-height:1.2;background:transparent;color:#fff;padding:14px 28px;border:1.5px solid rgba(255,255,255,.5)">{e(cta2[0])}</a></div>
 </div>
@@ -163,7 +163,7 @@ pages['your-rights-as-a-ctec-preparer'] = dict(
     img='photos/ctec-renewal-records.webp',
     alt='Tax preparer reviewing CTEC course records and completion certificates',
     faq=rights_faq,
-    html=hero('Resources', 'Your Rights as a', 'CTEC Preparer',
+    html=hero('Resources', 'Your Rights as a CTEC Preparer', '',
               'Key rights and protections you have when you study with a CTEC-approved school, whether you are taking the 60 hour course for the first time or the 20 hour course to renew.',
               'photos/ctec-renewal-records.webp', ('Compare CTEC-approved schools', '/#find-schools'), ('See your rights', '#rights'))
     + steps('rights', 'Key rights & protections', 'Your rights with', 'CTEC-approved schools',

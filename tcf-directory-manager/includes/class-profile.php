@@ -40,6 +40,7 @@ final class TCFD_Profile {
             'approved_types' => ['Approved for', 'choice:approved', ''],
             'contact_name' => ['Contact name', 'text', ''],
             'contact_email' => ['Contact email', 'email', ''],
+            'intro' => ['Short intro (top of the school page)', 'textarea', 'school_intro'],
             'about' => ['About the school', 'textarea', 'school_about'],
             'instructors' => ['Instructors', 'textarea', 'school_instructors'],
             'phone' => ['Support phone', 'text', 'support_phone'],
@@ -350,12 +351,13 @@ final class TCFD_Profile {
         $v = ['school_name' => $in('school_name'), 'website' => $in('website', 'url'), 'ctec_number' => $in('ctec_number'),
               'contact_name' => $in('contact_name'), 'contact_email' => $in('contact_email', 'email'), 'contact_phone' => $in('contact_phone'),
               // school profile page fields (same names as the private profile form, so review and apply already handle them)
-              'about' => $in('about', 'textarea'), 'phone' => $in('phone'), 'support_email' => $in('support_email', 'email'), 'hours' => $in('hours')];
+              'intro' => $in('intro', 'textarea'), 'about' => $in('about', 'textarea'), 'phone' => $in('phone'), 'support_email' => $in('support_email', 'email'), 'hours' => $in('hours')];
         if ($v['school_name'] === '' || $v['contact_name'] === '' || !is_email($v['contact_email'])) {
             self::fail('Please fill in the school name, your name and a valid email address.');
         }
         if (empty($_POST['confirm'])) self::fail('Please confirm that you are authorized to submit these details.');
         $reporting = $in('reporting', 'choice:reporting');
+        $part = sanitize_key((string) ($_POST['part'] ?? '')) === 'profile' ? 'profile' : 'verify'; // short verify form, or the longer profile page form
         $courses = [];
         foreach (['ce', 'qe'] as $c) {
             $courses[$c] = ['offered' => !empty($_POST[$c . '_offered']), 'price' => $in($c . '_price'), 'regular' => $in($c . '_regular'),
@@ -369,10 +371,15 @@ final class TCFD_Profile {
                             }, [1, 2, 3]))),
                             'refund_window' => $in('refund_window'), 'refund_url' => $in('refund_url', 'url'), 'refund_conditions' => $in('refund_conditions', 'textarea')];
         }
-        if (!$courses['ce']['offered'] && !$courses['qe']['offered']) self::fail('Please choose at least one course you offer.');
+        if ($part === 'profile') { // no course checkboxes on this form: a course counts when its details are filled in
+            foreach (['ce', 'qe'] as $c) $courses[$c]['offered'] = $courses[$c]['options'] !== '' || $courses[$c]['attempts'] !== '';
+        } elseif (!$courses['ce']['offered'] && !$courses['qe']['offered']) self::fail('Please choose at least one course you offer.');
         $picked = array_map('sanitize_key', (array) wp_unslash($_POST['features'] ?? []));
-        $features = [];
-        foreach (self::listing_features() as $items) foreach ($items as $k => $l) $features[$k] = in_array($k, $picked, true);
+        $features = []; // only the feature groups this form asks about (support on the profile form, the rest on the verify form)
+        foreach (self::listing_features() as $group => $items) {
+            if (($group === 'Support') !== ($part === 'profile')) continue;
+            foreach ($items as $k => $l) $features[$k] = in_array($k, $picked, true);
+        }
         $offers = []; // one coupon per course
         foreach (['ce', 'qe'] as $c) {
             $exp = $in($c . '_coupon_expires');
@@ -381,13 +388,24 @@ final class TCFD_Profile {
         }
 
         $pid = self::match_provider($v['ctec_number'], $v['school_name']);
-        $sub = wp_insert_post(['post_type' => self::CPT, 'post_status' => 'draft', 'post_title' => $v['school_name'] . ' – listing form – ' . wp_date('M j, Y')], true);
+        $sub = wp_insert_post(['post_type' => self::CPT, 'post_status' => 'draft', 'post_title' => $v['school_name'] . ($part === 'profile' ? ' – profile page form – ' : ' – listing form – ') . wp_date('M j, Y')], true);
         if (is_wp_error($sub)) self::fail('Could not save your submission. Please try again.', 500);
         $sub = (int) $sub;
         $media = ['logo' => 0, 'screenshots' => []];
         if (!empty($_FILES['logo']['name'])) $media['logo'] = self::upload($_FILES['logo'], $sub, $v['school_name'] . ' logo');
+        if (!empty($_FILES['photo']['name'])) $media['photo'] = self::upload($_FILES['photo'], $sub, $v['school_name'] . ' school photo');
+        if (!empty($_FILES['screenshots']['name']) && is_array($_FILES['screenshots']['name'])) {
+            $n = 0;
+            foreach (array_keys($_FILES['screenshots']['name']) as $i) {
+                if ($n >= 3 || empty($_FILES['screenshots']['name'][$i])) continue;
+                $file = [];
+                foreach (['name', 'type', 'tmp_name', 'error', 'size'] as $k) $file[$k] = $_FILES['screenshots'][$k][$i];
+                $aid = self::upload($file, $sub, $v['school_name'] . ' CTEC course screenshot ' . (++$n));
+                if ($aid) $media['screenshots'][] = $aid;
+            }
+        }
 
-        $payload = ['kind' => 'listing', 'v' => $v, 'ce' => $courses['ce'], 'qe' => $courses['qe'], 'features' => $features, 'offers' => $offers];
+        $payload = ['kind' => 'listing', 'part' => $part, 'v' => $v, 'ce' => $courses['ce'], 'qe' => $courses['qe'], 'features' => $features, 'offers' => $offers];
         update_post_meta($sub, '_tcfd_payload', wp_slash(wp_json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)));
         update_post_meta($sub, '_tcfd_media', $media);
         update_post_meta($sub, '_tcfd_provider', $pid);
@@ -488,10 +506,11 @@ final class TCFD_Profile {
         }
         $media = (array) get_post_meta($sub, '_tcfd_media', true);
         if (!empty($media['logo'])) $add('m:provider_logo', 'School', 'Logo', $pid ? (int) TCFD_Store::raw($pid, 'provider_logo') : 0, (int) $media['logo'], 'image');
+        if (!empty($media['photo'])) $add('m:school_photo', 'School', 'School photo', $pid ? (int) TCFD_Store::raw($pid, 'school_photo') : 0, (int) $media['photo'], 'image');
         if (!empty($media['screenshots'])) $add('m:school_screenshots', 'School', 'Screenshots', $pid ? array_map('intval', (array) TCFD_Store::raw($pid, 'school_screenshots')) : [], array_map('intval', $media['screenshots']), 'images');
         foreach (['ce' => ['20-hour course', 'offers_20_hour_ce'], 'qe' => ['60-hour course', 'offers_60_hour_qe']] as $c => [$group, $flag]) {
             $in = $p[$c] ?? [];
-            $add('f:' . $c, $group, 'Offers this course', $pid ? (bool) TCFD_Store::raw($pid, $flag) : false, !empty($in['offered']), 'bool');
+            if (($p['part'] ?? '') !== 'profile') $add('f:' . $c, $group, 'Offers this course', $pid ? (bool) TCFD_Store::raw($pid, $flag) : false, !empty($in['offered']), 'bool');
             if (empty($in['offered'])) continue; // not offered: nothing else from this course is stored
             $add('c:' . $c . ':url', $group, 'Course page URL', $pid ? (string) TCFD_Store::raw($pid, $c . '_course_url') : '', $in['course_url'] ?? '', 'url');
             $price = self::money_from_text((string) ($in['price'] ?? ''));
@@ -659,9 +678,9 @@ final class TCFD_Profile {
         }
         if ($n && $listing) {
             TCFD_Store::set($pid, 'provider_data_last_checked', wp_date('Ymd'));
-            // verified through the listing form: the school's profile page goes live
-            TCFD_Store::set($pid, 'school_page_live', 1);
+            // verify form: the listing is verified; profile page form: the school's profile page goes live too
             TCFD_Store::set($pid, 'provider_verified', 1);
+            if (($p['part'] ?? '') === 'profile') TCFD_Store::set($pid, 'school_page_live', 1);
         }
         if ($n) {
             update_post_meta($sub, '_tcfd_applied', time());

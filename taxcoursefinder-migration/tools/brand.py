@@ -196,6 +196,8 @@ def structure(h):
         ctx = parent
         if parent == 'skip':
             pass
+        elif parent == 'dark' and tag == 'span' and st.startswith('width:28px;height:2px'):
+            ctx = 'skip'  # eyebrow dash disappears on dark bands; drop it so the label lines up
         elif parent == 'hero' and st.startswith('position:absolute;inset:0'):
             ctx = 'skip'  # photo, navy overlay and sheen behind the old hero
         else:
