@@ -182,6 +182,11 @@ add_action( 'wp_head', function () {
 	echo '<style id="dwdp-no-arcs">.dw-swoosh .elementor-heading-title::after,.dw-swoosh.elementor-widget-heading .elementor-heading-title::after,.dw-swoosh-c .elementor-heading-title::after,.dww-title::after{display:none!important;content:none!important}</style>' . "\n";
 }, 999 );
 
+// Phones: easier reading. Body text at a regular weight and at least 16px, thin heading halves a touch heavier, larger section and card headings.
+add_action( 'wp_head', function () {
+	echo '<style id="dwdp-mobile-read">@media(max-width:767px){body{font-weight:400}.elementor-widget-text-editor,.elementor-widget-text-editor p:not([style*="font-weight"]),.elementor-widget-html p:not([style*="font-weight"]),li,.dwt-note,.dwt-note span,.dw-wt p,.dw-review p,.dwdp-single p,.dwb-article,.dwb-article p,.dwb-card-ex,.dww-card,.elementor-tab-content,.elementor-tab-content p{font-weight:400!important}.elementor-widget-text-editor:not(.elementor-element-dw0001g),.elementor-widget-text-editor:not(.elementor-element-dw0001g) p:not([style*="font-size"]),.elementor-widget-html p:not([style*="font-size"]):not([class*="eyebrow"]):not([class*="-k"]),.elementor-widget-html li,.dwt-card>p,.dwt-note,.elementor-tab-content p{font-size:16px!important;line-height:1.65!important}span[style*="font-weight:200"],.elementor-element-dw00002 .elementor-heading-title{font-weight:300!important}.elementor-widget-heading h2.elementor-heading-title{font-size:29px!important}.elementor-widget-heading h3.elementor-heading-title,.dwt-card h3,.elementor-widget-html h3{font-size:20px!important}}</style>' . "\n";
+}, 1000 );
+
 // Homepage quote: 34px on wide screens; a little smaller on small laptops so it stays on two lines.
 add_action( 'wp_head', function () {
 	echo '<style id="dwdp-quote">@media(min-width:1025px) and (max-width:1279px){.elementor-element-dw0001g,.elementor-element-dw0001g p:first-child{font-size:30px!important}}</style>' . "\n";
