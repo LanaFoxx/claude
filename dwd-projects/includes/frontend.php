@@ -192,8 +192,8 @@ add_action( 'wp_footer', function () {
 	?>
 <script>(function(){var mq=matchMedia('(max-width:767px)');
 function fit(){var hs=document.querySelectorAll('.elementor-heading-title,.dww-title,.dwdp-cta-title,.elementor-widget-html h2');
-hs.forEach(function(h){h.style.fontSize='';h.querySelectorAll('span').forEach(function(s){s.style.fontSize='';});
-var parts=h.querySelectorAll(':scope>span');if(!parts.length)return;var w=h.clientWidth;if(!w)return;var k=1;parts.forEach(function(s){s.style.display='inline-block';var sw=s.scrollWidth;if(sw>w)k=Math.min(k,w/sw);s.style.display='';});if(k<1){var fs=parseFloat(getComputedStyle(parts[0]).fontSize);var n=Math.max(14,Math.floor(fs*k*10)/10)+'px';parts.forEach(function(s){s.style.fontSize=n;});}});}
+hs.forEach(function(h){h.style.removeProperty('font-size');h.querySelectorAll('span').forEach(function(s){s.style.fontSize='';});
+var parts=h.querySelectorAll(':scope>span');if(!parts.length)return;var w=h.clientWidth;if(!w)return;var k=1;parts.forEach(function(s){s.style.display='inline-block';var sw=s.scrollWidth;if(sw>w)k=Math.min(k,w/sw);s.style.display='';});if(k<1){var fs=parseFloat(getComputedStyle(h).fontSize);h.style.setProperty('font-size',Math.max(14,Math.floor(fs*k*10)/10)+'px','important');}});}
 var t;function later(){clearTimeout(t);t=setTimeout(fit,80);}
 fit();if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fit);addEventListener('resize',later);addEventListener('load',fit);})();</script>
 	<?php
@@ -207,7 +207,7 @@ add_action( 'wp_head', function () {
 // Even line lengths: centered text is balanced (lines of similar length instead of long-short-long),
 // other paragraphs avoid a lone word on the last line. Headings are balanced everywhere.
 add_action( 'wp_head', function () {
-	echo '<style id="dwdp-wrap">.elementor-heading-title span,.elementor-widget-html h2>span,.dwdp-cta-title>span,.dww-title>span{white-space:nowrap}.dw-host-top>div{min-width:0;max-width:100%}.dw-host h2{max-width:100%!important;overflow:visible}p,li,.elementor-widget-text-editor{text-wrap:pretty}h1,h2,h3,h4,.elementor-heading-title,.dw-wrap-balance,.dw-wrap-balance p{text-wrap:balance}'
+	echo '<style id="dwdp-wrap">.elementor-heading-title>span[style*="color"],.elementor-widget-html h2>span[style*="color"],.dwdp-cta-title>span[style*="color"],.dww-title>span[style*="color"]{font-size:1.08em}.elementor-heading-title span,.elementor-widget-html h2>span,.dwdp-cta-title>span,.dww-title>span{white-space:nowrap}.dw-host-top>div{min-width:0;max-width:100%}.dw-host h2{max-width:100%!important;overflow:visible}p,li,.elementor-widget-text-editor{text-wrap:pretty}h1,h2,h3,h4,.elementor-heading-title,.dw-wrap-balance,.dw-wrap-balance p{text-wrap:balance}'
 		. '@media(max-width:767px){.elementor-element-dw0001g br{display:none}}</style>' . "\n";
 }, 99 );
 add_action( 'wp_footer', function () {
