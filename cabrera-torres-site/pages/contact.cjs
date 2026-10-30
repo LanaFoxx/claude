@@ -38,5 +38,6 @@ module.exports = {
         ], { gap: 28 }),
       ], { cols: ['minmax(0,1fr) minmax(0,1.2fr)', 1, 1], gap: 60, rowGap: 48, align: 'start' }),
     ], { pad: [96, 104], width: 1320 }),
+    P.ctaBand(),
   ],
 };
