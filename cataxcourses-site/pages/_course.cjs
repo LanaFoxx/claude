@@ -83,6 +83,8 @@ function hero(m, d) {
     grid([
       stack([
         pill(d.pill, videoFirst ? { settings: { hide_mobile: 'hidden-mobile' } } : {}),
+        // phones, image-hero pages: enroll button above the title (video pages put it under the laptop instead)
+        ...(!videoFirst ? [enrollBtn(d.heroCta, { align: 'justify', settings: { ...mobileOnly, _margin: box(18, 0, 0, 0) } })] : []),
         heading(d.h1, 'h1', [64, 52, 38], C.navy, 'left', { lh: 1.05, settings: { _margin: box(18, 0, 0, 0) } }),
         ...d.intro.map(para),
         row([
@@ -94,6 +96,8 @@ function hero(m, d) {
         ...(videoFirst ? [pill(d.pill, { settings: { ...mobileOnly, _margin_mobile: box(0, 0, 18, 0) } })] : []),
         heroMedia(m, d),
         text(d.caption, { align: 'center', size: [15, 15, 14], lh: 1.6, settings: { _margin: box(18, 0, 0, 0) } }),
+        // phones: enroll button above the fold (the hero's own button sits below the title + intro)
+        ...(videoFirst ? [enrollBtn(d.heroCta, { align: 'justify', settings: { ...mobileOnly, _margin: box(22, 0, 0, 0) } })] : []),
       ], { settings: { _z_index: 1, ...(videoFirst ? { _flex_order_mobile: 'start' } : {}) } }),
     ], { cols: [2, 1, 1], gap: 56, gapM: 40, align: 'center', settings: { _z_index: 1 } }),
   ], { pad: [88, 96], cls: 'ctc-dots-cream' });

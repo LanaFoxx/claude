@@ -17,6 +17,8 @@ function mugPage({ slug, title, liveId, name, orderUrl, images }) {
   })]);
   const details = stack([
     pill('Coffee Mug'),
+    // phones: Order Now above the title so it shows near the top
+    button('Order Now →', orderUrl, { align: 'justify', size: [22, 21, 19], pad: box(18, 32, 18, 32), settings: { hide_desktop: 'hidden-desktop', hide_tablet: 'hidden-tablet', _margin: box(18, 0, 0, 0) } }),
     heading(`${name}<span class="ctc-gold">.</span>`, 'h1', [56, 48, 38], C.navy, 'left', { lh: 1.05, settings: { _margin: box(18, 0, 0, 0) } }),
     widget('heading', { title: '<span class="ctc-thin ctc-gold">$</span>30.00', header_size: 'span', title_color: C.navy, ...typo('typography', HEAD, [56, 52, 46], 800, { lh: 1, ls: 0 }), _margin: box(22, 0, 0, 0) }),
     text('For those Tax Professionals that thrive on a delicious cup of coffee to get them through their day, here’s a special cup for you.', { size: [19, 18, 17], settings: { _margin: box(20, 0, 0, 0) } }),
