@@ -328,3 +328,21 @@
     if (t) { var h = document.querySelector('.tcf-header'); if (h) { var open = h.classList.toggle('tcf-menu-open'); t.setAttribute('aria-expanded', open ? 'true' : 'false'); } }
   });
 })();
+
+// School profiles: the price card floats over the coral section menu while the menu scrolls up into place,
+// and slides under it once the menu is stuck (e.g. when the card leaves at the bottom of the page).
+(function () {
+  var raf = 0;
+  function update() {
+    raf = 0;
+    var bar = document.querySelector('.tcfd-subnav-bar'), wrap = document.querySelector('.tcfd-card-wrap');
+    if (!bar || !wrap) return;
+    var head = document.querySelector('.tcf-header'), hb = head ? head.getBoundingClientRect().bottom : 0;
+    wrap.classList.toggle('tcfd-under-bar', bar.getBoundingClientRect().top <= hb + 1);
+  }
+  function onScroll() { if (!raf) raf = requestAnimationFrame(update); }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  document.addEventListener('DOMContentLoaded', update);
+  setTimeout(update, 600);
+})();

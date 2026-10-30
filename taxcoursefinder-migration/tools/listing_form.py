@@ -79,7 +79,7 @@ def form():
                     + field('Regular price ($)', c + '_regular', placeholder='If on sale', hint='Leave empty unless on sale.')
                     + '</div>' + field('Course page URL', c + '_url', 'url', placeholder='https://')
                     + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">'
-                    + field('Course access period', c + '_access_period', placeholder='e.g. 12 months') + field('Exam attempts', c + '_attempts', placeholder='e.g. Unlimited')
+                    + field('Course access period', c + '_access_period', placeholder='e.g. 12 months') + ('<label style="%s"><span>Unlimited exam attempts?</span><select name="%s_attempts" style="%s"><option value="">Select</option><option value="Unlimited">Yes</option><option value="Limited">No</option></select></label>' % (LABEL, c, INPUT))
                     + '</div></div>')
     out.append(card('courses', 3, 'Courses & prices', '<p style="%s">Tick each course you offer and add its price and the page where students enroll.</p>' % HINT + courses))
     n = 4

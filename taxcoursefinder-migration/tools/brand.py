@@ -64,6 +64,7 @@ THEMES = {
              '.tcfd-subnav{max-width:1312px!important}'
              '@media (max-width:760px){.tcfd-rep-head{white-space:normal!important;font-size:24px!important}}'
              # price card floats above the coral menu bar and sticks just below it
+             '.tcf-scope .tcfd-card-wrap.tcfd-under-bar{z-index:10!important}'
              '.tcf-scope .tcfd-card-wrap{z-index:30!important;pointer-events:none}.tcf-scope .tcfd-card-wrap .tcfd-card{pointer-events:auto}'  # wrapper never blocks clicks underneath
              '.tcf-scope .tcfd-card{top:calc(var(--tcf-head,110px) + 58px + 20px)!important}'
              'body.admin-bar .tcf-scope .tcfd-card{top:calc(var(--tcf-head,110px) + 32px + 58px + 20px)!important}'  # same left edge as the content column

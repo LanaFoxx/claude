@@ -78,7 +78,7 @@
         hasCoupon: !!dec.hasCoupon, coupon: dec.coupon, couponLabel: dec.couponLabel,
         formatShort: formatShort, supportShort: supportChannels.filter(function (c) { return c.status === 'Confirmed'; }).map(function (c) { return c.channel; }).join(' · ') || NC,
         materialsShort: [video && 'Video', book && 'Book'].filter(Boolean).join(' + ') || NC, reportingShort: rep ? rep[0] : NC, accessShort: or(C.access_period),
-        edition: or(C.edition), hours: (C.hours_breakdown && C.hours_breakdown.length) ? C.hours_breakdown : OFFICIAL[course], syllabus: or(C.syllabus),
+        edition: or(C.edition), hours: (C.hours_breakdown && C.hours_breakdown.length) ? C.hours_breakdown : OFFICIAL[course], syllabus: or(C.syllabus), attemptsKnown: has(C.attempts), unlimitedAttempts: /unlimited|^yes$/i.test(String(C.attempts || '')) ? 'Yes' : 'No',
         beginnerNote: C.beginner_friendly === 'yes' ? 'Beginner-friendly: written for people new to tax preparation.' : (C.beginner_friendly === 'no' ? 'Assumes prior tax preparation knowledge.' : ''),
         included: (C.included && C.included.length) ? C.included : [NC], extras: extras, refund: refund || NC, refundUrl: C.refund_url || p.website,
         formats: formats.filter(function (x) { return x.on; }), noFormats: !formats.some(function (x) { return x.on; }), pace: or(pace), access: access || NC, afterCompletion: has(C.after_completion) ? L.after[C.after_completion] + '.' : NC, liveSessions: or(C.live_sessions), accessibility: acc || NC,
