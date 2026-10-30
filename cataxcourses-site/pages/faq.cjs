@@ -53,9 +53,9 @@ function faqSection() {
   return band(C.navy, [
     grid([
       stack([
-        eyebrow('FAQ', C.gold, 'center'),
-        H2('<span class="ctc-thin">Frequently Asked</span> Questions', C.white, 'center', { settings: { _margin: box(12, 0, 18, 0) } }),
-        text(`Still have a question? Call <br><a href="${PHONE.tel}"><strong>${PHONE.label}</strong></a>, <br>Monday – Friday, 9am – 4pm PST.`, { align: 'center', color: C.muted, linkColor: C.gold, linkHover: C.goldHover, size: [20, 19, 18], lh: 1.6 }),
+        eyebrow('FAQ', C.gold, 'left', { settings: wcls('ctc-mc') }),
+        H2('<span class="ctc-thin">Frequently Asked</span> Questions', C.white, 'left', { cls: 'ctc-mc', settings: { _margin: box(12, 0, 18, 0) } }),
+        text(`Still have a question? Call <br><a href="${PHONE.tel}"><strong>${PHONE.label}</strong></a>, <br>Monday – Friday, 9am – 4pm PST.`, { cls: 'ctc-mc', color: C.muted, linkColor: C.gold, linkHover: C.goldHover, size: [20, 19, 18], lh: 1.6 }),
       ], { cls: 'ctc-sticky' }),
       widget('toggle', {
         tabs: FAQS.map(([q, ps]) => ({ _id: L.id(), tab_title: q, tab_content: ps.map((p) => `<p>${p}</p>`).join('') })),

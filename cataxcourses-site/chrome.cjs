@@ -47,6 +47,11 @@ body:has(.ctc-header){background:#fff;margin:0;color:${C.navy};font-family:${BOD
 .ctc-step-card{transition:transform .25s ease,box-shadow .25s ease}
 .ctc-step-card:hover{transform:translateY(-6px);box-shadow:0 18px 40px -18px rgba(27,34,51,.35)}
 @media (max-width:1024px){.ctc-steps::before{display:none}}
+/* ctc-mc: centered on phones only (section headers: eyebrow, title, the line/link/button under it) */
+@media (max-width:767px){.e-con.ctc-mc{flex-direction:column!important;align-items:center!important;justify-content:flex-start!important}
+.ctc-mc .elementor-heading-title,.ctc-mc.elementor-widget-text-editor,.ctc-mc .elementor-widget-text-editor{text-align:center!important}
+.elementor-widget.ctc-mc,.ctc-mc>.elementor-widget,.ctc-mc>.e-con{align-self:center}
+.elementor-widget-button.ctc-mc .elementor-button-wrapper{text-align:center!important;justify-content:center!important}}
 .ctc-dots-dark{background-image:radial-gradient(rgba(255,255,255,.07) 1px,transparent 1px)!important;background-size:22px 22px!important}
 .ctc-dots-white{background-image:radial-gradient(#d6d0bd 1.3px,transparent 1.3px)!important;background-size:22px 22px!important}
 .ctc-topbar .elementor-widget-text-editor p{white-space:nowrap}

@@ -173,9 +173,9 @@ function faq() {
   return band(C.navy, [
     grid([
       stack([
-        eyebrow('FAQ', C.gold, 'center'),
-        H2('<span class="ctc-thin">Frequently Asked</span> Questions', C.white, 'center', { settings: { _margin: box(12, 0, 18, 0) } }),
-        text(`Still have a question? Call <br><a href="${PHONE.tel}"><strong>${PHONE.label}</strong></a>, <br>Monday – Friday, 9am – 4pm PST.`, { align: 'center', color: C.muted, linkColor: C.gold, linkHover: C.goldHover, size: [20, 19, 18], lh: 1.6 }),
+        eyebrow('FAQ', C.gold, 'left', { settings: wcls('ctc-mc') }),
+        H2('<span class="ctc-thin">Frequently Asked</span> Questions', C.white, 'left', { cls: 'ctc-mc', settings: { _margin: box(12, 0, 18, 0) } }),
+        text(`Still have a question? Call <br><a href="${PHONE.tel}"><strong>${PHONE.label}</strong></a>, <br>Monday – Friday, 9am – 4pm PST.`, { cls: 'ctc-mc', color: C.muted, linkColor: C.gold, linkHover: C.goldHover, size: [20, 19, 18], lh: 1.6 }),
       ]),
       widget('toggle', {
         tabs: FAQS.map(([q, ps]) => ({ _id: L.id(), tab_title: q, tab_content: ps.map((p) => `<p>${p}</p>`).join('') })),
@@ -202,8 +202,8 @@ function newsletter() {
   return band(C.sand, [
     grid([
       stack([
-        eyebrow('Newsletter', C.goldText, 'center'),
-        H2('<span class="ctc-thin ctc-block">Coupon codes &amp;</span><span class="ctc-block">CTEC deadline reminders.</span>', C.navy, 'center', { lh: 1.05, settings: { _margin: box(12, 0, 16, 0) } }),
+        eyebrow('Newsletter', C.goldText, 'left', { settings: wcls('ctc-mc') }),
+        H2('<span class="ctc-thin ctc-block">Coupon codes &amp;</span><span class="ctc-block">CTEC deadline reminders.</span>', C.navy, 'left', { cls: 'ctc-mc', lh: 1.05, settings: { _margin: box(12, 0, 16, 0) } }),
         text('Join our email list and be the first to get discount codes on CTEC courses, plus reminders before every CTEC renewal deadline so you never miss October 31st.', { size: [20, 19, 18], maxW: 560 }),
         stack([perk('fas fa-tag', 'Exclusive coupon codes'), perk('fas fa-calendar-check', 'CTEC deadline reminders'), perk('fas fa-envelope-open-text', 'Tax law updates for preparers')], { gap: 12, settings: { margin: box(24, 0, 0, 0) } }),
       ]),

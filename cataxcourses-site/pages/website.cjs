@@ -104,12 +104,12 @@ function work(m) {
   return band(C.navy, [
     row([
       stack([
-        eyebrow('Our Work', C.gold, 'center'),
-        H2('<span class="ctc-thin">See the quality</span> for yourself.', C.white, 'center', { lh: 1.05, settings: { _margin: box(12, 0, 0, 0) } }),
-        text('Explore our website designs for tax professionals.', { align: 'center', color: C.muted, size: [19, 19, 18], settings: { _margin: box(14, 0, 0, 0) } }),
+        eyebrow('Our Work', C.gold),
+        H2('<span class="ctc-thin">See the quality</span> for yourself.', C.white, 'left', { lh: 1.05, settings: { _margin: box(12, 0, 0, 0) } }),
+        text('Explore our website designs for tax professionals.', { color: C.muted, size: [19, 19, 18], settings: { _margin: box(14, 0, 0, 0) } }),
       ], { settings: { width: auto, width_mobile: px(100, '%') } }),
-      heading('See More Websites →', 'span', [22, 22, 20], C.gold, 'center', { weight: 700, lh: 1.2, ls: 0, link: TPD, cls: 'ctc-link-gold' }),
-    ], { gap: 16, align: 'center', justify: 'center', settings: { flex_direction: 'column', margin: box(0, 0, 44, 0), margin_mobile: box(0, 0, 32, 0) } }),
+      heading('See More Websites →', 'span', [22, 22, 20], C.gold, 'left', { weight: 700, lh: 1.2, ls: 0, link: TPD, cls: 'ctc-link-gold' }),
+    ], { gap: 24, align: 'flex-end', justify: 'space-between', cls: 'ctc-mc', settings: { margin: box(0, 0, 44, 0), margin_mobile: box(0, 0, 32, 0) } }),
     grid(WORK.map(card), { cols: [3, 2, 1], gap: 24 }),
   ], { cls: 'ctc-dots-dark' });
 }
@@ -138,9 +138,9 @@ function how() {
   ], { gap: 22, settings: { min_width: px(0) } });
   return band(C.sand, [
     stack([
-      eyebrow('How it works', C.goldText, 'center'),
-      H2('<span class="ctc-thin ctc-block">We make getting a</span><span class="ctc-block">great website easy.</span>', C.navy, 'center', { lh: 1.05, settings: { _margin: box(12, 0, 0, 0) } }),
-    ], { settings: { margin: box(0, 0, 44, 0), margin_mobile: box(0, 0, 32, 0) } }),
+      eyebrow('How it works', C.goldText),
+      H2('<span class="ctc-thin ctc-block">We make getting a</span><span class="ctc-block">great website easy.</span>', C.navy, 'left', { lh: 1.05, settings: { _margin: box(12, 0, 0, 0) } }),
+    ], { maxW: 820, cls: 'ctc-mc', settings: { margin: box(0, 0, 44, 0), margin_mobile: box(0, 0, 32, 0) } }),
     grid(STEPS.map(step), { cols: [4, 2, 1], gap: 24, rowGap: 40, cls: 'ctc-steps' }),
   ]);
 }
