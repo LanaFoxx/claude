@@ -1,0 +1,12 @@
+import { chromium } from '/opt/node-tools/node_modules/playwright/index.mjs';
+import fs from 'fs';
+const S = process.argv[2], slug = process.argv[3], url = process.argv[4];
+const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', proxy: { server: process.env.HTTPS_PROXY } });
+const ctx = await b.newContext({ viewport: { width: 1440, height: 900 } });
+if (slug !== 'live') await ctx.route(u => u.href.includes('?pv='), r => r.fulfill({ status: 200, contentType: 'text/html; charset=utf-8', body: fs.readFileSync(`${S}/pv/${slug}.html`, 'utf8') }));
+const p = await ctx.newPage(); await p.goto('https://taxcoursefinder.com' + url + '?pv=1', { waitUntil: 'networkidle' });
+await p.evaluate(() => window.scrollTo(0, 1800)); await p.waitForTimeout(600);
+const r = await p.evaluate(() => { const nav = [...document.querySelectorAll(".tcf-root [style*=\"position:sticky\"]")].find(e => e.offsetParent && !e.closest(".tcf-header")); const h = document.querySelector('.tcf-header').getBoundingClientRect(); return { headerBottom: Math.round(h.bottom), navTop: nav ? Math.round(nav.getBoundingClientRect().top) : null }; });
+console.log(slug, JSON.stringify(r), 'gap', r.navTop - r.headerBottom);
+await p.screenshot({ path: `${S}/shots/sticky-${slug}.png`, clip: { x: 0, y: 0, width: 1440, height: 450 } });
+await b.close();

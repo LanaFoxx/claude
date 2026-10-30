@@ -18,7 +18,7 @@ REPORTING = [('same_day', 'Same day'), ('24h', 'Within 24 hours'), ('next_day', 
 SECTIONS = [('school', 'School & contact'), ('courses', 'Courses & prices'), ('features', 'Format & materials'), ('support', 'Student support'),
             ('reporting', 'Reporting to CTEC'), ('coupon', 'Current coupon'), ('logo', 'Logo'), ('confirm', 'Confirm & submit')]
 
-CARD = 'background:#fff;border:1px solid #D7DFE2;border-radius:16px;padding:36px;display:flex;flex-direction:column;gap:22px;scroll-margin-top:134px;box-shadow:0 2px 8px rgba(11,46,64,.06)'
+CARD = 'background:#fff;border:1px solid #D7DFE2;border-radius:16px;padding:36px;display:flex;flex-direction:column;gap:22px;scroll-margin-top:calc(var(--tcf-head,108px) + 50px);box-shadow:0 2px 8px rgba(11,46,64,.06)'
 LABEL = 'display:flex;flex-direction:column;gap:6px;font:700 19px Manrope,sans-serif'
 INPUT = 'height:44px;border:1px solid #D7DFE2;border-radius:8px;padding:0 14px;font-size:20px;color:#0B2E40;background:#fff'
 HINT = 'margin:0;font-size:19px;line-height:1.5;color:#5A6E78'

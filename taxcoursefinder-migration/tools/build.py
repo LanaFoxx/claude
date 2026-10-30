@@ -99,6 +99,9 @@ def comparison_table(body):
     return body[:i] + table + body[end:]
 
 def seo_tweaks(name, body):
+    # sticky side menus sit 50px below the sticky header; section jumps land at the same spot
+    body = re.sub(r'position:sticky;top:1[35][04]px', 'position:sticky;top:calc(var(--tcf-head,108px) + 50px)', body)
+    body = body.replace('scroll-margin-top:134px', 'scroll-margin-top:calc(var(--tcf-head,108px) + 50px)')
     body = comparison_table(body)
     body = (body.replace('CTEC renewal deadline · Oct 31', '{{ cdTitle }} · {{ cdShort }}')
                 .replace('CTEC renewal deadline: October 31, 2026', '{{ cdTitle }}: {{ cdLong }}')
