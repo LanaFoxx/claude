@@ -61,7 +61,11 @@ THEMES = {
              # full-height faint white dividers between the menu items
              '.tcfd-subnav{gap:0!important;align-items:stretch!important}.tcfd-subnav a{display:flex!important;align-items:center;border-radius:0!important;padding:0 20px!important}'
              '.tcfd-subnav a+a{border-left:1px solid rgba(255,255,255,.35)}'
-             '.tcfd-subnav{max-width:1312px!important}'  # same left edge as the content column
+             '.tcfd-subnav{max-width:1312px!important}'
+             # price card floats above the coral menu bar and sticks just below it
+             '.tcf-scope .tcfd-card-wrap{z-index:30!important}'
+             '.tcf-scope .tcfd-card{top:calc(var(--tcf-head,110px) + 58px + 20px)!important}'
+             'body.admin-bar .tcf-scope .tcfd-card{top:calc(var(--tcf-head,110px) + 32px + 58px + 20px)!important}'  # same left edge as the content column
              '.tcfd-subnav>a:first-of-type,.tcfd-subnav>:first-child a{padding-left:0!important}.tcfd-subnav>a:first-of-type:hover{background:none!important;text-decoration:underline}'  # first item lines up with the content below
              '@media (max-width:760px){.tcfd-subnav a{padding:0 14px!important}}'
              '@media (max-width:760px){.tcfd-subnav{overflow-x:auto;padding:0 10px!important;height:50px!important;white-space:nowrap;scrollbar-width:none;-webkit-overflow-scrolling:touch}'
