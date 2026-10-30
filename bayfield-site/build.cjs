@@ -403,7 +403,7 @@ function home(m) {
         selected_button_icon: fa('fas fa-arrow-right'), button_icon_align: 'row-reverse', button_icon_indent: px(10),
         submit_actions: ['redirect'],
         // Fallback only: the "Bayfield interactions" snippet sends the search to eviivo with the
-        // parameter names and mm-dd-yyyy dates of eviivo's own search widget.
+        // parameter names and yyyy-mm-dd dates of eviivo's official Search Box widget.
         redirect_to: `${EXT.book}&startdate=[field id="checkin"]&enddate=[field id="checkout"]&adults1=[field id="adults"]&children1=[field id="children"]`,
         column_gap: px(0), row_gap: px(0), label_spacing: px(6),
         label_color: 'rgba(245,242,236,0.65)', ...typo('label_typography', SANS, 10.5, 500, { lh: 1.2, ls: 2.1, transform: 'uppercase' }),
@@ -625,15 +625,23 @@ const interactionsJs = `<script>
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
-  // Booking bar -> eviivo (parameter names and mm-dd-yyyy dates from eviivo's search widget).
+  // Booking bar -> eviivo. Parameter names and yyyy-mm-dd dates follow eviivo's official
+  // Search Box widget (startdate, enddate, adults1, children1).
   var BOOK = '${EXT.book}';
   function bookingForms() { return document.querySelectorAll('form[name="Check availability"]'); }
   function field(f, id) { return f.querySelector('[name="form_fields[' + id + ']"]'); }
   function iso(d) { return d.toISOString().slice(0, 10); }
-  function mdy(v) { var p = (v || '').split('-'); return p.length === 3 ? p[1] + '-' + p[2] + '-' + p[0] : ''; }
   bookingForms().forEach(function (f) {
     var a = field(f, 'checkin'), b = field(f, 'checkout'); if (!a || !b) return;
     var today = new Date(); a.min = iso(today);
+    var note = f.closest('.e-con') && f.closest('.e-con').querySelector('.elementor-widget-text-editor p');
+    function nights() {
+      if (!note) return;
+      var n = a.value && b.value ? Math.round((new Date(b.value) - new Date(a.value)) / 864e5) : 0;
+      note.textContent = n > 0 ? n + (n === 1 ? ' night' : ' nights') + ' · Best rate guaranteed' : 'Best rate guaranteed';
+    }
+    b.addEventListener('change', nights);
+    a.addEventListener('change', function () { setTimeout(nights, 0); });
     function sync() { if (!a.value) return; var n = new Date(a.value + 'T12:00:00'); n.setDate(n.getDate() + 1); b.min = iso(n); if (b.value && b.value <= a.value) b.value = iso(n); }
     a.addEventListener('change', sync);
   });
@@ -643,7 +651,7 @@ const interactionsJs = `<script>
     var a = field(f, 'checkin'), b = field(f, 'checkout');
     if (!a.value) { a.focus(); a.reportValidity && a.reportValidity(); return; }
     if (!b.value || b.value <= a.value) { b.setCustomValidity('Choose a check-out date after check-in.'); b.reportValidity(); b.setCustomValidity(''); return; }
-    var q = 'startdate=' + mdy(a.value) + '&enddate=' + mdy(b.value) + '&adults1=' + (field(f, 'adults') || {}).value + '&children1=' + ((field(f, 'children') || {}).value || '0');
+    var q = 'startdate=' + a.value + '&enddate=' + b.value + '&adults1=' + (field(f, 'adults') || {}).value + '&children1=' + ((field(f, 'children') || {}).value || '0');
     window.location.href = BOOK + (BOOK.indexOf('?') > -1 ? '&' : '?') + q;
   }, true);
 
