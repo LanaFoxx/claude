@@ -78,6 +78,11 @@ function dwdp_box_capture( $post ) {
 			<input type="url" id="dwdp-url" name="dwdp[url]" value="<?php echo esc_attr( $url ); ?>" placeholder="https://clientwebsite.com" class="regular-text">
 			<button type="button" class="button button-primary button-hero" id="dwdp-capture">Capture screenshots</button>
 		</div>
+		<p class="dwdp-video-field" style="margin:14px 0 6px">
+			<label for="dwdp-video"><strong>Video walkthrough</strong></label><br>
+			<input type="url" id="dwdp-video" name="dwdp[video]" value="<?php echo esc_attr( dwdp_get( $post->ID, 'video' ) ); ?>" placeholder="https://www.loom.com/share/..." class="regular-text">
+			<span class="description">Loom or YouTube link. It plays at the top of the project page.</span>
+		</p>
 		<p class="description">Paste the live site address and click <em>Capture screenshots</em>. The plugin takes a full-page desktop screenshot and a phone screenshot, then finds each section of the page. It takes about a minute.</p>
 		<ol class="dwdp-progress" id="dwdp-progress" hidden></ol>
 	</div>
@@ -170,6 +175,9 @@ add_action( 'save_post_' . DWDP_CPT, function ( $post_id ) {
 	if ( isset( $in['url'] ) ) {
 		update_post_meta( $post_id, '_dwdp_url', esc_url_raw( $in['url'] ) );
 	}
+	if ( isset( $in['video'] ) ) {
+		update_post_meta( $post_id, '_dwdp_video', esc_url_raw( $in['video'] ) );
+	}
 	foreach ( array( 'on_home', 'pinned' ) as $k ) {
 		if ( isset( $in[ $k ] ) ) {
 			update_post_meta( $post_id, '_dwdp_' . $k, '1' === (string) $in[ $k ] ? '1' : '0' );
@@ -212,6 +220,9 @@ add_action( 'wp_ajax_dwdp_set_fields', function () {
 	}
 	if ( isset( $in['url'] ) ) {
 		update_post_meta( $post_id, '_dwdp_url', esc_url_raw( $in['url'] ) );
+	}
+	if ( isset( $in['video'] ) ) {
+		update_post_meta( $post_id, '_dwdp_video', esc_url_raw( $in['video'] ) );
 	}
 	foreach ( array( 'on_home', 'pinned' ) as $k ) {
 		if ( isset( $in[ $k ] ) ) {

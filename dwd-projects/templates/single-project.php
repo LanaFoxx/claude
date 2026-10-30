@@ -19,6 +19,7 @@ while ( have_posts() ) :
 	$by       = dwdp_get( $id, 'review_by' );
 	$sections = dwdp_ids( dwdp_get( $id, 'sections' ) );
 	$mockup   = absint( dwdp_get( $id, 'mockup' ) );
+	$video    = dwdp_video_embed( dwdp_get( $id, 'video' ) );
 	$notes    = array(
 		'Platform'   => dwdp_get( $id, 'platform' ),
 		'Scope'      => dwdp_get( $id, 'scope' ),
@@ -56,6 +57,12 @@ while ( have_posts() ) :
 					<a class="dwdp-btn" href="<?php echo esc_url( home_url( dwdp_setting( 'portfolio_url' ) ) ); ?>">&larr; Back to portfolio</a>
 				</div>
 				<div class="dwdp-right">
+					<?php if ( $video ) : ?>
+						<div class="dw-video">
+							<span class="dw-video-k">Video walkthrough</span>
+							<div class="dw-video-frame"><iframe src="<?php echo esc_url( $video ); ?>" title="<?php echo esc_attr( $name . ' website walkthrough' ); ?>" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>
+						</div>
+					<?php endif; ?>
 					<?php foreach ( $sections as $n => $img ) : ?>
 						<div class="dw-shot"><?php echo dwdp_img( $img, sprintf( '%s website design, section %d', $name, $n + 1 ), array( 'loading' => $n ? 'lazy' : 'eager' ) ); ?></div>
 					<?php endforeach; ?>

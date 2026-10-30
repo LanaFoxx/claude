@@ -43,6 +43,7 @@ function dwdp_base_slug() {
 function dwdp_fields() {
 	return array(
 		'url'        => '',
+		'video'      => '', // Loom or YouTube link for the walkthrough video
 		'industry'   => '',
 		'summary'    => '',
 		'together'   => '',
@@ -146,4 +147,21 @@ function dwdp_two_tone( $title, $color = '#4BA3DC', $tail = 0 ) {
 	$head = array_slice( $words, 0, count( $words ) - $tail );
 	$rest = array_slice( $words, count( $words ) - $tail );
 	return '<span style="font-weight:200">' . esc_html( implode( ' ', $head ) ) . '</span> <span style="font-weight:900;color:' . esc_attr( $color ) . '">' . esc_html( implode( ' ', $rest ) ) . '</span>';
+}
+
+/**
+ * Embed address for a walkthrough video link (Loom, YouTube or Vimeo), or '' if it isn't one of those.
+ */
+function dwdp_video_embed( $url ) {
+	$url = trim( (string) $url );
+	if ( preg_match( '~loom\.com/(?:share|embed)/([a-f0-9]{20,})~i', $url, $m ) ) {
+		return 'https://www.loom.com/embed/' . $m[1] . '?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true';
+	}
+	if ( preg_match( '~(?:youtube\.com/(?:watch\?(?:.*&)?v=|embed/|shorts/)|youtu\.be/)([\w-]{11})~i', $url, $m ) ) {
+		return 'https://www.youtube-nocookie.com/embed/' . $m[1] . '?rel=0';
+	}
+	if ( preg_match( '~vimeo\.com/(?:video/)?(\d+)~i', $url, $m ) ) {
+		return 'https://player.vimeo.com/video/' . $m[1];
+	}
+	return '';
 }
