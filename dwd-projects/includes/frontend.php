@@ -215,7 +215,7 @@ add_action( 'wp_footer', function () {
 // Even line lengths: centered text is balanced (lines of similar length instead of long-short-long),
 // other paragraphs avoid a lone word on the last line. Headings are balanced everywhere.
 add_action( 'wp_head', function () {
-	echo '<style id="dwdp-wrap">.elementor-heading-title>span[style*="color"],.elementor-widget-html h2>span[style*="color"],.dwdp-cta-title>span[style*="color"],.dww-title>span[style*="color"]{font-size:1.08em}.elementor-heading-title span,.elementor-widget-html h2>span,.dwdp-cta-title>span,.dww-title>span{white-space:nowrap}.dw-host-top>div{min-width:0;max-width:100%}.dw-host h2{max-width:100%!important;overflow:visible}p,li,.elementor-widget-text-editor{text-wrap:pretty}h1,h2,h3,h4,.elementor-heading-title,.dw-wrap-balance,.dw-wrap-balance p{text-wrap:balance}'
+	echo '<style id="dwdp-wrap">.dwdp-cta-text{max-width:640px;margin-left:auto!important;margin-right:auto!important}.elementor-heading-title>span[style*="color"],.elementor-widget-html h2>span[style*="color"],.dwdp-cta-title>span[style*="color"],.dww-title>span[style*="color"]{font-size:1.08em}.elementor-heading-title span,.elementor-widget-html h2>span,.dwdp-cta-title>span,.dww-title>span{white-space:nowrap}.dw-host-top>div{min-width:0;max-width:100%}.dw-host h2{max-width:100%!important;overflow:visible}p,li,.elementor-widget-text-editor{text-wrap:pretty}h1,h2,h3,h4,.elementor-heading-title,.dw-wrap-balance,.dw-wrap-balance p{text-wrap:balance}'
 		. '@media(max-width:767px){.elementor-element-dw0001g br{display:none}}</style>' . "\n";
 }, 99 );
 add_action( 'wp_footer', function () {
@@ -473,7 +473,7 @@ function dwdp_cta_html( $context = '' ) {
 	?>
 	<section class="dwdp-cta dw-dots-dark dw-glow">
 		<div class="dwdp-cta-inner">
-			<h2 class="dwdp-cta-title"><?php echo dwdp_two_tone( $s['cta_title'], '#4BA3DC', 3 ); // phpcs:ignore WordPress.Security.EscapeOutput ?></h2>
+			<h2 class="dwdp-cta-title"><?php echo dwdp_two_tone( $s['cta_title'], '#4BA3DC', 3, true ); // phpcs:ignore WordPress.Security.EscapeOutput ?></h2>
 			<p class="dwdp-cta-text"><?php echo esc_html( $s['cta_text'] ); ?></p>
 			<div class="dwdp-cta-row">
 				<a class="dwdp-btn" href="<?php echo esc_url( $s['cta_url'] ); ?>" target="_blank" rel="noopener"><?php echo esc_html( $s['cta_button'] ); ?></a>
