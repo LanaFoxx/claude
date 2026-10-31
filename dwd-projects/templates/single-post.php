@@ -195,7 +195,8 @@ while ( have_posts() ) :
 			<section class="dwbp-toc">
 				<div class="dwbp-in">
 					<div class="dwbp-eyebrow">In this guide</div>
-					<div class="dwbp-toc-grid">
+					<?php $n = count( $sections ); $cols = ( 0 === $n % 3 ) ? 3 : ( 0 === $n % 2 ? 2 : 3 ); ?>
+					<div class="dwbp-toc-grid cols-<?php echo (int) $cols; ?>">
 						<?php foreach ( $sections as $i => $s ) : ?>
 							<a href="#part-<?php echo (int) ( $i + 1 ); ?>"><b><?php echo esc_html( sprintf( '%02d', $i + 1 ) ); ?></b><span><?php echo esc_html( preg_replace( '/^\d+[\.\)]\s*/', '', $s['title'] ) ); ?></span></a>
 						<?php endforeach; ?>

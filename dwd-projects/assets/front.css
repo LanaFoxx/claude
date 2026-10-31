@@ -345,3 +345,12 @@
 .dwbp-toc-grid b{flex:none;width:26px}
 .dwbp-intro{max-width:none;margin:36px 0 0;text-align:left}
 .dwbp-intro p{text-align:left}
+/* "In this guide": compact panel, three columns, light tint and border */
+.dwbp-toc{padding:48px 0 0}
+.dwbp-toc .dwbp-eyebrow{margin:0 0 10px}
+.dwbp-toc-grid{background:#F4F9FE;border:1px solid #DCEAF6;border-radius:14px;padding:18px 26px;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:32px;row-gap:2px;border-top:1px solid #DCEAF6}
+.dwbp-toc-grid a{border:0;padding:7px 0;font-size:16px}
+.dwbp-intro{margin-top:28px}
+@media(max-width:1024px){.dwbp-toc-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:767px){.dwbp-toc-grid{grid-template-columns:1fr;padding:14px 18px}}
+@media(min-width:1025px){.dwbp-toc-grid.cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}}
