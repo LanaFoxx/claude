@@ -207,6 +207,7 @@ final class TCFD_School {
              . '.tcf-p-school .tcfd-idrow{flex-direction:column!important;align-items:flex-start!important;gap:14px!important}'
              . '.tcf-p-school .tcfd-idrow>div:first-child{width:72px!important;height:72px!important;border-radius:14px!important}'
              . '.tcf-p-school .tcfd-idrow h1{font-size:34px!important;line-height:1.08!important}'
+             . '.tcf-p-school .tcfd-aboutbox{padding:18px!important}'
              // coral section bar: smaller items in one row that fits the screen
              // each tab fills its whole cell (edge to edge, full height), so the active highlight lines up with the dividers
              . '.tcf-p-school .tcfd-subnav{height:48px!important;gap:0!important;justify-content:stretch!important;align-items:stretch!important;padding:0!important;font-size:13px!important}'
