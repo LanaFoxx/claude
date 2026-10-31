@@ -1,0 +1,10 @@
+import { chromium } from '/opt/node-tools/node_modules/playwright/index.mjs';
+import fs from 'fs';
+const S = process.argv[2];
+const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', proxy: { server: process.env.HTTPS_PROXY } });
+const ctx = await b.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+await ctx.route(u => u.href.includes('?pv='), r => r.fulfill({ status: 200, contentType: 'text/html; charset=utf-8', body: fs.readFileSync(`${S}/pv/faqs.html`, 'utf8') }));
+const p = await ctx.newPage(); await p.goto('https://taxcoursefinder.com/faqs/?pv=1', { waitUntil: 'networkidle' });
+await p.evaluate(() => scrollTo(0, 900)); await p.waitForTimeout(300);
+console.log(await p.evaluate(() => { const out = []; let e = document.querySelector('.tcf-header nav.tcf-nav'); while (e && e !== document.documentElement) { const c = getComputedStyle(e); if (c.position !== 'static' || c.transform !== 'none' || c.filter !== 'none' || c.backdropFilter !== 'none' || c.contain !== 'none') out.push(e.tagName + '.' + String(e.className).slice(0, 40) + ' pos=' + c.position + ' tf=' + c.transform + ' bf=' + c.backdropFilter + ' top=' + Math.round(e.getBoundingClientRect().top)); e = e.parentElement; } return out; }));
+await b.close();

@@ -355,7 +355,12 @@
   // Mobile header menu
   document.addEventListener('click', function (e) {
     var t = e.target.closest && e.target.closest('[data-tcf-menu-toggle]');
-    if (t) { var h = document.querySelector('.tcf-header'); if (h) { var open = h.classList.toggle('tcf-menu-open'); t.setAttribute('aria-expanded', open ? 'true' : 'false'); } }
+    if (t) { var h = document.querySelector('.tcf-header'); if (h) { var open = h.classList.toggle('tcf-menu-open'); t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      document.documentElement.style.setProperty('--tcf-mm-top', Math.round(h.getBoundingClientRect().bottom) + 'px'); } } // full-screen menu starts under the header
+    // Following a link from the open phone menu closes it (same-page links like /#find-schools do not reload).
+    var ml = e.target.closest && e.target.closest('.tcf-header.tcf-menu-open nav.tcf-nav a[href]');
+    if (ml) { var hh = document.querySelector('.tcf-header'); hh.classList.remove('tcf-menu-open');
+      var bt = hh.querySelector('[data-tcf-menu-toggle]'); if (bt) bt.setAttribute('aria-expanded', 'false'); }
     // Phone menu: each dropdown starts collapsed; tapping its heading opens or closes it.
     var dh = e.target.closest && e.target.closest('.tcf-header.tcf-menu-open .dd > div:first-child');
     if (dh) { var dd = dh.parentNode, on = dd.classList.toggle('tcf-dd-open'); dh.setAttribute('aria-expanded', on ? 'true' : 'false'); if (!on && document.activeElement && dd.contains(document.activeElement)) document.activeElement.blur(); }

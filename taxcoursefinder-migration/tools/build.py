@@ -358,6 +358,15 @@ def seo_tweaks(name, body):
     # Home countdown: after Oct 31 (California time) it counts to Jan 15 and says that is the final deadline before the registration lapses.
     body, n = re.subn(r'(<h2[^>]*>\{\{ cdTitle \}\}: <span[^>]*>\{\{ cdLong \}\}</span></h2>)',
                       lambda m: m.group(1) + '<sc-if value="{{ cdLate }}" hint-placeholder-val="{{ false }}"><p style="margin:0 auto;max-width:760px;font-size:20px;line-height:1.6;color:rgba(255,255,255,.85);text-align:center;text-wrap:balance">{{ cdNote }}</p></sc-if>', body)
+    if name == 'mobile':  # phone filter panel: above the sticky header (its close button was hidden), pill buttons, compact chips
+        for x, y, n in [('top:0;bottom:0;background:#fff;z-index:61;display:flex;flex-direction:column', 'top:0;bottom:0;background:#fff;z-index:1000;display:flex;flex-direction:column', 1),
+                        ('<div onclick="{{ closeDrawer }}" style="cursor:pointer;width:44px;height:44px;display:grid;place-items:center;border-radius:8px;color:#5A6E78">',
+                         '<div onclick="{{ closeDrawer }}" role="button" aria-label="Close filters" style="cursor:pointer;width:44px;height:44px;display:grid;place-items:center;border-radius:999px;border:1.5px solid #D7DFE2;color:#0B2E40;flex:none">', 1),
+                        ('font:600 19px Manrope,sans-serif;padding:0 12px;height:38px', 'font:600 16px Manrope,sans-serif;padding:0 14px;height:36px', 2),
+                        ('border:1.5px solid #0B2E40;border-radius:8px;padding:14px;font:700 19px Manrope,sans-serif;color:#0B2E40">Clear</div>', 'border:1.5px solid #0B2E40;border-radius:999px;padding:13px;font:700 17px Manrope,sans-serif;color:#0B2E40">Clear</div>', 1),
+                        ('background:#95AB3B;color:#fff;border-radius:8px;padding:14px;font:700 19px Manrope,sans-serif">Show {{ count }} providers', 'background:#95AB3B;color:#fff;border-radius:999px;padding:13px;font:700 17px Manrope,sans-serif">Show {{ count }} providers', 1)]:
+            assert body.count(x) == n, ('filter panel', x[:50], body.count(x))
+            body = body.replace(x, y)
     if name == 'mobile':  # phone hero: same photo as the desktop hero, under the same dark overlay; small course buttons
         x = '<div style="background:#0B2E40;background-image:linear-gradient(135deg,rgba(255,255,255,.07) 0%,rgba(255,255,255,0) 55%);color:#fff;padding:50px 16px 56px;display:flex;flex-direction:column;gap:14px">'
         assert body.count(x) == 1, 'mobile hero'

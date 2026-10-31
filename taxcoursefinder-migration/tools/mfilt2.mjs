@@ -1,0 +1,16 @@
+import { chromium } from '/opt/node-tools/node_modules/playwright/index.mjs';
+import fs from 'fs';
+const S = process.argv[2], live = process.argv[3] === 'live';
+const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', proxy: { server: process.env.HTTPS_PROXY } });
+const ctx = await b.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
+if (!live) await ctx.route(u => u.href.includes('?pv='), r => r.fulfill({ status: 200, contentType: 'text/html; charset=utf-8', body: fs.readFileSync(`${S}/pv/home.html`, 'utf8') }));
+const p = await ctx.newPage(); const errs = []; p.on('pageerror', e => errs.push(e.message));
+await p.goto('https://taxcoursefinder.com/' + (live ? '?nc=' + Date.now() : '?pv=1'), { waitUntil: 'networkidle' });
+const fb = p.locator('div,button').filter({ hasText: /^\s*Filters\s*$/ }).last();
+await fb.scrollIntoViewIfNeeded(); await fb.click(); await p.waitForTimeout(500);
+await p.screenshot({ path: S + '/shots/mfilters-new.png' });
+const x = p.locator('[aria-label="Close filters"]');
+console.log('close visible:', await x.isVisible(), JSON.stringify(await x.boundingBox()));
+await x.click(); await p.waitForTimeout(400);
+console.log('closed:', !(await p.locator('[aria-label="Close filters"]').count()), 'errors', errs);
+await b.close();
