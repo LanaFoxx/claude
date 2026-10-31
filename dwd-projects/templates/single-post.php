@@ -221,6 +221,11 @@ while ( have_posts() ) :
 		</section>
 
 		<?php if ( $sections ) : ?>
+			<?php if ( $more ) : ?>
+				<section class="dwbp-introsec dw-dots-light">
+					<div class="dwbp-in"><div class="dwbp-intro"><?php echo $more; // phpcs:ignore WordPress.Security.EscapeOutput ?></div></div>
+				</section>
+			<?php endif; ?>
 			<section class="dwbp-toc">
 				<div class="dwbp-in">
 					<div class="dwbp-eyebrow">In this guide</div>
@@ -230,9 +235,6 @@ while ( have_posts() ) :
 							<a href="#part-<?php echo (int) ( $i + 1 ); ?>"><b><?php echo esc_html( sprintf( '%02d', $i + 1 ) ); ?></b><span><?php echo esc_html( preg_replace( '/^\d+[\.\)]\s*/', '', $s['title'] ) ); ?></span></a>
 						<?php endforeach; ?>
 					</div>
-					<?php if ( $more ) : ?>
-						<div class="dwbp-intro"><?php echo $more; // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
-					<?php endif; ?>
 				</div>
 			</section>
 		<?php endif; ?>

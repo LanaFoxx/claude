@@ -366,3 +366,10 @@
 .dwbp-card p{font-size:18px}
 @media(max-width:767px){.dwbp-card{padding:26px 22px 14px}.dwbp-ic{width:52px;height:52px}}
 @media(min-width:768px){.dwbp-toc-grid.cols-1{grid-template-columns:1fr}}
+/* Intro and "In this guide" as separate sections */
+.dwbp-introsec{background-color:#F4F9FE;padding:56px 0;border-bottom:1px solid #E4E9F5}
+.dwbp-introsec .dwbp-intro{margin:0;max-width:none}
+.dwbp-introsec .dwbp-intro p{font-size:21px;line-height:1.7;color:#303B58;margin:0 0 14px}
+.dwbp-introsec .dwbp-intro p:last-child{margin-bottom:0}
+.dwbp-toc{padding:56px 0 8px}
+@media(max-width:767px){.dwbp-introsec{padding:40px 0}.dwbp-introsec .dwbp-intro p{font-size:17px}}
