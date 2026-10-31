@@ -165,3 +165,66 @@ function dwdp_video_embed( $url ) {
 	}
 	return '';
 }
+
+/** YouTube video ID from a link, or ''. */
+function dwdp_youtube_id( $url ) {
+	return preg_match( '~(?:youtube\.com/(?:watch\?(?:.*&)?v=|embed/|shorts/)|youtu\.be/|youtube-nocookie\.com/embed/)([\w-]{11})~i', (string) $url, $m ) ? $m[1] : '';
+}
+
+/**
+ * Width/height ratio of a YouTube video, so the player fits it with no black bars.
+ * Measured once from one of YouTube's auto-generated frames (letterboxed to 4:3) and remembered.
+ */
+function dwdp_youtube_ratio( $yt ) {
+	if ( ! $yt ) {
+		return 16 / 9;
+	}
+	$key   = 'dwdp_ytr_' . $yt;
+	$ratio = get_transient( $key );
+	if ( false !== $ratio ) {
+		return (float) $ratio;
+	}
+	$ratio = 16 / 9;
+	$res   = wp_remote_get( 'https://i.ytimg.com/vi/' . $yt . '/sd2.jpg', array( 'timeout' => 8 ) );
+	$body  = is_wp_error( $res ) ? '' : wp_remote_retrieve_body( $res );
+	$im    = ( $body && function_exists( 'imagecreatefromstring' ) ) ? @imagecreatefromstring( $body ) : false; // phpcs:ignore
+	if ( $im ) {
+		$w    = imagesx( $im );
+		$h    = imagesy( $im );
+		$dark = function ( $x0, $x1, $y0, $y1 ) use ( $im ) {
+			for ( $y = $y0; $y <= $y1; $y += 3 ) {
+				for ( $x = $x0; $x <= $x1; $x += 3 ) {
+					$c = imagecolorat( $im, $x, $y );
+					if ( ( ( $c >> 16 ) & 255 ) > 30 || ( ( $c >> 8 ) & 255 ) > 30 || ( $c & 255 ) > 30 ) {
+						return false;
+					}
+				}
+			}
+			return true;
+		};
+		$t = 0;
+		while ( $t < $h / 3 && $dark( (int) ( $w / 4 ), (int) ( $w * 3 / 4 ), $t, $t ) ) {
+			$t++;
+		}
+		$b = 0;
+		while ( $b < $h / 3 && $dark( (int) ( $w / 4 ), (int) ( $w * 3 / 4 ), $h - 1 - $b, $h - 1 - $b ) ) {
+			$b++;
+		}
+		$l = 0;
+		while ( $l < $w / 3 && $dark( $l, $l, (int) ( $h / 4 ), (int) ( $h * 3 / 4 ) ) ) {
+			$l++;
+		}
+		$r = 0;
+		while ( $r < $w / 3 && $dark( $w - 1 - $r, $w - 1 - $r, (int) ( $h / 4 ), (int) ( $h * 3 / 4 ) ) ) {
+			$r++;
+		}
+		$cw = $w - $l - $r;
+		$ch = $h - $t - $b;
+		if ( $cw > 0 && $ch > 0 ) {
+			$ratio = max( 1.2, min( 2.4, $cw / $ch ) );
+		}
+		imagedestroy( $im );
+	}
+	set_transient( $key, $ratio, $im ? MONTH_IN_SECONDS : HOUR_IN_SECONDS );
+	return $ratio;
+}

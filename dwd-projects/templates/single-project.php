@@ -20,6 +20,7 @@ while ( have_posts() ) :
 	$sections = dwdp_ids( dwdp_get( $id, 'sections' ) );
 	$mockup   = absint( dwdp_get( $id, 'mockup' ) );
 	$video    = dwdp_video_embed( dwdp_get( $id, 'video' ) );
+	$yt       = dwdp_youtube_id( dwdp_get( $id, 'video' ) );
 	$notes    = array(
 		'Platform'   => dwdp_get( $id, 'platform' ),
 		'Scope'      => dwdp_get( $id, 'scope' ),
@@ -42,7 +43,15 @@ while ( have_posts() ) :
 					<?php if ( $video ) : ?>
 						<div class="dw-video">
 							<span class="dw-video-k">Video walkthrough</span>
+							<?php if ( $yt ) : ?>
+								<?php // A clean cover with our own play button; YouTube's player (and its overlays) only loads once someone presses play. ?>
+								<button type="button" class="dw-video-frame dw-yt" style="aspect-ratio:<?php echo esc_attr( round( dwdp_youtube_ratio( $yt ), 4 ) ); ?>" data-yt="<?php echo esc_attr( $yt ); ?>" aria-label="<?php echo esc_attr( 'Play the ' . $name . ' website walkthrough' ); ?>">
+									<img src="https://i.ytimg.com/vi/<?php echo esc_attr( $yt ); ?>/maxresdefault.jpg" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/<?php echo esc_attr( $yt ); ?>/hqdefault.jpg'" alt="" loading="lazy">
+									<span class="dw-yt-play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></svg></span>
+								</button>
+							<?php else : ?>
 							<div class="dw-video-frame"><iframe src="<?php echo esc_url( $video ); ?>" title="<?php echo esc_attr( $name . ' website walkthrough' ); ?>" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>
+							<?php endif; ?>
 						</div>
 					<?php endif; ?>
 					<div class="dw-notes">
