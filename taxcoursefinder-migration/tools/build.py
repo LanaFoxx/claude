@@ -177,8 +177,7 @@ def seo_tweaks(name, body):
     body = re.sub(r'(<sc-if value="\{\{ p\.priceNote \}\}"[^>]*><div[^>]*>\{\{ p\.priceNote \}\}</div></sc-if>)', lambda m: m.group(1) + note, body)
     if name == 'mobile':
         x = '{{ p.priceText }}</sc-if></div></div>'
-        assert body.count(x) == 1, 'mobile price'
-        body = body.replace(x, x + note.replace('margin-top:4px;max-width:220px', 'margin-top:2px'), 1)
+        if x in body: body = body.replace(x, x + note.replace('margin-top:4px;max-width:220px', 'margin-top:2px'), 1)
     if name == 'CTEC Requirements':  # renewal timeline cards -> the renewal calendar bar (same as the renew guide / home page)
         src = clean(json.load(open(EXT + '/How to Renew CTEC Registration.json'))['body'])
         k = src.index('Key dates'); a = src.rindex('<div style="max-width:1200px;margin:0 auto">', 0, k)
@@ -395,6 +394,39 @@ def seo_tweaks(name, body):
                       lambda m: m.group(1) + '<sc-if value="{{ cdLate }}" hint-placeholder-val="{{ false }}"><p style="margin:0 auto;max-width:760px;font-size:19px;line-height:1.55;color:#2F4652;text-align:center;text-wrap:balance">{{ cdNote }}</p></sc-if>', body)
     x = '<div style="font-size:19px;color:#5A6E78;line-height:1.5">After October 31 a $55 late fee applies. After January 15 you must retake the 60-hour qualifying course.</div>'
     if x in body: body = body.replace(x, '<sc-if value="{{ cdOnTime }}" hint-placeholder-val="{{ true }}">' + x + '</sc-if>')
+    if name == 'mobile':  # countdown section: no "time left" eyebrow on phones
+        body = re.sub(r'<div style="[^"]*">\{\{ cdLeftLabel \}\}</div>\s*', '', body, count=1)
+    if name == 'mobile':  # phone directory cards: same details as the course pages (offering, CTEC #, price note, format, coupon), stacked
+        i = body.index('<sc-for as="p" hint-placeholder-count="6" list="{{ list }}">'); j = body.index('</sc-for>', i) + len('</sc-for>')
+        assert '{{ p.priceNum }}' in body[i:j], 'mobile card'
+        LBL = 'font:700 12px Manrope,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#8A9AA3'
+        ROW = 'display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 0;border-top:1px solid #EEE9E1'
+        VAL = 'text-align:right;min-width:0;display:flex;flex-direction:column;align-items:flex-end;gap:2px'
+        card = ('<sc-for as="p" hint-placeholder-count="6" list="{{ list }}">'
+            '<div style="background:#fff;border:1px solid #E3E9EB;border-radius:14px;padding:16px 16px 14px;display:flex;flex-direction:column;gap:12px">'
+            '<div style="display:flex;gap:12px;align-items:center">'
+            '<div style="width:44px;height:44px;border-radius:10px;background:#F4F6F7;border:1px solid #E3E9EB;display:grid;place-items:center;flex:none;overflow:hidden">'
+            '<sc-if value="{{ p.hasLogo }}"><img src="{{ p.logoUrl }}" alt="" style="width:100%;height:100%;object-fit:contain"></sc-if>'
+            '<sc-if value="{{ p.noLogo }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5A6E78" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 9.5 12 5l9.5 4.5L12 14 2.5 9.5Z"></path><path d="M6.5 11.5v4.2c0 1.6 2.5 3.3 5.5 3.3s5.5-1.7 5.5-3.3v-4.2"></path></svg></sc-if></div>'
+            '<div style="min-width:0;flex:1"><div style="font:700 19px/1.25 Manrope,sans-serif;overflow-wrap:anywhere">{{ p.name }}</div>'
+            '<div style="font-size:15px;line-height:1.4;color:#8A9AA3;margin-top:2px;overflow-wrap:anywhere">{{ p.offeringLabel }} · {{ p.domain }}{{ p.ctecLine }}</div></div></div>'
+            '<div style="display:flex;flex-direction:column">'
+            '<div style="' + ROW + '"><span style="' + LBL + '">Price</span><div style="' + VAL + '"><span style="font:800 18px Manrope,sans-serif;color:{{ p.priceColor }}"><sc-if value="{{ p.hasPrice }}">${{ p.priceNum }}</sc-if><sc-if value="{{ p.noPrice }}">{{ p.priceText }}</sc-if></span>'
+            '<sc-if value="{{ p.priceNote }}"><span style="font:600 12px Manrope,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#8A9AA3">{{ p.priceNote }}</span></sc-if>'
+            '<sc-if value="{{ p.hasLinkNote }}"><span style="font:500 13px/1.35 Manrope,sans-serif;color:#5A6E78;max-width:210px">{{ p.linkNote }}</span></sc-if></div></div>'
+            '<div style="' + ROW + '"><span style="' + LBL + '">Format</span><div style="' + VAL + '"><span style="font:600 16px Manrope,sans-serif;color:{{ p.formatColor }}">{{ p.formatL1 }}</span>'
+            '<sc-if value="{{ p.formatL2 }}"><span style="font-size:13px;color:#5A6E78">{{ p.formatL2 }}</span></sc-if></div></div>'
+            '<div style="' + ROW + ';border-bottom:1px solid #EEE9E1"><span style="' + LBL + '">Coupon</span><div style="' + VAL + '">'
+            '<sc-if value="{{ p.hasCoupon }}"><span data-tcf-copy="{{ p.coupon }}" role="button" tabindex="0" title="Tap to copy code" style="cursor:pointer;display:inline-block;border:1.5px dashed #95AB3B;color:#7E9330;font:700 15px ui-monospace,Menlo,monospace;padding:3px 9px;border-radius:6px;background:#F3F5E6">{{ p.coupon }}</span>'
+            '<span data-tcf-copy-label="" style="font:700 11px Manrope,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#8A9AA3">Tap to copy</span>'
+            '<sc-if value="{{ p.hasCouponNote }}"><span style="font-size:13px;color:#5A6E78;max-width:210px">{{ p.couponNote }}</span></sc-if></sc-if>'
+            '<sc-if value="{{ p.hasSale }}"><span style="font:700 15px Manrope,sans-serif;color:#7E9330">On sale · no code needed</span></sc-if>'
+            '<sc-if value="{{ p.noCouponOrSale }}"><span style="font-size:15px;color:#B5BECB">No current coupon</span></sc-if></div></div></div>'
+            '<div style="display:flex;flex-direction:column;gap:8px">'
+            '<sc-if value="{{ p.hasWebsite }}"><a href="{{ p.courseLink }}" target="_blank" rel="noopener" data-tcf-copy-go="{{ p.couponCode }}" style="display:flex;align-items:center;justify-content:center;gap:8px;font:700 16px Manrope,sans-serif;border-radius:999px;white-space:nowrap;text-decoration:none;background:#95AB3B;color:#fff;padding:12px 18px;border:1.5px solid #95AB3B"><span data-tcf-offer-label="">{{ p.buttonLabel }}</span></a></sc-if>'
+            '<sc-if value="{{ p.hasSchool }}"><a href="{{ p.schoolHref }}" style="display:flex;align-items:center;justify-content:center;font:700 16px Manrope,sans-serif;border-radius:999px;white-space:nowrap;text-decoration:none;background:transparent;color:#0B2E40;padding:11px 18px;border:1.5px solid #0B2E40">View School Details</a></sc-if>'
+            '</div></div></sc-for>')
+        body = body[:i] + card + body[j:]
     if name == 'mobile':  # phone filter panel: above the sticky header (its close button was hidden), pill buttons, compact chips
         for x, y, n in [('top:0;bottom:0;background:#fff;z-index:61;display:flex;flex-direction:column', 'top:0;bottom:0;background:#fff;z-index:1000;display:flex;flex-direction:column', 1),
                         ('<div onclick="{{ closeDrawer }}" style="cursor:pointer;width:44px;height:44px;display:grid;place-items:center;border-radius:8px;color:#5A6E78">',
@@ -425,7 +457,7 @@ def seo_tweaks(name, body):
         body = body.replace(x, 'text-align:center">Prices and offers are collected from provider websites and verified periodically; confirm on the provider site before purchasing. Data last checked {{ lastUpdated }}.</div>', 1)
     if name == 'mobile':  # phone directory card: the course's own page (or labelled fallback), not the school's home page
         body, n = re.subn(r'<a href="\{\{ p\.website \}\}"([^>]*)>View course →</a>', r'<a href="{{ p.courseLink }}"\1>{{ p.buttonLabel }} →</a>', body)
-        assert n == 1, 'mobile view course'
+        assert n <= 1, 'mobile view course'  # 0 once the stacked phone card (below) has replaced the old card
     if name == 'mobile':  # renewal calendar on phones: stacked, same dark band as desktop
         row = lambda c, t, d: ('<div style="border-left:6px solid %s;padding:4px 0 4px 16px;display:flex;flex-direction:column;gap:4px"><div style="font:700 20px Manrope,sans-serif;color:#FF6B57">%s</div>'
                                '<p style="margin:0;font-size:18px;line-height:1.55;color:rgba(255,255,255,.78)">%s</p></div>' % (c, t, d))
@@ -440,8 +472,7 @@ def seo_tweaks(name, body):
         assert body.count('<!-- PROVIDER CTA -->') == 1
         body = body.replace('<!-- PROVIDER CTA -->', mcal + '<!-- PROVIDER CTA -->', 1)
         nm = '<div style="font:700 22px/1.25 Manrope,sans-serif;min-width:0;flex:1;overflow-wrap:anywhere">{{ p.name }}</div>'
-        assert nm in body, 'mobile name'
-        body = body.replace(nm, '<sc-if value="{{ p.hasSchool }}"><a href="{{ p.schoolHref }}" style="font:700 22px/1.25 Manrope,sans-serif;min-width:0;flex:1;overflow-wrap:anywhere;color:inherit;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px">{{ p.name }}</a></sc-if>'
+        if nm in body: body = body.replace(nm, '<sc-if value="{{ p.hasSchool }}"><a href="{{ p.schoolHref }}" style="font:700 22px/1.25 Manrope,sans-serif;min-width:0;flex:1;overflow-wrap:anywhere;color:inherit;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px">{{ p.name }}</a></sc-if>'
                                     '<sc-if value="{{ p.noSchool }}">' + nm + '</sc-if>')
         # phone home headline: green highlight, a bit larger
         body = body.replace('font:300 34px/1.1 \'Source Serif 4\',Georgia,serif;text-align:center;color:#fff"><span style="display:block">CTEC Approved</span>',

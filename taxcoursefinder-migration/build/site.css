@@ -318,3 +318,33 @@ html.tcf-drawer-open .elementor-location-header,html.tcf-drawer-open .tcf-topbar
   .tcf-sortbar label{width:100%;justify-content:space-between}
   .tcf-sortbar select{flex:0 1 auto;min-width:0}
 }
+/* phones: the deadline section at the bottom of every page stands apart from the section above (white, coral line on top) */
+@media (max-width:760px){
+  .tcf-cdstrip{background:#fff!important;border-top:6px solid #FF6B57!important}
+  .tcf-cdstrip .tcf-cdm-grid>div{background:#F4F6F7!important}
+}
+/* course pages on phones: Price / Format / Coupon as label-and-value rows under the school name */
+@media (max-width:760px){
+  .tcf-trow{grid-template-columns:minmax(0,1fr)!important;gap:0!important;padding:16px!important}
+  .tcf-trow .tcf-cell-provider{margin-bottom:10px}
+  .tcf-trow [data-label]{display:grid!important;grid-template-columns:auto minmax(0,1fr);column-gap:12px;align-items:center!important;justify-items:end;text-align:right!important;padding:11px 0!important;border-top:1px solid #EEE9E1}
+  .tcf-trow [data-label]:last-of-type{border-bottom:1px solid #EEE9E1}
+  .tcf-trow [data-label]::before{display:block!important;grid-column:1;grid-row:1 / span 6;align-self:center;justify-self:start;margin:0!important;text-align:left}
+  .tcf-trow [data-label]>*{grid-column:2;align-items:flex-end!important;text-align:right!important}
+  .tcf-trow .tcf-cell-offer{margin-top:14px!important}
+}
+@media (max-width:760px){.tcf-cdstrip [data-cdm-left]{display:none!important}}
+.tcf-cdstrip.tcf-cdstrip .tcf-cdm-grid.tcf-cdm-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+/* phone menu: dropdown arrows in coral */
+.tcf-header.tcf-menu-open nav.tcf-nav .dd>div:first-child svg{color:#FF6B57!important;stroke:#FF6B57!important}
+.tcf-header.tcf-menu-open nav.tcf-nav .dd>div:first-child svg *{stroke:#FF6B57!important}
+@media (max-width:760px){
+  /* key-facts box (renew guide and similar): one fact per row; label and note on the left, the value on the right */
+  .tcf-page.tcf-scope [style*="display:grid;grid-template-columns:repeat(4,minmax(0,1fr))"][style*="border-top:3px solid"]{grid-template-columns:minmax(0,1fr)!important;margin-top:-40px!important}
+  .tcf-page.tcf-scope [style*="display:grid;grid-template-columns:repeat(4,minmax(0,1fr))"][style*="border-top:3px solid"]>div{display:grid!important;grid-template-columns:minmax(0,1fr) auto;column-gap:14px;row-gap:2px!important;align-items:center;padding:16px 20px!important;border-left:0!important;border-top:1px solid #EEE9E1}
+  .tcf-page.tcf-scope [style*="display:grid;grid-template-columns:repeat(4,minmax(0,1fr))"][style*="border-top:3px solid"]>div:first-child{border-top:0}
+  .tcf-page.tcf-scope [style*="display:grid;grid-template-columns:repeat(4,minmax(0,1fr))"][style*="border-top:3px solid"]>div>div:nth-child(1){grid-column:1;grid-row:1;font-size:12px!important}
+  .tcf-page.tcf-scope [style*="display:grid;grid-template-columns:repeat(4,minmax(0,1fr))"][style*="border-top:3px solid"]>div>div:nth-child(2){grid-column:2;grid-row:1 / span 2;font-size:26px!important;text-align:right;white-space:nowrap}
+  .tcf-page.tcf-scope [style*="display:grid;grid-template-columns:repeat(4,minmax(0,1fr))"][style*="border-top:3px solid"]>div>div:nth-child(3){grid-column:1;grid-row:2;font-size:15px!important}
+}
+@media (max-width:760px){.tcf-page.tcf-scope [style*="padding:0 56px 96px"]{padding-bottom:40px!important}}
