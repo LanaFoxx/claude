@@ -30,15 +30,18 @@
       var self = this, course = this.state.course, qe = course === 'qe', C = D.courses[course] || {};
       var dec = TCF.decorate([p], qe)[0] || TCF.decorate([p], !qe)[0] || {};
       var shortName = p.name.replace(/\s*\(.*\)\s*/, '').split(' dba ')[0];
-      var F = function (k) { return p.features && p.features[k]; };
+      // features of the course/package being shown (same data as the directory); optional package items are labelled as such
+      var inc = dec.includedFeatures || p.features || {}, opt = dec.optionalFeatures || [];
+      var F = function (k) { return !!inc[k]; }, O = function (k) { return !inc[k] && opt.indexOf(k) >= 0; };
       var fchip = function (label, on) { return { on: !!on, label: on ? label : label + ' · not confirmed', bg: on ? '#FFF1EE' : '#fff', border: on ? '#D9D4CC' : '#D9D4CC', color: on ? '#23272A' : '#4B4F54' }; };
       var fm = C.formats || [];
       var formats = fm.length
         ? Object.keys(L.formats).map(function (k) { return fchip(L.formats[k], fm.indexOf(k) >= 0); })
         : [fchip('Video lessons', F('video_lessons_available')), fchip('Online reading', F('text_based_course_available')), fchip('Downloadable PDF', F('downloadable_materials')),
-           fchip('Physical textbook', F('physical_book_available')), fchip('Live online classes', F('live_instruction_available')), fchip('Classroom', F('in_person_course_available'))];
+           O('physical_book_available') ? { on: true, label: 'Physical textbook (optional package)', bg: '#fff', border: '#D9D4CC', color: '#23272A' } : fchip('Physical textbook', F('physical_book_available')), fchip('Live online classes', F('live_instruction_available')), fchip('Classroom', F('in_person_course_available'))];
       var video = fm.length ? fm.indexOf('video') >= 0 : F('video_lessons_available');
-      var book = fm.length ? (fm.indexOf('textbook') >= 0 || fm.indexOf('pdf') >= 0 || fm.indexOf('reading') >= 0) : (F('physical_book_available') || F('digital_book_available'));
+      var book = fm.length ? (fm.indexOf('textbook') >= 0 || fm.indexOf('pdf') >= 0 || fm.indexOf('reading') >= 0) : F('physical_book_available');
+      var pdf = !fm.length && !book && F('digital_book_available'), bookOpt = !fm.length && !book && O('physical_book_available');
       var online = fm.length ? fm.some(function (k) { return ['video', 'reading', 'pdf', 'live_online', 'audio'].indexOf(k) >= 0; }) : F('online_course_available');
       var pace = has(C.pace) ? L.pace[C.pace] : '';
       var formatShort = (online || fm.indexOf('classroom') >= 0 || pace) ? [online ? 'Online' : (fm.indexOf('classroom') >= 0 ? 'Classroom' : ''), pace ? pace.toLowerCase() : ''].filter(Boolean).join(' · ') : NC;
@@ -79,7 +82,7 @@
         priceChecked: fmt(C.price_last_checked || p.lastChecked),
         hasCoupon: !!dec.hasCoupon, coupon: dec.coupon, couponLabel: dec.couponLabel,
         formatShort: formatShort, supportShort: supportChannels.filter(function (c) { return c.status === 'Confirmed'; }).map(function (c) { return c.channel; }).join(' · ') || NC,
-        materialsShort: [video && 'Video', book && 'Book'].filter(Boolean).join(' + ') || NC, reportingShort: rep ? rep[0] : NC, accessShort: or(C.access_period),
+        materialsShort: ([video && 'Video', book && 'Book', pdf && 'PDF'].filter(Boolean).join(' + ') || (bookOpt ? '' : NC)) + (bookOpt ? (video || pdf ? ' · printed book optional' : 'Printed book optional') : ''), reportingShort: rep ? rep[0] : NC, accessShort: or(C.access_period),
         edition: or(C.edition), hours: (C.hours_breakdown && C.hours_breakdown.length) ? C.hours_breakdown : OFFICIAL[course], syllabus: or(C.syllabus), attemptsKnown: has(C.attempts), unlimitedAttempts: /unlimited|^yes$/i.test(String(C.attempts || '')) ? 'Yes' : 'No',
         beginnerNote: C.beginner_friendly === 'yes' ? 'Beginner-friendly: written for people new to tax preparation.' : (C.beginner_friendly === 'no' ? 'Assumes prior tax preparation knowledge.' : ''),
         included: (C.included && C.included.length) ? C.included : [NC], extras: extras, refund: refund || NC, refundUrl: C.refund_url || p.website,

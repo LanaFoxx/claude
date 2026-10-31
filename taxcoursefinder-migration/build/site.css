@@ -250,8 +250,8 @@ html{scrollbar-gutter:stable}
 @media (max-width:760px){.tcf-scope h1 span[style*="color"],.tcf-scope h2 span[style*="color"]{white-space:nowrap}}
 @media (max-width:760px){
   /* rows of two or more pill buttons stack, full width, one line each */
-  .tcf-page.tcf-scope [style*="display:flex"]:has(> a[style*="border-radius:999px"] + a[style*="border-radius:999px"]){flex-direction:column!important;align-items:stretch!important;flex-wrap:nowrap!important;gap:12px!important}
-  .tcf-page.tcf-scope [style*="display:flex"]:has(> a[style*="border-radius:999px"] + a[style*="border-radius:999px"])>a{width:100%!important;justify-content:center!important;margin:0!important}
+  .tcf-page.tcf-scope [style*="display:flex"]:not(.tcfd-subnav):has(> a[style*="border-radius:999px"] + a[style*="border-radius:999px"]){flex-direction:column!important;align-items:stretch!important;flex-wrap:nowrap!important;gap:12px!important}
+  .tcf-page.tcf-scope [style*="display:flex"]:not(.tcfd-subnav):has(> a[style*="border-radius:999px"] + a[style*="border-radius:999px"])>a{width:100%!important;justify-content:center!important;margin:0!important}
   /* "Still have a question?" and similar text + email boxes: centered */
   .tcf-page.tcf-scope [style*="justify-content:space-between"]:has(> a[href^="mailto:"]){flex-direction:column!important;align-items:center!important;text-align:center!important;gap:20px!important}
   .tcf-page.tcf-scope [style*="justify-content:space-between"]:has(> a[href^="mailto:"])>a{align-self:center!important}
