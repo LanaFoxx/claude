@@ -208,11 +208,14 @@ final class TCFD_School {
              . '.tcf-p-school .tcfd-idrow>div:first-child{width:72px!important;height:72px!important;border-radius:14px!important}'
              . '.tcf-p-school .tcfd-idrow h1{font-size:34px!important;line-height:1.08!important}'
              // coral section bar: smaller items in one row that fits the screen
-             . '.tcf-p-school .tcfd-subnav{height:48px!important;gap:0!important;justify-content:space-between!important;padding:0 6px!important;font-size:13px!important}'
-             . '.tcf-p-school .tcfd-subnav>a,.tcf-p-school .tcfd-subnav>sc-if>a{padding:6px 7px!important;font-size:13px!important;margin:0!important;white-space:nowrap}'
+             // each tab fills its whole cell (edge to edge, full height), so the active highlight lines up with the dividers
+             . '.tcf-p-school .tcfd-subnav{height:48px!important;gap:0!important;justify-content:stretch!important;align-items:stretch!important;padding:0!important;font-size:13px!important}'
+             . '.tcf-p-school .tcfd-subnav>sc-if{display:contents}'
+             . '.tcf-p-school .tcfd-subnav>a,.tcf-p-school .tcfd-subnav>sc-if>a{flex:1 1 auto!important;display:flex!important;align-items:center!important;justify-content:center!important;height:100%!important;box-sizing:border-box;padding:0 6px!important;border-radius:0!important;font-size:13px!important;margin:0!important;white-space:nowrap}'
              . '.tcf-p-school .tcfd-subnav-bar{top:var(--tcf-head,76px)!important}'
              // accuracy band at the end: less empty space under its button
-             . '.tcf-p-school [style*="padding:72px 56px 80px"]{padding:44px 20px 36px!important}'
+             . '.tcf-p-school [style*="padding:72px 56px 80px"]{padding:48px 24px 52px!important}'
+             . '.tcf-p-school .tcfd-subnav-bar{padding:0!important}.tcf-p-school .tcfd-subnav{max-width:none!important;margin:0!important}'
              . '}</style>';
         return $css . $banner . '<div class="tcf-page tcf-scope tcf-p-school"><div id="tcf-school-root" class="tcf-root">' . $ssr . '</div></div>'
             . '<template id="tcf-school-tpl">' . $tpl . '</template>'

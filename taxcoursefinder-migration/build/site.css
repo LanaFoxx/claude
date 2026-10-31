@@ -311,3 +311,10 @@ html{scrollbar-gutter:stable}
 .tcf-header.tcf-header.tcf-menu-open nav.tcf-nav .dd .dd-menu a{display:flex!important;justify-content:center!important;text-align:center!important;width:100%;box-sizing:border-box}
 .tcf-header.tcf-header.tcf-menu-open nav.tcf-nav .dd .dd-menu>div{align-items:center!important}
 html.tcf-drawer-open .elementor-location-header,html.tcf-drawer-open .tcf-topbar{visibility:hidden!important}
+@media (max-width:760px){
+  /* directory header on phones: title and "Data last checked" centered; sort box is a pill with "Sort" at the far left */
+  .tcf-page.tcf-scope [style*="justify-content:space-between;align-items:baseline"]:has(> h2){flex-direction:column!important;align-items:center!important;text-align:center!important;gap:6px!important}
+  .tcf-sortbar{border-radius:999px!important;padding:8px 8px 8px 24px!important;justify-content:stretch!important}
+  .tcf-sortbar label{width:100%;justify-content:space-between}
+  .tcf-sortbar select{flex:0 1 auto;min-width:0}
+}

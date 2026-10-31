@@ -1,0 +1,11 @@
+import { chromium } from '/opt/node-tools/node_modules/playwright/index.mjs';
+import fs from 'fs';
+const S = process.argv[2], live = process.argv[3] === 'live';
+const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', proxy: { server: process.env.HTTPS_PROXY } });
+const ctx = await b.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, deviceScaleFactor: 2 });
+if (!live) await ctx.route(u => u.href.includes('?pv='), r => r.fulfill({ status: 200, contentType: 'text/html; charset=utf-8', body: fs.readFileSync(`${S}/pv/ctec-20-hour-course.html`, 'utf8') }));
+const p = await ctx.newPage();
+await p.goto('https://taxcoursefinder.com/ctec-20-hour-course/' + (live ? '?nc=' + Date.now() : '?pv=1'), { waitUntil: 'networkidle' }); await p.waitForTimeout(800);
+const h = p.locator('.tcf-sortbar').first(); await h.scrollIntoViewIfNeeded(); await p.evaluate(() => scrollBy(0, -150)); await p.waitForTimeout(300);
+await p.screenshot({ path: S + '/shots/sortbar.png' });
+await b.close();
