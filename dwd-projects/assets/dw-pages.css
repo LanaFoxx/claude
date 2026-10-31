@@ -1,0 +1,121 @@
+/* Page styles moved out of HTML widgets (Contact, Onboarding). */
+/* Contact */
+
+.dwc-hero{position:relative;overflow:hidden}
+.dwc-hero::before{content:"";position:absolute;top:-160px;left:-120px;width:640px;height:640px;background:radial-gradient(circle,rgba(27,126,195,.33),transparent 65%);pointer-events:none}
+.dwc-hero>.e-con-inner{position:relative;z-index:1}
+.dwc-cards{display:flex;flex-direction:column;gap:14px;width:100%;max-width:440px}
+.dwc-card{display:flex;align-items:center;gap:16px;padding:18px 20px;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);text-decoration:none!important;transition:background .2s,border-color .2s}
+.dwc-card:hover{background:rgba(27,126,195,.18);border-color:#1B7EC3}
+.dwc-card .dwc-ic{flex:none;width:48px;height:48px;border-radius:50%;background:#1B7EC3;display:flex;align-items:center;justify-content:center}
+.dwc-ic svg{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.dwc-card b{display:block;font:600 19px/1.3 Urbanist,sans-serif;color:#fff}
+.dwc-card .dwc-t span{display:block;font:300 15.5px/1.5 Urbanist,sans-serif;color:#AFC6D8}
+.dwc-form .elementor-field-group{margin-bottom:16px}
+.dwc-form .elementor-field-group>label{margin-bottom:7px}
+.dwc-form .elementor-field-textual{min-height:52px;padding:13px 16px!important;transition:border-color .2s,box-shadow .2s}
+.dwc-form textarea.elementor-field-textual{min-height:0;line-height:1.6}
+.dwc-form .elementor-field-textual:focus{border-color:#1B7EC3!important;box-shadow:0 0 0 3px rgba(27,126,195,.15)!important;outline:none}
+.dwc-form ::placeholder{color:#939DB5!important;opacity:1}
+.dwc-form .elementor-message{font:500 16px Urbanist,sans-serif;margin-top:14px}
+.dwc-note{text-align:center;font:300 15px Urbanist,sans-serif;color:#7A86A0;margin-top:4px}
+.dwc-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;width:100%}
+.dwc-step{background:#fff;border:1px solid #E4E9F5;border-radius:12px;padding:26px 24px;box-shadow:0 10px 30px rgba(18,41,62,.06)}
+.dwc-step i{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;background:#1B7EC3;color:#fff;font:600 15px Urbanist,sans-serif;font-style:normal;margin-bottom:14px}
+.dwc-step h3{margin:0 0 6px;font:700 18px/1.35 Urbanist,sans-serif;text-transform:uppercase;letter-spacing:.3px;color:#0E1526}
+.dwc-step p{margin:0;font:300 16px/1.7 Urbanist,sans-serif;color:#4A5470}
+@media(max-width:767px){.dwc-steps{grid-template-columns:1fr}.dwc-cards{max-width:none}}
+
+/* Onboarding */
+
+.dwo-hero{position:relative;overflow:hidden}
+.dwo-hero::before{content:"";position:absolute;top:-180px;left:50%;transform:translateX(-50%);width:820px;height:620px;background:radial-gradient(circle,rgba(27,126,195,.32),transparent 65%);pointer-events:none}
+.dwo-hero>.e-con-inner{position:relative;z-index:1}
+.dwo-meta{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.dwo-meta .dw-badge{display:inline-flex;align-items:center;gap:9px}
+.dwo-meta svg{width:17px;height:17px;stroke:#4BA3DC;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.dwo-steps{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin-top:6px}
+.dwo-step{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #DCE8F3;border-radius:12px;padding:14px 20px;font:500 15.5px/1.4 Urbanist,sans-serif;color:#12293E;box-shadow:0 6px 18px rgba(18,41,62,.05)}
+.dwo-step b{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:#1B7EC3;color:#fff;font:600 14px Urbanist,sans-serif;flex:none}
+/* form */
+.dwo-form .elementor-field-group{margin-bottom:22px}
+.dwo-form .elementor-field-group>label{margin-bottom:8px}
+.dwo-form .elementor-field-textual,.dwo-form .elementor-field-group .elementor-select-wrapper select{min-height:52px;padding:13px 16px!important;transition:border-color .2s,box-shadow .2s}
+.dwo-form textarea.elementor-field-textual{min-height:0;line-height:1.6}
+.dwo-form .elementor-field-textual:focus,.dwo-form select:focus{border-color:#1B7EC3!important;box-shadow:0 0 0 3px rgba(27,126,195,.15)!important;outline:none}
+.dwo-form ::placeholder{color:#939DB5!important;opacity:1}
+.dwo-form .elementor-select-wrapper .select-caret-down-wrapper{right:16px;color:#4A5470}
+.dwo-form .elementor-field-type-upload input[type=file]{width:100%;border:1.5px dashed #B7D0E6;border-radius:10px;background:#F4F8FC;padding:18px 16px;font:300 15px Urbanist,sans-serif;color:#4A5470;cursor:pointer}
+.dwo-form .elementor-field-type-upload input[type=file]::file-selector-button{margin-right:14px;border:0;border-radius:8px;background:#12293E;color:#fff;font:600 14px Urbanist,sans-serif;padding:10px 18px;cursor:pointer}
+.dwo-form .elementor-field-subgroup{gap:10px 12px}
+.dwo-form .elementor-field-subgroup .elementor-field-option{margin:0!important}
+.dwo-form .elementor-field-subgroup .elementor-field-option label{display:inline-flex;align-items:center;gap:8px;border:1px solid #CDE0EF;background:#FAFBFE;border-radius:100px;padding:9px 16px;font:500 15px Urbanist,sans-serif;color:#12293E;cursor:pointer;transition:border-color .2s,background .2s}
+.dwo-form .elementor-field-subgroup input[type=checkbox]{accent-color:#1B7EC3;width:16px;height:16px;margin:0;position:absolute;opacity:0;pointer-events:none}
+.dwo-form .elementor-field-subgroup .elementor-field-option{position:relative}
+.dwo-form .elementor-field-subgroup input[type=checkbox]:checked+label{background:#1B7EC3;border-color:#1B7EC3;color:#fff}
+.dwo-form .elementor-field-subgroup input[type=checkbox]:focus-visible+label{box-shadow:0 0 0 3px rgba(27,126,195,.25)}
+.dwo-form .elementor-field-type-html{margin-bottom:10px}
+.dwo-sec{border-bottom:1px solid #E3EDF5;padding-bottom:18px;margin:4px 0 6px}
+.dwo-sec .dwo-k{display:block;font:600 14px/1.4 Urbanist,sans-serif;letter-spacing:2px;text-transform:uppercase;color:#1B7EC3;margin-bottom:6px}
+.dwo-sec h3{margin:0 0 6px;font:900 26px/1.2 Urbanist,sans-serif;text-transform:uppercase;color:#0E1526}
+.dwo-sec p{margin:0;font:300 16px/1.65 Urbanist,sans-serif;color:#4A5470}
+.dwo-form .e-form__indicators{margin-bottom:34px;flex-wrap:nowrap}
+.dwo-form .e-form__indicators__indicator__label{font-family:Urbanist,sans-serif}
+.dwo-form .e-form__buttons{gap:12px;margin-top:8px}
+.dwo-form .e-form__buttons__wrapper{flex:1}
+.dwo-call p{margin:0}
+.dwo-form .elementor-message{font:500 16px Urbanist,sans-serif;margin-top:16px}
+@media(max-width:767px){
+ .dwo-form .e-form__indicators__indicator__label{display:none}
+ .dwo-form .e-form__indicators{margin-bottom:24px;justify-content:space-between}
+ .dwo-form{--e-form-steps-indicator-padding:28px!important;--e-form-steps-indicators-spacing:4px!important;--e-form-steps-divider-gap:3px!important}
+ .dwo-form .e-form__indicators__indicator__separator{min-width:4px}
+ .dwo-sec h3{font-size:21px}
+ .dwo-step{width:100%}
+}
+
+
+/* Contact: Zoom / phone cards (icon box widgets) */
+.dwc-cardsw{width:100%;max-width:440px;padding:0!important}
+.dwc-cardw .elementor-icon-box-wrapper{display:flex!important;align-items:center;gap:16px;text-align:left!important;padding:18px 20px;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);transition:background .2s,border-color .2s}
+.dwc-cardw .elementor-icon-box-wrapper:hover{background:rgba(27,126,195,.18);border-color:#1B7EC3}
+.dwc-cardw .elementor-icon-box-icon{margin:0!important}
+.dwc-cardw .elementor-icon-box-title{margin:0!important;font:600 19px/1.3 Urbanist,sans-serif!important}
+.dwc-cardw .elementor-icon-box-title a{color:#fff!important}
+.dwc-cardw .elementor-icon-box-description{margin:2px 0 0;font:400 15.5px/1.5 Urbanist,sans-serif!important;color:#AFC6D8}
+.elementor-widget-text-editor.dwc-note,.elementor-widget-text-editor.dwc-note p{margin:4px 0 0;text-align:center;font:400 15px Urbanist,sans-serif!important;color:#7A86A0}
+/* Contact: 3 steps */
+.dwc-stepsw{width:100%;padding:0!important}
+.dwc-stepw{flex:1 1 0!important;min-width:0;background:#fff;border:1px solid #E4E9F5;border-radius:12px;padding:26px 24px!important;box-shadow:0 10px 30px rgba(18,41,62,.06)}
+.dwc-num .elementor-heading-title{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;background:#1B7EC3;color:#fff!important;font:600 15px Urbanist,sans-serif!important}
+.dwc-stepw h3.elementor-heading-title{text-transform:uppercase;color:#0E1526}
+.dwc-stepw .elementor-widget-text-editor p{margin:0;color:#4A5470}
+@media(max-width:767px){.dwc-stepsw{flex-direction:column!important}}
+/* Onboarding: 3 step pills */
+.dwo-stepsw{padding:0!important;margin-top:6px}
+.dwo-stepw .elementor-heading-title{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #DCE8F3;border-radius:12px;padding:14px 20px;font:500 15.5px/1.4 Urbanist,sans-serif!important;color:#12293E!important;box-shadow:0 6px 18px rgba(18,41,62,.05);text-transform:none!important}
+.dwo-stepw .elementor-heading-title b{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:#1B7EC3;color:#fff;font:600 14px Urbanist,sans-serif;flex:none}
+/* Footer */
+.dwf-copy p{margin:0}
+.dwf-phonew p{margin:0;line-height:1.2}
+.dwf-phonew .dwf-k{font:600 11px Urbanist,sans-serif!important;letter-spacing:.16em;text-transform:uppercase;color:#4BA3DC}
+.dwf-phonew .dwf-num a{font:600 17px Urbanist,sans-serif!important;color:#fff!important;text-decoration:none!important}
+.dwf-phonew .dwf-num a:hover{color:#4BA3DC!important}
+.dwf-phonew .dwf-num{margin-top:3px}
+.dwf-socialw .elementor-social-icon{background:transparent!important}
+.dwf-socialw .elementor-social-icon i{color:#4BA3DC!important}
+.dwf-socialw .elementor-social-icon:hover i{color:#fff!important}
+@media(min-width:768px){
+.elementor-element-dw0006w{display:grid!important;grid-template-columns:1fr auto 1fr;align-items:center;column-gap:32px}
+.elementor-element-dw0006w>.elementor-element-dwf0002{grid-column:2;grid-row:1;align-items:center!important;text-align:center;width:auto!important}
+.elementor-element-dw0006w>.dwf-phonew{grid-column:1;grid-row:1;justify-self:start;text-align:left}
+.elementor-element-dw0006w>.dwf-socialw{grid-column:3;grid-row:1;justify-self:end}
+}
+@media(max-width:767px){.elementor-element-dw0006w{align-items:center!important;text-align:center}.dwf-phonew,.dwf-phonew p{text-align:center}.dwf-socialw{text-align:center}}
+.dwf-socialw .elementor-social-icon svg{fill:#4BA3DC!important}.dwf-socialw .elementor-social-icon:hover svg{fill:#fff!important}
+.dwf-socialw .elementor-social-icon[href*="upwork"]::before{content:"";display:block;width:21px;height:21px;background:#4BA3DC;-webkit-mask:url(https://dreamwebdigital.com/wp-content/uploads/2026/10/upwork-icon.svg) center/contain no-repeat;mask:url(https://dreamwebdigital.com/wp-content/uploads/2026/10/upwork-icon.svg) center/contain no-repeat}
+.dwf-socialw .elementor-social-icon[href*="upwork"]:hover::before{background:#fff}
+.dwf-socialw .elementor-social-icon{display:inline-flex!important;align-items:center;justify-content:center}
+.elementor-widget-text-editor.dwf-copy,.elementor-widget-text-editor.dwf-copy p{font-size:12px!important;line-height:1.5!important}
+.elementor-widget-text-editor.dwf-phonew p.dwf-k{font-size:11px!important;line-height:1.3!important}
+.elementor-widget-text-editor.dwf-phonew p.dwf-num,.elementor-widget-text-editor.dwf-phonew p.dwf-num a{font-size:17px!important;line-height:1.3!important}

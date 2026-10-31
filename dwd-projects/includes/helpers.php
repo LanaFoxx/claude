@@ -229,3 +229,18 @@ function dwdp_youtube_ratio( $yt ) {
 	set_transient( $key, $ratio, $im ? MONTH_IN_SECONDS : HOUR_IN_SECONDS );
 	return $ratio;
 }
+
+/** Administrators may upload SVG icons (used by Elementor icon widgets, e.g. the Upwork footer icon). */
+add_filter( 'upload_mimes', function ( $mimes ) {
+	if ( current_user_can( 'manage_options' ) ) {
+		$mimes['svg'] = 'image/svg+xml';
+	}
+	return $mimes;
+} );
+add_filter( 'wp_check_filetype_and_ext', function ( $data, $file, $filename ) {
+	if ( current_user_can( 'manage_options' ) && preg_match( '/\.svg$/i', $filename ) ) {
+		$data['ext']  = 'svg';
+		$data['type'] = 'image/svg+xml';
+	}
+	return $data;
+}, 10, 3 );
