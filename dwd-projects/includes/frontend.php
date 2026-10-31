@@ -209,7 +209,7 @@ add_action( 'wp_footer', function () {
 	if ( ! is_singular( DWDP_CPT ) ) {
 		return;
 	}
-	echo "<script>document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('.dw-yt');if(!b)return;var f=document.createElement('iframe');f.src='https://www.youtube-nocookie.com/embed/'+b.dataset.yt+'?autoplay=1&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3';f.title=b.getAttribute('aria-label')||'Video';f.allow='autoplay; fullscreen; picture-in-picture; encrypted-media';f.allowFullscreen=true;var w=document.createElement('div');w.className='dw-video-frame';w.style.aspectRatio=b.style.aspectRatio;w.appendChild(f);b.replaceWith(w);});</script>\n";
+	echo "<script>document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('.dw-yt');if(!b)return;var f=document.createElement('iframe');f.src='https://www.youtube-nocookie.com/embed/'+b.dataset.yt+'?autoplay=1&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3';f.title=b.getAttribute('aria-label')||'Video';f.allow='autoplay; fullscreen; picture-in-picture; encrypted-media';f.allowFullscreen=true;var w=document.createElement('div');w.className='dw-video-frame is-yt';w.style.aspectRatio=b.style.aspectRatio;w.appendChild(f);b.replaceWith(w);});</script>\n";
 }, 60 );
 
 // Even line lengths: centered text is balanced (lines of similar length instead of long-short-long),
