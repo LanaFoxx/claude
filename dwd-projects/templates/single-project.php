@@ -39,6 +39,12 @@ while ( have_posts() ) :
 					<?php if ( $together ) : ?>
 						<div class="dw-wt"><span>WORKING TOGETHER</span><?php echo wpautop( esc_html( $together ) ); ?></div>
 					<?php endif; ?>
+					<?php if ( $video ) : ?>
+						<div class="dw-video">
+							<span class="dw-video-k">Video walkthrough</span>
+							<div class="dw-video-frame"><iframe src="<?php echo esc_url( $video ); ?>" title="<?php echo esc_attr( $name . ' website walkthrough' ); ?>" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>
+						</div>
+					<?php endif; ?>
 					<div class="dw-notes">
 						<?php foreach ( $notes as $label => $value ) : ?>
 							<?php if ( $value ) : ?>
@@ -57,12 +63,6 @@ while ( have_posts() ) :
 					<a class="dwdp-btn" href="<?php echo esc_url( home_url( dwdp_setting( 'portfolio_url' ) ) ); ?>">&larr; Back to portfolio</a>
 				</div>
 				<div class="dwdp-right">
-					<?php if ( $video ) : ?>
-						<div class="dw-video">
-							<span class="dw-video-k">Video walkthrough</span>
-							<div class="dw-video-frame"><iframe src="<?php echo esc_url( $video ); ?>" title="<?php echo esc_attr( $name . ' website walkthrough' ); ?>" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>
-						</div>
-					<?php endif; ?>
 					<?php foreach ( $sections as $n => $img ) : ?>
 						<div class="dw-shot"><?php echo dwdp_img( $img, sprintf( '%s website design, section %d', $name, $n + 1 ), array( 'loading' => $n ? 'lazy' : 'eager' ) ); ?></div>
 					<?php endforeach; ?>
