@@ -520,6 +520,8 @@
 			if (cover) { setSlot('cover', cover.id, cover.thumb); }
 			if (mockup) { setSlot('mockup', mockup.id, mockup.thumb); }
 			persist();
+			if (cover) { DWDP.coverUrl = cover.full || cover.url || DWDP.coverUrl; }
+			buildThumbs();
 			$btn.text('Saved ✓');
 			$('#dwdp-editor').prop('hidden', true);
 			$('html, body').animate({ scrollTop: $('.dwdp-gallery-box').offset().top - 60 }, 300);
@@ -607,6 +609,122 @@
 	});
 
 	addRecutButton();
+
+	/* ---------- marketing thumbnails (Upwork, LinkedIn, YouTube) ---------- */
+
+	var THUMBS = [
+		{ key: 'thumb_upwork', w: 1000, h: 750, name: 'upwork-thumbnail', label: 'Upwork thumbnail' },
+		{ key: 'thumb_linkedin', w: 1200, h: 627, name: 'linkedin', label: 'LinkedIn image' },
+		{ key: 'thumb_youtube', w: 1920, h: 1080, name: 'youtube-cover', label: 'YouTube cover' }
+	];
+
+	function rrect(x, px, py, w, h, r) {
+		r = Math.min(r, w / 2, h / 2);
+		x.beginPath();
+		x.moveTo(px + r, py); x.arcTo(px + w, py, px + w, py + h, r); x.arcTo(px + w, py + h, px, py + h, r);
+		x.arcTo(px, py + h, px, py, r); x.arcTo(px, py, px + w, py, r); x.closePath();
+	}
+
+	// Draw img into the box, filling it from the top (object-fit: cover; object-position: top).
+	function fillTop(x, img, dx, dy, dw, dh) {
+		var iw = img.naturalWidth || img.width, ih = img.naturalHeight || img.height;
+		var s = Math.max(dw / iw, dh / ih), cw = dw / s, ch = dh / s;
+		x.drawImage(img, (iw - cw) / 2, 0, cw, ch, dx, dy, dw, dh);
+	}
+
+	/** White scene: a laptop showing the desktop hero and a phone beside it (like the example thumbnails). */
+	function drawScene(spec, hero, phone) {
+		var W = spec.w, H = spec.h, c = canvasFor(W, H), x = c.getContext('2d');
+		x.fillStyle = '#fff'; x.fillRect(0, 0, W, H);
+		var pr = (phone.naturalWidth || phone.width) / (phone.naturalHeight || phone.height);
+		// size the laptop so the whole group fits with generous white space
+		var LW = Math.min(W * 0.62, H * 0.64 * 1.42);
+		var bez = LW * 0.014, sw = LW - bez * 2, sh = sw / 1.6, lidH = sh + bez * 2.4;
+		var baseH = LW * 0.032, baseOver = LW * 0.065;
+		var PH = lidH * 0.9, PW = PH * pr;
+		var groupW = baseOver + LW + PW * 1.02, groupH = lidH + baseH;
+		var lx = (W - groupW) / 2 + baseOver, ly = (H - groupH) / 2 - H * 0.01;
+		// floor shadow
+		var g = x.createRadialGradient(lx + LW / 2, ly + groupH, 0, lx + LW / 2, ly + groupH, LW * 0.62);
+		g.addColorStop(0, 'rgba(18,24,38,.20)'); g.addColorStop(1, 'rgba(18,24,38,0)');
+		x.save(); x.translate(0, ly + groupH); x.scale(1, 0.09); x.translate(0, -(ly + groupH));
+		x.fillStyle = g; x.fillRect(lx - LW * 0.2, ly + groupH - LW * 0.62, LW * 1.4, LW * 1.24); x.restore();
+		// lid
+		rrect(x, lx, ly, LW, lidH, LW * 0.022); x.fillStyle = '#16171a'; x.fill();
+		x.lineWidth = Math.max(1, LW * 0.002); x.strokeStyle = '#3a3c42'; x.stroke();
+		x.fillStyle = '#2b2d33'; x.beginPath(); x.arc(lx + LW / 2, ly + bez * 0.6, Math.max(1.5, LW * 0.0028), 0, Math.PI * 2); x.fill();
+		var sx = lx + bez, sy = ly + bez * 1.2;
+		x.save(); rrect(x, sx, sy, sw, sh, LW * 0.006); x.clip(); x.fillStyle = '#fff'; x.fillRect(sx, sy, sw, sh); fillTop(x, hero, sx, sy, sw, sh); x.restore();
+		// base
+		var bx = lx - baseOver, by = ly + lidH, bw = LW + baseOver * 2;
+		var bg = x.createLinearGradient(0, by, 0, by + baseH);
+		bg.addColorStop(0, '#f1f2f5'); bg.addColorStop(0.55, '#d7dae0'); bg.addColorStop(1, '#aeb3bc');
+		x.beginPath(); x.moveTo(bx, by); x.lineTo(bx + bw, by);
+		x.quadraticCurveTo(bx + bw, by + baseH, bx + bw - baseH * 1.6, by + baseH);
+		x.lineTo(bx + baseH * 1.6, by + baseH); x.quadraticCurveTo(bx, by + baseH, bx, by); x.closePath();
+		x.fillStyle = bg; x.fill();
+		rrect(x, lx + LW / 2 - LW * 0.085, by, LW * 0.17, baseH * 0.32, baseH * 0.16); x.fillStyle = '#c3c7ce'; x.fill();
+		// phone, standing just right of the lid on the base line, with a soft shadow
+		var px = lx + LW + LW * 0.004, py = by + baseH - PH;
+		x.save(); x.shadowColor = 'rgba(10,16,28,.28)'; x.shadowBlur = PW * 0.18; x.shadowOffsetY = PW * 0.05;
+		x.drawImage(phone, px, py, PW, PH); x.restore();
+		return c;
+	}
+
+	function thumbSources() {
+		var hero, phone;
+		if (state.img) {
+			var W = state.img.naturalWidth, hh = heroHeight(), hc = canvasFor(W, hh);
+			hc.getContext('2d').drawImage(state.img, 0, 0, W, hh, 0, 0, W, hh);
+			hero = Promise.resolve(hc);
+		} else if (DWDP.coverUrl) {
+			hero = loadImage(DWDP.coverUrl);
+		} else {
+			return Promise.reject('Add a hero image first (capture the website or pick one in “Hero image”).');
+		}
+		if (state.mobileImg) {
+			phone = Promise.resolve(drawPhone(state.mobileImg, 720));
+		} else if (DWDP.mobile && DWDP.mobile.url) {
+			phone = loadImage(DWDP.mobile.url).then(function (im) { return drawPhone(im, 720); });
+		} else if (DWDP.mockupUrl) {
+			phone = loadImage(DWDP.mockupUrl);
+		} else {
+			return Promise.reject('Add a phone image first (capture the website or pick one in “Phone mockup”).');
+		}
+		return Promise.all([hero, phone]);
+	}
+
+	function buildThumbs() {
+		var $s = $('#dwdp-thumbs-status'), $b = $('#dwdp-build-thumbs').prop('disabled', true);
+		var name = projectName(), base = slug(name), saved = {};
+		$s.text('Building…');
+		return thumbSources().then(function (src) {
+			var chain = Promise.resolve();
+			THUMBS.forEach(function (t) {
+				chain = chain.then(function () {
+					$s.text('Saving ' + t.label + '…');
+					return toBlob(drawScene(t, src[0], src[1]), 'image/jpeg', 0.9).then(function (b) {
+						return upload(b, base + '-' + t.name + '.jpg', name + ' ' + t.label, name + ' website on a laptop and a phone');
+					}).then(function (r) {
+						saved[t.key] = r.id;
+						var $card = $('.dwdp-thumbcard[data-key="' + t.key + '"]');
+						$card.find('.dwdp-thumbcard-img').html('<img src="' + (r.full || r.url || r.thumb) + '" alt="">');
+						if (r.full || r.url) { $card.find('.dwdp-thumbdl').attr('href', r.full || r.url).prop('hidden', false); }
+					});
+				});
+			});
+			return chain;
+		}).then(function () {
+			return post('dwdp_set_media', saved);
+		}).then(function () {
+			$s.text('Done ✓ Saved to the Media Library.');
+		}).catch(function (e) {
+			$s.text('Stopped: ' + e);
+		}).then(function () { $b.prop('disabled', false); });
+	}
+
+	$('#dwdp-build-thumbs').on('click', buildThumbs);
+	window.DWDPBuildThumbs = buildThumbs;
 
 	// exposed for testing
 	window.DWDPTest = { cutsFromSections: cutsFromSections, cutsFromImage: cutsFromImage, drawPhone: drawPhone, state: state };

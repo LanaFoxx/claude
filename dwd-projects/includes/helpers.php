@@ -62,6 +62,9 @@ function dwdp_fields() {
 		'fullshot'   => '', // attachment ID of the full-page capture
 		'mobileshot' => '', // attachment ID of the raw mobile capture
 		'cuts'       => '', // JSON list of cut positions (px) used for the last split
+		'thumb_upwork'   => '', // attachment ID: 1000x750 Upwork thumbnail
+		'thumb_linkedin' => '', // attachment ID: 1200x627 LinkedIn image
+		'thumb_youtube'  => '', // attachment ID: 1920x1080 YouTube cover (also the video cover on the project page)
 	);
 }
 

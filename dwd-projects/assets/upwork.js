@@ -104,17 +104,16 @@
 		var $b = $(this).prop('disabled', true), $s = $('#dwdp-up-status').text('Building…');
 		$('#dwdp-up-list').empty();
 		var d = window.DWDPUP, slug = d.slug || 'project';
-		if (!d.cover) { $s.text('Add a cover image first.'); $b.prop('disabled', false); return; }
-		var pages = d.fullshot ? [d.fullshot] : d.sections;
-		Promise.all([load(window.DWDP_UP_FRAME), load(d.cover), d.mockup ? load(d.mockup) : null, Promise.all(pages.map(load))])
+				var pages = d.fullshot ? [d.fullshot] : d.sections;
+		Promise.all([null, null, null, Promise.all(pages.map(load))])
 			.then(function (r) {
 				var page = r[3].length ? fullPage(r[3]) : null;
-				var jobs = [addResult(slug + '-upwork-thumbnail.png', thumbnail(r[0], r[1], r[2]), 'image/png')];
+				var jobs = [];
 				if (page) {
 					jobs.push(addResult(slug + '-homepage-1.jpg', half(page, 0), 'image/jpeg', 0.9));
 					jobs.push(addResult(slug + '-homepage-2.jpg', half(page, 1), 'image/jpeg', 0.9));
 				}
-				return Promise.all(jobs).then(function () { $s.text(page ? 'Ready: thumbnail plus the homepage in two halves.' : 'Ready: thumbnail (no homepage screenshots on this project yet).'); });
+				return Promise.all(jobs).then(function () { $s.text(page ? 'Ready: the homepage in two halves. The thumbnail is in the Thumbnails box below.' : 'No homepage screenshots on this project yet.'); });
 			})
 			.catch(function (e) { $s.text('Stopped: ' + e); })
 			.then(function () { $b.prop('disabled', false).text('Rebuild Upwork images'); });

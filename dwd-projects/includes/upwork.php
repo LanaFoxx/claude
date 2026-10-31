@@ -88,7 +88,7 @@ function dwdp_box_upwork( $post ) {
 	?>
 	<p class="description">Skills: add them one at a time in Upwork (5 max). <?php echo $t['url'] ? 'Live site to add as a link: ' . esc_html( $t['url'] ) : ''; ?></p>
 	<div class="dwdp-up-images">
-		<button type="button" class="button button-primary" id="dwdp-up-build">Build Upwork images</button>
+		<button type="button" class="button button-primary" id="dwdp-up-build">Build homepage halves</button>
 		<span class="dwdp-up-status" id="dwdp-up-status"></span>
 		<ul class="dwdp-up-list" id="dwdp-up-list"></ul>
 	</div>

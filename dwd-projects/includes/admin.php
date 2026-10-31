@@ -10,6 +10,7 @@ add_filter( 'enter_title_here', function ( $text, $post ) {
 add_action( 'add_meta_boxes_' . DWDP_CPT, function () {
 	add_meta_box( 'dwdp_capture', 'Website & screenshots', 'dwdp_box_capture', DWDP_CPT, 'normal', 'high' );
 	add_meta_box( 'dwdp_details', 'Project details', 'dwdp_box_details', DWDP_CPT, 'normal', 'default' );
+	add_meta_box( 'dwdp_thumbs', 'Thumbnails for Upwork, LinkedIn & YouTube', 'dwdp_box_thumbs', DWDP_CPT, 'normal', 'default' );
 } );
 
 add_action( 'admin_enqueue_scripts', function ( $hook ) {
@@ -36,6 +37,8 @@ add_action( 'admin_enqueue_scripts', function ( $hook ) {
 			'mobile'   => $mobile ? array( 'id' => $mobile, 'url' => dwdp_original_url( $mobile ) ) : null,
 			'cuts'     => json_decode( (string) dwdp_get( $post_id, 'cuts' ), true ),
 			'captureW' => max( 800, min( 2560, absint( dwdp_setting( 'capture_width' ) ) ) ),
+			'coverUrl'  => ( $c = absint( dwdp_get( $post_id, 'cover' ) ) ) ? dwdp_original_url( $c ) : '',
+			'mockupUrl' => ( $m = absint( dwdp_get( $post_id, 'mockup' ) ) ) ? dwdp_original_url( $m ) : '',
 		)
 	);
 } );
@@ -252,7 +255,7 @@ add_action( 'wp_ajax_dwdp_set_media', function () {
 	if ( isset( $_POST['sections'] ) ) {
 		update_post_meta( $post_id, '_dwdp_sections', implode( ',', dwdp_ids( wp_unslash( $_POST['sections'] ) ) ) ); // phpcs:ignore
 	}
-	foreach ( array( 'cover', 'mockup' ) as $k ) {
+	foreach ( array( 'cover', 'mockup', 'thumb_upwork', 'thumb_linkedin', 'thumb_youtube' ) as $k ) {
 		if ( isset( $_POST[ $k ] ) ) {
 			update_post_meta( $post_id, '_dwdp_' . $k, absint( $_POST[ $k ] ) ? absint( $_POST[ $k ] ) : '' );
 		}
@@ -417,5 +420,32 @@ function dwdp_settings_page() {
 			<?php submit_button(); ?>
 		</form>
 	</div>
+	<?php
+}
+
+/** Marketing thumbnails: built in the browser from the project's hero and phone screenshots. */
+function dwdp_box_thumbs( $post ) {
+	$items = array(
+		'thumb_upwork'   => array( 'Upwork', '1000 × 750', 'upwork' ),
+		'thumb_linkedin' => array( 'LinkedIn', '1200 × 627', 'linkedin' ),
+		'thumb_youtube'  => array( 'YouTube cover', '1920 × 1080', 'youtube' ),
+	);
+	?>
+	<p class="description">These are made automatically when you capture a website. The YouTube cover is also shown on the project page's video before it plays (unless you set your own video cover image). Rebuild them any time after changing the hero or phone image.</p>
+	<div class="dwdp-thumbs">
+		<?php foreach ( $items as $key => $it ) : ?>
+			<?php
+			$id   = absint( dwdp_get( $post->ID, $key ) );
+			$full = $id ? dwdp_original_url( $id ) : '';
+			$src  = $id ? wp_get_attachment_image_src( $id, 'medium' ) : false;
+			?>
+			<figure class="dwdp-thumbcard" data-key="<?php echo esc_attr( $key ); ?>">
+				<div class="dwdp-thumbcard-img"><?php echo $src ? '<img src="' . esc_url( $src[0] ) . '" alt="">' : '<span>Not built yet</span>'; ?></div>
+				<figcaption><b><?php echo esc_html( $it[0] ); ?></b> <span><?php echo esc_html( $it[1] ); ?></span></figcaption>
+				<a class="button dwdp-thumbdl" href="<?php echo esc_url( $full ); ?>" download <?php echo $full ? '' : 'hidden'; ?>>Download</a>
+			</figure>
+		<?php endforeach; ?>
+	</div>
+	<p><button type="button" class="button button-primary" id="dwdp-build-thumbs">Build thumbnails</button> <span id="dwdp-thumbs-status" class="description"></span></p>
 	<?php
 }
