@@ -1,0 +1,14 @@
+import { chromium } from '/opt/node-tools/node_modules/playwright/index.mjs';
+import fs from 'fs';
+const S = process.argv[2], src = process.argv[3] || 'live';
+const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', proxy: { server: process.env.HTTPS_PROXY } });
+const ctx = await b.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
+if (src !== 'live') await ctx.route(u => u.href.includes('?pv='), r => r.fulfill({ status: 200, contentType: 'text/html; charset=utf-8', body: fs.readFileSync(`${S}/pv/${src}.html`, 'utf8') }));
+const p = await ctx.newPage();
+await p.goto('https://taxcoursefinder.com/' + (src === 'live' || src === 'home' ? '' : src + '/') + (src === 'live' ? '?nc=' + Date.now() : '?pv=1'), { waitUntil: 'networkidle' });
+const f = p.locator('footer, .tcf-footer').first(); await f.scrollIntoViewIfNeeded();
+const strip = p.locator('[data-tcf-cdstrip]').first();
+const top = await strip.boundingBox(), fb = await f.boundingBox();
+await p.screenshot({ path: S + '/shots/mfooter.png', fullPage: true, clip: { x: 0, y: top.y + (await p.evaluate(() => scrollY)), width: 390, height: Math.min(1900, fb.y + fb.height - top.y) } });
+console.log('footer height', Math.round(fb.height), 'strip', Math.round(top.height));
+await b.close();

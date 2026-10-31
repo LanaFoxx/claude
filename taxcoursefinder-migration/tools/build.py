@@ -133,6 +133,9 @@ def wording(text, js=False):
             text = text.replace(o, n); WORDING_USED.add(old)
     return text
 
+# Renewal calendar band on the home page: photo under a dark grey overlay.
+CAL_BG = ''  # no photo behind the renewal calendar (removed at the owner's request)
+
 def seo_tweaks(name, body):
     # Student note from the listing (e.g. which package to pick, recurring billing), in sentence case under the price label.
     note = ('<sc-if value="{{ p.hasLinkNote }}" hint-placeholder-val="{{ false }}"><div style="font:500 14px/1.4 Manrope,sans-serif;color:#5A6E78;margin-top:4px;max-width:220px">{{ p.linkNote }}</div></sc-if>')
@@ -165,7 +168,9 @@ def seo_tweaks(name, body):
             depth += -1 if m.group(1) else 1
             if depth == 0: j = a + m.end() + src[a + m.end():].index('>') + 1; break
         cal = src[a:j].replace('Renew inside the green window to avoid the late fee.', 'Renew by October 31 to avoid the late fee.').replace('</span>Key dates</div>', '</span>CTEC renewal deadline</div>', 1)
-        dark = cal.replace('<div style="padding:88px 56px;background:#fff">', '<div style="padding:88px 56px;background:#0B2E40;color:#fff;border-top:6px solid #FF6B57">', 1)  # dark band on the home page, coral line above
+        dark = cal.replace('<div style="padding:88px 56px;background:#fff">', '<div style="padding:88px 56px;background:#0B2E40;color:#fff;border-top:6px solid #FF6B57;position:relative;overflow:hidden">' + CAL_BG, 1)  # dark band on the home page, coral line above, photo under a dark grey overlay
+        dark = dark.replace(CAL_BG + '\n    <div style="max-width:1200px;margin:0 auto">', CAL_BG + '\n    <div style="max-width:1200px;margin:0 auto;position:relative">', 1)
+        assert 'margin:0 auto;position:relative' in dark, 'calendar inner'
         for x, y in [("serif;\">The renewal", "serif;color:#fff\">The renewal"), ('color:#2F4652', 'color:rgba(255,255,255,.78)'), ('color:#8A9AA3', 'color:rgba(255,255,255,.6)'),
                      ('#D7DFE2', 'rgba(255,255,255,.2)'), ('#E3E9EB', 'rgba(255,255,255,.2)'), ('<div style="font:700 22px Manrope,sans-serif">', '<div style="font:700 22px Manrope,sans-serif;color:#FF6B57">'),
                      ('background:#95AB3B;color:#fff;padding:12px 16px', 'background:#fff;color:#23272A;padding:12px 16px')]:
@@ -350,6 +355,24 @@ def seo_tweaks(name, body):
         import listing_form
         a = body.index('<form'); b = body.index('</form>', a) + len('</form>')
         body = body[:a] + listing_form.form() + body[b:]
+    # Home countdown: after Oct 31 (California time) it counts to Jan 15 and says that is the final deadline before the registration lapses.
+    body, n = re.subn(r'(<h2[^>]*>\{\{ cdTitle \}\}: <span[^>]*>\{\{ cdLong \}\}</span></h2>)',
+                      lambda m: m.group(1) + '<sc-if value="{{ cdLate }}" hint-placeholder-val="{{ false }}"><p style="margin:0 auto;max-width:760px;font-size:20px;line-height:1.6;color:rgba(255,255,255,.85);text-align:center;text-wrap:balance">{{ cdNote }}</p></sc-if>', body)
+    if name == 'mobile':  # phone hero: same photo as the desktop hero, under the same dark overlay; small course buttons
+        x = '<div style="background:#0B2E40;background-image:linear-gradient(135deg,rgba(255,255,255,.07) 0%,rgba(255,255,255,0) 55%);color:#fff;padding:50px 16px 56px;display:flex;flex-direction:column;gap:14px">'
+        assert body.count(x) == 1, 'mobile hero'
+        body = body.replace(x, '<div class="tcf-m-hero" style="background:#0B2E40;color:#fff;padding:50px 16px 56px;display:flex;flex-direction:column;gap:14px;position:relative;overflow:hidden">'
+            '<style>.tcf-m-hero>*:not(.tcf-m-bg){position:relative}.tcf-mobile #find-schools{position:relative;z-index:1}</style>'
+            '<img class="tcf-m-bg" src="@@MEDIA:photos/01-ctec-60-hour-learner.webp@@" alt="" fetchpriority="high" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">'
+            '<div class="tcf-m-bg" style="position:absolute;inset:0;background:linear-gradient(100deg,rgba(11,46,64,.96) 0%,rgba(11,46,64,.88) 55%,rgba(11,46,64,.78) 100%)"></div>', 1)
+        i = body.index('<div onclick="{{ setCE }}"'); a0 = body.rindex('<div style="display:flex;flex-direction:column;gap:10px">', 0, i)
+        b0 = body.index('</div>', body.index('<div onclick="{{ setQE }}"')); b0 = body.index('</div>', body.index('›</span></div>', b0)) + len('</div>')
+        assert body[b0 - 30:b0].count('</div>') >= 1
+        pill = ('<button type="button" onclick="{{ %s }}" style="cursor:pointer;background:{{ %sBoxBg }};color:{{ %sBoxColor }};border:1.5px solid {{ %sBoxBorder }};border-radius:999px;'
+                'padding:8px 16px;font:700 15px/1.2 Manrope,sans-serif;white-space:nowrap">%s</button>')
+        body = body[:a0] + ('<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px">'
+                            + pill % ('setCE', 'ce', 'ce', 'ce', '20 Hour Continuing Education') + pill % ('setQE', 'qe', 'qe', 'qe', '60 Hour Qualifying Education') + '</div>') + body[b0:]
+        assert 'I\'m renewing my registration' not in body and 'due Oct 31' not in body, 'mobile course cards'
     if name == 'mobile':  # phone directory: same review date as every other page
         x = 'text-align:center">Prices and offers are collected from provider websites and verified periodically; confirm on the provider site before purchasing.</div>'
         assert body.count(x) == 1, 'mobile price note'
@@ -360,7 +383,7 @@ def seo_tweaks(name, body):
     if name == 'mobile':  # renewal calendar on phones: stacked, same dark band as desktop
         row = lambda c, t, d: ('<div style="border-left:6px solid %s;padding:4px 0 4px 16px;display:flex;flex-direction:column;gap:4px"><div style="font:700 20px Manrope,sans-serif;color:#FF6B57">%s</div>'
                                '<p style="margin:0;font-size:18px;line-height:1.55;color:rgba(255,255,255,.78)">%s</p></div>' % (c, t, d))
-        mcal = ('<!-- RENEWAL CALENDAR --><div style="padding:56px 20px;background:#0B2E40;color:#fff;border-top:6px solid #FF6B57"><div style="display:flex;flex-direction:column;gap:22px">'
+        mcal = ('<!-- RENEWAL CALENDAR --><div style="padding:56px 20px;background:#0B2E40;color:#fff;border-top:6px solid #FF6B57;position:relative;overflow:hidden">' + CAL_BG + '<div style="display:flex;flex-direction:column;gap:22px;position:relative">'
                 '<div style="display:flex;flex-direction:column;gap:10px"><div style="font:700 17px Manrope,sans-serif;letter-spacing:1.6px;text-transform:uppercase;color:#7E9330">CTEC renewal deadline</div>'
                 "<h2 style=\"margin:0;font:300 36px/1.12 'Source Serif 4',Georgia,serif;color:#fff\">The renewal calendar</h2>"
                 '<p style="margin:0;font-size:18px;line-height:1.6;color:rgba(255,255,255,.78)">Registration runs November 1 to October 31. Renew by October 31 to avoid the late fee.</p></div>'
@@ -376,7 +399,7 @@ def seo_tweaks(name, body):
                                     '<sc-if value="{{ p.noSchool }}">' + nm + '</sc-if>')
         # phone home headline: green highlight, a bit larger
         body = body.replace('font:300 34px/1.1 \'Source Serif 4\',Georgia,serif;text-align:center;color:#fff"><span style="display:block">CTEC Approved</span>',
-                            'font:300 36px/1.1 \'Source Serif 4\',Georgia,serif;text-align:center;color:#fff"><span style="display:block;color:#AEC25A">CTEC Courses</span>', 1)
+                            'font:300 46px/1.08 \'Source Serif 4\',Georgia,serif;text-align:center;color:#fff"><span style="display:block;color:#AEC25A">CTEC Courses</span>', 1)
         body = body.replace('<span style="display:block;font-weight:300">Tax Course Directory</span></h1>', '<span style="display:block;font-weight:300">from Top Tax Schools</span></h1>', 1)
     if name == 'TaxCourse Finder Home':
         # Headline highlight in the same serif as the rest of the H1 (colour only), like the course pages.

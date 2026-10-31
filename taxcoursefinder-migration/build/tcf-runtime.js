@@ -327,19 +327,20 @@
     var ms = Math.max(0, end - Date.now());
     return { late: late, end: end, ms: ms, days: Math.floor(ms / 86400000), hours: Math.floor(ms % 86400000 / 3600000), mins: Math.floor(ms % 3600000 / 60000),
       short: late ? 'Jan 15' : 'Oct 31', long: MONTHS[m - 1] + ' ' + d + ', ' + y, monthDay: MONTHS[m - 1] + ' ' + d,
-      title: late ? 'Late renewal closes' : 'CTEC renewal deadline', leftLabel: late ? 'Time left in the late-renewal window' : 'Time left to renew' };
+      title: late ? 'Final CTEC renewal deadline' : 'CTEC renewal deadline', leftLabel: late ? 'Time left before your registration lapses' : 'Time left to renew',
+      note: late ? 'This is the final deadline to renew your CTEC registration (late fee applies). Miss it and your registration lapses: you would have to retake the 60-hour course and register again.' : '' };
   };
   TCF.countdownVals = function () {
     var k = TCF.deadline();
     return { daysLeft: k.days, cdDays: k.days, cdHours: String(k.hours).padStart(2, '0'), cdMins: String(k.mins).padStart(2, '0'),
-      cdTitle: k.title, cdShort: k.short, cdLong: k.long, cdLeftLabel: k.leftLabel, cdLate: k.late };
+      cdTitle: k.title, cdShort: k.short, cdLong: k.long, cdLeftLabel: k.leftLabel, cdLate: k.late, cdNote: k.note };
   };
   // Site-wide top bar text (header template has [data-tcf-cd]).
   function topbar() {
     var el = document.querySelectorAll('[data-tcf-cd]'); if (!el.length) return;
     var k = TCF.deadline(), left = k.days > 0 ? k.days + (k.days === 1 ? ' day' : ' days') + ' left' : (k.hours > 0 ? k.hours + ' hrs left' : 'ends today');
     var small = window.innerWidth < 600;
-    var txt = k.late ? (small ? 'Late CTEC renewal open until ' + k.short : 'Missed Oct 31? Late CTEC renewal is open until ' + k.monthDay + ' (late fee applies)')
+    var txt = k.late ? (small ? 'Final CTEC deadline: ' + k.short : 'Final deadline to renew CTEC: ' + k.monthDay + ' (11:59 PM Pacific) or your registration lapses')
                      : (small ? 'CTEC renewal deadline: ' + k.short : 'CTEC renewal deadline: ' + k.monthDay + ' (11:59 PM Pacific)');
     Array.prototype.forEach.call(document.querySelectorAll('.tcf-topbar-link'), function (l) { if (k.late) l.innerHTML = 'Find a 20-hour course <span aria-hidden="true">&rarr;</span>'; });
     Array.prototype.forEach.call(el, function (e) {
@@ -355,6 +356,9 @@
   document.addEventListener('click', function (e) {
     var t = e.target.closest && e.target.closest('[data-tcf-menu-toggle]');
     if (t) { var h = document.querySelector('.tcf-header'); if (h) { var open = h.classList.toggle('tcf-menu-open'); t.setAttribute('aria-expanded', open ? 'true' : 'false'); } }
+    // Phone menu: each dropdown starts collapsed; tapping its heading opens or closes it.
+    var dh = e.target.closest && e.target.closest('.tcf-header.tcf-menu-open .dd > div:first-child');
+    if (dh) { var dd = dh.parentNode, on = dd.classList.toggle('tcf-dd-open'); dh.setAttribute('aria-expanded', on ? 'true' : 'false'); if (!on && document.activeElement && dd.contains(document.activeElement)) document.activeElement.blur(); }
   });
 })();
 
@@ -382,7 +386,7 @@
     var els = document.querySelectorAll('[data-tcf-cdstrip]'); if (!els.length || !TCF.countdownVals) return;
     var v = TCF.countdownVals();
     Array.prototype.forEach.call(els, function (el) {
-      el.querySelector('[data-cd-title]').textContent = v.cdTitle + ' · ' + v.cdShort;
+      el.querySelector('[data-cd-title]').textContent = v.cdTitle + ' · ' + v.cdShort + (v.cdLate ? ' · renew or your registration lapses' : '');
       el.querySelector('[data-cd-time]').textContent = v.cdDays + (v.cdDays === 1 ? ' day' : ' days') + ' · ' + v.cdHours + ' hrs · ' + v.cdMins + ' min';
       el.style.visibility = 'visible';
     });
