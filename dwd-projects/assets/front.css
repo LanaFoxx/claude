@@ -373,3 +373,4 @@
 .dwbp-introsec .dwbp-intro p:last-child{margin-bottom:0}
 .dwbp-toc{padding:56px 0 8px}
 @media(max-width:767px){.dwbp-introsec{padding:40px 0}.dwbp-introsec .dwbp-intro p{font-size:17px}}
+.dw-upwork-link{display:flex;align-items:center;justify-content:center;gap:10px;margin:0 0 14px;padding:14px 20px;border:1.5px solid #14A800;border-radius:8px;background:#fff;color:#108A00!important;font:600 15px Urbanist,sans-serif;text-decoration:none!important;transition:background .2s,color .2s}.dw-upwork-link:hover{background:#14A800;color:#fff!important}.dw-upwork-ic{width:22px;height:22px;background:currentColor;-webkit-mask:url(https://dreamwebdigital.com/wp-content/uploads/2026/10/upwork-icon.svg) center/contain no-repeat;mask:url(https://dreamwebdigital.com/wp-content/uploads/2026/10/upwork-icon.svg) center/contain no-repeat}

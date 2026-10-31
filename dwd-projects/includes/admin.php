@@ -183,7 +183,7 @@ add_action( 'save_post_' . DWDP_CPT, function ( $post_id ) {
 	if ( isset( $in['url'] ) ) {
 		update_post_meta( $post_id, '_dwdp_url', esc_url_raw( $in['url'] ) );
 	}
-	foreach ( array( 'video', 'video_cover' ) as $k ) {
+	foreach ( array( 'video', 'video_cover', 'upwork_url' ) as $k ) {
 		if ( isset( $in[ $k ] ) ) {
 			update_post_meta( $post_id, '_dwdp_' . $k, esc_url_raw( $in[ $k ] ) );
 		}
@@ -231,7 +231,7 @@ add_action( 'wp_ajax_dwdp_set_fields', function () {
 	if ( isset( $in['url'] ) ) {
 		update_post_meta( $post_id, '_dwdp_url', esc_url_raw( $in['url'] ) );
 	}
-	foreach ( array( 'video', 'video_cover' ) as $k ) {
+	foreach ( array( 'video', 'video_cover', 'upwork_url' ) as $k ) {
 		if ( isset( $in[ $k ] ) ) {
 			update_post_meta( $post_id, '_dwdp_' . $k, esc_url_raw( $in[ $k ] ) );
 		}

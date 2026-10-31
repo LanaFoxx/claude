@@ -86,6 +86,11 @@ function dwdp_box_upwork( $post ) {
 	$field( 'Project description', $t['desc'], 600, 6 );
 	$field( 'Skills and deliverables', implode( ', ', $t['skills'] ), 200 );
 	?>
+	<div class="dwdp-up-field">
+		<div class="dwdp-up-label"><strong>Upwork project link</strong> <span class="description">After you publish the project on Upwork, open it there, copy its address and paste it here. The project page then shows a “View this project on Upwork” button.</span></div>
+		<input type="url" name="dwdp[upwork_url]" class="large-text" value="<?php echo esc_attr( dwdp_get( $post->ID, 'upwork_url' ) ); ?>" placeholder="https://www.upwork.com/freelancers/dreamwebdigital?p=…">
+		<p><a class="button" href="https://www.upwork.com/freelancers/settings/portfolio" target="_blank" rel="noopener">Open my Upwork portfolio ↗</a></p>
+	</div>
 	<p class="description">Skills: add them one at a time in Upwork (5 max). <?php echo $t['url'] ? 'Live site to add as a link: ' . esc_html( $t['url'] ) : ''; ?></p>
 	<div class="dwdp-up-images">
 		<button type="button" class="button button-primary" id="dwdp-up-build">Build homepage halves</button>

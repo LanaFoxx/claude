@@ -74,6 +74,8 @@ while ( have_posts() ) :
 							<span class="dw-rby">&mdash; <?php echo esc_html( $by ? $by : $name ); ?></span>
 						</div>
 					<?php endif; ?>
+					<?php $upw = dwdp_get( $id, 'upwork_url' ); ?>
+					<a class="dw-upwork-link" href="<?php echo esc_url( $upw ? $upw : 'https://www.upwork.com/freelancers/dreamwebdigital' ); ?>" target="_blank" rel="noopener me"><span class="dw-upwork-ic" aria-hidden="true"></span><?php echo $upw ? 'View this project on Upwork' : 'See my Upwork profile · Top Rated Plus'; ?> <span aria-hidden="true">↗</span></a>
 					<a class="dwdp-btn" href="<?php echo esc_url( home_url( dwdp_setting( 'portfolio_url' ) ) ); ?>">&larr; Back to portfolio</a>
 				</div>
 				<div class="dwdp-right">
