@@ -336,3 +336,12 @@
 .dwbp-card .dwbp-checks li{font-size:17px;padding:11px 0}
 .dwbp-sec.is-alt .dwbp-checks,.dwbp-sec.is-alt .dwbp-checks li{border-color:#D9E6F3}
 @media(max-width:767px){.dwbp-checks li{font-size:17px}}
+/* Blog sections: paragraphs as wide as the heading, straight edges */
+.dwbp-body>p,.dwbp-steps{max-width:none!important;text-align:justify;text-justify:inter-word;hyphens:manual}
+.dwbp-checks{max-width:none}
+@media(max-width:767px){.dwbp-body>p{text-align:left}}
+/* "In this guide" lines up with the sections below (same left edge), intro left-aligned */
+.dwbp-toc .dwbp-in{max-width:1180px}
+.dwbp-toc-grid b{flex:none;width:26px}
+.dwbp-intro{max-width:none;margin:36px 0 0;text-align:left}
+.dwbp-intro p{text-align:left}

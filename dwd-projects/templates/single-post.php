@@ -183,10 +183,6 @@ while ( have_posts() ) :
 					<?php if ( $lead ) : ?>
 						<p class="dwbp-lead"><?php echo esc_html( $lead ); ?></p>
 					<?php endif; ?>
-					<div class="dwbp-btns">
-						<a class="dwdp-btn" href="<?php echo esc_url( dwdp_setting( 'cta_url' ) ); ?>" target="_blank" rel="noopener">Schedule a Zoom</a>
-						<a class="dwbp-ghost" href="<?php echo esc_url( home_url( '/portfolio/' ) ); ?>">See my work →</a>
-					</div>
 					<div class="dwbp-meta">By <a href="<?php echo esc_url( home_url( '/#about' ) ); ?>">Michael</a> · <?php echo esc_html( get_the_date() ); ?> · <?php echo esc_html( dwdp_reading_time() ); ?> min read</div>
 				</div>
 				<?php if ( has_post_thumbnail() ) : ?>
