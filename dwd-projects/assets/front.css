@@ -354,3 +354,15 @@
 @media(max-width:1024px){.dwbp-toc-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:767px){.dwbp-toc-grid{grid-template-columns:1fr;padding:14px 18px}}
 @media(min-width:1025px){.dwbp-toc-grid.cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* Blog: links blue everywhere in the content; richer cards */
+.dwbp-intro a,.dwbp-body a,.dwbp-card a,.dwbp-steps a,.dwbp-checks a{color:#1B7EC3!important;font-weight:600;text-decoration:none}
+.dwbp-intro a:hover,.dwbp-body a:hover{text-decoration:underline}
+.dwbp-cards{gap:22px}
+.dwbp-card{padding:34px 34px 20px;border-color:#E4E9F5;border-radius:18px;box-shadow:0 18px 40px rgba(18,41,62,.07);transition:transform .25s,box-shadow .25s}
+.dwbp-card:hover{transform:translateY(-4px);box-shadow:0 24px 50px rgba(18,41,62,.1)}
+.dwbp-ic{display:inline-flex;align-items:center;justify-content:center;width:60px;height:60px;border-radius:16px;background:linear-gradient(145deg,#E8F2FB,#D6E8F8);margin-bottom:20px}
+.dwbp-ic svg{width:30px;height:30px;fill:none;stroke:#1B7EC3;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.dwbp-card h3{font-size:20px;margin-bottom:12px}
+.dwbp-card p{font-size:18px}
+@media(max-width:767px){.dwbp-card{padding:26px 22px 14px}.dwbp-ic{width:52px;height:52px}}
+@media(min-width:768px){.dwbp-toc-grid.cols-1{grid-template-columns:1fr}}

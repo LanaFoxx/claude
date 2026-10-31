@@ -68,6 +68,35 @@ function dwdp_bp_html( $node, &$linked ) {
 	return $html;
 }
 
+/** A line icon that fits a card's subject (falls back to a rotating set). */
+function dwdp_bp_icon( $title, $i ) {
+	$p = array(
+		'server'  => '<rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="13" width="18" height="7" rx="2"/><path d="M7 7.5h.01M7 16.5h.01"/>',
+		'shield'  => '<path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/>',
+		'pen'     => '<path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/>',
+		'layout'  => '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M9 9v11"/>',
+		'tag'     => '<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.5"/>',
+		'search'  => '<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',
+		'link'    => '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+		'chart'   => '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+		'person'  => '<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',
+		'gear'    => '<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/>',
+	);
+	$map = array( 'host' => 'server', 'server' => 'server', 'secur' => 'shield', 'ssl' => 'shield', 'backup' => 'shield', 'design' => 'pen', 'custom' => 'pen', 'template' => 'layout', 'builder' => 'layout', 'page' => 'layout', 'cost' => 'tag', 'price' => 'tag', 'cheap' => 'tag', 'seo' => 'search', 'search' => 'search', 'rank' => 'search', 'url' => 'link', 'redirect' => 'link', 'link' => 'link', 'track' => 'chart', 'speed' => 'chart', 'freelanc' => 'person', 'yourself' => 'person', 'support' => 'person', 'update' => 'gear', 'mainten' => 'gear' );
+	$key = '';
+	foreach ( $map as $w => $k ) {
+		if ( false !== stripos( $title, $w ) ) {
+			$key = $k;
+			break;
+		}
+	}
+	if ( ! $key ) {
+		$keys = array_keys( $p );
+		$key  = $keys[ $i % count( $keys ) ];
+	}
+	return '<svg viewBox="0 0 24 24">' . $p[ $key ] . '</svg>';
+}
+
 /** Render a section's body: paragraphs as they are, lists as check cards, H3 groups as cards. */
 function dwdp_bp_body( $nodes, &$linked ) {
 	$check = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11"/><path d="M7 12.5l3.2 3.2L17 9"/></svg>';
@@ -76,7 +105,7 @@ function dwdp_bp_body( $nodes, &$linked ) {
 	$card  = null;
 	$flush = function () use ( &$card, &$cards ) {
 		if ( $card ) {
-			$cards .= '<div class="dwbp-card"><h3>' . esc_html( $card['t'] ) . '</h3>' . $card['b'] . '</div>';
+			$cards .= '<div class="dwbp-card"><span class="dwbp-ic" aria-hidden="true">' . dwdp_bp_icon( $card['t'], substr_count( $cards, 'dwbp-card' ) ) . '</span><h3>' . esc_html( $card['t'] ) . '</h3>' . $card['b'] . '</div>';
 			$card   = null;
 		}
 	};
@@ -195,7 +224,7 @@ while ( have_posts() ) :
 			<section class="dwbp-toc">
 				<div class="dwbp-in">
 					<div class="dwbp-eyebrow">In this guide</div>
-					<?php $n = count( $sections ); $cols = ( 0 === $n % 3 ) ? 3 : ( 0 === $n % 2 ? 2 : 3 ); ?>
+					<?php $n = count( $sections ); $cols = ( 0 === $n % 3 ) ? 3 : ( 0 === $n % 2 ? 2 : 1 ); ?>
 					<div class="dwbp-toc-grid cols-<?php echo (int) $cols; ?>">
 						<?php foreach ( $sections as $i => $s ) : ?>
 							<a href="#part-<?php echo (int) ( $i + 1 ); ?>"><b><?php echo esc_html( sprintf( '%02d', $i + 1 ) ); ?></b><span><?php echo esc_html( preg_replace( '/^\d+[\.\)]\s*/', '', $s['title'] ) ); ?></span></a>
