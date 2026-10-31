@@ -322,3 +322,17 @@
 .dwbp-work .dw-pmeta b{font-size:20px!important}
 @media(max-width:1024px){.dwbp-head{justify-content:center;text-align:center}}
 @media(max-width:767px){.dwbp-head{flex-direction:column;gap:6px}.dwbp-num{font-size:48px}.dwbp-head h2{font-size:26px}.dwbp-cards,.dwbp-checks{grid-template-columns:1fr}}
+/* "In this guide": a clean two-column list, no boxes */
+.dwbp-toc{padding:56px 0 8px}
+.dwbp-toc .dwbp-in{max-width:960px}
+.dwbp-toc-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:48px;row-gap:0;border-top:1px solid #E4E9F5}
+.dwbp-toc-grid a{display:flex;align-items:baseline;gap:14px;padding:14px 0;border:0;border-bottom:1px solid #E4E9F5;border-radius:0;background:none;box-shadow:none!important;transform:none!important;font:500 17px/1.4 Urbanist,sans-serif;color:#0E1526}
+.dwbp-toc-grid a:hover{color:#1B7EC3}
+.dwbp-toc-grid b{width:auto;height:auto;background:none;border-radius:0;font:600 13px Urbanist,sans-serif;letter-spacing:.08em;color:#1B7EC3}
+@media(max-width:767px){.dwbp-toc-grid{grid-template-columns:1fr}}
+/* Check lists: one clean column with dividers, no boxes (even for any number of items) */
+.dwbp-checks,.dwbp-card .dwbp-checks{display:flex!important;flex-direction:column;gap:0;max-width:860px;margin:6px 0 26px;border-top:1px solid #E4E9F5}
+.dwbp-checks li{background:none;border:0;border-bottom:1px solid #E4E9F5;border-radius:0;padding:14px 2px;font:400 19px/1.5 Urbanist,sans-serif}
+.dwbp-card .dwbp-checks li{font-size:17px;padding:11px 0}
+.dwbp-sec.is-alt .dwbp-checks,.dwbp-sec.is-alt .dwbp-checks li{border-color:#D9E6F3}
+@media(max-width:767px){.dwbp-checks li{font-size:17px}}
