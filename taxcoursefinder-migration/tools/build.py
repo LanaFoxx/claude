@@ -75,7 +75,7 @@ def comparison_table(body):
     head = ('<div class="tcf-sortbar"><label>Sort <select value="{{ sort }}" onchange="{{ setSort }}"><option value="name">Name A–Z</option><option value="name_desc">Name Z–A</option><option value="price">Price: low to high</option><option value="price_desc">Price: high to low</option></select></label></div>'
             '<div class="tcf-thead" role="row"><button type="button" onclick="{{ sortName }}" title="Sort by name" ' + sbtn + '>Provider <span style="opacity:{{ nameOn }}">{{ nameArrow }}</span></button>'
             '<button type="button" onclick="{{ sortPrice }}" title="Sort by price" ' + sbtn + '>Price <span style="opacity:{{ priceOn }}">{{ priceArrow }}</span></button><span>Format</span><span>Coupon</span><span></span></div>')
-    row = ('<div class="tcf-trow" role="row">'
+    row = ('<div class="tcf-trow" role="row" data-tcf-href="{{ p.schoolUrl }}">'
            '<div class="tcf-cell-provider" style="display:flex;align-items:center;gap:16px;min-width:0">'
            # logo links to the school's profile when it is live
            '<sc-if value="{{ p.hasSchool }}"><a href="{{ p.schoolUrl }}" aria-label="{{ p.name }}: school details" style="flex:none;display:block">' + logo + '</a></sc-if>'
@@ -122,6 +122,8 @@ WORDING = [
     ('Provider websites and provider-submitted pricing, checked weekly.', "Provider websites and provider-submitted pricing, checked during each directory review (the review date is shown on the comparison pages)."),
     ('>Compare all providers<', '>Compare listed schools<'),
     ('>See all providers<', '>Compare listed schools<'),
+    ('Find Your Next <span style="font-weight:300">', 'Find Your Next <span class="tcf-m-br" style="font-weight:300">'),
+    ('Run a CTEC-approved school? Get listed free.', 'Run a CTEC-approved school? <span class="tcf-m-br">Get listed free.</span>'),
 ]
 WORDING_USED = set()
 
@@ -395,15 +397,16 @@ def seo_tweaks(name, body):
     x = '<div style="font-size:19px;color:#5A6E78;line-height:1.5">After October 31 a $55 late fee applies. After January 15 you must retake the 60-hour qualifying course.</div>'
     if x in body: body = body.replace(x, '<sc-if value="{{ cdOnTime }}" hint-placeholder-val="{{ true }}">' + x + '</sc-if>')
     if name == 'mobile':  # countdown section: no "time left" eyebrow on phones
+        body = body.replace("font:300 26px/1.15 'Source Serif 4',Georgia,serif;text-wrap:pretty\">{{ cdTitle }}", "font:300 31px/1.18 'Source Serif 4',Georgia,serif;text-wrap:balance;margin-bottom:10px\">{{ cdTitle }}", 1)
         body = re.sub(r'<div style="[^"]*">\{\{ cdLeftLabel \}\}</div>\s*', '', body, count=1)
     if name == 'mobile':  # phone directory cards: same details as the course pages (offering, CTEC #, price note, format, coupon), stacked
         i = body.index('<sc-for as="p" hint-placeholder-count="6" list="{{ list }}">'); j = body.index('</sc-for>', i) + len('</sc-for>')
         assert '{{ p.priceNum }}' in body[i:j], 'mobile card'
-        LBL = 'font:700 12px Manrope,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#8A9AA3'
+        LBL = 'font:700 12px Manrope,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#FF6B57'
         ROW = 'display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 0;border-top:1px solid #EEE9E1'
         VAL = 'text-align:right;min-width:0;display:flex;flex-direction:column;align-items:flex-end;gap:2px'
         card = ('<sc-for as="p" hint-placeholder-count="6" list="{{ list }}">'
-            '<div style="background:#fff;border:1px solid #E3E9EB;border-radius:14px;padding:16px 16px 14px;display:flex;flex-direction:column;gap:12px">'
+            '<div data-tcf-href="{{ p.schoolHref }}" style="background:#fff;border:1px solid #E3E9EB;border-radius:14px;padding:16px 16px 14px;display:flex;flex-direction:column;gap:12px">'
             '<div style="display:flex;gap:12px;align-items:center">'
             '<div style="width:44px;height:44px;border-radius:10px;background:#F4F6F7;border:1px solid #E3E9EB;display:grid;place-items:center;flex:none;overflow:hidden">'
             '<sc-if value="{{ p.hasLogo }}"><img src="{{ p.logoUrl }}" alt="" style="width:100%;height:100%;object-fit:contain"></sc-if>'
@@ -423,7 +426,7 @@ def seo_tweaks(name, body):
             '<sc-if value="{{ p.hasSale }}"><span style="font:700 15px Manrope,sans-serif;color:#7E9330">On sale · no code needed</span></sc-if>'
             '<sc-if value="{{ p.noCouponOrSale }}"><span style="font-size:15px;color:#B5BECB">No current coupon</span></sc-if></div></div></div>'
             '<div style="display:flex;flex-direction:column;gap:8px">'
-            '<sc-if value="{{ p.hasWebsite }}"><a href="{{ p.courseLink }}" target="_blank" rel="noopener" data-tcf-copy-go="{{ p.couponCode }}" style="display:flex;align-items:center;justify-content:center;gap:8px;font:700 16px Manrope,sans-serif;border-radius:999px;white-space:nowrap;text-decoration:none;background:#95AB3B;color:#fff;padding:12px 18px;border:1.5px solid #95AB3B"><span data-tcf-offer-label="">{{ p.buttonLabel }}</span></a></sc-if>'
+            '<sc-if value="{{ p.hasWebsite }}"><a href="{{ p.courseLink }}" target="_blank" rel="noopener" data-tcf-copy-go="{{ p.couponCode }}" style="display:flex;align-items:center;justify-content:center;gap:8px;font:700 16px Manrope,sans-serif;border-radius:999px;white-space:nowrap;text-decoration:none;background:#FF6B57;color:#fff;padding:12px 18px;border:1.5px solid #FF6B57"><span data-tcf-offer-label="">{{ p.buttonLabel }}</span></a></sc-if>'
             '<sc-if value="{{ p.hasSchool }}"><a href="{{ p.schoolHref }}" style="display:flex;align-items:center;justify-content:center;font:700 16px Manrope,sans-serif;border-radius:999px;white-space:nowrap;text-decoration:none;background:transparent;color:#0B2E40;padding:11px 18px;border:1.5px solid #0B2E40">View School Details</a></sc-if>'
             '</div></div></sc-for>')
         body = body[:i] + card + body[j:]
@@ -519,7 +522,7 @@ def code_for(d):
     # phone cards: same billing period after the number
     c = c.replace("priceNum: ((String(p.priceText || '').match(/^\\$[\\d,]+(?:\\.\\d{2})?/) || [''])[0]).replace(/^\\$/, ''),", "priceNum: ((String(p.priceText || '').match(/^\\$[\\d,]+(?:\\.\\d{2})?/) || [''])[0]).replace(/^\\$/, '') + (p.pricePer || ''),")
     # phone directory: school name opens the school's profile when it is live
-    c = c.replace("noWebsite: !p.website, priceWeight: p.priceMuted ? 500 : 800", "noWebsite: !p.website, schoolHref: p.schoolUrl || '', hasSchool: !!p.schoolUrl, noSchool: !p.schoolUrl, priceWeight: p.priceMuted ? 500 : 800")
+    c = c.replace("noWebsite: !p.website, priceWeight: p.priceMuted ? 500 : 800", "noWebsite: !p.website, schoolHref: p.schoolUrl ? p.schoolUrl + '?course=' + (qe ? '60-hour' : '20-hour') : '', hasSchool: !!p.schoolUrl, noSchool: !p.schoolUrl, priceWeight: p.priceMuted ? 500 : 800")
     # provider listing form: section nav matches the new, shorter form
     import listing_form
     c = c.replace("[['company', 'Company'], ['courses', 'Courses Offered'], ['pricing', 'Pricing'], ['features', 'Course Features'], ['support', 'Student Support'], ['refund', 'Refund Policy'], ['media', 'Profile Media'], ['description', 'Description'], ['verification', 'Verification']]", listing_form.sections_js())

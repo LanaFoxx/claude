@@ -182,7 +182,7 @@ def hf_html():
                # phones: the larger countdown box (filled by tcf-runtime.js), instead of the one-line strip
                '<div class="tcf-cd-mob" style="display:none;width:100%;flex-direction:column;align-items:center;gap:18px;text-align:center">'
                '<div data-cdm-left="" style="font:700 15px Manrope,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#FF6B57"></div>'
-               '<h2 style="margin:0;font:200 26px/1.2 Manrope,sans-serif;color:#23272A;text-wrap:balance"><span data-cdm-title=""></span><span data-cdm-long="" style="color:#FF6B57;font-weight:800"></span></h2>'
+               '<h2 style="margin:0 0 10px;font:200 31px/1.18 Manrope,sans-serif;color:#23272A;text-wrap:balance"><span data-cdm-title="" style="display:block;white-space:nowrap"></span><span data-cdm-long="" style="display:block;color:#FF6B57;font-weight:800"></span></h2>'
                '<div class="tcf-cdm-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;width:100%">'
                + ''.join('<div style="background:#fff;border:1px solid #D9D4CC;border-radius:12px;padding:16px 8px"><div %s style="font:800 48px/1 Manrope,sans-serif;letter-spacing:-.04em;color:#23272A"></div>'
                          '<div style="font:700 14px Manrope,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#8A9AA3;margin-top:6px">%s</div></div>' % (a, l)

@@ -348,3 +348,31 @@ html.tcf-drawer-open .elementor-location-header,html.tcf-drawer-open .tcf-topbar
   .tcf-page.tcf-scope [style*="display:grid;grid-template-columns:repeat(4,minmax(0,1fr))"][style*="border-top:3px solid"]>div>div:nth-child(3){grid-column:1;grid-row:2;font-size:15px!important}
 }
 @media (max-width:760px){.tcf-page.tcf-scope [style*="padding:0 56px 96px"]{padding-bottom:40px!important}}
+/* list rows / cards open the school profile when clicked */
+[data-tcf-href]:not([data-tcf-href=""]){cursor:pointer}
+/* the deadline section at the bottom of every page: coral line on top at every screen size */
+.tcf-cdstrip{border-top:6px solid #FF6B57!important;background:#fff!important}
+@media (max-width:760px){
+  .tcf-m-br{display:block}
+  /* label column of the list rows in coral */
+  .tcf-trow [data-label]::before{color:#FF6B57!important}
+  /* text + single button boxes (e.g. "Ready to compare?"): centered on phones */
+  .tcf-page.tcf-scope [style*="justify-content:space-between"]:has(> a[style*="border-radius:999px"]):has(> div){flex-direction:column!important;align-items:center!important;text-align:center!important;gap:20px!important}
+  .tcf-page.tcf-scope [style*="justify-content:space-between"]:has(> a[style*="border-radius:999px"]):has(> div)>a{align-self:center!important}
+}
+@media (max-width:760px){
+  .tcf-trow .tcf-cell-offer a,.tcf-trow .tcf-cell-offer a:hover{background:#FF6B57!important;border-color:#FF6B57!important;color:#fff!important}
+}
+[style*="font:300 52px/1 Manrope,sans-serif;letter-spacing:-.03em;color:#23272A"]{color:#FF6B57!important}
+@media (max-width:760px){
+  .tcf-page p,footer p,[data-cdm-note]{text-wrap:pretty}
+  footer p[style*="max-width:720px"]{text-wrap:balance}
+  [data-cdm-note]{font-size:16px!important;text-wrap:balance}
+}
+/* No paragraph ends on a lone word (all devices) */
+body{text-wrap-style:pretty}
+@media (max-width:760px){
+  .tcf-scope [style*="grid-template-columns:1.2fr 90px 2fr"][style*="text-transform:uppercase"]>span:nth-child(3){display:none!important}
+  .tcf-scope [style*="grid-template-columns:1.2fr 90px 2fr"][style*="text-transform:uppercase"]>span:first-child::after{content:" focus"}
+  .tcf-scope [style*="grid-template-columns:1.2fr 90px 2fr"][style*="text-transform:uppercase"]>span{white-space:nowrap}
+}

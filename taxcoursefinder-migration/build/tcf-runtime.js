@@ -395,7 +395,7 @@
       var set = function (sel, t) { var x = el.querySelector(sel); if (x) x.textContent = t; };
       set('[data-cdm-left]', v.cdLeftLabel); set('[data-cdm-title]', v.cdTitle + ': '); set('[data-cdm-long]', v.cdLong);
       set('[data-cdm-d]', v.cdDays); set('[data-cdm-h]', v.cdHours); set('[data-cdm-m]', v.cdMins);
-      set('[data-cdm-note]', v.cdLate ? v.cdNote : 'After October 31 a late fee applies. After January 15 your registration lapses and you must retake the 60-hour qualifying course.');
+      set('[data-cdm-note]', v.cdLate ? 'Final deadline (late fee applies). Miss it and you must retake the 60-hour course.' : 'After Oct\u00a031 a $55 late fee applies. After Jan\u00a015 you must retake the 60-hour course.');
       // the phone home page has its own countdown section, so its footer box would repeat it
       if (document.querySelector('.tcf-mobile')) el.classList.add('tcf-cd-hide-m');
       el.querySelector('[data-cd-time]').textContent = v.cdDays + (v.cdDays === 1 ? ' day' : ' days') + ' · ' + v.cdHours + ' hrs · ' + v.cdMins + ' min';
@@ -457,4 +457,14 @@
   var t; function soon() { clearTimeout(t); t = setTimeout(sync, 30); }
   if (window.MutationObserver) new MutationObserver(soon).observe(document.documentElement, { childList: true, subtree: true });
   document.addEventListener('click', soon);
+})();
+// Directory rows and cards open the school's profile page when clicked anywhere (buttons, links and coupon chips keep their own action).
+(function () {
+  document.addEventListener('click', function (e) {
+    var card = e.target.closest && e.target.closest('[data-tcf-href]'); if (!card) return;
+    var href = card.getAttribute('data-tcf-href'); if (!href || href.indexOf('{{') >= 0) return;
+    if (e.target.closest('a, button, select, input, label, [data-tcf-copy], [role="button"]')) return;
+    if (window.getSelection && String(window.getSelection()).length) return; // selecting text is not a click-through
+    if (e.metaKey || e.ctrlKey) window.open(href, '_blank'); else location.href = href;
+  });
 })();

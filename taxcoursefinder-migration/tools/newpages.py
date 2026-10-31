@@ -165,7 +165,7 @@ pages['your-rights-as-a-ctec-preparer'] = dict(
     faq=rights_faq,
     html=hero('Resources', 'Your Rights as a CTEC Preparer', '',
               'Key rights and protections you have when you study with a CTEC-approved school, whether you are taking the 60 hour course for the first time or the 20 hour course to renew.',
-              'photos/ctec-renewal-records.webp', ('Compare CTEC-approved schools', '/#find-schools'), ('See your rights', '#rights'))
+              'photos/ctec-renewal-records.webp', ('Compare CTEC schools', '/#find-schools'), ('See your rights', '#rights'))
     + steps('rights', 'Key rights & protections', 'Your rights with', 'CTEC-approved schools',
             'What you can expect from any CTEC-approved education provider, and where to check.',
             [('Active provider verification', f'You have the right to choose from officially vetted, active education providers. Check any school’s standing in the CTEC Find Education Provider directory before you enroll.' + src(('CTEC Find Education Provider directory', C_DIR), ('How to choose an approved provider (CTEC)', C_CHOOSE))),
@@ -174,9 +174,13 @@ pages['your-rights-as-a-ctec-preparer'] = dict(
              ('Transparent policies & refunds', 'You have the right to clear information before you pay: course costs, completion requirements such as minimum passing grades or attendance rules, and the refund policy.' + src(('How to choose an approved provider (CTEC)', C_CHOOSE))),
              ('Filing complaints against providers', 'If a CTEC-approved school fails to meet standards, misrepresents a course or mishandles your records, CTEC has formal guidelines for course evaluations and provider complaints. Review CTEC’s provider policies or contact CTEC directly.' + src(('CTEC provider policies', C_POL)))])
     + faq(rights_faq)
-    + cta('Ready to choose a school?', 'Compare every CTEC-approved provider by price, format and current offers.', ('Compare CTEC-approved schools', '/#find-schools'))
+    + cta('Ready to choose a school?', 'Compare top CTEC-approved schools by price, format and current offers.', ('Compare CTEC schools', '/#find-schools'))
     + source_note([('How to choose an approved provider (CTEC)', C_CHOOSE), ('CTEC provider policies', C_POL)])
 )
+
+# phones: "CTEC Preparer" on its own second line of the rights page title
+pages['your-rights-as-a-ctec-preparer']['html'] = pages['your-rights-as-a-ctec-preparer']['html'].replace('Your Rights as a CTEC Preparer</h1>', 'Your Rights as a <span class="tcf-m-br">CTEC Preparer</span></h1>', 1)
+assert 'tcf-m-br' in pages['your-rights-as-a-ctec-preparer']['html']
 
 for slug, p in pages.items():
     ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": html.unescape(__import__('re').sub(r'<[^>]+>', '', a))}} for q, a in p['faq']]}
