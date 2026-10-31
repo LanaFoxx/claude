@@ -198,7 +198,22 @@ final class TCFD_School {
              . '.tcf-p-school .tcfd-tabs{flex-wrap:wrap}'
              . '.tcf-p-school .tcfd-subnav-bar{top:76px!important}'
              . '.tcf-p-school .tcfd-subnav{overflow-x:auto;white-space:nowrap;padding:0 12px!important;-webkit-overflow-scrolling:touch;scrollbar-width:none}'
-             . '.tcf-p-school .tcfd-subnav>a{flex:none}}</style>';
+             . '.tcf-p-school .tcfd-subnav>a{flex:none}}'
+             . '@media (max-width:760px){'
+             // breadcrumb: one small line, the school name trimmed with an ellipsis
+             . '.tcf-p-school .tcfd-crumbs{font-size:14px!important;flex-wrap:nowrap!important;white-space:nowrap;min-width:0;gap:6px!important}'
+             . '.tcf-p-school .tcfd-crumbs>*{flex:none}.tcf-p-school .tcfd-crumbs>*:last-child{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis}'
+             // logo above the school name, both left-aligned
+             . '.tcf-p-school .tcfd-idrow{flex-direction:column!important;align-items:flex-start!important;gap:14px!important}'
+             . '.tcf-p-school .tcfd-idrow>div:first-child{width:72px!important;height:72px!important;border-radius:14px!important}'
+             . '.tcf-p-school .tcfd-idrow h1{font-size:34px!important;line-height:1.08!important}'
+             // coral section bar: smaller items in one row that fits the screen
+             . '.tcf-p-school .tcfd-subnav{height:48px!important;gap:0!important;justify-content:space-between!important;padding:0 6px!important;font-size:13px!important}'
+             . '.tcf-p-school .tcfd-subnav>a,.tcf-p-school .tcfd-subnav>sc-if>a{padding:6px 7px!important;font-size:13px!important;margin:0!important;white-space:nowrap}'
+             . '.tcf-p-school .tcfd-subnav-bar{top:var(--tcf-head,76px)!important}'
+             // accuracy band at the end: less empty space under its button
+             . '.tcf-p-school [style*="padding:72px 56px 80px"]{padding:44px 20px 36px!important}'
+             . '}</style>';
         return $css . $banner . '<div class="tcf-page tcf-scope tcf-p-school"><div id="tcf-school-root" class="tcf-root">' . $ssr . '</div></div>'
             . '<template id="tcf-school-tpl">' . $tpl . '</template>'
             . '<script>window.TCF_SCHOOL=' . str_replace('</', '<\\/', (string) wp_json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) . ';</script>'

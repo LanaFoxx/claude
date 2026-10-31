@@ -136,6 +136,41 @@ def wording(text, js=False):
 # Renewal calendar band on the home page: photo under a dark grey overlay.
 CAL_BG = ''  # no photo behind the renewal calendar (removed at the owner's request)
 
+def drawer_fix(body):
+    """Directory filter panel (desktop template, also used on phones for the course pages): above the sticky header, clear close button, pill buttons."""
+    n = body.count('z-index:60"></div>')
+    body = body.replace('background:rgba(11,46,64,.45);z-index:60"></div>', 'background:rgba(11,46,64,.45);z-index:1000"></div>')
+    body = body.replace('box-shadow:-30px 0 60px rgba(11,46,64,.25);z-index:61;display:flex;flex-direction:column">', 'box-shadow:-30px 0 60px rgba(11,46,64,.25);z-index:1001;display:flex;flex-direction:column">')
+    body = body.replace('<div onclick="{{ closeDrawer }}" style="cursor:pointer;width:40px;height:40px;display:grid;place-items:center;border-radius:8px;color:#5A6E78" data-hv="7">',
+                        '<div onclick="{{ closeDrawer }}" role="button" aria-label="Close filters" style="cursor:pointer;width:44px;height:44px;display:grid;place-items:center;border-radius:999px;border:1.5px solid #D7DFE2;color:#0B2E40;flex:none" data-hv="7">')
+    body = re.sub(r'(<div onclick="\{\{ clearAll \}\}" style="[^"]*?)border-radius:8px', r'\1border-radius:999px', body)
+    body = re.sub(r'(<div onclick="\{\{ closeDrawer \}\}" style="[^"]*?)border-radius:8px([^"]*"[^>]*>Show)', r'\1border-radius:999px\2', body)
+    return body
+
+
+def cal_phone(body):
+    """Renewal calendar (light pages): the month grid and timeline bar don't fit a phone, so phones get a stacked version instead."""
+    months = '<div style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));border-top:1px solid #D7DFE2;border-bottom:1px solid #D7DFE2">'
+    if months not in body:
+        return body
+    bar = '<div style="display:grid;grid-template-columns:repeat(12,minmax(0,1fr));margin-top:18px">'
+    desc = '<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:48px;margin-top:40px">'
+    assert body.count(months) == 1 and body.count(bar) == 1 and body.count(desc) == 1, 'calendar parts'
+    for x in (months, bar, desc):
+        body = body.replace(x, x.replace('<div style=', '<div class="tcf-cal-desk" style=', 1), 1)
+    i = body.index('<div class="tcf-cal-desk" style="display:grid;grid-template-columns:repeat(3'); depth = 0
+    for m in re.finditer(r'<(/?)div\b', body[i:]):
+        depth += -1 if m.group(1) else 1
+        if depth == 0: j = i + m.end() + body[i + m.end():].index('>') + 1; break
+    row = lambda c, t, d: ('<div style="border-left:6px solid %s;padding:4px 0 4px 16px;display:flex;flex-direction:column;gap:4px"><div style="font:700 20px Manrope,sans-serif;color:#0B2E40">%s</div>'
+                           '<p style="margin:0;font-size:18px;line-height:1.55;color:#2F4652">%s</p></div>' % (c, t, d))
+    mob = ('<div class="tcf-cal-mob" style="display:none;flex-direction:column;gap:22px">'
+           + row('#95AB3B', 'On-time renewal · by Oct 31', 'Education reported, PTIN and bond current, CTEC renewal submitted and paid.')
+           + row('#E0A82E', 'Late renewal · Nov 1 – Jan 15', 'Still possible, with a late fee on top of the standard renewal fee.')
+           + row('#C0392B', 'Lapsed · after Jan 15', 'You must retake the 60-hour qualifying course and register as a new preparer.') + '</div>')
+    return body[:j] + mob + body[j:]
+
+
 def seo_tweaks(name, body):
     # Student note from the listing (e.g. which package to pick, recurring billing), in sentence case under the price label.
     note = ('<sc-if value="{{ p.hasLinkNote }}" hint-placeholder-val="{{ false }}"><div style="font:500 14px/1.4 Manrope,sans-serif;color:#5A6E78;margin-top:4px;max-width:220px">{{ p.linkNote }}</div></sc-if>')
@@ -357,7 +392,9 @@ def seo_tweaks(name, body):
         body = body[:a] + listing_form.form() + body[b:]
     # Home countdown: after Oct 31 (California time) it counts to Jan 15 and says that is the final deadline before the registration lapses.
     body, n = re.subn(r'(<h2[^>]*>\{\{ cdTitle \}\}: <span[^>]*>\{\{ cdLong \}\}</span></h2>)',
-                      lambda m: m.group(1) + '<sc-if value="{{ cdLate }}" hint-placeholder-val="{{ false }}"><p style="margin:0 auto;max-width:760px;font-size:20px;line-height:1.6;color:rgba(255,255,255,.85);text-align:center;text-wrap:balance">{{ cdNote }}</p></sc-if>', body)
+                      lambda m: m.group(1) + '<sc-if value="{{ cdLate }}" hint-placeholder-val="{{ false }}"><p style="margin:0 auto;max-width:760px;font-size:19px;line-height:1.55;color:#2F4652;text-align:center;text-wrap:balance">{{ cdNote }}</p></sc-if>', body)
+    x = '<div style="font-size:19px;color:#5A6E78;line-height:1.5">After October 31 a $55 late fee applies. After January 15 you must retake the 60-hour qualifying course.</div>'
+    if x in body: body = body.replace(x, '<sc-if value="{{ cdOnTime }}" hint-placeholder-val="{{ true }}">' + x + '</sc-if>')
     if name == 'mobile':  # phone filter panel: above the sticky header (its close button was hidden), pill buttons, compact chips
         for x, y, n in [('top:0;bottom:0;background:#fff;z-index:61;display:flex;flex-direction:column', 'top:0;bottom:0;background:#fff;z-index:1000;display:flex;flex-direction:column', 1),
                         ('<div onclick="{{ closeDrawer }}" style="cursor:pointer;width:44px;height:44px;display:grid;place-items:center;border-radius:8px;color:#5A6E78">',
@@ -502,6 +539,8 @@ for name, (slug, url, title) in PAGES.items():
     body = clean(d['body'])
     body = body.replace('style="min-width:1100px"', 'class="tcf-screen"', 1)
     body = seo_tweaks(name, body)
+    body = cal_phone(body)
+    body = drawer_fix(body)
     if slug == 'provider-application':  # course-comparison laptop photo behind the verify form hero
         assert body.count('@@MEDIA:photos/03-online-tax-course-desktop.webp@@" alt="" class="tcf-hero-bg"') == 1, 'verify hero photo'
         body = body.replace('@@MEDIA:photos/03-online-tax-course-desktop.webp@@" alt="" class="tcf-hero-bg"', '@@MEDIA:photos/ctec-course-comparison-laptop.webp@@" alt="" class="tcf-hero-bg"', 1)

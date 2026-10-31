@@ -1,0 +1,14 @@
+import { chromium } from '/opt/node-tools/node_modules/playwright/index.mjs';
+import fs from 'fs';
+const S = process.argv[2], slug = process.argv[3] || 'faqs';
+const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', proxy: { server: process.env.HTTPS_PROXY } });
+const ctx = await b.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
+if (slug !== 'live') await ctx.route(u => u.href.includes('?pv='), r => r.fulfill({ status: 200, contentType: 'text/html; charset=utf-8', body: fs.readFileSync(`${S}/pv/${slug}.html`, 'utf8') }));
+const p = await ctx.newPage(); const errs = []; p.on('pageerror', e => errs.push(e.message));
+await p.goto('https://taxcoursefinder.com/' + (slug === 'live' ? '?nc=' + Date.now() : (slug === 'home' ? '' : slug + '/') + '?pv=1'), { waitUntil: 'networkidle' });
+await p.click('[data-tcf-menu-toggle]'); await p.waitForTimeout(400);
+await p.screenshot({ path: S + '/shots/mmenu-c.png' });
+await p.locator('.tcf-header .dd > div:first-child').filter({ hasText: 'Resources' }).click(); await p.waitForTimeout(300);
+await p.screenshot({ path: S + '/shots/mmenu-c2.png' });
+console.log('errors', errs);
+await b.close();

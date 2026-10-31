@@ -32,6 +32,11 @@ ${media(hf.header)}<main>${media(pg.widget.replace('@@SSR@@', ssr))}</main>${med
   await m.goto('http://127.0.0.1:8765/__' + pg.slug + '.html', { waitUntil: 'networkidle' });
   await m.waitForTimeout(800);
   const ov = await m.evaluate(() => document.documentElement.scrollWidth);
+  // Pages with a separate phone template (home): keep the phone render too, so phones never flash the desktop layout.
+  if (pg.widget.includes(pg.rid + '-mtpl')) {
+    pg.ssr_m = await m.evaluate((rid) => document.getElementById(rid + '-root').innerHTML, pg.rid);
+    fs.writeFileSync(S + '/build/pages/' + f, JSON.stringify(pg, null, 1));
+  }
   await m.screenshot({ path: `${S}/shots/${pg.slug}-m.png`, fullPage: true });
   await m.close();
   console.log('ok', pg.slug, ssr.length, 'mobile scrollWidth', ov);

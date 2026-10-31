@@ -333,7 +333,7 @@
   TCF.countdownVals = function () {
     var k = TCF.deadline();
     return { daysLeft: k.days, cdDays: k.days, cdHours: String(k.hours).padStart(2, '0'), cdMins: String(k.mins).padStart(2, '0'),
-      cdTitle: k.title, cdShort: k.short, cdLong: k.long, cdLeftLabel: k.leftLabel, cdLate: k.late, cdNote: k.note };
+      cdTitle: k.title, cdShort: k.short, cdLong: k.long, cdLeftLabel: k.leftLabel, cdLate: k.late, cdOnTime: !k.late, cdNote: k.note };
   };
   // Site-wide top bar text (header template has [data-tcf-cd]).
   function topbar() {
@@ -392,9 +392,69 @@
     var v = TCF.countdownVals();
     Array.prototype.forEach.call(els, function (el) {
       el.querySelector('[data-cd-title]').textContent = v.cdTitle + ' · ' + v.cdShort + (v.cdLate ? ' · renew or your registration lapses' : '');
+      var set = function (sel, t) { var x = el.querySelector(sel); if (x) x.textContent = t; };
+      set('[data-cdm-left]', v.cdLeftLabel); set('[data-cdm-title]', v.cdTitle + ': '); set('[data-cdm-long]', v.cdLong);
+      set('[data-cdm-d]', v.cdDays); set('[data-cdm-h]', v.cdHours); set('[data-cdm-m]', v.cdMins);
+      set('[data-cdm-note]', v.cdLate ? v.cdNote : 'After October 31 a late fee applies. After January 15 your registration lapses and you must retake the 60-hour qualifying course.');
+      // the phone home page has its own countdown section, so its footer box would repeat it
+      if (document.querySelector('.tcf-mobile')) el.classList.add('tcf-cd-hide-m');
       el.querySelector('[data-cd-time]').textContent = v.cdDays + (v.cdDays === 1 ? ' day' : ' days') + ' · ' + v.cdHours + ' hrs · ' + v.cdMins + ' min';
       el.style.visibility = 'visible';
     });
   }
   document.addEventListener('DOMContentLoaded', fill); setTimeout(fill, 300); setInterval(fill, 60000);
+})();
+
+// One-line buttons: if a pill button's text would not fit on one line, tighten its padding, then step its font size down (to 13px at most).
+(function () {
+  var SEL = '.tcf-scope a[style*="border-radius:999px"], .tcf-scope button[style*="border-radius:999px"], .tcf-scope [role="button"][style*="border-radius:999px"], .tcf-cdstrip a';
+  function fit() {
+    Array.prototype.forEach.call(document.querySelectorAll(SEL), function (el) {
+      if (!el.offsetParent) return;
+      if (el.__tcfFs == null) { el.__tcfFs = el.style.fontSize; el.__tcfPl = el.style.paddingLeft; el.__tcfPr = el.style.paddingRight; }
+      el.style.fontSize = el.__tcfFs; el.style.paddingLeft = el.__tcfPl; el.style.paddingRight = el.__tcfPr;
+      if (el.scrollWidth <= el.clientWidth + 1) return;
+      var pl = parseFloat(getComputedStyle(el).paddingLeft) || 0;
+      if (pl > 16) { el.style.paddingLeft = '16px'; el.style.paddingRight = '16px'; }
+      var fs = parseFloat(getComputedStyle(el).fontSize) || 16;
+      while (el.scrollWidth > el.clientWidth + 1 && fs > 13) { fs -= 0.5; el.style.fontSize = fs + 'px'; }
+    });
+  }
+  var t; function soon() { clearTimeout(t); t = setTimeout(fit, 120); }
+  window.addEventListener('resize', soon); window.addEventListener('load', soon); document.addEventListener('DOMContentLoaded', soon);
+  if (window.MutationObserver) new MutationObserver(soon).observe(document.documentElement, { childList: true, subtree: true });
+  setTimeout(fit, 400); setTimeout(fit, 1500);
+})();
+// Phones: FAQ items (a question ending in "?" followed by its answer) open and close on tap; they start closed.
+(function () {
+  var mq = window.matchMedia ? window.matchMedia('(max-width: 760px)') : null;
+  function mark() {
+    if (!mq || !mq.matches) return;
+    Array.prototype.forEach.call(document.querySelectorAll('.tcf-page h3, .tcf-page div[style*="font:800 22px"], .tcf-page div[style*="font:700 22px"]'), function (q) {
+      if (q.__tcfFaq) return;
+      var a = q.nextElementSibling, box = q.parentElement, t = q.textContent.trim();
+      if (!a || !box || box.children.length !== 2 || !/\?$/.test(t) || t.length > 160 || q.querySelector('div,p,img')) return;
+      q.__tcfFaq = true; box.classList.add('tcf-faq'); q.classList.add('tcf-faq-q'); a.classList.add('tcf-faq-a');
+      q.setAttribute('role', 'button'); q.setAttribute('tabindex', '0'); q.setAttribute('aria-expanded', 'false');
+    });
+  }
+  function toggle(e) {
+    var q = e.target.closest && e.target.closest('.tcf-faq-q'); if (!q) return;
+    if (e.type === 'keydown' && e.key !== 'Enter' && e.key !== ' ') return;
+    if (e.type === 'keydown') e.preventDefault();
+    var open = q.parentElement.classList.toggle('tcf-open'); q.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+  document.addEventListener('click', toggle); document.addEventListener('keydown', toggle);
+  var t; function soon() { clearTimeout(t); t = setTimeout(mark, 100); }
+  document.addEventListener('DOMContentLoaded', soon); window.addEventListener('load', soon);
+  if (window.MutationObserver) new MutationObserver(soon).observe(document.documentElement, { childList: true, subtree: true });
+  if (mq && mq.addEventListener) mq.addEventListener('change', soon);
+  setTimeout(mark, 300);
+})();
+// While the filters panel is open, the site header (and deadline bar) are hidden so the panel and its close button own the screen.
+(function () {
+  function sync() { document.documentElement.classList.toggle('tcf-drawer-open', !!document.querySelector('[aria-label="Close filters"]')); }
+  var t; function soon() { clearTimeout(t); t = setTimeout(sync, 30); }
+  if (window.MutationObserver) new MutationObserver(soon).observe(document.documentElement, { childList: true, subtree: true });
+  document.addEventListener('click', soon);
 })();

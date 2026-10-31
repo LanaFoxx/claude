@@ -100,7 +100,12 @@ def page_html(pg):
     w = pg['widget']
     if not pg['runtime']:
         w = re.sub(r'<template id="[^"]+-tpl">.*?</template>', '', w, flags=re.S)
-    w = w.replace('@@SSR@@', lazy(pg['ssr']))
+    if pg.get('ssr_m'):  # desktop and phone renders; CSS shows the right one until the page script takes over
+        w = w.replace('@@SSR@@', '<div class="tcf-ssr-d">' + lazy(pg['ssr']) + '</div><div class="tcf-ssr-m">' + lazy(pg['ssr_m']) + '</div>')
+        # mark the page as the phone layout before it paints (the phone styles key off .tcf-mobile)
+        w = w.replace('<div id="' + pg['rid'] + '-root"', '<script>if(window.matchMedia&&matchMedia("(max-width: 760px)").matches)document.currentScript.parentNode.classList.add("tcf-mobile")</script><div id="' + pg['rid'] + '-root"', 1)
+    else:
+        w = w.replace('@@SSR@@', lazy(pg['ssr']))
     # Target of the theme's "Skip to content" link (href="#content"): the page's main content wrapper.
     assert w.startswith('<div class="tcf-page'), pg['slug']
     w = '<div id="content" tabindex="-1" style="outline:none" role="main"' + w[len('<div'):]
@@ -170,10 +175,21 @@ def hf_html():
     ftr = fix_media(hf['footer']).replace('style="height:58px;width:auto;display:block"', 'style="height:68px;width:auto;display:block"', 1).replace("<img ", "<img width=\"188\" height=\"68\" ", 1)
     # CTEC deadline countdown strip above the footer on every page (filled live by tcf-runtime.js, California time)
     cdstrip = ('<div data-tcf-cdstrip="" class="tcf-cdstrip tcf-scope" style="background:#fff;color:#23272A;padding:24px 56px;min-height:120px;box-sizing:border-box;display:flex;align-items:center;border-top:1px solid #EEE9E1;visibility:hidden">'
-               '<div style="width:100%;max-width:1200px;margin:0 auto;display:flex;justify-content:center;align-items:center;gap:16px;flex-wrap:wrap;font:600 19px Manrope,sans-serif;text-align:center">'
+               '<div class="tcf-cd-desk" style="width:100%;max-width:1200px;margin:0 auto;display:flex;justify-content:center;align-items:center;gap:16px;flex-wrap:wrap;font:600 19px Manrope,sans-serif;text-align:center">'
                '<span data-cd-title="" style="letter-spacing:.1em;text-transform:uppercase;font-size:17px;opacity:.9">CTEC renewal deadline</span>'
                '<span data-cd-time="" style="font:800 22px Manrope,sans-serif;color:#FF6B57"></span>'
-               '<a href="/ctec-20-hour-course/" style="color:#23272A;text-decoration:underline;font-weight:700">Compare 20-hour courses</a></div></div>')
+               '<a href="/ctec-20-hour-course/" style="color:#23272A;text-decoration:underline;font-weight:700">Compare 20-hour courses</a></div>'
+               # phones: the larger countdown box (filled by tcf-runtime.js), instead of the one-line strip
+               '<div class="tcf-cd-mob" style="display:none;width:100%;flex-direction:column;align-items:center;gap:18px;text-align:center">'
+               '<div data-cdm-left="" style="font:700 15px Manrope,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#FF6B57"></div>'
+               '<h2 style="margin:0;font:200 26px/1.2 Manrope,sans-serif;color:#23272A;text-wrap:balance"><span data-cdm-title=""></span><span data-cdm-long="" style="color:#FF6B57;font-weight:800"></span></h2>'
+               '<div class="tcf-cdm-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;width:100%">'
+               + ''.join('<div style="background:#fff;border:1px solid #D9D4CC;border-radius:12px;padding:16px 8px"><div %s style="font:800 48px/1 Manrope,sans-serif;letter-spacing:-.04em;color:#23272A"></div>'
+                         '<div style="font:700 14px Manrope,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#8A9AA3;margin-top:6px">%s</div></div>' % (a, l)
+                         for a, l in (('data-cdm-d=""', 'Days'), ('data-cdm-h=""', 'Hours'), ('data-cdm-m=""', 'Minutes'))) +
+               '</div><div data-cdm-note="" style="font-size:17px;color:#5A6E78;line-height:1.5;margin:14px 0 18px"></div>'
+               '<a href="/ctec-20-hour-course/#find-schools" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;font:700 18px Manrope,sans-serif;border-radius:999px;text-decoration:none;background:#23272A;color:#fff;padding:14px 28px;width:100%;box-sizing:border-box">Pick a 20-hour course <span style="color:#FF6B57">&rarr;</span></a>'
+               '</div></div>')
     ftr = cdstrip + ftr
     ftr = re.sub(r'<p[^>]*>The independent directory of CTEC-approved education providers in California\.</p>', '', ftr)  # no tagline under the footer logo
     hdr, ftr = brand.brand(hdr), brand.brand(ftr)
