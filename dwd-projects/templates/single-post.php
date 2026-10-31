@@ -212,7 +212,7 @@ while ( have_posts() ) :
 					<?php if ( $lead ) : ?>
 						<p class="dwbp-lead"><?php echo esc_html( $lead ); ?></p>
 					<?php endif; ?>
-					<div class="dwbp-meta">By <a href="<?php echo esc_url( home_url( '/#about' ) ); ?>">Michael</a> · <?php echo esc_html( get_the_date() ); ?> · <?php echo esc_html( dwdp_reading_time() ); ?> min read</div>
+					<div class="dwbp-meta">By <a href="<?php echo esc_url( home_url( '/#about' ) ); ?>">Michael Tarr</a> · <?php echo esc_html( get_the_date() ); ?> · <?php echo esc_html( dwdp_reading_time() ); ?> min read</div>
 				</div>
 				<?php if ( has_post_thumbnail() ) : ?>
 					<figure class="dwbp-hero-img"><?php the_post_thumbnail( 'large', array( 'loading' => 'eager', 'alt' => $title ) ); ?></figure>
@@ -283,8 +283,8 @@ while ( have_posts() ) :
 					<a href="<?php echo esc_url( home_url( '/contact/' ) ); ?>"><b>Contact</b><span>Tell me about your project and I’ll respond the same day.</span><i>Get in touch →</i></a>
 				</div>
 				<aside class="dwbp-author">
-					<img src="<?php echo esc_url( content_url( '/uploads/2026/08/photo-michael.jpg' ) ); ?>" alt="Michael, founder of Dream Web Digital" loading="lazy" width="72" height="72">
-					<p><strong>Written by Michael, founder of Dream Web Digital.</strong> I’ve designed and built websites for more than 12 years, and I work with every client directly, from the first call through launch and beyond. <a href="<?php echo esc_url( home_url( '/#about' ) ); ?>">More about Michael →</a></p>
+					<img src="<?php echo esc_url( content_url( '/uploads/2026/08/photo-michael.jpg' ) ); ?>" alt="Michael Tarr, founder of Dream Web Digital" loading="lazy" width="72" height="72">
+					<p><strong>Written by Michael Tarr, founder of Dream Web Digital.</strong> I’ve designed and built websites for more than 12 years, and I work with every client directly, from the first call through launch and beyond. <a href="<?php echo esc_url( home_url( '/#about' ) ); ?>">More about Michael →</a></p>
 				</aside>
 			</div>
 		</section>
