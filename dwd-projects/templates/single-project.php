@@ -46,7 +46,12 @@ while ( have_posts() ) :
 							<?php if ( $yt ) : ?>
 								<?php // A clean cover with our own play button; YouTube's player (and its overlays) only loads once someone presses play. ?>
 								<button type="button" class="dw-video-frame dw-yt" style="aspect-ratio:<?php echo esc_attr( round( dwdp_youtube_ratio( $yt ), 4 ) ); ?>" data-yt="<?php echo esc_attr( $yt ); ?>" aria-label="<?php echo esc_attr( 'Play the ' . $name . ' website walkthrough' ); ?>">
-									<img src="https://i.ytimg.com/vi/<?php echo esc_attr( $yt ); ?>/maxresdefault.jpg" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/<?php echo esc_attr( $yt ); ?>/hqdefault.jpg'" alt="" loading="lazy">
+									<?php $vcover = dwdp_get( $id, 'video_cover' ); ?>
+									<?php if ( $vcover ) : ?>
+										<img src="<?php echo esc_url( $vcover ); ?>" alt="<?php echo esc_attr( $name . ' website on laptop and phone' ); ?>" loading="lazy">
+									<?php else : ?>
+										<img src="https://i.ytimg.com/vi/<?php echo esc_attr( $yt ); ?>/maxresdefault.jpg" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/<?php echo esc_attr( $yt ); ?>/hqdefault.jpg'" alt="" loading="lazy">
+									<?php endif; ?>
 									<span class="dw-yt-play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></svg></span>
 								</button>
 							<?php else : ?>

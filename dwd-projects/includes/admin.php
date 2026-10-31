@@ -83,6 +83,11 @@ function dwdp_box_capture( $post ) {
 			<input type="url" id="dwdp-video" name="dwdp[video]" value="<?php echo esc_attr( dwdp_get( $post->ID, 'video' ) ); ?>" placeholder="https://www.youtube.com/watch?v=..." class="regular-text">
 			<span class="description">Paste the YouTube link (from Share or the address bar). It plays at the top of the project page. Leave empty for no video.</span>
 		</p>
+		<p class="dwdp-video-field" style="margin:10px 0 6px">
+			<label for="dwdp-video-cover"><strong>Video cover image</strong> (optional)</label><br>
+			<input type="url" id="dwdp-video-cover" name="dwdp[video_cover]" value="<?php echo esc_attr( dwdp_get( $post->ID, 'video_cover' ) ); ?>" placeholder="https://dreamwebdigital.com/wp-content/uploads/..." class="regular-text">
+			<span class="description">Image shown on the video before it plays. Upload it in Media, copy its File URL and paste it here. Empty = the YouTube thumbnail.</span>
+		</p>
 		<p class="description">Paste the live site address and click <em>Capture screenshots</em>. The plugin takes a full-page desktop screenshot and a phone screenshot, then finds each section of the page. It takes about a minute.</p>
 		<ol class="dwdp-progress" id="dwdp-progress" hidden></ol>
 	</div>
@@ -175,8 +180,10 @@ add_action( 'save_post_' . DWDP_CPT, function ( $post_id ) {
 	if ( isset( $in['url'] ) ) {
 		update_post_meta( $post_id, '_dwdp_url', esc_url_raw( $in['url'] ) );
 	}
-	if ( isset( $in['video'] ) ) {
-		update_post_meta( $post_id, '_dwdp_video', esc_url_raw( $in['video'] ) );
+	foreach ( array( 'video', 'video_cover' ) as $k ) {
+		if ( isset( $in[ $k ] ) ) {
+			update_post_meta( $post_id, '_dwdp_' . $k, esc_url_raw( $in[ $k ] ) );
+		}
 	}
 	foreach ( array( 'on_home', 'pinned' ) as $k ) {
 		if ( isset( $in[ $k ] ) ) {
@@ -221,8 +228,10 @@ add_action( 'wp_ajax_dwdp_set_fields', function () {
 	if ( isset( $in['url'] ) ) {
 		update_post_meta( $post_id, '_dwdp_url', esc_url_raw( $in['url'] ) );
 	}
-	if ( isset( $in['video'] ) ) {
-		update_post_meta( $post_id, '_dwdp_video', esc_url_raw( $in['video'] ) );
+	foreach ( array( 'video', 'video_cover' ) as $k ) {
+		if ( isset( $in[ $k ] ) ) {
+			update_post_meta( $post_id, '_dwdp_' . $k, esc_url_raw( $in[ $k ] ) );
+		}
 	}
 	foreach ( array( 'on_home', 'pinned' ) as $k ) {
 		if ( isset( $in[ $k ] ) ) {

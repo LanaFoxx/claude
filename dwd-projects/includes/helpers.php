@@ -44,6 +44,7 @@ function dwdp_fields() {
 	return array(
 		'url'        => '',
 		'video'      => '', // Loom or YouTube link for the walkthrough video
+		'video_cover'=> '', // optional image address shown on the video before it plays
 		'industry'   => '',
 		'summary'    => '',
 		'together'   => '',
