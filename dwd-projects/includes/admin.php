@@ -158,7 +158,7 @@ function dwdp_box_details( $post ) {
 		<tr><th>Pin</th><td><label><input type="hidden" name="dwdp[pinned]" value="0"><input type="checkbox" name="dwdp[pinned]" value="1" <?php checked( '1', (string) $v( 'pinned' ) ); ?>> Always show first in the portfolio and homepage carousel</label></td></tr>
 	</table>
 	<p class="description">Working together, Platform, Scope, Responsive and Aftercare start with your defaults (change them under Projects → Settings). Industry and Short description are filled in from the client's site when you capture screenshots; the client review is always yours to add.</p>
-	<p class="description">Set the position in the portfolio with <strong>Order</strong> in the Project Attributes box (lowest first). New projects go to the top, under any pinned project.</p>
+	<p class="description">Set the position in the portfolio under <strong>Projects → Order</strong> (drag and drop). New projects go to the top, under any pinned project.</p>
 	<?php
 }
 
