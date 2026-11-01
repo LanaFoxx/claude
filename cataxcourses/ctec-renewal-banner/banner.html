@@ -1,0 +1,53 @@
+<div id="cxc-renewal" style="display:none" role="region" aria-label="CTEC renewal reminder">
+  <span id="cxc-renewal-text"></span>
+  <button type="button" id="cxc-renewal-close" aria-label="Hide this reminder">&times;</button>
+</div>
+<style>
+#cxc-renewal{position:fixed;top:0;left:0;right:0;z-index:1100;height:40px;display:flex;align-items:center;justify-content:center;
+  gap:10px;padding:0 44px;background:#1d2939;color:#fff;font-size:.88rem;line-height:1.2;text-align:center}
+#cxc-renewal a{color:#f5d76e;text-decoration:underline;font-weight:600}
+#cxc-renewal strong{color:#f5d76e}
+#cxc-renewal-close{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:0;color:#fff;
+  font-size:1.4rem;line-height:1;cursor:pointer;opacity:.8}
+#cxc-renewal-close:hover{opacity:1}
+body.cxc-has-renewal{padding-top:var(--cxc-h,40px)}
+body.cxc-has-renewal #navbar.sticky-nav,body.cxc-has-renewal .fixed-top,body.cxc-has-renewal #nav-drawer{top:var(--cxc-h,40px)!important}
+body.cxc-has-renewal .sidebar-btn{top:calc(var(--cxc-h,40px) + 10px)!important}
+@media (max-width:700px){#cxc-renewal{height:auto;min-height:40px;padding:6px 40px;font-size:.8rem}}
+</style>
+<script>
+/* California Tax Courses: sticky CTEC renewal reminder. Text follows the date (Pacific time); hidden after Jan 15, 2027. */
+(function () {
+  var now = Date.now();
+  var deadlineEnd = Date.UTC(2026, 10, 3, 8, 0, 0);  // end of Mon Nov 2, 2026 (PST)
+  var lateEnd = Date.UTC(2027, 0, 16, 8, 0, 0);      // end of Fri Jan 15, 2027 (PST)
+  var html;
+  if (now < deadlineEnd) {
+    html = '<span><strong>Reminder:</strong> The CTEC renewal deadline has been extended to <strong>Monday, November 2, 2026</strong> ' +
+      '(October 31 falls on a Saturday). <a href="https://www.ctec.org" target="_blank" rel="noopener">Renew at ctec.org</a></span>';
+  } else if (now < lateEnd) {
+    html = '<span>The CTEC renewal deadline has passed. <strong>Late renewals are accepted through January 15, 2027</strong> ' +
+      'with the late fee. <a href="https://www.ctec.org" target="_blank" rel="noopener">Renew at ctec.org</a></span>';
+  } else {
+    return;
+  }
+  try { if (sessionStorage.getItem('cxcRenewalHidden') === '1') { return; } } catch (e) {}
+  function show() {
+    var bar = document.getElementById('cxc-renewal');
+    if (!bar) { return; }
+    document.getElementById('cxc-renewal-text').innerHTML = html;
+    bar.style.display = 'flex';
+    document.body.classList.add('cxc-has-renewal');
+    // The bar wraps to two lines on phones: offset the page and the theme's fixed buttons by its real height.
+    function sync() { document.documentElement.style.setProperty('--cxc-h', bar.offsetHeight + 'px'); }
+    sync();
+    window.addEventListener('resize', sync);
+    document.getElementById('cxc-renewal-close').addEventListener('click', function () {
+      bar.style.display = 'none';
+      document.body.classList.remove('cxc-has-renewal');
+      try { sessionStorage.setItem('cxcRenewalHidden', '1'); } catch (e) {}
+    });
+  }
+  if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', show); } else { show(); }
+})();
+</script>
