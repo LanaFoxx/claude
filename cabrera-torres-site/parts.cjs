@@ -38,7 +38,7 @@ function pageHero(m, ph, o = {}) {
         settings: {
           custom_css: o.cutout
             ? 'selector img { display: block; width: auto; max-width: 100%; max-height: 460px; object-fit: contain; object-position: bottom; filter: drop-shadow(0 30px 50px rgba(0,0,0,.55)); }'
-            : 'selector img { display: block; width: auto; max-width: 100%; height: 460px; object-fit: contain; }', // whole photo, never crops her head
+            : 'selector img { display: block; width: auto; max-width: 100%; height: 460px; object-fit: contain; -webkit-mask-image: radial-gradient(ellipse 70% 72% at 55% 45%, #000 52%, transparent 100%); mask-image: radial-gradient(ellipse 70% 72% at 55% 45%, #000 52%, transparent 100%); }', // whole photo, edges feathered into the header (Jen: "blend the picture in more")
         },
       }),
     ]),

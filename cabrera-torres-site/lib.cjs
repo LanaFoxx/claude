@@ -13,7 +13,8 @@ const C = {
   line: 'rgba(74,54,47,0.18)', lineStrong: 'rgba(196,160,141,0.6)', hair: 'rgba(74,54,47,0.12)', rule: 'rgba(74,54,47,0.15)',
   roseLine: 'rgba(196,160,141,0.4)', darkLine: 'rgba(196,160,141,0.3)',
 };
-const FONT = 'Montserrat', HFONT = 'Cinzel', QFONT = 'Cormorant Garamond';
+// Jen (Markup): headings "def bold but not in caps" -> Playfair Display (Cinzel only has capitals).
+const FONT = 'Montserrat', HFONT = 'Playfair Display', QFONT = 'Cormorant Garamond';
 const PHONE = '770-777-HURT', TEL = 'tel:+17707774878', EMAIL = 'info@cabreratorres.com';
 const URL = {
   home: '/', about: '/about/', approach: '/our-approach/', jennifer: '/meet-jennifer/', practice: '/practice-areas/', results: '/case-results/',
@@ -118,7 +119,7 @@ const eyebrow = (text, color = C.roseDeep, align = 'left', o = {}) => widget('he
 function heading(text, tag, sizes, color, align = 'left', o = {}) {
   return widget('heading', {
     title: text, header_size: tag, title_color: color, align, ...(o.alignM ? { align_mobile: o.alignM } : {}),
-    ...typo('typography', sizes, o.weight || (o.family && o.family !== HFONT ? 400 : 700), { lh: o.lh || 1.12, ls: o.ls ?? 0.01, style: o.style, family: o.family || HFONT }),
+    ...typo('typography', sizes, o.weight || (o.family && o.family !== HFONT ? 400 : 700), { lh: o.lh || 1.12, ls: (o.family && o.family !== HFONT) ? (o.ls ?? 0) : Math.min(o.ls ?? 0, 0.01), style: o.style, family: o.family || HFONT }),
     ...(o.link ? { link: link(o.link) } : {}),
     ...(o.maxW ? { _element_width: 'initial', _element_custom_width: px(o.maxW), _element_custom_width_tablet: px(100, '%') } : {}),
     ...(o.settings || {}),

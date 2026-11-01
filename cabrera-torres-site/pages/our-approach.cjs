@@ -38,8 +38,8 @@ module.exports = {
       grid([
         stack([
           eyebrow('Litigation experience', C.ivory, 'left', { ls: 0.32 }),
-          heading('Prepared for Trial.<br>From the First Call.', 'h2', [44, 38, 32], C.ivory, 'left', { lh: 1.12 }),
-          text('There’s strength in your story. We build every case to be told in a courtroom if it has to be, because that preparation is what moves insurers to treat you fairly.', { color: C.ivory, size: 17, lh: 1.75 }),
+          heading('Ready for the courtroom.', 'h2', [44, 38, 32], C.ivory, 'left', { lh: 1.12 }), // Jen: "this phrase is getting repetitive"
+          text('We build every case to be told in front of a jury if it has to be, because that preparation is what moves insurers to treat you fairly.', { color: C.ivory, size: 17, lh: 1.75 }),
         ], { gap: 18 }),
         grid(P.LIT.map(([t, d]) => stack([
           eyebrow(t, C.rose, 'left', { size: 13, weight: 700, ls: 0.2 }),
