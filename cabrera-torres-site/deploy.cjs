@@ -29,7 +29,7 @@ const media = {
   jenTealCut: md('jennifer-cabrera-torres-attorney-teal-suit-cutout.webp'), jenTealClean: md('jennifer-cabrera-torres-teal-suit-portrait-cutout.webp'),
   // Jen's Markup photos (Nov 1)
   jenArms2: md('jennifer-cabrera-torres-arms-crossed-portrait.webp'), jenDeskWide: md('jennifer-cabrera-torres-attorney-desk-portrait-wide.webp'), jenSeated: md('jennifer-cabrera-torres-seated-portrait.webp'),
-  jenApproach: md('jennifer-cabrera-torres-our-approach-portrait.webp'), jenContact: md('jennifer-cabrera-torres-contact-portrait.webp'), jenTealPractice: md('jennifer-cabrera-torres-teal-suit-practice-cutout.webp'), jenProfile: md('jennifer-cabrera-torres-attorney-cream-dress-profile.webp'), jenStudio: md('jennifer-cabrera-torres-founder-studio-portrait.webp'), jenWindow: md('jennifer-cabrera-torres-attorney-office-window.webp'), litJen: md('jennifer-cabrera-torres-trial-attorney-georgia.webp'),
+  jenApproach: md('jennifer-cabrera-torres-our-approach-portrait.webp'), jenContact: md('jennifer-cabrera-torres-contact-portrait.webp'), jenTealPractice: md('jennifer-cabrera-torres-teal-suit-practice-cutout.webp'), jenProfileCut: md('jennifer-cabrera-torres-cream-dress-profile-cutout.webp'), jenProfile: md('jennifer-cabrera-torres-attorney-cream-dress-profile.webp'), jenStudio: md('jennifer-cabrera-torres-founder-studio-portrait.webp'), jenWindow: md('jennifer-cabrera-torres-attorney-office-window.webp'), litJen: md('jennifer-cabrera-torres-trial-attorney-georgia.webp'),
 };
 // Fail loudly on an unknown media key: Elementor would otherwise save an empty image and show its placeholder.
 const m = new Proxy(media, {

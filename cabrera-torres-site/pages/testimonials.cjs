@@ -12,7 +12,7 @@ module.exports = {
     focus: 'Cabrera Torres Law Firm reviews',
   },
   build: (m) => [
-    P.pageHero(m, heroes.testimonials, { photo: m.jenProfile }),
+    P.pageHero(m, heroes.testimonials, { photo: m.jenProfileCut, cutout: true }), // cut out: the grey studio backdrop showed as a pale oval on black
     band(C.wood, [
       grid(reviews.map((r) => glass([
         text('★★★★★', { color: C.rose, size: 26, ls: 0.12, lh: 1 }),
