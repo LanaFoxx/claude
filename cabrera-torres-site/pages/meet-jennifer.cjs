@@ -13,7 +13,7 @@ module.exports = {
     focus: 'Jennifer Cabrera-Torres',
   },
   build: (m) => [
-    P.pageHero(m, heroes.jennifer, { photo: m.jenDeskWide }), // Jen: "replace with this pic"
+    P.pageHero(m, heroes.jennifer, { photo: m.jenDeskWide, split: true, sizes: [48, 42, 34], maxW: 760 }), // Jen: "replace with this pic"
     band(C.ivory, [
       grid([
         stack([

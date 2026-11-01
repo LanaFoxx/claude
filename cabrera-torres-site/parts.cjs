@@ -18,7 +18,9 @@ function pageHero(m, ph, o = {}) {
   const rule = `<span style="display:inline-block;width:18px"></span><span style="display:inline-block;width:56px;height:1px;background:${C.rose};vertical-align:middle"></span>`;
   const copy = stack([
     eyebrow(`${ph.kicker}${rule}`, C.ivory, 'left', { size: 13, weight: 500, ls: 0.32 }),
-    heading(`${ph.title1}${ph.title2 ? ' ' + ph.title2 : ''}`, 'h1', [54, 46, 38], C.ivory, 'left', { lh: 1.08, maxW: o.photo ? 640 : 860 }),
+    // o.split: title2 on its own line (Jen: "esq on the same line as my name and the rest on this one").
+    heading(o.split ? `${ph.title1.replace(/-/g, '&#8209;').replace(/ (\S+)$/, '&nbsp;$1')}<br>${ph.title2}` : `${ph.title1}${ph.title2 ? ' ' + ph.title2 : ''}`,
+      'h1', o.sizes || [54, 46, 38], C.ivory, 'left', { lh: 1.08, maxW: o.maxW || (o.photo ? 640 : 860) }),
     ...(ph.intro ? [text(ph.intro, { color: C.ivory, size: 18, lh: 1.7, maxW: 640, settings: { _margin: box(4, 0, 0, 0) } })] : []),
   ], { gap: 22, settings: { padding: box(120, 0, 96, 0), padding_tablet: box(96, 0, 56, 0), padding_mobile: box(80, 0, 48, 0), z_index: 1 } });
   if (!o.photo) {
