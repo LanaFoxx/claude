@@ -153,9 +153,10 @@ function faqAccordion(faqs, o = {}) {
 const fld = (custom_id, field_type, placeholder, width, extra = {}) => ({
   _id: L.id(), custom_id, field_type, field_label: placeholder.replace(' *', ''), placeholder, width, width_tablet: width, width_mobile: extra.widthM || '100', ...extra,
 });
-const detail = (label, valueWidget) => stack([eyebrow(label, C.roseDeep, 'left', { size: 12, ls: 0.24 }), valueWidget], { gap: 6 });
-const phoneDetail = (size = 30) => detail('Phone', heading(L.PHONE, 'p', size, C.ink, 'left', { weight: 600, lh: 1.2, ls: 0, link: L.TEL }));
-const emailDetail = () => detail('Email', text(`<a href="mailto:${L.EMAIL}">${L.EMAIL}</a>`, { color: C.ink, size: 15, linkColor: C.ink, linkHover: C.roseDeep }));
+// Jen: "not caps" -> labels are bold sentence case (Playfair), not uppercase eyebrows. {dark} for the black contact panel.
+const detail = (label, valueWidget, o = {}) => stack([heading(label, 'p', [17, 17, 16], o.dark ? C.rose : C.ink, 'left', { lh: 1.3 }), valueWidget], { gap: 6 });
+const phoneDetail = (size = 30, o = {}) => detail('Phone', heading(L.PHONE, 'p', size, o.dark ? C.ivory : C.ink, 'left', { weight: 600, lh: 1.2, ls: 0, link: L.TEL }), o);
+const emailDetail = (o = {}) => detail('Email', text(`<a href="mailto:${L.EMAIL}">${L.EMAIL}</a>`, { color: o.dark ? C.ivory : C.ink, size: 15, linkColor: o.dark ? C.ivory : C.ink, linkHover: o.dark ? C.rose : C.roseDeep }), o);
 
 function contactForm(rows = 4) {
   return container({

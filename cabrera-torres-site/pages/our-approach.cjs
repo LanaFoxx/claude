@@ -30,7 +30,7 @@ module.exports = {
     // How a claim works, on espresso.
     band(C.wood, [
       eyebrow(edu.kicker, C.ivory, 'center', { ls: 0.34, settings: { _margin: box(0, 0, 18, 0) } }),
-      H2(edu.title1.replace(/,$/, ','), edu.title2, 'dark', 'center', { sizes: [44, 38, 32] }),
+      H2(edu.title1, edu.title2, 'dark', 'center', { sizes: [44, 38, 32] }),
       grid(edu.steps.map((s) => P.numberCard(s.n, s.h, s.p, { dark: true, pad: box(32, 28, 32, 28), nGap: 16, pSize: 15 })), { cols: [4, 2, 1], gap: 24, settings: { margin: box(56, 0, 0, 0) } }),
     ], { pad: [100, 100], width: 1320, align: 'center' }),
     // Trial preparation, on near-black.

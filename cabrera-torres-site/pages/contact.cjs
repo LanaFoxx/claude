@@ -2,7 +2,7 @@
 const L = require('../lib.cjs');
 const P = require('../parts.cjs');
 const { contact: ct, heroes } = require('../content.json');
-const { C, px, box, band, stack, grid, text, widget, image } = L;
+const { C, px, box, gap, container, band, stack, grid, text, widget, image } = L;
 
 module.exports = {
   slug: 'contact', title: 'Contact',
@@ -15,13 +15,17 @@ module.exports = {
     P.pageHero(m, heroes.contact),
     band(C.ivory, [
       grid([
-        stack([
-          // Jen: "replace with this pic and move up near the form" -> top of the column, level with the form.
-          image(m.jenContact, { settings: { custom_css: 'selector img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: center 35%; display: block; }' } }),
-          P.phoneDetail(32), P.emailDetail(),
-          P.detail('Norcross office', text(`<p>${L.ADDRESS}<br><a href="${L.URL.maps}" target="_blank" rel="noopener" style="font-size:13px;letter-spacing:.14em;text-transform:uppercase;font-weight:500">${ct.directions}</a></p>`, { color: C.inkSoft, size: 16 })),
-          P.detail(ct.hoursLbl, text(`<p>${ct.hours}<br><span style="color:${C.inkMuted}">${ct.hours2}</span></p>`, { color: C.inkSoft, size: 16 })),
-        ], { gap: 26 }),
+        // Jen: "is there a way to blend this pic better?" Her photo is shot on black, so the column becomes a black panel
+        // the same tone as the backdrop and the photo's edges feather into it. Labels are sentence case ("not caps").
+        container({
+          content_width: 'full', flex_direction: 'column', flex_gap: gap(26), padding: box(0, 40, 44, 40), padding_mobile: box(0, 24, 32, 24),
+          background_background: 'classic', background_color: '#020202',
+        }, [
+          image(m.jenContact, { settings: { _margin: box(0, -40, 0, -40), _margin_mobile: box(0, -24, 0, -24), custom_css: 'selector img { width: 100%; aspect-ratio: 16 / 11; object-fit: cover; object-position: center 30%; display: block; -webkit-mask-image: linear-gradient(to bottom, #000 70%, transparent 100%), linear-gradient(to right, transparent 0, #000 12%, #000 88%, transparent 100%); -webkit-mask-composite: source-in; mask-image: linear-gradient(to bottom, #000 70%, transparent 100%), linear-gradient(to right, transparent 0, #000 12%, #000 88%, transparent 100%); mask-composite: intersect; }' } }),
+          P.phoneDetail(32, { dark: true }), P.emailDetail({ dark: true }),
+          P.detail('Norcross office', text(`<p>${L.ADDRESS}<br><a href="${L.URL.maps}" target="_blank" rel="noopener" style="font-size:15px;font-weight:600;text-decoration:underline;text-underline-offset:4px">${ct.directions}</a></p>`, { color: C.ivory, size: 16, linkColor: C.rose, linkHover: C.ivory }), { dark: true }),
+          P.detail(ct.hoursLbl, text(`<p>${ct.hours}<br>${ct.hours2}</p>`, { color: C.ivory, size: 16 }), { dark: true }),
+        ]),
         // Map sits under the form so both columns end at a similar height.
         stack([
           P.contactForm(5),

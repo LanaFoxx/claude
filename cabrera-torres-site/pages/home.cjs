@@ -66,8 +66,8 @@ selector > .e-con-inner { position: relative; z-index: 1; }
 
 /* -------------------------------------------------------- practice areas */
 const AREAS = [
-  { name: 'Car Accidents', desc: 'Help after serious collisions involving cars, trucks, and rideshares.', icon: 'car', href: `${URL.practice}#mva` },
-  { name: 'Truck Accidents', desc: 'Holding trucking companies accountable for life-changing injuries.', icon: 'truck', href: `${URL.practice}#mva` },
+  { name: 'Car Accidents', desc: 'Help after serious collisions involving cars, motorcycles, and rideshares.', icon: 'car', href: `${URL.practice}#mva` },
+  { name: 'Truck Accidents', desc: 'Holding trucking companies accountable for life-changing injuries.', icon: 'truck', href: `${URL.practice}#truck` },
   { name: 'Slip & Fall', desc: 'Property owners must keep premises safe. We hold them accountable when they don’t.', icon: 'fall', href: `${URL.practice}#fall` },
   { name: 'Dog Bites', desc: 'Advocating for victims of dog attacks and the care they need to move forward.', icon: 'dog', href: `${URL.practice}#dog` },
 ];
@@ -86,8 +86,8 @@ const practice = () => band(C.ivory, [
 ], { pad: [96, 100], width: 1320, anchor: 'practice' });
 
 /* ---------------------------------------------------------- results band */
-// Jen (Markup): her actual results (the first four on the Case Results page), not the handoff's example figures.
-const RESULTS = require('../content.json').results.slice(0, 4).map((r) => [r.amount, r.type]);
+// Jen (Markup): her actual results, not the handoff's example figures. A mix of case types so it isn't only car wrecks.
+const RESULTS = ['$1.2M', '$500K', '$275K', '$230K'].map((a) => require('../content.json').results.find((r) => r.amount === a)).map((r) => [r.amount, r.type]);
 const results = () => band(C.espMid, [
   grid(RESULTS.map(([amt, type]) => stack([
     heading(amt, 'p', [42, 38, 34], C.ivory, 'center', { lh: 1 }),

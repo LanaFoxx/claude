@@ -25,7 +25,7 @@
    "kicker": "Case results",
    "title1": "Over $15 million",
    "title2": "recovered for our clients",
-   "intro": "A selection of recent settlements and verdicts in car, truck and serious-injury cases across metro Atlanta.",
+   "intro": "A selection of recent settlements and verdicts in car, truck, slip-and-fall, products liability and serious-injury cases across metro Atlanta.",
    "photo": "assets/jen-desk.png"
   },
   "testimonials": {
@@ -77,7 +77,7 @@
    {
     "n": "02",
     "h": "Client-centered",
-    "p": "If you can’t get to our office, we come to you: at home, in the hospital, or wherever you are."
+    "p": "If you can’t get to our office, we come to you, at home or wherever you are."
    },
    {
     "n": "03",
@@ -129,13 +129,25 @@
    "desc": "Crashes are the most common cause of serious injury in Georgia. We investigate fault, deal with the insurers so you don’t have to, and pursue every available policy, including your own underinsured coverage.",
    "items": [
     "Car accidents",
-    "Truck & tractor-trailer",
     "Motorcycle accidents",
     "Pedestrian & bicycle",
     "Uber & Lyft rideshare",
     "Drunk driving victims",
     "Hit-and-run",
     "Reckless driving"
+   ]
+  },
+  {
+   "key": "truck",
+   "name": "Trucking Accidents",
+   "desc": "A collision with an 18-wheeler or commercial truck can be catastrophic. These cases involve federal safety rules, trucking companies and their insurers, and evidence like driver logs and black-box data that has to be secured fast.",
+   "items": [
+    "Tractor-trailer & 18-wheeler crashes",
+    "Delivery & box truck accidents",
+    "Driver fatigue & hours-of-service violations",
+    "Overloaded or improperly secured cargo",
+    "Poor truck maintenance",
+    "Company & driver negligence"
    ]
   },
   {
@@ -178,29 +190,29 @@
   }
  ],
  "process": {
-  "kicker": "How a claim works",
-  "title1": "The process,",
+  "kicker": "How a personal injury case works",
+  "title1": "From claim to courtroom,",
   "title2": "step by step",
   "steps": [
    {
     "n": "01",
-    "h": "We investigate",
-    "p": "We gather photos, video, police reports, medical records and witness statements to establish fault."
+    "h": "The claim",
+    "p": "We investigate, gather the evidence and medical records, and open your claim with every insurer responsible for your injuries."
    },
    {
     "n": "02",
-    "h": "We present the claim",
-    "p": "We send the insurer a demand with a carefully calculated accounting of all of your damages."
+    "h": "Negotiation",
+    "p": "We present a detailed demand for all of your damages and negotiate hard with the insurance company for a fair settlement."
    },
    {
     "n": "03",
-    "h": "We negotiate",
-    "p": "We negotiate with the adjuster. Nearly 95% of injury cases resolve by settlement without a trial."
+    "h": "Litigation",
+    "p": "If the insurer won’t be fair, we file a lawsuit. Discovery, depositions and expert testimony build your case for court."
    },
    {
     "n": "04",
-    "h": "We recover",
-    "p": "If the offer isn’t fair, we file suit and take your case to a jury."
+    "h": "Trial",
+    "p": "When a case needs to be decided by a jury, we are ready to try it, and we prepare every case as if it will."
    }
   ],
   "whoH": "Who pays the compensation?",
@@ -254,9 +266,24 @@
    "desc": "Another driver failed to yield while turning across traffic, totaling our client’s vehicle and causing serious spinal injuries. After months of treatment, we secured $277,908."
   },
   {
+   "type": "Retail slip and fall",
+   "amount": "$275K",
+   "desc": "Our client slipped and fell at a major national retail chain, suffering injuries that required surgery and future treatment. We secured a $275,000 settlement."
+  },
+  {
+   "type": "Hotel slip and fall",
+   "amount": "$250K",
+   "desc": "Faulty plumbing at a leading international hotel chain caused our client’s fall and injuries. We secured a $250,000 settlement."
+  },
+  {
    "type": "Hit-and-run",
    "amount": "$245K",
    "desc": "After being struck by a drunk driver who fled the scene, our client was left with chronic pain and disc herniations. Despite policy limits, we secured $245,000 by pursuing all available coverage."
+  },
+  {
+   "type": "Products liability",
+   "amount": "$230K",
+   "desc": "A products liability case against a leading global manufacturer of industrial equipment, for an injury that required surgery and significant future medical treatment. We secured a $230,000 settlement."
   }
  ],
  "disclaimer": "Prior results do not guarantee a similar outcome. Each case is different and is judged on its own facts.",
@@ -344,7 +371,7 @@
   "directions": "Get directions",
   "hoursLbl": "Office hours",
   "hours": "Monday to Friday, 9:00 a.m. – 6:00 p.m.",
-  "hours2": "Calls answered 24/7 · Home and hospital visits available",
+  "hours2": "Calls answered 24/7 · Home visits available",
   "map": "Google Map embed goes here"
  },
  "articles": [
@@ -443,6 +470,6 @@
   "a2h": "Raised in Gwinnett County",
   "a2p": "Born in Atlanta to immigrant parents and the first in her family to finish college and law school. She fights for people who are too often overlooked or underestimated.",
   "a3h": "Bilingual, hands-on representation",
-  "a3p": "Fluent in Spanish, Jennifer handles your case herself. If you can’t come to us, we come to you, at home or in the hospital."
+  "a3p": "Fluent in Spanish, Jennifer handles your case herself. If you can’t come to us, we come to you, at home or wherever you are."
  }
 }

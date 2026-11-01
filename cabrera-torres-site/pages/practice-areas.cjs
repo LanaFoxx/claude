@@ -1,4 +1,4 @@
-// Practice areas: four areas (two with photos), how a claim works, who pays / what you can recover.
+// Practice areas: five areas, how a claim works, who pays / what you can recover.
 const L = require('../lib.cjs');
 const P = require('../parts.cjs');
 const { areasFull, process: edu, heroes } = require('../content.json');
@@ -8,9 +8,10 @@ const { C, px, box, container, band, stack, grid, eyebrow, heading, H2, H3, text
 // Jen: the stock photos were "the pictures from before". Like the homepage, each area now leads with its line icon.
 const AREA_STYLE = {
   mva: { bg: C.ivory, icon: 'car' },
-  dog: { bg: C.espMid, dark: true, icon: 'dog' },
-  fall: { bg: C.ivory, icon: 'fall' },
-  cat: { bg: C.espMid, dark: true, icon: 'commitment' },
+  truck: { bg: C.espMid, dark: true, icon: 'truck' }, // Jen: "trucking accidents is a category of its own"
+  dog: { bg: C.ivory, icon: 'dog' },
+  fall: { bg: C.espMid, dark: true, icon: 'fall' },
+  cat: { bg: C.ivory, icon: 'commitment' },
 };
 const areaCopy = (a, dark, icon) => stack([
   P.svg(P.ICON[icon], 60, dark ? C.rose : C.wood),
@@ -33,10 +34,11 @@ module.exports = {
   build: (m) => [
     P.pageHero(m, heroes.practice, { photo: m.jenTealPractice, cutout: true }), // Jen: "add this pic here"
     ...areasFull.map((a) => areaBand(m, a)),
-    band(C.ivory, [
-      eyebrow(edu.kicker, C.espMid, 'center', { weight: 600, ls: 0.34, settings: { _margin: box(0, 0, 18, 0) } }),
-      H2(edu.title1.replace(/,$/, ','), edu.title2, false, 'center', { sizes: [44, 38, 32] }),
-      grid(edu.steps.map((s) => P.numberCard(s.n, s.h, s.p, { pad: box(32, 28, 32, 28), nGap: 16, pSize: 15 })), { cols: [4, 2, 1], gap: 24, settings: { margin: box(56, 0, 0, 0) } }),
+    // Jen: "more generally how a personal injury case works including litigation": claim -> negotiation -> litigation -> trial.
+    band(C.nearBlack, [
+      eyebrow(edu.kicker, C.ivory, 'center', { weight: 600, ls: 0.34, settings: { _margin: box(0, 0, 18, 0) } }),
+      H2(edu.title1, edu.title2, 'dark', 'center', { sizes: [44, 38, 32] }),
+      grid(edu.steps.map((s) => P.numberCard(s.n, s.h, s.p, { dark: true, pad: box(32, 28, 32, 28), nGap: 16, pSize: 15 })), { cols: [4, 2, 1], gap: 24, settings: { margin: box(56, 0, 0, 0) } }),
     ], { pad: [100, 100], width: 1320, align: 'center' }),
     band(C.wood, [
       grid([
