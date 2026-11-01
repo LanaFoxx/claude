@@ -8,15 +8,15 @@ const C = {
   // taupe (rose) as an accent only: rules, buttons, eyebrow lines, stars.
   ivory: '#F6F1EA', light: '#FBF8F4', white: '#FFFFFF', blush: '#F6F1EA',
   wood: '#2B1D17', espMid: '#4A362F', nearBlack: '#0F0D0C', heroBlack: '#1C1310', black: '#000000', lit: '#141414', cardDark: '#1F1512',
-  rose: '#C4A08D', roseDeep: '#4A362F', roseHover: '#4A362F', sand: '#E6D6CB', mist: '#F6F1EA', smoke: '#9C8B80',
-  ink: '#2B1D17', inkSoft: '#4A3F39', inkMuted: '#4A3F39', placeholder: '#9C8B80',
+  rose: '#C4A08D', roseDeep: '#2B1D17', roseHover: '#4A362F', sand: '#E6D6CB', mist: '#F6F1EA', smoke: '#9C8B80',
+  ink: '#2B1D17', inkSoft: '#33241D', inkMuted: '#4A362F', placeholder: '#9C8B80',
   line: 'rgba(74,54,47,0.18)', lineStrong: 'rgba(196,160,141,0.6)', hair: 'rgba(74,54,47,0.12)', rule: 'rgba(74,54,47,0.15)',
   roseLine: 'rgba(196,160,141,0.4)', darkLine: 'rgba(196,160,141,0.3)',
 };
 const FONT = 'Montserrat', HFONT = 'Cinzel', QFONT = 'Cormorant Garamond';
 const PHONE = '770-777-HURT', TEL = 'tel:+17707774878', EMAIL = 'info@cabreratorres.com';
 const URL = {
-  home: '/', about: '/about/', jennifer: '/meet-jennifer/', practice: '/practice-areas/', results: '/case-results/',
+  home: '/', about: '/about/', approach: '/our-approach/', jennifer: '/meet-jennifer/', practice: '/practice-areas/', results: '/case-results/',
   testimonials: '/testimonials/', faq: '/faq/', blog: '/blog/', contact: '/contact/',
   maps: 'https://maps.google.com/?q=1770+Indian+Trail+Lilburn+Rd+NW+Norcross+GA+30093',
 };
@@ -111,14 +111,14 @@ function grid(children, o = {}) {
 // Small uppercase gold label above headings
 const eyebrow = (text, color = C.roseDeep, align = 'left', o = {}) => widget('heading', {
   title: text, header_size: o.tag || 'p', title_color: color, align, ...(o.alignM ? { align_mobile: o.alignM } : {}),
-  ...typo('typography', o.size || 13, o.weight || 500, { lh: 1.4, ls: o.ls ?? 0.3, transform: 'uppercase' }),
+  ...typo('typography', o.size || 13, o.weight || 600, { lh: 1.4, ls: o.ls ?? 0.3, transform: 'uppercase' }),
   ...(o.settings || {}),
 });
 
 function heading(text, tag, sizes, color, align = 'left', o = {}) {
   return widget('heading', {
     title: text, header_size: tag, title_color: color, align, ...(o.alignM ? { align_mobile: o.alignM } : {}),
-    ...typo('typography', sizes, o.weight || (o.family && o.family !== HFONT ? 400 : 600), { lh: o.lh || 1.12, ls: o.ls ?? 0.01, style: o.style, family: o.family || HFONT }),
+    ...typo('typography', sizes, o.weight || (o.family && o.family !== HFONT ? 400 : 700), { lh: o.lh || 1.12, ls: o.ls ?? 0.01, style: o.style, family: o.family || HFONT }),
     ...(o.link ? { link: link(o.link) } : {}),
     ...(o.maxW ? { _element_width: 'initial', _element_custom_width: px(o.maxW), _element_custom_width_tablet: px(100, '%') } : {}),
     ...(o.settings || {}),
@@ -152,25 +152,31 @@ function button(label, url, variant = 'gold', o = {}) {
     border_radius: box(0), text_padding: o.pad || box(18, 32, 18, 32),
     custom_css: 'selector .elementor-button { transition: background-color .15s, color .15s, border-color .15s; white-space: nowrap; }',
   };
-  if (variant === 'gold') Object.assign(base, {
-    button_text_color: C.wood, hover_color: o.dark === false ? C.ivory : C.wood,
+  if (variant === 'gold') Object.assign(base, o.dark === false ? {
+    // On cream: espresso button, ivory text (Jen: no taupe on cream).
+    button_text_color: C.ivory, hover_color: C.ivory,
+    background_background: 'classic', background_color: C.wood,
+    button_background_hover_background: 'classic', button_background_hover_color: C.espMid,
+  } : {
+    button_text_color: C.wood, hover_color: C.wood,
     background_background: 'classic', background_color: C.rose,
-    button_background_hover_background: 'classic', button_background_hover_color: o.dark === false ? C.espMid : C.ivory,
+    button_background_hover_background: 'classic', button_background_hover_color: C.ivory,
   });
   if (variant === 'outline' || variant === 'outlineDark') Object.assign(base, {
     ...typo('typography', o.size || 13, 700, { lh: 1.2, ls: o.ls ?? 0.22, transform: 'uppercase' }),
     button_text_color: variant === 'outlineDark' ? C.ivory : C.ink, hover_color: C.wood,
     background_background: 'classic', background_color: 'rgba(0,0,0,0)',
     button_background_hover_background: 'classic', button_background_hover_color: C.rose,
-    border_border: 'solid', border_width: box(1), border_color: C.rose, button_hover_border_color: C.rose,
+    border_border: 'solid', border_width: box(1), border_color: variant === 'outlineDark' ? C.rose : C.wood, button_hover_border_color: variant === 'outlineDark' ? C.rose : C.wood,
+    ...(variant === 'outline' ? { button_background_hover_color: C.wood, hover_color: C.ivory } : {}),
     text_padding: o.pad || box(16, 28, 16, 28),
   });
   if (variant === 'underline') Object.assign(base, {
     ...typo('typography', 12, 700, { lh: 1.2, ls: 0.22, transform: 'uppercase' }),
-    button_text_color: o.dark ? C.ivory : C.espMid, hover_color: C.rose,
+    button_text_color: o.dark ? C.ivory : C.wood, hover_color: o.dark ? C.rose : C.espMid,
     background_background: 'classic', background_color: 'rgba(0,0,0,0)',
     button_background_hover_background: 'classic', button_background_hover_color: 'rgba(0,0,0,0)',
-    border_border: 'solid', border_width: box(0, 0, 1, 0), border_color: C.rose, text_padding: box(0, 0, 4, 0),
+    border_border: 'solid', border_width: box(0, 0, 2, 0), border_color: o.dark ? C.rose : C.wood, text_padding: box(0, 0, 4, 0),
   });
   const btn = widget('button', { ...base, ...(o.settings || {}) });
   if (o.settings?.custom_css) btn.settings.custom_css = base.custom_css + '\n' + o.settings.custom_css;
@@ -274,7 +280,8 @@ function footer(m) {
     }, [
       stack([
         image(m.logoLight, { width: 250, link: '/', align: 'left', settings: { _element_width: 'initial', _element_custom_width: px(250), _element_custom_width_mobile: px(100, '%'), custom_css: 'selector img { max-width: 250px; }' } }),
-        eyebrow('Advocate. Protect. Deliver.', C.rose, 'left', { size: 13, weight: 500, ls: 0.24 }),
+        eyebrow('Advocate. Protect. Deliver.', C.rose, 'left', { size: 13, weight: 600, ls: 0.24 }),
+        heading('There’s strength in your story.', 'p', 20, C.ivory, 'left', { lh: 1.3, settings: { _margin: box(6, 0, 0, 0) } }),
       ], { gap: 18 }),
       stack([label('Office'), text(`<p>${ADDRESS}</p>`, { color: C.sand, size: 15, lh: 1.8 })], { gap: 10 }),
       stack([
@@ -283,7 +290,7 @@ function footer(m) {
       ], { gap: 10 }),
       stack([
         label('Firm'),
-        links([['About', URL.about], ['Meet Jennifer', URL.jennifer], ['Practice Areas', URL.practice], ['Results', URL.results], ['Testimonials', URL.testimonials], ['FAQ', URL.faq], ['Resources', URL.blog], ['Contact', URL.contact]]),
+        links([['About', URL.about], ['Our Approach', URL.approach], ['Meet Jennifer', URL.jennifer], ['Practice Areas', URL.practice], ['Results', URL.results], ['Testimonials', URL.testimonials], ['FAQ', URL.faq], ['Resources', URL.blog], ['Contact', URL.contact]]),
       ], { gap: 10 }),
     ]),
     container({

@@ -16,7 +16,7 @@ const areaCopy = (a, dark, icon) => stack([
   P.svg(P.ICON[icon], 60, dark ? C.rose : C.wood),
   heading(a.name, 'h2', [40, 34, 30], dark ? C.ivory : C.ink, 'center', { lh: 1.14, settings: { _margin: box(6, 0, 0, 0) } }),
   text(a.desc, { size: 17, color: dark ? C.ivory : C.inkSoft, align: 'center', settings: { _margin: box(0, 0, 10, 0) } }),
-  P.plusList(a.items, { size: 16, color: dark ? C.ivory : C.inkSoft, width: 620 }),
+  P.plusList(a.items, { size: 16, dark, color: dark ? C.ivory : C.inkSoft, width: 620 }),
 ], { gap: 14, align: 'center' });
 function areaBand(m, a) {
   const st = AREA_STYLE[a.key];
@@ -31,17 +31,17 @@ module.exports = {
     focus: 'car accident lawyer Norcross',
   },
   build: (m) => [
-    P.pageHero(m, heroes.practice),
+    P.pageHero(m, heroes.practice, { photo: m.jenTealPractice, cutout: true }), // Jen: "add this pic here"
     ...areasFull.map((a) => areaBand(m, a)),
     band(C.ivory, [
       eyebrow(edu.kicker, C.espMid, 'center', { weight: 600, ls: 0.34, settings: { _margin: box(0, 0, 18, 0) } }),
       H2(edu.title1.replace(/,$/, ','), edu.title2, false, 'center', { sizes: [44, 38, 32] }),
       grid(edu.steps.map((s) => P.numberCard(s.n, s.h, s.p, { pad: box(32, 28, 32, 28), nGap: 16, pSize: 15 })), { cols: [4, 2, 1], gap: 24, settings: { margin: box(56, 0, 0, 0) } }),
     ], { pad: [100, 100], width: 1320, align: 'center' }),
-    band(C.espMid, [
+    band(C.wood, [
       grid([
         stack([H3(edu.whoH, C.ivory, [24, 22, 20], { ls: 0.04 }), text(edu.whoP, { color: C.ivory })], { gap: 12 }),
-        stack([H3(edu.recH, C.ivory, [24, 22, 20], { ls: 0.04 }), P.plusList(edu.rec, { size: 16, rowGap: 8, color: C.ivory })], { gap: 12 }),
+        stack([H3(edu.recH, C.ivory, [24, 22, 20], { ls: 0.04 }), P.plusList(edu.rec, { size: 16, rowGap: 8, dark: true, color: C.ivory })], { gap: 12 }),
       ], { cols: [2, 1, 1], gap: 48, align: 'start' }),
     ], { pad: [100, 100], width: 1240 }),
     P.ctaBand(),

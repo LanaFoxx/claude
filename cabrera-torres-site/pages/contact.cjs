@@ -16,15 +16,11 @@ module.exports = {
     band(C.ivory, [
       grid([
         stack([
+          // Jen: "replace with this pic and move up near the form" -> top of the column, level with the form.
+          image(m.jenContact, { settings: { custom_css: 'selector img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: center 35%; display: block; }' } }),
           P.phoneDetail(32), P.emailDetail(),
           P.detail('Norcross office', text(`<p>${L.ADDRESS}<br><a href="${L.URL.maps}" target="_blank" rel="noopener" style="font-size:13px;letter-spacing:.14em;text-transform:uppercase;font-weight:500">${ct.directions}</a></p>`, { color: C.inkSoft, size: 16 })),
           P.detail(ct.hoursLbl, text(`<p>${ct.hours}<br><span style="color:${C.inkMuted}">${ct.hours2}</span></p>`, { color: C.inkSoft, size: 16 })),
-          image(m.jenDesk, {
-            settings: {
-              _border_border: 'solid', _border_width: box(1), _border_color: C.line,
-              custom_css: 'selector img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: center 30%; display: block; }',
-            },
-          }),
         ], { gap: 26 }),
         // Map sits under the form so both columns end at a similar height.
         stack([

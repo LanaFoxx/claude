@@ -13,7 +13,7 @@ module.exports = {
     focus: 'Jennifer Cabrera-Torres',
   },
   build: (m) => [
-    P.pageHero(m, heroes.jennifer, { photo: m.jenTealClean, cutout: true }), // re-cut: the handoff cutout had white specks (Jen: "photo needs work")
+    P.pageHero(m, heroes.jennifer, { photo: m.jenDeskWide }), // Jen: "replace with this pic"
     band(C.ivory, [
       grid([
         stack([
@@ -41,7 +41,7 @@ module.exports = {
           ]),
         ], { gap: 18 }),
         stack([
-          P.framedPhoto(m.jenStudio, { ratio: '4 / 5', pos: 'center 25%' }),
+          P.framedPhoto(m.jenSeated, { ratio: '2 / 3', pos: 'center top' }), // Jen: "replace with this pic"
           container({ content_width: 'full', flex_direction: 'column', flex_gap: gap(14), padding: box(32, 28, 32, 28), background_background: 'classic', background_color: C.light, border_border: 'solid', border_width: box(1), border_color: C.hair }, [
             eyebrow(jen.specLbl, C.roseDeep, 'left', { tag: 'h2' }),
             P.plusList(jen.spec, { cols: 1, size: 15, rowGap: 8, color: C.inkSoft }),

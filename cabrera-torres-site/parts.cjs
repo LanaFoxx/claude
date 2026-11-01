@@ -53,7 +53,7 @@ const ctaBand = () => container({
   background_background: 'classic', background_color: C.espMid,
   border_border: 'solid', border_width: box(1, 0, 0, 0), border_color: 'rgba(196,160,141,0.2)', _element_id: 'contact',
 }, [
-  eyebrow(`<span style="display:inline-block;width:56px;height:1px;background:${C.rose};vertical-align:middle"></span><span style="display:inline-block;width:22px"></span>Let's talk about your case<span style="display:inline-block;width:22px"></span><span style="display:inline-block;width:56px;height:1px;background:${C.rose};vertical-align:middle"></span>`, C.ivory, 'center', { size: 13, ls: 0.32, settings: { custom_css: '@media (max-width: 560px) { selector span[style*="height:1px"] { width: 24px !important; } }' } }),
+  eyebrow(`<span style="display:inline-block;width:56px;height:1px;background:${C.rose};vertical-align:middle"></span><span style="display:inline-block;width:22px"></span>There’s strength in your story<span style="display:inline-block;width:22px"></span><span style="display:inline-block;width:56px;height:1px;background:${C.rose};vertical-align:middle"></span>`, C.ivory, 'center', { size: 13, ls: 0.32, settings: { custom_css: '@media (max-width: 560px) { selector span[style*="height:1px"] { width: 24px !important; } }' } }),
   heading('Schedule Your Free Consultation.', 'h2', [44, 38, 32], C.ivory, 'center', { lh: 1.12, settings: { _margin: box(22, 0, 0, 0) } }),
   text(`We're here to listen, answer your questions, and help you understand your options. Call <a href="${L.TEL}" style="font-weight:700">${L.PHONE}</a>.`, { color: C.ivory, size: 18, lh: 1.75, align: 'center', maxW: 620, linkColor: C.rose, linkHover: C.ivory, settings: { _margin: box(18, 0, 0, 0) } }),
   button('Free Consultation  →', L.TEL, 'gold', { align: 'center', pad: box(20, 36, 20, 36), settings: { _margin: box(40, 0, 0, 0) } }),
@@ -78,7 +78,7 @@ const ICON = {
 /* ------------------------------------------------------------- lists */
 // Gold "+" checklist in a CSS grid of `cols` columns (1 column on phones).
 const plusList = (items, o = {}) => iconList(items, {
-  icon: 'fas fa-plus', iconSize: 9, indent: 10, iconColor: o.iconColor || C.rose, color: o.color || C.inkSoft, size: o.size || 15, weight: 400, space: 0,
+  icon: 'fas fa-plus', iconSize: 9, indent: 10, iconColor: o.iconColor || (o.dark ? C.rose : C.wood), color: o.color || C.inkSoft, size: o.size || 15, weight: 400, space: 0,
   settings: {
     ...(o.width ? { _element_width: 'initial', _element_custom_width: px(o.width), _element_custom_width_mobile: px(100, '%') } : {}),
     custom_css: `selector .elementor-icon-list-items { display: grid; grid-template-columns: repeat(${o.cols ?? 2}, minmax(0, 1fr)); gap: ${o.rowGap ?? 10}px 24px; }
@@ -90,14 +90,15 @@ selector .elementor-icon-list-item { margin: 0 !important; padding: 0 !important
 /* ------------------------------------------------------- result cards */
 // v3: square card with the Stat component (Cinzel amount, small uppercase label) and the case summary.
 function resultNote(r, _tilt, _drop, o = {}) {
+  const dark = o.dark !== false; // v3.1: results sit on espresso (Jen: more espresso, taupe only on dark)
   return container({
     content_width: 'full', flex_direction: 'column', flex_align_items: 'center', flex_gap: gap(0), padding: box(40, 30, 36, 30), padding_mobile: box(34, 24, 30, 24),
-    background_background: 'classic', background_color: C.light, border_border: 'solid', border_width: box(1), border_color: C.hair,
+    background_background: 'classic', background_color: dark ? C.cardDark : C.light, border_border: 'solid', border_width: box(1), border_color: dark ? C.darkLine : C.hair,
   }, [
-    heading(r.amount, 'h3', o.amountSizes || [42, 40, 38], C.ink, 'center', { lh: 1 }),
-    eyebrow(r.type, C.espMid, 'center', { size: 13, weight: 600, ls: 0.22, settings: { _margin: box(12, 0, 0, 0) } }),
-    widget('divider', { width: px(40), align: 'center', color: C.rose, weight: px(1), gap: px(14) }),
-    text(r.desc, { color: C.inkSoft, size: 15, lh: 1.7, align: 'center' }),
+    heading(r.amount, 'h3', o.amountSizes || [42, 40, 38], dark ? C.ivory : C.ink, 'center', { lh: 1 }),
+    eyebrow(r.type, dark ? C.rose : C.wood, 'center', { size: 13, weight: 700, ls: 0.22, settings: { _margin: box(12, 0, 0, 0) } }),
+    widget('divider', { width: px(40), align: 'center', color: dark ? C.rose : C.wood, weight: px(1), gap: px(14) }),
+    text(r.desc, { color: dark ? C.ivory : C.inkSoft, size: 15, lh: 1.7, align: 'center' }),
   ]);
 }
 
@@ -107,7 +108,7 @@ const numberCard = (n, h, p, o = {}) => container({
   content_width: 'full', flex_direction: 'column', flex_gap: gap(0), padding: o.pad || box(36, 32, 36, 32), padding_mobile: box(30, 24, 30, 24),
   background_background: 'classic', background_color: o.dark ? C.cardDark : C.light, border_border: 'solid', border_width: box(1), border_color: o.dark ? C.darkLine : C.hair,
 }, [
-  heading(n, 'p', 34, C.rose, 'left', { lh: 1, settings: { _margin: box(0, 0, o.nGap ?? 18, 0) } }),
+  heading(n, 'p', 34, o.dark ? C.rose : C.wood, 'left', { lh: 1, settings: { _margin: box(0, 0, o.nGap ?? 18, 0) } }),
   H3(h, o.dark ? C.ivory : C.ink, o.hSizes || [18, 18, 18], { ls: 0.1, settings: { _margin: box(0, 0, 10, 0) } }),
   text(p, { color: o.dark ? C.ivory : C.inkSoft, size: o.pSize || 16 }),
 ]);
@@ -138,7 +139,7 @@ function faqAccordion(faqs, o = {}) {
       accordion_border_radius: box(0), accordion_padding: box(24, 0, 24, 0),
       ...L.typo('title_typography', o.sizes || [20, 20, 18], 600, { lh: 1.3, ls: 0.02, family: L.HFONT }),
       normal_title_color: C.ink, hover_title_color: C.espMid, active_title_color: C.ink,
-      icon_size: px(16), icon_spacing: px(20), normal_icon_color: C.rose, hover_icon_color: C.rose, active_icon_color: C.rose,
+      icon_size: px(16), icon_spacing: px(20), normal_icon_color: C.wood, hover_icon_color: C.wood, active_icon_color: C.wood,
       content_border_border: 'solid', content_border_width: box(0, 0, 1, 0), content_border_color: C.rule, content_border_radius: box(0),
       content_padding: box(0, 48, 26, 0), content_padding_mobile: box(0, 0, 22, 0),
       custom_css: `selector { border-top: 1px solid ${C.rule}; }`,
@@ -180,14 +181,14 @@ function contactForm(rows = 4) {
       field_text_color: C.ink, field_background_color: C.light, field_border_color: C.line, field_border_width: box(1), field_border_radius: box(0),
       ...L.typo('field_typography', 16, 400, { lh: 1.5 }),
       label_color: C.inkMuted, ...L.typo('label_typography', 13, 300, { lh: 1.5 }),
-      button_background_color: C.rose, button_text_color: C.wood, button_background_hover_color: C.espMid, button_hover_color: C.ivory,
+      button_background_color: C.wood, button_text_color: C.ivory, button_background_hover_color: C.espMid, button_hover_color: C.ivory,
       button_border_radius: box(0), ...L.typo('button_typography', 14, 700, { lh: 1.2, ls: 0.2, transform: 'uppercase' }), button_text_padding: box(18, 32, 18, 32),
       success_message_color: C.roseDeep,
       custom_css: `selector .elementor-field-textual { padding: 14px 16px; min-height: 0; }
 selector .elementor-field-textual::placeholder { color: #9C8B80; opacity: 1; }
-selector .elementor-field-textual:focus { border-color: ${C.rose} !important; box-shadow: none; }
+selector .elementor-field-textual:focus { border-color: ${C.wood} !important; box-shadow: none; }
 selector .elementor-field-type-acceptance .elementor-field-subgroup label { color: ${C.inkMuted}; font-size: 13px; line-height: 1.5; }
-selector .elementor-field-type-acceptance input { accent-color: ${C.rose}; }
+selector .elementor-field-type-acceptance input { accent-color: ${C.wood}; }
 selector .elementor-button { transition: background-color .15s, color .15s; }`,
     }),
   ]);
@@ -208,4 +209,18 @@ const blogCard = (m, a, o = {}) => container({
   text(a.excerpt, { color: o.pColor || C.inkSoft, size: 15 }),
 ]);
 
-module.exports = { svg, ICON, emblem, pageHero, ctaBand, plusList, resultNote, numberCard, framedPhoto, faqAccordion, fld, detail, phoneDetail, emailDetail, contactForm, blogCard, articleUrl, ART_IMG };
+// Shared by the homepage strip and the Our Approach page.
+const PILLARS = [
+  ['Integrity', 'Honest guidance and straight answers, from the first call to the last.', 'integrity'],
+  ['Commitment', 'Every case prepared as if it will be tried.', 'commitment'],
+  ['Results', 'Recoveries that reflect the full impact of an injury.', 'results'],
+  ['Client-Focused', "You're never just a case. You're a person.", 'client'],
+];
+
+const LIT = [
+  ['Investigation', 'Evidence preserved early, experts retained when the case calls for it.'],
+  ['Negotiation', 'Demands built on documented damages, not guesswork.'],
+  ['Trial', 'When insurers refuse to be fair, we are ready to present your case to a jury.'],
+];
+
+module.exports = { svg, ICON, PILLARS, LIT, emblem, pageHero, ctaBand, plusList, resultNote, numberCard, framedPhoto, faqAccordion, fld, detail, phoneDetail, emailDetail, contactForm, blogCard, articleUrl, ART_IMG };

@@ -50,11 +50,17 @@
    "photo": "assets/jen-desk.png"
   },
   "contact": {
-   "kicker": "Free case evaluation",
-   "title1": "Injured?",
-   "title2": "Call Jen.",
+   "kicker": "Free consultation",
+   "title1": "There’s strength in your story.",
+   "title2": "Let’s hear yours.",
    "intro": "Tell us what happened. We respond quickly, keep everything confidential, and you pay nothing unless we recover for you.",
    "photo": "assets/jen-desk.png"
+  },
+  "approach": {
+   "kicker": "Our approach",
+   "title1": "Prepared for trial.",
+   "title2": "From the first call.",
+   "intro": "Insurance companies know which firms are willing to go to court. We prepare every case as if it will be tried, so when it’s time to negotiate, you negotiate from a position of strength."
   }
  },
  "about": {
@@ -82,10 +88,14 @@
  },
  "jennifer": {
   "bio": [
-   "Jennifer Cabrera-Torres brings nearly two decades of personal injury experience to her role as Managing Attorney. She spent more than 15 years as a personal injury paralegal before becoming an attorney, and has always believed in the power of advocacy to change lives.",
-   "Born in Atlanta and raised in Gwinnett County by immigrant parents, Jennifer was the first in her family to graduate from college and law school, overcoming the loss of her father days after graduation and becoming a mother during law school. That journey drives her commitment to people who are too often overlooked or underestimated.",
-   "Jennifer handles serious injury cases involving car accidents, tractor-trailers, wrongful death and slip-and-fall incidents. She has recovered millions of dollars for her clients. Her litigation experience, combined with personal dedication to each client, makes her a formidable advocate in and out of the courtroom.",
-   "Fluent in Spanish, she makes sure every client feels heard, understood and supported throughout the process."
+   "I’m Jennifer Cabrera-Torres, Founder & Managing Attorney of Cabrera Torres Law Firm. Before becoming an attorney, I spent more than 15 years as a personal injury trial paralegal, developing a deep understanding of the preparation, persistence, and personal attention injury cases require.",
+   "Born in Atlanta and raised in Gwinnett County by immigrant parents, I’m proud to serve the community I’ve long called home. Establishing my firm in Norcross is especially meaningful because it allows me to advocate for individuals and families in the community that helped shape who I am.",
+   "As the first in my family to graduate from college and law school, my journey has been shaped by profound loss, meaningful new beginnings, and a determination to keep moving forward.",
+   "Three days after graduating from college, I lost my father. What should have been a time of celebration became a season of grief as I prepared for the LSAT and pursued my goal of becoming an attorney. That experience taught me how suddenly life can change—and how much it matters to have someone beside you during difficult moments.",
+   "Years later, during the COVID-19 pandemic, I completed my law school final exams at 40 weeks pregnant and welcomed my first child the following day. Becoming a mother while pursuing my legal education strengthened my resolve and deepened my appreciation for the families who depend on the work I do.",
+   "Those experiences shape how I represent people whose lives have been disrupted by an injury. I understand that your case involves more than medical records and insurance claims. It can affect your livelihood, your family, your independence, and your sense of security.",
+   "I represent clients in personal injury matters involving car accidents, tractor-trailer collisions, wrongful death, dog bites, and slip-and-fall incidents. I bring litigation experience, careful preparation, and a personal commitment to helping you understand your options and make informed decisions throughout your case.",
+   "Fluent in English and Spanish, I want you to feel heard, understand the process, and know who is standing beside you."
   ],
   "barLbl": "Bar admissions",
   "bar": [
@@ -150,7 +160,6 @@
     "Parking lots & sidewalks",
     "Stairs & railings",
     "Negligent security",
-    "Apartment complexes",
     "Fractures & head injuries"
    ]
   },

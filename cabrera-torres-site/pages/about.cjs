@@ -12,7 +12,7 @@ module.exports = {
     focus: 'Norcross personal injury law firm',
   },
   build: (m) => [
-    P.pageHero(m, heroes.about),
+    P.pageHero(m, heroes.about, { photo: m.jenArms2 }), // Jen: "lets add this pic here"
     band(C.ivory, [
       grid([
         stack([
@@ -23,7 +23,8 @@ module.exports = {
         P.framedPhoto(m.jenWindow, { maxW: 420, ratio: '4 / 5', pos: 'center 30%' }),
       ], { cols: [2, 1, 1], gap: 60, rowGap: 56, align: 'start' }),
     ], { pad: [100, 100], width: 1320 }),
-    band(C.espMid, [
+    // Near-black so it no longer runs into the espresso-mid consultation band (Jen: "this is a weird space").
+    band(C.nearBlack, [
       eyebrow(ab.whyKicker, C.ivory, 'center', { ls: 0.34, settings: { _margin: box(0, 0, 32, 0) } }),
       grid(ab.why.map((w) => P.numberCard(w.n, w.h, w.p, { dark: true })), { cols: [3, 1, 1], gap: 24 }),
     ], { pad: [100, 100], width: 1320 }),

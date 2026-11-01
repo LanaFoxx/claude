@@ -13,9 +13,9 @@ module.exports = {
   },
   build: (m) => [
     P.pageHero(m, heroes.results, { photo: m.jenCreamCut, cutout: true }),
-    band(C.ivory, [
+    band(C.wood, [
       grid(results.map((r) => P.resultNote(r)), { cols: [4, 2, 1], gap: 24, rowGap: 24, align: 'stretch' }),
-      text(disclaimer, { color: C.inkSoft, size: 13, align: 'center', settings: { _margin: box(48, 0, 0, 0) } }),
+      text(disclaimer, { color: C.ivory, size: 13, align: 'center', settings: { _margin: box(48, 0, 0, 0) } }),
     ], { pad: [100, 100], width: 1320, align: 'center' }),
     P.ctaBand(),
   ],

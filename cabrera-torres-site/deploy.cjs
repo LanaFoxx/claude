@@ -15,7 +15,7 @@ const md = (f) => {
   if (!x || !x.id) throw new Error(`Missing media ${f}`);
   return { id: x.id, url: x.source_url, alt: '', source: 'library' };
 };
-const m = {
+const media = {
   logo: md('cabrera-torres-law-firm-logo-rose.webp'), emblem: md('cabrera-torres-law-firm-monogram-rose.webp'), pattern: md('cabrera-torres-law-art-deco-pattern-seamless.png'),
   jennifer: md('jennifer-cabrera-torres-personal-injury-attorney-norcross-ga.webp'),
   area_mva: md('car-accident-lawyer-norcross-ga.webp'), area_dog: md('dog-bite-lawyer-georgia.webp'), area_fall: md('slip-and-fall-lawyer-georgia.webp'),
@@ -25,15 +25,25 @@ const m = {
   // homepage-v2
   logoDark: md('cabrera-torres-law-firm-logo-dark.webp'), logoLight: md('cabrera-torres-law-firm-logo-light.webp'),
   office: md('cabrera-torres-law-firm-office-norcross-ga.webp'), heroJen: md('jennifer-cabrera-torres-personal-injury-lawyer-hero.webp'),
-  storyJen: md('jennifer-cabrera-torres-attorney-story-portrait.webp'), heroJenReal: md('jennifer-cabrera-torres-cream-dress-hero-portrait.webp'), // Jen's own retouched version (Markup) jenDeskPortrait: md('jennifer-cabrera-torres-attorney-desk-portrait.webp'),
-  jenTealCut: md('jennifer-cabrera-torres-attorney-teal-suit-cutout.webp'), jenTealClean: md('jennifer-cabrera-torres-teal-suit-portrait-cutout.webp'), jenProfile: md('jennifer-cabrera-torres-attorney-cream-dress-profile.webp'), jenStudio: md('jennifer-cabrera-torres-founder-studio-portrait.webp'), jenWindow: md('jennifer-cabrera-torres-attorney-office-window.webp'), litJen: md('jennifer-cabrera-torres-trial-attorney-georgia.webp'),
+  storyJen: md('jennifer-cabrera-torres-attorney-story-portrait.webp'), heroJenReal: md('jennifer-cabrera-torres-cream-dress-hero-portrait.webp'), jenDeskPortrait: md('jennifer-cabrera-torres-attorney-desk-portrait.webp'), // heroJenReal = Jen's own retouched version (Markup)
+  jenTealCut: md('jennifer-cabrera-torres-attorney-teal-suit-cutout.webp'), jenTealClean: md('jennifer-cabrera-torres-teal-suit-portrait-cutout.webp'),
+  // Jen's Markup photos (Nov 1)
+  jenArms2: md('jennifer-cabrera-torres-arms-crossed-portrait.webp'), jenDeskWide: md('jennifer-cabrera-torres-attorney-desk-portrait-wide.webp'), jenSeated: md('jennifer-cabrera-torres-seated-portrait.webp'),
+  jenApproach: md('jennifer-cabrera-torres-our-approach-portrait.webp'), jenContact: md('jennifer-cabrera-torres-contact-portrait.webp'), jenTealPractice: md('jennifer-cabrera-torres-teal-suit-practice-cutout.webp'), jenProfile: md('jennifer-cabrera-torres-attorney-cream-dress-profile.webp'), jenStudio: md('jennifer-cabrera-torres-founder-studio-portrait.webp'), jenWindow: md('jennifer-cabrera-torres-attorney-office-window.webp'), litJen: md('jennifer-cabrera-torres-trial-attorney-georgia.webp'),
 };
+// Fail loudly on an unknown media key: Elementor would otherwise save an empty image and show its placeholder.
+const m = new Proxy(media, {
+  get(t, k) {
+    if (typeof k === 'string' && !(k in t) && !['then', 'toJSON', 'constructor'].includes(k)) throw new Error(`Unknown media key: ${k}`);
+    return t[k];
+  },
+});
 
-const PAGE_SLUGS = ['home', 'about', 'meet-jennifer', 'practice-areas', 'case-results', 'testimonials', 'faq', 'blog', 'contact'];
+const PAGE_SLUGS = ['home', 'about', 'our-approach', 'meet-jennifer', 'practice-areas', 'case-results', 'testimonials', 'faq', 'blog', 'contact'];
 const PAGES = PAGE_SLUGS.map((s) => require(`./pages/${s}.cjs`));
 const POSTS = require('./posts.cjs');
 // Main menu order (labels from homepage-v2). A leading "/" means a custom link instead of a page.
-const MENU = [['About', 'about'], ['Practice Areas', 'practice-areas'], ['Results', 'case-results'], ['Our Approach', '/#approach'], ['Testimonials', 'testimonials'], ['Contact', 'contact']];
+const MENU = [['About', 'about'], ['Practice Areas', 'practice-areas'], ['Results', 'case-results'], ['Our Approach', 'our-approach'], ['Testimonials', 'testimonials'], ['Contact', 'contact']];
 
 const args = process.argv.slice(2);
 const selected = (def) => args.includes(def.slug) || args.includes(def.type === 'post' ? 'posts' : 'pages');

@@ -13,12 +13,12 @@ module.exports = {
   },
   build: (m) => [
     P.pageHero(m, heroes.testimonials, { photo: m.jenProfile }),
-    band(C.ivory, [
+    band(C.wood, [
       grid(reviews.map((r) => glass([
         text('★★★★★', { color: C.rose, size: 26, ls: 0.12, lh: 1 }),
-        text(r.text, { color: C.ink, size: 18, lh: 1.75, settings: { _flex_size: 'grow' } }),
-        text(`<span style="display:inline-block;width:28px;height:1px;background:${C.rose};vertical-align:middle;margin-right:14px"></span>${r.name} · Google`, { color: C.espMid, size: 13, weight: 700, ls: 0.2, transform: 'uppercase', lh: 1.4 }),
-      ], { gap: 20, pad: L.box(40, 36, 40, 36) })), { cols: [3, 2, 1], gap: 28 }),
+        text(r.text, { color: C.ivory, size: 18, lh: 1.75, settings: { _flex_size: 'grow' } }),
+        text(`<span style="display:inline-block;width:28px;height:1px;background:${C.rose};vertical-align:middle;margin-right:14px"></span>${r.name} · Google`, { color: C.rose, size: 13, weight: 700, ls: 0.2, transform: 'uppercase', lh: 1.4 }),
+      ], { gap: 20, pad: L.box(40, 36, 40, 36), settings: { background_color: C.cardDark, border_color: C.darkLine } })), { cols: [3, 2, 1], gap: 28 }),
     ], { pad: [100, 100], width: 1320 }),
     P.ctaBand(),
   ],

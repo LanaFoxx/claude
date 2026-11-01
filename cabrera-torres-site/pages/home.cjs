@@ -6,15 +6,15 @@ const P = require('../parts.cjs');
 const { C, px, box, gap, auto, container, band, stack, row, grid, eyebrow, heading, H3, text, button, image, URL } = L;
 
 /* -------------------------------------------------------------- helpers */
-const RULE = (w) => `<span style="display:inline-block;width:${w}px;height:1px;background:${C.rose};vertical-align:middle"></span>`;
+const RULE = (w, color = C.rose) => `<span style="display:inline-block;width:${w}px;height:1px;background:${color};vertical-align:middle"></span>`;
 const SP = (w) => `<span style="display:inline-block;width:${w}px"></span>`;
 // "[text] ——" (left sections) and "—— [text] ——" (centered sections).
 const kicker = (t, color = C.ivory, o = {}) => eyebrow(`${t}${SP(18)}${RULE(56)}`, color, o.align || 'left', { size: 13, weight: o.weight || 500, ls: 0.32, alignM: o.alignM, settings: o.settings });
-const centerLabel = (t, color = C.espMid, tag = 'p') => eyebrow(`${RULE(60)}${SP(22)}${t}${SP(22)}${RULE(60)}`, color, 'center', {
-  tag, size: 13, weight: 600, ls: 0.34,
+const centerLabel = (t, color = C.wood, tag = 'p') => eyebrow(`${RULE(60, color === C.ivory ? C.rose : C.wood)}${SP(22)}${t}${SP(22)}${RULE(60, color === C.ivory ? C.rose : C.wood)}`, color, 'center', {
+  tag, size: 13, weight: 700, ls: 0.34,
   settings: { custom_css: '@media (max-width: 560px) { selector span[style*="height:1px"] { width: 24px !important; } }' },
 });
-const { svg, ICON } = P;
+const { svg, ICON, PILLARS, LIT } = P;
 // Columns divided by 1px hairlines (none on the first; reset when the grid wraps to 2 or 1 columns).
 const DIVIDERS = (color) => `selector { border-left: 1px solid ${color}; }
 selector:first-child { border-left: 0; }
@@ -96,13 +96,10 @@ const results = () => band(C.espMid, [
 ], { pad: [56, 56], width: 1320, anchor: 'results', settings: { border_border: 'solid', border_width: box(1, 0, 0, 0), border_color: 'rgba(196,160,141,0.2)' } });
 
 /* --------------------------------------------------------------- my story */
-// Jen's own wording (Markup).
+// Jen (Markup): a brief introduction here; the full story lives on the Meet Jennifer page.
 const STORY = [
-  'Three days after graduating from college, I lost my father. In a moment that should have been filled with celebration and excitement for the future, I found myself navigating an unimaginable loss while preparing for the LSAT and the next chapter of my life.',
-  'Years later, during the uncertainty of the COVID-19 pandemic, I completed my law school final exams at 40 weeks pregnant. The very next day, I welcomed my first child into the world.',
-  'These experiences taught me that life rarely unfolds according to plan. They also reinforced something I carry into my practice every day: when circumstances become difficult, determination matters, but so do compassion, preparation, and the people standing beside you.',
-  'Before founding Cabrera Torres Law Firm, I served as Managing Partner of Gonzalez Torres Law, where I led the personal injury litigation practice. My experience in personal injury law has taught me that behind every case is someone facing a difficult and often unexpected chapter of their own.',
-  'I approach that responsibility with the same determination that has carried me through my own challenges—combined with the experience, preparation, and personal attention every client deserves.',
+  'Three days after graduating from college, I lost my father. Years later, I finished my law school final exams at 40 weeks pregnant and welcomed my first child the next day.',
+  'Those experiences shaped my determination and compassion—the same qualities I bring to representing people whose lives have been changed by an injury. At Cabrera Torres Law Firm, I combine personal injury litigation experience with a commitment to making sure you feel heard, prepared, and supported.',
 ];
 const STORY_MASK = 'linear-gradient(180deg, transparent 0, #000 16%, #000 90%, transparent 100%), linear-gradient(90deg, transparent 0, #000 10%, #000 90%, transparent 100%)';
 const story = (m) => container({
@@ -115,7 +112,7 @@ const story = (m) => container({
   // below its native size so it stays sharp, edges feathered into the background.
   // Jen (Markup): "the picture needs to be pushed up": centered vertically beside the text, not sitting on the bottom.
   container({ content_width: 'full', flex_direction: 'column', flex_justify_content: 'center', flex_align_items: 'center', padding: box(104, 24, 104, 48), padding_tablet: box(56, 24, 0, 24), padding_mobile: box(40, 24, 0, 24) }, [
-    image(m.jenDeskPortrait, { settings: { custom_css: `selector img { display: block; width: auto; max-width: 100%; height: 700px; max-height: 700px; object-fit: contain; -webkit-mask-image: ${STORY_MASK}; -webkit-mask-composite: source-in; mask-image: ${STORY_MASK}; mask-composite: intersect; }\n@media (max-width: 1024px) { selector img { height: auto; max-height: none; width: 100%; max-width: 480px; } }` } }),
+    image(m.jenDeskPortrait, { settings: { custom_css: `selector img { display: block; width: auto; max-width: 100%; height: 600px; max-height: 600px; object-fit: contain; -webkit-mask-image: ${STORY_MASK}; -webkit-mask-composite: source-in; mask-image: ${STORY_MASK}; mask-composite: intersect; }\n@media (max-width: 1024px) { selector img { height: auto; max-height: none; width: 100%; max-width: 480px; } }` } }),
   ]),
   stack([
     kicker('The Story Behind the Firm'),
@@ -126,12 +123,6 @@ const story = (m) => container({
 ], false);
 
 /* ------------------------------------------------------------ our approach */
-const PILLARS = [
-  ['Integrity', 'Honest guidance and straight answers, from the first call to the last.', 'integrity'],
-  ['Commitment', 'Every case prepared as if it will be tried.', 'commitment'],
-  ['Results', 'Recoveries that reflect the full impact of an injury.', 'results'],
-  ['Client-Focused', "You're never just a case. You're a person.", 'client'],
-];
 const approach = () => band(C.ivory, [
   grid(PILLARS.map(([t, d, ic]) => container({
     content_width: 'full', flex_direction: 'column', flex_align_items: 'flex-start', flex_gap: gap(16),
@@ -146,11 +137,6 @@ const approach = () => band(C.ivory, [
 ], { pad: [72, 72], width: 1320, anchor: 'approach' });
 
 /* ------------------------------------------------------------- litigation */
-const LIT = [
-  ['Investigation', 'Evidence preserved early, experts retained when the case calls for it.'],
-  ['Negotiation', 'Demands built on documented damages, not guesswork.'],
-  ['Trial', 'When insurers refuse to be fair, we are ready to present your case to a jury.'],
-];
 const litigation = (m) => container({
   content_width: 'full', flex_direction: 'row', flex_justify_content: 'flex-end', flex_align_items: 'center',
   min_height: px(600), padding: box(64, 0, 64, 0), padding_tablet: box(96, 32, 96, 32), padding_mobile: box(80, 24, 80, 24),
@@ -175,21 +161,19 @@ const litigation = (m) => container({
 ], false);
 
 /* ----------------------------------------------------------- testimonials */
-const QUOTES = [
-  'Jennifer and her team were incredible. They not only fought for me, but they genuinely cared about me and my family throughout the entire process.',
-  'She is compassionate, responsive, and truly goes above and beyond. I always felt heard, supported, and confident knowing they had my back.',
-  "Professional, knowledgeable, and relentless in the pursuit of justice. I'm so grateful for everything they did for me.",
-];
-const testimonials = () => band(C.ivory, [
-  centerLabel('What Our Clients Say', C.espMid, 'h2'),
+// Jen (Markup): "are these actual google reviews?" -> the handoff quotes were placeholders; use her real Google reviews.
+const QUOTES = require('../content.json').reviews.slice(0, 3);
+const testimonials = () => band(C.wood, [
+  centerLabel('What Our Clients Say', C.ivory, 'h2'),
   grid(QUOTES.map((q) => container({
     content_width: 'full', flex_direction: 'column', flex_gap: gap(20), padding: box(40, 36, 40, 36), padding_mobile: box(32, 26, 32, 26),
-    background_background: 'classic', background_color: C.light, border_border: 'solid', border_width: box(1), border_color: C.hair,
+    background_background: 'classic', background_color: C.cardDark, border_border: 'solid', border_width: box(1), border_color: C.darkLine,
   }, [
     text('★★★★★', { color: C.rose, size: 26, ls: 0.12, lh: 1 }),
-    text(q, { color: C.ink, size: 18, lh: 1.75, settings: { _flex_size: 'grow' } }),
-    text(`${RULE(28)}${SP(14)}Actual Client`, { color: C.espMid, size: 13, weight: 700, ls: 0.2, transform: 'uppercase', lh: 1.4 }),
+    text(q.text, { color: C.ivory, size: 18, lh: 1.75, settings: { _flex_size: 'grow' } }),
+    text(`${RULE(28)}${SP(14)}${q.name} · Google`, { color: C.rose, size: 13, weight: 700, ls: 0.2, transform: 'uppercase', lh: 1.4 }),
   ])), { cols: [3, 1, 1], gap: 28, settings: { margin: box(56, 0, 0, 0), margin_mobile: box(40, 0, 0, 0) } }),
+  button('Read more reviews  →', URL.testimonials, 'underline', { dark: true, align: 'center', settings: { _margin: box(44, 0, 0, 0) } }),
 ], { pad: [96, 100], width: 1320, anchor: 'testimonials' });
 
 module.exports = {
