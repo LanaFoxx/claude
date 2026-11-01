@@ -123,6 +123,13 @@ WORDING = [
     ('>Compare all providers<', '>Compare listed schools<'),
     ('>See all providers<', '>Compare listed schools<'),
     ('Find Your Next <span style="font-weight:300">', 'Find Your Next <span class="tcf-m-br" style="font-weight:300">'),
+    # 2026: October 31 falls on a Saturday, so CTEC extended the on-time deadline to Monday, November 2, 2026.
+    ('plan to finish your education and renewal by October 31, 2026.', 'plan to finish your education and renewal by Monday, November 2, 2026 (October 31, 2026 falls on a Saturday, so the deadline was extended).'),
+    ('Renew during the late window, November 1 through January 15, with the late fee. After January 15 the registration lapses.',
+     'Renew during the late window, through January 15, with the late fee. For 2026, October 31 falls on a Saturday, so the deadline is extended to Monday, November 2, 2026, and late renewals are accepted through January 15, 2027. After January 15 the registration lapses.'),
+    ('October 31 each year. Late renewal runs through January 15 with a late fee.',
+     'October 31 each year. For 2026, October 31 falls on a Saturday, so the deadline is extended to Monday, November 2, 2026. Late renewal runs through January 15 with a late fee.'),
+    ('>Deadline Oct 31<', '>Deadline <span data-tcf-dl-short="">Oct 31</span><'),
     ('Run a CTEC-approved school? Get listed free.', 'Run a CTEC-approved school? <span class="tcf-m-br">Get listed free.</span>'),
 ]
 WORDING_USED = set()
@@ -393,9 +400,9 @@ def seo_tweaks(name, body):
         body = body[:a] + listing_form.form() + body[b:]
     # Home countdown: after Oct 31 (California time) it counts to Jan 15 and says that is the final deadline before the registration lapses.
     body, n = re.subn(r'(<h2[^>]*>\{\{ cdTitle \}\}: <span[^>]*>\{\{ cdLong \}\}</span></h2>)',
-                      lambda m: m.group(1) + '<sc-if value="{{ cdLate }}" hint-placeholder-val="{{ false }}"><p style="margin:0 auto;max-width:760px;font-size:19px;line-height:1.55;color:#2F4652;text-align:center;text-wrap:balance">{{ cdNote }}</p></sc-if>', body)
+                      lambda m: m.group(1) + '<sc-if value="{{ cdShowNote }}" hint-placeholder-val="{{ false }}"><p style="margin:0 auto;max-width:760px;font-size:19px;line-height:1.55;color:#2F4652;text-align:center;text-wrap:balance">{{ cdNote }}</p></sc-if>', body)
     x = '<div style="font-size:19px;color:#5A6E78;line-height:1.5">After October 31 a $55 late fee applies. After January 15 you must retake the 60-hour qualifying course.</div>'
-    if x in body: body = body.replace(x, '<sc-if value="{{ cdOnTime }}" hint-placeholder-val="{{ true }}">' + x + '</sc-if>')
+    if x in body: body = body.replace(x, '<sc-if value="{{ cdPlainOnTime }}" hint-placeholder-val="{{ true }}">' + x + '</sc-if>')
     if name == 'mobile':  # countdown section: no "time left" eyebrow on phones
         body = body.replace("font:300 26px/1.15 'Source Serif 4',Georgia,serif;text-wrap:pretty\">{{ cdTitle }}", "font:300 31px/1.18 'Source Serif 4',Georgia,serif;text-wrap:balance;margin-bottom:10px\">{{ cdTitle }}", 1)
         body = re.sub(r'<div style="[^"]*">\{\{ cdLeftLabel \}\}</div>\s*', '', body, count=1)

@@ -320,23 +320,41 @@
     } catch (e) {}
     return m >= 4 && m <= 10 ? -7 : -8;
   }
+  // On-time deadline: Oct 31, unless CTEC announced an extension for that year (2026: Oct 31 is a Saturday, extended to Monday Nov 2).
+  var EXTENDED = { 2026: [11, 2] };
+  var SHORTM = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  var DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  function onTime(y) {
+    var wd = new Date(Date.UTC(y, 9, 31)).getUTCDay(), x = EXTENDED[y];
+    return x ? { y: y, m: x[0], d: x[1], moved: true, wd: wd } : { y: y, m: 10, d: 31, moved: false, wd: wd };
+  }
+  TCF.onTimeDeadline = onTime;
   TCF.deadline = function () {
-    var t = ptToday(), late = t.m >= 11 || (t.m === 1 && t.d <= 15);
-    var y = t.m >= 11 ? t.y + 1 : t.y, m = late ? 1 : 10, d = late ? 15 : 31;
+    var t = ptToday(), late, y, m, d, ot;
+    if (t.m === 1 && t.d <= 15) { late = true; y = t.y; m = 1; d = 15; ot = onTime(t.y - 1); }
+    else {
+      ot = onTime(t.y);
+      if (t.m < ot.m || (t.m === ot.m && t.d <= ot.d)) { late = false; y = ot.y; m = ot.m; d = ot.d; }
+      else { late = true; y = t.y + 1; m = 1; d = 15; }
+    }
     var end = Date.UTC(y, m - 1, d, 23, 59, 59) - ptOffset(y, m, d) * 3600000;
     var ms = Math.max(0, end - Date.now());
+    var otShort = SHORTM[ot.m - 1] + ' ' + ot.d;
+    var ext = ot.moved ? 'Because October 31, ' + ot.y + ' falls on a ' + DAYS[ot.wd] + ', the deadline to renew your CTEC registration has been extended to ' + DAYS[new Date(Date.UTC(ot.y, ot.m - 1, ot.d)).getUTCDay()] + ', ' + MONTHS[ot.m - 1] + ' ' + ot.d + ', ' + ot.y + '. Late renewals are accepted through January 15, ' + (ot.y + 1) + ', with the late fee.' : '';
     return { late: late, end: end, ms: ms, days: Math.floor(ms / 86400000), hours: Math.floor(ms % 86400000 / 3600000), mins: Math.floor(ms % 3600000 / 60000),
-      short: late ? 'Jan 15' : 'Oct 31', long: MONTHS[m - 1] + ' ' + d + ', ' + y, monthDay: MONTHS[m - 1] + ' ' + d,
+      short: SHORTM[m - 1] + ' ' + d, long: MONTHS[m - 1] + ' ' + d + ', ' + y, monthDay: MONTHS[m - 1] + ' ' + d,
+      onTimeShort: otShort, extended: ot.moved && !late, extNote: ext, extFrom: DAYS[ot.wd],
       title: late ? 'Final CTEC renewal deadline' : 'CTEC renewal deadline', leftLabel: late ? 'Time left before your registration lapses' : 'Time left to renew',
-      note: late ? 'This is the final deadline to renew your CTEC registration (late fee applies). Miss it and your registration lapses: you would have to retake the 60-hour course and register again.' : '' };
+      note: late ? 'This is the final deadline to renew your CTEC registration (late fee applies). Miss it and your registration lapses: you would have to retake the 60-hour course and register again.' : (ot.moved ? ext : '') };
   };
   TCF.countdownVals = function () {
     var k = TCF.deadline();
     return { daysLeft: k.days, cdDays: k.days, cdHours: String(k.hours).padStart(2, '0'), cdMins: String(k.mins).padStart(2, '0'),
-      cdTitle: k.title, cdShort: k.short, cdLong: k.long, cdLeftLabel: k.leftLabel, cdLate: k.late, cdOnTime: !k.late, cdNote: k.note };
+      cdTitle: k.title, cdShort: k.short, cdLong: k.long, cdLeftLabel: k.leftLabel, cdLate: k.late, cdOnTime: !k.late, cdNote: k.note, cdExt: k.extended, cdShowNote: k.late || k.extended, cdPlainOnTime: !k.late && !k.extended, cdOnTimeShort: k.onTimeShort, cdExtFrom: k.extFrom };
   };
   // Site-wide top bar text (header template has [data-tcf-cd]).
   function topbar() {
+    Array.prototype.forEach.call(document.querySelectorAll('[data-tcf-dl-short]'), function (e) { e.textContent = TCF.deadline().short; });
     var el = document.querySelectorAll('[data-tcf-cd]'); if (!el.length) return;
     var k = TCF.deadline(), left = k.days > 0 ? k.days + (k.days === 1 ? ' day' : ' days') + ' left' : (k.hours > 0 ? k.hours + ' hrs left' : 'ends today');
     var small = window.innerWidth < 600;
@@ -395,13 +413,15 @@
       var set = function (sel, t) { var x = el.querySelector(sel); if (x) x.textContent = t; };
       set('[data-cdm-left]', v.cdLeftLabel); set('[data-cdm-title]', v.cdTitle + ': '); set('[data-cdm-long]', v.cdLong);
       set('[data-cdm-d]', v.cdDays); set('[data-cdm-h]', v.cdHours); set('[data-cdm-m]', v.cdMins);
-      set('[data-cdm-note]', v.cdLate ? 'Final deadline (late fee applies). Miss it and you must retake the 60-hour course.' : 'After Oct\u00a031 a $55 late fee applies. After Jan\u00a015 you must retake the 60-hour course.');
+      set('[data-cdm-note]', v.cdLate ? 'Final deadline (late fee applies). Miss it and you must retake the 60-hour course.' : (v.cdExt ? 'Extended from ' + v.cdExtFrom + ', Oct\u00a031. Late renewals with the late fee are accepted through Jan\u00a015.' : 'After ' + v.cdShort.replace(' ', '\u00a0') + ' a $55 late fee applies. After Jan\u00a015 you must retake the 60-hour course.'));
       // the phone home page has its own countdown section, so its footer box would repeat it
       if (document.querySelector('.tcf-mobile')) el.classList.add('tcf-cd-hide-m');
       el.querySelector('[data-cd-time]').textContent = v.cdDays + (v.cdDays === 1 ? ' day' : ' days') + ' · ' + v.cdHours + ' hrs · ' + v.cdMins + ' min';
       el.style.visibility = 'visible';
     });
   }
+  function dlShort() { if (!TCF.deadline) return; var t = TCF.deadline().short; Array.prototype.forEach.call(document.querySelectorAll('[data-tcf-dl-short]'), function (e) { if (e.textContent !== t) e.textContent = t; }); }
+  document.addEventListener('DOMContentLoaded', dlShort); setTimeout(dlShort, 300); setTimeout(dlShort, 1500); setInterval(dlShort, 60000);
   document.addEventListener('DOMContentLoaded', fill); setTimeout(fill, 300); setInterval(fill, 60000);
 })();
 
