@@ -1,0 +1,16 @@
+<!-- CTC sidebar always open (block_ctc_student) -->
+<style>@media (min-width:1200px){.sidebar-btn,.sidebar-btn--close{display:none!important}}</style>
+<script>
+/* California Tax Courses: on computer screens the left menu is always open and has no open/close button.
+   Phones and tablets (narrower than 1200px) keep the menu button, where the menu slides over the page. */
+(function () {
+  function open() {
+    if (window.innerWidth < 1200) { return; }
+    var w = document.getElementById('page-wrapper');
+    if (w && !w.classList.contains('l-with-sidebar')) { w.classList.add('l-with-sidebar'); }
+  }
+  if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', open); } else { open(); }
+  window.addEventListener('resize', open);
+})();
+</script>
+<!-- /CTC sidebar always open -->

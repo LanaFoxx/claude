@@ -15,7 +15,11 @@ function block_ctc_student_clean_name($name) {
     $n = format_string($name);
     $n = preg_replace('/\s*[\(\["“]*\b(updated|outdated|expired|version|new course released[^)]*)\b[\)\]"”]*/i', '', $n);
     $n = preg_replace('/\s*\(\s*\)|\s*[|\-–]\s*$/u', '', trim($n));
-    return trim(preg_replace('/\s{2,}/', ' ', $n), " |-–");
+    $n = trim(preg_replace('/\s{2,}/', ' ', $n), " |-–");
+    if (substr_count($n, '(') > substr_count($n, ')')) {
+        $n .= ')';
+    }
+    return $n;
 }
 
 /** Who gets the student layout: everyone except staff who edit courses (admin, Admin Support, teachers at site level). */

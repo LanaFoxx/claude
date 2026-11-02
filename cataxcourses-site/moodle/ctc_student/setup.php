@@ -41,6 +41,16 @@ if ($do === 'forgot' || $do === 'all') {
     echo "  -> forgot-password box on, reset links last 4 hours\n";
 }
 
+// 2b. Left menu always open on computer screens.
+if ($do === 'sidebar' || $do === 'all') {
+    $sb = file_get_contents(__DIR__ . '/patches/sidebar.html');
+    $footer = (string) get_config('core', 'additionalhtmlfooter');
+    $footer = preg_replace('#\s*<!-- CTC sidebar always open.*?<!-- /CTC sidebar always open -->#s', '', $footer);
+    set_config('additionalhtmlfooter', rtrim($footer) . "\n\n" . $sb);
+    purge_all_caches();
+    echo "  -> sidebar always open on screens 1200px and wider\n";
+}
+
 // 3. Dashboard block for students (default dashboard + students' own customised dashboards).
 $staff = function ($userid) {
     return is_siteadmin($userid) || has_capability('moodle/course:update', context_system::instance(), $userid);

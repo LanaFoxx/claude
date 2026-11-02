@@ -90,6 +90,28 @@ class block_ctc_student extends block_base {
             $h .= '</ul></details></section>';
         }
 
+        // 5. Certificates by year.
+        $h .= '<section id="ctc-certificates" class="ctcsd-sec"><div class="ctcsd-eyebrow">Certificates of completion</div>';
+        if (!$certs) {
+            $h .= '<div class="ctcsd-card ctcsd-empty">Your certificate appears here as soon as you pass all of the exams in a course.</div>';
+        } else {
+            $byyear = [];
+            foreach ($certs as $ce) {
+                $byyear[$ce->year][] = $ce;
+            }
+            krsort($byyear);
+            $first = true;
+            foreach ($byyear as $y => $list) {
+                $h .= '<details class="ctcsd-card ctcsd-details ctcsd-mt"' . ($first ? ' open' : '') . '><summary>' . ($y ?: 'Other') . ($first && $y == $c['year'] ? ' · this year' : '') . ' <span class="ctcsd-count">' . count($list) . '</span></summary><ul class="ctcsd-list">';
+                foreach ($list as $ce) {
+                    $h .= '<li><span>🎓 ' . s($ce->name) . '</span><span class="ctcsd-meta">Issued ' . userdate($ce->issued, '%b %e, %Y')
+                        . ($ce->url ? ' · <a href="' . s($ce->url) . '">Download</a>' : '') . '</span></li>';
+                }
+                $h .= '</ul></details>';
+                $first = false;
+            }
+        }
+        $h .= '</section>';
         // 3. CTEC reporting.
         $h .= '<div class="ctcsd-grid"><section id="ctc-ctec" class="ctcsd-sec"><div class="ctcsd-eyebrow">CTEC reporting</div>';
         $cur = $c['current'] ? $c['current'][0] : null;
@@ -103,7 +125,7 @@ class block_ctc_student extends block_base {
         } else if ($rep && $rep->state === 'problem') {
             $h .= '<div class="ctcsd-card ctcsd-ctec ctcsd-ctec-bad"><div class="ctcsd-big">!</div><div><h3>We couldn\'t report your hours yet</h3>'
                 . '<p><strong>' . s($rep->course) . '</strong></p><p>CTEC did not accept the report. This is almost always a missing or mistyped CTEC ID. '
-                . '<a href="#ctc-ids">Check your CTEC ID below</a> and save it, and we will send your hours again automatically.</p></div></div>';
+                . '<a href="#ctc-ids">Check your CTEC ID</a> and save it, and we will send your hours again automatically.</p></div></div>';
         } else if ($rep) {
             $h .= '<div class="ctcsd-card ctcsd-ctec ctcsd-ctec-wait"><div class="ctcsd-big">⏳</div><div><h3>Sending your hours to CTEC</h3>'
                 . '<p><strong>' . s($rep->course) . '</strong> — completed ' . $fmt($rep->completed) . '. Your report is on its way to CTEC.</p></div></div>';
@@ -145,34 +167,39 @@ class block_ctc_student extends block_base {
             . '<span class="ctcsd-hint">The letter P followed by 8 digits, for example P12345678.</span>'
             . '<button class="ctcsd-btn" type="submit">Save</button></form></div></section></div>';
 
-        // 5. Certificates by year.
-        $h .= '<section id="ctc-certificates" class="ctcsd-sec"><div class="ctcsd-eyebrow">Certificates of completion</div>';
-        if (!$certs) {
-            $h .= '<div class="ctcsd-card ctcsd-empty">Your certificate appears here as soon as you pass all of the exams in a course.</div>';
-        } else {
-            $byyear = [];
-            foreach ($certs as $ce) {
-                $byyear[$ce->year][] = $ce;
-            }
-            krsort($byyear);
-            $first = true;
-            foreach ($byyear as $y => $list) {
-                $h .= '<details class="ctcsd-card ctcsd-details ctcsd-mt"' . ($first ? ' open' : '') . '><summary>' . ($y ?: 'Other') . ($first && $y == $c['year'] ? ' · this year' : '') . ' <span class="ctcsd-count">' . count($list) . '</span></summary><ul class="ctcsd-list">';
-                foreach ($list as $ce) {
-                    $h .= '<li><span>🎓 ' . s($ce->name) . '</span><span class="ctcsd-meta">Issued ' . userdate($ce->issued, '%b %e, %Y')
-                        . ($ce->url ? ' · <a href="' . s($ce->url) . '">Download</a>' : '') . '</span></li>';
-                }
-                $h .= '</ul></details>';
-                $first = false;
-            }
+        // 6. After the course: CTEC renewal (20 Hour) / CTEC registration (60 Hour).
+        $kinds = [];
+        foreach ($c['current'] as $co) {
+            if (preg_match('/\b20\s*Hour/i', $co->fullname)) { $kinds['20'] = true; }
+            if (preg_match('/\b60\s*Hour/i', $co->fullname)) { $kinds['60'] = true; }
         }
-        $h .= '</section>';
+        if ($kinds) {
+            $h .= '<section id="ctc-next" class="ctcsd-sec"><div class="ctcsd-eyebrow">After you complete your course</div>';
+            if (!empty($kinds['20'])) {
+                $h .= '<div class="ctcsd-card ctcsd-next ctcsd-mt"><div class="ctcsd-next-i">!</div><div><h3>Steps to take after completing your 20 Hour course</h3>'
+                    . '<p><strong>Your CTEC renewal is not complete just because you finished the course.</strong> You still need to log in to CTEC, pay your renewal fee and renew your registration before the deadline. You also need to renew your PTIN with the IRS each year.</p>'
+                    . '<a class="ctcsd-btn" href="https://cataxcourses.com/what-to-do-after-completing-the-20-hour-course/" target="_blank" rel="noopener">How to renew with CTEC →</a></div></div>';
+            }
+            if (!empty($kinds['60'])) {
+                $h .= '<div class="ctcsd-card ctcsd-next ctcsd-mt"><div class="ctcsd-next-i">!</div><div><h3>Steps to take after completing your 60 Hour course</h3>'
+                    . '<p><strong>You are not registered with CTEC just because you finished the course.</strong> To become a CTEC Registered Tax Preparer you still need your PTIN from the IRS and a $5,000 tax preparer bond, and then you register with CTEC and pay the registration fee. CTEC requires you to register within 18 months of completing the course.</p>'
+                    . '<a class="ctcsd-btn" href="https://cataxcourses.com/what-to-do-after-completing-the-60-hour-course/" target="_blank" rel="noopener">How to register with CTEC →</a></div></div>';
+            }
+            $h .= '</section>';
+        }
+
+        // 7. Physical book.
+        $h .= '<section id="ctc-book" class="ctcsd-sec"><div class="ctcsd-card ctcsd-book"><div class="ctcsd-book-i">📘</div><div class="ctcsd-book-t"><h3>Want a physical copy of the course book?</h3>'
+            . '<p>Take notes right in the book while you go through the course, and keep it as a study reference for your exams.</p></div>'
+            . '<a class="ctcsd-btn" href="https://cataxcourses.com/book-add-ons/" target="_blank" rel="noopener">Shop course books →</a></div></section>';
+
         return '<div class="ctcsd">' . self::css() . $h . self::js() . '</div>';
     }
 
     private static function css() {
         return '<style>
-.block_myoverview,.block_lp,.block_recentlyaccessedcourses{display:none!important}
+.block_myoverview,.block_lp,.block_recentlyaccessedcourses,.block_completeyourprofile{display:none!important}
+body.ctcsd-wide #region-main.has-blocks{flex:0 0 100%!important;max-width:100%!important;width:100%!important}body.ctcsd-wide #block-region-side-pre{display:none!important}body.ctcsd-wide .ctcsd-sidecol{display:none!important}
 .block_ctc_student .card-body{padding:0}.block_ctc_student.card{border:0;background:none;box-shadow:none}
 .ctcsd{--n:#1d2939;--a:#0b6bcb;--ok:#12805c;--okb:#e8f6ef;--bad:#b42318;--badb:#fef0ee;--w:#b54708;--wb:#fff6e5;--l:#e4e7ec;--m:#667085;font-size:15px;color:#1d2939;max-width:1100px}
 .ctcsd *{box-sizing:border-box}
@@ -186,9 +213,12 @@ class block_ctc_student extends block_base {
 .ctcsd-action{display:flex;align-items:center;gap:12px;background:var(--wb);border:1px solid #fedf89;color:#7a2e0e!important;border-radius:12px;padding:12px 16px;margin:0 0 18px;text-decoration:none!important}
 .ctcsd-action-i{flex:none;width:26px;height:26px;border-radius:50%;background:var(--w);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center}
 .ctcsd-action-go{margin-left:auto;font-weight:700;white-space:nowrap}
-.ctcsd-hero{display:flex;gap:24px;align-items:center;padding:28px;border-left:6px solid var(--a);margin-bottom:12px}
+.ctcsd-hero{display:flex;gap:24px;align-items:center;padding:28px;margin-bottom:12px;background:#1d2939;border-color:#1d2939;color:#fff}
+.ctcsd-hero h3 a,.ctcsd-hero h3{color:#fff!important}.ctcsd-hero .ctcsd-bar{background:rgba(255,255,255,.2)}.ctcsd-hero .ctcsd-bar span{background:#d4a72c}.ctcsd-hero .ctcsd-bar-l{color:#d0d5dd}
+.ctcsd-hero .ctcsd-btn{background:#d4a72c;color:#fff!important}.ctcsd-hero .ctcsd-btn-2{background:transparent;color:#fff!important;border:1px solid rgba(255,255,255,.5)}
+.ctcsd-hero .ctcsd-pill{background:rgba(255,255,255,.14);color:#fff}.ctcsd-hero .ctcsd-pill-ok{background:#12805c;color:#fff}
 .ctcsd-hero-main{flex:1;min-width:0}.ctcsd-hero h3{font-size:1.45rem;font-weight:700;margin:8px 0 14px;line-height:1.25}.ctcsd-hero h3 a{color:var(--n)}
-.ctcsd-hero-sm{padding:18px 22px;border-left-color:#98a2b3}.ctcsd-hero-sm h3{font-size:1.1rem}
+.ctcsd-hero-sm{padding:18px 22px;background:#344054;border-color:#344054}.ctcsd-hero-sm h3{font-size:1.1rem}
 .ctcsd-hero-act{display:flex;flex-direction:column;gap:8px;flex:none}
 .ctcsd-pill{display:inline-block;font-size:.75rem;font-weight:700;padding:3px 10px;border-radius:99px;background:#eef4ff;color:#3538cd}.ctcsd-pill-ok{background:var(--okb);color:var(--ok)}
 .ctcsd-bar{height:10px;background:#eaecf0;border-radius:99px;overflow:hidden}.ctcsd-bar span{display:block;height:100%;background:var(--a);border-radius:99px}
@@ -216,13 +246,18 @@ class block_ctc_student extends block_base {
 .ctcsd-need{border:2px solid #fdb022;background:#fffcf5}.ctcsd-need-t{font-weight:600;margin:0 0 4px}
 .ctcsd-idrow{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f2f4f7}.ctcsd-idrow span{color:var(--m)}
 .ctcsd-link{background:none;border:0;color:var(--a);font-weight:700;padding:10px 0 0;cursor:pointer}
-@media (max-width:820px){.ctcsd-grid{grid-template-columns:1fr}.ctcsd-hero{flex-direction:column;align-items:stretch;padding:20px}.ctcsd-hero-act .ctcsd-btn{width:100%}.ctcsd-action{flex-wrap:wrap}.ctcsd-action-go{margin-left:38px}}
+.ctcsd-next{display:flex;gap:18px;align-items:flex-start;border-left:6px solid #d4a72c}.ctcsd-next h3{font-size:1.15rem;font-weight:700;margin:2px 0 8px}.ctcsd-next p{margin:0 0 14px}
+.ctcsd-next-i{flex:none;width:44px;height:44px;border-radius:50%;background:#fdf3dc;color:#8a5a00;font-weight:800;font-size:1.3rem;display:flex;align-items:center;justify-content:center}
+.ctcsd-book{display:flex;gap:20px;align-items:center;background:#fffbea;border-color:#f3e3a6}.ctcsd-book-i{font-size:2.4rem;flex:none}.ctcsd-book-t{flex:1}.ctcsd-book h3{font-size:1.15rem;font-weight:700;margin:0 0 4px}.ctcsd-book p{margin:0;color:#475467}
+.ctcsd-book .ctcsd-btn{background:#d4a72c;flex:none}
+@media (max-width:820px){.ctcsd-book{flex-direction:column;align-items:stretch;text-align:center}.ctcsd-next{flex-direction:column}.ctcsd-grid{grid-template-columns:1fr}.ctcsd-hero{flex-direction:column;align-items:stretch;padding:20px}.ctcsd-hero-act .ctcsd-btn{width:100%}.ctcsd-action{flex-wrap:wrap}.ctcsd-action-go{margin-left:38px}}
 </style>';
     }
 
     private static function js() {
         // Opening /my/#ctc-previous (or #ctc-certificates) from the left-hand menu opens that section.
-        return '<script>(function(){function go(){var h=location.hash;if(!/^#ctc-/.test(h))return;var s=document.querySelector(h);if(!s)return;var d=s.querySelector("details");if(d)d.open=true;s.scrollIntoView({behavior:"smooth",block:"start"});}'
+        return '<script>(function(){function wide(){var r=document.getElementById("block-region-side-pre");if(!r)return;var vis=[].some.call(r.querySelectorAll(".block"),function(b){return b.offsetParent!==null;});if(!vis){document.body.classList.add("ctcsd-wide");var c=r.closest("section");if(c)c.classList.add("ctcsd-sidecol");}}document.addEventListener("DOMContentLoaded",wide);window.addEventListener("load",wide);})();'
+            . '(function(){function go(){var h=location.hash;if(!/^#ctc-/.test(h))return;var s=document.querySelector(h);if(!s)return;var d=s.querySelector("details");if(d)d.open=true;if(h==="#ctc-ids"){var f=s.querySelector("form");if(f&&f.hidden){f.hidden=false;var b=s.querySelector(".ctcsd-link");if(b)b.hidden=true;}}s.scrollIntoView({behavior:"smooth",block:"start"});}'
             . 'window.addEventListener("hashchange",go);if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",go);else go();})();</script>';
     }
 }
