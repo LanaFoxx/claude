@@ -66,7 +66,8 @@ async function ensurePage(p, def) {
 async function ensurePost(p, def, featured) {
   return p.evaluate(async ([def, featured, nonceFn]) => {
     const h = { 'X-WP-Nonce': eval(`(${nonceFn})`)(), 'Content-Type': 'application/json' };
-    const cats = await (await fetch(`/wp-json/wp/v2/categories?search=${encodeURIComponent(def.category)}&_fields=id,name`, { headers: h })).json();
+    // Fetch all categories: a search for a name with "&" ("Slip & fall") returns nothing on some hosts.
+    const cats = await (await fetch('/wp-json/wp/v2/categories?per_page=100&_fields=id,name', { headers: h })).json();
     // WordPress returns names HTML-encoded ("Slip &amp; fall"), so decode before comparing.
     const decode = (t) => { const el = document.createElement('textarea'); el.innerHTML = t; return el.value; };
     let cat = cats.find((c) => decode(c.name).toLowerCase() === def.category.toLowerCase())?.id;
