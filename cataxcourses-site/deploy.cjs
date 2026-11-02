@@ -280,6 +280,7 @@ async function publishNew(p, name) {
     else if (s === 'vervante') await installFileSnippet(p, 'CTC Vervante Book Orders', 'wp/vervante.php', 'global', 'Emails Vervante (myorders@vervante.com) the book lines + shipping address when an order with a 20/60 Hour book is paid. Once per order; order note.');
     else if (s === 'disputes') await installFileSnippet(p, 'CTC Stripe Disputes', 'wp/disputes.php', 'global', 'Hourly Stripe dispute check, evidence packets + Stripe form answers (menu: Disputes), email to Dispute Agents, feed for the Moodle CTC Disputes block.');
     else if (s === 'newsletter') await installFileSnippet(p, 'CTC Newsletter to Mailchimp', 'wp/newsletter-mailchimp.php', 'global', 'Homepage newsletter form adds the person to the Mailchimp for WooCommerce audience, tagged Website newsletter.');
+    else if (s === 'adminmenu') await installFileSnippet(p, 'CTC Admin Menu', 'wp/admin-menu.php', 'admin', 'Admin menu for administrators: Dashboard/Orders/Products/Coupons, then Development and Other sections.');
     else if (s === 'abandoned') await installFileSnippet(p, 'CTC Abandoned Cart Reminders', 'wp/abandoned-cart.php', 'global', 'Saves checkout carts and sends 3 reminder emails (2h, 3 days with a one-time 10% code, 7 days). List: WooCommerce > Abandoned Carts.');
     else if (s === 'preview') await buildPreview(p);
     else if (s === 'live-home') await liveHome(p);
