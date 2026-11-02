@@ -1,0 +1,67 @@
+<!-- CTC forgot-password box (block_ctc_student) -->
+<script>
+/* California Tax Courses: "Forgot your password?" opens a box asking for the email address, which emails a reset link.
+   The old two-form page (username or email) goes to the simple one-box page. */
+(function () {
+  var base = (window.M && M.cfg && M.cfg.wwwroot) || '';
+  var page = base + '/blocks/ctc_student/forgot.php';
+  function init() {
+    var id = document.body.id;
+    if (id === 'page-login-forgot_password' && document.getElementById('id_submitbuttonemail')) { location.replace(page); return; }
+    if (id !== 'page-login-index') { return; }
+    var links = document.querySelectorAll('a[href*="forgot_password.php"], a[href*="ctc_student/forgot.php"]');
+    if (!links.length) { return; }
+    links.forEach(function (a) { a.textContent = 'Forgot your password?'; });
+    var css = document.createElement('style');
+    css.textContent = '#ctcfpm{position:fixed;inset:0;z-index:2000;background:rgba(16,24,40,.55);display:none;align-items:center;justify-content:center;padding:16px}'
+      + '#ctcfpm.on{display:flex}#ctcfpm .b{background:#fff;border-radius:16px;max-width:440px;width:100%;padding:28px;position:relative;color:#1d2939;box-shadow:0 20px 40px rgba(0,0,0,.25);text-align:left}'
+      + '#ctcfpm h2{font-size:1.45rem;font-weight:700;margin:0 0 6px}#ctcfpm p{color:#475467;margin:0 0 14px}#ctcfpm label{font-weight:700;display:block;margin:0 0 6px}'
+      + '#ctcfpm input{width:100%;border:1px solid #d0d5dd;border-radius:10px;padding:13px 14px;font-size:1.05rem}'
+      + '#ctcfpm .go{width:100%;margin-top:14px;background:#0b6bcb;color:#fff;border:0;border-radius:10px;padding:14px;font-size:1.05rem;font-weight:700;cursor:pointer}'
+      + '#ctcfpm .go[disabled]{opacity:.6}#ctcfpm .x{position:absolute;right:12px;top:8px;background:none;border:0;font-size:1.8rem;line-height:1;color:#667085;cursor:pointer}'
+      + '#ctcfpm .r{border-radius:12px;padding:14px 16px;margin:0 0 14px}#ctcfpm .r-ok{background:#e8f6ef;color:#085d3a}#ctcfpm .r-bad{background:#fef0ee;color:#912018}'
+      + '#ctcfpm .r strong.t{display:block;font-size:1.05rem;margin-bottom:4px}#ctcfpm .f{margin-top:14px;font-size:.85rem;color:#667085;text-align:center}';
+    document.head.appendChild(css);
+    var m = document.createElement('div');
+    m.id = 'ctcfpm';
+    m.setAttribute('role', 'dialog');
+    m.setAttribute('aria-modal', 'true');
+    m.setAttribute('aria-labelledby', 'ctcfpm-t');
+    m.innerHTML = '<div class="b"><button type="button" class="x" aria-label="Close">&times;</button><div class="res"></div><div class="frm">'
+      + '<h2 id="ctcfpm-t">Reset your password</h2><p>Enter your email address and we\'ll email you a link to choose a new password.</p>'
+      + '<form novalidate><label for="ctcfpm-e">Email address</label><input id="ctcfpm-e" type="email" name="email" required autocomplete="email" placeholder="name@example.com">'
+      + '<button class="go" type="submit">Email me a reset link</button></form></div>'
+      + '<div class="f">Need help? Call (888) 229-1994 or email <a href="mailto:help@cataxcourses.com">help@cataxcourses.com</a></div></div>';
+    document.body.appendChild(m);
+    var res = m.querySelector('.res'), frm = m.querySelector('.frm'), form = m.querySelector('form'), input = m.querySelector('input'), btn = m.querySelector('.go');
+    function open(e) {
+      e.preventDefault();
+      res.innerHTML = ''; frm.style.display = ''; btn.disabled = false; btn.textContent = 'Email me a reset link';
+      var u = document.getElementById('username');
+      if (u && /@/.test(u.value) && !input.value) { input.value = u.value.trim(); }
+      m.classList.add('on'); setTimeout(function () { input.focus(); }, 50);
+    }
+    function close() { m.classList.remove('on'); }
+    links.forEach(function (a) { a.addEventListener('click', open); });
+    m.querySelector('.x').addEventListener('click', close);
+    m.addEventListener('click', function (e) { if (e.target === m) { close(); } });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { close(); } });
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var v = input.value.trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) {
+        res.innerHTML = '<div class="r r-bad"><strong class="t">Please check the email address</strong>Enter the full email address, for example name@gmail.com.</div>';
+        input.focus(); return;
+      }
+      btn.disabled = true; btn.textContent = 'Sending…';
+      var d = new FormData(); d.append('email', v);
+      fetch(page + '?ajax=1', { method: 'POST', body: d, credentials: 'same-origin' }).then(function (r) { return r.json(); }).then(function (j) {
+        res.innerHTML = '<div class="r r-' + (j.ok ? 'ok' : 'bad') + '"><strong class="t">' + j.title + '</strong>' + j.html + '</div>';
+        if (j.ok) { frm.style.display = 'none'; } else { btn.disabled = false; btn.textContent = 'Email me a reset link'; }
+      }).catch(function () { location.href = page; });
+    });
+  }
+  if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init); } else { init(); }
+})();
+</script>
+<!-- /CTC forgot-password box -->

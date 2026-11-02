@@ -1,0 +1,220 @@
+<?php
+require_once('../../config.php');
+global $CFG,$DB,$PAGE;
+error_reporting(0);
+header('Access-Control-Allow-Origin: *');
+header('Content-Type: application/json'); 
+
+$response   = new stdClass();
+$status = 0;
+$message = "";
+
+$fname     =  $_REQUEST['firstname'];
+$lname     =  $_REQUEST['lastname'];
+$user_name =  $_REQUEST['user'];
+$email     =  $_REQUEST['email'];
+$course_id =  $_REQUEST['course'];
+// echo json_encode($fname.' -> '.$lname.' ->'.$user_name.' ->'.$email.' -> '.$course_id); die;
+// $fname     =  'zeeshan';
+// $lname     =  'khan';
+// $user_name =  'zeeshan khan';
+// $email     =  'zishan@lds-international.in';
+// $course_id =  3;
+
+$courseid =  explode(',', $course_id);
+
+//Auto generate password
+$chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*_";
+//$pwd = substr( str_shuffle( $chars ), 0, 12 );
+$pwd = 'orange123';
+$password=md5($pwd);
+$allcourse_name = array();
+foreach ($courseid as $coursevalue){
+    $courseinfo=$DB->get_record_sql("SELECT * FROM {course} where id ='$coursevalue'");
+    // array_push($allcourse_name, "<li>".$courseinfo->fullname."</li>");
+    array_push($allcourse_name,$courseinfo->fullname);
+}
+
+function enrolCourse($courseid, $userid, $roleid) {
+    global $DB, $CFG;
+    if($courseid !== ""){
+        $query = 'SELECT * FROM {enrol} WHERE enrol = "manual" AND courseid = '.$courseid;
+        $enrollmentID = $DB->get_record_sql($query);
+
+        if(!empty($enrollmentID->id)) {
+            if (!$DB->record_exists('user_enrolments', array('enrolid'=>$enrollmentID->id, 'userid'=>$userid))) {
+                $userenrol = new stdClass();
+                $userenrol->status = 0;
+                $userenrol->userid = $userid;
+                $userenrol->enrolid = $enrollmentID->id;
+                $userenrol->timestart  = time();
+                $userenrol->timeend = 0;
+                $userenrol->modifierid  = 2;
+                $userenrol->timecreated  = time();
+                $userenrol->timemodified  = time();
+                $enrol_manual = enrol_get_plugin('manual');
+                $enrol_manual->enrol_user($enrollmentID, $userid, $roleid, $userenrol->timestart, $userenrol->timeend);
+                add_to_log($courseid, 'course', 'enrol', '../enrol/users.php?id='.$courseid, $courseid, $userid); 
+            }
+        }
+    }
+}
+
+// get admin email
+$adminEmail = $DB->get_record("user", array("id"=>2));
+$email_id = $adminEmail->email;
+
+// Comment added July 2021
+// This page is called from a Zapier trigger. 
+// The trigger is called from the cataxcourses WP site when a course purchase is completed
+// An enrollment email is sent to users when this page is requested.
+// The email details are stored in a custom table in the DB, email_message_template.
+// The email can be edited directly in the DB or accessed from local/mdl_course_enroll/mailsetup.php
+// The "message_html_new column" from DB table is used for the email body content
+$roles = $DB->get_record_sql("select * from {email_message_template} where id = 1");
+$fromUser = $roles->email_from;
+
+$userinfos=$DB->get_record_sql("SELECT * FROM {user} where username='$email' and email='$email' ");
+if(empty($userinfos)){
+    $userstatus="notavl";
+    $userinsert  = new stdClass();
+    $userinsert->username = $email;
+    $userinsert->password=$password;
+    $userinsert->firstname= $fname;
+    $userinsert->lastname= $lname;
+    $userinsert->email= $email;
+    $userinsert->timecreated= time();
+    $userinsert->timemodified= time();
+    $userinsert->middlename= " ";
+    $userinsert->confirmed= 1;
+    $userinsert->mnethostid= 1;
+    $insertRecords=$DB->insert_record('user', $userinsert);
+
+    $userinfo=$DB->get_record_sql("SELECT * FROM {user} where username='$email' and email='$email' ");
+    if(!empty($userinfo)){
+
+        $userpreinfo=$DB->get_record_sql("SELECT * FROM {user_preferences} where userid = $userinfo->id and value=1 ");
+        if(empty($userpreinfo)){
+            $forceinsert  = new stdClass();
+            $forceinsert->userid = $userinfo->id;
+            $forceinsert->name="auth_forcepasswordchange";
+            $forceinsert->value=1;
+            $insertRecords=$DB->insert_record('user_preferences', $forceinsert);
+        }
+        foreach ($courseid as $coursevalue){
+             enrolCourse($coursevalue, $userinfo->id, 5);
+        }
+
+        if(!empty($allcourse_name)){
+            // $allcourse_name = implode("", $allcourse_name);
+            // $allcourse_name = "<ol>".$allcourse_name."</ol>";
+            $allcourse_name = implode(",", $allcourse_name);
+        }
+
+        $mailcontent = str_replace('%firstname%', $fname ,$roles->message_html_new);
+        $mailcontent = str_replace('%lastname%', $lname ,$mailcontent);
+        $mailcontent = str_replace('%username%', $email ,$mailcontent);
+        $mailcontent = str_replace('%sideurl%', $CFG->wwwroot ,$mailcontent);
+        $mailcontent = str_replace('%password%', $pwd ,$mailcontent);
+        $mailcontent = str_replace('%email%', $email ,$mailcontent);
+        $mailcontent = str_replace('%company_orgname%', $company_orgname ,$mailcontent);
+        $mailcontent = str_replace('%allcoursename%', $allcourse_name ,$mailcontent);
+        $subject = $roles->subject_new;
+        // $fromUser = $email_id;
+        // $subject = 'Registration confirmation';
+        $emailuser = new stdClass();
+        $emailuser->email = $email;
+        $emailuser->firstname = $fname;
+        $emailuser->lastname= $lname;
+        $emailuser->maildisplay = true;
+        $emailuser->mailformat = 1; 
+        $emailuser->id = 1;
+        $emailuser->firstnamephonetic = false;
+        $emailuser->lastnamephonetic = false;
+        $emailuser->middlename = false;
+        $emailuser->username = false;
+        $emailuser->alternatename = false;
+        $mail = email_to_user($emailuser,$fromUser, $subject, $message = '', $mailcontent);
+        $returnContent = 'Hi '.$fname.',<br><br>
+                            Thank you for enrolling in the “'.$allcourse_name.'”. To access your course, go to <a href="'.$CFG->wwwroot.'" target="_blank">'.$CFG->wwwroot.'</a><br><br>
+                            Course Login Credentials:<br><br>
+                            Login URL : <a href="'.$CFG->wwwroot.'" target="_blank">'.$CFG->wwwroot.'</a><br><br>
+                            Username: '.$email.'<br>
+                            Password: '.$pwd;
+    }
+}else{
+    $userstatus="avl";
+    $sendenrollmail = false;
+    $userdata=$DB->get_record_sql("SELECT * FROM {user} where id='$userinfos->id'");
+    // CTC 2026-11-02: returning students keep their own password. This used to reset it to the temporary password
+    // (and force a change) on every purchase, while the email told them to keep using their existing password.
+    foreach ($courseid as $coursevalue){
+        $check_enrol =  $DB->get_record_sql("SELECT  {enrol}.courseid, {course}.fullname FROM {enrol} INNER JOIN {user_enrolments} ON {user_enrolments}.enrolid = {enrol}.id INNER JOIN {course} ON {course}.id = {enrol}.courseid   WHERE {user_enrolments}.userid = $userinfos->id and {enrol}.courseid = $coursevalue");
+        if (!$check_enrol) {
+            enrolCourse($coursevalue, $userinfos->id, 5);
+            $sendenrollmail = true;
+        }
+    }
+    if ($sendenrollmail == true) {
+        if(!empty($allcourse_name)){
+            // $allcourse_name = implode("", $allcourse_name);
+            // $allcourse_name = "<ol>".$allcourse_name."</ol>"; 
+            $allcourse_name = implode(",", $allcourse_name);
+        }
+        //mail function
+        $mailcontent = str_replace('%firstname%', $fname ,$roles->message_html);
+        $mailcontent = str_replace('%lastname%', $lname ,$mailcontent);
+        $mailcontent = str_replace('%username%', $userinfos->username ,$mailcontent);
+        $mailcontent = str_replace('%password%', $pwd ,$mailcontent);
+        $mailcontent = str_replace('%sideurl%', $CFG->wwwroot ,$mailcontent);
+        $mailcontent = str_replace('%allcoursename%', $allcourse_name ,$mailcontent);
+        $subject = $roles->subject;
+        // $fromUser = $email_id;
+        // $subject = 'Registration confirmation';
+        $emailuser = new stdClass();
+        $emailuser->email = $email;
+        $emailuser->firstname = $fname;
+        $emailuser->lastname= $lname;
+        $emailuser->maildisplay = true;
+        $emailuser->mailformat = 1; 
+        $emailuser->id = 1;
+        $emailuser->firstnamephonetic = false;
+        $emailuser->lastnamephonetic = false;
+        $emailuser->middlename = false;
+        $emailuser->username = false;
+        $emailuser->alternatename = false;
+        $mail = email_to_user($emailuser,$fromUser, $subject, $message = '', $mailcontent);
+        $returnContent = 'Hi '.$fname.',<br><br>
+                            Thank you for enrolling in the “'.$allcourse_name.'”. <br><br>
+                            Our records indicate you have an existing account with us. <br><br>
+                            To access your account and any courses, visit this link and enter your login credentials: <a href="'.$CFG->wwwroot.'" target="_blank">'.$CFG->wwwroot.'</a><br><br>
+                            <b>Login credentials:</b><br><br>
+                            Username: '.$userinfos->username.'<br>
+                            Password: <br>
+                            <div style="padding-left:15px">A temporary password was sent to your email when you originally created your account.
+                            Please review your email for a Registration Confirmation email from us. 
+                            This contains your temporary password. If you already set a new password after using the temporary password, you 
+                            should use your new password. If you set a new password and do not remember it, visit the site and select the <i>Forgotten your username or password</i> link in order to set a new password.</div>';
+    } else {
+        $mail = true;
+        $returnContent = 'Hi '.$fname.',<br><br>
+                            You are already successfully enrolled in the courses you purchased.<br><br>
+                            You may be seeing this message if you have refreshed your browser or are using the browser back button.<br><br>
+                            Access your account and any courses now by visiting this link and entering your login credentials: <a href="'.$CFG->wwwroot.'" target="_blank">'.$CFG->wwwroot.'</a><br><br>
+                            <b>Login credentials:</b><br><br>
+                            Username: '.$userinfos->username.'<br>
+                            Password: <br> 
+                            <div style="padding-left:15px">A temporary password was sent to your email when you completed your purchase.
+                            Please review your email for a Registration Confirmation email from us. 
+                            This contains your temporary password. If you already set a new password after using the temporary password, you
+                            should use your new password. If you set a new password and do not remember it, visit the site and select the <i>Forgotten your username or password</i> link in order to set a new password.</div>';
+    }
+}
+
+$response->status = $mail;
+$response->message = 'enrolled in course successfully';
+$response->messagehtml = $returnContent;
+$response->userstatus = $userstatus;
+echo json_encode($response);
+
+?>
