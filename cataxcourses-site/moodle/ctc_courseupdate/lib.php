@@ -99,6 +99,13 @@ function block_ctccu_create($type) {
         [['name' => 'users', 'value' => 0], ['name' => 'role_assignments', 'value' => 0], ['name' => 'comments', 'value' => 0],
          ['name' => 'userscompletion', 'value' => 0], ['name' => 'logs', 'value' => 0], ['name' => 'grade_histories', 'value' => 0]]);
     $newid = (int) $res['id'];
+    // Zero enrollments in a new course (in case the site enrols course creators).
+    foreach (enrol_get_instances($newid, false) as $inst) {
+        $plugin = enrol_get_plugin($inst->enrol);
+        foreach ($DB->get_records('user_enrolments', ['enrolid' => $inst->id]) as $ue) {
+            $plugin->unenrol_user($inst, $ue->userid);
+        }
+    }
 
     // Name, year and hidden state.
     $course = $DB->get_record('course', ['id' => $newid]);
@@ -1108,6 +1115,7 @@ function block_ctccu_textbook_assemble($courseid, $job) {
         if ($blocks && $blocks[0][0] === 'h1') {
             $title = array_shift($blocks)[1];
         }
+        $title = trim(preg_replace('/^chapter\s+\d+\s*[\x{2013}\x{2014}:-]\s*/iu', '', $title)); // numbering is added below
         $pdf->AddPage();
         $pdf->Bookmark(($i + 1) . '. ' . $title, 0, 0);
         $pdf->SetFont('helvetica', 'B', 20);
@@ -1363,4 +1371,126 @@ For each of this year's chapters give the number of last year's chapter on the s
         }
     }
     return $ranges;
+}
+
+/* ================================================================== 20 Hour pre-orders */
+// Pre-orders open every January 15 and close the day the new year's 20 Hour course is created in Moodle.
+
+/** ['from' => ts, 'to' => ts, 'open' => bool, 'course' => name of the course that closed it]. */
+function block_ctccu_preorder_window($now = null) {
+    $now = $now ?: time();
+    $y = (int) date('Y', $now);
+    $start = mktime(0, 0, 0, 1, 15, $y);
+    if ($now < $start) {
+        $start = mktime(0, 0, 0, 1, 15, $y - 1);
+    }
+    $closed = null;
+    foreach (block_ctccu_courses('20') as $c) {
+        if ($c->timecreated >= $start && (!$closed || $c->timecreated < $closed->timecreated)) {
+            $closed = $c;
+        }
+    }
+    return $closed ? ['from' => $start, 'to' => (int) $closed->timecreated, 'open' => false, 'course' => $closed->fullname]
+        : ['from' => $start, 'to' => $now, 'open' => true, 'course' => ''];
+}
+
+/** 20 Hour orders (course and/or book) between two dates (YYYY-MM-DD), from the store. */
+function block_ctccu_preorders($from, $to) {
+    global $CFG;
+    require_once($CFG->libdir . '/filelib.php');
+    $url = rtrim((string) get_config('block_ctc_disputes', 'wpurl'), '/');
+    $token = (string) get_config('block_ctc_disputes', 'token');
+    if ($url === '' || $token === '') {
+        throw new moodle_exception('The store is not connected (CTC Disputes block settings: WordPress URL and token).');
+    }
+    $curl = new curl(['ignoresecurity' => true]);
+    $body = $curl->get($url . '/wp-json/ctc/v1/orders-20', ['token' => $token, 'from' => $from, 'to' => $to], ['CURLOPT_TIMEOUT' => 300]);
+    $j = json_decode($body, true);
+    if (!is_array($j) || !isset($j['orders'])) {
+        throw new moodle_exception('Could not load orders from the store: ' . s($j['message'] ?? substr((string) $body, 0, 200)));
+    }
+    return $j['orders'];
+}
+
+/** Enroll every pre-order (orders with the course) in $courseid. Existing accounts directly; new ones through enrollcourse.php. */
+function block_ctccu_enroll_preorders(array $orders, $courseid) {
+    global $CFG, $DB;
+    require_once($CFG->libdir . '/filelib.php');
+    $plugin = enrol_get_plugin('manual');
+    $instance = $DB->get_record('enrol', ['courseid' => $courseid, 'enrol' => 'manual'], '*', IGNORE_MULTIPLE);
+    if (!$instance) {
+        $plugin->add_default_instance(get_course($courseid));
+        $instance = $DB->get_record('enrol', ['courseid' => $courseid, 'enrol' => 'manual'], '*', IGNORE_MULTIPLE);
+    }
+    $student = (int) $DB->get_field('role', 'id', ['shortname' => 'student']);
+    $ctx = context_course::instance($courseid);
+    $res = ['added' => 0, 'already' => 0, 'created' => 0, 'failed' => []];
+    $seen = [];
+    foreach ($orders as $o) {
+        $key = core_text::strtolower($o['account_email'] ?: $o['email']);
+        if (isset($seen[$key])) {
+            continue;
+        }
+        $seen[$key] = true;
+        $u = null;
+        foreach ([$o['account_email'], $o['email']] as $em) {
+            if ($em && !$u) {
+                $u = $DB->get_record_select('user', 'LOWER(email) = LOWER(?) AND deleted = 0', [$em], 'id', IGNORE_MULTIPLE);
+            }
+        }
+        if (!$u && $o['user']) {
+            $u = $DB->get_record('user', ['username' => core_text::strtolower($o['user']), 'deleted' => 0, 'mnethostid' => $CFG->mnet_localhost_id], 'id');
+        }
+        if ($u) {
+            if (is_enrolled($ctx, $u->id)) {
+                $res['already']++;
+            } else {
+                $plugin->enrol_user($instance, $u->id, $student);
+                $res['added']++;
+            }
+            continue;
+        }
+        // No account yet: the store's own enrollment script creates it (with the usual login email) and enrolls.
+        $curl = new curl(['ignoresecurity' => true]);
+        $curl->get($CFG->wwwroot . '/local/mdl_course_enroll/enrollcourse.php', ['user' => $o['user'], 'email' => $o['email'], 'course' => $courseid,
+            'displayname' => trim($o['first'] . ' ' . $o['last']), 'firstname' => $o['first'], 'lastname' => $o['last']], ['CURLOPT_TIMEOUT' => 60]);
+        $code = (int) ($curl->get_info()['http_code'] ?? 0);
+        $u = $DB->get_record_select('user', 'LOWER(email) = LOWER(?) AND deleted = 0', [$o['email']], 'id', IGNORE_MULTIPLE);
+        if ($u && is_enrolled($ctx, $u->id)) {
+            $res['created']++;
+            $res['added']++;
+        } else {
+            $res['failed'][] = trim($o['first'] . ' ' . $o['last']) . ' <' . $o['email'] . '> (order #' . $o['order'] . ', HTTP ' . $code . ')';
+        }
+    }
+    block_ctccu_log($courseid, 'Pre-orders enrolled: ' . $res['added'] . ' added, ' . $res['already'] . ' already in, ' . count($res['failed']) . ' failed.');
+    return $res;
+}
+
+/** Excel download: one row per book order line (Vervante print order). */
+function block_ctccu_export_books(array $orders, $from, $to) {
+    global $CFG;
+    require_once($CFG->libdir . '/excellib.class.php');
+    $name = clean_filename('20-hour-book-orders-' . $from . '-to-' . $to . '.xlsx');
+    $wb = new MoodleExcelWorkbook('-');
+    $wb->send($name);
+    $ws = $wb->add_worksheet('Book orders');
+    $bold = $wb->add_format(['bold' => 1]);
+    $cols = ['Order #', 'Order date', 'First name', 'Last name', 'Email', 'Phone', 'Item', 'Quantity', 'Ship to name', 'Company', 'Address 1', 'Address 2', 'City', 'State', 'ZIP', 'Country', 'Address type'];
+    foreach ($cols as $c => $h) {
+        $ws->write_string(0, $c, $h, $bold);
+    }
+    $r = 1;
+    foreach ($orders as $o) {
+        foreach ($o['books'] as $b) {
+            $a = $o['address'];
+            $vals = [$o['order'], $o['date'], $o['first'], $o['last'], $o['email'], $o['phone'], $b['item'], $b['qty'], $a['name'], $a['company'], $a['address1'], $a['address2'], $a['city'], $a['state'], $a['zip'], $a['country'],
+                $a['type'] === 'shipping' ? 'Shipping address' : 'Billing address (no shipping address given)'];
+            foreach ($vals as $c => $v) {
+                is_int($v) ? $ws->write_number($r, $c, $v) : $ws->write_string($r, $c, (string) $v);
+            }
+            $r++;
+        }
+    }
+    $wb->close();
 }

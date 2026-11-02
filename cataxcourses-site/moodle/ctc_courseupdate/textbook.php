@@ -181,9 +181,12 @@ document.getElementById("tb-done").innerHTML = r.ok
     $file = block_ctccu_tb_file($id);
     if ($file) {
         $url = moodle_url::make_pluginfile_url($file->get_contextid(), 'block_ctc_courseupdate', 'textbook', $id, '/', $file->get_filename(), true);
-        echo '<div class="card mb-3"><div class="card-body"><h5>✅ Textbook ready</h5><p>' . html_writer::link($url, s($file->get_filename()), ['class' => 'btn btn-primary']) . ' <span class="small text-muted">' . display_size($file->get_filesize()) . ' · built ' . userdate($file->get_timecreated()) . '</span></p>'
-            . '<p class="small">This is already the PDF students download in this course. Download it here to send to Vervante for printing the books. If you edit the course PDF by hand later, this button puts the textbook back:</p>'
-            . '<form method="post"><input type="hidden" name="sesskey" value="' . sesskey() . '"><input type="hidden" name="action" value="usepdf"><button class="btn btn-secondary">Use the textbook as the course PDF again</button></form></div></div>';
+        echo '<div class="card mb-3"><div class="card-body"><h5>✅ Textbook ready</h5>'
+            . '<p class="mb-3">✅ <strong>Students already get this PDF</strong> when they click the course PDF download in the course. Nothing else to do there.</p>'
+            . '<div class="d-flex flex-wrap align-items-start" style="gap:24px">'
+            . '<div><a class="btn btn-primary" href="' . $url->out(false) . '">⬇ Download the textbook PDF</a><div class="small text-muted mt-1">Save it to send to Vervante for printing the books<br>' . s($file->get_filename()) . ' · ' . display_size($file->get_filesize()) . ' · built ' . userdate($file->get_timecreated(), '%b %d, %Y %I:%M %p') . '</div></div>'
+            . '<form method="post"><input type="hidden" name="sesskey" value="' . sesskey() . '"><input type="hidden" name="action" value="usepdf"><button class="btn btn-outline-secondary">↺ Put this textbook back in the course</button>'
+            . '<div class="small text-muted mt-1">Only needed if someone replaced the course PDF by hand</div></form></div></div></div>';
     }
     if ($job && ($st = block_ctccu_tb_status($id, $job))) {
         $done = count(array_filter($st, function ($s) { return $s['status'] === 'done'; }));

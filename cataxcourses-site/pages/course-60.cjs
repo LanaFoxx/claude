@@ -11,6 +11,7 @@ module.exports = coursePage({
     ['All earned credits will be reported to CTEC.', true],
     ['This course is an online “Take at your own pace” interactive video and reading course. You can watch the videos online at your own pace, or if you prefer reading, you can download the PDF which can be read online or printed and read while away from the computer.'],
   ],
+  groupDiscount: true,
   heroCta: 'Enroll Now — from $179.95 →',
   caption: '24/7 Online Access to our video courses from your Computer, Laptop, Tablet, or even your smartphone. All Exams are Included. Additional Course PDF at no extra cost.',
   enrollTitle: '<span class="ctc-thin">Two ways to</span> enroll.',

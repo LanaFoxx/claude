@@ -494,6 +494,43 @@ add_action( 'rest_api_init', function () {
 		}
 		return array( 'disputes' => $rows, 'last_sync' => get_option( 'ctc_dp_last_sync' ), 'mode' => ctc_dp_mode() );
 	} ) );
+	// Course Update (Moodle): 20 Hour orders in a date range (pre-orders list, enroll-all, book export).
+	register_rest_route( 'ctc/v1', '/orders-20', array( 'methods' => 'GET', 'permission_callback' => '__return_true', 'callback' => function ( WP_REST_Request $req ) {
+		$tok = (string) get_option( 'ctc_dp_token' );
+		if ( ! $tok || ! hash_equals( $tok, (string) $req->get_param( 'token' ) ) ) return new WP_Error( 'forbidden', 'Bad token', array( 'status' => 403 ) );
+		// Whole days in the store's time zone.
+		try {
+			$from = ( new DateTime( (string) $req->get_param( 'from' ) . ' 00:00:00', wp_timezone() ) )->getTimestamp();
+			$to   = ( new DateTime( (string) $req->get_param( 'to' ) . ' 23:59:59', wp_timezone() ) )->getTimestamp();
+		} catch ( Exception $e ) {
+			$from = $to = 0;
+		}
+		if ( ! $from || ! $to ) return new WP_Error( 'invalid', 'from/to dates (YYYY-MM-DD) required', array( 'status' => 400 ) );
+		$course = array( 48, 30511 );           // 20 Hour course (both packages) and its Annual Auto-Renewal plan
+		$book   = array( 9294 => 'Online Course + Book', 14174 => '20 Hour Book Add-on' );
+		$out    = array();
+		foreach ( wc_get_orders( array( 'status' => array( 'processing', 'completed' ), 'date_created' => $from . '...' . $to, 'limit' => -1, 'orderby' => 'date', 'order' => 'ASC', 'type' => 'shop_order' ) ) as $o ) {
+			$hascourse = false; $books = array(); $items = array();
+			foreach ( $o->get_items() as $it ) {
+				$pid = (int) $it->get_product_id(); $vid = (int) $it->get_variation_id();
+				if ( in_array( $pid, $course, true ) ) $hascourse = true;
+				if ( isset( $book[ $vid ?: $pid ] ) ) $books[] = array( 'item' => $book[ $vid ?: $pid ], 'qty' => (int) $it->get_quantity() );
+				if ( in_array( $pid, $course, true ) || isset( $book[ $vid ?: $pid ] ) ) $items[] = $it->get_name();
+			}
+			if ( ! $hascourse && ! $books ) continue;
+			$ship = $o->has_shipping_address();
+			$g    = function ( $f ) use ( $o, $ship ) { $m = ( $ship ? 'get_shipping_' : 'get_billing_' ) . $f; return method_exists( $o, $m ) ? (string) $o->$m() : ''; };
+			$u    = $o->get_customer_id() ? get_userdata( $o->get_customer_id() ) : false;
+			$out[] = array(
+				'order' => $o->get_order_number(), 'date' => $o->get_date_created() ? $o->get_date_created()->date( 'Y-m-d H:i' ) : '', 'course' => $hascourse, 'books' => $books, 'items' => $items,
+				'first' => $o->get_billing_first_name(), 'last' => $o->get_billing_last_name(), 'email' => $o->get_billing_email(), 'phone' => $o->get_billing_phone(),
+				'user' => $u ? $u->user_login : $o->get_billing_email(), 'account_email' => $u ? $u->user_email : $o->get_billing_email(),
+				'address' => array( 'type' => $ship ? 'shipping' : 'billing', 'name' => trim( $g( 'first_name' ) . ' ' . $g( 'last_name' ) ), 'company' => $g( 'company' ), 'address1' => $g( 'address_1' ), 'address2' => $g( 'address_2' ),
+					'city' => $g( 'city' ), 'state' => $g( 'state' ), 'zip' => $g( 'postcode' ), 'country' => $g( 'country' ) ),
+			);
+		}
+		return array( 'orders' => $out, 'from' => gmdate( 'Y-m-d', $from ), 'to' => gmdate( 'Y-m-d', $to ) );
+	} ) );
 	// Course Update (Moodle): new orders of a product enroll in the new year's course (Enroll Course > Courses Mapping).
 	register_rest_route( 'ctc/v1', '/course-mapping', array( 'methods' => 'POST', 'permission_callback' => '__return_true', 'callback' => function ( WP_REST_Request $req ) {
 		global $wpdb;
