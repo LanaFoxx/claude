@@ -58,6 +58,17 @@ $t = new html_table();
 $t->data = [['Student', s($u['name'])], ['Username', s($u['username'])], ['Email', s($email)], ['Account created', $d($u['timecreated'])],
     ['First sign-in', $d($u['firstaccess'])], ['Last sign-in', $d($u['lastaccess'])], ['Last sign-in IP', s($u['lastip'])], ['Recorded actions', (int) $a['logcount']]];
 echo html_writer::table($t);
+$c = $a['ctec'];
+$t = new html_table();
+$t->data = [['Hours reported to CTEC', $c['reported'] === true ? 'Yes' . ($c['reported_on'] ? ' (' . s($c['reported_on']) . ')' : '') : ($c['reported'] === false ? 'No' : 'Not recorded in Moodle')],
+    ['How we know', s($c['how'])], ['CTEC ID', s($c['ctecid'])], ['PTIN', s($c['ptin'])]];
+foreach ($c['fields'] as $f) {
+    $t->data[] = [s($f['name']), s($f['value'])];
+}
+foreach ($c['certificates'] as $ce) {
+    $t->data[] = ['Certificate: ' . s($ce['name']), $d($ce['issued']) . ($ce['code'] ? ' · code ' . s($ce['code']) : '')];
+}
+echo $OUTPUT->heading('CTEC reporting', 3) . html_writer::table($t);
 if ($a['courses']) {
     $t = new html_table();
     $t->head = ['Course', 'Enrolled', 'Last opened', 'Completed', 'Grade'];

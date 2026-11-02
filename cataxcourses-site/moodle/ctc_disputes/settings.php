@@ -5,4 +5,6 @@ if ($ADMIN->fulltree) {
         get_string('wpurl_desc', 'block_ctc_disputes'), 'https://cataxcourses.com/', PARAM_URL));
     $settings->add(new admin_setting_configpasswordunmask('block_ctc_disputes/token', get_string('token', 'block_ctc_disputes'),
         get_string('token_desc', 'block_ctc_disputes'), ''));
+    $settings->add(new admin_setting_configtext('block_ctc_disputes/reportedfield', get_string('reportedfield', 'block_ctc_disputes'),
+        get_string('reportedfield_desc', 'block_ctc_disputes'), '', PARAM_ALPHANUMEXT));
 }

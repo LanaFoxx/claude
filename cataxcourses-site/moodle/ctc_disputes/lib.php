@@ -81,7 +81,78 @@ function block_ctc_disputes_activity($email, $limit = 60) {
     foreach ($logs as $l) {
         $recent[] = ['time' => (int) $l->timecreated, 'what' => block_ctc_disputes_describe($l, $cmcache), 'ip' => (string) $l->ip];
     }
-    return ['found' => true, 'user' => ['username' => $user->username, 'name' => fullname($user), 'timecreated' => (int) $user->timecreated,
+    return ['found' => true, 'ctec' => block_ctc_disputes_ctec($user), 'user' => ['username' => $user->username, 'name' => fullname($user), 'timecreated' => (int) $user->timecreated,
         'firstaccess' => (int) $user->firstaccess, 'lastaccess' => (int) $user->lastaccess, 'lastip' => $user->lastip],
         'courses' => $courses, 'quiz' => $quiz, 'logcount' => $count, 'recent' => $recent];
+}
+
+/**
+ * CTEC reporting status for a student. Hours are reported to CTEC by staff; this reads what Moodle records about it:
+ *  - custom profile fields whose name mentions CTEC, PTIN or "report" (CTEC ID, PTIN, a "Reported to CTEC" checkbox/date)
+ *  - issued certificates (mod_customcert, mod_certificate, mod_simplecertificate)
+ *  - groups whose name mentions "report" or "CTEC"
+ * The setting "reportedfield" (profile field short name) is the field that marks a student as reported, when set.
+ */
+function block_ctc_disputes_ctec($user) {
+    global $DB;
+    $out = ['reported' => null, 'reported_on' => '', 'how' => '', 'ctecid' => '', 'ptin' => '', 'fields' => [], 'certificates' => [], 'groups' => []];
+    $markfield = trim((string) get_config('block_ctc_disputes', 'reportedfield'));
+    $rows = $DB->get_records_sql('SELECT f.id, f.shortname, f.name, f.datatype, d.data FROM {user_info_field} f
+        LEFT JOIN {user_info_data} d ON d.fieldid = f.id AND d.userid = ? ORDER BY f.sortorder', [$user->id]);
+    foreach ($rows as $f) {
+        $label = $f->name . ' ' . $f->shortname;
+        $ismark = $markfield !== '' && strcasecmp($f->shortname, $markfield) === 0;
+        if (!$ismark && !preg_match('/ctec|ptin|report/i', $label)) {
+            continue;
+        }
+        $val = (string) $f->data;
+        if ($f->datatype === 'datetime' && $val !== '' && (int) $val > 0) {
+            $val = userdate((int) $val, '%b %d, %Y');
+        } else if ($f->datatype === 'checkbox') {
+            $val = $val === '1' ? 'Yes' : ($val === '' ? '' : 'No');
+        }
+        if (preg_match('/ptin/i', $label)) {
+            $out['ptin'] = $val !== '' ? '•••' . substr(preg_replace('/\s+/', '', $val), -4) : '';
+            $out['fields'][] = ['name' => format_string($f->name), 'value' => $out['ptin']];
+            continue;
+        }
+        if (preg_match('/ctec/i', $label) && !preg_match('/report/i', $label) && $out['ctecid'] === '') {
+            $out['ctecid'] = $val;
+        }
+        $out['fields'][] = ['name' => format_string($f->name), 'value' => $val];
+        if ($ismark || ($markfield === '' && preg_match('/report/i', $label))) {
+            $yes = $val !== '' && !in_array(strtolower($val), ['no', '0', 'false'], true);
+            $out['reported'] = $yes || $out['reported'] === true;
+            if ($yes) {
+                $out['reported_on'] = $f->datatype === 'datetime' || preg_match('/\d{4}|\d\/\d/', $val) ? $val : $out['reported_on'];
+                $out['how'] = 'Profile field "' . format_string($f->name) . '": ' . $val;
+            }
+        }
+    }
+    $dbman = $DB->get_manager();
+    $certs = [
+        'customcert_issues' => 'SELECT i.id, c.name, i.timecreated, i.code FROM {customcert_issues} i JOIN {customcert} c ON c.id = i.customcertid WHERE i.userid = ?',
+        'certificate_issues' => 'SELECT i.id, c.name, i.timecreated, i.code FROM {certificate_issues} i JOIN {certificate} c ON c.id = i.certificateid WHERE i.userid = ?',
+        'simplecertificate_issues' => 'SELECT i.id, i.certificatename AS name, i.timecreated, i.code FROM {simplecertificate_issues} i WHERE i.userid = ?',
+    ];
+    foreach ($certs as $table => $sql) {
+        if ($dbman->table_exists($table)) {
+            foreach ($DB->get_records_sql($sql . ' ORDER BY i.timecreated DESC', [$user->id]) as $c) {
+                $out['certificates'][] = ['name' => format_string($c->name), 'issued' => (int) $c->timecreated, 'code' => (string) $c->code];
+            }
+        }
+    }
+    $groups = $DB->get_records_sql('SELECT g.id, g.name, gm.timeadded, c.fullname AS course FROM {groups_members} gm JOIN {groups} g ON g.id = gm.groupid
+        JOIN {course} c ON c.id = g.courseid WHERE gm.userid = ?', [$user->id]);
+    foreach ($groups as $g) {
+        if (preg_match('/report|ctec/i', $g->name)) {
+            $out['groups'][] = ['name' => format_string($g->name), 'course' => format_string($g->course), 'added' => (int) $g->timeadded];
+            if (preg_match('/report/i', $g->name) && $out['reported'] !== true) {
+                $out['reported'] = true;
+                $out['reported_on'] = userdate((int) $g->timeadded, '%b %d, %Y');
+                $out['how'] = 'Group "' . format_string($g->name) . '" in ' . format_string($g->course);
+            }
+        }
+    }
+    return $out;
 }

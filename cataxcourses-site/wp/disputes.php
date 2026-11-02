@@ -16,7 +16,7 @@ if ( ! defined( 'CTC_DISPUTE_CAP' ) ) define( 'CTC_DISPUTE_CAP', 'ctc_view_dispu
 function ctc_dp_table() { global $wpdb; return $wpdb->prefix . 'ctc_disputes'; }
 function ctc_dp_install() {
 	global $wpdb;
-	if ( get_option( 'ctc_dp_db' ) === '2' ) return;
+	if ( get_option( 'ctc_dp_db' ) === '3' ) return;
 	require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 	dbDelta( 'CREATE TABLE ' . ctc_dp_table() . " (
 		id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
@@ -36,11 +36,13 @@ function ctc_dp_install() {
 		auto_state varchar(20) NOT NULL DEFAULT '',
 		submit_at datetime NULL,
 		auto_log longtext NULL,
+		moodle longtext NULL,
+		moodle_at datetime NULL,
 		data longtext NULL,
 		PRIMARY KEY  (id),
 		UNIQUE KEY dispute_id (dispute_id)
 	) " . $wpdb->get_charset_collate() . ';' );
-	update_option( 'ctc_dp_db', '2', false );
+	update_option( 'ctc_dp_db', '3', false );
 	if ( ! get_option( 'ctc_dp_token' ) ) update_option( 'ctc_dp_token', wp_generate_password( 40, false ), false );
 	if ( ! get_role( 'ctc_dispute_agent' ) ) add_role( 'ctc_dispute_agent', 'Dispute Agent', array( 'read' => true, CTC_DISPUTE_CAP => true ) );
 	if ( $admin = get_role( 'administrator' ) ) $admin->add_cap( CTC_DISPUTE_CAP );
@@ -195,7 +197,8 @@ function ctc_dp_facts( $row ) {
 		'Stripe risk level' => $charge['outcome']['risk_level'] ?? '',
 		'Card country' => $card['country'] ?? '',
 	) );
-	$f['moodle'] = ctc_dp_moodle_activity( $row['email'] );
+	$f['moodle'] = ctc_dp_moodle_cached( $row );
+	$f['ctec']   = $f['moodle']['ctec'] ?? null;
 	return $f;
 }
 
@@ -206,6 +209,9 @@ function ctc_dp_rebuttal( $row, $f ) {
 	$when   = ! empty( $f['paid'] ) ? wp_date( 'F j, Y', $f['paid'] ) : '';
 	$m      = $f['moodle'];
 	$used   = $m && ! empty( $m['user']['lastaccess'] ) ? sprintf( ' The student account (%s) was used to sign in to the course site, most recently on %s%s.', $m['user']['username'] ?? $f['email'], wp_date( 'F j, Y', (int) $m['user']['lastaccess'] ), ! empty( $m['logcount'] ) ? sprintf( ', with %d recorded course actions', (int) $m['logcount'] ) : '' ) : '';
+	$ctec   = ( $c = $f['ctec'] ?? null ) && true === $c['reported'] ? sprintf( ' The student\'s completed hours were reported to CTEC (California Tax Education Council)%s%s, so the cardholder received the continuing-education credit they paid for.', $c['reported_on'] ? ' on ' . $c['reported_on'] : '', $c['ctecid'] ? ' under CTEC ID ' . $c['ctecid'] : '' ) : '';
+	$cert   = ( $c = $f['ctec'] ?? null ) && ! empty( $c['certificates'] ) ? sprintf( ' A completion certificate was issued to the student on %s.', wp_date( 'F j, Y', (int) $c['certificates'][0]['issued'] ) ) : '';
+	$used  .= $ctec . $cert;
 	$intro  = sprintf( '%s purchased %s from California Tax Courses (cataxcourses.com) on %s, order %s, paying %s.', $f['name'] ?: 'The cardholder', $o ? implode( '; ', array_map( 'wp_strip_all_tags', $f['items'] ) ) : 'an online CTEC course', $when, $num, $f['amount'] );
 	$access = ' The course is delivered online: immediately after payment the student is enrolled automatically on our course site (learn.cataxcourses.com) and receives login details by email.' . $used;
 	$terms  = sprintf( ' At checkout the customer had to accept our Terms & Conditions (%s) and Refund Policy (%s) before paying.', $f['terms_url'], $f['refund_url'] );
@@ -236,6 +242,31 @@ function ctc_dp_rebuttal( $row, $f ) {
 			$body = $intro . $access . $terms . $refund;
 	}
 	return $body . ' Supporting evidence is attached.';
+}
+
+// Moodle data for a dispute, saved on the row (refreshed when older than 6 hours, or $fresh).
+function ctc_dp_moodle_cached( $row, $fresh = false ) {
+	global $wpdb;
+	if ( ! $fresh && ! empty( $row['moodle_at'] ) && strtotime( $row['moodle_at'] . ' UTC' ) > time() - 6 * HOUR_IN_SECONDS ) {
+		$m = json_decode( (string) $row['moodle'], true );
+		return is_array( $m ) && ! empty( $m['found'] ) ? $m : null;
+	}
+	$m = ctc_dp_moodle_activity( $row['email'] );
+	$wpdb->update( ctc_dp_table(), array( 'moodle' => wp_json_encode( $m ?: array( 'found' => false ) ), 'moodle_at' => current_time( 'mysql', true ) ), array( 'dispute_id' => $row['dispute_id'] ) );
+	return $m;
+}
+// Hourly: refresh Moodle / CTEC data for disputes still being decided.
+add_action( 'ctc_dp_sync', function () {
+	global $wpdb;
+	foreach ( $wpdb->get_col( 'SELECT dispute_id FROM ' . ctc_dp_table() . " WHERE status IN ('needs_response','warning_needs_response','under_review','warning_under_review')" ) as $id ) ctc_dp_moodle_cached( ctc_dp_row( $id ), true );
+}, 15 );
+function ctc_dp_ctec_label( $c, $plain = false ) {
+	if ( ! $c ) return $plain ? 'Unknown (Moodle not connected)' : '<span style="color:#666">—</span>';
+	if ( true === $c['reported'] ) $t = 'Reported to CTEC' . ( $c['reported_on'] ? ' ' . $c['reported_on'] : '' );
+	elseif ( false === $c['reported'] ) $t = 'Not reported';
+	else $t = 'Not recorded in Moodle';
+	if ( $plain ) return $t . ( $c['ctecid'] ? ' (CTEC ID ' . $c['ctecid'] . ')' : '' );
+	return ( true === $c['reported'] ? '<strong style="color:#1a7f37">✓ ' : '<span>' ) . esc_html( $t ) . ( true === $c['reported'] ? '</strong>' : '</span>' ) . ( $c['ctecid'] ? '<br><small>CTEC ID ' . esc_html( $c['ctecid'] ) . '</small>' : '' ) . ( ! empty( $c['certificates'] ) ? '<br><small>' . count( $c['certificates'] ) . ' certificate(s) issued</small>' : '' );
 }
 
 /* ---------------------------------------------------------------- notification */
@@ -295,18 +326,18 @@ function ctc_dp_page() {
 		update_option( 'ctc_dp_notify', sanitize_text_field( wp_unslash( $_POST['ctc_dp_notify'] ) ), false );
 		$msg = '<div class="notice notice-success"><p>Saved.</p></div>';
 	}
-	$rows = $wpdb->get_results( 'SELECT dispute_id, order_id, customer, email, amount, reason, status, due_by, created, auto_state, submit_at, auto_log FROM ' . ctc_dp_table() . ' ORDER BY created DESC LIMIT 200', ARRAY_A );
+	$rows = $wpdb->get_results( 'SELECT dispute_id, order_id, customer, email, amount, reason, status, due_by, created, auto_state, submit_at, auto_log, moodle FROM ' . ctc_dp_table() . ' ORDER BY created DESC LIMIT 200', ARRAY_A );
 	echo '<div class="wrap"><h1>Stripe Disputes</h1>' . $msg;
 	echo '<p>New disputes are checked every hour (last check: ' . esc_html( get_option( 'ctc_dp_last_sync', 'not yet' ) ) . '). Open a packet, save it as PDF and upload it to the dispute in Stripe, then paste the form answers.</p>';
 	echo '<form method="post" style="margin:12px 0">'; wp_nonce_field( 'ctc_dp' ); echo '<button class="button" name="ctc_dp_sync" value="1">Check Stripe now</button></form>';
-	echo '<table class="widefat striped"><thead><tr><th>Opened</th><th>Customer</th><th>Order</th><th>Amount</th><th>Reason</th><th>Status</th><th>Evidence due</th><th>Automatic</th><th></th></tr></thead><tbody>';
+	echo '<table class="widefat striped"><thead><tr><th>Opened</th><th>Customer</th><th>Order</th><th>Amount</th><th>Reason</th><th>Status</th><th>Evidence due</th><th>CTEC hours</th><th>Automatic</th><th></th></tr></thead><tbody>';
 	foreach ( $rows as $r ) {
 		$open = in_array( $r['status'], array( 'needs_response', 'warning_needs_response' ), true );
 		echo '<tr><td>' . esc_html( ctc_dp_fmt( $r['created'] ) ) . '</td><td><strong>' . esc_html( $r['customer'] ?: '—' ) . '</strong><br><span style="color:#666">' . esc_html( $r['email'] ) . '</span></td><td>' . ( $r['order_id'] ? '#' . (int) $r['order_id'] : '<span style="color:#b32d2e">not matched</span>' ) . '</td>'
 			. '<td>' . wp_kses_post( wc_price( $r['amount'] / 100 ) ) . '</td><td>' . esc_html( ctc_dp_reason_label( $r['reason'] ) ) . '</td><td>' . ( $open ? '<strong style="color:#b32d2e">' : '<span>' ) . esc_html( str_replace( '_', ' ', $r['status'] ) ) . ( $open ? '</strong>' : '</span>' ) . '</td>'
-			. '<td>' . esc_html( $r['due_by'] ? ctc_dp_fmt( $r['due_by'] ) : '—' ) . '</td><td>' . ctc_dp_auto_cell( $r ) . '</td><td><a class="button button-primary" href="' . esc_url( ctc_dp_link( $r['dispute_id'], 'packet' ) ) . '">Evidence packet</a> <a class="button" href="' . esc_url( ctc_dp_link( $r['dispute_id'], 'form' ) ) . '">Stripe form answers</a></td></tr>';
+			. '<td>' . esc_html( $r['due_by'] ? ctc_dp_fmt( $r['due_by'] ) : '—' ) . '</td><td>' . ctc_dp_ctec_label( ( $mm = json_decode( (string) $r['moodle'], true ) ) && ! empty( $mm['found'] ) ? ( $mm['ctec'] ?? null ) : null ) . '</td><td>' . ctc_dp_auto_cell( $r ) . '</td><td><a class="button button-primary" href="' . esc_url( ctc_dp_link( $r['dispute_id'], 'packet' ) ) . '">Evidence packet</a> <a class="button" href="' . esc_url( ctc_dp_link( $r['dispute_id'], 'form' ) ) . '">Stripe form answers</a></td></tr>';
 	}
-	if ( ! $rows ) echo '<tr><td colspan="9">No disputes found yet.</td></tr>';
+	if ( ! $rows ) echo '<tr><td colspan="10">No disputes found yet.</td></tr>';
 	echo '</tbody></table>';
 	if ( current_user_can( 'manage_options' ) ) {
 		echo '<h2 style="margin-top:32px">Settings</h2><form method="post">'; wp_nonce_field( 'ctc_dp' );
@@ -364,6 +395,12 @@ function ctc_dp_view( $dispute_id, $view ) {
 	if ( $f['checks'] ) { echo '<h2>Payment verification (from Stripe)</h2><table>'; foreach ( $f['checks'] as $k => $v ) $tr( $k, esc_html( $v ) ); echo '</table>'; }
 	echo '<h2>Delivery: course access</h2><p>Online course, delivered on learn.cataxcourses.com. The student is enrolled automatically when payment completes and receives login details by email; access does not expire.</p>';
 	if ( ! empty( $f['notes'] ) ) echo '<table>' . implode( '', array_map( function ( $n ) { return '<tr><td colspan="2">' . esc_html( $n ) . '</td></tr>'; }, $f['notes'] ) ) . '</table>';
+	if ( $c = $f['ctec'] ) {
+		echo '<h2>CTEC reporting</h2><table>';
+		$tr( 'Hours reported to CTEC', esc_html( ctc_dp_ctec_label( $c, true ) ) ); $tr( 'How we know', esc_html( $c['how'] ) ); $tr( 'PTIN', esc_html( $c['ptin'] ) );
+		foreach ( (array) $c['certificates'] as $ce ) $tr( 'Certificate: ' . $ce['name'], esc_html( 'Issued ' . ctc_dp_fmt( $ce['issued'] ) . ( $ce['code'] ? ' · code ' . $ce['code'] : '' ) ) );
+		echo '</table>';
+	}
 	if ( $f['moodle'] ) {
 		$m = $f['moodle'];
 		echo '<h2>Course activity (learn.cataxcourses.com)</h2><table>';
@@ -388,7 +425,9 @@ function ctc_dp_view( $dispute_id, $view ) {
 	echo '</div></div>';
 }
 function ctc_dp_activity_text( $m ) {
-	$lines = array( sprintf( 'Moodle account %s: created %s, first sign-in %s, last sign-in %s (IP %s), %d recorded course actions.', $m['user']['username'] ?? '', ctc_dp_fmt( $m['user']['timecreated'] ?? 0 ), ctc_dp_fmt( $m['user']['firstaccess'] ?? 0 ), ctc_dp_fmt( $m['user']['lastaccess'] ?? 0 ), $m['user']['lastip'] ?? '', (int) ( $m['logcount'] ?? 0 ) ) );
+	$lines = array();
+	if ( ! empty( $m['ctec'] ) && true === $m['ctec']['reported'] ) $lines[] = ctc_dp_ctec_label( $m['ctec'], true ) . '.';
+	$lines[] = sprintf( 'Moodle account %s: created %s, first sign-in %s, last sign-in %s (IP %s), %d recorded course actions.', $m['user']['username'] ?? '', ctc_dp_fmt( $m['user']['timecreated'] ?? 0 ), ctc_dp_fmt( $m['user']['firstaccess'] ?? 0 ), ctc_dp_fmt( $m['user']['lastaccess'] ?? 0 ), $m['user']['lastip'] ?? '', (int) ( $m['logcount'] ?? 0 ) );
 	foreach ( (array) ( $m['quiz'] ?? array() ) as $q ) $lines[] = 'Exam: ' . $q['name'] . ' — ' . $q['state'] . ( '' !== $q['score'] ? ', score ' . $q['score'] : '' ) . ', ' . ctc_dp_fmt( $q['start'] );
 	foreach ( array_slice( (array) ( $m['recent'] ?? array() ), 0, 15 ) as $l ) $lines[] = ctc_dp_fmt( $l['time'] ) . ' — ' . $l['what'] . ( ! empty( $l['ip'] ) ? ' (IP ' . $l['ip'] . ')' : '' );
 	return implode( "\n", $lines );
@@ -506,6 +545,12 @@ function ctc_dp_docs( $row, $f ) {
 	$b[] = array( 'h', 'Delivery: course access' );
 	$b[] = array( 'p', 'Online course delivered on learn.cataxcourses.com. The student is enrolled automatically when payment completes and receives login details by email; access does not expire.' );
 	if ( ! empty( $f['notes'] ) ) $b[] = array( 'rows', array_map( function ( $n ) { $p = explode( ' — ', $n, 2 ); return array( $p[0], $p[1] ?? '' ); }, $f['notes'] ) );
+	if ( $c = $f['ctec'] ) {
+		$b[] = array( 'h', 'CTEC reporting' );
+		$kv  = array( array( 'Hours reported to CTEC', ctc_dp_ctec_label( $c, true ) ), array( 'How we know', $c['how'] ), array( 'PTIN', $c['ptin'] ) );
+		foreach ( (array) $c['certificates'] as $ce ) $kv[] = array( 'Certificate: ' . $ce['name'], 'Issued ' . ctc_dp_fmt( $ce['issued'] ) . ( $ce['code'] ? ' · code ' . $ce['code'] : '' ) );
+		$b[] = array( 'kv', $kv );
+	}
 	if ( $m = $f['moodle'] ) {
 		$b[] = array( 'h', 'Course sign-ins and activity (learn.cataxcourses.com, timestamps ' . wp_timezone_string() . ')' );
 		$b[] = array( 'kv', array( array( 'Username', $m['user']['username'] ?? '' ), array( 'Account created', ctc_dp_fmt( $m['user']['timecreated'] ?? 0 ) ), array( 'First sign-in', ctc_dp_fmt( $m['user']['firstaccess'] ?? 0 ) ),
