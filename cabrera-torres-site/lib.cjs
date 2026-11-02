@@ -226,7 +226,7 @@ const glass = (children, o = {}) => container({
 function header(m, menuId) {
   const nav = container({
     content_width: 'boxed', boxed_width: px(1400), flex_direction: 'row', flex_wrap: 'nowrap',
-    flex_justify_content: 'space-between', flex_align_items: 'center', flex_gap: gap(28), flex_gap_mobile: gap(12),
+    flex_justify_content: 'space-between', flex_align_items: 'center', flex_gap: gap(18), flex_gap_mobile: gap(12),
     padding: box(20, 40, 20, 40), padding_tablet: box(16, 24, 16, 24), padding_mobile: box(14, 16, 14, 16),
     background_background: 'classic', background_color: C.wood,
     border_border: 'solid', border_width: box(0, 0, 1, 0), border_color: 'rgba(196,160,141,0.18)',
@@ -249,13 +249,16 @@ function header(m, menuId) {
       toggle_color: C.ivory, toggle_background_color: 'rgba(0,0,0,0)', toggle_size: px(26),
       _flex_size: 'grow', _flex_size_tablet: 'none', _flex_size_mobile: 'none',
       _flex_order_tablet: 'end', _flex_order_mobile: 'end',
-      custom_css: 'selector .elementor-nav-menu--main .elementor-item { white-space: nowrap; }',
+      // Room for the EN | ES switch: tighter items up to 1440px, and the burger menu on laptops (1025-1365px).
+      custom_css: 'selector .elementor-nav-menu--main .elementor-item { white-space: nowrap; }\n'
+        + '@media (max-width: 1440px) { selector .elementor-nav-menu--main .elementor-item { padding-left: 8px !important; padding-right: 8px !important; letter-spacing: .08em !important; } }\n'
+        + '@media (min-width: 1025px) and (max-width: 1365px) { selector .elementor-nav-menu--main { display: none !important; } selector .elementor-menu-toggle { display: flex !important; } selector .elementor-nav-menu--dropdown.elementor-nav-menu__container { display: block !important; } }',
     }),
     // EN | ES switch (points at the same page in the other language).
     widget('html', { html: require('./i18n/translate.cjs').toggleHtml(C), _element_width: 'auto', _flex_size: 'none' }),
     text(`<a href="${TEL}">${PHONE}</a>`, {
       color: C.rose, size: 14, weight: 600, ls: 0.06, lh: 1.2, linkColor: C.rose, linkHover: C.ivory,
-      settings: { _element_width: 'auto', _flex_size: 'none', _padding: box(0, 0, 0, 24), _border_border: 'solid', _border_width: box(0, 0, 0, 1), _border_color: 'rgba(196,160,141,0.35)', hide_tablet: 'hidden-tablet', hide_mobile: 'hidden-mobile', custom_css: 'selector { white-space: nowrap; }\n@media (max-width: 1300px) { selector { display: none; } }' },
+      settings: { _element_width: 'auto', _flex_size: 'none', _padding: box(0, 0, 0, 24), _border_border: 'solid', _border_width: box(0, 0, 0, 1), _border_color: 'rgba(196,160,141,0.35)', hide_tablet: 'hidden-tablet', hide_mobile: 'hidden-mobile', custom_css: 'selector { white-space: nowrap; }\n@media (max-width: 1700px) { selector { display: none; } }' },
     }),
     button('Free Consultation  →', URL.contact, 'gold', {
       size: 12, ls: 0.14, pad: box(14, 22, 14, 22),

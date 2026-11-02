@@ -20,7 +20,8 @@ const PAGES = {
   faq: { slug: 'preguntas-frecuentes', title: 'Preguntas frecuentes', seo: { title: 'Preguntas Frecuentes | Reclamos por Lesiones en Georgia', description: 'Respuestas claras sobre costos, plazos, compensación y qué hacer después de un accidente en Georgia. Llame al 770-777-HURT.', focus: 'preguntas abogado de lesiones Georgia' } },
   contact: { slug: 'contacto', title: 'Contacto', seo: { title: 'Contacto | Evaluación Gratuita de su Caso | Cabrera Torres Law Firm', description: '¿Sufrió una lesión? Llame a Jennifer al 770-777-HURT o solicite una evaluación gratuita y confidencial. 1770 Indian Trail Lilburn Rd NW, Suite 350, Norcross, GA 30093.', focus: 'evaluación gratuita de caso Norcross' } },
 };
-const MENU = [['Nosotros', 'about'], ['Casos que manejamos', 'practice-areas'], ['Resultados', 'case-results'], ['Nuestro enfoque', 'our-approach'], ['Testimonios', 'testimonials'], ['Contacto', 'contact']];
+// Short labels so the Spanish menu fits the header like the English one (full names stay on the pages and footer).
+const MENU = [['Nosotros', 'about'], ['Casos', 'practice-areas'], ['Resultados', 'case-results'], ['Enfoque', 'our-approach'], ['Testimonios', 'testimonials'], ['Contacto', 'contact']];
 
 const SKIP = new Set(['custom_css', '_css_classes', 'css_classes', 'html_tag', 'custom_id', '_element_id', 'anchor', 'id', '_id']);
 const mapPath = (u) => {
