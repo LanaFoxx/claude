@@ -48,5 +48,17 @@ add_action( 'admin_head', function () {
 #adminmenu li.ctc-am-dev .separator::before{content:"Development"}
 #adminmenu li.ctc-am-other .separator::before{content:"Other"}
 .folded #adminmenu li.ctc-am-head .separator::before{content:"";}
+#adminmenu li.ctc-am-other{cursor:pointer}
+#adminmenu li.ctc-am-other .separator::after{content:"";position:absolute;right:16px;margin-top:-13px;width:7px;height:7px;border-right:2px solid #a7aaad;border-bottom:2px solid #a7aaad;transform:rotate(-45deg);transition:transform .15s}
+#adminmenu li.ctc-am-other .separator{position:relative}
+#adminmenu.ctc-other-open li.ctc-am-other .separator::after{transform:rotate(45deg)}
+#adminmenu li.ctc-am-other:hover .separator::before{color:#fff}
+#adminmenu:not(.ctc-other-open) li.ctc-in-other{display:none}
 </style>';
+	// "Other" is collapsed by default: click the heading to open/close it (remembered); it opens on its own on one of its pages.
+	echo "<script>document.addEventListener('DOMContentLoaded',function(){var m=document.getElementById('adminmenu'),h=m&&m.querySelector('li.ctc-am-other');if(!h)return;"
+		. "var n=h.nextElementSibling,cur=false;while(n){n.classList.add('ctc-in-other');if(n.classList.contains('wp-has-current-submenu')||n.classList.contains('current'))cur=true;n=n.nextElementSibling;}"
+		. "var k='ctcOtherOpen',open=false;try{open=localStorage.getItem(k)==='1'}catch(e){}if(open||cur)m.classList.add('ctc-other-open');"
+		. "h.removeAttribute('aria-hidden');h.setAttribute('role','button');h.setAttribute('tabindex','0');"
+		. "function t(){var o=m.classList.toggle('ctc-other-open');try{localStorage.setItem(k,o?'1':'0')}catch(e){}}h.addEventListener('click',t);h.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();t();}});});</script>";
 } );
