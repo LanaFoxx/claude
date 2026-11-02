@@ -18,3 +18,4 @@ $string['csv'] = 'Activity CSV';
 $string['privacy:metadata'] = 'The CTC Disputes block stores no personal data. It shows dispute data held by the store and reads course activity from the Moodle logs.';
 $string['reportedfield'] = 'Reported-to-CTEC profile field';
 $string['reportedfield_desc'] = 'Short name of the custom profile field your staff fill in when a student\'s hours are reported to CTEC (a checkbox, date or text field). Leave empty to use any profile field whose name contains "report", plus groups named "Reported".';
+$string['ctc_disputes:courseupdate'] = 'Create and update the yearly 20/60 Hour courses';
