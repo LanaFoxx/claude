@@ -1088,7 +1088,7 @@ function block_ctccu_textbook_assemble($courseid, $job) {
     $pdf->AddPage();
     $pdf->SetFont('helvetica', 'B', 26);
     $pdf->SetY(220);
-    $pdf->MultiCell(0, 0, $data['course'], 0, 'C');
+    $pdf->MultiCell(0, 0, trim(preg_replace('/\s*\|\s*.*$/', '', $data['course'])), 0, 'C'); // "CTEC 20 Hour Continuing Education"
     $pdf->Ln(16);
     $pdf->SetFont('helvetica', '', 16);
     $pdf->MultiCell(0, 0, 'Course Textbook · ' . $data['year'] . ' Edition', 0, 'C');
