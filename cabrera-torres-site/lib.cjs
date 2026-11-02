@@ -277,6 +277,8 @@ function footer(m) {
     content_width: 'full', flex_direction: 'column', padding: box(0), flex_gap: gap(0),
     background_background: 'classic', background_color: C.black,
   }, [
+    // Floating EN | ES language pill (position: fixed, so it sits on screen wherever the footer is).
+    widget('html', { html: require('./i18n/translate.cjs').floatToggleHtml(C) }),
     container({
       container_type: 'grid', content_width: 'boxed', boxed_width: px(1320),
       grid_columns_grid: { unit: 'custom', size: 'minmax(0,1.4fr) repeat(3,minmax(0,1fr))' }, grid_columns_grid_tablet: px(2, 'fr'), grid_columns_grid_mobile: px(1, 'fr'),

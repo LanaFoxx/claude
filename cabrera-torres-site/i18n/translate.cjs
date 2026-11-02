@@ -70,4 +70,17 @@ if(es)document.documentElement.lang='es';
 if(!document.querySelector('link[hreflang]')){var en=es?R[p]:p,sp=es?p:M[p];if(en&&sp){[['en',en],['es',sp],['x-default',en]].forEach(function(x){var l=document.createElement('link');l.rel='alternate';l.hreflang=x[0];l.href=location.origin+x[1];document.head.appendChild(l);});}}})();</script>`;
 }
 
-module.exports = { ES, PATHS, PAGES, MENU, translate, str, missing, mapPath, toggleHtml };
+// Floating EN | ES pill, fixed to the bottom-left corner of every page (lives in the footer template).
+function floatToggleHtml(C) {
+  const map = JSON.stringify(PATHS);
+  const globe = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></svg>';
+  return `<nav class="ct-lang-float" aria-label="Language / Idioma">${globe}<a data-l="en" href="/" hreflang="en" lang="en">English</a><span aria-hidden="true">|</span><a data-l="es" href="/es/" hreflang="es" lang="es">Español</a></nav>
+<style>.ct-lang-float{position:fixed;left:20px;bottom:20px;z-index:9990;display:flex;align-items:center;gap:10px;padding:11px 18px;background:${C.wood};border:1px solid rgba(196,160,141,.55);border-radius:999px;box-shadow:0 10px 30px rgba(0,0,0,.35);color:${C.rose};font-family:Montserrat,sans-serif;font-size:13px;font-weight:600;letter-spacing:.06em;line-height:1}
+.ct-lang-float a{color:${C.ivory};text-decoration:none;opacity:.75;transition:opacity .2s,color .2s}.ct-lang-float a:hover{opacity:1;color:${C.rose}}
+.ct-lang-float a.on{opacity:1;color:${C.rose};text-decoration:underline;text-underline-offset:4px}.ct-lang-float span{color:rgba(196,160,141,.6)}
+@media (max-width:767px){.ct-lang-float{left:12px;bottom:12px;padding:10px 14px;font-size:12px;gap:8px}}</style>
+<script>(function(){var M=${map},R={},k;for(k in M)R[M[k]]=k;var p=location.pathname.replace(/\\/?$/,'/'),es=p.indexOf('/es/')===0,h=location.hash;
+document.querySelectorAll('.ct-lang-float a').forEach(function(a){var e=a.getAttribute('data-l')==='es';a.href=(e?(es?p:(M[p]||'/es/')):(es?(R[p]||'/'):p))+h;if(e===es){a.classList.add('on');a.setAttribute('aria-current','true');}});})();</script>`;
+}
+
+module.exports = { ES, PATHS, PAGES, MENU, translate, str, missing, mapPath, toggleHtml, floatToggleHtml };
