@@ -22,6 +22,8 @@ function local_ctcnav_extend_navigation(global_navigation $nav) {
             navigation_node::TYPE_CUSTOM, null, 'ctcnav_book', new pix_icon('i/report', ''));
         $book->showinflatnavigation = true;
         $nav->add_node($book);
+        // The book link opens the store in a new tab.
+        $PAGE->requires->js_init_code("document.querySelectorAll('[data-key=\"ctcnav_book\"] a, a[data-key=\"ctcnav_book\"]').forEach(function(a){a.target='_blank';a.rel='noopener';});");
 
         // My courses: only the current courses.
         $mc = $nav->find('mycourses', navigation_node::TYPE_ROOTNODE);
