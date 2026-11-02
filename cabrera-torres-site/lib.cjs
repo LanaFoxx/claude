@@ -282,7 +282,7 @@ function footer(m) {
       stack([
         image(m.logoLight, { width: 250, link: '/', align: 'left', settings: { _element_width: 'initial', _element_custom_width: px(250), _element_custom_width_mobile: px(100, '%'), custom_css: 'selector img { max-width: 250px; }' } }),
         eyebrow('Advocate. Protect. Deliver.', C.rose, 'left', { size: 13, weight: 600, ls: 0.24 }),
-        heading('There’s strength in your story.', 'p', 20, C.ivory, 'left', { lh: 1.3, settings: { _margin: box(6, 0, 0, 0) } }),
+        heading('There’s strength in your story.', 'p', 17, C.ivory, 'left', { lh: 1.3, weight: 400, style: 'italic', settings: { _margin: box(6, 0, 0, 0) } }), // Jen: catch phrase, smaller and italic
       ], { gap: 18 }),
       stack([label('Office'), text(`<p>${ADDRESS}</p>`, { color: C.sand, size: 15, lh: 1.8 })], { gap: 10 }),
       stack([
@@ -291,7 +291,7 @@ function footer(m) {
       ], { gap: 10 }),
       stack([
         label('Firm'),
-        links([['About', URL.about], ['Our Approach', URL.approach], ['Meet Jennifer', URL.jennifer], ['Practice Areas', URL.practice], ['Results', URL.results], ['Testimonials', URL.testimonials], ['FAQ', URL.faq], ['Resources', URL.blog], ['Contact', URL.contact]]),
+        links([['About', URL.about], ['Our Approach', URL.approach], ['Meet Jennifer', URL.jennifer], ['Cases We Handle', URL.practice], ['Results', URL.results], ['Testimonials', URL.testimonials], ['FAQ', URL.faq], ['Resources', URL.blog], ['Contact', URL.contact]]),
       ], { gap: 10 }),
     ]),
     container({

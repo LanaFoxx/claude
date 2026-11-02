@@ -25,9 +25,9 @@ function areaBand(m, a) {
 }
 
 module.exports = {
-  slug: 'practice-areas', title: 'Practice Areas',
+  slug: 'practice-areas', title: 'Cases We Handle', // Jen: one practice area (personal injury), so not "Practice Areas"
   seo: {
-    title: 'Practice Areas | Car Accident & Injury Lawyer Norcross GA',
+    title: 'Cases We Handle | Car & Truck Accident Injury Lawyer Norcross GA',
     description: 'Car and truck accidents, dog bites, slip and fall and wrongful death: what Cabrera Torres Law Firm handles and how a Georgia injury claim works.',
     focus: 'car accident lawyer Norcross',
   },

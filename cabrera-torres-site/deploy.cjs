@@ -43,7 +43,7 @@ const PAGE_SLUGS = ['home', 'about', 'our-approach', 'meet-jennifer', 'practice-
 const PAGES = PAGE_SLUGS.map((s) => require(`./pages/${s}.cjs`));
 const POSTS = require('./posts.cjs');
 // Main menu order (labels from homepage-v2). A leading "/" means a custom link instead of a page.
-const MENU = [['About', 'about'], ['Practice Areas', 'practice-areas'], ['Results', 'case-results'], ['Our Approach', 'our-approach'], ['Testimonials', 'testimonials'], ['Contact', 'contact']];
+const MENU = [['About', 'about'], ['Cases We Handle', 'practice-areas'], ['Results', 'case-results'], ['Our Approach', 'our-approach'], ['Testimonials', 'testimonials'], ['Contact', 'contact']];
 
 const args = process.argv.slice(2);
 const selected = (def) => args.includes(def.slug) || args.includes(def.type === 'post' ? 'posts' : 'pages');

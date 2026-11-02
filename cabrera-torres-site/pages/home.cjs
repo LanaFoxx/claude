@@ -72,7 +72,7 @@ const AREAS = [
   { name: 'Dog Bites', desc: 'Advocating for victims of dog attacks and the care they need to move forward.', icon: 'dog', href: `${URL.practice}#dog` },
 ];
 const practice = () => band(C.ivory, [
-  centerLabel('Our Practice Areas'),
+  centerLabel('Cases We Handle'),
   heading('Focused on Your Recovery.', 'h2', [44, 38, 32], C.ink, 'center', { lh: 1.15, settings: { _margin: box(22, 0, 0, 0) } }),
   grid(AREAS.map((a) => container({
     content_width: 'full', flex_direction: 'column', flex_align_items: 'center', flex_gap: gap(18),
