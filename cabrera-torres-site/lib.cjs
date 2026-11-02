@@ -251,6 +251,8 @@ function header(m, menuId) {
       _flex_order_tablet: 'end', _flex_order_mobile: 'end',
       custom_css: 'selector .elementor-nav-menu--main .elementor-item { white-space: nowrap; }',
     }),
+    // EN | ES switch (points at the same page in the other language).
+    widget('html', { html: require('./i18n/translate.cjs').toggleHtml(C), _element_width: 'auto', _flex_size: 'none' }),
     text(`<a href="${TEL}">${PHONE}</a>`, {
       color: C.rose, size: 14, weight: 600, ls: 0.06, lh: 1.2, linkColor: C.rose, linkHover: C.ivory,
       settings: { _element_width: 'auto', _flex_size: 'none', _padding: box(0, 0, 0, 24), _border_border: 'solid', _border_width: box(0, 0, 0, 1), _border_color: 'rgba(196,160,141,0.35)', hide_tablet: 'hidden-tablet', hide_mobile: 'hidden-mobile', custom_css: 'selector { white-space: nowrap; }\n@media (max-width: 1300px) { selector { display: none; } }' },

@@ -40,27 +40,56 @@ const m = new Proxy(media, {
 });
 
 const PAGE_SLUGS = ['home', 'about', 'our-approach', 'meet-jennifer', 'practice-areas', 'case-results', 'testimonials', 'faq', 'blog', 'contact'];
-const PAGES = PAGE_SLUGS.map((s) => require(`./pages/${s}.cjs`));
-const POSTS = require('./posts.cjs');
+// SITE_LANG=es builds the Spanish site: the same pages translated (i18n/), as children of the /es/ page.
+const ESL = process.env.SITE_LANG === 'es';
+const I = require('./i18n/translate.cjs');
+const EN_PAGES = PAGE_SLUGS.map((s) => require(`./pages/${s}.cjs`));
+const PAGES = !ESL ? EN_PAGES : EN_PAGES.filter((d) => I.PAGES[d.slug]).map((d) => ({
+  ...d, enSlug: d.slug, slug: I.PAGES[d.slug].slug, title: I.PAGES[d.slug].title, seo: I.PAGES[d.slug].seo, child: d.slug !== 'home',
+  build: (m) => I.translate(d.build(m)),
+}));
+const POSTS = ESL ? [] : require('./posts.cjs');
 // Main menu order (labels from homepage-v2). A leading "/" means a custom link instead of a page.
-const MENU = [['About', 'about'], ['Cases We Handle', 'practice-areas'], ['Results', 'case-results'], ['Our Approach', 'our-approach'], ['Testimonials', 'testimonials'], ['Contact', 'contact']];
+const MENU = ESL ? I.MENU : [['About', 'about'], ['Cases We Handle', 'practice-areas'], ['Results', 'case-results'], ['Our Approach', 'our-approach'], ['Testimonials', 'testimonials'], ['Contact', 'contact']];
 
 const args = process.argv.slice(2);
-const selected = (def) => args.includes(def.slug) || args.includes(def.type === 'post' ? 'posts' : 'pages');
+const selected = (def) => args.includes(def.slug) || (def.enSlug && args.includes(def.enSlug)) || args.includes(def.type === 'post' ? 'posts' : 'pages');
 const anyDocs = [...PAGES, ...POSTS].some(selected);
 const want = (key) => args.length === 0 || args.includes(key);
 const wantDoc = (def) => args.length === 0 || selected(def) || (args.includes('seo') && !anyDocs);
 const restNonce = () => window.wpApiSettings?.nonce || window.elementorCommon?.config?.rest?.nonce;
 
 async function ensurePage(p, def) {
-  return p.evaluate(async ([def, nonceFn]) => {
+  // Spanish pages live under the /es/ page; look them up by slug *and* parent so they never collide with English ones.
+  const parent = ESL ? (def.child ? await esHomeId(p) : 0) : undefined;
+  return p.evaluate(async ([def, parent, nonceFn]) => {
     const h = { 'X-WP-Nonce': eval(`(${nonceFn})`)(), 'Content-Type': 'application/json' };
-    const ex = await (await fetch(`/wp-json/wp/v2/pages?slug=${def.slug}&status=publish,draft,private&_fields=id,link`, { headers: h })).json();
+    const pq = parent === null ? '' : `&parent=${parent}`;
+    const ex = await (await fetch(`/wp-json/wp/v2/pages?slug=${def.slug}${pq}&status=publish,draft,private&_fields=id,link`, { headers: h })).json();
     if (ex.length) return ex[0];
-    const r = await fetch('/wp-json/wp/v2/pages', { method: 'POST', headers: h, body: JSON.stringify({ title: def.title, slug: def.slug, status: 'publish', template: 'elementor_header_footer' }) });
+    const body = { title: def.title, slug: def.slug, status: 'publish', template: 'elementor_header_footer', ...(parent ? { parent } : {}) };
+    const r = await fetch('/wp-json/wp/v2/pages', { method: 'POST', headers: h, body: JSON.stringify(body) });
     const j = await r.json();
+    if (!j.id) throw new Error(`Creating page ${def.slug} failed: ${JSON.stringify(j).slice(0, 200)}`);
     return { id: j.id, link: j.link };
-  }, [{ slug: def.slug, title: def.title }, restNonce.toString()]);
+  }, [{ slug: def.slug, title: def.title }, parent === undefined ? null : parent, restNonce.toString()]);
+}
+let esHome;
+async function esHomeId(p) {
+  if (!esHome) esHome = (await ensurePage(p, PAGES.find((d) => d.enSlug === 'home'))).id;
+  return esHome;
+}
+// The Spanish menu is its own WordPress menu, found (or created) by name.
+async function esMenuId(p) {
+  return p.evaluate(async (nonceFn) => {
+    const h = { 'X-WP-Nonce': eval(`(${nonceFn})`)(), 'Content-Type': 'application/json' };
+    const all = await (await fetch('/wp-json/wp/v2/menus?per_page=100&_fields=id,name', { headers: h })).json();
+    const hit = all.find((x) => x.name === 'Main Menu ES');
+    if (hit) return hit.id;
+    const j = await (await fetch('/wp-json/wp/v2/menus', { method: 'POST', headers: h, body: JSON.stringify({ name: 'Main Menu ES' }) })).json();
+    if (!j.id) throw new Error('Creating the Spanish menu failed: ' + JSON.stringify(j).slice(0, 200));
+    return j.id;
+  }, restNonce.toString());
 }
 
 async function ensurePost(p, def, featured) {
@@ -185,10 +214,18 @@ async function setYoast(p, seo) {
 
   if (want('chrome')) {
     const entireSite = [{ type: 'include', name: 'general', sub_name: '', sub_id: '' }];
-    for (const [type, title, els] of [['header', 'Cabrera Torres Header', L.header(m, prep.menu.id)], ['footer', 'Cabrera Torres Footer', L.footer(m)]]) {
+    let chrome = [['header', 'Cabrera Torres Header', L.header(m, prep.menu.id)], ['footer', 'Cabrera Torres Footer', L.footer(m)]];
+    let conds = entireSite;
+    if (ESL) {
+      // Spanish header/footer: shown on the /es/ page and every page under it (more specific than "entire site").
+      const home = await esHomeId(p); const menu = await esMenuId(p);
+      conds = [{ type: 'include', name: 'singular', sub_name: 'page', sub_id: String(home) }, { type: 'include', name: 'singular', sub_name: 'child_of', sub_id: String(home) }];
+      chrome = [['header', 'Cabrera Torres Header ES', I.translate(L.header(m, menu))], ['footer', 'Cabrera Torres Footer ES', I.translate(L.footer(m))]];
+    }
+    for (const [type, title, els] of chrome) {
       const tid = await findOrCreateTemplate(p, type, title);
       await openEditor(p, tid);
-      console.log(type, tid, 'elements saved:', await replaceContent(p, els), '| conditions:', await setConditions(p, tid, entireSite));
+      console.log(type, tid, 'elements saved:', await replaceContent(p, els), '| conditions:', await setConditions(p, tid, conds));
       out[type] = tid;
     }
   }
@@ -206,9 +243,9 @@ async function setYoast(p, seo) {
   if (want('menu')) {
     await p.goto(`${SITE}/wp-admin/`, { waitUntil: 'domcontentloaded' });
     const ids = [];
-    for (const [label, slug] of MENU) ids.push([label, slug.startsWith('/') ? slug : (await ensurePage(p, PAGES.find((d) => d.slug === slug))).id]);
-    console.log('menu:', (await rebuildMenu(p, prep.menu.id, ids)).join(' '));
+    for (const [label, slug] of MENU) ids.push([label, slug.startsWith('/') ? slug : (await ensurePage(p, PAGES.find((d) => d.slug === slug || d.enSlug === slug))).id]);
+    console.log('menu:', (await rebuildMenu(p, ESL ? await esMenuId(p) : prep.menu.id, ids)).join(' '));
   }
-  fs.writeFileSync(process.env.PREP.replace('prep.json', 'deployed.json'), JSON.stringify(out, null, 1));
+  fs.writeFileSync(process.env.PREP.replace('prep.json', ESL ? 'deployed-es.json' : 'deployed.json'), JSON.stringify(out, null, 1));
   await b.close();
 })().catch((e) => { console.error(e); process.exit(1); });
