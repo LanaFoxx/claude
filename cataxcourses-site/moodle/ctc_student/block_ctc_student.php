@@ -188,6 +188,23 @@ class block_ctc_student extends block_base {
             $h .= '</section>';
         }
 
+        // 6b. 20 Hour students: CTEC renewal countdown. Regular deadline Mon Nov 2, 2026; late renewal (with the late fee)
+        // through Fri Jan 15, 2027, after which the registration lapses. Times are Pacific.
+        $now = time();
+        $regend = 1793692800;  // 2026-11-03 00:00 PST
+        $lateend = 1800086400; // 2027-01-16 00:00 PST
+        if (!empty($kinds['20']) && $now < $lateend) {
+            $late = $now >= $regend;
+            $h .= '<section id="ctc-countdown" class="ctcsd-sec"><div class="ctcsd-card ctcsd-cd' . ($late ? ' ctcsd-cd-late' : '') . '" data-end="' . ($late ? $lateend : $regend) . '">'
+                . '<div class="ctcsd-cd-t"><div class="ctcsd-eyebrow">' . ($late ? 'CTEC late renewal period' : 'CTEC renewal deadline') . '</div>'
+                . ($late
+                    ? '<h3>The CTEC renewal deadline has passed. You can still renew, with a late fee.</h3><p>The regular deadline was Monday, November 2, 2026. Complete your hours and renew with CTEC, paying the late fee, by <strong>Friday, January 15, 2027</strong>. After that your CTEC registration lapses.</p>'
+                    : '<h3>Today is the last day to renew with CTEC without a late fee.</h3><p>The deadline is <strong>today, Monday, November 2, 2026</strong>. After today you can still renew until January 15, 2027, but you will pay a late fee. After January 15, 2027 your CTEC registration lapses.</p>')
+                . '<a class="ctcsd-btn" href="https://www.ctec.org" target="_blank" rel="noopener">Renew at ctec.org →</a></div>'
+                . '<div class="ctcsd-cd-clock" aria-label="Time left"><div><b data-u="d">–</b><span>days</span></div><div><b data-u="h">–</b><span>hours</span></div><div><b data-u="m">–</b><span>min</span></div><div><b data-u="s">–</b><span>sec</span></div>'
+                . '<div class="ctcsd-cd-l">' . ($late ? 'left to renew with the late fee' : 'left to renew without a late fee') . '</div></div></div></section>';
+        }
+
         // 7. Physical book.
         $h .= '<section id="ctc-book" class="ctcsd-sec"><div class="ctcsd-card ctcsd-book"><div class="ctcsd-book-i">📘</div><div class="ctcsd-book-t"><h3>Want a physical copy of the course book?</h3>'
             . '<p>Take notes right in the book while you go through the course, and keep it as a study reference for your exams.</p></div>'
@@ -250,13 +267,20 @@ body.ctcsd-wide #region-main.has-blocks{flex:0 0 100%!important;max-width:100%!i
 .ctcsd-next-i{flex:none;width:44px;height:44px;border-radius:50%;background:#fdf3dc;color:#8a5a00;font-weight:800;font-size:1.3rem;display:flex;align-items:center;justify-content:center}
 .ctcsd-book{display:flex;gap:20px;align-items:center;background:#fffbea;border-color:#f3e3a6}.ctcsd-book-i{font-size:2.4rem;flex:none}.ctcsd-book-t{flex:1}.ctcsd-book h3{font-size:1.15rem;font-weight:700;margin:0 0 4px}.ctcsd-book p{margin:0;color:#475467}
 .ctcsd-book .ctcsd-btn{background:#d4a72c;flex:none}
-@media (max-width:820px){.ctcsd-book{flex-direction:column;align-items:stretch;text-align:center}.ctcsd-next{flex-direction:column}.ctcsd-grid{grid-template-columns:1fr}.ctcsd-hero{flex-direction:column;align-items:stretch;padding:20px}.ctcsd-hero-act .ctcsd-btn{width:100%}.ctcsd-action{flex-wrap:wrap}.ctcsd-action-go{margin-left:38px}}
+.ctcsd-cd{display:flex;gap:24px;align-items:center;background:#1d2939;border-color:#1d2939;color:#fff}.ctcsd-cd .ctcsd-eyebrow{color:#d4a72c}.ctcsd-cd h3{font-size:1.2rem;font-weight:700;margin:0 0 8px;color:#fff}
+.ctcsd-cd p{margin:0 0 14px;color:#d0d5dd}.ctcsd-cd p strong{color:#fff}.ctcsd-cd .ctcsd-btn{background:#d4a72c}.ctcsd-cd-t{flex:1}
+.ctcsd-cd-clock{flex:none;display:grid;grid-template-columns:repeat(4,64px);gap:8px;text-align:center}.ctcsd-cd-clock>div:not(.ctcsd-cd-l){background:rgba(255,255,255,.08);border-radius:10px;padding:10px 0}
+.ctcsd-cd-clock b{display:block;font-size:1.7rem;font-weight:800;line-height:1.1;color:#fff;font-variant-numeric:tabular-nums}.ctcsd-cd-clock span{font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:#98a2b3}
+.ctcsd-cd-l{grid-column:1/-1;font-size:.8rem;color:#d0d5dd}.ctcsd-cd-late{background:#7a2e0e;border-color:#7a2e0e}.ctcsd-cd-late .ctcsd-eyebrow{color:#fdb022}
+@media (max-width:820px){.ctcsd-cd{flex-direction:column;align-items:stretch}.ctcsd-cd-clock{grid-template-columns:repeat(4,1fr)}.ctcsd-book{flex-direction:column;align-items:stretch;text-align:center}.ctcsd-next{flex-direction:column}.ctcsd-grid{grid-template-columns:1fr}.ctcsd-hero{flex-direction:column;align-items:stretch;padding:20px}.ctcsd-hero-act .ctcsd-btn{width:100%}.ctcsd-action{flex-wrap:wrap}.ctcsd-action-go{margin-left:38px}}
 </style>';
     }
 
     private static function js() {
         // Opening /my/#ctc-previous (or #ctc-certificates) from the left-hand menu opens that section.
         return '<script>(function(){function wide(){var r=document.getElementById("block-region-side-pre");if(!r)return;var vis=[].some.call(r.querySelectorAll(".block"),function(b){return b.offsetParent!==null;});if(!vis){document.body.classList.add("ctcsd-wide");var c=r.closest("section");if(c)c.classList.add("ctcsd-sidecol");}}document.addEventListener("DOMContentLoaded",wide);window.addEventListener("load",wide);})();'
+            . '(function(){var c=document.querySelector(".ctcsd-cd");if(!c)return;var end=+c.getAttribute("data-end")*1000;function t(){var d=Math.max(0,end-Date.now());if(d<=0){try{if(!sessionStorage.getItem("ctccd"+end)){sessionStorage.setItem("ctccd"+end,1);location.reload();}}catch(e){}}var v={d:Math.floor(d/864e5),h:Math.floor(d/36e5)%24,m:Math.floor(d/6e4)%60,s:Math.floor(d/1e3)%60};'
+            . 'for(var k in v){var e=c.querySelector("[data-u="+k+"]");if(e)e.textContent=(k==="d"?v[k]:("0"+v[k]).slice(-2));}}t();setInterval(t,1000);})();'
             . '(function(){function go(){var h=location.hash;if(!/^#ctc-/.test(h))return;var s=document.querySelector(h);if(!s)return;var d=s.querySelector("details");if(d)d.open=true;if(h==="#ctc-ids"){var f=s.querySelector("form");if(f&&f.hidden){f.hidden=false;var b=s.querySelector(".ctcsd-link");if(b)b.hidden=true;}}s.scrollIntoView({behavior:"smooth",block:"start"});}'
             . 'window.addEventListener("hashchange",go);if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",go);else go();})();</script>';
     }
