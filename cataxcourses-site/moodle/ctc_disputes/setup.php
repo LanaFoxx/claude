@@ -28,7 +28,8 @@ $prohibit = ['moodle/course:create', 'moodle/course:update', 'moodle/course:dele
     'moodle/question:add', 'moodle/question:editall', 'moodle/question:editmine', 'moodle/question:moveall', 'moodle/question:movemine', 'moodle/question:managecategory',
     'moodle/question:config', 'moodle/question:flag', 'mod/quiz:manage', 'mod/quiz:addinstance', 'mod/hvp:addinstance', 'mod/hvp:updatelibraries', 'mod/customcert:manage',
     'mod/customcert:addinstance', 'mod/lesson:edit', 'mod/lesson:addinstance', 'mod/feedback:edititems', 'mod/feedback:addinstance', 'mod/resource:addinstance',
-    'mod/page:addinstance', 'mod/url:addinstance', 'moodle/site:manageblocks', 'block/ctc_disputes:courseupdate'];
+    'mod/page:addinstance', 'mod/url:addinstance', 'moodle/site:manageblocks', 'block/ctc_disputes:courseupdate',
+    'block/ctc_courseupdate:manage', 'block/ctc_courseupdate:myaddinstance', 'block/ctc_preorders:myaddinstance']; // course updates + pre-orders: main admin only
 $n = 0;
 foreach ($prohibit as $cap) {
     if (get_capability_info($cap)) { assign_capability($cap, CAP_PROHIBIT, $rid, $sys->id, true); $n++; }
