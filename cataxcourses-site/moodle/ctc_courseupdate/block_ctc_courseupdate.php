@@ -40,9 +40,6 @@ class block_ctc_courseupdate extends block_base {
             }
             $rows .= '<tr><td><strong>' . $def['label'] . '</strong></td><td>' . $cell . '</td><td class="ctccu-right">' . $next . '</td></tr>';
         }
-        $win = block_ctccu_preorder_window();
-        $rows .= '<tr><td><strong>Pre-orders</strong></td><td>20 Hour orders since ' . userdate($win['from'], '%b %d, %Y') . html_writer::div($win['open'] ? 'Open — closes when the new 20 Hour course is created' : 'Closed ' . userdate($win['to'], '%b %d, %Y') . ' (new course created)', 'ctccu-sub') . '</td>'
-            . '<td class="ctccu-right">' . html_writer::link(new moodle_url('/blocks/ctc_courseupdate/preorders.php'), 'Pre-orders: enroll all · export books', ['class' => 'ctccu-btn']) . '</td></tr>';
         $css = '<style>[data-blockregion="content"] > .block_ctc_courseupdate{grid-column:1 / -1}
 .ctccu{--line:#e4e7ec;--muted:#667085;--ink:#1d2939;color:var(--ink);font-size:.9rem}
 .ctccu-card{background:#fff;border:1px solid var(--line);border-radius:12px}

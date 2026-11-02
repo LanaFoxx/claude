@@ -9,14 +9,21 @@ require_capability('block/ctc_courseupdate:manage', $sys);
 core_php_time_limit::raise(1800);
 raise_memory_limit(MEMORY_HUGE);
 
-$win = block_ctccu_preorder_window();
+$seasons = block_ctccu_preorder_seasons();
+$year = optional_param('season', $seasons[0]['year'], PARAM_INT);
+$win = $seasons[0];
+foreach ($seasons as $se) {
+    if ($se['year'] === $year) {
+        $win = $se;
+    }
+}
 $from = optional_param('from', date('Y-m-d', $win['from']), PARAM_RAW_TRIMMED);
 $to = optional_param('to', date('Y-m-d', $win['to']), PARAM_RAW_TRIMMED);
 $action = optional_param('action', '', PARAM_ALPHA);
-$self = new moodle_url('/blocks/ctc_courseupdate/preorders.php', ['from' => $from, 'to' => $to]);
+$self = new moodle_url('/blocks/ctc_courseupdate/preorders.php', ['season' => $win['year'], 'from' => $from, 'to' => $to]);
 $courses = block_ctccu_courses('20');
 usort($courses, function ($a, $b) { return [$b->year, $b->id] <=> [$a->year, $a->id]; });
-$target = optional_param('course', $courses ? $courses[0]->id : 0, PARAM_INT);
+$target = optional_param('course', $win['courseid'] ?: ($courses ? $courses[0]->id : 0), PARAM_INT);
 
 $msg = '';
 try {
@@ -30,12 +37,14 @@ $books = array_values(array_filter($orders, function ($o) { return $o['books']; 
 
 if ($action === 'export') {
     require_sesskey();
+    block_ctccu_season_note($win['year'], 'exported', ['orders' => count($books), 'from' => $from, 'to' => $to]);
     block_ctccu_export_books($books, $from, $to);
     die;
 }
 if ($action === 'enroll' && $target) {
     require_sesskey();
     $res = block_ctccu_enroll_preorders($enrol, $target);
+    block_ctccu_season_note($win['year'], 'enrolled', ['course' => get_course($target)->fullname, 'courseid' => $target, 'added' => $res['added'], 'already' => $res['already'], 'failed' => count($res['failed'])]);
     $msg = html_writer::div('Enrolled ' . $res['added'] . ' students in ' . s(get_course($target)->fullname) . ' (' . $res['already'] . ' were already in it'
         . ($res['created'] ? ', ' . $res['created'] . ' new Moodle accounts created through the store enrollment' : '') . ').'
         . ($res['failed'] ? '<br><strong>Not enrolled (' . count($res['failed']) . '):</strong> ' . s(implode(', ', $res['failed'])) : ''), $res['failed'] ? 'alert alert-warning' : 'alert alert-success');
@@ -47,12 +56,13 @@ $PAGE->set_pagelayout('admin');
 $PAGE->set_title('20 Hour pre-orders');
 $PAGE->set_heading('20 Hour pre-orders');
 echo $OUTPUT->header();
-echo $OUTPUT->heading('20 Hour pre-orders');
+echo $OUTPUT->heading('20 Hour pre-orders · ' . $win['year']);
 echo html_writer::div(html_writer::link(new moodle_url('/my/'), '← Dashboard'), 'mb-3');
 echo $msg;
 echo '<div class="card mb-3"><div class="card-body"><p class="mb-2">' . ($win['open']
         ? '🟢 <strong>Taking pre-orders now</strong> — since ' . userdate($win['from'], '%B %d, %Y') . '. The list closes automatically the day the new 20 Hour course is created.'
-        : '🔒 <strong>Pre-orders closed</strong> on ' . userdate($win['to'], '%B %d, %Y') . ', when "' . s($win['course']) . '" was created.') . '</p>'
+        : ($win['none'] ? 'No pre-orders in ' . $win['year'] . ': "' . s($win['course']) . '" was already available before January 15.'
+            : '🔒 <strong>Pre-orders closed</strong> on ' . userdate($win['to'], '%B %d, %Y') . ', when "' . s($win['course']) . '" became available.')) . '</p>'
     . '<form method="get" class="form-inline" style="gap:8px">Orders from <input type="date" class="form-control" name="from" value="' . s($from) . '"> to <input type="date" class="form-control" name="to" value="' . s($to) . '"> <button class="btn btn-secondary">Show</button></form></div></div>';
 
 // Enroll everyone.

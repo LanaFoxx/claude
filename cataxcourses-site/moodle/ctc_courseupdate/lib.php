@@ -140,6 +140,7 @@ function block_ctccu_create($type) {
     rebuild_course_cache($newid, true);
     block_ctccu_log($newid, 'Created from "' . $src->fullname . '" (course ' . $src->id . ') as "' . $course->fullname . '" — hidden from students.');
     set_config('source_' . $newid, $src->id, 'block_ctc_courseupdate');
+    set_config('created_' . $newid, time(), 'block_ctc_courseupdate'); // closes that year's 20 Hour pre-orders
     block_ctccu_enforce_rules($newid);
     return $newid;
 }
@@ -1376,22 +1377,60 @@ For each of this year's chapters give the number of last year's chapter on the s
 /* ================================================================== 20 Hour pre-orders */
 // Pre-orders open every January 15 and close the day the new year's 20 Hour course is created in Moodle.
 
-/** ['from' => ts, 'to' => ts, 'open' => bool, 'course' => name of the course that closed it]. */
-function block_ctccu_preorder_window($now = null) {
+/** When a 20 Hour course became available: the day the Update button made it, else its first student enrolment. */
+function block_ctccu_course_opened($course) {
+    global $DB;
+    $t = (int) get_config('block_ctc_courseupdate', 'created_' . $course->id);
+    if ($t) {
+        return $t;
+    }
+    $t = (int) $DB->get_field_sql('SELECT MIN(ue.timecreated) FROM {user_enrolments} ue JOIN {enrol} e ON e.id = ue.enrolid WHERE e.courseid = ?', [$course->id]);
+    return $t ?: (int) $course->timecreated;
+}
+
+/**
+ * 20 Hour pre-order seasons, newest first. Season Y opens January 15 of Y and closes the day the "Y Updated" 20 Hour
+ * course becomes available; until then it is open. [['year','from','to','open','course','none'], …]
+ */
+function block_ctccu_preorder_seasons($count = 6, $now = null) {
     $now = $now ?: time();
     $y = (int) date('Y', $now);
-    $start = mktime(0, 0, 0, 1, 15, $y);
-    if ($now < $start) {
-        $start = mktime(0, 0, 0, 1, 15, $y - 1);
+    if ($now < mktime(0, 0, 0, 1, 15, $y)) {
+        $y--;
     }
-    $closed = null;
-    foreach (block_ctccu_courses('20') as $c) {
-        if ($c->timecreated >= $start && (!$closed || $c->timecreated < $closed->timecreated)) {
-            $closed = $c;
+    $courses = block_ctccu_courses('20');
+    $out = [];
+    // Lists start with 2026, the first year the pre-order list was kept here.
+    for ($k = 0; $k < $count && $y >= 2026; $k++, $y--) {
+        $start = mktime(0, 0, 0, 1, 15, $y);
+        $closer = null;
+        foreach ($courses as $c) {
+            if ($c->year === $y && (!$closer || $c->id < $closer->id)) {
+                $closer = $c;
+            }
+        }
+        $opened = $closer ? block_ctccu_course_opened($closer) : 0;
+        if ($closer && $opened >= $start) {
+            $out[] = ['year' => $y, 'from' => $start, 'to' => $opened, 'open' => false, 'course' => $closer->fullname, 'courseid' => $closer->id, 'none' => false];
+        } else if ($closer) {
+            $out[] = ['year' => $y, 'from' => $start, 'to' => $start, 'open' => false, 'course' => $closer->fullname, 'courseid' => $closer->id, 'none' => true];
+        } else {
+            $out[] = ['year' => $y, 'from' => $start, 'to' => $now, 'open' => true, 'course' => '', 'courseid' => 0, 'none' => false];
         }
     }
-    return $closed ? ['from' => $start, 'to' => (int) $closed->timecreated, 'open' => false, 'course' => $closed->fullname]
-        : ['from' => $start, 'to' => $now, 'open' => true, 'course' => ''];
+    return $out;
+}
+function block_ctccu_preorder_window($now = null) {
+    return block_ctccu_preorder_seasons(1, $now)[0];
+}
+/** What was done with a season's list (export / enrol), for the dashboard. */
+function block_ctccu_season_note($year, $what, $data) {
+    $n = json_decode((string) get_config('block_ctc_courseupdate', 'season_' . (int) $year), true) ?: [];
+    $n[$what] = $data + ['at' => time()];
+    set_config('season_' . (int) $year, json_encode($n), 'block_ctc_courseupdate');
+}
+function block_ctccu_season_notes($year) {
+    return json_decode((string) get_config('block_ctc_courseupdate', 'season_' . (int) $year), true) ?: [];
 }
 
 /** 20 Hour orders (course and/or book) between two dates (YYYY-MM-DD), from the store. */
