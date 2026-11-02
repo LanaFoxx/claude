@@ -111,6 +111,7 @@ class block_ctc_disputes extends block_base {
         $modes = ['auto' => 'Evidence is drafted on Stripe and submitted automatically after 24 hours unless held.', 'draft' => 'Evidence is drafted on Stripe automatically; someone clicks Submit.', 'off' => 'Automatic evidence is off.'];
         $css = '<style>
 [data-blockregion="content"] > .block_ctc_disputes{grid-column:1 / -1}
+.block_studenttools .stt-card:has(a[href*="local/stripedispute"]){display:none} /* disputes live in this block now */
 .block_ctc_disputes .card-title{text-transform:uppercase}
 .ctcd{--ok:#1f7a4d;--ok-bg:#e6f4ec;--info:#1d5fa8;--info-bg:#e7f0fb;--warn:#8a5a00;--warn-bg:#fdf3dc;--bad:#b42318;--bad-bg:#fdecea;--muted:#667085;--muted-bg:#f2f4f7;--line:#e4e7ec;--ink:#1d2939;color:var(--ink);font-size:.9rem}
 .ctcd-banner{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 12px;border-radius:8px;margin-bottom:14px;background:var(--info-bg);color:var(--info);font-weight:500}

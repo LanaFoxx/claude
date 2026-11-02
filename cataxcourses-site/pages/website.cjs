@@ -4,6 +4,7 @@ const L = require('../lib.cjs');
 const { C, HEAD, BODY, px, box, gap, auto, typo, container, widget, cls, band, stack, row, grid, linkBox, eyebrow, heading, H2, text, image, pill } = L;
 
 const TPD = 'http://taxprodesign.com/';
+const TPD_PORTFOLIO = 'https://taxprodesign.com/portfolio/';
 
 // Two-line button (big label + small note), gold or navy outline, as in the design.
 function cta2(big, small, variant, o = {}) {
@@ -69,7 +70,7 @@ function why() {
   return band(C.white, [
     stack([
       eyebrow('Why your website matters', C.goldText, 'center'),
-      H2('<span class="ctc-thin ctc-block">Before they trust you with their taxes,</span><span class="ctc-block">they check you out.</span>', C.navy, 'center', { lh: 1.05, settings: { _margin: box(12, 0, 16, 0) } }),
+      H2('<span class="ctc-thin ctc-block">First impressions</span><span class="ctc-block">win clients.</span>', C.navy, 'center', { lh: 1.05, settings: { _margin: box(12, 0, 16, 0) } }),
       text('Your website is often a client’s first impression of your business. It should make them feel they’re in good hands. We design every detail to show your professionalism, answer their questions, and give them a reason to choose you.',
         { align: 'center', size: [21, 20, 18], maxW: 820 }),
     ], { align: 'center', maxW: 1120, settings: { margin: box(0, 0, 56, 0), margin_mobile: box(0, 0, 40, 0) } }),
@@ -88,7 +89,7 @@ const WORK = [
 
 function work(m) {
   const dot = () => container({ content_width: 'full', width: px(10), height: px(10), min_height: px(10), padding: box(0), border_radius: box(50, 50, 50, 50, '%'), background_background: 'classic', background_color: C.navyLine });
-  const card = ([name, tag, img]) => linkBox(TPD, {
+  const card = ([name, tag, img]) => linkBox(TPD_PORTFOLIO, {
     content_width: 'full', flex_direction: 'column', flex_gap: gap(0), padding: box(0), min_width: px(0), overflow: 'hidden',
     background_background: 'classic', background_color: C.navy2, border_radius: box(16),
     border_border: 'solid', border_width: box(1), border_color: C.navyLine, border_hover_border: 'solid', border_hover_color: C.gold,
@@ -108,7 +109,7 @@ function work(m) {
         H2('<span class="ctc-thin">See the quality</span> for yourself.', C.white, 'left', { lh: 1.05, settings: { _margin: box(12, 0, 0, 0) } }),
         text('Explore our website designs for tax professionals.', { color: C.muted, size: [19, 19, 18], settings: { _margin: box(14, 0, 0, 0) } }),
       ], { settings: { width: auto, width_mobile: px(100, '%') } }),
-      heading('See More Websites →', 'span', [22, 22, 20], C.gold, 'left', { weight: 700, lh: 1.2, ls: 0, link: TPD, cls: 'ctc-link-gold' }),
+      heading('See More Websites →', 'span', [22, 22, 20], C.gold, 'left', { weight: 700, lh: 1.2, ls: 0, link: TPD_PORTFOLIO, cls: 'ctc-link-gold' }),
     ], { gap: 24, align: 'flex-end', justify: 'space-between', cls: 'ctc-mc', settings: { margin: box(0, 0, 44, 0), margin_mobile: box(0, 0, 32, 0) } }),
     grid(WORK.map(card), { cols: [3, 2, 1], gap: 24 }),
   ], { cls: 'ctc-dots-dark' });
