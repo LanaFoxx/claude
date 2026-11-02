@@ -65,6 +65,9 @@ $t->data = [['Hours reported to CTEC', $c['reported'] === true ? 'Yes' . ($c['re
 foreach ($c['fields'] as $f) {
     $t->data[] = [s($f['name']), s($f['value'])];
 }
+foreach ($c['reports'] ?? [] as $r) {
+    $t->data[] = ['CTEC report: ' . s($r['course']), 'CTEC course ' . s($r['coursenumber']) . ' · completed ' . $d($r['completed']) . ' · CTEC ID ' . s($r['ctecid']) . ' · ' . s($r['status']) . ' (' . $d($r['time']) . ')'];
+}
 foreach ($c['certificates'] as $ce) {
     $t->data[] = ['Certificate: ' . s($ce['name']), $d($ce['issued']) . ($ce['code'] ? ' · code ' . s($ce['code']) : '')];
 }

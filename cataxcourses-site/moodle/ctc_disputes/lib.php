@@ -20,6 +20,21 @@ function block_ctc_disputes_wp($path) {
     return is_array($json) ? $json : null;
 }
 
+/** POST to the store's CTC Disputes API. */
+function block_ctc_disputes_wp_post($path, $params) {
+    global $CFG;
+    require_once($CFG->libdir . '/filelib.php');
+    $url = rtrim((string) get_config('block_ctc_disputes', 'wpurl'), '/');
+    $token = (string) get_config('block_ctc_disputes', 'token');
+    if ($url === '' || $token === '') {
+        return null;
+    }
+    $curl = new curl(['ignoresecurity' => true]);
+    $body = $curl->post($url . '/wp-json/ctc/v1/' . $path, ['token' => $token] + $params, ['CURLOPT_TIMEOUT' => 240]);
+    $json = json_decode($body, true);
+    return is_array($json) ? $json : null;
+}
+
 /** Friendly description of a standard log entry. */
 function block_ctc_disputes_describe($log, &$cmcache) {
     $e = $log->eventname;
@@ -60,7 +75,7 @@ function block_ctc_disputes_activity($email, $limit = 60) {
         $done = $DB->get_field('course_completions', 'timecompleted', ['userid' => $user->id, 'course' => $c->id]);
         $grade = $DB->get_field_sql('SELECT gg.finalgrade FROM {grade_grades} gg JOIN {grade_items} gi ON gi.id = gg.itemid
             WHERE gi.courseid = ? AND gi.itemtype = ? AND gg.userid = ?', [$c->id, 'course', $user->id]);
-        $courses[] = ['name' => format_string($c->fullname), 'enrolled' => (int) $enrolled, 'lastaccess' => (int) $last,
+        $courses[] = ['id' => (int) $c->id, 'usage' => block_ctc_disputes_usage($user->id, $c->id, (int) $enrolled), 'name' => format_string($c->fullname), 'enrolled' => (int) $enrolled, 'lastaccess' => (int) $last,
             'completed' => (int) $done, 'grade' => $grade === false || $grade === null ? '' : format_float($grade, 1)];
     }
     $quiz = [];
@@ -81,7 +96,13 @@ function block_ctc_disputes_activity($email, $limit = 60) {
     foreach ($logs as $l) {
         $recent[] = ['time' => (int) $l->timecreated, 'what' => block_ctc_disputes_describe($l, $cmcache), 'ip' => (string) $l->ip];
     }
-    return ['found' => true, 'ctec' => block_ctc_disputes_ctec($user), 'user' => ['username' => $user->username, 'name' => fullname($user), 'timecreated' => (int) $user->timecreated,
+    $logins = $DB->get_record_sql('SELECT COUNT(1) AS n, MIN(timecreated) AS first, MAX(timecreated) AS last, COUNT(DISTINCT ip) AS ips
+        FROM {logstore_standard_log} WHERE userid = ? AND eventname = ?', [$user->id, '\\core\\event\\user_loggedin']);
+    $iplist = array_values(array_filter($DB->get_fieldset_sql('SELECT DISTINCT ip FROM {logstore_standard_log} WHERE userid = ? AND eventname = ?',
+        [$user->id, '\\core\\event\\user_loggedin'])));
+    return ['found' => true, 'logins' => ['count' => (int) $logins->n, 'first' => (int) $logins->first, 'last' => (int) $logins->last, 'ips' => (int) $logins->ips,
+        'iplist' => array_slice($iplist, 0, 50)],
+        'ctec' => block_ctc_disputes_ctec($user), 'user' => ['username' => $user->username, 'name' => fullname($user), 'timecreated' => (int) $user->timecreated,
         'firstaccess' => (int) $user->firstaccess, 'lastaccess' => (int) $user->lastaccess, 'lastip' => $user->lastip],
         'courses' => $courses, 'quiz' => $quiz, 'logcount' => $count, 'recent' => $recent];
 }
@@ -130,6 +151,34 @@ function block_ctc_disputes_ctec($user) {
         }
     }
     $dbman = $DB->get_manager();
+    // The CTEC reporting plugin (local_ctecreport): one row per course completion reported to CTEC. Authoritative.
+    $out['reports'] = [];
+    if ($dbman->table_exists('local_ctecreport_log')) {
+        $rs = $DB->get_records_sql('SELECT l.id, l.courseid, l.coursenumber, l.timecompleted, l.ctecid, l.ctecidmanual, l.status, l.httpcode,
+                l.timecreated, l.timemodified, c.fullname
+            FROM {local_ctecreport_log} l LEFT JOIN {course} c ON c.id = l.courseid WHERE l.userid = ? ORDER BY l.timecompleted DESC', [$user->id]);
+        foreach ($rs as $l) {
+            $st = strtolower((string) $l->status);
+            $ok = !preg_match('/pend|fail|error|bad|reject|invalid|skip|queue|retry|wait/', $st) &&
+                (preg_match('/report|sent|success|accept|done|ok|complete|duplicate|manual/', $st) || ((int) $l->httpcode >= 200 && (int) $l->httpcode < 300));
+            // local_ctecreport statuses: sent = added to the CTEC roster, duplicate = already on the roster, manual = staff marked it
+            // as already reported, error = CTEC did not accept it (usually a missing/invalid CTEC ID).
+            $out['reports'][] = ['course' => format_string((string) $l->fullname), 'courseid' => (int) $l->courseid, 'coursenumber' => (string) $l->coursenumber,
+                'completed' => (int) $l->timecompleted, 'ctecid' => (string) ($l->ctecidmanual ?: $l->ctecid), 'status' => (string) $l->status,
+                'reported' => $ok, 'time' => (int) ($l->timemodified ?: $l->timecreated)];
+            if ($ok && $out['reported'] !== true) {
+                $out['reported'] = true;
+                $out['reported_on'] = userdate((int) ($l->timemodified ?: $l->timecreated), '%b %d, %Y');
+                $out['how'] = 'CTEC reporting log: ' . format_string((string) $l->fullname) . ' (CTEC course ' . $l->coursenumber . '), status "' . $l->status . '"';
+            }
+            if ($out['ctecid'] === '' && ($l->ctecidmanual || $l->ctecid)) {
+                $out['ctecid'] = (string) ($l->ctecidmanual ?: $l->ctecid);
+            }
+        }
+        if ($out['reported'] === null) {
+            $out['reported'] = $out['reports'] ? false : null;
+        }
+    }
     $certs = [
         'customcert_issues' => 'SELECT i.id, c.name, i.timecreated, i.code FROM {customcert_issues} i JOIN {customcert} c ON c.id = i.customcertid WHERE i.userid = ?',
         'certificate_issues' => 'SELECT i.id, c.name, i.timecreated, i.code FROM {certificate_issues} i JOIN {certificate} c ON c.id = i.certificateid WHERE i.userid = ?',
@@ -155,4 +204,39 @@ function block_ctc_disputes_ctec($user) {
         }
     }
     return $out;
+}
+
+/**
+ * How a student used one course: activities opened by type (chapters/pages, videos, quizzes...), exam attempts with
+ * scores, and first/last activity. From the standard log and quiz attempts.
+ */
+function block_ctc_disputes_usage($userid, $courseid, $since = 0) {
+    $since = max(0, (int) $since - HOURSECS); // only what happened after enrolment (course ids are reused across years)
+    global $DB;
+    $types = ['page' => 'Lesson pages', 'book' => 'Book chapters', 'lesson' => 'Lessons', 'hvp' => 'Videos (H5P)', 'h5pactivity' => 'Videos (H5P)',
+        'url' => 'Videos / links', 'resource' => 'Files / PDFs', 'scorm' => 'SCORM lessons', 'quiz' => 'Quizzes / exams', 'customcert' => 'Certificates'];
+    $rows = $DB->get_records_sql('SELECT component, COUNT(DISTINCT contextinstanceid) AS items, COUNT(1) AS views, MIN(timecreated) AS first, MAX(timecreated) AS last
+        FROM {logstore_standard_log} WHERE userid = ? AND courseid = ? AND timecreated >= ? AND eventname LIKE ? GROUP BY component', [$userid, $courseid, $since, '%course_module_viewed']);
+    $opened = [];
+    foreach ($rows as $r) {
+        $mod = preg_replace('/^mod_/', '', $r->component);
+        $label = $types[$mod] ?? ucfirst($mod);
+        $opened[$label] = ($opened[$label] ?? 0) + (int) $r->items;
+    }
+    $chapters = $DB->count_records_select('logstore_standard_log', 'userid = ? AND courseid = ? AND timecreated >= ? AND eventname = ?', [$userid, $courseid, $since, '\\mod_book\\event\\chapter_viewed']);
+    if ($chapters) {
+        $opened['Book chapter views'] = $chapters;
+    }
+    $all = $DB->get_record_sql('SELECT COUNT(1) AS n, MIN(timecreated) AS first, MAX(timecreated) AS last FROM {logstore_standard_log} WHERE userid = ? AND courseid = ? AND timecreated >= ?', [$userid, $courseid, $since]);
+    $quiz = [];
+    if ($DB->get_manager()->table_exists('quiz_attempts')) {
+        $qs = $DB->get_records_sql('SELECT qa.id, q.name, qa.state, qa.timestart, qa.timefinish, qa.sumgrades, q.sumgrades AS maxgrades
+            FROM {quiz_attempts} qa JOIN {quiz} q ON q.id = qa.quiz WHERE qa.userid = ? AND q.course = ? AND qa.timestart >= ? ORDER BY qa.timestart', [$userid, $courseid, $since]);
+        foreach ($qs as $a) {
+            $quiz[] = ['name' => format_string($a->name), 'state' => $a->state, 'start' => (int) $a->timestart, 'finish' => (int) $a->timefinish,
+                'score' => $a->sumgrades !== null && $a->maxgrades > 0 ? round(100 * $a->sumgrades / $a->maxgrades) . '%' : ''];
+        }
+    }
+    return ['actions' => (int) $all->n, 'first' => (int) $all->first, 'last' => (int) $all->last, 'opened' => $opened, 'quiz' => $quiz,
+        'quizfinished' => count(array_filter($quiz, function ($q) { return $q['state'] === 'finished'; }))];
 }
