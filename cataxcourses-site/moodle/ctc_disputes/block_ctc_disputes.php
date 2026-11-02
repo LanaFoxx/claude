@@ -95,7 +95,9 @@ class block_ctc_disputes extends block_base {
                 '<td>' . $duecell . '</td><td>' . $ctec . '</td><td>' . $ev . '</td><td class="ctcd-right">' . $open_ . '</td></tr>';
         };
         $opened = array_values(array_filter($feed['disputes'], function ($d) use ($open) { return in_array($d['status'], $open, true); }));
-        $closed = array_values(array_filter($feed['disputes'], function ($d) use ($open) { return !in_array($d['status'], $open, true); }));
+        $pendingst = ['under_review', 'warning_under_review'];
+        $pending = array_values(array_filter($feed['disputes'], function ($d) use ($pendingst) { return in_array($d['status'], $pendingst, true); }));
+        $closed = array_values(array_filter($feed['disputes'], function ($d) use ($open, $pendingst) { return !in_array($d['status'], array_merge($open, $pendingst), true); }));
         $soon = count(array_filter($opened, function ($d) use ($now) { return $d['due_by'] && strtotime($d['due_by'] . ' UTC') - $now < 7 * DAYSECS; }));
         $won = count(array_filter($closed, function ($d) { return $d['status'] === 'won'; }));
         $lost = count(array_filter($closed, function ($d) { return $d['status'] === 'lost'; }));
@@ -159,11 +161,12 @@ class block_ctc_disputes extends block_base {
                     ['class' => 'ctcd-seg' . ($cur ? ' ctcd-seg-on' : '')]);
             }, ['auto', 'draft', 'off'])) . '</span>' .
             html_writer::link(new moodle_url('/blocks/ctc_disputes/action.php', ['act' => 'sync', 'sesskey' => sesskey()]), 'Check Stripe now') . '</div>' .
-            '<div class="ctcd-tiles">' . $tile('Open', count($opened), 'need a response') . $tile('Due within 7 days', $soon, 'evidence deadline') .
-            $tile('Waiting for review', $review, 'drafted, not auto-submitting') . $tile('Closed', count($closed), $won . ' won · ' . $lost . ' lost') . '</div>' .
+            '<div class="ctcd-tiles">' . $tile('Due within 7 days', $soon, count($opened) . ' open' . ($review ? ' · ' . $review . ' waiting for review' : '')) .
+            $tile('Pending', count($pending), 'submitted, waiting for the bank') . $tile('Won', $won, 'money returned to us') . $tile('Lost', $lost, 'decided for the customer') . '</div>' .
             $section('Needs response', 'Open disputes, nearest deadline first', count($opened), count($opened) ? 'bad' : 'muted',
                 (function ($a) { usort($a, function ($x, $y) { return strcmp((string) $x['due_by'], (string) $y['due_by']); }); return $a; })($opened), true) .
-            $section('Closed', 'Won, lost and withdrawn', count($closed), 'muted', $closed, false) . '</div>';
+            $section('Pending decision', 'Evidence submitted; the bank usually decides within 60–75 days', count($pending), 'info', $pending, true) .
+            $section('Past disputes', 'Won, lost and withdrawn', count($closed), 'muted', $closed, false) . '</div>';
         $this->content->footer = '';
         return $this->content;
     }
