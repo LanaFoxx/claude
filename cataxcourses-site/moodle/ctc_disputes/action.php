@@ -7,7 +7,10 @@ require_capability('block/ctc_disputes:view', context_system::instance());
 require_sesskey();
 $act = required_param('act', PARAM_ALPHA);
 $return = new moodle_url('/my/');
-if ($act === 'sync') {
+if ($act === 'mode') {
+    $mode = required_param('mode', PARAM_ALPHA);
+    $res = block_ctc_disputes_wp_post('disputes/mode', ['mode' => $mode]);
+} else if ($act === 'sync') {
     $res = block_ctc_disputes_wp_post('disputes/sync', ['by' => fullname($USER)]);
 } else {
     $dispute = required_param('dispute', PARAM_ALPHANUMEXT);

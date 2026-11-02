@@ -116,6 +116,9 @@ class block_ctc_disputes extends block_base {
 .ctcd{--ok:#1f7a4d;--ok-bg:#e6f4ec;--info:#1d5fa8;--info-bg:#e7f0fb;--warn:#8a5a00;--warn-bg:#fdf3dc;--bad:#b42318;--bad-bg:#fdecea;--muted:#667085;--muted-bg:#f2f4f7;--line:#e4e7ec;--ink:#1d2939;color:var(--ink);font-size:.9rem}
 .ctcd-banner{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 12px;border-radius:8px;margin-bottom:14px;background:var(--info-bg);color:var(--info);font-weight:500}
 .ctcd-banner a{color:var(--info)!important;font-weight:600;white-space:nowrap}
+.ctcd-banner{flex-wrap:wrap}.ctcd-switch{display:inline-flex;align-items:center;gap:6px;margin-left:auto;color:var(--ink);font-weight:500}
+.ctcd-seg{display:inline-block;padding:3px 10px;border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--ink)!important;font-weight:500!important;text-decoration:none!important}
+.ctcd-banner a.ctcd-seg-on{background:#1f7a4d;border-color:#1f7a4d;color:#fff!important}.ctcd-banner a.ctcd-seg{font-weight:500!important}
 .ctcd-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:14px}
 .ctcd-tile{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px}
 .ctcd-tile-label{color:var(--muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.04em}
@@ -147,7 +150,14 @@ class block_ctc_disputes extends block_base {
 .ctcd-log summary{cursor:pointer;color:var(--muted);font-size:.75rem;margin-top:4px}.ctcd-log pre{white-space:pre-wrap;font-size:.72rem;color:var(--muted);margin:4px 0 0;max-width:340px}
 </style>';
         $this->content->text = $css . '<div class="ctcd">' .
-            '<div class="ctcd-banner"><span>' . s($modes[$feed['mode'] ?? ''] ?? '') . '</span>' .
+            '<div class="ctcd-banner"><span>' . s($modes[$feed['mode'] ?? ''] ?? '') . '</span><span class="ctcd-switch">Automatic submission: ' .
+            implode('', array_map(function ($m) use ($feed) {
+                $labels = ['auto' => 'On', 'draft' => 'Off (draft only)', 'off' => 'Paused'];
+                $labels[$m] = (($feed['mode'] ?? '') === $m ? '✓ ' : '') . $labels[$m];
+                $cur = ($feed['mode'] ?? '') === $m;
+                return html_writer::link(new moodle_url('/blocks/ctc_disputes/action.php', ['act' => 'mode', 'mode' => $m, 'sesskey' => sesskey()]), $labels[$m],
+                    ['class' => 'ctcd-seg' . ($cur ? ' ctcd-seg-on' : '')]);
+            }, ['auto', 'draft', 'off'])) . '</span>' .
             html_writer::link(new moodle_url('/blocks/ctc_disputes/action.php', ['act' => 'sync', 'sesskey' => sesskey()]), 'Check Stripe now') . '</div>' .
             '<div class="ctcd-tiles">' . $tile('Open', count($opened), 'need a response') . $tile('Due within 7 days', $soon, 'evidence deadline') .
             $tile('Waiting for review', $review, 'drafted, not auto-submitting') . $tile('Closed', count($closed), $won . ' won · ' . $lost . ' lost') . '</div>' .

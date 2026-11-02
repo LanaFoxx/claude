@@ -363,6 +363,7 @@ function ctc_dp_page() {
 	$rows = $wpdb->get_results( 'SELECT dispute_id, order_id, customer, email, amount, reason, status, due_by, created, auto_state, submit_at, auto_log, moodle FROM ' . ctc_dp_table() . ' ORDER BY created DESC LIMIT 200', ARRAY_A );
 	echo '<div class="wrap"><h1>Stripe Disputes</h1>' . $msg;
 	echo '<p>New disputes are checked every hour (last check: ' . esc_html( get_option( 'ctc_dp_last_sync', 'not yet' ) ) . '). Open a packet, save it as PDF and upload it to the dispute in Stripe, then paste the form answers.</p>';
+	echo ctc_dp_mode_switch();
 	echo '<form method="post" style="margin:12px 0">'; wp_nonce_field( 'ctc_dp' ); echo '<button class="button" name="ctc_dp_sync" value="1">Check Stripe now</button></form>';
 	echo '<table class="widefat striped"><thead><tr><th>Opened</th><th>Customer</th><th>Order</th><th>Amount</th><th>Reason</th><th>Status</th><th>Evidence due</th><th>CTEC hours</th><th>Automatic</th><th></th></tr></thead><tbody>';
 	foreach ( $rows as $r ) {
@@ -492,6 +493,14 @@ add_action( 'rest_api_init', function () {
 			unset( $r['moodle'], $r['auto_log'] );
 		}
 		return array( 'disputes' => $rows, 'last_sync' => get_option( 'ctc_dp_last_sync' ), 'mode' => ctc_dp_mode() );
+	} ) );
+	register_rest_route( 'ctc/v1', '/disputes/mode', array( 'methods' => 'POST', 'permission_callback' => '__return_true', 'callback' => function ( WP_REST_Request $req ) {
+		$tok = (string) get_option( 'ctc_dp_token' );
+		if ( ! $tok || ! hash_equals( $tok, (string) $req->get_param( 'token' ) ) ) return new WP_Error( 'forbidden', 'Bad token', array( 'status' => 403 ) );
+		$mode = (string) $req->get_param( 'mode' );
+		if ( ! in_array( $mode, array( 'auto', 'draft', 'off' ), true ) ) return new WP_Error( 'invalid', 'Bad mode', array( 'status' => 400 ) );
+		update_option( 'ctc_dp_auto', $mode, false );
+		return array( 'ok' => true, 'mode' => $mode );
 	} ) );
 	register_rest_route( 'ctc/v1', '/disputes/sync', array( 'methods' => 'POST', 'permission_callback' => '__return_true', 'callback' => function ( WP_REST_Request $req ) {
 		$tok = (string) get_option( 'ctc_dp_token' );
@@ -777,7 +786,7 @@ add_action( 'admin_init', function () {
 	$id  = sanitize_text_field( wp_unslash( $_POST['dispute'] ?? '' ) );
 	$act = sanitize_key( $_POST['ctc_dp_act'] );
 	$row = $id ? ctc_dp_row( $id ) : null;
-	if ( 'mode' === $act && current_user_can( 'manage_options' ) ) {
+	if ( 'mode' === $act ) {
 		update_option( 'ctc_dp_auto', in_array( $_POST['mode'] ?? '', array( 'auto', 'draft', 'off' ), true ) ? $_POST['mode'] : 'auto', false );
 	} elseif ( $row && 'hold' === $act && 'drafted' === $row['auto_state'] ) {
 		$wpdb->update( ctc_dp_table(), array( 'auto_state' => 'held' ), array( 'dispute_id' => $id ) ); ctc_dp_log( $id, 'Held by ' . wp_get_current_user()->display_name . '.' );
@@ -911,4 +920,20 @@ function ctc_dp_ip_match( $f ) {
 	$ip = $f['ip'] ?? '';
 	$l  = (array) ( $f['moodle']['logins']['iplist'] ?? array() );
 	return $ip && ( in_array( $ip, $l, true ) || $ip === ( $f['moodle']['user']['lastip'] ?? '' ) ) ? $ip : '';
+}
+
+// On/off switch for automatic submission (top of the Disputes page).
+function ctc_dp_mode_switch() {
+	$mode = ctc_dp_mode();
+	$opt  = function ( $v, $label, $help ) use ( $mode ) {
+		$on = $v === $mode;
+		if ( $on ) return '<span title="' . esc_attr( $help ) . '" style="display:inline-block;padding:4px 12px;border-radius:4px;background:#1f7a4d;color:#fff;font-weight:600">✓ ' . esc_html( $label ) . '</span> ';
+		return '<button class="button" name="mode" value="' . $v . '" title="' . esc_attr( $help ) . '">' . esc_html( $label ) . '</button> ';
+	};
+	return '<form method="post" style="margin:14px 0;padding:12px 14px;background:#fff;border:1px solid #ddd;border-radius:8px;display:flex;flex-wrap:wrap;gap:8px;align-items:center">'
+		. wp_nonce_field( 'ctc_dp', '_wpnonce', true, false ) . '<input type="hidden" name="ctc_dp_act" value="mode"><strong style="margin-right:6px">Automatic submission:</strong>'
+		. $opt( 'auto', 'On — submit automatically', 'New disputes are drafted on Stripe and submitted 24 hours later unless someone clicks Hold.' )
+		. $opt( 'draft', 'Off — draft only', 'New disputes are drafted on Stripe; someone clicks Submit now or Resume auto-submit.' )
+		. $opt( 'off', 'Paused', 'Nothing is sent to Stripe; packets and answers only.' )
+		. '<span style="color:#666;font-size:12px">Refund-not-processed, product-unacceptable and subscription-canceled disputes always wait for review.</span></form>';
 }
