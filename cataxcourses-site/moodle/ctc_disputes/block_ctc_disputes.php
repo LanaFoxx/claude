@@ -151,7 +151,14 @@ class block_ctc_disputes extends block_base {
 .ctcd-menu a{display:block;padding:7px 10px;border-radius:6px;color:var(--ink)!important;text-decoration:none!important;font-size:.85rem}.ctcd-menu a:hover{background:#fffbea}
 .ctcd-log summary{cursor:pointer;color:var(--muted);font-size:.75rem;margin-top:4px}.ctcd-log pre{white-space:pre-wrap;font-size:.72rem;color:var(--muted);margin:4px 0 0;max-width:340px}
 </style>';
-        $this->content->text = $css . '<div class="ctcd">' .
+        // Student Tools (another plugin) keeps search results open via ?stq=…: emptying the box, Esc or "Clear" closes them.
+        $sttjs = '<script>(function(){var b=document.querySelector(".block_studenttools");if(!b)return;var f=b.querySelector("form.stt-form"),q=f&&f.querySelector("input[name=stq]");if(!q)return;'
+            . 'var res=b.querySelectorAll(".stt-results,.stt-inline-panel");'
+            . 'function clear(){res.forEach(function(r){r.style.display="none"});q.value="";var u=new URL(location.href);[...u.searchParams.keys()].filter(function(k){return /^st/.test(k)}).forEach(function(k){u.searchParams.delete(k)});history.replaceState(null,"",u.toString());if(btn)btn.remove();}'
+            . 'var btn=null;if(res.length&&q.value){btn=document.createElement("button");btn.type="button";btn.className="stt-btn";btn.textContent="Clear \u2715";btn.onclick=clear;f.appendChild(btn);}'
+            . 'q.addEventListener("input",function(){if(!q.value.trim())clear();});q.addEventListener("search",function(){if(!q.value.trim())clear();});'
+            . 'q.addEventListener("keydown",function(e){if(e.key==="Escape"){e.preventDefault();clear();}});})();</script>';
+        $this->content->text = $sttjs . $css . '<div class="ctcd">' .
             '<div class="ctcd-banner"><span>' . s($modes[$feed['mode'] ?? ''] ?? '') . '</span><span class="ctcd-switch">Automatic submission: ' .
             implode('', array_map(function ($m) use ($feed) {
                 $labels = ['auto' => 'On', 'draft' => 'Off (draft only)', 'off' => 'Paused'];
