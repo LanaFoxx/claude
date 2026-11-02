@@ -29,7 +29,8 @@ function local_ctcnav_extend_navigation(global_navigation $nav) {
             $n->showinflatnavigation = true;
             $nav->add_node($n);
         }
-        $PAGE->requires->js_init_code("document.querySelectorAll('[data-key^=\"ctcnav_\"] a, a[data-key^=\"ctcnav_\"]').forEach(function(a){a.target='_blank';a.rel='noopener';});");
+        $PAGE->requires->js_init_code("document.querySelectorAll('[data-key^=\"ctcnav_\"] a, a[data-key^=\"ctcnav_\"]').forEach(function(a){a.target='_blank';a.rel='noopener';});"
+            . "document.querySelectorAll('[data-key=\"ctcnav_book\"] .icon').forEach(function(i){i.className='icon fas fa-book fa-fw';});");
 
         // My courses: only the current courses.
         $mc = $nav->find('mycourses', navigation_node::TYPE_ROOTNODE);

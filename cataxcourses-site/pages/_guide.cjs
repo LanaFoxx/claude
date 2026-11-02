@@ -21,7 +21,7 @@ const subStep = (t) => container({
 }, [
   widget('icon', { selected_icon: { value: 'fas fa-check', library: 'fa-solid' }, view: 'stacked', shape: 'circle', primary_color: C.gold, secondary_color: C.white,
     size: px(12), icon_padding: px(7), _flex_size: 'none', _margin: box(3, 0, 0, 0), _element_width: 'auto' }),
-  text(`<strong style="font-family:${HEAD},sans-serif">${t.label}</strong> ${t.text} <a href="${t.href}"><strong>${t.linkText}</strong></a>`,
+  text(`<strong style="font-family:${HEAD},sans-serif">${t.label}</strong> ${t.text}${t.linkText ? ` <a href="${t.href}"><strong>${t.linkText}</strong></a>` : ''}`,
     { color: C.navy, linkColor: C.goldText, linkHover: C.goldHover, size: [18, 18, 17], lh: 1.55, settings: { _flex_size: 'grow' } }),
 ]);
 
@@ -66,4 +66,4 @@ const guidePage = ({ thin, bold, steps: list, ...o }) => (m) => [container({ con
   hero(thin, bold, o), steps(list), callBand(o),
 ], false)];
 
-module.exports = { guidePage };
+module.exports = { guidePage, hero, steps };

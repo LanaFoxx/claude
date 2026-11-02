@@ -10,6 +10,7 @@ const GUIDES = [
   ['04', 'Next steps', 'What To Do After Completing the 20 Hour Continuing Education Course', URL.TODO_after20],
   ['05', 'Help', 'Frequently Asked Questions', URL.faq],
   ['06', 'Updates', 'Tax News', URL.news],
+  ['07', 'Grow your business', 'How To Get a Professional Website For Your Tax Business', 'https://cataxcourses.com/how-to-get-a-professional-website-for-your-tax-business/'],
 ];
 
 // Same card as home.cjs articles(), without the description line or the 01–06 number.
