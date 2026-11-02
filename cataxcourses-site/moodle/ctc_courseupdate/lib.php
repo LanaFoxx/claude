@@ -890,3 +890,331 @@ function block_ctccu_set_links($courseid, array $urls, array $names) {
     }
     return $n;
 }
+
+/* ================================================================== course textbook (AI) */
+// Slide text (read in the browser with pdf.js) -> one Claude call per chapter (adhoc tasks, run by cron) -> TCPDF book
+// with a title page and a clickable table of contents. Saved in the block's file area; can replace the course PDF.
+
+function block_ctccu_tb_dir($courseid, $job) {
+    return make_temp_directory('block_ctc_courseupdate/tb_' . (int) $courseid . '_' . clean_param($job, PARAM_ALPHANUM));
+}
+function block_ctccu_tb_job($courseid, $job) {
+    $f = block_ctccu_tb_dir($courseid, $job) . '/job.json';
+    return is_readable($f) ? json_decode(file_get_contents($f), true) : null;
+}
+function block_ctccu_tb_save($courseid, $job, $data) {
+    file_put_contents(block_ctccu_tb_dir($courseid, $job) . '/job.json', json_encode($data));
+}
+/** "05 WSlides - UtPoIT - Dependents - General - TY2025.pdf" -> "Dependents". */
+function block_ctccu_tb_title($filename) {
+    $parts = array_map('trim', explode(' - ', preg_replace('/\.pdf$/i', '', preg_replace('/^\s*\d+\s*/', '', $filename))));
+    $parts = array_filter($parts, function ($p) {
+        return $p !== '' && !preg_match('/^(w ?slides|utpoit|general|updates|tlu|casa\d+|ctec\d+|ctec60|ctec20|ethics|ca tax)$/i', $p) && !preg_match('/^ty\s?20\d\d/i', $p);
+    });
+    return implode(' - ', $parts) ?: $filename;
+}
+
+/** Start: $chapters = [['title' => …, 'text' => slide text], …]. Queues one task per chapter. */
+function block_ctccu_tb_start($courseid, $job, array $titles) {
+    $course = get_course($courseid);
+    $year = (int) preg_replace('/^ctccu-\d+-/', '', (string) $course->idnumber) ?: (int) date('Y');
+    $data = ['course' => $course->fullname, 'year' => $year, 'created' => time(), 'chapters' => []];
+    $chapters = $titles;
+    foreach (array_values($titles) as $i => $title) {
+        $f = block_ctccu_tb_dir($courseid, $job) . "/in_$i.txt";
+        if (!is_readable($f) || filesize($f) < 50) {
+            throw new moodle_exception('No slide text was read for "' . $title . '". Try again, or check that the PDF is not a scanned image.');
+        }
+        $data['chapters'][] = ['title' => $title, 'chars' => filesize($f)];
+        $t = new \block_ctc_courseupdate\task\textbook_chapter();
+        $t->set_custom_data(['courseid' => $courseid, 'job' => $job, 'index' => $i]);
+        \core\task\manager::queue_adhoc_task($t);
+    }
+    block_ctccu_tb_save($courseid, $job, $data);
+    set_config('tbjob_' . $courseid, $job, 'block_ctc_courseupdate');
+    block_ctccu_log($courseid, 'Textbook: ' . count($chapters) . ' chapters sent to be written.');
+}
+
+/** Status of each chapter: queued | done | error (with message). */
+function block_ctccu_tb_status($courseid, $job) {
+    $dir = block_ctccu_tb_dir($courseid, $job);
+    $job = block_ctccu_tb_job($courseid, $job);
+    $out = [];
+    foreach ($job['chapters'] ?? [] as $i => $c) {
+        $st = is_readable("$dir/out_$i.md") ? 'done' : (is_readable("$dir/err_$i.txt") ? 'error' : 'queued');
+        $out[] = ['title' => $c['title'], 'status' => $st, 'error' => $st === 'error' ? file_get_contents("$dir/err_$i.txt") : ''];
+    }
+    return $out;
+}
+
+function block_ctccu_claude($system, $user, $maxtokens = 16000) {
+    global $CFG;
+    require_once($CFG->libdir . '/filelib.php');
+    $key = (string) get_config('block_ctc_courseupdate', 'anthropickey');
+    if ($key === '') {
+        throw new moodle_exception('No Anthropic API key (Site administration > Plugins > Blocks > CTC Course Update).');
+    }
+    $body = json_encode(['model' => get_config('block_ctc_courseupdate', 'model') ?: 'claude-sonnet-5-5', 'max_tokens' => $maxtokens,
+        'system' => $system, 'messages' => [['role' => 'user', 'content' => $user]]]);
+    for ($try = 1; $try <= 4; $try++) {
+        $curl = new curl(['ignoresecurity' => true]);
+        $curl->setHeader(['x-api-key: ' . $key, 'anthropic-version: 2023-06-01', 'content-type: application/json']);
+        $res = $curl->post('https://api.anthropic.com/v1/messages', $body, ['CURLOPT_TIMEOUT' => 900, 'CURLOPT_CONNECTTIMEOUT' => 30]);
+        $code = (int) ($curl->get_info()['http_code'] ?? 0);
+        $j = json_decode($res, true);
+        if ($code === 200 && !empty($j['content'])) {
+            return implode('', array_map(function ($b) { return $b['type'] === 'text' ? $b['text'] : ''; }, $j['content']));
+        }
+        if (!in_array($code, [0, 429, 500, 502, 503, 504, 529], true)) {
+            throw new moodle_exception('Claude API error ' . $code . ': ' . ($j['error']['message'] ?? substr((string) $res, 0, 300)));
+        }
+        sleep(20 * $try);
+    }
+    throw new moodle_exception('Claude API did not answer after 4 tries (last HTTP ' . $code . ').');
+}
+
+function block_ctccu_textbook_chapter($courseid, $job, $i) {
+    $dir = block_ctccu_tb_dir($courseid, $job);
+    $data = block_ctccu_tb_job($courseid, $job);
+    if (!$data || is_readable("$dir/out_$i.md")) {
+        return;
+    }
+    @unlink("$dir/err_$i.txt");
+    $ch = $data['chapters'][$i];
+    $system = "You turn a tax course's webinar slides into one chapter of the printed course textbook for California Tax Courses (CTEC-approved education). "
+        . "Use only what the slides say: keep every figure, dollar amount, percentage, threshold, date, form name and line reference exactly; never add facts, examples or numbers that are not in the slides. "
+        . "Output Markdown only, in this exact subset: first line '# ' + the chapter title; '## ' section headings; '### ' sub-headings; paragraphs; '- ' bullet lists; '1. ' numbered lists; pipe tables (header row, then '|---|' separator); **bold**. No other syntax, no preface or closing remarks.\n"
+        . "Style notes: " . (string) get_config('block_ctc_courseupdate', 'style');
+    $user = 'Course: ' . $data['course'] . "\nChapter " . ($i + 1) . ' of ' . count($data['chapters']) . ': ' . $ch['title'] . "\n\nSlides (one block per slide):\n\n" . file_get_contents("$dir/in_$i.txt");
+    try {
+        $md = block_ctccu_claude($system, $user);
+        file_put_contents("$dir/out_$i.md", $md);
+    } catch (Throwable $e) {
+        file_put_contents("$dir/err_$i.txt", $e->getMessage());
+        return;
+    }
+    // Last chapter written: build the book (once).
+    $st = block_ctccu_tb_status($courseid, $job);
+    if (!array_filter($st, function ($s) { return $s['status'] !== 'done'; }) && @fopen("$dir/assemble.queued", 'x')) {
+        $t = new \block_ctc_courseupdate\task\textbook_assemble();
+        $t->set_custom_data(['courseid' => $courseid, 'job' => $job]);
+        \core\task\manager::queue_adhoc_task($t);
+    }
+}
+/** Re-queue chapters that failed. */
+function block_ctccu_tb_retry($courseid, $job) {
+    $dir = block_ctccu_tb_dir($courseid, $job);
+    $n = 0;
+    foreach (block_ctccu_tb_status($courseid, $job) as $i => $s) {
+        if ($s['status'] === 'error') {
+            @unlink("$dir/err_$i.txt");
+            $t = new \block_ctc_courseupdate\task\textbook_chapter();
+            $t->set_custom_data(['courseid' => $courseid, 'job' => $job, 'index' => $i]);
+            \core\task\manager::queue_adhoc_task($t);
+            $n++;
+        }
+    }
+    @unlink("$dir/assemble.queued");
+    return $n;
+}
+
+/** Markdown subset -> HTML blocks: [['h1'|'h2'|'h3'|'html', text], …]. */
+function block_ctccu_md_blocks($md) {
+    $inline = function ($t) { return preg_replace(['/\*\*(.+?)\*\*/', '/(?<!\*)\*(?!\s)(.+?)\*(?!\*)/'], ['<b>$1</b>', '<i>$1</i>'], s($t)); };
+    $out = [];
+    $html = '';
+    $list = '';
+    $table = [];
+    $flushlist = function () use (&$list, &$html) { if ($list !== '') { $html .= '</' . $list . '>'; $list = ''; } };
+    $flushtable = function () use (&$table, &$html, $inline) {
+        if (!$table) { return; }
+        $h = '<table border="1" cellpadding="4" cellspacing="0" style="border-color:#c9ccd1;font-size:9pt">';
+        foreach ($table as $r => $cells) {
+            $h .= '<tr' . ($r === 0 ? ' style="background-color:#f2efe6;font-weight:bold"' : '') . '>';
+            foreach ($cells as $c) { $h .= '<td>' . $inline($c) . '</td>'; }
+            $h .= '</tr>';
+        }
+        $html .= $h . '</table><br>';
+        $table = [];
+    };
+    $flush = function ($type = null, $text = null) use (&$out, &$html, $flushlist, $flushtable) {
+        $flushlist(); $flushtable();
+        if ($html !== '') { $out[] = ['html', $html]; $html = ''; }
+        if ($type) { $out[] = [$type, $text]; }
+    };
+    foreach (preg_split('/\r?\n/', (string) $md) as $line) {
+        $t = rtrim($line);
+        if (preg_match('/^(#{1,3})\s+(.*)$/', $t, $m)) {
+            $flush('h' . strlen($m[1]), trim($m[2]));
+        } else if (preg_match('/^\s*\|(.+)\|\s*$/', $t, $m)) {
+            $flushlist();
+            $cells = array_map('trim', explode('|', $m[1]));
+            if (!preg_match('/^[\s|:-]+$/', $m[1])) { $table[] = $cells; }
+        } else if (preg_match('/^\s*[-*]\s+(.*)$/', $t, $m) || preg_match('/^\s*\d+[.)]\s+(.*)$/', $t, $m2)) {
+            $flushtable();
+            $type = isset($m2[1]) && !isset($m[1]) ? 'ol' : 'ul';
+            if ($list !== $type) { $flushlist(); $html .= '<' . $type . '>'; $list = $type; }
+            $html .= '<li>' . $inline($m[1] ?? $m2[1]) . '</li>';
+            unset($m2);
+        } else if (trim($t) === '') {
+            $flushlist(); $flushtable();
+        } else {
+            $flushlist(); $flushtable();
+            $html .= '<p>' . $inline(trim($t)) . '</p>';
+        }
+        $m = [];
+    }
+    $flush();
+    return $out;
+}
+
+function block_ctccu_textbook_assemble($courseid, $job) {
+    global $CFG;
+    require_once($CFG->libdir . '/pdflib.php');
+    core_php_time_limit::raise(1800);
+    raise_memory_limit(MEMORY_HUGE);
+    $dir = block_ctccu_tb_dir($courseid, $job);
+    $data = block_ctccu_tb_job($courseid, $job);
+    $course = get_course($courseid);
+    $pdf = new pdf('P', 'pt', 'LETTER');
+    $pdf->SetTitle($data['course'] . ' — Course Textbook');
+    $pdf->SetAuthor('California Tax Courses');
+    $pdf->setPrintHeader(false);
+    $pdf->setPrintFooter(true);
+    $pdf->SetMargins(60, 60, 60);
+    $pdf->SetAutoPageBreak(true, 60);
+    $pdf->setFooterFont(['helvetica', '', 8]);
+    // Title page.
+    $pdf->AddPage();
+    $pdf->SetFont('helvetica', 'B', 26);
+    $pdf->SetY(220);
+    $pdf->MultiCell(0, 0, $data['course'], 0, 'C');
+    $pdf->Ln(16);
+    $pdf->SetFont('helvetica', '', 16);
+    $pdf->MultiCell(0, 0, 'Course Textbook · ' . $data['year'] . ' Edition', 0, 'C');
+    $pdf->Ln(40);
+    $pdf->SetFont('helvetica', '', 11);
+    $pdf->MultiCell(0, 0, "California Tax Courses\ncataxcourses.com · help@cataxcourses.com · (888) 229-1994", 0, 'C');
+    // Chapters.
+    $css = '<style>h2{font-size:15pt;color:#1C2333}h3{font-size:12pt;color:#1C2333}p{font-size:10.5pt;line-height:1.45}li{font-size:10.5pt}</style>';
+    foreach ($data['chapters'] as $i => $ch) {
+        $blocks = block_ctccu_md_blocks(file_get_contents("$dir/out_$i.md"));
+        $title = $ch['title'];
+        if ($blocks && $blocks[0][0] === 'h1') {
+            $title = array_shift($blocks)[1];
+        }
+        $pdf->AddPage();
+        $pdf->Bookmark(($i + 1) . '. ' . $title, 0, 0);
+        $pdf->SetFont('helvetica', 'B', 20);
+        $pdf->SetTextColor(184, 144, 31);
+        $pdf->MultiCell(0, 0, 'Chapter ' . ($i + 1), 0, 'L');
+        $pdf->SetTextColor(28, 35, 51);
+        $pdf->MultiCell(0, 0, $title, 0, 'L');
+        $pdf->Ln(10);
+        $pdf->SetFont('helvetica', '', 10.5);
+        foreach ($blocks as $b) {
+            if ($b[0] === 'h2' || $b[0] === 'h1') {
+                $pdf->Bookmark($b[1], 1, -1);
+                $pdf->writeHTML($css . '<h2>' . s($b[1]) . '</h2>', true, false, true, false, '');
+            } else if ($b[0] === 'h3') {
+                $pdf->writeHTML($css . '<h3>' . s($b[1]) . '</h3>', true, false, true, false, '');
+            } else {
+                $pdf->writeHTML($css . $b[1], true, false, true, false, '');
+            }
+        }
+    }
+    // Table of contents (clickable) on page 2.
+    $pdf->addTOCPage();
+    $pdf->SetFont('helvetica', 'B', 18);
+    $pdf->MultiCell(0, 0, 'Contents', 0, 'L');
+    $pdf->Ln(10);
+    $pdf->SetFont('helvetica', '', 10.5);
+    $pdf->addTOC(2, 'helvetica', '.', 'Contents', 'B', [28, 35, 51]);
+    $pdf->endTOCPage();
+    $bytes = $pdf->Output('', 'S');
+
+    $fs = get_file_storage();
+    $ctx = context_system::instance();
+    $name = clean_filename(preg_replace('/\s*\|\s*/', ' ', $data['course']) . ' - Textbook.pdf');
+    $fs->delete_area_files($ctx->id, 'block_ctc_courseupdate', 'textbook', $courseid);
+    $fs->create_file_from_string(['contextid' => $ctx->id, 'component' => 'block_ctc_courseupdate', 'filearea' => 'textbook', 'itemid' => $courseid,
+        'filepath' => '/', 'filename' => $name], $bytes);
+    block_ctccu_log($courseid, 'Textbook built: ' . $name . ' (' . $pdf->getNumPages() . ' pages).');
+    block_ctccu_step_done($courseid, 'textbook', $pdf->getNumPages() . ' pages');
+    block_ctccu_tb_use($courseid);
+}
+
+/** Make the built textbook the PDF students download: replace the PDF file, or point the course's PDF link at it. */
+function block_ctccu_tb_use($courseid) {
+    global $DB;
+    $file = block_ctccu_tb_file($courseid);
+    if (!$file) {
+        return '';
+    }
+    if (block_ctccu_course_pdf_cm($courseid)) {
+        $tmp = make_request_directory() . '/book.pdf';
+        $file->copy_content_to($tmp);
+        block_ctccu_replace_pdf($courseid, $tmp, $file->get_filename());
+        return 'The textbook is now the course PDF students download.';
+    }
+    foreach (block_ctccu_cms($courseid, 'url') as $cm) {
+        if (preg_match('/pdf/i', $cm->name)) {
+            $url = moodle_url::make_pluginfile_url($file->get_contextid(), 'block_ctc_courseupdate', 'textbook', $courseid, '/', $file->get_filename())->out(false);
+            $DB->set_field('url', 'externalurl', $url, ['id' => $cm->instance]);
+            rebuild_course_cache($courseid, true);
+            block_ctccu_log($courseid, '"' . $cm->name . '" now opens the new textbook.');
+            block_ctccu_step_done($courseid, 'pdf', 'textbook linked');
+            return '"' . $cm->name . '" now opens the new textbook.';
+        }
+    }
+    return 'No PDF download or PDF link found in the course: add the textbook to the course by hand.';
+}
+function block_ctccu_tb_file($courseid) {
+    $files = get_file_storage()->get_area_files(context_system::instance()->id, 'block_ctc_courseupdate', 'textbook', $courseid, 'id DESC', false);
+    return $files ? reset($files) : null;
+}
+
+function block_ctc_courseupdate_pluginfile($course, $birecord, $context, $filearea, $args, $forcedownload, array $options = []) {
+    require_login();
+    if ($filearea !== 'textbook') {
+        return false;
+    }
+    $itemid = (int) array_shift($args);
+    // Admins, and students enrolled in that course (the 60 Hour "PDF Files" link points here).
+    $cctx = context_course::instance($itemid, IGNORE_MISSING);
+    if (!has_capability('block/ctc_courseupdate:manage', context_system::instance()) && (!$cctx || !is_enrolled($cctx, null, '', true))) {
+        return false;
+    }
+    $file = get_file_storage()->get_file(context_system::instance()->id, 'block_ctc_courseupdate', 'textbook', $itemid, '/', array_pop($args));
+    if (!$file) {
+        return false;
+    }
+    send_stored_file($file, 0, 0, $forcedownload, $options);
+}
+
+/** Download a share link to a file (Dropbox, Google Drive file, or any direct link). */
+function block_ctccu_fetch_link($url, $dest) {
+    global $CFG;
+    require_once($CFG->libdir . '/filelib.php');
+    $u = trim($url);
+    if (preg_match('~dropbox\.com/~', $u)) {
+        $u = preg_replace('/([?&])dl=0/', '$1dl=1', $u);
+        if (strpos($u, 'dl=1') === false) {
+            $u .= (strpos($u, '?') === false ? '?' : '&') . 'dl=1';
+        }
+    } else if (preg_match('~drive\.google\.com/drive/folders/~', $u)) {
+        throw new moodle_exception('Google Drive folder links cannot be downloaded directly. In Drive, right-click the folder > Download (it makes a .zip), then upload that zip here — or share the zip file\'s link.');
+    } else if (preg_match('~drive\.google\.com/(?:file/d/|open\?id=|uc\?.*id=)([A-Za-z0-9_-]{10,})~', $u, $m)) {
+        $u = 'https://drive.usercontent.google.com/download?id=' . $m[1] . '&export=download&confirm=t';
+    }
+    $curl = new curl(['ignoresecurity' => true]);
+    $ok = $curl->download_one($u, null, ['filepath' => $dest, 'timeout' => 600, 'followlocation' => true]);
+    if ($ok !== true || !is_readable($dest) || filesize($dest) < 100) {
+        throw new moodle_exception('Could not download that link. Make sure anyone with the link can view it.');
+    }
+    $head = file_get_contents($dest, false, null, 0, 5);
+    if (strpos($head, '%PDF') !== 0 && strpos($head, "PK") !== 0) {
+        throw new moodle_exception('That link did not give a PDF or .zip file (it may need to be shared as "anyone with the link").');
+    }
+    return strpos($head, '%PDF') === 0 ? 'pdf' : 'zip';
+}

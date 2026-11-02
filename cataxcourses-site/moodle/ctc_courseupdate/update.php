@@ -245,6 +245,8 @@ if ($preview === '') {
         '<ul class="small">' . implode('', array_map(function ($r) { return '<li>' . ($r['ok'] ? '✅ ' : '❌ ') . s($r['text']) . '</li>'; }, $rules)) . '</ul>' . $form('rules', '', 'Fix anything that is off'));
     echo $step('publish', '6. Publish', 'Makes the course visible, adds it to CTEC reporting with last year\'s CTEC course number, and points the store\'s product at it so new orders enroll here. Students already on last year\'s course stay there.',
         $course->visible ? '<p>Already published.</p>' : $form('publish', '', 'Publish ' . s($course->fullname), false, 'Publish now? New orders will enroll in this course.'));
+    echo $step('textbook', '7. Course textbook (AI)', 'Turns the new slide PDFs into the course textbook (PDF with a clickable table of contents) using Claude, for students and for Vervante to print.',
+        html_writer::link(new moodle_url('/blocks/ctc_courseupdate/textbook.php', ['id' => $id]), 'Open the textbook builder', ['class' => 'btn btn-primary']));
     $log = block_ctccu_get_log($id);
     if ($log) {
         echo '<h5>History</h5><ul class="small text-muted">' . implode('', array_map(function ($l) { return '<li>' . userdate($l[0], '%b %d, %Y %I:%M %p') . ' — ' . s($l[1]) . '</li>'; }, array_reverse($log))) . '</ul>';
