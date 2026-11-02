@@ -18,12 +18,18 @@ function local_ctcnav_extend_navigation(global_navigation $nav) {
         }
         $data = block_ctc_student_courses($uid);
         $my = function ($anchor) { return new moodle_url('/my/', null, $anchor); };
-        $book = navigation_node::create('Need to purchase a physical book?', new moodle_url('https://cataxcourses.com/book-add-ons/'),
-            navigation_node::TYPE_CUSTOM, null, 'ctcnav_book', new pix_icon('i/report', ''));
-        $book->showinflatnavigation = true;
-        $nav->add_node($book);
-        // The book link opens the store in a new tab.
-        $PAGE->requires->js_init_code("document.querySelectorAll('[data-key=\"ctcnav_book\"] a, a[data-key=\"ctcnav_book\"]').forEach(function(a){a.target='_blank';a.rel='noopener';});");
+        // Links to the store, each opening in a new tab.
+        $links = [
+            ['ctcnav_browse', 'Browse new courses to enroll in', 'https://cataxcourses.com/', 'i/course'],
+            ['ctcnav_book', 'Need to purchase a physical book?', 'https://cataxcourses.com/book-add-ons/', 'i/report'],
+            ['ctcnav_help', 'Helpful resources', 'https://cataxcourses.com/helpful-guides-and-how-tos/', 'i/info'],
+        ];
+        foreach ($links as $l) {
+            $n = navigation_node::create($l[1], new moodle_url($l[2]), navigation_node::TYPE_CUSTOM, null, $l[0], new pix_icon($l[3], ''));
+            $n->showinflatnavigation = true;
+            $nav->add_node($n);
+        }
+        $PAGE->requires->js_init_code("document.querySelectorAll('[data-key^=\"ctcnav_\"] a, a[data-key^=\"ctcnav_\"]').forEach(function(a){a.target='_blank';a.rel='noopener';});");
 
         // My courses: only the current courses.
         $mc = $nav->find('mycourses', navigation_node::TYPE_ROOTNODE);
