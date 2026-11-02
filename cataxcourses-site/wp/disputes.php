@@ -494,6 +494,21 @@ add_action( 'rest_api_init', function () {
 		}
 		return array( 'disputes' => $rows, 'last_sync' => get_option( 'ctc_dp_last_sync' ), 'mode' => ctc_dp_mode() );
 	} ) );
+	// Course Update (Moodle): new orders of a product enroll in the new year's course (Enroll Course > Courses Mapping).
+	register_rest_route( 'ctc/v1', '/course-mapping', array( 'methods' => 'POST', 'permission_callback' => '__return_true', 'callback' => function ( WP_REST_Request $req ) {
+		global $wpdb;
+		$tok = (string) get_option( 'ctc_dp_token' );
+		if ( ! $tok || ! hash_equals( $tok, (string) $req->get_param( 'token' ) ) ) return new WP_Error( 'forbidden', 'Bad token', array( 'status' => 403 ) );
+		$product = absint( $req->get_param( 'product' ) );
+		$course  = absint( $req->get_param( 'course' ) );
+		if ( ! in_array( $product, array( 48, 76 ), true ) || ! $course ) return new WP_Error( 'invalid', 'Only the 20 Hour (48) and 60 Hour (76) products', array( 'status' => 400 ) );
+		$t   = $wpdb->prefix . 'wootomoodle';
+		$old = $wpdb->get_col( $wpdb->prepare( "SELECT courseid FROM $t WHERE productid = %d", $product ) );
+		if ( ! $old ) return new WP_Error( 'notfound', 'No mapping for this product yet', array( 'status' => 404 ) );
+		$wpdb->update( $t, array( 'courseid' => $course ), array( 'productid' => $product ) );
+		update_option( 'ctc_course_mapping_log', array_slice( array_merge( (array) get_option( 'ctc_course_mapping_log', array() ), array( array( current_time( 'mysql' ), $product, implode( ',', $old ), $course ) ) ), -20 ), false );
+		return array( 'ok' => true, 'product' => $product, 'from' => $old, 'to' => $course );
+	} ) );
 	register_rest_route( 'ctc/v1', '/disputes/mode', array( 'methods' => 'POST', 'permission_callback' => '__return_true', 'callback' => function ( WP_REST_Request $req ) {
 		$tok = (string) get_option( 'ctc_dp_token' );
 		if ( ! $tok || ! hash_equals( $tok, (string) $req->get_param( 'token' ) ) ) return new WP_Error( 'forbidden', 'Bad token', array( 'status' => 403 ) );
