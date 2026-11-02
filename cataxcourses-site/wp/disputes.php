@@ -16,7 +16,7 @@ if ( ! defined( 'CTC_DISPUTE_CAP' ) ) define( 'CTC_DISPUTE_CAP', 'ctc_view_dispu
 function ctc_dp_table() { global $wpdb; return $wpdb->prefix . 'ctc_disputes'; }
 function ctc_dp_install() {
 	global $wpdb;
-	if ( get_option( 'ctc_dp_db' ) === '1' ) return;
+	if ( get_option( 'ctc_dp_db' ) === '2' ) return;
 	require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 	dbDelta( 'CREATE TABLE ' . ctc_dp_table() . " (
 		id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
@@ -33,11 +33,14 @@ function ctc_dp_install() {
 		due_by datetime NULL,
 		created datetime NULL,
 		notified datetime NULL,
+		auto_state varchar(20) NOT NULL DEFAULT '',
+		submit_at datetime NULL,
+		auto_log longtext NULL,
 		data longtext NULL,
 		PRIMARY KEY  (id),
 		UNIQUE KEY dispute_id (dispute_id)
 	) " . $wpdb->get_charset_collate() . ';' );
-	update_option( 'ctc_dp_db', '1', false );
+	update_option( 'ctc_dp_db', '2', false );
 	if ( ! get_option( 'ctc_dp_token' ) ) update_option( 'ctc_dp_token', wp_generate_password( 40, false ), false );
 	if ( ! get_role( 'ctc_dispute_agent' ) ) add_role( 'ctc_dispute_agent', 'Dispute Agent', array( 'read' => true, CTC_DISPUTE_CAP => true ) );
 	if ( $admin = get_role( 'administrator' ) ) $admin->add_cap( CTC_DISPUTE_CAP );
@@ -114,7 +117,8 @@ function ctc_dp_sync() {
 		}
 		update_option( 'ctc_dp_since_' . $acct, time() - 30 * DAY_IN_SECONDS, false ); // re-read the last 30 days for status changes
 	}
-	foreach ( $new as $id ) ctc_dp_notify( $id );
+	foreach ( $new as $id ) { ctc_dp_auto_draft( $id ); ctc_dp_notify( $id ); }
+	ctc_dp_auto_due();
 	update_option( 'ctc_dp_last_sync', current_time( 'mysql' ), false );
 	return count( $new );
 }
@@ -207,7 +211,7 @@ function ctc_dp_rebuttal( $row, $f ) {
 	$terms  = sprintf( ' At checkout the customer had to accept our Terms & Conditions (%s) and Refund Policy (%s) before paying.', $f['terms_url'], $f['refund_url'] );
 	$match  = ! empty( $f['ip'] ) ? sprintf( ' The order was placed from IP address %s%s.', $f['ip'], ! empty( $f['checks']['ZIP check'] ) ? ', and the card issuer reported the ZIP check as "' . $f['checks']['ZIP check'] . '"' : '' ) : '';
 	$hist   = ! empty( $f['history'] ) ? sprintf( ' The same customer has %d other paid order(s) with us that were not disputed.', count( $f['history'] ) ) : '';
-	$refund = ! empty( $f['refunds'] ) ? sprintf( ' A refund of %s was already issued for this order.', ctc_dp_money( $f['refunds'] ) ) : ' We did not receive a refund request from the customer before this dispute.';
+	$refund = ! empty( $f['refunds'] ) ? sprintf( ' A refund of %s was already issued for this order.', ctc_dp_money( $f['refunds'] ) ) : ' No refund has been issued for this order.';
 	switch ( $row['reason'] ) {
 		case 'fraudulent':
 		case 'unrecognized':
@@ -217,7 +221,7 @@ function ctc_dp_rebuttal( $row, $f ) {
 			$body = $intro . $access . ' The product is a digital course, so there is nothing to ship; access was provided at the time of purchase and remains available.' . $terms . $refund;
 			break;
 		case 'product_unacceptable':
-			$body = $intro . $access . ' The course is CTEC-approved and was delivered as described on the product page.' . $terms . $refund . ' Our Refund Policy explains when refunds are available, and the customer did not follow it.';
+			$body = $intro . $access . ' The course is CTEC-approved and was delivered as described on the product page.' . $terms . $refund;
 			break;
 		case 'subscription_canceled':
 			$body = $intro . ' This charge is for the Annual Auto-Renewal plan the customer chose at checkout, with clear consent to a yearly charge, reminder emails 30 and 7 days before renewal, and a one-click cancel link in every email. The plan was not canceled before this renewal.' . $access . $terms;
@@ -254,7 +258,10 @@ function ctc_dp_notify( $dispute_id ) {
 		. '<h2 style="margin:0 0 12px">New Stripe dispute: ' . esc_html( $row['customer'] ?: 'unknown customer' ) . '</h2>'
 		. '<p style="margin:0 0 16px">' . esc_html( ctc_dp_reason_label( $row['reason'] ) ) . ' · ' . esc_html( $amount ) . ( $row['order_id'] ? ' · Order #' . (int) $row['order_id'] : '' ) . '<br><strong>Evidence due: ' . esc_html( $due ) . '</strong></p>'
 		. '<p>' . $btn( ctc_dp_link( $dispute_id, 'packet' ), 'Open evidence packet' ) . $btn( ctc_dp_link( $dispute_id, 'form' ), 'Stripe form answers', false ) . '</p>'
-		. '<p style="color:#555;font-size:14px">Review the packet, save it as a PDF (Print → Save as PDF) and upload it in the Stripe dispute, then paste the form answers. Stripe accepts one submission per dispute, so check everything first.<br>'
+		. ( 'drafted' === $row['auto_state']
+			? '<p style="background:#FDF6E3;border-left:4px solid #D4A93A;padding:10px 14px">The evidence (answers + PDF documents) is already filled in on Stripe as a draft. <strong>It will be submitted automatically on ' . esc_html( ctc_dp_fmt( $row['submit_at'] ) ) . '.</strong> To stop it, click <strong>Hold</strong> on the <a href="' . esc_url( admin_url( 'admin.php?page=ctc-disputes' ) ) . '">Disputes page</a>.</p>'
+			: ( 'failed' === $row['auto_state'] ? '<p style="color:#b32d2e"><strong>Automatic evidence upload failed</strong> (see the Disputes page). Please submit it manually.</p>' : '' ) )
+		. '<p style="color:#555;font-size:14px">Review the packet and the answers before they are submitted. Stripe accepts one submission per dispute.<br>'
 		. 'Stripe: <a href="https://dashboard.stripe.com/disputes/' . esc_attr( $dispute_id ) . '">dashboard.stripe.com/disputes/' . esc_html( $dispute_id ) . '</a></p></div>';
 	wp_mail( ctc_dp_agent_emails(), sprintf( 'New dispute: %s – %s – evidence due %s', $row['customer'] ?: $dispute_id, $amount, $row['due_by'] ? wp_date( 'M j', strtotime( $row['due_by'] . ' UTC' ) ) : '' ), $html, array( 'Content-Type: text/html; charset=UTF-8' ) );
 	$wpdb->update( ctc_dp_table(), array( 'notified' => current_time( 'mysql', true ) ), array( 'dispute_id' => $dispute_id ) );
@@ -288,22 +295,28 @@ function ctc_dp_page() {
 		update_option( 'ctc_dp_notify', sanitize_text_field( wp_unslash( $_POST['ctc_dp_notify'] ) ), false );
 		$msg = '<div class="notice notice-success"><p>Saved.</p></div>';
 	}
-	$rows = $wpdb->get_results( 'SELECT dispute_id, order_id, customer, email, amount, reason, status, due_by, created FROM ' . ctc_dp_table() . ' ORDER BY created DESC LIMIT 200', ARRAY_A );
+	$rows = $wpdb->get_results( 'SELECT dispute_id, order_id, customer, email, amount, reason, status, due_by, created, auto_state, submit_at, auto_log FROM ' . ctc_dp_table() . ' ORDER BY created DESC LIMIT 200', ARRAY_A );
 	echo '<div class="wrap"><h1>Stripe Disputes</h1>' . $msg;
 	echo '<p>New disputes are checked every hour (last check: ' . esc_html( get_option( 'ctc_dp_last_sync', 'not yet' ) ) . '). Open a packet, save it as PDF and upload it to the dispute in Stripe, then paste the form answers.</p>';
 	echo '<form method="post" style="margin:12px 0">'; wp_nonce_field( 'ctc_dp' ); echo '<button class="button" name="ctc_dp_sync" value="1">Check Stripe now</button></form>';
-	echo '<table class="widefat striped"><thead><tr><th>Opened</th><th>Customer</th><th>Order</th><th>Amount</th><th>Reason</th><th>Status</th><th>Evidence due</th><th></th></tr></thead><tbody>';
+	echo '<table class="widefat striped"><thead><tr><th>Opened</th><th>Customer</th><th>Order</th><th>Amount</th><th>Reason</th><th>Status</th><th>Evidence due</th><th>Automatic</th><th></th></tr></thead><tbody>';
 	foreach ( $rows as $r ) {
 		$open = in_array( $r['status'], array( 'needs_response', 'warning_needs_response' ), true );
 		echo '<tr><td>' . esc_html( ctc_dp_fmt( $r['created'] ) ) . '</td><td><strong>' . esc_html( $r['customer'] ?: '—' ) . '</strong><br><span style="color:#666">' . esc_html( $r['email'] ) . '</span></td><td>' . ( $r['order_id'] ? '#' . (int) $r['order_id'] : '<span style="color:#b32d2e">not matched</span>' ) . '</td>'
 			. '<td>' . wp_kses_post( wc_price( $r['amount'] / 100 ) ) . '</td><td>' . esc_html( ctc_dp_reason_label( $r['reason'] ) ) . '</td><td>' . ( $open ? '<strong style="color:#b32d2e">' : '<span>' ) . esc_html( str_replace( '_', ' ', $r['status'] ) ) . ( $open ? '</strong>' : '</span>' ) . '</td>'
-			. '<td>' . esc_html( $r['due_by'] ? ctc_dp_fmt( $r['due_by'] ) : '—' ) . '</td><td><a class="button button-primary" href="' . esc_url( ctc_dp_link( $r['dispute_id'], 'packet' ) ) . '">Evidence packet</a> <a class="button" href="' . esc_url( ctc_dp_link( $r['dispute_id'], 'form' ) ) . '">Stripe form answers</a></td></tr>';
+			. '<td>' . esc_html( $r['due_by'] ? ctc_dp_fmt( $r['due_by'] ) : '—' ) . '</td><td>' . ctc_dp_auto_cell( $r ) . '</td><td><a class="button button-primary" href="' . esc_url( ctc_dp_link( $r['dispute_id'], 'packet' ) ) . '">Evidence packet</a> <a class="button" href="' . esc_url( ctc_dp_link( $r['dispute_id'], 'form' ) ) . '">Stripe form answers</a></td></tr>';
 	}
-	if ( ! $rows ) echo '<tr><td colspan="8">No disputes found yet.</td></tr>';
+	if ( ! $rows ) echo '<tr><td colspan="9">No disputes found yet.</td></tr>';
 	echo '</tbody></table>';
 	if ( current_user_can( 'manage_options' ) ) {
 		echo '<h2 style="margin-top:32px">Settings</h2><form method="post">'; wp_nonce_field( 'ctc_dp' );
 		echo '<p><label>Also email new disputes to (comma separated): <input type="text" name="ctc_dp_notify" style="width:420px" value="' . esc_attr( get_option( 'ctc_dp_notify', '' ) ) . '"></label> <button class="button">Save</button><br><span style="color:#666">Users with the <strong>Dispute Agent</strong> role are emailed automatically (Users → Add New → Role: Dispute Agent). They can only see this page.</span></p></form>';
+		$mode = ctc_dp_mode();
+		echo '<form method="post" style="margin:16px 0">'; wp_nonce_field( 'ctc_dp' );
+		echo '<input type="hidden" name="ctc_dp_act" value="mode"><label><strong>Automatic evidence:</strong> <select name="mode">'
+			. '<option value="auto"' . selected( $mode, 'auto', false ) . '>Draft on Stripe right away, submit automatically after ' . (int) ( CTC_DP_SUBMIT_AFTER / HOUR_IN_SECONDS ) . ' hours (unless held)</option>'
+			. '<option value="draft"' . selected( $mode, 'draft', false ) . '>Draft on Stripe only (someone submits)</option>'
+			. '<option value="off"' . selected( $mode, 'off', false ) . '>Off (packets and answers only)</option></select></label> <button class="button">Save</button></form>';
 		echo '<p><strong>Moodle block settings</strong> (Site administration → Plugins → Blocks → CTC Disputes): WordPress URL <code>' . esc_html( home_url( '/' ) ) . '</code> · Shared token <code>' . esc_html( get_option( 'ctc_dp_token' ) ) . '</code></p>';
 		echo '<p>Stripe accounts checked: ' . esc_html( implode( ', ', array_keys( ctc_dp_keys() ) ) ?: 'none found' ) . '</p>';
 	}
@@ -401,3 +414,299 @@ add_action( 'rest_api_init', function () {
 		return array( 'html' => ob_get_clean() );
 	} ) );
 } );
+
+/* ================================================================ automatic evidence (draft, then submit) */
+// New disputes: the answers and three PDFs (evidence packet with the Moodle sign-in/activity log, receipt, policies)
+// are uploaded to Stripe and saved on the dispute as a draft (Stripe does not send drafts to the bank). The dispute is
+// then submitted automatically at submit_at (CTC_DP_SUBMIT_AFTER after drafting, and never later than 12 hours
+// before Stripe's deadline) unless someone clicks Hold. Mode (Disputes > Settings): auto | draft | off.
+if ( ! defined( 'CTC_DP_SUBMIT_AFTER' ) ) define( 'CTC_DP_SUBMIT_AFTER', DAY_IN_SECONDS );
+function ctc_dp_mode() { return get_option( 'ctc_dp_auto', 'auto' ); }
+
+/* ---------------------------------------------------------------- tiny PDF writer (Helvetica, A4-letter, wrapped text) */
+// $blocks: [ ['h', text], ['p', text], ['kv', [[label, value], …]], ['rows', [[col1, col2], …]] ]
+function ctc_dp_pdf( $title, $blocks ) {
+	$enc  = function ( $t ) { $t = html_entity_decode( wp_strip_all_tags( (string) $t ), ENT_QUOTES, 'UTF-8' ); $c = @iconv( 'UTF-8', 'Windows-1252//TRANSLIT', $t ); return false === $c ? preg_replace( '/[^\x20-\x7E]/', '?', $t ) : $c; };
+	$esc  = function ( $t ) { return str_replace( array( '\\', '(', ')', "\r" ), array( '\\\\', '\\(', '\\)', '' ), $t ); };
+	$wrap = function ( $t, $chars ) { $out = array(); foreach ( explode( "\n", $t ) as $ln ) { $w = wordwrap( $ln, $chars, "\n", true ); foreach ( explode( "\n", $w ) as $x ) $out[] = $x; } return $out; };
+	$pages = array(); $ops = ''; $y = 0;
+	$newpage = function () use ( &$pages, &$ops, &$y ) { if ( '' !== $ops ) $pages[] = $ops; $ops = ''; $y = 742; };
+	$line = function ( $text, $font = 'F1', $size = 10, $x = 54 ) use ( &$ops, &$y, $esc, $newpage ) {
+		if ( $y < 60 ) $newpage();
+		$ops .= sprintf( "BT /%s %d Tf %d %d Td (%s) Tj ET\n", $font, $size, $x, $y, $esc( $text ) );
+		$y -= $size + 4;
+	};
+	$newpage();
+	foreach ( $wrap( $enc( $title ), 60 ) as $l ) $line( $l, 'F2', 16 );
+	$line( $enc( 'California Tax Courses · cataxcourses.com · help@cataxcourses.com · (888) 229-1994' ), 'F1', 9 );
+	$y -= 6;
+	foreach ( $blocks as $b ) {
+		switch ( $b[0] ) {
+			case 'h':
+				$y -= 8; if ( $y < 90 ) $newpage();
+				$line( $enc( $b[1] ), 'F2', 12 ); $ops .= sprintf( "0.83 0.66 0.23 RG 1 w 54 %d m 558 %d l S 0 0 0 RG\n", $y + 11, $y + 11 ); $y -= 2;
+				break;
+			case 'p':
+				foreach ( $wrap( $enc( $b[1] ), 105 ) as $l ) $line( $l ); $y -= 4;
+				break;
+			case 'kv':
+				foreach ( $b[1] as $kv ) {
+					if ( '' === (string) $kv[1] ) continue;
+					$vals = $wrap( $enc( $kv[1] ), 78 );
+					if ( $y < 60 ) $newpage();
+					$ops .= sprintf( "BT /F2 9 Tf 54 %d Td (%s) Tj ET\n", $y, $esc( $enc( $kv[0] ) ) );
+					foreach ( $vals as $i => $v ) { if ( $i ) { if ( $y < 60 ) $newpage(); } $ops .= sprintf( "BT /F1 9 Tf 200 %d Td (%s) Tj ET\n", $y, $esc( $v ) ); $y -= 13; }
+				}
+				$y -= 4;
+				break;
+			case 'rows':
+				foreach ( $b[1] as $r ) {
+					$vals = $wrap( $enc( $r[1] ), 82 );
+					if ( $y < 60 ) $newpage();
+					$ops .= sprintf( "BT /F1 8 Tf 54 %d Td (%s) Tj ET\n", $y, $esc( $enc( $r[0] ) ) );
+					foreach ( $vals as $v ) { if ( $y < 60 ) $newpage(); $ops .= sprintf( "BT /F1 8 Tf 190 %d Td (%s) Tj ET\n", $y, $esc( $v ) ); $y -= 11; }
+				}
+				$y -= 4;
+				break;
+		}
+	}
+	$pages[] = $ops;
+	// assemble: 1 catalog, 2 pages, 3 F1, 4 F2, then page + content pairs
+	$objs = array( 1 => '<< /Type /Catalog /Pages 2 0 R >>', 3 => '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>', 4 => '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>' );
+	$kids = array(); $n = 5; $total = count( $pages );
+	foreach ( $pages as $i => $content ) {
+		$content .= sprintf( "BT /F1 8 Tf 54 30 Td (%s) Tj ET\n", $esc( 'Page ' . ( $i + 1 ) . ' of ' . $total ) );
+		$objs[ $n ]     = '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents ' . ( $n + 1 ) . ' 0 R >>';
+		$objs[ $n + 1 ] = '<< /Length ' . strlen( $content ) . " >>\nstream\n" . $content . "endstream";
+		$kids[] = $n . ' 0 R'; $n += 2;
+	}
+	$objs[2] = '<< /Type /Pages /Kids [' . implode( ' ', $kids ) . '] /Count ' . $total . ' >>';
+	ksort( $objs );
+	$pdf = "%PDF-1.4\n"; $off = array();
+	foreach ( $objs as $i => $o ) { $off[ $i ] = strlen( $pdf ); $pdf .= $i . " 0 obj\n" . $o . "\nendobj\n"; }
+	$x = strlen( $pdf );
+	$pdf .= 'xref' . "\n0 " . ( count( $objs ) + 1 ) . "\n0000000000 65535 f \n";
+	foreach ( $off as $o ) $pdf .= sprintf( "%010d 00000 n \n", $o );
+	return $pdf . 'trailer << /Size ' . ( count( $objs ) + 1 ) . " /Root 1 0 R >>\nstartxref\n" . $x . "\n%%EOF";
+}
+
+/* ---------------------------------------------------------------- the three documents */
+function ctc_dp_docs( $row, $f ) {
+	$o    = $f['order'];
+	$docs = array();
+	// 1. evidence packet: summary, customer, order, payment checks, delivery + Moodle access log, history
+	$b = array( array( 'h', 'Summary' ), array( 'p', ctc_dp_rebuttal( $row, $f ) ),
+		array( 'h', 'Dispute' ), array( 'kv', array( array( 'Dispute', $row['dispute_id'] ), array( 'Reason', $f['reason'] ), array( 'Amount', $f['amount'] ), array( 'Opened', ctc_dp_fmt( $row['created'] ) ) ) ),
+		array( 'h', 'Customer' ), array( 'kv', array( array( 'Name', $f['name'] ), array( 'Email', $f['email'] ), array( 'Phone', $f['phone'] ?? '' ), array( 'Billing address', $f['address'] ?? '' ), array( 'Shipping address', $f['shipping'] ?? '' ) ) ) );
+	if ( $o ) $b = array_merge( $b, array( array( 'h', 'Order #' . $o->get_order_number() ), array( 'kv', array(
+		array( 'Date paid', ctc_dp_fmt( $f['paid'] ) ), array( 'Items', implode( "\n", $f['items'] ) ), array( 'Total', ctc_dp_money( $o->get_total(), $o->get_currency() ) ),
+		array( 'Payment method', $o->get_payment_method_title() ), array( 'Refunded', $f['refunds'] ? ctc_dp_money( $f['refunds'] ) : 'No refund requested or issued' ),
+		array( 'Checkout IP address', $f['ip'] ), array( 'Device / browser', $f['ua'] ) ) ) ) );
+	if ( $f['checks'] ) $b = array_merge( $b, array( array( 'h', 'Payment verification (from Stripe)' ), array( 'kv', array_map( null, array_keys( $f['checks'] ), array_values( $f['checks'] ) ) ) ) );
+	$b[] = array( 'h', 'Delivery: course access' );
+	$b[] = array( 'p', 'Online course delivered on learn.cataxcourses.com. The student is enrolled automatically when payment completes and receives login details by email; access does not expire.' );
+	if ( ! empty( $f['notes'] ) ) $b[] = array( 'rows', array_map( function ( $n ) { $p = explode( ' — ', $n, 2 ); return array( $p[0], $p[1] ?? '' ); }, $f['notes'] ) );
+	if ( $m = $f['moodle'] ) {
+		$b[] = array( 'h', 'Course sign-ins and activity (learn.cataxcourses.com, timestamps ' . wp_timezone_string() . ')' );
+		$b[] = array( 'kv', array( array( 'Username', $m['user']['username'] ?? '' ), array( 'Account created', ctc_dp_fmt( $m['user']['timecreated'] ?? 0 ) ), array( 'First sign-in', ctc_dp_fmt( $m['user']['firstaccess'] ?? 0 ) ),
+			array( 'Last sign-in', ctc_dp_fmt( $m['user']['lastaccess'] ?? 0 ) ), array( 'Last sign-in IP', $m['user']['lastip'] ?? '' ), array( 'Recorded course actions', (string) ( $m['logcount'] ?? '' ) ) ) );
+		foreach ( (array) ( $m['courses'] ?? array() ) as $c ) $b[] = array( 'kv', array( array( 'Course', $c['name'] ), array( 'Enrolled', ctc_dp_fmt( $c['enrolled'] ?? 0 ) ), array( 'Last opened', ctc_dp_fmt( $c['lastaccess'] ?? 0 ) ), array( 'Completed', ! empty( $c['completed'] ) ? ctc_dp_fmt( $c['completed'] ) : '' ), array( 'Grade', $c['grade'] ?? '' ) ) );
+		if ( ! empty( $m['quiz'] ) ) { $b[] = array( 'h', 'Exam attempts' ); $b[] = array( 'rows', array_map( function ( $q ) { return array( ctc_dp_fmt( $q['start'] ), $q['name'] . ' — ' . $q['state'] . ( '' !== $q['score'] ? ', score ' . $q['score'] : '' ) ); }, $m['quiz'] ) ); }
+		if ( ! empty( $m['recent'] ) ) { $b[] = array( 'h', 'Activity log (most recent first)' ); $b[] = array( 'rows', array_map( function ( $l ) { return array( ctc_dp_fmt( $l['time'] ), $l['what'] . ( ! empty( $l['ip'] ) ? ' (IP ' . $l['ip'] . ')' : '' ) ); }, array_slice( $m['recent'], 0, 60 ) ) ); }
+	}
+	if ( ! empty( $f['history'] ) ) { $b[] = array( 'h', 'Other orders by this customer (not disputed)' ); $b[] = array( 'p', implode( "\n", $f['history'] ) ); }
+	$docs['service_documentation'] = array( 'evidence-' . $row['dispute_id'] . '.pdf', ctc_dp_pdf( 'Dispute evidence — ' . $f['name'], $b ) );
+	// 2. receipt
+	if ( $o ) {
+		$docs['receipt'] = array( 'receipt-' . $o->get_order_number() . '.pdf', ctc_dp_pdf( 'Receipt — order #' . $o->get_order_number(), array(
+			array( 'kv', array( array( 'Order', '#' . $o->get_order_number() ), array( 'Date', ctc_dp_fmt( $f['paid'] ) ), array( 'Customer', $f['name'] ), array( 'Email', $f['email'] ), array( 'Billing address', $f['address'] ) ) ),
+			array( 'h', 'Items' ), array( 'p', implode( "\n", $f['items'] ) ),
+			array( 'kv', array( array( 'Subtotal', ctc_dp_money( $o->get_subtotal(), $o->get_currency() ) ), array( 'Discount', $o->get_total_discount() ? '-' . ctc_dp_money( $o->get_total_discount(), $o->get_currency() ) : '' ), array( 'Shipping', $o->get_shipping_total() > 0 ? ctc_dp_money( $o->get_shipping_total(), $o->get_currency() ) : '' ), array( 'Tax', $o->get_total_tax() > 0 ? ctc_dp_money( $o->get_total_tax(), $o->get_currency() ) : '' ), array( 'Total paid', ctc_dp_money( $o->get_total(), $o->get_currency() ) ), array( 'Payment method', $o->get_payment_method_title() . ( ! empty( $f['checks']['Card'] ) ? ' (' . $f['checks']['Card'] . ')' : '' ) ) ) ),
+		) ) );
+	}
+	// 3. policies the customer accepted (current text of the Terms and Refund Policy pages)
+	$pol = array( array( 'p', 'At checkout the customer must tick "I have read and agree to the website Terms & Conditions" before the order can be placed.' ) );
+	foreach ( array( 'Refund Policy' => $f['refund_url'], 'Terms & Conditions' => $f['terms_url'] ) as $label => $url ) {
+		$pid  = url_to_postid( $url );
+		$html = $pid && class_exists( '\Elementor\Plugin' ) ? \Elementor\Plugin::instance()->frontend->get_builder_content_for_display( $pid ) : '';
+		if ( ! $html && $pid ) $html = get_post_field( 'post_content', $pid );
+		$text = wp_strip_all_tags( preg_replace( '#<(style|script)[^>]*>.*?</\1>#s', '', str_replace( array( '</p>', '<br>', '</li>', '</h2>', '</h3>' ), "\n", (string) $html ) ) );
+		$text = trim( preg_replace( "/\n{3,}/", "\n\n", implode( "\n", array_map( 'trim', explode( "\n", html_entity_decode( $text, ENT_QUOTES, 'UTF-8' ) ) ) ) ) );
+		$pol[] = array( 'h', $label . ' (' . $url . ')' );
+		$pol[] = array( 'p', $text ? mb_substr( $text, 0, 12000 ) : $url );
+	}
+	$docs['refund_policy'] = array( 'policies.pdf', ctc_dp_pdf( 'Refund Policy and Terms accepted at checkout', $pol ) );
+	return $docs;
+}
+
+/* ---------------------------------------------------------------- Stripe evidence fields */
+function ctc_dp_evidence( $row, $f ) {
+	$o  = $f['order'];
+	$ev = array(
+		'customer_name' => $f['name'], 'customer_email_address' => $f['email'], 'billing_address' => $f['address'] ?? '',
+		'customer_purchase_ip' => $f['ip'] ?? '',
+		'product_description' => ( $o ? implode( "\n", $f['items'] ) . "\n" : '' ) . 'Online CTEC-approved tax education course (video lessons, PDF, online exams), delivered on learn.cataxcourses.com.',
+		'service_date' => ! empty( $f['paid'] ) ? wp_date( 'Y-m-d', $f['paid'] ) : '',
+		'access_activity_log' => $f['moodle'] ? ctc_dp_activity_text( $f['moodle'] ) : 'Student enrolled on learn.cataxcourses.com automatically at purchase; login details emailed (order notes in the attached evidence).',
+		'refund_policy_disclosure' => 'Shown at checkout; the customer must tick "I have read and agree to the Terms & Conditions" before paying. Refund Policy: ' . $f['refund_url'],
+		'cancellation_policy_disclosure' => 'Terms & Conditions: ' . $f['terms_url'] . ( 'subscription_canceled' === $row['reason'] ? "\nAuto-renewal consent box at checkout; reminders 30 and 7 days before renewal; one-click cancel link in every email." : '' ),
+		'uncategorized_text' => ctc_dp_rebuttal( $row, $f ),
+	);
+	if ( 'credit_not_processed' === $row['reason'] && ! empty( $f['refunds'] ) ) $ev['refund_refusal_explanation'] = 'A refund of ' . ctc_dp_money( $f['refunds'] ) . ' was issued.';
+	if ( 'subscription_canceled' === $row['reason'] ) $ev['cancellation_rebuttal'] = 'The auto-renewal was not canceled before this charge. The customer opted in at checkout, received reminder emails 30 and 7 days before renewal, and every email has a one-click cancel link.';
+	if ( 'duplicate' === $row['reason'] ) $ev['duplicate_charge_explanation'] = 'This charge is for a single order; any other charges are separate orders for separate products.';
+	return array_filter( $ev, function ( $v ) { return '' !== (string) $v; } );
+}
+
+function ctc_dp_stripe_post( $key, $path, $fields ) {
+	$r = wp_remote_post( 'https://api.stripe.com/v1/' . $path, array( 'timeout' => 60, 'headers' => array( 'Authorization' => 'Bearer ' . $key ), 'body' => http_build_query( $fields ) ) );
+	if ( is_wp_error( $r ) ) return array( 'error' => array( 'message' => $r->get_error_message() ) );
+	return json_decode( wp_remote_retrieve_body( $r ), true ) ?: array( 'error' => array( 'message' => 'HTTP ' . wp_remote_retrieve_response_code( $r ) ) );
+}
+function ctc_dp_stripe_file( $key, $name, $bytes ) {
+	$bd   = 'ctc' . wp_generate_password( 16, false );
+	$body = "--$bd\r\nContent-Disposition: form-data; name=\"purpose\"\r\n\r\ndispute_evidence\r\n"
+		. "--$bd\r\nContent-Disposition: form-data; name=\"file\"; filename=\"$name\"\r\nContent-Type: application/pdf\r\n\r\n$bytes\r\n--$bd--\r\n";
+	$r = wp_remote_post( 'https://files.stripe.com/v1/files', array( 'timeout' => 90, 'headers' => array( 'Authorization' => 'Bearer ' . $key, 'Content-Type' => 'multipart/form-data; boundary=' . $bd ), 'body' => $body ) );
+	$j = is_wp_error( $r ) ? null : json_decode( wp_remote_retrieve_body( $r ), true );
+	return $j && ! empty( $j['id'] ) ? $j['id'] : new WP_Error( 'upload', $j['error']['message'] ?? ( is_wp_error( $r ) ? $r->get_error_message() : 'upload failed' ) );
+}
+function ctc_dp_log( $dispute_id, $msg ) {
+	global $wpdb;
+	$log = (string) $wpdb->get_var( $wpdb->prepare( 'SELECT auto_log FROM ' . ctc_dp_table() . ' WHERE dispute_id = %s', $dispute_id ) );
+	$wpdb->update( ctc_dp_table(), array( 'auto_log' => trim( $log . "\n" . current_time( 'M j g:i a' ) . ' — ' . $msg ) ), array( 'dispute_id' => $dispute_id ) );
+}
+
+// Upload the documents and save the evidence on Stripe. $submit = true sends it to the bank (final).
+function ctc_dp_push( $dispute_id, $submit ) {
+	global $wpdb;
+	$row = ctc_dp_row( $dispute_id );
+	$key = ctc_dp_keys()[ $row['account'] ?? '' ] ?? '';
+	if ( ! $row || ! $key ) return new WP_Error( 'nokey', 'No Stripe key for this dispute' );
+	$live = ctc_dp_stripe( $key, 'disputes/' . $dispute_id );
+	if ( ! $live || ! in_array( $live['status'], array( 'needs_response', 'warning_needs_response' ), true ) ) {
+		$wpdb->update( ctc_dp_table(), array( 'auto_state' => 'closed', 'status' => $live['status'] ?? $row['status'] ), array( 'dispute_id' => $dispute_id ) );
+		return new WP_Error( 'closed', 'Dispute no longer accepts evidence (' . ( $live['status'] ?? 'unknown' ) . ')' );
+	}
+	$f      = ctc_dp_facts( $row );
+	$fields = array( 'evidence' => ctc_dp_evidence( $row, $f ) );
+	foreach ( ctc_dp_docs( $row, $f ) as $field => $doc ) {
+		$id = ctc_dp_stripe_file( $key, $doc[0], $doc[1] );
+		if ( is_wp_error( $id ) ) return $id;
+		$fields['evidence'][ $field ] = $id;
+	}
+	$fields['submit']   = $submit ? 'true' : 'false';
+	$fields['metadata'] = array( 'ctc_evidence' => $submit ? 'submitted' : 'draft' );
+	$res = ctc_dp_stripe_post( $key, 'disputes/' . $dispute_id, $fields );
+	if ( ! empty( $res['error'] ) ) return new WP_Error( 'stripe', $res['error']['message'] ?? 'Stripe error' );
+	return $res;
+}
+
+function ctc_dp_submit_time( $row ) {
+	$t   = time() + CTC_DP_SUBMIT_AFTER;
+	$due = $row['due_by'] ? strtotime( $row['due_by'] . ' UTC' ) - 12 * HOUR_IN_SECONDS : 0;
+	return gmdate( 'Y-m-d H:i:s', $due ? max( time() + HOUR_IN_SECONDS, min( $t, $due ) ) : $t );
+}
+function ctc_dp_auto_draft( $dispute_id ) {
+	global $wpdb;
+	$row = ctc_dp_row( $dispute_id );
+	if ( ! $row || 'off' === ctc_dp_mode() || ! in_array( $row['status'], array( 'needs_response', 'warning_needs_response' ), true ) ) return;
+	$res = ctc_dp_push( $dispute_id, false );
+	if ( is_wp_error( $res ) ) { $wpdb->update( ctc_dp_table(), array( 'auto_state' => 'closed' === $res->get_error_code() ? 'closed' : 'failed' ), array( 'dispute_id' => $dispute_id ) ); ctc_dp_log( $dispute_id, 'Draft failed: ' . $res->get_error_message() ); return; }
+	$review = in_array( $row['reason'], array( 'credit_not_processed', 'product_unacceptable', 'subscription_canceled' ), true ); // depends on emails with the customer: a person decides
+	$auto   = 'auto' === ctc_dp_mode() && ! $review;
+	if ( $review ) ctc_dp_log( $dispute_id, 'Not auto-submitted: this reason depends on emails with the customer (refund request?). Check the inbox, add anything relevant in Stripe, then click Submit now or Resume auto-submit.' );
+	$wpdb->update( ctc_dp_table(), array( 'auto_state' => $auto ? 'drafted' : 'draft_only', 'submit_at' => $auto ? ctc_dp_submit_time( $row ) : null ), array( 'dispute_id' => $dispute_id ) );
+	ctc_dp_log( $dispute_id, 'Evidence saved on Stripe as a draft' . ( $auto ? '; auto-submit ' . ctc_dp_fmt( ctc_dp_submit_time( $row ) ) : '' ) . '.' );
+}
+function ctc_dp_auto_submit( $dispute_id ) {
+	global $wpdb;
+	$res = ctc_dp_push( $dispute_id, true ); // rebuilt at submit time, so newer Moodle activity is included
+	if ( is_wp_error( $res ) ) {
+		$wpdb->update( ctc_dp_table(), array( 'auto_state' => 'closed' === $res->get_error_code() ? 'closed' : 'failed' ), array( 'dispute_id' => $dispute_id ) );
+		ctc_dp_log( $dispute_id, 'Submit failed: ' . $res->get_error_message() );
+		if ( 'closed' !== $res->get_error_code() ) wp_mail( ctc_dp_agent_emails(), 'Dispute evidence NOT submitted: ' . $dispute_id, "Automatic submission failed (" . $res->get_error_message() . ").\nPlease submit it manually: " . ctc_dp_link( $dispute_id, 'form' ) . "\nStripe: https://dashboard.stripe.com/disputes/" . $dispute_id );
+		return;
+	}
+	$wpdb->update( ctc_dp_table(), array( 'auto_state' => 'submitted', 'status' => $res['status'] ?? 'under_review' ), array( 'dispute_id' => $dispute_id ) );
+	ctc_dp_log( $dispute_id, 'Evidence submitted to Stripe.' );
+	$row = ctc_dp_row( $dispute_id );
+	if ( $row['order_id'] && ( $o = wc_get_order( $row['order_id'] ) ) ) $o->add_order_note( 'Dispute ' . $dispute_id . ': evidence submitted to Stripe automatically.' );
+}
+// Due auto-submits (run with every hourly sync).
+function ctc_dp_auto_due() {
+	global $wpdb;
+	if ( 'auto' !== ctc_dp_mode() ) return;
+	foreach ( $wpdb->get_col( $wpdb->prepare( 'SELECT dispute_id FROM ' . ctc_dp_table() . " WHERE auto_state = 'drafted' AND submit_at <= %s", current_time( 'mysql', true ) ) ) as $id ) ctc_dp_auto_submit( $id );
+}
+
+/* ---------------------------------------------------------------- controls on the Disputes page */
+add_action( 'admin_init', function () {
+	global $wpdb;
+	if ( empty( $_POST['ctc_dp_act'] ) || ! current_user_can( CTC_DISPUTE_CAP ) || ! check_admin_referer( 'ctc_dp' ) ) return;
+	$id  = sanitize_text_field( wp_unslash( $_POST['dispute'] ?? '' ) );
+	$act = sanitize_key( $_POST['ctc_dp_act'] );
+	$row = $id ? ctc_dp_row( $id ) : null;
+	if ( 'mode' === $act && current_user_can( 'manage_options' ) ) {
+		update_option( 'ctc_dp_auto', in_array( $_POST['mode'] ?? '', array( 'auto', 'draft', 'off' ), true ) ? $_POST['mode'] : 'auto', false );
+	} elseif ( $row && 'hold' === $act && 'drafted' === $row['auto_state'] ) {
+		$wpdb->update( ctc_dp_table(), array( 'auto_state' => 'held' ), array( 'dispute_id' => $id ) ); ctc_dp_log( $id, 'Held by ' . wp_get_current_user()->display_name . '.' );
+	} elseif ( $row && 'resume' === $act && in_array( $row['auto_state'], array( 'held', 'draft_only' ), true ) ) {
+		$wpdb->update( ctc_dp_table(), array( 'auto_state' => 'drafted', 'submit_at' => ctc_dp_submit_time( $row ) ), array( 'dispute_id' => $id ) ); ctc_dp_log( $id, 'Auto-submit resumed by ' . wp_get_current_user()->display_name . '.' );
+	} elseif ( $row && 'draft' === $act ) {
+		ctc_dp_auto_draft( $id );
+	} elseif ( $row && 'submit' === $act && ! in_array( $row['auto_state'], array( 'submitted', 'closed' ), true ) ) {
+		ctc_dp_log( $id, 'Submit now clicked by ' . wp_get_current_user()->display_name . '.' ); ctc_dp_auto_submit( $id );
+	}
+	wp_safe_redirect( admin_url( 'admin.php?page=ctc-disputes' ) );
+	exit;
+} );
+// Draft the disputes that are open but were stored before automation existed (runs once per dispute).
+function ctc_dp_backfill() {
+	global $wpdb;
+	if ( 'off' === ctc_dp_mode() ) return;
+	foreach ( $wpdb->get_col( 'SELECT dispute_id FROM ' . ctc_dp_table() . " WHERE auto_state = '' AND status IN ('needs_response','warning_needs_response')" ) as $id ) ctc_dp_auto_draft( $id );
+}
+add_action( 'ctc_dp_sync', 'ctc_dp_backfill', 20 );
+// Admin: what Stripe currently holds for a dispute (evidence fields filled, files attached, submitted or not).
+add_action( 'admin_init', function () {
+	if ( empty( $_GET['ctc_dp_stripe'] ) || ! current_user_can( 'manage_options' ) ) return;
+	$row = ctc_dp_row( sanitize_text_field( wp_unslash( $_GET['dispute'] ?? '' ) ) );
+	$key = $row ? ( ctc_dp_keys()[ $row['account'] ] ?? '' ) : '';
+	$d   = $key ? ctc_dp_stripe( $key, 'disputes/' . $row['dispute_id'] ) : null;
+	if ( ! $d ) wp_die( 'Not found' );
+	wp_send_json( array( 'status' => $d['status'], 'submission_count' => $d['evidence_details']['submission_count'] ?? null, 'has_evidence' => $d['evidence_details']['has_evidence'] ?? null,
+		'filled' => array_keys( array_filter( (array) $d['evidence'] ) ), 'metadata' => $d['metadata'] ?? array() ) );
+} );
+// Admin: download the generated PDFs (to check what Stripe receives).
+add_action( 'admin_init', function () {
+	if ( empty( $_GET['ctc_dp_pdf'] ) || ! current_user_can( CTC_DISPUTE_CAP ) ) return;
+	$row = ctc_dp_row( sanitize_text_field( wp_unslash( $_GET['dispute'] ?? '' ) ) );
+	if ( ! $row ) wp_die( 'Not found' );
+	$docs = ctc_dp_docs( $row, ctc_dp_facts( $row ) );
+	$doc  = $docs[ sanitize_key( $_GET['ctc_dp_pdf'] ) ] ?? reset( $docs );
+	header( 'Content-Type: application/pdf' );
+	header( 'Content-Disposition: inline; filename=' . $doc[0] );
+	echo $doc[1];
+	exit;
+} );
+
+function ctc_dp_auto_cell( $r ) {
+	$labels = array( '' => '—', 'drafted' => 'Drafted on Stripe · submits ' . ( $r['submit_at'] ? ctc_dp_fmt( $r['submit_at'] ) : '' ), 'draft_only' => 'Drafted on Stripe (not auto-submitting)',
+		'held' => '<strong>Held</strong> (drafted on Stripe)', 'submitted' => '<span style="color:#1a7f37">✓ Submitted</span>', 'failed' => '<span style="color:#b32d2e">Failed – submit manually</span>', 'closed' => 'Closed' );
+	$btn = function ( $act, $label, $confirm = '' ) use ( $r ) {
+		return '<form method="post" style="display:inline"' . ( $confirm ? ' onsubmit="return confirm(\'' . esc_js( $confirm ) . '\')"' : '' ) . '>' . wp_nonce_field( 'ctc_dp', '_wpnonce', true, false )
+			. '<input type="hidden" name="dispute" value="' . esc_attr( $r['dispute_id'] ) . '"><button class="button button-small" name="ctc_dp_act" value="' . $act . '">' . $label . '</button></form> ';
+	};
+	$out  = wp_kses_post( $labels[ $r['auto_state'] ] ?? esc_html( $r['auto_state'] ) ) . '<br>';
+	$open = in_array( $r['status'], array( 'needs_response', 'warning_needs_response' ), true );
+	if ( $open ) {
+		if ( 'drafted' === $r['auto_state'] ) $out .= $btn( 'hold', 'Hold' );
+		if ( in_array( $r['auto_state'], array( 'held', 'draft_only' ), true ) ) $out .= $btn( 'resume', 'Resume auto-submit' );
+		if ( in_array( $r['auto_state'], array( '', 'failed' ), true ) ) $out .= $btn( 'draft', 'Draft on Stripe' );
+		if ( ! in_array( $r['auto_state'], array( 'submitted', 'closed' ), true ) ) $out .= $btn( 'submit', 'Submit now', 'Submit this evidence to Stripe now? This is final.' );
+	}
+	$out .= '<br><a href="' . esc_url( admin_url( 'admin.php?ctc_dp_pdf=service_documentation&dispute=' . rawurlencode( $r['dispute_id'] ) ) ) . '" target="_blank">Evidence PDF</a> · <a href="' . esc_url( admin_url( 'admin.php?ctc_dp_pdf=receipt&dispute=' . rawurlencode( $r['dispute_id'] ) ) ) . '" target="_blank">Receipt</a> · <a href="' . esc_url( admin_url( 'admin.php?ctc_dp_pdf=refund_policy&dispute=' . rawurlencode( $r['dispute_id'] ) ) ) . '" target="_blank">Policies</a>';
+	if ( $r['auto_log'] ) $out .= '<details><summary style="cursor:pointer;color:#666">Log</summary><pre style="white-space:pre-wrap;font-size:11px">' . esc_html( $r['auto_log'] ) . '</pre></details>';
+	return $out;
+}
