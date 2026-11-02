@@ -28,7 +28,7 @@ class block_ctc_courseupdate extends block_base {
             $draft = $st['draft'];
             $cell = $live ? html_writer::link(new moodle_url('/course/view.php', ['id' => $live->id]), s($live->fullname)) . html_writer::div('Course ' . $live->id . ' · students are enrolled here', 'ctccu-sub') : '<span class="ctccu-sub">none found</span>';
             if ($draft) {
-                $done = count(array_filter(['pdf', 'links', 'timestamps', 'quizzes'], function ($s) use ($draft) { return block_ctccu_step($draft->id, $s); }));
+                $done = count(array_filter(['textbook', 'links', 'timestamps', 'quizzes'], function ($s) use ($draft) { return block_ctccu_step($draft->id, $s); }));
                 $next = html_writer::link(new moodle_url('/blocks/ctc_courseupdate/update.php', ['id' => $draft->id]), 'Continue ' . $draft->year . ' update', ['class' => 'ctccu-btn ctccu-btn-primary'])
                     . html_writer::div(s($draft->fullname) . ' · hidden · ' . $done . ' of 4 imports done', 'ctccu-sub');
             } else if ($live) {

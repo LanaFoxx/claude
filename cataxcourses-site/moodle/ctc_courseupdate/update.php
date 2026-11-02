@@ -47,16 +47,6 @@ try {
     }
     switch ($action) {
         /* ---------------- course PDF */
-        case 'pdf':
-            $files = block_ctccu_uploaded('pdf', ['pdf']);
-            if (!$files) {
-                throw new moodle_exception('Choose a PDF file.');
-            }
-            reset($files);
-            $name = key($files);
-            block_ctccu_replace_pdf($id, $files[$name], $name);
-            $msg = $ok('Course PDF replaced with ' . s($name) . '.');
-            break;
 
         case 'urls':
             $n = block_ctccu_set_links($id, optional_param_array('url', [], PARAM_RAW_TRIMMED), optional_param_array('urlname', [], PARAM_TEXT));
@@ -225,18 +215,9 @@ echo html_writer::div(($course->visible ? '<span class="badge badge-success">Vis
     . html_writer::link(new moodle_url('/my/'), 'Dashboard'), 'mb-3');
 echo $msg . $preview;
 if ($preview === '') {
-    $pdfbody = block_ctccu_course_pdf_cm($id) ? $form('pdf', '<input type="file" name="pdf" accept=".pdf" required>', 'Upload PDF', true) : '';
     $urlcms = block_ctccu_cms($id, 'url');
-    if ($urlcms) {
-        $rowsu = '';
-        foreach ($urlcms as $cm) {
-            $u = $DB->get_record('url', ['id' => $cm->instance]);
-            $rowsu .= '<tr><td><input type="text" class="form-control" name="urlname[' . $cm->id . ']" value="' . s($u->name) . '"></td><td><input type="url" class="form-control" name="url[' . $cm->id . ']" value="' . s($u->externalurl) . '"></td></tr>';
-        }
-        $pdfbody .= '<p class="small mt-3 mb-1">Links in the course (for example the PDF download link or the errata). Paste the new address where it changed:</p>'
-            . $form('urls', '<table class="table table-sm"><thead><tr><th>Name students see</th><th>Link</th></tr></thead><tbody>' . $rowsu . '</tbody></table>', 'Save links');
-    }
-    echo $step('pdf', '1. Course PDF', 'Replaces the course PDF students download — an uploaded file, or the link to it.', $pdfbody ?: '<p class="small">No PDF download or link found in this course.</p>');
+    echo $step('textbook', '1. Course PDF (textbook)', 'Upload this year\'s webinar slides. Claude updates last year\'s course PDF (already in Moodle) with the new slides and the new year, and the result automatically becomes the PDF students download. You can download it there to send to Vervante.',
+        html_writer::link(new moodle_url('/blocks/ctc_courseupdate/textbook.php', ['id' => $id]), 'Open the textbook builder', ['class' => 'btn btn-primary']));
     echo $step('links', '2. YouTube video links', 'The "Course YouTube Links" sheet. Every video gets its new link; the Federal Tax Law Updates chapters also get their new titles (you can edit them in the preview).', $form('links_preview', '<input type="file" name="links" accept=".xlsx,.xls" required>', 'Preview', true));
     echo $step('timestamps', '3. Video questions (H5P timestamps)', 'The "Timestamps Quizzes" files — select them all or upload the .zip. Do this after step 2 so the new chapter titles match.', $form('ts_preview', '<input type="file" name="ts[]" accept=".xlsx,.xls,.zip" multiple required>', 'Preview', true));
     echo $step('quizzes', '4. Quiz / exam questions', 'The "Final Quizzes" files (20 Hour) or the "Final Examination Questions and Answers" workbook (60 Hour). Select them all or upload the .zip.', $form('quiz_preview', '<input type="file" name="quiz[]" accept=".xlsx,.xls,.zip" multiple required>', 'Preview', true));
@@ -245,8 +226,15 @@ if ($preview === '') {
         '<ul class="small">' . implode('', array_map(function ($r) { return '<li>' . ($r['ok'] ? '✅ ' : '❌ ') . s($r['text']) . '</li>'; }, $rules)) . '</ul>' . $form('rules', '', 'Fix anything that is off'));
     echo $step('publish', '6. Publish', 'Makes the course visible, adds it to CTEC reporting with last year\'s CTEC course number, and points the store\'s product at it so new orders enroll here. Students already on last year\'s course stay there.',
         $course->visible ? '<p>Already published.</p>' : $form('publish', '', 'Publish ' . s($course->fullname), false, 'Publish now? New orders will enroll in this course.'));
-    echo $step('textbook', '7. Course textbook (AI)', 'Turns the new slide PDFs into the course textbook (PDF with a clickable table of contents) using Claude, for students and for Vervante to print.',
-        html_writer::link(new moodle_url('/blocks/ctc_courseupdate/textbook.php', ['id' => $id]), 'Open the textbook builder', ['class' => 'btn btn-primary']));
+    if ($urlcms) {
+        $rowsu = '';
+        foreach ($urlcms as $cm) {
+            $u = $DB->get_record('url', ['id' => $cm->instance]);
+            $rowsu .= '<tr><td><input type="text" class="form-control" name="urlname[' . $cm->id . ']" value="' . s($u->name) . '"></td><td><input type="url" class="form-control" name="url[' . $cm->id . ']" value="' . s($u->externalurl) . '"></td></tr>';
+        }
+        echo $step('urls', 'Other links in the course', 'Optional: links such as the errata. The PDF link is set automatically by step 1.',
+            $form('urls', '<table class="table table-sm"><thead><tr><th>Name students see</th><th>Link</th></tr></thead><tbody>' . $rowsu . '</tbody></table>', 'Save links'));
+    }
     $log = block_ctccu_get_log($id);
     if ($log) {
         echo '<h5>History</h5><ul class="small text-muted">' . implode('', array_map(function ($l) { return '<li>' . userdate($l[0], '%b %d, %Y %I:%M %p') . ' — ' . s($l[1]) . '</li>'; }, array_reverse($log))) . '</ul>';

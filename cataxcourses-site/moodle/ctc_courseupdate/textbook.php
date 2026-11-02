@@ -13,14 +13,13 @@ $course = get_course($id);
 $self = new moodle_url('/blocks/ctc_courseupdate/textbook.php', ['id' => $id]);
 
 // Small JSON endpoints used by the page's script.
-if ($action === 'pdf' || $action === 'text' || $action === 'start' || $action === 'status') {
+if (in_array($action, ['pdf', 'refpdf', 'ref', 'text', 'start', 'status'], true)) {
     require_sesskey();
     $job = required_param('job', PARAM_ALPHANUM);
     $data = block_ctccu_tb_job($id, $job) ?: [];
     $dir = block_ctccu_tb_dir($id, $job);
-    if ($action === 'pdf') {
-        $i = required_param('i', PARAM_INT);
-        $f = $dir . '/pdf_' . $i . '.pdf';
+    if ($action === 'pdf' || $action === 'refpdf') {
+        $f = $action === 'refpdf' ? $dir . '/ref.pdf' : $dir . '/pdf_' . required_param('i', PARAM_INT) . '.pdf';
         if (!is_readable($f)) { throw new moodle_exception('filenotfound'); }
         header('Content-Type: application/pdf');
         readfile($f);
@@ -28,13 +27,27 @@ if ($action === 'pdf' || $action === 'text' || $action === 'start' || $action ==
     }
     header('Content-Type: application/json');
     try {
-        if ($action === 'text') {
+        if ($action === 'ref') {
+            $pages = json_decode((string) file_get_contents('php://input'), true) ?: [];
+            file_put_contents($dir . '/ref_pages.json', json_encode($pages));
+            echo json_encode(['ok' => true, 'pages' => count($pages), 'chapters' => count(block_ctccu_tb_old_chapters($pages))]);
+        } else if ($action === 'text') {
             $i = required_param('i', PARAM_INT);
             file_put_contents($dir . '/in_' . $i . '.txt', (string) file_get_contents('php://input'));
             echo json_encode(['ok' => true]);
         } else if ($action === 'start') {
+            $ranges = [];
+            if (is_readable($dir . '/ref_pages.json')) {
+                $ranges = block_ctccu_tb_split_reference($id, $job, json_decode(file_get_contents($dir . '/ref_pages.json'), true) ?: [], array_column($data['pdfs'] ?? [], 'title'));
+                $data['refranges'] = $ranges;
+                block_ctccu_tb_save($id, $job, $data);
+            }
             block_ctccu_tb_start($id, $job, array_column($data['pdfs'] ?? [], 'title'));
-            echo json_encode(['ok' => true]);
+            $pairs = [];
+            foreach (array_column($data['pdfs'] ?? [], 'title') as $i => $t) {
+                $pairs[] = $t . ' ← ' . (isset($ranges[$i]) ? 'last year\'s chapter ' . $ranges[$i]['chapter'] . ' "' . $ranges[$i]['heading'] . '" (pages ' . implode('–', $ranges[$i]['pages']) . ')' : 'no matching chapter last year (written from the slides)');
+            }
+            echo json_encode(['ok' => true, 'pairs' => $pairs]);
         } else {
             echo json_encode(['ok' => true, 'chapters' => block_ctccu_tb_status($id, $job), 'file' => (bool) block_ctccu_tb_file($id)]);
         }
@@ -91,8 +104,9 @@ try {
             $list[] = ['name' => $name, 'title' => block_ctccu_tb_title($name)];
             $i++;
         }
-        block_ctccu_tb_save($id, $job, ['pdfs' => $list]);
-        $extract = ['job' => $job, 'pdfs' => $list];
+        $refname = block_ctccu_tb_reference($id, $dir . '/ref.pdf');
+        block_ctccu_tb_save($id, $job, ['pdfs' => $list, 'ref' => $refname]);
+        $extract = ['job' => $job, 'pdfs' => $list, 'ref' => $refname];
     } else if ($action === 'retry') {
         require_sesskey();
         $n = block_ctccu_tb_retry($id, required_param('job', PARAM_ALPHANUM));
@@ -114,18 +128,27 @@ if (!get_config('block_ctc_courseupdate', 'anthropickey')) {
 }
 if ($extract) {
     // Read each PDF's text in the browser (pdf.js), send it to the server, then start the chapter tasks.
-    echo '<div class="card"><div class="card-body"><h5>Reading ' . count($extract['pdfs']) . ' slide files…</h5><ol id="tb-list" class="small">';
+    echo '<div class="card"><div class="card-body"><h5>Reading last year\'s textbook and ' . count($extract['pdfs']) . ' slide files…</h5>'
+        . '<p class="small" id="tb-ref">' . ($extract['ref'] ? 'Last year\'s textbook: ' . s($extract['ref']) . ' — <span>reading</span>' : '<span class="text-warning">Last year\'s textbook was not found in the previous course, so the chapters are written from the slides alone.</span>') . '</p><ol id="tb-list" class="small">';
     foreach ($extract['pdfs'] as $p) {
         echo '<li>' . s($p['title']) . ' <span class="text-muted">— waiting</span></li>';
     }
     echo '</ol><div id="tb-done"></div></div></div>';
-    $cfg = json_encode(['base' => $self->out(false), 'sesskey' => sesskey(), 'job' => $extract['job'], 'n' => count($extract['pdfs'])]);
+    $cfg = json_encode(['base' => $self->out(false), 'sesskey' => sesskey(), 'job' => $extract['job'], 'n' => count($extract['pdfs']), 'ref' => (bool) $extract['ref']]);
     echo '<script type="module">
 const C = ' . $cfg . ';
 const lib = await import("https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.min.mjs");
 lib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.worker.min.mjs";
 const items = document.querySelectorAll("#tb-list li");
 const url = (a, extra) => C.base + "&action=" + a + "&job=" + C.job + "&sesskey=" + C.sesskey + (extra || "");
+const pageTexts = async (src) => {
+  const doc = await lib.getDocument(src).promise, out = [];
+  for (let p = 1; p <= doc.numPages; p++) {
+    const tc = await (await doc.getPage(p)).getTextContent();
+    out.push(tc.items.map(t => t.str + (t.hasEOL ? "\n" : " ")).join("").replace(/[ \t]+\n/g, "\n").trim());
+  }
+  return out;
+};
 for (let i = 0; i < C.n; i++) {
   const note = items[i].querySelector("span");
   try {
@@ -140,9 +163,17 @@ for (let i = 0; i < C.n; i++) {
     note.textContent = "— " + doc.numPages + " slides read";
   } catch (e) { note.textContent = "— could not read: " + e.message; note.className = "text-danger"; }
 }
+if (C.ref) {
+  const note = document.querySelector("#tb-ref span");
+  try {
+    const pages = await pageTexts(url("refpdf"));
+    const r = await (await fetch(url("ref"), { method: "POST", body: JSON.stringify(pages), credentials: "same-origin" })).json();
+    note.textContent = pages.length + " pages read, " + r.chapters + " chapters found";
+  } catch (e) { note.textContent = "could not read it (" + e.message + ") — chapters will be written from the slides alone"; note.className = "text-warning"; }
+}
 const r = await (await fetch(url("start"), { method: "POST", credentials: "same-origin" })).json();
 document.getElementById("tb-done").innerHTML = r.ok
-  ? "<div class=\"alert alert-success\">All slides read. Claude is now writing the chapters in the background (a few minutes per chapter). You can close this page — <a href=\"" + C.base + "\">see progress</a>.</div>"
+  ? (r.pairs && r.pairs.length ? "<p class=\"small\"><strong>Each new chapter updates:</strong><br>" + r.pairs.map(p => p.replace(/</g, "&lt;")).join("<br>") + "</p>" : "") + "<div class=\"alert alert-success\">All slides read. Claude is now writing the chapters in the background (a few minutes per chapter). You can close this page — <a href=\"" + C.base + "\">see progress</a>.</div>"
   : "<div class=\"alert alert-danger\">" + r.error + "</div>";
 </script>';
 } else {

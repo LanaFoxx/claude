@@ -918,8 +918,8 @@ function block_ctccu_tb_title($filename) {
 function block_ctccu_tb_start($courseid, $job, array $titles) {
     $course = get_course($courseid);
     $year = (int) preg_replace('/^ctccu-\d+-/', '', (string) $course->idnumber) ?: (int) date('Y');
-    $data = ['course' => $course->fullname, 'year' => $year, 'created' => time(), 'chapters' => []];
-    $chapters = $titles;
+    $prev = block_ctccu_tb_job($courseid, $job) ?: [];
+    $data = ['course' => $course->fullname, 'year' => $year, 'created' => time(), 'chapters' => [], 'ref' => $prev['ref'] ?? '', 'refranges' => $prev['refranges'] ?? [], 'pdfs' => $prev['pdfs'] ?? []];
     foreach (array_values($titles) as $i => $title) {
         $f = block_ctccu_tb_dir($courseid, $job) . "/in_$i.txt";
         if (!is_readable($f) || filesize($f) < 50) {
@@ -981,11 +981,16 @@ function block_ctccu_textbook_chapter($courseid, $job, $i) {
     }
     @unlink("$dir/err_$i.txt");
     $ch = $data['chapters'][$i];
-    $system = "You turn a tax course's webinar slides into one chapter of the printed course textbook for California Tax Courses (CTEC-approved education). "
-        . "Use only what the slides say: keep every figure, dollar amount, percentage, threshold, date, form name and line reference exactly; never add facts, examples or numbers that are not in the slides. "
+    $ref = is_readable("$dir/ref_$i.txt") ? trim(file_get_contents("$dir/ref_$i.txt")) : '';
+    $system = "You update one chapter of the printed course textbook for California Tax Courses (CTEC-approved education) for the new course year. "
+        . "You get last year's chapter (when available) and this year's webinar slides. The slides are the source of truth: every figure, dollar amount, percentage, threshold, date, form name and line reference must match the slides exactly; never add facts, examples or numbers that are not in the slides. "
+        . "Keep last year's chapter structure, section order, headings and writing style wherever the topic is unchanged; replace its content with the slides' content; add sections for topics the slides add; drop topics the slides no longer cover; update years (e.g. TY and edition years) to the slides'. "
+        . "If there is no previous chapter, write the chapter from the slides alone. "
         . "Output Markdown only, in this exact subset: first line '# ' + the chapter title; '## ' section headings; '### ' sub-headings; paragraphs; '- ' bullet lists; '1. ' numbered lists; pipe tables (header row, then '|---|' separator); **bold**. No other syntax, no preface or closing remarks.\n"
         . "Style notes: " . (string) get_config('block_ctc_courseupdate', 'style');
-    $user = 'Course: ' . $data['course'] . "\nChapter " . ($i + 1) . ' of ' . count($data['chapters']) . ': ' . $ch['title'] . "\n\nSlides (one block per slide):\n\n" . file_get_contents("$dir/in_$i.txt");
+    $user = 'Course: ' . $data['course'] . "\nChapter " . ($i + 1) . ' of ' . count($data['chapters']) . ': ' . $ch['title'] . "\n\n"
+        . ($ref !== '' ? "=== LAST YEAR'S TEXTBOOK CHAPTER (update this) ===\n\n" . $ref . "\n\n" : "=== No previous chapter found: write it from the slides ===\n\n")
+        . "=== THIS YEAR'S SLIDES (one block per slide) ===\n\n" . file_get_contents("$dir/in_$i.txt");
     try {
         $md = block_ctccu_claude($system, $user);
         file_put_contents("$dir/out_$i.md", $md);
@@ -1217,4 +1222,145 @@ function block_ctccu_fetch_link($url, $dest) {
         throw new moodle_exception('That link did not give a PDF or .zip file (it may need to be shared as "anyone with the link").');
     }
     return strpos($head, '%PDF') === 0 ? 'pdf' : 'zip';
+}
+
+/* ------------------------------------------------------------------ last year's textbook as the reference */
+
+/** Path of last year's course PDF (from the course this one was copied from): the PDF file, or the file behind its PDF link. */
+function block_ctccu_tb_reference($courseid, $dest) {
+    global $DB;
+    $src = (int) get_config('block_ctc_courseupdate', 'source_' . $courseid);
+    if (!$src) {
+        return '';
+    }
+    if ($cm = block_ctccu_course_pdf_cm($src)) {
+        $files = get_file_storage()->get_area_files(context_module::instance($cm->id)->id, 'mod_resource', 'content', 0, 'sortorder DESC, id ASC', false);
+        foreach ($files as $f) {
+            if (preg_match('/\.pdf$/i', $f->get_filename())) {
+                $f->copy_content_to($dest);
+                return $f->get_filename();
+            }
+        }
+    }
+    foreach (block_ctccu_cms($src, 'url') as $cm) {
+        if (preg_match('/pdf/i', $cm->name)) {
+            $u = $DB->get_field('url', 'externalurl', ['id' => $cm->instance]);
+            // Our own stored textbook (a previous year built by this tool) or a shared Drive/Dropbox file.
+            if (preg_match('~/pluginfile\.php/\d+/block_ctc_courseupdate/textbook/(\d+)/~', $u, $m) && ($f = block_ctccu_tb_file((int) $m[1]))) {
+                $f->copy_content_to($dest);
+                return $f->get_filename();
+            }
+            try {
+                if (block_ctccu_fetch_link($u, $dest) === 'pdf') {
+                    return basename(parse_url($u, PHP_URL_PATH)) ?: 'last-year.pdf';
+                }
+            } catch (Throwable $e) {
+                return '';
+            }
+        }
+    }
+    return '';
+}
+
+/** Chapters of last year's book: [['num','heading','from','to'], …] from its "CHAPTER n – TITLE" headings (contents pages skipped). */
+function block_ctccu_tb_old_chapters(array $pages) {
+    $hits = [];
+    foreach ($pages as $p => $text) {
+        foreach (preg_split('/\r?\n/', $text) as $line) {
+            if (strpos($line, '....') === false && preg_match('/^\s*CHAPTER\s+(\d+)\s*[\x{2013}\x{2014}:-]\s*(.+?)\s*$/iu', $line, $m)) {
+                $hits[] = ['num' => (int) $m[1], 'heading' => $m[2], 'page' => $p];
+            }
+        }
+    }
+    // Chapter 1, 2, 3 … in page order: for each number the first heading after the previous chapter's (skips the contents).
+    $out = [];
+    $after = -1;
+    for ($n = 1; $n <= 200; $n++) {
+        $found = null;
+        foreach ($hits as $h) {
+            if ($h['num'] === $n && $h['page'] > $after) {
+                $found = $h;
+                break;
+            }
+        }
+        if (!$found) {
+            break;
+        }
+        $out[] = ['num' => $n, 'heading' => $found['heading'], 'from' => $found['page']];
+        $after = $found['page'];
+    }
+    foreach ($out as $k => $c) {
+        $out[$k]['to'] = isset($out[$k + 1]) ? $out[$k + 1]['from'] - 1 : count($pages) - 1;
+    }
+    return $out;
+}
+
+/**
+ * Pair this year's chapters with last year's book chapters and write ref_<i>.txt for each pair.
+ * Titles often change between years and the book's order can differ from the course's, so one short Claude call compares
+ * each new chapter's opening slides with each old chapter's opening text. Falls back to title matching.
+ */
+function block_ctccu_tb_split_reference($courseid, $job, array $pages, array $titles) {
+    $dir = block_ctccu_tb_dir($courseid, $job);
+    $old = block_ctccu_tb_old_chapters($pages);
+    if (!$old) {
+        return [];
+    }
+    $snip = function ($t) { return core_text::substr(trim(preg_replace('/\s+/', ' ', $t)), 0, 700); };
+    $new = [];
+    foreach (array_values($titles) as $i => $t) {
+        $new[] = ['i' => $i, 'title' => $t, 'start' => $snip(is_readable("$dir/in_$i.txt") ? preg_replace('/--- Slide \d+ ---/', ' ', file_get_contents("$dir/in_$i.txt")) : '')];
+    }
+    $oldinfo = array_map(function ($c) use ($pages, $snip) {
+        return ['num' => $c['num'], 'heading' => $c['heading'], 'start' => $snip(implode(' ', array_slice($pages, $c['from'], 2)))];
+    }, $old);
+    $map = [];
+    try {
+        $answer = block_ctccu_claude('You match chapters of a tax course between two years. Answer with JSON only.',
+            "THIS YEAR'S CHAPTERS (title + opening of the slides):
+" . json_encode($new, JSON_UNESCAPED_UNICODE)
+            . "
+
+LAST YEAR'S TEXTBOOK CHAPTERS (heading + opening text):
+" . json_encode($oldinfo, JSON_UNESCAPED_UNICODE)
+            . "
+
+For each of this year's chapters give the number of last year's chapter on the same subject, or null if none. Titles and order may differ between years. "
+            . 'Reply exactly like {"0": 3, "1": null, ...} with the index of this year\'s chapter as the key.', 1000);
+        if (preg_match('/\{.*\}/s', $answer, $m)) {
+            foreach ((array) json_decode($m[0], true) as $k => $v) {
+                if ($v !== null && is_numeric($v)) {
+                    $map[(int) $k] = (int) $v;
+                }
+            }
+        }
+    } catch (Throwable $e) {
+        $map = [];
+    }
+    if (!$map) {
+        foreach ($new as $n) {
+            $best = null;
+            $sc = 0;
+            foreach ($old as $c) {
+                $x = block_ctccu_similarity($n['title'], $c['heading']);
+                if ($x > $sc) {
+                    $sc = $x;
+                    $best = $c['num'];
+                }
+            }
+            if ($sc >= 0.5) {
+                $map[$n['i']] = $best;
+            }
+        }
+    }
+    $ranges = [];
+    foreach ($map as $i => $num) {
+        foreach ($old as $c) {
+            if ($c['num'] === $num) {
+                file_put_contents("$dir/ref_$i.txt", implode("\n\n", array_slice($pages, $c['from'], $c['to'] - $c['from'] + 1)));
+                $ranges[$i] = ['chapter' => $num, 'heading' => $c['heading'], 'pages' => [$c['from'] + 1, $c['to'] + 1]];
+            }
+        }
+    }
+    return $ranges;
 }
