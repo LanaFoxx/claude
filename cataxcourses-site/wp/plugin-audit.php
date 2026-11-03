@@ -69,14 +69,3 @@ add_action( 'admin_init', function () {
 	wp_send_json( $out );
 } );
 
-// One-time cleanup (site admins): /wp-admin/?ctc_rm_aiowm=list shows the old All-in-One WP Migration backups; =delete removes them.
-add_action( 'admin_init', function () {
-	$a = sanitize_key( $_GET['ctc_rm_aiowm'] ?? '' );
-	if ( ! $a || ! current_user_can( 'manage_options' ) ) return;
-	$dir = WP_CONTENT_DIR . '/ai1wm-backups';
-	$out = array();
-	foreach ( is_dir( $dir ) ? glob( $dir . '/*.wpress' ) : array() as $f ) {
-		$out[] = array( basename( $f ), round( filesize( $f ) / 1048576 ) . ' MB', gmdate( 'Y-m-d', filemtime( $f ) ), 'delete' === $a ? ( @unlink( $f ) ? 'deleted' : 'FAILED' ) : '' );
-	}
-	wp_send_json( $out );
-} );
