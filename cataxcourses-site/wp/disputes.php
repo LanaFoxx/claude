@@ -251,7 +251,7 @@ function ctc_dp_rebuttal( $row, $f ) {
 	switch ( $row['reason'] ) {
 		case 'fraudulent':
 		case 'unrecognized':
-			$body = $intro . $match . $access . $hist . ' The student account was created in the cardholder\'s own name and email address' . ( ctc_dp_usage_sentence( $f ) || ( $m && ! empty( $m['user']['lastaccess'] ) ) ? ' and was used to take the course, which shows the purchase was made and used by the cardholder.' : '.' ) . $terms;
+			$body = ctc_dp_fraud_rebuttal( $row, $f, $intro, $used, $terms );
 			break;
 		case 'product_not_received':
 			$body = $intro . $access . ' The product is a digital course, so there is nothing to ship; access was provided at the time of purchase and remains available.' . $terms . $refund;
@@ -272,6 +272,29 @@ function ctc_dp_rebuttal( $row, $f ) {
 			$body = $intro . $access . $terms . $refund;
 	}
 	return $body . ' Supporting evidence is attached.';
+}
+
+// Fraud / unrecognized: the cardholder made and used this purchase. Every point is a recorded fact.
+function ctc_dp_fraud_rebuttal( $row, $f, $intro, $used, $terms ) {
+	$pts = array();
+	$chk = $f['checks'] ?? array();
+	$pass = array_keys( array_filter( array( 'CVC' => $chk['CVC check'] ?? '', 'street address' => $chk['Address (street) check'] ?? '', 'ZIP code' => $chk['ZIP check'] ?? '' ), function ( $v ) { return 'pass' === $v; } ) );
+	if ( $pass ) $pts[] = 'The card issuer verified the ' . implode( ', ', $pass ) . ' at checkout (all "pass")' . ( ! empty( $chk['Stripe risk level'] ) ? ' and Stripe rated the payment risk "' . $chk['Stripe risk level'] . '"' : '' ) . '.';
+	if ( ! empty( $f['address'] ) ) $pts[] = 'The billing name and address on the order (' . $f['address'] . ') match the cardholder.';
+	if ( ctc_dp_ip_match( $f ) ) $pts[] = 'The order was placed from IP address ' . $f['ip'] . ', and the student account signed in to the course from the same IP address.';
+	elseif ( ! empty( $f['ip'] ) ) $pts[] = 'The order was placed from IP address ' . $f['ip'] . '.';
+	$m = $f['moodle'];
+	if ( $m && ! empty( $m['user']['timecreated'] ) && ! empty( $f['paid'] ) && $m['user']['timecreated'] < $f['paid'] - 30 * DAY_IN_SECONDS ) $pts[] = sprintf( 'The student account %s, in the cardholder\'s own name and email, has existed since %s, long before this purchase.', $m['user']['username'] ?? $f['email'], wp_date( 'F Y', (int) $m['user']['timecreated'] ) );
+	$e = (array) ( $f['earlier'] ?? array() );
+	$und = array_filter( $e, function ( $x ) { return ! $x['disputed'] && 'refunded' !== $x['status']; } );
+	if ( $und ) $pts[] = sprintf( 'The cardholder is a returning customer with %d earlier undisputed purchase(s) from us (%s).', count( $und ), implode( '; ', array_map( function ( $x ) { return '#' . $x['num'] . ' on ' . wp_date( 'M j, Y', $x['ts'] ); }, array_slice( array_values( $und ), -4 ) ) ) );
+	$c = $f['ctec'] ?? null;
+	if ( $c && ( $c['ctecid'] || $c['ptin'] ) ) $pts[] = 'This is professional continuing education for a California tax preparer license. The student\'s personal CTEC ID' . ( $c['ctecid'] ? ' (' . strtoupper( $c['ctecid'] ) . ')' : '' ) . ( $c['ptin'] ? ' and IRS PTIN' : '' ) . ' are on the account. Only the cardholder benefits from this course: the credit is applied to their own license, so it has no value to anyone using a stolen card.';
+	if ( $c && ! empty( $c['certificates'] ) ) $pts[] = sprintf( 'The student passed the course exams and a certificate of completion was issued in their name on %s.', wp_date( 'F j, Y', (int) $c['certificates'][0]['issued'] ) );
+	$out = $intro . ' This purchase was made and used by the cardholder:';
+	foreach ( $pts as $i => $p ) $out .= ' (' . ( $i + 1 ) . ') ' . $p;
+	$used = preg_replace( '/ The cardholder is a returning customer:[^.]*\.(?: We previously[^.]*\.)?/', '', $used ); // listed in point form above
+	return $out . $used . $terms . ' We ask the issuer to reverse this dispute.';
 }
 
 // Moodle data for a dispute, saved on the row (refreshed when older than 6 hours, or $fresh).
@@ -422,7 +445,7 @@ function ctc_dp_view( $dispute_id, $view ) {
 	if ( $o ) {
 		echo '<h2>Order #' . esc_html( $o->get_order_number() ) . '</h2><table>';
 		$tr( 'Date paid', esc_html( ctc_dp_fmt( $f['paid'] ) ) ); $tr( 'Items', implode( '<br>', array_map( 'esc_html', $f['items'] ) ) ); $tr( 'Total', wc_price( $o->get_total(), array( 'currency' => $o->get_currency() ) ) );
-		$tr( 'Payment method', esc_html( $o->get_payment_method_title() ) ); $tr( 'Order status', esc_html( wc_get_order_status_name( $o->get_status() ) ) ); $tr( 'Refunded', $f['refunds'] ? wc_price( $f['refunds'] ) : 'No refund issued' );
+		$tr( 'Payment', esc_html( ctc_dp_paid_text( $f ) ) ); $tr( 'Refunded', $f['refunds'] ? wc_price( $f['refunds'] ) : 'No refund issued' );
 		$tr( 'Checkout IP address', esc_html( $f['ip'] ) ); $tr( 'Device / browser', esc_html( $f['ua'] ) );
 		echo '</table>';
 	} else {
@@ -686,15 +709,14 @@ function ctc_dp_docs( $row, $f ) {
 		array( 'h', 'Customer' ), array( 'kv', array( array( 'Name', $f['name'] ), array( 'Email', $f['email'] ), array( 'Phone', $f['phone'] ?? '' ), array( 'Billing address', $f['address'] ?? '' ), array( 'Shipping address', $f['shipping'] ?? '' ) ) ) ) );
 	if ( $o ) $b = array_merge( $b, array( array( 'h', 'Order #' . $o->get_order_number() ), array( 'kv', array(
 		array( 'Date paid', ctc_dp_fmt( $f['paid'] ) ), array( 'Items', implode( "\n", $f['items'] ) ), array( 'Total', ctc_dp_money( $o->get_total(), $o->get_currency() ) ),
-		array( 'Payment method', $o->get_payment_method_title() ), array( 'Refunded', $f['refunds'] ? ctc_dp_money( $f['refunds'] ) : 'No refund issued' ),
+		array( 'Payment', ctc_dp_paid_text( $f ) ), array( 'Refunded', $f['refunds'] ? ctc_dp_money( $f['refunds'] ) : 'No refund issued' ),
 		array( 'Checkout IP address', $f['ip'] ), array( 'Device / browser', $f['ua'] ) ) ) ) );
 	if ( $f['checks'] ) $b = array_merge( $b, array( array( 'h', 'Payment verification (from Stripe)' ), array( 'kv', array_map( null, array_keys( $f['checks'] ), array_values( $f['checks'] ) ) ) ) );
 	$b[] = array( 'h', 'Delivery: course access' );
 	$b[] = array( 'p', 'Online course delivered on learn.cataxcourses.com. The student is enrolled automatically when payment completes and receives login details by email; access does not expire.' );
 	if ( ! empty( $f['notes'] ) ) $b[] = array( 'rows', array_map( function ( $n ) { $p = explode( ' — ', $n, 2 ); return array( $p[0], $p[1] ?? '' ); }, $f['notes'] ) );
 	if ( $c = $f['ctec'] ) {
-		$b[] = array( 'h', 'CTEC reporting' );
-		$b[] = array( 'kv', ctc_dp_ctec_rows( $f ) );
+		if ( $cr = ctc_dp_ctec_rows( $f ) ) { $b[] = array( 'h', 'Professional license records (CTEC)' ); $b[] = array( 'kv', $cr ); }
 	}
 	if ( $m = $f['moodle'] ) {
 		$b[] = array( 'h', 'Course sign-ins and activity (learn.cataxcourses.com, timestamps ' . wp_timezone_string() . ')' );
@@ -748,8 +770,10 @@ function ctc_dp_evidence( $row, $f ) {
 	return array_filter( $ev, function ( $v ) { return '' !== (string) $v; } );
 }
 
-function ctc_dp_stripe_post( $key, $path, $fields ) {
-	$r = wp_remote_post( 'https://api.stripe.com/v1/' . $path, array( 'timeout' => 60, 'headers' => array( 'Authorization' => 'Bearer ' . $key ), 'body' => http_build_query( $fields ) ) );
+function ctc_dp_stripe_post( $key, $path, $fields, $version = '' ) {
+	$h = array( 'Authorization' => 'Bearer ' . $key );
+	if ( $version ) $h['Stripe-Version'] = $version;
+	$r = wp_remote_post( 'https://api.stripe.com/v1/' . $path, array( 'timeout' => 60, 'headers' => $h, 'body' => http_build_query( $fields ) ) );
 	if ( is_wp_error( $r ) ) return array( 'error' => array( 'message' => $r->get_error_message() ) );
 	return json_decode( wp_remote_retrieve_body( $r ), true ) ?: array( 'error' => array( 'message' => 'HTTP ' . wp_remote_retrieve_response_code( $r ) ) );
 }
@@ -787,9 +811,60 @@ function ctc_dp_push( $dispute_id, $submit ) {
 	}
 	$fields['submit']   = $submit ? 'true' : 'false';
 	$fields['metadata'] = array( 'ctc_evidence' => $submit ? 'submitted' : 'draft' );
+	$ce3 = ctc_dp_ce3( $key, $row, $f, $live );
+	if ( $ce3 ) {
+		$try = $fields;
+		$try['evidence']['enhanced_evidence'] = array( 'visa_compelling_evidence_3' => $ce3 );
+		$res = ctc_dp_stripe_post( $key, 'disputes/' . $dispute_id, $try, CTC_DP_CE3_API );
+		if ( empty( $res['error'] ) ) {
+			ctc_dp_log( $dispute_id, 'Visa Compelling Evidence 3.0 included (2 earlier undisputed charges on the same card: ' . implode( ', ', wp_list_pluck( $ce3['prior_undisputed_transactions'], 'charge' ) ) . ').' );
+			return $res;
+		}
+		ctc_dp_log( $dispute_id, 'Visa Compelling Evidence 3.0 not accepted by Stripe (' . ( $res['error']['message'] ?? 'error' ) . '); sent the standard evidence.' );
+	}
 	$res = ctc_dp_stripe_post( $key, 'disputes/' . $dispute_id, $fields );
 	if ( ! empty( $res['error'] ) ) return new WP_Error( 'stripe', $res['error']['message'] ?? 'Stripe error' );
 	return $res;
+}
+
+/*
+ * Visa Compelling Evidence 3.0 (fraud disputes, Visa reason 10.4): when the same card made 2+ earlier undisputed purchases
+ * 120-365 days before the dispute, and those purchases share the IP address (required) and the customer account with the
+ * disputed one, Visa shifts liability back to the issuer. Returns the enhanced_evidence payload, or null when not eligible.
+ */
+define( 'CTC_DP_CE3_API', '2025-03-31.basil' );
+function ctc_dp_ce3( $key, $row, $f, $live ) {
+	$o = $f['order'];
+	if ( ! $o || ! in_array( $row['reason'], array( 'fraudulent', 'unrecognized' ), true ) || 'visa' !== strtolower( $f['card']['brand'] ?? '' ) ) return null;
+	$fp  = $f['card']['fingerprint'] ?? '';
+	$ip  = (string) $f['ip'];
+	$acct = $o->get_customer_id() ? 'customer-' . $o->get_customer_id() : strtolower( $o->get_billing_email() );
+	$opened = strtotime( $row['created'] . ' UTC' ) ?: time();
+	if ( ! $fp || ! $ip ) return null;
+	$prior = array();
+	foreach ( (array) ( $f['earlier'] ?? array() ) as $e ) {
+		$age = $opened - $e['ts'];
+		if ( $e['disputed'] || 'refunded' === $e['status'] || $age < 120 * DAY_IN_SECONDS || $age > 365 * DAY_IN_SECONDS ) continue;
+		$po = wc_get_order( $e['num'] ) ?: null;
+		if ( ! $po ) { $ids = wc_get_orders( array( 'limit' => 1, 'return' => 'ids', 'order_number' => $e['num'] ) ); $po = $ids ? wc_get_order( $ids[0] ) : null; }
+		if ( ! $po || $po->get_customer_ip_address() !== $ip ) continue;
+		$pacct = $po->get_customer_id() ? 'customer-' . $po->get_customer_id() : strtolower( $po->get_billing_email() );
+		if ( $pacct !== $acct ) continue;
+		$tid = (string) $po->get_transaction_id();
+		if ( 0 === strpos( $tid, 'pi_' ) ) { $pi = ctc_dp_stripe( $key, 'payment_intents/' . $tid ); $tid = is_array( $pi['latest_charge'] ?? null ) ? $pi['latest_charge']['id'] : (string) ( $pi['latest_charge'] ?? '' ); }
+		if ( 0 !== strpos( $tid, 'ch_' ) || $tid === ( $f['charge']['id'] ?? '' ) ) continue;
+		$ch = ctc_dp_stripe( $key, 'charges/' . $tid );
+		if ( ! $ch || ! empty( $ch['disputed'] ) || ( $ch['payment_method_details']['card']['fingerprint'] ?? '' ) !== $fp ) continue;
+		$prior[] = array( 'charge' => $tid, 'customer_account_id' => $acct, 'customer_email_address' => strtolower( $po->get_billing_email() ), 'customer_purchase_ip' => $ip,
+			'product_description' => implode( ', ', array_map( function ( $it ) { return $it->get_name(); }, array_values( $po->get_items() ) ) ) );
+		if ( count( $prior ) >= 2 ) break;
+	}
+	if ( count( $prior ) < 2 ) return null;
+	return array(
+		'disputed_transaction' => array( 'customer_account_id' => $acct, 'customer_email_address' => strtolower( $o->get_billing_email() ), 'customer_purchase_ip' => $ip,
+			'merchandise_or_services' => 'services', 'product_description' => implode( ', ', array_map( function ( $it ) { return $it->get_name(); }, array_values( $o->get_items() ) ) ) ),
+		'prior_undisputed_transactions' => $prior,
+	);
 }
 
 function ctc_dp_submit_time( $row ) {
@@ -803,11 +878,18 @@ function ctc_dp_auto_draft( $dispute_id ) {
 	if ( ! $row || 'off' === ctc_dp_mode() || ! in_array( $row['status'], array( 'needs_response', 'warning_needs_response' ), true ) ) return;
 	$res = ctc_dp_push( $dispute_id, false );
 	if ( is_wp_error( $res ) ) { $wpdb->update( ctc_dp_table(), array( 'auto_state' => 'closed' === $res->get_error_code() ? 'closed' : 'failed' ), array( 'dispute_id' => $dispute_id ) ); ctc_dp_log( $dispute_id, 'Draft failed: ' . $res->get_error_message() ); return; }
-	$review = in_array( $row['reason'], array( 'credit_not_processed', 'product_unacceptable', 'subscription_canceled' ), true ); // depends on emails with the customer: a person decides
-	$auto   = 'auto' === ctc_dp_mode() && ! $review;
-	if ( $review ) ctc_dp_log( $dispute_id, 'Not auto-submitted: this reason depends on emails with the customer (refund request?). Check the inbox, add anything relevant in Stripe, then click Submit now or Resume auto-submit.' );
-	$wpdb->update( ctc_dp_table(), array( 'auto_state' => $auto ? 'drafted' : 'draft_only', 'submit_at' => $auto ? ctc_dp_submit_time( $row ) : null ), array( 'dispute_id' => $dispute_id ) );
-	ctc_dp_log( $dispute_id, 'Evidence saved on Stripe as a draft' . ( $auto ? '; auto-submit ' . ctc_dp_fmt( ctc_dp_submit_time( $row ) ) : '' ) . '.' );
+	// An unanswered dispute is always lost, so every reason is submitted automatically. Reasons that can involve emails with the
+	// customer (refund requests, complaints) wait until 3 days before the deadline so the team can add anything first.
+	$review = in_array( $row['reason'], array( 'credit_not_processed', 'product_unacceptable', 'subscription_canceled' ), true );
+	$auto   = 'auto' === ctc_dp_mode();
+	$when   = ctc_dp_submit_time( $row );
+	if ( $review && $row['due_by'] ) $when = gmdate( 'Y-m-d H:i:s', max( time() + HOUR_IN_SECONDS, strtotime( $row['due_by'] . ' UTC' ) - 3 * DAY_IN_SECONDS ) );
+	if ( $review && $auto ) {
+		ctc_dp_log( $dispute_id, 'This reason can involve emails with the customer: check the inbox and add anything relevant before ' . ctc_dp_fmt( $when ) . ', when it is submitted automatically.' );
+		wp_mail( ctc_dp_agent_emails(), 'Dispute needs a quick check: ' . ctc_dp_reason_label( $row['reason'] ) . ' — ' . $row['customer'], "A dispute was opened for " . $row['customer'] . " (" . $row['email'] . ").\nReason: " . ctc_dp_reason_label( $row['reason'] ) . "\n\nIf this customer emailed us (refund request, complaint), add that in Stripe before " . ctc_dp_fmt( $when ) . ". After that the evidence is submitted automatically.\n\nEvidence: " . ctc_dp_link( $dispute_id ) . "\nStripe: https://dashboard.stripe.com/disputes/" . $dispute_id );
+	}
+	$wpdb->update( ctc_dp_table(), array( 'auto_state' => $auto ? 'drafted' : 'draft_only', 'submit_at' => $auto ? $when : null ), array( 'dispute_id' => $dispute_id ) );
+	ctc_dp_log( $dispute_id, 'Evidence saved on Stripe as a draft' . ( $auto ? '; auto-submit ' . ctc_dp_fmt( $when ) : '' ) . '.' );
 }
 function ctc_dp_auto_submit( $dispute_id ) {
 	global $wpdb;
@@ -913,13 +995,20 @@ function ctc_dp_history_rows( $f ) {
 function ctc_dp_ctec_rows( $f ) {
 	$c = $f['ctec'] ?? null;
 	if ( ! $c ) return array();
-	$fmt  = function ( $r ) { return ( $r['reported'] ? 'Reported ' : 'Not accepted yet (' . $r['status'] . ') ' ) . wp_date( 'M j, Y', $r['time'] ) . ' — ' . $r['course'] . ' (CTEC course ' . $r['coursenumber'] . ', completed ' . wp_date( 'M j, Y', $r['completed'] ) . ', CTEC ID ' . $r['ctecid'] . ')'; };
-	$rows = array( array( 'This purchase', $f['ctec_now'] ? implode( "\n", array_map( $fmt, $f['ctec_now'] ) ) : ( ! empty( $c['reports'] ) ? 'Not reported yet (course not completed)' : ctc_dp_ctec_label( $c, true ) ) ),
-		array( 'Reported to CTEC before', $f['ctec_before'] ? implode( "\n", array_map( $fmt, $f['ctec_before'] ) ) : 'No earlier CTEC reports for this student' ),
-		array( 'CTEC ID', $c['ctecid'] ), array( 'PTIN', $c['ptin'] ) );
-	if ( empty( $c['reports'] ) && $c['how'] ) $rows[] = array( 'How we know', $c['how'] );
-	foreach ( (array) $c['certificates'] as $ce ) $rows[] = array( 'Certificate: ' . $ce['name'], 'Issued ' . ctc_dp_fmt( $ce['issued'] ) . ( $ce['code'] ? ' · code ' . $ce['code'] : '' ) );
+	$fmt  = function ( $r ) { return 'Reported ' . wp_date( 'M j, Y', $r['time'] ) . ' — ' . $r['course'] . ' (CTEC course ' . $r['coursenumber'] . ', completed ' . wp_date( 'M j, Y', $r['completed'] ) . ', CTEC ID ' . $r['ctecid'] . ')'; };
+	$ok   = function ( $list ) { return array_values( array_filter( (array) $list, function ( $r ) { return ! empty( $r['reported'] ); } ) ); };
+	$rows = array();
+	// Only facts that show the cardholder received the service: reports CTEC accepted, the personal CTEC ID / PTIN on file, certificates.
+	if ( $now = $ok( $f['ctec_now'] ) ) $rows[] = array( 'Hours reported to CTEC for this purchase', implode( "\n", array_map( $fmt, $now ) ) );
+	if ( $before = $ok( $f['ctec_before'] ) ) $rows[] = array( 'Earlier hours reported to CTEC', implode( "\n", array_map( $fmt, $before ) ) );
+	if ( $c['ctecid'] ) $rows[] = array( 'Student\'s CTEC ID (personal license number)', strtoupper( $c['ctecid'] ) );
+	if ( $c['ptin'] ) $rows[] = array( 'Student\'s PTIN (IRS preparer number)', $c['ptin'] );
+	foreach ( (array) $c['certificates'] as $ce ) $rows[] = array( 'Certificate issued: ' . $ce['name'], ctc_dp_fmt( $ce['issued'] ) . ( $ce['code'] ? ' · verification code ' . $ce['code'] : '' ) );
 	return $rows;
+}
+function ctc_dp_paid_text( $f ) {
+	$card = $f['checks']['Card'] ?? '';
+	return 'Paid in full' . ( ! empty( $f['paid'] ) ? ' on ' . ctc_dp_fmt( $f['paid'] ) : '' ) . ( $card ? ' with ' . $card : '' ) . ' (charge ' . ( $f['charge']['id'] ?? '' ) . ' succeeded)';
 }
 
 // The Moodle course(s) this order bought, with their usage (falls back to courses enrolled after the purchase).
