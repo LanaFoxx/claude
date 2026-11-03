@@ -51,7 +51,7 @@ add_action( 'admin_init', function () {
 	$out['order_export_cron'] = array_values( array_filter( array_keys( _get_cron_array() ? call_user_func_array( 'array_merge', array_values( _get_cron_array() ) ) : array() ), function ( $h ) { return false !== strpos( $h, 'woe' ); } ) );
 	// HFCM snippets.
 	$t = $wpdb->prefix . 'hfcm_scripts';
-	if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $t ) ) === $t ) $out['hfcm'] = $wpdb->get_results( "SELECT script_id, name, status, location, display_on, LEFT(snippet, 400) code FROM $t" );
+	if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $t ) ) === $t ) $out['hfcm'] = $wpdb->get_results( ! empty( $_GET['full'] ) ? "SELECT * FROM $t" : "SELECT script_id, name, status, location, display_on, LEFT(snippet, 400) code FROM $t" );
 	// Duplicate Page / AIO migration backups.
 	$out['aiowm_backups'] = is_dir( WP_CONTENT_DIR . '/ai1wm-backups' ) ? count( glob( WP_CONTENT_DIR . '/ai1wm-backups/*.wpress' ) ) : 0;
 	// Shortcodes in use from plugins.
@@ -66,5 +66,17 @@ add_action( 'admin_init', function () {
 	if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $hpos ) ) === $hpos ) $out['last_eh_order_hpos'] = $wpdb->get_var( "SELECT MAX(date_created_gmt) FROM $hpos WHERE payment_method LIKE 'eh_%'" );
 	$out['last_wcpay_order'] = $wpdb->get_var( "SELECT MAX(date_created_gmt) FROM $hpos WHERE payment_method LIKE 'woocommerce_payments%'" );
 	} catch ( Throwable $e ) { $out['ERROR'] = $e->getMessage() . ' line ' . $e->getLine(); }
+	wp_send_json( $out );
+} );
+
+// One-time cleanup (site admins): /wp-admin/?ctc_rm_aiowm=list shows the old All-in-One WP Migration backups; =delete removes them.
+add_action( 'admin_init', function () {
+	$a = sanitize_key( $_GET['ctc_rm_aiowm'] ?? '' );
+	if ( ! $a || ! current_user_can( 'manage_options' ) ) return;
+	$dir = WP_CONTENT_DIR . '/ai1wm-backups';
+	$out = array();
+	foreach ( is_dir( $dir ) ? glob( $dir . '/*.wpress' ) : array() as $f ) {
+		$out[] = array( basename( $f ), round( filesize( $f ) / 1048576 ) . ' MB', gmdate( 'Y-m-d', filemtime( $f ) ), 'delete' === $a ? ( @unlink( $f ) ? 'deleted' : 'FAILED' ) : '' );
+	}
 	wp_send_json( $out );
 } );
