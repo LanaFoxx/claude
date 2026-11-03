@@ -65,6 +65,14 @@ add_action( 'admin_init', function () {
 	$hpos = $wpdb->prefix . 'wc_orders';
 	if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $hpos ) ) === $hpos ) $out['last_eh_order_hpos'] = $wpdb->get_var( "SELECT MAX(date_created_gmt) FROM $hpos WHERE payment_method LIKE 'eh_%'" );
 	$out['last_wcpay_order'] = $wpdb->get_var( "SELECT MAX(date_created_gmt) FROM $hpos WHERE payment_method LIKE 'woocommerce_payments%'" );
+	$out['all_time_methods'] = $wpdb->get_results( "SELECT meta_value m, COUNT(*) n, MAX(p.post_date) last FROM {$wpdb->postmeta} pm JOIN {$wpdb->posts} p ON p.ID=pm.post_id WHERE pm.meta_key='_payment_method' AND p.post_type='shop_order' GROUP BY meta_value" );
+	$out['wcpay_meta'] = $cnt( "SELECT COUNT(*) FROM {$wpdb->postmeta} WHERE meta_key IN ('_wcpay_intent_currency','_intention_status','_charge_id','_wcpay_payment_method') " );
+	$out['wcpay_tokens'] = $cnt( "SELECT COUNT(*) FROM {$wpdb->prefix}woocommerce_payment_tokens WHERE gateway_id LIKE 'woocommerce_payments%'" );
+	$out['wcpay_subscriptions'] = $cnt( "SELECT COUNT(*) FROM {$wpdb->postmeta} pm JOIN {$wpdb->posts} p ON p.ID=pm.post_id WHERE p.post_type='shop_subscription' AND pm.meta_key='_payment_method' AND pm.meta_value LIKE 'woocommerce_payments%'" );
+	$out['pofw_any_meta'] = $wpdb->get_col( "SELECT DISTINCT meta_key FROM {$wpdb->postmeta} WHERE meta_key LIKE '%pofw%' OR meta_key LIKE '%product_option%' LIMIT 20" );
+	$out['pofw_orderitem_meta'] = $cnt( "SELECT COUNT(*) FROM {$wpdb->prefix}woocommerce_order_itemmeta WHERE meta_key LIKE '%pofw%' OR meta_key LIKE '%option%'" );
+	$out['pofw_tables_all'] = $wpdb->get_col( "SHOW TABLES LIKE '%pofw%'" );
+	$out['gap_full'] = get_option( 'gap_options' );
 	} catch ( Throwable $e ) { $out['ERROR'] = $e->getMessage() . ' line ' . $e->getLine(); }
 	wp_send_json( $out );
 } );
