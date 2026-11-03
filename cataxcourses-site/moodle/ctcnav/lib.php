@@ -20,7 +20,7 @@ function local_ctcnav_extend_navigation(global_navigation $nav) {
         $my = function ($anchor) { return new moodle_url('/my/', null, $anchor); };
         // Links to the store, each opening in a new tab.
         $links = [
-            ['ctcnav_browse', 'Browse new courses to enroll in', 'https://cataxcourses.com/', 'i/course'],
+            ['ctcnav_browse', 'Purchase a new course', 'https://cataxcourses.com/', 'i/course'],
             ['ctcnav_book', 'Need to purchase a physical book?', 'https://cataxcourses.com/book-add-ons/', 'i/report'],
             ['ctcnav_help', 'Helpful resources', 'https://cataxcourses.com/helpful-guides-and-how-tos/', 'i/info'],
         ];

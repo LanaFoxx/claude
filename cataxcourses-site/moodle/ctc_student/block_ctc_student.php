@@ -197,7 +197,7 @@ class block_ctc_student extends block_base {
                 . $item($done ? 'done' : 'now', 'Finish your ' . $k . ' Hour course', $done ? 'Completed ' . userdate($co->completed, '%b %e, %Y') : (($co && $co->progress !== null ? $co->progress : 0) . '% complete'))
                 . $item($rep2 ? 'done' : ($done ? 'now' : 'todo'), 'Hours reported to CTEC', $rep2 ? 'Reported ' . userdate($r->time, '%b %e, %Y') : 'Automatic when you finish');
             if ($k === '20') {
-                $h .= $item($rep2 ? 'now' : 'todo', 'Renew &amp; pay your fee at ctec.org', 'Finishing the course doesn\'t renew you')
+                $h .= $item($rep2 ? 'now' : 'todo', 'Renew &amp; pay your fee at ctec.org', 'Required to complete your renewal')
                     . $item('todo', 'Renew your PTIN with the IRS', 'Every year, for the coming tax season');
             } else {
                 $h .= $item('todo', 'Get your PTIN from the IRS')
