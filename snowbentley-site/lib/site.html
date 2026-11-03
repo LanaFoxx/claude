@@ -1,0 +1,233 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Jost:wght@300;400;500;600&display=swap">
+<style id="sb-site-css">
+/* ---- Snow Bentley Realty: site-wide styles (loaded from the header template) ---- */
+body { background: #F5EFE7; color: #3A2C26; -webkit-font-smoothing: antialiased; }
+body .elementor-widget-text-editor a { color: inherit; }
+.elementor-widget a:hover, .elementor-widget a:hover .elementor-button-text { transition: color .2s; }
+
+/* Header: fixed, transparent over the hero, hides on scroll down, cream on scroll up */
+.sb-header { position: fixed !important; top: 0; left: 0; right: 0; z-index: 40; background: transparent; transition: transform .4s ease, background-color .3s ease; }
+.admin-bar .sb-header { top: 32px; }
+@media (max-width: 782px) { .admin-bar .sb-header { top: 46px; } }
+.sb-header.sb-scrolled, body.sb-menu-open .sb-header { background: #F5EFE7; }
+.sb-header.sb-hidden { transform: translateY(-100%); }
+.sb-header .sb-behaviour { position: absolute !important; width: 0; height: 0; overflow: hidden; }
+.sb-header .sb-logo img { height: 95px; width: auto; max-width: none; }
+@media (max-width: 767px) { .sb-header .sb-logo img { height: 64px; } }
+.sb-header .sb-logo-dark { display: none; }
+.sb-header.sb-scrolled .sb-logo-dark, body.sb-menu-open .sb-header .sb-logo-dark { display: block; }
+.sb-header.sb-scrolled .sb-logo-light, body.sb-menu-open .sb-header .sb-logo-light { display: none; }
+.sb-header .sb-navlink .elementor-button { color: #fff; transition: color .3s; }
+.sb-header.sb-scrolled .sb-navlink .elementor-button, body.sb-menu-open .sb-header .sb-navlink .elementor-button { color: #3A2C26; }
+.sb-header .sb-navlink .elementor-button:hover { color: #937C5C !important; }
+.sb-header .sb-lang .elementor-button-icon svg { width: 10px; }
+.sb-burger .elementor-button { width: 40px; height: 40px; padding: 0 !important; display: flex; align-items: center; justify-content: center; transition: background-color .3s, color .3s; }
+.sb-burger .elementor-button-icon { margin: 0 !important; }
+.sb-burger .elementor-button-icon svg { width: 16px; height: 16px; }
+.sb-header.sb-scrolled .sb-burger .elementor-button, body.sb-menu-open .sb-header .sb-burger .elementor-button { background: #3A2C26; color: #fff; fill: #fff; }
+.sb-header.sb-scrolled .sb-burger .elementor-button svg, body.sb-menu-open .sb-header .sb-burger .elementor-button svg { fill: #fff; }
+#sb-gt { position: fixed; z-index: 45; top: 96px; right: 120px; background: #F5EFE7; padding: 14px 16px; border: 1px solid #E3DACE; display: none; }
+#sb-gt.is-open { display: block; }
+#sb-gt select { font: 300 14px 'Jost', sans-serif; padding: 8px 12px; border: 1px solid #3A2C26; border-radius: 999px; background: transparent; color: #3A2C26; }
+
+/* Underlined text links (footer, menu) and "|" separators between them */
+.sb-ul .elementor-button-text { text-decoration: underline; text-underline-offset: 4px; }
+.sb-ul-links a { text-decoration: underline; text-underline-offset: 4px; }
+.sb-sep .elementor-button { padding: 0 16px !important; border-left: 1px solid #3A2C26 !important; border-radius: 0 !important; }
+.sb-sep.sb-sep-first .elementor-button { padding-left: 0 !important; border-left: 0 !important; }
+.sb-sep.sb-sep-24 .elementor-button { padding: 0 0 0 24px !important; }
+.sb-vrule { align-self: stretch; width: 1px !important; min-height: 160px; }
+.sb-vrule .elementor-divider { padding: 0 !important; height: 100%; }
+.sb-vrule .elementor-divider-separator { border-top: 0 !important; border-left: 1px solid #3A2C26; height: 100%; width: 1px !important; }
+.sb-rule .elementor-divider { padding: 0 !important; }
+
+/* Floating Let's Connect pill */
+.sb-float .elementor-button-icon svg { width: 10px; }
+body.elementor-editor-active .sb-float { position: relative !important; left: auto !important; bottom: auto !important; }
+
+/* Photo tiles with a label in the corner or centre */
+.sb-tile { overflow: hidden; }
+.sb-tile .sb-tile-img img { transition: transform .8s ease; }
+.sb-tile:hover .sb-tile-img img { transform: scale(1.04); }
+
+/* Pill forms */
+.sb-form .elementor-field-textual, .sb-form select { min-height: 50px; padding-left: 22px !important; padding-right: 22px !important; }
+.sb-form textarea.elementor-field-textual { border-radius: 24px !important; padding-top: 14px !important; }
+.sb-form .elementor-field-type-acceptance .elementor-field-option { display: flex; gap: 10px; align-items: flex-start; }
+.sb-form .elementor-field-type-acceptance input { margin-top: 3px; width: 14px; height: 14px; flex: none; accent-color: #3A2C26; }
+.sb-form .elementor-field-type-acceptance label { font: 300 11px/1.5 'Jost', sans-serif; color: #6B5B50; }
+.sb-form .elementor-field-type-acceptance label a { text-decoration: underline; color: inherit; }
+.sb-form .elementor-select-wrapper .select-caret-down-wrapper { right: 20px; }
+.sb-form .elementor-message { font-family: 'Cormorant Garamond', serif; }
+.sb-form.sb-form-light .elementor-field-textual { color: #fff; }
+.sb-form.sb-form-light .elementor-field-textual::placeholder { color: rgba(255,255,255,.85); }
+.sb-form.sb-form-glass .elementor-field-textual { background: rgba(255,255,255,.25) !important; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); color: #fff; border: 0 !important; }
+.sb-form.sb-form-glass .elementor-field-textual::placeholder { color: #fff; opacity: .9; }
+.sb-form .elementor-field-group:has(input[type=email]) .elementor-field-textual, .sb-form-icon-mail .elementor-field-textual { padding-left: 50px !important; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%233A2C26' stroke-width='1.6'%3E%3Crect x='3' y='5' width='18' height='14' rx='1'/%3E%3Cpath d='M3 7l9 6 9-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: 24px center; }
+.sb-form-icon-pin .elementor-field-textual { padding-left: 50px !important; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='1.6'%3E%3Cpath d='M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z'/%3E%3Ccircle cx='12' cy='10' r='2.5'/%3E%3C/svg%3E") !important; background-repeat: no-repeat !important; background-position: 24px center !important; }
+.sb-form.sb-form-noicon .elementor-field-textual { background-image: none !important; padding-left: 24px !important; }
+
+/* Switchers (testimonials, neighborhoods, tabs): only the active panel shows on the live site */
+body:not(.elementor-editor-active) .sb-switch .sb-panel:not(.is-active) { display: none !important; }
+.sb-switch .sb-panel.is-active { animation: sbFade .4s; }
+@keyframes sbFade { from { opacity: 0 } to { opacity: 1 } }
+.sb-tab { cursor: pointer; }
+.sb-hood-tab { border-bottom: 1px solid #E3DACE; }
+.sb-hood-tab.is-active { border-bottom-color: #3A2C26; }
+.sb-hood-tab .elementor-heading-title { display: flex; justify-content: space-between; align-items: center; height: 65px; }
+.sb-hood-tab.is-active .elementor-heading-title::after { content: ''; width: 8px; height: 8px; border-top: 1.6px solid #3A2C26; border-right: 1.6px solid #3A2C26; transform: rotate(45deg); margin-right: 4px; }
+.sb-hood-list { max-height: 455px; overflow: auto; scrollbar-width: none; position: relative; }
+.sb-hood-list::-webkit-scrollbar { display: none; }
+.sb-hood-fade { position: relative; }
+.sb-hood-fade::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 60px; background: linear-gradient(rgba(245,239,231,0), #F5EFE7); pointer-events: none; }
+.sb-pilltab .elementor-heading-title { display: inline-block; padding: 7px 14px; border: 1px solid #3A2C26; border-radius: 999px; }
+.sb-pilltab.is-active .elementor-heading-title { background: #3A2C26; color: #fff !important; }
+.sb-arrow .elementor-button { width: 56px; height: 56px; padding: 0 !important; display: flex; align-items: center; justify-content: center; }
+.sb-arrow .elementor-button-icon { margin: 0 !important; }
+.sb-arrow .elementor-button-icon svg { width: 14px; height: 14px; }
+.sb-t-arrows { pointer-events: none; }
+.sb-t-arrows .sb-arrow { pointer-events: auto; }
+
+/* Testimonial quote card */
+.sb-quote-mark { position: absolute !important; top: -60px; left: 50%; transform: translateX(-50%); }
+.sb-readmore-btn { margin-top: 28px; background: none; border: 0; padding: 0; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; color: #3A2C26; font: 600 12px/1 'Cormorant Garamond', serif; letter-spacing: 1.5px; text-transform: uppercase; }
+.sb-readmore-btn svg { transition: transform .2s; }
+.sb-readmore-btn.is-open svg { transform: rotate(180deg); }
+.sb-more-wrap { overflow: hidden; transition: max-height .4s ease; }
+
+/* Inner-page hero: bronze box overlapping the photo's bottom edge */
+.sb-hero-box { position: relative; z-index: 2; }
+.sb-hero-box .sb-down .elementor-button { width: 56px; height: 56px; padding: 0 !important; display: flex; align-items: center; justify-content: center; }
+.sb-hero-box .sb-down .elementor-button-icon { margin: 0 !important; }
+
+/* Data tables (schools, points of interest) */
+.sb-table table { width: 100%; border-collapse: collapse; font: 300 14px/1.4 'Jost', sans-serif; color: #3A2C26; background: transparent; margin: 0; }
+.sb-table th { font: 600 12px/1.2 'Jost', sans-serif; letter-spacing: .5px; text-transform: uppercase; text-align: left; padding: 14px 12px; border: 0; border-bottom: 1px solid #E3DACE; background: transparent; }
+.sb-table td { padding: 18px 12px; border: 0; border-bottom: 1px solid #E3DACE; vertical-align: middle; background: transparent !important; }
+.sb-table td a { color: #3A2C26; text-decoration: none; }
+.sb-table td a:hover { color: #937C5C; }
+.sb-table .sb-name { font: 600 14px/1.3 'Jost', sans-serif; display: block; }
+.sb-table .sb-addr { font: 600 11px/1.3 'Jost', sans-serif; letter-spacing: .5px; text-transform: uppercase; display: block; margin-top: 4px; }
+.sb-table .sb-badge { display: inline-block; background: #3A2C26; color: #fff; font: 600 10px/1 'Jost', sans-serif; letter-spacing: .5px; padding: 5px 7px; text-transform: uppercase; }
+.sb-table .sb-stars { letter-spacing: 2px; color: #3A2C26; }
+.sb-table .sb-stars i { font-style: normal; color: #C9BFB4; }
+.sb-table .sb-poi-img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; vertical-align: middle; margin-right: 14px; }
+.sb-table .sb-school-icon { width: 30px; height: 30px; border-radius: 50%; background: #3A2C26; display: inline-block; }
+@media (max-width: 767px) { .sb-table { overflow-x: auto; } .sb-table table { min-width: 640px; } }
+.sb-progress .elementor-progress-wrapper { border-radius: 0; }
+.sb-progress .elementor-title { font: 400 12px/1.2 'Jost', sans-serif !important; }
+.sb-edu-bar { display: flex; height: 16px; margin: 10px 0 18px; }
+.sb-edu-list { list-style: none; margin: 0; padding: 0; }
+.sb-edu-list li { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid #E3DACE; font: 400 12px/1.2 'Jost', sans-serif; }
+.sb-edu-list li span:first-child::before { content: ''; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--c, #3A2C26); margin-right: 12px; }
+.sb-score .elementor-heading-title { width: 56px; height: 56px; border-radius: 50%; border: 1px solid #3A2C26; display: flex; align-items: center; justify-content: center; }
+
+/* Read-more panel (About bio) */
+.sb-more .elementor-widget-container { position: relative; }
+
+/* Mobile tweaks */
+@media (max-width: 1024px) { .sb-hide-tab { display: none !important; } }
+</style>
+<div id="sb-gt" aria-label="Select language"><div id="google_translate_element"></div></div>
+<script>
+/* The old Dream Web Digital plugin (dwd-projects) injects site-wide CSS that forces its own font and
+   button styles on every element; drop it on Snow Bentley pages before first paint. */
+(function () {
+  var sel = 'style[id^="dwdp-"], style#dw-site-css, style#dwd-site-css, link#dwdp-pages-css, link#dwdp-fonts-css';
+  Array.prototype.forEach.call(document.querySelectorAll(sel), function (n) { n.parentNode.removeChild(n); });
+})();
+(function () {
+  if (window.sbSiteInit) return; window.sbSiteInit = true;
+  var editor = document.body && document.body.classList.contains('elementor-editor-active');
+  function ready(fn) { if (document.readyState !== 'loading') fn(); else document.addEventListener('DOMContentLoaded', fn); }
+  function own(root, sel) { return Array.prototype.filter.call(root.querySelectorAll(sel), function (el) { return el.parentElement.closest('.sb-switch') === root; }); }
+
+  ready(function () {
+    /* Scroll-aware header */
+    var hdr = document.querySelector('.sb-header'), lastY = window.scrollY;
+    function onScroll() {
+      if (!hdr) return;
+      var y = window.scrollY, state = 'top';
+      if (y > 80) state = y < lastY ? 'shown' : 'hidden';
+      lastY = y;
+      hdr.classList.toggle('sb-scrolled', state !== 'top');
+      hdr.classList.toggle('sb-hidden', state === 'hidden' && !document.body.classList.contains('sb-menu-open'));
+    }
+    if (!editor) { window.addEventListener('scroll', onScroll, { passive: true }); onScroll(); }
+    if (window.jQuery) {
+      jQuery(document).on('elementor/popup/show', function (e, id, inst) { if (inst && inst.$element && inst.$element.closest('.sb-menu-popup').length || document.querySelector('.elementor-' + id + ' .sb-menu-item, .elementor-popup-modal.sb-menu-popup')) document.body.classList.add('sb-menu-open'); });
+      jQuery(document).on('elementor/popup/hide', function () { document.body.classList.remove('sb-menu-open'); });
+    }
+
+    /* Switchers: .sb-switch > .sb-panel (+ .sb-tab, .sb-prev, .sb-next) */
+    Array.prototype.forEach.call(document.querySelectorAll('.sb-switch'), function (sw) {
+      var panels = own(sw, '.sb-panel'), tabs = own(sw, '.sb-tab'), i = 0;
+      if (!panels.length) return;
+      function set(n) {
+        i = (n + panels.length) % panels.length;
+        panels.forEach(function (p, k) { p.classList.toggle('is-active', k === i); });
+        tabs.forEach(function (t, k) { t.classList.toggle('is-active', k === i); });
+      }
+      tabs.forEach(function (t, k) { t.addEventListener('click', function (e) { e.preventDefault(); set(k); }); });
+      own(sw, '.sb-prev').forEach(function (b) { b.addEventListener('click', function (e) { e.preventDefault(); set(i - 1); }); });
+      own(sw, '.sb-next').forEach(function (b) { b.addEventListener('click', function (e) { e.preventDefault(); set(i + 1); }); });
+      set(0);
+    });
+
+    /* Long testimonial quotes: truncate at ~430 characters with Read More / Read Less */
+    var chev = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>';
+    Array.prototype.forEach.call(document.querySelectorAll('.sb-quote'), function (w) {
+      var box = w.querySelector('.elementor-widget-container') || w, p = box.querySelector('p') || box;
+      var full = p.textContent.trim(), lim = parseInt(w.getAttribute('data-limit') || (w.classList.contains('sb-quote-short') ? 220 : 430), 10);
+      if (full.length <= lim + 20) return;
+      var cut = full.slice(0, lim); cut = cut.slice(0, cut.lastIndexOf(' ')) + '...' + (/[”"]$/.test(full) ? '”' : '');
+      var btn = document.createElement('button'); btn.type = 'button'; btn.className = 'sb-readmore-btn'; btn.innerHTML = '<span>Read More</span>' + chev;
+      var open = false;
+      function render() { p.textContent = open ? full : cut; btn.firstChild.textContent = open ? 'Read Less' : 'Read More'; btn.classList.toggle('is-open', open); }
+      btn.addEventListener('click', function () { open = !open; render(); });
+      box.appendChild(btn); render();
+    });
+
+    /* Collapsible text (About bio) */
+    Array.prototype.forEach.call(document.querySelectorAll('.sb-more'), function (w) {
+      var box = w.querySelector('.elementor-widget-container') || w;
+      var inner = document.createElement('div'); inner.className = 'sb-more-wrap';
+      while (box.firstChild) inner.appendChild(box.firstChild);
+      box.appendChild(inner);
+      var collapsed = 380; if (inner.scrollHeight <= collapsed + 40) return;
+      inner.style.maxHeight = collapsed + 'px';
+      var btn = document.createElement('button'); btn.type = 'button'; btn.className = 'sb-readmore-btn'; btn.style.fontFamily = "'Jost', sans-serif"; btn.innerHTML = '<span>Read More</span>' + chev;
+      btn.addEventListener('click', function () {
+        var open = !btn.classList.contains('is-open');
+        btn.classList.toggle('is-open', open); btn.firstChild.textContent = open ? 'Read Less' : 'Read More';
+        inner.style.maxHeight = open ? inner.scrollHeight + 'px' : collapsed + 'px';
+      });
+      box.appendChild(btn);
+    });
+
+    /* Google Translate behind "Select Language" */
+    var gt = document.getElementById('sb-gt'), loaded = false;
+    if (gt && gt.parentElement !== document.body) document.body.appendChild(gt);
+    Array.prototype.forEach.call(document.querySelectorAll('.sb-lang a'), function (a) {
+      a.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (!loaded) {
+          loaded = true;
+          window.googleTranslateElementInit = function () { new google.translate.TranslateElement({ pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE }, 'google_translate_element'); };
+          var s = document.createElement('script'); s.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit'; document.body.appendChild(s);
+        }
+        gt.classList.toggle('is-open');
+      });
+    });
+
+    /* Hero "scroll down" arrows */
+    Array.prototype.forEach.call(document.querySelectorAll('.sb-down a'), function (a) {
+      a.addEventListener('click', function (e) {
+        e.preventDefault();
+        var sec = a.closest('.e-con.e-parent'), next = sec && sec.nextElementSibling;
+        if (next) window.scrollTo({ top: next.getBoundingClientRect().top + window.scrollY, behavior: 'smooth' });
+      });
+    });
+  });
+})();
+</script>

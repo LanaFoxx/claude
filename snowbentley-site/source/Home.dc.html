@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;padding:0;background:#F5EFE7;color:#3A2C26;font-family:'Jost',sans-serif;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#3A2C26;text-decoration:none}
+a:hover{color:#937C5C}
+input,button,select,textarea{font-family:'Jost',sans-serif}
+input::placeholder,textarea::placeholder{color:inherit;opacity:.75}
+ul::-webkit-scrollbar{display:none}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideIn{from{transform:translateX(100%)}to{transform:translateX(0)}}
+</style>
+</helmet>
+
+<div style="position:relative;overflow-x:clip">
+
+<header data-screen-label="Header" style="position:fixed;top:0;left:0;right:0;z-index:40;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:10px clamp(20px,3.3vw,62px);min-height:116px;background:{{ hdrBg }};transform:translateY({{ hdrY }});transition:transform .4s ease,background-color .3s ease">
+  <a href="/" style="display:block;flex:none"><img src="https://media-production.lp-cdn.com/cdn-cgi/image/format=auto,quality=85,fit=scale-down,width=1280/https://media-production.lp-cdn.com/media/{{ hdrLogo }}" alt="Snow Bentley Realty" style="height:95px;width:auto;display:block"></a>
+  <nav style="display:flex;align-items:center;gap:22px;flex-wrap:wrap;justify-content:flex-end;font:400 15px/1 'Jost',sans-serif;letter-spacing:.3px;text-transform:uppercase">
+    <a href="/home-search/listings" style="color:{{ hdrFg }}">Home Search</a>
+    <a href="https://snowbentley.realscout.com/homesearch/home-reports?hva_public=true" style="color:{{ hdrFg }}">Home Valuation</a>
+    <a href="/what-were-looking-for" style="color:{{ hdrFg }}">What We're Looking For</a>
+    <button onClick="{{ openConnect }}" style="background:none;border:0;padding:0;color:{{ hdrFg }};font:inherit;letter-spacing:inherit;text-transform:inherit;cursor:pointer">Let's Connect</button>
+    <a href="tel:4158238595" style="color:{{ hdrFg }}">415-823-8595</a>
+    <span style="color:{{ hdrFg }};cursor:pointer;display:inline-flex;align-items:center;gap:4px">Select Language <svg width="10" height="10" viewBox="0 0 10 10" fill="{{ hdrFg }}"><path d="M0 2h10L5 9z"></path></svg></span>
+    <button onClick="{{ openMenu }}" aria-label="Menu" style="width:40px;height:40px;border-radius:50%;background:{{ hdrBtnBg }};border:0;display:grid;place-items:center;cursor:pointer;padding:0;margin-left:6px;transition:background-color .3s"><svg width="18" height="12" viewBox="0 0 18 12" fill="none" stroke="{{ hdrBtnFg }}" stroke-width="1.5"><path d="M0 1h18M0 6h18M0 11h18"></path></svg></button>
+  </nav>
+</header>
+
+<section data-screen-label="Hero" style="position:relative;height:100vh;min-height:640px;color:#fff">
+  <div ref="{{ heroRef }}" style="position:absolute;inset:0;overflow:hidden;background:url(https://res.cloudinary.com/luxuryp/videos/so_0,eo_0,f_auto,q_auto/g8p7m0kpme81xzy4qxtc/v1_snow-bentley.jpg) center/cover no-repeat"></div>
+  <div style="position:absolute;inset:0;background:rgba(0,0,0,.3)"></div>
+  <div style="position:relative;z-index:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:130px clamp(20px,3.3vw,62px) 60px">
+    <p style="margin:0 0 12px;font:600 13px/1.4 'Jost',sans-serif;letter-spacing:.5px;text-transform:uppercase">Award-Winning Chinese-Speaking Agent in the Bay Area</p>
+    <h1 style="margin:0 0 20px;font:300 clamp(40px,3.5vw,66px)/1.05 'Cormorant Garamond',serif;letter-spacing:2px;text-transform:uppercase;text-wrap:balance">Snow Bentley Realty</h1>
+    <p style="margin:0 0 14px;font:400 clamp(16px,1.2vw,22px)/1.3 'Cormorant Garamond',serif;letter-spacing:1px;text-transform:uppercase">Commercial Leasing &amp; Sales · Luxury Real Estate</p>
+    <p style="margin:0 0 14px;font:400 clamp(16px,1.2vw,22px)/1.3 'Cormorant Garamond',serif;letter-spacing:1px;text-transform:uppercase">CoStar Power Broker</p>
+    <p style="margin:0 0 30px;font:400 clamp(16px,1.15vw,21px)/1.3 'Cormorant Garamond',serif;letter-spacing:.5px">CA DRE# 01911217 | Brokered by eXp Commercial of California, Inc.</p>
+    <form style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;justify-content:center;margin:0">
+      <label style="display:flex;align-items:center;gap:10px;height:56px;width:300px;max-width:100%;padding:0 24px;border-radius:999px;background:rgba(255,255,255,.25);backdrop-filter:blur(6px);color:#fff">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>
+        <input placeholder="Search address or city" style="flex:1;min-width:0;background:transparent;border:0;outline:0;color:#fff;font:300 16px 'Jost',sans-serif">
+      </label>
+      <a href="/home-search/listings" style="display:inline-flex;align-items:center;justify-content:center;height:56px;width:112px;border-radius:999px;background:#fff;color:#3A2C26;font:600 12px/1 'Jost',sans-serif;letter-spacing:.5px;text-transform:uppercase">Search</a>
+    </form>
+  </div>
+</section>
+
+<section data-screen-label="My Vision" style="background:#F5EFE7;padding:clamp(56px,5vw,96px) clamp(20px,3.3vw,62px)">
+  <h2 style="margin:0 0 28px;text-align:center;font:300 clamp(34px,2.5vw,48px)/1.1 'Cormorant Garamond',serif;letter-spacing:2px;text-transform:uppercase">My Vision</h2>
+  <p style="margin:0 auto 44px;max-width:1200px;text-align:center;font:300 clamp(15px,.95vw,18px)/1.5 'Jost',sans-serif;letter-spacing:.3px;text-wrap:pretty">To be the trusted compass every business owner and family turns to when they're building and owning something new in the Bay Area and beyond, making the journey easier, faster, and more cost-effective.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:15px">
+    <a href="/home-search/listings" style="position:relative;display:block;aspect-ratio:574/690;overflow:hidden;background:#EDE5DA">
+      <img src="https://media-production.lp-cdn.com/cdn-cgi/image/format=auto,quality=85,fit=scale-down,width=1280/https://media-production.lp-cdn.com/media/fbaf8acd-b2aa-48d9-9db9-0a8df214a0c7" alt="Buy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+      <span style="position:absolute;left:16px;bottom:18px;color:#fff;font:400 clamp(26px,1.9vw,36px)/1 'Cormorant Garamond',serif;letter-spacing:2px;text-transform:uppercase">Buy</span>
+    </a>
+    <button onClick="{{ openConnect }}" style="position:relative;display:block;aspect-ratio:574/690;overflow:hidden;background:#EDE5DA;border:0;padding:0;cursor:pointer;text-align:left">
+      <img src="https://media-production.lp-cdn.com/cdn-cgi/image/format=auto,quality=85/https://media-production.lp-cdn.com/media/e096368e-cd6d-411a-82c3-09447dc3a86e" alt="Let's Connect" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+      <span style="position:absolute;left:16px;bottom:18px;color:#fff;font:400 clamp(26px,1.9vw,36px)/1 'Cormorant Garamond',serif;letter-spacing:2px;text-transform:uppercase">Let's Connect</span>
+    </button>
+    <a href="/home-valuation" style="position:relative;display:block;aspect-ratio:574/690;overflow:hidden;background:#EDE5DA">
+      <img src="https://media-production.lp-cdn.com/cdn-cgi/image/format=auto,quality=85,fit=scale-down,width=1280/https://media-production.lp-cdn.com/media/8e8b5400-7015-4ee2-8e0b-a9616acc4b72" alt="Sell" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+      <span style="position:absolute;left:16px;bottom:18px;color:#fff;font:400 clamp(26px,1.9vw,36px)/1 'Cormorant Garamond',serif;letter-spacing:2px;text-transform:uppercase">Sell</span>
+    </a>
+  </div>
+</section>
+
+<section data-screen-label="Home Valuation" style="position:relative;min-height:630px;display:flex;align-items:center;justify-content:center;padding:clamp(56px,5vw,96px) clamp(20px,3.3vw,62px);color:#fff;background:#3A2C26">
+  <div style="position:absolute;inset:0;background:url(https://media-production.lp-cdn.com/cdn-cgi/image/format=auto,quality=85,fit=scale-down,width=1920/https://media-production.lp-cdn.com/media/20591ddb-8a46-4e2e-b68f-13b2b74c07ea) center/cover no-repeat"></div>
+  <div style="position:absolute;inset:0;background:rgba(0,0,0,.3);pointer-events:none"></div>
+  <div style="position:relative;z-index:1;width:100%;max-width:1450px;text-align:center;pointer-events:none">
+    <h2 style="margin:0 0 30px;font:300 clamp(30px,2.6vw,50px)/1.1 'Cormorant Garamond',serif;letter-spacing:2px;text-transform:uppercase;text-wrap:balance">How Much Is Your Home Worth?</h2>
+    <ul style="list-style:none;display:flex;gap:28px;justify-content:center;flex-wrap:wrap;margin:0 0 44px;padding:0;font:300 15px/1 'Jost',sans-serif;letter-spacing:.3px">
+      <li style="display:flex;align-items:center;gap:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12l5 5L20 7"></path></svg>Instant property valuation</li>
+      <li style="display:flex;align-items:center;gap:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12l5 5L20 7"></path></svg>Expert advice</li>
+      <li style="display:flex;align-items:center;gap:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12l5 5L20 7"></path></svg>Sell for more</li>
+    </ul>
+    <form style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin:0;pointer-events:auto">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff" style="flex:none"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12zm0-9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"></path></svg>
+      <input placeholder="Enter your home address..." style="flex:1;min-width:240px;height:56px;padding:0 24px;border-radius:999px;border:1px solid #fff;background:transparent;color:#fff;font:300 17px 'Jost',sans-serif;outline:0">
+      <a href="https://snowbentley.realscout.com/homesearch/home-reports?hva_public=true" style="display:inline-flex;align-items:center;justify-content:center;height:56px;padding:0 36px;border-radius:999px;background:rgba(255,255,255,.8);color:#3A2C26;font:600 12px/1 'Jost',sans-serif;letter-spacing:.5px;text-transform:uppercase">Home Valuation</a>
+    </form>
+  </div>
+</section>
+
+<section data-screen-label="Meet Snow" style="background:#F5EFE7;padding:clamp(56px,5vw,96px) clamp(20px,3.3vw,62px)">
+  <div style="max-width:1540px;margin:0 auto;display:flex;flex-wrap:wrap;gap:clamp(32px,6vw,120px);align-items:center">
+    <div style="flex:1 1 360px;max-width:563px"><img src="https://media-production.lp-cdn.com/cdn-cgi/image/format=auto,quality=85,fit=scale-down,width=1280/https://media-production.lp-cdn.com/media/e22256cc-24c8-4658-ac56-7f014796ef74" alt="Snow Bentley San Ramon, CA Real Estate Agent Headshot" style="width:100%;display:block;aspect-ratio:563/805;object-fit:cover"></div>
+    <div style="flex:1.4 1 420px">
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:12px"><span style="width:100px;height:1px;background:#937C5C"></span><span style="font:400 13px/1 'Jost',sans-serif;letter-spacing:1.5px;text-transform:uppercase;color:#937C5C">Meet</span></div>
+      <h2 style="margin:0 0 44px;font:300 clamp(34px,2.5vw,48px)/1.1 'Cormorant Garamond',serif;letter-spacing:2px;text-transform:uppercase">Snow Bentley</h2>
+      <p style="margin:0 0 24px;font:600 17px/1.5 'Jost',sans-serif;letter-spacing:.5px">Global Reach, Local Expertise</p>
+      <p style="margin:0 0 30px;font:600 17px/1.5 'Jost',sans-serif;letter-spacing:.5px">Specializing in Commercial Sales &amp; Leasing<br>Luxury Residential Real Estate</p>
+      <p style="margin:0 0 24px;font:300 16px/1.6 'Jost',sans-serif;letter-spacing:.4px;text-wrap:pretty">Snow Bentley believes the best deals aren't won - they're made. As founder of Snow Bentley Realty, Inc., brokered by eXp Commercial, Snow works across two worlds: commercial leasing for restaurant operators, retail brands, business owners, and investors, and luxury residential for buyers and sellers throughout the San Francisco Bay Area. Through her brokerage network, she also partners with agents worldwide.</p>
+      <p style="margin:0 0 24px;font:300 16px/1.6 'Jost',sans-serif;letter-spacing:.4px;text-wrap:pretty">Snow approaches real estate the way a business owner does, because she has been one. Before she earned her real estate license more than a decade ago, she ran an import-export company, invested in startups, and owned and operated a restaurant in Santa Barbara. She knows what it takes to sign a lease, build out a space, and keep the doors open. That is why food and beverage and retail clients trust her to find locations that work for their business, not just ones that look good on paper.</p>
+      <p style="margin:0;font:300 16px/1.6 'Jost',sans-serif;letter-spacing:.4px">CA DRE# 01911217 | eXp Commercial of California, Inc.</p>
+      <div style="display:flex;gap:20px;flex-wrap:wrap;margin-top:60px">
+        <a href="/about" style="display:inline-flex;align-items:center;justify-content:center;height:56px;padding:0 32px;border-radius:999px;background:#3A2C26;color:#fff;font:600 12px/1 'Jost',sans-serif;letter-spacing:.5px;text-transform:uppercase">Learn More</a>
+        <button onClick="{{ openConnect }}" style="display:inline-flex;align-items:center;justify-content:center;height:56px;padding:0 32px;border-radius:999px;background:transparent;border:1px solid #3A2C26;color:#3A2C26;font:600 12px/1 'Jost',sans-serif;letter-spacing:.5px;text-transform:uppercase;cursor:pointer">Let's Connect</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Testimonials" style="position:relative;min-height:990px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:clamp(56px,5vw,96px) clamp(20px,3.3vw,62px);color:#fff;text-align:center;background:#EEEDE9">
+  <div style="position:absolute;inset:0;background:url(https://media-production.lp-cdn.com/cdn-cgi/image/format=auto,quality=85,fit=scale-down,width=1920/https://media-production.lp-cdn.com/media/f6a1384a-fb50-4f28-8f3c-dfeafbcb6fec) center/cover no-repeat"></div>
+  <div style="position:absolute;inset:0;background:rgba(0,0,0,.3);pointer-events:none"></div>
+  <div style="position:relative;z-index:1;width:100%;max-width:1296px;margin:0 auto;pointer-events:none">
+    <div style="display:inline-flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:14px"><span style="font:600 13px/1 'Jost',sans-serif;letter-spacing:.5px;text-transform:uppercase">Success Stories</span><span style="width:104px;height:1px;background:#fff"></span></div>
+    <h2 style="margin:0;font:300 clamp(34px,2.5vw,48px)/1.1 'Cormorant Garamond',serif;letter-spacing:2px;text-transform:uppercase">Testimonials</h2>
+    <div style="position:relative;margin-top:86px;pointer-events:auto">
+      <div style="position:absolute;top:-20px;left:50%;transform:translateX(-50%);width:55px;height:80px;background:#3A2C26;display:grid;place-items:center;z-index:2"><span style="font:700 44px/1 'Cormorant Garamond',serif;color:#fff;margin-top:18px">“</span></div>
+      <div style="background:rgba(255,255,255,.86);padding:120px clamp(24px,6vw,112px) 84px;color:#3A2C26;min-height:512px;display:flex;flex-direction:column;align-items:center;justify-content:center;animation:fadeIn .4s">
+        <p style="margin:0;font:400 clamp(20px,1.7vw,32px)/1.15 'Cormorant Garamond',serif;text-wrap:pretty">{{ quote }}</p>
+        <sc-if value="{{ canExpand }}" hint-placeholder-val="{{ true }}">
+          <button onClick="{{ toggleExpand }}" style="margin-top:28px;background:none;border:0;padding:0;cursor:pointer;display:inline-flex;align-items:center;gap:8px;color:#3A2C26;font:600 12px/1 'Cormorant Garamond',serif;letter-spacing:1.5px;text-transform:uppercase">{{ readMoreLabel }}<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"></path></svg></button>
+        </sc-if>
+        <p style="margin:56px 0 0;font:300 16px/1 'Jost',sans-serif">{{ author }}</p>
+      </div>
+    </div>
+    <a href="/testimonials" style="display:inline-flex;align-items:center;justify-content:center;height:56px;padding:0 32px;border-radius:999px;background:#fff;color:#3A2C26;font:600 12px/1 'Jost',sans-serif;letter-spacing:.5px;text-transform:uppercase;margin-top:50px;pointer-events:auto">View All</a>
+  </div>
+  <button onClick="{{ prevT }}" aria-label="Previous" style="position:absolute;left:clamp(20px,3.3vw,62px);top:50%;transform:translateY(-50%);width:56px;height:56px;border-radius:50%;background:#fff;border:0;display:grid;place-items:center;cursor:pointer;z-index:2;padding:0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3A2C26" stroke-width="1.8"><path d="M15 5l-7 7 7 7"></path></svg></button>
+  <button onClick="{{ nextT }}" aria-label="Next" style="position:absolute;right:clamp(20px,3.3vw,62px);top:50%;transform:translateY(-50%);width:56px;height:56px;border-radius:50%;background:#fff;border:0;display:grid;place-items:center;cursor:pointer;z-index:2;padding:0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3A2C26" stroke-width="1.8"><path d="M9 5l7 7-7 7"></path></svg></button>
+</section>
+
+<section data-screen-label="Search Listings" style="background:#F5EFE7;padding:clamp(56px,5vw,96px) clamp(20px,3.3vw,62px)">
+  <h2 style="margin:0 0 40px;text-align:center;font:300 clamp(34px,2.5vw,48px)/1.1 'Cormorant Garamond',serif;letter-spacing:2px;text-transform:uppercase">Search Listings</h2>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:15px">
+    <a href="/home-search/listings?propertyType=COMMERCIAL" style="position:relative;display:block;aspect-ratio:869/564;overflow:hidden;background:#EDE5DA">
+      <img src="https://media-production.lp-cdn.com/cdn-cgi/image/format=auto,quality=85,fit=scale-down,width=1280/https://media-production.lp-cdn.com/media/f95b7474-5300-43d2-aaa6-b1767656a7f8" alt="Commercial Sales" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+      <span style="position:absolute;inset:0;background:rgba(0,0,0,.18);display:grid;place-items:center;color:#fff;font:400 clamp(24px,2vw,38px)/1 'Cormorant Garamond',serif;letter-spacing:3px;text-transform:uppercase;text-align:center;padding:16px">Commercial Sales</span>
+    </a>
+    <div style="display:grid;grid-template-rows:217fr 332fr;gap:15px">
+      <a href="/home-search/listings?propertyType=COMMERCIAL&amp;isLease=true" style="position:relative;display:block;min-height:200px;overflow:hidden;background:#EDE5DA">
+        <img src="https://media-production.lp-cdn.com/cdn-cgi/image/format=auto,quality=85,fit=scale-down,width=1280/https://media-production.lp-cdn.com/media/ac226cec-892f-4312-863f-07773c7056f4" alt="Commercial Leasing" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+        <span style="position:absolute;inset:0;background:rgba(0,0,0,.18);display:grid;place-items:center;color:#fff;font:400 clamp(24px,2vw,38px)/1 'Cormorant Garamond',serif;letter-spacing:3px;text-transform:uppercase;text-align:center;padding:16px">Commercial Leasing</span>
+      </a>
+      <a href="/home-search/listings?keyword=Luxury%20Residential&amp;priceMin=3000000" style="position:relative;display:block;min-height:300px;overflow:hidden;background:#EDE5DA">
+        <img src="https://media-production.lp-cdn.com/cdn-cgi/image/format=auto,quality=85,fit=scale-down,width=1280/https://media-production.lp-cdn.com/media/fc8caa14-75bb-4d2e-b19c-12511e3a20f2" alt="Luxury Residential" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+        <span style="position:absolute;inset:0;background:rgba(0,0,0,.18);display:grid;place-items:center;color:#fff;font:400 clamp(24px,2vw,38px)/1 'Cormorant Garamond',serif;letter-spacing:3px;text-transform:uppercase;text-align:center;padding:16px">Luxury Residential</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Neighborhoods" style="background:#F5EFE7;padding:clamp(56px,5vw,96px) 0 clamp(56px,5vw,96px) clamp(20px,3.3vw,62px)">
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;padding-right:clamp(20px,3.3vw,62px)">
+    <div>
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:12px"><span style="width:100px;height:1px;background:#937C5C"></span><span style="font:400 13px/1 'Jost',sans-serif;letter-spacing:1.5px;text-transform:uppercase;color:#937C5C">Local Expertise</span></div>
+      <h2 style="margin:0;font:300 clamp(34px,2.5vw,48px)/1.1 'Cormorant Garamond',serif;letter-spacing:2px;text-transform:uppercase">Neighborhoods</h2>
+    </div>
+    <div style="display:flex;gap:12px">
+      <button onClick="{{ prevH }}" aria-label="Previous neighborhood" style="width:56px;height:56px;border-radius:50%;background:#3A2C26;border:0;display:grid;place-items:center;cursor:pointer;padding:0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><path d="M15 5l-7 7 7 7"></path></svg></button>
+      <button onClick="{{ nextH }}" aria-label="Next neighborhood" style="width:56px;height:56px;border-radius:50%;background:#3A2C26;border:0;display:grid;place-items:center;cursor:pointer;padding:0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><path d="M9 5l7 7-7 7"></path></svg></button>
+    </div>
+  </div>
+  <div style="display:flex;gap:clamp(24px,3.6vw,68px);margin-top:40px;flex-wrap:wrap;align-items:flex-start">
+    <div style="flex:0 1 528px;min-width:260px">
+      <div style="position:relative">
+        <ul style="list-style:none;margin:0;padding:0;max-height:455px;overflow:auto;scrollbar-width:none">
+          <sc-for list="{{ hoods }}" as="n" hint-placeholder-count="7">
+            <li style="border-bottom:1px solid {{ n.line }}">
+              <button onClick="{{ n.select }}" style="width:100%;display:flex;justify-content:space-between;align-items:center;height:65px;padding:0;background:none;border:0;cursor:pointer;font:300 17px/1 'Jost',sans-serif;letter-spacing:.3px;text-transform:uppercase;color:#3A2C26;text-align:left">
+                <span>{{ n.name }}</span>
+                <sc-if value="{{ n.active }}" hint-placeholder-val="{{ false }}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3A2C26" stroke-width="1.8"><path d="M9 5l7 7-7 7"></path></svg></sc-if>
+              </button>
+            </li>
+          </sc-for>
+        </ul>
+        <div style="position:absolute;left:0;right:0;bottom:0;height:60px;background:linear-gradient(rgba(245,239,231,0),#F5EFE7);pointer-events:none"></div>
+      </div>
+      <a href="/neighborhoods" style="display:flex;align-items:center;justify-content:center;width:100%;height:56px;margin-top:4px;border-radius:999px;background:#3A2C26;color:#fff;font:600 12px/1 'Jost',sans-serif;letter-spacing:.5px;text-transform:uppercase">View All</a>
+    </div>
+    <div style="flex:1 1 520px;position:relative;padding-bottom:64px;min-width:0">
+      <img src="{{ activeHood.img }}" alt="{{ activeHood.name }}" style="width:100%;display:block;aspect-ratio:1217/622;object-fit:cover;background:#EDE5DA">
+      <div style="position:absolute;right:clamp(20px,3.3vw,62px);bottom:0;width:min(460px,78%);background:#3A2C26;color:#fff;padding:60px 48px;min-height:322px;display:flex;flex-direction:column;justify-content:center;gap:64px">
+        <h3 style="margin:0;font:400 clamp(22px,1.7vw,32px)/1.1 'Cormorant Garamond',serif;letter-spacing:2px;text-transform:uppercase">Explore {{ activeHood.name }}</h3>
+        <a href="{{ activeHood.href }}" style="color:#fff;font:600 12px/1 'Jost',sans-serif;letter-spacing:1px;text-transform:uppercase;display:inline-flex;align-items:center;gap:10px">Read More <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M9 5l7 7-7 7"></path></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Newsletter and Work With Snow" style="position:relative;padding:76px clamp(20px,3.3vw,62px);background:#937C5C">
+  <div style="position:absolute;inset:0;background:url(https://media-production.lp-cdn.com/cdn-cgi/image/format=auto,quality=85,fit=scale-down,width=1920/https://media-production.lp-cdn.com/media/36992463-4792-4bf9-974a-3ee606854281) center/cover no-repeat"></div>
+  <div style="position:absolute;inset:0;background:rgba(0,0,0,.3);pointer-events:none"></div>
+  <div style="position:relative;z-index:1;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr))">
+    <div style="background:rgba(255,255,255,.82);padding:80px clamp(24px,5vw,96px);text-align:center;display:flex;flex-direction:column;align-items:center;min-height:605px">
+      <div style="display:inline-flex;flex-direction:column;align-items:center;gap:14px;margin-bottom:18px"><span style="font:600 13px/1 'Jost',sans-serif;letter-spacing:1px;text-transform:uppercase;color:#6B5B50">Join My</span><span style="width:100px;height:1px;background:#937C5C"></span></div>
+      <h2 style="margin:0 0 30px;font:300 clamp(34px,2.5vw,48px)/1.1 'Cormorant Garamond',serif;letter-spacing:2px;text-transform:uppercase">Newsletter</h2>
+      <p style="margin:0 0 30px;max-width:580px;font:300 clamp(15px,.95vw,18px)/1.5 'Jost',sans-serif;letter-spacing:.3px;text-wrap:pretty">Stay up-to-date with exclusive news and market updates in the Bay Area.</p>
+      <label style="display:flex;align-items:center;gap:12px;height:50px;width:520px;max-width:100%;padding:0 24px;border-radius:999px;border:1px solid #3A2C26;color:#3A2C26">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="1"></rect><path d="M3 7l9 6 9-6"></path></svg>
+        <input placeholder="Enter Your Email Address" style="flex:1;min-width:0;background:transparent;border:0;outline:0;color:#3A2C26;font:300 16px 'Jost',sans-serif">
+      </label>
+      <label style="display:flex;gap:10px;align-items:flex-start;width:520px;max-width:100%;margin:22px 0 32px;text-align:left;font:300 11px/1.5 'Jost',sans-serif;color:#6B5B50">
+        <input type="checkbox" style="margin:2px 0 0;width:14px;height:14px;flex:none;accent-color:#3A2C26">
+        <span>I agree to be contacted by Snow Bentley via call, email, and text for real estate services. To opt out, you can reply 'stop' at any time or reply 'help' for assistance. You can also click the unsubscribe link in the emails. Message and data rates may apply. Message frequency may vary. <a href="/terms-and-conditions" style="text-decoration:underline">Privacy Policy</a>.</span>
+      </label>
+      <button style="display:inline-flex;align-items:center;justify-content:center;height:56px;padding:0 36px;border-radius:999px;background:#3A2C26;border:0;color:#fff;font:600 12px/1 'Jost',sans-serif;letter-spacing:.5px;text-transform:uppercase;cursor:pointer">Subscribe</button>
+    </div>
+    <div style="background:rgba(255,255,255,.9);padding:80px clamp(24px,5vw,96px);text-align:center;display:flex;flex-direction:column;align-items:center;min-height:605px">
+      <div style="display:inline-flex;flex-direction:column;align-items:center;gap:14px;margin-bottom:18px"><span style="font:600 13px/1 'Jost',sans-serif;letter-spacing:1px;text-transform:uppercase;color:#6B5B50">Get in Touch</span><span style="width:100px;height:1px;background:#937C5C"></span></div>
+      <h2 style="margin:0 0 30px;font:300 clamp(34px,2.5vw,48px)/1.1 'Cormorant Garamond',serif;letter-spacing:2px;text-transform:uppercase">Work With Snow</h2>
+      <p style="margin:0 0 50px;max-width:600px;font:300 clamp(15px,.95vw,18px)/1.5 'Jost',sans-serif;letter-spacing:.3px;text-wrap:pretty">Snow brings the same strategy and care to one of life's biggest decisions. She finds properties that fit her clients' lifestyle and goals, and she guides them through a smooth, well-negotiated process from first showing to closing.</p>
+      <button onClick="{{ openConnect }}" style="display:inline-flex;align-items:center;justify-content:center;height:56px;padding:0 36px;border-radius:999px;background:#3A2C26;border:0;color:#fff;font:600 12px/1 'Jost',sans-serif;letter-spacing:.5px;text-transform:uppercase;cursor:pointer">Let's Connect</button>
+      <div style="display:flex;align-items:center;gap:50px;margin:40px 0 36px;color:#9A8E86;font:300 12px/1 'Jost',sans-serif"><span style="width:56px;height:1px;background:#C9BFB4"></span>or<span style="width:56px;height:1px;background:#C9BFB4"></span></div>
+      <div style="display:flex;align-items:center;gap:14px;font:300 17px/1 'Jost',sans-serif;color:#8C7F76"><span>Call at</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3A2C26" stroke-width="1.6"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"></path></svg><a href="tel:4158238595" style="font:600 15px/1 'Jost',sans-serif;letter-spacing:.5px;color:#3A2C26">415-823-8595</a></div>
+    </div>
+  </div>
+</section>
+
+<footer data-screen-label="Footer" style="background:#F5EFE7;padding:clamp(56px,5vw,96px) clamp(20px,3.3vw,62px) 40px">
+  <img src="https://media-production.lp-cdn.com/cdn-cgi/image/format=auto,quality=85/https://media-production.lp-cdn.com/media/36b1231e-2d63-49e8-b594-b2f74ed4775e" alt="eXp Commercial" style="height:70px;width:auto;display:block">
+  <div style="display:flex;justify-content:space-between;gap:40px;flex-wrap:wrap;margin-top:50px;padding-bottom:40px;border-bottom:1px solid #3A2C26">
+    <div style="display:flex;gap:clamp(32px,9vw,180px);flex-wrap:wrap;flex:1 1 auto">
+      <div>
+        <p style="margin:0 0 40px;font:400 26px/1 'Cormorant Garamond',serif;letter-spacing:1px;text-transform:uppercase">Snow Bentley</p>
+        <p style="margin:0 0 20px;font:400 13px/1 'Jost',sans-serif;letter-spacing:.5px;text-transform:uppercase">Contact Details</p>
+        <a href="tel:4158238595" style="display:block;font:300 15px/1.4 'Jost',sans-serif;letter-spacing:.5px;text-decoration:underline;text-underline-offset:4px">415-823-8595</a>
+        <a href="mailto:snow@snowbentley.com" style="display:block;font:300 15px/1.4 'Jost',sans-serif;letter-spacing:.5px;text-decoration:underline;text-underline-offset:4px">snow@snowbentley.com</a>
+      </div>
+      <div style="padding-top:66px">
+        <p style="margin:0 0 20px;font:400 13px/1 'Jost',sans-serif;letter-spacing:.5px;text-transform:uppercase">Address</p>
+        <p style="margin:0;font:300 15px/1.4 'Jost',sans-serif;letter-spacing:.5px">2603 Camino Ramon<br>San Ramon, CA 94583</p>
+      </div>
+      <div style="width:1px;background:#3A2C26;align-self:stretch;min-height:160px"></div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:flex-start">
+      <a href="https://www.facebook.com/p/Snow-Bentley-61575852646089/" aria-label="Facebook" style="width:40px;height:40px;border-radius:50%;background:#3A2C26;display:grid;place-items:center"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M13.5 22v-8h2.7l.4-3.2h-3.1V8.8c0-.9.3-1.6 1.6-1.6h1.7V4.4c-.3 0-1.3-.1-2.5-.1-2.5 0-4.1 1.5-4.1 4.2v2.3H7.4V14h2.8v8h3.3z" fill="#fff"></path></svg></a>
+      <a href="https://www.instagram.com/snowlibentley/?hl=en" aria-label="Instagram" style="width:40px;height:40px;border-radius:50%;background:#3A2C26;display:grid;place-items:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1" fill="#fff"></circle></svg></a>
+      <a href="https://www.linkedin.com/in/snow-bentley" aria-label="LinkedIn" style="width:40px;height:40px;border-radius:50%;background:#3A2C26;display:grid;place-items:center"><svg width="16" height="16" viewBox="0 0 24 24"><path d="M6.5 9.5h-3V20h3V9.5zM5 4.5a1.8 1.8 0 1 0 0 3.6 1.8 1.8 0 0 0 0-3.6zM20.5 20h-3v-5.3c0-1.3-.5-2.2-1.7-2.2-.9 0-1.5.6-1.7 1.2-.1.2-.1.5-.1.8V20h-3V9.5h3v1.3c.4-.6 1.2-1.5 2.9-1.5 2.1 0 3.6 1.4 3.6 4.3V20z" fill="#fff"></path></svg></a>
+      <a href="https://maps.app.goo.gl/bK8Nzc5w69ZdCsiJ9" aria-label="Google" style="width:40px;height:40px;border-radius:50%;background:#3A2C26;display:grid;place-items:center;color:#fff;font:600 15px/1 'Jost',sans-serif">G</a>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px 0;margin-top:40px;font:300 15px/1 'Jost',sans-serif;letter-spacing:.3px;text-transform:uppercase">
+    <span style="width:190px;font-size:13px">Navigation</span>
+    <a href="/residential" style="padding:0 16px 0 0;text-decoration:underline;text-underline-offset:4px">Residential</a>
+    <a href="/home-search/listings" style="padding:0 16px;border-left:1px solid #3A2C26;text-decoration:underline;text-underline-offset:4px">Home Search</a>
+    <a href="https://snowbentley.realscout.com/homesearch/home-reports?hva_public=true" style="padding:0 16px;border-left:1px solid #3A2C26;text-decoration:underline;text-underline-offset:4px">Home Valuation</a>
+    <a href="/neighborhoods" style="padding:0 16px;border-left:1px solid #3A2C26;text-decoration:underline;text-underline-offset:4px">Neighborhoods</a>
+    <button onClick="{{ openConnect }}" style="padding:0 16px;border:0;border-left:1px solid #3A2C26;background:none;color:#3A2C26;font:inherit;letter-spacing:inherit;text-transform:inherit;text-decoration:underline;text-underline-offset:4px;cursor:pointer">Let's Connect</button>
+  </div>
+  <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px 0;margin-top:34px;font:300 15px/1 'Jost',sans-serif;letter-spacing:.3px;text-transform:uppercase">
+    <span style="width:190px;font-size:13px">Useful Items</span>
+    <a href="/what-were-looking-for" style="padding:0 16px 0 0;text-decoration:underline;text-underline-offset:4px">What We're Looking For?</a>
+    <a href="/done-deals" style="padding:0 16px;border-left:1px solid #3A2C26;text-decoration:underline;text-underline-offset:4px">Done Deals</a>
+    <a href="/testimonials" style="padding:0 16px;border-left:1px solid #3A2C26;text-decoration:underline;text-underline-offset:4px">Testimonials</a>
+  </div>
+  <p style="margin:50px 0 0;font:300 13px/1.5 'Jost',sans-serif;letter-spacing:.5px">Snow Bentley | CA DRE# 01911217<br>eXp Commercial of California, Inc. | CA DRE# 02134436</p>
+  <p style="margin:24px 0 0;font:300 13px/1.5 'Jost',sans-serif;letter-spacing:.5px">All information is deemed reliable but not guaranteed and should be independently reviewed and verified.</p>
+  <img src="https://media-production.lp-cdn.com/cdn-cgi/image/format=auto,quality=85/https://media-production.lp-cdn.com/media/382304bf-5354-45f0-878f-80323ad7d65a" alt="REALTOR and Equal Housing Opportunity" style="height:46px;width:auto;display:block;margin-top:24px">
+  <div style="display:flex;justify-content:flex-end;align-items:center;flex-wrap:wrap;margin-top:80px;font:300 15px/1 'Jost',sans-serif;letter-spacing:.3px;text-transform:uppercase">
+    <span style="padding:0 24px 0 0">Copyright © 2026</span>
+    <a href="/terms-and-conditions" style="padding:0 0 0 24px;border-left:1px solid #3A2C26;text-decoration:underline;text-underline-offset:4px">Privacy Policy</a>
+  </div>
+</footer>
+
+<sc-if value="{{ showFloating }}" hint-placeholder-val="{{ true }}">
+  <button onClick="{{ openConnect }}" style="position:fixed;left:20px;bottom:20px;z-index:50;display:inline-flex;align-items:center;gap:10px;height:50px;padding:0 24px;border-radius:999px;background:#3A2C26;border:0;color:#fff;font:600 12px/1 'Jost',sans-serif;letter-spacing:.5px;text-transform:uppercase;cursor:pointer">Let's Connect <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M6 15l6-6 6 6"></path></svg></button>
+</sc-if>
+
+<sc-if value="{{ connectOpen }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closeConnect }}" style="position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:60;animation:fadeIn .25s"></div>
+  <aside data-screen-label="Connect Drawer" style="position:fixed;top:0;right:0;bottom:0;width:min(460px,100%);background:#F5EFE7;z-index:61;padding:40px;overflow:auto;border-left:1px solid #EDE5DA">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:36px">
+      <span style="font:600 13px/1 'Jost',sans-serif;letter-spacing:1px;text-transform:uppercase;color:#937C5C">Let's Connect</span>
+      <button onClick="{{ closeConnect }}" aria-label="Close" style="width:40px;height:40px;border-radius:50%;border:1px solid #3A2C26;background:none;cursor:pointer;display:grid;place-items:center;padding:0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3A2C26" stroke-width="1.8"><path d="M5 5l14 14M19 5L5 19"></path></svg></button>
+    </div>
+    <h3 style="margin:0 0 28px;font:300 36px/1.1 'Cormorant Garamond',serif;letter-spacing:2px;text-transform:uppercase">Leave a Message</h3>
+    <sc-if value="{{ notSent }}" hint-placeholder-val="{{ true }}">
+      <div style="display:grid;gap:14px">
+        <input placeholder="Full Name*" style="height:50px;padding:0 22px;border-radius:999px;border:1px solid #3A2C26;background:transparent;color:#3A2C26;font:300 15px 'Jost',sans-serif;outline:0">
+        <input placeholder="Email*" style="height:50px;padding:0 22px;border-radius:999px;border:1px solid #3A2C26;background:transparent;color:#3A2C26;font:300 15px 'Jost',sans-serif;outline:0">
+        <input placeholder="Phone*" style="height:50px;padding:0 22px;border-radius:999px;border:1px solid #3A2C26;background:transparent;color:#3A2C26;font:300 15px 'Jost',sans-serif;outline:0">
+        <select style="height:50px;padding:0 18px;border-radius:999px;border:1px solid #3A2C26;background:transparent;color:#3A2C26;font:300 15px 'Jost',sans-serif;outline:0">
+          <option>Interested in...</option><option>Selling &amp; Buying</option><option>Selling</option><option>Buying</option><option>Renting</option><option>Other</option>
+        </select>
+        <textarea placeholder="Message" rows="4" style="padding:14px 22px;border-radius:24px;border:1px solid #3A2C26;background:transparent;color:#3A2C26;font:300 15px/1.5 'Jost',sans-serif;outline:0;resize:vertical"></textarea>
+        <label style="display:flex;gap:10px;align-items:flex-start;font:300 11px/1.5 'Jost',sans-serif;color:#6B5B50">
+          <input type="checkbox" style="margin:2px 0 0;width:14px;height:14px;flex:none;accent-color:#3A2C26">
+          <span>I agree to be contacted by Snow Bentley via call, email, and text for real estate services. To opt out, you can reply 'stop' at any time or reply 'help' for assistance. You can also click the unsubscribe link in the emails. Message and data rates may apply. Message frequency may vary. <a href="/terms-and-conditions" style="text-decoration:underline">Privacy Policy</a>.</span>
+        </label>
+        <button onClick="{{ submitConnect }}" style="height:56px;border-radius:999px;background:#3A2C26;border:0;color:#fff;font:600 12px/1 'Jost',sans-serif;letter-spacing:.5px;text-transform:uppercase;cursor:pointer;margin-top:6px">Submit</button>
+      </div>
+    </sc-if>
+    <sc-if value="{{ sent }}" hint-placeholder-val="{{ false }}">
+      <p style="margin:0;font:400 24px/1.3 'Cormorant Garamond',serif">Thank you for your message. I will be in touch with you shortly.</p>
+    </sc-if>
+    <div style="margin-top:48px;padding-top:32px;border-top:1px solid #3A2C26">
+      <p style="margin:0 0 14px;font:400 13px/1 'Jost',sans-serif;letter-spacing:.5px;text-transform:uppercase">Contact Details</p>
+      <p style="margin:0 0 6px;font:300 15px/1.5 'Jost',sans-serif">Snow Bentley | CA DRE# 01911217</p>
+      <p style="margin:0 0 24px;font:300 15px/1.5 'Jost',sans-serif"><a href="tel:4158238595" style="text-decoration:underline;text-underline-offset:4px">415-823-8595</a> · <a href="mailto:snow@snowbentley.com" style="text-decoration:underline;text-underline-offset:4px">snow@snowbentley.com</a></p>
+      <p style="margin:0 0 14px;font:400 13px/1 'Jost',sans-serif;letter-spacing:.5px;text-transform:uppercase">Address</p>
+      <p style="margin:0;font:300 15px/1.5 'Jost',sans-serif">2603 Camino Ramon<br>San Ramon, CA 94583</p>
+    </div>
+  </aside>
+</sc-if>
+
+<sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closeMenu }}" style="position:fixed;inset:0;z-index:69;background:rgba(0,0,0,.1);animation:fadeIn .3s"></div>
+  <div data-screen-label="Menu" style="position:fixed;top:0;right:0;bottom:0;width:min(1500px,80%);z-index:70;background:#F5EFE7;color:#3A2C26;overflow:auto;padding:130px clamp(24px,11vw,212px) 80px clamp(24px,6vw,113px);animation:slideIn .45s ease">
+    <button onClick="{{ closeMenu }}" aria-label="Close menu" style="position:absolute;top:26px;right:40px;width:40px;height:40px;border-radius:50%;background:#3A2C26;border:0;display:grid;place-items:center;cursor:pointer;padding:0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M5 5l14 14M19 5L5 19"></path></svg></button>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:40px 20px">
+      <div style="display:grid;gap:32px;align-content:start">
+        <a href="/" style="display:flex;gap:10px;align-items:flex-start;color:#3A2C26;font:300 clamp(24px,1.6vw,30px)/1 'Cormorant Garamond',serif;letter-spacing:1px;text-transform:uppercase"><span style="font:400 11px/1 'Cormorant Garamond',serif;color:#937C5C;width:14px;flex:none;margin-top:3px">01</span>Home</a>
+        <a href="/about" style="display:flex;gap:10px;align-items:flex-start;color:#3A2C26;font:300 clamp(24px,1.6vw,30px)/1 'Cormorant Garamond',serif;letter-spacing:1px;text-transform:uppercase"><span style="font:400 11px/1 'Cormorant Garamond',serif;color:#937C5C;width:14px;flex:none;margin-top:3px">02</span>About Snow</a>
+        <div style="display:grid;gap:16px">
+          <span style="display:flex;gap:10px;align-items:flex-start;font:300 clamp(24px,1.6vw,30px)/1 'Cormorant Garamond',serif;letter-spacing:1px;text-transform:uppercase"><span style="font:400 11px/1 'Cormorant Garamond',serif;color:#937C5C;width:14px;flex:none;margin-top:3px">03</span>Properties</span>
+          <div style="display:grid;gap:16px;padding-left:24px;margin-top:4px">
+            <a href="/residential" style="color:#3A2C26;font:300 15px/1 'Jost',sans-serif;letter-spacing:.3px;text-transform:uppercase;text-decoration:underline;text-underline-offset:4px">Residential</a>
+            <a href="/commercial" style="color:#3A2C26;font:300 15px/1 'Jost',sans-serif;letter-spacing:.3px;text-transform:uppercase;text-decoration:underline;text-underline-offset:4px">Commercial</a>
+            <a href="/done-deals" style="color:#3A2C26;font:300 15px/1 'Jost',sans-serif;letter-spacing:.3px;text-transform:uppercase;text-decoration:underline;text-underline-offset:4px">Done Deals</a>
+            <a href="/what-were-looking-for" style="color:#3A2C26;font:300 15px/1 'Jost',sans-serif;letter-spacing:.3px;text-transform:uppercase;text-decoration:underline;text-underline-offset:4px">What We're Looking For?</a>
+          </div>
+        </div>
+      </div>
+      <div style="display:grid;gap:32px;align-content:start">
+        <a href="/home-search" style="display:flex;gap:10px;align-items:flex-start;color:#3A2C26;font:300 clamp(24px,1.6vw,30px)/1 'Cormorant Garamond',serif;letter-spacing:1px;text-transform:uppercase"><span style="font:400 11px/1 'Cormorant Garamond',serif;color:#937C5C;width:14px;flex:none;margin-top:3px">04</span>Home Search</a>
+        <a href="https://snowbentley.realscout.com/homesearch/home-reports?hva_public=true" style="display:flex;gap:10px;align-items:flex-start;color:#3A2C26;font:300 clamp(24px,1.6vw,30px)/1 'Cormorant Garamond',serif;letter-spacing:1px;text-transform:uppercase"><span style="font:400 11px/1 'Cormorant Garamond',serif;color:#937C5C;width:14px;flex:none;margin-top:3px">05</span>Home Valuation</a>
+        <a href="/neighborhoods" style="display:flex;gap:10px;align-items:flex-start;color:#3A2C26;font:300 clamp(24px,1.6vw,30px)/1 'Cormorant Garamond',serif;letter-spacing:1px;text-transform:uppercase"><span style="font:400 11px/1 'Cormorant Garamond',serif;color:#937C5C;width:14px;flex:none;margin-top:3px">06</span>Neighborhoods</a>
+      </div>
+      <div style="display:grid;gap:32px;align-content:start">
+        <a href="/testimonials" style="display:flex;gap:10px;align-items:flex-start;color:#3A2C26;font:300 clamp(24px,1.6vw,30px)/1 'Cormorant Garamond',serif;letter-spacing:1px;text-transform:uppercase"><span style="font:400 11px/1 'Cormorant Garamond',serif;color:#937C5C;width:14px;flex:none;margin-top:3px">07</span>Testimonials</a>
+        <a href="/blog" style="display:flex;gap:10px;align-items:flex-start;color:#3A2C26;font:300 clamp(24px,1.6vw,30px)/1 'Cormorant Garamond',serif;letter-spacing:1px;text-transform:uppercase"><span style="font:400 11px/1 'Cormorant Garamond',serif;color:#937C5C;width:14px;flex:none;margin-top:3px">08</span>Blog</a>
+        <div style="display:grid;gap:16px">
+          <span style="display:flex;gap:10px;align-items:flex-start;font:300 clamp(24px,1.6vw,30px)/1 'Cormorant Garamond',serif;letter-spacing:1px;text-transform:uppercase"><span style="font:400 11px/1 'Cormorant Garamond',serif;color:#937C5C;width:14px;flex:none;margin-top:3px">09</span>Resources</span>
+          <div style="display:grid;gap:16px;padding-left:24px;margin-top:4px">
+            <a href="/buyers" style="color:#3A2C26;font:300 15px/1 'Jost',sans-serif;letter-spacing:.3px;text-transform:uppercase;text-decoration:underline;text-underline-offset:4px">Buyer's Guide</a>
+            <a href="/sellers" style="color:#3A2C26;font:300 15px/1 'Jost',sans-serif;letter-spacing:.3px;text-transform:uppercase;text-decoration:underline;text-underline-offset:4px">Seller's Guide</a>
+            <a href="/guides" style="color:#3A2C26;font:300 15px/1 'Jost',sans-serif;letter-spacing:.3px;text-transform:uppercase;text-decoration:underline;text-underline-offset:4px">Guides</a>
+          </div>
+        </div>
+      </div>
+      <div style="display:grid;gap:32px;align-content:start">
+        <a href="/contact" style="display:flex;gap:10px;align-items:flex-start;color:#3A2C26;font:300 clamp(24px,1.6vw,30px)/1 'Cormorant Garamond',serif;letter-spacing:1px;text-transform:uppercase"><span style="font:400 11px/1 'Cormorant Garamond',serif;color:#937C5C;width:14px;flex:none;margin-top:3px">10</span>Let's Connect</a>
+        <a href="/home-search/auth/sign_in" style="display:flex;gap:10px;align-items:flex-start;color:#3A2C26;font:300 clamp(24px,1.6vw,30px)/1 'Cormorant Garamond',serif;letter-spacing:1px;text-transform:uppercase"><span style="font:400 11px/1 'Cormorant Garamond',serif;color:#937C5C;width:14px;flex:none;margin-top:3px">11</span>My Search Portal</a>
+      </div>
+    </div>
+    <div style="height:1px;background:#3A2C26;margin-top:clamp(80px,22vh,280px)"></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:32px;margin-top:70px;font:300 15px/1.4 'Jost',sans-serif;letter-spacing:.5px">
+      <div>
+        <p style="margin:0 0 20px;font:400 12px/1 'Jost',sans-serif;letter-spacing:.5px;text-transform:uppercase">Contact Details</p>
+        <p style="margin:0">Snow Bentley | CA DRE# 01911217<br>eXp Commercial of California, Inc</p>
+        <a href="tel:4158238595" style="display:block;text-decoration:underline;text-underline-offset:4px">415-823-8595</a>
+        <a href="mailto:snow@snowbentley.com" style="display:block;text-decoration:underline;text-underline-offset:4px;text-transform:uppercase">snow@snowbentley.com</a>
+      </div>
+      <div>
+        <p style="margin:0 0 20px;font:400 12px/1 'Jost',sans-serif;letter-spacing:.5px;text-transform:uppercase">Address</p>
+        <p style="margin:0">2603 Camino Ramon<br>San Ramon, CA 94583</p>
+      </div>
+      <div>
+        <p style="margin:0 0 20px;font:400 12px/1 'Jost',sans-serif;letter-spacing:.5px;text-transform:uppercase">Follow</p>
+        <div style="display:flex;gap:6px">
+          <a href="https://www.facebook.com/p/Snow-Bentley-61575852646089/" aria-label="Facebook" style="width:40px;height:40px;border-radius:50%;background:#3A2C26;display:grid;place-items:center;color:#fff;font:600 15px/1 'Jost',sans-serif"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M13.5 22v-8h2.7l.4-3.2h-3.1V8.8c0-.9.3-1.6 1.6-1.6h1.7V4.4c-.3 0-1.3-.1-2.5-.1-2.5 0-4.1 1.5-4.1 4.2v2.3H7.4V14h2.8v8h3.3z" fill="#fff"></path></svg></a>
+          <a href="https://www.instagram.com/snowlibentley/?hl=en" aria-label="Instagram" style="width:40px;height:40px;border-radius:50%;background:#3A2C26;display:grid;place-items:center;color:#fff;font:600 15px/1 'Jost',sans-serif"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1" fill="#fff"></circle></svg></a>
+          <a href="https://www.linkedin.com/in/snow-bentley" aria-label="LinkedIn" style="width:40px;height:40px;border-radius:50%;background:#3A2C26;display:grid;place-items:center;color:#fff;font:600 15px/1 'Jost',sans-serif"><svg width="16" height="16" viewBox="0 0 24 24"><path d="M6.5 9.5h-3V20h3V9.5zM5 4.5a1.8 1.8 0 1 0 0 3.6 1.8 1.8 0 0 0 0-3.6zM20.5 20h-3v-5.3c0-1.3-.5-2.2-1.7-2.2-.9 0-1.5.6-1.7 1.2-.1.2-.1.5-.1.8V20h-3V9.5h3v1.3c.4-.6 1.2-1.5 2.9-1.5 2.1 0 3.6 1.4 3.6 4.3V20z" fill="#fff"></path></svg></a>
+          <a href="https://maps.app.goo.gl/bK8Nzc5w69ZdCsiJ9" aria-label="Google" style="width:40px;height:40px;border-radius:50%;background:#3A2C26;display:grid;place-items:center;color:#fff;font:600 15px/1 'Jost',sans-serif">G</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+</div>
+
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><rect width="200" height="200" fill="#3A2C26"></rect><text x="100" y="118" text-anchor="middle" font-family="Georgia,serif" font-size="56" fill="#F5EFE7" letter-spacing="4">SB</text></svg></template></x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;heroVideoUrl&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;https://res.cloudinary.com/luxuryp/videos/q_auto/g8p7m0kpme81xzy4qxtc/v1_snow-bentley.mp4&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Hero&quot;},&quot;autoplayTestimonials&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Behavior&quot;},&quot;showFloatingConnect&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Behavior&quot;}}">
+class Component extends DCLogic {
+  state = { t: 0, expanded: false, h: 0, menuOpen: false, connectOpen: false, sent: false, hdr: 'top' };
+  lastY = 0;
+  onScroll = () => {
+    const y = window.scrollY;
+    let hdr = 'top';
+    if (y > 80) hdr = (y < this.lastY) ? 'shown' : 'hidden';
+    this.lastY = y;
+    if (hdr !== this.state.hdr) this.setState({ hdr });
+  };
+  heroRef = React.createRef();
+  MEDIA = 'https://media-production.lp-cdn.com/cdn-cgi/image/format=auto,quality=85,fit=scale-down,width=1280/https://media-production.lp-cdn.com/media/';
+  hoodsData = [
+    ['Atherton','cb7d53d4-4728-4a38-b9b3-310275e09090'],
+    ['Hillsborough','61399524-45de-447f-9161-d3e04d898704'],
+    ['Lamorinda','312076af-719a-4d7c-aeea-77d8dada2502'],
+    ['Los Gatos','2054fa71-846d-4eb3-9476-5b8b3908a76a'],
+    ['Menlo Park','4811e183-fb88-414e-9359-0f33d2f0650a'],
+    ['Mountain View','819ada2a-74ae-4242-a339-c31a31c1219f'],
+    ['Pacific Heights','6fe28325-2041-4100-b93f-5e5545f5c6fe'],
+    ['Palo Alto','0cc4b407-c97a-4f3b-95a3-957a2d657c73'],
+    ['Piedmont','5e8ee836-05db-4923-90ec-4d0bb97cf1b0'],
+    ['San Francisco','ac026db8-83d6-4ade-81fd-509126f2bb5f'],
+  ];
+  testimonials = [
+    ["Helice W.", "Buying a house in San Francisco is straight-up wild — the market here is so competitive, it feels like every listing has a dozen offers. But Snow made it happen for us. She really listened to what we were looking for, found us a great home that felt perfect, and then used her soft skills to connect with the seller in a way that stood out. Her warm, genuine way of communicating and building trust is what got our offer picked over all the others. No crazy drama, just smooth and straightforward the whole way through. Snow is such a down-to-earth person who actually cares and gets results. If you’re house hunting in SF, you definitely want her on your team!"],
+    ["Aileen", "I recently purchased my dream home with the help of Snow Bentley, and I can’t say enough about how wonderful the entire experience was. Snow is incredibly patient and never pushed me into any decisions, which I really appreciated as a first-time homebuyer. She took the time to truly listen to what I was looking for and offered thoughtful suggestions without ever making me feel rushed. Her calm, steady approach made her someone I could completely trust to guide me through the whole process. She was always there to answer my questions and kept me feeling confident every step of the way, right up to closing. I’d recommend Snow to anyone looking for a realtor who genuinely cares about getting it right—she helped make my homeownership dreams a reality."],
+    ["Olivia S.", "Finding and negotiating the perfect lease for my new restaurant in Walnut Creek felt overwhelming at first—until I worked with Snow. She instantly got my vision for a high-visibility spot with the right kitchen setup and foot traffic, then went above and beyond to make it happen. Her negotiation skills were outstanding. Snow pushed hard and delivered big wins: a generous free-rent period during construction, capped operating expenses, strong tenant improvement allowances, and flexible renewal terms that will save my business thousands in the early years. She stayed responsive and professional every step of the way, turning a stressful process into a smooth, positive experience. I couldn’t have asked for a better advocate. Snow is hands-down the best realtor for restaurant owners—highly recommend!"],
+    ["Hank Q.", "Just wanted to give a huge shoutout to Snow! As a restaurant owner opening in San Jose, I was pretty stressed about scoring a solid lease in this crazy competitive market. Snow totally nailed it — she found me a killer high-visibility spot with great foot traffic and the perfect kitchen setup. She negotiated like a boss and got me lower rent, a solid tenant improvement allowance, free rent during build-out, and flexible terms that saved us a ton of cash. The whole process was super smooth and way less stressful than I expected. Snow is the real deal — highly recommend her to any restaurant owner!"],
+    ["David C.", "Snow made selling my home a breeze. She’s professional, patient, and a skilled negotiator who got me a great deal without any stress. I trusted her completely—highly recommend!"],
+    ["Faye L.", "Faye: I recently bought a commercial property in Walnut Creek and couldn’t be happier with Snow Bentley’s help. She took the time to understand my investment goals, quickly brought me several strong options, and then worked her magic at the negotiating table. Snow delivered impressive results: a meaningfully lower purchase price, seller contributions to closing costs and repairs, plus contract terms that gave me excellent protection and future flexibility. Those concessions made a big difference to my bottom line. Her steady guidance kept the entire process straightforward and focused on what mattered most to me. Snow is a true professional—I highly recommend her to anyone buying commercial real estate."],
+    ["Jingyuan G.", "As the owner of a restaurant, I needed the perfect lease to get my business off to a strong start. Snow nailed it from the very first meeting! She listened closely to my needs, found the ideal high-visibility space with great foot traffic, and then negotiated like a true pro—securing lower rent, solid tenant improvement allowances, and flexible terms that saved me thousands over the first few years. She made what could have been a stressful process feel smooth, professional, and even exciting. Snow truly had my back every step of the way. Best realtor I’ve ever worked with—highly recommend her!"],
+    ["Shannon J.", "I first met Snow Bentley at an open house, and she immediately made me feel comfortable. She was patient with me throughout the process and never pushed me to make a decision before I was ready. Snow really listened to what I was looking for, sent me homes that fit, and walked me through the pros and cons in a straightforward way. She was thorough, responsive, and always quick to answer questions. In the end, I was able to find the right house with her help, and she negotiated a deal I felt good about. I've already recommended her to a friend who's starting their own search."],
+    ["Jaina L.", "I’ll be honest — I was dreading the San Francisco home search. Everyone warned me about the bidding wars, the all-cash offers, the homes that disappear in 48 hours. But a friend referred me to Snow Bentley, and everything changed. Snow doesn’t sugarcoat the market, which I actually appreciated. Instead of false promises, I got straight talk, a clear game plan, and an agent who clearly knew every neighborhood inside and out. When the right place came up, Snow was ready — and so was I. If you’re serious about finding a home in the city, stop scrolling and call Snow Bentley."],
+    ["Caroline B.", "Snow Bentley is incredible—I honestly don’t know how I would have won that bid in San Francisco without her. The market was insane, with multiple strong offers coming in on this prime commercial space, and I was getting pretty stressed. She jumped in, really understood what the seller was looking for, helped us put together a clean, competitive offer with smart contingencies, and worked her network to get us an edge. She stayed on top of every detail and negotiated terms that actually worked for us instead of just rushing to close. In the end, we beat out the competition and got the property on terms we’re really happy with. If you’re trying to win a competitive deal in the Bay Area, reach out to Snow. She knows her stuff and actually cares about making it happen. Five stars!"],
+    ["David F.", "Hunting for a house in Walnut Creek is intense — every solid listing gets slammed with offers right away. Snow Bentley was a total lifesaver. She really tuned into what we needed, took us around to a bunch of options, and stuck with us until we scored the perfect one. What really clinched it was her warm, genuine personality — the sellers just connected with her (and us) and picked our offer over the rest. She kept the whole ride easygoing and totally drama-free. Snow’s the real deal — if you’re house hunting in Walnut Creek, hit her up!"],
+    ["Maxine", "Snow was a total game-changer for us. She actually listened to what we were after, showed us places that fit just right, and stuck with us until we found the one we loved. Her friendly, no-BS personality is what sealed it — the sellers just clicked with her (and us) and picked our offer. And during the process sent me a Fremont monthly market report every month to keep me in the loop. Snow is the real deal — if you’re house hunting in Fremont, I recommend her!"],
+    ["Chloe S.", "Working with Snow Bentley made buying in San Francisco feel so much less overwhelming. The market moves incredibly fast, but Snow was knowledgeable, responsive, and strategic throughout the entire process. She understood exactly what I was looking for, guided me toward the right neighborhoods, and helped me navigate negotiations and closing smoothly. I always felt like she genuinely had my best interests in mind. I’m so grateful for her help and would absolutely recommend Snow to anyone buying in SF. Five stars all the way!"],
+    ["Matt J.", "Great to work with! Timely responses and updates throughout the deal process."],
+    ["Kelsey Z.", "As an out-of-state investor, I recently purchased a fully leased commercial property in the Bay Area with Snow Bentley’s help. The entire transaction was incredibly smooth and stress-free. Snow’s expertise in commercial investment properties stood out immediately. She handled negotiations professionally, kept me updated every step of the way despite the distance, and ensured a seamless closing with no surprises. This fully leased asset is already delivering the stable returns I wanted. I highly recommend Snow to any investor seeking a knowledgeable and reliable commercial real estate agent in California!"],
+    ["Benson B.", "Snow was amazing to work with. She was very attentive to every detail and made the entire process smooth and stress-free. I’m very busy and sometimes slow to respond to messages, but she was always patient, understanding, and professional. Her dedication and excellent service truly stood out. I highly recommend Snow to anyone looking for a reliable and caring agent."],
+    ["Hao L.", "Opening a restaurant and finding the right space is stressful enough without an agent sending you 20 listings that clearly don't work. Snow actually asked about my concept first — parking, foot traffic, whether the hood system was already in place — before showing me anything. Ended up only looking at a handful of spots. She's just super efficient — quick to respond, on top of scheduling, never left me waiting around wondering what was happening. I'd been searching for a while with no luck until she finally found me a spot near Lake Tahoe that checked every box. She negotiated hard; I mean, there is no way I can get such a good deal. Saved me so much time and money, honestly. She gets that restaurants have different needs than a normal retail space, which not every agent seems to understand. Would definitely go back to her for the next location."],
+    ["Jiang Q.", "Snow helped us search for a space for our spa concept and truly went above and beyond. Her presentation was clear, detailed, and made it easy to understand everything about each property — layout, terms, potential, all of it laid out in a way that just made sense. We ended up reconsidering the concept itself, but that had nothing to do with Snow's work — she delivered on every level. When we're ready to move forward with our next venture, she'll be the first call we make. Highly recommend her to anyone looking for a commercial real estate partner who genuinely puts in the work."],
+    ["G. Y.", "Snow was very proactive throughout the process and always responded quickly. Communication was smooth, and she was reliable in following up on questions and next steps. I really appreciated her responsiveness and positive attitude, which helped keep the process moving efficiently. Thank you for all your help and support!"],
+    ["Tulasi Y.", "It has been a pleasure working with Snow as a fellow commercial real estate agent. Snow is hardworking, knowledgeable, and genuinely cares about her clients. I admire how effectively she uses social media and modern marketing tools to promote properties. She always goes above and beyond to help clients and keep transactions moving smoothly. I would gladly recommend her to anyone looking for a caring and committed commercial real estate professional."],
+  ];
+  componentDidMount() {
+    window.addEventListener('scroll', this.onScroll, { passive: true });
+    const url = this.props.heroVideoUrl ?? 'https://res.cloudinary.com/luxuryp/videos/q_auto/g8p7m0kpme81xzy4qxtc/v1_snow-bentley.mp4';
+    const el = this.heroRef.current;
+    if (el && url) {
+      const v = document.createElement('video');
+      v.src = url; v.muted = true; v.loop = true; v.autoplay = true; v.playsInline = true;
+      v.setAttribute('muted', ''); v.setAttribute('playsinline', '');
+      v.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .8s';
+      v.addEventListener('canplay', () => { v.style.opacity = '1'; v.play().catch(() => {}); });
+      v.addEventListener('error', () => v.remove());
+      el.appendChild(v);
+    }
+    this.timer = setInterval(() => {
+      if (this.props.autoplayTestimonials && !this.state.expanded) this.step(1);
+    }, 7000);
+  }
+  componentWillUnmount() { clearInterval(this.timer); window.removeEventListener('scroll', this.onScroll); }
+  step(d) {
+    const n = this.testimonials.length;
+    this.setState(s => ({ t: (s.t + d + n) % n, expanded: false }));
+  }
+  renderVals() {
+    const { t, expanded, h, menuOpen, connectOpen, sent } = this.state;
+    const [author, full] = this.testimonials[t];
+    const LIM = 430;
+    const canExpand = full.length > LIM;
+    let q = full;
+    if (canExpand && !expanded) { q = full.slice(0, LIM); q = q.slice(0, q.lastIndexOf(' ')) + '...'; }
+    const hoods = this.hoodsData.map(([name, id], i) => ({
+      name, img: this.MEDIA + id, href: '/neighborhoods/' + name.toLowerCase().replace(/\s+/g, '-'),
+      active: i === h, line: i === h ? '#3A2C26' : '#E3DACE', select: () => this.setState({ h: i }),
+    }));
+    const nH = hoods.length;
+    const top = this.state.hdr === 'top' && !menuOpen;
+    return {
+      hdrBg: top ? 'transparent' : '#F5EFE7',
+      hdrY: this.state.hdr === 'hidden' ? '-100%' : '0',
+      hdrFg: top ? '#fff' : '#3A2C26',
+      hdrLogo: top ? '4155cf8c-daa6-423d-9076-7c481fdc24e8' : '2aebcf66-1a83-4c58-9e8a-c1cf3b8def66',
+      hdrBtnBg: top ? '#fff' : '#3A2C26',
+      hdrBtnFg: top ? '#3A2C26' : '#fff',
+      heroRef: this.heroRef,
+      quote: '\u201C' + q + '\u201D', author, canExpand,
+      readMoreLabel: expanded ? 'Read Less' : 'Read More',
+      toggleExpand: () => this.setState(s => ({ expanded: !s.expanded })),
+      prevT: () => this.step(-1), nextT: () => this.step(1),
+      hoods, activeHood: hoods[h],
+      prevH: () => this.setState({ h: (h - 1 + nH) % nH }), nextH: () => this.setState({ h: (h + 1) % nH }),
+      menuOpen, openMenu: () => this.setState({ menuOpen: true }), closeMenu: () => this.setState({ menuOpen: false }),
+      connectOpen, sent, notSent: !sent,
+      openConnect: () => this.setState({ connectOpen: true, sent: false }),
+      closeConnect: () => this.setState({ connectOpen: false }),
+      submitConnect: () => this.setState({ sent: true }),
+      showFloating: this.props.showFloatingConnect ?? true,
+    };
+  }
+}
+</script>
+</body>
+</html>
