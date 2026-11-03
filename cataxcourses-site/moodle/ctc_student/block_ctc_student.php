@@ -55,16 +55,35 @@ class block_ctc_student extends block_base {
                 . (!$ctecidok && !$ptinok ? 'CTEC ID and PTIN' : (!$ctecidok ? 'CTEC ID' : 'PTIN')) . ' so we can report your hours to CTEC.</span><span class="ctcsd-action-go">Enter now →</span></a>';
         }
 
-        // 1. Current course(s).
-        $h .= '<section id="ctc-courses" class="ctcsd-sec"><div class="ctcsd-eyebrow">' . ($c['year'] ? $c['year'] . ' · ' : '') . 'My courses</div>';
+        $kinds = [];
+        foreach ($c['current'] as $co) {
+            if (preg_match('/\b20\s*Hour/i', $co->fullname)) { $kinds['20'] = true; }
+            if (preg_match('/\b60\s*Hour/i', $co->fullname)) { $kinds['60'] = true; }
+        }
+
+        // 1. Deadline strip (20 Hour students only, until the late-renewal cut-off). Regular deadline Mon Nov 2, 2026;
+        // late renewal with the late fee through Fri Jan 15, 2027, after which the registration lapses. Pacific time.
+        $now = time();
+        $regend = 1793692800;  // 2026-11-03 00:00 PST
+        $lateend = 1800086400; // 2027-01-16 00:00 PST
+        if (!empty($kinds['20']) && $now < $lateend) {
+            $late = $now >= $regend;
+            $h .= '<div class="ctcsd-strip ctcsd-cd" data-end="' . ($late ? $lateend : $regend) . '"><span class="ctcsd-strip-dot"></span><span class="ctcsd-strip-t">'
+                . ($late ? '<strong>CTEC late renewal is open until Jan 15, 2027.</strong> The Nov 2 deadline passed; you can still renew with a late fee. After Jan 15 your registration lapses.'
+                    : '<strong>Today is the last day to renew with CTEC without a late fee.</strong> After today you can renew until Jan 15, 2027 with a late fee.')
+                . '</span><span class="ctcsd-strip-cd" aria-label="Time left"><span><b data-u="d">–</b> days</span><span><b data-u="h">–</b> h</span><span><b data-u="m">–</b> m</span></span>'
+                . '<a href="https://www.ctec.org" target="_blank" rel="noopener">Renew at ctec.org →</a></div>';
+        }
+
+        // 2. Current course(s).
+        $h .= '<section id="ctc-courses" class="ctcsd-sec">';
         if (!$c['current']) {
-            $h .= '<div class="ctcsd-card ctcsd-empty">You are not enrolled in a course yet. <a href="https://cataxcourses.com/">Browse CTEC courses →</a></div>';
+            $h .= '<div class="ctcsd-card ctcsd-empty">You are not enrolled in a course yet. <a href="https://cataxcourses.com/" target="_blank" rel="noopener">Browse CTEC courses →</a></div>';
         }
         foreach ($c['current'] as $i => $co) {
             $pct = $co->progress;
-            $rep = $reports[$co->id] ?? null;
-            $h .= '<div class="ctcsd-card ctcsd-hero' . ($i ? ' ctcsd-hero-sm' : '') . '"><div class="ctcsd-hero-main">'
-                . '<div class="ctcsd-hero-tag">' . ($co->completed ? '<span class="ctcsd-pill ctcsd-pill-ok">✓ Completed</span>' : '<span class="ctcsd-pill">In progress</span>') . '</div>'
+            $h .= '<div class="ctcsd-hero' . ($i ? ' ctcsd-hero-sm' : '') . '"><div class="ctcsd-hero-main">'
+                . ($co->completed ? '<span class="ctcsd-pill ctcsd-pill-ok">✓ Completed</span>' : '<span class="ctcsd-pill">In progress</span>')
                 . '<h3><a href="' . s($co->url) . '">' . s($co->name) . '</a></h3>';
             if ($pct !== null) {
                 $h .= '<div class="ctcsd-bar" role="progressbar" aria-valuenow="' . $pct . '" aria-valuemin="0" aria-valuemax="100"><span style="width:' . max(2, $pct) . '%"></span></div>'
@@ -79,136 +98,119 @@ class block_ctc_student extends block_base {
             }
             $h .= '</div></div>';
         }
-        $h .= '</section>';
+        $h .= '</section><div class="ctcsd-cols"><div class="ctcsd-colmain">';
 
-        // 2. Previous year courses (collapsed).
-        if ($c['previous']) {
-            $h .= '<section id="ctc-previous" class="ctcsd-sec"><details class="ctcsd-card ctcsd-details"><summary>Previous year courses <span class="ctcsd-count">' . count($c['previous']) . '</span></summary><ul class="ctcsd-list">';
-            foreach ($c['previous'] as $co) {
-                $h .= '<li><a href="' . s($co->url) . '">' . s($co->name) . '</a><span class="ctcsd-meta">' . ($co->year ? $co->year : '') . ($co->completed ? ' · Completed ' . userdate($co->completed, '%b %e, %Y') : '') . '</span></li>';
-            }
-            $h .= '</ul></details></section>';
-        }
-
-        // 5. Certificates by year.
-        $h .= '<section id="ctc-certificates" class="ctcsd-sec"><div class="ctcsd-eyebrow">Certificates of completion</div>';
+        // 3. Records: Certificates | Previous courses (tabs).
+        $h .= '<section id="ctc-certificates" class="ctcsd-sec"><div class="ctcsd-card ctcsd-rec"><div class="ctcsd-tabs" role="tablist">'
+            . '<button type="button" role="tab" class="ctcsd-tab on" data-tab="certs">Certificates <span class="ctcsd-count">' . count($certs) . '</span></button>'
+            . '<button type="button" role="tab" class="ctcsd-tab" data-tab="prev">Previous courses <span class="ctcsd-count">' . count($c['previous']) . '</span></button></div>';
+        $h .= '<div class="ctcsd-panel" data-panel="certs">';
         if (!$certs) {
-            $h .= '<div class="ctcsd-card ctcsd-empty">Your certificate appears here as soon as you pass all of the exams in a course.</div>';
+            $h .= '<p class="ctcsd-empty">Your certificate appears here as soon as you pass all of the exams in a course.</p>';
         } else {
             $byyear = [];
             foreach ($certs as $ce) {
                 $byyear[$ce->year][] = $ce;
             }
             krsort($byyear);
-            $first = true;
             foreach ($byyear as $y => $list) {
-                $h .= '<details class="ctcsd-card ctcsd-details ctcsd-mt"' . ($first ? ' open' : '') . '><summary>' . ($y ?: 'Other') . ($first && $y == $c['year'] ? ' · this year' : '') . ' <span class="ctcsd-count">' . count($list) . '</span></summary><ul class="ctcsd-list">';
+                $h .= '<div class="ctcsd-yr">' . ($y ?: 'Other') . '</div>';
                 foreach ($list as $ce) {
-                    $h .= '<li><span>🎓 ' . s($ce->name) . '</span><span class="ctcsd-meta">Issued ' . userdate($ce->issued, '%b %e, %Y')
-                        . ($ce->url ? ' · <a href="' . s($ce->url) . '">Download</a>' : '') . '</span></li>';
+                    $h .= '<div class="ctcsd-li"><div><div class="ctcsd-li-t">' . s($ce->name) . '</div><div class="ctcsd-meta">Issued ' . userdate($ce->issued, '%b %e, %Y') . '</div></div>'
+                        . ($ce->url ? '<a href="' . s($ce->url) . '">⬇ Download</a>' : '') . '</div>';
                 }
-                $h .= '</ul></details>';
-                $first = false;
             }
         }
-        $h .= '</section>';
-        // 3. CTEC reporting.
-        $h .= '<div class="ctcsd-grid"><section id="ctc-ctec" class="ctcsd-sec"><div class="ctcsd-eyebrow">CTEC reporting</div>';
+        $h .= '</div><div class="ctcsd-panel" data-panel="prev" id="ctc-previous" hidden>';
+        if (!$c['previous']) {
+            $h .= '<p class="ctcsd-empty">No courses from previous years.</p>';
+        }
+        foreach ($c['previous'] as $co) {
+            $h .= '<div class="ctcsd-li"><div><div class="ctcsd-li-t">' . s($co->name) . '</div><div class="ctcsd-meta">' . ($co->year ?: '')
+                . ($co->completed ? ' · Completed ' . userdate($co->completed, '%b %e, %Y') : '') . '</div></div><a href="' . s($co->url) . '">Open →</a></div>';
+        }
+        $h .= '</div></div></section></div><div class="ctcsd-colside">';
+
+        // 4. CTEC status: reporting + CTEC ID & PTIN.
         $cur = $c['current'] ? $c['current'][0] : null;
         $curmapped = array_filter($c['current'], function ($co) use ($mapped) { return !empty($mapped[$co->id]); });
         $main = $curmapped ? reset($curmapped) : $cur;
         $rep = $main ? ($reports[$main->id] ?? null) : null;
-        if ($rep && $rep->state === 'reported') {
-            $h .= '<div class="ctcsd-card ctcsd-ctec ctcsd-ctec-ok"><div class="ctcsd-big">✓</div><div><h3>Your hours have been reported to CTEC</h3>'
-                . '<p><strong>' . s($rep->course) . '</strong><br>Reported ' . $fmt($rep->time) . '</p>'
-                . '<p class="ctcsd-small">CTEC usually shows new hours on your CTEC account within a few business days.</p></div></div>';
-        } else if ($rep && $rep->state === 'problem') {
-            $h .= '<div class="ctcsd-card ctcsd-ctec ctcsd-ctec-bad"><div class="ctcsd-big">!</div><div><h3>We couldn\'t report your hours yet</h3>'
-                . '<p><strong>' . s($rep->course) . '</strong></p><p>CTEC did not accept the report. This is almost always a missing or mistyped CTEC ID. '
-                . '<a href="#ctc-ids">Check your CTEC ID</a> and save it, and we will send your hours again automatically.</p></div></div>';
-        } else if ($rep) {
-            $h .= '<div class="ctcsd-card ctcsd-ctec ctcsd-ctec-wait"><div class="ctcsd-big">⏳</div><div><h3>Sending your hours to CTEC</h3>'
-                . '<p><strong>' . s($rep->course) . '</strong> — completed ' . $fmt($rep->completed) . '. Your report is on its way to CTEC.</p></div></div>';
-        } else if ($main && $main->completed) {
-            $h .= '<div class="ctcsd-card ctcsd-ctec ctcsd-ctec-wait"><div class="ctcsd-big">✓</div><div><h3>Course completed</h3><p><strong>' . s($main->name) . '</strong> — completed ' . $fmt($main->completed)
-                . '.</p><p class="ctcsd-small">Questions about your CTEC report? Call (888) 229-1994 or email <a href="mailto:help@cataxcourses.com">help@cataxcourses.com</a>.</p></div></div>';
-        } else if ($main) {
-            $h .= '<div class="ctcsd-card ctcsd-ctec ctcsd-ctec-todo"><div class="ctcsd-big">○</div><div><h3>Not reported yet</h3><p><strong>' . s($main->name) . '</strong></p>'
-                . '<p>When you finish the course, we report your hours to CTEC automatically. ' . ($ctecidok ? '' : 'Make sure your CTEC ID is entered so the report goes through.') . '</p></div></div>';
-        } else {
-            $h .= '<div class="ctcsd-card ctcsd-ctec ctcsd-ctec-todo"><div class="ctcsd-big">○</div><div><h3>Nothing reported yet</h3><p>Your hours are reported to CTEC automatically when you finish a course.</p></div></div>';
-        }
-        $older = array_filter($reports, function ($r) use ($main) { return $r->state === 'reported' && (!$main || $r->courseid !== $main->id); });
-        if ($older) {
-            $h .= '<details class="ctcsd-card ctcsd-details ctcsd-mt"><summary>Earlier CTEC reports <span class="ctcsd-count">' . count($older) . '</span></summary><ul class="ctcsd-list">';
-            foreach ($older as $r) {
-                $h .= '<li><span>✓ ' . s($r->course) . '</span><span class="ctcsd-meta">Reported ' . userdate($r->time, '%b %e, %Y') . '</span></li>';
-            }
-            $h .= '</ul></details>';
-        }
-        $h .= '</section>';
-
-        // 4. CTEC ID & PTIN.
-        $h .= '<section id="ctc-ids" class="ctcsd-sec"><div class="ctcsd-eyebrow">CTEC ID &amp; PTIN</div><div class="ctcsd-card ctcsd-ids' . ($ctecidok && $ptinok ? '' : ' ctcsd-need') . '">';
         $editing = !$ctecidok || !$ptinok;
-        if (!$editing) {
-            $h .= '<div class="ctcsd-idrow"><span>CTEC ID</span><strong>' . s(block_ctc_student_norm_ctecid($ctecid)) . '</strong></div>'
-                . '<div class="ctcsd-idrow"><span>PTIN</span><strong>P••••' . s(substr(block_ctc_student_norm_ptin($ptin), -4)) . '</strong></div>'
-                . '<button type="button" class="ctcsd-link" onclick="this.parentNode.querySelector(\'form\').hidden=false;this.hidden=true">Change</button>';
+        $problem = $rep && $rep->state === 'problem';
+        if ($rep && $rep->state === 'reported') {
+            $st = ['ok', '✓', 'Reported to CTEC', s($rep->course) . ' · ' . userdate($rep->time, '%b %e, %Y') . '. CTEC usually shows new hours within a few business days.'];
+        } else if ($problem) {
+            $st = ['bad', '!', 'We couldn\'t report your hours yet', 'CTEC did not accept the report, usually because of a missing or mistyped CTEC ID. Check it below and save; we\'ll send your hours again automatically.'];
+        } else if ($rep) {
+            $st = ['wait', '⏳', 'Sending your hours to CTEC', s($rep->course) . ' · completed ' . userdate($rep->completed, '%b %e, %Y') . '.'];
+        } else if ($main && $main->completed) {
+            $st = ['wait', '✓', 'Course completed', s($main->name) . ' · ' . userdate($main->completed, '%b %e, %Y') . '. Questions? Call (888) 229-1994.'];
         } else {
-            $h .= '<p class="ctcsd-need-t">' . (!$ctecidok && !$ptinok ? 'Please enter your CTEC ID and PTIN.' : 'Please enter your ' . (!$ctecidok ? 'CTEC ID.' : 'PTIN.'))
-                . ' We need them to report your hours to CTEC.</p>';
+            $st = ['todo', '○', 'Not reported yet', 'We report your hours to CTEC automatically when you finish your course.'];
         }
-        $h .= '<form method="post" action="' . (new moodle_url('/blocks/ctc_student/save.php'))->out(false) . '"' . ($editing ? '' : ' hidden') . '>'
+        $h .= '<section id="ctc-ctec" class="ctcsd-sec"><div class="ctcsd-card' . ($editing || $problem ? ' ctcsd-need' : '') . '" id="ctc-ids"><div class="ctcsd-eyebrow">CTEC reporting</div>'
+            . '<div class="ctcsd-st ctcsd-st-' . $st[0] . '"><div class="ctcsd-st-i">' . $st[1] . '</div><div><h3>' . $st[2] . '</h3><p>' . $st[3] . '</p></div></div>';
+        if (!$editing) {
+            $h .= '<div class="ctcsd-kv"><span>CTEC ID</span><strong>' . s(block_ctc_student_norm_ctecid($ctecid)) . '</strong></div>'
+                . '<div class="ctcsd-kv"><span>PTIN</span><strong>P••••' . s(substr(block_ctc_student_norm_ptin($ptin), -4)) . '</strong></div>';
+            if (!$problem) {
+                $h .= '<button type="button" class="ctcsd-link" onclick="this.parentNode.querySelector(\'form\').hidden=false;this.hidden=true">Change CTEC ID or PTIN</button>';
+            }
+        } else {
+            $h .= '<p class="ctcsd-need-t">' . (!$ctecidok && !$ptinok ? 'Please enter your CTEC ID and PTIN.' : 'Please enter your ' . (!$ctecidok ? 'CTEC ID.' : 'PTIN.')) . ' We need them to report your hours to CTEC.</p>';
+        }
+        $h .= '<form class="ctcsd-ids" method="post" action="' . (new moodle_url('/blocks/ctc_student/save.php'))->out(false) . '"' . ($editing || $problem ? '' : ' hidden') . '>'
             . '<input type="hidden" name="sesskey" value="' . sesskey() . '"><input type="hidden" name="uid" value="' . $uid . '">'
             . '<label>CTEC ID<input name="ctecid" value="' . s($ctecidok ? block_ctc_student_norm_ctecid($ctecid) : '') . '" placeholder="A123456" maxlength="12" autocomplete="off" required pattern="\s*[Aa]?\s*\d{6}\s*"></label>'
-            . '<span class="ctcsd-hint">The letter A followed by 6 digits, for example A123456. Don\'t know it? Log in at <a href="https://www.ctec.org" target="_blank" rel="noopener">ctec.org</a>.</span>'
+            . '<span class="ctcsd-hint">The letter A and 6 digits, e.g. A123456. Don\'t know it? Log in at <a href="https://www.ctec.org" target="_blank" rel="noopener">ctec.org</a>.</span>'
             . '<label>PTIN<input name="ptin" value="" placeholder="' . ($ptinok ? 'P••••' . s(substr(block_ctc_student_norm_ptin($ptin), -4)) . ' (leave blank to keep)' : 'P12345678') . '" maxlength="12" autocomplete="off"' . ($ptinok ? '' : ' required') . ' pattern="\s*[Pp]?\s*\d{8}\s*"></label>'
-            . '<span class="ctcsd-hint">The letter P followed by 8 digits, for example P12345678.</span>'
-            . '<button class="ctcsd-btn" type="submit">Save</button></form></div></section></div>';
-
-        // 6. After the course: CTEC renewal (20 Hour) / CTEC registration (60 Hour).
-        $kinds = [];
-        foreach ($c['current'] as $co) {
-            if (preg_match('/\b20\s*Hour/i', $co->fullname)) { $kinds['20'] = true; }
-            if (preg_match('/\b60\s*Hour/i', $co->fullname)) { $kinds['60'] = true; }
-        }
-        if ($kinds) {
-            $h .= '<section id="ctc-next" class="ctcsd-sec"><div class="ctcsd-eyebrow">After you complete your course</div>';
-            if (!empty($kinds['20'])) {
-                $h .= '<div class="ctcsd-card ctcsd-next ctcsd-mt"><div class="ctcsd-next-i">!</div><div><h3>Steps to take after completing your 20 Hour course</h3>'
-                    . '<p><strong>Your CTEC renewal is not complete just because you finished the course.</strong> You still need to log in to CTEC, pay your renewal fee and renew your registration before the deadline. You also need to renew your PTIN with the IRS each year.</p>'
-                    . '<a class="ctcsd-btn" href="https://cataxcourses.com/what-to-do-after-completing-the-20-hour-course/" target="_blank" rel="noopener">How to renew with CTEC →</a></div></div>';
+            . '<span class="ctcsd-hint">The letter P and 8 digits, e.g. P12345678.</span>'
+            . '<button class="ctcsd-btn" type="submit">Save</button></form>';
+        $older = array_filter($reports, function ($r) use ($main) { return $r->state === 'reported' && (!$main || $r->courseid !== $main->id); });
+        if ($older) {
+            $h .= '<details class="ctcsd-older"><summary>Earlier CTEC reports (' . count($older) . ')</summary>';
+            foreach ($older as $r) {
+                $h .= '<div class="ctcsd-kv"><span>✓ ' . s($r->course) . '</span><span>' . userdate($r->time, '%b %e, %Y') . '</span></div>';
             }
-            if (!empty($kinds['60'])) {
-                $h .= '<div class="ctcsd-card ctcsd-next ctcsd-mt"><div class="ctcsd-next-i">!</div><div><h3>Steps to take after completing your 60 Hour course</h3>'
-                    . '<p><strong>You are not registered with CTEC just because you finished the course.</strong> To become a CTEC Registered Tax Preparer you still need your PTIN from the IRS and a $5,000 tax preparer bond, and then you register with CTEC and pay the registration fee. CTEC requires you to register within 18 months of completing the course.</p>'
-                    . '<a class="ctcsd-btn" href="https://cataxcourses.com/what-to-do-after-completing-the-60-hour-course/" target="_blank" rel="noopener">How to register with CTEC →</a></div></div>';
+            $h .= '</details>';
+        }
+        $h .= '</div></section>';
+
+        // 5. Next steps checklist (20 Hour: renewal; 60 Hour: registration).
+        $reported = $rep && $rep->state === 'reported';
+        $item = function ($state, $t, $sub = '') {
+            return '<li><span class="ctcsd-ck-b ctcsd-ck-' . $state . '">' . ($state === 'done' ? '✓' : '') . '</span><div>' . $t . ($sub ? '<small>' . $sub . '</small>' : '') . '</div></li>';
+        };
+        foreach (['20', '60'] as $k) {
+            if (empty($kinds[$k])) {
+                continue;
             }
-            $h .= '</section>';
+            $co = null;
+            foreach ($c['current'] as $x) {
+                if (preg_match('/\b' . $k . '\s*Hour/i', $x->fullname)) { $co = $x; break; }
+            }
+            $r = $co ? ($reports[$co->id] ?? null) : null;
+            $done = $co && $co->completed;
+            $rep2 = $r && $r->state === 'reported';
+            $h .= '<section class="ctcsd-sec" id="ctc-next-' . $k . '"><div class="ctcsd-card"><div class="ctcsd-eyebrow">' . ($k === '20' ? 'Your renewal checklist' : 'Your CTEC registration checklist') . '</div><ul class="ctcsd-ck">'
+                . $item($done ? 'done' : 'now', 'Finish your ' . $k . ' Hour course', $done ? 'Completed ' . userdate($co->completed, '%b %e, %Y') : (($co && $co->progress !== null ? $co->progress : 0) . '% complete'))
+                . $item($rep2 ? 'done' : ($done ? 'now' : 'todo'), 'Hours reported to CTEC', $rep2 ? 'Reported ' . userdate($r->time, '%b %e, %Y') : 'Automatic when you finish');
+            if ($k === '20') {
+                $h .= $item($rep2 ? 'now' : 'todo', 'Renew &amp; pay your fee at ctec.org', 'Finishing the course doesn\'t renew you')
+                    . $item('todo', 'Renew your PTIN with the IRS', 'Every year, for the coming tax season');
+            } else {
+                $h .= $item('todo', 'Get your PTIN from the IRS')
+                    . $item('todo', 'Buy a $5,000 tax preparer bond')
+                    . $item($rep2 ? 'now' : 'todo', 'Register with CTEC &amp; pay the fee', 'Within 18 months of finishing the course');
+            }
+            $h .= '</ul><a class="ctcsd-link" href="https://cataxcourses.com/what-to-do-after-completing-the-' . $k . '-hour-course/" target="_blank" rel="noopener">Full guide: how to '
+                . ($k === '20' ? 'renew' : 'register') . ' with CTEC →</a></div></section>';
         }
 
-        // 6b. 20 Hour students: CTEC renewal countdown. Regular deadline Mon Nov 2, 2026; late renewal (with the late fee)
-        // through Fri Jan 15, 2027, after which the registration lapses. Times are Pacific.
-        $now = time();
-        $regend = 1793692800;  // 2026-11-03 00:00 PST
-        $lateend = 1800086400; // 2027-01-16 00:00 PST
-        if (!empty($kinds['20']) && $now < $lateend) {
-            $late = $now >= $regend;
-            $h .= '<section id="ctc-countdown" class="ctcsd-sec"><div class="ctcsd-card ctcsd-cd' . ($late ? ' ctcsd-cd-late' : '') . '" data-end="' . ($late ? $lateend : $regend) . '">'
-                . '<div class="ctcsd-cd-t"><div class="ctcsd-eyebrow">' . ($late ? 'CTEC late renewal period' : 'CTEC renewal deadline') . '</div>'
-                . ($late
-                    ? '<h3>The CTEC renewal deadline has passed. You can still renew, with a late fee.</h3><p>The regular deadline was Monday, November 2, 2026. Complete your hours and renew with CTEC, paying the late fee, by <strong>Friday, January 15, 2027</strong>. After that your CTEC registration lapses.</p>'
-                    : '<h3>Today is the last day to renew with CTEC without a late fee.</h3><p>The deadline is <strong>today, Monday, November 2, 2026</strong>. After today you can still renew until January 15, 2027, but you will pay a late fee. After January 15, 2027 your CTEC registration lapses.</p>')
-                . '<a class="ctcsd-btn" href="https://www.ctec.org" target="_blank" rel="noopener">Renew at ctec.org →</a></div>'
-                . '<div class="ctcsd-cd-clock" aria-label="Time left"><div><b data-u="d">–</b><span>days</span></div><div><b data-u="h">–</b><span>hours</span></div><div><b data-u="m">–</b><span>min</span></div><div><b data-u="s">–</b><span>sec</span></div>'
-                . '<div class="ctcsd-cd-l">' . ($late ? 'left to renew with the late fee' : 'left to renew without a late fee') . '</div></div></div></section>';
-        }
-
-        // 7. Physical book.
-        $h .= '<section id="ctc-book" class="ctcsd-sec"><div class="ctcsd-card ctcsd-book"><div class="ctcsd-book-i">📘</div><div class="ctcsd-book-t"><h3>Want a physical copy of the course book?</h3>'
-            . '<p>Take notes right in the book while you go through the course, and keep it as a study reference for your exams.</p></div>'
-            . '<a class="ctcsd-btn" href="https://cataxcourses.com/book-add-ons/" target="_blank" rel="noopener">Shop course books →</a></div></section>';
+        // 6. Book.
+        $h .= '<a class="ctcsd-book" href="https://cataxcourses.com/book-add-ons/" target="_blank" rel="noopener"><span class="ctcsd-book-i">📘</span><span class="ctcsd-book-t"><strong>Want the printed course book?</strong><span>Take notes as you go and study for your exams</span></span><span class="ctcsd-book-go">Shop →</span></a>';
+        $h .= '</div></div>';
 
         return '<div class="ctcsd">' . self::css() . $h . self::js() . '</div>';
     }
@@ -218,61 +220,60 @@ class block_ctc_student extends block_base {
 .block_myoverview,.block_lp,.block_recentlyaccessedcourses,.block_completeyourprofile{display:none!important}
 body.ctcsd-wide #region-main.has-blocks{flex:0 0 100%!important;max-width:100%!important;width:100%!important}body.ctcsd-wide #block-region-side-pre{display:none!important}body.ctcsd-wide .ctcsd-sidecol{display:none!important}
 .block_ctc_student .card-body{padding:0}.block_ctc_student.card{border:0;background:none;box-shadow:none}
-.ctcsd{--n:#1d2939;--a:#0b6bcb;--ok:#12805c;--okb:#e8f6ef;--bad:#b42318;--badb:#fef0ee;--w:#b54708;--wb:#fff6e5;--l:#e4e7ec;--m:#667085;font-size:15px;color:#1d2939;max-width:1100px}
+.ctcsd{--n:#1d2939;--g:#d4a72c;--gt:#b8901f;--a:#0b6bcb;--ok:#12805c;--okb:#e8f6ef;--bad:#b42318;--badb:#fef0ee;--l:#e4e7ec;--m:#667085;font-size:15px;color:#1d2939;max-width:1120px}
 .ctcsd *{box-sizing:border-box}
-.ctcsd-hello h2{font-size:1.6rem;font-weight:700;margin:0 0 14px}
-.ctcsd-eyebrow{font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--m);margin:0 0 8px}
-.ctcsd-sec{margin:0 0 22px;scroll-margin-top:90px}
-.ctcsd-card{background:#fff;border:1px solid var(--l);border-radius:14px;padding:20px;box-shadow:0 1px 2px rgba(16,24,40,.05)}
-.ctcsd-mt{margin-top:10px}
-.ctcsd-empty{color:var(--m)}
+.ctcsd-hello h2{font-size:1.6rem;font-weight:600;margin:0 0 16px}
+.ctcsd-eyebrow{font-size:.72rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--m);margin:0 0 10px}
+.ctcsd-sec{margin:0 0 20px;scroll-margin-top:90px}
+.ctcsd-card{background:#fff;border:1px solid var(--l);border-radius:14px;padding:22px}
+.ctcsd-empty{color:var(--m);margin:14px 0 4px}
 .ctcsd-flash{border-radius:10px;padding:12px 16px;margin:0 0 14px;font-weight:600}.ctcsd-ok{background:var(--okb);color:var(--ok)}
-.ctcsd-action{display:flex;align-items:center;gap:12px;background:var(--wb);border:1px solid #fedf89;color:#7a2e0e!important;border-radius:12px;padding:12px 16px;margin:0 0 18px;text-decoration:none!important}
-.ctcsd-action-i{flex:none;width:26px;height:26px;border-radius:50%;background:var(--w);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center}
+.ctcsd-action{display:flex;align-items:center;gap:12px;background:#fff6e5;border:1px solid #fedf89;color:#7a2e0e!important;border-radius:12px;padding:12px 16px;margin:0 0 16px;text-decoration:none!important}
+.ctcsd-action-i{flex:none;width:24px;height:24px;border-radius:50%;background:#b54708;color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center}
 .ctcsd-action-go{margin-left:auto;font-weight:700;white-space:nowrap}
-.ctcsd-hero{display:flex;gap:24px;align-items:center;padding:28px;margin-bottom:12px;background:#1d2939;border-color:#1d2939;color:#fff}
-.ctcsd-hero h3 a,.ctcsd-hero h3{color:#fff!important}.ctcsd-hero .ctcsd-bar{background:rgba(255,255,255,.2)}.ctcsd-hero .ctcsd-bar span{background:#d4a72c}.ctcsd-hero .ctcsd-bar-l{color:#d0d5dd}
-.ctcsd-hero .ctcsd-btn{background:#d4a72c;color:#fff!important}.ctcsd-hero .ctcsd-btn-2{background:transparent;color:#fff!important;border:1px solid rgba(255,255,255,.5)}
-.ctcsd-hero .ctcsd-pill{background:rgba(255,255,255,.14);color:#fff}.ctcsd-hero .ctcsd-pill-ok{background:#12805c;color:#fff}
-.ctcsd-hero-main{flex:1;min-width:0}.ctcsd-hero h3{font-size:1.45rem;font-weight:700;margin:8px 0 14px;line-height:1.25}.ctcsd-hero h3 a{color:var(--n)}
-.ctcsd-hero-sm{padding:18px 22px;background:#344054;border-color:#344054}.ctcsd-hero-sm h3{font-size:1.1rem}
+.ctcsd-strip{display:flex;align-items:center;gap:14px;background:#fff6e5;border:1px solid #fedf89;border-radius:12px;padding:12px 16px;margin:0 0 16px;color:#7a2e0e;font-size:.92rem;line-height:1.45}
+.ctcsd-strip-dot{width:10px;height:10px;border-radius:50%;background:#f79009;flex:none;box-shadow:0 0 0 4px rgba(247,144,9,.18)}
+.ctcsd-strip-t{flex:1}.ctcsd-strip-cd{display:flex;gap:6px;flex:none}.ctcsd-strip-cd>span{background:#fff;border:1px solid #fedf89;border-radius:8px;padding:4px 9px;font-size:.82rem;white-space:nowrap}
+.ctcsd-strip-cd b{font-weight:800;font-variant-numeric:tabular-nums}.ctcsd-strip a{color:#7a2e0e!important;font-weight:700;white-space:nowrap}
+.ctcsd-hero{display:flex;gap:24px;align-items:center;padding:28px;margin-bottom:12px;background:#1d2939;border-radius:16px;color:#fff}
+.ctcsd-hero-main{flex:1;min-width:0}.ctcsd-hero h3{font-size:1.45rem;font-weight:600;margin:10px 0 14px;line-height:1.25}.ctcsd-hero h3 a{color:#fff!important}
+.ctcsd-hero-sm{padding:18px 22px;background:#344054}.ctcsd-hero-sm h3{font-size:1.1rem}
 .ctcsd-hero-act{display:flex;flex-direction:column;gap:8px;flex:none}
-.ctcsd-pill{display:inline-block;font-size:.75rem;font-weight:700;padding:3px 10px;border-radius:99px;background:#eef4ff;color:#3538cd}.ctcsd-pill-ok{background:var(--okb);color:var(--ok)}
-.ctcsd-bar{height:10px;background:#eaecf0;border-radius:99px;overflow:hidden}.ctcsd-bar span{display:block;height:100%;background:var(--a);border-radius:99px}
-.ctcsd-bar-l{font-size:.85rem;color:var(--m);margin-top:6px}
-.ctcsd-btn{display:inline-block;background:var(--a);color:#fff!important;border:0;border-radius:10px;padding:12px 22px;font-weight:700;text-align:center;text-decoration:none!important;cursor:pointer;font-size:1rem}
-.ctcsd-btn:hover{filter:brightness(.92)}.ctcsd-btn-2{background:#fff;color:var(--n)!important;border:1px solid var(--l)}
-.ctcsd-details{padding:0}.ctcsd-details summary{cursor:pointer;padding:14px 20px;font-weight:700;list-style:none;display:flex;align-items:center;gap:8px}
-.ctcsd-details summary::-webkit-details-marker{display:none}.ctcsd-details summary::after{content:"";margin-left:auto;width:8px;height:8px;border-right:2px solid var(--m);border-bottom:2px solid var(--m);transform:rotate(45deg);transition:transform .15s}
-.ctcsd-details[open] summary::after{transform:rotate(-135deg)}
-.ctcsd-count{font-size:.75rem;background:#f2f4f7;color:var(--m);border-radius:99px;padding:1px 8px;font-weight:700}
-.ctcsd-list{list-style:none;margin:0;padding:0 20px 10px}.ctcsd-list li{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid #f2f4f7;flex-wrap:wrap}
-.ctcsd-meta{color:var(--m);font-size:.85rem}
-.ctcsd-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:0 20px}
-.ctcsd-ctec{display:flex;gap:18px;align-items:flex-start}.ctcsd-ctec h3{font-size:1.15rem;font-weight:700;margin:4px 0 6px}.ctcsd-ctec p{margin:0 0 6px}
-.ctcsd-big{flex:none;width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:800;color:#fff;background:#98a2b3}
-.ctcsd-ctec-ok{background:var(--okb);border-color:#abefc6}.ctcsd-ctec-ok .ctcsd-big{background:var(--ok)}
-.ctcsd-ctec-bad{background:var(--badb);border-color:#fecdca}.ctcsd-ctec-bad .ctcsd-big{background:var(--bad)}
-.ctcsd-ctec-wait .ctcsd-big{background:#0b6bcb;font-size:1.6rem}.ctcsd-ctec-todo .ctcsd-big{background:#d0d5dd}
-.ctcsd-small{font-size:.85rem;color:var(--m)}
-.ctcsd-ids form{display:flex;flex-direction:column;gap:4px}.ctcsd-ids label{display:flex;flex-direction:column;font-weight:700;font-size:.9rem;margin:8px 0 0;gap:4px}
-.ctcsd-ids input{border:1px solid #d0d5dd;border-radius:10px;padding:11px 12px;font-size:1rem;font-weight:400;text-transform:uppercase}
-.ctcsd-ids input::placeholder{text-transform:none}
-.ctcsd-ids .ctcsd-btn{margin-top:12px;align-self:flex-start}
-.ctcsd-hint{font-size:.8rem;color:var(--m)}
-.ctcsd-need{border:2px solid #fdb022;background:#fffcf5}.ctcsd-need-t{font-weight:600;margin:0 0 4px}
-.ctcsd-idrow{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f2f4f7}.ctcsd-idrow span{color:var(--m)}
-.ctcsd-link{background:none;border:0;color:var(--a);font-weight:700;padding:10px 0 0;cursor:pointer}
-.ctcsd-next{display:flex;gap:18px;align-items:flex-start;border-left:6px solid #d4a72c}.ctcsd-next h3{font-size:1.15rem;font-weight:700;margin:2px 0 8px}.ctcsd-next p{margin:0 0 14px}
-.ctcsd-next-i{flex:none;width:44px;height:44px;border-radius:50%;background:#fdf3dc;color:#8a5a00;font-weight:800;font-size:1.3rem;display:flex;align-items:center;justify-content:center}
-.ctcsd-book{display:flex;gap:20px;align-items:center;background:#fffbea;border-color:#f3e3a6}.ctcsd-book-i{font-size:2.4rem;flex:none}.ctcsd-book-t{flex:1}.ctcsd-book h3{font-size:1.15rem;font-weight:700;margin:0 0 4px}.ctcsd-book p{margin:0;color:#475467}
-.ctcsd-book .ctcsd-btn{background:#d4a72c;flex:none}
-.ctcsd-cd{display:flex;gap:24px;align-items:center;padding:28px;background:#1d2939;border-color:#1d2939;color:#fff}.ctcsd-cd .ctcsd-eyebrow{color:#d4a72c}.ctcsd-cd h3{font-size:1.2rem;font-weight:700;margin:0 0 8px;color:#fff}
-.ctcsd-cd p{margin:0 0 14px;color:#d0d5dd}.ctcsd-cd p strong{color:#fff}.ctcsd-cd .ctcsd-btn{background:#d4a72c}.ctcsd-cd-t{flex:1}
-.ctcsd-cd-clock{flex:none;display:grid;grid-template-columns:repeat(4,64px);gap:8px;text-align:center}.ctcsd-cd-clock>div:not(.ctcsd-cd-l){background:rgba(255,255,255,.08);border-radius:10px;padding:10px 0}
-.ctcsd-cd-clock b{display:block;font-size:1.7rem;font-weight:800;line-height:1.1;color:#fff;font-variant-numeric:tabular-nums}.ctcsd-cd-clock span{font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:#98a2b3}
-.ctcsd-cd-l{grid-column:1/-1;font-size:.8rem;color:#d0d5dd}.ctcsd-cd-late{background:#7a2e0e;border-color:#7a2e0e}.ctcsd-cd-late .ctcsd-eyebrow{color:#fdb022}
-@media (max-width:820px){.ctcsd-cd{flex-direction:column;align-items:stretch}.ctcsd-cd-clock{grid-template-columns:repeat(4,1fr)}.ctcsd-book{flex-direction:column;align-items:stretch;text-align:center}.ctcsd-next{flex-direction:column}.ctcsd-grid{grid-template-columns:1fr}.ctcsd-hero{flex-direction:column;align-items:stretch;padding:20px}.ctcsd-cd{padding:20px}.ctcsd-hero-act .ctcsd-btn{width:100%}.ctcsd-action{flex-wrap:wrap}.ctcsd-action-go{margin-left:38px}}
+.ctcsd-pill{display:inline-block;font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:99px;background:rgba(255,255,255,.14);color:#fff}.ctcsd-pill-ok{background:var(--ok)}
+.ctcsd-bar{height:9px;background:rgba(255,255,255,.2);border-radius:99px;overflow:hidden}.ctcsd-bar span{display:block;height:100%;background:var(--g);border-radius:99px}
+.ctcsd-bar-l{font-size:.85rem;color:#d0d5dd;margin-top:6px}
+.ctcsd-btn{display:inline-block;background:var(--g);color:#fff!important;border:0;border-radius:10px;padding:13px 24px;font-weight:700;text-align:center;text-decoration:none!important;cursor:pointer;font-size:1rem;white-space:nowrap}
+.ctcsd-btn:hover{filter:brightness(.93)}.ctcsd-btn-2{background:transparent;border:1px solid rgba(255,255,255,.5)}
+.ctcsd-cols{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:20px;align-items:start;margin-top:8px}
+.ctcsd-rec{padding-top:6px}
+.ctcsd-tabs{display:flex;gap:4px;border-bottom:1px solid var(--l);margin:0 -22px 4px;padding:0 22px}
+.ctcsd-tab{background:none;border:0;border-bottom:2px solid transparent;margin-bottom:-1px;padding:12px 14px;font-weight:600;color:var(--m);cursor:pointer;font-size:.95rem}
+.ctcsd-tab.on{color:var(--n);border-color:var(--g)}
+.ctcsd-count{font-size:.7rem;background:#f2f4f7;border-radius:99px;padding:1px 7px;margin-left:4px;color:var(--m);font-weight:700}
+.ctcsd-yr{font-size:.72rem;font-weight:700;color:var(--m);letter-spacing:.06em;padding:14px 0 2px}
+.ctcsd-li{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #f2f4f7}.ctcsd-li:last-child{border:0}
+.ctcsd-li-t{font-weight:500}.ctcsd-meta{color:var(--m);font-size:.82rem}.ctcsd-li a{color:var(--gt);font-weight:600;font-size:.88rem;white-space:nowrap;text-decoration:none}
+.ctcsd-st{display:flex;gap:14px;align-items:flex-start;padding-bottom:14px;border-bottom:1px solid #f2f4f7}
+.ctcsd-st-i{width:46px;height:46px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;background:#d0d5dd;font-size:1.25rem}
+.ctcsd-st h3{margin:2px 0 2px;font-size:1.02rem;font-weight:600}.ctcsd-st p{margin:0;color:var(--m);font-size:.84rem;line-height:1.45}
+.ctcsd-st-ok .ctcsd-st-i{background:var(--ok)}.ctcsd-st-ok h3{color:var(--ok)}.ctcsd-st-bad .ctcsd-st-i{background:var(--bad)}.ctcsd-st-bad h3{color:var(--bad)}.ctcsd-st-wait .ctcsd-st-i{background:var(--a);font-size:1.05rem}
+.ctcsd-kv{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid #f2f4f7;font-size:.9rem}.ctcsd-kv span{color:var(--m)}.ctcsd-kv strong{font-weight:600}
+.ctcsd-link{display:inline-block;background:none;border:0;padding:12px 0 0;color:var(--a)!important;font-weight:600;font-size:.88rem;cursor:pointer;text-decoration:none!important}
+.ctcsd-need{border:2px solid #fdb022;background:#fffcf5}.ctcsd-need-t{font-weight:600;margin:12px 0 0;font-size:.9rem}
+.ctcsd-ids{display:flex;flex-direction:column;gap:4px;margin-top:4px}.ctcsd-ids[hidden]{display:none}.ctcsd-ids label{display:flex;flex-direction:column;font-weight:600;font-size:.86rem;margin:10px 0 0;gap:4px}
+.ctcsd-ids input{border:1px solid #d0d5dd;border-radius:10px;padding:10px 12px;font-size:1rem;font-weight:400;text-transform:uppercase}.ctcsd-ids input::placeholder{text-transform:none}
+.ctcsd-ids .ctcsd-btn{margin-top:12px;align-self:flex-start;padding:10px 22px}
+.ctcsd-hint{font-size:.78rem;color:var(--m)}
+.ctcsd-older{margin-top:12px;font-size:.86rem}.ctcsd-older summary{cursor:pointer;color:var(--m);font-weight:600}
+.ctcsd-ck{list-style:none;margin:0;padding:0}.ctcsd-ck li{display:flex;gap:12px;padding:9px 0;align-items:flex-start;font-size:.92rem;line-height:1.35}
+.ctcsd-ck small{display:block;color:var(--m);font-size:.8rem;margin-top:2px}
+.ctcsd-ck-b{width:22px;height:22px;border-radius:50%;border:2px solid #d0d5dd;flex:none;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;color:#fff}
+.ctcsd-ck-done{background:var(--ok);border-color:var(--ok)}.ctcsd-ck-now{border-color:var(--g);box-shadow:0 0 0 3px rgba(212,167,44,.18)}
+.ctcsd-book{display:flex;gap:14px;align-items:center;background:#fffbea;border:1px solid #f3e3a6;border-radius:14px;padding:16px 18px;color:var(--n)!important;text-decoration:none!important}
+.ctcsd-book:hover{border-color:var(--g)}.ctcsd-book-i{font-size:1.8rem;flex:none}.ctcsd-book-t{flex:1}.ctcsd-book-t strong{display:block;font-weight:600}.ctcsd-book-t span{color:var(--m);font-size:.82rem}
+.ctcsd-book-go{color:var(--gt);font-weight:700;white-space:nowrap}
+@media (max-width:820px){.ctcsd-cols{grid-template-columns:1fr}.ctcsd-hero{flex-direction:column;align-items:stretch;padding:20px}.ctcsd-hero-act .ctcsd-btn{width:100%}
+.ctcsd-strip{flex-wrap:wrap}.ctcsd-strip-t{flex-basis:calc(100% - 30px)}.ctcsd-strip-cd{margin-left:24px}.ctcsd-action{flex-wrap:wrap}.ctcsd-action-go{margin-left:36px}}
 </style>';
     }
 
@@ -281,7 +282,9 @@ body.ctcsd-wide #region-main.has-blocks{flex:0 0 100%!important;max-width:100%!i
         return '<script>(function(){function wide(){var r=document.getElementById("block-region-side-pre");if(!r)return;var vis=[].some.call(r.querySelectorAll(".block"),function(b){return b.offsetParent!==null;});if(!vis){document.body.classList.add("ctcsd-wide");var c=r.closest("section");if(c)c.classList.add("ctcsd-sidecol");}}document.addEventListener("DOMContentLoaded",wide);window.addEventListener("load",wide);})();'
             . '(function(){var c=document.querySelector(".ctcsd-cd");if(!c)return;var end=+c.getAttribute("data-end")*1000;function t(){var d=Math.max(0,end-Date.now());if(d<=0){try{if(!sessionStorage.getItem("ctccd"+end)){sessionStorage.setItem("ctccd"+end,1);location.reload();}}catch(e){}}var v={d:Math.floor(d/864e5),h:Math.floor(d/36e5)%24,m:Math.floor(d/6e4)%60,s:Math.floor(d/1e3)%60};'
             . 'for(var k in v){var e=c.querySelector("[data-u="+k+"]");if(e)e.textContent=(k==="d"?v[k]:("0"+v[k]).slice(-2));}}t();setInterval(t,1000);})();'
-            . '(function(){function go(){var h=location.hash;if(!/^#ctc-/.test(h))return;var s=document.querySelector(h);if(!s)return;var d=s.querySelector("details");if(d)d.open=true;if(h==="#ctc-ids"){var f=s.querySelector("form");if(f&&f.hidden){f.hidden=false;var b=s.querySelector(".ctcsd-link");if(b)b.hidden=true;}}s.scrollIntoView({behavior:"smooth",block:"start"});}'
+            . '(function(){var r=document.querySelector(".ctcsd-rec");if(!r)return;function sel(n){r.querySelectorAll(".ctcsd-tab").forEach(function(b){var on=b.getAttribute("data-tab")===n;b.classList.toggle("on",on);b.setAttribute("aria-selected",on);});'
+            . 'r.querySelectorAll(".ctcsd-panel").forEach(function(p){p.hidden=p.getAttribute("data-panel")!==n;});}window.ctcsdTab=sel;r.querySelectorAll(".ctcsd-tab").forEach(function(b){b.addEventListener("click",function(){sel(b.getAttribute("data-tab"));});});})();'
+            . '(function(){function go(){var h=location.hash;if(!/^#ctc-/.test(h))return;if(h==="#ctc-previous"&&window.ctcsdTab){window.ctcsdTab("prev");h="#ctc-certificates";}var s=document.querySelector(h);if(!s)return;var d=s.querySelector("details");if(d)d.open=true;if(h==="#ctc-ids"){var f=s.querySelector("form");if(f&&f.hidden){f.hidden=false;var b=s.querySelector(".ctcsd-link");if(b)b.hidden=true;}}s.scrollIntoView({behavior:"smooth",block:"start"});}'
             . 'window.addEventListener("hashchange",go);if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",go);else go();})();</script>';
     }
 }
