@@ -128,3 +128,4 @@
 #onboarding .e-form__indicators__indicator{cursor:pointer}
 #onboarding .e-form__indicators__indicator:hover .e-form__indicators__indicator__number{transform:scale(1.08)}
 #onboarding{scroll-margin-top:120px}.dw-ob-note{scroll-margin-top:120px}
+.dw-ob-note button.dw-ob-clear,.dw-ob-note button.dw-ob-clear:hover,.dw-ob-note button.dw-ob-clear:focus{border:0!important;background:none!important;box-shadow:none!important;color:#1B7EC3!important;font:600 14px Urbanist,sans-serif!important;text-decoration:underline;padding:0!important;letter-spacing:0!important;text-transform:none!important;min-width:0!important;height:auto!important}
