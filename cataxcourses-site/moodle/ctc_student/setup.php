@@ -33,7 +33,10 @@ $footer = (string) get_config('core', 'additionalhtmlfooter');
 $has = strpos($footer, '<!-- CTC forgot-password box') !== false;
 echo "forgottenpasswordurl=" . ($CFG->forgottenpasswordurl ?? '') . " pwresettime=" . ($CFG->pwresettime ?? '') . " login box=" . ($has ? 'yes' : 'no') . "\n";
 if ($do === 'forgot' || $do === 'all') {
-    set_config('forgottenpasswordurl', $url);
+    // Leave Moodle's forgottenpasswordurl empty: when set, login/forgot_password.php redirects there even for the
+    // ?token= links in reset emails, so nobody could finish a reset. The login-page box and the redirect of the old
+    // form page are done by the footer script instead.
+    set_config('forgottenpasswordurl', '');
     set_config('pwresettime', 14400); // reset links work for 4 hours (was 30 minutes)
     $footer = preg_replace('#\s*<!-- CTC forgot-password box.*?<!-- /CTC forgot-password box -->#s', '', $footer);
     set_config('additionalhtmlfooter', rtrim($footer) . "\n\n" . $snippet);
@@ -50,6 +53,8 @@ if ($do === 'sidebar' || $do === 'all') {
     purge_all_caches();
     echo "  -> sidebar always open on screens 1200px and wider\n";
 }
+
+if ($do === 'fixreset') { set_config('forgottenpasswordurl', ''); purge_all_caches(); echo "  -> forgottenpasswordurl cleared\n"; }
 
 // 3. Dashboard block for students (default dashboard + students' own customised dashboards).
 $staff = function ($userid) {
