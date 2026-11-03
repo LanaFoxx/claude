@@ -68,9 +68,6 @@ add_action( 'admin_bar_menu', function ( $bar ) {
 	if ( ! ctc_hs_applies() ) return;
 	foreach ( array( 'woocommerce-site-visibility-badge', 'new-shop_order', 'wc-admin', 'ctc-disputes' ) as $n ) $bar->remove_node( $n );
 }, 99999 );
-// This restriction lives in a Code Snippet: keep these users out of the Snippets screens so it is not switched off by accident.
-add_filter( 'code_snippets_cap', function ( $cap ) { return ctc_hs_applies() ? 'do_not_allow' : $cap; } );
-add_filter( 'code_snippets/cap', function ( $cap ) { return ctc_hs_applies() ? 'do_not_allow' : $cap; } );
 // Check (site admins): /wp-admin/?ctc_hs_check=29 lists what that user can and cannot do.
 add_action( 'admin_init', function () {
 	if ( empty( $_GET['ctc_hs_check'] ) || ! current_user_can( 'manage_options' ) || ctc_hs_applies() ) return;
