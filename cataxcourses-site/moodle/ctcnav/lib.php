@@ -21,7 +21,7 @@ function local_ctcnav_extend_navigation(global_navigation $nav) {
         // Links to the store, each opening in a new tab.
         $links = [
             ['ctcnav_browse', 'Purchase a new course', 'https://cataxcourses.com/', 'i/course'],
-            ['ctcnav_book', 'Need to purchase a physical book?', 'https://cataxcourses.com/book-add-ons/', 'i/report'],
+            ['ctcnav_book', 'Purchase a physical book', 'https://cataxcourses.com/book-add-ons/', 'i/report'],
             ['ctcnav_help', 'Helpful resources', 'https://cataxcourses.com/helpful-guides-and-how-tos/', 'i/info'],
         ];
         foreach ($links as $l) {
