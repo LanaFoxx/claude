@@ -5,6 +5,9 @@ add_action( 'wp_enqueue_scripts', function () {
 	// The site's one typeface, Urbanist, loaded on every page (Elementor's own Google Fonts are switched off below).
 	wp_register_style( 'dwdp-fonts', 'https://fonts.googleapis.com/css2?family=Urbanist:wght@200;300;400;500;600;700;900&display=swap', array(), null );
 	wp_enqueue_style( 'dwdp-pages', DWDP_URL . 'assets/dw-pages.css', array(), DWDP_VERSION );
+	if ( is_page( 'onboarding' ) ) {
+		wp_enqueue_script( 'dwdp-onboarding', DWDP_URL . 'assets/onboarding.js', array( 'jquery' ), DWDP_VERSION, true );
+	}
 	wp_enqueue_style( 'dwdp-fonts' );
 	wp_register_style( 'dwdp-front', DWDP_URL . 'assets/front.css', array( 'dwdp-fonts' ), DWDP_VERSION );
 	wp_register_script( 'dwdp-front', DWDP_URL . 'assets/front.js', array(), DWDP_VERSION, true );
