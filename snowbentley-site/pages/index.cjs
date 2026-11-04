@@ -14,13 +14,35 @@ const DEV_SITE = {
   type: 'full-bleed-cta', bg: 'rgb(245, 239, 231)', title: 'DEVELOPMENT SITE — ACQUISITION', imageSide: 'left', imageBleed: false, imageW: 898, imageH: 560, buttons: [],
   images: ['c94562ec-1739-4336-bfc0-645b32ffe148'],
   blocks: [
-    { tag: 'p', html: '<em>(Qualified buyer, active in the SF AI Corridor)</em>' },
-    { tag: 'ul', html: '<li><strong>Entitled Multifamily</strong> — 200+ units, fully entitled, SoMa and Mission Bay; shovel-ready preferred, will consider sites with entitlements in final approval</li><li><strong>Multifamily — Southern California</strong> — Institutional buyer actively acquiring in the $30M–$40M range. Target markets: Irvine, San Gabriel, and Alhambra. Stabilized or value-add considered.</li><li>Open to land, existing improvements for teardown, or office/R&amp;D assets suitable for residential conversion</li><li>Off-market and pre-listing opportunities welcome; principals and their representatives only</li>' },
+    { tag: 'ul', html: '<li><strong>Multifamily — Southern California</strong> — Institutional buyer actively acquiring in the $30M–$40M range. Target markets: Irvine, San Gabriel, and Alhambra. Stabilized or value-add considered.</li><li>Open to land, existing improvements for teardown, or office/R&amp;D assets suitable for residential conversion</li><li>Off-market and pre-listing opportunities welcome; principals and their representatives only</li>' },
   ],
 };
 
+// RealScout city / neighborhood ids for each neighborhood page
+const AREAS = {
+  atherton: [['Atherton', ['city', '0603092']]], hillsborough: [['Hillsborough', ['city', '0633798']]],
+  lamorinda: [['Lafayette', ['city', '0639122']], ['Moraga', ['city', '0649187']], ['Orinda', ['city', '0654232']]],
+  'los-gatos': [['Los Gatos', ['city', '0644112']]], 'menlo-park': [['Menlo Park', ['city', '0646870']]],
+  'mountain-view': [['Mountain View', ['city', '0649651']]], 'pacific-heights': [['Pacific Heights', ['neighborhood', '194564']]],
+  'palo-alto': [['Palo Alto', ['city', '0655282']]], piedmont: [['Piedmont', ['city', '0656938']]], 'san-francisco': [['San Francisco', ['city', '0667000']]],
+};
+
 function idxSearch(ctx) {
-  return S.idxListings('search', { title: 'Search Bay Area Listings', text: 'Search every home for sale across the Bay Area MLSs, save searches and get new-listing alerts.', portal: true, connect: ctx.connect });
+  return section([
+    H2('Search Bay Area Listings', { align: 'center', mb: 24 }),
+    text('Search every home for sale across the Bay Area MLSs. Create a free account to save searches and get new listings by email.', { align: 'center', maxW: 900, mb: 40 }),
+    K.widget('html', { html: S.rsMap(null, 880), ...K.cls('sb-idx'), _element_width: 'initial', _element_custom_width: K.px(100, '%') }),
+    row([button('Open Full Screen', LINKS.portal, 'dark'), button("Let's Connect", ctx.connect, 'outline')], { justify: 'center', settings: { _margin: K.box(40, 0, 0, 0) } }),
+  ], { bg: C.cream, align: 'center' });
+}
+
+// Commercial: RealScout only carries residential MLS listings, so point commercial visitors to Snow directly.
+function commercialCta(ctx) {
+  return section([
+    H2('Commercial Opportunities', { align: 'center', mb: 24 }),
+    text("Many of Snow's commercial sale and lease opportunities are shared directly with qualified buyers and tenants before they reach the open market. Tell Snow what you're looking for, see the requirements she's currently sourcing for, or browse recent deals.", { align: 'center', maxW: 960, mb: 40 }),
+    row([button("Let's Connect", ctx.connect, 'dark'), button("What We're Looking For", '/what-were-looking-for/', 'outline'), button('Done Deals', '/done-deals/', 'outline')], { justify: 'center' }),
+  ], { bg: C.cream, align: 'center', minH: 420, justify: 'center' });
 }
 
 function build(slug, ctx) {
@@ -54,7 +76,7 @@ function build(slug, ctx) {
       case 'text-grid': out.push(S.textGrid(s)); break;
       case 'timeline': out.push(S.timeline(s)); break;
       case 'instant-home-valuation-modal': out.push(home.homeWorth(ctx)); break;
-      case 'gridItem': out.push(slug === 'neighborhoods' ? S.neighborhoodsGrid(s, ctx) : S.areaSearch(page.sections.find((x) => x.type === 'neighborhood-home-search-cta') || {}, ctx, name)); break;
+      case 'gridItem': out.push(slug === 'neighborhoods' ? S.neighborhoodsGrid(s, ctx) : S.areaSearch(AREAS[slug.split('/')[1]], name)); break;
       case 'signup-form-download': out.push(S.guideDownload(s, ctx)); break;
       case 'cardItem': out.push(S.testimonialsGrid(ctx)); break;
       case 'newsletter-signup': out.push(S.staySignup()); break;
@@ -69,6 +91,7 @@ function build(slug, ctx) {
       case 'propertyItem': {
         // Live LP listing feeds -> RealScout IDX (one per page)
         if (out.some((x) => x.__idx)) break;
+        if (slug === 'commercial') { const c = commercialCta(ctx); Object.defineProperty(c, '__idx', { value: true, enumerable: false }); out.push(c); break; }
         const kind = slug === 'properties/sold' ? 'sold' : 'active';
         const sec = S.idxListings(kind, { title: kind === 'sold' ? 'Past Transactions' : slug === 'commercial' ? 'Featured Listings' : 'Featured Listings' });
         Object.defineProperty(sec, '__idx', { value: true, enumerable: false });

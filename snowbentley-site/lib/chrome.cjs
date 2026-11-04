@@ -29,7 +29,7 @@ function header(ctx) {
       nav("What We're Looking For", '/what-were-looking-for/'),
       nav("Let's Connect", popupUrl(popups.connect)),
       nav(LINKS.phone, LINKS.tel),
-      textLink('Select Language', '#', { size: 15, weight: 400, ls: 0.3, upper: true, lh: 1, color: C.white, hover: C.bronze, cls: 'sb-navlink sb-lang', icon: fa('fas fa-caret-down'), iconGap: 4, settings: { hide_tablet: 'hidden-tablet', hide_mobile: 'hidden-mobile' } }),
+      textLink('English', '#', { size: 15, weight: 400, ls: 0.3, upper: false, lh: 1, color: C.white, hover: C.bronze, cls: 'sb-navlink sb-lang', icon: fa('fas fa-caret-down'), iconGap: 6, settings: { hide_tablet: 'hidden-tablet', hide_mobile: 'hidden-mobile' } }),
       widget('button', {
         text: '', link: link(popupUrl(popups.menu)), selected_icon: fa('fas fa-bars'), icon_indent: px(0),
         button_text_color: C.espresso, background_background: 'classic', background_color: C.white,
@@ -119,7 +119,8 @@ function menuPopup(ctx) {
       ]),
       stack([label('Address', { size: 12, weight: 400, ls: 0.5, upper: true, settings: { _margin: box(0, 0, 20, 0) } }), text('2603 Camino Ramon<br>San Ramon, CA 94583', { size: 15, lh: 1.4, ls: 0.5 })]),
       stack([label('Follow', { size: 12, weight: 400, ls: 0.5, upper: true, settings: { _margin: box(0, 0, 20, 0) } }), social({ gap: 6 })]),
-    ], { cols: [3, 3, 1], gap: 32, settings: { _margin: box(70, 0, 0, 0) } }),
+      stack([label('Language', { size: 12, weight: 400, ls: 0.5, upper: true, settings: { _margin: box(0, 0, 20, 0) } }), textLink('English', '#', { size: 15, weight: 400, ls: 0.3, icon: fa('fas fa-caret-down'), iconGap: 6, cls: 'sb-lang' })]),
+    ], { cols: [4, 2, 1], gap: 32, settings: { _margin: box(70, 0, 0, 0) } }),
   ], false)];
 }
 const menuPopupSettings = {

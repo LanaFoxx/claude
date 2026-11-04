@@ -66,7 +66,7 @@ function fullBleed(d, ctx) {
   const fg = dark ? C.white : C.espresso;
   const bg = dark ? C.espresso : C.cream;
   const btns = (d.buttons || []).map((b) => button(b.text, fixUrl(b.href, ctx), dark ? 'white' : 'dark'));
-  const body = (d.blocks || []).map((b) => text(b.html, { color: fg, size: 'clamp(15px, 0.95vw, 18px)', weight: b.tag === 'ul' ? 300 : 300, lh: 1.6, ls: 0.4, align: d.images.length ? 'left' : 'center', maxW: d.images.length ? undefined : 1800, cls: b.tag === 'ul' ? 'sb-list' : '' }));
+  const body = (d.blocks || []).map((b) => text(b.html, { color: fg, size: d.images.length && !d.imageBleed ? ['clamp(17px, 1.15vw, 21px)', 18, 17] : 'clamp(15px, 0.95vw, 18px)', weight: 300, lh: 1.65, ls: 0.3, align: d.images.length ? 'left' : 'center', maxW: d.images.length ? undefined : 1800, cls: b.tag === 'ul' ? 'sb-list' : '' }));
   if (!d.images.length) {
     return section([
       H2(d.title, { color: fg, align: 'center', mb: 24 }),
@@ -76,7 +76,7 @@ function fullBleed(d, ctx) {
   }
   const copy = stack([
     ...(d.pre ? [eyebrow(d.pre, { mb: 12 })] : []),
-    H2(d.title, { color: fg, mb: 30 }),
+    H2(d.title, { color: fg, mb: 30, ...(d.images.length && !d.imageBleed ? { size: ['clamp(36px, 2.8vw, 54px)', 40, 32] } : {}) }),
     stack(body, { gap: 16 }),
     ...(btns.length ? [row(btns, { settings: { _margin: box(40, 0, 0, 0) } })] : []),
   ], { justify: 'center', settings: { _flex_size: 'grow', width: px(50, '%'), width_tablet: px(100, '%'), width_mobile: px(100, '%') } });
@@ -94,12 +94,12 @@ function fullBleed(d, ctx) {
     });
   }
   // Boxed photo (Done Deals / What We're Looking For)
-  const pic = image(img, { ratio: `${d.imageW || 898} / ${d.imageH || 560}`, settings: { _element_width: 'initial', _element_custom_width: cu('calc(50% - 26px)'), _element_custom_width_tablet: px(100, '%'), _element_custom_width_mobile: px(100, '%'), _flex_size: 'none' } });
+  const pic = image(img, { ratio: `${d.imageW || 898} / ${d.imageH || 560}`, settings: { _element_width: 'initial', _element_custom_width: cu('calc(46% - 36px)'), _element_custom_width_tablet: px(100, '%'), _element_custom_width_mobile: px(100, '%'), _flex_size: 'none' } });
   copy.settings.padding = box(0, 0, 0, 0);
-  copy.settings.width = cu('calc(50% - 26px)');
+  copy.settings.width = cu('calc(54% - 36px)');
   return section(d.imageSide === 'left' ? [pic, copy] : [copy, pic], {
-    dir: 'row', bg, align: 'center', gap: 52, minH: d.height,
-    settings: { flex_wrap: 'wrap', flex_gap: { unit: 'px', size: 52, column: '52', row: '40', isLinked: false }, flex_direction_tablet: 'column', ...(d.imageSide === 'right' ? { flex_direction_tablet: 'column-reverse' } : {}) },
+    dir: 'row', bg, align: 'center', gap: 72, minH: d.height,
+    settings: { flex_wrap: 'wrap', flex_gap: { unit: 'px', size: 72, column: '72', row: '40', isLinked: false }, flex_direction_tablet: 'column', ...(d.imageSide === 'right' ? { flex_direction_tablet: 'column-reverse' } : {}) },
   });
 }
 
@@ -346,12 +346,19 @@ function legalBody(d) {
 }
 
 /* ------------------------------------------------- neighborhood detail */
-function areaSearch(d, ctx, name) {
-  const b = (d.buttons && d.buttons[0]) || { text: 'Search Homes in the Area', href: LINKS.search };
+const rsMap = (geo, h = 820) => `<iframe class="sb-rs-map" src="https://snowbentley.realscout.com/homesearch/map${geo ? `?geo_type=${geo[0]}&geo_id=${geo[1]}` : ''}" title="Home search" loading="lazy" style="width:100%;height:${h}px;border:0;display:block;background:#fff"></iframe>`;
+// Live MLS listings for the area (RealScout map search, filtered to the neighborhood's city). areas: [[label, [geo_type, geo_id]], ...]
+function areaSearch(areas, name) {
+  const embed = (geo) => widget('html', { html: rsMap(geo), ...cls('sb-idx sb-panel'), _element_width: 'initial', _element_custom_width: px(100, '%') });
   return section([
     H2('Property Listings', { align: 'center', weight: 400, mb: 24 }),
-    text(`Browse homes for sale in ${name} and across the Bay Area.`, { align: 'center', mb: 36 }),
-    button(b.text, LINKS.search + (/regions=/.test(b.href) ? '' : ''), 'dark', { align: 'center' }),
+    text(`Homes for sale in ${name}, updated live from the MLS. Save a search to get new listings by email.`, { align: 'center', mb: 36 }),
+    areas.length > 1
+      ? container({ content_width: 'full', flex_direction: 'column', flex_align_items: 'center', padding: box(0), ...cls('sb-switch') }, [
+        row(areas.map(([l]) => label(l, { size: 12, weight: 400, ls: 0.5, upper: true, cls: 'sb-tab sb-pilltab', settings: { _element_width: 'auto' } })), { gap: 8, justify: 'center', settings: { _margin: box(0, 0, 24, 0) } }),
+        ...areas.map(([, geo]) => embed(geo)),
+      ])
+      : embed(areas[0][1]),
   ], { bg: C.cream, align: 'center' });
 }
 function overview(d) {
@@ -472,7 +479,7 @@ function idxListings(kind, o = {}) {
 }
 
 module.exports = {
-  idxListings, innerHero, ctaBand, fullBleed, tile, galleryMenu, newsletterBand, testimonialsSlider, agentBio, agentDetails, contactForm,
+  rsMap, idxListings, innerHero, ctaBand, fullBleed, tile, galleryMenu, newsletterBand, testimonialsSlider, agentBio, agentDetails, contactForm,
   textGrid, timeline, hoodCard, neighborhoodsGrid, guideDownload, testimonialsGrid, staySignup, legalBody,
   areaSearch, overview, poi, demographics, schools, galleryImage, hoodMap, fixUrl, chevronRight, chevronLeft,
 };
