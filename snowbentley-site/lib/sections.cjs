@@ -66,7 +66,7 @@ function fullBleed(d, ctx) {
   const fg = dark ? C.white : C.espresso;
   const bg = dark ? C.espresso : C.cream;
   const btns = (d.buttons || []).map((b) => button(b.text, fixUrl(b.href, ctx), dark ? 'white' : 'dark'));
-  const body = (d.blocks || []).map((b) => text(b.html, { color: fg, size: d.images.length && !d.imageBleed ? ['clamp(17px, 1.15vw, 21px)', 18, 17] : 'clamp(15px, 0.95vw, 18px)', weight: 300, lh: 1.65, ls: 0.3, align: d.images.length ? 'left' : 'center', maxW: d.images.length ? undefined : 1800, cls: b.tag === 'ul' ? 'sb-list' : '' }));
+  const body = (d.blocks || []).map((b) => text(b.tag === 'ul' && !/^\s*<ul/.test(b.html) ? `<ul>${b.html}</ul>` : b.html, { color: fg, size: d.images.length && !d.imageBleed ? ['clamp(18px, 1.35vw, 22px)', 19, 17] : 'clamp(15px, 0.95vw, 18px)', weight: d.images.length && !d.imageBleed ? 400 : 300, lh: 1.65, ls: 0.3, align: d.images.length ? 'left' : 'center', maxW: d.images.length ? undefined : 1800, cls: b.tag === 'ul' ? 'sb-list' : '' }));
   if (!d.images.length) {
     return section([
       H2(d.title, { color: fg, align: 'center', mb: 24 }),
