@@ -28,9 +28,11 @@ forms redirect to `/home-search/listings/?keyword=…` and RealScout.
 
 ## Not cloneable / to wire up before launch
 
-* **IDX / MLS search** – `/home-search/` and `/home-search/listings/` are placeholders; listing feeds on
-  residential, commercial, properties/sale|sold and the neighborhood pages were live LP widgets (empty on the live site
-  except neighborhood listings). Connect IDX Broker (or similar) and drop its shortcode in.
+* **IDX** – RealScout web components (Snow's existing RealScout account, agent id `QWdlbnQtMjgxNzU1` in
+  `lib/core.cjs`): `/home-search/` + `/home-search/listings/` have the search form and live listings, residential /
+  commercial / properties/sale show active listings, properties/sold shows sold ones; "My Search Portal" opens
+  snowbentley.realscout.com. The script loads only on pages with a widget. Neighborhood pages link to the search page
+  (RealScout widgets can't filter by city). Note the listings widget shows the *office's* listings (eXp), as RealScout defines them.
 * **Guide PDFs** – the Guides page forms collect leads; attach the PDFs/autoresponder.
 * **Form recipients / CRM** – set `email_to` (currently the WP admin email) and any CRM integration.
 * **/review redirect** – add a 301 from `/review` to the Google review link (`LINKS.review` in `lib/core.cjs`).

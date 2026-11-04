@@ -19,7 +19,8 @@ const LINKS = {
   facebook: 'https://www.facebook.com/p/Snow-Bentley-61575852646089/', instagram: 'https://www.instagram.com/snowlibentley/?hl=en',
   linkedin: 'https://www.linkedin.com/in/snow-bentley', google: 'https://maps.app.goo.gl/bK8Nzc5w69ZdCsiJ9',
   review: 'https://www.google.com/maps/place//data=!4m3!3m2!1s0x8c1df049d2be74b1:0x378b4f58eef62d80!12e1?source=g.page.m.kd._&laa=lu-desktop-review-solicitation',
-  search: '/home-search/listings/', portal: '/home-search/listings/',
+  search: '/home-search/listings/', portal: 'https://snowbentley.realscout.com/homesearch',
+  realscoutId: 'QWdlbnQtMjgxNzU1', // Snow's RealScout agent id (IDX widgets)
 };
 const CONSENT = "I agree to be contacted by Snow Bentley via call, email, and text for real estate services. To opt out, you can reply 'stop' at any time or reply 'help' for assistance. You can also click the unsubscribe link in the emails. Message and data rates may apply. Message frequency may vary. <a href=\"/terms-and-conditions/\">Privacy Policy</a>.";
 

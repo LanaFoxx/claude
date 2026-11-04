@@ -19,12 +19,8 @@ const DEV_SITE = {
   ],
 };
 
-function idxPlaceholder(ctx) {
-  return section([
-    H2('Search Bay Area Listings', { align: 'center', mb: 24 }),
-    text("Snow's MLS home search is being connected. In the meantime, tell Snow what you're looking for and she'll send you matching listings, including off-market and pre-listing opportunities.", { align: 'center', maxW: 900, mb: 40 }),
-    row([button("Let's Connect", ctx.connect, 'dark'), button('Home Valuation', LINKS.valuation, 'outline')], { justify: 'center' }),
-  ], { bg: C.cream, align: 'center', minH: 520, justify: 'center' });
+function idxSearch(ctx) {
+  return S.idxListings('search', { title: 'Search Bay Area Listings', text: 'Search every home for sale across the Bay Area MLSs, save searches and get new-listing alerts.', portal: true, connect: ctx.connect });
 }
 
 function build(slug, ctx) {
@@ -70,7 +66,15 @@ function build(slug, ctx) {
       case 'gallery': out.push(S.galleryImage(s, ctx)); break;
       case 'neighborhood-map': out.push(S.hoodMap(s, name)); break;
       case 'flex': break;
-      case 'neighborhood-home-search-cta': case 'propertyItem': case 'blogItem': break; // live MLS / blog feeds (empty or IDX)
+      case 'propertyItem': {
+        // Live LP listing feeds -> RealScout IDX (one per page)
+        if (out.some((x) => x.__idx)) break;
+        const kind = slug === 'properties/sold' ? 'sold' : 'active';
+        const sec = S.idxListings(kind, { title: kind === 'sold' ? 'Past Transactions' : slug === 'commercial' ? 'Featured Listings' : 'Featured Listings' });
+        Object.defineProperty(sec, '__idx', { value: true, enumerable: false });
+        out.push(sec); break;
+      }
+      case 'neighborhood-home-search-cta': case 'blogItem': break;
       default: console.warn(`[${slug}] no builder for section type ${s.type}`);
     }
   }
@@ -96,7 +100,7 @@ const hoods = Object.keys(content).filter((k) => k.startsWith('neighborhoods/'))
 const props = ['sale', 'sold'].map((s) => ({ slug: s, path: `properties/${s}`, parent: 'properties', title: pageTitle(`properties/${s}`), ...seo(`properties/${s}`), build: (ctx) => build(`properties/${s}`, ctx) }));
 
 const searchHero = { eyebrow: 'Bay Area Listings', title: 'HOME SEARCH', image: 'fbaf8acd-b2aa-48d9-9db9-0a8df214a0c7' };
-const idxPage = (ctx) => [S.innerHero(searchHero, ctx), idxPlaceholder(ctx), S.newsletterBand(ctx)];
+const idxPage = (ctx) => [S.innerHero(searchHero, ctx), idxSearch(ctx), S.newsletterBand(ctx)];
 
 const PAGES = [
   { ...home, path: '', front: true, seoTitle: 'Snow Bentley Realty | Bay Area Commercial & Luxury Real Estate', seoDesc: 'Snow Bentley Realty: award-winning, Chinese-speaking Bay Area agent for commercial leasing & sales and luxury residential real estate. CA DRE# 01911217.' },

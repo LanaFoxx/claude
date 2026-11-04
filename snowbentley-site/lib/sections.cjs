@@ -455,8 +455,24 @@ function hoodMap(d, name) {
   ], false);
 }
 
+// RealScout IDX (live MLS data). kind: 'search' (search form + active listings) | 'active' | 'sold'
+function idxListings(kind, o = {}) {
+  const id = LINKS.realscoutId;
+  const listings = (status) => `<realscout-office-listings agent-encoded-id="${id}" sort-order="${status === 'Sold' ? 'STATUS_AND_SIGNIFICANT_CHANGE' : 'NEWEST'}" listing-status="${status}" property-types="${o.types || 'SFR,MF,TC,LAL,MOBILE,OTHER'}" price-min="${o.priceMin || 0}"></realscout-office-listings>`;
+  const html = kind === 'search'
+    ? `<realscout-advanced-search agent-encoded-id="${id}"></realscout-advanced-search>`
+    : listings(kind === 'sold' ? 'Sold' : 'For Sale');
+  return section([
+    ...(o.title ? [H2(o.title, { align: 'center', weight: 400, mb: 24 })] : []),
+    ...(o.text ? [text(o.text, { align: 'center', maxW: 900, mb: 40 })] : []),
+    widget('html', { html, ...cls('sb-idx'), _element_width: 'initial', _element_custom_width: px(100, '%') }),
+    ...(kind === 'search' ? [widget('html', { html: listings('For Sale'), ...cls('sb-idx'), _margin: box(48, 0, 0, 0), _element_width: 'initial', _element_custom_width: px(100, '%') })] : []),
+    ...(o.portal ? [row([button('Open Full Map Search', LINKS.portal, 'dark'), button("Let's Connect", o.connect, 'outline')], { justify: 'center', settings: { _margin: box(48, 0, 0, 0) } })] : []),
+  ], { bg: C.cream, align: 'center' });
+}
+
 module.exports = {
-  innerHero, ctaBand, fullBleed, tile, galleryMenu, newsletterBand, testimonialsSlider, agentBio, agentDetails, contactForm,
+  idxListings, innerHero, ctaBand, fullBleed, tile, galleryMenu, newsletterBand, testimonialsSlider, agentBio, agentDetails, contactForm,
   textGrid, timeline, hoodCard, neighborhoodsGrid, guideDownload, testimonialsGrid, staySignup, legalBody,
   areaSearch, overview, poi, demographics, schools, galleryImage, hoodMap, fixUrl, chevronRight, chevronLeft,
 };

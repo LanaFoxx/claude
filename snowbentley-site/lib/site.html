@@ -126,6 +126,11 @@ body:not(.elementor-editor-active) .sb-switch .sb-panel:not(.is-active) { displa
 /* Read-more panel (About bio) */
 .sb-more .elementor-widget-container { position: relative; }
 
+/* RealScout IDX widgets */
+realscout-advanced-search { --rs-as-button-text-color: #ffffff; --rs-as-background-color: transparent; --rs-as-button-color: #3A2C26; --rs-as-widget-width: 100% !important; display: block; }
+realscout-office-listings { --rs-listing-divider-color: #3A2C26; --rs-listing-divider-height: 1px; width: 100%; display: block; }
+realscout-simple-search { --rs-ss-font-primary-color: #3A2C26; --rs-ss-searchbar-border-color: #3A2C26; --rs-ss-box-shadow: none; --rs-ss-widget-width: 100% !important; display: block; }
+
 /* Mobile tweaks */
 @media (max-width: 1024px) { .sb-hide-tab { display: none !important; } }
 </style>
@@ -220,6 +225,11 @@ body:not(.elementor-editor-active) .sb-switch .sb-panel:not(.is-active) { displa
         gt.classList.toggle('is-open');
       });
     });
+
+    /* RealScout IDX: load the web components only where a widget is on the page */
+    if (document.querySelector('realscout-advanced-search, realscout-office-listings, realscout-simple-search, realscout-home-value')) {
+      var rs = document.createElement('script'); rs.type = 'module'; rs.src = 'https://em.realscout.com/widgets/realscout-web-components.umd.js'; document.head.appendChild(rs);
+    }
 
     /* Hero "scroll down" arrows */
     Array.prototype.forEach.call(document.querySelectorAll('.sb-down a'), function (a) {
