@@ -1161,3 +1161,7 @@
 @media (min-width:783px) and (max-width:1399px){
  #mjd .mj-ph .mj-dash__actions{margin-top:14px!important;width:100%;flex-basis:100%}
 }
+/* Log Attendance button: green */
+#mjd .mj-btn[data-act="logatt"]{background:#1E7D4F!important;border-color:#1E7D4F!important;color:#fff!important}
+#mjd .mj-btn[data-act="logatt"]:hover{background:#17663F!important;border-color:#17663F!important;color:#fff!important}
+#mjd .mj-btn[data-act="logatt"] svg{color:#fff!important;stroke:#fff}
