@@ -74,6 +74,10 @@ while ( have_posts() ) :
 							<span class="dw-rby">&mdash; <?php echo esc_html( $by ? $by : $name ); ?></span>
 						</div>
 					<?php endif; ?>
+					<?php $lbl = dwdp_get( $id, 'link_label' ); $lurl = dwdp_get( $id, 'url' ); ?>
+					<?php if ( $lbl && $lurl ) : ?>
+						<a class="dwdp-btn dw-site-link" href="<?php echo esc_url( $lurl ); ?>" target="_blank" rel="noopener"><?php echo esc_html( $lbl ); ?> ↗</a>
+					<?php endif; ?>
 					<?php $upw = dwdp_get( $id, 'upwork_url' ); ?>
 					<a class="dw-upwork-link" href="<?php echo esc_url( $upw ? $upw : 'https://www.upwork.com/freelancers/dreamwebdigital' ); ?>" target="_blank" rel="noopener me"><span class="dw-upwork-ic" aria-hidden="true"></span><?php echo $upw ? 'View this project on Upwork' : 'See my Upwork profile · Top Rated Plus'; ?> <span aria-hidden="true">↗</span></a>
 					<a class="dwdp-btn" href="<?php echo esc_url( home_url( dwdp_setting( 'portfolio_url' ) ) ); ?>">&larr; Back to portfolio</a>
@@ -88,6 +92,38 @@ while ( have_posts() ) :
 				</div>
 			</div>
 		</section>
+		<?php
+		$screens = dwdp_ids( dwdp_get( $id, 'mobile_screens' ) );
+		if ( $screens ) :
+			?>
+			<section class="dw-app dw-dots-dark">
+				<div class="dw-app-in">
+					<div class="dw-app-text">
+						<div class="dw-app-k">On the phone</div>
+						<h2 class="dwdp-cta-title"><span style="font-weight:200"><?php echo esc_html( $name ); ?></span><br><span style="font-weight:900;color:#4BA3DC">in your pocket</span></h2>
+						<p class="dw-app-p">Tap a screen to see it on the phone.</p>
+						<div class="dw-app-tabs" role="tablist">
+							<?php foreach ( $screens as $n => $sid ) : ?>
+								<button type="button" role="tab" class="dw-app-tab<?php echo $n ? '' : ' is-on'; ?>" data-i="<?php echo (int) $n; ?>" aria-selected="<?php echo $n ? 'false' : 'true'; ?>"><?php echo esc_html( get_the_title( $sid ) ); ?></button>
+							<?php endforeach; ?>
+						</div>
+					</div>
+					<div class="dw-app-phone">
+						<button type="button" class="dw-app-nav is-prev" aria-label="Previous screen">‹</button>
+						<div class="dw-app-device"><span class="dw-app-island"></span><div class="dw-app-screen">
+							<?php foreach ( $screens as $n => $sid ) : ?>
+								<?php echo dwdp_img( $sid, $name . ' app: ' . get_the_title( $sid ), array( 'loading' => $n ? 'lazy' : 'eager', 'class' => $n ? '' : 'is-on', 'data-i' => $n ) ); // phpcs:ignore ?>
+							<?php endforeach; ?>
+						</div></div>
+						<button type="button" class="dw-app-nav is-next" aria-label="Next screen">›</button>
+					</div>
+				</div>
+			</section>
+			<script>(function(){var s=document.querySelector('.dw-app');if(!s)return;var tabs=[].slice.call(s.querySelectorAll('.dw-app-tab')),imgs=[].slice.call(s.querySelectorAll('.dw-app-screen img')),cur=0;
+			function show(i){cur=(i+imgs.length)%imgs.length;imgs.forEach(function(m,k){m.classList.toggle('is-on',k===cur);if(k===cur&&m.loading==='lazy')m.loading='eager';});tabs.forEach(function(t,k){t.classList.toggle('is-on',k===cur);t.setAttribute('aria-selected',k===cur);});var on=tabs[cur];if(on&&on.parentNode.scrollWidth>on.parentNode.clientWidth){on.parentNode.scrollTo({left:on.offsetLeft-on.parentNode.clientWidth/2+on.clientWidth/2,behavior:'smooth'});}var sc=s.querySelector('.dw-app-screen');sc.scrollTop=0;}
+			tabs.forEach(function(t){t.addEventListener('click',function(){show(+t.dataset.i);});});
+			s.querySelector('.is-prev').addEventListener('click',function(){show(cur-1);});s.querySelector('.is-next').addEventListener('click',function(){show(cur+1);});})();</script>
+		<?php endif; ?>
 		<?php echo dwdp_cta_html(); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 	</main>
 	<?php

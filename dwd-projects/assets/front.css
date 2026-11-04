@@ -374,3 +374,38 @@
 .dwbp-toc{padding:56px 0 8px}
 @media(max-width:767px){.dwbp-introsec{padding:40px 0}.dwbp-introsec .dwbp-intro p{font-size:17px}}
 .dw-upwork-link{display:flex;align-items:center;justify-content:center;gap:10px;margin:0 0 14px;padding:14px 20px;border:1.5px solid #14A800;border-radius:8px;background:#fff;color:#108A00!important;font:600 15px Urbanist,sans-serif;text-decoration:none!important;transition:background .2s,color .2s}.dw-upwork-link:hover{background:#14A800;color:#fff!important}.dw-upwork-ic{width:22px;height:22px;background:currentColor;-webkit-mask:url(https://dreamwebdigital.com/wp-content/uploads/2026/10/upwork-icon.svg) center/contain no-repeat;mask:url(https://dreamwebdigital.com/wp-content/uploads/2026/10/upwork-icon.svg) center/contain no-repeat}
+/* Project page: tappable phone with app screens */
+.dw-app{background-color:#12293E;padding:96px 32px}
+.dw-app-in{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:64px;align-items:center}
+.dw-app-k{font:600 13px Urbanist,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#4BA3DC;margin-bottom:14px}
+.dw-app .dwdp-cta-title{text-align:left!important}
+.dw-app-p{margin:16px 0 26px;font:400 19px/1.6 Urbanist,sans-serif;color:#C9DAE8}
+.dw-app-tabs{display:flex;flex-wrap:wrap;gap:10px}
+.dw-app-tab{border:1px solid rgba(255,255,255,.22)!important;background:transparent!important;color:#C9DAE8!important;border-radius:100px!important;padding:9px 16px!important;font:500 15px Urbanist,sans-serif!important;letter-spacing:0!important;text-transform:none!important;cursor:pointer;height:auto!important;min-width:0!important;transition:background .2s,color .2s,border-color .2s}
+.dw-app-tab:hover{border-color:#4BA3DC!important;color:#fff!important}
+.dw-app-tab.is-on{background:#1B7EC3!important;border-color:#1B7EC3!important;color:#fff!important}
+.dw-app-phone{display:flex;align-items:center;gap:18px}
+.dw-app-device{position:relative;width:330px;aspect-ratio:390/844;border-radius:52px;background:#0b0c0e;padding:12px;box-shadow:0 0 0 2px #3a3c42,0 40px 80px rgba(0,0,0,.45)}
+.dw-app-island{position:absolute;top:22px;left:50%;width:92px;height:26px;margin-left:-46px;border-radius:20px;background:#000;z-index:3}
+.dw-app-screen{position:relative;width:100%;height:100%;border-radius:40px;overflow:hidden;background:#fff}
+.dw-app-screen img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;opacity:0;transition:opacity .35s ease}
+.dw-app-screen img.is-on{opacity:1}
+.dw-app-nav{width:44px;height:44px;border-radius:50%!important;border:1px solid rgba(255,255,255,.25)!important;background:transparent!important;color:#fff!important;font:400 26px/1 Urbanist,sans-serif!important;padding:0!important;min-width:0!important;cursor:pointer}
+.dw-app-nav:hover{background:#1B7EC3!important;border-color:#1B7EC3!important}
+.dw-site-link{display:block;text-align:center;margin:0 0 14px}
+@media(max-width:1024px){.dw-app-in{grid-template-columns:1fr;gap:40px;justify-items:center;text-align:center}.dw-app .dwdp-cta-title{text-align:center!important}.dw-app-tabs{justify-content:center}}
+@media(max-width:767px){.dw-app{padding:64px 16px}.dw-app-device{width:260px;border-radius:42px;padding:10px}.dw-app-screen{border-radius:32px}.dw-app-island{top:18px;width:74px;height:22px;margin-left:-37px}.dw-app-phone{gap:8px}.dw-app-nav{width:38px;height:38px}.dw-app-tab{font-size:14px!important;padding:8px 13px!important}}
+/* phone viewer: status bar strip so the notch never covers the app, round arrows, one-row tabs on phones */
+.dw-app-screen{background:#13262f}
+.dw-app-screen::before{content:"9:41";position:absolute;left:0;right:0;top:0;height:44px;z-index:2;display:flex;align-items:center;padding:0 0 0 30px;font:600 14px Urbanist,sans-serif;color:#fff;background:#13262f}
+.dw-app-screen img{top:44px!important;height:calc(100% - 44px)!important}
+.dw-app button.dw-app-nav{width:44px!important;height:44px!important;min-width:44px!important;max-width:44px!important;padding:0!important;border-radius:50%!important;display:inline-flex!important;align-items:center;justify-content:center;flex:none}
+@media(max-width:767px){
+	.dw-app-screen::before{height:36px;font-size:12px;padding-left:24px}
+	.dw-app-screen img{top:36px!important;height:calc(100% - 36px)!important}
+	.dw-app-tabs{flex-wrap:nowrap;justify-content:flex-start;overflow-x:auto;margin:0 -16px;padding:2px 16px 8px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+	.dw-app-tabs::-webkit-scrollbar{display:none}
+	.dw-app-tab{flex:none}
+	.dw-app button.dw-app-nav{width:38px!important;height:38px!important;min-width:38px!important;max-width:38px!important}
+}
+.dw-app-in>*{min-width:0;max-width:100%}.dw-app-text{width:100%}

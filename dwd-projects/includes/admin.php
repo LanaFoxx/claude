@@ -154,6 +154,8 @@ function dwdp_box_details( $post ) {
 			);
 		}
 		?>
+		<tr><th><label for="dwdp-link_label">Website button</label></th><td><input id="dwdp-link_label" name="dwdp[link_label]" class="regular-text" value="<?php echo esc_attr( $v( 'link_label' ) ); ?>" placeholder="e.g. Visit the website, or Try the live demo"><p class="description">Optional. Shows a button on the project page that opens the website address.</p></td></tr>
+		<tr><th>Phone app screens</th><td><?php $ms = dwdp_ids( $v( 'mobile_screens' ) ); ?><input type="hidden" id="dwdp-mobile-screens" name="dwdp[mobile_screens]" value="<?php echo esc_attr( implode( ',', $ms ) ); ?>"><ul id="dwdp-ms-list" class="dwdp-gallery"><?php foreach ( $ms as $mid ) { echo dwdp_thumb_item( $mid ); } // phpcs:ignore ?></ul><button type="button" class="button" id="dwdp-ms-add">Add phone screens</button><p class="description">Optional. Phone-size screenshots (e.g. each screen of an app). The project page shows a phone with a button for each screen; the image title is the button name. Drag to reorder.</p></td></tr>
 		<tr><th>Homepage</th><td><label><input type="hidden" name="dwdp[on_home]" value="0"><input type="checkbox" name="dwdp[on_home]" value="1" <?php checked( '1', (string) $on_home ); ?>> Show in the homepage carousel</label></td></tr>
 		<tr><th>Pin</th><td><label><input type="hidden" name="dwdp[pinned]" value="0"><input type="checkbox" name="dwdp[pinned]" value="1" <?php checked( '1', (string) $v( 'pinned' ) ); ?>> Always show first in the portfolio and homepage carousel</label></td></tr>
 	</table>
@@ -182,6 +184,12 @@ add_action( 'save_post_' . DWDP_CPT, function ( $post_id ) {
 	}
 	if ( isset( $in['url'] ) ) {
 		update_post_meta( $post_id, '_dwdp_url', esc_url_raw( $in['url'] ) );
+	}
+	if ( isset( $in['link_label'] ) ) {
+		update_post_meta( $post_id, '_dwdp_link_label', sanitize_text_field( $in['link_label'] ) );
+	}
+	if ( isset( $in['mobile_screens'] ) ) {
+		update_post_meta( $post_id, '_dwdp_mobile_screens', implode( ',', dwdp_ids( $in['mobile_screens'] ) ) );
 	}
 	foreach ( array( 'video', 'video_cover', 'upwork_url' ) as $k ) {
 		if ( isset( $in[ $k ] ) ) {
@@ -230,6 +238,12 @@ add_action( 'wp_ajax_dwdp_set_fields', function () {
 	}
 	if ( isset( $in['url'] ) ) {
 		update_post_meta( $post_id, '_dwdp_url', esc_url_raw( $in['url'] ) );
+	}
+	if ( isset( $in['link_label'] ) ) {
+		update_post_meta( $post_id, '_dwdp_link_label', sanitize_text_field( $in['link_label'] ) );
+	}
+	if ( isset( $in['mobile_screens'] ) ) {
+		update_post_meta( $post_id, '_dwdp_mobile_screens', implode( ',', dwdp_ids( $in['mobile_screens'] ) ) );
 	}
 	foreach ( array( 'video', 'video_cover', 'upwork_url' ) as $k ) {
 		if ( isset( $in[ $k ] ) ) {

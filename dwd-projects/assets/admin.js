@@ -726,6 +726,19 @@
 	$('#dwdp-build-thumbs').on('click', buildThumbs);
 	window.DWDPBuildThumbs = buildThumbs;
 
+	/* ---------- phone app screens ---------- */
+	function syncMs() { $('#dwdp-mobile-screens').val($('#dwdp-ms-list li').map(function () { return $(this).data('id'); }).get().join(',')); }
+	$('#dwdp-ms-list').sortable({ items: '> li', tolerance: 'pointer', update: syncMs });
+	$(document).on('click', '#dwdp-ms-list .dwdp-x', function (e) { e.stopImmediatePropagation(); $(this).closest('li').remove(); syncMs(); });
+	$('#dwdp-ms-add').on('click', function () {
+		var frame = wp.media({ title: 'Add phone screens', multiple: 'add', library: { type: 'image' }, button: { text: 'Add screens' } });
+		frame.on('select', function () {
+			frame.state().get('selection').each(function (a) { var j = a.toJSON(); $('#dwdp-ms-list').append(thumbLi(j.id, (j.sizes && j.sizes.medium) ? j.sizes.medium.url : j.url)); });
+			syncMs();
+		});
+		frame.open();
+	});
+
 	// exposed for testing
 	window.DWDPTest = { cutsFromSections: cutsFromSections, cutsFromImage: cutsFromImage, drawPhone: drawPhone, state: state };
 })(jQuery);
