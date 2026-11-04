@@ -43,6 +43,7 @@ function dwdp_base_slug() {
 function dwdp_fields() {
 	return array(
 		'url'        => '',
+		'hide_link'  => '0', // '1' = no live-website button on the project page
 		'link_label' => '', // e.g. 'Try the live demo': shows a button to the website address on the project page
 		'mobile_screens' => '', // comma-separated attachment IDs: phone screens shown in the tappable phone viewer
 		'upwork_url' => '', // link to this project in the Upwork profile portfolio

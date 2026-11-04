@@ -74,8 +74,8 @@ while ( have_posts() ) :
 							<span class="dw-rby">&mdash; <?php echo esc_html( $by ? $by : $name ); ?></span>
 						</div>
 					<?php endif; ?>
-					<?php $lbl = dwdp_get( $id, 'link_label' ); $lurl = dwdp_get( $id, 'url' ); ?>
-					<?php if ( $lbl && $lurl ) : ?>
+					<?php $lbl = dwdp_get( $id, 'link_label' ); $lbl = $lbl ? $lbl : 'View the live website'; $lurl = dwdp_get( $id, 'url' ); ?>
+					<?php if ( $lurl && '1' !== (string) dwdp_get( $id, 'hide_link' ) ) : ?>
 						<a class="dwdp-btn dw-site-link" href="<?php echo esc_url( $lurl ); ?>" target="_blank" rel="noopener"><?php echo esc_html( $lbl ); ?> ↗</a>
 					<?php endif; ?>
 					<?php $upw = dwdp_get( $id, 'upwork_url' ); ?>
