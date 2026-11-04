@@ -75,11 +75,9 @@ function product(m) {
       f('amount', 'radio', 'Amount', { field_options: opt([['$25', '25'], ['$50', '50'], ['$100', '100'], ['$250', '250'], ['$500', '500']]), field_value: '100', inline_list: 'elementor-subgroup-inline' }),
       f('custom_amount', 'number', 'Or choose an amount', { placeholder: '$', field_min: '10', field_max: '1000', width: '50', width_tablet: '50', width_mobile: '50' }),
       f('quantity', 'number', 'Quantity', { field_value: '1', field_min: '1', field_max: '20', width: '50', width_tablet: '50', width_mobile: '50' }),
-      f('delivery', 'radio', 'Delivery', { field_options: opt([['Email it', 'email'], ['Mail a physical card', 'mail']]), field_value: 'email', inline_list: 'elementor-subgroup-inline' }),
       f('recipient_name', 'text', 'Recipient’s name', { width: '50', width_tablet: '50' }),
-      f('recipient_email', 'email', 'Recipient’s email', { width: '50', width_tablet: '50' }),
+      f('address', 'textarea', 'Mailing address for the card', { rows: 2, required: 'true' }),
       f('from_name', 'text', 'From', { width: '50', width_tablet: '50' }),
-      f('send_on', 'date', 'Send on', { use_native_date: 'yes', width: '50', width_tablet: '50' }),
       f('message', 'textarea', 'Personal message (optional)', { rows: 3 }),
     ],
     show_labels: 'true', input_size: 'md', button_text: 'Add to cart', button_size: 'md', button_width: '100',
@@ -116,11 +114,17 @@ selector .elementor-field-group > .elementor-field-label { width: 100%; }`,
           heading('Bayfield Inn Gift Card', 'h1', [48, 42, 34], C.green, { ls: -1 }),
           widget('heading', { title: '$25 – $500', header_size: 'p', title_color: C.green, ...typo('typography', SERIF, [28, 26, 24], 400, { lh: 1 }) }),
           small('Give the best darn view on Lake Superior. Choose a Bayfield Inn card for a stay, or a Dining card for The Deck, The Lounge and the Lakeside Dining Room.', { size: 16, lh: 1.7 }),
-          widget('divider', { style: 'solid', weight: px(1), color: C.line, gap: px(4) }),
+          // Black Friday offer (remove after the promotion).
+      container({ content_width: 'full', flex_direction: 'row', flex_align_items: 'center', flex_gap: gap(14), padding: box(14, 18, 14, 18),
+        background_background: 'classic', background_color: C.green, border_radius: box(3) }, [
+        widget('heading', { title: 'Black Friday', header_size: 'span', title_color: 'rgba(245,242,236,0.7)', _element_width: 'auto', _flex_size: 'none', custom_css: 'selector .elementor-heading-title { white-space: nowrap; }', ...typo('typography', SANS, 10.5, 500, { lh: 1.3, ls: 2.2, transform: 'uppercase' }) }),
+        small('Spend $50, get a $10 bonus card for yourself. Spend $100, get $20.', { size: 14.5, color: C.cream, inline: true }),
+      ]),
+      widget('divider', { style: 'solid', weight: px(1), color: C.line, gap: px(4) }),
           form,
           widget('icon-list', {
             view: 'traditional',
-            icon_list: [['far fa-envelope', 'Sent by email, or mailed as a physical card'], ['fas fa-bed', 'Choose a card for rooms at the Inn, or for dining'], ['fas fa-phone-alt', 'Questions? Call (715) 779-3363']]
+            icon_list: [['far fa-envelope', 'Mailed to you or the recipient as a physical card'], ['fas fa-bed', 'Choose a card for rooms at the Inn, or for dining'], ['fas fa-phone-alt', 'Questions? Call (715) 779-3363']]
               .map(([icon, t]) => ({ _id: id(), text: t, selected_icon: fa(icon) })),
             space_between: px(10), icon_size: px(13), icon_color: C.green, text_color: C.muted, text_indent: px(12),
             ...typo('icon_typography', SANS, 14, 400, { lh: 1.5 }), _margin: box(6, 0, 0, 0),
@@ -130,8 +134,8 @@ selector .elementor-field-group > .elementor-field-label { width: 100%; }`,
     ]),
     section({ background_background: 'classic', background_color: C.white, ...pad(96, 96), ...boxed, flex_direction: 'column' }, [
       container({ ...gridSettings([3, 3, 1]), content_width: 'full', padding: box(0), grid_gaps: gap(56, 40), grid_gaps_tablet: gap(32, 40), grid_align_items: 'start' }, [
-        col('Description', '<p>A Bayfield Inn gift card is the easy present for anyone who loves Lake Superior. Choose an amount, add a personal note, and we’ll deliver it by email, or mail a physical card.</p>'),
-        col('How it works', '<p>1. Pick an amount and delivery.<br>2. Check out securely.<br>3. The recipient gets their card with your message.</p>'),
+        col('Description', '<p>A Bayfield Inn gift card is the easy present for anyone who loves Lake Superior. Choose an amount, add a personal note, and we’ll mail a physical card.</p>'),
+        col('How it works', '<p>1. Pick a card and an amount.<br>2. Check out securely.<br>3. We mail the physical card with your message.</p>'),
         col('Good to know', '<p>Placeholder: redemption, expiry and refund terms go here once confirmed by the Inn.</p>'),
       ]),
     ]),
@@ -151,7 +155,7 @@ function cart(m) {
       image(m.file('bayfield-gift-card.png'), { width: [120, 110, 88], settings: { _element_width: 'initial', _element_custom_width: px(120), _element_custom_width_mobile: px(88), _flex_size: 'none', link_to: 'custom', link: link(URL.product) } }),
       stack([
         widget('heading', { title: 'Bayfield Inn Gift Card', header_size: 'h3', title_color: C.green, link: link(URL.product), ...typo('typography', SERIF, [22, 22, 20], 400, { lh: 1.1 }) }),
-        small('Bayfield Inn (rooms) · $100 · Email delivery<br>To: Recipient name', { size: 13 }),
+        small('Bayfield Inn (rooms) · $100 · Mailed card<br>To: Recipient name', { size: 13 }),
         plainLink('Remove', URL.product, { size: 12.5 }),
       ], { gap: 6 }),
     ]),
@@ -233,7 +237,7 @@ function checkout(m) {
               image(m.file('bayfield-gift-card.png'), { width: 84, settings: { _element_width: 'initial', _element_custom_width: px(84), _flex_size: 'none' } }),
               stack([
                 widget('heading', { title: 'Bayfield Inn Gift Card × 1', header_size: 'p', title_color: C.green, ...typo('typography', SERIF, 19, 400, { lh: 1.2 }) }),
-                small('Bayfield Inn (rooms) · $100 · Email delivery', { size: 13 }),
+                small('Bayfield Inn (rooms) · $100 · Mailed card', { size: 13 }),
               ], { gap: 4, settings: { width: auto, width_tablet: auto, width_mobile: auto, _flex_size: 'grow', custom_css: 'selector { min-width: 0; }' } }),
               small('$100.00', { size: 15, color: C.ink, inline: true, settings: { _flex_size: 'none', hide_mobile: 'hidden-mobile' } }), // total below shows it on phones
             ]),
@@ -278,7 +282,7 @@ function orderReceived(m) {
           image(m.file('bayfield-gift-card.png'), { width: 96, settings: { _element_width: 'initial', _element_custom_width: px(96), _flex_size: 'none' } }),
           stack([
             widget('heading', { title: 'Bayfield Inn Gift Card × 1', header_size: 'p', title_color: C.green, ...typo('typography', SERIF, 20, 400, { lh: 1.2 }) }),
-            small('Bayfield Inn (rooms) · $100 · Email delivery · To: Recipient name', { size: 13 }),
+            small('Bayfield Inn (rooms) · $100 · Mailed card · To: Recipient name', { size: 13 }),
           ], { gap: 4, settings: { width: auto, width_tablet: auto, width_mobile: auto, _flex_size: 'grow', custom_css: 'selector { min-width: 0; }' } }),
           small('$100.00', { size: 15, color: C.ink, inline: true, settings: { _flex_size: 'none', hide_mobile: 'hidden-mobile' } }), // total below shows it on phones
         ]),

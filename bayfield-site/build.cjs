@@ -11,7 +11,8 @@ const C = {
 };
 const SERIF = 'Newsreader', SANS = 'Geist';
 const EXT = {
-  book: 'https://partners.eviivo.com/bayfieldinn/s?hli=true', rooms: 'https://bayfieldinn.com/stay/the-inn/',
+  // Booking happens on our /book/ page, which shows eviivo's live availability inside the site.
+  book: '/book/', eviivo: 'https://partners.eviivo.com/en-US/bayfieldinn/s', rooms: 'https://bayfieldinn.com/stay/the-inn/',
   dine: 'https://bayfieldinn.com/dine/', events: 'https://bayfieldinn.com/plan-an-event/',
   gallery: 'https://bayfieldinn.com/relax/lobby-gallery/', facebook: 'http://facebook.com/BayfieldInn',
   instagram: 'https://www.instagram.com/thebayfieldinn/', tripadvisor: 'https://www.tripadvisor.com/',
@@ -172,7 +173,7 @@ function header(m, menuId) {
   }, [
     widget('heading', { title: 'Black Friday', header_size: 'p', title_color: 'rgba(245,242,236,0.7)', _element_width: 'auto',
       ...typo('typography', SANS, 10.5, 500, { lh: 1.4, ls: 2.3, transform: 'uppercase' }) }),
-    text('Gift cards for the lake lover on your list. Buy now, stay next summer.', { color: C.cream, size: 13, lh: 1.45, align: 'center', inline: true, ls: 0.26 }),
+    text('Spend $50 on gift cards, get a $10 bonus card for yourself.', { color: C.cream, size: 13, lh: 1.45, align: 'center', inline: true, ls: 0.26 }),
     button('Buy gift cards →', EXT.giftCards, 'text', { color: C.cream, size: 13, upper: false, pad: box(0, 0, 1, 0), settings: {
       _element_width: 'auto', typography_letter_spacing: px(0.26), hover_color: 'rgba(245,242,236,0.8)',
       border_border: 'solid', border_width: box(0, 0, 1, 0), border_color: C.cream60, border_radius: box(0),
@@ -404,7 +405,7 @@ function home(m) {
         submit_actions: ['redirect'],
         // Fallback only: the "Bayfield interactions" snippet sends the search to eviivo with the
         // parameter names and yyyy-mm-dd dates of eviivo's official Search Box widget.
-        redirect_to: `${EXT.book}&startdate=[field id="checkin"]&enddate=[field id="checkout"]&adults1=[field id="adults"]&children1=[field id="children"]`,
+        redirect_to: `${m.site || ''}${EXT.book}?startdate=[field id="checkin"]&enddate=[field id="checkout"]&adults1=[field id="adults"]&children1=[field id="children"]`,
         column_gap: px(0), row_gap: px(0), label_spacing: px(6),
         label_color: 'rgba(245,242,236,0.65)', ...typo('label_typography', SANS, 10.5, 500, { lh: 1.2, ls: 2.1, transform: 'uppercase' }),
         field_text_color: C.cream, field_background_color: 'rgba(0,0,0,0)', field_border_color: 'rgba(0,0,0,0)', field_border_width: box(0), field_border_radius: box(0),
@@ -625,8 +626,8 @@ const interactionsJs = `<script>
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
-  // Booking bar -> eviivo. Parameter names and yyyy-mm-dd dates follow eviivo's official
-  // Search Box widget (startdate, enddate, adults1, children1).
+  // Booking bar -> our /book/ page, which embeds eviivo with the same search. Parameter names
+  // and yyyy-mm-dd dates follow eviivo's Search Box widget (startdate, enddate, adults1, children1).
   var BOOK = '${EXT.book}';
   function bookingForms() { return document.querySelectorAll('form[name="Check availability"]'); }
   function field(f, id) { return f.querySelector('[name="form_fields[' + id + ']"]'); }
@@ -654,6 +655,31 @@ const interactionsJs = `<script>
     var q = 'startdate=' + a.value + '&enddate=' + b.value + '&adults1=' + (field(f, 'adults') || {}).value + '&children1=' + ((field(f, 'children') || {}).value || '0');
     window.location.href = BOOK + (BOOK.indexOf('?') > -1 ? '&' : '?') + q;
   }, true);
+
+  // /book/ page: show eviivo's live results for the search in the URL, inside the site.
+  (function eviivoFrame() {
+    var box = document.getElementById('bi-eviivo');
+    if (!box) return;
+    var EVIIVO = '${EXT.eviivo}';
+    var inQ = new URLSearchParams(location.search), q = new URLSearchParams({ hli: 'true', noofrooms: '1', currency: 'USD' });
+    var okDate = /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/, okNum = /^[0-9]{1,2}$/;
+    if (okDate.test(inQ.get('startdate') || '') && okDate.test(inQ.get('enddate') || '')) { q.set('startdate', inQ.get('startdate')); q.set('enddate', inQ.get('enddate')); }
+    q.set('adults1', okNum.test(inQ.get('adults1') || '') ? inQ.get('adults1') : '2');
+    q.set('children1', okNum.test(inQ.get('children1') || '') ? inQ.get('children1') : '0');
+    var src = EVIIVO + '?' + q.toString();
+    var frame = document.createElement('iframe');
+    frame.src = src; frame.title = 'Live availability from eviivo'; frame.loading = 'eager';
+    frame.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+    box.innerHTML = ''; box.appendChild(frame);
+    document.querySelectorAll('a[href="#bi-eviivo-tab"]').forEach(function (a) { a.href = src; a.target = '_blank'; a.rel = 'noopener'; });
+    var sum = document.querySelector('.bi-book-summary .elementor-heading-title');
+    if (sum && q.get('startdate')) {
+      var f = function (d) { return new Date(d + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); };
+      var n = Math.round((new Date(q.get('enddate')) - new Date(q.get('startdate'))) / 864e5);
+      var g = +q.get('adults1') + +q.get('children1');
+      sum.textContent = f(q.get('startdate')) + ' – ' + f(q.get('enddate')) + ' · ' + n + (n === 1 ? ' night' : ' nights') + ' · ' + g + (g === 1 ? ' guest' : ' guests');
+    }
+  })();
 
   // Hero photo controls: arrows + one dot per photo, bottom center of the homepage hero.
   // Built from the hero's background slideshow, so they follow whatever photos it has.
