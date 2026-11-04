@@ -154,6 +154,7 @@ function dwdp_box_details( $post ) {
 			);
 		}
 		?>
+		<tr><th><label for="dwdp-builder">Built with</label></th><td><select id="dwdp-builder" name="dwdp[builder]"><option value="wordpress" <?php selected( 'wordpress', $v( 'builder' ) ?: 'wordpress' ); ?>>WordPress</option><option value="webflow" <?php selected( 'webflow', $v( 'builder' ) ); ?>>Webflow</option></select><p class="description">Which tab of the portfolio’s WordPress / Webflow toggle this project appears under.</p></td></tr>
 		<tr><th><label for="dwdp-link_label">Website button</label></th><td><input id="dwdp-link_label" name="dwdp[link_label]" class="regular-text" value="<?php echo esc_attr( $v( 'link_label' ) ); ?>" placeholder="e.g. Visit the website, or Try the live demo"><p class="description">Button text for the live website (default “View the live website”).</p><label><input type="hidden" name="dwdp[hide_link]" value="0"><input type="checkbox" name="dwdp[hide_link]" value="1" <?php checked( '1', (string) $v( 'hide_link' ) ); ?>> Hide the button (e.g. the site is offline)</label></td></tr>
 		<tr><th>Phone app screens</th><td><?php $ms = dwdp_ids( $v( 'mobile_screens' ) ); ?><input type="hidden" id="dwdp-mobile-screens" name="dwdp[mobile_screens]" value="<?php echo esc_attr( implode( ',', $ms ) ); ?>"><ul id="dwdp-ms-list" class="dwdp-gallery"><?php foreach ( $ms as $mid ) { echo dwdp_thumb_item( $mid ); } // phpcs:ignore ?></ul><button type="button" class="button" id="dwdp-ms-add">Add phone screens</button><p class="description">Optional. Phone-size screenshots (e.g. each screen of an app). The project page shows a phone with a button for each screen; the image title is the button name. Drag to reorder.</p></td></tr>
 		<tr><th>Homepage</th><td><label><input type="hidden" name="dwdp[on_home]" value="0"><input type="checkbox" name="dwdp[on_home]" value="1" <?php checked( '1', (string) $on_home ); ?>> Show in the homepage carousel</label></td></tr>
@@ -184,6 +185,9 @@ add_action( 'save_post_' . DWDP_CPT, function ( $post_id ) {
 	}
 	if ( isset( $in['url'] ) ) {
 		update_post_meta( $post_id, '_dwdp_url', esc_url_raw( $in['url'] ) );
+	}
+	if ( isset( $in['builder'] ) ) {
+		update_post_meta( $post_id, '_dwdp_builder', 'webflow' === $in['builder'] ? 'webflow' : 'wordpress' );
 	}
 	if ( isset( $in['link_label'] ) ) {
 		update_post_meta( $post_id, '_dwdp_link_label', sanitize_text_field( $in['link_label'] ) );
@@ -238,6 +242,9 @@ add_action( 'wp_ajax_dwdp_set_fields', function () {
 	}
 	if ( isset( $in['url'] ) ) {
 		update_post_meta( $post_id, '_dwdp_url', esc_url_raw( $in['url'] ) );
+	}
+	if ( isset( $in['builder'] ) ) {
+		update_post_meta( $post_id, '_dwdp_builder', 'webflow' === $in['builder'] ? 'webflow' : 'wordpress' );
 	}
 	if ( isset( $in['link_label'] ) ) {
 		update_post_meta( $post_id, '_dwdp_link_label', sanitize_text_field( $in['link_label'] ) );

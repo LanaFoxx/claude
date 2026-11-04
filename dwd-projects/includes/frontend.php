@@ -352,12 +352,13 @@ function dwdp_card_html( $p ) {
 	$name  = get_the_title( $p );
 	$img   = dwdp_img( dwdp_get( $p->ID, 'cover' ), $name . ' website', array( 'loading' => 'lazy' ) );
 	return sprintf(
-		'<a class="dw-pcard" href="%1$s"><span class="dw-pshot"><span class="dwdp-laptop"><span class="dwdp-lid"><i class="dwdp-cam"></i><span class="dwdp-lscreen">%3$s</span></span><span class="dwdp-base"></span></span>%5$s</span><span class="dw-pfoot"><span class="dw-pmeta"><b>%2$s</b><em>%4$s</em></span><span class="dw-pbtn">View project →</span></span></a>',
+		'<a class="dw-pcard" data-builder="%6$s" href="%1$s"><span class="dw-pshot"><span class="dwdp-laptop"><span class="dwdp-lid"><i class="dwdp-cam"></i><span class="dwdp-lscreen">%3$s</span></span><span class="dwdp-base"></span></span>%5$s</span><span class="dw-pfoot"><span class="dw-pmeta"><b>%2$s</b><em>%4$s</em></span><span class="dw-pbtn">View project →</span></span></a>',
 		esc_url( get_permalink( $p ) ),
 		esc_html( $name ),
 		$img,
 		esc_html( $label ),
-		$phone
+		$phone,
+		esc_attr( dwdp_get( $p->ID, 'builder' ) )
 	);
 }
 
@@ -380,7 +381,18 @@ add_shortcode( 'dwd_portfolio', function ( $atts ) {
 		$cards .= dwdp_card_html( $p );
 	}
 	if ( 'carousel' !== $atts['style'] ) {
-		return '<div class="dw-pgrid dwdp-grid">' . $cards . '</div>';
+		$builders = array_unique( array_map( function ( $p ) { return dwdp_get( $p->ID, 'builder' ); }, $projects ) );
+		if ( count( $builders ) < 2 ) {
+			return '<div class="dw-pgrid dwdp-grid">' . $cards . '</div>';
+		}
+		// WordPress / Webflow toggle above the grid; #webflow in the address opens the Webflow tab.
+		return '<div class="dw-ptoggle-wrap"><div class="dw-ptoggle" role="tablist" aria-label="Platform">'
+			. '<button type="button" role="tab" class="is-on" aria-selected="true" data-b="wordpress"><span class="dw-ptoggle-ic dw-ic-wp" aria-hidden="true"></span>WordPress</button>'
+			. '<button type="button" role="tab" aria-selected="false" data-b="webflow"><span class="dw-ptoggle-ic dw-ic-wf" aria-hidden="true"></span>Webflow</button>'
+			. '</div></div>'
+			. '<div class="dw-pgrid dwdp-grid" data-show="wordpress">' . $cards . '</div>'
+			. "<script>(function(){var w=document.currentScript.previousElementSibling,t=w.previousElementSibling;function set(b){w.setAttribute('data-show',b);t.querySelectorAll('button').forEach(function(x){var on=x.getAttribute('data-b')===b;x.classList.toggle('is-on',on);x.setAttribute('aria-selected',on);});}"
+			. "t.addEventListener('click',function(e){var x=e.target.closest('button');if(!x)return;set(x.getAttribute('data-b'));history.replaceState(null,'',x.getAttribute('data-b')==='webflow'?'#webflow':location.pathname);});if(location.hash==='#webflow')set('webflow');})();</script>";
 	}
 	$arrow = '<svg viewBox="0 0 22 22" aria-hidden="true"><path d="%s"></path></svg>';
 	return '<div class="dwdp-pcarousel">'

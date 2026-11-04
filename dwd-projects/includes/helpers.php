@@ -43,6 +43,7 @@ function dwdp_base_slug() {
 function dwdp_fields() {
 	return array(
 		'url'        => '',
+		'builder'    => 'wordpress', // 'wordpress' or 'webflow': which tab of the portfolio toggle the project appears under
 		'hide_link'  => '0', // '1' = no live-website button on the project page
 		'link_label' => '', // e.g. 'Try the live demo': shows a button to the website address on the project page
 		'mobile_screens' => '', // comma-separated attachment IDs: phone screens shown in the tappable phone viewer
@@ -113,7 +114,10 @@ function dwdp_number( $post_id ) {
 	if ( null === $order ) {
 		$order = wp_list_pluck( dwdp_projects(), 'ID' );
 	}
-	$i = array_search( (int) $post_id, array_map( 'intval', $order ), true );
+	// Numbered within its own tab (WordPress or Webflow).
+	$b    = dwdp_get( $post_id, 'builder' );
+	$list = array_values( array_filter( $order, function ( $id ) use ( $b ) { return dwdp_get( $id, 'builder' ) === $b; } ) );
+	$i = array_search( (int) $post_id, array_map( 'intval', $list ), true );
 	return sprintf( '%02d', false === $i ? 0 : $i + 1 );
 }
 
