@@ -1,0 +1,182 @@
+/* ═══════════════════════════════════════════════════════════
+ * Flight Desk redesign — "Today at Mojo's" system
+ * Norwester (titles, big numbers) · Barlow (UI) · Barlow Condensed (labels)
+ * Cards: white, 1px border, 14px radius, no shadows, no 2px navy outlines.
+ * The sidebar is intentionally left unchanged.
+ * ═══════════════════════════════════════════════════════════ */
+@font-face{font-family:Norwester;src:url('norwester.ttf') format('truetype');font-display:swap}
+#mjd{--navy:#16303A;--navy2:#0F2430;--teal:#0F6E79;--orange:#F1854E;--orange2:#E06F35;--sky:#40BEE2;--yellow:#F9D085;--cream:#FBF5EA;--ink2:#44606B;--ink3:#6B7D85;--ink4:#8A9BA3;--border:#CBD4D9;--line:#D9E0E4;--line2:#E6EBEE;--line3:#EDF1F3;--wash:#F7F9FA}
+body.mjd-hq,body.mjd-hq #wpwrap,body.mjd-hq #wpcontent,body.mjd-hq #wpbody{background:#EEF1F3!important}
+#mjd .mj-main{font-family:Barlow,sans-serif;color:var(--navy);-webkit-font-smoothing:antialiased}
+
+/* ── page header (every page) ── */
+#mjd .mj-crumb{font:700 13px/1 "Barlow Condensed",sans-serif;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3);margin:0 0 8px}
+#mjd .mj-crumb button{font:inherit;letter-spacing:inherit;text-transform:inherit;color:var(--ink3)}
+#mjd .mj-crumb span{color:var(--navy)}
+#mjd .mj-ph{align-items:flex-end;gap:18px 32px}
+#mjd .mj-ph h1{font:italic 400 40px/1 Norwester,"Noto Sans",sans-serif;text-transform:uppercase;letter-spacing:.01em;color:var(--navy)}
+#mjd .mj-subnav{border-bottom:1px solid var(--line);gap:24px}
+#mjd .mj-subnav button{font:600 14.5px Barlow,sans-serif;color:var(--ink3);margin-bottom:-1px;border-bottom-width:3px}
+#mjd .mj-subnav button.on{color:var(--navy)}
+#mjd .mj-subnav button i{font:600 12px/1 "Barlow Condensed",sans-serif;letter-spacing:.06em;font-style:normal}
+
+/* ── type helpers ── */
+#mjd .mj-label{font:700 11.5px/1 "Barlow Condensed",sans-serif;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+#mjd .mj-label--xs{font-size:11px}
+#mjd .mj-muted{color:var(--ink3)}
+
+/* ── home header actions ── */
+#mjd .mj-dash__actions{display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+#mjd .mj-dash__btns{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}
+#mjd .mj-dash__links{display:flex;flex-wrap:wrap;gap:4px 18px;justify-content:flex-end}
+#mjd .mj-dash__links button{display:inline-flex;align-items:center;gap:6px;padding:4px 0;border:0;background:none;font:500 13.5px Barlow,sans-serif;color:var(--ink2);cursor:pointer}
+#mjd .mj-dash__links button:hover{color:var(--navy)}
+#mjd .mj-dash__links svg,#mjd .mj-btn svg{width:16px;height:16px}
+
+/* ── buttons ── */
+#mjd .mj-btn{height:40px;padding:0 16px;border:1px solid var(--navy);border-radius:10px;background:#fff;color:var(--navy);font:600 13.5px Barlow,sans-serif;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap;box-shadow:none;text-decoration:none;transition:background .15s,color .15s,border-color .15s}
+#mjd .mj-btn:hover{background:#F5F7F8;color:var(--navy);text-decoration:none}
+#mjd .mj-btn--dark{background:var(--navy);color:#fff}
+#mjd .mj-btn--dark:hover{background:var(--navy2);color:#fff}
+#mjd .mj-btn--orange{background:var(--orange);border-color:var(--orange);color:#fff}
+#mjd .mj-btn--orange:hover{background:var(--orange2);border-color:var(--orange2);color:#fff}
+#mjd .mj-btn--md{height:38px}
+#mjd .mj-btn--sm{height:34px;padding:0 14px;border-radius:9px;font-size:13px}
+#mjd .mj-btn--xs{height:32px;padding:0 12px;border-radius:8px;font-size:12.5px;border-width:1.5px}
+#mjd .mj-btn--outline:hover{background:var(--navy);color:#fff}
+#mjd .mj-btn--ghost{border-color:var(--line);color:var(--ink3)}
+#mjd .mj-btn--ghost:hover{background:#fff;border-color:var(--ink3);color:var(--navy)}
+#mjd .mj-iconbtn{width:34px;height:34px;padding:0;border:0;border-radius:9px;background:transparent;color:var(--ink3);cursor:pointer;display:grid;place-items:center;font-size:14px}
+#mjd .mj-iconbtn:hover{background:#F5F7F8;color:var(--navy)}
+#mjd .mj-iconbtn--outline{width:38px;height:38px;border:1px solid var(--border);border-radius:10px;background:#fff;color:var(--navy)}
+#mjd .mj-iconbtn--xs{width:28px;height:28px;border-radius:7px;color:var(--ink4)}
+#mjd .mj-check{width:18px!important;height:18px!important;min-width:18px;margin:2px 0 0;accent-color:var(--orange);cursor:pointer;flex:none}
+
+/* ── pills ── */
+#mjd em.mj-pill,#mjd span.mj-pill{display:inline-flex;align-items:center;height:20px;min-height:0;line-height:1;vertical-align:middle;font:600 12px/1 "Barlow Condensed",sans-serif;letter-spacing:.06em;font-style:normal;background:var(--yellow);color:var(--navy);border:0;border-radius:999px;padding:0 8px;cursor:default}
+#mjd .mj-pill--warn{background:#FBECC9;color:#9A5B1A;text-transform:uppercase}
+
+/* ── install banner ── */
+#mjd .mj-banner{margin:22px 0 0;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px 12px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+#mjd .mj-banner__icon{flex:none;width:34px;height:34px;border-radius:9px;background:var(--cream);color:var(--navy);display:grid;place-items:center}
+#mjd .mj-banner p{flex:1 1 300px;min-width:0;margin:0;font:400 14px/1.4 Barlow,sans-serif;color:var(--ink2)}
+#mjd .mj-banner p b{color:var(--navy);font-weight:600}
+#mjd .mj-banner__actions{display:flex;align-items:center;gap:6px}
+
+/* ── cards ── */
+#mjd .mj-cards{margin-top:22px;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
+#mjd .mj-cards--two{margin-top:18px;grid-template-columns:repeat(auto-fit,minmax(340px,1fr))}
+#mjd .mj-card{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;min-width:0}
+#mjd .mj-card--students{border-top:4px solid var(--orange)}
+#mjd .mj-card--training{border-top:4px solid var(--sky)}
+#mjd .mj-card--sales{border-top:4px solid var(--yellow)}
+#mjd .mj-card a{color:var(--teal);text-decoration:none;font:600 13px Barlow,sans-serif}
+#mjd .mj-card a:hover{color:#0B525B;text-decoration:underline}
+#mjd .mj-card__head{padding:16px 20px 0;display:flex;align-items:center;justify-content:space-between;gap:10px}
+#mjd .mj-card__head--bordered{padding-bottom:16px;border-bottom:1px solid var(--line2)}
+#mjd .mj-card__name{display:flex;align-items:center;gap:10px;font:700 15px/1 "Barlow Condensed",sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--navy)}
+#mjd .mj-card__icon{width:32px;height:32px;border-radius:9px;display:grid;place-items:center}
+#mjd .mj-card__icon svg{width:16px;height:16px}
+#mjd .mj-card--students .mj-card__icon{background:#FDEDE4;color:var(--orange)}
+#mjd .mj-card--training .mj-card__icon{background:#E3F5FA;color:#1A9DC4}
+#mjd .mj-card--sales .mj-card__icon{background:#FBF3DF;color:#C7901C}
+#mjd .mj-card__body{padding:18px 20px 20px;flex:1}
+#mjd .mj-card__h{font:600 20px/1.3 Barlow,sans-serif;margin-top:6px;color:var(--navy)}
+#mjd .mj-card__p{margin:6px 0 0;font:400 14px/1.5 Barlow,sans-serif;color:var(--ink3)}
+#mjd .mj-card__sub{font:400 14px Barlow,sans-serif;color:var(--ink3);margin-top:6px}
+#mjd .mj-card__empty{padding:22px 20px;text-align:center;font:400 14px Barlow,sans-serif;color:var(--ink3)}
+#mjd .mj-card a.mj-card__more{display:block;padding:12px 20px;text-align:center;background:var(--wash);border-top:1px solid var(--line3)}
+#mjd .mj-row-actions{display:flex;gap:8px;margin-top:18px}
+#mjd .mj-kpi{display:flex;align-items:baseline;gap:10px;margin-top:6px}
+#mjd .mj-kpi__num{font:italic 400 44px/1 Norwester,sans-serif;font-variant-numeric:tabular-nums;color:var(--navy)}
+#mjd .mj-kpi__unit{font:400 15px Barlow,sans-serif;color:var(--ink2)}
+#mjd .mj-bar{display:flex;height:8px;border-radius:999px;overflow:hidden;margin-top:14px;background:#EEF1F3;gap:2px}
+#mjd .mj-bar span{display:block;height:100%}
+#mjd .mj-legend{list-style:none;margin:14px 0 0;padding:0}
+#mjd .mj-legend li{display:flex;align-items:center;gap:10px;padding:7px 0;margin:0;font:400 14px Barlow,sans-serif;color:var(--navy);cursor:pointer}
+#mjd .mj-legend li:hover span{text-decoration:underline}
+#mjd .mj-legend i{width:9px;height:9px;border-radius:50%;flex:none}
+#mjd .mj-legend span{flex:1}
+#mjd .mj-legend b{font-weight:600;font-variant-numeric:tabular-nums}
+#mjd .mj-callout{margin-top:18px;border:1px solid var(--line2);border-radius:10px;padding:12px 14px;background:var(--cream);cursor:pointer}
+#mjd .mj-callout__row{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-top:6px;font:400 14px Barlow,sans-serif;color:var(--navy)}
+#mjd .mj-callout__row b{font-weight:600;font-variant-numeric:tabular-nums}
+#mjd .mj-card__foot{border-top:1px solid var(--line2);background:var(--wash)}
+#mjd .mj-card__foot>a,#mjd .mj-card__foot-static{padding:12px 20px;display:flex;justify-content:space-between;align-items:center;gap:10px;font:500 13.5px Barlow,sans-serif;color:var(--navy);border-bottom:1px solid var(--line2)}
+#mjd .mj-card__foot>a:last-child,#mjd .mj-card__foot-static:last-child{border-bottom:0}
+#mjd .mj-card__foot>a:hover{background:#fff;text-decoration:none;color:var(--navy)}
+#mjd .mj-card__foot b{font-weight:600;font-variant-numeric:tabular-nums}
+#mjd .mj-card__foot-static{color:var(--ink3)}
+#mjd .mj-card__foot-static b{color:var(--navy)}
+#mjd .mj-card__meta{display:flex;align-items:center;gap:8px;color:var(--ink3);font:400 13px Barlow,sans-serif}
+#mjd .mj-card__meta b{color:var(--navy)}
+#mjd .mj-card__foot--grid{display:grid;grid-template-columns:1fr 1fr}
+#mjd .mj-card__foot--grid>a:nth-child(odd){border-right:1px solid var(--line2)}
+#mjd .mj-card__foot--grid>a:nth-last-child(-n+2){border-bottom:0}
+
+/* ── to-do ── */
+#mjd .mj-todo__add{margin:0;padding:14px 20px;display:flex;gap:8px;border-bottom:1px solid var(--line2);background:var(--wash)}
+#mjd .mj-todo__add input{flex:1;min-width:0;height:38px;min-height:38px;padding:0 12px;border:1px solid var(--border);border-radius:10px;font:400 14px Barlow,sans-serif;color:var(--navy);background:#fff;outline:none;box-shadow:none}
+#mjd .mj-todo__add input::placeholder{color:var(--ink4)}
+#mjd .mj-todo__add input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(15,110,121,.15)}
+#mjd .mj-todo__item{padding:14px 20px;display:flex;align-items:flex-start;gap:12px;border-bottom:1px solid var(--line3)}
+#mjd .mj-todo__item:hover,#mjd .mj-reminder:hover{background:#FCFAF5}
+#mjd .mj-todo__text{flex:1;min-width:0}
+#mjd .mj-item__title{font:600 15px/1.3 Barlow,sans-serif;color:var(--navy)}
+#mjd .mj-item__sub{font:400 13px Barlow,sans-serif;color:var(--ink3);margin-top:2px}
+
+/* ── reminders ── */
+#mjd .mj-reminder{padding:14px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line3);background:#fff}
+#mjd .mj-reminder.hid{opacity:.6}
+#mjd .mj-reminder__icon{flex:none;width:34px;height:34px;border-radius:50%;border:1px solid var(--border);display:grid;place-items:center;color:var(--navy)}
+#mjd .mj-reminder__icon svg{width:16px;height:16px}
+#mjd .mj-reminder__text{flex:1 1 180px;min-width:0}
+#mjd .mj-reminder__actions{display:flex;gap:6px}
+
+/* ═══ Whole Flight Desk: flatten to the same system (main area + pop-ups) ═══ */
+#mjd .mj-main .mjd-card,#mjd .mjd-modal>.mjd-card,#mjd .mj-sc,#mjd .mjd-s,#mjd .mjd-si,#mjd .mjd-stat,#mjd .mjd-sdetail,#mjd .mjd-ar,#mjd .mj-wxd,#mjd .mj-wxdet,#mjd .mj-wxbest,#mjd .mj-cr,#mjd .mj-todob,#mjd .mj-ppgr,#mjd .mj-sec2,#mjd .mj-fbar,#mjd .mj-rf,#mjd .mj-crf,#mjd .mj-latest,#mjd .mj-hc,#mjd .mj-appban,#mjd .mj-ddm,#mjd .mjd-ddm,#mjd .mj-tbl,#mjd .mj-recbox{border:1px solid var(--line)!important;box-shadow:none!important}
+#mjd .mj-sc,#mjd .mjd-s,#mjd .mj-tbl{border-radius:14px!important}
+#mjd .mjd-modal>.mjd-card{box-shadow:0 24px 60px rgba(15,36,48,.28)!important;border-radius:14px!important}
+#mjd .mj-main .mjd-ch,#mjd .mjd-modal .mjd-ch,#mjd .mjd-card>.mjd-ch{background:var(--wash)!important;border-bottom:1px solid var(--line2)!important}
+#mjd .mj-cf{border-top:1px solid var(--line2)!important;background:var(--wash)}
+#mjd .mj-cf a,#mjd .mj-cf button{border-color:var(--line2)!important}
+#mjd .mj-hls{border-top:1px solid var(--line2)!important}
+#mjd .mj-dist{border:0!important}
+#mjd .mj-dist span+span{border-left:2px solid #fff!important}
+#mjd .mj-main .mj-b,#mjd .mjd-modal .mj-b{border:1px solid var(--navy)!important;box-shadow:none!important;font:600 13.5px Barlow,sans-serif;min-height:40px;border-radius:10px}
+#mjd .mj-main .mj-b[class*="mjd-c-"]{background:var(--navy)!important;color:#fff!important}
+#mjd .mj-main .mj-b.mjd-c-orange,#mjd .mjd-modal .mj-b.mjd-c-orange{background:var(--orange)!important;border-color:var(--orange)!important;color:#fff!important}
+#mjd .mj-main .mj-b.mj-red{background:#C8372A!important;border-color:#C8372A!important;color:#fff!important}
+#mjd .mj-in,#mjd .mj-log input[type=date],#mjd .mj-log input[type=number],#mjd .mj-log input[type=text],#mjd .mj-log select,#mjd .mj-log textarea,#mjd .mj-tdf input,#mjd .mj-tdf select,#mjd .mj-tdq input,#mjd .mj-wxwin select,#mjd .mjd-f input,#mjd .mjd-f select,#mjd .mjd-f textarea{border:1px solid var(--border)!important;border-radius:10px;box-shadow:none;font-family:Barlow,sans-serif}
+#mjd .mj-in:focus-within,#mjd .mjd-f input:focus,#mjd .mjd-f select:focus,#mjd .mjd-f textarea:focus,#mjd .mj-log input:focus,#mjd .mj-log select:focus,#mjd .mj-log textarea:focus{border-color:var(--teal)!important;box-shadow:0 0 0 3px rgba(15,110,121,.15)!important;outline:none}
+#mjd .mjd-f label{font:700 11.5px/1 "Barlow Condensed",sans-serif;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+#mjd .mj-brands button,#mjd .mj-chips label,#mjd .mjd-chip,#mjd .mj-tog,#mjd .mj-wxtog,#mjd .mjd-viewtog,#mjd .mjd-tabs,#mjd .mjd-tab,#mjd .mjd-subtabs{border-width:1px!important;border-color:var(--border)!important;box-shadow:none!important}
+#mjd .mj-wxtog button+button,#mjd .mjd-viewtog button+button{border-left:1px solid var(--border)!important}
+#mjd .mj-main input[type=checkbox]:not(.mj-check){border-width:1.5px!important;border-color:var(--border)!important}
+#mjd .mjd-rt tr.mjd-rrow{border-width:1px!important;border-color:var(--line)!important}
+#mjd .mj-main h3,#mjd .mjd-modal h3{font-family:"Barlow Condensed",sans-serif;font-style:normal;font-weight:700;letter-spacing:.04em}
+#mjd .mjd-modal .mjd-sub,#mjd .mj-main .mjd-sub{font-family:Barlow,sans-serif;color:var(--ink3)}
+/* any leftover hard offset shadows in the main area */
+#mjd .mj-main *:not(:focus):not(:focus-visible):not(:focus-within){box-shadow:none!important}
+
+/* filter chips (Active Students "Also filter by") */
+#mjd button.mj-pill{min-height:34px;padding:0 12px;border:1px solid var(--border)!important;border-radius:999px;background:#fff;color:var(--navy);font:600 13px Barlow,sans-serif;box-shadow:none}
+#mjd button.mj-pill i{font-style:normal;font-weight:600;color:var(--ink3)}
+#mjd button.mj-pill.on{background:var(--navy);border-color:var(--navy)!important;color:#fff}
+#mjd button.mj-pill.on i{color:#C9D6DB}
+/* real checkboxes for to-do items */
+#mjd input.mj-check{-webkit-appearance:checkbox!important;appearance:auto!important;border:0!important;background:none!important;box-shadow:none!important;padding:0!important}
+#mjd input.mj-check::before,#mjd input.mj-check::after{display:none!important}
+/* student cards: names in Barlow */
+#mjd .mj-sc h3{font:600 16px/1.3 Barlow,sans-serif!important;letter-spacing:0!important;text-transform:none!important}
+
+/* ── phones ── */
+@media (max-width:782px){
+ #mjd .mj-ph h1{font-size:32px}
+ #mjd .mj-dash__actions{align-items:stretch;width:100%}
+ #mjd .mj-dash__btns{justify-content:flex-start}
+ #mjd .mj-dash__btns .mj-btn{flex:1 1 calc(50% - 4px)}
+ #mjd .mj-dash__links{justify-content:flex-start}
+ #mjd .mj-cards,#mjd .mj-cards--two{grid-template-columns:1fr}
+ #mjd .mj-card__head,#mjd .mj-card__body,#mjd .mj-todo__add,#mjd .mj-todo__item,#mjd .mj-reminder,#mjd .mj-card__foot>a,#mjd .mj-card__foot-static{padding-left:16px;padding-right:16px}
+}

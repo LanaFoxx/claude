@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Mojo’s Flight Desk</title>
+<meta name="description" content="Interactive demo of Mojo’s Flight Desk, a custom flight-school management dashboard. All data is sample data.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0F2430">
+<link rel="icon" href="assets/icon.png">
+<link rel="apple-touch-icon" href="assets/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="assets/wp/wp-admin.css">
+<link rel="stylesheet" href="assets/wp/colors.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans:ital,wght@0,800;0,900;1,800;1,900&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Barlow+Condensed:wght@600;700&display=swap">
+<link rel="stylesheet" href="assets/app.css">
+<link rel="stylesheet" href="assets/hq.css">
+<link rel="stylesheet" href="assets/ds.css">
+<link rel="stylesheet" href="assets/dash.css">
+<link rel="stylesheet" href="assets/pages.css">
+<link rel="stylesheet" href="demo/demo.css">
+</head>
+<body class="wp-admin wp-core-ui js mjd-hq toplevel_page_mjd-desk admin-color-modern locale-en-us mjd-demo">
+<div id="wpwrap"><div id="wpcontent"><div id="wpbody" role="main"><div id="wpbody-content"><div class="wrap">
+<div id="mjd"><div style="padding:40px;text-align:center;color:#6B8690">Loading Flight Desk…</div></div>
+</div></div></div></div></div>
+
+<div class="mjd-demobar" role="note">
+	<span class="mjd-demobar__dot"></span>
+	<span class="mjd-demobar__txt"><b>Demo</b> · sample data only</span>
+	<button type="button" class="mjd-demobar__reset" title="Put the sample data back the way it started">Reset</button>
+</div>
+
+<script>
+/* Demo configuration — mirrors what WordPress hands the real Flight Desk, with sample values. */
+try { localStorage.setItem('mjdAppHide', '1'); } catch (e) {}
+window.MJD = {
+	ajax: 'demo://flight-desk',
+	nonce: 'demo',
+	stages: { 'kiting': ['Kiting / Ground Work', '#40BEE2'], 'close-first': ['Close to First Flight', '#E8B54A'], 'flying': ['Flying — Building Hours', '#F89B66'], 'almost-done': ['Almost Finished', '#F1854E'], 'paused': ['On Hold', '#9AA9AE'] },
+	categories: { intro: 'Intro Day', training: 'Premium Training', 'day-rate': 'Day Rate Training', conversion: 'Launch Conversion', gear: 'Gear', merch: 'Merch', other: 'Other' },
+	methods: ['Cash', 'Check', 'Venmo', 'Zelle', 'PayPal', 'Card', 'Other'],
+	bookUrl: '#demo-booking-page',
+	logUrl: '#demo-attendance-form',
+	links: { credentials: '#demo', pricing: [['APCO dealer sheet', '#demo'], ['Kangook dealer sheet', '#demo'], ['MacFly dealer sheet', '#demo']] },
+	team: ['Alex', 'Jordan', 'Taylor', 'Casey'],
+	hourCats: ['Gear / maintenance', 'Intros & student calls', 'Admin / office', 'Event / fly-in', 'Other'],
+	hpd: '6',
+	fields: ['Monarch', 'Laney’s Airport'],
+	pilotUrl: '#demo', mondayUrl: '#demo', settingsUrl: '#demo-settings', mondayOn: '',
+	siteUrl: '#demo/',
+	logo: 'assets/logo.png',
+	logout: '#demo-logout',
+	profileUrl: '#demo-profile',
+	appIcon: 'assets/icon.png',
+	me: 'Alex',
+	orderCats: ['Wing', 'Motor', 'Trike / cart', 'Risers / harness', 'Reserve / safety', 'Parts', 'Other'],
+	dealers: ['APCO', 'Kangook', 'MacFly', 'Gin'],
+	locations: ['Maiden, NC', 'Mocksville, NC', 'Yadkinville, NC', 'Laurens, SC']
+};
+</script>
+<script src="demo/templates.js"></script>
+<script src="demo/mock.js"></script>
+<script src="assets/app.js"></script>
+<script src="demo/demo.js"></script>
+</body>
+</html>

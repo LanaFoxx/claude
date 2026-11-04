@@ -1,0 +1,137 @@
+/* ═══════════════════════════════════════════════════════════
+ * Flight Desk design system — tables + buttons
+ * (from the "Intro Day Leads" redesign: Barlow / Barlow Condensed,
+ *  navy #16303A, teal #0F6E79, orange #F1854E, yellow #F9D085)
+ * Loaded after app.css + hq.css so it wins.
+ * ═══════════════════════════════════════════════════════════ */
+#mjd{--ds-navy:#16303A;--ds-teal:#0F6E79;--ds-orange:#F1854E;--ds-yellow:#F9D085;--ds-ink2:#5B6F78;--ds-ink3:#6B7D85;--ds-ink4:#8A9BA3;--ds-line:#E6EBEE;--ds-line2:#EDF1F3;--ds-border:#CBD4D9;--ds-wash:#F7F9FA;--ds-frame:#D9E0E4}
+
+/* ── Buttons ── */
+#mjd .mjd-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:40px;height:auto;padding:0 14px;border:1px solid var(--ds-border);border-radius:10px;background:#fff;color:var(--ds-navy);font:600 13px/1.2 Barlow,sans-serif;letter-spacing:0;box-shadow:none;transform:none;white-space:nowrap;cursor:pointer;transition:background .15s,color .15s,border-color .15s;text-decoration:none}
+#mjd .mjd-btn:hover{background:#F5F7F8;color:var(--ds-navy);transform:none;box-shadow:none}
+#mjd .mjd-btn:active{transform:none}
+#mjd .mjd-btn:focus-visible{outline:none;border-color:var(--ds-teal);box-shadow:0 0 0 3px rgba(15,110,121,.18)}
+#mjd .mjd-btn[disabled]{opacity:.45;cursor:not-allowed}
+#mjd .mjd-btn.sm{min-height:32px;padding:0 12px;border-radius:8px;font-size:12.5px;border-width:1.5px;border-color:var(--ds-navy)}
+#mjd .mjd-btn.sm:hover{background:var(--ds-navy);color:#fff}
+#mjd .mjd-btn.pri{background:var(--ds-orange);border-color:var(--ds-orange);color:#fff;box-shadow:none}
+#mjd .mjd-btn.pri:hover{background:#E8743B;border-color:#E8743B;color:#fff}
+#mjd .mjd-btn.dark{background:var(--ds-navy);border-color:var(--ds-navy);color:#fff}
+#mjd .mjd-btn.dark:hover{background:#0F2430;color:#fff}
+#mjd .mjd-btn.danger{border-color:#E3B2AC;color:#B42318;background:#fff}
+#mjd .mjd-btn.danger:hover{background:#FDECEC;border-color:#B42318;color:#B42318}
+#mjd .mjd-btn.mjd-ghost{border:1.5px solid var(--ds-frame);color:var(--ds-ink3);background:#fff;font-weight:600}
+#mjd .mjd-btn.mjd-ghost:hover{background:#fff;border-color:var(--ds-ink3);color:var(--ds-navy)}
+#mjd .mjd-btn.mjd-unpaid{border:1.5px solid var(--ds-navy);background:#fff;color:var(--ds-navy);font-weight:600}
+#mjd .mjd-btn.mjd-unpaid:hover{background:var(--ds-navy);color:#fff}
+#mjd .mjd-btn.mjd-paid,#mjd .mjd-btn.mjd-paid:hover{background:#1E7B3C;border-color:#1E7B3C;color:#fff}
+#mjd .mjd-btn.mjd-log{background:#D7392B;border-color:#D7392B;color:#fff;font-size:15px;min-height:46px;padding:0 22px}
+#mjd .mjd-btn.mjd-log:hover{background:#BF2E21;border-color:#BF2E21;color:#fff}
+#mjd .mjd-btn.mjd-viewatt{border-color:#D7392B;color:#D7392B;font-size:15px;min-height:46px;padding:0 20px}
+#mjd .mjd-btn.mjd-viewatt:hover{background:#FDECEC;color:#BF2E21}
+#mjd .mjd-btn.mjd-ref{background:#F3F9FB;border-color:var(--ds-teal);color:var(--ds-teal)}
+#mjd .mjd-btn.mjd-ref:hover{background:#E3F2F5}
+#mjd .mjd-pacts .mjd-btn{min-height:46px;font-size:14px;padding:0 18px;box-shadow:none;border-radius:10px}
+#mjd .mjd-pacts .mjd-btn.pri{box-shadow:none}
+#mjd .mjd-noemail{min-height:32px;border:1.5px dashed var(--ds-border);border-radius:8px;background:#fff;color:var(--ds-ink3);font:600 12px Barlow,sans-serif;padding:0 10px}
+#mjd .mjd-noemail:hover{border-color:var(--ds-orange);color:var(--ds-orange)}
+
+/* ── Pills / tags ── */
+#mjd span.mj-pill,#mjd .mj-cnt{display:inline-block;font:600 12px/1.4 "Barlow Condensed",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--ds-navy);background:var(--ds-yellow);border:0;border-radius:999px;padding:3px 9px}
+#mjd .mj-new,#mjd .mjd-tag.new{font:700 10px/1.4 "Barlow Condensed",sans-serif;letter-spacing:.12em;color:#fff;background:var(--ds-orange);border-radius:999px;padding:2px 7px}
+#mjd .mjd-tag{font-family:Barlow,sans-serif;font-weight:700}
+
+/* ── Inputs in toolbars ── */
+#mjd .mjd-tools input[type=search],#mjd .mjd-tools input[type=text],#mjd .mjd-tools select,#mjd .mj-sel{height:40px;min-height:40px;padding:0 12px;border:1px solid var(--ds-border);border-radius:10px;font:500 14px Barlow,sans-serif;color:var(--ds-navy);background-color:#fff;box-shadow:none}
+#mjd .mjd-tools select,#mjd select.mj-sel{appearance:none;-webkit-appearance:none;padding-right:34px;cursor:pointer;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2316303A' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") right 12px center no-repeat}
+#mjd .mjd-tools input:focus,#mjd .mjd-tools select:focus,#mjd .mj-sel:focus{outline:none;border-color:var(--ds-teal);box-shadow:0 0 0 3px rgba(15,110,121,.15)}
+
+/* ── Tables (every .mjd-t in the Flight Desk) ── */
+#mjd .mjd-tw{border:1px solid var(--ds-frame);border-radius:12px;overflow:auto;background:#fff}
+#mjd .mjd-t{width:100%;border-collapse:collapse;font:400 14px/1.4 Barlow,sans-serif;color:var(--ds-navy)}
+#mjd .mjd-t th{position:sticky;top:0;z-index:1;background:var(--ds-wash);border-bottom:1px solid var(--ds-line);padding:11px 14px;text-align:left;font:700 11.5px/1 "Barlow Condensed",sans-serif;letter-spacing:.16em;text-transform:uppercase;color:var(--ds-ink2)}
+#mjd .mjd-t th.r,#mjd .mjd-t td.r{text-align:right}
+#mjd .mjd-t td{padding:14px;border-bottom:1px solid var(--ds-line2);vertical-align:top}
+#mjd .mjd-t tbody tr:last-child td{border-bottom:0}
+#mjd .mjd-t tr:hover td{background:#FCFAF5}
+#mjd .mjd-t a{color:var(--ds-teal);text-decoration:none}
+#mjd .mjd-t a:hover{color:#0B525B;text-decoration:underline}
+#mjd .mjd-t .mjd-name{font:600 15px/1.3 Barlow,sans-serif;color:var(--ds-navy);cursor:pointer}
+#mjd .mjd-t .mjd-name:hover{color:var(--ds-teal)}
+#mjd .mjd-t .mjd-m{font:400 13px/1.4 Barlow,sans-serif;color:var(--ds-ink3)}
+#mjd .mjd-t .mjd-empty{padding:28px 14px;text-align:center;color:var(--ds-ink3)}
+#mjd .mjd-t input[type=checkbox]{accent-color:var(--ds-orange)}
+#mjd .mjd-cb span{width:18px;height:18px;border:1.5px solid var(--ds-border);border-radius:5px}
+#mjd .mjd-cb input:checked+span{background:var(--ds-orange);border-color:var(--ds-orange)}
+#mjd .mjd-cb input:checked+span:after{font-size:12px}
+
+/* ── Table card (toolbar + table + footer) ── */
+#mjd .mj-tbl{width:100%;max-width:1120px;background:#fff;border:1px solid var(--ds-frame);border-radius:14px;overflow:hidden;box-shadow:0 1px 2px rgba(22,48,58,.06);font-family:Barlow,sans-serif;color:var(--ds-navy)}
+#mjd .mj-tbl .mjd-tw{border:0;border-radius:0}
+#mjd .mj-tbl__bar{padding:18px 22px 16px;border-bottom:1px solid var(--ds-line);display:flex;flex-wrap:wrap;align-items:center;gap:12px 14px}
+#mjd .mj-tbl__title{display:flex;align-items:center;gap:10px;margin-right:auto}
+#mjd .mj-tbl__title h3{margin:0;font:700 20px/1 "Barlow Condensed",sans-serif;font-style:normal;letter-spacing:.04em;text-transform:uppercase;color:var(--ds-navy)}
+#mjd .mj-tbl__search{position:relative;flex:1 1 280px;max-width:420px;color:var(--ds-ink4);margin:0}
+#mjd .mj-tbl__search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);pointer-events:none;width:16px;height:16px}
+#mjd .mj-tbl__search input{width:100%;height:40px;min-height:40px;padding:0 12px 0 36px;border:1px solid var(--ds-border);border-radius:10px;font:400 14px Barlow,sans-serif;color:var(--ds-navy);background:#fff;box-shadow:none}
+#mjd .mj-tbl__search input:focus{outline:none;border-color:var(--ds-teal);box-shadow:0 0 0 3px rgba(15,110,121,.15)}
+#mjd .mj-tbl__bulk{display:flex;gap:6px}
+#mjd .mj-tbl__foot{padding:14px 22px;display:flex;justify-content:space-between;align-items:center;gap:12px;font:400 13px Barlow,sans-serif;color:var(--ds-ink3);background:var(--ds-wash);border-top:1px solid var(--ds-line)}
+#mjd .mj-tbl__foot b{font-weight:600;color:var(--ds-navy)}
+
+/* ── Leads table cells ── */
+#mjd .mj-leadt td{padding:16px 14px}
+#mjd .mj-leadt .mj-ln{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+#mjd .mj-leadt .mj-meta{margin-top:4px;font:400 13px/1.4 Barlow,sans-serif;color:var(--ds-ink3)}
+#mjd .mj-leadt .c-contact{min-width:170px;max-width:240px}
+#mjd .mj-leadt .c-contact a{display:block}
+#mjd .mj-leadt .mj-em{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#mjd .mj-leadt .mj-ph{color:var(--ds-navy)!important;font-variant-numeric:tabular-nums;margin-top:3px}
+#mjd .mj-leadt .c-loc{white-space:nowrap}
+#mjd .mj-leadt .c-note{min-width:140px}
+#mjd .mj-leadt .mj-note{font:italic 400 13.5px/1.5 Barlow,sans-serif;color:var(--ds-ink2);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#mjd .mj-leadt .c-act{width:150px}
+#mjd .mj-leadt .mj-st{display:flex;flex-direction:column;gap:6px;width:136px}
+#mjd .mj-leadt .mj-st .mjd-btn{width:100%;margin:0}
+#mjd .mj-leadt .mj-inv{font:400 12px/1.4 Barlow,sans-serif;color:var(--ds-ink4)}
+#mjd .mj-leadt .mj-inv b{color:#1E7B3C;font-weight:600}
+
+/* ── Phones: rows become soft cards ── */
+@media(max-width:782px){
+ #mjd .mjd-btn{min-height:44px;font-size:14px}
+ #mjd .mjd-btn.sm{min-height:38px;font-size:13px}
+ #mjd .mjd-tw{border:0;background:none;overflow:visible}
+ #mjd .mjd-t tr{border:1px solid var(--ds-frame)!important;border-radius:12px!important;box-shadow:0 1px 2px rgba(22,48,58,.06)!important;background:#fff;padding:14px 16px!important;margin-bottom:12px}
+ #mjd .mjd-t td{padding:3px 0!important;border:0}
+ #mjd .mjd-t tr:hover td{background:none}
+ #mjd .mj-tbl{border-radius:14px}
+ #mjd .mj-tbl__bar{padding:16px}
+ #mjd .mj-tbl__search{max-width:none;flex-basis:100%}
+ #mjd .mj-tbl__bar .mj-sel{flex:1}
+ #mjd .mj-tbl .mjd-tw{padding:12px 12px 0}
+ #mjd .mj-tbl__foot{flex-direction:column;align-items:flex-start;padding:14px 16px}
+ #mjd .mj-leadt .c-contact,#mjd .mj-leadt .c-note{max-width:none;min-width:0}
+ #mjd .mj-leadt .c-loc:not(:empty){color:var(--ds-ink3);font-size:13px}
+ #mjd .mj-leadt .c-note:not(:empty){margin-top:4px!important}
+ #mjd .mj-leadt .c-act{width:auto;margin-top:8px!important}
+ #mjd .mj-leadt .mj-st{width:auto;flex-direction:row;flex-wrap:wrap}
+ #mjd .mj-leadt .mj-st .mjd-btn{flex:1 1 calc(50% - 6px);width:auto}
+ #mjd .mj-leadt .mj-st .mjd-btn.pri{flex-basis:100%}
+ #mjd .mj-leadt .mj-inv{flex-basis:100%}
+}
+
+/* ── Pill sizing fix ── */
+#mjd .mj-tbl__title .mj-pill{display:inline-flex;align-items:center;height:22px;line-height:1;padding:0 9px;white-space:nowrap}
+
+/* ── Page action buttons (+ Add Student, New School Order, Home quick buttons) ── */
+#mjd .mj-b{min-height:40px;padding:0 16px;border:1px solid var(--ds-border);border-radius:10px;box-shadow:none;font:600 14px/1.2 Barlow,sans-serif;letter-spacing:0;transition:background .15s,color .15s,border-color .15s,filter .15s}
+#mjd .mj-b:hover{box-shadow:none;filter:brightness(.97)}
+#mjd .mj-b:active{transform:none;box-shadow:none}
+#mjd .mj-b[class*="mjd-c-"],#mjd .mj-b.mj-red{border-color:transparent}
+#mjd .mj-b.sm{min-height:34px;font-size:13px;border-radius:8px}
+
+/* ── Cards that hold tables / lists ── */
+#mjd .mjd-main .mjd-card,#mjd .mjd-card{border:1px solid var(--ds-frame)!important;box-shadow:0 1px 2px rgba(22,48,58,.06)!important;border-radius:14px!important}
+#mjd .mjd-ch{background:var(--ds-wash)!important;border-bottom:1px solid var(--ds-line)!important}
+#mjd .mjd-card h3,#mjd .mjd-ch h3{font:700 20px/1.1 "Barlow Condensed",sans-serif;font-style:normal;letter-spacing:.04em;text-transform:uppercase;color:var(--ds-navy)}
+#mjd .mjd-ch .mj-cnt,#mjd .mjd-ch .mjd-c{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 8px;border-radius:999px;background:var(--ds-yellow);color:var(--ds-navy);font:600 12px/1 "Barlow Condensed",sans-serif;letter-spacing:.06em;border:0}

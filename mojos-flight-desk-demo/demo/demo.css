@@ -1,0 +1,14 @@
+/* Demo shell: no WordPress admin bar, so pin everything to the top (same as the installed-app mode). */
+html,html.wp-toolbar{padding-top:0!important;margin-top:0!important}
+#wpcontent,#wpbody,#wpbody-content{padding-top:0!important;margin-top:0!important}
+@media(min-width:783px){#mjd .mj-side{top:0!important;height:100vh!important}}
+body.mjd-demo{background:#F4EFE6}
+
+.mjd-demobar{position:fixed;left:calc(50% + 136px);transform:translateX(-50%);bottom:16px;z-index:100000;display:flex;align-items:center;gap:10px;height:38px;padding:0 6px 0 14px;border-radius:999px;background:#0F2430;color:#fff;font:500 13px Barlow,sans-serif;box-shadow:0 6px 18px rgba(15,36,48,.25)}
+.mjd-demobar b{font-weight:700;letter-spacing:.02em}
+.mjd-demobar__dot{width:8px;height:8px;border-radius:50%;background:#F1854E;box-shadow:0 0 0 3px rgba(241,133,78,.25)}
+.mjd-demobar__reset{height:28px;padding:0 12px;border:0;border-radius:999px;background:rgba(255,255,255,.12);color:#fff;font:600 12.5px Barlow,sans-serif;cursor:pointer}
+.mjd-demobar__reset:hover{background:#F1854E}
+@media(max-width:960px){.mjd-demobar{left:50%}}
+@media(max-width:782px){.mjd-demobar{left:auto;transform:none;right:12px;bottom:calc(84px + env(safe-area-inset-bottom));height:32px;font-size:12px;padding:0 4px 0 12px}.mjd-demobar__reset{height:24px}}
+.mjd-demotoast{position:fixed;left:50%;top:20px;transform:translateX(-50%);z-index:100002;max-width:min(420px,calc(100vw - 32px));background:#16303A;color:#fff;padding:12px 18px;border-radius:10px;font:600 14px Barlow,sans-serif;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25)}
