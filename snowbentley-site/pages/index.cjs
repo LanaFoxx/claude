@@ -106,6 +106,12 @@ const PAGES = [
   { slug: 'home-search', path: 'home-search', title: 'Home Search', ...seo('home-search/listings'), build: idxPage },
   { slug: 'listings', path: 'home-search/listings', parent: 'home-search', title: 'Home Search', ...seo('home-search/listings'), build: idxPage },
   ...hoods,
+  // /review forwards to the Google review form (a 301 on the live site); fallback button if JS is off.
+  { slug: 'review', path: 'review', title: 'Leave a Review', build: (ctx) => [section([
+    K.widget('html', { html: `<script>location.replace(${JSON.stringify(LINKS.review)});</script>` }),
+    H2('Had a Great Experience?', { color: C.white, align: 'center', mb: 24 }),
+    button('Leave a Review', LINKS.review, 'white', { align: 'center' }),
+  ], { bg: C.espresso, align: 'center', minH: 487, justify: 'center' })] },
 ];
 
 module.exports = { PAGES, build };

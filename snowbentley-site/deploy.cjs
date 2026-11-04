@@ -178,10 +178,15 @@ const pageSettings = { hide_title: 'yes', background_background: 'classic', back
     const parentId = def.parent ? deployed.pages[def.parent]?.id : 0;
     if (def.parent && !parentId) throw new Error(`Deploy parent ${def.parent} before ${def.path}`);
     const pg = await ensurePage(p, { ...def, slug: def.front ? 'home-snow-bentley' : def.slug }, parentId);
+    // The old dwd-projects plugin 301s /about to /#about, which breaks Elementor's preview; edit under a
+    // temporary slug and switch back afterwards.
+    const tempSlug = def.path === 'about' ? 'about-snow-bentley' : null;
+    if (tempSlug) await api(p, 'POST', `wp/v2/pages/${pg.id}`, { slug: tempSlug });
     await openEditor(p, pg.id);
     let els = def.build(ctx);
     if (process.env.ONLY) els = process.env.ONLY.split(',').map(Number).map((i) => els[i]);
     console.log(def.path || 'home', pg.id, 'elements saved:', await replaceContent(p, els, pageSettings));
+    if (tempSlug) await api(p, 'POST', `wp/v2/pages/${pg.id}`, { slug: def.slug });
     if (def.front) {
       await api(p, 'POST', 'wp/v2/settings', { show_on_front: 'page', page_on_front: pg.id });
       console.log('front page ->', pg.id);

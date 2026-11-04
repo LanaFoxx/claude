@@ -76,7 +76,7 @@ body:not(.elementor-editor-active) .sb-switch .sb-panel:not(.is-active) { displa
 .sb-hood-tab.is-active { border-bottom-color: #3A2C26; }
 .sb-hood-tab .elementor-heading-title { display: flex; justify-content: space-between; align-items: center; height: 65px; }
 .sb-hood-tab.is-active .elementor-heading-title::after { content: ''; width: 8px; height: 8px; border-top: 1.6px solid #3A2C26; border-right: 1.6px solid #3A2C26; transform: rotate(45deg); margin-right: 4px; }
-.sb-hood-list { max-height: 455px; overflow: auto; scrollbar-width: none; position: relative; }
+.sb-hood-list { max-height: 455px; overflow: auto; scrollbar-width: none; position: relative; flex-wrap: nowrap !important; --flex-wrap: nowrap; display: block !important; }
 .sb-hood-list::-webkit-scrollbar { display: none; }
 .sb-hood-fade { position: relative; }
 .sb-hood-fade::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 60px; background: linear-gradient(rgba(245,239,231,0), #F5EFE7); pointer-events: none; }
@@ -86,6 +86,7 @@ body:not(.elementor-editor-active) .sb-switch .sb-panel:not(.is-active) { displa
 .sb-arrow .elementor-button-icon { margin: 0 !important; }
 .sb-arrow .elementor-button-icon svg { width: 14px; height: 14px; }
 .sb-t-arrows { pointer-events: none; }
+@media (max-width: 767px) { .sb-t-arrows { position: static !important; transform: none !important; justify-content: center !important; gap: 12px !important; margin-top: 20px; padding: 0 !important; } }
 .sb-t-arrows .sb-arrow { pointer-events: auto; }
 
 /* Testimonial quote card */

@@ -3,6 +3,82 @@
   "": {
    "id": 4898,
    "link": "https://staging195.dreamwebdigital.com/home-snow-bentley/"
+  },
+  "about": {
+   "id": 4932,
+   "link": "https://staging195.dreamwebdigital.com/about/"
+  },
+  "contact": {
+   "id": 4937,
+   "link": "https://staging195.dreamwebdigital.com/contact/"
+  },
+  "residential": {
+   "id": 4942,
+   "link": "https://staging195.dreamwebdigital.com/residential/"
+  },
+  "commercial": {
+   "id": 4947,
+   "link": "https://staging195.dreamwebdigital.com/commercial/"
+  },
+  "done-deals": {
+   "id": 4952,
+   "link": "https://staging195.dreamwebdigital.com/done-deals/"
+  },
+  "what-were-looking-for": {
+   "id": 4957,
+   "link": "https://staging195.dreamwebdigital.com/what-were-looking-for/"
+  },
+  "home-valuation": {
+   "id": 4962,
+   "link": "https://staging195.dreamwebdigital.com/home-valuation/"
+  },
+  "neighborhoods": {
+   "id": 4967,
+   "link": "https://staging195.dreamwebdigital.com/neighborhoods/"
+  },
+  "testimonials": {
+   "id": 4972,
+   "link": "https://staging195.dreamwebdigital.com/testimonials/"
+  },
+  "blog": {
+   "id": 4977,
+   "link": "https://staging195.dreamwebdigital.com/blog/"
+  },
+  "buyers": {
+   "id": 4982,
+   "link": "https://staging195.dreamwebdigital.com/buyers/"
+  },
+  "sellers": {
+   "id": 4987,
+   "link": "https://staging195.dreamwebdigital.com/sellers/"
+  },
+  "guides": {
+   "id": 4992,
+   "link": "https://staging195.dreamwebdigital.com/guides/"
+  },
+  "terms-and-conditions": {
+   "id": 4997,
+   "link": "https://staging195.dreamwebdigital.com/terms-and-conditions/"
+  },
+  "review-site": {
+   "id": 5002,
+   "link": "https://staging195.dreamwebdigital.com/review-site/"
+  },
+  "properties": {
+   "id": 5007,
+   "link": "https://staging195.dreamwebdigital.com/properties/"
+  },
+  "properties/sale": {
+   "id": 5012,
+   "link": "https://staging195.dreamwebdigital.com/properties/sale/"
+  },
+  "properties/sold": {
+   "id": 5017,
+   "link": "https://staging195.dreamwebdigital.com/properties/sold/"
+  },
+  "home-search": {
+   "id": 5022,
+   "link": "https://staging195.dreamwebdigital.com/home-search/"
   }
  },
  "templates": {
