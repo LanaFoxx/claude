@@ -1165,3 +1165,7 @@
 #mjd .mj-btn[data-act="logatt"]{background:#1E7D4F!important;border-color:#1E7D4F!important;color:#fff!important}
 #mjd .mj-btn[data-act="logatt"]:hover{background:#17663F!important;border-color:#17663F!important;color:#fff!important}
 #mjd .mj-btn[data-act="logatt"] svg{color:#fff!important;stroke:#fff}
+/* mobile header "+ Schedule" buttons: icon + label centered */
+#mjd .mj-appbar__actions [data-act="newsess"],#mjd .mj-appbar__actions [data-act="newgs"]{display:inline-flex;align-items:center;gap:6px}
+#mjd .mj-appbar__actions [data-act="newsess"] svg,#mjd .mj-appbar__actions [data-act="newgs"] svg{width:14px;height:14px;color:#fff;stroke:currentColor}
+#mjd .mj-qseg{display:inline-flex;width:auto}
