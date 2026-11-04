@@ -22,3 +22,11 @@ python3 tools/sync-from-plugin.py /path/to/mojos-dashboard
 
 This copies the plugin’s latest CSS/JS and strips anything confidential that lives in the code
 (instructor names, the PAP dealer price list and its link).
+
+## Live copy
+
+Hosted at **https://mojosflightschool.com/flightdeck-demo/** by the small WordPress plugin in
+`tools/wp-plugin/` (“Mojo’s Flight Desk — Public Demo”). To update it: put `index.html`, `assets/`
+and `demo/` in a `site/` folder next to that PHP file, zip the folder as `mojos-flightdeck-demo`,
+and upload it under Plugins → Add New → Upload (replace current version). It only serves these
+static files, adds `noindex`, and never touches the real Flight Desk data.
