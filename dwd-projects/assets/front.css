@@ -392,7 +392,7 @@
 .dw-app-screen img.is-on{opacity:1}
 .dw-app-nav{width:44px;height:44px;border-radius:50%!important;border:1px solid rgba(255,255,255,.25)!important;background:transparent!important;color:#fff!important;font:400 26px/1 Urbanist,sans-serif!important;padding:0!important;min-width:0!important;cursor:pointer}
 .dw-app-nav:hover{background:#1B7EC3!important;border-color:#1B7EC3!important}
-.dw-site-link{display:block!important;align-self:stretch!important;width:100%;box-sizing:border-box;text-align:center;margin:0 0 14px}
+.dw-site-link{display:block!important;align-self:stretch!important;width:100%;box-sizing:border-box;text-align:center;margin:28px 0 -10px!important}
 @media(max-width:1024px){.dw-app-in{grid-template-columns:1fr;gap:40px;justify-items:center;text-align:center}.dw-app .dwdp-cta-title{text-align:center!important}.dw-app-tabs{justify-content:center}}
 @media(max-width:767px){.dw-app{padding:64px 16px}.dw-app-device{width:260px;border-radius:42px;padding:10px}.dw-app-screen{border-radius:32px}.dw-app-island{top:18px;width:74px;height:22px;margin-left:-37px}.dw-app-phone{gap:8px}.dw-app-nav{width:38px;height:38px}.dw-app-tab{font-size:14px!important;padding:8px 13px!important}}
 /* phone viewer: status bar strip so the notch never covers the app, round arrows, one-row tabs on phones */

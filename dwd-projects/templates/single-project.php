@@ -59,6 +59,10 @@ while ( have_posts() ) :
 							<?php endif; ?>
 						</div>
 					<?php endif; ?>
+					<?php $lbl = dwdp_get( $id, 'link_label' ); $lbl = $lbl ? $lbl : 'View the live website'; $lurl = dwdp_get( $id, 'url' ); ?>
+					<?php if ( $lurl && '1' !== (string) dwdp_get( $id, 'hide_link' ) ) : ?>
+						<a class="dwdp-btn dw-site-link" href="<?php echo esc_url( $lurl ); ?>" target="_blank" rel="noopener"><?php echo esc_html( $lbl ); ?> ↗</a>
+					<?php endif; ?>
 					<div class="dw-notes">
 						<?php foreach ( $notes as $label => $value ) : ?>
 							<?php if ( $value ) : ?>
@@ -73,10 +77,6 @@ while ( have_posts() ) :
 							<p>&ldquo;<?php echo esc_html( trim( $review, " \"“”" ) ); ?>&rdquo;</p>
 							<span class="dw-rby">&mdash; <?php echo esc_html( $by ? $by : $name ); ?></span>
 						</div>
-					<?php endif; ?>
-					<?php $lbl = dwdp_get( $id, 'link_label' ); $lbl = $lbl ? $lbl : 'View the live website'; $lurl = dwdp_get( $id, 'url' ); ?>
-					<?php if ( $lurl && '1' !== (string) dwdp_get( $id, 'hide_link' ) ) : ?>
-						<a class="dwdp-btn dw-site-link" href="<?php echo esc_url( $lurl ); ?>" target="_blank" rel="noopener"><?php echo esc_html( $lbl ); ?> ↗</a>
 					<?php endif; ?>
 					<?php $upw = dwdp_get( $id, 'upwork_url' ); ?>
 					<a class="dw-upwork-link" href="<?php echo esc_url( $upw ? $upw : 'https://www.upwork.com/freelancers/dreamwebdigital' ); ?>" target="_blank" rel="noopener me"><span class="dw-upwork-ic" aria-hidden="true"></span><?php echo $upw ? 'View this project on Upwork' : 'See my Upwork profile · Top Rated Plus'; ?> <span aria-hidden="true">↗</span></a>
