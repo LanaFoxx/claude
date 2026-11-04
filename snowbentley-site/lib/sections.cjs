@@ -94,8 +94,9 @@ function fullBleed(d, ctx) {
     });
   }
   // Boxed photo (Done Deals / What We're Looking For)
-  const pic = image(img, { ratio: `${d.imageW || 898} / ${d.imageH || 560}`, settings: { _element_width: 'initial', _element_custom_width: px(50, '%'), _element_custom_width_tablet: px(100, '%'), _element_custom_width_mobile: px(100, '%'), _flex_size: 'none' } });
+  const pic = image(img, { ratio: `${d.imageW || 898} / ${d.imageH || 560}`, settings: { _element_width: 'initial', _element_custom_width: cu('calc(50% - 26px)'), _element_custom_width_tablet: px(100, '%'), _element_custom_width_mobile: px(100, '%'), _flex_size: 'none' } });
   copy.settings.padding = box(0, 0, 0, 0);
+  copy.settings.width = cu('calc(50% - 26px)');
   return section(d.imageSide === 'left' ? [pic, copy] : [copy, pic], {
     dir: 'row', bg, align: 'center', gap: 52, minH: d.height,
     settings: { flex_wrap: 'wrap', flex_gap: { unit: 'px', size: 52, column: '52', row: '40', isLinked: false }, flex_direction_tablet: 'column', ...(d.imageSide === 'right' ? { flex_direction_tablet: 'column-reverse' } : {}) },
@@ -440,9 +441,14 @@ function galleryImage(d, ctx) {
   return section([], { image: ctx.m(d.images[0]), overlay: 'rgba(0,0,0,0)', minH: 'clamp(320px, 56vw, 1080px)', pad: box(0) });
 }
 function hoodMap(d, name) {
-  return container({ content_width: 'full', flex_direction: 'column', flex_justify_content: 'flex-end', padding: box(0), min_height: px(796), min_height_mobile: px(520), ...cls('sb-map') }, [
-    widget('google_maps', { address: `${d.lat},${d.lng}`, zoom: px(13), height: px(796), height_mobile: px(520), _position: 'absolute', _offset_x: px(0), _offset_y: px(0), _element_width: 'initial', _element_custom_width: px(100, '%'), custom_css: 'selector { inset: 0; } selector iframe { display: block; }' }),
-    container({ content_width: 'full', flex_direction: 'column', flex_align_items: 'center', flex_gap: gap(24), width: px(394), width_mobile: px(100, '%'), padding: box(40, 32, 40, 32), background_background: 'classic', background_color: C.espresso, _margin: cbox('0', '0', '62px', GUT), z_index: 2 }, [
+  // Map fills the section; the espresso "Navigate" card floats over its bottom-left corner.
+  return container({ content_width: 'full', flex_direction: 'column', padding: box(0), ...cls('sb-map'), custom_css: 'selector { position: relative; }' }, [
+    widget('google_maps', { address: `${d.lat},${d.lng}`, zoom: px(13), height: px(796), height_mobile: px(520), custom_css: 'selector iframe { display: block; }' }),
+    container({
+      content_width: 'full', flex_direction: 'column', flex_align_items: 'center', flex_gap: gap(24), padding: box(40, 32, 40, 32),
+      background_background: 'classic', background_color: C.espresso,
+      custom_css: 'selector { position: absolute; left: clamp(20px, 3.3vw, 62px); bottom: 62px; width: 394px; max-width: calc(100% - 40px); z-index: 2; }',
+    }, [
       label(name, { size: 18, weight: 300, ls: 0, color: C.white, upper: false, align: 'center' }),
       button('Navigate', d.href, 'white', { align: 'center', pad: box(18, 32, 18, 32) }),
     ]),

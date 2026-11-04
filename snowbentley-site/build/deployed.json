@@ -79,6 +79,54 @@
   "home-search": {
    "id": 5022,
    "link": "https://staging195.dreamwebdigital.com/home-search/"
+  },
+  "home-search/listings": {
+   "id": 5027,
+   "link": "https://staging195.dreamwebdigital.com/home-search/listings/"
+  },
+  "neighborhoods/lamorinda": {
+   "id": 5032,
+   "link": "https://staging195.dreamwebdigital.com/neighborhoods/lamorinda/"
+  },
+  "neighborhoods/atherton": {
+   "id": 5037,
+   "link": "https://staging195.dreamwebdigital.com/neighborhoods/atherton/"
+  },
+  "neighborhoods/hillsborough": {
+   "id": 5042,
+   "link": "https://staging195.dreamwebdigital.com/neighborhoods/hillsborough/"
+  },
+  "neighborhoods/los-gatos": {
+   "id": 5047,
+   "link": "https://staging195.dreamwebdigital.com/neighborhoods/los-gatos/"
+  },
+  "neighborhoods/menlo-park": {
+   "id": 5052,
+   "link": "https://staging195.dreamwebdigital.com/neighborhoods/menlo-park/"
+  },
+  "neighborhoods/mountain-view": {
+   "id": 5057,
+   "link": "https://staging195.dreamwebdigital.com/neighborhoods/mountain-view/"
+  },
+  "neighborhoods/pacific-heights": {
+   "id": 5062,
+   "link": "https://staging195.dreamwebdigital.com/neighborhoods/pacific-heights/"
+  },
+  "neighborhoods/palo-alto": {
+   "id": 5067,
+   "link": "https://staging195.dreamwebdigital.com/neighborhoods/palo-alto/"
+  },
+  "neighborhoods/piedmont": {
+   "id": 5072,
+   "link": "https://staging195.dreamwebdigital.com/neighborhoods/piedmont/"
+  },
+  "neighborhoods/san-francisco": {
+   "id": 5077,
+   "link": "https://staging195.dreamwebdigital.com/neighborhoods/san-francisco/"
+  },
+  "review": {
+   "id": 5086,
+   "link": "https://staging195.dreamwebdigital.com/review/"
   }
  },
  "templates": {
