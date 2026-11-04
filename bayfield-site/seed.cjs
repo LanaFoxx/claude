@@ -77,7 +77,7 @@ const captions = (md) => HISTORY.map(([f, cap]) => [md(`bayfield-history-${f}.jp
 
 // Merchandise: the client adds items, photos and Square payment links in the dashboard.
 const products = (md) => ({ items: [
-  { name: 'Sweatshirt – The Deck @ The Bayfield Inn (Pink)', price: '', badge: 'New', link: '', desc: 'Soft pink hoodie with The Deck logo on the chest.',
+  { name: 'Sweatshirt – The Deck @ The Bayfield Inn (Pink)', price: '', badge: 'New', link: 'https://square.link/u/z2lLZv2P', desc: 'Soft pink hoodie with The Deck logo on the chest. Sizes S–XXXL.',
     images: [md('bayfield-merch-deck-hoodie-pink-front.jpg').id, md('bayfield-merch-deck-hoodie-pink-model.jpg').id], soldout: false },
 ] });
 
