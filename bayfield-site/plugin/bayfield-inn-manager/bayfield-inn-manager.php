@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Bayfield Inn Manager
  * Description: Simple dashboard for the Bayfield Inn team to edit restaurant menus, the photo gallery and merchandise. The site's Elementor pages show whatever is saved here.
- * Version: 1.1.1
+ * Version: 1.2.0
  * Author: Dream Web Digital
  * Requires at least: 6.0
  * Requires PHP: 7.4
@@ -10,7 +10,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'BI_MANAGER_VERSION', '1.1.1' );
+define( 'BI_MANAGER_VERSION', '1.2.0' );
 define( 'BI_MANAGER_URL', plugin_dir_url( __FILE__ ) );
 define( 'BI_MANAGER_DIR', plugin_dir_path( __FILE__ ) );
 define( 'BI_MANAGER_CAP', 'edit_pages' ); // Administrators and Editors.
@@ -181,3 +181,4 @@ add_action( 'elementor/widgets/register', function ( $widgets ) {
 add_action( 'elementor/elements/categories_registered', function ( $manager ) {
 	$manager->add_category( 'bayfield', array( 'title' => 'Bayfield Inn', 'icon' => 'fa fa-plug' ) );
 } );
+require_once BI_MANAGER_DIR . 'live-viewers.php';
