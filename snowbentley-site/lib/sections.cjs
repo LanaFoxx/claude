@@ -34,7 +34,7 @@ function innerHero(d, ctx) {
     }, [
       ...(d.eyebrow ? [label(d.eyebrow, { align: 'center', color: C.white, size: 14, weight: 600, ls: 0.5, upper: true }),
         widget('divider', { width: px(104), align: 'center', color: C.white, weight: px(1), gap: px(0), _margin: box(16, 0, 0, 0), ...cls('sb-rule') })] : []),
-      H1(d.title, { color: C.white, align: 'center', size: 'clamp(36px, 2.5vw, 48px)', weight: 400, lh: 1.2, ls: 2, settings: { _margin: box(d.eyebrow ? 10 : 0, 0, 0, 0) } }),
+      H1(d.title, { color: C.white, align: 'center', size: ['clamp(36px, 2.5vw, 48px)', 36, 'clamp(22px, 7vw, 30px)'], weight: 400, lh: 1.2, ls: 2, settings: { _margin: box(d.eyebrow ? 10 : 0, 0, 0, 0) } }),
       button('', '#', 'white', { pad: box(0), icon: chevronDown, iconGap: 0, cls: 'sb-down', settings: { _margin: box(24, 0, 0, 0), align: 'center' } }),
     ]),
   ], false);
