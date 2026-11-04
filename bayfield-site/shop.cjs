@@ -107,7 +107,7 @@ selector .elementor-field-group > .elementor-field-label { width: 100%; }`,
       container({ ...gridSettings(['7fr 6fr', 1, 1]), content_width: 'full', padding: box(0), grid_gaps: gap(72, 40), grid_gaps_tablet: gap(40, 40), grid_align_items: 'start' }, [
         container({ content_width: 'full', padding: box(48), padding_mobile: box(16), border_radius: box(4), ...radial('top left', '#FFFFFF', null, '#ECE7DC'),
           custom_css: '@media (min-width: 1025px) { selector { position: sticky; top: 140px; } }' }, [
-          image(m.file('bayfield-gift-card.png'), { settings: { alt_text: 'Bayfield Inn gift card' } }),
+          image(m.file('bayfield-gift-card-gateway.png'), { settings: { alt_text: 'Bayfield Inn gift card' } }),
         ]),
         stack([
           eyebrow('Gift card', C.green),
@@ -152,7 +152,7 @@ function cart(m) {
   }, children);
   const item = cartGrid([
     container({ content_width: 'full', flex_direction: 'row', flex_wrap: 'nowrap', flex_align_items: 'center', flex_gap: gap(18), padding: box(0) }, [
-      image(m.file('bayfield-gift-card.png'), { width: [120, 110, 88], settings: { _element_width: 'initial', _element_custom_width: px(120), _element_custom_width_mobile: px(88), _flex_size: 'none', link_to: 'custom', link: link(URL.product) } }),
+      image(m.file('bayfield-gift-card-gateway.png'), { width: [120, 110, 88], settings: { _element_width: 'initial', _element_custom_width: px(120), _element_custom_width_mobile: px(88), _flex_size: 'none', link_to: 'custom', link: link(URL.product) } }),
       stack([
         widget('heading', { title: 'Bayfield Inn Gift Card', header_size: 'h3', title_color: C.green, link: link(URL.product), ...typo('typography', SERIF, [22, 22, 20], 400, { lh: 1.1 }) }),
         small('Bayfield Inn (rooms) · $100 · Mailed card<br>To: Recipient name', { size: 13 }),
@@ -234,7 +234,7 @@ function checkout(m) {
           panel([
             sub('Your order'),
             container({ content_width: 'full', flex_direction: 'row', flex_wrap: 'nowrap', flex_align_items: 'center', flex_gap: gap(16), custom_css: 'selector > .e-con { flex: 1 1 0; min-width: 0; }\nselector .elementor-heading-title { overflow-wrap: anywhere; }', padding: box(0, 0, 16, 0), border_border: 'solid', border_width: box(0, 0, 1, 0), border_color: C.line }, [
-              image(m.file('bayfield-gift-card.png'), { width: 84, settings: { _element_width: 'initial', _element_custom_width: px(84), _flex_size: 'none' } }),
+              image(m.file('bayfield-gift-card-gateway.png'), { width: 84, settings: { _element_width: 'initial', _element_custom_width: px(84), _flex_size: 'none' } }),
               stack([
                 widget('heading', { title: 'Bayfield Inn Gift Card × 1', header_size: 'p', title_color: C.green, ...typo('typography', SERIF, 19, 400, { lh: 1.2 }) }),
                 small('Bayfield Inn (rooms) · $100 · Mailed card', { size: 13 }),
@@ -279,7 +279,7 @@ function orderReceived(m) {
           ['Order number', '#0000'], ['Date', 'Placeholder'], ['Email', 'you@example.com'], ['Payment', 'Card'],
         ].map(([l, v]) => stack([small(l, { size: 11, weight: 500, ls: 1.6, settings: { typography_text_transform: 'uppercase' } }), small(v, { size: 15, color: C.ink })], { gap: 6 }))),
         container({ content_width: 'full', flex_direction: 'row', flex_wrap: 'nowrap', flex_align_items: 'center', flex_gap: gap(16), custom_css: 'selector > .e-con { flex: 1 1 0; min-width: 0; }\nselector .elementor-heading-title { overflow-wrap: anywhere; }', padding: box(0) }, [
-          image(m.file('bayfield-gift-card.png'), { width: 96, settings: { _element_width: 'initial', _element_custom_width: px(96), _flex_size: 'none' } }),
+          image(m.file('bayfield-gift-card-gateway.png'), { width: 96, settings: { _element_width: 'initial', _element_custom_width: px(96), _flex_size: 'none' } }),
           stack([
             widget('heading', { title: 'Bayfield Inn Gift Card × 1', header_size: 'p', title_color: C.green, ...typo('typography', SERIF, 20, 400, { lh: 1.2 }) }),
             small('Bayfield Inn (rooms) · $100 · Mailed card · To: Recipient name', { size: 13 }),
