@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Bayfield Inn Manager
  * Description: Simple dashboard for the Bayfield Inn team to edit restaurant menus, the photo gallery and merchandise. The site's Elementor pages show whatever is saved here.
- * Version: 1.2.0
+ * Version: 1.3.2
  * Author: Dream Web Digital
  * Requires at least: 6.0
  * Requires PHP: 7.4
@@ -10,7 +10,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'BI_MANAGER_VERSION', '1.2.0' );
+define( 'BI_MANAGER_VERSION', '1.3.2' );
 define( 'BI_MANAGER_URL', plugin_dir_url( __FILE__ ) );
 define( 'BI_MANAGER_DIR', plugin_dir_path( __FILE__ ) );
 define( 'BI_MANAGER_CAP', 'edit_pages' ); // Administrators and Editors.
@@ -167,18 +167,22 @@ add_action( 'rest_api_init', function () {
 add_action( 'wp_enqueue_scripts', function () {
 	wp_register_style( 'bi-front', BI_MANAGER_URL . 'assets/front.css', array(), BI_MANAGER_VERSION );
 	wp_register_script( 'bi-front', BI_MANAGER_URL . 'assets/front.js', array(), BI_MANAGER_VERSION, true );
+	wp_register_script( 'bi-booking', BI_MANAGER_URL . 'assets/booking.js', array(), BI_MANAGER_VERSION, true );
 } );
 
 add_action( 'elementor/widgets/register', function ( $widgets ) {
 	require_once BI_MANAGER_DIR . 'widgets/class-bi-menu-widget.php';
 	require_once BI_MANAGER_DIR . 'widgets/class-bi-gallery-widget.php';
 	require_once BI_MANAGER_DIR . 'widgets/class-bi-shop-widget.php';
+	require_once BI_MANAGER_DIR . 'widgets/class-bi-booking-widget.php';
 	$widgets->register( new BI_Menu_Widget() );
 	$widgets->register( new BI_Gallery_Widget() );
 	$widgets->register( new BI_Shop_Widget() );
+	$widgets->register( new BI_Booking_Widget() );
 } );
 
 add_action( 'elementor/elements/categories_registered', function ( $manager ) {
 	$manager->add_category( 'bayfield', array( 'title' => 'Bayfield Inn', 'icon' => 'fa fa-plug' ) );
 } );
 require_once BI_MANAGER_DIR . 'live-viewers.php';
+require_once BI_MANAGER_DIR . 'booking.php';

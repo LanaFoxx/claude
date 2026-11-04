@@ -656,31 +656,6 @@ const interactionsJs = `<script>
     window.location.href = BOOK + (BOOK.indexOf('?') > -1 ? '&' : '?') + q;
   }, true);
 
-  // /book/ page: show eviivo's live results for the search in the URL, inside the site.
-  (function eviivoFrame() {
-    var box = document.getElementById('bi-eviivo');
-    if (!box) return;
-    var EVIIVO = '${EXT.eviivo}';
-    var inQ = new URLSearchParams(location.search), q = new URLSearchParams({ hli: 'true', noofrooms: '1', currency: 'USD' });
-    var okDate = /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/, okNum = /^[0-9]{1,2}$/;
-    if (okDate.test(inQ.get('startdate') || '') && okDate.test(inQ.get('enddate') || '')) { q.set('startdate', inQ.get('startdate')); q.set('enddate', inQ.get('enddate')); }
-    q.set('adults1', okNum.test(inQ.get('adults1') || '') ? inQ.get('adults1') : '2');
-    q.set('children1', okNum.test(inQ.get('children1') || '') ? inQ.get('children1') : '0');
-    var src = EVIIVO + '?' + q.toString();
-    var frame = document.createElement('iframe');
-    frame.src = src; frame.title = 'Live availability from eviivo'; frame.loading = 'eager';
-    frame.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
-    box.innerHTML = ''; box.appendChild(frame);
-    document.querySelectorAll('a[href="#bi-eviivo-tab"]').forEach(function (a) { a.href = src; a.target = '_blank'; a.rel = 'noopener'; });
-    var sum = document.querySelector('.bi-book-summary .elementor-heading-title');
-    if (sum && q.get('startdate')) {
-      var f = function (d) { return new Date(d + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); };
-      var n = Math.round((new Date(q.get('enddate')) - new Date(q.get('startdate'))) / 864e5);
-      var g = +q.get('adults1') + +q.get('children1');
-      sum.textContent = f(q.get('startdate')) + ' – ' + f(q.get('enddate')) + ' · ' + n + (n === 1 ? ' night' : ' nights') + ' · ' + g + (g === 1 ? ' guest' : ' guests');
-    }
-  })();
-
   // Hero photo controls: arrows + one dot per photo, bottom center of the homepage hero.
   // Built from the hero's background slideshow, so they follow whatever photos it has.
   (function heroDots(tries) {

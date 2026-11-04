@@ -175,7 +175,7 @@ function webcam(m) {
 
 // Book: eviivo's live availability shown inside the site (the "Bayfield interactions" snippet
 // builds the frame from the search in the URL, e.g. /book/?startdate=2026-11-20&enddate=...).
-function book() {
+function book(m) {
   return [
     section({ ...radial('bottom left', C.mid, null, C.deep), padding: box(36, 48, 36, 48), padding_tablet: box(30, 32, 30, 32), padding_mobile: box(26, 16, 26, 16), ...boxed }, [
       row([
@@ -189,16 +189,13 @@ function book() {
           { color: 'rgba(245,242,236,0.8)', size: 14, maxW: 380, linkColor: C.cream, settings: { link_hover_color: C.cream } }),
       ], { gap: 20, align: 'flex-end', justify: 'space-between' }),
     ]),
-    section({ background_background: 'classic', background_color: C.cream, padding: box(28, 48, 72, 48), padding_tablet: box(24, 24, 56, 24), padding_mobile: box(12, 0, 40, 0), ...boxed, flex_direction: 'column', flex_gap: gap(12) }, [
-      container({ content_width: 'full', padding: box(0), _element_id: 'bi-eviivo', background_background: 'classic', background_color: C.white, border_radius: box(4), border_radius_mobile: box(0),
-        box_shadow_box_shadow_type: 'yes', box_shadow_box_shadow: { horizontal: 0, vertical: 30, blur: 60, spread: -44, color: 'rgba(23,48,27,0.35)' },
-        custom_css: `body:has(#bi-eviivo)::after { display: none; } /* no film grain over the booking frame */
-selector { min-height: 1100px; overflow: hidden; }
-selector:empty::before { content: "Loading live availability…"; display: block; padding: 60px 20px; text-align: center; color: #4B5249; font-family: Geist, system-ui, sans-serif; }
-selector iframe { display: block; width: 100%; height: 1100px; border: 0; }
-@media (max-width: 767px) { selector, selector iframe { min-height: 1300px; height: 1300px; } }` }, []),
-      text('Prices and availability are live from eviivo, our booking partner. Trouble seeing the options? <a href="#bi-eviivo-tab">Open booking in a new tab ↗</a>',
-        { size: 13, color: C.muted, align: 'center', settings: { _padding: box(0, 16, 0, 16) } }),
+    section({ background_background: 'classic', background_color: C.cream, padding: box(36, 48, 96, 48), padding_tablet: box(28, 24, 72, 24), padding_mobile: box(20, 14, 56, 14), ...boxed, flex_direction: 'column' }, [
+      // Search, live results (The Inn / Condos) and eviivo booking: plugin widget, see booking.php.
+      widget('bi-booking', {
+        img_thebayfieldinnllc54814: m.file('bayfield-inn-exterior.jpg'),
+        img_byfldnthlkcnds54814: m.file('bayfield-condos-cover.jpg'),
+        img_isaacwinghouse54814: m.file('bayfield-condo-iwh-house-exterior-1.jpg'),
+      }),
     ]),
   ];
 }

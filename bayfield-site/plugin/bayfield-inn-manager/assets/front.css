@@ -106,3 +106,59 @@
 .bi-shop__note { margin: 28px 0 0; text-align: center; font: 400 13px/1.5 Geist, system-ui, sans-serif; color: #4B5249; }
 @media (max-width: 1024px) { .bi-shop { gap: 22px; } .bi-shop > .bi-product { flex-basis: calc((100% - 22px) / 2); } }
 @media (max-width: 600px) { .bi-shop > .bi-product { flex-basis: 100%; max-width: none; } }
+
+/* Booking search + results */
+.bi-book { --g: #17301B; --line: #DCD7CC; --muted: #4B5249; color: #161B17; font-family: Geist, system-ui, sans-serif; }
+.bi-book__search { display: grid; grid-template-columns: 1.15fr 1.15fr .8fr .8fr auto; background: #fff; border: 1px solid var(--line); border-radius: 3px; box-shadow: 0 20px 50px -40px rgba(23,48,27,.5); }
+.bi-book__field { display: flex; flex-direction: column; gap: 6px; padding: 14px 18px; border-right: 1px solid var(--line); min-width: 0; }
+.bi-book__field span { font-size: 10.5px; letter-spacing: .2em; text-transform: uppercase; font-weight: 500; color: var(--muted); }
+.bi-book__field input, .bi-book__field select { border: 0 !important; padding: 0 !important; background: transparent !important; font: 400 15px/1.4 Geist, system-ui, sans-serif; color: #161B17; min-height: 24px; width: 100%; box-shadow: none !important; }
+.bi-book__go, .bi-book button.bi-book__go:hover { border: 0; border-radius: 0 3px 3px 0; padding: 0 28px; background: #17301B; color: #F5F2EC; font: 500 13px Geist, system-ui, sans-serif; letter-spacing: .04em; cursor: pointer; }
+.bi-book__go:hover { background: #0F2113 !important; }
+.bi-book__hint { margin: 10px 2px 0; font-size: 12.5px; color: var(--muted); }
+.bi-book__results { margin-top: 48px; }
+.bi-book__head { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; }
+.bi-book__eyebrow { margin: 0; font-size: 11px; letter-spacing: .22em; text-transform: uppercase; font-weight: 500; color: var(--g); }
+.bi-book__title { margin: 10px 0 0; font: 300 46px/1.05 Newsreader, Georgia, serif; color: var(--g); letter-spacing: -.02em; }
+.bi-book__live { display: inline-flex; align-items: center; gap: 8px; padding: 7px 12px; border: 1px solid #c8d6c2; font-size: 12px; color: #3d5a3a; white-space: nowrap; }
+.bi-book__live span { width: 7px; height: 7px; border-radius: 50%; background: #4E8A3E; animation: bi-pulse 1.6s ease-in-out infinite; }
+.bi-book__summary { margin: 18px 0 0; font-size: 15px; color: var(--muted); white-space: pre-wrap; }
+.bi-book__status { margin: 6px 0 0; font-size: 14px; color: var(--muted); }
+.bi-book__filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 22px 0 24px; }
+.bi-book button.bi-book__filter { padding: 10px 20px; border: 1px solid rgba(23,48,27,.3); border-radius: 999px; background: transparent; color: var(--g); font: 400 14px Geist, system-ui, sans-serif; cursor: pointer; transition: background .2s, color .2s; }
+.bi-book button.bi-book__filter:hover { background: rgba(23,48,27,.06); color: var(--g); }
+.bi-book button.bi-book__filter.is-active { background: var(--g); border-color: var(--g); color: #F5F2EC; }
+.bi-book__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
+.bi-book__card { background: #fff; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; display: flex; flex-direction: column; }
+.bi-book__card[hidden] { display: none; }
+.bi-book__img { aspect-ratio: 16 / 10; background: #DCD7CC; overflow: hidden; }
+.bi-book__img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.bi-book__body { padding: 22px 24px 24px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.bi-book__body h3 { margin: 2px 0 0; font: 400 30px/1.1 Newsreader, Georgia, serif; color: var(--g); }
+.bi-book__desc { margin: 0; font: 300 14.5px/1.6 Geist, system-ui, sans-serif; color: var(--muted); }
+.bi-book__fits { margin: 6px 0 0; font-size: 13px; color: #3d6a33; }
+.bi-book__price { margin-top: auto; padding-top: 16px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; gap: 14px; font-size: 13px; color: var(--muted); }
+.bi-book__price strong { display: inline-block; margin-left: 4px; font: 400 26px/1 Newsreader, Georgia, serif; color: var(--g); }
+.bi-book__price small { display: block; margin-top: 4px; font-size: 11.5px; }
+.bi-book__empty, .bi-book__error { margin-top: 24px; padding: 32px; text-align: center; background: #EEF0E8; border: 1px solid var(--line); border-radius: 4px; }
+.bi-book__empty h3, .bi-book__error h3 { margin: 0 0 8px; font: 400 28px/1.15 Newsreader, Georgia, serif; color: var(--g); }
+.bi-book__empty p, .bi-book__error p { margin: 0 0 14px; color: var(--muted); }
+.bi-book__note { margin: 18px 0 0; font-size: 12.5px; color: var(--muted); }
+.bi-book__loading { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 40px; padding: 44px 20px; background: #EEF0E8; color: var(--muted); border-radius: 4px; }
+.bi-book__loading[hidden], .bi-book__error[hidden], .bi-book__empty[hidden], .bi-book__results[hidden], .bi-book__panel[hidden] { display: none; }
+.bi-book__spin { width: 18px; height: 18px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: bi-spin .8s linear infinite; }
+@keyframes bi-spin { to { transform: rotate(360deg); } }
+.bi-book__panel { margin-top: 40px; background: #fff; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; scroll-margin-top: 120px; }
+.bi-book__panel-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; padding: 22px 26px; }
+.bi-book__panel-title { margin: 6px 0 0; font: 400 32px/1.15 Newsreader, Georgia, serif; color: var(--g); outline: none; }
+.bi-book__panel-sub { margin: 6px 0 0; font-size: 13px; color: var(--muted); }
+.bi-book button.bi-book__close, .bi-book button.bi-book__close:hover { width: 38px; height: 38px; flex: none; border: 1px solid var(--line); background: #fff; color: var(--g); font-size: 22px; line-height: 1; padding: 0; cursor: pointer; border-radius: 2px; }
+.bi-book__panel-bar { display: flex; justify-content: space-between; gap: 16px; padding: 12px 26px; background: #EFF2E9; font-size: 12.5px; color: var(--muted); }
+.bi-book__panel-bar a { color: var(--g); text-decoration: underline; white-space: nowrap; }
+.bi-book__frame { display: block; width: 100%; height: 1100px; border: 0; }
+@media (max-width: 1024px) { .bi-book__search { grid-template-columns: 1fr 1fr; } .bi-book__field:nth-child(2) { border-right: 0; } .bi-book__field:nth-child(-n+2) { border-bottom: 1px solid var(--line); } .bi-book__go { grid-column: 1 / -1; padding: 16px; border-radius: 0 0 3px 3px; } .bi-book__field:nth-child(4) { border-right: 0; } }
+@media (max-width: 767px) { .bi-book__title { font-size: 36px; } .bi-book__head { flex-direction: column-reverse; align-items: flex-start; } .bi-book__grid { grid-template-columns: 1fr; } .bi-book__panel-bar { flex-direction: column; } .bi-book__frame { height: 1300px; } .bi-book__panel-head { padding: 20px; } }
+@keyframes bi-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+/* No film grain over the booking widget / eviivo frame; plain buttons inside it. */
+body:has(.bi-book)::after { display: none !important; }
+.bi-book button.bi-btn, .bi-book button.bi-btn:hover, .bi-book button.bi-btn:focus { border: 0; cursor: pointer; }
