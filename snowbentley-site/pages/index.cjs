@@ -15,7 +15,7 @@ const DEV_SITE = {
   images: ['c94562ec-1739-4336-bfc0-645b32ffe148'],
   blocks: [
     { tag: 'p', html: '<em>(Qualified buyer, active in the SF AI Corridor)</em>' },
-    { tag: 'ul', html: '<li><strong>Entitled Multifamily</strong> — 200+ units, fully entitled, SoMa and Mission Bay; shovel-ready preferred, will consider sites with entitlements in final approval</li><li>Open to land, existing improvements for teardown, or office/R&amp;D assets suitable for residential conversion</li><li>Off-market and pre-listing opportunities welcome; principals and their representatives only</li>' },
+    { tag: 'ul', html: '<li><strong>Entitled Multifamily</strong> — 200+ units, fully entitled, SoMa and Mission Bay; shovel-ready preferred, will consider sites with entitlements in final approval</li><li><strong>Multifamily — Southern California</strong> — Institutional buyer actively acquiring in the $30M–$40M range. Target markets: Irvine, San Gabriel, and Alhambra. Stabilized or value-add considered.</li><li>Open to land, existing improvements for teardown, or office/R&amp;D assets suitable for residential conversion</li><li>Off-market and pre-listing opportunities welcome; principals and their representatives only</li>' },
   ],
 };
 
