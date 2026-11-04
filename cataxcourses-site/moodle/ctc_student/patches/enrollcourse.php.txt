@@ -134,7 +134,7 @@ if(empty($userinfos)){
         $emailuser->middlename = false;
         $emailuser->username = false;
         $emailuser->alternatename = false;
-        $mail = email_to_user($emailuser,$fromUser, $subject, $message = '', $mailcontent);
+        $mail = email_to_user($emailuser,$fromUser, $subject, $message = '', $mailcontent, '', '', true, 'help@cataxcourses.com', 'California Tax Courses'); // CTC: replies go to the help inbox
         $returnContent = 'Hi '.$fname.',<br><br>
                             Thank you for enrolling in the “'.$allcourse_name.'”. To access your course, go to <a href="'.$CFG->wwwroot.'" target="_blank">'.$CFG->wwwroot.'</a><br><br>
                             Course Login Credentials:<br><br>
@@ -183,7 +183,7 @@ if(empty($userinfos)){
         $emailuser->middlename = false;
         $emailuser->username = false;
         $emailuser->alternatename = false;
-        $mail = email_to_user($emailuser,$fromUser, $subject, $message = '', $mailcontent);
+        $mail = email_to_user($emailuser,$fromUser, $subject, $message = '', $mailcontent, '', '', true, 'help@cataxcourses.com', 'California Tax Courses'); // CTC: replies go to the help inbox
         $returnContent = 'Hi '.$fname.',<br><br>
                             Thank you for enrolling in the “'.$allcourse_name.'”. <br><br>
                             Our records indicate you have an existing account with us. <br><br>

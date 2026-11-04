@@ -9,14 +9,18 @@ global $DB, $CFG;
 $do = optional_param('do', '', PARAM_ALPHA);
 if ($do !== '') { require_sesskey(); }
 $ORIG = '56e0bfd2ed8af90152f48ef0f2cc4056cc7e89f3';
+$PATCH1 = '9f32a02f46f527448db5931f449a9da8cc2460c9'; // first patch (password reset only)
 
 // 1. Enrollment script: stop resetting returning students' passwords.
 $f = $CFG->dirroot . '/local/mdl_course_enroll/enrollcourse.php';
 $new = file_get_contents(__DIR__ . '/patches/enrollcourse.php.txt');
 $cur = sha1_file($f);
-echo "enrollcourse.php: " . ($cur === sha1($new) ? 'patched' : ($cur === $ORIG ? 'original' : 'CHANGED (' . $cur . ')')) . "\n";
+echo "enrollcourse.php: " . ($cur === sha1($new) ? 'patched' : ($cur === $ORIG ? 'original' : ($cur === $PATCH1 ? 'first patch' : 'CHANGED (' . $cur . ')'))) . "\n";
 if ($do === 'enroll' || $do === 'all') {
-    if ($cur === $ORIG) {
+    if ($cur === $PATCH1) {
+        file_put_contents($f, $new);
+        echo "  -> updated to the current patch (replies go to help@), now " . (sha1_file($f) === sha1($new) ? 'OK' : 'FAILED') . "\n";
+    } else if ($cur === $ORIG) {
         copy($f, $f . '.ctc-backup-20261102');
         file_put_contents($f, $new);
         echo "  -> patched (backup: enrollcourse.php.ctc-backup-20261102), now " . (sha1_file($f) === sha1($new) ? 'OK' : 'FAILED') . "\n";
@@ -24,6 +28,14 @@ if ($do === 'enroll' || $do === 'all') {
 }
 if ($do === 'unenroll') {
     if (file_exists($f . '.ctc-backup-20261102')) { copy($f . '.ctc-backup-20261102', $f); echo "  -> restored original\n"; }
+}
+
+// 1b. Enrollment email sender name (the template's "from" is used as the sender name).
+$tpl = $DB->get_record('email_message_template', ['id' => 1], 'id, email_from');
+echo "enrollment email from: " . ($tpl ? $tpl->email_from : '(no template)') . "\n";
+if ($tpl && ($do === 'enroll' || $do === 'all') && trim($tpl->email_from) !== 'California Tax Courses') {
+    $DB->set_field('email_message_template', 'email_from', 'California Tax Courses', ['id' => 1]);
+    echo "  -> sender name set to California Tax Courses (was " . $tpl->email_from . ")\n";
 }
 
 // 2. Forgot password.

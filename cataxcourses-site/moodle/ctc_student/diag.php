@@ -71,3 +71,9 @@ foreach ($DB->get_records_sql("SELECT c.id, c.fullname, c.visible, (SELECT COUNT
 echo "users with the temporary password still set: " . $DB->count_records_select('user', 'deleted=0 AND password=?', [md5('orange123')]) . "\n";
 echo "  of those, with forced change flag: " . $DB->count_records_sql("SELECT COUNT(1) FROM {user} u JOIN {user_preferences} p ON p.userid=u.id AND p.name='auth_forcepasswordchange' AND p.value='1' WHERE u.deleted=0 AND u.password=?", [md5('orange123')]) . "\n";
 echo "  of those, logged in before (had their own password once): " . $DB->count_records_select('user', 'deleted=0 AND password=? AND lastlogin>0', [md5('orange123')]) . "\n";
+if (optional_param('mailtpl', 0, PARAM_INT)) {
+    foreach ($DB->get_records_sql('SELECT id, email_from, subject, subject_new FROM {email_message_template}') as $r) {
+        echo "\nTEMPLATE {$r->id}: from=" . $r->email_from . " | subject=" . $r->subject . " | subject_new=" . $r->subject_new . "\n";
+    }
+    echo "smtpuser=" . $CFG->smtpuser . " noreply=" . $CFG->noreplyaddress . " emailfromvia=" . $CFG->emailfromvia . "\n";
+}
