@@ -69,7 +69,7 @@ function dwdt_build() {
 	$mn  = function ( $key ) { return gmdate( 'F', strtotime( $key . '-01' ) ); };
 	$out = array();
 	$add = function ( $pct, $text, $alert_at = 20 ) use ( &$out ) {
-		$tone  = null === $pct ? 'info' : ( $pct >= 3 ? 'up' : ( $pct <= -3 ? 'down' : 'flat' ) );
+		$tone  = null === $pct ? 'info' : ( $pct >= 10 ? 'up' : ( $pct <= -10 ? 'down' : 'flat' ) );
 		$out[] = array( 'tone' => $tone, 'text' => $text, 'alert' => null !== $pct && abs( $pct ) >= $alert_at );
 	};
 	$word = function ( $pct ) { return $pct >= 0 ? 'up ' . round( $pct ) . '%' : 'down ' . round( abs( $pct ) ) . '%'; };
@@ -81,7 +81,8 @@ function dwdt_build() {
 	$b  = $sum( $l2, $l2 );
 	$p  = dwdt_pct( $a, $b );
 	if ( null !== $p ) {
-		$add( $p, $mn( $l1 ) . ' brought in ' . dwdt_money( $a ) . ', ' . $word( $p ) . ' from ' . $mn( $l2 ) . ' (' . dwdt_money( $b ) . ').' );
+		// Neutral on purpose: milestone approvals and Upwork's payout hold move money between months.
+		$out[] = array( 'tone' => 'info', 'text' => $mn( $l1 ) . ' brought in ' . dwdt_money( $a ) . ' (' . $mn( $l2 ) . ': ' . dwdt_money( $b ) . '). Single months swing with payout timing, so watch the 3-month and 12-month lines instead.', 'alert' => false );
 	}
 
 	// 2) This month so far, paced against the same days last month.
@@ -104,10 +105,6 @@ function dwdt_build() {
 				$lastMtd += $amt;
 			}
 		}
-	}
-	if ( $day >= 3 ) {
-		$p = dwdt_pct( $mtd, $lastMtd );
-		$add( $p, 'So far this month: ' . dwdt_money( $mtd ) . ' in ' . $day . ' days' . ( null !== $p ? ', ' . $word( $p ) . ' versus the first ' . $day . ' days of ' . $mn( $prev ) . ' (' . dwdt_money( $lastMtd ) . ').' : '.' ), 1000 );
 	}
 
 	// 3) Last 3 months vs the 3 before.
@@ -133,7 +130,7 @@ function dwdt_build() {
 	$b = $sum( $ym( '-24' ), $ym( '-13' ) );
 	$p = dwdt_pct( $a, $b );
 	if ( null !== $p ) {
-		$out[] = array( 'tone' => $p >= 3 ? 'up' : ( $p <= -3 ? 'down' : 'flat' ), 'text' => 'Long-term: the last 12 months total ' . dwdt_money( $a ) . ', ' . $word( $p ) . ' from the 12 months before (' . dwdt_money( $b ) . ').' . ( $p <= -10 ? ' This is a real downward trend worth acting on.' : '' ), 'alert' => $p <= -10 || $p >= 20 );
+		$out[] = array( 'tone' => $p >= 10 ? 'up' : ( $p <= -10 ? 'down' : 'flat' ), 'text' => 'Long-term: the last 12 months total ' . dwdt_money( $a ) . ', ' . $word( $p ) . ' from the 12 months before (' . dwdt_money( $b ) . ').' . ( $p <= -10 ? ' This is a real downward trend worth acting on.' : '' ), 'alert' => $p <= -10 || $p >= 20 );
 	}
 
 	// 6) Slides: income down several months in a row.
@@ -162,7 +159,8 @@ function dwdt_build() {
 		}
 	}
 	$p = dwdt_pct( $n1, $n2 );
-	$add( $p, 'New paying projects in the last 90 days: ' . $n1 . ( $n2 ? ', versus ' . $n2 . ' in the 90 days before.' : '.' ), 25 );
+	// Small counts swing easily, so only call it up or down when the change is big (30%+).
+	$out[] = array( 'tone' => null === $p ? 'info' : ( $p >= 30 ? 'up' : ( $p <= -30 ? 'down' : 'flat' ) ), 'text' => 'New paying projects in the last 90 days: ' . $n1 . ( $n2 ? ', versus ' . $n2 . ' in the 90 days before.' : '.' ), 'alert' => null !== $p && $p <= -40 );
 
 	// 8) Average project value: projects that started paying this year vs last year.
 	$avg = function ( $yr ) use ( $first, $value ) {
