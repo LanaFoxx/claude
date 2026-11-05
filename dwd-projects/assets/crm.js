@@ -148,14 +148,14 @@
 	function route() {
 		var h = location.hash.replace(/^#/, '').split('/');
 		if (OLD[h[0]]) { return { view: OLD[h[0]].split('/')[0], arg: OLD[h[0]].split('/')[1] || '', id: 0 }; }
-		return { view: TITLES[h[0]] || h[0] === 'client' || h[0] === 'cl' ? h[0] : 'home', arg: h[1] || '', id: +h[1] || 0 };
+		return { view: TITLES[h[0]] || h[0] === 'client' || h[0] === 'cl' || h[0] === 'host' ? h[0] : 'home', arg: h[1] || '', id: +h[1] || 0 };
 	}
 	window.addEventListener('hashchange', function () {
 		var r = route();
 		if (r.view !== 'search' && S.prev !== r.view + r.arg) { S.q = ''; }
-		if (r.view !== 'client' && r.view !== 'search' && r.view !== 'cl') { S.back = r.view + (r.arg ? '/' + r.arg : ''); }
+		if (r.view !== 'client' && r.view !== 'search' && r.view !== 'cl' && r.view !== 'host') { S.back = r.view + (r.arg ? '/' + r.arg : ''); }
 		S.edit = false; S.cardTodo = 0; document.body.classList.remove('dwdc-menu-open');
-		if (r.view === 'client' && !S.full[r.id]) { load(r.id); }
+		if ((r.view === 'client' || r.view === 'host') && !S.full[r.id]) { load(r.id); }
 		render(true); window.scrollTo(0, 0);
 	});
 	function go(h) { if (location.hash === '#' + h) { render(true); } else { location.hash = h; } }
@@ -203,6 +203,10 @@
 			var c = contact(r.id), words = String(c ? c.name : 'Project').split(' ');
 			t = ['Project', words.slice(0, Math.max(1, words.length - 1)).join(' '), words.length > 1 ? words[words.length - 1] : ''];
 			body = clientView(r.id);
+		} else if (r.view === 'host') {
+			var hc = contact(r.id);
+			t = ['Website Hosted', '', hc ? (site(hc) || hc.name) : 'Website'];
+			body = hostView(r.id);
 		} else if (r.view === 'cl') {
 			var k = clientRec(r.id), kw = String(k ? k.name : 'Client').split(' ');
 			t = ['Client', kw[0], kw.slice(1).join(' ')];
@@ -483,7 +487,7 @@
 				var on = subActive(c), n = c.renewal ? daysTo(c.renewal) : null;
 				var st = on ? ['Auto-renew', 'green'] : n === null ? ['No date', 'gray'] : n < 0 ? ['Past due', 'red'] : n <= 30 ? ['Renewing soon', 'orange'] : ['Not on auto-pay', 'amber'];
 				var when = on && c.sub.next ? c.sub.next : c.renewal;
-				return '<div class="dwdc-grid g-host row" data-go="client/' + c.id + '"><span class="dwdc-nm"><span><b>' + esc(c.name) + '</b><small>' + esc(site(c) || '') + '</small></span></span>'
+				return '<div class="dwdc-grid g-host row" data-go="host/' + c.id + '"><span class="dwdc-nm"><span><b>' + esc(c.name) + '</b><small>' + esc(site(c) || '') + '</small></span></span>'
 					+ clientCell(c)
 					+ '<span>' + (on ? '<b class="green">Active</b>' + (c.sub.method ? '<small class="dwdc-sm">&nbsp;· ' + esc(c.sub.method) + '</small>' : '') : (c.sub ? '<span class="mut">' + esc(c.sub.status) + '</span>' : '<span class="mut">None</span>')) + '</span>'
 					+ '<span class="b">' + money(on && num(c.sub.amount) ? c.sub.amount : c.hosting) + '</span>'
@@ -721,8 +725,9 @@
 	}
 	function detailsCard(c) {
 		var row = function (k, v) { return '<dt>' + k + '</dt><dd>' + (v || '<span class="mut">—</span>') + '</dd>'; };
+		var k = clientOf(c) || {}, em = c.email || k.email, ph = c.phone || k.phone;
 		return '<section class="dwdc-card pad"><div class="dwdc-cardh"><h2>Details</h2><button class="dwdc-lnk" data-edit>Edit</button></div><dl class="dwdc-dl">'
-			+ row('Contact', esc(c.person)) + row('Email', c.email ? '<a href="mailto:' + esc(c.email) + '">' + esc(c.email) + '</a>' : '') + row('Phone', esc(c.phone))
+			+ row('Contact', esc(k.name || c.person)) + row('Email', em ? '<a href="mailto:' + esc(em) + '">' + esc(em) + '</a>' : '') + row('Phone', esc(ph))
 			+ row('Company', esc(c.company)) + row('Website', site(c) ? '<a href="https://' + esc(site(c)) + '" target="_blank" rel="noopener">' + esc(site(c)) + '</a>' : '')
 			+ row('Project', esc(c.job)) + row('Markup', c.markup ? '<a href="' + esc(url(c.markup)) + '" target="_blank" rel="noopener">Open Markup link</a>' : '<button class="dwdc-lnk" data-markup="' + c.id + '">Add link</button>') + row('Source', esc(sourceOf(c))) + row('Started', fmt(c.created, true)) + '</dl></section>';
 	}
@@ -750,6 +755,44 @@
 					+ (j.cur ? '<i></i>' : '<button class="dwdc-del" data-del-job="' + j.i + '" title="Remove">' + ic('x', 14) + '</button>') + '</div>';
 			}).join('') + '</div>' : '<p class="dwdc-mutp">No jobs logged yet.</p>')
 			+ '<form class="dwdc-logjob"><input name="title" placeholder="Log an older job" required><input name="price" placeholder="$" inputmode="decimal"><input name="date" placeholder="When"><button class="dwdc-btn2">Log</button></form></section>';
+	}
+	/* ---------- hosting profile (one hosted website) ---------- */
+	function hostPays(c) {
+		var list = (c.payments || []).filter(function (x) { return x.status === 'paid' && /host|renew/i.test([x.note, x.ref].join(' ')); }).map(function (x) {
+			return { date: x.date, amount: x.amount, by: x.source, what: x.note || x.ref || 'Hosting payment' };
+		});
+		(c.files || []).forEach(function (e) {
+			if (!/hosting/i.test(e.form || '')) { return; }
+			var ord = (e.fields || []).filter(function (f) { return f.id === 'order'; })[0];
+			var amt = ord ? (String(ord.value).match(/\$([\d.,]+)/) || [])[1] : '';
+			list.push({ date: e.date, amount: amt, by: 'WooCommerce', what: (e.form || 'Hosting order') + (ord ? ' · ' + String(ord.value).split(' ')[0] : '') });
+		});
+		return list.sort(function (a, b) { return (d(a.date) || 0) < (d(b.date) || 0) ? 1 : -1; });
+	}
+	function hostView(id) {
+		var c = S.full[id] || contact(id);
+		if (!c) { return '<div class="dwdc-card">' + emptyRow('Loading…') + '</div>'; }
+		var full = !!S.full[id], k = clientOf(c), on = subActive(c), n = c.renewal ? daysTo(c.renewal) : null;
+		var pays = full ? hostPays(c) : [], dom = site(c) || c.name;
+		var st = on ? ['Auto-renew', 'blue', 'Charged automatically' + (c.sub.next ? ' · next ' + fmt(c.sub.next, true) : '')]
+			: n === null ? ['No date', 'steel', 'Set the renewal date in Details']
+			: n < 0 ? ['Overdue', 'deep', 'Was due ' + fmt(c.renewal, true)]
+			: n <= 30 ? ['Due soon', 'blue', 'Due ' + fmt(c.renewal, true)]
+			: ['Paid', 'navy', 'Paid through ' + fmt(c.renewal, true)];
+		var btn = function (cls, attr, label) { return '<button class="dwdc-btn2 ' + cls + '" ' + attr + '>' + label + '</button>'; };
+		return '<a class="dwdc-back" href="#hosting">' + ic('left', 14) + 'Back to hosting</a>'
+			+ '<div class="dwdc-card dwdc-chead"><div class="dwdc-chead-t"><h2>' + esc(dom) + ' ' + pill(st[0], st[1]) + '</h2><p>'
+			+ [k ? 'Client: <a href="#cl/' + k.id + '"><b>' + esc(k.name) + '</b></a>' : esc(c.person || ''), c.website ? '<a href="' + esc(url(c.website)) + '" target="_blank" rel="noopener">Visit site</a>' : '', '<a href="#client/' + c.id + '">Project: ' + esc(c.name) + '</a>'].filter(Boolean).join('<i>·</i>') + '</p></div>'
+			+ '<div class="dwdc-chead-a">' + btn('', 'data-edit', S.edit ? 'Close edit' : 'Edit') + btn('solid navy', 'data-act="pay" data-project="' + c.id + '" data-renew="1"', 'Log renewal payment') + '</div></div>'
+			+ '<div class="dwdc-minis">' + mini('navy', 'Price', money(c.hosting) + ' / year')
+			+ mini('deep', 'Years paid', pays.length || (on ? 1 : 0))
+			+ '<div class="dwdc-mini"><small>Status</small><strong class="' + (n !== null && n < 0 && !on ? 'deep' : '') + '">' + esc(st[0]) + '</strong><span class="dwdc-mini-sub">' + esc(st[2]) + '</span></div></div>'
+			+ '<div class="dwdc-two"><div class="dwdc-col">' + hostCard(c) + (S.edit ? editCard(c) : detailsCard(c)) + '</div>'
+			+ '<div class="dwdc-col"><section class="dwdc-card"><div class="dwdc-cardh pad2"><h2>Payments <span class="dwdc-cnt">' + pays.length + '</span></h2></div>'
+			+ (!full ? emptyRow('Loading…') : pays.length ? '<div class="pad2">' + pays.map(function (x) {
+				return '<div class="dwdc-pay"><span><b>' + fmt(x.date, true) + '</b><small>' + esc([x.what, x.by].filter(Boolean).join(' · ')) + '</small></span><b>' + (num(x.amount) ? money(x.amount) : '—') + '</b></div>';
+			}).join('') + '</div>' : emptyRow('No hosting payments recorded yet. Payments through the website (Stripe/WooCommerce) show up here automatically, or use “Log renewal payment”.'))
+			+ '</section></div></div>';
 	}
 	function hostCard(c) {
 		var on = subActive(c), n = c.renewal ? daysTo(c.renewal) : null;
@@ -795,7 +838,8 @@
 				+ '<label class="wide"><span>Project</span><select name="project" class="dwdc-sel" required><option value="">Choose a project…</option>' + opts.map(function (c) { return '<option value="' + c.id + '"' + (c.id === m.project ? ' selected' : '') + '>' + esc(c.name + (clientName(c) && clientName(c) !== c.name ? ' · ' + clientName(c) : '') + (num(c.balance) ? ' · ' + money(c.balance) + ' owed' : '')) + '</option>'; }).join('') + '</select></label>'
 				+ inp('amount', 'Amount ($)', 'e.g. 1500') + '<label><span>Date</span><input name="date" type="date" value="' + esc(v.date || DWDC.today) + '"></label>'
 				+ '<label><span>Paid by</span><select name="method" class="dwdc-sel">' + ['Stripe', 'PayPal', 'Zelle', 'Upwork', 'Check', 'Cash', 'Bank transfer', 'Venmo', 'Other'].map(function (o) { return '<option>' + o + '</option>'; }).join('') + '</select></label>'
-				+ inp('note', 'Note', 'e.g. Deposit, final payment, hosting')
+				+ inp('note', 'Note', 'e.g. Deposit, final payment, hosting', '', false)
+				+ '<label class="wide dwdc-chkl"><input type="checkbox" name="renew" value="1"' + (m.renew ? ' checked' : '') + '> This is a hosting renewal (moves the renewal date a year ahead)</label>'
 				+ '</div><p class="dwdc-mutp">It’s added to the project’s payment history and taken off what they owe.</p><div class="dwdc-farow end"><button type="button" class="dwdc-btn2" data-close-modal>Cancel</button><button class="dwdc-btn">Log payment</button></div></form>';
 		} else if (m.type === 'newclient') {
 			body = '<form class="dwdc-modal dwdc-newclientf">' + head('Clients', 'New', 'client') + '<div class="dwdc-fgrid">'
@@ -889,7 +933,7 @@
 		}
 		if ((el = t.closest('[data-act]'))) {
 			var a = el.getAttribute('data-act');
-			S.modal = a === 'pay' ? { type: 'pay', project: +el.getAttribute('data-project') || (route().view === 'client' ? route().id : 0), vals: {} } : a === 'lead' ? { type: 'lead', vals: {} } : a === 'newclient' ? { type: 'newclient', vals: {} } : { type: 'job', client: +el.getAttribute('data-client') || 0, q: '', vals: {} };
+			S.modal = a === 'pay' ? { type: 'pay', renew: !!el.getAttribute('data-renew'), project: +el.getAttribute('data-project') || (route().view === 'client' || route().view === 'host' ? route().id : 0), vals: el.getAttribute('data-renew') ? { note: 'Hosting renewal' } : {} } : a === 'lead' ? { type: 'lead', vals: {} } : a === 'newclient' ? { type: 'newclient', vals: {} } : { type: 'job', client: +el.getAttribute('data-client') || 0, q: '', vals: {} };
 			render(); focusIn(a === 'job' && !S.modal.client ? '.dwdc-pick' : '[name=name]'); return;
 		}
 		if (t.closest('select, input, textarea, summary, label')) { return; }
@@ -1102,7 +1146,7 @@
 		var m = /[?&]contact=(\d+)/.exec(location.search), em = /[?&]email=([^&]+)/.exec(location.search);
 		var who = m ? contact(+m[1]) : em ? S.contacts.find(function (c) { return c.email && c.email.toLowerCase() === decodeURIComponent(em[1]).toLowerCase(); }) : null;
 		if (who) { location.hash = 'client/' + who.id; }
-		var rr = route(); if (rr.view === 'client') { load(rr.id); }
+		var rr = route(); if (rr.view === 'client' || rr.view === 'host') { load(rr.id); }
 		render(true);
 	}).catch(function (e) { app.innerHTML = '<p class="dwdc-loading">Couldn’t load Client Desk: ' + esc(e.message) + '</p>'; });
 })();

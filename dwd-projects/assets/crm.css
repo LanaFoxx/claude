@@ -428,3 +428,8 @@ select.dwdc-sel[class*=pm-] option { background: #fff; color: #0B203D; font-weig
 .dwdc-grid.row .dwdc-pname { max-width: 100%; }
 .g-projects { grid-template-columns: minmax(250px, 2fr) minmax(170px, 1.2fr) 90px 90px 80px 130px minmax(130px, 1.1fr); }
 .dwdc-grid.row .dwdc-pname { white-space: normal; overflow: visible; }
+.dwdc-mini-sub { display: block; font-size: 12.5px; color: var(--sec); margin-top: 2px; }
+.dwdc-chkl { display: flex !important; align-items: center; gap: 10px; font-size: 13.5px; color: var(--navy); }
+.dwdc-chkl input { width: 18px !important; height: 18px !important; flex: none; }
+.dwdc-pay b { font-weight: 700; }
+.dwdc .dwdc-chkl input[type=checkbox] { -webkit-appearance: checkbox; appearance: auto; width: 18px !important; height: 18px !important; min-height: 0 !important; padding: 0 !important; border-radius: 4px !important; margin: 0; accent-color: #0B203D; }

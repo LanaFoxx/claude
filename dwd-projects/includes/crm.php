@@ -828,6 +828,12 @@ add_action( 'rest_api_init', function () {
 		if ( $bal > 0 ) {
 			update_post_meta( $id, '_dwdc_balance', (string) max( 0, round( $bal - $amt, 2 ) ) );
 		}
+		// A hosting renewal moves the renewal date a year on (from the old date, or the payment date if that's later).
+		if ( $r->get_param( 'renew' ) ) {
+			$cur  = (string) get_post_meta( $id, '_dwdc_renewal', true );
+			$base = $cur && $cur > $date ? $cur : $date;
+			update_post_meta( $id, '_dwdc_renewal', gmdate( 'Y-m-d', strtotime( '+1 year', strtotime( $base ) ) ) );
+		}
 		if ( ! get_post_meta( $id, '_dwdc_pay_method', true ) ) {
 			update_post_meta( $id, '_dwdc_pay_method', $method );
 		}
