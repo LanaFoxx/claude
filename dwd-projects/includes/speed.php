@@ -38,3 +38,13 @@ add_filter( 'sgo_css_combine_exclude', function ( $exclude ) {
 	$exclude[] = 'dwdp-front';
 	return $exclude;
 } );
+
+/** jQuery is only used by scripts in the footer, so load it there instead of blocking the first paint. */
+add_action( 'wp_default_scripts', function ( $scripts ) {
+	if ( is_admin() || wp_doing_ajax() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) || in_array( $GLOBALS['pagenow'] ?? '', array( 'wp-login.php', 'wp-register.php' ), true ) ) {
+		return;
+	}
+	foreach ( array( 'jquery', 'jquery-core', 'jquery-migrate' ) as $h ) {
+		$scripts->add_data( $h, 'group', 1 );
+	}
+} );
