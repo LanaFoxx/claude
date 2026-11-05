@@ -470,3 +470,7 @@ select.dwdc-stage.t-green { background-color: #E6F6EE !important; color: #17824F
 .dwdc-modal.wide { width: min(760px, calc(100vw - 24px)); }
 .dwdc-qa.big { margin: 8px 0 14px !important; padding: 16px 18px; }
 .dwdc-qa.big dd { font-size: 14.5px; line-height: 1.55; }
+/* rule: never dark text on a solid blue background — always white */
+.dwdc-mklink, .dwdc-mklink .dwdc-ic, .dwdc-mklink:hover { color: #fff !important; }
+select.dwdc-sel.pm-stripe { color: #fff !important; }
+.dwdc-subbox.ok > span, .dwdc-qact.blue *, .dwdc-cnt, .dwdc-owepill, .dwdc-me-av { color: #fff !important; }
