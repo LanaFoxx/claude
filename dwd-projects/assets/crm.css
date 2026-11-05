@@ -989,3 +989,36 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 .dwdc-trends li i { width: 26px; height: 26px; font-size: 11px; margin-top: 0; }
 .dwdc-trends-foot { font-size: 13.5px; }
 @media (max-width: 768px) { .dwdc-trends li { font-size: 15.5px; } }
+/* ===== Phones, round 2 ===== */
+@media (max-width: 768px) {
+  /* Busiest months: all 12 months fit the screen; best month underneath each year */
+  .dwdc-bm { overflow: visible; }
+  .dwdc-bm-row { min-width: 0 !important; grid-template-columns: 38px repeat(12, minmax(0, 1fr)) !important; grid-template-rows: 72px auto; column-gap: 3px !important; height: auto !important; padding: 18px 0 10px !important; }
+  .dwdc-bm-row.head { grid-template-rows: auto; padding: 0 0 6px !important; }
+  .dwdc-bm-row.head span { font-size: 8.5px !important; letter-spacing: 0 !important; }
+  .dwdc-bm-row.head span:last-child { display: none; }
+  .dwdc-bm-y { font-size: 13px !important; align-self: end; }
+  .dwdc-bm-c { grid-row: 1; }
+  .dwdc-bm-c em { font-size: 9.5px !important; white-space: nowrap; margin-left: -6px; margin-right: -6px; }
+  .dwdc-bm-best { grid-column: 1 / -1; grid-row: 2; flex-direction: row !important; align-items: baseline; gap: 6px !important; padding: 8px 0 0 !important; }
+  .dwdc-bm-best b { font-size: 13.5px !important; } .dwdc-bm-best span { font-size: 12.5px !important; }
+  .dwdc-mcard.bm .dwdc-cardh h2 { flex-wrap: wrap; } .dwdc-bm-sub { margin-left: 0 !important; flex-basis: 100%; margin-top: 4px; }
+  /* project page: Price / Paid / Owed / Due as a 2x2 grid */
+  .dwdc .dwdc-minis { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
+  .dwdc .dwdc-mini { padding: 12px 14px !important; min-width: 0; }
+  .dwdc .dwdc-mini strong { font-size: 22px !important; }
+  /* home: no empty gaps when the boxes stack */
+  .dwdc-row3 .dwdc-dbody { flex: none !important; }
+  .cd-trends > .dwdc-dhead { flex-wrap: wrap; gap: 8px 12px; }
+  .cd-trends > .dwdc-dhead h2 { flex-basis: 100%; }
+  /* header buttons: New + Update side by side, Log Payment full width */
+  .dwdc-ph-tools .dwdc-ph-btn.primary { flex-basis: 100%; }
+}
+@media (max-width: 768px) {
+  .dwdc-bm-y { grid-column: 1 !important; grid-row: 1 !important; }
+  .dwdc-row3 { grid-template-columns: 1fr !important; grid-auto-rows: auto !important; align-items: start !important; }
+  .dwdc-row3 > .dwdc-dcard { height: auto !important; min-height: 0 !important; }
+  .dwdc-row3 .dwdc-dbody { min-height: 0 !important; justify-content: flex-start !important; }
+  .dwdc-collapse:not(.open) { padding-bottom: 20px; }
+}
+@media (max-width: 768px) { .dwdc .dwdc-tint-space { display: none !important; } }
