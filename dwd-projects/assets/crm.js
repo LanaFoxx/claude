@@ -281,7 +281,7 @@
 		var done = D.todos.filter(function (t) { return t.done; }).sort(function (a, b) { return (b.done_at || '') < (a.done_at || '') ? -1 : 1; });
 		var G = S.pGoogle, GL = G && G.last;
 		if (!G && !S.pGoogleLoading) { S.pGoogleLoading = true; api('/personal/google').then(function (x) { S.pGoogle = x; render(); }).catch(function () {}); }
-		return '<section class="dwdc-card"><form class="dwdc-addbar home" data-pform="todos"><input name="text" placeholder="Add something to do…" autocomplete="off" required><input name="due" type="date"><button class="dwdc-btn">Add</button></form>'
+		return '<section class="dwdc-card dwdc-ptodo"><div class="dwdc-cardh pad2"><h2>My To-Dos <span class="dwdc-cnt">' + open.length + '</span></h2></div><form class="dwdc-ptadd" data-pform="todos"><input name="text" placeholder="Add something to do…" autocomplete="off" required><input name="due" type="date" title="Due date (optional)"><button class="dwdc-btn">' + ic('plus', 14) + 'Add</button></form>'
 			+ (open.length ? '<div class="dwdc-todos">' + open.map(pTodoRow).join('') + '</div>' : emptyRow('Nothing on your list.'))
 			+ (done.length ? '<button class="dwdc-donebtn" data-pshowdone>' + (S.pShowDone ? 'Hide' : 'Show') + ' completed <b>' + done.length + '</b></button>' + (S.pShowDone ? '<div class="dwdc-todos donelist">' + done.slice(0, 40).map(pTodoRow).join('') + '</div>' : '') : '')
 			+ '</section>'
