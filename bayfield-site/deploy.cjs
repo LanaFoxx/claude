@@ -231,5 +231,7 @@ async function setConditions(p, postId, conditions) {
   }
 
   fs.writeFileSync(PREP, JSON.stringify(prep, null, 1));
+  // Clear SiteGround's page + combined-CSS cache so visitors never get stale styles.
+  try { await p.goto(`${SITE}/wp-admin/`, { waitUntil: 'domcontentloaded' }); const pu = await p.$('#wp-admin-bar-SG_CachePress_Supercacher_Purge a, #wp-admin-bar-sg-cachepress-purge a'); if (pu) { await Promise.all([p.waitForLoadState('load'), pu.click()]); console.log('cache: purged'); } } catch (e) { console.log('cache purge skipped:', e.message); }
   await b.close();
 })().catch((e) => { console.error(e); process.exit(1); });

@@ -144,3 +144,16 @@ add_filter( 'sgo_lazy_load_exclude_classes', function ( $classes ) {
 add_filter( 'option_siteground_optimizer_excluded_lazy_load_classes', function ( $classes ) {
 	return array_values( array_unique( array_merge( (array) $classes, array( 'skip-lazy' ) ) ) );
 } );
+
+/* --------------------------------------------------------- cache safety */
+// SiteGround combines CSS into one cached file. When an Elementor page is saved (or Elementor
+// regenerates its CSS), clear SiteGround's cache so no visitor gets a page pointing at old styles.
+function bi_purge_sg_cache() {
+	if ( function_exists( 'sg_cachepress_purge_everything' ) ) {
+		sg_cachepress_purge_everything();
+	} elseif ( function_exists( 'sg_cachepress_purge_cache' ) ) {
+		sg_cachepress_purge_cache();
+	}
+}
+add_action( 'elementor/document/after_save', 'bi_purge_sg_cache' );
+add_action( 'elementor/core/files/clear_cache', 'bi_purge_sg_cache' );
