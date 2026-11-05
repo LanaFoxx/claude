@@ -1052,16 +1052,16 @@
 			+ '<div class="dwdc-two">'
 			+ '<div class="dwdc-col">'
 			+ (S.edit ? editCard(c) : detailsCard(c))
-			+ onboardCard(c, full)
-			+ markupCard(c)
+			+ peopleCard(c)
+			+ sourceCard(c)
 			+ (num(c.hosting) ? hostCard(c) : '')
 			+ jobsCard(c)
 			+ '</div><div class="dwdc-col">'
 			+ '<section class="dwdc-card pad"><div class="dwdc-cardh"><h2>To-dos</h2><span class="dwdc-cnt">' + openN + '</span></div>'
 			+ (tasks.length ? '<div class="dwdc-todos">' + tasks.map(function (t) { return todoRow(t, true); }).join('') + '</div>' : '')
 			+ '<form class="dwdc-inlineadd" data-contact="' + c.id + '">' + ic('plus', 16) + '<input name="text" placeholder="Add a to-do for ' + esc(c.name) + '…" autocomplete="off"><input type="date" name="due" title="Due date"></form></section>'
-			+ peopleCard(c)
-			+ sourceCard(c)
+			+ onboardCard(c, full)
+			+ markupCard(c)
 			+ activityCard(c, full)
 			+ '</div></div>';
 	}
