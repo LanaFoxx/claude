@@ -451,3 +451,15 @@ select.dwdc-sel[class*=pm-] option { background: #fff; color: #0B203D; font-weig
 .cd-projects .dwdc-row2 { margin-top: auto; }
 /* white text on the blue count circles and "owed" pills */
 .dwdc-cnt, .dwdc-owepill, .dwdc-me-av { color: #fff !important; }
+/* status colors: Active blue, On hold gray, Limbo red, Completed green */
+.dwdc-sdot.t-red { background: #D9453D; } .dwdc-sdot.t-green { background: #1F9D63; }
+select.dwdc-stage.t-red { background-color: #FCE9E8 !important; color: #C0362E !important; border-color: #F4C7C3 !important; }
+select.dwdc-stage.t-green { background-color: #E6F6EE !important; color: #17824F !important; border-color: #BFE8D3 !important; }
+.dwdc-pill.t-green { background: #E6F6EE; color: #17824F; } .dwdc-pill.t-red { background: #FCE9E8; color: #C0362E; }
+/* Status column centered (header and pills) */
+.g-projects > span:nth-child(6) { justify-content: center; text-align: center; }
+.dwdc-qact.blue, .dwdc-qact.blue .dwdc-ic { color: #fff !important; }
+.dwdc-qas { grid-template-columns: repeat(3, minmax(140px, 1fr)); max-width: 520px; }
+/* no focus border/ring on the sidebar search */
+.dwdc-ssearch input, .dwdc-ssearch input:focus, .dwdc-ssearch input:focus-visible { outline: none !important; box-shadow: none !important; border: 0 !important; }
+.dwdc-ssearch:focus-within { box-shadow: none !important; background: rgba(255,255,255,.12); }

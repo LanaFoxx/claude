@@ -89,7 +89,7 @@
 
 	// Status colors: blue active, violet limbo, green done/paid, teal hosting, orange leads/owed, red overdue.
 	// Dream Desk statuses: "Pending" is the old "In limbo" (waiting on the client).
-	var TONE = { active: 'blue', limbo: 'deep', hold: 'steel', complete: 'navy', leads: 'deep', archive: 'steel', hosting: 'navy' };
+	var TONE = { active: 'blue', limbo: 'red', hold: 'steel', complete: 'green', leads: 'deep', archive: 'steel', hosting: 'navy' };
 	var LABEL = { active: 'Active', limbo: 'Limbo', hold: 'On hold', complete: 'Completed', leads: 'Lead', archive: 'Archived' };
 	function avatar() { return ''; } // client avatars removed: names carry the rows
 	function avatarOld(c, size, tone) { return '<span class="dwdc-av t-' + (tone || TONE[c.list] || 'blue') + (size ? ' s' + size : '') + '">' + esc(initials(c.name)) + '</span>'; }
@@ -187,8 +187,8 @@
 		var qa = function (cls, attr, icon, label) { return '<button class="dwdc-qact ' + cls + '" ' + attr + '>' + ic(icon, 15) + label + '</button>'; };
 		return '<header class="dwdc-top"><button class="dwdc-burger" data-menu aria-label="Menu">' + ic('menu', 20) + '</button>'
 			+ '<div class="dwdc-title"><p class="dwdc-eyebrow">' + esc(t[0]) + '</p><h1><span>' + esc(t[1]) + '</span>' + (t[2] ? ' <em>' + esc(t[2]) + '</em>' : '') + '</h1></div>'
-			+ '<div class="dwdc-qas">' + qa('qnavy', 'data-act="job"', 'plus', 'Project') + qa('', 'data-act="newclient"', 'plus', 'Client') + qa('', 'data-act="lead"', 'plus', 'Lead') + qa('blue', 'data-act="pay"', 'card', 'Log Payment')
-			+ qa('', 'data-goto="hosting"', 'server', 'Hosting') + qa('', 'data-goto="leads"', 'mail', 'Leads') + qa('', 'data-goto="archive"', 'archive', 'Archive') + '</div></header>';
+			+ '<div class="dwdc-qas">' + qa('qnavy', 'data-act="job"', 'plus', 'Project') + qa('', 'data-act="newclient"', 'plus', 'Client') + qa('', 'data-act="lead"', 'plus', 'Lead')
+			+ qa('', 'data-goto="hosting"', 'server', 'Hosting') + qa('', 'data-goto="leads"', 'mail', 'Leads') + qa('blue', 'data-act="pay"', 'card', 'Log Payment') + '</div></header>';
 	}
 
 	function render(anim) {
