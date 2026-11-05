@@ -429,3 +429,13 @@ select.dwdc-stage.t-blue { background-color: #D4EEFD !important; color: #0078BF 
 select.dwdc-stage.t-green { background-color: #CDEFDD !important; color: #137A4B !important; border-color: #96D8B5 !important; }
 select.dwdc-stage.t-red { background-color: #F9D3D0 !important; color: #B42F28 !important; border-color: #F0A7A1 !important; }
 .dwdc-pill.t-blue { background: #D4EEFD; color: #0078BF; } .dwdc-pill.t-green { background: #CDEFDD; color: #137A4B; } .dwdc-pill.t-red { background: #F9D3D0; color: #B42F28; }
+/* v2.9.13: Active = green, On hold = light green, Limbo = red, Completed = navy, Hosting = brand blue */
+.dwdc { --lgreen: #5FC48F; }
+.dwdc-tile.t-navy { background: var(--navy) !important; }
+.dwdc-grid.head.tint-lgreen { background: var(--lgreen); color: #fff; border-bottom-color: var(--lgreen); }
+.dwdc-grid.head.tint-navy, .dwdc-grid.head.tint-gray { background: var(--navy); color: #fff; border-bottom-color: var(--navy); }
+select.dwdc-stage.t-lgreen { background-color: #E2F5EA !important; color: #2E8F5E !important; border-color: #B6E3C9 !important; }
+select.dwdc-stage.t-navy { background-color: #DCE3EE !important; color: var(--navy) !important; border-color: #B9C5D6 !important; }
+.dwdc-pill.t-lgreen { background: #E2F5EA; color: #2E8F5E; } .dwdc-pill.t-navy { background: #DCE3EE; color: var(--navy); }
+.dwdc-mini.t-lgreen strong { color: #2E8F5E; } .dwdc-mini.t-navy strong { color: var(--navy); }
+.dwdc-btn2.greenl:hover { border-color: #2E8F5E; color: #2E8F5E; }

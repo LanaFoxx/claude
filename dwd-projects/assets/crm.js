@@ -73,7 +73,7 @@
 	function ic(n, size) { return '<svg class="dwdc-ic" width="' + (size || 18) + '" height="' + (size || 18) + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICON[n] + '</svg>'; }
 
 	// Status colors: blue active, violet limbo, green done/paid, teal hosting, orange leads/owed, red overdue.
-	var TONE = { active: 'blue', hold: 'green', limbo: 'red', complete: 'green', leads: 'orange', archive: 'gray', hosting: 'teal' };
+	var TONE = { active: 'green', hold: 'lgreen', limbo: 'red', complete: 'navy', leads: 'orange', archive: 'gray', hosting: 'teal' };
 	var LABEL = { active: 'Active', hold: 'On hold', limbo: 'In limbo', complete: 'Completed', leads: 'Lead', archive: 'Archived' };
 	function avatar() { return ''; } // client avatars removed: names carry the rows
 	function avatarOld(c, size, tone) { return '<span class="dwdc-av t-' + (tone || TONE[c.list] || 'blue') + (size ? ' s' + size : '') + '">' + esc(initials(c.name)) + '</span>'; }
@@ -201,9 +201,9 @@
 		var entries = S.contacts.filter(function (c) { return c.entry_count && c.list !== 'archive'; }).sort(function (a, b) { return a.last_entry_date < b.last_entry_date ? 1 : -1; }).slice(0, 6);
 		var stop = function (id) { return ' data-scroll="sec-' + id + '"'; };
 		return '<div class="dwdc-card pad dwdc-tilebox"><div class="dwdc-tiles">'
-			+ tile('blue', 'Active jobs', active.length, money(owed(working())) + ' owed on open jobs', '', stop('active'))
-			+ tile('green', 'Completed', done.length, money(billed) + ' billed all-time', '', stop('complete'))
-			+ tile('teal', 'Hosting clients', host.length, money(annual) + '/yr' + (next ? ' · next renewal ' + fmt(next.renewal) : ''), 'hosting')
+			+ tile('green', 'Active jobs', active.length, money(owed(working())) + ' owed on open jobs', '', stop('active'))
+			+ tile('navy', 'Completed', done.length, money(billed) + ' billed all-time', '', stop('complete'))
+			+ tile('blue', 'Hosting clients', host.length, money(annual) + '/yr' + (next ? ' · next renewal ' + fmt(next.renewal) : ''), 'hosting')
 			+ '</div></div>'
 			+ jobTable('active', 'Active jobs', 'Nothing in progress right now.', '<div class="dwdc-sechr">' + (nLeads ? '<a class="dwdc-lnk" href="#leads">' + nLeads + ' new lead' + (nLeads === 1 ? '' : 's') + ' / onboarding ' + ic('right', 14) + '</a>' : '') + '<button class="dwdc-btn sm" data-act="job">' + ic('plus', 14) + 'Add job</button></div>')
 			+ jobTable('hold', 'On hold', 'No jobs on hold. Paused jobs go here.')
