@@ -186,7 +186,7 @@ function button(label, url, variant = 'gold', o = {}) {
 
 function image(media, o = {}) {
   return widget('image', {
-    image: media, image_size: 'full', align: o.align || 'center',
+    image: media, image_size: o.size || 'full', align: o.align || 'center',
     ...(o.width !== undefined ? resp('width', Array.isArray(o.width) ? o.width : [o.width], (v) => (typeof v === 'object' ? v : px(v))) : {}),
     ...(o.link ? { link_to: 'custom', link: link(o.link) } : {}),
     ...(o.settings || {}),
@@ -233,7 +233,7 @@ function header(m, menuId) {
     sticky: 'top', sticky_on: ['desktop', 'tablet', 'mobile'], z_index: 50,
   }, [
     // 1255x260 lockup at 50px tall -> 241px wide.
-    image(m.logoLight, { width: [241, 212, 172], link: '/', align: 'left', settings: { _element_width: 'initial', _element_custom_width: px(241), _element_custom_width_tablet: px(212), _element_custom_width_mobile: px(172), _flex_size: 'none' } }),
+    image(m.logoLight482, { width: [241, 212, 172], link: '/', align: 'left', settings: { _element_width: 'initial', _element_custom_width: px(241), _element_custom_width_tablet: px(212), _element_custom_width_mobile: px(172), _flex_size: 'none' } }),
     widget('nav-menu', {
       menu: menuId, layout: 'horizontal', align_items: 'center', pointer: 'none',
       dropdown: 'tablet', toggle: 'burger', toggle_align: 'right', full_width: 'stretch',
@@ -287,7 +287,7 @@ function footer(m) {
       padding: box(64, 40, 40, 40), padding_mobile: box(56, 24, 32, 24),
     }, [
       stack([
-        image(m.logoLight, { width: 250, link: '/', align: 'left', settings: { _element_width: 'initial', _element_custom_width: px(250), _element_custom_width_mobile: px(100, '%'), custom_css: 'selector img { max-width: 250px; }' } }),
+        image(m.logoLight482, { width: 250, link: '/', align: 'left', settings: { _element_width: 'initial', _element_custom_width: px(250), _element_custom_width_mobile: px(100, '%'), custom_css: 'selector img { max-width: 250px; }' } }),
         eyebrow('Advocate. Protect. Deliver.', C.rose, 'left', { size: 13, weight: 600, ls: 0.24 }),
         heading('There’s strength in your story.', 'p', 17, C.ivory, 'left', { lh: 1.3, weight: 400, style: 'italic', settings: { _margin: box(6, 0, 0, 0) } }), // Jen: catch phrase, smaller and italic
       ], { gap: 18 }),
@@ -308,7 +308,7 @@ function footer(m) {
       border_border: 'solid', border_width: box(1, 0, 0, 0), border_color: 'rgba(196,160,141,0.2)',
     }, [
       text('© 2026 Cabrera Torres Law Firm. All rights reserved.', { color: C.smoke, size: 13, settings: { _element_width: 'auto' } }),
-      text(`Attorney advertising. Prior results do not guarantee a similar outcome. <a href="/privacy-policy/">Privacy Policy</a> · <a href="/sms-terms/">SMS Terms</a>`, { color: C.smoke, size: 13, linkColor: C.sand, linkHover: C.rose, settings: { _element_width: 'auto' } }),
+      text(`Attorney advertising. Prior results do not guarantee a similar outcome. <a href="/privacy-policy/" style="text-decoration:underline;text-underline-offset:3px">Privacy Policy</a> · <a href="/sms-terms/" style="text-decoration:underline;text-underline-offset:3px">SMS Terms</a>`, { color: C.smoke, size: 13, linkColor: C.sand, linkHover: C.rose, settings: { _element_width: 'auto' } }),
     ]),
   ], false)];
 }

@@ -30,12 +30,15 @@ const hero = (m) => container({
   grid_gaps: gap(32, 0), grid_align_items: 'end', min_height: px(700), min_height_tablet: px(0), min_height_mobile: px(0),
   padding: box(0, 40, 0, 40), padding_tablet: box(0, 32, 0, 32), padding_mobile: box(0, 24, 0, 24),
   background_background: 'classic', background_color: C.heroBlack, background_image: m.office,
+  background_image_tablet: m.officeMd, background_image_mobile: m.officeMd, // 28KB instead of 78KB under the dark overlay
+  css_classes: 'e-no-lazyload', // LCP image: paint it as soon as it loads, not after Elementor's lazy-load script
   background_position: 'initial', background_xpos: px(72, '%'), background_ypos: px(50, '%'), background_size: 'cover', background_repeat: 'no-repeat',
   overflow: 'hidden',
   custom_css: `selector { position: relative; }
 selector::before { content: ""; position: absolute; inset: 0; background: ${HERO_SCRIM}; pointer-events: none; z-index: 0; }
 selector > .e-con-inner { position: relative; z-index: 1; }
-@media (max-width: 1024px) { selector::before { background: rgba(28,19,16,.88); } }`,
+@media (max-width: 1024px) { selector::before { background: rgba(28,19,16,.88); } }
+@media (max-width: 767px) { selector { background-image: none !important; } }`, // phones: the photo was ~invisible under the overlay; the headline becomes the LCP
 }, [
   stack([
     heading("There's Strength in Your Story.<br>And Purpose Behind Ours.", 'h1', [64, 52, 42], C.ivory, 'left', { lh: 1.06, alignM: 'center', settings: { align_tablet: 'center' } }),
@@ -56,6 +59,7 @@ selector > .e-con-inner { position: relative; z-index: 1; }
   }, [
     // Jen (Markup): her original hand-to-chin cream-dress photo (the handoff's retouched hero-jen was "too AI").
     image(m.heroJenReal, {
+      size: 'large', // 538x1024 (50KB): enough for its 300-330px slot at 1.75x
       align: 'left', settings: {
         align_tablet: 'center', align_mobile: 'center',
         custom_css: 'selector img { display: block; width: auto; max-width: 100%; height: 620px; max-height: 620px; object-fit: contain; object-position: bottom; filter: drop-shadow(0 30px 50px rgba(0,0,0,.55)); }\n@media (max-width: 1024px) { selector img { height: auto; max-height: none; max-width: 300px; width: 100%; } }',
@@ -112,7 +116,7 @@ const story = (m) => container({
   // below its native size so it stays sharp, edges feathered into the background.
   // Jen (Markup): "the picture needs to be pushed up": centered vertically beside the text, not sitting on the bottom.
   container({ content_width: 'full', flex_direction: 'column', flex_justify_content: 'center', flex_align_items: 'center', padding: box(104, 24, 104, 48), padding_tablet: box(56, 24, 0, 24), padding_mobile: box(40, 24, 0, 24) }, [
-    image(m.jenDeskPortrait, { settings: { custom_css: `selector img { display: block; width: auto; max-width: 100%; height: 600px; max-height: 600px; object-fit: contain; -webkit-mask-image: ${STORY_MASK}; -webkit-mask-composite: source-in; mask-image: ${STORY_MASK}; mask-composite: intersect; }\n@media (max-width: 1024px) { selector img { height: auto; max-height: none; width: 100%; max-width: 480px; } }` } }),
+    image(m.jenDeskPortrait, { settings: { custom_css: `selector img { display: block; width: auto; max-width: 100%; height: 600px; max-height: 600px; object-fit: contain; -webkit-mask-image: ${STORY_MASK}; -webkit-mask-composite: source-in; mask-image: ${STORY_MASK}; mask-composite: intersect; }\n@media (max-width: 1024px) { selector img { height: auto; max-height: none; width: 100%; max-width: 480px; aspect-ratio: 640 / 744; } }` } }), // aspect-ratio: no layout shift when it lazy-loads
   ]),
   stack([
     kicker('The Story Behind the Firm'),
