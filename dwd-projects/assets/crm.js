@@ -168,6 +168,45 @@
 	function isInstalled() { return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true; }
 	function isIOS() { return /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); }
 	function isPhone() { return /android|iphone|ipod|mobile/i.test(navigator.userAgent); }
+	/* ---------- Quote of the day (non-dual teachers) — same quote all day, a new one each morning ---------- */
+	var QUOTES = [
+		['We’re all just walking each other home.', 'Ram Dass'],
+		['The quieter you become, the more you can hear.', 'Ram Dass'],
+		['Treat everyone you meet like God in drag.', 'Ram Dass'],
+		['If you think you’re enlightened, go spend a week with your family.', 'Ram Dass'],
+		['I would like my life to be a statement of love and compassion — and where it isn’t, that’s where my work lies.', 'Ram Dass'],
+		['Love everyone, serve everyone, remember God.', 'Neem Karoli Baba (Maharaj-ji)'],
+		['It is better to see God in everything than to try to figure it out.', 'Neem Karoli Baba (Maharaj-ji)'],
+		['Wisdom tells me I am nothing. Love tells me I am everything. Between the two my life flows.', 'Sri Nisargadatta Maharaj'],
+		['The mind creates the abyss, the heart crosses it.', 'Sri Nisargadatta Maharaj'],
+		['All you need is already within you, only you must approach your self with reverence and love.', 'Sri Nisargadatta Maharaj'],
+		['To know that you are a prisoner of your mind, that you live in an imaginary world of your own creation, is the dawn of wisdom.', 'Sri Nisargadatta Maharaj'],
+		['This is the real secret of life — to be completely engaged with what you are doing in the here and now.', 'Alan Watts'],
+		['The only way to make sense out of change is to plunge into it, move with it, and join the dance.', 'Alan Watts'],
+		['You are an aperture through which the universe is looking at and exploring itself.', 'Alan Watts'],
+		['Muddy water is best cleared by leaving it alone.', 'Alan Watts'],
+		['Trying to define yourself is like trying to bite your own teeth.', 'Alan Watts'],
+		['Nature loves courage. You make the commitment and nature will respond to that commitment by removing impossible obstacles.', 'Terence McKenna'],
+		['The cost of sanity in this society is a certain level of alienation.', 'Terence McKenna'],
+		['You are a divine being. You matter, you count. You come from realms of unimaginable power and light.', 'Terence McKenna'],
+		['Enlightenment is a destructive process. It has nothing to do with becoming better or being happier.', 'Adyashanti'],
+		['The present moment is filled with joy and happiness. If you are attentive, you will see it.', 'Thich Nhat Hanh'],
+		['Feelings come and go like clouds in a windy sky. Conscious breathing is my anchor.', 'Thich Nhat Hanh'],
+		['Walk as if you are kissing the Earth with your feet.', 'Thich Nhat Hanh'],
+		['Because you are alive, everything is possible.', 'Thich Nhat Hanh'],
+		['Smile, breathe, and go slowly.', 'Thich Nhat Hanh'],
+		['Happiness is your nature. It is not wrong to desire it. What is wrong is seeking it outside when it is inside.', 'Ramana Maharshi'],
+		['Your own Self-Realization is the greatest service you can render the world.', 'Ramana Maharshi'],
+		['Realize deeply that the present moment is all you have.', 'Eckhart Tolle'],
+		['Life is the dancer and you are the dance.', 'Eckhart Tolle']
+	];
+	function quoteBar() {
+		var d = DWDC.today || new Date().toISOString().slice(0, 10), h = 0;
+		for (var i = 0; i < d.length; i++) { h = (h * 31 + d.charCodeAt(i)) >>> 0; }
+		var q = QUOTES[h % QUOTES.length];
+		return '<div class="dwdc-quote"><span class="dwdc-quote-q">“' + esc(q[0]) + '”</span><span class="dwdc-quote-a">— ' + esc(q[1]) + '</span></div>';
+	}
+
 	function appBanner() {
 		if (isInstalled()) { return ''; }
 		try { if (localStorage.getItem('dwdcAppOff')) { return ''; } } catch (e) {}
@@ -287,7 +326,7 @@
 		} else {
 			body = ({ home: home, clients: clientsView, projects: projectsView, leads: leadsList, onboarding: onboardView, todos: todosView, hosting: hostingView, money: moneyView, reviews: reviewsView, archive: archiveView, search: searchView }[r.view] || home)();
 		}
-		app.innerHTML = sidebar(r) + '<div class="dwdc-shade-m" data-menu></div><main class="dwdc-main">' + appBanner() + top(r, t) + '<div class="dwdc-screen' + (anim ? ' in' : '') + '">' + body + '</div></main>' + modal();
+		app.innerHTML = sidebar(r) + '<div class="dwdc-shade-m" data-menu></div><main class="dwdc-main">' + quoteBar() + appBanner() + top(r, t) + '<div class="dwdc-screen' + (anim ? ' in' : '') + '">' + body + '</div></main>' + modal();
 		S.prev = r.view + r.arg;
 		syncWpMenu(r);
 		fitProjects();
@@ -401,7 +440,7 @@
 			+ (R ? '<div class="dwdc-conn-res big">' + refreshText(R) + '</div>' : '');
 		if (!S.mail && !S.mailLoading) { S.mailLoading = true; api('/upwork-mail').then(function (x) { S.mail = x; S.mailLoading = false; if (route().view === 'money') { render(); } }).catch(function () { S.mailLoading = false; }); }
 		var M = S.mail, ML = M && M.last;
-		var mail = '<div class="dwdc-conn"><h3><i class="upw"></i>Upwork emails' + '<span class="dwdc-conn-st ' + (ML ? 'on' : 'off') + '">' + (ML ? 'Connected' : 'Not set up') + '</span>' + (ML ? '<small class="dwdc-conn-last">Last checked ' + fmt(ML.at, true) + ' · ' + ML.created + ' new · ' + ML.reopened + ' reopened · ' + ML.completed + ' completed</small>' : '') + '</h3>'
+		var mail = '<div class="dwdc-conn"><h3><i class="upw"></i>Upwork emails' + '<span class="dwdc-conn-st ' + (ML ? 'on' : 'off') + '">' + (ML ? 'Connected' : 'Not set up') + '</span>' + (ML ? '<small class="dwdc-conn-last">Last checked ' + fmt(ML.at, true) + ' · ' + (ML.created + ML.reopened + ML.completed + ML.check) + ' sent for your review</small>' : '') + '</h3>'
 			+ '<p>Twice a week (Monday and Thursday mornings) your Gmail sends new Upwork “hired you”, offer and “contract ended” emails here. New contracts become Active projects (never duplicates), returning clients are reopened, and ended contracts move to Completed. Money still comes from the Upwork CSV.</p>'
 			+ '<ol><li>Open <a href="https://script.google.com/home/projects/create" target="_blank" rel="noopener"><b>script.google.com → New project</b></a> while signed in as mike@dreamwebdigital.com.</li><li>Delete what’s there, then paste this script:' + (M ? '<div class="dwdc-conn-url"><code>Dream Desk Upwork sync script</code><button class="dwdc-lnk sm2" data-copy="' + esc(M.script) + '">Copy script</button></div>' : ' <i>loading…</i>') + '</li><li>Pick <b>setup</b> in the function menu and press <b>Run</b>. Allow access to Gmail when Google asks.</li></ol></div>';
 		return bar + '<div class="dwdc-conns">' + up + mail + stripe + pp + '</div><p class="dwdc-mutp sm">Payments are matched to clients by email. Anything that doesn’t match becomes a to-do on your dashboard so you can assign it. Keys are saved on your server and never shown again.</p>';
@@ -609,9 +648,52 @@
 		var k = c ? clientOf(c) : null, cn = k ? k.name : (c ? c.person : '');
 		var tag = c ? '<a class="dwdc-ttag" href="#client/' + c.id + '">' + ic('brief', 12) + '<b>' + esc(c.name) + '</b>' + (cn && cn !== c.name ? '<span>' + esc(cn) + '</span>' : '') + '</a>' : '';
 		var meta = [t.due ? 'Due ' + fmt(t.due) : '', 'Added by Michael'].filter(Boolean).join(' · ');
-		return '<div class="dwdc-todo' + (t.done ? ' done' : '') + (small ? ' sm' : '') + '" data-toggle="' + t.id + '"><span class="dwdc-chk">' + ic('check', 12) + '</span>'
+		return '<div class="dwdc-todo' + (t.done ? ' done' : '') + (small ? ' sm' : '') + '" data-task="' + t.id + '"><span class="dwdc-chk" data-toggle="' + t.id + '" title="' + (t.done ? 'Mark not done' : 'Mark done') + '">' + ic('check', 12) + '</span>'
 			+ '<span class="dwdc-tt"><b>' + esc(t.text) + '</b>' + (small ? '' : tag + '<small>' + meta + '</small>') + '</span>'
 			+ due(t) + '<button class="dwdc-del" data-del-task="' + t.id + '" title="Delete to-do">' + ic('x', 14) + '</button></div>';
+	}
+
+	function setDone(tid, val) {
+		var task = S.tasks.find(function (x) { return x.id === tid; });
+		if (!task) { return; }
+		task.done = val === undefined ? !task.done : val;
+		task.done_at = task.done ? new Date().toISOString().slice(0, 19).replace('T', ' ') : '';
+		render();
+		api('/task/' + tid, 'POST', { done: task.done }).catch(fail);
+		if (task.done) { undoToast('To-do done', function () { setDone(tid, false); }); }
+	}
+	function undoToast(msg, fn) {
+		var old = document.querySelector('.dwdc-toast.undo'); if (old) { old.remove(); }
+		var t = document.createElement('div'); t.className = 'dwdc-toast undo'; t.innerHTML = '<span>' + esc(msg) + '</span><button type="button">Undo</button>';
+		t.querySelector('button').onclick = function () { t.remove(); fn(); };
+		document.body.appendChild(t); setTimeout(function () { t.classList.add('out'); }, 6000); setTimeout(function () { t.remove(); }, 6500);
+	}
+	function doneTasks() { return S.tasks.filter(function (t) { return t.done; }).sort(function (a, b) { return (b.done_at || b.created || '') < (a.done_at || a.created || '') ? -1 : 1; }); }
+	function reviewSend(what) {
+		var items = S.pending || [], off = (S.modal && S.modal.off) || {};
+		var pick = items.filter(function (x) { return !off[x.id]; }).map(function (x) { return x.id; });
+		if (!pick.length) { toast('Nothing selected', true); return; }
+		var body = what === 'approve' ? { approve: pick } : { dismiss: pick };
+		S.modal.busy = true; render();
+		api('/pending', 'POST', body).then(function (r) {
+			S.pending = items.filter(function (x) { return pick.indexOf(x.id) < 0; });
+			S.modal = S.pending.length ? { type: 'review', vals: {}, off: {} } : null;
+			toast(what === 'approve' ? r.approved + ' added to Dream Desk' + (r.errors.length ? ' · ' + r.errors.length + ' failed' : '') : r.dismissed + ' dismissed');
+			return reload();
+		}).then(render).catch(function (e) { if (S.modal) { S.modal.busy = false; } fail(e); });
+	}
+	function loadPending(auto) {
+		return api('/pending').then(function (x) {
+			S.pending = x.items || [];
+			var seen = ''; try { seen = sessionStorage.getItem('dwdcRevSeen') || ''; } catch (e) {}
+			var sig = S.pending.map(function (i) { return i.id; }).join(',');
+			if (auto && S.pending.length && seen !== sig && !S.modal) { try { sessionStorage.setItem('dwdcRevSeen', sig); } catch (e) {} S.modal = { type: 'review', vals: {}, off: {} }; }
+			render();
+		}).catch(function () {});
+	}
+	function reviewBar() {
+		var n = (S.pending || []).length;
+		return n ? '<button class="dwdc-revbar" data-review><span class="dwdc-revdot">' + n + '</span><span><b>' + n + ' new update' + (n === 1 ? '' : 's') + ' from your email</b><small>Review and approve before they’re added to Dream Desk</small></span>' + ic('right', 16) + '</button>' : '';
 	}
 
 	/* ---------- Dream Desk: helpers ---------- */
@@ -673,8 +755,10 @@
 		var td = openTasks().sort(function (a, b) { return (a.due || '9') < (b.due || '9') ? -1 : 1; });
 		var tl = card('cd-plain cd-todo', '<header class="dwdc-dhead"><h2>To-Do List <span class="dwdc-cnt">' + td.length + '</span></h2></header>',
 			'<form class="dwdc-addbar home"><input name="text" placeholder="Add something we need to do..." autocomplete="off" required><button class="dwdc-btn">Add</button></form>'
-			+ (td.length ? '<div class="dwdc-todos">' + td.map(function (t) { return todoRow(t); }).join('') + '</div>' : emptyRow('Nothing on the list. Nice.')));
-		return '<div class="dwdc-row3">' + c2 + c3 + c1 + '</div><div class="dwdc-row2c">' + card('cd-plain cd-trends', '<header class="dwdc-dhead"><h2>Patterns &amp; Trends</h2><button class="dwdc-askbtn light" data-askai>' + ic('bolt', 14) + 'Ask AI</button><a href="#money">Money Stats ' + ic('right', 14) + '</a></header>', trendsBox()) + tl + '</div>';
+			+ (td.length ? '<div class="dwdc-todos">' + td.map(function (t) { return todoRow(t); }).join('') + '</div>' : emptyRow('Nothing on the list. Nice.'))
+			+ (doneTasks().length ? '<button class="dwdc-donebtn" data-showdone>' + (S.showDone ? 'Hide' : 'Show') + ' completed <b>' + doneTasks().length + '</b></button>'
+				+ (S.showDone ? '<div class="dwdc-todos donelist">' + doneTasks().slice(0, 25).map(function (t) { return todoRow(t); }).join('') + '</div>' : '') : ''));
+		return reviewBar() + '<div class="dwdc-row3">' + c2 + c3 + c1 + '</div><div class="dwdc-row2c">' + card('cd-plain cd-trends', '<header class="dwdc-dhead"><h2>Patterns &amp; Trends</h2><button class="dwdc-askbtn light" data-askai>' + ic('bolt', 14) + 'Ask AI</button><a href="#money">Money Stats ' + ic('right', 14) + '</a></header>', trendsBox()) + tl + '</div>';
 	}
 
 	/* ---------- All Clients ---------- */
@@ -1344,6 +1428,33 @@
 				+ '<div class="dwdc-mo-nav"><button class="dwdc-btn2 sm" data-month="' + shift(-1) + '">‹ ' + MNL[(mo + 10) % 12].slice(0, 3) + '</button><button class="dwdc-btn2 sm" data-month="' + shift(1) + '">' + MNL[mo % 12].slice(0, 3) + ' ›</button></div>'
 				+ body + '</div>';
 		}
+		if (m.type === 'task') {
+			var tk = S.tasks.find(function (x) { return x.id === m.id; });
+			if (!tk) { S.modal = null; return ''; }
+			var tc = tk.contact ? contact(tk.contact) : null, tcl = tc ? clientOf(tc) : null;
+			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal dwdc-taskm">' + head(tk.done ? 'Completed to-do' : 'To-do', 'Task', 'details')
+				+ '<p class="dwdc-taskm-t' + (tk.done ? ' done' : '') + '">' + esc(tk.text).replace(/\n/g, '<br>') + '</p>'
+				+ '<dl class="dwdc-taskm-d">'
+				+ (tc ? '<dt>Project</dt><dd><a href="#client/' + tc.id + '" data-close-modal>' + esc(tc.name) + '</a>' + (tcl ? ' · ' + esc(tcl.name) : '') + '</dd>' : '')
+				+ '<dt>Due</dt><dd>' + (tk.due ? fmt(tk.due) : 'No date') + '</dd>'
+				+ '<dt>Added</dt><dd>' + (tk.created ? fmt(tk.created.slice(0, 10)) : '—') + '</dd>'
+				+ (tk.done ? '<dt>Completed</dt><dd>' + (tk.done_at ? fmt(tk.done_at.slice(0, 10)) : 'Yes') + '</dd>' : '')
+				+ '</dl><div class="dwdc-farow end"><button type="button" class="dwdc-btn2 danger" data-del-task="' + tk.id + '">Delete</button>'
+				+ '<button type="button" class="dwdc-btn" data-toggle="' + tk.id + '">' + ic('check', 14) + (tk.done ? 'Mark not done' : 'Mark done') + '</button></div></div>';
+		}
+		if (m.type === 'review') {
+			var its = S.pending || [], off = m.off || {}, nOn = its.filter(function (x) { return !off[x.id]; }).length;
+			var KIND = { new_project: ['New project', 'blue'], update: ['Update', 'deep'], completed: ['Completed', 'navy'], note: ['Check', 'steel'], email: ['Client email', 'deep'], markup: ['Markup link', 'deep'] };
+			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide dwdc-revm">' + head('Found in your email', 'Review', 'updates')
+				+ '<p class="dwdc-mutp">Nothing is added until you approve it. Untick anything you don’t want.</p>'
+				+ (its.length ? '<div class="dwdc-revlist">' + its.map(function (x) {
+					var k = KIND[x.kind] || ['Update', 'deep'], on = !off[x.id];
+					return '<div class="dwdc-revi' + (on ? ' on' : '') + '" data-revpick="' + x.id + '"><span class="dwdc-chk">' + ic('check', 12) + '</span><div><span class="dwdc-pill t-' + k[1] + '">' + k[0] + '</span><b>' + esc(x.title) + '</b>'
+						+ '<ul>' + (x.lines || []).map(function (l) { return '<li>' + esc(l) + '</li>'; }).join('') + '</ul><small>' + esc(x.source || '') + '</small></div></div>';
+				}).join('') + '</div>' : emptyRow('All caught up — nothing waiting for review.'))
+				+ (its.length ? '<div class="dwdc-farow end"><button type="button" class="dwdc-btn2" data-revgo="dismiss"' + (m.busy ? ' disabled' : '') + '>Dismiss ' + nOn + '</button><button type="button" class="dwdc-btn" data-revgo="approve"' + (m.busy ? ' disabled' : '') + '>' + ic('check', 14) + 'Approve ' + nOn + '</button></div>' : '')
+				+ '</div>';
+		}
 		if (m.type === 'app') {
 			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal">' + head('Dream Desk', 'Get the', 'app') + appModal()
 				+ '<div class="dwdc-farow end"><button type="button" class="dwdc-btn" data-close-modal>Done</button></div></div>';
@@ -1476,6 +1587,7 @@
 		if ((el = t.closest('[data-del-task]'))) {
 			e.stopPropagation();
 			var id = +el.getAttribute('data-del-task');
+			if (S.modal && S.modal.type === 'task') { S.modal = null; }
 			api('/task/' + id, 'DELETE').then(function () { S.tasks = S.tasks.filter(function (x) { return x.id !== id; }); render(); }).catch(fail);
 			return;
 		}
@@ -1492,12 +1604,19 @@
 			return;
 		}
 		if ((el = t.closest('[data-toggle]')) && !t.closest('a')) {
-			var tid = +el.getAttribute('data-toggle'), task = S.tasks.find(function (x) { return x.id === tid; });
-			if (!task) { return; }
-			task.done = !task.done; el.classList.toggle('done', task.done);
-			api('/task/' + tid, 'POST', { done: task.done }).then(function () { setTimeout(render, 220); }).catch(fail);
+			e.stopPropagation();
+			if (S.modal && S.modal.type === 'task') { S.modal = null; }
+			setDone(+el.getAttribute('data-toggle'));
 			return;
 		}
+		if ((el = t.closest('[data-task]')) && !t.closest('a, button')) {
+			S.modal = { type: 'task', id: +el.getAttribute('data-task'), vals: {} }; render();
+			return;
+		}
+		if ((el = t.closest('[data-showdone]'))) { S.showDone = !S.showDone; render(); return; }
+		if ((el = t.closest('[data-review]'))) { S.modal = { type: 'review', vals: {}, off: {} }; render(); return; }
+		if ((el = t.closest('[data-revpick]'))) { var rid = el.getAttribute('data-revpick'); S.modal.off[rid] = !S.modal.off[rid]; render(); return; }
+		if ((el = t.closest('[data-revgo]'))) { reviewSend(el.getAttribute('data-revgo')); return; }
 		if ((el = t.closest('[data-markup]'))) {
 			e.stopPropagation();
 			var mid = +el.getAttribute('data-markup'), mc = contact(mid), v = prompt('Paste the Markup link for ' + (mc ? mc.name : 'this job') + ':', mc && mc.markup || '');
@@ -1790,5 +1909,6 @@
 		if (who) { location.hash = 'client/' + who.id; }
 		var rr = route(); if (rr.view === 'client' || rr.view === 'host') { load(rr.id); }
 		render(true);
+		loadPending(true);
 	}).catch(function (e) { app.innerHTML = '<p class="dwdc-loading">Couldn’t load Client Desk: ' + esc(e.message) + '</p>'; });
 })();

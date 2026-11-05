@@ -205,36 +205,33 @@ function dwdm_apply( $messages, $dry = false ) {
 					} else {
 						$out['reopened'][] = array( 'project' => html_entity_decode( get_the_title( $pid ), ENT_QUOTES ), 'id' => $pid, 'email' => $label, 'why' => 'Returning client (matched by ' . $how . ') — moved back to Active with the new job' );
 					}
-					if ( ! $dry ) {
-						update_post_meta( $pid, '_dwdc_upwork_contract', $e['contract'] );
-						$data = array();
-						if ( ! $has ) {
-							$jobs[]       = array( 'title' => $e['title'], 'price' => $price, 'date' => $date );
-							$data['jobs'] = $jobs;
-						}
-						if ( ! $open ) {
-							$data['list']  = 'active';
-							$data['price'] = $price;
-							dwdc_add_task( 'Re-hired on Upwork: ' . $e['title'] . ' — check the price and details', $pid );
-						}
-						if ( $data ) {
-							dwdc_save_contact( $pid, $data );
-						}
+					if ( ! $dry && ! $open ) {
+						$pname = html_entity_decode( get_the_title( $pid ), ENT_QUOTES );
+						dwdq_add( array(
+							'kind'   => 'update',
+							'title'  => 'Reopen ' . $pname . ' — re-hired on Upwork',
+							'lines'  => array( 'Job: ' . $e['title'] . ( $price ? ' · $' . number_format( $price ) : '' ), 'Move from ' . ( $list ? $list : 'leads' ) . ' to Active', 'Matched by ' . $how ),
+							'source' => 'Upwork email · ' . $date,
+							'key'    => 'hired:' . $key,
+							'pid'    => $pid,
+							'op'     => array( 'project' => $pid, 'data' => array( 'list' => 'active', 'price' => $price ), 'job' => array( 'title' => $e['title'], 'price' => $price, 'date' => $date ), 'meta' => array( '_dwdc_upwork_contract' => $e['contract'] ), 'task' => 'Re-hired on Upwork: ' . $e['title'] . ' — check the price and details' ),
+						) );
+					} elseif ( ! $dry && $e['contract'] ) {
+						update_post_meta( $pid, '_dwdc_upwork_contract', $e['contract'] ); // bookkeeping only, nothing visible changes
 					}
 				} else {
 					$name              = $comp ? $comp : ( $person ? $person : $e['title'] );
 					$finished          = $e['contract'] && isset( $ended[ $e['contract'] ] );
 					$out['created'][]  = array( 'project' => $name, 'email' => $label, 'why' => $finished ? 'New Upwork contract that has already ended — added as Completed' : 'New Upwork contract, no matching project' );
 					if ( ! $dry ) {
-						$pid = dwdc_save_contact( 0, array( 'name' => $name, 'person' => $person, 'company' => $comp, 'list' => $finished ? 'complete' : 'active', 'price' => $price, 'lead_source' => 'Upwork', 'pay_method' => 'Upwork', 'source' => 'Upwork email', 'jobs' => array( array( 'title' => $e['title'], 'price' => $price, 'date' => $date ) ) ) );
-						update_post_meta( $pid, '_dwdc_upwork_contract', $e['contract'] );
-						if ( $comp ) {
-							$map          = (array) get_option( 'dwds_upwork_map', array() );
-							$map[ $comp ] = $pid;
-							update_option( 'dwds_upwork_map', $map, false );
-						}
-						dwdc_add_task( 'New Upwork project from email: ' . $name . ' — add the client’s email and details', $pid );
-						$out['created'][ count( $out['created'] ) - 1 ]['id'] = $pid;
+						dwdq_add( array(
+							'kind'   => 'new_project',
+							'title'  => 'New project: ' . $name,
+							'lines'  => array_filter( array( 'Job: ' . $e['title'], $price ? 'Price: $' . number_format( $price ) : 'Price: not in the email (hourly or unknown)', $person ? 'Client: ' . $person . ( $comp ? ' · ' . $comp : '' ) : '', $finished ? 'Already ended on Upwork → goes in Completed' : 'Goes in Active projects' ) ),
+							'source' => 'Upwork email · ' . $date,
+							'key'    => 'hired:' . $key,
+							'op'     => array( 'project' => 0, 'data' => array( 'name' => $name, 'person' => $person, 'company' => $comp, 'list' => $finished ? 'complete' : 'active', 'price' => $price, 'lead_source' => 'Upwork', 'pay_method' => 'Upwork', 'source' => 'Upwork email' ), 'job' => array( 'title' => $e['title'], 'price' => $price, 'date' => $date ), 'meta' => array( '_dwdc_upwork_contract' => $e['contract'] ), 'map' => $comp, 'task' => 'New Upwork project: ' . $name . ' — add the client’s email and details' ),
+						) );
 					}
 				}
 			}
@@ -247,7 +244,7 @@ function dwdm_apply( $messages, $dry = false ) {
 			if ( ! $pid ) {
 				$out['check'][] = array( 'email' => $label, 'why' => 'Contract ended, but no project matches it' );
 				if ( ! $dry ) {
-					dwdc_add_task( 'Upwork contract ended: ' . $e['title'] . ' — which project is this?' );
+					dwdq_add( array( 'kind' => 'note', 'title' => 'Contract ended — no matching project', 'lines' => array( $label, 'Approving adds a to-do so you can file it' ), 'source' => 'Upwork email · ' . $date, 'key' => 'ended:' . $e['contract'], 'op' => array( 'project' => 0, 'data' => array(), 'task' => 'Upwork contract ended: ' . $e['title'] . ' — which project is this?' ) ) );
 				}
 			} else {
 				$list = (string) get_post_meta( $pid, '_dwdc_list', true );
@@ -256,10 +253,10 @@ function dwdm_apply( $messages, $dry = false ) {
 				} else {
 					$out['completed'][] = array( 'project' => html_entity_decode( get_the_title( $pid ), ENT_QUOTES ), 'id' => $pid, 'email' => $label, 'why' => 'Contract ended — moved to Completed' );
 					if ( ! $dry ) {
-						dwdc_save_contact( $pid, array( 'list' => 'complete', 'completed' => $e['date'] ) );
+						dwdq_add( array( 'kind' => 'completed', 'title' => 'Complete ' . html_entity_decode( get_the_title( $pid ), ENT_QUOTES ), 'lines' => array( 'Upwork contract ended ' . $e['date'], $label ), 'source' => 'Upwork email · ' . $date, 'key' => 'ended:' . $e['contract'], 'pid' => $pid, 'op' => array( 'project' => $pid, 'data' => array( 'list' => 'complete', 'completed' => $e['date'] ), 'meta' => array( '_dwdc_upwork_contract' => $e['contract'] ) ) ) );
 					}
 				}
-				if ( ! $dry && $e['contract'] && ! get_post_meta( $pid, '_dwdc_upwork_contract', true ) ) {
+				if ( ! $dry && 'complete' === $list && $e['contract'] && ! get_post_meta( $pid, '_dwdc_upwork_contract', true ) ) {
 					update_post_meta( $pid, '_dwdc_upwork_contract', $e['contract'] );
 				}
 			}

@@ -110,6 +110,7 @@ function dwdc_task( $post ) {
 		'contact' => (int) get_post_meta( $p->ID, '_dwdc_contact', true ),
 		'due'     => (string) get_post_meta( $p->ID, '_dwdc_due', true ),
 		'done'    => '1' === get_post_meta( $p->ID, '_dwdc_done', true ),
+		'done_at' => (string) get_post_meta( $p->ID, '_dwdc_done_at', true ),
 		'order'   => (int) $p->menu_order,
 		'created' => get_post_time( 'c', true, $p ),
 	);
@@ -1019,6 +1020,7 @@ add_action( 'rest_api_init', function () {
 			}
 			if ( isset( $d['done'] ) ) {
 				update_post_meta( $id, '_dwdc_done', $d['done'] ? '1' : '0' );
+				update_post_meta( $id, '_dwdc_done_at', $d['done'] ? current_time( 'mysql' ) : '' );
 			}
 			if ( isset( $d['due'] ) ) {
 				update_post_meta( $id, '_dwdc_due', sanitize_text_field( $d['due'] ) );

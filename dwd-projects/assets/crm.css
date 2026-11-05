@@ -1084,3 +1084,36 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
   .dwdc .dwdc-chips .dwdc-fchip { flex: 1 1 auto; justify-content: center; padding: 0 8px; gap: 4px; font-size: 13px; min-width: 0; white-space: nowrap; }
   .dwdc .dwdc-chips .dwdc-fchip b { font-size: 10.5px; }
 }
+/* ===== Undo toast, completed to-dos, task pop-up, review pop-up ===== */
+.dwdc-toast.undo { display: flex; align-items: center; gap: 16px; }
+.dwdc-toast.undo button { background: none; border: 0; color: #FF7A59; font: 700 13px/1 inherit; font-family: inherit; letter-spacing: .04em; text-transform: uppercase; cursor: pointer; padding: 4px 2px; }
+.dwdc .dwdc-donebtn { display: flex; align-items: center; gap: 8px; width: 100%; padding: 12px 20px; background: none; border: 0; border-top: 1px solid var(--div); color: var(--mut); font: 600 13px/1 inherit; font-family: inherit; cursor: pointer; text-align: left; }
+.dwdc .dwdc-donebtn b { background: var(--bg, #F1F4F9); color: var(--navy); border-radius: 999px; padding: 3px 8px; font-size: 11px; }
+.dwdc .dwdc-donebtn:hover { color: var(--navy); }
+.dwdc .dwdc-todos.donelist .dwdc-todo { opacity: .75; }
+.dwdc .dwdc-todo .dwdc-chk { cursor: pointer; }
+.dwdc .dwdc-todo .dwdc-chk:hover { box-shadow: inset 0 0 0 2px var(--blue); }
+.dwdc-taskm-t { font-size: 17px; line-height: 1.5; color: var(--navy); margin: 6px 0 18px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.dwdc-taskm-t.done { text-decoration: line-through; color: var(--mut); }
+.dwdc-taskm-d { display: grid; grid-template-columns: 110px 1fr; gap: 10px 14px; margin: 0 0 22px; padding: 16px 0 0; border-top: 1px solid var(--div); font-size: 14px; }
+.dwdc-taskm-d dt { color: var(--mut); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; padding-top: 2px; }
+.dwdc-taskm-d dd { margin: 0; color: var(--navy); }
+.dwdc-taskm-d a { color: var(--blue); font-weight: 600; }
+.dwdc .dwdc-btn2.danger { color: #D64545; }
+.dwdc .dwdc-revbar { display: flex; align-items: center; gap: 14px; width: 100%; margin: 0 0 22px; padding: 14px 20px; border: 0; border-radius: 16px; background: linear-gradient(135deg, #FF7A59, #FF946F); color: #fff; text-align: left; cursor: pointer; font-family: inherit; box-shadow: 0 10px 24px -14px rgba(255,122,89,.8); }
+.dwdc .dwdc-revbar b { display: block; font-size: 15px; } .dwdc .dwdc-revbar small { display: block; opacity: .9; font-size: 12.5px; margin-top: 2px; }
+.dwdc .dwdc-revbar > span:nth-child(2) { flex: 1; }
+.dwdc .dwdc-revdot { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: #fff; color: #FF7A59; font-weight: 800; font-size: 15px; flex: none; }
+.dwdc-revlist { display: flex; flex-direction: column; gap: 10px; max-height: 58vh; overflow-y: auto; margin: 14px 0 20px; padding-right: 4px; }
+.dwdc-revi { display: flex; gap: 14px; align-items: flex-start; padding: 14px 16px; border: 1px solid var(--line); border-radius: 14px; cursor: pointer; opacity: .55; transition: .15s ease; }
+.dwdc-revi.on { opacity: 1; border-color: var(--blue); background: rgba(27,126,195,.04); }
+.dwdc-revi .dwdc-chk { flex: none; margin-top: 2px; }
+.dwdc-revi.on .dwdc-chk { background: var(--blue); box-shadow: inset 0 0 0 2px var(--blue); color: #fff; }
+.dwdc-revi b { display: block; color: var(--navy); font-size: 15px; margin: 6px 0 4px; }
+.dwdc-revi ul { margin: 0 0 6px; padding-left: 18px; color: var(--ink, #3B4A5E); font-size: 13.5px; line-height: 1.55; }
+.dwdc-revi small { color: var(--mut); font-size: 12px; }
+/* ===== Quote of the day bar ===== */
+.dwdc-quote { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: center; gap: 4px 12px; margin: -4px 0 20px; padding: 11px 20px; border-radius: 14px; background: linear-gradient(90deg, #0E1F3D, #16325C); color: #E8EEF7; text-align: center; font-size: 14px; line-height: 1.5; }
+.dwdc-quote-q { font-style: italic; font-weight: 400; letter-spacing: .01em; }
+.dwdc-quote-a { color: #7FC4F0; font-weight: 600; font-size: 12.5px; white-space: nowrap; }
+@media (max-width: 768px) { .dwdc-quote { margin: 0 0 14px; padding: 10px 14px; font-size: 13px; } }
