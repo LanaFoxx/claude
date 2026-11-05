@@ -1117,3 +1117,7 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 .dwdc-quote-q { font-style: italic; font-weight: 400; letter-spacing: .01em; }
 .dwdc-quote-a { color: #7FC4F0; font-weight: 600; font-size: 12.5px; white-space: nowrap; }
 @media (max-width: 768px) { .dwdc-quote { margin: 0 0 14px; padding: 10px 14px; font-size: 13px; } }
+/* View answers button: coral */
+.dwdc .dwdc-btn2.dwdc-viewob { background: #FF6F4F !important; border-color: #FF6F4F !important; color: #fff !important; }
+.dwdc .dwdc-btn2.dwdc-viewob:hover { background: #F25A38 !important; border-color: #F25A38 !important; }
+.dwdc .dwdc-btn2.dwdc-viewob .dwdc-ic, .dwdc .dwdc-btn2.dwdc-viewob svg { color: #fff; stroke: #fff; }
