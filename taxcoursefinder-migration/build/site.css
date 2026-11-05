@@ -385,3 +385,5 @@ body{text-wrap-style:pretty}
 [style*="text-align:right;font:800 22px Manrope,sans-serif;color:#23272A"],
 [style*="font:800 52px/1 Manrope,sans-serif;color:#23272A;letter-spacing:-.03em"],
 [style*="font:800 32px/1 Manrope,sans-serif;letter-spacing:-.02em"]{color:#FF6B57!important}
+.tcf-faq-btn,.tcf-faq-btn:hover,.tcf-faq-btn:focus,.tcf-faq-btn:active{font:inherit!important;color:inherit!important;letter-spacing:inherit!important;line-height:inherit!important;text-align:inherit!important;text-transform:inherit!important;white-space:normal!important;background:none!important;border:0!important;border-radius:0;padding:0!important;margin:0!important;width:100%;cursor:pointer;display:block;-webkit-tap-highlight-color:transparent}
+.tcf-faq-btn:focus-visible{outline:2px solid #FF6B57;outline-offset:4px;border-radius:4px}

@@ -73,9 +73,9 @@ def comparison_table(body):
     price = price.replace('<div style="min-width:0">', '<div style="min-width:0" data-label="Price">', 1).replace('Manrope,sans-serif', "'DM Sans',Manrope,sans-serif")
     sbtn = 'style="all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;font:inherit;letter-spacing:inherit;text-transform:inherit;color:inherit"'
     head = ('<div class="tcf-sortbar"><label>Sort <select value="{{ sort }}" onchange="{{ setSort }}"><option value="name">Name A–Z</option><option value="name_desc">Name Z–A</option><option value="price">Price: low to high</option><option value="price_desc">Price: high to low</option></select></label></div>'
-            '<div class="tcf-thead" role="row"><button type="button" onclick="{{ sortName }}" title="Sort by name" ' + sbtn + '>Provider <span style="opacity:{{ nameOn }}">{{ nameArrow }}</span></button>'
+            '<div class="tcf-thead"><button type="button" onclick="{{ sortName }}" title="Sort by name" ' + sbtn + '>Provider <span style="opacity:{{ nameOn }}">{{ nameArrow }}</span></button>'
             '<button type="button" onclick="{{ sortPrice }}" title="Sort by price" ' + sbtn + '>Price <span style="opacity:{{ priceOn }}">{{ priceArrow }}</span></button><span>Format</span><span>Coupon</span><span></span></div>')
-    row = ('<div class="tcf-trow" role="row" data-tcf-href="{{ p.schoolUrl }}">'
+    row = ('<div class="tcf-trow" data-tcf-href="{{ p.schoolUrl }}">'
            '<div class="tcf-cell-provider" style="display:flex;align-items:center;gap:16px;min-width:0">'
            # logo links to the school's profile when it is live
            '<sc-if value="{{ p.hasSchool }}"><a href="{{ p.schoolUrl }}" aria-label="{{ p.name }}: school details" style="flex:none;display:block">' + logo + '</a></sc-if>'
@@ -99,7 +99,7 @@ def comparison_table(body):
            'background:#95AB3B;color:#fff;padding:11px 18px;border:1.5px solid #95AB3B;transition:background .15s,border-color .15s" data-hv="4"><span data-tcf-offer-label="">{{ p.buttonLabel }}</span></a></sc-if>'
            '<sc-if value="{{ p.noWebsite }}"><div style="font-size:15px;color:#8A9AA3">No website listed</div></sc-if></div>'
            '</div>')
-    table = (TABLE_CSS + '<div class="tcf-table" role="table" aria-label="CTEC course providers compared">' + head +
+    table = (TABLE_CSS + '<div class="tcf-table" role="region" aria-label="CTEC course providers compared">' + head +
              '<div class="tcf-tbody"><sc-for list="{{ list }}" as="p" hint-placeholder-count="10">\n        ' + row + '\n      </sc-for></div></div>')
     return body[:i] + table + body[end:]
 

@@ -3,13 +3,16 @@ import sys, json; sys.path.insert(0, '/tmp/claude-0/-home-user-claude/01e6a9c1-e
 from wp import *
 s = session()
 ids = json.load(open(S + '/ids.json'))
-META = {
+META_ALL = {
     'home': (None, 'Compare 20 hour and 60 hour CTEC courses from top California tax schools: prices, coupon codes, course format and how fast each school reports to CTEC.'),
     'ctec-20-hour-course': ('20 Hour CTEC Course: Compare Top Tax Schools (2026)', 'Compare 20 hour CTEC continuing education courses from top tax schools for 2026 renewal: prices, coupon codes, course format and how fast each school reports to CTEC.'),
     'ctec-60-hour-course': ('60 Hour CTEC Course: Compare Top Tax Schools (2026)', 'Compare 60 hour CTEC qualifying education courses from top tax schools to become a California tax preparer: prices, coupon codes, course format and support.'),
     'about': (None, 'California Tax Course Finder is an independent directory of top CTEC-approved tax schools, comparing price, course format and current offers.'),
+    'create-your-school-profile': (None, 'Create a free school profile on California Tax Course Finder: add your CTEC courses, prices, formats, support and photos for students comparing schools.'),
+    'listing-verified': (None, 'Thank you for verifying your school listing on California Tax Course Finder. Next step: create your free school profile.'),
     'how-we-compare-providers': (None, 'How California Tax Course Finder selects and compares CTEC-approved schools: what each listing shows, how prices are checked, and why there are no paid rankings.'),
 }
+META = {k: v for k, v in META_ALL.items() if len(sys.argv) < 2 or k in sys.argv[1:]}
 for slug, (title, desc) in META.items():
     pid = ids[slug]
     before = api(s, 'GET', 'wp/v2/pages/%d?context=edit&_fields=meta' % pid)['meta']

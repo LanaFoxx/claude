@@ -152,7 +152,7 @@
   }
   // Today's date in California (YYYY-MM-DD): offers expire at the end of their last day, Pacific time.
   function caToday() {
-    try { var f = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Los_Angeles', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(new Date()), o = {};
+    try { var f = (caToday.f || (caToday.f = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Los_Angeles', year: 'numeric', month: '2-digit', day: '2-digit' }))).formatToParts(new Date()), o = {};
       f.forEach(function (x) { o[x.type] = x.value; }); return o.year + '-' + o.month + '-' + o.day; } catch (e) { return new Date().toISOString().slice(0, 10); }
   }
   // A date-only value ("2026-10-12" or "20261012") shown as a calendar date: the same day in every time zone.
@@ -308,14 +308,14 @@
   var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
   function ptToday() {
     try {
-      var o = {}; new Intl.DateTimeFormat('en-US', { timeZone: 'America/Los_Angeles', year: 'numeric', month: 'numeric', day: 'numeric' }).formatToParts(new Date()).forEach(function (x) { o[x.type] = +x.value; });
+      var o = {}; (ptToday.f || (ptToday.f = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Los_Angeles', year: 'numeric', month: 'numeric', day: 'numeric' }))).formatToParts(new Date()).forEach(function (x) { o[x.type] = +x.value; });
       if (o.year) return { y: o.year, m: o.month, d: o.day };
     } catch (e) {}
     var n = new Date(Date.now() - 8 * 3600000); return { y: n.getUTCFullYear(), m: n.getUTCMonth() + 1, d: n.getUTCDate() };
   }
   function ptOffset(y, m, d) {
     try {
-      var z = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Los_Angeles', timeZoneName: 'shortOffset' }).formatToParts(new Date(Date.UTC(y, m - 1, d, 20))).filter(function (x) { return x.type === 'timeZoneName'; })[0].value;
+      var z = (ptOffset.f || (ptOffset.f = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Los_Angeles', timeZoneName: 'shortOffset' }))).formatToParts(new Date(Date.UTC(y, m - 1, d, 20))).filter(function (x) { return x.type === 'timeZoneName'; })[0].value;
       var mm = /GMT([+-]\d+)/.exec(z); if (mm) return +mm[1];
     } catch (e) {}
     return m >= 4 && m <= 10 ? -7 : -8;
@@ -428,12 +428,15 @@
 // One-line buttons: if a pill button's text would not fit on one line, tighten its padding, then step its font size down (to 13px at most).
 (function () {
   var SEL = '.tcf-scope a[style*="border-radius:999px"], .tcf-scope button[style*="border-radius:999px"], .tcf-scope [role="button"][style*="border-radius:999px"], .tcf-cdstrip a';
+  // Batched: one pass of writes (undo earlier adjustments), one pass of reads, then fix only the buttons that overflow.
   function fit() {
-    Array.prototype.forEach.call(document.querySelectorAll(SEL), function (el) {
-      if (!el.offsetParent) return;
-      if (el.__tcfFs == null) { el.__tcfFs = el.style.fontSize; el.__tcfPl = el.style.paddingLeft; el.__tcfPr = el.style.paddingRight; }
-      el.style.fontSize = el.__tcfFs; el.style.paddingLeft = el.__tcfPl; el.style.paddingRight = el.__tcfPr;
-      if (el.scrollWidth <= el.clientWidth + 1) return;
+    var els = Array.prototype.filter.call(document.querySelectorAll(SEL), function (el) { return el.offsetParent; });
+    els.forEach(function (el) {
+      if (el.__tcfAdj) { el.style.fontSize = el.__tcfFs; el.style.paddingLeft = el.__tcfPl; el.style.paddingRight = el.__tcfPr; el.__tcfAdj = false; }
+    });
+    var over = els.filter(function (el) { return el.scrollWidth > el.clientWidth + 1; });
+    over.forEach(function (el) {
+      el.__tcfFs = el.style.fontSize; el.__tcfPl = el.style.paddingLeft; el.__tcfPr = el.style.paddingRight; el.__tcfAdj = true;
       var pl = parseFloat(getComputedStyle(el).paddingLeft) || 0;
       if (pl > 16) { el.style.paddingLeft = '16px'; el.style.paddingRight = '16px'; }
       var fs = parseFloat(getComputedStyle(el).fontSize) || 16;
@@ -455,16 +458,17 @@
       var a = q.nextElementSibling, box = q.parentElement, t = q.textContent.trim();
       if (!a || !box || box.children.length !== 2 || !/\?$/.test(t) || t.length > 160 || q.querySelector('div,p,img')) return;
       q.__tcfFaq = true; box.classList.add('tcf-faq'); q.classList.add('tcf-faq-q'); a.classList.add('tcf-faq-a');
-      q.setAttribute('role', 'button'); q.setAttribute('tabindex', '0'); q.setAttribute('aria-expanded', 'false');
+      // the question text goes inside a real button (a heading cannot itself be a button)
+      var btn = document.createElement('button'); btn.type = 'button'; btn.className = 'tcf-faq-btn'; btn.setAttribute('aria-expanded', 'false');
+      while (q.firstChild) btn.appendChild(q.firstChild);
+      q.appendChild(btn);
     });
   }
   function toggle(e) {
     var q = e.target.closest && e.target.closest('.tcf-faq-q'); if (!q) return;
-    if (e.type === 'keydown' && e.key !== 'Enter' && e.key !== ' ') return;
-    if (e.type === 'keydown') e.preventDefault();
-    var open = q.parentElement.classList.toggle('tcf-open'); q.setAttribute('aria-expanded', open ? 'true' : 'false');
+    var open = q.parentElement.classList.toggle('tcf-open'), b = q.querySelector('.tcf-faq-btn'); if (b) b.setAttribute('aria-expanded', open ? 'true' : 'false');
   }
-  document.addEventListener('click', toggle); document.addEventListener('keydown', toggle);
+  document.addEventListener('click', toggle);
   var t; function soon() { clearTimeout(t); t = setTimeout(mark, 100); }
   document.addEventListener('DOMContentLoaded', soon); window.addEventListener('load', soon);
   if (window.MutationObserver) new MutationObserver(soon).observe(document.documentElement, { childList: true, subtree: true });

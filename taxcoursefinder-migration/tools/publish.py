@@ -62,6 +62,38 @@ def lazy(h):
         return t
     return re.sub(r'<img\b[^>]*>', rep, h)
 
+# ---- PageSpeed: responsive images, sized icons, labelled selects, self-hosted fonts ----
+MEDIA_SIZES = json.load(open(S + '/media_sizes.json'))  # upload URL -> {w, h, sizes{name: [w, h, url]}}
+PLUG = BASE + '/wp-content/plugins/tcf-directory-manager/assets/'
+LOGOS = {brand.LOGO: 'california-tax-course-finder-logo', brand.LOGO_WHITE: 'california-tax-course-finder-logo-white'}
+
+def perf(h):
+    def img(m):
+        t = m.group(0); src = re.search(r'\bsrc="([^"]+)"', t)
+        if not src: return t
+        u = src.group(1)
+        if u in LOGOS:  # small WebP logos instead of the 912px PNG
+            b = PLUG + 'img/' + LOGOS[u]
+            t = t.replace('src="' + u + '"', 'src="%s-240.webp" srcset="%s-240.webp 240w, %s-360.webp 360w, %s-480.webp 480w, %s-720.webp 720w" sizes="188px"' % (b, b, b, b, b), 1)
+            return t
+        i = MEDIA_SIZES.get(u)
+        if i and 'srcset=' not in t and i.get('w'):
+            ar = i['h'] / i['w']
+            cand = sorted({(w_, url) for w_, h_, url in i['sizes'].values() if w_ >= 300 and abs(h_ / w_ - ar) < 0.02} | {(i['w'], u)})
+            if len(cand) > 1:
+                sizes = '100vw' if 'inset:0' in t else '(max-width:760px) 100vw, 640px'
+                t = t.replace('src="' + u + '"', 'src="%s" srcset="%s" sizes="%s"' % (u, ', '.join('%s %dw' % (url, w_) for w_, url in cand), sizes), 1)
+        if re.search(r'/check-(white|coral|charcoal|green)\.png$', u) and 'width=' not in t:
+            t = t.replace('<img ', '<img width="18" height="14" ', 1)
+        return t
+    h = re.sub(r'<img\b[^>]*>', img, h)
+    h = re.sub(r'<select(?![^>]*(aria-label|\bname=|\bid=))', '<select aria-label="Sort schools"', h)  # the directory sort boxes have no label; form fields keep theirs
+    return h
+
+FONT_FACES = ''.join("@font-face{font-family:'%s';font-style:normal;font-weight:%s;font-display:swap;src:url(%sfonts/%s-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}" % (f, w, PLUG, n)
+                     for f, w, n in (('DM Sans', '100 1000', 'dm-sans'), ('Manrope', '200 800', 'manrope'), ('Source Sans 3', '200 900', 'source-sans-3')))
+FONT_HEAD = ''.join('<link rel="preload" href="%sfonts/%s-latin.woff2" as="font" type="font/woff2" crossorigin>' % (PLUG, n) for n in ('manrope', 'source-sans-3')) + '<style id="tcf-fonts">' + FONT_FACES + '</style>'
+
 PAGE_ALTS = json.load(open(S + '/page_alts.json'))
 
 def page_alts(slug, h):
@@ -109,7 +141,10 @@ def page_html(pg):
     # Target of the theme's "Skip to content" link (href="#content"): the page's main content wrapper.
     assert w.startswith('<div class="tcf-page'), pg['slug']
     w = '<div id="content" tabindex="-1" style="outline:none" role="main"' + w[len('<div'):]
-    return brand.brand(add_links(pg['slug'], page_alts(pg['slug'], fix_media(w))))
+    w = perf(brand.brand(add_links(pg['slug'], page_alts(pg['slug'], fix_media(w)))))
+    if pg['slug'] == 'provider-rights':  # these card titles come straight after the h1: outline level 2 (same look)
+        w = w.replace('<h3 style="margin:0;font:800 26px/1.2 Manrope,sans-serif;letter-spacing:-.01em">', '<h3 aria-level="2" style="margin:0;font:800 26px/1.2 Manrope,sans-serif;letter-spacing:-.01em">')
+    return w
 
 if STEP == 'trash':
     old = [608, 609, 610, 611, 507, 494, 165, 126, 127, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 3]
@@ -152,8 +187,7 @@ def hf_html():
     css = open(B + '/site.css').read() + hover + brand.CSS
     css = re.sub(r'\s*\n\s*', '', css)
     rt = open(B + '/tcf-runtime.js').read()
-    head = ('<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
-            '<link href="' + brand.FONTS_URL + '" rel="stylesheet">'
+    head = (FONT_HEAD +  # self-hosted fonts (were render-blocking Google Fonts)
             '<style id="tcf-site-css">' + css + '.tcf-hidden-form{display:none!important}</style><script>' + rt + '</script>')
     hdr = fix_media(head + hf['header'])
     hdr = hdr.replace('max-width:1200px;margin:0 auto;padding:0 56px;height:110px', 'max-width:1312px;margin:0 auto;padding:0 56px;height:110px', 1)  # header lines up with the content column  # full-width header: logo left, menu right
@@ -171,7 +205,7 @@ def hf_html():
     hdr = hdr.replace('<header id="top"', topbar + '<header id="top"', 1)
     assert 'tcf-topbar' in hdr
     hdr = hdr.replace('style="height:80px;width:auto;display:block"', 'width="188" height="68" style="height:68px;width:auto;display:block"', 1)
-    hdr = hdr.replace('<img ', '<img fetchpriority="high" width="193" height="80" ', 1)
+    hdr = hdr.replace('<img ', '<img fetchpriority="high" ', 1)
     ftr = fix_media(hf['footer']).replace('style="height:58px;width:auto;display:block"', 'style="height:68px;width:auto;display:block"', 1).replace("<img ", "<img width=\"188\" height=\"68\" ", 1)
     # CTEC deadline countdown strip above the footer on every page (filled live by tcf-runtime.js, California time)
     cdstrip = ('<div data-tcf-cdstrip="" class="tcf-cdstrip tcf-scope" style="background:#fff;color:#23272A;padding:24px 56px;min-height:120px;box-sizing:border-box;display:flex;align-items:center;border-top:1px solid #EEE9E1;visibility:hidden">'
@@ -192,7 +226,8 @@ def hf_html():
                '</div></div>')
     ftr = cdstrip + ftr
     ftr = re.sub(r'<p[^>]*>The independent directory of CTEC-approved education providers in California\.</p>', '', ftr)  # no tagline under the footer logo
-    hdr, ftr = brand.brand(hdr), brand.brand(ftr)
+    hdr, ftr = perf(brand.brand(hdr)), perf(brand.brand(ftr))
+    ftr = ftr.replace('<img ', '<img loading="lazy" ', 1) if 'loading=' not in ftr.split('<img ', 2)[1][:300] else ftr  # footer logo is far below the fold
     return hdr, ftr
 
 if STEP == 'hf':
@@ -202,3 +237,11 @@ if STEP == 'hf':
         api(s, 'POST', 'wp/v2/elementor_library/%d' % tid, json={'meta': {'_elementor_data': json.dumps(data, ensure_ascii=False)}})
         back = api(s, 'GET', 'wp/v2/elementor_library/%d?context=edit' % tid)['meta']['_elementor_data']
         print('template', tid, len(html), json.loads(back)[0]['elements'][0]['settings']['html'] == html)
+
+if STEP == 'dry':  # write header, footer and page HTML to scratch files, publish nothing
+    os.makedirs(S + '/dry', exist_ok=True)
+    hdr, ftr = hf_html()
+    open(S + '/dry/header.html', 'w').write(hdr); open(S + '/dry/footer.html', 'w').write(ftr)
+    for f in sorted(glob.glob(B + '/pages/*.json')):
+        pg = json.load(open(f)); open(S + '/dry/%s.html' % pg['slug'], 'w').write(page_html(pg))
+    print('dry ok')
