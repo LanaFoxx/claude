@@ -199,12 +199,12 @@
 		var todayT = openTasks().filter(function (t) { return t.due === DWDC.today; });
 		var overdue = openTasks().filter(function (t) { return t.due && t.due < DWDC.today; }).length;
 		var entries = S.contacts.filter(function (c) { return c.entry_count && c.list !== 'archive'; }).sort(function (a, b) { return a.last_entry_date < b.last_entry_date ? 1 : -1; }).slice(0, 6);
-		return '<div class="dwdc-tiles">'
+		return '<div class="dwdc-card pad dwdc-tilebox"><div class="dwdc-tiles">'
 			+ tile('blue', 'Active jobs', active.length, money(owed(S.contacts.filter(function (c) { return c.list !== 'archive'; }))) + ' still owed overall', 'jobs')
 			+ tile('red', 'On hold &amp; limbo', hold.length + limbo.length, hold.length + ' on hold · ' + limbo.length + ' in limbo', 'jobs')
 			+ tile('green', 'Completed', done.length, money(billed) + ' billed all-time', 'completed')
 			+ tile('teal', 'Hosting clients', host.length, money(annual) + '/yr' + (next ? ' · next ' + fmt(next.renewal) : ''), 'hosting')
-			+ '</div>'
+			+ '</div></div>'
 			+ '<section>' + secHead('Active jobs', active.length, '<div class="dwdc-sechr">' + (nLeads ? '<a class="dwdc-lnk" href="#leads">' + nLeads + ' new lead' + (nLeads === 1 ? '' : 's') + ' / onboarding ' + ic('right', 14) + '</a>' : '') + '<button class="dwdc-btn sm" data-act="job">' + ic('plus', 14) + 'Add job</button></div>')
 			+ (jobs.length ? '<div class="dwdc-cards">' + jobs.map(jobCard).join('') + '</div>' : '<div class="dwdc-card">' + emptyRow(S.q ? 'No active jobs match.' : 'No active jobs right now.') + '</div>') + '</section>'
 			+ '<div class="dwdc-two">'
