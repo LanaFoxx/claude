@@ -78,7 +78,7 @@ add_filter( 'menu_order', function ( $order ) {
 	if ( ! current_user_can( 'manage_options' ) ) {
 		return $order;
 	}
-	$groups = array( 'top' => array(), 'projects' => array(), 'clients' => array(), 'finances' => array(), 'portfolio' => array(), 'development' => array(), 'ecommerce' => array(), 'settings' => array() );
+	$groups = array( 'top' => array(), 'p_todo' => array(), 'p_fin' => array(), 'p_bills' => array(), 'projects' => array(), 'clients' => array(), 'finances' => array(), 'portfolio' => array(), 'development' => array(), 'ecommerce' => array(), 'settings' => array() );
 	// Dream Desk pages as their own sections (they open the Dream Desk app at that page).
 	$dd = array(
 		'projects' => array( array( 'projects/active', 'Active', 'dashicons-controls-play' ), array( 'projects/hold', 'On Hold', 'dashicons-controls-pause' ), array( 'projects/limbo', 'Limbo', 'dashicons-clock' ), array( 'projects/complete', 'Completed', 'dashicons-yes-alt' ) ),
@@ -90,6 +90,18 @@ add_filter( 'menu_order', function ( $order ) {
 			$groups[ $g ][] = array( $i, array( $x[1], 'manage_options', 'admin.php?page=client-desk#' . $x[0], '', 'menu-top dwd-dd', 'dwd-dd-' . str_replace( '/', '-', $x[0] ), $x[2] ) );
 		}
 	}
+	// Personal: a switch under Dream Desk, and its own pages (shown only in Personal mode).
+	$groups['top'][] = array( 5, array( 'Personal', 'manage_options', 'admin.php?page=client-desk#personal', '', 'menu-top dwd-dd dwd-pers-switch', 'dwd-pers-switch', 'dashicons-heart' ) );
+	$pers = array(
+		'p_todo'  => array( array( 'personal/todo', 'My To-Dos', 'dashicons-yes-alt' ), array( 'personal/calendar', 'Calendar', 'dashicons-calendar' ), array( 'personal/done', 'Completed', 'dashicons-saved' ) ),
+		'p_fin'   => array( array( 'personal/finances', 'Money In & Out', 'dashicons-chart-bar' ) ),
+		'p_bills' => array( array( 'personal/bills', 'Upcoming Bills', 'dashicons-calendar-alt' ) ),
+	);
+	foreach ( $pers as $g => $list ) {
+		foreach ( $list as $i => $x ) {
+			$groups[ $g ][] = array( $i, array( $x[1], 'manage_options', 'admin.php?page=client-desk#' . $x[0], '', 'menu-top dwd-dd dwd-pers', 'dwd-dd-' . str_replace( '/', '-', $x[0] ), $x[2] ) );
+		}
+	}
 	foreach ( (array) $menu as $item ) {
 		if ( empty( $item[2] ) || false !== strpos( (string) ( $item[4] ?? '' ), 'wp-menu-separator' ) || in_array( $item[2], array( 'index.php', 'edit-comments.php', 'hello-elementor' ), true ) ) {
 			continue;
@@ -97,7 +109,7 @@ add_filter( 'menu_order', function ( $order ) {
 		list( $g, $rank ) = dwda_menu_group( $item[2] );
 		$groups[ $g ][] = array( $rank, $item );
 	}
-	$labels = array( 'projects' => 'Projects', 'clients' => 'Clients', 'finances' => 'Finances', 'portfolio' => 'Portfolio', 'development' => 'Development', 'ecommerce' => 'E-commerce', 'settings' => 'Settings' );
+	$labels = array( 'p_todo' => 'To-Do', 'p_fin' => 'Finances', 'p_bills' => 'Bills', 'projects' => 'Projects', 'clients' => 'Clients', 'finances' => 'Finances', 'portfolio' => 'Portfolio', 'development' => 'Development', 'ecommerce' => 'E-commerce', 'settings' => 'Settings' );
 	$new    = array();
 	$out    = array();
 	$pos    = 1;
@@ -107,7 +119,7 @@ add_filter( 'menu_order', function ( $order ) {
 		}
 		usort( $items, function ( $a, $b ) { return $a[0] - $b[0]; } );
 		if ( isset( $labels[ $g ] ) ) {
-			$new[ $pos++ ] = array( $labels[ $g ], 'read', 'dwd-sec-' . $g, '', 'dwd-msec menu-top', 'dwd-msec-' . $g, 'none' );
+			$new[ $pos++ ] = array( $labels[ $g ], 'read', 'dwd-sec-' . $g, '', 'dwd-msec menu-top' . ( 0 === strpos( $g, 'p_' ) ? ' dwd-pers' : '' ), 'dwd-msec-' . $g, 'none' );
 			$out[]         = 'dwd-sec-' . $g;
 		}
 		foreach ( $items as $it ) {
@@ -180,6 +192,17 @@ add_action( 'admin_head', function () {
 	#adminmenu li.dwd-dd.current > a .dwdc-mcount { background: #E3F4FD; color: #0B203D; }
 	#adminmenu li.dwd-dd > a .wp-menu-name { flex: 1; display: flex; align-items: center; gap: 8px; }
 	#adminmenu li#dwd-msec-settings .wp-menu-name { color: rgba(255,255,255,.6) !important; }
+	/* Personal switch (coral text; coral box with white text when in Personal mode) */
+	#adminmenu li.dwd-pers-switch > a, #adminmenu li.dwd-pers-switch.current > a { background: transparent !important; color: #FF8A6E !important; box-shadow: none !important; }
+	#adminmenu li.dwd-pers-switch > a .wp-menu-image::before, #adminmenu li.dwd-pers-switch > a .wp-menu-name { color: #FF8A6E !important; }
+	body.dwd-pmode #adminmenu li.dwd-pers-switch > a { background: #FF6F4F !important; color: #fff !important; }
+	body.dwd-pmode #adminmenu li.dwd-pers-switch > a .wp-menu-image::before, body.dwd-pmode #adminmenu li.dwd-pers-switch > a .wp-menu-name { color: #fff !important; }
+	body:not(.dwd-pmode) #adminmenu li.dwd-pers { display: none !important; }
+	body.dwd-pmode #adminmenu > li:not(.dwd-brand):not(#toplevel_page_client-desk):not(.dwd-pers):not(.dwd-pers-switch) { display: none !important; }
+	body.dwd-pmode #adminmenu li#toplevel_page_client-desk > a { background: transparent !important; color: #fff !important; box-shadow: none !important; }
+	#adminmenu li#dwd-msec-p_todo .wp-menu-name { color: #6CC6F4 !important; }
+	#adminmenu li#dwd-msec-p_fin .wp-menu-name { color: #FF8A6E !important; }
+	#adminmenu li#dwd-msec-p_bills .wp-menu-name { color: #7FD48B !important; }
 	#adminmenu li.dwd-msec .wp-menu-name::after { content: ""; position: absolute; right: 16px; top: 50%; width: 6px; height: 6px; margin-top: -2px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg); transition: transform .15s ease; }
 	#adminmenu li.dwd-msec.dwd-closed .wp-menu-name::after { transform: rotate(-45deg); margin-top: 0; }
 	#adminmenu li.dwd-msec:hover > a { background: none !important; }
@@ -227,7 +250,7 @@ add_action( 'admin_footer', function () {
 		function set(h, isOpen) { h.classList.toggle('dwd-closed', !isOpen); items(h).forEach(function (li) { li.classList.toggle('dwd-sec-hide', !isOpen); }); }
 		heads.forEach(function (h) {
 			var hasCurrent = items(h).some(function (li) { return li.classList.contains('wp-has-current-submenu') || li.classList.contains('current') || li.classList.contains('wp-menu-open'); });
-			var def = ['dwd-msec-projects', 'dwd-msec-clients', 'dwd-msec-finances', 'dwd-msec-portfolio'].indexOf(h.id) > -1;
+			var def = ['dwd-msec-projects', 'dwd-msec-clients', 'dwd-msec-finances', 'dwd-msec-portfolio', 'dwd-msec-p_todo', 'dwd-msec-p_fin', 'dwd-msec-p_bills'].indexOf(h.id) > -1;
 			set(h, hasCurrent || (h.id in open ? !!open[h.id] : def));
 			var a = h.querySelector('a');
 			if (a) { a.removeAttribute('href'); }

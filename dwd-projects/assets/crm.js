@@ -60,6 +60,7 @@
 	var ICON = {
 		link: '<path d="M7 17 17 7"/><path d="M8 7h9v9"/>',
 		grid: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>',
+		user: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
 		users: '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
 		brief: '<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>',
 		todo: '<polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>',
@@ -143,7 +144,7 @@
 	var TITLES = {
 		home: ['', '', 'Dream Web Digital'], leads: ['Clients', 'All', 'Leads'], onboarding: ['Clients', 'Onboarding', 'Forms'],
 		todos: ['Everything open', 'To-Do', 'List'], hosting: ['Clients', 'Hosting', 'Clients'], archive: ['More', 'Archive', ''],
-		search: ['Search', 'Search', 'Results'], money: ['Finances', 'Money', 'Stats'], reviews: ['Clients', 'Get', 'Reviews'], clients: ['Clients', 'All', 'Clients'], projects: ['Projects', 'All', 'Projects']
+		search: ['Search', 'Search', 'Results'], personal: ['Personal', 'To-Do', 'List'], money: ['Finances', 'Money', 'Stats'], reviews: ['Clients', 'Get', 'Reviews'], clients: ['Clients', 'All', 'Clients'], projects: ['Projects', 'All', 'Projects']
 	};
 	var OLD = { dashboard: 'home', jobs: 'projects/active', completed: 'projects/complete', forms: 'leads', todos: 'home' };
 	function route() {
@@ -168,6 +169,128 @@
 	function isInstalled() { return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true; }
 	function isIOS() { return /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); }
 	function isPhone() { return /android|iphone|ipod|mobile/i.test(navigator.userAgent); }
+	/* ---------- Personal: to-dos, finances, bills (Mike's own, not the business) ---------- */
+	function pData() {
+		if (!S.pers && !S.persLoading) { S.persLoading = true; api('/personal').then(function (d) { S.pers = d; S.persLoading = false; render(); }).catch(function (e) { S.persLoading = false; fail(e); }); }
+		return S.pers;
+	}
+	function pSave(kind, item, msg) {
+		return api('/personal', 'POST', { kind: kind, item: item }).then(function (d) { S.pers = d; render(); if (msg) { toast(msg); } }).catch(fail);
+	}
+	function pDel(kind, id, msg) {
+		return api('/personal', 'POST', { kind: kind, 'delete': id }).then(function (d) { S.pers = d; render(); if (msg) { toast(msg); } }).catch(fail);
+	}
+	function pMonthKey(d) { return (d || DWDC.today).slice(0, 7); }
+	// Next due date of a bill on/after today, and whether this period is paid.
+	function billNext(b) {
+		var t = DWDC.today, y = +t.slice(0, 4), m = +t.slice(5, 7);
+		var pad = function (n) { return ('0' + n).slice(-2); };
+		var dim = function (yy, mm) { return new Date(yy, mm, 0).getDate(); };
+		var due, key;
+		if (b.freq === 'yearly') {
+			due = y + '-' + pad(b.month) + '-' + pad(Math.min(b.day, dim(y, b.month)));
+			key = String(y);
+			if (due < t && b.paid && b.paid[key]) { due = (y + 1) + '-' + pad(b.month) + '-' + pad(Math.min(b.day, dim(y + 1, b.month))); key = String(y + 1); }
+		} else if (b.freq === 'weekly') {
+			var dt = new Date(t + 'T12:00:00'), wd = (b.day - 1) % 7; // day 1 = Monday
+			var diff = (wd + 1 - dt.getDay() + 7) % 7; dt.setDate(dt.getDate() + diff);
+			due = dt.toISOString().slice(0, 10); key = due;
+		} else {
+			due = y + '-' + pad(m) + '-' + pad(Math.min(b.day, dim(y, m)));
+			key = y + '-' + pad(m);
+			if (due < t && b.paid && b.paid[key]) { var ny = m === 12 ? y + 1 : y, nm = m === 12 ? 1 : m + 1; due = ny + '-' + pad(nm) + '-' + pad(Math.min(b.day, dim(ny, nm))); key = ny + '-' + pad(nm); }
+		}
+		var paid = !!(b.paid && b.paid[key]);
+		return { due: due, key: key, paid: paid, late: !paid && !b.autopay && due < t };
+	}
+	function billMonthly(b) { return b.freq === 'yearly' ? b.amount / 12 : b.freq === 'weekly' ? b.amount * 52 / 12 : b.amount; }
+	function pTodoRow(t) {
+		var src = t.source ? '<span class="dwdc-psrc ' + (t.source === 'Google Calendar' ? 'cal' : 'gt') + '">' + esc(t.source === 'Google Calendar' ? 'Calendar' : 'Google Tasks') + '</span>' : '';
+		var meta = [t.due ? (t.due === DWDC.today ? 'Today' : fmt(t.due)) + (t.time ? ' · ' + t.time : '') : '', t.note ? 'Has notes' : ''].filter(Boolean).join(' · ');
+		return '<div class="dwdc-todo' + (t.done ? ' done' : '') + (t.due && t.due < DWDC.today && !t.done ? ' late' : '') + '" data-ptask="' + t.id + '"><span class="dwdc-chk" data-ptoggle="' + t.id + '">' + ic('check', 12) + '</span>'
+			+ '<span class="dwdc-tt"><b>' + esc(t.text) + '</b><small>' + src + esc(meta) + '</small></span>'
+			+ '<button class="dwdc-del" data-pdel="todos:' + t.id + '" title="Delete">' + ic('x', 14) + '</button></div>';
+	}
+	function personalView(r) {
+		var D = pData(), tab = r.arg || 'todo';
+		if (!D) { return emptyRow('Loading…'); }
+		var kpi = function (label, val, sub, tone) { return '<div class="dwdc-kpi' + (tone ? ' ' + tone : '') + '"><small>' + label + '</small><strong>' + val + '</strong>' + (sub ? '<span>' + sub + '</span>' : '') + '</div>'; };
+		if (tab === 'finances') {
+			var ym = S.pMonth || pMonthKey(), MN = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+			var rows = D.money.filter(function (x) { return x.date.slice(0, 7) === ym; }).sort(function (a, b) { return a.date < b.date ? 1 : -1; });
+			var inc = rows.filter(function (x) { return x.type === 'income'; }).reduce(function (a, x) { return a + x.amount; }, 0);
+			var out = rows.filter(function (x) { return x.type !== 'income'; }).reduce(function (a, x) { return a + x.amount; }, 0);
+			var billsMo = D.bills.reduce(function (a, b) { return a + billMonthly(b); }, 0);
+			var yy = +ym.slice(0, 4), mm = +ym.slice(5, 7), shift = function (n) { var d = new Date(yy, mm - 1 + n, 1); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2); };
+			var cats = {}; rows.filter(function (x) { return x.type !== 'income'; }).forEach(function (x) { var c = x.cat || 'Other'; cats[c] = (cats[c] || 0) + x.amount; });
+			var catList = Object.keys(cats).sort(function (a, b) { return cats[b] - cats[a]; });
+			return '<div class="dwdc-pmonth"><button class="dwdc-btn2 sm" data-pmonth="' + shift(-1) + '">‹</button><b>' + MN[mm - 1] + ' ' + yy + '</b><button class="dwdc-btn2 sm" data-pmonth="' + shift(1) + '">›</button></div>'
+				+ '<div class="dwdc-kpis">' + kpi('Money in', money(inc), rows.filter(function (x) { return x.type === 'income'; }).length + ' entries', 'navy') + kpi('Money out', money(out), rows.filter(function (x) { return x.type !== 'income'; }).length + ' entries', 'coral') + kpi('Left over', money(inc - out), 'Bills run about ' + money(billsMo) + ' / month') + '</div>'
+				+ '<section class="dwdc-card pad"><div class="dwdc-cardh"><h2>Add money in or out</h2></div>'
+				+ '<form class="dwdc-pform" data-pform="money"><select name="type"><option value="expense">Money out</option><option value="income">Money in</option></select><input name="label" placeholder="What was it? (e.g. Groceries)" required><input name="amount" inputmode="decimal" placeholder="$0.00" required><input name="cat" placeholder="Category" list="dwdc-pcats"><input name="date" type="date" value="' + (ym === pMonthKey() ? DWDC.today : ym + '-01') + '"><button class="dwdc-btn">' + ic('plus', 14) + 'Add</button></form>'
+				+ '<datalist id="dwdc-pcats">' + ['Groceries', 'Dining', 'Gas', 'Car', 'Home', 'Health', 'Shopping', 'Travel', 'Fun', 'Gifts', 'Paycheck', 'Side job', 'Other'].map(function (c) { return '<option value="' + c + '">'; }).join('') + '</datalist></section>'
+				+ (catList.length ? '<section class="dwdc-card pad"><div class="dwdc-cardh"><h2>Where it went</h2></div><div class="dwdc-pcats">' + catList.map(function (c) { return '<div><span>' + esc(c) + '</span><i style="width:' + Math.max(4, Math.round(cats[c] / out * 100)) + '%"></i><b>' + money(cats[c]) + '</b></div>'; }).join('') + '</div></section>' : '')
+				+ '<section class="dwdc-card"><div class="dwdc-cardh pad2"><h2>' + MN[mm - 1] + ' entries</h2></div>' + (rows.length ? rows.map(function (x) {
+					return '<div class="dwdc-prow"><span class="d">' + fmt(x.date) + '</span><span class="w"><b>' + esc(x.label || (x.type === 'income' ? 'Money in' : 'Money out')) + '</b>' + (x.cat ? '<small>' + esc(x.cat) + '</small>' : '') + '</span><span class="a ' + (x.type === 'income' ? 'in' : 'out') + '">' + (x.type === 'income' ? '+' : '−') + money(x.amount) + '</span><button class="dwdc-del" data-pdel="money:' + x.id + '" title="Delete">' + ic('x', 14) + '</button></div>';
+				}).join('') : emptyRow('Nothing logged this month yet.')) + '</section>';
+		}
+		if (tab === 'bills') {
+			var bl = D.bills.map(function (b) { return { b: b, n: billNext(b) }; }).sort(function (a, b) { return a.n.paid - b.n.paid || (a.n.due < b.n.due ? -1 : 1); });
+			var mo = D.bills.reduce(function (a, b) { return a + billMonthly(b); }, 0);
+			var dueSoon = bl.filter(function (x) { return !x.n.paid && x.n.due <= new Date(Date.now() + 7 * 864e5).toISOString().slice(0, 10); });
+			var late = bl.filter(function (x) { return x.n.late; });
+			return '<div class="dwdc-kpis">' + kpi('Bills per month', money(mo), D.bills.length + ' bills · ' + money(mo * 12) + ' a year', 'navy') + kpi('Due in 7 days', String(dueSoon.length), money(dueSoon.reduce(function (a, x) { return a + x.b.amount; }, 0)), dueSoon.length ? 'coral' : '') + kpi('Late', String(late.length), late.length ? 'Mark them paid once done' : 'All caught up') + '</div>'
+				+ '<section class="dwdc-card pad"><div class="dwdc-cardh"><h2>Add a bill</h2></div>'
+				+ '<form class="dwdc-pform" data-pform="bills"><input name="name" placeholder="Bill (e.g. Rent, Phone)" required><input name="amount" inputmode="decimal" placeholder="$0.00" required><select name="freq"><option value="monthly">Monthly</option><option value="yearly">Yearly</option><option value="weekly">Weekly</option></select><label class="dwdc-pday"><span>Due day</span><input name="day" type="number" min="1" max="31" value="1"></label><label class="dwdc-pchk"><input type="checkbox" name="autopay"> Autopay</label><button class="dwdc-btn">' + ic('plus', 14) + 'Add</button></form>'
+				+ '<p class="dwdc-mutp sm">Yearly bills use the due day of the month you add them in; weekly bills use 1 = Monday … 7 = Sunday.</p></section>'
+				+ '<section class="dwdc-card">' + (bl.length ? bl.map(function (x) {
+					var b = x.b, n = x.n;
+					return '<div class="dwdc-prow bill' + (n.paid ? ' paid' : '') + (n.late ? ' late' : '') + '"><span class="dwdc-chk" data-pbillpaid="' + b.id + '" title="' + (n.paid ? 'Mark not paid' : 'Mark paid') + '">' + ic('check', 12) + '</span><span class="w"><b>' + esc(b.name) + '</b><small>' + (b.freq === 'yearly' ? 'Yearly' : b.freq === 'weekly' ? 'Weekly' : 'Monthly') + (b.autopay ? ' · Autopay' : '') + '</small></span><span class="d2">' + (n.paid ? 'Paid' : n.late ? 'Late · ' + fmt(n.due) : 'Due ' + fmt(n.due)) + '</span><span class="a">' + money(b.amount) + '</span><button class="dwdc-del" data-pdel="bills:' + b.id + '" title="Delete">' + ic('x', 14) + '</button></div>';
+				}).join('') : emptyRow('No bills yet. Add your first one above.')) + '</section>';
+		}
+		if (tab === 'calendar') {
+			var cm = S.pCal || pMonthKey(), cy = +cm.slice(0, 4), cmo = +cm.slice(5, 7), MNc = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+			var cshift = function (n) { var d = new Date(cy, cmo - 1 + n, 1); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2); };
+			var first = new Date(cy, cmo - 1, 1), startPad = (first.getDay() + 6) % 7, days = new Date(cy, cmo, 0).getDate();
+			var items = {};
+			var put = function (day, html) { (items[day] = items[day] || []).push(html); };
+			D.todos.forEach(function (t) { if (t.due && t.due.slice(0, 7) === cm) { put(+t.due.slice(8, 10), '<button class="dwdc-cal-i ' + (t.gevent ? 'ev' : 'td') + (t.done ? ' done' : '') + '" data-ptask="' + t.id + '">' + (t.time ? '<i>' + esc(t.time) + '</i> ' : '') + esc(t.text) + '</button>'); } });
+			D.bills.forEach(function (b) {
+				var dd = b.freq === 'weekly' ? null : Math.min(b.day, days);
+				if (b.freq === 'yearly' && b.month !== cmo) { return; }
+				var key = b.freq === 'yearly' ? String(cy) : cm, paid = b.paid && b.paid[key];
+				if (b.freq === 'weekly') { for (var dd2 = 1; dd2 <= days; dd2++) { if (((new Date(cy, cmo - 1, dd2).getDay() + 6) % 7) + 1 === b.day) { put(dd2, '<a class="dwdc-cal-i bill" href="#personal/bills">' + esc(b.name) + ' · ' + money(b.amount) + '</a>'); } } return; }
+				put(dd, '<a class="dwdc-cal-i bill' + (paid ? ' done' : '') + '" href="#personal/bills">' + esc(b.name) + ' · ' + money(b.amount) + '</a>');
+			});
+			var cells = '';
+			for (var pi = 0; pi < startPad; pi++) { cells += '<div class="dwdc-cal-d off"></div>'; }
+			for (var di = 1; di <= days; di++) {
+				var ds = cm + '-' + ('0' + di).slice(-2);
+				cells += '<div class="dwdc-cal-d' + (ds === DWDC.today ? ' today' : '') + '"><button class="dwdc-cal-n" data-caladd="' + ds + '" title="Add a to-do on this day">' + di + '</button>' + (items[di] || []).join('') + '</div>';
+			}
+			return '<div class="dwdc-pmonth"><button class="dwdc-btn2 sm" data-pcal="' + cshift(-1) + '">‹</button><b>' + MNc[cmo - 1] + ' ' + cy + '</b><button class="dwdc-btn2 sm" data-pcal="' + cshift(1) + '">›</button>' + (cm !== pMonthKey() ? '<button class="dwdc-btn2 sm" data-pcal="' + pMonthKey() + '">Today</button>' : '') + '</div>'
+				+ '<section class="dwdc-card dwdc-cal"><div class="dwdc-cal-h">' + ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(function (x) { return '<span>' + x + '</span>'; }).join('') + '</div><div class="dwdc-cal-g">' + cells + '</div></section>'
+				+ '<p class="dwdc-mutp sm"><span class="dwdc-cal-key td"></span>To-dos <span class="dwdc-cal-key ev"></span>Google Calendar <span class="dwdc-cal-key bill"></span>Bills · Click a day’s number to add a to-do on that day.</p>';
+		}
+		if (tab === 'done') {
+			var dn = D.todos.filter(function (t) { return t.done; }).sort(function (a, b) { return (b.done_at || '') < (a.done_at || '') ? -1 : 1; });
+			return '<section class="dwdc-card">' + (dn.length ? '<div class="dwdc-todos donelist">' + dn.map(pTodoRow).join('') + '</div>' : emptyRow('Nothing completed yet.')) + '</section>';
+		}
+		// To-do
+		var open = D.todos.filter(function (t) { return !t.done; }).sort(function (a, b) { return (a.due || '9') < (b.due || '9') ? -1 : 1; });
+		var done = D.todos.filter(function (t) { return t.done; }).sort(function (a, b) { return (b.done_at || '') < (a.done_at || '') ? -1 : 1; });
+		var G = S.pGoogle, GL = G && G.last;
+		if (!G && !S.pGoogleLoading) { S.pGoogleLoading = true; api('/personal/google').then(function (x) { S.pGoogle = x; render(); }).catch(function () {}); }
+		return '<section class="dwdc-card"><form class="dwdc-addbar home" data-pform="todos"><input name="text" placeholder="Add something to do…" autocomplete="off" required><input name="due" type="date"><button class="dwdc-btn">Add</button></form>'
+			+ (open.length ? '<div class="dwdc-todos">' + open.map(pTodoRow).join('') + '</div>' : emptyRow('Nothing on your list.'))
+			+ (done.length ? '<button class="dwdc-donebtn" data-pshowdone>' + (S.pShowDone ? 'Hide' : 'Show') + ' completed <b>' + done.length + '</b></button>' + (S.pShowDone ? '<div class="dwdc-todos donelist">' + done.slice(0, 40).map(pTodoRow).join('') + '</div>' : '') : '')
+			+ '</section>'
+			+ '<section class="dwdc-card pad dwdc-gsync"><div class="dwdc-cardh"><h2>Google Tasks &amp; Calendar</h2><span class="dwdc-conn-st ' + (GL ? 'on' : 'off') + '">' + (GL ? 'Connected' : 'Not set up') + '</span></div>'
+			+ (GL ? '<p class="dwdc-mutp">Last synced ' + fmt(GL.at, true) + ' ' + esc(GL.at.slice(11, 16)) + '. Syncs every 15 minutes.</p>' : '')
+			+ '<p>Two-way sync: to-dos you add here go to Google Tasks (with a due date they also show on your Google Calendar), Google Tasks you add show up here, and your calendar events for the next two weeks appear here on their day. Ticking one off on either side ticks it off on the other.</p>'
+			+ '<ol><li>Open <a href="https://script.google.com/home/projects/create" target="_blank" rel="noopener"><b>script.google.com → New project</b></a> (signed in as mike@dreamwebdigital.com).</li><li>On the left, click <b>Services +</b>, choose <b>Google Tasks API</b>, click <b>Add</b>.</li><li>Delete what’s in the editor and paste this script:' + (G ? '<div class="dwdc-conn-url"><code>Dream Desk personal sync script</code><button class="dwdc-lnk sm2" data-copy="' + esc(G.script) + '">Copy script</button></div>' : ' <i>loading…</i>') + '</li><li>Save, pick <b>setup</b> next to Run, press <b>Run</b> and allow access.</li></ol></section>';
+	}
+
 	/* ---------- Quote of the day (non-dual teachers) — same quote all day, a new one each morning ---------- */
 	var QUOTES = [
 		['We’re all just walking each other home.', 'Ram Dass'],
@@ -233,8 +356,10 @@
 		return '<aside class="dwdc-side">'
 			+ '<a class="dwdc-brand" href="#home"><span class="dwdc-mark"><img src="' + esc(DWDC.mark) + '" alt=""></span><span><strong>Dream Desk</strong><small>Dream Web Digital</small></span></a>'
 			+ (true ? '' : '<label class="dwdc-ssearch">' + ic('search', 16) + '<input type="search" placeholder="Search..." value="' + esc(S.q) + '"><kbd>Ctrl K</kbd></label>')
-			+ '<nav>' + nav('home', 'home', 'Home')
-			+ '<div class="dwdc-navh"><i class="b1"></i>Projects</div>'
+			+ '<nav>' + nav('home', 'home', 'Home') + '<a class="dwdc-nav dwdc-pswitch' + (r.view === 'personal' ? ' on' : '') + '" href="#personal">' + ic('user', 18) + '<span>Personal</span></a>'
+			+ (r.view === 'personal' ? '<div class="dwdc-navh"><i class="b2"></i>To-Do</div>' + nav('personal/todo', 'todo', 'My To-Dos', S.pers ? S.pers.todos.filter(function (x) { return !x.done; }).length : '') + nav('personal/calendar', 'clock', 'Calendar') + nav('personal/done', 'done', 'Completed', S.pers ? S.pers.todos.filter(function (x) { return x.done; }).length : '')
+				+ '<div class="dwdc-navh fin"><i class="b4"></i>Finances</div>' + nav('personal/finances', 'dollar', 'Money In &amp; Out') + '<div class="dwdc-navh pb"><i class="b5"></i>Bills</div>' + nav('personal/bills', 'card', 'Upcoming Bills') + '</nav><a class="dwdc-me" href="' + esc(DWDC.logout) + '" title="Sign out"><span class="dwdc-me-av">MT</span><span><strong>' + esc(DWDC.user || 'Michael Tarr') + '</strong><small>Owner · Sign out</small></span>' + ic('logout', 17) + '</a></aside>' : '')
+			+ (r.view === 'personal' ? '' : '<div class="dwdc-navh"><i class="b1"></i>Projects</div>'
 			+ nav('projects/active', 'bolt', 'Active', by('active').length) + nav('projects/hold', 'pause', 'On Hold', by('hold').length)
 			+ nav('projects/limbo', 'clock', 'Limbo', by('limbo').length) + nav('projects/complete', 'done', 'Completed', by('complete').length)
 			+ '<div class="dwdc-navh"><i class="b2"></i>Clients</div>'
@@ -243,7 +368,7 @@
 			+ '<div class="dwdc-navh fin"><i class="b4"></i>Finances</div>' + nav('money', 'dollar', 'Money Stats')
 			+ '<div class="dwdc-navh"><i class="b3"></i>More</div>'
 			+ '<a class="dwdc-nav" href="' + esc(DWDC.wp) + '">' + ic('wp') + '<span>WordPress Admin</span></a>'
-			+ '</nav><a class="dwdc-me" href="' + esc(DWDC.logout) + '" title="Sign out"><span class="dwdc-me-av">MT</span><span><strong>' + esc(DWDC.user || 'Michael Tarr') + '</strong><small>Owner · Sign out</small></span>' + ic('logout', 17) + '</a></aside>';
+			+ '</nav><a class="dwdc-me" href="' + esc(DWDC.logout) + '" title="Sign out"><span class="dwdc-me-av">MT</span><span><strong>' + esc(DWDC.user || 'Michael Tarr') + '</strong><small>Owner · Sign out</small></span>' + ic('logout', 17) + '</a></aside>');
 	}
 	function top(r, t) {
 		var SEC = { Projects: 'projects/active', Project: 'projects/active', Clients: 'clients', Client: 'clients', Finances: 'money', 'Website Hosted': 'hosting', Search: 'home' };
@@ -256,21 +381,27 @@
 			+ '<div class="dwdc-ph-id"><button class="dwdc-burger" data-menu aria-label="Menu">' + ic('menu', 20) + '</button><div>'
 			+ '<p class="dwdc-ph-crumb">' + crumb + '</p>'
 			+ '<h1 class="dwdc-ph-title">' + esc(t[1]) + (t[2] ? (t[1] ? ' ' : '') + '<b>' + esc(t[2]) + '</b>' : '') + '</h1></div></div>'
-			+ '<div class="dwdc-ph-tools">'
+			+ (r.view === 'personal' ? '</header>' : '<div class="dwdc-ph-tools">'
 			+ '<label class="dwdc-ssearch dwdc-ph-search">' + ic('search', 16) + '<input type="search" name="dwdc-find" placeholder="Search clients…" aria-label="Search clients" value="" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" readonly data-lpignore="true" data-1p-ignore data-form-type="other"><kbd>Ctrl K</kbd></label>'
 			+ '<span class="dwdc-ph-sp"></span>'
 			+ '<div class="dwdc-ph-menu' + (menuOpen ? ' open' : '') + '"><button class="dwdc-ph-btn outline" type="button" data-newmenu aria-haspopup="menu" aria-expanded="' + menuOpen + '">' + plus + 'New' + '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>'
 			+ '<ul role="menu"><li><button role="menuitem" type="button" data-act="job">' + plus + 'Project</button></li><li><button role="menuitem" type="button" data-act="newclient">' + plus + 'Client</button></li><li><button role="menuitem" type="button" data-act="hosting">' + plus + 'Website Hosting</button></li></ul></div>'
 			+ (r.view === 'money' ? '<button class="dwdc-ph-btn coral" type="button" data-refresh' + (S.refreshRes && S.refreshRes.busy ? ' disabled' : '') + '>' + ic('refresh', 14) + (S.refreshRes && S.refreshRes.busy ? 'Updating…' : 'Update Finances') + '</button>' : '')
 			+ '<button class="dwdc-ph-btn primary" type="button" data-act="pay">' + ic('card', 14) + 'Log Payment</button>'
-			+ '</div></header>';
+			+ '</div></header>');
 	}
 
 	function syncWpMenu(r) {
+		document.body.classList.toggle('dwd-pmode', r.view === 'personal');
+		if (r.view === 'personal' && S.pers) {
+			var pc = { 'personal/todo': S.pers.todos.filter(function (x) { return !x.done; }).length, 'personal/done': S.pers.todos.filter(function (x) { return x.done; }).length, 'personal/bills': S.pers.bills.filter(function (b) { var n = billNext(b); return !n.paid && n.due <= new Date(Date.now() + 7 * 864e5).toISOString().slice(0, 10); }).length };
+			Object.keys(pc).forEach(function (h) { var li = document.getElementById('dwd-dd-' + h.replace('/', '-')); if (!li) { return; } var nm = li.querySelector('.wp-menu-name'), b = nm && nm.querySelector('.dwdc-mcount'); if (!nm) { return; } if (!b) { b = document.createElement('span'); b.className = 'dwdc-mcount'; nm.appendChild(b); } b.textContent = pc[h]; });
+		}
 		var menu = document.getElementById('adminmenu');
 		if (!menu) { return; }
 		var cur = r.view === 'client' || r.view === 'cl' ? S.back : r.view + (r.arg ? '/' + r.arg : '');
 		if (cur === 'projects' || cur === 'projects/all') { cur = 'projects/active'; }
+		if (cur === 'personal') { cur = 'personal/todo'; }
 		var counts = { 'projects/active': by('active').length, 'projects/hold': by('hold').length, 'projects/limbo': by('limbo').length, 'projects/complete': by('complete').length, onboarding: onboardList().length, hosting: hosting().length, leads: leadList().length, clients: S.clients.length };
 		var home = document.getElementById('toplevel_page_client-desk');
 		if (home) { var onHome = cur === 'home' || cur === ''; home.classList.toggle('current', onHome); home.classList.toggle('wp-has-current-submenu', onHome); var ha = home.querySelector('a.menu-top'); if (ha) { ha.classList.toggle('current', onHome); ha.classList.toggle('wp-has-current-submenu', onHome); } }
@@ -311,6 +442,7 @@
 			var pl = { active: ['Active', 'Projects'], limbo: ['Limbo', 'Projects'], hold: ['On Hold', 'Projects'], complete: ['Completed', 'Projects'] }[r.arg];
 			if (pl) { t = ['Projects', pl[0], pl[1]]; }
 		}
+		if (r.view === 'personal') { t = ['Personal'].concat({ finances: ['Money In &', 'Out'], bills: ['Upcoming', 'Bills'], done: ['Completed', 'To-Dos'], calendar: ['My', 'Calendar'] }[r.arg] || ['My', 'To-Dos']); }
 		if (r.view === 'client') {
 			var c = contact(r.id), words = String(c ? c.name : 'Project').split(' ');
 			t = ['Project', words.slice(0, Math.max(1, words.length - 1)).join(' '), words.length > 1 ? words[words.length - 1] : ''];
@@ -324,7 +456,7 @@
 			t = ['Client', kw[0], kw.slice(1).join(' ')];
 			body = personView(r.id);
 		} else {
-			body = ({ home: home, clients: clientsView, projects: projectsView, leads: leadsList, onboarding: onboardView, todos: todosView, hosting: hostingView, money: moneyView, reviews: reviewsView, archive: archiveView, search: searchView }[r.view] || home)();
+			body = r.view === 'personal' ? personalView(r) : ({ home: home, clients: clientsView, projects: projectsView, leads: leadsList, onboarding: onboardView, todos: todosView, hosting: hostingView, money: moneyView, reviews: reviewsView, archive: archiveView, search: searchView }[r.view] || home)();
 		}
 		app.innerHTML = sidebar(r) + '<div class="dwdc-shade-m" data-menu></div><main class="dwdc-main">' + quoteBar() + appBanner() + top(r, t) + '<div class="dwdc-screen' + (anim ? ' in' : '') + '">' + body + '</div></main>' + modal();
 		S.prev = r.view + r.arg;
@@ -1450,6 +1582,14 @@
 				+ '</dl><div class="dwdc-farow end"><button type="button" class="dwdc-btn2 danger" data-del-task="' + tk.id + '">Delete</button>'
 				+ '<button type="button" class="dwdc-btn" data-toggle="' + tk.id + '">' + ic('check', 14) + (tk.done ? 'Mark not done' : 'Mark done') + '</button></div></div>';
 		}
+		if (m.type === 'ptask') {
+			var pt = ((S.pers || {}).todos || []).find(function (x) { return x.id === m.id; });
+			if (!pt) { S.modal = null; return ''; }
+			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal dwdc-taskm">' + head(pt.done ? 'Completed · Personal' : 'Personal to-do', 'Task', 'details')
+				+ (pt.source ? '<p class="dwdc-mutp">From ' + esc(pt.source) + (pt.time ? ' · ' + esc(pt.time) : '') + '</p>' : '')
+				+ '<form class="dwdc-fgrid dwdc-pedit" data-pform="ptask"><input type="hidden" name="id" value="' + esc(pt.id) + '"><label class="wide"><span>To-do</span><input name="text" value="' + esc(pt.text) + '" required></label><label><span>Due</span><input type="date" name="due" value="' + esc(pt.due || '') + '"></label><label class="wide"><span>Notes</span><textarea name="note" rows="4" placeholder="Anything to remember…">' + esc(pt.note || '') + '</textarea></label>'
+				+ '<div class="dwdc-farow end wide"><button type="button" class="dwdc-btn2 danger" data-pdel="todos:' + pt.id + '">Delete</button><button type="button" class="dwdc-btn2" data-ptoggle="' + pt.id + '">' + (pt.done ? 'Mark not done' : 'Mark done') + '</button><button class="dwdc-btn">Save</button></div></form></div>';
+		}
 		if (m.type === 'csvremind') {
 			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal dwdc-csvm">' + head('Reminder', 'Update your', 'finances')
 				+ '<p>It’s time to upload a fresh <b>Upwork CSV</b> so your Money Stats stay current.' + (DWDC.upLast ? ' Your last upload was <b>' + fmt(DWDC.upLast, true) + '</b>.' : '') + '</p>'
@@ -1629,6 +1769,31 @@
 		}
 		if (t.closest('[data-csvsnooze]')) { try { localStorage.setItem('dwdcCsvSnooze', DWDC.today); } catch (e2) {} S.modal = null; render(); return; }
 		if (t.closest('[data-csvgo]')) { S.modal = null; S.syncOpen = true; go('money'); setTimeout(function () { var u = document.querySelector('.dwdc-upbtn'); if (u) { u.scrollIntoView({ block: 'center', behavior: 'smooth' }); } }, 400); return; }
+		if ((el = t.closest('[data-ptoggle]'))) {
+			e.stopPropagation();
+			var ptd = (S.pers.todos || []).find(function (x) { return x.id === el.getAttribute('data-ptoggle'); });
+			if (ptd) { var was = ptd.done; ptd.done = !was; render(); pSave('todos', { id: ptd.id, done: !was }); if (!was) { undoToast('Done', function () { pSave('todos', { id: ptd.id, done: false }); }); } }
+			if (S.modal && S.modal.type === 'ptask') { S.modal = null; }
+			return;
+		}
+		if ((el = t.closest('[data-pdel]'))) {
+			e.stopPropagation();
+			var pd = el.getAttribute('data-pdel').split(':');
+			if (pd[0] !== 'todos' && !confirm('Delete this for good?')) { return; }
+			if (S.modal) { S.modal = null; }
+			pDel(pd[0], pd[1], 'Deleted');
+			return;
+		}
+		if ((el = t.closest('[data-ptask]')) && !t.closest('a, button')) { S.modal = { type: 'ptask', id: el.getAttribute('data-ptask'), vals: {} }; render(); return; }
+		if ((el = t.closest('[data-pshowdone]'))) { S.pShowDone = !S.pShowDone; render(); return; }
+		if ((el = t.closest('[data-pcal]'))) { S.pCal = el.getAttribute('data-pcal'); render(); return; }
+		if ((el = t.closest('[data-caladd]'))) { var cd = el.getAttribute('data-caladd'), txt = prompt('Add a to-do for ' + fmt(cd) + ':'); if (txt && txt.trim()) { pSave('todos', { text: txt.trim(), due: cd }, 'Added'); } return; }
+		if ((el = t.closest('[data-pmonth]'))) { S.pMonth = el.getAttribute('data-pmonth'); render(); return; }
+		if ((el = t.closest('[data-pbillpaid]'))) {
+			var pb = (S.pers.bills || []).find(function (x) { return x.id === el.getAttribute('data-pbillpaid'); });
+			if (pb) { var nx = billNext(pb), pp = {}; Object.keys(pb.paid || {}).forEach(function (k) { pp[k] = pb.paid[k]; }); if (nx.paid) { delete pp[nx.key]; } else { pp[nx.key] = DWDC.today; } pSave('bills', { id: pb.id, paid: pp }, nx.paid ? 'Marked not paid' : pb.name + ' paid'); }
+			return;
+		}
 		if ((el = t.closest('[data-showdone]'))) { S.showDone = !S.showDone; render(); return; }
 		if ((el = t.closest('[data-review]'))) { S.modal = { type: 'review', vals: {}, off: {} }; render(); return; }
 		if ((el = t.closest('[data-revpick]'))) { var rid = el.getAttribute('data-revpick'); S.modal.off[rid] = !S.modal.off[rid]; render(); return; }
@@ -1832,6 +1997,13 @@
 	app.addEventListener('submit', function (e) {
 		var f = e.target, data = {}; e.preventDefault();
 		new FormData(f).forEach(function (val, k) { data[k] = val; });
+		if (f.hasAttribute('data-pform')) {
+			var pk = f.getAttribute('data-pform');
+			if (pk === 'bills') { data.autopay = !!f.querySelector('[name=autopay]:checked'); data.month = +DWDC.today.slice(5, 7); }
+			if (pk === 'ptask') { pk = 'todos'; S.modal = null; }
+			pSave(pk, data, pk === 'todos' ? (data.id ? 'Saved' : 'Added') : pk === 'bills' ? 'Bill added' : 'Added').then(function () { var x = document.querySelector('[data-pform="' + pk + '"] input[name=text], [data-pform="' + pk + '"] input[name=label], [data-pform="' + pk + '"] input[name=name]'); if (x) { x.focus(); } });
+			return;
+		}
 		var r = route();
 		if (f.classList.contains('dwdc-pplf')) {
 			if (!String(data.name || '').trim() && !String(data.email || '').trim()) { toast('Add a name or email', true); return; }
