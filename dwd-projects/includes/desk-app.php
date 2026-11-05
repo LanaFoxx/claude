@@ -159,6 +159,7 @@ input[type=text]:focus,input[type=password]:focus{border-color:#13A6EE;box-shado
 		<div class="row"><label><input type="checkbox" name="remember" value="1" checked> Keep me signed in</label><a href="<?php echo esc_url( wp_lostpassword_url( home_url( '/desk/' ) ) ); ?>">Forgot password?</a></div>
 		<?php wp_nonce_field( 'dwda_login', '_dwda' ); ?>
 		<input type="hidden" name="dwda_login" value="1">
+		<input type="hidden" name="redirect_to" value="<?php echo esc_url( home_url( '/desk/' ) ); ?>">
 		<button class="btn" type="submit">Sign in</button>
 	</form>
 	<p class="foot">Dream Web Digital</p>
