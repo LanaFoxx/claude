@@ -202,8 +202,8 @@
 		var stop = function (id) { return ' data-scroll="sec-' + id + '"'; };
 		return '<div class="dwdc-card pad dwdc-tilebox"><div class="dwdc-tiles">'
 			+ tile('blue', 'Active jobs', active.length, money(owed(working())) + ' owed on open jobs', '', stop('active'))
-			+ tile('red', 'On hold &amp; limbo', hold.length + limbo.length, hold.length + ' on hold · ' + limbo.length + ' in limbo', '', stop('hold'))
 			+ tile('green', 'Completed', done.length, money(billed) + ' billed all-time', '', stop('complete'))
+			+ tile('teal', 'Hosting clients', host.length, money(annual) + '/yr' + (next ? ' · next renewal ' + fmt(next.renewal) : ''), 'hosting')
 			+ '</div></div>'
 			+ jobTable('active', 'Active jobs', 'Nothing in progress right now.', '<div class="dwdc-sechr">' + (nLeads ? '<a class="dwdc-lnk" href="#leads">' + nLeads + ' new lead' + (nLeads === 1 ? '' : 's') + ' / onboarding ' + ic('right', 14) + '</a>' : '') + '<button class="dwdc-btn sm" data-act="job">' + ic('plus', 14) + 'Add job</button></div>')
 			+ jobTable('hold', 'On hold', 'No jobs on hold. Paused jobs go here.')
