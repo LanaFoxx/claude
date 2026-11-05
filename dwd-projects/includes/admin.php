@@ -470,3 +470,40 @@ function dwdp_box_thumbs( $post ) {
 	<p><button type="button" class="button button-primary" id="dwdp-build-thumbs">Build thumbnails</button> <span id="dwdp-thumbs-status" class="description"></span></p>
 	<?php
 }
+
+/* ---------- Dream Desk look for every Portfolio → Projects screen ---------- */
+function dwdp_is_skin_screen() {
+	$s = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+	return $s && ( DWDP_CPT === $s->post_type || false !== strpos( (string) $s->id, DWDP_CPT ) );
+}
+add_filter( 'admin_body_class', function ( $c ) {
+	return dwdp_is_skin_screen() ? $c . ' dwdp-skin' : $c;
+} );
+add_action( 'admin_enqueue_scripts', function () {
+	if ( ! dwdp_is_skin_screen() ) {
+		return;
+	}
+	wp_enqueue_style( 'dwdp-fonts', 'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap', array(), null );
+	wp_enqueue_style( 'dwdp-skin', DWDP_URL . 'assets/portfolio-skin.css', array(), DWDP_VERSION );
+} );
+// Breadcrumb above the title, and the last word of the title in bold blue (like the rest of Dream Desk).
+add_action( 'admin_footer', function () {
+	if ( ! dwdp_is_skin_screen() ) {
+		return;
+	}
+	$s     = get_current_screen();
+	$label = 'post' === $s->base ? ( 'add' === $s->action ? 'Add New Project' : 'Edit Project' ) : ( 'edit' === $s->base ? 'All Projects' : trim( (string) get_admin_page_title() ) );
+	?>
+	<script>
+	(function () {
+		var h = document.querySelector('.wrap > h1, .wrap h1.wp-heading-inline'); if (!h || h.dataset.dw) { return; }
+		h.dataset.dw = 1;
+		var words = h.textContent.trim().split(/\s+/);
+		if (words.length > 1) { var last = words.pop(); h.innerHTML = words.join(' ') + ' <b>' + last + '</b>'; }
+		var c = document.createElement('p'); c.className = 'dwdp-crumb';
+		c.innerHTML = '<a href="<?php echo esc_js( admin_url( 'edit.php?post_type=' . DWDP_CPT ) ); ?>">Portfolio</a><span aria-hidden="true">/</span><strong><?php echo esc_js( $label ); ?></strong>';
+		h.parentNode.insertBefore(c, h);
+	})();
+	</script>
+	<?php
+} );

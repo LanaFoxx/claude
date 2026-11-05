@@ -188,6 +188,7 @@ add_action( 'admin_head', function () {
 	.folded #adminmenu li.dwd-msec, .folded #adminmenu li.dwd-brand { display: none; }
 	/* brand block at the top */
 	#adminmenu li.dwd-brand { padding: 14px 16px 10px !important; }
+	#adminmenu li.dwd-brand, #adminmenu li.dwd-brand:hover, #adminmenu li.dwd-brand a, #adminmenu li.dwd-brand a:hover, #adminmenu li.dwd-brand a:focus { background: transparent !important; box-shadow: none !important; outline: 0; }
 	#adminmenu li.dwd-brand a { display: flex; align-items: center; gap: 12px; text-decoration: none; box-shadow: none !important; }
 	#adminmenu li.dwd-brand .mk { width: 48px; height: 48px; border-radius: 12px; background: #fff; display: flex; align-items: center; justify-content: center; flex: none; }
 	#adminmenu li.dwd-brand .mk img { width: 36px; height: 36px; }

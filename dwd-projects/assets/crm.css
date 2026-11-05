@@ -937,3 +937,7 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 .dwdc-colh .dwdc-ic { flex: none; color: var(--sec); transition: transform .15s ease; }
 .dwdc-collapse.open .dwdc-colh .dwdc-ic { transform: rotate(90deg); }
 .dwdc-colh:hover h2 { color: var(--deep); }
+/* To-Do List header: teal, complements the bright blue and coral */
+.cd-todo > .dwdc-dhead { background: #13A89E; height: auto; min-height: 64px; padding: 14px 20px; }
+.cd-todo > .dwdc-dhead h2 { color: #fff; }
+.cd-todo > .dwdc-dhead .dwdc-cnt { background: #fff; color: #0E7F78 !important; }

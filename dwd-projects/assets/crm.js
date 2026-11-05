@@ -141,7 +141,7 @@
 
 	/* ---------- routing ---------- */
 	var TITLES = {
-		home: ['', 'Today at', 'Dream Web'], leads: ['Clients', 'All', 'Leads'], onboarding: ['Clients', 'Onboarding', 'Forms'],
+		home: ['', 'Today at', 'Dream Web Digital'], leads: ['Clients', 'All', 'Leads'], onboarding: ['Clients', 'Onboarding', 'Forms'],
 		todos: ['Everything open', 'To-Do', 'List'], hosting: ['Clients', 'Hosting', 'Clients'], archive: ['More', 'Archive', ''],
 		search: ['Search', 'Search', 'Results'], money: ['Finances', 'Money', 'Stats'], reviews: ['Clients', 'Get', 'Reviews'], clients: ['Clients', 'All', 'Clients'], projects: ['Projects', 'All', 'Projects']
 	};
@@ -655,7 +655,7 @@
 			}).join('') : emptyRow('No active projects.')) + '</div>',
 			'<footer class="dwdc-totals one"><div><small>Total amount due</small><strong class="deep">' + money(owed(active)) + '</strong></div></footer>');
 		var td = openTasks().sort(function (a, b) { return (a.due || '9') < (b.due || '9') ? -1 : 1; });
-		var tl = card('cd-plain', '<header class="dwdc-dhead plain"><h2>To-Do List <span class="dwdc-cnt">' + td.length + '</span></h2></header>',
+		var tl = card('cd-plain cd-todo', '<header class="dwdc-dhead"><h2>To-Do List <span class="dwdc-cnt">' + td.length + '</span></h2></header>',
 			'<form class="dwdc-addbar home"><input name="text" placeholder="Add something we need to do..." autocomplete="off" required><button class="dwdc-btn">Add</button></form>'
 			+ (td.length ? '<div class="dwdc-todos">' + td.map(function (t) { return todoRow(t); }).join('') + '</div>' : emptyRow('Nothing on the list. Nice.')));
 		return '<div class="dwdc-row3">' + c2 + c3 + c1 + '</div><div class="dwdc-row2c">' + card('cd-plain cd-trends', '<header class="dwdc-dhead"><h2>Patterns &amp; Trends</h2><button class="dwdc-askbtn light" data-askai>' + ic('bolt', 14) + 'Ask AI</button><a href="#money">Money Stats ' + ic('right', 14) + '</a></header>', trendsBox()) + tl + '</div>';
@@ -671,7 +671,7 @@
 		var list = rows.filter(function (x) { return f === 'all' || x.t === { projects: 'Project', hosting: 'Hosting', past: 'Past client', leads: 'Lead' }[f]; })
 			.sort(function (a, b) { var o = ['Project', 'Hosting', 'Lead', 'Past client']; return o.indexOf(a.t) - o.indexOf(b.t) || a.k.name.localeCompare(b.k.name); });
 		var cap = S.more.clients || q ? list.length : 50;
-		return '<div class="dwdc-chips">' + chip('all', 'All', 'all') + chip('projects', 'Projects', 'Project') + chip('hosting', 'Hosting', 'Hosting') + chip('leads', 'Leads', 'Lead') + chip('past', 'Past', 'Past client') + '</div>'
+		return '<div class="dwdc-chips">' + chip('all', 'All', 'all') + chip('projects', 'Projects', 'Project') + chip('hosting', 'Hosting', 'Hosting') + chip('past', 'Past', 'Past client') + '</div>'
 			+ '<div class="dwdc-card dwdc-tbl"><div class="dwdc-grid g-clients head"><span>Client</span><span>Business</span><span>Email</span><span>Type</span><span>Projects</span><span>Hosting</span><span>Last activity</span></div>'
 			+ (list.length ? list.slice(0, cap).map(function (x) {
 				var k = x.k, biz = k.company || (x.pp[0] ? x.pp[0].name : ''), host = x.pp.some(function (c) { return num(c.hosting) > 0; });
