@@ -344,9 +344,9 @@
           "nofollow": ""
          },
          "background_background": "classic",
-         "background_color": "#738238",
+         "background_color": "#5E6B2D",
          "button_background_hover_background": "classic",
-         "button_background_hover_color": "#5E6B2D",
+         "button_background_hover_color": "#4F5A25",
          "button_text_color": "#F4F2EA",
          "hover_color": "#FFFFFF",
          "border_radius": {
@@ -849,7 +849,7 @@
         "settings": {
          "title": "Why Magnolia",
          "header_size": "p",
-         "title_color": "#738238",
+         "title_color": "#5E6B2D",
          "typography_typography": "custom",
          "typography_font_family": "Jost",
          "typography_font_size": {
@@ -2098,7 +2098,7 @@
         "settings": {
          "title": "Past Projects",
          "header_size": "p",
-         "title_color": "#738238",
+         "title_color": "#5E6B2D",
          "typography_typography": "custom",
          "typography_font_family": "Jost",
          "typography_font_size": {
@@ -2365,7 +2365,7 @@
           "settings": {
            "title": "Person County, NC",
            "header_size": "span",
-           "title_color": "#738238",
+           "title_color": "#5E6B2D",
            "typography_typography": "custom",
            "typography_font_family": "Jost",
            "typography_font_size": {
@@ -2550,7 +2550,7 @@
           "settings": {
            "title": "Orange County, NC",
            "header_size": "span",
-           "title_color": "#738238",
+           "title_color": "#5E6B2D",
            "typography_typography": "custom",
            "typography_font_family": "Jost",
            "typography_font_size": {
@@ -2735,7 +2735,7 @@
           "settings": {
            "title": "Halifax County, VA",
            "header_size": "span",
-           "title_color": "#738238",
+           "title_color": "#5E6B2D",
            "typography_typography": "custom",
            "typography_font_family": "Jost",
            "typography_font_size": {
@@ -2966,7 +2966,7 @@
       "settings": {
        "title": "About Us",
        "header_size": "p",
-       "title_color": "#738238",
+       "title_color": "#5E6B2D",
        "typography_typography": "custom",
        "typography_font_family": "Jost",
        "typography_font_size": {
@@ -3163,14 +3163,15 @@
     "unit": "px",
     "size": 32
    },
+   "css_classes": "e-no-lazyload",
    "background_background": "gradient",
-   "background_color": "#8A9A48",
+   "background_color": "#66742F",
    "background_color_stop": {
     "unit": "%",
     "size": 0,
     "sizes": []
    },
-   "background_color_b": "#5E6B2D",
+   "background_color_b": "#4F5A25",
    "background_color_b_stop": {
     "unit": "%",
     "size": 100,
@@ -3270,7 +3271,7 @@
       "isInner": false,
       "settings": {
        "editor": "Tell us about your property and we will schedule a site visit and estimate.",
-       "text_color": "#EEF0DC",
+       "text_color": "#F4F2EA",
        "typography_typography": "custom",
        "typography_font_family": "Jost",
        "typography_font_size": {

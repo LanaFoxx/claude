@@ -343,9 +343,9 @@
         "nofollow": ""
        },
        "background_background": "classic",
-       "background_color": "#738238",
+       "background_color": "#5E6B2D",
        "button_background_hover_background": "classic",
-       "button_background_hover_color": "#5E6B2D",
+       "button_background_hover_color": "#4F5A25",
        "button_text_color": "#F4F2EA",
        "hover_color": "#FFFFFF",
        "border_radius": {

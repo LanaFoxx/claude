@@ -421,8 +421,8 @@
           "isInner": false,
           "settings": {
            "title": "Call or Text",
-           "header_size": "h3",
-           "title_color": "#738238",
+           "header_size": "h2",
+           "title_color": "#5E6B2D",
            "typography_typography": "custom",
            "typography_font_family": "Jost",
            "typography_font_size": {
@@ -520,8 +520,8 @@
           "isInner": false,
           "settings": {
            "title": "Email",
-           "header_size": "h3",
-           "title_color": "#738238",
+           "header_size": "h2",
+           "title_color": "#5E6B2D",
            "typography_typography": "custom",
            "typography_font_family": "Jost",
            "typography_font_size": {
@@ -615,8 +615,8 @@
           "isInner": false,
           "settings": {
            "title": "Hours",
-           "header_size": "h3",
-           "title_color": "#738238",
+           "header_size": "h2",
+           "title_color": "#5E6B2D",
            "typography_typography": "custom",
            "typography_font_family": "Jost",
            "typography_font_size": {
@@ -704,8 +704,8 @@
           "isInner": false,
           "settings": {
            "title": "Service Area",
-           "header_size": "h3",
-           "title_color": "#738238",
+           "header_size": "h2",
+           "title_color": "#5E6B2D",
            "typography_typography": "custom",
            "typography_font_family": "Jost",
            "typography_font_size": {
@@ -1185,7 +1185,7 @@
           "sizes": []
          },
          "label_color": "#283A33",
-         "mark_required_color": "#738238",
+         "mark_required_color": "#5E6B2D",
          "html_color": "#3F4A44",
          "field_text_color": "#1F2A25",
          "field_background_color": "#FBFAF6",
@@ -1206,9 +1206,9 @@
           "left": "0",
           "isLinked": true
          },
-         "button_background_color": "#738238",
+         "button_background_color": "#5E6B2D",
          "button_text_color": "#F4F2EA",
-         "button_background_hover_color": "#5E6B2D",
+         "button_background_hover_color": "#4F5A25",
          "button_hover_color": "#FFFFFF",
          "button_border_radius": {
           "unit": "px",

@@ -492,7 +492,7 @@
             "settings": {
              "title": "Person County, NC",
              "header_size": "span",
-             "title_color": "#738238",
+             "title_color": "#5E6B2D",
              "typography_typography": "custom",
              "typography_font_family": "Jost",
              "typography_font_size": {
@@ -522,7 +522,7 @@
             "settings": {
              "title": "Site Preparation",
              "header_size": "span",
-             "title_color": "#8A918C",
+             "title_color": "#5B655F",
              "typography_typography": "custom",
              "typography_font_family": "Jost",
              "typography_font_size": {
@@ -553,7 +553,7 @@
           "isInner": false,
           "settings": {
            "title": "Wooded Lot to Build-Ready Homesite",
-           "header_size": "h3",
+           "header_size": "h2",
            "title_color": "#283A33",
            "typography_typography": "custom",
            "typography_font_family": "Marcellus",
@@ -730,7 +730,7 @@
             "settings": {
              "title": "Orange County, NC",
              "header_size": "span",
-             "title_color": "#738238",
+             "title_color": "#5E6B2D",
              "typography_typography": "custom",
              "typography_font_family": "Jost",
              "typography_font_size": {
@@ -760,7 +760,7 @@
             "settings": {
              "title": "Landscape Development",
              "header_size": "span",
-             "title_color": "#8A918C",
+             "title_color": "#5B655F",
              "typography_typography": "custom",
              "typography_font_family": "Jost",
              "typography_font_size": {
@@ -791,7 +791,7 @@
           "isInner": false,
           "settings": {
            "title": "Hillside Drainage &amp; Retaining Wall",
-           "header_size": "h3",
+           "header_size": "h2",
            "title_color": "#283A33",
            "typography_typography": "custom",
            "typography_font_family": "Marcellus",
@@ -968,7 +968,7 @@
             "settings": {
              "title": "Halifax County, VA",
              "header_size": "span",
-             "title_color": "#738238",
+             "title_color": "#5E6B2D",
              "typography_typography": "custom",
              "typography_font_family": "Jost",
              "typography_font_size": {
@@ -998,7 +998,7 @@
             "settings": {
              "title": "Tree Care",
              "header_size": "span",
-             "title_color": "#8A918C",
+             "title_color": "#5B655F",
              "typography_typography": "custom",
              "typography_font_family": "Jost",
              "typography_font_size": {
@@ -1029,7 +1029,7 @@
           "isInner": false,
           "settings": {
            "title": "Lake Property Treeline Clearing",
-           "header_size": "h3",
+           "header_size": "h2",
            "title_color": "#283A33",
            "typography_typography": "custom",
            "typography_font_family": "Marcellus",
@@ -1206,7 +1206,7 @@
             "settings": {
              "title": "Caswell County, NC",
              "header_size": "span",
-             "title_color": "#738238",
+             "title_color": "#5E6B2D",
              "typography_typography": "custom",
              "typography_font_family": "Jost",
              "typography_font_size": {
@@ -1236,7 +1236,7 @@
             "settings": {
              "title": "Site Preparation",
              "header_size": "span",
-             "title_color": "#8A918C",
+             "title_color": "#5B655F",
              "typography_typography": "custom",
              "typography_font_family": "Jost",
              "typography_font_size": {
@@ -1267,7 +1267,7 @@
           "isInner": false,
           "settings": {
            "title": "Farm Driveway Rebuild",
-           "header_size": "h3",
+           "header_size": "h2",
            "title_color": "#283A33",
            "typography_typography": "custom",
            "typography_font_family": "Marcellus",
@@ -1444,7 +1444,7 @@
             "settings": {
              "title": "Granville County, NC",
              "header_size": "span",
-             "title_color": "#738238",
+             "title_color": "#5E6B2D",
              "typography_typography": "custom",
              "typography_font_family": "Jost",
              "typography_font_size": {
@@ -1474,7 +1474,7 @@
             "settings": {
              "title": "Property Care",
              "header_size": "span",
-             "title_color": "#8A918C",
+             "title_color": "#5B655F",
              "typography_typography": "custom",
              "typography_font_family": "Jost",
              "typography_font_size": {
@@ -1505,7 +1505,7 @@
           "isInner": false,
           "settings": {
            "title": "Second Home Seasonal Care",
-           "header_size": "h3",
+           "header_size": "h2",
            "title_color": "#283A33",
            "typography_typography": "custom",
            "typography_font_family": "Marcellus",
@@ -1626,14 +1626,15 @@
     "unit": "px",
     "size": 32
    },
+   "css_classes": "e-no-lazyload",
    "background_background": "gradient",
-   "background_color": "#8A9A48",
+   "background_color": "#66742F",
    "background_color_stop": {
     "unit": "%",
     "size": 0,
     "sizes": []
    },
-   "background_color_b": "#5E6B2D",
+   "background_color_b": "#4F5A25",
    "background_color_b_stop": {
     "unit": "%",
     "size": 100,
@@ -1733,7 +1734,7 @@
       "isInner": false,
       "settings": {
        "editor": "Tell us about your property and we will schedule a site visit and estimate.",
-       "text_color": "#EEF0DC",
+       "text_color": "#F4F2EA",
        "typography_typography": "custom",
        "typography_font_family": "Jost",
        "typography_font_size": {

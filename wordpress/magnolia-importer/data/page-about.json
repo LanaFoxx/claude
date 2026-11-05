@@ -447,7 +447,7 @@
           "settings": {
            "title": "Owner &amp; Operator",
            "header_size": "p",
-           "title_color": "#738238",
+           "title_color": "#5E6B2D",
            "typography_typography": "custom",
            "typography_font_family": "Jost",
            "typography_font_size": {
@@ -505,7 +505,7 @@
         "settings": {
          "title": "From the Owner",
          "header_size": "p",
-         "title_color": "#738238",
+         "title_color": "#5E6B2D",
          "typography_typography": "custom",
          "typography_font_family": "Jost",
          "typography_font_size": {
@@ -751,7 +751,7 @@
           "settings": {
            "title": "Heys McMath",
            "header_size": "p",
-           "title_color": "#738238",
+           "title_color": "#5E6B2D",
            "typography_typography": "custom",
            "typography_font_family": "Jost",
            "typography_font_size": {
@@ -876,7 +876,7 @@
       "settings": {
        "title": "The Magnolia Standard",
        "header_size": "p",
-       "title_color": "#738238",
+       "title_color": "#5E6B2D",
        "typography_typography": "custom",
        "typography_font_family": "Jost",
        "typography_font_size": {
@@ -1066,7 +1066,7 @@
         "settings": {
          "title": "01",
          "header_size": "span",
-         "title_color": "#738238",
+         "title_color": "#5E6B2D",
          "typography_typography": "custom",
          "typography_font_family": "Marcellus",
          "typography_font_size": {
@@ -1213,7 +1213,7 @@
         "settings": {
          "title": "02",
          "header_size": "span",
-         "title_color": "#738238",
+         "title_color": "#5E6B2D",
          "typography_typography": "custom",
          "typography_font_family": "Marcellus",
          "typography_font_size": {
@@ -1360,7 +1360,7 @@
         "settings": {
          "title": "03",
          "header_size": "span",
-         "title_color": "#738238",
+         "title_color": "#5E6B2D",
          "typography_typography": "custom",
          "typography_font_family": "Marcellus",
          "typography_font_size": {
@@ -1507,7 +1507,7 @@
         "settings": {
          "title": "04",
          "header_size": "span",
-         "title_color": "#738238",
+         "title_color": "#5E6B2D",
          "typography_typography": "custom",
          "typography_font_family": "Marcellus",
          "typography_font_size": {
@@ -1711,7 +1711,7 @@
       "settings": {
        "title": "How We Work",
        "header_size": "p",
-       "title_color": "#738238",
+       "title_color": "#5E6B2D",
        "typography_typography": "custom",
        "typography_font_family": "Jost",
        "typography_font_size": {
@@ -1879,7 +1879,7 @@
         "settings": {
          "title": "1",
          "header_size": "span",
-         "title_color": "#738238",
+         "title_color": "#5E6B2D",
          "typography_typography": "custom",
          "typography_font_family": "Marcellus",
          "typography_font_size": {
@@ -2016,7 +2016,7 @@
         "settings": {
          "title": "2",
          "header_size": "span",
-         "title_color": "#738238",
+         "title_color": "#5E6B2D",
          "typography_typography": "custom",
          "typography_font_family": "Marcellus",
          "typography_font_size": {
@@ -2153,7 +2153,7 @@
         "settings": {
          "title": "3",
          "header_size": "span",
-         "title_color": "#738238",
+         "title_color": "#5E6B2D",
          "typography_typography": "custom",
          "typography_font_family": "Marcellus",
          "typography_font_size": {
@@ -2290,7 +2290,7 @@
         "settings": {
          "title": "4",
          "header_size": "span",
-         "title_color": "#738238",
+         "title_color": "#5E6B2D",
          "typography_typography": "custom",
          "typography_font_family": "Marcellus",
          "typography_font_size": {
@@ -2447,14 +2447,15 @@
     "unit": "px",
     "size": 32
    },
+   "css_classes": "e-no-lazyload",
    "background_background": "gradient",
-   "background_color": "#8A9A48",
+   "background_color": "#66742F",
    "background_color_stop": {
     "unit": "%",
     "size": 0,
     "sizes": []
    },
-   "background_color_b": "#5E6B2D",
+   "background_color_b": "#4F5A25",
    "background_color_b_stop": {
     "unit": "%",
     "size": 100,
@@ -2554,7 +2555,7 @@
       "isInner": false,
       "settings": {
        "editor": "Tell us about your property and we will schedule a site visit and estimate.",
-       "text_color": "#EEF0DC",
+       "text_color": "#F4F2EA",
        "typography_typography": "custom",
        "typography_font_family": "Jost",
        "typography_font_size": {

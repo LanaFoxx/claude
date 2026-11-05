@@ -35,6 +35,9 @@ WHITE = '#FFFFFF'
 SERIF = 'Marcellus'
 SANS = 'Jost'
 PHONE = '(336) 583-9398'
+OLIVE_DEEP = '#4F5A25'
+# Text colors that fail WCAG AA contrast on the light backgrounds, and their accessible stand-ins.
+TEXT_SAFE = {OLIVE: OLIVE_DARK, GREY: MUTED}
 SIDE = 40  # minimum left/right padding at every breakpoint
 MAX = 1300  # maximum content width
 TEL = 'tel:3365839398'
@@ -166,6 +169,7 @@ def widget(kind, s, glob=()):
 
 
 def heading(text, tag='h2', color=FOREST, align=None, align_m=None, link=None, **t):
+    color = TEXT_SAFE.get(color, color)
     s = {'title': text, 'header_size': tag, 'title_color': color}
     s.update(typo(**t))
     if align:
@@ -186,6 +190,7 @@ def display(text, tag='h2', color=FOREST, size=50, t=40, m=34, align=None, lh=1.
 
 
 def text(html, color=BODY, size=18, t=None, m=17, weight=300, lh=1.65, align=None, **extra):
+    color = TEXT_SAFE.get(color, color)
     s = {'editor': html, 'text_color': color}
     s.update(typo(size=size, t=t, m=m, weight=weight, lh=lh))
     if align:
@@ -196,6 +201,8 @@ def text(html, color=BODY, size=18, t=None, m=17, weight=300, lh=1.65, align=Non
 
 def button(label, url, bg=OLIVE, color=IVORY, hover_bg=OLIVE_DARK, hover_color=WHITE, border=None,
            pad=(17, 30), full_mobile=False, **extra):
+    if bg == OLIVE:
+        bg, hover_bg = OLIVE_DARK, OLIVE_DEEP
     s = {
         'text': label, 'link': {'url': url, 'is_external': '', 'nofollow': ''},
         'background_background': 'classic', 'background_color': bg,
@@ -314,7 +321,7 @@ def page_hero(label, title, intro=None, after=None):
 def cta_band():
     left = stack([display('Ready to make one call?', 'h2', IVORY, 46, 38, 32),
                   text('Tell us about your property and we will schedule a site visit and estimate.',
-                       '#EEF0DC', 18, m=17, lh=1.55)], gap=12, _flex_size='grow',
+                       IVORY, 18, m=17, lh=1.55)], gap=12, _flex_size='grow',
                  **resp('width', px(640), px(100, '%'), px(100, '%')))
     right = row([button('Request an Estimate', '%%URL:contact%%', FOREST, IVORY, DEEP, WHITE),
                  heading(PHONE, 'p', IVORY, link=TEL, size=17, weight=500, lh=1.2)],
@@ -324,8 +331,9 @@ def cta_band():
                 extra={'flex_direction_tablet': 'column', 'flex_justify_content': 'space-between',
                        'flex_align_items': 'center', 'flex_align_items_tablet': 'flex-start',
                        'flex_gap': gaps(32),
-                       'background_background': 'gradient', 'background_color': '#8A9A48',
-                       'background_color_stop': px(0, '%'), 'background_color_b': OLIVE_DARK,
+                       'css_classes': 'e-no-lazyload',
+                       'background_background': 'gradient', 'background_color': '#66742F',
+                       'background_color_stop': px(0, '%'), 'background_color_b': OLIVE_DEEP,
                        'background_color_b_stop': px(100, '%'), 'background_gradient_type': 'linear',
                        'background_gradient_angle': px(120, 'deg')})
     return s
@@ -688,7 +696,7 @@ def projects():
             stack([row([heading(place, 'span', OLIVE, size=11, weight=500, ls=0.2, transform='uppercase'),
                         heading(cat, 'span', GREY, size=11, weight=500, ls=0.2, transform='uppercase')],
                        gap=16, wrap='wrap'),
-                   display(title, 'h3', FOREST, 24, 22, 22, lh=1.2),
+                   display(title, 'h2', FOREST, 24, 22, 22, lh=1.2),
                    text(body, MUTED, 15, m=15, weight=400, lh=1.55)], gap=8)],
             gap=18, _css_classes='mpc-project mpc-cat-' + slug(cat)))
     body = section([html_widget(FILTER_HTML), grid(cards, (3, 2, 1), (28, 36), (24, 36), (24, 40))],
@@ -739,10 +747,10 @@ def form_widget():
         'required_field_message': 'This field is required.',
         'invalid_message': "There's something wrong. The form is invalid.",
         'column_gap': px(22), 'row_gap': px(22), 'label_spacing': px(8),
-        'label_color': FOREST, 'mark_required_color': OLIVE, 'html_color': BODY,
+        'label_color': FOREST, 'mark_required_color': OLIVE_DARK, 'html_color': BODY,
         'field_text_color': INK, 'field_background_color': '#FBFAF6', 'field_border_color': '#C4C6B8',
         'field_border_width': box(1), 'field_border_radius': box(0),
-        'button_background_color': OLIVE, 'button_text_color': IVORY, 'button_background_hover_color': OLIVE_DARK,
+        'button_background_color': OLIVE_DARK, 'button_text_color': IVORY, 'button_background_hover_color': OLIVE_DEEP,
         'button_hover_color': WHITE, 'button_border_radius': box(0), 'button_text_padding': box(18, 34),
         'message_color': FOREST,
         '_css_classes': 'mpc-form',
@@ -758,7 +766,7 @@ def form_widget():
 
 def contact():
     def info(label, kids):
-        return stack([heading(label, 'h3', OLIVE, size=12, weight=600, ls=0.2, transform='uppercase')] + kids, gap=14)
+        return stack([heading(label, 'h2', OLIVE, size=12, weight=600, ls=0.2, transform='uppercase')] + kids, gap=14)
     left = stack([
         info('Call or Text', [heading(PHONE, 'p', FOREST, link=TEL, family=SERIF, size=30, t=28, m=26, lh=1.2)]),
         info('Email', [heading(EMAIL, 'p', FOREST, link='mailto:' + EMAIL, size=19, m=17, weight=400, lh=1.4)]),
