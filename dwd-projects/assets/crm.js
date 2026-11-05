@@ -298,7 +298,7 @@
 			var top = m.indexOf(Math.max.apply(null, m)), tot = m.reduce(function (a, b) { return a + b; }, 0);
 			return '<div class="dwdc-bm-row"><b class="dwdc-bm-y">' + y + '</b>' + m.map(function (v, i) {
 				var h = v ? Math.max(3, Math.round(v / mx * 100)) : 0, best = i === top && v;
-				return '<div class="dwdc-bm-c' + (best ? ' best' : '') + '" title="' + MN[i] + ' ' + y + ': ' + money(v) + '">' + (best ? '<em>' + k(v) + '</em>' : '') + '<i style="height:' + h + '%"></i></div>';
+				return '<div class="dwdc-bm-c' + (best ? ' best' : '') + '" data-month="' + y + '-' + ('0' + (i + 1)).slice(-2) + '" role="button" tabindex="0" title="' + MN[i] + ' ' + y + ': ' + money(v) + ' · click to see every payment">' + (best ? '<em>' + k(v) + '</em>' : '') + '<i style="height:' + h + '%"></i></div>';
 			}).join('') + '<div class="dwdc-bm-best">' + (m[top] ? '<b>' + MN[top] + '</b><span>' + money(m[top]) + ' · ' + Math.round(m[top] / Math.max(1, tot) * 100) + '% of the year</span>' : '—') + '</div></div>';
 		}).join('');
 		return rows ? '<div class="dwdc-bm">' + head + rows + '</div>' : emptyRow('No dated payments yet.');
@@ -1294,6 +1294,31 @@
 		var inp = function (k, label, ph, type, wide) { return '<label' + (wide ? ' class="wide"' : '') + '><span>' + label + '</span><input name="' + k + '" type="' + (type || 'text') + '" value="' + esc(v[k] || '') + '" placeholder="' + esc(ph || '') + '"></label>'; };
 		var head = function (eb, a, b) { return '<button type="button" class="dwdc-mx" data-close-modal>' + ic('x', 20) + '</button><p class="dwdc-eyebrow">' + eb + '</p><h2><span>' + a + '</span> <em>' + b + '</em></h2>'; };
 		var body;
+		if (m.type === 'month') {
+			var MNL = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+			var yy = +m.ym.slice(0, 4), mo = +m.ym.slice(5, 7), title = MNL[mo - 1] + ' ' + yy;
+			var shift = function (n) { var d = new Date(yy, mo - 1 + n, 1); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2); };
+			var body;
+			if (!m.rows) { body = emptyRow('Loading payments…'); }
+			else if (!m.rows.length) { body = emptyRow('No payments this month.'); }
+			else {
+				var tot = m.rows.reduce(function (a, x) { return a + x.amount; }, 0);
+				var groups = [['Upwork', 'upw', 'Upwork (after fees)'], ['Stripe', 'str', 'Stripe'], ['PayPal', 'ppl', 'PayPal'], ['Other', 'oth', 'Zelle, check & other']];
+				body = '<div class="dwdc-mo-sum">' + groups.map(function (g) { var t = m.rows.filter(function (x) { return x.source === g[0]; }).reduce(function (a, x) { return a + x.amount; }, 0); return t ? '<span><i class="' + g[1] + '"></i>' + g[2] + '<b>' + money(t) + '</b></span>' : ''; }).join('') + '<span class="all">Total<b>' + money(tot) + '</b></span></div>'
+					+ groups.map(function (g) {
+						var list = m.rows.filter(function (x) { return x.source === g[0]; });
+						if (!list.length) { return ''; }
+						var t = list.reduce(function (a, x) { return a + x.amount; }, 0);
+						return '<section class="dwdc-mo-g"><h4><i class="' + g[1] + '"></i>' + g[2] + '<small>' + list.length + ' payment' + (list.length === 1 ? '' : 's') + '</small><b>' + money(t) + '</b></h4>'
+							+ list.map(function (x) {
+								return '<a class="dwdc-mo-r' + (x.refund ? ' ref' : '') + '" href="#client/' + x.pid + '" data-close-modal><span class="d">' + fmt(x.date) + '</span><span class="w"><b>' + esc(x.client || x.project) + '</b><small>' + esc(x.project + (x.note ? ' · ' + x.note.replace(/ · after Upwork fee.*$/, '') : '') + (g[0] === 'Other' && x.method ? ' · ' + x.method : '')) + '</small></span><span class="a">' + (x.refund ? '−' : '') + money(Math.abs(x.amount)) + '</span></a>';
+							}).join('') + '</section>';
+					}).join('');
+			}
+			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide">' + head('Payments', MNL[mo - 1], String(yy))
+				+ '<div class="dwdc-mo-nav"><button class="dwdc-btn2 sm" data-month="' + shift(-1) + '">‹ ' + MNL[(mo + 10) % 12].slice(0, 3) + '</button><button class="dwdc-btn2 sm" data-month="' + shift(1) + '">' + MNL[mo % 12].slice(0, 3) + ' ›</button></div>'
+				+ body + '</div>';
+		}
 		if (m.type === 'app') {
 			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal">' + head('Dream Desk', 'Get the', 'app') + appModal()
 				+ '<div class="dwdc-farow end"><button type="button" class="dwdc-btn" data-close-modal>Done</button></div></div>';
@@ -1478,6 +1503,12 @@
 			if (dk && confirm('Delete ' + dk.name + '? They have no projects. (It goes to the WordPress trash and can be restored.)')) {
 				api('/client/' + dk.id, 'DELETE').then(function () { return reload(); }).then(function () { location.hash = 'clients'; toast(dk.name + ' deleted'); }).catch(fail);
 			}
+			return;
+		}
+		if ((el = t.closest('[data-month]'))) {
+			var ym = el.getAttribute('data-month');
+			S.modal = { type: 'month', ym: ym, vals: {} }; render();
+			api('/month?ym=' + ym).then(function (x) { if (S.modal && S.modal.type === 'month' && S.modal.ym === ym) { S.modal.rows = x.rows; render(); } }).catch(fail);
 			return;
 		}
 		if (t.closest('[data-refresh]')) { runRefresh(); return; }

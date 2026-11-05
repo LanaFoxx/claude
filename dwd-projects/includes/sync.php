@@ -699,3 +699,41 @@ add_action( 'rest_api_init', function () {
 	} ) );
 	register_rest_route( 'dwd/v1', '/crm/refresh', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function () { return dwds_refresh(); } ) );
 } );
+
+/** Every payment received in one month (YYYY-MM), for the month breakdown on Money Stats. */
+add_action( 'rest_api_init', function () {
+	register_rest_route( 'dwd/v1', '/crm/month', array( 'methods' => 'GET', 'permission_callback' => function () { return current_user_can( 'manage_options' ); }, 'callback' => function ( $r ) {
+		$ym = (string) $r->get_param( 'ym' );
+		if ( ! preg_match( '/^\d{4}-\d{2}$/', $ym ) ) {
+			return new WP_Error( 'dwdc_ym', 'Pick a month.', array( 'status' => 400 ) );
+		}
+		$rows = array();
+		foreach ( get_posts( array( 'post_type' => DWDC_CONTACT, 'post_status' => 'private', 'posts_per_page' => -1, 'fields' => 'ids' ) ) as $pid ) {
+			$pays = get_post_meta( $pid, '_dwdc_payments', true );
+			if ( ! is_array( $pays ) ) {
+				continue;
+			}
+			$cid = (int) get_post_meta( $pid, '_dwdc_client', true );
+			foreach ( $pays as $x ) {
+				$st = strtolower( (string) ( $x['status'] ?? 'paid' ) );
+				if ( 0 !== strpos( (string) ( $x['date'] ?? '' ), $ym ) || in_array( $st, array( 'open', 'void', 'draft', 'failed', 'uncollectible' ), true ) ) {
+					continue;
+				}
+				$src    = in_array( $x['source'] ?? '', array( 'Upwork', 'Stripe', 'PayPal' ), true ) ? $x['source'] : 'Other';
+				$rows[] = array(
+					'date'    => $x['date'],
+					'amount'  => round( ( 'refunded' === $st ? -1 : 1 ) * (float) preg_replace( '/[^\d.]/', '', (string) $x['amount'] ), 2 ),
+					'source'  => $src,
+					'method'  => 'Other' === $src ? (string) ( $x['source'] ?? '' ) : $src,
+					'project' => get_the_title( $pid ),
+					'pid'     => $pid,
+					'client'  => $cid ? get_the_title( $cid ) : (string) get_post_meta( $pid, '_dwdc_person', true ),
+					'note'    => (string) ( $x['note'] ?? '' ),
+					'refund'  => 'refunded' === $st,
+				);
+			}
+		}
+		usort( $rows, function ( $a, $b ) { return strcmp( $b['date'], $a['date'] ) ?: ( $b['amount'] <=> $a['amount'] ); } );
+		return array( 'ym' => $ym, 'rows' => $rows );
+	} ) );
+} );

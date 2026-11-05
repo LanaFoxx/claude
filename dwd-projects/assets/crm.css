@@ -892,3 +892,29 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 .dwdc-files small { font-size: 11.5px; color: var(--sec); }
 .dwdc .dwdc-lnk.red { color: #C0362E !important; }
 @media (max-width: 768px) { .dwdc-refbar { flex-direction: column; align-items: stretch; } }
+/* Clickable months + month payments list */
+.dwdc-bm-c[data-month] { cursor: pointer; }
+.dwdc-bm-c[data-month]:hover i { background: #9ECDF0; }
+.dwdc-bm-c.best[data-month]:hover i { background: #0F96DA; }
+.dwdc-mo-nav { display: flex; justify-content: space-between; margin: -4px 0 12px; }
+.dwdc-mo-sum { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+.dwdc-mo-sum span { display: inline-flex; align-items: center; gap: 7px; padding: 8px 12px; border-radius: 10px; background: var(--hover); border: 1px solid var(--div); font-size: 13px; font-weight: 600; color: var(--sec); }
+.dwdc-mo-sum span i { width: 9px; height: 9px; border-radius: 3px; }
+.dwdc-mo-sum span b { color: var(--navy); font-weight: 800; }
+.dwdc-mo-sum span.all { margin-left: auto; background: var(--navy); border-color: var(--navy); color: rgba(255,255,255,.75); }
+.dwdc-mo-sum span.all b { color: #fff; }
+.dwdc-mo-g { border: 1px solid var(--div); border-radius: 12px; margin-bottom: 12px; overflow: hidden; }
+.dwdc-mo-g h4 { margin: 0; display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: var(--hover); border-bottom: 1px solid var(--div); font-size: 13.5px; font-weight: 800; color: var(--navy); }
+.dwdc-mo-g h4 i { width: 10px; height: 10px; border-radius: 3px; }
+.dwdc-mo-g h4 small { font-size: 12px; font-weight: 500; color: var(--sec); }
+.dwdc-mo-g h4 b { margin-left: auto; }
+.dwdc-mo-r { display: grid; grid-template-columns: 64px 1fr auto; gap: 12px; align-items: center; padding: 9px 14px; border-bottom: 1px solid var(--div); color: var(--navy) !important; text-decoration: none; }
+.dwdc-mo-r:last-child { border-bottom: 0; }
+.dwdc-mo-r:hover { background: #F6FAFE; }
+.dwdc-mo-r .d { font-size: 12.5px; color: var(--sec); }
+.dwdc-mo-r .w { min-width: 0; display: flex; flex-direction: column; }
+.dwdc-mo-r .w b { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dwdc-mo-r .w small { font-size: 12px; color: var(--sec); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dwdc-mo-r .a { font-size: 14px; font-weight: 700; }
+.dwdc-mo-r.ref .a { color: #C0362E; }
+.dwdc .dwdc-modal.wide { max-height: calc(100vh - 60px); overflow-y: auto; }
