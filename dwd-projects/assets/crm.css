@@ -442,3 +442,13 @@ select.dwdc-stage.t-navy { background-color: #DCE3EE !important; color: var(--na
 /* v2.9.15: On hold = navy, Completed = brand blue */
 .dwdc-grid.head.tint-blue { background: var(--logo); color: #fff; border-bottom-color: var(--logo); }
 select.dwdc-stage.t-blue { background-color: #D4EEFD !important; color: #0078BF !important; border-color: #9FD8FB !important; }
+/* v3.0: clients & projects */
+.g-clients { grid-template-columns: minmax(220px, 1.4fr) minmax(220px, 2fr) 150px 120px 110px; min-width: 900px; }
+.g-projects { grid-template-columns: minmax(220px, 1.6fr) minmax(180px, 1.3fr) 130px 110px 110px 110px; min-width: 920px; }
+.g-cproj { grid-template-columns: minmax(240px, 2fr) 130px 110px 100px minmax(150px, 1.2fr) 110px; min-width: 900px; }
+.dwdc-clink { font-weight: 600; font-size: 15px; color: var(--navy) !important; border-bottom: 1px dashed #B9C5D6; }
+.dwdc-clink:hover { color: var(--blue) !important; border-bottom-color: var(--blue); }
+.dwdc-nm small { min-height: 1em; }
+.dwdc-tproj { font-style: normal; font-size: 11px; font-weight: 700; color: var(--blue); background: var(--blue-t); border-radius: 999px; padding: 2px 8px; margin-right: 4px; }
+.dwdc-cnotes { font-size: 14px; line-height: 1.6; color: var(--navy); }
+.g-clients .dwdc-cnt { margin-right: 4px; }

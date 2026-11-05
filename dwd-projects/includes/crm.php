@@ -17,16 +17,17 @@ defined( 'ABSPATH' ) || exit;
 
 const DWDC_CONTACT = 'dwd_contact';
 const DWDC_TASK    = 'dwd_task';
+const DWDC_CLIENT  = 'dwd_client';
 
 add_action( 'init', function () {
-	foreach ( array( DWDC_CONTACT => 'Contacts', DWDC_TASK => 'To-dos' ) as $type => $label ) {
+	foreach ( array( DWDC_CONTACT => 'Projects', DWDC_TASK => 'To-dos', DWDC_CLIENT => 'Clients' ) as $type => $label ) {
 		register_post_type( $type, array( 'label' => $label, 'public' => false, 'show_ui' => false, 'supports' => array( 'title' ) ) );
 	}
 } );
 
 // Contacts and to-dos are private posts: keep "Private:" out of their titles in emails and to-dos.
 add_filter( 'private_title_format', function ( $format, $post ) {
-	return $post && in_array( get_post_type( $post ), array( DWDC_CONTACT, DWDC_TASK ), true ) ? '%s' : $format;
+	return $post && in_array( get_post_type( $post ), array( DWDC_CONTACT, DWDC_TASK, DWDC_CLIENT ), true ) ? '%s' : $format;
 }, 10, 2 );
 
 /** The lists, in order. Saved so they can be renamed or added to later. */
@@ -60,6 +61,7 @@ function dwdc_contact( $post, $full = false ) {
 	$entries          = get_post_meta( $p->ID, '_dwdc_entries', true );
 	$entries          = is_array( $entries ) ? $entries : array();
 	$c['entry_count'] = count( $entries );
+	$c['client']      = (int) get_post_meta( $p->ID, '_dwdc_client', true );
 	$c['last_entry']  = $entries ? end( $entries )['form'] : '';
 	$c['last_entry_date'] = $entries ? end( $entries )['date'] : '';
 	$c['onboarded']   = '';
@@ -119,6 +121,7 @@ function dwdc_find_by_email( $email ) {
 }
 
 function dwdc_save_contact( $id, $data ) {
+	$is_new = ! $id;
 	if ( ! $id ) {
 		$id = wp_insert_post( array( 'post_type' => DWDC_CONTACT, 'post_status' => 'private', 'post_title' => $data['name'] ?? 'New contact' ) );
 		if ( empty( $data['list'] ) ) {
@@ -154,7 +157,81 @@ function dwdc_save_contact( $id, $data ) {
 		}
 		update_post_meta( $id, '_dwdc_jobs', $jobs );
 	}
+	if ( isset( $data['client'] ) && DWDC_CLIENT === get_post_type( (int) $data['client'] ) ) {
+		update_post_meta( $id, '_dwdc_client', (int) $data['client'] );
+	} elseif ( $is_new ) {
+		dwdc_ensure_client( $id );
+	}
 	return (int) $id;
+}
+
+/* ---------------------------------------------------------------- clients (people) and their projects */
+
+function dwdc_client( $post ) {
+	$p = get_post( $post );
+	if ( ! $p || DWDC_CLIENT !== $p->post_type ) {
+		return null;
+	}
+	$c = array( 'id' => $p->ID, 'name' => $p->post_title, 'created' => get_post_time( 'c', true, $p ) );
+	foreach ( array( 'email', 'phone', 'company', 'notes' ) as $f ) {
+		$c[ $f ] = (string) get_post_meta( $p->ID, '_dwdcl_' . $f, true );
+	}
+	return $c;
+}
+function dwdc_save_client( $id, $d ) {
+	if ( ! $id ) {
+		$id = wp_insert_post( array( 'post_type' => DWDC_CLIENT, 'post_status' => 'private', 'post_title' => sanitize_text_field( $d['name'] ?? 'New client' ) ) );
+	} elseif ( isset( $d['name'] ) && '' !== trim( $d['name'] ) ) {
+		wp_update_post( array( 'ID' => $id, 'post_title' => sanitize_text_field( $d['name'] ) ) );
+	}
+	foreach ( array( 'email', 'phone', 'company', 'notes' ) as $f ) {
+		if ( isset( $d[ $f ] ) ) {
+			update_post_meta( $id, '_dwdcl_' . $f, 'email' === $f ? strtolower( sanitize_email( $d[ $f ] ) ) : ( 'notes' === $f ? sanitize_textarea_field( $d[ $f ] ) : sanitize_text_field( $d[ $f ] ) ) );
+		}
+	}
+	return (int) $id;
+}
+/** Find a client by email, else by exact name. */
+function dwdc_find_client( $email, $name ) {
+	$email = strtolower( trim( (string) $email ) );
+	if ( $email ) {
+		$ids = get_posts( array( 'post_type' => DWDC_CLIENT, 'post_status' => 'private', 'posts_per_page' => 1, 'fields' => 'ids', 'meta_key' => '_dwdcl_email', 'meta_value' => $email ) ); // phpcs:ignore
+		if ( $ids ) {
+			return (int) $ids[0];
+		}
+	}
+	$name = strtolower( trim( (string) $name ) );
+	if ( $name ) {
+		foreach ( get_posts( array( 'post_type' => DWDC_CLIENT, 'post_status' => 'private', 'posts_per_page' => -1 ) ) as $p ) {
+			if ( strtolower( $p->post_title ) === $name ) {
+				return $p->ID;
+			}
+		}
+	}
+	return 0;
+}
+/** Make sure a project belongs to a client: matched by email or contact name, else a new client. */
+function dwdc_ensure_client( $pid ) {
+	$have = (int) get_post_meta( $pid, '_dwdc_client', true );
+	if ( $have && DWDC_CLIENT === get_post_type( $have ) ) {
+		return $have;
+	}
+	$email  = (string) get_post_meta( $pid, '_dwdc_email', true );
+	$person = trim( (string) get_post_meta( $pid, '_dwdc_person', true ) );
+	$name   = $person ? $person : get_post_field( 'post_title', $pid );
+	$cid    = dwdc_find_client( $email, $name );
+	if ( ! $cid ) {
+		$cid = dwdc_save_client( 0, array( 'name' => $name, 'email' => $email, 'phone' => (string) get_post_meta( $pid, '_dwdc_phone', true ), 'company' => (string) get_post_meta( $pid, '_dwdc_company', true ) ) );
+	} else {
+		foreach ( array( 'email', 'phone' ) as $f ) {
+			$v = (string) get_post_meta( $pid, '_dwdc_' . $f, true );
+			if ( $v && ! get_post_meta( $cid, '_dwdcl_' . $f, true ) ) {
+				update_post_meta( $cid, '_dwdcl_' . $f, $v );
+			}
+		}
+	}
+	update_post_meta( $pid, '_dwdc_client', $cid );
+	return $cid;
 }
 
 function dwdc_domain( $url ) {
@@ -257,6 +334,7 @@ add_action( 'elementor_pro/forms/new_record', function ( $record ) {
 	}
 	$cid = dwdc_file_entry( $form, $fields );
 	if ( $cid ) {
+		dwdc_ensure_client( $cid );
 		$name = get_the_title( $cid );
 		dwdc_add_task( ( false !== stripos( $form, 'onboard' ) ? 'Review onboarding form from ' : 'Reply to ' ) . $name, $cid, current_time( 'Y-m-d' ) );
 	}
@@ -295,6 +373,7 @@ function dwdc_from_order( $order_id ) {
 	$auto  = $had && '1' === get_post_meta( $had, '_dwdc_autopay', true );
 	$cid   = dwdc_file_entry( $auto || $renewal ? 'Hosting renewal paid' : 'Hosting order', $fields, $o->get_date_created() ? $o->get_date_created()->date( 'Y-m-d H:i:s' ) : '', 'Store', $match );
 	if ( $cid ) {
+		dwdc_ensure_client( $cid );
 		$start = $o->get_date_paid() ? $o->get_date_paid() : $o->get_date_created();
 		$data  = array( 'hosting' => $o->get_total(), 'renewal' => $start ? gmdate( 'Y-m-d', strtotime( '+1 year', $start->getTimestamp() ) ) : '' );
 		if ( ! $had ) {
@@ -406,7 +485,8 @@ add_action( 'rest_api_init', function () {
 	register_rest_route( $ns, '/crm', array( 'methods' => 'GET', 'permission_callback' => $can, 'callback' => function () {
 		$contacts = array_map( 'dwdc_contact', get_posts( array( 'post_type' => DWDC_CONTACT, 'post_status' => 'private', 'posts_per_page' => -1, 'orderby' => 'modified', 'order' => 'DESC' ) ) );
 		$tasks    = array_map( 'dwdc_task', get_posts( array( 'post_type' => DWDC_TASK, 'post_status' => 'private', 'posts_per_page' => -1, 'orderby' => array( 'menu_order' => 'ASC', 'date' => 'DESC' ) ) ) );
-		return array( 'lists' => dwdc_lists(), 'contacts' => $contacts, 'tasks' => $tasks );
+		$clients  = array_map( 'dwdc_client', get_posts( array( 'post_type' => DWDC_CLIENT, 'post_status' => 'private', 'posts_per_page' => -1, 'orderby' => 'title', 'order' => 'ASC' ) ) );
+		return array( 'lists' => dwdc_lists(), 'contacts' => $contacts, 'tasks' => $tasks, 'clients' => $clients );
 	} ) );
 
 	register_rest_route( $ns, '/crm/contact/(?P<id>\d+)', array(
@@ -440,30 +520,84 @@ add_action( 'rest_api_init', function () {
 		return dwdc_contact( $id, true );
 	} ) );
 
-	// New job: for an existing client (their current job moves into their job history) or a new one.
+	// New project for a client (existing, or new from the form). Past projects stay as their own records.
 	register_rest_route( $ns, '/crm/job', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
-		$d  = (array) $r->get_json_params();
-		$id = (int) ( $d['contact'] ?? 0 );
-		$job = array( 'job' => $d['title'] ?? '', 'price' => $d['price'] ?? '', 'balance' => $d['balance'] ?? '', 'deadline' => $d['deadline'] ?? '', 'list' => 'active', 'next' => '' );
-		if ( $id ) {
-			$price = (string) get_post_meta( $id, '_dwdc_price', true );
-			$title = (string) get_post_meta( $id, '_dwdc_job', true );
-			if ( '' !== $price || '' !== $title ) {
-				$jobs   = get_post_meta( $id, '_dwdc_jobs', true );
-				$jobs   = is_array( $jobs ) ? $jobs : array();
-				$when   = (string) get_post_meta( $id, '_dwdc_deadline', true );
-				$jobs[] = array( 'title' => $title ? $title : 'Earlier job', 'price' => $price, 'date' => $when ? gmdate( 'M Y', strtotime( $when ) ) : get_post_modified_time( 'M Y', true, $id ) );
-				$job['jobs'] = $jobs;
+		$d   = (array) $r->get_json_params();
+		$cid = (int) ( $d['client'] ?? 0 );
+		if ( ! $cid || DWDC_CLIENT !== get_post_type( $cid ) ) {
+			if ( empty( $d['client_name'] ) ) {
+				return new WP_Error( 'dwdc_client', 'Pick a client or add a new one.', array( 'status' => 400 ) );
 			}
-			dwdc_save_contact( $id, $job );
-		} else {
-			if ( ! empty( $d['email'] ) && dwdc_find_by_email( $d['email'] ) ) {
-				return new WP_Error( 'dwdc_exists', 'That email is already a contact. Pick them from the list instead.', array( 'status' => 400 ) );
-			}
-			$id = dwdc_save_contact( 0, array_merge( $job, array_intersect_key( $d, array_flip( array( 'name', 'person', 'email', 'phone', 'website' ) ) ) ) );
+			$cid = dwdc_find_client( $d['email'] ?? '', '' ) ?: dwdc_save_client( 0, array( 'name' => $d['client_name'], 'email' => $d['email'] ?? '', 'phone' => $d['phone'] ?? '' ) );
 		}
-		wp_update_post( array( 'ID' => $id ) );
+		$cl  = dwdc_client( $cid );
+		$id  = dwdc_save_contact( 0, array(
+			'name' => trim( (string) ( $d['name'] ?? '' ) ) ?: $cl['name'], 'client' => $cid, 'list' => 'active',
+			'job' => $d['title'] ?? '', 'price' => $d['price'] ?? '', 'balance' => $d['balance'] ?? '', 'deadline' => $d['deadline'] ?? '', 'next' => $d['next'] ?? '',
+			'person' => $cl['name'], 'email' => $cl['email'], 'phone' => $cl['phone'], 'website' => $d['website'] ?? '', 'source' => 'Added in Client Desk',
+		) );
 		return dwdc_contact( $id, true );
+	} ) );
+
+	// Clients: create / update / delete (only when no projects), link a project to a client, one-time grouping.
+	register_rest_route( $ns, '/crm/client', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
+		$d = (array) $r->get_json_params();
+		if ( empty( $d['name'] ) ) {
+			return new WP_Error( 'dwdc_name', 'Add the client’s name.', array( 'status' => 400 ) );
+		}
+		return dwdc_client( dwdc_save_client( 0, $d ) );
+	} ) );
+	register_rest_route( $ns, '/crm/client/(?P<id>\d+)', array(
+		array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
+			$id = (int) $r['id'];
+			$d  = (array) $r->get_json_params();
+			dwdc_save_client( $id, $d );
+			// Keep the contact details on their projects in step.
+			foreach ( get_posts( array( 'post_type' => DWDC_CONTACT, 'post_status' => 'private', 'posts_per_page' => -1, 'fields' => 'ids', 'meta_key' => '_dwdc_client', 'meta_value' => $id ) ) as $pid ) { // phpcs:ignore
+				foreach ( array( 'email' => 'email', 'phone' => 'phone', 'name' => 'person' ) as $k => $f ) {
+					if ( isset( $d[ $k ] ) && '' !== trim( (string) $d[ $k ] ) ) {
+						update_post_meta( $pid, '_dwdc_' . $f, 'email' === $k ? strtolower( sanitize_email( $d[ $k ] ) ) : sanitize_text_field( $d[ $k ] ) );
+					}
+				}
+			}
+			return dwdc_client( $id );
+		} ),
+		array( 'methods' => 'DELETE', 'permission_callback' => $can, 'callback' => function ( $r ) {
+			$id = (int) $r['id'];
+			if ( get_posts( array( 'post_type' => DWDC_CONTACT, 'post_status' => 'private', 'posts_per_page' => 1, 'fields' => 'ids', 'meta_key' => '_dwdc_client', 'meta_value' => $id ) ) ) { // phpcs:ignore
+				return new WP_Error( 'dwdc_has', 'Move or delete this client’s projects first.', array( 'status' => 400 ) );
+			}
+			wp_trash_post( $id );
+			return array( 'ok' => true );
+		} ),
+	) );
+	register_rest_route( $ns, '/crm/contact/(?P<id>\d+)/client', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
+		$pid = (int) $r['id'];
+		$cid = (int) $r->get_param( 'client' );
+		if ( ! $cid && $r->get_param( 'name' ) ) {
+			$cid = dwdc_save_client( 0, array( 'name' => $r->get_param( 'name' ), 'email' => (string) get_post_meta( $pid, '_dwdc_email', true ) ) );
+		}
+		if ( DWDC_CLIENT !== get_post_type( $cid ) ) {
+			return new WP_Error( 'dwdc_nf', 'Client not found', array( 'status' => 404 ) );
+		}
+		$old = (int) get_post_meta( $pid, '_dwdc_client', true );
+		update_post_meta( $pid, '_dwdc_client', $cid );
+		update_post_meta( $pid, '_dwdc_person', get_post_field( 'post_title', $cid ) );
+		// An old client left with no projects goes away.
+		if ( $old && $old !== $cid && ! get_posts( array( 'post_type' => DWDC_CONTACT, 'post_status' => 'private', 'posts_per_page' => 1, 'fields' => 'ids', 'meta_key' => '_dwdc_client', 'meta_value' => $old ) ) ) { // phpcs:ignore
+			wp_trash_post( $old );
+		}
+		return array( 'project' => dwdc_contact( $pid, true ), 'client' => dwdc_client( $cid ) );
+	} ) );
+	register_rest_route( $ns, '/crm/clients/build', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function () {
+		$n = 0;
+		foreach ( get_posts( array( 'post_type' => DWDC_CONTACT, 'post_status' => 'private', 'posts_per_page' => -1, 'fields' => 'ids', 'orderby' => 'ID', 'order' => 'ASC' ) ) as $pid ) {
+			if ( ! get_post_meta( $pid, '_dwdc_client', true ) ) {
+				dwdc_ensure_client( $pid );
+				$n++;
+			}
+		}
+		return array( 'linked' => $n, 'clients' => count( get_posts( array( 'post_type' => DWDC_CLIENT, 'post_status' => 'private', 'posts_per_page' => -1, 'fields' => 'ids' ) ) ) );
 	} ) );
 
 	// Bulk import (e.g. from ClickUp): each row is merged into an existing record when the email,
