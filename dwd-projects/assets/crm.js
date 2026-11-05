@@ -136,7 +136,7 @@
 		return '<span class="dwdc-nm"><span>' + (k ? '<a class="dwdc-clink" href="#cl/' + k.id + '">' + esc(k.name) + '</a>' : '<b class="nm2">' + esc(c.person || '—') + '</b>') + (em ? '<small>' + esc(em) + '</small>' : '') + '</span></span>';
 	}
 	function reload() {
-		return api('').then(function (r) { S.contacts = r.contacts.filter(Boolean); S.tasks = r.tasks.filter(Boolean); S.clients = (r.clients || []).filter(Boolean); S.money = r.money || {}; S.costs = r.costs || {}; });
+		return api('').then(function (r) { S.contacts = r.contacts.filter(Boolean); S.tasks = r.tasks.filter(Boolean); S.clients = (r.clients || []).filter(Boolean); S.money = r.money || {}; S.costs = r.costs || {}; S.trends = r.trends || null; });
 	}
 
 	/* ---------- routing ---------- */
@@ -200,7 +200,7 @@
 			+ nav('projects/limbo', 'clock', 'Limbo', by('limbo').length) + nav('projects/complete', 'done', 'Completed', by('complete').length)
 			+ '<div class="dwdc-navh"><i class="b2"></i>Clients</div>'
 			+ nav('onboarding', 'filter', 'Onboarding', onboardList().length) + nav('hosting', 'server', 'Hosting', hosting().length)
-			+ nav('leads', 'mail', 'Leads', leadList().length) + nav('clients', 'users', 'All Clients', S.clients.length) + nav('reviews', 'mail', 'Get Reviews')
+			+ nav('clients', 'users', 'All Clients', S.clients.length) + nav('reviews', 'mail', 'Get Reviews')
 			+ '<div class="dwdc-navh fin"><i class="b4"></i>Finances</div>' + nav('money', 'dollar', 'Money Stats')
 			+ '<div class="dwdc-navh"><i class="b3"></i>More</div>'
 			+ '<a class="dwdc-nav" href="' + esc(DWDC.wp) + '">' + ic('wp') + '<span>WordPress Admin</span></a>'
@@ -211,8 +211,8 @@
 		return '<header class="dwdc-top"><button class="dwdc-burger" data-menu aria-label="Menu">' + ic('menu', 20) + '</button>'
 			+ '<div class="dwdc-title"><p class="dwdc-eyebrow">' + esc(t[0]) + '</p><h1><span>' + esc(t[1]) + '</span>' + (t[2] ? ' <em>' + esc(t[2]) + '</em>' : '') + '</h1></div>'
 			+ (document.body.classList.contains('dwdc-screen') ? '<div class="dwdc-tsearchw"><label class="dwdc-ssearch dwdc-tsearch">' + ic('search', 16) + '<input type="search" placeholder="Search clients…" value="' + esc(S.q) + '"><kbd>Ctrl K</kbd></label></div>' : '')
-			+ '<div class="dwdc-qas">' + qa('qnavy', 'data-act="job"', 'plus', 'Project') + qa('', 'data-act="newclient"', 'plus', 'Client') + qa('', 'data-act="lead"', 'plus', 'Lead')
-			+ qa('', 'data-goto="hosting"', 'server', 'Hosting') + qa('', 'data-goto="leads"', 'mail', 'Leads') + qa('blue', 'data-act="pay"', 'card', 'Log Payment') + '</div></header>';
+			+ '<div class="dwdc-qas">' + qa('qnavy', 'data-act="job"', 'plus', 'Project') + qa('', 'data-act="newclient"', 'plus', 'Client')
+			+ qa('', 'data-goto="hosting"', 'server', 'Hosting') + qa('blue', 'data-act="pay"', 'card', 'Log Payment') + '</div></header>';
 	}
 
 	function syncWpMenu(r) {
@@ -323,6 +323,17 @@
 			+ '<div class="dwdc-ctbl"><table><thead><tr><th>Year</th><th>Connects spend</th><th>Connects</th><th>Avg / month</th><th>Biggest month</th><th>Membership</th><th>Upwork earned</th><th>Per $1</th></tr></thead><tbody>' + rows + '</tbody></table></div>'
 			+ '<p class="dwdc-mutp sm">From your Upwork transaction history. Upwork earned is after fees. "Per $1" is how much Upwork paid you for every dollar spent on Connects that year.</p>';
 	}
+	function trendsBox() {
+		var T = S.trends;
+		if (!T || !T.items) { return emptyRow('Checking your numbers…'); }
+		var icon = { up: '▲', down: '▼', flat: '●', info: '●' };
+		var next = new Date(DWDC.today + 'T12:00:00'); do { next.setDate(next.getDate() + 1); } while (next.getDay() !== 1);
+		return '<ul class="dwdc-trends">' + T.items.map(function (x) {
+			return '<li class="' + x.tone + (x.alert ? ' alert' : '') + '"><i>' + icon[x.tone] + '</i><span>' + esc(x.text) + '</span></li>';
+		}).join('') + '</ul>'
+			+ '<p class="dwdc-trends-foot">Checked ' + fmt(T.generated) + ' · next check Monday, ' + fmt(next.toISOString().slice(0, 10)) + ' · <button class="dwdc-lnk sm2" data-trendsnow>Check now</button></p>'
+			+ '<p class="dwdc-mutp sm">Bold lines are big moves (about 20% or more, or a long downward slide). When one shows up, you get an email.</p>';
+	}
 	function moneyView() {
 		var projs = S.contacts.filter(function (c) { return ['active', 'hold', 'limbo', 'complete'].indexOf(c.list) > -1; });
 		var sum = function (f) { return projs.reduce(function (s, c) { return s + num(c[f]); }, 0); };
@@ -365,6 +376,7 @@
 			+ kpi('Repeat clients', repeat.length, money(repeatRev) + ' · ' + (cl.length ? Math.round(repeat.length / cl.length * 100) : 0) + '% of clients')
 			+ '</div>'
 			+ '<div class="dwdc-mgrid">'
+			+ mcard('Patterns &amp; Trends', trendsBox(), 'trends')
 			+ mcard('Where it came from', '<div class="dwdc-chanbar">' + chan.map(function (x) { return x[1] ? '<i class="' + x[2] + '" style="width:' + Math.max(1, pct(x[1])) + '%"></i>' : ''; }).join('') + '</div>'
 				+ '<ul class="dwdc-chans">' + chan.map(function (x) { return '<li><i class="' + x[2] + '"></i><span>' + x[0] + '</span><b>' + money(x[1]) + '</b><em>' + pct(x[1]) + '%</em></li>'; }).join('') + '</ul>')
 			+ mcard('By year', (ylist.length ? '<ul class="dwdc-years2">' + ylist.map(function (y) { var o = MY[y], t = ytot(y); return '<li><span>' + y + '</span><div>' + [['Upwork', 'upw'], ['Stripe', 'str'], ['PayPal', 'ppl'], ['Other', 'oth']].map(function (x) { return o[x[0]] > 0 ? '<i class="' + x[1] + '" style="width:' + Math.max(1, Math.round(o[x[0]] / ymax * 100)) + '%" title="' + x[0] + ' ' + money(o[x[0]]) + '"></i>' : ''; }).join('') + '</div><b>' + money(t) + '</b></li>'; }).join('') + '</ul>' : emptyRow('No dated payments yet.'))
@@ -372,7 +384,6 @@
 				+ '<p class="dwdc-mutp sm">Hover a bar to see each amount. Every payment on the day it was paid: Upwork (from your transaction history, after Upwork’s fees), Stripe, PayPal and payments you log. Refunds come off the year they happened.</p>')
 			+ mcard('Busiest months', busyMonths(MY, ylist), 'wide')
 			+ mcard('Upwork Connects', connectsCard(MY), 'wide')
-			+ mcard('How clients found you', '<ul class="dwdc-chans src">' + slist.map(function (s) { return '<li><span>' + esc(s) + '</span><em>' + src[s].n + ' projects</em><b>' + money(src[s].v) + '</b></li>'; }).join('') + '</ul>')
 			+ mcard('Top projects', rowsP || emptyRow('No payments yet.'))
 			+ mcard('Top clients', rowsC || emptyRow('No payments yet.'))
 			+ mcard('Repeat clients <span class="dwdc-cnt">' + repeat.length + '</span>', rowsR || emptyRow('No repeat clients yet.'))
@@ -479,7 +490,7 @@
 		var c1 = card('cd-clients', chead('users', 'Clients', 'clients'),
 			'<p class="dwdc-hero"><strong>' + S.clients.length + '</strong> clients on file</p><div class="dwdc-segbar">' + seg(nP, 's1') + seg(nH, 's2') + seg(nPast, 's3') + '</div>'
 			+ '<a class="dwdc-seg" href="#clients"><i class="s1"></i>Project clients<b>' + nP + '</b></a><a class="dwdc-seg" href="#clients"><i class="s2"></i>Hosting only<b>' + nH + '</b></a><a class="dwdc-seg" href="#clients"><i class="s3"></i>Past clients<b>' + nPast + '</b></a>',
-			'<footer class="dwdc-grid4">' + frow('Active Projects', active.length, 'projects/active') + frow('Onboarding', onboardList().length, 'onboarding') + frow('Hosting', host.length, 'hosting') + frow('Leads', leadList().length, 'leads') + '</footer>');
+			'<footer class="dwdc-grid4">' + frow('Active Projects', active.length, 'projects/active') + frow('Onboarding', onboardList().length, 'onboarding') + frow('Hosting', host.length, 'hosting') + frow('All Clients', S.clients.length, 'clients') + '</footer>');
 		var c2 = card('cd-projects', chead('brief', 'Projects', 'projects/active'),
 			'<p class="dwdc-hero"><strong>' + active.length + '</strong> project' + (active.length === 1 ? '' : 's') + '</p>'
 			+ '<p class="dwdc-sub">' + money(owed(active)) + ' still owed on active projects</p>'
@@ -1327,6 +1338,7 @@
 			}
 			return;
 		}
+		if ((el = t.closest('[data-trendsnow]'))) { el.textContent = 'Checking…'; api('/trends', 'POST', {}).then(function (x) { S.trends = x; render(); toast('Trends updated'); }).catch(fail); return; }
 		if ((el = t.closest('[data-cyear]'))) { S.cYear = el.getAttribute('data-cyear'); render(); return; }
 		if ((el = t.closest('[data-revpage]'))) { S.revPage = +el.getAttribute('data-revpage'); render(); window.scrollTo(0, 0); return; }
 		if (t.closest('[data-revclear]')) { S.revSel = {}; render(); return; }
@@ -1525,7 +1537,7 @@
 	/* ---------- start ---------- */
 	document.body.classList.add('dwdc-app-on');
 	api('').then(function (r) {
-		S.contacts = r.contacts.filter(Boolean); S.tasks = r.tasks.filter(Boolean); S.clients = (r.clients || []).filter(Boolean); S.money = r.money || {}; S.costs = r.costs || {};
+		S.contacts = r.contacts.filter(Boolean); S.tasks = r.tasks.filter(Boolean); S.clients = (r.clients || []).filter(Boolean); S.money = r.money || {}; S.costs = r.costs || {}; S.trends = r.trends || null;
 		var m = /[?&]contact=(\d+)/.exec(location.search), em = /[?&]email=([^&]+)/.exec(location.search);
 		var who = m ? contact(+m[1]) : em ? S.contacts.find(function (c) { return c.email && c.email.toLowerCase() === decodeURIComponent(em[1]).toLowerCase(); }) : null;
 		if (who) { location.hash = 'client/' + who.id; }

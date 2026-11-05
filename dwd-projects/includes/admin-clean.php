@@ -82,7 +82,7 @@ add_filter( 'menu_order', function ( $order ) {
 	// Dream Desk pages as their own sections (they open the Dream Desk app at that page).
 	$dd = array(
 		'projects' => array( array( 'projects/active', 'Active', 'dashicons-controls-play' ), array( 'projects/hold', 'On Hold', 'dashicons-controls-pause' ), array( 'projects/limbo', 'Limbo', 'dashicons-clock' ), array( 'projects/complete', 'Completed', 'dashicons-yes-alt' ) ),
-		'clients'  => array( array( 'onboarding', 'Onboarding', 'dashicons-feedback' ), array( 'leads', 'Leads', 'dashicons-email-alt' ), array( 'hosting', 'Hosting', 'dashicons-cloud' ), array( 'clients', 'All Clients', 'dashicons-groups' ), array( 'reviews', 'Get Reviews', 'dashicons-star-filled' ) ),
+		'clients'  => array( array( 'onboarding', 'Onboarding', 'dashicons-feedback' ), array( 'hosting', 'Hosting', 'dashicons-cloud' ), array( 'clients', 'All Clients', 'dashicons-groups' ), array( 'reviews', 'Get Reviews', 'dashicons-star-filled' ) ),
 		'finances' => array( array( 'money', 'Money Stats', 'dashicons-chart-bar' ) ),
 	);
 	foreach ( $dd as $g => $list ) {
@@ -219,14 +219,14 @@ add_action( 'admin_footer', function () {
 	<script id="dwd-admin-sections">
 	(function () {
 		var menu = document.getElementById('adminmenu'); if (!menu) { return; }
-		var KEY = 'dwdMenuOpen', open = {};
+		var KEY = 'dwdMenuOpen2', open = {};
 		try { open = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { open = {}; }
 		var heads = menu.querySelectorAll(':scope > li.dwd-msec');
 		function items(h) { var out = [], n = h.nextElementSibling; while (n && !n.classList.contains('dwd-msec')) { if (n.tagName === 'LI') { out.push(n); } n = n.nextElementSibling; } return out; }
 		function set(h, isOpen) { h.classList.toggle('dwd-closed', !isOpen); items(h).forEach(function (li) { li.classList.toggle('dwd-sec-hide', !isOpen); }); }
 		heads.forEach(function (h) {
 			var hasCurrent = items(h).some(function (li) { return li.classList.contains('wp-has-current-submenu') || li.classList.contains('current') || li.classList.contains('wp-menu-open'); });
-			var def = ['dwd-msec-projects', 'dwd-msec-clients', 'dwd-msec-finances', 'dwd-msec-portfolio', 'dwd-msec-development'].indexOf(h.id) > -1;
+			var def = ['dwd-msec-projects', 'dwd-msec-clients', 'dwd-msec-finances', 'dwd-msec-portfolio'].indexOf(h.id) > -1;
 			set(h, hasCurrent || (h.id in open ? !!open[h.id] : def));
 			var a = h.querySelector('a');
 			if (a) { a.removeAttribute('href'); }
