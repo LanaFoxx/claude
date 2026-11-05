@@ -439,3 +439,6 @@ select.dwdc-stage.t-navy { background-color: #DCE3EE !important; color: var(--na
 .dwdc-pill.t-lgreen { background: #E2F5EA; color: #2E8F5E; } .dwdc-pill.t-navy { background: #DCE3EE; color: var(--navy); }
 .dwdc-mini.t-lgreen strong { color: #2E8F5E; } .dwdc-mini.t-navy strong { color: var(--navy); }
 .dwdc-btn2.greenl:hover { border-color: #2E8F5E; color: #2E8F5E; }
+/* v2.9.15: On hold = navy, Completed = brand blue */
+.dwdc-grid.head.tint-blue { background: var(--logo); color: #fff; border-bottom-color: var(--logo); }
+select.dwdc-stage.t-blue { background-color: #D4EEFD !important; color: #0078BF !important; border-color: #9FD8FB !important; }

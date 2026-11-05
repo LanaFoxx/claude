@@ -69,6 +69,14 @@ function dwdc_contact( $post, $full = false ) {
 		}
 	}
 	$c['autopay'] = '1' === get_post_meta( $p->ID, '_dwdc_autopay', true );
+	// Date of their most recent paid payment (Stripe, PayPal…), used to sort completed work.
+	$pays           = get_post_meta( $p->ID, '_dwdc_payments', true );
+	$c['last_paid'] = '';
+	foreach ( is_array( $pays ) ? $pays : array() as $x ) {
+		if ( 'paid' === ( $x['status'] ?? '' ) && (string) ( $x['date'] ?? '' ) > $c['last_paid'] ) {
+			$c['last_paid'] = (string) $x['date'];
+		}
+	}
 	$c['sub']     = (float) preg_replace( '/[^\d.]/', '', (string) get_post_meta( $p->ID, '_dwdc_hosting', true ) ) > 0 ? dwdc_subscription_for( $p->ID, $c['email'] ) : null;
 	if ( $full ) {
 		$c['paylink'] = dwdc_paylink( $p->ID );

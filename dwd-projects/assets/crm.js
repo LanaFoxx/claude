@@ -73,7 +73,7 @@
 	function ic(n, size) { return '<svg class="dwdc-ic" width="' + (size || 18) + '" height="' + (size || 18) + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICON[n] + '</svg>'; }
 
 	// Status colors: blue active, violet limbo, green done/paid, teal hosting, orange leads/owed, red overdue.
-	var TONE = { active: 'green', hold: 'lgreen', limbo: 'red', complete: 'navy', leads: 'orange', archive: 'gray', hosting: 'teal' };
+	var TONE = { active: 'green', hold: 'navy', limbo: 'red', complete: 'blue', leads: 'orange', archive: 'gray', hosting: 'teal' };
 	var LABEL = { active: 'Active', hold: 'On hold', limbo: 'In limbo', complete: 'Completed', leads: 'Lead', archive: 'Archived' };
 	function avatar() { return ''; } // client avatars removed: names carry the rows
 	function avatarOld(c, size, tone) { return '<span class="dwdc-av t-' + (tone || TONE[c.list] || 'blue') + (size ? ' s' + size : '') + '">' + esc(initials(c.name)) + '</span>'; }
@@ -86,6 +86,15 @@
 	/* ---------- derived ---------- */
 	function by(list) { return S.contacts.filter(function (c) { return c.list === list; }); }
 	function hosting() { return S.contacts.filter(function (c) { return num(c.hosting) > 0 && c.list !== 'archive'; }); }
+	// When a completed job finished: the date it was marked complete, else the last payment, else the latest dated job.
+	function doneDate(c) {
+		if (c.completed) { return c.completed; }
+		var best = c.last_paid || '';
+		(c.jobs || []).forEach(function (j) { var t = j.date ? new Date(/^\d{4}-/.test(j.date) ? j.date : '1 ' + j.date) : null; if (t && !isNaN(t)) { var iso = t.toISOString().slice(0, 10); if (iso > best) { best = iso; } } });
+		if (!best && c.deadline) { best = c.deadline; }
+		return best;
+	}
+	function byDone(a, b) { var x = doneDate(a), y = doneDate(b); return x === y ? (a.name < b.name ? -1 : 1) : (x < y ? 1 : -1); }
 	function working() { return S.contacts.filter(function (c) { return c.list === 'active' || c.list === 'hold' || c.list === 'limbo'; }); }
 	function stageOf(c) { return c.list === 'leads' ? (c.stage || 'new') : (c.stage === 'onboarding' && c.list !== 'complete' ? 'onboarding' : 'active'); }
 	function leadRows() {
@@ -202,8 +211,8 @@
 		var stop = function (id) { return ' data-scroll="sec-' + id + '"'; };
 		return '<div class="dwdc-card pad dwdc-tilebox"><div class="dwdc-tiles">'
 			+ tile('green', 'Active jobs', active.length, money(owed(working())) + ' owed on open jobs', '', stop('active'))
-			+ tile('navy', 'Completed', done.length, money(billed) + ' billed all-time', '', stop('complete'))
-			+ tile('blue', 'Hosting clients', host.length, money(annual) + '/yr' + (next ? ' · next renewal ' + fmt(next.renewal) : ''), 'hosting')
+			+ tile('blue', 'Completed', done.length, money(billed) + ' billed all-time', '', stop('complete'))
+			+ tile('teal', 'Hosting clients', host.length, money(annual) + '/yr' + (next ? ' · next renewal ' + fmt(next.renewal) : ''), 'hosting')
 			+ '</div></div>'
 			+ jobTable('active', 'Active jobs', 'Nothing in progress right now.', '<div class="dwdc-sechr">' + (nLeads ? '<a class="dwdc-lnk" href="#leads">' + nLeads + ' new lead' + (nLeads === 1 ? '' : 's') + ' / onboarding ' + ic('right', 14) + '</a>' : '') + '<button class="dwdc-btn sm" data-act="job">' + ic('plus', 14) + 'Add job</button></div>')
 			+ jobTable('hold', 'On hold', 'No jobs on hold. Paused jobs go here.')
@@ -269,16 +278,16 @@
 	// One status section on the dashboard: Job | Client | Price | Owed | Due | Status | Next step.
 	function jobTable(list, title, empty, right, cap) {
 		var rows = by(list).filter(match), done = list === 'complete';
-		if (done) { rows.sort(function (a, b) { return (b.completed || b.updated || '') > (a.completed || a.updated || '') ? 1 : -1; }); }
+		if (done) { rows.sort(byDone); }
 		var key = 'dash-' + list, limit = cap && !S.more[key] && !S.q ? cap : rows.length;
 		return '<section id="sec-' + list + '">' + secHead(title, rows.length, right || '')
-			+ '<div class="dwdc-card dwdc-tbl"><div class="dwdc-grid g-jobs head tint-' + (done ? 'gray' : (TONE[list] || 'blue')) + '"><span>Job</span><span>Client</span><span>' + (done ? 'Billed' : 'Price') + '</span><span>Owed</span><span>' + (done ? 'Completed' : 'Due') + '</span><span>Status</span><span>Next step</span></div>'
+			+ '<div class="dwdc-card dwdc-tbl"><div class="dwdc-grid g-jobs head tint-' + (TONE[list] || 'blue') + '"><span>Job</span><span>Client</span><span>' + (done ? 'Billed' : 'Price') + '</span><span>Owed</span><span>' + (done ? 'Completed' : 'Due') + '</span><span>Status</span><span>Next step</span></div>'
 			+ (rows.length ? rows.slice(0, limit).map(function (c) {
 				var ow = num(c.balance), late = !done && c.deadline && c.deadline < DWDC.today, amt = done ? lifetime(c) : num(c.price);
 				return '<div class="dwdc-grid g-jobs row" data-go="client/' + c.id + '"><span class="dwdc-nm"><span><b>' + esc(c.name) + (c.markup ? ' <a class="dwdc-mkpill" href="' + esc(url(c.markup)) + '" target="_blank" rel="noopener">Markup</a>' : '') + '</b>' + (c.job ? '<small>' + esc(c.job) + '</small>' : '') + '</span></span>'
 					+ '<span class="dwdc-nm"><span><b class="nm2">' + esc(c.person || '—') + '</b>' + (c.email ? '<small>' + esc(c.email) + '</small>' : '') + '</span></span>'
 					+ '<span class="b">' + (amt ? money(amt) : '—') + '</span><span class="b ' + (ow ? 'orange' : 'green') + '">' + (ow ? money(ow) : (amt ? 'Paid' : '—')) + '</span>'
-					+ '<span class="' + (late ? 'red b' : '') + '">' + (done ? (c.completed ? fmt(c.completed, true) : '—') : (c.deadline ? fmt(c.deadline) : '—')) + '</span><span>' + statusSelect(c) + '</span><span class="sec ell">' + esc(c.next || '—') + '</span></div>';
+					+ '<span class="' + (late ? 'red b' : '') + '">' + (done ? (doneDate(c) ? fmt(doneDate(c), true) : '—') : (c.deadline ? fmt(c.deadline) : '—')) + '</span><span>' + statusSelect(c) + '</span><span class="sec ell">' + esc(c.next || '—') + '</span></div>';
 			}).join('') : emptyRow(S.q ? 'No matches.' : empty)) + (cap ? moreFoot(key, limit, rows.length) : '') + '</div></section>';
 	}
 
@@ -328,7 +337,7 @@
 
 	/* ---------- completed ---------- */
 	function completedView() {
-		var rows = by('complete').sort(function (a, b) { return (b.completed || '') > (a.completed || '') ? 1 : (b.completed || '') < (a.completed || '') ? -1 : (a.updated < b.updated ? 1 : -1); });
+		var rows = by('complete').sort(byDone);
 		var billed = rows.reduce(function (s, c) { return s + lifetime(c); }, 0), priced = rows.filter(function (c) { return lifetime(c) > 0; }).length;
 		var list = rows.filter(match), cap = S.more.completed || S.q ? list.length : 25;
 		return '<div class="dwdc-minis">' + mini('green', 'Completed jobs', rows.length) + mini('navy', 'Billed all-time', money(billed)) + mini('navy', 'Average job', priced ? money(billed / priced) : '—') + mini('teal', 'Now hosting', hosting().length) + '</div>'
@@ -337,7 +346,7 @@
 				var proj = c.job || ((c.jobs || []).length ? c.jobs[c.jobs.length - 1].title : '') || (c.source === 'Stripe' ? 'Stripe client' : c.source === 'PayPal' ? 'PayPal client' : num(c.billed) || c.source === 'Upwork' ? 'Upwork client' : '');
 				return '<div class="dwdc-grid g-done row" data-go="client/' + c.id + '"><span class="dwdc-nm">' + avatar(c, 34, 'green') + '<span><b>' + esc(c.name) + '</b><small>' + esc(c.person || c.email || site(c) || 'No contact on file') + '</small></span></span>'
 					+ '<span class="sec ell">' + esc(proj || '—') + ((c.jobs || []).length > 1 ? ' <small class="mut">+' + (c.jobs.length - 1) + ' more</small>' : '') + '</span>'
-					+ '<span class="b">' + (lifetime(c) ? money(lifetime(c)) : '—') + '</span><span class="mut">' + (c.completed ? fmt(c.completed, true) : '—') + '</span>'
+					+ '<span class="b">' + (lifetime(c) ? money(lifetime(c)) : '—') + '</span><span class="mut">' + (doneDate(c) ? fmt(doneDate(c), true) : '—') + '</span>'
 					+ '<span>' + (num(c.hosting) > 0 ? pill('Hosting', 'teal') : pill('No', 'gray')) + '</span></div>';
 			}).join('') : emptyRow('No completed jobs match.')) + moreFoot('completed', cap, list.length) + '</div>';
 	}
