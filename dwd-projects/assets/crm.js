@@ -750,7 +750,7 @@
 		var n = list.reduce(function (s, e) { return s + (e.fields || []).length; }, 0);
 		return '<section class="dwdc-card pad"><div class="dwdc-cardh"><h2>' + (ob || !list.length ? 'Onboarding' : 'Form answers') + '</h2>' + (list.length ? '<span class="dwdc-cnt">' + n + ' answers</span>' : '') + '</div>'
 			+ (!full ? '<p class="dwdc-mutp">Loading…</p>' : list.length
-				? '<p class="dwdc-mutp">' + esc(list[0].form || 'Form') + ' · ' + fmt(list[0].date, true) + (list.length > 1 ? ' (+' + (list.length - 1) + ' more)' : '') + '</p><button class="dwdc-btn dwdc-copyob" data-copyob>' + ic('todo', 15) + 'Copy onboarding text</button>'
+				? '<p class="dwdc-mutp">' + esc(list[0].form || 'Form') + ' · ' + fmt(list[0].date, true) + (list.length > 1 ? ' (+' + (list.length - 1) + ' more)' : '') + '</p><div class="dwdc-obbtns"><button class="dwdc-btn dwdc-copyob" data-copyob>' + ic('todo', 15) + 'Copy answers</button><button class="dwdc-btn2 dwdc-viewob" data-viewob>' + ic('list', 15) + 'View answers</button></div>'
 				: '<p class="dwdc-mutp">No onboarding form from this client yet.</p>') + '</section>';
 	}
 	function detailsCard(c) {
@@ -864,6 +864,12 @@
 		var inp = function (k, label, ph, type, wide) { return '<label' + (wide ? ' class="wide"' : '') + '><span>' + label + '</span><input name="' + k + '" type="' + (type || 'text') + '" value="' + esc(v[k] || '') + '" placeholder="' + esc(ph || '') + '"></label>'; };
 		var head = function (eb, a, b) { return '<button type="button" class="dwdc-mx" data-close-modal>' + ic('x', 20) + '</button><p class="dwdc-eyebrow">' + eb + '</p><h2><span>' + a + '</span> <em>' + b + '</em></h2>'; };
 		var body;
+		if (m.type === 'answers') {
+			var oc = S.full[m.project] || {}, ents = onboardEntries(oc);
+			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide">' + head('Onboarding', esc(oc.name || ''), 'answers')
+				+ ents.map(function (e) { return '<p class="dwdc-mutp">' + esc(e.form || 'Form') + ' · ' + fmt(e.date, true) + '</p><dl class="dwdc-qa big">' + (e.fields || []).map(function (x) { return '<dt>' + esc(x.label) + '</dt><dd>' + esc(x.value).replace(/\n/g, '<br>') + '</dd>'; }).join('') + '</dl>'; }).join('')
+				+ '<div class="dwdc-farow end"><button type="button" class="dwdc-btn" data-copyob>' + ic('todo', 15) + 'Copy answers</button><button type="button" class="dwdc-btn2" data-close-modal>Close</button></div></div>';
+		}
 		if (m.type === 'pay') {
 			var opts = S.contacts.filter(function (c) { return c.list !== 'archive'; }).sort(function (a, b) { return (isOpen(b) - isOpen(a)) || (num(b.balance) - num(a.balance)) || a.name.localeCompare(b.name); });
 			body = '<form class="dwdc-modal dwdc-payform">' + head('Money', 'Log', 'payment') + '<div class="dwdc-fgrid">'
@@ -1056,6 +1062,7 @@
 			api('/contact/' + rid + '/markup-email', 'POST', md).then(function (x) { upsert(x); S.full[x.id] = x; render(); toast('Markup link emailed'); }).catch(function (er) { el.disabled = false; fail(er); });
 			return;
 		}
+		if (t.closest('[data-viewob]')) { S.modal = { type: 'answers', project: route().id, vals: {} }; render(); return; }
 		if (t.closest('[data-copyob]')) {
 			var txt = onboardText(S.full[r.id] || {});
 			(navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(function () { toast('Onboarding answers copied'); }, function () {

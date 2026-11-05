@@ -465,3 +465,8 @@ select.dwdc-stage.t-green { background-color: #E6F6EE !important; color: #17824F
 .dwdc-ssearch:focus-within { box-shadow: none !important; background: rgba(255,255,255,.12); }
 /* bigger headline numbers on the Home cards */
 .dwdc-hero strong, .dwdc-hero.big strong { font-size: 48px !important; line-height: 1; vertical-align: -6px; }
+.dwdc-obbtns { display: flex; gap: 10px; flex-wrap: wrap; }
+.dwdc-obbtns .dwdc-btn2 { height: 42px; }
+.dwdc-modal.wide { width: min(760px, calc(100vw - 24px)); }
+.dwdc-qa.big { margin: 8px 0 14px !important; padding: 16px 18px; }
+.dwdc-qa.big dd { font-size: 14.5px; line-height: 1.55; }
