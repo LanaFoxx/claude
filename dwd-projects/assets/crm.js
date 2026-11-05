@@ -585,9 +585,11 @@
 	}
 	function todoRow(t, small) {
 		var c = t.contact ? contact(t.contact) : null;
-		var meta = [c ? '<a href="#client/' + c.id + '">' + esc(c.name) + '</a>' : '', t.due ? 'Due ' + fmt(t.due) : '', 'Added by Michael'].filter(Boolean).join(' · ');
+		var k = c ? clientOf(c) : null, cn = k ? k.name : (c ? c.person : '');
+		var tag = c ? '<a class="dwdc-ttag" href="#client/' + c.id + '">' + ic('brief', 12) + '<b>' + esc(c.name) + '</b>' + (cn && cn !== c.name ? '<span>' + esc(cn) + '</span>' : '') + '</a>' : '';
+		var meta = [t.due ? 'Due ' + fmt(t.due) : '', 'Added by Michael'].filter(Boolean).join(' · ');
 		return '<div class="dwdc-todo' + (t.done ? ' done' : '') + (small ? ' sm' : '') + '" data-toggle="' + t.id + '"><span class="dwdc-chk">' + ic('check', 12) + '</span>'
-			+ '<span class="dwdc-tt"><b>' + esc(t.text) + '</b>' + (small ? '' : '<small>' + meta + '</small>') + '</span>'
+			+ '<span class="dwdc-tt"><b>' + esc(t.text) + '</b>' + (small ? '' : tag + '<small>' + meta + '</small>') + '</span>'
 			+ due(t) + '<button class="dwdc-del" data-del-task="' + t.id + '" title="Delete to-do">' + ic('x', 14) + '</button></div>';
 	}
 
