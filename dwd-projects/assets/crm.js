@@ -186,8 +186,8 @@
 	function top(r, t) {
 		var qa = function (cls, attr, icon, label) { return '<button class="dwdc-qact ' + cls + '" ' + attr + '>' + ic(icon, 15) + label + '</button>'; };
 		return '<header class="dwdc-top"><button class="dwdc-burger" data-menu aria-label="Menu">' + ic('menu', 20) + '</button>'
-			+ '<div class="dwdc-title"><p class="dwdc-eyebrow">' + esc(t[0]) + '</p><h1><span>' + esc(t[1]) + '</span>' + (t[2] ? ' <em>' + esc(t[2]) + '</em>' : '') + '</h1>'
-			+ (document.body.classList.contains('dwdc-screen') ? '<label class="dwdc-ssearch dwdc-tsearch">' + ic('search', 16) + '<input type="search" placeholder="Search clients and projects…" value="' + esc(S.q) + '"><kbd>Ctrl K</kbd></label>' : '') + '</div>'
+			+ '<div class="dwdc-title"><p class="dwdc-eyebrow">' + esc(t[0]) + '</p><h1><span>' + esc(t[1]) + '</span>' + (t[2] ? ' <em>' + esc(t[2]) + '</em>' : '') + '</h1></div>'
+			+ (document.body.classList.contains('dwdc-screen') ? '<div class="dwdc-tsearchw"><label class="dwdc-ssearch dwdc-tsearch">' + ic('search', 16) + '<input type="search" placeholder="Search clients and projects…" value="' + esc(S.q) + '"><kbd>Ctrl K</kbd></label></div>' : '')
 			+ '<div class="dwdc-qas">' + qa('qnavy', 'data-act="job"', 'plus', 'Project') + qa('', 'data-act="newclient"', 'plus', 'Client') + qa('', 'data-act="lead"', 'plus', 'Lead')
 			+ qa('', 'data-goto="hosting"', 'server', 'Hosting') + qa('', 'data-goto="leads"', 'mail', 'Leads') + qa('blue', 'data-act="pay"', 'card', 'Log Payment') + '</div></header>';
 	}
@@ -298,7 +298,7 @@
 			+ '<a class="dwdc-seg" href="#clients"><i class="s1"></i>Project clients<b>' + nP + '</b></a><a class="dwdc-seg" href="#clients"><i class="s2"></i>Hosting only<b>' + nH + '</b></a><a class="dwdc-seg" href="#clients"><i class="s3"></i>Past clients<b>' + nPast + '</b></a>',
 			'<footer class="dwdc-grid4">' + frow('Active Projects', active.length, 'projects/active') + frow('Onboarding', onboardList().length, 'onboarding') + frow('Hosting', host.length, 'hosting') + frow('Leads', leadList().length, 'leads') + '</footer>');
 		var c2 = card('cd-projects', chead('brief', 'Projects', 'projects/active'),
-			'<p class="dwdc-hero"><strong>' + active.length + '</strong> active project' + (active.length === 1 ? '' : 's') + '</p>'
+			'<p class="dwdc-hero"><strong>' + active.length + '</strong> project' + (active.length === 1 ? '' : 's') + '</p>'
 			+ '<p class="dwdc-sub">' + money(owed(active)) + ' still owed on active projects</p>'
 			+ '<div class="dwdc-row2"><button class="dwdc-btn" data-act="job">' + ic('plus', 14) + 'New Project</button></div>',
 			'<footer>' + frow('Active Projects', active.length, 'projects/active') + frow('Awaiting Payment', owing.length ? '<em class="dwdc-owepill">' + owing.length + ' owed</em>' : '0', 'projects/active') + frow('Completed', by('complete').length + ' <span class="mut">all-time</span>', 'projects/complete') + '</footer>');
@@ -318,7 +318,7 @@
 		var tl = card('cd-plain', '<header class="dwdc-dhead plain"><h2>To-Do List <span class="dwdc-cnt">' + td.length + '</span></h2></header>',
 			'<form class="dwdc-addbar home"><input name="text" placeholder="Add something we need to do..." autocomplete="off" required><button class="dwdc-btn">Add</button></form>'
 			+ (td.length ? '<div class="dwdc-todos">' + td.map(function (t) { return todoRow(t); }).join('') + '</div>' : emptyRow('Nothing on the list. Nice.')));
-		return '<div class="dwdc-row3">' + c1 + c2 + c3 + '</div><div class="dwdc-row2c">' + ap + tl + '</div>';
+		return '<div class="dwdc-row3">' + c2 + c3 + c1 + '</div><div class="dwdc-row2c">' + ap + tl + '</div>';
 	}
 
 	/* ---------- All Clients ---------- */

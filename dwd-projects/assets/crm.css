@@ -525,3 +525,11 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 #adminmenu .wp-submenu li.current a .dwdc-mcount { background: #13A6EE; }
 .dwdc-years { margin-left: auto; display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--sec); }
 .dwdc .dwdc-yearsel { height: 36px; min-width: 170px; max-width: none !important; border: 1px solid var(--line); border-radius: 999px; padding: 0 32px 0 14px; background-color: #fff; font: inherit; font-size: 13px; font-weight: 700; color: var(--navy); }
+/* search sits in the middle of the header, between the title and the quick actions */
+.dwdc-screen .dwdc-top { align-items: center; }
+.dwdc-tsearchw { flex: 1; display: flex; justify-content: center; min-width: 220px; padding: 0 24px; }
+.dwdc-tsearchw .dwdc-tsearch { margin-top: 0; width: min(380px, 100%); height: 44px; }
+@media (max-width: 1100px) { .dwdc-tsearchw { order: 3; flex-basis: 100%; justify-content: flex-start; padding: 12px 0 0; } }
+.dwdc-screen .dwdc-tsearchw .dwdc-ssearch.dwdc-tsearch { width: 100% !important; max-width: 400px; flex: 1 1 auto; margin: 0; }
+.dwdc-screen .dwdc-tsearchw { flex: 1 1 260px; }
+.dwdc-tsearch input::placeholder { color: var(--mut); opacity: 1; }

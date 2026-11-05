@@ -110,12 +110,43 @@ add_filter( 'menu_order', function ( $order ) {
 add_action( 'admin_head', function () {
 	?>
 	<style id="dwd-admin-clean">
-	#adminmenu li.dwd-msec { pointer-events: none; margin-top: 14px; }
-	#adminmenu li.dwd-msec > a { cursor: default; background: none !important; box-shadow: none !important; }
+	#adminmenu li.dwd-msec { margin-top: 6px; }
+	#adminmenu li.dwd-msec > a { cursor: pointer; background: none !important; box-shadow: none !important; }
 	#adminmenu li.dwd-msec .wp-menu-image { display: none; }
-	#adminmenu li.dwd-msec .wp-menu-name { padding: 8px 12px 6px !important; font-size: 10.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #8C9AAE !important; border-top: 1px solid rgba(255,255,255,.08); }
-	#adminmenu li.dwd-msec:hover .wp-menu-name { color: #8C9AAE !important; }
+	#adminmenu li.dwd-msec .wp-menu-name { position: relative; padding: 12px 30px 10px 12px !important; font-size: 10.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #8C9AAE !important; border-top: 1px solid rgba(255,255,255,.08); }
+	#adminmenu li.dwd-msec .wp-menu-name::after { content: ""; position: absolute; right: 14px; top: 50%; width: 6px; height: 6px; margin-top: -5px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg); transition: transform .15s ease; }
+	#adminmenu li.dwd-msec.dwd-closed .wp-menu-name::after { transform: rotate(-45deg); margin-top: -3px; }
+	#adminmenu li.dwd-msec:hover .wp-menu-name { color: #fff !important; }
+	#adminmenu li.dwd-sec-hide { display: none !important; }
 	.folded #adminmenu li.dwd-msec { display: none; }
 	</style>
+	<?php
+} );
+
+// Sections start closed; click a heading to open it. The section holding the current page opens itself.
+add_action( 'admin_footer', function () {
+	?>
+	<script id="dwd-admin-sections">
+	(function () {
+		var menu = document.getElementById('adminmenu'); if (!menu) { return; }
+		var KEY = 'dwdMenuOpen', open = {};
+		try { open = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { open = {}; }
+		var heads = menu.querySelectorAll(':scope > li.dwd-msec');
+		function items(h) { var out = [], n = h.nextElementSibling; while (n && !n.classList.contains('dwd-msec')) { if (n.tagName === 'LI') { out.push(n); } n = n.nextElementSibling; } return out; }
+		function set(h, isOpen) { h.classList.toggle('dwd-closed', !isOpen); items(h).forEach(function (li) { li.classList.toggle('dwd-sec-hide', !isOpen); }); }
+		heads.forEach(function (h) {
+			var hasCurrent = items(h).some(function (li) { return li.classList.contains('wp-has-current-submenu') || li.classList.contains('current') || li.classList.contains('wp-menu-open'); });
+			set(h, hasCurrent || !!open[h.id]);
+			var a = h.querySelector('a');
+			if (a) { a.removeAttribute('href'); }
+			h.addEventListener('click', function (e) {
+				e.preventDefault();
+				var now = h.classList.contains('dwd-closed');
+				set(h, now); open[h.id] = now;
+				try { localStorage.setItem(KEY, JSON.stringify(open)); } catch (err) {}
+			});
+		});
+	})();
+	</script>
 	<?php
 } );
