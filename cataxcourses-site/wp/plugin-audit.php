@@ -79,6 +79,8 @@ add_action( 'admin_init', function () {
 		'object_cache' => wp_using_ext_object_cache(), 'config_writable' => is_writable( $cfg ), 'htaccess_writable' => is_writable( ABSPATH . '.htaccess' ), 'content_writable' => is_writable( WP_CONTENT_DIR ),
 		'config_debug_lines' => preg_grep( '/SCRIPT_DEBUG|WP_DEBUG|WP_CACHE|WP_MEMORY/', file( $cfg ) ?: array() ), 'memory' => WP_MEMORY_LIMIT, 'autoload_kb' => round( $wpdb->get_var( "SELECT SUM(LENGTH(option_value)) FROM {$wpdb->options} WHERE autoload IN ('yes','on','auto-on','auto')" ) / 1024 ),
 		'mods' => function_exists( 'apache_get_modules' ) ? array_values( array_filter( apache_get_modules(), function ( $m ) { return preg_match( '/rewrite|deflate|expires|headers|http2|brotli|cache/', $m ); } ) ) : 'n/a' );
+	$out['autoload_top'] = $wpdb->get_results( "SELECT option_name, ROUND(LENGTH(option_value)/1024) kb, autoload FROM {$wpdb->options} WHERE autoload IN ('yes','on','auto-on','auto') ORDER BY LENGTH(option_value) DESC LIMIT 25" );
+	$out['transients'] = array( 'all' => $cnt( "SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE '\\_transient\\_%'" ), 'expired' => $cnt( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE '\\_transient\\_timeout\\_%%' AND option_value < %d", time() ) ) );
 	} catch ( Throwable $e ) { $out['ERROR'] = $e->getMessage() . ' line ' . $e->getLine(); }
 	wp_send_json( $out );
 } );
@@ -115,4 +117,46 @@ add_action( 'admin_init', function () {
 		$out['applied'] = $want;
 	}
 	wp_send_json( $out );
+} );
+// One-time (site admins): /wp-admin/?ctc_cfg=expires adds long browser caching for images, fonts and video to .htaccess
+// inside a "CTC Speed" marker block (backup: .htaccess.ctc-bak-20261105). =expires_off removes the block.
+add_action( 'admin_init', function () {
+	$a = $_GET['ctc_cfg'] ?? '';
+	if ( ! in_array( $a, array( 'expires', 'expires_off' ), true ) || ! current_user_can( 'manage_options' ) ) return;
+	require_once ABSPATH . 'wp-admin/includes/misc.php';
+	$f = ABSPATH . '.htaccess';
+	if ( ! file_exists( $f . '.ctc-bak-20261105' ) ) copy( $f, $f . '.ctc-bak-20261105' );
+	$rules = 'expires' === $a ? array(
+		'<IfModule mod_expires.c>',
+		'ExpiresActive On',
+		'ExpiresByType image/webp "access plus 1 year"',
+		'ExpiresByType image/png "access plus 1 year"',
+		'ExpiresByType image/jpeg "access plus 1 year"',
+		'ExpiresByType image/svg+xml "access plus 1 year"',
+		'ExpiresByType image/x-icon "access plus 1 year"',
+		'ExpiresByType font/woff2 "access plus 1 year"',
+		'ExpiresByType font/woff "access plus 1 year"',
+		'ExpiresByType application/font-woff2 "access plus 1 year"',
+		'ExpiresByType video/mp4 "access plus 1 year"',
+		'</IfModule>',
+		'<IfModule mod_headers.c>',
+		'<FilesMatch "\.(webp|png|jpe?g|svg|ico|woff2?|mp4)$">',
+		'Header set Cache-Control "public, max-age=31536000"',
+		'</FilesMatch>',
+		'</IfModule>',
+	) : array();
+	$ok = insert_with_markers( $f, 'CTC Speed', $rules );
+	wp_send_json( array( 'ok' => $ok, 'backup' => file_exists( $f . '.ctc-bak-20261105' ) ) );
+} );
+// One-time (site admins): /wp-admin/?ctc_cfg=autoload stops loading leftover settings of plugins that are no longer
+// installed (and YayMail's old backup) on every request. Nothing is deleted; =autoload_undo restores.
+add_action( 'admin_init', function () {
+	$a = $_GET['ctc_cfg'] ?? '';
+	if ( ! in_array( $a, array( 'autoload', 'autoload_undo' ), true ) || ! current_user_can( 'manage_options' ) || ! function_exists( 'wp_set_option_autoload_values' ) ) return;
+	global $wpdb;
+	$names = array( 'ultimate_google_fonts', 'ultimate_selected_google_fonts', '_yaymail_backup_3_9_9', 'redux_builder_amp', 'revslider-addons', 'oxygen_vsb_css_files_state', 'layerslider_update_info', 'widget_wpex_fontawesome_social_widget', 'wpforms_notifications', 'ct_global_settings', 'retainful_premium' );
+	$names = array_merge( $names, $wpdb->get_col( "SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE 'jetpack\\_%' OR option_name LIKE 'jp\\_sync%' OR option_name LIKE 'revslider%' OR option_name LIKE 'layerslider%'" ) );
+	$set = array_fill_keys( array_unique( $names ), 'autoload' === $a ? false : true );
+	wp_set_option_autoload_values( $set );
+	wp_send_json( array( 'options' => count( $set ), 'autoload_kb_now' => round( $wpdb->get_var( "SELECT SUM(LENGTH(option_value)) FROM {$wpdb->options} WHERE autoload IN ('yes','on','auto-on','auto')" ) / 1024 ) ) );
 } );
