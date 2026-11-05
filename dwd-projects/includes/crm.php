@@ -1079,6 +1079,7 @@ function dwdc_vars( $mode = 'admin' ) {
 	$v['appIcon'] = DWDP_URL . 'assets/app/icon-192.png';
 	$v['appQr']   = DWDP_URL . 'assets/app/qr-desk.png';
 	$v['mode']    = $mode;
+	$v['ver']     = DWDP_VERSION;
 	$v['aiReady'] = function_exists( 'dwdc_ai_key' ) && '' !== dwdc_ai_key();
 	$v['upLast']  = '';
 	if ( function_exists( 'dwds_files' ) ) {
@@ -1220,3 +1221,8 @@ add_filter( 'admin_body_class', function ( $c ) {
 add_filter( 'admin_title', function ( $title ) {
 	return ( isset( $_GET['page'] ) && 'client-desk' === $_GET['page'] ) ? 'Dream Desk' : $title; // phpcs:ignore WordPress.Security.NonceVerification
 }, 99 );
+
+/** Current Dream Desk version, so an app left open in the background can refresh itself after an update. */
+add_action( 'rest_api_init', function () {
+	register_rest_route( 'dwd/v1', '/crm/version', array( 'methods' => 'GET', 'permission_callback' => function () { return current_user_can( 'manage_options' ); }, 'callback' => function () { return array( 'ver' => DWDP_VERSION ); } ) );
+} );

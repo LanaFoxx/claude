@@ -516,7 +516,8 @@
 		var tabs = pers
 			? [['personal/todo', 'todo', 'To-Do', 'c1', a === 'todo' || a === 'calendar' || a === 'done'], ['personal/spending', 'dollar', 'Finances', 'c3', a === 'spending' || a === 'subs' || a === 'finances'], ['personal/bills', 'card', 'Bills', 'c4', a === 'bills']]
 			: [['projects/active', 'brief', 'Projects', 'c0', r.view === 'projects' || r.view === 'client'], ['money', 'dollar', 'Finances', 'c3', r.view === 'money']];
-		return '<nav class="dwdc-tabbar' + (pers ? ' pers' : ' t2') + '" aria-label="Quick menu">' + tabs.map(function (x) { return '<a class="' + x[3] + (x[4] ? ' on' : '') + '" href="#' + x[0] + '">' + ic(x[1], 20) + '<span>' + x[2] + '</span></a>'; }).join('') + '</nav>';
+		if (window.innerWidth > 768) { return ''; }
+		return '<nav class="dwdc-tabbar' + (pers ? ' pers' : ' t2') + '" aria-label="Quick menu" style="position:fixed;left:0;right:0;bottom:0;z-index:9990">' + tabs.map(function (x) { return '<a class="' + x[3] + (x[4] ? ' on' : '') + '" href="#' + x[0] + '">' + ic(x[1], 20) + '<span>' + x[2] + '</span></a>'; }).join('') + '</nav>';
 	}
 	function sidebar(r) {
 		var cur = r.view === 'client' || r.view === 'cl' ? S.back : r.view + (r.arg ? '/' + r.arg : '');
@@ -2306,6 +2307,18 @@
 		if (e.target.closest && e.target.closest('.dwdc-cardtodo') && !e.target.value) { setTimeout(function () { if (S.cardTodo) { S.cardTodo = 0; render(); } }, 150); }
 	});
 
+	// When the app comes back to the front (or every 10 minutes), reload if Dream Desk was updated.
+	(function () {
+		var last = 0;
+		var check = function () {
+			if (Date.now() - last < 60000 || !DWDC.ver) { return; }
+			last = Date.now();
+			api('/version').then(function (x) { if (x && x.ver && x.ver !== DWDC.ver && !S.modal) { location.reload(); } }).catch(function () {});
+		};
+		document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') { check(); } });
+		window.addEventListener('focus', check);
+		setInterval(check, 600000);
+	})();
 	/* ---------- start ---------- */
 	document.body.classList.add('dwdc-app-on');
 	api('').then(function (r) {
