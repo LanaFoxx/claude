@@ -193,7 +193,7 @@
 		var proj = S.contacts.filter(isProject);
 		return '<aside class="dwdc-side">'
 			+ '<a class="dwdc-brand" href="#home"><span class="dwdc-mark"><img src="' + esc(DWDC.mark) + '" alt=""></span><span><strong>Dream Desk</strong><small>Dream Web Digital</small></span></a>'
-			+ (document.body.classList.contains('dwdc-screen') ? '' : '<label class="dwdc-ssearch">' + ic('search', 16) + '<input type="search" placeholder="Search..." value="' + esc(S.q) + '"><kbd>Ctrl K</kbd></label>')
+			+ (true ? '' : '<label class="dwdc-ssearch">' + ic('search', 16) + '<input type="search" placeholder="Search..." value="' + esc(S.q) + '"><kbd>Ctrl K</kbd></label>')
 			+ '<nav>' + nav('home', 'home', 'Home')
 			+ '<div class="dwdc-navh"><i class="b1"></i>Projects</div>'
 			+ nav('projects/active', 'bolt', 'Active', by('active').length) + nav('projects/hold', 'pause', 'On Hold', by('hold').length)
@@ -207,12 +207,23 @@
 			+ '</nav><a class="dwdc-me" href="' + esc(DWDC.logout) + '" title="Sign out"><span class="dwdc-me-av">MT</span><span><strong>' + esc(DWDC.user || 'Michael Tarr') + '</strong><small>Owner · Sign out</small></span>' + ic('logout', 17) + '</a></aside>';
 	}
 	function top(r, t) {
-		var qa = function (cls, attr, icon, label) { return '<button class="dwdc-qact ' + cls + '" ' + attr + '>' + ic(icon, 15) + label + '</button>'; };
-		return '<header class="dwdc-top"><button class="dwdc-burger" data-menu aria-label="Menu">' + ic('menu', 20) + '</button>'
-			+ '<div class="dwdc-title"><p class="dwdc-eyebrow">' + esc(t[0]) + '</p><h1><span>' + esc(t[1]) + '</span>' + (t[2] ? ' <em>' + esc(t[2]) + '</em>' : '') + '</h1></div>'
-			+ (document.body.classList.contains('dwdc-screen') ? '<div class="dwdc-tsearchw"><label class="dwdc-ssearch dwdc-tsearch">' + ic('search', 16) + '<input type="search" placeholder="Search clients…" value="' + esc(S.q) + '"><kbd>Ctrl K</kbd></label></div>' : '')
-			+ '<div class="dwdc-qas">' + qa('qnavy', 'data-act="job"', 'plus', 'Project') + qa('', 'data-act="newclient"', 'plus', 'Client')
-			+ qa('', 'data-goto="hosting"', 'server', 'Hosting') + qa('blue', 'data-act="pay"', 'card', 'Log Payment') + '</div></header>';
+		var SEC = { Projects: 'projects/active', Project: 'projects/active', Clients: 'clients', Client: 'clients', Finances: 'money', 'Website Hosted': 'hosting', Search: 'home' };
+		var page = [t[1], t[2]].filter(Boolean).join(' ').toLowerCase().replace(/(^|\s)\S/g, function (m) { return m.toUpperCase(); });
+		var crumb = r.view === 'home'
+			? '<a href="#home">Dream Desk</a><span aria-hidden="true">/</span><strong>' + esc(t[0]) + '</strong>'
+			: '<a href="#' + (SEC[t[0]] || 'home') + '">' + esc(t[0] || 'Dream Desk') + '</a><span aria-hidden="true">/</span><strong>' + esc(page) + '</strong>';
+		var plus = ic('plus', 14), menuOpen = !!S.newOpen;
+		return '<header class="dwdc-ph">'
+			+ '<div class="dwdc-ph-id"><button class="dwdc-burger" data-menu aria-label="Menu">' + ic('menu', 20) + '</button><div>'
+			+ '<p class="dwdc-ph-crumb">' + crumb + '</p>'
+			+ '<h1 class="dwdc-ph-title">' + esc(t[1]) + (t[2] ? ' <b>' + esc(t[2]) + '</b>' : '') + '</h1></div></div>'
+			+ '<div class="dwdc-ph-tools">'
+			+ '<label class="dwdc-ssearch dwdc-ph-search">' + ic('search', 16) + '<input type="search" placeholder="Search clients…" aria-label="Search clients" value="' + esc(S.q) + '"><kbd>Ctrl K</kbd></label>'
+			+ '<span class="dwdc-ph-sp"></span>'
+			+ '<div class="dwdc-ph-menu' + (menuOpen ? ' open' : '') + '"><button class="dwdc-ph-btn outline" type="button" data-newmenu aria-haspopup="menu" aria-expanded="' + menuOpen + '">' + plus + 'New' + '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>'
+			+ '<ul role="menu"><li><button role="menuitem" type="button" data-act="job">' + plus + 'Project</button></li><li><button role="menuitem" type="button" data-act="newclient">' + plus + 'Client</button></li><li><button role="menuitem" type="button" data-goto="hosting">' + ic('server', 14) + 'Hosting</button></li></ul></div>'
+			+ '<button class="dwdc-ph-btn primary" type="button" data-act="pay">' + ic('card', 14) + 'Log Payment</button>'
+			+ '</div></header>';
 	}
 
 	function syncWpMenu(r) {
@@ -424,10 +435,10 @@
 				+ '<p class="dwdc-mutp sm">Hover a bar to see each amount. Every payment on the day it was paid: Upwork (from your transaction history, after Upwork’s fees), Stripe, PayPal and payments you log. Refunds come off the year they happened.</p>')
 			+ mcard('Busiest months', busyMonths(MY, ylist), 'wide')
 			+ mcard('Upwork Connects', connectsCard(MY), 'wide')
-			+ mcard('Connections <small class="dwdc-conn-sub">Keep Money Stats up to date automatically</small>', connCard(), 'wide')
 			+ mcard('Top projects', rowsP || emptyRow('No payments yet.'))
 			+ mcard('Top clients', rowsC || emptyRow('No payments yet.'))
 			+ mcard('Repeat clients <span class="dwdc-cnt">' + repeat.length + '</span>', rowsR || emptyRow('No repeat clients yet.'))
+			+ mcard('Connections <small class="dwdc-conn-sub">Keep Money Stats up to date automatically</small>', connCard(), 'wide')
 			+ '</div>';
 	}
 	/* ---------- Get Reviews: pick past clients and email them a Google review request ---------- */
@@ -1344,6 +1355,9 @@
 	app.addEventListener('click', function (e) {
 		var t = e.target, el;
 		if (t.closest('[data-menu]')) { document.body.classList.toggle('dwdc-menu-open'); return; }
+		if (t.closest('[data-newmenu]')) { S.newOpen = !S.newOpen; var mm = app.querySelector('.dwdc-ph-menu'); if (mm) { mm.classList.toggle('open', S.newOpen); mm.querySelector('[data-newmenu]').setAttribute('aria-expanded', S.newOpen); } return; }
+		if (S.newOpen && !t.closest('.dwdc-ph-menu')) { S.newOpen = false; var m2 = app.querySelector('.dwdc-ph-menu'); if (m2) { m2.classList.remove('open'); } }
+		if (t.closest('.dwdc-ph-menu [role=menuitem]')) { S.newOpen = false; }
 		if (t.closest('[data-close-modal]')) { S.modal = null; render(); return; }
 		if ((el = t.closest('[data-pick]'))) { keepVals(); S.modal.client = +el.getAttribute('data-pick'); render(); focusIn('[name=name]'); return; }
 		if (t.closest('[data-unpick]')) { keepVals(); S.modal.client = 0; render(); focusIn('.dwdc-pick'); return; }
