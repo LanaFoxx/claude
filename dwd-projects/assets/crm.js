@@ -515,8 +515,8 @@
 		var pers = r.view === 'personal', a = r.arg || '';
 		var tabs = pers
 			? [['personal/todo', 'todo', 'To-Do', 'c1', a === 'todo' || a === 'calendar' || a === 'done'], ['personal/spending', 'dollar', 'Finances', 'c3', a === 'spending' || a === 'subs' || a === 'finances'], ['personal/bills', 'card', 'Bills', 'c4', a === 'bills']]
-			: [['projects/active', 'brief', 'Projects', 'c0', r.view === 'projects' || r.view === 'client'], ['clients', 'users', 'Clients', 'c1', ['clients', 'cl', 'onboarding', 'hosting', 'reviews', 'host'].indexOf(r.view) > -1], ['money', 'dollar', 'Finances', 'c3', r.view === 'money']];
-		return '<nav class="dwdc-tabbar' + (pers ? ' pers' : '') + '" aria-label="Quick menu">' + tabs.map(function (x) { return '<a class="' + x[3] + (x[4] ? ' on' : '') + '" href="#' + x[0] + '">' + ic(x[1], 20) + '<span>' + x[2] + '</span></a>'; }).join('') + '</nav>';
+			: [['projects/active', 'brief', 'Projects', 'c0', r.view === 'projects' || r.view === 'client'], ['money', 'dollar', 'Finances', 'c3', r.view === 'money']];
+		return '<nav class="dwdc-tabbar' + (pers ? ' pers' : ' t2') + '" aria-label="Quick menu">' + tabs.map(function (x) { return '<a class="' + x[3] + (x[4] ? ' on' : '') + '" href="#' + x[0] + '">' + ic(x[1], 20) + '<span>' + x[2] + '</span></a>'; }).join('') + '</nav>';
 	}
 	function sidebar(r) {
 		var cur = r.view === 'client' || r.view === 'cl' ? S.back : r.view + (r.arg ? '/' + r.arg : '');

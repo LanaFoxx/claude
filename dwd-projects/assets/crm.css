@@ -1366,3 +1366,10 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
   .dwdc-side { height: 100dvh !important; max-height: 100dvh; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: calc(24px + env(safe-area-inset-bottom)); }
   body.dwdc-menu-open .dwdc-tabbar { display: none; }
 }
+/* Bottom bar: the tab you're on turns coral; the others are white */
+@media (max-width: 768px) {
+  .dwdc-tabbar.t2 { grid-template-columns: repeat(2, 1fr); }
+  .dwdc-tabbar a, .dwdc-tabbar a svg, .dwdc-tabbar a.c0, .dwdc-tabbar a.c0 svg, .dwdc-tabbar a.c1, .dwdc-tabbar a.c1 svg, .dwdc-tabbar a.c3, .dwdc-tabbar a.c3 svg, .dwdc-tabbar a.c4, .dwdc-tabbar a.c4 svg { color: #DCE6F3 !important; }
+  .dwdc-tabbar a.on, .dwdc-tabbar a.on svg { color: #FF7A59 !important; }
+  .dwdc-tabbar a.on { background: rgba(255,122,89,.12); }
+}
