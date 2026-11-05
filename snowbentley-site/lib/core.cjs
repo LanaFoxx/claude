@@ -18,7 +18,8 @@ const LINKS = {
   valuation: 'https://snowbentley.realscout.com/homesearch/home-reports?hva_public=true',
   facebook: 'https://www.facebook.com/p/Snow-Bentley-61575852646089/', instagram: 'https://www.instagram.com/snowlibentley/?hl=en',
   linkedin: 'https://www.linkedin.com/in/snow-bentley', google: 'https://maps.app.goo.gl/bK8Nzc5w69ZdCsiJ9',
-  review: 'https://www.google.com/maps/place//data=!4m3!3m2!1s0x8c1df049d2be74b1:0x378b4f58eef62d80!12e1?source=g.page.m.kd._&laa=lu-desktop-review-solicitation',
+  // Google "write a review" link (works on phones too; the old Maps link only opened the profile on mobile)
+  review: 'https://search.google.com/local/writereview?placeid=ChIJsXS-0knwHYwRgC327lhPizc',
   search: '/home-search/listings/', portal: 'https://snowbentley.realscout.com/homesearch',
   realscoutId: 'QWdlbnQtMjgxNzU1', // Snow's RealScout agent id (IDX widgets)
 };

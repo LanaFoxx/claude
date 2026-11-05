@@ -11,6 +11,7 @@ const chevronRight = fa('fas fa-chevron-right'), chevronLeft = fa('fas fa-chevro
 const fixUrl = (u, ctx) => {
   if (!u) return ctx.connect;
   if (u === '/properties') return '/properties/sale/';
+  if (/google\.com\/maps\/place\/.*review/.test(u)) return LINKS.review;
   if (/^\/(?!\/)/.test(u) && !/[?#]/.test(u) && !u.endsWith('/')) return u + '/';
   return u;
 };

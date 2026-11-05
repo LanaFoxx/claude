@@ -10,6 +10,12 @@ body .elementor-widget-text-editor a { color: inherit; }
 .admin-bar .sb-header { top: 32px; }
 @media (max-width: 782px) { .admin-bar .sb-header { top: 46px; } }
 .sb-header.sb-scrolled, body.sb-menu-open .sb-header { background: #F5EFE7; }
+/* Over the hero photo: soft dark fade behind the header + shadowed text so the menu reads on any image */
+.sb-header:not(.sb-scrolled) { background-image: linear-gradient(rgba(0,0,0,.55), rgba(0,0,0,.25) 60%, rgba(0,0,0,0)); }
+body.sb-menu-open .sb-header { background-image: none; }
+.sb-header:not(.sb-scrolled) .sb-navlink .elementor-button { text-shadow: 0 1px 10px rgba(0,0,0,.55), 0 0 2px rgba(0,0,0,.35); }
+.sb-header .sb-navlink .elementor-button { padding: 8px 0 !important; border-bottom: 1px solid transparent !important; border-radius: 0 !important; transition: color .3s, border-color .3s; }
+.sb-header .sb-navlink .elementor-button:hover { border-bottom-color: currentColor !important; }
 .sb-header.sb-hidden { transform: translateY(-100%); }
 .sb-header .sb-behaviour { position: absolute !important; width: 0; height: 0; overflow: hidden; }
 .sb-header .sb-logo img { height: 95px; width: auto; max-width: none; }

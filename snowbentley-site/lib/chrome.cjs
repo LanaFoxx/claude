@@ -14,7 +14,7 @@ const behaviour = () => fs.readFileSync(path.join(__dirname, 'site.html'), 'utf8
 /* ------------------------------------------------------------------ header */
 function header(ctx) {
   const { m, popups } = ctx;
-  const nav = (t, url) => textLink(t, url, { size: 15, weight: 400, ls: 0.3, upper: true, lh: 1, color: C.white, hover: C.bronze, cls: 'sb-navlink', settings: { hide_tablet: 'hidden-tablet', hide_mobile: 'hidden-mobile' } });
+  const nav = (t, url) => textLink(t, url, { size: 16, weight: 500, ls: 0.6, upper: true, lh: 1, color: C.white, hover: C.bronze, cls: 'sb-navlink', settings: { hide_tablet: 'hidden-tablet', hide_mobile: 'hidden-mobile' } });
   return [container({
     content_width: 'full', flex_direction: 'row', flex_wrap: 'nowrap', flex_justify_content: 'space-between', flex_align_items: 'center',
     flex_gap: gap(24), padding: cbox('10px', GUT, '10px', GUT), min_height: px(116), min_height_mobile: px(84),
@@ -29,7 +29,7 @@ function header(ctx) {
       nav("What We're Looking For", '/what-were-looking-for/'),
       nav("Let's Connect", popupUrl(popups.connect)),
       nav(LINKS.phone, LINKS.tel),
-      textLink('English', '#', { size: 15, weight: 400, ls: 0.3, upper: false, lh: 1, color: C.white, hover: C.bronze, cls: 'sb-navlink sb-lang', icon: fa('fas fa-caret-down'), iconGap: 6, settings: { hide_tablet: 'hidden-tablet', hide_mobile: 'hidden-mobile' } }),
+      textLink('English', '#', { size: 16, weight: 500, ls: 0.6, upper: false, lh: 1, color: C.white, hover: C.bronze, cls: 'sb-navlink sb-lang', icon: fa('fas fa-caret-down'), iconGap: 6, settings: { hide_tablet: 'hidden-tablet', hide_mobile: 'hidden-mobile' } }),
       widget('button', {
         text: '', link: link(popupUrl(popups.menu)), selected_icon: fa('fas fa-bars'), icon_indent: px(0),
         button_text_color: C.espresso, background_background: 'classic', background_color: C.white,
