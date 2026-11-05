@@ -144,7 +144,7 @@
 		todos: ['Everything open', 'To-Do', 'List'], hosting: ['Clients', 'Hosting', 'Clients'], archive: ['More', 'Archive', ''],
 		search: ['Search', 'Search', 'Results'], clients: ['Clients', 'All', 'Clients'], projects: ['Projects', 'All', 'Projects']
 	};
-	var OLD = { dashboard: 'home', jobs: 'projects/active', completed: 'projects/complete', forms: 'leads' };
+	var OLD = { dashboard: 'home', jobs: 'projects/active', completed: 'projects/complete', forms: 'leads', todos: 'home' };
 	function route() {
 		var h = location.hash.replace(/^#/, '').split('/');
 		if (OLD[h[0]]) { return { view: OLD[h[0]].split('/')[0], arg: OLD[h[0]].split('/')[1] || '', id: 0 }; }
@@ -171,7 +171,7 @@
 		return '<aside class="dwdc-side">'
 			+ '<a class="dwdc-brand" href="#home"><span class="dwdc-mark"><img src="' + esc(DWDC.mark) + '" alt=""></span><span><strong>Dream Desk</strong><small>Dream Web Digital</small></span></a>'
 			+ '<label class="dwdc-ssearch">' + ic('search', 16) + '<input type="search" placeholder="Search..." value="' + esc(S.q) + '"><kbd>Ctrl K</kbd></label>'
-			+ '<nav>' + nav('home', 'home', 'Home') + nav('todos', 'todo', 'To-Do List', openTasks().length + ' open')
+			+ '<nav>' + nav('home', 'home', 'Home')
 			+ '<div class="dwdc-navh"><i class="b1"></i>Projects</div>'
 			+ nav('projects/active', 'bolt', 'Active', by('active').length) + nav('projects/hold', 'pause', 'On Hold', by('hold').length)
 			+ nav('projects/limbo', 'clock', 'Limbo', by('limbo').length) + nav('projects/all', 'brief', 'All Projects', proj.length) + nav('projects/complete', 'done', 'Completed', by('complete').length)
@@ -188,7 +188,7 @@
 		return '<header class="dwdc-top"><button class="dwdc-burger" data-menu aria-label="Menu">' + ic('menu', 20) + '</button>'
 			+ '<div class="dwdc-title"><p class="dwdc-eyebrow">' + esc(t[0]) + '</p><h1><span>' + esc(t[1]) + '</span>' + (t[2] ? ' <em>' + esc(t[2]) + '</em>' : '') + '</h1></div>'
 			+ '<div class="dwdc-qas">' + qa('qnavy', 'data-act="job"', 'plus', 'Project') + qa('', 'data-act="newclient"', 'plus', 'Client') + qa('', 'data-act="lead"', 'plus', 'Lead') + qa('blue', 'data-act="pay"', 'card', 'Log Payment')
-			+ qa('', 'data-goto="hosting"', 'server', 'Hosting') + qa('', 'data-goto="todos"', 'list', 'View To-Dos') + qa('', 'data-goto="leads"', 'mail', 'Leads') + qa('', 'data-goto="archive"', 'archive', 'Archive') + '</div></header>';
+			+ qa('', 'data-goto="hosting"', 'server', 'Hosting') + qa('', 'data-goto="leads"', 'mail', 'Leads') + qa('', 'data-goto="archive"', 'archive', 'Archive') + '</div></header>';
 	}
 
 	function render(anim) {
@@ -298,9 +298,9 @@
 			}).join('') : emptyRow('No active projects.')) + '</div>',
 			'<footer class="dwdc-totals one"><div><small>Total amount due</small><strong class="deep">' + money(owed(active)) + '</strong></div></footer>');
 		var td = openTasks().sort(function (a, b) { return (a.due || '9') < (b.due || '9') ? -1 : 1; });
-		var tl = card('cd-plain', '<header class="dwdc-dhead plain"><h2>To-Do List <span class="dwdc-cnt">' + td.length + '</span></h2><a href="#todos">View all</a></header>',
+		var tl = card('cd-plain', '<header class="dwdc-dhead plain"><h2>To-Do List <span class="dwdc-cnt">' + td.length + '</span></h2></header>',
 			'<form class="dwdc-addbar home"><input name="text" placeholder="Add something we need to do..." autocomplete="off" required><button class="dwdc-btn">Add</button></form>'
-			+ (td.length ? '<div class="dwdc-todos">' + td.slice(0, 8).map(function (t) { return todoRow(t); }).join('') + '</div>' : emptyRow('Nothing on the list. Nice.')));
+			+ (td.length ? '<div class="dwdc-todos">' + td.map(function (t) { return todoRow(t); }).join('') + '</div>' : emptyRow('Nothing on the list. Nice.')));
 		return '<div class="dwdc-row3">' + c1 + c2 + c3 + '</div><div class="dwdc-row2c">' + ap + tl + '</div>';
 	}
 
