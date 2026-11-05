@@ -760,3 +760,22 @@ add_action( 'rest_api_init', function () {
 		return array( 'ym' => $ym, 'rows' => $rows );
 	} ) );
 } );
+
+/** Read-only: list a client's Stripe charges in a date range (to double-check payments). */
+add_action( 'rest_api_init', function () {
+	register_rest_route( 'dwd/v1', '/crm/stripe-check', array( 'methods' => 'GET', 'permission_callback' => function () { return current_user_can( 'manage_options' ); }, 'callback' => function ( $r ) {
+		$key = (string) get_option( 'dwds_stripe_key', '' );
+		if ( ! $key ) {
+			return new WP_Error( 'dwds_nokey', 'No Stripe key saved.', array( 'status' => 400 ) );
+		}
+		$from = strtotime( (string) $r->get_param( 'from' ) . ' 00:00:00 UTC' );
+		$to   = strtotime( (string) $r->get_param( 'to' ) . ' 23:59:59 UTC' );
+		$res  = wp_remote_get( 'https://api.stripe.com/v1/charges?limit=100&created[gte]=' . $from . '&created[lte]=' . $to, array( 'timeout' => 30, 'headers' => array( 'Authorization' => 'Bearer ' . $key ) ) );
+		$j    = json_decode( wp_remote_retrieve_body( $res ), true );
+		$out  = array();
+		foreach ( (array) ( $j['data'] ?? array() ) as $c ) {
+			$out[] = array( 'id' => $c['id'], 'date' => gmdate( 'Y-m-d H:i', (int) $c['created'] ), 'amount' => ( $c['amount'] ?? 0 ) / 100, 'paid' => ! empty( $c['paid'] ) && 'succeeded' === ( $c['status'] ?? '' ), 'refunded' => ! empty( $c['refunded'] ), 'email' => $c['billing_details']['email'] ?? $c['receipt_email'] ?? '', 'name' => $c['billing_details']['name'] ?? '', 'invoice' => $c['invoice'] ?? '', 'desc' => $c['description'] ?? '' );
+		}
+		return array( 'charges' => $out, 'error' => $j['error']['message'] ?? null );
+	} ) );
+} );
