@@ -172,12 +172,12 @@
 			+ '<a class="dwdc-brand" href="#home"><span class="dwdc-mark"><img src="' + esc(DWDC.mark) + '" alt=""></span><span><strong>Dream Desk</strong><small>Dream Web Digital</small></span></a>'
 			+ '<label class="dwdc-ssearch">' + ic('search', 16) + '<input type="search" placeholder="Search..." value="' + esc(S.q) + '"><kbd>Ctrl K</kbd></label>'
 			+ '<nav>' + nav('home', 'home', 'Home') + nav('todos', 'todo', 'To-Do List', openTasks().length + ' open')
-			+ '<div class="dwdc-navh"><i class="b1"></i>Clients</div>'
-			+ nav('leads', 'mail', 'Leads', leadList().length) + nav('onboarding', 'filter', 'Onboarding', onboardList().length)
-			+ nav('hosting', 'server', 'Hosting', hosting().length) + nav('clients', 'users', 'All Clients', S.clients.length)
-			+ '<div class="dwdc-navh"><i class="b2"></i>Projects</div>'
+			+ '<div class="dwdc-navh"><i class="b1"></i>Projects</div>'
 			+ nav('projects/active', 'bolt', 'Active', by('active').length) + nav('projects/hold', 'pause', 'On Hold', by('hold').length)
 			+ nav('projects/limbo', 'clock', 'Limbo', by('limbo').length) + nav('projects/all', 'brief', 'All Projects', proj.length) + nav('projects/complete', 'done', 'Completed', by('complete').length)
+			+ '<div class="dwdc-navh"><i class="b2"></i>Clients</div>'
+			+ nav('onboarding', 'filter', 'Onboarding', onboardList().length) + nav('hosting', 'server', 'Hosting', hosting().length)
+			+ nav('leads', 'mail', 'Leads', leadList().length) + nav('clients', 'users', 'All Clients', S.clients.length)
 			+ '<div class="dwdc-navh"><i class="b3"></i>More</div>'
 			+ nav('archive', 'archive', 'Archive', by('archive').length)
 			+ '<a class="dwdc-nav" href="' + esc(DWDC.wp) + '">' + ic('wp') + '<span>WordPress Admin</span></a>'
@@ -817,12 +817,12 @@
 			+ '<div class="dwdc-minis">' + mini('navy', 'Price', money(c.hosting) + ' / year')
 			+ mini('deep', 'Years paid', pays.length || (on ? 1 : 0))
 			+ '<div class="dwdc-mini"><small>Status</small><strong class="' + (n !== null && n < 0 && !on ? 'deep' : '') + '">' + esc(st[0]) + '</strong><span class="dwdc-mini-sub">' + esc(st[2]) + '</span></div></div>'
-			+ '<div class="dwdc-two"><div class="dwdc-col">' + hostCard(c) + (S.edit ? editCard(c) : detailsCard(c)) + '</div>'
-			+ '<div class="dwdc-col"><section class="dwdc-card"><div class="dwdc-cardh pad2"><h2>Payments <span class="dwdc-cnt">' + pays.length + '</span></h2></div>'
+			+ '<div class="dwdc-two"><div class="dwdc-col">' + hostCard(c) + '</div><div class="dwdc-col">' + (S.edit ? editCard(c) : detailsCard(c)) + '</div></div>'
+			+ '<section class="dwdc-card"><div class="dwdc-cardh pad2"><h2>Payments <span class="dwdc-cnt">' + pays.length + '</span></h2></div>'
 			+ (!full ? emptyRow('Loading…') : pays.length ? '<div class="pad2">' + pays.map(function (x) {
 				return '<div class="dwdc-pay"><span><b>' + fmt(x.date, true) + '</b><small>' + esc([x.what, x.by].filter(Boolean).join(' · ')) + '</small></span><b>' + (num(x.amount) ? money(x.amount) : '—') + '</b></div>';
 			}).join('') + '</div>' : emptyRow('No hosting payments recorded yet. Payments through the website (Stripe/WooCommerce) show up here automatically, or use “Log renewal payment”.'))
-			+ '</section></div></div>';
+			+ '</section>';
 	}
 	function hostCard(c) {
 		var on = subActive(c), n = c.renewal ? daysTo(c.renewal) : null;
@@ -832,7 +832,9 @@
 				+ '<form class="dwdc-payf">' + (c.email ? '' : '<input name="email" type="email" placeholder="Client’s email (needed to send the link)" required>')
 				+ '<button class="dwdc-btn">' + ic('right', 14) + 'Email payment link</button><button type="button" class="dwdc-btn2" data-copy>Copy link</button></form>';
 		return '<section class="dwdc-card pad"><div class="dwdc-cardh"><h2>Hosting</h2>' + (on ? pill('Auto-renew', 'green') : pill('Not on auto-pay', 'amber')) + '</div>' + box
-			+ '<dl class="dwdc-dl"><dt>Plan</dt><dd>' + money(c.hosting) + ' / year</dd><dt>Renews</dt><dd class="' + (!on && n !== null && n < 0 ? 'red' : !on && n !== null && n <= 30 ? 'orange' : '') + '">' + ((on && c.sub.next) || c.renewal ? fmt((on && c.sub.next) || c.renewal, true) : '—') + '</dd>'
+			+ '<form class="dwdc-hostprice"><label><span>Price per year</span><span class="dwdc-pricein">$<input name="hosting" inputmode="decimal" value="' + esc(num(c.hosting) || '') + '"></span></label><label><span>Renews</span><input name="renewal" type="date" value="' + esc(c.renewal || '') + '"></label><button class="dwdc-btn2">Save</button></form>'
+			+ '<p class="dwdc-mutp">The payment link charges this price and sets up a yearly subscription at the same amount.</p>'
+			+ '<dl class="dwdc-dl">'
 			+ (c.email ? '<dt>Payments</dt><dd><a href="' + esc(DWDC.orders + encodeURIComponent(c.email)) + '" target="_blank">View orders in WooCommerce</a></dd>' : '') + '</dl></section>';
 	}
 	function activityCard(c, full) {
@@ -1157,6 +1159,9 @@
 		} else if (f.classList.contains('dwdc-payf')) {
 			var pb = f.querySelector('.dwdc-btn'); pb.disabled = true;
 			api('/contact/' + r.id + '/paylink', 'POST', data).then(function (x) { upsert(x); S.full[x.id] = x; render(); toast('Payment link emailed to ' + x.email); }).catch(function (er) { pb.disabled = false; fail(er); });
+		} else if (f.classList.contains('dwdc-hostprice')) {
+			if (!num(data.hosting)) { toast('Enter the yearly price', true); return; }
+			save(r.id, { hosting: String(num(data.hosting)), renewal: data.renewal || '' }, 'Hosting price saved: ' + money(data.hosting) + '/yr');
 		} else if (f.classList.contains('dwdc-markupf')) {
 			save(r.id, { markup: (data.markup || '').trim() }, data.markup ? 'Markup link saved' : 'Markup link removed');
 		} else if (f.classList.contains('dwdc-nextf')) {

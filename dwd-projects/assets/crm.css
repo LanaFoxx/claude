@@ -439,3 +439,10 @@ select.dwdc-sel[class*=pm-] option { background: #fff; color: #0B203D; font-weig
 .dwdc-fu { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 999px; background: var(--blue-t); color: var(--navy); font-size: 12px; font-weight: 700; }
 .dwdc-tint-space { height: 78px; }
 .g-onb.row > span:nth-child(2) { flex-direction: column; align-items: flex-start; justify-content: center; }
+.dwdc-hostprice { display: grid; grid-template-columns: 1fr 1fr auto; gap: 12px; align-items: end; }
+.dwdc-hostprice label > span:first-child { display: block; font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--sec); margin-bottom: 6px; }
+.dwdc-hostprice input { width: 100%; height: 42px; min-height: 0 !important; border: 1px solid var(--input) !important; border-radius: 8px !important; padding: 0 12px !important; background: #fff !important; }
+.dwdc-pricein { display: flex; align-items: center; gap: 6px; height: 42px; padding-left: 12px; border: 1px solid var(--input); border-radius: 8px; font-weight: 700; }
+.dwdc-pricein input { border: 0 !important; height: 40px; padding: 0 12px 0 0 !important; font-weight: 700; font-size: 15px !important; }
+.dwdc-hostprice .dwdc-btn2 { height: 42px; }
+@media (max-width: 768px) { .dwdc-hostprice { grid-template-columns: 1fr; } }
