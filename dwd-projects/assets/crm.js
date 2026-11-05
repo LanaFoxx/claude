@@ -810,7 +810,8 @@
 				for (var i = 1; i <= 12; i++) { var d = new Date(y, mo - 1 - i, 1), yy = String(d.getFullYear()); vals.push(MY[yy] && MY[yy].m ? Math.max(0, +MY[yy].m[d.getMonth()] || 0) : 0); }
 				var lm = new Date(y, mo - 2, 1), avg12 = vals.reduce(function (a, v) { return a + v; }, 0) / 12;
 				var cur = MY[String(y)] && MY[String(y)].m ? Math.max(0, +MY[String(y)].m[mo - 1] || 0) : 0;
-				return kpi(MNf[mo - 1] + ' income', money(cur), MNf[lm.getMonth()] + ': ' + money(vals[0]) + ' · 12-month average ' + money(avg12), 'coralfill');
+				return kpi(MNf[mo - 1] + ' income', money(cur), MNf[lm.getMonth()] + ': ' + money(vals[0]) + ' · 12-month average ' + money(avg12) + '<em class="dwdc-kpi-go">See every payment →</em>', 'coralfill')
+					.replace('<div class="dwdc-kpi', '<div role="button" tabindex="0" title="See every payment this month" data-month="' + t.slice(0, 7) + '" class="dwdc-kpi click');
 			})()
 			+ kpi('All-time income', money(total), 'Every payment since you started · ' + paid.length + ' projects', 'navy')
 			+ kpi('Average project', money(avg), 'Middle project ' + money(mid))

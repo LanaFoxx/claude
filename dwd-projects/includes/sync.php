@@ -748,9 +748,9 @@ add_action( 'rest_api_init', function () {
 					'amount'  => round( ( 'refunded' === $st ? -1 : 1 ) * (float) preg_replace( '/[^\d.]/', '', (string) $x['amount'] ), 2 ),
 					'source'  => $src,
 					'method'  => 'Other' === $src ? (string) ( $x['source'] ?? '' ) : $src,
-					'project' => get_the_title( $pid ),
+					'project' => html_entity_decode( get_the_title( $pid ), ENT_QUOTES ),
 					'pid'     => $pid,
-					'client'  => $cid ? get_the_title( $cid ) : (string) get_post_meta( $pid, '_dwdc_person', true ),
+					'client'  => html_entity_decode( $cid ? get_the_title( $cid ) : (string) get_post_meta( $pid, '_dwdc_person', true ), ENT_QUOTES ),
 					'note'    => (string) ( $x['note'] ?? '' ),
 					'refund'  => 'refunded' === $st,
 				);

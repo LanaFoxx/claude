@@ -1373,3 +1373,6 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
   .dwdc-tabbar a.on, .dwdc-tabbar a.on svg { color: #FF7A59 !important; }
   .dwdc-tabbar a.on { background: rgba(255,122,89,.12); }
 }
+.dwdc-kpi.click { cursor: pointer; transition: transform .15s ease, box-shadow .15s ease; }
+.dwdc-kpi.click:hover { transform: translateY(-2px); box-shadow: 0 12px 26px -14px rgba(255,111,79,.9); }
+.dwdc-kpi-go { display: block; margin-top: 8px; font-style: normal; font-weight: 700; font-size: 12.5px; color: #fff; opacity: .95; }
