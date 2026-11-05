@@ -463,3 +463,5 @@ select.dwdc-stage.t-green { background-color: #E6F6EE !important; color: #17824F
 /* no focus border/ring on the sidebar search */
 .dwdc-ssearch input, .dwdc-ssearch input:focus, .dwdc-ssearch input:focus-visible { outline: none !important; box-shadow: none !important; border: 0 !important; }
 .dwdc-ssearch:focus-within { box-shadow: none !important; background: rgba(255,255,255,.12); }
+/* bigger headline numbers on the Home cards */
+.dwdc-hero strong, .dwdc-hero.big strong { font-size: 48px !important; line-height: 1; vertical-align: -6px; }
