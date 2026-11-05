@@ -6,7 +6,7 @@ const crypto = require('crypto');
 const C = {
   blue: '#0B57D0', blueHover: '#083F99', bright: '#3B82F6', ink: '#101828', slate: '#475467',
   cream: '#F3F0E8', paleBlue: '#E9F0FA', pill: '#E3EDFB', eyebrowLight: '#9DB9EF', mist: '#CBD5E1',
-  footer: '#0B1322', card: '#1A2538', muted: '#98A2B3', border: '#E4E7EC', borderDark: '#D0D5DD',
+  footer: '#0B1322', card: '#1A2538', muted: '#98A2B3', mutedText: '#667085', border: '#E4E7EC', borderDark: '#D0D5DD',
   fieldBorder: '#2A3650', white: '#FFFFFF',
 };
 const HEAD = 'Saira', BODY = 'Figtree';

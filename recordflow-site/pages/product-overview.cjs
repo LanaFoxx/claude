@@ -50,8 +50,8 @@ const modeToggle = () => row([modeButton('Mobile', 'mobile', true), modeButton('
 
 const SWITCHER_CSS = `/* Feature switcher styling. Order matters: box 1 shows screen 1, and so on. */
 selector .rf-feature { cursor: pointer; transition: background-color .25s, box-shadow .25s, opacity .25s; }
-selector.rf-ready .rf-feature { opacity: .55; }
-selector.rf-ready .rf-feature:hover { opacity: .85; }
+selector.rf-ready .rf-feature { opacity: .85; }
+selector.rf-ready .rf-feature:hover { opacity: 1; }
 selector.rf-ready .rf-feature.is-active { opacity: 1; background: #fff; box-shadow: 0 18px 40px rgba(16,24,40,.12); }
 selector .rf-feature:focus-visible { outline: 2px solid ${C.blue}; outline-offset: 2px; }
 selector .rf-phone { display: grid !important; }

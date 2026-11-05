@@ -2,7 +2,7 @@ const L = require('../lib.cjs');
 const { C, BODY, URL, id, px, box, gap, typo, container, widget, band, stack, grid, eyebrow, H2, H3, text, iconList, subHero, ctaBand } = L;
 
 const detail = (label, valueHtml, color = C.ink, weight = 600) => stack([
-  eyebrow(label, C.muted, 'left', { ls: 1.32 }),
+  eyebrow(label, C.mutedText, 'left', { ls: 1.32 }),
   text(valueHtml, { size: 16, color, weight, lh: 1.5 }),
 ], { gap: 4 });
 

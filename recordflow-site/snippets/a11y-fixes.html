@@ -1,0 +1,14 @@
+<style>
+/* RecordFLOW accessibility: give carousel arrows a 24px tap target (visual size unchanged). */
+/* Underline links inside body text so they are not identified by colour alone. */
+.elementor-widget-text-editor p a, .elementor-widget-text-editor li a { text-decoration: underline; }
+.elementor-swiper-button { min-width: 24px; min-height: 24px; display: inline-flex; align-items: center; justify-content: center; }
+</style>
+<script>
+/* RecordFLOW accessibility: give the theme's "Skip to content" link a target on Elementor pages. */
+(function () {
+  if (document.getElementById('content')) return;
+  var main = document.querySelector('[data-elementor-type="wp-page"], [data-elementor-type="wp-post"], main');
+  if (main) { main.id = 'content'; main.setAttribute('tabindex', '-1'); }
+})();
+</script>

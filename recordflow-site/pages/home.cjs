@@ -50,7 +50,7 @@ const hero = (m) => band(C.cream, [
 
 /* 2. PARTNER LOGOS ----------------------------------------------------- */
 const logos = (m) => band(C.white, [
-  eyebrow('Trusted by ditch companies, districts and water professionals', C.muted, 'center'),
+  eyebrow('Trusted by ditch companies, districts and water professionals', C.mutedText, 'center'),
   widget('image-carousel', {
     carousel_name: 'Partner logos',
     carousel: m.partnerLogos,
@@ -89,7 +89,7 @@ const problem = (m) => band(C.paleBlue, [
       container({ content_width: 'full', flex_direction: 'column', flex_justify_content: 'space-between', flex_gap: gap(14), padding: box(24),
         background_background: 'classic', background_color: C.white, border_radius: box(12) }, [
         stack([
-          eyebrow('Today', C.muted, 'left', { ls: 1.32 }),
+          eyebrow('Today', C.mutedText, 'left', { ls: 1.32 }),
           iconList(['Readings in a notepad', "Photos on someone's phone", 'Flows in a spreadsheet', 'Chalk notes on the headgate', 'The "why" in one person\'s head'],
             { icon: 'fas fa-minus', iconSize: 10, iconColor: C.borderDark, size: 15, weight: 400, space: 10 }),
         ], { gap: 14 }),
@@ -228,7 +228,7 @@ const roi = (m) => band(C.cream, [
     roiCard(`$49<span style="font-size:20px;color:${C.slate};font-weight:500">/yr</span>`, 'starting price, no hardware required', 'Enterprise SCADA and telemetry systems start at $X,XXX plus installation and contracts.'),
     roiCard('0', 'records lost when a manager retires', 'The reading, the photo and the reason stay with the ditch, not with the person.', true),
   ], { cols: [4, 2, 1], gap: 18, align: 'stretch' }),
-  text('Figures shown are placeholders pending real customer data.', { size: 13, color: C.muted }),
+  text('Figures shown are placeholders pending real customer data.', { size: 13, color: C.mutedText }),
 ], { gap: 48, gapM: 36, anchor: 'roi' });
 
 /* 10. FLOWSENSE -------------------------------------------------------- */
@@ -290,7 +290,7 @@ const trial = (m) => band(C.ink, [
       H3('Start your risk-free trial', C.ink),
       text('Create your account at app.myrecordflow.com. Have a question first? Send us a note and a water manager will reply.', { size: 14, lh: 1.5 }),
       btnPrimary('Start Risk-Free 7-day Trial', APP, { align: 'justify' }),
-      widget('divider', { look: 'line_text', text: 'or ask a question', color: C.border, weight: px(1), text_color: C.muted, gap: px(2),
+      widget('divider', { look: 'line_text', text: 'or ask a question', color: C.border, weight: px(1), text_color: C.mutedText, gap: px(2),
         ...typo('typography', BODY, 12, 400), text_spacing: px(12), html_tag: 'span' }),
       widget('form', {
         form_name: 'Homepage question',

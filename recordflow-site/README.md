@@ -38,3 +38,26 @@ padding and gutters shrink, the nav becomes a hamburger on tablet and mobile.
   creates missing pages and the header/footer templates and sets their conditions.
   `node deploy.cjs [chrome] [page-slug ...]` (no args = everything). Needs a logged-in Playwright
   storage state (`STATE`) and the uploaded media/menu IDs (`PREP`, JSON).
+
+## Performance (live site, Nov 2026)
+
+PageSpeed work on myrecordflow.com was applied in place, because the client edits the live pages in
+Elementor. Do not redeploy a page from `pages/*.cjs` without first checking for their edits.
+
+* ElementsKit Lite is deactivated: no page uses its widgets, but its CSS and JS loaded everywhere.
+* Elementor > Settings > Performance has "Load Google Fonts locally" turned on. The Default Kit's
+  Roboto globals now use Figtree, so Roboto no longer loads; the form fields use it.
+* Images: the client's 1080x1920 PNG phone mockups (up to 2.6 MB), `Map_Desktop.png`, the hero,
+  the headgate and canal photos, and the logos were re-encoded as WebP. They were uploaded as new
+  media with alt text, and the Elementor data was repointed to them. The originals are still in the
+  Media Library.
+* Custom Code `snippets/hero-preload.html` preloads the homepage hero (LCP). Update it if the hero
+  image changes. `snippets/a11y-fixes.html` gives the skip link a target, underlines links in body
+  text and gives carousel arrows a 24px tap target.
+* Small text on light backgrounds uses `C.mutedText` (#667085) for WCAG contrast. The app-tour
+  inactive items dim to .85 instead of .55. The site icon was replaced, because the old 32px file
+  was a 404.
+* `tools/lighthouse.sh` runs Lighthouse for a page.
+
+The remaining mobile blocking time comes from Google Tag Manager (Site Kit), reCAPTCHA v3 on the
+contact and quote forms, and Elementor's own jQuery front end.
