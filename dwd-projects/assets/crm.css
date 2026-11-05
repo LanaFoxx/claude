@@ -1336,3 +1336,18 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
   .dwdc-btrend { height: 130px; gap: 3px; }
   .dwdc .dwdc-cardh.split { flex-wrap: wrap; }
 }
+/* ===== Phone / app: sticky bottom tab bar ===== */
+.dwdc-tabbar { display: none; }
+@media (max-width: 768px) {
+  .dwdc-tabbar { display: grid; grid-template-columns: repeat(3, 1fr); position: fixed; left: 0; right: 0; bottom: 0; z-index: 9990; background: #0B1F3F; padding: 8px 10px calc(8px + env(safe-area-inset-bottom)); box-shadow: 0 -8px 24px -10px rgba(11,31,63,.45); }
+  .dwdc-tabbar a { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 7px 4px; border-radius: 12px; font: 700 12px/1.1 Poppins, sans-serif; letter-spacing: .04em; text-transform: uppercase; text-decoration: none; opacity: .8; }
+  .dwdc-tabbar a svg { width: 22px; height: 22px; }
+  .dwdc-tabbar a.on { opacity: 1; background: rgba(255,255,255,.08); }
+  .dwdc-tabbar a.c0, .dwdc-tabbar a.c0 svg { color: #13A6EE !important; }
+  .dwdc-tabbar a.c1, .dwdc-tabbar a.c1 svg { color: #6CC6F4 !important; }
+  .dwdc-tabbar a.c3, .dwdc-tabbar a.c3 svg { color: #FF8A6E !important; }
+  .dwdc-tabbar a.c4, .dwdc-tabbar a.c4 svg { color: #7FD48B !important; }
+  .dwdc-main { padding-bottom: calc(96px + env(safe-area-inset-bottom)) !important; }
+  .dwdc-chat { bottom: calc(80px + env(safe-area-inset-bottom)) !important; height: calc(100dvh - 150px) !important; }
+  .dwdc-toast { bottom: calc(90px + env(safe-area-inset-bottom)) !important; }
+}
