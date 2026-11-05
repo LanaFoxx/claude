@@ -1091,9 +1091,10 @@ function dwdc_money_by_year() {
 		}
 		foreach ( $pays as $p ) {
 			$st = strtolower( (string) ( $p['status'] ?? 'paid' ) );
-			if ( in_array( $st, array( 'open', 'void', 'draft', 'refunded', 'failed', 'uncollectible' ), true ) ) {
+			if ( in_array( $st, array( 'open', 'void', 'draft', 'failed', 'uncollectible' ), true ) ) {
 				continue;
 			}
+			$sign = 'refunded' === $st ? -1 : 1; // money sent back to a client comes off that year
 			$y   = substr( (string) ( $p['date'] ?? '' ), 0, 4 );
 			$amt = (float) preg_replace( '/[^\d.]/', '', (string) ( $p['amount'] ?? 0 ) );
 			if ( ! preg_match( '/^\d{4}$/', $y ) || $amt <= 0 ) {
@@ -1104,7 +1105,7 @@ function dwdc_money_by_year() {
 			if ( ! isset( $out[ $y ] ) ) {
 				$out[ $y ] = array( 'Stripe' => 0, 'PayPal' => 0, 'Upwork' => 0, 'Other' => 0 );
 			}
-			$out[ $y ][ $src ] += $amt;
+			$out[ $y ][ $src ] += $sign * $amt;
 		}
 	}
 	krsort( $out );
