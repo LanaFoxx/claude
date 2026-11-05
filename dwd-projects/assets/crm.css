@@ -1289,3 +1289,50 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 .dwdc .dwdc-cal-n { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 50%; font-size: 13.5px; font-weight: 700; line-height: 1; margin: 2px 0 4px 2px; flex: none; }
 .dwdc .dwdc-cal-d.today .dwdc-cal-n { background: #FF6F4F; color: #fff; }
 @media (max-width: 768px) { .dwdc .dwdc-cal-n { width: 24px; height: 24px; font-size: 11.5px; } }
+/* ===== Personal: add rows stay side by side on phones ===== */
+@media (max-width: 768px) {
+  .dwdc .dwdc-ptadd.mini, .dwdc .dwdc-ptadd.daym { flex-wrap: nowrap; }
+  .dwdc .dwdc-ptadd.mini input[name=text], .dwdc .dwdc-ptadd.daym input[name=text] { flex: 1 1 auto; min-width: 0; }
+  .dwdc .dwdc-ptadd.mini .dwdc-btn, .dwdc .dwdc-ptadd.daym .dwdc-btn { flex: none; }
+}
+/* ===== Spending / Subscriptions / Connections ===== */
+.dwdc .dwdc-askbtn.sm { padding: 6px 12px; font-size: 12.5px; }
+.dwdc .dwdc-askbtn.full { width: 100%; justify-content: center; margin-top: 16px; }
+.dwdc-psubs { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; padding: 10px 12px; border-radius: 10px; background: #F4F7FB; color: var(--navy) !important; text-decoration: none; font-size: 14px; }
+.dwdc-prow2.top { margin: 0 0 22px; }
+.dwdc .dwdc-cardh.split { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.dwdc .dwdc-cardh .dwdc-askbtn { margin-left: auto; }
+.dwdc-pcats > div[data-bcat] { cursor: pointer; border-radius: 8px; padding: 6px 8px; margin: 0 -8px; }
+.dwdc-pcats > div[data-bcat]:hover, .dwdc-pcats > div.on { background: #FFF4F0; }
+.dwdc-btrend { display: flex; align-items: flex-end; gap: 6px; height: 170px; padding-top: 10px; }
+.dwdc-btrend button { flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 6px; background: none; border: 0; cursor: pointer; padding: 0; font-family: inherit; }
+.dwdc-btrend i { display: block; width: 100%; max-width: 34px; border-radius: 6px 6px 2px 2px; background: #FFC2B2; }
+.dwdc-btrend button.on i, .dwdc-btrend button:hover i { background: #FF6F4F; }
+.dwdc-btrend small { font-size: 11px; color: var(--sec); font-weight: 600; }
+.dwdc-subr { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 16px; align-items: center; padding: 14px 20px; border-top: 1px solid var(--div); }
+.dwdc-subr .w b { display: block; font-size: 15px; color: var(--navy); }
+.dwdc-subr .w small { color: var(--mut); font-size: 12.5px; }
+.dwdc-subr em { font-style: normal; color: var(--sec); font-weight: 600; } .dwdc-subr em.up { color: #E8553A; }
+.dwdc-subr .a { font-weight: 700; color: var(--navy); font-size: 15px; } .dwdc-subr .a small { color: var(--mut); font-weight: 500; }
+.dwdc-subr.cancel { background: #FFF6F3; } .dwdc-subr.cancel .w b { text-decoration: line-through; color: var(--mut); }
+.dwdc-subr.stopped { opacity: .6; }
+.dwdc-subact { display: flex; gap: 6px; }
+.dwdc-subact button { height: 32px; padding: 0 12px; border: 1px solid var(--line); border-radius: 999px; background: #fff; font: 600 12.5px/1 inherit; font-family: inherit; color: var(--navy); cursor: pointer; }
+.dwdc-subact button.on { background: var(--navy); border-color: var(--navy); color: #fff; }
+.dwdc-subact button.on.bad { background: #FF6F4F; border-color: #FF6F4F; }
+.dwdc-pconn .dwdc-colh { display: flex; align-items: center; gap: 12px; width: 100%; }
+.dwdc-pconn-sum { margin-left: auto; font-size: 12.5px; color: var(--sec); font-weight: 600; }
+.dwdc-pconn { margin-top: 22px; }
+.dwdc-pconn .dwdc-conns { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.dwdc-pconn .dwdc-conn h3 { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.dwdc-pconn .dwdc-conn p, .dwdc-pconn .dwdc-conn ol { font-size: 13.5px; line-height: 1.6; }
+.dwdc-ok { display: block; color: #1F9D55; font-weight: 600; margin-top: 6px; }
+.dwdc .dwdc-btn.sm.coral[disabled] { opacity: .45; cursor: not-allowed; }
+.dwdc-bankempty p { font-size: 15px; line-height: 1.6; }
+@media (max-width: 1100px) { .dwdc-pconn .dwdc-conns { grid-template-columns: 1fr; } }
+@media (max-width: 768px) {
+  .dwdc-subr { grid-template-columns: minmax(0, 1fr) auto; padding: 12px 14px; }
+  .dwdc-subact { grid-column: 1 / -1; }
+  .dwdc-btrend { height: 130px; gap: 3px; }
+  .dwdc .dwdc-cardh.split { flex-wrap: wrap; }
+}

@@ -170,6 +170,112 @@
 	function isInstalled() { return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true; }
 	function isIOS() { return /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); }
 	function isPhone() { return /android|iphone|ipod|mobile/i.test(navigator.userAgent); }
+	/* ---------- Personal: bank spending, subscriptions, connections ---------- */
+	function bData() {
+		if (!S.bank && !S.bankLoading) { S.bankLoading = true; api('/bank').then(function (d) { S.bank = d; S.bankLoading = false; render(); }).catch(function () { S.bankLoading = false; }); }
+		return S.bank;
+	}
+	function plData() {
+		if (!S.plaid && !S.plaidLoading) { S.plaidLoading = true; api('/plaid').then(function (d) { S.plaid = d; S.plaidLoading = false; render(); }).catch(function () { S.plaidLoading = false; }); }
+		return S.plaid;
+	}
+	function bankUpload(file) {
+		var rd = new FileReader();
+		rd.onload = function () {
+			toast('Reading ' + file.name + '…');
+			api('/bank', 'POST', { csv: String(rd.result || ''), name: file.name, account: /credit|card|visa|mastercard/i.test(file.name) ? 'Bank of America · Credit card' : 'Bank of America' })
+				.then(function (d) { S.bank = d; render(); toast(d.added + ' new transactions added (' + d.read + ' read)'); }).catch(fail);
+		};
+		rd.readAsText(file);
+	}
+	function plaidConnect() {
+		toast('Opening Plaid…');
+		var go = function () {
+			api('/plaid', 'POST', { action: 'link' }).then(function (x) {
+				var h = window.Plaid.create({
+					token: x.link_token,
+					onSuccess: function (pt, meta) {
+						toast('Connected — pulling your transactions…');
+						api('/plaid', 'POST', { action: 'exchange', public_token: pt, institution: (meta && meta.institution && meta.institution.name) || 'Bank' })
+							.then(function (s) { S.plaid = s; S.bank = null; render(); toast((s.sync && s.sync.added || 0) + ' transactions imported'); }).catch(fail);
+					},
+					onExit: function (err) { if (err) { toast(err.display_message || err.error_message || 'Plaid closed', true); } }
+				});
+				h.open();
+			}).catch(fail);
+		};
+		if (window.Plaid) { go(); return; }
+		var sc = document.createElement('script'); sc.src = 'https://cdn.plaid.com/link/v2/stable/link-initialize.js'; sc.onload = go; sc.onerror = function () { toast('Couldn’t load Plaid', true); }; document.head.appendChild(sc);
+	}
+	function spendingView() {
+		var B = bData();
+		if (!B) { return emptyRow('Loading…'); }
+		var months = Object.keys(B.months || {});
+		var upl = '<label class="dwdc-btn2 dwdc-upbtn sm">' + ic('plus', 13) + 'Upload Bank of America CSV<input type="file" accept=".csv,text/csv" data-bankcsv hidden></label>';
+		if (!B.count) {
+			return '<section class="dwdc-card pad dwdc-bankempty"><div class="dwdc-cardh"><h2>Connect your bank</h2></div><p>No bank transactions yet. Connect Bank of America through Plaid (automatic, daily) or upload a download from bankofamerica.com. Steps are in <a href="#personal" data-openconn>Personal → Connections</a>.</p><div class="dwdc-farow">' + upl + '<button class="dwdc-btn" data-openconn>' + ic('link', 14) + 'See connection steps</button></div></section>';
+		}
+		var ym = S.bMonth && B.months[S.bMonth] ? S.bMonth : months[0], mo = B.months[ym] || { in: 0, out: 0, cats: {} };
+		var idx = months.indexOf(ym), prev = B.months[months[idx + 1]];
+		var MN = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+		var label = function (k) { return MN[+k.slice(5, 7) - 1] + ' ' + k.slice(0, 4); };
+		var diff = prev ? mo.out - prev.out : 0;
+		var cats = Object.keys(mo.cats || {});
+		var maxC = cats.length ? mo.cats[cats[0]] : 1;
+		var tx = (B.tx || []).filter(function (t) { return t.date.slice(0, 7) === ym && (!S.bCat || t.cat === S.bCat); });
+		var trend = months.slice(0, 12).reverse(), maxT = Math.max.apply(null, trend.map(function (k) { return B.months[k].out; }).concat([1]));
+		return '<div class="dwdc-pmonth"><button class="dwdc-btn2 sm" data-bmonth="' + (months[idx + 1] || '') + '"' + (months[idx + 1] ? '' : ' disabled') + '>‹</button><b>' + label(ym) + '</b><button class="dwdc-btn2 sm" data-bmonth="' + (months[idx - 1] || '') + '"' + (idx > 0 ? '' : ' disabled') + '>›</button></div>'
+			+ '<div class="dwdc-kpis"><div class="dwdc-kpi coral"><small>Spent</small><strong>' + money(mo.out) + '</strong><span>' + (prev ? (diff > 0 ? '▲ ' : '▼ ') + money(Math.abs(diff)) + ' vs ' + label(months[idx + 1]).split(' ')[0] : 'First month on file') + '</span></div><div class="dwdc-kpi navy"><small>Money in</small><strong>' + money(mo.in) + '</strong><span>Deposits &amp; income</span></div><div class="dwdc-kpi"><small>Net</small><strong>' + money(mo.in - mo.out) + '</strong><span>Transfers between your accounts aren’t counted</span></div></div>'
+			+ '<div class="dwdc-prow2 top">'
+			+ '<section class="dwdc-card pad"><div class="dwdc-cardh"><h2>Where it went</h2>' + (S.bCat ? '<button class="dwdc-lnk sm2" data-bcat="">Show all</button>' : '') + '</div><div class="dwdc-pcats">' + (cats.length ? cats.map(function (c) { return '<div class="' + (S.bCat === c ? 'on' : '') + '" data-bcat="' + esc(c) + '"><span>' + esc(c) + '</span><i style="width:' + Math.max(3, Math.round(mo.cats[c] / maxC * 100)) + '%"></i><b>' + money(mo.cats[c]) + '</b></div>'; }).join('') : '<p class="dwdc-mutp">No spending this month.</p>') + '</div></section>'
+			+ '<section class="dwdc-card pad"><div class="dwdc-cardh"><h2>Spending by month</h2><button class="dwdc-askbtn sm" data-askai="personal">' + ic('bolt', 13) + 'Ask AI</button></div><div class="dwdc-btrend">' + trend.map(function (k) { return '<button class="' + (k === ym ? 'on' : '') + '" data-bmonth="' + k + '" title="' + label(k) + ': ' + money(B.months[k].out) + '"><i style="height:' + Math.max(4, Math.round(B.months[k].out / maxT * 100)) + '%"></i><small>' + MN[+k.slice(5, 7) - 1].slice(0, 3) + '</small></button>'; }).join('') + '</div></section>'
+			+ '</div>'
+			+ '<section class="dwdc-card"><div class="dwdc-cardh pad2 split"><h2>' + (S.bCat ? esc(S.bCat) + ' · ' : '') + label(ym) + ' transactions</h2>' + upl + '</div>' + (tx.length ? tx.map(function (t) {
+				return '<div class="dwdc-prow"><span class="d">' + fmt(t.date) + '</span><span class="w"><b>' + esc(t.desc) + '</b><small>' + esc(t.cat) + ' · ' + esc(t.acct) + '</small></span><span class="a ' + (t.amt > 0 ? 'in' : 'out') + '">' + (t.amt > 0 ? '+' : '−') + money(Math.abs(t.amt)) + '</span><span></span></div>';
+			}).join('') : emptyRow('No transactions here.')) + '</section>'
+			+ '<p class="dwdc-mutp sm">' + B.count + ' transactions on file · latest ' + (B.last ? fmt(B.last) : '—') + '</p>';
+	}
+	function subsView() {
+		var B = bData();
+		if (!B) { return emptyRow('Loading…'); }
+		var subs = (B.subs || []).filter(function (s) { return s.status !== 'ignore'; });
+		if (!B.count) { return spendingView(); }
+		var act = subs.filter(function (s) { return !s.stopped; }), mo = act.reduce(function (a, s) { return a + s.monthly; }, 0);
+		var cancel = act.filter(function (s) { return s.status === 'cancel'; }), save = cancel.reduce(function (a, s) { return a + s.yearly; }, 0);
+		var raised = act.filter(function (s) { return s.raised > 0; });
+		var row = function (s) {
+			return '<div class="dwdc-subr' + (s.status ? ' ' + s.status : '') + (s.stopped ? ' stopped' : '') + '"><div class="w"><b>' + esc(s.name) + '</b><small>' + money(s.amount) + ' ' + s.cycle + ' · ' + s.count + ' charges since ' + fmt(s.first, true) + (s.stopped ? ' · <em>looks stopped</em>' : ' · next ~' + fmt(s.next)) + (s.raised ? ' · <em class="up">price up ' + money(s.raised) + '</em>' : '') + '</small></div>'
+				+ '<span class="a">' + money(s.monthly) + '<small>/mo</small></span>'
+				+ '<div class="dwdc-subact"><button class="' + (s.status === 'keep' ? 'on' : '') + '" data-sub="' + esc(s.merchant) + '" data-st="keep">Keep</button><button class="' + (s.status === 'cancel' ? 'on bad' : '') + '" data-sub="' + esc(s.merchant) + '" data-st="cancel">Cancel</button><button data-sub="' + esc(s.merchant) + '" data-st="ignore" title="Not a subscription">' + ic('x', 12) + '</button></div></div>';
+		};
+		return '<div class="dwdc-kpis"><div class="dwdc-kpi navy"><small>Recurring charges</small><strong>' + money(mo) + '<small>/mo</small></strong><span>' + act.length + ' active · ' + money(mo * 12) + ' a year</span></div><div class="dwdc-kpi coral"><small>Marked to cancel</small><strong>' + money(save) + '<small>/yr</small></strong><span>' + cancel.length + ' subscription' + (cancel.length === 1 ? '' : 's') + '</span></div><div class="dwdc-kpi"><small>Price increases</small><strong>' + raised.length + '</strong><span>' + (raised.length ? raised.map(function (s) { return esc(s.name); }).slice(0, 3).join(', ') : 'None spotted') + '</span></div></div>'
+			+ '<section class="dwdc-card"><div class="dwdc-cardh pad2 split"><h2>Recurring charges &amp; subscriptions</h2><button class="dwdc-askbtn sm" data-askai="personal">' + ic('bolt', 13) + 'Ask AI what to cut</button></div>'
+			+ (act.length ? act.map(row).join('') : emptyRow('No repeating charges found yet — they show up after two or more months of transactions.')) + '</section>'
+			+ (subs.filter(function (s) { return s.stopped; }).length ? '<section class="dwdc-card"><div class="dwdc-cardh pad2"><h2>Stopped or paused</h2></div>' + subs.filter(function (s) { return s.stopped; }).map(row).join('') + '</section>' : '')
+			+ '<p class="dwdc-mutp sm">Found by looking for the same merchant charging a similar amount on a regular schedule. Tap ✕ on anything that isn’t a subscription. Dream Desk can’t cancel for you — “Cancel” is your reminder list.</p>';
+	}
+	function connPanel() {
+		var G = S.pGoogle, GL = G && G.last, P = plData(), B = S.bank;
+		if (!G && !S.pGoogleLoading) { S.pGoogleLoading = true; api('/personal/google').then(function (x) { S.pGoogle = x; render(); }).catch(function () {}); }
+		var st = function (on, txt) { return '<span class="dwdc-conn-st ' + (on ? 'on' : 'off') + '">' + (txt || (on ? 'Connected' : 'Not set up')) + '</span>'; };
+		var banks = P && P.banks && P.banks.length;
+		var google = '<div class="dwdc-conn"><h3>' + ic('todo', 16) + 'Google Tasks &amp; Calendar' + st(!!GL) + '</h3>' + (GL ? '<small class="dwdc-conn-last">Last synced ' + fmt(GL.at, true) + ' ' + esc(GL.at.slice(11, 16)) + ' · every 15 minutes</small>' : '')
+			+ '<p>Two-way: to-dos ↔ Google Tasks, and your Google Calendar ↔ the Personal calendar (edits and deletes included).</p>'
+			+ '<ol><li>Open <a href="https://script.google.com/home/projects/create" target="_blank" rel="noopener"><b>script.google.com → New project</b></a> as mike@dreamwebdigital.com.</li><li>Click <b>Services +</b> on the left, add <b>Google Tasks API</b>, then click <b>Services +</b> again and add <b>Google Calendar API</b>.</li><li>Delete what’s in the editor and paste the script:' + (G ? '<div class="dwdc-conn-url"><code>Dream Desk personal sync script</code><button class="dwdc-lnk sm2" data-copy="' + esc(G.script) + '">Copy script</button></div>' : ' <i>loading…</i>') + '</li><li>Save, choose <b>setup</b> next to Run, press <b>Run</b>, and allow access.</li></ol></div>';
+		var bank = '<div class="dwdc-conn"><h3>' + ic('dollar', 16) + 'Bank of America' + st(banks || (B && B.count), banks ? 'Connected via Plaid' : (B && B.count ? 'CSV uploads' : '')) + '</h3>'
+			+ (banks ? '<ul class="dwdc-files">' + P.banks.map(function (b) { return '<li><span><b>' + esc(b.institution) + '</b><small>' + esc((b.accounts || []).join(', ') || 'Accounts') + (b.synced ? ' · synced ' + fmt(b.synced, true) : '') + (b.error ? ' · <em class="bad">' + esc(b.error) + '</em>' : '') + '</small></span><button class="dwdc-lnk sm2" data-plremove="' + esc(b.id) + '">Disconnect</button></li>'; }).join('') + '</ul><div class="dwdc-farow"><button class="dwdc-btn2 sm" data-plsync>' + ic('refresh', 13) + 'Sync now</button><button class="dwdc-btn2 sm" data-plconnect>' + ic('plus', 13) + 'Add another account</button></div>' : '')
+			+ '<p><b>Option 1 — automatic (Plaid), like Rocket Money.</b> Plaid is the service banks use to share transactions with apps. It syncs daily. Your bank login happens on Plaid’s own screen; Dream Desk never sees it.</p>'
+			+ '<ol><li>Create a free account at <a href="https://dashboard.plaid.com/signup" target="_blank" rel="noopener"><b>dashboard.plaid.com</b></a> (choose “personal / building for myself”).</li><li>In the Plaid dashboard go to <b>Developers → Keys</b> and copy your <b>client_id</b> and your <b>Production secret</b>. If Production isn’t available yet, click <b>Request access</b> (Plaid’s free/limited production is enough for one person). Bank of America also needs Plaid’s <b>OAuth</b> registration, which the dashboard walks you through.</li><li>Paste them here and save:<div class="dwdc-conn-f col"><input placeholder="Plaid client_id" data-plk="client_id" autocomplete="off"><input type="password" placeholder="Plaid Production secret" data-plk="secret" autocomplete="off"><button class="dwdc-btn sm" data-plkeys>Save Plaid keys</button></div>' + (P && P.ready ? '<small class="dwdc-ok">Keys saved (' + esc(P.env) + ').</small>' : '') + '</li><li>Click <button class="dwdc-btn sm coral" data-plconnect' + (P && P.ready ? '' : ' disabled') + '>' + ic('link', 13) + 'Connect Bank of America</button>, pick Bank of America and sign in.</li></ol>'
+			+ '<p><b>Option 2 — upload a file (works today).</b> On bankofamerica.com open your account → <b>Download</b> → pick a date range (up to 18 months) → <b>File type: Microsoft Excel (.csv)</b>. Do it for checking and for each credit card, then add the files here. Re-uploading overlaps is fine — duplicates are skipped.</p>'
+			+ '<label class="dwdc-btn2 dwdc-upbtn sm">' + ic('plus', 13) + 'Upload Bank of America CSV<input type="file" accept=".csv,text/csv" data-bankcsv hidden></label>'
+			+ (B && B.files && B.files.length ? '<ul class="dwdc-files">' + B.files.slice().reverse().slice(0, 6).map(function (f) { return '<li><span><b>' + esc(f.name) + '</b><small>' + fmt(f.from, true) + ' – ' + fmt(f.to, true) + ' · ' + f.rows + ' rows · ' + f.new + ' new · added ' + fmt(f.uploaded, true) + '</small></span></li>'; }).join('') + '</ul>' : '')
+			+ '<p class="dwdc-mutp sm">ChatGPT’s link to your bank belongs to OpenAI’s account, so Dream Desk can’t borrow it — but it’s the same kind of connection as Option 1.</p></div>';
+		var ai = '<div class="dwdc-conn"><h3>' + ic('bolt', 16) + 'Claude AI (finance chatbot)' + st(!CHAT.needKey) + '</h3><p>Powers “Ask AI” on your Personal pages: spending trends, subscriptions to cut, “how much did I spend on dining last month?”, upcoming bills. It uses the same Claude key as the business Ask AI.</p>'
+			+ (CHAT.needKey ? '<ol><li>Get a key at <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener"><b>console.anthropic.com → API Keys</b></a>.</li><li>Click <b>Ask AI</b> below and paste it in the box that appears (it’s stored on your server only).</li></ol>' : '') + '<button class="dwdc-btn sm" data-askai="personal">' + ic('bolt', 13) + 'Ask AI about my money</button></div>';
+		return '<section class="dwdc-card pad dwdc-mcard wide dwdc-collapse dwdc-pconn' + (S.pConnOpen ? ' open' : '') + '"><button class="dwdc-cardh dwdc-colh" data-pconnopen aria-expanded="' + !!S.pConnOpen + '"><h2>Connections</h2><span class="dwdc-pconn-sum">' + [GL ? 'Google ✓' : 'Google —', banks ? 'Bank ✓' : (B && B.count ? 'Bank (CSV)' : 'Bank —'), CHAT.needKey ? 'AI —' : 'AI ✓'].join(' · ') + '</span>' + ic('right', 16) + '</button>'
+			+ (S.pConnOpen ? '<div class="dwdc-conns">' + google + bank + ai + '</div>' : '') + '</section>';
+	}
+
 	/* ---------- Personal: to-dos, finances, bills (Mike's own, not the business) ---------- */
 	function pData() {
 		if (!S.pers && !S.persLoading) { S.persLoading = true; api('/personal').then(function (d) { S.pers = d; S.persLoading = false; render(); }).catch(function (e) { S.persLoading = false; fail(e); }); }
@@ -249,6 +355,8 @@
 					return '<div class="dwdc-prow bill' + (n.paid ? ' paid' : '') + (n.late ? ' late' : '') + '"><span class="dwdc-chk" data-pbillpaid="' + b.id + '" title="' + (n.paid ? 'Mark not paid' : 'Mark paid') + '">' + ic('check', 12) + '</span><span class="w"><b>' + esc(b.name) + '</b><small>' + (b.freq === 'yearly' ? 'Yearly' : b.freq === 'weekly' ? 'Weekly' : 'Monthly') + (b.autopay ? ' · Autopay' : '') + '</small></span><span class="d2">' + (n.paid ? 'Paid' : n.late ? 'Late · ' + fmt(n.due) : 'Due ' + fmt(n.due)) + '</span><span class="a">' + money(b.amount) + '</span><button class="dwdc-del" data-pdel="bills:' + b.id + '" title="Delete">' + ic('x', 14) + '</button></div>';
 				}).join('') : emptyRow('No bills yet. Add your first one above.')) + '</section>';
 		}
+		if (tab === 'spending') { return spendingView(); }
+		if (tab === 'subs') { return subsView(); }
 		if (tab === 'home') {
 			var today = DWDC.today, addD = function (n) { var d = new Date(today + 'T12:00:00'); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); };
 			var tmin = function (x) { if (!x.time) { return -1; } var q = /^(\d{1,2}):(\d{2})\s*([AP]M)?/i.exec(x.time) || [0, 0, 0]; return (+q[1] % 12 + (/p/i.test(q[3] || '') ? 12 : 0)) * 60 + +q[2]; };
@@ -260,6 +368,9 @@
 			var bdays = D.todos.filter(function (x) { return /birthday/i.test(x.text) && x.due >= today && x.due <= addD(60); }).sort(function (a, b) { return a.due < b.due ? -1 : 1; });
 			var mk = pMonthKey(), mrows = D.money.filter(function (x) { return x.date.slice(0, 7) === mk; });
 			var inc = mrows.filter(function (x) { return x.type === 'income'; }).reduce(function (a, x) { return a + x.amount; }, 0), out = mrows.filter(function (x) { return x.type !== 'income'; }).reduce(function (a, x) { return a + x.amount; }, 0);
+			var BK = bData(), bm = BK && BK.months && BK.months[mk];
+			if (bm) { inc += bm.in; out += bm.out; }
+			var subsMo = BK && BK.subs ? BK.subs.filter(function (x) { return !x.stopped && x.status !== 'ignore'; }).reduce(function (a, x) { return a + x.monthly; }, 0) : 0;
 			var bl = D.bills.map(function (b) { return { b: b, n: billNext(b) }; }).filter(function (x) { return !x.n.paid; }).sort(function (a, b) { return a.n.due < b.n.due ? -1 : 1; });
 			var billsMo = D.bills.reduce(function (a, b) { return a + billMonthly(b); }, 0);
 			var row = function (x, showDate) {
@@ -281,13 +392,15 @@
 					+ '<form class="dwdc-ptadd mini" data-pform="pdayadd"><input type="hidden" name="due" value="' + today + '"><input name="text" placeholder="Add for today…" autocomplete="off" required><button class="dwdc-btn">' + ic('plus', 13) + '</button></form>')
 				+ card('cd-psoon', chead('clock', 'Coming Up', 'personal/calendar'), soon.length ? soon.slice(0, 9).map(function (x) { return row(x, true); }).join('') + (soon.length > 9 ? '<a class="dwdc-pmore" href="#personal/calendar">+' + (soon.length - 9) + ' more in the next 2 weeks</a>' : '') : emptyRow('Nothing in the next two weeks.'))
 				+ card('cd-pmoney', chead('dollar', 'This Month', 'personal/finances'), '<div class="dwdc-pm3"><div><small>Money in</small><b class="in">' + money(inc) + '</b></div><div><small>Money out</small><b class="out">' + money(out) + '</b></div><div><small>Left over</small><b>' + money(inc - out) + '</b></div></div>'
+					+ (subsMo ? '<a class="dwdc-psubs" href="#personal/subs"><span>Recurring charges &amp; subscriptions</span><b>' + money(subsMo) + '/mo</b></a>' : '')
+					+ '<button class="dwdc-askbtn sm full" data-askai="personal">' + ic('bolt', 13) + 'Ask AI about my money</button>'
 					+ '<div class="dwdc-pbills"><p class="dwdc-lbl">Next bills · ' + money(billsMo) + ' / month</p>' + (bl.length ? bl.slice(0, 4).map(function (x) { return '<a class="' + (x.n.late ? 'late' : '') + '" href="#personal/bills"><span>' + esc(x.b.name) + '</span><small>' + (x.n.late ? 'Late · ' : '') + fmt(x.n.due) + '</small><b>' + money(x.b.amount) + '</b></a>'; }).join('') : '<p class="dwdc-mutp sm">No bills added yet. <a href="#personal/bills">Add your bills</a></p>') + '</div>')
 				+ '</div>'
 				+ card('cd-pweek', chead('grid', 'This Week', 'personal/calendar'), '<div class="dwdc-wk">' + wk + '</div>')
 				+ '<div class="dwdc-prow2">'
 				+ card('cd-pbday', chead('star', 'Birthdays Coming Up', 'personal/calendar'), bdays.length ? bdays.slice(0, 6).map(function (x) { return row(x, true); }).join('') : emptyRow('No birthdays in the next two months.'))
 				+ card('cd-plist', chead('list', 'To-Do List', 'personal/todo'), nodate.length || openT.filter(function (x) { return !x.gevent; }).length ? openT.filter(function (x) { return !x.gevent; }).sort(function (a, b) { return (a.due || '9') < (b.due || '9') ? -1 : 1; }).slice(0, 7).map(function (x) { return row(x, !!x.due); }).join('') : emptyRow('No open to-dos. Add one on My To-Dos.'))
-				+ '</div>';
+				+ '</div>' + connPanel();
 		}
 		if (tab === 'calendar') {
 			var cm = S.pCal || pMonthKey(), cy = +cm.slice(0, 4), cmo = +cm.slice(5, 7), MNc = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -326,10 +439,7 @@
 			+ (open.length ? '<div class="dwdc-todos">' + open.map(pTodoRow).join('') + '</div>' : emptyRow('Nothing on your list.'))
 			+ (done.length ? '<button class="dwdc-donebtn" data-pshowdone>' + (S.pShowDone ? 'Hide' : 'Show') + ' completed <b>' + done.length + '</b></button>' + (S.pShowDone ? '<div class="dwdc-todos donelist">' + done.slice(0, 40).map(pTodoRow).join('') + '</div>' : '') : '')
 			+ '</section>'
-			+ '<section class="dwdc-card pad dwdc-gsync"><div class="dwdc-cardh"><h2>Google Tasks &amp; Calendar</h2><span class="dwdc-conn-st ' + (GL ? 'on' : 'off') + '">' + (GL ? 'Connected' : 'Not set up') + '</span></div>'
-			+ (GL ? '<p class="dwdc-mutp">Last synced ' + fmt(GL.at, true) + ' ' + esc(GL.at.slice(11, 16)) + '. Syncs every 15 minutes.</p>' : '')
-			+ '<p>Two-way sync: to-dos you add here go to Google Tasks (with a due date they also show on your Google Calendar), Google Tasks you add show up here, and your calendar events for the next two weeks appear here on their day. Ticking one off on either side ticks it off on the other.</p>'
-			+ '<ol><li>Open <a href="https://script.google.com/home/projects/create" target="_blank" rel="noopener"><b>script.google.com → New project</b></a> (signed in as mike@dreamwebdigital.com).</li><li>On the left, click <b>Services +</b>, choose <b>Google Tasks API</b>, click <b>Add</b>.</li><li>Delete what’s in the editor and paste this script:' + (G ? '<div class="dwdc-conn-url"><code>Dream Desk personal sync script</code><button class="dwdc-lnk sm2" data-copy="' + esc(G.script) + '">Copy script</button></div>' : ' <i>loading…</i>') + '</li><li>Save, pick <b>setup</b> next to Run, press <b>Run</b> and allow access.</li></ol></section>';
+			+ '<p class="dwdc-mutp sm dwdc-pgnote">' + (GL ? 'Google Tasks &amp; Calendar connected · last synced ' + fmt(GL.at, true) : 'Connect Google Tasks &amp; Calendar in <a href="#personal" data-openconn>Personal → Connections</a>.') + '</p>';
 	}
 
 	/* ---------- Quote of the day (non-dual teachers) — same quote all day, a new one each morning ---------- */
@@ -399,7 +509,7 @@
 			+ (true ? '' : '<label class="dwdc-ssearch">' + ic('search', 16) + '<input type="search" placeholder="Search..." value="' + esc(S.q) + '"><kbd>Ctrl K</kbd></label>')
 			+ '<nav>' + nav('home', 'home', 'Home') + '<a class="dwdc-nav dwdc-pswitch' + (r.view === 'personal' ? ' on' : '') + '" href="#personal">' + ic('user', 18) + '<span>Personal</span></a>'
 			+ (r.view === 'personal' ? '<div class="dwdc-navh"><i class="b2"></i>To-Do</div>' + nav('personal/todo', 'todo', 'My To-Dos', S.pers ? S.pers.todos.filter(function (x) { return !x.done; }).length : '') + nav('personal/calendar', 'clock', 'Calendar') + nav('personal/done', 'done', 'Completed', S.pers ? S.pers.todos.filter(function (x) { return x.done; }).length : '')
-				+ '<div class="dwdc-navh fin"><i class="b4"></i>Finances</div>' + nav('personal/finances', 'dollar', 'Money In &amp; Out') + '<div class="dwdc-navh pb"><i class="b5"></i>Bills</div>' + nav('personal/bills', 'card', 'Upcoming Bills') + '</nav><a class="dwdc-me" href="' + esc(DWDC.logout) + '" title="Sign out"><span class="dwdc-me-av">MT</span><span><strong>' + esc(DWDC.user || 'Michael Tarr') + '</strong><small>Owner · Sign out</small></span>' + ic('logout', 17) + '</a></aside>' : '')
+				+ '<div class="dwdc-navh fin"><i class="b4"></i>Finances</div>' + nav('personal/spending', 'card', 'Spending') + nav('personal/subs', 'refresh', 'Subscriptions') + nav('personal/finances', 'dollar', 'Money In &amp; Out') + '<div class="dwdc-navh pb"><i class="b5"></i>Bills</div>' + nav('personal/bills', 'card', 'Upcoming Bills') + '</nav><a class="dwdc-me" href="' + esc(DWDC.logout) + '" title="Sign out"><span class="dwdc-me-av">MT</span><span><strong>' + esc(DWDC.user || 'Michael Tarr') + '</strong><small>Owner · Sign out</small></span>' + ic('logout', 17) + '</a></aside>' : '')
 			+ (r.view === 'personal' ? '' : '<div class="dwdc-navh"><i class="b1"></i>Projects</div>'
 			+ nav('projects/active', 'bolt', 'Active', by('active').length) + nav('projects/hold', 'pause', 'On Hold', by('hold').length)
 			+ nav('projects/limbo', 'clock', 'Limbo', by('limbo').length) + nav('projects/complete', 'done', 'Completed', by('complete').length)
@@ -482,7 +592,7 @@
 			var pl = { active: ['Active', 'Projects'], limbo: ['Limbo', 'Projects'], hold: ['On Hold', 'Projects'], complete: ['Completed', 'Projects'] }[r.arg];
 			if (pl) { t = ['Projects', pl[0], pl[1]]; }
 		}
-		if (r.view === 'personal') { t = ['Personal'].concat(!r.arg ? ['Personal', 'Dashboard'] : { finances: ['Money In &', 'Out'], bills: ['Upcoming', 'Bills'], done: ['Completed', 'To-Dos'], calendar: ['My', 'Calendar'] }[r.arg] || ['My', 'To-Dos']); if (!r.arg) { t = ['Personal', 'Personal', 'Dashboard']; } }
+		if (r.view === 'personal') { t = ['Personal'].concat(!r.arg ? ['Personal', 'Dashboard'] : { finances: ['Money In &', 'Out'], bills: ['Upcoming', 'Bills'], done: ['Completed', 'To-Dos'], calendar: ['My', 'Calendar'], spending: ['My', 'Spending'], subs: ['My', 'Subscriptions'] }[r.arg] || ['My', 'To-Dos']); if (!r.arg) { t = ['Personal', 'Personal', 'Dashboard']; } }
 		if (r.view === 'client') {
 			var c = contact(r.id), words = String(c ? c.name : 'Project').split(' ');
 			t = ['Project', words.slice(0, Math.max(1, words.length - 1)).join(' '), words.length > 1 ? words[words.length - 1] : ''];
@@ -737,7 +847,7 @@
 			.catch(function (e) { render(); fail(e); });
 	}
 	/* ---------- Ask AI: a small chat window about money, projects and trends ---------- */
-	var CHAT = { msgs: [], busy: false, needKey: !DWDC.aiReady };
+	var CHAT = { msgs: [], busy: false, needKey: !DWDC.aiReady, scope: '' };
 	function mdLite(t) {
 		var h = esc(t).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
 		var out = [], list = [];
@@ -754,12 +864,12 @@
 	function chatPaint() {
 		var box = chatEl(); if (!box) { return; }
 		var log = box.querySelector('.dwdc-chat-log');
-		var sugg = ['How much did I make in October vs September?', 'Who were my top 5 clients this year?', 'What were my slowest months in 2025?', 'Is my Upwork Connects spending paying off?'];
+		var sugg = CHAT.scope === 'personal' ? ['Where did my money go last month?', 'Which subscriptions should I cancel?', 'Am I spending more on dining than usual?', 'What bills and charges are coming up?'] : ['How much did I make in October vs September?', 'Who were my top 5 clients this year?', 'What were my slowest months in 2025?', 'Is my Upwork Connects spending paying off?'];
 		if (CHAT.needKey) {
 			log.innerHTML = '<div class="dwdc-chat-key"><b>Connect Claude</b><p>Paste your Claude API key to turn on Ask AI. It’s saved on your server and never shown in the browser.</p><p class="sm">Get one at console.anthropic.com → API Keys.</p><input type="password" placeholder="sk-ant-..." data-chatkey><button class="dwdc-btn" data-chatkeysave>Save key</button></div>';
 			return;
 		}
-		log.innerHTML = (CHAT.msgs.length ? '' : '<div class="dwdc-chat-hi"><p>Ask me anything about your money, projects and trends.</p>' + sugg.map(function (q) { return '<button class="dwdc-chat-sug" data-chatsug>' + esc(q) + '</button>'; }).join('') + '</div>')
+		log.innerHTML = (CHAT.msgs.length ? '' : '<div class="dwdc-chat-hi"><p>' + (CHAT.scope === 'personal' ? 'Ask me anything about your personal spending, subscriptions and bills.' : 'Ask me anything about your money, projects and trends.') + '</p>' + sugg.map(function (q) { return '<button class="dwdc-chat-sug" data-chatsug>' + esc(q) + '</button>'; }).join('') + '</div>')
 			+ CHAT.msgs.map(function (m) { return '<div class="dwdc-chat-m ' + m.role + '">' + (m.role === 'assistant' ? mdLite(m.content) : esc(m.content)) + '</div>'; }).join('')
 			+ (CHAT.busy ? '<div class="dwdc-chat-m assistant typing"><i></i><i></i><i></i></div>' : '');
 		log.scrollTop = log.scrollHeight;
@@ -767,14 +877,16 @@
 	function chatSend(q) {
 		q = String(q || '').trim(); if (!q || CHAT.busy) { return; }
 		CHAT.msgs.push({ role: 'user', content: q }); CHAT.busy = true; chatPaint();
-		api('/ask', 'POST', { messages: CHAT.msgs }).then(function (r) {
+		api('/ask', 'POST', { messages: CHAT.msgs, scope: CHAT.scope }).then(function (r) {
 			CHAT.msgs.push({ role: 'assistant', content: r.answer });
 		}).catch(function (e) {
 			if (e.data && e.data.needs_key) { CHAT.needKey = true; CHAT.msgs.pop(); toast(e.message, true); }
 			else { CHAT.msgs.push({ role: 'assistant', content: 'Sorry, that didn’t work: ' + e.message }); }
 		}).then(function () { CHAT.busy = false; chatPaint(); });
 	}
-	function chatOpen() {
+	function chatOpen(scope) {
+		scope = scope || '';
+		if (scope !== CHAT.scope) { CHAT.scope = scope; CHAT.msgs = []; }
 		var box = chatEl();
 		if (!box) {
 			box = document.createElement('div'); box.id = 'dwdc-chat'; box.className = 'dwdc-chat';
@@ -795,6 +907,7 @@
 			ta.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); box.querySelector('form').requestSubmit(); } });
 			ta.addEventListener('input', function () { ta.style.height = ''; ta.style.height = Math.min(120, ta.scrollHeight) + 'px'; });
 		}
+		var hd = box.querySelector('header div'); if (hd) { hd.innerHTML = CHAT.scope === 'personal' ? '<b>Ask AI · Personal money</b><small>Spending, subscriptions, bills &amp; trends</small>' : '<b>Ask AI</b><small>About your money, projects &amp; trends</small>'; }
 		box.classList.add('open'); chatPaint();
 		setTimeout(function () { var ta = box.querySelector('textarea'); if (ta && !CHAT.needKey) { ta.focus(); } }, 50);
 	}
@@ -1923,7 +2036,16 @@
 			api('/sync', 'POST', body).then(function () { return api('/sync'); }).then(function (x) { S.sync = x; render(); toast('Saved'); }).catch(function (e) { el.disabled = false; el.textContent = 'Save'; fail(e); });
 			return;
 		}
-		if (t.closest('[data-askai]')) { chatOpen(); return; }
+		if ((el = t.closest('[data-askai]'))) { chatOpen(el.getAttribute('data-askai') === 'personal' || route().view === 'personal' ? 'personal' : ''); return; }
+		if (t.closest('[data-pconnopen]')) { S.pConnOpen = !S.pConnOpen; render(); return; }
+		if (t.closest('[data-openconn]')) { e.preventDefault(); S.pConnOpen = true; if (location.hash !== '#personal') { location.hash = 'personal'; } else { render(); } setTimeout(function () { var c = document.querySelector('.dwdc-pconn'); if (c) { c.scrollIntoView({ behavior: 'smooth' }); } }, 300); return; }
+		if ((el = t.closest('[data-bmonth]'))) { if (el.getAttribute('data-bmonth')) { S.bMonth = el.getAttribute('data-bmonth'); S.bCat = ''; render(); } return; }
+		if ((el = t.closest('[data-bcat]'))) { var bc = el.getAttribute('data-bcat'); S.bCat = S.bCat === bc ? '' : bc; render(); return; }
+		if ((el = t.closest('[data-sub]'))) { var sst = el.getAttribute('data-st'), sm = el.getAttribute('data-sub'), scur = ((S.bank && S.bank.subs) || []).find(function (x) { return x.merchant === sm; }); api('/bank', 'POST', { sub: sm, status: scur && scur.status === sst ? '' : sst }).then(function (d) { S.bank = d; render(); }).catch(fail); return; }
+		if (t.closest('[data-plkeys]')) { var plk = {}; app.querySelectorAll('[data-plk]').forEach(function (x) { plk[x.getAttribute('data-plk')] = x.value.trim(); }); api('/plaid', 'POST', { action: 'keys', client_id: plk.client_id, secret: plk.secret }).then(function (d) { S.plaid = d; render(); toast('Plaid keys saved'); }).catch(fail); return; }
+		if (t.closest('[data-plconnect]')) { plaidConnect(); return; }
+		if (t.closest('[data-plsync]')) { toast('Syncing…'); api('/plaid', 'POST', { action: 'sync' }).then(function (d) { S.plaid = d; S.bank = null; render(); toast((d.sync && d.sync.added || 0) + ' new transactions'); }).catch(fail); return; }
+		if ((el = t.closest('[data-plremove]'))) { if (!confirm('Disconnect this bank from Dream Desk? Transactions already imported stay.')) { return; } api('/plaid', 'POST', { action: 'remove', id: el.getAttribute('data-plremove') }).then(function (d) { S.plaid = d; render(); }).catch(fail); return; }
 		if ((el = t.closest('[data-trendsnow]'))) { el.textContent = 'Checking…'; api('/trends', 'POST', {}).then(function (x) { S.trends = x; render(); toast('Trends updated'); }).catch(fail); return; }
 		if (t.closest('[data-syncopen]')) { S.syncOpen = !S.syncOpen; render(); return; }
 		if (t.closest('[data-connopen]')) { S.connOpen = !S.connOpen; render(); return; }
@@ -2035,6 +2157,7 @@
 		if (t.hasAttribute('data-revpick')) { S.revSel = S.revSel || {}; S.revSel[t.getAttribute('data-revpick')] = t.checked; render(); return; }
 		if (t.hasAttribute('data-revall')) { S.revSel = S.revSel || {}; app.querySelectorAll('[data-revpick]').forEach(function (x) { S.revSel[x.getAttribute('data-revpick')] = t.checked; }); render(); return; }
 		if (t.hasAttribute('data-upcsv') && t.files && t.files[0]) { upImport(t.files[0]); return; }
+		if (t.hasAttribute('data-bankcsv') && t.files && t.files[0]) { [].forEach.call(t.files, bankUpload); t.value = ''; return; }
 		if (t.hasAttribute('data-year')) { S.year = t.value; render(); return; }
 		if (t.hasAttribute('data-field')) {
 			var fd = {}; fd[t.getAttribute('data-field')] = t.value;

@@ -393,3 +393,11 @@ add_action( 'rest_api_init', function () {
 		},
 	) );
 } );
+
+// One-time cleanup: forget the sync status left by setup testing, so "Connected" only shows after the real script runs.
+add_action( 'init', function () {
+	if ( ! get_option( 'dwdpe_reset1' ) ) {
+		delete_option( 'dwdpe_last_sync' );
+		update_option( 'dwdpe_reset1', 1, false );
+	}
+} );

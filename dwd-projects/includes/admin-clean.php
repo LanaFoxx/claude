@@ -94,7 +94,7 @@ add_filter( 'menu_order', function ( $order ) {
 	$groups['top'][] = array( 5, array( 'Personal', 'manage_options', 'admin.php?page=client-desk#personal', '', 'menu-top dwd-dd dwd-pers-switch', 'dwd-pers-switch', 'dashicons-heart' ) );
 	$pers = array(
 		'p_todo'  => array( array( 'personal/todo', 'My To-Dos', 'dashicons-yes-alt' ), array( 'personal/calendar', 'Calendar', 'dashicons-calendar' ), array( 'personal/done', 'Completed', 'dashicons-saved' ) ),
-		'p_fin'   => array( array( 'personal/finances', 'Money In & Out', 'dashicons-chart-bar' ) ),
+		'p_fin'   => array( array( 'personal/spending', 'Spending', 'dashicons-chart-pie' ), array( 'personal/subs', 'Subscriptions', 'dashicons-update' ), array( 'personal/finances', 'Money In & Out', 'dashicons-chart-bar' ) ),
 		'p_bills' => array( array( 'personal/bills', 'Upcoming Bills', 'dashicons-calendar-alt' ) ),
 	);
 	foreach ( $pers as $g => $list ) {
