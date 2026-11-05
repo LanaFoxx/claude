@@ -44,6 +44,9 @@ Recorded in `build/deployed.json` → `prep`:
 * Old DWD pages renamed so the live URLs are free: about → `dwd-about`, contact → `dwd-contact`, blog → `dwd-blog`.
 * Old DWD theme header (#3294) and footer (#3162) set to Draft.
 * Site title → "Snow Bentley Realty"; front page → the new Home page (old values in `prep.settingsBefore`).
+* Old DWD / WooCommerce pages moved to Trash (restorable from Pages → Trash).
+* `dwd-projects/includes/frontend.php`: the `template_redirect` block that 301'd `/about` → `/#about` is commented out
+  (marked "Disabled for the Snow Bentley site"), so the About page loads. Un-comment it to restore.
 
 ## Build
 
