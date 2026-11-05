@@ -233,6 +233,16 @@
 			if (on) { var sec = li.previousElementSibling; while (sec && !sec.classList.contains('dwd-msec')) { sec = sec.previousElementSibling; } if (sec && sec.classList.contains('dwd-closed')) { sec.click(); } }
 		});
 	}
+	// Projects box on Home: show only the rows that fit beside the other boxes; the rest are one click away.
+	function fitProjects() {
+		var wrap = app.querySelector('.dwdc-pl-wrap'); if (!wrap) { return; }
+		var rows = [].slice.call(wrap.querySelectorAll('.dwdc-pl-row')), h = wrap.clientHeight, shown = 0;
+		rows.forEach(function (r) { r.style.display = ''; });
+		rows.forEach(function (r) { if (r.offsetTop + r.offsetHeight <= h + 1) { shown++; } else { r.style.display = 'none'; } });
+		var all = app.querySelector('[data-plall]');
+		if (all) { all.style.visibility = rows.length > shown ? 'visible' : 'hidden'; }
+	}
+	window.addEventListener('resize', function () { fitProjects(); });
 	function render(anim) {
 		var r = route(), t = (TITLES[r.view] || ['', '', '']).slice(), body;
 		if (r.view === 'home') { t[0] = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }); }
@@ -258,6 +268,7 @@
 		app.innerHTML = sidebar(r) + '<div class="dwdc-shade-m" data-menu></div><main class="dwdc-main">' + appBanner() + top(r, t) + '<div class="dwdc-screen' + (anim ? ' in' : '') + '">' + body + '</div></main>' + modal();
 		S.prev = r.view + r.arg;
 		syncWpMenu(r);
+		fitProjects();
 		if (S.focusSearch) { var q = app.querySelector('.dwdc-ssearch input'); if (q) { q.focus(); q.setSelectionRange(q.value.length, q.value.length); } S.focusSearch = false; }
 		if (S.cardTodo) { var ti = app.querySelector('.dwdc-cardtodo input'); if (ti) { ti.focus(); } }
 	}
@@ -553,11 +564,14 @@
 			'<p class="dwdc-hero"><strong>' + S.clients.length + '</strong> clients on file</p><div class="dwdc-segbar">' + seg(nP, 's1') + seg(nH, 's2') + seg(nPast, 's3') + '</div>'
 			+ '<a class="dwdc-seg" href="#clients"><i class="s1"></i>Project clients<b>' + nP + '</b></a><a class="dwdc-seg" href="#clients"><i class="s2"></i>Hosting only<b>' + nH + '</b></a><a class="dwdc-seg" href="#clients"><i class="s3"></i>Past clients<b>' + nPast + '</b></a>',
 			'<footer class="dwdc-grid4">' + frow('Active Projects', active.length, 'projects/active') + frow('Onboarding', onboardList().length, 'onboarding') + frow('Hosting', host.length, 'hosting') + frow('All Clients', S.clients.length, 'clients') + '</footer>');
-		var c2 = card('cd-projects', chead('brief', 'Projects', 'projects/active'),
-			'<p class="dwdc-hero"><strong>' + active.length + '</strong> project' + (active.length === 1 ? '' : 's') + '</p>'
-			+ '<p class="dwdc-sub">' + money(owed(active)) + ' still owed on active projects</p>'
-			+ '<div class="dwdc-row2"><button class="dwdc-btn coral" data-act="job">' + ic('plus', 14) + 'New Project</button></div>',
-			'<footer>' + frow('Active Projects', active.length, 'projects/active') + frow('Onboarding Docs', onboardList().length, 'onboarding') + frow('Completed', by('complete').length + ' <span class="mut">all-time</span>', 'projects/complete') + '</footer>');
+		var plist = active.slice().sort(function (x, y) { return num(y.balance) - num(x.balance) || (x.name < y.name ? -1 : 1); });
+		var c2 = card('cd-projects cd-plist', chead('brief', 'Projects', 'projects/active'),
+			'<div class="dwdc-pl-head"><span>Project · Client</span><span>Price</span><span>Owed</span></div>'
+			+ '<div class="dwdc-pl-wrap"><div class="dwdc-pl">' + (plist.length ? plist.map(function (c) {
+				var k = clientOf(c), ow = num(c.balance);
+				return '<a class="dwdc-pl-row" href="#client/' + c.id + '"><span><b>' + esc(c.name) + '</b><small>' + esc(k ? k.name : (c.person || '')) + '</small></span><span>' + (num(c.price) ? money(c.price) : '—') + '</span><span class="' + (ow ? 'ow' : 'pd') + '">' + (ow ? money(ow) : 'Paid') + '</span></a>';
+			}).join('') : '<p class="dwdc-mutp">No active projects right now.</p>') + '</div></div>',
+			'<footer class="dwdc-pl-foot"><button class="dwdc-btn coral" data-act="job">' + ic('plus', 14) + 'New Project</button><a class="dwdc-pl-all" href="#projects/active" data-plall>View all ' + active.length + ' ' + ic('right', 12) + '</a></footer>');
 		var c3 = card('cd-money', chead('dollar', 'Money', 'money'),
 			'<p class="dwdc-lbl">Owed on open projects</p><p class="dwdc-hero big"><strong>' + money(owed(open)) + '</strong></p><p class="dwdc-sub">' + owing.length + ' invoice' + (owing.length === 1 ? '' : 's') + ' open · ' + active.length + ' active projects</p>'
 			+ '<div class="dwdc-tint-space" aria-hidden="true"></div>',
