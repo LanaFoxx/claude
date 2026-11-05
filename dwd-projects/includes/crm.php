@@ -585,7 +585,7 @@ add_action( 'rest_api_init', function () {
 		$contacts = array_map( 'dwdc_contact', get_posts( array( 'post_type' => DWDC_CONTACT, 'post_status' => 'private', 'posts_per_page' => -1, 'orderby' => 'modified', 'order' => 'DESC' ) ) );
 		$tasks    = array_map( 'dwdc_task', get_posts( array( 'post_type' => DWDC_TASK, 'post_status' => 'private', 'posts_per_page' => -1, 'orderby' => array( 'menu_order' => 'ASC', 'date' => 'DESC' ) ) ) );
 		$clients  = array_map( 'dwdc_client', get_posts( array( 'post_type' => DWDC_CLIENT, 'post_status' => 'private', 'posts_per_page' => -1, 'orderby' => 'title', 'order' => 'ASC' ) ) );
-		return array( 'lists' => dwdc_lists(), 'contacts' => $contacts, 'tasks' => $tasks, 'clients' => $clients );
+		return array( 'lists' => dwdc_lists(), 'contacts' => $contacts, 'tasks' => $tasks, 'clients' => $clients, 'money' => dwdc_money_by_year() );
 	} ) );
 
 	register_rest_route( $ns, '/crm/contact/(?P<id>\d+)', array(
@@ -1035,6 +1035,39 @@ function dwdc_vars( $mode = 'admin' ) {
 		$v['logout'] = wp_logout_url( home_url( '/desk/' ) );
 	}
 	return $v;
+}
+
+/**
+ * Money actually received per year, from payments that carry a real date
+ * (Stripe, PayPal and payments logged by hand). Upwork totals have no dates yet.
+ */
+function dwdc_money_by_year() {
+	$out = array();
+	foreach ( get_posts( array( 'post_type' => DWDC_CONTACT, 'post_status' => 'private', 'posts_per_page' => -1, 'fields' => 'ids' ) ) as $id ) {
+		$pays = get_post_meta( $id, '_dwdc_payments', true );
+		if ( ! is_array( $pays ) ) {
+			continue;
+		}
+		foreach ( $pays as $p ) {
+			$st = strtolower( (string) ( $p['status'] ?? 'paid' ) );
+			if ( in_array( $st, array( 'open', 'void', 'draft', 'refunded', 'failed', 'uncollectible' ), true ) ) {
+				continue;
+			}
+			$y   = substr( (string) ( $p['date'] ?? '' ), 0, 4 );
+			$amt = (float) preg_replace( '/[^\d.]/', '', (string) ( $p['amount'] ?? 0 ) );
+			if ( ! preg_match( '/^\d{4}$/', $y ) || $amt <= 0 ) {
+				continue;
+			}
+			$src = (string) ( $p['source'] ?? 'Other' );
+			$src = in_array( $src, array( 'Stripe', 'PayPal', 'Upwork' ), true ) ? $src : 'Other';
+			if ( ! isset( $out[ $y ] ) ) {
+				$out[ $y ] = array( 'Stripe' => 0, 'PayPal' => 0, 'Upwork' => 0, 'Other' => 0 );
+			}
+			$out[ $y ][ $src ] += $amt;
+		}
+	}
+	krsort( $out );
+	return $out;
 }
 
 function dwdc_page() {

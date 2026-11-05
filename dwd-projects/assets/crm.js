@@ -136,7 +136,7 @@
 		return '<span class="dwdc-nm"><span>' + (k ? '<a class="dwdc-clink" href="#cl/' + k.id + '">' + esc(k.name) + '</a>' : '<b class="nm2">' + esc(c.person || '—') + '</b>') + (em ? '<small>' + esc(em) + '</small>' : '') + '</span></span>';
 	}
 	function reload() {
-		return api('').then(function (r) { S.contacts = r.contacts.filter(Boolean); S.tasks = r.tasks.filter(Boolean); S.clients = (r.clients || []).filter(Boolean); });
+		return api('').then(function (r) { S.contacts = r.contacts.filter(Boolean); S.tasks = r.tasks.filter(Boolean); S.clients = (r.clients || []).filter(Boolean); S.money = r.money || {}; });
 	}
 
 	/* ---------- routing ---------- */
@@ -278,10 +278,10 @@
 		var repeatRev = repeat.reduce(function (s, x) { return s + x.total; }, 0);
 		var topClients = cl.slice().sort(function (a, b) { return b.total - a.total; }).slice(0, 10);
 		var cname = function (x) { var k = x.id ? clientRec(x.id) : null; return k ? k.name : (x.list[0].person || x.list[0].name); };
-		// by year (finished date for completed work, this year for open work)
-		var years = {};
-		projs.forEach(function (c) { var y = c.list === 'complete' ? (doneDate(c) || '').slice(0, 4) : DWDC.today.slice(0, 4); if (y) { years[y] = (years[y] || 0) + lifetime(c); } });
-		var ylist = Object.keys(years).sort().reverse(), ymax = Math.max.apply(null, ylist.map(function (y) { return years[y]; }).concat([1]));
+		// by year: only payments that carry a real date (Stripe, PayPal, logged by hand)
+		var MY = S.money || {}, ylist = Object.keys(MY).sort().reverse();
+		var ytot = function (y) { var o = MY[y]; return o.Stripe + o.PayPal + o.Upwork + o.Other; };
+		var ymax = Math.max.apply(null, ylist.map(ytot).concat([1]));
 		// lead sources
 		var src = {};
 		projs.forEach(function (c) { var s = c.lead_source || (num(c.billed) ? 'Upwork' : 'Not set'); (src[s] = src[s] || { n: 0, v: 0 }); src[s].n++; src[s].v += lifetime(c); });
@@ -304,7 +304,8 @@
 			+ '<div class="dwdc-mgrid">'
 			+ mcard('Where it came from', '<div class="dwdc-chanbar">' + chan.map(function (x) { return x[1] ? '<i class="' + x[2] + '" style="width:' + Math.max(1, pct(x[1])) + '%"></i>' : ''; }).join('') + '</div>'
 				+ '<ul class="dwdc-chans">' + chan.map(function (x) { return '<li><i class="' + x[2] + '"></i><span>' + x[0] + '</span><b>' + money(x[1]) + '</b><em>' + pct(x[1]) + '%</em></li>'; }).join('') + '</ul>')
-			+ mcard('By year', '<ul class="dwdc-years2">' + ylist.map(function (y) { return '<li><span>' + y + '</span><div><i style="width:' + Math.max(2, Math.round(years[y] / ymax * 100)) + '%"></i></div><b>' + money(years[y]) + '</b></li>'; }).join('') + '</ul><p class="dwdc-mutp sm">Completed work counts in the year it finished; open projects count this year.</p>')
+			+ mcard('By year', (ylist.length ? '<ul class="dwdc-years2">' + ylist.map(function (y) { var o = MY[y], t = ytot(y); return '<li><span>' + y + '</span><div>' + [['Stripe', 'str'], ['PayPal', 'ppl'], ['Upwork', 'upw'], ['Other', 'oth']].map(function (x) { return o[x[0]] ? '<i class="' + x[1] + '" style="width:' + Math.max(1, Math.round(o[x[0]] / ymax * 100)) + '%" title="' + x[0] + ' ' + money(o[x[0]]) + '"></i>' : ''; }).join('') + '</div><b>' + money(t) + '</b></li>'; }).join('') + '</ul>' : emptyRow('No dated payments yet.'))
+				+ '<p class="dwdc-mutp sm">Dated payments only: Stripe, PayPal and payments you log. Upwork’s ' + money(up) + ' has no dates yet. Import your Upwork transaction history to add it here.</p>')
 			+ mcard('How clients found you', '<ul class="dwdc-chans src">' + slist.map(function (s) { return '<li><span>' + esc(s) + '</span><em>' + src[s].n + ' projects</em><b>' + money(src[s].v) + '</b></li>'; }).join('') + '</ul>')
 			+ mcard('Top projects', rowsP || emptyRow('No payments yet.'))
 			+ mcard('Top clients', rowsC || emptyRow('No payments yet.'))

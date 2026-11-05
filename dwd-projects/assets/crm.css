@@ -622,3 +622,8 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 .dwdc-snone { padding: 14px 12px; font-size: 13.5px; color: var(--sec); }
 .dwdc-side .dwdc-sdrop { min-width: 0; }
 .dwdc .dwdc-tsearch input { color: var(--navy) !important; font-weight: 500; }
+.dwdc-years2 li div { display: flex; }
+.dwdc-years2 li div i { border-radius: 0; }
+.dwdc-years2 li div i:first-child { border-radius: 999px 0 0 999px; }
+.dwdc-years2 li div i:last-child { border-radius: 0 999px 999px 0; }
+.dwdc-years2 li div i:only-child { border-radius: 999px; }
