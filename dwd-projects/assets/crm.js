@@ -399,7 +399,12 @@
 		var R = S.refreshRes;
 		var bar = '<div class="dwdc-refbar"><div><b>Update Finances</b><span>Re-reads your Upwork files, pulls every paid Stripe and PayPal payment, keeps the payments you logged by hand, then re-checks trends.' + (X.refreshed ? ' Last run ' + fmt(String(X.refreshed).slice(0, 10), true) + '.' : '') + '</span></div><button class="dwdc-btn dwdc-refbtn" data-refresh>' + ic('refresh', 15) + 'Update Finances</button></div>'
 			+ (R ? '<div class="dwdc-conn-res big">' + refreshText(R) + '</div>' : '');
-		return bar + '<div class="dwdc-conns">' + up + stripe + pp + '</div><p class="dwdc-mutp sm">Payments are matched to clients by email. Anything that doesn’t match becomes a to-do on your dashboard so you can assign it. Keys are saved on your server and never shown again.</p>';
+		if (!S.mail && !S.mailLoading) { S.mailLoading = true; api('/upwork-mail').then(function (x) { S.mail = x; S.mailLoading = false; if (route().view === 'money') { render(); } }).catch(function () { S.mailLoading = false; }); }
+		var M = S.mail, ML = M && M.last;
+		var mail = '<div class="dwdc-conn"><h3><i class="upw"></i>Upwork emails' + '<span class="dwdc-conn-st ' + (ML ? 'on' : 'off') + '">' + (ML ? 'Connected' : 'Not set up') + '</span>' + (ML ? '<small class="dwdc-conn-last">Last checked ' + fmt(ML.at, true) + ' · ' + ML.created + ' new · ' + ML.reopened + ' reopened · ' + ML.completed + ' completed</small>' : '') + '</h3>'
+			+ '<p>Twice a week (Monday and Thursday mornings) your Gmail sends new Upwork “hired you”, offer and “contract ended” emails here. New contracts become Active projects (never duplicates), returning clients are reopened, and ended contracts move to Completed. Money still comes from the Upwork CSV.</p>'
+			+ '<ol><li>Open <a href="https://script.google.com/home/projects/create" target="_blank" rel="noopener"><b>script.google.com → New project</b></a> while signed in as mike@dreamwebdigital.com.</li><li>Delete what’s there, then paste this script:' + (M ? '<div class="dwdc-conn-url"><code>Dream Desk Upwork sync script</code><button class="dwdc-lnk sm2" data-copy="' + esc(M.script) + '">Copy script</button></div>' : ' <i>loading…</i>') + '</li><li>Pick <b>setup</b> in the function menu and press <b>Run</b>. Allow access to Gmail when Google asks.</li></ol></div>';
+		return bar + '<div class="dwdc-conns">' + up + mail + stripe + pp + '</div><p class="dwdc-mutp sm">Payments are matched to clients by email. Anything that doesn’t match becomes a to-do on your dashboard so you can assign it. Keys are saved on your server and never shown again.</p>';
 	}
 	function refreshText(R) {
 		if (R.busy) { return 'Updating… this can take up to a minute.'; }
