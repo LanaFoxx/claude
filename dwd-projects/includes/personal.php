@@ -321,3 +321,32 @@ add_action( 'rest_api_init', function () {
 		'callback'            => function () { return array( 'script' => dwdpe_script(), 'last' => get_option( 'dwdpe_last_sync', null ) ); },
 	) );
 } );
+
+/** One-time import of calendar events (admin only): keeps the Google link so the sync won't duplicate them. */
+add_action( 'rest_api_init', function () {
+	register_rest_route( 'dwd/v1', '/crm/personal/import', array(
+		'methods'             => 'POST',
+		'permission_callback' => function () { return current_user_can( 'manage_options' ); },
+		'callback'            => function ( $r ) {
+			$all  = dwdpe_get();
+			$have = array();
+			foreach ( $all['todos'] as $t ) {
+				$have[ $t['gevent'] ? 'e:' . $t['gevent'] : 'x' ] = 1;
+				$have[ 't:' . strtolower( trim( $t['text'] ) ) . '|' . $t['due'] ] = 1;
+			}
+			$n = 0;
+			foreach ( (array) ( $r->get_json_params()['items'] ?? array() ) as $x ) {
+				$k1 = 'e:' . ( $x['gevent'] ?? '' );
+				$k2 = 't:' . strtolower( trim( (string) ( $x['text'] ?? '' ) ) ) . '|' . ( $x['due'] ?? '' );
+				if ( isset( $have[ $k1 ] ) || isset( $have[ $k2 ] ) ) {
+					continue;
+				}
+				$have[ $k1 ] = $have[ $k2 ] = 1;
+				$all['todos'][] = dwdpe_clean( 'todos', array( 'text' => $x['text'] ?? '', 'due' => $x['due'] ?? '', 'time' => $x['time'] ?? '', 'note' => $x['note'] ?? '', 'gevent' => $x['gevent'] ?? '', 'source' => $x['source'] ?? 'Google Calendar', 'done' => false, 'dirty' => false, 'id' => strtolower( wp_generate_password( 10, false ) ) ) );
+				$n++;
+			}
+			update_option( 'dwdpe_data', $all, false );
+			return array( 'added' => $n, 'total' => count( $all['todos'] ) );
+		},
+	) );
+} );
