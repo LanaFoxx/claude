@@ -3,7 +3,9 @@ defined( 'ABSPATH' ) || exit;
 
 add_action( 'wp_enqueue_scripts', function () {
 	// The site's one typeface, Urbanist, loaded on every page (Elementor's own Google Fonts are switched off below).
-	wp_register_style( 'dwdp-fonts', 'https://fonts.googleapis.com/css2?family=Urbanist:wght@200;300;400;500;600;700;900&display=swap', array(), null );
+	// Self-hosted: one variable woff2 covers every weight, preloaded in the head (no Google round trips).
+	wp_register_style( 'dwdp-fonts', false, array(), null );
+	wp_add_inline_style( 'dwdp-fonts', "@font-face{font-family:'Urbanist';font-style:normal;font-weight:100 900;font-display:swap;src:url(" . DWDP_URL . "assets/fonts/urbanist-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}" );
 	wp_enqueue_style( 'dwdp-pages', DWDP_URL . 'assets/dw-pages.css', array(), DWDP_VERSION );
 	if ( is_page( 'onboarding' ) ) {
 		wp_enqueue_script( 'dwdp-onboarding', DWDP_URL . 'assets/onboarding.js', array( 'jquery' ), DWDP_VERSION, true );
@@ -15,6 +17,10 @@ add_action( 'wp_enqueue_scripts', function () {
 		wp_enqueue_style( 'dwdp-front' );
 	}
 } );
+
+add_action( 'wp_head', function () {
+	echo '<link rel="preload" href="' . esc_url( DWDP_URL . 'assets/fonts/urbanist-latin.woff2' ) . '" as="font" type="font/woff2" crossorigin>' . "\n";
+}, 1 );
 
 function dwdp_enqueue_front() {
 	wp_enqueue_style( 'dwdp-front' );
@@ -411,6 +417,33 @@ add_shortcode( 'dwd_portfolio', function ( $atts ) {
  * right edge of the section; use frame="none" for a plain screen, or style="classic" for the
  * older one-at-a-time slider.
  */
+/** How wide the slider's laptop screen shows, so phones download a phone-sized hero. */
+const DWDP_SLIDE_SIZES = '(max-width: 1439px) 78vw, 1000px';
+
+/** Front page: load the slider's styles in the head and preload its first hero (the page's largest paint). */
+add_action( 'wp_head', function () {
+	if ( ! is_front_page() ) {
+		return;
+	}
+	foreach ( dwdp_projects( true ) as $p ) {
+		$hero = absint( dwdp_get( $p->ID, 'cover' ) );
+		if ( ! $hero ) {
+			continue;
+		}
+		$src = wp_get_attachment_image_src( $hero, 'full' );
+		$set = wp_get_attachment_image_srcset( $hero, 'full' );
+		if ( $src ) {
+			printf( '<link rel="preload" as="image" href="%s"%s imagesizes="%s" fetchpriority="high">' . "\n", esc_url( $src[0] ), $set ? ' imagesrcset="' . esc_attr( $set ) . '"' : '', esc_attr( DWDP_SLIDE_SIZES ) );
+		}
+		break;
+	}
+}, 2 );
+add_action( 'wp_enqueue_scripts', function () {
+	if ( is_front_page() ) {
+		wp_enqueue_style( 'dwdp-front' );
+	}
+}, 20 );
+
 add_shortcode( 'dwd_project_slider', function ( $atts ) {
 	$atts     = shortcode_atts( array( 'style' => 'vertical', 'frame' => 'laptop' ), $atts );
 	$projects = dwdp_projects( true );
@@ -435,7 +468,7 @@ add_shortcode( 'dwd_project_slider', function ( $atts ) {
 			'<a class="dwdp-vitem" href="%1$s" aria-label="%2$s">%3$s</a>',
 			esc_url( get_permalink( $p ) ),
 			esc_attr( 'View the ' . get_the_title( $p ) . ' project' ),
-			dwdp_img( $hero, get_the_title( $p ) . ' website design', array( 'loading' => $lazy ) )
+			dwdp_img( $hero, get_the_title( $p ) . ' website design', array_merge( array( 'loading' => $lazy, 'sizes' => DWDP_SLIDE_SIZES ), $count ? array() : array( 'fetchpriority' => 'high', 'decoding' => 'sync' ) ) )
 		);
 		$count++;
 	}
