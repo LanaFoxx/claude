@@ -344,3 +344,5 @@ select.dwdc-stage.t-gray { background-color: var(--neutral) !important; color: v
 }
 .dwdc-view { font-size: 12px; font-weight: 600; color: var(--blue); margin-left: 6px; }
 details[open] > summary .dwdc-view { display: none; }
+.dwdc-upw { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-radius: 10px; background: var(--green-t); font-size: 13.5px; color: var(--sec); }
+.dwdc-upw b { color: var(--green); font-size: 15px; }
