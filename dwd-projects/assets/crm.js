@@ -564,14 +564,14 @@
 			'<p class="dwdc-hero"><strong>' + S.clients.length + '</strong> clients on file</p><div class="dwdc-segbar">' + seg(nP, 's1') + seg(nH, 's2') + seg(nPast, 's3') + '</div>'
 			+ '<a class="dwdc-seg" href="#clients"><i class="s1"></i>Project clients<b>' + nP + '</b></a><a class="dwdc-seg" href="#clients"><i class="s2"></i>Hosting only<b>' + nH + '</b></a><a class="dwdc-seg" href="#clients"><i class="s3"></i>Past clients<b>' + nPast + '</b></a>',
 			'<footer class="dwdc-grid4">' + frow('Active Projects', active.length, 'projects/active') + frow('Onboarding', onboardList().length, 'onboarding') + frow('Hosting', host.length, 'hosting') + frow('All Clients', S.clients.length, 'clients') + '</footer>');
-		var plist = active.slice().sort(function (x, y) { return num(y.balance) - num(x.balance) || (x.name < y.name ? -1 : 1); });
+		var plist = active.slice().sort(function (x, y) { return num(y.price) - num(x.price) || (x.name < y.name ? -1 : 1); });
 		var c2 = card('cd-projects cd-plist', chead('brief', 'Projects', 'projects/active'),
 			'<div class="dwdc-pl-head"><span>Project · Client</span><span>Price</span><span>Owed</span></div>'
 			+ '<div class="dwdc-pl-wrap"><div class="dwdc-pl">' + (plist.length ? plist.map(function (c) {
 				var k = clientOf(c), ow = num(c.balance);
 				return '<a class="dwdc-pl-row" href="#client/' + c.id + '"><span><b>' + esc(c.name) + '</b><small>' + esc(k ? k.name : (c.person || '')) + '</small></span><span>' + (num(c.price) ? money(c.price) : '—') + '</span><span class="' + (ow ? 'ow' : 'pd') + '">' + (ow ? money(ow) : 'Paid') + '</span></a>';
 			}).join('') : '<p class="dwdc-mutp">No active projects right now.</p>') + '</div></div>',
-			'<footer class="dwdc-pl-foot"><button class="dwdc-btn coral" data-act="job">' + ic('plus', 14) + 'New Project</button><a class="dwdc-pl-all" href="#projects/active" data-plall>View all ' + active.length + ' ' + ic('right', 12) + '</a></footer>');
+			'<footer class="dwdc-pl-foot"><button class="dwdc-btn brightblue" data-act="job">' + ic('plus', 14) + 'New Project</button><a class="dwdc-pl-all" href="#projects/active" data-plall>View all ' + active.length + ' ' + ic('right', 12) + '</a></footer>');
 		var c3 = card('cd-money', chead('dollar', 'Money', 'money'),
 			'<p class="dwdc-lbl">Owed on open projects</p><p class="dwdc-hero big"><strong>' + money(owed(open)) + '</strong></p><p class="dwdc-sub">' + owing.length + ' invoice' + (owing.length === 1 ? '' : 's') + ' open · ' + active.length + ' active projects</p>'
 			+ '<div class="dwdc-tint-space" aria-hidden="true"></div>',
@@ -588,7 +588,7 @@
 		var tl = card('cd-plain', '<header class="dwdc-dhead plain"><h2>To-Do List <span class="dwdc-cnt">' + td.length + '</span></h2></header>',
 			'<form class="dwdc-addbar home"><input name="text" placeholder="Add something we need to do..." autocomplete="off" required><button class="dwdc-btn">Add</button></form>'
 			+ (td.length ? '<div class="dwdc-todos">' + td.map(function (t) { return todoRow(t); }).join('') + '</div>' : emptyRow('Nothing on the list. Nice.')));
-		return '<div class="dwdc-row3">' + c2 + c3 + c1 + '</div><div class="dwdc-row2c">' + ap + tl + '</div>';
+		return '<div class="dwdc-row3">' + c2 + c3 + c1 + '</div><div class="dwdc-row2c">' + card('cd-plain cd-trends', '<header class="dwdc-dhead"><h2>Patterns &amp; Trends</h2><button class="dwdc-askbtn light" data-askai>' + ic('bolt', 14) + 'Ask AI</button><a href="#money">Money Stats ' + ic('right', 14) + '</a></header>', trendsBox()) + tl + '</div>';
 	}
 
 	/* ---------- All Clients ---------- */
