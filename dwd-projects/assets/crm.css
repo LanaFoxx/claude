@@ -409,3 +409,8 @@ select.dwdc-sel { width: 100%; height: 42px !important; min-height: 0 !important
 }
 .dwdc-sms { width: 100%; border: 1px solid var(--input); border-radius: 8px; padding: 10px 12px; font-size: 13.5px; background: #fff; resize: none; }
 select.dwdc-sel { max-width: none !important; }
+/* payment method colors */
+select.dwdc-sel.pm-upwork { background-color: #14A800 !important; border-color: #14A800 !important; color: #fff !important; font-weight: 700; }
+select.dwdc-sel.pm-paypal { background-color: #0070BA !important; border-color: #0070BA !important; color: #fff !important; font-weight: 700; }
+select.dwdc-sel.pm-stripe { background-color: #13A6EE !important; border-color: #13A6EE !important; color: #0B203D !important; font-weight: 700; }
+select.dwdc-sel[class*=pm-] option { background: #fff; color: #0B203D; font-weight: 400; }

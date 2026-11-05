@@ -828,7 +828,7 @@ add_action( 'rest_api_init', function () {
 		if ( $bal > 0 ) {
 			update_post_meta( $id, '_dwdc_balance', (string) max( 0, round( $bal - $amt, 2 ) ) );
 		}
-		if ( ! get_post_meta( $id, '_dwdc_pay_method', true ) && 'Upwork' !== $method ) {
+		if ( ! get_post_meta( $id, '_dwdc_pay_method', true ) ) {
 			update_post_meta( $id, '_dwdc_pay_method', $method );
 		}
 		$notes   = get_post_meta( $id, '_dwdc_notes', true );

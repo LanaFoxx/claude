@@ -683,14 +683,14 @@
 	}
 	// Where the project came from, and (unless it came through Upwork) how they pay.
 	var SOURCES = ['Upwork', 'Google', 'Referral', 'Reference', 'Repeat client', 'Website', 'Social media', 'Other'];
-	var PAYS = ['Stripe', 'PayPal', 'Zelle', 'Check', 'Cash', 'Bank transfer', 'Venmo', 'Other'];
+	var PAYS = ['Upwork', 'Stripe', 'PayPal', 'Zelle', 'Check', 'Cash', 'Bank transfer', 'Venmo', 'Other'];
+	// Payment method colors: Upwork green, PayPal blue, Stripe bright blue.
+	function payClass(m) { return m ? ' pm-' + String(m).toLowerCase().replace(/[^a-z]/g, '') : ''; }
 	function sourceCard(c) {
 		var opt = function (list, cur, ph) { return '<option value="">' + ph + '</option>' + list.map(function (o) { return '<option' + (o === cur ? ' selected' : '') + '>' + o + '</option>'; }).join(''); };
-		var up = c.lead_source === 'Upwork';
 		return '<section class="dwdc-card pad"><div class="dwdc-cardh"><h2>Lead source &amp; payment</h2></div><div class="dwdc-srcrow">'
-			+ '<label><span>Where they came from</span><select class="dwdc-sel" data-field="lead_source">' + opt(SOURCES, c.lead_source, 'Select a source…') + '</select></label>'
-			+ (up ? '<label><span>How they pay</span><div class="dwdc-paidup">Paid through Upwork</div></label>'
-				: '<label><span>How they pay</span><select class="dwdc-sel" data-field="pay_method">' + opt(PAYS, c.pay_method, 'Select a payment method…') + '</select></label>')
+			+ '<label><span>Where they came from</span><select class="dwdc-sel' + payClass(c.lead_source === 'Upwork' ? 'Upwork' : '') + '" data-field="lead_source">' + opt(SOURCES, c.lead_source, 'Select a source…') + '</select></label>'
+			+ '<label><span>How they pay</span><select class="dwdc-sel' + payClass(c.pay_method) + '" data-field="pay_method">' + opt(PAYS, c.pay_method, c.lead_source === 'Upwork' ? 'Through Upwork, or outside it?' : 'Select a payment method…') + '</select></label>'
 			+ '</div></section>';
 	}
 	// Markup: open the workspace, paste the client's review link, and email it to them.
