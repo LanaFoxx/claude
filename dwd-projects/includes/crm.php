@@ -46,7 +46,7 @@ function dwdc_lists() {
 
 /** Contact fields kept on every contact. */
 function dwdc_fields() {
-	return array( 'job', 'markup', 'lead_source', 'pay_method', 'stage', 'completed', 'billed', 'stripe', 'paypal', 'person', 'email', 'phone', 'company', 'website', 'list', 'price', 'balance', 'deadline', 'hosting', 'renewal', 'source', 'next' );
+	return array( 'job', 'markup', 'markup_sent', 'lead_source', 'pay_method', 'stage', 'completed', 'billed', 'stripe', 'paypal', 'person', 'email', 'phone', 'company', 'website', 'list', 'price', 'balance', 'deadline', 'hosting', 'renewal', 'source', 'next' );
 }
 
 function dwdc_contact( $post, $full = false ) {
@@ -740,6 +740,50 @@ add_action( 'rest_api_init', function () {
 		return dwdc_contact( $into, true );
 	} ) );
 
+	// Email the client their Markup review link, in the site's branded email.
+	register_rest_route( $ns, '/crm/contact/(?P<id>\d+)/markup-email', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
+		$id   = (int) $r['id'];
+		$link = esc_url_raw( trim( (string) ( $r->get_param( 'markup' ) ?: get_post_meta( $id, '_dwdc_markup', true ) ) ) );
+		if ( ! $link ) {
+			return new WP_Error( 'dwdc_link', 'Add the client’s Markup link first.', array( 'status' => 400 ) );
+		}
+		update_post_meta( $id, '_dwdc_markup', $link );
+		$cid   = (int) get_post_meta( $id, '_dwdc_client', true );
+		$email = sanitize_email( (string) $r->get_param( 'email' ) ) ?: (string) get_post_meta( $id, '_dwdc_email', true ) ?: ( $cid ? (string) get_post_meta( $cid, '_dwdcl_email', true ) : '' );
+		if ( ! is_email( $email ) ) {
+			return new WP_Error( 'dwdc_email', 'Add the client’s email first.', array( 'status' => 400 ) );
+		}
+		if ( ! get_post_meta( $id, '_dwdc_email', true ) ) {
+			update_post_meta( $id, '_dwdc_email', strtolower( $email ) );
+		}
+		$who     = ( $cid ? get_post_field( 'post_title', $cid ) : '' ) ?: ( get_post_meta( $id, '_dwdc_person', true ) ?: get_post_field( 'post_title', $id ) );
+		$first   = trim( strtok( (string) $who, ' ' ) );
+		$project = get_post_field( 'post_title', $id );
+		$html    = dwdp_email_html( array(
+			'eyebrow' => 'Website Review',
+			'title'   => 'Your website is ready for review',
+			'intro'   => 'Hi ' . esc_html( $first ) . ',<br><br>'
+				. 'Your website is ready for you to look through. I’ve set up a Markup review link for <strong>' . esc_html( $project ) . '</strong> so you can leave feedback right on the page.<br><br>'
+				. '<strong>How it works:</strong> open the link, click anywhere on your site, and type your note. Each comment is pinned to the exact spot you clicked, and you can add screenshots and reply to my notes in the same place. There’s nothing to install.<br><br>'
+				. '<strong>Please keep all revisions in Markup.</strong> When changes come in by email or chat, they get split across threads and are easy to miss, which slows everything down. With every note in one place, I can work through your list quickly and get your site launched sooner.',
+			'buttons' => array( array( 'Open your Markup review', $link ) ),
+			'outro'   => 'Questions? Just reply to this email.<br>Michael Tarr, Dream Web Digital',
+			'footer'  => 'Dream Web Digital ·',
+		) );
+		$html = str_replace( 'padding:14px 26px;border-radius:8px;font-size:13px', 'padding:20px 44px;border-radius:10px;font-size:16px', $html ); // a bigger, bolder button
+		$sent = wp_mail( $email, 'Your review link for ' . $project, $html, array( 'Content-Type: text/html; charset=UTF-8', 'Reply-To: Michael Tarr <mike@dreamwebdigital.com>' ) );
+		if ( ! $sent ) {
+			return new WP_Error( 'dwdc_mail', 'The email didn’t send. Copy the link and send it yourself.', array( 'status' => 500 ) );
+		}
+		update_post_meta( $id, '_dwdc_markup_sent', current_time( 'Y-m-d' ) );
+		$notes   = get_post_meta( $id, '_dwdc_notes', true );
+		$notes   = is_array( $notes ) ? $notes : array();
+		$notes[] = array( 'date' => current_time( 'mysql', true ), 'text' => 'Markup review link emailed to ' . $email . '.' );
+		update_post_meta( $id, '_dwdc_notes', $notes );
+		wp_update_post( array( 'ID' => $id ) );
+		return dwdc_contact( $id, true );
+	} ) );
+
 	register_rest_route( $ns, '/crm/task', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
 		$id = dwdc_add_task( sanitize_text_field( (string) $r->get_param( 'text' ) ), (int) $r->get_param( 'contact' ), sanitize_text_field( (string) $r->get_param( 'due' ) ) );
 		return dwdc_task( $id );
@@ -807,6 +851,7 @@ add_action( 'admin_enqueue_scripts', function ( $hook ) {
 		'today' => current_time( 'Y-m-d' ),
 		'orders' => admin_url( class_exists( '\\Automattic\\WooCommerce\\Utilities\\OrderUtil' ) && \Automattic\WooCommerce\Utilities\OrderUtil::custom_orders_table_usage_is_enabled() ? 'admin.php?page=wc-orders&s=' : 'edit.php?post_type=shop_order&s=' ),
 		'pay'   => home_url( '/checkout/?dwd-order=hosting' ),
+		'markupHome' => 'https://app.markup.io/w/o7nvlGWC',
 		'logout' => wp_logout_url( admin_url( 'admin.php?page=client-desk' ) ),
 		'wp'     => admin_url(),
 		'user'   => wp_get_current_user()->display_name,

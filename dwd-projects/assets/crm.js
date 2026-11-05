@@ -490,6 +490,7 @@
 			+ '<div class="dwdc-two">'
 			+ '<div class="dwdc-col">'
 			+ onboardCard(c, full)
+			+ markupCard(c)
 			+ sourceCard(c)
 			+ (num(c.hosting) ? hostCard(c) : '')
 			+ (S.edit ? editCard(c) : detailsCard(c))
@@ -528,6 +529,19 @@
 			+ (up ? '<label><span>How they pay</span><div class="dwdc-paidup">Paid through Upwork</div></label>'
 				: '<label><span>How they pay</span><select class="dwdc-sel" data-field="pay_method">' + opt(PAYS, c.pay_method, 'Select a payment method…') + '</select></label>')
 			+ '</div></section>';
+	}
+	// Markup: open the workspace, paste the client's review link, and email it to them.
+	function markupCard(c) {
+		var em = c.email || ((clientOf(c) || {}).email) || '';
+		return '<section class="dwdc-card pad dwdc-mkcard"><div class="dwdc-cardh"><h2>Markup review</h2><a class="dwdc-mklink" href="' + esc(DWDC.markupHome) + '" target="_blank" rel="noopener">' + ic('wp', 14) + 'Open Markup</a></div>'
+			+ '<p class="dwdc-mutp">1. Open Markup and add the staging link. 2. Paste the review link Markup gives you below. 3. Email it to the client.</p>'
+			+ '<form class="dwdc-markupf"><label><span>Client’s Markup link</span><input name="markup" type="url" value="' + esc(c.markup) + '" placeholder="https://app.markup.io/…"></label>'
+			+ (em ? '' : '<label><span>Client’s email</span><input name="email" type="email" placeholder="Needed to send the link"></label>')
+			+ '<div class="dwdc-mkacts"><button class="dwdc-btn2">Save link</button>'
+			+ (c.markup ? '<a class="dwdc-btn2" href="' + esc(url(c.markup)) + '" target="_blank" rel="noopener">Open their link</a>' : '')
+			+ '<button type="button" class="dwdc-btn" data-mksend>' + ic('right', 14) + 'Email link to client</button></div>'
+			+ (c.markup_sent ? '<p class="dwdc-mksent">' + ic('check', 14) + 'Sent to ' + esc(em) + ' on ' + fmt(c.markup_sent, true) + '</p>' : '')
+			+ '</form></section>';
 	}
 	function onboardCard(c, full) {
 		var list = full ? onboardEntries(c) : [], ob = list.some(function (e) { return /onboard/i.test(e.form || ''); });
@@ -730,6 +744,16 @@
 			var c = S.full[r.id], jobs = (c.jobs || []).slice(); jobs.splice(+el.getAttribute('data-del-job'), 1);
 			save(r.id, { jobs: jobs }); return;
 		}
+		if ((el = t.closest('[data-mksend]'))) {
+			var mf = el.closest('form'), md = {}; new FormData(mf).forEach(function (v, k) { md[k] = String(v).trim(); });
+			if (!md.markup) { toast('Paste the client’s Markup link first', true); return; }
+			if (mf.querySelector('[name=email]') && !md.email) { toast('Add the client’s email first', true); return; }
+			var rid = route().id, c0 = S.full[rid] || contact(rid);
+			if (!confirm('Email the Markup link to ' + (md.email || c0.email || (clientOf(c0) || {}).email) + '?')) { return; }
+			el.disabled = true;
+			api('/contact/' + rid + '/markup-email', 'POST', md).then(function (x) { upsert(x); S.full[x.id] = x; render(); toast('Markup link emailed'); }).catch(function (er) { el.disabled = false; fail(er); });
+			return;
+		}
 		if (t.closest('[data-copyob]')) {
 			var txt = onboardText(S.full[r.id] || {});
 			(navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(function () { toast('Onboarding answers copied'); }, function () {
@@ -827,6 +851,8 @@
 		} else if (f.classList.contains('dwdc-payf')) {
 			var pb = f.querySelector('.dwdc-btn'); pb.disabled = true;
 			api('/contact/' + r.id + '/paylink', 'POST', data).then(function (x) { upsert(x); S.full[x.id] = x; render(); toast('Payment link emailed to ' + x.email); }).catch(function (er) { pb.disabled = false; fail(er); });
+		} else if (f.classList.contains('dwdc-markupf')) {
+			save(r.id, { markup: (data.markup || '').trim() }, data.markup ? 'Markup link saved' : 'Markup link removed');
 		} else if (f.classList.contains('dwdc-nextf')) {
 			save(r.id, { next: data.next }, 'Next step saved');
 		} else if (f.classList.contains('dwdc-editf')) {

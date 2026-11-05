@@ -71,11 +71,12 @@ function dwdp_email_html( $o ) {
 		. '<h1 style="margin:0 0 14px;' . $font . ";font-size:26px;line-height:1.2;font-weight:900;text-transform:uppercase;color:#0E1526\">" . esc_html( $o['title'] ?? '' ) . '</h1>'
 		. ( ! empty( $o['intro'] ) ? '<p style="margin:0 0 22px;font-size:16px;line-height:1.7;color:#303B58">' . wp_kses_post( $o['intro'] ) . '</p>' : '' )
 		. ( $buttons ? '<table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 18px"><tr>' . $buttons . '</tr></table>' : '' )
+		. ( ! empty( $o['outro'] ) ? '<p style="margin:8px 0 26px;font-size:15px;line-height:1.7;color:#7A86A0">' . wp_kses_post( $o['outro'] ) . '</p>' : '' )
 		. '</td></tr>'
 		. ( $rows ? '<tr><td style="padding:0 36px 30px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #E4E9F5;border-radius:10px;overflow:hidden;border-collapse:separate">' . $rows . '</table></td></tr>' : '' )
 		. ( $meta ? '<tr><td style="padding:0 36px 30px;' . $font . ';font-size:13px;line-height:1.7;color:#7A86A0">' . implode( '<br>', $meta ) . '</td></tr>' : '' )
 		. '</table>'
-		. '<p style="margin:18px 0 0;font-family:Helvetica,Arial,sans-serif;font-size:12px;line-height:1.6;color:#9AA6BC">Dream Web Digital LLC · Charlotte, NC · (772) 210-1728<br>Sent by your website, <a href="' . esc_url( home_url( '/' ) ) . '" style="color:#9AA6BC">dreamwebdigital.com</a></p>'
+		. '<p style="margin:18px 0 0;font-family:Helvetica,Arial,sans-serif;font-size:12px;line-height:1.6;color:#9AA6BC">Dream Web Digital LLC · Charlotte, NC · (772) 210-1728<br>' . ( ! empty( $o['footer'] ) ? esc_html( $o['footer'] ) . ' ' : 'Sent by your website, ' ) . '<a href="' . esc_url( home_url( '/' ) ) . '" style="color:#9AA6BC">dreamwebdigital.com</a></p>'
 		. '</td></tr></table></body></html>';
 }
 
