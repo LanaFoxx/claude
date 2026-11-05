@@ -29,6 +29,7 @@ function dwdc_lists() {
 	$default = array(
 		array( 'id' => 'leads', 'name' => 'Leads', 'color' => '#F0874A' ),
 		array( 'id' => 'active', 'name' => 'Active jobs', 'color' => '#1B7EC3' ),
+		array( 'id' => 'hold', 'name' => 'On hold', 'color' => '#C98A0B' ),
 		array( 'id' => 'limbo', 'name' => 'In limbo', 'color' => '#9B6BDF' ),
 		array( 'id' => 'complete', 'name' => 'Completed', 'color' => '#2EA36B' ),
 		array( 'id' => 'archive', 'name' => 'Archive', 'color' => '#A7B1C2' ),

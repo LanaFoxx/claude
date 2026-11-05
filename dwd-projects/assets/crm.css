@@ -346,3 +346,24 @@ select.dwdc-stage.t-gray { background-color: var(--neutral) !important; color: v
 details[open] > summary .dwdc-view { display: none; }
 .dwdc-upw { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-radius: 10px; background: var(--green-t); font-size: 13.5px; color: var(--sec); }
 .dwdc-upw b { color: var(--green); font-size: 15px; }
+
+/* v2.9.3: On hold status, no client avatars, larger names */
+.dwdc { --amber: #C98A0B; --amber-t: #FBF3DF; }
+.dwdc-pill.t-amber { background: var(--amber-t); color: var(--amber); }
+.dwdc-mini.t-amber strong { color: var(--amber); }
+.dwdc-btn2.amber:hover { border-color: var(--amber); color: var(--amber); }
+select.dwdc-stage.t-amber { background-color: var(--amber-t) !important; color: var(--amber) !important; border-color: #F0DDAE !important; }
+.dwdc-job header { align-items: flex-start; }
+.dwdc-job header > div { flex: 1; min-width: 0; }
+.dwdc-job h3 { font-size: 20px; font-weight: 700; line-height: 1.25; }
+.dwdc-job header small { font-size: 14px; margin-top: 2px; color: var(--sec); }
+.dwdc-job header select.dwdc-stage { width: auto; max-width: 118px; flex: none; height: 28px !important; font-size: 10px !important; padding: 0 8px !important; }
+.dwdc-nm b { font-size: 16px; }
+.dwdc-nm small { font-size: 13.5px; color: var(--sec); }
+.dwdc-grid.g-leads .dwdc-nm b { font-size: 15.5px; }
+.dwdc-who strong { font-size: 15.5px; }
+.dwdc-who small { font-size: 13px; }
+.dwdc-chead h2 { font-size: 30px; }
+.dwdc-chead p { font-size: 15px; }
+.dwdc-picked b, .dwdc-pickrow b { font-size: 15.5px; }
+.g-jobs select.dwdc-stage { max-width: 124px; }

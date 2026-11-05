@@ -70,17 +70,23 @@
 	function ic(n, size) { return '<svg class="dwdc-ic" width="' + (size || 18) + '" height="' + (size || 18) + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICON[n] + '</svg>'; }
 
 	// Status colors: blue active, violet limbo, green done/paid, teal hosting, orange leads/owed, red overdue.
-	var TONE = { active: 'blue', limbo: 'violet', complete: 'green', leads: 'orange', archive: 'gray', hosting: 'teal' };
-	var LABEL = { active: 'Active', limbo: 'In limbo', complete: 'Completed', leads: 'Lead', archive: 'Archived' };
-	function avatar(c, size, tone) { return '<span class="dwdc-av t-' + (tone || TONE[c.list] || 'blue') + (size ? ' s' + size : '') + '">' + esc(initials(c.name)) + '</span>'; }
+	var TONE = { active: 'blue', hold: 'amber', limbo: 'violet', complete: 'green', leads: 'orange', archive: 'gray', hosting: 'teal' };
+	var LABEL = { active: 'Active', hold: 'On hold', limbo: 'In limbo', complete: 'Completed', leads: 'Lead', archive: 'Archived' };
+	function avatar() { return ''; } // client avatars removed: names carry the rows
+	function avatarOld(c, size, tone) { return '<span class="dwdc-av t-' + (tone || TONE[c.list] || 'blue') + (size ? ' s' + size : '') + '">' + esc(initials(c.name)) + '</span>'; }
+	var STATUS = [['active', 'Active'], ['hold', 'On hold'], ['limbo', 'In limbo'], ['complete', 'Completed']];
+	function statusSelect(c) {
+		return '<select class="dwdc-stage t-' + (TONE[c.list] || 'gray') + '" data-status-of="' + c.id + '" title="Change status">' + STATUS.map(function (s) { return '<option value="' + s[0] + '"' + (s[0] === c.list ? ' selected' : '') + '>' + s[1] + '</option>'; }).join('') + '</select>';
+	}
 	function pill(text, tone) { return '<span class="dwdc-pill t-' + tone + '">' + esc(text) + '</span>'; }
 
 	/* ---------- derived ---------- */
 	function by(list) { return S.contacts.filter(function (c) { return c.list === list; }); }
 	function hosting() { return S.contacts.filter(function (c) { return num(c.hosting) > 0 && c.list !== 'archive'; }); }
+	function working() { return S.contacts.filter(function (c) { return c.list === 'active' || c.list === 'hold' || c.list === 'limbo'; }); }
 	function stageOf(c) { return c.list === 'leads' ? (c.stage || 'new') : (c.stage === 'onboarding' && c.list !== 'complete' ? 'onboarding' : 'active'); }
 	function leadRows() {
-		return S.contacts.filter(function (c) { return c.list === 'leads' || ((c.onboarded || c.stage === 'onboarding') && (c.list === 'active' || c.list === 'limbo')); })
+		return S.contacts.filter(function (c) { return c.list === 'leads' || ((c.onboarded || c.stage === 'onboarding') && (c.list === 'active' || c.list === 'hold' || c.list === 'limbo')); })
 			.sort(function (a, b) { return (received(a) < received(b)) ? 1 : -1; });
 	}
 	function received(c) { return c.onboarded || c.last_entry_date || c.created; }
@@ -182,7 +188,7 @@
 
 	/* ---------- dashboard ---------- */
 	function dashboard() {
-		var active = by('active'), limbo = by('limbo'), done = by('complete'), host = hosting();
+		var active = by('active'), hold = by('hold'), limbo = by('limbo'), done = by('complete'), host = hosting();
 		var billed = S.contacts.reduce(function (s, c) { return s + lifetime(c); }, 0);
 		var annual = host.reduce(function (s, c) { return s + num(c.hosting); }, 0);
 		var next = host.filter(function (c) { return c.renewal && c.renewal >= DWDC.today; }).sort(function (a, b) { return a.renewal < b.renewal ? -1 : 1; })[0];
@@ -192,7 +198,7 @@
 		var entries = S.contacts.filter(function (c) { return c.entry_count && c.list !== 'archive'; }).sort(function (a, b) { return a.last_entry_date < b.last_entry_date ? 1 : -1; }).slice(0, 6);
 		return '<div class="dwdc-tiles">'
 			+ tile('blue', 'Active jobs', active.length, money(owed(S.contacts.filter(function (c) { return c.list !== 'archive'; }))) + ' still owed overall', 'jobs')
-			+ tile('violet', 'In limbo', limbo.length, 'Waiting on the client', 'jobs')
+			+ tile('violet', 'On hold &amp; limbo', hold.length + limbo.length, hold.length + ' on hold · ' + limbo.length + ' in limbo', 'jobs')
 			+ tile('green', 'Completed', done.length, money(billed) + ' billed all-time', 'completed')
 			+ tile('teal', 'Hosting clients', host.length, money(annual) + '/yr' + (next ? ' · next ' + fmt(next.renewal) : ''), 'hosting')
 			+ '</div>'
@@ -215,7 +221,7 @@
 		var p = paidPct(c), late = c.deadline && c.deadline < DWDC.today, ow = num(c.balance);
 		var todos = S.tasks.filter(function (t) { return t.contact === c.id && !t.done; });
 		return '<article class="dwdc-job" data-go="client/' + c.id + '">'
-			+ '<header>' + avatar(c, 40) + '<div><h3>' + esc(c.name) + '</h3><small>' + esc(c.person || 'No contact on file') + '</small></div></header>'
+			+ '<header><div><h3>' + esc(c.name) + '</h3><small>' + esc(c.person || 'No contact on file') + '</small></div>' + statusSelect(c) + '</header>'
 			+ (c.job ? '<p class="dwdc-proj">' + esc(c.job) + '</p>' : '')
 			+ '<div class="dwdc-strip"><span><small>Price</small><b>' + (num(c.price) ? money(c.price) : '—') + '</b></span>'
 			+ '<span><small>Owed</small><b class="' + (ow ? 'orange' : 'green') + '">' + (ow ? money(ow) : 'Paid') + '</b></span>'
@@ -254,17 +260,22 @@
 
 	/* ---------- active jobs ---------- */
 	function jobsView() {
-		var active = by('active'), limbo = by('limbo'), all = active.concat(limbo).filter(match);
-		var value = active.concat(limbo).reduce(function (s, c) { return s + num(c.price); }, 0);
-		return '<div class="dwdc-minis">' + mini('blue', 'Active', active.length) + mini('navy', 'Contract value', money(value)) + mini('orange', 'Owed on these', money(owed(active.concat(limbo)))) + mini('violet', 'In limbo', limbo.length) + '</div>'
-			+ secHead('All jobs', all.length, '<button class="dwdc-btn sm" data-act="job">' + ic('plus', 14) + 'Add job</button>')
-			+ '<div class="dwdc-card dwdc-tbl"><div class="dwdc-grid g-jobs head"><span>Client</span><span>Price</span><span>Owed</span><span>Due</span><span>Status</span><span>Next step</span></div>'
-			+ (all.length ? all.map(function (c) {
-				var ow = num(c.balance), late = c.deadline && c.deadline < DWDC.today;
-				return '<div class="dwdc-grid g-jobs row" data-go="client/' + c.id + '"><span class="dwdc-nm">' + avatar(c, 34) + '<span><b>' + esc(c.name) + '</b><small>' + esc([c.job, c.person].filter(Boolean).join(' · ') || 'No contact on file') + '</small></span></span>'
-					+ '<span class="b">' + (num(c.price) ? money(c.price) : '—') + '</span><span class="b ' + (ow ? 'orange' : 'green') + '">' + (ow ? money(ow) : 'Paid') + '</span>'
-					+ '<span class="' + (late ? 'red b' : '') + '">' + (c.deadline ? fmt(c.deadline) : '—') + '</span><span>' + pill(LABEL[c.list], TONE[c.list]) + '</span><span class="sec ell">' + esc(c.next || '—') + '</span></div>';
-			}).join('') : emptyRow('No jobs match.')) + '</div>';
+		var all = working(), value = all.reduce(function (s, c) { return s + num(c.price); }, 0);
+		var sec = function (list, title, empty, btn) {
+			var rows = by(list).filter(match);
+			return '<section>' + secHead(title, rows.length, btn || '')
+				+ '<div class="dwdc-card dwdc-tbl"><div class="dwdc-grid g-jobs head"><span>Client</span><span>Price</span><span>Owed</span><span>Due</span><span>Status</span><span>Next step</span></div>'
+				+ (rows.length ? rows.map(function (c) {
+					var ow = num(c.balance), late = c.deadline && c.deadline < DWDC.today;
+					return '<div class="dwdc-grid g-jobs row" data-go="client/' + c.id + '"><span class="dwdc-nm"><span><b>' + esc(c.name) + '</b><small>' + esc([c.person, c.job].filter(Boolean).join(' · ') || 'No contact on file') + '</small></span></span>'
+						+ '<span class="b">' + (num(c.price) ? money(c.price) : '—') + '</span><span class="b ' + (ow ? 'orange' : 'green') + '">' + (ow ? money(ow) : 'Paid') + '</span>'
+						+ '<span class="' + (late ? 'red b' : '') + '">' + (c.deadline ? fmt(c.deadline) : '—') + '</span><span>' + statusSelect(c) + '</span><span class="sec ell">' + esc(c.next || '—') + '</span></div>';
+				}).join('') : emptyRow(S.q ? 'No matches.' : empty)) + '</div></section>';
+		};
+		return '<div class="dwdc-minis">' + mini('blue', 'Active', by('active').length) + mini('navy', 'Contract value', money(value)) + mini('orange', 'Owed on these', money(owed(all))) + mini('amber', 'On hold', by('hold').length) + mini('violet', 'In limbo', by('limbo').length) + '</div>'
+			+ sec('active', 'Active jobs', 'Nothing in progress right now.', '<button class="dwdc-btn sm" data-act="job">' + ic('plus', 14) + 'Add job</button>')
+			+ sec('hold', 'On hold', 'No jobs on hold. Paused jobs go here.')
+			+ sec('limbo', 'In limbo', 'No jobs in limbo. Clients you haven’t heard back from go here.');
 	}
 
 	/* ---------- to-dos ---------- */
@@ -356,12 +367,13 @@
 		var c = S.full[id] || contact(id);
 		if (!c) { return '<div class="dwdc-card">' + emptyRow('Loading…') + '</div>'; }
 		var full = !!S.full[id], st = c.list, ow = num(c.balance), price = num(c.price), late = c.deadline && c.deadline < DWDC.today;
-		var backName = { dashboard: 'dashboard', leads: 'leads & onboarding', jobs: 'active jobs', todos: 'to-dos', hosting: 'hosting', completed: 'completed', archive: 'archive' }[S.back] || 'dashboard';
+		var backName = { dashboard: 'dashboard', leads: 'leads & onboarding', jobs: 'jobs', todos: 'to-dos', hosting: 'hosting', completed: 'completed', archive: 'archive' }[S.back] || 'dashboard';
 		var tasks = S.tasks.filter(function (t) { return t.contact === c.id; }).sort(function (a, b) { return a.done - b.done; }), openN = tasks.filter(function (t) { return !t.done; }).length;
 		var btn = function (cls, attr, label) { return '<button class="dwdc-btn2 ' + cls + '" ' + attr + '>' + label + '</button>'; };
 		var acts = '';
-		if (st === 'active' || st === 'limbo') {
-			acts = (ow ? btn('', 'data-paid', 'Mark paid') : '') + (st === 'active' ? btn('violet', 'data-set="limbo"', 'Move to limbo') : btn('', 'data-set="active"', 'Back to active')) + btn('solid green', 'data-complete', 'Mark complete');
+		if (st === 'active' || st === 'hold' || st === 'limbo') {
+			acts = (ow ? btn('', 'data-paid', 'Mark paid') : '') + (st !== 'active' ? btn('', 'data-set="active"', 'Back to active') : '')
+				+ (st !== 'hold' ? btn('amber', 'data-set="hold"', 'Put on hold') : '') + (st !== 'limbo' ? btn('violet', 'data-set="limbo"', 'Move to limbo') : '') + btn('solid green', 'data-complete', 'Mark complete');
 		} else if (st === 'leads') {
 			acts = btn('', 'data-set="archive"', 'Archive') + btn('solid blue', 'data-act="job" data-contact="' + c.id + '"', 'Start a job');
 		} else if (st === 'archive') {
@@ -408,7 +420,7 @@
 			+ '</div><div class="dwdc-farow"><button type="button" class="dwdc-lnk red" data-trash="' + c.id + '">Delete client</button><span><button type="button" class="dwdc-btn2" data-edit>Cancel</button><button class="dwdc-btn">Save</button></span></div></form>';
 	}
 	function jobsCard(c) {
-		var all = (num(c.price) || c.job ? [{ title: c.job || 'Current job', price: c.price, date: c.list === 'active' || c.list === 'limbo' ? 'In progress' : (c.completed ? fmt(c.completed, true) : ''), cur: true }] : [])
+		var all = (num(c.price) || c.job ? [{ title: c.job || 'Current job', price: c.price, date: c.list === 'active' || c.list === 'hold' || c.list === 'limbo' ? 'In progress' : (c.completed ? fmt(c.completed, true) : ''), cur: true }] : [])
 			.concat((c.jobs || []).map(function (j, i) { return { title: j.title, price: j.price, date: j.date, i: i }; }).reverse());
 		return '<section class="dwdc-card pad"><div class="dwdc-cardh"><h2>Jobs &amp; spend</h2><span class="dwdc-total">' + money(lifetime(c)) + ' total</span></div>'
 			+ (num(c.billed) ? '<div class="dwdc-upw"><span>Billed on Upwork (lifetime)</span><b>' + money(c.billed) + '</b></div>' : '')
@@ -542,7 +554,7 @@
 		if (t.closest('[data-paid]')) { save(r.id, { balance: '0' }, 'Marked paid'); return; }
 		if ((el = t.closest('[data-set]'))) {
 			var to = el.getAttribute('data-set');
-			save(r.id, { list: to }, { limbo: 'Moved to limbo', active: 'Back in active jobs', archive: 'Archived', leads: 'Restored to leads' }[to]);
+			save(r.id, { list: to }, { limbo: 'Moved to limbo', hold: 'Put on hold', active: 'Back in active jobs', archive: 'Archived', leads: 'Restored to leads' }[to]);
 			return;
 		}
 		if (t.closest('[data-complete]')) {
@@ -580,6 +592,12 @@
 
 	app.addEventListener('change', function (e) {
 		var t = e.target;
+		if (t.hasAttribute('data-status-of')) {
+			var sid = +t.getAttribute('data-status-of'), to = t.value, sd = { list: to };
+			if (to === 'complete') { sd.completed = DWDC.today; }
+			api('/contact/' + sid, 'POST', sd).then(function (x) { upsert(x); render(); toast('Moved to ' + (LABEL[to] || to)); }).catch(fail);
+			return;
+		}
 		if (t.hasAttribute('data-stage-of')) {
 			var id = +t.getAttribute('data-stage-of'), c = contact(id), v = t.value, data = { stage: v };
 			if (v === 'active') { data.list = 'active'; } else if (c.list === 'archive') { data.list = 'leads'; }
