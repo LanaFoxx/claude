@@ -699,6 +699,7 @@
 			+ sourceCard(c)
 			+ (num(c.hosting) ? hostCard(c) : '')
 			+ (S.edit ? editCard(c) : detailsCard(c))
+			+ peopleCard(c)
 			+ jobsCard(c)
 			+ '</div><div class="dwdc-col">'
 			+ '<section class="dwdc-card pad"><div class="dwdc-cardh"><h2>To-dos</h2><span class="dwdc-cnt">' + openN + '</span></div>'
@@ -756,11 +757,44 @@
 				? '<p class="dwdc-mutp">' + esc(list[0].form || 'Form') + ' · ' + fmt(list[0].date, true) + (list.length > 1 ? ' (+' + (list.length - 1) + ' more)' : '') + '</p><div class="dwdc-obbtns"><button class="dwdc-btn dwdc-copyob" data-copyob>' + ic('todo', 15) + 'Copy answers</button><button class="dwdc-btn2 dwdc-viewob" data-viewob>' + ic('list', 15) + 'View answers</button></div>'
 				: '<p class="dwdc-mutp">No onboarding form from this client yet.</p>') + '</section>';
 	}
+	function peopleOf(c) {
+		var list = (c.contacts || []).slice(), key = function (x) { return String(x.email || x.name || '').toLowerCase(); };
+		var mk = String(c.email || c.person || '').toLowerCase();
+		if ((c.person || c.email) && !list.some(function (x) { return key(x) === mk || (c.person && x.name === c.person && (!x.email || !c.email)); })) {
+			list.unshift({ name: c.person || '', email: c.email || '', phone: c.phone || '', role: '' });
+		}
+		list.forEach(function (x) { x.main = !!mk && (key(x) === mk || (!c.email && x.name === c.person)); });
+		list.sort(function (a, b) { return b.main - a.main; });
+		return list;
+	}
+	function peopleCard(c) {
+		var ppl = peopleOf(c);
+		var rows = ppl.map(function (x, i) {
+			var bits = [x.email ? '<a href="mailto:' + esc(x.email) + '">' + esc(x.email) + '</a>' : '', x.phone ? '<a href="tel:' + esc(x.phone.replace(/[^\d+]/g, '')) + '">' + esc(x.phone) + '</a>' : ''].filter(Boolean).join('<i>·</i>');
+			return '<li class="dwdc-ppl' + (x.main ? ' main' : '') + '"><div><b>' + esc(x.name || x.email) + '</b>' + (x.role ? '<em>' + esc(x.role) + '</em>' : '') + (bits ? '<span>' + bits + '</span>' : '') + '</div>'
+				+ (x.main ? '<strong class="dwdc-mainpill">Main contact</strong>' : '<div class="dwdc-pplact"><button class="dwdc-btn2 sm" data-pplmain="' + i + '">Make main</button><button class="dwdc-lnk sm2" data-pplrm="' + i + '" title="Remove">Remove</button></div>') + '</li>';
+		}).join('');
+		var form = S.addPpl === c.id ? '<form class="dwdc-pplf"><input name="name" placeholder="Name"><input name="email" type="email" placeholder="Email"><input name="phone" placeholder="Phone"><input name="role" placeholder="Role (e.g. office manager)"><div class="dwdc-pplfa"><button type="button" class="dwdc-btn2" data-ppladd="0">Cancel</button><button class="dwdc-btn">Add contact</button></div></form>' : '';
+		return '<section class="dwdc-card pad dwdc-pplcard"><div class="dwdc-cardh"><h2>Contacts' + (ppl.length > 1 ? ' <span class="dwdc-cnt">' + ppl.length + '</span>' : '') + '</h2><button class="dwdc-lnk" data-ppladd="1">+ Add</button></div>'
+			+ (ppl.length ? '<ul class="dwdc-ppll">' + rows + '</ul>' : '<p class="dwdc-mutp">No contacts yet.</p>')
+			+ (ppl.length > 1 ? '<p class="dwdc-mutp sm">Everyone on this project’s emails. Pick who’s the main contact.</p>' : '') + form + '</section>';
+	}
+	function savePeople(c, ppl, main) {
+		var data = { contacts: ppl.map(function (x) { return { name: x.name, email: x.email, phone: x.phone, role: x.role }; }) };
+		if (main) { data.person = main.name; data.email = main.email; data.phone = main.phone || ''; }
+		return save(c.id, data, main ? (main.name || main.email) + ' is now the main contact' : 'Contacts saved').then(function (x) {
+			var k = clientOf(c);
+			if (main && k && S.contacts.filter(function (p) { return p.client === k.id; }).length === 1 && main.name) {
+				return api('/client/' + k.id, 'POST', { name: main.name, email: main.email, phone: main.phone || k.phone }).then(reload).then(render);
+			}
+			return x;
+		});
+	}
 	function detailsCard(c) {
 		var row = function (k, v) { return '<dt>' + k + '</dt><dd>' + (v || '<span class="mut">—</span>') + '</dd>'; };
 		var k = clientOf(c) || {}, em = c.email || k.email, ph = c.phone || k.phone;
 		return '<section class="dwdc-card pad"><div class="dwdc-cardh"><h2>Details</h2><button class="dwdc-lnk" data-edit>Edit</button></div><dl class="dwdc-dl">'
-			+ row('Contact', esc(k.name || c.person)) + row('Email', em ? '<a href="mailto:' + esc(em) + '">' + esc(em) + '</a>' : '') + row('Phone', esc(ph))
+			+ row('Main contact', esc(c.person || k.name)) + row('Email', em ? '<a href="mailto:' + esc(em) + '">' + esc(em) + '</a>' : '') + row('Phone', esc(ph))
 			+ row('Company', esc(c.company)) + row('Website', site(c) ? '<a href="https://' + esc(site(c)) + '" target="_blank" rel="noopener">' + esc(site(c)) + '</a>' : '')
 			+ row('Project', esc(c.job)) + row('Markup', c.markup ? '<a href="' + esc(url(c.markup)) + '" target="_blank" rel="noopener">Open Markup link</a>' : '<button class="dwdc-lnk" data-markup="' + c.id + '">Add link</button>') + row('Source', esc(sourceOf(c))) + row('Started', imported(c) ? '' : fmt(c.created, true)) + '</dl></section>';
 	}
@@ -1039,6 +1073,9 @@
 		if ((el = t.closest('[data-pfilter]'))) { S.projFilter = el.getAttribute('data-pfilter'); render(); return; }
 		if ((el = t.closest('[data-filter]'))) { S.leadFilter = el.getAttribute('data-filter'); render(); return; }
 		if ((el = t.closest('[data-more]'))) { S.more[el.getAttribute('data-more')] = true; render(); return; }
+		if ((el = t.closest('[data-ppladd]'))) { S.addPpl = el.getAttribute('data-ppladd') === '1' ? route().id : 0; render(); setTimeout(function () { var x = app.querySelector('.dwdc-pplf [name=name]'); if (x) { x.focus(); } }, 0); return; }
+		if ((el = t.closest('[data-pplmain]'))) { var pc = S.full[route().id] || contact(route().id), pl = peopleOf(pc); savePeople(pc, pl, pl[+el.getAttribute('data-pplmain')]); return; }
+		if ((el = t.closest('[data-pplrm]'))) { var rc = S.full[route().id] || contact(route().id), rl = peopleOf(rc), gone = rl[+el.getAttribute('data-pplrm')]; if (confirm('Remove ' + (gone.name || gone.email) + ' from this project?')) { rl.splice(+el.getAttribute('data-pplrm'), 1); savePeople(rc, rl); } return; }
 		if (t.closest('[data-edit]')) { S.edit = !S.edit; render(); return; }
 		var r = route();
 		if (t.closest('[data-paid]')) { save(r.id, { balance: '0' }, 'Marked paid'); return; }
@@ -1125,6 +1162,11 @@
 		var f = e.target, data = {}; e.preventDefault();
 		new FormData(f).forEach(function (val, k) { data[k] = val; });
 		var r = route();
+		if (f.classList.contains('dwdc-pplf')) {
+			if (!String(data.name || '').trim() && !String(data.email || '').trim()) { toast('Add a name or email', true); return; }
+			var ac = S.full[r.id] || contact(r.id), al = peopleOf(ac); al.push(data); S.addPpl = 0;
+			savePeople(ac, al, al.length === 1 ? data : null); return;
+		}
 		if (f.classList.contains('dwdc-jobform')) {
 			var m = S.modal;
 			if (!m.client && !m.newc) { toast('Pick the client first, or add a new one', true); return; }

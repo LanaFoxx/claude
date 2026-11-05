@@ -87,6 +87,8 @@ function dwdc_contact( $post, $full = false ) {
 	}
 	$jobs        = get_post_meta( $p->ID, '_dwdc_jobs', true );
 	$c['jobs']   = is_array( $jobs ) ? $jobs : array();
+	$ppl         = get_post_meta( $p->ID, '_dwdc_contacts', true );
+	$c['contacts'] = is_array( $ppl ) ? array_values( $ppl ) : array();
 	if ( $full ) {
 		$notes      = get_post_meta( $p->ID, '_dwdc_notes', true );
 		$c['notes'] = is_array( $notes ) ? array_reverse( $notes ) : array();
@@ -164,6 +166,24 @@ function dwdc_save_contact( $id, $data ) {
 			}
 		}
 		update_post_meta( $id, '_dwdc_jobs', $jobs );
+	}
+	if ( isset( $data['contacts'] ) && is_array( $data['contacts'] ) ) {
+		$ppl  = array();
+		$seen = array();
+		foreach ( $data['contacts'] as $x ) {
+			$n = sanitize_text_field( $x['name'] ?? '' );
+			$e = sanitize_email( $x['email'] ?? '' );
+			if ( '' === $n && '' === $e ) {
+				continue;
+			}
+			$key = strtolower( $e ? $e : $n );
+			if ( isset( $seen[ $key ] ) ) {
+				continue;
+			}
+			$seen[ $key ] = 1;
+			$ppl[]        = array( 'name' => $n, 'email' => $e, 'phone' => sanitize_text_field( $x['phone'] ?? '' ), 'role' => sanitize_text_field( $x['role'] ?? '' ) );
+		}
+		update_post_meta( $id, '_dwdc_contacts', $ppl );
 	}
 	if ( isset( $data['client'] ) && DWDC_CLIENT === get_post_type( (int) $data['client'] ) ) {
 		update_post_meta( $id, '_dwdc_client', (int) $data['client'] );
@@ -764,7 +784,7 @@ add_action( 'rest_api_init', function () {
 			if ( '' === (string) get_post_meta( $into, '_dwdc_person', true ) && get_the_title( $from ) !== get_the_title( $into ) ) {
 				update_post_meta( $into, '_dwdc_person', get_the_title( $from ) );
 			}
-			foreach ( array( '_dwdc_jobs', '_dwdc_notes', '_dwdc_entries', '_dwdc_payments' ) as $k ) {
+			foreach ( array( '_dwdc_jobs', '_dwdc_notes', '_dwdc_entries', '_dwdc_payments', '_dwdc_contacts' ) as $k ) {
 				$a = get_post_meta( $into, $k, true );
 				$b = get_post_meta( $from, $k, true );
 				if ( is_array( $b ) && $b ) {

@@ -474,3 +474,20 @@ select.dwdc-stage.t-green { background-color: #E6F6EE !important; color: #17824F
 .dwdc-mklink, .dwdc-mklink .dwdc-ic, .dwdc-mklink:hover { color: #fff !important; }
 select.dwdc-sel.pm-stripe { color: #fff !important; }
 .dwdc-subbox.ok > span, .dwdc-qact.blue *, .dwdc-cnt, .dwdc-owepill, .dwdc-me-av { color: #fff !important; }
+/* project Contacts card: everyone on the emails, pick the main contact */
+.dwdc-ppll { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.dwdc-ppl { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; border: 1px solid var(--line, #E3E8EF); border-radius: 10px; background: #fff; }
+.dwdc-ppl.main { border-color: var(--blue); box-shadow: inset 3px 0 0 var(--blue); }
+.dwdc-ppl > div:first-child { min-width: 0; display: flex; flex-direction: column; gap: 2px; font-size: 14px; }
+.dwdc-ppl b { color: var(--navy); font-weight: 700; }
+.dwdc-ppl em { font-style: normal; font-size: 12px; color: var(--sec, #5B6B80); }
+.dwdc-ppl span { font-size: 13px; color: var(--sec, #5B6B80); overflow-wrap: anywhere; }
+.dwdc-ppl span i { margin: 0 6px; font-style: normal; opacity: .5; }
+.dwdc-mainpill { flex: none; font-size: 10.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; background: var(--blue); color: #fff !important; padding: 4px 10px; border-radius: 999px; }
+.dwdc-pplact { flex: none; display: flex; align-items: center; gap: 10px; }
+.dwdc-pplact .dwdc-btn2.sm { height: 32px; padding: 0 12px; font-size: 12.5px; }
+.dwdc-pplf { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+.dwdc-pplf input { height: 40px; border: 1px solid #C9D3E0; border-radius: 8px; padding: 0 12px; font: inherit; font-size: 14px; }
+.dwdc-pplfa { grid-column: 1 / -1; display: flex; justify-content: flex-end; gap: 8px; }
+.dwdc-mutp.sm { font-size: 12.5px; margin-top: 10px; }
+@media (max-width: 600px) { .dwdc-ppl { flex-direction: column; align-items: flex-start; } .dwdc-pplf { grid-template-columns: 1fr; } }
