@@ -163,6 +163,34 @@ const DECK_DRINKS = [
   ]],
 ];
 
+// The Creamery: placeholder menu (switched off at first; edit and turn on in the dashboard).
+const CREAMERY = [
+  ['Bar Bites', 'Placeholder menu: update items and prices before turning it on.', [
+    ['Frozen Pizza', '', 'Cheese, pepperoni or supreme, baked to order'],
+    ['Milwaukee Soft Pretzel', '', 'Warm and salty, with beer cheese for dipping'],
+    ['Chips & Salsa', '', 'Tortilla chips with house salsa'],
+  ]],
+  ['On Tap', 'Rotating local and regional drafts. Ask your bartender what’s pouring.', [
+    ['Local Draft', '', 'Changes with the season'],
+    ['Domestic Draft', '', ''],
+  ]],
+  ['Cans & Bottles', '', [
+    ['Domestic Beer', '', ''],
+    ['Craft & Import Beer', '', ''],
+    ['Hard Seltzer', '', ''],
+    ['Hard Cider', '', 'Bayfield, WI'],
+  ]],
+  ['Cocktails & Spirits', '', [
+    ['Bloody Mary', '', 'With a beer chaser'],
+    ['Old Fashioned', '', 'Brandy or whiskey, sweet or sour'],
+    ['Rail Drinks', '', ''],
+  ]],
+  ['Non-Alcoholic', '', [
+    ['Soda', '', 'Coke products'],
+    ['N/A Beer', '', ''],
+  ]],
+];
+
 const SERVICE_NOTE = 'A 5% service charge is added to your final bill. This is not a gratuity: 100% goes to our back-of-house staff.';
 const RAW_NOTE = 'Consuming raw or undercooked meat or eggs may increase the likelihood of foodborne illness.';
 
@@ -171,5 +199,6 @@ module.exports = {
     footer: 'We incorporate fresh, local ingredients as much as possible: fish, cheese, sauces, fruits and vegetables grown and produced on the Bayfield Peninsula.' },
   'the-lounge': { menus: [{ title: 'Lounge menu', sections: LOUNGE, pdf: 'bayfield-menu-the-lounge.pdf' }], notes: [RAW_NOTE],
     footer: 'Come and join us: Chicken Wednesdays and Tex-Mex Thursdays.' },
+  'the-creamery': { name: 'The Creamery', enabled: false, menus: [{ title: 'Bar menu', sections: CREAMERY }], notes: [RAW_NOTE] },
   'the-deck': { menus: [{ title: 'Food', sections: DECK_FOOD, pdf: 'bayfield-menu-the-deck.pdf' }, { title: 'Drinks', sections: DECK_DRINKS, pdf: 'bayfield-menu-the-deck-drinks.pdf' }], notes: [SERVICE_NOTE, RAW_NOTE] },
 };

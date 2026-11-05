@@ -19,7 +19,7 @@ const MEDIA = process.env.MEDIA;
 const PREP = path.join(path.dirname(process.env.STATE), 'bayfield-prep.json');
 const args = process.argv.slice(2);
 const want = (k) => args.length === 0 || args.includes(k);
-const FONTS = '<link rel="preconnect" href="https://fonts.googleapis.com">\n<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">';
+const FONTS = '<!-- Geist + Newsreader are self-hosted by the Bayfield Inn Manager plugin (performance.php). -->';
 // Header menu: [label, link, css class, sub-items]. Employment lives in the footer.
 const MENU = [
   ['Stay', '/gallery/#rooms', '', [['Suites', '/gallery/#suites'], ['Lake View Rooms', '/gallery/#lake-view'], ['City View Rooms', '/gallery/#city-view'],

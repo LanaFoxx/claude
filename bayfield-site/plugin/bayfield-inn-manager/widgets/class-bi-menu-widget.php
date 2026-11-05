@@ -27,6 +27,12 @@ class BI_Menu_Widget extends \Elementor\Widget_Base {
 			'type'    => \Elementor\Controls_Manager::SWITCHER,
 			'default' => 'yes',
 		) );
+		$this->add_control( 'off_title', array(
+			'label'       => 'When the menu is switched off, show this heading',
+			'type'        => \Elementor\Controls_Manager::TEXT,
+			'description' => 'Leave empty to hide the whole menu section while it is off.',
+		) );
+		$this->add_control( 'off_text', array( 'label' => '…and this text', 'type' => \Elementor\Controls_Manager::TEXTAREA ) );
 		$this->add_control( 'how_to', array(
 			'type' => \Elementor\Controls_Manager::RAW_HTML,
 			'raw'  => 'Dishes and prices are edited in <a href="' . esc_url( admin_url( 'admin.php?page=bi-menus' ) ) . '" target="_blank">Bayfield Inn › Restaurant Menus</a>.',
@@ -48,7 +54,18 @@ class BI_Menu_Widget extends \Elementor\Widget_Base {
 		}
 		$menus = $r['menus'] ?? array();
 		$many  = count( $menus ) > 1;
+		if ( isset( $r['enabled'] ) && ! $r['enabled'] ) {
+			// Switched off under Bayfield Inn › Restaurant Menus.
+			if ( ! empty( $s['off_title'] ) ) {
+				printf( '<div class="bi-menu bi-menu--off"><span class="bi-menu-hidden" hidden></span><p class="bi-menu__eyebrow">At the bar</p><h2 class="bi-menu__heading">%s</h2>%s</div>',
+					esc_html( $s['off_title'] ), ! empty( $s['off_text'] ) ? '<p class="bi-menu__lead">' . esc_html( $s['off_text'] ) . '</p>' : '' );
+			} else {
+				echo '<div class="bi-menu-off bi-menu-hidden" hidden></div>';
+			}
+			return;
+		}
 		echo '<div class="bi-menu">';
+		printf( '<p class="bi-menu__eyebrow">%s</p><h2 class="bi-menu__heading">%s %s</h2>', $many ? 'Menus' : 'Menu', esc_html( $r['name'] ), $many ? 'menus' : 'menu' );
 		if ( 'yes' === $s['show_pdf'] ) {
 			$pdfs = array_filter( $menus, function ( $m ) { return ! empty( $m['pdf'] ); } );
 			if ( $pdfs ) {

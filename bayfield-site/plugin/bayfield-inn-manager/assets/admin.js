@@ -63,7 +63,7 @@
     data.restaurants = data.restaurants || [];
     var tabs = h('div', { class: 'bi-tabs' });
     data.restaurants.forEach(function (r, i) {
-      tabs.appendChild(h('button', { type: 'button', class: 'bi-tab' + (i === current ? ' is-active' : ''), text: r.name, onclick: function () {
+      tabs.appendChild(h('button', { type: 'button', class: 'bi-tab' + (i === current ? ' is-active' : '') + (r.enabled === false ? ' is-off' : ''), text: r.name + (r.enabled === false ? ' (off)' : ''), onclick: function () {
         stash(); current = i; render();
       } }));
     });
@@ -75,6 +75,10 @@
   }
   function restaurantUI(r) {
     var wrap = h('div', { class: 'bi-restaurant', 'data-slug': r.slug, 'data-name': r.name });
+    var on = h('input', { type: 'checkbox', 'data-k': 'enabled' }); on.checked = r.enabled !== false;
+    on.addEventListener('change', function () { dirty = true; });
+    wrap.appendChild(h('label', { class: 'bi-check bi-check--big' }, [on, ' Show this menu on the website']));
+    wrap.appendChild(h('p', { class: 'description bi-check-help', text: 'Turn off to hide the menu (and its "View menu" button) without deleting it. Turn it back on any time.' }));
     var menus = h('div', { class: 'bi-list', 'data-axis': 'y' });
     (r.menus || []).forEach(function (m) { menus.appendChild(menuUI(m)); });
     sortable(menus);
@@ -131,7 +135,8 @@
   }
   function stash() { if (body && data.restaurants[current]) data.restaurants[current] = readRestaurant(body.querySelector('.bi-restaurant')); }
   function readRestaurant(el) {
-    var out = { slug: el.dataset.slug, name: el.dataset.name, menus: [] };
+    var en = el.querySelector(':scope > .bi-check [data-k="enabled"]');
+    var out = { slug: el.dataset.slug, name: el.dataset.name, enabled: en ? en.checked : true, menus: [] };
     el.querySelectorAll(':scope > .bi-list > .bi-menu').forEach(function (mc) {
       var head = mc.querySelector(':scope > .bi-row');
       var m = { title: head.querySelector('[data-k="title"]').value.trim(), pdf: head.querySelector('[data-k="pdf"]').value.trim(), sections: [] };

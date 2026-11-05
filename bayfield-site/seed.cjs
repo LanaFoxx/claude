@@ -3,7 +3,7 @@
 const MENUS = require('./menus.cjs');
 const { EXT, PAGE } = require('./build.cjs');
 
-const NAMES = { 'the-deck': 'The Deck', 'lakeside-dining-room': 'Lakeside Dining Room', 'the-lounge': 'The Lounge' };
+const NAMES = { 'the-deck': 'The Deck', 'lakeside-dining-room': 'Lakeside Dining Room', 'the-lounge': 'The Lounge', 'the-creamery': 'The Creamery' };
 
 // Sections priced "10 each" get that price on every item that doesn't have its own.
 function items(note, list) {
@@ -14,7 +14,7 @@ function items(note, list) {
 function menus(md) {
   return {
     restaurants: Object.entries(MENUS).map(([slug, r]) => ({
-      slug, name: NAMES[slug],
+      slug, name: NAMES[slug], enabled: r.enabled !== false,
       menus: r.menus.map((mn) => ({
         title: mn.title, pdf: mn.pdf ? md(mn.pdf).url : '',
         sections: mn.sections.map(([title, note, list]) => ({ title, note: /^\d+ each$/.test(note) ? '' : note, items: items(note, list) })),

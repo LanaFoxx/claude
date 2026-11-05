@@ -30,7 +30,7 @@ function pageHero(eb, title, intro, img, o = {}) {
     copy,
     container({
       content_width: 'full', padding: box(0), min_height: px(520), min_height_tablet: px(420), min_height_mobile: px(280),
-      background_background: 'classic', background_color: C.line, background_image: img, background_size: 'cover', background_position: o.pos || 'center center',
+      background_background: 'classic', background_color: '#0F2113', background_image: img, background_size: 'cover', background_position: o.pos || 'center center',
     }),
   ]);
 }
@@ -268,22 +268,11 @@ function employment(m) {
 // Menus (dishes, prices, PDFs) are managed under Bayfield Inn › Restaurant Menus.
 const MENUS = require('./menus.cjs');
 function menuSection(m, r) {
-  const data = MENUS[r.slug];
-  if (!data && r.barBites) {
-    return section({ _element_id: 'menus', background_background: 'classic', background_color: C.cream, ...pad, ...boxed, flex_direction: 'column', flex_align_items: 'center', flex_gap: gap(20) }, [
-      eyebrow('At the bar', C.green, { align: 'center' }),
-      heading(r.barBites.title, 'h2', [44, 38, 30], C.green, { align: 'center', ls: -0.9, maxW: 760 }),
-      text(r.barBites.body, { align: 'center', size: 16.5, maxW: 600 }),
-    ]);
-  }
-  if (!data) return null;
-  const many = data.menus.length > 1;
+  // Heading + menu come from the plugin widget, so switching a menu off in
+  // Bayfield Inn › Restaurant Menus hides the whole section (or shows off_title/off_text).
   return section({ _element_id: 'menus', background_background: 'classic', background_color: C.cream, ...pad, ...boxed, flex_direction: 'column', flex_gap: gap(24) }, [
-    stack([
-      eyebrow(many ? 'Menus' : 'Menu', C.green, { align: 'center' }),
-      heading(`${r.name} ${many ? 'menus' : 'menu'}`, 'h2', [48, 40, 32], C.green, { align: 'center', ls: -1 }),
-    ], { gap: 16, align: 'center' }),
-    widget('bi-restaurant-menu', { restaurant: r.slug, show_pdf: 'yes' }),
+    widget('bi-restaurant-menu', { restaurant: r.slug, show_pdf: 'yes',
+      ...(r.barBites ? { off_title: r.barBites.title, off_text: r.barBites.body } : {}) }),
   ]);
 }
 
@@ -299,7 +288,7 @@ const eventsBar = (r) => section({ _element_id: 'events', ...radial('bottom left
 function restaurant(m, r) {
   return [
     pageHero(r.eb, r.title, r.intro, m.file(r.hero), { pos: r.pos, buttons: r.barBites
-      ? [light('What’s on', '#events'), outline('Call (715) 779-3363', PHONE)]
+      ? [light('What’s on', '#events'), outline('View menu', '#menus'), outline('Call (715) 779-3363', PHONE)]
       : [light(MENUS[r.slug]?.menus.length > 1 ? 'View menus' : 'View menu', '#menus'), outline('Call (715) 779-3363', PHONE)] }),
     ...(r.barBites ? [eventsBar(r)] : []),
     story('About', r.aboutTitle, r.about, r.aboutImg ? m.file(r.aboutImg) : null, { bg: C.white, alt: r.title }),

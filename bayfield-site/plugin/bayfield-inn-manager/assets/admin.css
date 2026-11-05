@@ -53,3 +53,7 @@
 .bi-product-card { border-left: 4px solid #17301B; }
 .bi-price-wrap { flex: 0 1 140px; }
 .bi-product-card > .bi-field { margin-bottom: 12px; }
+
+.bi-check--big { font-size: 15px; padding: 12px 14px; background: #f0f6f2; border: 1px solid #c8d6c2; border-radius: 6px; display: inline-block; margin-bottom: 4px; }
+.bi-check-help { margin: 0 0 16px; }
+.bi-tab.is-off { color: #8c8f94; }
