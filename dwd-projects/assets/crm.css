@@ -1357,3 +1357,8 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 .dwdc .dwdc-quote-x:hover { background: rgba(255,255,255,.18); color: #fff; }
 .dwdc .dwdc-quote-x svg { color: inherit; }
 @media (max-width: 768px) { .dwdc-quote { padding-left: 16px !important; padding-right: 44px !important; } .dwdc .dwdc-quote-x { top: 10px; transform: none; right: 8px; } }
+.dwdc-kpis.k4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.dwdc-kpi.coralfill { background: #FF6F4F; border-color: #FF6F4F; }
+.dwdc-kpi.coralfill small, .dwdc-kpi.coralfill strong, .dwdc-kpi.coralfill span, .dwdc-kpi.coralfill strong i { color: #fff !important; }
+@media (max-width: 1100px) { .dwdc-kpis.k4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.dwdc-kpis.k4 .dwdc-kpi span { white-space: normal !important; overflow: visible !important; text-overflow: clip !important; line-height: 1.45; }

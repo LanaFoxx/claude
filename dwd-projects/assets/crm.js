@@ -803,13 +803,17 @@
 		var rowsC = topClients.map(function (x, i) { return '<a class="dwdc-mrow" href="' + (x.id ? '#cl/' + x.id : '#client/' + x.list[0].id) + '"><em>' + (i + 1) + '</em><span><b>' + esc(cname(x)) + '</b><small>' + x.list.length + ' project' + (x.list.length === 1 ? '' : 's') + '</small></span><strong>' + money(x.total) + '</strong></a>'; }).join('');
 		var rowsR = repeat.slice(0, 12).map(function (x) { return '<a class="dwdc-mrow" href="' + (x.id ? '#cl/' + x.id : '#client/' + x.list[0].id) + '"><span><b>' + esc(cname(x)) + '</b><small>' + x.list.map(function (c) { return esc(c.name); }).join(' · ') + '</small></span><strong>' + money(x.total) + '</strong></a>'; }).join('');
 		var mcard = function (title, inner, extra) { return '<section class="dwdc-card pad dwdc-mcard' + (extra ? ' ' + extra : '') + '"><div class="dwdc-cardh"><h2>' + title + '</h2></div>' + inner + '</section>'; };
-		return '<div class="dwdc-kpis">'
+		return '<div class="dwdc-kpis k4">'
+			+ (function () {
+				// Monthly income: average of the last 12 full months, plus last month's total.
+				var t = DWDC.today, y = +t.slice(0, 4), mo = +t.slice(5, 7), vals = [], MNf = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+				for (var i = 1; i <= 12; i++) { var d = new Date(y, mo - 1 - i, 1), yy = String(d.getFullYear()); vals.push(MY[yy] && MY[yy].m ? Math.max(0, +MY[yy].m[d.getMonth()] || 0) : 0); }
+				var lm = new Date(y, mo - 2, 1), avg12 = vals.reduce(function (a, v) { return a + v; }, 0) / 12;
+				return kpi('Monthly income', money(avg12) + '<i>/mo</i>', '12-month average · ' + MNf[lm.getMonth()] + ': ' + money(vals[0]), 'coralfill');
+			})()
 			+ kpi('All-time income', money(total), 'Every payment since you started · ' + paid.length + ' projects', 'navy')
 			+ kpi('Average project', money(avg), 'Middle project ' + money(mid))
 			+ kpi('Top project', top ? money(lifetime(top)) : '—', top ? esc(top.name) : '')
-			+ kpi('Owed right now', money(owe), open.filter(function (c) { return num(c.balance) > 0; }).length + ' open invoices', owe ? 'coral' : '')
-			+ kpi('Hosting', money(hostYr) + '<i>/yr</i>', hosting().length + ' hosted sites')
-			+ kpi('Repeat clients', repeat.length, money(repeatRev) + ' · ' + (cl.length ? Math.round(repeat.length / cl.length * 100) : 0) + '% of clients')
 			+ '</div>'
 			+ '<div class="dwdc-mgrid">'
 			+ mcard('Patterns &amp; Trends <button class="dwdc-askbtn" data-askai>' + ic('bolt', 14) + 'Ask AI</button>', trendsBox(), 'trends')
