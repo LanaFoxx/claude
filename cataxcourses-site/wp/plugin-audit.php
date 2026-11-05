@@ -73,7 +73,46 @@ add_action( 'admin_init', function () {
 	$out['pofw_orderitem_meta'] = $cnt( "SELECT COUNT(*) FROM {$wpdb->prefix}woocommerce_order_itemmeta WHERE meta_key LIKE '%pofw%' OR meta_key LIKE '%option%'" );
 	$out['pofw_tables_all'] = $wpdb->get_col( "SHOW TABLES LIKE '%pofw%'" );
 	$out['gap_full'] = get_option( 'gap_options' );
+	$cfg = ABSPATH . 'wp-config.php'; if ( ! file_exists( $cfg ) ) $cfg = dirname( ABSPATH ) . '/wp-config.php';
+	$out['perf'] = array( 'SCRIPT_DEBUG' => defined( 'SCRIPT_DEBUG' ) ? SCRIPT_DEBUG : 'undef', 'WP_DEBUG' => WP_DEBUG, 'WP_CACHE' => defined( 'WP_CACHE' ) ? WP_CACHE : 'undef', 'CONCATENATE_SCRIPTS' => defined( 'CONCATENATE_SCRIPTS' ) ? CONCATENATE_SCRIPTS : 'undef',
+		'php' => PHP_VERSION, 'server' => $_SERVER['SERVER_SOFTWARE'] ?? '', 'opcache' => function_exists( 'opcache_get_status' ) && ( $st = @opcache_get_status( false ) ) ? ! empty( $st['opcache_enabled'] ) : false,
+		'object_cache' => wp_using_ext_object_cache(), 'config_writable' => is_writable( $cfg ), 'htaccess_writable' => is_writable( ABSPATH . '.htaccess' ), 'content_writable' => is_writable( WP_CONTENT_DIR ),
+		'config_debug_lines' => preg_grep( '/SCRIPT_DEBUG|WP_DEBUG|WP_CACHE|WP_MEMORY/', file( $cfg ) ?: array() ), 'memory' => WP_MEMORY_LIMIT, 'autoload_kb' => round( $wpdb->get_var( "SELECT SUM(LENGTH(option_value)) FROM {$wpdb->options} WHERE autoload IN ('yes','on','auto-on','auto')" ) / 1024 ),
+		'mods' => function_exists( 'apache_get_modules' ) ? array_values( array_filter( apache_get_modules(), function ( $m ) { return preg_match( '/rewrite|deflate|expires|headers|http2|brotli|cache/', $m ); } ) ) : 'n/a' );
 	} catch ( Throwable $e ) { $out['ERROR'] = $e->getMessage() . ' line ' . $e->getLine(); }
 	wp_send_json( $out );
 } );
 
+// One-time config fix (site admins): /wp-admin/?ctc_cfg=scriptdebug_off sets SCRIPT_DEBUG to false in wp-config.php
+// (debug mode was serving the large unminified copies of WordPress / Elementor scripts). Backup: wp-config.php.ctc-bak-20261105
+add_action( 'admin_init', function () {
+	if ( 'scriptdebug_off' !== ( $_GET['ctc_cfg'] ?? '' ) || ! current_user_can( 'manage_options' ) ) return;
+	$cfg = ABSPATH . 'wp-config.php'; if ( ! file_exists( $cfg ) ) $cfg = dirname( ABSPATH ) . '/wp-config.php';
+	$src = file_get_contents( $cfg );
+	$new = preg_replace( "/^define\\(\\s*'SCRIPT_DEBUG',\\s*true\\s*\\);/m", "define( 'SCRIPT_DEBUG', false ); // CTC 2026-11-05: debug scripts off (speed)", $src, 1, $n );
+	if ( ! $n ) wp_send_json( array( 'changed' => false, 'note' => 'no active SCRIPT_DEBUG true line' ) );
+	if ( ! file_exists( $cfg . '.ctc-bak-20261105' ) ) copy( $cfg, $cfg . '.ctc-bak-20261105' );
+	$ok = false !== file_put_contents( $cfg, $new );
+	wp_send_json( array( 'changed' => $ok, 'backup' => file_exists( $cfg . '.ctc-bak-20261105' ) ) );
+} );
+// Elementor performance settings (site admins): /wp-admin/?ctc_el=show lists them, =apply turns on the speed settings.
+add_action( 'admin_init', function () {
+	$a = sanitize_key( $_GET['ctc_el'] ?? '' );
+	if ( ! $a || ! current_user_can( 'manage_options' ) ) return;
+	global $wpdb;
+	$want = array(
+		'elementor_css_print_method' => 'external', 'elementor_font_display' => 'swap', 'elementor_local_google_fonts' => '1',
+		'elementor_optimized_image_loading' => '1', 'elementor_optimized_gutenberg_loading' => '1', 'elementor_lazy_load_background_images' => '1',
+		'elementor_load_fa4_shim' => '', 'elementor_element_cache_ttl' => '24',
+		'elementor_experiment-e_font_icon_svg' => 'active', 'elementor_experiment-e_optimized_markup' => 'active', 'elementor_experiment-e_element_cache' => 'active',
+		'elementor_experiment-additional_custom_breakpoints' => 'active',
+	);
+	$out = array();
+	foreach ( $wpdb->get_results( "SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE 'elementor_experiment-%' OR option_name IN ('" . implode( "','", array_map( 'esc_sql', array_keys( $want ) ) ) . "')" ) as $r ) $out['now'][ $r->option_name ] = $r->option_value;
+	if ( 'apply' === $a ) {
+		foreach ( $want as $k => $v ) update_option( $k, $v );
+		if ( class_exists( '\Elementor\Plugin' ) ) \Elementor\Plugin::$instance->files_manager->clear_cache();
+		$out['applied'] = $want;
+	}
+	wp_send_json( $out );
+} );

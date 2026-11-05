@@ -1,12 +1,13 @@
 /**
  * CTC head scripts (Code Snippets, scope: front-end). Moved from Header Footer Code Manager (Nov 2026):
- *  - Google Analytics 4 tag (G-1Z345NXR1E) on every page
+ *  - Google Analytics 4 tag (G-1Z345NXR1E) on every page. The gtag library itself is loaded by the CTC Speed snippet on the
+ *    visitor's first interaction (window.ctcLoadGA); page views queued before that are sent when it loads.
  *  - Schema.org WebPage markup on the homepage (page 65) and the 60 Hour course product (post 76)
  */
 add_action( 'wp_head', function () {
 	if ( is_admin() ) return;
 	echo '<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-1Z345NXR1E"></script>
+<script>window.ctcLoadGA=function(){if(window.ctcGA)return;window.ctcGA=1;var s=document.createElement("script");s.async=true;s.src="https://www.googletagmanager.com/gtag/js?id=G-1Z345NXR1E";document.head.appendChild(s);};</script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
