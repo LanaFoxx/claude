@@ -494,7 +494,7 @@ function dwdp_send_reminder( $lead, $n ) {
 		$body    = 'Just a friendly reminder that your hosting order is still unfinished. If you have any questions before you sign up, I’m happy to help. This is the last reminder I’ll send.';
 	}
 	$url  = esc_url( add_query_arg( 'dwd-order', 'hosting', wc_get_checkout_url() ) );
-	$logo = esc_url( 'https://dreamwebdigital.com/wp-content/uploads/2026/11/dwd-logo-white.png' );
+	$logo = esc_url( 'https://dreamwebdigital.com/wp-content/uploads/2026/11/dreamweb-white-blue-transparent.png' );
 	$html = '<!doctype html><html><body style="margin:0;padding:0;background:#F4F9FE">'
 		. '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F4F9FE"><tr><td align="center" style="padding:32px 16px">'
 		. '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border-radius:14px;overflow:hidden;border:1px solid #E4E9F5">'

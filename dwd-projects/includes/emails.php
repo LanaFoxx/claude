@@ -10,7 +10,7 @@
  */
 defined( 'ABSPATH' ) || exit;
 
-const DWDP_EMAIL_LOGO = 'https://dreamwebdigital.com/wp-content/uploads/2026/11/dwd-logo-white.png';
+const DWDP_EMAIL_LOGO = 'https://dreamwebdigital.com/wp-content/uploads/2026/11/dreamweb-white-blue-transparent.png';
 
 /** Addresses that count as "me": only these get the branded notification layout. */
 function dwdp_email_is_mine( $to ) {

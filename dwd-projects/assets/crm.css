@@ -410,7 +410,7 @@ select.dwdc-stage.t-red { background-color: var(--red-t) !important; color: var(
 .dwdc-grid.head.tint-gray { background: #EEF2F7; color: var(--sec); border-bottom-color: var(--line); }
 
 /* v2.9.10: bolder status colors. Active = logo blue (#00A1F7), On hold = green, Limbo = red, Completed = navy */
-.dwdc { --logo: #00A1F7; }
+.dwdc { --logo: #13A6EE; }
 .dwdc-tile { border: 0 !important; box-shadow: 0 10px 22px -14px rgba(14,34,64,.45); }
 .dwdc-tile.t-blue { background: var(--logo) !important; }
 .dwdc-tile.t-green { background: var(--green) !important; }

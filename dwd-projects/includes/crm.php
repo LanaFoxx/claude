@@ -626,7 +626,7 @@ add_action( 'admin_enqueue_scripts', function ( $hook ) {
 	wp_localize_script( 'dwdc', 'DWDC', array(
 		'api'   => esc_url_raw( rest_url( 'dwd/v1/crm' ) ),
 		'nonce' => wp_create_nonce( 'wp_rest' ),
-		'logo'  => content_url( '/uploads/2026/11/dwd-logo-white.png' ),
+		'logo'  => content_url( '/uploads/2026/11/dreamweb-white-blue-transparent.png' ),
 		'today' => current_time( 'Y-m-d' ),
 		'orders' => admin_url( class_exists( '\\Automattic\\WooCommerce\\Utilities\\OrderUtil' ) && \Automattic\WooCommerce\Utilities\OrderUtil::custom_orders_table_usage_is_enabled() ? 'admin.php?page=wc-orders&s=' : 'edit.php?post_type=shop_order&s=' ),
 		'pay'   => home_url( '/checkout/?dwd-order=hosting' ),
