@@ -222,6 +222,7 @@
 			+ '<span class="dwdc-ph-sp"></span>'
 			+ '<div class="dwdc-ph-menu' + (menuOpen ? ' open' : '') + '"><button class="dwdc-ph-btn outline" type="button" data-newmenu aria-haspopup="menu" aria-expanded="' + menuOpen + '">' + plus + 'New' + '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>'
 			+ '<ul role="menu"><li><button role="menuitem" type="button" data-act="job">' + plus + 'Project</button></li><li><button role="menuitem" type="button" data-act="newclient">' + plus + 'Client</button></li><li><button role="menuitem" type="button" data-goto="hosting">' + ic('server', 14) + 'Hosting</button></li></ul></div>'
+			+ (r.view === 'money' ? '<button class="dwdc-ph-btn coral" type="button" data-refresh' + (S.refreshRes && S.refreshRes.busy ? ' disabled' : '') + '>' + ic('refresh', 14) + (S.refreshRes && S.refreshRes.busy ? 'Updating…' : 'Update Finances') + '</button>' : '')
 			+ '<button class="dwdc-ph-btn primary" type="button" data-act="pay">' + ic('card', 14) + 'Log Payment</button>'
 			+ '</div></header>';
 	}
@@ -290,18 +291,19 @@
 		var all = [];
 		ylist.forEach(function (y) { (MY[y].m || []).forEach(function (v) { all.push(Math.max(0, +v || 0)); }); });
 		var mx = Math.max.apply(null, all.concat([1]));
-		var k = function (v) { return v >= 1000 ? '$' + (v / 1000).toFixed(v >= 10000 ? 0 : 1) + 'k' : (v ? '$' + Math.round(v) : ''); };
-		var head = '<div class="dwdc-hm-row head"><span></span>' + MN.map(function (m) { return '<span>' + m + '</span>'; }).join('') + '<span>Best month</span></div>';
+		var k = function (v) { return v >= 1000 ? '$' + (v / 1000).toFixed(v >= 10000 ? 0 : 1).replace(/\.0$/, '') + 'k' : '$' + Math.round(v); };
+		var head = '<div class="dwdc-bm-row head"><span></span>' + MN.map(function (m) { return '<span>' + m + '</span>'; }).join('') + '<span>Best month</span></div>';
 		var rows = ylist.map(function (y) {
 			var m = (MY[y].m || []).map(function (v) { return Math.max(0, +v || 0); });
-			var top = m.indexOf(Math.max.apply(null, m));
-			return '<div class="dwdc-hm-row"><b>' + y + '</b>' + m.map(function (v, i) {
-				var t = v / mx, bg = v ? 'rgba(19,166,238,' + (0.12 + t * 0.88).toFixed(2) + ')' : '#F4F6F9';
-				return '<span class="dwdc-hm-c' + (i === top && v ? ' top' : '') + '" style="background:' + bg + ';color:' + (t > 0.5 ? '#fff' : '#0B203D') + '" title="' + MN[i] + ' ' + y + ': ' + money(v) + '">' + k(v) + '</span>';
-			}).join('') + '<span class="dwdc-hm-best">' + (m[top] ? MN[top] + ' · ' + money(m[top]) : '—') + '</span></div>';
+			var top = m.indexOf(Math.max.apply(null, m)), tot = m.reduce(function (a, b) { return a + b; }, 0);
+			return '<div class="dwdc-bm-row"><b class="dwdc-bm-y">' + y + '</b>' + m.map(function (v, i) {
+				var h = v ? Math.max(3, Math.round(v / mx * 100)) : 0, best = i === top && v;
+				return '<div class="dwdc-bm-c' + (best ? ' best' : '') + '" title="' + MN[i] + ' ' + y + ': ' + money(v) + '">' + (best ? '<em>' + k(v) + '</em>' : '') + '<i style="height:' + h + '%"></i></div>';
+			}).join('') + '<div class="dwdc-bm-best">' + (m[top] ? '<b>' + MN[top] + '</b><span>' + money(m[top]) + ' · ' + Math.round(m[top] / Math.max(1, tot) * 100) + '% of the year</span>' : '—') + '</div></div>';
 		}).join('');
-		return (rows ? '<div class="dwdc-hm">' + head + rows + '</div>' : emptyRow('No dated payments yet.')) + '<p class="dwdc-mutp sm">Money received each month, after Upwork fees. Darker means more money, on the same scale for every year. Each year’s best month is outlined.</p>';
+		return rows ? '<div class="dwdc-bm">' + head + rows + '</div>' : emptyRow('No dated payments yet.');
 	}
+
 	function connectsCard(MY) {
 		var C = S.costs || {}, years = Object.keys(C).sort().reverse();
 		if (!years.length) { return emptyRow('No Connects spending imported yet.'); }
@@ -363,28 +365,48 @@
 		var st = function (ok, last) { return '<span class="dwdc-conn-st ' + (ok ? 'on' : 'off') + '">' + (ok ? 'Connected' : 'Not set up') + '</span>' + (last ? '<small class="dwdc-conn-last">Last payment synced ' + fmt(String(last).slice(0, 10), true) + '</small>' : ''); };
 		var copy = function (u) { return '<div class="dwdc-conn-url"><code>' + esc(u) + '</code><button class="dwdc-lnk sm2" data-copy="' + esc(u) + '">Copy</button></div>'; };
 		var pick = function () { return '<option value="">Pick the project…</option>' + S.contacts.filter(function (c) { return c.list !== 'archive'; }).sort(function (a, b) { return a.name.localeCompare(b.name); }).map(function (c) { var k = clientOf(c); return '<option value="' + c.id + '">' + esc(c.name + (k && k.name !== c.name ? ' (' + k.name + ')' : '')) + '</option>'; }).join(''); };
-		var up = '<div class="dwdc-conn"><h3><i class="upw"></i>Upwork</h3><p>Upwork has no live connection, so import its report: in Upwork go to <b>Reports → Transaction History</b>, pick a date range, then <b>Download CSV</b> and drop it here. Only new payments are added, after fees, and Connects costs update too.</p>'
-			+ '<label class="dwdc-btn dwdc-upbtn">' + ic('plus', 14) + 'Import Upwork CSV<input type="file" accept=".csv,text/csv" data-upcsv hidden></label>'
-			+ (X.upwork.last ? '<small class="dwdc-conn-last">Last import ' + fmt(String(X.upwork.last).slice(0, 10), true) + '</small>' : '')
-			+ (U ? '<div class="dwdc-conn-res">' + (U.error ? esc(U.error) : '<b>' + U.added + ' new payment' + (U.added === 1 ? '' : 's') + '</b> added (' + money(U.amount) + ' after fees)' + (U.already ? ' · ' + U.already + ' already in Dream Desk' : '') + (U.costs ? ' · ' + U.costs + ' Connects charges' : '')) + '</div>' : '')
-			+ (U && U.unmatched && U.unmatched.length ? '<div class="dwdc-conn-map"><p><b>Which project is each of these?</b> Pick one, then import again. Dream Desk remembers your picks.</p>' + U.unmatched.map(function (x) { return '<label><span>' + esc(x.team || '(no name)') + ' · ' + money(x.amount) + '</span><select data-upmap="' + esc(x.team) + '">' + pick() + '</select></label>'; }).join('') + '<button class="dwdc-btn" data-upagain>Import again</button></div>' : '')
+		var FL = X.upwork.files || [];
+		var up = '<div class="dwdc-conn"><h3><i class="upw"></i>Upwork</h3><p>In Upwork go to <b>Reports → Transaction History</b>, pick a date range, <b>Download CSV</b> and add it here. Overlapping files are fine; nothing is counted twice.</p>'
+			+ '<label class="dwdc-btn dwdc-upbtn">' + ic('plus', 14) + 'Add Upwork CSV<input type="file" accept=".csv,text/csv" data-upcsv hidden></label>'
+			+ (FL.length ? '<ul class="dwdc-files">' + FL.slice().sort(function (a, b) { return a.from < b.from ? 1 : -1; }).map(function (f) {
+				return '<li><span><b>' + esc(f.name) + '</b><small>' + fmt(f.from, true) + ' – ' + fmt(f.to, true) + ' · ' + f.payments + ' payments · ' + f.costs + ' Connects charges · added ' + fmt(f.uploaded, true) + '</small></span><button class="dwdc-lnk sm2 red" data-updel="' + f.id + '" data-upname="' + esc(f.name) + '">Delete</button></li>';
+			}).join('') + '</ul>' : '<p class="dwdc-mutp sm">No Upwork files yet.</p>')
+			+ (U ? '<div class="dwdc-conn-res">' + (U.error ? esc(U.error) : '<b>' + U.payments + ' Upwork payments</b> across ' + U.projects + ' projects, from ' + (U.files ? U.files.length : FL.length) + ' file' + ((U.files ? U.files.length : FL.length) === 1 ? '' : 's') + '.') + '</div>' : '')
+			+ (U && U.unmatched && U.unmatched.length ? '<div class="dwdc-conn-map"><p><b>Which project is each of these?</b> Pick one, then save. Dream Desk remembers your picks.</p>' + U.unmatched.map(function (x) { return '<label><span>' + esc(x.team || '(no name)') + ' · ' + money(x.amount) + '</span><select data-upmap="' + esc(x.team) + '">' + pick() + '</select></label>'; }).join('') + '<button class="dwdc-btn" data-upagain>Save</button></div>' : '')
 			+ '</div>';
 		var stripe = '<div class="dwdc-conn"><h3><i class="str"></i>Stripe' + st(X.stripe.ready, X.stripe.last) + '</h3>'
 			+ '<ol><li>In Stripe, go to <b>Developers → Webhooks → Add endpoint</b>.</li><li>Paste this link as the endpoint URL:' + copy(X.stripe.url) + '</li><li>Choose the events <b>invoice.paid</b> and <b>charge.succeeded</b>, then save.</li><li>Click <b>Reveal</b> under Signing secret and paste it here:</li></ol>'
-			+ '<div class="dwdc-conn-f"><input type="password" placeholder="whsec_…" data-sk="stripe_whsec"><button class="dwdc-btn" data-synsave="stripe">Save</button></div></div>';
+			+ '<div class="dwdc-conn-f col"><input type="password" placeholder="Signing secret: whsec_…" data-sk="stripe_whsec"><input type="password" placeholder="Read-only key for Update Finances: rk_live_…" data-sk="stripe_key"><small class="dwdc-conn-last">For the key: <b>Developers → API keys → Create restricted key</b>, give it <b>Read</b> access to Charges, Customers and Invoices.' + (X.stripe.key ? ' <b>Key saved.</b>' : '') + '</small><button class="dwdc-btn" data-synsave="stripe">Save</button></div></div>';
 		var pp = '<div class="dwdc-conn"><h3><i class="ppl"></i>PayPal' + st(X.paypal.ready, X.paypal.last) + '</h3>'
-			+ '<ol><li>Go to <b>developer.paypal.com → Apps &amp; Credentials</b>, switch to <b>Live</b>, and <b>Create App</b>.</li><li>In the app, under <b>Live Webhooks</b>, add this link:' + copy(X.paypal.url) + 'with the events <b>Invoicing invoice paid</b> and <b>Payment capture completed</b>.</li><li>Paste the app’s Client ID, Secret and the Webhook ID here:</li></ol>'
+			+ '<ol><li>Go to <b>developer.paypal.com → Apps &amp; Credentials</b>, switch to <b>Live</b>, and <b>Create App</b>.</li><li>In the app, under <b>Live Webhooks</b>, add this link:' + copy(X.paypal.url) + 'with the events <b>Invoicing invoice paid</b> and <b>Payment capture completed</b>.</li><li>Under the app’s <b>Features</b>, tick <b>Transaction search</b> (used by Update Finances).</li><li>Paste the app’s Client ID, Secret and the Webhook ID here:</li></ol>'
 			+ '<div class="dwdc-conn-f col"><input placeholder="Client ID" data-sk="paypal_id"><input type="password" placeholder="Secret" data-sk="paypal_secret"><input placeholder="Webhook ID" data-sk="paypal_hook"><button class="dwdc-btn" data-synsave="paypal">Save</button></div></div>';
-		return '<div class="dwdc-conns">' + up + stripe + pp + '</div><p class="dwdc-mutp sm">Payments are matched to clients by email. Anything that doesn’t match becomes a to-do on your dashboard so you can assign it. Keys are saved on your server and never shown again.</p>';
+		var R = S.refreshRes;
+		var bar = '<div class="dwdc-refbar"><div><b>Update Finances</b><span>Re-reads your Upwork files, pulls every paid Stripe and PayPal payment, keeps the payments you logged by hand, then re-checks trends.' + (X.refreshed ? ' Last run ' + fmt(String(X.refreshed).slice(0, 10), true) + '.' : '') + '</span></div><button class="dwdc-btn dwdc-refbtn" data-refresh>' + ic('refresh', 15) + 'Update Finances</button></div>'
+			+ (R ? '<div class="dwdc-conn-res big">' + refreshText(R) + '</div>' : '');
+		return bar + '<div class="dwdc-conns">' + up + stripe + pp + '</div><p class="dwdc-mutp sm">Payments are matched to clients by email. Anything that doesn’t match becomes a to-do on your dashboard so you can assign it. Keys are saved on your server and never shown again.</p>';
+	}
+	function refreshText(R) {
+		if (R.busy) { return 'Updating… this can take up to a minute.'; }
+		if (R.error) { return esc(R.error); }
+		var src = function (x, name) { return !x ? '' : x.error ? esc(x.error) : x.skipped ? name + ': ' + esc(x.skipped) + ' (connect it below)' : name + ': ' + x.added + ' new · ' + x.already + ' already in Dream Desk' + (x.unmatched ? ' · ' + x.unmatched + ' older payments didn’t match a client' : ''); };
+		return '<b>Finances updated.</b><ul><li>Upwork: ' + R.upwork.payments + ' payments across ' + R.upwork.projects + ' projects' + (R.upwork.unmatched.length ? ' · ' + R.upwork.unmatched.length + ' Upwork names need a project (see below)' : '') + '</li><li>' + src(R.stripe, 'Stripe') + '</li><li>' + src(R.paypal, 'PayPal') + '</li><li>Logged by hand (Zelle, checks, other): ' + money(R.manual.total) + ' kept and counted</li></ul>';
+	}
+	function runRefresh() {
+		S.refreshRes = { busy: true }; render(); toast('Updating finances… this can take up to a minute');
+		api('/refresh', 'POST', {}).then(function (r) { S.refreshRes = r; if (r.upwork && r.upwork.unmatched && r.upwork.unmatched.length) { S.upRes = r.upwork; } return Promise.all([reload(), api('/sync').then(function (x) { S.sync = x; })]); })
+			.then(function () { render(); toast('Finances updated'); })
+			.catch(function (e) { S.refreshRes = { error: e.message }; render(); });
 	}
 	function upImport(file, map) {
-		var go = function (text) {
-			S.upCsv = text;
-			api('/upwork-import', 'POST', { csv: text, map: map || {} }).then(function (r) { S.upRes = r; return reload(); }).then(function () { render(); toast('Upwork import done'); })
+		var send = function (name, text) {
+			S.upRes = { error: 'Working…' }; render();
+			api('/upwork-files', 'POST', { name: name || '', csv: text || '', map: map || {} }).then(function (r) { S.upRes = r; return Promise.all([reload(), api('/sync').then(function (x) { S.sync = x; })]); })
+				.then(function () { render(); toast('Upwork updated'); })
 				.catch(function (e) { S.upRes = { error: e.message }; render(); });
 		};
-		if (file) { var fr = new FileReader(); fr.onload = function () { go(String(fr.result)); }; fr.readAsText(file); } else if (S.upCsv) { go(S.upCsv); }
+		if (file) { var fr = new FileReader(); fr.onload = function () { send(file.name, String(fr.result)); }; fr.readAsText(file); } else { send('', ''); }
 	}
+
 	function moneyView() {
 		var projs = S.contacts.filter(function (c) { return ['active', 'hold', 'limbo', 'complete'].indexOf(c.list) > -1; });
 		var sum = function (f) { return projs.reduce(function (s, c) { return s + num(c[f]); }, 0); };
@@ -419,7 +441,7 @@
 		var rowsR = repeat.slice(0, 12).map(function (x) { return '<a class="dwdc-mrow" href="' + (x.id ? '#cl/' + x.id : '#client/' + x.list[0].id) + '"><span><b>' + esc(cname(x)) + '</b><small>' + x.list.map(function (c) { return esc(c.name); }).join(' · ') + '</small></span><strong>' + money(x.total) + '</strong></a>'; }).join('');
 		var mcard = function (title, inner, extra) { return '<section class="dwdc-card pad dwdc-mcard' + (extra ? ' ' + extra : '') + '"><div class="dwdc-cardh"><h2>' + title + '</h2></div>' + inner + '</section>'; };
 		return '<div class="dwdc-kpis">'
-			+ kpi('Total received', money(total), paid.length + ' paying projects', 'navy')
+			+ kpi('All-time income', money(total), 'Every payment since you started · ' + paid.length + ' projects', 'navy')
 			+ kpi('Average project', money(avg), 'Middle project ' + money(mid))
 			+ kpi('Top project', top ? money(lifetime(top)) : '—', top ? esc(top.name) : '')
 			+ kpi('Owed right now', money(owe), open.filter(function (c) { return num(c.balance) > 0; }).length + ' open invoices', owe ? 'coral' : '')
@@ -433,7 +455,7 @@
 			+ mcard('By year', (ylist.length ? '<ul class="dwdc-years2">' + ylist.map(function (y) { var o = MY[y], t = ytot(y); return '<li><span>' + y + '</span><div>' + [['Upwork', 'upw'], ['Stripe', 'str'], ['PayPal', 'ppl'], ['Other', 'oth']].map(function (x) { return o[x[0]] > 0 ? '<i class="' + x[1] + '" style="width:' + Math.max(1, Math.round(o[x[0]] / ymax * 100)) + '%" title="' + x[0] + ' ' + money(o[x[0]]) + '"></i>' : ''; }).join('') + '</div><b>' + money(t) + '</b></li>'; }).join('') + '</ul>' : emptyRow('No dated payments yet.'))
 				+ '<div class="dwdc-ylegend"><span><i class="upw"></i>Upwork</span><span><i class="str"></i>Stripe</span><span><i class="ppl"></i>PayPal</span><span><i class="oth"></i>Zelle & other</span></div>'
 				+ '<p class="dwdc-mutp sm">Hover a bar to see each amount. Every payment on the day it was paid: Upwork (from your transaction history, after Upwork’s fees), Stripe, PayPal and payments you log. Refunds come off the year they happened.</p>')
-			+ mcard('Busiest months', busyMonths(MY, ylist), 'wide')
+			+ mcard('Busiest months <small class="dwdc-bm-sub">Money received after Upwork fees · same scale every year</small>', busyMonths(MY, ylist), 'wide bm')
 			+ mcard('Upwork Connects', connectsCard(MY), 'wide')
 			+ mcard('Top projects', rowsP || emptyRow('No payments yet.'))
 			+ mcard('Top clients', rowsC || emptyRow('No payments yet.'))
@@ -1458,6 +1480,12 @@
 			}
 			return;
 		}
+		if (t.closest('[data-refresh]')) { runRefresh(); return; }
+		if ((el = t.closest('[data-updel]'))) {
+			if (!confirm('Delete ' + el.getAttribute('data-upname') + '? Its Upwork payments come out of your totals, unless another file covers them.')) { return; }
+			api('/upwork-files/' + el.getAttribute('data-updel'), 'DELETE').then(function (r) { S.upRes = r; return Promise.all([reload(), api('/sync').then(function (x) { S.sync = x; })]); }).then(function () { render(); toast('File deleted and totals updated'); }).catch(fail);
+			return;
+		}
 		if (t.closest('[data-upagain]')) { var mp = {}; app.querySelectorAll('[data-upmap]').forEach(function (x) { if (x.value) { mp[x.getAttribute('data-upmap')] = +x.value; } }); upImport(null, mp); return; }
 		if ((el = t.closest('[data-copy]'))) { var cv = el.getAttribute('data-copy'); (navigator.clipboard ? navigator.clipboard.writeText(cv) : Promise.reject()).then(function () { toast('Link copied'); }, function () { prompt('Copy this link:', cv); }); return; }
 		if ((el = t.closest('[data-synsave]'))) {
@@ -1572,7 +1600,7 @@
 		var t = e.target;
 		if (t.hasAttribute('data-revpick')) { S.revSel = S.revSel || {}; S.revSel[t.getAttribute('data-revpick')] = t.checked; render(); return; }
 		if (t.hasAttribute('data-revall')) { S.revSel = S.revSel || {}; app.querySelectorAll('[data-revpick]').forEach(function (x) { S.revSel[x.getAttribute('data-revpick')] = t.checked; }); render(); return; }
-		if (t.hasAttribute('data-upcsv') && t.files && t.files[0]) { S.upRes = { added: 0, amount: 0, error: 'Importing…' }; render(); upImport(t.files[0]); return; }
+		if (t.hasAttribute('data-upcsv') && t.files && t.files[0]) { upImport(t.files[0]); return; }
 		if (t.hasAttribute('data-year')) { S.year = t.value; render(); return; }
 		if (t.hasAttribute('data-field')) {
 			var fd = {}; fd[t.getAttribute('data-field')] = t.value;

@@ -320,14 +320,15 @@ add_action( 'rest_api_init', function () {
 	register_rest_route( 'dwd/v1', '/crm/sync', array(
 		array( 'methods' => 'GET', 'permission_callback' => $can, 'callback' => function () {
 			return array(
-				'stripe' => array( 'url' => rest_url( 'dwd/v1/stripe-webhook' ), 'ready' => '' !== get_option( 'dwds_stripe_whsec', '' ), 'last' => get_option( 'dwds_last_stripe', '' ) ),
-				'paypal' => array( 'url' => rest_url( 'dwd/v1/paypal-webhook' ), 'ready' => get_option( 'dwds_paypal_id' ) && get_option( 'dwds_paypal_secret' ) && get_option( 'dwds_paypal_hook' ), 'last' => get_option( 'dwds_last_paypal', '' ) ),
-				'upwork' => array( 'last' => get_option( 'dwds_last_upwork', '' ) ),
+				'stripe' => array( 'url' => rest_url( 'dwd/v1/stripe-webhook' ), 'ready' => (bool) get_option( 'dwds_stripe_whsec', '' ), 'key' => (bool) get_option( 'dwds_stripe_key', '' ), 'last' => get_option( 'dwds_last_stripe', '' ) ),
+				'paypal' => array( 'url' => rest_url( 'dwd/v1/paypal-webhook' ), 'ready' => (bool) ( get_option( 'dwds_paypal_id' ) && get_option( 'dwds_paypal_secret' ) && get_option( 'dwds_paypal_hook' ) ), 'last' => get_option( 'dwds_last_paypal', '' ) ),
+				'upwork' => array( 'last' => get_option( 'dwds_last_upwork', '' ), 'files' => array_values( dwds_files() ) ),
+				'refreshed' => get_option( 'dwds_last_refresh', '' ),
 			);
 		} ),
 		array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
 			$d = (array) $r->get_json_params();
-			foreach ( array( 'stripe_whsec' => '/^whsec_[A-Za-z0-9]+$/', 'paypal_id' => '/^[A-Za-z0-9_\-]{20,}$/', 'paypal_secret' => '/^[A-Za-z0-9_\-]{20,}$/', 'paypal_hook' => '/^[A-Za-z0-9]{8,}$/' ) as $k => $re ) {
+			foreach ( array( 'stripe_key' => '/^(rk|sk)_live_[A-Za-z0-9]+$/', 'stripe_whsec' => '/^whsec_[A-Za-z0-9]+$/', 'paypal_id' => '/^[A-Za-z0-9_\-]{20,}$/', 'paypal_secret' => '/^[A-Za-z0-9_\-]{20,}$/', 'paypal_hook' => '/^[A-Za-z0-9]{8,}$/' ) as $k => $re ) {
 				if ( isset( $d[ $k ] ) && '' !== trim( (string) $d[ $k ] ) ) {
 					$v = trim( (string) $d[ $k ] );
 					if ( ! preg_match( $re, $v ) ) {
@@ -363,4 +364,338 @@ add_action( 'rest_api_init', function () {
 		update_option( 'dwds_upwork_map', $map, false );
 		return array( 'saved' => count( $map ) );
 	} ) );
+} );
+
+/* =====================================================================
+ * Stored Upwork files + "Update Finances" (rebuild from every source)
+ * ===================================================================== */
+
+/** Parse an Upwork transaction CSV into earnings and costs (fees already taken out). */
+function dwds_upwork_parse( $csv ) {
+	$lines = preg_split( '/\r\n|\n|\r/', (string) $csv );
+	$head  = array_map( function ( $h ) { return trim( preg_replace( '/^\xEF\xBB\xBF/', '', $h ) ); }, str_getcsv( (string) array_shift( $lines ) ) );
+	if ( ! in_array( 'Transaction type', $head, true ) || ! in_array( 'Amount $', $head, true ) ) {
+		return null;
+	}
+	$rows = array();
+	foreach ( $lines as $l ) {
+		if ( '' !== trim( $l ) ) {
+			$rows[] = array_combine( $head, array_pad( array_slice( str_getcsv( $l ), 0, count( $head ) ), count( $head ), '' ) );
+		}
+	}
+	$amt  = function ( $x ) { return (float) str_replace( array( ',', '$' ), '', (string) $x ); };
+	$date = function ( $x ) { $t = strtotime( (string) $x ); return $t ? gmdate( 'Y-m-d', $t ) : ''; };
+	$fees = array();
+	foreach ( $rows as $x ) {
+		if ( 'Service Fee' === $x['Transaction type'] && '' !== ( $x['Transaction ID'] ?? '' ) ) {
+			$fees[ $x['Transaction ID'] ] = ( $fees[ $x['Transaction ID'] ] ?? 0 ) + $amt( $x['Amount $'] );
+		}
+	}
+	$earn  = array();
+	$costs = array();
+	$min   = '';
+	$max   = '';
+	foreach ( $rows as $x ) {
+		$t = $x['Transaction type'];
+		$d = $date( $x['Date'] );
+		if ( $d ) {
+			$min = $min ? min( $min, $d ) : $d;
+			$max = max( $max, $d );
+		}
+		if ( in_array( $t, array( 'Connects', 'Subscription' ), true ) ) {
+			preg_match( '/(\d+)\s+Connects/', (string) $x['Transaction summary'], $m );
+			$costs[] = array( 'date' => $d, 'amount' => round( -$amt( $x['Amount $'] ), 2 ), 'type' => 'Connects' === $t ? 'connects' : 'membership', 'qty' => isset( $m[1] ) ? (int) $m[1] : 0, 'ref' => (string) ( $x['Ref ID'] ?? '' ) );
+		} elseif ( in_array( $t, array( 'Fixed-price', 'Hourly', 'Bonus', 'Miscellaneous', 'Refund to client' ), true ) ) {
+			$a      = $amt( $x['Amount $'] );
+			$earn[] = array( 'team' => trim( (string) ( $x['Client team'] ?? '' ) ), 'date' => $d, 'gross' => $a, 'net' => round( $a + ( $fees[ $x['Transaction ID'] ?? '' ] ?? 0 ), 2 ), 'ref' => (string) ( $x['Ref ID'] ?: $x['Transaction ID'] ), 'refund' => 'Refund to client' === $t, 'summary' => (string) $x['Transaction summary'], 'type' => $t );
+		}
+	}
+	return array( 'earn' => $earn, 'costs' => $costs, 'from' => $min, 'to' => $max );
+}
+
+function dwds_files() {
+	return (array) get_option( 'dwds_upwork_files', array() );
+}
+
+/** Save an uploaded CSV to the list (same content twice is ignored). */
+function dwds_file_add( $name, $csv ) {
+	$p = dwds_upwork_parse( $csv );
+	if ( ! $p ) {
+		return new WP_Error( 'dwds_csv', 'That doesn’t look like an Upwork transaction report.', array( 'status' => 400 ) );
+	}
+	$hash  = md5( $csv );
+	$files = dwds_files();
+	foreach ( $files as $f ) {
+		if ( $f['hash'] === $hash ) {
+			return $f;
+		}
+	}
+	$id = substr( $hash, 0, 12 );
+	update_option( 'dwds_upf_' . $id, $csv, false );
+	$f       = array( 'id' => $id, 'hash' => $hash, 'name' => sanitize_file_name( $name ?: 'upwork-report.csv' ), 'uploaded' => current_time( 'Y-m-d' ), 'from' => $p['from'], 'to' => $p['to'], 'payments' => count( $p['earn'] ), 'costs' => count( $p['costs'] ) );
+	$files[] = $f;
+	update_option( 'dwds_upwork_files', $files, false );
+	return $f;
+}
+
+/**
+ * Rebuild every project's Upwork payments from the files on the list.
+ * Upwork money that never came from a file (older totals) is kept as it was.
+ */
+function dwds_upwork_rebuild() {
+	$earn  = array();
+	$costs = array();
+	$seen  = array();
+	foreach ( dwds_files() as $f ) {
+		$p = dwds_upwork_parse( (string) get_option( 'dwds_upf_' . $f['id'], '' ) );
+		if ( ! $p ) {
+			continue;
+		}
+		foreach ( $p['earn'] as $e ) {
+			if ( ! isset( $seen[ 'e' . $e['ref'] ] ) ) {
+				$seen[ 'e' . $e['ref'] ] = 1;
+				$earn[]                  = $e;
+			}
+		}
+		foreach ( $p['costs'] as $c ) {
+			$k = 'c' . $c['ref'] . '|' . $c['date'];
+			if ( ! isset( $seen[ $k ] ) ) {
+				$seen[ $k ] = 1;
+				$costs[]    = $c;
+			}
+		}
+	}
+	$by        = array();
+	$unmatched = array();
+	foreach ( $earn as $e ) {
+		$pid = dwds_upwork_project( $e['team'] );
+		if ( ! $pid ) {
+			$unmatched[ $e['team'] ] = ( $unmatched[ $e['team'] ] ?? 0 ) + $e['net'];
+			continue;
+		}
+		$by[ $pid ][] = array( 'date' => $e['date'], 'amount' => sprintf( '%.2f', abs( $e['net'] ) ), 'source' => 'Upwork', 'ref' => $e['ref'], 'status' => $e['refund'] ? 'refunded' : 'paid', 'note' => mb_substr( ( $e['refund'] ? 'Refund · ' : '' ) . $e['summary'] . ( in_array( $e['type'], array( 'Hourly', 'Bonus' ), true ) ? ' · ' . $e['type'] : '' ) . ' · after Upwork fee ($' . number_format( abs( $e['gross'] ), 2 ) . ' gross)', 0, 140 ) );
+	}
+	$touched = 0;
+	foreach ( get_posts( array( 'post_type' => DWDC_CONTACT, 'post_status' => 'private', 'posts_per_page' => -1, 'fields' => 'ids' ) ) as $pid ) {
+		$pays    = get_post_meta( $pid, '_dwdc_payments', true );
+		$pays    = is_array( $pays ) ? $pays : array();
+		$oldFile = 0;
+		$keep    = array();
+		foreach ( $pays as $x ) {
+			if ( 'Upwork' === ( $x['source'] ?? '' ) && '' !== (string) ( $x['ref'] ?? '' ) ) {
+				$oldFile += ( 'refunded' === ( $x['status'] ?? '' ) ? -1 : 1 ) * (float) $x['amount'];
+			} else {
+				$keep[] = $x;
+			}
+		}
+		$new = $by[ $pid ] ?? array();
+		if ( ! $new && ! $oldFile ) {
+			continue;
+		}
+		$newSum = 0;
+		foreach ( $new as $x ) {
+			$newSum += ( 'refunded' === $x['status'] ? -1 : 1 ) * (float) $x['amount'];
+		}
+		$all = array_merge( $keep, $new );
+		usort( $all, function ( $a, $b ) { return strcmp( (string) ( $b['date'] ?? '' ), (string) ( $a['date'] ?? '' ) ); } );
+		update_post_meta( $pid, '_dwdc_payments', $all );
+		$billed = (float) get_post_meta( $pid, '_dwdc_billed', true ) - $oldFile + $newSum;
+		update_post_meta( $pid, '_dwdc_billed', $billed > 0.004 ? (string) round( $billed, 2 ) : '' );
+		$touched++;
+	}
+	update_option( 'dwdc_upwork_costs', $costs, false );
+	return array( 'payments' => count( $earn ), 'projects' => $touched, 'unmatched' => array_map( function ( $k, $v ) { return array( 'team' => $k, 'amount' => round( $v, 2 ) ); }, array_keys( $unmatched ), array_values( $unmatched ) ) );
+}
+
+/** Is this payment already on the project (same reference, or same amount within 3 days)? */
+function dwds_has_payment( $pid, $source, $ref, $amount, $date ) {
+	$pays = get_post_meta( $pid, '_dwdc_payments', true );
+	foreach ( is_array( $pays ) ? $pays : array() as $x ) {
+		if ( ( $x['source'] ?? '' ) !== $source ) {
+			continue;
+		}
+		if ( $ref && (string) ( $x['ref'] ?? '' ) === (string) $ref ) {
+			return true;
+		}
+		if ( abs( (float) $x['amount'] - $amount ) < 0.01 && abs( strtotime( (string) $x['date'] ) - strtotime( $date ) ) <= 3 * DAY_IN_SECONDS ) {
+			return true;
+		}
+	}
+	return false;
+}
+
+/** Pull paid Stripe invoices and one-off charges (needs a read-only restricted key). */
+function dwds_stripe_pull() {
+	$key = (string) get_option( 'dwds_stripe_key', '' );
+	if ( ! $key ) {
+		return array( 'skipped' => 'No Stripe key yet' );
+	}
+	$out  = array( 'added' => 0, 'already' => 0, 'unmatched' => 0 );
+	$get  = function ( $path ) use ( $key ) {
+		$r = wp_remote_get( 'https://api.stripe.com/v1/' . $path, array( 'timeout' => 30, 'headers' => array( 'Authorization' => 'Bearer ' . $key ) ) );
+		return json_decode( wp_remote_retrieve_body( $r ), true );
+	};
+	$take = function ( $email, $who, $amount, $date, $ref, $note ) use ( &$out ) {
+		$pid = dwds_project_for( $email, $who );
+		if ( $pid && dwds_has_payment( $pid, 'Stripe', $ref, $amount, $date ) ) {
+			$out['already']++;
+			return;
+		}
+		if ( ! $pid && $date < gmdate( 'Y-m-d', strtotime( '-60 days' ) ) ) {
+			$out['unmatched']++; // old and unmatched: count it, don't flood the to-do list
+			return;
+		}
+		$r = dwds_log_payment( 'Stripe', $email, $who, $amount, $date, $ref, $note );
+		$out[ 'added' === $r ? 'added' : ( 'unmatched' === $r ? 'unmatched' : 'already' ) ]++;
+	};
+	$after = '';
+	for ( $i = 0; $i < 30; $i++ ) {
+		$j = $get( 'invoices?status=paid&limit=100' . ( $after ? '&starting_after=' . $after : '' ) );
+		if ( empty( $j['data'] ) ) {
+			if ( ! empty( $j['error'] ) ) {
+				return array( 'error' => 'Stripe: ' . ( $j['error']['message'] ?? 'key rejected' ) );
+			}
+			break;
+		}
+		foreach ( $j['data'] as $o ) {
+			$take( $o['customer_email'] ?? '', $o['customer_name'] ?? '', ( $o['amount_paid'] ?? 0 ) / 100, gmdate( 'Y-m-d', (int) ( $o['status_transitions']['paid_at'] ?? $o['created'] ) ), $o['number'] ?? $o['id'], 'Stripe invoice ' . ( $o['number'] ?? '' ) );
+			$after = $o['id'];
+		}
+		if ( empty( $j['has_more'] ) ) {
+			break;
+		}
+	}
+	$after = '';
+	for ( $i = 0; $i < 30; $i++ ) {
+		$j = $get( 'charges?limit=100' . ( $after ? '&starting_after=' . $after : '' ) );
+		if ( empty( $j['data'] ) ) {
+			break;
+		}
+		foreach ( $j['data'] as $o ) {
+			$after = $o['id'];
+			if ( empty( $o['paid'] ) || 'succeeded' !== ( $o['status'] ?? '' ) || ! empty( $o['invoice'] ) || ! empty( $o['metadata']['order_id'] ) || ! empty( $o['refunded'] ) ) {
+				continue;
+			}
+			$take( $o['billing_details']['email'] ?? $o['receipt_email'] ?? '', $o['billing_details']['name'] ?? '', ( $o['amount'] ?? 0 ) / 100, gmdate( 'Y-m-d', (int) $o['created'] ), $o['id'], 'Stripe payment' );
+		}
+		if ( empty( $j['has_more'] ) ) {
+			break;
+		}
+	}
+	return $out;
+}
+
+/** Pull incoming PayPal payments (last 3 years) with the Transaction Search API. */
+function dwds_paypal_pull() {
+	$token = dwds_paypal_token();
+	if ( ! $token ) {
+		return array( 'skipped' => 'No PayPal app yet' );
+	}
+	$out = array( 'added' => 0, 'already' => 0, 'unmatched' => 0 );
+	$end = time();
+	for ( $i = 0; $i < 37; $i++ ) {
+		$start = $end - 30 * DAY_IN_SECONDS;
+		$page  = 1;
+		do {
+			$r = wp_remote_get( 'https://api-m.paypal.com/v1/reporting/transactions?fields=transaction_info,payer_info&page_size=500&page=' . $page . '&start_date=' . rawurlencode( gmdate( 'Y-m-d\TH:i:s\Z', $start ) ) . '&end_date=' . rawurlencode( gmdate( 'Y-m-d\TH:i:s\Z', $end ) ), array( 'timeout' => 30, 'headers' => array( 'Authorization' => 'Bearer ' . $token ) ) );
+			$j = json_decode( wp_remote_retrieve_body( $r ), true );
+			if ( ! empty( $j['name'] ) && empty( $j['transaction_details'] ) ) {
+				return 'NOT_AUTHORIZED' === $j['name'] || 'PERMISSION_DENIED' === $j['name'] ? array( 'error' => 'PayPal: turn on “Transaction search” for your app in the PayPal developer dashboard.' ) : $out;
+			}
+			foreach ( (array) ( $j['transaction_details'] ?? array() ) as $t ) {
+				$ti  = $t['transaction_info'] ?? array();
+				$amt = (float) ( $ti['transaction_amount']['value'] ?? 0 );
+				$ev  = (string) ( $ti['transaction_event_code'] ?? '' );
+				if ( $amt <= 0 || 'S' !== ( $ti['transaction_status'] ?? 'S' ) || ! preg_match( '/^T0(0|1)/', $ev ) ) {
+					continue; // incoming, completed payments only (no transfers, holds or currency moves)
+				}
+				$email = $t['payer_info']['email_address'] ?? '';
+				$who   = $t['payer_info']['payer_name']['alternate_full_name'] ?? '';
+				$date  = substr( (string) ( $ti['transaction_initiation_date'] ?? '' ), 0, 10 );
+				$ref   = (string) ( $ti['transaction_id'] ?? '' );
+				$pid   = dwds_project_for( $email, $who );
+				if ( $pid && dwds_has_payment( $pid, 'PayPal', $ref, $amt, $date ) ) {
+					$out['already']++;
+					continue;
+				}
+				if ( ! $pid && $date < gmdate( 'Y-m-d', strtotime( '-60 days' ) ) ) {
+					$out['unmatched']++;
+					continue;
+				}
+				$res = dwds_log_payment( 'PayPal', $email, $who, $amt, $date, $ref, 'PayPal payment' );
+				$out[ 'added' === $res ? 'added' : ( 'unmatched' === $res ? 'unmatched' : 'already' ) ]++;
+			}
+			$page++;
+		} while ( ! empty( $j['total_pages'] ) && $page <= (int) $j['total_pages'] );
+		$end = $start;
+	}
+	return $out;
+}
+
+/** "Update Finances": every source, then the weekly trends. Manual payments are always kept. */
+function dwds_refresh() {
+	if ( function_exists( 'set_time_limit' ) ) {
+		@set_time_limit( 300 ); // phpcs:ignore WordPress.PHP.NoSilencedErrors
+	}
+	$res = array(
+		'upwork' => dwds_upwork_rebuild(),
+		'stripe' => dwds_stripe_pull(),
+		'paypal' => dwds_paypal_pull(),
+	);
+	$manual = 0;
+	foreach ( get_posts( array( 'post_type' => DWDC_CONTACT, 'post_status' => 'private', 'posts_per_page' => -1, 'fields' => 'ids' ) ) as $pid ) {
+		foreach ( (array) get_post_meta( $pid, '_dwdc_payments', true ) as $x ) {
+			if ( is_array( $x ) && ! in_array( $x['source'] ?? '', array( 'Upwork', 'Stripe', 'PayPal' ), true ) && 'paid' === ( $x['status'] ?? 'paid' ) ) {
+				$manual += (float) $x['amount'];
+			}
+		}
+	}
+	$res['manual'] = array( 'total' => round( $manual, 2 ) );
+	if ( function_exists( 'dwdt_get' ) ) {
+		dwdt_get( true );
+	}
+	update_option( 'dwds_last_refresh', current_time( 'mysql' ), false );
+	return $res;
+}
+
+add_action( 'rest_api_init', function () {
+	$can = function () { return current_user_can( 'manage_options' ); };
+	register_rest_route( 'dwd/v1', '/crm/upwork-files', array(
+		array( 'methods' => 'GET', 'permission_callback' => $can, 'callback' => function () { return array_values( dwds_files() ); } ),
+		array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
+			$map = (array) get_option( 'dwds_upwork_map', array() );
+			foreach ( (array) $r->get_param( 'map' ) as $team => $pid ) {
+				if ( DWDC_CONTACT === get_post_type( (int) $pid ) ) {
+					$map[ sanitize_text_field( $team ) ] = (int) $pid;
+				}
+			}
+			update_option( 'dwds_upwork_map', $map, false );
+			if ( '' !== (string) $r->get_param( 'csv' ) ) {
+				$f = dwds_file_add( (string) $r->get_param( 'name' ), (string) $r->get_param( 'csv' ) );
+				if ( is_wp_error( $f ) ) {
+					return $f;
+				}
+			}
+			$out          = dwds_upwork_rebuild();
+			$out['files'] = array_values( dwds_files() );
+			update_option( 'dwds_last_upwork', current_time( 'mysql' ), false );
+			if ( function_exists( 'dwdt_get' ) ) {
+				dwdt_get( true );
+			}
+			return $out;
+		} ),
+	) );
+	register_rest_route( 'dwd/v1', '/crm/upwork-files/(?P<id>[a-f0-9]{12})', array( 'methods' => 'DELETE', 'permission_callback' => $can, 'callback' => function ( $r ) {
+		$id    = (string) $r['id'];
+		$files = array_values( array_filter( dwds_files(), function ( $f ) use ( $id ) { return $f['id'] !== $id; } ) );
+		update_option( 'dwds_upwork_files', $files, false );
+		delete_option( 'dwds_upf_' . $id );
+		$out          = dwds_upwork_rebuild();
+		$out['files'] = $files;
+		if ( function_exists( 'dwdt_get' ) ) {
+			dwdt_get( true );
+		}
+		return $out;
+	} ) );
+	register_rest_route( 'dwd/v1', '/crm/refresh', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function () { return dwds_refresh(); } ) );
 } );
