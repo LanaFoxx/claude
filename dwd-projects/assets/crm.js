@@ -40,8 +40,11 @@
 	function contact(id) { for (var i = 0; i < S.contacts.length; i++) { if (S.contacts[i].id === id) { return S.contacts[i]; } } return null; }
 	// Total billed: the jobs logged here, or the Upwork lifetime total if that's higher (it already includes those jobs).
 	function logged(c) { return num(c.price) + (c.jobs || []).reduce(function (s, j) { return s + num(j.price); }, 0); }
-	function lifetime(c) { return Math.max(logged(c), num(c.billed)); }
+	// Upwork, Stripe and PayPal are separate payment channels, so they add up; jobs logged by hand overlap them.
+	function paidIn(c) { return num(c.billed) + num(c.stripe) + num(c.paypal); }
+	function lifetime(c) { return Math.max(logged(c), paidIn(c)); }
 	function paidPct(c) { var p = num(c.price); return p ? Math.max(0, Math.min(100, Math.round((p - num(c.balance)) / p * 100))) : (num(c.balance) ? 0 : 100); }
+	function url(u) { u = String(u || '').trim(); return /^https?:\/\//i.test(u) ? u : 'https://' + u; }
 	function site(c) { return String(c.website || '').replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, ''); }
 	function toast(msg, bad) {
 		var t = document.createElement('div'); t.className = 'dwdc-toast' + (bad ? ' bad' : ''); t.textContent = msg;
@@ -70,7 +73,7 @@
 	function ic(n, size) { return '<svg class="dwdc-ic" width="' + (size || 18) + '" height="' + (size || 18) + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICON[n] + '</svg>'; }
 
 	// Status colors: blue active, violet limbo, green done/paid, teal hosting, orange leads/owed, red overdue.
-	var TONE = { active: 'blue', hold: 'amber', limbo: 'red', complete: 'green', leads: 'orange', archive: 'gray', hosting: 'teal' };
+	var TONE = { active: 'blue', hold: 'green', limbo: 'red', complete: 'green', leads: 'orange', archive: 'gray', hosting: 'teal' };
 	var LABEL = { active: 'Active', hold: 'On hold', limbo: 'In limbo', complete: 'Completed', leads: 'Lead', archive: 'Archived' };
 	function avatar() { return ''; } // client avatars removed: names carry the rows
 	function avatarOld(c, size, tone) { return '<span class="dwdc-av t-' + (tone || TONE[c.list] || 'blue') + (size ? ' s' + size : '') + '">' + esc(initials(c.name)) + '</span>'; }
@@ -228,6 +231,8 @@
 			+ '<span><small>Due</small><b class="' + (late ? 'red' : '') + '">' + (c.deadline ? fmt(c.deadline) : '—') + '</b></span></div>'
 			+ '<div class="dwdc-paid"><div><span>Paid</span><b class="' + (p >= 100 ? 'green' : 'orange') + '">' + p + '%</b></div><i><u class="' + (p >= 100 ? 'full' : '') + '" style="width:' + p + '%"></u></i></div>'
 			+ '<p class="dwdc-next"><b>Next</b> ' + esc(c.next || 'No next step set') + '</p>'
+			+ (c.markup ? '<div class="dwdc-mk"><a class="dwdc-mklink" href="' + esc(url(c.markup)) + '" target="_blank" rel="noopener">' + ic('wp', 14) + 'Open Markup</a><button class="dwdc-lnk sm2" data-markup="' + c.id + '">Change</button></div>'
+				: '<div class="dwdc-mk"><button class="dwdc-lnk sm2" data-markup="' + c.id + '">' + ic('plus', 13) + 'Add Markup link</button></div>')
 			+ (todos.length ? '<div class="dwdc-todos mini">' + todos.slice(0, 4).map(function (t) { return todoRow(t, true); }).join('') + (todos.length > 4 ? '<a class="dwdc-lnk sm" href="#client/' + c.id + '">+' + (todos.length - 4) + ' more</a>' : '') + '</div>' : '')
 			+ '<footer>' + (S.cardTodo === c.id
 				? '<form class="dwdc-cardtodo" data-contact="' + c.id + '"><input name="text" placeholder="What needs doing? Press Enter" autocomplete="off"></form>'
@@ -264,15 +269,15 @@
 		var sec = function (list, title, empty, btn) {
 			var rows = by(list).filter(match);
 			return '<section>' + secHead(title, rows.length, btn || '')
-				+ '<div class="dwdc-card dwdc-tbl"><div class="dwdc-grid g-jobs head"><span>Client</span><span>Price</span><span>Owed</span><span>Due</span><span>Status</span><span>Next step</span></div>'
+				+ '<div class="dwdc-card dwdc-tbl"><div class="dwdc-grid g-jobs head tint-' + (TONE[list] || 'blue') + '"><span>Client</span><span>Price</span><span>Owed</span><span>Due</span><span>Status</span><span>Next step</span></div>'
 				+ (rows.length ? rows.map(function (c) {
 					var ow = num(c.balance), late = c.deadline && c.deadline < DWDC.today;
-					return '<div class="dwdc-grid g-jobs row" data-go="client/' + c.id + '"><span class="dwdc-nm"><span><b>' + esc(c.name) + '</b><small>' + esc([c.person, c.job].filter(Boolean).join(' · ') || 'No contact on file') + '</small></span></span>'
+					return '<div class="dwdc-grid g-jobs row" data-go="client/' + c.id + '"><span class="dwdc-nm"><span><b>' + esc(c.name) + (c.markup ? ' <a class="dwdc-mkpill" href="' + esc(url(c.markup)) + '" target="_blank" rel="noopener">Markup</a>' : '') + '</b><small>' + esc([c.person, c.job].filter(Boolean).join(' · ') || 'No contact on file') + '</small></span></span>'
 						+ '<span class="b">' + (num(c.price) ? money(c.price) : '—') + '</span><span class="b ' + (ow ? 'orange' : 'green') + '">' + (ow ? money(ow) : 'Paid') + '</span>'
 						+ '<span class="' + (late ? 'red b' : '') + '">' + (c.deadline ? fmt(c.deadline) : '—') + '</span><span>' + statusSelect(c) + '</span><span class="sec ell">' + esc(c.next || '—') + '</span></div>';
 				}).join('') : emptyRow(S.q ? 'No matches.' : empty)) + '</div></section>';
 		};
-		return '<div class="dwdc-minis">' + mini('blue', 'Active', by('active').length) + mini('navy', 'Contract value', money(value)) + mini('orange', 'Owed on these', money(owed(all))) + mini('amber', 'On hold', by('hold').length) + mini('red', 'In limbo', by('limbo').length) + '</div>'
+		return '<div class="dwdc-minis">' + mini('blue', 'Active', by('active').length) + mini('navy', 'Contract value', money(value)) + mini('orange', 'Owed on these', money(owed(all))) + mini('green', 'On hold', by('hold').length) + mini('red', 'In limbo', by('limbo').length) + '</div>'
 			+ sec('active', 'Active jobs', 'Nothing in progress right now.', '<button class="dwdc-btn sm" data-act="job">' + ic('plus', 14) + 'Add job</button>')
 			+ sec('hold', 'On hold', 'No jobs on hold. Paused jobs go here.')
 			+ sec('limbo', 'In limbo', 'No jobs in limbo. Clients you haven’t heard back from go here.');
@@ -330,7 +335,7 @@
 		return '<div class="dwdc-minis">' + mini('green', 'Completed jobs', rows.length) + mini('navy', 'Billed all-time', money(billed)) + mini('navy', 'Average job', priced ? money(billed / priced) : '—') + mini('teal', 'Now hosting', hosting().length) + '</div>'
 			+ '<div class="dwdc-card dwdc-tbl"><div class="dwdc-grid g-done head"><span>Client</span><span>Project</span><span>Billed</span><span>Completed</span><span>Hosting</span></div>'
 			+ (list.length ? list.slice(0, cap).map(function (c) {
-				var proj = c.job || ((c.jobs || []).length ? c.jobs[c.jobs.length - 1].title : '') || (num(c.billed) || c.source === 'Upwork' ? 'Upwork client' : '');
+				var proj = c.job || ((c.jobs || []).length ? c.jobs[c.jobs.length - 1].title : '') || (c.source === 'Stripe' ? 'Stripe client' : c.source === 'PayPal' ? 'PayPal client' : num(c.billed) || c.source === 'Upwork' ? 'Upwork client' : '');
 				return '<div class="dwdc-grid g-done row" data-go="client/' + c.id + '"><span class="dwdc-nm">' + avatar(c, 34, 'green') + '<span><b>' + esc(c.name) + '</b><small>' + esc(c.person || c.email || site(c) || 'No contact on file') + '</small></span></span>'
 					+ '<span class="sec ell">' + esc(proj || '—') + ((c.jobs || []).length > 1 ? ' <small class="mut">+' + (c.jobs.length - 1) + ' more</small>' : '') + '</span>'
 					+ '<span class="b">' + (lifetime(c) ? money(lifetime(c)) : '—') + '</span><span class="mut">' + (c.completed ? fmt(c.completed, true) : '—') + '</span>'
@@ -379,7 +384,7 @@
 		var acts = '';
 		if (st === 'active' || st === 'hold' || st === 'limbo') {
 			acts = (ow ? btn('', 'data-paid', 'Mark paid') : '') + (st !== 'active' ? btn('', 'data-set="active"', 'Back to active') : '')
-				+ (st !== 'hold' ? btn('amber', 'data-set="hold"', 'Put on hold') : '') + (st !== 'limbo' ? btn('red', 'data-set="limbo"', 'Move to limbo') : '') + btn('solid green', 'data-complete', 'Mark complete');
+				+ (st !== 'hold' ? btn('greenl', 'data-set="hold"', 'Put on hold') : '') + (st !== 'limbo' ? btn('red', 'data-set="limbo"', 'Move to limbo') : '') + btn('solid green', 'data-complete', 'Mark complete');
 		} else if (st === 'leads') {
 			acts = btn('', 'data-set="archive"', 'Archive') + btn('solid blue', 'data-act="job" data-contact="' + c.id + '"', 'Start a job');
 		} else if (st === 'archive') {
@@ -438,23 +443,27 @@
 		return '<section class="dwdc-card pad"><div class="dwdc-cardh"><h2>Details</h2><button class="dwdc-lnk" data-edit>Edit</button></div><dl class="dwdc-dl">'
 			+ row('Contact', esc(c.person)) + row('Email', c.email ? '<a href="mailto:' + esc(c.email) + '">' + esc(c.email) + '</a>' : '') + row('Phone', esc(c.phone))
 			+ row('Company', esc(c.company)) + row('Website', site(c) ? '<a href="https://' + esc(site(c)) + '" target="_blank" rel="noopener">' + esc(site(c)) + '</a>' : '')
-			+ row('Project', esc(c.job)) + row('Source', esc(sourceOf(c))) + row('Started', fmt(c.created, true)) + '</dl></section>';
+			+ row('Project', esc(c.job)) + row('Markup', c.markup ? '<a href="' + esc(url(c.markup)) + '" target="_blank" rel="noopener">Open Markup link</a>' : '<button class="dwdc-lnk" data-markup="' + c.id + '">Add link</button>') + row('Source', esc(sourceOf(c))) + row('Started', fmt(c.created, true)) + '</dl></section>';
 	}
 	function editCard(c) {
 		var f = function (k, label, type, ph) { return '<label><span>' + label + '</span><input name="' + k + '" type="' + (type || 'text') + '" value="' + esc(c[k]) + '" placeholder="' + esc(ph || '') + '"></label>'; };
 		return '<form class="dwdc-card pad dwdc-editf"><div class="dwdc-cardh"><h2>Edit details</h2></div><div class="dwdc-fgrid">'
 			+ f('name', 'Client / business') + f('person', 'Contact person') + f('email', 'Email', 'email') + f('phone', 'Phone') + f('company', 'Company') + f('website', 'Website')
 			+ '<label class="wide"><span>Project (current job)</span><input name="job" value="' + esc(c.job) + '" placeholder="e.g. Booking site redesign"></label>'
+			+ '<label class="wide"><span>Markup link</span><input name="markup" value="' + esc(c.markup) + '" placeholder="Paste the markup.io link"></label>'
 			+ '<label class="wide"><span>Next step (shows on the job card)</span><input name="next" value="' + esc(c.next) + '" placeholder="e.g. Send wireframes Friday"></label>'
 			+ f('price', 'Price ($)') + f('balance', 'Still owed ($)') + f('deadline', 'Due date', 'date') + f('source', 'Source', 'text', 'e.g. Referral, Upwork')
-			+ f('hosting', 'Hosting ($/yr)') + f('renewal', 'Hosting renews', 'date') + f('billed', 'Billed on Upwork, lifetime ($)')
+			+ f('hosting', 'Hosting ($/yr)') + f('renewal', 'Hosting renews', 'date') + f('billed', 'Paid on Upwork, lifetime ($)') + f('stripe', 'Paid by Stripe ($)') + f('paypal', 'Paid by PayPal ($)')
 			+ '</div><div class="dwdc-farow"><button type="button" class="dwdc-lnk red" data-trash="' + c.id + '">Delete client</button><span><button type="button" class="dwdc-btn2" data-edit>Cancel</button><button class="dwdc-btn">Save</button></span></div></form>';
 	}
 	function jobsCard(c) {
 		var all = (num(c.price) || c.job ? [{ title: c.job || 'Current job', price: c.price, date: c.list === 'active' || c.list === 'hold' || c.list === 'limbo' ? 'In progress' : (c.completed ? fmt(c.completed, true) : ''), cur: true }] : [])
 			.concat((c.jobs || []).map(function (j, i) { return { title: j.title, price: j.price, date: j.date, i: i }; }).reverse());
 		return '<section class="dwdc-card pad"><div class="dwdc-cardh"><h2>Jobs &amp; spend</h2><span class="dwdc-total">' + money(lifetime(c)) + ' total</span></div>'
-			+ (num(c.billed) ? '<div class="dwdc-upw"><span>Billed on Upwork (lifetime)</span><b>' + money(c.billed) + '</b></div>' : '')
+			+ [['billed', 'Paid on Upwork'], ['stripe', 'Paid by Stripe'], ['paypal', 'Paid by PayPal']].filter(function (k) { return num(c[k[0]]); }).map(function (k) { return '<div class="dwdc-upw"><span>' + k[1] + '</span><b>' + money(c[k[0]]) + '</b></div>'; }).join('')
+			+ ((c.payments || []).length ? '<details class="dwdc-pays"><summary>Payment history (' + c.payments.length + ')</summary><div>' + c.payments.map(function (x) {
+				return '<div class="dwdc-pay"><span>' + fmt(x.date, true) + '<small>' + esc([x.source, x.ref, x.note].filter(Boolean).join(' · ')) + '</small></span><b class="' + (x.status === 'paid' ? 'green' : x.status === 'open' ? 'orange' : 'mut') + '">' + money(x.amount) + (x.status && x.status !== 'paid' ? ' <em>' + esc(x.status) + '</em>' : '') + '</b></div>';
+			}).join('') + '</div></details>' : '')
 			+ (all.length ? '<div class="dwdc-jobs">' + all.map(function (j) {
 				return '<div class="dwdc-jobrow"><span><b>' + esc(j.title) + '</b>' + (j.date ? '<small>' + esc(j.date) + '</small>' : '') + '</span><strong>' + (num(j.price) ? money(j.price) : '—') + '</strong>'
 					+ (j.cur ? '<i></i>' : '<button class="dwdc-del" data-del-job="' + j.i + '" title="Remove">' + ic('x', 14) + '</button>') + '</div>';
@@ -578,6 +587,13 @@
 			if (!task) { return; }
 			task.done = !task.done; el.classList.toggle('done', task.done);
 			api('/task/' + tid, 'POST', { done: task.done }).then(function () { setTimeout(render, 220); }).catch(fail);
+			return;
+		}
+		if ((el = t.closest('[data-markup]'))) {
+			e.stopPropagation();
+			var mid = +el.getAttribute('data-markup'), mc = contact(mid), v = prompt('Paste the Markup link for ' + (mc ? mc.name : 'this job') + ':', mc && mc.markup || '');
+			if (v === null) { return; }
+			save(mid, { markup: v.trim() }, v.trim() ? 'Markup link saved' : 'Markup link removed');
 			return;
 		}
 		if ((el = t.closest('[data-cardtodo]'))) { e.stopPropagation(); S.cardTodo = +el.getAttribute('data-cardtodo'); render(); return; }

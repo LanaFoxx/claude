@@ -24,6 +24,11 @@ add_action( 'init', function () {
 	}
 } );
 
+// Contacts and to-dos are private posts: keep "Private:" out of their titles in emails and to-dos.
+add_filter( 'private_title_format', function ( $format, $post ) {
+	return $post && in_array( get_post_type( $post ), array( DWDC_CONTACT, DWDC_TASK ), true ) ? '%s' : $format;
+}, 10, 2 );
+
 /** The lists, in order. Saved so they can be renamed or added to later. */
 function dwdc_lists() {
 	$default = array(
@@ -40,7 +45,7 @@ function dwdc_lists() {
 
 /** Contact fields kept on every contact. */
 function dwdc_fields() {
-	return array( 'job', 'stage', 'completed', 'billed', 'person', 'email', 'phone', 'company', 'website', 'list', 'price', 'balance', 'deadline', 'hosting', 'renewal', 'source', 'next' );
+	return array( 'job', 'markup', 'stage', 'completed', 'billed', 'stripe', 'paypal', 'person', 'email', 'phone', 'company', 'website', 'list', 'price', 'balance', 'deadline', 'hosting', 'renewal', 'source', 'next' );
 }
 
 function dwdc_contact( $post, $full = false ) {
@@ -73,6 +78,8 @@ function dwdc_contact( $post, $full = false ) {
 	if ( $full ) {
 		$notes      = get_post_meta( $p->ID, '_dwdc_notes', true );
 		$c['notes'] = is_array( $notes ) ? array_reverse( $notes ) : array();
+		$pays          = get_post_meta( $p->ID, '_dwdc_payments', true );
+		$c['payments'] = is_array( $pays ) ? $pays : array();
 		$c['files'] = array_reverse( $entries );
 	}
 	return $c;
@@ -117,6 +124,18 @@ function dwdc_save_contact( $id, $data ) {
 			$v = 'email' === $f ? strtolower( sanitize_email( $data[ $f ] ) ) : sanitize_text_field( $data[ $f ] );
 			update_post_meta( $id, '_dwdc_' . $f, $v );
 		}
+	}
+	// Payment history (Stripe invoices, PayPal…): a new batch replaces older entries from the same source.
+	if ( isset( $data['payments'] ) && is_array( $data['payments'] ) ) {
+		$old  = get_post_meta( $id, '_dwdc_payments', true );
+		$old  = is_array( $old ) ? $old : array();
+		$srcs = array_unique( array_map( function ( $x ) { return (string) ( $x['source'] ?? '' ); }, $data['payments'] ) );
+		$keep = array_values( array_filter( $old, function ( $x ) use ( $srcs ) { return ! in_array( (string) ( $x['source'] ?? '' ), $srcs, true ); } ) );
+		foreach ( $data['payments'] as $x ) {
+			$keep[] = array_map( 'sanitize_text_field', array_intersect_key( (array) $x, array_flip( array( 'date', 'amount', 'source', 'ref', 'status', 'note' ) ) ) );
+		}
+		usort( $keep, function ( $a, $b ) { return strcmp( (string) ( $b['date'] ?? '' ), (string) ( $a['date'] ?? '' ) ); } );
+		update_post_meta( $id, '_dwdc_payments', $keep );
 	}
 	if ( isset( $data['jobs'] ) && is_array( $data['jobs'] ) ) {
 		$jobs = array();
@@ -503,6 +522,45 @@ add_action( 'rest_api_init', function () {
 		update_post_meta( $id, '_dwdc_notes', $notes );
 		wp_update_post( array( 'ID' => $id ) );
 		return dwdc_contact( $id, true );
+	} ) );
+
+	// Merge duplicate contacts into one: details fill gaps, totals add up, everything else moves over.
+	register_rest_route( $ns, '/crm/merge', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
+		$into = (int) $r->get_param( 'into' );
+		if ( DWDC_CONTACT !== get_post_type( $into ) ) {
+			return new WP_Error( 'dwdc_nf', 'Contact not found', array( 'status' => 404 ) );
+		}
+		foreach ( array_map( 'absint', (array) $r->get_param( 'from' ) ) as $from ) {
+			if ( ! $from || $from === $into || DWDC_CONTACT !== get_post_type( $from ) ) {
+				continue;
+			}
+			foreach ( dwdc_fields() as $f ) {
+				$a = (string) get_post_meta( $into, '_dwdc_' . $f, true );
+				$b = (string) get_post_meta( $from, '_dwdc_' . $f, true );
+				if ( in_array( $f, array( 'billed', 'stripe', 'paypal' ), true ) ) {
+					$sum = (float) $a + (float) $b;
+					update_post_meta( $into, '_dwdc_' . $f, $sum ? (string) round( $sum, 2 ) : '' );
+				} elseif ( '' === $a && '' !== $b && 'list' !== $f ) {
+					update_post_meta( $into, '_dwdc_' . $f, $b );
+				}
+			}
+			if ( '' === (string) get_post_meta( $into, '_dwdc_person', true ) && get_the_title( $from ) !== get_the_title( $into ) ) {
+				update_post_meta( $into, '_dwdc_person', get_the_title( $from ) );
+			}
+			foreach ( array( '_dwdc_jobs', '_dwdc_notes', '_dwdc_entries', '_dwdc_payments' ) as $k ) {
+				$a = get_post_meta( $into, $k, true );
+				$b = get_post_meta( $from, $k, true );
+				if ( is_array( $b ) && $b ) {
+					update_post_meta( $into, $k, array_merge( is_array( $a ) ? $a : array(), $b ) );
+				}
+			}
+			foreach ( get_posts( array( 'post_type' => DWDC_TASK, 'post_status' => 'any', 'posts_per_page' => -1, 'fields' => 'ids', 'meta_key' => '_dwdc_contact', 'meta_value' => $from ) ) as $t ) { // phpcs:ignore
+				update_post_meta( $t, '_dwdc_contact', $into );
+			}
+			wp_trash_post( $from );
+		}
+		wp_update_post( array( 'ID' => $into ) );
+		return dwdc_contact( $into, true );
 	} ) );
 
 	register_rest_route( $ns, '/crm/task', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
