@@ -86,6 +86,11 @@ add_action( 'rest_api_init', function () {
 				$list = $all[ $kind ];
 				if ( ! empty( $d['delete'] ) ) {
 					foreach ( $list as $x ) {
+						if ( 'todos' === $kind && ( $x['id'] ?? '' ) === (string) $d['delete'] && ! empty( $x['gevent'] ) ) {
+							$ge   = (array) get_option( 'dwdpe_gone_ev', array() );
+							$ge[] = $x['gevent'];
+							update_option( 'dwdpe_gone_ev', array_slice( $ge, -200 ), false );
+						}
 						if ( 'todos' === $kind && ( $x['id'] ?? '' ) === (string) $d['delete'] && ! empty( $x['gtask'] ) ) {
 							$gone   = (array) get_option( 'dwdpe_gone', array() );
 							$gone[] = $x['gtask'];
@@ -196,8 +201,13 @@ function dwdpe_sync( $d ) {
 		}
 		$seen_e[ $eid ] = 1;
 		$fields = array( 'text' => $e['title'] ?? '', 'due' => substr( (string) ( $e['date'] ?? '' ), 0, 10 ), 'time' => $e['time'] ?? '', 'note' => $e['notes'] ?? '' );
+		if ( in_array( $eid, (array) get_option( 'dwdpe_gone_ev', array() ), true ) ) {
+			continue;
+		}
 		$idx    = array_search( $eid, array_column( $todos, 'gevent' ), true );
-		if ( false !== $idx ) {
+		if ( false !== $idx && ! empty( $todos[ $idx ]['dirty'] ) ) {
+			// Edited in Dream Desk and not pushed yet: Dream Desk wins.
+		} elseif ( false !== $idx ) {
 			$todos[ $idx ] = dwdpe_clean( 'todos', $fields + array( 'dirty' => false ), $todos[ $idx ] );
 		} elseif ( '' !== trim( (string) $fields['text'] ) ) {
 			$todos[] = dwdpe_clean( 'todos', $fields + array( 'id' => strtolower( wp_generate_password( 10, false ) ), 'done' => false, 'gevent' => $eid, 'source' => 'Google Calendar', 'dirty' => false ) );
@@ -214,8 +224,13 @@ function dwdpe_sync( $d ) {
 	// 3. Dream Desk → Google Tasks: what the script should do.
 	$create = array();
 	$update = array();
+	$evup   = array();
 	foreach ( $todos as $i => $t ) {
 		if ( ! empty( $t['gevent'] ) ) {
+			if ( ! empty( $t['dirty'] ) ) {
+				$evup[]               = array( 'eid' => $t['gevent'], 'title' => preg_replace( '/^🎂\s*/u', '', $t['text'] ), 'date' => $t['due'], 'time' => $t['time'] );
+				$todos[ $i ]['dirty'] = false;
+			}
 			continue; // calendar items stay on the calendar
 		}
 		if ( empty( $t['gtask'] ) && empty( $t['done'] ) ) {
@@ -229,8 +244,10 @@ function dwdpe_sync( $d ) {
 	update_option( 'dwdpe_data', $all, false );
 	$del = array_values( array_unique( $gone ) );
 	update_option( 'dwdpe_gone', array(), false );
+	$evdel = array_values( array_unique( (array) get_option( 'dwdpe_gone_ev', array() ) ) );
+	update_option( 'dwdpe_gone_ev', array(), false );
 	update_option( 'dwdpe_last_sync', array( 'at' => current_time( 'mysql' ), 'added' => $added, 'sent' => count( $create ) + count( $update ) ), false );
-	return array( 'create' => $create, 'update' => $update, 'delete' => $del );
+	return array( 'create' => $create, 'update' => $update, 'delete' => $del, 'event_update' => $evup, 'event_delete' => $evdel );
 }
 
 /** After the script creates Google Tasks it reports their ids back. */
@@ -252,23 +269,30 @@ function dwdpe_script() {
 	$url = rest_url( 'dwd/v1/personal-sync' );
 	$tok = dwdpe_token();
 	return <<<JS
-// Dream Desk · Personal to-dos <-> Google Tasks & Google Calendar.
-// Before running: click "Services +" on the left, pick "Google Tasks API", click Add.
+// Dream Desk · Personal to-dos <-> Google Tasks & Google Calendar (two-way).
+// Before running: click "Services +" on the left and add BOTH "Google Tasks API" and "Google Calendar API".
 var DREAM_DESK = '{$url}';
 var TOKEN = '{$tok}';
 
 function syncDreamDesk() {
+  var tz = Session.getScriptTimeZone();
   var list = Tasks.Tasklists.list().items[0].id, tasks = [], page;
   do {
     var r = Tasks.Tasks.list(list, { showCompleted: true, showHidden: true, maxResults: 100, pageToken: page });
     (r.items || []).forEach(function (t) { tasks.push({ id: t.id, title: t.title, notes: t.notes || '', due: t.due || '', done: t.status === 'completed', updated: t.updated }); });
     page = r.nextPageToken;
   } while (page);
-  var now = new Date(), from = Utilities.formatDate(now, Session.getScriptTimeZone(), 'yyyy-MM-dd'), end = new Date(now.getTime() + 14 * 864e5);
-  var events = CalendarApp.getDefaultCalendar().getEvents(now, end).map(function (e) {
-    var s = e.getStartTime();
-    return { id: e.getId() + '@' + s.getTime(), title: e.getTitle(), date: Utilities.formatDate(s, Session.getScriptTimeZone(), 'yyyy-MM-dd'), time: e.isAllDayEvent() ? '' : Utilities.formatDate(s, Session.getScriptTimeZone(), 'h:mm a'), notes: (e.getLocation() || '') };
-  });
+  var now = new Date(), from = Utilities.formatDate(now, tz, 'yyyy-MM-dd'), end = new Date(now.getTime() + 365 * 864e5), events = [];
+  page = null;
+  do {
+    var ev = Calendar.Events.list('primary', { timeMin: new Date(from + 'T00:00:00').toISOString(), timeMax: end.toISOString(), singleEvents: true, orderBy: 'startTime', maxResults: 250, pageToken: page });
+    (ev.items || []).forEach(function (e) {
+      if (e.status === 'cancelled' || !e.summary) { return; }
+      var allDay = !!e.start.date, s = allDay ? null : new Date(e.start.dateTime);
+      events.push({ id: e.id, title: e.summary, date: allDay ? e.start.date : Utilities.formatDate(s, tz, 'yyyy-MM-dd'), time: allDay ? '' : Utilities.formatDate(s, tz, 'h:mm a'), notes: e.location || '' });
+    });
+    page = ev.nextPageToken;
+  } while (page);
   var res = call({ tasks: tasks, tasks_complete: true, events: events, from: from });
   var links = [];
   (res.create || []).forEach(function (t) {
@@ -285,6 +309,25 @@ function syncDreamDesk() {
     } catch (e) {}
   });
   (res['delete'] || []).forEach(function (gid) { try { Tasks.Tasks.remove(list, gid); } catch (e) {} });
+  // Calendar events edited or deleted in Dream Desk.
+  (res.event_update || []).forEach(function (u) {
+    try {
+      var e = Calendar.Events.get('primary', u.eid), patch = { summary: u.title };
+      if (e.start.date) {
+        var len = (new Date(e.end.date) - new Date(e.start.date)) || 864e5;
+        patch.start = { date: u.date }; patch.end = { date: Utilities.formatDate(new Date(new Date(u.date + 'T12:00:00').getTime() + len), tz, 'yyyy-MM-dd') };
+      } else {
+        var dur = new Date(e.end.dateTime) - new Date(e.start.dateTime), oldStart = new Date(e.start.dateTime);
+        var hm = Utilities.formatDate(oldStart, tz, 'HH:mm');
+        var m = /^(\d{1,2}):(\d{2})\s*([AaPp][Mm])?$/.exec((u.time || '').trim());
+        if (m) { var h = +m[1] % 12 + (m[3] && /p/i.test(m[3]) ? 12 : (!m[3] && +m[1] === 12 ? 12 : 0)); hm = ('0' + h).slice(-2) + ':' + m[2]; }
+        var ns = new Date(Utilities.formatDate(new Date(u.date + 'T12:00:00'), tz, 'yyyy-MM-dd') + 'T' + hm + ':00' + Utilities.formatDate(new Date(u.date + 'T12:00:00'), tz, 'XXX'));
+        patch.start = { dateTime: ns.toISOString(), timeZone: e.start.timeZone || tz }; patch.end = { dateTime: new Date(ns.getTime() + dur).toISOString(), timeZone: e.end.timeZone || tz };
+      }
+      Calendar.Events.patch(patch, 'primary', u.eid);
+    } catch (err) { Logger.log('event update failed ' + u.eid + ' ' + err); }
+  });
+  (res.event_delete || []).forEach(function (eid) { try { Calendar.Events.remove('primary', eid); } catch (err) {} });
   if (links.length) { call({ links: links }); }
 }
 

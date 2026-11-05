@@ -1218,3 +1218,71 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
   .dwdc .dwdc-ptadd input[name=text] { flex: 1 1 100%; }
   .dwdc .dwdc-ptadd input[name=due] { flex: 1 1 0; }
 }
+/* ===== Personal dashboard ===== */
+.dwdc-pgreet { font-size: 17px; color: var(--sec); margin: -6px 0 18px; }
+.dwdc-prow3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; margin-bottom: 22px; align-items: stretch; }
+.dwdc-prow2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; margin-top: 22px; }
+.cd-ptoday .dwdc-dhead { background: #FF6F4F; }
+.cd-psoon .dwdc-dhead { background: var(--navy); }
+.cd-pmoney .dwdc-dhead { background: #14A39A; }
+.cd-pweek .dwdc-dhead { background: var(--blue); }
+.cd-pbday .dwdc-dhead { background: #8E6FD8; }
+.cd-plist .dwdc-dhead { background: var(--deep); }
+.cd-ptoday .dwdc-dbody, .cd-psoon .dwdc-dbody, .cd-pbday .dwdc-dbody, .cd-plist .dwdc-dbody { padding: 6px 0; gap: 0; }
+.dwdc .dwdc-ph-row { display: flex; align-items: center; gap: 12px; width: 100%; padding: 10px 20px; border: 0; border-bottom: 1px solid var(--div); background: none; text-align: left; font-family: inherit; cursor: pointer; }
+.dwdc .dwdc-ph-row:last-child { border-bottom: 0; }
+.dwdc .dwdc-ph-row:hover { background: var(--hover); }
+.dwdc .dwdc-ph-row .tx { min-width: 0; flex: 1; }
+.dwdc .dwdc-ph-row b { display: block; font-size: 15px; color: var(--navy); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dwdc .dwdc-ph-row small { display: block; font-size: 12.5px; color: var(--mut); margin-top: 1px; }
+.dwdc .dwdc-ph-row .dot { width: 10px; height: 10px; border-radius: 50%; background: #FF8A6E; flex: none; margin: 0 6px; }
+.dwdc .dwdc-ph-row .dwdc-chk { width: 22px; height: 22px; flex: none; }
+.dwdc-plate { margin: 8px 20px 2px; font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: #E8553A; }
+.dwdc .dwdc-ptadd.mini { padding: 12px 16px; border-top: 1px solid var(--div); border-bottom: 0; margin-top: auto; }
+.dwdc .dwdc-ptadd.mini input[name=text] { height: 40px; font-size: 14px; }
+.dwdc .dwdc-ptadd.mini .dwdc-btn { height: 40px; padding: 0 14px; }
+.dwdc-pmore { display: block; padding: 10px 20px; font-size: 13px; font-weight: 600; color: var(--blue); }
+.dwdc-pm3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.dwdc-pm3 small { display: block; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--sec); }
+.dwdc-pm3 b { display: block; font-size: 21px; color: var(--navy); margin-top: 4px; }
+.dwdc-pm3 b.in { color: #1F9D55; } .dwdc-pm3 b.out { color: #E8553A; }
+.dwdc-pbills { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--div); }
+.dwdc-pbills a { display: grid; grid-template-columns: 1fr auto auto; gap: 12px; align-items: center; padding: 8px 0; color: var(--navy); text-decoration: none; font-size: 14.5px; }
+.dwdc-pbills a small { color: var(--mut); font-size: 12.5px; } .dwdc-pbills a.late small { color: #E8553A; font-weight: 700; }
+.dwdc-wk { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
+.dwdc-wk-d { min-height: 130px; padding: 12px 10px; border-right: 1px solid var(--div); cursor: pointer; display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.dwdc-wk-d:last-child { border-right: 0; }
+.dwdc-wk-d:hover { background: var(--hover); }
+.dwdc-wk-d.past { opacity: .55; }
+.dwdc-wk-d.today { background: #FFF4F0; }
+.dwdc-wk-d small { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--sec); }
+.dwdc-wk-d > b { font-size: 22px; color: var(--navy); line-height: 1; margin-bottom: 4px; }
+.dwdc-wk-d.today > b { color: #FF6F4F; }
+.dwdc-wk-d span { display: block; padding: 3px 6px; border-radius: 6px; font-size: 11.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dwdc-wk-d span.td { background: #E3F4FD; color: #1B7EC3; } .dwdc-wk-d span.ev { background: #FFEDE7; color: #D9482B; }
+.dwdc-wk-d em { font-style: normal; font-size: 11px; color: var(--mut); }
+.cd-pweek .dwdc-dbody { padding: 0; }
+/* Day pop-up */
+.dwdc-daylist { display: flex; flex-direction: column; gap: 8px; margin: 14px 0 16px; max-height: 55vh; overflow-y: auto; }
+.dwdc .dwdc-dayi { display: flex; align-items: center; gap: 14px; width: 100%; padding: 12px 14px; border: 1px solid var(--line); border-left-width: 4px; border-radius: 12px; background: #fff; text-align: left; font-family: inherit; cursor: pointer; color: var(--navy); text-decoration: none; }
+.dwdc .dwdc-dayi:hover { background: var(--hover); }
+.dwdc .dwdc-dayi.ev { border-left-color: #FF8A6E; } .dwdc .dwdc-dayi.td { border-left-color: #13A6EE; } .dwdc .dwdc-dayi.bill { border-left-color: #2FB36A; }
+.dwdc .dwdc-dayi .tm { flex: none; width: 70px; font-size: 13px; font-weight: 700; color: var(--sec); }
+.dwdc .dwdc-dayi .tx { flex: 1; min-width: 0; }
+.dwdc .dwdc-dayi .tx b { display: block; font-size: 15px; } .dwdc .dwdc-dayi .tx small { display: block; color: var(--mut); font-size: 12.5px; margin-top: 2px; }
+.dwdc .dwdc-dayi.done .tx b { text-decoration: line-through; color: var(--mut); }
+.dwdc .dwdc-ptadd.daym { margin: 0 -2px; border: 0; border-radius: 12px; padding: 12px; }
+.dwdc-cal-d { cursor: pointer; } .dwdc-cal-d:hover { background: #F7FAFD; }
+@media (max-width: 1100px) { .dwdc-prow3 { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 768px) {
+  .dwdc-prow3, .dwdc-prow2 { grid-template-columns: 1fr; gap: 16px; }
+  .dwdc-wk { grid-template-columns: 1fr; }
+  .dwdc-wk-d { min-height: 0; flex-direction: row; flex-wrap: wrap; align-items: center; border-right: 0; border-bottom: 1px solid var(--div); padding: 10px 14px; }
+  .dwdc-wk-d small { width: 34px; } .dwdc-wk-d > b { font-size: 16px; margin: 0 8px 0 0; width: 24px; }
+  .dwdc-wk-d span { max-width: 100%; }
+}
+.dwdc .dwdc-wk-d { padding: 18px 16px 16px; gap: 6px; }
+.dwdc .dwdc-wk-d:first-child { padding-left: 20px; }
+.dwdc .dwdc-wk-d > b { margin-bottom: 6px; }
+.dwdc-pbills .dwdc-mutp a { color: var(--blue); font-weight: 600; }
+@media (max-width: 768px) { .dwdc .dwdc-wk-d, .dwdc .dwdc-wk-d:first-child { padding: 12px 16px; } }
