@@ -1051,17 +1051,17 @@
 			+ (st === 'complete' ? mini('navy', 'Total spent', money(lifetime(c))) : '<div class="dwdc-mini"><small>Due</small><strong class="' + (late ? 'red' : '') + '">' + (c.deadline ? fmt(c.deadline) : '—') + '</strong></div>') + '</div>'
 			+ '<div class="dwdc-two">'
 			+ '<div class="dwdc-col">'
+			+ (S.edit ? editCard(c) : detailsCard(c))
 			+ onboardCard(c, full)
 			+ markupCard(c)
-			+ sourceCard(c)
 			+ (num(c.hosting) ? hostCard(c) : '')
-			+ (S.edit ? editCard(c) : detailsCard(c))
-			+ peopleCard(c)
 			+ jobsCard(c)
 			+ '</div><div class="dwdc-col">'
 			+ '<section class="dwdc-card pad"><div class="dwdc-cardh"><h2>To-dos</h2><span class="dwdc-cnt">' + openN + '</span></div>'
 			+ (tasks.length ? '<div class="dwdc-todos">' + tasks.map(function (t) { return todoRow(t, true); }).join('') + '</div>' : '')
 			+ '<form class="dwdc-inlineadd" data-contact="' + c.id + '">' + ic('plus', 16) + '<input name="text" placeholder="Add a to-do for ' + esc(c.name) + '…" autocomplete="off"><input type="date" name="due" title="Due date"></form></section>'
+			+ peopleCard(c)
+			+ sourceCard(c)
 			+ activityCard(c, full)
 			+ '</div></div>';
 	}
