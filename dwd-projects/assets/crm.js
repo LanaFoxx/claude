@@ -421,7 +421,7 @@
 				+ card('cd-pweek', chead('grid', 'This Week', 'personal/calendar'), '<div class="dwdc-wk">' + wk + '</div>')
 				+ '<div class="dwdc-prow2">'
 				+ card('cd-pbday', chead('star', 'Birthdays Coming Up', 'personal/calendar'), bdays.length ? bdays.slice(0, 6).map(function (x) { return row(x, true); }).join('') : emptyRow('No birthdays in the next two months.'))
-				+ card('cd-plist', chead('list', 'To-Do List', 'personal/todo'), nodate.length || openT.filter(function (x) { return !x.gevent; }).length ? openT.filter(function (x) { return !x.gevent; }).sort(function (a, b) { return (a.due || '9') < (b.due || '9') ? -1 : 1; }).slice(0, 7).map(function (x) { return row(x, !!x.due); }).join('') : emptyRow('No open to-dos. Add one on My To-Dos.'))
+				+ card('cd-ptdl', chead('list', 'To-Do List', 'personal/todo'), nodate.length || openT.filter(function (x) { return !x.gevent; }).length ? openT.filter(function (x) { return !x.gevent; }).sort(function (a, b) { return (a.due || '9') < (b.due || '9') ? -1 : 1; }).slice(0, 7).map(function (x) { return row(x, !!x.due); }).join('') : emptyRow('No open to-dos. Add one on My To-Dos.'))
 				+ '</div>' + connPanel();
 		}
 		if (tab === 'calendar') {

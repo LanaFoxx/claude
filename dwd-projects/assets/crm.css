@@ -1227,8 +1227,8 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 .cd-pmoney .dwdc-dhead { background: #14A39A; }
 .cd-pweek .dwdc-dhead { background: var(--blue); }
 .cd-pbday .dwdc-dhead { background: #8E6FD8; }
-.cd-plist .dwdc-dhead { background: var(--deep); }
-.cd-ptoday .dwdc-dbody, .cd-psoon .dwdc-dbody, .cd-pbday .dwdc-dbody, .cd-plist .dwdc-dbody { padding: 6px 0; gap: 0; }
+.cd-ptdl .dwdc-dhead { background: var(--deep); }
+.cd-ptoday .dwdc-dbody, .cd-psoon .dwdc-dbody, .cd-pbday .dwdc-dbody, .cd-ptdl .dwdc-dbody { padding: 6px 0; gap: 0; }
 .dwdc .dwdc-ph-row { display: flex; align-items: center; gap: 12px; width: 100%; padding: 10px 20px; border: 0; border-bottom: 1px solid var(--div); background: none; text-align: left; font-family: inherit; cursor: pointer; }
 .dwdc .dwdc-ph-row:last-child { border-bottom: 0; }
 .dwdc .dwdc-ph-row:hover { background: var(--hover); }
@@ -1433,3 +1433,10 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 .dwdc .dwdc-mopen .dwdc-lbl { margin: 0; }
 .dwdc .dwdc-mopen strong { display: block; font-size: 28px; font-weight: 800; color: var(--navy); line-height: 1.2; margin: 4px 0 2px; }
 .dwdc .dwdc-mopen small { font-size: 13px; color: var(--sec); }
+
+/* Money box: plain, left-aligned stack (no coral block) */
+.dwdc .dwdc-mnow { background: none !important; color: var(--navy) !important; padding: 0 !important; border-radius: 0; margin: 0 0 18px; box-shadow: none !important; }
+.dwdc .dwdc-mnow .dwdc-lbl { color: var(--blue) !important; }
+.dwdc .dwdc-mnow strong { color: var(--navy) !important; font-size: 28px; }
+.dwdc .dwdc-mnow small { color: var(--sec); opacity: 1; }
+.dwdc .dwdc-mnow:hover small { color: var(--blue); }
