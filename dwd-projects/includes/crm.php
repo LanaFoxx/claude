@@ -64,6 +64,10 @@ function dwdc_contact( $post, $full = false ) {
 		}
 	}
 	$c['autopay'] = '1' === get_post_meta( $p->ID, '_dwdc_autopay', true );
+	$c['sub']     = (float) preg_replace( '/[^\d.]/', '', (string) get_post_meta( $p->ID, '_dwdc_hosting', true ) ) > 0 ? dwdc_subscription_for( $p->ID, $c['email'] ) : null;
+	if ( $full ) {
+		$c['paylink'] = dwdc_paylink( $p->ID );
+	}
 	$jobs        = get_post_meta( $p->ID, '_dwdc_jobs', true );
 	$c['jobs']   = is_array( $jobs ) ? $jobs : array();
 	if ( $full ) {
@@ -239,6 +243,15 @@ function dwdc_from_order( $order_id ) {
 	if ( ! $o || $o->get_meta( '_dwdc_filed' ) ) {
 		return;
 	}
+	// Paid through a client's own renewal link: make sure the email lands on that client.
+	$linked = (int) $o->get_meta( '_dwdc_contact' );
+	if ( ! $linked && $o->get_parent_id() ) {
+		$parent = wc_get_order( $o->get_parent_id() );
+		$linked = $parent ? (int) $parent->get_meta( '_dwdc_contact' ) : 0;
+	}
+	if ( $linked && DWDC_CONTACT === get_post_type( $linked ) && ! get_post_meta( $linked, '_dwdc_email', true ) && $o->get_billing_email() ) {
+		update_post_meta( $linked, '_dwdc_email', strtolower( sanitize_email( $o->get_billing_email() ) ) );
+	}
 	$name    = trim( $o->get_billing_first_name() . ' ' . $o->get_billing_last_name() );
 	$site    = (string) $o->get_meta( '_billing_website' );
 	$renewal = (bool) $o->get_meta( '_wps_sfw_renewal_order' ) || (bool) $o->get_meta( 'wps_sfw_renewal_order' ) || $o->get_parent_id();
@@ -272,6 +285,64 @@ function dwdc_from_order( $order_id ) {
 }
 add_action( 'woocommerce_order_status_processing', 'dwdc_from_order' );
 add_action( 'woocommerce_order_status_completed', 'dwdc_from_order' );
+
+/* ---------------------------------------------------------------- hosting subscriptions */
+
+/** Secret key in each client's renewal link, so nobody can guess another client's link. */
+function dwdc_paykey( $id ) {
+	return substr( hash_hmac( 'sha256', 'dwdc-pay-' . (int) $id, wp_salt( 'auth' ) ), 0, 20 );
+}
+function dwdc_paylink( $id ) {
+	return add_query_arg( array( 'dwd-order' => 'hosting', 'dwc' => (int) $id, 'dwk' => dwdc_paykey( $id ) ), home_url( '/checkout/' ) );
+}
+
+/**
+ * Yearly hosting subscriptions (Subscriptions for WooCommerce), keyed by contact id and by email.
+ * Each: status (active, on-hold, cancelled, pending…), amount, method (Stripe, PayPal…), next charge date.
+ */
+function dwdc_subscriptions() {
+	static $map = null;
+	if ( null !== $map ) {
+		return $map;
+	}
+	$map = array( 'email' => array(), 'contact' => array() );
+	if ( ! function_exists( 'wc_get_orders' ) ) {
+		return $map;
+	}
+	try {
+		$subs = wc_get_orders( array( 'type' => 'wps_subscriptions', 'limit' => -1, 'status' => 'any' ) );
+	} catch ( \Throwable $e ) {
+		$subs = array();
+	}
+	foreach ( (array) $subs as $sub ) {
+		if ( ! is_object( $sub ) || ! method_exists( $sub, 'get_meta' ) ) {
+			continue;
+		}
+		$parent = (int) $sub->get_meta( 'wps_parent_order' );
+		$po     = $parent ? wc_get_order( $parent ) : null;
+		$email  = strtolower( (string) ( $sub->get_billing_email() ?: ( $po ? $po->get_billing_email() : '' ) ) );
+		$next   = $sub->get_meta( 'wps_next_payment_date' );
+		$info   = array(
+			'id'     => $sub->get_id(),
+			'status' => (string) ( $sub->get_meta( 'wps_subscription_status' ) ?: $sub->get_status() ),
+			'amount' => (string) $sub->get_total(),
+			'method' => (string) ( $sub->get_payment_method_title() ?: ( $po ? $po->get_payment_method_title() : '' ) ),
+			'next'   => $next ? ( is_numeric( $next ) ? gmdate( 'Y-m-d', (int) $next ) : gmdate( 'Y-m-d', strtotime( $next ) ) ) : '',
+		);
+		$rank = function ( $i ) { return 'active' === $i['status'] ? 2 : ( 'cancelled' === $i['status'] ? 0 : 1 ); };
+		$cid  = $po ? (int) $po->get_meta( '_dwdc_contact' ) : 0;
+		foreach ( array( 'email' => $email, 'contact' => $cid ) as $k => $v ) {
+			if ( $v && ( empty( $map[ $k ][ $v ] ) || $rank( $info ) >= $rank( $map[ $k ][ $v ] ) ) ) {
+				$map[ $k ][ $v ] = $info;
+			}
+		}
+	}
+	return $map;
+}
+function dwdc_subscription_for( $id, $email ) {
+	$m = dwdc_subscriptions();
+	return $m['contact'][ $id ] ?? ( $email ? ( $m['email'][ strtolower( $email ) ] ?? null ) : null );
+}
 
 /** One time: file every form entry already saved by Elementor. */
 function dwdc_backfill() {
@@ -399,6 +470,39 @@ add_action( 'rest_api_init', function () {
 			$out[ $new ? 'created' : 'merged' ]++;
 		}
 		return $out;
+	} ) );
+
+	// Email a client their hosting renewal link (their own price; it sets up yearly auto-renew).
+	register_rest_route( $ns, '/crm/contact/(?P<id>\d+)/paylink', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
+		$id    = (int) $r['id'];
+		$email = sanitize_email( (string) $r->get_param( 'email' ) );
+		if ( $email ) {
+			update_post_meta( $id, '_dwdc_email', strtolower( $email ) );
+		}
+		$email = (string) get_post_meta( $id, '_dwdc_email', true );
+		if ( ! is_email( $email ) ) {
+			return new WP_Error( 'dwdc_email', 'Add the client’s email first.', array( 'status' => 400 ) );
+		}
+		$fee   = (float) preg_replace( '/[^\d.]/', '', (string) get_post_meta( $id, '_dwdc_hosting', true ) );
+		$who   = get_post_meta( $id, '_dwdc_person', true ) ?: get_the_title( $id );
+		$first = trim( strtok( $who, ' ' ) );
+		$site  = preg_replace( '#^https?://(www\.)?#', '', (string) get_post_meta( $id, '_dwdc_website', true ) );
+		$html  = dwdp_email_html( array(
+			'eyebrow' => 'Website Hosting',
+			'title'   => 'Renew your hosting',
+			'intro'   => 'Hi ' . esc_html( $first ) . ',<br><br>It’s time to renew hosting' . ( $site ? ' for <strong>' . esc_html( rtrim( $site, '/' ) ) . '</strong>' : '' ) . '. Use the button below to pay <strong>$' . esc_html( number_format( $fee, $fee == (int) $fee ? 0 : 2 ) ) . ' for the year</strong>. It renews automatically each year after that, so you won’t need to think about it again. Cancel anytime.<br><br>Questions? Just reply to this email.<br><br>Michael Tarr<br>Dream Web Digital',
+			'buttons' => array( array( 'Renew hosting', dwdc_paylink( $id ) ) ),
+		) );
+		$sent = wp_mail( $email, 'Renew your website hosting', $html, array( 'Content-Type: text/html; charset=UTF-8', 'Reply-To: Michael Tarr <mike@dreamwebdigital.com>' ) );
+		if ( ! $sent ) {
+			return new WP_Error( 'dwdc_mail', 'The email didn’t send. Copy the link and send it yourself.', array( 'status' => 500 ) );
+		}
+		$notes   = get_post_meta( $id, '_dwdc_notes', true );
+		$notes   = is_array( $notes ) ? $notes : array();
+		$notes[] = array( 'date' => current_time( 'mysql', true ), 'text' => 'Hosting renewal link emailed to ' . $email . '.' );
+		update_post_meta( $id, '_dwdc_notes', $notes );
+		wp_update_post( array( 'ID' => $id ) );
+		return dwdc_contact( $id, true );
 	} ) );
 
 	register_rest_route( $ns, '/crm/task', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {

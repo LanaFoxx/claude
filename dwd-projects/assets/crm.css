@@ -367,3 +367,23 @@ select.dwdc-stage.t-amber { background-color: var(--amber-t) !important; color: 
 .dwdc-chead p { font-size: 15px; }
 .dwdc-picked b, .dwdc-pickrow b { font-size: 15.5px; }
 .g-jobs select.dwdc-stage { max-width: 124px; }
+.g-host { grid-template-columns: minmax(200px, 1.6fr) minmax(170px, 1.4fr) 1.1fr 0.8fr 1fr 150px; min-width: 900px; }
+.dwdc-nm b.nm2 { font-size: 15px; font-weight: 500; }
+.dwdc-sm { font-size: 12px; color: var(--mut); }
+.dwdc-subbox { display: flex; align-items: center; gap: 14px; border-radius: 10px; padding: 16px; }
+.dwdc-subbox > span { width: 36px; height: 36px; border-radius: 50%; flex: none; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 18px; }
+.dwdc-subbox strong { display: block; font-size: 15px; font-weight: 700; }
+.dwdc-subbox small { display: block; font-size: 13px; color: var(--sec); margin-top: 2px; }
+.dwdc-subbox.ok { background: var(--green-t); } .dwdc-subbox.ok > span { background: var(--green); } .dwdc-subbox.ok small { color: var(--green); }
+.dwdc-subbox.no { background: var(--amber-t); } .dwdc-subbox.no > span { background: var(--amber); }
+.dwdc-payf { display: flex; gap: 10px; flex-wrap: wrap; }
+.dwdc-payf input { flex: 1 1 100%; height: 42px; min-height: 0 !important; border: 1px solid var(--line) !important; border-radius: 10px !important; padding: 0 12px !important; background: var(--surf) !important; }
+.dwdc-payf .dwdc-btn, .dwdc-payf .dwdc-btn2 { height: 42px; }
+/* status/stage pills: text centered inside */
+select.dwdc-stage { text-align: center; text-align-last: center; -moz-text-align-last: center; padding: 0 12px !important; line-height: normal !important; display: inline-flex; align-items: center; }
+select.dwdc-stage option { text-align: left; }
+.dwdc-job header select.dwdc-stage { height: 30px !important; padding: 0 12px !important; min-width: 96px; }
+/* limbo / on-hold tile in red */
+.dwdc-tile.t-red { background: var(--red-t); border-color: var(--red-t); } .dwdc-tile.t-red .dwdc-tile-h { color: var(--red); }
+.dwdc-mini.t-red strong { color: var(--red); }
+select.dwdc-stage.t-red { background-color: var(--red-t) !important; color: var(--red) !important; border-color: #F3C4C1 !important; }

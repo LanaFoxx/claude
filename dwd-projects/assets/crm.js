@@ -70,7 +70,7 @@
 	function ic(n, size) { return '<svg class="dwdc-ic" width="' + (size || 18) + '" height="' + (size || 18) + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICON[n] + '</svg>'; }
 
 	// Status colors: blue active, violet limbo, green done/paid, teal hosting, orange leads/owed, red overdue.
-	var TONE = { active: 'blue', hold: 'amber', limbo: 'violet', complete: 'green', leads: 'orange', archive: 'gray', hosting: 'teal' };
+	var TONE = { active: 'blue', hold: 'amber', limbo: 'red', complete: 'green', leads: 'orange', archive: 'gray', hosting: 'teal' };
 	var LABEL = { active: 'Active', hold: 'On hold', limbo: 'In limbo', complete: 'Completed', leads: 'Lead', archive: 'Archived' };
 	function avatar() { return ''; } // client avatars removed: names carry the rows
 	function avatarOld(c, size, tone) { return '<span class="dwdc-av t-' + (tone || TONE[c.list] || 'blue') + (size ? ' s' + size : '') + '">' + esc(initials(c.name)) + '</span>'; }
@@ -198,7 +198,7 @@
 		var entries = S.contacts.filter(function (c) { return c.entry_count && c.list !== 'archive'; }).sort(function (a, b) { return a.last_entry_date < b.last_entry_date ? 1 : -1; }).slice(0, 6);
 		return '<div class="dwdc-tiles">'
 			+ tile('blue', 'Active jobs', active.length, money(owed(S.contacts.filter(function (c) { return c.list !== 'archive'; }))) + ' still owed overall', 'jobs')
-			+ tile('violet', 'On hold &amp; limbo', hold.length + limbo.length, hold.length + ' on hold · ' + limbo.length + ' in limbo', 'jobs')
+			+ tile('red', 'On hold &amp; limbo', hold.length + limbo.length, hold.length + ' on hold · ' + limbo.length + ' in limbo', 'jobs')
 			+ tile('green', 'Completed', done.length, money(billed) + ' billed all-time', 'completed')
 			+ tile('teal', 'Hosting clients', host.length, money(annual) + '/yr' + (next ? ' · next ' + fmt(next.renewal) : ''), 'hosting')
 			+ '</div>'
@@ -272,7 +272,7 @@
 						+ '<span class="' + (late ? 'red b' : '') + '">' + (c.deadline ? fmt(c.deadline) : '—') + '</span><span>' + statusSelect(c) + '</span><span class="sec ell">' + esc(c.next || '—') + '</span></div>';
 				}).join('') : emptyRow(S.q ? 'No matches.' : empty)) + '</div></section>';
 		};
-		return '<div class="dwdc-minis">' + mini('blue', 'Active', by('active').length) + mini('navy', 'Contract value', money(value)) + mini('orange', 'Owed on these', money(owed(all))) + mini('amber', 'On hold', by('hold').length) + mini('violet', 'In limbo', by('limbo').length) + '</div>'
+		return '<div class="dwdc-minis">' + mini('blue', 'Active', by('active').length) + mini('navy', 'Contract value', money(value)) + mini('orange', 'Owed on these', money(owed(all))) + mini('amber', 'On hold', by('hold').length) + mini('red', 'In limbo', by('limbo').length) + '</div>'
 			+ sec('active', 'Active jobs', 'Nothing in progress right now.', '<button class="dwdc-btn sm" data-act="job">' + ic('plus', 14) + 'Add job</button>')
 			+ sec('hold', 'On hold', 'No jobs on hold. Paused jobs go here.')
 			+ sec('limbo', 'In limbo', 'No jobs in limbo. Clients you haven’t heard back from go here.');
@@ -300,19 +300,25 @@
 	function byDue(a, b) { return a.due < b.due ? -1 : 1; }
 
 	/* ---------- hosting ---------- */
+	function subActive(c) { return !!(c.sub && c.sub.status === 'active'); }
 	function hostingView() {
 		var rows = hosting().sort(function (a, b) { return (a.renewal || '9') < (b.renewal || '9') ? -1 : 1; });
 		var annual = rows.reduce(function (s, c) { return s + num(c.hosting); }, 0);
 		var next = rows.filter(function (c) { return c.renewal && c.renewal >= DWDC.today; })[0];
 		var soon = rows.filter(function (c) { return c.renewal && daysTo(c.renewal) >= 0 && daysTo(c.renewal) <= 30; }).length;
+		var auto = rows.filter(subActive).length;
 		var list = rows.filter(match), cap = S.more.hosting || S.q ? list.length : 15;
-		return '<div class="dwdc-minis">' + mini('teal', 'Hosting clients', rows.length) + mini('navy', 'Annual recurring', money(annual)) + mini('navy', 'Next renewal', next ? fmt(next.renewal) : '—') + mini('orange', 'Renewing in 30 days', soon) + '</div>'
-			+ '<div class="dwdc-card dwdc-tbl"><div class="dwdc-grid g-host head"><span>Client</span><span>Plan</span><span>Per year</span><span>Renews</span><span>Status</span></div>'
+		return '<div class="dwdc-minis">' + mini('teal', 'Hosting clients', rows.length) + mini('navy', 'Annual recurring', money(annual)) + mini('green', 'On auto-renew', auto + ' of ' + rows.length) + mini('orange', 'Renewing in 30 days', soon) + '</div>'
+			+ '<div class="dwdc-card dwdc-tbl"><div class="dwdc-grid g-host head"><span>Website</span><span>Client</span><span>Subscription</span><span>Per year</span><span>Renews</span><span>Status</span></div>'
 			+ (list.length ? list.slice(0, cap).map(function (c) {
-				var n = c.renewal ? daysTo(c.renewal) : null, st = n === null ? ['No date', 'gray'] : n < 0 ? ['Past due', 'red'] : n <= 30 ? ['Renewing soon', 'orange'] : ['Active', 'green'];
-				return '<div class="dwdc-grid g-host row" data-go="client/' + c.id + '"><span class="dwdc-nm">' + avatar(c, 34, 'teal') + '<span><b>' + esc(c.name) + '</b><small>' + esc(site(c) || c.email || '') + '</small></span></span>'
-					+ '<span>' + (c.autopay ? 'Yearly · <b class="green">Auto-pay</b>' : 'Yearly · Invoice') + '</span><span class="b">' + money(c.hosting) + '</span>'
-					+ '<span class="b ' + (n === null ? 'mut' : n < 0 ? 'red' : n <= 30 ? 'orange' : '') + '">' + (c.renewal ? fmt(c.renewal, true) : '—') + '</span><span>' + pill(st[0], st[1]) + '</span></div>';
+				var on = subActive(c), n = c.renewal ? daysTo(c.renewal) : null;
+				var st = on ? ['Auto-renew', 'green'] : n === null ? ['No date', 'gray'] : n < 0 ? ['Past due', 'red'] : n <= 30 ? ['Renewing soon', 'orange'] : ['Not on auto-pay', 'amber'];
+				var when = on && c.sub.next ? c.sub.next : c.renewal;
+				return '<div class="dwdc-grid g-host row" data-go="client/' + c.id + '"><span class="dwdc-nm"><span><b>' + esc(c.name) + '</b><small>' + esc(site(c) || '') + '</small></span></span>'
+					+ '<span class="dwdc-nm"><span><b class="nm2">' + esc(c.person || '—') + '</b><small>' + esc(c.email || '') + '</small></span></span>'
+					+ '<span>' + (on ? '<b class="green">Active</b>' + (c.sub.method ? '<small class="dwdc-sm">&nbsp;· ' + esc(c.sub.method) + '</small>' : '') : (c.sub ? '<span class="mut">' + esc(c.sub.status) + '</span>' : '<span class="mut">None</span>')) + '</span>'
+					+ '<span class="b">' + money(on && num(c.sub.amount) ? c.sub.amount : c.hosting) + '</span>'
+					+ '<span class="b ' + (on ? '' : n === null ? 'mut' : n < 0 ? 'red' : n <= 30 ? 'orange' : '') + '">' + (when ? fmt(when, true) : '—') + '</span><span>' + pill(st[0], st[1]) + '</span></div>';
 			}).join('') : emptyRow('No hosting clients match.')) + moreFoot('hosting', cap, list.length) + '</div>';
 	}
 
@@ -373,7 +379,7 @@
 		var acts = '';
 		if (st === 'active' || st === 'hold' || st === 'limbo') {
 			acts = (ow ? btn('', 'data-paid', 'Mark paid') : '') + (st !== 'active' ? btn('', 'data-set="active"', 'Back to active') : '')
-				+ (st !== 'hold' ? btn('amber', 'data-set="hold"', 'Put on hold') : '') + (st !== 'limbo' ? btn('violet', 'data-set="limbo"', 'Move to limbo') : '') + btn('solid green', 'data-complete', 'Mark complete');
+				+ (st !== 'hold' ? btn('amber', 'data-set="hold"', 'Put on hold') : '') + (st !== 'limbo' ? btn('red', 'data-set="limbo"', 'Move to limbo') : '') + btn('solid green', 'data-complete', 'Mark complete');
 		} else if (st === 'leads') {
 			acts = btn('', 'data-set="archive"', 'Archive') + btn('solid blue', 'data-act="job" data-contact="' + c.id + '"', 'Start a job');
 		} else if (st === 'archive') {
@@ -392,10 +398,10 @@
 			+ (st === 'complete' ? mini('navy', 'Total spent', money(lifetime(c))) : '<div class="dwdc-mini"><small>Due</small><strong class="' + (late ? 'red' : '') + '">' + (c.deadline ? fmt(c.deadline) : '—') + '</strong></div>') + '</div>'
 			+ '<div class="dwdc-two">'
 			+ '<div class="dwdc-col">'
+			+ (num(c.hosting) ? hostCard(c) : '')
 			+ '<section class="dwdc-card pad"><div class="dwdc-cardh"><h2>Next step</h2></div><form class="dwdc-nextf"><input name="next" value="' + esc(c.next) + '" placeholder="No next step set. Type one and press Enter"></form></section>'
 			+ (S.edit ? editCard(c) : detailsCard(c))
 			+ jobsCard(c)
-			+ (num(c.hosting) ? hostCard(c) : '')
 			+ '</div><div class="dwdc-col">'
 			+ '<section class="dwdc-card pad"><div class="dwdc-cardh"><h2>To-dos</h2><span class="dwdc-cnt">' + openN + '</span></div>'
 			+ (tasks.length ? '<div class="dwdc-todos">' + tasks.map(function (t) { return todoRow(t, true); }).join('') + '</div>' : '')
@@ -431,10 +437,14 @@
 			+ '<form class="dwdc-logjob"><input name="title" placeholder="Log an older job" required><input name="price" placeholder="$" inputmode="decimal"><input name="date" placeholder="When"><button class="dwdc-btn2">Log</button></form></section>';
 	}
 	function hostCard(c) {
-		var n = c.renewal ? daysTo(c.renewal) : null;
-		return '<section class="dwdc-card pad"><div class="dwdc-cardh"><h2>Hosting</h2>' + (c.autopay ? pill('Auto-pay', 'green') : pill('Invoice', 'orange')) + '</div><dl class="dwdc-dl">'
-			+ '<dt>Plan</dt><dd>' + money(c.hosting) + ' / year</dd><dt>Renews</dt><dd class="' + (n !== null && n < 0 ? 'red' : n !== null && n <= 30 ? 'orange' : '') + '">' + (c.renewal ? fmt(c.renewal, true) : '—') + '</dd>'
-			+ '<dt>Billing</dt><dd>' + (c.autopay ? 'Charged automatically each year through the website.' : 'Not on auto-pay yet. <button class="dwdc-lnk" data-copy>Copy payment link</button>') + '</dd>'
+		var on = subActive(c), n = c.renewal ? daysTo(c.renewal) : null;
+		var box = on
+			? '<div class="dwdc-subbox ok"><span>' + ic('check', 18) + '</span><div><strong>Annual subscription active</strong><small>' + money(num(c.sub.amount) || c.hosting) + '/yr' + (c.sub.method ? ' · ' + esc(c.sub.method) : '') + (c.sub.next ? ' · next charge ' + fmt(c.sub.next, true) : '') + '</small></div></div>'
+			: '<div class="dwdc-subbox no"><span>!</span><div><strong>No active subscription</strong><small>' + (c.sub ? 'Their subscription is ' + esc(c.sub.status) + '. ' : '') + (c.renewal ? (n < 0 ? 'Renewal was due ' : 'Renews ') + fmt(c.renewal, true) + '. ' : '') + 'Send a link to pay ' + money(c.hosting) + ' and turn on yearly auto-renew.</small></div></div>'
+				+ '<form class="dwdc-payf">' + (c.email ? '' : '<input name="email" type="email" placeholder="Client’s email (needed to send the link)" required>')
+				+ '<button class="dwdc-btn">' + ic('right', 14) + 'Email payment link</button><button type="button" class="dwdc-btn2" data-copy>Copy link</button></form>';
+		return '<section class="dwdc-card pad"><div class="dwdc-cardh"><h2>Hosting</h2>' + (on ? pill('Auto-renew', 'green') : pill('Not on auto-pay', 'amber')) + '</div>' + box
+			+ '<dl class="dwdc-dl"><dt>Plan</dt><dd>' + money(c.hosting) + ' / year</dd><dt>Renews</dt><dd class="' + (!on && n !== null && n < 0 ? 'red' : !on && n !== null && n <= 30 ? 'orange' : '') + '">' + ((on && c.sub.next) || c.renewal ? fmt((on && c.sub.next) || c.renewal, true) : '—') + '</dd>'
 			+ (c.email ? '<dt>Payments</dt><dd><a href="' + esc(DWDC.orders + encodeURIComponent(c.email)) + '" target="_blank">View orders in WooCommerce</a></dd>' : '') + '</dl></section>';
 	}
 	function activityCard(c, full) {
@@ -566,7 +576,8 @@
 			save(r.id, { jobs: jobs }); return;
 		}
 		if (t.closest('[data-copy]')) {
-			(navigator.clipboard ? navigator.clipboard.writeText(DWDC.pay) : Promise.reject()).then(function () { toast('Payment link copied'); }, function () { prompt('Copy this payment link:', DWDC.pay); });
+			var link = (S.full[r.id] && S.full[r.id].paylink) || DWDC.pay;
+			(navigator.clipboard ? navigator.clipboard.writeText(link) : Promise.reject()).then(function () { toast('Payment link copied'); }, function () { prompt('Copy this payment link:', link); });
 			return;
 		}
 		if ((el = t.closest('[data-go]')) && !t.closest('a, button')) { go(el.getAttribute('data-go')); }
@@ -636,6 +647,9 @@
 				S.tasks.unshift(x); if (f.classList.contains('dwdc-cardtodo')) { S.cardTodo = 0; } render();
 				var again = app.querySelector(f.classList.contains('dwdc-addbar') ? '.dwdc-addbar [name=text]' : '.dwdc-inlineadd [name=text]'); if (again && !f.classList.contains('dwdc-cardtodo')) { again.focus(); }
 			}).catch(fail);
+		} else if (f.classList.contains('dwdc-payf')) {
+			var pb = f.querySelector('.dwdc-btn'); pb.disabled = true;
+			api('/contact/' + r.id + '/paylink', 'POST', data).then(function (x) { upsert(x); S.full[x.id] = x; render(); toast('Payment link emailed to ' + x.email); }).catch(function (er) { pb.disabled = false; fail(er); });
 		} else if (f.classList.contains('dwdc-nextf')) {
 			save(r.id, { next: data.next }, 'Next step saved');
 		} else if (f.classList.contains('dwdc-editf')) {

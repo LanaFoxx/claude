@@ -33,6 +33,13 @@ add_action( 'wp_loaded', function () {
 	}
 	$id = dwdp_hosting_product_id();
 	wc_clear_notices();
+	// A client's own renewal link from Client Desk: their price and details are filled in.
+	if ( WC()->session ) {
+		WC()->session->set_customer_session_cookie( true );
+		$cid = isset( $_GET['dwc'] ) ? absint( $_GET['dwc'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification
+		$key = isset( $_GET['dwk'] ) ? sanitize_text_field( wp_unslash( $_GET['dwk'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+		WC()->session->set( 'dwdc_pay', $cid && function_exists( 'dwdc_paykey' ) && hash_equals( dwdc_paykey( $cid ), $key ) ? $cid : 0 );
+	}
 	if ( $id ) {
 		WC()->cart->empty_cart();
 		WC()->cart->add_to_cart( $id, 1 );
@@ -41,6 +48,44 @@ add_action( 'wp_loaded', function () {
 	wp_safe_redirect( wc_get_checkout_url() );
 	exit;
 }, 20 );
+
+// Client renewal links: charge that client's yearly price (the subscription renews at the same amount).
+function dwdp_pay_contact() {
+	$cid = WC()->session ? (int) WC()->session->get( 'dwdc_pay' ) : 0;
+	return $cid && 'dwd_contact' === get_post_type( $cid ) ? $cid : 0;
+}
+add_action( 'woocommerce_before_calculate_totals', function ( $cart ) {
+	$cid = dwdp_pay_contact();
+	$fee = $cid ? (float) preg_replace( '/[^\d.]/', '', (string) get_post_meta( $cid, '_dwdc_hosting', true ) ) : 0;
+	if ( $fee <= 0 ) {
+		return;
+	}
+	foreach ( $cart->get_cart() as $item ) {
+		if ( (int) $item['product_id'] === dwdp_hosting_product_id() ) {
+			$item['data']->set_price( $fee );
+			$item['data']->update_meta_data( '_price', $fee );
+		}
+	}
+}, 20 );
+add_filter( 'woocommerce_checkout_get_value', function ( $value, $input ) {
+	$cid = dwdp_pay_contact();
+	if ( ! $cid || '' !== (string) $value ) {
+		return $value;
+	}
+	$map = array( 'billing_first_name' => get_post_meta( $cid, '_dwdc_person', true ) ?: get_the_title( $cid ), 'billing_email' => get_post_meta( $cid, '_dwdc_email', true ), 'billing_phone' => get_post_meta( $cid, '_dwdc_phone', true ), 'billing_website' => get_post_meta( $cid, '_dwdc_website', true ) );
+	return isset( $map[ $input ] ) ? $map[ $input ] : $value;
+}, 10, 2 );
+add_action( 'woocommerce_checkout_create_order', function ( $order ) {
+	$cid = dwdp_pay_contact();
+	if ( $cid ) {
+		$order->update_meta_data( '_dwdc_contact', $cid );
+	}
+}, 20 );
+add_action( 'woocommerce_thankyou', function () {
+	if ( WC()->session ) {
+		WC()->session->set( 'dwdc_pay', 0 );
+	}
+} );
 
 // Old ?add-to-cart= links: replace the plan already in the cart instead of refusing a second one.
 add_filter( 'woocommerce_add_to_cart_validation', function ( $ok, $product_id ) {
