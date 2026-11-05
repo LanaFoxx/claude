@@ -9,6 +9,7 @@ const UPDATED = 'Last updated October 11, 2026';
 const PAGES = {
   privacy: {
     slug: 'privacy-policy', title: 'Privacy policy',
+    meta: 'How Recco Consulting collects, uses, and protects personal information.',
     intro: 'This policy describes how Recco Consulting collects, uses and protects information you share with us through this website and in the course of our work together.',
     sections: [
       ['Information we collect', 'When you contact us through this site we collect the name, work email, company and message you provide. We also collect standard server logs and analytics data such as pages visited, browser type and approximate location.', true],
@@ -21,6 +22,7 @@ const PAGES = {
   },
   terms: {
     slug: 'terms-of-use', title: 'Terms of use',
+    meta: 'The terms that apply when you use the Recco Consulting website.',
     intro: 'These terms govern your use of the Recco Consulting website. By using the site you agree to them. Our consulting engagements are governed by separate written agreements.',
     sections: [
       ['Use of this site', 'The content on this site is provided for general information about our services. You may view and print pages for your own reference. You may not reproduce, modify or redistribute content without our written permission.', true],
@@ -48,7 +50,7 @@ const build = (def) => (m) => [band([
         title: def.title, header_size: 'h1', title_color: C.navy,
         ...typo('typography', SERIF, [54, 46, 36], 300, { lh: 1.06, ls: -0.65 }),
       }),
-      text(UPDATED, { color: C.gray, size: 14, lh: 1.5 }),
+      text(UPDATED, { color: C.grayText, size: 14, lh: 1.5 }),
     ], { gap: 18, settings: {
       sticky: 'top', sticky_on: ['desktop'], sticky_offset: 116, sticky_parent: 'yes', _title: 'Title (sticky on desktop)',
     } }),
@@ -69,4 +71,4 @@ const build = (def) => (m) => [band([
   ]),
 ], { pad: [96, 112], title: def.title })];
 
-module.exports = Object.fromEntries(Object.entries(PAGES).map(([k, def]) => [k, { slug: def.slug, title: def.title, build: build(def) }]));
+module.exports = Object.fromEntries(Object.entries(PAGES).map(([k, def]) => [k, { slug: def.slug, title: def.title, meta: def.meta, build: build(def) }]));

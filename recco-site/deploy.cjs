@@ -50,6 +50,9 @@ async function ensurePage(p, def) {
   return { id: j.id, link: j.link };
 }
 
+// The Hello theme outputs the page excerpt as the meta description.
+const setMeta = (p, pageId, meta) => meta && rest(p, `/wp/v2/pages/${pageId}`, { method: 'POST', data: { excerpt: meta } });
+
 async function findOrCreateTemplate(p, type, title) {
   await p.goto(`${SITE}/wp-admin/edit.php?post_type=elementor_library&tabs_group=theme&elementor_library_type=${type}`, { waitUntil: 'domcontentloaded' });
   const list = await rest(p, `/wp/v2/elementor_library?per_page=100&status=publish,draft,private&search=${encodeURIComponent(title)}&_fields=id,title`);
@@ -66,6 +69,23 @@ async function openEditor(p, postId) {
   await p.waitForFunction(() => window.elementor && window.$e && elementor.documents?.getCurrent?.()?.container, null, { timeout: 180000 });
   await p.waitForTimeout(3000);
 }
+
+// Background photos get smaller copies for tablet (1536px) and mobile (1024px), see L.band.
+const BG = ['heroTower', 'dome', 'cityData', 'team', 'officeBokeh', 'serverBlur'];
+async function attachSizes(p) {
+  const ids = BG.map((k) => m[k].id).join(',');
+  const list = await rest(p, `/wp/v2/media?include=${ids}&per_page=100&_fields=id,media_details`);
+  for (const k of BG) {
+    const s = list.find((x) => x.id === m[k].id)?.media_details?.sizes || {};
+    if (s['1536x1536'] && s.large) m[k].sizes = { tablet: s['1536x1536'].source_url, mobile: s.large.source_url };
+  }
+}
+
+// Hello's "Skip to content" link points at #content, so the first section of each page carries that id.
+const withSkipTarget = (elements) => {
+  const [first, ...rest] = elements;
+  return [{ ...first, settings: { _element_id: 'content', ...first.settings } }, ...rest];
+};
 
 async function replaceContent(p, elements, pageSettings) {
   return p.evaluate(async ([elements, pageSettings]) => {
@@ -122,6 +142,7 @@ async function updateKit(p) {
   const p = await ctx.newPage();
   p.on('dialog', (d) => d.accept());
   await p.goto(`${SITE}/wp-admin/`, { waitUntil: 'domcontentloaded' });
+  await attachSizes(p);
   const out = {};
 
   if (want('chrome')) {
@@ -138,7 +159,8 @@ async function updateKit(p) {
     await p.goto(`${SITE}/wp-admin/`, { waitUntil: 'domcontentloaded' });
     const pg = await ensurePage(p, home);
     await openEditor(p, pg.id);
-    console.log('home', pg.id, 'elements saved:', await replaceContent(p, home.build(m), L.pageSettings));
+    await setMeta(p, pg.id, home.meta);
+    console.log('home', pg.id, 'elements saved:', await replaceContent(p, withSkipTarget(home.build(m)), L.pageSettings));
     const s = await rest(p, '/wp/v2/settings', { method: 'POST', data: { show_on_front: 'page', page_on_front: pg.id } });
     console.log('front page:', s.page_on_front);
     out.home = pg;
@@ -150,7 +172,8 @@ async function updateKit(p) {
     await p.goto(`${SITE}/wp-admin/`, { waitUntil: 'domcontentloaded' });
     const pg = await ensurePage(p, def);
     await openEditor(p, pg.id);
-    console.log(def.slug, pg.id, 'elements saved:', await replaceContent(p, def.build(m), L.pageSettings));
+    await setMeta(p, pg.id, def.meta);
+    console.log(def.slug, pg.id, 'elements saved:', await replaceContent(p, withSkipTarget(def.build(m)), L.pageSettings));
     out[def.slug] = pg;
   }
 

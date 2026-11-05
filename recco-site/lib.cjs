@@ -6,6 +6,9 @@ const crypto = require('crypto');
 const C = {
   navy: '#1E495E', green: '#95AB3B', slate: '#4A5F6B', gray: '#808285', line: '#DFE6EA', lineSoft: '#E6EBEE',
   field: '#D6DEE2', tint: '#F4F7F8', deep: 'rgba(14,42,58,0.96)', white: '#FFFFFF',
+  // Text versions of the brand green and gray that pass WCAG AA (4.5:1) for small text:
+  // greenText/grayText on white or tint, greenOnDark on navy and the dark photo bands.
+  greenText: '#62751F', greenOnDark: '#A8BE4C', grayText: '#6B6E71',
 };
 const SERIF = 'Source Serif 4', SANS = 'Manrope';
 const EMAIL = 'info@reccoconsulting.com';
@@ -55,6 +58,12 @@ function band(children, o = {}) {
     ...(o.bg ? { background_background: 'classic', background_color: o.bg } : {}),
     ...(o.image ? {
       background_background: 'classic', background_color: o.bg || C.navy, background_image: o.image,
+      // Smaller copies for tablet and mobile (deploy.cjs attaches the generated sizes).
+      // Elementor resolves the URL from the attachment id and the "size" key.
+      ...(o.image.sizes ? {
+        background_image_tablet: { id: o.image.id, url: o.image.sizes.tablet, size: '1536x1536', alt: '', source: 'library' },
+        background_image_mobile: { id: o.image.id, url: o.image.sizes.mobile, size: 'large', alt: '', source: 'library' },
+      } : {}),
       background_position: o.imagePos || 'center center', background_size: 'cover', background_repeat: 'no-repeat',
     } : {}),
     ...(o.overlay || {}),
@@ -118,13 +127,13 @@ const arch = (m, w = 56, align = 'left') => widget('image', {
   ].join('\n'),
 });
 
-const eyebrowText = (text, align = 'left', color = C.green) => widget('heading', {
+const eyebrowText = (text, align = 'left', color = C.greenText) => widget('heading', {
   title: text, header_size: 'p', title_color: color, align,
   ...typo('typography', SANS, 12, 700, { lh: 1.3, ls: 2.16, transform: 'uppercase' }),
 });
 
 // Arch + eyebrow label
-const eyebrow = (m, text, o = {}) => stack([arch(m, o.archW || 56, o.align || 'left'), eyebrowText(text, o.align || 'left')],
+const eyebrow = (m, text, o = {}) => stack([arch(m, o.archW || 56, o.align || 'left'), eyebrowText(text, o.align || 'left', o.dark ? C.greenOnDark : C.greenText)],
   { gap: 8, align: o.align === 'center' ? 'center' : 'flex-start' });
 
 function heading(text, tag, sizes, color = C.navy, align = 'left', o = {}) {
@@ -171,7 +180,9 @@ function button(label, url, variant, o = {}) {
 
 function image(media, o = {}) {
   return widget('image', {
-    image: media, image_size: 'full', align: o.align || 'left',
+    image: media, image_size: o.size || 'full', align: o.align || 'left',
+    // A custom size is resized by Elementor and served without a srcset (used for the header logo).
+    ...(o.size === 'custom' ? { image_custom_dimension: { width: '240', height: '' } } : {}),
     ...(o.width !== undefined ? resp('width', Array.isArray(o.width) ? o.width : [o.width], (v) => (typeof v === 'object' ? v : px(v))) : {}),
     ...(o.height ? { ...resp('height', Array.isArray(o.height) ? o.height : [o.height], (v) => px(v)), object_fit: o.fit || 'cover', 'object-fit': o.fit || 'cover', object_position: 'center center' } : {}),
     ...(o.radius ? { image_border_radius: box(o.radius) } : {}),
@@ -207,7 +218,7 @@ function header(m, menuId) {
     custom_css: 'selector { -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }',
     _title: 'Header',
   }, [
-    image(m.logo, { width: [119, 119, 96], link: '/', settings: { _element_width: 'initial', _element_custom_width: px(119), _element_custom_width_mobile: px(96), _flex_size: 'none', _title: 'Logo' } }),
+    image(m.logo, { width: [119, 119, 96], size: 'custom', link: '/', settings: { _element_width: 'initial', _element_custom_width: px(119), _element_custom_width_mobile: px(96), _flex_size: 'none', _title: 'Logo' } }),
     widget('nav-menu', {
       menu: menuId, layout: 'horizontal', align_items: 'end', pointer: 'none',
       dropdown: 'tablet', toggle: 'burger', toggle_align: 'right', full_width: 'stretch',
@@ -234,6 +245,8 @@ function header(m, menuId) {
 }
 
 /* ---------------------------------------------------------------- footer */
+// Footer links are small text, so give each one a 24px-tall tap target.
+const TAP = 'selector .elementor-icon-list-item > a { min-height: 24px; display: inline-flex; align-items: center; }';
 function footer(m) {
   const rowBox = (children, extra = {}) => container({
     content_width: 'full', flex_direction: 'row', flex_direction_mobile: 'column', flex_wrap: 'wrap',
@@ -247,10 +260,10 @@ function footer(m) {
     border_border: 'solid', border_width: box(1, 0, 0, 0), border_color: C.lineSoft, _title: 'Footer',
   }, [
     rowBox([
-      image(m.logo, { width: 100, link: '/', settings: { _element_width: 'initial', _element_custom_width: px(100), _flex_size: 'none', _title: 'Logo' } }),
+      image(m.logo, { width: 100, size: 'medium', link: '/', settings: { _element_width: 'initial', _element_custom_width: px(100), _flex_size: 'none', _title: 'Logo' } }),
       iconList(NAV, {
         inline: true, space: 26, size: 13.5, weight: 500, color: C.slate,
-        settings: { space_between_mobile: px(20), icon_align_mobile: 'center', _element_width: 'auto', _title: 'Footer links' },
+        settings: { space_between_mobile: px(20), icon_align_mobile: 'center', _element_width: 'auto', _title: 'Footer links', custom_css: TAP },
       }),
     ], { _title: 'Footer top' }),
     rowBox([
@@ -258,9 +271,9 @@ function footer(m) {
         content_width: 'full', width: auto, width_tablet: auto, width_mobile: auto, flex_direction: 'row', flex_wrap: 'nowrap',
         flex_align_items: 'center', flex_gap: gap(14), padding: box(0), _title: 'ERP badge',
       }, [
-        image(m.erpBadge, { width: 56, link: '/#sustainability', settings: { _element_width: 'initial', _element_custom_width: px(56), _flex_size: 'none' } }),
+        image(m.erpBadge, { width: 56, size: 'medium', link: '/#sustainability', settings: { _element_width: 'initial', _element_custom_width: px(56), _flex_size: 'none' } }),
         text('Emissions Reduction Program, Level 1 · Action 2026. Validated by RyeStrategy.', {
-          color: C.gray, size: 12, lh: 1.5, settings: { _element_width: 'initial', _element_custom_width: px(280), _element_custom_width_mobile: px(220) },
+          color: C.grayText, size: 12, lh: 1.5, settings: { _element_width: 'initial', _element_custom_width: px(280), _element_custom_width_mobile: px(220) },
         }),
       ]),
       container({
@@ -268,9 +281,9 @@ function footer(m) {
         flex_justify_content: 'flex-end', flex_justify_content_mobile: 'center', flex_align_items: 'center', flex_gap: gap(20, 8), padding: box(0), _title: 'Legal links',
       }, [
         iconList([['Privacy policy', U.privacy], ['Terms of use', U.terms]], {
-          inline: true, space: 20, size: 12.5, weight: 400, color: C.gray, hover: C.green, settings: { _element_width: 'auto', icon_align_mobile: 'center' },
+          inline: true, space: 20, size: 12.5, weight: 400, color: C.grayText, hover: C.greenText, settings: { _element_width: 'auto', icon_align_mobile: 'center', custom_css: TAP },
         }),
-        text('© 2026 Recco Consulting. All rights reserved.', { color: C.gray, size: 12.5, lh: 1.5, settings: { _element_width: 'auto', align_mobile: 'center' } }),
+        text('© 2026 Recco Consulting. All rights reserved.', { color: C.grayText, size: 12.5, lh: 1.5, settings: { _element_width: 'auto', align_mobile: 'center' } }),
       ]),
     ], { border_border: 'solid', border_width: box(1, 0, 0, 0), border_color: C.lineSoft, padding: box(24, 0, 0, 0), _title: 'Footer bottom' }),
   ], false)];

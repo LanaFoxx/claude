@@ -55,7 +55,7 @@ const chips = (m, items, o = {}) => row(items.map((p) => chip(m, p, o)), { gap: 
 
 // "AI Services": one wrapping row of 14 chips under a small label.
 const aiGroup = (m, o = {}) => stack([
-  L.eyebrowText('AI Services', 'left', o.dark ? 'rgba(255,255,255,0.72)' : C.green),
+  L.eyebrowText('AI Services', 'left', o.dark ? 'rgba(255,255,255,0.72)' : C.greenText),
   chips(m, AI_SERVICES, o),
 ], { gap: 16, settings: { _title: 'AI Services' } });
 
@@ -63,7 +63,7 @@ const aiGroup = (m, o = {}) => stack([
 const appRows = (m, o = {}) => {
   const rule = o.dark ? 'rgba(255,255,255,0.16)' : C.line;
   return stack([
-    ...(o.label === false ? [] : [L.eyebrowText('Enterprise App Services', 'left', o.dark ? 'rgba(255,255,255,0.72)' : C.green)]),
+    ...(o.label === false ? [] : [L.eyebrowText('Enterprise App Services', 'left', o.dark ? 'rgba(255,255,255,0.72)' : C.greenText)]),
     stack(APP_CATEGORIES.map(([cat, items]) => container({
       container_type: 'grid', content_width: 'full', padding: box(16, 0, 16, 0), padding_mobile: box(14, 0, 14, 0),
       grid_columns_grid: { unit: 'custom', size: '240px minmax(0,1fr)' }, grid_columns_grid_tablet: { unit: 'custom', size: '190px minmax(0,1fr)' },

@@ -55,3 +55,10 @@ h2 46/38/32), section padding and gutters shrink, and the nav becomes a hamburge
 
 All scripts need a logged-in Playwright storage state (`STATE`). SiteGround's bot check challenges
 Playwright's own HTTP client, so every REST call runs inside the logged-in admin page.
+
+## Performance settings (set in WP admin, not by these scripts)
+
+* Speed Optimizer: dynamic + file-based caching, HTML/CSS/JS minification, CSS combination with preload, web font optimization, emoji removal, query-string removal, GZIP, browser caching, WebP for images. "Defer render-blocking JS" stays **off**: it breaks Elementor Pro's script order (`elementorModules is not defined`).
+* Elementor > Settings > Performance: Google Fonts loaded locally, font-display swap, optimized image loading, lazy background images; Features: inline font icons, optimized markup, optimized CSS loading.
+* The "Fonts Plugin" (Olympus) is deactivated: it only loaded an unused Adobe Typekit kit.
+* After deploying, regenerate Elementor CSS (Elementor > Tools) and purge the SG cache.

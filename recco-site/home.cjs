@@ -39,7 +39,7 @@ const small = (title, size, color, o = {}) => widget('heading', {
 
 /* ------------------------------------------------------------------ hero */
 const hero = (m) => band([
-  eyebrow(m, 'Technology advisory', { align: 'center', archW: 120 }),
+  eyebrow(m, 'Technology advisory', { align: 'center', archW: 120, dark: true }),
   widget('heading', {
     title: 'Empirical Vendor Analysis & Performance Benchmarking for Enterprise Generative AI', header_size: 'h1',
     title_color: C.white, align: 'center',
@@ -107,7 +107,7 @@ const serviceRow = ([n, title, body]) => container({
   custom_css: 'selector { transition: background .2s, padding .2s; }\n@media (min-width: 1025px) { selector:hover { padding-left: 20px; padding-right: 0; } }',
   _title: `Service ${n}`,
 }, [
-  small(n, 15, C.gray, { family: SERIF, ls: 0.9, settings: { _element_width: 'initial', _element_custom_width: px(64), _element_custom_width_mobile: px(30), _flex_size: 'none', _padding: box(6, 0, 0, 0) } }),
+  small(n, 15, C.grayText, { family: SERIF, ls: 0.9, settings: { _element_width: 'initial', _element_custom_width: px(64), _element_custom_width_mobile: px(30), _flex_size: 'none', _padding: box(6, 0, 0, 0) } }),
   stack([
     H3(title, [24, 22, 20]),
     text(body, { size: 15.5, lh: 1.6 }),
@@ -136,7 +136,7 @@ const services = (m) => band([
 /* ------------------------------------------------------------- platforms */
 const platforms = (m) => band([
   stack([
-    eyebrow(m, 'Platform expertise'),
+    eyebrow(m, 'Platform expertise', { dark: true }),
     H2('Deep on the platforms that run the enterprise.', C.white, { sizes: [40, 34, 28], lh: 1.12 }),
   ], { gap: 14, maxW: 640 }),
   P.aiGroup(m, { dark: true }),
@@ -156,7 +156,7 @@ const updated = row([
     custom_css: 'selector .elementor-icon { display: flex; animation: reccoPulse 2.4s ease-in-out infinite; }\n@keyframes reccoPulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }',
   }),
   widget('heading', {
-    title: 'Updated daily', header_size: 'p', title_color: C.gray, ...typo('typography', SANS, 13, 500, { lh: 1.4 }),
+    title: 'Updated daily', header_size: 'p', title_color: C.grayText, ...typo('typography', SANS, 13, 500, { lh: 1.4 }),
     __dynamic__: { title: `[elementor-tag id="${id()}" name="current-date-time" settings="${dateSettings}"]` },
     _element_width: 'auto',
   }),
@@ -177,7 +177,7 @@ const featured = (m) => container({
     title: 'Headline summary of the latest release, generated daily by the back-end engine.', header_size: 'h3', title_color: C.white,
     ...typo('typography', SERIF, [30, 28, 24], 400, { lh: 1.2 }),
   }),
-  text('<p>Today · <strong style="color:#95AB3B">Read more →</strong></p>', { color: 'rgba(255,255,255,0.7)', size: 13, lh: 1.4 }),
+  text('<p>Today · <strong style="color:#A8BE4C">Read more →</strong></p>', { color: 'rgba(255,255,255,0.7)', size: 13, lh: 1.4 }),
 ]);
 
 const newsItem = (m, [logo, w, title, when]) => container({
@@ -194,7 +194,7 @@ const newsItem = (m, [logo, w, title, when]) => container({
   image(m[logo], { width: [w, w, Math.round(w * 0.75)] }),
   stack([
     widget('heading', { title, header_size: 'h3', title_color: C.navy, ...typo('typography', SERIF, [18, 18, 17], 400, { lh: 1.35 }) }),
-    small(when, 12, C.gray),
+    small(when, 12, C.grayText),
   ], { gap: 6 }),
 ]);
 
@@ -222,6 +222,10 @@ const about = (m) => container({
   container({
     content_width: 'full', min_height: px(420), min_height_tablet: px(380), min_height_mobile: px(280), padding: box(0),
     background_background: 'classic', background_image: m.team, background_size: 'cover', background_repeat: 'no-repeat',
+    ...(m.team.sizes ? {
+      background_image_tablet: { id: m.team.id, url: m.team.sizes.tablet, size: '1536x1536', alt: '', source: 'library' },
+      background_image_mobile: { id: m.team.id, url: m.team.sizes.mobile, size: 'large', alt: '', source: 'library' },
+    } : {}),
     background_position: 'initial', background_xpos: px(55, '%'), background_ypos: px(25, '%'), _title: 'About photo',
   }),
   container({
@@ -229,7 +233,7 @@ const about = (m) => container({
     padding: box(96, 32, 96, 72), padding_tablet: box(72, 32, 72, 32), padding_mobile: box(56, 20, 56, 20),
   }, [
     stack([
-      eyebrow(m, 'About Recco'),
+      eyebrow(m, 'About Recco', { dark: true }),
       H2('Reconnaissance first, then recommendations. That\u2019s what our name means.', C.white, { sizes: [50, 40, 32], lh: 1.08, ls: -0.6 }),
       text('Founded in Seattle in 2006 by Eric Pozil, Recco gives technology leaders an independent second opinion. Our consultants average 20 years of experience. Today our SEED lab applies that judgment to enterprise AI.', { color: 'rgba(255,255,255,0.8)', size: 16.5 }),
     ], { gap: 22, maxW: 640 }),
@@ -259,7 +263,7 @@ const step = ([n, title, body]) => container({
   background_background: 'classic', background_color: C.white, background_hover_background: 'classic', background_hover_color: C.tint,
   _title: `Step ${n}`,
 }, [
-  small(n, 14, C.green, { family: SERIF, ls: 1.4 }),
+  small(n, 14, C.greenText, { family: SERIF, ls: 1.4 }),
   H3(title, [21, 20, 19]),
   text(body, { size: 15, lh: 1.6 }),
 ]);
@@ -295,7 +299,7 @@ const contactForm = () => widget('form', {
   submit_actions: ['email'], email_subject: 'New enquiry from the Recco Consulting website', email_from_name: 'Recco Consulting website',
   success_message: 'Thanks. Your message has been sent.',
   column_gap: px(24), row_gap: px(22), label_spacing: px(8),
-  label_color: C.gray, ...typo('label_typography', SANS, 12, 700, { lh: 1.3, ls: 1.2, transform: 'uppercase' }),
+  label_color: C.grayText, ...typo('label_typography', SANS, 12, 700, { lh: 1.3, ls: 1.2, transform: 'uppercase' }),
   field_text_color: C.navy, ...typo('field_typography', SANS, 16, 500, { lh: 1.4 }),
   field_background_color: 'rgba(0,0,0,0)', field_border_color: C.field, field_border_width: box(0, 0, 1.5, 0), field_border_radius: box(0),
   button_background_color: C.navy, button_text_color: C.white, button_background_hover_color: C.green, button_hover_color: C.white,
@@ -337,7 +341,7 @@ const contact = (m) => band([
       _title: 'Form card',
     }, [
       contactForm(),
-      text('Protected against automated submissions. We never share your details.', { color: C.gray, size: 12.5, lh: 1.5 }),
+      text('Protected against automated submissions. We never share your details.', { color: C.grayText, size: 12.5, lh: 1.5 }),
     ]),
   ], { cols: [2, 1, 1], gap: [72, 56], gapT: [48, 48], gapM: [36, 36], align: 'center', settings: { _z_index: 1 } }),
 ], {
@@ -348,5 +352,7 @@ const contact = (m) => band([
 
 module.exports = {
   slug: 'home', title: 'Home',
+  // Meta description (V3 copy doc). The Hello theme prints the page excerpt as <meta name="description">.
+  meta: 'Recco tests Copilot, ChatGPT, Gemini, Claude, Glean, and Perplexity in live enterprise tenants, measuring real performance and true cost per task.',
   build: (m) => [hero(m), proof(), valueProp(m), seedOverview(m), services(m), platforms(m), news(m), about(m), sustainability(m), approach(m), contact(m)],
 };

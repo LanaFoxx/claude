@@ -7,6 +7,7 @@ const { appRows } = require('./platforms.cjs');
 /* -------------------------------------------------------- Enterprise Apps */
 const enterpriseApps = {
   slug: 'enterprise-apps', title: 'Enterprise Apps',
+  meta: 'Vendor-agnostic advice on Salesforce, Dynamics 365, ServiceNow, SAP, Oracle, and more, plus testing of how AI agents perform inside your apps.',
   build: (m) => [
     subHero(m, {
       label: 'Enterprise Apps', image: 'dome',
@@ -37,6 +38,7 @@ const enterpriseApps = {
 /* ----------------------------------------------------------- AI Platforms */
 const aiPlatforms = {
   slug: 'ai-platforms', title: 'AI Platforms',
+  meta: 'Head-to-head enterprise AI platform analysis in native, enterprise-tier tenants: quality, cost per prompt run, administration, and governance.',
   build: (m) => [
     subHero(m, {
       label: 'AI Platforms', image: 'cityData',
@@ -112,6 +114,7 @@ const pillar = ([name, headline, desc, details], i) => container({
 
 const seed = {
   slug: 'seed', title: 'SEED',
+  meta: 'SEED is Recco\u2019s enterprise AI lab: licensed tenants tested hands-on, Recco-Tuned hydration packs, and per-task FinOps telemetry, live for 16+ months.',
   build: (m) => [
     subHero(m, {
       label: 'SEED: Synthetic Enterprise Environment Data', image: 'serverBlur',

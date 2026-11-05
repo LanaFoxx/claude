@@ -5,7 +5,7 @@ const { C, SERIF, SANS, id, px, box, gap, auto, link, typo, fa, container, widge
 
 // Navy photo banner at the top of each inner page.
 const subHero = (m, { label, title, lede, image, pos = 'center center', buttons = [] }) => band([
-  eyebrow(m, label),
+  eyebrow(m, label, { dark: true }),
   widget('heading', {
     title, header_size: 'h1', title_color: C.white,
     ...typo('typography', SERIF, [56, 46, 36], 300, { lh: 1.08, ls: -0.8 }),
@@ -21,7 +21,7 @@ const subHero = (m, { label, title, lede, image, pos = 'center center', buttons 
 
 // Section heading: arch + eyebrow, h2, optional intro.
 const head = (m, label, title, intro, o = {}) => stack([
-  eyebrow(m, label),
+  eyebrow(m, label, { dark: o.dark }),
   H2(title, o.dark ? C.white : C.navy, { ls: -0.46, sizes: o.sizes }),
   ...(intro ? [text(intro, { color: o.dark ? 'rgba(255,255,255,0.8)' : C.slate, size: [17, 17, 16] })] : []),
 ], { gap: 14, maxW: o.maxW ?? 720 });
@@ -42,7 +42,7 @@ const numberedCards = (items, cols = [3, 1, 1], o = {}) => grid(items.map(([titl
   background_background: 'classic', background_color: C.white, background_hover_background: 'classic', background_hover_color: C.tint,
   _title: title,
 }, [
-  widget('heading', { title: String(i + 1).padStart(2, '0'), header_size: 'p', title_color: C.green, ...typo('typography', SERIF, 14, 400, { lh: 1.3, ls: 1.4 }) }),
+  widget('heading', { title: String(i + 1).padStart(2, '0'), header_size: 'p', title_color: C.greenText, ...typo('typography', SERIF, 14, 400, { lh: 1.3, ls: 1.4 }) }),
   H3(title, [22, 21, 20]),
   text(body, { size: 15.5, lh: 1.65 }),
   ...(linkLabel ? [container({ content_width: 'full', padding: box(10, 0, 0, 0), flex_direction: 'column', flex_justify_content: 'flex-end', flex_align_items: 'flex-start', _flex_size: 'grow' }, [arrowLink(linkLabel, url)])] : []),
@@ -61,9 +61,9 @@ const checkList = (items, o = {}) => L.iconList(items, {
 const seedBand = (m, { label, title, sub, body, cta, url, image = 'serverBlur', anchor }) => band([
   grid([
     stack([
-      eyebrow(m, label),
+      eyebrow(m, label, { dark: true }),
       H2(title, C.white, { sizes: [42, 36, 30], lh: 1.12 }),
-      ...(sub ? [widget('heading', { title: sub, header_size: 'p', title_color: C.green, ...typo('typography', SERIF, [22, 21, 19], 400, { lh: 1.35 }) })] : []),
+      ...(sub ? [widget('heading', { title: sub, header_size: 'p', title_color: C.greenOnDark, ...typo('typography', SERIF, [22, 21, 19], 400, { lh: 1.35 }) })] : []),
     ], { gap: 16 }),
     stack([
       text(body, { color: 'rgba(255,255,255,0.84)', size: [17, 17, 16], lh: 1.7 }),
@@ -81,7 +81,7 @@ const seedBand = (m, { label, title, sub, body, cta, url, image = 'serverBlur', 
 function matrix(headers, rows, { highlight = 2, cols = 'minmax(0,0.8fr) minmax(0,1.1fr) minmax(0,1.1fr)' } = {}) {
   const cell = (children, ci, o = {}) => container({
     content_width: 'full', flex_direction: 'column', flex_gap: gap(6), padding: box(22, 24, 22, 24), padding_mobile: box(o.first ? 18 : 6, 18, o.last ? 18 : 6, 18),
-    ...(ci === highlight ? { background_background: 'classic', background_color: o.header ? C.green : 'rgba(149,171,59,0.09)' } : {}),
+    ...(ci === highlight ? { background_background: 'classic', background_color: o.header ? C.greenText : 'rgba(149,171,59,0.09)' } : {}),
     ...(o.header && ci !== highlight ? { background_background: 'classic', background_color: C.navy } : {}),
   }, children);
   const gridRow = (children, o = {}) => container({
@@ -92,7 +92,7 @@ function matrix(headers, rows, { highlight = 2, cols = 'minmax(0,0.8fr) minmax(0
     ...(o.settings || {}),
   }, children);
   const mobileLabel = (t) => widget('heading', {
-    title: t, header_size: 'p', title_color: C.gray, ...typo('typography', SANS, 11, 700, { lh: 1.3, ls: 1.1, transform: 'uppercase' }),
+    title: t, header_size: 'p', title_color: C.grayText, ...typo('typography', SANS, 11, 700, { lh: 1.3, ls: 1.1, transform: 'uppercase' }),
     hide_desktop: 'hidden-desktop', hide_tablet: 'hidden-tablet',
   });
   return stack([
