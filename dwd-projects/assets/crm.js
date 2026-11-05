@@ -712,7 +712,7 @@
 			+ (first.list === 'limbo' ? btn('', 'data-pset="active" data-pid="' + first.id + '"', 'Back to active') : btn('', 'data-pset="limbo" data-pid="' + first.id + '"', 'Move to limbo'))
 			+ (first.list === 'hold' ? btn('', 'data-pset="active" data-pid="' + first.id + '"', 'Resume') : btn('', 'data-pset="hold" data-pid="' + first.id + '"', 'Put on hold'))
 			+ btn('solid navy', 'data-pset="complete" data-pid="' + first.id + '"', 'Mark complete')
-			: btn('solid navy', 'data-act="job" data-client="' + k.id + '"', '+ New project');
+			: (pp.length ? '' : btn('red', 'data-delclient="' + k.id + '"', 'Delete client')) + btn('solid navy', 'data-act="job" data-client="' + k.id + '"', '+ New project');
 		var f = function (n, label, t) { return '<label><span>' + label + '</span><input name="' + n + '" type="' + (t || 'text') + '" value="' + esc(k[n]) + '"></label>'; };
 		var tl = [];
 		pp.forEach(function (c) {
@@ -1212,6 +1212,13 @@
 		if ((el = t.closest('[data-pfilter]'))) { S.projFilter = el.getAttribute('data-pfilter'); render(); return; }
 		if ((el = t.closest('[data-filter]'))) { S.leadFilter = el.getAttribute('data-filter'); render(); return; }
 		if ((el = t.closest('[data-more]'))) { S.more[el.getAttribute('data-more')] = true; render(); return; }
+		if ((el = t.closest('[data-delclient]'))) {
+			var dk = clientRec(+el.getAttribute('data-delclient'));
+			if (dk && confirm('Delete ' + dk.name + '? They have no projects. (It goes to the WordPress trash and can be restored.)')) {
+				api('/client/' + dk.id, 'DELETE').then(function () { return reload(); }).then(function () { location.hash = 'clients'; toast(dk.name + ' deleted'); }).catch(fail);
+			}
+			return;
+		}
 		if (t.closest('[data-appinstall]')) { if (INSTALL) { INSTALL.prompt(); INSTALL.userChoice.then(function () { INSTALL = null; render(); }); } return; }
 		if (t.closest('[data-appinfo]')) { S.modal = { type: 'app', vals: {} }; render(); return; }
 		if (t.closest('[data-appoff]')) { try { localStorage.setItem('dwdcAppOff', '1'); } catch (er) {} render(); return; }
