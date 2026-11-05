@@ -189,7 +189,9 @@ function dwdc_save_contact( $id, $data ) {
 		}
 		update_post_meta( $id, '_dwdc_contacts', $ppl );
 	}
-	if ( isset( $data['client'] ) && DWDC_CLIENT === get_post_type( (int) $data['client'] ) ) {
+	if ( isset( $data['client'] ) && 0 === (int) $data['client'] && ! $is_new ) {
+		delete_post_meta( $id, '_dwdc_client' ); // project kept, no client attached
+	} elseif ( isset( $data['client'] ) && DWDC_CLIENT === get_post_type( (int) $data['client'] ) ) {
 		update_post_meta( $id, '_dwdc_client', (int) $data['client'] );
 	} elseif ( $is_new ) {
 		dwdc_ensure_client( $id );

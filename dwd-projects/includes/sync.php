@@ -524,6 +524,29 @@ function dwds_has_payment( $pid, $source, $ref, $amount, $date ) {
 	return false;
 }
 
+/** Is this payment already anywhere in Dream Desk (any project)? Same reference, or same amount within 3 days. */
+function dwds_seen_anywhere( $source, $ref, $amount, $date ) {
+	static $all = null;
+	if ( null === $all ) {
+		$all = array();
+		foreach ( get_posts( array( 'post_type' => DWDC_CONTACT, 'post_status' => 'private', 'posts_per_page' => -1, 'fields' => 'ids' ) ) as $pid ) {
+			foreach ( (array) get_post_meta( $pid, '_dwdc_payments', true ) as $x ) {
+				if ( is_array( $x ) && ( $x['source'] ?? '' ) === $source ) {
+					$all[] = array( (string) ( $x['ref'] ?? '' ), (float) $x['amount'], strtotime( (string) $x['date'] ) );
+				}
+			}
+		}
+	}
+	$t = strtotime( $date );
+	foreach ( $all as $a ) {
+		if ( ( $ref && $a[0] === (string) $ref ) || ( abs( $a[1] - $amount ) < 0.01 && abs( $a[2] - $t ) <= 3 * DAY_IN_SECONDS ) ) {
+			return true;
+		}
+	}
+	$all[] = array( (string) $ref, (float) $amount, $t ); // count it as seen for the rest of this run
+	return false;
+}
+
 /** Pull paid Stripe invoices and one-off charges (needs a read-only restricted key). */
 function dwds_stripe_pull() {
 	$key = (string) get_option( 'dwds_stripe_key', '' );
@@ -537,7 +560,7 @@ function dwds_stripe_pull() {
 	};
 	$take = function ( $email, $who, $amount, $date, $ref, $note ) use ( &$out ) {
 		$pid = dwds_project_for( $email, $who );
-		if ( $pid && dwds_has_payment( $pid, 'Stripe', $ref, $amount, $date ) ) {
+		if ( dwds_seen_anywhere( 'Stripe', $ref, $amount, $date ) ) {
 			$out['already']++;
 			return;
 		}
@@ -614,7 +637,7 @@ function dwds_paypal_pull() {
 				$date  = substr( (string) ( $ti['transaction_initiation_date'] ?? '' ), 0, 10 );
 				$ref   = (string) ( $ti['transaction_id'] ?? '' );
 				$pid   = dwds_project_for( $email, $who );
-				if ( $pid && dwds_has_payment( $pid, 'PayPal', $ref, $amt, $date ) ) {
+				if ( dwds_seen_anywhere( 'PayPal', $ref, $amt, $date ) ) {
 					$out['already']++;
 					continue;
 				}

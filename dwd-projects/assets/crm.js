@@ -255,6 +255,16 @@
 		if (all) { all.closest('footer').style.display = rows.length > shown ? '' : 'none'; }
 	}
 	window.addEventListener('resize', function () { fitProjects(); });
+	// On phones every table becomes stacked cards; each cell gets its column name as a small label.
+	function labelTables() {
+		app.querySelectorAll('.dwdc-tbl').forEach(function (tb) {
+			var head = tb.querySelector('.dwdc-grid.head'); if (!head) { return; }
+			var names = [].map.call(head.children, function (h) { return h.textContent.trim(); });
+			tb.querySelectorAll('.dwdc-grid.row').forEach(function (row) {
+				[].forEach.call(row.children, function (cell, i) { if (names[i] && i > 0) { cell.setAttribute('data-l', names[i]); } });
+			});
+		});
+	}
 	function render(anim) {
 		var r = route(), t = (TITLES[r.view] || ['', '', '']).slice(), body;
 		if (r.view === 'home') { t[0] = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }); }
@@ -281,6 +291,7 @@
 		S.prev = r.view + r.arg;
 		syncWpMenu(r);
 		fitProjects();
+		labelTables();
 		if (S.focusSearch) { var q = app.querySelector('.dwdc-ssearch input'); if (q) { q.focus(); q.setSelectionRange(q.value.length, q.value.length); } S.focusSearch = false; }
 		if (S.cardTodo) { var ti = app.querySelector('.dwdc-cardtodo input'); if (ti) { ti.focus(); } }
 	}
