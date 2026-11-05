@@ -1050,3 +1050,16 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
   .pw-todos { order: 4 !important; } .pw-host { order: 5 !important; } .pw-source { order: 6 !important; }
   .pw-people { order: 7 !important; } .pw-jobs { order: 8 !important; } .pw-activity { order: 9 !important; }
 }
+@media (max-width: 768px) {
+  .dwdc-two { align-items: stretch !important; }
+  .dwdc-two > .dwdc-col > .pw, .dwdc-two .pw-todos { width: 100% !important; max-width: none !important; align-self: stretch !important; }
+  .dwdc-two .pw > *, .dwdc-two .pw-todos { width: 100% !important; max-width: none !important; box-sizing: border-box; }
+  .dwdc .dwdc-card .dwdc-addbar { flex-wrap: wrap; }
+  .dwdc .dwdc-card .dwdc-addbar input[name=text] { flex: 1 1 100%; }
+  .dwdc .dwdc-card .dwdc-addbar select, .dwdc .dwdc-card .dwdc-addbar [type=date] { flex: 1 1 0; max-width: none; }
+}
+@media (max-width: 768px) {
+  .dwdc .dwdc-inlineadd { flex-wrap: wrap; row-gap: 8px; }
+  .dwdc .dwdc-inlineadd input[name=text] { flex: 1 1 calc(100% - 30px); min-width: 0; }
+  .dwdc .dwdc-inlineadd [type=date] { flex: 1 1 100%; max-width: none; margin-left: 26px; }
+}
