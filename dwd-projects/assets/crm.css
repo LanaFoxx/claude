@@ -1417,3 +1417,10 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
   .dwdc .dwdc-ptadd.btnonly .dwdc-btn { width: 100%; justify-content: center; }
   .dwdc .dwdc-ptadd.btnonly span { width: 100%; text-align: center; font-size: 12.5px; }
 }
+/* Phone: pop-ups sit inside the visible screen (with the keyboard open too) */
+@media (max-width: 768px) {
+  .dwdc .dwdc-modal { top: calc(12px + env(safe-area-inset-top)) !important; transform: translateX(-50%) !important; max-height: calc(100dvh - 24px - env(safe-area-inset-top)) !important; }
+  .dwdc .dwdc-modal.dwdc-addm { padding: 22px 18px 18px !important; }
+  .dwdc-addm .dwdc-addhi { font-size: 14px; }
+  .dwdc-addin textarea { font-size: 16px; }
+}

@@ -1794,7 +1794,7 @@
 				+ (m.tasks && m.tasks.length ? '<div class="dwdc-addprop"><p class="dwdc-lbl">Ready to add</p>' + m.tasks.map(function (t, i) { return '<div class="dwdc-addcard"><span class="dwdc-chk on">' + ic('check', 11) + '</span><div><b>' + esc(t.text) + '</b><small>' + esc(dfmt(t)) + (t.note ? ' · ' + esc(t.note) : '') + '</small></div><button type="button" data-ptrm="' + i + '" aria-label="Remove">' + ic('x', 13) + '</button></div>'; }).join('')
 					+ '<button type="button" class="dwdc-btn coral full" data-ptconfirm>' + ic('check', 14) + 'Add ' + (m.tasks.length === 1 ? 'task' : m.tasks.length + ' tasks') + '</button><p class="dwdc-mutp sm">Want to change something? Just say it below.</p></div>' : '')
 				+ '<div class="dwdc-addin">' + (SR ? '<button type="button" class="dwdc-mic' + (m.listening ? ' on' : '') + '" data-ptmic aria-label="Talk">' + ic('mic', 18) + '</button>' : '')
-				+ '<textarea rows="1" data-ptdraft placeholder="' + (m.listening ? 'Listening…' : 'Type or tap the mic and talk…') + '">' + esc(m.draft || '') + '</textarea><button type="button" class="dwdc-btn" data-ptsend aria-label="Send"' + (m.busy ? ' disabled' : '') + '>' + ic('right', 16) + '</button></div></div>';
+				+ '<textarea rows="1" data-ptdraft placeholder="' + (m.listening ? 'Listening…' : 'Type or tap the mic…') + '">' + esc(m.draft || '') + '</textarea><button type="button" class="dwdc-btn" data-ptsend aria-label="Send"' + (m.busy ? ' disabled' : '') + '>' + ic('right', 16) + '</button></div></div>';
 		}
 		if (m.type === 'pday') {
 			var PD = S.pers || { todos: [], bills: [] }, day = m.day;
