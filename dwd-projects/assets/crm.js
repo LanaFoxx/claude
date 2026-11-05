@@ -17,7 +17,7 @@
 			method: method || 'GET', credentials: 'same-origin',
 			headers: { 'X-WP-Nonce': DWDC.nonce, 'Content-Type': 'application/json' },
 			body: body ? JSON.stringify(body) : undefined
-		}).then(function (r) { return r.json().then(function (j) { if (!r.ok) { throw new Error(j.message || 'Something went wrong'); } return j; }); });
+		}).then(function (r) { return r.json().then(function (j) { if (!r.ok) { var er = new Error(j.message || 'Something went wrong'); er.code = j.code; er.data = j.data || {}; throw er; } return j; }); });
 	}
 	function num(v) { return parseFloat(String(v || '').replace(/[^\d.]/g, '')) || 0; }
 	function money(n) { return '$' + Math.round(num(n)).toLocaleString(); }
@@ -376,7 +376,7 @@
 			+ kpi('Repeat clients', repeat.length, money(repeatRev) + ' · ' + (cl.length ? Math.round(repeat.length / cl.length * 100) : 0) + '% of clients')
 			+ '</div>'
 			+ '<div class="dwdc-mgrid">'
-			+ mcard('Patterns &amp; Trends', trendsBox(), 'trends')
+			+ mcard('Patterns &amp; Trends <button class="dwdc-askbtn" data-askai>' + ic('bolt', 14) + 'Ask AI</button>', trendsBox(), 'trends')
 			+ mcard('Where it came from', '<div class="dwdc-chanbar">' + chan.map(function (x) { return x[1] ? '<i class="' + x[2] + '" style="width:' + Math.max(1, pct(x[1])) + '%"></i>' : ''; }).join('') + '</div>'
 				+ '<ul class="dwdc-chans">' + chan.map(function (x) { return '<li><i class="' + x[2] + '"></i><span>' + x[0] + '</span><b>' + money(x[1]) + '</b><em>' + pct(x[1]) + '%</em></li>'; }).join('') + '</ul>')
 			+ mcard('By year', (ylist.length ? '<ul class="dwdc-years2">' + ylist.map(function (y) { var o = MY[y], t = ytot(y); return '<li><span>' + y + '</span><div>' + [['Upwork', 'upw'], ['Stripe', 'str'], ['PayPal', 'ppl'], ['Other', 'oth']].map(function (x) { return o[x[0]] > 0 ? '<i class="' + x[1] + '" style="width:' + Math.max(1, Math.round(o[x[0]] / ymax * 100)) + '%" title="' + x[0] + ' ' + money(o[x[0]]) + '"></i>' : ''; }).join('') + '</div><b>' + money(t) + '</b></li>'; }).join('') + '</ul>' : emptyRow('No dated payments yet.'))
@@ -429,6 +429,68 @@
 			.then(function () { S.revSel = {}; return reload(); })
 			.then(function () { render(); toast('Review request sent to ' + sent + ' client' + (sent === 1 ? '' : 's') + (failed ? ' · ' + failed + ' didn’t send' : ''), !!failed); })
 			.catch(function (e) { render(); fail(e); });
+	}
+	/* ---------- Ask AI: a small chat window about money, projects and trends ---------- */
+	var CHAT = { msgs: [], busy: false, needKey: !DWDC.aiReady };
+	function mdLite(t) {
+		var h = esc(t).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+		var out = [], list = [];
+		h.split('\n').forEach(function (l) {
+			var m = l.match(/^\s*[-*•]\s+(.*)/) || l.match(/^\s*\d+[.)]\s+(.*)/);
+			if (m) { list.push('<li>' + m[1] + '</li>'); return; }
+			if (list.length) { out.push('<ul>' + list.join('') + '</ul>'); list = []; }
+			if (l.trim()) { out.push('<p>' + l.replace(/^#+\s*/, '') + '</p>'); }
+		});
+		if (list.length) { out.push('<ul>' + list.join('') + '</ul>'); }
+		return out.join('');
+	}
+	function chatEl() { return document.getElementById('dwdc-chat'); }
+	function chatPaint() {
+		var box = chatEl(); if (!box) { return; }
+		var log = box.querySelector('.dwdc-chat-log');
+		var sugg = ['How much did I make in October vs September?', 'Who were my top 5 clients this year?', 'What were my slowest months in 2025?', 'Is my Upwork Connects spending paying off?'];
+		if (CHAT.needKey) {
+			log.innerHTML = '<div class="dwdc-chat-key"><b>Connect Claude</b><p>Paste your Claude API key to turn on Ask AI. It’s saved on your server and never shown in the browser.</p><p class="sm">Get one at console.anthropic.com → API Keys.</p><input type="password" placeholder="sk-ant-..." data-chatkey><button class="dwdc-btn" data-chatkeysave>Save key</button></div>';
+			return;
+		}
+		log.innerHTML = (CHAT.msgs.length ? '' : '<div class="dwdc-chat-hi"><p>Ask me anything about your money, projects and trends.</p>' + sugg.map(function (q) { return '<button class="dwdc-chat-sug" data-chatsug>' + esc(q) + '</button>'; }).join('') + '</div>')
+			+ CHAT.msgs.map(function (m) { return '<div class="dwdc-chat-m ' + m.role + '">' + (m.role === 'assistant' ? mdLite(m.content) : esc(m.content)) + '</div>'; }).join('')
+			+ (CHAT.busy ? '<div class="dwdc-chat-m assistant typing"><i></i><i></i><i></i></div>' : '');
+		log.scrollTop = log.scrollHeight;
+	}
+	function chatSend(q) {
+		q = String(q || '').trim(); if (!q || CHAT.busy) { return; }
+		CHAT.msgs.push({ role: 'user', content: q }); CHAT.busy = true; chatPaint();
+		api('/ask', 'POST', { messages: CHAT.msgs }).then(function (r) {
+			CHAT.msgs.push({ role: 'assistant', content: r.answer });
+		}).catch(function (e) {
+			if (e.data && e.data.needs_key) { CHAT.needKey = true; CHAT.msgs.pop(); toast(e.message, true); }
+			else { CHAT.msgs.push({ role: 'assistant', content: 'Sorry, that didn’t work: ' + e.message }); }
+		}).then(function () { CHAT.busy = false; chatPaint(); });
+	}
+	function chatOpen() {
+		var box = chatEl();
+		if (!box) {
+			box = document.createElement('div'); box.id = 'dwdc-chat'; box.className = 'dwdc-chat';
+			box.innerHTML = '<header><span class="dwdc-chat-ic">' + ic('bolt', 16) + '</span><div><b>Ask AI</b><small>About your money, projects &amp; trends</small></div><button data-chatclose aria-label="Close">' + ic('x', 18) + '</button></header>'
+				+ '<div class="dwdc-chat-log"></div><form class="dwdc-chat-f"><textarea rows="1" placeholder="Ask a question…"></textarea><button class="dwdc-btn" aria-label="Send">' + ic('right', 16) + '</button></form>';
+			document.body.appendChild(box);
+			box.addEventListener('click', function (e) {
+				var t = e.target;
+				if (t.closest('[data-chatclose]')) { box.classList.remove('open'); return; }
+				var sg = t.closest('[data-chatsug]'); if (sg) { chatSend(sg.textContent); return; }
+				if (t.closest('[data-chatkeysave]')) {
+					var k = box.querySelector('[data-chatkey]').value;
+					api('/ask/key', 'POST', { key: k }).then(function () { CHAT.needKey = false; chatPaint(); toast('Claude connected'); }).catch(fail);
+				}
+			});
+			var ta = box.querySelector('textarea');
+			box.querySelector('form').addEventListener('submit', function (e) { e.preventDefault(); var v = ta.value; ta.value = ''; ta.style.height = ''; chatSend(v); });
+			ta.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); box.querySelector('form').requestSubmit(); } });
+			ta.addEventListener('input', function () { ta.style.height = ''; ta.style.height = Math.min(120, ta.scrollHeight) + 'px'; });
+		}
+		box.classList.add('open'); chatPaint();
+		setTimeout(function () { var ta = box.querySelector('textarea'); if (ta && !CHAT.needKey) { ta.focus(); } }, 50);
 	}
 	/* ---------- shared pieces ---------- */
 	function tile(tone, label, n, sub, href, attrs) {
@@ -1338,6 +1400,7 @@
 			}
 			return;
 		}
+		if (t.closest('[data-askai]')) { chatOpen(); return; }
 		if ((el = t.closest('[data-trendsnow]'))) { el.textContent = 'Checking…'; api('/trends', 'POST', {}).then(function (x) { S.trends = x; render(); toast('Trends updated'); }).catch(fail); return; }
 		if ((el = t.closest('[data-cyear]'))) { S.cYear = el.getAttribute('data-cyear'); render(); return; }
 		if ((el = t.closest('[data-revpage]'))) { S.revPage = +el.getAttribute('data-revpage'); render(); window.scrollTo(0, 0); return; }

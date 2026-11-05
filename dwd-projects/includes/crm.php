@@ -1075,6 +1075,7 @@ function dwdc_vars( $mode = 'admin' ) {
 	$v['appIcon'] = DWDP_URL . 'assets/app/icon-192.png';
 	$v['appQr']   = DWDP_URL . 'assets/app/qr-desk.png';
 	$v['mode']    = $mode;
+	$v['aiReady'] = function_exists( 'dwdc_ai_key' ) && '' !== dwdc_ai_key();
 	if ( 'app' === $mode ) {
 		$v['logout'] = wp_logout_url( home_url( '/desk/' ) );
 	}
