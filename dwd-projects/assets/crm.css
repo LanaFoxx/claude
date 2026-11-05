@@ -387,3 +387,4 @@ select.dwdc-stage option { text-align: left; }
 .dwdc-tile.t-red { background: var(--red-t); border-color: var(--red-t); } .dwdc-tile.t-red .dwdc-tile-h { color: var(--red); }
 .dwdc-mini.t-red strong { color: var(--red); }
 select.dwdc-stage.t-red { background-color: var(--red-t) !important; color: var(--red) !important; border-color: #F3C4C1 !important; }
+.dwdc-copyob { align-self: flex-start; }

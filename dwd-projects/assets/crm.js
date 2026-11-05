@@ -399,7 +399,7 @@
 			+ '<div class="dwdc-two">'
 			+ '<div class="dwdc-col">'
 			+ (num(c.hosting) ? hostCard(c) : '')
-			+ '<section class="dwdc-card pad"><div class="dwdc-cardh"><h2>Next step</h2></div><form class="dwdc-nextf"><input name="next" value="' + esc(c.next) + '" placeholder="No next step set. Type one and press Enter"></form></section>'
+			+ onboardCard(c, full)
 			+ (S.edit ? editCard(c) : detailsCard(c))
 			+ jobsCard(c)
 			+ '</div><div class="dwdc-col">'
@@ -408,6 +408,30 @@
 			+ '<form class="dwdc-inlineadd" data-contact="' + c.id + '">' + ic('plus', 16) + '<input name="text" placeholder="Add a to-do for ' + esc(c.name) + '…" autocomplete="off"><input type="date" name="due" title="Due date"></form></section>'
 			+ activityCard(c, full)
 			+ '</div></div>';
+	}
+	// Onboarding answers as plain text, ready to paste into Claude.
+	function onboardEntries(c) {
+		var files = c.files || [], ob = files.filter(function (e) { return /onboard/i.test(e.form || ''); });
+		return ob.length ? ob : files;
+	}
+	function onboardText(c) {
+		var list = onboardEntries(c);
+		if (!list.length) { return ''; }
+		var lines = ['Client: ' + c.name];
+		[c.person && 'Contact: ' + c.person, c.email && 'Email: ' + c.email, c.phone && 'Phone: ' + c.phone, site(c) && 'Website: ' + site(c)].forEach(function (x) { if (x) { lines.push(x); } });
+		list.forEach(function (e) {
+			lines.push('', '=== ' + (e.form || 'Form') + ' (' + fmt(e.date, true) + ') ===', '');
+			(e.fields || []).forEach(function (x) { lines.push(x.label + ':', String(x.value).trim(), ''); });
+		});
+		return lines.join('\n').trim();
+	}
+	function onboardCard(c, full) {
+		var list = full ? onboardEntries(c) : [], ob = list.some(function (e) { return /onboard/i.test(e.form || ''); });
+		var n = list.reduce(function (s, e) { return s + (e.fields || []).length; }, 0);
+		return '<section class="dwdc-card pad"><div class="dwdc-cardh"><h2>' + (ob || !list.length ? 'Onboarding' : 'Form answers') + '</h2>' + (list.length ? '<span class="dwdc-cnt">' + n + ' answers</span>' : '') + '</div>'
+			+ (!full ? '<p class="dwdc-mutp">Loading…</p>' : list.length
+				? '<p class="dwdc-mutp">' + esc(list[0].form || 'Form') + ' · ' + fmt(list[0].date, true) + (list.length > 1 ? ' (+' + (list.length - 1) + ' more)' : '') + '</p><button class="dwdc-btn dwdc-copyob" data-copyob>' + ic('todo', 15) + 'Copy onboarding text</button>'
+				: '<p class="dwdc-mutp">No onboarding form from this client yet.</p>') + '</section>';
 	}
 	function detailsCard(c) {
 		var row = function (k, v) { return '<dt>' + k + '</dt><dd>' + (v || '<span class="mut">—</span>') + '</dd>'; };
@@ -421,6 +445,7 @@
 		return '<form class="dwdc-card pad dwdc-editf"><div class="dwdc-cardh"><h2>Edit details</h2></div><div class="dwdc-fgrid">'
 			+ f('name', 'Client / business') + f('person', 'Contact person') + f('email', 'Email', 'email') + f('phone', 'Phone') + f('company', 'Company') + f('website', 'Website')
 			+ '<label class="wide"><span>Project (current job)</span><input name="job" value="' + esc(c.job) + '" placeholder="e.g. Booking site redesign"></label>'
+			+ '<label class="wide"><span>Next step (shows on the job card)</span><input name="next" value="' + esc(c.next) + '" placeholder="e.g. Send wireframes Friday"></label>'
 			+ f('price', 'Price ($)') + f('balance', 'Still owed ($)') + f('deadline', 'Due date', 'date') + f('source', 'Source', 'text', 'e.g. Referral, Upwork')
 			+ f('hosting', 'Hosting ($/yr)') + f('renewal', 'Hosting renews', 'date') + f('billed', 'Billed on Upwork, lifetime ($)')
 			+ '</div><div class="dwdc-farow"><button type="button" class="dwdc-lnk red" data-trash="' + c.id + '">Delete client</button><span><button type="button" class="dwdc-btn2" data-edit>Cancel</button><button class="dwdc-btn">Save</button></span></div></form>';
@@ -574,6 +599,14 @@
 		if ((el = t.closest('[data-del-job]'))) {
 			var c = S.full[r.id], jobs = (c.jobs || []).slice(); jobs.splice(+el.getAttribute('data-del-job'), 1);
 			save(r.id, { jobs: jobs }); return;
+		}
+		if (t.closest('[data-copyob]')) {
+			var txt = onboardText(S.full[r.id] || {});
+			(navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(function () { toast('Onboarding answers copied'); }, function () {
+				var ta = document.createElement('textarea'); ta.value = txt; document.body.appendChild(ta); ta.select();
+				try { document.execCommand('copy'); toast('Onboarding answers copied'); } catch (er) { prompt('Copy:', txt); } ta.remove();
+			});
+			return;
 		}
 		if (t.closest('[data-copy]')) {
 			var link = (S.full[r.id] && S.full[r.id].paylink) || DWDC.pay;
