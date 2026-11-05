@@ -305,7 +305,7 @@
 			+ mcard('Where it came from', '<div class="dwdc-chanbar">' + chan.map(function (x) { return x[1] ? '<i class="' + x[2] + '" style="width:' + Math.max(1, pct(x[1])) + '%"></i>' : ''; }).join('') + '</div>'
 				+ '<ul class="dwdc-chans">' + chan.map(function (x) { return '<li><i class="' + x[2] + '"></i><span>' + x[0] + '</span><b>' + money(x[1]) + '</b><em>' + pct(x[1]) + '%</em></li>'; }).join('') + '</ul>')
 			+ mcard('By year', (ylist.length ? '<ul class="dwdc-years2">' + ylist.map(function (y) { var o = MY[y], t = ytot(y); return '<li><span>' + y + '</span><div>' + [['Stripe', 'str'], ['PayPal', 'ppl'], ['Upwork', 'upw'], ['Other', 'oth']].map(function (x) { return o[x[0]] ? '<i class="' + x[1] + '" style="width:' + Math.max(1, Math.round(o[x[0]] / ymax * 100)) + '%" title="' + x[0] + ' ' + money(o[x[0]]) + '"></i>' : ''; }).join('') + '</div><b>' + money(t) + '</b></li>'; }).join('') + '</ul>' : emptyRow('No dated payments yet.'))
-				+ '<p class="dwdc-mutp sm">Dated payments only: Stripe, PayPal and payments you log. Upwork’s ' + money(up) + ' has no dates yet. Import your Upwork transaction history to add it here.</p>')
+				+ '<p class="dwdc-mutp sm">Every payment on the day it was paid: Upwork (from your transaction history, before Upwork’s 10% fee), Stripe, PayPal and payments you log. Refunds come off the year they happened.</p>')
 			+ mcard('How clients found you', '<ul class="dwdc-chans src">' + slist.map(function (s) { return '<li><span>' + esc(s) + '</span><em>' + src[s].n + ' projects</em><b>' + money(src[s].v) + '</b></li>'; }).join('') + '</ul>')
 			+ mcard('Top projects', rowsP || emptyRow('No payments yet.'))
 			+ mcard('Top clients', rowsC || emptyRow('No payments yet.'))
