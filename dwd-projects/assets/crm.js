@@ -90,10 +90,10 @@
 	// Status colors: blue active, violet limbo, green done/paid, teal hosting, orange leads/owed, red overdue.
 	// Dream Desk statuses: "Pending" is the old "In limbo" (waiting on the client).
 	var TONE = { active: 'blue', limbo: 'deep', hold: 'steel', complete: 'navy', leads: 'deep', archive: 'steel', hosting: 'navy' };
-	var LABEL = { active: 'Active', limbo: 'Pending', hold: 'On hold', complete: 'Completed', leads: 'Lead', archive: 'Archived' };
+	var LABEL = { active: 'Active', limbo: 'Limbo', hold: 'On hold', complete: 'Completed', leads: 'Lead', archive: 'Archived' };
 	function avatar() { return ''; } // client avatars removed: names carry the rows
 	function avatarOld(c, size, tone) { return '<span class="dwdc-av t-' + (tone || TONE[c.list] || 'blue') + (size ? ' s' + size : '') + '">' + esc(initials(c.name)) + '</span>'; }
-	var STATUS = [['active', 'Active'], ['limbo', 'Pending'], ['hold', 'On hold'], ['complete', 'Completed']];
+	var STATUS = [['active', 'Active'], ['hold', 'On hold'], ['limbo', 'Limbo'], ['complete', 'Completed']];
 	function statusSelect(c) {
 		return '<select class="dwdc-stage t-' + (TONE[c.list] || 'gray') + '" data-status-of="' + c.id + '" title="Change status">' + STATUS.map(function (s) { return '<option value="' + s[0] + '"' + (s[0] === c.list ? ' selected' : '') + '>' + s[1] + '</option>'; }).join('') + '</select>';
 	}
@@ -140,11 +140,11 @@
 
 	/* ---------- routing ---------- */
 	var TITLES = {
-		home: ['', 'Today at', 'Dream Web'], leads: ['Clients', 'Leads &', 'Onboarding'], forms: ['Clients', 'Form', 'Entries'],
+		home: ['', 'Today at', 'Dream Web'], leads: ['Clients', 'All', 'Leads'], onboarding: ['Clients', 'Onboarding', 'Forms'],
 		todos: ['Everything open', 'To-Do', 'List'], hosting: ['Clients', 'Hosting', 'Clients'], archive: ['More', 'Archive', ''],
 		search: ['Search', 'Search', 'Results'], clients: ['Clients', 'All', 'Clients'], projects: ['Projects', 'All', 'Projects']
 	};
-	var OLD = { dashboard: 'home', jobs: 'projects/active', completed: 'projects/complete' };
+	var OLD = { dashboard: 'home', jobs: 'projects/active', completed: 'projects/complete', forms: 'leads' };
 	function route() {
 		var h = location.hash.replace(/^#/, '').split('/');
 		if (OLD[h[0]]) { return { view: OLD[h[0]].split('/')[0], arg: OLD[h[0]].split('/')[1] || '', id: 0 }; }
@@ -167,18 +167,17 @@
 			var on = cur === h || (h === 'projects/all' && cur === 'projects');
 			return '<a class="dwdc-nav' + (on ? ' on' : '') + '" href="#' + h + '">' + ic(icon) + '<span>' + label + '</span>' + (count !== undefined && count !== '' ? '<b>' + count + '</b>' : '') + '</a>';
 		};
-		var newForms = formRows().filter(function (c) { return formStatus(c) === 'New'; }).length;
 		var proj = S.contacts.filter(isProject);
 		return '<aside class="dwdc-side">'
 			+ '<a class="dwdc-brand" href="#home"><span class="dwdc-mark"><img src="' + esc(DWDC.mark) + '" alt=""></span><span><strong>Dream Desk</strong><small>Dream Web Digital</small></span></a>'
 			+ '<label class="dwdc-ssearch">' + ic('search', 16) + '<input type="search" placeholder="Search..." value="' + esc(S.q) + '"><kbd>Ctrl K</kbd></label>'
 			+ '<nav>' + nav('home', 'home', 'Home') + nav('todos', 'todo', 'To-Do List', openTasks().length + ' open')
 			+ '<div class="dwdc-navh"><i class="b1"></i>Clients</div>'
-			+ nav('clients', 'users', 'All Clients', S.clients.length) + nav('leads', 'filter', 'Leads &amp; Onboarding', openLeads().length)
-			+ nav('forms', 'mail', 'Form Entries', newForms ? newForms + ' new' : formRows().length) + nav('hosting', 'server', 'Hosting', hosting().length)
+			+ nav('leads', 'mail', 'Leads', leadList().length) + nav('onboarding', 'filter', 'Onboarding', onboardList().length)
+			+ nav('hosting', 'server', 'Hosting', hosting().length) + nav('clients', 'users', 'All Clients', S.clients.length)
 			+ '<div class="dwdc-navh"><i class="b2"></i>Projects</div>'
-			+ nav('projects/all', 'brief', 'All Projects', proj.length) + nav('projects/active', 'bolt', 'Active', by('active').length)
-			+ nav('projects/limbo', 'clock', 'Pending', by('limbo').length) + nav('projects/hold', 'pause', 'On Hold', by('hold').length) + nav('projects/complete', 'done', 'Completed', by('complete').length)
+			+ nav('projects/active', 'bolt', 'Active', by('active').length) + nav('projects/hold', 'pause', 'On Hold', by('hold').length)
+			+ nav('projects/limbo', 'clock', 'Limbo', by('limbo').length) + nav('projects/all', 'brief', 'All Projects', proj.length) + nav('projects/complete', 'done', 'Completed', by('complete').length)
 			+ '<div class="dwdc-navh"><i class="b3"></i>More</div>'
 			+ nav('archive', 'archive', 'Archive', by('archive').length)
 			+ '<a class="dwdc-nav" href="' + esc(DWDC.wp) + '">' + ic('wp') + '<span>WordPress Admin</span></a>'
@@ -189,14 +188,14 @@
 		return '<header class="dwdc-top"><button class="dwdc-burger" data-menu aria-label="Menu">' + ic('menu', 20) + '</button>'
 			+ '<div class="dwdc-title"><p class="dwdc-eyebrow">' + esc(t[0]) + '</p><h1><span>' + esc(t[1]) + '</span>' + (t[2] ? ' <em>' + esc(t[2]) + '</em>' : '') + '</h1></div>'
 			+ '<div class="dwdc-qas">' + qa('qnavy', 'data-act="job"', 'plus', 'Project') + qa('', 'data-act="newclient"', 'plus', 'Client') + qa('', 'data-act="lead"', 'plus', 'Lead') + qa('blue', 'data-act="pay"', 'card', 'Log Payment')
-			+ qa('', 'data-goto="hosting"', 'server', 'Hosting') + qa('', 'data-goto="todos"', 'list', 'View To-Dos') + qa('', 'data-goto="forms"', 'mail', 'Form Entries') + qa('', 'data-goto="archive"', 'archive', 'Archive') + '</div></header>';
+			+ qa('', 'data-goto="hosting"', 'server', 'Hosting') + qa('', 'data-goto="todos"', 'list', 'View To-Dos') + qa('', 'data-goto="leads"', 'mail', 'Leads') + qa('', 'data-goto="archive"', 'archive', 'Archive') + '</div></header>';
 	}
 
 	function render(anim) {
 		var r = route(), t = (TITLES[r.view] || ['', '', '']).slice(), body;
 		if (r.view === 'home') { t[0] = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }); }
 		if (r.view === 'projects') {
-			var pl = { active: ['Active', 'Projects'], limbo: ['Pending', 'Projects'], hold: ['On Hold', 'Projects'], complete: ['Completed', 'Projects'] }[r.arg];
+			var pl = { active: ['Active', 'Projects'], limbo: ['Limbo', 'Projects'], hold: ['On Hold', 'Projects'], complete: ['Completed', 'Projects'] }[r.arg];
 			if (pl) { t = ['Projects', pl[0], pl[1]]; }
 		}
 		if (r.view === 'client') {
@@ -212,7 +211,7 @@
 			t = ['Client', kw[0], kw.slice(1).join(' ')];
 			body = personView(r.id);
 		} else {
-			body = ({ home: home, clients: clientsView, projects: projectsView, leads: leadsView, forms: formsView, todos: todosView, hosting: hostingView, archive: archiveView, search: searchView }[r.view] || home)();
+			body = ({ home: home, clients: clientsView, projects: projectsView, leads: leadsList, onboarding: onboardView, todos: todosView, hosting: hostingView, archive: archiveView, search: searchView }[r.view] || home)();
 		}
 		app.innerHTML = sidebar(r) + '<div class="dwdc-shade-m" data-menu></div><main class="dwdc-main">' + top(r, t) + '<div class="dwdc-screen' + (anim ? ' in' : '') + '">' + body + '</div></main>' + modal();
 		S.prev = r.view + r.arg;
@@ -280,15 +279,15 @@
 		var c1 = card('cd-clients', chead('users', 'Clients', 'clients'),
 			'<p class="dwdc-hero"><strong>' + S.clients.length + '</strong> clients on file</p><div class="dwdc-segbar">' + seg(nP, 's1') + seg(nH, 's2') + seg(nPast, 's3') + '</div>'
 			+ '<a class="dwdc-seg" href="#clients"><i class="s1"></i>Project clients<b>' + nP + '</b></a><a class="dwdc-seg" href="#clients"><i class="s2"></i>Hosting only<b>' + nH + '</b></a><a class="dwdc-seg" href="#clients"><i class="s3"></i>Past clients<b>' + nPast + '</b></a>',
-			'<footer class="dwdc-grid4">' + frow('Active Projects', active.length, 'projects/active') + frow('Leads', openLeads().length, 'leads') + frow('Hosting', host.length, 'hosting') + frow('Form Entries', formRows().length, 'forms') + '</footer>');
+			'<footer class="dwdc-grid4">' + frow('Active Projects', active.length, 'projects/active') + frow('Onboarding', onboardList().length, 'onboarding') + frow('Hosting', host.length, 'hosting') + frow('Leads', leadList().length, 'leads') + '</footer>');
 		var c2 = card('cd-projects', chead('brief', 'Projects', 'projects/all'),
-			(nextDue ? '<div class="dwdc-tint"><small>Next due</small><strong>' + esc(nextDue.name) + ' · ' + new Date(nextDue.deadline + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) + '</strong><span>' + esc([nextDue.job, num(nextDue.balance) ? money(nextDue.balance) + ' still owed' : 'Paid'].filter(Boolean).join(' · ')) + '</span></div>'
-				: '<div class="dwdc-tint"><small>Next due</small><strong>No due dates set</strong><span>Add a due date to a project to see it here.</span></div>')
-			+ '<div class="dwdc-row2"><button class="dwdc-btn" data-act="job">' + ic('plus', 14) + 'New Project</button><button class="dwdc-iconbtn" data-reload title="Refresh">' + ic('refresh', 16) + '</button></div>',
+			'<p class="dwdc-hero"><strong>' + active.length + '</strong> active project' + (active.length === 1 ? '' : 's') + '</p>'
+			+ '<p class="dwdc-sub">' + money(active.reduce(function (s, c) { return s + num(c.price); }, 0)) + ' in active contracts</p>'
+			+ '<div class="dwdc-row2"><button class="dwdc-btn" data-act="job">' + ic('plus', 14) + 'New Project</button></div>',
 			'<footer>' + frow('Active Projects', active.length, 'projects/active') + frow('Awaiting Payment', owing.length ? '<em class="dwdc-owepill">' + owing.length + ' owed</em>' : '0', 'projects/active') + frow('Completed', by('complete').length + ' <span class="mut">all-time</span>', 'projects/complete') + '</footer>');
 		var c3 = card('cd-money', chead('dollar', 'Money', 'projects/active'),
 			'<p class="dwdc-lbl">Owed on open projects</p><p class="dwdc-hero big"><strong>' + money(owed(open)) + '</strong></p><p class="dwdc-sub">' + owing.length + ' invoice' + (owing.length === 1 ? '' : 's') + ' open · ' + active.length + ' active projects</p>'
-			+ (lastPay ? '<a class="dwdc-tint row" href="#client/' + lastPay.id + '"><span><small>Latest payment · ' + fmt(lastPay.last_pay.date) + '</small><strong>' + esc(lastPay.name) + '</strong> <span class="mut">· ' + esc(lastPay.last_pay.source) + '</span></span><b>' + money(lastPay.last_pay.amount) + '</b></a>' : ''),
+			+ '<div class="dwdc-tint-space" aria-hidden="true"></div>',
 			'<footer>' + frow('Hosting Revenue', money(annual) + ' / yr', 'hosting') + frow('Next Renewal', nextH ? fmt(nextH.renewal) + ' · ' + esc(nextH.name) : '—', 'hosting') + '<div class="dwdc-frow"><span>All-time billed</span><b>' + money(billed) + '</b></div></footer>');
 		var tv = active.reduce(function (s, c) { return s + num(c.price); }, 0);
 		var ap = card('cd-plain', '<header class="dwdc-dhead plain"><h2>Active Projects <span class="dwdc-cnt">' + active.length + '</span></h2><a href="#projects/active">View all</a></header>',
@@ -331,11 +330,11 @@
 		if (['all', 'active', 'limbo', 'hold', 'complete'].indexOf(f) < 0) { f = 'all'; }
 		var all = S.contacts.filter(isProject).filter(match);
 		var chip = function (k, l) { var n = all.filter(function (c) { return k === 'all' || c.list === k; }).length; return '<a class="dwdc-fchip' + (f === k ? ' on' : '') + '" href="#projects/' + k + '">' + (k === 'all' ? '' : '<i class="dwdc-sdot t-' + TONE[k] + '"></i>') + l + ' <b>' + n + '</b></a>'; };
-		var order = ['active', 'limbo', 'hold', 'complete'];
+		var order = ['active', 'hold', 'limbo', 'complete'];
 		var rows = all.filter(function (c) { return f === 'all' || c.list === f; }).sort(function (a, b) { return order.indexOf(a.list) - order.indexOf(b.list) || (a.list === 'complete' ? byDone(a, b) : (a.deadline || '9') < (b.deadline || '9') ? -1 : 1); });
 		var cap = S.more['p' + f] || S.q ? rows.length : 50;
-		var empties = { active: 'No active projects right now.', limbo: 'No pending projects. Projects waiting on the client go here.', hold: 'No projects on hold. Paused projects go here.', complete: 'No completed projects yet.', all: 'No projects match.' };
-		return '<div class="dwdc-chips">' + chip('all', 'All') + chip('active', 'Active') + chip('limbo', 'Pending') + chip('hold', 'On hold') + chip('complete', 'Completed') + '</div>'
+		var empties = { active: 'No active projects right now.', limbo: 'Nothing in limbo. Clients you haven’t heard back from in a while go here.', hold: 'No projects on hold. Paused or waiting projects go here.', complete: 'No completed projects yet.', all: 'No projects match.' };
+		return '<div class="dwdc-chips">' + chip('active', 'Active') + chip('hold', 'On hold') + chip('limbo', 'Limbo') + chip('all', 'All') + chip('complete', 'Completed') + '</div>'
 			+ '<div class="dwdc-card dwdc-tbl">' + (rows.length ? '<div class="dwdc-grid g-projects head"><span>Project</span><span>Client</span><span>Price</span><span>Owed</span><span>Due</span><span>Status</span><span>Next step</span></div>'
 				+ rows.slice(0, cap).map(function (c) {
 					var k = clientOf(c), ow = num(c.balance), done = c.list === 'complete', dd = done ? doneDate(c) : c.deadline, late = !done && c.deadline && c.deadline < DWDC.today, amt = done ? lifetime(c) : num(c.price);
@@ -344,6 +343,37 @@
 						+ '<span class="b">' + (amt ? money(amt) : '—') + '</span><span class="b ' + (ow ? 'deep' : 'sec') + '">' + (ow ? money(ow) : 'Paid') + '</span>'
 						+ '<span class="' + (late ? 'deep b' : 'b') + '">' + (dd ? fmt(dd, done) : '—') + '</span><span>' + statusSelect(c) + '</span><span class="sec ell">' + esc(c.next || '—') + '</span></div>';
 				}).join('') : emptyRow(S.q ? 'No matches.' : empties[f])) + moreFoot('p' + f, cap, rows.length) + '</div>';
+	}
+
+	/* ---------- Leads (website forms other than onboarding, plus leads added by hand) ---------- */
+	function isOnboard(c) { return !!(c.onboarded || c.stage === 'onboarding'); }
+	function leadList() { return S.contacts.filter(function (c) { return c.list === 'leads' && !isOnboard(c); }).sort(function (a, b) { return received(a) < received(b) ? 1 : -1; }); }
+	function onboardList() { return S.contacts.filter(function (c) { return isOnboard(c) && c.list !== 'archive'; }).sort(function (a, b) { return received(a) < received(b) ? 1 : -1; }); }
+	var LSTAGES = [['new', 'New'], ['contacted', 'Contacted'], ['active', 'Won → Active'], ['lost', 'Lost']];
+	function leadsList() {
+		var rows = leadList().filter(match);
+		return '<div class="dwdc-card dwdc-tbl"><div class="dwdc-grid g-leads2 head"><span>Name</span><span>Contact</span><span>Source</span><span>Stage</span><span>Received</span><span>Follow up</span><span></span></div>'
+			+ (rows.length ? rows.map(function (c) {
+				var st = c.stage && c.stage !== 'onboarding' ? c.stage : 'new', fu = c.followup;
+				return '<div class="dwdc-grid g-leads2 row" data-go="client/' + c.id + '"><span><b>' + esc(clientName(c) || c.name) + '</b>' + (c.company || (clientName(c) && clientName(c) !== c.name) ? '<small>' + esc(c.company || c.name) + '</small>' : '') + '</span>'
+					+ '<span class="dwdc-nm"><span><b class="nm2">' + esc(c.email || '—') + '</b><small>' + esc(c.phone || '') + '</small></span></span>'
+					+ '<span class="sec ell">' + esc(c.last_entry || String(c.source || 'Added by hand').replace(/^Website form: /, '')) + '</span>'
+					+ '<span><select class="dwdc-stage t-' + ({ new: 'blue', contacted: 'deep', active: 'navy', lost: 'steel' }[st] || 'blue') + '" data-stage-of="' + c.id + '">' + LSTAGES.map(function (x) { return '<option value="' + x[0] + '"' + (x[0] === st ? ' selected' : '') + '>' + x[1] + '</option>'; }).join('') + '</select></span>'
+					+ '<span class="mut">' + ago(received(c)) + '</span>'
+					+ '<span>' + (fu && fu >= DWDC.today ? '<span class="dwdc-fu">' + ic('clock', 13) + fmt(fu) + '</span>' : '<button class="dwdc-btn3" data-followup="' + c.id + '">' + ic('clock', 13) + ' Follow up</button>') + '</span>'
+					+ '<span class="r"><button class="dwdc-del show" data-arch="' + c.id + '" title="Archive">' + ic('archive', 15) + '</button></span></div>';
+			}).join('') : emptyRow('No leads yet. Website form entries and leads you add with “+ Lead” show up here.')) + '</div>';
+	}
+	/* ---------- Onboarding (everyone who sent the onboarding form) ---------- */
+	function onboardView() {
+		var rows = onboardList().filter(match);
+		return '<div class="dwdc-card dwdc-tbl"><div class="dwdc-grid g-onb head"><span>Client</span><span>Project</span><span>Email</span><span>Status</span><span>Received</span><span></span></div>'
+			+ (rows.length ? rows.map(function (c) {
+				return '<div class="dwdc-grid g-onb row" data-go="client/' + c.id + '"><span><b>' + esc(clientName(c) || c.person || c.name) + '</b>' + (c.phone ? '<small>' + esc(c.phone) + '</small>' : '') + '</span>'
+					+ '<span><b class="dwdc-pname">' + esc(c.name) + '</b>' + (site(c) ? siteLine(c) : '') + '</span><span class="sec ell">' + esc(c.email || '—') + '</span>'
+					+ '<span>' + (c.list === 'leads' ? pill('Onboarding', 'deep') : statusPill(c)) + '</span><span class="mut">' + ago(received(c)) + '</span>'
+					+ '<span class="r"><a class="dwdc-btn3" href="#client/' + c.id + '">View answers</a></span></div>';
+			}).join('') : emptyRow('No onboarding forms yet. Use + Project → Add new client to send one.')) + '</div>';
 	}
 
 	/* ---------- Form Entries ---------- */
@@ -577,7 +607,7 @@
 		var biz = k.company || (pp[0] && pp[0].name !== k.name ? pp[0].name : '');
 		var btn = function (cls, attr, label) { return '<button class="dwdc-btn2 ' + cls + '" ' + attr + '>' + label + '</button>'; };
 		var acts = first ? btn('', 'data-act="pay" data-project="' + first.id + '"', 'Log payment')
-			+ (first.list === 'limbo' ? btn('', 'data-pset="active" data-pid="' + first.id + '"', 'Back to active') : btn('', 'data-pset="limbo" data-pid="' + first.id + '"', 'Mark pending'))
+			+ (first.list === 'limbo' ? btn('', 'data-pset="active" data-pid="' + first.id + '"', 'Back to active') : btn('', 'data-pset="limbo" data-pid="' + first.id + '"', 'Move to limbo'))
 			+ (first.list === 'hold' ? btn('', 'data-pset="active" data-pid="' + first.id + '"', 'Resume') : btn('', 'data-pset="hold" data-pid="' + first.id + '"', 'Put on hold'))
 			+ btn('solid navy', 'data-pset="complete" data-pid="' + first.id + '"', 'Mark complete')
 			: btn('solid navy', 'data-act="job" data-client="' + k.id + '"', '+ New project');
@@ -641,7 +671,7 @@
 		var acts = '';
 		if (st === 'active' || st === 'hold' || st === 'limbo') {
 			acts = (ow ? btn('', 'data-paid', 'Mark paid') : '') + (st !== 'active' ? btn('', 'data-set="active"', 'Back to active') : '')
-				+ (st !== 'hold' ? btn('greenl', 'data-set="hold"', 'Put on hold') : '') + (st !== 'limbo' ? btn('', 'data-set="limbo"', 'Mark pending') : '') + btn('solid green', 'data-complete', 'Mark complete');
+				+ (st !== 'hold' ? btn('greenl', 'data-set="hold"', 'Put on hold') : '') + (st !== 'limbo' ? btn('', 'data-set="limbo"', 'Move to limbo') : '') + btn('solid green', 'data-complete', 'Mark complete');
 		} else if (st === 'leads') {
 			acts = btn('', 'data-set="archive"', 'Archive') + btn('solid blue', 'data-set="active"', 'Start the job');
 		} else if (st === 'archive') {
@@ -975,6 +1005,12 @@
 		if ((el = t.closest('[data-goto]'))) { go(el.getAttribute('data-goto')); return; }
 		if ((el = t.closest('[data-cfilter]'))) { S.clientFilter = el.getAttribute('data-cfilter'); render(); return; }
 		if (t.closest('[data-reload]')) { reload().then(function () { render(); toast('Up to date'); }).catch(fail); return; }
+		if ((el = t.closest('[data-followup]'))) {
+			e.stopPropagation();
+			var fid = +el.getAttribute('data-followup'); el.disabled = true;
+			api('/contact/' + fid + '/followup', 'POST', { days: 7 }).then(function (x) { upsert(x); return reload(); }).then(function () { render(); toast('Reminder set. You’ll get an email in a week.'); }).catch(function (er) { el.disabled = false; fail(er); });
+			return;
+		}
 		if ((el = t.closest('[data-mklead]'))) { e.stopPropagation(); save(+el.getAttribute('data-mklead'), { stage: 'contacted' }, 'Moved to leads'); return; }
 		if ((el = t.closest('[data-arch]'))) { e.stopPropagation(); save(+el.getAttribute('data-arch'), { list: 'archive' }, 'Archived'); return; }
 		if ((el = t.closest('[data-restore]'))) {

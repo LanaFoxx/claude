@@ -46,7 +46,7 @@ function dwdc_lists() {
 
 /** Contact fields kept on every contact. */
 function dwdc_fields() {
-	return array( 'job', 'manual', 'markup', 'markup_sent', 'lead_source', 'pay_method', 'stage', 'completed', 'billed', 'stripe', 'paypal', 'person', 'email', 'phone', 'company', 'website', 'list', 'price', 'balance', 'deadline', 'hosting', 'renewal', 'source', 'next' );
+	return array( 'job', 'manual', 'followup', 'markup', 'markup_sent', 'lead_source', 'pay_method', 'stage', 'completed', 'billed', 'stripe', 'paypal', 'person', 'email', 'phone', 'company', 'website', 'list', 'price', 'balance', 'deadline', 'hosting', 'renewal', 'source', 'next' );
 }
 
 function dwdc_contact( $post, $full = false ) {
@@ -448,6 +448,25 @@ function dwdc_from_order( $order_id ) {
 add_action( 'woocommerce_order_status_processing', 'dwdc_from_order' );
 add_action( 'woocommerce_order_status_completed', 'dwdc_from_order' );
 
+// The follow-up reminder email (sent to Michael).
+add_action( 'dwdc_followup', function ( $id ) {
+	if ( DWDC_CONTACT !== get_post_type( $id ) || 'leads' !== get_post_meta( $id, '_dwdc_list', true ) ) {
+		return; // already a client, or archived
+	}
+	$name  = get_post_meta( $id, '_dwdc_person', true ) ?: get_post_field( 'post_title', $id );
+	$email = (string) get_post_meta( $id, '_dwdc_email', true );
+	$phone = (string) get_post_meta( $id, '_dwdc_phone', true );
+	$rows  = array_filter( array( array( 'Lead', get_post_field( 'post_title', $id ) ), array( 'Email', $email ), array( 'Phone', $phone ), array( 'Came in', get_post_time( 'M j, Y', false, $id ) ) ), function ( $x ) { return '' !== $x[1]; } );
+	$html  = dwdp_email_html( array(
+		'eyebrow' => 'Follow Up',
+		'title'   => 'Time to follow up with ' . $name,
+		'intro'   => 'You asked for a reminder a week ago. Here are their details so you can reach out.',
+		'rows'    => array_values( $rows ),
+		'buttons' => array_filter( array( $email ? array( 'Email ' . trim( strtok( $name, ' ' ) ), 'mailto:' . $email ) : null, array( 'Open in Dream Desk', admin_url( 'admin.php?page=client-desk#client/' . $id ) ) ) ),
+	) );
+	wp_mail( 'mike@dreamwebdigital.com', 'Follow up with ' . $name, $html, array( 'Content-Type: text/html; charset=UTF-8' ) );
+} );
+
 /* ---------------------------------------------------------------- hosting subscriptions */
 
 /** Secret key in each client's renewal link, so nobody can guess another client's link. */
@@ -759,6 +778,18 @@ add_action( 'rest_api_init', function () {
 		}
 		wp_update_post( array( 'ID' => $into ) );
 		return dwdc_contact( $into, true );
+	} ) );
+
+	// Follow up with a lead: emails Michael a reminder in N days (and adds a to-do for that day).
+	register_rest_route( $ns, '/crm/contact/(?P<id>\d+)/followup', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
+		$id   = (int) $r['id'];
+		$days = max( 1, min( 60, (int) ( $r->get_param( 'days' ) ?: 7 ) ) );
+		$when = strtotime( '+' . $days . ' days', current_time( 'timestamp' ) );
+		update_post_meta( $id, '_dwdc_followup', gmdate( 'Y-m-d', $when ) );
+		wp_clear_scheduled_hook( 'dwdc_followup', array( $id ) );
+		wp_schedule_single_event( time() + $days * DAY_IN_SECONDS, 'dwdc_followup', array( $id ) );
+		dwdc_add_task( 'Follow up with ' . get_post_field( 'post_title', $id ), $id, gmdate( 'Y-m-d', $when ) );
+		return dwdc_contact( $id, true );
 	} ) );
 
 	// Invite a new client: a waiting lead + client are created, and the onboarding form link is emailed
