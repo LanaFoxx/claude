@@ -815,3 +815,5 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 .dwdc-conn-map select { height: 38px; border: 1px solid var(--input); border-radius: 8px; padding: 0 10px; font: inherit; font-size: 13px; max-width: none !important; }
 .dwdc-conn-map .dwdc-btn { align-self: flex-start; }
 @media (max-width: 1100px) { .dwdc-conns { grid-template-columns: 1fr; } }
+.dwdc .dwdc-conn-f input { min-width: 0; height: 40px !important; min-height: 40px !important; line-height: 38px; box-sizing: border-box; }
+.dwdc .dwdc-conn-f .dwdc-btn { flex: none; }
