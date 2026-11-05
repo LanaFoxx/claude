@@ -318,7 +318,8 @@
 			+ '<div class="dwdc-card dwdc-tbl"><div class="dwdc-grid g-clients head"><span>Client</span><span>Business</span><span>Email</span><span>Type</span><span>Projects</span><span>Hosting</span><span>Last activity</span></div>'
 			+ (list.length ? list.slice(0, cap).map(function (x) {
 				var k = x.k, biz = k.company || (x.pp[0] ? x.pp[0].name : ''), host = x.pp.some(function (c) { return num(c.hosting) > 0; });
-				var last = x.pp.reduce(function (m, c) { return c.updated > m ? c.updated : m; }, '');
+				// Only open projects have real recent activity; imported records were all touched on import day.
+				var last = x.pp.filter(isOpen).reduce(function (m, c) { return c.updated > m ? c.updated : m; }, '');
 				return '<div class="dwdc-grid g-clients row" data-go="cl/' + k.id + '"><span><b>' + esc(k.name) + '</b></span><span class="ell sec">' + esc(biz === k.name ? '—' : biz || '—') + '</span><span class="ell sec">' + esc(k.email || 'No email on file') + '</span>'
 					+ '<span>' + pill(x.t, CTYPE_TONE[x.t]) + '</span><span class="b">' + x.pp.length + '</span><span class="sec">' + (host ? 'Yes' : 'No') + '</span><span class="mut">' + ago(last) + '</span></div>';
 			}).join('') : emptyRow('No clients match.')) + moreFoot('clients', cap, list.length) + '</div>';
@@ -346,6 +347,8 @@
 	}
 
 	/* ---------- Leads (website forms other than onboarding, plus leads added by hand) ---------- */
+	// Records brought in from ClickUp, Upwork, Stripe or PayPal: their created/updated dates are just the import day.
+	function imported(c) { return /ClickUp import|^Upwork$|^Stripe$|^PayPal$/.test(c.source || ''); }
 	function isOnboard(c) { return !!(c.onboarded || c.stage === 'onboarding'); }
 	function leadList() { return S.contacts.filter(function (c) { return c.list === 'leads' && !isOnboard(c); }).sort(function (a, b) { return received(a) < received(b) ? 1 : -1; }); }
 	function onboardList() { return S.contacts.filter(function (c) { return isOnboard(c) && c.list !== 'archive'; }).sort(function (a, b) { return received(a) < received(b) ? 1 : -1; }); }
@@ -560,7 +563,7 @@
 		return '<div class="dwdc-card dwdc-tbl"><div class="dwdc-grid g-simple head"><span>Name</span><span>Email</span><span>List</span><span class="r">Last activity</span><span></span></div>'
 			+ (list.length ? list.map(function (c) {
 				return '<div class="dwdc-grid g-simple row" data-go="client/' + c.id + '"><span class="dwdc-nm">' + avatar(c, 34) + '<span><b>' + esc(c.name) + '</b><small>' + esc(c.person || site(c) || '') + '</small></span></span>'
-					+ '<span class="sec ell">' + esc(c.email || '—') + '</span><span>' + pill(LABEL[c.list] || c.list, TONE[c.list] || 'gray') + '</span><span class="r mut">' + ago(c.updated) + '</span>'
+					+ '<span class="sec ell">' + esc(c.email || '—') + '</span><span>' + pill(LABEL[c.list] || c.list, TONE[c.list] || 'gray') + '</span><span class="r mut">' + (isOpen(c) ? ago(c.updated) : '') + '</span>'
 					+ '<span class="r">' + (del ? '<button class="dwdc-del show" data-quickdel="' + c.id + '" title="Delete">' + ic('x', 15) + '</button>' : '') + '</span></div>';
 			}).join('') : emptyRow(empty)) + '</div>';
 	}
@@ -617,7 +620,7 @@
 			if (c.last_entry_date) { tl.push({ d: c.last_entry_date, t: c.last_entry + ' form received', tone: 'blue' }); }
 			if (c.last_pay) { tl.push({ d: c.last_pay.date, t: 'Payment of ' + money(c.last_pay.amount) + ' recorded · ' + c.name, tone: 'deep' }); }
 			if (c.completed) { tl.push({ d: c.completed, t: 'Completed: ' + c.name, tone: 'navy' }); }
-			tl.push({ d: c.created, t: 'Project added: ' + c.name, tone: 'navy' });
+			if (!imported(c)) { tl.push({ d: c.created, t: 'Project added: ' + c.name, tone: 'navy' }); }
 		});
 		tl.sort(function (a, b) { return (d(a.d) || 0) < (d(b.d) || 0) ? 1 : -1; });
 		var bk = S.back || 'clients', bn = { home: 'home', leads: 'leads & onboarding', forms: 'form entries', todos: 'to-do list', hosting: 'hosting', projects: 'projects', clients: 'clients', archive: 'archive', search: 'search' }[bk.split('/')[0]] || 'clients';
@@ -639,7 +642,7 @@
 			+ '<section class="dwdc-card"><div class="dwdc-cardh pad2"><h2>Details</h2><button class="dwdc-lnk" data-edit>' + (S.edit ? 'Close' : 'Edit') + '</button></div><dl class="dwdc-dl pad2">'
 			+ '<dt>Client</dt><dd>' + esc(k.name) + '</dd><dt>Business</dt><dd>' + esc(biz || '—') + '</dd><dt>Email</dt><dd>' + (k.email ? '<a href="mailto:' + esc(k.email) + '">' + esc(k.email) + '</a>' : '—') + '</dd><dt>Phone</dt><dd>' + esc(k.phone || '—') + '</dd>'
 			+ '<dt>Hosting</dt><dd>' + (host.length ? host.length + ' site' + (host.length > 1 ? 's' : '') + ' · ' + money(host.reduce(function (s, c) { return s + num(c.hosting); }, 0)) + '/yr' : 'No') + '</dd>'
-			+ '<dt>Source</dt><dd>' + esc((pp.filter(function (c) { return c.lead_source; })[0] || {}).lead_source || sourceOf(pp[0] || {}) || '—') + '</dd><dt>Client since</dt><dd>' + fmt(k.created, true) + '</dd>'
+			+ '<dt>Source</dt><dd>' + esc((pp.filter(function (c) { return c.lead_source; })[0] || {}).lead_source || sourceOf(pp[0] || {}) || '—') + '</dd><dt>Client since</dt><dd>' + (pp.length && pp.every(imported) ? '—' : fmt(k.created, true)) + '</dd>'
 			+ (k.notes ? '<dt>Notes</dt><dd>' + esc(k.notes).replace(/\n/g, '<br>') + '</dd>' : '') + '</dl></section>'
 			+ '</div><div class="dwdc-col">'
 			+ '<section class="dwdc-card"><div class="dwdc-cardh pad2"><h2>To-Dos <span class="dwdc-cnt">' + tasks.filter(function (t) { return !t.done; }).length + '</span></h2></div><div class="pad2">'
@@ -759,7 +762,7 @@
 		return '<section class="dwdc-card pad"><div class="dwdc-cardh"><h2>Details</h2><button class="dwdc-lnk" data-edit>Edit</button></div><dl class="dwdc-dl">'
 			+ row('Contact', esc(k.name || c.person)) + row('Email', em ? '<a href="mailto:' + esc(em) + '">' + esc(em) + '</a>' : '') + row('Phone', esc(ph))
 			+ row('Company', esc(c.company)) + row('Website', site(c) ? '<a href="https://' + esc(site(c)) + '" target="_blank" rel="noopener">' + esc(site(c)) + '</a>' : '')
-			+ row('Project', esc(c.job)) + row('Markup', c.markup ? '<a href="' + esc(url(c.markup)) + '" target="_blank" rel="noopener">Open Markup link</a>' : '<button class="dwdc-lnk" data-markup="' + c.id + '">Add link</button>') + row('Source', esc(sourceOf(c))) + row('Started', fmt(c.created, true)) + '</dl></section>';
+			+ row('Project', esc(c.job)) + row('Markup', c.markup ? '<a href="' + esc(url(c.markup)) + '" target="_blank" rel="noopener">Open Markup link</a>' : '<button class="dwdc-lnk" data-markup="' + c.id + '">Add link</button>') + row('Source', esc(sourceOf(c))) + row('Started', imported(c) ? '' : fmt(c.created, true)) + '</dl></section>';
 	}
 	function editCard(c) {
 		var f = function (k, label, type, ph) { return '<label><span>' + label + '</span><input name="' + k + '" type="' + (type || 'text') + '" value="' + esc(c[k]) + '" placeholder="' + esc(ph || '') + '"></label>'; };
@@ -844,7 +847,7 @@
 			(c.files || []).forEach(function (e, i) { items.push({ date: e.date, tone: 'orange', title: (e.form || 'Form') + ' received', entry: e, open: false }); });
 		}
 		if (c.completed) { items.push({ date: c.completed, tone: 'green', title: 'Marked complete' }); }
-		items.push({ date: c.created, tone: 'gray', title: 'Added to Client Desk' + (c.source && !c.entry_count ? ' (' + c.source + ')' : '') });
+		if (!imported(c)) { items.push({ date: c.created, tone: 'gray', title: 'Added to Dream Desk' + (c.source && !c.entry_count ? ' (' + c.source + ')' : '') }); }
 		items.sort(function (a, b) { return (d(a.date) || 0) < (d(b.date) || 0) ? 1 : -1; });
 		return '<section class="dwdc-card pad"><div class="dwdc-cardh"><h2>Activity</h2></div>'
 			+ '<form class="dwdc-notef"><textarea name="text" rows="2" placeholder="Add a note: call recap, decisions…" required></textarea><button class="dwdc-btn sm">Add note</button></form>'
