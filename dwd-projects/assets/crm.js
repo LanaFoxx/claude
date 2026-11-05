@@ -218,7 +218,7 @@
 			+ '<p class="dwdc-ph-crumb">' + crumb + '</p>'
 			+ '<h1 class="dwdc-ph-title">' + esc(t[1]) + (t[2] ? ' <b>' + esc(t[2]) + '</b>' : '') + '</h1></div></div>'
 			+ '<div class="dwdc-ph-tools">'
-			+ '<label class="dwdc-ssearch dwdc-ph-search">' + ic('search', 16) + '<input type="search" placeholder="Search clients…" aria-label="Search clients" value="' + esc(S.q) + '"><kbd>Ctrl K</kbd></label>'
+			+ '<label class="dwdc-ssearch dwdc-ph-search">' + ic('search', 16) + '<input type="search" name="dwdc-find" placeholder="Search clients…" aria-label="Search clients" value="" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" readonly data-lpignore="true" data-1p-ignore data-form-type="other"><kbd>Ctrl K</kbd></label>'
 			+ '<span class="dwdc-ph-sp"></span>'
 			+ '<div class="dwdc-ph-menu' + (menuOpen ? ' open' : '') + '"><button class="dwdc-ph-btn outline" type="button" data-newmenu aria-haspopup="menu" aria-expanded="' + menuOpen + '">' + plus + 'New' + '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>'
 			+ '<ul role="menu"><li><button role="menuitem" type="button" data-act="job">' + plus + 'Project</button></li><li><button role="menuitem" type="button" data-act="newclient">' + plus + 'Client</button></li><li><button role="menuitem" type="button" data-goto="hosting">' + ic('server', 14) + 'Hosting</button></li></ul></div>'
@@ -1620,9 +1620,14 @@
 		if (it) { setTimeout(closeDrops, 0); return; }
 		if (!(e.target.closest && e.target.closest('.dwdc-ssearch'))) { closeDrops(); }
 	});
+	// The search box starts read-only so browsers don't autofill a saved email into it; unlock it on focus.
+	app.addEventListener('focusin', function (e) { var t = e.target; if (t.matches && t.matches('.dwdc-ssearch input') && t.hasAttribute('readonly')) { t.removeAttribute('readonly'); } });
+	app.addEventListener('mousedown', function (e) { var t = e.target.closest && e.target.closest('.dwdc-ssearch'); if (t) { var i = t.querySelector('input'); if (i) { i.removeAttribute('readonly'); } } });
 	app.addEventListener('input', function (e) {
 		var t = e.target;
 		if (t.closest('.dwdc-ssearch')) {
+			// Only react to real typing (browser autofill fills unfocused fields).
+			if (document.activeElement !== t) { t.value = ''; return; }
 			searchDrop(t.closest('.dwdc-ssearch'), t.value);
 		} else if (t.classList.contains('dwdc-pick')) {
 			S.modal.q = t.value; app.querySelector('.dwdc-picks').innerHTML = pickList(S.modal.q);

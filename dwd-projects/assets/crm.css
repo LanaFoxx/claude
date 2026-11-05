@@ -926,3 +926,6 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 .dwdc-ttag span::before { content: "·"; margin-right: 6px; color: #8C9AAE; }
 .dwdc-ttag:hover { background: #CDEBFB; }
 .dwdc-todo .dwdc-tt { display: flex; flex-direction: column; min-width: 0; }
+/* never show browser autofill colors in the search box */
+.dwdc .dwdc-ssearch input:-webkit-autofill, .dwdc .dwdc-ssearch input:-webkit-autofill:hover, .dwdc .dwdc-ssearch input:-webkit-autofill:focus { -webkit-box-shadow: 0 0 0 40px #fff inset !important; -webkit-text-fill-color: #0b1f3f !important; transition: background-color 9999s ease-in-out 0s; }
+.dwdc .dwdc-ssearch input[readonly] { cursor: text; }
