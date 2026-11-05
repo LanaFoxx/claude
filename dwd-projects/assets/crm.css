@@ -447,3 +447,7 @@ select.dwdc-sel[class*=pm-] option { background: #fff; color: #0B203D; font-weig
 .dwdc-hostprice .dwdc-btn2 { height: 42px; }
 @media (max-width: 768px) { .dwdc-hostprice { grid-template-columns: 1fr; } }
 .dwdc-totals.one { grid-template-columns: 1fr; }
+/* New Project button sits at the bottom of its card */
+.cd-projects .dwdc-row2 { margin-top: auto; }
+/* white text on the blue count circles and "owed" pills */
+.dwdc-cnt, .dwdc-owepill, .dwdc-me-av { color: #fff !important; }
