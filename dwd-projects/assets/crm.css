@@ -414,3 +414,15 @@ select.dwdc-sel.pm-upwork { background-color: #14A800 !important; border-color: 
 select.dwdc-sel.pm-paypal { background-color: #0070BA !important; border-color: #0070BA !important; color: #fff !important; font-weight: 700; }
 select.dwdc-sel.pm-stripe { background-color: #13A6EE !important; border-color: #13A6EE !important; color: #0B203D !important; font-weight: 700; }
 select.dwdc-sel[class*=pm-] option { background: #fff; color: #0B203D; font-weight: 400; }
+/* project name + website under it; everything left-aligned */
+.dwdc-grid.row > span { text-align: left; }
+.dwdc-grid.row > span.dwdc-pn { justify-content: flex-start !important; align-items: flex-start !important; }
+.dwdc-grid.row > span.dwdc-pn .dwdc-sdot { margin-top: 7px; }
+.dwdc-pn > span { display: flex; flex-direction: column; align-items: flex-start; }
+.dwdc .dwdc-pname { font-size: 15.5px !important; font-weight: 700; color: var(--navy); }
+.dwdc-url { display: inline-block; max-width: 100%; font-size: 12.5px; font-weight: 500; color: var(--deep) !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dwdc-url:hover { text-decoration: underline; }
+.g-ap.row .dwdc-url, .dwdc-pcard-h .dwdc-url { display: block; }
+.dwdc-subl { display: flex; align-items: center; gap: 6px; max-width: 100%; min-width: 0; }
+.dwdc-subl .dwdc-mkpill { margin-left: 0; flex: none; }
+.dwdc-grid.row .dwdc-pname { max-width: 100%; }

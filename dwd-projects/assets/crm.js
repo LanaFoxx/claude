@@ -45,6 +45,11 @@
 	function lifetime(c) { return Math.max(logged(c), paidIn(c)); }
 	function paidPct(c) { var p = num(c.price); return p ? Math.max(0, Math.min(100, Math.round((p - num(c.balance)) / p * 100))) : (num(c.balance) ? 0 : 100); }
 	function url(u) { u = String(u || '').trim(); return /^https?:\/\//i.test(u) ? u : 'https://' + u; }
+	// The project's website under its name, as a link (falls back to what the job is).
+	function siteLine(c) {
+		var w = site(c);
+		return w ? '<a class="dwdc-url" href="https://' + esc(w) + '" target="_blank" rel="noopener">' + esc(w) + '</a>' : (c.job ? '<small>' + esc(c.job) + '</small>' : '');
+	}
 	function site(c) { return String(c.website || '').replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, ''); }
 	function toast(msg, bad) {
 		var t = document.createElement('div'); t.className = 'dwdc-toast' + (bad ? ' bad' : ''); t.textContent = msg;
@@ -286,7 +291,7 @@
 			'<div class="dwdc-mini-t"><div class="g-ap head"><span>Project · Client</span><span>Price</span><span>Due</span><span class="r">Owed</span></div>'
 			+ (active.length ? active.filter(match).map(function (c) {
 				var late = c.deadline && c.deadline < DWDC.today, ow = num(c.balance);
-				return '<div class="g-ap row" data-go="client/' + c.id + '"><span><b>' + esc(c.name) + '</b><small>' + esc([clientName(c), c.job].filter(Boolean).join(' · ')) + '</small></span><span class="b">' + (num(c.price) ? money(c.price) : '—') + '</span><span class="' + (late ? 'deep b' : '') + '">' + (c.deadline ? fmt(c.deadline) : '—') + '</span><span class="r b ' + (ow ? 'deep' : 'sec') + '">' + (ow ? money(ow) : 'Paid') + '</span></div>';
+				return '<div class="g-ap row" data-go="client/' + c.id + '"><span><b class="dwdc-pname">' + esc(c.name) + '</b>' + (site(c) ? siteLine(c) : '') + '<small>' + esc([clientName(c), c.job].filter(Boolean).join(' · ')) + '</small></span><span class="b">' + (num(c.price) ? money(c.price) : '—') + '</span><span class="' + (late ? 'deep b' : '') + '">' + (c.deadline ? fmt(c.deadline) : '—') + '</span><span class="r b ' + (ow ? 'deep' : 'sec') + '">' + (ow ? money(ow) : 'Paid') + '</span></div>';
 			}).join('') : emptyRow('No active projects.')) + '</div>',
 			'<footer class="dwdc-totals"><div><small>Total contract value</small><strong>' + money(tv) + '</strong></div><div><small>Total amount due</small><strong class="deep">' + money(owed(active)) + '</strong></div></footer>');
 		var td = openTasks().sort(function (a, b) { return (a.due || '9') < (b.due || '9') ? -1 : 1; });
@@ -330,7 +335,7 @@
 			+ '<div class="dwdc-card dwdc-tbl">' + (rows.length ? '<div class="dwdc-grid g-projects head"><span>Project</span><span>Client</span><span>Price</span><span>Owed</span><span>Due</span><span>Status</span><span>Next step</span></div>'
 				+ rows.slice(0, cap).map(function (c) {
 					var k = clientOf(c), ow = num(c.balance), done = c.list === 'complete', dd = done ? doneDate(c) : c.deadline, late = !done && c.deadline && c.deadline < DWDC.today, amt = done ? lifetime(c) : num(c.price);
-					return '<div class="dwdc-grid g-projects row" data-go="client/' + c.id + '"><span class="dwdc-pn">' + dot(c) + '<span><b>' + esc(c.name) + (c.markup ? ' <a class="dwdc-mkpill" href="' + esc(url(c.markup)) + '" target="_blank" rel="noopener">Markup</a>' : '') + '</b><small>' + esc(c.job || site(c) || '') + '</small></span></span>'
+					return '<div class="dwdc-grid g-projects row" data-go="client/' + c.id + '"><span class="dwdc-pn">' + dot(c) + '<span><b class="dwdc-pname">' + esc(c.name) + '</b><span class="dwdc-subl">' + siteLine(c) + (c.markup ? '<a class="dwdc-mkpill" href="' + esc(url(c.markup)) + '" target="_blank" rel="noopener">Markup</a>' : '') + '</span></span></span>'
 						+ '<span class="dwdc-nm"><span>' + (k ? '<a class="dwdc-clink" href="#cl/' + k.id + '">' + esc(k.name) + '</a>' : '<b>' + esc(c.person || '—') + '</b>') + '<small>' + esc((k && k.email) || c.email || 'No email on file') + '</small></span></span>'
 						+ '<span class="b">' + (amt ? money(amt) : '—') + '</span><span class="b ' + (ow ? 'deep' : 'sec') + '">' + (ow ? money(ow) : 'Paid') + '</span>'
 						+ '<span class="' + (late ? 'deep b' : 'b') + '">' + (dd ? fmt(dd, done) : '—') + '</span><span>' + statusSelect(c) + '</span><span class="sec ell">' + esc(c.next || '—') + '</span></div>';
@@ -592,7 +597,7 @@
 			+ '<section class="dwdc-card"><div class="dwdc-cardh pad2"><h2>Projects</h2><button class="dwdc-lnk" data-act="job" data-client="' + k.id + '">' + ic('plus', 13) + 'New project</button></div>'
 			+ (pp.length ? pp.map(function (c) {
 				var o = num(c.balance), late = c.deadline && c.deadline < DWDC.today && isOpen(c);
-				return '<div class="dwdc-pcard" data-go="client/' + c.id + '"><div class="dwdc-pcard-h">' + dot(c) + '<span><b>' + esc(c.name) + '</b><small>' + esc([c.job, site(c)].filter(Boolean).join(' · ') || ' ') + '</small></span>' + statusPill(c) + '</div>'
+				return '<div class="dwdc-pcard" data-go="client/' + c.id + '"><div class="dwdc-pcard-h">' + dot(c) + '<span><b>' + esc(c.name) + '</b>' + (site(c) ? siteLine(c) : '') + (c.job ? '<small>' + esc(c.job) + '</small>' : '') + '</span>' + statusPill(c) + '</div>'
 					+ '<div class="dwdc-pstats"><span><small>' + (c.list === 'complete' ? 'Billed' : 'Price') + '</small><b>' + (lifetime(c) || num(c.price) ? money(c.list === 'complete' ? lifetime(c) : c.price || lifetime(c)) : '—') + '</b></span><span><small>Owed</small><b class="' + (o ? 'deep' : '') + '">' + (o ? money(o) : 'Paid') + '</b></span><span><small>' + (c.list === 'complete' ? 'Completed' : 'Due') + '</small><b class="' + (late ? 'deep' : '') + '">' + (c.list === 'complete' ? (doneDate(c) ? fmt(doneDate(c), true) : '—') : (c.deadline ? fmt(c.deadline) : '—')) + '</b></span>'
 					+ (num(c.hosting) ? '<span><small>Hosting</small><b>' + money(c.hosting) + '/yr</b></span>' : '') + '</div>'
 					+ (c.next && isOpen(c) ? '<div class="dwdc-nextp"><small>Next</small> ' + esc(c.next) + '</div>' : '') + '</div>';
