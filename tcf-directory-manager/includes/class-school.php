@@ -193,6 +193,7 @@ final class TCFD_School {
         $banner = $data['live'] ? '' : '<div style="background:#E0A82E;color:#23272A;text-align:center;padding:10px 16px;font:700 17px Manrope,sans-serif">Preview only – this school page is not live. Visitors get a 404 until “School page live” is switched on.</div>';
         $css = '<style id="tcfd-school-css">'
              . '@media (max-width:900px){.tcf-p-school .tcfd-hero-spacer{display:none!important}'
+             . '.tcf-p-school [style*="grid-template-columns:minmax(0,1fr) 400px"]{grid-template-columns:minmax(0,1fr)!important}'  // hero text uses the full width when the card stacks
              . '.tcf-p-school .tcfd-card-wrap{margin-top:0!important;order:-1}'
              . '.tcf-p-school .tcfd-card{position:static!important;width:100%!important}'
              . '.tcf-p-school .tcfd-tabs{flex-wrap:wrap}'

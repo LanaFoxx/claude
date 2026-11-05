@@ -582,6 +582,11 @@ for name, (slug, url, title) in PAGES.items():
     body = seo_tweaks(name, body)
     body = cal_phone(body)
     body = drawer_fix(body)
+    # Hero filter row: a "Clear filters" pill next to "See all filters" while any filter is on
+    k = '{{ activeCount }}</span></sc-if></div>'
+    body = body.replace(k, k + '<sc-if value="{{ anyFilter }}" hint-placeholder-val="{{ false }}"><button type="button" onclick="{{ clearAll }}" class="tcf-clear-filters" '
+                        'style="cursor:pointer;font:700 17px Manrope,sans-serif;padding:0 18px;height:40px;display:inline-flex;align-items:center;gap:8px;border-radius:999px;background:transparent;border:1px solid rgba(255,255,255,.55);color:#fff;white-space:nowrap">'
+                        'Clear filters<span aria-hidden="true" style="font-size:20px;line-height:1;color:#FF6B57">&times;</span></button></sc-if>')
     if slug == 'provider-application':  # course-comparison laptop photo behind the verify form hero
         assert body.count('@@MEDIA:photos/03-online-tax-course-desktop.webp@@" alt="" class="tcf-hero-bg"') == 1, 'verify hero photo'
         body = body.replace('@@MEDIA:photos/03-online-tax-course-desktop.webp@@" alt="" class="tcf-hero-bg"', '@@MEDIA:photos/ctec-course-comparison-laptop.webp@@" alt="" class="tcf-hero-bg"', 1)

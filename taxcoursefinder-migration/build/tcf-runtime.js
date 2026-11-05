@@ -385,22 +385,27 @@
   });
 })();
 
-// School profiles: the price card floats over the coral section menu while the menu scrolls up into place,
-// and slides under it once the menu is stuck (e.g. when the card leaves at the bottom of the page).
+// School profiles: the price card is not sticky; on wider screens it sits vertically centred in the dark hero.
 (function () {
   var raf = 0;
-  function update() {
+  function place() {
     raf = 0;
-    var bar = document.querySelector('.tcfd-subnav-bar'), wrap = document.querySelector('.tcfd-card-wrap');
-    if (!bar || !wrap) return;
-    var head = document.querySelector('.tcf-header'), hb = head ? head.getBoundingClientRect().bottom : 0;
-    wrap.classList.toggle('tcfd-under-bar', bar.getBoundingClientRect().top <= hb + 1);
+    var wrap = document.querySelector('.tcfd-card-wrap'), card = wrap && wrap.querySelector('.tcfd-card');
+    var hero = document.querySelector('#tcf-school-root .tcf-screen > div');
+    if (!wrap || !card || !hero) return;
+    wrap.style.setProperty('margin-top', '0px', 'important');
+    var h = hero.getBoundingClientRect(), w = wrap.getBoundingClientRect(), c = card.getBoundingClientRect();
+    // only when the card has its own right-hand column; in stacked layouts (phones, narrow tablets) it stays in the page flow
+    if (window.innerWidth <= 760 || w.left < window.innerWidth / 2) { wrap.style.removeProperty('margin-top'); return; }
+    var want = h.top + Math.max(24, (h.height - c.height) / 2);   // card top for a centred card (never above the hero's top edge)
+    var off = (c.top - w.top);                                     // card's offset inside its wrapper
+    wrap.style.setProperty('margin-top', Math.round(want - off - w.top) + 'px', 'important');
   }
-  function onScroll() { if (!raf) raf = requestAnimationFrame(update); }
-  window.addEventListener('scroll', onScroll, { passive: true });
-  window.addEventListener('resize', onScroll);
-  document.addEventListener('DOMContentLoaded', update);
-  setTimeout(update, 600);
+  function soon() { if (!raf) raf = requestAnimationFrame(place); }
+  window.addEventListener('resize', soon); window.addEventListener('load', soon);
+  document.addEventListener('DOMContentLoaded', soon); document.addEventListener('click', function () { setTimeout(soon, 50); });
+  if (window.ResizeObserver) { var ro = new ResizeObserver(soon), seen = null; setInterval(function () { var c = document.querySelector('.tcfd-card'); if (c && c !== seen) { seen = c; ro.observe(c); soon(); } }, 500); }
+  setTimeout(soon, 300); setTimeout(soon, 1200);
 })();
 
 // Countdown strip above the footer on every page (footer template has [data-tcf-cdstrip]); California time, like the top bar.
