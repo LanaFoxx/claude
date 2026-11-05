@@ -58,6 +58,7 @@
 	function fail(e) { toast(e.message || 'Something went wrong', true); }
 
 	var ICON = {
+		link: '<path d="M7 17 17 7"/><path d="M8 7h9v9"/>',
 		grid: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>',
 		users: '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
 		brief: '<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>',
@@ -164,7 +165,7 @@
 	function sidebar(r) {
 		var cur = r.view === 'client' || r.view === 'cl' ? S.back : r.view + (r.arg ? '/' + r.arg : '');
 		var nav = function (h, icon, label, count) {
-			var on = cur === h || (h === 'projects/all' && cur === 'projects');
+			var on = cur === h || (h === 'projects/active' && (cur === 'projects' || cur === 'projects/all'));
 			return '<a class="dwdc-nav' + (on ? ' on' : '') + '" href="#' + h + '">' + ic(icon) + '<span>' + label + '</span>' + (count !== undefined && count !== '' ? '<b>' + count + '</b>' : '') + '</a>';
 		};
 		var proj = S.contacts.filter(isProject);
@@ -174,7 +175,7 @@
 			+ '<nav>' + nav('home', 'home', 'Home')
 			+ '<div class="dwdc-navh"><i class="b1"></i>Projects</div>'
 			+ nav('projects/active', 'bolt', 'Active', by('active').length) + nav('projects/hold', 'pause', 'On Hold', by('hold').length)
-			+ nav('projects/limbo', 'clock', 'Limbo', by('limbo').length) + nav('projects/all', 'brief', 'All Projects', proj.length) + nav('projects/complete', 'done', 'Completed', by('complete').length)
+			+ nav('projects/limbo', 'clock', 'Limbo', by('limbo').length) + nav('projects/complete', 'done', 'Completed', by('complete').length)
 			+ '<div class="dwdc-navh"><i class="b2"></i>Clients</div>'
 			+ nav('onboarding', 'filter', 'Onboarding', onboardList().length) + nav('hosting', 'server', 'Hosting', hosting().length)
 			+ nav('leads', 'mail', 'Leads', leadList().length) + nav('clients', 'users', 'All Clients', S.clients.length)
@@ -280,7 +281,7 @@
 			'<p class="dwdc-hero"><strong>' + S.clients.length + '</strong> clients on file</p><div class="dwdc-segbar">' + seg(nP, 's1') + seg(nH, 's2') + seg(nPast, 's3') + '</div>'
 			+ '<a class="dwdc-seg" href="#clients"><i class="s1"></i>Project clients<b>' + nP + '</b></a><a class="dwdc-seg" href="#clients"><i class="s2"></i>Hosting only<b>' + nH + '</b></a><a class="dwdc-seg" href="#clients"><i class="s3"></i>Past clients<b>' + nPast + '</b></a>',
 			'<footer class="dwdc-grid4">' + frow('Active Projects', active.length, 'projects/active') + frow('Onboarding', onboardList().length, 'onboarding') + frow('Hosting', host.length, 'hosting') + frow('Leads', leadList().length, 'leads') + '</footer>');
-		var c2 = card('cd-projects', chead('brief', 'Projects', 'projects/all'),
+		var c2 = card('cd-projects', chead('brief', 'Projects', 'projects/active'),
 			'<p class="dwdc-hero"><strong>' + active.length + '</strong> active project' + (active.length === 1 ? '' : 's') + '</p>'
 			+ '<p class="dwdc-sub">' + money(owed(active)) + ' still owed on active projects</p>'
 			+ '<div class="dwdc-row2"><button class="dwdc-btn" data-act="job">' + ic('plus', 14) + 'New Project</button></div>',
@@ -327,15 +328,15 @@
 
 	/* ---------- All Projects ---------- */
 	function projectsView() {
-		var f = route().arg || 'all';
-		if (['all', 'active', 'limbo', 'hold', 'complete'].indexOf(f) < 0) { f = 'all'; }
+		var f = route().arg || 'active';
+		if (['active', 'limbo', 'hold', 'complete'].indexOf(f) < 0) { f = 'active'; }
 		var all = S.contacts.filter(isProject).filter(match);
 		var chip = function (k, l) { var n = all.filter(function (c) { return k === 'all' || c.list === k; }).length; return '<a class="dwdc-fchip' + (f === k ? ' on' : '') + '" href="#projects/' + k + '">' + (k === 'all' ? '' : '<i class="dwdc-sdot t-' + TONE[k] + '"></i>') + l + ' <b>' + n + '</b></a>'; };
 		var order = ['active', 'hold', 'limbo', 'complete'];
 		var rows = all.filter(function (c) { return f === 'all' || c.list === f; }).sort(function (a, b) { return order.indexOf(a.list) - order.indexOf(b.list) || (a.list === 'complete' ? byDone(a, b) : (a.deadline || '9') < (b.deadline || '9') ? -1 : 1); });
 		var cap = S.more['p' + f] || S.q ? rows.length : 50;
 		var empties = { active: 'No active projects right now.', limbo: 'Nothing in limbo. Clients you haven’t heard back from in a while go here.', hold: 'No projects on hold. Paused or waiting projects go here.', complete: 'No completed projects yet.', all: 'No projects match.' };
-		return '<div class="dwdc-chips">' + chip('active', 'Active') + chip('hold', 'On hold') + chip('limbo', 'Limbo') + chip('all', 'All') + chip('complete', 'Completed') + '</div>'
+		return '<div class="dwdc-chips">' + chip('active', 'Active') + chip('hold', 'On hold') + chip('limbo', 'Limbo') + chip('complete', 'Completed') + '</div>'
 			+ '<div class="dwdc-card dwdc-tbl">' + (rows.length ? '<div class="dwdc-grid g-projects head"><span>Project</span><span>Client</span><span>Price</span><span>Owed</span><span>Due</span><span>Status</span><span>Next step</span></div>'
 				+ rows.slice(0, cap).map(function (c) {
 					var k = clientOf(c), ow = num(c.balance), done = c.list === 'complete', dd = done ? doneDate(c) : c.deadline, late = !done && c.deadline && c.deadline < DWDC.today, amt = done ? lifetime(c) : num(c.price);
@@ -790,6 +791,42 @@
 			return x;
 		});
 	}
+	function linkify(t) {
+		return esc(t).replace(/(https?:\/\/[^\s<]+)/g, function (u) { var d = u.replace(/^https?:\/\/(www\.)?/, '').replace(/[/?#].*$/, ''); return '<a href="' + u + '" target="_blank" rel="noopener">' + d + ic('link', 12) + '</a>'; });
+	}
+	function answersHtml(fields) {
+		var tiles = [], blocks = [];
+		fields.forEach(function (x) {
+			var v = String(x.value || '').trim(), lab = String(x.label || '');
+			if (!v) { return; }
+			var low = lab.toLowerCase(), lines = v.split(/\n+/).map(function (l) { return l.trim(); }).filter(Boolean);
+			if (/social|links?$/.test(low) || lines.every(function (l) { return /https?:\/\//.test(l); }) && lines.length > 1) {
+				blocks.push('<section class="dwdc-ans"><h4>' + esc(lab) + '</h4><div class="dwdc-ans-chips">' + lines.map(function (l) {
+					var mm = l.match(/^([^:]{2,24}):\s*(https?:\/\/\S+)/), u = mm ? mm[2] : (l.match(/https?:\/\/\S+/) || [''])[0], name = mm ? mm[1] : u.replace(/^https?:\/\/(www\.)?/, '').replace(/[/?#].*$/, '');
+					return u ? '<a class="dwdc-ans-chip" href="' + esc(u) + '" target="_blank" rel="noopener">' + esc(name) + ic('link', 12) + '</a>' : '<span class="dwdc-ans-chip">' + esc(l) + '</span>';
+				}).join('') + '</div></section>');
+				return;
+			}
+			if (v.length <= 60 && lines.length <= 2) {
+				var val = /@/.test(v) && /email/.test(low) ? '<a href="mailto:' + esc(v) + '">' + esc(v) + '</a>'
+					: /phone/.test(low) ? '<a href="tel:' + esc(v.replace(/[^\d+]/g, '')) + '">' + esc(v.replace(/^\+?1?(\d{3})(\d{3})(\d{4})$/, '($1) $2-$3')) + '</a>'
+					: lines.map(linkify).join('<br>');
+				tiles.push('<div class="dwdc-ans-tile"><small>' + esc(lab) + '</small><b>' + val + '</b></div>');
+				return;
+			}
+			// long answer: paragraphs; runs of short lines become a bullet list
+			var html = '', run = [];
+			var flush = function () { if (run.length > 1) { html += '<ul>' + run.map(function (l) { return '<li>' + linkify(l) + '</li>'; }).join('') + '</ul>'; } else if (run.length) { html += '<p>' + linkify(run[0]) + '</p>'; } run = []; };
+			v.split(/\n\s*\n/).forEach(function (para) {
+				var ls = para.split('\n').map(function (l) { return l.trim(); }).filter(Boolean);
+				if (ls.length > 1 && ls[0].length < 40 && !/[.:]$/.test(ls[0]) && ls.slice(1).every(function (l) { return l.length < 90; })) { html += '<h5>' + esc(ls[0]) + '</h5>'; ls = ls.slice(1); }
+				ls.forEach(function (l) { if (l.length < 90 && !/[.!?]$/.test(l)) { run.push(l); } else { flush(); html += '<p>' + linkify(l) + '</p>'; } });
+				flush();
+			});
+			blocks.push('<section class="dwdc-ans"><h4>' + esc(lab) + '</h4><div class="dwdc-ans-body">' + html + '</div></section>');
+		});
+		return (tiles.length ? '<div class="dwdc-ans-grid">' + tiles.join('') + '</div>' : '') + blocks.join('');
+	}
 	function detailsCard(c) {
 		var row = function (k, v) { return '<dt>' + k + '</dt><dd>' + (v || '<span class="mut">—</span>') + '</dd>'; };
 		var k = clientOf(c) || {}, em = c.email || k.email, ph = c.phone || k.phone;
@@ -904,7 +941,7 @@
 		if (m.type === 'answers') {
 			var oc = S.full[m.project] || {}, ents = onboardEntries(oc);
 			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide">' + head('Onboarding', esc(oc.name || ''), 'answers')
-				+ ents.map(function (e) { return '<p class="dwdc-mutp">' + esc(e.form || 'Form') + ' · ' + fmt(e.date, true) + '</p><dl class="dwdc-qa big">' + (e.fields || []).map(function (x) { return '<dt>' + esc(x.label) + '</dt><dd>' + esc(x.value).replace(/\n/g, '<br>') + '</dd>'; }).join('') + '</dl>'; }).join('')
+				+ ents.map(function (e) { return '<p class="dwdc-mutp">' + esc(e.form || 'Form') + ' · ' + fmt(e.date, true) + '</p>' + answersHtml(e.fields || []); }).join('')
 				+ '<div class="dwdc-farow end"><button type="button" class="dwdc-btn" data-copyob>' + ic('todo', 15) + 'Copy answers</button><button type="button" class="dwdc-btn2" data-close-modal>Close</button></div></div>';
 		}
 		if (m.type === 'pay') {

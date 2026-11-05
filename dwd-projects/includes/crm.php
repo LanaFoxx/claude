@@ -134,6 +134,10 @@ function dwdc_save_contact( $id, $data ) {
 	} elseif ( isset( $data['name'] ) ) {
 		wp_update_post( array( 'ID' => $id, 'post_title' => $data['name'] ) );
 	}
+	// Moving a project to Completed stamps today's date so the Completed list sorts newest first.
+	if ( isset( $data['list'] ) && 'complete' === $data['list'] && empty( $data['completed'] ) && 'complete' !== get_post_meta( $id, '_dwdc_list', true ) ) {
+		$data['completed'] = current_time( 'Y-m-d' );
+	}
 	foreach ( dwdc_fields() as $f ) {
 		if ( isset( $data[ $f ] ) ) {
 			$v = 'email' === $f ? strtolower( sanitize_email( $data[ $f ] ) ) : sanitize_text_field( $data[ $f ] );
