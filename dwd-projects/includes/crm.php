@@ -46,7 +46,7 @@ function dwdc_lists() {
 
 /** Contact fields kept on every contact. */
 function dwdc_fields() {
-	return array( 'job', 'markup', 'stage', 'completed', 'billed', 'stripe', 'paypal', 'person', 'email', 'phone', 'company', 'website', 'list', 'price', 'balance', 'deadline', 'hosting', 'renewal', 'source', 'next' );
+	return array( 'job', 'markup', 'lead_source', 'pay_method', 'stage', 'completed', 'billed', 'stripe', 'paypal', 'person', 'email', 'phone', 'company', 'website', 'list', 'price', 'balance', 'deadline', 'hosting', 'renewal', 'source', 'next' );
 }
 
 function dwdc_contact( $post, $full = false ) {
@@ -292,11 +292,33 @@ function dwdc_file_entry( $form, $fields, $date = '', $source = 'Website form', 
 	}
 	$id         = $match ? dwdc_find( $email, $match ) : dwdc_find_by_email( $email );
 	$onboarding = false !== stripos( $form, 'onboard' );
+	$person     = $get( array( 'full_name', 'name' ) );
+	$business   = $get( array( 'company', 'business_name', 'business' ) );
+	$client     = 0;
+	// Onboarding from someone whose earlier project is already under way or finished = a new project for the same client.
+	if ( $onboarding && $id && ! in_array( get_post_meta( $id, '_dwdc_list', true ), array( 'leads', 'archive', 'onboarding' ), true ) ) {
+		$client = (int) get_post_meta( $id, '_dwdc_client', true );
+		$id     = 0;
+	}
+	if ( $onboarding && ! $client && $id ) {
+		$client = (int) get_post_meta( $id, '_dwdc_client', true );
+	}
+	if ( $onboarding && ! $client ) {
+		// Onboarding always files under a client: matched by email, else a new one with their details.
+		$client = dwdc_find_client( $email, '' ) ?: dwdc_save_client( 0, array( 'name' => $person ?: $email, 'email' => $email, 'phone' => $get( array( 'phone' ) ), 'company' => $business ) );
+	}
 	$new        = ! $id;
 	$data       = array(
-		'name'  => $get( array( 'full_name', 'name' ) ) ?: $email,
+		// Projects are named after the business (the website); the client is the person.
+		'name'  => $onboarding && $business ? $business : ( $person ?: $email ),
 		'email' => $email,
 	);
+	if ( $person ) {
+		$data['person'] = $person;
+	}
+	if ( $client ) {
+		$data['client'] = $client;
+	}
 	foreach ( array( 'phone' => array( 'phone' ), 'company' => array( 'company' ), 'website' => array( 'existing_url', 'website' ) ) as $k => $keys ) {
 		$v = $get( $keys );
 		if ( $v && ( $new || '' === get_post_meta( $id, '_dwdc_' . $k, true ) ) ) {
@@ -317,6 +339,13 @@ function dwdc_file_entry( $form, $fields, $date = '', $source = 'Website form', 
 		}
 	}
 	$id      = dwdc_save_contact( $id, $data );
+	if ( $client ) {
+		foreach ( array( 'email' => $email, 'phone' => $get( array( 'phone' ) ), 'company' => $business ) as $k => $v ) {
+			if ( $v && ! get_post_meta( $client, '_dwdcl_' . $k, true ) ) {
+				update_post_meta( $client, '_dwdcl_' . $k, 'email' === $k ? strtolower( $v ) : $v );
+			}
+		}
+	}
 	$entries = get_post_meta( $id, '_dwdc_entries', true );
 	$entries = is_array( $entries ) ? $entries : array();
 	$entries[] = array(

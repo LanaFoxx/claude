@@ -414,7 +414,7 @@
 		return '<div class="dwdc-chips">' + chip('all', 'All') + chip('active', 'Active') + chip('hold', 'On hold') + chip('limbo', 'In limbo') + chip('leads', 'Leads') + chip('complete', 'Completed') + '</div>'
 			+ '<div class="dwdc-card dwdc-tbl"><div class="dwdc-grid g-projects head tint-navy"><span>Project</span><span>Client</span><span>Status</span><span>Billed</span><span>Hosting</span><span class="r">Last activity</span></div>'
 			+ (rows.length ? rows.slice(0, cap).map(function (c) {
-				return '<div class="dwdc-grid g-projects row" data-go="client/' + c.id + '"><span class="dwdc-nm"><span><b>' + esc(c.name) + '</b><small>' + esc(c.job || site(c) || '') + '</small></span></span>' + clientCell(c)
+				return '<div class="dwdc-grid g-projects row" data-go="client/' + c.id + '"><span class="dwdc-nm"><span><b>' + esc(c.name) + '</b><small>' + esc([c.job || site(c), c.lead_source && 'via ' + c.lead_source].filter(Boolean).join(' · ')) + '</small></span></span>' + clientCell(c)
 					+ '<span>' + pill(c.list === 'leads' ? 'Lead' : LABEL[c.list] || c.list, c.list === 'leads' ? 'orange' : TONE[c.list] || 'gray') + '</span><span class="b">' + (lifetime(c) ? money(lifetime(c)) : '—') + '</span>'
 					+ '<span>' + (num(c.hosting) ? money(c.hosting) + '/yr' : '<span class="mut">—</span>') + '</span><span class="r mut">' + ago(c.updated) + '</span></div>';
 			}).join('') : emptyRow('No projects match.')) + moreFoot('projects', cap, rows.length) + '</div>';
@@ -489,8 +489,9 @@
 			+ (st === 'complete' ? mini('navy', 'Total spent', money(lifetime(c))) : '<div class="dwdc-mini"><small>Due</small><strong class="' + (late ? 'red' : '') + '">' + (c.deadline ? fmt(c.deadline) : '—') + '</strong></div>') + '</div>'
 			+ '<div class="dwdc-two">'
 			+ '<div class="dwdc-col">'
-			+ (num(c.hosting) ? hostCard(c) : '')
 			+ onboardCard(c, full)
+			+ sourceCard(c)
+			+ (num(c.hosting) ? hostCard(c) : '')
 			+ (S.edit ? editCard(c) : detailsCard(c))
 			+ jobsCard(c)
 			+ '</div><div class="dwdc-col">'
@@ -515,6 +516,18 @@
 			(e.fields || []).forEach(function (x) { lines.push(x.label + ':', String(x.value).trim(), ''); });
 		});
 		return lines.join('\n').trim();
+	}
+	// Where the project came from, and (unless it came through Upwork) how they pay.
+	var SOURCES = ['Upwork', 'Google', 'Referral', 'Reference', 'Repeat client', 'Website', 'Social media', 'Other'];
+	var PAYS = ['Stripe', 'PayPal', 'Zelle', 'Check', 'Cash', 'Bank transfer', 'Venmo', 'Other'];
+	function sourceCard(c) {
+		var opt = function (list, cur, ph) { return '<option value="">' + ph + '</option>' + list.map(function (o) { return '<option' + (o === cur ? ' selected' : '') + '>' + o + '</option>'; }).join(''); };
+		var up = c.lead_source === 'Upwork';
+		return '<section class="dwdc-card pad"><div class="dwdc-cardh"><h2>Lead source &amp; payment</h2></div><div class="dwdc-srcrow">'
+			+ '<label><span>Where they came from</span><select class="dwdc-sel" data-field="lead_source">' + opt(SOURCES, c.lead_source, 'Select a source…') + '</select></label>'
+			+ (up ? '<label><span>How they pay</span><div class="dwdc-paidup">Paid through Upwork</div></label>'
+				: '<label><span>How they pay</span><select class="dwdc-sel" data-field="pay_method">' + opt(PAYS, c.pay_method, 'Select a payment method…') + '</select></label>')
+			+ '</div></section>';
 	}
 	function onboardCard(c, full) {
 		var list = full ? onboardEntries(c) : [], ob = list.some(function (e) { return /onboard/i.test(e.form || ''); });
@@ -753,6 +766,11 @@
 
 	app.addEventListener('change', function (e) {
 		var t = e.target;
+		if (t.hasAttribute('data-field')) {
+			var fd = {}; fd[t.getAttribute('data-field')] = t.value;
+			save(route().id, fd, 'Saved');
+			return;
+		}
 		if (t.hasAttribute('data-status-of')) {
 			var sid = +t.getAttribute('data-status-of'), to = t.value, sd = { list: to };
 			if (to === 'complete') { sd.completed = DWDC.today; }
