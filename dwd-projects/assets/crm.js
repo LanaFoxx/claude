@@ -337,7 +337,7 @@
 		var cap = S.more['p' + f] || S.q ? rows.length : 50;
 		var empties = { active: 'No active projects right now.', limbo: 'Nothing in limbo. Clients you haven’t heard back from in a while go here.', hold: 'No projects on hold. Paused or waiting projects go here.', complete: 'No completed projects yet.', all: 'No projects match.' };
 		return '<div class="dwdc-chips">' + chip('active', 'Active') + chip('hold', 'On hold') + chip('limbo', 'Limbo') + chip('complete', 'Completed') + '</div>'
-			+ '<div class="dwdc-card dwdc-tbl">' + (rows.length ? '<div class="dwdc-grid g-projects head"><span>Project</span><span>Client</span><span>Price</span><span>Owed</span><span>Due</span><span>Status</span><span>Next step</span></div>'
+			+ '<div class="dwdc-card dwdc-tbl">' + (rows.length ? '<div class="dwdc-grid g-projects head"><span>Project</span><span>Client</span><span>' + (f === 'complete' ? 'Total' : 'Price') + '</span><span>Owed</span><span>' + (f === 'complete' ? 'Finished' : 'Due') + '</span><span>Status</span><span>Next step</span></div>'
 				+ rows.slice(0, cap).map(function (c) {
 					var k = clientOf(c), ow = num(c.balance), done = c.list === 'complete', dd = done ? doneDate(c) : c.deadline, late = !done && c.deadline && c.deadline < DWDC.today, amt = done ? lifetime(c) : num(c.price);
 					return '<div class="dwdc-grid g-projects row" data-go="client/' + c.id + '"><span class="dwdc-pn">' + dot(c) + '<span><b class="dwdc-pname">' + esc(c.name) + '</b><span class="dwdc-subl">' + siteLine(c) + (c.markup ? '<a class="dwdc-mkpill" href="' + esc(url(c.markup)) + '" target="_blank" rel="noopener">Markup</a>' : '') + '</span></span></span>'
