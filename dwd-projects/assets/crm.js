@@ -221,7 +221,7 @@
 			+ '<label class="dwdc-ssearch dwdc-ph-search">' + ic('search', 16) + '<input type="search" name="dwdc-find" placeholder="Search clients…" aria-label="Search clients" value="" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" readonly data-lpignore="true" data-1p-ignore data-form-type="other"><kbd>Ctrl K</kbd></label>'
 			+ '<span class="dwdc-ph-sp"></span>'
 			+ '<div class="dwdc-ph-menu' + (menuOpen ? ' open' : '') + '"><button class="dwdc-ph-btn outline" type="button" data-newmenu aria-haspopup="menu" aria-expanded="' + menuOpen + '">' + plus + 'New' + '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>'
-			+ '<ul role="menu"><li><button role="menuitem" type="button" data-act="job">' + plus + 'Project</button></li><li><button role="menuitem" type="button" data-act="newclient">' + plus + 'Client</button></li><li><button role="menuitem" type="button" data-goto="hosting">' + ic('server', 14) + 'Hosting</button></li></ul></div>'
+			+ '<ul role="menu"><li><button role="menuitem" type="button" data-act="job">' + plus + 'Project</button></li><li><button role="menuitem" type="button" data-act="newclient">' + plus + 'Client</button></li><li><button role="menuitem" type="button" data-act="hosting">' + plus + 'Website Hosting</button></li></ul></div>'
 			+ (r.view === 'money' ? '<button class="dwdc-ph-btn coral" type="button" data-refresh' + (S.refreshRes && S.refreshRes.busy ? ' disabled' : '') + '>' + ic('refresh', 14) + (S.refreshRes && S.refreshRes.busy ? 'Updating…' : 'Update Finances') + '</button>' : '')
 			+ '<button class="dwdc-ph-btn primary" type="button" data-act="pay">' + ic('card', 14) + 'Log Payment</button>'
 			+ '</div></header>';
@@ -1371,7 +1371,7 @@
 					+ '</div><div class="dwdc-farow"><button type="button" class="dwdc-lnk" data-oldc>' + ic('left', 14) + 'Back to search</button><button type="button" class="dwdc-lnk" data-newc>Enter their details myself instead</button></div>';
 			} else {
 				who = '<label class="dwdc-search wide">' + ic('search', 16) + '<input class="dwdc-pick" placeholder="Start typing a client’s name, business or email…" autocomplete="off" value="' + esc(m.q || '') + '"></label><div class="dwdc-picks">' + pickList(m.q || '') + '</div>'
-					+ (mv ? '<button type="button" class="dwdc-lnk" data-newc>' + ic('plus', 14) + 'New client</button>' : '<button type="button" class="dwdc-btn2 wide" data-newinvite>' + ic('plus', 15) + 'Add new client</button>');
+					+ (mv ? '<button type="button" class="dwdc-lnk" data-newc>' + ic('plus', 14) + 'New client</button>' : m.hosting ? '<button type="button" class="dwdc-btn2 wide" data-newc>' + ic('plus', 15) + 'Add new client</button>' : '<button type="button" class="dwdc-btn2 wide" data-newinvite>' + ic('plus', 15) + 'Add new client</button>');
 			}
 			if (mv) {
 				var pj = contact(m.project);
@@ -1379,11 +1379,22 @@
 					+ '<p class="dwdc-mutp">Which client does <b>' + esc(pj ? pj.name : 'this project') + '</b> belong to?</p><h3 class="dwdc-mh">Client</h3>' + who
 					+ '<div class="dwdc-farow end"><button type="button" class="dwdc-btn2" data-close-modal>Cancel</button><button class="dwdc-btn">Save</button></div></form>';
 			} else {
+				if (m.hosting) {
+					var ny = new Date(DWDC.today + 'T12:00:00'); ny.setFullYear(ny.getFullYear() + 1);
+					body = '<form class="dwdc-modal dwdc-hostform">' + head('Hosting', 'New website', 'hosting')
+						+ '<h3 class="dwdc-mh">Client</h3>' + who
+						+ (!picked && !m.newc ? '</form>' : '<h3 class="dwdc-mh">Website hosting</h3><div class="dwdc-fgrid">'
+							+ inp('website', 'Website', 'e.g. denningerlaw.com', '', true) + inp('hosting', 'Price per year ($)', 'e.g. 250')
+							+ '<label><span>Renews on</span><input name="renewal" type="date" value="' + esc(v.renewal || ny.toISOString().slice(0, 10)) + '"></label>'
+							+ '<label class="wide dwdc-chkl"><input type="checkbox" name="sendlink" value="1"' + (v.sendlink ? ' checked' : '') + '> Email them the hosting payment link now</label>'
+							+ '</div><div class="dwdc-farow end"><button type="button" class="dwdc-btn2" data-close-modal>Cancel</button><button class="dwdc-btn">Add website hosting</button></div></form>');
+				} else {
 				body = '<form class="dwdc-modal dwdc-jobform">' + head('New project', 'Add a', 'project')
 					+ '<h3 class="dwdc-mh">Client</h3>' + who
 					+ (!picked && !m.newc ? '</form>' : '<h3 class="dwdc-mh">The project</h3><div class="dwdc-fgrid">' + inp('name', 'Project name', 'The website or business, e.g. Denninger Law', '', true) + inp('title', 'What they hired you for', 'e.g. New website and logo', '', true)
 					+ inp('price', 'Price ($)', '3000') + inp('balance', 'Still owed ($)', 'e.g. 1500 after deposit') + inp('deadline', 'Due date', '', 'date') + inp('website', 'Website', 'e.g. denningerlaw.com') + inp('next', 'Next step', 'e.g. Send wireframes', '', true) + '</div>'
 					+ '<div class="dwdc-farow end"><button type="button" class="dwdc-btn2" data-close-modal>Cancel</button><button class="dwdc-btn">Add to active projects</button></div></form>');
+				}
 			}
 		}
 		return '<div class="dwdc-overlay" data-close-modal></div>' + body;
@@ -1413,7 +1424,7 @@
 		if (S.newOpen && !t.closest('.dwdc-ph-menu')) { S.newOpen = false; var m2 = app.querySelector('.dwdc-ph-menu'); if (m2) { m2.classList.remove('open'); } }
 		if (t.closest('.dwdc-ph-menu [role=menuitem]')) { S.newOpen = false; }
 		if (t.closest('[data-close-modal]')) { S.modal = null; render(); return; }
-		if ((el = t.closest('[data-pick]'))) { keepVals(); S.modal.client = +el.getAttribute('data-pick'); render(); focusIn('[name=name]'); return; }
+		if ((el = t.closest('[data-pick]'))) { keepVals(); S.modal.client = +el.getAttribute('data-pick'); render(); focusIn(S.modal.hosting ? '[name=website]' : '[name=name]'); return; }
 		if (t.closest('[data-unpick]')) { keepVals(); S.modal.client = 0; render(); focusIn('.dwdc-pick'); return; }
 		if (t.closest('[data-newc]')) { keepVals(); S.modal.newc = true; S.modal.vals.client_name = S.modal.vals.client_name || S.modal.q || ''; render(); focusIn('[name=client_name]'); return; }
 		if ((el = t.closest('[data-moveclient]'))) { S.modal = { type: 'move', project: +el.getAttribute('data-moveclient'), client: 0, q: '', vals: {} }; render(); focusIn('.dwdc-pick'); return; }
@@ -1440,8 +1451,8 @@
 		}
 		if ((el = t.closest('[data-act]'))) {
 			var a = el.getAttribute('data-act');
-			S.modal = a === 'pay' ? { type: 'pay', renew: !!el.getAttribute('data-renew'), project: +el.getAttribute('data-project') || (route().view === 'client' || route().view === 'host' ? route().id : 0), vals: el.getAttribute('data-renew') ? { note: 'Hosting renewal' } : {} } : a === 'lead' ? { type: 'lead', vals: {} } : a === 'newclient' ? { type: 'newclient', vals: {} } : { type: 'job', client: +el.getAttribute('data-client') || 0, q: '', vals: {} };
-			render(); focusIn(a === 'job' && !S.modal.client ? '.dwdc-pick' : '[name=name]'); return;
+			S.modal = a === 'pay' ? { type: 'pay', renew: !!el.getAttribute('data-renew'), project: +el.getAttribute('data-project') || (route().view === 'client' || route().view === 'host' ? route().id : 0), vals: el.getAttribute('data-renew') ? { note: 'Hosting renewal' } : {} } : a === 'lead' ? { type: 'lead', vals: {} } : a === 'newclient' ? { type: 'newclient', vals: {} } : a === 'hosting' ? { type: 'job', hosting: true, client: +el.getAttribute('data-client') || 0, q: '', vals: {} } : { type: 'job', client: +el.getAttribute('data-client') || 0, q: '', vals: {} };
+			render(); focusIn((a === 'job' || a === 'hosting') && !S.modal.client ? '.dwdc-pick' : (a === 'hosting' ? '[name=website]' : '[name=name]')); return;
 		}
 		if (t.closest('select, input, textarea, summary, label')) { return; }
 		if ((el = t.closest('[data-del-task]'))) {
@@ -1673,6 +1684,19 @@
 			if (!String(data.name || '').trim() && !String(data.email || '').trim()) { toast('Add a name or email', true); return; }
 			var ac = S.full[r.id] || contact(r.id), al = peopleOf(ac); al.push(data); S.addPpl = 0;
 			savePeople(ac, al, al.length === 1 ? data : null); return;
+		}
+		if (f.classList.contains('dwdc-hostform')) {
+			var hm = S.modal, dom = String(data.website || '').trim().replace(/^https?:\/\//i, '').replace(/^www\./i, '').replace(/\/.*$/, '').toLowerCase();
+			if (!hm.client && !hm.newc) { toast('Pick the client first, or add a new one', true); return; }
+			if (hm.newc && !String(data.client_name || '').trim()) { toast('Add the client’s name', true); return; }
+			if (!dom) { toast('Add the website', true); return; }
+			var hb = f.querySelector('.dwdc-farow .dwdc-btn'); hb.disabled = true;
+			api('/job', 'POST', { client: hm.client || 0, client_name: data.client_name, email: data.email, phone: data.phone, name: dom, title: 'Website hosting', website: dom })
+				.then(function (x) { return api('/contact/' + x.id, 'POST', { list: 'complete', completed: DWDC.today, hosting: String(num(data.hosting) || ''), renewal: data.renewal || '', source: 'Added in Dream Desk', job: 'Website hosting' }); })
+				.then(function (x) { return (data.sendlink ? api('/contact/' + x.id + '/paylink', 'POST', {}).then(function () { toast('Payment link emailed'); }, function (er) { toast('Hosting added, but the link didn’t send: ' + er.message, true); }) : Promise.resolve()).then(function () { return x; }); })
+				.then(function (x) { return reload().then(function () { S.modal = null; location.hash = 'host/' + x.id; toast('Website hosting added'); }); })
+				.catch(function (er) { hb.disabled = false; fail(er); });
+			return;
 		}
 		if (f.classList.contains('dwdc-jobform')) {
 			var m = S.modal;
