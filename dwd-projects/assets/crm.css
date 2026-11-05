@@ -1072,3 +1072,9 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
   .dwdc .dwdc-grid4 .dwdc-frow { gap: 8px; }
   .dwdc .dwdc-grid4 .dwdc-frow span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 1; }
 }
+/* Phone: To-Do List above Patterns & Trends on the dashboard */
+@media (max-width: 768px) {
+  .dwdc .dwdc-row2c { display: flex !important; flex-direction: column; }
+  .dwdc .dwdc-row2c > .cd-todo { order: 1; }
+  .dwdc .dwdc-row2c > .cd-trends { order: 2; }
+}
