@@ -240,7 +240,7 @@
 		rows.forEach(function (r) { r.style.display = ''; });
 		rows.forEach(function (r) { if (r.offsetTop + r.offsetHeight <= h + 1) { shown++; } else { r.style.display = 'none'; } });
 		var all = app.querySelector('[data-plall]');
-		if (all) { all.style.visibility = rows.length > shown ? 'visible' : 'hidden'; }
+		if (all) { all.closest('footer').style.display = rows.length > shown ? '' : 'none'; }
 	}
 	window.addEventListener('resize', function () { fitProjects(); });
 	function render(anim) {
@@ -345,6 +345,35 @@
 			+ '<p class="dwdc-trends-foot">Checked ' + fmt(T.generated) + ' · next check Monday, ' + fmt(next.toISOString().slice(0, 10)) + ' · <button class="dwdc-lnk sm2" data-trendsnow>Check now</button></p>'
 			+ '<p class="dwdc-mutp sm">Bold lines are big moves (about 20% or more, or a long downward slide). When one shows up, you get an email.</p>';
 	}
+	/* ---------- Connections: Stripe & PayPal live sync, Upwork CSV import ---------- */
+	function connCard() {
+		if (!S.sync) { if (!S.syncLoading) { S.syncLoading = true; api('/sync').then(function (x) { S.sync = x; S.syncLoading = false; if (route().view === 'money') { render(); } }).catch(function () { S.syncLoading = false; }); } return emptyRow('Loading…'); }
+		var X = S.sync, U = S.upRes;
+		var st = function (ok, last) { return '<span class="dwdc-conn-st ' + (ok ? 'on' : 'off') + '">' + (ok ? 'Connected' : 'Not set up') + '</span>' + (last ? '<small class="dwdc-conn-last">Last payment synced ' + fmt(String(last).slice(0, 10), true) + '</small>' : ''); };
+		var copy = function (u) { return '<div class="dwdc-conn-url"><code>' + esc(u) + '</code><button class="dwdc-lnk sm2" data-copy="' + esc(u) + '">Copy</button></div>'; };
+		var pick = function () { return '<option value="">Pick the project…</option>' + S.contacts.filter(function (c) { return c.list !== 'archive'; }).sort(function (a, b) { return a.name.localeCompare(b.name); }).map(function (c) { var k = clientOf(c); return '<option value="' + c.id + '">' + esc(c.name + (k && k.name !== c.name ? ' (' + k.name + ')' : '')) + '</option>'; }).join(''); };
+		var up = '<div class="dwdc-conn"><h3><i class="upw"></i>Upwork</h3><p>Upwork has no live connection, so import its report: in Upwork go to <b>Reports → Transaction History</b>, pick a date range, then <b>Download CSV</b> and drop it here. Only new payments are added, after fees, and Connects costs update too.</p>'
+			+ '<label class="dwdc-btn dwdc-upbtn">' + ic('plus', 14) + 'Import Upwork CSV<input type="file" accept=".csv,text/csv" data-upcsv hidden></label>'
+			+ (X.upwork.last ? '<small class="dwdc-conn-last">Last import ' + fmt(String(X.upwork.last).slice(0, 10), true) + '</small>' : '')
+			+ (U ? '<div class="dwdc-conn-res">' + (U.error ? esc(U.error) : '<b>' + U.added + ' new payment' + (U.added === 1 ? '' : 's') + '</b> added (' + money(U.amount) + ' after fees)' + (U.already ? ' · ' + U.already + ' already in Dream Desk' : '') + (U.costs ? ' · ' + U.costs + ' Connects charges' : '')) + '</div>' : '')
+			+ (U && U.unmatched && U.unmatched.length ? '<div class="dwdc-conn-map"><p><b>Which project is each of these?</b> Pick one, then import again. Dream Desk remembers your picks.</p>' + U.unmatched.map(function (x) { return '<label><span>' + esc(x.team || '(no name)') + ' · ' + money(x.amount) + '</span><select data-upmap="' + esc(x.team) + '">' + pick() + '</select></label>'; }).join('') + '<button class="dwdc-btn" data-upagain>Import again</button></div>' : '')
+			+ '</div>';
+		var stripe = '<div class="dwdc-conn"><h3><i class="str"></i>Stripe' + st(X.stripe.ready, X.stripe.last) + '</h3>'
+			+ '<ol><li>In Stripe, go to <b>Developers → Webhooks → Add endpoint</b>.</li><li>Paste this link as the endpoint URL:' + copy(X.stripe.url) + '</li><li>Choose the events <b>invoice.paid</b> and <b>charge.succeeded</b>, then save.</li><li>Click <b>Reveal</b> under Signing secret and paste it here:</li></ol>'
+			+ '<div class="dwdc-conn-f"><input type="password" placeholder="whsec_…" data-sk="stripe_whsec"><button class="dwdc-btn" data-synsave="stripe">Save</button></div></div>';
+		var pp = '<div class="dwdc-conn"><h3><i class="ppl"></i>PayPal' + st(X.paypal.ready, X.paypal.last) + '</h3>'
+			+ '<ol><li>Go to <b>developer.paypal.com → Apps &amp; Credentials</b>, switch to <b>Live</b>, and <b>Create App</b>.</li><li>In the app, under <b>Live Webhooks</b>, add this link:' + copy(X.paypal.url) + 'with the events <b>Invoicing invoice paid</b> and <b>Payment capture completed</b>.</li><li>Paste the app’s Client ID, Secret and the Webhook ID here:</li></ol>'
+			+ '<div class="dwdc-conn-f col"><input placeholder="Client ID" data-sk="paypal_id"><input type="password" placeholder="Secret" data-sk="paypal_secret"><input placeholder="Webhook ID" data-sk="paypal_hook"><button class="dwdc-btn" data-synsave="paypal">Save</button></div></div>';
+		return '<div class="dwdc-conns">' + up + stripe + pp + '</div><p class="dwdc-mutp sm">Payments are matched to clients by email. Anything that doesn’t match becomes a to-do on your dashboard so you can assign it. Keys are saved on your server and never shown again.</p>';
+	}
+	function upImport(file, map) {
+		var go = function (text) {
+			S.upCsv = text;
+			api('/upwork-import', 'POST', { csv: text, map: map || {} }).then(function (r) { S.upRes = r; return reload(); }).then(function () { render(); toast('Upwork import done'); })
+				.catch(function (e) { S.upRes = { error: e.message }; render(); });
+		};
+		if (file) { var fr = new FileReader(); fr.onload = function () { go(String(fr.result)); }; fr.readAsText(file); } else if (S.upCsv) { go(S.upCsv); }
+	}
 	function moneyView() {
 		var projs = S.contacts.filter(function (c) { return ['active', 'hold', 'limbo', 'complete'].indexOf(c.list) > -1; });
 		var sum = function (f) { return projs.reduce(function (s, c) { return s + num(c[f]); }, 0); };
@@ -395,6 +424,7 @@
 				+ '<p class="dwdc-mutp sm">Hover a bar to see each amount. Every payment on the day it was paid: Upwork (from your transaction history, after Upwork’s fees), Stripe, PayPal and payments you log. Refunds come off the year they happened.</p>')
 			+ mcard('Busiest months', busyMonths(MY, ylist), 'wide')
 			+ mcard('Upwork Connects', connectsCard(MY), 'wide')
+			+ mcard('Connections <small class="dwdc-conn-sub">Keep Money Stats up to date automatically</small>', connCard(), 'wide')
 			+ mcard('Top projects', rowsP || emptyRow('No payments yet.'))
 			+ mcard('Top clients', rowsC || emptyRow('No payments yet.'))
 			+ mcard('Repeat clients <span class="dwdc-cnt">' + repeat.length + '</span>', rowsR || emptyRow('No repeat clients yet.'))
@@ -571,7 +601,7 @@
 				var k = clientOf(c), ow = num(c.balance);
 				return '<a class="dwdc-pl-row" href="#client/' + c.id + '"><span><b>' + esc(c.name) + '</b><small>' + esc(k ? k.name : (c.person || '')) + '</small></span><span>' + (num(c.price) ? money(c.price) : '—') + '</span><span class="' + (ow ? 'ow' : 'pd') + '">' + (ow ? money(ow) : 'Paid') + '</span></a>';
 			}).join('') : '<p class="dwdc-mutp">No active projects right now.</p>') + '</div></div>',
-			'<footer class="dwdc-pl-foot"><button class="dwdc-btn brightblue" data-act="job">' + ic('plus', 14) + 'New Project</button><a class="dwdc-pl-all" href="#projects/active" data-plall>View all ' + active.length + ' ' + ic('right', 12) + '</a></footer>');
+			'<footer class="dwdc-pl-foot"><a class="dwdc-pl-all" href="#projects/active" data-plall>View all ' + active.length + ' ' + ic('right', 12) + '</a></footer>');
 		var c3 = card('cd-money', chead('dollar', 'Money', 'money'),
 			'<p class="dwdc-lbl">Owed on open projects</p><p class="dwdc-hero big"><strong>' + money(owed(open)) + '</strong></p><p class="dwdc-sub">' + owing.length + ' invoice' + (owing.length === 1 ? '' : 's') + ' open · ' + active.length + ' active projects</p>'
 			+ '<div class="dwdc-tint-space" aria-hidden="true"></div>',
@@ -1414,6 +1444,16 @@
 			}
 			return;
 		}
+		if (t.closest('[data-upagain]')) { var mp = {}; app.querySelectorAll('[data-upmap]').forEach(function (x) { if (x.value) { mp[x.getAttribute('data-upmap')] = +x.value; } }); upImport(null, mp); return; }
+		if ((el = t.closest('[data-copy]'))) { var cv = el.getAttribute('data-copy'); (navigator.clipboard ? navigator.clipboard.writeText(cv) : Promise.reject()).then(function () { toast('Link copied'); }, function () { prompt('Copy this link:', cv); }); return; }
+		if ((el = t.closest('[data-synsave]'))) {
+			var box = el.closest('.dwdc-conn'), body = {};
+			box.querySelectorAll('[data-sk]').forEach(function (x) { if (x.value.trim()) { body[x.getAttribute('data-sk')] = x.value.trim(); } });
+			if (!Object.keys(body).length) { toast('Paste the details first', true); return; }
+			el.disabled = true; el.textContent = 'Saving…';
+			api('/sync', 'POST', body).then(function () { return api('/sync'); }).then(function (x) { S.sync = x; render(); toast('Saved'); }).catch(function (e) { el.disabled = false; el.textContent = 'Save'; fail(e); });
+			return;
+		}
 		if (t.closest('[data-askai]')) { chatOpen(); return; }
 		if ((el = t.closest('[data-trendsnow]'))) { el.textContent = 'Checking…'; api('/trends', 'POST', {}).then(function (x) { S.trends = x; render(); toast('Trends updated'); }).catch(fail); return; }
 		if ((el = t.closest('[data-cyear]'))) { S.cYear = el.getAttribute('data-cyear'); render(); return; }
@@ -1518,6 +1558,7 @@
 		var t = e.target;
 		if (t.hasAttribute('data-revpick')) { S.revSel = S.revSel || {}; S.revSel[t.getAttribute('data-revpick')] = t.checked; render(); return; }
 		if (t.hasAttribute('data-revall')) { S.revSel = S.revSel || {}; app.querySelectorAll('[data-revpick]').forEach(function (x) { S.revSel[x.getAttribute('data-revpick')] = t.checked; }); render(); return; }
+		if (t.hasAttribute('data-upcsv') && t.files && t.files[0]) { S.upRes = { added: 0, amount: 0, error: 'Importing…' }; render(); upImport(t.files[0]); return; }
 		if (t.hasAttribute('data-year')) { S.year = t.value; render(); return; }
 		if (t.hasAttribute('data-field')) {
 			var fd = {}; fd[t.getAttribute('data-field')] = t.value;
