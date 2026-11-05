@@ -985,6 +985,20 @@ add_action( 'rest_api_init', function () {
 
 add_action( 'admin_menu', function () {
 	add_menu_page( 'Dream Desk', 'Dream Desk', 'manage_options', 'client-desk', 'dwdc_page', 'dashicons-groups', 2 );
+	add_submenu_page( 'client-desk', 'Dream Desk', 'Home', 'manage_options', 'client-desk', 'dwdc_page' );
+	global $submenu;
+	foreach ( array(
+		'projects/active'   => 'Active',
+		'projects/hold'     => 'On Hold',
+		'projects/limbo'    => 'Limbo',
+		'projects/complete' => 'Completed',
+		'onboarding'        => 'Onboarding',
+		'hosting'           => 'Hosting',
+		'leads'             => 'Leads',
+		'clients'           => 'All Clients',
+	) as $route => $label ) {
+		$submenu['client-desk'][] = array( $label, 'manage_options', 'admin.php?page=client-desk#' . $route, $label ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+	}
 } );
 
 add_action( 'admin_init', function () {
@@ -1023,11 +1037,11 @@ add_action( 'admin_enqueue_scripts', function ( $hook ) {
 add_action( 'admin_head', function () {
 	$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
 	if ( $screen && 'toplevel_page_client-desk' === $screen->id ) {
-		echo '<style>html.wp-toolbar{padding-top:0!important}html{margin-top:0!important}#wpwrap,#wpbody{margin-top:0!important;padding-top:0!important}</style>';
+		echo '<style>#wpfooter{display:none!important}</style>';
 	}
 } );
 
 add_filter( 'admin_body_class', function ( $c ) {
 	$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
-	return $screen && 'toplevel_page_client-desk' === $screen->id ? $c . ' dwdc-screen folded' : $c;
+	return $screen && 'toplevel_page_client-desk' === $screen->id ? $c . ' dwdc-screen' : $c;
 } );

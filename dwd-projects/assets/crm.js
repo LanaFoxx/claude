@@ -171,7 +171,7 @@
 		var proj = S.contacts.filter(isProject);
 		return '<aside class="dwdc-side">'
 			+ '<a class="dwdc-brand" href="#home"><span class="dwdc-mark"><img src="' + esc(DWDC.mark) + '" alt=""></span><span><strong>Dream Desk</strong><small>Dream Web Digital</small></span></a>'
-			+ '<label class="dwdc-ssearch">' + ic('search', 16) + '<input type="search" placeholder="Search..." value="' + esc(S.q) + '"><kbd>Ctrl K</kbd></label>'
+			+ (document.body.classList.contains('dwdc-screen') ? '' : '<label class="dwdc-ssearch">' + ic('search', 16) + '<input type="search" placeholder="Search..." value="' + esc(S.q) + '"><kbd>Ctrl K</kbd></label>')
 			+ '<nav>' + nav('home', 'home', 'Home')
 			+ '<div class="dwdc-navh"><i class="b1"></i>Projects</div>'
 			+ nav('projects/active', 'bolt', 'Active', by('active').length) + nav('projects/hold', 'pause', 'On Hold', by('hold').length)
@@ -180,18 +180,33 @@
 			+ nav('onboarding', 'filter', 'Onboarding', onboardList().length) + nav('hosting', 'server', 'Hosting', hosting().length)
 			+ nav('leads', 'mail', 'Leads', leadList().length) + nav('clients', 'users', 'All Clients', S.clients.length)
 			+ '<div class="dwdc-navh"><i class="b3"></i>More</div>'
-			+ nav('archive', 'archive', 'Archive', by('archive').length)
 			+ '<a class="dwdc-nav" href="' + esc(DWDC.wp) + '">' + ic('wp') + '<span>WordPress Admin</span></a>'
 			+ '</nav><a class="dwdc-me" href="' + esc(DWDC.logout) + '" title="Sign out"><span class="dwdc-me-av">MT</span><span><strong>' + esc(DWDC.user || 'Michael Tarr') + '</strong><small>Owner · Sign out</small></span>' + ic('logout', 17) + '</a></aside>';
 	}
 	function top(r, t) {
 		var qa = function (cls, attr, icon, label) { return '<button class="dwdc-qact ' + cls + '" ' + attr + '>' + ic(icon, 15) + label + '</button>'; };
 		return '<header class="dwdc-top"><button class="dwdc-burger" data-menu aria-label="Menu">' + ic('menu', 20) + '</button>'
-			+ '<div class="dwdc-title"><p class="dwdc-eyebrow">' + esc(t[0]) + '</p><h1><span>' + esc(t[1]) + '</span>' + (t[2] ? ' <em>' + esc(t[2]) + '</em>' : '') + '</h1></div>'
+			+ '<div class="dwdc-title"><p class="dwdc-eyebrow">' + esc(t[0]) + '</p><h1><span>' + esc(t[1]) + '</span>' + (t[2] ? ' <em>' + esc(t[2]) + '</em>' : '') + '</h1>'
+			+ (document.body.classList.contains('dwdc-screen') ? '<label class="dwdc-ssearch dwdc-tsearch">' + ic('search', 16) + '<input type="search" placeholder="Search clients and projects…" value="' + esc(S.q) + '"><kbd>Ctrl K</kbd></label>' : '') + '</div>'
 			+ '<div class="dwdc-qas">' + qa('qnavy', 'data-act="job"', 'plus', 'Project') + qa('', 'data-act="newclient"', 'plus', 'Client') + qa('', 'data-act="lead"', 'plus', 'Lead')
 			+ qa('', 'data-goto="hosting"', 'server', 'Hosting') + qa('', 'data-goto="leads"', 'mail', 'Leads') + qa('blue', 'data-act="pay"', 'card', 'Log Payment') + '</div></header>';
 	}
 
+	function syncWpMenu(r) {
+		var box = document.getElementById('toplevel_page_client-desk');
+		if (!box) { return; }
+		var cur = r.view === 'client' || r.view === 'cl' ? S.back : r.view + (r.arg ? '/' + r.arg : '');
+		if (cur === 'projects' || cur === 'projects/all') { cur = 'projects/active'; }
+		var counts = { 'projects/active': by('active').length, 'projects/hold': by('hold').length, 'projects/limbo': by('limbo').length, 'projects/complete': by('complete').length, onboarding: onboardList().length, hosting: hosting().length, leads: leadList().length, clients: S.clients.length };
+		box.querySelectorAll('.wp-submenu li').forEach(function (li) {
+			var a = li.querySelector('a'); if (!a) { return; }
+			var h = (a.getAttribute('href') || '').split('#')[1] || 'home';
+			if (/page=client-desk$/.test(a.getAttribute('href') || '')) { h = 'home'; a.setAttribute('href', a.getAttribute('href') + '#home'); }
+			li.classList.toggle('current', h === cur); a.classList.toggle('current', h === cur);
+			var b = a.querySelector('.dwdc-mcount');
+			if (counts[h] !== undefined) { if (!b) { b = document.createElement('span'); b.className = 'dwdc-mcount'; a.appendChild(b); } b.textContent = counts[h]; }
+		});
+	}
 	function render(anim) {
 		var r = route(), t = (TITLES[r.view] || ['', '', '']).slice(), body;
 		if (r.view === 'home') { t[0] = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }); }
@@ -216,6 +231,7 @@
 		}
 		app.innerHTML = sidebar(r) + '<div class="dwdc-shade-m" data-menu></div><main class="dwdc-main">' + top(r, t) + '<div class="dwdc-screen' + (anim ? ' in' : '') + '">' + body + '</div></main>' + modal();
 		S.prev = r.view + r.arg;
+		syncWpMenu(r);
 		if (S.focusSearch) { var q = app.querySelector('.dwdc-ssearch input'); if (q) { q.focus(); q.setSelectionRange(q.value.length, q.value.length); } S.focusSearch = false; }
 		if (S.cardTodo) { var ti = app.querySelector('.dwdc-cardtodo input'); if (ti) { ti.focus(); } }
 	}
@@ -333,10 +349,17 @@
 		var all = S.contacts.filter(isProject).filter(match);
 		var chip = function (k, l) { var n = all.filter(function (c) { return k === 'all' || c.list === k; }).length; return '<a class="dwdc-fchip' + (f === k ? ' on' : '') + '" href="#projects/' + k + '">' + (k === 'all' ? '' : '<i class="dwdc-sdot t-' + TONE[k] + '"></i>') + l + ' <b>' + n + '</b></a>'; };
 		var order = ['active', 'hold', 'limbo', 'complete'];
-		var rows = all.filter(function (c) { return f === 'all' || c.list === f; }).sort(function (a, b) { return order.indexOf(a.list) - order.indexOf(b.list) || (a.list === 'complete' ? byDone(a, b) : (a.deadline || '9') < (b.deadline || '9') ? -1 : 1); });
+		var yr = S.year || '', years = {};
+		if (f === 'complete') { all.filter(function (c) { return c.list === 'complete'; }).forEach(function (c) { var y = (doneDate(c) || '').slice(0, 4); years[y || 'none'] = (years[y || 'none'] || 0) + 1; }); }
+		var rows = all.filter(function (c) { return f === 'all' || c.list === f; }).filter(function (c) { if (f !== 'complete' || !yr) { return true; } var y = (doneDate(c) || '').slice(0, 4); return yr === 'none' ? !y : y === yr; }).sort(function (a, b) { return order.indexOf(a.list) - order.indexOf(b.list) || (a.list === 'complete' ? byDone(a, b) : (a.deadline || '9') < (b.deadline || '9') ? -1 : 1); });
 		var cap = S.more['p' + f] || S.q ? rows.length : 50;
 		var empties = { active: 'No active projects right now.', limbo: 'Nothing in limbo. Clients you haven’t heard back from in a while go here.', hold: 'No projects on hold. Paused or waiting projects go here.', complete: 'No completed projects yet.', all: 'No projects match.' };
-		return '<div class="dwdc-chips">' + chip('active', 'Active') + chip('hold', 'On hold') + chip('limbo', 'Limbo') + chip('complete', 'Completed') + '</div>'
+		var ylist = Object.keys(years).filter(function (y) { return y !== 'none'; }).sort().reverse();
+		var yearBar = f === 'complete' ? '<div class="dwdc-years"><span>Finished in</span><select class="dwdc-yearsel" data-year>'
+			+ '<option value="">All years (' + all.filter(function (c) { return c.list === 'complete'; }).length + ')</option>'
+			+ ylist.map(function (y) { return '<option value="' + y + '"' + (yr === y ? ' selected' : '') + '>' + y + ' (' + years[y] + ')</option>'; }).join('')
+			+ (years.none ? '<option value="none"' + (yr === 'none' ? ' selected' : '') + '>No date yet (' + years.none + ')</option>' : '') + '</select></div>' : '';
+		return '<div class="dwdc-chips">' + chip('active', 'Active') + chip('hold', 'On hold') + chip('limbo', 'Limbo') + chip('complete', 'Completed') + yearBar + '</div>'
 			+ '<div class="dwdc-card dwdc-tbl">' + (rows.length ? '<div class="dwdc-grid g-projects head"><span>Project</span><span>Client</span><span>' + (f === 'complete' ? 'Total' : 'Price') + '</span><span>Owed</span><span>' + (f === 'complete' ? 'Finished' : 'Due') + '</span><span>Status</span><span>Next step</span></div>'
 				+ rows.slice(0, cap).map(function (c) {
 					var k = clientOf(c), ow = num(c.balance), done = c.list === 'complete', dd = done ? doneDate(c) : c.deadline, late = !done && c.deadline && c.deadline < DWDC.today, amt = done ? lifetime(c) : num(c.price);
@@ -1177,6 +1200,7 @@
 
 	app.addEventListener('change', function (e) {
 		var t = e.target;
+		if (t.hasAttribute('data-year')) { S.year = t.value; render(); return; }
 		if (t.hasAttribute('data-field')) {
 			var fd = {}; fd[t.getAttribute('data-field')] = t.value;
 			save(route().id, fd, 'Saved');

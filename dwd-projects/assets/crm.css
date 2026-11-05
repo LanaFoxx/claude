@@ -2,8 +2,8 @@
 
 /* ---------- take over the admin screen ---------- */
 body.dwdc-screen { background: #F1F4F8; }
-.dwdc-screen #adminmenumain, .dwdc-screen #wpadminbar, .dwdc-screen #wpfooter, .dwdc-screen #screen-meta-links { display: none !important; }
-.dwdc-screen #wpcontent, .dwdc-screen #wpfooter { margin-left: 0 !important; padding-left: 0 !important; }
+.dwdc-screen #wpfooter, .dwdc-screen #screen-meta-links { display: none !important; }
+.dwdc-screen #wpcontent { padding-left: 0 !important; }
 .dwdc-screen #wpbody-content { padding-bottom: 0 !important; }
 .dwdc-screen #wpbody-content > :not(#dwdc-app) { display: none !important; }
 
@@ -513,3 +513,15 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 .dwdc-ans-chips { display: flex; flex-wrap: wrap; gap: 8px; padding: 14px 16px; }
 .dwdc-ans-chip { display: inline-flex; align-items: center; gap: 4px; height: 32px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--navy) !important; font-size: 13px; font-weight: 600; }
 .dwdc-ans-chip:hover { border-color: var(--blue); color: var(--deep) !important; }
+
+/* Dream Desk inside the WordPress admin: WP menu on the left, Dream Desk nav lives in the WP submenu */
+.dwdc-screen .dwdc-side, .dwdc-screen .dwdc-burger { display: none !important; }
+.dwdc-screen .dwdc { min-height: calc(100vh - 32px); }
+.dwdc-tsearch { display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 12px; margin-top: 12px; width: min(360px, 100%); border: 1px solid var(--line); border-radius: 10px; background: #fff; color: var(--mut); }
+.dwdc-tsearch input { flex: 1; min-width: 0; border: 0 !important; outline: none !important; box-shadow: none !important; background: transparent !important; font: inherit; font-size: 14px; color: var(--navy); padding: 0 !important; }
+.dwdc-tsearch kbd { font-size: 10.5px; font-weight: 700; padding: 2px 6px; border-radius: 5px; background: var(--hover); border: 1px solid var(--line); color: var(--sec); }
+.dwdc-tsearch:focus-within { border-color: var(--blue); }
+#adminmenu .wp-submenu a .dwdc-mcount { float: right; min-width: 18px; padding: 0 6px; border-radius: 9px; background: rgba(255,255,255,.12); color: #fff; font-size: 11px; line-height: 18px; text-align: center; }
+#adminmenu .wp-submenu li.current a .dwdc-mcount { background: #13A6EE; }
+.dwdc-years { margin-left: auto; display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--sec); }
+.dwdc .dwdc-yearsel { height: 36px; min-width: 170px; max-width: none !important; border: 1px solid var(--line); border-radius: 999px; padding: 0 32px 0 14px; background-color: #fff; font: inherit; font-size: 13px; font-weight: 700; color: var(--navy); }
