@@ -2,7 +2,8 @@
 /**
  * Client Desk: a small CRM in the WordPress admin, in the style of Mojo's Flight Desk.
  *
- * - Each client/job sits in one stage: Leads, Onboarding, Active jobs, In limbo, Completed, Archive.
+ * - Each client sits in one stage: Leads, Active jobs, In limbo, Completed, Archive. "Onboarding" lists
+ *   everyone who has sent the onboarding form, whatever their stage.
  *   Hosting is separate: anyone with a yearly hosting fee shows under Hosting clients, whatever their stage.
  * - Every website form (Elementor) creates or updates the contact by email and files the answers
  *   on the contact; hosting orders (WooCommerce) set their hosting fee and renewal date.
@@ -27,7 +28,6 @@ add_action( 'init', function () {
 function dwdc_lists() {
 	$default = array(
 		array( 'id' => 'leads', 'name' => 'Leads', 'color' => '#F0874A' ),
-		array( 'id' => 'onboarding', 'name' => 'Onboarding', 'color' => '#E2A93B' ),
 		array( 'id' => 'active', 'name' => 'Active jobs', 'color' => '#1B7EC3' ),
 		array( 'id' => 'limbo', 'name' => 'In limbo', 'color' => '#9B6BDF' ),
 		array( 'id' => 'complete', 'name' => 'Completed', 'color' => '#2EA36B' ),
@@ -39,7 +39,7 @@ function dwdc_lists() {
 
 /** Contact fields kept on every contact. */
 function dwdc_fields() {
-	return array( 'person', 'email', 'phone', 'company', 'website', 'list', 'price', 'balance', 'deadline', 'hosting', 'renewal', 'source', 'next' );
+	return array( 'job', 'person', 'email', 'phone', 'company', 'website', 'list', 'price', 'balance', 'deadline', 'hosting', 'renewal', 'source', 'next' );
 }
 
 function dwdc_contact( $post, $full = false ) {
@@ -55,6 +55,13 @@ function dwdc_contact( $post, $full = false ) {
 	$entries          = is_array( $entries ) ? $entries : array();
 	$c['entry_count'] = count( $entries );
 	$c['last_entry']  = $entries ? end( $entries )['form'] : '';
+	$c['onboarded']   = '';
+	foreach ( $entries as $e ) {
+		if ( false !== stripos( (string) $e['form'], 'onboard' ) ) {
+			$c['onboarded'] = $e['date'];
+		}
+	}
+	$c['autopay'] = '1' === get_post_meta( $p->ID, '_dwdc_autopay', true );
 	$jobs        = get_post_meta( $p->ID, '_dwdc_jobs', true );
 	$c['jobs']   = is_array( $jobs ) ? $jobs : array();
 	if ( $full ) {
@@ -86,7 +93,7 @@ function dwdc_find_by_email( $email ) {
 	if ( ! $email ) {
 		return 0;
 	}
-	$ids = get_posts( array( 'post_type' => DWDC_CONTACT, 'post_status' => 'any', 'posts_per_page' => 1, 'fields' => 'ids', 'meta_key' => '_dwdc_email', 'meta_value' => $email ) ); // phpcs:ignore
+	$ids = get_posts( array( 'post_type' => DWDC_CONTACT, 'post_status' => 'private', 'posts_per_page' => 1, 'fields' => 'ids', 'meta_key' => '_dwdc_email', 'meta_value' => $email ) ); // phpcs:ignore
 	return $ids ? (int) $ids[0] : 0;
 }
 
@@ -117,6 +124,10 @@ function dwdc_save_contact( $id, $data ) {
 	return (int) $id;
 }
 
+function dwdc_domain( $url ) {
+	return strtolower( preg_replace( '#^(https?://)?(www\.)?([^/]+).*$#i', '$3', trim( (string) $url ) ) );
+}
+
 /** Find a record by email, then by name / company / any alias (case-insensitive). */
 function dwdc_find( $email, $names ) {
 	$id = dwdc_find_by_email( $email );
@@ -128,7 +139,7 @@ function dwdc_find( $email, $names ) {
 		return 0;
 	}
 	foreach ( get_posts( array( 'post_type' => DWDC_CONTACT, 'post_status' => 'private', 'posts_per_page' => -1 ) ) as $p ) {
-		$have = array( strtolower( $p->post_title ), strtolower( (string) get_post_meta( $p->ID, '_dwdc_company', true ) ), strtolower( (string) get_post_meta( $p->ID, '_dwdc_person', true ) ) );
+		$have = array( strtolower( $p->post_title ), strtolower( (string) get_post_meta( $p->ID, '_dwdc_company', true ) ), strtolower( (string) get_post_meta( $p->ID, '_dwdc_person', true ) ), dwdc_domain( get_post_meta( $p->ID, '_dwdc_website', true ) ) );
 		if ( array_intersect( $names, array_filter( $have ) ) ) {
 			return $p->ID;
 		}
@@ -150,7 +161,7 @@ function dwdc_add_task( $text, $contact = 0, $due = '' ) {
  * File a form entry on the matching contact (created if new).
  * $fields: list of array( 'id', 'label', 'value' ).
  */
-function dwdc_file_entry( $form, $fields, $date = '', $source = 'Website form' ) {
+function dwdc_file_entry( $form, $fields, $date = '', $source = 'Website form', $match = array() ) {
 	$get = function ( $keys ) use ( $fields ) {
 		foreach ( $fields as $f ) {
 			if ( in_array( $f['id'], $keys, true ) && '' !== trim( (string) $f['value'] ) ) {
@@ -163,7 +174,7 @@ function dwdc_file_entry( $form, $fields, $date = '', $source = 'Website form' )
 	if ( ! $email ) {
 		return 0;
 	}
-	$id         = dwdc_find_by_email( $email );
+	$id         = $match ? dwdc_find( $email, $match ) : dwdc_find_by_email( $email );
 	$onboarding = false !== stripos( $form, 'onboard' );
 	$new        = ! $id;
 	$data       = array(
@@ -177,12 +188,12 @@ function dwdc_file_entry( $form, $fields, $date = '', $source = 'Website form' )
 		}
 	}
 	if ( $new ) {
-		$data['list']   = $onboarding ? 'onboarding' : 'leads';
+		$data['list']   = $onboarding ? 'active' : 'leads';
 		$data['source'] = $source . ': ' . $form;
 	} else {
 		unset( $data['name'] );
-		if ( $onboarding && in_array( get_post_meta( $id, '_dwdc_list', true ), array( 'leads', 'archive' ), true ) ) {
-			$data['list'] = 'onboarding';
+		if ( $onboarding && in_array( get_post_meta( $id, '_dwdc_list', true ), array( 'leads', 'archive', 'onboarding' ), true ) ) {
+			$data['list'] = 'active';
 		}
 	}
 	$id      = dwdc_save_contact( $id, $data );
@@ -214,25 +225,42 @@ add_action( 'elementor_pro/forms/new_record', function ( $record ) {
 	}
 }, 20 );
 
-// Hosting orders: the buyer goes on Hosting clients with a renewal date a year out.
+// Hosting orders (first payment and every yearly auto-renewal from the subscription): the buyer is
+// matched to their client record by email, then name or website, so an existing hosting client who
+// starts paying online keeps one record. Each paid order sets the fee and moves the renewal date a year on.
 function dwdc_from_order( $order_id ) {
 	$o = function_exists( 'wc_get_order' ) ? wc_get_order( $order_id ) : null;
 	if ( ! $o || $o->get_meta( '_dwdc_filed' ) ) {
 		return;
 	}
-	$fields = array(
-		array( 'id' => 'name', 'label' => 'Name', 'value' => trim( $o->get_billing_first_name() . ' ' . $o->get_billing_last_name() ) ),
+	$name    = trim( $o->get_billing_first_name() . ' ' . $o->get_billing_last_name() );
+	$site    = (string) $o->get_meta( '_billing_website' );
+	$renewal = (bool) $o->get_meta( '_wps_sfw_renewal_order' ) || (bool) $o->get_meta( 'wps_sfw_renewal_order' ) || $o->get_parent_id();
+	$fields  = array(
+		array( 'id' => 'name', 'label' => 'Name', 'value' => $name ),
 		array( 'id' => 'email', 'label' => 'Email', 'value' => $o->get_billing_email() ),
 		array( 'id' => 'phone', 'label' => 'Phone', 'value' => $o->get_billing_phone() ),
-		array( 'id' => 'website', 'label' => 'Website', 'value' => (string) $o->get_meta( '_billing_website' ) ),
+		array( 'id' => 'company', 'label' => 'Company', 'value' => $o->get_billing_company() ),
+		array( 'id' => 'website', 'label' => 'Website', 'value' => $site ),
 		array( 'id' => 'order', 'label' => 'Order', 'value' => '#' . $o->get_order_number() . ' · $' . $o->get_total() ),
 	);
-	$cid = dwdc_file_entry( 'Hosting order', $fields, $o->get_date_created() ? $o->get_date_created()->date( 'Y-m-d H:i:s' ) : '', 'Store' );
+	$match = array_filter( array( $name, $o->get_billing_company(), $site ? dwdc_domain( $site ) : '' ) );
+	$had   = dwdc_find( $o->get_billing_email(), $match );
+	$auto  = $had && '1' === get_post_meta( $had, '_dwdc_autopay', true );
+	$cid   = dwdc_file_entry( $auto || $renewal ? 'Hosting renewal paid' : 'Hosting order', $fields, $o->get_date_created() ? $o->get_date_created()->date( 'Y-m-d H:i:s' ) : '', 'Store', $match );
 	if ( $cid ) {
 		$start = $o->get_date_paid() ? $o->get_date_paid() : $o->get_date_created();
-		dwdc_save_contact( $cid, array( 'hosting' => $o->get_total(), 'renewal' => $start ? gmdate( 'Y-m-d', strtotime( '+1 year', $start->getTimestamp() ) ) : '' ) );
-		dwdc_add_task( 'Set up hosting for ' . get_the_title( $cid ), $cid, current_time( 'Y-m-d' ) );
+		$data  = array( 'hosting' => $o->get_total(), 'renewal' => $start ? gmdate( 'Y-m-d', strtotime( '+1 year', $start->getTimestamp() ) ) : '' );
+		if ( ! $had ) {
+			$data['list'] = 'complete'; // a hosting-only client, not a lead
+		}
+		dwdc_save_contact( $cid, $data );
+		update_post_meta( $cid, '_dwdc_autopay', '1' );
+		if ( ! $auto && ! $renewal ) {
+			dwdc_add_task( 'Set up hosting for ' . get_the_title( $cid ), $cid, current_time( 'Y-m-d' ) );
+		}
 		$o->update_meta_data( '_dwdc_filed', 1 );
+		$o->update_meta_data( '_dwdc_contact', $cid );
 		$o->save();
 	}
 }
@@ -304,6 +332,32 @@ add_action( 'rest_api_init', function () {
 		$notes = is_array( $notes ) ? $notes : array();
 		$notes[] = array( 'date' => current_time( 'mysql', true ), 'text' => sanitize_textarea_field( (string) $r->get_param( 'text' ) ) );
 		update_post_meta( $id, '_dwdc_notes', $notes );
+		wp_update_post( array( 'ID' => $id ) );
+		return dwdc_contact( $id, true );
+	} ) );
+
+	// New job: for an existing client (their current job moves into their job history) or a new one.
+	register_rest_route( $ns, '/crm/job', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
+		$d  = (array) $r->get_json_params();
+		$id = (int) ( $d['contact'] ?? 0 );
+		$job = array( 'job' => $d['title'] ?? '', 'price' => $d['price'] ?? '', 'balance' => $d['balance'] ?? '', 'deadline' => $d['deadline'] ?? '', 'list' => 'active', 'next' => '' );
+		if ( $id ) {
+			$price = (string) get_post_meta( $id, '_dwdc_price', true );
+			$title = (string) get_post_meta( $id, '_dwdc_job', true );
+			if ( '' !== $price || '' !== $title ) {
+				$jobs   = get_post_meta( $id, '_dwdc_jobs', true );
+				$jobs   = is_array( $jobs ) ? $jobs : array();
+				$when   = (string) get_post_meta( $id, '_dwdc_deadline', true );
+				$jobs[] = array( 'title' => $title ? $title : 'Earlier job', 'price' => $price, 'date' => $when ? gmdate( 'M Y', strtotime( $when ) ) : get_post_modified_time( 'M Y', true, $id ) );
+				$job['jobs'] = $jobs;
+			}
+			dwdc_save_contact( $id, $job );
+		} else {
+			if ( ! empty( $d['email'] ) && dwdc_find_by_email( $d['email'] ) ) {
+				return new WP_Error( 'dwdc_exists', 'That email is already a contact. Pick them from the list instead.', array( 'status' => 400 ) );
+			}
+			$id = dwdc_save_contact( 0, array_merge( $job, array_intersect_key( $d, array_flip( array( 'name', 'person', 'email', 'phone', 'website' ) ) ) ) );
+		}
 		wp_update_post( array( 'ID' => $id ) );
 		return dwdc_contact( $id, true );
 	} ) );
@@ -406,6 +460,8 @@ add_action( 'admin_enqueue_scripts', function ( $hook ) {
 		'nonce' => wp_create_nonce( 'wp_rest' ),
 		'logo'  => content_url( '/uploads/2025/10/Asset-2-1.png' ),
 		'today' => current_time( 'Y-m-d' ),
+		'orders' => admin_url( class_exists( '\\Automattic\\WooCommerce\\Utilities\\OrderUtil' ) && \Automattic\WooCommerce\Utilities\OrderUtil::custom_orders_table_usage_is_enabled() ? 'admin.php?page=wc-orders&s=' : 'edit.php?post_type=shop_order&s=' ),
+		'pay'   => home_url( '/checkout/?dwd-order=hosting' ),
 	) );
 } );
 
