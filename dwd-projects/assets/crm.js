@@ -262,17 +262,20 @@
 	/* ---------- Money: where the money came from ---------- */
 	function busyMonths(MY, ylist) {
 		var MN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+		var all = [];
+		ylist.forEach(function (y) { (MY[y].m || []).forEach(function (v) { all.push(Math.max(0, +v || 0)); }); });
+		var mx = Math.max.apply(null, all.concat([1]));
+		var k = function (v) { return v >= 1000 ? '$' + (v / 1000).toFixed(v >= 10000 ? 0 : 1) + 'k' : (v ? '$' + Math.round(v) : ''); };
+		var head = '<div class="dwdc-hm-row head"><span></span>' + MN.map(function (m) { return '<span>' + m + '</span>'; }).join('') + '<span>Best month</span></div>';
 		var rows = ylist.map(function (y) {
-			var m = (MY[y].m || []).map(function (v, i) { return { i: i, v: Math.max(0, +v || 0) }; });
-			if (!m.length) { return ''; }
-			var mx = Math.max.apply(null, m.map(function (x) { return x.v; }).concat([1]));
-			var top = m.slice().sort(function (a, b) { return b.v - a.v; }).filter(function (x) { return x.v > 0; }).slice(0, 3);
-			var topIds = top.map(function (x) { return x.i; });
-			return '<div class="dwdc-busy"><div class="dwdc-busy-y"><b>' + y + '</b>' + (top[0] ? '<span>Busiest: <strong>' + MN[top[0].i] + '</strong> · ' + money(top[0].v) + '</span>' : '') + '</div>'
-				+ '<div class="dwdc-busy-bars">' + m.map(function (x) { var h = Math.round(x.v / mx * 100); return '<div class="dwdc-busy-col' + (x.i === (top[0] && top[0].i) ? ' top' : (topIds.indexOf(x.i) > -1 ? ' hi' : '')) + '" title="' + MN[x.i] + ' ' + y + ': ' + money(x.v) + '"><i style="height:' + Math.max(x.v ? 4 : 0, h) + '%"></i><small>' + MN[x.i].charAt(0) + '</small></div>'; }).join('') + '</div>'
-				+ '<ol class="dwdc-busy-top">' + top.map(function (x, k) { return '<li><em>' + (k + 1) + '</em>' + MN[x.i] + '<b>' + money(x.v) + '</b></li>'; }).join('') + '</ol></div>';
+			var m = (MY[y].m || []).map(function (v) { return Math.max(0, +v || 0); });
+			var top = m.indexOf(Math.max.apply(null, m));
+			return '<div class="dwdc-hm-row"><b>' + y + '</b>' + m.map(function (v, i) {
+				var t = v / mx, bg = v ? 'rgba(19,166,238,' + (0.12 + t * 0.88).toFixed(2) + ')' : '#F4F6F9';
+				return '<span class="dwdc-hm-c' + (i === top && v ? ' top' : '') + '" style="background:' + bg + ';color:' + (t > 0.5 ? '#fff' : '#0B203D') + '" title="' + MN[i] + ' ' + y + ': ' + money(v) + '">' + k(v) + '</span>';
+			}).join('') + '<span class="dwdc-hm-best">' + (m[top] ? MN[top] + ' · ' + money(m[top]) : '—') + '</span></div>';
 		}).join('');
-		return (rows || emptyRow('No dated payments yet.')) + '<p class="dwdc-mutp sm">Money received each month, after Upwork fees. The top 3 months each year are highlighted.</p>';
+		return (rows ? '<div class="dwdc-hm">' + head + rows + '</div>' : emptyRow('No dated payments yet.')) + '<p class="dwdc-mutp sm">Money received each month, after Upwork fees. Darker means more money, on the same scale for every year. Each year’s best month is outlined.</p>';
 	}
 	function connectsCard(MY) {
 		var C = S.costs || {}, years = Object.keys(C).sort().reverse();
