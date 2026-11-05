@@ -304,6 +304,11 @@
 		return rows ? '<div class="dwdc-bm">' + head + rows + '</div>' : emptyRow('No dated payments yet.');
 	}
 
+	function connSummary() {
+		var C = S.costs || {}, t = 0, q = 0;
+		Object.keys(C).forEach(function (y) { t += C[y].connects; q += C[y].qty; });
+		return t ? money(t) + ' spent · ' + q.toLocaleString() + ' Connects' : '';
+	}
 	function connectsCard(MY) {
 		var C = S.costs || {}, years = Object.keys(C).sort().reverse();
 		if (!years.length) { return emptyRow('No Connects spending imported yet.'); }
@@ -343,7 +348,7 @@
 			+ kpi('Average per year', money(spent / pick.length), pick.length + ' year' + (pick.length === 1 ? '' : 's'))
 			+ kpi('Membership fees', money(mem), 'Freelancer Plus')
 			+ kpi('Earned per $1 on Connects', spent ? '$' + (earned / spent).toFixed(0) : '—', money(earned) + ' from Upwork')
-			+ '</div>' + bars
+			+ '</div>'
 			+ '<div class="dwdc-ctbl"><table><thead><tr><th>Year</th><th>Connects spend</th><th>Connects</th><th>Avg / month</th><th>Biggest month</th><th>Membership</th><th>Upwork earned</th><th>Per $1</th></tr></thead><tbody>' + rows + '</tbody></table></div>'
 			+ '<p class="dwdc-mutp sm">From your Upwork transaction history. Upwork earned is after fees. "Per $1" is how much Upwork paid you for every dollar spent on Connects that year.</p>';
 	}
@@ -393,7 +398,7 @@
 	}
 	function runRefresh() {
 		S.refreshRes = { busy: true }; render(); toast('Updating finances… this can take up to a minute');
-		api('/refresh', 'POST', {}).then(function (r) { S.refreshRes = r; if (r.upwork && r.upwork.unmatched && r.upwork.unmatched.length) { S.upRes = r.upwork; } return Promise.all([reload(), api('/sync').then(function (x) { S.sync = x; })]); })
+		api('/refresh', 'POST', {}).then(function (r) { S.refreshRes = r; if (r.upwork && r.upwork.unmatched && r.upwork.unmatched.length) { S.upRes = r.upwork; S.syncOpen = true; } return Promise.all([reload(), api('/sync').then(function (x) { S.sync = x; })]); })
 			.then(function () { render(); toast('Finances updated'); })
 			.catch(function (e) { S.refreshRes = { error: e.message }; render(); });
 	}
@@ -454,13 +459,13 @@
 				+ '<ul class="dwdc-chans">' + chan.map(function (x) { return '<li><i class="' + x[2] + '"></i><span>' + x[0] + '</span><b>' + money(x[1]) + '</b><em>' + pct(x[1]) + '%</em></li>'; }).join('') + '</ul>')
 			+ mcard('By year', (ylist.length ? '<ul class="dwdc-years2">' + ylist.map(function (y) { var o = MY[y], t = ytot(y); return '<li><span>' + y + '</span><div>' + [['Upwork', 'upw'], ['Stripe', 'str'], ['PayPal', 'ppl'], ['Other', 'oth']].map(function (x) { return o[x[0]] > 0 ? '<i class="' + x[1] + '" style="width:' + Math.max(1, Math.round(o[x[0]] / ymax * 100)) + '%" title="' + x[0] + ' ' + money(o[x[0]]) + '"></i>' : ''; }).join('') + '</div><b>' + money(t) + '</b></li>'; }).join('') + '</ul>' : emptyRow('No dated payments yet.'))
 				+ '<div class="dwdc-ylegend"><span><i class="upw"></i>Upwork</span><span><i class="str"></i>Stripe</span><span><i class="ppl"></i>PayPal</span><span><i class="oth"></i>Zelle & other</span></div>'
-				+ '<p class="dwdc-mutp sm">Hover a bar to see each amount. Every payment on the day it was paid: Upwork (from your transaction history, after Upwork’s fees), Stripe, PayPal and payments you log. Refunds come off the year they happened.</p>')
-			+ mcard('Busiest months <small class="dwdc-bm-sub">Money received after Upwork fees · same scale every year</small>', busyMonths(MY, ylist), 'wide bm')
-			+ mcard('Upwork Connects', connectsCard(MY), 'wide')
+				)
+			+ mcard('Busiest months <small class="dwdc-bm-sub">Click any month to see every payment · after Upwork fees</small>', busyMonths(MY, ylist), 'wide bm')
+			+ '<section class="dwdc-card pad dwdc-mcard wide dwdc-collapse' + (S.connOpen ? ' open' : '') + '"><button class="dwdc-cardh dwdc-colh" data-connopen aria-expanded="' + !!S.connOpen + '"><h2>Upwork Connects</h2><span class="dwdc-colsum">' + connSummary() + '</span>' + ic('right', 16) + '</button>' + (S.connOpen ? connectsCard(MY) : '') + '</section>'
 			+ mcard('Top projects', rowsP || emptyRow('No payments yet.'))
 			+ mcard('Top clients', rowsC || emptyRow('No payments yet.'))
 			+ mcard('Repeat clients <span class="dwdc-cnt">' + repeat.length + '</span>', rowsR || emptyRow('No repeat clients yet.'))
-			+ mcard('Connections <small class="dwdc-conn-sub">Keep Money Stats up to date automatically</small>', connCard(), 'wide')
+			+ '<section class="dwdc-card pad dwdc-mcard wide dwdc-collapse' + (S.syncOpen ? ' open' : '') + '"><button class="dwdc-cardh dwdc-colh" data-syncopen aria-expanded="' + !!S.syncOpen + '"><h2>Connections</h2><span class="dwdc-colsum">Upwork files, Stripe &amp; PayPal sync, Update Finances</span>' + ic('right', 16) + '</button>' + (S.syncOpen ? connCard() : '') + '</section>'
 			+ '</div>';
 	}
 	/* ---------- Get Reviews: pick past clients and email them a Google review request ---------- */
@@ -1531,6 +1536,8 @@
 		}
 		if (t.closest('[data-askai]')) { chatOpen(); return; }
 		if ((el = t.closest('[data-trendsnow]'))) { el.textContent = 'Checking…'; api('/trends', 'POST', {}).then(function (x) { S.trends = x; render(); toast('Trends updated'); }).catch(fail); return; }
+		if (t.closest('[data-syncopen]')) { S.syncOpen = !S.syncOpen; render(); return; }
+		if (t.closest('[data-connopen]')) { S.connOpen = !S.connOpen; render(); return; }
 		if ((el = t.closest('[data-cyear]'))) { S.cYear = el.getAttribute('data-cyear'); render(); return; }
 		if ((el = t.closest('[data-revpage]'))) { S.revPage = +el.getAttribute('data-revpage'); render(); window.scrollTo(0, 0); return; }
 		if (t.closest('[data-revclear]')) { S.revSel = {}; render(); return; }

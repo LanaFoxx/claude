@@ -929,3 +929,11 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 /* never show browser autofill colors in the search box */
 .dwdc .dwdc-ssearch input:-webkit-autofill, .dwdc .dwdc-ssearch input:-webkit-autofill:hover, .dwdc .dwdc-ssearch input:-webkit-autofill:focus { -webkit-box-shadow: 0 0 0 40px #fff inset !important; -webkit-text-fill-color: #0b1f3f !important; transition: background-color 9999s ease-in-out 0s; }
 .dwdc .dwdc-ssearch input[readonly] { cursor: text; }
+/* collapsible Upwork Connects box */
+.dwdc .dwdc-colh { width: 100%; border: 0; background: none; font: inherit; text-align: left; cursor: pointer; color: inherit; }
+.dwdc-collapse:not(.open) > .dwdc-colh { margin-bottom: -20px; border-bottom: 0; }
+.dwdc-colh h2 { flex: none; }
+.dwdc-colsum { margin-left: auto; font-size: 13px; font-weight: 600; color: var(--sec); }
+.dwdc-colh .dwdc-ic { flex: none; color: var(--sec); transition: transform .15s ease; }
+.dwdc-collapse.open .dwdc-colh .dwdc-ic { transform: rotate(90deg); }
+.dwdc-colh:hover h2 { color: var(--deep); }
