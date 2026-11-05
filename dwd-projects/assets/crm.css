@@ -426,3 +426,5 @@ select.dwdc-sel[class*=pm-] option { background: #fff; color: #0B203D; font-weig
 .dwdc-subl { display: flex; align-items: center; gap: 6px; max-width: 100%; min-width: 0; }
 .dwdc-subl .dwdc-mkpill { margin-left: 0; flex: none; }
 .dwdc-grid.row .dwdc-pname { max-width: 100%; }
+.g-projects { grid-template-columns: minmax(250px, 2fr) minmax(170px, 1.2fr) 90px 90px 80px 130px minmax(130px, 1.1fr); }
+.dwdc-grid.row .dwdc-pname { white-space: normal; overflow: visible; }
