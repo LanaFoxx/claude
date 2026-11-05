@@ -136,7 +136,7 @@
 		return '<span class="dwdc-nm"><span>' + (k ? '<a class="dwdc-clink" href="#cl/' + k.id + '">' + esc(k.name) + '</a>' : '<b class="nm2">' + esc(c.person || '—') + '</b>') + (em ? '<small>' + esc(em) + '</small>' : '') + '</span></span>';
 	}
 	function reload() {
-		return api('').then(function (r) { S.contacts = r.contacts.filter(Boolean); S.tasks = r.tasks.filter(Boolean); S.clients = (r.clients || []).filter(Boolean); S.money = r.money || {}; });
+		return api('').then(function (r) { S.contacts = r.contacts.filter(Boolean); S.tasks = r.tasks.filter(Boolean); S.clients = (r.clients || []).filter(Boolean); S.money = r.money || {}; S.costs = r.costs || {}; });
 	}
 
 	/* ---------- routing ---------- */
@@ -274,6 +274,49 @@
 		}).join('');
 		return (rows || emptyRow('No dated payments yet.')) + '<p class="dwdc-mutp sm">Money received each month, after Upwork fees. The top 3 months each year are highlighted.</p>';
 	}
+	function connectsCard(MY) {
+		var C = S.costs || {}, years = Object.keys(C).sort().reverse();
+		if (!years.length) { return emptyRow('No Connects spending imported yet.'); }
+		var MN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+		var sel = S.cYear && C[S.cYear] ? S.cYear : 'all';
+		var nowY = DWDC.today.slice(0, 4), nowM = +DWDC.today.slice(5, 7);
+		var monthsIn = function (y) { // months that count toward the average: from the first purchase month (first year) to now (this year)
+			var first = years[years.length - 1], m = C[y].m, start = 0, end = 11;
+			if (y === first) { start = m.findIndex(function (v) { return v > 0; }); if (start < 0) { start = 0; } }
+			if (y === nowY) { end = nowM - 1; }
+			return Math.max(1, end - start + 1);
+		};
+		var pick = sel === 'all' ? years : [sel];
+		var spent = 0, qty = 0, buys = 0, mem = 0, months = 0, earned = 0;
+		pick.forEach(function (y) { var o = C[y]; spent += o.connects; qty += o.qty; buys += o.buys; mem += o.membership; months += monthsIn(y); earned += MY[y] ? (+MY[y].Upwork || 0) : 0; });
+		var kpi = function (l, v, sub) { return '<div class="dwdc-ckpi"><small>' + l + '</small><strong>' + v + '</strong>' + (sub ? '<span>' + sub + '</span>' : '') + '</div>'; };
+		var chips = '<div class="dwdc-cchips"><button class="dwdc-fchip' + (sel === 'all' ? ' on' : '') + '" data-cyear="all">All years</button>' + years.map(function (y) { return '<button class="dwdc-fchip' + (sel === y ? ' on' : '') + '" data-cyear="' + y + '">' + y + '</button>'; }).join('') + '</div>';
+		// bars: by month for one year, by year for all years
+		var bars;
+		if (sel === 'all') {
+			var vals = years.slice().reverse().map(function (y) { return { l: y, v: C[y].connects, t: C[y].qty.toLocaleString() + ' Connects' }; });
+			var mx = Math.max.apply(null, vals.map(function (x) { return x.v; }).concat([1]));
+			bars = '<div class="dwdc-cbars yrs">' + vals.map(function (x) { return '<div class="dwdc-busy-col" title="' + x.l + ': ' + money(x.v) + ' · ' + x.t + '"><b>' + money(x.v) + '</b><i style="height:' + Math.max(4, Math.round(x.v / mx * 100)) + '%"></i><small>' + x.l + '</small></div>'; }).join('') + '</div>';
+		} else {
+			var o = C[sel], mx2 = Math.max.apply(null, o.m.concat([1])), top = o.m.indexOf(Math.max.apply(null, o.m));
+			bars = '<div class="dwdc-cbars">' + o.m.map(function (v, i) { return '<div class="dwdc-busy-col' + (i === top && v ? ' top' : '') + '" title="' + MN[i] + ' ' + sel + ': ' + money(v) + ' · ' + (o.mq[i] || 0).toLocaleString() + ' Connects"><b>' + (v ? money(v) : '') + '</b><i style="height:' + (v ? Math.max(4, Math.round(v / mx2 * 100)) : 0) + '%"></i><small>' + MN[i] + '</small></div>'; }).join('') + '</div>';
+		}
+		var rows = years.map(function (y) {
+			var o = C[y], up = MY[y] ? (+MY[y].Upwork || 0) : 0, mi = monthsIn(y), tm = o.m.indexOf(Math.max.apply(null, o.m));
+			return '<tr><td><b>' + y + '</b></td><td>' + money(o.connects) + '</td><td>' + o.qty.toLocaleString() + '</td><td>' + money(o.connects / mi) + '</td><td>' + (o.m[tm] ? MN[tm] + ' · ' + money(o.m[tm]) : '—') + '</td><td>' + (o.membership ? money(o.membership) : '—') + '</td><td>' + money(up) + '</td><td class="g">' + (o.connects ? '$' + (up / o.connects).toFixed(0) : '—') + '</td></tr>';
+		}).join('');
+		return chips
+			+ '<div class="dwdc-ckpis">'
+			+ kpi('Spent on Connects', money(spent), buys + ' purchases')
+			+ kpi('Connects bought', qty.toLocaleString(), qty ? '$' + (spent / qty).toFixed(2) + ' each' : '')
+			+ kpi('Average per month', money(spent / Math.max(1, months)), months + ' month' + (months === 1 ? '' : 's'))
+			+ kpi('Average per year', money(spent / pick.length), pick.length + ' year' + (pick.length === 1 ? '' : 's'))
+			+ kpi('Membership fees', money(mem), 'Freelancer Plus')
+			+ kpi('Earned per $1 on Connects', spent ? '$' + (earned / spent).toFixed(0) : '—', money(earned) + ' from Upwork')
+			+ '</div>' + bars
+			+ '<div class="dwdc-ctbl"><table><thead><tr><th>Year</th><th>Connects spend</th><th>Connects</th><th>Avg / month</th><th>Biggest month</th><th>Membership</th><th>Upwork earned</th><th>Per $1</th></tr></thead><tbody>' + rows + '</tbody></table></div>'
+			+ '<p class="dwdc-mutp sm">From your Upwork transaction history. Upwork earned is after fees. "Per $1" is how much Upwork paid you for every dollar spent on Connects that year.</p>';
+	}
 	function moneyView() {
 		var projs = S.contacts.filter(function (c) { return ['active', 'hold', 'limbo', 'complete'].indexOf(c.list) > -1; });
 		var sum = function (f) { return projs.reduce(function (s, c) { return s + num(c[f]); }, 0); };
@@ -321,6 +364,7 @@
 			+ mcard('By year', (ylist.length ? '<ul class="dwdc-years2">' + ylist.map(function (y) { var o = MY[y], t = ytot(y); return '<li><span>' + y + '</span><div>' + [['Stripe', 'str'], ['PayPal', 'ppl'], ['Upwork', 'upw'], ['Other', 'oth']].map(function (x) { return o[x[0]] ? '<i class="' + x[1] + '" style="width:' + Math.max(1, Math.round(o[x[0]] / ymax * 100)) + '%" title="' + x[0] + ' ' + money(o[x[0]]) + '"></i>' : ''; }).join('') + '</div><b>' + money(t) + '</b></li>'; }).join('') + '</ul>' : emptyRow('No dated payments yet.'))
 				+ '<p class="dwdc-mutp sm">Every payment on the day it was paid: Upwork (from your transaction history, after Upwork’s fees), Stripe, PayPal and payments you log. Refunds come off the year they happened.</p>')
 			+ mcard('Busiest months', busyMonths(MY, ylist), 'wide')
+			+ mcard('Upwork Connects', connectsCard(MY), 'wide')
 			+ mcard('How clients found you', '<ul class="dwdc-chans src">' + slist.map(function (s) { return '<li><span>' + esc(s) + '</span><em>' + src[s].n + ' projects</em><b>' + money(src[s].v) + '</b></li>'; }).join('') + '</ul>')
 			+ mcard('Top projects', rowsP || emptyRow('No payments yet.'))
 			+ mcard('Top clients', rowsC || emptyRow('No payments yet.'))
@@ -1276,6 +1320,7 @@
 			}
 			return;
 		}
+		if ((el = t.closest('[data-cyear]'))) { S.cYear = el.getAttribute('data-cyear'); render(); return; }
 		if ((el = t.closest('[data-revpage]'))) { S.revPage = +el.getAttribute('data-revpage'); render(); window.scrollTo(0, 0); return; }
 		if (t.closest('[data-revclear]')) { S.revSel = {}; render(); return; }
 		if ((el = t.closest('[data-revsend]'))) { sendReviews(el); return; }
@@ -1473,7 +1518,7 @@
 	/* ---------- start ---------- */
 	document.body.classList.add('dwdc-app-on');
 	api('').then(function (r) {
-		S.contacts = r.contacts.filter(Boolean); S.tasks = r.tasks.filter(Boolean); S.clients = (r.clients || []).filter(Boolean); S.money = r.money || {};
+		S.contacts = r.contacts.filter(Boolean); S.tasks = r.tasks.filter(Boolean); S.clients = (r.clients || []).filter(Boolean); S.money = r.money || {}; S.costs = r.costs || {};
 		var m = /[?&]contact=(\d+)/.exec(location.search), em = /[?&]email=([^&]+)/.exec(location.search);
 		var who = m ? contact(+m[1]) : em ? S.contacts.find(function (c) { return c.email && c.email.toLowerCase() === decodeURIComponent(em[1]).toLowerCase(); }) : null;
 		if (who) { location.hash = 'client/' + who.id; }

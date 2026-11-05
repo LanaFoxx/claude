@@ -586,9 +586,28 @@ add_action( 'rest_api_init', function () {
 		$contacts = array_map( 'dwdc_contact', get_posts( array( 'post_type' => DWDC_CONTACT, 'post_status' => 'private', 'posts_per_page' => -1, 'orderby' => 'modified', 'order' => 'DESC' ) ) );
 		$tasks    = array_map( 'dwdc_task', get_posts( array( 'post_type' => DWDC_TASK, 'post_status' => 'private', 'posts_per_page' => -1, 'orderby' => array( 'menu_order' => 'ASC', 'date' => 'DESC' ) ) ) );
 		$clients  = array_map( 'dwdc_client', get_posts( array( 'post_type' => DWDC_CLIENT, 'post_status' => 'private', 'posts_per_page' => -1, 'orderby' => 'title', 'order' => 'ASC' ) ) );
-		return array( 'lists' => dwdc_lists(), 'contacts' => $contacts, 'tasks' => $tasks, 'clients' => $clients, 'money' => dwdc_money_by_year() );
+		return array( 'lists' => dwdc_lists(), 'contacts' => $contacts, 'tasks' => $tasks, 'clients' => $clients, 'money' => dwdc_money_by_year(), 'costs' => dwdc_costs_by_year() );
 	} ) );
 
+	// Upwork costs (Connects and membership), uploaded from the transaction history.
+	register_rest_route( $ns, '/crm/costs', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
+		$rows = array();
+		foreach ( (array) $r->get_param( 'rows' ) as $x ) {
+			$x = (array) $x;
+			if ( empty( $x['date'] ) ) {
+				continue;
+			}
+			$rows[] = array(
+				'date'   => sanitize_text_field( $x['date'] ),
+				'amount' => round( (float) ( $x['amount'] ?? 0 ), 2 ),
+				'type'   => 'membership' === ( $x['type'] ?? '' ) ? 'membership' : 'connects',
+				'qty'    => absint( $x['qty'] ?? 0 ),
+				'ref'    => sanitize_text_field( $x['ref'] ?? '' ),
+			);
+		}
+		update_option( 'dwdc_upwork_costs', $rows, false );
+		return array( 'saved' => count( $rows ) );
+	} ) );
 	// Preview of the review-request email, exactly as clients see it.
 	register_rest_route( $ns, '/crm/reviews/preview', array( 'methods' => 'GET', 'permission_callback' => $can, 'callback' => function () {
 		header( 'Content-Type: text/html; charset=utf-8' );
@@ -1146,6 +1165,33 @@ function dwdc_send_review_request( $cid, $email ) {
 	$first = $first && ! preg_match( '/[.@]/', $first ) ? $first : 'there';
 	$html  = dwdc_review_html( $first );
 	return wp_mail( $email, 'A quick favor: would you leave me a review?', $html, array( 'Content-Type: text/html; charset=UTF-8', 'Reply-To: Michael Tarr <mike@dreamwebdigital.com>' ) );
+}
+
+/** Upwork Connects and membership spending per year and month. */
+function dwdc_costs_by_year() {
+	$out = array();
+	foreach ( (array) get_option( 'dwdc_upwork_costs', array() ) as $x ) {
+		$y  = substr( (string) ( $x['date'] ?? '' ), 0, 4 );
+		$mo = (int) substr( (string) ( $x['date'] ?? '' ), 5, 2 );
+		if ( ! preg_match( '/^\d{4}$/', $y ) || $mo < 1 || $mo > 12 ) {
+			continue;
+		}
+		if ( ! isset( $out[ $y ] ) ) {
+			$out[ $y ] = array( 'connects' => 0, 'qty' => 0, 'buys' => 0, 'membership' => 0, 'm' => array_fill( 0, 12, 0 ), 'mq' => array_fill( 0, 12, 0 ) );
+		}
+		$a = (float) ( $x['amount'] ?? 0 );
+		if ( 'membership' === ( $x['type'] ?? '' ) ) {
+			$out[ $y ]['membership'] += $a;
+		} else {
+			$out[ $y ]['connects']        += $a;
+			$out[ $y ]['qty']             += (int) ( $x['qty'] ?? 0 );
+			$out[ $y ]['buys']            += 1;
+			$out[ $y ]['m'][ $mo - 1 ]    += $a;
+			$out[ $y ]['mq'][ $mo - 1 ]   += (int) ( $x['qty'] ?? 0 );
+		}
+	}
+	krsort( $out );
+	return $out;
 }
 
 function dwdc_page() {

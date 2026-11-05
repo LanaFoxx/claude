@@ -673,3 +673,24 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 .dwdc-busy-top li:first-child em { background: #FF6F4F; border-color: #FF6F4F; color: #fff; }
 .dwdc-busy-top li b { margin-left: auto; }
 @media (max-width: 1100px) { .dwdc-busy { grid-template-columns: 1fr; gap: 12px; } }
+/* Upwork Connects */
+.dwdc-cchips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.dwdc-ckpis { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; margin-bottom: 18px; }
+.dwdc-ckpi { background: var(--hover); border: 1px solid var(--div); border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.dwdc-ckpi small { font-size: 10.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--sec); }
+.dwdc-ckpi strong { font-size: 22px; font-weight: 800; color: var(--navy); line-height: 1.2; }
+.dwdc-ckpi span { font-size: 12px; color: var(--sec); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dwdc-cbars { display: grid; grid-template-columns: repeat(12, 1fr); gap: 8px; height: 170px; align-items: end; margin: 6px 0 18px; }
+.dwdc-cbars.yrs { grid-template-columns: repeat(auto-fit, minmax(60px, 1fr)); max-width: 640px; }
+.dwdc-cbars .dwdc-busy-col b { font-size: 10.5px; font-weight: 700; color: var(--sec); white-space: nowrap; }
+.dwdc-cbars .dwdc-busy-col i { max-width: 48px; background: #14A800; opacity: .55; }
+.dwdc-cbars .dwdc-busy-col.top i { opacity: 1; background: #14A800; }
+.dwdc-cbars.yrs .dwdc-busy-col i { opacity: .85; }
+.dwdc-ctbl { overflow-x: auto; }
+.dwdc-ctbl table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.dwdc-ctbl th { text-align: left; font-size: 10.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--sec); padding: 10px 12px; border-bottom: 1px solid var(--div); white-space: nowrap; }
+.dwdc-ctbl td { padding: 11px 12px; border-bottom: 1px solid var(--div); color: var(--navy); white-space: nowrap; }
+.dwdc-ctbl tr:last-child td { border-bottom: 0; }
+.dwdc-ctbl td.g { color: #14A800; font-weight: 700; }
+@media (max-width: 1100px) { .dwdc-ckpis { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 600px) { .dwdc-ckpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } .dwdc-cbars { gap: 3px; } .dwdc-cbars .dwdc-busy-col b { display: none; } }
