@@ -101,7 +101,7 @@ function dwdp_ajax_contact() {
 	if ( preg_match_all( '#https?://#i', $message ) > 2 ) {
 		wp_send_json_error( 'Please remove the links and try again.' );
 	}
-	$body = "Name: {$name}\nEmail: {$email}\n\n{$message}\n\n— Sent from the form on " . home_url( '/' );
+	$body = "Name: {$name}\nEmail: {$email}\nMessage: {$message}\n\n— Sent from the form on " . home_url( '/' );
 	$sent = wp_mail( DWDP_CONTACT_TO, 'Website inquiry from ' . $name, $body, array( 'Reply-To: ' . $name . ' <' . $email . '>' ) );
 	$sent ? wp_send_json_success() : wp_send_json_error( 'Sorry, that didn’t send. Please call (772) 210-1728.' );
 }
