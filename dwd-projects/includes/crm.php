@@ -208,6 +208,7 @@ function dwdc_client( $post ) {
 	foreach ( array( 'email', 'phone', 'company', 'notes' ) as $f ) {
 		$c[ $f ] = (string) get_post_meta( $p->ID, '_dwdcl_' . $f, true );
 	}
+	$c['review_sent'] = (string) get_post_meta( $p->ID, '_dwdcl_review_sent', true );
 	return $c;
 }
 function dwdc_save_client( $id, $d ) {
@@ -586,6 +587,45 @@ add_action( 'rest_api_init', function () {
 		$tasks    = array_map( 'dwdc_task', get_posts( array( 'post_type' => DWDC_TASK, 'post_status' => 'private', 'posts_per_page' => -1, 'orderby' => array( 'menu_order' => 'ASC', 'date' => 'DESC' ) ) ) );
 		$clients  = array_map( 'dwdc_client', get_posts( array( 'post_type' => DWDC_CLIENT, 'post_status' => 'private', 'posts_per_page' => -1, 'orderby' => 'title', 'order' => 'ASC' ) ) );
 		return array( 'lists' => dwdc_lists(), 'contacts' => $contacts, 'tasks' => $tasks, 'clients' => $clients, 'money' => dwdc_money_by_year() );
+	} ) );
+
+	// Preview of the review-request email, exactly as clients see it.
+	register_rest_route( $ns, '/crm/reviews/preview', array( 'methods' => 'GET', 'permission_callback' => $can, 'callback' => function () {
+		header( 'Content-Type: text/html; charset=utf-8' );
+		echo dwdc_review_html( 'Sarah' ); // phpcs:ignore WordPress.Security.EscapeOutput
+		exit;
+	} ) );
+	// Review requests: a branded email asking past clients for a Google review.
+	register_rest_route( $ns, '/crm/reviews', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
+		$ids  = array_slice( array_filter( array_map( 'absint', (array) $r->get_param( 'ids' ) ) ), 0, 20 );
+		$sent = array();
+		$fail = array();
+		foreach ( $ids as $cid ) {
+			if ( DWDC_CLIENT !== get_post_type( $cid ) ) {
+				continue;
+			}
+			$email = (string) get_post_meta( $cid, '_dwdcl_email', true );
+			if ( ! is_email( $email ) ) {
+				foreach ( get_posts( array( 'post_type' => DWDC_CONTACT, 'post_status' => 'private', 'posts_per_page' => -1, 'fields' => 'ids', 'meta_key' => '_dwdc_client', 'meta_value' => $cid ) ) as $pid ) { // phpcs:ignore
+					$e = (string) get_post_meta( $pid, '_dwdc_email', true );
+					if ( is_email( $e ) ) {
+						$email = $e;
+						break;
+					}
+				}
+			}
+			if ( ! is_email( $email ) ) {
+				$fail[] = array( 'id' => $cid, 'why' => 'no email' );
+				continue;
+			}
+			if ( dwdc_send_review_request( $cid, $email ) ) {
+				update_post_meta( $cid, '_dwdcl_review_sent', current_time( 'Y-m-d' ) );
+				$sent[] = $cid;
+			} else {
+				$fail[] = array( 'id' => $cid, 'why' => 'did not send' );
+			}
+		}
+		return array( 'sent' => $sent, 'failed' => $fail );
 	} ) );
 
 	register_rest_route( $ns, '/crm/contact/(?P<id>\d+)', array(
@@ -997,6 +1037,7 @@ add_action( 'admin_menu', function () {
 		'hosting'           => 'Hosting',
 		'leads'             => 'Leads',
 		'clients'           => 'All Clients',
+		'reviews'           => 'Get Reviews',
 	) as $route => $label ) {
 		$submenu['client-desk'][] = array( $label, 'manage_options', 'admin.php?page=client-desk#' . $route, $label ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 	}
@@ -1068,6 +1109,38 @@ function dwdc_money_by_year() {
 	}
 	krsort( $out );
 	return $out;
+}
+
+/** The Google review link clients are sent to. */
+define( 'DWDC_REVIEW_URL', 'https://g.page/r/CTqmN38PVOg7EBM/review' );
+
+function dwdc_review_html( $first ) {
+	$html = dwdp_email_html( array(
+		'eyebrow' => 'A quick favor',
+		'title'   => 'Would you leave me a review?',
+		'intro'   => 'Hi ' . esc_html( $first ) . ',<br><br>'
+			. 'Thank you again for trusting me with your website. It was a pleasure working with you.<br><br>'
+			. 'I have a small favor to ask. Would you take a minute to leave me a review on Google? Building websites is my full-time career, and reviews help me more than anything else. Every new review builds trust and gives the next business owner the confidence to hire me.<br><br>'
+			. 'If you were happy with your experience, a <strong>5-star review</strong> with a few kind words about working together would mean the world to me. It only takes a minute.',
+		'buttons' => array( array( 'Click here to leave a review', DWDC_REVIEW_URL ) ),
+		'outro'   => 'If you’ve already left a review, thank you so much, and please disregard this email.<br><br>With gratitude,<br>Michael Tarr<br>Dream Web Digital',
+		'footer'  => 'Dream Web Digital ·',
+	) );
+	$html = str_replace( 'padding:14px 26px;border-radius:8px;font-size:13px', 'padding:20px 44px;border-radius:10px;font-size:16px', $html ); // a bigger, bolder button
+	return $html;
+}
+
+/**
+ * Send one branded "please leave a review" email.
+ *
+ * @param int    $cid   Client ID.
+ * @param string $email Where to send it.
+ */
+function dwdc_send_review_request( $cid, $email ) {
+	$first = trim( strtok( (string) get_post_field( 'post_title', $cid ), ' ' ) );
+	$first = $first && ! preg_match( '/[.@]/', $first ) ? $first : 'there';
+	$html  = dwdc_review_html( $first );
+	return wp_mail( $email, 'A quick favor: would you leave me a review?', $html, array( 'Content-Type: text/html; charset=UTF-8', 'Reply-To: Michael Tarr <mike@dreamwebdigital.com>' ) );
 }
 
 function dwdc_page() {

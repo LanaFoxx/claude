@@ -143,7 +143,7 @@
 	var TITLES = {
 		home: ['', 'Today at', 'Dream Web'], leads: ['Clients', 'All', 'Leads'], onboarding: ['Clients', 'Onboarding', 'Forms'],
 		todos: ['Everything open', 'To-Do', 'List'], hosting: ['Clients', 'Hosting', 'Clients'], archive: ['More', 'Archive', ''],
-		search: ['Search', 'Search', 'Results'], money: ['Money', 'Money', 'Breakdown'], clients: ['Clients', 'All', 'Clients'], projects: ['Projects', 'All', 'Projects']
+		search: ['Search', 'Search', 'Results'], money: ['Money', 'Money', 'Breakdown'], reviews: ['Clients', 'Get', 'Reviews'], clients: ['Clients', 'All', 'Clients'], projects: ['Projects', 'All', 'Projects']
 	};
 	var OLD = { dashboard: 'home', jobs: 'projects/active', completed: 'projects/complete', forms: 'leads', todos: 'home' };
 	function route() {
@@ -201,7 +201,7 @@
 			+ nav('money', 'dollar', 'Money')
 			+ '<div class="dwdc-navh"><i class="b2"></i>Clients</div>'
 			+ nav('onboarding', 'filter', 'Onboarding', onboardList().length) + nav('hosting', 'server', 'Hosting', hosting().length)
-			+ nav('leads', 'mail', 'Leads', leadList().length) + nav('clients', 'users', 'All Clients', S.clients.length)
+			+ nav('leads', 'mail', 'Leads', leadList().length) + nav('clients', 'users', 'All Clients', S.clients.length) + nav('reviews', 'mail', 'Get Reviews')
 			+ '<div class="dwdc-navh"><i class="b3"></i>More</div>'
 			+ '<a class="dwdc-nav" href="' + esc(DWDC.wp) + '">' + ic('wp') + '<span>WordPress Admin</span></a>'
 			+ '</nav><a class="dwdc-me" href="' + esc(DWDC.logout) + '" title="Sign out"><span class="dwdc-me-av">MT</span><span><strong>' + esc(DWDC.user || 'Michael Tarr') + '</strong><small>Owner · Sign out</small></span>' + ic('logout', 17) + '</a></aside>';
@@ -250,7 +250,7 @@
 			t = ['Client', kw[0], kw.slice(1).join(' ')];
 			body = personView(r.id);
 		} else {
-			body = ({ home: home, clients: clientsView, projects: projectsView, leads: leadsList, onboarding: onboardView, todos: todosView, hosting: hostingView, money: moneyView, archive: archiveView, search: searchView }[r.view] || home)();
+			body = ({ home: home, clients: clientsView, projects: projectsView, leads: leadsList, onboarding: onboardView, todos: todosView, hosting: hostingView, money: moneyView, reviews: reviewsView, archive: archiveView, search: searchView }[r.view] || home)();
 		}
 		app.innerHTML = sidebar(r) + '<div class="dwdc-shade-m" data-menu></div><main class="dwdc-main">' + appBanner() + top(r, t) + '<div class="dwdc-screen' + (anim ? ' in' : '') + '">' + body + '</div></main>' + modal();
 		S.prev = r.view + r.arg;
@@ -311,6 +311,47 @@
 			+ mcard('Top clients', rowsC || emptyRow('No payments yet.'))
 			+ mcard('Repeat clients <span class="dwdc-cnt">' + repeat.length + '</span>', rowsR || emptyRow('No repeat clients yet.'))
 			+ '</div>';
+	}
+	/* ---------- Get Reviews: pick past clients and email them a Google review request ---------- */
+	var REV_PER = 25;
+	function revEmail(k) { if (k.email) { return k.email; } var p = projectsOf(k.id).filter(function (c) { return c.email; })[0]; return p ? p.email : ''; }
+	function revBiz(k) { if (k.company) { return k.company; } var p = projectsOf(k.id).filter(function (c) { return c.name !== k.name; })[0]; return p ? p.name : ''; }
+	function reviewsView() {
+		S.revSel = S.revSel || {};
+		var list = S.clients.slice().sort(function (a, b) { return a.name.localeCompare(b.name); });
+		var pages = Math.max(1, Math.ceil(list.length / REV_PER)), pg = Math.min(Math.max(1, S.revPage || 1), pages);
+		var rows = list.slice((pg - 1) * REV_PER, pg * REV_PER);
+		var nSel = Object.keys(S.revSel).filter(function (k) { return S.revSel[k]; }).length;
+		var pageIds = rows.filter(function (k) { return revEmail(k); }).map(function (k) { return k.id; });
+		var allOn = pageIds.length && pageIds.every(function (id) { return S.revSel[id]; });
+		var pager = '';
+		if (pages > 1) {
+			pager = '<nav class="dwdc-pager">' + (pg > 1 ? '<button data-revpage="' + (pg - 1) + '">‹ Prev</button>' : '<span></span>');
+			for (var i = 1; i <= pages; i++) { pager += '<button class="' + (i === pg ? 'on' : '') + '" data-revpage="' + i + '">' + i + '</button>'; }
+			pager += (pg < pages ? '<button data-revpage="' + (pg + 1) + '">Next ›</button>' : '') + '</nav>';
+		}
+		return '<div class="dwdc-revbar"><div><b>' + nSel + '</b> selected' + (nSel ? ' <button class="dwdc-lnk sm2" data-revclear>Clear</button>' : '') + '<small>Check the clients you want to ask, on any page. Your picks stay checked as you move between pages.</small></div>'
+			+ '<a class="dwdc-lnk dwdc-revprev" href="' + esc(DWDC.api + '/reviews/preview?_wpnonce=' + DWDC.nonce) + '" target="_blank" rel="noopener">Preview email</a><button class="dwdc-btn coral" data-revsend' + (nSel ? '' : ' disabled') + '>' + ic('mail', 15) + 'Send mass review request email' + (nSel ? ' (' + nSel + ')' : '') + '</button></div>'
+			+ '<div class="dwdc-card dwdc-tbl"><div class="dwdc-grid g-rev head"><span>Name</span><span>Business</span><span>Email</span><span class="r"><label class="dwdc-revall"><input type="checkbox" data-revall' + (allOn ? ' checked' : '') + '> Select page</label></span></div>'
+			+ rows.map(function (k) {
+				var em = revEmail(k), on = !!S.revSel[k.id];
+				return '<div class="dwdc-grid g-rev row' + (on ? ' sel' : '') + '"><span><a class="dwdc-clink" href="#cl/' + k.id + '">' + esc(k.name) + '</a></span><span class="sec ell">' + esc(revBiz(k) || '—') + '</span><span class="sec ell">' + esc(em || 'No email on file') + '</span>'
+					+ '<span class="r">' + (em ? '<label class="dwdc-revchk"><input type="checkbox" data-revpick="' + k.id + '"' + (on ? ' checked' : '') + '><span>Email review request</span></label>' : '<em class="mut">Add an email first</em>')
+					+ (k.review_sent ? '<small class="dwdc-revsent">Asked ' + fmt(k.review_sent, true) + '</small>' : '') + '</span></div>';
+			}).join('') + '</div>'
+			+ '<div class="dwdc-revfoot"><span class="mut">Showing ' + ((pg - 1) * REV_PER + 1) + '–' + Math.min(pg * REV_PER, list.length) + ' of ' + list.length + ' clients</span>' + pager + '</div>';
+	}
+	function sendReviews(btn) {
+		var ids = Object.keys(S.revSel).filter(function (k) { return S.revSel[k]; }).map(Number);
+		if (!ids.length) { return; }
+		if (!confirm('Send the review request email to ' + ids.length + ' client' + (ids.length === 1 ? '' : 's') + '?')) { return; }
+		btn.disabled = true; btn.textContent = 'Sending…';
+		var sent = 0, failed = 0, chunks = [];
+		for (var i = 0; i < ids.length; i += 20) { chunks.push(ids.slice(i, i + 20)); }
+		chunks.reduce(function (p, ch) { return p.then(function () { return api('/reviews', 'POST', { ids: ch }).then(function (r) { sent += (r.sent || []).length; failed += (r.failed || []).length; }); }); }, Promise.resolve())
+			.then(function () { S.revSel = {}; return reload(); })
+			.then(function () { render(); toast('Review request sent to ' + sent + ' client' + (sent === 1 ? '' : 's') + (failed ? ' · ' + failed + ' didn’t send' : ''), !!failed); })
+			.catch(function (e) { render(); fail(e); });
 	}
 	/* ---------- shared pieces ---------- */
 	function tile(tone, label, n, sub, href, attrs) {
@@ -1220,6 +1261,9 @@
 			}
 			return;
 		}
+		if ((el = t.closest('[data-revpage]'))) { S.revPage = +el.getAttribute('data-revpage'); render(); window.scrollTo(0, 0); return; }
+		if (t.closest('[data-revclear]')) { S.revSel = {}; render(); return; }
+		if ((el = t.closest('[data-revsend]'))) { sendReviews(el); return; }
 		if (t.closest('[data-appinstall]')) { if (INSTALL) { INSTALL.prompt(); INSTALL.userChoice.then(function () { INSTALL = null; render(); }); } return; }
 		if (t.closest('[data-appinfo]')) { S.modal = { type: 'app', vals: {} }; render(); return; }
 		if (t.closest('[data-appoff]')) { try { localStorage.setItem('dwdcAppOff', '1'); } catch (er) {} render(); return; }
@@ -1316,6 +1360,8 @@
 
 	app.addEventListener('change', function (e) {
 		var t = e.target;
+		if (t.hasAttribute('data-revpick')) { S.revSel = S.revSel || {}; S.revSel[t.getAttribute('data-revpick')] = t.checked; render(); return; }
+		if (t.hasAttribute('data-revall')) { S.revSel = S.revSel || {}; app.querySelectorAll('[data-revpick]').forEach(function (x) { S.revSel[x.getAttribute('data-revpick')] = t.checked; }); render(); return; }
 		if (t.hasAttribute('data-year')) { S.year = t.value; render(); return; }
 		if (t.hasAttribute('data-field')) {
 			var fd = {}; fd[t.getAttribute('data-field')] = t.value;
