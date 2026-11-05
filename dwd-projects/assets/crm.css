@@ -1078,3 +1078,9 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
   .dwdc .dwdc-row2c > .cd-todo { order: 1; }
   .dwdc .dwdc-row2c > .cd-trends { order: 2; }
 }
+/* Phone: filter pills in one row */
+@media (max-width: 768px) {
+  .dwdc .dwdc-chips { flex-wrap: nowrap !important; gap: 6px; }
+  .dwdc .dwdc-chips .dwdc-fchip { flex: 1 1 auto; justify-content: center; padding: 0 8px; gap: 4px; font-size: 13px; min-width: 0; white-space: nowrap; }
+  .dwdc .dwdc-chips .dwdc-fchip b { font-size: 10.5px; }
+}
