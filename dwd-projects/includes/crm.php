@@ -1080,6 +1080,12 @@ function dwdc_vars( $mode = 'admin' ) {
 	$v['appQr']   = DWDP_URL . 'assets/app/qr-desk.png';
 	$v['mode']    = $mode;
 	$v['aiReady'] = function_exists( 'dwdc_ai_key' ) && '' !== dwdc_ai_key();
+	$v['upLast']  = '';
+	if ( function_exists( 'dwds_files' ) ) {
+		foreach ( dwds_files() as $f ) {
+			$v['upLast'] = max( $v['upLast'], (string) ( $f['uploaded'] ?? '' ) );
+		}
+	}
 	if ( 'app' === $mode ) {
 		$v['logout'] = html_entity_decode( wp_logout_url( home_url( '/desk/' ) ) );
 	}

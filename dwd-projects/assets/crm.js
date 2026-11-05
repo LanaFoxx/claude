@@ -460,7 +460,7 @@
 	function upImport(file, map) {
 		var send = function (name, text) {
 			S.upRes = { error: 'Working…' }; render();
-			api('/upwork-files', 'POST', { name: name || '', csv: text || '', map: map || {} }).then(function (r) { S.upRes = r; return Promise.all([reload(), api('/sync').then(function (x) { S.sync = x; })]); })
+			api('/upwork-files', 'POST', { name: name || '', csv: text || '', map: map || {} }).then(function (r) { S.upRes = r; if (!r.error) { DWDC.upLast = DWDC.today; } return Promise.all([reload(), api('/sync').then(function (x) { S.sync = x; })]); })
 				.then(function () { render(); toast('Upwork updated'); })
 				.catch(function (e) { S.upRes = { error: e.message }; render(); });
 		};
@@ -682,6 +682,13 @@
 			return reload();
 		}).then(render).catch(function (e) { if (S.modal) { S.modal.busy = false; } fail(e); });
 	}
+	// Twice a month (1st and 15th) remind Mike to upload a fresh Upwork CSV, until he does.
+	function csvRemind() {
+		var d = DWDC.today || new Date().toISOString().slice(0, 10), start = d.slice(0, 8) + (+d.slice(8, 10) >= 15 ? '15' : '01');
+		var snooze = ''; try { snooze = localStorage.getItem('dwdcCsvSnooze') || ''; } catch (e) {}
+		if ((DWDC.upLast || '') >= start || snooze >= d || S.modal) { return; }
+		S.modal = { type: 'csvremind', vals: {} }; render();
+	}
 	function loadPending(auto) {
 		return api('/pending').then(function (x) {
 			S.pending = x.items || [];
@@ -689,6 +696,7 @@
 			var sig = S.pending.map(function (i) { return i.id; }).join(',');
 			if (auto && S.pending.length && seen !== sig && !S.modal) { try { sessionStorage.setItem('dwdcRevSeen', sig); } catch (e) {} S.modal = { type: 'review', vals: {}, off: {} }; }
 			render();
+			if (auto) { csvRemind(); }
 		}).catch(function () {});
 	}
 	function reviewBar() {
@@ -1442,6 +1450,12 @@
 				+ '</dl><div class="dwdc-farow end"><button type="button" class="dwdc-btn2 danger" data-del-task="' + tk.id + '">Delete</button>'
 				+ '<button type="button" class="dwdc-btn" data-toggle="' + tk.id + '">' + ic('check', 14) + (tk.done ? 'Mark not done' : 'Mark done') + '</button></div></div>';
 		}
+		if (m.type === 'csvremind') {
+			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal dwdc-csvm">' + head('Reminder', 'Update your', 'finances')
+				+ '<p>It’s time to upload a fresh <b>Upwork CSV</b> so your Money Stats stay current.' + (DWDC.upLast ? ' Your last upload was <b>' + fmt(DWDC.upLast, true) + '</b>.' : '') + '</p>'
+				+ '<ol><li>In Upwork, open <a href="https://www.upwork.com/nx/payments/reports/transaction-history" target="_blank" rel="noopener"><b>Reports → Transaction History</b></a>.</li><li>Pick the date range since your last upload and click <b>Download CSV</b>.</li><li>Add it under <b>Money Stats → Connections → Upwork</b>.</li></ol>'
+				+ '<div class="dwdc-farow end"><button type="button" class="dwdc-btn2" data-csvsnooze>Remind me tomorrow</button><button type="button" class="dwdc-btn coral" data-csvgo>' + ic('plus', 14) + 'Upload CSV now</button></div></div>';
+		}
 		if (m.type === 'review') {
 			var its = S.pending || [], off = m.off || {}, nOn = its.filter(function (x) { return !off[x.id]; }).length;
 			var KIND = { new_project: ['New project', 'blue'], update: ['Update', 'deep'], completed: ['Completed', 'navy'], note: ['Check', 'steel'], email: ['Client email', 'deep'], markup: ['Markup link', 'deep'] };
@@ -1613,6 +1627,8 @@
 			S.modal = { type: 'task', id: +el.getAttribute('data-task'), vals: {} }; render();
 			return;
 		}
+		if (t.closest('[data-csvsnooze]')) { try { localStorage.setItem('dwdcCsvSnooze', DWDC.today); } catch (e2) {} S.modal = null; render(); return; }
+		if (t.closest('[data-csvgo]')) { S.modal = null; S.syncOpen = true; go('money'); setTimeout(function () { var u = document.querySelector('.dwdc-upbtn'); if (u) { u.scrollIntoView({ block: 'center', behavior: 'smooth' }); } }, 400); return; }
 		if ((el = t.closest('[data-showdone]'))) { S.showDone = !S.showDone; render(); return; }
 		if ((el = t.closest('[data-review]'))) { S.modal = { type: 'review', vals: {}, off: {} }; render(); return; }
 		if ((el = t.closest('[data-revpick]'))) { var rid = el.getAttribute('data-revpick'); S.modal.off[rid] = !S.modal.off[rid]; render(); return; }
@@ -1669,7 +1685,7 @@
 		if (t.closest('[data-refresh]')) { runRefresh(); return; }
 		if ((el = t.closest('[data-updel]'))) {
 			if (!confirm('Delete ' + el.getAttribute('data-upname') + '? Its Upwork payments come out of your totals, unless another file covers them.')) { return; }
-			api('/upwork-files/' + el.getAttribute('data-updel'), 'DELETE').then(function (r) { S.upRes = r; return Promise.all([reload(), api('/sync').then(function (x) { S.sync = x; })]); }).then(function () { render(); toast('File deleted and totals updated'); }).catch(fail);
+			api('/upwork-files/' + el.getAttribute('data-updel'), 'DELETE').then(function (r) { S.upRes = r; if (!r.error) { DWDC.upLast = DWDC.today; } return Promise.all([reload(), api('/sync').then(function (x) { S.sync = x; })]); }).then(function () { render(); toast('File deleted and totals updated'); }).catch(fail);
 			return;
 		}
 		if (t.closest('[data-upagain]')) { var mp = {}; app.querySelectorAll('[data-upmap]').forEach(function (x) { if (x.value) { mp[x.getAttribute('data-upmap')] = +x.value; } }); upImport(null, mp); return; }
