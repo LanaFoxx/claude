@@ -59,6 +59,7 @@
 
 	var ICON = {
 		link: '<path d="M7 17 17 7"/><path d="M8 7h9v9"/>',
+		mic: '<rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v1a7 7 0 0 0 14 0v-1"/><line x1="12" y1="18" x2="12" y2="22"/>',
 		star: '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>',
 		grid: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>',
 		user: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
@@ -311,6 +312,26 @@
 		return { due: due, key: key, paid: paid, late: !paid && !b.autopay && due < t };
 	}
 	function billMonthly(b) { return b.freq === 'yearly' ? b.amount / 12 : b.freq === 'weekly' ? b.amount * 52 / 12 : b.amount; }
+	function ptSend() {
+		var m = S.modal; if (!m || m.type !== 'paddtask' || m.busy) { return; }
+		var q = String(m.draft || '').trim(); if (!q) { return; }
+		m.msgs.push({ role: 'user', content: q }); m.draft = ''; m.busy = true; render();
+		api('/personal/plan', 'POST', { messages: m.msgs.concat(m.tasks && m.tasks.length ? [] : []) }).then(function (r) {
+			if (S.modal !== m) { return; }
+			m.msgs.push({ role: 'assistant', content: r.reply || (r.tasks.length ? 'Here’s what I’ll add.' : 'Got it.') });
+			if (r.tasks && r.tasks.length) { m.tasks = r.tasks; }
+		}).catch(function (e) { m.msgs.push({ role: 'assistant', content: 'Sorry — ' + e.message }); }).then(function () { m.busy = false; render(); setTimeout(function () { var x = document.querySelector('.dwdc-addlog'); if (x) { x.scrollTop = x.scrollHeight; } var ta = document.querySelector('[data-ptdraft]'); if (ta && window.innerWidth > 768) { ta.focus(); } }, 30); });
+	}
+	function ptMic() {
+		var m = S.modal, SR = window.SpeechRecognition || window.webkitSpeechRecognition; if (!m || !SR) { return; }
+		if (m.rec) { m.rec.stop(); return; }
+		var rec = new SR(); rec.lang = 'en-US'; rec.interimResults = true; rec.continuous = false;
+		var base = (m.draft ? m.draft + ' ' : '');
+		rec.onresult = function (e) { var t = ''; for (var i = 0; i < e.results.length; i++) { t += e.results[i][0].transcript; } m.draft = base + t; var ta = document.querySelector('[data-ptdraft]'); if (ta) { ta.value = m.draft; } };
+		rec.onend = function () { m.rec = null; m.listening = false; render(); if (String(m.draft || '').trim()) { ptSend(); } };
+		rec.onerror = function (e) { m.rec = null; m.listening = false; render(); if (e.error === 'not-allowed') { toast('Allow the microphone to talk to it', true); } };
+		m.rec = rec; m.listening = true; render(); rec.start();
+	}
 	function pTodoRow(t) {
 		var src = t.source ? '<span class="dwdc-psrc ' + (t.source === 'Google Calendar' ? 'cal' : 'gt') + '">' + esc(t.source === 'Google Calendar' ? 'Calendar' : 'Google Tasks') + '</span>' : '';
 		var meta = [t.due ? (t.due === DWDC.today ? 'Today' : fmt(t.due)) + (t.time ? ' · ' + t.time : '') : '', t.note ? 'Has notes' : ''].filter(Boolean).join(' · ');
@@ -389,7 +410,7 @@
 				+ '<div class="dwdc-prow3">'
 				+ card('cd-ptoday', chead('todo', 'Today', 'personal/calendar'), (todayT.length ? todayT.map(function (x) { return row(x, false); }).join('') : emptyRow('Nothing scheduled today.'))
 					+ (late.length ? '<p class="dwdc-plate">' + late.length + ' overdue</p>' + late.slice(0, 4).map(function (x) { return row(x, true); }).join('') : '')
-					+ '<form class="dwdc-ptadd mini" data-pform="pdayadd"><input type="hidden" name="due" value="' + today + '"><input name="text" placeholder="Add for today…" autocomplete="off" required><button class="dwdc-btn">' + ic('plus', 13) + '</button></form>')
+					+ '<div class="dwdc-ptadd mini btnonly"><button type="button" class="dwdc-btn coral dwdc-addtask" data-addtask>' + ic('plus', 14) + 'Add task</button></div>')
 				+ card('cd-psoon', chead('clock', 'Coming Up', 'personal/calendar'), soon.length ? soon.slice(0, 9).map(function (x) { return row(x, true); }).join('') + (soon.length > 9 ? '<a class="dwdc-pmore" href="#personal/calendar">+' + (soon.length - 9) + ' more in the next 2 weeks</a>' : '') : emptyRow('Nothing in the next two weeks.'))
 				+ card('cd-pmoney', chead('dollar', 'This Month', 'personal/finances'), '<div class="dwdc-pm3"><div><small>Money in</small><b class="in">' + money(inc) + '</b></div><div><small>Money out</small><b class="out">' + money(out) + '</b></div><div><small>Left over</small><b>' + money(inc - out) + '</b></div></div>'
 					+ (subsMo ? '<a class="dwdc-psubs" href="#personal/subs"><span>Recurring charges &amp; subscriptions</span><b>' + money(subsMo) + '/mo</b></a>' : '')
@@ -435,7 +456,7 @@
 		var done = D.todos.filter(function (t) { return t.done; }).sort(function (a, b) { return (b.done_at || '') < (a.done_at || '') ? -1 : 1; });
 		var G = S.pGoogle, GL = G && G.last;
 		if (!G && !S.pGoogleLoading) { S.pGoogleLoading = true; api('/personal/google').then(function (x) { S.pGoogle = x; render(); }).catch(function () {}); }
-		return '<section class="dwdc-card dwdc-ptodo"><div class="dwdc-cardh pad2"><h2>My To-Dos <span class="dwdc-cnt">' + open.length + '</span></h2></div><form class="dwdc-ptadd" data-pform="todos"><input name="text" placeholder="Add something to do…" autocomplete="off" required><input name="due" type="date" title="Due date (optional)"><button class="dwdc-btn">' + ic('plus', 14) + 'Add</button></form>'
+		return '<section class="dwdc-card dwdc-ptodo"><div class="dwdc-cardh pad2"><h2>My To-Dos <span class="dwdc-cnt">' + open.length + '</span></h2></div><div class="dwdc-ptadd btnonly"><button type="button" class="dwdc-btn coral dwdc-addtask" data-addtask>' + ic('plus', 16) + 'Add task</button><span>Tell it what to add — “call mom Sunday at 5” — by typing or talking.</span></div>'
 			+ (open.length ? '<div class="dwdc-todos">' + open.map(pTodoRow).join('') + '</div>' : emptyRow('Nothing on your list.'))
 			+ (done.length ? '<button class="dwdc-donebtn" data-pshowdone>' + (S.pShowDone ? 'Hide' : 'Show') + ' completed <b>' + done.length + '</b></button>' + (S.pShowDone ? '<div class="dwdc-todos donelist">' + done.slice(0, 40).map(pTodoRow).join('') + '</div>' : '') : '')
 			+ '</section>'
@@ -1763,6 +1784,18 @@
 				+ '</dl><div class="dwdc-farow end"><button type="button" class="dwdc-btn2 danger" data-del-task="' + tk.id + '">Delete</button>'
 				+ '<button type="button" class="dwdc-btn" data-toggle="' + tk.id + '">' + ic('check', 14) + (tk.done ? 'Mark not done' : 'Mark done') + '</button></div></div>';
 		}
+		if (m.type === 'paddtask') {
+			var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+			var dfmt = function (t) { return t.due ? new Date(t.due + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) + (t.time ? ' · ' + t.time : '') : 'No date'; };
+			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal dwdc-addm">' + head('Personal', 'Add a', 'task')
+				+ '<div class="dwdc-addlog">' + (m.msgs.length ? '' : '<p class="dwdc-addhi">Just say what you need to do and when. For example: <i>“Dentist next Tuesday at 3pm, bring the insurance card”</i> or <i>“Pay rent on the 1st and call Mom Sunday evening.”</i></p>')
+				+ m.msgs.map(function (x) { return '<div class="dwdc-chat-m ' + x.role + '">' + esc(x.content) + '</div>'; }).join('')
+				+ (m.busy ? '<div class="dwdc-chat-m assistant typing"><i></i><i></i><i></i></div>' : '') + '</div>'
+				+ (m.tasks && m.tasks.length ? '<div class="dwdc-addprop"><p class="dwdc-lbl">Ready to add</p>' + m.tasks.map(function (t, i) { return '<div class="dwdc-addcard"><span class="dwdc-chk on">' + ic('check', 11) + '</span><div><b>' + esc(t.text) + '</b><small>' + esc(dfmt(t)) + (t.note ? ' · ' + esc(t.note) : '') + '</small></div><button type="button" data-ptrm="' + i + '" aria-label="Remove">' + ic('x', 13) + '</button></div>'; }).join('')
+					+ '<button type="button" class="dwdc-btn coral full" data-ptconfirm>' + ic('check', 14) + 'Add ' + (m.tasks.length === 1 ? 'task' : m.tasks.length + ' tasks') + '</button><p class="dwdc-mutp sm">Want to change something? Just say it below.</p></div>' : '')
+				+ '<div class="dwdc-addin">' + (SR ? '<button type="button" class="dwdc-mic' + (m.listening ? ' on' : '') + '" data-ptmic aria-label="Talk">' + ic('mic', 18) + '</button>' : '')
+				+ '<textarea rows="1" data-ptdraft placeholder="' + (m.listening ? 'Listening…' : 'Type or tap the mic and talk…') + '">' + esc(m.draft || '') + '</textarea><button type="button" class="dwdc-btn" data-ptsend aria-label="Send"' + (m.busy ? ' disabled' : '') + '>' + ic('right', 16) + '</button></div></div>';
+		}
 		if (m.type === 'pday') {
 			var PD = S.pers || { todos: [], bills: [] }, day = m.day;
 			var dayItems = PD.todos.filter(function (x) { return x.due === day; }).sort(function (a, b) {
@@ -1987,6 +2020,16 @@
 		if ((el = t.closest('[data-ptask]')) && !t.closest('a') && (!t.closest('button') || t.closest('button') === el)) { S.modal = { type: 'ptask', id: el.getAttribute('data-ptask'), back: S.modal && S.modal.type === 'pday' ? S.modal.day : '', vals: {} }; render(); return; }
 		if ((el = t.closest('[data-pshowdone]'))) { S.pShowDone = !S.pShowDone; render(); return; }
 		if ((el = t.closest('[data-pcal]'))) { S.pCal = el.getAttribute('data-pcal'); render(); return; }
+		if (t.closest('[data-addtask]')) { S.modal = { type: 'paddtask', msgs: [], tasks: [], draft: '', vals: {} }; render(); setTimeout(function () { var ta = document.querySelector('[data-ptdraft]'); if (ta) { ta.focus(); } }, 60); return; }
+		if (t.closest('[data-ptsend]')) { var ta0 = document.querySelector('[data-ptdraft]'); if (ta0 && S.modal) { S.modal.draft = ta0.value; } ptSend(); return; }
+		if (t.closest('[data-ptmic]')) { var ta1 = document.querySelector('[data-ptdraft]'); if (ta1 && S.modal) { S.modal.draft = ta1.value; } ptMic(); return; }
+		if ((el = t.closest('[data-ptrm]'))) { S.modal.tasks.splice(+el.getAttribute('data-ptrm'), 1); render(); return; }
+		if (t.closest('[data-ptconfirm]')) {
+			var list = (S.modal.tasks || []).slice(); S.modal = null; render();
+			list.reduce(function (pr, x) { return pr.then(function () { return api('/personal', 'POST', { kind: 'todos', item: x }).then(function (d) { S.pers = d; }); }); }, Promise.resolve())
+				.then(function () { render(); toast(list.length === 1 ? 'Task added' : list.length + ' tasks added'); }).catch(fail);
+			return;
+		}
 		if ((el = t.closest('[data-pday]')) && !t.closest('[data-ptask], a')) { S.modal = { type: 'pday', day: el.getAttribute('data-pday'), vals: {} }; render(); setTimeout(function () { var x = document.querySelector('.dwdc-daym input[name=text]'); if (x) { x.focus(); } }, 50); return; }
 		if ((el = t.closest('[data-caladd]'))) { var cd = el.getAttribute('data-caladd'), txt = prompt('Add a to-do for ' + fmt(cd) + ':'); if (txt && txt.trim()) { pSave('todos', { text: txt.trim(), due: cd }, 'Added'); } return; }
 		if ((el = t.closest('[data-pmonth]'))) { S.pMonth = el.getAttribute('data-pmonth'); render(); return; }
@@ -2187,6 +2230,8 @@
 		app.addEventListener('touchmove', function (e) { if (!qel) { return; } var dx = e.touches[0].clientX - sx; if (Math.abs(dx) > Math.abs(e.touches[0].clientY - sy)) { qel.style.transform = 'translateX(' + dx + 'px)'; qel.style.opacity = String(Math.max(0.2, 1 - Math.abs(dx) / 260)); } }, { passive: true });
 		app.addEventListener('touchend', function (e) { if (!qel) { return; } var dx = (e.changedTouches[0] || {}).clientX - sx; if (Math.abs(dx) > 90) { hideQuote(qel); } else { qel.style.transform = ''; qel.style.opacity = ''; } qel = null; });
 	})();
+	document.addEventListener('input', function (e) { if (e.target && e.target.hasAttribute && e.target.hasAttribute('data-ptdraft') && S.modal) { S.modal.draft = e.target.value; e.target.style.height = ''; e.target.style.height = Math.min(140, e.target.scrollHeight) + 'px'; } });
+	document.addEventListener('keydown', function (e) { if (e.target && e.target.hasAttribute && e.target.hasAttribute('data-ptdraft') && e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); if (S.modal) { S.modal.draft = e.target.value; } ptSend(); } });
 	app.addEventListener('change', function (e) {
 		var t = e.target;
 		if (t.hasAttribute('data-revpick')) { S.revSel = S.revSel || {}; S.revSel[t.getAttribute('data-revpick')] = t.checked; render(); return; }

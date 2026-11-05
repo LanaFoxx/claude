@@ -401,3 +401,69 @@ add_action( 'init', function () {
 		update_option( 'dwdpe_reset1', 1, false );
 	}
 } );
+
+/* ---------------------------------------------------------------- Add task by talking to Claude
+ * Mike types or dictates ("dentist next Tuesday at 3, remind me to bring insurance card") and Claude
+ * turns it into one or more to-dos with dates and times. Nothing is saved until he confirms.
+ */
+add_action( 'rest_api_init', function () {
+	register_rest_route( 'dwd/v1', '/crm/personal/plan', array(
+		'methods'             => 'POST',
+		'permission_callback' => function () { return current_user_can( 'manage_options' ); },
+		'callback'            => function ( $r ) {
+			$key = function_exists( 'dwdc_ai_key' ) ? dwdc_ai_key() : '';
+			if ( ! $key ) {
+				return new WP_Error( 'dwdc_nokey', 'Add your Claude API key first (Personal → Connections → Claude AI).', array( 'status' => 400, 'needs_key' => true ) );
+			}
+			$msgs = array();
+			foreach ( array_slice( (array) $r->get_param( 'messages' ), -10 ) as $m ) {
+				$m    = (array) $m;
+				$text = trim( wp_strip_all_tags( (string) ( $m['content'] ?? '' ) ) );
+				if ( '' !== $text ) {
+					$msgs[] = array( 'role' => 'assistant' === ( $m['role'] ?? '' ) ? 'assistant' : 'user', 'content' => mb_substr( $text, 0, 3000 ) );
+				}
+			}
+			while ( $msgs && 'user' !== $msgs[0]['role'] ) {
+				array_shift( $msgs );
+			}
+			if ( ! $msgs || 'user' !== end( $msgs )['role'] ) {
+				return new WP_Error( 'dwdpe_plan', 'Tell me what to add.', array( 'status' => 400 ) );
+			}
+			$now    = current_time( 'l, F j, Y g:i A' );
+			$system = "You turn Michael's spoken or typed requests into to-do items for his personal Dream Desk list. Today is {$now} (" . wp_timezone_string() . "). Resolve relative dates ('tomorrow', 'next Tuesday', 'the 15th', 'in two weeks') to real dates. Split separate things into separate tasks. Keep titles short and clear (start with a verb when natural, fix speech-to-text slips), put extra details in notes. Only set a time if he gave one. If something essential is genuinely ambiguous, ask one short question instead of guessing. Respond with ONLY a JSON object, no prose around it: {\"reply\": \"one short friendly sentence summarising what you'll add or asking your question\", \"tasks\": [{\"text\": \"...\", \"due\": \"YYYY-MM-DD or empty\", \"time\": \"h:mm AM/PM or empty\", \"note\": \"... or empty\"}]}. Use an empty tasks list when you're asking a question.";
+			$res = wp_remote_post( 'https://api.anthropic.com/v1/messages', array(
+				'timeout' => 60,
+				'headers' => array( 'x-api-key' => $key, 'anthropic-version' => '2026-10-21', 'anthropic-beta' => 'server-side-fallback-2026-07-01', 'content-type' => 'application/json' ),
+				'body'    => wp_json_encode( array( 'model' => 'claude-opus-5-5', 'max_tokens' => 4000, 'output_config' => array( 'effort' => 'low' ), 'fallbacks' => 'default', 'system' => $system, 'messages' => $msgs ) ),
+			) );
+			if ( is_wp_error( $res ) ) {
+				return new WP_Error( 'dwdpe_ai', 'Couldn’t reach Claude: ' . $res->get_error_message(), array( 'status' => 502 ) );
+			}
+			$code = wp_remote_retrieve_response_code( $res );
+			$body = json_decode( wp_remote_retrieve_body( $res ), true );
+			if ( 200 !== $code ) {
+				return new WP_Error( 'dwdpe_ai', 401 === $code ? 'Your Claude API key was rejected.' : ( $body['error']['message'] ?? 'Claude returned an error.' ), array( 'status' => 400, 'needs_key' => 401 === $code ) );
+			}
+			$text = '';
+			foreach ( (array) ( $body['content'] ?? array() ) as $b ) {
+				if ( 'text' === ( $b['type'] ?? '' ) ) {
+					$text .= $b['text'];
+				}
+			}
+			$a = strpos( $text, '{' );
+			$z = strrpos( $text, '}' );
+			$j = ( false !== $a && false !== $z ) ? json_decode( substr( $text, $a, $z - $a + 1 ), true ) : null;
+			if ( ! is_array( $j ) ) {
+				return array( 'reply' => trim( $text ) ? trim( $text ) : 'Sorry, I didn’t catch that. Try again?', 'tasks' => array() );
+			}
+			$tasks = array();
+			foreach ( (array) ( $j['tasks'] ?? array() ) as $t ) {
+				$c = dwdpe_clean( 'todos', array( 'text' => $t['text'] ?? '', 'due' => $t['due'] ?? '', 'time' => $t['time'] ?? '', 'note' => $t['note'] ?? '' ) );
+				if ( '' !== $c['text'] ) {
+					$tasks[] = array( 'text' => $c['text'], 'due' => $c['due'], 'time' => $c['time'], 'note' => $c['note'] );
+				}
+			}
+			return array( 'reply' => sanitize_text_field( (string) ( $j['reply'] ?? '' ) ), 'tasks' => array_slice( $tasks, 0, 20 ) );
+		},
+	) );
+} );

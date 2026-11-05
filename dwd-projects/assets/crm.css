@@ -1381,3 +1381,39 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
   .dwdc .dwdc-bankempty .dwdc-farow > * { flex: 1 1 100%; justify-content: center; }
   .dwdc .dwdc-main { overflow-x: hidden; }
 }
+/* ===== Add task (AI) ===== */
+.dwdc .dwdc-ptadd.btnonly { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.dwdc .dwdc-ptadd.btnonly span { color: var(--mut); font-size: 13.5px; }
+.dwdc .dwdc-btn.dwdc-addtask { height: 46px; padding: 0 22px; font-size: 15px; gap: 8px; }
+.dwdc .dwdc-ptadd.mini.btnonly .dwdc-btn { width: 100%; justify-content: center; height: 42px; }
+.dwdc .dwdc-btn.coral { background: #FF6F4F !important; border-color: #FF6F4F !important; color: #fff !important; }
+.dwdc .dwdc-btn.full { width: 100%; justify-content: center; }
+.dwdc-addm { display: flex; flex-direction: column; max-width: 560px; }
+.dwdc-addlog { display: flex; flex-direction: column; gap: 10px; max-height: 38vh; overflow-y: auto; margin: 12px 0; }
+.dwdc-addhi { font-size: 14.5px; line-height: 1.6; color: var(--sec); margin: 0; }
+.dwdc-addhi i { color: var(--navy); }
+.dwdc-addm .dwdc-chat-m { max-width: 88%; padding: 10px 14px; border-radius: 14px; font-size: 14.5px; line-height: 1.5; }
+.dwdc-addm .dwdc-chat-m.user { align-self: flex-end; background: var(--navy); color: #fff; border-bottom-right-radius: 4px; }
+.dwdc-addm .dwdc-chat-m.assistant { align-self: flex-start; background: #F1F4F9; color: var(--navy); border-bottom-left-radius: 4px; }
+.dwdc-addprop { border: 1px solid #FFD3C7; background: #FFF8F5; border-radius: 14px; padding: 12px; margin-bottom: 12px; }
+.dwdc-addprop .dwdc-lbl { margin: 2px 4px 8px; }
+.dwdc-addcard { display: flex; align-items: center; gap: 12px; background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; }
+.dwdc-addcard > div { flex: 1; min-width: 0; }
+.dwdc-addcard b { display: block; color: var(--navy); font-size: 14.5px; }
+.dwdc-addcard small { color: var(--mut); font-size: 12.5px; }
+.dwdc-addcard .dwdc-chk.on { background: #FF6F4F; box-shadow: inset 0 0 0 2px #FF6F4F; color: #fff; }
+.dwdc-addcard button { border: 0; background: none; color: var(--mut); cursor: pointer; padding: 4px; }
+.dwdc-addin { display: flex; align-items: flex-end; gap: 8px; border: 1px solid var(--line); border-radius: 16px; padding: 8px; background: #fff; }
+.dwdc-addin textarea { flex: 1; min-width: 0; border: 0; outline: 0; resize: none; font: inherit; font-size: 15px; line-height: 1.45; padding: 8px 6px; max-height: 140px; color: var(--navy); background: transparent; }
+.dwdc-addin .dwdc-btn { height: 40px; width: 40px; padding: 0; justify-content: center; border-radius: 12px; flex: none; }
+.dwdc .dwdc-mic { flex: none; width: 40px; height: 40px; border-radius: 12px; border: 0; background: #FFEDE7; color: #FF6F4F; display: grid; place-items: center; cursor: pointer; }
+.dwdc .dwdc-mic svg { color: inherit; }
+.dwdc .dwdc-mic.on { background: #FF6F4F; color: #fff; animation: dwdcPulse 1.2s ease-in-out infinite; }
+@keyframes dwdcPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(255,111,79,.5); } 50% { box-shadow: 0 0 0 8px rgba(255,111,79,0); } }
+/* Never let a page be wider than the phone (keeps the bottom bar on screen) */
+@media (max-width: 768px) {
+  html, body { overflow-x: hidden !important; max-width: 100%; }
+  .dwdc .dwdc-ptadd.btnonly { padding: 14px; }
+  .dwdc .dwdc-ptadd.btnonly .dwdc-btn { width: 100%; justify-content: center; }
+  .dwdc .dwdc-ptadd.btnonly span { width: 100%; text-align: center; font-size: 12.5px; }
+}
