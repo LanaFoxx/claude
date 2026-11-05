@@ -45,7 +45,7 @@ function dwda_menu_group( $slug ) {
 	$s = strtolower( $slug );
 	$map = array(
 		'top'         => array( 'client-desk' ),
-		'development' => array( 'elementor-home', 'edit.php?post_type=elementor_library', 'edit.php?post_type=page', 'edit.php', 'upload.php', 'edit.php?post_type=dwd_project', 'themes.php' ),
+		'development' => array( 'elementor-home', 'edit.php?post_type=elementor_library', 'edit.php?post_type=page', 'edit.php?post_type=dwd_project', 'edit.php', 'upload.php', 'themes.php' ),
 		'ecommerce'   => array( 'woocommerce', 'edit.php?post_type=product', 'payments_menu_item', 'woocommerce-marketing', 'wps-plugins', 'subscriptions_for_woocommerce' ),
 		'settings'    => array( 'plugins.php', 'users.php', 'tools.php', 'options-general.php', 'wpseo_dashboard', 'sg-cachepress', 'w3tc_dashboard', 'ai1wm_export', '/analytics/overview', 'wp-mail-smtp', 'elementor' ),
 	);
@@ -136,7 +136,8 @@ add_action( 'admin_footer', function () {
 		function set(h, isOpen) { h.classList.toggle('dwd-closed', !isOpen); items(h).forEach(function (li) { li.classList.toggle('dwd-sec-hide', !isOpen); }); }
 		heads.forEach(function (h) {
 			var hasCurrent = items(h).some(function (li) { return li.classList.contains('wp-has-current-submenu') || li.classList.contains('current') || li.classList.contains('wp-menu-open'); });
-			set(h, hasCurrent || !!open[h.id]);
+			var def = h.id === 'dwd-msec-development';
+			set(h, hasCurrent || (h.id in open ? !!open[h.id] : def));
 			var a = h.querySelector('a');
 			if (a) { a.removeAttribute('href'); }
 			h.addEventListener('click', function (e) {
