@@ -143,7 +143,7 @@
 	var TITLES = {
 		home: ['', 'Today at', 'Dream Web'], leads: ['Clients', 'All', 'Leads'], onboarding: ['Clients', 'Onboarding', 'Forms'],
 		todos: ['Everything open', 'To-Do', 'List'], hosting: ['Clients', 'Hosting', 'Clients'], archive: ['More', 'Archive', ''],
-		search: ['Search', 'Search', 'Results'], money: ['Money', 'Money', 'Breakdown'], reviews: ['Clients', 'Get', 'Reviews'], clients: ['Clients', 'All', 'Clients'], projects: ['Projects', 'All', 'Projects']
+		search: ['Search', 'Search', 'Results'], money: ['Finances', 'Money', 'Stats'], reviews: ['Clients', 'Get', 'Reviews'], clients: ['Clients', 'All', 'Clients'], projects: ['Projects', 'All', 'Projects']
 	};
 	var OLD = { dashboard: 'home', jobs: 'projects/active', completed: 'projects/complete', forms: 'leads', todos: 'home' };
 	function route() {
@@ -198,10 +198,10 @@
 			+ '<div class="dwdc-navh"><i class="b1"></i>Projects</div>'
 			+ nav('projects/active', 'bolt', 'Active', by('active').length) + nav('projects/hold', 'pause', 'On Hold', by('hold').length)
 			+ nav('projects/limbo', 'clock', 'Limbo', by('limbo').length) + nav('projects/complete', 'done', 'Completed', by('complete').length)
-			+ nav('money', 'dollar', 'Money')
 			+ '<div class="dwdc-navh"><i class="b2"></i>Clients</div>'
 			+ nav('onboarding', 'filter', 'Onboarding', onboardList().length) + nav('hosting', 'server', 'Hosting', hosting().length)
 			+ nav('leads', 'mail', 'Leads', leadList().length) + nav('clients', 'users', 'All Clients', S.clients.length) + nav('reviews', 'mail', 'Get Reviews')
+			+ '<div class="dwdc-navh fin"><i class="b4"></i>Finances</div>' + nav('money', 'dollar', 'Money Stats')
 			+ '<div class="dwdc-navh"><i class="b3"></i>More</div>'
 			+ '<a class="dwdc-nav" href="' + esc(DWDC.wp) + '">' + ic('wp') + '<span>WordPress Admin</span></a>'
 			+ '</nav><a class="dwdc-me" href="' + esc(DWDC.logout) + '" title="Sign out"><span class="dwdc-me-av">MT</span><span><strong>' + esc(DWDC.user || 'Michael Tarr') + '</strong><small>Owner · Sign out</small></span>' + ic('logout', 17) + '</a></aside>';
@@ -216,18 +216,21 @@
 	}
 
 	function syncWpMenu(r) {
-		var box = document.getElementById('toplevel_page_client-desk');
-		if (!box) { return; }
+		var menu = document.getElementById('adminmenu');
+		if (!menu) { return; }
 		var cur = r.view === 'client' || r.view === 'cl' ? S.back : r.view + (r.arg ? '/' + r.arg : '');
 		if (cur === 'projects' || cur === 'projects/all') { cur = 'projects/active'; }
 		var counts = { 'projects/active': by('active').length, 'projects/hold': by('hold').length, 'projects/limbo': by('limbo').length, 'projects/complete': by('complete').length, onboarding: onboardList().length, hosting: hosting().length, leads: leadList().length, clients: S.clients.length };
-		box.querySelectorAll('.wp-submenu li').forEach(function (li) {
+		var home = document.getElementById('toplevel_page_client-desk');
+		if (home) { var onHome = cur === 'home' || cur === ''; home.classList.toggle('current', onHome); home.classList.toggle('wp-has-current-submenu', onHome); var ha = home.querySelector('a.menu-top'); if (ha) { ha.classList.toggle('current', onHome); ha.classList.toggle('wp-has-current-submenu', onHome); } }
+		menu.querySelectorAll('li.dwd-dd').forEach(function (li) {
 			var a = li.querySelector('a'); if (!a) { return; }
-			var h = (a.getAttribute('href') || '').split('#')[1] || 'home';
-			if (/page=client-desk$/.test(a.getAttribute('href') || '')) { h = 'home'; a.setAttribute('href', a.getAttribute('href') + '#home'); }
-			li.classList.toggle('current', h === cur); a.classList.toggle('current', h === cur);
-			var b = a.querySelector('.dwdc-mcount');
-			if (counts[h] !== undefined) { if (!b) { b = document.createElement('span'); b.className = 'dwdc-mcount'; a.appendChild(b); } b.textContent = counts[h]; }
+			var h = (a.getAttribute('href') || '').split('#')[1] || '';
+			var on = h === cur;
+			li.classList.toggle('current', on); a.classList.toggle('current', on);
+			var name = a.querySelector('.wp-menu-name'), b = a.querySelector('.dwdc-mcount');
+			if (counts[h] !== undefined && name) { if (!b) { b = document.createElement('span'); b.className = 'dwdc-mcount'; name.appendChild(b); } b.textContent = counts[h]; }
+			if (on) { var sec = li.previousElementSibling; while (sec && !sec.classList.contains('dwd-msec')) { sec = sec.previousElementSibling; } if (sec && sec.classList.contains('dwd-closed')) { sec.click(); } }
 		});
 	}
 	function render(anim) {

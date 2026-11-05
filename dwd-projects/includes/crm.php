@@ -1044,22 +1044,6 @@ add_action( 'rest_api_init', function () {
 
 add_action( 'admin_menu', function () {
 	add_menu_page( 'Dream Desk', 'Dream Desk', 'manage_options', 'client-desk', 'dwdc_page', 'dashicons-groups', 2 );
-	add_submenu_page( 'client-desk', 'Dream Desk', 'Home', 'manage_options', 'client-desk', 'dwdc_page' );
-	global $submenu;
-	foreach ( array(
-		'projects/active'   => 'Active',
-		'projects/hold'     => 'On Hold',
-		'projects/limbo'    => 'Limbo',
-		'projects/complete' => 'Completed',
-		'money'             => 'Money',
-		'onboarding'        => 'Onboarding',
-		'hosting'           => 'Hosting',
-		'leads'             => 'Leads',
-		'clients'           => 'All Clients',
-		'reviews'           => 'Get Reviews',
-	) as $route => $label ) {
-		$submenu['client-desk'][] = array( $label, 'manage_options', 'admin.php?page=client-desk#' . $route, $label ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-	}
 } );
 
 add_action( 'admin_init', function () {

@@ -45,7 +45,8 @@ function dwda_menu_group( $slug ) {
 	$s = strtolower( $slug );
 	$map = array(
 		'top'         => array( 'client-desk' ),
-		'development' => array( 'elementor-home', 'edit.php?post_type=elementor_library', 'edit.php?post_type=page', 'edit.php?post_type=dwd_project', 'edit.php', 'upload.php', 'themes.php' ),
+		'portfolio'   => array( 'edit.php?post_type=dwd_project' ),
+		'development' => array( 'elementor-home', 'edit.php?post_type=elementor_library', 'edit.php?post_type=page', 'edit.php', 'upload.php', 'themes.php' ),
 		'ecommerce'   => array( 'woocommerce', 'edit.php?post_type=product', 'payments_menu_item', 'woocommerce-marketing', 'wps-plugins', 'subscriptions_for_woocommerce' ),
 		'settings'    => array( 'plugins.php', 'users.php', 'tools.php', 'options-general.php', 'wpseo_dashboard', 'sg-cachepress', 'w3tc_dashboard', 'ai1wm_export', '/analytics/overview', 'wp-mail-smtp', 'elementor' ),
 	);
@@ -77,7 +78,18 @@ add_filter( 'menu_order', function ( $order ) {
 	if ( ! current_user_can( 'manage_options' ) ) {
 		return $order;
 	}
-	$groups = array( 'top' => array(), 'development' => array(), 'ecommerce' => array(), 'settings' => array() );
+	$groups = array( 'top' => array(), 'projects' => array(), 'clients' => array(), 'finances' => array(), 'portfolio' => array(), 'development' => array(), 'ecommerce' => array(), 'settings' => array() );
+	// Dream Desk pages as their own sections (they open the Dream Desk app at that page).
+	$dd = array(
+		'projects' => array( array( 'projects/active', 'Active', 'dashicons-controls-play' ), array( 'projects/hold', 'On Hold', 'dashicons-controls-pause' ), array( 'projects/limbo', 'Limbo', 'dashicons-clock' ), array( 'projects/complete', 'Completed', 'dashicons-yes-alt' ) ),
+		'clients'  => array( array( 'onboarding', 'Onboarding', 'dashicons-feedback' ), array( 'leads', 'Leads', 'dashicons-email-alt' ), array( 'hosting', 'Hosting', 'dashicons-cloud' ), array( 'clients', 'All Clients', 'dashicons-groups' ), array( 'reviews', 'Get Reviews', 'dashicons-star-filled' ) ),
+		'finances' => array( array( 'money', 'Money Stats', 'dashicons-chart-bar' ) ),
+	);
+	foreach ( $dd as $g => $list ) {
+		foreach ( $list as $i => $x ) {
+			$groups[ $g ][] = array( $i, array( $x[1], 'manage_options', 'admin.php?page=client-desk#' . $x[0], '', 'menu-top dwd-dd', 'dwd-dd-' . str_replace( '/', '-', $x[0] ), $x[2] ) );
+		}
+	}
 	foreach ( (array) $menu as $item ) {
 		if ( empty( $item[2] ) || false !== strpos( (string) ( $item[4] ?? '' ), 'wp-menu-separator' ) || in_array( $item[2], array( 'index.php', 'edit-comments.php', 'hello-elementor' ), true ) ) {
 			continue;
@@ -85,7 +97,7 @@ add_filter( 'menu_order', function ( $order ) {
 		list( $g, $rank ) = dwda_menu_group( $item[2] );
 		$groups[ $g ][] = array( $rank, $item );
 	}
-	$labels = array( 'development' => 'Development', 'ecommerce' => 'E-commerce', 'settings' => 'Settings' );
+	$labels = array( 'projects' => 'Projects', 'clients' => 'Clients', 'finances' => 'Finances', 'portfolio' => 'Portfolio', 'development' => 'Development', 'ecommerce' => 'E-commerce', 'settings' => 'Settings' );
 	$new    = array();
 	$out    = array();
 	$pos    = 1;
@@ -161,7 +173,12 @@ add_action( 'admin_head', function () {
 	#adminmenu li.dwd-msec .wp-menu-image { display: none; }
 	#adminmenu li.dwd-msec .wp-menu-name { position: relative; display: flex; align-items: center; gap: 8px; width: 100%; padding: 12px 30px 6px 14px !important; font-size: 11.5px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: #13A6EE !important; }
 	#adminmenu li.dwd-msec .wp-menu-name::before { content: ""; width: 7px; height: 7px; background: currentColor; flex: none; }
-	#adminmenu li#dwd-msec-ecommerce .wp-menu-name { color: #6CC6F4 !important; }
+	#adminmenu li#dwd-msec-ecommerce .wp-menu-name, #adminmenu li#dwd-msec-clients .wp-menu-name { color: #6CC6F4 !important; }
+	#adminmenu li#dwd-msec-finances .wp-menu-name { color: #FF8A6E !important; }
+	#adminmenu li#dwd-msec-portfolio .wp-menu-name { color: #7FD48B !important; }
+	#adminmenu li.dwd-dd > a .dwdc-mcount { margin-left: auto; padding: 2px 9px; border-radius: 999px; font: 700 11px/1.3 Poppins, sans-serif; background: rgba(255,255,255,.12); color: #fff; }
+	#adminmenu li.dwd-dd.current > a .dwdc-mcount { background: #E3F4FD; color: #0B203D; }
+	#adminmenu li.dwd-dd > a .wp-menu-name { flex: 1; display: flex; align-items: center; gap: 8px; }
 	#adminmenu li#dwd-msec-settings .wp-menu-name { color: rgba(255,255,255,.6) !important; }
 	#adminmenu li.dwd-msec .wp-menu-name::after { content: ""; position: absolute; right: 16px; top: 50%; width: 6px; height: 6px; margin-top: -2px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg); transition: transform .15s ease; }
 	#adminmenu li.dwd-msec.dwd-closed .wp-menu-name::after { transform: rotate(-45deg); margin-top: 0; }
@@ -209,7 +226,7 @@ add_action( 'admin_footer', function () {
 		function set(h, isOpen) { h.classList.toggle('dwd-closed', !isOpen); items(h).forEach(function (li) { li.classList.toggle('dwd-sec-hide', !isOpen); }); }
 		heads.forEach(function (h) {
 			var hasCurrent = items(h).some(function (li) { return li.classList.contains('wp-has-current-submenu') || li.classList.contains('current') || li.classList.contains('wp-menu-open'); });
-			var def = h.id === 'dwd-msec-development';
+			var def = ['dwd-msec-projects', 'dwd-msec-clients', 'dwd-msec-finances', 'dwd-msec-portfolio', 'dwd-msec-development'].indexOf(h.id) > -1;
 			set(h, hasCurrent || (h.id in open ? !!open[h.id] : def));
 			var a = h.querySelector('a');
 			if (a) { a.removeAttribute('href'); }
