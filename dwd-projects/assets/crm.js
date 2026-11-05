@@ -288,7 +288,7 @@
 		var slist = Object.keys(src).sort(function (a, b) { return src[b].v - src[a].v; });
 		var pct = function (v) { return total ? Math.round(v / total * 100) : 0; };
 		var kpi = function (label, val, sub, tone) { return '<div class="dwdc-kpi' + (tone ? ' ' + tone : '') + '"><small>' + label + '</small><strong>' + val + '</strong>' + (sub ? '<span>' + sub + '</span>' : '') + '</div>'; };
-		var chan = [['Upwork', up, 'upw'], ['Stripe', st, 'str'], ['PayPal', pp, 'ppl'], ['Zelle, check & other', ot, 'oth']];
+		var chan = [['Upwork (after fees)', up, 'upw'], ['Stripe', st, 'str'], ['PayPal', pp, 'ppl'], ['Zelle, check & other', ot, 'oth']];
 		var rowsP = paid.slice(0, 10).map(function (c, i) { var k = clientOf(c); return '<a class="dwdc-mrow" href="#client/' + c.id + '"><em>' + (i + 1) + '</em><span><b>' + esc(c.name) + '</b><small>' + esc(k ? k.name : (c.person || '')) + '</small></span><strong>' + money(lifetime(c)) + '</strong></a>'; }).join('');
 		var rowsC = topClients.map(function (x, i) { return '<a class="dwdc-mrow" href="' + (x.id ? '#cl/' + x.id : '#client/' + x.list[0].id) + '"><em>' + (i + 1) + '</em><span><b>' + esc(cname(x)) + '</b><small>' + x.list.length + ' project' + (x.list.length === 1 ? '' : 's') + '</small></span><strong>' + money(x.total) + '</strong></a>'; }).join('');
 		var rowsR = repeat.slice(0, 12).map(function (x) { return '<a class="dwdc-mrow" href="' + (x.id ? '#cl/' + x.id : '#client/' + x.list[0].id) + '"><span><b>' + esc(cname(x)) + '</b><small>' + x.list.map(function (c) { return esc(c.name); }).join(' · ') + '</small></span><strong>' + money(x.total) + '</strong></a>'; }).join('');
@@ -305,7 +305,7 @@
 			+ mcard('Where it came from', '<div class="dwdc-chanbar">' + chan.map(function (x) { return x[1] ? '<i class="' + x[2] + '" style="width:' + Math.max(1, pct(x[1])) + '%"></i>' : ''; }).join('') + '</div>'
 				+ '<ul class="dwdc-chans">' + chan.map(function (x) { return '<li><i class="' + x[2] + '"></i><span>' + x[0] + '</span><b>' + money(x[1]) + '</b><em>' + pct(x[1]) + '%</em></li>'; }).join('') + '</ul>')
 			+ mcard('By year', (ylist.length ? '<ul class="dwdc-years2">' + ylist.map(function (y) { var o = MY[y], t = ytot(y); return '<li><span>' + y + '</span><div>' + [['Stripe', 'str'], ['PayPal', 'ppl'], ['Upwork', 'upw'], ['Other', 'oth']].map(function (x) { return o[x[0]] ? '<i class="' + x[1] + '" style="width:' + Math.max(1, Math.round(o[x[0]] / ymax * 100)) + '%" title="' + x[0] + ' ' + money(o[x[0]]) + '"></i>' : ''; }).join('') + '</div><b>' + money(t) + '</b></li>'; }).join('') + '</ul>' : emptyRow('No dated payments yet.'))
-				+ '<p class="dwdc-mutp sm">Every payment on the day it was paid: Upwork (from your transaction history, before Upwork’s 10% fee), Stripe, PayPal and payments you log. Refunds come off the year they happened.</p>')
+				+ '<p class="dwdc-mutp sm">Every payment on the day it was paid: Upwork (from your transaction history, after Upwork’s fees), Stripe, PayPal and payments you log. Refunds come off the year they happened.</p>')
 			+ mcard('How clients found you', '<ul class="dwdc-chans src">' + slist.map(function (s) { return '<li><span>' + esc(s) + '</span><em>' + src[s].n + ' projects</em><b>' + money(src[s].v) + '</b></li>'; }).join('') + '</ul>')
 			+ mcard('Top projects', rowsP || emptyRow('No payments yet.'))
 			+ mcard('Top clients', rowsC || emptyRow('No payments yet.'))
@@ -1458,7 +1458,7 @@
 	/* ---------- start ---------- */
 	document.body.classList.add('dwdc-app-on');
 	api('').then(function (r) {
-		S.contacts = r.contacts.filter(Boolean); S.tasks = r.tasks.filter(Boolean); S.clients = (r.clients || []).filter(Boolean);
+		S.contacts = r.contacts.filter(Boolean); S.tasks = r.tasks.filter(Boolean); S.clients = (r.clients || []).filter(Boolean); S.money = r.money || {};
 		var m = /[?&]contact=(\d+)/.exec(location.search), em = /[?&]email=([^&]+)/.exec(location.search);
 		var who = m ? contact(+m[1]) : em ? S.contacts.find(function (c) { return c.email && c.email.toLowerCase() === decodeURIComponent(em[1]).toLowerCase(); }) : null;
 		if (who) { location.hash = 'client/' + who.id; }

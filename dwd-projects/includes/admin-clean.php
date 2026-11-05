@@ -119,6 +119,7 @@ add_action( 'admin_head', function () {
 		body:not(.folded) #wpcontent, body:not(.folded) #wpfooter { margin-left: 252px; }
 	}
 	#adminmenuwrap { padding-bottom: 12px; }
+	#adminmenu > li, #adminmenu > li:hover, #adminmenu > li.opensub, #adminmenu > li.wp-has-current-submenu, #adminmenu > li.menu-top:hover, #adminmenu li.menu-top.opensub { background: transparent !important; }
 	#adminmenu { margin: 0; padding: 6px 0 12px; }
 	body:not(.folded) #adminmenu > li { padding: 0 12px; margin: 1px 0; }
 	#adminmenu > li > a.menu-top { display: flex; align-items: center; min-height: 42px; border-radius: 8px; color: rgba(255,255,255,.85) !important; font-size: 14.5px; font-weight: 500; background: transparent !important; transition: background .15s ease; }
