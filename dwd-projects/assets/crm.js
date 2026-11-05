@@ -141,7 +141,7 @@
 
 	/* ---------- routing ---------- */
 	var TITLES = {
-		home: ['', 'Today at', 'Dream Web Digital'], leads: ['Clients', 'All', 'Leads'], onboarding: ['Clients', 'Onboarding', 'Forms'],
+		home: ['', '', 'Dream Web Digital'], leads: ['Clients', 'All', 'Leads'], onboarding: ['Clients', 'Onboarding', 'Forms'],
 		todos: ['Everything open', 'To-Do', 'List'], hosting: ['Clients', 'Hosting', 'Clients'], archive: ['More', 'Archive', ''],
 		search: ['Search', 'Search', 'Results'], money: ['Finances', 'Money', 'Stats'], reviews: ['Clients', 'Get', 'Reviews'], clients: ['Clients', 'All', 'Clients'], projects: ['Projects', 'All', 'Projects']
 	};
@@ -216,7 +216,7 @@
 		return '<header class="dwdc-ph">'
 			+ '<div class="dwdc-ph-id"><button class="dwdc-burger" data-menu aria-label="Menu">' + ic('menu', 20) + '</button><div>'
 			+ '<p class="dwdc-ph-crumb">' + crumb + '</p>'
-			+ '<h1 class="dwdc-ph-title">' + esc(t[1]) + (t[2] ? ' <b>' + esc(t[2]) + '</b>' : '') + '</h1></div></div>'
+			+ '<h1 class="dwdc-ph-title">' + esc(t[1]) + (t[2] ? (t[1] ? ' ' : '') + '<b>' + esc(t[2]) + '</b>' : '') + '</h1></div></div>'
 			+ '<div class="dwdc-ph-tools">'
 			+ '<label class="dwdc-ssearch dwdc-ph-search">' + ic('search', 16) + '<input type="search" name="dwdc-find" placeholder="Search clients…" aria-label="Search clients" value="" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" readonly data-lpignore="true" data-1p-ignore data-form-type="other"><kbd>Ctrl K</kbd></label>'
 			+ '<span class="dwdc-ph-sp"></span>'
@@ -1039,6 +1039,8 @@
 	function save(id, data, msg) {
 		return api('/contact/' + id, 'POST', data).then(function (c) { upsert(c); S.full[id] = c; render(); if (msg) { toast(msg); } return c; }).catch(fail);
 	}
+	// Wrap a project-page box so phones can reorder it.
+	function pw(name, html) { return html ? '<div class="pw pw-' + name + '">' + html + '</div>' : ''; }
 	function clientView(id) {
 		var c = S.full[id] || contact(id);
 		if (!c) { return '<div class="dwdc-card">' + emptyRow('Loading…') + '</div>'; }
@@ -1069,18 +1071,18 @@
 			+ (st === 'complete' ? mini('navy', 'Total spent', money(lifetime(c))) : '<div class="dwdc-mini"><small>Due</small><strong class="' + (late ? 'red' : '') + '">' + (c.deadline ? fmt(c.deadline) : '—') + '</strong></div>') + '</div>'
 			+ '<div class="dwdc-two">'
 			+ '<div class="dwdc-col">'
-			+ (S.edit ? editCard(c) : detailsCard(c))
-			+ peopleCard(c)
-			+ sourceCard(c)
-			+ (num(c.hosting) ? hostCard(c) : '')
-			+ jobsCard(c)
+			+ pw('details', S.edit ? editCard(c) : detailsCard(c))
+			+ pw('people', peopleCard(c))
+			+ pw('source', sourceCard(c))
+			+ (num(c.hosting) ? pw('host', hostCard(c)) : '')
+			+ pw('jobs', jobsCard(c))
 			+ '</div><div class="dwdc-col">'
-			+ '<section class="dwdc-card pad"><div class="dwdc-cardh"><h2>To-dos</h2><span class="dwdc-cnt">' + openN + '</span></div>'
+			+ '<section class="dwdc-card pad pw-todos"><div class="dwdc-cardh"><h2>To-dos</h2><span class="dwdc-cnt">' + openN + '</span></div>'
 			+ (tasks.length ? '<div class="dwdc-todos">' + tasks.map(function (t) { return todoRow(t, true); }).join('') + '</div>' : '')
 			+ '<form class="dwdc-inlineadd" data-contact="' + c.id + '">' + ic('plus', 16) + '<input name="text" placeholder="Add a to-do for ' + esc(c.name) + '…" autocomplete="off"><input type="date" name="due" title="Due date"></form></section>'
-			+ onboardCard(c, full)
-			+ markupCard(c)
-			+ activityCard(c, full)
+			+ pw('onboard', onboardCard(c, full))
+			+ pw('markup', markupCard(c))
+			+ pw('activity', activityCard(c, full))
 			+ '</div></div>';
 	}
 	// Onboarding answers as plain text, ready to paste into Claude.

@@ -1069,7 +1069,7 @@ function dwdc_vars( $mode = 'admin' ) {
 		'pay'   => home_url( '/checkout/?dwd-order=hosting' ),
 		'markupHome' => 'https://app.markup.io/w/o7nvlGWC',
 		'mark'       => DWDP_URL . 'assets/db-mark.png',
-		'logout' => wp_logout_url( admin_url( 'admin.php?page=client-desk' ) ),
+		'logout' => html_entity_decode( wp_logout_url( admin_url( 'admin.php?page=client-desk' ) ) ),
 		'wp'     => admin_url(),
 		'user'   => wp_get_current_user()->display_name,
 	);
@@ -1079,7 +1079,7 @@ function dwdc_vars( $mode = 'admin' ) {
 	$v['mode']    = $mode;
 	$v['aiReady'] = function_exists( 'dwdc_ai_key' ) && '' !== dwdc_ai_key();
 	if ( 'app' === $mode ) {
-		$v['logout'] = wp_logout_url( home_url( '/desk/' ) );
+		$v['logout'] = html_entity_decode( wp_logout_url( home_url( '/desk/' ) ) );
 	}
 	return $v;
 }

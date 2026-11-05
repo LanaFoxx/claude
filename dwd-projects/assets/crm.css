@@ -1022,3 +1022,25 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
   .dwdc-collapse:not(.open) { padding-bottom: 20px; }
 }
 @media (max-width: 768px) { .dwdc .dwdc-tint-space { display: none !important; } }
+/* project page boxes: wrappers are invisible on desktop */
+.pw > .dwdc-card, .pw > section, .pw > form { margin-bottom: 0; }
+.dwdc-col > .pw { display: contents; }
+/* phones: one column, Onboarding and Markup right under Contacts */
+@media (max-width: 768px) {
+  .dwdc-two { display: flex !important; flex-direction: column; gap: 16px; }
+  .dwdc-two > .dwdc-col { display: contents; }
+  .pw-details { order: 1; } .pw-people { order: 2; } .pw-onboard { order: 3; } .pw-markup { order: 4; }
+  .pw-source { order: 5; } .pw-host { order: 6; } .pw-jobs { order: 7; } .pw-todos { order: 8; } .pw-activity { order: 9; }
+  .dwdc-two > .dwdc-col > .pw { display: block; }
+}
+@media (max-width: 768px) {
+  .pw-todos { order: 7 !important; } .pw-jobs { order: 8 !important; } .pw-activity { order: 9 !important; }
+  .dwdc .dwdc-addbar { min-width: 0; }
+  .dwdc .dwdc-addbar input { min-width: 0; flex: 1 1 auto; width: auto; }
+  .dwdc .dwdc-addbar .dwdc-btn { flex: none; }
+}
+@media (max-width: 768px) {
+  .dwdc .dwdc-addbar.home { flex-wrap: wrap; }
+  .dwdc .dwdc-addbar.home [name=text] { flex: 1 1 100%; }
+  .dwdc .dwdc-addbar [type=date] { max-width: none; flex: 1 1 0; }
+}
