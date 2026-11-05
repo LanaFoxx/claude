@@ -408,3 +408,24 @@ select.dwdc-stage.t-red { background-color: var(--red-t) !important; color: var(
 .g-jobs { grid-template-columns: minmax(190px, 1.6fr) minmax(160px, 1.3fr) 0.8fr 0.8fr 0.9fr 128px minmax(140px, 1.3fr); min-width: 1000px; }
 .dwdc-screen > section + section { margin-top: 28px; }
 .dwdc-grid.head.tint-gray { background: #EEF2F7; color: var(--sec); border-bottom-color: var(--line); }
+
+/* v2.9.10: bolder status colors. Active = logo blue (#00A1F7), On hold = green, Limbo = red, Completed = navy */
+.dwdc { --logo: #00A1F7; }
+.dwdc-tile { border: 0 !important; box-shadow: 0 10px 22px -14px rgba(14,34,64,.45); }
+.dwdc-tile.t-blue { background: var(--logo) !important; }
+.dwdc-tile.t-green { background: var(--green) !important; }
+.dwdc-tile.t-red { background: var(--red) !important; }
+.dwdc-tile.t-teal { background: var(--teal) !important; }
+.dwdc-tile .dwdc-tile-h, .dwdc-tile strong { color: #fff !important; }
+.dwdc-tile .dwdc-tile-h i { background: rgba(255,255,255,.85); }
+.dwdc-tile small { color: rgba(255,255,255,.9) !important; }
+.dwdc-grid.head.tint-blue { background: var(--logo); color: #fff; border-bottom-color: var(--logo); }
+.dwdc-grid.head.tint-green { background: var(--green); color: #fff; border-bottom-color: var(--green); }
+.dwdc-grid.head.tint-red { background: var(--red); color: #fff; border-bottom-color: var(--red); }
+.dwdc-grid.head.tint-gray { background: var(--navy); color: #fff; border-bottom-color: var(--navy); }
+.dwdc-grid.head[class*=tint-] { font-size: 10.5px; }
+/* matching pills: stronger tints */
+select.dwdc-stage.t-blue { background-color: #D4EEFD !important; color: #0078BF !important; border-color: #9FD8FB !important; }
+select.dwdc-stage.t-green { background-color: #CDEFDD !important; color: #137A4B !important; border-color: #96D8B5 !important; }
+select.dwdc-stage.t-red { background-color: #F9D3D0 !important; color: #B42F28 !important; border-color: #F0A7A1 !important; }
+.dwdc-pill.t-blue { background: #D4EEFD; color: #0078BF; } .dwdc-pill.t-green { background: #CDEFDD; color: #137A4B; } .dwdc-pill.t-red { background: #F9D3D0; color: #B42F28; }

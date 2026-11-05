@@ -134,7 +134,6 @@
 			+ nav('todos', 'todo', 'To-dos', todo)
 			+ nav('hosting', 'server', 'Hosting') + nav('completed', 'done', 'Completed') + nav('archive', 'archive', 'Archive')
 			+ '</nav><div class="dwdc-sidefoot">'
-			+ '<div class="dwdc-owed"><small>Still owed</small><strong>' + money(ow) + '</strong><span>across ' + owN + ' job' + (owN === 1 ? '' : 's') + '</span></div>'
 			+ '<a class="dwdc-wp" href="' + esc(DWDC.wp) + '">' + ic('wp', 15) + 'WordPress admin</a>'
 			+ '<a class="dwdc-me" href="' + esc(DWDC.logout) + '" title="Sign out"><span class="dwdc-av t-blue s34">MT</span><span><strong>' + esc(DWDC.user || 'Michael Tarr') + '</strong><small>Owner</small></span>' + ic('logout', 17) + '</a>'
 			+ '</div></aside>';
