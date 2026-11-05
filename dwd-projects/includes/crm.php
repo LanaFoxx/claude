@@ -46,7 +46,7 @@ function dwdc_lists() {
 
 /** Contact fields kept on every contact. */
 function dwdc_fields() {
-	return array( 'job', 'markup', 'markup_sent', 'lead_source', 'pay_method', 'stage', 'completed', 'billed', 'stripe', 'paypal', 'person', 'email', 'phone', 'company', 'website', 'list', 'price', 'balance', 'deadline', 'hosting', 'renewal', 'source', 'next' );
+	return array( 'job', 'manual', 'markup', 'markup_sent', 'lead_source', 'pay_method', 'stage', 'completed', 'billed', 'stripe', 'paypal', 'person', 'email', 'phone', 'company', 'website', 'list', 'price', 'balance', 'deadline', 'hosting', 'renewal', 'source', 'next' );
 }
 
 function dwdc_contact( $post, $full = false ) {
@@ -74,9 +74,11 @@ function dwdc_contact( $post, $full = false ) {
 	// Date of their most recent paid payment (Stripe, PayPal…), used to sort completed work.
 	$pays           = get_post_meta( $p->ID, '_dwdc_payments', true );
 	$c['last_paid'] = '';
+	$c['last_pay']  = null;
 	foreach ( is_array( $pays ) ? $pays : array() as $x ) {
 		if ( 'paid' === ( $x['status'] ?? '' ) && (string) ( $x['date'] ?? '' ) > $c['last_paid'] ) {
 			$c['last_paid'] = (string) $x['date'];
+			$c['last_pay']  = array( 'date' => (string) $x['date'], 'amount' => (string) ( $x['amount'] ?? '' ), 'source' => (string) ( $x['source'] ?? '' ), 'note' => (string) ( $x['note'] ?? '' ) );
 		}
 	}
 	$c['sub']     = (float) preg_replace( '/[^\d.]/', '', (string) get_post_meta( $p->ID, '_dwdc_hosting', true ) ) > 0 ? dwdc_subscription_for( $p->ID, $c['email'] ) : null;
@@ -292,6 +294,16 @@ function dwdc_file_entry( $form, $fields, $date = '', $source = 'Website form', 
 	}
 	$id         = $match ? dwdc_find( $email, $match ) : dwdc_find_by_email( $email );
 	$onboarding = false !== stripos( $form, 'onboard' );
+	// Someone invited by phone: match their waiting lead by phone number.
+	$digits = preg_replace( '/\D/', '', $get( array( 'phone' ) ) );
+	if ( ! $id && $onboarding && strlen( $digits ) >= 7 ) {
+		foreach ( get_posts( array( 'post_type' => DWDC_CONTACT, 'post_status' => 'private', 'posts_per_page' => -1, 'fields' => 'ids', 'meta_key' => '_dwdc_list', 'meta_value' => 'leads' ) ) as $lid ) { // phpcs:ignore
+			if ( substr( preg_replace( '/\D/', '', (string) get_post_meta( $lid, '_dwdc_phone', true ) ), -10 ) === substr( $digits, -10 ) ) {
+				$id = $lid;
+				break;
+			}
+		}
+	}
 	$person     = $get( array( 'full_name', 'name' ) );
 	$business   = $get( array( 'company', 'business_name', 'business' ) );
 	$client     = 0;
@@ -330,7 +342,12 @@ function dwdc_file_entry( $form, $fields, $date = '', $source = 'Website form', 
 		$data['stage']  = $onboarding ? 'onboarding' : 'new';
 		$data['source'] = $source . ': ' . $form;
 	} else {
-		unset( $data['name'] );
+		// Invited leads start with a placeholder name (their email or phone); the form fills in the real one.
+		if ( get_post_meta( $id, '_dwdc_invited', true ) ) {
+			delete_post_meta( $id, '_dwdc_invited' );
+		} else {
+			unset( $data['name'] );
+		}
 		if ( $onboarding ) {
 			$data['stage'] = 'onboarding';
 			if ( in_array( get_post_meta( $id, '_dwdc_list', true ), array( 'archive', 'onboarding' ), true ) ) {
@@ -340,6 +357,10 @@ function dwdc_file_entry( $form, $fields, $date = '', $source = 'Website form', 
 	}
 	$id      = dwdc_save_contact( $id, $data );
 	if ( $client ) {
+		if ( $person && get_post_meta( $client, '_dwdcl_invited', true ) ) {
+			wp_update_post( array( 'ID' => $client, 'post_title' => $person ) );
+			delete_post_meta( $client, '_dwdcl_invited' );
+		}
 		foreach ( array( 'email' => $email, 'phone' => $get( array( 'phone' ) ), 'company' => $business ) as $k => $v ) {
 			if ( $v && ! get_post_meta( $client, '_dwdcl_' . $k, true ) ) {
 				update_post_meta( $client, '_dwdcl_' . $k, 'email' === $k ? strtolower( $v ) : $v );
@@ -740,6 +761,84 @@ add_action( 'rest_api_init', function () {
 		return dwdc_contact( $into, true );
 	} ) );
 
+	// Invite a new client: a waiting lead + client are created, and the onboarding form link is emailed
+	// (or, for a phone number, returned so it can be texted). Their answers fill both in automatically.
+	register_rest_route( $ns, '/crm/invite', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
+		$to    = trim( (string) $r->get_param( 'to' ) );
+		$email = is_email( $to ) ? strtolower( sanitize_email( $to ) ) : '';
+		$phone = $email ? '' : ( strlen( preg_replace( '/\D/', '', $to ) ) >= 7 ? sanitize_text_field( $to ) : '' );
+		if ( ! $email && ! $phone ) {
+			return new WP_Error( 'dwdc_to', 'Enter an email address or phone number.', array( 'status' => 400 ) );
+		}
+		$link = get_permalink( 2993 ) ?: home_url( '/onboarding/' );
+		$pid  = $email ? dwdc_find_by_email( $email ) : 0;
+		if ( ! $pid ) {
+			$cid = $email ? dwdc_find_client( $email, '' ) : 0;
+			if ( ! $cid ) {
+				$cid = dwdc_save_client( 0, array( 'name' => $to, 'email' => $email, 'phone' => $phone ) );
+				update_post_meta( $cid, '_dwdcl_invited', 1 );
+			}
+			$pid = dwdc_save_contact( 0, array( 'name' => $to, 'email' => $email, 'phone' => $phone, 'list' => 'leads', 'stage' => 'contacted', 'source' => 'Invited to onboarding', 'client' => $cid, 'next' => 'Waiting on their onboarding form' ) );
+			update_post_meta( $pid, '_dwdc_invited', 1 );
+		}
+		$notes   = get_post_meta( $pid, '_dwdc_notes', true );
+		$notes   = is_array( $notes ) ? $notes : array();
+		$sent    = false;
+		if ( $email ) {
+			$html = dwdp_email_html( array(
+				'eyebrow' => 'Welcome',
+				'title'   => 'Let’s get your website started',
+				'intro'   => 'Hi there,<br><br>Thank you for choosing Dream Web Digital. The first step is a short onboarding form that tells me everything I need to plan your website: your business, your goals, the pages you need, and the look you have in mind.<br><br>'
+					. 'It takes about 10 to 15 minutes. You can skip anything you don’t have yet and come back to it later, since your answers save automatically as you go.',
+				'buttons' => array( array( 'Start my onboarding form', $link ) ),
+				'outro'   => 'Questions? Just reply to this email.<br>Michael Tarr, Dream Web Digital',
+				'footer'  => 'Dream Web Digital ·',
+			) );
+			$html = str_replace( 'padding:14px 26px;border-radius:8px;font-size:13px', 'padding:20px 44px;border-radius:10px;font-size:16px', $html );
+			$sent = wp_mail( $email, 'Your onboarding form from Dream Web Digital', $html, array( 'Content-Type: text/html; charset=UTF-8', 'Reply-To: Michael Tarr <mike@dreamwebdigital.com>' ) );
+		}
+		$notes[] = array( 'date' => current_time( 'mysql', true ), 'text' => $email ? ( $sent ? 'Onboarding form emailed to ' . $email . '.' : 'Tried to email the onboarding form to ' . $email . ', but it didn’t send.' ) : 'Onboarding form link shared by text with ' . $phone . '.' );
+		update_post_meta( $pid, '_dwdc_notes', $notes );
+		return array(
+			'project' => dwdc_contact( $pid, true ),
+			'sent'    => $sent,
+			'link'    => $link,
+			'text'    => 'Hi! This is Michael from Dream Web Digital. Here’s your onboarding form to get your website started. It takes about 10–15 minutes and saves as you go: ' . $link,
+		);
+	} ) );
+
+	// Log a payment on a project: adds it to the payment history, counts it in the right total, lowers what's owed.
+	register_rest_route( $ns, '/crm/contact/(?P<id>\d+)/payment', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
+		$id  = (int) $r['id'];
+		$amt = round( (float) preg_replace( '/[^\d.]/', '', (string) $r->get_param( 'amount' ) ), 2 );
+		if ( $amt <= 0 || DWDC_CONTACT !== get_post_type( $id ) ) {
+			return new WP_Error( 'dwdc_amt', 'Enter the amount paid.', array( 'status' => 400 ) );
+		}
+		$method = sanitize_text_field( (string) $r->get_param( 'method' ) ) ?: 'Other';
+		$date   = sanitize_text_field( (string) $r->get_param( 'date' ) ) ?: current_time( 'Y-m-d' );
+		$note   = sanitize_text_field( (string) $r->get_param( 'note' ) );
+		$pays   = get_post_meta( $id, '_dwdc_payments', true );
+		$pays   = is_array( $pays ) ? $pays : array();
+		$pays[] = array( 'date' => $date, 'amount' => (string) $amt, 'source' => $method, 'ref' => 'Logged in Dream Desk', 'status' => 'paid', 'note' => $note );
+		usort( $pays, function ( $a, $b ) { return strcmp( (string) ( $b['date'] ?? '' ), (string) ( $a['date'] ?? '' ) ); } );
+		update_post_meta( $id, '_dwdc_payments', $pays );
+		$field = array( 'Stripe' => 'stripe', 'PayPal' => 'paypal', 'Upwork' => 'billed' )[ $method ] ?? 'manual';
+		update_post_meta( $id, '_dwdc_' . $field, (string) round( (float) get_post_meta( $id, '_dwdc_' . $field, true ) + $amt, 2 ) );
+		$bal = (float) preg_replace( '/[^\d.]/', '', (string) get_post_meta( $id, '_dwdc_balance', true ) );
+		if ( $bal > 0 ) {
+			update_post_meta( $id, '_dwdc_balance', (string) max( 0, round( $bal - $amt, 2 ) ) );
+		}
+		if ( ! get_post_meta( $id, '_dwdc_pay_method', true ) && 'Upwork' !== $method ) {
+			update_post_meta( $id, '_dwdc_pay_method', $method );
+		}
+		$notes   = get_post_meta( $id, '_dwdc_notes', true );
+		$notes   = is_array( $notes ) ? $notes : array();
+		$notes[] = array( 'date' => current_time( 'mysql', true ), 'text' => 'Payment of $' . number_format( $amt, $amt == (int) $amt ? 0 : 2 ) . ' logged (' . $method . ( $note ? ', ' . $note : '' ) . ').' );
+		update_post_meta( $id, '_dwdc_notes', $notes );
+		wp_update_post( array( 'ID' => $id ) );
+		return dwdc_contact( $id, true );
+	} ) );
+
 	// Email the client their Markup review link, in the site's branded email.
 	register_rest_route( $ns, '/crm/contact/(?P<id>\d+)/markup-email', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
 		$id   = (int) $r['id'];
@@ -824,7 +923,7 @@ add_action( 'rest_api_init', function () {
 /* ---------------------------------------------------------------- admin screen */
 
 add_action( 'admin_menu', function () {
-	add_menu_page( 'Client Desk', 'Client Desk', 'manage_options', 'client-desk', 'dwdc_page', 'dashicons-groups', 2 );
+	add_menu_page( 'Dream Desk', 'Dream Desk', 'manage_options', 'client-desk', 'dwdc_page', 'dashicons-groups', 2 );
 } );
 
 add_action( 'admin_init', function () {
@@ -841,7 +940,7 @@ add_action( 'admin_enqueue_scripts', function ( $hook ) {
 	if ( 'toplevel_page_client-desk' !== $hook ) {
 		return;
 	}
-	wp_enqueue_style( 'dwdc-fonts', 'https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;500;600;700;800&display=swap', array(), null );
+	wp_enqueue_style( 'dwdc-fonts', 'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap', array(), null );
 	wp_enqueue_style( 'dwdc', DWDP_URL . 'assets/crm.css', array(), DWDP_VERSION );
 	wp_enqueue_script( 'dwdc', DWDP_URL . 'assets/crm.js', array(), DWDP_VERSION, true );
 	wp_localize_script( 'dwdc', 'DWDC', array(
@@ -852,6 +951,7 @@ add_action( 'admin_enqueue_scripts', function ( $hook ) {
 		'orders' => admin_url( class_exists( '\\Automattic\\WooCommerce\\Utilities\\OrderUtil' ) && \Automattic\WooCommerce\Utilities\OrderUtil::custom_orders_table_usage_is_enabled() ? 'admin.php?page=wc-orders&s=' : 'edit.php?post_type=shop_order&s=' ),
 		'pay'   => home_url( '/checkout/?dwd-order=hosting' ),
 		'markupHome' => 'https://app.markup.io/w/o7nvlGWC',
+		'mark'       => DWDP_URL . 'assets/db-mark.png',
 		'logout' => wp_logout_url( admin_url( 'admin.php?page=client-desk' ) ),
 		'wp'     => admin_url(),
 		'user'   => wp_get_current_user()->display_name,
