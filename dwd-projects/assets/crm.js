@@ -282,7 +282,7 @@
 			'<footer class="dwdc-grid4">' + frow('Active Projects', active.length, 'projects/active') + frow('Onboarding', onboardList().length, 'onboarding') + frow('Hosting', host.length, 'hosting') + frow('Leads', leadList().length, 'leads') + '</footer>');
 		var c2 = card('cd-projects', chead('brief', 'Projects', 'projects/all'),
 			'<p class="dwdc-hero"><strong>' + active.length + '</strong> active project' + (active.length === 1 ? '' : 's') + '</p>'
-			+ '<p class="dwdc-sub">' + money(active.reduce(function (s, c) { return s + num(c.price); }, 0)) + ' in active contracts</p>'
+			+ '<p class="dwdc-sub">' + money(owed(active)) + ' still owed on active projects</p>'
 			+ '<div class="dwdc-row2"><button class="dwdc-btn" data-act="job">' + ic('plus', 14) + 'New Project</button></div>',
 			'<footer>' + frow('Active Projects', active.length, 'projects/active') + frow('Awaiting Payment', owing.length ? '<em class="dwdc-owepill">' + owing.length + ' owed</em>' : '0', 'projects/active') + frow('Completed', by('complete').length + ' <span class="mut">all-time</span>', 'projects/complete') + '</footer>');
 		var c3 = card('cd-money', chead('dollar', 'Money', 'projects/active'),
@@ -296,7 +296,7 @@
 				var late = c.deadline && c.deadline < DWDC.today, ow = num(c.balance);
 				return '<div class="g-ap row" data-go="client/' + c.id + '"><span><b class="dwdc-pname">' + esc(c.name) + '</b>' + (site(c) ? siteLine(c) : '') + '<small>' + esc([clientName(c), c.job].filter(Boolean).join(' · ')) + '</small></span><span class="b">' + (num(c.price) ? money(c.price) : '—') + '</span><span class="' + (late ? 'deep b' : '') + '">' + (c.deadline ? fmt(c.deadline) : '—') + '</span><span class="r b ' + (ow ? 'deep' : 'sec') + '">' + (ow ? money(ow) : 'Paid') + '</span></div>';
 			}).join('') : emptyRow('No active projects.')) + '</div>',
-			'<footer class="dwdc-totals"><div><small>Total contract value</small><strong>' + money(tv) + '</strong></div><div><small>Total amount due</small><strong class="deep">' + money(owed(active)) + '</strong></div></footer>');
+			'<footer class="dwdc-totals one"><div><small>Total amount due</small><strong class="deep">' + money(owed(active)) + '</strong></div></footer>');
 		var td = openTasks().sort(function (a, b) { return (a.due || '9') < (b.due || '9') ? -1 : 1; });
 		var tl = card('cd-plain', '<header class="dwdc-dhead plain"><h2>To-Do List <span class="dwdc-cnt">' + td.length + '</span></h2><a href="#todos">View all</a></header>',
 			'<form class="dwdc-addbar home"><input name="text" placeholder="Add something we need to do..." autocomplete="off" required><button class="dwdc-btn">Add</button></form>'

@@ -446,3 +446,4 @@ select.dwdc-sel[class*=pm-] option { background: #fff; color: #0B203D; font-weig
 .dwdc-pricein input { border: 0 !important; height: 40px; padding: 0 12px 0 0 !important; font-weight: 700; font-size: 15px !important; }
 .dwdc-hostprice .dwdc-btn2 { height: 42px; }
 @media (max-width: 768px) { .dwdc-hostprice { grid-template-columns: 1fr; } }
+.dwdc-totals.one { grid-template-columns: 1fr; }
