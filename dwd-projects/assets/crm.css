@@ -1044,3 +1044,9 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
   .dwdc .dwdc-addbar.home [name=text] { flex: 1 1 100%; }
   .dwdc .dwdc-addbar [type=date] { max-width: none; flex: 1 1 0; }
 }
+/* Phone project page: Details, Onboarding, Markup, To-dos, Hosting, then Lead source, Contacts, Jobs & spend, Activity */
+@media (max-width: 768px) {
+  .pw-details { order: 1 !important; } .pw-onboard { order: 2 !important; } .pw-markup { order: 3 !important; }
+  .pw-todos { order: 4 !important; } .pw-host { order: 5 !important; } .pw-source { order: 6 !important; }
+  .pw-people { order: 7 !important; } .pw-jobs { order: 8 !important; } .pw-activity { order: 9 !important; }
+}
