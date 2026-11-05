@@ -117,6 +117,11 @@ add_action( 'admin_head', function () {
 	@media (min-width: 961px) {
 		body:not(.folded) #adminmenuback, body:not(.folded) #adminmenuwrap, body:not(.folded) #adminmenu { width: 252px; }
 		body:not(.folded) #wpcontent, body:not(.folded) #wpfooter { margin-left: 252px; }
+		/* the menu scrolls on its own when it's taller than the screen */
+		body:not(.folded) #adminmenuwrap { position: fixed !important; top: 32px !important; bottom: 0; left: 0; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.18) transparent; }
+		body:not(.folded) #adminmenuwrap::-webkit-scrollbar { width: 6px; }
+		body:not(.folded) #adminmenuwrap::-webkit-scrollbar-thumb { background: rgba(255,255,255,.18); border-radius: 3px; }
+		body:not(.folded) #adminmenu .wp-not-current-submenu .wp-submenu { display: none !important; }
 	}
 	#adminmenuwrap { padding-bottom: 12px; }
 	#adminmenu > li, #adminmenu > li:hover, #adminmenu > li.opensub, #adminmenu > li.wp-has-current-submenu, #adminmenu > li.menu-top:hover, #adminmenu li.menu-top.opensub { background: transparent !important; }
