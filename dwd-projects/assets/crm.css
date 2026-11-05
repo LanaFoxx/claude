@@ -1063,3 +1063,12 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
   .dwdc .dwdc-inlineadd input[name=text] { flex: 1 1 calc(100% - 30px); min-width: 0; }
   .dwdc .dwdc-inlineadd [type=date] { flex: 1 1 100%; max-width: none; margin-left: 26px; }
 }
+/* Phone: Patterns & Trends header and the dashboard quick links sit evenly */
+@media (max-width: 768px) {
+  .dwdc .cd-trends .dwdc-dhead { display: grid !important; grid-template-columns: 1fr 1fr; gap: 12px; align-items: center; }
+  .dwdc .cd-trends .dwdc-dhead h2 { grid-column: 1 / -1; margin: 0; }
+  .dwdc .cd-trends .dwdc-dhead .dwdc-askbtn, .dwdc .cd-trends .dwdc-dhead > a { justify-content: center; width: 100%; margin: 0 !important; box-sizing: border-box; }
+  .dwdc .cd-trends .dwdc-dhead > a { display: inline-flex; align-items: center; gap: 6px; padding: 9px 12px; border: 1.5px solid rgba(255,255,255,.7); border-radius: 999px; }
+  .dwdc .dwdc-grid4 .dwdc-frow { gap: 8px; }
+  .dwdc .dwdc-grid4 .dwdc-frow span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 1; }
+}
