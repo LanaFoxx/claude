@@ -1351,3 +1351,9 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
   .dwdc-chat { bottom: calc(80px + env(safe-area-inset-bottom)) !important; height: calc(100dvh - 150px) !important; }
   .dwdc-toast { bottom: calc(90px + env(safe-area-inset-bottom)) !important; }
 }
+.dwdc-quote { position: relative; padding-right: 48px !important; padding-left: 48px !important; transition: transform .25s ease, opacity .25s ease; touch-action: pan-y; }
+.dwdc-quote.gone { transform: translateX(110%); opacity: 0; }
+.dwdc .dwdc-quote-x { position: absolute; top: 50%; right: 10px; transform: translateY(-50%); width: 30px; height: 30px; display: grid; place-items: center; border: 0; border-radius: 50%; background: rgba(255,255,255,.08); color: #C9D6E8; cursor: pointer; }
+.dwdc .dwdc-quote-x:hover { background: rgba(255,255,255,.18); color: #fff; }
+.dwdc .dwdc-quote-x svg { color: inherit; }
+@media (max-width: 768px) { .dwdc-quote { padding-left: 16px !important; padding-right: 44px !important; } .dwdc .dwdc-quote-x { top: 10px; transform: none; right: 8px; } }

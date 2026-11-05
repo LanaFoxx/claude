@@ -474,11 +474,24 @@
 		['Realize deeply that the present moment is all you have.', 'Eckhart Tolle'],
 		['Life is the dancer and you are the dance.', 'Eckhart Tolle']
 	];
+	// One quote a day: random, never repeating until every quote has been shown. X (or a swipe) hides it until tomorrow.
 	function quoteBar() {
-		var d = DWDC.today || new Date().toISOString().slice(0, 10), h = 0;
-		for (var i = 0; i < d.length; i++) { h = (h * 31 + d.charCodeAt(i)) >>> 0; }
-		var q = QUOTES[h % QUOTES.length];
-		return '<div class="dwdc-quote"><span class="dwdc-quote-q">“' + esc(q[0]) + '”</span><span class="dwdc-quote-a">— ' + esc(q[1]) + '</span></div>';
+		var d = DWDC.today || new Date().toISOString().slice(0, 10), st = {};
+		try { if (localStorage.getItem('dwdcQuoteHide') === d) { return ''; } st = JSON.parse(localStorage.getItem('dwdcQuote') || '{}') || {}; } catch (e) { st = {}; }
+		if (st.day !== d || typeof st.i !== 'number' || !QUOTES[st.i]) {
+			var used = (st.used || []).filter(function (i) { return i < QUOTES.length; });
+			if (used.length >= QUOTES.length) { used = typeof st.i === 'number' ? [st.i] : []; }
+			var left = QUOTES.map(function (q, i) { return i; }).filter(function (i) { return used.indexOf(i) < 0 && i !== st.i; });
+			st = { day: d, i: left[Math.floor(Math.random() * left.length)], used: used.concat([]) };
+			st.used.push(st.i);
+			try { localStorage.setItem('dwdcQuote', JSON.stringify(st)); } catch (e) {}
+		}
+		var q = QUOTES[st.i];
+		return '<div class="dwdc-quote" data-quote><span class="dwdc-quote-q">“' + esc(q[0]) + '”</span><span class="dwdc-quote-a">— ' + esc(q[1]) + '</span><button type="button" class="dwdc-quote-x" data-quotex aria-label="Hide until tomorrow" title="Hide until tomorrow">' + ic('x', 14) + '</button></div>';
+	}
+	function hideQuote(el) {
+		try { localStorage.setItem('dwdcQuoteHide', DWDC.today || new Date().toISOString().slice(0, 10)); } catch (e) {}
+		if (el) { el.classList.add('gone'); setTimeout(function () { render(); }, 260); } else { render(); }
 	}
 
 	function appBanner() {
@@ -1975,6 +1988,7 @@
 			if (pb) { var nx = billNext(pb), pp = {}; Object.keys(pb.paid || {}).forEach(function (k) { pp[k] = pb.paid[k]; }); if (nx.paid) { delete pp[nx.key]; } else { pp[nx.key] = DWDC.today; } pSave('bills', { id: pb.id, paid: pp }, nx.paid ? 'Marked not paid' : pb.name + ' paid'); }
 			return;
 		}
+		if ((el = t.closest('[data-quotex]'))) { hideQuote(el.closest('[data-quote]')); return; }
 		if ((el = t.closest('[data-showdone]'))) { S.showDone = !S.showDone; render(); return; }
 		if ((el = t.closest('[data-review]'))) { S.modal = { type: 'review', vals: {}, off: {} }; render(); return; }
 		if ((el = t.closest('[data-revpick]'))) { var rid = el.getAttribute('data-revpick'); S.modal.off[rid] = !S.modal.off[rid]; render(); return; }
@@ -2160,6 +2174,12 @@
 		}
 	});
 
+	(function () {
+		var sx = 0, sy = 0, qel = null;
+		app.addEventListener('touchstart', function (e) { qel = e.target.closest && e.target.closest('[data-quote]'); if (qel) { sx = e.touches[0].clientX; sy = e.touches[0].clientY; } }, { passive: true });
+		app.addEventListener('touchmove', function (e) { if (!qel) { return; } var dx = e.touches[0].clientX - sx; if (Math.abs(dx) > Math.abs(e.touches[0].clientY - sy)) { qel.style.transform = 'translateX(' + dx + 'px)'; qel.style.opacity = String(Math.max(0.2, 1 - Math.abs(dx) / 260)); } }, { passive: true });
+		app.addEventListener('touchend', function (e) { if (!qel) { return; } var dx = (e.changedTouches[0] || {}).clientX - sx; if (Math.abs(dx) > 90) { hideQuote(qel); } else { qel.style.transform = ''; qel.style.opacity = ''; } qel = null; });
+	})();
 	app.addEventListener('change', function (e) {
 		var t = e.target;
 		if (t.hasAttribute('data-revpick')) { S.revSel = S.revSel || {}; S.revSel[t.getAttribute('data-revpick')] = t.checked; render(); return; }
