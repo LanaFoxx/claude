@@ -992,6 +992,7 @@ add_action( 'admin_menu', function () {
 		'projects/hold'     => 'On Hold',
 		'projects/limbo'    => 'Limbo',
 		'projects/complete' => 'Completed',
+		'money'             => 'Money',
 		'onboarding'        => 'Onboarding',
 		'hosting'           => 'Hosting',
 		'leads'             => 'Leads',
@@ -1007,18 +1008,13 @@ add_action( 'admin_init', function () {
 	}
 } );
 
-function dwdc_page() {
-	echo '<div id="dwdc-app" class="dwdc"><div class="dwdc-loading">Loading Client Desk…</div></div>';
-}
-
-add_action( 'admin_enqueue_scripts', function ( $hook ) {
-	if ( 'toplevel_page_client-desk' !== $hook ) {
-		return;
-	}
-	wp_enqueue_style( 'dwdc-fonts', 'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap', array(), null );
-	wp_enqueue_style( 'dwdc', DWDP_URL . 'assets/crm.css', array(), DWDP_VERSION );
-	wp_enqueue_script( 'dwdc', DWDP_URL . 'assets/crm.js', array(), DWDP_VERSION, true );
-	wp_localize_script( 'dwdc', 'DWDC', array(
+/**
+ * Settings handed to the Dream Desk app (admin screen and the /desk/ phone app).
+ *
+ * @param string $mode 'admin' or 'app'.
+ */
+function dwdc_vars( $mode = 'admin' ) {
+	$v = array(
 		'api'   => esc_url_raw( rest_url( 'dwd/v1/crm' ) ),
 		'nonce' => wp_create_nonce( 'wp_rest' ),
 		'logo'  => content_url( '/uploads/2026/11/dreamweb-white-blue-transparent.png' ),
@@ -1030,7 +1026,29 @@ add_action( 'admin_enqueue_scripts', function ( $hook ) {
 		'logout' => wp_logout_url( admin_url( 'admin.php?page=client-desk' ) ),
 		'wp'     => admin_url(),
 		'user'   => wp_get_current_user()->display_name,
-	) );
+	);
+	$v['app']     = home_url( '/desk/' );
+	$v['appIcon'] = DWDP_URL . 'assets/app/icon-192.png';
+	$v['appQr']   = DWDP_URL . 'assets/app/qr-desk.png';
+	$v['mode']    = $mode;
+	if ( 'app' === $mode ) {
+		$v['logout'] = wp_logout_url( home_url( '/desk/' ) );
+	}
+	return $v;
+}
+
+function dwdc_page() {
+	echo '<div id="dwdc-app" class="dwdc"><div class="dwdc-loading">Loading Client Desk…</div></div>';
+}
+
+add_action( 'admin_enqueue_scripts', function ( $hook ) {
+	if ( 'toplevel_page_client-desk' !== $hook ) {
+		return;
+	}
+	wp_enqueue_style( 'dwdc-fonts', 'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap', array(), null );
+	wp_enqueue_style( 'dwdc', DWDP_URL . 'assets/crm.css', array(), DWDP_VERSION );
+	wp_enqueue_script( 'dwdc', DWDP_URL . 'assets/crm.js', array(), DWDP_VERSION, true );
+	wp_localize_script( 'dwdc', 'DWDC', dwdc_vars() );
 } );
 
 // Full-screen app: no admin bar gap above it.

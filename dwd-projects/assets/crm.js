@@ -143,7 +143,7 @@
 	var TITLES = {
 		home: ['', 'Today at', 'Dream Web'], leads: ['Clients', 'All', 'Leads'], onboarding: ['Clients', 'Onboarding', 'Forms'],
 		todos: ['Everything open', 'To-Do', 'List'], hosting: ['Clients', 'Hosting', 'Clients'], archive: ['More', 'Archive', ''],
-		search: ['Search', 'Search', 'Results'], clients: ['Clients', 'All', 'Clients'], projects: ['Projects', 'All', 'Projects']
+		search: ['Search', 'Search', 'Results'], money: ['Money', 'Money', 'Breakdown'], clients: ['Clients', 'All', 'Clients'], projects: ['Projects', 'All', 'Projects']
 	};
 	var OLD = { dashboard: 'home', jobs: 'projects/active', completed: 'projects/complete', forms: 'leads', todos: 'home' };
 	function route() {
@@ -161,6 +161,28 @@
 	});
 	function go(h) { if (location.hash === '#' + h) { render(true); } else { location.hash = h; } }
 
+	/* ---------- Get-the-app notice (hidden inside the installed app) ---------- */
+	var INSTALL = null;
+	window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); INSTALL = e; if (S.contacts.length) { render(); } });
+	window.addEventListener('appinstalled', function () { INSTALL = null; try { localStorage.setItem('dwdcAppOff', '1'); } catch (er) {} render(); });
+	function isInstalled() { return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true; }
+	function isIOS() { return /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); }
+	function isPhone() { return /android|iphone|ipod|mobile/i.test(navigator.userAgent); }
+	function appBanner() {
+		if (isInstalled()) { return ''; }
+		try { if (localStorage.getItem('dwdcAppOff')) { return ''; } } catch (e) {}
+		var btn = INSTALL ? '<button class="dwdc-appb-go" data-appinstall>Install app</button>'
+			: '<button class="dwdc-appb-go" data-appinfo>' + (isPhone() ? 'How to install' : 'Get it on your phone') + '</button>';
+		return '<div class="dwdc-appb"><img src="' + esc(DWDC.appIcon) + '" alt=""><div><b>Get the Dream Desk app</b><span>Open your clients, projects and payments from your phone’s home screen.</span></div>' + btn + '<button class="dwdc-appb-x" data-appoff aria-label="Hide">' + ic('x', 16) + '</button></div>';
+	}
+	function appModal() {
+		var ios = '<li><b>iPhone:</b> open <a href="' + esc(DWDC.app) + '">' + esc(DWDC.app.replace(/^https?:\/\//, '')) + '</a> in <b>Safari</b>, tap the <b>Share</b> button, then <b>Add to Home Screen</b>.</li>';
+		var and = '<li><b>Android:</b> open the link in <b>Chrome</b>, tap the <b>⋮</b> menu, then <b>Install app</b> (or <b>Add to Home screen</b>).</li>';
+		return '<div class="dwdc-appm">'
+			+ (isPhone() ? '' : '<div class="dwdc-appqr"><img src="' + esc(DWDC.appQr) + '" alt="QR code for the Dream Desk app"><small>Scan with your phone camera</small></div>')
+			+ '<div><ol>' + (isPhone() ? (isIOS() ? ios : and) : ios + and) + '<li>Sign in once. Dream Desk keeps you signed in.</li></ol>'
+			+ '<p class="dwdc-mutp">App link: <a href="' + esc(DWDC.app) + '" target="_blank" rel="noopener">' + esc(DWDC.app) + '</a></p></div></div>';
+	}
 	/* ---------- shell ---------- */
 	function sidebar(r) {
 		var cur = r.view === 'client' || r.view === 'cl' ? S.back : r.view + (r.arg ? '/' + r.arg : '');
@@ -176,6 +198,7 @@
 			+ '<div class="dwdc-navh"><i class="b1"></i>Projects</div>'
 			+ nav('projects/active', 'bolt', 'Active', by('active').length) + nav('projects/hold', 'pause', 'On Hold', by('hold').length)
 			+ nav('projects/limbo', 'clock', 'Limbo', by('limbo').length) + nav('projects/complete', 'done', 'Completed', by('complete').length)
+			+ nav('money', 'dollar', 'Money')
 			+ '<div class="dwdc-navh"><i class="b2"></i>Clients</div>'
 			+ nav('onboarding', 'filter', 'Onboarding', onboardList().length) + nav('hosting', 'server', 'Hosting', hosting().length)
 			+ nav('leads', 'mail', 'Leads', leadList().length) + nav('clients', 'users', 'All Clients', S.clients.length)
@@ -187,7 +210,7 @@
 		var qa = function (cls, attr, icon, label) { return '<button class="dwdc-qact ' + cls + '" ' + attr + '>' + ic(icon, 15) + label + '</button>'; };
 		return '<header class="dwdc-top"><button class="dwdc-burger" data-menu aria-label="Menu">' + ic('menu', 20) + '</button>'
 			+ '<div class="dwdc-title"><p class="dwdc-eyebrow">' + esc(t[0]) + '</p><h1><span>' + esc(t[1]) + '</span>' + (t[2] ? ' <em>' + esc(t[2]) + '</em>' : '') + '</h1></div>'
-			+ (document.body.classList.contains('dwdc-screen') ? '<div class="dwdc-tsearchw"><label class="dwdc-ssearch dwdc-tsearch">' + ic('search', 16) + '<input type="search" placeholder="Search clients and projects…" value="' + esc(S.q) + '"><kbd>Ctrl K</kbd></label></div>' : '')
+			+ (document.body.classList.contains('dwdc-screen') ? '<div class="dwdc-tsearchw"><label class="dwdc-ssearch dwdc-tsearch">' + ic('search', 16) + '<input type="search" placeholder="Search clients…" value="' + esc(S.q) + '"><kbd>Ctrl K</kbd></label></div>' : '')
 			+ '<div class="dwdc-qas">' + qa('qnavy', 'data-act="job"', 'plus', 'Project') + qa('', 'data-act="newclient"', 'plus', 'Client') + qa('', 'data-act="lead"', 'plus', 'Lead')
 			+ qa('', 'data-goto="hosting"', 'server', 'Hosting') + qa('', 'data-goto="leads"', 'mail', 'Leads') + qa('blue', 'data-act="pay"', 'card', 'Log Payment') + '</div></header>';
 	}
@@ -227,15 +250,67 @@
 			t = ['Client', kw[0], kw.slice(1).join(' ')];
 			body = personView(r.id);
 		} else {
-			body = ({ home: home, clients: clientsView, projects: projectsView, leads: leadsList, onboarding: onboardView, todos: todosView, hosting: hostingView, archive: archiveView, search: searchView }[r.view] || home)();
+			body = ({ home: home, clients: clientsView, projects: projectsView, leads: leadsList, onboarding: onboardView, todos: todosView, hosting: hostingView, money: moneyView, archive: archiveView, search: searchView }[r.view] || home)();
 		}
-		app.innerHTML = sidebar(r) + '<div class="dwdc-shade-m" data-menu></div><main class="dwdc-main">' + top(r, t) + '<div class="dwdc-screen' + (anim ? ' in' : '') + '">' + body + '</div></main>' + modal();
+		app.innerHTML = sidebar(r) + '<div class="dwdc-shade-m" data-menu></div><main class="dwdc-main">' + appBanner() + top(r, t) + '<div class="dwdc-screen' + (anim ? ' in' : '') + '">' + body + '</div></main>' + modal();
 		S.prev = r.view + r.arg;
 		syncWpMenu(r);
 		if (S.focusSearch) { var q = app.querySelector('.dwdc-ssearch input'); if (q) { q.focus(); q.setSelectionRange(q.value.length, q.value.length); } S.focusSearch = false; }
 		if (S.cardTodo) { var ti = app.querySelector('.dwdc-cardtodo input'); if (ti) { ti.focus(); } }
 	}
 
+	/* ---------- Money: where the money came from ---------- */
+	function moneyView() {
+		var projs = S.contacts.filter(function (c) { return ['active', 'hold', 'limbo', 'complete'].indexOf(c.list) > -1; });
+		var sum = function (f) { return projs.reduce(function (s, c) { return s + num(c[f]); }, 0); };
+		var up = sum('billed'), st = sum('stripe'), pp = sum('paypal'), ot = sum('manual'), total = up + st + pp + ot;
+		var paid = projs.filter(function (c) { return lifetime(c) > 0; }).sort(function (a, b) { return lifetime(b) - lifetime(a); });
+		var avg = paid.length ? paid.reduce(function (s, c) { return s + lifetime(c); }, 0) / paid.length : 0;
+		var mid = paid.length ? lifetime(paid[Math.floor(paid.length / 2)]) : 0;
+		var top = paid[0];
+		var hostYr = hosting().reduce(function (s, c) { return s + num(c.hosting); }, 0);
+		var open = working(), owe = owed(open);
+		// clients
+		var byClient = {};
+		projs.forEach(function (c) { var k = c.client || ('p' + c.id); (byClient[k] = byClient[k] || { id: c.client, list: [], total: 0 }).list.push(c); byClient[k].total += lifetime(c); });
+		var cl = Object.keys(byClient).map(function (k) { return byClient[k]; });
+		var repeat = cl.filter(function (x) { return x.list.length > 1; }).sort(function (a, b) { return b.total - a.total; });
+		var repeatRev = repeat.reduce(function (s, x) { return s + x.total; }, 0);
+		var topClients = cl.slice().sort(function (a, b) { return b.total - a.total; }).slice(0, 10);
+		var cname = function (x) { var k = x.id ? clientRec(x.id) : null; return k ? k.name : (x.list[0].person || x.list[0].name); };
+		// by year (finished date for completed work, this year for open work)
+		var years = {};
+		projs.forEach(function (c) { var y = c.list === 'complete' ? (doneDate(c) || '').slice(0, 4) : DWDC.today.slice(0, 4); if (y) { years[y] = (years[y] || 0) + lifetime(c); } });
+		var ylist = Object.keys(years).sort().reverse(), ymax = Math.max.apply(null, ylist.map(function (y) { return years[y]; }).concat([1]));
+		// lead sources
+		var src = {};
+		projs.forEach(function (c) { var s = c.lead_source || (num(c.billed) ? 'Upwork' : 'Not set'); (src[s] = src[s] || { n: 0, v: 0 }); src[s].n++; src[s].v += lifetime(c); });
+		var slist = Object.keys(src).sort(function (a, b) { return src[b].v - src[a].v; });
+		var pct = function (v) { return total ? Math.round(v / total * 100) : 0; };
+		var kpi = function (label, val, sub, tone) { return '<div class="dwdc-kpi' + (tone ? ' ' + tone : '') + '"><small>' + label + '</small><strong>' + val + '</strong>' + (sub ? '<span>' + sub + '</span>' : '') + '</div>'; };
+		var chan = [['Upwork', up, 'upw'], ['Stripe', st, 'str'], ['PayPal', pp, 'ppl'], ['Zelle, check & other', ot, 'oth']];
+		var rowsP = paid.slice(0, 10).map(function (c, i) { var k = clientOf(c); return '<a class="dwdc-mrow" href="#client/' + c.id + '"><em>' + (i + 1) + '</em><span><b>' + esc(c.name) + '</b><small>' + esc(k ? k.name : (c.person || '')) + '</small></span><strong>' + money(lifetime(c)) + '</strong></a>'; }).join('');
+		var rowsC = topClients.map(function (x, i) { return '<a class="dwdc-mrow" href="' + (x.id ? '#cl/' + x.id : '#client/' + x.list[0].id) + '"><em>' + (i + 1) + '</em><span><b>' + esc(cname(x)) + '</b><small>' + x.list.length + ' project' + (x.list.length === 1 ? '' : 's') + '</small></span><strong>' + money(x.total) + '</strong></a>'; }).join('');
+		var rowsR = repeat.slice(0, 12).map(function (x) { return '<a class="dwdc-mrow" href="' + (x.id ? '#cl/' + x.id : '#client/' + x.list[0].id) + '"><span><b>' + esc(cname(x)) + '</b><small>' + x.list.map(function (c) { return esc(c.name); }).join(' · ') + '</small></span><strong>' + money(x.total) + '</strong></a>'; }).join('');
+		var mcard = function (title, inner, extra) { return '<section class="dwdc-card pad dwdc-mcard' + (extra ? ' ' + extra : '') + '"><div class="dwdc-cardh"><h2>' + title + '</h2></div>' + inner + '</section>'; };
+		return '<div class="dwdc-kpis">'
+			+ kpi('Total received', money(total), paid.length + ' paying projects', 'navy')
+			+ kpi('Average project', money(avg), 'Middle project ' + money(mid))
+			+ kpi('Top project', top ? money(lifetime(top)) : '—', top ? esc(top.name) : '')
+			+ kpi('Owed right now', money(owe), open.filter(function (c) { return num(c.balance) > 0; }).length + ' open invoices', owe ? 'coral' : '')
+			+ kpi('Hosting', money(hostYr) + '<i>/yr</i>', hosting().length + ' hosted sites')
+			+ kpi('Repeat clients', repeat.length, money(repeatRev) + ' · ' + (cl.length ? Math.round(repeat.length / cl.length * 100) : 0) + '% of clients')
+			+ '</div>'
+			+ '<div class="dwdc-mgrid">'
+			+ mcard('Where it came from', '<div class="dwdc-chanbar">' + chan.map(function (x) { return x[1] ? '<i class="' + x[2] + '" style="width:' + Math.max(1, pct(x[1])) + '%"></i>' : ''; }).join('') + '</div>'
+				+ '<ul class="dwdc-chans">' + chan.map(function (x) { return '<li><i class="' + x[2] + '"></i><span>' + x[0] + '</span><b>' + money(x[1]) + '</b><em>' + pct(x[1]) + '%</em></li>'; }).join('') + '</ul>')
+			+ mcard('By year', '<ul class="dwdc-years2">' + ylist.map(function (y) { return '<li><span>' + y + '</span><div><i style="width:' + Math.max(2, Math.round(years[y] / ymax * 100)) + '%"></i></div><b>' + money(years[y]) + '</b></li>'; }).join('') + '</ul><p class="dwdc-mutp sm">Completed work counts in the year it finished; open projects count this year.</p>')
+			+ mcard('How clients found you', '<ul class="dwdc-chans src">' + slist.map(function (s) { return '<li><span>' + esc(s) + '</span><em>' + src[s].n + ' projects</em><b>' + money(src[s].v) + '</b></li>'; }).join('') + '</ul>')
+			+ mcard('Top projects', rowsP || emptyRow('No payments yet.'))
+			+ mcard('Top clients', rowsC || emptyRow('No payments yet.'))
+			+ mcard('Repeat clients <span class="dwdc-cnt">' + repeat.length + '</span>', rowsR || emptyRow('No repeat clients yet.'))
+			+ '</div>';
+	}
 	/* ---------- shared pieces ---------- */
 	function tile(tone, label, n, sub, href, attrs) {
 		return '<a class="dwdc-tile t-' + tone + '"' + (href ? ' href="#' + href + '"' : '') + (attrs || '') + '><span class="dwdc-tile-h">' + label + '<i></i></span><strong>' + n + '</strong><small>' + sub + '</small></a>';
@@ -300,9 +375,9 @@
 		var c2 = card('cd-projects', chead('brief', 'Projects', 'projects/active'),
 			'<p class="dwdc-hero"><strong>' + active.length + '</strong> project' + (active.length === 1 ? '' : 's') + '</p>'
 			+ '<p class="dwdc-sub">' + money(owed(active)) + ' still owed on active projects</p>'
-			+ '<div class="dwdc-row2"><button class="dwdc-btn" data-act="job">' + ic('plus', 14) + 'New Project</button></div>',
-			'<footer>' + frow('Active Projects', active.length, 'projects/active') + frow('Awaiting Payment', owing.length ? '<em class="dwdc-owepill">' + owing.length + ' owed</em>' : '0', 'projects/active') + frow('Completed', by('complete').length + ' <span class="mut">all-time</span>', 'projects/complete') + '</footer>');
-		var c3 = card('cd-money', chead('dollar', 'Money', 'projects/active'),
+			+ '<div class="dwdc-row2"><button class="dwdc-btn coral" data-act="job">' + ic('plus', 14) + 'New Project</button></div>',
+			'<footer>' + frow('Active Projects', active.length, 'projects/active') + frow('Onboarding Docs', onboardList().length, 'onboarding') + frow('Completed', by('complete').length + ' <span class="mut">all-time</span>', 'projects/complete') + '</footer>');
+		var c3 = card('cd-money', chead('dollar', 'Money', 'money'),
 			'<p class="dwdc-lbl">Owed on open projects</p><p class="dwdc-hero big"><strong>' + money(owed(open)) + '</strong></p><p class="dwdc-sub">' + owing.length + ' invoice' + (owing.length === 1 ? '' : 's') + ' open · ' + active.length + ' active projects</p>'
 			+ '<div class="dwdc-tint-space" aria-hidden="true"></div>',
 			'<footer>' + frow('Hosting Revenue', money(annual) + ' / yr', 'hosting') + frow('Next Renewal', nextH ? fmt(nextH.renewal) + ' · ' + esc(nextH.name) : '—', 'hosting') + '<div class="dwdc-frow"><span>All-time billed</span><b>' + money(billed) + '</b></div></footer>');
@@ -961,6 +1036,10 @@
 		var inp = function (k, label, ph, type, wide) { return '<label' + (wide ? ' class="wide"' : '') + '><span>' + label + '</span><input name="' + k + '" type="' + (type || 'text') + '" value="' + esc(v[k] || '') + '" placeholder="' + esc(ph || '') + '"></label>'; };
 		var head = function (eb, a, b) { return '<button type="button" class="dwdc-mx" data-close-modal>' + ic('x', 20) + '</button><p class="dwdc-eyebrow">' + eb + '</p><h2><span>' + a + '</span> <em>' + b + '</em></h2>'; };
 		var body;
+		if (m.type === 'app') {
+			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal">' + head('Dream Desk', 'Get the', 'app') + appModal()
+				+ '<div class="dwdc-farow end"><button type="button" class="dwdc-btn" data-close-modal>Done</button></div></div>';
+		}
 		if (m.type === 'answers') {
 			var oc = S.full[m.project] || {}, ents = onboardEntries(oc);
 			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide">' + head('Onboarding', esc(oc.name || ''), 'answers')
@@ -1133,6 +1212,9 @@
 		if ((el = t.closest('[data-pfilter]'))) { S.projFilter = el.getAttribute('data-pfilter'); render(); return; }
 		if ((el = t.closest('[data-filter]'))) { S.leadFilter = el.getAttribute('data-filter'); render(); return; }
 		if ((el = t.closest('[data-more]'))) { S.more[el.getAttribute('data-more')] = true; render(); return; }
+		if (t.closest('[data-appinstall]')) { if (INSTALL) { INSTALL.prompt(); INSTALL.userChoice.then(function () { INSTALL = null; render(); }); } return; }
+		if (t.closest('[data-appinfo]')) { S.modal = { type: 'app', vals: {} }; render(); return; }
+		if (t.closest('[data-appoff]')) { try { localStorage.setItem('dwdcAppOff', '1'); } catch (er) {} render(); return; }
 		if ((el = t.closest('[data-ppladd]'))) { S.addPpl = el.getAttribute('data-ppladd') === '1' ? route().id : 0; render(); setTimeout(function () { var x = app.querySelector('.dwdc-pplf [name=name]'); if (x) { x.focus(); } }, 0); return; }
 		if ((el = t.closest('[data-pplmain]'))) { var pc = S.full[route().id] || contact(route().id), pl = peopleOf(pc); savePeople(pc, pl, pl[+el.getAttribute('data-pplmain')]); return; }
 		if ((el = t.closest('[data-pplrm]'))) { var rc = S.full[route().id] || contact(route().id), rl = peopleOf(rc), gone = rl[+el.getAttribute('data-pplrm')]; if (confirm('Remove ' + (gone.name || gone.email) + ' from this project?')) { rl.splice(+el.getAttribute('data-pplrm'), 1); savePeople(rc, rl); } return; }
@@ -1186,13 +1268,39 @@
 		if (S.modal) { S.modal = null; render(); } else if (S.cardTodo) { S.cardTodo = 0; render(); } else if (S.edit) { S.edit = false; render(); }
 	});
 
+	/* ---------- quick search: a dropdown of matching clients and projects, no page change ---------- */
+	function searchDrop(box, q) {
+		var dd = box.querySelector('.dwdc-sdrop');
+		q = String(q || '').toLowerCase().trim();
+		if (!q) { if (dd) { dd.remove(); } return; }
+		if (!dd) { dd = document.createElement('div'); dd.className = 'dwdc-sdrop'; box.appendChild(dd); }
+		var has = function (arr) { return arr.join(' ').toLowerCase().indexOf(q) > -1; };
+		var ks = S.clients.filter(function (k) { return has([k.name, k.email, k.phone, k.company]); }).slice(0, 4);
+		var ps = S.contacts.filter(function (c) { return c.list !== 'archive' && has([c.name, c.person, clientName(c), c.email, c.phone, c.company, c.website, c.job]); }).slice(0, 6);
+		var row = function (href, title, sub, tag, tone) { return '<a class="dwdc-sitem" href="' + href + '"><span><b>' + esc(title) + '</b><small>' + esc(sub) + '</small></span>' + (tag ? pill(tag, tone || 'gray') : '') + '</a>'; };
+		var html = (ks.length ? '<p>Clients</p>' + ks.map(function (k) { var n = projectsOf(k.id).length; return row('#cl/' + k.id, k.name, [k.company, k.email, n + ' project' + (n === 1 ? '' : 's')].filter(Boolean).join(' · '), '', ''); }).join('') : '')
+			+ (ps.length ? '<p>Projects</p>' + ps.map(function (c) { return row('#client/' + c.id, c.name, [clientName(c), site(c)].filter(Boolean).join(' · '), c.list === 'leads' ? 'Lead' : LABEL[c.list], c.list === 'leads' ? 'orange' : TONE[c.list]); }).join('') : '');
+		dd.innerHTML = html || '<div class="dwdc-snone">No clients or projects match “' + esc(q) + '”.</div>';
+		var first = dd.querySelector('.dwdc-sitem'); if (first) { first.classList.add('on'); }
+	}
+	function closeDrops() { app.querySelectorAll('.dwdc-sdrop').forEach(function (x) { x.remove(); }); app.querySelectorAll('.dwdc-ssearch input').forEach(function (i) { i.value = ''; }); }
+	app.addEventListener('keydown', function (e) {
+		var box = e.target.closest && e.target.closest('.dwdc-ssearch'); if (!box) { return; }
+		var dd = box.querySelector('.dwdc-sdrop'); if (!dd) { if (e.key === 'Escape') { e.target.blur(); } return; }
+		var items = [].slice.call(dd.querySelectorAll('.dwdc-sitem')), i = items.findIndex(function (x) { return x.classList.contains('on'); });
+		if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); if (!items.length) { return; } if (i > -1) { items[i].classList.remove('on'); } i = (i + (e.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length; items[i].classList.add('on'); items[i].scrollIntoView({ block: 'nearest' }); }
+		else if (e.key === 'Enter') { e.preventDefault(); if (items[i > -1 ? i : 0]) { var h = items[i > -1 ? i : 0].getAttribute('href'); closeDrops(); e.target.blur(); location.hash = h.slice(1); } }
+		else if (e.key === 'Escape') { closeDrops(); e.target.blur(); }
+	});
+	document.addEventListener('click', function (e) {
+		var it = e.target.closest && e.target.closest('.dwdc-sitem');
+		if (it) { setTimeout(closeDrops, 0); return; }
+		if (!(e.target.closest && e.target.closest('.dwdc-ssearch'))) { closeDrops(); }
+	});
 	app.addEventListener('input', function (e) {
 		var t = e.target;
 		if (t.closest('.dwdc-ssearch')) {
-			S.q = t.value; S.focusSearch = true;
-			var v = route().view;
-			if (v === 'client' || v === 'todos' || v === 'cl' || v === 'home') { if (S.q) { location.hash = 'search'; return; } }
-			render();
+			searchDrop(t.closest('.dwdc-ssearch'), t.value);
 		} else if (t.classList.contains('dwdc-pick')) {
 			S.modal.q = t.value; app.querySelector('.dwdc-picks').innerHTML = pickList(S.modal.q);
 		}
