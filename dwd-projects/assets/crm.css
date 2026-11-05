@@ -533,3 +533,6 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 .dwdc-screen .dwdc-tsearchw .dwdc-ssearch.dwdc-tsearch { width: 100% !important; max-width: 400px; flex: 1 1 auto; margin: 0; }
 .dwdc-screen .dwdc-tsearchw { flex: 1 1 260px; }
 .dwdc-tsearch input::placeholder { color: var(--mut); opacity: 1; }
+/* Active Projects table header matches the navy Projects card */
+.cd-apnavy > .dwdc-dhead { height: auto; min-height: 64px; padding: 14px 20px; border-radius: 10px 10px 0 0; }
+.cd-apnavy > .dwdc-dhead .dwdc-cnt { background: #fff; color: var(--navy) !important; }

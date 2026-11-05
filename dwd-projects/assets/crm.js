@@ -307,7 +307,7 @@
 			+ '<div class="dwdc-tint-space" aria-hidden="true"></div>',
 			'<footer>' + frow('Hosting Revenue', money(annual) + ' / yr', 'hosting') + frow('Next Renewal', nextH ? fmt(nextH.renewal) + ' · ' + esc(nextH.name) : '—', 'hosting') + '<div class="dwdc-frow"><span>All-time billed</span><b>' + money(billed) + '</b></div></footer>');
 		var tv = active.reduce(function (s, c) { return s + num(c.price); }, 0);
-		var ap = card('cd-plain', '<header class="dwdc-dhead plain"><h2>Active Projects <span class="dwdc-cnt">' + active.length + '</span></h2><a href="#projects/active">View all</a></header>',
+		var ap = card('cd-plain cd-apnavy', '<header class="dwdc-dhead"><h2>Active Projects <span class="dwdc-cnt">' + active.length + '</span></h2><a href="#projects/active">View all</a></header>',
 			'<div class="dwdc-mini-t"><div class="g-ap head"><span>Project · Client</span><span>Price</span><span>Due</span><span class="r">Owed</span></div>'
 			+ (active.length ? active.filter(match).map(function (c) {
 				var late = c.deadline && c.deadline < DWDC.today, ow = num(c.balance);
