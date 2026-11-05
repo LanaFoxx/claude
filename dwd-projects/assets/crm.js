@@ -260,6 +260,20 @@
 	}
 
 	/* ---------- Money: where the money came from ---------- */
+	function busyMonths(MY, ylist) {
+		var MN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+		var rows = ylist.map(function (y) {
+			var m = (MY[y].m || []).map(function (v, i) { return { i: i, v: Math.max(0, +v || 0) }; });
+			if (!m.length) { return ''; }
+			var mx = Math.max.apply(null, m.map(function (x) { return x.v; }).concat([1]));
+			var top = m.slice().sort(function (a, b) { return b.v - a.v; }).filter(function (x) { return x.v > 0; }).slice(0, 3);
+			var topIds = top.map(function (x) { return x.i; });
+			return '<div class="dwdc-busy"><div class="dwdc-busy-y"><b>' + y + '</b>' + (top[0] ? '<span>Busiest: <strong>' + MN[top[0].i] + '</strong> · ' + money(top[0].v) + '</span>' : '') + '</div>'
+				+ '<div class="dwdc-busy-bars">' + m.map(function (x) { var h = Math.round(x.v / mx * 100); return '<div class="dwdc-busy-col' + (x.i === (top[0] && top[0].i) ? ' top' : (topIds.indexOf(x.i) > -1 ? ' hi' : '')) + '" title="' + MN[x.i] + ' ' + y + ': ' + money(x.v) + '"><i style="height:' + Math.max(x.v ? 4 : 0, h) + '%"></i><small>' + MN[x.i].charAt(0) + '</small></div>'; }).join('') + '</div>'
+				+ '<ol class="dwdc-busy-top">' + top.map(function (x, k) { return '<li><em>' + (k + 1) + '</em>' + MN[x.i] + '<b>' + money(x.v) + '</b></li>'; }).join('') + '</ol></div>';
+		}).join('');
+		return (rows || emptyRow('No dated payments yet.')) + '<p class="dwdc-mutp sm">Money received each month, after Upwork fees. The top 3 months each year are highlighted.</p>';
+	}
 	function moneyView() {
 		var projs = S.contacts.filter(function (c) { return ['active', 'hold', 'limbo', 'complete'].indexOf(c.list) > -1; });
 		var sum = function (f) { return projs.reduce(function (s, c) { return s + num(c[f]); }, 0); };
@@ -280,7 +294,7 @@
 		var cname = function (x) { var k = x.id ? clientRec(x.id) : null; return k ? k.name : (x.list[0].person || x.list[0].name); };
 		// by year: only payments that carry a real date (Stripe, PayPal, logged by hand)
 		var MY = S.money || {}, ylist = Object.keys(MY).sort().reverse();
-		var ytot = function (y) { var o = MY[y]; return o.Stripe + o.PayPal + o.Upwork + o.Other; };
+		var ytot = function (y) { var o = MY[y]; return (+o.Stripe || 0) + (+o.PayPal || 0) + (+o.Upwork || 0) + (+o.Other || 0); };
 		var ymax = Math.max.apply(null, ylist.map(ytot).concat([1]));
 		// lead sources
 		var src = {};
@@ -306,6 +320,7 @@
 				+ '<ul class="dwdc-chans">' + chan.map(function (x) { return '<li><i class="' + x[2] + '"></i><span>' + x[0] + '</span><b>' + money(x[1]) + '</b><em>' + pct(x[1]) + '%</em></li>'; }).join('') + '</ul>')
 			+ mcard('By year', (ylist.length ? '<ul class="dwdc-years2">' + ylist.map(function (y) { var o = MY[y], t = ytot(y); return '<li><span>' + y + '</span><div>' + [['Stripe', 'str'], ['PayPal', 'ppl'], ['Upwork', 'upw'], ['Other', 'oth']].map(function (x) { return o[x[0]] ? '<i class="' + x[1] + '" style="width:' + Math.max(1, Math.round(o[x[0]] / ymax * 100)) + '%" title="' + x[0] + ' ' + money(o[x[0]]) + '"></i>' : ''; }).join('') + '</div><b>' + money(t) + '</b></li>'; }).join('') + '</ul>' : emptyRow('No dated payments yet.'))
 				+ '<p class="dwdc-mutp sm">Every payment on the day it was paid: Upwork (from your transaction history, after Upwork’s fees), Stripe, PayPal and payments you log. Refunds come off the year they happened.</p>')
+			+ mcard('Busiest months', busyMonths(MY, ylist), 'wide')
 			+ mcard('How clients found you', '<ul class="dwdc-chans src">' + slist.map(function (s) { return '<li><span>' + esc(s) + '</span><em>' + src[s].n + ' projects</em><b>' + money(src[s].v) + '</b></li>'; }).join('') + '</ul>')
 			+ mcard('Top projects', rowsP || emptyRow('No payments yet.'))
 			+ mcard('Top clients', rowsC || emptyRow('No payments yet.'))

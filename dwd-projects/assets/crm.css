@@ -653,3 +653,23 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
   .g-rev > span:nth-child(2), .g-rev > span:nth-child(3) { display: none; }
 }
 .dwdc-revprev { margin-left: auto; font-weight: 600; white-space: nowrap; } .dwdc-revbar .dwdc-revprev + .dwdc-btn.coral { margin-left: 0; }
+/* Busiest months */
+.dwdc-mcard.wide { grid-column: 1 / -1; }
+.dwdc-busy { display: grid; grid-template-columns: 200px 1fr 220px; gap: 24px; align-items: end; padding: 16px 0; border-bottom: 1px solid var(--div); }
+.dwdc-busy:last-of-type { border-bottom: 0; }
+.dwdc-busy-y { align-self: center; display: flex; flex-direction: column; gap: 4px; }
+.dwdc-busy-y b { font-size: 22px; font-weight: 800; color: var(--navy); }
+.dwdc-busy-y span { font-size: 13px; color: var(--sec); }
+.dwdc-busy-y strong { color: #E8553A; }
+.dwdc-busy-bars { display: grid; grid-template-columns: repeat(12, 1fr); gap: 6px; height: 110px; align-items: end; }
+.dwdc-busy-col { height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 6px; cursor: default; }
+.dwdc-busy-col i { display: block; width: 100%; max-width: 34px; border-radius: 5px 5px 2px 2px; background: #CFE3F4; }
+.dwdc-busy-col.hi i { background: var(--blue); }
+.dwdc-busy-col.top i { background: #FF6F4F; }
+.dwdc-busy-col small { font-size: 11px; font-weight: 600; color: var(--mut); line-height: 1; }
+.dwdc-busy-top { list-style: none; margin: 0; padding: 0; align-self: center; display: flex; flex-direction: column; gap: 6px; }
+.dwdc-busy-top li { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; color: var(--navy); }
+.dwdc-busy-top li em { font-style: normal; width: 22px; height: 22px; border-radius: 50%; background: var(--hover); border: 1px solid var(--line); font-size: 11px; display: flex; align-items: center; justify-content: center; color: var(--sec); }
+.dwdc-busy-top li:first-child em { background: #FF6F4F; border-color: #FF6F4F; color: #fff; }
+.dwdc-busy-top li b { margin-left: auto; }
+@media (max-width: 1100px) { .dwdc-busy { grid-template-columns: 1fr; gap: 12px; } }

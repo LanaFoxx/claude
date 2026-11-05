@@ -1103,9 +1103,13 @@ function dwdc_money_by_year() {
 			$src = (string) ( $p['source'] ?? 'Other' );
 			$src = in_array( $src, array( 'Stripe', 'PayPal', 'Upwork' ), true ) ? $src : 'Other';
 			if ( ! isset( $out[ $y ] ) ) {
-				$out[ $y ] = array( 'Stripe' => 0, 'PayPal' => 0, 'Upwork' => 0, 'Other' => 0 );
+				$out[ $y ] = array( 'Stripe' => 0, 'PayPal' => 0, 'Upwork' => 0, 'Other' => 0, 'm' => array_fill( 0, 12, 0 ) );
 			}
 			$out[ $y ][ $src ] += $sign * $amt;
+			$mo = (int) substr( (string) $p['date'], 5, 2 );
+			if ( $mo >= 1 && $mo <= 12 ) {
+				$out[ $y ]['m'][ $mo - 1 ] += $sign * $amt;
+			}
 		}
 	}
 	krsort( $out );
