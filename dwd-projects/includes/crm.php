@@ -136,6 +136,12 @@ function dwdc_save_contact( $id, $data ) {
 			update_post_meta( $id, '_dwdc_' . $f, $v );
 		}
 	}
+	// Remove a source's payments entirely (e.g. when they were filed on the wrong project).
+	if ( ! empty( $data['payments_clear'] ) && is_array( $data['payments_clear'] ) ) {
+		$old = get_post_meta( $id, '_dwdc_payments', true );
+		$clr = array_map( 'strval', $data['payments_clear'] );
+		update_post_meta( $id, '_dwdc_payments', array_values( array_filter( is_array( $old ) ? $old : array(), function ( $x ) use ( $clr ) { return ! in_array( (string) ( $x['source'] ?? '' ), $clr, true ); } ) ) );
+	}
 	// Payment history (Stripe invoices, PayPal…): a new batch replaces older entries from the same source.
 	if ( isset( $data['payments'] ) && is_array( $data['payments'] ) ) {
 		$old  = get_post_meta( $id, '_dwdc_payments', true );
