@@ -405,3 +405,6 @@ select.dwdc-stage.t-red { background-color: var(--red-t) !important; color: var(
 .dwdc-mklink:hover { background: #D6E8FA; }
 .dwdc-lnk.sm2 { font-size: 12.5px; }
 .dwdc-mkpill { display: inline-block; margin-left: 6px; padding: 1px 8px; border-radius: 999px; background: var(--blue-t); color: var(--blue) !important; font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; vertical-align: middle; }
+.g-jobs { grid-template-columns: minmax(190px, 1.6fr) minmax(160px, 1.3fr) 0.8fr 0.8fr 0.9fr 128px minmax(140px, 1.3fr); min-width: 1000px; }
+.dwdc-screen > section + section { margin-top: 28px; }
+.dwdc-grid.head.tint-gray { background: #EEF2F7; color: var(--sec); border-bottom-color: var(--line); }
