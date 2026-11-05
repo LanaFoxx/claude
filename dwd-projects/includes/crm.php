@@ -1215,3 +1215,8 @@ add_filter( 'admin_body_class', function ( $c ) {
 	$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
 	return $screen && 'toplevel_page_client-desk' === $screen->id ? $c . ' dwdc-screen' : $c;
 } );
+
+/** Browser tab just says "Dream Desk" (not "Dream Desk ‹ Dream Web Digital — WordPress"). */
+add_filter( 'admin_title', function ( $title ) {
+	return ( isset( $_GET['page'] ) && 'client-desk' === $_GET['page'] ) ? 'Dream Desk' : $title; // phpcs:ignore WordPress.Security.NonceVerification
+}, 99 );

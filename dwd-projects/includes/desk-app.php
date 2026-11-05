@@ -117,7 +117,7 @@ function dwda_app() {
 
 function dwda_login( $error ) {
 	$u = DWDP_URL . 'assets/app/';
-	dwda_head( 'Sign in · Dream Desk' );
+	dwda_head( 'Dream Desk' );
 	?>
 <style>
 *{box-sizing:border-box}
