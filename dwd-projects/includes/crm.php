@@ -39,7 +39,7 @@ function dwdc_lists() {
 
 /** Contact fields kept on every contact. */
 function dwdc_fields() {
-	return array( 'job', 'person', 'email', 'phone', 'company', 'website', 'list', 'price', 'balance', 'deadline', 'hosting', 'renewal', 'source', 'next' );
+	return array( 'job', 'stage', 'completed', 'person', 'email', 'phone', 'company', 'website', 'list', 'price', 'balance', 'deadline', 'hosting', 'renewal', 'source', 'next' );
 }
 
 function dwdc_contact( $post, $full = false ) {
@@ -55,6 +55,7 @@ function dwdc_contact( $post, $full = false ) {
 	$entries          = is_array( $entries ) ? $entries : array();
 	$c['entry_count'] = count( $entries );
 	$c['last_entry']  = $entries ? end( $entries )['form'] : '';
+	$c['last_entry_date'] = $entries ? end( $entries )['date'] : '';
 	$c['onboarded']   = '';
 	foreach ( $entries as $e ) {
 		if ( false !== stripos( (string) $e['form'], 'onboard' ) ) {
@@ -188,12 +189,16 @@ function dwdc_file_entry( $form, $fields, $date = '', $source = 'Website form', 
 		}
 	}
 	if ( $new ) {
-		$data['list']   = $onboarding ? 'active' : 'leads';
+		$data['list']   = 'leads';
+		$data['stage']  = $onboarding ? 'onboarding' : 'new';
 		$data['source'] = $source . ': ' . $form;
 	} else {
 		unset( $data['name'] );
-		if ( $onboarding && in_array( get_post_meta( $id, '_dwdc_list', true ), array( 'leads', 'archive', 'onboarding' ), true ) ) {
-			$data['list'] = 'active';
+		if ( $onboarding ) {
+			$data['stage'] = 'onboarding';
+			if ( in_array( get_post_meta( $id, '_dwdc_list', true ), array( 'archive', 'onboarding' ), true ) ) {
+				$data['list'] = 'leads';
+			}
 		}
 	}
 	$id      = dwdc_save_contact( $id, $data );
@@ -452,7 +457,7 @@ add_action( 'admin_enqueue_scripts', function ( $hook ) {
 	if ( 'toplevel_page_client-desk' !== $hook ) {
 		return;
 	}
-	wp_enqueue_style( 'dwdc-fonts', 'https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;500;600;700;800;900&display=swap', array(), null );
+	wp_enqueue_style( 'dwdc-fonts', 'https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;500;600;700;800&display=swap', array(), null );
 	wp_enqueue_style( 'dwdc', DWDP_URL . 'assets/crm.css', array(), DWDP_VERSION );
 	wp_enqueue_script( 'dwdc', DWDP_URL . 'assets/crm.js', array(), DWDP_VERSION, true );
 	wp_localize_script( 'dwdc', 'DWDC', array(
@@ -462,7 +467,18 @@ add_action( 'admin_enqueue_scripts', function ( $hook ) {
 		'today' => current_time( 'Y-m-d' ),
 		'orders' => admin_url( class_exists( '\\Automattic\\WooCommerce\\Utilities\\OrderUtil' ) && \Automattic\WooCommerce\Utilities\OrderUtil::custom_orders_table_usage_is_enabled() ? 'admin.php?page=wc-orders&s=' : 'edit.php?post_type=shop_order&s=' ),
 		'pay'   => home_url( '/checkout/?dwd-order=hosting' ),
+		'logout' => wp_logout_url( admin_url( 'admin.php?page=client-desk' ) ),
+		'wp'     => admin_url(),
+		'user'   => wp_get_current_user()->display_name,
 	) );
+} );
+
+// Full-screen app: no admin bar gap above it.
+add_action( 'admin_head', function () {
+	$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+	if ( $screen && 'toplevel_page_client-desk' === $screen->id ) {
+		echo '<style>html.wp-toolbar{padding-top:0!important}html{margin-top:0!important}#wpwrap,#wpbody{margin-top:0!important;padding-top:0!important}</style>';
+	}
 } );
 
 add_filter( 'admin_body_class', function ( $c ) {
