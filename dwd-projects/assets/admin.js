@@ -422,9 +422,10 @@
 		progress([['desk', 'Full-page desktop screenshot'], ['sec', 'Finding the page sections'], ['mob', 'Phone screenshot']]);
 		['desk', 'sec', 'mob'].forEach(function (k) { mark(k, 'is-run'); });
 
+		// One request at a time: the free screenshot service refuses parallel captures ("too many concurrent requests").
 		var desk = post('dwdp_capture', { step: 'desktop', url: url }).then(function (d) { mark('desk', 'is-ok'); return d; }, function (m) { mark('desk', 'is-err', m); return $.Deferred().reject(m); });
-		var sec = post('dwdp_capture', { step: 'sections', url: url }).then(function (d) { mark('sec', 'is-ok'); return d; }, function (m) { mark('sec', 'is-err', m); return null; });
-		var mob = post('dwdp_capture', { step: 'mobile', url: url }).then(function (d) { mark('mob', 'is-ok'); return d; }, function (m) { mark('mob', 'is-err', m); return null; });
+		var sec = desk.then(function () { return post('dwdp_capture', { step: 'sections', url: url }).then(function (d) { mark('sec', 'is-ok'); return d; }, function (m) { mark('sec', 'is-err', m); return $.Deferred().resolve(null); }); }, function () { mark('sec', 'is-err', 'skipped'); return $.Deferred().resolve(null); });
+		var mob = sec.then(function () { return post('dwdp_capture', { step: 'mobile', url: url }).then(function (d) { mark('mob', 'is-ok'); return d; }, function (m) { mark('mob', 'is-err', m); return $.Deferred().resolve(null); }); }, function () { return $.Deferred().resolve(null); });
 
 		$.when(desk, sec, mob).always(function () { $btn.prop('disabled', false).text('Capture again'); });
 		$.when(desk, sec, mob).done(function (d, s, m) {
