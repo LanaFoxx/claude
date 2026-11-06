@@ -10,15 +10,15 @@ function hero(ctx) {
     min_height: px(100, 'vh'), padding: cbox('130px', GUT, '60px', GUT),
     background_background: 'video', background_video_link: ctx.m('sb-hero-video').url, background_play_on_mobile: 'yes',
     background_video_fallback: ctx.m('sb-hero-poster'),
-    background_overlay_background: 'classic', background_overlay_color: 'rgba(0,0,0,0.3)',
+    background_overlay_background: 'classic', background_overlay_color: 'rgba(0,0,0,0.42)',
     custom_css: 'selector { min-height: max(100vh, 640px); } selector .elementor-background-video-container { background: url(' + ctx.m('sb-hero-poster').url + ') center/cover no-repeat; }',
     ...cls('sb-home-hero'),
   }, [
-    label('Award-Winning Chinese-Speaking Agent in the Bay Area', { align: 'center', color: C.white, size: 13, weight: 600, ls: 0.5, upper: true, settings: { _margin: box(0, 0, 12, 0) } }),
-    H1('Snow Bentley Realty', { color: C.white, align: 'center', mb: 20 }),
-    heading('Commercial Leasing &amp; Sales · Luxury Real Estate', { tag: 'p', color: C.white, align: 'center', size: 'clamp(16px, 1.2vw, 22px)', weight: 400, lh: 1.3, ls: 1, mb: 14 }),
-    heading('CoStar Power Broker', { tag: 'p', color: C.white, align: 'center', size: 'clamp(16px, 1.2vw, 22px)', weight: 400, lh: 1.3, ls: 1, mb: 14 }),
-    heading('CA DRE# 01911217 | Brokered by eXp Commercial of California, Inc.', { tag: 'p', color: C.white, align: 'center', size: 'clamp(16px, 1.15vw, 21px)', weight: 400, lh: 1.3, ls: 0.5, upper: false, mb: 30 }),
+    label('Award-Winning Chinese-Speaking Agent in the Bay Area', { align: 'center', color: C.white, size: [17, 16, 14], weight: 600, ls: 1.5, upper: true, cls: 'sb-hero-text', settings: { _margin: box(0, 0, 18, 0) } }),
+    H1('Snow Bentley Realty', { color: C.white, align: 'center', size: ['clamp(48px, 4.4vw, 84px)', 56, 40], weight: 400, ls: 3, mb: 24, cls: 'sb-hero-text' }),
+    heading('Commercial Leasing &amp; Sales · Luxury Real Estate', { tag: 'p', color: C.white, align: 'center', size: ['clamp(20px, 1.6vw, 30px)', 22, 18], weight: 500, lh: 1.3, ls: 1.5, mb: 14, cls: 'sb-hero-text' }),
+    heading('CoStar Power Broker', { tag: 'p', color: C.white, align: 'center', size: ['clamp(20px, 1.6vw, 30px)', 22, 18], weight: 500, lh: 1.3, ls: 1.5, mb: 14, cls: 'sb-hero-text' }),
+    heading('CA DRE# 01911217 | Brokered by eXp Commercial of California, Inc.', { tag: 'p', color: C.white, align: 'center', size: ['clamp(18px, 1.35vw, 25px)', 20, 16], weight: 500, lh: 1.35, ls: 0.6, upper: false, mb: 34, cls: 'sb-hero-text' }),
     widget('form', {
       form_name: 'Hero search', submit_actions: ['redirect'], redirect_to: `${LINKS.search}?keyword=[field id="q"]`,
       form_fields: [field('q', 'text', 'Search address or city', { width: '70', extra: { width_tablet: '70', width_mobile: '100' } })],
@@ -98,7 +98,7 @@ function searchListings(ctx) {
       t('sb-listings-commercial-sales', 'Commercial Sales', `${LINKS.search}?propertyType=COMMERCIAL`, { ratio: '869 / 564' }),
       grid([
         t('sb-listings-commercial-leasing', 'Commercial Leasing', `${LINKS.search}?propertyType=COMMERCIAL&isLease=true`, { minH: 200 }),
-        t('sb-listings-luxury-residential', 'Luxury Residential', `${LINKS.search}?keyword=Luxury%20Residential&priceMin=3000000`, { minH: 300 }),
+        t('sb-listings-luxury-residential', 'Luxury Residential', `${LINKS.search}?pmin=3000000`, { minH: 300 }),
       ], { cols: [1, 1, 1], gap: 15, rows: '217fr 332fr', settings: { grid_rows_grid: { unit: 'custom', size: '217fr 332fr' } } }),
     ], { cols: [2, 1, 1], gap: 15 }),
   ], { bg: C.cream });

@@ -144,6 +144,14 @@ body:not(.elementor-editor-active) .sb-switch .sb-panel:not(.is-active) { displa
 .sb-list li { margin-bottom: .55em; padding-left: .2em; }
 @media (max-width: 767px) { .sb-rs-map { height: 640px !important; } }
 
+/* Seven header links: tighten on smaller laptop screens */
+@media (max-width: 1400px) { .sb-header .sb-navlink .elementor-button { font-size: 14px !important; letter-spacing: .3px !important; } .sb-header .e-con-full > .e-con:has(.sb-navlink) { --gap: 16px !important; gap: 16px !important; } }
+@media (max-width: 1180px) { .sb-header .sb-navlink a[href^="tel:"] { display: none; } }
+
+/* Homepage hero copy: shadow so it reads on the video */
+.sb-hero-text .elementor-heading-title { text-shadow: 0 2px 14px rgba(0,0,0,.55), 0 0 2px rgba(0,0,0,.4); }
+.sb-list li + li { margin-top: 1.1em; }
+
 /* Keep form buttons on one line */
 .sb-form .elementor-button { white-space: nowrap; }
 
@@ -273,6 +281,44 @@ realscout-simple-search { --rs-ss-font-primary-color: #3A2C26; --rs-ss-searchbar
     });
     document.addEventListener('click', function (e) { if (!e.target.closest('.sb-lang-menu')) menu.classList.remove('is-open'); });
     window.addEventListener('scroll', function () { menu.classList.remove('is-open'); }, { passive: true });
+    /* Snow's own Chinese name instead of Google's transliteration: protect the English brand from Google
+       and write the Chinese name in ourselves. */
+    var BRAND = { 'zh-CN': ['雪·宾利地产', '雪·宾利'], 'zh-TW': ['雪·賓利地產', '雪·賓利'] }[curLang[0]];
+    if (BRAND) {
+      var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, { acceptNode: function (n) {
+        return /snow\s+bentley/i.test(n.nodeValue) && !n.parentElement.closest('script, style, .sb-lang-menu, a[href^="mailto"], .notranslate') ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT; } });
+      var hits = []; while (walker.nextNode()) hits.push(walker.currentNode);
+      hits.forEach(function (n) {
+        var html = n.nodeValue.replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; })
+          .replace(/snow\s+bentley\s+realty/gi, '<span class="notranslate" translate="no">' + BRAND[0] + '</span>')
+          .replace(/snow\s+bentley(?![^<]*<\/span>)/gi, '<span class="notranslate" translate="no">' + BRAND[1] + '</span>');
+        var span = document.createElement('span'); span.innerHTML = html; n.parentNode.replaceChild(span, n);
+      });
+      document.title = document.title.replace(/snow\s+bentley\s+realty/gi, BRAND[0]).replace(/snow\s+bentley/gi, BRAND[1]);
+    }
+    /* Brand / license terms Google mistranslates ("eXp Commercial" -> "experience commercial"): keep them in English. */
+    if (curLang[0] !== 'en') {
+      var KEEP = /(eXp Commercial of California, Inc\.?|eXp Commercial|eXp Realty|CoStar|REALTOR®|CA DRE#)/g;
+      var tw = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, { acceptNode: function (n) {
+        KEEP.lastIndex = 0; return KEEP.test(n.nodeValue) && !n.parentElement.closest('script, style, .notranslate') ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT; } });
+      var keepNodes = []; while (tw.nextNode()) keepNodes.push(tw.currentNode);
+      keepNodes.forEach(function (n) {
+        var sp = document.createElement('span');
+        sp.innerHTML = n.nodeValue.replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }).replace(KEEP, '<span class="notranslate" translate="no">$1</span>');
+        n.parentNode.replaceChild(sp, n);
+      });
+      // The tab title can't hold notranslate markup: put the brand terms back after Google translates it.
+      var origTitle = document.title, titleEl = document.querySelector('title');
+      var fixTitle = function () {
+        var parts = origTitle.split(/\s*\|\s*/);
+        var t = document.title.split(/\s*\|\s*/);
+        if (t.length === parts.length) {
+          var fixed = t.map(function (x, i) { return /eXp|CoStar|DRE|[\u3400-\u9fff]/.test(parts[i]) ? parts[i] : x; }).join(' | ');
+          if (fixed !== document.title) document.title = fixed;
+        }
+      };
+      if (titleEl && window.MutationObserver) new MutationObserver(fixTitle).observe(titleEl, { childList: true, characterData: true, subtree: true });
+    }
     if (curLang[0] !== 'en') {
       window.googleTranslateElementInit = function () { new google.translate.TranslateElement({ pageLanguage: 'en', autoDisplay: false }, 'google_translate_element'); };
       var gts = document.createElement('script'); gts.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit'; document.body.appendChild(gts);
@@ -282,6 +328,15 @@ realscout-simple-search { --rs-ss-font-primary-color: #3A2C26; --rs-ss-searchbar
     /* RealScout IDX: load the web components only where a widget is on the page */
     if (document.querySelector('realscout-advanced-search, realscout-office-listings, realscout-simple-search, realscout-home-value')) {
       var rs = document.createElement('script'); rs.type = 'module'; rs.src = 'https://em.realscout.com/widgets/realscout-web-components.umd.js'; document.head.appendChild(rs);
+    }
+
+    /* Embedded RealScout search: forward filter params from the page URL (?pmin=3000000, ?bmin=3, ...) */
+    var qs = new URLSearchParams(location.search), keep = new URLSearchParams();
+    ['pmin', 'pmax', 'bmin', 'bamin', 'ptype', 'for_sale', 'for_rent', 'oh', 'geo_type', 'geo_id'].forEach(function (k) { if (qs.get(k)) keep.set(k, qs.get(k)); });
+    if ([].concat.apply([], [keep.keys ? Array.from(keep.keys()) : []]).length) {
+      Array.prototype.forEach.call(document.querySelectorAll('iframe.sb-rs-map'), function (f) {
+        var u = new URL(f.src); keep.forEach(function (v, k) { u.searchParams.set(k, v); }); f.src = u.toString();
+      });
     }
 
     /* Hero "scroll down" arrows */

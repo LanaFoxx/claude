@@ -24,9 +24,10 @@ function header(ctx) {
     image(m('sb-logo-white'), { width: 'auto', link: '/', cls: 'sb-logo sb-logo-light', settings: { height: px(95), height_mobile: px(64), _flex_size: 'none' } }),
     image(m('sb-logo-color'), { width: 'auto', link: '/', cls: 'sb-logo sb-logo-dark', settings: { height: px(95), height_mobile: px(64), _flex_size: 'none' } }),
     row([
+      nav("What We're Looking For", '/what-were-looking-for/'),
       nav('Home Search', LINKS.search),
       nav('Home Valuation', LINKS.valuation),
-      nav("What We're Looking For", '/what-were-looking-for/'),
+      nav('Guides', '/guides/'),
       nav("Let's Connect", popupUrl(popups.connect)),
       nav(LINKS.phone, LINKS.tel),
       textLink('English', '#', { size: 16, weight: 500, ls: 0.6, upper: false, lh: 1, color: C.white, hover: C.bronze, cls: 'sb-navlink sb-lang', icon: fa('fas fa-caret-down'), iconGap: 6, settings: { hide_tablet: 'hidden-tablet', hide_mobile: 'hidden-mobile' } }),

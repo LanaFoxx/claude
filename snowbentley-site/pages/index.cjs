@@ -14,7 +14,7 @@ const DEV_SITE = {
   type: 'full-bleed-cta', bg: 'rgb(245, 239, 231)', title: 'DEVELOPMENT SITE — ACQUISITION', imageSide: 'left', imageBleed: false, imageW: 898, imageH: 560, buttons: [],
   images: ['c94562ec-1739-4336-bfc0-645b32ffe148'],
   blocks: [
-    { tag: 'ul', html: '<li><strong>Multifamily — Southern California</strong> — Institutional buyer actively acquiring in the $30M–$40M range. Target markets: Irvine, San Gabriel, and Alhambra. Stabilized or value-add considered.</li><li>Open to land, existing improvements for teardown, or office/R&amp;D assets suitable for residential conversion</li><li>Off-market and pre-listing opportunities welcome; principals and their representatives only</li>' },
+    { tag: 'ul', html: '<li><strong>Multifamily — Southern California</strong> — Institutional buyer actively acquiring in the $30M–$40M range.<br>Target markets: Irvine, San Gabriel, and Alhambra. Stabilized or value-add considered.<br>— Open to land, existing improvements for teardown, or office/R&amp;D assets suitable for residential conversion<br>— Off-market and pre-listing opportunities welcome; principals and their representatives only</li><li><strong>Entitled Multifamily — San Francisco</strong> — 200+ units, fully entitled, SoMa and Mission Bay; shovel-ready preferred, will consider sites with entitlements in final approval<br>— Open to land, existing improvements for teardown, or office/R&amp;D assets suitable for residential conversion<br>— Off-market and pre-listing opportunities welcome</li>' },
   ],
 };
 

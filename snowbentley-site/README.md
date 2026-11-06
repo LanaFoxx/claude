@@ -36,7 +36,7 @@ forms redirect to `/home-search/listings/?keyword=…` and RealScout.
 * **Guide PDFs** – the Guides page forms collect leads; attach the PDFs/autoresponder.
 * **Form recipients / CRM** – set `email_to` (currently the WP admin email) and any CRM integration.
 * **/review redirect** – add a 301 from `/review` to the Google review link (`LINKS.review` in `lib/core.cjs`).
-* **SEO** – Yoast titles/descriptions per page are in `source/content.json` (`title`, `description`).
+* **SEO** – done: `tools/seo.cjs` sets Yoast titles/descriptions (homepage: "Snow Bentley | Commercial & Luxury REALTOR® | eXp Commercial"; other pages use the live site's titles).
 
 ## Changes made to the existing staging site (reversible)
 
@@ -47,6 +47,13 @@ Recorded in `build/deployed.json` → `prep`:
 * Old DWD / WooCommerce pages moved to Trash (restorable from Pages → Trash).
 * `dwd-projects/includes/frontend.php`: the `template_redirect` block that 301'd `/about` → `/#about` is commented out
   (marked "Disabled for the Snow Bentley site"), so the About page loads. Un-comment it to restore.
+
+## Language switcher notes
+
+`lib/site.html`: Google Translate runs hidden behind a custom dropdown. In Chinese, "Snow Bentley Realty" / "Snow Bentley"
+are written as 雪·宾利地产 / 雪·宾利 (Simplified) and 雪·賓利地產 / 雪·賓利 (Traditional) instead of Google's version, and
+"eXp Commercial", "CoStar", "REALTOR®", "CA DRE#" are kept in English. The embedded RealScout search takes filters from the
+page URL (`/home-search/listings/?pmin=3000000` = $3M+, also pmax, bmin, bamin, ptype, geo_type/geo_id).
 
 ## Build
 
