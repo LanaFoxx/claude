@@ -1549,3 +1549,5 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 @media (max-width: 1100px) { .dwdc-c2 { grid-template-columns: minmax(0, 1fr) !important; } .dwdc-c2-cal, .dwdc-c2-side { min-width: 0; } }
 .dwdc .dwdc-c2-i { max-width: 100%; min-width: 0; }
 .dwdc .dwdc-plate { display: block; margin: 0 !important; padding: 14px 20px 6px !important; border-top: 1px solid var(--div); }
+.dwdc-prow3.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 768px) { .dwdc-prow3.two { grid-template-columns: 1fr; } }

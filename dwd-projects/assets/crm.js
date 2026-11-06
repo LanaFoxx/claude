@@ -412,15 +412,11 @@
 			}
 			var greet = new Date().getHours() < 12 ? 'Good morning' : new Date().getHours() < 17 ? 'Good afternoon' : 'Good evening';
 			return '<p class="dwdc-pgreet">' + greet + ', Michael. Here’s your day.</p>'
-				+ '<div class="dwdc-prow3">'
+				+ '<div class="dwdc-prow3 two">'
 				+ card('cd-ptoday', chead('todo', 'Today', 'personal/calendar'), (todayT.length ? todayT.map(function (x) { return row(x, false); }).join('') : emptyRow('Nothing scheduled today.'))
 					+ (late.length ? '<p class="dwdc-plate">' + late.length + ' overdue</p>' + late.slice(0, 4).map(function (x) { return row(x, true); }).join('') : '')
 					+ '<div class="dwdc-ptadd mini btnonly"><button type="button" class="dwdc-btn coral dwdc-addtask" data-addtask>' + ic('plus', 14) + 'Add task</button></div>')
 				+ card('cd-psoon', chead('clock', 'Coming Up', 'personal/calendar'), soon.length ? soon.slice(0, 9).map(function (x) { return row(x, true); }).join('') + (soon.length > 9 ? '<a class="dwdc-pmore" href="#personal/calendar">+' + (soon.length - 9) + ' more in the next 2 weeks</a>' : '') : emptyRow('Nothing in the next two weeks.'))
-				+ card('cd-pmoney', chead('dollar', 'This Month', 'personal/finances'), '<div class="dwdc-pm3"><div><small>Money in</small><b class="in">' + money(inc) + '</b></div><div><small>Money out</small><b class="out">' + money(out) + '</b></div><div><small>Left over</small><b>' + money(inc - out) + '</b></div></div>'
-					+ (subsMo ? '<a class="dwdc-psubs" href="#personal/subs"><span>Recurring charges &amp; subscriptions</span><b>' + money(subsMo) + '/mo</b></a>' : '')
-					+ '<button class="dwdc-askbtn sm full" data-askai="personal">' + ic('bolt', 13) + 'Ask AI about my money</button>'
-					+ '<div class="dwdc-pbills"><p class="dwdc-lbl">Next bills · ' + money(billsMo) + ' / month</p>' + (bl.length ? bl.slice(0, 4).map(function (x) { return '<a class="' + (x.n.late ? 'late' : '') + '" href="#personal/bills"><span>' + esc(x.b.name) + '</span><small>' + (x.n.late ? 'Late · ' : '') + fmt(x.n.due) + '</small><b>' + money(x.b.amount) + '</b></a>'; }).join('') : '<p class="dwdc-mutp sm">No bills added yet. <a href="#personal/bills">Add your bills</a></p>') + '</div>')
 				+ '</div>'
 				+ card('cd-pweek', chead('grid', 'This Week', 'personal/calendar'), '<div class="dwdc-wk">' + wk + '</div>')
 				+ '<div class="dwdc-prow2">'
