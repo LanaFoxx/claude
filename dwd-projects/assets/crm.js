@@ -1442,6 +1442,13 @@
 					+ '<span>' + (num(c.hosting) ? money(c.hosting) + '/yr' : '<span class="mut">—</span>') + '</span><span class="r mut">' + ago(c.updated) + '</span></div>';
 			}).join('') : emptyRow('No projects match.')) + moreFoot('projects', cap, rows.length) + '</div>';
 	}
+	// "Request a review" button for a client (used on project and client pages).
+	function reviewBtn(cid) {
+		var k = cid ? clientRec(cid) : null;
+		if (!k) { return ''; }
+		var sent = k.review_sent;
+		return '<button class="dwdc-btn2 dwdc-revbtn" data-askreview="' + k.id + '" title="Email ' + esc(k.name) + ' the Google review request">' + ic('star', 14) + (sent ? 'Review asked ' + fmt(String(sent).slice(0, 10), true) + ' · Send again' : 'Request review') + '</button>';
+	}
 	function personView(id) {
 		var k = clientRec(id);
 		if (!k) { return '<div class="dwdc-card">' + emptyRow('Client not found.') + '</div>'; }
@@ -1452,11 +1459,11 @@
 		var ids = pp.map(function (c) { return c.id; }), tasks = S.tasks.filter(function (t) { return ids.indexOf(t.contact) > -1; }).sort(function (a, b) { return a.done - b.done; });
 		var biz = k.company || (pp[0] && pp[0].name !== k.name ? pp[0].name : '');
 		var btn = function (cls, attr, label) { return '<button class="dwdc-btn2 ' + cls + '" ' + attr + '>' + label + '</button>'; };
-		var acts = first ? btn('', 'data-act="pay" data-project="' + first.id + '"', 'Log payment')
+		var acts = reviewBtn(k.id) + (first ? btn('', 'data-act="pay" data-project="' + first.id + '"', 'Log payment')
 			+ (first.list === 'limbo' ? btn('', 'data-pset="active" data-pid="' + first.id + '"', 'Back to active') : btn('', 'data-pset="limbo" data-pid="' + first.id + '"', 'Move to limbo'))
 			+ (first.list === 'hold' ? btn('', 'data-pset="active" data-pid="' + first.id + '"', 'Resume') : btn('', 'data-pset="hold" data-pid="' + first.id + '"', 'Put on hold'))
 			+ btn('solid navy', 'data-pset="complete" data-pid="' + first.id + '"', 'Mark complete')
-			: (pp.length ? '' : btn('red', 'data-delclient="' + k.id + '"', 'Delete client')) + btn('solid navy', 'data-act="job" data-client="' + k.id + '"', '+ New project');
+			: (pp.length ? '' : btn('red', 'data-delclient="' + k.id + '"', 'Delete client')) + btn('solid navy', 'data-act="job" data-client="' + k.id + '"', '+ New project'));
 		var f = function (n, label, t) { return '<label><span>' + label + '</span><input name="' + n + '" type="' + (t || 'text') + '" value="' + esc(k[n]) + '"></label>'; };
 		var tl = [];
 		pp.forEach(function (c) {
@@ -1533,7 +1540,7 @@
 		var tone = st === 'leads' ? 'orange' : TONE[st];
 		return '<a class="dwdc-back" href="#' + S.back + '">' + ic('left', 14) + 'Back to ' + backName + '</a>'
 			+ '<div class="dwdc-card dwdc-chead">' + avatar(c, 64, tone) + '<div class="dwdc-chead-t"><h2>' + esc(c.name) + ' ' + pill(st === 'leads' ? (STAGES.filter(function (s) { return s[0] === stageOf(c); })[0] || ['', 'Lead'])[1] : LABEL[st], st === 'leads' ? STAGE_TONE[stageOf(c)] : tone) + (num(c.hosting) ? ' ' + pill('Hosting', 'teal') : '') + '</h2><p>' + line + '</p></div>'
-			+ '<div class="dwdc-chead-a">' + btn('', 'data-edit', S.edit ? 'Close edit' : 'Edit') + acts + '</div></div>'
+			+ '<div class="dwdc-chead-a">' + btn('', 'data-edit', S.edit ? 'Close edit' : 'Edit') + reviewBtn(c.client) + acts + '</div></div>'
 			+ '<div class="dwdc-minis">' + mini('navy', 'Price', price ? money(price) : '—') + mini('green', 'Paid', price ? money(Math.max(0, price - ow)) : '—')
 			+ '<div class="dwdc-mini"><small>Owed</small><strong class="' + (ow ? 'orange' : 'green') + '">' + (ow ? money(ow) : 'Paid') + '</strong></div>'
 			+ (st === 'complete' ? mini('navy', 'Total spent', money(lifetime(c))) : '<div class="dwdc-mini"><small>Due</small><strong class="' + (late ? 'red' : '') + '">' + (c.deadline ? fmt(c.deadline) : '—') + '</strong></div>') + '</div>'
@@ -2080,6 +2087,17 @@
 			return;
 		}
 		if ((el = t.closest('[data-quotex]'))) { hideQuote(el.closest('[data-quote]')); return; }
+		if ((el = t.closest('[data-askreview]'))) {
+			var rk = clientRec(+el.getAttribute('data-askreview'));
+			if (!rk || !confirm('Send ' + rk.name + ' the review request email?' + (rk.review_sent ? '\n\nYou already asked on ' + fmt(String(rk.review_sent).slice(0, 10), true) + '.' : ''))) { return; }
+			el.disabled = true; el.textContent = 'Sending…';
+			api('/reviews', 'POST', { ids: [rk.id] }).then(function (r) {
+				if ((r.sent || []).length) { toast('Review request sent to ' + rk.name); }
+				else { toast('Couldn’t send — ' + (((r.failed || [])[0] || {}).why === 'no email' ? 'no email address on file for ' + rk.name : 'the email didn’t go out'), true); }
+				return reload();
+			}).then(render).catch(fail);
+			return;
+		}
 		if ((el = t.closest('[data-showdone]'))) { S.showDone = !S.showDone; render(); return; }
 		if ((el = t.closest('[data-review]'))) { S.modal = { type: 'review', vals: {}, off: {} }; render(); return; }
 		if ((el = t.closest('[data-revpick]'))) { var rid = el.getAttribute('data-revpick'); S.modal.off[rid] = !S.modal.off[rid]; render(); return; }
