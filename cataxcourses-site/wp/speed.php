@@ -96,6 +96,14 @@ add_action( 'template_redirect', function () {
 		if ( preg_match_all( '#<style[^>]*>\s*\.elementor-(\d+) #', $html, $ids ) ) {
 			foreach ( array_unique( $ids[1] ) as $pid ) $html = preg_replace( "#<link[^>]+id='elementor-post-" . $pid . "-css'[^>]*>\n?#", '', $html );
 		}
+		// Stylesheets Elementor prints late, in the page body (slider, video, accordion widget styles): move them into <head>
+		// so those parts appear styled from the first paint instead of jumping into place when the file arrives.
+		$hp = strpos( $html, '</head>' );
+		if ( false !== $hp && preg_match_all( '#<link\s[^>]*rel=[\'"]stylesheet[\'"][^>]*>\n?#i', substr( $html, $hp ), $late ) && $late[0] ) {
+			$body = substr( $html, $hp );
+			foreach ( $late[0] as $tag ) $body = str_replace( $tag, '', $body );
+			$html = substr( $html, 0, $hp ) . implode( '', $late[0] ) . $body;
+		}
 		// Photo sliders: the first photo is the main image on screen, so it loads right away (the rest stay lazy).
 		$html = preg_replace( '#<img class="swiper-slide-image swiper-lazy" data-src="([^"]+)"#', '<img class="swiper-slide-image" src="$1" fetchpriority="high" decoding="async"', $html, 1 );
 		// Trust badges and seals sit lower on the page: load them when scrolled near.
