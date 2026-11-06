@@ -19,6 +19,7 @@ class TCFD_Perf {
     public static function init() {
         add_action('init', [__CLASS__, 'emoji']);
         add_action('wp_enqueue_scripts', [__CLASS__, 'styles'], 100);
+        add_action('template_redirect', [__CLASS__, 'cache_headers'], 99);
         add_action('wp_head', [__CLASS__, 'strip'], 1);
         add_action('wp_print_scripts', [__CLASS__, 'strip'], 0);
         add_action('wp_print_footer_scripts', [__CLASS__, 'strip'], 0);
@@ -51,6 +52,15 @@ class TCFD_Perf {
     public static function styles() {
         if (!self::active()) return;
         foreach (['wp-block-library', 'wp-block-library-theme', 'classic-theme-styles'] as $h) wp_dequeue_style($h);
+    }
+
+    // Visitor page views may be stored by the host's page cache (pages hold no per-visitor content;
+    // forms post to REST/AJAX and use no nonces). Logged-in users, queries, searches and errors are never cached.
+    public static function cache_headers() {
+        if (!self::active() || ($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'GET' || !empty($_GET)) return;
+        if (is_404() || is_search() || is_feed() || is_preview() || headers_sent()) return;
+        $ttl = (int) apply_filters('tcfd_page_cache_ttl', 600);
+        header('Cache-Control: public, max-age=60, s-maxage=' . $ttl);
     }
 
     public static function emoji() {
