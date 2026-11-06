@@ -45,6 +45,34 @@ add_action( 'wp_enqueue_scripts', function () {
 	}
 }, 9999 );
 
+/* 1b. Files some plugins add late, while the page is being built (after the step above). Product pages were loading
+   WooCommerce's whole checkout (checkout script, 50 KB of country/address data, React, Stripe's card form) and the
+   product-gallery zoom/lightbox, although these pages have no checkout form and no product gallery. Removed right
+   before the scripts and styles are printed; cart, checkout and account pages keep everything. */
+function ctc_sp_late_strip() {
+	if ( is_admin() || ! function_exists( 'is_cart' ) || is_cart() || is_checkout() || is_account_page() ) return;
+	foreach ( array( 'wc-checkout', 'wc-country-select', 'wc-address-i18n', 'wc-custom-place-order-button', 'woocommerce-tokenization-form',
+		'stripe', 'wc-stripe-upe-classic', 'wc_stripe_express_checkout', 'wc-stripe-blocks-checkout', 'wc_stripe_payment_request' ) as $h ) wp_dequeue_script( $h );
+	foreach ( array( 'wc-stripe-upe-classic', 'stripelink_styles', 'wc_stripe_express_checkout_style' ) as $h ) wp_dequeue_style( $h );
+	if ( function_exists( 'is_product' ) && is_product() && ctc_sp_elementor_product() ) {
+		foreach ( array( 'wc-zoom', 'wc-flexslider', 'wc-photoswipe', 'wc-photoswipe-ui-default', 'wc-single-product', 'zoom', 'flexslider', 'photoswipe', 'photoswipe-ui-default' ) as $h ) wp_dequeue_script( $h );
+		foreach ( array( 'photoswipe', 'photoswipe-default-skin', 'wp-block-library', 'wc-blocks-style' ) as $h ) wp_dequeue_style( $h );
+	}
+}
+// True when this product page uses our Elementor design (no WooCommerce image gallery). Products on WooCommerce's
+// standard layout (e.g. the auto-renewal plan) keep their gallery scripts.
+function ctc_sp_elementor_product() {
+	// Our course / mug designs are applied by the CTC preview snippet (ctc_product_template_id); those pages have no WooCommerce gallery.
+	return function_exists( 'ctc_product_template_id' ) && (bool) ctc_product_template_id();
+}
+add_action( 'wp_print_styles', 'ctc_sp_late_strip', 0 );
+add_action( 'wp_print_scripts', 'ctc_sp_late_strip', 0 );
+add_action( 'wp_print_footer_scripts', 'ctc_sp_late_strip', 0 );
+add_action( 'wp_footer', 'ctc_sp_late_strip', 0 );
+add_action( 'wp', function () {
+	if ( function_exists( 'is_product' ) && is_product() && ctc_sp_elementor_product() ) remove_action( 'wp_footer', 'woocommerce_photoswipe' ); // lightbox markup for a gallery these pages don't have
+} );
+
 /* 2. Hero: poster first, video after load */
 add_action( 'wp_head', function () {
 	if ( is_admin() ) return;
@@ -52,6 +80,8 @@ add_action( 'wp_head', function () {
 		if ( $i > 3 ) break;
 		echo '<link rel="preload" as="font" type="font/woff2" crossorigin href="' . esc_url( content_url( '/uploads/elementor/google-fonts/fonts/' . basename( $f ) ) ) . '">' . "\n";
 	}
+	// Mug photo slider: keep the square photo's space from the first paint, show only the first slide until the slider starts.
+	echo '<style>.ctc-mug-gallery .swiper-slide-image{width:100%;height:auto;aspect-ratio:1/1;object-fit:cover}.ctc-mug-gallery .elementor-image-carousel-wrapper:not(.swiper-initialized) .swiper-slide:not(:first-child){display:none}.ctc-mug-gallery .elementor-image-carousel-wrapper{aspect-ratio:1/1}</style>' . "\n";
 }, 1 );
 add_action( 'template_redirect', function () {
 	if ( is_admin() || wp_doing_ajax() || is_feed() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) return;
@@ -59,6 +89,12 @@ add_action( 'template_redirect', function () {
 		if ( false === strpos( $html, '<html' ) ) return $html;
 		// The hero video's poster is the largest thing on screen: fetch it first (only on pages that show it).
 		if ( preg_match( '#<video class="elementor-video"[^>]*poster="([^"]+)"#', $html, $pm ) ) $html = preg_replace( '#<head([^>]*)>#', '<head$1>' . "\n" . '<link rel="preload" as="image" href="' . $pm[1] . '" fetchpriority="high">', $html, 1 );
+		// Header, footer and product designs are printed inline by the design snippet; drop the duplicate <link> to the same CSS file.
+		if ( preg_match_all( '#<style[^>]*>\s*\.elementor-(\d+) #', $html, $ids ) ) {
+			foreach ( array_unique( $ids[1] ) as $pid ) $html = preg_replace( "#<link[^>]+id='elementor-post-" . $pid . "-css'[^>]*>\n?#", '', $html );
+		}
+		// Photo sliders: the first photo is the main image on screen, so it loads right away (the rest stay lazy).
+		$html = preg_replace( '#<img class="swiper-slide-image swiper-lazy" data-src="([^"]+)"#', '<img class="swiper-slide-image" src="$1" fetchpriority="high" decoding="async"', $html, 1 );
 		// Trust badges and seals sit lower on the page: load them when scrolled near.
 		$html = preg_replace( '#<img(?![^>]*\bloading=)([^>]*/uploads/[^"]*ctc-(?:badge|seal)[^>]*)>#', '<img loading="lazy" decoding="async"$1>', $html );
 		// Hosted hero videos: keep the poster, hand the file to the loader below.

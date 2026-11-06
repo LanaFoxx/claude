@@ -10,9 +10,10 @@ function mugPage({ slug, title, liveId, name, orderUrl, images }) {
     content_width: 'full', padding: box(14), padding_mobile: box(8), background_background: 'classic', background_color: C.white, border_radius: box(16),
     border_border: 'solid', border_width: box(6, 0, 0, 0), border_color: C.gold, overflow: 'hidden',
     box_shadow_box_shadow_type: 'yes', box_shadow_box_shadow: { horizontal: 0, vertical: 30, blur: 60, spread: -30, color: 'rgba(28,35,51,0.35)' },
+    ...cls('ctc-mug-gallery'),
   }, [widget('image-carousel', {
     carousel: images.map(([imgId, path]) => ({ id: imgId, url: `${L.SITE}/wp-content/uploads/${path}`, alt: name, source: 'library', _id: id() })),
-    thumbnail_size: 'large', slides_to_show: '1', slides_to_show_tablet: '1', slides_to_show_mobile: '1', navigation: 'both', link_to: 'none',
+    thumbnail_size: 'medium_large', lazyload: 'yes', slides_to_show: '1', slides_to_show_tablet: '1', slides_to_show_mobile: '1', navigation: 'both', link_to: 'none',
     autoplay: 'yes', autoplay_speed: 4000, infinite: 'yes', image_stretch: 'yes', arrows_color: C.navy, dots_color: C.gold,
   })]);
   const details = stack([
