@@ -20,6 +20,7 @@ class TCFD_Perf {
         add_action('init', [__CLASS__, 'emoji']);
         add_action('wp_enqueue_scripts', [__CLASS__, 'styles'], 100);
         add_action('template_redirect', [__CLASS__, 'cache_headers'], 99);
+        add_action('wp_head', [__CLASS__, 'preload'], 2);
         add_action('wp_head', [__CLASS__, 'strip'], 1);
         add_action('wp_print_scripts', [__CLASS__, 'strip'], 0);
         add_action('wp_print_footer_scripts', [__CLASS__, 'strip'], 0);
@@ -61,6 +62,14 @@ class TCFD_Perf {
         if (is_404() || is_search() || is_feed() || is_preview() || headers_sent()) return;
         $ttl = (int) apply_filters('tcfd_page_cache_ttl', 600);
         header('Cache-Control: public, max-age=60, s-maxage=' . $ttl);
+    }
+
+    // School pages are drawn by script, so the browser finds the hero photo late: tell it up front.
+    public static function preload() {
+        if (!is_singular(TCFD_Plugin::POST_TYPE)) return;
+        $u = content_url('uploads/2026/09/04-tax-forms-calculator-closeup');
+        echo '<link rel="preload" as="image" fetchpriority="high" href="' . esc_url($u . '-1024x683.webp') . '" imagesrcset="'
+            . esc_attr($u . '-768x512.webp 768w, ' . $u . '-1024x683.webp 1024w, ' . $u . '.webp 1536w') . '" imagesizes="100vw">' . "\n";
     }
 
     public static function emoji() {
