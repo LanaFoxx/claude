@@ -48,3 +48,15 @@ add_action( 'wp_default_scripts', function ( $scripts ) {
 		$scripts->add_data( $h, 'group', 1 );
 	}
 } );
+
+/** Blog posts: the featured image at the top is the biggest thing on screen, so fetch it first. */
+add_filter( 'wp_get_attachment_image_attributes', function ( $attr, $att, $size ) {
+	static $done = false;
+	if ( $done || is_admin() || ! is_singular( 'post' ) || false === strpos( (string) ( $attr['class'] ?? '' ), 'wp-post-image' ) ) {
+		return $attr;
+	}
+	$done                  = true;
+	$attr['loading']       = 'eager';
+	$attr['fetchpriority'] = 'high';
+	return $attr;
+}, 20, 3 );
