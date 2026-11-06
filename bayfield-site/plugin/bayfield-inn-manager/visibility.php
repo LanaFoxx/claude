@@ -184,3 +184,25 @@ add_action( 'wp_head', function () {
 	}
 	echo '<style id="bi-hidden-links">' . implode( ',', $sel ) . '{display:none!important}</style>' . "\n"; // phpcs:ignore
 }, 20 );
+
+/* ---------------------------------------------------------- login links */
+// The login page lives at /binnlogin (SiteGround Security custom login URL). wp-login.php links
+// only work with SiteGround's token attached, so make sure password-reset and new-user email
+// links carry it; otherwise those links land on "Page not found".
+const BI_LOGIN_SLUG = 'binnlogin';
+function bi_login_token_url( $url ) {
+	if ( false !== strpos( $url, 'wp-login.php' ) && false === strpos( $url, 'sgs-token=' ) && preg_match( '/[?&]action=(rp|resetpass)\b/', $url ) ) {
+		$url = add_query_arg( 'sgs-token', BI_LOGIN_SLUG, $url );
+	}
+	return $url;
+}
+add_filter( 'network_site_url', 'bi_login_token_url', 99 );
+add_filter( 'site_url', 'bi_login_token_url', 99 );
+add_filter( 'retrieve_password_notification_email', function ( $email ) {
+	$email['message'] = preg_replace_callback( '#https?://[^\s<>]*wp-login\.php\?[^\s<>]*#', function ( $m ) { return bi_login_token_url( $m[0] ); }, $email['message'] );
+	return $email;
+} );
+add_filter( 'wp_new_user_notification_email', function ( $email ) {
+	$email['message'] = preg_replace_callback( '#https?://[^\s<>]*wp-login\.php\?[^\s<>]*#', function ( $m ) { return bi_login_token_url( $m[0] ); }, $email['message'] );
+	return $email;
+} );
