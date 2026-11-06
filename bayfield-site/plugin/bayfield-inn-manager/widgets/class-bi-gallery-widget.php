@@ -50,9 +50,20 @@ class BI_Gallery_Widget extends \Elementor\Widget_Base {
 			}
 			$cap = wp_get_attachment_caption( $aid ) ?: get_the_title( $aid );
 			$alt = get_post_meta( $aid, '_wp_attachment_image_alt', true ) ?: $cap;
+			// Phones get a 1024px file, big screens up to 2048px. The very first photo on the page loads
+			// straight away (it is usually the main image); the rest load lazily.
+			$srcset = wp_get_attachment_image_srcset( $aid, '2048x2048' );
+			static $first_on_page = true;
+			$attrs = $srcset ? 'srcset="' . esc_attr( $srcset ) . '" sizes="(max-width: 1024px) 100vw, 1100px" ' : '';
+			if ( 0 === $i && $first_on_page ) {
+				$attrs        .= 'fetchpriority="high" class="skip-lazy" data-skip-lazy="1"';
+				$first_on_page = false;
+			} elseif ( 0 !== $i ) {
+				$attrs .= 'loading="lazy"';
+			}
 			printf( '<a class="bi-show__slide%s" href="%s" data-elementor-open-lightbox="yes" data-elementor-lightbox-slideshow="%s" data-elementor-lightbox-title="%s"><img src="%s" alt="%s" %s>%s</a>',
 				0 === $i ? ' is-active' : '', esc_url( $full[0] ), esc_attr( $group ), esc_attr( $cap ), esc_url( $large[0] ), esc_attr( $alt ),
-				0 === $i ? '' : 'loading="lazy"', $captions && $cap ? '<span class="bi-show__cap">' . esc_html( $cap ) . '</span>' : '' );
+				$attrs, $captions && $cap ? '<span class="bi-show__cap">' . esc_html( $cap ) . '</span>' : '' );
 		}
 		if ( count( $ids ) > 1 ) {
 			echo '<button type="button" class="bi-show__nav bi-show__prev" aria-label="Previous photo">&#8592;</button><button type="button" class="bi-show__nav bi-show__next" aria-label="Next photo">&#8594;</button>';

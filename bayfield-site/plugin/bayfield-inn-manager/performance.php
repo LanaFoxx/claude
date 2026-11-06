@@ -10,13 +10,19 @@ defined( 'ABSPATH' ) || exit;
 
 add_action( 'wp_head', function () {
 	$base = BI_MANAGER_URL . 'assets/';
-	foreach ( array( 'geist-normal-latin', 'newsreader-normal-latin' ) as $f ) {
+	foreach ( array( 'geist-normal-latin', 'newsreader-normal-latin', 'newsreader-italic-latin' ) as $f ) {
 		printf( '<link rel="preload" href="%s" as="font" type="font/woff2" crossorigin>' . "\n", esc_url( $base . 'fonts/' . $f . '.woff2' ) );
 	}
 	$css = file_get_contents( BI_MANAGER_DIR . 'assets/fonts.css' ); // phpcs:ignore
 	if ( $css ) {
 		echo '<style id="bi-fonts">' . str_replace( 'url(fonts/', 'url(' . esc_url( $base ) . 'fonts/', $css ) . "</style>\n"; // phpcs:ignore
 	}
+	// Site-wide accessibility touches (front.css only loads on pages with Bayfield widgets):
+	// a solid color under gradient buttons, which is what contrast checkers measure, and
+	// underlined links inside paragraphs so they don't rely on color alone.
+	echo '<style id="bi-a11y">.bi-btn-dark .elementor-button:not(:hover):not(:focus){background-color:#17301B!important}'
+		. '.bi-btn-light .elementor-button:not(:hover):not(:focus){background-color:#F5F2EC!important}'
+		. '.elementor-widget-text-editor a:not(.elementor-button),.bi-menu__fine a{text-decoration:underline;text-underline-offset:2px}</style>' . "\n";
 }, 1 );
 
 /** First photo of the homepage hero slideshow (container #book), from the page's Elementor data. */
@@ -25,7 +31,7 @@ function bi_hero_first_image() {
 	if ( ! $front ) {
 		return null;
 	}
-	$cached = get_transient( 'bi_hero_first_' . $front );
+	$cached = get_transient( 'bi_hero_first2_' . $front );
 	if ( is_array( $cached ) ) {
 		return $cached ?: null;
 	}
@@ -42,7 +48,16 @@ function bi_hero_first_image() {
 				$full  = wp_get_attachment_image_src( $id, 'full' );
 				$small = wp_get_attachment_image_src( $id, 'medium_large' );
 				if ( $full ) {
-					$found = array( 'full' => $full[0], 'w' => $full[1], 'small' => $small ? $small[0] : $full[0] );
+					$found = array( 'full' => $full[0], 'w' => $full[1], 'small' => $small ? $small[0] : $full[0], 'slides' => array() );
+					// Phone-sized (1536px) version of every slide. 1536px still covers a phone-width hero
+					// without being enlarged, so the slide never counts as a bigger, later LCP.
+					foreach ( $s['background_slideshow_gallery'] as $g ) {
+						$f = wp_get_attachment_image_src( (int) $g['id'], 'full' );
+						$m = wp_get_attachment_image_src( (int) $g['id'], '1536x1536' );
+						if ( $f && $m && $m[1] < $f[1] ) {
+							$found['slides'][] = array( basename( $f[0] ), $m[0] );
+						}
+					}
 				}
 				return;
 			}
@@ -50,10 +65,10 @@ function bi_hero_first_image() {
 		}
 	};
 	$walk( $data );
-	set_transient( 'bi_hero_first_' . $front, $found, HOUR_IN_SECONDS );
+	set_transient( 'bi_hero_first2_' . $front, $found, HOUR_IN_SECONDS );
 	return $found ?: null;
 }
-add_action( 'save_post', function ( $id ) { delete_transient( 'bi_hero_first_' . $id ); } );
+add_action( 'save_post', function ( $id ) { delete_transient( 'bi_hero_first2_' . $id ); } );
 
 add_action( 'wp_head', function () {
 	if ( ! is_front_page() ) {
@@ -64,10 +79,80 @@ add_action( 'wp_head', function () {
 		return;
 	}
 	// Same file Elementor's slideshow uses, so it is downloaded once and the slide never counts as a later, larger LCP.
-	printf( '<link rel="preload" as="image" href="%s" fetchpriority="high">' . "\n", esc_url( $img['full'] ) );
+	$first_small = '';
+	$css         = '';
+	foreach ( $img['slides'] ?? array() as $i => $sl ) {
+		if ( 0 === $i ) {
+			$first_small = $sl[1];
+		}
+		$css .= '.elementor-background-slideshow__slide__image[style*="' . esc_attr( $sl[0] ) . '"]{background-image:url("' . esc_url( $sl[1] ) . '") !important}';
+	}
+	if ( $first_small ) {
+		printf( '<link rel="preload" as="image" href="%s" media="(max-width: 767px)" fetchpriority="high">' . "\n", esc_url( $first_small ) );
+		printf( '<link rel="preload" as="image" href="%s" media="(min-width: 768px)" fetchpriority="high">' . "\n", esc_url( $img['full'] ) );
+	} else {
+		printf( '<link rel="preload" as="image" href="%s" fetchpriority="high">' . "\n", esc_url( $img['full'] ) );
+	}
 	// Paint the first photo immediately; Elementor's slideshow fades in over it once its script runs.
-	printf( '<style>#book{background-color:#122617;background-image:url("%s");background-size:cover;background-position:center}</style>' . "\n",
-		esc_url( $img['full'] ) );
+	printf( '<style>#book{background-color:#122617;background-image:url("%s");background-size:cover;background-position:center}%s</style>' . "\n",
+		esc_url( $img['full'] ), $first_small ? '@media (max-width: 767px){#book{background-image:url("' . esc_url( $first_small ) . '")}' . $css . '}' : '' );
+}, 2 );
+
+/**
+ * Interior pages: the hero photo is a CSS background, which browsers only find after the
+ * stylesheet loads. Preload it (phones get the 1024px version instead of the full original)
+ * so it starts downloading straight away. Only looks inside the page's first section.
+ */
+function bi_page_hero( $post_id ) {
+	$cached = get_transient( 'bi_hero_' . $post_id );
+	if ( is_array( $cached ) ) {
+		return $cached ?: null;
+	}
+	$data  = json_decode( (string) get_post_meta( $post_id, '_elementor_data', true ), true );
+	$found = array();
+	$walk  = function ( $els ) use ( &$walk, &$found ) {
+		foreach ( (array) $els as $el ) {
+			if ( $found ) {
+				return;
+			}
+			$s  = $el['settings'] ?? array();
+			$id = (int) ( $s['background_image']['id'] ?? 0 );
+			if ( 'classic' === ( $s['background_background'] ?? '' ) && $id ) {
+				$full  = wp_get_attachment_image_src( $id, 'full' );
+				$large = wp_get_attachment_image_src( $id, 'large' );
+				if ( $full ) {
+					$found = array( 'el' => (string) $el['id'], 'full' => $s['background_image']['url'] ?: $full[0], 'small' => ( $large && $large[1] < $full[1] ) ? $large[0] : '' );
+				}
+				return;
+			}
+			$walk( $el['elements'] ?? array() );
+		}
+	};
+	if ( is_array( $data ) && $data ) {
+		$walk( array( $data[0] ) ); // first section only (above the fold)
+	}
+	set_transient( 'bi_hero_' . $post_id, $found, DAY_IN_SECONDS );
+	return $found ?: null;
+}
+add_action( 'save_post', function ( $id ) { delete_transient( 'bi_hero_' . $id ); } );
+add_action( 'elementor/document/after_save', function ( $doc ) { delete_transient( 'bi_hero_' . $doc->get_main_id() ); } );
+
+add_action( 'wp_head', function () {
+	if ( is_front_page() || ! is_singular() ) {
+		return;
+	}
+	$h = bi_page_hero( get_queried_object_id() );
+	if ( ! $h ) {
+		return;
+	}
+	if ( $h['small'] ) {
+		printf( '<link rel="preload" as="image" href="%s" media="(max-width: 767px)" fetchpriority="high">' . "\n", esc_url( $h['small'] ) );
+		printf( '<link rel="preload" as="image" href="%s" media="(min-width: 768px)" fetchpriority="high">' . "\n", esc_url( $h['full'] ) );
+		printf( '<style>@media (max-width: 767px){.elementor .elementor-element.elementor-element-%s{background-image:url("%s") !important}}</style>' . "\n",
+			esc_attr( $h['el'] ), esc_url( $h['small'] ) );
+	} else {
+		printf( '<link rel="preload" as="image" href="%s" fetchpriority="high">' . "\n", esc_url( $h['full'] ) );
+	}
 }, 2 );
 
 /* ------------------------------------------------------------------ SEO */
@@ -128,8 +213,22 @@ add_filter( 'elementor/widget/render_content', function ( $content, $widget ) {
 	if ( 'image' !== $widget->get_name() ) {
 		return $content;
 	}
+	// Tell the browser how wide the image really shows (fixed-width images like logos), so phones
+	// download a small file instead of one sized for the whole screen.
+	$w = array();
+	foreach ( array( '' => '', '_tablet' => '(max-width: 1024px) ', '_mobile' => '(max-width: 767px) ' ) as $suffix => $mq ) {
+		$cw = $widget->get_settings( '_element_custom_width' . $suffix );
+		if ( 'initial' === $widget->get_settings( '_element_width' ) && ! empty( $cw['size'] ) && 'px' === ( $cw['unit'] ?? 'px' ) ) {
+			$w[ $suffix ] = $mq . (int) $cw['size'] . 'px';
+		}
+	}
+	if ( isset( $w[''] ) ) {
+		$sizes   = trim( implode( ', ', array_filter( array( $w['_mobile'] ?? '', $w['_tablet'] ?? '' ) ) ) . ', ' . $w[''], ', ' );
+		$content = preg_replace( '/\ssizes="[^"]*"/', ' sizes="' . esc_attr( $sizes ) . '"', $content );
+	}
 	$classes = (string) $widget->get_settings( '_css_classes' );
-	if ( ! preg_match( '/\b(bi-header-logo|bi-no-lazy)\b/', $classes ) ) {
+	// WordPress marks the page's main image fetchpriority="high"; never lazy-load that one either.
+	if ( ! preg_match( '/\b(bi-header-logo|bi-no-lazy)\b/', $classes ) && false === strpos( $content, 'fetchpriority="high"' ) ) {
 		return $content;
 	}
 	return preg_replace_callback( '/<img\b[^>]*>/', function ( $m ) {
@@ -157,3 +256,13 @@ function bi_purge_sg_cache() {
 }
 add_action( 'elementor/document/after_save', 'bi_purge_sg_cache' );
 add_action( 'elementor/core/files/clear_cache', 'bi_purge_sg_cache' );
+// WordPress marks the main image on the page fetchpriority="high" while filtering the content
+// (after widgets render). Keep that image out of SiteGround's lazy loading.
+add_filter( 'wp_content_img_tag', function ( $tag ) {
+	if ( false === strpos( $tag, 'fetchpriority="high"' ) || false !== strpos( $tag, 'skip-lazy' ) ) {
+		return $tag;
+	}
+	$tag = str_replace( ' loading="lazy"', '', $tag );
+	$tag = preg_match( '/\sclass="/', $tag ) ? preg_replace( '/\sclass="/', ' class="skip-lazy ', $tag, 1 ) : str_replace( '<img', '<img class="skip-lazy"', $tag );
+	return str_replace( '<img', '<img data-skip-lazy="1"', $tag );
+}, 20 );

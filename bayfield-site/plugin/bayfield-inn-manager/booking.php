@@ -107,3 +107,28 @@ add_action( 'rest_api_init', function () {
 		},
 	) );
 } );
+
+/* Current Bayfield weather for the Webcam page, cached 10 minutes (one Open-Meteo call for everyone). */
+add_action( 'rest_api_init', function () {
+	register_rest_route( 'bayfield/v1', '/weather', array(
+		'methods'             => 'GET',
+		'permission_callback' => '__return_true',
+		'callback'            => function () {
+			$data = get_transient( 'bi_weather' );
+			if ( ! is_array( $data ) ) {
+				$res  = wp_remote_get( 'https://api.open-meteo.com/v1/forecast?latitude=46.811&longitude=-90.818&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,wind_direction_10m&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=America%2FChicago', array( 'timeout' => 8 ) );
+				$body = is_wp_error( $res ) ? null : json_decode( wp_remote_retrieve_body( $res ), true );
+				if ( empty( $body['current'] ) ) {
+					$stale = get_option( 'bi_weather_last' );
+					return rest_ensure_response( is_array( $stale ) ? $stale : array() );
+				}
+				$data = array( 'current' => $body['current'] );
+				set_transient( 'bi_weather', $data, 10 * MINUTE_IN_SECONDS );
+				update_option( 'bi_weather_last', $data, false );
+			}
+			$r = rest_ensure_response( $data );
+			$r->header( 'Cache-Control', 'public, max-age=300' );
+			return $r;
+		},
+	) );
+} );

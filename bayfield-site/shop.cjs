@@ -21,7 +21,7 @@ const panel = (children, o = {}) => container({
   ...(o.settings || {}),
 }, children);
 const small = (t, o = {}) => text(t, { size: o.size || 13.5, weight: o.weight || 400, color: o.color || C.muted, lh: 1.5, ...o });
-const sub = (t) => widget('heading', { title: t, header_size: 'h3', title_color: C.green, ...typo('typography', SERIF, [26, 24, 22], 400, { lh: 1.1 }) });
+const sub = (t) => widget('heading', { title: t, header_size: 'h2', title_color: C.green, ...typo('typography', SERIF, [26, 24, 22], 400, { lh: 1.1 }) });
 
 // Label / value line for totals.
 const line = (label, value, o = {}) => container({

@@ -144,7 +144,10 @@ function button(label, url, variant, o = {}) {
     hover_color: C.cream, button_background_hover_background: 'classic', button_background_hover_color: 'rgba(0,0,0,0)',
     text_padding: box(14, 4, 14, 4),
   });
-  return widget('button', { ...s, ...(o.settings || {}) });
+  // Class gives gradient buttons a solid fallback color (front.css) so contrast checkers read the real background.
+  const cls = { light: 'bi-btn-light', dark: 'bi-btn-dark' }[variant];
+  const extra = o.settings || {};
+  return widget('button', { ...s, ...extra, ...(cls ? { _css_classes: [cls, extra._css_classes].filter(Boolean).join(' ') } : {}) });
 }
 
 function image(media, o = {}) {
@@ -440,7 +443,7 @@ selector .elementor-message { color: #F5F2EC; padding: 0 18px 12px; margin: 0; f
     _element_id: 'book', flex_direction: 'column', flex_justify_content: 'center',
     background_background: 'slideshow', background_slideshow_gallery: [m.exterior, m.heroDeck, m.marina, m.sunset].map((x) => ({ id: x.id, url: x.url })),
     background_slideshow_slide_duration: 6000, background_slideshow_transition_duration: 1200, background_slideshow_slide_transition: 'fade',
-    background_slideshow_background_size: 'cover', background_slideshow_background_position: 'center center', background_slideshow_ken_burns: '', // no zoom: keeps the first photo as the fast-loading main image background_slideshow_loop: 'yes',
+    background_slideshow_background_size: 'cover', background_slideshow_background_position: 'center center', background_slideshow_ken_burns: '', background_slideshow_loop: 'yes', // no zoom: keeps the first photo as the fast-loading main image
     background_overlay_background: 'gradient', background_overlay_color: 'rgba(12,26,15,0.86)', background_overlay_color_stop: px(0, '%'),
     background_overlay_color_b: 'rgba(12,26,15,0)', background_overlay_color_b_stop: px(75, '%'), background_overlay_gradient_type: 'linear',
     background_overlay_gradient_angle: px(90, 'deg'), background_overlay_gradient_angle_tablet: px(180, 'deg'), background_overlay_gradient_angle_mobile: px(180, 'deg'),
@@ -690,7 +693,6 @@ const interactionsJs = `<script>
   }
 
   // Current weather on the webcam (Open-Meteo, free, no API key). Bayfield, WI.
-  var WX = { lat: 46.811, lon: -90.818 };
   var WX_TEXT = { 0: 'Clear', 1: 'Mostly clear', 2: 'Partly cloudy', 3: 'Overcast', 45: 'Fog', 48: 'Freezing fog', 51: 'Light drizzle', 53: 'Drizzle', 55: 'Heavy drizzle',
     56: 'Freezing drizzle', 57: 'Freezing drizzle', 61: 'Light rain', 63: 'Rain', 65: 'Heavy rain', 66: 'Freezing rain', 67: 'Freezing rain', 71: 'Light snow', 73: 'Snow',
     75: 'Heavy snow', 77: 'Snow grains', 80: 'Rain showers', 81: 'Rain showers', 82: 'Heavy showers', 85: 'Snow showers', 86: 'Heavy snow showers', 95: 'Thunderstorms',
@@ -698,9 +700,9 @@ const interactionsJs = `<script>
   function compass(d) { return ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'][Math.round(d / 45) % 8]; }
   function setText(cls, t) { document.querySelectorAll('.' + cls + ' .elementor-heading-title').forEach(function (el) { el.textContent = t; }); }
   function loadWeather() {
-    fetch('https://api.open-meteo.com/v1/forecast?latitude=' + WX.lat + '&longitude=' + WX.lon +
-      '&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,wind_direction_10m&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=America%2FChicago')
-      .then(function (r) { return r.json(); })
+    // Served by the Bayfield Inn Manager plugin, which asks Open-Meteo at most every 10 minutes.
+    fetch('/wp-json/bayfield/v1/weather')
+      .then(function (r) { return r.ok ? r.json() : {}; })
       .then(function (d) {
         var c = d.current; if (!c) return;
         setText('bi-wx-temp', Math.round(c.temperature_2m) + '°');
