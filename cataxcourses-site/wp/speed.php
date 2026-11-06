@@ -15,7 +15,7 @@ function ctc_sp_shop_page() {
 }
 function ctc_sp_no_delay() {
 	if ( is_user_logged_in() && current_user_can( 'edit_posts' ) && ! empty( $_GET['ctc_sp_test'] ) ) return false; // staff can test
-	return ( function_exists( 'is_cart' ) && ( is_cart() || is_checkout() || is_account_page() || ( function_exists( 'is_order_received_page' ) && is_order_received_page() ) ) )
+	return ( function_exists( 'is_cart' ) && ( is_cart() || is_checkout() || ( function_exists( 'is_order_received_page' ) && is_order_received_page() ) ) )
 		|| is_page( 'thank-you' ) || isset( $_GET['ctc_nodelay'] );
 }
 
@@ -81,7 +81,7 @@ add_action( 'wp_head', function () {
 		echo '<link rel="preload" as="font" type="font/woff2" crossorigin href="' . esc_url( content_url( '/uploads/elementor/google-fonts/fonts/' . basename( $f ) ) ) . '">' . "\n";
 	}
 	// Mug photo slider: keep the square photo's space from the first paint, show only the first slide until the slider starts.
-	echo '<style>.ctc-mug-gallery .swiper-slide-image{width:100%;height:auto;aspect-ratio:1/1;object-fit:cover}.ctc-mug-gallery .elementor-image-carousel-wrapper:not(.swiper-initialized) .swiper-slide:not(:first-child){display:none}.ctc-mug-gallery .elementor-image-carousel-wrapper{aspect-ratio:1/1}</style>' . "\n";
+	echo '<style>.ctc-mug-gallery .swiper-slide-image{width:100%;height:auto;aspect-ratio:1/1;object-fit:cover}.ctc-mug-gallery .elementor-image-carousel-wrapper:not(.swiper-initialized) .swiper-slide:not(:first-child){display:none}.ctc-mug-gallery .elementor-image-carousel-wrapper{aspect-ratio:1/1}.ctc-mug-gallery .elementor-image-carousel-wrapper:not(.swiper-initialized) .swiper-slide{max-width:100%!important;width:100%;flex:0 0 100%}</style>' . "\n";
 }, 1 );
 add_action( 'template_redirect', function () {
 	if ( is_admin() || wp_doing_ajax() || is_feed() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) return;
@@ -89,6 +89,9 @@ add_action( 'template_redirect', function () {
 		if ( false === strpos( $html, '<html' ) ) return $html;
 		// The hero video's poster is the largest thing on screen: fetch it first (only on pages that show it).
 		if ( preg_match( '#<video class="elementor-video"[^>]*poster="([^"]+)"#', $html, $pm ) ) $html = preg_replace( '#<head([^>]*)>#', '<head$1>' . "\n" . '<link rel="preload" as="image" href="' . $pm[1] . '" fetchpriority="high">', $html, 1 );
+		// WebP: where a .webp copy of an uploaded JPG/PNG exists, pages use it (about 70% smaller). Only image tags, srcset lists
+		// and CSS backgrounds change; social-sharing <meta> images keep the original.
+		$html = ctc_sp_webp( $html );
 		// Header, footer and product designs are printed inline by the design snippet; drop the duplicate <link> to the same CSS file.
 		if ( preg_match_all( '#<style[^>]*>\s*\.elementor-(\d+) #', $html, $ids ) ) {
 			foreach ( array_unique( $ids[1] ) as $pid ) $html = preg_replace( "#<link[^>]+id='elementor-post-" . $pid . "-css'[^>]*>\n?#", '', $html );
@@ -104,6 +107,25 @@ add_action( 'template_redirect', function () {
 		return $html;
 	} );
 }, 1 );
+
+function ctc_sp_webp_url( $url ) {
+	static $seen = array();
+	if ( ! preg_match( '#^(?:https?://cataxcourses\.com)?/wp-content/uploads/(.+)\.(?:jpe?g|png)$#i', $url, $m ) ) return $url;
+	if ( ! isset( $seen[ $url ] ) ) {
+		$file = WP_CONTENT_DIR . '/uploads/' . $m[1] . '.webp';
+		$seen[ $url ] = is_file( $file ) ? preg_replace( '#\.(?:jpe?g|png)$#i', '.webp', $url ) : $url;
+	}
+	return $seen[ $url ];
+}
+function ctc_sp_webp( $html ) {
+	$swap = function ( $value ) {
+		return preg_replace_callback( '#(?:https?://cataxcourses\.com)?/wp-content/uploads/[^\s"\'(),]+\.(?:jpe?g|png)#i', function ( $m ) { return ctc_sp_webp_url( $m[0] ); }, $value );
+	};
+	$html = preg_replace_callback( '#\b(src|srcset|data-src|data-srcset|poster)=("|\')([^"\']*)\2#i', function ( $m ) use ( $swap ) {
+		return $m[1] . '=' . $m[2] . $swap( $m[3] ) . $m[2];
+	}, $html );
+	return preg_replace_callback( '#url\(\s*(["\']?)([^)"\']+)\1\s*\)#i', function ( $m ) use ( $swap ) { return 'url(' . $m[1] . $swap( $m[2] ) . $m[1] . ')'; }, $html );
+}
 
 /* 3. Delay chat / tracking until the visitor interacts */
 function ctc_sp_delay_handles() {
@@ -148,7 +170,8 @@ add_action( 'wp_footer', function () {
       else { s.text = old.text; old.parentNode.replaceChild(s, old); next(); }
     })();
   }
-  if (!DELAY) { run(); return; }
+  // Cart, checkout and order pages: tracking still loads on every visit, right after the page has finished loading.
+  if (!DELAY) { if (document.readyState === 'complete') run(); else window.addEventListener('load', function () { setTimeout(run, 200); }); return; }
   ['scroll', 'pointerdown', 'touchstart', 'keydown', 'mousemove', 'wheel'].forEach(function (e) { window.addEventListener(e, run, { passive: true }); });
   setTimeout(run, 15000);
   // "Chat with us" buttons clicked before the chat has loaded: load it, then open it.

@@ -160,3 +160,30 @@ add_action( 'admin_init', function () {
 	wp_set_option_autoload_values( $set );
 	wp_send_json( array( 'options' => count( $set ), 'autoload_kb_now' => round( $wpdb->get_var( "SELECT SUM(LENGTH(option_value)) FROM {$wpdb->options} WHERE autoload IN ('yes','on','auto-on','auto')" ) / 1024 ) ) );
 } );
+// WebP copies (site admins). /wp-admin/?ctc_cfg=webp_check reports support. POST /wp-admin/?ctc_cfg=webp_make with
+// files[]=2022/04/65216.jpg (paths inside uploads): writes 65216.webp next to each original (originals are untouched).
+add_action( 'admin_init', function () {
+	$a = $_GET['ctc_cfg'] ?? '';
+	if ( ! in_array( $a, array( 'webp_check', 'webp_make' ), true ) || ! current_user_can( 'manage_options' ) ) return;
+	$gd = function_exists( 'gd_info' ) ? gd_info() : array();
+	if ( 'webp_check' === $a ) wp_send_json( array( 'gd' => ! empty( $gd ), 'webp' => ! empty( $gd['WebP Support'] ), 'imagick' => class_exists( 'Imagick' ) ) );
+	if ( empty( $gd['WebP Support'] ) ) wp_send_json( array( 'error' => 'no webp support' ) );
+	$up = wp_get_upload_dir()['basedir'];
+	$out = array();
+	foreach ( (array) ( $_POST['files'] ?? array() ) as $rel ) {
+		$rel = ltrim( str_replace( '..', '', wp_unslash( $rel ) ), '/' );
+		$src = $up . '/' . $rel;
+		if ( ! preg_match( '/\.(jpe?g|png)$/i', $rel ) || ! is_file( $src ) ) { $out[ $rel ] = 'skip'; continue; }
+		$dst = preg_replace( '/\.(jpe?g|png)$/i', '.webp', $src );
+		if ( is_file( $dst ) && filemtime( $dst ) >= filemtime( $src ) ) { $out[ $rel ] = 'exists'; continue; }
+		$png = preg_match( '/\.png$/i', $rel );
+		$im = $png ? @imagecreatefrompng( $src ) : @imagecreatefromjpeg( $src );
+		if ( ! $im ) { $out[ $rel ] = 'unreadable'; continue; }
+		if ( $png ) { imagepalettetotruecolor( $im ); imagealphablending( $im, false ); imagesavealpha( $im, true ); }
+		$ok = imagewebp( $im, $dst, 80 );
+		imagedestroy( $im );
+		if ( $ok && filesize( $dst ) >= filesize( $src ) ) { @unlink( $dst ); $out[ $rel ] = 'not smaller'; continue; } // keep the original then
+		$out[ $rel ] = $ok ? round( filesize( $src ) / 1024 ) . 'KB -> ' . round( filesize( $dst ) / 1024 ) . 'KB' : 'failed';
+	}
+	wp_send_json( $out );
+} );
