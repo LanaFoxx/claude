@@ -1440,3 +1440,14 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 .dwdc .dwdc-mnow strong { color: var(--navy) !important; font-size: 28px; }
 .dwdc .dwdc-mnow small { color: var(--sec); opacity: 1; }
 .dwdc .dwdc-mnow:hover small { color: var(--blue); }
+/* ===== Phone / app: every row in a list becomes its own card ===== */
+@media (max-width: 768px) {
+  .dwdc .dwdc-card.dwdc-tbl { background: transparent !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; overflow: visible !important; display: flex; flex-direction: column; gap: 14px; }
+  .dwdc .dwdc-tbl .dwdc-grid.row:not(.g-rev) { background: #fff; border: 1px solid var(--line) !important; border-radius: 18px; box-shadow: 0 6px 18px -12px rgba(11,31,63,.28); padding: 18px 18px 16px !important; margin: 0 !important; }
+  .dwdc .dwdc-tbl .dwdc-grid.row:not(.g-rev):active { transform: scale(.995); }
+  .dwdc .dwdc-tbl .dwdc-grid.row:not(.g-rev) > span:first-child { padding-bottom: 12px; margin-bottom: 2px; border-bottom: 1px solid var(--div); }
+  .dwdc .dwdc-tbl .dwdc-grid.row .dwdc-pname { font-size: 18px; }
+  .dwdc .dwdc-tbl .dwdc-grid.row .dwdc-pill, .dwdc .dwdc-tbl .dwdc-grid.row select { max-width: 160px !important; }
+  .dwdc .dwdc-tbl .dwdc-none, .dwdc .dwdc-tbl > p { background: #fff; border-radius: 18px; border: 1px solid var(--line); }
+  .dwdc .dwdc-tbl .dwdc-pager, .dwdc .dwdc-tbl > footer { background: #fff; border-radius: 14px; border: 1px solid var(--line); }
+}
