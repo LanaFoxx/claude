@@ -429,28 +429,58 @@
 				+ '</div>' + connPanel();
 		}
 		if (tab === 'calendar') {
-			var cm = S.pCal || pMonthKey(), cy = +cm.slice(0, 4), cmo = +cm.slice(5, 7), MNc = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-			var cshift = function (n) { var d = new Date(cy, cmo - 1 + n, 1); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2); };
-			var first = new Date(cy, cmo - 1, 1), startPad = (first.getDay() + 6) % 7, days = new Date(cy, cmo, 0).getDate();
-			var items = {};
-			var put = function (day, html) { (items[day] = items[day] || []).push(html); };
-			D.todos.forEach(function (t) { if (t.due && t.due.slice(0, 7) === cm) { put(+t.due.slice(8, 10), '<button class="dwdc-cal-i ' + (t.gevent ? 'ev' : 'td') + (t.done ? ' done' : '') + '" data-ptask="' + t.id + '">' + (t.time ? '<i>' + esc(t.time) + '</i> ' : '') + esc(ptx(t.text)) + '</button>'); } });
-			D.bills.forEach(function (b) {
-				var dd = b.freq === 'weekly' ? null : Math.min(b.day, days);
-				if (b.freq === 'yearly' && b.month !== cmo) { return; }
-				var key = b.freq === 'yearly' ? String(cy) : cm, paid = b.paid && b.paid[key];
-				if (b.freq === 'weekly') { for (var dd2 = 1; dd2 <= days; dd2++) { if (((new Date(cy, cmo - 1, dd2).getDay() + 6) % 7) + 1 === b.day) { put(dd2, '<a class="dwdc-cal-i bill" href="#personal/bills">' + esc(b.name) + ' · ' + money(b.amount) + '</a>'); } } return; }
-				put(dd, '<a class="dwdc-cal-i bill' + (paid ? ' done' : '') + '" href="#personal/bills">' + esc(b.name) + ' · ' + money(b.amount) + '</a>');
-			});
-			var cells = '';
-			for (var pi = 0; pi < startPad; pi++) { cells += '<div class="dwdc-cal-d off"></div>'; }
-			for (var di = 1; di <= days; di++) {
-				var ds = cm + '-' + ('0' + di).slice(-2);
-				cells += '<div class="dwdc-cal-d' + (ds === DWDC.today ? ' today' : '') + '" data-pday="' + ds + '" title="See everything on this day"><span class="dwdc-cal-n">' + di + '</span>' + (items[di] || []).join('') + '</div>';
+			var today = DWDC.today, MNs = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], MNf = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+			var cm = S.pCal || pMonthKey(), cy = +cm.slice(0, 4), cmo = +cm.slice(5, 7), F = S.pCalF || { td: true, ev: true, bill: true };
+			var sel = S.pSel || today;
+			var iso = function (d) { return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); };
+			var short = function (tm) { var q = /^(\d{1,2}):(\d{2})\s*([AP]M)$/i.exec(String(tm || '').trim()); return q ? (+q[1]) + (q[2] === '00' ? '' : ':' + q[2]) + q[3].toLowerCase() : String(tm || ''); };
+			var tmin = function (x) { if (!x.time) { return -1; } var q = /^(\d{1,2}):(\d{2})\s*([AP]M)?/i.exec(x.time) || [0, 0, 0]; return (+q[1] % 12 + (/p/i.test(q[3] || '') ? 12 : 0)) * 60 + +q[2]; };
+			var billsOn = function (ds) {
+				var dd = new Date(ds + 'T12:00:00'), dim = new Date(dd.getFullYear(), dd.getMonth() + 1, 0).getDate();
+				return D.bills.filter(function (b) {
+					if (b.freq === 'weekly') { return ((dd.getDay() + 6) % 7) + 1 === b.day; }
+					if (b.freq === 'yearly' && b.month !== dd.getMonth() + 1) { return false; }
+					return Math.min(b.day, dim) === dd.getDate();
+				}).map(function (b) { var key = b.freq === 'yearly' ? ds.slice(0, 4) : b.freq === 'weekly' ? ds : ds.slice(0, 7); return { kind: 'bill', text: b.name + ' · ' + money(b.amount), done: !!(b.paid && b.paid[key]), b: b }; });
+			};
+			var itemsOn = function (ds, all) {
+				var list = D.todos.filter(function (x) { return x.due === ds; }).map(function (x) { return { kind: x.gevent ? 'ev' : 'td', text: ptx(x.text), time: x.time, done: x.done, id: x.id, src: x.gevent ? 'Google Calendar' : (x.source === 'Google Tasks' ? 'Google Tasks' : 'Personal') }; });
+				list = list.concat(billsOn(ds));
+				if (!all) { list = list.filter(function (x) { return F[x.kind]; }); }
+				return list.sort(function (a, b) { return a.done - b.done || tmin(a) - tmin(b); });
+			};
+			// counts for the visible month (chips)
+			var cnt = { td: 0, ev: 0, bill: 0 }, dimM = new Date(cy, cmo, 0).getDate();
+			for (var dc = 1; dc <= dimM; dc++) { itemsOn(cm + '-' + ('0' + dc).slice(-2), true).forEach(function (x) { cnt[x.kind]++; }); }
+			var first = new Date(cy, cmo - 1, 1), start = new Date(first); start.setDate(1 - ((first.getDay() + 6) % 7));
+			var weeks = Math.ceil((((first.getDay() + 6) % 7) + dimM) / 7), cells = '';
+			for (var ci = 0; ci < weeks * 7; ci++) {
+				var cd = new Date(start); cd.setDate(start.getDate() + ci); var ds = iso(cd), inM = cd.getMonth() === cmo - 1;
+				var its = itemsOn(ds), lbl = cd.getDate() === 1 && !inM ? MNs[cd.getMonth()] + ' 1' : String(cd.getDate());
+				cells += '<div class="dwdc-c2-d' + (inM ? '' : ' out') + (ds === today ? ' today' : '') + (ds === sel ? ' sel' : '') + '" data-psel="' + ds + '">'
+					+ '<div class="dwdc-c2-n">' + (ds === today ? '<b>' + cd.getDate() + '</b><span>Today</span>' : lbl) + '</div>'
+					+ its.slice(0, 3).map(function (x) { return '<button type="button" class="dwdc-c2-i ' + x.kind + (x.done ? ' done' : '') + '"' + (x.id ? ' data-ptask="' + x.id + '"' : ' data-gobills') + '>' + (x.time ? '<em>' + esc(short(x.time)) + '</em> ' : '') + esc(x.text) + '</button>'; }).join('')
+					+ (its.length > 3 ? '<span class="dwdc-c2-more">+' + (its.length - 3) + ' more</span>' : '') + '</div>';
 			}
-			return '<div class="dwdc-pmonth"><button class="dwdc-btn2 sm" data-pcal="' + cshift(-1) + '">‹</button><b>' + MNc[cmo - 1] + ' ' + cy + '</b><button class="dwdc-btn2 sm" data-pcal="' + cshift(1) + '">›</button>' + (cm !== pMonthKey() ? '<button class="dwdc-btn2 sm" data-pcal="' + pMonthKey() + '">Today</button>' : '') + '</div>'
-				+ '<section class="dwdc-card dwdc-cal"><div class="dwdc-cal-h">' + ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(function (x) { return '<span>' + x + '</span>'; }).join('') + '</div><div class="dwdc-cal-g">' + cells + '</div></section>'
-				+ '<p class="dwdc-mutp sm"><span class="dwdc-cal-key td"></span>To-dos <span class="dwdc-cal-key ev"></span>Google Calendar <span class="dwdc-cal-key bill"></span>Bills · Click a day to see everything on it, or an item to open it.</p>';
+			var shift = function (n) { var d = new Date(cy, cmo - 1 + n, 1); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2); };
+			var chip = function (k, label) { return '<button type="button" class="dwdc-c2-chip ' + k + (F[k] ? ' on' : '') + '" data-pcalf="' + k + '"><i></i>' + label + '<b>' + cnt[k] + '</b></button>'; };
+			// side: selected day
+			var sd = new Date(sel + 'T12:00:00'), sitems = itemsOn(sel, true);
+			var kindLbl = { td: 'To-do', ev: 'Event', bill: 'Bill' };
+			var side = '<section class="dwdc-c2-day"><header><div class="dwdc-c2-badge"><small>' + MNs[sd.getMonth()].toUpperCase() + '</small><b>' + sd.getDate() + '</b></div><div><small>' + (sel === today ? 'Today · ' : '') + sd.toLocaleDateString('en-US', { weekday: 'long' }) + '</small><h3>' + MNf[sd.getMonth()] + ' ' + sd.getDate() + '</h3></div><span class="dwdc-c2-cnt">' + sitems.length + ' item' + (sitems.length === 1 ? '' : 's') + '</span></header>'
+				+ '<div class="dwdc-c2-list">' + (sitems.length ? sitems.map(function (x) {
+					return '<div class="dwdc-c2-row ' + x.kind + (x.done ? ' done' : '') + '"' + (x.id ? ' data-ptask="' + x.id + '"' : ' data-gobills') + '><div><p><b>' + esc(x.time ? short(x.time) : 'All day') + '</b><span>' + kindLbl[x.kind] + '</span></p><h4>' + esc(x.text) + '</h4><small>' + esc(x.src || 'Bills') + '</small></div>'
+						+ (x.kind === 'td' ? '<span class="dwdc-chk' + (x.done ? ' on' : '') + '" data-ptoggle="' + x.id + '">' + ic('check', 12) + '</span>' : '') + '</div>';
+				}).join('') : '<p class="dwdc-c2-empty">Nothing on this day.</p>') + '</div>'
+				+ '<form class="dwdc-c2-add" data-pform="pdayadd"><input type="hidden" name="due" value="' + sel + '"><input name="text" placeholder="Add a to-do for ' + MNs[sd.getMonth()] + ' ' + sd.getDate() + '…" autocomplete="off" required><button class="dwdc-btn">Add</button></form></section>';
+			// side: coming up 7 days
+			var up = [];
+			for (var ui = 0; ui < 7; ui++) { var ud = new Date(today + 'T12:00:00'); ud.setDate(ud.getDate() + ui + 1); var us = iso(ud); itemsOn(us, true).filter(function (x) { return !x.done; }).forEach(function (x) { up.push({ d: ud, x: x }); }); }
+			var soon = '<section class="dwdc-c2-up"><header><h3>Coming up</h3><span>Next 7 days</span></header>' + (up.length ? up.slice(0, 12).map(function (u) {
+				var x = u.x; return '<div class="dwdc-c2-urow"' + (x.id ? ' data-ptask="' + x.id + '"' : ' data-gobills') + '><div class="d"><small>' + u.d.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase() + '</small><b>' + u.d.getDate() + '</b></div><i class="' + x.kind + '"></i><div class="t"><b>' + esc(x.text) + '</b><small>' + esc(x.time ? short(x.time) : 'All day') + ' · ' + (x.kind === 'ev' ? 'Google Calendar' : kindLbl[x.kind]) + '</small></div></div>';
+			}).join('') : '<p class="dwdc-c2-empty">Nothing in the next week.</p>') + '</section>';
+			return '<div class="dwdc-c2-top"><div class="dwdc-c2-nav"><button type="button" data-pcal="' + shift(-1) + '" aria-label="Previous month">' + ic('left', 16) + '</button><button type="button" data-pcaltoday>Today</button><button type="button" data-pcal="' + shift(1) + '" aria-label="Next month">' + ic('right', 16) + '</button></div><h2 class="dwdc-c2-month">' + MNf[cmo - 1] + ' ' + cy + '</h2><div class="dwdc-c2-chips">' + chip('td', 'To-dos') + chip('ev', 'Google Calendar') + chip('bill', 'Bills') + '</div></div>'
+				+ '<div class="dwdc-c2"><section class="dwdc-c2-cal"><div class="dwdc-c2-h">' + ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(function (x) { return '<span>' + x + '</span>'; }).join('') + '</div><div class="dwdc-c2-g">' + cells + '</div></section><aside class="dwdc-c2-side">' + side + soon + '</aside></div>';
 		}
 		if (tab === 'done') {
 			var dn = D.todos.filter(function (t) { return t.done; }).sort(function (a, b) { return (b.done_at || '') < (a.done_at || '') ? -1 : 1; });
@@ -2031,6 +2061,10 @@
 		if ((el = t.closest('[data-ptask]')) && !t.closest('a') && (!t.closest('button') || t.closest('button') === el)) { S.modal = { type: 'ptask', id: el.getAttribute('data-ptask'), back: S.modal && S.modal.type === 'pday' ? S.modal.day : '', vals: {} }; render(); return; }
 		if ((el = t.closest('[data-pshowdone]'))) { S.pShowDone = !S.pShowDone; render(); return; }
 		if ((el = t.closest('[data-pcal]'))) { S.pCal = el.getAttribute('data-pcal'); render(); return; }
+		if (t.closest('[data-pcaltoday]')) { S.pCal = DWDC.today.slice(0, 7); S.pSel = DWDC.today; render(); return; }
+		if ((el = t.closest('[data-pcalf]'))) { var fk = el.getAttribute('data-pcalf'); S.pCalF = S.pCalF || { td: true, ev: true, bill: true }; S.pCalF[fk] = !S.pCalF[fk]; render(); return; }
+		if (t.closest('[data-gobills]') && !t.closest('[data-ptask]')) { location.hash = 'personal/bills'; return; }
+		if ((el = t.closest('[data-psel]')) && !t.closest('[data-ptask], [data-gobills], a')) { S.pSel = el.getAttribute('data-psel'); var pm = S.pSel.slice(0, 7); if (pm !== (S.pCal || DWDC.today.slice(0, 7))) { S.pCal = pm; } render(); if (window.innerWidth <= 1100) { setTimeout(function () { var dd = document.querySelector('.dwdc-c2-day'); if (dd) { dd.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }, 50); } return; }
 		if (t.closest('[data-addtask]')) { S.modal = { type: 'paddtask', msgs: [], tasks: [], draft: '', vals: {} }; render(); setTimeout(function () { var ta = document.querySelector('[data-ptdraft]'); if (ta) { ta.focus(); } }, 60); return; }
 		if (t.closest('[data-ptsend]')) { var ta0 = document.querySelector('[data-ptdraft]'); if (ta0 && S.modal) { S.modal.draft = ta0.value; } ptSend(); return; }
 		if (t.closest('[data-ptmic]')) { var ta1 = document.querySelector('[data-ptdraft]'); if (ta1 && S.modal) { S.modal.draft = ta1.value; } ptMic(); return; }
