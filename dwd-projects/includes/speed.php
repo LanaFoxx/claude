@@ -60,3 +60,8 @@ add_filter( 'wp_get_attachment_image_attributes', function ( $attr, $att, $size 
 	$attr['fetchpriority'] = 'high';
 	return $attr;
 }, 20, 3 );
+
+/** Hello Elementor adds its own description tag; Yoast already writes one, so drop the duplicate. */
+add_action( 'wp', function () {
+	remove_action( 'wp_head', 'hello_elementor_add_description_meta_tag' );
+} );
