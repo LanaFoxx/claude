@@ -10,7 +10,7 @@ defined( 'ABSPATH' ) || exit;
 
 add_action( 'wp_head', function () {
 	$base = BI_MANAGER_URL . 'assets/';
-	foreach ( array( 'geist-normal-latin', 'newsreader-normal-latin', 'newsreader-italic-latin' ) as $f ) {
+	foreach ( array( 'geist-normal-latin', 'newsreader-normal-latin' ) as $f ) {
 		printf( '<link rel="preload" href="%s" as="font" type="font/woff2" crossorigin>' . "\n", esc_url( $base . 'fonts/' . $f . '.woff2' ) );
 	}
 	$css = file_get_contents( BI_MANAGER_DIR . 'assets/fonts.css' ); // phpcs:ignore
