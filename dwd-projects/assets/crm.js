@@ -172,6 +172,10 @@
 	function isInstalled() { return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true; }
 	function isIOS() { return /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); }
 	function isPhone() { return /android|iphone|ipod|mobile/i.test(navigator.userAgent); }
+	// Display-only tidy-up of calendar titles synced from ClickUp (Google keeps the original).
+	function ptx(s) { var m = /^🔄\s*(.+?)\s*::.*Hosting Client List\s*$/.exec(String(s || '')); return m ? 'Hosting renewal: ' + m[1] : String(s || ''); }
+	// Google sync health: connected, or stopped (no sync for 2+ hours).
+	function gStale(GL) { if (!GL || !GL.at) { return false; } var t = new Date(GL.at.replace(' ', 'T') + 'Z').getTime(); return Date.now() - t > 2 * 3600 * 1000; }
 	/* ---------- Personal: bank spending, subscriptions, connections ---------- */
 	function bData() {
 		if (!S.bank && !S.bankLoading) { S.bankLoading = true; api('/bank').then(function (d) { S.bank = d; S.bankLoading = false; render(); }).catch(function () { S.bankLoading = false; }); }
@@ -261,7 +265,7 @@
 		if (!G && !S.pGoogleLoading) { S.pGoogleLoading = true; api('/personal/google').then(function (x) { S.pGoogle = x; render(); }).catch(function () {}); }
 		var st = function (on, txt) { return '<span class="dwdc-conn-st ' + (on ? 'on' : 'off') + '">' + (txt || (on ? 'Connected' : 'Not set up')) + '</span>'; };
 		var banks = P && P.banks && P.banks.length;
-		var google = '<div class="dwdc-conn"><h3>' + ic('todo', 16) + 'Google Tasks &amp; Calendar' + st(!!GL) + '</h3>' + (GL ? '<small class="dwdc-conn-last">Last synced ' + fmt(GL.at, true) + ' ' + esc(GL.at.slice(11, 16)) + ' · every 15 minutes</small>' : '')
+		var google = '<div class="dwdc-conn"><h3>' + ic('todo', 16) + 'Google Tasks &amp; Calendar' + st(!!GL && !gStale(GL), GL && gStale(GL) ? 'Stopped syncing' : '') + '</h3>' + (GL ? '<small class="dwdc-conn-last">Last synced ' + fmt(GL.at, true) + ' ' + esc(GL.at.slice(11, 16)) + ' UTC · every 15 minutes</small>' : '') + (gStale(GL) ? '<p class="dwdc-warn">No sync for over 2 hours. Open the script at script.google.com and press Run on <b>setup</b> again (it re-creates the 15-minute timer).</p>' : '')
 			+ '<p>Two-way: to-dos ↔ Google Tasks, and your Google Calendar ↔ the Personal calendar (edits and deletes included).</p>'
 			+ '<ol><li>Open <a href="https://script.google.com/home/projects/create" target="_blank" rel="noopener"><b>script.google.com → New project</b></a> as mike@dreamwebdigital.com.</li><li>Click <b>Services +</b> on the left, add <b>Google Tasks API</b>, then click <b>Services +</b> again and add <b>Google Calendar API</b>.</li><li>Delete what’s in the editor and paste the script:' + (G ? '<div class="dwdc-conn-url"><code>Dream Desk personal sync script</code><button class="dwdc-lnk sm2" data-copy="' + esc(G.script) + '">Copy script</button></div>' : ' <i>loading…</i>') + '</li><li>Save, choose <b>setup</b> next to Run, press <b>Run</b>, and allow access.</li></ol></div>';
 		var bank = '<div class="dwdc-conn"><h3>' + ic('dollar', 16) + 'Bank of America' + st(banks || (B && B.count), banks ? 'Connected via Plaid' : (B && B.count ? 'CSV uploads' : '')) + '</h3>'
@@ -337,7 +341,7 @@
 		var src = t.source ? '<span class="dwdc-psrc ' + (t.source === 'Google Calendar' ? 'cal' : 'gt') + '">' + esc(t.source === 'Google Calendar' ? 'Calendar' : 'Google Tasks') + '</span>' : '';
 		var meta = [t.due ? (t.due === DWDC.today ? 'Today' : fmt(t.due)) + (t.time ? ' · ' + t.time : '') : '', t.note ? 'Has notes' : ''].filter(Boolean).join(' · ');
 		return '<div class="dwdc-todo' + (t.done ? ' done' : '') + (t.due && t.due < DWDC.today && !t.done ? ' late' : '') + '" data-ptask="' + t.id + '"><span class="dwdc-chk" data-ptoggle="' + t.id + '">' + ic('check', 12) + '</span>'
-			+ '<span class="dwdc-tt"><b>' + esc(t.text) + '</b><small>' + src + esc(meta) + '</small></span>'
+			+ '<span class="dwdc-tt"><b>' + esc(ptx(t.text)) + '</b><small>' + src + esc(meta) + '</small></span>'
 			+ '<button class="dwdc-del" data-pdel="todos:' + t.id + '" title="Delete">' + ic('x', 14) + '</button></div>';
 	}
 	function personalView(r) {
@@ -397,14 +401,14 @@
 			var billsMo = D.bills.reduce(function (a, b) { return a + billMonthly(b); }, 0);
 			var row = function (x, showDate) {
 				var when = showDate ? (x.due === addD(1) ? 'Tomorrow' : new Date(x.due + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })) : (x.time || (x.gevent ? 'All day' : ''));
-				return '<button type="button" class="dwdc-ph-row ' + (x.gevent ? 'ev' : 'td') + '" data-ptask="' + x.id + '">' + (x.gevent ? '<i class="dot"></i>' : '<span class="dwdc-chk" data-ptoggle="' + x.id + '">' + ic('check', 11) + '</span>') + '<span class="tx"><b>' + esc(x.text) + '</b>' + (when ? '<small>' + esc(when) + (showDate && x.time ? ' · ' + esc(x.time) : '') + '</small>' : '') + '</span></button>';
+				return '<button type="button" class="dwdc-ph-row ' + (x.gevent ? 'ev' : 'td') + '" data-ptask="' + x.id + '">' + (x.gevent ? '<i class="dot"></i>' : '<span class="dwdc-chk" data-ptoggle="' + x.id + '">' + ic('check', 11) + '</span>') + '<span class="tx"><b>' + esc(ptx(x.text)) + '</b>' + (when ? '<small>' + esc(when) + (showDate && x.time ? ' · ' + esc(x.time) : '') + '</small>' : '') + '</span></button>';
 			};
 			// this week strip
 			var wk = '', start = new Date(today + 'T12:00:00'); start.setDate(start.getDate() - ((start.getDay() + 6) % 7));
 			for (var wi = 0; wi < 7; wi++) {
 				var wd = new Date(start); wd.setDate(start.getDate() + wi); var ws = wd.toISOString().slice(0, 10);
 				var its = D.todos.filter(function (x) { return x.due === ws && !x.done; });
-				wk += '<div class="dwdc-wk-d' + (ws === today ? ' today' : '') + (ws < today ? ' past' : '') + '" data-pday="' + ws + '"><small>' + wd.toLocaleDateString('en-US', { weekday: 'short' }) + '</small><b>' + wd.getDate() + '</b>' + its.slice(0, 3).map(function (x) { return '<span class="' + (x.gevent ? 'ev' : 'td') + '">' + esc(x.text) + '</span>'; }).join('') + (its.length > 3 ? '<em>+' + (its.length - 3) + ' more</em>' : '') + '</div>';
+				wk += '<div class="dwdc-wk-d' + (ws === today ? ' today' : '') + (ws < today ? ' past' : '') + '" data-pday="' + ws + '"><small>' + wd.toLocaleDateString('en-US', { weekday: 'short' }) + '</small><b>' + wd.getDate() + '</b>' + its.slice(0, 3).map(function (x) { return '<span class="' + (x.gevent ? 'ev' : 'td') + '">' + esc(ptx(x.text)) + '</span>'; }).join('') + (its.length > 3 ? '<em>+' + (its.length - 3) + ' more</em>' : '') + '</div>';
 			}
 			var greet = new Date().getHours() < 12 ? 'Good morning' : new Date().getHours() < 17 ? 'Good afternoon' : 'Good evening';
 			return '<p class="dwdc-pgreet">' + greet + ', Michael. Here’s your day.</p>'
@@ -430,7 +434,7 @@
 			var first = new Date(cy, cmo - 1, 1), startPad = (first.getDay() + 6) % 7, days = new Date(cy, cmo, 0).getDate();
 			var items = {};
 			var put = function (day, html) { (items[day] = items[day] || []).push(html); };
-			D.todos.forEach(function (t) { if (t.due && t.due.slice(0, 7) === cm) { put(+t.due.slice(8, 10), '<button class="dwdc-cal-i ' + (t.gevent ? 'ev' : 'td') + (t.done ? ' done' : '') + '" data-ptask="' + t.id + '">' + (t.time ? '<i>' + esc(t.time) + '</i> ' : '') + esc(t.text) + '</button>'); } });
+			D.todos.forEach(function (t) { if (t.due && t.due.slice(0, 7) === cm) { put(+t.due.slice(8, 10), '<button class="dwdc-cal-i ' + (t.gevent ? 'ev' : 'td') + (t.done ? ' done' : '') + '" data-ptask="' + t.id + '">' + (t.time ? '<i>' + esc(t.time) + '</i> ' : '') + esc(ptx(t.text)) + '</button>'); } });
 			D.bills.forEach(function (b) {
 				var dd = b.freq === 'weekly' ? null : Math.min(b.day, days);
 				if (b.freq === 'yearly' && b.month !== cmo) { return; }
@@ -1813,7 +1817,7 @@
 			var long = new Date(day + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }).split(', ');
 			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal dwdc-daym">' + head(long[0], long[1].split(' ')[0], long[1].split(' ')[1] + (long[2] ? ', ' + long[2] : ''))
 				+ (dayItems.length || dayBills.length ? '<div class="dwdc-daylist">' + dayItems.map(function (x) {
-					return '<button type="button" class="dwdc-dayi ' + (x.gevent ? 'ev' : 'td') + (x.done ? ' done' : '') + '" data-ptask="' + x.id + '"><span class="tm">' + esc(x.time || (x.gevent ? 'All day' : 'To-do')) + '</span><span class="tx"><b>' + esc(x.text) + '</b>' + (x.note ? '<small>' + esc(x.note) + '</small>' : '') + '</span>' + ic('right', 14) + '</button>';
+					return '<button type="button" class="dwdc-dayi ' + (x.gevent ? 'ev' : 'td') + (x.done ? ' done' : '') + '" data-ptask="' + x.id + '"><span class="tm">' + esc(x.time || (x.gevent ? 'All day' : 'To-do')) + '</span><span class="tx"><b>' + esc(ptx(x.text)) + '</b>' + (x.note ? '<small>' + esc(x.note) + '</small>' : '') + '</span>' + ic('right', 14) + '</button>';
 				}).join('') + dayBills.map(function (b) {
 					return '<a class="dwdc-dayi bill" href="#personal/bills" data-close-modal><span class="tm">Bill</span><span class="tx"><b>' + esc(b.name) + ' · ' + money(b.amount) + '</b><small>' + (b.autopay ? 'Autopay' : 'Pay manually') + '</small></span>' + ic('right', 14) + '</a>';
 				}).join('') + '</div>' : emptyRow('Nothing on this day yet.'))

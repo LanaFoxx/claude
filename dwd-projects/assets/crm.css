@@ -1452,3 +1452,4 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
   .dwdc .dwdc-tbl .dwdc-pager, .dwdc .dwdc-tbl > footer { background: #fff; border-radius: 14px; border: 1px solid var(--line); }
 }
 @media (max-width: 768px) { .dwdc-ph[data-view="projects"] .dwdc-ph-btn.primary[data-act="pay"] { display: none !important; } }
+.dwdc-warn { background: #FFF1EC; border: 1px solid #FFC9B8; color: #B43C1E !important; border-radius: 10px; padding: 10px 12px; font-size: 13.5px; }
