@@ -48,7 +48,17 @@ while ( have_posts() ) :
 								<button type="button" class="dw-video-frame dw-yt" style="aspect-ratio:<?php echo esc_attr( round( dwdp_youtube_ratio( $yt ), 4 ) ); ?>" data-yt="<?php echo esc_attr( $yt ); ?>" aria-label="<?php echo esc_attr( 'Play the ' . $name . ' website walkthrough' ); ?>">
 									<?php $vcover = dwdp_get( $id, 'video_cover' ); if ( ! $vcover && ( $ytt = absint( dwdp_get( $id, 'thumb_youtube' ) ) ) ) { $vcover = dwdp_original_url( $ytt ); } ?>
 									<?php if ( $vcover ) : ?>
-										<img src="<?php echo esc_url( $vcover ); ?>" alt="<?php echo esc_attr( $name . ' website on laptop and phone' ); ?>" loading="lazy">
+										<?php
+										// The video cover is the first big picture on the page: load it first, in a phone-sized version on phones.
+										$vcid = attachment_url_to_postid( $vcover );
+										if ( $vcid ) {
+											echo wp_get_attachment_image( $vcid, 'full', false, array( 'alt' => $name . ' website on laptop and phone', 'loading' => 'eager', 'fetchpriority' => 'high', 'decoding' => 'async', 'sizes' => '(max-width: 767px) 92vw, 720px' ) ); // phpcs:ignore WordPress.Security.EscapeOutput
+										} else {
+											?>
+											<img src="<?php echo esc_url( $vcover ); ?>" alt="<?php echo esc_attr( $name . ' website on laptop and phone' ); ?>" loading="eager" fetchpriority="high" decoding="async">
+											<?php
+										}
+										?>
 									<?php else : ?>
 										<img src="https://i.ytimg.com/vi/<?php echo esc_attr( $yt ); ?>/maxresdefault.jpg" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/<?php echo esc_attr( $yt ); ?>/hqdefault.jpg'" alt="" loading="lazy">
 									<?php endif; ?>

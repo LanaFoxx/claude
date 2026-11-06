@@ -353,10 +353,12 @@ add_filter( 'request', function ( $vars ) {
 /** Project card used on the Portfolio page: the hero on a laptop with the phone view beside it, then name and industry. */
 function dwdp_card_html( $p ) {
 	$mock  = absint( dwdp_get( $p->ID, 'mockup' ) );
-	$phone = $mock ? '<span class="dw-pphone">' . dwdp_img( $mock, get_the_title( $p ) . ' website on mobile', array( 'loading' => 'lazy' ) ) . '</span>' : '';
+	static $n = 0;
+	$first = $n++ < 2; // the first cards are on screen right away: load them first
+	$phone = $mock ? '<span class="dw-pphone">' . dwdp_img( $mock, get_the_title( $p ) . ' website on mobile', array( 'loading' => $first ? 'eager' : 'lazy', 'sizes' => '(max-width: 767px) 80px, 120px' ) ) . '</span>' : '';
 	$label = dwdp_number( $p->ID ) . ' · ' . dwdp_get( $p->ID, 'industry' );
 	$name  = get_the_title( $p );
-	$img   = dwdp_img( dwdp_get( $p->ID, 'cover' ), $name . ' website', array( 'loading' => 'lazy' ) );
+	$img   = dwdp_img( dwdp_get( $p->ID, 'cover' ), $name . ' website', array_merge( array( 'loading' => $first ? 'eager' : 'lazy', 'sizes' => '(max-width: 767px) 72vw, 440px' ), 1 === $n ? array( 'fetchpriority' => 'high' ) : array() ) );
 	return sprintf(
 		'<a class="dw-pcard" data-builder="%6$s" href="%1$s"><span class="dw-pshot"><span class="dwdp-laptop"><span class="dwdp-lid"><i class="dwdp-cam"></i><span class="dwdp-lscreen">%3$s</span></span><span class="dwdp-base"></span></span>%5$s</span><span class="dw-pfoot"><span class="dw-pmeta"><b>%2$s</b><em>%4$s</em></span><span class="dw-pbtn">View project →</span></span></a>',
 		esc_url( get_permalink( $p ) ),
@@ -438,8 +440,20 @@ add_action( 'wp_head', function () {
 		break;
 	}
 }, 2 );
+/** Does this page show the project grid/slider? Then its styles load in the head (no late layout shift). */
+function dwdp_page_uses_cards() {
+	if ( is_front_page() || is_singular( DWDP_CPT ) ) {
+		return true;
+	}
+	if ( ! is_singular() ) {
+		return false;
+	}
+	$id  = get_queried_object_id();
+	$raw = (string) get_post_field( 'post_content', $id ) . (string) get_post_meta( $id, '_elementor_data', true );
+	return false !== strpos( $raw, '[dwd_portfolio' ) || false !== strpos( $raw, '[dwd_project_slider' ) || false !== strpos( $raw, 'dwd_portfolio' );
+}
 add_action( 'wp_enqueue_scripts', function () {
-	if ( is_front_page() ) {
+	if ( dwdp_page_uses_cards() ) {
 		wp_enqueue_style( 'dwdp-front' );
 	}
 }, 20 );
