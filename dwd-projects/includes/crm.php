@@ -369,6 +369,11 @@ function dwdc_file_entry( $form, $fields, $date = '', $source = 'Website form', 
 		$data['list']   = 'leads';
 		$data['stage']  = $onboarding ? 'onboarding' : 'new';
 		$data['source'] = $source . ': ' . $form;
+		// Came from a Google ad (the site remembers the click for 90 days)? Record that, and which campaign.
+		if ( function_exists( 'dwdp_ad_click' ) && ( $ad = dwdp_ad_click() ) ) {
+			$data['lead_source'] = 'Google Ads';
+			$data['source']      = 'Google Ads' . ( $ad['c'] ? ' · ' . $ad['c'] : '' ) . ( $ad['t'] ? ' · “' . $ad['t'] . '”' : '' ) . ': ' . $form;
+		}
 	} else {
 		// Invited leads start with a placeholder name (their email or phone); the form fills in the real one.
 		if ( get_post_meta( $id, '_dwdc_invited', true ) ) {

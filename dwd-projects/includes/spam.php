@@ -49,7 +49,7 @@ document.addEventListener('submit',function(ev){var f=ev.target;if(!f.classList|
 ev.preventDefault();ev.stopImmediatePropagation();mark();var b=f.querySelector('button[type=submit]'),n=f.querySelector('.dw-fnote'),old=n?n.textContent:'';
 if(b){b.disabled=true;}var d=new FormData(f);d.append('action','dwdp_contact');
 fetch('<?php echo $ajax; // phpcs:ignore ?>',{method:'POST',body:d,credentials:'same-origin'}).then(function(r){return r.json();}).then(function(r){
-if(r&&r.success){f.reset();if(n){n.textContent='Thanks! Your message is on its way. I’ll reply the same day.';n.style.color='#1B7EC3';}}
+if(r&&r.success){f.reset();try{document.dispatchEvent(new Event('dwd:lead'));}catch(x){}if(n){n.textContent='Thanks! Your message is on its way. I’ll reply the same day.';n.style.color='#1B7EC3';}}
 else{if(n){n.textContent=(r&&r.data)||'Sorry, that didn’t send. Please call (772) 210-1728.';n.style.color='#D63638';}}
 }).catch(function(){if(n){n.textContent='Sorry, that didn’t send. Please call (772) 210-1728.';n.style.color='#D63638';}}).then(function(){if(b){b.disabled=false;}});
 },true);

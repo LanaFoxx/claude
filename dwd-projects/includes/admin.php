@@ -381,6 +381,11 @@ function dwdp_settings_page() {
 			'microlink_key' => array( 'Microlink API key (optional)', 'Free use allows about 16 project captures per day. Add a key from microlink.io for more.' ),
 			'capture_width' => array( 'Desktop capture width (px)', 'Default 1440.' ),
 		),
+		'Google Ads tracking'  => array(
+			'gads_id'   => array( 'Google Ads tag ID', 'Looks like AW-123456789. Google Ads → Goals → Conversions → your conversion action → Tag setup → “Use Google Tag Manager” shows the Conversion ID (add AW- in front).' ),
+			'gads_lead' => array( 'Lead conversion label', 'The Conversion label of your “Website lead” conversion (counts contact, onboarding and booking forms).' ),
+			'gads_call' => array( 'Call conversion label (optional)', 'Label of a “Click to call” conversion, counted when someone taps your phone number.' ),
+		),
 		'Pages'                => array(
 			'base_slug'     => array( 'Project page address', 'Projects live at /<this>/project-name/.' ),
 			'portfolio_url' => array( '“Back to portfolio” link', '' ),

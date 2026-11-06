@@ -1577,7 +1577,7 @@
 		return lines.join('\n').trim();
 	}
 	// Where the project came from, and (unless it came through Upwork) how they pay.
-	var SOURCES = ['Upwork', 'Google', 'Referral', 'Reference', 'Repeat client', 'Website', 'Social media', 'Other'];
+	var SOURCES = ['Upwork', 'Google Ads', 'Google', 'Referral', 'Reference', 'Repeat client', 'Website', 'Social media', 'Other'];
 	var PAYS = ['Upwork', 'Stripe', 'PayPal', 'Zelle', 'Check', 'Cash', 'Bank transfer', 'Venmo', 'Other'];
 	// Payment method colors: Upwork green, PayPal blue, Stripe bright blue.
 	function payClass(m) { return m ? ' pm-' + String(m).toLowerCase().replace(/[^a-z]/g, '') : ''; }
