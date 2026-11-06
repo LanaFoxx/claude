@@ -572,7 +572,7 @@
 			? '<a href="#home">Dream Desk</a><span aria-hidden="true">/</span><strong>' + esc(t[0]) + '</strong>'
 			: '<a href="#' + (SEC[t[0]] || 'home') + '">' + esc(t[0] || 'Dream Desk') + '</a><span aria-hidden="true">/</span><strong>' + esc(page) + '</strong>';
 		var plus = ic('plus', 14), menuOpen = !!S.newOpen;
-		return '<header class="dwdc-ph">'
+		return '<header class="dwdc-ph" data-view="' + r.view + '">'
 			+ '<div class="dwdc-ph-id"><button class="dwdc-burger" data-menu aria-label="Menu">' + ic('menu', 20) + '</button><div>'
 			+ '<p class="dwdc-ph-crumb">' + crumb + '</p>'
 			+ '<h1 class="dwdc-ph-title">' + esc(t[1]) + (t[2] ? (t[1] ? ' ' : '') + '<b>' + esc(t[2]) + '</b>' : '') + '</h1></div></div>'
