@@ -317,20 +317,20 @@ body.woocommerce-page{background:#12293E}
 body.woocommerce-page main#content.site-main{max-width:none;width:100%;margin:0;padding:100px 32px 100px;background-color:#12293E;background-image:radial-gradient(ellipse 700px 380px at 50% 0,rgba(27,126,195,.35),transparent 70%),radial-gradient(rgba(255,255,255,.12) 1px,transparent 1px);background-size:auto,22px 22px}
 body.woocommerce-page main#content .page-header{display:none}
 .dww-hero{text-align:center;max-width:920px;margin:0 auto 40px}
-.dww-eyebrow{display:inline-block;border:1px solid rgba(255,255,255,0.22);border-radius:100px;padding:9px 18px;font:500 15.5px/1.5 Urbanist,sans-serif;color:#C9DAE8;letter-spacing:.02em}
-.dww-title{margin:14px 0 0;font:900 60px/1.04 Urbanist,sans-serif;letter-spacing:.01em;text-transform:uppercase;color:#fff}
+.dww-eyebrow{display:inline-block;border:1px solid rgba(255,255,255,0.22);border-radius:100px;padding:9px 18px;font:500 15.5px/1.5 Urbanist,"Urbanist Fallback",sans-serif;color:#C9DAE8;letter-spacing:.02em}
+.dww-title{margin:14px 0 0;font:900 60px/1.04 Urbanist,"Urbanist Fallback",sans-serif;letter-spacing:.01em;text-transform:uppercase;color:#fff}
 .dww-title::after{content:"";display:block;width:170px;height:12px;margin:14px auto 0;background:' . $swoosh . ' no-repeat center/contain}
 .dww-pills{display:flex;justify-content:center;flex-wrap:wrap;gap:18px;margin-top:30px}
-.dww-pill{display:inline-flex;align-items:center;gap:12px;background:#fff;border-radius:10px;padding:16px 20px;font:300 16px Urbanist,sans-serif;color:#0E1526}
-.dww-pill i{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:#1B7EC3;color:#fff;font:600 14px Urbanist,sans-serif;font-style:normal}
-.dww-card{max-width:920px;margin:0 auto;background:#fff;border-radius:14px;padding:48px 52px 40px;box-shadow:0 30px 70px rgba(0,0,0,.25);font:300 16px/1.6 Urbanist,sans-serif;color:#4A5470}
-.dww-card h2,.dww-card h3{font:900 24px/1.25 Urbanist,sans-serif;text-transform:uppercase;color:#0E1526;margin:0 0 18px}
+.dww-pill{display:inline-flex;align-items:center;gap:12px;background:#fff;border-radius:10px;padding:16px 20px;font:300 16px Urbanist,"Urbanist Fallback",sans-serif;color:#0E1526}
+.dww-pill i{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:#1B7EC3;color:#fff;font:600 14px Urbanist,"Urbanist Fallback",sans-serif;font-style:normal}
+.dww-card{max-width:920px;margin:0 auto;background:#fff;border-radius:14px;padding:48px 52px 40px;box-shadow:0 30px 70px rgba(0,0,0,.25);font:300 16px/1.6 Urbanist,"Urbanist Fallback",sans-serif;color:#4A5470}
+.dww-card h2,.dww-card h3{font:900 24px/1.25 Urbanist,"Urbanist Fallback",sans-serif;text-transform:uppercase;color:#0E1526;margin:0 0 18px}
 .dww-card .woocommerce-billing-fields>h3{display:block}
 .dww-card .woocommerce form .form-row,.dww-card form .form-row{padding:0;margin:0 0 20px}
 .dww-card form .form-row-first,.dww-card form .form-row-last{width:calc(50% - 10px)}
-.dww-card label{display:block;margin-bottom:8px;font:600 15px Urbanist,sans-serif;color:#0E1526}
+.dww-card label{display:block;margin-bottom:8px;font:600 15px Urbanist,"Urbanist Fallback",sans-serif;color:#0E1526}
 .dww-card label .required,.dww-card abbr.required{color:#1B7EC3;text-decoration:none;border:0}
-.dww-card input.input-text,.dww-card input[type=text],.dww-card input[type=email],.dww-card input[type=tel],.dww-card input[type=password],.dww-card select,.dww-card textarea{width:100%!important;height:52px!important;box-sizing:border-box!important;background:#FAFBFE!important;border:1px solid #CDE0EF!important;border-radius:8px!important;padding:13px 16px!important;font:400 16px Urbanist,sans-serif!important;color:#0E1526!important;box-shadow:none!important;outline:0!important}
+.dww-card input.input-text,.dww-card input[type=text],.dww-card input[type=email],.dww-card input[type=tel],.dww-card input[type=password],.dww-card select,.dww-card textarea{width:100%!important;height:52px!important;box-sizing:border-box!important;background:#FAFBFE!important;border:1px solid #CDE0EF!important;border-radius:8px!important;padding:13px 16px!important;font:400 16px Urbanist,"Urbanist Fallback",sans-serif!important;color:#0E1526!important;box-shadow:none!important;outline:0!important}
 .dww-card input.input-text:focus{border-color:#1B7EC3!important;box-shadow:0 0 0 3px rgba(27,126,195,.15)!important}
 .dww-card ::placeholder{color:#A9B6CB}
 .dww-card .col2-set{width:100%;float:none;display:block}.dww-card .col2-set .col-1,.dww-card .col2-set .col-2{width:100%;float:none}.dww-card .col2-set .col-2:empty,.dww-card .woocommerce-shipping-fields,.dww-card .woocommerce-additional-fields{display:none}
@@ -338,34 +338,34 @@ body.woocommerce-page main#content .page-header{display:none}
 .dww-card .woocommerce-billing-fields__field-wrapper .form-row-wide{width:100%}
 .dww-card #order_review_heading{margin-top:12px;padding-top:28px;border-top:1px solid #E4E9F5}
 .dww-card table.shop_table{width:100%;border:1px solid #E4E9F5;border-radius:10px;border-collapse:separate;border-spacing:0;overflow:hidden;margin:0 0 24px}
-.dww-card table.shop_table th,.dww-card table.shop_table td{padding:16px 18px;border:0;border-top:1px solid #E4E9F5;background:#fff;font:300 15.5px Urbanist,sans-serif;color:#0E1526;text-align:left}
-.dww-card table.shop_table thead th{border-top:0;background:#F4F9FE;font:600 13px Urbanist,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#4A5470}
+.dww-card table.shop_table th,.dww-card table.shop_table td{padding:16px 18px;border:0;border-top:1px solid #E4E9F5;background:#fff;font:300 15.5px Urbanist,"Urbanist Fallback",sans-serif;color:#0E1526;text-align:left}
+.dww-card table.shop_table thead th{border-top:0;background:#F4F9FE;font:600 13px Urbanist,"Urbanist Fallback",sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#4A5470}
 .dww-card table.shop_table td:last-child,.dww-card table.shop_table th:last-child{text-align:right}
 .dww-card table.shop_table .order-total th,.dww-card table.shop_table .order-total td{font-weight:700;font-size:17px}
 .dww-renew{display:flex;gap:14px;align-items:flex-start;background:#EAF4FC;border:1px solid #CDE0EF;border-radius:10px;padding:18px 20px;margin:0 0 20px}
 .dww-renew-ic{flex:none;display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:#1B7EC3;color:#fff;font-size:18px;line-height:1}
-.dww-renew b{display:block;font:600 16px Urbanist,sans-serif;color:#0E1526;margin-bottom:4px}
-.dww-renew p{margin:0;font:300 15px/1.6 Urbanist,sans-serif;color:#303B58}
+.dww-renew b{display:block;font:600 16px Urbanist,"Urbanist Fallback",sans-serif;color:#0E1526;margin-bottom:4px}
+.dww-renew p{margin:0;font:300 15px/1.6 Urbanist,"Urbanist Fallback",sans-serif;color:#303B58}
 .dww-card #payment{background:#F4F9FE;border-radius:10px;padding:0}
 .dww-card #payment ul.payment_methods{padding:20px;border-bottom:1px solid #E4E9F5;margin:0}
 .dww-card #payment div.payment_box{background:#fff;border-radius:8px}
 .dww-card #payment div.payment_box::before{display:none}
 .dww-card #payment fieldset{border:0!important;padding:0!important;margin:0!important;min-width:0}.dww-card #payment div.payment_box{padding:0!important;background:transparent!important}
 .dww-card #payment .place-order{padding:20px;margin:0}
-.dww-agree label{display:flex;gap:10px;align-items:flex-start;font:300 15px/1.5 Urbanist,sans-serif;color:#0E1526;margin:0 0 18px}
+.dww-agree label{display:flex;gap:10px;align-items:flex-start;font:300 15px/1.5 Urbanist,"Urbanist Fallback",sans-serif;color:#0E1526;margin:0 0 18px}
 .dww-agree input{margin-top:4px;width:18px;height:18px;flex:none}
 .dww-card .woocommerce-privacy-policy-text p{font-size:13.5px;color:#7A86A0}
-.dww-card button.button,.dww-card a.button,.dww-card #place_order{display:inline-flex;align-items:center;justify-content:center;height:52px;padding:0 32px;border:0;border-radius:8px;background:#1B7EC3;color:#fff;font:600 14px Urbanist,sans-serif!important;letter-spacing:.16em;text-transform:uppercase;cursor:pointer}
+.dww-card button.button,.dww-card a.button,.dww-card #place_order{display:inline-flex;align-items:center;justify-content:center;height:52px;padding:0 32px;border:0;border-radius:8px;background:#1B7EC3;color:#fff;font:600 14px Urbanist,"Urbanist Fallback",sans-serif!important;letter-spacing:.16em;text-transform:uppercase;cursor:pointer}
 .dww-card #place_order{width:100%}
 .dww-card button.button:hover,.dww-card #place_order:hover{background:#166AA6}
-.dww-card .woocommerce-error,.dww-card .woocommerce-info,.dww-card .woocommerce-message{list-style:none;margin:0 0 24px;padding:16px 20px 16px 20px;border:0;border-left:4px solid #1B7EC3;border-radius:8px;background:#EAF4FC;color:#0E1526;font:300 15px Urbanist,sans-serif}
+.dww-card .woocommerce-error,.dww-card .woocommerce-info,.dww-card .woocommerce-message{list-style:none;margin:0 0 24px;padding:16px 20px 16px 20px;border:0;border-left:4px solid #1B7EC3;border-radius:8px;background:#EAF4FC;color:#0E1526;font:300 15px Urbanist,"Urbanist Fallback",sans-serif}
 .dww-card .woocommerce-error{border-left-color:#D63638;background:#FDEDED}
 .dww-card .woocommerce-error::before,.dww-card .woocommerce-info::before,.dww-card .woocommerce-message::before{display:none}
 .dww-card .woocommerce-order-overview{display:flex;flex-wrap:wrap;gap:12px;padding:0;margin:0 0 28px;list-style:none}
-.dww-card .woocommerce-order-overview li{flex:1 1 160px;background:#F4F9FE;border-radius:10px;padding:14px 16px;border:0;margin:0;font:400 13px Urbanist,sans-serif;text-transform:uppercase;letter-spacing:.08em;color:#4A5470}
-.dww-card .woocommerce-order-overview li strong{display:block;margin-top:4px;font:600 16px Urbanist,sans-serif;text-transform:none;letter-spacing:0;color:#0E1526}
+.dww-card .woocommerce-order-overview li{flex:1 1 160px;background:#F4F9FE;border-radius:10px;padding:14px 16px;border:0;margin:0;font:400 13px Urbanist,"Urbanist Fallback",sans-serif;text-transform:uppercase;letter-spacing:.08em;color:#4A5470}
+.dww-card .woocommerce-order-overview li strong{display:block;margin-top:4px;font:600 16px Urbanist,"Urbanist Fallback",sans-serif;text-transform:none;letter-spacing:0;color:#0E1526}
 .dww-card .woocommerce-MyAccount-navigation ul{list-style:none;padding:0;margin:0 0 24px;display:flex;flex-wrap:wrap;gap:8px}
-.dww-card .woocommerce-MyAccount-navigation a{display:block;padding:10px 16px;border-radius:8px;background:#F4F9FE;color:#0E1526;text-decoration:none;font:500 15px Urbanist,sans-serif}
+.dww-card .woocommerce-MyAccount-navigation a{display:block;padding:10px 16px;border-radius:8px;background:#F4F9FE;color:#0E1526;text-decoration:none;font:500 15px Urbanist,"Urbanist Fallback",sans-serif}
 .dww-card .woocommerce-MyAccount-navigation .is-active a{background:#1B7EC3;color:#fff}
 .dww-card .woocommerce-MyAccount-navigation,.dww-card .woocommerce-MyAccount-content{float:none;width:100%}
 .dww-card a{color:#1B7EC3}
