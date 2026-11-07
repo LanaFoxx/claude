@@ -2,7 +2,7 @@
 /**
  * Plugin Name: DWD Projects Portfolio
  * Description: Add a website project once (name, URL, details) and it appears on the Portfolio page, the homepage carousel and its own case-study page. Captures full-page screenshots from the URL and cuts them into section images automatically. Also styles blog posts to match the site.
- * Version: 4.8.84
+ * Version: 4.8.87
  * Author: Dream Web Digital
  * Requires at least: 6.0
  * Requires PHP: 7.4
@@ -11,7 +11,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'DWDP_VERSION', '4.8.84' );
+define( 'DWDP_VERSION', '4.8.87' );
 define( 'DWDP_FILE', __FILE__ );
 define( 'DWDP_DIR', plugin_dir_path( __FILE__ ) );
 define( 'DWDP_URL', plugin_dir_url( __FILE__ ) );
@@ -26,6 +26,7 @@ require_once DWDP_DIR . 'includes/spam.php';
 require_once DWDP_DIR . 'includes/speed.php';
 require_once DWDP_DIR . 'includes/ads.php';
 require_once DWDP_DIR . 'includes/local.php';
+require_once DWDP_DIR . 'includes/redesign.php';
 require_once DWDP_DIR . 'includes/review.php';
 require_once DWDP_DIR . 'includes/personal.php';
 require_once DWDP_DIR . 'includes/bank.php';

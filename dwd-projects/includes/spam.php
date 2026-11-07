@@ -33,7 +33,7 @@ add_action( 'wp_footer', function () {
 <script>(function(){
 var t0=Date.now(),human=false;
 ['keydown','pointerdown','touchstart','focusin'].forEach(function(ev){window.addEventListener(ev,function(){human=true;mark();},{passive:true,once:true});});
-function sel(){return document.querySelectorAll('form.elementor-form,form.dw-form,form.checkout,form.woocommerce-checkout');}
+function sel(){return document.querySelectorAll('form.elementor-form,form.dw-form,form.dwr-form,form.checkout,form.woocommerce-checkout');}
 function add(f){if(f.querySelector('[name=dwdp_hp]'))return;
 var w=document.createElement('div');w.setAttribute('aria-hidden','true');w.style.cssText='position:absolute!important;left:-9999px!important;top:auto;width:1px;height:1px;overflow:hidden';
 w.innerHTML='<label>Leave this empty<input type="text" name="dwdp_hp" tabindex="-1" autocomplete="off" value=""></label>';
@@ -44,12 +44,15 @@ sel().forEach(add);
 document.addEventListener('submit',function(){mark();},true);
 document.addEventListener('click',function(ev){if(ev.target.closest&&ev.target.closest('button,[type=submit],#place_order'))mark();},true);
 if(window.jQuery){jQuery(document.body).on('updated_checkout',function(){sel().forEach(add);mark();});}
-// Homepage message form: send it to the site instead of opening the mail app.
-document.addEventListener('submit',function(ev){var f=ev.target;if(!f.classList||!f.classList.contains('dw-form'))return;
-ev.preventDefault();ev.stopImmediatePropagation();mark();var b=f.querySelector('button[type=submit]'),n=f.querySelector('.dw-fnote'),old=n?n.textContent:'';
+// Homepage message form and the redesigned Contact form (dwr-form): send to the site instead of opening the mail app.
+document.addEventListener('submit',function(ev){var f=ev.target;if(!f.classList||!(f.classList.contains('dw-form')||f.classList.contains('dwr-form')))return;var rd=f.classList.contains('dwr-form');
+ev.preventDefault();ev.stopImmediatePropagation();
+if(rd){var bad=f.querySelector('[required]:invalid');if(bad){bad.focus();if(bad.reportValidity)bad.reportValidity();return;}}
+mark();var b=f.querySelector('button[type=submit]'),n=f.querySelector(rd?'.dwr-note':'.dw-fnote');
+if(rd&&!n){n=document.createElement('p');n.className='dwr-note';n.setAttribute('role','status');(f.querySelector('.dwr-fields')||f).appendChild(n);}
 if(b){b.disabled=true;}var d=new FormData(f);d.append('action','dwdp_contact');
 fetch('<?php echo $ajax; // phpcs:ignore ?>',{method:'POST',body:d,credentials:'same-origin'}).then(function(r){return r.json();}).then(function(r){
-if(r&&r.success){f.reset();try{document.dispatchEvent(new Event('dwd:lead'));}catch(x){}if(n){n.textContent='Thanks! Your message is on its way. I’ll reply the same day.';n.style.color='#1B7EC3';}}
+if(r&&r.success){f.reset();try{document.dispatchEvent(new Event('dwd:lead'));}catch(x){}if(rd){n.textContent='';f.setAttribute('data-sent','1');var ok=f.querySelector('.dwr-sent');if(ok){ok.hidden=false;}return;}if(n){n.textContent='Thanks! Your message is on its way. I’ll reply the same day.';n.style.color='#1B7EC3';}}
 else{if(n){n.textContent=(r&&r.data)||'Sorry, that didn’t send. Please call (772) 210-1728.';n.style.color='#D63638';}}
 }).catch(function(){if(n){n.textContent='Sorry, that didn’t send. Please call (772) 210-1728.';n.style.color='#D63638';}}).then(function(){if(b){b.disabled=false;}});
 },true);
@@ -101,8 +104,27 @@ function dwdp_ajax_contact() {
 	if ( preg_match_all( '#https?://#i', $message ) > 2 ) {
 		wp_send_json_error( 'Please remove the links and try again.' );
 	}
-	$body = "Name: {$name}\nEmail: {$email}\nMessage: {$message}\n\n— Sent from the form on " . home_url( '/' );
+	// The redesigned Contact form also asks for a phone number and the current website.
+	$phone = sanitize_text_field( wp_unslash( $_POST['phone'] ?? '' ) );
+	$site  = esc_url_raw( wp_unslash( $_POST['website'] ?? '' ) );
+	$extra = ( $phone ? "Phone: {$phone}\n" : '' ) . ( $site ? "Website: {$site}\n" : '' );
+	$body  = "Name: {$name}\nEmail: {$email}\n{$extra}Message: {$message}\n\n— Sent from the form on " . esc_url_raw( wp_get_referer() ?: home_url( '/' ) );
 	$sent = wp_mail( DWDP_CONTACT_TO, 'Website inquiry from ' . $name, $body, array( 'Reply-To: ' . $name . ' <' . $email . '>' ) );
+	// File it in Dream Desk like the Elementor forms (contact, entry, "Reply to …" task).
+	if ( function_exists( 'dwdc_file_entry' ) ) {
+		$fields = array(
+			array( 'id' => 'name', 'label' => 'Name', 'value' => $name ),
+			array( 'id' => 'email', 'label' => 'Email', 'value' => $email ),
+			array( 'id' => 'phone', 'label' => 'Phone', 'value' => $phone ),
+			array( 'id' => 'website', 'label' => 'Current website', 'value' => $site ),
+			array( 'id' => 'message', 'label' => 'Message', 'value' => $message ),
+		);
+		$cid = dwdc_file_entry( 'Contact', array_values( array_filter( $fields, function ( $f ) { return '' !== $f['value']; } ) ) );
+		if ( $cid ) {
+			dwdc_ensure_client( $cid );
+			dwdc_add_task( 'Reply to ' . get_the_title( $cid ), $cid, current_time( 'Y-m-d' ) );
+		}
+	}
 	$sent ? wp_send_json_success() : wp_send_json_error( 'Sorry, that didn’t send. Please call (772) 210-1728.' );
 }
 add_action( 'wp_ajax_dwdp_contact', 'dwdp_ajax_contact' );
