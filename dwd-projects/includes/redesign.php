@@ -211,6 +211,7 @@ add_action( 'wp_enqueue_scripts', function () {
 	wp_add_inline_style( 'dwdr', "@font-face{font-family:'Archivo';font-style:normal;font-weight:300 700;font-display:swap;src:url(" . DWDP_URL . "assets/fonts/archivo-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}"
 		. '.admin-bar #dw-nav,.admin-bar #dw-menu>div{top:32px!important}@media(max-width:782px){.admin-bar #dw-nav,.admin-bar #dw-menu>div{top:46px!important}}'
 		. '@media(max-width:600px){#dw-hero-cta>#dw-hero-trust{flex-direction:row!important;flex-wrap:wrap;align-items:center!important;gap:6px 10px!important}}' // the design's phone rule stacked the trust strip too
+		. '#dw-intro-grid>div:last-child{max-width:none!important}#dw-intro-grid>div:last-child>p{max-width:860px}' // intro text fills its column on wide screens
 		. '.dwr-form[data-sent="1"] .dwr-fields{display:none}.dwr-note{font-size:14px;color:#F27A7A;min-height:1em}' );
 	wp_enqueue_script( 'dwdr', DWDP_URL . 'assets/redesign/redesign.js', array(), DWDP_VERSION, true );
 	// Theme, Elementor and the old page scripts have nothing to do on these pages.
