@@ -54,7 +54,7 @@ LINKS = {
     'https://dreamwebdigital.com/blog/': '%HOME%/blog/',
     'https://dreamwebdigital.com/contact/': '%HOME%/contact/',
     'https://dreamwebdigital.com/checkout/?dwd-order=hosting': '%HOME%/checkout/?dwd-order=hosting',
-    'mailto:michael@dreamwebdigital.com': 'mailto:info@dreamwebdigital.com',
+    'mailto:michael@dreamwebdigital.com': 'mailto:mike@dreamwebdigital.com',
 }
 
 def fix_tag(tag):
@@ -74,7 +74,18 @@ def fix_tag(tag):
             tag = re.sub(r'^(<[a-zA-Z0-9-]+)', r'\1 class="' + ' '.join(classes) + '"', tag)
     return tag
 
+# Copy corrections from Michael (applied on every run).
+COPY_FIX = {
+    '500+ websites': '200+ websites',
+    '500+ Websites Built': '200+ Websites Built',
+    'more than 500 websites': 'more than 200 websites',
+    'A custom WordPress website for a personal training business, built mobile-first so clients can book from their phone.':
+        'Launch website for Finesse, the fitness app by Dancing with the Stars pro Witney Carson, built mobile-first to drive App Store downloads.',
+}
+
 def transform(html):
+    for a, b in COPY_FIX.items():
+        html = html.replace(a, b)
     html = re.sub(r'<[a-zA-Z][^>]*>', lambda m: fix_tag(m.group(0)), html)
     for a, b in LINKS.items():
         html = html.replace('href="' + a + '"', 'href="' + b + '"')

@@ -13,7 +13,7 @@
 defined( 'ABSPATH' ) || exit;
 
 const DWDP_SPAM_MIN_SECONDS = 3;
-const DWDP_CONTACT_TO       = 'info@dreamwebdigital.com';
+const DWDP_CONTACT_TO       = 'mike@dreamwebdigital.com';
 
 /** True when the posted form passed the checks. */
 function dwdp_spam_ok( $src = null ) {
