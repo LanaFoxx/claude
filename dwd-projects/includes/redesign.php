@@ -12,6 +12,8 @@
 defined( 'ABSPATH' ) || exit;
 
 const DWDR_COOKIE = 'dwd_redesign';
+/** Live for everyone. Set to false to put the old Elementor pages back (the redesign then needs ?redesign=1 as an editor). */
+const DWDR_LIVE = true;
 
 /** Copy written in the design for the two featured case studies; other projects use the fallback below. */
 function dwdr_copy() {
@@ -46,7 +48,7 @@ function dwdr_on() {
 	if ( is_admin() || wp_doing_ajax() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) {
 		return $on = false;
 	}
-	if ( '1' === (string) get_option( 'dwdr_live', '0' ) ) {
+	if ( DWDR_LIVE || '1' === (string) get_option( 'dwdr_live', '0' ) ) {
 		return $on = ! isset( $_GET['redesign'] ) || '0' !== $_GET['redesign']; // phpcs:ignore
 	}
 	if ( ! is_user_logged_in() || ! current_user_can( 'edit_posts' ) ) {
