@@ -57,8 +57,8 @@ selector > .e-con-inner { position: relative; z-index: 1; }
     content_width: 'full', flex_direction: 'column', flex_justify_content: 'flex-end', flex_align_items: 'flex-start', flex_align_items_tablet: 'center', flex_align_items_mobile: 'center',
     padding: box(40, 0, 0, 0), padding_tablet: box(0), padding_mobile: box(0), min_height: px(600), min_height_tablet: px(0), min_height_mobile: px(0),
   }, [
-    // Jen (Markup): her original hand-to-chin cream-dress photo (the handoff's retouched hero-jen was "too AI").
-    image(m.heroJenReal, {
+    // Jen (Nov 7): this photo looks less retouched ("less AI") than the earlier hero portrait.
+    image(m.heroJenNatural, {
       size: 'large', // 538x1024 (50KB): enough for its 300-330px slot at 1.75x
       align: 'left', settings: {
         align_tablet: 'center', align_mobile: 'center',
