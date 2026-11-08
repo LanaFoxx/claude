@@ -321,6 +321,7 @@ function filterTo(f) {
     const media = c.querySelector('.pf-media'), copy = c.querySelector('.pf-copy');
     if (media) media.style.order = i % 2 ? 2 : 1;
     if (copy) copy.style.order = i % 2 ? 1 : 2;
+    c.toggleAttribute('data-flip', i % 2 === 1);
     const num = c.querySelector('[data-dw-num]');
     if (num) num.textContent = String(i + 1).padStart(2, '0');
     c.setAttribute('data-dw-reveal', 'in');
