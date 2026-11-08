@@ -137,6 +137,8 @@ hb = close_menu_if(transform(body_of(home)))
 # The laptop videos are given their src by script once the lid opens.
 hb = hb.replace('id="dw-laptop-rec"', 'id="dw-laptop-rec" data-src="%MEDIA%dwd-goods-hero.mp4"')
 hb = hb.replace('id="dw-laptop-brands"', 'id="dw-laptop-brands" data-src="%MEDIA%dwd-goods-brands.mp4"')
+# Their posters wait too (one is a 400 KB image from another site).
+hb = re.sub(r'(<video id="dw-laptop-(?:rec|brands)"[^>]*?) poster="', r'\1 data-poster="', hb)
 write('home.html', hb)
 
 def interior(name, out):
@@ -147,8 +149,17 @@ def interior(name, out):
     b = b.replace('</dc-import>', '')
     return transform(b)
 
+# Trust badges on Process: larger, with the Upwork and Google logos (Michael: the small text line was too tiny).
+TRUST_OLD = '''<div data-dw-reveal="1" style="display:flex;flex-wrap:wrap;gap:12px 32px;margin-top:32px;font-size:14px;color:#9A9A9A">
+    <span>100% Job Success · Upwork</span>
+    <span><span style="color:#F5B301;letter-spacing:2px">★★★★★</span> · Google Reviews</span>
+  </div>'''
+TRUST_NEW = '''<div data-dw-reveal="1" class="dwr-trust"><a class="dwr-badge" href="https://www.upwork.com/freelancers/dreamwebdigital" target="_blank" rel="noopener"><svg width="34" height="34" viewBox="0 0 24 24" fill="#14A800" aria-hidden="true"><path d="M18.56 13.02c-1.33 0-2.58-.56-3.71-1.48l.28-1.3v-.02c.25-1.38.98-3.68 3.43-3.68 1.84 0 3.33 1.5 3.33 3.34 0 1.84-1.49 3.14-3.33 3.14zm0-9.88c-3.13 0-5.56 2.03-6.54 5.37-1.5-2.26-2.64-4.97-3.3-7.25H5.36v8.77c0 1.72-1.4 3.12-3.12 3.12S-.88 11.75-.88 10.03V1.26H-4.2v8.77c0 3.56 2.9 6.49 6.45 6.49s6.44-2.93 6.44-6.49V8.56c.65 1.35 1.44 2.72 2.4 3.93l-2.04 9.68h3.4l1.48-7.02c1.3.83 2.79 1.35 4.5 1.35 3.66 0 6.65-3 6.65-6.67 0-3.67-2.99-6.69-6.65-6.69z" transform="translate(3.66 2.63) scale(.8)"></path></svg><span><b>100% Job Success</b><small>Top Rated Plus on Upwork</small></span></a><a class="dwr-badge" href="https://maps.app.goo.gl/z4HfYnTZaqccWhhy9" target="_blank" rel="noopener"><svg width="32" height="32" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg><span><b class="dwr-stars">★★★★★</b><small>Google Reviews</small></span></a></div>'''
 for n, o in (('Process.dc.html', 'process.html'), ('Hosting.dc.html', 'hosting.html')):
-    write(o, interior(n, o))
+    h = interior(n, o)
+    if TRUST_OLD in h:
+        h = h.replace(TRUST_OLD, TRUST_NEW)
+    write(o, h)
 
 # ---- Contact: the sent / not-sent states become two blocks toggled by script ----
 c = interior('Contact.dc.html', 'contact.html')

@@ -135,7 +135,8 @@ class SiteFx {
     if (!w || !h) return;
     const resized = c.width !== Math.round(w * dpr) || c.height !== Math.round(h * dpr);
     if (resized) { c.width = Math.round(w * dpr); c.height = Math.round(h * dpr); }
-    const moving = this.motionOn;
+    // Phones get a still drawing (no per-frame work): the slow rotation is barely visible there and costs battery.
+    const moving = this.motionOn && window.innerWidth >= 768;
     if (!moving && !resized && this._drawn[canvasId]) return;
     this._drawn[canvasId] = true;
     const ctx = c.getContext('2d');
@@ -279,6 +280,7 @@ class HomeFx extends SiteFx {
       ['dw-laptop-rec', 'dw-laptop-brands'].forEach(id => {
         const v = document.getElementById(id);
         if (!v) return;
+        if (near && v.dataset.poster && !v.getAttribute('poster')) v.setAttribute('poster', v.dataset.poster);
         if (near && !v.getAttribute('src') && v.dataset.src) { v.setAttribute('src', v.dataset.src); v.load(); }
         play(v, onScreen);
       });
