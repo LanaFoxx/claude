@@ -174,9 +174,27 @@ function dwdr_project( $p ) {
 function dwdr_body( $page ) {
 	if ( 'portfolio' === $page ) {
 		$list  = array_map( 'dwdr_project', dwdp_projects() );
+		// A rebuild of a site already listed (e.g. "The Goods Vending (Webflow)") only shows under its platform filter, not in All.
+		$names = wp_list_pluck( $list, 'name' );
+		foreach ( $list as &$x ) {
+			$base     = trim( preg_replace( '/\s*\((webflow|wordpress)\)\s*$/i', '', $x['name'] ) );
+			$x['dup'] = $base !== $x['name'] && in_array( $base, $names, true );
+		}
+		unset( $x );
+		// Michael: Finesse by Witney gets the large (full-width) spot Mojo's Flight Desk had; they trade places.
+		$slugs = wp_list_pluck( $list, 'slug' );
+		$fa    = array_search( 'finesse-by-witney', $slugs, true );
+		$fb    = array_search( 'mojos-flight-desk', $slugs, true );
+		if ( false !== $fa && false !== $fb ) {
+			$tmp         = $list[ $fa ];
+			$list[ $fa ] = $list[ $fb ];
+			$list[ $fb ] = $tmp;
+		}
 		$spans = array( 12, 6, 6, 12, 6, 6, 12, 6, 6, 12 );
 		$cards = '';
-		foreach ( $list as $i => $p ) {
+		$shown = 0;
+		foreach ( $list as $p ) {
+			$i      = $p['dup'] ? 0 : $shown++;
 			$span   = $spans[ $i % count( $spans ) ];
 			$cards .= dwdr_render( 'portfolio-card', array(
 				'p.href'         => $p['href'],
@@ -191,13 +209,16 @@ function dwdr_body( $page ) {
 				'p.platform_key' => strtolower( $p['platform'] ),
 				'p.num'          => sprintf( '%02d', $i + 1 ),
 			) );
+			if ( $p['dup'] ) {
+				$cards = substr_replace( $cards, '<a data-dup="1" style="display:none" ', strrpos( $cards, '<a ' ), 3 );
+			}
 		}
 		$count = function ( $pl ) use ( $list ) {
 			return count( array_filter( $list, function ( $p ) use ( $pl ) { return $p['platform'] === $pl; } ) );
 		};
 		$off = array( 'Bg' => 'transparent', 'Color' => '#fff', 'Border' => '#3A3A3A' );
 		$on  = array( 'Bg' => '#13A6EE', 'Color' => '#fff', 'Border' => '#13A6EE' );
-		$v   = array( 'cards' => $cards, 'countAll' => count( $list ), 'countWP' => $count( 'WordPress' ), 'countWF' => $count( 'Webflow' ), 'isAll' => 'true', 'isWP' => 'false', 'isWF' => 'false' );
+		$v   = array( 'cards' => $cards, 'countAll' => count( array_filter( $list, function ( $p ) { return ! $p['dup']; } ) ), 'countWP' => $count( 'WordPress' ), 'countWF' => $count( 'Webflow' ), 'isAll' => 'true', 'isWP' => 'false', 'isWF' => 'false' );
 		foreach ( array( 'all' => $on, 'wp' => $off, 'wf' => $off ) as $k => $set ) {
 			foreach ( $set as $prop => $val ) {
 				$v[ $k . $prop ] = $val;

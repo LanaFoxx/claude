@@ -316,7 +316,7 @@ function filterTo(f) {
   });
   let i = 0;
   document.querySelectorAll('[data-dw-card]').forEach(c => {
-    const show = f === 'all' || c.getAttribute('data-platform') === f;
+    const show = f === 'all' ? !c.hasAttribute('data-dup') : c.getAttribute('data-platform') === f;
     c.style.display = show ? '' : 'none';
     if (!show) return;
     const span = SPANS[i % SPANS.length];
