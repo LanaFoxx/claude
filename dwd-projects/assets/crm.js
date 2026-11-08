@@ -1140,7 +1140,7 @@
 			+ '<a class="dwdc-seg" href="#clients"><i class="s1"></i>Project clients<b>' + nP + '</b></a><a class="dwdc-seg" href="#clients"><i class="s2"></i>Hosting only<b>' + nH + '</b></a><a class="dwdc-seg" href="#clients"><i class="s3"></i>Past clients<b>' + nPast + '</b></a>',
 			'<footer class="dwdc-grid4">' + frow('Active Projects', active.length, 'projects/active') + frow('Onboarding', onboardList().length, 'onboarding') + frow('Hosting', host.length, 'hosting') + frow('All Clients', S.clients.length, 'clients') + '</footer>');
 		var plist = active.slice().sort(function (x, y) { return num(y.price) - num(x.price) || (x.name < y.name ? -1 : 1); });
-		var c2 = card('cd-projects cd-plist', chead('brief', 'Projects', 'projects/active'),
+		var c2 = card('cd-projects cd-plist', chead('brief', 'Projects <span class="dwdc-hcnt">(' + active.length + ')</span>', 'projects/active'),
 			'<div class="dwdc-pl-head"><span>Project · Client</span><span>Price</span><span>Owed</span></div>'
 			+ '<div class="dwdc-pl-wrap"><div class="dwdc-pl">' + (plist.length ? plist.map(function (c) {
 				var k = clientOf(c), ow = num(c.balance);
@@ -1153,10 +1153,16 @@
 				var cur = yo && yo.m ? Math.max(0, +yo.m[mi] || 0) : 0, prevD = new Date(+t.slice(0, 4), mi - 1, 1), py = MY[String(prevD.getFullYear())];
 				var prev = py && py.m ? Math.max(0, +py.m[prevD.getMonth()] || 0) : 0;
 				var MNf = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-				return '<button type="button" class="dwdc-mnow" data-month="' + ym + '"><span class="dwdc-lbl">Made in ' + MNf[mi] + '</span><strong>' + money(cur) + '</strong><small>' + MNf[prevD.getMonth()] + ': ' + money(prev) + ' · see payments →</small></button>'
-					+ '<button type="button" class="dwdc-mopen" data-owed><span class="dwdc-lbl">Owed on open projects</span><strong>' + money(owed(open)) + '</strong><small>' + owing.length + ' invoice' + (owing.length === 1 ? '' : 's') + ' open · ' + active.length + ' active projects · see projects →</small></button>';
+				var ws = weekStart(t), we = new Date(ws); we.setDate(we.getDate() + 6);
+				var ls = new Date(ws); ls.setDate(ls.getDate() - 7); var le = new Date(ws); le.setDate(le.getDate() - 1);
+				var wbox = function (label, a, b) { var l = winsIn(dIso(a), dIso(b)); return '<button type="button" class="dwdc-mjob" data-wins="' + dIso(a) + '|' + dIso(b) + '|' + label + '"><span class="dwdc-lbl">' + label + '</span><strong>' + l.length + '<i> job' + (l.length === 1 ? '' : 's') + '</i></strong><small>' + shortD(dIso(a)) + '–' + shortD(dIso(b)) + (winVal(l) ? ' · ' + money(winVal(l)) : '') + '</small></button>'; };
+				return '<div class="dwdc-mtop"><button type="button" class="dwdc-mnow" data-month="' + ym + '"><span class="dwdc-lbl">Made in ' + MNf[mi] + '</span><strong>' + money(cur) + '</strong><small>' + MNf[prevD.getMonth()] + ': ' + money(prev) + ' · see payments →</small></button>'
+					+ '<button type="button" class="dwdc-mopen" data-owed><span class="dwdc-lbl">Owed to you</span><strong>' + money(owed(open)) + '</strong><small>' + owing.length + ' open project' + (owing.length === 1 ? '' : 's') + ' · see list →</small></button></div>'
+					+ '<div class="dwdc-mjobs">' + wbox('Jobs this week', ws, we) + wbox('Jobs last week', ls, le) + '</div>';
 			})(),
-			'<footer>' + frow('Hosting Revenue', money(annual) + ' / yr', 'hosting') + frow('Next Renewal', nextH ? fmt(nextH.renewal) + ' · ' + esc(nextH.name) : '—', 'hosting') + '<a class="dwdc-frow" href="#money"><span>All-time income</span><b>' + money(allIncome()) + '</b>' + ic('right', 12) + '</a></footer>');
+			'<footer>' + frow('Hosting Revenue', money(annual) + ' / yr', 'hosting') + (function () { var C = S.costs || {}, t = DWDC.today, y = +t.slice(0, 4), mi = +t.slice(5, 7) - 1, pd = new Date(y, mi - 1, 1), MNs = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+				var cm = C[String(y)] && C[String(y)].m ? +C[String(y)].m[mi] || 0 : 0, py = C[String(pd.getFullYear())], lm = py && py.m ? +py.m[pd.getMonth()] || 0 : 0;
+				return frow('Spent on Connects this month', money(cm) + ' <small class="dwdc-frow-sub">' + MNs[pd.getMonth()] + ' ' + money(lm) + '</small>', 'money'); })() + '<a class="dwdc-frow" href="#money"><span>All-time income</span><b>' + money(allIncome()) + '</b>' + ic('right', 12) + '</a></footer>');
 		var tv = active.reduce(function (s, c) { return s + num(c.price); }, 0);
 		var ap = card('cd-plain cd-apnavy', '<header class="dwdc-dhead"><h2>Active Projects <span class="dwdc-cnt">' + active.length + '</span></h2><a href="#projects/active">View all</a></header>',
 			'<div class="dwdc-mini-t"><div class="g-ap head"><span>Project · Client</span><span>Price</span><span>Due</span><span class="r">Owed</span></div>'

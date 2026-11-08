@@ -1595,3 +1595,17 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 .dwdc a.dwdc-herolink strong { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 6px; text-decoration-color: rgba(19,166,238,.35); }
 .dwdc a.dwdc-herolink:hover strong { text-decoration-color: var(--blue); }
 .dwdc a.dwdc-herolink svg { color: var(--blue); }
+/* Money box: month + owed side by side, then jobs this week / last week */
+.dwdc .dwdc-mtop, .dwdc .dwdc-mjobs { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+.dwdc .dwdc-mtop .dwdc-mnow { margin: 0 !important; }
+.dwdc .dwdc-mtop strong { font-size: 26px !important; }
+.dwdc .dwdc-mtop small { font-size: 12px !important; line-height: 1.4; display: block; }
+.dwdc .dwdc-mjobs { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--div); }
+.dwdc .dwdc-mjob { display: block; width: 100%; text-align: left; border: 0; background: none; padding: 0; cursor: pointer; font-family: inherit; color: var(--navy); }
+.dwdc .dwdc-mjob .dwdc-lbl { margin: 0; }
+.dwdc .dwdc-mjob strong { display: block; font-size: 26px; font-weight: 800; color: var(--navy); line-height: 1.2; margin: 4px 0 2px; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 5px; text-decoration-color: rgba(19,166,238,.35); }
+.dwdc .dwdc-mjob strong i { font-style: normal; font-size: 14px; font-weight: 600; color: var(--sec); }
+.dwdc .dwdc-mjob:hover strong { text-decoration-color: var(--blue); }
+.dwdc .dwdc-mjob small { font-size: 12px; color: var(--sec); }
+.dwdc .dwdc-dhead h2 .dwdc-hcnt { color: #13A6EE !important; margin-left: 4px; }
+.dwdc .dwdc-frow b .dwdc-frow-sub { font-weight: 500; color: var(--sec); margin-left: 6px; font-size: 12.5px; }
