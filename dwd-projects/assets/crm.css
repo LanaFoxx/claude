@@ -1661,3 +1661,7 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
   .dwdc-arow { grid-template-columns: minmax(90px, 1.4fr) repeat(3, minmax(50px, 1fr)); font-size: 13px; }
   .dwdc-arow > :nth-child(4), .dwdc-arow > :nth-child(5), .dwdc-arow > :nth-child(7) { display: none; }
 }
+/* Contacts inside the Details box (project page) */
+.dwdc .dwdc-pplin { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--div); }
+.dwdc .dwdc-pplin .dwdc-cardh.sub { padding: 0; margin: 0 0 12px; border: 0; min-height: 0; display: flex; align-items: center; justify-content: space-between; }
+.dwdc .dwdc-pplin .dwdc-cardh.sub h3 { margin: 0; font-size: 13px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--navy); }

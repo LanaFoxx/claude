@@ -1626,8 +1626,8 @@
 			+ (st === 'complete' ? mini('navy', 'Total spent', money(lifetime(c))) : '<div class="dwdc-mini"><small>Due</small><strong class="' + (late ? 'red' : '') + '">' + (c.deadline ? fmt(c.deadline) : '—') + '</strong></div>') + '</div>'
 			+ '<div class="dwdc-two">'
 			+ '<div class="dwdc-col">'
-			+ pw('details', S.edit ? editCard(c) : detailsCard(c))
-			+ pw('people', peopleCard(c))
+			+ pw('details', S.edit ? editCard(c) : detailsCard(c, peopleCard(c, true)))
+			+ (S.edit ? pw('people', peopleCard(c)) : '')
 			+ pw('source', sourceCard(c))
 			+ (num(c.hosting) ? pw('host', hostCard(c)) : '')
 			+ pw('jobs', jobsCard(c))
@@ -1699,7 +1699,7 @@
 		list.sort(function (a, b) { return b.main - a.main; });
 		return list;
 	}
-	function peopleCard(c) {
+	function peopleCard(c, inner) {
 		var ppl = peopleOf(c);
 		var rows = ppl.map(function (x, i) {
 			var bits = [x.email ? '<a href="mailto:' + esc(x.email) + '">' + esc(x.email) + '</a>' : '', x.phone ? '<a href="tel:' + esc(x.phone.replace(/[^\d+]/g, '')) + '">' + esc(x.phone) + '</a>' : ''].filter(Boolean).join('<i>·</i>');
@@ -1707,9 +1707,9 @@
 				+ (x.main ? '<strong class="dwdc-mainpill">Main contact</strong>' : '<div class="dwdc-pplact"><button class="dwdc-btn2 sm" data-pplmain="' + i + '">Make main</button><button class="dwdc-lnk sm2" data-pplrm="' + i + '" title="Remove">Remove</button></div>') + '</li>';
 		}).join('');
 		var form = S.addPpl === c.id ? '<form class="dwdc-pplf"><input name="name" placeholder="Name"><input name="email" type="email" placeholder="Email"><input name="phone" placeholder="Phone"><input name="role" placeholder="Role (e.g. office manager)"><div class="dwdc-pplfa"><button type="button" class="dwdc-btn2" data-ppladd="0">Cancel</button><button class="dwdc-btn">Add contact</button></div></form>' : '';
-		return '<section class="dwdc-card pad dwdc-pplcard"><div class="dwdc-cardh"><h2>Contacts' + (ppl.length > 1 ? ' <span class="dwdc-cnt">' + ppl.length + '</span>' : '') + '</h2><button class="dwdc-lnk" data-ppladd="1">+ Add</button></div>'
+		return (inner ? '<div class="dwdc-pplin dwdc-pplcard"><div class="dwdc-cardh sub"><h3>Contacts' : '<section class="dwdc-card pad dwdc-pplcard"><div class="dwdc-cardh"><h2>Contacts') + (ppl.length > 1 ? ' <span class="dwdc-cnt">' + ppl.length + '</span>' : '') + (inner ? '</h3>' : '</h2>') + '<button class="dwdc-lnk" data-ppladd="1">+ Add</button></div>'
 			+ (ppl.length ? '<ul class="dwdc-ppll">' + rows + '</ul>' : '<p class="dwdc-mutp">No contacts yet.</p>')
-			+ (ppl.length > 1 ? '<p class="dwdc-mutp sm">Everyone on this project’s emails. Pick who’s the main contact.</p>' : '') + form + '</section>';
+			+ (ppl.length > 1 ? '<p class="dwdc-mutp sm">Everyone on this project’s emails. Pick who’s the main contact.</p>' : '') + form + (inner ? '</div>' : '</section>');
 	}
 	function savePeople(c, ppl, main) {
 		var data = { contacts: ppl.map(function (x) { return { name: x.name, email: x.email, phone: x.phone, role: x.role }; }) };
@@ -1758,13 +1758,13 @@
 		});
 		return (tiles.length ? '<div class="dwdc-ans-grid">' + tiles.join('') + '</div>' : '') + blocks.join('');
 	}
-	function detailsCard(c) {
+	function detailsCard(c, extra) {
 		var row = function (k, v) { return '<dt>' + k + '</dt><dd>' + (v || '<span class="mut">—</span>') + '</dd>'; };
 		var k = clientOf(c) || {}, em = c.email || k.email, ph = c.phone || k.phone;
 		return '<section class="dwdc-card pad"><div class="dwdc-cardh"><h2>Details</h2><button class="dwdc-lnk" data-edit>Edit</button></div><dl class="dwdc-dl">'
 			+ row('Main contact', esc(c.person || k.name)) + row('Email', em ? '<a href="mailto:' + esc(em) + '">' + esc(em) + '</a>' : '') + row('Phone', esc(ph))
 			+ row('Company', esc(c.company)) + row('Website', site(c) ? '<a href="https://' + esc(site(c)) + '" target="_blank" rel="noopener">' + esc(site(c)) + '</a>' : '')
-			+ row('Project', esc(c.job)) + row('Markup', c.markup ? '<a href="' + esc(url(c.markup)) + '" target="_blank" rel="noopener">Open Markup link</a>' : '<button class="dwdc-lnk" data-markup="' + c.id + '">Add link</button>') + row('Source', esc(sourceOf(c))) + row('Started', imported(c) ? '' : fmt(c.created, true)) + '</dl></section>';
+			+ row('Project', esc(c.job)) + row('Markup', c.markup ? '<a href="' + esc(url(c.markup)) + '" target="_blank" rel="noopener">Open Markup link</a>' : '<button class="dwdc-lnk" data-markup="' + c.id + '">Add link</button>') + row('Source', esc(sourceOf(c))) + row('Started', imported(c) ? '' : fmt(c.created, true)) + '</dl>' + (extra || '') + '</section>';
 	}
 	function editCard(c) {
 		var f = function (k, label, type, ph) { return '<label><span>' + label + '</span><input name="' + k + '" type="' + (type || 'text') + '" value="' + esc(c[k]) + '" placeholder="' + esc(ph || '') + '"></label>'; };
