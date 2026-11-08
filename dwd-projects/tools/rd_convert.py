@@ -162,6 +162,11 @@ for num, paths in SERVICE_ICONS.items():
 # Michael: the laptop's second Goods section must show in full (the design cropped off the four promise cards).
 hb = re.sub(r'<div style="position:relative;overflow:hidden;aspect-ratio:2880/945">(<img [^>]*?)style="position:absolute;left:0;top:0;width:100%;height:auto;display:block">\s*</div>',
             r'\1style="width:100%;height:auto;display:block">', hb)
+# Michael: show the Upwork Job Success score and the number of Upwork projects next to the Google rating.
+UP_OLD = '<span style="font-size:16px;color:#9A9A9A">100% Job Success · Top Rated Plus on Upwork</span>\n    </div>\n  </div>'
+UP_NEW = '</div>\n    <div id="dw-upwork-stats" style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:24px 48px;padding:0 0 10px 40px;border-left:1px solid #333"><div style="display:flex;flex-direction:column;gap:10px"><span style="font-size:clamp(56px,6.4vw,104px);line-height:.85;letter-spacing:-.05em;font-weight:600;color:#fff">100%</span><span style="font-size:clamp(17px,1.4vw,20px);font-weight:500;color:#fff">Job Success on Upwork</span></div><div style="display:flex;flex-direction:column;gap:10px"><span style="font-size:clamp(56px,6.4vw,104px);line-height:.85;letter-spacing:-.05em;font-weight:600;color:#fff">%UPWORK_JOBS%</span><span style="font-size:clamp(17px,1.4vw,20px);font-weight:500;color:#fff">Projects completed on Upwork</span></div><span style="display:inline-flex;align-items:center;gap:10px;font-size:16px;color:#C9C9C9;flex-basis:100%"><svg width="30" height="30" viewBox="0 0 24 24" fill="#14A800" aria-hidden="true"><path d="M18.56 13.02c-1.33 0-2.58-.56-3.71-1.48l.28-1.3v-.02c.25-1.38.98-3.68 3.43-3.68 1.84 0 3.33 1.5 3.33 3.34 0 1.84-1.49 3.14-3.33 3.14zm0-9.88c-3.13 0-5.56 2.03-6.54 5.37-1.5-2.26-2.64-4.97-3.3-7.25H5.36v8.77c0 1.72-1.4 3.12-3.12 3.12S-.88 11.75-.88 10.03V1.26H-4.2v8.77c0 3.56 2.9 6.49 6.45 6.49s6.44-2.93 6.44-6.49V8.56c.65 1.35 1.44 2.72 2.4 3.93l-2.04 9.68h3.4l1.48-7.02c1.3.83 2.79 1.35 4.5 1.35 3.66 0 6.65-3 6.65-6.67 0-3.67-2.99-6.69-6.65-6.69z" transform="translate(3.66 2.63) scale(.8)"></path></svg>Top Rated Plus freelancer</span></div>\n  </div>'
+if UP_OLD in hb:
+    hb = hb.replace(UP_OLD, UP_NEW)
 write('home.html', hb)
 
 def interior(name, out):
