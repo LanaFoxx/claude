@@ -857,6 +857,35 @@
 			+ (S.wins && S.wins.undated ? '<p class="dwdc-wins-foot">' + S.wins.undated + ' older project' + (S.wins.undated === 1 ? '' : 's') + ' have no payment, hire email or onboarding date, so they aren’t counted.</p>' : '')
 			+ '</section>';
 	}
+	/* ---------- Connects spending: this month, last month, the month before, the last 12 months and every year ---------- */
+	function connMonth(y, m) { var o = (S.costs || {})[String(y)]; return { v: o && o.m ? +o.m[m] || 0 : 0, q: o && o.mq ? +o.mq[m] || 0 : 0 }; }
+	function upJobs(from, to) { return winsIn(from, to).filter(function (w) { return /Upwork/.test(w.how); }).length; }
+	function connSpend() {
+		var MNf = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+		var t = DWDC.today, y = +t.slice(0, 4), mo = +t.slice(5, 7) - 1, C = S.costs || {};
+		var mons = [];
+		for (var i = 0; i < 12; i++) {
+			var d = new Date(y, mo - i, 1), e = new Date(y, mo - i + 1, 0), c = connMonth(d.getFullYear(), d.getMonth()), j = upJobs(dIso(d), dIso(e));
+			mons.push({ label: MNf[d.getMonth()] + (d.getFullYear() !== y ? ' ' + d.getFullYear() : ''), v: c.v, q: c.q, jobs: j });
+		}
+		var tile = function (label, x, tone) { return '<div class="dwdc-kpi' + (tone ? ' ' + tone : '') + '"><small>' + label + '</small><strong>' + money(x.v) + '</strong><span>' + x.label + (x.q ? ' · ' + x.q.toLocaleString() + ' Connects' : '') + (x.jobs ? ' · ' + x.jobs + ' Upwork job' + (x.jobs === 1 ? '' : 's') : '') + '</span></div>'; };
+		var max = Math.max.apply(null, mons.map(function (x) { return x.v; }).concat([1]));
+		var tot12 = mons.reduce(function (a, x) { return a + x.v; }, 0), jobs12 = mons.reduce(function (a, x) { return a + x.jobs; }, 0);
+		var rows = mons.map(function (x) {
+			return '<div class="dwdc-crow"><span>' + x.label + '</span><i><b style="width:' + Math.round(x.v / max * 100) + '%"></b></i><strong>' + (x.v ? money(x.v) : '—') + '</strong><em>' + (x.q ? x.q.toLocaleString() : '—') + '</em><em>' + (x.jobs || '—') + '</em><em>' + (x.v && x.jobs ? money(x.v / x.jobs) : '—') + '</em></div>';
+		}).join('');
+		var years = Object.keys(C).sort().reverse();
+		var yrows = years.map(function (yy) {
+			var o = C[yy], n = yy === String(y) ? mo + 1 : 12, j = upJobs(yy + '-01-01', yy + '-12-31');
+			return '<div class="dwdc-crow yr"><span>' + yy + '</span><i><b style="width:' + Math.round(o.connects / Math.max.apply(null, years.map(function (k) { return C[k].connects; }).concat([1])) * 100) + '%"></b></i><strong>' + money(o.connects) + '</strong><em>' + o.qty.toLocaleString() + '</em><em>' + (j || '—') + '</em><em>' + money(o.connects / n) + '/mo</em></div>';
+		}).join('');
+		var head = function (a) { return '<div class="dwdc-crow head"><span>' + a + '</span><span></span><span>Spent</span><span>Connects</span><span>Upwork jobs</span><span>' + (a === 'Year' ? 'Average' : 'Per job') + '</span></div>'; };
+		if (!years.length) { return emptyRow('No Connects spending imported yet. Upload your Upwork transactions file in Connections.'); }
+		return '<div class="dwdc-kpis k3">' + tile('This month', mons[0], 'coralfill') + tile('Last month', mons[1]) + tile('Month before', mons[2]) + '</div>'
+			+ '<h3 class="dwdc-ch3">Last 12 months <small>' + money(tot12) + ' spent' + (jobs12 ? ' · ' + jobs12 + ' Upwork jobs · ' + money(tot12 / jobs12) + ' per job' : '') + '</small></h3>' + head('Month') + rows
+			+ '<h3 class="dwdc-ch3">Every year</h3>' + head('Year') + yrows
+			+ '<p class="dwdc-wins-foot">From your Upwork transactions file' + (DWDC.upLast ? ', last uploaded ' + fmt(DWDC.upLast.slice(0, 10)) : '') + '. Upwork jobs are the jobs won that month that came through Upwork. Membership fees aren’t included.</p>';
+	}
 	function moneyView() {
 		var projs = S.contacts.filter(function (c) { return ['active', 'hold', 'limbo', 'complete'].indexOf(c.list) > -1; });
 		var sum = function (f) { return projs.reduce(function (s, c) { return s + num(c[f]); }, 0); };
@@ -890,7 +919,7 @@
 		var rowsC = topClients.map(function (x, i) { return '<a class="dwdc-mrow" href="' + (x.id ? '#cl/' + x.id : '#client/' + x.list[0].id) + '"><em>' + (i + 1) + '</em><span><b>' + esc(cname(x)) + '</b><small>' + x.list.length + ' project' + (x.list.length === 1 ? '' : 's') + '</small></span><strong>' + money(x.total) + '</strong></a>'; }).join('');
 		var rowsR = repeat.slice(0, 12).map(function (x) { return '<a class="dwdc-mrow" href="' + (x.id ? '#cl/' + x.id : '#client/' + x.list[0].id) + '"><span><b>' + esc(cname(x)) + '</b><small>' + x.list.map(function (c) { return esc(c.name); }).join(' · ') + '</small></span><strong>' + money(x.total) + '</strong></a>'; }).join('');
 		var mcard = function (title, inner, extra) { return '<section class="dwdc-card pad dwdc-mcard' + (extra ? ' ' + extra : '') + '"><div class="dwdc-cardh"><h2>' + title + '</h2></div>' + inner + '</section>'; };
-		return winsCard() + '<div class="dwdc-kpis k4">'
+		return winsCard() + '<section class="dwdc-card pad dwdc-wins dwdc-conn"><div class="dwdc-cardh"><h2>Connects spending</h2><small class="dwdc-wins-sub">What you spend on Upwork Connects, month by month, and what it costs per Upwork job won.</small></div>' + connSpend() + '</section>' + '<div class="dwdc-kpis k4">'
 			+ (function () {
 				// Monthly income: average of the last 12 full months, plus last month's total.
 				var t = DWDC.today, y = +t.slice(0, 4), mo = +t.slice(5, 7), vals = [], MNf = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -1162,7 +1191,7 @@
 			})(),
 			'<footer>' + frow('Hosting Revenue', money(annual) + ' / yr', 'hosting') + (function () { var C = S.costs || {}, t = DWDC.today, y = +t.slice(0, 4), mi = +t.slice(5, 7) - 1, pd = new Date(y, mi - 1, 1), MNs = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 				var cm = C[String(y)] && C[String(y)].m ? +C[String(y)].m[mi] || 0 : 0, py = C[String(pd.getFullYear())], lm = py && py.m ? +py.m[pd.getMonth()] || 0 : 0;
-				return frow('Spent on Connects this month', money(cm) + ' <small class="dwdc-frow-sub">' + MNs[pd.getMonth()] + ' ' + money(lm) + '</small>', 'money'); })() + '<a class="dwdc-frow" href="#money"><span>All-time income</span><b>' + money(allIncome()) + '</b>' + ic('right', 12) + '</a></footer>');
+				return frow('Spent on Connects this month', money(cm) + ' <small class="dwdc-frow-sub">' + MNs[pd.getMonth()] + ' ' + money(lm) + '</small>', 'money').replace('<a class="dwdc-frow"', '<a class="dwdc-frow" data-connmodal'); })() + '<a class="dwdc-frow" href="#money"><span>All-time income</span><b>' + money(allIncome()) + '</b>' + ic('right', 12) + '</a></footer>');
 		var tv = active.reduce(function (s, c) { return s + num(c.price); }, 0);
 		var ap = card('cd-plain cd-apnavy', '<header class="dwdc-dhead"><h2>Active Projects <span class="dwdc-cnt">' + active.length + '</span></h2><a href="#projects/active">View all</a></header>',
 			'<div class="dwdc-mini-t"><div class="g-ap head"><span>Project · Client</span><span>Price</span><span>Due</span><span class="r">Owed</span></div>'
@@ -1837,6 +1866,9 @@
 				}).join('') : emptyRow('No jobs found in this period.');
 			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide">' + head('Jobs won', esc(m.label), shortD(m.from) + (m.to !== m.from ? '–' + shortD(m.to) : '')) + wbody + '</div>';
 		}
+		if (m.type === 'connects') {
+			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide">' + head('Upwork', 'Connects', 'spending') + connSpend() + '<div class="dwdc-farow end"><a class="dwdc-btn2" href="#money" data-close-modal>Open in Money Stats</a></div></div>';
+		}
 		if (m.type === 'owed') {
 			var ol = working().filter(function (c) { return num(c.balance) > 0; }).sort(function (a, b) { return num(b.balance) - num(a.balance); });
 			var obody = ol.length ? '<div class="dwdc-mo-sum"><span>Projects<b>' + ol.length + '</b></span><span>Total owed<b>' + money(owed(ol)) + '</b></span></div>'
@@ -2207,6 +2239,7 @@
 			S.modal = { type: 'wins', from: wp[0], to: wp[1], label: wp[2] }; render();
 			return;
 		}
+		if (t.closest('[data-connmodal]')) { e.preventDefault(); S.modal = { type: 'connects' }; render(); return; }
 		if (t.closest('[data-owed]')) { S.modal = { type: 'owed' }; render(); return; }
 		if ((el = t.closest('[data-month]'))) {
 			var ym = el.getAttribute('data-month');
