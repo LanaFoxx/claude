@@ -336,11 +336,24 @@ document.addEventListener('click', e => {
   history.replaceState(null, '', f === 'all' ? location.pathname : '#' + f);
 });
 
+// Project page: the left column stays in view. When it is taller than the screen it scrolls with the page and
+// then holds once its end is visible, so nothing in it is ever out of reach.
+function pinLeft() {
+  document.querySelectorAll('[data-dwr-sticky]').forEach(el => {
+    if (window.innerWidth <= 980) { el.style.position = ''; el.style.top = ''; return; }
+    el.style.position = 'sticky';
+    el.style.top = Math.min(110, window.innerHeight - el.offsetHeight - 40) + 'px';
+  });
+}
+window.addEventListener('resize', pinLeft);
+window.addEventListener('load', pinLeft);
+
 function boot() {
   const canvases = Array.from(document.querySelectorAll('canvas[id^="dw-"]')).map(c => c.id);
   const fx = document.getElementById('dw-home') ? new HomeFx({ canvases }) : new SiteFx({ canvases });
   fx.start();
   window.__dwFx = fx;
+  pinLeft();
   if (location.hash === '#webflow' || location.hash === '#wordpress') filterTo(location.hash.slice(1));
 }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();

@@ -208,8 +208,9 @@ function dwdr_body( $page ) {
 	if ( 'project' === $page ) {
 		$all = dwdp_projects();
 		$ids = wp_list_pluck( $all, 'ID' );
-		$i   = array_search( get_queried_object_id(), array_map( 'intval', $ids ), true );
-		$p   = dwdr_project( get_queried_object() );
+		$po  = get_queried_object();
+		$i   = array_search( (int) $po->ID, array_map( 'intval', $ids ), true );
+		$p   = dwdr_project( $po );
 		$nx  = $all ? dwdr_project( $all[ ( false === $i ? 0 : $i + 1 ) % count( $all ) ] ) : null;
 		$c   = dwdr_copy();
 		$cp  = isset( $c[ $p['slug'] ] ) ? $c[ $p['slug'] ] : array(
@@ -221,13 +222,17 @@ function dwdr_body( $page ) {
 			'h2b'     => 'Easy to keep current',
 			'p3'      => 'Built on ' . $p['platform'] . ' so the owner can update text, images and pages after a one-on-one training session, with two months of support and a lifetime workmanship warranty included.',
 		);
-		return dwdr_render( 'project', array_merge( $p, $cp, array(
+		$full = dwdr_render( 'project', array_merge( $p, $cp, array(
 			'hasSite'   => '' !== $p['site'],
 			'nextName'  => $nx ? $nx['name'] : '',
 			'nextCat'   => $nx ? $nx['cat'] : '',
 			'nextCover' => $nx ? $nx['cover'] : '',
 			'nextHref'  => $nx ? $nx['href'] : home_url( '/portfolio/' ),
 		) ) );
+		// Keep the design's "Next project" section; the case study itself uses the two-column layout below.
+		$k    = strrpos( $full, '<section' );
+		$next = false === $k ? '' : substr( $full, $k );
+		return dwdr_case( $po, $p, $cp ) . $next;
 	}
 	if ( 'blog' === $page ) {
 		$posts = get_posts( array( 'post_type' => 'post', 'post_status' => 'publish', 'posts_per_page' => 30 ) );
@@ -272,6 +277,79 @@ function dwdr_body( $page ) {
 		}
 	}
 	return $html;
+}
+
+/**
+ * Project case study: title, summary and details on the left (pinned while there is room), every section
+ * screenshot of the site stacked on the right, the phone view after them. On phones: intro, screenshots, details.
+ */
+function dwdr_case( $po, $p, $cp ) {
+	$id       = $po->ID;
+	$sections = dwdp_ids( dwdp_get( $id, 'sections' ) );
+	$mock     = absint( dwdp_get( $id, 'mockup' ) );
+	$review   = trim( (string) dwdp_get( $id, 'review' ), " \"“”" );
+	$by       = (string) dwdp_get( $id, 'review_by' );
+	$upw      = (string) dwdp_get( $id, 'upwork_url' );
+	$label    = (string) dwdp_get( $id, 'link_label' );
+	$arrow    = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12 12 2M4 2h8v8"></path></svg>';
+	$facts    = array_filter( array(
+		'Client'     => $p['name'],
+		'Industry'   => $p['cat'],
+		'Platform'   => $p['platform'],
+		'Scope'      => $cp['scope'],
+		'Responsive' => (string) dwdp_get( $id, 'responsive' ),
+		'Aftercare'  => (string) dwdp_get( $id, 'aftercare' ),
+	) );
+	ob_start();
+	?>
+<section class="dwr-case" data-theme="light">
+	<div class="dwr-case-grid">
+		<div class="dwr-case-left" data-dwr-sticky>
+			<div class="dwr-case-intro">
+				<a class="dwr-case-back" href="<?php echo esc_url( home_url( '/portfolio/' ) ); ?>"><svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 7H2M7 2 2 7l5 5"></path></svg> All work</a>
+				<span class="dwr-eyebrow"><i></i><?php echo esc_html( dwdp_number( $id ) . ( $p['cat'] ? ' · ' . $p['cat'] : '' ) ); ?></span>
+				<h1><?php echo esc_html( $p['name'] ); ?></h1>
+				<p class="dwr-case-sum"><?php echo esc_html( $cp['summary'] ); ?></p>
+				<div class="dwr-case-btns">
+					<?php if ( $p['site'] ) : ?><a class="dwr-pill" href="<?php echo esc_url( $p['site'] ); ?>" target="_blank" rel="noopener"><?php echo esc_html( $label ? $label : 'Visit the live site' ); ?> <?php echo $arrow; // phpcs:ignore ?></a><?php endif; ?>
+					<a class="dwr-pill dark" href="<?php echo esc_url( home_url( '/quote/' ) ); ?>">Get a Quote <?php echo $arrow; // phpcs:ignore ?></a>
+				</div>
+			</div>
+			<div class="dwr-case-details">
+				<dl class="dwr-facts">
+					<?php foreach ( $facts as $k => $v ) : ?><div><dt><?php echo esc_html( $k ); ?></dt><dd><?php echo esc_html( $v ); ?></dd></div><?php endforeach; ?>
+				</dl>
+				<div class="dwr-case-copy">
+					<h2><?php echo esc_html( $cp['h2a'] ); ?></h2>
+					<p><?php echo esc_html( $cp['p1'] ); ?></p>
+					<?php if ( ! empty( $cp['p2'] ) ) : ?><p><?php echo esc_html( $cp['p2'] ); ?></p><?php endif; ?>
+					<h2><?php echo esc_html( $cp['h2b'] ); ?></h2>
+					<p><?php echo esc_html( $cp['p3'] ); ?></p>
+				</div>
+				<?php if ( $review ) : ?>
+					<figure class="dwr-review"><span class="dwr-stars">★★★★★</span><blockquote>“<?php echo esc_html( $review ); ?>”</blockquote><figcaption>— <?php echo esc_html( $by ? $by : $p['name'] ); ?></figcaption></figure>
+				<?php endif; ?>
+				<a class="dwr-case-up" href="<?php echo esc_url( $upw ? $upw : 'https://www.upwork.com/freelancers/dreamwebdigital' ); ?>" target="_blank" rel="noopener"><?php echo $upw ? 'View this project on Upwork' : 'See my Upwork profile'; ?> <?php echo $arrow; // phpcs:ignore ?></a>
+			</div>
+		</div>
+		<div class="dwr-case-shots">
+			<?php
+			if ( $sections ) {
+				foreach ( $sections as $n => $img ) {
+					echo '<figure class="dwr-shot">' . wp_get_attachment_image( $img, 'full', false, array( 'alt' => sprintf( '%s website design, section %d', $p['name'], $n + 1 ), 'loading' => $n ? 'lazy' : 'eager', 'fetchpriority' => $n ? 'auto' : 'high', 'sizes' => '(max-width: 980px) 92vw, 60vw' ) ) . '</figure>'; // phpcs:ignore
+				}
+			} elseif ( $p['cover'] ) {
+				echo '<figure class="dwr-shot"><img src="' . esc_url( $p['cover'] ) . '" alt="' . esc_attr( $p['name'] . ' website' ) . '"></figure>';
+			}
+			if ( $mock ) {
+				echo '<figure class="dwr-shot-phone">' . wp_get_attachment_image( $mock, 'large', false, array( 'alt' => $p['name'] . ' website on a phone', 'loading' => 'lazy', 'sizes' => '(max-width: 600px) 60vw, 320px' ) ) . '<figcaption>On the phone</figcaption></figure>'; // phpcs:ignore
+			}
+			?>
+		</div>
+	</div>
+</section>
+	<?php
+	return (string) ob_get_clean();
 }
 
 /** The scrolling strip of project screenshots (same look as the homepage hero). $rev scrolls the other way. */
@@ -350,6 +428,7 @@ add_action( 'wp_enqueue_scripts', function () {
 		. '[data-theme="light"] span[style*="color:#13A6EE"][style*="uppercase"]{color:#0B76B8!important}'
 		. '.dwr-strip{position:relative;overflow:hidden;margin:clamp(48px,6vw,88px) calc(-1 * clamp(20px,4vw,56px)) 0}.dwr-strip-track{display:flex;width:max-content;animation:dwMarquee 90s linear infinite}.dwr-strip.rev .dwr-strip-track{animation-direction:reverse}.dwr-strip-track:hover{animation-play-state:paused}.dwr-strip-track>div{display:flex;gap:20px;padding-right:20px}.dwr-strip a{position:relative;display:block;flex:0 0 auto;width:clamp(300px,36vw,560px);aspect-ratio:16/10;overflow:hidden;border-radius:8px;background:#1C1C1C;transition:transform .4s cubic-bezier(.2,.7,.1,1)}.dwr-strip-light a{background:#EDEDED;box-shadow:0 18px 40px -24px rgba(0,0,0,.35)}.dwr-strip a:hover{transform:translateY(-4px)}.dwr-strip img{width:100%;height:100%;object-fit:cover;object-position:top;display:block}.dwr-workband{background:#fff;color:#121212;padding:clamp(72px,9vw,140px) clamp(20px,4vw,56px)}.dwr-workband .dwr-strip{margin-top:0}.dwr-workband-h{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:16px;margin-bottom:clamp(28px,4vw,48px)}.dwr-eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#0B76B8}.dwr-eyebrow i{width:24px;height:2px;background:#13A6EE}.dwr-workband-h a{display:inline-flex;align-items:center;gap:8px;color:#121212;font-size:16px;font-weight:600;text-decoration:none;min-height:44px;background-image:linear-gradient(currentColor,currentColor);background-size:100% 1px;background-position:0 100%;background-repeat:no-repeat;transition:background-size .4s cubic-bezier(.2,.7,.1,1)}.dwr-workband-h a:hover{background-size:0 1px;color:#13A6EE}@media(max-width:600px){.dwr-strip-track>div{gap:12px;padding-right:12px}.dwr-strip a{width:min(72vw,300px)}}@media(prefers-reduced-motion:reduce){.dwr-strip-track{animation:none}.dwr-strip{overflow-x:auto}}' // project strip on text-only pages
 		. '.dwr-trust{display:flex;flex-wrap:wrap;gap:16px;margin-top:40px}.dwr-badge{display:inline-flex;align-items:center;gap:16px;padding:18px 26px 18px 20px;border:1px solid #333;border-radius:14px;background:rgba(255,255,255,.03);color:#fff!important;text-decoration:none;transition:border-color .3s ease,transform .3s ease}.dwr-badge:hover{border-color:#13A6EE;transform:translateY(-2px)}.dwr-badge span{display:flex;flex-direction:column;gap:4px}.dwr-badge b{font-size:clamp(20px,1.8vw,26px);font-weight:600;letter-spacing:-.01em;line-height:1.1}.dwr-badge small{font-size:15px;color:#C9C9C9}.dwr-badge .dwr-stars{color:#F5B301;letter-spacing:3px;font-size:clamp(22px,2vw,28px)}@media(max-width:600px){.dwr-badge{width:100%}}' // trust badges
+		. '.dwr-case{background:#fff;color:#121212;padding:clamp(130px,16vh,190px) clamp(20px,4vw,56px) clamp(80px,10vw,140px)}.dwr-case-grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(40px,5vw,96px);align-items:start;max-width:1560px;margin:0 auto}.dwr-case-left{top:110px;display:flex;flex-direction:column;gap:40px}.dwr-case-intro{display:flex;flex-direction:column;gap:20px}.dwr-case-back{display:inline-flex;align-items:center;gap:8px;color:#6B6B6B;font-size:14px;font-weight:500;text-decoration:none;min-height:36px;align-self:flex-start}.dwr-case-back:hover{color:#13A6EE}.dwr-case h1{margin:0;font-size:clamp(40px,4.6vw,84px);line-height:.95;letter-spacing:-.045em;font-weight:600;text-wrap:balance}.dwr-case-sum{margin:0;font-size:clamp(17px,1.35vw,21px);line-height:1.5;color:#333;text-wrap:pretty}.dwr-case-btns{display:flex;flex-wrap:wrap;gap:12px;margin-top:4px}.dwr-pill{display:inline-flex;align-items:center;gap:10px;min-height:52px;padding:0 24px;border-radius:999px;background:#13A6EE;color:#fff!important;font-size:16px;font-weight:600;text-decoration:none;transition:background .3s ease,transform .3s ease}.dwr-pill:hover{background:#2A8FD6;transform:translateY(-2px)}.dwr-pill.dark{background:#121212}.dwr-pill.dark:hover{background:#000}.dwr-facts{margin:0;display:grid;grid-template-columns:1fr 1fr;border-top:1px solid #121212}.dwr-facts div{padding:16px 16px 16px 0;border-bottom:1px solid #D9D9D9;display:flex;flex-direction:column;gap:4px}.dwr-facts dt{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#0B76B8}.dwr-facts dd{margin:0;font-size:16px;font-weight:500;line-height:1.4}.dwr-case-copy{display:flex;flex-direction:column;gap:14px}.dwr-case-copy h2{margin:14px 0 0;font-size:clamp(24px,2vw,32px);line-height:1.1;letter-spacing:-.03em;font-weight:600}.dwr-case-copy h2:first-child{margin-top:0}.dwr-case-copy p{margin:0;font-size:17px;line-height:1.6;color:#333}.dwr-review{margin:0;padding:24px;border-radius:12px;background:#F4F6F8;display:flex;flex-direction:column;gap:10px}.dwr-review .dwr-stars{color:#F5B301;letter-spacing:3px;font-size:20px}.dwr-review blockquote{margin:0;font-size:18px;line-height:1.5;color:#121212}.dwr-review figcaption{font-size:14px;color:#6B6B6B}.dwr-case-up{display:inline-flex;align-items:center;gap:8px;align-self:flex-start;color:#121212;font-weight:600;text-decoration:none;min-height:44px;background-image:linear-gradient(currentColor,currentColor);background-size:100% 1px;background-position:0 100%;background-repeat:no-repeat}.dwr-case-up:hover{color:#13A6EE}.dwr-case-shots{display:flex;flex-direction:column;gap:clamp(20px,2.4vw,36px)}.dwr-shot{margin:0;border-radius:12px;overflow:hidden;border:1px solid #E3E3E3;box-shadow:0 30px 60px -40px rgba(0,0,0,.45);background:#F2F2F2}.dwr-shot img{width:100%;height:auto;display:block}.dwr-shot-phone{margin:clamp(12px,2vw,32px) auto 0;width:min(320px,60%);display:flex;flex-direction:column;align-items:center;gap:12px}.dwr-shot-phone img{width:100%;height:auto;display:block;filter:drop-shadow(0 30px 40px rgba(0,0,0,.28))}.dwr-shot-phone figcaption{font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#6B6B6B}@media(max-width:980px){.dwr-case-grid{grid-template-columns:1fr}.dwr-case-left{display:contents}.dwr-case-intro{order:1}.dwr-case-shots{order:2}.dwr-case-details{order:3;display:flex;flex-direction:column;gap:36px}}@media(min-width:981px){.dwr-case-details{display:flex;flex-direction:column;gap:36px}}@media(max-width:600px){.dwr-case{padding-top:110px}.dwr-facts{grid-template-columns:1fr}}' // project case study layout
 		. '#dw-hero-row>div:first-child>p:first-child{font-size:clamp(22px,2.1vw,32px)!important;line-height:1.2!important;white-space:normal!important;letter-spacing:-.01em}#dw-hero-row>div:first-child>p:nth-child(2){font-size:clamp(16px,1.25vw,19px)!important}#dw-hero-trust,#dw-hero-trust-m{font-size:clamp(17px,1.3vw,20px)!important;gap:10px 20px!important;color:#D6D6D6!important;font-weight:500}#dw-hero-trust span[style*="F5B301"],#dw-hero-trust-m span[style*="F5B301"]{font-size:clamp(24px,1.9vw,30px)!important;letter-spacing:3px!important;line-height:1}#dw-hero-trust svg,#dw-hero-trust-m svg{width:28px!important;height:28px!important}#dw-hero-trust span[style*="inline-flex"],#dw-hero-trust-m span[style*="inline-flex"]{gap:10px!important}' // homepage hero: bigger lead line, stars, Upwork logo and badge text
 		. '@media(min-width:601px){#dw-nav{transition:color .35s ease,background-color .35s ease,box-shadow .35s ease,padding .35s ease,transform .45s cubic-bezier(.2,.7,.1,1),opacity .35s ease!important}#dw-nav[data-floating="1"]{padding-top:14px!important;padding-bottom:14px!important}#dw-nav[data-floating="1"][data-theme="light"]{background:#121212!important;color:#fff!important;box-shadow:0 12px 32px -20px rgba(0,0,0,.7)}#dw-nav[data-floating="1"][data-theme="light"] #dw-logo-white{display:block!important;filter:none!important}#dw-nav[data-floating="1"][data-theme="light"] #dw-logo-dark{display:none!important}#dw-nav[data-floating="1"][data-theme="dark"],#dw-nav[data-floating="1"][data-theme="blue"]{background:#fff!important;color:#121212!important;box-shadow:0 12px 32px -20px rgba(0,0,0,.45)}#dw-nav[data-floating="1"][data-theme="dark"] #dw-logo-white,#dw-nav[data-floating="1"][data-theme="blue"] #dw-logo-white{display:none!important}#dw-nav[data-floating="1"][data-theme="dark"] #dw-logo-dark,#dw-nav[data-floating="1"][data-theme="blue"] #dw-logo-dark{display:block!important}}' // desktop: once scrolled, the sticky nav gets a solid bar that contrasts with the section under it // small blue labels on white: readable contrast
 		. '.dwr-form[data-sent="1"] .dwr-fields{display:none}.dwr-note{font-size:14px;color:#F27A7A;min-height:1em}' );
