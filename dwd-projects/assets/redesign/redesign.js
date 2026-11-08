@@ -56,10 +56,12 @@ class SiteFx {
     const nav = document.getElementById('dw-nav');
     if (nav) {
       let theme = 'dark';
+      // The section under the middle of the header decides (works below the WordPress admin bar too).
+      const nb = nav.getBoundingClientRect(), probe = Math.max(1, nb.top + nb.height / 2);
       document.querySelectorAll('[data-theme]').forEach(s => {
         if (s === nav) return;
         const r = s.getBoundingClientRect();
-        if (r.top <= 40 && r.bottom > 40) theme = s.getAttribute('data-theme');
+        if (r.top <= probe && r.bottom > probe) theme = s.getAttribute('data-theme');
       });
       if (nav.getAttribute('data-theme') !== theme) nav.setAttribute('data-theme', theme);
       const y = window.scrollY;
