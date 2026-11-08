@@ -167,6 +167,24 @@ UP_OLD = '<span style="font-size:16px;color:#9A9A9A">100% Job Success · Top Rat
 UP_NEW = '</div>\n    <div id="dw-upwork-stats" style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:24px 48px;padding:0 0 10px 40px;border-left:1px solid #333"><div style="display:flex;flex-direction:column;gap:10px"><span style="font-size:clamp(56px,6.4vw,104px);line-height:.85;letter-spacing:-.05em;font-weight:600;color:#fff">100%</span><span style="font-size:clamp(17px,1.4vw,20px);font-weight:500;color:#fff">Job Success on Upwork</span></div><div style="display:flex;flex-direction:column;gap:10px"><span style="font-size:clamp(56px,6.4vw,104px);line-height:.85;letter-spacing:-.05em;font-weight:600;color:#fff">%UPWORK_JOBS%</span><span style="font-size:clamp(17px,1.4vw,20px);font-weight:500;color:#fff">Projects completed on Upwork</span></div><span style="display:inline-flex;align-items:center;gap:10px;font-size:16px;color:#C9C9C9;flex-basis:100%"><svg width="30" height="30" viewBox="0 0 24 24" fill="#14A800" aria-hidden="true"><path d="M18.56 13.02c-1.33 0-2.58-.56-3.71-1.48l.28-1.3v-.02c.25-1.38.98-3.68 3.43-3.68 1.84 0 3.33 1.5 3.33 3.34 0 1.84-1.49 3.14-3.33 3.14zm0-9.88c-3.13 0-5.56 2.03-6.54 5.37-1.5-2.26-2.64-4.97-3.3-7.25H5.36v8.77c0 1.72-1.4 3.12-3.12 3.12S-.88 11.75-.88 10.03V1.26H-4.2v8.77c0 3.56 2.9 6.49 6.45 6.49s6.44-2.93 6.44-6.49V8.56c.65 1.35 1.44 2.72 2.4 3.93l-2.04 9.68h3.4l1.48-7.02c1.3.83 2.79 1.35 4.5 1.35 3.66 0 6.65-3 6.65-6.67 0-3.67-2.99-6.69-6.65-6.69z" transform="translate(3.66 2.63) scale(.8)"></path></svg>Top Rated Plus freelancer</span></div>\n  </div>'
 if UP_OLD in hb:
     hb = hb.replace(UP_OLD, UP_NEW)
+hb = hb.replace('<span data-dw-line="1">Let’s talk.</span>', '<span data-dw-line="1">Let’s talk<span style="color:#13A6EE">.</span></span>')  # blue period, like Contact
+# Michael: the triangle pattern behind the Client reviews section too.
+hb = hb.replace('<section id="reviews" data-theme="dark" style="background:#121212;', '<section id="reviews" data-theme="dark" style="position:relative;isolation:isolate;overflow:hidden;background:#121212;', 1)
+hb = re.sub(r'(<section id="reviews"[^>]*>)', r'\1\n  <canvas id="dw-reviews-canvas" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none;opacity:.85;-webkit-mask-image:linear-gradient(90deg,rgba(0,0,0,.35) 0%,rgba(0,0,0,.5) 45%,#000 75%);mask-image:linear-gradient(90deg,rgba(0,0,0,.35) 0%,rgba(0,0,0,.5) 45%,#000 75%)"></canvas>', hb, 1)
+# Michael: the same menu and footer on every page. The design's homepage had its own nav (with About / Services
+# anchors and no Blog) and an older footer; use the shared Site Chrome versions instead.
+def _cut(html, start, end_marker, include_end=False):
+    i = html.find(start)
+    j = html.find(end_marker, i)
+    return (i, j + (len(end_marker) if include_end else 0)) if i > -1 and j > -1 else (-1, -1)
+ci, cj = _cut(cb, '<nav id="dw-nav"', '<main')
+hi, hj = _cut(hb, '<nav id="dw-nav"', '<main')
+if ci > -1 and hi > -1:
+    hb = hb[:hi] + cb[ci:cj] + hb[hj:]
+ci, cj = _cut(cb, '<footer', '</footer>', True)
+hi, hj = _cut(hb, '<footer', '</footer>', True)
+if ci > -1 and hi > -1:
+    hb = hb[:hi] + cb[ci:cj] + hb[hj:]
 write('home.html', hb)
 
 def interior(name, out):
