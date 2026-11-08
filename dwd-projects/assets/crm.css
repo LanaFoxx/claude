@@ -1591,3 +1591,7 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 }
 .dwdc .dwdc-wrow span em.dwdc-wof { font-style: normal; color: inherit; text-align: left; }
 @media (max-width: 768px) { .dwdc .dwdc-wrow span em.dwdc-wof { display: none; } }
+.dwdc a.dwdc-herolink { display: flex; align-items: center; gap: 4px; margin: 0 0 14px; text-decoration: none; color: var(--sec) !important; }
+.dwdc a.dwdc-herolink strong { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 6px; text-decoration-color: rgba(19,166,238,.35); }
+.dwdc a.dwdc-herolink:hover strong { text-decoration-color: var(--blue); }
+.dwdc a.dwdc-herolink svg { color: var(--blue); }

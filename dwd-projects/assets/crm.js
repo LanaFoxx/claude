@@ -1136,7 +1136,7 @@
 		var lastPay = S.contacts.filter(function (c) { return c.last_pay; }).sort(function (a, b) { return a.last_pay.date < b.last_pay.date ? 1 : -1; })[0];
 		var seg = function (n, cls) { return n ? '<i class="' + cls + '" style="flex:' + n + '"></i>' : ''; };
 		var c1 = card('cd-clients', chead('users', 'Clients', 'clients'),
-			'<p class="dwdc-hero"><strong>' + S.clients.length + '</strong> clients on file</p><div class="dwdc-segbar">' + seg(nP, 's1') + seg(nH, 's2') + seg(nPast, 's3') + '</div>'
+			'<a class="dwdc-hero dwdc-herolink" href="#clients"><strong>' + S.clients.length + '</strong> clients on file ' + ic('right', 14) + '</a><div class="dwdc-segbar">' + seg(nP, 's1') + seg(nH, 's2') + seg(nPast, 's3') + '</div>'
 			+ '<a class="dwdc-seg" href="#clients"><i class="s1"></i>Project clients<b>' + nP + '</b></a><a class="dwdc-seg" href="#clients"><i class="s2"></i>Hosting only<b>' + nH + '</b></a><a class="dwdc-seg" href="#clients"><i class="s3"></i>Past clients<b>' + nPast + '</b></a>',
 			'<footer class="dwdc-grid4">' + frow('Active Projects', active.length, 'projects/active') + frow('Onboarding', onboardList().length, 'onboarding') + frow('Hosting', host.length, 'hosting') + frow('All Clients', S.clients.length, 'clients') + '</footer>');
 		var plist = active.slice().sort(function (x, y) { return num(y.price) - num(x.price) || (x.name < y.name ? -1 : 1); });
