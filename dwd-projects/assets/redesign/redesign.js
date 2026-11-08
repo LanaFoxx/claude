@@ -294,6 +294,7 @@ function setMenu(open) {
   if (!m) return;
   m.hidden = !open;
   document.documentElement.style.overflow = open ? 'hidden' : '';
+  document.documentElement.classList.toggle('dw-menu-open', !!open);
   const b = document.getElementById('dw-nav-menu');
   if (b) b.setAttribute('aria-expanded', open ? 'true' : 'false');
   if (open) { const c = m.querySelector('[data-dw-menu="close"]'); if (c) c.focus(); }
