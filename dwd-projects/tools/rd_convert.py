@@ -81,6 +81,7 @@ def fix_tag(tag):
 COPY_FIX = {
     '500+ websites': '200+ websites',
     '500+ Websites Built': '200+ Websites Built',
+    'all 500+ sites': 'all 200+ sites',
     'letter-spacing:-.04em;line-height:1">500+</span>': 'letter-spacing:-.04em;line-height:1">200+</span>',
     'more than 500 websites': 'more than 200 websites',
     'A custom WordPress website for a personal training business, built mobile-first so clients can book from their phone.':
@@ -203,6 +204,7 @@ assert 'data-dw-card' in card
 card = card.replace(' target="_blank" rel="noopener"', '')
 card = card.replace('{{ p.num }}', '<span data-dw-num>{{ p.num }}</span>')
 card = card.replace('border-top:1px solid #121212;padding-top:16px', 'padding-top:6px')  # Michael: no line under each card
+card = card.replace('border-top:1px solid #121212;', '')  # no rule between portfolio rows either
 write('portfolio-card.html', card)
 p = p[:m.start()] + '{{{ cards }}}' + p[m.end():]
 for key, f in (('showAll', 'all'), ('showWP', 'wordpress'), ('showWF', 'webflow')):
