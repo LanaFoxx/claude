@@ -140,7 +140,7 @@
 		return '<span class="dwdc-nm"><span>' + (k ? '<a class="dwdc-clink" href="#cl/' + k.id + '">' + esc(k.name) + '</a>' : '<b class="nm2">' + esc(c.person || '—') + '</b>') + (em ? '<small>' + esc(em) + '</small>' : '') + '</span></span>';
 	}
 	function reload() {
-		return api('').then(function (r) { S.contacts = r.contacts.filter(Boolean); S.tasks = r.tasks.filter(Boolean); S.clients = (r.clients || []).filter(Boolean); S.money = r.money || {}; S.costs = r.costs || {}; S.trends = r.trends || null; });
+		return api('').then(function (r) { S.contacts = r.contacts.filter(Boolean); S.tasks = r.tasks.filter(Boolean); S.clients = (r.clients || []).filter(Boolean); S.money = r.money || {}; S.costs = r.costs || {}; S.trends = r.trends || null; S.wins = r.wins || { list: [], undated: 0 }; });
 	}
 
 	/* ---------- routing ---------- */
@@ -823,6 +823,40 @@
 		if (file) { var fr = new FileReader(); fr.onload = function () { send(file.name, String(fr.result)); }; fr.readAsText(file); } else { send('', ''); }
 	}
 
+	/* ---------- Jobs won: per week and per month, from hire emails, first payments and onboarding forms ---------- */
+	function dIso(d) { return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+	function weekStart(iso) { var d = new Date(+iso.slice(0, 4), +iso.slice(5, 7) - 1, +iso.slice(8, 10)); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return d; }
+	function winsIn(from, to) { return ((S.wins && S.wins.list) || []).filter(function (w) { return w.date >= from && w.date <= to; }); }
+	function winVal(l) { return l.reduce(function (a, w) { return a + (+w.value || 0); }, 0); }
+	function shortD(iso) { var M = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']; return M[+iso.slice(5, 7) - 1] + ' ' + (+iso.slice(8, 10)); }
+	function winsCard() {
+		var MNf = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+		var t = DWDC.today, ws = weekStart(t), y = +t.slice(0, 4), mo = +t.slice(5, 7) - 1;
+		var wk = function (n) { var a = new Date(ws); a.setDate(a.getDate() - 7 * n); var b = new Date(a); b.setDate(b.getDate() + 6); return { from: dIso(a), to: dIso(b) }; };
+		var mon = function (n) { var a = new Date(y, mo - n, 1), b = new Date(y, mo - n + 1, 0); return { from: dIso(a), to: dIso(b), label: MNf[a.getMonth()] + (a.getFullYear() !== y ? ' ' + a.getFullYear() : '') }; };
+		var tile = function (label, r, sub, tone) {
+			var l = winsIn(r.from, r.to);
+			return '<div class="dwdc-kpi click' + (tone ? ' ' + tone : '') + '" role="button" tabindex="0" data-wins="' + r.from + '|' + r.to + '|' + esc(label) + '"><small>' + label + '</small><strong>' + l.length + '<i> job' + (l.length === 1 ? '' : 's') + '</i></strong><span>' + sub + (winVal(l) ? ' · ' + money(winVal(l)) : '') + '</span></div>';
+		};
+		var w0 = wk(0), w1 = wk(1), w2 = wk(2), m0 = mon(0), m1 = mon(1);
+		var rows = function (list) {
+			var max = Math.max.apply(null, list.map(function (r) { return r.n; }).concat([1]));
+			return list.map(function (r) {
+				return '<button type="button" class="dwdc-wrow" data-wins="' + r.from + '|' + r.to + '|' + esc(r.label) + '"><span>' + (r.html || r.label) + '</span><i><b style="width:' + Math.round(r.n / max * 100) + '%"></b></i><strong>' + r.n + '</strong><em>' + (r.v ? money(r.v) : '—') + '</em></button>';
+			}).join('');
+		};
+		var weeks = [], months = [];
+		for (var i = 0; i < 12; i++) { var r = wk(i), l = winsIn(r.from, r.to); weeks.push({ from: r.from, to: r.to, n: l.length, v: winVal(l), label: (i === 0 ? 'This week' : i === 1 ? 'Last week' : 'Week of ' + shortD(r.from)), html: i > 1 ? '<em class="dwdc-wof">Week of </em>' + shortD(r.from) : '' }); }
+		for (var j = 0; j < 12; j++) { var q = mon(j), ml = winsIn(q.from, q.to); months.push({ from: q.from, to: q.to, n: ml.length, v: winVal(ml), label: q.label }); }
+		var avgW = weeks.slice(1).reduce(function (a, r) { return a + r.n; }, 0) / 11, avgM = months.slice(1).reduce(function (a, r) { return a + r.n; }, 0) / 11;
+		var head = '<div class="dwdc-whead"><span>Period</span><span></span><span>Jobs</span><span>Paid / price</span></div>';
+		return '<section class="dwdc-card pad dwdc-wins"><div class="dwdc-cardh"><h2>Jobs won</h2><small class="dwdc-wins-sub">When each job started: Upwork hire email, else the first payment (Upwork, Stripe, PayPal), else the onboarding form. Click any number to see the jobs.</small></div>'
+			+ '<div class="dwdc-kpis k5">' + tile('This week', w0, shortD(w0.from) + '–' + shortD(w0.to), 'coralfill') + tile('Last week', w1, shortD(w1.from) + '–' + shortD(w1.to)) + tile('Week before', w2, shortD(w2.from) + '–' + shortD(w2.to))
+			+ tile(MNf[mo] + ' so far', m0, 'Month to date', 'navy') + tile(m1.label, m1, 'Last month') + '</div>'
+			+ '<div class="dwdc-wgrid"><div><h3>By week <small>avg ' + avgW.toFixed(1) + ' a week</small></h3>' + head + rows(weeks) + '</div><div><h3>By month <small>avg ' + avgM.toFixed(1) + ' a month</small></h3>' + head + rows(months) + '</div></div>'
+			+ (S.wins && S.wins.undated ? '<p class="dwdc-wins-foot">' + S.wins.undated + ' older project' + (S.wins.undated === 1 ? '' : 's') + ' have no payment, hire email or onboarding date, so they aren’t counted.</p>' : '')
+			+ '</section>';
+	}
 	function moneyView() {
 		var projs = S.contacts.filter(function (c) { return ['active', 'hold', 'limbo', 'complete'].indexOf(c.list) > -1; });
 		var sum = function (f) { return projs.reduce(function (s, c) { return s + num(c[f]); }, 0); };
@@ -856,7 +890,7 @@
 		var rowsC = topClients.map(function (x, i) { return '<a class="dwdc-mrow" href="' + (x.id ? '#cl/' + x.id : '#client/' + x.list[0].id) + '"><em>' + (i + 1) + '</em><span><b>' + esc(cname(x)) + '</b><small>' + x.list.length + ' project' + (x.list.length === 1 ? '' : 's') + '</small></span><strong>' + money(x.total) + '</strong></a>'; }).join('');
 		var rowsR = repeat.slice(0, 12).map(function (x) { return '<a class="dwdc-mrow" href="' + (x.id ? '#cl/' + x.id : '#client/' + x.list[0].id) + '"><span><b>' + esc(cname(x)) + '</b><small>' + x.list.map(function (c) { return esc(c.name); }).join(' · ') + '</small></span><strong>' + money(x.total) + '</strong></a>'; }).join('');
 		var mcard = function (title, inner, extra) { return '<section class="dwdc-card pad dwdc-mcard' + (extra ? ' ' + extra : '') + '"><div class="dwdc-cardh"><h2>' + title + '</h2></div>' + inner + '</section>'; };
-		return '<div class="dwdc-kpis k4">'
+		return winsCard() + '<div class="dwdc-kpis k4">'
 			+ (function () {
 				// Monthly income: average of the last 12 full months, plus last month's total.
 				var t = DWDC.today, y = +t.slice(0, 4), mo = +t.slice(5, 7), vals = [], MNf = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -1120,7 +1154,7 @@
 				var prev = py && py.m ? Math.max(0, +py.m[prevD.getMonth()] || 0) : 0;
 				var MNf = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 				return '<button type="button" class="dwdc-mnow" data-month="' + ym + '"><span class="dwdc-lbl">Made in ' + MNf[mi] + '</span><strong>' + money(cur) + '</strong><small>' + MNf[prevD.getMonth()] + ': ' + money(prev) + ' · see payments →</small></button>'
-					+ '<div class="dwdc-mopen"><span class="dwdc-lbl">Owed on open projects</span><strong>' + money(owed(open)) + '</strong><small>' + owing.length + ' invoice' + (owing.length === 1 ? '' : 's') + ' open · ' + active.length + ' active projects</small></div>';
+					+ '<button type="button" class="dwdc-mopen" data-owed><span class="dwdc-lbl">Owed on open projects</span><strong>' + money(owed(open)) + '</strong><small>' + owing.length + ' invoice' + (owing.length === 1 ? '' : 's') + ' open · ' + active.length + ' active projects · see projects →</small></button>';
 			})(),
 			'<footer>' + frow('Hosting Revenue', money(annual) + ' / yr', 'hosting') + frow('Next Renewal', nextH ? fmt(nextH.renewal) + ' · ' + esc(nextH.name) : '—', 'hosting') + '<a class="dwdc-frow" href="#money"><span>All-time income</span><b>' + money(allIncome()) + '</b>' + ic('right', 12) + '</a></footer>');
 		var tv = active.reduce(function (s, c) { return s + num(c.price); }, 0);
@@ -1789,6 +1823,23 @@
 		var inp = function (k, label, ph, type, wide) { return '<label' + (wide ? ' class="wide"' : '') + '><span>' + label + '</span><input name="' + k + '" type="' + (type || 'text') + '" value="' + esc(v[k] || '') + '" placeholder="' + esc(ph || '') + '"></label>'; };
 		var head = function (eb, a, b) { return '<button type="button" class="dwdc-mx" data-close-modal>' + ic('x', 20) + '</button><p class="dwdc-eyebrow">' + eb + '</p><h2><span>' + a + '</span> <em>' + b + '</em></h2>'; };
 		var body;
+		if (m.type === 'wins') {
+			var wl = winsIn(m.from, m.to);
+			var wbody = wl.length ? '<div class="dwdc-mo-sum"><span>Jobs<b>' + wl.length + '</b></span><span>Paid / price<b>' + money(winVal(wl)) + '</b></span></div>'
+				+ wl.map(function (w) {
+					return '<a class="dwdc-mo-r" href="#client/' + w.id + '" data-close-modal><span class="d">' + fmt(w.date) + '</span><span class="w"><b>' + esc(w.name) + '</b><small>' + esc([w.title, w.how].filter(Boolean).join(' · ')) + '</small></span><strong>' + (w.value ? money(w.value) : '—') + '</strong></a>';
+				}).join('') : emptyRow('No jobs found in this period.');
+			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide">' + head('Jobs won', esc(m.label), shortD(m.from) + (m.to !== m.from ? '–' + shortD(m.to) : '')) + wbody + '</div>';
+		}
+		if (m.type === 'owed') {
+			var ol = working().filter(function (c) { return num(c.balance) > 0; }).sort(function (a, b) { return num(b.balance) - num(a.balance); });
+			var obody = ol.length ? '<div class="dwdc-mo-sum"><span>Projects<b>' + ol.length + '</b></span><span>Total owed<b>' + money(owed(ol)) + '</b></span></div>'
+				+ ol.map(function (c) {
+					var k = clientOf(c);
+					return '<a class="dwdc-mo-r" href="#client/' + c.id + '" data-close-modal><span class="d">' + (c.deadline ? 'Due ' + fmt(c.deadline) : '') + '</span><span class="w"><b>' + esc(c.name) + '</b><small>' + esc([k ? k.name : c.person, num(c.price) ? 'Price ' + money(c.price) : ''].filter(Boolean).join(' · ')) + '</small></span><strong>' + money(c.balance) + '</strong></a>';
+				}).join('') : emptyRow('Nothing is owed on open projects.');
+			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide">' + head('Open projects', 'Owed', money(owed(ol))) + obody + '</div>';
+		}
 		if (m.type === 'month') {
 			var MNL = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 			var yy = +m.ym.slice(0, 4), mo = +m.ym.slice(5, 7), title = MNL[mo - 1] + ' ' + yy;
@@ -2145,6 +2196,12 @@
 			}
 			return;
 		}
+		if ((el = t.closest('[data-wins]'))) {
+			var wp = el.getAttribute('data-wins').split('|');
+			S.modal = { type: 'wins', from: wp[0], to: wp[1], label: wp[2] }; render();
+			return;
+		}
+		if (t.closest('[data-owed]')) { S.modal = { type: 'owed' }; render(); return; }
 		if ((el = t.closest('[data-month]'))) {
 			var ym = el.getAttribute('data-month');
 			S.modal = { type: 'month', ym: ym, vals: {} }; render();
@@ -2426,7 +2483,7 @@
 	/* ---------- start ---------- */
 	document.body.classList.add('dwdc-app-on');
 	api('').then(function (r) {
-		S.contacts = r.contacts.filter(Boolean); S.tasks = r.tasks.filter(Boolean); S.clients = (r.clients || []).filter(Boolean); S.money = r.money || {}; S.costs = r.costs || {}; S.trends = r.trends || null;
+		S.contacts = r.contacts.filter(Boolean); S.tasks = r.tasks.filter(Boolean); S.clients = (r.clients || []).filter(Boolean); S.money = r.money || {}; S.costs = r.costs || {}; S.trends = r.trends || null; S.wins = r.wins || { list: [], undated: 0 };
 		var m = /[?&]contact=(\d+)/.exec(location.search), em = /[?&]email=([^&]+)/.exec(location.search);
 		var who = m ? contact(+m[1]) : em ? S.contacts.find(function (c) { return c.email && c.email.toLowerCase() === decodeURIComponent(em[1]).toLowerCase(); }) : null;
 		if (who) { location.hash = 'client/' + who.id; }
