@@ -202,6 +202,7 @@ card = re.sub(r'^<a ', '<a data-platform="{{ p.platform_key }}" data-dw-card="1"
 assert 'data-dw-card' in card
 card = card.replace(' target="_blank" rel="noopener"', '')
 card = card.replace('{{ p.num }}', '<span data-dw-num>{{ p.num }}</span>')
+card = card.replace('border-top:1px solid #121212;padding-top:16px', 'padding-top:6px')  # Michael: no line under each card
 write('portfolio-card.html', card)
 p = p[:m.start()] + '{{{ cards }}}' + p[m.end():]
 for key, f in (('showAll', 'all'), ('showWP', 'wordpress'), ('showWF', 'webflow')):
