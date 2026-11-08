@@ -304,7 +304,7 @@ document.addEventListener('click', e => {
 document.addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(false); });
 
 // Portfolio filter pills: All / WordPress / Webflow. Card widths follow the same rhythm as the design.
-const SPANS = [12, 7, 5, 5, 7, 12, 6, 6, 7, 5, 12];
+const SPANS = [12, 6, 6, 12, 6, 6, 12, 6, 6, 12];
 function filterTo(f) {
   document.querySelectorAll('[data-filter]').forEach(b => {
     const on = b.getAttribute('data-filter') === f;
@@ -320,7 +320,6 @@ function filterTo(f) {
     const span = SPANS[i % SPANS.length];
     c.style.gridColumn = 'span ' + span;
     const frame = c.firstElementChild;
-    if (frame) frame.style.aspectRatio = span === 12 ? '21/9' : span >= 7 ? '16/10' : '4/3';
     const num = c.querySelector('[data-dw-num]');
     if (num) num.textContent = String(i + 1).padStart(2, '0');
     c.setAttribute('data-dw-reveal', 'in');

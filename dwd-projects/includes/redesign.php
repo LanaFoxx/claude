@@ -15,28 +15,14 @@ const DWDR_COOKIE = 'dwd_redesign';
 /** Live for everyone. Set to false to put the old Elementor pages back (the redesign then needs ?redesign=1 as an editor). */
 const DWDR_LIVE = true;
 
-/** Copy written in the design for the two featured case studies; other projects use the fallback below. */
+/** Case-study copy for every project, from the design's COPY object (templates/redesign/copy.json, written by the converter). */
 function dwdr_copy() {
-	return array(
-		'the-goods-vending' => array(
-			'summary' => 'A premium vending company needed a website that felt as polished as the machines it places in offices and gyms. I designed and built a custom WordPress site around a full-screen hero video, a browsable product menu and a quote flow that turns visitors into placements.',
-			'scope'   => 'Design, WordPress build, hero video, hosting',
-			'h2a'     => 'Selling a premium service, not a snack machine',
-			'p1'      => 'The Goods places high-end vending in offices, gyms and apartment communities. The old perception of vending is a dusty machine in a hallway, so the site had to do the opposite: open on motion, lead with the brands people recognize, and make the request process feel effortless.',
-			'p2'      => 'The home page opens on a full-screen video of the machines in use, then moves through a dark, product-forward section ("Premium brands. Options for everyone."), the placement process and proof from existing locations. Every section ends with a single call to action: request a machine.',
-			'h2b'     => 'Built to be run by the owner',
-			'p3'      => 'The site runs on WordPress with Elementor, so the team can update the product menu, add locations and publish promotions without touching code. It is hosted and monitored on my managed hosting, with daily backups and same-day support.',
-		),
-		'finesse-by-witney' => array(
-			'summary' => 'Launch website for Finesse, the fitness app by Dancing with the Stars pro Witney Carson. Built to drive App Store downloads with a video-led hero, program highlights and real App Store reviews.',
-			'scope'   => 'Design, WordPress build, video, App Store funnels',
-			'h2a'     => 'One job: get the app installed',
-			'p1'      => 'Every section of the page points at the same action. The hero pairs the commercial with a direct "Find your program" button, the programs are shown as cards with level and length, and the reviews are pulled from the App Store.',
-			'p2'      => 'The visual language borrows from the app itself: dark surfaces, a single pink accent and large uppercase headlines that match the brand.',
-			'h2b'     => 'Fast on phones, where the audience is',
-			'p3'      => 'Most visitors arrive from Instagram and TikTok on a phone, so the page is built mobile-first, with lazy-loaded video and a smart app banner at the top.',
-		),
-	);
+	static $c = null;
+	if ( null === $c ) {
+		$f = DWDP_DIR . 'templates/redesign/copy.json';
+		$c = is_readable( $f ) ? (array) json_decode( (string) file_get_contents( $f ), true ) : array(); // phpcs:ignore
+	}
+	return $c;
 }
 
 /** True when this request should get the new design. */
@@ -84,7 +70,13 @@ function dwdr_page() {
 	if ( is_post_type_archive( DWDP_CPT ) || is_page( dwdp_base_slug() ) ) {
 		return 'portfolio';
 	}
-	foreach ( array( 'process', 'hosting', 'contact' ) as $slug ) {
+	if ( is_singular( 'post' ) ) {
+		return 'article';
+	}
+	if ( is_home() || is_page( 'blog' ) ) {
+		return 'blog';
+	}
+	foreach ( array( 'process', 'hosting', 'contact', 'quote', 'thank-you' ) as $slug ) {
 		if ( is_page( $slug ) ) {
 			return $slug;
 		}
@@ -143,14 +135,14 @@ function dwdr_project( $p ) {
 function dwdr_body( $page ) {
 	if ( 'portfolio' === $page ) {
 		$list  = array_map( 'dwdr_project', dwdp_projects() );
-		$spans = array( 12, 7, 5, 5, 7, 12, 6, 6, 7, 5, 12 );
+		$spans = array( 12, 6, 6, 12, 6, 6, 12, 6, 6, 12 );
 		$cards = '';
 		foreach ( $list as $i => $p ) {
 			$span   = $spans[ $i % count( $spans ) ];
 			$cards .= dwdr_render( 'portfolio-card', array(
 				'p.href'         => $p['href'],
 				'p.span'         => $span,
-				'p.ratio'        => 12 === $span ? '21/9' : ( $span >= 7 ? '16/10' : '4/3' ),
+				'p.ratio'        => '16/10', // screenshots shown whole
 				'p.cover'        => $p['cover'],
 				'p.phone'        => $p['phone'],
 				'p.alt'          => $p['name'] . ' website',
@@ -198,8 +190,76 @@ function dwdr_body( $page ) {
 			'nextHref'  => $nx ? $nx['href'] : home_url( '/portfolio/' ),
 		) ) );
 	}
+	if ( 'blog' === $page ) {
+		$posts = get_posts( array( 'post_type' => 'post', 'post_status' => 'publish', 'posts_per_page' => 30 ) );
+		$spans = array( 7, 5, 5, 7, 6, 6 );
+		$cards = '';
+		foreach ( $posts as $i => $po ) {
+			$v      = dwdr_post( $po );
+			$cards .= dwdr_render( 'blog-card', array( 'p.href' => $v['href'], 'p.span' => $spans[ $i % count( $spans ) ], 'p.image' => $v['image'], 'p.cat' => $v['cat'], 'p.read' => $v['read'], 'p.title' => $v['title'], 'p.excerpt' => $v['excerpt'] ) );
+		}
+		return dwdr_render( 'blog', array( 'cards' => $cards ) );
+	}
+	if ( 'article' === $page ) {
+		$po   = get_queried_object();
+		$v    = dwdr_post( $po );
+		$all  = get_posts( array( 'post_type' => 'post', 'post_status' => 'publish', 'posts_per_page' => -1, 'fields' => 'ids' ) );
+		$i    = array_search( (int) $po->ID, array_map( 'intval', $all ), true );
+		$next = count( $all ) > 1 ? dwdr_post( get_post( $all[ ( false === $i ? 0 : $i + 1 ) % count( $all ) ] ) ) : null;
+		$html = apply_filters( 'the_content', $po->post_content ); // phpcs:ignore
+		return dwdr_render( 'article', array_merge( $v, array(
+			'content'   => $html,
+			'nextHref'  => $next ? $next['href'] : home_url( '/blog/' ),
+			'nextTitle' => $next ? $next['title'] : '',
+			'nextCat'   => $next ? $next['cat'] : '',
+			'nextRead'  => $next ? $next['read'] : '',
+			'nextImage' => $next ? $next['image'] : '',
+		) ) );
+	}
 	return dwdr_render( $page );
 }
+
+/** One blog post's values for the templates. */
+function dwdr_post( $po ) {
+	$cats  = get_the_category( $po->ID );
+	$words = str_word_count( wp_strip_all_tags( (string) $po->post_content ) );
+	$ex    = has_excerpt( $po ) ? get_the_excerpt( $po ) : wp_trim_words( wp_strip_all_tags( (string) $po->post_content ), 30 );
+	return array(
+		'href'    => get_permalink( $po ),
+		'title'   => html_entity_decode( get_the_title( $po ), ENT_QUOTES ),
+		'cat'     => $cats ? html_entity_decode( $cats[0]->name, ENT_QUOTES ) : 'Article',
+		'read'    => max( 1, (int) ceil( $words / 230 ) ) . ' min read',
+		'excerpt' => html_entity_decode( wp_strip_all_tags( $ex ), ENT_QUOTES ),
+		'image'   => (string) get_the_post_thumbnail_url( $po, 'large' ),
+	);
+}
+
+/* ---------- Pages the design adds: /quote/ (form only) and /thank-you/ (after a form is sent) ---------- */
+
+add_action( 'init', function () {
+	if ( get_option( 'dwdr_pages_made' ) ) {
+		return;
+	}
+	foreach ( array( 'quote' => 'Get a Quote', 'thank-you' => 'Thank You' ) as $slug => $title ) {
+		if ( ! get_page_by_path( $slug ) ) {
+			wp_insert_post( array( 'post_type' => 'page', 'post_status' => 'publish', 'post_title' => $title, 'post_name' => $slug, 'post_content' => '<!-- Built by the Dream Web Digital plugin (templates/redesign). -->' ) );
+		}
+	}
+	update_option( 'dwdr_pages_made', 1, false );
+}, 31 );
+
+// The thank-you page is only for people who just sent a form.
+add_filter( 'wp_robots', function ( $r ) {
+	if ( is_page( 'thank-you' ) ) {
+		$r['noindex']  = true;
+		$r['nofollow'] = true;
+		unset( $r['max-image-preview'] );
+	}
+	return $r;
+} );
+add_filter( 'wpseo_robots', function ( $v ) { return is_page( 'thank-you' ) ? 'noindex, nofollow' : $v; } );
+add_filter( 'wpseo_title', function ( $t ) { return is_page( 'quote' ) ? 'Get a Free Website Quote | Dream Web Digital' : $t; }, 99 );
+add_filter( 'wpseo_metadesc', function ( $d ) { return is_page( 'quote' ) ? 'Tell me about your business and what your website needs to do. I reply the same day with a flat quote, no obligation.' : $d; }, 99 );
 
 /* ---------- Assets: only the redesign's own CSS/JS on these pages ---------- */
 
@@ -212,6 +272,7 @@ add_action( 'wp_enqueue_scripts', function () {
 		. '.admin-bar #dw-nav,.admin-bar #dw-menu>div{top:32px!important}@media(max-width:782px){.admin-bar #dw-nav,.admin-bar #dw-menu>div{top:46px!important}}'
 		. '@media(max-width:600px){#dw-hero-cta>#dw-hero-trust{flex-direction:row!important;flex-wrap:wrap;align-items:center!important;gap:6px 10px!important}}' // the design's phone rule stacked the trust strip too
 		. '#dw-intro-grid>div:last-child{max-width:none!important}#dw-intro-grid>div:last-child>p{max-width:860px}' // intro text fills its column on wide screens
+		. '.dwr-prose{display:flex;flex-direction:column;gap:18px;font-size:clamp(17px,1.35vw,20px);line-height:1.6;color:#333}.dwr-prose>*{margin:0}.dwr-prose h2{margin:clamp(18px,2.4vw,36px) 0 0;font-size:clamp(26px,2.8vw,42px);line-height:1.08;letter-spacing:-.03em;font-weight:600;color:#121212;text-wrap:balance}.dwr-prose h3{margin:12px 0 0;font-size:clamp(20px,1.8vw,26px);line-height:1.2;letter-spacing:-.02em;font-weight:600;color:#121212}.dwr-prose p{text-wrap:pretty}.dwr-prose ul,.dwr-prose ol{padding-left:1.2em;display:flex;flex-direction:column;gap:8px}.dwr-prose a{color:#121212;text-decoration:underline;text-decoration-color:#13A6EE;text-underline-offset:3px}.dwr-prose a:hover{color:#13A6EE}.dwr-prose img{max-width:100%;height:auto;border-radius:8px}.dwr-prose strong{color:#121212;font-weight:600}.dwr-prose blockquote{border-left:2px solid #13A6EE;padding-left:20px;color:#121212}'
 		. '.dwr-form[data-sent="1"] .dwr-fields{display:none}.dwr-note{font-size:14px;color:#F27A7A;min-height:1em}' );
 	wp_enqueue_script( 'dwdr', DWDP_URL . 'assets/redesign/redesign.js', array(), DWDP_VERSION, true );
 	// Theme, Elementor and the old page scripts have nothing to do on these pages.

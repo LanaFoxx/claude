@@ -13,8 +13,8 @@
       <!--/if:hasSite-->
     </div>
   </div>
-  <div data-dw-reveal="1" data-dw-intro="1" style="position:relative;overflow:hidden;border-radius:10px 10px 0 0;aspect-ratio:21/9;background:#1C1C1C;margin-top:clamp(40px,6vw,88px);transition-delay:.45s">
-    <div data-dw-px="1" style="position:absolute;left:0;right:0;top:-12%;bottom:-12%;will-change:transform"><img data-dw-zoom="1" src="{{ cover }}" alt="{{ name }} website" style="width:100%;height:100%;object-fit:cover;object-position:top;display:block"></div>
+  <div id="pj-cover" data-dw-reveal="1" data-dw-intro="1" style="position:relative;overflow:hidden;border-radius:10px 10px 0 0;aspect-ratio:16/10;background:#1C1C1C;margin-top:clamp(40px,6vw,88px);transition-delay:.45s">
+    <div style="position:absolute;inset:0"><img data-dw-zoom="1" src="{{ cover }}" alt="{{ name }} website" style="width:100%;height:100%;object-fit:cover;object-position:top;display:block"></div>
   </div>
 </section>
 
@@ -34,7 +34,7 @@
       </div>
       <figure data-dw-reveal="1" style="margin:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,220px);gap:clamp(20px,3vw,40px);align-items:end">
         <div style="position:relative;overflow:hidden;border-radius:8px;aspect-ratio:16/10;background:#EDEDED">
-          <div data-dw-px="1" style="position:absolute;left:0;right:0;top:-12%;bottom:-12%;will-change:transform"><img data-dw-zoom="1" src="{{ cover }}" alt="{{ name }} website, desktop view" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:bottom;display:block"></div>
+          <div style="position:absolute;inset:0"><img data-dw-zoom="1" src="{{ cover }}" alt="{{ name }} website, desktop view" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:top;display:block"></div>
         </div>
         <img src="{{ phone }}" alt="{{ name }} website on a phone" loading="lazy" style="width:100%;height:auto;display:block;filter:drop-shadow(0 24px 40px rgba(0,0,0,.25))">
       </figure>
@@ -58,8 +58,8 @@
       <span style="font-size:16px;color:#9A9A9A">{{ nextCat }}</span>
       <span style="display:inline-flex;align-items:center;gap:8px;font-size:15px;font-weight:600;color:inherit;margin-top:8px">View project <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12 12 2M4 2h8v8"></path></svg></span>
     </div>
-    <div style="position:relative;overflow:hidden;border-radius:8px;aspect-ratio:16/9;background:#1C1C1C">
-      <div data-dw-px="1" style="position:absolute;left:0;right:0;top:-12%;bottom:-12%;will-change:transform"><img data-dw-zoom="1" src="{{ nextCover }}" alt="{{ nextName }} website" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:top;display:block"></div>
+    <div style="position:relative;overflow:hidden;border-radius:8px;aspect-ratio:16/10;background:#1C1C1C">
+      <div style="position:absolute;inset:0"><img data-dw-zoom="1" src="{{ nextCover }}" alt="{{ nextName }} website" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:top;display:block"></div>
     </div>
   </a>
 </section>

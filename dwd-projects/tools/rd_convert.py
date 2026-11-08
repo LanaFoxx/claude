@@ -51,6 +51,9 @@ LINKS = {
     'Process.dc.html': '%HOME%/process/',
     'Hosting.dc.html': '%HOME%/hosting/',
     'Contact.dc.html': '%HOME%/contact/',
+    'Quote.dc.html': '%HOME%/quote/',
+    'Blog.dc.html': '%HOME%/blog/',
+    'Quote%20Thank%20You.dc.html': '%HOME%/thank-you/',
     'https://dreamwebdigital.com/blog/': '%HOME%/blog/',
     'https://dreamwebdigital.com/contact/': '%HOME%/contact/',
     'https://dreamwebdigital.com/checkout/?dwd-order=hosting': '%HOME%/checkout/?dwd-order=hosting',
@@ -90,6 +93,7 @@ def transform(html):
     for a, b in LINKS.items():
         html = html.replace('href="' + a + '"', 'href="' + b + '"')
     html = re.sub(r'href="Project\.dc\.html\?slug=([a-z0-9-]+)"', r'href="%HOME%/portfolio/\1/"', html)
+    html = re.sub(r'href="Article\.dc\.html\?slug=([a-z0-9-]+)"', r'href="%HOME%/\1/"', html)
     html = re.sub(r'(src|poster)="assets/([^"]+)"', lambda m: m.group(1) + '="%MEDIA%' + media_name(m.group(2)) + '"', html)
     # The menu: rendered hidden, toggled by redesign.js.
     html = re.sub(r'<sc-if value="\{\{ menuOpen \}\}"[^>]*>', '<div id="dw-menu" hidden>', html)
@@ -148,7 +152,7 @@ for n, o in (('Process.dc.html', 'process.html'), ('Hosting.dc.html', 'hosting.h
 
 # ---- Contact: the sent / not-sent states become two blocks toggled by script ----
 c = interior('Contact.dc.html', 'contact.html')
-c = c.replace('onSubmit="{{ submit }}"', 'class="dwr-form" novalidate')
+c = c.replace('onSubmit="{{ submit }}"', 'class="dwr-form" data-redirect="%HOME%/thank-you/" novalidate')
 c = re.sub(r'<sc-if value="\{\{ sent \}\}"[^>]*>', '<div class="dwr-sent" hidden>', c)
 c = re.sub(r'<sc-if value="\{\{ notSent \}\}"[^>]*>', '<div class="dwr-fields">', c)
 c = c.replace('</sc-if>', '</div>')
@@ -158,7 +162,8 @@ write('contact.html', c)
 p = interior('Portfolio.dc.html', 'portfolio.html')
 m = re.search(r'<sc-for list="\{\{ items \}\}"[^>]*>(.*?)</sc-for>', p, re.S)
 card = m.group(1).strip()
-card = card.replace('<a data-dw-reveal="1"', '<a data-dw-reveal="1" data-platform="{{ p.platform_key }}" data-dw-card="1"')
+card = re.sub(r'^<a ', '<a data-platform="{{ p.platform_key }}" data-dw-card="1" ', card, 1)
+assert 'data-dw-card' in card
 card = card.replace(' target="_blank" rel="noopener"', '')
 card = card.replace('{{ p.num }}', '<span data-dw-num>{{ p.num }}</span>')
 write('portfolio-card.html', card)
@@ -167,11 +172,44 @@ for key, f in (('showAll', 'all'), ('showWP', 'wordpress'), ('showWF', 'webflow'
     p = p.replace('onClick="{{ ' + key + ' }}"', 'data-filter="' + f + '"')
 write('portfolio.html', p)
 
+# ---- Quote: form only; posts to the site and goes to /thank-you/ ----
+q = interior('Quote.dc.html', 'quote.html')
+q = q.replace('onSubmit="{{ submit }}"', 'class="dwr-form" data-redirect="%HOME%/thank-you/" novalidate')
+write('quote.html', q)
+write('thank-you.html', interior('Quote Thank You.dc.html', 'thank-you.html'))
+
+# ---- Blog: post cards become a partial filled from WordPress posts ----
+bl = interior('Blog.dc.html', 'blog.html')
+m = re.search(r'<sc-for list="\{\{ posts \}\}"[^>]*>(.*?)</sc-for>', bl, re.S)
+write('blog-card.html', m.group(1).strip())
+write('blog.html', bl[:m.start()] + '{{{ cards }}}' + bl[m.end():])
+
+# ---- Article: the sample body becomes the published post content ----
+ar = interior('Article.dc.html', 'article.html')
+i = ar.index('<sc-for list="{{ sections }}"')
+j = ar.index('</sc-if>', ar.index('<sc-if value="{{ noBody }}"')) + len('</sc-if>')
+ar = ar[:i] + '<div class="dwr-prose" data-dw-reveal="1">{{{ content }}}</div>' + ar[j:]
+write('article.html', ar)
+
 # ---- Project ----
 pj = interior('Project.dc.html', 'project.html')
 pj = re.sub(r'<sc-if value="\{\{ hasSite \}\}"[^>]*>', '<!--if:hasSite-->', pj)
 pj = pj.replace('</sc-if>', '<!--/if:hasSite-->')
 write('project.html', pj)
+
+# ---- Case-study copy (COPY in Project.dc.html) → copy.json for PHP ----
+import subprocess, json
+src = read('Project.dc.html')
+mm = re.search(r'^const COPY = (\{.*?^\});', src, re.S | re.M)
+if mm:
+    out = subprocess.run(['node', '-e', 'const COPY=' + mm.group(1) + ';process.stdout.write(JSON.stringify(COPY))'], capture_output=True, text=True, check=True).stdout
+    data = json.loads(out)
+    for k in data:
+        for f in data[k]:
+            for a2, b2 in COPY_FIX.items():
+                data[k][f] = data[k][f].replace(a2, b2)
+    with open(os.path.join(OUT_T, 'copy.json'), 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=1)
 
 # ---- CSS ----
 seen, lines = set(), []

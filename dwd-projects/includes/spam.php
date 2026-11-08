@@ -52,7 +52,7 @@ mark();var b=f.querySelector('button[type=submit]'),n=f.querySelector(rd?'.dwr-n
 if(rd&&!n){n=document.createElement('p');n.className='dwr-note';n.setAttribute('role','status');(f.querySelector('.dwr-fields')||f).appendChild(n);}
 if(b){b.disabled=true;}var d=new FormData(f);d.append('action','dwdp_contact');
 fetch('<?php echo $ajax; // phpcs:ignore ?>',{method:'POST',body:d,credentials:'same-origin'}).then(function(r){return r.json();}).then(function(r){
-if(r&&r.success){f.reset();try{document.dispatchEvent(new Event('dwd:lead'));}catch(x){}if(rd){n.textContent='';f.setAttribute('data-sent','1');var ok=f.querySelector('.dwr-sent');if(ok){ok.hidden=false;}return;}if(n){n.textContent='Thanks! Your message is on its way. I’ll reply the same day.';n.style.color='#1B7EC3';}}
+if(r&&r.success){f.reset();try{document.dispatchEvent(new Event('dwd:lead'));}catch(x){}if(rd){n.textContent='';var go=f.getAttribute('data-redirect');if(go){if(b){b.textContent='Sent ✓';}setTimeout(function(){location.href=go;},700);return;}f.setAttribute('data-sent','1');var ok=f.querySelector('.dwr-sent');if(ok){ok.hidden=false;}return;}if(n){n.textContent='Thanks! Your message is on its way. I’ll reply the same day.';n.style.color='#1B7EC3';}}
 else{if(n){n.textContent=(r&&r.data)||'Sorry, that didn’t send. Please call (772) 210-1728.';n.style.color='#D63638';}}
 }).catch(function(){if(n){n.textContent='Sorry, that didn’t send. Please call (772) 210-1728.';n.style.color='#D63638';}}).then(function(){if(b){b.disabled=false;}});
 },true);
@@ -107,9 +107,22 @@ function dwdp_ajax_contact() {
 	// The redesigned Contact form also asks for a phone number and the current website.
 	$phone = sanitize_text_field( wp_unslash( $_POST['phone'] ?? '' ) );
 	$site  = esc_url_raw( wp_unslash( $_POST['website'] ?? '' ) );
+	// The Quote form adds business name, budget, timeline and how they heard about Dream Web Digital.
+	$q = array();
+	foreach ( array( 'business' => 'Business', 'budget' => 'Budget', 'timeline' => 'Timeline', 'source' => 'Heard about me' ) as $k => $label ) {
+		$v = sanitize_text_field( wp_unslash( $_POST[ $k ] ?? '' ) );
+		$v = strtr( $v, array( 'under-2500' => 'Under $2,500', '2500-5000' => '$2,500 to $5,000', '5000-10000' => '$5,000 to $10,000', '10000-plus' => '$10,000 or more', 'not-sure' => 'Not sure yet', 'asap' => 'As soon as possible', '1-3-months' => '1 to 3 months', 'exploring' => 'Just exploring', 'google-search' => 'Google search', 'google-ads' => 'Google ad', 'upwork' => 'Upwork', 'referral' => 'Referral', 'social' => 'Social media' ) );
+		$v = 'month' === $v ? 'Within a month' : ( 'other' === $v ? 'Other' : $v );
+		if ( '' !== $v ) {
+			$q[ $k ] = array( $label, $v );
+		}
+	}
 	$extra = ( $phone ? "Phone: {$phone}\n" : '' ) . ( $site ? "Website: {$site}\n" : '' );
+	foreach ( $q as $x ) {
+		$extra .= $x[0] . ': ' . $x[1] . "\n";
+	}
 	$body  = "Name: {$name}\nEmail: {$email}\n{$extra}Message: {$message}\n\n— Sent from the form on " . esc_url_raw( wp_get_referer() ?: home_url( '/' ) );
-	$sent = wp_mail( DWDP_CONTACT_TO, 'Website inquiry from ' . $name, $body, array( 'Reply-To: ' . $name . ' <' . $email . '>' ) );
+	$sent = wp_mail( DWDP_CONTACT_TO, ( $q ? 'Quote request from ' : 'Website inquiry from ' ) . $name, $body, array( 'Reply-To: ' . $name . ' <' . $email . '>' ) );
 	// File it in Dream Desk like the Elementor forms (contact, entry, "Reply to …" task).
 	if ( function_exists( 'dwdc_file_entry' ) ) {
 		$fields = array(
@@ -117,9 +130,13 @@ function dwdp_ajax_contact() {
 			array( 'id' => 'email', 'label' => 'Email', 'value' => $email ),
 			array( 'id' => 'phone', 'label' => 'Phone', 'value' => $phone ),
 			array( 'id' => 'website', 'label' => 'Current website', 'value' => $site ),
+			array( 'id' => 'company', 'label' => 'Business', 'value' => $q['business'][1] ?? '' ),
+			array( 'id' => 'budget', 'label' => 'Budget', 'value' => $q['budget'][1] ?? '' ),
+			array( 'id' => 'timeline', 'label' => 'Timeline', 'value' => $q['timeline'][1] ?? '' ),
+			array( 'id' => 'heard', 'label' => 'Heard about me', 'value' => $q['source'][1] ?? '' ),
 			array( 'id' => 'message', 'label' => 'Message', 'value' => $message ),
 		);
-		$cid = dwdc_file_entry( 'Contact', array_values( array_filter( $fields, function ( $f ) { return '' !== $f['value']; } ) ) );
+		$cid = dwdc_file_entry( $q ? 'Quote' : 'Contact', array_values( array_filter( $fields, function ( $f ) { return '' !== $f['value']; } ) ) );
 		if ( $cid ) {
 			dwdc_ensure_client( $cid );
 			dwdc_add_task( 'Reply to ' . get_the_title( $cid ), $cid, current_time( 'Y-m-d' ) );
