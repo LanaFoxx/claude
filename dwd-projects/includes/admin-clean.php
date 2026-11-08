@@ -195,7 +195,7 @@ add_action( 'admin_head', function () {
 	/* Personal switch (coral text; coral box with white text when in Personal mode) */
 	#adminmenu li.dwd-pers-switch > a, #adminmenu li.dwd-pers-switch.current > a { background: transparent !important; color: #FF8A6E !important; box-shadow: none !important; }
 	#adminmenu li.dwd-pers-switch > a .wp-menu-image::before, #adminmenu li.dwd-pers-switch > a .wp-menu-name { color: #FF8A6E !important; }
-	body.dwd-pmode #adminmenu li.dwd-pers-switch > a { background: #FF6F4F !important; color: #fff !important; }
+	body.dwd-pmode #adminmenu li.dwd-pers-switch > a { background: #E8573B !important; color: #fff !important; }
 	body.dwd-pmode #adminmenu li.dwd-pers-switch > a .wp-menu-image::before, body.dwd-pmode #adminmenu li.dwd-pers-switch > a .wp-menu-name { color: #fff !important; }
 	body:not(.dwd-pmode) #adminmenu li.dwd-pers { display: none !important; }
 	body.dwd-pmode #adminmenu > li:not(.dwd-brand):not(#toplevel_page_client-desk):not(.dwd-pers):not(.dwd-pers-switch) { display: none !important; }

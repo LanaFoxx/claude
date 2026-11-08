@@ -102,7 +102,7 @@ function dwda_app() {
 	dwda_head( 'Dream Desk' );
 	?>
 <link rel="stylesheet" href="<?php echo esc_url( DWDP_URL . 'assets/crm.css?ver=' . DWDP_VERSION ); ?>">
-<style>html,body{margin:0;background:#F1F4F8}body{-webkit-tap-highlight-color:transparent}.dwdc{padding-top:env(safe-area-inset-top)}</style>
+<style>html,body{margin:0;background:#F4F8F6}body{-webkit-tap-highlight-color:transparent}.dwdc{padding-top:env(safe-area-inset-top)}</style>
 </head>
 <body class="dwdc-standalone">
 <div id="dwdc-app" class="dwdc"><div class="dwdc-loading">Loading Dream Desk…</div></div>
