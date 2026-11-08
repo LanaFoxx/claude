@@ -190,6 +190,15 @@ ci, cj = _cut(cb, '<footer', '</footer>', True)
 hi, hj = _cut(hb, '<footer', '</footer>', True)
 if ci > -1 and hi > -1:
     hb = hb[:hi] + cb[ci:cj] + hb[hj:]
+# Michael: "See all work" is a blue button, centered and full width.
+_k = hb.find('>See all work')
+if _k > -1:
+    _ds = hb.rfind('<div data-dw-reveal="1" style="display:flex;justify-content:flex-end;', 0, _k)
+    _as = hb.rfind('<a ', 0, _k)
+    _ae = hb.find('</a>', _k)
+    if _ds > -1:
+        _ins = hb[_k + 1:_ae]
+        hb = hb[:_ds] + '<div data-dw-reveal="1" style="display:flex;margin-top:clamp(40px,5vw,72px)"><a class="dwr-allwork" href="%HOME%/portfolio/">' + _ins + '</a></div>' + hb[hb.find('</div>', _ae) + 6:]
 write('home.html', hb)
 
 def interior(name, out):
