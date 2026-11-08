@@ -140,7 +140,7 @@
 		return '<span class="dwdc-nm"><span>' + (k ? '<a class="dwdc-clink" href="#cl/' + k.id + '">' + esc(k.name) + '</a>' : '<b class="nm2">' + esc(c.person || '—') + '</b>') + (em ? '<small>' + esc(em) + '</small>' : '') + '</span></span>';
 	}
 	function reload() {
-		return api('').then(function (r) { S.contacts = r.contacts.filter(Boolean); S.tasks = r.tasks.filter(Boolean); S.clients = (r.clients || []).filter(Boolean); S.money = r.money || {}; S.costs = r.costs || {}; S.trends = r.trends || null; S.wins = r.wins || { list: [], undated: 0 }; });
+		return api('').then(function (r) { S.contacts = r.contacts.filter(Boolean); S.tasks = r.tasks.filter(Boolean); S.clients = (r.clients || []).filter(Boolean); S.money = r.money || {}; S.costs = r.costs || {}; S.trends = r.trends || null; S.wins = r.wins || { list: [], undated: 0 }; S.ads = r.ads || null; });
 	}
 
 	/* ---------- routing ---------- */
@@ -1164,10 +1164,21 @@
 		var billed = S.contacts.reduce(function (s, c) { return s + lifetime(c); }, 0);
 		var lastPay = S.contacts.filter(function (c) { return c.last_pay; }).sort(function (a, b) { return a.last_pay.date < b.last_pay.date ? 1 : -1; })[0];
 		var seg = function (n, cls) { return n ? '<i class="' + cls + '" style="flex:' + n + '"></i>' : ''; };
-		var c1 = card('cd-clients', chead('users', 'Clients', 'clients'),
-			'<a class="dwdc-hero dwdc-herolink" href="#clients"><strong>' + S.clients.length + '</strong> clients on file ' + ic('right', 14) + '</a><div class="dwdc-segbar">' + seg(nP, 's1') + seg(nH, 's2') + seg(nPast, 's3') + '</div>'
-			+ '<a class="dwdc-seg" href="#clients"><i class="s1"></i>Project clients<b>' + nP + '</b></a><a class="dwdc-seg" href="#clients"><i class="s2"></i>Hosting only<b>' + nH + '</b></a><a class="dwdc-seg" href="#clients"><i class="s3"></i>Past clients<b>' + nPast + '</b></a>',
-			'<footer class="dwdc-grid4">' + frow('Active Projects', active.length, 'projects/active') + frow('Onboarding', onboardList().length, 'onboarding') + frow('Hosting', host.length, 'hosting') + frow('All Clients', S.clients.length, 'clients') + '</footer>');
+		var c1 = (function () {
+			var A = S.ads || {}, G = A.google, K = A.connects || {}, LD = A.leads || {};
+			var ago = function (at) { var m = Math.round((Date.now() - new Date(String(at).replace(' ', 'T')).getTime()) / 60000); return m < 90 ? Math.max(1, m) + ' min ago' : m < 2880 ? Math.round(m / 60) + ' h ago' : Math.round(m / 1440) + ' days ago'; };
+			var gpart = G
+				? '<button type="button" class="dwdc-mnow dwdc-adg" data-adsmodal><span class="dwdc-lbl">Google Ads · this week</span><strong>' + money(G.week.cost) + '</strong><small>' + G.week.clicks + ' clicks · ' + Math.round(G.week.conv) + ' conversion' + (Math.round(G.week.conv) === 1 ? '' : 's') + ' · ' + money(G.month.cost) + ' this month</small></button>'
+				: '<div class="dwdc-adg off"><span class="dwdc-lbl">Google Ads</span><p>Not connected yet. One copy-and-paste in Google Ads and your spend, clicks and conversions show up here.</p><button type="button" class="dwdc-btn sm" data-adsconnect>Connect Google Ads</button></div>';
+			var kpart = '<button type="button" class="dwdc-mnow dwdc-adk" data-connmodal><span class="dwdc-lbl">Connects · this week</span><strong>' + money(K.week || 0) + '</strong><small>' + money(K.month || 0) + ' this month · ' + money(K.lastmonth || 0) + ' last month</small></button>';
+			var total = (G ? G.month.cost : 0) + (K.month || 0);
+			return card('cd-clients cd-ads', chead('bolt', 'Advertising', ''),
+				'<div class="dwdc-mtop">' + gpart + kpart + '</div>'
+				+ (K.last ? '<p class="dwdc-adnote">Connects from your Upwork file, last purchase ' + fmt(K.last) + (G ? ' · Google Ads updated ' + ago(G.at) : '') + '</p>' : ''),
+				'<footer>' + '<a class="dwdc-frow" href="#money" data-adsmodal><span>Total ad spend this month</span><b>' + money(total) + '</b>' + ic('right', 12) + '</a>'
+				+ '<a class="dwdc-frow" href="#leads"><span>Leads from Google Ads</span><b>' + (LD.month || 0) + ' <small class="dwdc-frow-sub">this month · ' + (LD.lastmonth || 0) + ' last</small></b>' + ic('right', 12) + '</a>'
+				+ frow('All Clients', S.clients.length, 'clients') + '</footer>');
+		})();
 		var plist = active.slice().sort(function (x, y) { return num(y.price) - num(x.price) || (x.name < y.name ? -1 : 1); });
 		var c2 = card('cd-projects cd-plist', chead('brief', 'Projects <span class="dwdc-hcnt">(' + active.length + ')</span>', 'projects/active'),
 			'<div class="dwdc-pl-head"><span>Project · Client</span><span>Price</span><span>Owed</span></div>'
@@ -1866,6 +1877,26 @@
 				}).join('') : emptyRow('No jobs found in this period.');
 			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide">' + head('Jobs won', esc(m.label), shortD(m.from) + (m.to !== m.from ? '–' + shortD(m.to) : '')) + wbody + '</div>';
 		}
+		if (m.type === 'ads') {
+			var G2 = (S.ads || {}).google;
+			if (!G2) { S.modal = { type: 'adsconnect' }; return modal(); }
+			var per = [['Today', G2.today], ['This week', G2.week], ['Last week', G2.lastweek], ['This month', G2.month], ['Last month', G2.lastmonth], ['Last 30 days', G2.last30]];
+			var prow = function (l, x) { return '<div class="dwdc-arow"><span>' + l + '</span><strong>' + money(x.cost) + '</strong><em>' + x.clicks.toLocaleString() + '</em><em>' + (x.impr ? (x.clicks / x.impr * 100).toFixed(1) + '%' : '—') + '</em><em>' + (x.clicks ? money(x.cost / x.clicks) : '—') + '</em><em>' + (+x.conv).toFixed(x.conv % 1 ? 1 : 0) + '</em><em>' + (x.conv ? money(x.cost / x.conv) : '—') + '</em></div>'; };
+			var ahead = '<div class="dwdc-arow head"><span></span><span>Spend</span><span>Clicks</span><span>CTR</span><span>Avg CPC</span><span>Conv.</span><span>Per conv.</span></div>';
+			var camps = (G2.campaigns || []).slice().sort(function (a, b) { return b.cost - a.cost; });
+			var crow = function (c) { return '<div class="dwdc-arow"><span><b>' + esc(c.name) + '</b><small>' + esc(String(c.status).toLowerCase()) + (c.budget ? ' · ' + money(c.budget) + '/day' : '') + '</small></span><strong>' + money(c.cost) + '</strong><em>' + c.clicks.toLocaleString() + '</em><em>' + (c.impr ? (c.clicks / c.impr * 100).toFixed(1) + '%' : '—') + '</em><em>' + (c.clicks ? money(c.cost / c.clicks) : '—') + '</em><em>' + (+c.conv).toFixed(c.conv % 1 ? 1 : 0) + '</em><em>' + (c.conv ? money(c.cost / c.conv) : '—') + '</em></div>'; };
+			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide">' + head('Advertising', 'Google', 'Ads')
+				+ ahead + per.map(function (x) { return prow(x[0], x[1]); }).join('')
+				+ '<h3 class="dwdc-ch3">Campaigns this month</h3>' + (camps.length ? ahead.replace('<span></span>', '<span>Campaign</span>') + camps.map(crow).join('') : emptyRow('No campaign activity this month.'))
+				+ '<p class="dwdc-wins-foot">' + esc(G2.account || 'Google Ads') + ' · updated ' + fmt(String(G2.at).slice(0, 10)) + ' ' + String(G2.at).slice(11, 16) + '. Conversions are the leads, calls and bookings the website reports to Google Ads.</p></div>';
+		}
+		if (m.type === 'adsconnect') {
+			var steps = ['In Google Ads, open <b>Tools</b> (wrench icon) → <b>Bulk actions</b> → <b>Scripts</b>.', 'Click the blue <b>+</b> → <b>New script</b>. Name it <b>Dream Desk report</b>.', 'Delete what’s in the editor, then paste the script below (use <b>Copy script</b>).', 'Click <b>Authorize</b> and allow access (it only reads reports), then <b>Preview</b>. The log should end with <b>200</b>.', 'Click <b>Save</b>, close the editor, and in the <b>Frequency</b> column choose <b>Hourly</b>.'];
+			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide">' + head('Advertising', 'Connect', 'Google Ads')
+				+ '<ol class="dwdc-adsteps">' + steps.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ol>'
+				+ (m.script ? '<textarea class="dwdc-adscript" readonly rows="10">' + esc(m.script) + '</textarea><div class="dwdc-farow end"><button type="button" class="dwdc-btn" data-adscopy>Copy script</button></div>' : emptyRow('Loading the script…'))
+				+ '<p class="dwdc-wins-foot">The script runs inside your Google Ads account and only reads spend, clicks, impressions and conversions. It never changes campaigns or billing. Your numbers appear here within the hour.</p></div>';
+		}
 		if (m.type === 'connects') {
 			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide">' + head('Upwork', 'Connects', 'spending') + connSpend() + '<div class="dwdc-farow end"><a class="dwdc-btn2" href="#money" data-close-modal>Open in Money Stats</a></div></div>';
 		}
@@ -2239,6 +2270,13 @@
 			S.modal = { type: 'wins', from: wp[0], to: wp[1], label: wp[2] }; render();
 			return;
 		}
+		if (t.closest('[data-adsconnect]') || (t.closest('[data-adsmodal]') && !(S.ads && S.ads.google))) {
+			e.preventDefault(); S.modal = { type: 'adsconnect' }; render();
+			api('/ads-script').then(function (x) { if (S.modal && S.modal.type === 'adsconnect') { S.modal.script = x.script; render(); } }).catch(fail);
+			return;
+		}
+		if (t.closest('[data-adsmodal]')) { e.preventDefault(); S.modal = { type: 'ads' }; render(); return; }
+		if (t.closest('[data-adscopy]')) { var ta = app.querySelector('.dwdc-adscript'); if (ta) { ta.select(); (navigator.clipboard ? navigator.clipboard.writeText(ta.value) : Promise.reject()).then(function () { toast('Script copied'); }, function () { document.execCommand('copy'); toast('Script copied'); }); } return; }
 		if (t.closest('[data-connmodal]')) { e.preventDefault(); S.modal = { type: 'connects' }; render(); return; }
 		if (t.closest('[data-owed]')) { S.modal = { type: 'owed' }; render(); return; }
 		if ((el = t.closest('[data-month]'))) {
@@ -2522,7 +2560,7 @@
 	/* ---------- start ---------- */
 	document.body.classList.add('dwdc-app-on');
 	api('').then(function (r) {
-		S.contacts = r.contacts.filter(Boolean); S.tasks = r.tasks.filter(Boolean); S.clients = (r.clients || []).filter(Boolean); S.money = r.money || {}; S.costs = r.costs || {}; S.trends = r.trends || null; S.wins = r.wins || { list: [], undated: 0 };
+		S.contacts = r.contacts.filter(Boolean); S.tasks = r.tasks.filter(Boolean); S.clients = (r.clients || []).filter(Boolean); S.money = r.money || {}; S.costs = r.costs || {}; S.trends = r.trends || null; S.wins = r.wins || { list: [], undated: 0 }; S.ads = r.ads || null;
 		var m = /[?&]contact=(\d+)/.exec(location.search), em = /[?&]email=([^&]+)/.exec(location.search);
 		var who = m ? contact(+m[1]) : em ? S.contacts.find(function (c) { return c.email && c.email.toLowerCase() === decodeURIComponent(em[1]).toLowerCase(); }) : null;
 		if (who) { location.hash = 'client/' + who.id; }
