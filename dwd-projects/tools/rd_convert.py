@@ -140,6 +140,11 @@ def write(name, html):
 chrome = read('Site Chrome.dc.html')
 add_css(chrome, 'Site Chrome')
 cb = close_menu_if(transform(body_of(chrome)))
+# Michael: no Hosting item in the top menu or the phone menu (the footer keeps it).
+_ns = cb.find('<nav id="dw-nav"'); _me = cb.find('<main')
+if _ns > -1 and _me > -1:
+    _head = re.sub(r'\s*<a\b[^>]*href="%HOME%/hosting/"[^>]*>Hosting</a>', '', cb[_ns:_me])
+    cb = cb[:_ns] + _head + cb[_me:]
 top, bottom = cb.split('<main>{{ children }}</main>')
 write('chrome-top.html', top + '<main id="content">')
 write('chrome-bottom.html', '</main>' + bottom)
