@@ -252,6 +252,12 @@ function dwdr_body( $page ) {
 		// Keep the design's "Next project" section; the case study itself uses the two-column layout below.
 		$k    = strrpos( $full, '<section' );
 		$next = false === $k ? '' : substr( $full, $k );
+		// Next project: shown on the same laptop + phone mockup as the portfolio.
+		if ( $nx ) {
+			$mock = dwdr_mockup_card( '<div class="pf-media"></div><div class="pf-copy"></div>', $nx );
+			$mock = preg_replace( '#^<div class="pf-media">(.*)</div><div class="pf-copy"></div>$#s', '$1', $mock );
+			$next = preg_replace( '#<div style="position:relative;overflow:hidden;border-radius:8px;aspect-ratio:16/10;background:\#1C1C1C">\s*<div style="position:absolute;inset:0">.*?</div>\s*</div>#s', str_replace( '$', '\\$', $mock ), $next, 1 );
+		}
 		return dwdr_case( $po, $p, $cp ) . $next;
 	}
 	if ( 'blog' === $page ) {
@@ -497,6 +503,7 @@ add_action( 'wp_enqueue_scripts', function () {
 		. '@media(max-width:980px){.dwr-allwork{width:min(78vw,300px);margin:0 auto}}' // phones/tablets: See all work as wide as the phone image above it
 		. '@media(max-width:600px){.admin-bar #dw-nav[data-floating="1"]{top:0!important}}' // phones: the WP admin bar scrolls away, so the scrolled header sits at the very top
 		. '@media(max-width:600px){#dw-nav[data-floating][data-theme="light"] #dw-logo-white{display:block!important;filter:none!important}#dw-nav[data-floating][data-theme="light"] #dw-logo-dark{display:none!important}}' // phones: white logo on the dark bar over white sections
+		. '@media(max-width:600px){#dw-nav:not([data-floating="1"]){background:#121212!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;color:#fff!important}#dw-nav:not([data-floating="1"]) #dw-logo-white{display:block!important;filter:none!important}#dw-nav:not([data-floating="1"]) #dw-logo-dark{display:none!important}}' // phones: solid dark header at the top of every page (no see-through bar)
 		. '.dw-menu-open #dw-nav{visibility:hidden!important}@media(max-width:782px){.admin-bar #dw-menu>div{top:0!important;padding-top:68px!important}}' // open menu covers the header (no double logo)
 		. '@media(max-width:600px){#services h2{font-size:clamp(26px,8.6vw,46px)!important}#services h2 [data-dw-line]{white-space:nowrap}}' // phones: Everything included heading on two lines
 		. '#ar-hero{padding-bottom:clamp(56px,7vw,104px)!important}#ar-hero>div[data-dw-intro]:last-child{border-radius:12px!important;max-height:none!important}span[style*="letter-spacing:.14em"][style*="uppercase"],.dwr-eyebrow,.dwr-facts dt,.dwr-trust small{font-size:14px!important;letter-spacing:.12em!important}@media(max-width:600px){span[style*="letter-spacing:.14em"][style*="uppercase"],.dwr-eyebrow{font-size:13px!important}}' // article hero spacing; bigger eyebrow labels
