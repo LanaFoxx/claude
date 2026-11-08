@@ -186,6 +186,12 @@ c = c.replace('onSubmit="{{ submit }}"', 'class="dwr-form" data-redirect="%HOME%
 c = re.sub(r'<sc-if value="\{\{ sent \}\}"[^>]*>', '<div class="dwr-sent" hidden>', c)
 c = re.sub(r'<sc-if value="\{\{ notSent \}\}"[^>]*>', '<div class="dwr-fields">', c)
 c = c.replace('</sc-if>', '</div>')
+# Michael: no "Three steps to a flat quote" section on Contact.
+k = c.find('Three steps to')
+if k > -1:
+    i = c.rfind('<section', 0, k)
+    j = c.find('</section>', k) + len('</section>')
+    c = c[:i] + c[j:]
 write('contact.html', c)
 
 # ---- Portfolio: the card loop becomes its own partial ----
