@@ -151,6 +151,12 @@ hb = hb.replace('id="dw-laptop-rec"', 'id="dw-laptop-rec" data-src="%MEDIA%dwd-g
 hb = hb.replace('id="dw-laptop-brands"', 'id="dw-laptop-brands" data-src="%MEDIA%dwd-goods-brands.mp4"')
 # Their posters wait too (one is a 400 KB image from another site).
 hb = re.sub(r'(<video id="dw-laptop-(?:rec|brands)"[^>]*?) poster="', r'\1 data-poster="', hb)
+# Services rows on the homepage: thin line icons instead of 01–06 (Michael's request).
+SERVICE_ICONS = {'01': '<path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/>', '02': '<path d="M21 4v5h-5"/><path d="M3 20v-5h5"/><path d="M4.6 9A8 8 0 0 1 18 6.3L21 9"/><path d="M3 15l3 2.7A8 8 0 0 0 19.4 15"/>', '03': '<rect x="2" y="4.5" width="14.5" height="10" rx="1.2"/><path d="M1 18h12.5"/><rect x="17" y="8.5" width="6" height="11.5" rx="1.4"/><path d="M19.4 17.8h1.2"/>', '04': '<circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19"/><path d="M12 2.5c2.6 2.6 3.9 5.8 3.9 9.5s-1.3 6.9-3.9 9.5c-2.6-2.6-3.9-5.8-3.9-9.5S9.4 5.1 12 2.5z"/>', '05': '<rect x="2" y="3.5" width="20" height="13.5" rx="1.6"/><path d="M8 21h8"/><path d="M12 17v4"/><circle cx="12" cy="9" r="2.4"/><path d="M7.8 14.6a4.4 4.4 0 0 1 8.4 0"/>', '06': '<path d="M3.5 14v-2a8.5 8.5 0 0 1 17 0v2"/><path d="M20.5 15a2 2 0 0 1-2 2h-1v-5.5h1a2 2 0 0 1 2 2z"/><path d="M3.5 15a2 2 0 0 0 2 2h1v-5.5h-1a2 2 0 0 0-2 2z"/><path d="M18.5 17v.5a3 3 0 0 1-3 3H13"/>'}
+for num, paths in SERVICE_ICONS.items():
+    old = '<span style="flex:0 0 56px;font-size:14px;font-weight:500;color:#6B6B6B">' + num + '</span>'
+    new = '<span class="dwr-sicon" aria-hidden="true" style="flex:0 0 56px;align-self:center;display:flex;color:#13A6EE"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">' + paths + '</svg></span>'
+    hb = hb.replace(old, new, 1)
 write('home.html', hb)
 
 def interior(name, out):
