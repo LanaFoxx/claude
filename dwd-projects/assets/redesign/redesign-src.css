@@ -83,7 +83,6 @@ a{color:#13A6EE}a:hover{color:#3FB5F1}
 #dw-hero-cta{align-items:flex-start !important}
 #dw-hero-cta>div{justify-content:flex-start !important}
 #dw-process-sticky{position:static !important}
-#dw-quote-wide{grid-column:auto !important}
 #dw-work-f{aspect-ratio:4/3 !important}
 #dw-laptop-scroll{height:auto !important;min-height:0 !important}
 #dw-laptop-stage,#dw-phone-stage{position:static !important}
@@ -137,7 +136,9 @@ footer{padding-top:40px !important}
 #services [data-dw-row]>span:nth-child(3){flex:1 1 100% !important;max-width:none !important}
 #services [data-dw-row]>span:nth-child(4){display:none !important}
 #process li{grid-template-columns:40px minmax(0,1fr) !important;gap:12px !important;padding:24px 0 !important}
-#dw-quote-wide blockquote{font-size:clamp(26px,8vw,36px) !important}
+#dw-rating{gap:16px 24px !important}
+#dw-rating-num{font-size:96px !important}
+#dw-rating-stars{font-size:30px !important;letter-spacing:4px !important}
 #contact h2{font-size:clamp(56px,20vw,96px) !important}
 #dw-contact-grid a{font-size:22px !important;padding:18px 0 !important}
 footer{padding-left:18px !important;padding-right:18px !important}
