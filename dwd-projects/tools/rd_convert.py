@@ -83,12 +83,24 @@ COPY_FIX = {
     '500+ Websites Built': '200+ Websites Built',
     'more than 500 websites': 'more than 200 websites',
     'A custom WordPress website for a personal training business, built mobile-first so clients can book from their phone.':
-        'Launch website for Finesse, the fitness app by Dancing with the Stars pro Witney Carson, built mobile-first to drive App Store downloads.',
+        'The launch site for Witney Carson’s fitness app, built to drive App Store downloads.',
+    'A bold, product-forward WordPress website for a healthy vending company, built from scratch on Elementor with video throughout.':
+        'A bold, video-led WordPress site for a premium vending company.',
 }
 
 def transform(html):
     for a, b in COPY_FIX.items():
         html = html.replace(a, b)
+    # Michael: body text should never run much wider than its heading. Paragraphs get at most 600px.
+    def cap(m):
+        t = m.group(0)
+        if 'style="' not in t:
+            return t
+        mw = re.search(r'max-width:(\d+)px', t)
+        if not mw:
+            return t.replace('style="', 'style="max-width:600px;', 1)
+        return t if int(mw.group(1)) <= 600 else t.replace(mw.group(0), 'max-width:600px')
+    html = re.sub(r'<p\b[^>]*>', cap, html)
     html = re.sub(r'<[a-zA-Z][^>]*>', lambda m: fix_tag(m.group(0)), html)
     for a, b in LINKS.items():
         html = html.replace('href="' + a + '"', 'href="' + b + '"')
