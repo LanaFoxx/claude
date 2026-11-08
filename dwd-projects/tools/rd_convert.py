@@ -81,6 +81,7 @@ def fix_tag(tag):
 COPY_FIX = {
     '500+ websites': '200+ websites',
     '500+ Websites Built': '200+ Websites Built',
+    'letter-spacing:-.04em;line-height:1">500+</span>': 'letter-spacing:-.04em;line-height:1">200+</span>',
     'more than 500 websites': 'more than 200 websites',
     'A custom WordPress website for a personal training business, built mobile-first so clients can book from their phone.':
         'The launch site for Witney Carson’s fitness app, built to drive App Store downloads.',

@@ -75,9 +75,11 @@ a{color:#13A6EE}a:hover{color:#3FB5F1}
 @media (max-width:980px){
 #dw-nav-links{display:none !important}
 #dw-nav-menu{display:inline-flex !important}
-#dw-hero-row,#dw-laptop-stage,#dw-phone-stage,#dw-work-grid-a,#dw-work-grid-b,#dw-intro-grid,#dw-process-grid,#dw-quotes-grid,#dw-contact-grid,#dw-foot-grid{grid-template-columns:1fr !important}
+#dw-hero-row,#dw-laptop-stage,#dw-phone-stage,#dw-work-grid-a,#dw-work-grid-b,#dw-process-grid,#dw-quotes-grid,#dw-contact-grid,#dw-foot-grid{grid-template-columns:1fr !important}
 #dw-hero-row p{white-space:normal !important}
-#dw-skills{grid-template-columns:1fr !important}
+#dw-intro-card{grid-template-columns:160px minmax(0,1fr) !important;align-items:start !important}
+#dw-intro-photo{width:160px !important}
+#dw-intro-stats{grid-column:1 / -1;flex-direction:row !important;gap:40px !important;border-left:0 !important;padding-left:0 !important;border-top:1px solid #333;padding-top:20px}
 #dw-hero-cta{align-items:flex-start !important}
 #dw-hero-cta>div{justify-content:flex-start !important}
 #dw-process-sticky{position:static !important}
@@ -113,9 +115,11 @@ a{color:#13A6EE}a:hover{color:#3FB5F1}
 #dw-hero-trust{gap:8px 12px !important;justify-content:flex-start !important}
 #dw-hero-row p{white-space:normal !important}
 #dw-hero-media{margin-top:28px !important;padding-top:48px !important}
-#dw-intro-grid{gap:28px !important;margin-top:40px !important}
-#dw-intro-grid>figure{order:2}
-#dw-intro-grid>figure>div{aspect-ratio:16/10 !important}
+#dw-intro-card{grid-template-columns:1fr !important;gap:24px !important;padding:24px !important;margin-top:40px !important}
+#dw-intro-photo{width:112px !important}
+#dw-intro-stats{gap:28px !important}
+#dw-intro-stats span:first-child{font-size:40px !important}
+#dw-skills{gap:12px 20px !important;margin-top:32px !important}
 footer{padding-top:40px !important}
 #dw-foot-grid{grid-template-columns:1fr 1fr !important;gap:28px 20px !important;padding-top:28px !important}
 #dw-foot-grid>div:first-child{grid-column:1 / -1}
@@ -126,7 +130,6 @@ footer{padding-top:40px !important}
 #dw-foot-bottom{justify-content:center !important;text-align:center}
 #dw-hero-track>div{gap:12px !important;padding-right:12px !important}
 #dw-hero-track>div>a{width:min(84vw,360px) !important}
-#dw-skills{grid-template-columns:1fr 1fr !important;gap:8px 16px !important}
 #dw-about-stats{grid-template-columns:1fr 1fr !important;gap:20px 16px !important}
 #services [data-dw-row]{gap:8px 16px !important;padding:22px 0 !important}
 #services [data-dw-row]>span:nth-child(1){flex:0 0 36px !important}
