@@ -159,6 +159,9 @@ for num, paths in SERVICE_ICONS.items():
     old = '<span style="flex:0 0 56px;font-size:14px;font-weight:500;color:#6B6B6B">' + num + '</span>'
     new = '<span class="dwr-sicon" aria-hidden="true" style="flex:0 0 56px;align-self:center;display:flex;color:#13A6EE"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">' + paths + '</svg></span>'
     hb = hb.replace(old, new, 1)
+# Michael: the laptop's second Goods section must show in full (the design cropped off the four promise cards).
+hb = re.sub(r'<div style="position:relative;overflow:hidden;aspect-ratio:2880/945">(<img [^>]*?)style="position:absolute;left:0;top:0;width:100%;height:auto;display:block">\s*</div>',
+            r'\1style="width:100%;height:auto;display:block">', hb)
 write('home.html', hb)
 
 def interior(name, out):
