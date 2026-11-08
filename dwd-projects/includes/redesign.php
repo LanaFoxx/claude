@@ -209,6 +209,8 @@ function dwdr_body( $page ) {
 				'p.platform_key' => strtolower( $p['platform'] ),
 				'p.num'          => sprintf( '%02d', $i + 1 ),
 			) );
+			// The website shown on a laptop with the phone view beside it (instead of a cropped screenshot).
+			$cards = dwdr_mockup_card( $cards, $p, $span );
 			if ( $p['dup'] ) {
 				$cards = substr_replace( $cards, '<a data-dup="1" style="display:none" ', strrpos( $cards, '<a ' ), 3 );
 			}
@@ -373,6 +375,18 @@ function dwdr_case( $po, $p, $cp ) {
 	return (string) ob_get_clean();
 }
 
+/** Swap the last card's screenshot frame for a laptop + phone mockup on a light panel. */
+function dwdr_mockup_card( $cards, $p, $span ) {
+	$at = strrpos( $cards, '<a ' );
+	$card = substr( $cards, $at );
+	$mock = '<div class="dwr-pshot' . ( 12 === (int) $span ? ' wide' : '' ) . '">'
+		. '<span class="dwr-laptop"><span class="dwr-lid"><i class="dwr-cam"></i><span class="dwr-lscreen"><img src="' . esc_url( $p['cover'] ) . '" alt="' . esc_attr( $p['name'] . ' website' ) . '" loading="lazy"></span></span><span class="dwr-base"></span></span>'
+		. ( $p['phone'] ? '<span class="dwr-pphone"><img src="' . esc_url( $p['phone'] ) . '" alt="' . esc_attr( $p['name'] . ' website on a phone' ) . '" loading="lazy"></span>' : '' )
+		. '</div>';
+	$new = preg_replace( '#<div style="position:relative;overflow:hidden;border-radius:8px;aspect-ratio:[^"]*">.*?</div>\s*<img[^>]*>\s*</div>#s', $mock, $card, 1 );
+	return substr( $cards, 0, $at ) . dwdr_srcset( (string) $new );
+}
+
 /** The scrolling strip of project screenshots (same look as the homepage hero). $rev scrolls the other way. */
 function dwdr_strip( $theme = 'dark', $rev = false ) {
 	static $items = null;
@@ -457,6 +471,7 @@ add_action( 'wp_enqueue_scripts', function () {
 		. '#dw-nav img{height:38px!important}#dw-nav[data-floating="1"] img{height:34px!important}#dw-menu img{height:36px!important}@media(max-width:600px){#dw-nav img,#dw-nav[data-floating="1"] img{height:34px!important}#dw-menu img{height:34px!important}}' // larger logo in the header
 		. ':root{--dwr-gx:max(clamp(20px,4vw,56px),calc((100vw - 1500px) / 2))}.dwr section,.dwr footer,.dwr #dw-nav{padding-left:var(--dwr-gx)!important;padding-right:var(--dwr-gx)!important}.dwr #dw-hero-media,.dwr .dwr-strip{margin-left:calc(-1 * var(--dwr-gx))!important;margin-right:calc(-1 * var(--dwr-gx))!important}.dwr-workband{overflow:hidden}' // content never wider than 1500px on big monitors; backgrounds stay full width
 		. '[data-theme="light"] div[style*="background:#EDEDED"]{border:1px solid rgba(18,18,18,.10);box-shadow:0 1px 2px rgba(18,18,18,.05),0 22px 44px -26px rgba(18,18,18,.35)}.dwr-shot{border-color:rgba(18,18,18,.10)!important;box-shadow:0 1px 2px rgba(18,18,18,.05),0 26px 50px -30px rgba(18,18,18,.4)!important}' // website screenshots on white get a faint border and soft shadow so white sites don't blend in
+		. '.dwr-pshot{position:relative;display:flex;align-items:flex-end;justify-content:center;aspect-ratio:16/10;padding:5% 5% 7%;border-radius:12px;background:linear-gradient(180deg,#F5F6F8,#ECEEF1);border:1px solid rgba(18,18,18,.07);overflow:hidden}.dwr-pshot.wide{aspect-ratio:21/9;padding:4% 6% 5%}.dwr-laptop{position:relative;display:block;width:74%;filter:drop-shadow(0 18px 24px rgba(18,32,48,.22));transition:transform .4s cubic-bezier(.2,.7,.1,1)}.dwr-pshot.wide .dwr-laptop{width:58%}.dwr-lid{position:relative;display:block;background:#0b0d10;border-radius:10px 10px 0 0;padding:1.6% 1.5% 1.4%;box-shadow:inset 0 0 0 1.5px #3a4049,inset 0 0 0 3px #15181c}.dwr-cam{position:absolute;top:0;left:50%;width:4px;height:4px;margin-left:-2px;margin-top:calc(.8% - 2px);border-radius:50%;background:#1d2228}.dwr-lscreen{display:block;overflow:hidden;border-radius:2px;background:#fff}.dwr-lscreen img{display:block;width:100%;height:auto;aspect-ratio:1.6/1;object-fit:cover;object-position:center top}.dwr-base{position:relative;display:block;width:112%;margin-left:-6%;height:0;padding-bottom:3.2%;background:linear-gradient(#e3e7ec 0%,#c4cad2 45%,#8f96a0 100%);border-radius:2px 2px 26px 26px / 2px 2px 70% 70%;box-shadow:inset 0 1px 0 #fff}.dwr-base:before{content:"";position:absolute;top:0;left:50%;width:15%;height:38%;transform:translateX(-50%);background:linear-gradient(#a8afb8,#c9ced5);border-radius:0 0 10px 10px}.dwr-pphone{position:relative;z-index:1;display:block;width:20%;margin-left:-4%;margin-bottom:.5%;filter:drop-shadow(0 16px 20px rgba(18,32,48,.28));transition:transform .4s cubic-bezier(.2,.7,.1,1)}.dwr-pshot.wide .dwr-pphone{width:15%}.dwr-pphone img{display:block;width:100%;height:auto}[data-dw-card]:hover .dwr-laptop{transform:translateY(-4px)}[data-dw-card]:hover .dwr-pphone{transform:translateY(-8px)}@media(max-width:600px){.dwr-pshot,.dwr-pshot.wide{aspect-ratio:16/11;padding:8% 5% 9%}.dwr-pshot.wide .dwr-laptop{width:68%}.dwr-pshot.wide .dwr-pphone{width:19%}}' // portfolio cards: laptop + phone mockup
 		. '#dw-hero-row>div:first-child>p:first-child{font-size:clamp(22px,2.1vw,32px)!important;line-height:1.2!important;white-space:normal!important;letter-spacing:-.01em}#dw-hero-row>div:first-child>p:nth-child(2){font-size:clamp(16px,1.25vw,19px)!important}#dw-hero-trust,#dw-hero-trust-m{font-size:clamp(17px,1.3vw,20px)!important;gap:10px 20px!important;color:#D6D6D6!important;font-weight:500}#dw-hero-trust span[style*="F5B301"],#dw-hero-trust-m span[style*="F5B301"]{font-size:clamp(24px,1.9vw,30px)!important;letter-spacing:3px!important;line-height:1}#dw-hero-trust svg,#dw-hero-trust-m svg{width:28px!important;height:28px!important}#dw-hero-trust span[style*="inline-flex"],#dw-hero-trust-m span[style*="inline-flex"]{gap:10px!important}' // homepage hero: bigger lead line, stars, Upwork logo and badge text
 		. '@media(min-width:601px){#dw-nav{transition:color .35s ease,background-color .35s ease,box-shadow .35s ease,padding .35s ease,transform .45s cubic-bezier(.2,.7,.1,1),opacity .35s ease!important}#dw-nav[data-floating="1"]{padding-top:14px!important;padding-bottom:14px!important}#dw-nav[data-floating="1"][data-theme="light"]{background:#121212!important;color:#fff!important;box-shadow:0 12px 32px -20px rgba(0,0,0,.7)}#dw-nav[data-floating="1"][data-theme="light"] #dw-logo-white{display:block!important;filter:none!important}#dw-nav[data-floating="1"][data-theme="light"] #dw-logo-dark{display:none!important}#dw-nav[data-floating="1"][data-theme="dark"],#dw-nav[data-floating="1"][data-theme="blue"]{background:#fff!important;color:#121212!important;box-shadow:0 12px 32px -20px rgba(0,0,0,.45)}#dw-nav[data-floating="1"][data-theme="dark"] #dw-logo-white,#dw-nav[data-floating="1"][data-theme="blue"] #dw-logo-white{display:none!important}#dw-nav[data-floating="1"][data-theme="dark"] #dw-logo-dark,#dw-nav[data-floating="1"][data-theme="blue"] #dw-logo-dark{display:block!important}}' // desktop: once scrolled, the sticky nav gets a solid bar that contrasts with the section under it // small blue labels on white: readable contrast
 		. '.dwr-form[data-sent="1"] .dwr-fields{display:none}.dwr-note{font-size:14px;color:#F27A7A;min-height:1em}' );
