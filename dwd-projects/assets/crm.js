@@ -1664,7 +1664,7 @@
 			acts = (ow ? btn('', 'data-paid', 'Mark paid') : '') + (st !== 'active' ? btn('', 'data-set="active"', 'Back to active') : '')
 				+ (st !== 'hold' ? btn('greenl', 'data-set="hold"', 'Put on hold') : '') + (st !== 'limbo' ? btn('', 'data-set="limbo"', 'Move to limbo') : '') + btn('solid green', 'data-complete', 'Mark complete');
 		} else if (st === 'leads') {
-			acts = btn('red', 'data-purge="' + c.id + '"', 'Delete lead') + btn('', 'data-set="archive"', 'Archive') + btn('solid blue', 'data-set="active"', 'Start the job');
+			acts = btn('red', 'data-purge="' + c.id + '"', 'Delete lead') + btn('', 'data-set="archive"', 'Archive') + btn('', 'data-leadinvite="' + c.id + '"', ic('mail', 14) + 'Send onboarding form') + btn('solid blue', 'data-set="active"', 'Start the job');
 		} else if (st === 'archive') {
 			acts = btn('', 'data-set="leads"', 'Restore to leads') + btn('red', 'data-trash="' + c.id + '"', 'Delete');
 		} else {
@@ -2232,6 +2232,22 @@
 		if ((el = t.closest('[data-moveclient]'))) { S.modal = { type: 'move', project: +el.getAttribute('data-moveclient'), client: 0, q: '', vals: {} }; render(); focusIn('.dwdc-pick'); return; }
 		if (t.closest('[data-oldc]')) { keepVals(); S.modal.newc = false; S.modal.invite = false; S.modal.textMsg = ''; render(); focusIn('.dwdc-pick'); return; }
 		if (t.closest('[data-newinvite]')) { keepVals(); S.modal.invite = true; S.modal.newc = false; var qq = S.modal.q || ''; if (/@|\d{3}/.test(qq)) { S.modal.vals.invite_to = qq; } render(); focusIn('[name=invite_to]'); return; }
+		if ((el = t.closest('[data-leadinvite]'))) {
+			var lc = S.full[+el.getAttribute('data-leadinvite')] || contact(+el.getAttribute('data-leadinvite'));
+			var lto = lc.email || window.prompt('Email or phone number to send ' + (lc.person || lc.name) + ' the onboarding form:', lc.phone || '');
+			if (!lto || !String(lto).trim()) { return; }
+			lto = String(lto).trim(); el.disabled = true;
+			api('/invite', 'POST', { to: lto, project: lc.id }).then(function (x) {
+				upsert(x.project); S.full[lc.id] = x.project; el.disabled = false; render();
+				if (x.sent) { toast('Onboarding form emailed to ' + lto); }
+				else if (/@/.test(lto)) { toast('The email didn’t send. Try again, or text them the link.', true); }
+				else {
+					var done = function () { toast('Text copied: paste it into a message to ' + lto); };
+					if (navigator.clipboard) { navigator.clipboard.writeText(x.text).then(done, function () { window.prompt('Copy this and text it to ' + lto + ':', x.text); }); } else { window.prompt('Copy this and text it to ' + lto + ':', x.text); }
+				}
+			}).catch(function (er) { el.disabled = false; fail(er); });
+			return;
+		}
 		if ((el = t.closest('[data-invite]'))) {
 			keepVals();
 			var to = String(S.modal.vals.invite_to || '').trim();

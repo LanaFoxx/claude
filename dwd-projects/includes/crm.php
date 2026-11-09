@@ -989,6 +989,23 @@ add_action( 'rest_api_init', function () {
 		}
 		$link = get_permalink( 2993 ) ?: home_url( '/onboarding/' );
 		$pid  = $email ? dwdc_find_by_email( $email ) : 0;
+		// Sent from a lead's own page: that lead gets the form (and the email / phone if it had none).
+		$lead = (int) $r->get_param( 'project' );
+		if ( $lead && DWDC_CONTACT === get_post_type( $lead ) ) {
+			$pid = $lead;
+			foreach ( array( 'email' => $email, 'phone' => $phone ) as $k => $v ) {
+				if ( $v && '' === (string) get_post_meta( $pid, '_dwdc_' . $k, true ) ) {
+					update_post_meta( $pid, '_dwdc_' . $k, $v );
+				}
+			}
+			$cid = (int) get_post_meta( $pid, '_dwdc_client', true );
+			if ( $cid && $email && ! get_post_meta( $cid, '_dwdcl_email', true ) ) {
+				update_post_meta( $cid, '_dwdcl_email', $email );
+			}
+			if ( '' === (string) get_post_meta( $pid, '_dwdc_next', true ) || 'leads' === get_post_meta( $pid, '_dwdc_list', true ) ) {
+				update_post_meta( $pid, '_dwdc_next', 'Waiting on their onboarding form' );
+			}
+		}
 		if ( ! $pid ) {
 			$cid = $email ? dwdc_find_client( $email, '' ) : 0;
 			if ( ! $cid ) {
