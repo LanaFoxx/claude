@@ -36,7 +36,15 @@ function dwdc_wins() {
 		$pays = get_post_meta( $id, '_dwdc_payments', true );
 		$up   = array();
 		$rest = array();
-		foreach ( is_array( $pays ) ? $pays : array() as $p ) {
+		// Upwork payments logged by hand in Dream Desk (e.g. Mark paid) are more money on a job already won,
+		// so they're handled last and join the project's latest earlier Upwork job instead of starting a new one.
+		$pays = is_array( $pays ) ? $pays : array();
+		usort( $pays, function ( $a, $b ) {
+			$ma = 'Logged in Dream Desk' === ( $a['ref'] ?? '' ) ? 1 : 0;
+			$mb = 'Logged in Dream Desk' === ( $b['ref'] ?? '' ) ? 1 : 0;
+			return $ma - $mb;
+		} );
+		foreach ( $pays as $p ) {
 			$st  = strtolower( (string) ( $p['status'] ?? 'paid' ) );
 			$amt = (float) preg_replace( '/[^\d.]/', '', (string) ( $p['amount'] ?? 0 ) );
 			$d   = $day( $p['date'] ?? '' );
@@ -45,6 +53,18 @@ function dwdc_wins() {
 				continue;
 			}
 			$src = (string) ( $p['source'] ?? 'Other' );
+			if ( 'Upwork' === $src && 'Logged in Dream Desk' === ( $p['ref'] ?? '' ) && $up ) {
+				$best = null;
+				foreach ( $up as $uk => $u ) {
+					if ( $u['date'] <= $d && ( null === $best || $u['date'] > $up[ $best ]['date'] ) ) {
+						$best = $uk;
+					}
+				}
+				if ( null !== $best ) {
+					$up[ $best ]['value'] += $amt;
+					continue;
+				}
+			}
 			if ( 'Upwork' === $src ) {
 				$t = trim( preg_replace( '/\s·\s.*$/u', '', (string) ( $p['note'] ?? '' ) ) );
 				$k = $t ? strtolower( $t ) : 'upwork';
