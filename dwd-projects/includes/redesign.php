@@ -316,6 +316,7 @@ function dwdr_body( $page ) {
 	if ( 'home' === $page ) {
 		$html = dwdr_intro_video( $html );
 		$html = str_replace( '%SHOTPLANE%', dwdr_shotplane(), $html );
+		$html = dwdr_hero_track( $html );
 	}
 	if ( 'process' === $page ) {
 		$j = strrpos( $html, '<section' );
@@ -750,4 +751,51 @@ function dwdr_shotplane() {
 		$out .= '</div>';
 	}
 	return $out;
+}
+
+
+/**
+ * Homepage hero slider: every portfolio project, in portfolio order, so new projects show up automatically.
+ * Projects already in the design keep the cover picked for the slider; others use their portfolio cover.
+ */
+function dwdr_hero_track( $html ) {
+	$i = strpos( $html, 'id="dw-hero-track"' );
+	if ( false === $i ) {
+		return $html;
+	}
+	$a = strpos( $html, '<div style="display:flex;gap:20px;padding-right:20px">', $i );
+	if ( false === $a ) {
+		return $html;
+	}
+	$end   = dwdr_div_end( $html, $i ); // the whole track
+	$track = substr( $html, $a, $end - 6 - $a ); // both halves, without the track's closing </div>
+	if ( ! preg_match( '#<a href="[^"]*" style="([^"]*)">\s*<img\b[^>]*?\sstyle="([^"]*)"#', $track, $st ) ) {
+		return $html;
+	}
+	$design = array();
+	if ( preg_match_all( '#<a href="[^"]*/portfolio/([^/"]+)/" style="[^"]*">\s*<img src="([^"]+)"#', $track, $mm, PREG_SET_ORDER ) ) {
+		foreach ( $mm as $m ) {
+			$design[ $m[1] ] = $m[2];
+		}
+	}
+	$list  = array_map( 'dwdr_project', dwdp_projects() );
+	$names = wp_list_pluck( $list, 'name' );
+	$items = '';
+	foreach ( $list as $p ) {
+		$base = trim( preg_replace( '/\s*\((webflow|wordpress)\)\s*$/i', '', $p['name'] ) );
+		if ( $base !== $p['name'] && in_array( $base, $names, true ) ) {
+			continue; // a platform rebuild of a site already in the list
+		}
+		$img = $design[ $p['slug'] ] ?? $p['cover'];
+		if ( ! $img ) {
+			continue;
+		}
+		$items .= '<a href="' . esc_url( $p['href'] ) . '" style="' . esc_attr( $st[1] ) . '"><img src="' . esc_url( $img ) . '" alt="' . esc_attr( $p['name'] . ' website' ) . '" style="' . esc_attr( $st[2] ) . '"></a>';
+	}
+	if ( '' === $items ) {
+		return $html;
+	}
+	$copy = str_replace( '<a href=', '<a tabindex="-1" href=', $items );
+	$new  = '<div style="display:flex;gap:20px;padding-right:20px">' . $items . '</div><div style="display:flex;gap:20px;padding-right:20px" aria-hidden="true">' . $copy . '</div>';
+	return substr( $html, 0, $a ) . dwdr_srcset( $new ) . substr( $html, $end - 6 );
 }
