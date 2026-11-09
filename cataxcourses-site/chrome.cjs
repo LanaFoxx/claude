@@ -378,14 +378,15 @@ function header(m) {
       text(`Call Us Today <a href="${PHONE.tel}">888-229-1994</a>`, { color: C.light, linkColor: C.gold, linkHover: C.goldHover, size: [17, 16, 14], weight: 600, lh: 1.45, settings: { _element_width: 'auto' } }),
       widget('heading', { title: 'View Cart', header_size: 'span', link: link(URL.cart), title_color: C.light, ...typo('typography', BODY, [17, 16, 14], 600, { lh: 1.45, ls: 0.02 }) }),
     ]),
-    // CTEC deadline notice (stays visible: the sticky header only hides the top bar). Remove after Jan 15, 2027.
+    // CTEC deadline notice (stays visible: the sticky header only hides the top bar). Text and dates come from the
+    // [ctc_ctec_notice] shortcode (wp/ctec-dates.php): deadline notice from Aug 15, late-renewal notice until Jan 15, then hidden.
     container({
       content_width: 'boxed', boxed_width: px(1392), flex_direction: 'row', flex_justify_content: 'center', flex_align_items: 'center',
       padding: box(9, 24, 9, 24), padding_mobile: box(8, 14, 8, 14), background_background: 'classic', background_color: C.gold, ...cls('ctc-notice'),
     }, [
-      text(`<strong>CTEC renewal deadline extended to Monday, November 2, 2026</strong> (October 31 falls on a Saturday). Late renewals accepted Nov 2, 2026 – Jan 15, 2027 with the late fee. <a href="${URL.c20}"><strong>Renew now →</strong></a>`,
+      text(`[ctc_ctec_notice]`,
         { align: 'center', color: C.navy, linkColor: C.navy, linkHover: C.white, size: 15, lh: 1.4, settings: { hide_mobile: 'hidden-mobile' } }),
-      text(`<strong>CTEC renewal deadline: Mon, Nov 2, 2026.</strong> Late renewals through Jan 15, 2027 (late fee). <a href="${URL.c20}"><strong>Renew →</strong></a>`,
+      text(`[ctc_ctec_notice size="short"]`,
         { align: 'center', color: C.navy, linkColor: C.navy, linkHover: C.white, size: 13, lh: 1.35, settings: { hide_desktop: 'hidden-desktop', hide_tablet: 'hidden-tablet' } }),
     ]),
     // nav

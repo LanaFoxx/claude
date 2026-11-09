@@ -61,16 +61,29 @@ class block_ctc_student extends block_base {
             if (preg_match('/\b60\s*Hour/i', $co->fullname)) { $kinds['60'] = true; }
         }
 
-        // 1. Deadline strip (20 Hour students only, until the late-renewal cut-off). Regular deadline Mon Nov 2, 2026;
-        // late renewal with the late fee through Fri Jan 15, 2027, after which the registration lapses. Pacific time.
-        $now = time();
-        $regend = 1793692800;  // 2026-11-03 00:00 PST
-        $lateend = 1800086400; // 2027-01-16 00:00 PST
-        if (!empty($kinds['20']) && $now < $lateend) {
+        // 1. Deadline strip (20 Hour students). Every year: renewal deadline Oct 31 (moved to Monday when it falls on a
+        // weekend), shown from Aug 15; then late renewal with the late fee through Jan 15, after which the registration
+        // lapses; hidden the rest of the year. Pacific time.
+        $tz = new DateTimeZone('America/Los_Angeles');
+        $nowd = new DateTime('now', $tz);
+        $now = $nowd->getTimestamp();
+        $cy = (int) $nowd->format('Y') - ($nowd->format('m-d') <= '01-15' ? 1 : 0);
+        $dl = new DateTime($cy . '-10-31', $tz);
+        $wd = (int) $dl->format('N');
+        if ($wd >= 6) {
+            $dl->modify('+' . (8 - $wd) . ' days');
+        }
+        $le = new DateTime(($cy + 1) . '-01-15', $tz);
+        $regend = (clone $dl)->modify('+1 day')->getTimestamp();   // end of the deadline day
+        $lateend = (clone $le)->modify('+1 day')->getTimestamp();  // end of Jan 15
+        $start = (new DateTime($cy . '-08-15', $tz))->getTimestamp();
+        if (!empty($kinds['20']) && $now >= $start && $now < $lateend) {
             $late = $now >= $regend;
+            $lastday = $dl->format('Y-m-d') === $nowd->format('Y-m-d');
             $h .= '<div class="ctcsd-strip ctcsd-cd" data-end="' . ($late ? $lateend : $regend) . '"><span class="ctcsd-strip-dot"></span><span class="ctcsd-strip-t">'
-                . ($late ? '<strong>CTEC late renewal is open until Jan 15, 2027.</strong> The Nov 2 deadline passed; you can still renew with a late fee. After Jan 15 your registration lapses.'
-                    : '<strong>Today is the last day to renew with CTEC without a late fee.</strong> After today you can renew until Jan 15, 2027 with a late fee.')
+                . ($late ? '<strong>CTEC late renewal is open until ' . $le->format('M j, Y') . '.</strong> The ' . $dl->format('M j') . ' deadline passed; you can still renew with a late fee. After ' . $le->format('M j') . ' your registration lapses.'
+                    : ($lastday ? '<strong>Today is the last day to renew with CTEC without a late fee.</strong> After today you can renew until ' . $le->format('M j, Y') . ' with a late fee.'
+                        : '<strong>CTEC renewal deadline: ' . $dl->format('l, M j, Y') . '.</strong> Renew by then to avoid the late fee.'))
                 . '</span><span class="ctcsd-strip-cd" aria-label="Time left"><span><b data-u="d">–</b> days</span><span><b data-u="h">–</b> h</span><span><b data-u="m">–</b> m</span></span>'
                 . '<a href="https://www.ctec.org" target="_blank" rel="noopener">Renew at ctec.org →</a></div>';
         }
