@@ -333,6 +333,18 @@ hb = hb.replace('<span id="dw-rating-stars"', _G + '<span id="dw-rating-stars"',
 # Source logo above the stars on each review card, and the Google logo + 4.9 in the hero star line.
 _UPW = '<svg width="26" height="26" viewBox="0 0 24 24" fill="#14A800" aria-hidden="true"><path d="M18.56 13.02c-1.33 0-2.58-.56-3.71-1.48l.28-1.3v-.02c.25-1.38.98-3.68 3.43-3.68 1.84 0 3.33 1.5 3.33 3.34 0 1.84-1.49 3.14-3.33 3.14zm0-9.88c-3.13 0-5.56 2.03-6.54 5.37-1.5-2.26-2.64-4.97-3.3-7.25H5.36v8.77c0 1.72-1.4 3.12-3.12 3.12S-.88 11.75-.88 10.03V1.26H-4.2v8.77c0 3.56 2.9 6.49 6.45 6.49s6.44-2.93 6.44-6.49V8.56c.65 1.35 1.44 2.72 2.4 3.93l-2.04 9.68h3.4l1.48-7.02c1.3.83 2.79 1.35 4.5 1.35 3.66 0 6.65-3 6.65-6.67 0-3.67-2.99-6.69-6.65-6.69z" transform="translate(3.66 2.63) scale(.8)"></path></svg>'
 _GSVG = _G[_G.find('<svg'):_G.find('</svg>') + 6]
+# Michael: the rating row uses the same three equal columns as the results row below it, so the dividers line up.
+_ri = hb.find('<div id="dw-rating"')
+if _ri > -1:
+    _svgs = re.findall(r'<svg.*?</svg>', hb[_ri:_div_end(hb, _ri)], re.S)
+    _UPW_S = next((x for x in _svgs if '#14A800' in x), '')
+    _G_S = _GSVG.replace('width="30" height="30"', 'width="22" height="22"')
+    _rows = ('<div id="dw-rating" class="dwr-results dwr-ratings" data-dw-reveal="1">'
+             '<div><b>4.9</b><span class="dwr-rsub">' + _G_S + '<i>★★★★★</i></span><span>Average rating on Google</span></div>'
+             '<div><b>100%</b><span>Job Success on Upwork</span><span class="dwr-rsub">' + _UPW_S + 'Top Rated Plus freelancer</span></div>'
+             '<div><b>%UPWORK_JOBS%</b><span>Projects completed on Upwork</span></div>'
+             '</div>')
+    hb = hb[:_ri] + _rows + hb[_div_end(hb, _ri):]
 def _src_logo(m):
     fig = m.group(0)
     if 'data-src="Upwork"' in fig:
@@ -394,10 +406,12 @@ if _gi > -1:
     _arrowL = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>'
     _arrowR = _arrowL.replace('M15 18l-6-6 6-6', 'M9 18l6-6-6-6')
     _dots = ''.join('<button type="button" class="dwr-qdot' + (' on' if k == 0 else '') + '" data-qgo="' + str(k) + '" aria-label="Review ' + str(k + 1) + '"></button>' for k in range(_n))
-    hb = (hb[:_gi] + '<div class="dwr-qwrap" data-dw-reveal="1"><button type="button" class="dwr-qbtn" data-q="-1" aria-label="Previous review">' + _arrowL + '</button>'
+    hb = (hb[:_gi] + '<div class="dwr-qwrap" data-dw-reveal="1">'
           + hb[_gi:_ge].replace('<div id="dw-quotes-grid"', '<div id="dw-quotes-grid" class="dwr-qslider" aria-live="polite"', 1).replace('<figure data-src', '<figure data-q-item="1" data-src').replace(' data-dw-reveal="1" style="margin:0;display:flex', ' style="margin:0;display:flex')
-          + '<button type="button" class="dwr-qbtn" data-q="1" aria-label="Next review">' + _arrowR + '</button></div>'
-          + '<div class="dwr-qnav"><span class="dwr-qcount"><b>1</b> / ' + str(_n) + '</span><span class="dwr-qdots">' + _dots + '</span></div>' + hb[_ge:])
+          + '</div>'
+          + '<div class="dwr-qnav"><button type="button" class="dwr-qbtn" data-q="-1" aria-label="Previous review">' + _arrowL + '</button>'
+          + '<span class="dwr-qmid"><span class="dwr-qcount"><b>1</b> / ' + str(_n) + '</span><span class="dwr-qdots">' + _dots + '</span></span>'
+          + '<button type="button" class="dwr-qbtn" data-q="1" aria-label="Next review">' + _arrowR + '</button></div>' + hb[_ge:])
 # Michael: no big "Read all reviews on Google" button under the reviews; each card has a text link instead.
 _rk = hb.find('>Read all reviews on Google')
 if _rk > -1:
@@ -560,6 +574,29 @@ for _fn, _band in (
         _h = _h[:_bs] + _band + _h[_be:]
         if _fn == 'hosting.html':
             _h = _h.replace('Tell me what you need and I’ll send a flat quote, usually the same day.', 'Order online in a minute, or call and I’ll set everything up with you.')
+        open(_path, 'w', encoding='utf-8').write(_h)
+# ---- Footer: handoff "Footer layout options", option 1c (headline first, slim nav strip, thin bottom line) ----
+_FOOT = ('<footer data-theme="dark" class="dwr-ft">'
+         '<div class="dwr-ft-head"><h2>You Dream It, <span style="white-space:nowrap">I Build It</span></h2></div>'
+         '<div class="dwr-ft-strip"><div class="dwr-ft-brand">'
+         '<a href="%HOME%/" class="dwr-ft-logo"><img src="https://dreamwebdigital.com/wp-content/uploads/2026/11/dreamweb-white-blue-transparent.png" alt="Dream Web Digital" loading="lazy" width="180" height="45"></a>'
+         '<p>Custom WordPress websites for all business types, designed, built and hosted by Michael Tarr.</p></div>'
+         '<nav class="dwr-ft-nav" aria-label="Footer">'
+         '<a href="%HOME%/">Home</a><a href="%HOME%/portfolio/">Portfolio</a><a href="%HOME%/process/">Process</a><a href="%HOME%/hosting/">Hosting</a>'
+         '<a href="%HOME%/blog/">Blog</a><a href="%HOME%/contact/">Contact</a><a class="dwr-ft-cta" href="%HOME%/quote/">Get a quote <span aria-hidden="true">→</span></a>'
+         '</nav></div>'
+         '<div class="dwr-ft-bottom"><div><p>Dream Web Digital LLC · 789 SW Federal Hwy, Suite 201 · Stuart, FL 34994</p><p>© %YEAR% Dream Web Digital LLC</p></div>'
+         '<nav aria-label="Contact and profiles"><a href="tel:+17722101728">(772) 210-1728</a>'
+         '<a href="https://maps.app.goo.gl/z4HfYnTZaqccWhhy9" target="_blank" rel="noopener">Google <span aria-hidden="true">↗</span></a>'
+         '<a href="https://www.linkedin.com/in/miketarr/" target="_blank" rel="noopener">LinkedIn <span aria-hidden="true">↗</span></a>'
+         '<a href="https://www.upwork.com/freelancers/dreamwebdigital" target="_blank" rel="noopener">Upwork <span aria-hidden="true">↗</span></a></nav></div>'
+         '</footer>')
+for _fn in ('chrome-bottom.html', 'home.html'):
+    _path = os.path.join(OUT_T, _fn)
+    _h = open(_path, encoding='utf-8').read()
+    _fi = _h.find('<footer'); _fe = _h.find('</footer>', _fi) + len('</footer>')
+    if _fi > -1:
+        _h = _h[:_fi] + _FOOT + _h[_fe:]
         open(_path, 'w', encoding='utf-8').write(_h)
 from collections import Counter
 print(Counter(left))
