@@ -94,6 +94,10 @@
 .bi-product__dot { width: 24px; height: 24px; padding: 0; border: 0; background: none; cursor: pointer; position: relative; }
 .bi-product__dot::before { content: ""; position: absolute; left: 50%; top: 50%; width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px; border-radius: 50%; background: rgba(23,48,27,.25); transition: background .2s; }
 .bi-product__dot.is-active::before { background: #17301B; }
+/* The theme gives every <button> a pink hover/focus background; keep the dots plain, brand green. */
+.bi-product__dot, .bi-product__dot:hover, .bi-product__dot:focus, .bi-product__dot:active { background: none !important; border: 0 !important; box-shadow: none !important; color: inherit; }
+.bi-product__dot:hover::before { background: rgba(23,48,27,.6); }
+.bi-product__dot:focus-visible { outline: 2px solid #17301B; outline-offset: -4px; border-radius: 50%; }
 .bi-product__media:hover img { transform: scale(1.03); }
 .bi-product__placeholder { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #4B5249; font: 400 14px Geist, system-ui, sans-serif; }
 .bi-product__badge { position: absolute; top: 14px; left: 14px; z-index: 2; padding: 6px 10px; border-radius: 2px; background: #17301B; color: #F5F2EC; font: 500 11px/1 Geist, system-ui, sans-serif; letter-spacing: .14em; text-transform: uppercase; }
