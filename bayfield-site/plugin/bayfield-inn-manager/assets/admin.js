@@ -276,7 +276,7 @@
         removeBtn('item', function () { card.remove(); })]),
       field('Square payment link', p.link, { key: 'link', placeholder: 'https://square.link/u/…' }),
       field('Short description (optional)', p.desc, { key: 'desc', textarea: true, rows: 2, placeholder: 'Cozy fleece hoodie with The Deck logo. Unisex sizes S–XXL.' }),
-      h('p', { class: 'description', text: 'Photos: the first one shows on the page, the second appears when someone hovers. Drag to reorder.' }),
+      h('p', { class: 'description', text: 'Photos: the first one is the cover; hovering the item on the website shows the others in turn. Drag to reorder.' }),
       imagesUI(p.images || []),
       h('label', { class: 'bi-check' }, [sold, ' Sold out (keeps the item on the page with a "Sold out" label)']),
     ]);

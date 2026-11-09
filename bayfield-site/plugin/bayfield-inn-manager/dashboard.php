@@ -13,31 +13,37 @@ add_action( 'wp_dashboard_setup', function () {
 	global $wp_meta_boxes;
 	$wp_meta_boxes['dashboard'] = array(); // phpcs:ignore -- drop WordPress / plugin default boxes
 	remove_action( 'welcome_panel', 'wp_welcome_panel' );
-	wp_add_dashboard_widget( 'bi_dash_live', 'Right now', 'bi_dash_live' );
-	wp_add_dashboard_widget( 'bi_dash_stats', 'Visitors', 'bi_dash_stats' );
+	// Left column: Google Analytics, then the site's own visitor counts. Right: live webcam, add a product, quick links.
+	wp_add_dashboard_widget( 'bi_dash_ga', 'Google Analytics', 'bi_dash_ga' );
+	wp_add_dashboard_widget( 'bi_dash_stats', 'Website & webcam visitors (counted by the site)', 'bi_dash_stats' );
+	wp_add_dashboard_widget( 'bi_dash_cam', 'Live webcam', 'bi_dash_cam' );
+	wp_add_dashboard_widget( 'bi_dash_product', 'Add a product', 'bi_dash_product' );
 	wp_add_dashboard_widget( 'bi_dash_links', 'Quick links', 'bi_dash_links' );
-	// Stats on the left, live + links on the right.
-	$wp_meta_boxes['dashboard']['side']['core']['bi_dash_live'] = $wp_meta_boxes['dashboard']['normal']['core']['bi_dash_live']; // phpcs:ignore
-	$wp_meta_boxes['dashboard']['side']['core']['bi_dash_links'] = $wp_meta_boxes['dashboard']['normal']['core']['bi_dash_links']; // phpcs:ignore
-	unset( $wp_meta_boxes['dashboard']['normal']['core']['bi_dash_live'], $wp_meta_boxes['dashboard']['normal']['core']['bi_dash_links'] );
+	foreach ( array( 'bi_dash_cam', 'bi_dash_product', 'bi_dash_links' ) as $w ) {
+		$wp_meta_boxes['dashboard']['side']['core'][ $w ] = $wp_meta_boxes['dashboard']['normal']['core'][ $w ]; // phpcs:ignore
+		unset( $wp_meta_boxes['dashboard']['normal']['core'][ $w ] );
+	}
 }, 9999 );
 // Fresh layout for everyone (ignores box positions saved before this dashboard existed).
 add_filter( 'get_user_option_meta-box-order_dashboard', '__return_false' );
 add_filter( 'get_user_option_closedpostboxes_dashboard', '__return_false' );
 
-function bi_dash_live() {
+function bi_dash_cam() {
 	?>
-	<div class="bi-live">
-		<a class="bi-live__box" href="<?php echo esc_url( home_url( '/' ) ); ?>" target="_blank">
-			<span class="bi-live__n" data-live="site"><?php echo (int) count( bi_live_site() ); ?></span>
-			<span class="bi-live__label">on the website now</span>
-		</a>
-		<a class="bi-live__box" href="<?php echo esc_url( home_url( '/' . BI_LIVE_PAGE . '/' ) ); ?>" target="_blank">
-			<span class="bi-live__n" data-live="cam"><span class="bi-live__dot"></span><?php echo (int) count( bi_live_viewers() ); ?></span>
-			<span class="bi-live__label">watching the webcam now</span>
-		</a>
+	<div class="bi-cam">
+		<div class="bi-cam__player"><div id="player_bayfieldlive"></div></div>
+		<div class="bi-live">
+			<a class="bi-live__box" href="<?php echo esc_url( home_url( '/' . BI_LIVE_PAGE . '/' ) ); ?>" target="_blank">
+				<span class="bi-live__n" data-live="cam"><span class="bi-live__dot"></span><?php echo (int) count( bi_live_viewers() ); ?></span>
+				<span class="bi-live__label">watching the webcam page now</span>
+			</a>
+			<a class="bi-live__box" href="<?php echo esc_url( home_url( '/' ) ); ?>" target="_blank">
+				<span class="bi-live__n" data-live="site"><?php echo (int) count( bi_live_site() ); ?></span>
+				<span class="bi-live__label">on the website now</span>
+			</a>
+		</div>
 	</div>
-	<p class="bi-dash-note">Updates every 20 seconds. Logged-in team members aren't counted.</p>
+	<p class="bi-dash-note">Counts update every 20 seconds. Logged-in team members aren't counted.</p>
 	<?php
 }
 
@@ -76,7 +82,7 @@ function bi_dash_links() {
 		array( 'edit.php?post_type=page', 'admin-page', 'Edit pages', 'Hover a page, then click "Edit with Elementor". Switch pages on or off.' ),
 		array( 'admin.php?page=bi-menus', 'food', 'Restaurant menus', 'Dishes, prices, and switching a menu on or off.' ),
 		array( 'admin.php?page=bi-gallery', 'format-gallery', 'Gallery', 'Photos and sections on the Gallery page.' ),
-		array( 'admin.php?page=bi-merch', 'cart', 'Merchandise', 'Items, Square payment links, sold out.' ),
+		array( 'admin.php?page=bi-merch', 'cart', 'Merchandise', 'All items: edit, reorder, sold out.' ),
 	);
 	if ( current_user_can( 'list_users' ) ) {
 		$links[] = array( 'users.php', 'admin-users', 'Users', 'Add people who can log in, and choose what they can do.' );
@@ -124,6 +130,31 @@ add_action( 'admin_head-index.php', function () {
 	.bi-links a:hover strong { color: #2271b1; }
 	.bi-links .dashicons { color: #17301B; margin-top: 2px; }
 	.bi-links small { display: block; color: #646970; }
+	.bi-cam__player { position: relative; aspect-ratio: 16 / 9; background: #0F2113; border-radius: 6px; overflow: hidden; margin: 0 0 12px; }
+	.bi-cam__player > div, .bi-cam__player iframe, .bi-cam__player video { position: absolute; inset: 0; width: 100% !important; height: 100% !important; padding: 0 !important; border: 0; }
+	.bi-tiles--ga { grid-template-columns: repeat(3, 1fr); }
+	.bi-tile__d { font-size: 11px; color: #646970; min-height: 14px; }
+	.bi-tile__d.is-up { color: #1a7f37; } .bi-tile__d.is-down { color: #b32d2e; }
+	.bi-range .bi-ga__rt { margin-left: auto; align-self: center; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; }
+	.bi-range .bi-ga__rt[hidden] { display: none; }
+	.bi-ga__top { margin: 0 0 14px 18px; }
+	.bi-ga__top li { display: flex; justify-content: space-between; gap: 12px; padding: 4px 0; border-bottom: 1px solid #f0f0f1; }
+	.bi-ga__top li span:last-child { font-variant-numeric: tabular-nums; color: #50575e; }
+	.bi-ga__foot { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 0; }
+	.bi-ga__err { color: #b32d2e; }
+	.bi-ga-setup summary { cursor: pointer; font-weight: 600; margin: 4px 0 8px; }
+	.bi-ga-steps { margin-left: 18px; } .bi-ga-steps li { margin-bottom: 6px; }
+	.bi-ga-form label, .bi-quick label { display: flex; flex-direction: column; gap: 4px; margin: 0 0 10px; font-size: 12px; color: #50575e; }
+	.bi-ga-form input, .bi-quick input[type=text], .bi-quick input[type=url], .bi-quick textarea { width: 100%; max-width: none; }
+	.bi-quick__row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+	.bi-quick__photos { display: flex; flex-wrap: wrap; gap: 8px; }
+	.bi-quick__photos figure { position: relative; margin: 0; width: 64px; height: 64px; border-radius: 4px; overflow: hidden; background: #f0f0f1; }
+	.bi-quick__photos img { width: 100%; height: 100%; object-fit: cover; display: block; }
+	.bi-quick__photos button { position: absolute; top: 2px; right: 2px; width: 20px; height: 20px; border-radius: 50%; border: 0; background: rgba(0,0,0,.65); color: #fff; line-height: 18px; cursor: pointer; padding: 0; }
+	.bi-quick .button .dashicons { vertical-align: text-bottom; font-size: 17px; margin-right: 2px; }
+	label.bi-quick__check { flex-direction: row; align-items: center; gap: 6px; font-size: 13px; color: #1d2327; }
+	.bi-quick__actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 0; }
+	@media (max-width: 600px) { .bi-tiles--ga { grid-template-columns: 1fr 1fr; } }
 	@media (max-width: 600px) { .bi-tiles { grid-template-columns: 1fr 1fr; } }
 	</style>
 	<?php
@@ -143,6 +174,90 @@ add_action( 'admin_footer-index.php', function () {
 				.then(function (d) { if (!d) return; setN('[data-live=site]', d.site); setN('[data-live=cam]', d.count); })
 				.catch(function () {});
 		}, 20000);
+
+		var REST = <?php echo wp_json_encode( esc_url_raw( rest_url( 'bayfield/v1/' ) ) ); ?>;
+		function api(path, opts) {
+			opts = opts || {}; opts.headers = Object.assign({ 'X-WP-Nonce': nonce }, opts.headers || {}); opts.credentials = 'same-origin';
+			return fetch(REST + path, opts).then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(j && j.message || 'Something went wrong.'); return j; }); });
+		}
+		function esc(t) { var d = document.createElement('div'); d.textContent = t == null ? '' : String(t); return d.innerHTML; }
+
+		// Live webcam player (same Angelcam camera as the Webcam page).
+		if (document.getElementById('player_bayfieldlive')) {
+			var sdk = document.createElement('script'); sdk.src = 'https://v.angelcam.com/js_sdk';
+			sdk.onload = function () { try { new Angelcam.player('player_bayfieldlive', { id: 'v8ypjjj8y6' }); } catch (e) {} };
+			document.head.appendChild(sdk);
+		}
+
+		// Google Analytics summary.
+		var ga = document.querySelector('[data-ga]');
+		function fmtDur(s) { s = Math.round(s); return Math.floor(s / 60) + 'm ' + String(s % 60).padStart(2, '0') + 's'; }
+		function loadGA(days) {
+			ga.querySelectorAll('[data-days]').forEach(function (b) { b.classList.toggle('button-primary', +b.dataset.days === days); });
+			ga.querySelector('[data-err]').hidden = true;
+			api('ga/summary?days=' + days).then(function (d) {
+				var n = d.now, b = d.before, v = {
+					screenPageViews: [n.screenPageViews, b.screenPageViews, 'n'], totalUsers: [n.totalUsers, b.totalUsers, 'n'], sessions: [n.sessions, b.sessions, 'n'],
+					returning: [Math.max(0, n.totalUsers - n.newUsers), Math.max(0, b.totalUsers - b.newUsers), 'n'],
+					bounceRate: [n.bounceRate, b.bounceRate, 'pct'], averageSessionDuration: [n.averageSessionDuration, b.averageSessionDuration, 'dur'] };
+				Object.keys(v).forEach(function (k) {
+					var cur = v[k][0], prev = v[k][1], kind = v[k][2];
+					ga.querySelector('[data-m=' + k + ']').textContent = kind === 'pct' ? (cur * 100).toFixed(1) + '%' : kind === 'dur' ? fmtDur(cur) : Math.round(cur).toLocaleString();
+					var el = ga.querySelector('[data-d=' + k + ']'), ch = prev ? (cur - prev) / prev * 100 : null;
+					el.className = 'bi-tile__d';
+					if (ch === null || !isFinite(ch)) { el.textContent = ''; return; }
+					var good = k === 'bounceRate' ? ch < 0 : ch > 0;
+					el.textContent = (ch > 0 ? '▲ ' : ch < 0 ? '▼ ' : '') + Math.abs(ch).toFixed(0) + '% vs previous ' + days + ' days';
+					if (Math.abs(ch) >= 1) el.classList.add(good ? 'is-up' : 'is-down');
+				});
+				ga.querySelector('[data-top]').innerHTML = (d.top || []).length ? d.top.map(function (t) { return '<li><span>' + esc(t.title || t.path) + '</span><span>' + t.views.toLocaleString() + '</span></li>'; }).join('') : '<li class="bi-dash-note">No page views yet for this period.</li>';
+				var rt = ga.querySelector('.bi-ga__rt'); if (d.realtime !== null) { rt.hidden = false; rt.querySelector('[data-rt]').textContent = d.realtime; }
+				ga.querySelector('[data-at]').textContent = 'Updated ' + new Date(d.at * 1000).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) + ' (refreshes every 30 minutes)';
+			}).catch(function (e) { var er = ga.querySelector('[data-err]'); er.textContent = 'Google Analytics: ' + e.message; er.hidden = false; ga.querySelector('[data-top]').innerHTML = ''; });
+		}
+		if (ga) { ga.querySelectorAll('[data-days]').forEach(function (b) { b.addEventListener('click', function () { loadGA(+b.dataset.days); }); }); loadGA(28); }
+
+		// Connect Google Analytics (administrators).
+		var gaForm = document.querySelector('[data-ga-form]');
+		if (gaForm) gaForm.addEventListener('submit', function (e) {
+			e.preventDefault(); var msg = gaForm.querySelector('[data-ga-msg]'); msg.textContent = 'Saving…';
+			var f = new FormData(gaForm);
+			api('ga/settings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ measurement_id: f.get('measurement_id'), property_id: f.get('property_id'), key: f.get('key') }) })
+				.then(function (r) { if (r.connected && !r.error) { msg.textContent = 'Connected. Loading your numbers…'; location.reload(); } else msg.textContent = r.error ? 'Saved, but: ' + r.error : 'Saved. Add the Property ID and key to show reports here.'; })
+				.catch(function (er) { msg.textContent = er.message; });
+		});
+
+		// Add a product.
+		var qp = document.querySelector('[data-quick-product]');
+		if (qp) {
+			var photos = [], box = qp.querySelector('[data-photos]'), frame;
+			function drawPhotos() {
+				box.innerHTML = photos.map(function (p, i) { return '<figure><img src="' + esc(p.url) + '" alt=""><button type="button" data-rm="' + i + '" aria-label="Remove photo">×</button></figure>'; }).join('');
+			}
+			box.addEventListener('click', function (e) { var b = e.target.closest('[data-rm]'); if (b) { photos.splice(+b.dataset.rm, 1); drawPhotos(); } });
+			qp.querySelector('[data-pick]').addEventListener('click', function () {
+				if (!frame) {
+					frame = wp.media({ title: 'Product photos (the first one is the cover)', button: { text: 'Use these photos' }, library: { type: 'image' }, multiple: 'add' });
+					frame.on('select', function () {
+						frame.state().get('selection').each(function (a) { a = a.toJSON(); if (!photos.some(function (p) { return p.id === a.id; })) photos.push({ id: a.id, url: (a.sizes && a.sizes.thumbnail || a).url }); });
+						drawPhotos();
+					});
+				}
+				frame.open();
+			});
+			qp.addEventListener('submit', function (e) {
+				e.preventDefault(); var msg = qp.querySelector('[data-msg]'), btn = qp.querySelector('[type=submit]'), f = new FormData(qp);
+				btn.disabled = true; msg.textContent = 'Adding…';
+				api('products/add', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
+					name: f.get('name'), price: f.get('price'), badge: f.get('badge'), link: f.get('link'), desc: f.get('desc'), first: !!f.get('first'), images: photos.map(function (p) { return p.id; }) }) })
+					.then(function () {
+						msg.innerHTML = 'Added. <a href="<?php echo esc_url( home_url( '/merchandise/' ) ); ?>" target="_blank">View the Merchandise page</a> · <a href="<?php echo esc_url( admin_url( 'admin.php?page=bi-merch' ) ); ?>">Edit items</a>';
+						qp.reset(); photos = []; drawPhotos();
+					})
+					.catch(function (er) { msg.textContent = er.message; })
+					.then(function () { btn.disabled = false; });
+			});
+		}
 
 		// Stats.
 		var raw = document.getElementById('bi-stats-data'); if (!raw) return;
@@ -208,6 +323,126 @@ add_action( 'admin_footer-index.php', function () {
 	})();
 	</script>
 	<?php
+} );
+
+function bi_dash_ga() {
+	$s = bi_ga_settings();
+	if ( bi_ga_connected() ) {
+		?>
+		<div class="bi-ga" data-ga>
+			<div class="bi-range" role="tablist" aria-label="Time range">
+				<button type="button" class="button" data-days="7">Last 7 days</button>
+				<button type="button" class="button button-primary" data-days="28">Last 28 days</button>
+				<button type="button" class="button" data-days="90">Last 90 days</button>
+				<span class="bi-ga__rt" hidden><span class="bi-live__dot"></span><b data-rt>0</b> on the site right now</span>
+			</div>
+			<div class="bi-tiles bi-tiles--ga">
+				<?php
+				foreach ( array(
+					'screenPageViews'        => 'Page views',
+					'totalUsers'             => 'Visitors',
+					'sessions'               => 'Visits (sessions)',
+					'returning'              => 'Returning visitors',
+					'bounceRate'             => 'Bounce rate',
+					'averageSessionDuration' => 'Avg. time on site',
+				) as $k => $label ) {
+					printf( '<div class="bi-tile"><span class="bi-tile__n" data-m="%s">–</span><span class="bi-tile__l">%s</span><span class="bi-tile__d" data-d="%s"></span></div>', esc_attr( $k ), esc_html( $label ), esc_attr( $k ) );
+				}
+				?>
+			</div>
+			<h4 class="bi-chart-title">Most viewed pages</h4>
+			<ol class="bi-ga__top" data-top><li class="bi-dash-note">Loading…</li></ol>
+			<p class="bi-ga__err" data-err hidden></p>
+			<p class="bi-ga__foot">
+				<a class="button button-primary" href="<?php echo esc_url( bi_ga_report_url() ); ?>" target="_blank" rel="noopener">View full reports in Google Analytics <span aria-hidden="true">&#8599;</span></a>
+				<span class="bi-dash-note" data-at></span>
+			</p>
+		</div>
+		<?php
+	} else {
+		?>
+		<div class="bi-ga-setup">
+			<p><strong>Not connected yet.</strong> Once Google Analytics is connected, this box shows page views, visitors, returning visitors, bounce rate, time on site and the most viewed pages, with a button straight into Google Analytics.</p>
+			<?php if ( ! current_user_can( 'manage_options' ) ) : ?>
+				<p class="bi-dash-note">An administrator can connect it here.</p>
+			<?php else : ?>
+				<details<?php echo ( $s['measurement_id'] || $s['property_id'] ) ? ' open' : ''; ?>>
+					<summary>Connect Google Analytics</summary>
+					<ol class="bi-ga-steps">
+						<li><b>Tracking:</b> in Google Analytics, Admin › Data streams › the website stream, copy the <b>Measurement ID</b> (G-…). This starts recording visits.</li>
+						<li><b>Property ID:</b> Admin › Property details (a number like 123456789).</li>
+						<li><b>Read access for this dashboard:</b> in Google Cloud Console create a service account, enable the "Google Analytics Data API", create a JSON key and paste the file below. Then in Google Analytics, Admin › Property access management, add the service account's email as a <b>Viewer</b>.</li>
+					</ol>
+					<form class="bi-ga-form" data-ga-form>
+						<label>Measurement ID<input type="text" name="measurement_id" class="regular-text" placeholder="G-ABC123XYZ" value="<?php echo esc_attr( $s['measurement_id'] ); ?>"></label>
+						<label>Property ID<input type="text" name="property_id" class="regular-text" placeholder="123456789" value="<?php echo esc_attr( $s['property_id'] ); ?>"></label>
+						<label>Service-account key (JSON)
+							<?php if ( bi_ga_key() ) : ?><span class="bi-dash-note">Saved for <?php echo esc_html( bi_ga_key()['client_email'] ); ?>. Paste a new one to replace it.</span><?php endif; ?>
+							<textarea name="key" rows="4" class="large-text code" placeholder='{"type": "service_account", ...}' autocomplete="off"></textarea>
+						</label>
+						<p><button type="submit" class="button button-primary">Save &amp; connect</button> <span class="bi-dash-note" data-ga-msg></span></p>
+					</form>
+				</details>
+			<?php endif; ?>
+		</div>
+		<?php
+	}
+}
+
+function bi_dash_product() {
+	?>
+	<form class="bi-quick" data-quick-product>
+		<label>Item name<input type="text" name="name" required placeholder="e.g. Sweatshirt – The Deck (Pink)"></label>
+		<div class="bi-quick__row">
+			<label>Price<input type="text" name="price" inputmode="decimal" placeholder="45"></label>
+			<label>Label (optional)<input type="text" name="badge" placeholder="New"></label>
+		</div>
+		<label>Square payment link<input type="url" name="link" placeholder="https://square.link/u/…"></label>
+		<label>Short description (optional)<textarea name="desc" rows="2" placeholder="Cozy fleece hoodie with The Deck logo. Sizes S–XXL."></textarea></label>
+		<div class="bi-quick__photos" data-photos></div>
+		<p><button type="button" class="button" data-pick><span class="dashicons dashicons-format-image"></span> Add photos</button></p>
+		<label class="bi-quick__check"><input type="checkbox" name="first" checked> Show it first on the Merchandise page</label>
+		<p class="bi-quick__actions"><button type="submit" class="button button-primary">Add product</button> <span class="bi-dash-note" data-msg></span></p>
+	</form>
+	<?php
+}
+
+// Quick add from the dashboard: appends one item to Bayfield Inn › Merchandise.
+add_action( 'rest_api_init', function () {
+	register_rest_route( 'bayfield/v1', '/products/add', array(
+		'methods'             => 'POST',
+		'permission_callback' => function () { return current_user_can( BI_MANAGER_CAP ); },
+		'callback'            => function ( WP_REST_Request $req ) {
+			$name = sanitize_text_field( (string) $req->get_param( 'name' ) );
+			if ( '' === $name ) {
+				return new WP_Error( 'bi_name', 'Give the item a name.', array( 'status' => 400 ) );
+			}
+			$item = array(
+				'name'    => $name,
+				'price'   => ltrim( sanitize_text_field( (string) $req->get_param( 'price' ) ), '$' ),
+				'badge'   => sanitize_text_field( (string) $req->get_param( 'badge' ) ),
+				'link'    => esc_url_raw( (string) $req->get_param( 'link' ) ),
+				'desc'    => sanitize_textarea_field( (string) $req->get_param( 'desc' ) ),
+				'images'  => array_values( array_filter( array_map( 'absint', (array) $req->get_param( 'images' ) ), function ( $id ) { return 'attachment' === get_post_type( $id ); } ) ),
+				'soldout' => false,
+			);
+			$data          = bi_get_data( 'products' );
+			$data['items'] = $data['items'] ?? array();
+			if ( $req->get_param( 'first' ) ) {
+				array_unshift( $data['items'], $item );
+			} else {
+				$data['items'][] = $item;
+			}
+			bi_save_data( 'products', $data );
+			return array( 'ok' => true, 'count' => count( $data['items'] ) );
+		},
+	) );
+} );
+
+add_action( 'admin_enqueue_scripts', function ( $hook ) {
+	if ( 'index.php' === $hook ) {
+		wp_enqueue_media(); // photo picker for "Add a product"
+	}
 } );
 
 /* ============================================================ left menu */
