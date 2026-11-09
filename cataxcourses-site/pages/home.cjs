@@ -38,24 +38,50 @@ const badges = (m, h, extra = {}) => row([
   image(m.bca, { height: [h[3], h[3], Math.round(h[3] * 0.8)], link: URL.bca, settings: { width: auto, _element_width: 'auto' } }),
 ], { gap: h[4], rowGap: 20, justify: 'center', cls: 'ctc-badge-slider', settings: extra });
 
-// Phone price card (hero): label, price, call to action; the whole card links to the course.
-function mobilePrice(label, amount, sub, url, variant) {
-  const navy = variant === 'navy';
-  return linkBox(url, {
-    content_width: 'full', flex_direction: 'column', flex_gap: gap(6), padding: box(16, 14, 16, 14), border_radius: box(14),
-    background_background: 'classic', background_color: navy ? C.navy : C.gold,
-    box_shadow_box_shadow_type: 'yes', box_shadow_box_shadow: { horizontal: 0, vertical: 12, blur: 28, spread: -14, color: 'rgba(28,35,51,0.45)' },
-  }, [
-    eyebrow(label, navy ? C.gold : C.white, 'left', { size: 12, ls: 0.1 }),
-    widget('heading', { title: `<span class="ctc-thin" style="color:${navy ? C.gold : C.white}">$</span>${amount}`, header_size: 'span', title_color: C.white, ...typo('typography', HEAD, [34, 32, 30], 800, { lh: 1, ls: 0 }) }),
-    text(sub, { color: navy ? C.light : C.white, size: [14, 14, 13], lh: 1.3 }),
-    widget('heading', { title: 'Start course →', header_size: 'span', title_color: navy ? C.gold : C.white, ...typo('typography', HEAD, [15, 15, 14], 700, { lh: 1.2, ls: 0 }), _margin: box(4, 0, 0, 0) }),
-  ]);
+// Phone hero (approved handoff "option 2a", Nov 2026): headline, subhead, one box with both courses, provider logos,
+// then the full course-player laptop. Shown at Elementor's mobile width only; tablet and desktop
+// keep the original hero. Navy and gold use the site's own colors.
+function mobileHero(m) {
+  const row = (label, title, amount, url, arrowBg, arrowFg) =>
+    `<a class="ctc-mh-row" href="${url}"><span><span class="ctc-mh-lab">${label}</span><span class="ctc-mh-t">${title}</span></span>` +
+    `<span class="ctc-mh-p">$${amount}</span><span class="ctc-mh-ar" style="background:${arrowBg};color:${arrowFg}" aria-hidden="true">→</span></a>`;
+  const css = `
+.ctc-mh{font-family:Outfit,sans-serif;color:${C.navy}}
+.ctc-mh-pill{display:inline-flex;padding:7px 12px;border-radius:999px;background:#F0E3BD;color:#7A5A0E;font:600 11px/1 Outfit,sans-serif;letter-spacing:2px;text-transform:uppercase}
+.ctc-mh h1{margin:16px 0 0;padding:0;font:400 28px/1.1 Outfit,sans-serif;letter-spacing:-.2px;color:${C.navy}}
+.ctc-mh h1 b{display:block;margin-top:6px;font-weight:800;font-size:46px;line-height:1.05;letter-spacing:-1px}
+.ctc-mh h1 i{font-style:normal;color:${C.gold}}
+.ctc-mh-sub{margin:14px 0 0;font:400 16px/1.45 Outfit,sans-serif;color:#4B5162;text-wrap:pretty}
+.ctc-mh-box{margin-top:22px;background:#fff;border-radius:20px;overflow:hidden;border:1px solid rgba(28,37,65,.10);box-shadow:0 8px 24px rgba(28,37,65,.08)}
+.ctc-mh-row{display:grid;grid-template-columns:1fr auto auto;gap:14px;align-items:center;min-height:74px;box-sizing:border-box;padding:16px 16px 16px 18px;text-decoration:none!important;color:${C.navy}!important;transition:background 150ms ease}
+.ctc-mh-row+.ctc-mh-row{border-top:1px solid rgba(28,37,65,.12)}
+.ctc-mh-row:hover,.ctc-mh-row:active{background:#F7F5EF}
+.ctc-mh-row:focus-visible{outline:2px solid ${C.gold};outline-offset:-2px}
+.ctc-mh-lab{display:block;font:600 11px/1 Outfit,sans-serif;letter-spacing:2px;text-transform:uppercase;color:#8A6512}
+.ctc-mh-t{display:block;margin-top:5px;font:600 17px/1.2 Outfit,sans-serif;color:${C.navy}}
+.ctc-mh-p{font:800 20px/1 Outfit,sans-serif;color:${C.navy}}
+.ctc-mh-ar{display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;font:700 16px/1 Outfit,sans-serif}
+.ctc-mh-prov{margin-top:16px;display:flex;align-items:center;gap:10px;font:400 12px/1.2 Outfit,sans-serif;color:#5B6170}
+.ctc-mh-prov img{height:30px;width:auto;display:block}
+.ctc-mh-lap{margin:18px -8px 0}
+.ctc-mh-lap img{display:block;width:100%;height:auto;mix-blend-mode:multiply;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 4%,#000 96%,transparent 100%),linear-gradient(180deg,#000 82%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 4%,#000 96%,transparent 100%),linear-gradient(180deg,#000 82%,transparent 100%);mask-composite:intersect}`;
+  const html = `<style>${css}</style><div class="ctc-mh">` +
+    `<span class="ctc-mh-pill">CTEC &amp; IRS Approved</span>` +
+    `<h1>California Tax Education<b>Made Simple<i>.</i></b></h1>` +
+    `<p class="ctc-mh-sub">Online, self-paced courses to renew your CTEC or become a California tax preparer.</p>` +
+    `<div class="ctc-mh-box">` +
+    row('20 Hour CE', 'Renew your CTEC', COURSES[1].amount, URL.c20, C.navy, '#FFFFFF') +
+    row('60 Hour QE', 'Become a tax preparer', COURSES[0].amount, URL.c60, C.gold, C.navy) +
+    `</div>` +
+    `<div class="ctc-mh-prov">Approved provider<img src="${m.ctec.url}" alt="CTEC approved provider" height="30"><img src="${m.irs.url}" alt="IRS approved continuing education provider" height="30"></div>` +
+    `<div class="ctc-mh-lap"><img src="${m.laptopPoster.url}" alt="California Tax Courses online course player" width="1180" height="787" fetchpriority="high"></div>` +
+    `</div>`;
+  return widget('html', { html, _css_classes: 'ctc-mh-wrap', hide_desktop: 'hidden-desktop', hide_tablet: 'hidden-tablet' });
 }
 
 function hero(m) {
   return band(C.cream, [
-    image(m.seal, { width: 560, cls: 'ctc-deco', settings: { _position: 'absolute', _element_width: 'initial', _element_custom_width: px(560), _element_custom_width_mobile: px(320), opacity: px(0.1), _offset_orientation_h: 'end', _offset_x_end: px(-140), _offset_orientation_v: 'end', _offset_y_end: px(-200), _z_index: 0 } }),
+    image(m.seal, { width: 560, cls: 'ctc-deco', settings: { hide_mobile: 'hidden-mobile', _position: 'absolute', _element_width: 'initial', _element_custom_width: px(560), _element_custom_width_mobile: px(320), opacity: px(0.1), _offset_orientation_h: 'end', _offset_x_end: px(-140), _offset_orientation_v: 'end', _offset_y_end: px(-200), _z_index: 0 } }),
     grid([
       stack([
         pill('CTEC &amp; IRS Approved Tax Education', { settings: { hide_mobile: 'hidden-mobile' } }),
@@ -67,25 +93,27 @@ function hero(m) {
           ctaCard('Need to renew?', '20 Hour CE Course →', URL.c20, 'navy'),
           ctaCard('Becoming a preparer?', '60 Hour QE Course →', URL.c60, 'gold'),
         ], { settings: { hide_mobile: 'hidden-mobile' } }),
-        badges(m, [40, 48, 44, 56, 28], { hide_desktop: 'hidden-desktop', hide_tablet: 'hidden-tablet', margin: box(36, 0, 0, 0) }),
       ]),
       stack([
-        pill('CTEC &amp; IRS Approved Tax Education', { settings: { hide_desktop: 'hidden-desktop', hide_tablet: 'hidden-tablet', _flex_align_self_mobile: 'center' } }),
         pill('CTEC <span class="ctc-gold">&amp;</span> IRS Approved', { color: C.white, bg: C.navy, size: [15, 14, 12], ls: 0.1, radius: box(6), pad: box(7, 12, 7, 12),
           settings: { _position: 'absolute', _offset_orientation_h: 'end', _offset_x_end: px(20), _offset_orientation_v: 'start', _offset_y: px(-14), _z_index: 2, hide_mobile: 'hidden-mobile' } }),
         widget('video', {
           video_type: 'hosted', hosted_url: { url: m.laptopVideo.url, id: m.laptopVideo.id }, autoplay: 'yes', play_on_mobile: 'yes', mute: 'yes', loop: 'yes', controls: '',
           preload: 'auto', aspect_ratio: '32', poster: { url: m.laptopPoster.url, id: m.laptopPoster.id }, ...wcls('ctc-laptop'),
         }),
-        // Phones: prices right under the laptop (desktop shows the two course buttons beside the text instead).
-        grid([
-          mobilePrice('20 Hour CE', COURSES[1].amount, 'Renew your CTEC', URL.c20, 'navy'),
-          mobilePrice('60 Hour QE', COURSES[0].amount, 'Become a tax preparer', URL.c60, 'gold'),
-        ], { cols: [2, 2, 2], gap: 12, gapM: 12, settings: { hide_desktop: 'hidden-desktop', hide_tablet: 'hidden-tablet', margin_mobile: box(-22, 0, 22, 0) } }),
         badges(m, [40, 48, 44, 56, 28], { hide_mobile: 'hidden-mobile' }),
       ], { gap: 28, settings: { _z_index: 1, _flex_order_mobile: 'start', flex_gap_mobile: gap(18) } }),
-    ], { cols: [2, 1, 1], gap: 56, gapM: 0, align: 'center' }),
-  ], { pad: [88, 96], cls: 'ctc-dots-cream', settings: { padding_mobile: box(29, 20, 63, 20) } });
+    ], { cols: [2, 1, 1], gap: 56, gapM: 0, align: 'center', settings: { hide_mobile: 'hidden-mobile' } }),
+    mobileHero(m),
+  ], { pad: [88, 96], cls: 'ctc-dots-cream', settings: { padding_mobile: box(26, 24, 0, 24) } });
+}
+
+// Phones: the hero's full introduction continues on white right under the laptop.
+function mobileIntro() {
+  return band('#FFFFFF', [
+    text('California Tax Courses is a CTEC Approved Continuing Education and Qualifying Education Provider. Our courses are offered online and can be accessed from a computer or smartphone, 24/7 anywhere you have access to the internet! We offer a 20 hour continuing education course for those who want to renew their CTEC registration, and a 60 Hour Qualifying Education Course for those who want to become a registered tax preparer.',
+      { size: [17, 17, 17], lh: 1.65 }),
+  ], { settings: { hide_desktop: 'hidden-desktop', hide_tablet: 'hidden-tablet', padding_mobile: box(28, 24, 28, 24) } });
 }
 
 function courseCard(c) {
@@ -275,6 +303,6 @@ function finalCta() {
 module.exports = {
   slug: 'new-home', title: 'Home (new design preview)', liveId: 65,
   build: (m) => [container({ content_width: 'full', padding: box(0), flex_gap: gap(0), ...cls('ctc-page') }, [
-    hero(m), courses(), credentials(m), students(m), articles(), faq(), newsletter(), finalCta(),
+    hero(m), mobileIntro(), courses(), credentials(m), students(m), articles(), faq(), newsletter(), finalCta(),
   ], false)],
 };

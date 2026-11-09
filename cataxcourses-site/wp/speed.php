@@ -160,7 +160,7 @@ add_action( 'wp_footer', function () {
 <script id="ctc-speed">
 (function () {
   // Hero video: start it once the page has loaded.
-  function videos() { document.querySelectorAll('video[data-ctc-src]').forEach(function (v) { v.src = v.getAttribute('data-ctc-src'); v.removeAttribute('data-ctc-src'); v.preload = 'auto'; var p = v.play && v.play(); if (p && p.catch) p.catch(function () {}); }); }
+  function videos() { document.querySelectorAll('video[data-ctc-src]').forEach(function (v) { if (!v.getClientRects().length) return; /* hidden at this screen size (phone hero shows a still image) */ v.src = v.getAttribute('data-ctc-src'); v.removeAttribute('data-ctc-src'); v.preload = 'auto'; var p = v.play && v.play(); if (p && p.catch) p.catch(function () {}); }); }
   if (document.readyState === 'complete') setTimeout(videos, 300); else window.addEventListener('load', function () { setTimeout(videos, 300); });
   // Chat and tracking: run the delayed scripts in page order on the first interaction.
   var DELAY = <?php echo $delay; ?>, done = false;
