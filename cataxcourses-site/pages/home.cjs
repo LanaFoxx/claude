@@ -38,6 +38,21 @@ const badges = (m, h, extra = {}) => row([
   image(m.bca, { height: [h[3], h[3], Math.round(h[3] * 0.8)], link: URL.bca, settings: { width: auto, _element_width: 'auto' } }),
 ], { gap: h[4], rowGap: 20, justify: 'center', cls: 'ctc-badge-slider', settings: extra });
 
+// Phone price card (hero): label, price, call to action; the whole card links to the course.
+function mobilePrice(label, amount, sub, url, variant) {
+  const navy = variant === 'navy';
+  return linkBox(url, {
+    content_width: 'full', flex_direction: 'column', flex_gap: gap(6), padding: box(16, 14, 16, 14), border_radius: box(14),
+    background_background: 'classic', background_color: navy ? C.navy : C.gold,
+    box_shadow_box_shadow_type: 'yes', box_shadow_box_shadow: { horizontal: 0, vertical: 12, blur: 28, spread: -14, color: 'rgba(28,35,51,0.45)' },
+  }, [
+    eyebrow(label, navy ? C.gold : C.white, 'left', { size: 12, ls: 0.1 }),
+    widget('heading', { title: `<span class="ctc-thin" style="color:${navy ? C.gold : C.white}">$</span>${amount}`, header_size: 'span', title_color: C.white, ...typo('typography', HEAD, [34, 32, 30], 800, { lh: 1, ls: 0 }) }),
+    text(sub, { color: navy ? C.light : C.white, size: [14, 14, 13], lh: 1.3 }),
+    widget('heading', { title: 'Start course →', header_size: 'span', title_color: navy ? C.gold : C.white, ...typo('typography', HEAD, [15, 15, 14], 700, { lh: 1.2, ls: 0 }), _margin: box(4, 0, 0, 0) }),
+  ]);
+}
+
 function hero(m) {
   return band(C.cream, [
     image(m.seal, { width: 560, cls: 'ctc-deco', settings: { _position: 'absolute', _element_width: 'initial', _element_custom_width: px(560), _element_custom_width_mobile: px(320), opacity: px(0.1), _offset_orientation_h: 'end', _offset_x_end: px(-140), _offset_orientation_v: 'end', _offset_y_end: px(-200), _z_index: 0 } }),
@@ -51,7 +66,7 @@ function hero(m) {
         row([
           ctaCard('Need to renew?', '20 Hour CE Course →', URL.c20, 'navy'),
           ctaCard('Becoming a preparer?', '60 Hour QE Course →', URL.c60, 'gold'),
-        ]),
+        ], { settings: { hide_mobile: 'hidden-mobile' } }),
         badges(m, [40, 48, 44, 56, 28], { hide_desktop: 'hidden-desktop', hide_tablet: 'hidden-tablet', margin: box(36, 0, 0, 0) }),
       ]),
       stack([
@@ -62,8 +77,13 @@ function hero(m) {
           video_type: 'hosted', hosted_url: { url: m.laptopVideo.url, id: m.laptopVideo.id }, autoplay: 'yes', play_on_mobile: 'yes', mute: 'yes', loop: 'yes', controls: '',
           preload: 'auto', aspect_ratio: '32', poster: { url: m.laptopPoster.url, id: m.laptopPoster.id }, ...wcls('ctc-laptop'),
         }),
+        // Phones: prices right under the laptop (desktop shows the two course buttons beside the text instead).
+        grid([
+          mobilePrice('20 Hour CE', COURSES[1].amount, 'Renew your CTEC', URL.c20, 'navy'),
+          mobilePrice('60 Hour QE', COURSES[0].amount, 'Become a tax preparer', URL.c60, 'gold'),
+        ], { cols: [2, 2, 2], gap: 12, gapM: 12, settings: { hide_desktop: 'hidden-desktop', hide_tablet: 'hidden-tablet', margin_mobile: box(-22, 0, 22, 0) } }),
         badges(m, [40, 48, 44, 56, 28], { hide_mobile: 'hidden-mobile' }),
-      ], { gap: 28, settings: { _z_index: 1, _flex_order_mobile: 'start' } }),
+      ], { gap: 28, settings: { _z_index: 1, _flex_order_mobile: 'start', flex_gap_mobile: gap(18) } }),
     ], { cols: [2, 1, 1], gap: 56, gapM: 0, align: 'center' }),
   ], { pad: [88, 96], cls: 'ctc-dots-cream', settings: { padding_mobile: box(29, 20, 63, 20) } });
 }
