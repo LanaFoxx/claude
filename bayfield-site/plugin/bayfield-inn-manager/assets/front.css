@@ -185,3 +185,16 @@ body:has(.bi-book)::after { display: none !important; }
 /* Menu switched off with no message: hide its section and the "View menu" buttons. */
 #menus:has(.bi-menu-off) { display: none !important; }
 body:has(.bi-menu-hidden) .elementor-widget-button:has(a[href="#menus"]) { display: none !important; }
+
+/* Restaurant hours (Bayfield Inn › Hours) */
+.bi-hours { margin-top: 8px; padding: 20px 22px; border: 1px solid rgba(23,48,27,.14); border-radius: 4px; background: #F5F2EC; max-width: 420px; }
+.bi-hours__title { margin: 0 0 12px; font: 500 11px/1 Geist, system-ui, sans-serif; letter-spacing: .2em; text-transform: uppercase; color: #17301B; }
+.bi-hours__list { margin: 0; }
+.bi-hours__row { display: flex; justify-content: space-between; gap: 16px; padding: 7px 0; border-top: 1px solid rgba(23,48,27,.1); font: 400 15px/1.4 Geist, system-ui, sans-serif; color: #17301B; }
+.bi-hours__row:first-child { border-top: 0; padding-top: 0; }
+.bi-hours__row dt { font-weight: 500; }
+.bi-hours__row dd { margin: 0; text-align: right; }
+.bi-hours__row.is-closed dd { color: #6B7268; }
+.bi-hours__call { margin: 0; font: 400 15px/1.5 Geist, system-ui, sans-serif; color: #17301B; }
+.bi-hours__call a { color: inherit; font-weight: 500; text-decoration: underline; text-underline-offset: 2px; }
+.bi-hours__note { margin: 12px 0 0; font: italic 400 14px/1.5 Newsreader, Georgia, serif; color: #4B5249; }

@@ -291,7 +291,7 @@ function restaurant(m, r) {
       ? [light('What’s on', '#events'), outline('View menu', '#menus'), outline('Call (715) 779-3363', PHONE)]
       : [light(MENUS[r.slug]?.menus.length > 1 ? 'View menus' : 'View menu', '#menus'), outline('Call (715) 779-3363', PHONE)] }),
     ...(r.barBites ? [eventsBar(r)] : []),
-    story('About', r.aboutTitle, r.about, r.aboutImg ? m.file(r.aboutImg) : null, { bg: C.white, alt: r.title }),
+    story('About', r.aboutTitle, r.about, r.aboutImg ? m.file(r.aboutImg) : null, { bg: C.white, alt: r.title, after: [widget('bi-hours', { restaurant: r.slug })] }),
     ...[menuSection(m, r)].filter(Boolean),
     ...(r.photos?.length ? [section({ background_background: 'classic', background_color: C.white, ...pad, ...boxed, flex_direction: 'column' }, [galleryWidget(r.photos.map(m.file), [3, 3, 1])])] : []),
     ctaBand('Stay with us', r.barBites ? 'Your room is right across the street.' : 'Dinner downstairs, a lake view upstairs.', [light('Book a Room', EXT.book), outline('See the gallery', '/gallery/')]),

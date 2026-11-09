@@ -80,6 +80,7 @@ function bi_dash_stats() {
 function bi_dash_links() {
 	$links = array(
 		array( 'edit.php?post_type=page', 'admin-page', 'Edit pages', 'Hover a page, then click "Edit with Elementor". Switch pages on or off.' ),
+		array( 'admin.php?page=bi-hours', 'clock', 'Restaurant hours', 'Opening hours shown on each restaurant page.', 'hours' ),
 		array( 'admin.php?page=bi-menus', 'food', 'Restaurant menus', 'Dishes, prices, and switching a menu on or off.' ),
 		array( 'admin.php?page=bi-gallery', 'format-gallery', 'Gallery', 'Photos and sections on the Gallery page.' ),
 		array( 'admin.php?page=bi-merch', 'cart', 'Merchandise', 'All items: edit, reorder, sold out.' ),
@@ -89,8 +90,15 @@ function bi_dash_links() {
 	}
 	echo '<ul class="bi-links">';
 	foreach ( $links as $l ) {
-		printf( '<li><a href="%s"><span class="dashicons dashicons-%s"></span><span><strong>%s</strong><small>%s</small></span></a></li>',
-			esc_url( admin_url( $l[0] ) ), esc_attr( $l[1] ), esc_html( $l[2] ), esc_html( $l[3] ) );
+		$sub = '';
+		if ( 'hours' === ( $l[4] ?? '' ) ) {
+			// One-click links straight to each restaurant's hours.
+			$sub = '<span class="bi-links__sub">' . implode( '', array_map( function ( $slug, $name ) {
+				return sprintf( '<a href="%s">%s</a>', esc_url( admin_url( 'admin.php?page=bi-hours#' . $slug ) ), esc_html( $name ) );
+			}, array_keys( bi_hours_restaurants() ), bi_hours_restaurants() ) ) . '</span>';
+		}
+		printf( '<li><a href="%s"><span class="dashicons dashicons-%s"></span><span><strong>%s</strong><small>%s</small></span></a>%s</li>',
+			esc_url( admin_url( $l[0] ) ), esc_attr( $l[1] ), esc_html( $l[2] ), esc_html( $l[3] ), $sub ); // phpcs:ignore -- $sub escaped above
 	}
 	echo '</ul>';
 }
@@ -130,6 +138,9 @@ add_action( 'admin_head-index.php', function () {
 	.bi-links a:hover strong { color: #2271b1; }
 	.bi-links .dashicons { color: #17301B; margin-top: 2px; }
 	.bi-links small { display: block; color: #646970; }
+	.bi-links__sub { display: flex; flex-wrap: wrap; gap: 6px; margin: -4px 0 10px 30px; }
+	.bi-links__sub a { display: inline-block; padding: 3px 9px; border: 1px solid #c3c4c7; border-radius: 999px; font-size: 12px; text-decoration: none; color: #17301B; }
+	.bi-links__sub a:hover { border-color: #17301B; background: #f0f6f2; }
 	.bi-cam__player { position: relative; aspect-ratio: 16 / 9; background: #0F2113; border-radius: 6px; overflow: hidden; margin: 0 0 12px; }
 	.bi-cam__player > div, .bi-cam__player iframe, .bi-cam__player video { position: absolute; inset: 0; width: 100% !important; height: 100% !important; padding: 0 !important; border: 0; }
 	.bi-tiles--ga { grid-template-columns: repeat(3, 1fr); }
