@@ -1175,7 +1175,8 @@
 			return card('cd-clients cd-ads', chead('bolt', 'Advertising', ''),
 				'<div class="dwdc-mtop">' + gpart + kpart + '</div>'
 				+ (K.last ? '<p class="dwdc-adnote">Connects from your Upwork file, last purchase ' + fmt(K.last) + (G ? ' · Google Ads updated ' + ago(G.at) : '') + '</p>' : ''),
-				'<footer>' + '<a class="dwdc-frow" href="#money" data-adsmodal><span>Total ad spend this month</span><b>' + money(total) + '</b>' + ic('right', 12) + '</a>'
+				'<footer>' + '<a class="dwdc-frow" href="#money" data-connmodal><span>Connects spent this month</span><b>' + money(K.month || 0) + ' <small class="dwdc-frow-sub">last month ' + money(K.lastmonth || 0) + '</small></b>' + ic('right', 12) + '</a>'
+				+ '<a class="dwdc-frow" href="#money" data-adsmodal><span>Total ad spend this month</span><b>' + money(total) + '</b>' + ic('right', 12) + '</a>'
 				+ '<a class="dwdc-frow" href="#leads"><span>Leads from Google Ads</span><b>' + (LD.month || 0) + ' <small class="dwdc-frow-sub">this month · ' + (LD.lastmonth || 0) + ' last</small></b>' + ic('right', 12) + '</a>'
 				+ '</footer>');
 		})();
