@@ -1777,3 +1777,12 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 .dwdc [data-sort].dwdc-sorting [data-sid] { cursor: grabbing; }
 .dwdc [data-sort] .dwdc-dragging { background: #EEF6FD !important; box-shadow: 0 6px 18px -8px rgba(11,32,61,.35); border-radius: 8px; position: relative; z-index: 2; }
 .dwdc .dwdc-hlead.dwdc-dragging { padding-left: 8px; padding-right: 8px; }
+/* Owed list: Pending / Paid per project */
+.dwdc-mo-r.dwdc-owr { grid-template-columns: 64px 1fr auto auto; cursor: pointer; }
+.dwdc-owacts { display: flex; gap: 6px; }
+.dwdc-owacts .dwdc-btn2.sm, .dwdc-owacts .dwdc-btn.sm { padding: 6px 12px; font-size: 12.5px; min-height: 0; }
+.dwdc-mo-r.is-pend strong { color: var(--sec); }
+.dwdc-pendtag { display: inline-block; margin-left: 6px; padding: 2px 8px; border-radius: 999px; background: #FFF4E0; color: #A3620A; font-style: normal; font-size: 11px; font-weight: 700; vertical-align: 1px; }
+.dwdc-mo-sum span.pend { background: #FFF8EC; border-color: #F3DDB5; color: #A3620A; }
+@media (max-width: 600px) { .dwdc-mo-r.dwdc-owr { grid-template-columns: 1fr auto; } .dwdc-mo-r.dwdc-owr .d { display: none; } .dwdc-owacts { grid-column: 1 / -1; justify-content: flex-end; } }
+@media (max-width: 600px) { .dwdc-mo-r.dwdc-owr .w b { white-space: normal; } .dwdc-mo-r.dwdc-owr .dwdc-pendtag { display: table; margin: 4px 0 0; } }

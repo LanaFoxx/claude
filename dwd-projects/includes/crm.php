@@ -46,7 +46,7 @@ function dwdc_lists() {
 
 /** Contact fields kept on every contact. */
 function dwdc_fields() {
-	return array( 'job', 'manual', 'followup', 'markup', 'markup_sent', 'lead_source', 'pay_method', 'stage', 'completed', 'billed', 'stripe', 'paypal', 'person', 'email', 'phone', 'company', 'website', 'list', 'price', 'balance', 'deadline', 'hosting', 'renewal', 'source', 'next' );
+	return array( 'job', 'manual', 'followup', 'markup', 'markup_sent', 'lead_source', 'pay_method', 'stage', 'completed', 'billed', 'stripe', 'paypal', 'person', 'email', 'phone', 'company', 'website', 'list', 'price', 'balance', 'deadline', 'hosting', 'renewal', 'source', 'next', 'pending' );
 }
 
 function dwdc_contact( $post, $full = false ) {
@@ -1061,6 +1061,9 @@ add_action( 'rest_api_init', function () {
 		$bal = (float) preg_replace( '/[^\d.]/', '', (string) get_post_meta( $id, '_dwdc_balance', true ) );
 		if ( $bal > 0 ) {
 			update_post_meta( $id, '_dwdc_balance', (string) max( 0, round( $bal - $amt, 2 ) ) );
+		}
+		if ( $bal - $amt <= 0 ) {
+			update_post_meta( $id, '_dwdc_pending', '' ); // fully paid: no longer pending
 		}
 		// A hosting renewal moves the renewal date a year on (from the old date, or the payment date if that's later).
 		if ( $r->get_param( 'renew' ) ) {
