@@ -14,8 +14,9 @@ const SECTIONS = [
  {
   "title": "SMS / TEXT MESSAGING TERMS",
   "ps": [
-   "California Tax Courses offers a text messaging program for customers and students who opt in at https://cataxcourses.com/text-alerts/. By opting in, you agree to receive text messages from California Tax Courses at the mobile number you provide.",
-   "Types of messages: replies to your questions, course and enrollment support (such as login help and course access), and CTEC deadline reminders. These messages help you complete your course and stay on track with your CTEC registration.",
+   "California Tax Courses offers a text messaging program (California Tax Courses Alerts) for customers, students and tax professionals who opt in, either at https://cataxcourses.com/text-alerts/ or by checking the text message consent box at checkout. By opting in, you agree to receive recurring automated text messages from California Tax Courses at the mobile number you provide, including marketing and promotional messages.",
+   "Types of messages: course offers and promotions, discounts and coupon codes, new course and tax season announcements, CTEC renewal and deadline reminders, replies to your questions, and course and enrollment support (such as login help and course access).",
+   "Our text messages are sent through our SMS service provider, Intuit Mailchimp, on our behalf.",
    "Message frequency varies. Message and data rates may apply. Consent to receive text messages is not a condition of purchase.",
    "To stop receiving text messages, reply STOP at any time. After you reply STOP, you will receive one final message confirming that you have been unsubscribed, and no further messages will be sent. To opt back in, reply START.",
    "For help, reply HELP, call (888) 229-1994 (Monday – Friday, 9am – 4pm PST), or email help@cataxcourses.com.",
