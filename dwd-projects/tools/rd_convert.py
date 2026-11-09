@@ -263,7 +263,8 @@ if _gi > -1:
     _figs = ''
     for _q, _who, _co, _url, _host, _slug, _src in _REVIEWS:
         _cap = (_fc.group(1) + '<span class="dwr-qwho"><b>' + _who + '</b> · ' + (_co if _co.endswith('review') else _co + (' · ' + _src + ' review' if _src else '')) + '</span>'
-                '<span class="dwr-qlinks"><a href="' + _url + '" target="_blank" rel="noopener">' + _host + ' ↗</a><a href="%HOME%/portfolio/' + _slug + '/">See the project →</a></span>' + _fc.group(3))
+                '<span class="dwr-qlinks"><a href="' + _url + '" target="_blank" rel="noopener">' + _host + ' ↗</a><a href="%HOME%/portfolio/' + _slug + '/">See the project →</a>'
+                '<a class="dwr-qall" href="https://maps.app.goo.gl/z4HfYnTZaqccWhhy9" target="_blank" rel="noopener">Read all Google reviews <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12 12 2M4 2h8v8"></path></svg></a></span>' + _fc.group(3))
         _f = _tpl.replace(_bq.group(0), _bq.group(1) + '“' + _q + '”' + _bq.group(3)).replace(_fc.group(0), _cap)
         _f = _f.replace('font-size:clamp(24px,2.4vw,30px);line-height:1.2;letter-spacing:-.025em;font-weight:500;color:#fff', 'font-size:clamp(17px,1.35vw,19px);line-height:1.5;letter-spacing:-.01em;font-weight:400;color:#E6E6E6')
         _f = _f.replace('<figure', '<figure data-src="' + (_src or 'client') + '"', 1)
@@ -397,6 +398,11 @@ if _gi > -1:
           + hb[_gi:_ge].replace('<div id="dw-quotes-grid"', '<div id="dw-quotes-grid" class="dwr-qslider" aria-live="polite"', 1).replace('<figure data-src', '<figure data-q-item="1" data-src').replace(' data-dw-reveal="1" style="margin:0;display:flex', ' style="margin:0;display:flex')
           + '<button type="button" class="dwr-qbtn" data-q="1" aria-label="Next review">' + _arrowR + '</button></div>'
           + '<div class="dwr-qnav"><span class="dwr-qcount"><b>1</b> / ' + str(_n) + '</span><span class="dwr-qdots">' + _dots + '</span></div>' + hb[_ge:])
+# Michael: no big "Read all reviews on Google" button under the reviews; each card has a text link instead.
+_rk = hb.find('>Read all reviews on Google')
+if _rk > -1:
+    _rs = hb.rfind('<div', 0, _rk)
+    hb = hb[:_rs] + hb[_div_end(hb, _rs):]
 write('home.html', hb)
 
 def interior(name, out):
