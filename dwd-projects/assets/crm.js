@@ -177,6 +177,7 @@
 	// Google sync health: connected, or stopped (no sync for 2+ hours).
 	function gStale(GL) { if (!GL || !GL.at) { return false; } var t = new Date(GL.at.replace(' ', 'T') + 'Z').getTime(); return Date.now() - t > 2 * 3600 * 1000; }
 	/* ---------- Personal: bank spending, subscriptions, connections ---------- */
+	function money2(v) { return '$' + (+v || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
 	function bData() {
 		if (!S.bank && !S.bankLoading) { S.bankLoading = true; api('/bank').then(function (d) { S.bank = d; S.bankLoading = false; render(); }).catch(function () { S.bankLoading = false; }); }
 		return S.bank;
@@ -233,9 +234,9 @@
 		return '<div class="dwdc-pmonth"><button class="dwdc-btn2 sm" data-bmonth="' + (months[idx + 1] || '') + '"' + (months[idx + 1] ? '' : ' disabled') + '>‹</button><b>' + label(ym) + '</b><button class="dwdc-btn2 sm" data-bmonth="' + (months[idx - 1] || '') + '"' + (idx > 0 ? '' : ' disabled') + '>›</button></div>'
 			+ (function () {
 				// 1. Total balance across the bank accounts (live from Plaid). 2. Money in this month. 3. Ad spend.
-				var BL = (B.balances && B.balances.accounts ? B.balances.accounts : []).filter(function (x) { return x.type === 'checking'; }), tot = BL.reduce(function (a, x) { return a + (x.current || 0); }, 0);
+				var BL = (B.balances && B.balances.accounts ? B.balances.accounts : []).filter(function (x) { return x.type === 'checking'; }), bv = function (x) { return x.available != null ? x.available : (x.current || 0); }, tot = BL.reduce(function (a, x) { return a + bv(x); }, 0);
 				var bname = function (x) { return (x.business ? 'Business' : 'Personal') + ' ••' + esc(x.mask); };
-				var bal = '<div class="dwdc-kpi navy"><small>Total balance</small><strong>' + (BL.length ? money(tot) : '—') + '</strong><span>' + (BL.length ? BL.slice().sort(function (a, b) { return (b.business ? 1 : 0) - (a.business ? 1 : 0); }).map(function (x) { return bname(x) + ' ' + money(x.current || 0); }).join(' · ') + (B.balances.at ? '<br>Updated ' + fmt(B.balances.at.slice(0, 10)) + ' ' + B.balances.at.slice(11, 16) : '') : 'Balances show once Bank of America syncs through Plaid') + '</span></div>';
+				var bal = '<div class="dwdc-kpi navy"><small>Total balance · available</small><strong>' + (BL.length ? money2(tot) : '—') + '</strong><span>' + (BL.length ? BL.slice().sort(function (a, b) { return (b.business ? 1 : 0) - (a.business ? 1 : 0); }).map(function (x) { return bname(x) + ' ' + money2(bv(x)); }).join(' · ') + (B.balances.at ? '<br>Updated ' + fmt(B.balances.at.slice(0, 10)) + ' ' + B.balances.at.slice(11, 16) : '') : 'Balances show once Bank of America syncs through Plaid') + '</span></div>';
 				var inBox = '<div class="dwdc-kpi"><small>Money in</small><strong>' + money(mo.in) + '</strong><span>Deposits &amp; income in ' + label(ym).split(' ')[0] + ' (not transfers between accounts)</span></div>';
 				var AS = (B.adspend && B.adspend.months && B.adspend.months[ym]) || {}, cn = AS.connects || 0, gg = AS.google || 0;
 				var ads = '<div class="dwdc-kpi coral wide"><small>Advertising spend · ' + label(ym) + '</small><strong>' + money(cn + gg) + '</strong><span>Upwork Connects ' + money(cn) + ' · Google Ads ' + (B.adspend && B.adspend.google_on ? money(gg) : 'not connected') + '</span></div>';

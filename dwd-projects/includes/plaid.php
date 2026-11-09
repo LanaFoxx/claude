@@ -208,12 +208,12 @@ add_action( 'rest_api_init', function () {
 
 /* ---------------------------------------------------------------- Account balances
  * /accounts/get returns each account's balance as of Plaid's last update (no extra Balance charge).
- * Refreshed at most every 3 hours when the Personal finance page loads, keyed by the account's last 4 digits.
+ * Refreshed at most every 30 minutes when the Personal finance page loads, keyed by the account's last 4 digits.
  */
 function dwdpl_balances( $force = false ) {
 	$saved = get_option( 'dwdpl_balances', array() );
 	$saved = is_array( $saved ) ? $saved : array();
-	if ( ! dwdpl_ready() || ( ! $force && ! empty( $saved['at'] ) && time() - (int) $saved['ts'] < 3 * HOUR_IN_SECONDS ) ) {
+	if ( ! dwdpl_ready() || ( ! $force && ! empty( $saved['at'] ) && time() - (int) $saved['ts'] < 30 * MINUTE_IN_SECONDS ) ) {
 		return $saved;
 	}
 	$accts = array();
