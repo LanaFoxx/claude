@@ -564,3 +564,20 @@ add_shortcode( 'dwd_projects_cta', function ( $atts ) {
 	dwdp_enqueue_front();
 	return dwdp_cta_html( $atts['context'] );
 } );
+
+/**
+ * Cache busting for this plugin's own CSS/JS. SiteGround's "remove query strings" strips ?ver=, and the files are
+ * cached for a year, so browsers kept running old copies after updates (e.g. the portfolio filter breaking).
+ * Our handles are excluded from that, and each URL also carries ?v=<plugin version>, which it never strips.
+ */
+add_filter( 'sgo_rqs_exclude', function ( $ex ) {
+	return array_merge( (array) $ex, array( 'dwdr', 'dwdc', 'dwdp-admin', 'dwdp-front', 'dwdp-onboarding', 'dwdp-pages', 'dwdp-skin', 'dwdp-upwork' ) );
+} );
+foreach ( array( 'script_loader_src', 'style_loader_src' ) as $dwdp_hook ) {
+	add_filter( $dwdp_hook, function ( $src ) {
+		if ( is_string( $src ) && 0 === strpos( $src, DWDP_URL ) ) {
+			$src = add_query_arg( 'v', DWDP_VERSION, $src );
+		}
+		return $src;
+	}, 99 );
+}
