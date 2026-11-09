@@ -301,7 +301,7 @@ function dwdr_body( $page ) {
 	$html = dwdr_render( $page );
 	// Text-only pages get the homepage's scrolling strip of real project screenshots: at the bottom of the hero,
 	// and on Process once more before the closing call to action.
-	if ( in_array( $page, array( 'process', 'hosting', 'contact', 'thank-you' ), true ) ) {
+	if ( in_array( $page, array( 'process', 'contact', 'thank-you' ), true ) ) {
 		$i = strpos( $html, '</section>' );
 		if ( false !== $i ) {
 			$html = substr_replace( $html, dwdr_strip( 'dark' ), $i, 0 );
