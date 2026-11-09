@@ -584,6 +584,60 @@ function dwdc_backfill() {
 	return $n;
 }
 
+/**
+ * Delete a lead completely: the lead, its to-dos, its client record (when that client has nothing else),
+ * the website-form submissions Elementor kept for that email, and any unfinished-checkout record.
+ */
+function dwdc_purge_lead( $id ) {
+	global $wpdb;
+	$id = (int) $id;
+	if ( DWDC_CONTACT !== get_post_type( $id ) ) {
+		return new WP_Error( 'dwdc_none', 'That lead no longer exists.', array( 'status' => 404 ) );
+	}
+	$email  = strtolower( (string) get_post_meta( $id, '_dwdc_email', true ) );
+	$client = (int) get_post_meta( $id, '_dwdc_client', true );
+	$out    = array( 'tasks' => 0, 'client' => false, 'submissions' => 0, 'checkout' => 0 );
+	foreach ( get_posts( array( 'post_type' => DWDC_TASK, 'post_status' => 'any', 'posts_per_page' => -1, 'fields' => 'ids', 'meta_key' => '_dwdc_contact', 'meta_value' => $id ) ) as $t ) { // phpcs:ignore
+		wp_delete_post( $t, true );
+		$out['tasks']++;
+	}
+	wp_delete_post( $id, true );
+	if ( $client && DWDC_CLIENT === get_post_type( $client ) ) {
+		$others = get_posts( array( 'post_type' => DWDC_CONTACT, 'post_status' => 'any', 'posts_per_page' => 1, 'fields' => 'ids', 'meta_key' => '_dwdc_client', 'meta_value' => $client ) ); // phpcs:ignore
+		if ( ! $others ) {
+			wp_delete_post( $client, true );
+			$out['client'] = true;
+		}
+	}
+	if ( $email ) {
+		$s = $wpdb->prefix . 'e_submissions';
+		$v = $wpdb->prefix . 'e_submissions_values';
+		if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $s ) ) === $s ) {
+			$ids = $wpdb->get_col( $wpdb->prepare( "SELECT DISTINCT submission_id FROM {$v} WHERE LOWER(`value`) = %s", $email ) ); // phpcs:ignore
+			foreach ( array_map( 'intval', $ids ) as $sid ) {
+				$wpdb->delete( $v, array( 'submission_id' => $sid ) );
+				$wpdb->delete( $s, array( 'id' => $sid ) );
+				$log = $wpdb->prefix . 'e_submissions_actions_log';
+				if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $log ) ) === $log ) {
+					$wpdb->delete( $log, array( 'submission_id' => $sid ) );
+				}
+				$out['submissions']++;
+			}
+		}
+		if ( defined( 'DWDP_LEADS' ) ) {
+			$l = get_option( DWDP_LEADS, array() );
+			if ( is_array( $l ) ) {
+				$keep = array_filter( $l, function ( $x, $k ) use ( $email ) { return strtolower( (string) ( is_array( $x ) ? ( $x['email'] ?? $k ) : $k ) ) !== $email; }, ARRAY_FILTER_USE_BOTH );
+				$out['checkout'] = count( $l ) - count( $keep );
+				if ( $out['checkout'] ) {
+					update_option( DWDP_LEADS, $keep, false );
+				}
+			}
+		}
+	}
+	return $out;
+}
+
 /* ---------------------------------------------------------------- REST */
 
 add_action( 'rest_api_init', function () {
@@ -668,6 +722,9 @@ add_action( 'rest_api_init', function () {
 		} ),
 	) );
 
+	register_rest_route( $ns, '/crm/lead/(?P<id>\d+)', array( 'methods' => 'DELETE', 'permission_callback' => $can, 'callback' => function ( $r ) {
+		return dwdc_purge_lead( (int) $r['id'] );
+	} ) );
 	register_rest_route( $ns, '/crm/contact', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
 		$d = (array) $r->get_json_params();
 		if ( ! empty( $d['email'] ) && dwdc_find_by_email( $d['email'] ) ) {

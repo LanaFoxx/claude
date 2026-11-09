@@ -1326,7 +1326,7 @@
 					+ '<span><select class="dwdc-stage t-' + ({ new: 'blue', contacted: 'deep', active: 'navy', lost: 'steel' }[st] || 'blue') + '" data-stage-of="' + c.id + '">' + LSTAGES.map(function (x) { return '<option value="' + x[0] + '"' + (x[0] === st ? ' selected' : '') + '>' + x[1] + '</option>'; }).join('') + '</select></span>'
 					+ '<span class="mut">' + ago(received(c)) + '</span>'
 					+ '<span>' + (fu && fu >= DWDC.today ? '<span class="dwdc-fu">' + ic('clock', 13) + fmt(fu) + '</span>' : '<button class="dwdc-btn3" data-followup="' + c.id + '">' + ic('clock', 13) + ' Follow up</button>') + '</span>'
-					+ '<span class="r dwdc-lacts"><button class="dwdc-btn3 dwdc-lstart" data-lstart="' + c.id + '">Start project</button><button class="dwdc-del show" data-arch="' + c.id + '" title="Archive">' + ic('archive', 15) + '</button></span></div>';
+					+ '<span class="r dwdc-lacts"><button class="dwdc-btn3 dwdc-lstart" data-lstart="' + c.id + '">Start project</button><button class="dwdc-del show" data-arch="' + c.id + '" title="Archive">' + ic('archive', 15) + '</button><button class="dwdc-del show red" data-purge="' + c.id + '" title="Delete lead for good">' + ic('x', 15) + '</button></span></div>';
 			}).join('') : emptyRow('No leads yet. Click “Add lead” to add someone you’re talking to.')) + '</div>';
 	}
 	/* ---------- Onboarding (everyone who sent the onboarding form) ---------- */
@@ -1647,7 +1647,7 @@
 			acts = (ow ? btn('', 'data-paid', 'Mark paid') : '') + (st !== 'active' ? btn('', 'data-set="active"', 'Back to active') : '')
 				+ (st !== 'hold' ? btn('greenl', 'data-set="hold"', 'Put on hold') : '') + (st !== 'limbo' ? btn('', 'data-set="limbo"', 'Move to limbo') : '') + btn('solid green', 'data-complete', 'Mark complete');
 		} else if (st === 'leads') {
-			acts = btn('', 'data-set="archive"', 'Archive') + btn('solid blue', 'data-set="active"', 'Start the job');
+			acts = btn('red', 'data-purge="' + c.id + '"', 'Delete lead') + btn('', 'data-set="archive"', 'Archive') + btn('solid blue', 'data-set="active"', 'Start the job');
 		} else if (st === 'archive') {
 			acts = btn('', 'data-set="leads"', 'Restore to leads') + btn('red', 'data-trash="' + c.id + '"', 'Delete');
 		} else {
@@ -2314,6 +2314,13 @@
 		if ((el = t.closest('[data-wins]'))) {
 			var wp = el.getAttribute('data-wins').split('|');
 			S.modal = { type: 'wins', from: wp[0], to: wp[1], label: wp[2] }; render();
+			return;
+		}
+		if ((el = t.closest('[data-purge]'))) {
+			e.preventDefault(); e.stopPropagation();
+			var pid = +el.getAttribute('data-purge'), pc = contact(pid);
+			if (!confirm('Delete ' + (pc ? (clientName(pc) || pc.name) : 'this lead') + ' completely?\n\nThis removes the lead, its notes and to-dos, its client record and the website form messages they sent. It can’t be undone.')) { return; }
+			api('/lead/' + pid, 'DELETE').then(function () { drop(pid); return reload(); }).then(function () { toast('Lead deleted'); if (route().view !== 'leads') { go('leads'); } else { render(); } }).catch(fail);
 			return;
 		}
 		if ((el = t.closest('[data-lstart]'))) {

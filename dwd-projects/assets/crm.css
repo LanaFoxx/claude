@@ -1728,3 +1728,7 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 .dwdc-lacts { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
 .dwdc-lstart { white-space: nowrap; background: var(--blue) !important; color: #fff !important; border-color: var(--blue) !important; }
 .dwdc-lstart:hover { background: var(--deep) !important; }
+.dwdc-del.red { color: #E8573B !important; }
+.dwdc-del.red:hover { background: #FDECE8 !important; }
+.g-leads2 { grid-template-columns: minmax(170px, 1.3fr) minmax(190px, 1.4fr) minmax(130px, 1fr) 140px 100px 140px 210px !important; }
+@media (min-width: 901px) { .g-leads2 { grid-template-columns: minmax(120px, 1.2fr) minmax(150px, 1.4fr) minmax(90px, 1fr) 118px 78px 120px 196px !important; min-width: 0 !important; } }
