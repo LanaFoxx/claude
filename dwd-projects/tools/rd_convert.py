@@ -244,6 +244,8 @@ if _gi > -1:
     _new = ''
     for _q, _c in _UPWORK_REVIEWS:
         _f = _tpl.replace(_bq.group(0), _bq.group(1) + '“' + _q + '”' + _bq.group(3)).replace(_fc.group(0), _fc.group(1) + _c + _fc.group(3))
+        # Long quotes use the design's smaller quote style (as on its second card).
+        _f = _f.replace('font-size:clamp(24px,2.4vw,30px);line-height:1.2;letter-spacing:-.025em;font-weight:500;color:#fff', 'font-size:clamp(17px,1.5vw,20px);line-height:1.4;letter-spacing:-.01em;font-weight:400;color:#E6E6E6')
         _new += '\n    ' + _f
     hb = hb[:_end] + _new + '\n  ' + hb[_end:]
 # Price range (Michael: $1,500 up to $10k, depending on what the site needs), under the Everything included intro.
@@ -303,6 +305,29 @@ if _ss > -1:
 # Google logo above the rating stars (Michael).
 _G = ('<span class="dwr-glogo" aria-label="Google"><svg width="30" height="30" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>Google</span>')
 hb = hb.replace('<span id="dw-rating-stars"', _G + '<span id="dw-rating-stars"', 1)
+# Source logo above the stars on each review card, and the Google logo + 4.9 in the hero star line.
+_UPW = '<svg width="26" height="26" viewBox="0 0 24 24" fill="#14A800" aria-hidden="true"><path d="M18.56 13.02c-1.33 0-2.58-.56-3.71-1.48l.28-1.3v-.02c.25-1.38.98-3.68 3.43-3.68 1.84 0 3.33 1.5 3.33 3.34 0 1.84-1.49 3.14-3.33 3.14zm0-9.88c-3.13 0-5.56 2.03-6.54 5.37-1.5-2.26-2.64-4.97-3.3-7.25H5.36v8.77c0 1.72-1.4 3.12-3.12 3.12S-.88 11.75-.88 10.03V1.26H-4.2v8.77c0 3.56 2.9 6.49 6.45 6.49s6.44-2.93 6.44-6.49V8.56c.65 1.35 1.44 2.72 2.4 3.93l-2.04 9.68h3.4l1.48-7.02c1.3.83 2.79 1.35 4.5 1.35 3.66 0 6.65-3 6.65-6.67 0-3.67-2.99-6.69-6.65-6.69z" transform="translate(3.66 2.63) scale(.8)"></path></svg>'
+_GSVG = _G[_G.find('<svg'):_G.find('</svg>') + 6]
+def _src_logo(m):
+    fig = m.group(0)
+    if 'Upwork review' in fig:
+        lg = '<span class="dwr-qsrc">' + _UPW + 'Upwork</span>'
+    elif 'Google review' in fig:
+        lg = '<span class="dwr-qsrc">' + _GSVG.replace('width="30" height="30"', 'width="22" height="22"') + 'Google</span>'
+    else:
+        return fig
+    return re.sub(r'(<figure[^>]*>)', r'\1' + lg.replace('\\', '\\\\'), fig, 1)
+_gi = hb.find('<div id="dw-quotes-grid"')
+if _gi > -1:
+    _ge = _div_end(hb, _gi)
+    hb = hb[:_gi] + re.sub(r'<figure.*?</figure>', _src_logo, hb[_gi:_ge], flags=re.S) + hb[_ge:]
+for _id in ('dw-hero-trust', 'dw-hero-trust-m'):
+    _ti = hb.find('<div id="' + _id + '"')
+    if _ti > -1:
+        _si = hb.find('★★★★★', _ti)
+        _ss = hb.rfind('<span', _ti, _si)
+        _se = hb.find('</span>', _si) + 7
+        hb = hb[:_ss] + '<span class="dwr-hg">' + _GSVG.replace('width="30" height="30"', 'width="22" height="22"') + '</span>' + hb[_ss:_se] + '<span class="dwr-hg4">4.9 on Google</span><span style="color:#444">·</span>' + hb[_se:]
 write('home.html', hb)
 
 def interior(name, out):
