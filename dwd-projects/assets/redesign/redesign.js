@@ -320,7 +320,9 @@ function filterTo(f) {
   let i = 0;
   document.querySelectorAll('[data-dw-card]').forEach(c => {
     const show = f === 'all' ? !c.hasAttribute('data-dup') : c.getAttribute('data-platform') === f;
-    c.style.display = show ? (c.classList.contains('pf-row') ? 'grid' : 'flex') : 'none';
+    // Only hide/show: the layout itself always comes from the stylesheet, never from this script.
+    c.hidden = !show;
+    c.style.removeProperty('display');
     if (!show) return;
     const media = c.querySelector('.pf-media'), copy = c.querySelector('.pf-copy');
     if (media) media.style.order = i % 2 ? 2 : 1;

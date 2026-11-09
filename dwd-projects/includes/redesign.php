@@ -364,7 +364,7 @@ function dwdr_case( $po, $p, $cp ) {
 					<?php if ( $p['site'] ) : ?><a class="dwr-pill" href="<?php echo esc_url( $p['site'] ); ?>" target="_blank" rel="noopener"><?php echo esc_html( $label ? $label : 'Visit the live site' ); ?> <?php echo $arrow; // phpcs:ignore ?></a><?php endif; ?>
 					<a class="dwr-pill dark" href="<?php echo esc_url( home_url( '/quote/' ) ); ?>">Get a Quote <?php echo $arrow; // phpcs:ignore ?></a>
 				</div>
-				<?php echo dwdr_proof(); // phpcs:ignore ?>
+				<?php echo dwdr_proof( $p['slug'] ); // phpcs:ignore ?>
 			</div>
 			<div class="dwr-case-details">
 				<dl class="dwr-facts">
@@ -558,6 +558,8 @@ add_action( 'wp_enqueue_scripts', function () {
 		. '#dw-trustbar{gap:16px 44px!important;padding-top:30px!important}.dwr-tstat{font-size:clamp(17px,1.35vw,21px)!important;gap:12px!important}.dwr-tstat>span[style*="F5B301"]{font-size:clamp(19px,1.5vw,24px);letter-spacing:3px!important}.dwr-tstat svg{width:clamp(22px,1.7vw,28px)!important;height:clamp(22px,1.7vw,28px)!important}.dwr-tdiv{height:24px!important}@media(max-width:600px){.dwr-tstat{font-size:16px!important}.dwr-tstat>span[style*="F5B301"]{font-size:18px}}' // bigger hero trust bar
 		. '@media(min-width:1100px){#dw-trustbar{flex-wrap:nowrap!important;justify-content:space-between;gap:16px 20px!important}.dwr-tstat{font-size:clamp(15px,1.15vw,20px)!important}}.dwr-band-in>div:first-child{flex:1 1 440px;min-width:0}.dwr-bigcta{flex:0 1 520px!important;min-width:min(100%,380px)!important}@media(max-width:1100px) and (min-width:861px){.dwr-bc-t{font-size:clamp(28px,3.2vw,38px)}}' // trust bar on one line; band CTA stays beside the text on laptops
 		. '.dwr-band-gray{background:#F3F4F6!important}.dwr-band-gray .dwr-halo{background:radial-gradient(ellipse at 42% 52%,#F3F4F6 0%,rgba(243,244,246,.92) 28%,rgba(243,244,246,0) 66%)}' // end-of-page CTA band on interior pages
+		. '#pf-grid [data-dw-card][hidden]{display:none!important}#pf-grid .pf-row:not([hidden]){display:grid!important}@media(min-width:701px){#pf-grid .pf-row:not([hidden]){grid-template-columns:7fr 5fr!important}}' // portfolio filter only hides/shows; layout never changes
+		. '@media(min-width:901px){.dwr-doall-l{display:flex;align-items:center;gap:32px}.dwr-doall-l .dwr-eyebrow{flex:none;white-space:nowrap;margin:0}.dwr-doall .dwr-marq{margin-top:0;flex:1;min-width:0}.dwr-doall{align-items:center}}' // I do it all: label, services and CTA on one centered line
 		. '.dwr-proof{display:flex;flex-wrap:wrap;gap:0;margin-top:28px;border-top:1px solid #E3E3E3;padding-top:20px}.dwr-proof span{display:flex;flex-direction:column;gap:4px;padding:0 22px}.dwr-proof span:first-child{padding-left:0}.dwr-proof span+span{border-left:1px solid #E3E3E3}.dwr-proof b{display:inline-flex;align-items:center;gap:6px;font-size:clamp(24px,2.2vw,32px);line-height:1;letter-spacing:-.03em;font-weight:600;color:#121212}.dwr-proof b i{font-style:normal;color:#F5B301;font-size:.8em}.dwr-proof small{font-size:13px;color:#6B6B6B}#dw-phone-copy .dwr-proof{justify-content:inherit}@media(max-width:600px){.dwr-proof{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}.dwr-proof span{padding:0 10px;min-width:0}.dwr-proof b{font-size:21px;gap:4px}.dwr-proof b svg{width:14px;height:14px}.dwr-proof small{font-size:11.5px;line-height:1.3}}' // proof under the homepage projects
 		. '.dwr-band{padding-top:clamp(64px,8vw,120px)!important;padding-bottom:clamp(64px,8vw,120px)!important}.dwr-band-light{background:#fff;color:#121212}.dwr-band-dark{background:#121212;color:#fff}.dwr-band-in{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:32px 48px}.dwr-band-in>div:first-child{display:flex;flex-direction:column;gap:16px;max-width:820px}.dwr-band-h{margin:0;font-size:clamp(34px,4.4vw,72px);line-height:1;letter-spacing:-.04em;font-weight:600;text-wrap:balance}.dwr-band-dark .dwr-band-h span{color:#13A6EE}.dwr-band-p{margin:0;max-width:600px;font-size:clamp(17px,1.35vw,20px);line-height:1.5}.dwr-band-light .dwr-band-p{color:#333}.dwr-band-dark .dwr-band-p{color:#C9C9C9}.dwr-band-dark .dwr-eyebrow{color:#13A6EE}.dwr-band-b{display:flex;flex-wrap:wrap;align-items:center;gap:14px 28px}.dwr-band-light .dwr-cta-call{color:#121212!important}.dwr-band-dark .dwr-cta-call{color:#fff!important}@media(max-width:600px){.dwr-band-b{width:100%}.dwr-band-b .dwr-pill,.dwr-band-b .dwr-cta-call{width:100%;justify-content:center}}' // quote bands between same-colored sections
 		. '.dwr-price{margin:18px 0 0;max-width:600px;font-size:clamp(17px,1.35vw,20px);line-height:1.5;color:#333}.dwr-price b{color:#121212;font-weight:600;background:linear-gradient(transparent 62%,rgba(19,166,238,.25) 62%)}' // price range under Everything included
@@ -721,10 +723,13 @@ add_action( 'wp_enqueue_scripts', function () {
 
 
 /** The proof row (PageSpeed, Google rating, Upwork record) used under projects. */
-function dwdr_proof() {
+function dwdr_proof( $slug = '' ) {
+	// A project's own rating where Michael has one (Finesse: 5-star Upwork review); otherwise the Google average.
+	$own = array( 'finesse-by-witney' => array( '5.0', 'Upwork review' ) );
+	$r   = $own[ $slug ] ?? array( '4.9', 'Google reviews' );
 	return '<div class="dwr-proof">'
 		. '<span><b><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#13A6EE" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>95+</b><small>Google PageSpeed</small></span>'
-		. '<span><b><i>★</i>4.9</b><small>Google reviews</small></span>'
+		. '<span><b><i>★</i>' . $r[0] . '</b><small>' . $r[1] . '</small></span>'
 		. '<span><b>100%</b><small>Job Success on Upwork</small></span>'
 		. '</div>';
 }

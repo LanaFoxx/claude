@@ -294,7 +294,9 @@ _pc = hb.find('id="dw-phone-copy"')
 if _pc > -1:
     _fb = hb.find('finessebywitney.com', _pc)
     _ds = hb.rfind('<div', _pc, _fb)
-    _e = _div_end(hb, _ds); hb = hb[:_e] + _PROOF + hb[_e:]
+    # Finesse's own rating: a 5-star Upwork review (Michael).
+    _PROOF_F = _PROOF.replace('<span><b><i>★</i>4.9</b><small>Google reviews</small></span>', '<span><b><i>★</i>5.0</b><small>Upwork review</small></span>')
+    _e = _div_end(hb, _ds); hb = hb[:_e] + _PROOF_F + hb[_e:]
 # A white quote band between the dark Reviews and dark About sections.
 _arrow = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12 12 2M4 2h8v8"></path></svg>'
 # Large two-row action panel for the quote bands (Michael: the pill + phone link looked like a tiny dot in the space).
