@@ -131,6 +131,20 @@
 		var fresh = list.filter(function (c) { return !(c.id in pos); }), kept = list.filter(function (c) { return c.id in pos; }).sort(function (a, b) { return pos[a.id] - pos[b.id]; });
 		return fresh.concat(kept);
 	}
+	// Paid = the rest of the balance came in today: logged as a payment so it counts in "Made in <month>".
+	// Upwork money is stored after Upwork's 10% fee (like the Upwork file), and the whole balance is cleared.
+	function markPaid(id, btn) {
+		var c = S.full[id] || contact(id), gross = c ? num(c.balance) : 0;
+		if (!gross) { save(id, { balance: '0', paymark: '' }, 'Marked paid'); return; }
+		var pm = ['Upwork', 'Stripe', 'PayPal'].indexOf(c.pay_method) > -1 ? c.pay_method : 'Other', up = pm === 'Upwork';
+		var amt = up ? Math.round(gross * 90) / 100 : gross;
+		if (btn) { btn.disabled = true; }
+		api('/contact/' + id + '/payment', 'POST', { amount: amt, method: pm, date: DWDC.today, note: 'Marked paid' + (up ? ' · after Upwork fee (' + money(gross) + ' gross)' : '') })
+			.then(function () { return api('/contact/' + id, 'POST', { balance: '0', paymark: '' }); })
+			.then(function (x) { upsert(x); S.full[x.id] = x; return reload(); })
+			.then(function () { render(); toast(money(amt) + ' paid · added to this month'); })
+			.catch(function (er) { if (btn) { btn.disabled = false; } fail(er); });
+	}
 	function owed(list) { return list.reduce(function (s, c) { return s + num(c.balance); }, 0); }
 	function openTasks() { return S.tasks.filter(function (t) { return !t.done; }); }
 	function match(c) {
@@ -1978,8 +1992,8 @@
 				+ ol.map(function (c) {
 					var k = clientOf(c), pm = c.paymark || '';
 					var tb = function (v, label) { return '<button type="button" class="dwdc-btn2 sm' + (pm === v ? ' on-' + v : '') + '" data-owmark="' + c.id + '" data-v="' + (pm === v ? '' : v) + '">' + label + '</button>'; };
-					return '<div class="dwdc-mo-r dwdc-owr" data-owgo="client/' + c.id + '"><span class="d">' + (c.deadline ? 'Due ' + fmt(c.deadline) : '') + '</span><span class="w"><b>' + esc(c.name) + (pm ? ' <em class="dwdc-pendtag ' + pm + '">' + (pm === 'paid' ? 'Paid' : 'Pending') + '</em>' : '') + '</b><small>' + esc([k ? k.name : c.person, num(c.price) ? 'Price ' + money(c.price) : ''].filter(Boolean).join(' · ')) + '</small></span><strong>' + money(c.balance) + '</strong>'
-						+ '<span class="dwdc-owacts">' + tb('pending', 'Pending') + tb('paid', 'Paid') + '</span></div>';
+					return '<div class="dwdc-mo-r dwdc-owr" data-owgo="client/' + c.id + '"><span class="d">' + (c.deadline ? 'Due ' + fmt(c.deadline) : '') + '</span><span class="w"><b>' + esc(c.name) + (pm === 'pending' ? ' <em class="dwdc-pendtag pending">Pending</em>' : '') + '</b><small>' + esc([k ? k.name : c.person, num(c.price) ? 'Price ' + money(c.price) : ''].filter(Boolean).join(' · ')) + '</small></span><strong>' + money(c.balance) + '</strong>'
+						+ '<span class="dwdc-owacts">' + tb('pending', 'Pending') + '<button type="button" class="dwdc-btn sm" data-owpaid="' + c.id + '">Paid</button></span></div>';
 				}).join('') : emptyRow('Nothing is owed on open projects.');
 			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide">' + head('Open projects', 'Owed', money(owed(ol))) + obody + '</div>';
 		}
@@ -2224,6 +2238,7 @@
 	app.addEventListener('click', function (e) {
 		var t = e.target, el;
 		if ((el = t.closest('[data-owgo]')) && !t.closest('button')) { S.modal = null; go(el.getAttribute('data-owgo')); return; }
+		if ((el = t.closest('[data-owpaid]'))) { e.preventDefault(); e.stopPropagation(); markPaid(+el.getAttribute('data-owpaid'), el); return; }
 		if ((el = t.closest('[data-owmark]'))) {
 			// Just a label on the Owed list: nothing is logged, moved or totalled.
 			e.preventDefault(); e.stopPropagation();
@@ -2493,15 +2508,7 @@
 		if ((el = t.closest('[data-pplrm]'))) { var rc = S.full[route().id] || contact(route().id), rl = peopleOf(rc), gone = rl[+el.getAttribute('data-pplrm')]; if (confirm('Remove ' + (gone.name || gone.email) + ' from this project?')) { rl.splice(+el.getAttribute('data-pplrm'), 1); savePeople(rc, rl); } return; }
 		if (t.closest('[data-edit]')) { S.edit = !S.edit; render(); return; }
 		var r = route();
-		if (t.closest('[data-paid]')) {
-			// Mark paid = the rest of the balance came in today, so it counts in "Made in <month>".
-			var pc = S.full[r.id] || contact(r.id), pamt = pc ? num(pc.balance) : 0, pm = pc && ['Upwork', 'Stripe', 'PayPal'].indexOf(pc.pay_method) > -1 ? pc.pay_method : 'Other';
-			if (!pamt) { save(r.id, { balance: '0' }, 'Marked paid'); return; }
-			api('/contact/' + r.id + '/payment', 'POST', { amount: pamt, method: pm, date: DWDC.today, note: 'Marked paid' })
-				.then(function (x) { upsert(x); S.full[x.id] = x; return reload(); })
-				.then(function () { render(); toast(money(pamt) + ' marked paid · added to this month'); }).catch(fail);
-			return;
-		}
+		if (t.closest('[data-paid]')) { markPaid(r.id); return; }
 		if ((el = t.closest('[data-set]'))) {
 			var to = el.getAttribute('data-set');
 			save(r.id, { list: to }, { limbo: 'Moved to limbo', hold: 'Put on hold', active: 'Back in active jobs', archive: 'Archived', leads: 'Restored to leads' }[to]);
