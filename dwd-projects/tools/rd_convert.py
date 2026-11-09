@@ -223,12 +223,86 @@ if _ri > -1 and _wi > -1 and _ri > _we:
     hb = hb[:_ri] + hb[_re:]
     hb = hb[:_we] + '\n\n' + _rev + hb[_we:]
 # Speed proof in the hero trust line (this site scores 95+ on Google PageSpeed).
-_ps = '<span class="dwr-ps" style="display:inline-flex;align-items:center;gap:8px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#13A6EE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>95+ Google PageSpeed</span>'
+_ps = '<span class="dwr-ps" style="display:inline-flex;align-items:center;gap:8px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#13A6EE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>95+ PageSpeed on every site</span>'
 for _id in ('dw-hero-trust', 'dw-hero-trust-m'):
     _ti = hb.find('<div id="' + _id + '"')
     if _ti > -1:
         _te = hb.find('</div>', _ti)
         hb = hb[:_te] + _ps + hb[_te:]
+# Real Upwork reviews Michael sent (Nov 2026), added beside the Google ones.
+_UPWORK_REVIEWS = [
+    ('Michael very much exceeded my expectations completing a website update/refresh project. He was easy to work with, stayed in touch through the project and completed the site in a fraction of the time I would have expected from other developers. If you are reading this while evaluating options for who to engage for website work, stop now and just hire Michael! He did great work.', 'Website refresh client · Upwork review'),
+    ('Michael did a fantastic job. I’m super happy with my site. He was very easy to work with and fast. He also positively accepted changes and edits. I highly recommend him and plan to maintain the relationship for any future maintenance.', 'Upwork review'),
+]
+_gi = hb.find('<div id="dw-quotes-grid"')
+if _gi > -1:
+    _fs = hb.find('<figure', _gi); _fe = hb.find('</figure>', _fs) + len('</figure>')
+    _tpl = hb[_fs:_fe]
+    _bq = re.search(r'(<blockquote[^>]*>)(.*?)(</blockquote>)', _tpl, re.S)
+    _fc = re.search(r'(<figcaption[^>]*>)(.*?)(</figcaption>)', _tpl, re.S)
+    _end = hb.find('</div>', hb.rfind('</figure>', _gi, hb.find('Read all reviews', _gi)))
+    _new = ''
+    for _q, _c in _UPWORK_REVIEWS:
+        _f = _tpl.replace(_bq.group(0), _bq.group(1) + '“' + _q + '”' + _bq.group(3)).replace(_fc.group(0), _fc.group(1) + _c + _fc.group(3))
+        _new += '\n    ' + _f
+    hb = hb[:_end] + _new + '\n  ' + hb[_end:]
+# Price range (Michael: $1,500 up to $10k, depending on what the site needs), under the Everything included intro.
+_pr = '<p class="dwr-price"><b>Most websites run $1,500 to $10,000</b>, depending on the pages and features you need. You get one flat quote up front, so the price never creeps.</p>'
+# Results row under the ratings (Michael: every site scores 95+ on PageSpeed; many rank top 5 for 20+ keywords).
+def _div_end(h, start):
+    d, k = 0, start
+    while True:
+        o = h.find('<div', k + 1); cl = h.find('</div>', k + 1)
+        if o > -1 and o < cl:
+            d += 1; k = o
+        else:
+            if d == 0:
+                return cl + 6
+            d -= 1; k = cl
+_ri = hb.find('<div id="dw-rating"')
+if _ri > -1:
+    _re = _div_end(hb, _ri)
+    _res = ('<div class="dwr-results" data-dw-reveal="1">'
+            '<div><b>95+</b><span>Google PageSpeed score on every site I build</span></div>'
+            '<a href="%HOME%/portfolio/california-tax-courses/"><b>Top 5</b><span>on Google for 20+ keywords: California Tax Courses</span></a>'
+            '<div><b>200+</b><span>websites designed and built by me, not a team</span></div>'
+            '</div>')
+    hb = hb[:_re] + _res + hb[_re:]
+# Proof under The Goods and Finesse (Michael): PageSpeed, Google rating, Upwork record.
+_PROOF = ('<div class="dwr-proof" data-dw-reveal="1">'
+          '<span><b><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#13A6EE" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>95+</b><small>Google PageSpeed</small></span>'
+          '<span><b><i>★</i>4.9</b><small>Google reviews</small></span>'
+          '<span><b>100%</b><small>Job Success on Upwork</small></span>'
+          '</div>')
+_wc = hb.find('<div id="dw-work-ctas"')
+if _wc > -1:
+    _e = _div_end(hb, _wc); hb = hb[:_e] + _PROOF + hb[_e:]
+_pc = hb.find('id="dw-phone-copy"')
+if _pc > -1:
+    _fb = hb.find('finessebywitney.com', _pc)
+    _ds = hb.rfind('<div', _pc, _fb)
+    _e = _div_end(hb, _ds); hb = hb[:_e] + _PROOF + hb[_e:]
+# A white quote band between the dark Reviews and dark About sections.
+_arrow = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12 12 2M4 2h8v8"></path></svg>'
+_band_w = ('<section data-theme="light" class="dwr-band dwr-band-light"><div class="dwr-band-in"><div><span class="dwr-eyebrow"><i></i>Your turn</span>'
+           '<h2 class="dwr-band-h">Want a website people rave about?</h2><p class="dwr-band-p">Tell me what you need and I’ll send a flat quote, usually the same day.</p></div>'
+           '<div class="dwr-band-b"><a class="dwr-pill" href="%HOME%/quote/">Get a Free Quote ' + _arrow + '</a><a class="dwr-cta-call" href="tel:+17722101728">or call (772) 210-1728</a></div></div></section>')
+_rs = hb.find('<section id="reviews"')
+if _rs > -1:
+    _re2 = hb.find('</section>', _rs) + len('</section>')
+    hb = hb[:_re2] + '\n\n' + _band_w + hb[_re2:]
+# A dark quote band (with the price range) between the white Services and white Contact sections.
+_band_d = ('<section data-theme="dark" class="dwr-band dwr-band-dark"><div class="dwr-band-in"><div><span class="dwr-eyebrow"><i></i>Flat pricing</span>'
+           '<h2 class="dwr-band-h">Most websites run <span>$1,500 to $10,000</span>.</h2><p class="dwr-band-p">It depends on the pages and features you need. You get one flat quote up front, so the price never creeps.</p></div>'
+           '<div class="dwr-band-b"><a class="dwr-pill" href="%HOME%/quote/">Get a Free Quote ' + _arrow + '</a><a class="dwr-cta-call" href="tel:+17722101728">or call (772) 210-1728</a></div></div></section>')
+_ss = hb.find('<section id="services"')
+if _ss > -1:
+    hb = hb[:_ss] + hb[_ss:].replace('<section id="services"', '<section data-nocta="1" id="services"', 1)
+    _se = hb.find('</section>', _ss) + len('</section>')
+    hb = hb[:_se] + '\n\n' + _band_d + hb[_se:]
+# Google logo above the rating stars (Michael).
+_G = ('<span class="dwr-glogo" aria-label="Google"><svg width="30" height="30" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>Google</span>')
+hb = hb.replace('<span id="dw-rating-stars"', _G + '<span id="dw-rating-stars"', 1)
 write('home.html', hb)
 
 def interior(name, out):
@@ -251,6 +325,11 @@ for n, o in (('Process.dc.html', 'process.html'), ('Hosting.dc.html', 'hosting.h
         h = h.replace(TRUST_OLD, TRUST_NEW)
     write(o, h)
 
+
+def BUDGET(h):
+    """Budget choices match the real price range ($1,500 to $10,000+)."""
+    return h.replace('<option value="under-2500">Under $2,500</option>', '<option value="1500-3000">$1,500 to $3,000</option>').replace('<option value="2500-5000">$2,500 to $5,000</option>', '<option value="3000-5000">$3,000 to $5,000</option>')
+
 # ---- Contact: the sent / not-sent states become two blocks toggled by script ----
 c = interior('Contact.dc.html', 'contact.html')
 c = c.replace('onSubmit="{{ submit }}"', 'class="dwr-form" data-redirect="%HOME%/thank-you/" novalidate')
@@ -263,6 +342,25 @@ if k > -1:
     i = c.rfind('<section', 0, k)
     j = c.find('</section>', k) + len('</section>')
     c = c[:i] + c[j:]
+# Contact gets the quote form's budget, timeline and source questions (so every lead arrives with them).
+_q = interior('Quote.dc.html', 'quote.html')
+_r3 = _q.find('<div id="qt-row3"')
+if _r3 > -1:
+    # find the matching close of the row div
+    _d, _k = 0, _r3
+    while True:
+        _o = _q.find('<div', _k + 1); _cl = _q.find('</div>', _k + 1)
+        if _o > -1 and _o < _cl:
+            _d += 1; _k = _o
+        else:
+            if _d == 0:
+                _row = _q[_r3:_cl + 6]; break
+            _d -= 1; _k = _cl
+    _row = _row.replace('id="qt-row3"', 'id="ct-row3"').replace(' id="budget"', '').replace(' id="timeline"', '').replace(' id="source"', '')
+    _m = c.find('What do you need?')
+    _l = c.rfind('<label', 0, _m)
+    c = c[:_l] + _row + '\n        ' + c[_l:]
+c = BUDGET(c)
 write('contact.html', c)
 
 # ---- Portfolio: the card loop becomes its own partial ----
@@ -284,6 +382,7 @@ write('portfolio.html', p)
 # ---- Quote: form only; posts to the site and goes to /thank-you/ ----
 q = interior('Quote.dc.html', 'quote.html')
 q = q.replace('onSubmit="{{ submit }}"', 'class="dwr-form" data-redirect="%HOME%/thank-you/" novalidate')
+q = BUDGET(q)
 write('quote.html', q)
 write('thank-you.html', interior('Quote Thank You.dc.html', 'thank-you.html'))
 

@@ -76,7 +76,7 @@ function dwdr_page() {
 	if ( is_home() || is_page( 'blog' ) ) {
 		return 'blog';
 	}
-	foreach ( array( 'process', 'hosting', 'contact', 'quote', 'thank-you' ) as $slug ) {
+	foreach ( array( 'process', 'hosting', 'contact', 'quote', 'thank-you', 'onboarding' ) as $slug ) {
 		if ( is_page( $slug ) ) {
 			return $slug;
 		}
@@ -277,6 +277,10 @@ function dwdr_body( $page ) {
 		$i    = array_search( (int) $po->ID, array_map( 'intval', $all ), true );
 		$next = count( $all ) > 1 ? dwdr_post( get_post( $all[ ( false === $i ? 0 : $i + 1 ) % count( $all ) ] ) ) : null;
 		$html = apply_filters( 'the_content', $po->post_content ); // phpcs:ignore
+		// Halfway call to action: before the article's second heading (or at the end of a short post).
+		$cta  = '<aside class="dwr-acta"><span class="dwr-eyebrow"><i></i>Need a website like this?</span><p class="dwr-acta-h">Get a flat quote for your website, usually the same day.</p><p class="dwr-acta-p">Custom design, 95+ PageSpeed, unlimited revisions. Most sites run $1,500 to $10,000.</p><div class="dwr-acta-b"><a class="dwr-pill" href="' . esc_url( home_url( '/quote/' ) ) . '">Get a Free Quote</a><a class="dwr-acta-call" href="tel:+17722101728">or call (772) 210-1728</a></div></aside>';
+		$h2   = preg_match_all( '/<h2[\s>]/i', $html, $mm, PREG_OFFSET_CAPTURE ) >= 2 ? $mm[0][1][1] : -1;
+		$html = $h2 > -1 ? substr_replace( $html, $cta, $h2, 0 ) : $html . $cta;
 		$v['image'] = (string) get_the_post_thumbnail_url( $po, 'full' ); // the hero is wide: start from the original
 		$html_out = dwdr_render( 'article', array_merge( $v, array(
 			'content'   => $html,
@@ -289,6 +293,9 @@ function dwdr_body( $page ) {
 		// The hero image spans the content column (up to 1500px): let the browser pick a size that is sharp at that width.
 		return preg_replace( '#(<img data-dw-zoom="1" src="' . preg_quote( esc_attr( $v['image'] ), '#' ) . '"[^>]*?)sizes="[^"]*"#', '$1sizes="(max-width: 1500px) 100vw, 1500px"', $html_out, 1 );
 	}
+	if ( 'onboarding' === $page ) {
+		return dwdr_onboarding();
+	}
 	$html = dwdr_render( $page );
 	// Text-only pages get the homepage's scrolling strip of real project screenshots: at the bottom of the hero,
 	// and on Process once more before the closing call to action.
@@ -297,6 +304,17 @@ function dwdr_body( $page ) {
 		if ( false !== $i ) {
 			$html = substr_replace( $html, dwdr_strip( 'dark' ), $i, 0 );
 		}
+	}
+	if ( 'thank-you' === $page ) {
+		// Book the call right here instead of waiting for a reply (name and email carried over from the form).
+		$cal  = 'https://calendly.com/dreamwebdigital/dream-web-digital-consultation-call';
+		$html .= '<section data-theme="light" class="dwr-calsec"><div class="dwr-calhead"><span class="dwr-eyebrow"><i></i>Skip the wait</span><h2>Pick a time for a free 30-minute Zoom.</h2><p>Grab a slot now and we’ll talk through your project. No pressure, no obligation.</p></div>'
+			. '<div class="dwr-cal" data-cal="' . esc_attr( $cal ) . '"><a class="dwr-pill" href="' . esc_url( $cal ) . '" target="_blank" rel="noopener">Open my calendar</a></div></section>'
+			. '<script>(function(){var w=document.querySelector(".dwr-cal");if(!w)return;var u=w.getAttribute("data-cal")+"?hide_gdpr_banner=1&primary_color=13a6ee";try{var l=JSON.parse(sessionStorage.getItem("dwr_lead")||"null");if(l){if(l.name)u+="&name="+encodeURIComponent(l.name);if(l.email)u+="&email="+encodeURIComponent(l.email);}}catch(e){}'
+			. 'var f=document.createElement("iframe");f.src=u+"&embed_domain="+location.hostname+"&embed_type=Inline";f.title="Schedule a call with Michael";f.loading="lazy";w.innerHTML="";w.appendChild(f);})();</script>';
+	}
+	if ( 'home' === $page ) {
+		$html = dwdr_intro_video( $html );
 	}
 	if ( 'process' === $page ) {
 		$j = strrpos( $html, '<section' );
@@ -343,6 +361,7 @@ function dwdr_case( $po, $p, $cp ) {
 					<?php if ( $p['site'] ) : ?><a class="dwr-pill" href="<?php echo esc_url( $p['site'] ); ?>" target="_blank" rel="noopener"><?php echo esc_html( $label ? $label : 'Visit the live site' ); ?> <?php echo $arrow; // phpcs:ignore ?></a><?php endif; ?>
 					<a class="dwr-pill dark" href="<?php echo esc_url( home_url( '/quote/' ) ); ?>">Get a Quote <?php echo $arrow; // phpcs:ignore ?></a>
 				</div>
+				<?php echo dwdr_proof(); // phpcs:ignore ?>
 			</div>
 			<div class="dwr-case-details">
 				<dl class="dwr-facts">
@@ -410,7 +429,7 @@ function dwdr_upwork_jobs() {
 /** Michael: every section gets a call to action. Sections without any link or button get Get a Quote + Call. */
 function dwdr_add_ctas( $html ) {
 	return preg_replace_callback( '#(<section\b[^>]*>)(.*?)(</section>)#s', function ( $m ) {
-		if ( preg_match( '#<a\b|<button\b#', $m[2] ) ) {
+		if ( preg_match( '#<a\b|<button\b#', $m[2] ) || false !== strpos( $m[1], 'data-nocta' ) ) {
 			return $m[0];
 		}
 		$theme = preg_match( '#data-theme="(\w+)"#', $m[1], $t ) ? $t[1] : 'light';
@@ -524,10 +543,20 @@ add_action( 'wp_enqueue_scripts', function () {
 		. '@media(min-width:981px){#dw-rating{flex-wrap:nowrap!important;justify-content:space-between}#dw-upwork-stats{flex:0 1 auto}#dw-upwork-stats>div>span:first-child{font-size:clamp(48px,5.2vw,88px)!important}}'
 		. '#dw-hero-row>div:first-child>p:first-child{font-size:clamp(22px,2.1vw,32px)!important;line-height:1.2!important;white-space:normal!important;letter-spacing:-.01em}#dw-hero-row>div:first-child>p:nth-child(2){font-size:clamp(16px,1.25vw,19px)!important}#dw-hero-trust,#dw-hero-trust-m{font-size:clamp(17px,1.3vw,20px)!important;gap:10px 20px!important;color:#D6D6D6!important;font-weight:500}#dw-hero-trust span[style*="F5B301"],#dw-hero-trust-m span[style*="F5B301"]{font-size:clamp(24px,1.9vw,30px)!important;letter-spacing:3px!important;line-height:1}#dw-hero-trust svg,#dw-hero-trust-m svg{width:28px!important;height:28px!important}#dw-hero-trust span[style*="inline-flex"],#dw-hero-trust-m span[style*="inline-flex"]{gap:10px!important}' // homepage hero: bigger lead line, stars, Upwork logo and badge text
 		. '@media(min-width:601px){#dw-nav{transition:color .35s ease,background-color .35s ease,box-shadow .35s ease,padding .35s ease,transform .45s cubic-bezier(.2,.7,.1,1),opacity .35s ease!important}#dw-nav[data-floating="1"]{padding-top:14px!important;padding-bottom:14px!important}#dw-nav[data-floating="1"][data-theme="light"]{background:#121212!important;color:#fff!important;box-shadow:0 12px 32px -20px rgba(0,0,0,.7)}#dw-nav[data-floating="1"][data-theme="light"] #dw-logo-white{display:block!important;filter:none!important}#dw-nav[data-floating="1"][data-theme="light"] #dw-logo-dark{display:none!important}#dw-nav[data-floating="1"][data-theme="dark"],#dw-nav[data-floating="1"][data-theme="blue"]{background:#fff!important;color:#121212!important;box-shadow:0 12px 32px -20px rgba(0,0,0,.45)}#dw-nav[data-floating="1"][data-theme="dark"] #dw-logo-white,#dw-nav[data-floating="1"][data-theme="blue"] #dw-logo-white{display:none!important}#dw-nav[data-floating="1"][data-theme="dark"] #dw-logo-dark,#dw-nav[data-floating="1"][data-theme="blue"] #dw-logo-dark{display:block!important}}' // desktop: once scrolled, the sticky nav gets a solid bar that contrasts with the section under it // small blue labels on white: readable contrast
-		. '.dwr-form[data-sent="1"] .dwr-fields{display:none}.dwr-note{font-size:14px;color:#F27A7A;min-height:1em}' );
+		. '.dwr-form[data-sent="1"] .dwr-fields{display:none}.dwr-note{font-size:14px;color:#F27A7A;min-height:1em}'
+		. '.dwr-mbar{display:none}@media(max-width:700px){.dwr-mbar{position:fixed;left:0;right:0;bottom:0;z-index:90;display:flex;gap:10px;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:rgba(18,18,18,.96);box-shadow:0 -10px 30px -12px rgba(0,0,0,.5);transform:translateY(110%);transition:transform .35s cubic-bezier(.2,.7,.1,1)}.dwr-mbar.on{transform:none}.dwr-mbar a{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:50px;border-radius:999px;font-size:16px;font-weight:600;text-decoration:none}.dwr-mbar-call{flex:0 0 38%!important;border:1px solid #444;color:#fff!important}.dwr-mbar-quote{background:#13A6EE;color:#fff!important}.dw-menu-open .dwr-mbar{display:none}body.dwr{padding-bottom:calc(70px + env(safe-area-inset-bottom))}}' // phones: sticky Call / Get a Quote bar
+		. '.dwr-glogo{display:inline-flex;align-items:center;gap:10px;font-size:clamp(20px,1.7vw,26px);font-weight:600;letter-spacing:-.01em;color:#fff;margin-bottom:6px}.dwr-glogo svg{width:clamp(26px,2.2vw,34px);height:auto}' // Google logo above the rating stars
+		. '.dwr-proof{display:flex;flex-wrap:wrap;gap:0;margin-top:28px;border-top:1px solid #E3E3E3;padding-top:20px}.dwr-proof span{display:flex;flex-direction:column;gap:4px;padding:0 22px}.dwr-proof span:first-child{padding-left:0}.dwr-proof span+span{border-left:1px solid #E3E3E3}.dwr-proof b{display:inline-flex;align-items:center;gap:6px;font-size:clamp(24px,2.2vw,32px);line-height:1;letter-spacing:-.03em;font-weight:600;color:#121212}.dwr-proof b i{font-style:normal;color:#F5B301;font-size:.8em}.dwr-proof small{font-size:13px;color:#6B6B6B}#dw-phone-copy .dwr-proof{justify-content:inherit}@media(max-width:600px){.dwr-proof{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}.dwr-proof span{padding:0 10px;min-width:0}.dwr-proof b{font-size:21px;gap:4px}.dwr-proof b svg{width:14px;height:14px}.dwr-proof small{font-size:11.5px;line-height:1.3}}' // proof under the homepage projects
+		. '.dwr-band{padding-top:clamp(64px,8vw,120px)!important;padding-bottom:clamp(64px,8vw,120px)!important}.dwr-band-light{background:#fff;color:#121212}.dwr-band-dark{background:#121212;color:#fff}.dwr-band-in{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:32px 48px}.dwr-band-in>div:first-child{display:flex;flex-direction:column;gap:16px;max-width:820px}.dwr-band-h{margin:0;font-size:clamp(34px,4.4vw,72px);line-height:1;letter-spacing:-.04em;font-weight:600;text-wrap:balance}.dwr-band-dark .dwr-band-h span{color:#13A6EE}.dwr-band-p{margin:0;max-width:600px;font-size:clamp(17px,1.35vw,20px);line-height:1.5}.dwr-band-light .dwr-band-p{color:#333}.dwr-band-dark .dwr-band-p{color:#C9C9C9}.dwr-band-dark .dwr-eyebrow{color:#13A6EE}.dwr-band-b{display:flex;flex-wrap:wrap;align-items:center;gap:14px 28px}.dwr-band-light .dwr-cta-call{color:#121212!important}.dwr-band-dark .dwr-cta-call{color:#fff!important}@media(max-width:600px){.dwr-band-b{width:100%}.dwr-band-b .dwr-pill,.dwr-band-b .dwr-cta-call{width:100%;justify-content:center}}' // quote bands between same-colored sections
+		. '.dwr-price{margin:18px 0 0;max-width:600px;font-size:clamp(17px,1.35vw,20px);line-height:1.5;color:#333}.dwr-price b{color:#121212;font-weight:600;background:linear-gradient(transparent 62%,rgba(19,166,238,.25) 62%)}' // price range under Everything included
+		. '.dwr-results{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;margin-top:clamp(36px,4vw,56px);border-top:1px solid #333;border-bottom:1px solid #333}.dwr-results>*{display:flex;flex-direction:column;gap:8px;padding:clamp(22px,2.6vw,34px) clamp(16px,2vw,32px) clamp(22px,2.6vw,34px) 0;color:#fff!important;text-decoration:none}.dwr-results>*+*{border-left:1px solid #333;padding-left:clamp(16px,2vw,32px)}.dwr-results b{font-size:clamp(40px,4.4vw,72px);line-height:1;letter-spacing:-.04em;font-weight:600;color:#13A6EE}.dwr-results span{font-size:clamp(15px,1.2vw,18px);line-height:1.45;color:#C9C9C9;max-width:280px}.dwr-results a:hover span{color:#fff;text-decoration:underline;text-decoration-color:#13A6EE;text-underline-offset:3px}@media(max-width:700px){.dwr-results{grid-template-columns:1fr}.dwr-results>*+*{border-left:0;border-top:1px solid #333;padding-left:0}}' // results row under the ratings
+		. '.dwr-acta{margin:clamp(12px,2vw,28px) 0;padding:clamp(24px,3vw,40px);border-radius:14px;background:#121212;color:#fff;display:flex;flex-direction:column;gap:12px}.dwr-acta .dwr-eyebrow{color:#13A6EE}.dwr-prose .dwr-acta p{margin:0}.dwr-acta-h{font-size:clamp(24px,2.4vw,34px)!important;line-height:1.1;letter-spacing:-.03em;font-weight:600;color:#fff!important}.dwr-acta-p{font-size:17px;color:#C9C9C9!important}.dwr-acta-b{display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px;margin-top:6px}.dwr-prose .dwr-acta a.dwr-pill{color:#fff!important;text-decoration:none}.dwr-prose .dwr-acta a.dwr-acta-call{color:#fff!important;font-weight:600}@media(max-width:600px){.dwr-acta .dwr-pill{width:100%;justify-content:center}}' // mid-article call to action
+		. '.dwr-calsec{background:#fff;color:#121212;padding:clamp(72px,9vw,140px) var(--dwr-gx)}.dwr-calhead{display:flex;flex-direction:column;gap:16px;max-width:760px;margin-bottom:clamp(24px,3vw,40px)}.dwr-calhead h2{margin:0;font-size:clamp(32px,4vw,64px);line-height:1;letter-spacing:-.04em;font-weight:600}.dwr-calhead p{margin:0;font-size:clamp(17px,1.35vw,20px);line-height:1.5;color:#333}.dwr-cal{border:1px solid rgba(18,18,18,.10);border-radius:14px;overflow:hidden;background:#fff;box-shadow:0 26px 50px -30px rgba(18,18,18,.4);min-height:120px;display:flex;align-items:center;justify-content:center}.dwr-cal iframe{display:block;width:100%;height:1000px;border:0}@media(max-width:700px){.dwr-cal iframe{height:1100px}}' // Calendly on thank-you
+		. '.dwr-play{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;border:0;background:rgba(0,0,0,.18);color:#fff;font:inherit;cursor:pointer;transition:background .3s ease}.dwr-play:hover{background:rgba(0,0,0,.05)}.dwr-play span{width:84px;height:84px;border-radius:50%;background:#13A6EE;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 0 0 10px rgba(19,166,238,.25);transition:transform .3s ease}.dwr-play:hover span{transform:scale(1.08)}.dwr-play b{font-size:16px;font-weight:600;text-shadow:0 2px 12px rgba(0,0,0,.6)}.dwr-vid{position:absolute;inset:0;z-index:3;width:100%;height:100%;border:0;background:#000;object-fit:contain}.dwr-playing .dwr-play{display:none}' // intro video on the founder photo
+		);
 	wp_enqueue_script( 'dwdr', DWDP_URL . 'assets/redesign/redesign.js', array(), DWDP_VERSION, true );
 	// Theme, Elementor and the old page scripts have nothing to do on these pages.
-	foreach ( wp_scripts()->queue as $h ) {
+	foreach ( 'onboarding' === dwdr_page() ? array() : wp_scripts()->queue as $h ) {
 		if ( preg_match( '/^(elementor|hello|swiper|dwdp-front|dwdp-onboarding|e-sticky|imagesloaded|jquery)/', $h ) ) {
 			wp_dequeue_script( $h );
 		}
@@ -569,3 +598,121 @@ function dwdr_head() {
 add_action( 'admin_init', function () {
 	register_setting( 'dwdr', 'dwdr_live', array( 'type' => 'string', 'sanitize_callback' => function ( $v ) { return '1' === (string) $v ? '1' : '0'; } ) );
 } );
+
+/* ---------- Homepage intro video (Settings → General → "Homepage intro video") ---------- */
+
+add_action( 'admin_init', function () {
+	register_setting( 'general', 'dwdr_intro_video', array( 'type' => 'string', 'sanitize_callback' => 'esc_url_raw' ) );
+	add_settings_field( 'dwdr_intro_video', 'Homepage intro video', function () {
+		echo '<input type="url" class="regular-text code" name="dwdr_intro_video" value="' . esc_attr( get_option( 'dwdr_intro_video', '' ) ) . '" placeholder="https://www.youtube.com/watch?v=… or a Media Library .mp4 link">'
+			. '<p class="description">Plays on the photo of you in the homepage intro (“There’s a reason my reviews are high”). A YouTube, Vimeo or .mp4 link. Leave empty to show just the photo.</p>';
+	}, 'general' );
+} );
+
+/** The video source for the intro, as an embed URL or an .mp4 file, or ''. */
+function dwdr_video_src( $url ) {
+	if ( preg_match( '#(?:youtube\.com/(?:watch\?v=|shorts/|embed/)|youtu\.be/)([\w-]{6,})#', $url, $m ) ) {
+		return array( 'iframe', 'https://www.youtube-nocookie.com/embed/' . $m[1] . '?autoplay=1&rel=0&modestbranding=1&playsinline=1' );
+	}
+	if ( preg_match( '#vimeo\.com/(?:video/)?(\d+)#', $url, $m ) ) {
+		return array( 'iframe', 'https://player.vimeo.com/video/' . $m[1] . '?autoplay=1&title=0&byline=0' );
+	}
+	return preg_match( '#\.(mp4|webm|mov)(\?|$)#i', $url ) ? array( 'video', $url ) : array( '', '' );
+}
+
+/** Put a play button on the founder photo; clicking it plays Michael's intro video in place. */
+function dwdr_intro_video( $html ) {
+	list( $type, $src ) = dwdr_video_src( (string) get_option( 'dwdr_intro_video', '' ) );
+	if ( ! $type ) {
+		return $html;
+	}
+	$btn = '<button type="button" class="dwr-play" data-type="' . esc_attr( $type ) . '" data-src="' . esc_attr( $src ) . '" aria-label="Play Michael’s intro video"><span><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg></span><b>Watch my 60-second intro</b></button>';
+	$js  = '<script>document.addEventListener("click",function(e){var b=e.target.closest&&e.target.closest(".dwr-play");if(!b)return;var box=b.parentNode,t=b.getAttribute("data-type"),s=b.getAttribute("data-src"),el;'
+		. 'if(t==="video"){el=document.createElement("video");el.src=s;el.controls=true;el.autoplay=true;el.playsInline=true;}else{el=document.createElement("iframe");el.src=s;el.allow="autoplay; fullscreen; picture-in-picture";el.allowFullscreen=true;el.title="Michael’s intro video";}'
+		. 'el.className="dwr-vid";box.appendChild(el);box.classList.add("dwr-playing");});</script>';
+	return preg_replace( '#(<div id="dw-intro-photo"[^>]*>)#', '$1' . str_replace( '$', '\\$', $btn ), $html, 1 ) . $js;
+}
+
+
+/* ---------- Onboarding: the Elementor form (steps, uploads, saving as you go) in the new design ---------- */
+
+/** The page: a dark intro, then the original Elementor form widget on its own, styled to match the site. */
+function dwdr_onboarding() {
+	$id   = (int) get_queried_object_id();
+	$form = '';
+	if ( class_exists( '\Elementor\Plugin' ) ) {
+		$all = (string) \Elementor\Plugin::$instance->frontend->get_builder_content( $id, false );
+		$i   = strpos( $all, 'elementor-widget-form' );
+		if ( false !== $i ) {
+			$i     = strrpos( substr( $all, 0, $i ), '<div' );
+			$form  = '<div data-elementor-type="wp-page" data-elementor-id="' . $id . '" class="elementor elementor-' . $id . '" data-elementor-post-type="page">' . substr( $all, $i, dwdr_div_end( $all, $i ) - $i ) . '</div>';
+		}
+	}
+	if ( '' === $form ) {
+		$form = '<p>The onboarding form is being updated. Please email <a href="mailto:mike@dreamwebdigital.com">mike@dreamwebdigital.com</a> or call (772) 210-1728.</p>';
+	}
+	$check = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#13A6EE" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>';
+	return '<section id="ob-hero" data-theme="dark" data-nocta="1" class="dwr-obhero"><div class="dwr-obhero-in">'
+		. '<span class="dwr-eyebrow"><i></i>Client onboarding</span>'
+		. '<h1>Let’s plan <span>your website.</span></h1>'
+		. '<p>Seven short steps tell me everything I need: your business, your goals, the pages you need and the look you have in mind.</p>'
+		. '<ul class="dwr-obnotes"><li>' . $check . 'About 10 to 15 minutes</li><li>' . $check . 'Saves as you go, so you can finish later</li><li>' . $check . 'Skip anything you don’t have yet</li></ul>'
+		. '</div></section>'
+		. '<section data-theme="light" data-nocta="1" class="dwr-obform"><div class="dwr-obcard dwo-form-wrap">' . $form . '</div>'
+		. '<p class="dwr-obhelp">Stuck on something? Call or text <a href="tel:+17722101728">(772) 210-1728</a> or email <a href="mailto:mike@dreamwebdigital.com">mike@dreamwebdigital.com</a>.</p></section>';
+}
+
+/** Index just past the </div> that closes the <div> starting at $start. */
+function dwdr_div_end( $h, $start ) {
+	$d = 0;
+	$k = $start;
+	while ( true ) {
+		$o  = strpos( $h, '<div', $k + 1 );
+		$cl = strpos( $h, '</div>', $k + 1 );
+		if ( false === $cl ) {
+			return strlen( $h );
+		}
+		if ( false !== $o && $o < $cl ) {
+			$d++;
+			$k = $o;
+		} elseif ( 0 === $d ) {
+			return $cl + 6;
+		} else {
+			$d--;
+			$k = $cl;
+		}
+	}
+}
+
+add_action( 'wp_enqueue_scripts', function () {
+	if ( 'onboarding' !== dwdr_page() ) {
+		return;
+	}
+	// Elementor's form scripts (steps, uploads, sending) with their config, as on an Elementor page.
+	if ( class_exists( '\Elementor\Plugin' ) ) {
+		\Elementor\Plugin::$instance->frontend->enqueue_scripts();
+	}
+	wp_add_inline_style( 'dwdr', '.elementor-hidden,.elementor-screen-only{display:none!important}'
+		. '.dwr-obhero{position:relative;background:#121212;color:#fff;padding-top:clamp(140px,18vh,210px)!important;padding-bottom:clamp(64px,8vw,110px)!important}.dwr-obhero-in{display:flex;flex-direction:column;gap:22px;max-width:900px}.dwr-obhero h1{margin:0;font-size:clamp(44px,7vw,112px);line-height:.92;letter-spacing:-.045em;font-weight:600}.dwr-obhero h1 span{display:block;color:#13A6EE}.dwr-obhero p{margin:0;max-width:620px;font-size:clamp(18px,1.5vw,22px);line-height:1.45;color:#C9C9C9}.dwr-obnotes{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:10px 28px}.dwr-obnotes li{display:inline-flex;align-items:center;gap:8px;font-size:16px;font-weight:500;color:#fff}'
+		. '.dwr-obform{background:#F4F5F7;color:#121212;padding-top:clamp(40px,5vw,72px)!important;padding-bottom:clamp(72px,9vw,130px)!important}.dwr-obcard{max-width:980px;margin:0 auto;background:#fff;border:1px solid rgba(18,18,18,.08);border-radius:16px;padding:clamp(22px,4vw,56px);box-shadow:0 30px 70px -40px rgba(18,18,18,.35)}.dwr-obhelp{max-width:980px;margin:22px auto 0;text-align:center;font-size:15px;color:#6B6B6B}.dwr-obhelp a{color:#121212;font-weight:600}'
+		. '.dwr-obcard .elementor-form-fields-wrapper{display:flex;flex-wrap:wrap;margin:0 -10px}.dwr-obcard .elementor-field-group{width:100%;padding:0 10px;margin:0 0 22px;display:flex;flex-direction:column;gap:9px;box-sizing:border-box}.dwr-obcard .elementor-col-50{width:50%}@media(max-width:700px){.dwr-obcard .elementor-col-50{width:100%}}'
+		. '.dwr-obcard .e-form__step{width:100%;display:flex;flex-wrap:wrap}.dwr-obcard .elementor-field-label{font-size:15px;font-weight:600;color:#121212;line-height:1.35}.dwr-obcard .elementor-mark-required .elementor-field-label:after{content:" *";color:#E8573B}'
+		. '.dwr-obcard input.elementor-field,.dwr-obcard textarea.elementor-field,.dwr-obcard select{width:100%;min-height:54px;padding:14px 16px;border:1px solid #DADDE2;border-radius:10px;background:#F6F7F9;font:inherit;font-size:16px;color:#121212;box-sizing:border-box;transition:border-color .2s,box-shadow .2s,background-color .2s;-webkit-appearance:none;appearance:none}.dwr-obcard textarea.elementor-field{min-height:120px;line-height:1.5;resize:vertical}.dwr-obcard input.elementor-field:focus,.dwr-obcard textarea.elementor-field:focus,.dwr-obcard select:focus{outline:none;border-color:#13A6EE;background:#fff;box-shadow:0 0 0 4px rgba(19,166,238,.15)}'
+		. '.dwr-obcard .elementor-select-wrapper{position:relative}.dwr-obcard .select-caret-down-wrapper{position:absolute;right:16px;top:50%;transform:translateY(-50%);pointer-events:none;width:12px;height:12px;display:flex}.dwr-obcard .select-caret-down-wrapper svg{width:12px;height:12px;fill:#6B6B6B}.dwr-obcard select{padding-right:40px}'
+		. '.dwr-obcard .elementor-upload-field{padding:12px!important;background:#fff!important;border-style:dashed!important;cursor:pointer}.dwr-obcard .elementor-field-subgroup{display:flex;flex-wrap:wrap;gap:10px}.dwr-obcard .elementor-field-option{display:inline-flex}.dwr-obcard .elementor-field-option input{position:absolute;opacity:0;pointer-events:none}.dwr-obcard .elementor-field-option label{display:inline-flex;align-items:center;min-height:44px;padding:0 18px;border:1px solid #DADDE2;border-radius:999px;background:#F6F7F9;font-size:15px;font-weight:500;cursor:pointer;transition:all .2s}.dwr-obcard .elementor-field-option label:hover{border-color:#13A6EE}.dwr-obcard .elementor-field-option input:checked+label{background:#13A6EE;border-color:#13A6EE;color:#fff}.dwr-obcard .elementor-field-option input:focus-visible+label{box-shadow:0 0 0 4px rgba(19,166,238,.25)}'
+		. '.dwr-obcard .dwo-sec{display:flex;flex-direction:column;gap:6px;padding-bottom:6px;margin-bottom:4px;border-bottom:1px solid #EDEFF2}.dwr-obcard .dwo-k{font-size:13px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#0B76B8}.dwr-obcard .dwo-sec h3{margin:0;font-size:clamp(26px,2.6vw,38px);line-height:1.05;letter-spacing:-.03em;font-weight:600}.dwr-obcard .dwo-sec p{margin:0;font-size:16px;color:#555}'
+		. '.dwr-obcard .e-form__indicators{display:flex;align-items:center;gap:6px;margin:0 0 32px;flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}.dwr-obcard .e-form__indicators__indicator{display:flex;flex-direction:column;align-items:center;gap:6px;flex:0 0 auto;cursor:pointer;font-size:12px;font-weight:600;color:#9AA0A8}.dwr-obcard .e-form__indicators__indicator__number{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1.5px solid #DADDE2;background:#fff;font-size:14px;color:#6B6B6B}.dwr-obcard .e-form__indicators__indicator--state-active{color:#121212}.dwr-obcard .e-form__indicators__indicator--state-active .e-form__indicators__indicator__number{background:#13A6EE;border-color:#13A6EE;color:#fff}.dwr-obcard .e-form__indicators__indicator--state-completed .e-form__indicators__indicator__number{background:#121212;border-color:#121212;color:#fff}.dwr-obcard .e-form__indicators__indicator__separator{flex:1 1 16px;min-width:12px;height:1.5px;background:#DADDE2;align-self:flex-start;margin-top:17px}.dwr-obcard .e-form__indicators__indicator--state-completed+.e-form__indicators__indicator__separator{background:#121212}@media(max-width:600px){.dwr-obcard .e-form__indicators__indicator__label{display:none}.dwr-obcard .e-form__indicators__indicator__number{width:30px;height:30px}.dwr-obcard .e-form__indicators__indicator__separator{margin-top:15px}}'
+		. '.dwr-obcard .e-form__buttons{display:flex;flex-direction:row;gap:12px;margin-top:8px}.dwr-obcard .elementor-button{flex:1;display:inline-flex;align-items:center;justify-content:center;min-height:56px;padding:0 28px;border:0;border-radius:999px;background:#13A6EE;color:#fff;font:inherit;font-size:16px;font-weight:600;cursor:pointer;transition:background .3s,transform .3s}.dwr-obcard .elementor-button:hover{background:#2A8FD6;transform:translateY(-2px)}.dwr-obcard .e-form__buttons__wrapper{flex:1;display:flex}.dwr-obcard .e-form__buttons__wrapper__button-previous{background:#fff;color:#121212;border:1px solid #DADDE2}.dwr-obcard .e-form__buttons__wrapper__button-previous:hover{background:#F6F7F9}'
+		. '.dwr-obcard .dw-ob-note{display:flex;align-items:center;flex-wrap:wrap;gap:10px 16px;margin:0 0 28px;padding:14px 18px;border-radius:12px;background:#EEF7FD;color:#21415E;font-size:15px;line-height:1.45}.dwr-obcard .dw-ob-ic{display:none}.dwr-obcard .dw-ob-t{flex:1 1 300px}.dwr-obcard .dw-ob-clear{border:1px solid #B8D9EE;background:#fff;color:#0B76B8;border-radius:999px;padding:6px 14px;font:inherit;font-size:14px;font-weight:600;cursor:pointer}.dwr-obcard .dw-ob-clear:hover{border-color:#13A6EE}'
+		. '.dwr-obcard .elementor-message{margin:12px 0 0;padding:14px 16px;border-radius:10px;font-size:15px}.dwr-obcard .elementor-message-success{background:#E9F7EF;color:#1B6B3A}.dwr-obcard .elementor-message-danger,.dwr-obcard .elementor-error .elementor-field{border-color:#E8573B!important}.dwr-obcard .elementor-help-inline{font-size:13px;color:#E8573B}.dwr-obcard .elementor-message:before{display:none}' );
+}, 10000 );
+
+
+/** The proof row (PageSpeed, Google rating, Upwork record) used under projects. */
+function dwdr_proof() {
+	return '<div class="dwr-proof">'
+		. '<span><b><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#13A6EE" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>95+</b><small>Google PageSpeed</small></span>'
+		. '<span><b><i>★</i>4.9</b><small>Google reviews</small></span>'
+		. '<span><b>100%</b><small>Job Success on Upwork</small></span>'
+		. '</div>';
+}

@@ -180,6 +180,12 @@ footer{padding-left:18px !important;padding-right:18px !important}
 #ct-row{grid-template-columns:1fr !important}
 #ct-ways a{font-size:22px !important;padding:18px 0 !important}
 }
+/* Quote */
+@media (max-width:600px){
+#qt-hero{padding-top:92px !important;padding-bottom:64px !important}
+#qt-hero h1{font-size:clamp(44px,14vw,72px) !important}
+#qt-row,#qt-row2,#qt-row3{grid-template-columns:1fr !important}
+}
 /* Portfolio */
 @media (max-width:980px){
 #pf-head{grid-template-columns:1fr !important}
