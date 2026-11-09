@@ -514,6 +514,29 @@ for fn in os.listdir(OUT_T):
     s = open(os.path.join(OUT_T, fn), encoding='utf-8').read()
     for tok in re.findall(r'\{\{\{? ?[a-zA-Z.]+ ?\}?\}\}|sc-[a-z]+|dc\.html|assets/', s):
         left.append((fn, tok))
+# Michael (Nov 2026): the blue end-of-page CTA on interior pages becomes the homepage-style band (light gray,
+# faint screenshot texture, big Quote / Call panel). Same headline per page; hosting keeps its order link.
+def _end_band(head, href, kicker, title):
+    panel = _BIGCTA.replace('%HOME%/quote/', href).replace('Free quote · same-day reply', kicker).replace('>Get a Free Quote<', '>' + title + '<')
+    return ('<section data-theme="light" class="dwr-band dwr-band-light dwr-band-tex dwr-band-gray"><div class="dwr-shotlayer" aria-hidden="true"><div class="dwr-shotplane">%SHOTPLANE%</div></div><div class="dwr-halo" aria-hidden="true"></div>'
+            '<div class="dwr-band-in"><div><span class="dwr-eyebrow"><i></i>Your turn</span><h2 class="dwr-band-h">' + head + '</h2>'
+            '<p class="dwr-band-p">Tell me what you need and I’ll send a flat quote, usually the same day.</p></div>' + panel + '</div></section>')
+for _fn, _band in (
+    ('portfolio.html', _end_band('Your site could be next.', '%HOME%/quote/', 'Free quote · same-day reply', 'Get a Free Quote')),
+    ('blog.html', _end_band('Need help with your website?', '%HOME%/quote/', 'Free quote · same-day reply', 'Get a Free Quote')),
+    ('article.html', _end_band('Need help with your website?', '%HOME%/quote/', 'Free quote · same-day reply', 'Get a Free Quote')),
+    ('process.html', _end_band('Ready to get started?', '%HOME%/quote/', 'Free quote · same-day reply', 'Get a Free Quote')),
+    ('hosting.html', _end_band('Ready to get your website live?', '%HOME%/checkout/?dwd-order=hosting', 'Hosting · set up for you', 'Order Hosting')),
+):
+    _path = os.path.join(OUT_T, _fn)
+    _h = open(_path, encoding='utf-8').read()
+    _bi = _h.find('data-theme="blue"')
+    if _bi > -1:
+        _bs = _h.rfind('<section', 0, _bi); _be = _h.find('</section>', _bi) + len('</section>')
+        _h = _h[:_bs] + _band + _h[_be:]
+        if _fn == 'hosting.html':
+            _h = _h.replace('Tell me what you need and I’ll send a flat quote, usually the same day.', 'Order online in a minute, or call and I’ll set everything up with you.')
+        open(_path, 'w', encoding='utf-8').write(_h)
 from collections import Counter
 print(Counter(left))
 print(len(hover_rules), 'hover/focus rules')
