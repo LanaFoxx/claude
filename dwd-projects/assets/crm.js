@@ -1255,7 +1255,15 @@
 			+ (td.length ? '<div class="dwdc-todos">' + td.map(function (t) { return todoRow(t); }).join('') + '</div>' : emptyRow('Nothing on the list. Nice.'))
 			+ (doneTasks().length ? '<button class="dwdc-donebtn" data-showdone>' + (S.showDone ? 'Hide' : 'Show') + ' completed <b>' + doneTasks().length + '</b></button>'
 				+ (S.showDone ? '<div class="dwdc-todos donelist">' + doneTasks().slice(0, 25).map(function (t) { return todoRow(t); }).join('') + '</div>' : '') : ''));
-		return meetBar() + reviewBar() + '<div class="dwdc-row3">' + c2 + c3 + c1 + '</div><div class="dwdc-row2c">' + card('cd-plain cd-trends', '<header class="dwdc-dhead"><h2>Patterns &amp; Trends</h2><button class="dwdc-askbtn light" data-askai>' + ic('bolt', 14) + 'Ask AI</button><a href="#money">Money Stats ' + ic('right', 14) + '</a></header>', trendsBox()) + tl + '</div>';
+		var lds = S.contacts.filter(function (c) { return c.list === 'leads'; }).sort(function (a, b) { return (a.followup || '9') < (b.followup || '9') ? -1 : 1; });
+		var lb = card('cd-plain cd-leadsb', '<header class="dwdc-dhead"><h2>Leads <span class="dwdc-cnt">' + lds.length + '</span></h2><a href="#leads">View all</a></header>',
+			lds.length ? '<div class="dwdc-hleads">' + lds.map(function (c) {
+				var due = c.followup && c.followup <= DWDC.today;
+				return '<a class="dwdc-hlead" href="#client/' + c.id + '"><span class="w"><b>' + esc(c.name) + '</b><small>' + esc([c.person && c.person !== c.name ? c.person : '', c.source || c.lead_source].filter(Boolean).join(' · ')) + '</small></span>'
+					+ '<span class="v"><b>' + (num(c.price) ? money(c.price) : '—') + '</b><small class="' + (due ? 'deep' : '') + '">' + (c.followup ? (due ? 'Follow up ' + (c.followup < DWDC.today ? fmt(c.followup) : 'today') : 'Follow up ' + fmt(c.followup)) : 'No follow-up') + '</small></span></a>';
+			}).join('') + '</div>' : emptyRow('No open leads.'),
+			lds.length ? '<footer class="dwdc-totals one"><div><small>Estimated value</small><strong class="deep">' + money(lds.reduce(function (a, c) { return a + num(c.price); }, 0)) + '</strong></div></footer>' : '');
+		return meetBar() + reviewBar() + '<div class="dwdc-row3">' + c2 + c3 + c1 + '</div><div class="dwdc-row2c">' + card('cd-plain cd-trends', '<header class="dwdc-dhead"><h2>Patterns &amp; Trends</h2><button class="dwdc-askbtn light" data-askai>' + ic('bolt', 14) + 'Ask AI</button><a href="#money">Money Stats ' + ic('right', 14) + '</a></header>', trendsBox()) + tl + lb + '</div>';
 	}
 
 	/* ---------- All Clients ---------- */
@@ -1982,7 +1990,9 @@
 						var t = list.reduce(function (a, x) { return a + x.amount; }, 0);
 						return '<section class="dwdc-mo-g"><h4><i class="' + g[1] + '"></i>' + g[2] + '<small>' + list.length + ' payment' + (list.length === 1 ? '' : 's') + '</small><b>' + money(t) + '</b></h4>'
 							+ list.map(function (x) {
-								return '<a class="dwdc-mo-r' + (x.refund ? ' ref' : '') + '" href="#client/' + x.pid + '" data-close-modal><span class="d">' + fmt(x.date) + '</span><span class="w"><b>' + esc(x.client || x.project) + '</b><small>' + esc(x.project + (x.note ? ' · ' + x.note.replace(/ · after Upwork fee.*$/, '') : '') + (g[0] === 'Other' && x.method ? ' · ' + x.method : '')) + '</small></span><span class="a">' + (x.refund ? '−' : '') + money(Math.abs(x.amount)) + '</span></a>';
+								var pc = contact(x.pid), ptot = pc ? num(pc.price) : 0;
+								var fin = pc && !x.refund && !num(pc.balance) && ptot && paidIn(pc) - Math.abs(x.amount) < ptot && (!pc.last_paid || String(x.date).slice(0, 10) >= String(pc.last_paid).slice(0, 10));
+								return '<a class="dwdc-mo-r' + (x.refund ? ' ref' : '') + (ptot ? ' tot' : '') + '" href="#client/' + x.pid + '" data-close-modal><span class="d">' + fmt(x.date) + '</span><span class="w"><b>' + esc(x.client || x.project) + (fin ? ' <em class="dwdc-final">Final payment</em>' : '') + '</b><small>' + esc(x.project + (x.note ? ' · ' + x.note.replace(/ · after Upwork fee.*$/, '') : '') + (g[0] === 'Other' && x.method ? ' · ' + x.method : '')) + '</small></span><span class="a">' + (x.refund ? '−' : '') + money(Math.abs(x.amount)) + (ptot ? '<small>of ' + money(ptot) + ' project</small>' : '') + '</span></a>';
 							}).join('') + '</section>';
 					}).join('');
 			}
