@@ -2400,7 +2400,15 @@
 		if ((el = t.closest('[data-pplrm]'))) { var rc = S.full[route().id] || contact(route().id), rl = peopleOf(rc), gone = rl[+el.getAttribute('data-pplrm')]; if (confirm('Remove ' + (gone.name || gone.email) + ' from this project?')) { rl.splice(+el.getAttribute('data-pplrm'), 1); savePeople(rc, rl); } return; }
 		if (t.closest('[data-edit]')) { S.edit = !S.edit; render(); return; }
 		var r = route();
-		if (t.closest('[data-paid]')) { save(r.id, { balance: '0' }, 'Marked paid'); return; }
+		if (t.closest('[data-paid]')) {
+			// Mark paid = the rest of the balance came in today, so it counts in "Made in <month>".
+			var pc = S.full[r.id] || contact(r.id), pamt = pc ? num(pc.balance) : 0, pm = pc && ['Upwork', 'Stripe', 'PayPal'].indexOf(pc.pay_method) > -1 ? pc.pay_method : 'Other';
+			if (!pamt) { save(r.id, { balance: '0' }, 'Marked paid'); return; }
+			api('/contact/' + r.id + '/payment', 'POST', { amount: pamt, method: pm, date: DWDC.today, note: 'Marked paid' })
+				.then(function (x) { upsert(x); S.full[x.id] = x; return reload(); })
+				.then(function () { render(); toast(money(pamt) + ' marked paid · added to this month'); }).catch(fail);
+			return;
+		}
 		if ((el = t.closest('[data-set]'))) {
 			var to = el.getAttribute('data-set');
 			save(r.id, { list: to }, { limbo: 'Moved to limbo', hold: 'Put on hold', active: 'Back in active jobs', archive: 'Archived', leads: 'Restored to leads' }[to]);
