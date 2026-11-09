@@ -599,7 +599,7 @@
 			+ nav('projects/limbo', 'clock', 'Limbo', by('limbo').length) + nav('projects/complete', 'done', 'Completed', by('complete').length)
 			+ '<div class="dwdc-navh"><i class="b2"></i>Clients</div>'
 			+ nav('onboarding', 'filter', 'Onboarding', onboardList().length) + nav('hosting', 'server', 'Hosting', hosting().length)
-			+ nav('clients', 'users', 'All Clients', S.clients.length) + nav('reviews', 'mail', 'Get Reviews')
+			+ nav('clients', 'users', 'All Clients', S.clients.length) + nav('leads', 'user', 'Leads', leadList().length) + nav('reviews', 'mail', 'Get Reviews')
 			+ '<div class="dwdc-navh fin"><i class="b4"></i>Finances</div>' + nav('money', 'dollar', 'Money Stats')
 			+ '<div class="dwdc-navh"><i class="b3"></i>More</div>'
 			+ '<a class="dwdc-nav" href="' + esc(DWDC.wp) + '">' + ic('wp') + '<span>WordPress Admin</span></a>'
@@ -1316,7 +1316,8 @@
 	var LSTAGES = [['new', 'New'], ['contacted', 'Contacted'], ['active', 'Won → Active'], ['lost', 'Lost']];
 	function leadsList() {
 		var rows = leadList().filter(match);
-		return '<div class="dwdc-card dwdc-tbl"><div class="dwdc-grid g-leads2 head"><span>Name</span><span>Contact</span><span>Source</span><span>Stage</span><span>Received</span><span>Follow up</span><span></span></div>'
+		return '<div class="dwdc-ltop"><p>People you’re talking to who haven’t hired you yet. When one signs up, click <b>Start project</b> and they become a client with an active project.</p><button type="button" class="dwdc-btn" data-act="lead">' + ic('plus', 15) + 'Add lead</button></div>'
+			+ '<div class="dwdc-card dwdc-tbl"><div class="dwdc-grid g-leads2 head"><span>Name</span><span>Contact</span><span>Source</span><span>Stage</span><span>Received</span><span>Follow up</span><span></span></div>'
 			+ (rows.length ? rows.map(function (c) {
 				var st = c.stage && c.stage !== 'onboarding' ? c.stage : 'new', fu = c.followup;
 				return '<div class="dwdc-grid g-leads2 row" data-go="client/' + c.id + '"><span><b>' + esc(clientName(c) || c.name) + '</b>' + (c.company || (clientName(c) && clientName(c) !== c.name) ? '<small>' + esc(c.company || c.name) + '</small>' : '') + '</span>'
@@ -1325,8 +1326,8 @@
 					+ '<span><select class="dwdc-stage t-' + ({ new: 'blue', contacted: 'deep', active: 'navy', lost: 'steel' }[st] || 'blue') + '" data-stage-of="' + c.id + '">' + LSTAGES.map(function (x) { return '<option value="' + x[0] + '"' + (x[0] === st ? ' selected' : '') + '>' + x[1] + '</option>'; }).join('') + '</select></span>'
 					+ '<span class="mut">' + ago(received(c)) + '</span>'
 					+ '<span>' + (fu && fu >= DWDC.today ? '<span class="dwdc-fu">' + ic('clock', 13) + fmt(fu) + '</span>' : '<button class="dwdc-btn3" data-followup="' + c.id + '">' + ic('clock', 13) + ' Follow up</button>') + '</span>'
-					+ '<span class="r"><button class="dwdc-del show" data-arch="' + c.id + '" title="Archive">' + ic('archive', 15) + '</button></span></div>';
-			}).join('') : emptyRow('No leads yet. Website form entries and leads you add with “+ Lead” show up here.')) + '</div>';
+					+ '<span class="r dwdc-lacts"><button class="dwdc-btn3 dwdc-lstart" data-lstart="' + c.id + '">Start project</button><button class="dwdc-del show" data-arch="' + c.id + '" title="Archive">' + ic('archive', 15) + '</button></span></div>';
+			}).join('') : emptyRow('No leads yet. Click “Add lead” to add someone you’re talking to.')) + '</div>';
 	}
 	/* ---------- Onboarding (everyone who sent the onboarding form) ---------- */
 	function onboardView() {
@@ -2076,7 +2077,7 @@
 		} else if (m.type === 'lead') {
 			body = '<form class="dwdc-modal dwdc-leadform">' + head('Pipeline', 'New', 'lead') + '<div class="dwdc-fgrid">'
 				+ inp('name', 'Name or business', 'e.g. Lakeside Dental', '', true) + inp('person', 'Contact person') + inp('email', 'Email', '', 'email') + inp('phone', 'Phone') + inp('company', 'Company')
-				+ inp('source', 'Source', 'e.g. Referral, phone call, Upwork') + inp('website', 'Website')
+				+ inp('source', 'Source', 'e.g. Referral, phone call, Upwork') + inp('website', 'Website') + inp('price', 'Estimated value ($)', 'e.g. 3500') + inp('followup', 'Follow up on', '', 'date')
 				+ '<label class="wide"><span>Note</span><textarea name="note" rows="2" placeholder="What are they looking for?">' + esc(v.note || '') + '</textarea></label>'
 				+ '</div><div class="dwdc-farow end"><button type="button" class="dwdc-btn2" data-close-modal>Cancel</button><button class="dwdc-btn">Add lead</button></div></form>';
 		} else {
@@ -2313,6 +2314,12 @@
 		if ((el = t.closest('[data-wins]'))) {
 			var wp = el.getAttribute('data-wins').split('|');
 			S.modal = { type: 'wins', from: wp[0], to: wp[1], label: wp[2] }; render();
+			return;
+		}
+		if ((el = t.closest('[data-lstart]'))) {
+			e.preventDefault(); e.stopPropagation();
+			var lid = +el.getAttribute('data-lstart');
+			api('/contact/' + lid, 'POST', { list: 'active', stage: 'active' }).then(function (x) { upsert(x); return reload(); }).then(function () { S.back = 'leads'; go('client/' + lid); toast('Project started: now in Active'); }).catch(fail);
 			return;
 		}
 		if (t.closest('[data-adsconnect]') || (t.closest('[data-adsmodal]') && !(S.ads && S.ads.google))) {

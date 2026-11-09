@@ -1720,3 +1720,11 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 @media (max-width: 600px) { .dwdc-kpis.two { grid-template-columns: 1fr !important; } }
 .dwdc-kpis.two .dwdc-kpi span, .dwdc-kpis.one .dwdc-kpi span { white-space: normal !important; overflow: visible !important; text-overflow: clip !important; }
 .dwdc .cd-ptoday .dwdc-none { text-align: left !important; justify-content: flex-start !important; padding: 22px 20px !important; }
+/* Leads page: intro + Add lead button; Start project per row */
+.dwdc-ltop { display: flex; align-items: center; justify-content: space-between; gap: 16px 24px; flex-wrap: wrap; margin: 0 0 16px; }
+.dwdc-ltop p { margin: 0; max-width: 640px; color: var(--sec); font-size: 14.5px; line-height: 1.5; }
+.dwdc-ltop .dwdc-btn { gap: 8px; }
+.g-leads2 { grid-template-columns: minmax(170px, 1.3fr) minmax(190px, 1.4fr) minmax(130px, 1fr) 140px 100px 140px 170px !important; }
+.dwdc-lacts { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
+.dwdc-lstart { white-space: nowrap; background: var(--blue) !important; color: #fff !important; border-color: var(--blue) !important; }
+.dwdc-lstart:hover { background: var(--deep) !important; }

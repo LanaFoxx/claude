@@ -82,7 +82,7 @@ add_filter( 'menu_order', function ( $order ) {
 	// Dream Desk pages as their own sections (they open the Dream Desk app at that page).
 	$dd = array(
 		'projects' => array( array( 'projects/active', 'Active', 'dashicons-controls-play' ), array( 'projects/hold', 'On Hold', 'dashicons-controls-pause' ), array( 'projects/limbo', 'Limbo', 'dashicons-clock' ), array( 'projects/complete', 'Completed', 'dashicons-yes-alt' ) ),
-		'clients'  => array( array( 'onboarding', 'Onboarding', 'dashicons-feedback' ), array( 'hosting', 'Hosting', 'dashicons-cloud' ), array( 'clients', 'All Clients', 'dashicons-groups' ), array( 'reviews', 'Get Reviews', 'dashicons-star-filled' ) ),
+		'clients'  => array( array( 'onboarding', 'Onboarding', 'dashicons-feedback' ), array( 'hosting', 'Hosting', 'dashicons-cloud' ), array( 'clients', 'All Clients', 'dashicons-groups' ), array( 'leads', 'Leads', 'dashicons-id' ), array( 'reviews', 'Get Reviews', 'dashicons-star-filled' ) ),
 		'finances' => array( array( 'money', 'Money Stats', 'dashicons-chart-bar' ) ),
 	);
 	foreach ( $dd as $g => $list ) {
