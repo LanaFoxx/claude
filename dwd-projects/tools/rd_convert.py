@@ -212,7 +212,8 @@ if _k > -1:
     _ae = hb.find('</a>', _k)
     if _ds > -1:
         _ins = hb[_k + 1:_ae]
-        hb = hb[:_ds] + '<div data-dw-reveal="1" style="display:flex;margin-top:clamp(40px,5vw,72px)"><a class="dwr-allwork" href="%HOME%/portfolio/">' + _ins + '</a></div>' + hb[hb.find('</div>', _ae) + 6:]
+        # Michael (Nov 2026): no See all work button under the showcase; Portfolio is in the menu.
+        hb = hb[:_ds] + hb[hb.find('</div>', _ae) + 6:]
 # Main hero button: a free quote (most people won't book a call cold).
 hb = re.sub(r'href="#contact"([^>]*)>Schedule Zoom', r'href="%HOME%/quote/"\1>Get a Free Quote', hb, 1)
 # Proof right after the "wow": move the reviews block up to follow the laptop/phone showcase.
@@ -296,9 +297,16 @@ if _pc > -1:
     _e = _div_end(hb, _ds); hb = hb[:_e] + _PROOF + hb[_e:]
 # A white quote band between the dark Reviews and dark About sections.
 _arrow = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12 12 2M4 2h8v8"></path></svg>'
+# Large two-row action panel for the quote bands (Michael: the pill + phone link looked like a tiny dot in the space).
+_BIGCTA = ('<div class="dwr-bigcta">'
+           '<a class="dwr-bc" href="%HOME%/quote/"><span class="dwr-bc-x"><span class="dwr-bc-k">Free quote · same-day reply</span><span class="dwr-bc-t">Get a Free Quote</span></span>'
+           '<span class="dwr-bc-ic"><svg width="22" height="22" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12 12 2M4 2h8v8"></path></svg></span></a>'
+           '<a class="dwr-bc" href="tel:+17722101728"><span class="dwr-bc-x"><span class="dwr-bc-k">Call or text Michael</span><span class="dwr-bc-t">(772) 210-1728</span></span>'
+           '<span class="dwr-bc-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></span></a>'
+           '</div>')
 _band_w = ('<section data-theme="light" class="dwr-band dwr-band-light"><div class="dwr-band-in"><div><span class="dwr-eyebrow"><i></i>Your turn</span>'
            '<h2 class="dwr-band-h">Want a website people rave about?</h2><p class="dwr-band-p">Tell me what you need and I’ll send a flat quote, usually the same day.</p></div>'
-           '<div class="dwr-band-b"><a class="dwr-pill" href="%HOME%/quote/">Get a Free Quote ' + _arrow + '</a><a class="dwr-cta-call" href="tel:+17722101728">or call (772) 210-1728</a></div></div></section>')
+           + _BIGCTA + '</div></section>')
 _rs = hb.find('<section id="reviews"')
 if _rs > -1:
     _re2 = hb.find('</section>', _rs) + len('</section>')
@@ -306,7 +314,7 @@ if _rs > -1:
 # A dark quote band (with the price range) between the white Services and white Contact sections.
 _band_d = ('<section data-theme="dark" class="dwr-band dwr-band-dark"><div class="dwr-band-in"><div><span class="dwr-eyebrow"><i></i>Flat pricing</span>'
            '<h2 class="dwr-band-h">Most websites run <span>$1,500 to $7,000</span>.</h2><p class="dwr-band-p">It depends on the pages and features you need. You get one flat quote up front, so the price never creeps.</p></div>'
-           '<div class="dwr-band-b"><a class="dwr-pill" href="%HOME%/quote/">Get a Free Quote ' + _arrow + '</a><a class="dwr-cta-call" href="tel:+17722101728">or call (772) 210-1728</a></div></div></section>')
+           + _BIGCTA + '</div></section>')
 _ss = hb.find('<section id="services"')
 if _ss > -1:
     hb = hb[:_ss] + hb[_ss:].replace('<section id="services"', '<section data-nocta="1" id="services"', 1)
