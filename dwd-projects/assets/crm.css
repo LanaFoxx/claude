@@ -1719,3 +1719,4 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 .dwdc-kpi span { line-height: 1.45; }
 @media (max-width: 600px) { .dwdc-kpis.two { grid-template-columns: 1fr !important; } }
 .dwdc-kpis.two .dwdc-kpi span, .dwdc-kpis.one .dwdc-kpi span { white-space: normal !important; overflow: visible !important; text-overflow: clip !important; }
+.dwdc .cd-ptoday .dwdc-none { text-align: left !important; justify-content: flex-start !important; padding: 22px 20px !important; }
