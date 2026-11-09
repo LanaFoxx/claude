@@ -1201,9 +1201,7 @@
 					+ '<button type="button" class="dwdc-mopen" data-owed><span class="dwdc-lbl">Owed to you</span><strong>' + money(owed(open)) + '</strong><small>' + owing.length + ' open project' + (owing.length === 1 ? '' : 's') + ' · see list →</small></button></div>'
 					+ '<div class="dwdc-mjobs">' + wbox('Jobs this week', ws, we) + wbox('Jobs last week', ls, le) + '</div>';
 			})(),
-			'<footer>' + frow('Hosting Revenue', money(annual) + ' / yr', 'hosting') + (function () { var C = S.costs || {}, t = DWDC.today, y = +t.slice(0, 4), mi = +t.slice(5, 7) - 1, pd = new Date(y, mi - 1, 1), MNs = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-				var cm = C[String(y)] && C[String(y)].m ? +C[String(y)].m[mi] || 0 : 0, py = C[String(pd.getFullYear())], lm = py && py.m ? +py.m[pd.getMonth()] || 0 : 0;
-				return frow('Spent on Connects this month', money(cm) + ' <small class="dwdc-frow-sub">' + MNs[pd.getMonth()] + ' ' + money(lm) + '</small>', 'money').replace('<a class="dwdc-frow"', '<a class="dwdc-frow" data-connmodal'); })() + '<a class="dwdc-frow" href="#money"><span>All-time income</span><b>' + money(allIncome()) + '</b>' + ic('right', 12) + '</a></footer>');
+			'<footer>' + frow('Hosting Revenue', money(annual) + ' / yr', 'hosting') + '<a class="dwdc-frow" href="#money"><span>All-time income</span><b>' + money(allIncome()) + '</b>' + ic('right', 12) + '</a></footer>');
 		var tv = active.reduce(function (s, c) { return s + num(c.price); }, 0);
 		var ap = card('cd-plain cd-apnavy', '<header class="dwdc-dhead"><h2>Active Projects <span class="dwdc-cnt">' + active.length + '</span></h2><a href="#projects/active">View all</a></header>',
 			'<div class="dwdc-mini-t"><div class="g-ap head"><span>Project · Client</span><span>Price</span><span>Due</span><span class="r">Owed</span></div>'
