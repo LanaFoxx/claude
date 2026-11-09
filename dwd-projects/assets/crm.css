@@ -1732,3 +1732,12 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 .dwdc-del.red:hover { background: #FDECE8 !important; }
 .g-leads2 { grid-template-columns: minmax(170px, 1.3fr) minmax(190px, 1.4fr) minmax(130px, 1fr) 140px 100px 140px 210px !important; }
 @media (min-width: 901px) { .g-leads2 { grid-template-columns: minmax(120px, 1.2fr) minmax(150px, 1.4fr) minmax(90px, 1fr) 118px 78px 120px 196px !important; min-width: 0 !important; } }
+/* Leads: Price column (editable right in the list) */
+@media (min-width: 901px) { .g-leads2 { grid-template-columns: minmax(120px, 1.2fr) minmax(140px, 1.3fr) minmax(90px, 1fr) 104px 118px 78px 120px 196px !important; } }
+.dwdc-lprice { width: 100%; max-width: 96px; height: 34px; padding: 0 10px; border: 1px solid transparent; border-radius: 8px; background: transparent; font: inherit; font-size: 14px; font-weight: 700; color: var(--navy); transition: border-color .15s, background .15s; }
+.dwdc-lprice::placeholder { color: var(--mut); font-weight: 500; }
+.dwdc-lprice:hover { border-color: var(--input); background: #fff; }
+.dwdc-lprice:focus { outline: none; border-color: var(--blue); background: #fff; box-shadow: 0 0 0 3px rgba(19,166,238,.15); }
+.dwdc .dwdc-tbl input.dwdc-lprice { border: 1px solid transparent !important; background: transparent !important; box-shadow: none !important; padding: 0 8px !important; height: 34px !important; min-height: 0 !important; margin-left: -8px; }
+.dwdc .dwdc-tbl input.dwdc-lprice:hover { border-color: var(--input) !important; background: #fff !important; }
+.dwdc .dwdc-tbl input.dwdc-lprice:focus { border-color: var(--blue) !important; background: #fff !important; box-shadow: 0 0 0 3px rgba(19,166,238,.15) !important; }

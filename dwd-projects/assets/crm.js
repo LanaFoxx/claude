@@ -1317,12 +1317,13 @@
 	function leadsList() {
 		var rows = leadList().filter(match);
 		return '<div class="dwdc-ltop"><p>People you’re talking to who haven’t hired you yet. When one signs up, click <b>Start project</b> and they become a client with an active project.</p><button type="button" class="dwdc-btn" data-act="lead">' + ic('plus', 15) + 'Add lead</button></div>'
-			+ '<div class="dwdc-card dwdc-tbl"><div class="dwdc-grid g-leads2 head"><span>Name</span><span>Contact</span><span>Source</span><span>Stage</span><span>Received</span><span>Follow up</span><span></span></div>'
+			+ '<div class="dwdc-card dwdc-tbl"><div class="dwdc-grid g-leads2 head"><span>Name</span><span>Contact</span><span>Source</span><span>Price</span><span>Stage</span><span>Received</span><span>Follow up</span><span></span></div>'
 			+ (rows.length ? rows.map(function (c) {
 				var st = c.stage && c.stage !== 'onboarding' ? c.stage : 'new', fu = c.followup;
 				return '<div class="dwdc-grid g-leads2 row" data-go="client/' + c.id + '"><span><b>' + esc(clientName(c) || c.name) + '</b>' + (c.company || (clientName(c) && clientName(c) !== c.name) ? '<small>' + esc(c.company || c.name) + '</small>' : '') + '</span>'
 					+ '<span class="dwdc-nm"><span><b class="nm2">' + esc(c.email || '—') + '</b><small>' + esc(c.phone || '') + '</small></span></span>'
 					+ '<span class="sec ell">' + esc(c.last_entry || String(c.source || 'Added by hand').replace(/^Website form: /, '')) + '</span>'
+					+ '<span><input class="dwdc-lprice" type="text" inputmode="decimal" data-lprice="' + c.id + '" value="' + (num(c.price) ? money(c.price) : '') + '" placeholder="Add $" title="Estimated price"></span>'
 					+ '<span><select class="dwdc-stage t-' + ({ new: 'blue', contacted: 'deep', active: 'navy', lost: 'steel' }[st] || 'blue') + '" data-stage-of="' + c.id + '">' + LSTAGES.map(function (x) { return '<option value="' + x[0] + '"' + (x[0] === st ? ' selected' : '') + '>' + x[1] + '</option>'; }).join('') + '</select></span>'
 					+ '<span class="mut">' + ago(received(c)) + '</span>'
 					+ '<span>' + (fu && fu >= DWDC.today ? '<span class="dwdc-fu">' + ic('clock', 13) + fmt(fu) + '</span>' : '<button class="dwdc-btn3" data-followup="' + c.id + '">' + ic('clock', 13) + ' Follow up</button>') + '</span>'
@@ -2428,7 +2429,7 @@
 			(navigator.clipboard ? navigator.clipboard.writeText(link) : Promise.reject()).then(function () { toast('Payment link copied'); }, function () { prompt('Copy this payment link:', link); });
 			return;
 		}
-		if ((el = t.closest('[data-go]')) && !t.closest('a, button')) { go(el.getAttribute('data-go')); }
+		if ((el = t.closest('[data-go]')) && !t.closest('a, button, input, select, textarea, label')) { go(el.getAttribute('data-go')); }
 	});
 	function drop(id) { S.contacts = S.contacts.filter(function (x) { return x.id !== id; }); S.tasks = S.tasks.filter(function (x) { return x.contact !== id; }); delete S.full[id]; }
 
@@ -2505,6 +2506,11 @@
 			var sid = +t.getAttribute('data-status-of'), to = t.value, sd = { list: to };
 			if (to === 'complete') { sd.completed = DWDC.today; }
 			api('/contact/' + sid, 'POST', sd).then(function (x) { upsert(x); render(); toast('Moved to ' + (LABEL[to] || to)); }).catch(fail);
+			return;
+		}
+		if (t.hasAttribute('data-lprice')) {
+			var lpid = +t.getAttribute('data-lprice'), lv = String(t.value).replace(/[^0-9.]/g, '');
+			api('/contact/' + lpid, 'POST', { price: lv }).then(function (x) { upsert(x); render(); toast(lv ? 'Price saved' : 'Price cleared'); }).catch(fail);
 			return;
 		}
 		if (t.hasAttribute('data-stage-of')) {
