@@ -43,11 +43,11 @@ const hero = (m) => band([
   widget('heading', {
     title: 'Empirical Vendor Analysis & Performance Benchmarking for Enterprise Generative AI', header_size: 'h1',
     title_color: C.white, align: 'center',
-    ...typo('typography', SERIF, [64, 50, 38], 300, { lh: 1.06, ls: -0.96 }),
+    ...typo('typography', SERIF, [64, 50, 34], 300, { lh: 1.06, ls: -0.96 }),
     _element_width: 'initial', _element_custom_width: px(980), _element_custom_width_tablet: px(100, '%'),
   }),
   text('Move past vendor claims and generic test tenants. Recco evaluates enterprise AI inside live, enterprise-tier environments. We measure real prompt performance, true cost per task, and architectural capability across Microsoft 365 Copilot, ChatGPT Enterprise, Gemini Enterprise, Claude Enterprise, Glean, and Perplexity.', {
-    align: 'center', color: 'rgba(255,255,255,0.86)', size: 18, lh: 1.6, maxW: 780, settings: { typography_font_size_mobile: px(16) },
+    align: 'center', color: 'rgba(255,255,255,0.86)', size: 18, lh: 1.6, maxW: 780, settings: { typography_font_size_mobile: px(15), typography_line_height_mobile: { unit: 'em', size: 1.55, sizes: [] } },
   }),
   row([
     button('Explore the SEED Lab', U.seed, 'green', { arrow: true }),
@@ -59,6 +59,8 @@ const hero = (m) => band([
   settings: {
     flex_align_items: 'center', flex_justify_content: 'center',
     min_height: px(780), min_height_tablet: px(640), min_height_mobile: px(0),
+    // Tighter on phones so both buttons sit above the fold.
+    padding_mobile: box(36, 20, 48, 20), flex_gap_mobile: gap(18),
     background_position: 'initial', background_xpos: px(50, '%'), background_ypos: px(30, '%'),
   },
 });
