@@ -1699,3 +1699,23 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 .dwdc-meet .dwdc-mt .dwdc-btn.sm:not(.ghost):hover { background: var(--deep) !important; }
 .dwdc-meet .dwdc-mt .dwdc-btn.ghost:hover { background: rgba(255,255,255,.12) !important; border-color: #fff; }
 .dwdc-meet .dwdc-btn2:hover { border-color: #fff; color: #fff !important; }
+/* Meeting cards: wide enough to read the full name (names wrap instead of cutting off) */
+.dwdc-mt-list { grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr)) !important; }
+.dwdc-mt { padding: 14px 16px; }
+.dwdc-mt-who b { white-space: normal !important; overflow: visible !important; text-overflow: clip !important; line-height: 1.25; }
+.dwdc-mt-who small { white-space: normal !important; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.dwdc-mt-time { min-width: 80px; }
+/* Phones: time (with countdown and Join) on top, who + details underneath */
+@media (max-width: 600px) {
+  .dwdc-mt { display: grid !important; grid-template-columns: auto 1fr auto; grid-template-areas: "time in join" "who who who"; align-items: center; gap: 8px 12px !important; }
+  .dwdc-mt-time { grid-area: time; min-width: 0; }
+  .dwdc-mt-in, .dwdc-mt-done { grid-area: in; }
+  .dwdc-mt .dwdc-btn.sm { grid-area: join; margin-left: 0 !important; }
+  .dwdc-mt-who { grid-area: who; flex-basis: auto !important; }
+}
+/* Personal finance: Total balance + Money in side by side, advertising spend full width below */
+.dwdc-kpis.two { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+.dwdc-kpis.one { grid-template-columns: 1fr !important; }
+.dwdc-kpi span { line-height: 1.45; }
+@media (max-width: 600px) { .dwdc-kpis.two { grid-template-columns: 1fr !important; } }
+.dwdc-kpis.two .dwdc-kpi span, .dwdc-kpis.one .dwdc-kpi span { white-space: normal !important; overflow: visible !important; text-overflow: clip !important; }

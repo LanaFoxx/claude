@@ -205,3 +205,40 @@ add_action( 'rest_api_init', function () {
 		} ),
 	) );
 } );
+
+/* ---------------------------------------------------------------- Account balances
+ * /accounts/get returns each account's balance as of Plaid's last update (no extra Balance charge).
+ * Refreshed at most every 3 hours when the Personal finance page loads, keyed by the account's last 4 digits.
+ */
+function dwdpl_balances( $force = false ) {
+	$saved = get_option( 'dwdpl_balances', array() );
+	$saved = is_array( $saved ) ? $saved : array();
+	if ( ! dwdpl_ready() || ( ! $force && ! empty( $saved['at'] ) && time() - (int) $saved['ts'] < 3 * HOUR_IN_SECONDS ) ) {
+		return $saved;
+	}
+	$accts = array();
+	foreach ( dwdpl_items() as $it ) {
+		$r = dwdpl_call( '/accounts/get', array( 'access_token' => $it['token'] ) );
+		if ( is_wp_error( $r ) ) {
+			continue;
+		}
+		foreach ( (array) ( $r['accounts'] ?? array() ) as $a ) {
+			$mask = (string) ( $a['mask'] ?? '' );
+			$name = (string) ( $a['official_name'] ?? '' ) ?: (string) ( $a['name'] ?? '' );
+			$accts[ $mask ? $mask : md5( $name ) ] = array(
+				'name'      => sanitize_text_field( (string) ( $a['name'] ?? $name ) ),
+				'mask'      => $mask,
+				'type'      => sanitize_text_field( (string) ( $a['subtype'] ?? $a['type'] ?? '' ) ),
+				'business'  => (bool) preg_match( '/business/i', $name . ' ' . ( $a['name'] ?? '' ) ),
+				'current'   => isset( $a['balances']['current'] ) ? round( (float) $a['balances']['current'], 2 ) : null,
+				'available' => isset( $a['balances']['available'] ) ? round( (float) $a['balances']['available'], 2 ) : null,
+			);
+		}
+	}
+	if ( ! $accts ) {
+		return $saved;
+	}
+	$saved = array( 'at' => current_time( 'mysql' ), 'ts' => time(), 'accounts' => array_values( $accts ) );
+	update_option( 'dwdpl_balances', $saved, false );
+	return $saved;
+}

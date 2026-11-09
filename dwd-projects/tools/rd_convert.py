@@ -229,28 +229,6 @@ for _id in ('dw-hero-trust', 'dw-hero-trust-m'):
     if _ti > -1:
         _te = hb.find('</div>', _ti)
         hb = hb[:_te] + _ps + hb[_te:]
-# Real Upwork reviews Michael sent (Nov 2026), added beside the Google ones.
-_UPWORK_REVIEWS = [
-    ('Michael very much exceeded my expectations completing a website update/refresh project. He was easy to work with, stayed in touch through the project and completed the site in a fraction of the time I would have expected from other developers. If you are reading this while evaluating options for who to engage for website work, stop now and just hire Michael! He did great work.', 'Website refresh client · Upwork review'),
-    ('Michael did a fantastic job. I’m super happy with my site. He was very easy to work with and fast. He also positively accepted changes and edits. I highly recommend him and plan to maintain the relationship for any future maintenance.', 'Upwork review'),
-]
-_gi = hb.find('<div id="dw-quotes-grid"')
-if _gi > -1:
-    _fs = hb.find('<figure', _gi); _fe = hb.find('</figure>', _fs) + len('</figure>')
-    _tpl = hb[_fs:_fe]
-    _bq = re.search(r'(<blockquote[^>]*>)(.*?)(</blockquote>)', _tpl, re.S)
-    _fc = re.search(r'(<figcaption[^>]*>)(.*?)(</figcaption>)', _tpl, re.S)
-    _end = hb.find('</div>', hb.rfind('</figure>', _gi, hb.find('Read all reviews', _gi)))
-    _new = ''
-    for _q, _c in _UPWORK_REVIEWS:
-        _f = _tpl.replace(_bq.group(0), _bq.group(1) + '“' + _q + '”' + _bq.group(3)).replace(_fc.group(0), _fc.group(1) + _c + _fc.group(3))
-        # Long quotes use the design's smaller quote style (as on its second card).
-        _f = _f.replace('font-size:clamp(24px,2.4vw,30px);line-height:1.2;letter-spacing:-.025em;font-weight:500;color:#fff', 'font-size:clamp(17px,1.5vw,20px);line-height:1.4;letter-spacing:-.01em;font-weight:400;color:#E6E6E6')
-        _new += '\n    ' + _f
-    hb = hb[:_end] + _new + '\n  ' + hb[_end:]
-# Price range (Michael: $1,500 up to $10k, depending on what the site needs), under the Everything included intro.
-_pr = '<p class="dwr-price"><b>Most websites run $1,500 to $10,000</b>, depending on the pages and features you need. You get one flat quote up front, so the price never creeps.</p>'
-# Results row under the ratings (Michael: every site scores 95+ on PageSpeed; many rank top 5 for 20+ keywords).
 def _div_end(h, start):
     d, k = 0, start
     while True:
@@ -261,6 +239,38 @@ def _div_end(h, start):
             if d == 0:
                 return cl + 6
             d -= 1; k = cl
+# Real client reviews (Michael, Nov 2026): only reviews from sites in the portfolio, each linked to the live site
+# and its project page. They replace the design's sample quotes.
+_REVIEWS = [
+    ('Michael helped us blow our competition out of the water with an amazing redesign of our site. Our brand is all about being premium and high quality, so our website had to reflect just that. Michael pulled it off better than we expected. It took many Zoom meetings and one-on-one calls to fine-tune every little detail, but he was there every time and got it done. Highly, highly recommended.',
+     'The Goods Vending', 'Google review', 'https://thegoodsvending.com', 'thegoodsvending.com', 'the-goods-vending', 'Google'),
+    ('Michael did an excellent job redesigning my client’s website. He took our direction and turned it into modern, thoughtful designs that aligned with our vision. He was collaborative, easy to work with, and incredibly responsive whenever we needed changes or adjustments. Most importantly, he stepped into a website project that had stalled and helped us get it across the finish line quickly. I would highly recommend working with Michael!',
+     'Camille Weber', 'FarmQA', 'https://farmqa.com', 'farmqa.com', 'farmqa', 'Google'),
+    ('Michael was so great to work with for so many reasons. He took our website which was made 7 years ago and completely redesigned it to look more modern and easy to use. We saw a significant improvement with our bounce rate scores after the new design went live, and that means more business for us, so yeah, we highly recommend Michael. Thank you so much!',
+     'Shimika', 'California Tax Courses', 'https://www.cataxcourses.com', 'cataxcourses.com', 'california-tax-courses', ''),
+    ('Michael did a fantastic job. I’m super happy with my site. He was very easy to work with and fast. He also positively accepted changes and edits. I highly recommend him and plan to maintain the relationship for any future maintenance.',
+     'Marci', 'Framework Accounting', 'https://frameworkorgdev.co/', 'frameworkorgdev.co', 'framework-accounting', 'Upwork'),
+]
+_gi = hb.find('<div id="dw-quotes-grid"')
+if _gi > -1:
+    _ge = _div_end(hb, _gi)
+    _grid = hb[_gi:_ge]
+    _fs = _grid.find('<figure'); _fe = _grid.find('</figure>', _fs) + len('</figure>')
+    _tpl = _grid[_fs:_fe]
+    _bq = re.search(r'(<blockquote[^>]*>)(.*?)(</blockquote>)', _tpl, re.S)
+    _fc = re.search(r'(<figcaption[^>]*>)(.*?)(</figcaption>)', _tpl, re.S)
+    _figs = ''
+    for _q, _who, _co, _url, _host, _slug, _src in _REVIEWS:
+        _cap = (_fc.group(1) + '<span class="dwr-qwho"><b>' + _who + '</b> · ' + (_co if _co.endswith('review') else _co + (' · ' + _src + ' review' if _src else '')) + '</span>'
+                '<span class="dwr-qlinks"><a href="' + _url + '" target="_blank" rel="noopener">' + _host + ' ↗</a><a href="%HOME%/portfolio/' + _slug + '/">See the project →</a></span>' + _fc.group(3))
+        _f = _tpl.replace(_bq.group(0), _bq.group(1) + '“' + _q + '”' + _bq.group(3)).replace(_fc.group(0), _cap)
+        _f = _f.replace('font-size:clamp(24px,2.4vw,30px);line-height:1.2;letter-spacing:-.025em;font-weight:500;color:#fff', 'font-size:clamp(17px,1.35vw,19px);line-height:1.5;letter-spacing:-.01em;font-weight:400;color:#E6E6E6')
+        _f = _f.replace('<figure', '<figure data-src="' + (_src or 'client') + '"', 1)
+        _figs += '\n    ' + _f
+    hb = hb[:_gi] + _grid[:_fs] + _figs.strip() + '\n  </div>' + hb[_ge:]
+# Price range (Michael: $1,500 up to $10k, depending on what the site needs), under the Everything included intro.
+_pr = '<p class="dwr-price"><b>Most websites run $1,500 to $7,000</b>, depending on the pages and features you need. You get one flat quote up front, so the price never creeps.</p>'
+# Results row under the ratings (Michael: every site scores 95+ on PageSpeed; many rank top 5 for 20+ keywords).
 _ri = hb.find('<div id="dw-rating"')
 if _ri > -1:
     _re = _div_end(hb, _ri)
@@ -295,7 +305,7 @@ if _rs > -1:
     hb = hb[:_re2] + '\n\n' + _band_w + hb[_re2:]
 # A dark quote band (with the price range) between the white Services and white Contact sections.
 _band_d = ('<section data-theme="dark" class="dwr-band dwr-band-dark"><div class="dwr-band-in"><div><span class="dwr-eyebrow"><i></i>Flat pricing</span>'
-           '<h2 class="dwr-band-h">Most websites run <span>$1,500 to $10,000</span>.</h2><p class="dwr-band-p">It depends on the pages and features you need. You get one flat quote up front, so the price never creeps.</p></div>'
+           '<h2 class="dwr-band-h">Most websites run <span>$1,500 to $7,000</span>.</h2><p class="dwr-band-p">It depends on the pages and features you need. You get one flat quote up front, so the price never creeps.</p></div>'
            '<div class="dwr-band-b"><a class="dwr-pill" href="%HOME%/quote/">Get a Free Quote ' + _arrow + '</a><a class="dwr-cta-call" href="tel:+17722101728">or call (772) 210-1728</a></div></div></section>')
 _ss = hb.find('<section id="services"')
 if _ss > -1:
@@ -310,13 +320,15 @@ _UPW = '<svg width="26" height="26" viewBox="0 0 24 24" fill="#14A800" aria-hidd
 _GSVG = _G[_G.find('<svg'):_G.find('</svg>') + 6]
 def _src_logo(m):
     fig = m.group(0)
-    if 'Upwork review' in fig:
+    if 'data-src="Upwork"' in fig:
         lg = '<span class="dwr-qsrc">' + _UPW + 'Upwork</span>'
-    elif 'Google review' in fig:
+    elif 'data-src="Google"' in fig:
         lg = '<span class="dwr-qsrc">' + _GSVG.replace('width="30" height="30"', 'width="22" height="22"') + 'Google</span>'
+    elif 'data-src="client"' in fig:
+        lg = '<span class="dwr-qsrc"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#13A6EE" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Client review</span>'
     else:
         return fig
-    return re.sub(r'(<figure[^>]*>)', r'\1' + lg.replace('\\', '\\\\'), fig, 1)
+    return re.sub(r'(<figure[^>]*>)', lambda mm: mm.group(1) + lg, fig, 1)
 _gi = hb.find('<div id="dw-quotes-grid"')
 if _gi > -1:
     _ge = _div_end(hb, _gi)
@@ -328,6 +340,37 @@ for _id in ('dw-hero-trust', 'dw-hero-trust-m'):
         _ss = hb.rfind('<span', _ti, _si)
         _se = hb.find('</span>', _si) + 7
         hb = hb[:_ss] + '<span class="dwr-hg">' + _GSVG.replace('width="30" height="30"', 'width="22" height="22"') + '</span>' + hb[_ss:_se] + '<span class="dwr-hg4">4.9 on Google</span><span style="color:#444">·</span>' + hb[_se:]
+# ---- Handoff "CTA background texture" (Nov 2026): options 2a, 1b and 3c ----
+# 2a: the proof stats leave the CTA column and become a full-width trust bar at the bottom of the hero text.
+for _id in ('dw-hero-trust', 'dw-hero-trust-m'):
+    _ti = hb.find('<div id="' + _id + '"')
+    if _ti > -1:
+        hb = hb[:_ti] + hb[_div_end(hb, _ti):]
+_STAR = '<span style="color:#F5B301;letter-spacing:2px">★★★★★</span>'
+_trust = ('<div id="dw-trustbar" data-dw-reveal="1" data-dw-intro="1" style="transition-delay:.4s">'
+          '<div class="dwr-tstat"><span class="dwr-hg">' + _GSVG.replace('width="30" height="30"', 'width="20" height="20"') + '</span>' + _STAR + '4.9 on Google</div><i class="dwr-tdiv"></i>'
+          '<div class="dwr-tstat">' + _STAR + '100% Job Success</div><i class="dwr-tdiv"></i>'
+          '<div class="dwr-tstat">' + _UPW.replace('width="26" height="26"', 'width="22" height="22"') + 'Top Rated Plus on Upwork</div><i class="dwr-tdiv"></i>'
+          '<div class="dwr-tstat"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#13A6EE" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8z"/></svg>95+ PageSpeed on every site</div>'
+          '</div>')
+_hr = hb.find('<div id="dw-hero-row"')
+if _hr > -1:
+    _he = _div_end(hb, _hr)
+    hb = hb[:_he] + '\n  ' + _trust + hb[_he:]
+# 1b: a faint, perspective-tilted floor of real website screenshots behind the white quote band (filled in by PHP).
+hb = hb.replace('<section data-theme="light" class="dwr-band dwr-band-light"><div class="dwr-band-in">',
+                '<section data-theme="light" class="dwr-band dwr-band-light dwr-band-tex"><div class="dwr-shotlayer" aria-hidden="true"><div class="dwr-shotplane">%SHOTPLANE%</div></div><div class="dwr-halo" aria-hidden="true"></div><div class="dwr-band-in">', 1)
+# 3c: "I do it all" becomes one contained band: services marquee on the left, Get a Quote + phone on the right.
+_sk = hb.find('<div id="dw-skills"')
+if _sk > -1:
+    _svc = ['Design', 'Development', 'Copywriting', 'SEO and AI', 'Page Speed', 'Logos', 'Hosting', 'Training']
+    _one = ''.join('<span class="dwr-svc">' + x + '</span><span class="dwr-svcdot">·</span>' for x in _svc)
+    _band = ('<div id="dw-skills" class="dwr-doall" data-dw-reveal="1"><div class="dwr-doall-l"><span class="dwr-eyebrow"><i></i>I do it all</span>'
+             '<div class="dwr-marq"><div class="dwr-marq-track"><span>' + _one + '</span><span aria-hidden="true">' + _one + '</span></div></div></div>'
+             '<div class="dwr-doall-r"><a class="dwr-pill" href="%HOME%/quote/">Get a Quote <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12 12 2M4 2h8v8"></path></svg></a>'
+             '<a class="dwr-doall-call" href="tel:+17722101728">or call (772) 210-1728</a></div></div>')
+    hb = hb[:_sk] + _band + hb[_div_end(hb, _sk):]
+    hb = hb.replace('<section id="about"', '<section data-nocta="1" id="about"', 1)
 write('home.html', hb)
 
 def interior(name, out):
@@ -352,8 +395,11 @@ for n, o in (('Process.dc.html', 'process.html'), ('Hosting.dc.html', 'hosting.h
 
 
 def BUDGET(h):
-    """Budget choices match the real price range ($1,500 to $10,000+)."""
-    return h.replace('<option value="under-2500">Under $2,500</option>', '<option value="1500-3000">$1,500 to $3,000</option>').replace('<option value="2500-5000">$2,500 to $5,000</option>', '<option value="3000-5000">$3,000 to $5,000</option>')
+    """Budget choices match the real price range ($1,500 to $7,000+)."""
+    return (h.replace('<option value="under-2500">Under $2,500</option>', '<option value="1500-3000">$1,500 to $3,000</option>')
+             .replace('<option value="2500-5000">$2,500 to $5,000</option>', '<option value="3000-5000">$3,000 to $5,000</option>')
+             .replace('<option value="5000-10000">$5,000 to $10,000</option>', '<option value="5000-7000">$5,000 to $7,000</option>')
+             .replace('<option value="10000-plus">$10,000 or more</option>', '<option value="7000-plus">$7,000 or more</option>'))
 
 # ---- Contact: the sent / not-sent states become two blocks toggled by script ----
 c = interior('Contact.dc.html', 'contact.html')

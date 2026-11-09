@@ -119,6 +119,9 @@ add_action( 'rest_api_init', function () {
 					if ( $hit > -1 ) {
 						$list[ $hit ] = $clean;
 					} else {
+						if ( 'todos' === $kind && '' === $clean['due'] ) {
+							$clean['due'] = current_time( 'Y-m-d' ); // no date given: it's for today
+						}
 						$list[] = $clean;
 					}
 				}

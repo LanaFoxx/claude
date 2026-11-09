@@ -310,6 +310,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(fals
 
 // Portfolio filter pills: All / WordPress / Webflow. Card widths follow the same rhythm as the design.
 function filterTo(f) {
+  const grid = document.getElementById('pf-grid'); if (grid) grid.setAttribute('data-f', f);
   document.querySelectorAll('[data-filter]').forEach(b => {
     const on = b.getAttribute('data-filter') === f;
     b.setAttribute('aria-pressed', on ? 'true' : 'false');

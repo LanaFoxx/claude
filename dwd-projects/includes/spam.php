@@ -111,7 +111,7 @@ function dwdp_ajax_contact() {
 	$q = array();
 	foreach ( array( 'business' => 'Business', 'budget' => 'Budget', 'timeline' => 'Timeline', 'source' => 'Heard about me' ) as $k => $label ) {
 		$v = sanitize_text_field( wp_unslash( $_POST[ $k ] ?? '' ) );
-		$v = strtr( $v, array( '1500-3000' => '$1,500 to $3,000', '3000-5000' => '$3,000 to $5,000', 'month' => 'Within a month', 'under-2500' => 'Under $2,500', '2500-5000' => '$2,500 to $5,000', '5000-10000' => '$5,000 to $10,000', '10000-plus' => '$10,000 or more', 'not-sure' => 'Not sure yet', 'asap' => 'As soon as possible', '1-3-months' => '1 to 3 months', 'exploring' => 'Just exploring', 'google-search' => 'Google search', 'google-ads' => 'Google ad', 'upwork' => 'Upwork', 'referral' => 'Referral', 'social' => 'Social media' ) );
+		$v = strtr( $v, array( '1500-3000' => '$1,500 to $3,000', '5000-7000' => '$5,000 to $7,000', '7000-plus' => '$7,000 or more', '3000-5000' => '$3,000 to $5,000', 'month' => 'Within a month', 'under-2500' => 'Under $2,500', '2500-5000' => '$2,500 to $5,000', '5000-10000' => '$5,000 to $10,000', '10000-plus' => '$10,000 or more', 'not-sure' => 'Not sure yet', 'asap' => 'As soon as possible', '1-3-months' => '1 to 3 months', 'exploring' => 'Just exploring', 'google-search' => 'Google search', 'google-ads' => 'Google ad', 'upwork' => 'Upwork', 'referral' => 'Referral', 'social' => 'Social media' ) );
 		$v = 'month' === $v ? 'Within a month' : ( 'other' === $v ? 'Other' : $v );
 		if ( '' !== $v ) {
 			$q[ $k ] = array( $label, $v );

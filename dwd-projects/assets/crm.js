@@ -231,7 +231,16 @@
 		var tx = (B.tx || []).filter(function (t) { return t.date.slice(0, 7) === ym && (!S.bCat || t.cat === S.bCat); });
 		var trend = months.slice(0, 12).reverse(), maxT = Math.max.apply(null, trend.map(function (k) { return B.months[k].out; }).concat([1]));
 		return '<div class="dwdc-pmonth"><button class="dwdc-btn2 sm" data-bmonth="' + (months[idx + 1] || '') + '"' + (months[idx + 1] ? '' : ' disabled') + '>‹</button><b>' + label(ym) + '</b><button class="dwdc-btn2 sm" data-bmonth="' + (months[idx - 1] || '') + '"' + (idx > 0 ? '' : ' disabled') + '>›</button></div>'
-			+ '<div class="dwdc-kpis"><div class="dwdc-kpi coral"><small>Spent</small><strong>' + money(mo.out) + '</strong><span>' + (prev ? (diff > 0 ? '▲ ' : '▼ ') + money(Math.abs(diff)) + ' vs ' + label(months[idx + 1]).split(' ')[0] : 'First month on file') + '</span></div><div class="dwdc-kpi navy"><small>Money in</small><strong>' + money(mo.in) + '</strong><span>Deposits &amp; income</span></div><div class="dwdc-kpi"><small>Net</small><strong>' + money(mo.in - mo.out) + '</strong><span>Transfers between your accounts aren’t counted</span></div></div>'
+			+ (function () {
+				// 1. Total balance across the bank accounts (live from Plaid). 2. Money in this month. 3. Ad spend.
+				var BL = (B.balances && B.balances.accounts ? B.balances.accounts : []).filter(function (x) { return x.type === 'checking'; }), tot = BL.reduce(function (a, x) { return a + (x.current || 0); }, 0);
+				var bname = function (x) { return (x.business ? 'Business' : 'Personal') + ' ••' + esc(x.mask); };
+				var bal = '<div class="dwdc-kpi navy"><small>Total balance</small><strong>' + (BL.length ? money(tot) : '—') + '</strong><span>' + (BL.length ? BL.slice().sort(function (a, b) { return (b.business ? 1 : 0) - (a.business ? 1 : 0); }).map(function (x) { return bname(x) + ' ' + money(x.current || 0); }).join(' · ') + (B.balances.at ? '<br>Updated ' + fmt(B.balances.at.slice(0, 10)) + ' ' + B.balances.at.slice(11, 16) : '') : 'Balances show once Bank of America syncs through Plaid') + '</span></div>';
+				var inBox = '<div class="dwdc-kpi"><small>Money in</small><strong>' + money(mo.in) + '</strong><span>Deposits &amp; income in ' + label(ym).split(' ')[0] + ' (not transfers between accounts)</span></div>';
+				var AS = (B.adspend && B.adspend.months && B.adspend.months[ym]) || {}, cn = AS.connects || 0, gg = AS.google || 0;
+				var ads = '<div class="dwdc-kpi coral wide"><small>Advertising spend · ' + label(ym) + '</small><strong>' + money(cn + gg) + '</strong><span>Upwork Connects ' + money(cn) + ' · Google Ads ' + (B.adspend && B.adspend.google_on ? money(gg) : 'not connected') + '</span></div>';
+				return '<div class="dwdc-kpis two">' + bal + inBox + '</div><div class="dwdc-kpis one">' + ads + '</div>';
+			})()
 			+ '<div class="dwdc-prow2 top">'
 			+ '<section class="dwdc-card pad"><div class="dwdc-cardh"><h2>Where it went</h2>' + (S.bCat ? '<button class="dwdc-lnk sm2" data-bcat="">Show all</button>' : '') + '</div><div class="dwdc-pcats">' + (cats.length ? cats.map(function (c) { return '<div class="' + (S.bCat === c ? 'on' : '') + '" data-bcat="' + esc(c) + '"><span>' + esc(c) + '</span><i style="width:' + Math.max(3, Math.round(mo.cats[c] / maxC * 100)) + '%"></i><b>' + money(mo.cats[c]) + '</b></div>'; }).join('') : '<p class="dwdc-mutp">No spending this month.</p>') + '</div></section>'
 			+ '<section class="dwdc-card pad"><div class="dwdc-cardh"><h2>Spending by month</h2><button class="dwdc-askbtn sm" data-askai="personal">' + ic('bolt', 13) + 'Ask AI</button></div><div class="dwdc-btrend">' + trend.map(function (k) { return '<button class="' + (k === ym ? 'on' : '') + '" data-bmonth="' + k + '" title="' + label(k) + ': ' + money(B.months[k].out) + '"><i style="height:' + Math.max(4, Math.round(B.months[k].out / maxT * 100)) + '%"></i><small>' + MN[+k.slice(5, 7) - 1].slice(0, 3) + '</small></button>'; }).join('') + '</div></section>'
@@ -388,7 +397,7 @@
 			var tmin = function (x) { if (!x.time) { return -1; } var q = /^(\d{1,2}):(\d{2})\s*([AP]M)?/i.exec(x.time) || [0, 0, 0]; return (+q[1] % 12 + (/p/i.test(q[3] || '') ? 12 : 0)) * 60 + +q[2]; };
 			var openT = D.todos.filter(function (x) { return !x.done; });
 			var late = openT.filter(function (x) { return x.due && x.due < today && !x.gevent; });
-			var todayT = openT.filter(function (x) { return x.due === today; }).sort(function (a, b) { return tmin(a) - tmin(b); });
+			var todayT = openT.filter(function (x) { return x.due === today || (!x.due && !x.gevent); }).sort(function (a, b) { return tmin(a) - tmin(b); });
 			var nodate = openT.filter(function (x) { return !x.due; });
 			var soon = openT.filter(function (x) { return x.due > today && x.due <= addD(14); }).sort(function (a, b) { return a.due < b.due ? -1 : a.due > b.due ? 1 : tmin(a) - tmin(b); });
 			var bdays = D.todos.filter(function (x) { return /birthday/i.test(x.text) && x.due >= today && x.due <= addD(60); }).sort(function (a, b) { return a.due < b.due ? -1 : 1; });

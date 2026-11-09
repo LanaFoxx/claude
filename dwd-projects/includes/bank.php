@@ -237,7 +237,12 @@ function dwdbk_ai_context() {
 add_action( 'rest_api_init', function () {
 	$can = function () { return current_user_can( 'manage_options' ); };
 	register_rest_route( 'dwd/v1', '/crm/bank', array(
-		array( 'methods' => 'GET', 'permission_callback' => $can, 'callback' => function () { return dwdbk_summary(); } ),
+		array( 'methods' => 'GET', 'permission_callback' => $can, 'callback' => function () {
+			$out             = dwdbk_summary();
+			$out['balances'] = function_exists( 'dwdpl_balances' ) ? dwdpl_balances() : null;
+			$out['adspend']  = dwdbk_adspend();
+			return $out;
+		} ),
 		array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
 			$p = (array) $r->get_json_params();
 			$d = dwdbk_get();
@@ -289,3 +294,22 @@ add_action( 'rest_api_init', function () {
 		} ),
 	) );
 } );
+
+
+/** Advertising spend by month (YYYY-MM): Upwork Connects (membership left out) and Google Ads. */
+function dwdbk_adspend() {
+	$m = array();
+	foreach ( (array) get_option( 'dwdc_upwork_costs', array() ) as $x ) {
+		$d = substr( (string) ( $x['date'] ?? '' ), 0, 7 );
+		if ( 'membership' === ( $x['type'] ?? '' ) || ! preg_match( '/^\d{4}-\d\d$/', $d ) ) {
+			continue;
+		}
+		$m[ $d ]['connects'] = round( ( $m[ $d ]['connects'] ?? 0 ) + (float) ( $x['amount'] ?? 0 ), 2 );
+	}
+	$g = get_option( 'dwdads_data', array() );
+	foreach ( (array) ( $g['days'] ?? array() ) as $day => $x ) {
+		$d = substr( (string) $day, 0, 7 );
+		$m[ $d ]['google'] = round( ( $m[ $d ]['google'] ?? 0 ) + (float) ( $x['cost'] ?? 0 ), 2 );
+	}
+	return array( 'months' => $m, 'google_on' => ! empty( $g['at'] ) );
+}
