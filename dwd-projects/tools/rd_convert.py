@@ -289,13 +289,17 @@ _PROOF = ('<div class="dwr-proof" data-dw-reveal="1">'
           '</div>')
 _wc = hb.find('<div id="dw-work-ctas"')
 if _wc > -1:
-    _e = _div_end(hb, _wc); hb = hb[:_e] + _PROOF + hb[_e:]
+    # Each showcase project gets its own measured PageSpeed and its own review (no Job Success line here).
+    _PROOF_G = (_PROOF.replace('95+</b>', '100</b>').replace('<span><b><i>★</i>4.9</b><small>Google reviews</small></span>', '<span><b><i>★</i>5.0</b><small>Google review</small></span>')
+                .replace('<span><b>100%</b><small>Job Success on Upwork</small></span>', ''))
+    _e = _div_end(hb, _wc); hb = hb[:_e] + _PROOF_G + hb[_e:]
 _pc = hb.find('id="dw-phone-copy"')
 if _pc > -1:
     _fb = hb.find('finessebywitney.com', _pc)
     _ds = hb.rfind('<div', _pc, _fb)
     # Finesse's own rating: a 5-star Upwork review (Michael).
-    _PROOF_F = _PROOF.replace('<span><b><i>★</i>4.9</b><small>Google reviews</small></span>', '<span><b><i>★</i>5.0</b><small>Upwork review</small></span>')
+    _PROOF_F = (_PROOF.replace('95+</b>', '98</b>').replace('<span><b><i>★</i>4.9</b><small>Google reviews</small></span>', '<span><b><i>★</i>5.0</b><small>Upwork review</small></span>')
+                .replace('<span><b>100%</b><small>Job Success on Upwork</small></span>', ''))
     _e = _div_end(hb, _ds); hb = hb[:_e] + _PROOF_F + hb[_e:]
 # A white quote band between the dark Reviews and dark About sections.
 _arrow = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12 12 2M4 2h8v8"></path></svg>'
