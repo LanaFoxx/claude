@@ -1177,7 +1177,7 @@
 				+ (K.last ? '<p class="dwdc-adnote">Connects from your Upwork file, last purchase ' + fmt(K.last) + (G ? ' · Google Ads updated ' + ago(G.at) : '') + '</p>' : ''),
 				'<footer>' + '<a class="dwdc-frow" href="#money" data-adsmodal><span>Total ad spend this month</span><b>' + money(total) + '</b>' + ic('right', 12) + '</a>'
 				+ '<a class="dwdc-frow" href="#leads"><span>Leads from Google Ads</span><b>' + (LD.month || 0) + ' <small class="dwdc-frow-sub">this month · ' + (LD.lastmonth || 0) + ' last</small></b>' + ic('right', 12) + '</a>'
-				+ frow('All Clients', S.clients.length, 'clients') + '</footer>');
+				+ '</footer>');
 		})();
 		var plist = active.slice().sort(function (x, y) { return num(y.price) - num(x.price) || (x.name < y.name ? -1 : 1); });
 		var c2 = card('cd-projects cd-plist', chead('brief', 'Projects <span class="dwdc-hcnt">(' + active.length + ')</span>', 'projects/active'),
