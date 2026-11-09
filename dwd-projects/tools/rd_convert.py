@@ -248,7 +248,7 @@ _REVIEWS = [
     ('Michael did an excellent job redesigning my client’s website. He took our direction and turned it into modern, thoughtful designs that aligned with our vision. He was collaborative, easy to work with, and incredibly responsive whenever we needed changes or adjustments. Most importantly, he stepped into a website project that had stalled and helped us get it across the finish line quickly. I would highly recommend working with Michael!',
      'Camille Weber', 'FarmQA', 'https://farmqa.com', 'farmqa.com', 'farmqa', 'Google'),
     ('Michael was so great to work with for so many reasons. He took our website which was made 7 years ago and completely redesigned it to look more modern and easy to use. We saw a significant improvement with our bounce rate scores after the new design went live, and that means more business for us, so yeah, we highly recommend Michael. Thank you so much!',
-     'Shimika', 'California Tax Courses', 'https://www.cataxcourses.com', 'cataxcourses.com', 'california-tax-courses', ''),
+     'Shimika', 'California Tax Courses', 'https://www.cataxcourses.com', 'cataxcourses.com', 'california-tax-courses', 'Google'),
     ('Michael did a fantastic job. I’m super happy with my site. He was very easy to work with and fast. He also positively accepted changes and edits. I highly recommend him and plan to maintain the relationship for any future maintenance.',
      'Marci', 'Framework Accounting', 'https://frameworkorgdev.co/', 'frameworkorgdev.co', 'framework-accounting', 'Upwork'),
 ]
