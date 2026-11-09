@@ -426,7 +426,7 @@ function dwdr_case( $po, $p, $cp ) {
 function dwdr_mockup_card( $card, $p ) {
 	$mock = '<div class="dwr-pdev">'
 		. '<span class="dwr-laptop"><span class="dwr-lid"><i class="dwr-cam"></i><span class="dwr-lscreen"><img src="' . esc_url( $p['cover'] ) . '" alt="' . esc_attr( $p['name'] . ' website' ) . '" loading="lazy"></span></span><span class="dwr-base"></span></span>'
-		. ( $p['phone'] ? '<span class="dwr-pphone"><img src="' . esc_url( $p['phone'] ) . '" alt="' . esc_attr( $p['name'] . ' website on a phone' ) . '" loading="lazy"></span>' : '' )
+		. ( $p['phone'] ? '<span class="dwr-pphone"><img src="' . esc_url( dwdr_webp_url( $p['phone'], 420 ) ) . '" alt="' . esc_attr( $p['name'] . ' website on a phone' ) . '" loading="lazy"></span>' : '' )
 		. '</div>';
 	$new = preg_replace( '#(<div class="pf-media"[^>]*>).*?(</div>\s*<div class="pf-copy")#s', '$1' . str_replace( '$', '\\$', $mock ) . '$2', $card, 1 );
 	return dwdr_srcset( (string) $new );
@@ -520,7 +520,7 @@ add_filter( 'wp_robots', function ( $r ) {
 } );
 add_filter( 'wpseo_robots', function ( $v ) { return is_page( 'thank-you' ) ? 'noindex, nofollow' : $v; } );
 add_filter( 'wpseo_title', function ( $t ) { return is_page( 'quote' ) ? 'Get a Free Website Quote | Dream Web Digital' : $t; }, 99 );
-add_filter( 'wpseo_metadesc', function ( $d ) { return is_page( 'quote' ) ? 'Tell me about your business and what your website needs to do. I reply the same day with a flat quote, no obligation.' : $d; }, 99 );
+add_filter( 'wpseo_metadesc', function ( $d ) { return is_page( 'quote' ) ? 'Tell me about your business and what your website needs to do. I reply the same day with a flat quote, no obligation.' : ( is_page( 'thank-you' ) ? 'Thanks for reaching out to Dream Web Digital. Michael replies the same day; book a free call while you wait.' : $d ); }, 99 );
 
 /* ---------- Assets: only the redesign's own CSS/JS on these pages ---------- */
 
@@ -587,6 +587,12 @@ add_action( 'wp_enqueue_scripts', function () {
 		. '#dw-hero-track a.dwr-htphone{flex:0 0 auto!important;width:auto!important;height:calc(clamp(300px,44vw,680px) * .55)!important;align-self:center!important;aspect-ratio:auto!important;background:transparent!important;border:0!important;border-radius:0!important;overflow:visible!important;display:block}@media(max-width:600px){#dw-hero-track a.dwr-htphone{width:auto!important;height:calc(min(84vw,360px) * .55)!important}}#dw-hero-track a.dwr-htphone img{width:auto!important;height:100%!important;object-fit:contain!important;display:block;filter:drop-shadow(0 18px 30px rgba(0,0,0,.45))}' // phones between the hero slider screenshots
 		. '@media(max-width:900px){.dwr-doall{align-items:stretch!important}.dwr-doall-l{width:100%;max-width:100%;min-width:0;overflow:hidden}.dwr-doall .dwr-marq{max-width:100%}}' // phones: the services marquee stays inside its box
 		. '.dwr-doall{padding-top:clamp(36px,3.4vw,52px)!important;padding-bottom:clamp(36px,3.4vw,52px)!important}.dwr-doall .dwr-marq{padding:12px 0}@media(max-width:900px){.dwr-doall{padding:32px 24px!important}.dwr-doall-l .dwr-marq{margin-top:18px;margin-bottom:14px}}' // I do it all: more breathing room around the moving services
+		. '[data-dw-intro]{opacity:1!important}' // speed: intro content is visible at first paint (only slides), so Google sees the page load right away
+		. '@media(max-width:600px){#dw-trustbar{justify-content:center!important;text-align:center}#dw-trustbar .dwr-tstat{justify-content:center}#dw-trustbar .dwr-tstat:nth-of-type(2){display:none!important}}' // phones: trust bar centered, no Job Success line
+		. '.dwr-band-light .dwr-bc-k,.dwr-band-light .dwr-eyebrow,.dwr-astep-n,.dwr-asec .dwr-eyebrow,#pf-grid [data-dw-num],.dwr-eyebrow{color:#0A659F}.dwr-band-dark .dwr-eyebrow,.dwr-band-dark .dwr-bc-k,.dwr-obhero .dwr-eyebrow,.dwr-astats .dwr-eyebrow,.dwr-aclose .dwr-eyebrow,[data-theme=dark] .dwr-eyebrow,.dwr-doall .dwr-eyebrow{color:#13A6EE!important}' // readable label contrast (accessibility)
+		. '.dwr-pill,.dwr-pill:hover,.dwr-mbar-quote,#ho-card a.dwh14,.dwr-obcard .elementor-button:not(.e-form__buttons__wrapper__button-previous),.dwr-allwork{color:#0B1626!important}.dwr-pill svg,.dwr-allwork svg{stroke:#0B1626}.dwr-pill.dark,.dwr-pill.dark:hover{color:#fff!important}.dwr-pill.dark svg{stroke:#fff}' // blue buttons: dark text, like the hero button (white on this blue is too low contrast)
+		. '.dwr-qdot{position:relative;width:24px!important;height:24px!important;background:transparent!important;display:inline-flex;align-items:center;justify-content:center}.dwr-qdot:before{content:"";width:8px;height:8px;border-radius:99px;background:#444;transition:width .3s,background .3s}.dwr-qdot.on:before{width:24px;background:#13A6EE}.dwr-qdots{gap:2px!important}' // review dots: 24px tap targets
+		. 'a[style*="background:#13A6EE"][style*="color:#fff"]{color:#0B1626!important}a[style*="background:#13A6EE"][style*="color:#fff"] svg{stroke:#0B1626}.dwr-obcard .e-form__indicators__indicator{color:#5F6672!important}' // remaining blue buttons with white text + onboarding step labels: readable contrast
 		. '.dwr-proof{display:flex;flex-wrap:wrap;gap:0;margin-top:28px;border-top:1px solid #E3E3E3;padding-top:20px}.dwr-proof span{display:flex;flex-direction:column;gap:4px;padding:0 22px}.dwr-proof span:first-child{padding-left:0}.dwr-proof span+span{border-left:1px solid #E3E3E3}.dwr-proof b{display:inline-flex;align-items:center;gap:6px;font-size:clamp(24px,2.2vw,32px);line-height:1;letter-spacing:-.03em;font-weight:600;color:#121212}.dwr-proof b i{font-style:normal;color:#F5B301;font-size:.8em}.dwr-proof small{font-size:13px;color:#6B6B6B}#dw-phone-copy .dwr-proof{justify-content:inherit}@media(max-width:600px){.dwr-proof{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}.dwr-proof span{padding:0 10px;min-width:0}.dwr-proof b{font-size:21px;gap:4px}.dwr-proof b svg{width:14px;height:14px}.dwr-proof small{font-size:11.5px;line-height:1.3}}' // proof under the homepage projects
 		. '.dwr-band{padding-top:clamp(64px,8vw,120px)!important;padding-bottom:clamp(64px,8vw,120px)!important}.dwr-band-light{background:#fff;color:#121212}.dwr-band-dark{background:#121212;color:#fff}.dwr-band-in{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:32px 48px}.dwr-band-in>div:first-child{display:flex;flex-direction:column;gap:16px;max-width:820px}.dwr-band-h{margin:0;font-size:clamp(34px,4.4vw,72px);line-height:1;letter-spacing:-.04em;font-weight:600;text-wrap:balance}.dwr-band-dark .dwr-band-h span{color:#13A6EE}.dwr-band-p{margin:0;max-width:600px;font-size:clamp(17px,1.35vw,20px);line-height:1.5}.dwr-band-light .dwr-band-p{color:#333}.dwr-band-dark .dwr-band-p{color:#C9C9C9}.dwr-band-dark .dwr-eyebrow{color:#13A6EE}.dwr-band-b{display:flex;flex-wrap:wrap;align-items:center;gap:14px 28px}.dwr-band-light .dwr-cta-call{color:#121212!important}.dwr-band-dark .dwr-cta-call{color:#fff!important}@media(max-width:600px){.dwr-band-b{width:100%}.dwr-band-b .dwr-pill,.dwr-band-b .dwr-cta-call{width:100%;justify-content:center}}' // quote bands between same-colored sections
 		. '.dwr-price{margin:18px 0 0;max-width:600px;font-size:clamp(17px,1.35vw,20px);line-height:1.5;color:#333}.dwr-price b{color:#121212;font-weight:600;background:linear-gradient(transparent 62%,rgba(19,166,238,.25) 62%)}' // price range under Everything included
@@ -630,6 +636,12 @@ function dwdr_head() {
 	}, $h );
 	$h = preg_replace( '#<link\b[^>]*rel=["\']preload["\'][^>]*>\s*#i', '', $h );
 	$h = preg_replace( '#<link\b[^>]*fonts\.(googleapis|gstatic)\.com[^>]*>\s*#i', '', $h );
+	// Speed: the design's small base stylesheet goes inline, so nothing blocks the first paint.
+	$h = preg_replace_callback( '#<link\b[^>]*id=["\']dwdr-css["\'][^>]*>#i', function () {
+		$css = (string) @file_get_contents( DWDP_DIR . 'assets/redesign/redesign-src.css' ); // phpcs:ignore
+		$css = preg_replace( array( '#/\*.*?\*/#s', '#\s+#' ), array( '', ' ' ), $css );
+		return '' !== trim( $css ) ? '<style id="dwdr-css">' . $css . '</style>' : func_get_arg( 0 )[0];
+	}, $h, 1 );
 	echo '<link rel="preload" href="' . esc_url( DWDP_URL . 'assets/fonts/archivo-latin.woff2' ) . '" as="font" type="font/woff2" crossorigin>' . "\n";
 	echo $h; // phpcs:ignore
 }
@@ -689,6 +701,7 @@ function dwdr_onboarding() {
 			$form  = '<div data-elementor-type="wp-page" data-elementor-id="' . $id . '" class="elementor elementor-' . $id . '" data-elementor-post-type="page">' . substr( $all, $i, dwdr_div_end( $all, $i ) - $i ) . '</div>';
 		}
 	}
+	$form = str_replace( array( '<h3>', '</h3>' ), array( '<h2 class="dwo-h">', '</h2>' ), $form );
 	if ( '' === $form ) {
 		$form = '<p>The onboarding form is being updated. Please email <a href="mailto:mike@dreamwebdigital.com">mike@dreamwebdigital.com</a> or call (772) 210-1728.</p>';
 	}
@@ -741,7 +754,7 @@ add_action( 'wp_enqueue_scripts', function () {
 		. '.dwr-obcard input.elementor-field,.dwr-obcard textarea.elementor-field,.dwr-obcard select{width:100%;min-height:54px;padding:14px 16px;border:1px solid #DADDE2;border-radius:10px;background:#F6F7F9;font:inherit;font-size:16px;color:#121212;box-sizing:border-box;transition:border-color .2s,box-shadow .2s,background-color .2s;-webkit-appearance:none;appearance:none}.dwr-obcard textarea.elementor-field{min-height:120px;line-height:1.5;resize:vertical}.dwr-obcard input.elementor-field:focus,.dwr-obcard textarea.elementor-field:focus,.dwr-obcard select:focus{outline:none;border-color:#13A6EE;background:#fff;box-shadow:0 0 0 4px rgba(19,166,238,.15)}'
 		. '.dwr-obcard .elementor-select-wrapper{position:relative}.dwr-obcard .select-caret-down-wrapper{position:absolute;right:16px;top:50%;transform:translateY(-50%);pointer-events:none;width:12px;height:12px;display:flex}.dwr-obcard .select-caret-down-wrapper svg{width:12px;height:12px;fill:#6B6B6B}.dwr-obcard select{padding-right:40px}'
 		. '.dwr-obcard .elementor-upload-field{padding:12px!important;background:#fff!important;border-style:dashed!important;cursor:pointer}.dwr-obcard .elementor-field-subgroup{display:flex;flex-wrap:wrap;gap:10px}.dwr-obcard .elementor-field-option{display:inline-flex}.dwr-obcard .elementor-field-option input{position:absolute;opacity:0;pointer-events:none}.dwr-obcard .elementor-field-option label{display:inline-flex;align-items:center;min-height:44px;padding:0 18px;border:1px solid #DADDE2;border-radius:999px;background:#F6F7F9;font-size:15px;font-weight:500;cursor:pointer;transition:all .2s}.dwr-obcard .elementor-field-option label:hover{border-color:#13A6EE}.dwr-obcard .elementor-field-option input:checked+label{background:#13A6EE;border-color:#13A6EE;color:#fff}.dwr-obcard .elementor-field-option input:focus-visible+label{box-shadow:0 0 0 4px rgba(19,166,238,.25)}'
-		. '.dwr-obcard .dwo-sec{display:flex;flex-direction:column;gap:6px;padding-bottom:6px;margin-bottom:4px;border-bottom:1px solid #EDEFF2}.dwr-obcard .dwo-k{font-size:13px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#0B76B8}.dwr-obcard .dwo-sec h3{margin:0;font-size:clamp(26px,2.6vw,38px);line-height:1.05;letter-spacing:-.03em;font-weight:600}.dwr-obcard .dwo-sec p{margin:0;font-size:16px;color:#555}'
+		. '.dwr-obcard .dwo-sec{display:flex;flex-direction:column;gap:6px;padding-bottom:6px;margin-bottom:4px;border-bottom:1px solid #EDEFF2}.dwr-obcard .dwo-k{font-size:13px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#0B76B8}.dwr-obcard .dwo-sec h2,.dwr-obcard .dwo-sec h3{margin:0;font-size:clamp(26px,2.6vw,38px);line-height:1.05;letter-spacing:-.03em;font-weight:600}.dwr-obcard .dwo-sec p{margin:0;font-size:16px;color:#555}'
 		. '.dwr-obcard .e-form__indicators{display:flex;align-items:center;gap:6px;margin:0 0 32px;flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}.dwr-obcard .e-form__indicators__indicator{display:flex;flex-direction:column;align-items:center;gap:6px;flex:0 0 auto;cursor:pointer;font-size:12px;font-weight:600;color:#9AA0A8}.dwr-obcard .e-form__indicators__indicator__number{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1.5px solid #DADDE2;background:#fff;font-size:14px;color:#6B6B6B}.dwr-obcard .e-form__indicators__indicator--state-active{color:#121212}.dwr-obcard .e-form__indicators__indicator--state-active .e-form__indicators__indicator__number{background:#13A6EE;border-color:#13A6EE;color:#fff}.dwr-obcard .e-form__indicators__indicator--state-completed .e-form__indicators__indicator__number{background:#121212;border-color:#121212;color:#fff}.dwr-obcard .e-form__indicators__indicator__separator{flex:1 1 16px;min-width:12px;height:1.5px;background:#DADDE2;align-self:flex-start;margin-top:17px}.dwr-obcard .e-form__indicators__indicator--state-completed+.e-form__indicators__indicator__separator{background:#121212}@media(max-width:600px){.dwr-obcard .e-form__indicators__indicator__label{display:none}.dwr-obcard .e-form__indicators__indicator__number{width:30px;height:30px}.dwr-obcard .e-form__indicators__indicator__separator{margin-top:15px}}'
 		. '.dwr-obcard .e-form__buttons{display:flex;flex-direction:row;gap:12px;margin-top:8px}.dwr-obcard .elementor-button{flex:1;display:inline-flex;align-items:center;justify-content:center;min-height:56px;padding:0 28px;border:0;border-radius:999px;background:#13A6EE;color:#fff;font:inherit;font-size:16px;font-weight:600;cursor:pointer;transition:background .3s,transform .3s}.dwr-obcard .elementor-button:hover{background:#2A8FD6;transform:translateY(-2px)}.dwr-obcard .e-form__buttons__wrapper{flex:1;display:flex}.dwr-obcard .e-form__buttons__wrapper__button-previous{background:#fff;color:#121212;border:1px solid #DADDE2}.dwr-obcard .e-form__buttons__wrapper__button-previous:hover{background:#F6F7F9}'
 		. '.dwr-obcard .dw-ob-note{display:flex;align-items:center;flex-wrap:wrap;gap:10px 16px;margin:0 0 28px;padding:14px 18px;border-radius:12px;background:#EEF7FD;color:#21415E;font-size:15px;line-height:1.45}.dwr-obcard .dw-ob-ic{display:none}.dwr-obcard .dw-ob-t{flex:1 1 300px}.dwr-obcard .dw-ob-clear{border:1px solid #B8D9EE;background:#fff;color:#0B76B8;border-radius:999px;padding:6px 14px;font:inherit;font-size:14px;font-weight:600;cursor:pointer}.dwr-obcard .dw-ob-clear:hover{border-color:#13A6EE}'
@@ -830,7 +843,7 @@ function dwdr_hero_track( $html ) {
 	foreach ( $shown as $p ) {
 		$items .= '<a href="' . esc_url( $p['href'] ) . '" style="' . esc_attr( $st[1] ) . '"><img src="' . esc_url( $p['img'] ) . '" alt="' . esc_attr( $p['name'] . ' website' ) . '" style="' . esc_attr( $st[2] ) . '"></a>';
 		if ( ! empty( $p['phone'] ) ) {
-			$items .= '<a class="dwr-htphone" href="' . esc_url( $p['href'] ) . '" tabindex="-1"><img src="' . esc_url( $p['phone'] ) . '" alt="' . esc_attr( $p['name'] . ' website on a phone' ) . '" loading="lazy"></a>';
+			$items .= '<a class="dwr-htphone" href="' . esc_url( $p['href'] ) . '" tabindex="-1"><img src="' . esc_url( dwdr_webp_url( $p['phone'], 420 ) ) . '" alt="' . esc_attr( $p['name'] . ' website on a phone' ) . '" loading="lazy"></a>';
 		}
 	}
 	if ( '' === $items ) {
@@ -982,9 +995,67 @@ add_action( 'wp_enqueue_scripts', function () {
 	}
 	wp_add_inline_style( 'dwdr', '.dwr-asec{padding-top:clamp(64px,8vw,120px)!important;padding-bottom:clamp(64px,8vw,120px)!important;background:#fff;color:#121212}.dwr-asec.alt{background:#F4F5F7}.dwr-ainner{max-width:1500px;margin:0 auto}'
 		. '.dwr-aintro{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:clamp(32px,5vw,88px);align-items:start}.dwr-alead{display:flex;flex-direction:column;gap:22px}.dwr-alead .dwr-prose p:first-child{font-size:clamp(22px,2vw,30px);line-height:1.35;letter-spacing:-.015em;color:#121212;font-weight:500}.dwr-aguide{position:sticky;top:110px;display:flex;flex-direction:column;background:#121212;color:#fff;border-radius:16px;padding:clamp(22px,2.4vw,32px)}.dwr-aguide-h{font-size:13px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#13A6EE;margin-bottom:10px}.dwr-aguide a{display:flex;gap:16px;align-items:baseline;padding:12px 0;border-top:1px solid #2A2A2A;color:#fff!important;text-decoration:none;font-size:16px;line-height:1.35;transition:color .2s}.dwr-aguide a:hover{color:#13A6EE!important}.dwr-aguide a b{font-size:13px;color:#13A6EE;font-weight:600;min-width:22px}'
-		. '.dwr-astep-in{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(28px,5vw,96px);align-items:start}.dwr-astep-h{position:sticky;top:110px;display:flex;flex-direction:column;gap:18px}.dwr-astep-ic{width:64px;height:64px;border-radius:16px;background:#13A6EE;color:#fff;display:inline-flex;align-items:center;justify-content:center}.dwr-astep-ic svg{width:30px;height:30px}.dwr-astep-n{font-size:14px;font-weight:600;letter-spacing:.14em;color:#0B76B8}.dwr-astep-h h2{margin:0;font-size:clamp(30px,3.4vw,54px);line-height:1.02;letter-spacing:-.035em;font-weight:600;text-wrap:balance}.dwr-astep-b{padding-top:6px}.dwr-astep-b p{font-size:clamp(18px,1.4vw,21px)!important;line-height:1.6!important;color:#333}.dwr-acard{font-size:17px!important}'
+		. '.dwr-astep-in{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(28px,5vw,96px);align-items:start}.dwr-astep-h{position:sticky;top:110px;display:flex;flex-direction:column;gap:18px}.dwr-astep-ic{width:64px;height:64px;border-radius:16px;background:#13A6EE;color:#fff;display:inline-flex;align-items:center;justify-content:center}.dwr-astep-ic svg{width:30px;height:30px}.dwr-astep-n{font-size:14px;font-weight:600;letter-spacing:.14em;color:#0A659F}.dwr-astep-h h2{margin:0;font-size:clamp(30px,3.4vw,54px);line-height:1.02;letter-spacing:-.035em;font-weight:600;text-wrap:balance}.dwr-astep-b{padding-top:6px}.dwr-astep-b p{font-size:clamp(18px,1.4vw,21px)!important;line-height:1.6!important;color:#333}.dwr-acard{font-size:17px!important}'
 		. '.dwr-acards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:6px 0}.dwr-acard{display:flex;gap:14px;align-items:flex-start;padding:18px 20px;border-radius:14px;background:#fff;border:1px solid rgba(18,18,18,.08);box-shadow:0 1px 2px rgba(18,18,18,.04),0 14px 30px -24px rgba(18,18,18,.35);font-size:16px;line-height:1.45;color:#121212}.dwr-asec:not(.alt) .dwr-acard{background:#F7F8FA}.dwr-acard-ic{flex:none;width:30px;height:30px;border-radius:50%;background:rgba(19,166,238,.12);color:#0B76B8;display:inline-flex;align-items:center;justify-content:center}.dwr-acard-ic svg{width:16px;height:16px;stroke-width:2.4}'
-		. '.dwr-astats{background:#121212!important;color:#fff!important}.dwr-astats .dwr-eyebrow{color:#13A6EE}.dwr-astats .dwr-results{margin-top:28px!important;border-bottom:1px solid #333!important}.dwr-aclose{background:#121212!important;color:#fff!important}.dwr-aclose .dwr-eyebrow{color:#13A6EE}.dwr-aclose .dwr-prose{margin-top:20px;max-width:980px}.dwr-aclose .dwr-prose p{font-size:clamp(22px,2.2vw,34px);line-height:1.35;letter-spacing:-.015em;color:#fff}.dwr-aclose .dwr-prose a{color:#13A6EE}.dwr-aband .dwr-band-h span{color:#13A6EE}'
+		. '.dwr-astats{background:#121212!important;color:#fff!important}.dwr-astats .dwr-eyebrow{color:#13A6EE}.dwr-astats .dwr-results{margin-top:28px!important;border-bottom:1px solid #333!important}.dwr-aclose{background:#121212!important;color:#fff!important}.dwr-aclose .dwr-eyebrow{color:#13A6EE}.dwr-aclose .dwr-prose{margin-top:20px;max-width:980px}.dwr-aclose .dwr-prose p{font-size:clamp(22px,2.2vw,34px);line-height:1.35;letter-spacing:-.015em;color:#fff}.dwr-aclose .dwr-prose a{color:#13A6EE}.dwr-aclose .dwr-prose li,.dwr-aclose .dwr-prose strong,.dwr-aclose .dwr-prose h3{color:#fff!important}.dwr-aclose .dwr-prose li{font-size:clamp(18px,1.5vw,22px)}.dwr-aband .dwr-band-h span{color:#13A6EE}'
 		. '.dwr-asec-author{padding-top:clamp(48px,5vw,72px)!important;padding-bottom:clamp(48px,5vw,72px)!important}.dwr-asec-author .dwr-ainner>div{max-width:1500px;border-top:0!important;padding-top:0!important}'
 		. '@media(max-width:900px){.dwr-aintro,.dwr-astep-in{grid-template-columns:1fr}.dwr-aguide,.dwr-astep-h{position:static}.dwr-astep-h{flex-direction:row;flex-wrap:wrap;align-items:center;gap:14px}.dwr-astep-h h2{flex-basis:100%}.dwr-astep-ic{width:52px;height:52px;border-radius:14px}}@media(max-width:600px){.dwr-acards{grid-template-columns:1fr}}' );
 }, 10001 );
+
+
+/* ---------- Speed: serve WebP copies of uploaded images (made once, cached next to the original) ---------- */
+
+/** URL of a WebP copy of an uploaded JPG/PNG, resized to $maxw pixels wide when larger. Falls back to the original. */
+function dwdr_webp_url( $url, $maxw = 0 ) {
+	static $up = null;
+	if ( null === $up ) {
+		$up = wp_get_upload_dir();
+	}
+	$url = html_entity_decode( (string) $url );
+	if ( ! function_exists( 'imagewebp' ) || ! preg_match( '#\.(jpe?g|png)$#i', strtok( $url, '?' ) ) || 0 !== strpos( $url, $up['baseurl'] ) ) {
+		return $url;
+	}
+	$rel  = substr( strtok( $url, '?' ), strlen( $up['baseurl'] ) );
+	$src  = $up['basedir'] . $rel;
+	$dest = preg_replace( '#\.(jpe?g|png)$#i', ( $maxw ? '-w' . (int) $maxw : '' ) . '.webp', $src );
+	$durl = $up['baseurl'] . substr( $dest, strlen( $up['basedir'] ) );
+	if ( file_exists( $dest ) ) {
+		return $durl;
+	}
+	static $made = 0;
+	if ( ! file_exists( $src ) || filesize( $src ) > 25 * 1024 * 1024 || ++$made > 40 ) {
+		return $url; // at most 40 new copies per page load; the rest are made on the next visits
+	}
+	$png = preg_match( '#\.png$#i', $src );
+	$im  = $png ? @imagecreatefrompng( $src ) : @imagecreatefromjpeg( $src ); // phpcs:ignore
+	if ( ! $im ) {
+		return $url;
+	}
+	$w = imagesx( $im );
+	$h = imagesy( $im );
+	if ( $maxw && $w > $maxw ) {
+		$nh = (int) round( $h * $maxw / $w );
+		$rs = imagecreatetruecolor( $maxw, $nh );
+		imagealphablending( $rs, false );
+		imagesavealpha( $rs, true );
+		imagefill( $rs, 0, 0, imagecolorallocatealpha( $rs, 0, 0, 0, 127 ) );
+		imagecopyresampled( $rs, $im, 0, 0, 0, 0, $maxw, $nh, $w, $h );
+		imagedestroy( $im );
+		$im = $rs;
+	} elseif ( $png ) {
+		imagepalettetotruecolor( $im );
+		imagealphablending( $im, false );
+		imagesavealpha( $im, true );
+	}
+	$ok = @imagewebp( $im, $dest, 80 ); // phpcs:ignore
+	imagedestroy( $im );
+	return $ok && file_exists( $dest ) && filesize( $dest ) > 0 ? $durl : $url;
+}
+
+/** Swap every uploaded JPG/PNG in the page body (src, srcset, posters, inline backgrounds) for its WebP copy. */
+function dwdr_webp_html( $html ) {
+	$base = preg_quote( wp_get_upload_dir()['baseurl'], '#' );
+	return preg_replace_callback( '#' . $base . '/[^"\'\s\),]+?\.(?:jpe?g|png)(?=[\s"\'\),])#i', function ( $m ) {
+		return dwdr_webp_url( $m[0] );
+	}, $html );
+}

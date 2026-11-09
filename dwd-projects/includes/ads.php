@@ -46,7 +46,20 @@ add_action( 'wp_head', function () {
 })();
 </script>
 	<?php if ( $id ) : ?>
-<script async src="https://www.googletagmanager.com/gtag/js?id=<?php echo esc_attr( $id ); ?>"></script>
+<script>
+// Speed: the Google Ads tag loads on the visitor's first scroll, tap, click or keypress (right away for ad clicks).
+// Everything below queues in dataLayer until then, so no conversion is lost.
+(function () {
+	var done = false, ev = ['scroll', 'pointerdown', 'touchstart', 'keydown', 'mousemove', 'wheel'];
+	function load() {
+		if (done) { return; } done = true;
+		ev.forEach(function (n) { removeEventListener(n, load, { passive: true }); });
+		var s = document.createElement('script'); s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=<?php echo esc_js( $id ); ?>'; document.head.appendChild(s);
+	}
+	if (/[?&](gclid|gbraid|wbraid)=/.test(location.search)) { load(); return; }
+	ev.forEach(function (n) { addEventListener(n, load, { passive: true, once: true }); });
+})();
+</script>
 <script>
 window.dataLayer = window.dataLayer || []; function gtag(){ dataLayer.push(arguments); }
 gtag('js', new Date()); gtag('config', '<?php echo esc_js( $id ); ?>');
