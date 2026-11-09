@@ -131,7 +131,6 @@
 		var fresh = list.filter(function (c) { return !(c.id in pos); }), kept = list.filter(function (c) { return c.id in pos; }).sort(function (a, b) { return pos[a.id] - pos[b.id]; });
 		return fresh.concat(kept);
 	}
-	function pendSum(list) { return list.reduce(function (s, c) { return s + (c.pending ? num(c.balance) : 0); }, 0); }
 	function owed(list) { return list.reduce(function (s, c) { return s + num(c.balance); }, 0); }
 	function openTasks() { return S.tasks.filter(function (t) { return !t.done; }); }
 	function match(c) {
@@ -1246,7 +1245,7 @@
 				var ls = new Date(ws); ls.setDate(ls.getDate() - 7); var le = new Date(ws); le.setDate(le.getDate() - 1);
 				var wbox = function (label, a, b) { var l = winsIn(dIso(a), dIso(b)); return '<button type="button" class="dwdc-mjob" data-wins="' + dIso(a) + '|' + dIso(b) + '|' + label + '"><span class="dwdc-lbl">' + label + '</span><strong>' + l.length + '<i> job' + (l.length === 1 ? '' : 's') + '</i></strong><small>' + shortD(dIso(a)) + '–' + shortD(dIso(b)) + (winVal(l) ? ' · ' + money(winVal(l)) : '') + '</small></button>'; };
 				return '<div class="dwdc-mtop"><button type="button" class="dwdc-mnow" data-month="' + ym + '"><span class="dwdc-lbl">Made in ' + MNf[mi] + '</span><strong>' + money(cur) + '</strong><small>' + MNf[prevD.getMonth()] + ': ' + money(prev) + ' · see payments →</small></button>'
-					+ '<button type="button" class="dwdc-mopen" data-owed><span class="dwdc-lbl">Owed to you</span><strong>' + money(owed(open) - pendSum(open)) + '</strong><small>' + (pendSum(open) ? money(pendSum(open)) + ' paid, pending · ' : '') + owing.length + ' open project' + (owing.length === 1 ? '' : 's') + ' · see list →</small></button></div>'
+					+ '<button type="button" class="dwdc-mopen" data-owed><span class="dwdc-lbl">Owed to you</span><strong>' + money(owed(open)) + '</strong><small>' + owing.length + ' open project' + (owing.length === 1 ? '' : 's') + ' · see list →</small></button></div>'
 					+ '<div class="dwdc-mjobs">' + wbox('Jobs this week', ws, we) + wbox('Jobs last week', ls, le) + '</div>';
 			})(),
 			'<footer>' + frow('Hosting Revenue', money(annual) + ' / yr', 'hosting') + '<a class="dwdc-frow" href="#money"><span>All-time income</span><b>' + money(allIncome()) + '</b>' + ic('right', 12) + '</a></footer>');
@@ -1974,15 +1973,15 @@
 			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide">' + head('Upwork', 'Connects', 'spending') + connSpend() + '<div class="dwdc-farow end"><a class="dwdc-btn2" href="#money" data-close-modal>Open in Money Stats</a></div></div>';
 		}
 		if (m.type === 'owed') {
-			var ol = working().filter(function (c) { return num(c.balance) > 0; }).sort(function (a, b) { return (a.pending ? 1 : 0) - (b.pending ? 1 : 0) || num(b.balance) - num(a.balance); });
-			var opend = pendSum(ol), onow = owed(ol) - opend;
-			var obody = ol.length ? '<div class="dwdc-mo-sum"><span>Projects<b>' + ol.length + '</b></span><span>Still owed<b>' + money(onow) + '</b></span>' + (opend ? '<span class="pend">Paid, pending<b>' + money(opend) + '</b></span>' : '') + '</div>'
+			var ol = working().filter(function (c) { return num(c.balance) > 0; }).sort(function (a, b) { return num(b.balance) - num(a.balance); });
+			var obody = ol.length ? '<div class="dwdc-mo-sum"><span>Projects<b>' + ol.length + '</b></span><span>Total owed<b>' + money(owed(ol)) + '</b></span></div>'
 				+ ol.map(function (c) {
-					var k = clientOf(c);
-					return '<div class="dwdc-mo-r dwdc-owr' + (c.pending ? ' is-pend' : '') + '" data-owgo="client/' + c.id + '"><span class="d">' + (c.deadline ? 'Due ' + fmt(c.deadline) : '') + '</span><span class="w"><b>' + esc(c.name) + (c.pending ? ' <em class="dwdc-pendtag">Paid · pending since ' + fmt(c.pending) + '</em>' : '') + '</b><small>' + esc([k ? k.name : c.person, num(c.price) ? 'Price ' + money(c.price) : ''].filter(Boolean).join(' · ')) + '</small></span><strong>' + money(c.balance) + '</strong>'
-						+ '<span class="dwdc-owacts">' + (c.pending ? '<button type="button" class="dwdc-btn2 sm" data-owpend="' + c.id + '" data-off="1">Undo</button>' : '<button type="button" class="dwdc-btn2 sm" data-owpend="' + c.id + '">Pending</button>') + '<button type="button" class="dwdc-btn sm" data-owpaid="' + c.id + '">Paid</button></span></div>';
+					var k = clientOf(c), pm = c.paymark || '';
+					var tb = function (v, label) { return '<button type="button" class="dwdc-btn2 sm' + (pm === v ? ' on-' + v : '') + '" data-owmark="' + c.id + '" data-v="' + (pm === v ? '' : v) + '">' + label + '</button>'; };
+					return '<div class="dwdc-mo-r dwdc-owr" data-owgo="client/' + c.id + '"><span class="d">' + (c.deadline ? 'Due ' + fmt(c.deadline) : '') + '</span><span class="w"><b>' + esc(c.name) + (pm ? ' <em class="dwdc-pendtag ' + pm + '">' + (pm === 'paid' ? 'Paid' : 'Pending') + '</em>' : '') + '</b><small>' + esc([k ? k.name : c.person, num(c.price) ? 'Price ' + money(c.price) : ''].filter(Boolean).join(' · ')) + '</small></span><strong>' + money(c.balance) + '</strong>'
+						+ '<span class="dwdc-owacts">' + tb('pending', 'Pending') + tb('paid', 'Paid') + '</span></div>';
 				}).join('') : emptyRow('Nothing is owed on open projects.');
-			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide">' + head('Open projects', 'Owed', money(onow)) + obody + '</div>';
+			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide">' + head('Open projects', 'Owed', money(owed(ol))) + obody + '</div>';
 		}
 		if (m.type === 'month') {
 			var MNL = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -2225,19 +2224,11 @@
 	app.addEventListener('click', function (e) {
 		var t = e.target, el;
 		if ((el = t.closest('[data-owgo]')) && !t.closest('button')) { S.modal = null; go(el.getAttribute('data-owgo')); return; }
-		if ((el = t.closest('[data-owpend]'))) {
+		if ((el = t.closest('[data-owmark]'))) {
+			// Just a label on the Owed list: nothing is logged, moved or totalled.
 			e.preventDefault(); e.stopPropagation();
-			var opid = +el.getAttribute('data-owpend'), off = el.hasAttribute('data-off');
-			api('/contact/' + opid, 'POST', { pending: off ? '' : DWDC.today }).then(function (x) { upsert(x); S.full[opid] = x; render(); toast(off ? 'Back to owed' : 'Marked paid, pending'); }).catch(fail);
-			return;
-		}
-		if ((el = t.closest('[data-owpaid]'))) {
-			e.preventDefault(); e.stopPropagation();
-			var qc = contact(+el.getAttribute('data-owpaid')), qa = num(qc.balance), qm = ['Upwork', 'Stripe', 'PayPal'].indexOf(qc.pay_method) > -1 ? qc.pay_method : 'Other';
-			el.disabled = true;
-			api('/contact/' + qc.id + '/payment', 'POST', { amount: qa, method: qm, date: DWDC.today, note: 'Marked paid' })
-				.then(function (x) { upsert(x); S.full[x.id] = x; return reload(); })
-				.then(function () { render(); toast(money(qa) + ' paid · added to this month'); }).catch(function (er) { el.disabled = false; fail(er); });
+			var mid = +el.getAttribute('data-owmark'), mv = el.getAttribute('data-v');
+			api('/contact/' + mid, 'POST', { paymark: mv }).then(function (x) { upsert(x); S.full[mid] = x; render(); }).catch(fail);
 			return;
 		}
 		if (t.closest('[data-menu]')) { document.body.classList.toggle('dwdc-menu-open'); return; }

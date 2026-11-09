@@ -1786,3 +1786,6 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 .dwdc-mo-sum span.pend { background: #FFF8EC; border-color: #F3DDB5; color: #A3620A; }
 @media (max-width: 600px) { .dwdc-mo-r.dwdc-owr { grid-template-columns: 1fr auto; } .dwdc-mo-r.dwdc-owr .d { display: none; } .dwdc-owacts { grid-column: 1 / -1; justify-content: flex-end; } }
 @media (max-width: 600px) { .dwdc-mo-r.dwdc-owr .w b { white-space: normal; } .dwdc-mo-r.dwdc-owr .dwdc-pendtag { display: table; margin: 4px 0 0; } }
+.dwdc-pendtag.paid { background: #E6F6EC; color: #1C7C45; }
+.dwdc .dwdc-owacts .dwdc-btn2.on-pending { background: #FFF4E0; border-color: #F0C77E; color: #A3620A; }
+.dwdc .dwdc-owacts .dwdc-btn2.on-paid { background: #E6F6EC; border-color: #8FD3A8; color: #1C7C45; }
