@@ -381,6 +381,18 @@ if _sk > -1:
              '<a class="dwr-doall-call" href="tel:+17722101728">or call (772) 210-1728</a></div></div>')
     hb = hb[:_sk] + _band + hb[_div_end(hb, _sk):]
     hb = hb.replace('<section id="about"', '<section data-nocta="1" id="about"', 1)
+# Michael: reviews as a one-at-a-time slider (left / right buttons) instead of a grid of cards.
+_gi = hb.find('<div id="dw-quotes-grid"')
+if _gi > -1:
+    _ge = _div_end(hb, _gi)
+    _n = hb[_gi:_ge].count('<figure')
+    _arrowL = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>'
+    _arrowR = _arrowL.replace('M15 18l-6-6 6-6', 'M9 18l6-6-6-6')
+    _dots = ''.join('<button type="button" class="dwr-qdot' + (' on' if k == 0 else '') + '" data-qgo="' + str(k) + '" aria-label="Review ' + str(k + 1) + '"></button>' for k in range(_n))
+    hb = (hb[:_gi] + '<div class="dwr-qwrap" data-dw-reveal="1"><button type="button" class="dwr-qbtn" data-q="-1" aria-label="Previous review">' + _arrowL + '</button>'
+          + hb[_gi:_ge].replace('<div id="dw-quotes-grid"', '<div id="dw-quotes-grid" class="dwr-qslider" aria-live="polite"', 1).replace('<figure data-src', '<figure data-q-item="1" data-src').replace(' data-dw-reveal="1" style="margin:0;display:flex', ' style="margin:0;display:flex')
+          + '<button type="button" class="dwr-qbtn" data-q="1" aria-label="Next review">' + _arrowR + '</button></div>'
+          + '<div class="dwr-qnav"><span class="dwr-qcount"><b>1</b> / ' + str(_n) + '</span><span class="dwr-qdots">' + _dots + '</span></div>' + hb[_ge:])
 write('home.html', hb)
 
 def interior(name, out):
