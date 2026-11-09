@@ -132,7 +132,21 @@ def body_of(text):
     m = re.search(r'</helmet>(.*)</x-dc>', text, re.S)
     return m.group(1).strip()
 
+def balance_sections(html):
+    # The design files sometimes have a stray </div> inside a section; browsers then close the page wrapper
+    # early. Drop extra closing divs (from the end of the section) so every section is balanced.
+    def fix(m):
+        seg = m.group(0)
+        extra = len(re.findall(r'</div>', seg)) - len(re.findall(r'<div\b', seg))
+        while extra > 0:
+            k = seg.rfind('</div>')
+            seg = seg[:k] + seg[k + 6:]
+            extra -= 1
+        return seg
+    return re.sub(r'<section\b.*?</section>', fix, html, flags=re.S)
+
 def write(name, html):
+    html = balance_sections(html)
     with open(os.path.join(OUT_T, name), 'w', encoding='utf-8') as f:
         f.write(html.strip() + '\n')
 

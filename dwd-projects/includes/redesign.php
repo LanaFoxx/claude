@@ -407,6 +407,19 @@ function dwdr_upwork_jobs() {
 	return $n >= 20 ? ( floor( $n / 10 ) * 10 ) . '+' : ( $n ? (string) $n : '200+' );
 }
 
+/** Michael: every section gets a call to action. Sections without any link or button get Get a Quote + Call. */
+function dwdr_add_ctas( $html ) {
+	return preg_replace_callback( '#(<section\b[^>]*>)(.*?)(</section>)#s', function ( $m ) {
+		if ( preg_match( '#<a\b|<button\b#', $m[2] ) ) {
+			return $m[0];
+		}
+		$theme = preg_match( '#data-theme="(\w+)"#', $m[1], $t ) ? $t[1] : 'light';
+		$arrow = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12 12 2M4 2h8v8"></path></svg>';
+		$cta   = '<div class="dwr-cta dwr-cta-' . esc_attr( $theme ) . '" data-dw-reveal="1"><a class="dwr-pill' . ( 'blue' === $theme ? ' dark' : '' ) . '" href="' . esc_url( home_url( '/quote/' ) ) . '">Get a Quote ' . $arrow . '</a><a class="dwr-cta-call" href="tel:+17722101728">or call (772) 210-1728</a></div>';
+		return $m[1] . $m[2] . $cta . $m[3];
+	}, $html );
+}
+
 /** The scrolling strip of project screenshots (same look as the homepage hero). $rev scrolls the other way. */
 function dwdr_strip( $theme = 'dark', $rev = false ) {
 	static $items = null;
@@ -500,6 +513,7 @@ add_action( 'wp_enqueue_scripts', function () {
 		. '@media(max-width:980px){#dw-phone-stage{display:flex!important;flex-direction:column!important;gap:32px!important}#dw-phone-copy{order:1!important}#dw-phone-col{order:2!important;width:100%!important;justify-content:center!important;justify-self:center!important}#dw-phone{margin:0 auto!important;width:min(78vw,300px)!important}}' // homepage Finesse: copy above the phone, phone centered (tablets and phones)
 		. '@media(max-width:600px){#dw-nav{transition:background-color .35s ease,color .35s ease,box-shadow .35s ease,transform .45s cubic-bezier(.2,.7,.1,1),opacity .35s ease!important}#dw-nav[data-floating="1"][data-theme="light"]{background:#121212!important;color:#fff!important;-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:0 10px 26px -18px rgba(0,0,0,.7)}#dw-nav[data-floating="1"][data-theme="dark"],#dw-nav[data-floating="1"][data-theme="blue"]{background:#fff!important;color:#121212!important;-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:0 10px 26px -18px rgba(0,0,0,.45)}#dw-nav[data-floating="1"][data-theme="dark"] #dw-logo-white,#dw-nav[data-floating="1"][data-theme="blue"] #dw-logo-white{display:none!important}#dw-nav[data-floating="1"][data-theme="dark"] #dw-logo-dark,#dw-nav[data-floating="1"][data-theme="blue"] #dw-logo-dark{display:block!important}}@media(max-width:600px){#dw-foot-grid{grid-template-columns:1fr!important;gap:28px!important}#dw-foot-grid>div:nth-child(2),#dw-foot-grid>div:nth-child(3){display:grid!important;grid-template-columns:1fr 1fr;column-gap:16px;row-gap:2px}#dw-foot-grid>div:nth-child(2)>span:first-child,#dw-foot-grid>div:nth-child(3)>span:first-child{grid-column:1 / -1}}' // phones: header bar by section once scrolled; footer link lists in two columns
 		. '.dwr-allwork{display:inline-flex;align-items:center;justify-content:center;gap:10px;width:auto;min-height:56px;padding:0 32px;margin:0 auto;border-radius:999px;background:#13A6EE;color:#fff!important;font-size:16px;font-weight:600;text-decoration:none;transition:background .3s ease,transform .3s ease}.dwr-allwork:hover{background:#2A8FD6;transform:translateY(-2px)}' // See all work button
+		. '.dwr-cta{display:flex;flex-wrap:wrap;align-items:center;gap:16px 28px;margin-top:clamp(36px,4.5vw,64px)}.dwr-cta-call{font-size:16px;font-weight:600;text-decoration:none;min-height:44px;display:inline-flex;align-items:center;background-image:linear-gradient(currentColor,currentColor);background-size:100% 1px;background-position:0 100%;background-repeat:no-repeat;transition:background-size .4s cubic-bezier(.2,.7,.1,1)}.dwr-cta-call:hover{background-size:0 1px}.dwr-cta-dark .dwr-cta-call{color:#fff!important}.dwr-cta-light .dwr-cta-call,.dwr-cta-blue .dwr-cta-call{color:#121212!important}@media(max-width:600px){.dwr-cta .dwr-pill{width:100%;justify-content:center}.dwr-cta{gap:8px}.dwr-cta-call{width:100%;justify-content:center}}' // section call to action
 		. '@media(max-width:980px){.dwr-allwork{width:min(78vw,300px);margin:0 auto}}' // phones/tablets: See all work as wide as the phone image above it
 		. '@media(max-width:600px){.admin-bar #dw-nav[data-floating="1"]{top:0!important}}' // phones: the WP admin bar scrolls away, so the scrolled header sits at the very top
 		. '@media(max-width:600px){#dw-nav[data-floating][data-theme="light"] #dw-logo-white{display:block!important;filter:none!important}#dw-nav[data-floating][data-theme="light"] #dw-logo-dark{display:none!important}}' // phones: white logo on the dark bar over white sections

@@ -5,7 +5,7 @@
  */
 defined( 'ABSPATH' ) || exit;
 $dwdr = dwdr_page();
-$body = dwdr_body( $dwdr );
+$body = dwdr_add_ctas( dwdr_body( $dwdr ) ); // sections without a button get Get a Quote + Call
 ?><!doctype html>
 <html <?php language_attributes(); ?>>
 <head>
