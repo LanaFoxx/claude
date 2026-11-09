@@ -77,7 +77,24 @@
     setTimeout(function () { root.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 50);
   }
 
+  // Merchandise cards: hovering cycles through an item's photos; dots pick one (phones).
+  function initCycle(media) {
+    if (media.dataset.biReady) return; media.dataset.biReady = '1';
+    var imgs = media.querySelectorAll('.bi-product__img'), dots = media.querySelectorAll('.bi-product__dot'), i = 0, timer = null;
+    if (imgs.length < 2) return;
+    function show(n) {
+      i = (n + imgs.length) % imgs.length;
+      imgs.forEach(function (el, k) { el.classList.toggle('is-active', k === i); });
+      dots.forEach(function (el, k) { el.classList.toggle('is-active', k === i); });
+    }
+    function stop() { clearInterval(timer); timer = null; }
+    media.addEventListener('mouseenter', function () { if (timer) return; show(i + 1); timer = setInterval(function () { show(i + 1); }, 1200); });
+    media.addEventListener('mouseleave', function () { stop(); show(0); });
+    dots.forEach(function (d, k) { d.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); stop(); show(k); }); });
+  }
+
   function init(scope) {
+    (scope || document).querySelectorAll('[data-bi-cycle]').forEach(initCycle);
     (scope || document).querySelectorAll('[data-bi-show]').forEach(initShow);
     (scope || document).querySelectorAll('[data-bi-tabs]').forEach(initTabs);
     (scope || document).querySelectorAll('.bi-gallery').forEach(openFromHash);
@@ -90,6 +107,7 @@
   window.addEventListener('elementor/frontend/init', function () {
     if (window.elementorFrontend && elementorFrontend.hooks) {
       elementorFrontend.hooks.addAction('frontend/element_ready/bi-gallery.default', function ($el) { init($el[0]); });
+      elementorFrontend.hooks.addAction('frontend/element_ready/bi-shop.default', function ($el) { init($el[0]); });
     }
   });
 })();

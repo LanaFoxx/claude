@@ -38,7 +38,7 @@ class BI_Shop_Widget extends \Elementor\Widget_Base {
 			$soon  = empty( $p['link'] );
 			$sold  = ! empty( $p['soldout'] );
 			echo '<article class="bi-product' . ( $sold ? ' is-sold' : '' ) . '">';
-			echo '<div class="bi-product__media">';
+			echo '<div class="bi-product__media" data-bi-cycle>';
 			if ( ! empty( $p['badge'] ) && ! $sold ) {
 				printf( '<span class="bi-product__badge">%s</span>', esc_html( $p['badge'] ) );
 			}
@@ -52,10 +52,17 @@ class BI_Shop_Widget extends \Elementor\Widget_Base {
 					if ( ! $full ) {
 						continue;
 					}
-					// First photo shows; the second fades in on hover. All open in the lightbox.
-					printf( '<a class="bi-product__img%s" href="%s" data-elementor-open-lightbox="yes" data-elementor-lightbox-slideshow="%s" data-elementor-lightbox-title="%s"%s><img src="%s" alt="%s" loading="lazy"></a>',
-						0 === $k ? ' is-first' : ( 1 === $k ? ' is-second' : '' ), esc_url( $full[0] ), esc_attr( $group ), esc_attr( $p['name'] ),
-						$k > 1 ? ' hidden' : '', esc_url( $img[0] ), esc_attr( $p['name'] ) );
+					// First photo is the cover; hovering cycles through the rest (front.js). All open in the lightbox.
+					printf( '<a class="bi-product__img%s" href="%s" data-elementor-open-lightbox="yes" data-elementor-lightbox-slideshow="%s" data-elementor-lightbox-title="%s"><img src="%s" alt="%s"%s></a>',
+						0 === $k ? ' is-active' : '', esc_url( $full[0] ), esc_attr( $group ), esc_attr( $p['name'] . ( $k ? ' (photo ' . ( $k + 1 ) . ')' : '' ) ),
+						esc_url( $img[0] ), esc_attr( $p['name'] . ( $k ? ' (photo ' . ( $k + 1 ) . ')' : '' ) ), 0 === $k ? '' : ' loading="lazy"' );
+				}
+				if ( count( $ids ) > 1 ) {
+					echo '<div class="bi-product__dots" role="group" aria-label="Photos">';
+					foreach ( $ids as $k => $aid ) {
+						printf( '<button type="button" class="bi-product__dot%s" aria-label="Show photo %d of %d"></button>', 0 === $k ? ' is-active' : '', $k + 1, count( $ids ) );
+					}
+					echo '</div>';
 				}
 			} else {
 				echo '<div class="bi-product__placeholder">Photo coming soon</div>';
