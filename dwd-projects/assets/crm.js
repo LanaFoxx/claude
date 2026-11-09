@@ -1661,9 +1661,11 @@
 		return '<a class="dwdc-back" href="#' + S.back + '">' + ic('left', 14) + 'Back to ' + backName + '</a>'
 			+ '<div class="dwdc-card dwdc-chead">' + avatar(c, 64, tone) + '<div class="dwdc-chead-t"><h2>' + esc(c.name) + ' ' + pill(st === 'leads' ? (STAGES.filter(function (s) { return s[0] === stageOf(c); })[0] || ['', 'Lead'])[1] : LABEL[st], st === 'leads' ? STAGE_TONE[stageOf(c)] : tone) + (num(c.hosting) ? ' ' + pill('Hosting', 'teal') : '') + '</h2><p>' + line + '</p></div>'
 			+ '<div class="dwdc-chead-a">' + btn('', 'data-edit', S.edit ? 'Close edit' : 'Edit') + reviewBtn(c.client) + acts + '</div></div>'
-			+ '<div class="dwdc-minis">' + mini('navy', 'Price', price ? money(price) : '—') + mini('green', 'Paid', price ? money(Math.max(0, price - ow)) : '—')
+			+ (st === 'leads'
+				? '<div class="dwdc-minis">' + mini('navy', 'Estimated value', price ? money(price) : '—') + mini('', 'Follow up', c.followup ? fmt(c.followup) : '—') + mini('', 'Source', esc(String(c.source || '—').replace(/^Website form: /, ''))) + mini('', 'Stage', esc((STAGES.filter(function (x) { return x[0] === stageOf(c); })[0] || ['', 'New'])[1])) + '</div>'
+				: '<div class="dwdc-minis">' + mini('navy', 'Price', price ? money(price) : '—') + mini('green', 'Paid', price ? money(Math.max(0, price - ow)) : '—')
 			+ '<div class="dwdc-mini"><small>Owed</small><strong class="' + (ow ? 'orange' : 'green') + '">' + (ow ? money(ow) : 'Paid') + '</strong></div>'
-			+ (st === 'complete' ? mini('navy', 'Total spent', money(lifetime(c))) : '<div class="dwdc-mini"><small>Due</small><strong class="' + (late ? 'red' : '') + '">' + (c.deadline ? fmt(c.deadline) : '—') + '</strong></div>') + '</div>'
+			+ (st === 'complete' ? mini('navy', 'Total spent', money(lifetime(c))) : '<div class="dwdc-mini"><small>Due</small><strong class="' + (late ? 'red' : '') + '">' + (c.deadline ? fmt(c.deadline) : '—') + '</strong></div>') + '</div>')
 			+ '<div class="dwdc-two">'
 			+ '<div class="dwdc-col">'
 			+ pw('details', S.edit ? editCard(c) : detailsCard(c, peopleCard(c, true)))
@@ -1672,6 +1674,7 @@
 			+ (num(c.hosting) ? pw('host', hostCard(c)) : '')
 			+ pw('jobs', jobsCard(c))
 			+ '</div><div class="dwdc-col">'
+			+ pw('notes', notesCard(c, full))
 			+ '<section class="dwdc-card pad pw-todos"><div class="dwdc-cardh"><h2>To-dos</h2><span class="dwdc-cnt">' + openN + '</span></div>'
 			+ (tasks.length ? '<div class="dwdc-todos">' + tasks.map(function (t) { return todoRow(t, true); }).join('') + '</div>' : '')
 			+ '<form class="dwdc-inlineadd" data-contact="' + c.id + '">' + ic('plus', 16) + '<input name="text" placeholder="Add a to-do for ' + esc(c.name) + '…" autocomplete="off"><input type="date" name="due" title="Due date"></form></section>'
@@ -1882,17 +1885,23 @@
 			+ '<dl class="dwdc-dl">'
 			+ (c.email ? '<dt>Payments</dt><dd><a href="' + esc(DWDC.orders + encodeURIComponent(c.email)) + '" target="_blank">View orders in WooCommerce</a></dd>' : '') + '</dl></section>';
 	}
+	// Notes: their own box near the top of every lead/project (add a note, see them all, newest first).
+	function notesCard(c, full) {
+		var notes = full ? (c.notes || []).slice().sort(function (a, b) { return (d(a.date) || 0) < (d(b.date) || 0) ? 1 : -1; }) : [];
+		return '<section class="dwdc-card pad dwdc-notescard"><div class="dwdc-cardh"><h2>Notes</h2><span class="dwdc-cnt">' + notes.length + '</span></div>'
+			+ '<form class="dwdc-notef"><textarea name="text" rows="3" placeholder="Add a note: what they need, call recap, budget, next step…" required></textarea><button class="dwdc-btn sm">Add note</button></form>'
+			+ (full ? (notes.length ? '<div class="dwdc-notelist">' + notes.map(function (n) { return '<div class="dwdc-note"><p>' + esc(n.text).replace(/\n/g, '<br>') + '</p><time>' + fmt(n.date, true) + '</time></div>'; }).join('') + '</div>' : '<p class="dwdc-mutp">No notes yet.</p>') : '<p class="dwdc-mutp">Loading…</p>')
+			+ '</section>';
+	}
 	function activityCard(c, full) {
 		var items = [];
 		if (full) {
-			(c.notes || []).forEach(function (n) { items.push({ date: n.date, tone: 'blue', title: n.text, note: true }); });
 			(c.files || []).forEach(function (e, i) { items.push({ date: e.date, tone: 'orange', title: (e.form || 'Form') + ' received', entry: e, open: false }); });
 		}
 		if (c.completed) { items.push({ date: c.completed, tone: 'green', title: 'Marked complete' }); }
 		if (!imported(c)) { items.push({ date: c.created, tone: 'gray', title: 'Added to Dream Desk' + (c.source && !c.entry_count ? ' (' + c.source + ')' : '') }); }
 		items.sort(function (a, b) { return (d(a.date) || 0) < (d(b.date) || 0) ? 1 : -1; });
 		return '<section class="dwdc-card pad"><div class="dwdc-cardh"><h2>Activity</h2></div>'
-			+ '<form class="dwdc-notef"><textarea name="text" rows="2" placeholder="Add a note: call recap, decisions…" required></textarea><button class="dwdc-btn sm">Add note</button></form>'
 			+ (full ? '' : '<p class="dwdc-mutp">Loading…</p>')
 			+ '<ol class="dwdc-tl">' + items.map(function (it) {
 				return '<li class="t-' + it.tone + '"><i></i><div>' + (it.entry
