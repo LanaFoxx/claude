@@ -281,8 +281,11 @@ function dwdr_body( $page ) {
 		$html = apply_filters( 'the_content', $po->post_content ); // phpcs:ignore
 		// Halfway call to action: before the article's second heading (or at the end of a short post).
 		$cta  = '<aside class="dwr-acta"><span class="dwr-eyebrow"><i></i>Need a website like this?</span><p class="dwr-acta-h">Get a flat quote for your website, usually the same day.</p><p class="dwr-acta-p">Custom design, 95+ PageSpeed, unlimited revisions. Most sites run $1,500 to $7,000.</p><div class="dwr-acta-b"><a class="dwr-pill" href="' . esc_url( home_url( '/quote/' ) ) . '">Get a Free Quote</a><a class="dwr-acta-call" href="tel:+17722101728">or call (772) 210-1728</a></div></aside>';
-		$h2   = preg_match_all( '/<h2[\s>]/i', $html, $mm, PREG_OFFSET_CAPTURE ) >= 2 ? $mm[0][1][1] : -1;
-		$html = $h2 > -1 ? substr_replace( $html, $cta, $h2, 0 ) : $html . $cta;
+		$designed = dwdr_article_sections( $html );
+		if ( '' === $designed ) { // no headings to build sections from: keep the simple reading layout
+			$h2   = preg_match_all( '/<h2[\s>]/i', $html, $mm, PREG_OFFSET_CAPTURE ) >= 2 ? $mm[0][1][1] : -1;
+			$html = $h2 > -1 ? substr_replace( $html, $cta, $h2, 0 ) : $html . $cta;
+		}
 		$v['image'] = (string) get_the_post_thumbnail_url( $po, 'full' ); // the hero is wide: start from the original
 		$html_out = dwdr_render( 'article', array_merge( $v, array(
 			'content'   => $html,
@@ -292,6 +295,19 @@ function dwdr_body( $page ) {
 			'nextRead'  => $next ? $next['read'] : '',
 			'nextImage' => $next ? $next['image'] : '',
 		) ) );
+		if ( '' !== $designed ) {
+			// Replace the plain reading column with the designed sections; the author box becomes its own band.
+			$a = strpos( $html_out, '<section data-theme="light"' );
+			$b = false === $a ? false : strpos( $html_out, '</section>', $a );
+			if ( false !== $b ) {
+				$old    = substr( $html_out, $a, $b + 10 - $a );
+				$author = '';
+				if ( preg_match( '#<div data-dw-reveal="1" style="display:flex;flex-wrap:wrap;align-items:center;gap:20px;border-top:1px solid \#121212;padding-top:28px">.*</div>#s', $old, $am ) ) {
+					$author = '<section data-theme="light" data-nocta="1" class="dwr-asec dwr-asec-author"><div class="dwr-ainner">' . $am[0] . '</div></section>';
+				}
+				$html_out = substr( $html_out, 0, $a ) . $designed . $author . substr( $html_out, $b + 10 );
+			}
+		}
 		// The hero image spans the content column (up to 1500px): let the browser pick a size that is sharp at that width.
 		return preg_replace( '#(<img data-dw-zoom="1" src="' . preg_quote( esc_attr( $v['image'] ), '#' ) . '"[^>]*?)sizes="[^"]*"#', '$1sizes="(max-width: 1500px) 100vw, 1500px"', $html_out, 1 );
 	}
@@ -832,3 +848,151 @@ function dwdr_hero_track( $html ) {
 	$new  = '<div style="display:flex;gap:20px;padding-right:20px">' . $items . '</div><div style="display:flex;gap:20px;padding-right:20px" aria-hidden="true">' . $copy . '</div>';
 	return substr( $html, 0, $a ) . dwdr_srcset( $new ) . substr( $html, $end - 6 );
 }
+
+
+/* ---------- Articles as designed pages: intro + guide card, full-width sections, icon cards, CTA and stats bands ---------- */
+
+function dwdr_icon( $k ) {
+	$p = array(
+		'search'  => '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+		'chat'    => '<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5v.2M12 16.5h.01"/>',
+		'code'    => '<path d="m8 8-4 4 4 4M16 8l4 4-4 4M13.5 5l-3 14"/>',
+		'star'    => '<path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',
+		'pin'     => '<path d="M12 21s-7-6.2-7-11.5a7 7 0 1 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
+		'shop'    => '<path d="M4 10h16l-1.5-5h-13zM5 10v10h14V10M9 20v-5h6v5"/>',
+		'zap'     => '<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',
+		'pen'     => '<path d="M4 20h4L19 9l-4-4L4 16zM14 6l4 4"/>',
+		'file'    => '<path d="M14 3H6v18h12V7z"/><path d="M14 3v4h4M9 13h6M9 17h6"/>',
+		'dollar'  => '<path d="M12 2v20M17 6.5C17 4.6 14.8 4 12 4S7 5 7 7.5 9.5 10.5 12 11s5 1.4 5 4-2.2 4-5 4-5-1-5-3"/>',
+		'server'  => '<rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="13" width="18" height="7" rx="2"/><path d="M7 7.5h.01M7 16.5h.01"/>',
+		'layout'  => '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M9 9v11"/>',
+		'shield'  => '<path d="M12 3 4 6v6c0 5 3.4 8.3 8 9 4.6-.7 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/>',
+		'refresh' => '<path d="M20 11a8 8 0 0 0-14.6-4.5L4 8M4 4v4h4M4 13a8 8 0 0 0 14.6 4.5L20 16M20 20v-4h-4"/>',
+		'calendar'=> '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+		'users'   => '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M21.5 20a6.5 6.5 0 0 0-4-6"/>',
+		'target'  => '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
+		'image'   => '<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m21 17-5-5-9 8"/>',
+		'link'    => '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+		'check'   => '<path d="m5 12.5 4.5 4.5L19 7.5"/>',
+		'list'    => '<path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/>',
+		'mobile'  => '<rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/>',
+		'key'     => '<circle cx="8" cy="15" r="4"/><path d="m11 12 9-9M17 6l3 3M15 8l2 2"/>',
+	);
+	return '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' . ( $p[ $k ] ?? $p['check'] ) . '</svg>';
+}
+
+/** An icon that fits a heading, from its words. */
+function dwdr_icon_for( $text, $i ) {
+	$map = array(
+		'search'   => 'search|seo|rank|found|google search',
+		'chat'     => 'question|ask|faq|answer|ai |chatgpt|assistant',
+		'code'     => 'structured|schema|code|llms|markup|technical',
+		'star'     => 'review|proof|testimonial|trust|reputation',
+		'pin'      => 'business profile|local|location|\\bwhere\\b|\\bmap\\b',
+		'zap'      => 'fast|speed|performance|load',
+		'pen'      => 'content|write|copy|publish|blog|article',
+		'dollar'   => 'cost|price|budget|pay|fee|\$|money|afford',
+		'server'   => 'host|server|managed|uptime|backup',
+		'layout'   => 'design|template|custom|layout|theme|look',
+		'shield'   => 'secur|protect|safe|ssl|updates',
+		'refresh'  => 'redesign|migrat|redirect|update|keep',
+		'calendar' => 'timeline|schedule|time|weeks|deadline',
+		'users'    => 'customer|audience|who|people|team|hire|designer',
+		'target'   => 'goal|clear|focus|what you do|purpose',
+		'image'    => 'photo|image|logo|brand|visual',
+		'link'     => 'link|url|consistent|details|citation',
+		'mobile'   => 'mobile|phone|responsive',
+		'key'      => 'access|login|domain|account|password',
+		'list'     => 'prepare|checklist|list|plan|before',
+	);
+	foreach ( $map as $k => $re ) {
+		if ( preg_match( '/' . $re . '/i', $text ) ) {
+			return $k;
+		}
+	}
+	$rot = array( 'target', 'list', 'star', 'zap', 'pen', 'layout' );
+	return $rot[ $i % count( $rot ) ];
+}
+
+function dwdr_bigcta_php() {
+	$arrow = '<svg width="22" height="22" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12 12 2M4 2h8v8"></path></svg>';
+	$phone = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>';
+	return '<div class="dwr-bigcta"><a class="dwr-bc" href="' . esc_url( home_url( '/quote/' ) ) . '"><span class="dwr-bc-x"><span class="dwr-bc-k">Free quote · same-day reply</span><span class="dwr-bc-t">Get a Free Quote</span></span><span class="dwr-bc-ic">' . $arrow . '</span></a>'
+		. '<a class="dwr-bc" href="tel:+17722101728"><span class="dwr-bc-x"><span class="dwr-bc-k">Call or text Michael</span><span class="dwr-bc-t">(772) 210-1728</span></span><span class="dwr-bc-ic">' . $phone . '</span></a></div>';
+}
+
+/** Turn post content (intro + H2 sections) into full-width designed sections. '' when the post has no H2s. */
+function dwdr_article_sections( $html ) {
+	$parts = preg_split( '#(<h2\b[^>]*>.*?</h2>)#is', $html, -1, PREG_SPLIT_DELIM_CAPTURE );
+	if ( count( $parts ) < 3 ) {
+		return '';
+	}
+	$intro = trim( (string) array_shift( $parts ) );
+	$secs  = array();
+	for ( $k = 0; $k + 1 < count( $parts ); $k += 2 ) {
+		$title  = trim( wp_strip_all_tags( $parts[ $k ] ) );
+		$secs[] = array( 'title' => $title, 'body' => trim( (string) $parts[ $k + 1 ] ) );
+	}
+	// A last section that isn't numbered ("The bottom line", "Conclusion") becomes the closing dark band.
+	$close = null;
+	$last  = end( $secs );
+	if ( count( $secs ) > 2 && ! preg_match( '/^\d+[.)]/', $last['title'] ) ) {
+		$close = array_pop( $secs );
+	}
+	$clean = function ( $t ) { return trim( preg_replace( '/^\d+[.)]\s*/', '', $t ) ); };
+	// Lists become icon cards; everything else stays as written.
+	$body = function ( $b ) {
+		return preg_replace_callback( '#<ul\b[^>]*>(.*?)</ul>#is', function ( $m ) {
+			preg_match_all( '#<li\b[^>]*>(.*?)</li>#is', $m[1], $li );
+			$cards = '';
+			foreach ( $li[1] as $x ) {
+				$cards .= '<div class="dwr-acard"><span class="dwr-acard-ic">' . dwdr_icon( 'check' ) . '</span><span>' . $x . '</span></div>';
+			}
+			return '<div class="dwr-acards">' . $cards . '</div>';
+		}, $b );
+	};
+	$out = '';
+	// 1. Intro + "In this guide"
+	$guide = '';
+	foreach ( $secs as $i => $sx ) {
+		$guide .= '<a href="#s' . ( $i + 1 ) . '"><b>' . sprintf( '%02d', $i + 1 ) . '</b><span>' . esc_html( $clean( $sx['title'] ) ) . '</span></a>';
+	}
+	$out .= '<section data-theme="light" data-nocta="1" class="dwr-asec dwr-asec-intro"><div class="dwr-ainner dwr-aintro">'
+		. '<div class="dwr-alead"><span class="dwr-eyebrow"><i></i>The short version</span><div class="dwr-prose">' . $intro . '</div></div>'
+		. '<nav class="dwr-aguide" aria-label="In this guide"><span class="dwr-aguide-h">In this guide</span>' . $guide . '</nav></div></section>';
+	// 2. The numbered sections, with a CTA band and a stats band woven in.
+	$n      = count( $secs );
+	$cta_at = $n >= 4 ? (int) floor( $n / 2 ) - 1 : -1;
+	$st_at  = $n >= 6 ? $n - 2 : -1;
+	foreach ( $secs as $i => $sx ) {
+		$ic   = dwdr_icon_for( $sx['title'], $i );
+		$out .= '<section id="s' . ( $i + 1 ) . '" data-theme="light" data-nocta="1" class="dwr-asec dwr-astep' . ( $i % 2 ? ' alt' : '' ) . '"><div class="dwr-ainner dwr-astep-in">'
+			. '<div class="dwr-astep-h"><span class="dwr-astep-ic">' . dwdr_icon( $ic ) . '</span><span class="dwr-astep-n">' . sprintf( '%02d', $i + 1 ) . '</span><h2>' . esc_html( $clean( $sx['title'] ) ) . '</h2></div>'
+			. '<div class="dwr-astep-b dwr-prose">' . $body( $sx['body'] ) . '</div></div></section>';
+		if ( $i === $cta_at ) {
+			$out .= '<section data-theme="dark" class="dwr-band dwr-band-dark dwr-aband"><div class="dwr-band-in"><div><span class="dwr-eyebrow"><i></i>Want this done for you?</span><h2 class="dwr-band-h">I build websites that get <span>found and chosen</span>.</h2><p class="dwr-band-p">Custom design, 95+ PageSpeed, real SEO set up from day one. Most sites run $1,500 to $7,000, with one flat quote up front.</p></div>' . dwdr_bigcta_php() . '</div></section>';
+		}
+		if ( $i === $st_at ) {
+			$out .= '<section data-theme="dark" data-nocta="1" class="dwr-asec dwr-astats"><div class="dwr-ainner"><span class="dwr-eyebrow"><i></i>Why business owners hire me</span>'
+				. '<div class="dwr-results dwr-ratings"><div><b>200+</b><span>websites designed and built by me, not a team</span></div><div><b>4.9</b><span class="dwr-rsub"><i>★★★★★</i></span><span>average rating on Google</span></div><div><b>95+</b><span>Google PageSpeed score on every site I build</span></div></div></div></section>';
+		}
+	}
+	// 3. Closing thought
+	if ( $close ) {
+		$out .= '<section data-theme="dark" data-nocta="1" class="dwr-asec dwr-aclose"><div class="dwr-ainner"><span class="dwr-eyebrow"><i></i>' . esc_html( $clean( $close['title'] ) ) . '</span><div class="dwr-prose">' . $body( $close['body'] ) . '</div></div></section>';
+	}
+	return $out;
+}
+
+add_action( 'wp_enqueue_scripts', function () {
+	if ( 'article' !== dwdr_page() ) {
+		return;
+	}
+	wp_add_inline_style( 'dwdr', '.dwr-asec{padding-top:clamp(64px,8vw,120px)!important;padding-bottom:clamp(64px,8vw,120px)!important;background:#fff;color:#121212}.dwr-asec.alt{background:#F4F5F7}.dwr-ainner{max-width:1500px;margin:0 auto}'
+		. '.dwr-aintro{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:clamp(32px,5vw,88px);align-items:start}.dwr-alead{display:flex;flex-direction:column;gap:22px}.dwr-alead .dwr-prose p:first-child{font-size:clamp(22px,2vw,30px);line-height:1.35;letter-spacing:-.015em;color:#121212;font-weight:500}.dwr-aguide{position:sticky;top:110px;display:flex;flex-direction:column;background:#121212;color:#fff;border-radius:16px;padding:clamp(22px,2.4vw,32px)}.dwr-aguide-h{font-size:13px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#13A6EE;margin-bottom:10px}.dwr-aguide a{display:flex;gap:16px;align-items:baseline;padding:12px 0;border-top:1px solid #2A2A2A;color:#fff!important;text-decoration:none;font-size:16px;line-height:1.35;transition:color .2s}.dwr-aguide a:hover{color:#13A6EE!important}.dwr-aguide a b{font-size:13px;color:#13A6EE;font-weight:600;min-width:22px}'
+		. '.dwr-astep-in{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(28px,5vw,96px);align-items:start}.dwr-astep-h{position:sticky;top:110px;display:flex;flex-direction:column;gap:18px}.dwr-astep-ic{width:64px;height:64px;border-radius:16px;background:#13A6EE;color:#fff;display:inline-flex;align-items:center;justify-content:center}.dwr-astep-ic svg{width:30px;height:30px}.dwr-astep-n{font-size:14px;font-weight:600;letter-spacing:.14em;color:#0B76B8}.dwr-astep-h h2{margin:0;font-size:clamp(30px,3.4vw,54px);line-height:1.02;letter-spacing:-.035em;font-weight:600;text-wrap:balance}.dwr-astep-b{padding-top:6px}.dwr-astep-b p{font-size:clamp(18px,1.4vw,21px)!important;line-height:1.6!important;color:#333}.dwr-acard{font-size:17px!important}'
+		. '.dwr-acards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:6px 0}.dwr-acard{display:flex;gap:14px;align-items:flex-start;padding:18px 20px;border-radius:14px;background:#fff;border:1px solid rgba(18,18,18,.08);box-shadow:0 1px 2px rgba(18,18,18,.04),0 14px 30px -24px rgba(18,18,18,.35);font-size:16px;line-height:1.45;color:#121212}.dwr-asec:not(.alt) .dwr-acard{background:#F7F8FA}.dwr-acard-ic{flex:none;width:30px;height:30px;border-radius:50%;background:rgba(19,166,238,.12);color:#0B76B8;display:inline-flex;align-items:center;justify-content:center}.dwr-acard-ic svg{width:16px;height:16px;stroke-width:2.4}'
+		. '.dwr-astats{background:#121212!important;color:#fff!important}.dwr-astats .dwr-eyebrow{color:#13A6EE}.dwr-astats .dwr-results{margin-top:28px!important;border-bottom:1px solid #333!important}.dwr-aclose{background:#121212!important;color:#fff!important}.dwr-aclose .dwr-eyebrow{color:#13A6EE}.dwr-aclose .dwr-prose{margin-top:20px;max-width:980px}.dwr-aclose .dwr-prose p{font-size:clamp(22px,2.2vw,34px);line-height:1.35;letter-spacing:-.015em;color:#fff}.dwr-aclose .dwr-prose a{color:#13A6EE}.dwr-aband .dwr-band-h span{color:#13A6EE}'
+		. '.dwr-asec-author{padding-top:clamp(48px,5vw,72px)!important;padding-bottom:clamp(48px,5vw,72px)!important}.dwr-asec-author .dwr-ainner>div{max-width:1500px;border-top:0!important;padding-top:0!important}'
+		. '@media(max-width:900px){.dwr-aintro,.dwr-astep-in{grid-template-columns:1fr}.dwr-aguide,.dwr-astep-h{position:static}.dwr-astep-h{flex-direction:row;flex-wrap:wrap;align-items:center;gap:14px}.dwr-astep-h h2{flex-basis:100%}.dwr-astep-ic{width:52px;height:52px;border-radius:14px}}@media(max-width:600px){.dwr-acards{grid-template-columns:1fr}}' );
+}, 10001 );
