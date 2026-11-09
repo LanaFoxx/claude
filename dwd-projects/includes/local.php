@@ -8,6 +8,7 @@
 defined( 'ABSPATH' ) || exit;
 
 function dwdp_local_pages() {
+	return array(); // Michael: Charlotte page removed for now (the business profile is Treasure Coast). Old entry kept below for reuse.
 	return array(
 		'charlotte-web-design' => array(
 			'city'   => 'Charlotte',
@@ -70,3 +71,29 @@ add_action( 'wp_enqueue_scripts', function () {
 		wp_enqueue_style( 'dwdp-front' );
 	}
 }, 21 );
+
+// The Charlotte page is retired for now: send its address (and any ads or links) to the homepage.
+add_action( 'template_redirect', function () {
+	$path = trim( (string) wp_parse_url( isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '', PHP_URL_PATH ), '/' ); // phpcs:ignore
+	if ( 'charlotte-web-design' === $path ) {
+		wp_safe_redirect( home_url( '/' ), 301 );
+		exit;
+	}
+}, 1 );
+
+/* Saved business settings from the Charlotte period fall back to the Treasure Coast defaults (once). */
+add_action( 'admin_init', function () {
+	if ( get_option( 'dwdp_loc_tc_2026_11' ) || ! current_user_can( 'manage_options' ) ) {
+		return;
+	}
+	$saved = get_option( 'dwdp_settings', array() );
+	if ( is_array( $saved ) ) {
+		foreach ( array( 'biz_summary', 'biz_city', 'biz_areas' ) as $k ) {
+			if ( isset( $saved[ $k ] ) && preg_match( '/Charlotte|Mecklenburg|5\.0/', $saved[ $k ] ) ) {
+				unset( $saved[ $k ] );
+			}
+		}
+		update_option( 'dwdp_settings', $saved );
+	}
+	update_option( 'dwdp_loc_tc_2026_11', 1, false );
+} );

@@ -508,7 +508,7 @@ function dwdp_send_reminder( $lead, $n ) {
 		. '</td></tr>'
 		. '<tr><td style="padding:24px 40px 36px;font-family:Urbanist,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.7;color:#7A86A0">Questions? Reply to this email or call <a href="tel:+17722101728" style="color:#1B7EC3;text-decoration:none;font-weight:600">(772) 210-1728</a>.<br>Michael Tarr, Dream Web Digital</td></tr>'
 		. '</table>'
-		. '<p style="margin:18px 0 0;font-family:Helvetica,Arial,sans-serif;font-size:12px;color:#9AA6BC">Dream Web Digital LLC · Charlotte, NC</p>'
+		. '<p style="margin:18px 0 0;font-family:Helvetica,Arial,sans-serif;font-size:12px;color:#9AA6BC">Dream Web Digital LLC · Stuart, FL</p>'
 		. '</td></tr></table></body></html>';
 	$headers = array( 'Content-Type: text/html; charset=UTF-8', 'From: Dream Web Digital <' . get_option( 'admin_email' ) . '>', 'Reply-To: Dream Web Digital <' . get_option( 'admin_email' ) . '>' );
 	return wp_mail( $lead['email'], $subject, $html, $headers );

@@ -213,6 +213,22 @@ if _k > -1:
     if _ds > -1:
         _ins = hb[_k + 1:_ae]
         hb = hb[:_ds] + '<div data-dw-reveal="1" style="display:flex;margin-top:clamp(40px,5vw,72px)"><a class="dwr-allwork" href="%HOME%/portfolio/">' + _ins + '</a></div>' + hb[hb.find('</div>', _ae) + 6:]
+# Main hero button: a free quote (most people won't book a call cold).
+hb = re.sub(r'href="#contact"([^>]*)>Schedule Zoom', r'href="%HOME%/quote/"\1>Get a Free Quote', hb, 1)
+# Proof right after the "wow": move the reviews block up to follow the laptop/phone showcase.
+_ri = hb.find('<section id="reviews"'); _re = hb.find('</section>', _ri) + len('</section>')
+_wi = hb.find('<section id="work"'); _we = hb.find('</section>', _wi) + len('</section>')
+if _ri > -1 and _wi > -1 and _ri > _we:
+    _rev = hb[_ri:_re]
+    hb = hb[:_ri] + hb[_re:]
+    hb = hb[:_we] + '\n\n' + _rev + hb[_we:]
+# Speed proof in the hero trust line (this site scores 95+ on Google PageSpeed).
+_ps = '<span class="dwr-ps" style="display:inline-flex;align-items:center;gap:8px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#13A6EE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>95+ Google PageSpeed</span>'
+for _id in ('dw-hero-trust', 'dw-hero-trust-m'):
+    _ti = hb.find('<div id="' + _id + '"')
+    if _ti > -1:
+        _te = hb.find('</div>', _ti)
+        hb = hb[:_te] + _ps + hb[_te:]
 write('home.html', hb)
 
 def interior(name, out):

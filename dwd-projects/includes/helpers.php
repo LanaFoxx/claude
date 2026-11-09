@@ -21,9 +21,20 @@ function dwdp_settings() {
 		'def_scope'      => 'Full custom website design, no premade themes or templates.',
 		'def_responsive' => 'Desktop, tablet, and mobile',
 		'def_aftercare'  => 'Security setup, one-on-one training, and 2 months of post-launch support',
-		'biz_summary'    => 'Dream Web Digital is a one-on-one web design business run by Michael, an experienced designer and developer based in Charlotte, North Carolina who works with clients nationwide. He personally designs, builds and hosts premium custom WordPress websites, gives every project his full attention, offers unlimited revisions and 2 months of aftercare, and is rated 5.0 stars on Google with 100% Job Success on Upwork.',
-		'biz_city'       => 'Charlotte',
-		'biz_areas'      => "Charlotte, NC\nMecklenburg County, NC\nConcord, NC\nGastonia, NC\nHuntersville, NC\nMatthews, NC\nRock Hill, SC",
+		'biz_summary'    => 'Dream Web Digital is a one-on-one web design business run by Michael Tarr, an experienced designer and developer based in Stuart, Florida on the Treasure Coast, who also serves Charlotte, North Carolina and clients nationwide. He personally designs, builds and hosts premium custom WordPress websites, gives every project his full attention, offers unlimited revisions and 2 months of aftercare, and is rated 4.9 stars on Google with 100% Job Success on Upwork.',
+		'biz_city'       => 'Stuart',
+		'biz_areas'      => "Stuart, FL
+Port St. Lucie, FL
+Jensen Beach, FL
+Palm City, FL
+Hobe Sound, FL
+Jupiter, FL
+Fort Pierce, FL
+Vero Beach, FL
+Martin County, FL
+St. Lucie County, FL
+Treasure Coast, FL
+Charlotte, NC",
 		'biz_industries' => "Attorneys and law firms\nDoctors and medical practices\nConstruction companies\nRoofing companies\nRemodeling contractors\nAccounting firms\nFinancial advisors\nMental health practices\nFitness and training brands\nFlight schools\nRetail stores\nVending services\nMedical records services",
 		'biz_services'   => "Custom website design\nWordPress website development\nElementor website design\nWebsite redesign\nSmall business website design\nManaged WordPress hosting\nWebsite maintenance and support\nSEO-ready website builds",
 		'biz_promises'   => "One-on-one: you work directly with Michael, never a large agency, rotating team or overseas outsourcing\nFull time and attention on every project\nThe job gets done exactly as the client asks\nUnlimited revisions\nNo surprise charges: the project is finished as agreed, never paused midway to ask for more money\nCustom design, no templates\nFully responsive on desktop, tablet and mobile\nWordPress security setup and 1-on-1 training\n2 months of aftercare after launch, plus a lifetime workmanship warranty\nLong-term client relationships",

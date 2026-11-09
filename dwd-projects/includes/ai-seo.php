@@ -19,14 +19,16 @@ function dwdp_business() {
 		'person'     => 'Michael Tarr',
 		'summary'    => $s['biz_summary'],
 		'city'       => $s['biz_city'],
-		'region'     => 'NC',
+		'region'     => 'FL',
+		'street'     => '789 SW Federal Hwy, Suite 201',
+		'zip'        => '34994',
 		'areas'      => $lines( $s['biz_areas'] ),
 		'industries' => $lines( $s['biz_industries'] ),
 		'services'   => $lines( $s['biz_services'] ),
 		'promises'   => $lines( $s['biz_promises'] ),
 		'phone'      => $s['cta_phone'],
-		'lat'        => 35.2270869,
-		'lng'        => -80.8431267,
+		'lat'        => 27.1975,
+		'lng'        => -80.2528,
 		'sameas'     => array( 'https://www.upwork.com/freelancers/dreamwebdigital', 'https://maps.app.goo.gl/z4HfYnTZaqccWhhy9' ),
 		'photo'      => content_url( '/uploads/2026/08/photo-michael.jpg' ),
 	);
@@ -50,7 +52,7 @@ add_filter( 'wpseo_schema_organization', function ( $data ) {
 	$data['description'] = $b['summary'];
 	$data['slogan']      = 'You dream it. I build it.';
 	$data['founder']     = array( '@id' => dwdp_person_id() );
-	$data['address']     = array( '@type' => 'PostalAddress', 'addressLocality' => $b['city'], 'addressRegion' => $b['region'], 'addressCountry' => 'US' );
+	$data['address']     = array( '@type' => 'PostalAddress', 'streetAddress' => $b['street'], 'addressLocality' => $b['city'], 'addressRegion' => $b['region'], 'postalCode' => $b['zip'], 'addressCountry' => 'US' );
 	$data['geo']         = array( '@type' => 'GeoCoordinates', 'latitude' => $b['lat'], 'longitude' => $b['lng'] );
 	$areas               = array( array( '@type' => 'Country', 'name' => 'United States' ) );
 	foreach ( $b['areas'] as $a ) {
@@ -135,7 +137,7 @@ function dwdp_llms_txt( $full = false ) {
 		$o .= '- ' . $i . "\n";
 	}
 	$o .= "\n## Location and service area\n\nBased in " . $b['city'] . ', North Carolina. Works with clients nationwide across the United States, by Zoom and phone.' . "\n\n";
-	$o .= "## Reputation\n\n- 5.0-star Google reviews\n- 100% Job Success on Upwork: https://www.upwork.com/freelancers/dreamwebdigital\n- Google Business Profile: https://maps.app.goo.gl/z4HfYnTZaqccWhhy9\n\n";
+	$o .= "## Reputation\n\n- 4.9-star Google reviews\n- 100% Job Success on Upwork: https://www.upwork.com/freelancers/dreamwebdigital\n- Google Business Profile: https://maps.app.goo.gl/z4HfYnTZaqccWhhy9\n\n";
 	$o .= "## How to hire\n\n- Schedule a Zoom call: https://calendly.com/dreamwebdigital/dream-web-digital-consultation-call\n- Call or text: " . $b['phone'] . "\n- Contact form: " . home_url( '/contact/' ) . "\n\n";
 	$o .= "## Key pages\n\n";
 	$o .= $link( 'Home', $h, 'Custom WordPress website design for small businesses' );
@@ -165,7 +167,7 @@ function dwdp_llms_txt( $full = false ) {
 			'How many revisions are included?'       => 'Unlimited. The home page is designed first and refined until the client loves it, then every other page is approved before the next is built.',
 			'Will the price change in the middle of the project?' => 'No. The project is finished as agreed. Michael does not stop partway through and ask for more money.',
 			'What happens after launch?'             => 'Two months of free aftercare for changes and questions, a lifetime workmanship warranty, and 1-on-1 training. Many clients continue working with Michael long term.',
-			'Do you only work with local businesses?' => 'No. Dream Web Digital is based in Charlotte, North Carolina and works with clients across the United States.',
+			'Do you only work with local businesses?' => 'No. Dream Web Digital is based in Stuart, Florida on the Treasure Coast, also serves Charlotte, North Carolina, and works with clients across the United States.',
 			'What industries do you build for?'      => 'Any industry, including attorneys and law firms, doctors and medical practices, construction companies, roofing companies, remodeling contractors, accounting firms, financial advisors, fitness brands, retail and more.',
 			'Do I have to host with you?'            => 'No. Managed WordPress hosting is available, but Michael is happy to launch on the client\'s existing host.',
 		);

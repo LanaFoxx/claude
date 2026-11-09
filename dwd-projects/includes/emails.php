@@ -76,7 +76,7 @@ function dwdp_email_html( $o ) {
 		. ( $rows ? '<tr><td style="padding:0 36px 30px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #E4E9F5;border-radius:10px;overflow:hidden;border-collapse:separate">' . $rows . '</table></td></tr>' : '' )
 		. ( $meta ? '<tr><td style="padding:0 36px 30px;' . $font . ';font-size:13px;line-height:1.7;color:#7A86A0">' . implode( '<br>', $meta ) . '</td></tr>' : '' )
 		. '</table>'
-		. '<p style="margin:18px 0 0;font-family:Helvetica,Arial,sans-serif;font-size:12px;line-height:1.6;color:#9AA6BC">Dream Web Digital LLC · Charlotte, NC · (772) 210-1728<br>' . ( ! empty( $o['footer'] ) ? esc_html( $o['footer'] ) . ' ' : 'Sent by your website, ' ) . '<a href="' . esc_url( home_url( '/' ) ) . '" style="color:#9AA6BC">dreamwebdigital.com</a></p>'
+		. '<p style="margin:18px 0 0;font-family:Helvetica,Arial,sans-serif;font-size:12px;line-height:1.6;color:#9AA6BC">Dream Web Digital LLC · Stuart, FL · (772) 210-1728<br>' . ( ! empty( $o['footer'] ) ? esc_html( $o['footer'] ) . ' ' : 'Sent by your website, ' ) . '<a href="' . esc_url( home_url( '/' ) ) . '" style="color:#9AA6BC">dreamwebdigital.com</a></p>'
 		. '</td></tr></table></body></html>';
 }
 
@@ -206,7 +206,7 @@ foreach ( array(
 	'woocommerce_email_body_background_color' => '#FFFFFF',
 	'woocommerce_email_text_color'       => '#303B58',
 	'woocommerce_email_header_image'     => DWDP_EMAIL_LOGO,
-	'woocommerce_email_footer_text'      => 'Dream Web Digital LLC · Charlotte, NC · (772) 210-1728',
+	'woocommerce_email_footer_text'      => 'Dream Web Digital LLC · Stuart, FL · (772) 210-1728',
 ) as $opt => $val ) {
 	add_filter( 'pre_option_' . $opt, function () use ( $val ) { return $val; } );
 }

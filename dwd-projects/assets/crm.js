@@ -140,7 +140,7 @@
 		return '<span class="dwdc-nm"><span>' + (k ? '<a class="dwdc-clink" href="#cl/' + k.id + '">' + esc(k.name) + '</a>' : '<b class="nm2">' + esc(c.person || '—') + '</b>') + (em ? '<small>' + esc(em) + '</small>' : '') + '</span></span>';
 	}
 	function reload() {
-		return api('').then(function (r) { S.contacts = r.contacts.filter(Boolean); S.tasks = r.tasks.filter(Boolean); S.clients = (r.clients || []).filter(Boolean); S.money = r.money || {}; S.costs = r.costs || {}; S.trends = r.trends || null; S.wins = r.wins || { list: [], undated: 0 }; S.ads = r.ads || null; });
+		return api('').then(function (r) { S.contacts = r.contacts.filter(Boolean); S.tasks = r.tasks.filter(Boolean); S.clients = (r.clients || []).filter(Boolean); S.money = r.money || {}; S.costs = r.costs || {}; S.trends = r.trends || null; S.wins = r.wins || { list: [], undated: 0 }; S.ads = r.ads || null; S.meet = r.meetings || null; });
 	}
 
 	/* ---------- routing ---------- */
@@ -643,8 +643,8 @@
 	function fitProjects() {
 		var wrap = app.querySelector('.dwdc-pl-wrap'); if (!wrap) { return; }
 		var rows = [].slice.call(wrap.querySelectorAll('.dwdc-pl-row')), h = wrap.clientHeight, shown = 0;
-		rows.forEach(function (r) { r.style.display = ''; });
-		rows.forEach(function (r) { if (r.offsetTop + r.offsetHeight <= h + 1) { shown++; } else { r.style.display = 'none'; } });
+		// All rows stay in the list (it scrolls); just count how many fit for the "View all" link.
+		rows.forEach(function (r) { r.style.display = ''; if (r.offsetTop + r.offsetHeight <= h + 1) { shown++; } });
 		var all = app.querySelector('[data-plall]');
 		if (all) { all.closest('footer').style.display = rows.length > shown ? '' : 'none'; }
 	}
@@ -1152,6 +1152,35 @@
 	function statusPill(c) { return pill(LABEL[c.list] || c.list, TONE[c.list] || 'steel'); }
 	function dot(c) { return '<i class="dwdc-sdot t-' + (TONE[c.list] || 'steel') + '"></i>'; }
 
+	/* ---------- Home: today's client meetings (first thing on the page) ---------- */
+	function meetBar() {
+		var M = S.meet, now = Date.now() / 1000;
+		var hi = new Date().getHours(), greet = hi < 12 ? 'Good morning' : hi < 17 ? 'Good afternoon' : 'Good evening';
+		if (!M) {
+			return '<section class="dwdc-meet off"><div class="dwdc-meet-h"><span class="dwdc-meet-ic">' + ic('clock', 20) + '</span><div><b>' + greet + ', Michael.</b><small>Connect your Google Calendar and today’s Zoom and Upwork calls show up right here.</small></div><button type="button" class="dwdc-btn sm" data-meetconnect>Connect calendar</button></div></section>';
+		}
+		// Dates and times in this browser's time zone (the site itself runs on UTC).
+		var lt = new Date(), tdy = lt.getFullYear() + '-' + ('0' + (lt.getMonth() + 1)).slice(-2) + '-' + ('0' + lt.getDate()).slice(-2);
+		M.list.forEach(function (m) { var d = new Date(m.ts * 1000); m.date = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); m.time = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }); });
+		M.today = tdy;
+		var today = M.list.filter(function (m) { return m.date === M.today; }), later = M.list.filter(function (m) { return m.date > M.today; });
+		var left = today.filter(function (m) { return m.te > now; }), next = left[0];
+		var until = function (m) { var d = Math.round((m.ts - now) / 60); return m.ts <= now ? 'Happening now' : d < 60 ? 'in ' + d + ' min' : d < 600 ? 'in ' + Math.floor(d / 60) + ' h' + (d % 60 ? ' ' + d % 60 + ' min' : '') : ''; };
+		var item = function (m) {
+			var past = m.te <= now, live = m.ts <= now && !past, isNext = m === next;
+			return '<div class="dwdc-mt' + (past ? ' past' : '') + (isNext ? ' next' : '') + '"><span class="dwdc-mt-time">' + esc(m.time) + '</span><span class="dwdc-mt-who"><b>' + esc(m.who || m.title) + '</b><small>' + esc([m.kind, m.source && m.source !== m.kind ? 'via ' + m.source : '', m.about].filter(Boolean).join(' · ')) + '</small></span>'
+				+ (past ? '<span class="dwdc-mt-done">Done</span>' : (isNext || live ? '<span class="dwdc-mt-in">' + until(m) + '</span>' : '') + (m.link ? '<a class="dwdc-btn sm' + (isNext || live ? '' : ' ghost') + '" href="' + esc(m.link) + '" target="_blank" rel="noopener">Join</a>' : '')) + '</div>';
+		};
+		var head = today.length
+			? '<b>' + greet + ', Michael. You have ' + today.length + ' meeting' + (today.length === 1 ? '' : 's') + ' today.</b><small>' + (next ? 'Next: ' + esc(next.who || next.title) + ' at ' + esc(next.time) + (until(next) ? ' (' + until(next) + ')' : '') : 'All done for today.') + '</small>'
+			: '<b>' + greet + ', Michael. No meetings today.</b><small>' + (later[0] ? 'Next: ' + esc(later[0].who || later[0].title) + ' on ' + fmt(later[0].date) + ' at ' + esc(later[0].time) : 'Nothing booked in the next two weeks.') + '</small>';
+		var stale = M.via !== 'script';
+		return '<section class="dwdc-meet"><div class="dwdc-meet-h"><span class="dwdc-meet-ic"><strong>' + today.length + '</strong></span><div>' + head + '</div>'
+			+ (stale ? '<button type="button" class="dwdc-btn2 sm" data-meetconnect>Not linked yet: link your calendar</button>' : '') + '</div>'
+			+ (today.length ? '<div class="dwdc-mt-list">' + today.map(item).join('') + '</div>' : '')
+			+ (later.length ? '<p class="dwdc-mt-later">Coming up: ' + later.slice(0, 4).map(function (m) { return '<span>' + esc(new Date(m.date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short' })) + ' ' + esc(m.time) + ' · ' + esc(m.who || m.title) + '</span>'; }).join('') + '</p>' : '')
+			+ '</section>';
+	}
 	/* ---------- Home ---------- */
 	function home() {
 		var types = S.clients.map(function (k) { return clientType(k.id); });
@@ -1216,7 +1245,7 @@
 			+ (td.length ? '<div class="dwdc-todos">' + td.map(function (t) { return todoRow(t); }).join('') + '</div>' : emptyRow('Nothing on the list. Nice.'))
 			+ (doneTasks().length ? '<button class="dwdc-donebtn" data-showdone>' + (S.showDone ? 'Hide' : 'Show') + ' completed <b>' + doneTasks().length + '</b></button>'
 				+ (S.showDone ? '<div class="dwdc-todos donelist">' + doneTasks().slice(0, 25).map(function (t) { return todoRow(t); }).join('') + '</div>' : '') : ''));
-		return reviewBar() + '<div class="dwdc-row3">' + c2 + c3 + c1 + '</div><div class="dwdc-row2c">' + card('cd-plain cd-trends', '<header class="dwdc-dhead"><h2>Patterns &amp; Trends</h2><button class="dwdc-askbtn light" data-askai>' + ic('bolt', 14) + 'Ask AI</button><a href="#money">Money Stats ' + ic('right', 14) + '</a></header>', trendsBox()) + tl + '</div>';
+		return meetBar() + reviewBar() + '<div class="dwdc-row3">' + c2 + c3 + c1 + '</div><div class="dwdc-row2c">' + card('cd-plain cd-trends', '<header class="dwdc-dhead"><h2>Patterns &amp; Trends</h2><button class="dwdc-askbtn light" data-askai>' + ic('bolt', 14) + 'Ask AI</button><a href="#money">Money Stats ' + ic('right', 14) + '</a></header>', trendsBox()) + tl + '</div>';
 	}
 
 	/* ---------- All Clients ---------- */
@@ -1896,6 +1925,13 @@
 				+ (m.script ? '<textarea class="dwdc-adscript" readonly rows="10">' + esc(m.script) + '</textarea><div class="dwdc-farow end"><button type="button" class="dwdc-btn" data-adscopy>Copy script</button></div>' : emptyRow('Loading the script…'))
 				+ '<p class="dwdc-wins-foot">The script runs inside your Google Ads account and only reads spend, clicks, impressions and conversions. It never changes campaigns or billing. Your numbers appear here within the hour.</p></div>';
 		}
+		if (m.type === 'meetconnect') {
+			var msteps = ['Open <b>script.google.com</b> (signed in as mike@dreamwebdigital.com) and click <b>New project</b>. Name it <b>Dream Desk meetings</b>.', 'Delete what’s in the editor and paste the script below (use <b>Copy script</b>), then click <b>Save</b>.', 'In the function menu at the top choose <b>setup</b> and click <b>Run</b>. Allow access to your calendar when Google asks.', 'The log should end with <b>200</b>. That’s it: it updates every 15 minutes from now on.'];
+			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide">' + head('Meetings', 'Connect', 'Google Calendar')
+				+ '<ol class="dwdc-adsteps">' + msteps.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ol>'
+				+ (m.script ? '<textarea class="dwdc-adscript" readonly rows="10">' + esc(m.script) + '</textarea><div class="dwdc-farow end"><button type="button" class="dwdc-btn" data-adscopy>Copy script</button></div>' : emptyRow('Loading the script…'))
+				+ '<p class="dwdc-wins-foot">Calendly and Upwork already put every booked call on your Google Calendar. The script only reads the next two weeks of it and sends the calls with a Zoom, Upwork or Meet link here. It never changes your calendar.</p></div>';
+		}
 		if (m.type === 'connects') {
 			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide">' + head('Upwork', 'Connects', 'spending') + connSpend() + '<div class="dwdc-farow end"><a class="dwdc-btn2" href="#money" data-close-modal>Open in Money Stats</a></div></div>';
 		}
@@ -2274,6 +2310,11 @@
 			api('/ads-script').then(function (x) { if (S.modal && S.modal.type === 'adsconnect') { S.modal.script = x.script; render(); } }).catch(fail);
 			return;
 		}
+		if (t.closest('[data-meetconnect]')) {
+			e.preventDefault(); S.modal = { type: 'meetconnect' }; render();
+			api('/meetings').then(function (x) { if (S.modal && S.modal.type === 'meetconnect') { S.modal.script = x.script; render(); } }).catch(fail);
+			return;
+		}
 		if (t.closest('[data-adsmodal]')) { e.preventDefault(); S.modal = { type: 'ads' }; render(); return; }
 		if (t.closest('[data-adscopy]')) { var ta = app.querySelector('.dwdc-adscript'); if (ta) { ta.select(); (navigator.clipboard ? navigator.clipboard.writeText(ta.value) : Promise.reject()).then(function () { toast('Script copied'); }, function () { document.execCommand('copy'); toast('Script copied'); }); } return; }
 		if (t.closest('[data-connmodal]')) { e.preventDefault(); S.modal = { type: 'connects' }; render(); return; }
@@ -2559,7 +2600,7 @@
 	/* ---------- start ---------- */
 	document.body.classList.add('dwdc-app-on');
 	api('').then(function (r) {
-		S.contacts = r.contacts.filter(Boolean); S.tasks = r.tasks.filter(Boolean); S.clients = (r.clients || []).filter(Boolean); S.money = r.money || {}; S.costs = r.costs || {}; S.trends = r.trends || null; S.wins = r.wins || { list: [], undated: 0 }; S.ads = r.ads || null;
+		S.contacts = r.contacts.filter(Boolean); S.tasks = r.tasks.filter(Boolean); S.clients = (r.clients || []).filter(Boolean); S.money = r.money || {}; S.costs = r.costs || {}; S.trends = r.trends || null; S.wins = r.wins || { list: [], undated: 0 }; S.ads = r.ads || null; S.meet = r.meetings || null;
 		var m = /[?&]contact=(\d+)/.exec(location.search), em = /[?&]email=([^&]+)/.exec(location.search);
 		var who = m ? contact(+m[1]) : em ? S.contacts.find(function (c) { return c.email && c.email.toLowerCase() === decodeURIComponent(em[1]).toLowerCase(); }) : null;
 		if (who) { location.hash = 'client/' + who.id; }
