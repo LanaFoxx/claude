@@ -124,6 +124,13 @@
 	}
 	function received(c) { return c.onboarded || c.last_entry_date || c.created; }
 	function openLeads() { return leadRows().filter(function (c) { var s = stageOf(c); return s !== 'lost' && s !== 'active'; }); }
+	// Lists Mike reorders by dragging: saved ids first in his order, anything new on top.
+	function inOrder(key, list) {
+		var ids = (S.order && S.order[key]) || [], pos = {};
+		ids.forEach(function (id, i) { pos[id] = i; });
+		var fresh = list.filter(function (c) { return !(c.id in pos); }), kept = list.filter(function (c) { return c.id in pos; }).sort(function (a, b) { return pos[a.id] - pos[b.id]; });
+		return fresh.concat(kept);
+	}
 	function owed(list) { return list.reduce(function (s, c) { return s + num(c.balance); }, 0); }
 	function openTasks() { return S.tasks.filter(function (t) { return !t.done; }); }
 	function match(c) {
@@ -140,7 +147,7 @@
 		return '<span class="dwdc-nm"><span>' + (k ? '<a class="dwdc-clink" href="#cl/' + k.id + '">' + esc(k.name) + '</a>' : '<b class="nm2">' + esc(c.person || '—') + '</b>') + (em ? '<small>' + esc(em) + '</small>' : '') + '</span></span>';
 	}
 	function reload() {
-		return api('').then(function (r) { S.contacts = r.contacts.filter(Boolean); S.tasks = r.tasks.filter(Boolean); S.clients = (r.clients || []).filter(Boolean); S.money = r.money || {}; S.costs = r.costs || {}; S.trends = r.trends || null; S.wins = r.wins || { list: [], undated: 0 }; S.ads = r.ads || null; S.meet = r.meetings || null; });
+		return api('').then(function (r) { S.contacts = r.contacts.filter(Boolean); S.tasks = r.tasks.filter(Boolean); S.clients = (r.clients || []).filter(Boolean); S.money = r.money || {}; S.costs = r.costs || {}; S.trends = r.trends || null; S.wins = r.wins || { list: [], undated: 0 }; S.ads = r.ads || null; S.meet = r.meetings || null; S.order = r.order || {}; });
 	}
 
 	/* ---------- routing ---------- */
@@ -1175,6 +1182,7 @@
 		M.today = tdy;
 		var today = M.list.filter(function (m) { return m.date === M.today; }), later = M.list.filter(function (m) { return m.date > M.today; });
 		var left = today.filter(function (m) { return m.te > now; }), next = left[0];
+		if (!left.length) { return ''; } // no meetings today, or they're all done: no box
 		var until = function (m) { var d = Math.round((m.ts - now) / 60); return m.ts <= now ? 'Happening now' : d < 60 ? 'in ' + d + ' min' : d < 600 ? 'in ' + Math.floor(d / 60) + ' h' + (d % 60 ? ' ' + d % 60 + ' min' : '') : ''; };
 		var item = function (m) {
 			var past = m.te <= now, live = m.ts <= now && !past, isNext = m === next;
@@ -1219,12 +1227,12 @@
 				+ '<a class="dwdc-frow" href="#leads"><span>Leads from Google Ads</span><b>' + (LD.month || 0) + ' <small class="dwdc-frow-sub">this month · ' + (LD.lastmonth || 0) + ' last</small></b>' + ic('right', 12) + '</a>'
 				+ '</footer>');
 		})();
-		var plist = active.slice().sort(function (x, y) { return num(y.price) - num(x.price) || (x.name < y.name ? -1 : 1); });
+		var plist = inOrder('active', active.slice().sort(function (x, y) { return num(y.price) - num(x.price) || (x.name < y.name ? -1 : 1); }));
 		var c2 = card('cd-projects cd-plist', chead('brief', 'Projects <span class="dwdc-hcnt">(' + active.length + ')</span>', 'projects/active'),
 			'<div class="dwdc-pl-head"><span>Project · Client</span><span>Price</span><span>Owed</span></div>'
-			+ '<div class="dwdc-pl-wrap"><div class="dwdc-pl">' + (plist.length ? plist.map(function (c) {
+			+ '<div class="dwdc-pl-wrap"><div class="dwdc-pl" data-sort="active">' + (plist.length ? plist.map(function (c) {
 				var k = clientOf(c), ow = num(c.balance);
-				return '<a class="dwdc-pl-row" href="#client/' + c.id + '"><span><b>' + esc(c.name) + '</b><small>' + esc(k ? k.name : (c.person || '')) + '</small></span><span>' + (num(c.price) ? money(c.price) : '—') + '</span><span class="' + (ow ? 'ow' : 'pd') + '">' + (ow ? money(ow) : 'Paid') + '</span></a>';
+				return '<a class="dwdc-pl-row" data-sid="' + c.id + '" href="#client/' + c.id + '"><span><b>' + esc(c.name) + '</b><small>' + esc(k ? k.name : (c.person || '')) + '</small></span><span>' + (num(c.price) ? money(c.price) : '—') + '</span><span class="' + (ow ? 'ow' : 'pd') + '">' + (ow ? money(ow) : 'Paid') + '</span></a>';
 			}).join('') : '<p class="dwdc-mutp">No active projects right now.</p>') + '</div></div>',
 			'<footer class="dwdc-pl-foot"><a class="dwdc-pl-all" href="#projects/active" data-plall>View all ' + active.length + ' ' + ic('right', 12) + '</a></footer>');
 		var c3 = card('cd-money', chead('dollar', 'Money', 'money'),
@@ -1255,15 +1263,15 @@
 			+ (td.length ? '<div class="dwdc-todos">' + td.map(function (t) { return todoRow(t); }).join('') + '</div>' : emptyRow('Nothing on the list. Nice.'))
 			+ (doneTasks().length ? '<button class="dwdc-donebtn" data-showdone>' + (S.showDone ? 'Hide' : 'Show') + ' completed <b>' + doneTasks().length + '</b></button>'
 				+ (S.showDone ? '<div class="dwdc-todos donelist">' + doneTasks().slice(0, 25).map(function (t) { return todoRow(t); }).join('') + '</div>' : '') : ''));
-		var lds = S.contacts.filter(function (c) { return c.list === 'leads'; }).sort(function (a, b) { return (a.followup || '9') < (b.followup || '9') ? -1 : 1; });
+		var lds = inOrder('leads', S.contacts.filter(function (c) { return c.list === 'leads'; }).sort(function (a, b) { return (a.followup || '9') < (b.followup || '9') ? -1 : 1; }));
 		var lb = card('cd-plain cd-leadsb', '<header class="dwdc-dhead"><h2>Leads <span class="dwdc-cnt">' + lds.length + '</span></h2><a href="#leads">View all</a></header>',
-			lds.length ? '<div class="dwdc-hleads">' + lds.map(function (c) {
+			lds.length ? '<div class="dwdc-hleads" data-sort="leads">' + lds.map(function (c) {
 				var due = c.followup && c.followup <= DWDC.today;
-				return '<a class="dwdc-hlead" href="#client/' + c.id + '"><span class="w"><b>' + esc(c.name) + '</b><small>' + esc([c.person && c.person !== c.name ? c.person : '', c.source || c.lead_source].filter(Boolean).join(' · ')) + '</small></span>'
+				return '<a class="dwdc-hlead" data-sid="' + c.id + '" href="#client/' + c.id + '"><span class="w"><b>' + esc(c.name) + '</b><small>' + esc([c.person && c.person !== c.name ? c.person : '', c.source || c.lead_source].filter(Boolean).join(' · ')) + '</small></span>'
 					+ '<span class="v"><b>' + (num(c.price) ? money(c.price) : '—') + '</b><small class="' + (due ? 'deep' : '') + '">' + (c.followup ? (due ? 'Follow up ' + (c.followup < DWDC.today ? fmt(c.followup) : 'today') : 'Follow up ' + fmt(c.followup)) : 'No follow-up') + '</small></span></a>';
 			}).join('') + '</div>' : emptyRow('No open leads.'),
 			lds.length ? '<footer class="dwdc-totals one"><div><small>Estimated value</small><strong class="deep">' + money(lds.reduce(function (a, c) { return a + num(c.price); }, 0)) + '</strong></div></footer>' : '');
-		return meetBar() + reviewBar() + '<div class="dwdc-row3">' + c2 + c3 + c1 + '</div><div class="dwdc-row2c">' + card('cd-plain cd-trends', '<header class="dwdc-dhead"><h2>Patterns &amp; Trends</h2><button class="dwdc-askbtn light" data-askai>' + ic('bolt', 14) + 'Ask AI</button><a href="#money">Money Stats ' + ic('right', 14) + '</a></header>', trendsBox()) + tl + lb + '</div>';
+		return meetBar() + reviewBar() + '<div class="dwdc-row3">' + c2 + c3 + c1 + '</div><div class="dwdc-row2c">' + lb + card('cd-plain cd-trends', '<header class="dwdc-dhead"><h2>Patterns &amp; Trends</h2><button class="dwdc-askbtn light" data-askai>' + ic('bolt', 14) + 'Ask AI</button><a href="#money">Money Stats ' + ic('right', 14) + '</a></header>', trendsBox()) + tl + '</div>';
 	}
 
 	/* ---------- All Clients ---------- */
@@ -2162,6 +2170,55 @@
 	function focusIn(sel) { setTimeout(function () { var x = app.querySelector('.dwdc-modal ' + sel); if (x) { x.focus(); } }, 0); }
 
 	/* ---------- events ---------- */
+	/* ---------- drag to reorder (home Leads + Projects): mouse drag, or press-and-hold on touch ---------- */
+	(function () {
+		var D = null, eatClick = false;
+		function pt(e) { var t = e.touches ? e.touches[0] : e; return { x: t.clientX, y: t.clientY }; }
+		function begin(e) {
+			var it = e.target.closest('[data-sort] [data-sid]');
+			if (!it || (e.button !== undefined && e.button !== 0)) { return; }
+			var p = pt(e);
+			D = { it: it, list: it.closest('[data-sort]'), x: p.x, y: p.y, on: false, touch: !!e.touches };
+			if (D.touch) { D.timer = setTimeout(function () { if (D) { start(); if (navigator.vibrate) { navigator.vibrate(15); } } }, 320); }
+		}
+		function start() { D.on = true; D.it.classList.add('dwdc-dragging'); D.list.classList.add('dwdc-sorting'); }
+		function move(e) {
+			if (!D) { return; }
+			var p = pt(e);
+			if (!D.on) {
+				if (D.touch) { if (Math.abs(p.y - D.y) > 8 || Math.abs(p.x - D.x) > 8) { clearTimeout(D.timer); D = null; } return; }
+				if (Math.abs(p.y - D.y) < 6) { return; }
+				start();
+			}
+			e.preventDefault();
+			var sib = [].slice.call(D.list.querySelectorAll('[data-sid]')).filter(function (x) { return x !== D.it; });
+			var before = null;
+			for (var i = 0; i < sib.length; i++) { var r = sib[i].getBoundingClientRect(); if (p.y < r.top + r.height / 2) { before = sib[i]; break; } }
+			if (before) { if (D.it.nextElementSibling !== before) { D.list.insertBefore(D.it, before); } } else if (sib.length && D.list.lastElementChild !== D.it) { D.list.appendChild(D.it); }
+			var lr = D.list.getBoundingClientRect(); // nudge a scrolling list along
+			if (p.y > lr.bottom - 24) { D.list.scrollTop += 10; } else if (p.y < lr.top + 24) { D.list.scrollTop -= 10; }
+		}
+		function end() {
+			if (!D) { return; }
+			clearTimeout(D.timer);
+			if (D.on) {
+				var key = D.list.getAttribute('data-sort'), ids = [].map.call(D.list.querySelectorAll('[data-sid]'), function (x) { return +x.getAttribute('data-sid'); });
+				D.it.classList.remove('dwdc-dragging'); D.list.classList.remove('dwdc-sorting');
+				S.order = S.order || {}; S.order[key] = ids; eatClick = true; setTimeout(function () { eatClick = false; }, 400);
+				api('/home-order', 'POST', { key: key, ids: ids }).then(function () { toast('Order saved'); }).catch(fail);
+			}
+			D = null;
+		}
+		app.addEventListener('mousedown', function (e) { if (e.target.closest('[data-sort] [data-sid]')) { e.preventDefault(); begin(e); } });
+		document.addEventListener('mousemove', move);
+		document.addEventListener('mouseup', end);
+		app.addEventListener('touchstart', begin, { passive: true });
+		document.addEventListener('touchmove', function (e) { if (D && D.on) { move(e); } else if (D) { move(e); } }, { passive: false });
+		document.addEventListener('touchend', end);
+		document.addEventListener('touchcancel', end);
+		app.addEventListener('contextmenu', function (e) { if (D && D.touch) { e.preventDefault(); } });
+		app.addEventListener('click', function (e) { if (eatClick && e.target.closest('[data-sort]')) { e.preventDefault(); e.stopPropagation(); eatClick = false; } }, true);
+	})();
 	app.addEventListener('click', function (e) {
 		var t = e.target, el;
 		if (t.closest('[data-menu]')) { document.body.classList.toggle('dwdc-menu-open'); return; }
@@ -2657,7 +2714,7 @@
 	/* ---------- start ---------- */
 	document.body.classList.add('dwdc-app-on');
 	api('').then(function (r) {
-		S.contacts = r.contacts.filter(Boolean); S.tasks = r.tasks.filter(Boolean); S.clients = (r.clients || []).filter(Boolean); S.money = r.money || {}; S.costs = r.costs || {}; S.trends = r.trends || null; S.wins = r.wins || { list: [], undated: 0 }; S.ads = r.ads || null; S.meet = r.meetings || null;
+		S.contacts = r.contacts.filter(Boolean); S.tasks = r.tasks.filter(Boolean); S.clients = (r.clients || []).filter(Boolean); S.money = r.money || {}; S.costs = r.costs || {}; S.trends = r.trends || null; S.wins = r.wins || { list: [], undated: 0 }; S.ads = r.ads || null; S.meet = r.meetings || null; S.order = r.order || {};
 		var m = /[?&]contact=(\d+)/.exec(location.search), em = /[?&]email=([^&]+)/.exec(location.search);
 		var who = m ? contact(+m[1]) : em ? S.contacts.find(function (c) { return c.email && c.email.toLowerCase() === decodeURIComponent(em[1]).toLowerCase(); }) : null;
 		if (who) { location.hash = 'client/' + who.id; }

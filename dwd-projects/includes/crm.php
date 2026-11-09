@@ -304,6 +304,38 @@ function dwdc_add_task( $text, $contact = 0, $due = '' ) {
 /* ---------------------------------------------------------------- forms → contacts */
 
 /**
+ * The one open project (active, on hold, limbo) or lead whose project name matches the business,
+ * or whose person / client matches the name. 0 when none or more than one match.
+ */
+function dwdc_find_open_project( $business, $person ) {
+	$norm = function ( $s ) { return preg_replace( '/[^a-z0-9]/', '', strtolower( html_entity_decode( (string) $s, ENT_QUOTES ) ) ); };
+	$b    = $norm( $business );
+	$n    = $norm( $person );
+	if ( strlen( $b ) < 4 && strlen( $n ) < 4 ) {
+		return 0;
+	}
+	$by_biz = array();
+	$by_per = array();
+	foreach ( get_posts( array( 'post_type' => DWDC_CONTACT, 'post_status' => 'private', 'posts_per_page' => -1, 'fields' => 'ids', 'meta_query' => array( array( 'key' => '_dwdc_list', 'value' => array( 'active', 'hold', 'limbo', 'leads' ), 'compare' => 'IN' ) ) ) ) as $pid ) { // phpcs:ignore
+		if ( strlen( $b ) >= 4 && $norm( get_the_title( $pid ) ) === $b ) {
+			$by_biz[] = $pid;
+		}
+		$cid = (int) get_post_meta( $pid, '_dwdc_client', true );
+		if ( strlen( $n ) >= 4 && ( $norm( get_post_meta( $pid, '_dwdc_person', true ) ) === $n || ( $cid && $norm( get_the_title( $cid ) ) === $n ) ) ) {
+			$by_per[] = $pid;
+		}
+	}
+	if ( 1 === count( $by_biz ) ) {
+		return (int) $by_biz[0];
+	}
+	$both = array_values( array_intersect( $by_biz, $by_per ) );
+	if ( 1 === count( $both ) ) {
+		return (int) $both[0];
+	}
+	return ! $by_biz && 1 === count( $by_per ) ? (int) $by_per[0] : 0;
+}
+
+/**
  * File a form entry on the matching contact (created if new).
  * $fields: list of array( 'id', 'label', 'value' ).
  */
@@ -335,8 +367,14 @@ function dwdc_file_entry( $form, $fields, $date = '', $source = 'Website form', 
 	$person     = $get( array( 'full_name', 'name' ) );
 	$business   = $get( array( 'company', 'business_name', 'business' ) );
 	$client     = 0;
-	// Onboarding from someone whose earlier project is already under way or finished = a new project for the same client.
-	if ( $onboarding && $id && ! in_array( get_post_meta( $id, '_dwdc_list', true ), array( 'leads', 'archive', 'onboarding' ), true ) ) {
+	// No email match: a project added by hand (e.g. from Upwork) often has no email yet. Match an open
+	// project or lead by business name or the person's name, so the form lands on it instead of a duplicate lead.
+	if ( ! $id && $onboarding ) {
+		$id = dwdc_find_open_project( $business, $person );
+	}
+	// Onboarding from someone whose earlier project is finished = a new project for the same client.
+	// (An active / on-hold / limbo project is the one they're onboarding for, so it's filed there.)
+	if ( $onboarding && $id && 'complete' === get_post_meta( $id, '_dwdc_list', true ) ) {
 		$client = (int) get_post_meta( $id, '_dwdc_client', true );
 		$id     = 0;
 	}
@@ -381,7 +419,7 @@ function dwdc_file_entry( $form, $fields, $date = '', $source = 'Website form', 
 		} else {
 			unset( $data['name'] );
 		}
-		if ( $onboarding ) {
+		if ( $onboarding && in_array( get_post_meta( $id, '_dwdc_list', true ), array( 'leads', 'archive', 'onboarding' ), true ) ) {
 			$data['stage'] = 'onboarding';
 			if ( in_array( get_post_meta( $id, '_dwdc_list', true ), array( 'archive', 'onboarding' ), true ) ) {
 				$data['list'] = 'leads';
@@ -648,7 +686,7 @@ add_action( 'rest_api_init', function () {
 		$contacts = array_map( 'dwdc_contact', get_posts( array( 'post_type' => DWDC_CONTACT, 'post_status' => 'private', 'posts_per_page' => -1, 'orderby' => 'modified', 'order' => 'DESC' ) ) );
 		$tasks    = array_map( 'dwdc_task', get_posts( array( 'post_type' => DWDC_TASK, 'post_status' => 'private', 'posts_per_page' => -1, 'orderby' => array( 'menu_order' => 'ASC', 'date' => 'DESC' ) ) ) );
 		$clients  = array_map( 'dwdc_client', get_posts( array( 'post_type' => DWDC_CLIENT, 'post_status' => 'private', 'posts_per_page' => -1, 'orderby' => 'title', 'order' => 'ASC' ) ) );
-		return array( 'lists' => dwdc_lists(), 'contacts' => $contacts, 'tasks' => $tasks, 'clients' => $clients, 'money' => dwdc_money_by_year(), 'costs' => dwdc_costs_by_year(), 'trends' => function_exists( 'dwdt_get' ) ? dwdt_get() : null, 'wins' => function_exists( 'dwdc_wins' ) ? dwdc_wins() : null, 'ads' => function_exists( 'dwdads_summary' ) ? dwdads_summary() : null, 'meetings' => function_exists( 'dwdmt_summary' ) ? dwdmt_summary() : null );
+		return array( 'lists' => dwdc_lists(), 'contacts' => $contacts, 'tasks' => $tasks, 'clients' => $clients, 'money' => dwdc_money_by_year(), 'costs' => dwdc_costs_by_year(), 'trends' => function_exists( 'dwdt_get' ) ? dwdt_get() : null, 'wins' => function_exists( 'dwdc_wins' ) ? dwdc_wins() : null, 'ads' => function_exists( 'dwdads_summary' ) ? dwdads_summary() : null, 'meetings' => function_exists( 'dwdmt_summary' ) ? dwdmt_summary() : null, 'order' => (object) get_option( 'dwdc_home_order', array() ) );
 	} ) );
 
 	// Upwork costs (Connects and membership), uploaded from the transaction history.
@@ -1098,6 +1136,17 @@ add_action( 'rest_api_init', function () {
 		} ),
 	) );
 
+	// Home page lists (Leads, active Projects) in the order Mike dragged them into.
+	register_rest_route( $ns, '/crm/home-order', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
+		$key = (string) $r->get_param( 'key' );
+		if ( ! in_array( $key, array( 'leads', 'active' ), true ) ) {
+			return new WP_Error( 'dwdc_key', 'Unknown list.', array( 'status' => 400 ) );
+		}
+		$all         = (array) get_option( 'dwdc_home_order', array() );
+		$all[ $key ] = array_values( array_filter( array_map( 'absint', (array) $r->get_param( 'ids' ) ) ) );
+		update_option( 'dwdc_home_order', $all, false );
+		return array( 'ok' => true );
+	} ) );
 	register_rest_route( $ns, '/crm/task-order', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
 		foreach ( array_map( 'absint', (array) $r->get_param( 'ids' ) ) as $i => $id ) {
 			wp_update_post( array( 'ID' => $id, 'menu_order' => $i ) );

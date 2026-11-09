@@ -1757,7 +1757,7 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 .dwdc-final { display: inline-block; margin-left: 6px; padding: 2px 8px; border-radius: 999px; background: #E6F6EC; color: #1C7C45; font-style: normal; font-size: 11px; font-weight: 700; letter-spacing: .02em; vertical-align: 1px; }
 /* Home: bottom row = Patterns & Trends · To-Do · Leads */
 @media (min-width: 1500px) { .dwdc .dwdc-row2c { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-@media (min-width: 1100px) and (max-width: 1499px) { .dwdc .dwdc-row2c { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: auto 1fr; } .dwdc .dwdc-row2c > .cd-trends { grid-column: 1; grid-row: 1; } .dwdc .dwdc-row2c > .cd-leadsb { grid-column: 1; grid-row: 2; } .dwdc .dwdc-row2c > .cd-todo { grid-column: 2; grid-row: 1 / span 2; } }
+@media (min-width: 1100px) and (max-width: 1499px) { .dwdc .dwdc-row2c { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: auto 1fr; } .dwdc .dwdc-row2c > .cd-leadsb { grid-column: 1; grid-row: 1; } .dwdc .dwdc-row2c > .cd-trends { grid-column: 1; grid-row: 2; } .dwdc .dwdc-row2c > .cd-todo { grid-column: 2; grid-row: 1 / span 2; } }
 @media (max-width: 768px) { .dwdc .dwdc-row2c > .cd-leadsb { order: 3; } }
 .dwdc-hleads { max-height: 520px; overflow-y: auto; }
 .dwdc .dwdc-hlead { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--div); color: var(--navy) !important; text-decoration: none; }
@@ -1772,3 +1772,8 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 .dwdc .cd-leadsb { min-width: 0; max-width: 100%; }
 .dwdc .dwdc-hlead .w, .dwdc .dwdc-hlead .v { min-width: 0; }
 .dwdc .dwdc-hlead .v { max-width: 45%; }
+/* Drag to reorder (home Leads + Projects) */
+.dwdc [data-sort] [data-sid] { cursor: grab; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+.dwdc [data-sort].dwdc-sorting [data-sid] { cursor: grabbing; }
+.dwdc [data-sort] .dwdc-dragging { background: #EEF6FD !important; box-shadow: 0 6px 18px -8px rgba(11,32,61,.35); border-radius: 8px; position: relative; z-index: 2; }
+.dwdc .dwdc-hlead.dwdc-dragging { padding-left: 8px; padding-right: 8px; }
