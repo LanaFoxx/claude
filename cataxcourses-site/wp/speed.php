@@ -118,9 +118,68 @@ add_action( 'template_redirect', function () {
 		// visitor's first interaction like the other tracking scripts. Its chain of ~10 scripts otherwise lands before
 		// the first paint on cached pages and PageSpeed counts all of it as blocking.
 		$html = str_replace( '<script id="mcjs">', '<script id="mcjs" type="ctc/delay">', $html );
+		// Page scripts after the first paint (visitors only; never cart, checkout or order pages; ?ctc_nodefer=1 turns it off).
+		if ( ! is_user_logged_in() && ! ctc_sp_no_delay() && ! isset( $_GET['ctc_nodefer'] ) ) $html = ctc_sp_defer_body_scripts( $html );
 		return $html;
 	} );
 }, 1 );
+
+/**
+ * The scripts at the end of the page (jQuery plugins, WooCommerce, Stripe buttons, Elementor widgets) used to run before
+ * the browser drew anything, because on a cached page they all arrive at once. Here they keep their exact order but run
+ * right after the first paint: each <script> in <body> becomes type="ctc/defer" and a small runner replays them in order.
+ * DOMContentLoaded / load listeners added by those scripts after the events already fired are still called.
+ */
+function ctc_sp_defer_body_scripts( $html ) {
+	$bp = stripos( $html, '<body' );
+	$ep = strripos( $html, '</body>' );
+	if ( false === $bp || false === $ep ) return $html;
+	$body = substr( $html, $bp, $ep - $bp );
+	$n = 0;
+	$body = preg_replace_callback( '#<script\b([^>]*)>#i', function ( $m ) use ( &$n ) {
+		$attrs = $m[1];
+		if ( preg_match( '#\bid=[\'"]ctc-(?:speed|defer-run)[\'"]#i', $attrs ) ) return $m[0];
+		if ( preg_match( '#(?<![\w-])type=[\'"]([^\'"]*)[\'"]#i', $attrs, $t ) && ! in_array( strtolower( $t[1] ), array( 'text/javascript', 'application/javascript', '' ), true ) ) return $m[0];
+		if ( preg_match( '#(?<![\w-])(?:async|nomodule)(?=[\s>=/]|$)#i', $attrs ) ) return $m[0];
+		$attrs = preg_replace( '#\s*(?<![\w-])type=[\'"][^\'"]*[\'"]#i', '', $attrs );
+		$attrs = preg_replace( '#\s*(?<![\w-])defer(?:=[\'"][^\'"]*[\'"])?(?=[\s>/]|$)#i', '', $attrs );
+		$attrs = preg_replace( '#(?<![\w-])src=#i', 'data-ctc-defer=', $attrs );
+		$n++;
+		return '<script type="ctc/defer"' . $attrs . '>';
+	}, $body );
+	if ( ! $n ) return $html;
+	$runner = <<<'JS'
+<script id="ctc-defer-run">
+(function () {
+  var d = document, w = window, loaded = d.readyState === 'complete', dAdd = d.addEventListener, wAdd = w.addEventListener;
+  wAdd.call(w, 'load', function () { loaded = true; });
+  function late(type, fn, target) {
+    if (type === 'DOMContentLoaded' && d.readyState !== 'loading') { setTimeout(function () { fn.call(target, new Event(type)); }); return true; }
+    if (type === 'load' && target === w && loaded) { setTimeout(function () { fn.call(target, new Event(type)); }); return true; }
+    return false;
+  }
+  function start() {
+    d.addEventListener = function (t, f, o) { if (typeof f === 'function' && late(t, f, d)) return; return dAdd.call(this, t, f, o); };
+    w.addEventListener = function (t, f, o) { if (typeof f === 'function' && late(t, f, w)) return; return wAdd.call(this, t, f, o); };
+    var list = Array.prototype.slice.call(d.querySelectorAll('script[type="ctc/defer"]'));
+    (function next() {
+      var old = list.shift();
+      if (!old) { setTimeout(function () { d.addEventListener = dAdd; w.addEventListener = wAdd; w.ctcDeferredDone = true; d.dispatchEvent(new Event('ctc-deferred')); }, 50); return; }
+      var s = d.createElement('script');
+      for (var i = 0; i < old.attributes.length; i++) { var a = old.attributes[i]; if (a.name !== 'type' && a.name !== 'data-ctc-defer') s.setAttribute(a.name, a.value); }
+      var src = old.getAttribute('data-ctc-defer');
+      if (src) { s.src = src; s.async = false; s.onload = s.onerror = next; old.parentNode.replaceChild(s, old); }
+      else { s.text = old.text; old.parentNode.replaceChild(s, old); next(); }
+    })();
+  }
+  // Let the browser draw the page once, then run the scripts.
+  if (w.requestAnimationFrame) requestAnimationFrame(function () { setTimeout(start, 0); }); else setTimeout(start, 0);
+})();
+</script>
+
+JS;
+	return substr( $html, 0, $bp ) . $body . $runner . substr( $html, $ep );
+}
 
 function ctc_sp_inline_css( $html ) {
 	$hp = strpos( $html, '</head>' );
@@ -201,7 +260,9 @@ add_action( 'wp_footer', function () {
 (function () {
   // Hero video: start it once the page has loaded.
   function videos() { document.querySelectorAll('video[data-ctc-src]').forEach(function (v) { if (!v.getClientRects().length) return; /* hidden at this screen size (phone hero shows a still image) */ v.src = v.getAttribute('data-ctc-src'); v.removeAttribute('data-ctc-src'); v.preload = 'auto'; var p = v.play && v.play(); if (p && p.catch) p.catch(function () {}); }); }
-  if (document.readyState === 'complete') setTimeout(videos, 300); else window.addEventListener('load', function () { setTimeout(videos, 300); });
+  // Pages whose scripts run after the first paint: start the video a second after they finish (the poster shows meanwhile).
+  if (document.querySelector('script[type="ctc/defer"]')) document.addEventListener('ctc-deferred', function () { setTimeout(videos, 1000); });
+  else if (document.readyState === 'complete') setTimeout(videos, 300); else window.addEventListener('load', function () { setTimeout(videos, 300); });
   // Chat and tracking: run the delayed scripts in page order on the first interaction.
   var DELAY = <?php echo $delay; ?>, done = false;
   function run() {
