@@ -1386,8 +1386,9 @@
 	// Records brought in from ClickUp, Upwork, Stripe or PayPal: their created/updated dates are just the import day.
 	function imported(c) { return /ClickUp import|^Upwork$|^Stripe$|^PayPal$/.test(c.source || ''); }
 	function isOnboard(c) { return !!(c.onboarded || c.stage === 'onboarding'); }
-	function leadList() { return S.contacts.filter(function (c) { return c.list === 'leads' && !isOnboard(c); }).sort(function (a, b) { return received(a) < received(b) ? 1 : -1; }); }
-	function onboardList() { return S.contacts.filter(function (c) { return isOnboard(c) && c.list !== 'archive'; }).sort(function (a, b) { return received(a) < received(b) ? 1 : -1; }); }
+	function leadList() { return S.contacts.filter(function (c) { return c.list === 'leads' && !c.onboarded; }).sort(function (a, b) { return received(a) < received(b) ? 1 : -1; }); }
+	// Only people who actually sent in the onboarding form (not just projects at the onboarding stage).
+	function onboardList() { return S.contacts.filter(function (c) { return !!c.onboarded && c.list !== 'archive'; }).sort(function (a, b) { return received(a) < received(b) ? 1 : -1; }); }
 	var LSTAGES = [['new', 'New'], ['contacted', 'Contacted'], ['active', 'Won → Active'], ['lost', 'Lost']];
 	function leadsList() {
 		var rows = leadList().filter(match);
