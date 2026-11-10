@@ -1789,3 +1789,56 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 .dwdc-pendtag.paid { background: #E6F6EC; color: #1C7C45; }
 .dwdc .dwdc-owacts .dwdc-btn2.on-pending { background: #FFF4E0; border-color: #F0C77E; color: #A3620A; }
 .dwdc .dwdc-owacts .dwdc-btn2.on-paid { background: #E6F6EC; border-color: #8FD3A8; color: #1C7C45; }
+/* Personal home: combined bank balance */
+.dwdc a.dwdc-pbal { display: flex; align-items: center; justify-content: space-between; gap: 18px; flex-wrap: wrap; margin: 0 0 22px; padding: 20px 24px; border-radius: 16px; background: linear-gradient(135deg, #0B203D, #16365F); color: #fff !important; text-decoration: none; box-shadow: 0 10px 28px -18px rgba(11,32,61,.7); }
+.dwdc-pbal small { display: block; font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.72); }
+.dwdc-pbal strong { display: block; font-size: 34px; font-weight: 800; line-height: 1.15; margin: 4px 0 2px; color: #fff; }
+.dwdc-pbal span { font-size: 12.5px; color: rgba(255,255,255,.75); }
+.dwdc-pbal ul { list-style: none; margin: 0; padding: 0; display: flex; gap: 12px; flex-wrap: wrap; }
+.dwdc-pbal li { padding: 10px 14px; border-radius: 12px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12); min-width: 150px; }
+.dwdc-pbal li small { letter-spacing: .04em; }
+.dwdc-pbal li b { display: block; font-size: 18px; font-weight: 700; margin-top: 2px; color: #fff; }
+.dwdc a.dwdc-pbal:hover { box-shadow: 0 14px 32px -16px rgba(11,32,61,.85); }
+@media (max-width: 600px) { .dwdc a.dwdc-pbal { padding: 18px; } .dwdc-pbal strong { font-size: 30px; } .dwdc-pbal ul { width: 100%; } .dwdc-pbal li { flex: 1; min-width: 0; } }
+/* Calendar: empty-state lines get the same side padding as the rest of the panel */
+.dwdc .dwdc-c2-empty { padding: 16px 22px !important; margin: 0 !important; }
+
+/* Personal home: one long To-Do list on the left, everything else on the right */
+.dwdc-phome { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 22px; align-items: start; margin-bottom: 22px; }
+.dwdc-phl { position: sticky; top: 46px; }
+.dwdc-phr { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+.dwdc-phr .dwdc-pbal { margin: 0 !important; }
+.dwdc .cd-ptodo1 { display: flex; flex-direction: column; height: calc(100vh - 140px); min-height: 560px; }
+.dwdc .cd-ptodo1 .dwdc-dhead .dwdc-addtask { margin-left: auto; }
+.dwdc .cd-ptodo1 .dwdc-dbody { display: flex; flex-direction: column; min-height: 0; flex: 1; padding: 0 !important; }
+.dwdc-ptl { flex: 1; min-height: 0; overflow-y: auto; padding: 0 20px 18px; }
+.dwdc-ptl-h { position: sticky; top: 0; z-index: 1; margin: 0; padding: 14px 0 8px; background: #fff; font-size: 11.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--navy); }
+.dwdc-ptl-h b { color: var(--mut); font-weight: 700; margin-left: 4px; }
+.dwdc-ptl-h.late { color: #D94A2B; }
+.dwdc-ptagf { display: flex; flex-wrap: wrap; gap: 6px; padding: 14px 20px 10px; border-bottom: 1px solid var(--div); }
+.dwdc-ptagf button { border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 5px 11px; font: inherit; font-size: 12.5px; font-weight: 600; color: var(--navy); cursor: pointer; }
+.dwdc-ptagf button b { font-weight: 700; color: var(--mut); margin-left: 2px; }
+.dwdc-ptagf button.on { background: var(--navy); border-color: var(--navy); color: #fff; }
+.dwdc-ptagf button.on b { color: rgba(255,255,255,.75); }
+.dwdc-ptag { display: inline-block; margin-left: 8px; padding: 1px 8px; border-radius: 999px; font-style: normal; font-size: 10.5px; font-weight: 700; letter-spacing: .02em; vertical-align: 1px; background: #EEF2F7; color: #44546A; }
+.t-urgent.dwdc-ptag, .dwdc-tagpick .t-urgent.on, .dwdc-ptagf .t-urgent.on { background: #FDE7E2; color: #C2381B; border-color: #F3B9AB; }
+.t-important.dwdc-ptag, .dwdc-tagpick .t-important.on, .dwdc-ptagf .t-important.on { background: #FFF1DC; color: #A3620A; border-color: #F0C77E; }
+.t-errand.dwdc-ptag, .dwdc-tagpick .t-errand.on, .dwdc-ptagf .t-errand.on { background: #E5F1FC; color: #1667A8; border-color: #A9CFF0; }
+.t-birthday.dwdc-ptag, .dwdc-tagpick .t-birthday.on, .dwdc-ptagf .t-birthday.on { background: #F6E8FB; color: #8A3BA8; border-color: #D9B4E8; }
+.t-home.dwdc-ptag, .dwdc-tagpick .t-home.on, .dwdc-ptagf .t-home.on { background: #E6F6EC; color: #1C7C45; border-color: #9FD8B4; }
+.t-work.dwdc-ptag, .dwdc-tagpick .t-work.on, .dwdc-ptagf .t-work.on { background: #E8ECF7; color: #2F4A8A; border-color: #B5C2E3; }
+.t-health.dwdc-ptag, .dwdc-tagpick .t-health.on, .dwdc-ptagf .t-health.on { background: #E3F6F5; color: #127A73; border-color: #A3DCD8; }
+.t-bills.dwdc-ptag, .dwdc-tagpick .t-bills.on, .dwdc-ptagf .t-bills.on { background: #F1F1F1; color: #444; border-color: #CFCFCF; }
+.dwdc-tagpick > span { display: block; font-size: 12px; color: var(--sec); margin-bottom: 6px; }
+.dwdc-tagpick > div { display: flex; flex-wrap: wrap; gap: 6px; }
+.dwdc-tagpick button { border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 6px 12px; font: inherit; font-size: 13px; font-weight: 600; color: var(--navy); cursor: pointer; }
+@media (max-width: 1000px) { .dwdc-phome { grid-template-columns: 1fr; } .dwdc-phl { position: static; } .dwdc .cd-ptodo1 { height: 70vh; min-height: 420px; } }
+/* Personal home: greeting spacing; calendar grid only (the Calendar page keeps its day panel) */
+.dwdc .dwdc-pgreet { margin-bottom: 20px !important; }
+.dwdc-phcal .dwdc-c2 { grid-template-columns: minmax(0, 1fr) !important; }
+.dwdc-phcal .dwdc-c2-side, .dwdc-phcal .dwdc-c2-day, .dwdc-phcal .dwdc-c2-up { display: none !important; }
+.dwdc-phcal .dwdc-c2-d { cursor: pointer; }
+.dwdc .dwdc-phome { grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr); }
+@media (max-width: 1000px) { .dwdc .dwdc-phome { grid-template-columns: 1fr; } }
+.dwdc-phl, .dwdc .cd-ptodo1 { min-width: 0; max-width: 100%; }
+@media (max-width: 600px) { .dwdc .cd-ptodo1 .dwdc-dhead { flex-wrap: wrap; gap: 10px; } .dwdc .cd-ptodo1 .dwdc-dhead .dwdc-addtask { padding: 8px 12px; } .dwdc .cd-ptodo1 .dwdc-dhead h2 { font-size: 16px; } }

@@ -208,12 +208,12 @@ add_action( 'rest_api_init', function () {
 
 /* ---------------------------------------------------------------- Account balances
  * /accounts/get returns each account's balance as of Plaid's last update (no extra Balance charge).
- * Refreshed at most every 30 minutes when the Personal finance page loads, keyed by the account's last 4 digits.
+ * Checked once a day at 5 AM Eastern (and the first time, if nothing is saved yet), keyed by the account's last 4 digits.
  */
 function dwdpl_balances( $force = false ) {
 	$saved = get_option( 'dwdpl_balances', array() );
 	$saved = is_array( $saved ) ? $saved : array();
-	if ( ! dwdpl_ready() || ( ! $force && ! empty( $saved['at'] ) && time() - (int) $saved['ts'] < 30 * MINUTE_IN_SECONDS ) ) {
+	if ( ! dwdpl_ready() || ( ! $force && ! empty( $saved['at'] ) ) ) { // checked once a day (5 AM Eastern), not on page load
 		return $saved;
 	}
 	$accts = array();
@@ -242,3 +242,24 @@ function dwdpl_balances( $force = false ) {
 	update_option( 'dwdpl_balances', $saved, false );
 	return $saved;
 }
+
+
+/* Daily balance check at 5:00 AM Eastern. A single event that re-schedules itself, so it stays at 5 AM through daylight saving changes. */
+function dwdpl_next_5am() {
+	$tz  = new DateTimeZone( 'America/New_York' );
+	$now = new DateTime( 'now', $tz );
+	$at  = new DateTime( 'today 05:00', $tz );
+	if ( $at <= $now ) {
+		$at->modify( '+1 day' );
+	}
+	return $at->getTimestamp();
+}
+add_action( 'dwdpl_balance_check', function () {
+	dwdpl_balances( true );
+	wp_schedule_single_event( dwdpl_next_5am(), 'dwdpl_balance_check' );
+} );
+add_action( 'init', function () {
+	if ( ! wp_next_scheduled( 'dwdpl_balance_check' ) ) {
+		wp_schedule_single_event( dwdpl_next_5am(), 'dwdpl_balance_check' );
+	}
+} );

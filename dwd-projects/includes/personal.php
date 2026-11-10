@@ -33,6 +33,7 @@ function dwdpe_clean( $kind, $x, $old = array() ) {
 			'gevent'  => $txt( $x['gevent'] ?? '', 200 ),
 			'source'  => $txt( $x['source'] ?? '', 40 ),
 			'time'    => $txt( $x['time'] ?? '', 40 ),
+			'tag'     => in_array( (string) ( $x['tag'] ?? '' ), array( 'urgent', 'important', 'errand', 'birthday', 'home', 'work', 'health', 'bills' ), true ) ? (string) $x['tag'] : '',
 			'updated' => gmdate( 'c' ),
 			'dirty'   => array_key_exists( 'dirty', (array) $x ) ? ! empty( $x['dirty'] ) : true,
 		);

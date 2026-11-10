@@ -198,6 +198,8 @@
 	// Google sync health: connected, or stopped (no sync for 2+ hours).
 	function gStale(GL) { if (!GL || !GL.at) { return false; } var t = new Date(GL.at.replace(' ', 'T') + 'Z').getTime(); return Date.now() - t > 2 * 3600 * 1000; }
 	/* ---------- Personal: bank spending, subscriptions, connections ---------- */
+	var PTAGS = { urgent: 'Urgent', important: 'Important', errand: 'Errand', birthday: 'Birthday', home: 'Home', work: 'Work', health: 'Health', bills: 'Bills' };
+	function tagOf(x) { return x.tag || (/birthday|bday/i.test(x.text || '') ? 'birthday' : ''); }
 	function money2(v) { return '$' + (+v || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
 	function bData() {
 		if (!S.bank && !S.bankLoading) { S.bankLoading = true; api('/bank').then(function (d) { S.bank = d; S.bankLoading = false; render(); }).catch(function () { S.bankLoading = false; }); }
@@ -442,18 +444,39 @@
 				wk += '<div class="dwdc-wk-d' + (ws === today ? ' today' : '') + (ws < today ? ' past' : '') + '" data-pday="' + ws + '"><small>' + wd.toLocaleDateString('en-US', { weekday: 'short' }) + '</small><b>' + wd.getDate() + '</b>' + its.slice(0, 3).map(function (x) { return '<span class="' + (x.gevent ? 'ev' : 'td') + '">' + esc(ptx(x.text)) + '</span>'; }).join('') + (its.length > 3 ? '<em>+' + (its.length - 3) + ' more</em>' : '') + '</div>';
 			}
 			var greet = new Date().getHours() < 12 ? 'Good morning' : new Date().getHours() < 17 ? 'Good afternoon' : 'Good evening';
+			// Combined checking balance (business + personal), live from Plaid (refreshed at most every 30 min).
+			var bbox = (function () {
+				var BA = BK && BK.balances && BK.balances.accounts ? BK.balances.accounts.filter(function (x) { return x.type === 'checking'; }) : [];
+				var bv = function (x) { return x.available != null ? x.available : (x.current || 0); }, tot = BA.reduce(function (a, x) { return a + bv(x); }, 0);
+				if (!BK) { return '<a class="dwdc-pbal" href="#personal/spending"><small>Bank balance today</small><strong>…</strong></a>'; }
+				if (!BA.length) { return '<a class="dwdc-pbal" href="#personal/spending"><small>Bank balance today</small><strong>—</strong><span>Connect your bank in Personal → Spending to see it here.</span></a>'; }
+				return '<a class="dwdc-pbal" href="#personal/spending"><div><small>Bank balance today · business + personal</small><strong>' + money2(tot) + '</strong><span>Available in checking' + (BK.balances.at ? (function () { var u = new Date(BK.balances.at.replace(' ', 'T') + 'Z'), sameDay = u.toDateString() === new Date().toDateString(); return ' · updated ' + (sameDay ? '' : u.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ', ') + u.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }); })() : '') + '</span></div>'
+					+ '<ul>' + BA.slice().sort(function (a, b) { return (b.business ? 1 : 0) - (a.business ? 1 : 0); }).map(function (x) { return '<li><small>' + (x.business ? 'Business' : 'Personal') + ' ••' + esc(x.mask) + '</small><b>' + money2(bv(x)) + '</b></li>'; }).join('') + '</ul></a>';
+			})();
+			// One to-do list, in order: Today → Overdue → To-do (no date) → Upcoming. Filter by category pill.
+			var ftag = S.pTag || '', okTag = function (x) { return !ftag || tagOf(x) === ftag; };
+			var trow = function (x, showDate) { var tg = tagOf(x); return row(x, showDate).replace('</b>', '</b>' + (tg ? '<em class="dwdc-ptag t-' + tg + '">' + PTAGS[tg] + '</em>' : '')); };
+			var secs = [
+				['Today', todayT.filter(function (x) { return x.due === today; }), false],
+				['Overdue', late.slice().sort(function (a, b) { return a.due < b.due ? 1 : -1; }), true],
+				['To-do', openT.filter(function (x) { return !x.due && !x.gevent; }), false],
+				['Later this month', openT.filter(function (x) { return x.due > today && x.due.slice(0, 7) === today.slice(0, 7); }).sort(function (a, b) { return a.due < b.due ? -1 : a.due > b.due ? 1 : tmin(a) - tmin(b); }).slice(0, 80), true]
+			];
+			var allOpen = openT.filter(function (x) { return !x.gevent; });
+			var pills = '<div class="dwdc-ptagf"><button type="button" class="' + (!ftag ? 'on' : '') + '" data-ptagf="">All <b>' + allOpen.length + '</b></button>' + Object.keys(PTAGS).map(function (k) { var n = allOpen.filter(function (x) { return tagOf(x) === k; }).length; return n || ftag === k ? '<button type="button" class="t-' + k + (ftag === k ? ' on' : '') + '" data-ptagf="' + k + '">' + PTAGS[k] + ' <b>' + n + '</b></button>' : ''; }).join('') + '</div>';
+			var listHtml = secs.map(function (sc) {
+				var its = sc[1].filter(okTag);
+				return its.length ? '<p class="dwdc-ptl-h' + (sc[0] === 'Overdue' ? ' late' : '') + '">' + sc[0] + ' <b>' + its.length + '</b></p>' + its.map(function (x) { return trow(x, sc[2]); }).join('') : '';
+			}).join('');
+			var todoCard = card('cd-ptodo1', '<header class="dwdc-dhead"><span class="dwdc-dic">' + ic('todo', 18) + '</span><h2>To-Do List <span class="dwdc-cnt">' + allOpen.length + '</span></h2><button type="button" class="dwdc-btn coral sm dwdc-addtask" data-addtask>' + ic('plus', 14) + 'Add task</button></header>',
+				pills + '<div class="dwdc-ptl">' + (listHtml || emptyRow(ftag ? 'Nothing tagged ' + PTAGS[ftag] + '.' : 'Nothing on your list. Nice.')) + '</div>');
+			// Right side: bank balance, then the month calendar (day squares; clicking a day opens that day).
+			var calHtml = personalView({ view: 'personal', arg: 'calendar' });
 			return '<p class="dwdc-pgreet">' + greet + ', Michael. Here’s your day.</p>'
-				+ '<div class="dwdc-prow3 two">'
-				+ card('cd-ptoday', chead('todo', 'Today', 'personal/calendar'), (todayT.length ? todayT.map(function (x) { return row(x, false); }).join('') : emptyRow('Nothing scheduled today.'))
-					+ (late.length ? '<p class="dwdc-plate">' + late.length + ' overdue</p>' + late.slice(0, 4).map(function (x) { return row(x, true); }).join('') : '')
-					+ '<div class="dwdc-ptadd mini btnonly"><button type="button" class="dwdc-btn coral dwdc-addtask" data-addtask>' + ic('plus', 14) + 'Add task</button></div>')
-				+ card('cd-psoon', chead('clock', 'Coming Up', 'personal/calendar'), soon.length ? soon.slice(0, 9).map(function (x) { return row(x, true); }).join('') + (soon.length > 9 ? '<a class="dwdc-pmore" href="#personal/calendar">+' + (soon.length - 9) + ' more in the next 2 weeks</a>' : '') : emptyRow('Nothing in the next two weeks.'))
-				+ '</div>'
-				+ card('cd-pweek', chead('grid', 'This Week', 'personal/calendar'), '<div class="dwdc-wk">' + wk + '</div>')
-				+ '<div class="dwdc-prow2">'
-				+ card('cd-pbday', chead('star', 'Birthdays Coming Up', 'personal/calendar'), bdays.length ? bdays.slice(0, 6).map(function (x) { return row(x, true); }).join('') : emptyRow('No birthdays in the next two months.'))
-				+ card('cd-ptdl', chead('list', 'To-Do List', 'personal/todo'), nodate.length || openT.filter(function (x) { return !x.gevent; }).length ? openT.filter(function (x) { return !x.gevent; }).sort(function (a, b) { return (a.due || '9') < (b.due || '9') ? -1 : 1; }).slice(0, 7).map(function (x) { return row(x, !!x.due); }).join('') : emptyRow('No open to-dos. Add one on My To-Dos.'))
-				+ '</div>' + connPanel();
+				+ '<div class="dwdc-phome"><div class="dwdc-phl">' + todoCard + '</div><div class="dwdc-phr">'
+				+ bbox
+				+ '<div class="dwdc-phcal">' + calHtml + '</div>'
+				+ '</div></div>' + connPanel();
 		}
 		if (tab === 'calendar') {
 			var today = DWDC.today, MNs = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], MNf = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -2073,6 +2096,7 @@
 				+ (pt.source ? '<p class="dwdc-mutp">From ' + esc(pt.source) + (pt.gevent ? ' · edits and deletes also update your Google Calendar' : pt.gtask ? ' · changes also update Google Tasks' : '') + '</p>' : '')
 				+ '<form class="dwdc-fgrid dwdc-pedit" data-pform="ptask"><input type="hidden" name="id" value="' + esc(pt.id) + '"><label class="wide"><span>' + (pt.gevent ? 'Event' : 'To-do') + '</span><input name="text" value="' + esc(pt.text) + '" required></label><label><span>' + (pt.gevent ? 'Date' : 'Due') + '</span><input type="date" name="due" value="' + esc(pt.due || '') + '"></label>'
 				+ (pt.gevent ? '<label><span>Time</span><input name="time" value="' + esc(pt.time || '') + '" placeholder="All day, or e.g. 7:00 PM"></label>' : '')
+				+ (pt.gevent ? '' : '<div class="wide dwdc-tagpick"><span>Category</span><input type="hidden" name="tag" value="' + esc(pt.tag || '') + '"><div>' + Object.keys(PTAGS).map(function (k) { return '<button type="button" class="t-' + k + (pt.tag === k ? ' on' : '') + '" data-tagpick="' + k + '">' + PTAGS[k] + '</button>'; }).join('') + '</div></div>')
 				+ '<label class="wide"><span>Notes</span><textarea name="note" rows="4" placeholder="Anything to remember…">' + esc(pt.note || '') + '</textarea></label>'
 				+ '<div class="dwdc-farow end wide"><button type="button" class="dwdc-btn2 danger" data-pdel="todos:' + pt.id + '">Delete</button><button type="button" class="dwdc-btn2" data-ptoggle="' + pt.id + '">' + (pt.done ? 'Mark not done' : 'Mark done') + '</button><button class="dwdc-btn">Save</button></div></form></div>';
 		}
@@ -2345,12 +2369,19 @@
 			pDel(pd[0], pd[1], 'Deleted');
 			return;
 		}
+		if ((el = t.closest('[data-ptagf]'))) { S.pTag = el.getAttribute('data-ptagf'); render(); return; }
+		if ((el = t.closest('[data-tagpick]'))) {
+			var tf = el.closest('form'), hv = tf.querySelector('input[name=tag]'), tv = el.getAttribute('data-tagpick'), on = hv.value === tv;
+			hv.value = on ? '' : tv; [].forEach.call(tf.querySelectorAll('[data-tagpick]'), function (b) { b.classList.toggle('on', !on && b === el); });
+			return;
+		}
 		if ((el = t.closest('[data-ptask]')) && !t.closest('a') && (!t.closest('button') || t.closest('button') === el)) { S.modal = { type: 'ptask', id: el.getAttribute('data-ptask'), back: S.modal && S.modal.type === 'pday' ? S.modal.day : '', vals: {} }; render(); return; }
 		if ((el = t.closest('[data-pshowdone]'))) { S.pShowDone = !S.pShowDone; render(); return; }
 		if ((el = t.closest('[data-pcal]'))) { S.pCal = el.getAttribute('data-pcal'); render(); return; }
 		if (t.closest('[data-pcaltoday]')) { S.pCal = DWDC.today.slice(0, 7); S.pSel = DWDC.today; render(); return; }
 		if ((el = t.closest('[data-pcalf]'))) { var fk = el.getAttribute('data-pcalf'); S.pCalF = S.pCalF || { td: true, ev: true, bill: true }; S.pCalF[fk] = !S.pCalF[fk]; render(); return; }
 		if (t.closest('[data-gobills]') && !t.closest('[data-ptask]')) { location.hash = 'personal/bills'; return; }
+		if ((el = t.closest('.dwdc-phcal [data-psel]')) && !t.closest('[data-ptask], [data-gobills], a')) { S.modal = { type: 'pday', day: el.getAttribute('data-psel'), vals: {} }; render(); return; }
 		if ((el = t.closest('[data-psel]')) && !t.closest('[data-ptask], [data-gobills], a')) { S.pSel = el.getAttribute('data-psel'); var pm = S.pSel.slice(0, 7); if (pm !== (S.pCal || DWDC.today.slice(0, 7))) { S.pCal = pm; } render(); if (window.innerWidth <= 1100) { setTimeout(function () { var dd = document.querySelector('.dwdc-c2-day'); if (dd) { dd.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }, 50); } return; }
 		if (t.closest('[data-addtask]')) { S.modal = { type: 'paddtask', msgs: [], tasks: [], draft: '', vals: {} }; render(); setTimeout(function () { var ta = document.querySelector('[data-ptdraft]'); if (ta) { ta.focus(); } }, 60); return; }
 		if (t.closest('[data-ptsend]')) { var ta0 = document.querySelector('[data-ptdraft]'); if (ta0 && S.modal) { S.modal.draft = ta0.value; } ptSend(); return; }
