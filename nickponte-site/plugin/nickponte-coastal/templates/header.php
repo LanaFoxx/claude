@@ -21,7 +21,7 @@ $tel = 'tel:6039187593';
 		<nav class="npc-nav" aria-label="Main">
 			<a href="<?php echo esc_url($home); ?>" <?php if ($npc_active === 'home') echo 'aria-current="page"'; ?>>Home</a>
 			<a href="<?php echo esc_url(npc_default_town_url()); ?>" <?php if ($npc_active === 'town') echo 'aria-current="page"'; ?>>Towns</a>
-			<a href="<?php echo esc_url($home . '#contact'); ?>">Free Home Valuation</a>
+			<a href="<?php echo esc_url($home . '#valuation'); ?>">Free Home Valuation</a>
 			<a href="<?php echo esc_url($home . '#about'); ?>">About</a>
 			<a class="npc-btn npc-btn--sm" href="<?php echo esc_url($tel); ?>">Call 603-918-7593</a>
 		</nav>

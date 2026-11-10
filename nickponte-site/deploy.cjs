@@ -18,11 +18,16 @@ const args = process.argv.slice(2);
 const steps = args.filter((a) => !a.startsWith('--'));
 const want = (s) => steps.length === 0 || steps.includes(s);
 const RESEED = args.includes('--reseed');
-const MEDIA = ['npc-rye-coast.jpg', 'npc-portsmouth.jpg', 'npc-hampton-beach.jpg', 'npc-nick-ponte.jpg', 'npc-387-ocean.jpg', 'npc-logo-black.png', 'npc-logo-white.png'];
+const MEDIA = ['npc-rye-coast.jpg', 'npc-portsmouth.jpg', 'npc-hampton-beach.jpg', 'npc-nick-ponte.jpg', 'npc-387-ocean.jpg', 'npc-logo-black.png', 'npc-logo-white.png',
+  // Photos Nick supplied in the Markup.io review (Nov 2026)
+  'npc-hero-hampton.jpg', 'npc-contact-seawall.jpg', 'npc-quote-rye.jpg', 'npc-exeter-downtown.jpg', 'npc-estate-dusk.jpg'];
 const ALT = {
   'npc-rye-coast': 'The Rye, NH coastline from above', 'npc-portsmouth': 'Portsmouth, NH South End harbor at sunset',
   'npc-hampton-beach': 'Hampton Beach, NH from above', 'npc-nick-ponte': 'Nick Ponte, Managing Broker',
   'npc-387-ocean': 'Rendering of 387 Ocean, Hampton', 'npc-logo-black': 'Nick Ponte Realty', 'npc-logo-white': 'Nick Ponte Realty',
+  'npc-hero-hampton': 'Hampton Beach, NH from above', 'npc-contact-seawall': 'Oceanfront homes along the seawall on the NH Seacoast',
+  'npc-quote-rye': 'The Rye, NH coast from above', 'npc-exeter-downtown': 'Downtown Exeter, NH and the bandstand from above',
+  'npc-estate-dusk': 'Oceanfront home on the Seacoast at dusk',
 };
 
 async function login(p) {
@@ -121,16 +126,19 @@ function seed(t, i) {
   };
 }
 
+// Town photos supplied by Nick that replace the Rye fallback.
+const PHOTO = { Exeter: 'npc-exeter-downtown' };
+
 async function deployTowns(p, nonce, ids) {
   const towns = require('./content/towns-source.cjs');
   const imgFor = { 'assets/rye-coast.jpg': 'npc-rye-coast', 'assets/portsmouth.jpg': 'npc-portsmouth', 'assets/hampton-beach.jpg': 'npc-hampton-beach' };
   for (const [i, t] of towns.entries()) {
     const slug = t.name.toLowerCase().replace(/\s+/g, '-');
-    const media = ids[imgFor[t.img] || 'npc-rye-coast'] || 0;
+    const media = ids[PHOTO[t.name] || imgFor[t.img] || 'npc-rye-coast'] || 0;
     const ex = await api(p, nonce, 'GET', `/wp/v2/np-towns?slug=${slug}&status=publish,draft&_fields=id,link`);
     let j;
     if (ex.length && !RESEED) {
-      j = await api(p, nonce, 'POST', `/wp/v2/np-towns/${ex[0].id}`, { menu_order: i });
+      j = await api(p, nonce, 'POST', `/wp/v2/np-towns/${ex[0].id}`, { menu_order: i, ...(PHOTO[t.name] && ids[PHOTO[t.name]] ? { featured_media: ids[PHOTO[t.name]] } : {}) });
       console.log(`town: ${t.name} kept (owner edits preserved) ${j.link}`);
       continue;
     }

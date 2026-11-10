@@ -15,7 +15,7 @@ $home = npc_home_url();
 				<h2 class="npc-footer__h">Explore</h2>
 				<ul>
 					<li><a href="<?php echo esc_url(npc_default_town_url()); ?>">Town markets</a></li>
-					<li><a href="<?php echo esc_url($home . '#contact'); ?>">Free home valuation</a></li>
+					<li><a href="<?php echo esc_url($home . '#valuation'); ?>">Free home valuation</a></li>
 					<li><a href="<?php echo esc_url($home . '#about'); ?>">About Nick</a></li>
 					<li><a href="<?php echo esc_url(home_url('/featured-properties/')); ?>">Featured sales</a></li>
 				</ul>

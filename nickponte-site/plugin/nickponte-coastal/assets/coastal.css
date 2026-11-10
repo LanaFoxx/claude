@@ -121,11 +121,58 @@ html:has(body.npc) { scroll-behavior: smooth; }
 .npc-ocean__card p:not(.npc-eyebrow) { font-size: 15px; margin: 16px 0 24px; }
 .npc-ocean__h { font-size: clamp(34px, 3.4vw, 46px); }
 
-/* Testimonial */
-.npc-quote { text-align: center; max-width: calc(860px + 2 * var(--npc-gutter)); }
-.npc-quote__mark { font: 500 80px/.6 var(--npc-serif); color: #B9CCDC; margin-bottom: 18px; padding-top: 30px; }
-.npc-quote blockquote p { font: italic 500 clamp(24px, 2.8vw, 34px)/1.35 var(--npc-serif); color: var(--npc-deep); text-wrap: balance; }
-.npc-quote blockquote footer { margin-top: 24px; font: 600 13px var(--npc-sans); letter-spacing: .14em; text-transform: uppercase; color: var(--npc-steel); }
+/* Testimonial (rotating, photo behind) */
+.npc-quote { position: relative; overflow: hidden; text-align: center; margin-top: var(--npc-section); }
+.npc-quote__img { position: absolute; inset: 0; width: 100%; height: 100% !important; object-fit: cover; }
+.npc-quote__veil { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(243, 247, 250, .9), rgba(243, 247, 250, .82)); }
+.npc-quote__in { position: relative; max-width: calc(860px + 2 * var(--npc-gutter)); padding-block: clamp(64px, 8vw, 104px); }
+.npc-quote__mark { font: 500 80px/.6 var(--npc-serif); color: var(--npc-steel); opacity: .45; margin-bottom: 18px; padding-top: 30px; }
+.npc-quote__slides { display: grid; }
+.npc-quote__slide { grid-area: 1 / 1; }
+.npc-quote__slide p { font: italic 500 clamp(24px, 2.8vw, 34px)/1.35 var(--npc-serif); color: var(--npc-deep); text-wrap: balance; }
+.npc-quote__slide footer { margin-top: 24px; font: 600 13px var(--npc-sans); letter-spacing: .14em; text-transform: uppercase; color: var(--npc-steel); }
+@media (prefers-reduced-motion: no-preference) { .npc-quote__slide.is-on { animation: npc-fade .6s ease; } @keyframes npc-fade { from { opacity: 0 } to { opacity: 1 } } }
+.npc-quote__nav { display: flex; justify-content: center; gap: 4px; margin-top: 28px; }
+.npc-quote__dot { width: 28px; height: 28px; border: 0; background: none; cursor: pointer; display: grid; place-items: center; padding: 0; }
+.npc-quote__dot::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: #B9CCDC; transition: background-color .15s, transform .15s; }
+.npc-quote__dot[aria-current="true"]::before { background: var(--npc-steel); transform: scale(1.15); }
+
+/* Resources */
+.npc-res__guides { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr)); gap: 20px; }
+.npc .npc-guide { display: grid; gap: 8px; align-content: start; background: #fff; border: 1px solid var(--npc-border); border-radius: 18px; padding: clamp(24px, 3vw, 32px); box-shadow: var(--npc-shadow-card); }
+.npc .npc-guide:hover { border-color: var(--npc-btn-border); }
+.npc-guide__t { font: 500 32px/1.1 var(--npc-serif); color: var(--npc-deep); }
+.npc-guide__p { font-size: 15px; color: var(--npc-muted); max-width: 440px; }
+.npc-guide__go { font: 600 14px var(--npc-sans); color: var(--npc-steel); margin-top: 8px; }
+.npc-posts { margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); gap: 20px; }
+.npc .npc-post { display: grid; gap: 6px; align-content: start; }
+.npc-post__img { display: block; aspect-ratio: 16 / 10; border-radius: 14px; overflow: hidden; background: var(--npc-ph); margin-bottom: 8px; }
+.npc-post__img img { width: 100%; height: 100% !important; object-fit: cover; }
+.npc-post__date { font-size: 13px; color: var(--npc-muted); }
+.npc-post__t { font: 500 22px/1.2 var(--npc-serif); color: var(--npc-deep); }
+.npc .npc-post:hover .npc-post__t { color: var(--npc-steel); }
+
+/* Instagram */
+.npc-insta__feed #sb_instagram { padding-bottom: 0 !important; }
+.npc-insta__feed img { border-radius: 10px; }
+
+/* Valuation */
+.npc-val { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(420px, 100%), 1fr)); background: #fff; border: 1px solid var(--npc-border); border-radius: 22px; overflow: hidden; box-shadow: 0 30px 70px -40px rgba(31, 58, 95, .45); }
+.npc-val__photo { position: relative; min-height: 320px; background: var(--npc-ph); }
+.npc-val__photo img { position: absolute; inset: 0; width: 100%; height: 100% !important; object-fit: cover; }
+.npc-val__body { padding: clamp(28px, 4vw, 52px); }
+.npc-val__p { font-size: 16px; color: var(--npc-muted); margin-top: 14px; max-width: 460px; }
+.npc-val__form { margin-top: 24px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.npc-field { display: grid; gap: 6px; min-width: 0; }
+.npc-field--wide, .npc-field--btn, .npc-val__form .npc-eform__msg { grid-column: 1 / -1; }
+@media (max-width: 560px) { .npc-val__form { grid-template-columns: 1fr; } }
+.npc-field label { font: 600 12px var(--npc-sans); letter-spacing: .08em; text-transform: uppercase; color: var(--npc-muted); }
+.npc-field input { height: 50px; border-radius: 10px; border: 1px solid #B9CCDC; background: var(--npc-bg); padding: 0 14px; font: 15px var(--npc-sans); color: var(--npc-text); min-width: 0; }
+.npc-field input:focus { border-color: var(--npc-steel); outline: none; box-shadow: 0 0 0 3px rgba(63, 110, 153, .18); }
+.npc-field--btn .npc-btn { justify-self: start; }
+.npc-eform__msg { font-size: 14px; color: var(--npc-muted); min-height: 1em; flex-basis: 100%; }
+.npc-eform__msg.is-err { color: #A3302A; }
+.npc-eform__msg.is-ok { color: #23743A; }
 
 /* Contact */
 .npc-contact-wrap { padding-top: var(--npc-section); padding-bottom: 40px; }
@@ -254,3 +301,6 @@ html:has(body.npc) { scroll-behavior: smooth; }
 .npc-review__town img { width: 64px; height: 64px !important; border-radius: 10px; object-fit: cover; }
 .npc-review__town strong { display: block; font: 500 22px/1.1 var(--npc-serif); color: var(--npc-deep); }
 .npc-review__town span span { font-size: 13px; color: var(--npc-muted); }
+.npc-insta__feed .sb_instagram_header, .npc-insta__feed #sbi_load .sbi_load_btn { display: none !important; }
+.npc .npc-insta__feed .sbi_follow_btn a { background: var(--npc-steel) !important; border-radius: 10px !important; font: 600 14px var(--npc-sans) !important; padding: 12px 20px !important; }
+.npc .npc-insta__feed .sbi_follow_btn a:hover { background: var(--npc-hover) !important; box-shadow: none !important; }
