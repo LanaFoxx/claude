@@ -299,7 +299,8 @@ function dwds_upwork_import( $csv ) {
 		$out['added']++;
 		$out['amount'] += $net;
 	}
-	update_option( 'dwdc_upwork_costs', $costs, false );
+	$fileCosts = array_values( array_filter( $costs, function ( $c ) { return 'manual' !== ( $c['ref'] ?? '' ); } ) );
+	update_option( 'dwdc_upwork_costs', dwds_merge_manual_costs( $fileCosts, $costs ), false );
 	update_option( 'dwds_last_upwork', current_time( 'mysql' ), false );
 	$out['amount']    = round( $out['amount'], 2 );
 	$out['unmatched'] = array_map( function ( $k, $v ) { return array( 'team' => $k, 'amount' => round( $v, 2 ) ); }, array_keys( $out['unmatched'] ), array_values( $out['unmatched'] ) );
@@ -439,6 +440,29 @@ function dwds_file_add( $name, $csv ) {
 }
 
 /**
+ * Connects purchases logged by hand (ref "manual", e.g. from Ask Dream Desk) stay until an
+ * Upwork file brings in the same purchase (same amount within 3 days); then the file's row wins.
+ */
+function dwds_merge_manual_costs( $file_costs, $old ) {
+	foreach ( (array) $old as $m ) {
+		if ( 'manual' !== ( $m['ref'] ?? '' ) ) {
+			continue;
+		}
+		$dup = false;
+		foreach ( $file_costs as $c ) {
+			if ( 'manual' !== ( $c['ref'] ?? '' ) && abs( (float) $c['amount'] - (float) $m['amount'] ) < 0.01 && abs( strtotime( $c['date'] ) - strtotime( $m['date'] ) ) <= 3 * DAY_IN_SECONDS ) {
+				$dup = true;
+				break;
+			}
+		}
+		if ( ! $dup ) {
+			$file_costs[] = $m;
+		}
+	}
+	return $file_costs;
+}
+
+/**
  * Rebuild every project's Upwork payments from the files on the list.
  * Upwork money that never came from a file (older totals) is kept as it was.
  */
@@ -503,7 +527,7 @@ function dwds_upwork_rebuild() {
 		update_post_meta( $pid, '_dwdc_billed', $billed > 0.004 ? (string) round( $billed, 2 ) : '' );
 		$touched++;
 	}
-	update_option( 'dwdc_upwork_costs', $costs, false );
+	update_option( 'dwdc_upwork_costs', dwds_merge_manual_costs( $costs, get_option( 'dwdc_upwork_costs', array() ) ), false );
 	return array( 'payments' => count( $earn ), 'projects' => $touched, 'unmatched' => array_map( function ( $k, $v ) { return array( 'team' => $k, 'amount' => round( $v, 2 ) ); }, array_keys( $unmatched ), array_values( $unmatched ) ) );
 }
 

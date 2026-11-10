@@ -1073,12 +1073,12 @@
 	function chatPaint() {
 		var box = chatEl(); if (!box) { return; }
 		var log = box.querySelector('.dwdc-chat-log');
-		var sugg = CHAT.scope === 'desk' ? ['Who owes me money right now?', 'What to-dos are overdue or due this week?', 'Which leads need a follow-up?', 'What did I last do on my newest project?'] : CHAT.scope === 'personal' ? ['Where did my money go last month?', 'Which subscriptions should I cancel?', 'Am I spending more on dining than usual?', 'What bills and charges are coming up?'] : ['How much did I make in October vs September?', 'Who were my top 5 clients this year?', 'What were my slowest months in 2025?', 'Is my Upwork Connects spending paying off?'];
+		var sugg = CHAT.scope === 'desk' ? ['Who owes me money right now?', 'What to-dos are overdue or due this week?', 'Which leads need a follow-up?', 'Add a to-do to follow up with my newest lead tomorrow'] : CHAT.scope === 'personal' ? ['Where did my money go last month?', 'Which subscriptions should I cancel?', 'Am I spending more on dining than usual?', 'What bills and charges are coming up?'] : ['How much did I make in October vs September?', 'Who were my top 5 clients this year?', 'What were my slowest months in 2025?', 'Is my Upwork Connects spending paying off?'];
 		if (CHAT.needKey) {
 			log.innerHTML = '<div class="dwdc-chat-key"><b>Connect Claude</b><p>Paste your Claude API key to turn on Ask AI. It’s saved on your server and never shown in the browser.</p><p class="sm">Get one at console.anthropic.com → API Keys.</p><input type="password" placeholder="sk-ant-..." data-chatkey><button class="dwdc-btn" data-chatkeysave>Save key</button></div>';
 			return;
 		}
-		log.innerHTML = (CHAT.msgs.length ? '' : '<div class="dwdc-chat-hi"><p>' + (CHAT.scope === 'desk' ? 'Ask me anything about your clients, leads, projects, amounts, to-dos, past actions or how Dream Desk works.' : CHAT.scope === 'personal' ? 'Ask me anything about your personal spending, subscriptions and bills.' : 'Ask me anything about your money, projects and trends.') + '</p>' + sugg.map(function (q) { return '<button class="dwdc-chat-sug" data-chatsug>' + esc(q) + '</button>'; }).join('') + '</div>')
+		log.innerHTML = (CHAT.msgs.length ? '' : '<div class="dwdc-chat-hi"><p>' + (CHAT.scope === 'desk' ? 'Ask about your clients, leads, projects, money, to-dos or past actions, or tell me to do something (log a payment or Connects, add a note or to-do, update a lead).' : CHAT.scope === 'personal' ? 'Ask me anything about your personal spending, subscriptions and bills.' : 'Ask me anything about your money, projects and trends.') + '</p>' + sugg.map(function (q) { return '<button class="dwdc-chat-sug" data-chatsug>' + esc(q) + '</button>'; }).join('') + '</div>')
 			+ CHAT.msgs.map(function (m) { return '<div class="dwdc-chat-m ' + m.role + '">' + (m.role === 'assistant' ? mdLite(m.content) : esc(m.content)) + '</div>'; }).join('')
 			+ (CHAT.busy ? '<div class="dwdc-chat-m assistant typing"><i></i><i></i><i></i></div>' : '');
 		log.scrollTop = log.scrollHeight;
@@ -1088,6 +1088,7 @@
 		CHAT.msgs.push({ role: 'user', content: q }); CHAT.busy = true; chatPaint();
 		api('/ask', 'POST', { messages: CHAT.msgs, scope: CHAT.scope }).then(function (r) {
 			CHAT.msgs.push({ role: 'assistant', content: r.answer });
+			if (r.changed) { if (route().id) { delete S.full[route().id]; } reload().then(render); }
 		}).catch(function (e) {
 			if (e.data && e.data.needs_key) { CHAT.needKey = true; CHAT.msgs.pop(); toast(e.message, true); }
 			else { CHAT.msgs.push({ role: 'assistant', content: 'Sorry, that didn’t work: ' + e.message }); }

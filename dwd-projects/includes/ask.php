@@ -88,7 +88,7 @@ function dwdc_ai_context() {
 			'Project "status": active, hold (on hold), limbo (waiting on client), complete.',
 		),
 		'monthly_received_by_source' => $monthly,
-		'upwork_connects_costs_by_year' => function_exists( 'dwdc_costs_by_year' ) ? array_map( function ( $o ) { unset( $o['mq'] ); return $o; }, dwdc_costs_by_year() ) : array(),
+		'upwork_connects_costs_by_year' => function_exists( 'dwdc_costs_by_year' ) ? array_map( function ( $o ) { $o['connects_by_month'] = array_combine( array( 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ), $o['m'] ); $o['connects_bought_by_month'] = array_combine( array( 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ), $o['mq'] ); unset( $o['m'], $o['mq'] ); return $o; }, dwdc_costs_by_year() ) : array(),
 		'weekly_trends'       => function_exists( 'dwdt_get' ) ? dwdt_get() : null,
 		'projects'            => $projects,
 	);
@@ -154,7 +154,7 @@ function dwdc_ai_desk_context() {
 	$since = gmdate( 'Y-m-d', strtotime( '-45 days' ) );
 	foreach ( get_posts( array( 'post_type' => DWDC_TASK, 'post_status' => 'private', 'posts_per_page' => -1 ) ) as $t ) {
 		$t   = dwdc_task( $t );
-		$row = $clean( array( 'todo' => $cut( $t['text'], 200 ), 'project' => $t['contact'] ? ( $names[ $t['contact'] ] ?? null ) : null, 'due' => $t['due'] ) );
+		$row = $clean( array( 'todo_id' => $t['id'], 'todo' => $cut( $t['text'], 200 ), 'project' => $t['contact'] ? ( $names[ $t['contact'] ] ?? null ) : null, 'due' => $t['due'] ) );
 		if ( ! $t['done'] ) {
 			$open[] = $row;
 		} elseif ( substr( $t['done_at'], 0, 10 ) >= $since ) {
@@ -182,6 +182,103 @@ function dwdc_ai_desk_context() {
 		'clients'            => $clients,
 		'money_summary'      => array_intersect_key( dwdc_ai_context(), array_flip( array( 'monthly_received_by_source', 'upwork_connects_costs_by_year', 'notes' ) ) ),
 	);
+}
+
+/** Actions the Ask Dream Desk assistant can take when Michael asks. */
+function dwdc_ai_tools() {
+	$s = function ( $d ) { return array( 'type' => 'string', 'description' => $d ); };
+	$n = function ( $d ) { return array( 'type' => 'number', 'description' => $d ); };
+	$i = function ( $d ) { return array( 'type' => 'integer', 'description' => $d ); };
+	return array(
+		array( 'name' => 'add_connects_purchase', 'description' => 'Record an Upwork Connects purchase (or Upwork membership charge) in the Connects spending totals.', 'input_schema' => array( 'type' => 'object', 'properties' => array( 'amount' => $n( 'Dollars spent' ), 'date' => $s( 'YYYY-MM-DD, default today' ), 'qty' => $i( 'Number of Connects bought, if known' ), 'type' => array( 'type' => 'string', 'enum' => array( 'connects', 'membership' ) ) ), 'required' => array( 'amount' ) ) ),
+		array( 'name' => 'log_payment', 'description' => 'Log a payment received on a project. Lowers what is owed and counts toward money made.', 'input_schema' => array( 'type' => 'object', 'properties' => array( 'project_id' => $i( 'Project id' ), 'amount' => $n( 'Dollars received' ), 'method' => array( 'type' => 'string', 'enum' => array( 'Upwork', 'Stripe', 'PayPal', 'Zelle', 'Check', 'Cash', 'Other' ) ), 'date' => $s( 'YYYY-MM-DD, default today' ), 'note' => $s( 'Optional note' ) ), 'required' => array( 'project_id', 'amount', 'method' ) ) ),
+		array( 'name' => 'add_note', 'description' => 'Add a note to a project or lead.', 'input_schema' => array( 'type' => 'object', 'properties' => array( 'project_id' => $i( 'Project id' ), 'text' => $s( 'Note text' ) ), 'required' => array( 'project_id', 'text' ) ) ),
+		array( 'name' => 'add_todo', 'description' => 'Add a to-do, optionally tied to a project, optionally with a due date.', 'input_schema' => array( 'type' => 'object', 'properties' => array( 'text' => $s( 'To-do text' ), 'project_id' => $i( 'Project id, or 0 for none' ), 'due' => $s( 'YYYY-MM-DD or empty' ) ), 'required' => array( 'text' ) ) ),
+		array( 'name' => 'update_todo', 'description' => 'Mark a to-do done or not done, change its text or due date.', 'input_schema' => array( 'type' => 'object', 'properties' => array( 'todo_id' => $i( 'To-do id' ), 'done' => array( 'type' => 'boolean' ), 'text' => $s( 'New text' ), 'due' => $s( 'YYYY-MM-DD, or empty string to clear' ) ), 'required' => array( 'todo_id' ) ) ),
+		array( 'name' => 'update_project', 'description' => 'Change fields on a project or lead. list: leads, active, hold, limbo, complete, archive. stage (leads): new, contacted, lost. Dates YYYY-MM-DD. Money as plain numbers. pending "1" marks owed money as paid in Upwork but not deposited, "" clears it.', 'input_schema' => array( 'type' => 'object', 'properties' => array( 'project_id' => $i( 'Project id' ), 'fields' => array( 'type' => 'object', 'description' => 'Only the fields to change', 'properties' => array( 'name' => $s( 'Project name' ), 'list' => $s( 'list' ), 'stage' => $s( 'lead stage' ), 'followup' => $s( 'follow-up date' ), 'deadline' => $s( 'deadline' ), 'next' => $s( 'next step' ), 'price' => $s( 'project total' ), 'balance' => $s( 'amount still owed' ), 'pending' => $s( '"1" or ""' ), 'person' => $s( 'contact person' ), 'email' => $s( 'email' ), 'phone' => $s( 'phone' ), 'company' => $s( 'company' ), 'website' => $s( 'website' ), 'lead_source' => $s( 'where the lead came from' ), 'pay_method' => $s( 'how they pay' ), 'job' => $s( 'job description' ), 'hosting' => $s( 'yearly hosting fee' ), 'renewal' => $s( 'hosting renewal date' ) ), 'additionalProperties' => false ) ), 'required' => array( 'project_id', 'fields' ) ) ),
+		array( 'name' => 'create_lead', 'description' => 'Create a new lead.', 'input_schema' => array( 'type' => 'object', 'properties' => array( 'name' => $s( 'Lead / project name' ), 'person' => $s( 'Contact person' ), 'email' => $s( 'Email' ), 'phone' => $s( 'Phone' ), 'company' => $s( 'Company' ), 'price' => $s( 'Estimated price' ), 'lead_source' => $s( 'Source, e.g. Upwork Proposal, Referral, Google Ads' ), 'followup' => $s( 'Follow-up date YYYY-MM-DD' ), 'job' => $s( 'What they need' ) ), 'required' => array( 'name' ) ) ),
+	);
+}
+
+/** Run one assistant action. Returns a short result string for the model. */
+function dwdc_ai_run_tool( $name, $in ) {
+	$in   = (array) $in;
+	$rest = function ( $method, $route, $body ) {
+		$q = new WP_REST_Request( $method, '/dwd/v1/crm' . $route );
+		$q->set_header( 'content-type', 'application/json' );
+		$q->set_body( wp_json_encode( $body ) );
+		$q->set_body_params( $body );
+		$res = rest_do_request( $q );
+		if ( $res->is_error() ) {
+			return new WP_Error( 'x', $res->as_error()->get_error_message() );
+		}
+		return $res->get_data();
+	};
+	$proj = function ( $id ) {
+		$id = (int) $id;
+		return $id && DWDC_CONTACT === get_post_type( $id ) ? $id : 0;
+	};
+	$date = function ( $d ) { return preg_match( '/^\d{4}-\d{2}-\d{2}$/', (string) $d ) ? $d : current_time( 'Y-m-d' ); };
+	switch ( $name ) {
+		case 'add_connects_purchase':
+			$amt = round( (float) ( $in['amount'] ?? 0 ), 2 );
+			if ( $amt <= 0 ) {
+				return 'Error: amount must be more than 0.';
+			}
+			$costs   = (array) get_option( 'dwdc_upwork_costs', array() );
+			$costs[] = array( 'date' => $date( $in['date'] ?? '' ), 'amount' => $amt, 'type' => 'membership' === ( $in['type'] ?? '' ) ? 'membership' : 'connects', 'qty' => absint( $in['qty'] ?? 0 ), 'ref' => 'manual' );
+			update_option( 'dwdc_upwork_costs', $costs, false );
+			return 'OK: $' . $amt . ' ' . ( 'membership' === ( $in['type'] ?? '' ) ? 'membership charge' : 'Connects purchase' ) . ' recorded for ' . $date( $in['date'] ?? '' ) . '.';
+		case 'log_payment':
+			$id = $proj( $in['project_id'] ?? 0 );
+			if ( ! $id ) {
+				return 'Error: no project with that id.';
+			}
+			$r = $rest( 'POST', '/contact/' . $id . '/payment', array( 'amount' => $in['amount'] ?? 0, 'method' => $in['method'] ?? 'Other', 'date' => $date( $in['date'] ?? '' ), 'note' => (string) ( $in['note'] ?? '' ) ) );
+			return is_wp_error( $r ) ? 'Error: ' . $r->get_error_message() : 'OK: payment logged on ' . $r['name'] . '. Owed now: ' . ( $r['balance'] ?: '0' ) . '.';
+		case 'add_note':
+			$id = $proj( $in['project_id'] ?? 0 );
+			if ( ! $id || '' === trim( (string) ( $in['text'] ?? '' ) ) ) {
+				return 'Error: need a valid project id and note text.';
+			}
+			$r = $rest( 'POST', '/contact/' . $id . '/note', array( 'text' => (string) $in['text'] ) );
+			return is_wp_error( $r ) ? 'Error: ' . $r->get_error_message() : 'OK: note added to ' . $r['name'] . '.';
+		case 'add_todo':
+			$pid = $proj( $in['project_id'] ?? 0 );
+			$r   = $rest( 'POST', '/task', array( 'text' => (string) ( $in['text'] ?? '' ), 'contact' => $pid, 'due' => preg_match( '/^\d{4}-\d{2}-\d{2}$/', (string) ( $in['due'] ?? '' ) ) ? $in['due'] : '' ) );
+			return is_wp_error( $r ) || empty( $r['id'] ) ? 'Error: couldn’t add the to-do.' : 'OK: to-do #' . $r['id'] . ' added' . ( $pid ? ' to ' . get_the_title( $pid ) : '' ) . ( $r['due'] ? ', due ' . $r['due'] : '' ) . '.';
+		case 'update_todo':
+			$tid = (int) ( $in['todo_id'] ?? 0 );
+			if ( ! $tid || DWDC_TASK !== get_post_type( $tid ) ) {
+				return 'Error: no to-do with that id.';
+			}
+			$body = array_intersect_key( $in, array_flip( array( 'done', 'text', 'due' ) ) );
+			$r    = $rest( 'POST', '/task/' . $tid, $body );
+			return is_wp_error( $r ) ? 'Error: ' . $r->get_error_message() : 'OK: to-do updated (' . $r['text'] . ( $r['done'] ? ', done' : '' ) . ( $r['due'] ? ', due ' . $r['due'] : '' ) . ').';
+		case 'update_project':
+			$id = $proj( $in['project_id'] ?? 0 );
+			if ( ! $id ) {
+				return 'Error: no project with that id.';
+			}
+			$ok = array( 'name', 'list', 'stage', 'followup', 'deadline', 'next', 'price', 'balance', 'pending', 'person', 'email', 'phone', 'company', 'website', 'lead_source', 'pay_method', 'job', 'hosting', 'renewal' );
+			$f  = array_map( 'strval', array_intersect_key( (array) ( $in['fields'] ?? array() ), array_flip( $ok ) ) );
+			if ( isset( $f['list'] ) && ! in_array( $f['list'], array( 'leads', 'active', 'hold', 'limbo', 'complete', 'archive' ), true ) ) {
+				return 'Error: list must be leads, active, hold, limbo, complete or archive.';
+			}
+			if ( ! $f ) {
+				return 'Error: nothing to change.';
+			}
+			$r = $rest( 'POST', '/contact/' . $id, $f );
+			return is_wp_error( $r ) ? 'Error: ' . $r->get_error_message() : 'OK: updated ' . $r['name'] . ' (' . implode( ', ', array_map( function ( $k, $v ) { return $k . ' = ' . ( '' === $v ? '(cleared)' : $v ); }, array_keys( $f ), $f ) ) . ').';
+		case 'create_lead':
+			$d         = array_map( 'strval', array_intersect_key( $in, array_flip( array( 'name', 'person', 'email', 'phone', 'company', 'price', 'lead_source', 'followup', 'job' ) ) ) );
+			$d['list'] = 'leads';
+			$d['stage'] = 'new';
+			$d['source'] = 'Added by Ask Dream Desk';
+			$r = $rest( 'POST', '/contact', $d );
+			return is_wp_error( $r ) ? 'Error: ' . $r->get_error_message() : 'OK: lead "' . $r['name'] . '" created (id ' . $r['id'] . ').';
+	}
+	return 'Error: unknown action.';
 }
 
 add_action( 'rest_api_init', function () {
@@ -222,7 +319,7 @@ add_action( 'rest_api_init', function () {
 		if ( $desk && ! $personal ) {
 			$system = array( array(
 				'type' => 'text',
-				'text' => "You are the assistant built into Dream Desk, the private CRM and business dashboard of Michael Tarr (Dream Web Digital, websites and hosting for small businesses). Michael asks quick questions about anything in it: how the workflow works, clients, leads, projects, amounts owed and paid, to-dos, and what was done or noted before. Answer only from the data below; today is " . current_time( 'l, F j, Y' ) . ". Lead with the direct answer (names, dates, dollar amounts rounded to the nearest dollar), then add a line of context only when it helps. Keep it short; use a short bullet list when listing several items. When a project is relevant, name it exactly as it appears. If the data can't answer the question, say so plainly and say where in Dream Desk he could check. Never invent clients, amounts or events. You can't change anything; if he asks you to, tell him where to do it in Dream Desk.\n\nDATA (JSON):\n" . wp_json_encode( dwdc_ai_desk_context() ),
+				'text' => "You are the assistant built into Dream Desk, the private CRM and business dashboard of Michael Tarr (Dream Web Digital, websites and hosting for small businesses). Michael asks quick questions about anything in it: how the workflow works, clients, leads, projects, amounts owed and paid, to-dos, and what was done or noted before. Answer only from the data below; today is " . current_time( 'l, F j, Y' ) . ". Lead with the direct answer (names, dates, dollar amounts rounded to the nearest dollar), then add a line of context only when it helps. Keep it short; use a short bullet list when listing several items. When a project is relevant, name it exactly as it appears. If the data can't answer the question, say so plainly and say where in Dream Desk he could check. Never invent clients, amounts or events. You can also make changes with your tools when he asks (log Connects purchases, log payments, add notes and to-dos, check off or reschedule to-dos, update project and lead fields, create leads). When he asks for a change, just do it with the right tool, no need to ask permission first; only ask a short question if it's genuinely unclear which project he means or a required amount is missing. Use the ids from the data. After acting, confirm in one or two lines exactly what changed (and new totals when relevant). Only say something was done if the tool returned OK. You can't delete anything or send emails; for those, tell him where in Dream Desk to do it.\n\nDATA (JSON):\n" . wp_json_encode( dwdc_ai_desk_context() ),
 				'cache_control' => array( 'type' => 'ephemeral' ),
 			) );
 		} else
@@ -239,38 +336,57 @@ add_action( 'rest_api_init', function () {
 				'cache_control' => array( 'type' => 'ephemeral' ),
 			),
 		);
-		$res = wp_remote_post( 'https://api.anthropic.com/v1/messages', array(
-			'timeout' => 90,
-			'headers' => array(
-				'x-api-key'         => $key,
-				'anthropic-version' => '2026-10-21',
-				'anthropic-beta'    => 'server-side-fallback-2026-07-01',
-				'content-type'      => 'application/json',
-			),
-			'body'    => wp_json_encode( array(
+		$changed = false;
+		for ( $turn = 0; $turn < 8; $turn++ ) {
+			$req = array(
 				'model'         => 'claude-opus-5-5',
 				'max_tokens'    => 16000,
 				'output_config' => array( 'effort' => 'medium' ),
 				'fallbacks'     => 'default',
 				'system'        => $system,
 				'messages'      => $msgs,
-			) ),
-		) );
-		if ( is_wp_error( $res ) ) {
-			return new WP_Error( 'dwdc_ai', 'Couldn’t reach Claude: ' . $res->get_error_message(), array( 'status' => 502 ) );
-		}
-		$code = wp_remote_retrieve_response_code( $res );
-		$body = json_decode( wp_remote_retrieve_body( $res ), true );
-		if ( 200 !== $code ) {
-			$msg = $body['error']['message'] ?? 'Claude returned an error.';
-			if ( 401 === $code ) {
-				$msg = 'Your Claude API key was rejected. Paste a new one.';
-				return new WP_Error( 'dwdc_ai', $msg, array( 'status' => 400, 'needs_key' => true ) );
+			);
+			if ( ! empty( $desk ) && ! $personal ) {
+				$req['tools'] = dwdc_ai_tools();
 			}
-			return new WP_Error( 'dwdc_ai', $msg, array( 'status' => 502 ) );
-		}
-		if ( 'refusal' === ( $body['stop_reason'] ?? '' ) ) {
-			return array( 'answer' => 'I can’t answer that one. Try asking it a different way.' );
+			$res = wp_remote_post( 'https://api.anthropic.com/v1/messages', array(
+				'timeout' => 90,
+				'headers' => array(
+					'x-api-key'         => $key,
+					'anthropic-version' => '2026-10-21',
+					'anthropic-beta'    => 'server-side-fallback-2026-07-01',
+					'content-type'      => 'application/json',
+				),
+				'body'    => wp_json_encode( $req ),
+			) );
+			if ( is_wp_error( $res ) ) {
+				return new WP_Error( 'dwdc_ai', 'Couldn’t reach Claude: ' . $res->get_error_message(), array( 'status' => 502 ) );
+			}
+			$code = wp_remote_retrieve_response_code( $res );
+			$body = json_decode( wp_remote_retrieve_body( $res ), true );
+			if ( 200 !== $code ) {
+				$msg = $body['error']['message'] ?? 'Claude returned an error.';
+				if ( 401 === $code ) {
+					return new WP_Error( 'dwdc_ai', 'Your Claude API key was rejected. Paste a new one.', array( 'status' => 400, 'needs_key' => true ) );
+				}
+				return new WP_Error( 'dwdc_ai', $msg, array( 'status' => 502 ) );
+			}
+			if ( 'refusal' === ( $body['stop_reason'] ?? '' ) ) {
+				return array( 'answer' => 'I can’t answer that one. Try asking it a different way.', 'changed' => $changed );
+			}
+			if ( 'tool_use' !== ( $body['stop_reason'] ?? '' ) ) {
+				break;
+			}
+			$msgs[]  = array( 'role' => 'assistant', 'content' => $body['content'] );
+			$results = array();
+			foreach ( (array) $body['content'] as $b ) {
+				if ( 'tool_use' === ( $b['type'] ?? '' ) ) {
+					$out       = dwdc_ai_run_tool( (string) $b['name'], $b['input'] ?? array() );
+					$changed   = $changed || 0 === strpos( $out, 'OK' );
+					$results[] = array( 'type' => 'tool_result', 'tool_use_id' => $b['id'], 'content' => $out, 'is_error' => 0 !== strpos( $out, 'OK' ) );
+				}
+			}
+			$msgs[] = array( 'role' => 'user', 'content' => $results );
 		}
 		$text = '';
 		foreach ( (array) ( $body['content'] ?? array() ) as $b ) {
@@ -278,6 +394,6 @@ add_action( 'rest_api_init', function () {
 				$text .= $b['text'];
 			}
 		}
-		return array( 'answer' => trim( $text ) ?: 'I didn’t get an answer back. Try again.' );
+		return array( 'answer' => trim( $text ) ?: ( $changed ? 'Done.' : 'I didn’t get an answer back. Try again.' ), 'changed' => $changed );
 	} ) );
 } );
