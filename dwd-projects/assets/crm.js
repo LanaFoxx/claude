@@ -950,7 +950,7 @@
 		var mid = paid.length ? lifetime(paid[Math.floor(paid.length / 2)]) : 0;
 		var top = paid[0];
 		var hostYr = hosting().reduce(function (s, c) { return s + num(c.hosting); }, 0);
-		var open = working(), owe = owed(open);
+		var open = working(), owe = owed(owingList());
 		// clients
 		var byClient = {};
 		projs.forEach(function (c) { var k = c.client || ('p' + c.id); (byClient[k] = byClient[k] || { id: c.client, list: [], total: 0 }).list.push(c); byClient[k].total += lifetime(c); });
@@ -1189,6 +1189,8 @@
 
 	/* ---------- Dream Desk: helpers ---------- */
 	function isProject(c) { return c.list === 'active' || c.list === 'limbo' || c.list === 'hold' || c.list === 'complete'; }
+	// Everything with money still owed: open projects, plus completed ones you set an amount owed on after finishing.
+	function owingList() { return S.contacts.filter(function (c) { return (isOpen(c) || (c.list === 'complete' && c.owedopen)) && num(c.balance) > 0; }); }
 	function isOpen(c) { return c.list === 'active' || c.list === 'limbo' || c.list === 'hold'; }
 	// Client type: Project (an open project), Hosting, Lead, else Past client.
 	function clientType(cid) {
@@ -1245,7 +1247,7 @@
 		var annual = host.reduce(function (s, c) { return s + num(c.hosting); }, 0);
 		var nextH = host.filter(function (c) { return c.renewal && c.renewal >= DWDC.today; }).sort(function (a, b) { return a.renewal < b.renewal ? -1 : 1; })[0];
 		var nextDue = open.filter(function (c) { return c.deadline; }).sort(function (a, b) { return a.deadline < b.deadline ? -1 : 1; })[0];
-		var owing = open.filter(function (c) { return num(c.balance) > 0; });
+		var owing = owingList();
 		var billed = S.contacts.reduce(function (s, c) { return s + lifetime(c); }, 0);
 		var lastPay = S.contacts.filter(function (c) { return c.last_pay; }).sort(function (a, b) { return a.last_pay.date < b.last_pay.date ? 1 : -1; })[0];
 		var seg = function (n, cls) { return n ? '<i class="' + cls + '" style="flex:' + n + '"></i>' : ''; };
@@ -1283,7 +1285,7 @@
 				var ls = new Date(ws); ls.setDate(ls.getDate() - 7); var le = new Date(ws); le.setDate(le.getDate() - 1);
 				var wbox = function (label, a, b) { var l = winsIn(dIso(a), dIso(b)); return '<button type="button" class="dwdc-mjob" data-wins="' + dIso(a) + '|' + dIso(b) + '|' + label + '"><span class="dwdc-lbl">' + label + '</span><strong>' + l.length + '<i> job' + (l.length === 1 ? '' : 's') + '</i></strong><small>' + shortD(dIso(a)) + '–' + shortD(dIso(b)) + (winVal(l) ? ' · ' + money(winVal(l)) : '') + '</small></button>'; };
 				return '<div class="dwdc-mtop"><button type="button" class="dwdc-mnow" data-month="' + ym + '"><span class="dwdc-lbl">Made in ' + MNf[mi] + '</span><strong>' + money(cur) + '</strong><small>' + MNf[prevD.getMonth()] + ': ' + money(prev) + ' · see payments →</small></button>'
-					+ '<button type="button" class="dwdc-mopen" data-owed><span class="dwdc-lbl">Owed to you</span><strong>' + money(owed(open)) + '</strong><small>' + owing.length + ' open project' + (owing.length === 1 ? '' : 's') + ' · see list →</small></button></div>'
+					+ '<button type="button" class="dwdc-mopen" data-owed><span class="dwdc-lbl">Owed to you</span><strong>' + money(owed(owing)) + '</strong><small>' + owing.length + ' project' + (owing.length === 1 ? '' : 's') + ' · see list →</small></button></div>'
 					+ '<div class="dwdc-mjobs">' + wbox('Jobs this week', ws, we) + wbox('Jobs last week', ls, le) + '</div>';
 			})(),
 			'<footer>' + frow('Hosting Revenue', money(annual) + ' / yr', 'hosting') + '<a class="dwdc-frow" href="#money"><span>All-time income</span><b>' + money(allIncome()) + '</b>' + ic('right', 12) + '</a></footer>');
@@ -2011,15 +2013,15 @@
 			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide">' + head('Upwork', 'Connects', 'spending') + connSpend() + '<div class="dwdc-farow end"><a class="dwdc-btn2" href="#money" data-close-modal>Open in Money Stats</a></div></div>';
 		}
 		if (m.type === 'owed') {
-			var ol = working().filter(function (c) { return num(c.balance) > 0; }).sort(function (a, b) { return num(b.balance) - num(a.balance); });
+			var ol = owingList().sort(function (a, b) { return num(b.balance) - num(a.balance); });
 			var obody = ol.length ? '<div class="dwdc-mo-sum"><span>Projects<b>' + ol.length + '</b></span><span>Total owed<b>' + money(owed(ol)) + '</b></span></div>'
 				+ ol.map(function (c) {
 					var k = clientOf(c), pm = c.paymark || '';
 					var tb = function (v, label) { return '<button type="button" class="dwdc-btn2 sm' + (pm === v ? ' on-' + v : '') + '" data-owmark="' + c.id + '" data-v="' + (pm === v ? '' : v) + '">' + label + '</button>'; };
-					return '<div class="dwdc-mo-r dwdc-owr" data-owgo="client/' + c.id + '"><span class="d">' + (c.deadline ? 'Due ' + fmt(c.deadline) : '') + '</span><span class="w"><b>' + esc(c.name) + (pm === 'pending' ? ' <em class="dwdc-pendtag pending">Pending</em>' : '') + '</b><small>' + esc([k ? k.name : c.person, num(c.price) ? 'Price ' + money(c.price) : ''].filter(Boolean).join(' · ')) + '</small></span><strong>' + money(c.balance) + '</strong>'
+					return '<div class="dwdc-mo-r dwdc-owr" data-owgo="client/' + c.id + '"><span class="d">' + (c.deadline ? 'Due ' + fmt(c.deadline) : '') + '</span><span class="w"><b>' + esc(c.name) + (pm === 'pending' ? ' <em class="dwdc-pendtag pending">Pending</em>' : '') + '</b><small>' + esc([k ? k.name : c.person, num(c.price) ? 'Price ' + money(c.price) : '', c.list === 'complete' ? 'Completed' : ''].filter(Boolean).join(' · ')) + '</small></span><strong>' + money(c.balance) + '</strong>'
 						+ '<span class="dwdc-owacts">' + tb('pending', 'Pending') + '<button type="button" class="dwdc-btn sm" data-owpaid="' + c.id + '">Paid</button></span></div>';
 				}).join('') : emptyRow('Nothing is owed on open projects.');
-			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide">' + head('Open projects', 'Owed', money(owed(ol))) + obody + '</div>';
+			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide">' + head('Projects', 'Owed', money(owed(ol))) + obody + '</div>';
 		}
 		if (m.type === 'month') {
 			var MNL = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];

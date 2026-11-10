@@ -46,7 +46,7 @@ function dwdc_lists() {
 
 /** Contact fields kept on every contact. */
 function dwdc_fields() {
-	return array( 'job', 'manual', 'followup', 'markup', 'markup_sent', 'lead_source', 'pay_method', 'stage', 'completed', 'billed', 'stripe', 'paypal', 'person', 'email', 'phone', 'company', 'website', 'list', 'price', 'balance', 'deadline', 'hosting', 'renewal', 'source', 'next', 'pending', 'paymark' );
+	return array( 'job', 'manual', 'followup', 'markup', 'markup_sent', 'lead_source', 'pay_method', 'stage', 'completed', 'billed', 'stripe', 'paypal', 'person', 'email', 'phone', 'company', 'website', 'list', 'price', 'balance', 'deadline', 'hosting', 'renewal', 'source', 'next', 'pending', 'paymark', 'owedopen' );
 }
 
 function dwdc_contact( $post, $full = false ) {
@@ -144,6 +144,11 @@ function dwdc_save_contact( $id, $data ) {
 			$v = 'email' === $f ? strtolower( sanitize_email( $data[ $f ] ) ) : sanitize_text_field( $data[ $f ] );
 			update_post_meta( $id, '_dwdc_' . $f, $v );
 		}
+	}
+	// A completed project you set an amount owed on (after finishing) shows in Owed until it's paid.
+	if ( isset( $data['balance'] ) ) {
+		$owe = (float) preg_replace( '/[^\d.]/', '', (string) $data['balance'] );
+		update_post_meta( $id, '_dwdc_owedopen', $owe > 0 && 'complete' === get_post_meta( $id, '_dwdc_list', true ) ? '1' : '' );
 	}
 	// Remove a source's payments entirely (e.g. when they were filed on the wrong project).
 	if ( ! empty( $data['payments_clear'] ) && is_array( $data['payments_clear'] ) ) {
