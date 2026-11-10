@@ -1,0 +1,330 @@
+<?php
+/**
+ * Plugin Name: Nick Ponte Coastal Light (preview)
+ * Description: "Coastal Light" redesign preview: a homepage template (/home-preview/) and a Town post type (/town-preview/<town>/) with monthly market fields, FAQ and JSON-LD. Preview pages are noindex and use their own header and footer, so live pages are not affected. Deactivate to remove everything from the front end.
+ * Version: 1.0.2
+ * Author: Dream Web Digital
+ * Requires PHP: 7.4
+ */
+
+if (!defined('ABSPATH')) exit;
+
+define('NPC_VER', '1.0.2');
+define('NPC_DIR', plugin_dir_path(__FILE__));
+define('NPC_URL', plugin_dir_url(__FILE__));
+const NPC_HOME_TEMPLATE = 'npc-home';
+const NPC_REVIEW_TEMPLATE = 'npc-review';
+
+/* ------------------------------------------------------------------ */
+/* Town post type and fields                                          */
+/* ------------------------------------------------------------------ */
+
+function npc_fields() {
+	// key => [label, type, help]
+	return [
+		'tag'           => ['Short description (homepage list)', 'text', 'One line, e.g. "Oceanfront estates, Wallis Sands and Jenness beaches."'],
+		'intro'         => ['Intro paragraph', 'textarea', 'Shown under the town name. Also used as the meta description.'],
+		'updated'       => ['Snapshot month', 'text', 'e.g. "November 2026". Shown as "Updated …".'],
+		'median'        => ['Median sale price ($)', 'number', 'Whole dollars, no commas.'],
+		'dom'           => ['Avg. days on market', 'number', ''],
+		'active'        => ['Active listings', 'number', ''],
+		'ratio'         => ['Sale-to-list ratio (%)', 'number', 'e.g. 98.2'],
+		'sold'          => ['Homes sold (last 90 days)', 'number', ''],
+		'trend'         => ['Median price, last 12 months', 'text', '12 numbers, oldest first, separated by commas. Drives the sparkline and the YoY figure.'],
+		'read'          => ["Nick's read", 'textarea', '2–3 sentences of commentary.'],
+		'neighborhoods' => ['Neighborhoods', 'textarea', 'One per line: Name | short note'],
+		'sales'         => ['Recent sales', 'textarea', 'One per line: Street | Town, NH · 4 bd · 3 ba | $1,250,000 | Represented the seller | Closed Sep 2026 | optional image URL'],
+		'sample'        => ['Figures are sample data', 'checkbox', 'Shows a "sample figures" note on the page. Untick once real numbers are entered.'],
+		'zillow'        => ['Show "All sales on Zillow" link', 'checkbox', ''],
+	];
+}
+
+function npc_register() {
+	register_post_type('np_town', [
+		'label'               => 'Towns',
+		'labels'              => ['name' => 'Towns', 'singular_name' => 'Town', 'add_new_item' => 'Add town', 'edit_item' => 'Edit town', 'menu_name' => 'Towns (preview)'],
+		'public'              => true,
+		'exclude_from_search' => true,
+		'show_in_rest'        => true,
+		'rest_base'           => 'np-towns',
+		'menu_icon'           => 'dashicons-location-alt',
+		'menu_position'       => 21,
+		'supports'            => ['title', 'thumbnail', 'page-attributes', 'custom-fields'],
+		'has_archive'         => false,
+		'rewrite'             => ['slug' => 'town-preview', 'with_front' => false],
+	]);
+	foreach (npc_fields() as $k => $f) {
+		register_post_meta('np_town', "_npc_$k", [
+			'type'          => $f[1] === 'number' ? 'number' : ($f[1] === 'checkbox' ? 'boolean' : 'string'),
+			'single'        => true,
+			'show_in_rest'  => true,
+			'auth_callback' => function () { return current_user_can('edit_posts'); },
+		]);
+	}
+}
+add_action('init', 'npc_register');
+
+register_activation_hook(__FILE__, function () {
+	npc_register();
+	flush_rewrite_rules();
+});
+register_deactivation_hook(__FILE__, 'flush_rewrite_rules');
+
+function npc_meta($id, $k, $default = '') {
+	$v = get_post_meta($id, "_npc_$k", true);
+	return ($v === '' || $v === null) ? $default : $v;
+}
+
+add_action('add_meta_boxes', function () {
+	add_meta_box('npc_town_fields', 'Monthly market snapshot', 'npc_render_metabox', 'np_town', 'normal', 'high');
+});
+
+function npc_render_metabox($post) {
+	wp_nonce_field('npc_save', 'npc_nonce');
+	echo '<p style="margin-top:0">Update these each month. The featured image is the town photo. Order on the homepage and in the town pills follows <em>Order</em> under Page Attributes (the first three are the photo tiles).</p><table class="form-table" role="presentation">';
+	foreach (npc_fields() as $k => $f) {
+		[$label, $type, $help] = $f;
+		$v = get_post_meta($post->ID, "_npc_$k", true);
+		$id = "npc_$k";
+		echo '<tr><th scope="row"><label for="' . esc_attr($id) . '">' . esc_html($label) . '</label></th><td>';
+		if ($type === 'textarea') {
+			echo '<textarea class="large-text" rows="' . (in_array($k, ['sales', 'neighborhoods'], true) ? 6 : 4) . '" id="' . esc_attr($id) . '" name="' . esc_attr($id) . '">' . esc_textarea($v) . '</textarea>';
+		} elseif ($type === 'checkbox') {
+			echo '<label><input type="checkbox" id="' . esc_attr($id) . '" name="' . esc_attr($id) . '" value="1" ' . checked((bool) $v, true, false) . '> Yes</label>';
+		} else {
+			echo '<input class="' . ($type === 'number' ? 'small-text' : 'large-text') . '" type="' . ($type === 'number' ? 'number' : 'text') . '" step="any" id="' . esc_attr($id) . '" name="' . esc_attr($id) . '" value="' . esc_attr($v) . '">';
+		}
+		if ($help) echo '<p class="description">' . esc_html($help) . '</p>';
+		echo '</td></tr>';
+	}
+	echo '</table>';
+}
+
+add_action('save_post_np_town', function ($id) {
+	if (!isset($_POST['npc_nonce']) || !wp_verify_nonce($_POST['npc_nonce'], 'npc_save')) return;
+	if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
+	if (!current_user_can('edit_post', $id)) return;
+	foreach (npc_fields() as $k => $f) {
+		$name = "npc_$k";
+		if ($f[1] === 'checkbox') {
+			update_post_meta($id, "_npc_$k", !empty($_POST[$name]));
+			continue;
+		}
+		if (!isset($_POST[$name])) continue;
+		$raw = wp_unslash($_POST[$name]);
+		$val = $f[1] === 'textarea' ? sanitize_textarea_field($raw) : ($f[1] === 'number' ? ($raw === '' ? '' : (float) $raw) : sanitize_text_field($raw));
+		update_post_meta($id, "_npc_$k", $val);
+	}
+});
+
+/* ------------------------------------------------------------------ */
+/* Data helpers                                                        */
+/* ------------------------------------------------------------------ */
+
+function npc_money($n) { return '$' . number_format((float) $n, 0, '.', ','); }
+function npc_short($n) {
+	$n = (float) $n;
+	if ($n >= 1e6) return '$' . preg_replace('/0$/', '', number_format($n / 1e6, 2)) . 'M';
+	return '$' . round($n / 1000) . 'K';
+}
+function npc_lines($text, $min = 2) {
+	$rows = [];
+	foreach (preg_split('/\r\n|\r|\n/', (string) $text) as $line) {
+		if (trim($line) === '') continue;
+		$parts = array_map('trim', explode('|', $line));
+		if (count($parts) >= $min) $rows[] = $parts;
+	}
+	return $rows;
+}
+
+function npc_towns() {
+	static $towns = null;
+	if ($towns === null) {
+		$towns = get_posts(['post_type' => 'np_town', 'post_status' => 'publish', 'numberposts' => 50, 'orderby' => ['menu_order' => 'ASC', 'title' => 'ASC']]);
+	}
+	return $towns;
+}
+
+function npc_town_data($post) {
+	$id = $post->ID;
+	$name = get_the_title($post);
+	$median = (float) npc_meta($id, 'median', 0);
+	$dom = (float) npc_meta($id, 'dom', 0);
+	$ratio = (float) npc_meta($id, 'ratio', 0);
+	$updated = npc_meta($id, 'updated', date_i18n('F Y'));
+	$trend = array_values(array_filter(array_map('floatval', explode(',', (string) npc_meta($id, 'trend', ''))), function ($v) { return $v > 0; }));
+	$spark = null;
+	if (count($trend) >= 2) {
+		$mn = min($trend); $mx = max($trend); $span = max($mx - $mn, 1); $last = count($trend) - 1;
+		$pts = [];
+		foreach ($trend as $i => $v) $pts[] = round($i * 240 / $last, 1) . ',' . round(58 - ($v - $mn) / $span * 50, 1);
+		$line = implode(' ', $pts);
+		$delta = ($trend[$last] / $trend[0] - 1) * 100;
+		$spark = ['line' => $line, 'area' => '0,64 ' . $line . ' 240,64', 'delta' => ($delta >= 0 ? '+' : '') . number_format($delta, 1) . '% YoY'];
+	}
+	$sold = (int) npc_meta($id, 'sold', 0);
+	$active = (int) npc_meta($id, 'active', 0);
+	$ratio_s = number_format($ratio, 1) . '%';
+	$faqs = [
+		["What is the median home price in $name, NH?", npc_money($median) . ", based on closed sales over the last 90 days, updated $updated. $sold homes sold in that window and $active are active today."],
+		["How long do homes in $name take to sell?", "About " . (int) $dom . " days from listing to accepted offer on average. Homes are closing at $ratio_s of their last list price, so pricing correctly on day one still matters more than anything else."],
+		["How do I find out what my $name home is worth?", "Automated estimates struggle in $name because of the price spread between neighborhoods and the small number of annual sales. Nick prepares a confidential valuation from comparable closed sales, absorption rate and your property's specifics, at no cost."],
+	];
+	return [
+		'id' => $id, 'name' => $name, 'slug' => $post->post_name, 'url' => get_permalink($post),
+		'tag' => npc_meta($id, 'tag'), 'intro' => npc_meta($id, 'intro'), 'updated' => $updated,
+		'median' => $median, 'img' => get_post_thumbnail_id($post),
+		'metrics' => [
+			['Median sale price', npc_money($median), 'Last 90 days'],
+			['Avg. days on market', (int) $dom . ' days', 'List to accepted offer'],
+			['Active listings', (string) $active, 'Single-family and condo'],
+			['Sale-to-list ratio', $ratio_s, 'Sale price vs. last list'],
+			['Homes sold', (string) $sold, 'Last 90 days'],
+		],
+		'spark' => $spark, 'read' => npc_meta($id, 'read'),
+		'areas' => npc_lines(npc_meta($id, 'neighborhoods')), 'sales' => npc_lines(npc_meta($id, 'sales'), 3),
+		'sample' => (bool) npc_meta($id, 'sample', false), 'zillow' => (bool) npc_meta($id, 'zillow', false),
+		'faqs' => $faqs,
+	];
+}
+
+function npc_media_id($slug) {
+	static $cache = [];
+	if (!isset($cache[$slug])) {
+		$a = get_posts(['post_type' => 'attachment', 'name' => $slug, 'numberposts' => 1, 'post_status' => 'inherit']);
+		$cache[$slug] = $a ? $a[0]->ID : 0;
+	}
+	return $cache[$slug];
+}
+function npc_img($id_or_slug, $size, $attrs = []) {
+	$id = is_numeric($id_or_slug) ? (int) $id_or_slug : npc_media_id($id_or_slug);
+	if (!$id) $id = npc_media_id('npc-rye-coast');
+	return $id ? wp_get_attachment_image($id, $size, false, $attrs) : '';
+}
+
+function npc_home_url() {
+	$p = get_posts(['post_type' => 'page', 'name' => 'home-preview', 'numberposts' => 1, 'post_status' => 'publish']);
+	return $p ? get_permalink($p[0]) : home_url('/home-preview/');
+}
+function npc_default_town_url() {
+	$t = npc_towns();
+	return $t ? get_permalink($t[0]) : home_url('/town-preview/rye/');
+}
+
+/* ------------------------------------------------------------------ */
+/* Templates                                                           */
+/* ------------------------------------------------------------------ */
+
+add_filter('theme_page_templates', function ($templates) {
+	$templates[NPC_HOME_TEMPLATE] = 'Coastal Light – Home (preview)';
+	$templates[NPC_REVIEW_TEMPLATE] = 'Coastal Light – Review hub';
+	return $templates;
+});
+
+function npc_is_preview() {
+	if (is_singular('np_town')) return 'town';
+	if (is_page() && get_page_template_slug(get_queried_object_id()) === NPC_HOME_TEMPLATE) return 'home';
+	if (is_page() && get_page_template_slug(get_queried_object_id()) === NPC_REVIEW_TEMPLATE) return 'review';
+	return false;
+}
+
+add_filter('template_include', function ($template) {
+	$k = npc_is_preview();
+	if ($k === 'town') return NPC_DIR . 'templates/town.php';
+	if ($k === 'home') return NPC_DIR . 'templates/home.php';
+	if ($k === 'review') return NPC_DIR . 'templates/review.php';
+	return $template;
+}, 99);
+
+add_action('wp_enqueue_scripts', function () {
+	if (!npc_is_preview()) return;
+	wp_enqueue_style('npc-fonts', 'https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,500;0,600;1,500&family=Figtree:wght@400;500;600&display=swap', [], null);
+	wp_enqueue_style('npc', NPC_URL . 'assets/coastal.css', [], NPC_VER);
+	wp_enqueue_script('npc', NPC_URL . 'assets/coastal.js', [], NPC_VER, true);
+	wp_localize_script('npc', 'npcForm', ['ajax' => admin_url('admin-ajax.php')]);
+}, 20);
+
+// The preview pages carry their own header, footer and styles: drop the theme's and Elementor's page CSS there.
+add_action('wp_print_styles', function () {
+	if (!npc_is_preview()) return;
+	global $wp_styles;
+	foreach ((array) $wp_styles->queue as $h) {
+		if (preg_match('/^(astra|elementor|e-|swiper|font-awesome|google-fonts-1|wp-block-library|global-styles|classic-theme)/', $h)) wp_dequeue_style($h);
+	}
+}, 100);
+
+/* ------------------------------------------------------------------ */
+/* SEO: noindex previews, titles, schema                               */
+/* ------------------------------------------------------------------ */
+
+add_filter('rank_math/frontend/robots', function ($robots) {
+	if (npc_is_preview()) { $robots['index'] = 'noindex'; $robots['follow'] = 'nofollow'; }
+	return $robots;
+});
+add_filter('wp_robots', function ($robots) {
+	if (npc_is_preview()) { $robots['noindex'] = true; $robots['nofollow'] = true; unset($robots['index'], $robots['follow']); }
+	return $robots;
+});
+add_filter('rank_math/sitemap/exclude_post_type', function ($exclude, $type) { return $type === 'np_town' ? true : $exclude; }, 10, 2);
+add_filter('rank_math/sitemap/entry', function ($url, $type, $object) {
+	if ($type === 'post' && isset($object->ID) && in_array(get_page_template_slug($object->ID), [NPC_HOME_TEMPLATE, NPC_REVIEW_TEMPLATE], true)) return false;
+	return $url;
+}, 10, 3);
+add_filter('wp_sitemaps_post_types', function ($types) { unset($types['np_town']); return $types; });
+
+add_filter('rank_math/frontend/title', function ($title) {
+	if (npc_is_preview() === 'town') return 'Top Realtor in ' . get_the_title() . ' NH | Nick Ponte';
+	return $title;
+});
+add_filter('rank_math/frontend/description', function ($d) {
+	if (npc_is_preview() === 'town') return wp_trim_words(npc_meta(get_queried_object_id(), 'intro'), 28, '…');
+	return $d;
+});
+add_filter('pre_get_document_title', function ($t) {
+	if (npc_is_preview() === 'town') return 'Top Realtor in ' . get_the_title() . ' NH | Nick Ponte';
+	return $t;
+}, 20);
+
+function npc_agent_schema($area = null) {
+	$s = [
+		'@type'     => ['RealEstateAgent', 'LocalBusiness'],
+		'@id'       => home_url('/#nick-ponte'),
+		'name'      => 'Nick Ponte Realty',
+		'url'       => home_url('/'),
+		'telephone' => '+1-603-918-7593',
+		'email'     => 'nponte@careyandgiampa.com',
+		'image'     => wp_get_attachment_image_url(npc_media_id('npc-nick-ponte'), 'full') ?: '',
+		'address'   => ['@type' => 'PostalAddress', 'streetAddress' => '655 Wallis Road', 'addressLocality' => 'Rye', 'addressRegion' => 'NH', 'postalCode' => '03870', 'addressCountry' => 'US'],
+		'employee'  => ['@type' => 'Person', 'name' => 'Nick Ponte', 'jobTitle' => 'Managing Broker'],
+		'parentOrganization' => ['@type' => 'Organization', 'name' => 'Carey & Giampa Realtors'],
+		'areaServed' => $area ? ['@type' => 'City', 'name' => "$area, NH"] : array_map(function ($t) { return ['@type' => 'City', 'name' => get_the_title($t) . ', NH']; }, npc_towns()),
+	];
+	return $s;
+}
+
+add_action('wp_head', function () {
+	$k = npc_is_preview();
+	if (!$k) return;
+	$graph = [];
+	if ($k === 'town') {
+		$t = npc_town_data(get_queried_object());
+		$graph[] = npc_agent_schema($t['name']);
+		$graph[] = ['@type' => 'FAQPage', 'mainEntity' => array_map(function ($f) {
+			return ['@type' => 'Question', 'name' => $f[0], 'acceptedAnswer' => ['@type' => 'Answer', 'text' => $f[1]]];
+		}, $t['faqs'])];
+	} elseif ($k === 'home') {
+		$graph[] = npc_agent_schema();
+	} else {
+		return;
+	}
+	echo '<script type="application/ld+json">' . wp_json_encode(['@context' => 'https://schema.org', '@graph' => $graph], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "</script>\n";
+}, 30);
+
+/* ------------------------------------------------------------------ */
+/* Admin notice                                                        */
+/* ------------------------------------------------------------------ */
+
+add_filter('display_post_states', function ($states, $post) {
+	if ($post->post_type === 'page' && in_array(get_page_template_slug($post->ID), [NPC_HOME_TEMPLATE, NPC_REVIEW_TEMPLATE], true)) $states['npc'] = 'Coastal Light preview (noindex)';
+	return $states;
+}, 10, 2);
