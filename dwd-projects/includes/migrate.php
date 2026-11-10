@@ -150,3 +150,49 @@ add_action( 'admin_init', function () {
 	}
 	update_option( 'dwdp_mig_onb_inspiration', $hit ? 'done' : 'not-found', false );
 } );
+
+/* Onboarding form: every question required (except file uploads and the two link fields, which can't take "N/A"). Runs once. */
+add_action( 'admin_init', function () {
+	if ( get_option( 'dwdp_mig_onb_required' ) ) {
+		return;
+	}
+	$id   = 2993;
+	$d    = json_decode( (string) get_post_meta( $id, '_elementor_data', true ), true );
+	$skip = array( 'logo_upload', 'brand_upload', 'content_upload', 'media_upload', 'existing_url', 'shared_folder' );
+	if ( ! is_array( $d ) ) {
+		update_option( 'dwdp_mig_onb_required', 'no-data', false );
+		return;
+	}
+	$n    = 0;
+	$walk = function ( &$els ) use ( &$walk, &$n, $skip ) {
+		foreach ( $els as &$el ) {
+			if ( ! empty( $el['settings']['form_fields'] ) && is_array( $el['settings']['form_fields'] ) ) {
+				foreach ( $el['settings']['form_fields'] as &$f ) {
+					$type = $f['field_type'] ?? 'text';
+					if ( in_array( $type, array( 'step', 'html', 'hidden', 'upload', 'recaptcha', 'recaptcha_v3', 'honeypot' ), true ) || in_array( $f['custom_id'] ?? '', $skip, true ) ) {
+						continue;
+					}
+					if ( 'true' !== ( $f['required'] ?? '' ) ) {
+						$f['required'] = 'true';
+						$n++;
+					}
+				}
+				unset( $f );
+			}
+			if ( ! empty( $el['elements'] ) ) {
+				$walk( $el['elements'] );
+			}
+		}
+		unset( $el );
+	};
+	$walk( $d );
+	if ( $n ) {
+		update_post_meta( $id, '_elementor_data', wp_slash( wp_json_encode( $d ) ) );
+		delete_post_meta( $id, '_elementor_css' );
+		delete_post_meta( $id, '_elementor_element_cache' );
+		if ( class_exists( '\Elementor\Plugin' ) ) {
+			\Elementor\Plugin::$instance->files_manager->clear_cache();
+		}
+	}
+	update_option( 'dwdp_mig_onb_required', 'done:' . $n, false );
+} );

@@ -1028,7 +1028,7 @@ add_action( 'rest_api_init', function () {
 				'eyebrow' => 'Welcome',
 				'title'   => 'Let’s get your website started',
 				'intro'   => 'Hi there,<br><br>Thank you for choosing Dream Web Digital. The first step is a short onboarding form that tells me everything I need to plan your website: your business, your goals, the pages you need, and the look you have in mind.<br><br>'
-					. 'It takes about 10 to 15 minutes. You can skip anything you don’t have yet and come back to it later, since your answers save automatically as you go.',
+					. 'It takes about 10 to 15 minutes, and your answers save automatically as you go, so you can come back to finish. Please answer every question; if one doesn’t apply, just write N/A.',
 				'buttons' => array( array( 'Start my onboarding form', $link ) ),
 				'outro'   => 'Questions? Just reply to this email.<br>Michael Tarr, Dream Web Digital',
 				'footer'  => 'Dream Web Digital ·',

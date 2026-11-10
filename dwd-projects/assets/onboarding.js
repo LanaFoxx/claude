@@ -3,7 +3,8 @@
  * - Next/Back never get stuck on an empty field; the step dots jump straight to any step.
  * - Everything typed or chosen is saved in this browser as you go (for 60 days) and filled back in
  *   when the page is opened again, on the step you were last on. Cleared once the form is sent.
- * - If the final submit finds a required answer missing, it jumps to the step with that question.
+ * - If the final submit finds a required answer missing (including a checkbox question with nothing ticked),
+ *   it jumps to the step with that question.
  */
 (function () {
 	'use strict';
@@ -137,7 +138,7 @@
 
 	var box = document.createElement('div');
 	box.className = 'dw-ob-note';
-	box.innerHTML = '<span class="dw-ob-ic" aria-hidden="true"></span><span class="dw-ob-t">Your answers save automatically on this device. Skip anything you don’t have yet, move between steps any time, and come back later to finish.</span><button type="button" class="dw-ob-clear" hidden>Start over</button>';
+	box.innerHTML = '<span class="dw-ob-ic" aria-hidden="true"></span><span class="dw-ob-t">Your answers save automatically on this device, so you can come back later to finish. Every question needs an answer: if one doesn’t apply, just write N/A. File uploads are optional.</span><button type="button" class="dw-ob-clear" hidden>Start over</button>';
 	form.parentNode.insertBefore(box, form);
 	var clearBtn = box.querySelector('.dw-ob-clear');
 	function note(saved) { clearBtn.hidden = !saved; }
@@ -159,6 +160,21 @@
 				e.preventDefault(); e.stopImmediatePropagation();
 				goTo(i, true);
 				setTimeout(function () { miss.reportValidity(); miss.focus(); }, 300);
+				return;
+			}
+		}
+		// Checkbox questions are required too (the browser can't check a group): at least one box each.
+		for (var j = 0; j < s.length; j++) {
+			var grp = [].slice.call(s[j].querySelectorAll('.elementor-field-type-checkbox')).filter(function (g) { return !g.querySelector('input[type="checkbox"]:checked'); })[0];
+			if (grp) {
+				e.preventDefault(); e.stopImmediatePropagation();
+				var box = grp.querySelector('input[type="checkbox"]');
+				if (j !== cur) { goTo(j, true); }
+				setTimeout(function () {
+					box.setCustomValidity('Please choose at least one option.');
+					box.reportValidity(); box.focus();
+					grp.addEventListener('change', function clr() { box.setCustomValidity(''); grp.removeEventListener('change', clr); });
+				}, j !== cur ? 300 : 0);
 				return;
 			}
 		}
