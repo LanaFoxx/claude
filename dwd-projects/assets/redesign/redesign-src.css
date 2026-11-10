@@ -2,7 +2,7 @@
 /* Site Chrome */
 html{scroll-behavior:smooth}
 html,body{margin:0;padding:0;background:#121212}
-body{font-family:'Archivo',system-ui,sans-serif;color:#121212;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body{font-family:'Archivo','Archivo Fallback',system-ui,sans-serif;color:#121212;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 a{color:#13A6EE}a:hover{color:#2A8FD6}
 *,*::before,*::after{box-sizing:border-box}
 input::placeholder,textarea::placeholder{color:#8A8A8A}
@@ -44,7 +44,7 @@ footer{padding-left:18px !important;padding-right:18px !important}
 /* Home */
 html{scroll-behavior:smooth}
 html,body{margin:0;padding:0;background:#121212}
-body{font-family:'Archivo',system-ui,sans-serif;color:#121212;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body{font-family:'Archivo','Archivo Fallback',system-ui,sans-serif;color:#121212;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 a{color:#13A6EE}a:hover{color:#3FB5F1}
 *,*::before,*::after{box-sizing:border-box}
 @keyframes dwMarquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}

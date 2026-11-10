@@ -1875,5 +1875,14 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 /* short copy on a narrow card, the full wording once it's wider than ~600px */
 .dwdc .money-grid .lg { display: none; }
 @container (min-width: 600px) { .dwdc .money-grid .lg { display: inline; } .dwdc .money-grid .sh { display: none; } }
-@container (max-width: 440px) { .dwdc .money-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .dwdc .money-grid .tile--hero { grid-column: 1 / -1; } }
+@container (max-width: 380px) { .dwdc .money-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .dwdc .money-grid .tile--hero { grid-column: 1 / -1; } }
 .dwdc .money-grid .tile { display: flex; flex-direction: column; justify-content: flex-start; align-items: stretch; }
+/* Projects + Leads boxes: every other row a touch darker */
+.dwdc .dwdc-pl .dwdc-pl-row:nth-child(even) { background: #F6F9FC; }
+.dwdc .dwdc-hleads { margin: 0 -20px; }
+.dwdc .dwdc-hlead { padding-left: 20px !important; padding-right: 20px !important; }
+.dwdc .dwdc-hleads .dwdc-hlead:nth-child(even) { background: #F6F9FC; }
+.dwdc .dwdc-pl .dwdc-pl-row:hover, .dwdc .dwdc-hleads .dwdc-hlead:hover { background: #EEF4FA; }
+/* Leads box: bright blue header */
+.dwdc .cd-leadsb > .dwdc-dhead { background: #1497E8 !important; }
+.dwdc .cd-leadsb > .dwdc-dhead .dwdc-cnt { background: #fff !important; color: #1497E8 !important; }

@@ -540,6 +540,8 @@ add_action( 'wp_enqueue_scripts', function () {
 		return;
 	}
 	wp_enqueue_style( 'dwdr', DWDP_URL . 'assets/redesign/redesign-src.css', array(), DWDP_VERSION );
+	// Metric-matched fallback (Arial resized to Archivo's width and line height): no text reflow, so no layout shift, when Archivo swaps in.
+	wp_add_inline_style( 'dwdr', "@font-face{font-family:'Archivo Fallback';font-weight:300 500;src:local('Arial'),local('ArialMT'),local('Liberation Sans'),local('Helvetica'),local('Roboto');size-adjust:98.3%;ascent-override:89.3%;descent-override:21.4%;line-gap-override:0%}@font-face{font-family:'Archivo Fallback';font-weight:600 800;src:local('Arial Bold'),local('Arial-BoldMT'),local('Liberation Sans Bold'),local('Helvetica Bold'),local('Roboto Bold');size-adjust:94.8%;ascent-override:92.6%;descent-override:22.2%;line-gap-override:0%}" );
 	wp_add_inline_style( 'dwdr', "@font-face{font-family:'Archivo';font-style:normal;font-weight:300 700;font-display:swap;src:url(" . DWDP_URL . "assets/fonts/archivo-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}"
 		. '.admin-bar #dw-nav,.admin-bar #dw-menu>div{top:32px!important}@media(max-width:782px){.admin-bar #dw-nav,.admin-bar #dw-menu>div{top:46px!important}}'
 		. '@media(max-width:600px){#dw-hero-cta>#dw-hero-trust{flex-direction:row!important;flex-wrap:wrap;align-items:center!important;gap:6px 10px!important}}' // the design's phone rule stacked the trust strip too
