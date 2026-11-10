@@ -633,7 +633,7 @@
 		var cur = r.view === 'client' || r.view === 'cl' ? S.back : r.view + (r.arg ? '/' + r.arg : '');
 		var nav = function (h, icon, label, count) {
 			var on = cur === h || (h === 'projects/active' && (cur === 'projects' || cur === 'projects/all'));
-			return '<a class="dwdc-nav' + (on ? ' on' : '') + '" href="#' + h + '">' + ic(icon) + '<span>' + label + '</span>' + (count !== undefined && count !== '' ? '<b>' + count + '</b>' : '') + '</a>';
+			return '<a class="dwdc-nav' + (on ? ' on' : '') + '" href="#' + h + '">' + ic(icon) + '<span>' + label + '</span>' + (count ? '<b>' + count + '</b>' : '') + '</a>';
 		};
 		var proj = S.contacts.filter(isProject);
 		return '<aside class="dwdc-side">'
@@ -643,12 +643,11 @@
 			+ (r.view === 'personal' ? '<div class="dwdc-navh"><i class="b2"></i>To-Do</div>' + nav('personal/todo', 'todo', 'My To-Dos', S.pers ? S.pers.todos.filter(function (x) { return !x.done; }).length : '') + nav('personal/calendar', 'clock', 'Calendar') + nav('personal/done', 'done', 'Completed', S.pers ? S.pers.todos.filter(function (x) { return x.done; }).length : '')
 				+ '<div class="dwdc-navh fin"><i class="b4"></i>Finances</div>' + nav('personal/spending', 'card', 'Spending') + nav('personal/subs', 'refresh', 'Subscriptions') + nav('personal/finances', 'dollar', 'Money In &amp; Out') + '<div class="dwdc-navh pb"><i class="b5"></i>Bills</div>' + nav('personal/bills', 'card', 'Upcoming Bills') + '</nav><a class="dwdc-me" href="' + esc(DWDC.logout) + '" title="Sign out"><span class="dwdc-me-av">MT</span><span><strong>' + esc(DWDC.user || 'Michael Tarr') + '</strong><small>Owner · Sign out</small></span>' + ic('logout', 17) + '</a></aside>' : '')
 			+ (r.view === 'personal' ? '' : '<div class="dwdc-navh"><i class="b1"></i>Projects</div>'
+			+ nav('leads', 'user', 'Leads', leadList().length) + nav('onboarding', 'filter', 'Onboarding', onboardList().length)
 			+ nav('projects/active', 'bolt', 'Active', by('active').length) + nav('projects/hold', 'pause', 'On Hold', by('hold').length)
 			+ nav('projects/limbo', 'clock', 'Limbo', by('limbo').length) + nav('projects/complete', 'done', 'Completed', by('complete').length)
 			+ '<div class="dwdc-navh"><i class="b2"></i>Clients</div>'
-			+ '<a class="dwdc-nav' + (location.hash === '#clients/active' ? ' on' : '') + '" href="#clients/active">' + ic('bolt') + '<span>Active</span><b>' + by('active').length + '</b></a>'
-			+ nav('leads', 'user', 'Leads', leadList().length) + nav('onboarding', 'filter', 'Onboarding', onboardList().length) + nav('hosting', 'server', 'Hosting', hosting().length)
-			+ nav('reviews', 'mail', 'Get Reviews') + nav('clients', 'users', 'All Clients', S.clients.length)
+			+ nav('clients', 'users', 'All Clients', S.clients.length) + nav('hosting', 'server', 'Hosting', hosting().length) + nav('reviews', 'mail', 'Get Reviews')
 			+ '<div class="dwdc-navh fin"><i class="b4"></i>Finances</div>' + nav('money', 'dollar', 'Money Stats')
 			+ '<div class="dwdc-navh"><i class="b3"></i>More</div>'
 			+ '<a class="dwdc-nav" href="' + esc(DWDC.wp) + '">' + ic('wp') + '<span>WordPress Admin</span></a>'
@@ -692,8 +691,7 @@
 		if (!menu) { return; }
 		var cur = r.view === 'client' || r.view === 'cl' ? S.back : r.view + (r.arg ? '/' + r.arg : '');
 		if (cur === 'projects' || cur === 'projects/all') { cur = 'projects/active'; }
-		if (location.hash === '#clients/active') { cur = 'clients/active'; }
-		var counts = { 'clients/active': by('active').length, 'projects/active': by('active').length, 'projects/hold': by('hold').length, 'projects/limbo': by('limbo').length, 'projects/complete': by('complete').length, onboarding: onboardList().length, hosting: hosting().length, leads: leadList().length, clients: S.clients.length };
+		var counts = { 'projects/active': by('active').length, 'projects/hold': by('hold').length, 'projects/limbo': by('limbo').length, 'projects/complete': by('complete').length, onboarding: onboardList().length, hosting: hosting().length, leads: leadList().length, clients: S.clients.length };
 		var home = document.getElementById('toplevel_page_client-desk');
 		if (home) { var onHome = cur === 'home' || cur === ''; home.classList.toggle('current', onHome); home.classList.toggle('wp-has-current-submenu', onHome); var ha = home.querySelector('a.menu-top'); if (ha) { ha.classList.toggle('current', onHome); ha.classList.toggle('wp-has-current-submenu', onHome); } }
 		menu.querySelectorAll('li.dwd-dd').forEach(function (li) {
@@ -702,7 +700,7 @@
 			var on = h === cur;
 			li.classList.toggle('current', on); a.classList.toggle('current', on);
 			var name = a.querySelector('.wp-menu-name'), b = a.querySelector('.dwdc-mcount');
-			if (counts[h] !== undefined && name) { if (!b) { b = document.createElement('span'); b.className = 'dwdc-mcount'; name.appendChild(b); } b.textContent = counts[h]; }
+			if (counts[h] !== undefined && name) { if (!b) { b = document.createElement('span'); b.className = 'dwdc-mcount'; name.appendChild(b); } b.textContent = counts[h]; b.hidden = !counts[h]; }
 			if (on) { var sec = li.previousElementSibling; while (sec && !sec.classList.contains('dwd-msec')) { sec = sec.previousElementSibling; } if (sec && sec.classList.contains('dwd-closed')) { sec.click(); } }
 		});
 	}
@@ -1075,12 +1073,12 @@
 	function chatPaint() {
 		var box = chatEl(); if (!box) { return; }
 		var log = box.querySelector('.dwdc-chat-log');
-		var sugg = CHAT.scope === 'personal' ? ['Where did my money go last month?', 'Which subscriptions should I cancel?', 'Am I spending more on dining than usual?', 'What bills and charges are coming up?'] : ['How much did I make in October vs September?', 'Who were my top 5 clients this year?', 'What were my slowest months in 2025?', 'Is my Upwork Connects spending paying off?'];
+		var sugg = CHAT.scope === 'desk' ? ['Who owes me money right now?', 'What to-dos are overdue or due this week?', 'Which leads need a follow-up?', 'What did I last do on my newest project?'] : CHAT.scope === 'personal' ? ['Where did my money go last month?', 'Which subscriptions should I cancel?', 'Am I spending more on dining than usual?', 'What bills and charges are coming up?'] : ['How much did I make in October vs September?', 'Who were my top 5 clients this year?', 'What were my slowest months in 2025?', 'Is my Upwork Connects spending paying off?'];
 		if (CHAT.needKey) {
 			log.innerHTML = '<div class="dwdc-chat-key"><b>Connect Claude</b><p>Paste your Claude API key to turn on Ask AI. It’s saved on your server and never shown in the browser.</p><p class="sm">Get one at console.anthropic.com → API Keys.</p><input type="password" placeholder="sk-ant-..." data-chatkey><button class="dwdc-btn" data-chatkeysave>Save key</button></div>';
 			return;
 		}
-		log.innerHTML = (CHAT.msgs.length ? '' : '<div class="dwdc-chat-hi"><p>' + (CHAT.scope === 'personal' ? 'Ask me anything about your personal spending, subscriptions and bills.' : 'Ask me anything about your money, projects and trends.') + '</p>' + sugg.map(function (q) { return '<button class="dwdc-chat-sug" data-chatsug>' + esc(q) + '</button>'; }).join('') + '</div>')
+		log.innerHTML = (CHAT.msgs.length ? '' : '<div class="dwdc-chat-hi"><p>' + (CHAT.scope === 'desk' ? 'Ask me anything about your clients, leads, projects, amounts, to-dos, past actions or how Dream Desk works.' : CHAT.scope === 'personal' ? 'Ask me anything about your personal spending, subscriptions and bills.' : 'Ask me anything about your money, projects and trends.') + '</p>' + sugg.map(function (q) { return '<button class="dwdc-chat-sug" data-chatsug>' + esc(q) + '</button>'; }).join('') + '</div>')
 			+ CHAT.msgs.map(function (m) { return '<div class="dwdc-chat-m ' + m.role + '">' + (m.role === 'assistant' ? mdLite(m.content) : esc(m.content)) + '</div>'; }).join('')
 			+ (CHAT.busy ? '<div class="dwdc-chat-m assistant typing"><i></i><i></i><i></i></div>' : '');
 		log.scrollTop = log.scrollHeight;
@@ -1106,7 +1104,7 @@
 			document.body.appendChild(box);
 			box.addEventListener('click', function (e) {
 				var t = e.target;
-				if (t.closest('[data-chatclose]')) { box.classList.remove('open'); return; }
+				if (t.closest('[data-chatclose]')) { box.classList.remove('open'); var lb = document.getElementById('dwdc-askfab'); if (lb) { lb.classList.remove('on'); } return; }
 				var sg = t.closest('[data-chatsug]'); if (sg) { chatSend(sg.textContent); return; }
 				if (t.closest('[data-chatkeysave]')) {
 					var k = box.querySelector('[data-chatkey]').value;
@@ -1118,10 +1116,24 @@
 			ta.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); box.querySelector('form').requestSubmit(); } });
 			ta.addEventListener('input', function () { ta.style.height = ''; ta.style.height = Math.min(120, ta.scrollHeight) + 'px'; });
 		}
-		var hd = box.querySelector('header div'); if (hd) { hd.innerHTML = CHAT.scope === 'personal' ? '<b>Ask AI · Personal money</b><small>Spending, subscriptions, bills &amp; trends</small>' : '<b>Ask AI</b><small>About your money, projects &amp; trends</small>'; }
+		var hd = box.querySelector('header div'); box.classList.toggle('dwdc-chat-left', CHAT.scope === 'desk'); var lb = document.getElementById('dwdc-askfab'); if (lb) { lb.classList.add('on'); }
+		if (hd) { hd.innerHTML = CHAT.scope === 'desk' ? '<b>Ask Dream Desk</b><small>Clients, projects, money, to-dos &amp; history</small>' : CHAT.scope === 'personal' ? '<b>Ask AI · Personal money</b><small>Spending, subscriptions, bills &amp; trends</small>' : '<b>Ask AI</b><small>About your money, projects &amp; trends</small>'; }
 		box.classList.add('open'); chatPaint();
 		setTimeout(function () { var ta = box.querySelector('textarea'); if (ta && !CHAT.needKey) { ta.focus(); } }, 50);
 	}
+	/* Floating "Ask" launcher, bottom-left on every Dream Desk page. */
+	(function askFab() {
+		if (!document.body) { document.addEventListener('DOMContentLoaded', askFab); return; }
+		if (document.getElementById('dwdc-askfab')) { return; }
+		var b = document.createElement('button'); b.id = 'dwdc-askfab'; b.type = 'button'; b.className = 'dwdc-askfab'; b.setAttribute('aria-label', 'Ask Dream Desk');
+		b.innerHTML = '<span class="i">' + ic('bolt', 18) + '</span><span class="t">Ask</span>';
+		document.body.appendChild(b);
+		b.addEventListener('click', function () {
+			var box = chatEl(), sc = route().view === 'personal' ? 'personal' : 'desk';
+			if (box && box.classList.contains('open') && CHAT.scope === sc) { box.classList.remove('open'); b.classList.remove('on'); return; }
+			chatOpen(sc);
+		});
+	})();
 	/* ---------- shared pieces ---------- */
 	function tile(tone, label, n, sub, href, attrs) {
 		return '<a class="dwdc-tile t-' + tone + '"' + (href ? ' href="#' + href + '"' : '') + (attrs || '') + '><span class="dwdc-tile-h">' + label + '<i></i></span><strong>' + n + '</strong><small>' + sub + '</small></a>';
