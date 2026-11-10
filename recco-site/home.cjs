@@ -18,12 +18,6 @@ const SERVICE_GROUPS = [
     ['04', 'Licensing, Pricing & Discount Intelligence', 'Demystifying opaque SaaS tiers, usage metrics, and vendor sales practices. We audit proposals against historical street pricing, uncover renewal escalators, and analyze discounting structures so your executive team negotiates from strength.'],
   ]],
 ];
-const NEWS = [
-  ['logoAnthropic', 110, 'One sentence on what shipped and why it matters to enterprise buyers.', 'Today'],
-  ['logoSalesforce', 110, 'The most relevant platform update for CRM and service teams this week.', 'Yesterday'],
-  ['logoServicenow', 110, 'What changed in the latest release and who should pay attention.', '2 days ago'],
-  ['logoMicrosoft', 100, 'Copilot and Azure AI developments summarized for decision makers.', '2 days ago'],
-];
 const STEPS = [
   ['01', 'Frame the decision', 'We start with the business question, not the technology, and agree on what evidence will settle it.'],
   ['02', 'Test in the lab', 'Hands-on evaluation in licensed tenants with realistic data, scoring quality and cost together.'],
@@ -167,55 +161,56 @@ const updated = row([
   }),
 ], { gap: 10, nowrap: true, settings: { width: auto, width_tablet: auto, width_mobile: auto, _flex_size: 'none', padding: box(0, 0, 6, 0) } });
 
-const featured = (m) => container({
-  content_width: 'full', flex_direction: 'column', flex_justify_content: 'flex-end', flex_align_items: 'flex-start', flex_gap: gap(18),
-  min_height: px(460), min_height_tablet: px(400), min_height_mobile: px(360), padding: box(40), padding_mobile: box(26),
-  html_tag: 'a', link: link('#'), overflow: 'hidden', border_radius: box(12),
-  background_background: 'classic', background_color: C.navy, background_image: m.cityData, background_position: 'center center', background_size: 'cover',
-  ...L.overlayGradient('rgba(14,42,58,0.1)', 'rgba(14,42,58,0.92)'),
-  _title: 'Featured story',
-}, [
-  image(m.logoOpenai, { width: [78, 78, 66], settings: {
-    _element_width: 'auto', _background_background: 'classic', _background_color: C.white, _border_radius: box(6), _padding: box(8, 14, 8, 14),
-  } }),
-  widget('heading', {
-    title: 'Headline summary of the latest release, generated daily by the back-end engine.', header_size: 'h3', title_color: C.white,
-    ...typo('typography', SERIF, [30, 28, 24], 400, { lh: 1.2 }),
-  }),
-  text('<p>Today · <strong style="color:#A8BE4C">Read more →</strong></p>', { color: 'rgba(255,255,255,0.7)', size: 13, lh: 1.4 }),
-]);
-
-const newsItem = (m, [logo, w, title, when]) => container({
-  content_width: 'full', container_type: 'grid',
-  grid_columns_grid: { unit: 'custom', size: '120px minmax(0,1fr)' }, grid_columns_grid_tablet: { unit: 'custom', size: '120px minmax(0,1fr)' },
-  grid_columns_grid_mobile: { unit: 'custom', size: '84px minmax(0,1fr)' },
+// The list is an Elementor Pro Loop Grid over the "AI Updates" posts (newest first). Each row is the
+// "Recco News Item" loop template: vendor logo (featured image) + headline (post title). The news app
+// publishes the posts; see news-seed.cjs.
+const tag = (name) => `[elementor-tag id="${id()}" name="${name}" settings="%7B%7D"]`;
+const newsItemTemplate = () => [container({
+  container_type: 'grid', content_width: 'full', padding: box(22, 0, 22, 0), padding_mobile: box(18, 0, 18, 0),
+  grid_columns_grid: { unit: 'custom', size: '128px minmax(0,1fr)' }, grid_columns_grid_tablet: { unit: 'custom', size: '112px minmax(0,1fr)' },
+  grid_columns_grid_mobile: { unit: 'custom', size: '92px minmax(0,1fr)' },
   grid_rows_grid: auto, grid_rows_grid_tablet: auto, grid_rows_grid_mobile: auto,
   grid_gaps: gap(24), grid_gaps_mobile: gap(16), grid_align_items: 'center',
-  padding: box(24, 0, 24, 0), html_tag: 'a', link: link('#'),
   border_border: 'solid', border_width: box(0, 0, 1, 0), border_color: C.line,
-  custom_css: 'selector { transition: padding .2s; }\n@media (min-width: 1025px) { selector:hover { padding-left: 12px; } }',
-  _title: `News: ${logo.replace('logo', '')}`,
+  custom_css: 'selector { height: 100%; }',
+  _title: 'News row',
 }, [
-  image(m[logo], { width: [w, w, Math.round(w * 0.75)] }),
-  stack([
-    widget('heading', { title, header_size: 'h3', title_color: C.navy, ...typo('typography', SERIF, [18, 18, 17], 400, { lh: 1.35 }) }),
-    small(when, 12, C.grayText),
-  ], { gap: 6 }),
-]);
+  widget('theme-post-featured-image', {
+    __dynamic__: { image: tag('post-featured-image') }, image_size: 'medium', align: 'left',
+    width: px(120), width_tablet: px(104), width_mobile: px(88), height: px(40), height_mobile: px(32),
+    object_fit: 'contain', 'object-fit': 'contain', object_position: 'center left', _title: 'Vendor logo',
+  }),
+  widget('theme-post-title', {
+    __dynamic__: { title: tag('post-title') }, header_size: 'h3', title_color: C.navy, _title: 'Headline',
+    ...typo('typography', SERIF, [19, 18, 17], 400, { lh: 1.4 }),
+    custom_css: 'selector .elementor-heading-title { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }',
+  }),
+])];
 
 const news = (m) => band([
   row([
     stack([
-      eyebrow(m, 'What’s new in AI'),
+      eyebrow(m, 'What\u2019s new in AI'),
       H2('The latest from the platforms our clients run on.', C.navy, { ls: -0.46 }),
     ], { gap: 14, maxW: 640 }),
     updated,
   ], { justify: 'space-between', align: 'flex-end', gap: 32, rowGap: 20, settings: { flex_align_items_mobile: 'flex-start' } }),
-  grid([
-    featured(m),
-    stack(NEWS.map((n) => newsItem(m, n)), { gap: 0, settings: { border_border: 'solid', border_width: box(1, 0, 0, 0), border_color: C.line } }),
-  ], { cols: [2, 1, 1], gap: [64, 48], gapT: [40, 40], gapM: [32, 32], align: 'start' }),
-], { bg: C.white, anchor: 'news', title: 'AI News' });
+  widget('loop-grid', {
+    _skin: 'post', template_id: m.news.templateId,
+    posts_per_page: 6, columns: 2, columns_tablet: 2, columns_mobile: 1,
+    column_gap: px(56), column_gap_tablet: px(32), column_gap_mobile: px(0), row_gap: px(0), row_gap_tablet: px(0), row_gap_mobile: px(0),
+    post_query_post_type: 'post', post_query_include: ['terms'], post_query_include_term_ids: [String(m.news.categoryId)],
+    post_query_orderby: 'post_date', post_query_order: 'desc',
+    nothing_found_message_text: 'Today\u2019s platform updates are on their way. Check back shortly.',
+    nothing_found_message_color: C.grayText, ...typo('nothing_found_message_typography', SANS, 15, 400, { lh: 1.5 }),
+    // Top rule over the first row of each column (one column on phones).
+    custom_css: [
+      'selector .e-loop-item:nth-child(-n+2) > .e-con { border-top: 1px solid #DFE6EA; }',
+      '@media (max-width: 767px) { selector .e-loop-item:nth-child(2) > .e-con { border-top: 0; } }',
+    ].join('\n'),
+    _title: 'AI updates feed',
+  }),
+], { bg: C.white, gap: 40, anchor: 'news', title: 'AI News', settings: { border_border: 'solid', border_width: box(0, 0, 1, 0), border_color: C.line } });
 
 /* ----------------------------------------------------------------- about */
 const about = (m) => container({
@@ -356,8 +351,9 @@ const contact = (m) => band([
 });
 
 module.exports = {
+  newsItemTemplate,
   slug: 'home', title: 'Home',
   // Meta description (V3 copy doc). The Hello theme prints the page excerpt as <meta name="description">.
   meta: 'Recco tests Copilot, ChatGPT, Gemini, Claude, Glean, and Perplexity in live enterprise tenants, measuring real performance and true cost per task.',
-  build: (m) => [hero(m), approach(m), valueProp(m), seedOverview(m), services(m), platforms(m), news(m), about(m), sustainability(m), contact(m)],
+  build: (m) => [hero(m), approach(m), news(m), valueProp(m), seedOverview(m), services(m), platforms(m), about(m), sustainability(m), contact(m)],
 };

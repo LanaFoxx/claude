@@ -156,6 +156,12 @@ async function updateKit(p) {
   }
 
   if (want('home')) {
+    // "What's new in AI": the loop item template the homepage Loop Grid renders for each AI Updates post.
+    if (!prep.news?.categoryId) throw new Error('Run news-seed.cjs first (AI Updates category)');
+    const tid = await findOrCreateTemplate(p, 'loop-item', 'Recco News Item');
+    await openEditor(p, tid);
+    console.log('news item template', tid, 'elements saved:', await replaceContent(p, home.newsItemTemplate()));
+    m.news = { templateId: tid, categoryId: prep.news.categoryId };
     await p.goto(`${SITE}/wp-admin/`, { waitUntil: 'domcontentloaded' });
     const pg = await ensurePage(p, home);
     await openEditor(p, pg.id);
