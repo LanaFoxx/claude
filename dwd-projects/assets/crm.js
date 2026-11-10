@@ -74,6 +74,7 @@
 		plus: '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
 		logout: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>',
 		check: '<polyline points="20 6 9 17 4 12"/>',
+		down: '<path d="m6 9 6 6 6-6"/>',
 		right: '<line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>',
 		left: '<line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>',
 		menu: '<line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>',
@@ -1152,6 +1153,16 @@
 		if (n === 0) { return '<span class="dwdc-due blue">Today</span>'; }
 		return '<span class="dwdc-due ' + (n > 0 && n <= 7 ? 'navy' : 'mut') + '">' + fmt(t.due) + '</span>';
 	}
+	// Home to-do list items: a project's to-dos fold into one row (when it has 2+), in your drag order.
+	function todoItems(td) {
+		var items = [], grp = {};
+		td.forEach(function (t) {
+			var n = t.contact ? td.filter(function (x) { return x.contact === t.contact; }).length : 0;
+			if (n > 1) { if (!grp[t.contact]) { grp[t.contact] = { id: t.contact, tasks: [] }; items.push(grp[t.contact]); } grp[t.contact].tasks.push(t); }
+			else { items.push({ id: t.id, task: t }); }
+		});
+		return inOrder('todos', items);
+	}
 	function todoRow(t, small) {
 		var c = t.contact ? contact(t.contact) : null;
 		var k = c ? clientOf(c) : null, cn = k ? k.name : (c ? c.person : '');
@@ -1342,7 +1353,13 @@
 		var td = openTasks().sort(function (a, b) { return (a.due || '9') < (b.due || '9') ? -1 : 1; });
 		var tl = card('cd-plain cd-todo', '<header class="dwdc-dhead"><h2>To-Do List <span class="dwdc-cnt">' + td.length + '</span></h2></header>',
 			'<form class="dwdc-addbar home"><input name="text" placeholder="Add something we need to do..." autocomplete="off" required><button class="dwdc-btn">Add</button></form>'
-			+ (td.length ? '<div class="dwdc-todos">' + td.map(function (t) { return todoRow(t); }).join('') + '</div>' : emptyRow('Nothing on the list. Nice.'))
+			+ (td.length ? '<div class="dwdc-todos" data-sort="todos">' + todoItems(td).map(function (it) {
+				if (!it.tasks) { return todoRow(it.task).replace('<div class="dwdc-todo', '<div data-sid="' + it.id + '" class="dwdc-todo'); }
+				var c = contact(it.id), open = S.tgOpen && S.tgOpen[it.id], first = it.tasks[0];
+				return '<div class="dwdc-tgrp' + (open ? ' open' : '') + '" data-sid="' + it.id + '"><div class="dwdc-tgrp-h" data-tgrp="' + it.id + '"><span class="dwdc-tgrp-n">' + it.tasks.length + '</span>'
+					+ '<span class="dwdc-tt"><b>' + esc(c ? c.name : 'Project') + '</b><small>' + esc(it.tasks.length + ' to-dos · next: ' + first.text) + '</small></span>' + due(first) + '<span class="dwdc-tgrp-c">' + ic('down', 16) + '</span></div>'
+					+ (open ? '<div class="dwdc-tgrp-b">' + it.tasks.map(function (t) { return todoRow(t, true); }).join('') + '</div>' : '') + '</div>';
+			}).join('') + '</div>' : emptyRow('Nothing on the list. Nice.'))
 			+ (doneTasks().length ? '<button class="dwdc-donebtn" data-showdone>' + (S.showDone ? 'Hide' : 'Show') + ' completed <b>' + doneTasks().length + '</b></button>'
 				+ (S.showDone ? '<div class="dwdc-todos donelist">' + doneTasks().slice(0, 25).map(function (t) { return todoRow(t); }).join('') + '</div>' : '') : ''));
 		var lds = inOrder('leads', S.contacts.filter(function (c) { return c.list === 'leads'; }).sort(function (a, b) { return (a.followup || '9') < (b.followup || '9') ? -1 : 1; }));
@@ -2579,6 +2596,7 @@
 			}).then(render).catch(fail);
 			return;
 		}
+		if ((el = t.closest('[data-tgrp]'))) { var gid = +el.getAttribute('data-tgrp'); S.tgOpen = S.tgOpen || {}; S.tgOpen[gid] = !S.tgOpen[gid]; render(); return; }
 		if ((el = t.closest('[data-showdone]'))) { S.showDone = !S.showDone; render(); return; }
 		if ((el = t.closest('[data-review]'))) { S.modal = { type: 'review', vals: {}, off: {} }; render(); return; }
 		if ((el = t.closest('[data-revpick]'))) { var rid = el.getAttribute('data-revpick'); S.modal.off[rid] = !S.modal.off[rid]; render(); return; }

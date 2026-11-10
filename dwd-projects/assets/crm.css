@@ -2276,3 +2276,16 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 #dwdc-app[data-view="personal"] .dwdc-c2-d.today { box-shadow: inset 0 0 0 2px #1a73e8 !important; border-color: transparent !important; background: #f3f8ff !important; }
 #dwdc-app[data-view="personal"] .dwdc-pmonth .dwdc-btn2 { width: 36px; height: 36px; padding: 0 !important; justify-content: center; }
 #dwdc-app[data-view="personal"] .dwdc-pgreet { margin-left: 0 !important; }
+/* Home to-do list: one row per project (click to open), draggable rows */
+.dwdc .cd-todo [data-sort="todos"] > [data-sid] { cursor: grab; }
+.dwdc .dwdc-tgrp { border-top: 1px solid var(--div); }
+.dwdc .dwdc-tgrp-h { display: flex; align-items: center; gap: 14px; padding: 12px 20px; cursor: pointer; transition: background .15s ease; }
+.dwdc .dwdc-tgrp-h:hover { background: #F6F9FC; }
+.dwdc .dwdc-tgrp-n { flex: none; width: 26px; height: 26px; border-radius: 8px; background: #E3F0FF; color: #1A5FB4; font: 700 12.5px Poppins, sans-serif; display: flex; align-items: center; justify-content: center; }
+.dwdc .dwdc-tgrp-h .dwdc-tt { flex: 1; min-width: 0; }
+.dwdc .dwdc-tgrp-h .dwdc-tt small { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--sec); }
+.dwdc .dwdc-tgrp-c { color: #8C9AAE; display: flex; transition: transform .15s ease; }
+.dwdc .dwdc-tgrp.open .dwdc-tgrp-c { transform: rotate(180deg); }
+.dwdc .dwdc-tgrp.open .dwdc-tgrp-h { background: #F6F9FC; }
+.dwdc .dwdc-tgrp-b { background: #FBFCFE; }
+.dwdc .dwdc-tgrp-b .dwdc-todo { padding-left: 60px; }

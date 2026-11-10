@@ -1266,7 +1266,7 @@ add_action( 'rest_api_init', function () {
 	// Home page lists (Leads, active Projects) in the order Mike dragged them into.
 	register_rest_route( $ns, '/crm/home-order', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
 		$key = (string) $r->get_param( 'key' );
-		if ( ! in_array( $key, array( 'leads', 'active' ), true ) ) {
+		if ( ! in_array( $key, array( 'leads', 'active', 'todos' ), true ) ) {
 			return new WP_Error( 'dwdc_key', 'Unknown list.', array( 'status' => 400 ) );
 		}
 		$all         = (array) get_option( 'dwdc_home_order', array() );
