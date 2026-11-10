@@ -2201,3 +2201,78 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 .dwdc .pv3-btn.pv3-btn-pri { background: #0B203D; border-color: #0B203D; color: #fff !important; }
 .dwdc .pv3-btn.pv3-btn-pri:hover { background: #13305A; }
 .dwdc .pv3-btn:disabled { opacity: .6; cursor: default; }
+/* ===== Personal pages: same look as the project page (pv3) ===== */
+#dwdc-app[data-view="personal"] .dwdc-main { background: #fff; }
+#dwdc-app[data-view="personal"] .dwdc-screen { max-width: none !important; margin: 0 !important; padding-left: 4px; padding-right: 4px; }
+#dwdc-app[data-view="personal"] .dwdc-quote { background: #f3f6fa !important; border: 0 !important; border-bottom: 1px solid #e3e8ef !important; border-radius: 0 !important; color: #3f4f68 !important; min-height: 32px; padding: 6px 44px !important; box-shadow: none !important; }
+#dwdc-app[data-view="personal"] .dwdc-quote .dwdc-quote-q { color: #3f4f68 !important; font-size: 12.5px; }
+#dwdc-app[data-view="personal"] .dwdc-quote .dwdc-quote-a { color: #0f2447 !important; font-weight: 600; font-style: normal; }
+#dwdc-app[data-view="personal"] .dwdc-quote button { background: transparent !important; color: #3f4f68 !important; }
+/* cards + tinted header bands */
+#dwdc-app[data-view="personal"] .dwdc-card, #dwdc-app[data-view="personal"] .dwdc-dcard, #dwdc-app[data-view="personal"] .dwdc-c2-cal, #dwdc-app[data-view="personal"] .dwdc-c2-day, #dwdc-app[data-view="personal"] .dwdc-c2-up { border: 1px solid #cfd8e3 !important; border-radius: 14px !important; box-shadow: none !important; background: #fff; overflow: hidden; }
+#dwdc-app[data-view="personal"] .dwdc-cardh, #dwdc-app[data-view="personal"] .dwdc-dhead { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0 !important; padding: 12px 22px !important; min-height: 0 !important; background: #eef2f7 !important; border-bottom: 1px solid #cfd8e3 !important; border-radius: 0 !important; }
+#dwdc-app[data-view="personal"] .dwdc-card.pad > .dwdc-cardh { margin: -24px -24px 18px !important; }
+#dwdc-app[data-view="personal"] .dwdc-cardh h2, #dwdc-app[data-view="personal"] .dwdc-dhead h2 { margin: 0; font: 600 17px Poppins, sans-serif !important; color: #0f2447 !important; text-transform: none !important; letter-spacing: 0 !important; }
+#dwdc-app[data-view="personal"] .dwdc-dhead .dwdc-dic { display: none; }
+#dwdc-app[data-view="personal"] .dwdc-cnt { display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 22px; padding: 0 7px; border-radius: 11px; background: #e3f0ff !important; color: #1a5fb4 !important; font: 600 12px Poppins, sans-serif !important; border: 0 !important; }
+#dwdc-app[data-view="personal"] .cd-ptodo1 > .dwdc-dhead, #dwdc-app[data-view="personal"] .dwdc-ptodo > .dwdc-cardh, #dwdc-app[data-view="personal"] .donelist { --tint: #e9f1fc; }
+#dwdc-app[data-view="personal"] .cd-ptodo1 > .dwdc-dhead, #dwdc-app[data-view="personal"] .dwdc-ptodo > .dwdc-cardh { background: #e9f1fc !important; }
+#dwdc-app[data-view="personal"] .dwdc-pconn > .dwdc-cardh { background: #f1edfb !important; }
+#dwdc-app[data-view="personal"] .dwdc-prow2 > .dwdc-card:nth-child(1) > .dwdc-cardh { background: #fbeef0 !important; }
+#dwdc-app[data-view="personal"] .dwdc-prow2 > .dwdc-card:nth-child(2) > .dwdc-cardh { background: #fcf5e6 !important; }
+#dwdc-app[data-view="personal"] .dwdc-pform ~ *, #dwdc-app[data-view="personal"] .dwdc-card:has(.dwdc-pform) > .dwdc-cardh { background: #eaf6ec !important; }
+#dwdc-app[data-view="personal"] .dwdc-card:has(.dwdc-subr.stopped) > .dwdc-cardh { background: #eef2f7 !important; }
+#dwdc-app[data-view="personal"] .dwdc-card:has(.dwdc-subr:not(.stopped)) > .dwdc-cardh { background: #e8f5f3 !important; }
+#dwdc-app[data-view="personal"] .dwdc-card:has(.dwdc-prow) > .dwdc-cardh { background: #e9f1fc !important; }
+/* buttons: navy primary, outlined secondary */
+#dwdc-app[data-view="personal"] .dwdc-btn, #dwdc-app[data-view="personal"] .dwdc-btn.coral { height: 38px; padding: 0 16px !important; border-radius: 10px !important; background: #0f2447 !important; border: 1px solid #0f2447 !important; color: #fff !important; font: 600 13.5px Poppins, sans-serif !important; box-shadow: none !important; }
+#dwdc-app[data-view="personal"] .dwdc-btn:hover { background: #1a3561 !important; }
+#dwdc-app[data-view="personal"] .dwdc-btn.sm { height: 34px; }
+#dwdc-app[data-view="personal"] .dwdc-btn2, #dwdc-app[data-view="personal"] .dwdc-askbtn, #dwdc-app[data-view="personal"] .dwdc-upbtn { background: #fff !important; border: 1px solid #bfcad8 !important; color: #0f2447 !important; border-radius: 10px !important; box-shadow: none !important; font-weight: 600 !important; }
+#dwdc-app[data-view="personal"] .dwdc-askbtn .dwdc-ic { color: #1a73e8 !important; }
+#dwdc-app[data-view="personal"] .dwdc-btn2:hover, #dwdc-app[data-view="personal"] .dwdc-askbtn:hover, #dwdc-app[data-view="personal"] .dwdc-c2-nav button:hover { background: #f5f8fc !important; }
+/* stat tiles like the project money card */
+#dwdc-app[data-view="personal"] .dwdc-kpi, #dwdc-app[data-view="personal"] .dwdc-kpi.navy, #dwdc-app[data-view="personal"] .dwdc-kpi.coral { background: #fff !important; border: 1px solid #cfd8e3 !important; border-radius: 14px !important; box-shadow: none !important; padding: 18px 22px !important; }
+#dwdc-app[data-view="personal"] .dwdc-kpi small { color: #4a5a73 !important; font: 500 13px Poppins, sans-serif !important; text-transform: none !important; letter-spacing: 0 !important; }
+#dwdc-app[data-view="personal"] .dwdc-kpi strong { color: #0f2447 !important; font-size: 30px !important; font-weight: 700 !important; letter-spacing: -.01em; }
+#dwdc-app[data-view="personal"] .dwdc-kpi strong i, #dwdc-app[data-view="personal"] .dwdc-kpi strong em { color: #4a5a73 !important; font-style: normal; font-size: 15px !important; font-weight: 500 !important; }
+#dwdc-app[data-view="personal"] .dwdc-kpi.coral strong { color: #e8661f !important; }
+#dwdc-app[data-view="personal"] .dwdc-kpi span { color: #3f4f68 !important; font-size: 13px !important; }
+/* bank balance: white money card */
+#dwdc-app[data-view="personal"] a.dwdc-pbal, #dwdc-app[data-view="personal"] .dwdc-pbal { background: #fff !important; border: 1px solid #cfd8e3 !important; border-radius: 14px !important; box-shadow: none !important; color: #0f2447 !important; }
+#dwdc-app[data-view="personal"] .dwdc-pbal small { color: #4a5a73 !important; text-transform: none !important; letter-spacing: 0 !important; font-weight: 500 !important; font-size: 13px !important; }
+#dwdc-app[data-view="personal"] .dwdc-pbal strong { color: #137333 !important; }
+#dwdc-app[data-view="personal"] .dwdc-pbal span, #dwdc-app[data-view="personal"] .dwdc-pbal p { color: #3f4f68 !important; }
+#dwdc-app[data-view="personal"] .dwdc-pbal li { background: #f5f8fc !important; border: 1px solid #e3e8ef !important; }
+#dwdc-app[data-view="personal"] .dwdc-pbal li b { color: #0f2447 !important; }
+/* calendar: light header row, softer grid */
+#dwdc-app[data-view="personal"] .dwdc-c2-h { background: #eef2f7 !important; border-bottom: 1px solid #cfd8e3; }
+#dwdc-app[data-view="personal"] .dwdc-c2-h span { color: #4a5a73 !important; font: 600 12.5px Poppins, sans-serif !important; letter-spacing: .04em !important; }
+#dwdc-app[data-view="personal"] .dwdc-c2-d.out { background: #f8fafc !important; }
+#dwdc-app[data-view="personal"] .dwdc-c2-month { font: 600 22px Poppins, sans-serif !important; color: #0f2447 !important; }
+#dwdc-app[data-view="personal"] .dwdc-c2-chip { box-shadow: none !important; }
+/* lists: lighter row dividers, pv3 text tones */
+#dwdc-app[data-view="personal"] .dwdc-todo, #dwdc-app[data-view="personal"] .dwdc-ph-row, #dwdc-app[data-view="personal"] .dwdc-prow, #dwdc-app[data-view="personal"] .dwdc-subr { border-color: #e9eef5 !important; }
+#dwdc-app[data-view="personal"] .dwdc-ptl-h { color: #4a5a73 !important; font: 600 12px Poppins, sans-serif !important; letter-spacing: .04em !important; }
+#dwdc-app[data-view="personal"] .dwdc-ptl-h.late { color: #c5221f !important; }
+#dwdc-app[data-view="personal"] .dwdc-pform input, #dwdc-app[data-view="personal"] .dwdc-pform select, #dwdc-app[data-view="personal"] .dwdc-ptadd input { border: 1px solid #cfd8e3 !important; border-radius: 10px !important; height: 40px; }
+#dwdc-app[data-view="personal"] .dwdc-pgreet { color: #3f4f68; }
+#dwdc-app[data-view="personal"] .dwdc-card.pad { padding: 0 22px 20px !important; }
+#dwdc-app[data-view="personal"] .dwdc-card.pad > .dwdc-cardh { margin: 0 -22px 18px !important; }
+#dwdc-app[data-view="personal"] .dwdc-card.pad.dwdc-collapse:not(.open) { padding-bottom: 0 !important; }
+#dwdc-app[data-view="personal"] .dwdc-card.pad.dwdc-collapse:not(.open) > .dwdc-cardh { margin-bottom: 0 !important; border-bottom: 0 !important; }
+#dwdc-app[data-view="personal"] .dwdc-c2-nav { border: 1px solid #bfcad8 !important; border-radius: 10px !important; }
+#dwdc-app[data-view="personal"] .dwdc-c2-nav button { height: 40px !important; background: #fff !important; color: #0f2447 !important; border: 0 !important; border-right: 1px solid #e3e8ef !important; border-radius: 0 !important; font: 600 13.5px Poppins, sans-serif !important; }
+#dwdc-app[data-view="personal"] .dwdc-c2-nav button:last-child { border-right: 0 !important; }
+#dwdc-app[data-view="personal"] .dwdc-c2-day header { background: #e9f1fc !important; color: #0f2447 !important; border-bottom: 1px solid #cfd8e3; padding: 16px 22px !important; }
+#dwdc-app[data-view="personal"] .dwdc-c2-day header small { color: #1a5fb4 !important; letter-spacing: .04em !important; font-weight: 600 !important; text-transform: none !important; }
+#dwdc-app[data-view="personal"] .dwdc-c2-day header h3 { color: #0f2447 !important; font-weight: 600 !important; font-size: 20px !important; }
+#dwdc-app[data-view="personal"] .dwdc-c2-badge { border: 1px solid #cfd8e3; height: 62px; width: 58px; }
+#dwdc-app[data-view="personal"] .dwdc-c2-badge b { color: #0f2447 !important; }
+#dwdc-app[data-view="personal"] .dwdc-c2-cnt { background: #fff !important; color: #1a5fb4 !important; border: 1px solid #cfd8e3; font-weight: 600 !important; }
+#dwdc-app[data-view="personal"] .dwdc-c2-up header { background: #fcf5e6 !important; border-bottom: 1px solid #cfd8e3 !important; padding: 12px 22px !important; align-items: center !important; }
+#dwdc-app[data-view="personal"] .dwdc-c2-up header h3 { font: 600 17px Poppins, sans-serif !important; letter-spacing: 0 !important; text-transform: none !important; color: #0f2447 !important; }
+#dwdc-app[data-view="personal"] .dwdc-c2-up header span { font-size: 13px !important; color: #4a5a73 !important; }
+#dwdc-app[data-view="personal"] .dwdc-c2-d.today { box-shadow: inset 0 0 0 2px #1a73e8 !important; border-color: transparent !important; background: #f3f8ff !important; }
+#dwdc-app[data-view="personal"] .dwdc-pmonth .dwdc-btn2 { width: 36px; height: 36px; padding: 0 !important; justify-content: center; }
+#dwdc-app[data-view="personal"] .dwdc-pgreet { margin-left: 0 !important; }
