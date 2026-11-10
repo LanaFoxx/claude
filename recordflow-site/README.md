@@ -57,7 +57,28 @@ Elementor. Do not redeploy a page from `pages/*.cjs` without first checking for 
 * Small text on light backgrounds uses `C.mutedText` (#667085) for WCAG contrast. The app-tour
   inactive items dim to .85 instead of .55. The site icon was replaced, because the old 32px file
   was a 404.
-* `tools/lighthouse.sh` runs Lighthouse for a page.
+* `tools/lighthouse.sh` runs Lighthouse for a page. It tests the clean URL so Kinsta serves it from
+  cache, as PageSpeed Insights does. A `?query` bypasses the cache and inflates server response time.
 
-The remaining mobile blocking time comes from Google Tag Manager (Site Kit), reCAPTCHA v3 on the
-contact and quote forms, and Elementor's own jQuery front end.
+### RecordFLOW Performance plugin (`plugin/recordflow-performance`, installed and active on live)
+
+Upload `recordflow-performance/` as a zip via Plugins > Add New > Upload. Deactivate it to undo everything.
+
+* Google Analytics (Site Kit's Google tag) loads on the visitor's first scroll, tap, click, key press or
+  mouse move. Page views are still recorded; visitors who leave without touching the page are not.
+* reCAPTCHA (Elementor forms) loads when a visitor first focuses or taps a form. Elementor's form code
+  waits for it, and submissions still carry a valid token (tested).
+* jQuery loads in the footer without jQuery Migrate. The Figtree and Saira font files are preloaded.
+* Each page's main above-the-fold image is preloaded with high priority, and the header logo no longer
+  takes that priority. The page ID to attachment ID list is `rf_perf_lcp_images()`; update it if a page's
+  top image changes.
+* Resized WebP copies that WordPress generates are saved at quality 70.
+* The emoji script is removed.
+
+Other live changes in this pass:
+* The About page canal graphic shows at its natural square shape; it was stretched to a fixed height.
+* Home: the "Trusted by" partner-logo section was hidden on every device. It is now a Saved Template,
+  "Homepage - Trusted by partner logos", so it no longer loads a carousel.
+* The Plans & Pricing page got a Yoast meta description. That page still shows a raw
+  `[cb_plan_list]` shortcode because the Chargebee plugin is inactive.
+* The JS hero-preload snippet was replaced by the plugin's server-side preload.
