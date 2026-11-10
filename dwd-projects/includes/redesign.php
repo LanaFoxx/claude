@@ -73,8 +73,11 @@ function dwdr_page() {
 	if ( is_singular( 'post' ) ) {
 		return 'article';
 	}
-	if ( is_home() || is_page( 'blog' ) ) {
+	if ( is_home() || is_page( 'blog' ) || is_category() ) {
 		return 'blog';
+	}
+	if ( function_exists( 'is_account_page' ) && is_account_page() ) {
+		return 'account';
 	}
 	foreach ( array( 'process', 'hosting', 'contact', 'quote', 'thank-you', 'onboarding' ) as $slug ) {
 		if ( is_page( $slug ) ) {
@@ -175,6 +178,12 @@ function dwdr_project( $p ) {
 
 /** The page body (between the nav and the footer for interior pages). */
 function dwdr_body( $page ) {
+	if ( 'account' === $page ) { // WooCommerce My Account (hosting customers), in the site's own look
+		$title = is_user_logged_in() ? 'Your account' : 'Sign in';
+		return '<section data-theme="dark" style="background:#121212;color:#fff;padding:clamp(150px,20vh,220px) var(--dwr-gx,clamp(20px,4vw,56px)) clamp(40px,5vw,72px)"><span class="dwr-eyebrow" style="color:#13A6EE"><i></i>Hosting customers</span><h1 style="margin:16px 0 0;font-size:clamp(44px,7vw,110px);line-height:.95;letter-spacing:-.045em;font-weight:600">' . esc_html( $title ) . '</h1></section>'
+			. '<section data-theme="light" class="dwr-acct" style="background:#fff;color:#121212;padding:clamp(48px,6vw,96px) var(--dwr-gx,clamp(20px,4vw,56px))"><div class="dwr-acct-in">' . do_shortcode( '[woocommerce_my_account]' ) . '</div></section>'
+			. '<style>.dwr-acct-in{max-width:760px}.dwr-acct h2{font-size:clamp(26px,2.6vw,36px);letter-spacing:-.03em;font-weight:600;margin:0 0 18px}.dwr-acct form .form-row{display:flex;flex-direction:column;gap:6px;margin:0 0 16px}.dwr-acct label{font-size:15px;font-weight:600;color:#121212}.dwr-acct .required{color:#B42318;text-decoration:none}.dwr-acct input.input-text,.dwr-acct input[type=email],.dwr-acct input[type=password],.dwr-acct input[type=text]{width:100%;box-sizing:border-box;height:52px;padding:0 16px;border:1px solid #BDBDBD;border-radius:10px;font:inherit;font-size:16px;color:#121212;background:#fff}.dwr-acct .password-input{position:relative;display:block}.dwr-acct .show-password-input{position:absolute;right:4px;top:4px;width:44px;height:44px;border:0;background:transparent;cursor:pointer}.dwr-acct .show-password-input::after{content:"\\1F441";font-size:18px}.dwr-acct .woocommerce-form-login__rememberme{display:inline-flex;align-items:center;gap:10px;font-weight:500;margin:4px 0 18px;min-height:44px}.dwr-acct .woocommerce-form-login__rememberme input{width:22px;height:22px}.dwr-acct button.button,.dwr-acct .button{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 28px;border:0;border-radius:999px;background:#0B6FA4;color:#fff;font:inherit;font-size:16px;font-weight:600;cursor:pointer;text-decoration:none}.dwr-acct button.button:hover{background:#085A86}.dwr-acct .lost_password{margin-top:18px}.dwr-acct .lost_password a,.dwr-acct a{color:#0B6FA4;text-decoration:underline;text-underline-offset:3px;display:inline-block;min-height:24px;padding:4px 0}.dwr-acct .woocommerce-MyAccount-navigation ul{list-style:none;margin:0 0 28px;padding:0;display:flex;flex-wrap:wrap;gap:8px}.dwr-acct .woocommerce-MyAccount-navigation a{display:inline-block;padding:10px 16px;border:1px solid #DDD;border-radius:999px;text-decoration:none;color:#121212}.dwr-acct .is-active a{background:#121212;color:#fff;border-color:#121212}.dwr-acct table{width:100%;border-collapse:collapse}.dwr-acct th,.dwr-acct td{padding:12px 10px;border-bottom:1px solid #EEE;text-align:left}.dwr-acct .woocommerce-error,.dwr-acct .woocommerce-message,.dwr-acct .woocommerce-info{list-style:none;margin:0 0 20px;padding:14px 18px;border-radius:10px;background:#F4F8FB;border-left:4px solid #0B6FA4}</style>';
+	}
 	if ( 'portfolio' === $page ) {
 		$list  = array_map( 'dwdr_project', dwdp_projects() );
 		// A rebuild of a site already listed (e.g. "The Goods Vending (Webflow)") only shows under its platform filter, not in All.
@@ -263,14 +272,16 @@ function dwdr_body( $page ) {
 		return dwdr_case( $po, $p, $cp ) . $next;
 	}
 	if ( 'blog' === $page ) {
-		$posts = get_posts( array( 'post_type' => 'post', 'post_status' => 'publish', 'posts_per_page' => 30 ) );
+		$cat   = is_category() ? get_queried_object() : null; // a category page = the blog, showing only that category
+		$posts = get_posts( array( 'post_type' => 'post', 'post_status' => 'publish', 'posts_per_page' => 30 ) + ( $cat ? array( 'cat' => (int) $cat->term_id ) : array() ) );
 		$spans = array( 7, 5, 5, 7, 6, 6 );
 		$cards = '';
 		foreach ( $posts as $i => $po ) {
 			$v      = dwdr_post( $po );
 			$cards .= dwdr_render( 'blog-card', array( 'p.href' => $v['href'], 'p.span' => $spans[ $i % count( $spans ) ], 'p.image' => $v['image'], 'p.cat' => $v['cat'], 'p.read' => $v['read'], 'p.title' => $v['title'], 'p.excerpt' => $v['excerpt'] ) );
 		}
-		return dwdr_render( 'blog', array( 'cards' => $cards ) );
+		$out = dwdr_render( 'blog', array( 'cards' => $cards ) );
+		return $cat ? str_replace( '</span>The blog</span>', '</span>The blog · ' . esc_html( $cat->name ) . '</span>', $out ) : $out;
 	}
 	if ( 'article' === $page ) {
 		$po   = get_queried_object();
@@ -604,7 +615,7 @@ add_action( 'wp_enqueue_scripts', function () {
 	wp_enqueue_script( 'dwdr', DWDP_URL . 'assets/redesign/redesign.js', array(), DWDP_VERSION, true );
 	// Theme, Elementor and the old page scripts have nothing to do on these pages.
 	foreach ( 'onboarding' === dwdr_page() ? array() : wp_scripts()->queue as $h ) {
-		if ( preg_match( '/^(elementor|hello|swiper|dwdp-front|dwdp-onboarding|e-sticky|imagesloaded|jquery)/', $h ) ) {
+		if ( preg_match( '/^(elementor|hello|swiper|dwdp-front|dwdp-onboarding|e-sticky|imagesloaded|jquery|smartmenus)/', $h ) ) {
 			wp_dequeue_script( $h );
 		}
 	}
@@ -1059,3 +1070,38 @@ function dwdr_webp_html( $html ) {
 		return dwdr_webp_url( $m[0] );
 	}, $html );
 }
+
+
+/* Single-author site: the author archive just repeats the blog, so it points there. */
+add_action( 'template_redirect', function () {
+	if ( is_author() ) {
+		wp_safe_redirect( home_url( '/blog/' ), 301 );
+		exit;
+	}
+} );
+/* Keep the sitemap to real pages: no store/account pages (they redirect or need a login), products, author archive. */
+add_filter( 'wpseo_sitemap_exclude_post_type', function ( $ex, $type ) { return 'product' === $type ? true : $ex; }, 10, 2 );
+add_filter( 'wpseo_sitemap_exclude_taxonomy', function ( $ex, $tax ) { return in_array( $tax, array( 'product_cat', 'product_tag' ), true ) ? true : $ex; }, 10, 2 );
+add_filter( 'wpseo_sitemap_exclude_author', function () { return array(); } );
+add_filter( 'wpseo_exclude_from_sitemap_by_post_ids', function ( $ids ) {
+	foreach ( array( 'shop', 'cart', 'checkout', 'my-account', 'charlotte-web-design' ) as $slug ) {
+		$pg = get_page_by_path( $slug );
+		if ( $pg ) {
+			$ids[] = (int) $pg->ID;
+		}
+	}
+	return $ids;
+} );
+add_filter( 'wpseo_robots', function ( $v ) { return function_exists( 'is_account_page' ) && is_account_page() ? 'noindex, follow' : $v; }, 20 );
+/* Category pages: a real meta description (the category's own, or one written from its name). */
+add_filter( 'wpseo_metadesc', function ( $d ) {
+	if ( ! is_category() || $d ) {
+		return $d;
+	}
+	$c    = get_queried_object();
+	$desc = trim( wp_strip_all_tags( (string) term_description( $c ) ) );
+	return $desc ? $desc : 'Practical ' . strtolower( $c->name ) . ' articles for small business owners: plain-English guides from Dream Web Digital, a WordPress web designer with 12+ years of experience.';
+}, 100 );
+add_filter( 'wpseo_metadesc', function ( $d ) {
+	return function_exists( 'is_account_page' ) && is_account_page() ? 'Sign in to your Dream Web Digital hosting account to see your orders, renewals and billing details.' : $d;
+}, 100 );

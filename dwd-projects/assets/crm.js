@@ -1254,7 +1254,7 @@
 		var billed = S.contacts.reduce(function (s, c) { return s + lifetime(c); }, 0);
 		var lastPay = S.contacts.filter(function (c) { return c.last_pay; }).sort(function (a, b) { return a.last_pay.date < b.last_pay.date ? 1 : -1; })[0];
 		var seg = function (n, cls) { return n ? '<i class="' + cls + '" style="flex:' + n + '"></i>' : ''; };
-		var adsRow = '';
+		var adsRow = '', adsG = null, adsK = {};
 		var c1 = (function () {
 			var A = S.ads || {}, G = A.google, K = A.connects || {}, LD = A.leads || {};
 			var ago = function (at) { var m = Math.round((Date.now() - new Date(String(at).replace(' ', 'T')).getTime()) / 60000); return m < 90 ? Math.max(1, m) + ' min ago' : m < 2880 ? Math.round(m / 60) + ' h ago' : Math.round(m / 1440) + ' days ago'; };
@@ -1264,6 +1264,7 @@
 			var kpart = '<button type="button" class="dwdc-mnow dwdc-adk" data-connmodal><span class="dwdc-lbl">Connects · this week</span><strong>' + money(K.week || 0) + '</strong><small>' + money(K.month || 0) + ' this month · ' + money(K.lastmonth || 0) + ' last month</small></button>';
 			var total = (G ? G.month.cost : 0) + (K.month || 0);
 			adsRow = '<div class="dwdc-mjobs dwdc-madsrow">' + gpart + kpart + '</div>';
+			adsG = G; adsK = K;
 			return card('cd-clients cd-ads', chead('bolt', 'Advertising', ''),
 				'<div class="dwdc-mtop">' + gpart + kpart + '</div>'
 				+ (K.last ? '<p class="dwdc-adnote">Connects from your Upwork file, last purchase ' + fmt(K.last) + (G ? ' · Google Ads updated ' + ago(G.at) : '') + '</p>' : ''),
@@ -1280,7 +1281,8 @@
 				return '<a class="dwdc-pl-row" data-sid="' + c.id + '" href="#client/' + c.id + '"><span><b>' + esc(c.name) + '</b><small>' + esc(k ? k.name : (c.person || '')) + '</small></span><span>' + (num(c.price) ? money(c.price) : '—') + '</span><span class="' + (ow ? 'ow' : 'pd') + '">' + (ow ? money(ow) : 'Paid') + '</span></a>';
 			}).join('') : '<p class="dwdc-mutp">No active projects right now.</p>') + '</div></div>',
 			'<footer class="dwdc-pl-foot"><a class="dwdc-pl-all" href="#projects/active" data-plall>View all ' + active.length + ' ' + ic('right', 12) + '</a></footer>');
-		var c3 = card('cd-money', chead('dollar', 'Money', 'money'),
+		// Money card (option 1b): a grid of tiles. Owed to you is the hero; short labels on a narrow card, full ones when it's wide.
+		var c3 = card('cd-money money-card', chead('dollar', 'Money', 'money'),
 			(function () {
 				var t = DWDC.today, ym = t.slice(0, 7), MY = S.money || {}, yo = MY[t.slice(0, 4)], mi = +t.slice(5, 7) - 1;
 				var cur = yo && yo.m ? Math.max(0, +yo.m[mi] || 0) : 0, prevD = new Date(+t.slice(0, 4), mi - 1, 1), py = MY[String(prevD.getFullYear())];
@@ -1288,12 +1290,24 @@
 				var MNf = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 				var ws = weekStart(t), we = new Date(ws); we.setDate(we.getDate() + 6);
 				var ls = new Date(ws); ls.setDate(ls.getDate() - 7); var le = new Date(ws); le.setDate(le.getDate() - 1);
-				var wbox = function (label, a, b) { var l = winsIn(dIso(a), dIso(b)); return '<button type="button" class="dwdc-mjob" data-wins="' + dIso(a) + '|' + dIso(b) + '|' + label + '"><span class="dwdc-lbl">' + label + '</span><strong>' + l.length + '<i> job' + (l.length === 1 ? '' : 's') + '</i></strong><small>' + shortD(dIso(a)) + '–' + shortD(dIso(b)) + (winVal(l) ? ' · ' + money(winVal(l)) : '') + '</small></button>'; };
-				return '<div class="dwdc-mtop"><button type="button" class="dwdc-mopen" data-owed><span class="dwdc-lbl">Owed to you</span><strong>' + money(owed(owing)) + '</strong><small>' + (pendDeposit(owing) ? money(pendDeposit(owing)) + ' pending deposit · ' : '') + owing.length + ' project' + (owing.length === 1 ? '' : 's') + ' · see list →</small></button>'
-					+ '<button type="button" class="dwdc-mnow" data-month="' + ym + '"><span class="dwdc-lbl">Made in ' + MNf[mi] + '</span><strong>' + money(cur) + '</strong><small>' + MNf[prevD.getMonth()] + ': ' + money(prev) + ' · see payments →</small></button>' + '</div>'
-					+ '<div class="dwdc-mjobs">' + wbox('Jobs this week', ws, we) + wbox('Jobs last week', ls, le) + '</div>' + adsRow;
-			})(),
-			'<footer>' + frow('Hosting Revenue', money(annual) + ' / yr', 'hosting') + '<a class="dwdc-frow" href="#money"><span>All-time income</span><b>' + money(allIncome()) + '</b>' + ic('right', 12) + '</a></footer>');
+				var L = function (long, short) { return '<span class="lg">' + long + '</span><span class="sh">' + short + '</span>'; };
+				var tile = function (attrs, label, value, meta, cls) { return '<button type="button" class="tile' + (cls ? ' ' + cls : '') + '" ' + attrs + '><span class="label">' + label + '</span><span class="value">' + value + '</span><span class="meta">' + meta + '</span></button>'; };
+				var jobs = function (label, a, b) { var l = winsIn(dIso(a), dIso(b)); return tile('data-wins="' + dIso(a) + '|' + dIso(b) + '|' + label + '"', label, l.length + ' <span class="unit">job' + (l.length === 1 ? '' : 's') + '</span>', shortD(dIso(a)) + '–' + shortD(dIso(b)) + (winVal(l) ? ' · ' + money(winVal(l)) : '')); };
+				var pd = pendDeposit(owing);
+				var G = adsG, K = adsK || {};
+				var gTile = G
+					? tile('data-adsmodal', L('Google Ads · This week', 'Google Ads · Week'), money(G.week.cost), G.week.clicks + ' clicks · ' + Math.round(G.week.conv) + ' ' + L('conversion' + (Math.round(G.week.conv) === 1 ? '' : 's'), 'conv.') + ' · ' + money(G.month.cost) + ' this month')
+					: tile('data-adsconnect', 'Google Ads', '—', 'Not connected · connect →');
+				return '<div class="money-grid">'
+					+ tile('data-owed', 'Owed to you', money(owed(owing)), (pd ? money(pd) + ' pending deposit · ' : '') + owing.length + ' project' + (owing.length === 1 ? '' : 's') + ' · see list →', 'tile--hero')
+					+ tile('data-month="' + ym + '"', L('Made in ' + MNf[mi], 'Made in ' + MNf[mi].slice(0, 3) + '.'), money(cur), L(MNf[prevD.getMonth()], MNf[prevD.getMonth()].slice(0, 3)) + ': ' + money(prev) + ' · ' + L('see payments →', 'payments →'))
+					+ jobs('Jobs this week', ws, we) + jobs('Jobs last week', ls, le)
+					+ gTile
+					+ tile('data-connmodal', L('Connects · This week', 'Connects · Week'), money(K.week || 0), money(K.month || 0) + ' this month · ' + money(K.lastmonth || 0) + ' last month')
+					+ '<a class="tile tile--plain" href="#hosting"><span class="label">Hosting revenue</span><span class="value">' + money(annual) + ' <span class="suffix">/ yr</span></span><span class="meta">see clients →</span></a>'
+					+ '<a class="tile tile--plain" href="#money"><span class="label">All-time income</span><span class="value">' + money(allIncome()) + '</span><span class="meta">see history →</span></a>'
+					+ '</div>';
+			})());
 		var tv = active.reduce(function (s, c) { return s + num(c.price); }, 0);
 		var ap = card('cd-plain cd-apnavy', '<header class="dwdc-dhead"><h2>Active Projects <span class="dwdc-cnt">' + active.length + '</span></h2><a href="#projects/active">View all</a></header>',
 			'<div class="dwdc-mini-t"><div class="g-ap head"><span>Project · Client</span><span>Price</span><span>Due</span><span class="r">Owed</span></div>'
