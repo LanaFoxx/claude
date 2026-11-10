@@ -2016,3 +2016,5 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 .dwdc .pv2-hacts > [data-complete] { order: 10; }
 .dwdc .pv2-hacts .dwdc-btn2[data-complete] { background: #16a34a !important; border-color: #16a34a !important; color: #fff !important; }
 .dwdc .pv2-hacts .dwdc-btn2[data-complete]:hover { background: #128a3e !important; border-color: #128a3e !important; }
+.dwdc .pv2-acts .dwdc-btn[data-act="pay"] { background: #34C46A !important; border-color: #34C46A !important; }
+.dwdc .pv2-acts .dwdc-btn[data-act="pay"]:hover { background: #22B159 !important; border-color: #22B159 !important; }
