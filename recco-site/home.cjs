@@ -32,30 +32,52 @@ const small = (title, size, color, o = {}) => widget('heading', {
 });
 
 /* ------------------------------------------------------------------ hero */
-// Copy from Eric's Markup notes (10 Nov 2026): one intro line, then the two disciplines.
+// Hero copy and layout from Eric's Markup notes and reference image (10 Nov 2026): intro line, then two
+// halves, one per discipline, each with three numbered points.
 const DISCIPLINES = [
-  ['Enterprise Application Reconnaissance', 'We stand up live, production-grade instances to evaluate real capabilities, separate marketing hype from functional reality, and audit enterprise contracts, licensing tiers, and discounting structures.'],
-  ['Generative AI Platform Recommendations', 'Built on licensed enterprise-tier tenants connected directly to core business systems, we benchmark prompt performance side-by-side, pinpoint hallucination risks, and define scenario differentiators. We back every deployment with AI FinOps\u2014providing granular token estimation, workload consumption forecasting, and cost-per-task modeling before you commit capital.'],
+  ['Enterprise Application Reconnaissance', [
+    ['Live Production-Grade Testing', 'We stand up actual production grade instances to evaluate capabilities.'],
+    ['Hype vs. Reality Audits', 'Going beyond generic and flashy demos to prove real-world value.'],
+    ['Licensing & Contract Intelligence', 'Deep intelligence on enterprise pricing, licensing, and discounting.'],
+  ]],
+  ['Generative AI Platform Recommendations', [
+    ['Multi-Model Live Benchmarking', 'Side-by-side testing of Enterprise editions of ChatGPT, Claude, Gemini and others.'],
+    ['Hallucination & Connector Testing', 'Pinpointing prompt errors and management of data pipelines.'],
+    ['AI FinOps & Token Forecasting', 'Grounded financial modeling and analysis before you commit capital.'],
+  ]],
 ];
-// Two halves (Eric's Markup note, 10 Nov 2026): each discipline name is a headline with its paragraph,
-// split by a thin rule (vertical side by side, horizontal when stacked on phones).
-const half = ([title, body], i) => container({
-  content_width: 'full', flex_direction: 'column', flex_gap: gap(16), flex_gap_mobile: gap(12),
-  padding: i ? box(4, 0, 4, 48) : box(4, 48, 4, 0), padding_tablet: i ? box(4, 0, 4, 28) : box(4, 28, 4, 0),
-  padding_mobile: i ? box(24, 0, 0, 0) : box(0, 0, 0, 0),
+const point = ([title, body], i) => container({
+  content_width: 'full', flex_direction: 'row', flex_wrap: 'nowrap', flex_align_items: 'flex-start', flex_gap: gap(18), flex_gap_mobile: gap(14), padding: box(0),
+  _title: `Point ${i + 1}`,
+}, [
+  widget('heading', {
+    title: String(i + 1).padStart(2, '0'), header_size: 'p', title_color: C.greenOnDark,
+    ...typo('typography', SERIF, [30, 28, 24], 300, { lh: 1 }),
+    _element_width: 'initial', _element_custom_width: px(40), _element_custom_width_mobile: px(32), _flex_size: 'none',
+  }),
+  stack([
+    widget('heading', { title, header_size: 'h3', title_color: C.white, ...typo('typography', SANS, [17, 16, 16], 700, { lh: 1.3 }) }),
+    text(body, { color: 'rgba(255,255,255,0.82)', size: [15.5, 15, 15], lh: 1.5 }),
+  ], { gap: 4, settings: { custom_css: 'selector { flex: 1 1 0; min-width: 0; }' } }),
+]);
+// Halves are split by a thin rule: vertical side by side, horizontal when stacked on phones.
+const half = ([title, points], i) => container({
+  content_width: 'full', flex_direction: 'column', flex_gap: gap(28), flex_gap_mobile: gap(20),
+  padding: i ? box(4, 0, 4, 56) : box(4, 56, 4, 0), padding_tablet: i ? box(4, 0, 4, 28) : box(4, 28, 4, 0),
+  padding_mobile: i ? box(28, 0, 0, 0) : box(0, 0, 0, 0),
   ...(i ? { border_border: 'solid', border_width: box(0, 0, 0, 1), border_width_mobile: box(1, 0, 0, 0), border_color: 'rgba(255,255,255,0.22)' } : {}),
   _title: title,
 }, [
   widget('heading', {
-    title: `${title}.`, header_size: 'h1', title_color: C.white, align: 'left',
+    title, header_size: 'h1', title_color: C.white, align: 'left',
     ...typo('typography', SERIF, [42, 34, 28], 300, { lh: 1.12, ls: -0.5 }),
   }),
-  text(body, { color: 'rgba(255,255,255,0.84)', size: [16.5, 15.5, 15], lh: 1.65 }),
+  stack(points.map(point), { gap: 24, settings: { flex_gap_mobile: gap(18) } }),
 ]);
 
 const hero = (m) => band([
   eyebrow(m, 'Technology advisory since 2006', { align: 'center', archW: 120, dark: true }),
-  text('Move past unverified vendor claims and generic demos. Recco delivers empirical evaluation and prescriptive guidance across two distinct disciplines:', {
+  text('<p>Move past unverified vendor claims and generic demos. Recco delivers empirical <strong>evaluation</strong> and <strong>prescriptive</strong> guidance across two distinct disciplines.</p>', {
     align: 'center', color: 'rgba(255,255,255,0.9)', size: [20, 18, 16], lh: 1.55, maxW: 820,
     settings: { typography_font_size_mobile: px(15.5), typography_line_height_mobile: { unit: 'em', size: 1.55, sizes: [] } },
   }),
@@ -356,5 +378,5 @@ module.exports = {
   slug: 'home', title: 'Home',
   // Meta description (V3 copy doc). The Hello theme prints the page excerpt as <meta name="description">.
   meta: 'Recco tests Copilot, ChatGPT, Gemini, Claude, Glean, and Perplexity in live enterprise tenants, measuring real performance and true cost per task.',
-  build: (m) => [hero(m), approach(m), news(m), valueProp(m), seedOverview(m), services(m), platforms(m), about(m), sustainability(m), contact(m)],
+  build: (m) => [hero(m), news(m), approach(m), valueProp(m), seedOverview(m), services(m), platforms(m), about(m), sustainability(m), contact(m)],
 };
