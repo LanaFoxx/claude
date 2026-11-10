@@ -1,4 +1,4 @@
-// Recco Consulting homepage: hero, proof band, value proposition (cards to the inner pages),
+// Recco Consulting homepage: hero, how we work, value proposition (cards to the inner pages),
 // SEED overview, services, platforms, AI news, about, approach, contact.
 // Section anchors used by the menu/footer: #services #about #contact.
 const L = require('./lib.cjs');
@@ -7,15 +7,15 @@ const B = require('./blocks.cjs');
 const P = require('./platforms.cjs');
 const { C, SERIF, SANS, EMAIL, A, id, px, box, gap, auto, link, typo, fa, container, widget, band, stack, row, grid, eyebrow, H2, H3, text, button, image } = L;
 
-// Copy from the V3 copy rewrite (28 Oct 2026). Two practices, two items each.
+// Services copy from Eric's Markup note (10 Nov 2026). Two practices, two items each.
 const SERVICE_GROUPS = [
-  ['AI Services', [
-    ['01', 'AI platform evaluation', 'Side-by-side testing of enterprise AI platforms in licensed tenants loaded with realistic data. You get quality, cost-per-task, and governance trade-offs before you commit budget.'],
-    ['02', 'AI adoption and build', 'Prompt and scenario design, release analysis, demo environments, and enablement. We test build tools like Cursor, Replit, Lovable, and n8n hands-on.'],
+  ['Generative AI Platform Recommendations', [
+    ['01', 'Live Tenant Benchmarking & Hallucination Audits', 'Side-by-side prompt testing inside licensed enterprise-tier tenants (ChatGPT Enterprise, Claude Enterprise, Gemini Enterprise, Microsoft Copilot) connected to real systems. We measure output fidelity, isolate hallucination frequencies, and identify scenario-specific differentiators before you commit capital.'],
+    ['02', 'AI FinOps, Token Forecasting & Enterprise Connectors', 'Grounded financial modeling and integration architecture. We run workload simulations to establish accurate token estimation, forecast recurring consumption costs, and stress-test data retrieval connectors to enterprise applications for secure, scalable adoption.'],
   ]],
-  ['Enterprise App Services', [
-    ['03', 'Enterprise app selection', 'Independent evaluation of platforms, vendors, and contracts. RFP templates, demo scripts, street pricing, and hidden costs, so you choose with confidence and negotiate from strength.'],
-    ['04', 'Value and delivery oversight', 'For platforms you already own: where adoption stalled, what\u2019s underused, and how to add AI that works. Plus program leadership that holds partners to scope.'],
+  ['Enterprise Application Reconnaissance', [
+    ['03', 'Production-Grade Instance Evaluation', 'We stand up live, production-grade environments of leading enterprise platforms to separate marketing demonstrations from operational reality. We conduct side-by-side capability shootouts using your realistic business data and workflows.'],
+    ['04', 'Licensing, Pricing & Discount Intelligence', 'Demystifying opaque SaaS tiers, usage metrics, and vendor sales practices. We audit proposals against historical street pricing, uncover renewal escalators, and analyze discounting structures so your executive team negotiates from strength.'],
   ]],
 ];
 const NEWS = [
@@ -38,46 +38,48 @@ const small = (title, size, color, o = {}) => widget('heading', {
 });
 
 /* ------------------------------------------------------------------ hero */
+// Headline and subhead from Eric's Markup note (10 Nov 2026): one intro line, then the two disciplines.
+const DISCIPLINES = [
+  ['Enterprise Application Reconnaissance', 'We stand up live, production-grade instances to evaluate real capabilities, separate marketing hype from functional reality, and audit enterprise contracts, licensing tiers, and discounting structures.'],
+  ['Generative AI Platform Recommendations', 'Built on licensed enterprise-tier tenants connected directly to core business systems, we benchmark prompt performance side-by-side, pinpoint hallucination risks, and define scenario differentiators. We back every deployment with AI FinOps\u2014providing granular token estimation, workload consumption forecasting, and cost-per-task modeling before you commit capital.'],
+];
+const discipline = ([title, body]) => container({
+  content_width: 'full', flex_direction: 'column', flex_gap: gap(10), padding: box(26, 28, 28, 28), padding_mobile: box(20, 20, 22, 20),
+  background_background: 'classic', background_color: 'rgba(255,255,255,0.06)', border_radius: box(12),
+  border_border: 'solid', border_width: box(1), border_color: 'rgba(255,255,255,0.16)', _title: title,
+}, [
+  widget('heading', { title, header_size: 'h2', title_color: C.greenOnDark, ...typo('typography', SANS, [17, 17, 16], 700, { lh: 1.3 }) }),
+  text(body, { color: 'rgba(255,255,255,0.84)', size: [15.5, 15.5, 14.5], lh: 1.6 }),
+]);
+
 const hero = (m) => band([
-  eyebrow(m, 'Technology advisory', { align: 'center', archW: 120, dark: true }),
+  eyebrow(m, 'Technology advisory since 2006', { align: 'center', archW: 120, dark: true }),
   widget('heading', {
-    title: 'Empirical Vendor Analysis & Performance Benchmarking for Enterprise Generative AI', header_size: 'h1',
+    title: 'Enterprise Application Reconnaissance.<br>Generative AI Platform Recommendations.', header_size: 'h1',
     title_color: C.white, align: 'center',
-    ...typo('typography', SERIF, [64, 50, 34], 300, { lh: 1.06, ls: -0.96 }),
-    _element_width: 'initial', _element_custom_width: px(980), _element_custom_width_tablet: px(100, '%'),
+    ...typo('typography', SERIF, [56, 46, 32], 300, { lh: 1.08, ls: -0.8 }),
+    _element_width: 'initial', _element_custom_width: px(1100), _element_custom_width_tablet: px(100, '%'),
   }),
-  text('Move past vendor claims and generic test tenants. Recco evaluates enterprise AI inside live, enterprise-tier environments. We measure real prompt performance, true cost per task, and architectural capability across Microsoft 365 Copilot, ChatGPT Enterprise, Gemini Enterprise, Claude Enterprise, Glean, and Perplexity.', {
-    align: 'center', color: 'rgba(255,255,255,0.86)', size: 18, lh: 1.6, maxW: 780, settings: { typography_font_size_mobile: px(15), typography_line_height_mobile: { unit: 'em', size: 1.55, sizes: [] } },
+  text('Move past unverified vendor claims and generic demos. Recco delivers empirical evaluation and prescriptive guidance across two distinct disciplines:', {
+    align: 'center', color: 'rgba(255,255,255,0.86)', size: 18, lh: 1.6, maxW: 760,
+    settings: { typography_font_size_mobile: px(15.5), typography_line_height_mobile: { unit: 'em', size: 1.55, sizes: [] } },
   }),
+  grid(DISCIPLINES.map(discipline), { cols: [2, 2, 1], gap: [20, 20], gapT: [16, 16], gapM: [12, 12], align: 'stretch', settings: { _title: 'Disciplines', custom_css: 'selector { max-width: 1040px; }', _flex_order_mobile: 'custom', _flex_order_custom_mobile: 2 } }),
   row([
     button('Explore the SEED Lab', U.seed, 'green', { arrow: true }),
     button('Compare AI Platforms', U.platforms, 'ghostWhite', { arrow: true }),
-  ], { gap: 14, justify: 'center', settings: { width: auto } }),
+  // On phones the buttons come straight after the intro line, before the two discipline cards.
+  ], { gap: 14, justify: 'center', settings: { width: auto, _flex_order_mobile: 'custom', _flex_order_custom_mobile: 1 } }),
 ], {
-  pad: [120, 112], gap: 30, image: m.heroTower, imagePos: 'center center', title: 'Hero',
-  overlay: L.overlayGradient('rgba(14,42,58,0.7)', 'rgba(14,42,58,0.96)'),
+  pad: [104, 96], gap: 28, image: m.heroTower, imagePos: 'center center', title: 'Hero',
+  overlay: L.overlayGradient('rgba(14,42,58,0.72)', 'rgba(14,42,58,0.96)'),
   settings: {
     flex_align_items: 'center', flex_justify_content: 'center',
     min_height: px(780), min_height_tablet: px(640), min_height_mobile: px(0),
-    // Tighter on phones so both buttons sit above the fold.
     padding_mobile: box(36, 20, 48, 20), flex_gap_mobile: gap(18),
     background_position: 'initial', background_xpos: px(50, '%'), background_ypos: px(30, '%'),
   },
 });
-
-/* ----------------------------------------------------------- proof band */
-const proofItem = (title, sub) => stack([
-  small(title, [32, 30, 28], C.white, { family: SERIF, weight: 300, lh: 1.1 }),
-  small(sub, 13, 'rgba(255,255,255,0.72)', { ls: 0.52, lh: 1.5 }),
-], { gap: 6, settings: { border_border: 'solid', border_width: box(0, 0, 0, 1), border_color: 'rgba(255,255,255,0.18)', padding: box(0, 0, 0, 24) } });
-
-const proof = () => band([
-  grid([
-    proofItem('Since 2006', 'Advising enterprise technology leaders'),
-    proofItem('Live lab', '16+ months of hands-on enterprise AI testing'),
-    proofItem('Lab scale', '10B+ tokens and 5,800+ prompts a month'),
-  ], { cols: [3, 3, 1], gap: [40, 28], gapT: [24, 24], gapM: [28, 28], align: 'stretch' }),
-], { pad: [40, 40], bg: C.navy, title: 'Proof band', settings: { padding_mobile: box(36, 20, 36, 20) } });
 
 /* ------------------------------------------------- value proposition */
 const valueProp = (m) => band([
@@ -124,8 +126,8 @@ const services = (m) => band([
   grid([
     stack([
       eyebrow(m, 'Services'),
-      H2('Two practices. One standard of evidence. AI Services and Enterprise App Services.', C.navy, { ls: -0.46 }),
-      text('AI Services covers the platforms reshaping how work gets done. Enterprise App Services covers the systems that run the business. Engagements are scoped to the decision in front of you.'),
+      H2('Two practices. One standard of empirical evidence. Reconnaissance and Recommendations.', C.navy, { ls: -0.46 }),
+      text('Enterprise Application Reconnaissance proves what software actually delivers before you allocate budget. Generative AI Platform Recommendations provide benchmarked model deployment, hallucination testing, and predictive FinOps governance. Every engagement is scoped directly to the technical decision in front of you.'),
       image(m.dome, { width: px(100, '%'), height: [414, 380, 260], radius: 4, settings: { _margin: box(20, 0, 0, 0), _margin_mobile: box(8, 0, 0, 0) } }),
     ], { gap: 18 }),
     stack(SERVICE_GROUPS.map(([label, items]) => stack([
@@ -136,16 +138,17 @@ const services = (m) => band([
 ], { anchor: 'services', title: 'Services' });
 
 /* ------------------------------------------------------------- platforms */
+// White background per Eric's Markup note (10 Nov 2026); a hairline separates it from Services.
 const platforms = (m) => band([
   stack([
-    eyebrow(m, 'Platform expertise', { dark: true }),
-    H2('Deep on the platforms that run the enterprise.', C.white, { sizes: [40, 34, 28], lh: 1.12 }),
+    eyebrow(m, 'Platform expertise'),
+    H2('Deep on the platforms that run the enterprise.', C.navy, { sizes: [40, 34, 28], lh: 1.12 }),
   ], { gap: 14, maxW: 640 }),
-  P.aiGroup(m, { dark: true }),
-  P.appRows(m, { dark: true }),
+  P.aiGroup(m),
+  P.appRows(m),
 ], {
-  pad: [88, 88], gap: 48, gapM: 36, image: m.cityData, anchor: 'platforms', title: 'Platforms',
-  overlay: L.overlayGradient('rgba(30,73,94,0.96)', 'rgba(30,73,94,0.86)', 90),
+  pad: [88, 88], gap: 48, gapM: 36, bg: C.white, anchor: 'platforms', title: 'Platforms',
+  settings: { border_border: 'solid', border_width: box(1, 0, 0, 0), border_color: C.line },
 });
 
 /* ------------------------------------------------------------------ news */
@@ -279,7 +282,7 @@ const approach = (m) => band([
     cols: [4, 2, 1], gap: 1, gapT: 1, gapM: 1, align: 'stretch',
     settings: { background_background: 'classic', background_color: C.line, border_border: 'solid', border_width: box(1, 0, 1, 0), border_color: C.line },
   }),
-], { pad: [96, 0], gap: 56, gapM: 36, bg: C.white, anchor: 'approach', title: 'How we work' });
+], { pad: [96, 0], gap: 56, gapM: 36, bg: C.tint, anchor: 'approach', title: 'How we work' });
 
 /* --------------------------------------------------------------- contact */
 const field = (custom_id, field_type, field_label, placeholder, width, extra = {}) => ({
@@ -356,5 +359,5 @@ module.exports = {
   slug: 'home', title: 'Home',
   // Meta description (V3 copy doc). The Hello theme prints the page excerpt as <meta name="description">.
   meta: 'Recco tests Copilot, ChatGPT, Gemini, Claude, Glean, and Perplexity in live enterprise tenants, measuring real performance and true cost per task.',
-  build: (m) => [hero(m), proof(), valueProp(m), seedOverview(m), services(m), platforms(m), news(m), about(m), sustainability(m), approach(m), contact(m)],
+  build: (m) => [hero(m), approach(m), valueProp(m), seedOverview(m), services(m), platforms(m), news(m), about(m), sustainability(m), contact(m)],
 };
