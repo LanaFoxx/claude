@@ -76,10 +76,9 @@ add_action( 'wp', function () {
 /* 2. Hero: poster first, video after load */
 add_action( 'wp_head', function () {
 	if ( is_admin() ) return;
-	foreach ( glob( WP_CONTENT_DIR . '/uploads/elementor/google-fonts/fonts/{outfit,manrope}-*.woff2', GLOB_BRACE ) ?: array() as $i => $f ) {
-		if ( $i > 3 ) break;
-		echo '<link rel="preload" as="font" type="font/woff2" crossorigin href="' . esc_url( content_url( '/uploads/elementor/google-fonts/fonts/' . basename( $f ) ) ) . '">' . "\n";
-	}
+	// No font preloads: the font rules are printed in the page now, so the browser finds the files right away, and on this
+	// HTTP/1.1 server four early font downloads held up the scripts the first paint waits for (text shows in the
+	// fallback font first; font-display: swap).
 	// Mug photo slider: keep the square photo's space from the first paint, show only the first slide until the slider starts.
 	echo '<style>.ctc-mug-gallery .swiper-slide-image{width:100%;height:auto;aspect-ratio:1/1;object-fit:cover}.ctc-mug-gallery .elementor-image-carousel-wrapper:not(.swiper-initialized) .swiper-slide:not(:first-child){display:none}.ctc-mug-gallery .elementor-image-carousel-wrapper{aspect-ratio:1/1}.ctc-mug-gallery .elementor-image-carousel-wrapper:not(.swiper-initialized) .swiper-slide{max-width:100%!important;width:100%;flex:0 0 100%}</style>' . "\n";
 }, 1 );
@@ -129,7 +128,7 @@ function ctc_sp_inline_css( $html ) {
 	$head = substr( $html, 0, $hp );
 	if ( ! preg_match_all( '#<link\s[^>]*>\n?#i', $head, $links ) ) return $html;
 	$home = preg_quote( untrailingslashit( set_url_scheme( home_url(), 'https' ) ), '#' );
-	$budget = 300 * 1024; // raw bytes; anything beyond stays a normal link
+	$budget = 600 * 1024; // raw bytes; anything beyond stays a normal link
 	foreach ( $links[0] as $tag ) {
 		if ( ! preg_match( '#rel=[\'"]stylesheet[\'"]#i', $tag ) || preg_match( '#\bonload=|\bdisabled\b#i', $tag ) ) continue;
 		if ( ! preg_match( '#href=[\'"](' . $home . '(/wp-(?:content|includes)/[^\'"?]+\.css))(?:\?[^\'"]*)?[\'"]#i', $tag, $m ) ) continue;
@@ -178,7 +177,7 @@ function ctc_sp_webp( $html ) {
 
 /* 3. Delay chat / tracking until the visitor interacts */
 function ctc_sp_delay_handles() {
-	return array( 'text-widget', 'pmw', 'mailchimp-woocommerce-pixel-tracking', 'mailchimp-woocommerce-pixel-tracking-blocks' );
+	return array( 'text-connect', 'text-widget', 'pmw', 'mailchimp-woocommerce-pixel-tracking', 'mailchimp-woocommerce-pixel-tracking-blocks' );
 }
 function ctc_sp_delay_id( $id ) {
 	foreach ( ctc_sp_delay_handles() as $h ) if ( in_array( $id, array( "$h-js", "$h-js-before", "$h-js-after", "$h-js-extra" ), true ) ) return true;
