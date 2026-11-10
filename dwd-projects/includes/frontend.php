@@ -229,6 +229,9 @@ add_action( 'wp_head', function () {
 		. '@media(max-width:767px){.elementor-element-dw0001g br{display:none}}</style>' . "\n";
 }, 99 );
 add_action( 'wp_footer', function () {
+	if ( function_exists( 'dwdr_page' ) && 'article' === dwdr_page() ) {
+		return; // articles use CSS text-wrap; re-measuring here moved the summary after load (layout shift)
+	}
 	echo "<script>(function(){
 function lines(e){var r=document.createRange();r.selectNodeContents(e);var t={};[].forEach.call(r.getClientRects(),function(x){if(x.width>1)t[Math.round(x.top)]=1;});return Object.keys(t).length;}
 function even(e){e.style.maxWidth='';var n=lines(e);if(n<2)return;var w=e.getBoundingClientRect().width,lo=w*0.5,hi=w;for(var i=0;i<9;i++){var m=(lo+hi)/2;e.style.maxWidth=m+'px';if(lines(e)>n)lo=m;else hi=m;}e.style.maxWidth=Math.ceil(hi)+'px';e.style.marginLeft='auto';e.style.marginRight='auto';}
