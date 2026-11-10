@@ -125,6 +125,33 @@ function dwdc_find_by_email( $email ) {
 	return $ids ? (int) $ids[0] : 0;
 }
 
+/** The Markup review email: first draft is up, leave notes right on the site in Markup. */
+function dwdc_markup_email_html( $first, $project, $link ) {
+	$html = dwdp_email_html( array(
+		'eyebrow' => 'First draft',
+		'title'   => 'Your first draft is ready',
+		'intro'   => 'Hi ' . esc_html( $first ?: 'there' ) . ',<br><br>'
+			. 'Good news: the first draft of <strong>' . esc_html( $project ) . '</strong> is up and ready for you to look through.<br><br>'
+			. 'I’ve set it up in Markup, so you can review the actual site and leave notes right on it. Just click any spot on the page and type what you’d like changed. Each note is pinned to that exact spot, and I see them in real time, so I can start on your changes right away.<br><br>'
+			. '<strong>Please keep all your notes and revisions in Markup.</strong> That way nothing gets lost in email threads, and we get your site launched sooner.',
+		'buttons' => array( array( 'View your draft & leave notes', $link ) ),
+		'outro'   => 'Questions? Just reply to this email.<br>Michael Tarr, Dream Web Digital',
+		'footer'  => 'Dream Web Digital ·',
+	) );
+	return str_replace( 'padding:14px 26px;border-radius:8px;font-size:13px', 'padding:20px 44px;border-radius:10px;font-size:16px', $html ); // a bigger, bolder button
+}
+add_action( 'rest_api_init', function () {
+	// Preview of the Markup email exactly as the client gets it (admin only).
+	register_rest_route( 'dwd/v1', '/crm/markup-email/preview', array( 'methods' => 'GET', 'permission_callback' => function () { return current_user_can( 'manage_options' ); }, 'callback' => function ( $r ) {
+		$id = (int) $r->get_param( 'id' );
+		$cid = $id ? (int) get_post_meta( $id, '_dwdc_client', true ) : 0;
+		$who = $id ? ( ( $cid ? get_post_field( 'post_title', $cid ) : '' ) ?: get_post_meta( $id, '_dwdc_person', true ) ) : 'Nick Ponte';
+		header( 'Content-Type: text/html; charset=UTF-8' );
+		echo dwdc_markup_email_html( trim( strtok( (string) $who, ' ' ) ), $id ? get_post_field( 'post_title', $id ) : 'Nick Ponte Realty', $id && get_post_meta( $id, '_dwdc_markup', true ) ? get_post_meta( $id, '_dwdc_markup', true ) : 'https://app.markup.io/' ); // phpcs:ignore
+		exit;
+	} ) );
+} );
+
 function dwdc_save_contact( $id, $data ) {
 	$is_new = ! $id;
 	if ( ! $id ) {
@@ -1133,19 +1160,8 @@ add_action( 'rest_api_init', function () {
 		$who     = ( $cid ? get_post_field( 'post_title', $cid ) : '' ) ?: ( get_post_meta( $id, '_dwdc_person', true ) ?: get_post_field( 'post_title', $id ) );
 		$first   = trim( strtok( (string) $who, ' ' ) );
 		$project = get_post_field( 'post_title', $id );
-		$html    = dwdp_email_html( array(
-			'eyebrow' => 'Website Review',
-			'title'   => 'Your website is ready for review',
-			'intro'   => 'Hi ' . esc_html( $first ) . ',<br><br>'
-				. 'Your website is ready for you to look through. I’ve set up a Markup review link for <strong>' . esc_html( $project ) . '</strong> so you can leave feedback right on the page.<br><br>'
-				. '<strong>How it works:</strong> open the link, click anywhere on your site, and type your note. Each comment is pinned to the exact spot you clicked, and you can add screenshots and reply to my notes in the same place. There’s nothing to install.<br><br>'
-				. '<strong>Please keep all revisions in Markup.</strong> When changes come in by email or chat, they get split across threads and are easy to miss, which slows everything down. With every note in one place, I can work through your list quickly and get your site launched sooner.',
-			'buttons' => array( array( 'Open your Markup review', $link ) ),
-			'outro'   => 'Questions? Just reply to this email.<br>Michael Tarr, Dream Web Digital',
-			'footer'  => 'Dream Web Digital ·',
-		) );
-		$html = str_replace( 'padding:14px 26px;border-radius:8px;font-size:13px', 'padding:20px 44px;border-radius:10px;font-size:16px', $html ); // a bigger, bolder button
-		$sent = wp_mail( $email, 'Your review link for ' . $project, $html, array( 'Content-Type: text/html; charset=UTF-8', 'Reply-To: Michael Tarr <mike@dreamwebdigital.com>' ) );
+		$html    = dwdc_markup_email_html( $first, $project, $link );
+		$sent = wp_mail( $email, 'The first draft of ' . $project . ' is ready for you', $html, array( 'Content-Type: text/html; charset=UTF-8', 'Reply-To: Michael Tarr <mike@dreamwebdigital.com>' ) );
 		if ( ! $sent ) {
 			return new WP_Error( 'dwdc_mail', 'The email didn’t send. Copy the link and send it yourself.', array( 'status' => 500 ) );
 		}

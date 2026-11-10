@@ -1813,7 +1813,8 @@
 		var notes = full ? (c.notes || []).slice().sort(function (a, b) { return (d(a.date) || 0) < (d(b.date) || 0) ? 1 : -1; }) : [];
 		var notesBox = card('pv3-notes', band('Notes', notes.length),
 			'<form class="dwdc-notef pv3-notef"><textarea name="text" rows="3" placeholder="Add a note: what they need, call recap, budget, next step…" required></textarea><div class="pv3-nrow"><span>' + (full && !notes.length ? 'No notes yet.' : '') + '</span><button class="pv3-btn">Add note</button></div></form>'
-			+ (full ? notes.map(function (n) { var dt = d(n.date); return '<div class="pv3-note"><p>' + esc(n.text).replace(/\n/g, '<br>') + '</p><time>' + (dt ? dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' · ' + dt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : '') + '</time></div>'; }).join('') : '<p class="pv3-mut">Loading…</p>'));
+			+ (full && notes.length ? '<button type="button" class="pv3-lnk pv3-ntog" data-notestog="' + c.id + '">' + ((S.notesOpen || {})[c.id] ? 'Hide notes' : 'View all notes (' + notes.length + ')') + '</button>' : '')
+			+ (full ? ((S.notesOpen || {})[c.id] ? notes : []).map(function (n) { var dt = d(n.date); return '<div class="pv3-note"><p>' + esc(n.text).replace(/\n/g, '<br>') + '</p><time>' + (dt ? dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' · ' + dt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : '') + '</time></div>'; }).join('') : '<p class="pv3-mut">Loading…</p>'));
 		// onboarding
 		var obl = full ? onboardEntries(c) : [], obn = obl.reduce(function (s2, e) { return s2 + (e.fields || []).length; }, 0);
 		var obBox = obl.length ? card('pv3-ob', band('Onboarding', obn + ' answers', '<span class="pv3-hmeta">' + esc(obl[0].form || 'Form') + ' · submitted ' + fmt(obl[0].date) + '</span>'),
@@ -2397,6 +2398,7 @@
 	})();
 	app.addEventListener('click', function (e) {
 		var t = e.target, el;
+		if ((el = t.closest('[data-notestog]'))) { var nid = el.getAttribute('data-notestog'); S.notesOpen = S.notesOpen || {}; S.notesOpen[nid] = !S.notesOpen[nid]; render(); return; }
 		// project page: ⋯ menu, payment log form, remove a payment
 		if ((el = t.closest('[data-pmore]'))) { var mw = el.closest('.pv3-more'); mw.classList.toggle('open'); return; }
 		if (!t.closest('.pv3-more')) { app.querySelectorAll('.pv3-more.open').forEach(function (m) { m.classList.remove('open'); }); }

@@ -2164,3 +2164,12 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 @media (max-width: 600px) { .dwdc .pv3-ob .pv3-hmeta { display: none; } .dwdc .pv3-tb .dwdc-ph-sp { display: none; } .dwdc .pv3-tb .dwdc-ph-menu { margin-left: auto; } }
 /* Project page fills the width (small side padding only) */
 #dwdc-app[data-view="client"] .dwdc-screen { max-width: none !important; margin: 0 !important; padding-left: 4px; padding-right: 4px; }
+.dwdc .pv3-ntog { display: inline-block; margin-top: 12px; }
+/* Project page: each box's header band gets its own subtle tint */
+.dwdc .pv3-todos .pv3-band { background: #e9f1fc; }
+.dwdc .pv3-notes .pv3-band { background: #fcf5e6; }
+.dwdc .pv3-ob .pv3-band { background: #f1edfb; }
+.dwdc .pv3-mk .pv3-band { background: #e8f5f3; }
+.dwdc .pv3-det .pv3-band { background: #eef2f7; }
+.dwdc .pv3-ppl .pv3-band { background: #fbeef0; }
+.dwdc .pv3-pay .pv3-band { background: #eaf6ec; }
