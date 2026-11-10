@@ -1842,3 +1842,8 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 @media (max-width: 1000px) { .dwdc .dwdc-phome { grid-template-columns: 1fr; } }
 .dwdc-phl, .dwdc .cd-ptodo1 { min-width: 0; max-width: 100%; }
 @media (max-width: 600px) { .dwdc .cd-ptodo1 .dwdc-dhead { flex-wrap: wrap; gap: 10px; } .dwdc .cd-ptodo1 .dwdc-dhead .dwdc-addtask { padding: 8px 12px; } .dwdc .cd-ptodo1 .dwdc-dhead h2 { font-size: 16px; } }
+/* Flights show in red on the calendar and lists */
+.dwdc .dwdc-c2-i.flight { background: #DC2626 !important; }
+.dwdc .dwdc-c2-row.flight, .dwdc .dwdc-dayi.flight { border-left-color: #DC2626 !important; }
+.dwdc .dwdc-c2-row.flight p span { color: #DC2626 !important; }
+.dwdc .dwdc-c2-urow i.flight, .dwdc .dwdc-ph-row.flight .dot { background: #DC2626 !important; }

@@ -199,6 +199,7 @@
 	function gStale(GL) { if (!GL || !GL.at) { return false; } var t = new Date(GL.at.replace(' ', 'T') + 'Z').getTime(); return Date.now() - t > 2 * 3600 * 1000; }
 	/* ---------- Personal: bank spending, subscriptions, connections ---------- */
 	var PTAGS = { urgent: 'Urgent', important: 'Important', errand: 'Errand', birthday: 'Birthday', home: 'Home', work: 'Work', health: 'Health', bills: 'Bills' };
+	function isFlight(t) { return /\bflights?\b|✈|\bairlines?\b|\bairways\b|\b(AA|DL|UA|WN|B6|AS|NK|F9|G4)\s?\d{2,4}\b/.test(String(t || '')); }
 	function tagOf(x) { return x.tag || (/birthday|bday/i.test(x.text || '') ? 'birthday' : ''); }
 	function money2(v) { return '$' + (+v || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
 	function bData() {
@@ -434,7 +435,7 @@
 			var billsMo = D.bills.reduce(function (a, b) { return a + billMonthly(b); }, 0);
 			var row = function (x, showDate) {
 				var when = showDate ? (x.due === addD(1) ? 'Tomorrow' : new Date(x.due + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })) : (x.time || (x.gevent ? 'All day' : ''));
-				return '<button type="button" class="dwdc-ph-row ' + (x.gevent ? 'ev' : 'td') + '" data-ptask="' + x.id + '">' + (x.gevent ? '<i class="dot"></i>' : '<span class="dwdc-chk" data-ptoggle="' + x.id + '">' + ic('check', 11) + '</span>') + '<span class="tx"><b>' + esc(ptx(x.text)) + '</b>' + (when ? '<small>' + esc(when) + (showDate && x.time ? ' · ' + esc(x.time) : '') + '</small>' : '') + '</span></button>';
+				return '<button type="button" class="dwdc-ph-row ' + (x.gevent ? 'ev' : 'td') + (isFlight(x.text) ? ' flight' : '') + '" data-ptask="' + x.id + '">' + (x.gevent ? '<i class="dot"></i>' : '<span class="dwdc-chk" data-ptoggle="' + x.id + '">' + ic('check', 11) + '</span>') + '<span class="tx"><b>' + esc(ptx(x.text)) + '</b>' + (when ? '<small>' + esc(when) + (showDate && x.time ? ' · ' + esc(x.time) : '') + '</small>' : '') + '</span></button>';
 			};
 			// this week strip
 			var wk = '', start = new Date(today + 'T12:00:00'); start.setDate(start.getDate() - ((start.getDay() + 6) % 7));
@@ -494,7 +495,7 @@
 				}).map(function (b) { var key = b.freq === 'yearly' ? ds.slice(0, 4) : b.freq === 'weekly' ? ds : ds.slice(0, 7); return { kind: 'bill', text: b.name + ' · ' + money(b.amount), done: !!(b.paid && b.paid[key]), b: b }; });
 			};
 			var itemsOn = function (ds, all) {
-				var list = D.todos.filter(function (x) { return x.due === ds; }).map(function (x) { return { kind: x.gevent ? 'ev' : 'td', text: ptx(x.text), time: x.time, done: x.done, id: x.id, src: x.gevent ? 'Google Calendar' : (x.source === 'Google Tasks' ? 'Google Tasks' : 'Personal') }; });
+				var list = D.todos.filter(function (x) { return x.due === ds; }).map(function (x) { return { kind: x.gevent ? 'ev' : 'td', fl: isFlight(x.text), text: ptx(x.text), time: x.time, done: x.done, id: x.id, src: x.gevent ? 'Google Calendar' : (x.source === 'Google Tasks' ? 'Google Tasks' : 'Personal') }; });
 				list = list.concat(billsOn(ds));
 				if (!all) { list = list.filter(function (x) { return F[x.kind]; }); }
 				return list.sort(function (a, b) { return a.done - b.done || tmin(a) - tmin(b); });
@@ -509,7 +510,7 @@
 				var its = itemsOn(ds), lbl = cd.getDate() === 1 && !inM ? MNs[cd.getMonth()] + ' 1' : String(cd.getDate());
 				cells += '<div class="dwdc-c2-d' + (inM ? '' : ' out') + (ds === today ? ' today' : '') + (ds === sel ? ' sel' : '') + '" data-psel="' + ds + '">'
 					+ '<div class="dwdc-c2-n">' + (ds === today ? '<b>' + cd.getDate() + '</b><span>Today</span>' : lbl) + '</div>'
-					+ its.slice(0, 3).map(function (x) { return '<button type="button" class="dwdc-c2-i ' + x.kind + (x.done ? ' done' : '') + '"' + (x.id ? ' data-ptask="' + x.id + '"' : ' data-gobills') + '>' + (x.time ? '<em>' + esc(short(x.time)) + '</em> ' : '') + esc(x.text) + '</button>'; }).join('')
+					+ its.slice(0, 3).map(function (x) { return '<button type="button" class="dwdc-c2-i ' + x.kind + (x.fl ? ' flight' : '') + (x.done ? ' done' : '') + '"' + (x.id ? ' data-ptask="' + x.id + '"' : ' data-gobills') + '>' + (x.time ? '<em>' + esc(short(x.time)) + '</em> ' : '') + esc(x.text) + '</button>'; }).join('')
 					+ (its.length > 3 ? '<span class="dwdc-c2-more">+' + (its.length - 3) + ' more</span>' : '') + '</div>';
 			}
 			var shift = function (n) { var d = new Date(cy, cmo - 1 + n, 1); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2); };
@@ -519,7 +520,7 @@
 			var kindLbl = { td: 'To-do', ev: 'Event', bill: 'Bill' };
 			var side = '<section class="dwdc-c2-day"><header><div class="dwdc-c2-badge"><small>' + MNs[sd.getMonth()].toUpperCase() + '</small><b>' + sd.getDate() + '</b></div><div><small>' + (sel === today ? 'Today · ' : '') + sd.toLocaleDateString('en-US', { weekday: 'long' }) + '</small><h3>' + MNf[sd.getMonth()] + ' ' + sd.getDate() + '</h3></div><span class="dwdc-c2-cnt">' + sitems.length + ' item' + (sitems.length === 1 ? '' : 's') + '</span></header>'
 				+ '<div class="dwdc-c2-list">' + (sitems.length ? sitems.map(function (x) {
-					return '<div class="dwdc-c2-row ' + x.kind + (x.done ? ' done' : '') + '"' + (x.id ? ' data-ptask="' + x.id + '"' : ' data-gobills') + '><div><p><b>' + esc(x.time ? short(x.time) : 'All day') + '</b><span>' + kindLbl[x.kind] + '</span></p><h4>' + esc(x.text) + '</h4><small>' + esc(x.src || 'Bills') + '</small></div>'
+					return '<div class="dwdc-c2-row ' + x.kind + (x.fl ? ' flight' : '') + (x.done ? ' done' : '') + '"' + (x.id ? ' data-ptask="' + x.id + '"' : ' data-gobills') + '><div><p><b>' + esc(x.time ? short(x.time) : 'All day') + '</b><span>' + kindLbl[x.kind] + '</span></p><h4>' + esc(x.text) + '</h4><small>' + esc(x.src || 'Bills') + '</small></div>'
 						+ (x.kind === 'td' ? '<span class="dwdc-chk' + (x.done ? ' on' : '') + '" data-ptoggle="' + x.id + '">' + ic('check', 12) + '</span>' : '') + '</div>';
 				}).join('') : '<p class="dwdc-c2-empty">Nothing on this day.</p>') + '</div>'
 				+ '<form class="dwdc-c2-add" data-pform="pdayadd"><input type="hidden" name="due" value="' + sel + '"><input name="text" placeholder="Add a to-do for ' + MNs[sd.getMonth()] + ' ' + sd.getDate() + '…" autocomplete="off" required><button class="dwdc-btn">Add</button></form></section>';
@@ -527,7 +528,7 @@
 			var up = [];
 			for (var ui = 0; ui < 7; ui++) { var ud = new Date(today + 'T12:00:00'); ud.setDate(ud.getDate() + ui + 1); var us = iso(ud); itemsOn(us, true).filter(function (x) { return !x.done; }).forEach(function (x) { up.push({ d: ud, x: x }); }); }
 			var soon = '<section class="dwdc-c2-up"><header><h3>Coming up</h3><span>Next 7 days</span></header>' + (up.length ? up.slice(0, 12).map(function (u) {
-				var x = u.x; return '<div class="dwdc-c2-urow"' + (x.id ? ' data-ptask="' + x.id + '"' : ' data-gobills') + '><div class="d"><small>' + u.d.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase() + '</small><b>' + u.d.getDate() + '</b></div><i class="' + x.kind + '"></i><div class="t"><b>' + esc(x.text) + '</b><small>' + esc(x.time ? short(x.time) : 'All day') + ' · ' + (x.kind === 'ev' ? 'Google Calendar' : kindLbl[x.kind]) + '</small></div></div>';
+				var x = u.x; return '<div class="dwdc-c2-urow"' + (x.id ? ' data-ptask="' + x.id + '"' : ' data-gobills') + '><div class="d"><small>' + u.d.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase() + '</small><b>' + u.d.getDate() + '</b></div><i class="' + x.kind + (x.fl ? ' flight' : '') + '"></i><div class="t"><b>' + esc(x.text) + '</b><small>' + esc(x.time ? short(x.time) : 'All day') + ' · ' + (x.kind === 'ev' ? 'Google Calendar' : kindLbl[x.kind]) + '</small></div></div>';
 			}).join('') : '<p class="dwdc-c2-empty">Nothing in the next week.</p>') + '</section>';
 			return '<div class="dwdc-c2-top"><div class="dwdc-c2-nav"><button type="button" data-pcal="' + shift(-1) + '" aria-label="Previous month">' + ic('left', 16) + '</button><button type="button" data-pcaltoday>Today</button><button type="button" data-pcal="' + shift(1) + '" aria-label="Next month">' + ic('right', 16) + '</button></div><h2 class="dwdc-c2-month">' + MNf[cmo - 1] + ' ' + cy + '</h2><div class="dwdc-c2-chips">' + chip('td', 'To-dos') + chip('ev', 'Google Calendar') + chip('bill', 'Bills') + '</div></div>'
 				+ '<div class="dwdc-c2"><section class="dwdc-c2-cal"><div class="dwdc-c2-h">' + ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(function (x) { return '<span>' + x + '</span>'; }).join('') + '</div><div class="dwdc-c2-g">' + cells + '</div></section><aside class="dwdc-c2-side">' + side + soon + '</aside></div>';
@@ -2083,7 +2084,7 @@
 			var long = new Date(day + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }).split(', ');
 			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal dwdc-daym">' + head(long[0], long[1].split(' ')[0], long[1].split(' ')[1] + (long[2] ? ', ' + long[2] : ''))
 				+ (dayItems.length || dayBills.length ? '<div class="dwdc-daylist">' + dayItems.map(function (x) {
-					return '<button type="button" class="dwdc-dayi ' + (x.gevent ? 'ev' : 'td') + (x.done ? ' done' : '') + '" data-ptask="' + x.id + '"><span class="tm">' + esc(x.time || (x.gevent ? 'All day' : 'To-do')) + '</span><span class="tx"><b>' + esc(ptx(x.text)) + '</b>' + (x.note ? '<small>' + esc(x.note) + '</small>' : '') + '</span>' + ic('right', 14) + '</button>';
+					return '<button type="button" class="dwdc-dayi ' + (x.gevent ? 'ev' : 'td') + (isFlight(x.text) ? ' flight' : '') + (x.done ? ' done' : '') + '" data-ptask="' + x.id + '"><span class="tm">' + esc(x.time || (x.gevent ? 'All day' : 'To-do')) + '</span><span class="tx"><b>' + esc(ptx(x.text)) + '</b>' + (x.note ? '<small>' + esc(x.note) + '</small>' : '') + '</span>' + ic('right', 14) + '</button>';
 				}).join('') + dayBills.map(function (b) {
 					return '<a class="dwdc-dayi bill" href="#personal/bills" data-close-modal><span class="tm">Bill</span><span class="tx"><b>' + esc(b.name) + ' · ' + money(b.amount) + '</b><small>' + (b.autopay ? 'Autopay' : 'Pay manually') + '</small></span>' + ic('right', 14) + '</a>';
 				}).join('') + '</div>' : emptyRow('Nothing on this day yet.'))
