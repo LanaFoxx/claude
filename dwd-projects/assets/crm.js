@@ -1254,6 +1254,7 @@
 		var billed = S.contacts.reduce(function (s, c) { return s + lifetime(c); }, 0);
 		var lastPay = S.contacts.filter(function (c) { return c.last_pay; }).sort(function (a, b) { return a.last_pay.date < b.last_pay.date ? 1 : -1; })[0];
 		var seg = function (n, cls) { return n ? '<i class="' + cls + '" style="flex:' + n + '"></i>' : ''; };
+		var adsRow = '';
 		var c1 = (function () {
 			var A = S.ads || {}, G = A.google, K = A.connects || {}, LD = A.leads || {};
 			var ago = function (at) { var m = Math.round((Date.now() - new Date(String(at).replace(' ', 'T')).getTime()) / 60000); return m < 90 ? Math.max(1, m) + ' min ago' : m < 2880 ? Math.round(m / 60) + ' h ago' : Math.round(m / 1440) + ' days ago'; };
@@ -1262,6 +1263,7 @@
 				: '<div class="dwdc-adg off"><span class="dwdc-lbl">Google Ads</span><p>Not connected yet. One copy-and-paste in Google Ads and your spend, clicks and conversions show up here.</p><button type="button" class="dwdc-btn sm" data-adsconnect>Connect Google Ads</button></div>';
 			var kpart = '<button type="button" class="dwdc-mnow dwdc-adk" data-connmodal><span class="dwdc-lbl">Connects · this week</span><strong>' + money(K.week || 0) + '</strong><small>' + money(K.month || 0) + ' this month · ' + money(K.lastmonth || 0) + ' last month</small></button>';
 			var total = (G ? G.month.cost : 0) + (K.month || 0);
+			adsRow = '<div class="dwdc-mjobs dwdc-madsrow">' + gpart + kpart + '</div>';
 			return card('cd-clients cd-ads', chead('bolt', 'Advertising', ''),
 				'<div class="dwdc-mtop">' + gpart + kpart + '</div>'
 				+ (K.last ? '<p class="dwdc-adnote">Connects from your Upwork file, last purchase ' + fmt(K.last) + (G ? ' · Google Ads updated ' + ago(G.at) : '') + '</p>' : ''),
@@ -1289,7 +1291,7 @@
 				var wbox = function (label, a, b) { var l = winsIn(dIso(a), dIso(b)); return '<button type="button" class="dwdc-mjob" data-wins="' + dIso(a) + '|' + dIso(b) + '|' + label + '"><span class="dwdc-lbl">' + label + '</span><strong>' + l.length + '<i> job' + (l.length === 1 ? '' : 's') + '</i></strong><small>' + shortD(dIso(a)) + '–' + shortD(dIso(b)) + (winVal(l) ? ' · ' + money(winVal(l)) : '') + '</small></button>'; };
 				return '<div class="dwdc-mtop"><button type="button" class="dwdc-mopen" data-owed><span class="dwdc-lbl">Owed to you</span><strong>' + money(owed(owing)) + '</strong><small>' + (pendDeposit(owing) ? money(pendDeposit(owing)) + ' pending deposit · ' : '') + owing.length + ' project' + (owing.length === 1 ? '' : 's') + ' · see list →</small></button>'
 					+ '<button type="button" class="dwdc-mnow" data-month="' + ym + '"><span class="dwdc-lbl">Made in ' + MNf[mi] + '</span><strong>' + money(cur) + '</strong><small>' + MNf[prevD.getMonth()] + ': ' + money(prev) + ' · see payments →</small></button>' + '</div>'
-					+ '<div class="dwdc-mjobs">' + wbox('Jobs this week', ws, we) + wbox('Jobs last week', ls, le) + '</div>';
+					+ '<div class="dwdc-mjobs">' + wbox('Jobs this week', ws, we) + wbox('Jobs last week', ls, le) + '</div>' + adsRow;
 			})(),
 			'<footer>' + frow('Hosting Revenue', money(annual) + ' / yr', 'hosting') + '<a class="dwdc-frow" href="#money"><span>All-time income</span><b>' + money(allIncome()) + '</b>' + ic('right', 12) + '</a></footer>');
 		var tv = active.reduce(function (s, c) { return s + num(c.price); }, 0);
@@ -1314,7 +1316,7 @@
 					+ '<span class="v"><b>' + (num(c.price) ? money(c.price) : '—') + '</b><small class="' + (due ? 'deep' : '') + '">' + (c.followup ? (due ? 'Follow up ' + (c.followup < DWDC.today ? fmt(c.followup) : 'today') : 'Follow up ' + fmt(c.followup)) : 'No follow-up') + '</small></span></a>';
 			}).join('') + '</div>' : emptyRow('No open leads.'),
 			lds.length ? '<footer class="dwdc-totals one"><div><small>Estimated value</small><strong class="deep">' + money(lds.reduce(function (a, c) { return a + num(c.price); }, 0)) + '</strong></div></footer>' : '');
-		return meetBar() + reviewBar() + '<div class="dwdc-row3">' + c2 + c3 + c1 + '</div><div class="dwdc-row2c">' + lb + card('cd-plain cd-trends', '<header class="dwdc-dhead"><h2>Patterns &amp; Trends</h2><button class="dwdc-askbtn light" data-askai>' + ic('bolt', 14) + 'Ask AI</button><a href="#money">Money Stats ' + ic('right', 14) + '</a></header>', trendsBox()) + tl + '</div>';
+		return meetBar() + reviewBar() + '<div class="dwdc-row3">' + c2 + lb + c3 + '</div><div class="dwdc-row2c">' + card('cd-plain cd-trends', '<header class="dwdc-dhead"><h2>Patterns &amp; Trends</h2><button class="dwdc-askbtn light" data-askai>' + ic('bolt', 14) + 'Ask AI</button><a href="#money">Money Stats ' + ic('right', 14) + '</a></header>', trendsBox()) + tl + '</div>';
 	}
 
 	/* ---------- All Clients ---------- */
