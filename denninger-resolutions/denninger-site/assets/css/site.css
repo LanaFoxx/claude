@@ -121,3 +121,8 @@ body.dr-menu-open{overflow:hidden}
 .drh4:hover{border-color:#6F8A7A !important}
 .drf1:focus-visible,.drf1:focus{outline:2px solid #24394A !important}
 .drf2:focus-visible,.drf2:focus{outline:2px solid #24394A !important;outline-offset:2px !important}
+
+/* Global scale: the design reads small at desktop widths, so scale every element proportionally. */
+.dr-site .dr-header,.dr-site #dr-main,.dr-site .dr-footer,.dr-site .dr-bottombar,.dr-site .dr-menu{zoom:1.06}
+@media (min-width:1280px){.dr-site .dr-header,.dr-site #dr-main,.dr-site .dr-footer{zoom:1.15}}
+@media (min-width:1700px){.dr-site .dr-header,.dr-site #dr-main,.dr-site .dr-footer{zoom:1.25}}
