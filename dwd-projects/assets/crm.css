@@ -2289,3 +2289,47 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 .dwdc .dwdc-tgrp.open .dwdc-tgrp-h { background: #F6F9FC; }
 .dwdc .dwdc-tgrp-b { background: #FBFCFE; }
 .dwdc .dwdc-tgrp-b .dwdc-todo { padding-left: 60px; }
+/* ===== Money Stats: snapshot first, less scrolling ===== */
+.dwdc .dwdc-snaps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin: 0 0 18px; }
+.dwdc .dwdc-snap { display: flex; flex-direction: column; gap: 3px; padding: 16px 18px; background: #fff; border: 1px solid #cfd8e3; border-left-width: 4px; border-radius: 12px; cursor: pointer; transition: box-shadow .15s ease; min-width: 0; }
+.dwdc .dwdc-snap:hover { box-shadow: 0 8px 20px -14px rgba(11,32,61,.5); }
+.dwdc .dwdc-snap small { font: 600 12.5px Poppins, sans-serif; color: #4a5a73; }
+.dwdc .dwdc-snap strong { font: 700 28px/1.1 Poppins, sans-serif; color: #0f2447; letter-spacing: -.01em; }
+.dwdc .dwdc-snap span { font-size: 12.5px; color: #4a5a73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dwdc .dwdc-snap.owe { border-left-color: #e8661f; } .dwdc .dwdc-snap.owe strong { color: #e8661f; }
+.dwdc .dwdc-snap.made { border-left-color: #137333; } .dwdc .dwdc-snap.made strong { color: #137333; }
+.dwdc .dwdc-snap.jobs { border-left-color: #1a73e8; }
+.dwdc .dwdc-snap.conn { border-left-color: #8C9AAE; }
+.dwdc .dwdc-more { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; height: 40px; margin: 4px 0 6px; border: 1px solid #dfe5ee; border-radius: 10px; background: #f8fafc; color: #0f2447; font: 600 13px Poppins, sans-serif; cursor: pointer; }
+.dwdc .dwdc-more:hover { background: #eef3f9; }
+.dwdc .dwdc-ph-btn .sm { display: none; }
+@media (max-width: 1100px) { .dwdc .dwdc-snaps { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 768px) {
+  .dwdc .dwdc-snaps { gap: 10px; margin-bottom: 14px; }
+  .dwdc .dwdc-snap { padding: 12px 14px; }
+  .dwdc .dwdc-snap strong { font-size: 22px; }
+  .dwdc .dwdc-snap small, .dwdc .dwdc-snap span { font-size: 12px; }
+  /* toolbar: buttons on one row, search below */
+  .dwdc .dwdc-ph-tools { display: flex !important; flex-wrap: wrap !important; gap: 8px !important; }
+  .dwdc .dwdc-ph-tools > .dwdc-ph-search { order: 5; flex: 1 1 100% !important; height: 42px !important; }
+  .dwdc .dwdc-ph-tools > .dwdc-ph-sp { display: none !important; }
+  .dwdc .dwdc-ph-tools > .dwdc-ph-menu, .dwdc .dwdc-ph-tools > .dwdc-ph-btn { flex: 1 1 0 !important; width: auto !important; min-width: 0 !important; }
+  .dwdc .dwdc-ph-tools .dwdc-ph-btn { height: 42px !important; padding: 0 10px !important; font-size: 13.5px !important; gap: 6px !important; }
+  .dwdc .dwdc-ph-tools .dwdc-ph-menu > .dwdc-ph-btn { width: 100% !important; }
+  .dwdc .dwdc-ph-btn .lg { display: none; } .dwdc .dwdc-ph-btn .sm { display: inline; }
+  .dwdc .dwdc-wins .dwdc-kpis.k5 { grid-template-columns: 1fr 1fr !important; gap: 8px !important; margin: 10px 0 12px !important; }
+  .dwdc .dwdc-wins .dwdc-kpis.k5 .dwdc-kpi:first-child { grid-column: 1 / -1; }
+  .dwdc .dwdc-wins .dwdc-kpi { padding: 12px 14px !important; }
+  .dwdc .dwdc-wins .dwdc-kpi strong { font-size: 22px !important; }
+  .dwdc .dwdc-wins .dwdc-kpi small { font-size: 11px !important; }
+  .dwdc .dwdc-wins .dwdc-kpi span { font-size: 12px !important; }
+  .dwdc .dwdc-conn .dwdc-kpis.k3 { grid-template-columns: 1fr 1fr 1fr !important; gap: 8px !important; }
+  .dwdc .dwdc-conn .dwdc-kpis.k3 .dwdc-kpi span { display: none; }
+  .dwdc .dwdc-conn .dwdc-kpis.k3 .dwdc-kpi strong { font-size: 18px !important; }
+  .dwdc .dwdc-mkpis { grid-template-columns: 1fr 1fr 1fr !important; gap: 8px !important; }
+  .dwdc .dwdc-mkpis .dwdc-kpi { padding: 12px !important; }
+  .dwdc .dwdc-mkpis .dwdc-kpi strong { font-size: 17px !important; }
+  .dwdc .dwdc-mkpis .dwdc-kpi span { font-size: 11px !important; }
+}
+@media (max-width: 768px) { .dwdc .dwdc-ph-search kbd { display: none !important; } }
+@media (max-width: 768px) { .dwdc .dwdc-conn .dwdc-kpis.k3 { margin-bottom: 10px !important; } }

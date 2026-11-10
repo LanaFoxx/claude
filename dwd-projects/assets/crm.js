@@ -677,8 +677,8 @@
 			+ '<span class="dwdc-ph-sp"></span>'
 			+ (r.view === 'client' ? '' : '<div class="dwdc-ph-menu' + (menuOpen ? ' open' : '') + '"><button class="dwdc-ph-btn outline" type="button" data-newmenu aria-haspopup="menu" aria-expanded="' + menuOpen + '">' + plus + 'New' + '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>'
 			+ '<ul role="menu"><li><button role="menuitem" type="button" data-act="job">' + plus + 'Project</button></li><li><button role="menuitem" type="button" data-act="newclient">' + plus + 'Client</button></li><li><button role="menuitem" type="button" data-act="hosting">' + plus + 'Website Hosting</button></li></ul></div>'
-			+ (r.view === 'money' ? '<button class="dwdc-ph-btn coral" type="button" data-refresh' + (S.refreshRes && S.refreshRes.busy ? ' disabled' : '') + '>' + ic('refresh', 14) + (S.refreshRes && S.refreshRes.busy ? 'Updating…' : 'Update Finances') + '</button>' : '')
-			+ '<button class="dwdc-ph-btn primary" type="button" data-act="pay">' + ic('card', 14) + 'Log Payment</button>')
+			+ (r.view === 'money' ? '<button class="dwdc-ph-btn coral" type="button" data-refresh' + (S.refreshRes && S.refreshRes.busy ? ' disabled' : '') + '>' + ic('refresh', 14) + (S.refreshRes && S.refreshRes.busy ? 'Updating…' : '<span class="lg">Update Finances</span><span class="sm">Update</span>') + '</button>' : '')
+			+ '<button class="dwdc-ph-btn primary" type="button" data-act="pay">' + ic('card', 14) + '<span class="lg">Log Payment</span><span class="sm">Payment</span></button>')
 			+ '</div></header>');
 	}
 
@@ -917,11 +917,12 @@
 		for (var j = 0; j < 12; j++) { var q = mon(j), ml = winsIn(q.from, q.to); months.push({ from: q.from, to: q.to, n: ml.length, v: winVal(ml), label: q.label }); }
 		var avgW = weeks.slice(1).reduce(function (a, r) { return a + r.n; }, 0) / 11, avgM = months.slice(1).reduce(function (a, r) { return a + r.n; }, 0) / 11;
 		var head = '<div class="dwdc-whead"><span>Period</span><span></span><span>Jobs</span><span>Paid / price</span></div>';
-		return '<section class="dwdc-card pad dwdc-wins"><div class="dwdc-cardh"><h2>Jobs won</h2><small class="dwdc-wins-sub">When each job started: Upwork hire email, else the first payment (Upwork, Stripe, PayPal), else the onboarding form. Click any number to see the jobs.</small></div>'
+		return '<section class="dwdc-card pad dwdc-wins"><div class="dwdc-cardh"><h2>Jobs won</h2></div>'
 			+ '<div class="dwdc-kpis k5">' + tile('This week', w0, shortD(w0.from) + '–' + shortD(w0.to), 'coralfill') + tile('Last week', w1, shortD(w1.from) + '–' + shortD(w1.to)) + tile('Week before', w2, shortD(w2.from) + '–' + shortD(w2.to))
 			+ tile(MNf[mo] + ' so far', m0, 'Month to date', 'navy') + tile(m1.label, m1, 'Last month') + '</div>'
-			+ '<div class="dwdc-wgrid"><div><h3>By week <small>avg ' + avgW.toFixed(1) + ' a week</small></h3>' + head + rows(weeks) + '</div><div><h3>By month <small>avg ' + avgM.toFixed(1) + ' a month</small></h3>' + head + rows(months) + '</div></div>'
-			+ (S.wins && S.wins.undated ? '<p class="dwdc-wins-foot">' + S.wins.undated + ' older project' + (S.wins.undated === 1 ? '' : 's') + ' have no payment, hire email or onboarding date, so they aren’t counted.</p>' : '')
+			+ '<button type="button" class="dwdc-more" data-winsmore>' + (S.winsMore ? 'Hide' : 'Show') + ' by week &amp; month ' + ic('down', 15) + '</button>'
+			+ (S.winsMore ? '<div class="dwdc-wgrid"><div><h3>By week <small>avg ' + avgW.toFixed(1) + ' a week</small></h3>' + head + rows(weeks) + '</div><div><h3>By month <small>avg ' + avgM.toFixed(1) + ' a month</small></h3>' + head + rows(months) + '</div></div>' : '')
+			+ (S.winsMore && S.wins && S.wins.undated ? '<p class="dwdc-wins-foot">' + S.wins.undated + ' older project' + (S.wins.undated === 1 ? '' : 's') + ' have no payment, hire email or onboarding date, so they aren’t counted.</p>' : '')
 			+ '</section>';
 	}
 	/* ---------- Connects spending: this month, last month, the month before, the last 12 months and every year ---------- */
@@ -949,9 +950,27 @@
 		var head = function (a) { return '<div class="dwdc-crow head"><span>' + a + '</span><span></span><span>Spent</span><span>Connects</span><span>Upwork jobs</span><span>' + (a === 'Year' ? 'Average' : 'Per job') + '</span></div>'; };
 		if (!years.length) { return emptyRow('No Connects spending imported yet. Upload your Upwork transactions file in Connections.'); }
 		return '<div class="dwdc-kpis k3">' + tile('This month', mons[0], 'coralfill') + tile('Last month', mons[1]) + tile('Month before', mons[2]) + '</div>'
-			+ '<h3 class="dwdc-ch3">Last 12 months <small>' + money(tot12) + ' spent' + (jobs12 ? ' · ' + jobs12 + ' Upwork jobs · ' + money(tot12 / jobs12) + ' per job' : '') + '</small></h3>' + head('Month') + rows
+			+ '<button type="button" class="dwdc-more" data-connmore>' + (S.connMore ? 'Hide' : 'Show') + ' month &amp; year history ' + ic('down', 15) + '</button>'
+			+ (!S.connMore ? '' : '<h3 class="dwdc-ch3">Last 12 months <small>' + money(tot12) + ' spent' + (jobs12 ? ' · ' + jobs12 + ' Upwork jobs · ' + money(tot12 / jobs12) + ' per job' : '') + '</small></h3>' + head('Month') + rows
 			+ '<h3 class="dwdc-ch3">Every year</h3>' + head('Year') + yrows
-			+ '<p class="dwdc-wins-foot">From your Upwork transactions file' + (DWDC.upLast ? ', last uploaded ' + fmt(DWDC.upLast.slice(0, 10)) : '') + '. Upwork jobs are the jobs won that month that came through Upwork. Membership fees aren’t included.</p>';
+			+ '<p class="dwdc-wins-foot">From your Upwork transactions file' + (DWDC.upLast ? ', last uploaded ' + fmt(DWDC.upLast.slice(0, 10)) : '') + '. Upwork jobs are the jobs won that month that came through Upwork. Membership fees aren’t included.</p>');
+	}
+	// The four numbers that matter most right now, at the top of Money Stats.
+	function moneySnap(MY) {
+		var MNf = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+		var t = DWDC.today, y = +t.slice(0, 4), mo = +t.slice(5, 7) - 1, lm = new Date(y, mo - 1, 1);
+		var mv = function (yy, m) { var o = MY[String(yy)]; return o && o.m ? Math.max(0, +o.m[m] || 0) : 0; };
+		var cur = mv(y, mo), prev = mv(lm.getFullYear(), lm.getMonth());
+		var ol = owingList(), owe = owed(ol), pend = pendDeposit(ol);
+		var ws = weekStart(t), we = new Date(ws); we.setDate(we.getDate() + 6);
+		var wl = winsIn(dIso(ws), dIso(we)), cm = connMonth(y, mo);
+		var tile = function (attr, cls, label, val, sub) { return '<div class="dwdc-snap ' + cls + '" role="button" tabindex="0" ' + attr + '><small>' + label + '</small><strong>' + val + '</strong><span>' + sub + '</span></div>'; };
+		return '<div class="dwdc-snaps">'
+			+ tile('data-owed', 'owe', 'Owed to you', money(owe), pend ? money(pend) + ' pending deposit' : ol.length + ' project' + (ol.length === 1 ? '' : 's'))
+			+ tile('data-month="' + t.slice(0, 7) + '"', 'made', 'Made in ' + MNf[mo].slice(0, 3), money(cur), MNf[lm.getMonth()].slice(0, 3) + ': ' + money(prev))
+			+ tile('data-wins="' + dIso(ws) + '|' + dIso(we) + '|This week"', 'jobs', 'Jobs this week', wl.length + '', winVal(wl) ? money(winVal(wl)) : 'None yet')
+			+ tile('data-connmore', 'conn', 'Connects in ' + MNf[mo].slice(0, 3), money(cm.v), cm.q ? cm.q.toLocaleString() + ' Connects' : 'Upwork spend')
+			+ '</div>';
 	}
 	function moneyView() {
 		var projs = S.contacts.filter(function (c) { return ['active', 'hold', 'limbo', 'complete'].indexOf(c.list) > -1; });
@@ -986,16 +1005,7 @@
 		var rowsC = topClients.map(function (x, i) { return '<a class="dwdc-mrow" href="' + (x.id ? '#cl/' + x.id : '#client/' + x.list[0].id) + '"><em>' + (i + 1) + '</em><span><b>' + esc(cname(x)) + '</b><small>' + x.list.length + ' project' + (x.list.length === 1 ? '' : 's') + '</small></span><strong>' + money(x.total) + '</strong></a>'; }).join('');
 		var rowsR = repeat.slice(0, 12).map(function (x) { return '<a class="dwdc-mrow" href="' + (x.id ? '#cl/' + x.id : '#client/' + x.list[0].id) + '"><span><b>' + esc(cname(x)) + '</b><small>' + x.list.map(function (c) { return esc(c.name); }).join(' · ') + '</small></span><strong>' + money(x.total) + '</strong></a>'; }).join('');
 		var mcard = function (title, inner, extra) { return '<section class="dwdc-card pad dwdc-mcard' + (extra ? ' ' + extra : '') + '"><div class="dwdc-cardh"><h2>' + title + '</h2></div>' + inner + '</section>'; };
-		return winsCard() + '<section class="dwdc-card pad dwdc-wins dwdc-conn"><div class="dwdc-cardh"><h2>Connects spending</h2><small class="dwdc-wins-sub">What you spend on Upwork Connects, month by month, and what it costs per Upwork job won.</small></div>' + connSpend() + '</section>' + '<div class="dwdc-kpis k4">'
-			+ (function () {
-				// Monthly income: average of the last 12 full months, plus last month's total.
-				var t = DWDC.today, y = +t.slice(0, 4), mo = +t.slice(5, 7), vals = [], MNf = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-				for (var i = 1; i <= 12; i++) { var d = new Date(y, mo - 1 - i, 1), yy = String(d.getFullYear()); vals.push(MY[yy] && MY[yy].m ? Math.max(0, +MY[yy].m[d.getMonth()] || 0) : 0); }
-				var lm = new Date(y, mo - 2, 1), avg12 = vals.reduce(function (a, v) { return a + v; }, 0) / 12;
-				var cur = MY[String(y)] && MY[String(y)].m ? Math.max(0, +MY[String(y)].m[mo - 1] || 0) : 0;
-				return kpi(MNf[mo - 1] + ' income', money(cur), MNf[lm.getMonth()] + ': ' + money(vals[0]) + ' · 12-month average ' + money(avg12) + '<em class="dwdc-kpi-go">See every payment →</em>', 'coralfill')
-					.replace('<div class="dwdc-kpi', '<div role="button" tabindex="0" title="See every payment this month" data-month="' + t.slice(0, 7) + '" class="dwdc-kpi click');
-			})()
+		return moneySnap(MY) + winsCard() + '<section class="dwdc-card pad dwdc-wins dwdc-conn"><div class="dwdc-cardh"><h2>Connects spending</h2></div>' + connSpend() + '</section>' + '<div class="dwdc-kpis k3 dwdc-mkpis">'
 			+ kpi('All-time income', money(total), 'Every payment since you started · ' + paid.length + ' projects', 'navy')
 			+ kpi('Average project', money(avg), 'Middle project ' + money(mid))
 			+ kpi('Top project', top ? money(lifetime(top)) : '—', top ? esc(top.name) : '')
@@ -2596,6 +2606,8 @@
 			}).then(render).catch(fail);
 			return;
 		}
+		if (t.closest('[data-winsmore]')) { S.winsMore = !S.winsMore; render(); return; }
+		if (t.closest('[data-connmore]')) { S.connMore = !S.connMore; render(); if (S.connMore) { setTimeout(function () { var c = document.querySelector('.dwdc-conn'); if (c) { c.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }, 50); } return; }
 		if ((el = t.closest('[data-tgrp]'))) { var gid = +el.getAttribute('data-tgrp'); S.tgOpen = S.tgOpen || {}; S.tgOpen[gid] = !S.tgOpen[gid]; render(); return; }
 		if ((el = t.closest('[data-showdone]'))) { S.showDone = !S.showDone; render(); return; }
 		if ((el = t.closest('[data-review]'))) { S.modal = { type: 'review', vals: {}, off: {} }; render(); return; }
