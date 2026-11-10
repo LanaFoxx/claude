@@ -1087,6 +1087,33 @@ add_action( 'rest_api_init', function () {
 		return dwdc_contact( $id, true );
 	} ) );
 
+	// Remove one logged payment (by its position in the list): it comes off the paid totals and goes back into what's owed.
+	register_rest_route( $ns, '/crm/contact/(?P<id>\d+)/payment/(?P<i>\d+)', array( 'methods' => 'DELETE', 'permission_callback' => $can, 'callback' => function ( $r ) {
+		$id   = (int) $r['id'];
+		$i    = (int) $r['i'];
+		$pays = get_post_meta( $id, '_dwdc_payments', true );
+		if ( DWDC_CONTACT !== get_post_type( $id ) || ! is_array( $pays ) || ! isset( $pays[ $i ] ) ) {
+			return new WP_Error( 'dwdc_nf', 'Payment not found.', array( 'status' => 404 ) );
+		}
+		$p   = $pays[ $i ];
+		$amt = (float) preg_replace( '/[^\d.]/', '', (string) ( $p['amount'] ?? 0 ) );
+		array_splice( $pays, $i, 1 );
+		update_post_meta( $id, '_dwdc_payments', $pays );
+		$field = array( 'Stripe' => 'stripe', 'PayPal' => 'paypal', 'Upwork' => 'billed' )[ (string) ( $p['source'] ?? '' ) ] ?? 'manual';
+		$cur   = (float) get_post_meta( $id, '_dwdc_' . $field, true );
+		update_post_meta( $id, '_dwdc_' . $field, $cur - $amt > 0 ? (string) round( $cur - $amt, 2 ) : '' );
+		$price = (float) preg_replace( '/[^\d.]/', '', (string) get_post_meta( $id, '_dwdc_price', true ) );
+		$bal   = (float) preg_replace( '/[^\d.]/', '', (string) get_post_meta( $id, '_dwdc_balance', true ) );
+		if ( $price > 0 && ( $p['status'] ?? 'paid' ) === 'paid' ) {
+			update_post_meta( $id, '_dwdc_balance', (string) min( $price, round( $bal + $amt, 2 ) ) );
+		}
+		$notes   = (array) get_post_meta( $id, '_dwdc_notes', true );
+		$notes[] = array( 'date' => current_time( 'mysql', true ), 'text' => 'Payment of $' . number_format( $amt, $amt == (int) $amt ? 0 : 2 ) . ' (' . ( $p['source'] ?? '' ) . ', ' . ( $p['date'] ?? '' ) . ') removed.' );
+		update_post_meta( $id, '_dwdc_notes', array_values( array_filter( $notes ) ) );
+		wp_update_post( array( 'ID' => $id ) );
+		return dwdc_contact( $id, true );
+	} ) );
+
 	// Email the client their Markup review link, in the site's branded email.
 	register_rest_route( $ns, '/crm/contact/(?P<id>\d+)/markup-email', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
 		$id   = (int) $r['id'];

@@ -82,12 +82,12 @@ add_filter( 'menu_order', function ( $order ) {
 	// Dream Desk pages as their own sections (they open the Dream Desk app at that page).
 	$dd = array(
 		'projects' => array( array( 'projects/active', 'Active', 'dashicons-controls-play' ), array( 'projects/hold', 'On Hold', 'dashicons-controls-pause' ), array( 'projects/limbo', 'Limbo', 'dashicons-clock' ), array( 'projects/complete', 'Completed', 'dashicons-yes-alt' ) ),
-		'clients'  => array( array( 'onboarding', 'Onboarding', 'dashicons-feedback' ), array( 'hosting', 'Hosting', 'dashicons-cloud' ), array( 'clients', 'All Clients', 'dashicons-groups' ), array( 'leads', 'Leads', 'dashicons-id' ), array( 'reviews', 'Get Reviews', 'dashicons-star-filled' ) ),
+		'clients'  => array( array( 'clients/active', 'Active', 'dashicons-controls-play' ), array( 'leads', 'Leads', 'dashicons-id' ), array( 'onboarding', 'Onboarding', 'dashicons-feedback' ), array( 'hosting', 'Hosting', 'dashicons-cloud' ), array( 'reviews', 'Get Reviews', 'dashicons-star-filled' ), array( 'clients', 'All Clients', 'dashicons-groups' ) ),
 		'finances' => array( array( 'money', 'Money Stats', 'dashicons-chart-bar' ) ),
 	);
 	foreach ( $dd as $g => $list ) {
 		foreach ( $list as $i => $x ) {
-			$groups[ $g ][] = array( $i, array( $x[1], 'manage_options', 'admin.php?page=client-desk#' . $x[0], '', 'menu-top dwd-dd', 'dwd-dd-' . str_replace( '/', '-', $x[0] ), $x[2] ) );
+			$groups[ $g ][] = array( $i, array( $x[1], 'manage_options', 'admin.php?page=client-desk#' . $x[0], '', 'menu-top dwd-dd', 'dwd-dd-' . ( $x[3] ?? str_replace( '/', '-', $x[0] ) ), $x[2] ) );
 		}
 	}
 	// Personal: a switch under Dream Desk, and its own pages (shown only in Personal mode).
