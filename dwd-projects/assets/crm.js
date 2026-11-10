@@ -667,10 +667,10 @@
 			+ (r.view === 'personal' ? '</header>' : '<div class="dwdc-ph-tools">'
 			+ '<label class="dwdc-ssearch dwdc-ph-search">' + ic('search', 16) + '<input type="search" name="dwdc-find" placeholder="Search clients…" aria-label="Search clients" value="" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" readonly data-lpignore="true" data-1p-ignore data-form-type="other"><kbd>Ctrl K</kbd></label>'
 			+ '<span class="dwdc-ph-sp"></span>'
-			+ '<div class="dwdc-ph-menu' + (menuOpen ? ' open' : '') + '"><button class="dwdc-ph-btn outline" type="button" data-newmenu aria-haspopup="menu" aria-expanded="' + menuOpen + '">' + plus + 'New' + '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>'
+			+ (r.view === 'client' ? obTools(r.id) : '<div class="dwdc-ph-menu' + (menuOpen ? ' open' : '') + '"><button class="dwdc-ph-btn outline" type="button" data-newmenu aria-haspopup="menu" aria-expanded="' + menuOpen + '">' + plus + 'New' + '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>'
 			+ '<ul role="menu"><li><button role="menuitem" type="button" data-act="job">' + plus + 'Project</button></li><li><button role="menuitem" type="button" data-act="newclient">' + plus + 'Client</button></li><li><button role="menuitem" type="button" data-act="hosting">' + plus + 'Website Hosting</button></li></ul></div>'
 			+ (r.view === 'money' ? '<button class="dwdc-ph-btn coral" type="button" data-refresh' + (S.refreshRes && S.refreshRes.busy ? ' disabled' : '') + '>' + ic('refresh', 14) + (S.refreshRes && S.refreshRes.busy ? 'Updating…' : 'Update Finances') + '</button>' : '')
-			+ '<button class="dwdc-ph-btn primary" type="button" data-act="pay">' + ic('card', 14) + 'Log Payment</button>'
+			+ '<button class="dwdc-ph-btn primary" type="button" data-act="pay">' + ic('card', 14) + 'Log Payment</button>')
 			+ '</div></header>');
 	}
 
@@ -1734,30 +1734,53 @@
 		var kc = clientOf(c);
 		var line = [(kc ? 'Client: <a href="#cl/' + kc.id + '"><b>' + esc(kc.name) + '</b></a>' : esc(c.person || 'No client linked')) + ' <button class="dwdc-lnk sm2" data-moveclient="' + c.id + '">Change</button>', mail, c.phone ? '<a href="tel:' + esc(c.phone.replace(/[^\d+]/g, '')) + '">' + esc(c.phone) + '</a>' : '', site(c) ? '<a href="https://' + esc(site(c)) + '" target="_blank" rel="noopener">' + esc(site(c)) + '</a>' : ''].filter(Boolean).join('<i>·</i>');
 		var tone = st === 'leads' ? 'orange' : TONE[st];
-		return '<a class="dwdc-back" href="#' + S.back + '">' + ic('left', 14) + 'Back to ' + backName + '</a>'
-			+ '<div class="dwdc-card dwdc-chead">' + avatar(c, 64, tone) + '<div class="dwdc-chead-t"><h2>' + esc(c.name) + ' ' + pill(st === 'leads' ? (STAGES.filter(function (s) { return s[0] === stageOf(c); })[0] || ['', 'Lead'])[1] : LABEL[st], st === 'leads' ? STAGE_TONE[stageOf(c)] : tone) + (num(c.hosting) ? ' ' + pill('Hosting', 'teal') : '') + '</h2><p>' + line + '</p></div>'
-			+ '<div class="dwdc-chead-a">' + btn('', 'data-edit', S.edit ? 'Close edit' : 'Edit') + reviewBtn(c.client) + acts + '</div></div>'
-			+ (st === 'leads'
-				? '<div class="dwdc-minis">' + mini('navy', 'Estimated value', price ? money(price) : '—') + mini('', 'Follow up', c.followup ? fmt(c.followup) : '—') + mini('', 'Source', esc(String(c.source || '—').replace(/^Website form: /, ''))) + mini('', 'Stage', esc((STAGES.filter(function (x) { return x[0] === stageOf(c); })[0] || ['', 'New'])[1])) + '</div>'
-				: '<div class="dwdc-minis">' + mini('navy', 'Price', price ? money(price) : '—') + mini('green', 'Paid', price ? money(Math.max(0, price - ow)) : '—')
-			+ '<div class="dwdc-mini"><small>Owed</small><strong class="' + (ow ? 'orange' : 'green') + '">' + (ow ? money(ow) : 'Paid') + '</strong></div>'
-			+ (st === 'complete' ? mini('navy', 'Total spent', money(lifetime(c))) : '<div class="dwdc-mini"><small>Due</small><strong class="' + (late ? 'red' : '') + '">' + (c.deadline ? fmt(c.deadline) : '—') + '</strong></div>') + '</div>')
-			+ '<div class="dwdc-two">'
+		// Project page (v2 design): header card, money strip, details + money on the left, to-dos + notes on the right.
+		var nm = String(c.name || ''), sp = nm.lastIndexOf(' ');
+		var title = sp > 0 ? esc(nm.slice(0, sp)) + ' <strong>' + esc(nm.slice(sp + 1)) + '</strong>' : '<strong>' + esc(nm) + '</strong>';
+		var stLabel = st === 'leads' ? (STAGES.filter(function (x) { return x[0] === stageOf(c); })[0] || ['', 'Lead'])[1] : LABEL[st];
+		var crumb = { home: 'Home', leads: 'Leads', forms: 'Form entries', todos: 'To-dos', hosting: 'Hosting', projects: 'Projects', clients: 'Clients', archive: 'Archive', search: 'Search', onboarding: 'Onboarding' }[(S.back || 'home').split('/')[0]] || 'Home';
+		var daysTo = function (iso) { return Math.round((new Date(iso + 'T00:00:00') - new Date(DWDC.today + 'T00:00:00')) / 864e5); };
+		var rel = function (n) { return n > 0 ? 'in ' + n + ' day' + (n === 1 ? '' : 's') : n === 0 ? 'today' : -n + ' day' + (n === -1 ? '' : 's') + ' ago'; };
+		var cell = function (label, val, sub, cls, vcls) { return '<div class="pv2-cell' + (cls ? ' ' + cls : '') + '"><span class="l">' + label + '</span><span class="v' + (vcls ? ' ' + vcls : '') + '">' + val + '</span>' + (sub ? '<span class="s">' + sub + '</span>' : '') + '</div>'; };
+		var strip;
+		if (st === 'leads') {
+			strip = '<div class="pv2-strip"><div class="pv2-cells">' + cell('Estimated value', price ? money(price) : '—', 'If they sign') + cell('Follow up', c.followup ? fmt(c.followup) : '—', c.followup ? rel(daysTo(c.followup)) : 'No date set', c.followup && c.followup <= DWDC.today ? 'warn' : '')
+				+ cell('Source', esc(String(c.source || '—').replace(/^Website form: /, '')), '') + cell('Stage', esc(stLabel), '') + '</div></div>';
+		} else {
+			var paid = price ? Math.max(0, price - ow) : 0, pct = price ? Math.max(0, Math.min(100, Math.round(paid / price * 100))) : (ow ? 0 : 100);
+			var dueCell = st === 'complete'
+				? cell('Completed', doneDate(c) ? fmt(doneDate(c), true) : '—', 'Total spent ' + money(lifetime(c)))
+				: cell('Due', c.deadline ? fmt(c.deadline) : '—', (c.deadline ? 'Due ' + rel(daysTo(c.deadline)) : 'No due date') + (c.created ? ' · started ' + fmt(String(c.created).slice(0, 10)) : ''), late ? 'warn' : '', late ? 'red' : '');
+			strip = '<div class="pv2-strip"><div class="pv2-cells">'
+				+ cell('Price', price ? money(price) : '—', c.pay_method ? 'Paid via ' + esc(c.pay_method) : 'Fixed price')
+				+ cell('Paid', price ? money(paid) : '—', price ? pct + '% of price' : '', '', 'green')
+				+ cell('Owed', ow ? money(ow) : 'Paid', ow ? (c.paymark === 'pending' ? 'Paid · pending deposit' : 'Unpaid') : 'Paid in full', ow ? 'owe' : '', ow ? 'orange' : 'green')
+				+ dueCell
+				+ '<div class="pv2-cell pv2-acts">' + (ow ? btn('', 'data-paid', 'Mark paid') : '') + '<button class="dwdc-btn" data-act="pay" data-project="' + c.id + '">' + ic('dollar', 15) + 'Log payment</button></div>'
+				+ '</div><div class="pv2-bar"><i style="width:' + pct + '%"></i></div></div>';
+		}
+		var hacts = acts.replace(/<button class="dwdc-btn2 " data-paid>Mark paid<\/button>/, '');
+		var todos = '<section class="dwdc-card pad pw-todos"><div class="dwdc-cardh"><h2>To-dos <span class="dwdc-cnt">' + openN + '</span></h2>' + (tasks.filter(function (t) { return !t.done && t.due && t.due < DWDC.today; }).length ? '<span class="pv2-late">' + tasks.filter(function (t) { return !t.done && t.due && t.due < DWDC.today; }).length + ' overdue</span>' : '') + '</div>'
+			+ (tasks.length ? '<div class="dwdc-todos">' + tasks.map(function (t) { return todoRow(t, true); }).join('') + '</div>' : '')
+			+ '<form class="dwdc-inlineadd" data-contact="' + c.id + '">' + ic('plus', 16) + '<input name="text" placeholder="Add a to-do for ' + esc(c.name) + '…" autocomplete="off"><input type="date" name="due" title="Due date"><button class="dwdc-btn sm">Add</button></form></section>';
+		return '<div class="pv2">'
+			+ '<div class="dwdc-card pv2-head"><div class="pv2-title"><div class="pv2-h1row"><h1>' + title + '</h1><span class="pv2-status s-' + st + '">' + esc(stLabel) + '</span>' + (num(c.hosting) ? '<span class="pv2-status s-host">Hosting</span>' : '') + '</div>'
+			+ '<div class="pv2-meta">' + line + '</div></div>'
+			+ '<div class="pv2-hacts">' + newMenu() + btn('', 'data-edit', S.edit ? 'Close edit' : 'Edit') + reviewBtn(c.client) + hacts + '</div></div>'
+			+ strip
+			+ '<div class="dwdc-two pv2-cols">'
 			+ '<div class="dwdc-col">'
+			+ todos
+			+ pw('notes', notesCard(c, full))
+			+ pw('activity', activityCard(c, full))
+			+ '</div><div class="dwdc-col">'
 			+ pw('details', S.edit ? editCard(c) : detailsCard(c, peopleCard(c, true)))
 			+ (S.edit ? pw('people', peopleCard(c)) : '')
+			+ pw('markup', markupCard(c))
 			+ pw('source', sourceCard(c))
 			+ (num(c.hosting) ? pw('host', hostCard(c)) : '')
 			+ pw('jobs', jobsCard(c))
-			+ '</div><div class="dwdc-col">'
-			+ pw('notes', notesCard(c, full))
-			+ '<section class="dwdc-card pad pw-todos"><div class="dwdc-cardh"><h2>To-dos</h2><span class="dwdc-cnt">' + openN + '</span></div>'
-			+ (tasks.length ? '<div class="dwdc-todos">' + tasks.map(function (t) { return todoRow(t, true); }).join('') + '</div>' : '')
-			+ '<form class="dwdc-inlineadd" data-contact="' + c.id + '">' + ic('plus', 16) + '<input name="text" placeholder="Add a to-do for ' + esc(c.name) + '…" autocomplete="off"><input type="date" name="due" title="Due date"></form></section>'
-			+ pw('onboard', onboardCard(c, full))
-			+ pw('markup', markupCard(c))
-			+ pw('activity', activityCard(c, full))
-			+ '</div></div>';
+			+ '</div></div></div>';
 	}
 	// Onboarding answers as plain text, ready to paste into Claude.
 	function onboardEntries(c) {
@@ -1799,6 +1822,19 @@
 			+ '<button type="button" class="dwdc-btn" data-mksend>' + ic('right', 14) + 'Email link to client</button></div>'
 			+ (c.markup_sent ? '<p class="dwdc-mksent">' + ic('check', 14) + 'Sent to ' + esc(em) + ' on ' + fmt(c.markup_sent, true) + '</p>' : '')
 			+ '</form></section>';
+	}
+	// "New" menu (Project / Client / Website Hosting): the toolbar's, also on the project page header.
+	function newMenu() {
+		var plus = ic('plus', 14), open = !!S.newOpen;
+		return '<div class="dwdc-ph-menu' + (open ? ' open' : '') + '"><button class="dwdc-ph-btn outline" type="button" data-newmenu aria-haspopup="menu" aria-expanded="' + open + '">' + plus + 'New<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>'
+			+ '<ul role="menu"><li><button role="menuitem" type="button" data-act="job">' + plus + 'Project</button></li><li><button role="menuitem" type="button" data-act="newclient">' + plus + 'Client</button></li><li><button role="menuitem" type="button" data-act="hosting">' + plus + 'Website Hosting</button></li></ul></div>';
+	}
+	// Project page toolbar: the onboarding answers buttons (in place of New / Log Payment).
+	function obTools(id) {
+		var c = S.full[id], list = c ? onboardEntries(c) : [];
+		if (!list.length) { return ''; }
+		var n = list.reduce(function (s, e) { return s + (e.fields || []).length; }, 0);
+		return '<span class="pv2-obn">' + esc(list[0].form || 'Onboarding') + ' · ' + n + ' answers</span><button class="dwdc-ph-btn outline" type="button" data-copyob>' + ic('todo', 14) + 'Copy answers</button><button class="dwdc-ph-btn coral" type="button" data-viewob>' + ic('list', 14) + 'View answers</button>';
 	}
 	function onboardCard(c, full) {
 		var list = full ? onboardEntries(c) : [], ob = list.some(function (e) { return /onboard/i.test(e.form || ''); });
