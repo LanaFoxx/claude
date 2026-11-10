@@ -1,0 +1,238 @@
+<section data-screen-label="Schedule intro" style="background:#F7F5F0">
+<div style="max-width:1200px;margin:0 auto;padding:clamp(40px,5vw,64px) clamp(20px,4vw,40px) 0;display:flex;flex-direction:column;gap:16px;max-width:1200px">
+<p style="margin:0;font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#3A6B8C">Schedule</p>
+<h1 style="margin:0;font-family:Literata,Georgia,serif;font-weight:600;font-size:clamp(34px,2.4vw + 22px,56px);line-height:1.12;letter-spacing:-.01em;color:#24394A">Schedule a mediation.</h1>
+<p style="margin:0;font-size:clamp(18px,.4vw + 16px,20px);line-height:1.55;max-width:680px;text-wrap:pretty">Choose a half-day or full-day block, in person or by Zoom. Everyone you list receives the confirmation and calendar invitation. No payment is required to book.</p>
+</div>
+</section>
+<section data-screen-label="Booking" style="background:#F7F5F0">
+<div style="max-width:1200px;margin:0 auto;padding:clamp(32px,4vw,48px) clamp(20px,4vw,40px) clamp(56px,8vw,112px);display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start">
+<div style="flex:1 1 440px;min-width:0;background:#fff;border:1px solid #ECEEEA;border-radius:10px;box-shadow:0 1px 2px rgba(36,57,74,.05),0 8px 24px rgba(36,57,74,.06);overflow:hidden">
+<div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding:20px clamp(16px,3vw,28px);border-bottom:1px solid #ECEEEA">
+<div style="display:flex;flex-direction:column;gap:2px">
+<span style="font-family:Literata,Georgia,serif;font-weight:600;font-size:22px;color:#24394A">Open dates · <span data-dr-month></span></span>
+<span style="font-size:13px;color:#5E6670">Choose a weekday to request a block. Dates shown up to 90 days out.</span>
+</div>
+<div style="display:flex;align-items:center;gap:14px;font-size:13px;color:#5E6670"><button type="button" data-dr-cal="prev" aria-label="Previous month" style="width:36px;height:36px;border:1px solid #ECEEEA;border-radius:8px;background:#fff;display:grid;place-items:center;cursor:pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#24394A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button><button type="button" data-dr-cal="next" aria-label="Next month" style="width:36px;height:36px;border:1px solid #ECEEEA;border-radius:8px;background:#fff;display:grid;place-items:center;cursor:pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#24394A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button><span style="display:inline-flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:3px;background:#fff;border:1px solid #6F8A7A"></span>Open</span><span style="display:inline-flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:3px;background:#24394A"></span>Selected</span></div>
+</div>
+<div style="padding:16px clamp(12px,3vw,28px) 24px;display:flex;flex-direction:column;gap:8px">
+<div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#5E6670;text-align:center"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
+<div role="grid" data-dr-grid aria-label="Available dates" style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px">
+
+</div>
+<p style="margin:8px 0 0;font-size:13px;color:#5E6670">AM blocks run 9:00 to 1:00, PM blocks 1:30 to 5:30, full days 9:00 to 5:00. I confirm each request after a conflicts check.</p>
+</div>
+<div data-dr-panel hidden>
+<div style="border-top:1px solid #ECEEEA;background:#F7F5F0;padding:24px clamp(16px,3vw,28px) 28px;display:flex;flex-direction:column;gap:22px">
+<div style="display:flex;flex-direction:column;gap:6px">
+<span style="font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#3A6B8C">Reserve</span>
+<span style="font-family:Literata,Georgia,serif;font-weight:600;font-size:22px;color:#24394A"><span data-dr-seldate></span></span>
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:24px 40px">
+<div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:14px;font-weight:500">Block</span><div style="display:flex;flex-wrap:wrap;gap:8px"><button type="button" data-dr-seg="block" data-value="AM" aria-pressed="false" style="min-height:44px;padding:0 16px;border:1px solid #24394A;border-radius:8px;background:#fff;color:#24394A;font:500 15px 'IBM Plex Sans',system-ui,sans-serif;cursor:pointer">AM</button><button type="button" data-dr-seg="block" data-value="PM" aria-pressed="false" style="min-height:44px;padding:0 16px;border:1px solid #24394A;border-radius:8px;background:#fff;color:#24394A;font:500 15px 'IBM Plex Sans',system-ui,sans-serif;cursor:pointer">PM</button><button type="button" data-dr-seg="block" data-value="Full day" aria-pressed="false" style="min-height:44px;padding:0 16px;border:1px solid #24394A;border-radius:8px;background:#fff;color:#24394A;font:500 15px 'IBM Plex Sans',system-ui,sans-serif;cursor:pointer">Full day</button></div></div>
+<div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:14px;font-weight:500">Format</span><div style="display:flex;flex-wrap:wrap;gap:8px"><button type="button" data-dr-seg="mode" data-value="In person" aria-pressed="false" style="min-height:44px;padding:0 16px;border:1px solid #24394A;border-radius:8px;background:#fff;color:#24394A;font:500 15px 'IBM Plex Sans',system-ui,sans-serif;cursor:pointer">In person</button><button type="button" data-dr-seg="mode" data-value="Zoom" aria-pressed="false" style="min-height:44px;padding:0 16px;border:1px solid #24394A;border-radius:8px;background:#fff;color:#24394A;font:500 15px 'IBM Plex Sans',system-ui,sans-serif;cursor:pointer">Zoom</button></div></div>
+</div>
+<form method="post" action="/wp-admin/admin-post.php" data-dr-form="dr_booking" data-dr-booking style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:14px"><input type="hidden" name="action" value="dr_booking"><input type="hidden" name="dr_page" value="schedule"><div class="dr-hp" aria-hidden="true"><label>Leave this field empty<input type="text" name="dr_website" tabindex="-1" autocomplete="off"></label></div><input type="hidden" name="date" data-dr-in="date"><input type="hidden" name="block" data-dr-in="block"><input type="hidden" name="format" data-dr-in="mode">
+<label style="grid-column:1 / -1;display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:500">Case caption<input name="case_caption" required type="text" placeholder="Smith v. Jones Trucking, LLC" style="width:100%;min-height:46px;padding:10px 14px;border:1px solid #6F8A7A;border-radius:8px;background:#fff;font:400 16px/1.4 'IBM Plex Sans',system-ui,sans-serif;color:#26292C" class="drf2"></label>
+<label style="display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:500">County<input name="county" required type="text" style="width:100%;min-height:46px;padding:10px 14px;border:1px solid #6F8A7A;border-radius:8px;background:#fff;font:400 16px/1.4 'IBM Plex Sans',system-ui,sans-serif;color:#26292C" class="drf2"></label>
+<label style="display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:500">File number<input name="file_number" required type="text" placeholder="26 CVS 1234" style="width:100%;min-height:46px;padding:10px 14px;border:1px solid #6F8A7A;border-radius:8px;background:#fff;font:400 16px/1.4 'IBM Plex Sans',system-ui,sans-serif;color:#26292C" class="drf2"></label>
+<label style="display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:500">Completion deadline in the order<input name="completion_deadline_in_the_order" required type="date" style="width:100%;min-height:46px;padding:10px 14px;border:1px solid #6F8A7A;border-radius:8px;background:#fff;font:400 16px/1.4 'IBM Plex Sans',system-ui,sans-serif;color:#26292C" class="drf2"></label>
+<label style="display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:500">Appointment<select name="appointment" style="width:100%;min-height:46px;padding:10px 14px;border:1px solid #6F8A7A;border-radius:8px;background:#fff;font:400 16px/1.4 'IBM Plex Sans',system-ui,sans-serif;color:#26292C" class="drf2"><option>Party-selected</option><option>Court-appointed</option></select></label>
+<label style="display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:500">Booking attorney<input name="booking_attorney" required type="text" autocomplete="name" style="width:100%;min-height:46px;padding:10px 14px;border:1px solid #6F8A7A;border-radius:8px;background:#fff;font:400 16px/1.4 'IBM Plex Sans',system-ui,sans-serif;color:#26292C" class="drf2"></label>
+<label style="display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:500">Firm<input name="firm" type="text" autocomplete="organization" style="width:100%;min-height:46px;padding:10px 14px;border:1px solid #6F8A7A;border-radius:8px;background:#fff;font:400 16px/1.4 'IBM Plex Sans',system-ui,sans-serif;color:#26292C" class="drf2"></label>
+<label style="display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:500">Email<input name="email" required type="email" autocomplete="email" style="width:100%;min-height:46px;padding:10px 14px;border:1px solid #6F8A7A;border-radius:8px;background:#fff;font:400 16px/1.4 'IBM Plex Sans',system-ui,sans-serif;color:#26292C" class="drf2"></label>
+<label style="display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:500">Phone<input name="phone" type="tel" autocomplete="tel" style="width:100%;min-height:46px;padding:10px 14px;border:1px solid #6F8A7A;border-radius:8px;background:#fff;font:400 16px/1.4 'IBM Plex Sans',system-ui,sans-serif;color:#26292C" class="drf2"></label>
+<label style="display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:500">Party you represent<input name="party_you_represent" type="text" style="width:100%;min-height:46px;padding:10px 14px;border:1px solid #6F8A7A;border-radius:8px;background:#fff;font:400 16px/1.4 'IBM Plex Sans',system-ui,sans-serif;color:#26292C" class="drf2"></label>
+<div style="grid-column:1 / -1;display:flex;flex-direction:column;gap:10px;margin-top:6px">
+<span style="font-size:14px;font-weight:500">Other counsel (each receives the confirmation)</span>
+<div data-dr-counsel-list style="display:flex;flex-direction:column;gap:10px"></div><template data-dr-counsel-tpl><div data-dr-counsel-row style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,160px),1fr));gap:10px;align-items:center">
+<input type="text" name="counsel_name[]" placeholder="Name" aria-label="Counsel name" style="width:100%;min-height:46px;padding:10px 14px;border:1px solid #6F8A7A;border-radius:8px;background:#fff;font:400 16px/1.4 'IBM Plex Sans',system-ui,sans-serif;color:#26292C" class="drf2">
+<input type="text" name="counsel_firm[]" placeholder="Firm" aria-label="Counsel firm" style="width:100%;min-height:46px;padding:10px 14px;border:1px solid #6F8A7A;border-radius:8px;background:#fff;font:400 16px/1.4 'IBM Plex Sans',system-ui,sans-serif;color:#26292C" class="drf2">
+<div style="display:flex;gap:8px;align-items:center"><input type="email" name="counsel_email[]" placeholder="Email" aria-label="Counsel email" style="flex:1;min-width:0;min-height:46px;padding:10px 14px;border:1px solid #6F8A7A;border-radius:8px;background:#fff;font:400 16px/1.4 'IBM Plex Sans',system-ui,sans-serif;color:#26292C" class="drf2"><button type="button" data-dr-counsel-remove aria-label="Remove counsel" style="width:44px;height:44px;flex:none;border:1px solid #ECEEEA;border-radius:8px;background:#fff;display:grid;place-items:center;cursor:pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5E6670" stroke-width="1.5" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+</div></template>
+<button type="button" data-dr-counsel-add style="align-self:flex-start;display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 14px;background:#fff;color:#24394A;border:1px solid #24394A;border-radius:8px;font:500 14px 'IBM Plex Sans',system-ui,sans-serif;cursor:pointer" class="drh2"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#24394A" stroke-width="1.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Add counsel</button>
+</div>
+<label style="grid-column:1 / -1;display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:500">Parties and insurance representatives attending<textarea name="parties_and_insurance_representatives_at" rows="2" placeholder="Names and roles, one per line" style="width:100%;padding:10px 14px;border:1px solid #6F8A7A;border-radius:8px;background:#fff;font:400 16px/1.4 'IBM Plex Sans',system-ui,sans-serif;color:#26292C;resize:vertical" class="drf2"></textarea></label>
+<label style="display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:500">Accessibility or interpreter needs<input name="accessibility_or_interpreter_needs" type="text" style="width:100%;min-height:46px;padding:10px 14px;border:1px solid #6F8A7A;border-radius:8px;background:#fff;font:400 16px/1.4 'IBM Plex Sans',system-ui,sans-serif;color:#26292C" class="drf2"></label>
+<label style="display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:500">Notes<input name="notes" type="text" placeholder="Skip the joint session, multi-day matter, etc." style="width:100%;min-height:46px;padding:10px 14px;border:1px solid #6F8A7A;border-radius:8px;background:#fff;font:400 16px/1.4 'IBM Plex Sans',system-ui,sans-serif;color:#26292C" class="drf2"></label>
+<p data-dr-error role="alert" hidden style="grid-column:1 / -1;margin:0;font-size:14px;line-height:1.5;color:#6B4F32"></p><p style="grid-column:1 / -1;margin:0;font-size:13px;line-height:1.5;color:#5E6670">No settlement positions or confidential case details here. Mediation summaries go by email once the date is confirmed.</p>
+<div style="grid-column:1 / -1;display:flex;flex-wrap:wrap;align-items:center;gap:14px">
+<button type="submit" style="display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0 24px;background:#866541;color:#fff;border:0;border-radius:8px;font:500 16px 'IBM Plex Sans',system-ui,sans-serif;cursor:pointer" class="drh1">Request this date</button>
+<span style="font-size:13px;color:#5E6670">By requesting a date you accept the <a href="/terms/">payment and cancellation terms</a>.</span>
+</div>
+
+</form>
+</div>
+</div>
+</div>
+<aside style="flex:1 1 300px;max-width:420px;display:flex;flex-direction:column;gap:20px">
+<div style="background:#fff;border:1px solid #ECEEEA;border-radius:10px;padding:24px;display:flex;flex-direction:column;gap:14px">
+<h2 style="margin:0;font-family:Literata,Georgia,serif;font-weight:600;font-size:22px;line-height:1.25;color:#24394A">Before you book</h2>
+<p style="margin:0;font-size:15px;line-height:1.5;color:#5E6670">Have these to hand. The whole thing takes about three minutes.</p>
+<ul style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px;font-size:15px;line-height:1.45">
+<li style="display:flex;gap:10px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6F8A7A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:2px"><path d="M20 6 9 17l-5-5"/></svg>Case caption, county and file number</li>
+<li style="display:flex;gap:10px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6F8A7A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:2px"><path d="M20 6 9 17l-5-5"/></svg>Completion deadline from the court's order (AOC-CV-811)</li>
+<li style="display:flex;gap:10px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6F8A7A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:2px"><path d="M20 6 9 17l-5-5"/></svg>Whether I am court-appointed or party-selected</li>
+<li style="display:flex;gap:10px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6F8A7A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:2px"><path d="M20 6 9 17l-5-5"/></svg>Names and emails for all counsel and attending parties</li>
+<li style="display:flex;gap:10px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6F8A7A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:2px"><path d="M20 6 9 17l-5-5"/></svg>In person or by Zoom</li>
+</ul>
+</div>
+<div style="background:#DCE5DF;border-radius:10px;padding:24px;display:flex;flex-direction:column;gap:10px">
+<h2 style="margin:0;font-family:Literata,Georgia,serif;font-weight:600;font-size:20px;line-height:1.25;color:#24394A">How confirmation works</h2>
+<p style="margin:0;font-size:15px;line-height:1.5;color:#26292C">Your request holds the date. I confirm within one business day after a conflicts check, and everyone listed receives the confirmation.</p>
+
+</div>
+<div style="display:flex;flex-direction:column;gap:10px;padding:0 4px">
+<span style="font-size:14px;font-weight:600;color:#24394A">Need a different arrangement?</span>
+<p style="margin:0;font-size:15px;line-height:1.5;color:#26292C">For multi-day matters, dates not shown, or a 20-minute pre-mediation call, <a href="#inquiry-form">send an inquiry</a>.</p>
+</div>
+</aside>
+</div>
+</section>
+<section id="fees" data-screen-label="Fees and policies" style="background:#fff;border-top:1px solid #ECEEEA;border-bottom:1px solid #ECEEEA;scroll-margin-top:120px">
+<div style="max-width:1200px;margin:0 auto;padding:clamp(56px,8vw,112px) clamp(20px,4vw,40px);display:flex;flex-wrap:wrap;gap:clamp(32px,5vw,64px);align-items:flex-start">
+<div style="flex:1 1 280px;max-width:400px;display:flex;flex-direction:column;gap:14px">
+<p style="margin:0;font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#3A6B8C">Fees and policies</p>
+<h2 style="margin:0;font-family:Literata,Georgia,serif;font-weight:600;font-size:clamp(28px,1.2vw + 22px,38px);line-height:1.2;color:#24394A;text-wrap:pretty">Plain terms, stated in advance.</h2>
+<p style="margin:0;font-size:16px;line-height:1.55">Fees are paid by the parties at the conclusion of the conference unless the court orders otherwise. Ability to pay is never discussed before a conference is scheduled or held.</p>
+<a href="#kit" data-dr-print style="display:inline-flex;align-items:center;gap:8px;font-size:15px;font-weight:500">Printable fees and policies (PDF)<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></a>
+</div>
+<table style="flex:2 1 460px;border-collapse:collapse;font-size:16px;line-height:1.5">
+<tbody>
+<tr style="border-top:1px solid #ECEEEA;border-bottom:1px solid #ECEEEA"><th scope="row" style="text-align:left;vertical-align:top;padding:16px 20px 16px 0;font-weight:600;color:#24394A;width:38%">Party-selected mediations</th><td style="padding:16px 0">$<span data-confirm="hourly rate">350</span> per hour, plus a $<span data-confirm="administrative fee">150</span> administrative fee per case. Preparation time is included. <span data-confirm="travel billing">Travel outside Buncombe County is billed at the hourly rate.</span></td></tr>
+<tr style="border-bottom:1px solid #ECEEEA"><th scope="row" style="text-align:left;vertical-align:top;padding:16px 20px 16px 0;font-weight:600;color:#24394A">Court-appointed mediations</th><td style="padding:16px 0">$150 per hour, plus a one-time $150 administrative fee, as set by Rule 7 of the Superior Court MSC rules.</td></tr>
+<tr style="border-bottom:1px solid #ECEEEA"><th scope="row" style="text-align:left;vertical-align:top;padding:16px 20px 16px 0;font-weight:600;color:#24394A">How fees are split</th><td style="padding:16px 0">Equal shares among the parties unless otherwise agreed or ordered. Each party pays its own share and receives its own receipt.</td></tr>
+<tr style="border-bottom:1px solid #ECEEEA"><th scope="row" style="text-align:left;vertical-align:top;padding:16px 20px 16px 0;font-weight:600;color:#24394A">When fees are due</th><td style="padding:16px 0">At the conclusion of the conference unless otherwise agreed or ordered. Nothing is due to book a date.</td></tr>
+<tr style="border-bottom:1px solid #ECEEEA"><th scope="row" style="text-align:left;vertical-align:top;padding:16px 20px 16px 0;font-weight:600;color:#24394A">Postponement and cancellation</th><td style="padding:16px 0"><span data-confirm="postponement and cancellation terms, e.g. notice period and any fee">Postponements or cancellations with fewer than five business days’ notice are billed at two hours of the hourly rate, divided among the parties responsible, unless the case has settled.</span></td></tr>
+<tr style="border-bottom:1px solid #ECEEEA"><th scope="row" style="text-align:left;vertical-align:top;padding:16px 20px 16px 0;font-weight:600;color:#24394A">Paying electronically</th><td style="padding:16px 0">A party who chooses to pay by card covers the card processing fee, shown before payment, as DRC Advisory Opinion 44 permits. Bank transfer (ACH) carries no fee. Checks are also accepted.</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="kit" data-screen-label="Paralegal kit" style="background:#ECEEEA;scroll-margin-top:120px">
+<div style="max-width:1200px;margin:0 auto;padding:clamp(56px,8vw,112px) clamp(20px,4vw,40px);display:flex;flex-direction:column;gap:32px">
+<div style="display:flex;flex-direction:column;gap:14px;max-width:720px">
+<p style="margin:0;font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#3A6B8C">Paralegal kit</p>
+<h2 style="margin:0;font-family:Literata,Georgia,serif;font-weight:600;font-size:clamp(28px,1.2vw + 22px,38px);line-height:1.2;color:#24394A;text-wrap:pretty">Everything the file needs, in one place.</h2>
+</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:20px">
+<a href="mailto:David@DenningerResolutions.com?subject=Request%3A%20Form%20W-9" style="background:#fff;border:1px solid #ECEEEA;border-radius:10px;padding:24px;display:flex;flex-direction:column;gap:12px;text-decoration:none;color:#26292C" class="drh4">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6F8A7A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4M10 9H8M16 13H8M16 17H8"/></svg>
+<span style="font-family:Literata,Georgia,serif;font-weight:600;font-size:20px;color:#24394A">Form W-9</span>
+<span style="font-size:15px;line-height:1.5;color:#5E6670">Denninger Resolutions tax ID, for your accounts-payable file. PDF </span>
+<span style="display:inline-flex;align-items:center;gap:6px;font-size:15px;font-weight:500;color:#24394A">Download<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></span>
+</a>
+<a href="mailto:David@DenningerResolutions.com?subject=Request%3A%20Fees%20and%20policies" style="background:#fff;border:1px solid #ECEEEA;border-radius:10px;padding:24px;display:flex;flex-direction:column;gap:12px;text-decoration:none;color:#26292C" class="drh4">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6F8A7A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 9V3h12v6"/><rect x="6" y="14" width="12" height="8"/></svg>
+<span style="font-family:Literata,Georgia,serif;font-weight:600;font-size:20px;color:#24394A">Fees and policies</span>
+<span style="font-size:15px;line-height:1.5;color:#5E6670">The table above as a one-page printable PDF for the case file.</span>
+<span style="display:inline-flex;align-items:center;gap:6px;font-size:15px;font-weight:500;color:#24394A">Download<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></span>
+</a>
+<div style="background:#fff;border:1px solid #ECEEEA;border-radius:10px;padding:24px;display:flex;flex-direction:column;gap:12px">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6F8A7A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="14" height="14" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+<span style="font-family:Literata,Georgia,serif;font-weight:600;font-size:20px;color:#24394A">Mediator details for the AOC-CV-812</span>
+<pre style="margin:0;font:400 14px/1.5 'IBM Plex Sans',system-ui,sans-serif;color:#26292C;white-space:pre-wrap">David <span data-confirm="public name">H.</span> Denninger
+Denninger Resolutions
+9 SW Pack Square, Suite 210B
+Asheville, NC 28801
+Phone: <span data-confirm="public phone">(828) 555-0142</span>
+David@DenningerResolutions.com
+NCDRC Certified Superior Court Mediator</pre>
+<button type="button" data-dr-copy="Copy mediator details" style="align-self:flex-start;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;background:#fff;color:#24394A;border:1px solid #24394A;border-radius:8px;font:500 15px 'IBM Plex Sans',system-ui,sans-serif;cursor:pointer" class="drh2"><span data-dr-copy-label>Copy mediator details</span></button>
+</div>
+</div>
+</div>
+</section>
+<section data-screen-label="Neutrality" style="background:#24394A;color:#F7F5F0">
+<div style="max-width:1200px;margin:0 auto;padding:clamp(40px,5vw,64px) clamp(20px,4vw,40px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:28px 40px">
+<div style="display:flex;flex-direction:column;gap:8px"><span style="font-family:Literata,Georgia,serif;font-weight:600;font-size:20px;color:#F7F5F0">Impartiality</span><p style="margin:0;font-size:15px;line-height:1.55;color:#DCE5DF">I do not represent any party, give legal advice or decide the case. Prosecution and defense experience means I have sat at both tables.</p></div>
+<div style="display:flex;flex-direction:column;gap:8px"><span style="font-family:Literata,Georgia,serif;font-weight:600;font-size:20px;color:#F7F5F0">Confidentiality</span><p style="margin:0;font-size:15px;line-height:1.55;color:#DCE5DF">What is said in the conference stays there, as the Standards of Professional Conduct for Mediators require. No session is recorded, in the room or on Zoom.</p></div>
+<div style="display:flex;flex-direction:column;gap:8px"><span style="font-family:Literata,Georgia,serif;font-weight:600;font-size:20px;color:#F7F5F0">Conflicts</span><p style="margin:0;font-size:15px;line-height:1.55;color:#DCE5DF">Every listed party, counsel and insurer is checked against my current and former matters before I confirm a date.</p></div>
+</div>
+</section>
+<section data-screen-label="FAQ" style="background:#F7F5F0">
+<div style="max-width:1200px;margin:0 auto;padding:clamp(56px,8vw,112px) clamp(20px,4vw,40px);display:flex;flex-wrap:wrap;gap:clamp(32px,5vw,64px);align-items:flex-start">
+<div style="flex:1 1 260px;max-width:360px;display:flex;flex-direction:column;gap:14px">
+<p style="margin:0;font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#3A6B8C">Questions counsel ask</p>
+<h2 style="margin:0;font-family:Literata,Georgia,serif;font-weight:600;font-size:clamp(28px,1.2vw + 22px,38px);line-height:1.2;color:#24394A">Before the conference</h2>
+</div>
+<div style="flex:2 1 460px;display:flex;flex-direction:column;border-top:1px solid #DCE5DF">
+<div style="border-bottom:1px solid #DCE5DF">
+<button type="button" data-dr-faq aria-expanded="true" aria-controls="dr-faq-0" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 0;background:none;border:0;text-align:left;cursor:pointer;font:600 17px/1.4 'IBM Plex Sans',system-ui,sans-serif;color:#24394A">
+<span>Can we attend by Zoom?</span>
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6F8A7A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none;transform:rotate(180deg);transition:transform .2s"><path d="m6 9 6 6 6-6"/></svg>
+</button>
+<p id="dr-faq-0" style="margin:0;padding:0 40px 20px 0;font-size:16px;line-height:1.6;color:#26292C">Yes. Any session can be held by Zoom with private breakout rooms for caucus and a waiting room, and I offer a short tech check the week before for anyone who wants one. In-person sessions are at 9 SW Pack Square in Asheville. Sessions are never recorded, in either format.</p>
+</div>
+<div style="border-bottom:1px solid #DCE5DF">
+<button type="button" data-dr-faq aria-expanded="false" aria-controls="dr-faq-1" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 0;background:none;border:0;text-align:left;cursor:pointer;font:600 17px/1.4 'IBM Plex Sans',system-ui,sans-serif;color:#24394A">
+<span>Which counties do you serve?</span>
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6F8A7A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none;transform:none;transition:transform .2s"><path d="m6 9 6 6 6-6"/></svg>
+</button>
+<p id="dr-faq-1" hidden style="margin:0;padding:0 40px 20px 0;font-size:16px;line-height:1.6;color:#26292C">In person, I mediate in Buncombe County and the surrounding counties of Western North Carolina. By Zoom, I take matters statewide.</p>
+</div>
+<div style="border-bottom:1px solid #DCE5DF">
+<button type="button" data-dr-faq aria-expanded="false" aria-controls="dr-faq-2" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 0;background:none;border:0;text-align:left;cursor:pointer;font:600 17px/1.4 'IBM Plex Sans',system-ui,sans-serif;color:#24394A">
+<span>What should we send before the conference?</span>
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6F8A7A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none;transform:none;transition:transform .2s"><path d="m6 9 6 6 6-6"/></svg>
+</button>
+<p id="dr-faq-2" hidden style="margin:0;padding:0 40px 20px 0;font-size:16px;line-height:1.6;color:#26292C">A short mediation summary by email, five business days before the session: the parties, the claims and defenses, procedural posture, the key documents, and any prior offers you want me to know about. Nothing confidential goes in the booking form.</p>
+</div>
+<div style="border-bottom:1px solid #DCE5DF">
+<button type="button" data-dr-faq aria-expanded="false" aria-controls="dr-faq-3" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 0;background:none;border:0;text-align:left;cursor:pointer;font:600 17px/1.4 'IBM Plex Sans',system-ui,sans-serif;color:#24394A">
+<span>How are fees split?</span>
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6F8A7A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none;transform:none;transition:transform .2s"><path d="m6 9 6 6 6-6"/></svg>
+</button>
+<p id="dr-faq-3" hidden style="margin:0;padding:0 40px 20px 0;font-size:16px;line-height:1.6;color:#26292C">Equal shares among the parties unless the court orders otherwise or counsel agree to a different split. Each party pays its own share on the Payments page and receives its own receipt.</p>
+</div>
+<div style="border-bottom:1px solid #DCE5DF">
+<button type="button" data-dr-faq aria-expanded="false" aria-controls="dr-faq-4" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 0;background:none;border:0;text-align:left;cursor:pointer;font:600 17px/1.4 'IBM Plex Sans',system-ui,sans-serif;color:#24394A">
+<span>What if the case settles before the conference?</span>
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6F8A7A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none;transform:none;transition:transform .2s"><path d="m6 9 6 6 6-6"/></svg>
+</button>
+<p id="dr-faq-4" hidden style="margin:0;padding:0 40px 20px 0;font-size:16px;line-height:1.6;color:#26292C">Tell me as soon as you know and I will file the Report of Mediator. The postponement and cancellation terms apply to late notice.</p>
+</div>
+<div style="border-bottom:1px solid #DCE5DF">
+<button type="button" data-dr-faq aria-expanded="false" aria-controls="dr-faq-5" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 0;background:none;border:0;text-align:left;cursor:pointer;font:600 17px/1.4 'IBM Plex Sans',system-ui,sans-serif;color:#24394A">
+<span>Joint session or straight to caucus?</span>
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6F8A7A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none;transform:none;transition:transform .2s"><path d="m6 9 6 6 6-6"/></svg>
+</button>
+<p id="dr-faq-5" hidden style="margin:0;padding:0 40px 20px 0;font-size:16px;line-height:1.6;color:#26292C">I open with a short joint session unless counsel agree otherwise, then move to private caucus. If you would rather skip the joint session, say so in the booking notes.</p>
+</div>
+<div style="border-bottom:1px solid #DCE5DF">
+<button type="button" data-dr-faq aria-expanded="false" aria-controls="dr-faq-6" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 0;background:none;border:0;text-align:left;cursor:pointer;font:600 17px/1.4 'IBM Plex Sans',system-ui,sans-serif;color:#24394A">
+<span>Do you run conflicts checks?</span>
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6F8A7A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none;transform:none;transition:transform .2s"><path d="m6 9 6 6 6-6"/></svg>
+</button>
+<p id="dr-faq-6" hidden style="margin:0;padding:0 40px 20px 0;font-size:16px;line-height:1.6;color:#26292C">Yes. When a date is requested, I check every listed party, counsel and insurer against my current and former matters before confirming. If there is a conflict, I tell all counsel the same day and release the date.</p>
+</div>
+<div style="border-bottom:1px solid #DCE5DF">
+<button type="button" data-dr-faq aria-expanded="false" aria-controls="dr-faq-7" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 0;background:none;border:0;text-align:left;cursor:pointer;font:600 17px/1.4 'IBM Plex Sans',system-ui,sans-serif;color:#24394A">
+<span>How do we request accommodations or an interpreter?</span>
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6F8A7A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none;transform:none;transition:transform .2s"><path d="m6 9 6 6 6-6"/></svg>
+</button>
+<p id="dr-faq-7" hidden style="margin:0;padding:0 40px 20px 0;font-size:16px;line-height:1.6;color:#26292C">Note it in the booking form or email me. The suite has an elevator and an accessible entrance; interpreters are arranged by the party who needs one. If a party needs a trauma-informed setup, such as separate arrival times or a quiet room, tell me in advance and I will plan the day around it.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="inquiry-form" data-screen-label="Inquiry" style="background:#DCE5DF;scroll-margin-top:120px">
+<div style="max-width:1200px;margin:0 auto;padding:clamp(56px,8vw,112px) clamp(20px,4vw,40px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr));gap:clamp(32px,5vw,64px);align-items:start">
+<div style="display:flex;flex-direction:column;gap:18px;max-width:480px">
+<h2 style="margin:0;font-family:Literata,Georgia,serif;font-weight:600;font-size:clamp(28px,1.2vw + 22px,38px);line-height:1.2;color:#24394A;text-wrap:pretty">Questions, conflict checks and multi-day matters</h2>
+<p style="margin:0">If the calendar does not fit your case, tell me what you need and I will reply within one business day.</p>
+<p style="margin:0;font-size:15px;line-height:1.55;color:#5E6670">Please keep settlement positions and confidential case details out of this form.</p>
+</div>
+<form method="post" action="/wp-admin/admin-post.php" data-dr-form="dr_inquiry" style="background:#fff;border:1px solid #ECEEEA;border-radius:10px;box-shadow:0 1px 2px rgba(36,57,74,.05),0 8px 24px rgba(36,57,74,.06);padding:clamp(20px,3vw,32px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:16px"><input type="hidden" name="action" value="dr_inquiry"><input type="hidden" name="dr_page" value="schedule"><div class="dr-hp" aria-hidden="true"><label>Leave this field empty<input type="text" name="dr_website" tabindex="-1" autocomplete="off"></label></div>
+<label style="display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:500">Name<input name="name" required type="text" autocomplete="name" style="width:100%;min-height:48px;padding:10px 14px;border:1px solid #6F8A7A;border-radius:8px;background:#fff;font:400 16px/1.4 'IBM Plex Sans',system-ui,sans-serif;color:#26292C" class="drf2"></label>
+<label style="display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:500">Firm<input name="firm" type="text" autocomplete="organization" style="width:100%;min-height:48px;padding:10px 14px;border:1px solid #6F8A7A;border-radius:8px;background:#fff;font:400 16px/1.4 'IBM Plex Sans',system-ui,sans-serif;color:#26292C" class="drf2"></label>
+<label style="display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:500">Email<input name="email" required type="email" autocomplete="email" style="width:100%;min-height:48px;padding:10px 14px;border:1px solid #6F8A7A;border-radius:8px;background:#fff;font:400 16px/1.4 'IBM Plex Sans',system-ui,sans-serif;color:#26292C" class="drf2"></label>
+<label style="display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:500">Phone<input name="phone" type="tel" autocomplete="tel" style="width:100%;min-height:48px;padding:10px 14px;border:1px solid #6F8A7A;border-radius:8px;background:#fff;font:400 16px/1.4 'IBM Plex Sans',system-ui,sans-serif;color:#26292C" class="drf2"></label>
+<label style="grid-column:1 / -1;display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:500">What do you need?<textarea name="what_do_you_need" rows="4" style="width:100%;padding:10px 14px;border:1px solid #6F8A7A;border-radius:8px;background:#fff;font:400 16px/1.4 'IBM Plex Sans',system-ui,sans-serif;color:#26292C;resize:vertical" class="drf2"></textarea></label>
+<div style="grid-column:1 / -1;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px">
+<button type="submit" style="display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0 24px;background:#fff;color:#24394A;border:1px solid #24394A;border-radius:8px;font:500 16px 'IBM Plex Sans',system-ui,sans-serif;cursor:pointer" class="drh2">Send an inquiry</button>
+<span style="font-size:13px;color:#5E6670">Or email <a href="mailto:David@DenningerResolutions.com">David@DenningerResolutions.com</a></span>
+</div>
+</form>
+</div>
+</section>
