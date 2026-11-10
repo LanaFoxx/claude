@@ -2018,3 +2018,4 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 .dwdc .pv2-hacts .dwdc-btn2[data-complete]:hover { background: #128a3e !important; border-color: #128a3e !important; }
 .dwdc .pv2-acts .dwdc-btn[data-act="pay"] { background: #34C46A !important; border-color: #34C46A !important; }
 .dwdc .pv2-acts .dwdc-btn[data-act="pay"]:hover { background: #22B159 !important; border-color: #22B159 !important; }
+@media (max-width: 1100px) { .dwdc .pv2-cols .pw-onboard { order: 0; } }

@@ -1770,7 +1770,6 @@
 			+ strip
 			+ '<div class="dwdc-two pv2-cols">'
 			+ '<div class="dwdc-col">'
-			+ (full && onboardEntries(c).length ? pw('onboard', onboardCard(c, full)) : '')
 			+ todos
 			+ pw('notes', notesCard(c, full))
 			+ pw('activity', activityCard(c, full))
@@ -1778,6 +1777,7 @@
 			+ '</div><div class="dwdc-col">'
 			+ pw('details', S.edit ? editCard(c) : detailsCard(c, peopleCard(c, true)))
 			+ (S.edit ? pw('people', peopleCard(c)) : '')
+			+ (full && onboardEntries(c).length ? pw('onboard', onboardCard(c, full)) : '')
 			+ pw('markup', markupCard(c))
 			+ pw('jobs', jobsCard(c))
 			+ (num(c.hosting) ? pw('host', hostCard(c)) : '')
