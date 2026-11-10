@@ -2019,3 +2019,7 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 .dwdc .pv2-acts .dwdc-btn[data-act="pay"] { background: #34C46A !important; border-color: #34C46A !important; }
 .dwdc .pv2-acts .dwdc-btn[data-act="pay"]:hover { background: #22B159 !important; border-color: #22B159 !important; }
 @media (max-width: 1100px) { .dwdc .pv2-cols .pw-onboard { order: 0; } }
+/* Patterns & Trends header: white text */
+.dwdc .cd-trends > .dwdc-dhead h2, .dwdc .cd-trends > .dwdc-dhead > a { color: #fff !important; }
+.dwdc .cd-trends > .dwdc-dhead > a svg { color: #fff !important; }
+.dwdc .cd-trends > .dwdc-dhead > a { border-color: rgba(255,255,255,.6) !important; }
