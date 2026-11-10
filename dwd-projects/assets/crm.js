@@ -145,6 +145,9 @@
 			.then(function () { render(); toast(money(amt) + ' paid · added to this month'); })
 			.catch(function (er) { if (btn) { btn.disabled = false; } fail(er); });
 	}
+	// What a project will actually deposit: Upwork money arrives after Upwork's 10% fee.
+	function netOf(c) { var b = num(c.balance); return c.pay_method === 'Upwork' ? Math.round(b * 90) / 100 : b; }
+	function pendDeposit(list) { return list.filter(function (c) { return c.paymark === 'pending'; }).reduce(function (a, c) { return a + netOf(c); }, 0); }
 	function owed(list) { return list.reduce(function (s, c) { return s + num(c.balance); }, 0); }
 	function openTasks() { return S.tasks.filter(function (t) { return !t.done; }); }
 	function match(c) {
@@ -1285,7 +1288,7 @@
 				var ls = new Date(ws); ls.setDate(ls.getDate() - 7); var le = new Date(ws); le.setDate(le.getDate() - 1);
 				var wbox = function (label, a, b) { var l = winsIn(dIso(a), dIso(b)); return '<button type="button" class="dwdc-mjob" data-wins="' + dIso(a) + '|' + dIso(b) + '|' + label + '"><span class="dwdc-lbl">' + label + '</span><strong>' + l.length + '<i> job' + (l.length === 1 ? '' : 's') + '</i></strong><small>' + shortD(dIso(a)) + '–' + shortD(dIso(b)) + (winVal(l) ? ' · ' + money(winVal(l)) : '') + '</small></button>'; };
 				return '<div class="dwdc-mtop"><button type="button" class="dwdc-mnow" data-month="' + ym + '"><span class="dwdc-lbl">Made in ' + MNf[mi] + '</span><strong>' + money(cur) + '</strong><small>' + MNf[prevD.getMonth()] + ': ' + money(prev) + ' · see payments →</small></button>'
-					+ '<button type="button" class="dwdc-mopen" data-owed><span class="dwdc-lbl">Owed to you</span><strong>' + money(owed(owing)) + '</strong><small>' + owing.length + ' project' + (owing.length === 1 ? '' : 's') + ' · see list →</small></button></div>'
+					+ '<button type="button" class="dwdc-mopen" data-owed><span class="dwdc-lbl">Owed to you</span><strong>' + money(owed(owing)) + '</strong><small>' + (pendDeposit(owing) ? money(pendDeposit(owing)) + ' pending deposit · ' : '') + owing.length + ' project' + (owing.length === 1 ? '' : 's') + ' · see list →</small></button></div>'
 					+ '<div class="dwdc-mjobs">' + wbox('Jobs this week', ws, we) + wbox('Jobs last week', ls, le) + '</div>';
 			})(),
 			'<footer>' + frow('Hosting Revenue', money(annual) + ' / yr', 'hosting') + '<a class="dwdc-frow" href="#money"><span>All-time income</span><b>' + money(allIncome()) + '</b>' + ic('right', 12) + '</a></footer>');
@@ -2014,7 +2017,8 @@
 		}
 		if (m.type === 'owed') {
 			var ol = owingList().sort(function (a, b) { return num(b.balance) - num(a.balance); });
-			var obody = ol.length ? '<div class="dwdc-mo-sum"><span>Projects<b>' + ol.length + '</b></span><span>Total owed<b>' + money(owed(ol)) + '</b></span></div>'
+			var pdep = pendDeposit(ol), pN = ol.filter(function (c) { return c.paymark === 'pending'; }).length;
+			var obody = ol.length ? '<div class="dwdc-mo-sum"><span>Projects<b>' + ol.length + '</b></span><span>Total owed<b>' + money(owed(ol)) + '</b></span>' + (pdep ? '<span class="pend" title="Projects marked Pending: paid, waiting to be transferred to your bank (Upwork after its 10% fee)">Next deposit · ' + pN + ' pending<b>' + money(pdep) + '</b></span>' : '') + '</div>'
 				+ ol.map(function (c) {
 					var k = clientOf(c), pm = c.paymark || '';
 					var tb = function (v, label) { return '<button type="button" class="dwdc-btn2 sm' + (pm === v ? ' on-' + v : '') + '" data-owmark="' + c.id + '" data-v="' + (pm === v ? '' : v) + '">' + label + '</button>'; };
