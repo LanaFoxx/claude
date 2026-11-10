@@ -106,3 +106,47 @@ add_action( 'admin_init', function () {
 	}
 	update_option( 'dwdp_copy_2026_10_tone', time(), false );
 } );
+
+/* Onboarding form: ask for 3–4 websites the client likes and what they like about each (style read). Runs once. */
+add_action( 'admin_init', function () {
+	if ( get_option( 'dwdp_mig_onb_inspiration' ) ) {
+		return;
+	}
+	$id  = 2993;
+	$raw = get_post_meta( $id, '_elementor_data', true );
+	$d   = is_string( $raw ) ? json_decode( $raw, true ) : null;
+	if ( ! is_array( $d ) ) {
+		update_option( 'dwdp_mig_onb_inspiration', 'no-data', false );
+		return;
+	}
+	$hit  = 0;
+	$walk = function ( &$els ) use ( &$walk, &$hit ) {
+		foreach ( $els as &$el ) {
+			if ( ! empty( $el['settings']['form_fields'] ) && is_array( $el['settings']['form_fields'] ) ) {
+				foreach ( $el['settings']['form_fields'] as &$f ) {
+					if ( 'inspiration' === ( $f['custom_id'] ?? '' ) ) {
+						$f['field_label'] = 'List 3–4 websites you like, and what you like about each one';
+						$f['placeholder'] = 'Paste each link, then a line on what you like about it: the layout, colors, fonts, photos, or the overall feel. Any kind of business is fine; it is about the style.';
+						$f['rows']        = 6;
+						$hit++;
+					}
+				}
+				unset( $f );
+			}
+			if ( ! empty( $el['elements'] ) ) {
+				$walk( $el['elements'] );
+			}
+		}
+		unset( $el );
+	};
+	$walk( $d );
+	if ( $hit ) {
+		update_post_meta( $id, '_elementor_data', wp_slash( wp_json_encode( $d ) ) );
+		delete_post_meta( $id, '_elementor_css' );
+		delete_post_meta( $id, '_elementor_element_cache' );
+		if ( class_exists( '\Elementor\Plugin' ) ) {
+			\Elementor\Plugin::$instance->files_manager->clear_cache();
+		}
+	}
+	update_option( 'dwdp_mig_onb_inspiration', $hit ? 'done' : 'not-found', false );
+} );
