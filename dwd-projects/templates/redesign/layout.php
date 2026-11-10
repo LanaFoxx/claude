@@ -11,6 +11,14 @@ $body = dwdr_webp_html( dwdr_add_ctas( dwdr_body( $dwdr ) ) ); // WebP images fo
 <head>
 <meta charset="<?php bloginfo( 'charset' ); ?>">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<?php
+// Articles: the cover photo is the largest thing on screen, so the browser fetches it first (same URLs as in the page).
+if ( 'article' === $dwdr && preg_match( '#<img data-dw-zoom="1" src="([^"]+)"([^>]*)>#', $body, $im ) ) {
+	$ss = preg_match( '#srcset="([^"]+)"#', $im[2], $m1 ) ? ' imagesrcset="' . $m1[1] . '"' : '';
+	$sz = preg_match( '#sizes="([^"]+)"#', $im[2], $m2 ) ? ' imagesizes="' . $m2[1] . '"' : '';
+	echo '<link rel="preload" as="image" href="' . $im[1] . '"' . $ss . $sz . ' fetchpriority="high">' . "\n"; // phpcs:ignore
+}
+?>
 <?php dwdr_head(); ?>
 </head>
 <body <?php body_class( 'dwr dwr-' . $dwdr ); ?>>
