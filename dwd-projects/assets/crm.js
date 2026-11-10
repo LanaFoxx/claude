@@ -667,7 +667,7 @@
 			+ (r.view === 'personal' ? '</header>' : '<div class="dwdc-ph-tools">'
 			+ '<label class="dwdc-ssearch dwdc-ph-search">' + ic('search', 16) + '<input type="search" name="dwdc-find" placeholder="Search clients…" aria-label="Search clients" value="" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" readonly data-lpignore="true" data-1p-ignore data-form-type="other"><kbd>Ctrl K</kbd></label>'
 			+ '<span class="dwdc-ph-sp"></span>'
-			+ (r.view === 'client' ? obTools(r.id) : '<div class="dwdc-ph-menu' + (menuOpen ? ' open' : '') + '"><button class="dwdc-ph-btn outline" type="button" data-newmenu aria-haspopup="menu" aria-expanded="' + menuOpen + '">' + plus + 'New' + '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>'
+			+ (r.view === 'client' ? '' : '<div class="dwdc-ph-menu' + (menuOpen ? ' open' : '') + '"><button class="dwdc-ph-btn outline" type="button" data-newmenu aria-haspopup="menu" aria-expanded="' + menuOpen + '">' + plus + 'New' + '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>'
 			+ '<ul role="menu"><li><button role="menuitem" type="button" data-act="job">' + plus + 'Project</button></li><li><button role="menuitem" type="button" data-act="newclient">' + plus + 'Client</button></li><li><button role="menuitem" type="button" data-act="hosting">' + plus + 'Website Hosting</button></li></ul></div>'
 			+ (r.view === 'money' ? '<button class="dwdc-ph-btn coral" type="button" data-refresh' + (S.refreshRes && S.refreshRes.busy ? ' disabled' : '') + '>' + ic('refresh', 14) + (S.refreshRes && S.refreshRes.busy ? 'Updating…' : 'Update Finances') + '</button>' : '')
 			+ '<button class="dwdc-ph-btn primary" type="button" data-act="pay">' + ic('card', 14) + 'Log Payment</button>')
@@ -1770,16 +1770,17 @@
 			+ strip
 			+ '<div class="dwdc-two pv2-cols">'
 			+ '<div class="dwdc-col">'
+			+ (full && onboardEntries(c).length ? pw('onboard', onboardCard(c, full)) : '')
 			+ todos
 			+ pw('notes', notesCard(c, full))
 			+ pw('activity', activityCard(c, full))
+			+ pw('source', sourceCard(c))
 			+ '</div><div class="dwdc-col">'
 			+ pw('details', S.edit ? editCard(c) : detailsCard(c, peopleCard(c, true)))
 			+ (S.edit ? pw('people', peopleCard(c)) : '')
 			+ pw('markup', markupCard(c))
-			+ pw('source', sourceCard(c))
-			+ (num(c.hosting) ? pw('host', hostCard(c)) : '')
 			+ pw('jobs', jobsCard(c))
+			+ (num(c.hosting) ? pw('host', hostCard(c)) : '')
 			+ '</div></div></div>';
 	}
 	// Onboarding answers as plain text, ready to paste into Claude.
@@ -1862,7 +1863,7 @@
 				+ (x.main ? '<strong class="dwdc-mainpill">Main contact</strong>' : '<div class="dwdc-pplact"><button class="dwdc-btn2 sm" data-pplmain="' + i + '">Make main</button><button class="dwdc-lnk sm2" data-pplrm="' + i + '" title="Remove">Remove</button></div>') + '</li>';
 		}).join('');
 		var form = S.addPpl === c.id ? '<form class="dwdc-pplf"><input name="name" placeholder="Name"><input name="email" type="email" placeholder="Email"><input name="phone" placeholder="Phone"><input name="role" placeholder="Role (e.g. office manager)"><div class="dwdc-pplfa"><button type="button" class="dwdc-btn2" data-ppladd="0">Cancel</button><button class="dwdc-btn">Add contact</button></div></form>' : '';
-		return (inner ? '<div class="dwdc-pplin dwdc-pplcard"><div class="dwdc-cardh sub"><h3>Contacts' : '<section class="dwdc-card pad dwdc-pplcard"><div class="dwdc-cardh"><h2>Contacts') + (ppl.length > 1 ? ' <span class="dwdc-cnt">' + ppl.length + '</span>' : '') + (inner ? '</h3>' : '</h2>') + '<button class="dwdc-lnk" data-ppladd="1">+ Add</button></div>'
+		return (inner ? '<div class="dwdc-pplin dwdc-pplcard' + ((S.pplOpen || {})[c.id] || S.addPpl === c.id ? ' open' : '') + '"><div class="dwdc-cardh sub"><h3 data-ppltoggle="' + c.id + '" role="button" tabindex="0">' + ic('right', 13) + 'Contacts' + (ppl.length ? ' <span class="dwdc-cnt">' + ppl.length + '</span>' : '') : '<section class="dwdc-card pad dwdc-pplcard"><div class="dwdc-cardh"><h2>Contacts') + (!inner && ppl.length > 1 ? ' <span class="dwdc-cnt">' + ppl.length + '</span>' : '') + (inner ? '</h3>' : '</h2>') + '<button class="dwdc-lnk" data-ppladd="1">+ Add</button></div>'
 			+ (ppl.length ? '<ul class="dwdc-ppll">' + rows + '</ul>' : '<p class="dwdc-mutp">No contacts yet.</p>')
 			+ (ppl.length > 1 ? '<p class="dwdc-mutp sm">Everyone on this project’s emails. Pick who’s the main contact.</p>' : '') + form + (inner ? '</div>' : '</section>');
 	}
@@ -1919,7 +1920,7 @@
 		return '<section class="dwdc-card pad"><div class="dwdc-cardh"><h2>Details</h2><button class="dwdc-lnk" data-edit>Edit</button></div><dl class="dwdc-dl">'
 			+ row('Main contact', esc(c.person || k.name)) + row('Email', em ? '<a href="mailto:' + esc(em) + '">' + esc(em) + '</a>' : '') + row('Phone', esc(ph))
 			+ row('Company', esc(c.company)) + row('Website', site(c) ? '<a href="https://' + esc(site(c)) + '" target="_blank" rel="noopener">' + esc(site(c)) + '</a>' : '')
-			+ row('Project', esc(c.job)) + row('Markup', c.markup ? '<a href="' + esc(url(c.markup)) + '" target="_blank" rel="noopener">Open Markup link</a>' : '<button class="dwdc-lnk" data-markup="' + c.id + '">Add link</button>') + row('Source', esc(sourceOf(c))) + row('Started', imported(c) ? '' : fmt(c.created, true)) + '</dl>' + (extra || '') + '</section>';
+			+ row('Project', esc(c.job)) + '</dl>' + (extra || '') + '</section>';
 	}
 	function editCard(c) {
 		var f = function (k, label, type, ph) { return '<label><span>' + label + '</span><input name="' + k + '" type="' + (type || 'text') + '" value="' + esc(c[k]) + '" placeholder="' + esc(ph || '') + '"></label>'; };
@@ -2321,6 +2322,7 @@
 	})();
 	app.addEventListener('click', function (e) {
 		var t = e.target, el;
+		if ((el = t.closest('[data-ppltoggle]'))) { var pid = el.getAttribute('data-ppltoggle'); S.pplOpen = S.pplOpen || {}; S.pplOpen[pid] = !S.pplOpen[pid]; el.closest('.dwdc-pplin').classList.toggle('open', !!S.pplOpen[pid]); return; }
 		if ((el = t.closest('[data-owgo]')) && !t.closest('button')) { S.modal = null; go(el.getAttribute('data-owgo')); return; }
 		if ((el = t.closest('[data-owpaid]'))) { e.preventDefault(); e.stopPropagation(); markPaid(+el.getAttribute('data-owpaid'), el); return; }
 		if ((el = t.closest('[data-owmark]'))) {

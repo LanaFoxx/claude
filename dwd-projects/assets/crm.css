@@ -1976,3 +1976,41 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 .dwdc .pv2 { gap: 22px !important; }
 .dwdc .pv2-cols { gap: 22px !important; }
 .dwdc .pv2-cols .dwdc-col { gap: 22px !important; }
+/* Project page: onboarding answers box above To-dos */
+.dwdc .pv2-cols .pw-onboard .dwdc-card > .dwdc-mutp { margin-bottom: 10px; }
+.dwdc .pv2-cols .pw-onboard .dwdc-obbtns { display: flex; gap: 8px; flex-wrap: wrap; }
+.dwdc .pv2-cols .pw-onboard .dwdc-obbtns .dwdc-btn, .dwdc .pv2-cols .pw-onboard .dwdc-obbtns .dwdc-btn2 { height: 36px; min-height: 0; border-radius: 8px; font-size: 13px; }
+.dwdc .pv2-cols .pw-onboard .dwdc-copyob { background: #0f2447; border-color: #0f2447; }
+.dwdc .pv2-cols .pw-onboard .dwdc-viewob { background: #e8503a !important; border-color: #e8503a !important; color: #fff !important; }
+@media (max-width: 1100px) { .dwdc .pv2-cols .pw-onboard { order: -4; } }
+/* Onboarding box: one line — buttons left, form name + date right */
+.dwdc .pv2-cols .pw-onboard > .dwdc-card { display: grid !important; grid-template-columns: auto minmax(0, 1fr); align-items: center; }
+.dwdc .pv2-cols .pw-onboard > .dwdc-card > .dwdc-cardh { grid-column: 1 / -1; }
+.dwdc .pv2-cols .pw-onboard > .dwdc-card > .dwdc-obbtns { grid-column: 1; grid-row: 2; margin-bottom: 14px; margin-right: 8px; flex-wrap: nowrap; }
+.dwdc .pv2-cols .pw-onboard > .dwdc-card > .dwdc-mutp { grid-column: 2; grid-row: 2; margin: 0 16px 14px 8px !important; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@media (max-width: 480px) { .dwdc .pv2-cols .pw-onboard > .dwdc-card > .dwdc-mutp { display: none; } }
+/* Contacts inside Details: plain title (no bar), collapsed until clicked */
+.dwdc .pv2 .pv2-cols .dwdc-card .dwdc-pplin > .dwdc-cardh.sub { margin: 4px 0 0 !important; padding: 12px 0 !important; background: none !important; border: 0 !important; border-top: 1px solid #eef2f7 !important; }
+.dwdc .pv2 .pv2-cols .dwdc-pplin h3[data-ppltoggle] { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; }
+.dwdc .pv2 .pv2-cols .dwdc-pplin h3[data-ppltoggle] svg { transition: transform .15s ease; color: #6b7a90; }
+.dwdc .pv2 .pv2-cols .dwdc-pplin.open h3[data-ppltoggle] svg { transform: rotate(90deg); }
+.dwdc .pv2 .pv2-cols .dwdc-pplin h3 .dwdc-cnt { background: #e9eef5 !important; color: #0f2447 !important; border-radius: 10px; min-width: 20px; height: 20px; padding: 0 6px; font-size: 11px; display: inline-flex; align-items: center; justify-content: center; letter-spacing: 0; }
+.dwdc .pv2 .pv2-cols .dwdc-pplin:not(.open) > :not(.dwdc-cardh) { display: none !important; }
+.dwdc .pv2 .pv2-cols .dwdc-pplin.open > .dwdc-cardh.sub { margin-bottom: 8px !important; }
+/* Onboarding box: buttons centred with equal space above and below */
+.dwdc .pv2-cols .pw-onboard > .dwdc-card > .dwdc-cardh { margin-bottom: 0 !important; }
+.dwdc .pv2-cols .pw-onboard > .dwdc-card > .dwdc-obbtns { margin-top: 14px !important; margin-bottom: 14px !important; }
+.dwdc .pv2-cols .pw-onboard > .dwdc-card > .dwdc-mutp { margin-top: 14px !important; margin-bottom: 14px !important; }
+/* Request review: gold */
+.dwdc .dwdc-btn2.dwdc-revbtn { background: #F4C542 !important; border-color: #E2AE17 !important; color: #3D2B00 !important; }
+.dwdc .dwdc-btn2.dwdc-revbtn svg { color: #3D2B00 !important; }
+.dwdc .dwdc-btn2.dwdc-revbtn:hover { background: #EDB92A !important; border-color: #D29F0C !important; }
+/* Project page: Log payment green, Mark complete orange */
+.dwdc .pv2-acts .dwdc-btn[data-act="pay"] { background: #16a34a !important; border-color: #16a34a !important; color: #fff !important; }
+.dwdc .pv2-acts .dwdc-btn[data-act="pay"]:hover { background: #128a3e !important; border-color: #128a3e !important; }
+.dwdc .pv2-hacts .dwdc-btn2[data-complete] { background: #F7941D !important; border-color: #F7941D !important; color: #fff !important; }
+.dwdc .pv2-hacts .dwdc-btn2[data-complete]:hover { background: #E07F0A !important; border-color: #E07F0A !important; }
+/* Header buttons order: New … Request review, Mark complete last */
+.dwdc .pv2-hacts > .dwdc-ph-menu { order: -1; }
+.dwdc .pv2-hacts > .dwdc-revbtn { order: 9; }
+.dwdc .pv2-hacts > [data-complete] { order: 10; }
