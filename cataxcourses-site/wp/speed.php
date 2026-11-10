@@ -112,9 +112,50 @@ add_action( 'template_redirect', function () {
 		$html = preg_replace_callback( '#<video class="elementor-video" src="([^"]+)"([^>]*)>#', function ( $m ) {
 			return '<video class="elementor-video" data-ctc-src="' . $m[1] . '" preload="none"' . str_replace( array( ' preload="auto"', ' preload="metadata"' ), '', $m[2] ) . '>';
 		}, $html );
+		// Stylesheets from this site: print their contents into <head> instead of linking ~16 small files. The server speaks
+		// HTTP/1.1 (six downloads at a time), so those files held up the first paint by ~0.5-0.8 s even with a cached page.
+		$html = ctc_sp_inline_css( $html );
+		// Mailchimp site tracking (printed straight into the page, so the script filters below miss it): wait for the
+		// visitor's first interaction like the other tracking scripts. Its chain of ~10 scripts otherwise lands before
+		// the first paint on cached pages and PageSpeed counts all of it as blocking.
+		$html = str_replace( '<script id="mcjs">', '<script id="mcjs" type="ctc/delay">', $html );
 		return $html;
 	} );
 }, 1 );
+
+function ctc_sp_inline_css( $html ) {
+	$hp = strpos( $html, '</head>' );
+	if ( false === $hp ) return $html;
+	$head = substr( $html, 0, $hp );
+	if ( ! preg_match_all( '#<link\s[^>]*>\n?#i', $head, $links ) ) return $html;
+	$home = preg_quote( untrailingslashit( set_url_scheme( home_url(), 'https' ) ), '#' );
+	$budget = 300 * 1024; // raw bytes; anything beyond stays a normal link
+	foreach ( $links[0] as $tag ) {
+		if ( ! preg_match( '#rel=[\'"]stylesheet[\'"]#i', $tag ) || preg_match( '#\bonload=|\bdisabled\b#i', $tag ) ) continue;
+		if ( ! preg_match( '#href=[\'"](' . $home . '(/wp-(?:content|includes)/[^\'"?]+\.css))(?:\?[^\'"]*)?[\'"]#i', $tag, $m ) ) continue;
+		$media = preg_match( '#media=[\'"]([^\'"]+)[\'"]#i', $tag, $mm ) ? $mm[1] : 'all';
+		if ( ! in_array( $media, array( 'all', 'screen' ), true ) ) continue;
+		$file = ABSPATH . ltrim( $m[2], '/' );
+		$real = realpath( $file );
+		if ( ! $real || 0 !== strpos( $real, realpath( ABSPATH ) ) || ! is_readable( $real ) ) continue;
+		$css = file_get_contents( $real );
+		if ( false === $css || stripos( $css, '@import' ) !== false || strlen( $css ) > $budget ) continue;
+		$budget -= strlen( $css );
+		$base = dirname( $m[1] ) . '/';
+		$css = preg_replace_callback( '#url\(\s*([\'"]?)([^)\'"]+)\1\s*\)#i', function ( $u ) use ( $base ) {
+			$p = $u[2];
+			if ( preg_match( '#^(?:[a-z]+:|//|/|\#)#i', $p ) ) return $u[0];
+			$abs = $base . $p;
+			do { $abs = preg_replace( '#/[^/]+/\.\./#', '/', $abs, 1, $n ); } while ( $n );
+			$abs = str_replace( '/./', '/', $abs );
+			return 'url(' . $u[1] . $abs . $u[1] . ')';
+		}, $css );
+		$css = str_replace( '</style', '<\/style', $css );
+		$id = preg_match( '#id=[\'"]([^\'"]+)[\'"]#i', $tag, $im ) ? ' id="' . esc_attr( $im[1] ) . '-inline"' : '';
+		$head = str_replace( $tag, '<style' . $id . ( 'all' !== $media ? ' media="' . esc_attr( $media ) . '"' : '' ) . '>' . $css . "</style>\n", $head );
+	}
+	return $head . substr( $html, $hp );
+}
 
 function ctc_sp_webp_url( $url ) {
 	static $seen = array();
