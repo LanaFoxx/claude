@@ -2173,3 +2173,15 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 .dwdc .pv3-det .pv3-band { background: #eef2f7; }
 .dwdc .pv3-ppl .pv3-band { background: #fbeef0; }
 .dwdc .pv3-pay .pv3-band { background: #eaf6ec; }
+/* Get Reviews selection bar: clean white bar, neutral + navy buttons */
+.dwdc .dwdc-revbar { background: #fff !important; background-image: none !important; color: #0f2447 !important; border: 1px solid #cfd8e3 !important; border-radius: 14px !important; box-shadow: none !important; padding: 14px 18px !important; gap: 12px 16px; font-family: Poppins, sans-serif; }
+.dwdc .dwdc-revbar > div { color: #0f2447 !important; gap: 4px 10px; }
+.dwdc .dwdc-revbar > div b { display: inline-flex; align-items: center; justify-content: center; min-width: 28px; height: 28px; padding: 0 9px; border-radius: 14px; background: #e3f0ff; color: #1a5fb4 !important; font-size: 14px; font-weight: 700; }
+.dwdc .dwdc-revbar > div { font-size: 15px; font-weight: 600; }
+.dwdc .dwdc-revbar small { color: #4a5a73 !important; font-size: 13px; font-weight: 400; }
+.dwdc .dwdc-revbar .dwdc-revprev { margin-left: auto; display: inline-flex; align-items: center; height: 40px; padding: 0 16px; border: 1px solid #bfcad8; border-radius: 10px; background: #fff; color: #0f2447 !important; font-size: 13.5px; font-weight: 600; text-decoration: none !important; white-space: nowrap; }
+.dwdc .dwdc-revbar .dwdc-revprev:hover { background: #f3f6fa; }
+.dwdc .dwdc-revbar .dwdc-btn.coral { margin-left: 0 !important; height: 40px !important; padding: 0 18px !important; border-radius: 10px !important; background: #0f2447 !important; border-color: #0f2447 !important; color: #fff !important; font-size: 13.5px; box-shadow: none !important; display: inline-flex; align-items: center; gap: 8px; }
+.dwdc .dwdc-revbar .dwdc-btn.coral:hover { background: #1a3561 !important; }
+.dwdc .dwdc-revbar .dwdc-btn.coral[disabled] { opacity: 1 !important; background: #e9eef5 !important; border-color: #e3e8ef !important; color: #8a97aa !important; }
+@media (max-width: 760px) { .dwdc .dwdc-revbar .dwdc-revprev { margin-left: 0; justify-content: center; } }
