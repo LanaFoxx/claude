@@ -1834,7 +1834,9 @@
 		// markup review
 		var mem = em || '';
 		var mkBox = card('pv3-mk', band('Markup review', null, '<a class="pv3-btn" href="' + esc(DWDC.markupHome) + '" target="_blank" rel="noopener">Open Markup ' + svg(I.ext, 14) + '</a>'),
-			'<ol class="pv3-ol"><li>Open Markup and add the staging link.</li><li>Paste the review link Markup gives you below.</li><li>Email it to the client.</li></ol>'
+			(DWDC.mkReady
+				? '<div class="pv3-mkauto"><label class="pv3-lab">Staging site URL</label><div class="pv3-row"><input data-mkurl type="url" placeholder="https://staging.example.com"><button type="button" class="pv3-btn pv3-btn-pri" data-mkcreate>' + svg(I.plus, 14) + (c.markup ? 'Create new link' : 'Create markup link') + '</button></div></div>'
+				: '<div class="pv3-mkauto"><label class="pv3-lab">Connect Markup once to create review links automatically</label><div class="pv3-row"><input data-mkkey type="password" placeholder="Markup API key"><button type="button" class="pv3-btn" data-mkkeysave>Connect</button></div><p class="pv3-mut">In Markup: Workspace settings → Developer Settings → create an API key, then paste it here. It’s saved on your server only.</p></div>')
 			+ '<form class="dwdc-markupf pv3-mkf"><label class="pv3-lab">Client’s Markup link</label><div class="pv3-row"><input name="markup" type="url" value="' + esc(c.markup) + '" placeholder="https://app.markup.io/…"><button class="pv3-btn">Save</button></div>'
 			+ (mem ? '' : '<label class="pv3-lab">Client’s email</label><div class="pv3-row"><input name="email" type="email" placeholder="Needed to send the link"></div>')
 			+ (c.markup ? '<div class="pv3-btns">' + '<a class="pv3-btn" href="' + esc(url(c.markup)) + '" target="_blank" rel="noopener">Open their link</a>' + sb('data-mksend', svg(I.send, 14) + 'Email link to client') + '</div>' : '')
@@ -2714,6 +2716,23 @@
 		if ((el = t.closest('[data-del-job]'))) {
 			var c = S.full[r.id], jobs = (c.jobs || []).slice(); jobs.splice(+el.getAttribute('data-del-job'), 1);
 			save(r.id, { jobs: jobs }); return;
+		}
+		if ((el = t.closest('[data-mkkeysave]'))) {
+			var kv = (document.querySelector('[data-mkkey]') || {}).value || '';
+			if (!kv.trim()) { toast('Paste your Markup API key first', true); return; }
+			el.disabled = true;
+			api('/markup-key', 'POST', { key: kv.trim() }).then(function () { DWDC.mkReady = true; render(); toast('Markup connected'); }).catch(function (er) { el.disabled = false; fail(er); });
+			return;
+		}
+		if ((el = t.closest('[data-mkcreate]'))) {
+			var su = ((document.querySelector('[data-mkurl]') || {}).value || '').trim();
+			if (!su) { toast('Paste the staging site URL first', true); return; }
+			if (!/^https?:\/\//i.test(su)) { su = 'https://' + su; }
+			var rid2 = route().id;
+			el.disabled = true; el.textContent = 'Creating…';
+			api('/contact/' + rid2 + '/markup-create', 'POST', { url: su }).then(function (x) { upsert(x); S.full[x.id] = x; render(); toast('Markup link created'); })
+				.catch(function (er) { if (er.data && er.data.needs_key) { DWDC.mkReady = false; render(); } else { el.disabled = false; el.textContent = 'Create markup link'; } fail(er); });
+			return;
 		}
 		if ((el = t.closest('[data-mksend]'))) {
 			var mf = el.closest('form'), md = {}; new FormData(mf).forEach(function (v, k) { md[k] = String(v).trim(); });

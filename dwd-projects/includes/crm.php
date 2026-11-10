@@ -1142,6 +1142,65 @@ add_action( 'rest_api_init', function () {
 	} ) );
 
 	// Email the client their Markup review link, in the site's branded email.
+	// Markup.io API: save the workspace API key, and create a review markup from a staging URL.
+	register_rest_route( $ns, '/crm/markup-key', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
+		$key = trim( (string) $r->get_param( 'key' ) );
+		if ( strlen( $key ) < 20 || preg_match( '/\s/', $key ) ) {
+			return new WP_Error( 'dwdc_key', 'That doesn’t look like a Markup API key.', array( 'status' => 400 ) );
+		}
+		update_option( 'dwdc_markup_key', $key, false );
+		return array( 'ok' => true );
+	} ) );
+	register_rest_route( $ns, '/crm/contact/(?P<id>\d+)/markup-create', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
+		$id  = (int) $r['id'];
+		$key = (string) get_option( 'dwdc_markup_key', '' );
+		if ( ! $key ) {
+			return new WP_Error( 'dwdc_nokey', 'Add your Markup API key first.', array( 'status' => 400, 'needs_key' => true ) );
+		}
+		$site = esc_url_raw( trim( (string) $r->get_param( 'url' ) ) );
+		if ( ! $site || ! preg_match( '#^https?://#i', $site ) ) {
+			return new WP_Error( 'dwdc_url', 'Paste the full staging URL (starting with https://).', array( 'status' => 400 ) );
+		}
+		$call = function ( $method, $path, $body = null ) use ( $key ) {
+			$res = wp_remote_request( 'https://api.markup.io/api/v2' . $path, array(
+				'method'  => $method,
+				'timeout' => 45,
+				'headers' => array( 'Authorization' => 'Bearer ' . $key, 'Markup-API-Version' => '2023-02-22', 'Content-Type' => 'application/json' ),
+				'body'    => null === $body ? null : wp_json_encode( $body ),
+			) );
+			if ( is_wp_error( $res ) ) {
+				return new WP_Error( 'dwdc_mk', 'Couldn’t reach Markup: ' . $res->get_error_message(), array( 'status' => 502 ) );
+			}
+			$code = wp_remote_retrieve_response_code( $res );
+			$json = json_decode( wp_remote_retrieve_body( $res ), true );
+			if ( 401 === $code || 403 === $code ) {
+				return new WP_Error( 'dwdc_mk', 'Markup rejected the API key. Paste a new one.', array( 'status' => 400, 'needs_key' => true ) );
+			}
+			if ( $code < 200 || $code >= 300 ) {
+				$msg = is_array( $json ) ? ( $json['message'] ?? ( $json['error']['message'] ?? '' ) ) : '';
+				return new WP_Error( 'dwdc_mk', 'Markup error (' . $code . ')' . ( $msg ? ': ' . ( is_string( $msg ) ? $msg : wp_json_encode( $msg ) ) : '' ), array( 'status' => 502 ) );
+			}
+			return is_array( $json ) ? ( $json['data'] ?? $json ) : array();
+		};
+		$mk = $call( 'POST', '/markups/url', array( 'url' => $site, 'name' => get_post_field( 'post_title', $id ) ) );
+		if ( is_wp_error( $mk ) ) {
+			return $mk;
+		}
+		$share = ! empty( $mk['id'] ) ? $call( 'GET', '/markups/' . rawurlencode( $mk['id'] ) . '/share-link' ) : null;
+		$link  = ( is_array( $share ) && ! empty( $share['url'] ) ) ? $share['url'] : (string) ( $mk['markupUrl'] ?? '' );
+		if ( ! $link ) {
+			return new WP_Error( 'dwdc_mk', 'Markup created it but didn’t return a link. Open Markup to copy it.', array( 'status' => 502 ) );
+		}
+		update_post_meta( $id, '_dwdc_markup', esc_url_raw( $link ) );
+		update_post_meta( $id, '_dwdc_markup_app', esc_url_raw( (string) ( $mk['markupUrl'] ?? '' ) ) );
+		update_post_meta( $id, '_dwdc_markup_sent', '' );
+		$notes   = get_post_meta( $id, '_dwdc_notes', true );
+		$notes   = is_array( $notes ) ? $notes : array();
+		$notes[] = array( 'date' => current_time( 'mysql', true ), 'text' => 'Markup review created for ' . $site . '.' );
+		update_post_meta( $id, '_dwdc_notes', $notes );
+		wp_update_post( array( 'ID' => $id ) );
+		return dwdc_contact( $id, true );
+	} ) );
 	register_rest_route( $ns, '/crm/contact/(?P<id>\d+)/markup-email', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
 		$id   = (int) $r['id'];
 		$link = esc_url_raw( trim( (string) ( $r->get_param( 'markup' ) ?: get_post_meta( $id, '_dwdc_markup', true ) ) ) );
@@ -1260,6 +1319,7 @@ function dwdc_vars( $mode = 'admin' ) {
 	$v['mode']    = $mode;
 	$v['ver']     = DWDP_VERSION;
 	$v['aiReady'] = function_exists( 'dwdc_ai_key' ) && '' !== dwdc_ai_key();
+	$v['mkReady'] = '' !== (string) get_option( 'dwdc_markup_key', '' );
 	$v['upLast']  = '';
 	if ( function_exists( 'dwds_files' ) ) {
 		foreach ( dwds_files() as $f ) {
