@@ -122,7 +122,33 @@ body.dr-menu-open{overflow:hidden}
 .drf1:focus-visible,.drf1:focus{outline:2px solid #24394A !important}
 .drf2:focus-visible,.drf2:focus{outline:2px solid #24394A !important;outline-offset:2px !important}
 
-/* Global scale: the design reads small at desktop widths, so scale every element proportionally. */
-.dr-site .dr-header,.dr-site #dr-main,.dr-site .dr-footer,.dr-site .dr-bottombar,.dr-site .dr-menu{zoom:1.06}
-@media (min-width:1280px){.dr-site .dr-header,.dr-site #dr-main,.dr-site .dr-footer{zoom:1.15}}
-@media (min-width:1700px){.dr-site .dr-header,.dr-site #dr-main,.dr-site .dr-footer{zoom:1.25}}
+/* Global scale: the design reads small at desktop widths. Content and footer scale proportionally;
+   the sticky header is sized explicitly (zoom on a sticky element mis-offsets it under the admin bar). */
+.dr-site #dr-main,.dr-site .dr-footer,.dr-site .dr-bottombar,.dr-site .dr-menu{zoom:1.06}
+@media (min-width:1280px){.dr-site #dr-main,.dr-site .dr-footer{zoom:1.15}}
+@media (min-width:1700px){.dr-site #dr-main,.dr-site .dr-footer{zoom:1.25}}
+@media (min-width:1060px){
+  .dr-utility-in,.dr-header .dr-wrap{max-width:1272px;padding-left:42px;padding-right:42px}
+  .dr-utility-in{font-size:14px}
+  .dr-wordmark{font-size:21px}.dr-descriptor{font-size:11px}
+  .dr-nav{gap:20px}.dr-nav>a:not(.dr-btn){font-size:16px}
+  .dr-header .dr-btn-sm{min-height:48px;font-size:16px;padding:0 20px}
+}
+@media (min-width:1280px){
+  .dr-utility-in,.dr-header .dr-wrap{max-width:1380px;padding-left:46px;padding-right:46px}
+  .dr-utility-in{font-size:15px;padding-top:8px;padding-bottom:8px}
+  .dr-hd-row{padding:16px 0}
+  .dr-lockup img{width:78px;height:46px}
+  .dr-wordmark{font-size:23px}.dr-descriptor{font-size:12px}
+  .dr-nav{gap:26px}.dr-nav>a:not(.dr-btn){font-size:17px}
+  .dr-header .dr-btn-sm{min-height:52px;font-size:17px;padding:0 24px}
+}
+@media (min-width:1700px){
+  .dr-utility-in,.dr-header .dr-wrap{max-width:1500px;padding-left:50px;padding-right:50px}
+  .dr-utility-in{font-size:16px}
+  .dr-lockup img{width:85px;height:50px}
+  .dr-wordmark{font-size:25px}.dr-descriptor{font-size:13px}
+  .dr-nav{gap:30px}.dr-nav>a:not(.dr-btn){font-size:18px}
+  .dr-header .dr-btn-sm{min-height:56px;font-size:18px;padding:0 26px}
+}
+@media (max-width:1059px){.dr-hd-mobile .dr-wordmark{font-size:18px}.dr-hd-mobile .dr-descriptor{font-size:10px}}

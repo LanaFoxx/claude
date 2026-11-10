@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Denninger Resolutions Site
  * Description: Design system, header/footer, page template, forms (inquiry, booking request, payment reference) and SEO for the Denninger Resolutions website.
- * Version: 1.0.1
+ * Version: 1.0.2
  * Author: Dream Web Digital
  * Requires at least: 6.2
  * Requires PHP: 7.4
@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DR_SITE_VER', '1.0.1' );
+define( 'DR_SITE_VER', '1.0.2' );
 define( 'DR_SITE_DIR', plugin_dir_path( __FILE__ ) );
 define( 'DR_SITE_URL', plugin_dir_url( __FILE__ ) );
 define( 'DR_TEMPLATE', 'dr-full-width.php' );
