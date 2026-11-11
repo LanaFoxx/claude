@@ -1268,16 +1268,23 @@
 		M.list.forEach(function (m) { var d = new Date(m.ts * 1000); m.date = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); m.time = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }); });
 		M.today = tdy;
 		var today = M.list.filter(function (m) { return m.date === M.today; }), later = M.list.filter(function (m) { return m.date > M.today; });
+		var tm = new Date(lt.getFullYear(), lt.getMonth(), lt.getDate() + 1), tmd = tm.getFullYear() + '-' + ('0' + (tm.getMonth() + 1)).slice(-2) + '-' + ('0' + tm.getDate()).slice(-2);
+		var tomorrow = later.filter(function (m) { return m.date === tmd; });
 		var left = today.filter(function (m) { return m.te > now; }), next = left[0];
+		if (!left.length && tomorrow.length) { // nothing left today: show tomorrow's calls
+			return '<section class="dwdc-meet"><div class="dwdc-meet-h"><span class="dwdc-meet-ic"><strong>' + tomorrow.length + '</strong></span><div><b>' + greet + ', Michael. ' + (today.length ? 'All done for today. ' : 'No more meetings today. ') + 'Tomorrow you have ' + tomorrow.length + ' meeting' + (tomorrow.length === 1 ? '' : 's') + '.</b><small>First: ' + esc(tomorrow[0].who || tomorrow[0].title) + ' at ' + esc(tomorrow[0].time) + '</small></div>'
+				+ (M.fresh ? '' : '<button type="button" class="dwdc-btn2 sm" data-meetconnect>Inbox not connected: connect Google</button>') + '</div>'
+				+ '<p class="dwdc-mt-day">Tomorrow</p><div class="dwdc-mt-list">' + tomorrow.map(function (m) { return item(m); }).join('') + '</div></section>';
+		}
 		if (!left.length) { // no meetings today, or they're all done: no box (unless the inbox isn't connected)
 			return M.fresh ? '' : '<section class="dwdc-meet off slim"><div class="dwdc-meet-h"><span class="dwdc-meet-ic">' + ic('mail', 18) + '</span><div><b>Google inbox not connected' + (M.at ? ' · last update ' + esc(fmt(String(M.at).slice(0, 10))) : '') + '</b><small>Booked calls, Upwork invites and client messages aren’t coming in automatically.</small></div><button type="button" class="dwdc-btn sm" data-meetconnect>Connect Google</button></div></section>';
 		}
 		var until = function (m) { var d = Math.round((m.ts - now) / 60); return m.ts <= now ? 'Happening now' : d < 60 ? 'in ' + d + ' min' : d < 600 ? 'in ' + Math.floor(d / 60) + ' h' + (d % 60 ? ' ' + d % 60 + ' min' : '') : ''; };
-		var item = function (m) {
+		function item(m) {
 			var past = m.te <= now, live = m.ts <= now && !past, isNext = m === next;
 			return '<div class="dwdc-mt' + (past ? ' past' : '') + (isNext ? ' next' : '') + '"><span class="dwdc-mt-time">' + esc(m.time) + '</span><span class="dwdc-mt-who"><b>' + esc(m.who || m.title) + '</b><small>' + esc([m.kind, m.source && m.source !== m.kind ? 'via ' + m.source : '', m.about].filter(Boolean).join(' · ')) + '</small></span>'
 				+ (past ? '<span class="dwdc-mt-done">Done</span>' : (isNext || live ? '<span class="dwdc-mt-in">' + until(m) + '</span>' : '') + (m.link ? '<a class="dwdc-btn sm' + (isNext || live ? '' : ' ghost') + '" href="' + esc(m.link) + '" target="_blank" rel="noopener">Join</a>' : '')) + '</div>';
-		};
+		}
 		var head = today.length
 			? '<b>' + greet + ', Michael. You have ' + today.length + ' meeting' + (today.length === 1 ? '' : 's') + ' today.</b><small>' + (next ? 'Next: ' + esc(next.who || next.title) + ' at ' + esc(next.time) + (until(next) ? ' (' + until(next) + ')' : '') : 'All done for today.') + '</small>'
 			: '<b>' + greet + ', Michael. No meetings today.</b><small>' + (later[0] ? 'Next: ' + esc(later[0].who || later[0].title) + ' on ' + fmt(later[0].date) + ' at ' + esc(later[0].time) : 'Nothing booked in the next two weeks.') + '</small>';
@@ -1285,7 +1292,8 @@
 		return '<section class="dwdc-meet"><div class="dwdc-meet-h"><span class="dwdc-meet-ic"><strong>' + today.length + '</strong></span><div>' + head + '</div>'
 			+ (stale ? '<button type="button" class="dwdc-btn2 sm" data-meetconnect>Inbox not connected: connect Google</button>' : '') + '</div>'
 			+ (today.length ? '<div class="dwdc-mt-list">' + today.map(item).join('') + '</div>' : '')
-			+ (later.length ? '<p class="dwdc-mt-later">Coming up: ' + later.slice(0, 4).map(function (m) { return '<span>' + esc(new Date(m.date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short' })) + ' ' + esc(m.time) + ' · ' + esc(m.who || m.title) + '</span>'; }).join('') + '</p>' : '')
+			+ (tomorrow.length ? '<p class="dwdc-mt-day">Tomorrow</p><div class="dwdc-mt-list">' + tomorrow.map(function (m) { return item(m); }).join('') + '</div>' : '')
+			+ (later.filter(function (m) { return m.date > tmd; }).length ? '<p class="dwdc-mt-later">Coming up: ' + later.filter(function (m) { return m.date > tmd; }).slice(0, 4).map(function (m) { return '<span>' + esc(new Date(m.date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short' })) + ' ' + esc(m.time) + ' · ' + esc(m.who || m.title) + '</span>'; }).join('') + '</p>' : '')
 			+ '</section>';
 	}
 	/* ---------- Home ---------- */
