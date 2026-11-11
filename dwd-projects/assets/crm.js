@@ -1882,7 +1882,13 @@
 			+ (full && notes.length ? '<button type="button" class="pv3-lnk pv3-ntog" data-notestog="' + c.id + '">' + ((S.notesOpen || {})[c.id] ? 'Hide notes' : 'View all notes (' + notes.length + ')') + '</button>' : '')
 			+ (full ? ((S.notesOpen || {})[c.id] ? notes : []).map(function (n) { var dt = d(n.date); return '<div class="pv3-note"><p>' + esc(n.text).replace(/\n/g, '<br>') + '</p><time>' + (dt ? dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' · ' + dt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : '') + '</time></div>'; }).join('') : '<p class="pv3-mut">Loading…</p>'));
 		// onboarding
-		var obl = full ? onboardEntries(c) : [], obn = obl.reduce(function (s2, e) { return s2 + (e.fields || []).length; }, 0);
+		var obl = full ? (c.files || []).filter(function (e) { return /onboard/i.test(e.form || ''); }) : [], obn = obl.reduce(function (s2, e) { return s2 + (e.fields || []).length; }, 0);
+		// What they filled out on a website form (Quote, Contact…): shown in full, above the to-dos.
+		var fe = full ? (c.files || []).filter(function (e) { return !/onboard/i.test(e.form || '') && (e.fields || []).length; })[0] : null;
+		var fval = function (v) { v = String(v == null ? '' : v); return /^\S+@\S+\.\S+$/.test(v) ? '<a href="mailto:' + esc(v) + '">' + esc(v) + '</a>' : /^[\d\s().+-]{7,}$/.test(v) ? '<a href="tel:' + esc(v.replace(/[^\d+]/g, '')) + '">' + esc(v) + '</a>' : /^https?:\/\//i.test(v) ? '<a href="' + esc(v) + '" target="_blank" rel="noopener">' + esc(v) + '</a>' : esc(v).replace(/\n/g, '<br>'); };
+		var formBox = fe ? card('pv3-form', band(esc(fe.form || 'Website form') + ' form', null, '<span class="pv3-hmeta">Submitted ' + fmt(fe.date) + '</span>'),
+			fe.fields.filter(function (f) { return String(f.value || '').trim() !== ''; }).map(function (f) { return '<div class="pv3-dr"><span>' + esc(f.label || f.id) + '</span><div>' + fval(f.value) + '</div></div>'; }).join('')
+			+ (st === 'leads' || !obl.length ? '<div class="pv3-btns pv3-formacts">' + sb('data-leadinvite="' + c.id + '"', svg(I.send, 14) + (c.stage === 'onboarding' ? 'Resend onboarding form' : 'Send onboarding form'), 'primary') + '</div>' : '')) : '';
 		var obBox = obl.length ? card('pv3-ob', band('Onboarding', obn + ' answers', '<span class="pv3-hmeta">' + esc(obl[0].form || 'Form') + ' · submitted ' + fmt(obl[0].date) + '</span>'),
 			'<div class="pv3-btns">' + sb('data-viewob', svg(I.list, 15) + 'View answers') + sb('data-copyob', svg(I.copy, 15) + 'Copy answers') + '</div>') : '';
 		// markup review
@@ -1925,7 +1931,7 @@
 			+ (price ? '<p class="pv3-pfoot">' + money(paidSum) + ' of ' + money(price) + ' paid · ' + money(ow) + ' remaining</p>' : ''));
 		var hosting = num(c.hosting) ? hostCard(c) : '';
 		return '<div class="pv3">' + head + money3
-			+ '<div class="pv3-cols"><div class="pv3-col">' + todos + notesBox + obBox + mkBox + '</div><div class="pv3-col">' + details + (S.edit ? peopleCard(c) : contacts) + (st === 'leads' ? '' : paysBox) + hosting + '</div></div></div>';
+			+ '<div class="pv3-cols"><div class="pv3-col">' + formBox + todos + notesBox + obBox + mkBox + '</div><div class="pv3-col">' + details + (S.edit ? peopleCard(c) : contacts) + (st === 'leads' ? '' : paysBox) + hosting + '</div></div></div>';
 	}
 	// Onboarding answers as plain text, ready to paste into Claude.
 	function onboardEntries(c) {
