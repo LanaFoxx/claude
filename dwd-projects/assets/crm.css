@@ -2381,3 +2381,7 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 .dwdc .dwdc-mtl-u { flex: none; font-size: 12.5px; font-weight: 600; color: #1a73e8; }
 .dwdc .dwdc-mtl-j { flex: none; padding: 5px 12px; border-radius: 8px; background: #0f2447; color: #fff !important; font-size: 12.5px; font-weight: 600; text-decoration: none; }
 @media (max-width: 600px) { .dwdc .dwdc-mtl-r { gap: 8px; padding: 9px 12px; font-size: 13.5px; } .dwdc .dwdc-mtl-w em { display: none; } }
+.dwdc a.dwdc-mtl-r { text-decoration: none; color: #0f2447; }
+.dwdc .dwdc-mtl-r.go { cursor: pointer; }
+.dwdc .dwdc-mtl-r.go:hover { background: #f5f9fd; }
+.dwdc .dwdc-mtl-j.ghost { background: #fff; color: #0f2447 !important; border: 1px solid #cfd8e3; }

@@ -1283,10 +1283,19 @@
 		if (!list.length) { return ''; }
 		var name = function (m) { var w = m.who && m.who !== m.title ? m.who : (m.title.match(/\bwith\s+([A-Z][\w'-]+(?:\s+[A-Z][\w'-]*\.?)?)/) || [])[1]; return w || m.title; };
 		var until = function (m) { var d = Math.round((m.ts - now) / 60); return day !== 'Today' ? '' : m.ts <= now ? 'now' : d < 60 ? 'in ' + d + ' min' : d < 600 ? 'in ' + Math.floor(d / 60) + 'h' + (d % 60 ? ' ' + d % 60 + 'm' : '') : ''; };
+		// Tapping a meeting opens its link (Zoom, Meet, Upwork); a call with no link opens that person's lead or project.
+		var whose = function (m) {
+			var em = (m.guests || []).map(function (g) { return String(g).toLowerCase(); }), first = String(name(m)).split(' ')[0].toLowerCase();
+			var open = S.contacts.filter(function (c) { return c && ['leads', 'active', 'hold', 'limbo'].indexOf(c.list) > -1; });
+			var hit = open.filter(function (c) { return c.email && em.indexOf(String(c.email).toLowerCase()) > -1; })[0];
+			if (!hit && first.length > 2) { var ps = open.filter(function (c) { return String(c.person || '').split(' ')[0].toLowerCase() === first; }); hit = ps.length === 1 ? ps[0] : null; }
+			return hit;
+		};
 		return '<section class="dwdc-mtl">' + list.map(function (m, i) {
-			var u = until(m);
-			return '<div class="dwdc-mtl-r' + (i === 0 && day === 'Today' ? ' next' : '') + '"><b class="dwdc-mtl-d">' + day + '</b><span class="dwdc-mtl-t">' + esc(m.time) + '</span><span class="dwdc-mtl-w" title="' + esc(m.title) + '">' + esc(name(m)) + (m.kind && m.kind !== 'Meeting' ? ' <em>· ' + esc(m.kind) + '</em>' : '') + '</span>'
-				+ (u ? '<span class="dwdc-mtl-u">' + u + '</span>' : '') + (m.link ? '<a class="dwdc-mtl-j" href="' + esc(m.link) + '" target="_blank" rel="noopener">Join</a>' : '') + '</div>';
+			var u = until(m), who = m.link ? null : whose(m), href = m.link || (who ? '#client/' + who.id : '');
+			var tag = href ? 'a href="' + esc(href) + '"' + (m.link ? ' target="_blank" rel="noopener"' : '') : 'div';
+			return '<' + tag + ' class="dwdc-mtl-r' + (href ? ' go' : '') + (i === 0 && day === 'Today' ? ' next' : '') + '" title="' + esc(m.title) + '"><b class="dwdc-mtl-d">' + day + '</b><span class="dwdc-mtl-t">' + esc(m.time) + '</span><span class="dwdc-mtl-w" title="' + esc(m.title) + '">' + esc(name(m)) + (m.kind && m.kind !== 'Meeting' ? ' <em>· ' + esc(m.kind) + '</em>' : '') + '</span>'
+				+ (u ? '<span class="dwdc-mtl-u">' + u + '</span>' : '') + (m.link ? '<span class="dwdc-mtl-j">Join</span>' : (who ? '<span class="dwdc-mtl-j ghost">Open</span>' : '')) + '</' + (href ? 'a' : 'div') + '>';
 		}).join('') + '</section>';
 	}
 	/* ---------- Home ---------- */
