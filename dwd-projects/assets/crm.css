@@ -2334,3 +2334,9 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 @media (max-width: 768px) { .dwdc .dwdc-ph-search kbd { display: none !important; } }
 @media (max-width: 768px) { .dwdc .dwdc-conn .dwdc-kpis.k3 { margin-bottom: 10px !important; } }
 .dwdc .dwdc-mt-day { margin: 10px 0 4px; font: 700 11.5px Poppins, sans-serif; letter-spacing: .08em; text-transform: uppercase; color: #8C9AAE; }
+/* To-do card never wider than its column (long one-line summaries cut off with … instead) */
+.dwdc .cd-todo .dwdc-todos { min-width: 0; }
+.dwdc .cd-todo, .dwdc .cd-todo .dwdc-dbody, .dwdc .dwdc-tgrp, .dwdc .dwdc-tgrp-h, .dwdc .cd-todo .dwdc-todo { min-width: 0; max-width: 100%; }
+.dwdc .cd-todo { overflow: hidden; }
+.dwdc .cd-todo .dwdc-tt b, .dwdc .cd-todo .dwdc-tt small { overflow-wrap: anywhere; }
+.dwdc .dwdc-tgrp-h .dwdc-tt b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
