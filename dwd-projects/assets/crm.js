@@ -461,11 +461,19 @@
 			// One to-do list, in order: Today → Overdue → To-do (no date) → Upcoming. Filter by category pill.
 			var ftag = S.pTag || '', okTag = function (x) { return !ftag || tagOf(x) === ftag; };
 			var trow = function (x, showDate) { var tg = tagOf(x); return row(x, showDate).replace('</b>', '</b>' + (tg ? '<em class="dwdc-ptag t-' + tg + '">' + PTAGS[tg] + '</em>' : '')); };
+			// Sections: Overdue → Today → Tomorrow → This week (to Sunday) → This month → No date.
+			var isoOf = function (d) { return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); };
+			var t0 = new Date(+today.slice(0, 4), +today.slice(5, 7) - 1, +today.slice(8, 10));
+			var tmr = isoOf(new Date(t0.getFullYear(), t0.getMonth(), t0.getDate() + 1));
+			var wkEnd = isoOf(new Date(t0.getFullYear(), t0.getMonth(), t0.getDate() + (7 - (t0.getDay() || 7))));
+			var byDue = function (a, b) { return a.due < b.due ? -1 : a.due > b.due ? 1 : tmin(a) - tmin(b); };
 			var secs = [
-				['Today', todayT.filter(function (x) { return x.due === today; }), false],
 				['Overdue', late.slice().sort(function (a, b) { return a.due < b.due ? 1 : -1; }), true],
-				['To-do', openT.filter(function (x) { return !x.due && !x.gevent; }), false],
-				['Later this month', openT.filter(function (x) { return x.due > today && x.due.slice(0, 7) === today.slice(0, 7); }).sort(function (a, b) { return a.due < b.due ? -1 : a.due > b.due ? 1 : tmin(a) - tmin(b); }).slice(0, 80), true]
+				['Today', todayT.filter(function (x) { return x.due === today; }), false],
+				['Tomorrow', openT.filter(function (x) { return x.due === tmr; }).sort(byDue), false],
+				['This week', openT.filter(function (x) { return x.due > tmr && x.due <= wkEnd; }).sort(byDue), true],
+				['This month', openT.filter(function (x) { return x.due > wkEnd && x.due > tmr && x.due.slice(0, 7) === today.slice(0, 7); }).sort(byDue).slice(0, 80), true],
+				['No date', openT.filter(function (x) { return !x.due && !x.gevent; }), false]
 			];
 			var allOpen = openT.filter(function (x) { return !x.gevent; });
 			var pills = '<div class="dwdc-ptagf"><button type="button" class="' + (!ftag ? 'on' : '') + '" data-ptagf="">All <b>' + allOpen.length + '</b></button>' + Object.keys(PTAGS).map(function (k) { var n = allOpen.filter(function (x) { return tagOf(x) === k; }).length; return n || ftag === k ? '<button type="button" class="t-' + k + (ftag === k ? ' on' : '') + '" data-ptagf="' + k + '">' + PTAGS[k] + ' <b>' + n + '</b></button>' : ''; }).join('') + '</div>';
