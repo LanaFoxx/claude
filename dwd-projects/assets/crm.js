@@ -1362,7 +1362,7 @@
 				var pd = pendDeposit(owing);
 				var G = adsG, K = adsK || {};
 				var gTile = G
-					? tile('data-adsmodal', L('Google Ads · This week', 'Google Ads · Week'), money(G.week.cost), G.week.clicks + ' clicks · ' + Math.round(G.week.conv) + ' ' + L('conversion' + (Math.round(G.week.conv) === 1 ? '' : 's'), 'conv.') + ' · ' + money(G.month.cost) + ' this month')
+					? (function () { var d0 = (G.daily || [])[0] || G.today || { cost: 0, clicks: 0 }, d1 = (G.daily || [])[1] || { cost: 0, clicks: 0 }; return tile('data-adsmodal', 'Google Ads · Today', money(d0.cost), d0.clicks + ' clicks · ' + L('Yesterday', 'Yest.') + ' ' + money(d1.cost) + ' (' + d1.clicks + ' clicks) · ' + money(G.week.cost) + ' this week'); })()
 					: tile('data-adsconnect', 'Google Ads', '—', 'Not connected · connect →');
 				return '<div class="money-grid">'
 					+ tile('data-owed', 'Owed to you', money(owed(owing)), (pd ? money(pd) + ' pending deposit · ' : '') + owing.length + ' project' + (owing.length === 1 ? '' : 's') + ' · see list →', 'tile--hero')
@@ -2186,12 +2186,15 @@
 		if (m.type === 'ads') {
 			var G2 = (S.ads || {}).google;
 			if (!G2) { S.modal = { type: 'adsconnect' }; return modal(); }
-			var per = [['Today', G2.today], ['This week', G2.week], ['Last week', G2.lastweek], ['This month', G2.month], ['Last month', G2.lastmonth], ['Last 30 days', G2.last30]];
+			var dayL = function (d, i) { return i === 0 ? 'Today' : i === 1 ? 'Yesterday' : new Date(d + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }); };
+			var days = (G2.daily || []).map(function (x, i) { return [dayL(x.date, i), x]; });
+			var per = [['This week', G2.week], ['Last week', G2.lastweek], ['This month', G2.month], ['Last month', G2.lastmonth], ['Last 30 days', G2.last30]];
 			var prow = function (l, x) { return '<div class="dwdc-arow"><span>' + l + '</span><strong>' + money(x.cost) + '</strong><em>' + x.clicks.toLocaleString() + '</em><em>' + (x.impr ? (x.clicks / x.impr * 100).toFixed(1) + '%' : '—') + '</em><em>' + (x.clicks ? money(x.cost / x.clicks) : '—') + '</em><em>' + (+x.conv).toFixed(x.conv % 1 ? 1 : 0) + '</em><em>' + (x.conv ? money(x.cost / x.conv) : '—') + '</em></div>'; };
 			var ahead = '<div class="dwdc-arow head"><span></span><span>Spend</span><span>Clicks</span><span>CTR</span><span>Avg CPC</span><span>Conv.</span><span>Per conv.</span></div>';
 			var camps = (G2.campaigns || []).slice().sort(function (a, b) { return b.cost - a.cost; });
 			var crow = function (c) { return '<div class="dwdc-arow"><span><b>' + esc(c.name) + '</b><small>' + esc(String(c.status).toLowerCase()) + (c.budget ? ' · ' + money(c.budget) + '/day' : '') + '</small></span><strong>' + money(c.cost) + '</strong><em>' + c.clicks.toLocaleString() + '</em><em>' + (c.impr ? (c.clicks / c.impr * 100).toFixed(1) + '%' : '—') + '</em><em>' + (c.clicks ? money(c.cost / c.clicks) : '—') + '</em><em>' + (+c.conv).toFixed(c.conv % 1 ? 1 : 0) + '</em><em>' + (c.conv ? money(c.cost / c.conv) : '—') + '</em></div>'; };
 			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide">' + head('Advertising', 'Google', 'Ads')
+				+ (days.length ? '<h3 class="dwdc-ch3">Last 7 days</h3>' + ahead + days.map(function (x) { return prow(x[0], x[1]); }).join('') + '<h3 class="dwdc-ch3">Totals</h3>' : '')
 				+ ahead + per.map(function (x) { return prow(x[0], x[1]); }).join('')
 				+ '<h3 class="dwdc-ch3">Campaigns this month</h3>' + (camps.length ? ahead.replace('<span></span>', '<span>Campaign</span>') + camps.map(crow).join('') : emptyRow('No campaign activity this month.'))
 				+ '<p class="dwdc-wins-foot">' + esc(G2.account || 'Google Ads') + ' · updated ' + fmt(String(G2.at).slice(0, 10)) + ' ' + String(G2.at).slice(11, 16) + '. Conversions are the leads, calls and bookings the website reports to Google Ads.</p></div>';

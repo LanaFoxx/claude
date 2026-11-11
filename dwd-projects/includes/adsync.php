@@ -94,7 +94,7 @@ add_action( 'rest_api_init', function () {
 
 /** Totals for the Advertising box: Google Ads by period, campaigns, ad leads, and Connects by week/month. */
 function dwdads_summary() {
-	$today = current_time( 'Y-m-d' );
+	$today = wp_date( 'Y-m-d', null, new DateTimeZone( 'America/New_York' ) ); // Mike's day (the server runs on UTC)
 	$ts    = strtotime( $today );
 	$wk0   = gmdate( 'Y-m-d', $ts - ( (int) gmdate( 'N', $ts ) - 1 ) * DAY_IN_SECONDS ); // Monday
 	$wk1   = gmdate( 'Y-m-d', strtotime( $wk0 ) - 7 * DAY_IN_SECONDS );
@@ -124,6 +124,13 @@ function dwdads_summary() {
 			$t['from'] = $r[0];
 			$t['to']   = $r[1];
 			$g[ $k ]   = $t;
+		}
+		// Day by day, today and the 6 days before.
+		$g['daily'] = array();
+		for ( $i = 0; $i < 7; $i++ ) {
+			$d             = gmdate( 'Y-m-d', $ts - $i * DAY_IN_SECONDS );
+			$x             = (array) ( $data['days'][ $d ] ?? array() );
+			$g['daily'][]  = array( 'date' => $d, 'cost' => (float) ( $x['cost'] ?? 0 ), 'clicks' => (float) ( $x['clicks'] ?? 0 ), 'impr' => (float) ( $x['impr'] ?? 0 ), 'conv' => (float) ( $x['conv'] ?? 0 ) );
 		}
 	}
 	// Leads that came from an ad click this month and last (filed by the site's forms).
