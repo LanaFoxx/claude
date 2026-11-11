@@ -2346,3 +2346,10 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 .dwdc .dwdc-c2-d.today .dwdc-c2-n span { min-width: 0; overflow: hidden; text-overflow: clip; white-space: nowrap; font-size: 11px; letter-spacing: .08em; }
 .dwdc .dwdc-phcal .dwdc-c2-d.today .dwdc-c2-n span { display: none; }
 @media (max-width: 600px) { .dwdc .dwdc-c2-d.today .dwdc-c2-n b { width: 22px !important; height: 22px !important; min-width: 22px; font-size: 11px !important; } }
+/* Click-to-sort Price headers */
+.dwdc .dwdc-sorth { display: inline-flex; align-items: center; gap: 4px; padding: 0; border: 0; background: none; font: inherit; color: inherit; letter-spacing: inherit; text-transform: inherit; cursor: pointer; }
+.dwdc .dwdc-sorth i { font-style: normal; font-size: 11px; opacity: .55; }
+.dwdc .dwdc-sorth:hover i, .dwdc .dwdc-sorth.on i { opacity: 1; }
+.dwdc .dwdc-sorth.on { color: #13A6EE; }
+.dwdc .cd-leadsb > .dwdc-dhead .dwdc-sorth { margin-left: auto; margin-right: 14px; color: #fff; font: 600 13px Poppins, sans-serif; }
+.dwdc .cd-leadsb > .dwdc-dhead .dwdc-sorth.on { color: #fff; text-decoration: underline; }

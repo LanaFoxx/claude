@@ -9,6 +9,7 @@
 	if (!app || !window.DWDC) { return; }
 
 	var S = { contacts: [], tasks: [], clients: [], full: {}, q: '', leadFilter: 'all', back: 'home', modal: null, edit: false, more: {}, cardTodo: 0, prev: '' };
+	try { S.psort = JSON.parse(localStorage.getItem('dwdc-psort') || '{}') || {}; } catch (er) { S.psort = {}; }
 
 	/* ---------- helpers ---------- */
 	function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
@@ -126,6 +127,9 @@
 	function received(c) { return c.onboarded || c.last_entry_date || c.created; }
 	function openLeads() { return leadRows().filter(function (c) { var s = stageOf(c); return s !== 'lost' && s !== 'active'; }); }
 	// Lists Mike reorders by dragging: saved ids first in his order, anything new on top.
+	// Price sort for the Active and Leads lists: click the Price header → high to low → low to high → back to your order.
+	function psort(key, list) { var d = (S.psort || {})[key]; if (!d) { return list; } return list.slice().sort(function (a, b) { var x = num(a.price) - num(b.price); return d === 'asc' ? x : -x; }); }
+	function phead(key, label) { var d = (S.psort || {})[key]; return '<button type="button" class="dwdc-sorth' + (d ? ' on' : '') + '" data-psort="' + key + '" title="Sort by price">' + label + ' <i>' + (d === 'asc' ? '↑' : d === 'desc' ? '↓' : '↕') + '</i></button>'; }
 	function inOrder(key, list) {
 		var ids = (S.order && S.order[key]) || [], pos = {};
 		ids.forEach(function (id, i) { pos[id] = i; });
@@ -1335,10 +1339,10 @@
 				+ '<a class="dwdc-frow" href="#leads"><span>Leads from Google Ads</span><b>' + (LD.month || 0) + ' <small class="dwdc-frow-sub">this month · ' + (LD.lastmonth || 0) + ' last</small></b>' + ic('right', 12) + '</a>'
 				+ '</footer>');
 		})();
-		var plist = inOrder('active', active.slice().sort(function (x, y) { return num(y.price) - num(x.price) || (x.name < y.name ? -1 : 1); }));
+		var plist = psort('active', inOrder('active', active.slice().sort(function (x, y) { return num(y.price) - num(x.price) || (x.name < y.name ? -1 : 1); })));
 		var c2 = card('cd-projects cd-plist', chead('brief', 'Projects <span class="dwdc-hcnt">(' + active.length + ')</span>', 'projects/active'),
-			'<div class="dwdc-pl-head"><span>Project · Client</span><span>Price</span><span>Owed</span></div>'
-			+ '<div class="dwdc-pl-wrap"><div class="dwdc-pl" data-sort="active">' + (plist.length ? plist.map(function (c) {
+			'<div class="dwdc-pl-head"><span>Project · Client</span><span>' + phead('active', 'Price') + '</span><span>Owed</span></div>'
+			+ '<div class="dwdc-pl-wrap"><div class="dwdc-pl"' + ((S.psort || {}).active ? '' : ' data-sort="active"') + '>' + (plist.length ? plist.map(function (c) {
 				var k = clientOf(c), ow = num(c.balance);
 				return '<a class="dwdc-pl-row" data-sid="' + c.id + '" href="#client/' + c.id + '"><span><b>' + esc(c.name) + '</b><small>' + esc(k ? k.name : (c.person || '')) + '</small></span><span>' + (num(c.price) ? money(c.price) : '—') + '</span><span class="' + (ow ? 'ow' : 'pd') + '">' + (ow ? money(ow) : 'Paid') + '</span></a>';
 			}).join('') : '<p class="dwdc-mutp">No active projects right now.</p>') + '</div></div>',
@@ -1390,9 +1394,9 @@
 			}).join('') + '</div>' : emptyRow('Nothing on the list. Nice.'))
 			+ (doneTasks().length ? '<button class="dwdc-donebtn" data-showdone>' + (S.showDone ? 'Hide' : 'Show') + ' completed <b>' + doneTasks().length + '</b></button>'
 				+ (S.showDone ? '<div class="dwdc-todos donelist">' + doneTasks().slice(0, 25).map(function (t) { return todoRow(t); }).join('') + '</div>' : '') : ''));
-		var lds = inOrder('leads', S.contacts.filter(function (c) { return c.list === 'leads'; }).sort(function (a, b) { return (a.followup || '9') < (b.followup || '9') ? -1 : 1; }));
-		var lb = card('cd-plain cd-leadsb', '<header class="dwdc-dhead"><h2>Leads <span class="dwdc-cnt">' + lds.length + '</span></h2><a href="#leads">View all</a></header>',
-			lds.length ? '<div class="dwdc-hleads" data-sort="leads">' + lds.map(function (c) {
+		var lds = psort('leads', inOrder('leads', S.contacts.filter(function (c) { return c.list === 'leads'; }).sort(function (a, b) { return (a.followup || '9') < (b.followup || '9') ? -1 : 1; })));
+		var lb = card('cd-plain cd-leadsb', '<header class="dwdc-dhead"><h2>Leads <span class="dwdc-cnt">' + lds.length + '</span></h2>' + phead('leads', 'Price') + '<a href="#leads">View all</a></header>',
+			lds.length ? '<div class="dwdc-hleads"' + ((S.psort || {}).leads ? '' : ' data-sort="leads"') + '>' + lds.map(function (c) {
 				var due = c.followup && c.followup <= DWDC.today;
 				return '<a class="dwdc-hlead" data-sid="' + c.id + '" href="#client/' + c.id + '"><span class="w"><b>' + esc(c.name) + '</b><small>' + esc([c.person && c.person !== c.name ? c.person : '', c.source || c.lead_source].filter(Boolean).join(' · ')) + '</small></span>'
 					+ '<span class="v"><b>' + (num(c.price) ? money(c.price) : '—') + '</b><small class="' + (due ? 'deep' : '') + '">' + (c.followup ? (due ? 'Follow up ' + (c.followup < DWDC.today ? fmt(c.followup) : 'today') : 'Follow up ' + fmt(c.followup)) : 'No follow-up') + '</small></span></a>';
@@ -1432,6 +1436,7 @@
 		var yr = S.year || '', years = {};
 		if (f === 'complete') { all.filter(function (c) { return c.list === 'complete'; }).forEach(function (c) { var y = (doneDate(c) || '').slice(0, 4); years[y || 'none'] = (years[y || 'none'] || 0) + 1; }); }
 		var rows = all.filter(function (c) { return f === 'all' || c.list === f; }).filter(function (c) { if (f !== 'complete' || !yr) { return true; } var y = (doneDate(c) || '').slice(0, 4); return yr === 'none' ? !y : y === yr; }).sort(function (a, b) { return order.indexOf(a.list) - order.indexOf(b.list) || (a.list === 'complete' ? byDone(a, b) : (a.deadline || '9') < (b.deadline || '9') ? -1 : 1); });
+		if (f === 'active') { rows = psort('active', rows); }
 		var cap = S.more['p' + f] || S.q ? rows.length : 50;
 		var empties = { active: 'No active projects right now.', limbo: 'Nothing in limbo. Clients you haven’t heard back from in a while go here.', hold: 'No projects on hold. Paused or waiting projects go here.', complete: 'No completed projects yet.', all: 'No projects match.' };
 		var ylist = Object.keys(years).filter(function (y) { return y !== 'none'; }).sort().reverse();
@@ -1440,7 +1445,7 @@
 			+ ylist.map(function (y) { return '<option value="' + y + '"' + (yr === y ? ' selected' : '') + '>' + y + ' (' + years[y] + ')</option>'; }).join('')
 			+ (years.none ? '<option value="none"' + (yr === 'none' ? ' selected' : '') + '>No date yet (' + years.none + ')</option>' : '') + '</select></div>' : '';
 		return '<div class="dwdc-chips">' + chip('active', 'Active') + chip('hold', 'On hold') + chip('limbo', 'Limbo') + chip('complete', 'Completed') + yearBar + '</div>'
-			+ '<div class="dwdc-card dwdc-tbl">' + (rows.length ? '<div class="dwdc-grid g-projects head"><span>Project</span><span>Client</span><span>' + (f === 'complete' ? 'Total' : 'Price') + '</span><span>Owed</span><span>' + (f === 'complete' ? 'Finished' : 'Due') + '</span><span>Status</span><span>Next step</span></div>'
+			+ '<div class="dwdc-card dwdc-tbl">' + (rows.length ? '<div class="dwdc-grid g-projects head"><span>Project</span><span>Client</span><span>' + (f === 'complete' ? 'Total' : phead('active', 'Price')) + '</span><span>Owed</span><span>' + (f === 'complete' ? 'Finished' : 'Due') + '</span><span>Status</span><span>Next step</span></div>'
 				+ rows.slice(0, cap).map(function (c) {
 					var k = clientOf(c), ow = num(c.balance), done = c.list === 'complete', dd = done ? doneDate(c) : c.deadline, late = !done && c.deadline && c.deadline < DWDC.today, amt = done ? lifetime(c) : num(c.price);
 					return '<div class="dwdc-grid g-projects row" data-go="client/' + c.id + '"><span class="dwdc-pn">' + dot(c) + '<span><b class="dwdc-pname">' + esc(c.name) + '</b><span class="dwdc-subl">' + siteLine(c) + (c.markup ? '<a class="dwdc-mkpill" href="' + esc(url(c.markup)) + '" target="_blank" rel="noopener">Markup</a>' : '') + '</span></span></span>'
@@ -1460,9 +1465,9 @@
 	function onboardList() { return S.contacts.filter(function (c) { return !!c.onboarded && c.list !== 'archive'; }).sort(function (a, b) { return received(a) < received(b) ? 1 : -1; }); }
 	var LSTAGES = [['new', 'New'], ['contacted', 'Contacted'], ['active', 'Won → Active'], ['lost', 'Lost']];
 	function leadsList() {
-		var rows = leadList().filter(match);
+		var rows = psort('leads', leadList().filter(match));
 		return '<div class="dwdc-ltop"><p>People you’re talking to who haven’t hired you yet. When one signs up, click <b>Start project</b> and they become a client with an active project.</p><button type="button" class="dwdc-btn" data-act="lead">' + ic('plus', 15) + 'Add lead</button></div>'
-			+ '<div class="dwdc-card dwdc-tbl"><div class="dwdc-grid g-leads2 head"><span>Name</span><span>Contact</span><span>Source</span><span>Price</span><span>Stage</span><span>Received</span><span>Follow up</span><span></span></div>'
+			+ '<div class="dwdc-card dwdc-tbl"><div class="dwdc-grid g-leads2 head"><span>Name</span><span>Contact</span><span>Source</span><span>' + phead('leads', 'Price') + '</span><span>Stage</span><span>Received</span><span>Follow up</span><span></span></div>'
 			+ (rows.length ? rows.map(function (c) {
 				var st = c.stage && c.stage !== 'onboarding' ? c.stage : 'new', fu = c.followup;
 				return '<div class="dwdc-grid g-leads2 row" data-go="client/' + c.id + '"><span><b>' + esc(clientName(c) || c.name) + '</b>' + (c.company || (clientName(c) && clientName(c) !== c.name) ? '<small>' + esc(c.company || c.name) + '</small>' : '') + '</span>'
@@ -2626,6 +2631,7 @@
 			}).then(render).catch(fail);
 			return;
 		}
+		if ((el = t.closest('[data-psort]'))) { e.preventDefault(); e.stopPropagation(); var pk = el.getAttribute('data-psort'); S.psort = S.psort || {}; S.psort[pk] = { '': 'desc', desc: 'asc', asc: '' }[S.psort[pk] || '']; try { localStorage.setItem('dwdc-psort', JSON.stringify(S.psort)); } catch (er) {} render(); return; }
 		if (t.closest('[data-winsmore]')) { S.winsMore = !S.winsMore; render(); return; }
 		if (t.closest('[data-connmore]')) { S.connMore = !S.connMore; render(); if (S.connMore) { setTimeout(function () { var c = document.querySelector('.dwdc-conn'); if (c) { c.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }, 50); } return; }
 		if ((el = t.closest('[data-tgrp]'))) { var gid = +el.getAttribute('data-tgrp'); S.tgOpen = S.tgOpen || {}; S.tgOpen[gid] = !S.tgOpen[gid]; render(); return; }
