@@ -2385,3 +2385,7 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 .dwdc .dwdc-mtl-r.go { cursor: pointer; }
 .dwdc .dwdc-mtl-r.go:hover { background: #f5f9fd; }
 .dwdc .dwdc-mtl-j.ghost { background: #fff; color: #0f2447 !important; border: 1px solid #cfd8e3; }
+/* Join the next meeting with this person (project page header) */
+.dwdc .pv3-btn.pv3-join { background: #1a73e8; border-color: #1a73e8; color: #fff !important; }
+.dwdc .pv3-btn.pv3-join:hover { background: #1765cc; }
+.dwdc .pv3-btn.pv3-join.off { background: #e8f1fd; border-color: #c9dcf6; color: #1a5fb4 !important; cursor: default; }

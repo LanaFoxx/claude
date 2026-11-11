@@ -1270,6 +1270,29 @@
 	function dot(c) { return '<i class="dwdc-sdot t-' + (TONE[c.list] || 'steel') + '"></i>'; }
 
 	/* ---------- Home: today's client meetings (first thing on the page) ---------- */
+	// The next upcoming meeting with this lead/client (matched by their email, or their first name in the meeting).
+	function nextMeetingFor(c) {
+		var M = S.meet, now = Date.now() / 1000;
+		if (!M || !M.list || !c) { return null; }
+		var em = String(c.email || '').toLowerCase(), first = String(c.person || '').trim().split(' ')[0].toLowerCase();
+		var mine = M.list.filter(function (m) {
+			if (m.te <= now) { return false; }
+			var gs = (m.guests || []).map(function (g) { return String(g).toLowerCase(); });
+			if (em && gs.indexOf(em) > -1) { return true; }
+			return first.length > 2 && new RegExp('\\b' + first.replace(/[^a-z]/g, '') + '\\b', 'i').test((m.who || '') + ' ' + m.title);
+		}).sort(function (a, b) { return a.ts - b.ts; });
+		return mine[0] || null;
+	}
+	function meetBtn(c) {
+		var m = nextMeetingFor(c);
+		if (!m) { return ''; }
+		var d = new Date(m.ts * 1000), now = new Date(), tm = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+		var day = d.toDateString() === now.toDateString() ? 'Today' : d.toDateString() === tm.toDateString() ? 'Tomorrow' : d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+		var when = day + ' ' + d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+		return m.link
+			? '<a class="pv3-btn pv3-join" href="' + esc(m.link) + '" target="_blank" rel="noopener" title="' + esc(m.title) + '">' + ic('bolt', 14) + 'Join meeting · ' + esc(when) + '</a>'
+			: '<span class="pv3-btn pv3-join off" title="' + esc(m.title) + '">' + ic('clock', 14) + 'Call · ' + esc(when) + '</span>';
+	}
 	// Meetings on Home: one slim line per meeting today (or tomorrow's, once today's are done). Nothing else.
 	function meetBar() {
 		var M = S.meet, now = Date.now() / 1000;
@@ -1835,7 +1858,7 @@
 			menu = mi('data-trash="' + c.id + '"', 'Delete');
 		}
 		var head = '<div class="pv3-head"><div class="pv3-ht"><div class="pv3-h1row"><h1>' + title + '</h1><span class="pv3-pill s-' + st + '">' + esc(stLabel) + '</span>' + (num(c.hosting) ? '<span class="pv3-pill s-host">Hosting</span>' : '') + '</div><div class="pv3-meta">' + meta + '</div></div>'
-			+ '<div class="pv3-ha"><button type="button" class="pv3-lnk tall" data-edit>' + (S.edit ? 'Close edit' : 'Edit') + '</button>' + main
+			+ '<div class="pv3-ha">' + meetBtn(c) + '<button type="button" class="pv3-lnk tall" data-edit>' + (S.edit ? 'Close edit' : 'Edit') + '</button>' + main
 			+ '<div class="pv3-more"><button type="button" class="pv3-btn icon" data-pmore aria-haspopup="menu" aria-label="More actions">' + svg(I.more, 18) + '</button><div class="pv3-menu" role="menu">' + menu + '</div></div></div></div>';
 		// money card
 		var money3;
