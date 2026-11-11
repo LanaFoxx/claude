@@ -1359,7 +1359,7 @@
 				var k = clientOf(c), ow = num(c.balance);
 				return '<a class="dwdc-pl-row" data-sid="' + c.id + '" href="#client/' + c.id + '"><span><b>' + esc(c.name) + '</b><small>' + esc(k ? k.name : (c.person || '')) + '</small></span><span>' + (num(c.price) ? money(c.price) : '—') + '</span><span class="' + (ow ? 'ow' : 'pd') + '">' + (ow ? money(ow) : 'Paid') + '</span></a>';
 			}).join('') : '<p class="dwdc-mutp">No active projects right now.</p>') + '</div></div>',
-			'<footer class="dwdc-pl-foot"><a class="dwdc-pl-all" href="#projects/active" data-plall>View all ' + active.length + ' ' + ic('right', 12) + '</a></footer>');
+			'<footer class="dwdc-pl-foot dwdc-pl-tot"><div><small>Total owed</small><strong class="deep">' + money(active.reduce(function (a, c) { return a + num(c.balance); }, 0)) + '</strong></div><a class="dwdc-pl-all" href="#projects/active" data-plall>View all ' + active.length + ' ' + ic('right', 12) + '</a></footer>');
 		// Money card (option 1b): a grid of tiles. Owed to you is the hero; short labels on a narrow card, full ones when it's wide.
 		var c3 = card('cd-money money-card', chead('dollar', 'Money', 'money'),
 			(function () {

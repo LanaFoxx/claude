@@ -2389,3 +2389,7 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 .dwdc .pv3-btn.pv3-join { background: #1a73e8; border-color: #1a73e8; color: #fff !important; }
 .dwdc .pv3-btn.pv3-join:hover { background: #1765cc; }
 .dwdc .pv3-btn.pv3-join.off { background: #e8f1fd; border-color: #c9dcf6; color: #1a5fb4 !important; cursor: default; }
+/* Projects box: total owed at the bottom, like the Leads box */
+.dwdc .dwdc-pl-foot.dwdc-pl-tot { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 20px !important; }
+.dwdc .dwdc-pl-tot small { display: block; font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--sec); }
+.dwdc .dwdc-pl-tot strong { display: block; margin-top: 2px; font-size: 24px; font-weight: 700; color: #1576c7; }
