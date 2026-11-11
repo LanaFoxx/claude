@@ -22,8 +22,9 @@ function dwdmt_script() {
 	$url = rest_url( 'dwd/v1/meetings-sync' );
 	$tok = dwdmt_token();
 	return <<<JS
-// Dream Desk · Client meetings. Read-only: it sends the next 14 days of your Google Calendar
-// (Calendly, Upwork and Zoom calls) to Dream Desk and never changes your calendar.
+// Dream Desk · Inbox. Read-only: every 15 minutes it sends the next 14 days of your Google Calendar
+// (Calendly, Upwork, Zoom and Meet calls) and the last 3 days of Upwork emails (invites, client
+// messages, hires) to Dream Desk. It never changes your calendar or your email.
 // Click Run on "setup" once; it then updates every 15 minutes.
 var DREAM_DESK = '{$url}';
 var TOKEN = '{$tok}';
@@ -36,7 +37,16 @@ function syncMeetings() {
       desc: (e.getDescription() || '').slice(0, 3000), guests: e.getGuestList().map(function (g) { return g.getEmail(); }).filter(function (m) { return m.toLowerCase() !== me; }),
       mine: e.getMyStatus() !== CalendarApp.GuestStatus.NO };
   });
-  var r = UrlFetchApp.fetch(DREAM_DESK, { method: 'post', contentType: 'application/json', headers: { 'X-DWD-Token': TOKEN }, payload: JSON.stringify({ events: events }), muteHttpExceptions: true });
+  // Upwork emails from the last 3 days: interview invites, client messages, hires, offers, ended contracts.
+  var q = 'from:upwork.com newer_than:3d (subject:"Invitation to Interview" OR subject:"sent you a message" OR subject:"hired you" OR subject:offer OR subject:"contract has ended" OR subject:"contract ended")';
+  var messages = [];
+  GmailApp.search(q, 0, 60).forEach(function (t) {
+    t.getMessages().forEach(function (m) {
+      if (m.getDate() < new Date(now.getTime() - 3 * 864e5)) { return; }
+      messages.push({ id: m.getId(), date: Utilities.formatDate(m.getDate(), 'UTC', "yyyy-MM-dd'T'HH:mm:ss'Z'"), subject: m.getSubject(), body: m.getPlainBody().slice(0, 20000) });
+    });
+  });
+  var r = UrlFetchApp.fetch(DREAM_DESK, { method: 'post', contentType: 'application/json', headers: { 'X-DWD-Token': TOKEN }, payload: JSON.stringify({ events: events, messages: messages }), muteHttpExceptions: true });
   Logger.log(r.getResponseCode() + ' ' + r.getContentText().slice(0, 300));
 }
 
@@ -138,7 +148,8 @@ function dwdmt_summary() {
 		$m['te']   = $e;
 		$list[]    = $m;
 	}
-	return array( 'at' => $d['at'], 'via' => $d['via'] ?? '', 'today' => $today, 'list' => array_slice( $list, 0, 40 ) );
+	$fresh = 'script' === ( $d['via'] ?? '' ) && current_time( 'timestamp' ) - strtotime( $d['at'] ) < 2 * HOUR_IN_SECONDS;
+	return array( 'at' => $d['at'], 'via' => $d['via'] ?? '', 'fresh' => $fresh, 'today' => $today, 'list' => array_slice( $list, 0, 40 ) );
 }
 
 add_action( 'rest_api_init', function () {
@@ -149,7 +160,18 @@ add_action( 'rest_api_init', function () {
 			return '' !== $t && hash_equals( dwdmt_token(), $t );
 		},
 		'callback'            => function ( $r ) {
-			return dwdmt_store( (array) ( $r->get_json_params()['events'] ?? array() ), 'script' );
+			$d   = (array) $r->get_json_params();
+			$res = dwdmt_store( (array) ( $d['events'] ?? array() ), 'script' );
+			$msg = array_slice( (array) ( $d['messages'] ?? array() ), 0, 200 );
+			if ( $msg ) {
+				$res['inbox'] = dwdin_apply_mail( $msg );
+				if ( function_exists( 'dwdm_apply' ) ) {
+					$res['upwork'] = dwdm_apply( $msg );
+				}
+			}
+			$res['calls'] = dwdin_apply_meetings( dwdmt_parse( (array) ( $d['events'] ?? array() ) ) );
+			update_option( 'dwdin_last', current_time( 'mysql' ), false );
+			return $res;
 		},
 	) );
 	$admin = function () { return current_user_can( 'manage_options' ); };

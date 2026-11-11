@@ -1261,7 +1261,7 @@
 		var M = S.meet, now = Date.now() / 1000;
 		var hi = new Date().getHours(), greet = hi < 12 ? 'Good morning' : hi < 17 ? 'Good afternoon' : 'Good evening';
 		if (!M) {
-			return '<section class="dwdc-meet off"><div class="dwdc-meet-h"><span class="dwdc-meet-ic">' + ic('clock', 20) + '</span><div><b>' + greet + ', Michael.</b><small>Connect your Google Calendar and today’s Zoom and Upwork calls show up right here.</small></div><button type="button" class="dwdc-btn sm" data-meetconnect>Connect calendar</button></div></section>';
+			return '<section class="dwdc-meet off"><div class="dwdc-meet-h"><span class="dwdc-meet-ic">' + ic('clock', 20) + '</span><div><b>' + greet + ', Michael.</b><small>Connect your Google inbox: booked calls, Upwork invites and client messages then show up here, as leads and on your to-do lists, by themselves.</small></div><button type="button" class="dwdc-btn sm" data-meetconnect>Connect Google</button></div></section>';
 		}
 		// Dates and times in this browser's time zone (the site itself runs on UTC).
 		var lt = new Date(), tdy = lt.getFullYear() + '-' + ('0' + (lt.getMonth() + 1)).slice(-2) + '-' + ('0' + lt.getDate()).slice(-2);
@@ -1269,7 +1269,9 @@
 		M.today = tdy;
 		var today = M.list.filter(function (m) { return m.date === M.today; }), later = M.list.filter(function (m) { return m.date > M.today; });
 		var left = today.filter(function (m) { return m.te > now; }), next = left[0];
-		if (!left.length) { return ''; } // no meetings today, or they're all done: no box
+		if (!left.length) { // no meetings today, or they're all done: no box (unless the inbox isn't connected)
+			return M.fresh ? '' : '<section class="dwdc-meet off slim"><div class="dwdc-meet-h"><span class="dwdc-meet-ic">' + ic('mail', 18) + '</span><div><b>Google inbox not connected' + (M.at ? ' · last update ' + esc(fmt(String(M.at).slice(0, 10))) : '') + '</b><small>Booked calls, Upwork invites and client messages aren’t coming in automatically.</small></div><button type="button" class="dwdc-btn sm" data-meetconnect>Connect Google</button></div></section>';
+		}
 		var until = function (m) { var d = Math.round((m.ts - now) / 60); return m.ts <= now ? 'Happening now' : d < 60 ? 'in ' + d + ' min' : d < 600 ? 'in ' + Math.floor(d / 60) + ' h' + (d % 60 ? ' ' + d % 60 + ' min' : '') : ''; };
 		var item = function (m) {
 			var past = m.te <= now, live = m.ts <= now && !past, isNext = m === next;
@@ -1279,9 +1281,9 @@
 		var head = today.length
 			? '<b>' + greet + ', Michael. You have ' + today.length + ' meeting' + (today.length === 1 ? '' : 's') + ' today.</b><small>' + (next ? 'Next: ' + esc(next.who || next.title) + ' at ' + esc(next.time) + (until(next) ? ' (' + until(next) + ')' : '') : 'All done for today.') + '</small>'
 			: '<b>' + greet + ', Michael. No meetings today.</b><small>' + (later[0] ? 'Next: ' + esc(later[0].who || later[0].title) + ' on ' + fmt(later[0].date) + ' at ' + esc(later[0].time) : 'Nothing booked in the next two weeks.') + '</small>';
-		var stale = M.via !== 'script';
+		var stale = !M.fresh;
 		return '<section class="dwdc-meet"><div class="dwdc-meet-h"><span class="dwdc-meet-ic"><strong>' + today.length + '</strong></span><div>' + head + '</div>'
-			+ (stale ? '<button type="button" class="dwdc-btn2 sm" data-meetconnect>Not linked yet: link your calendar</button>' : '') + '</div>'
+			+ (stale ? '<button type="button" class="dwdc-btn2 sm" data-meetconnect>Inbox not connected: connect Google</button>' : '') + '</div>'
 			+ (today.length ? '<div class="dwdc-mt-list">' + today.map(item).join('') + '</div>' : '')
 			+ (later.length ? '<p class="dwdc-mt-later">Coming up: ' + later.slice(0, 4).map(function (m) { return '<span>' + esc(new Date(m.date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short' })) + ' ' + esc(m.time) + ' · ' + esc(m.who || m.title) + '</span>'; }).join('') + '</p>' : '')
 			+ '</section>';
@@ -2179,11 +2181,11 @@
 				+ '<p class="dwdc-wins-foot">The script runs inside your Google Ads account and only reads spend, clicks, impressions and conversions. It never changes campaigns or billing. Your numbers appear here within the hour.</p></div>';
 		}
 		if (m.type === 'meetconnect') {
-			var msteps = ['Open <b>script.google.com</b> (signed in as mike@dreamwebdigital.com) and click <b>New project</b>. Name it <b>Dream Desk meetings</b>.', 'Delete what’s in the editor and paste the script below (use <b>Copy script</b>), then click <b>Save</b>.', 'In the function menu at the top choose <b>setup</b> and click <b>Run</b>. Allow access to your calendar when Google asks.', 'The log should end with <b>200</b>. That’s it: it updates every 15 minutes from now on.'];
-			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide">' + head('Meetings', 'Connect', 'Google Calendar')
+			var msteps = ['Open <b>script.google.com</b> (signed in as mike@dreamwebdigital.com) and click <b>New project</b>. Name it <b>Dream Desk inbox</b> (or open your old <b>Dream Desk meetings</b> project and replace its code).', 'Delete what’s in the editor and paste the script below (use <b>Copy script</b>), then click <b>Save</b>.', 'In the function menu at the top choose <b>setup</b> and click <b>Run</b>. Allow access to your calendar and Gmail when Google asks (it only reads them).', 'The log should end with <b>200</b>. That’s it: it updates every 15 minutes from now on.'];
+			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide">' + head('Inbox', 'Connect', 'Google')
 				+ '<ol class="dwdc-adsteps">' + msteps.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ol>'
 				+ (m.script ? '<textarea class="dwdc-adscript" readonly rows="10">' + esc(m.script) + '</textarea><div class="dwdc-farow end"><button type="button" class="dwdc-btn" data-adscopy>Copy script</button></div>' : emptyRow('Loading the script…'))
-				+ '<p class="dwdc-wins-foot">Calendly and Upwork already put every booked call on your Google Calendar. The script only reads the next two weeks of it and sends the calls with a Zoom, Upwork or Meet link here. It never changes your calendar.</p></div>';
+				+ '<p class="dwdc-wins-foot">Every 15 minutes the script reads the next two weeks of your Google Calendar and the last 3 days of Upwork emails. Booked calls go on the lead, your Business to-dos and your Personal to-dos; Upwork interview invites and client messages become leads (or notes on the existing one); hires become active projects. It never changes your calendar or email.</p></div>';
 		}
 		if (m.type === 'connects') {
 			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide">' + head('Upwork', 'Connects', 'spending') + connSpend() + '<div class="dwdc-farow end"><a class="dwdc-btn2" href="#money" data-close-modal>Open in Money Stats</a></div></div>';
