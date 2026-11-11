@@ -337,6 +337,13 @@ function dwdc_find( $email, $names ) {
 }
 
 function dwdc_add_task( $text, $contact = 0, $due = '' ) {
+	// Same open to-do already on the list: don't add it twice.
+	$key = dwdc_todo_key( $text, $due, $contact );
+	foreach ( get_posts( array( 'post_type' => DWDC_TASK, 'post_status' => 'private', 'posts_per_page' => -1, 'fields' => 'ids', 'meta_key' => '_dwdc_done', 'meta_value' => '0' ) ) as $tid ) { // phpcs:ignore
+		if ( dwdc_todo_key( get_post_field( 'post_title', $tid ), get_post_meta( $tid, '_dwdc_due', true ), get_post_meta( $tid, '_dwdc_contact', true ) ) === $key ) {
+			return (int) $tid;
+		}
+	}
 	$id = wp_insert_post( array( 'post_type' => DWDC_TASK, 'post_status' => 'private', 'post_title' => $text ) );
 	update_post_meta( $id, '_dwdc_contact', (int) $contact );
 	update_post_meta( $id, '_dwdc_due', $due );
@@ -726,6 +733,7 @@ add_action( 'rest_api_init', function () {
 	$ns  = 'dwd/v1';
 
 	register_rest_route( $ns, '/crm', array( 'methods' => 'GET', 'permission_callback' => $can, 'callback' => function () {
+		dwdc_dedupe_tasks();
 		$contacts = array_map( 'dwdc_contact', get_posts( array( 'post_type' => DWDC_CONTACT, 'post_status' => 'private', 'posts_per_page' => -1, 'orderby' => 'modified', 'order' => 'DESC' ) ) );
 		$tasks    = array_map( 'dwdc_task', get_posts( array( 'post_type' => DWDC_TASK, 'post_status' => 'private', 'posts_per_page' => -1, 'orderby' => array( 'menu_order' => 'ASC', 'date' => 'DESC' ) ) ) );
 		$clients  = array_map( 'dwdc_client', get_posts( array( 'post_type' => DWDC_CLIENT, 'post_status' => 'private', 'posts_per_page' => -1, 'orderby' => 'title', 'order' => 'ASC' ) ) );
@@ -1476,3 +1484,27 @@ add_filter( 'admin_title', function ( $title ) {
 add_action( 'rest_api_init', function () {
 	register_rest_route( 'dwd/v1', '/crm/version', array( 'methods' => 'GET', 'permission_callback' => function () { return current_user_can( 'manage_options' ); }, 'callback' => function () { return array( 'ver' => DWDP_VERSION ); } ) );
 } );
+
+/**
+ * Duplicate to-dos: two open to-dos with the exact same text (ignoring case and spacing),
+ * the same due date and the same project are the same to-do. Keep the oldest, delete the rest.
+ * Runs whenever the to-dos are loaded, and new to-dos that match an open one aren't created.
+ */
+function dwdc_todo_key( $text, $due, $contact ) {
+	return strtolower( preg_replace( '/\s+/', ' ', trim( (string) $text ) ) ) . '|' . (string) $due . '|' . (int) $contact;
+}
+function dwdc_dedupe_tasks() {
+	$seen = array();
+	$ids  = get_posts( array( 'post_type' => DWDC_TASK, 'post_status' => 'private', 'posts_per_page' => -1, 'fields' => 'ids', 'orderby' => 'ID', 'order' => 'ASC' ) );
+	foreach ( $ids as $id ) {
+		if ( '1' === get_post_meta( $id, '_dwdc_done', true ) ) {
+			continue;
+		}
+		$k = dwdc_todo_key( get_post_field( 'post_title', $id ), get_post_meta( $id, '_dwdc_due', true ), get_post_meta( $id, '_dwdc_contact', true ) );
+		if ( isset( $seen[ $k ] ) ) {
+			wp_delete_post( $id, true );
+		} else {
+			$seen[ $k ] = $id;
+		}
+	}
+}

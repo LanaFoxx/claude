@@ -2340,3 +2340,9 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 .dwdc .cd-todo { overflow: hidden; }
 .dwdc .cd-todo .dwdc-tt b, .dwdc .cd-todo .dwdc-tt small { overflow-wrap: anywhere; }
 .dwdc .dwdc-tgrp-h .dwdc-tt b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* Calendar "today": round number badge that never squishes; label shrinks or hides in narrow cells */
+.dwdc .dwdc-c2-d.today .dwdc-c2-n { min-width: 0; flex-wrap: nowrap; }
+.dwdc .dwdc-c2-d.today .dwdc-c2-n b { flex: 0 0 auto; width: 28px !important; height: 28px !important; min-width: 28px; aspect-ratio: 1; font-size: 13px !important; line-height: 1; }
+.dwdc .dwdc-c2-d.today .dwdc-c2-n span { min-width: 0; overflow: hidden; text-overflow: clip; white-space: nowrap; font-size: 11px; letter-spacing: .08em; }
+.dwdc .dwdc-phcal .dwdc-c2-d.today .dwdc-c2-n span { display: none; }
+@media (max-width: 600px) { .dwdc .dwdc-c2-d.today .dwdc-c2-n b { width: 22px !important; height: 22px !important; min-width: 22px; font-size: 11px !important; } }

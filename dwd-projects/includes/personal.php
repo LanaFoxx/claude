@@ -11,6 +11,48 @@ function dwdpe_get() {
 	foreach ( array( 'todos', 'money', 'bills' ) as $k ) {
 		$d[ $k ] = isset( $d[ $k ] ) && is_array( $d[ $k ] ) ? array_values( $d[ $k ] ) : array();
 	}
+	return dwdpe_dedupe( $d );
+}
+
+/**
+ * Duplicate personal to-dos (same text, ignoring case and spacing, same day and time, both open):
+ * keep one and delete the copy. The kept one is the one linked to Google, if either is.
+ * A deleted copy that was itself a Google task is removed from Google Tasks on the next sync.
+ */
+function dwdpe_dedupe( $d ) {
+	$keep = array();
+	$drop = array();
+	foreach ( $d['todos'] as $i => $t ) {
+		if ( ! empty( $t['done'] ) ) {
+			continue;
+		}
+		$k = strtolower( preg_replace( '/\s+/', ' ', trim( (string) ( $t['text'] ?? '' ) ) ) ) . '|' . ( $t['due'] ?? '' ) . '|' . strtolower( (string) ( $t['time'] ?? '' ) );
+		if ( ! isset( $keep[ $k ] ) ) {
+			$keep[ $k ] = $i;
+			continue;
+		}
+		$j    = $keep[ $k ];
+		$link = function ( $x ) { return ! empty( $x['gevent'] ) ? 2 : ( ! empty( $x['gtask'] ) ? 1 : 0 ); };
+		if ( $link( $t ) > $link( $d['todos'][ $j ] ) ) { // the new one is the better-linked copy: keep it instead
+			$drop[]     = $j;
+			$keep[ $k ] = $i;
+		} else {
+			$drop[] = $i;
+		}
+	}
+	if ( ! $drop ) {
+		return $d;
+	}
+	$gone = (array) get_option( 'dwdpe_gone', array() );
+	foreach ( $drop as $i ) {
+		if ( ! empty( $d['todos'][ $i ]['gtask'] ) && empty( $d['todos'][ $i ]['gevent'] ) ) {
+			$gone[] = $d['todos'][ $i ]['gtask'];
+		}
+		unset( $d['todos'][ $i ] );
+	}
+	$d['todos'] = array_values( $d['todos'] );
+	update_option( 'dwdpe_gone', array_slice( array_values( array_unique( $gone ) ), -200 ), false );
+	update_option( 'dwdpe_data', $d, false );
 	return $d;
 }
 
