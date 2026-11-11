@@ -90,8 +90,14 @@ function dwdmt_parse( $events ) {
 			$link = $m[0];
 		}
 		$guests = array_values( array_filter( array_map( 'sanitize_email', (array) ( $e['guests'] ?? array() ) ) ) );
-		if ( '' === $link && ! $guests ) {
+		// Booked through someone else's booking page (Google appointment page, Calendly…): they organize it,
+		// so they aren't listed as a guest and a phone call has no link. Keep those too.
+		$booked = preg_match( '/Booked by|Invitee|calendly\.com|appointment|I will call you/i', $desc ) || preg_match( '/\b(?:call|meeting|chat|consult(?:ation)?|interview)\s+with\b/i', $title );
+		if ( '' === $link && ! $guests && ! $booked ) {
 			continue;
+		}
+		if ( '' === $link && preg_match( '/I will call you|phone call|call you at/i', $desc ) ) {
+			$kind = 'Phone call';
 		}
 		$src = stripos( $hay, 'calendly.com' ) !== false ? 'Calendly' : ( stripos( $hay, 'upwork.com' ) !== false ? 'Upwork' : '' );
 		// Who: "Aliny and Dream Web Digital" → Aliny; "Sherry / Michael" → Sherry.

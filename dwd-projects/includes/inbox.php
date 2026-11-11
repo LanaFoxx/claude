@@ -114,7 +114,7 @@ function dwdin_apply_mail( $messages ) {
 				'lead_source' => 'invite' === $x['type'] ? 'Upwork Invite' : 'Upwork Message',
 				'source'      => 'invite' === $x['type'] ? 'Upwork invite email' : 'Upwork message email',
 				'job'         => $x['desc'],
-				'followup'    => current_time( 'Y-m-d' ),
+				'followup'    => wp_date( 'Y-m-d', time(), new DateTimeZone( 'America/New_York' ) ),
 			) );
 			$out['leads'][] = $x['job'];
 			dwdin_note( $pid, 'Lead added automatically from an Upwork ' . ( 'invite' === $x['type'] ? 'interview invite' : 'message' ) . ( $x['person'] ? ' from ' . $x['person'] : '' ) . '.' );
@@ -141,7 +141,7 @@ function dwdin_is_client_call( $m ) {
 /** Booked calls → note on the lead, a Business to-do and a Personal to-do (once per event; moved if rescheduled). */
 function dwdin_apply_meetings( $meetings ) {
 	$done = (array) get_option( 'dwdin_meets', array() );
-	$tz   = wp_timezone();
+	$tz   = new DateTimeZone( 'America/New_York' ); // Mike's time, not the server's (UTC)
 	$now  = time();
 	$out  = 0;
 	foreach ( (array) $meetings as $m ) {
