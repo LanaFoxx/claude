@@ -2278,11 +2278,16 @@
 			var tk = S.tasks.find(function (x) { return x.id === m.id; });
 			if (!tk) { S.modal = null; return ''; }
 			var tc = tk.contact ? contact(tk.contact) : null, tcl = tc ? clientOf(tc) : null;
-			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal dwdc-taskm">' + head(tk.done ? 'Completed to-do' : 'To-do', 'Task', 'details')
-				+ '<p class="dwdc-taskm-t' + (tk.done ? ' done' : '') + '">' + esc(tk.text).replace(/\n/g, '<br>') + '</p>'
+			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal dwdc-taskm">' + head(tk.done ? 'Completed to-do' : 'To-do', 'Edit', 'to-do')
+				// Editable: text, due date (or none) and project.
+				+ '<form class="dwdc-taskedit" data-tid="' + tk.id + '">'
+				+ '<label class="dwdc-tel">To-do</label><textarea name="text" rows="2" required>' + esc(tk.text) + '</textarea>'
+				+ '<div class="dwdc-terow"><div><label class="dwdc-tel">Due date</label><input type="date" name="due" value="' + esc(tk.due || '') + '"></div>'
+				+ '<div><label class="dwdc-tel">Project</label><select name="contact"><option value="0">No project</option>' + S.contacts.filter(function (c) { return c && (['leads', 'active', 'hold', 'limbo'].indexOf(c.list) > -1 || c.id === tk.contact); }).sort(function (a, b) { return a.name.localeCompare(b.name); }).map(function (c) { return '<option value="' + c.id + '"' + (c.id === tk.contact ? ' selected' : '') + '>' + esc(c.name) + '</option>'; }).join('') + '</select></div></div>'
+				+ '<div class="dwdc-tequick"><button type="button" data-tdue="0">Today</button><button type="button" data-tdue="1">Tomorrow</button><button type="button" data-tdue="7">Next week</button><button type="button" data-tdue="">No date</button></div>'
+				+ '<div class="dwdc-farow end"><button class="dwdc-btn">Save changes</button></div></form>'
 				+ '<dl class="dwdc-taskm-d">'
 				+ (tc ? '<dt>Project</dt><dd><a href="#client/' + tc.id + '" data-close-modal>' + esc(tc.name) + '</a>' + (tcl ? ' · ' + esc(tcl.name) : '') + '</dd>' : '')
-				+ '<dt>Due</dt><dd>' + (tk.due ? fmt(tk.due) : 'No date') + '</dd>'
 				+ '<dt>Added</dt><dd>' + (tk.created ? fmt(tk.created.slice(0, 10)) : '—') + '</dd>'
 				+ (tk.done ? '<dt>Completed</dt><dd>' + (tk.done_at ? fmt(tk.done_at.slice(0, 10)) : 'Yes') + '</dd>' : '')
 				+ '</dl><div class="dwdc-farow end"><button type="button" class="dwdc-btn2 danger" data-del-task="' + tk.id + '">Delete</button>'
@@ -2585,6 +2590,11 @@
 			e.stopPropagation();
 			if (S.modal && S.modal.type === 'task') { S.modal = null; }
 			setDone(+el.getAttribute('data-toggle'));
+			return;
+		}
+		if ((el = t.closest('[data-tdue]'))) {
+			var din = el.closest('form').querySelector('[name=due]'), n = el.getAttribute('data-tdue');
+			if (n === '') { din.value = ''; } else { var dd = new Date(DWDC.today + 'T12:00:00'); dd.setDate(dd.getDate() + (+n)); din.value = dd.getFullYear() + '-' + ('0' + (dd.getMonth() + 1)).slice(-2) + '-' + ('0' + dd.getDate()).slice(-2); }
 			return;
 		}
 		if ((el = t.closest('[data-task]')) && !t.closest('a, button')) {
@@ -2932,6 +2942,14 @@
 	app.addEventListener('submit', function (e) {
 		var f = e.target, data = {}; e.preventDefault();
 		new FormData(f).forEach(function (val, k) { data[k] = val; });
+		if (f.classList.contains('dwdc-taskedit')) {
+			var tid = +f.getAttribute('data-tid'), tb = f.querySelector('.dwdc-btn'); tb.disabled = true;
+			api('/task/' + tid, 'POST', { text: data.text, due: data.due || '', contact: +data.contact || 0 }).then(function (x) {
+				var i = S.tasks.findIndex(function (y) { return y.id === tid; }); if (i > -1) { S.tasks[i] = x; }
+				S.modal = null; render(); toast('To-do updated');
+			}).catch(function (er) { tb.disabled = false; fail(er); });
+			return;
+		}
 		if (f.classList.contains('pv3-logf')) {
 			var lid = route().id, lb = f.querySelector('.pay'); lb.disabled = true;
 			api('/contact/' + lid + '/payment', 'POST', { amount: data.amount, date: data.date, method: data.method, note: data.note })

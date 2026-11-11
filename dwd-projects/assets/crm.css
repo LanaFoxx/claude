@@ -2393,3 +2393,13 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 .dwdc .dwdc-pl-foot.dwdc-pl-tot { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 20px !important; }
 .dwdc .dwdc-pl-tot small { display: block; font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--sec); }
 .dwdc .dwdc-pl-tot strong { display: block; margin-top: 2px; font-size: 24px; font-weight: 700; color: #1576c7; }
+/* Business to-do: edit form in the details popup */
+.dwdc .dwdc-taskedit { display: flex; flex-direction: column; gap: 6px; margin: 4px 0 14px; }
+.dwdc .dwdc-tel { font: 600 12px Poppins, sans-serif; color: #4a5a73; margin-top: 6px; }
+.dwdc .dwdc-taskedit textarea, .dwdc .dwdc-taskedit input, .dwdc .dwdc-taskedit select { width: 100%; box-sizing: border-box; border: 1px solid #cfd8e3; border-radius: 10px; padding: 10px 12px; font: 500 14.5px Poppins, sans-serif; color: #0f2447; background: #fff; }
+.dwdc .dwdc-taskedit textarea { resize: vertical; min-height: 60px; }
+.dwdc .dwdc-terow { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.dwdc .dwdc-tequick { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.dwdc .dwdc-tequick button { border: 1px solid #cfd8e3; background: #f5f8fc; border-radius: 999px; padding: 5px 12px; font: 600 12.5px Poppins, sans-serif; color: #0f2447; cursor: pointer; }
+.dwdc .dwdc-tequick button:hover { background: #e9f1fc; }
+@media (max-width: 600px) { .dwdc .dwdc-terow { grid-template-columns: 1fr; } }
