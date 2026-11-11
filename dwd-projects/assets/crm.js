@@ -1832,8 +1832,8 @@
 		var mi = function (attr, label) { return '<button type="button" role="menuitem" ' + attr + '>' + label + '</button>'; };
 		var main, menu;
 		if (st === 'active' || st === 'hold' || st === 'limbo') {
-			main = rv + sb('data-complete', svg(I.check, 14) + 'Mark complete', 'primary');
-			menu = mi(st === 'hold' ? 'data-set="active"' : 'data-set="hold"', st === 'hold' ? 'Resume project' : 'Put on hold') + mi(st === 'limbo' ? 'data-set="active"' : 'data-set="limbo"', st === 'limbo' ? 'Take out of limbo' : 'Move to limbo') + mi('data-act="job" data-client="' + (c.client || 0) + '"', 'New project for this client');
+			main = (c.onboarded ? '' : sb('data-leadinvite="' + c.id + '"', svg(I.send, 14) + (c.stage === 'onboarding' ? 'Resend onboarding form' : 'Send onboarding form'))) + rv + sb('data-complete', svg(I.check, 14) + 'Mark complete', 'primary');
+			menu = mi('data-leadinvite="' + c.id + '"', c.onboarded ? 'Send onboarding form again' : 'Send onboarding form') + mi(st === 'hold' ? 'data-set="active"' : 'data-set="hold"', st === 'hold' ? 'Resume project' : 'Put on hold') + mi(st === 'limbo' ? 'data-set="active"' : 'data-set="limbo"', st === 'limbo' ? 'Take out of limbo' : 'Move to limbo') + mi('data-act="job" data-client="' + (c.client || 0) + '"', 'New project for this client');
 		} else if (st === 'complete') {
 			main = rv + sb('data-set="active"', 'Reopen', 'primary');
 			menu = mi('data-act="job" data-client="' + (c.client || 0) + '"', 'New project for this client');
@@ -1931,7 +1931,7 @@
 			+ (price ? '<p class="pv3-pfoot">' + money(paidSum) + ' of ' + money(price) + ' paid · ' + money(ow) + ' remaining</p>' : ''));
 		var hosting = num(c.hosting) ? hostCard(c) : '';
 		return '<div class="pv3">' + head + money3
-			+ '<div class="pv3-cols"><div class="pv3-col">' + formBox + todos + notesBox + obBox + mkBox + '</div><div class="pv3-col">' + details + (S.edit ? peopleCard(c) : contacts) + (st === 'leads' ? '' : paysBox) + hosting + '</div></div></div>';
+			+ (S.edit ? '<div class="pv3-editwrap" id="pv3-edit">' + details + peopleCard(c) + '</div>' : '') + '<div class="pv3-cols"><div class="pv3-col">' + formBox + todos + notesBox + obBox + mkBox + '</div><div class="pv3-col">' + (S.edit ? '' : details + contacts) + (st === 'leads' ? '' : paysBox) + hosting + '</div></div></div>';
 	}
 	// Onboarding answers as plain text, ready to paste into Claude.
 	function onboardEntries(c) {
@@ -2768,7 +2768,7 @@
 		if ((el = t.closest('[data-ppladd]'))) { S.addPpl = el.getAttribute('data-ppladd') === '1' ? route().id : 0; render(); setTimeout(function () { var x = app.querySelector('.dwdc-pplf [name=name]'); if (x) { x.focus(); } }, 0); return; }
 		if ((el = t.closest('[data-pplmain]'))) { var pc = S.full[route().id] || contact(route().id), pl = peopleOf(pc); savePeople(pc, pl, pl[+el.getAttribute('data-pplmain')]); return; }
 		if ((el = t.closest('[data-pplrm]'))) { var rc = S.full[route().id] || contact(route().id), rl = peopleOf(rc), gone = rl[+el.getAttribute('data-pplrm')]; if (confirm('Remove ' + (gone.name || gone.email) + ' from this project?')) { rl.splice(+el.getAttribute('data-pplrm'), 1); savePeople(rc, rl); } return; }
-		if (t.closest('[data-edit]')) { S.edit = !S.edit; render(); return; }
+		if (t.closest('[data-edit]')) { S.edit = !S.edit; render(); if (S.edit) { setTimeout(function () { var ed = document.getElementById('pv3-edit'); if (ed) { ed.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }, 30); } return; }
 		var r = route();
 		if (t.closest('[data-paid]')) { markPaid(r.id); return; }
 		if ((el = t.closest('[data-set]'))) {

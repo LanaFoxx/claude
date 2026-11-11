@@ -2366,3 +2366,6 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 .dwdc .pv3-form .pv3-dr { align-items: start; }
 .dwdc .pv3-form .pv3-dr > div a { color: #1a73e8; text-decoration: none; }
 .dwdc .pv3-formacts { margin-top: 14px; }
+/* Edit mode: the edit form opens right under the money card, full width */
+.dwdc .pv3-editwrap { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; margin: 0 0 22px; scroll-margin-top: 70px; }
+@media (max-width: 900px) { .dwdc .pv3-editwrap { grid-template-columns: 1fr; } }
