@@ -652,8 +652,8 @@
 			+ (r.view === 'personal' ? '<div class="dwdc-navh"><i class="b2"></i>To-Do</div>' + nav('personal/todo', 'todo', 'My To-Dos', S.pers ? S.pers.todos.filter(function (x) { return !x.done; }).length : '') + nav('personal/calendar', 'clock', 'Calendar') + nav('personal/done', 'done', 'Completed', S.pers ? S.pers.todos.filter(function (x) { return x.done; }).length : '')
 				+ '<div class="dwdc-navh fin"><i class="b4"></i>Finances</div>' + nav('personal/spending', 'card', 'Spending') + nav('personal/subs', 'refresh', 'Subscriptions') + nav('personal/finances', 'dollar', 'Money In &amp; Out') + '<div class="dwdc-navh pb"><i class="b5"></i>Bills</div>' + nav('personal/bills', 'card', 'Upcoming Bills') + '</nav><a class="dwdc-me" href="' + esc(DWDC.logout) + '" title="Sign out"><span class="dwdc-me-av">MT</span><span><strong>' + esc(DWDC.user || 'Michael Tarr') + '</strong><small>Owner · Sign out</small></span>' + ic('logout', 17) + '</a></aside>' : '')
 			+ (r.view === 'personal' ? '' : '<div class="dwdc-navh"><i class="b1"></i>Projects</div>'
-			+ nav('leads', 'user', 'Leads', leadList().length) + nav('onboarding', 'filter', 'Onboarding', onboardList().length)
-			+ nav('projects/active', 'bolt', 'Active', by('active').length) + nav('projects/hold', 'pause', 'On Hold', by('hold').length)
+			+ nav('projects/active', 'bolt', 'Active', by('active').length) + nav('leads', 'user', 'Leads', leadList().length) + nav('onboarding', 'filter', 'Onboarding', onboardList().length)
+			+ nav('projects/hold', 'pause', 'On Hold', by('hold').length)
 			+ nav('projects/limbo', 'clock', 'Limbo', by('limbo').length) + nav('projects/complete', 'done', 'Completed', by('complete').length)
 			+ '<div class="dwdc-navh"><i class="b2"></i>Clients</div>'
 			+ nav('clients', 'users', 'All Clients', S.clients.length) + nav('hosting', 'server', 'Hosting', hosting().length) + nav('reviews', 'mail', 'Get Reviews')

@@ -104,25 +104,36 @@ function dwdin_apply_mail( $messages ) {
 			continue;
 		}
 		$seen[ $id ] = substr( (string) ( $msg['date'] ?? '' ), 0, 10 ) ?: current_time( 'Y-m-d' );
-		$pid         = dwdin_find( $x['job'], $x['person'] );
+		$x['job']    = html_entity_decode( $x['job'], ENT_QUOTES );
+		// A job invite alone is NOT a lead (Mike gets lots of them). Just remember its details, so that if
+		// the client later messages or books a call, the lead gets the job description.
+		if ( 'invite' === $x['type'] ) {
+			$inv = (array) get_option( 'dwdin_invites', array() );
+			$inv[ dwdin_norm( $x['job'] ) ] = array( 'job' => $x['job'], 'person' => $x['person'], 'desc' => $x['desc'], 'date' => $seen[ $id ] );
+			update_option( 'dwdin_invites', array_slice( $inv, -100, null, true ), false );
+			continue;
+		}
+		$inv = (array) get_option( 'dwdin_invites', array() );
+		$ix  = $inv[ dwdin_norm( $x['job'] ) ] ?? array();
+		$pid = dwdin_find( $x['job'], $x['person'] );
 		if ( ! $pid && $x['job'] ) {
 			$pid = dwdc_save_contact( 0, array(
 				'name'        => $x['job'],
 				'person'      => $x['person'],
 				'list'        => 'leads',
 				'stage'       => 'new',
-				'lead_source' => 'invite' === $x['type'] ? 'Upwork Invite' : 'Upwork Message',
-				'source'      => 'invite' === $x['type'] ? 'Upwork invite email' : 'Upwork message email',
-				'job'         => $x['desc'],
+				'lead_source' => $ix ? 'Upwork Invite' : 'Upwork Message',
+				'source'      => 'Upwork message email',
+				'job'         => $ix['desc'] ?? '',
 				'followup'    => wp_date( 'Y-m-d', time(), new DateTimeZone( 'America/New_York' ) ),
 			) );
 			$out['leads'][] = $x['job'];
-			dwdin_note( $pid, 'Lead added automatically from an Upwork ' . ( 'invite' === $x['type'] ? 'interview invite' : 'message' ) . ( $x['person'] ? ' from ' . $x['person'] : '' ) . '.' );
+			dwdin_note( $pid, 'Lead added automatically: ' . ( $x['person'] ? $x['person'] : 'the client' ) . ' messaged you on Upwork' . ( $ix ? ' (after inviting you to this job on ' . $ix['date'] . ')' : '' ) . '.' );
 		} elseif ( $pid && $x['person'] && ! get_post_meta( $pid, '_dwdc_person', true ) ) {
 			update_post_meta( $pid, '_dwdc_person', sanitize_text_field( $x['person'] ) );
 		}
 		if ( $pid && $x['text'] ) {
-			dwdin_note( $pid, ( 'invite' === $x['type'] ? 'Upwork invite note' : 'Upwork message' ) . ( $x['person'] ? ' from ' . $x['person'] : '' ) . ': ' . sanitize_text_field( $x['text'] ) );
+			dwdin_note( $pid, 'Upwork message' . ( $x['person'] ? ' from ' . $x['person'] : '' ) . ': ' . sanitize_text_field( $x['text'] ) );
 			$out['notes']++;
 		}
 	}

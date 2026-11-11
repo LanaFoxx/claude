@@ -81,7 +81,7 @@ add_filter( 'menu_order', function ( $order ) {
 	$groups = array( 'top' => array(), 'p_todo' => array(), 'p_fin' => array(), 'p_bills' => array(), 'projects' => array(), 'clients' => array(), 'finances' => array(), 'portfolio' => array(), 'development' => array(), 'ecommerce' => array(), 'settings' => array() );
 	// Dream Desk pages as their own sections (they open the Dream Desk app at that page).
 	$dd = array(
-		'projects' => array( array( 'leads', 'Leads', 'dashicons-id' ), array( 'onboarding', 'Onboarding', 'dashicons-feedback' ), array( 'projects/active', 'Active', 'dashicons-controls-play' ), array( 'projects/hold', 'On Hold', 'dashicons-controls-pause' ), array( 'projects/limbo', 'Limbo', 'dashicons-clock' ), array( 'projects/complete', 'Completed', 'dashicons-yes-alt' ) ),
+		'projects' => array( array( 'projects/active', 'Active', 'dashicons-controls-play' ), array( 'leads', 'Leads', 'dashicons-id' ), array( 'onboarding', 'Onboarding', 'dashicons-feedback' ), array( 'projects/hold', 'On Hold', 'dashicons-controls-pause' ), array( 'projects/limbo', 'Limbo', 'dashicons-clock' ), array( 'projects/complete', 'Completed', 'dashicons-yes-alt' ) ),
 		'clients'  => array( array( 'clients', 'All Clients', 'dashicons-groups' ), array( 'hosting', 'Hosting', 'dashicons-cloud' ), array( 'reviews', 'Get Reviews', 'dashicons-star-filled' ) ),
 		'finances' => array( array( 'money', 'Money Stats', 'dashicons-chart-bar' ) ),
 	);
