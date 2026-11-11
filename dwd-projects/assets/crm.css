@@ -2353,3 +2353,10 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 .dwdc .dwdc-sorth.on { color: #13A6EE; }
 .dwdc .cd-leadsb > .dwdc-dhead .dwdc-sorth { margin-left: auto; margin-right: 14px; color: #fff; font: 600 13px Poppins, sans-serif; }
 .dwdc .cd-leadsb > .dwdc-dhead .dwdc-sorth.on { color: #fff; text-decoration: underline; }
+/* Home: Projects + Leads on top, Money full width below */
+.dwdc .dwdc-row3.dwdc-top2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.dwdc .dwdc-moneywide { margin-top: 22px; }
+.dwdc .dwdc-moneywide > .money-card { width: 100%; }
+.dwdc .dwdc-moneywide .money-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.dwdc .dwdc-moneywide .money-grid .tile--hero { grid-column: span 1; }
+@media (max-width: 1100px) { .dwdc .dwdc-row3.dwdc-top2 { grid-template-columns: 1fr; } .dwdc .dwdc-moneywide .money-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .dwdc .dwdc-moneywide .money-grid .tile--hero { grid-column: span 2; } }
