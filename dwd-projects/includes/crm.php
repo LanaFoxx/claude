@@ -515,7 +515,46 @@ add_action( 'elementor_pro/forms/new_record', function ( $record ) {
 		$name = get_the_title( $cid );
 		dwdc_add_task( ( false !== stripos( $form, 'onboard' ) ? 'Review onboarding form from ' : 'Reply to ' ) . $name, $cid, current_time( 'Y-m-d' ) );
 	}
+	dwdc_notify_form( $form, $fields, $cid );
 }, 20 );
+
+/** Email Mike every website form submission (the answers, where it came from, and a link to the lead). */
+function dwdc_notify_form( $form, $fields, $cid ) {
+	$email = '';
+	$who   = '';
+	$rows  = array();
+	foreach ( $fields as $f ) {
+		$v = trim( (string) $f['value'] );
+		if ( '' === $v ) {
+			continue;
+		}
+		if ( 'email' === $f['id'] || ( ! $email && is_email( $v ) ) ) {
+			$email = $v;
+		}
+		if ( ! $who && in_array( $f['id'], array( 'name', 'full_name', 'first_name' ), true ) ) {
+			$who = $v;
+		}
+		$rows[] = array( $f['label'], mb_substr( $v, 0, 1500 ) );
+	}
+	$src = $cid ? (string) get_post_meta( $cid, '_dwdc_lead_source', true ) : '';
+	if ( $src ) {
+		$rows[] = array( 'Came from', $src );
+	}
+	$who     = $who ? $who : ( $email ? $email : 'Someone' );
+	$onboard = false !== stripos( $form, 'onboard' );
+	$html    = dwdp_email_html( array(
+		'eyebrow' => $onboard ? 'Onboarding form' : 'New lead',
+		'title'   => $who . ' filled out your ' . ( $form ? $form : 'website' ) . ' form',
+		'intro'   => $onboard ? 'Their onboarding answers are below and saved on the project in Dream Desk.' : 'Here’s what they sent. They’re saved as a lead in Dream Desk with a to-do to reply today. Reply to this email to answer them directly.',
+		'rows'    => $rows,
+		'buttons' => array_values( array_filter( array( $email ? array( 'Reply to ' . trim( strtok( $who, ' ' ) ), 'mailto:' . $email ) : null, $cid ? array( 'Open in Dream Desk', admin_url( 'admin.php?page=client-desk#client/' . $cid ) ) : null ) ) ),
+	) );
+	$headers = array( 'Content-Type: text/html; charset=UTF-8' );
+	if ( $email && is_email( $email ) ) {
+		$headers[] = 'Reply-To: ' . str_replace( array( "\r", "\n", '<', '>' ), '', $who ) . ' <' . $email . '>';
+	}
+	wp_mail( 'mike@dreamwebdigital.com', ( $onboard ? 'Onboarding form: ' : 'New lead: ' ) . $who . ( $form ? ' (' . $form . ')' : '' ), $html, $headers );
+}
 
 // Hosting orders (first payment and every yearly auto-renewal from the subscription): the buyer is
 // matched to their client record by email, then name or website, so an existing hosting client who
@@ -1291,6 +1330,15 @@ add_action( 'rest_api_init', function () {
 		$all         = (array) get_option( 'dwdc_home_order', array() );
 		$all[ $key ] = array_values( array_filter( array_map( 'absint', (array) $r->get_param( 'ids' ) ) ) );
 		update_option( 'dwdc_home_order', $all, false );
+		return array( 'ok' => true );
+	} ) );
+	// Send a sample "New lead" email to check the form notifications arrive.
+	register_rest_route( $ns, '/crm/form-notify-test', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function () {
+		dwdc_notify_form( 'Quote (TEST)', array(
+			array( 'id' => 'name', 'label' => 'Name', 'value' => 'Test Person' ),
+			array( 'id' => 'email', 'label' => 'Email', 'value' => 'mike@dreamwebdigital.com' ),
+			array( 'id' => 'message', 'label' => 'Message', 'value' => 'This is a test of the new-lead email. Nothing was added to Dream Desk.' ),
+		), 0 );
 		return array( 'ok' => true );
 	} ) );
 	register_rest_route( $ns, '/crm/task-order', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
