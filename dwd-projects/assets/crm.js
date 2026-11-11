@@ -638,9 +638,9 @@
 		var pers = r.view === 'personal', a = r.arg || '';
 		var tabs = pers
 			? [['personal/todo', 'todo', 'To-Do', 'c1', a === 'todo' || a === 'calendar' || a === 'done'], ['personal/spending', 'dollar', 'Finances', 'c3', a === 'spending' || a === 'subs' || a === 'finances'], ['personal/bills', 'card', 'Bills', 'c4', a === 'bills']]
-			: [['projects/active', 'brief', 'Projects', 'c0', r.view === 'projects' || r.view === 'client'], ['money', 'dollar', 'Finances', 'c3', r.view === 'money']];
+			: [['home', 'home', 'Home', 'c1', r.view === 'home' || r.view === ''], ['projects/active', 'brief', 'Projects', 'c0', r.view === 'projects' || r.view === 'client'], ['money', 'dollar', 'Finances', 'c3', r.view === 'money']];
 		if (window.innerWidth > 768) { return ''; }
-		return '<nav class="dwdc-tabbar' + (pers ? ' pers' : ' t2') + '" aria-label="Quick menu" style="position:fixed;left:0;right:0;bottom:0;z-index:9990">' + tabs.map(function (x) { return '<a class="' + x[3] + (x[4] ? ' on' : '') + '" href="#' + x[0] + '">' + ic(x[1], 20) + '<span>' + x[2] + '</span></a>'; }).join('') + '</nav>';
+		return '<nav class="dwdc-tabbar' + (pers ? ' pers' : '') + '" aria-label="Quick menu" style="position:fixed;left:0;right:0;bottom:0;z-index:9990">' + tabs.map(function (x) { return '<a class="' + x[3] + (x[4] ? ' on' : '') + '" href="#' + x[0] + '">' + ic(x[1], 20) + '<span>' + x[2] + '</span></a>'; }).join('') + '</nav>';
 	}
 	function sidebar(r) {
 		var cur = r.view === 'client' || r.view === 'cl' ? S.back : r.view + (r.arg ? '/' + r.arg : '');
@@ -1444,7 +1444,7 @@
 			+ '<option value="">All years (' + all.filter(function (c) { return c.list === 'complete'; }).length + ')</option>'
 			+ ylist.map(function (y) { return '<option value="' + y + '"' + (yr === y ? ' selected' : '') + '>' + y + ' (' + years[y] + ')</option>'; }).join('')
 			+ (years.none ? '<option value="none"' + (yr === 'none' ? ' selected' : '') + '>No date yet (' + years.none + ')</option>' : '') + '</select></div>' : '';
-		return '<div class="dwdc-chips">' + chip('active', 'Active') + chip('hold', 'On hold') + chip('limbo', 'Limbo') + chip('complete', 'Completed') + yearBar + '</div>'
+		return (yearBar ? '<div class="dwdc-chips">' + yearBar + '</div>' : '')
 			+ '<div class="dwdc-card dwdc-tbl">' + (rows.length ? '<div class="dwdc-grid g-projects head"><span>Project</span><span>Client</span><span>' + (f === 'complete' ? 'Total' : phead('active', 'Price')) + '</span><span>Owed</span><span>' + (f === 'complete' ? 'Finished' : 'Due') + '</span><span>Status</span><span>Next step</span></div>'
 				+ rows.slice(0, cap).map(function (c) {
 					var k = clientOf(c), ow = num(c.balance), done = c.list === 'complete', dd = done ? doneDate(c) : c.deadline, late = !done && c.deadline && c.deadline < DWDC.today, amt = done ? lifetime(c) : num(c.price);
