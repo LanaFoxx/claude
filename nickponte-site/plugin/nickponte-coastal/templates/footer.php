@@ -8,7 +8,7 @@ $home = npc_home_url();
 	<div class="npc-wrap">
 		<div class="npc-footer__cols">
 			<div>
-				<?php echo npc_img('npc-logo-black', 'medium', ['alt' => 'Nick Ponte Realty', 'class' => 'npc-footer__logo']); ?>
+				<?php echo npc_img('npc-logo-navy', 'medium', ['alt' => 'Nick Ponte Realty', 'class' => 'npc-footer__logo']); ?>
 				<p class="npc-footer__tag">Your dream home is just a click away.</p>
 			</div>
 			<div>

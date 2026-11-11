@@ -5,7 +5,7 @@
 //   3. creates/updates the page /home-preview/ (template "Coastal Light – Home (preview)") and the
 //      review hub /design-preview/ that links every preview for the client
 //   4. creates/updates the 12 Town posts at /town-preview/<town>/
-// Usage: WPU=... WPP=... node deploy.cjs [plugin] [media] [home] [review] [towns] [--reseed]
+// Usage: WPU=... WPP=... node deploy.cjs [plugin] [media] [home] [review] [guides] [towns] [--reseed]
 // No step args = all steps. Existing towns keep the owner's edits unless --reseed is passed.
 const { chromium } = require('playwright');
 const { execSync } = require('child_process');
@@ -20,14 +20,16 @@ const want = (s) => steps.length === 0 || steps.includes(s);
 const RESEED = args.includes('--reseed');
 const MEDIA = ['npc-rye-coast.jpg', 'npc-portsmouth.jpg', 'npc-hampton-beach.jpg', 'npc-nick-ponte.jpg', 'npc-387-ocean.jpg', 'npc-logo-black.png', 'npc-logo-white.png',
   // Photos Nick supplied in the Markup.io review (Nov 2026)
-  'npc-hero-hampton.jpg', 'npc-contact-seawall.jpg', 'npc-quote-rye.jpg', 'npc-exeter-downtown.jpg', 'npc-estate-dusk.jpg'];
+  'npc-hero-hampton.jpg', 'npc-contact-seawall.jpg', 'npc-quote-rye.jpg', 'npc-exeter-downtown.jpg', 'npc-estate-dusk.jpg',
+  'npc-logo-navy.png', 'npc-logo-reversed.png', 'npc-buyer-hero.jpg', 'npc-seller-hero.jpg'];
 const ALT = {
   'npc-rye-coast': 'The Rye, NH coastline from above', 'npc-portsmouth': 'Portsmouth, NH South End harbor at sunset',
   'npc-hampton-beach': 'Hampton Beach, NH from above', 'npc-nick-ponte': 'Nick Ponte, Managing Broker',
   'npc-387-ocean': 'Rendering of 387 Ocean, Hampton', 'npc-logo-black': 'Nick Ponte Realty', 'npc-logo-white': 'Nick Ponte Realty',
   'npc-hero-hampton': 'Hampton Beach, NH from above', 'npc-contact-seawall': 'Oceanfront homes along the seawall on the NH Seacoast',
   'npc-quote-rye': 'The Rye, NH coast from above', 'npc-exeter-downtown': 'Downtown Exeter, NH and the bandstand from above',
-  'npc-estate-dusk': 'Oceanfront home on the Seacoast at dusk',
+  'npc-estate-dusk': 'Oceanfront home on the Seacoast at dusk', 'npc-logo-navy': 'Nick Ponte Realty', 'npc-logo-reversed': 'Nick Ponte Realty',
+  'npc-buyer-hero': 'Oceanfront homes along the NH Seacoast', 'npc-seller-hero': 'Oceanfront homes along the NH Seacoast',
 };
 
 async function login(p) {
@@ -97,6 +99,15 @@ async function deployReview(p, nonce) {
   console.log('review: ' + j.link);
 }
 
+async function deployGuides(p, nonce) {
+  for (const [slug, title] of [['buyers-guide-preview', 'Buyer Guide (Coastal Light preview)'], ['sellers-guide-preview', 'Seller Guide (Coastal Light preview)']]) {
+    const ex = await api(p, nonce, 'GET', `/wp/v2/pages?slug=${slug}&status=publish,draft,private&_fields=id,link`);
+    const j = ex.length ? await api(p, nonce, 'POST', `/wp/v2/pages/${ex[0].id}`, { template: 'npc-guide', status: 'publish' })
+      : await api(p, nonce, 'POST', '/wp/v2/pages', { title, slug, status: 'publish', template: 'npc-guide', content: '' });
+    console.log('guide: ' + j.link);
+  }
+}
+
 async function deployHome(p, nonce) {
   const ex = await api(p, nonce, 'GET', '/wp/v2/pages?slug=home-preview&status=publish,draft,private&_fields=id,link,template');
   const body = { title: 'Home (Coastal Light preview)', slug: 'home-preview', status: 'publish', template: 'npc-home', content: '' };
@@ -157,6 +168,7 @@ async function deployTowns(p, nonce, ids) {
   const ids = (want('media') || want('towns')) ? await deployMedia(p, nonce) : {};
   if (want('home')) await deployHome(p, nonce);
   if (want('review')) await deployReview(p, nonce);
+  if (want('guides')) await deployGuides(p, nonce);
   if (want('towns')) await deployTowns(p, nonce, ids);
   await b.close();
 })().catch((e) => { console.error(e); process.exit(1); });

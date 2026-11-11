@@ -2,18 +2,19 @@
 /**
  * Plugin Name: Nick Ponte Coastal Light (preview)
  * Description: "Coastal Light" redesign preview: a homepage template (/home-preview/) and a Town post type (/town-preview/<town>/) with monthly market fields, FAQ and JSON-LD. Preview pages are noindex and use their own header and footer, so live pages are not affected. Deactivate to remove everything from the front end.
- * Version: 1.1.1
+ * Version: 1.2.0
  * Author: Dream Web Digital
  * Requires PHP: 7.4
  */
 
 if (!defined('ABSPATH')) exit;
 
-define('NPC_VER', '1.1.1');
+define('NPC_VER', '1.2.0');
 define('NPC_DIR', plugin_dir_path(__FILE__));
 define('NPC_URL', plugin_dir_url(__FILE__));
 const NPC_HOME_TEMPLATE = 'npc-home';
 const NPC_REVIEW_TEMPLATE = 'npc-review';
+const NPC_GUIDE_TEMPLATE = 'npc-guide';
 
 /* ------------------------------------------------------------------ */
 /* Town post type and fields                                          */
@@ -206,6 +207,11 @@ function npc_home_url() {
 	$p = get_posts(['post_type' => 'page', 'name' => 'home-preview', 'numberposts' => 1, 'post_status' => 'publish']);
 	return $p ? get_permalink($p[0]) : home_url('/home-preview/');
 }
+// The restyled guide preview if it exists (e.g. /buyers-guide-preview/), otherwise the live guide page.
+function npc_guide_url($slug) {
+	$p = get_posts(['post_type' => 'page', 'name' => $slug . '-preview', 'numberposts' => 1, 'post_status' => 'publish']);
+	return $p ? get_permalink($p[0]) : home_url('/' . $slug . '/');
+}
 function npc_default_town_url() {
 	$t = npc_towns();
 	return $t ? get_permalink($t[0]) : home_url('/town-preview/rye/');
@@ -218,6 +224,7 @@ function npc_default_town_url() {
 add_filter('theme_page_templates', function ($templates) {
 	$templates[NPC_HOME_TEMPLATE] = 'Coastal Light – Home (preview)';
 	$templates[NPC_REVIEW_TEMPLATE] = 'Coastal Light – Review hub';
+	$templates[NPC_GUIDE_TEMPLATE] = 'Coastal Light – Buyer/Seller Guide (preview)';
 	return $templates;
 });
 
@@ -225,6 +232,7 @@ function npc_is_preview() {
 	if (is_singular('np_town')) return 'town';
 	if (is_page() && get_page_template_slug(get_queried_object_id()) === NPC_HOME_TEMPLATE) return 'home';
 	if (is_page() && get_page_template_slug(get_queried_object_id()) === NPC_REVIEW_TEMPLATE) return 'review';
+	if (is_page() && get_page_template_slug(get_queried_object_id()) === NPC_GUIDE_TEMPLATE) return 'guide';
 	return false;
 }
 
@@ -233,6 +241,7 @@ add_filter('template_include', function ($template) {
 	if ($k === 'town') return NPC_DIR . 'templates/town.php';
 	if ($k === 'home') return NPC_DIR . 'templates/home.php';
 	if ($k === 'review') return NPC_DIR . 'templates/review.php';
+	if ($k === 'guide') return NPC_DIR . 'templates/guide.php';
 	return $template;
 }, 99);
 
@@ -267,7 +276,7 @@ add_filter('wp_robots', function ($robots) {
 });
 add_filter('rank_math/sitemap/exclude_post_type', function ($exclude, $type) { return $type === 'np_town' ? true : $exclude; }, 10, 2);
 add_filter('rank_math/sitemap/entry', function ($url, $type, $object) {
-	if ($type === 'post' && isset($object->ID) && in_array(get_page_template_slug($object->ID), [NPC_HOME_TEMPLATE, NPC_REVIEW_TEMPLATE], true)) return false;
+	if ($type === 'post' && isset($object->ID) && in_array(get_page_template_slug($object->ID), [NPC_HOME_TEMPLATE, NPC_REVIEW_TEMPLATE, NPC_GUIDE_TEMPLATE], true)) return false;
 	return $url;
 }, 10, 3);
 add_filter('wp_sitemaps_post_types', function ($types) { unset($types['np_town']); return $types; });
@@ -325,6 +334,6 @@ add_action('wp_head', function () {
 /* ------------------------------------------------------------------ */
 
 add_filter('display_post_states', function ($states, $post) {
-	if ($post->post_type === 'page' && in_array(get_page_template_slug($post->ID), [NPC_HOME_TEMPLATE, NPC_REVIEW_TEMPLATE], true)) $states['npc'] = 'Coastal Light preview (noindex)';
+	if ($post->post_type === 'page' && in_array(get_page_template_slug($post->ID), [NPC_HOME_TEMPLATE, NPC_REVIEW_TEMPLATE, NPC_GUIDE_TEMPLATE], true)) $states['npc'] = 'Coastal Light preview (noindex)';
 	return $states;
 }, 10, 2);

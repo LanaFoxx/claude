@@ -16,7 +16,7 @@ $tel = 'tel:6039187593';
 <header class="npc-header">
 	<div class="npc-wrap npc-header__in">
 		<a class="npc-logo" href="<?php echo esc_url($home); ?>" aria-label="Nick Ponte Realty, home">
-			<?php echo npc_img('npc-logo-black', 'medium', ['alt' => 'Nick Ponte Realty', 'loading' => 'eager', 'class' => 'npc-logo__img']); ?>
+			<?php echo npc_img('npc-logo-navy', 'medium', ['alt' => 'Nick Ponte Realty', 'loading' => 'eager', 'class' => 'npc-logo__img']); ?>
 		</a>
 		<nav class="npc-nav" aria-label="Main">
 			<a href="<?php echo esc_url($home); ?>" <?php if ($npc_active === 'home') echo 'aria-current="page"'; ?>>Home</a>

@@ -25,6 +25,14 @@ $towns = array_map('npc_town_data', npc_towns());
 		</div>
 	</section>
 
+	<h2 class="npc-review__h3" style="margin-top:56px">Buyer and Seller Guide pages</h2>
+	<p class="npc-muted" style="margin-top:8px;font-size:15px">The guide download pages in the new style. The download forms work the same way as today.</p>
+	<div class="npc-review__towns">
+		<?php foreach ([['buyers-guide', 'Buyer Guide', 'npc-buyer-hero'], ['sellers-guide', 'Seller Guide', 'npc-seller-hero']] as $gd) : ?>
+			<a class="npc-review__town" href="<?php echo esc_url(npc_guide_url($gd[0])); ?>"><?php echo npc_img($gd[2], 'thumbnail', ['alt' => '']); ?><span><strong><?php echo esc_html($gd[1]); ?></strong><span>Free download page</span></span></a>
+		<?php endforeach; ?>
+	</div>
+
 	<h2 class="npc-review__h3" style="margin-top:56px">Town pages</h2>
 	<p class="npc-muted" style="margin-top:8px;font-size:15px">One page per town with a monthly market snapshot, neighborhoods, recent sales and FAQ.</p>
 	<div class="npc-review__towns">

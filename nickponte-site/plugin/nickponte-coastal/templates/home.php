@@ -75,13 +75,13 @@ $updated = $towns ? $towns[0]['updated'] : date_i18n('F Y');
 			<a class="npc-link" href="<?php echo esc_url(home_url('/seacoast-nh-real-estate-blog/')); ?>">All market news →</a>
 		</div>
 		<div class="npc-res__guides">
-			<a class="npc-guide" href="<?php echo esc_url(home_url('/buyers-guide/')); ?>">
+			<a class="npc-guide" href="<?php echo esc_url(npc_guide_url('buyers-guide')); ?>">
 				<span class="npc-label">For buyers</span>
 				<span class="npc-guide__t">Buyer Guide</span>
 				<span class="npc-guide__p">How buying on the Seacoast works, from pre-approval and offers to inspections and closing.</span>
 				<span class="npc-guide__go">Read the Buyer Guide →</span>
 			</a>
-			<a class="npc-guide" href="<?php echo esc_url(home_url('/sellers-guide/')); ?>">
+			<a class="npc-guide" href="<?php echo esc_url(npc_guide_url('sellers-guide')); ?>">
 				<span class="npc-label">For sellers</span>
 				<span class="npc-guide__t">Seller Guide</span>
 				<span class="npc-guide__p">Pricing, preparing and marketing your home, and what to expect from listing to closing.</span>

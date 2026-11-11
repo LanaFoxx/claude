@@ -304,3 +304,21 @@ html:has(body.npc) { scroll-behavior: smooth; }
 .npc-insta__feed .sb_instagram_header, .npc-insta__feed #sbi_load .sbi_load_btn { display: none !important; }
 .npc .npc-insta__feed .sbi_follow_btn a { background: var(--npc-steel) !important; border-radius: 10px !important; font: 600 14px var(--npc-sans) !important; padding: 12px 20px !important; }
 .npc .npc-insta__feed .sbi_follow_btn a:hover { background: var(--npc-hover) !important; box-shadow: none !important; }
+
+/* Buyer / Seller Guide */
+.npc-guidepage { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(380px, 100%), 1fr)); gap: 48px clamp(40px, 6vw, 80px); align-items: center; }
+.npc-guidepage__cover { position: relative; max-width: 400px; width: calc(100% - 28px); justify-self: center; }
+.npc-guidepage__plate { position: absolute; inset: 0; transform: translate(28px, 28px); background: var(--npc-plate); border-radius: 22px; }
+.npc-guidepage__cover img { position: relative; width: 100%; height: auto; border-radius: 10px; box-shadow: 0 30px 60px -30px rgba(31, 58, 95, .55); }
+.npc-guidepage__card { padding: clamp(28px, 4vw, 44px); }
+.npc-guidepage__intro { font-size: 16px; color: var(--npc-muted); margin-top: 14px; }
+.npc-guidepage__h3 { font: 600 12px var(--npc-sans); letter-spacing: .14em; text-transform: uppercase; color: var(--npc-steel); margin-top: 24px; }
+.npc-checks { display: grid; gap: 8px; margin-top: 12px; }
+.npc-checks li { position: relative; padding-left: 28px; font-size: 15px; color: var(--npc-text); }
+.npc-checks li::before { content: ""; position: absolute; left: 0; top: .2em; width: 18px; height: 18px; border-radius: 50%; background: var(--npc-panel);
+	box-shadow: inset 0 0 0 1px var(--npc-btn-border); }
+.npc-checks li::after { content: ""; position: absolute; left: 6px; top: calc(.2em + 4px); width: 5px; height: 9px; border: solid var(--npc-steel); border-width: 0 2px 2px 0; transform: rotate(45deg); }
+.npc-consent { display: flex; gap: 10px; align-items: flex-start; font-size: 12.5px; line-height: 1.5; color: var(--npc-muted); }
+.npc-consent input { margin-top: 3px; width: 16px; height: 16px; accent-color: var(--npc-steel); flex: none; }
+.npc .npc-consent a { color: var(--npc-steel); text-decoration: underline; }
+.npc-guidecta { padding-bottom: 40px; }

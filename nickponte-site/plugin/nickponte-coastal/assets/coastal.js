@@ -48,7 +48,8 @@
 			e.preventDefault();
 			msg.className = 'npc-eform__msg';
 			for (var i = 0; i < inputs.length; i++) {
-				if (!inputs[i].value.trim() || !inputs[i].checkValidity()) {
+				if (inputs[i].type === 'checkbox') continue;
+				if ((inputs[i].required && !inputs[i].value.trim()) || !inputs[i].checkValidity()) {
 					var lab = form.querySelector('label[for="' + inputs[i].id + '"]');
 					msg.textContent = 'Enter ' + (inputs[i].type === 'email' ? 'a valid email address' : 'your ' + (lab ? lab.textContent.toLowerCase() : 'details')) + '.';
 					msg.classList.add('is-err'); inputs[i].focus(); return;
@@ -60,12 +61,15 @@
 			fd.append('form_id', form.dataset.formId);
 			fd.append('queried_id', form.dataset.queriedId);
 			fd.append('referer_title', document.title);
-			inputs.forEach(function (el) { fd.append('form_fields[' + el.dataset.field + ']', el.value.trim()); });
+			inputs.forEach(function (el) {
+				if (el.type === 'checkbox') { if (el.checked) fd.append('form_fields[' + el.dataset.field + ']', 'on'); }
+				else fd.append('form_fields[' + el.dataset.field + ']', el.value.trim());
+			});
 			btn.disabled = true; msg.textContent = 'Sending…';
 			fetch(window.npcForm.ajax, { method: 'POST', body: fd, credentials: 'same-origin' })
 				.then(function (r) { return r.json(); })
 				.then(function (j) {
-					if (j && j.success) { msg.textContent = form.dataset.formId === '4acdcf3' ? 'Thanks. Nick will be in touch with your valuation.' : 'Thanks. Nick will be in touch about off-market properties.'; msg.classList.add('is-ok'); form.reset(); }
+					if (j && j.success) { msg.textContent = form.dataset.success || (form.dataset.formId === '4acdcf3' ? 'Thanks. Nick will be in touch with your valuation.' : 'Thanks. Nick will be in touch about off-market properties.'); msg.classList.add('is-ok'); form.reset(); }
 					else { msg.textContent = (j && j.data && j.data.message) || fail; msg.classList.add('is-err'); }
 				})
 				.catch(function () { msg.textContent = fail; msg.classList.add('is-err'); })

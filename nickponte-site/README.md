@@ -40,6 +40,14 @@ Applied from Nick's comments on the homepage preview:
 * Exeter town page uses his downtown Exeter photo; the portrait no longer lazy-loads.
 * Still waiting on Nick: "As seen in" logos and links, photos for the other towns.
 
+## Client review round 2 (Markup.io, Nov 2026)
+
+* Header and footer use Nick's new navy/steel logo (`npc-logo-navy`); the white version (`npc-logo-reversed`) is uploaded for dark backgrounds.
+* Buyer and Seller Guide pages restyled as previews: `/buyers-guide-preview/` and `/sellers-guide-preview/` (template
+  "Coastal Light – Buyer/Seller Guide (preview)"). Their download forms post to the live guide pages' existing Elementor
+  forms (5725 / `969c00c`, 5742 / `eb8b9a0`) with the same fields and consent checkbox. The homepage Resources cards and the
+  review hub link to these previews. The live `/buyers-guide/` and `/sellers-guide/` pages are unchanged.
+
 ## Going live (only after client approval)
 
 Not done yet. Plan: point the real homepage and `/nickponterealty-com-realtor-<town>-nh/` URLs at these templates
