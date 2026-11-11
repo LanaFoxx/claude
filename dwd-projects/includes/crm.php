@@ -162,6 +162,17 @@ function dwdc_save_contact( $id, $data ) {
 	} elseif ( isset( $data['name'] ) ) {
 		wp_update_post( array( 'ID' => $id, 'post_title' => $data['name'] ) );
 	}
+	// Starting the job on a lead: nothing's been paid yet, so the whole price is owed (not shown as "Paid").
+	if ( isset( $data['list'] ) && 'active' === $data['list'] && 'leads' === get_post_meta( $id, '_dwdc_list', true ) && ! isset( $data['balance'] ) ) {
+		$price = (float) preg_replace( '/[^\d.]/', '', (string) ( $data['price'] ?? get_post_meta( $id, '_dwdc_price', true ) ) );
+		$paid  = 0;
+		foreach ( array( 'billed', 'stripe', 'paypal', 'manual' ) as $f ) {
+			$paid += (float) preg_replace( '/[^\d.]/', '', (string) get_post_meta( $id, '_dwdc_' . $f, true ) );
+		}
+		if ( $price > 0 && '' === (string) get_post_meta( $id, '_dwdc_balance', true ) ) {
+			$data['balance'] = (string) max( 0, round( $price - $paid, 2 ) );
+		}
+	}
 	// Moving a project to Completed stamps today's date so the Completed list sorts newest first.
 	if ( isset( $data['list'] ) && 'complete' === $data['list'] && empty( $data['completed'] ) && 'complete' !== get_post_meta( $id, '_dwdc_list', true ) ) {
 		$data['completed'] = current_time( 'Y-m-d' );

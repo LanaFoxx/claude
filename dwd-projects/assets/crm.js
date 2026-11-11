@@ -1769,6 +1769,8 @@
 		var c = S.full[id] || contact(id);
 		if (!c) { return '<div class="dwdc-card">' + emptyRow('Loading…') + '</div>'; }
 		var full = !!S.full[id], st = c.list, ow = num(c.balance), price = num(c.price), late = c.deadline && c.deadline < DWDC.today;
+		// No owed amount set yet on an open job: it's the price minus what actually came in, not "paid".
+		if (c.balance === '' && price && st !== 'complete') { ow = Math.max(0, price - lifetime(c)); }
 		var backName = { home: 'home', leads: 'leads & onboarding', forms: 'form entries', todos: 'to-do list', hosting: 'hosting', projects: 'projects', clients: 'clients', archive: 'archive', search: 'search' }[(S.back || 'home').split('/')[0]] || 'home';
 		var tasks = S.tasks.filter(function (t) { return t.contact === c.id; }).sort(function (a, b) { return a.done - b.done; }), openN = tasks.filter(function (t) { return !t.done; }).length;
 		var btn = function (cls, attr, label) { return '<button class="dwdc-btn2 ' + cls + '" ' + attr + '>' + label + '</button>'; };
