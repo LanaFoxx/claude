@@ -1381,7 +1381,7 @@ function dwdc_vars( $mode = 'admin' ) {
 		'user'   => wp_get_current_user()->display_name,
 	);
 	$v['app']     = home_url( '/desk/' );
-	$v['appIcon'] = DWDP_URL . 'assets/app/icon-192.png';
+	$v['appIcon'] = DWDP_URL . 'assets/app/icon-192.png?v=2';
 	$v['appQr']   = DWDP_URL . 'assets/app/qr-desk.png';
 	$v['mode']    = $mode;
 	$v['ver']     = DWDP_VERSION;
