@@ -240,6 +240,17 @@ function dwdpe_sync( $d ) {
 	}
 	// 2. Calendar events (next 14 days) → Dream Desk to-dos on that day.
 	$seen_e = array();
+	if ( function_exists( 'dwdmt_save_links' ) ) { // Meet/Zoom links for the Home meetings line
+		$lm = array();
+		foreach ( (array) ( $d['events'] ?? array() ) as $e ) {
+			if ( ! empty( $e['link'] ) && ! empty( $e['id'] ) ) {
+				$lm[ (string) $e['id'] ] = (string) $e['link'];
+			}
+		}
+		if ( $lm ) {
+			dwdmt_save_links( $lm );
+		}
+	}
 	foreach ( (array) ( $d['events'] ?? array() ) as $e ) {
 		$eid = sanitize_text_field( (string) ( $e['id'] ?? '' ) );
 		if ( '' === $eid ) {
@@ -335,7 +346,7 @@ function syncDreamDesk() {
     (ev.items || []).forEach(function (e) {
       if (e.status === 'cancelled' || !e.summary) { return; }
       var allDay = !!e.start.date, s = allDay ? null : new Date(e.start.dateTime);
-      events.push({ id: e.id, title: e.summary, date: allDay ? e.start.date : Utilities.formatDate(s, tz, 'yyyy-MM-dd'), time: allDay ? '' : Utilities.formatDate(s, tz, 'h:mm a'), notes: e.location || '' });
+      events.push({ id: e.id, title: e.summary, date: allDay ? e.start.date : Utilities.formatDate(s, tz, 'yyyy-MM-dd'), time: allDay ? '' : Utilities.formatDate(s, tz, 'h:mm a'), notes: e.location || '', link: e.hangoutLink || ((e.conferenceData && e.conferenceData.entryPoints || []).filter(function (p) { return p.entryPointType === 'video'; })[0] || {}).uri || '' });
     });
     page = ev.nextPageToken;
   } while (page);

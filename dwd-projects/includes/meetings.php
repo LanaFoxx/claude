@@ -126,6 +126,19 @@ function dwdmt_parse( $events ) {
 	return $out;
 }
 
+/** Remember meeting links by calendar event id (without "@google.com"). */
+function dwdmt_save_links( $map ) {
+	$lk = (array) get_option( 'dwdmt_links', array() );
+	foreach ( (array) $map as $id => $link ) {
+		$id   = preg_replace( '/@google\.com$/', '', sanitize_text_field( (string) $id ) );
+		$link = esc_url_raw( (string) $link );
+		if ( $id && preg_match( '#^https://#', $link ) ) {
+			$lk[ $id ] = $link;
+		}
+	}
+	update_option( 'dwdmt_links', array_slice( $lk, -300, null, true ), false );
+}
+
 function dwdmt_store( $events, $via ) {
 	$m = dwdmt_parse( $events );
 	update_option( 'dwdmt_data', array( 'at' => current_time( 'mysql' ), 'via' => $via, 'meetings' => $m ), false );
@@ -147,6 +160,15 @@ function dwdmt_summary() {
 		$e = strtotime( $m['end'] );
 		if ( $e < $now - DAY_IN_SECONDS ) {
 			continue; // the browser shows dates and times in Mike's own time zone and drops past days
+		}
+		// Meet / Zoom links Google keeps outside the event text (sent by the Personal calendar sync).
+		if ( empty( $m['link'] ) ) {
+			$lk = (array) get_option( 'dwdmt_links', array() );
+			$k  = preg_replace( '/@google\.com$/', '', (string) $m['id'] );
+			if ( ! empty( $lk[ $k ] ) ) {
+				$m['link'] = $lk[ $k ];
+				$m['kind'] = false !== strpos( $lk[ $k ], 'meet.google.com' ) ? 'Google Meet' : ( false !== strpos( $lk[ $k ], 'zoom.us' ) ? 'Zoom' : $m['kind'] );
+			}
 		}
 		$m['date'] = wp_date( 'Y-m-d', $s, $tz );
 		$m['time'] = wp_date( 'g:i A', $s, $tz );
@@ -181,6 +203,11 @@ add_action( 'rest_api_init', function () {
 		},
 	) );
 	$admin = function () { return current_user_can( 'manage_options' ); };
+	// Attach a meeting link to a calendar event by hand (or from the Personal sync).
+	register_rest_route( 'dwd/v1', '/crm/meeting-link', array( 'methods' => 'POST', 'permission_callback' => $admin, 'callback' => function ( $r ) {
+		dwdmt_save_links( array( (string) $r->get_param( 'id' ) => (string) $r->get_param( 'link' ) ) );
+		return array( 'ok' => true, 'meetings' => dwdmt_summary() );
+	} ) );
 	register_rest_route( 'dwd/v1', '/crm/meetings', array(
 		array( 'methods' => 'GET', 'permission_callback' => $admin, 'callback' => function () { return array( 'meetings' => dwdmt_summary(), 'script' => dwdmt_script() ); } ),
 		// Admin load (used once to fill today in before the script is set up).
