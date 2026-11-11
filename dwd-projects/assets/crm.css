@@ -2369,3 +2369,15 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 /* Edit mode: the edit form opens right under the money card, full width */
 .dwdc .pv3-editwrap { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; margin: 0 0 22px; scroll-margin-top: 70px; }
 @media (max-width: 900px) { .dwdc .pv3-editwrap { grid-template-columns: 1fr; } }
+/* Home meetings: slim lines */
+.dwdc .dwdc-mtl { display: flex; flex-direction: column; margin: 0 0 18px; background: #fff; border: 1px solid #cfd8e3; border-left: 4px solid #13A6EE; border-radius: 12px; overflow: hidden; }
+.dwdc .dwdc-mtl-r { display: flex; align-items: center; gap: 12px; padding: 10px 16px; min-height: 46px; font: 500 14px Poppins, sans-serif; color: #0f2447; }
+.dwdc .dwdc-mtl-r + .dwdc-mtl-r { border-top: 1px solid #edf1f6; }
+.dwdc .dwdc-mtl-d { flex: none; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #13A6EE; }
+.dwdc .dwdc-mtl-r + .dwdc-mtl-r .dwdc-mtl-d { visibility: hidden; }
+.dwdc .dwdc-mtl-t { flex: none; font-weight: 700; }
+.dwdc .dwdc-mtl-w { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dwdc .dwdc-mtl-w em { font-style: normal; color: #4a5a73; font-weight: 400; }
+.dwdc .dwdc-mtl-u { flex: none; font-size: 12.5px; font-weight: 600; color: #1a73e8; }
+.dwdc .dwdc-mtl-j { flex: none; padding: 5px 12px; border-radius: 8px; background: #0f2447; color: #fff !important; font-size: 12.5px; font-weight: 600; text-decoration: none; }
+@media (max-width: 600px) { .dwdc .dwdc-mtl-r { gap: 8px; padding: 9px 12px; font-size: 13.5px; } .dwdc .dwdc-mtl-w em { display: none; } }

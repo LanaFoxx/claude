@@ -856,6 +856,7 @@
 		var copy = function (u) { return '<div class="dwdc-conn-url"><code>' + esc(u) + '</code><button class="dwdc-lnk sm2" data-copy="' + esc(u) + '">Copy</button></div>'; };
 		var pick = function () { return '<option value="">Pick the project…</option>' + S.contacts.filter(function (c) { return c.list !== 'archive'; }).sort(function (a, b) { return a.name.localeCompare(b.name); }).map(function (c) { var k = clientOf(c); return '<option value="' + c.id + '">' + esc(c.name + (k && k.name !== c.name ? ' (' + k.name + ')' : '')) + '</option>'; }).join(''); };
 		var FL = X.upwork.files || [];
+		var gin = '<div class="dwdc-conn"><h3>' + ic('mail', 15) + ' Google inbox &amp; calendar</h3><p>Brings in booked calls, Upwork client messages and hires every 15 minutes. ' + (S.meet && S.meet.fresh ? '<b>Connected.</b>' : '<b>Not connected.</b>') + '</p><button type="button" class="dwdc-btn2 sm" data-meetconnect>' + (S.meet && S.meet.fresh ? 'Show the script' : 'Connect Google') + '</button></div>';
 		var up = '<div class="dwdc-conn"><h3><i class="upw"></i>Upwork</h3><p>In Upwork go to <b>Reports → Transaction History</b>, pick a date range, <b>Download CSV</b> and add it here. Overlapping files are fine; nothing is counted twice.</p>'
 			+ '<label class="dwdc-btn dwdc-upbtn">' + ic('plus', 14) + 'Add Upwork CSV<input type="file" accept=".csv,text/csv" data-upcsv hidden></label>'
 			+ (FL.length ? '<ul class="dwdc-files">' + FL.slice().sort(function (a, b) { return a.from < b.from ? 1 : -1; }).map(function (f) {
@@ -878,7 +879,7 @@
 		var mail = '<div class="dwdc-conn"><h3><i class="upw"></i>Upwork emails' + '<span class="dwdc-conn-st ' + (ML ? 'on' : 'off') + '">' + (ML ? 'Connected' : 'Not set up') + '</span>' + (ML ? '<small class="dwdc-conn-last">Last checked ' + fmt(ML.at, true) + ' · ' + (ML.created + ML.reopened + ML.completed + ML.check) + ' sent for your review</small>' : '') + '</h3>'
 			+ '<p>Twice a week (Monday and Thursday mornings) your Gmail sends new Upwork “hired you”, offer and “contract ended” emails here. New contracts become Active projects (never duplicates), returning clients are reopened, and ended contracts move to Completed. Money still comes from the Upwork CSV.</p>'
 			+ '<ol><li>Open <a href="https://script.google.com/home/projects/create" target="_blank" rel="noopener"><b>script.google.com → New project</b></a> while signed in as mike@dreamwebdigital.com.</li><li>Delete what’s there, then paste this script:' + (M ? '<div class="dwdc-conn-url"><code>Dream Desk Upwork sync script</code><button class="dwdc-lnk sm2" data-copy="' + esc(M.script) + '">Copy script</button></div>' : ' <i>loading…</i>') + '</li><li>Pick <b>setup</b> in the function menu and press <b>Run</b>. Allow access to Gmail when Google asks.</li></ol></div>';
-		return bar + '<div class="dwdc-conns">' + up + mail + stripe + pp + '</div><p class="dwdc-mutp sm">Payments are matched to clients by email. Anything that doesn’t match becomes a to-do on your dashboard so you can assign it. Keys are saved on your server and never shown again.</p>';
+		return bar + '<div class="dwdc-conns">' + gin + up + mail + stripe + pp + '</div><p class="dwdc-mutp sm">Payments are matched to clients by email. Anything that doesn’t match becomes a to-do on your dashboard so you can assign it. Keys are saved on your server and never shown again.</p>';
 	}
 	function refreshText(R) {
 		if (R.busy) { return 'Updating… this can take up to a minute.'; }
@@ -1269,44 +1270,24 @@
 	function dot(c) { return '<i class="dwdc-sdot t-' + (TONE[c.list] || 'steel') + '"></i>'; }
 
 	/* ---------- Home: today's client meetings (first thing on the page) ---------- */
+	// Meetings on Home: one slim line per meeting today (or tomorrow's, once today's are done). Nothing else.
 	function meetBar() {
 		var M = S.meet, now = Date.now() / 1000;
-		var hi = new Date().getHours(), greet = hi < 12 ? 'Good morning' : hi < 17 ? 'Good afternoon' : 'Good evening';
-		if (!M) {
-			return '<section class="dwdc-meet off"><div class="dwdc-meet-h"><span class="dwdc-meet-ic">' + ic('clock', 20) + '</span><div><b>' + greet + ', Michael.</b><small>Connect your Google inbox: booked calls, Upwork invites and client messages then show up here, as leads and on your to-do lists, by themselves.</small></div><button type="button" class="dwdc-btn sm" data-meetconnect>Connect Google</button></div></section>';
-		}
-		// Dates and times in this browser's time zone (the site itself runs on UTC).
-		var lt = new Date(), tdy = lt.getFullYear() + '-' + ('0' + (lt.getMonth() + 1)).slice(-2) + '-' + ('0' + lt.getDate()).slice(-2);
-		M.list.forEach(function (m) { var d = new Date(m.ts * 1000); m.date = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); m.time = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }); });
-		M.today = tdy;
-		var today = M.list.filter(function (m) { return m.date === M.today; }), later = M.list.filter(function (m) { return m.date > M.today; });
-		var tm = new Date(lt.getFullYear(), lt.getMonth(), lt.getDate() + 1), tmd = tm.getFullYear() + '-' + ('0' + (tm.getMonth() + 1)).slice(-2) + '-' + ('0' + tm.getDate()).slice(-2);
-		var tomorrow = later.filter(function (m) { return m.date === tmd; });
-		var left = today.filter(function (m) { return m.te > now; }), next = left[0];
-		if (!left.length && tomorrow.length) { // nothing left today: show tomorrow's calls
-			return '<section class="dwdc-meet"><div class="dwdc-meet-h"><span class="dwdc-meet-ic"><strong>' + tomorrow.length + '</strong></span><div><b>' + greet + ', Michael. ' + (today.length ? 'All done for today. ' : 'No more meetings today. ') + 'Tomorrow you have ' + tomorrow.length + ' meeting' + (tomorrow.length === 1 ? '' : 's') + '.</b><small>First: ' + esc(tomorrow[0].who || tomorrow[0].title) + ' at ' + esc(tomorrow[0].time) + '</small></div>'
-				+ (M.fresh ? '' : '<button type="button" class="dwdc-btn2 sm" data-meetconnect>Inbox not connected: connect Google</button>') + '</div>'
-				+ '<p class="dwdc-mt-day">Tomorrow</p><div class="dwdc-mt-list">' + tomorrow.map(function (m) { return item(m); }).join('') + '</div></section>';
-		}
-		if (!left.length) { // no meetings today, or they're all done: no box (unless the inbox isn't connected)
-			return M.fresh ? '' : '<section class="dwdc-meet off slim"><div class="dwdc-meet-h"><span class="dwdc-meet-ic">' + ic('mail', 18) + '</span><div><b>Google inbox not connected' + (M.at ? ' · last update ' + esc(fmt(String(M.at).slice(0, 10))) : '') + '</b><small>Booked calls, Upwork invites and client messages aren’t coming in automatically.</small></div><button type="button" class="dwdc-btn sm" data-meetconnect>Connect Google</button></div></section>';
-		}
-		var until = function (m) { var d = Math.round((m.ts - now) / 60); return m.ts <= now ? 'Happening now' : d < 60 ? 'in ' + d + ' min' : d < 600 ? 'in ' + Math.floor(d / 60) + ' h' + (d % 60 ? ' ' + d % 60 + ' min' : '') : ''; };
-		function item(m) {
-			var past = m.te <= now, live = m.ts <= now && !past, isNext = m === next;
-			return '<div class="dwdc-mt' + (past ? ' past' : '') + (isNext ? ' next' : '') + '"><span class="dwdc-mt-time">' + esc(m.time) + '</span><span class="dwdc-mt-who"><b>' + esc(m.who || m.title) + '</b><small>' + esc([m.kind, m.source && m.source !== m.kind ? 'via ' + m.source : '', m.about].filter(Boolean).join(' · ')) + '</small></span>'
-				+ (past ? '<span class="dwdc-mt-done">Done</span>' : (isNext || live ? '<span class="dwdc-mt-in">' + until(m) + '</span>' : '') + (m.link ? '<a class="dwdc-btn sm' + (isNext || live ? '' : ' ghost') + '" href="' + esc(m.link) + '" target="_blank" rel="noopener">Join</a>' : '')) + '</div>';
-		}
-		var head = today.length
-			? '<b>' + greet + ', Michael. You have ' + today.length + ' meeting' + (today.length === 1 ? '' : 's') + ' today.</b><small>' + (next ? 'Next: ' + esc(next.who || next.title) + ' at ' + esc(next.time) + (until(next) ? ' (' + until(next) + ')' : '') : 'All done for today.') + '</small>'
-			: '<b>' + greet + ', Michael. No meetings today.</b><small>' + (later[0] ? 'Next: ' + esc(later[0].who || later[0].title) + ' on ' + fmt(later[0].date) + ' at ' + esc(later[0].time) : 'Nothing booked in the next two weeks.') + '</small>';
-		var stale = !M.fresh;
-		return '<section class="dwdc-meet"><div class="dwdc-meet-h"><span class="dwdc-meet-ic"><strong>' + today.length + '</strong></span><div>' + head + '</div>'
-			+ (stale ? '<button type="button" class="dwdc-btn2 sm" data-meetconnect>Inbox not connected: connect Google</button>' : '') + '</div>'
-			+ (today.length ? '<div class="dwdc-mt-list">' + today.map(item).join('') + '</div>' : '')
-			+ (tomorrow.length ? '<p class="dwdc-mt-day">Tomorrow</p><div class="dwdc-mt-list">' + tomorrow.map(function (m) { return item(m); }).join('') + '</div>' : '')
-			+ (later.filter(function (m) { return m.date > tmd; }).length ? '<p class="dwdc-mt-later">Coming up: ' + later.filter(function (m) { return m.date > tmd; }).slice(0, 4).map(function (m) { return '<span>' + esc(new Date(m.date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short' })) + ' ' + esc(m.time) + ' · ' + esc(m.who || m.title) + '</span>'; }).join('') + '</p>' : '')
-			+ '</section>';
+		if (!M || !M.list) { return ''; }
+		var lt = new Date(), iso = function (d) { return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); };
+		var tdy = iso(lt), tmd = iso(new Date(lt.getFullYear(), lt.getMonth(), lt.getDate() + 1));
+		M.list.forEach(function (m) { var d = new Date(m.ts * 1000); m.date = iso(d); m.time = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }); });
+		var left = M.list.filter(function (m) { return m.date === tdy && m.te > now; });
+		var day = 'Today', list = left;
+		if (!list.length) { list = M.list.filter(function (m) { return m.date === tmd; }); day = 'Tomorrow'; }
+		if (!list.length) { return ''; }
+		var name = function (m) { var w = m.who && m.who !== m.title ? m.who : (m.title.match(/\bwith\s+([A-Z][\w'-]+(?:\s+[A-Z][\w'-]*\.?)?)/) || [])[1]; return w || m.title; };
+		var until = function (m) { var d = Math.round((m.ts - now) / 60); return day !== 'Today' ? '' : m.ts <= now ? 'now' : d < 60 ? 'in ' + d + ' min' : d < 600 ? 'in ' + Math.floor(d / 60) + 'h' + (d % 60 ? ' ' + d % 60 + 'm' : '') : ''; };
+		return '<section class="dwdc-mtl">' + list.map(function (m, i) {
+			var u = until(m);
+			return '<div class="dwdc-mtl-r' + (i === 0 && day === 'Today' ? ' next' : '') + '"><b class="dwdc-mtl-d">' + day + '</b><span class="dwdc-mtl-t">' + esc(m.time) + '</span><span class="dwdc-mtl-w" title="' + esc(m.title) + '">' + esc(name(m)) + (m.kind && m.kind !== 'Meeting' ? ' <em>· ' + esc(m.kind) + '</em>' : '') + '</span>'
+				+ (u ? '<span class="dwdc-mtl-u">' + u + '</span>' : '') + (m.link ? '<a class="dwdc-mtl-j" href="' + esc(m.link) + '" target="_blank" rel="noopener">Join</a>' : '') + '</div>';
+		}).join('') + '</section>';
 	}
 	/* ---------- Home ---------- */
 	function home() {
