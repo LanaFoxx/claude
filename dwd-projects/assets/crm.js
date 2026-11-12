@@ -1377,7 +1377,7 @@
 		var res = R ? '<div class="dd-zres"><p>' + (R.sent ? 'Invite sent to <b>' + esc(R.sent) + '</b>' : 'Meeting ready' + (R.noEmail ? ' · no email on file, send the link yourself' : '')) + (R.when ? ' · ' + esc(R.when) : '') + '</p>'
 			+ '<div class="dd-pbtns"><a class="dd-btn primary dd-zjoin" href="' + esc(R.join) + '" target="_blank" rel="noopener" title="Right-click to copy the link">' + lu('play', 14) + 'Join meeting</a><button type="button" class="dd-btn secondary" data-copy="' + esc(R.join) + '">' + lu('link', 14) + 'Copy link</button></div></div>' : '';
 		return '<section class="dd-card dd-zoom">' + title + '<form class="dd-zb dd-zform" data-zkey="' + key + '">' + pick
-			+ '<label class="dd-zf"><span>When <i>(leave empty to start now)</i></span><input type="datetime-local" name="when"></label>'
+			+ '<label class="dd-zf"><span>When <i>(leave empty to start now)</i></span><span class="dd-isel dd-dtw"><input type="datetime-local" name="when">' + lu('chevron-down', 14) + '</span></label>'
 			+ '<button class="dd-btn primary dd-zgo">' + lu('mail', 14) + 'Send Zoom invite</button></form>' + res + '</section>';
 	}
 

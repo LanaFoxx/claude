@@ -189,3 +189,9 @@
 .dd .dd-zf input[type=datetime-local]::-webkit-calendar-picker-indicator { margin-right: 2px; opacity: .7; cursor: pointer; }
 @media (prefers-color-scheme: dark) { .dd .dd-zf input[type=datetime-local]::-webkit-calendar-picker-indicator { filter: invert(.8); } }
 [data-theme="dark"] .dd-zf input[type=datetime-local]::-webkit-calendar-picker-indicator { filter: invert(.8); }
+/* Zoom "When" box: same arrow as the Who dropdown; the whole box opens the picker */
+.dd .dd-dtw { position: relative; display: block; }
+.dd .dd-dtw input[type=datetime-local] { padding-right: 30px !important; -webkit-appearance: none; appearance: none; text-align: left; }
+.dd .dd-dtw input[type=datetime-local]::-webkit-calendar-picker-indicator { position: absolute; inset: 0; width: auto; height: auto; margin: 0; opacity: 0; cursor: pointer; filter: none !important; }
+.dd .dd-dtw input[type=datetime-local]::-webkit-date-and-time-value { text-align: left; }
+.dd .dd-dtw > .lu { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--text-3); }
