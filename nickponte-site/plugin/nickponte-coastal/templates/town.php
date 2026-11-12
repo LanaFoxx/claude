@@ -105,12 +105,7 @@ include NPC_DIR . 'templates/header.php';
 		</section>
 	<?php endif; ?>
 
-	<?php if (trim(wp_strip_all_tags($t['body']))) : ?>
-		<section class="npc-section npc-article">
-			<p class="npc-eyebrow">Town guide</p>
-			<div class="npc-article__body"><?php echo wp_kses_post(wpautop($t['body'])); ?></div>
-		</section>
-	<?php endif; ?>
+	<?php if (trim(wp_strip_all_tags($t['body']))) echo npc_town_guide($t['body'], $t['name']); ?>
 
 	<section class="npc-faq npc-section">
 		<div>

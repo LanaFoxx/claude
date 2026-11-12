@@ -21,6 +21,35 @@
 		});
 	});
 
+	// Town guide tabs (arrow keys move between tabs) and "Read more"
+	document.querySelectorAll('[data-npc-tabs]').forEach(function (box) {
+		var tabs = [].slice.call(box.querySelectorAll('[role=tab]'));
+		function show(t) {
+			tabs.forEach(function (x) { var on = x === t; x.setAttribute('aria-selected', on); x.tabIndex = on ? 0 : -1; document.getElementById(x.getAttribute('aria-controls')).hidden = !on; });
+		}
+		tabs.forEach(function (t, i) {
+			t.addEventListener('click', function () { show(t); });
+			t.addEventListener('keydown', function (e) {
+				var n = e.key === 'ArrowRight' ? i + 1 : e.key === 'ArrowLeft' ? i - 1 : null;
+				if (n === null) return; e.preventDefault(); var x = tabs[(n + tabs.length) % tabs.length]; show(x); x.focus();
+			});
+		});
+	});
+	// Long guide cards: show 5 lines with a More toggle
+	document.querySelectorAll('.npc-gcard__b').forEach(function (b) {
+		if (b.textContent.trim().split(/\s+/).length < 60) return;
+		b.classList.add('is-clamped');
+		var btn = document.createElement('button'); btn.type = 'button'; btn.className = 'npc-gcard__more'; btn.textContent = 'More'; btn.setAttribute('aria-expanded', 'false');
+		btn.addEventListener('click', function () { var open = b.classList.toggle('is-clamped'); btn.textContent = open ? 'More' : 'Less'; btn.setAttribute('aria-expanded', String(!open)); });
+		b.after(btn);
+	});
+	document.querySelectorAll('.npc-readmore').forEach(function (b) {
+		b.addEventListener('click', function () {
+			var el = document.getElementById(b.getAttribute('aria-controls')), open = b.getAttribute('aria-expanded') === 'true';
+			el.hidden = open; b.setAttribute('aria-expanded', !open); b.textContent = open ? 'Read more' : 'Show less';
+		});
+	});
+
 	// Seller net sheet calculator
 	document.querySelectorAll('[data-npc-net]').forEach(function (box) {
 		var price = box.querySelector('#npc-net-price'), comm = box.querySelector('#npc-net-comm');
