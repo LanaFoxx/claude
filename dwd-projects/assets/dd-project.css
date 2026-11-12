@@ -184,3 +184,8 @@
 .dd-zgrid input { height: 36px !important; min-height: 0 !important; padding: 0 12px !important; background: var(--bg) !important; border: 1px solid var(--border-strong) !important; border-radius: var(--radius-md) !important; color: var(--text) !important; font-size: 13px !important; box-shadow: none !important; }
 @media (max-width: 767px) { .dd-zgrid { grid-template-columns: 1fr; } .dd-zf input, .dd-zf .dd-isel select { height: 44px !important; font-size: 16px !important; } }
 .dd .dd-zf .dd-isel select, .dd .dd-billf .dd-isel select, .dd .dd-bform .dd-isel select { max-width: none !important; width: 100% !important; }
+/* date/time box: keep the phone's arrow off the edge, like the dropdown above it */
+.dd .dd-zf input[type=datetime-local] { padding-right: 26px !important; padding-left: 14px !important; }
+.dd .dd-zf input[type=datetime-local]::-webkit-calendar-picker-indicator { margin-right: 2px; opacity: .7; cursor: pointer; }
+@media (prefers-color-scheme: dark) { .dd .dd-zf input[type=datetime-local]::-webkit-calendar-picker-indicator { filter: invert(.8); } }
+[data-theme="dark"] .dd-zf input[type=datetime-local]::-webkit-calendar-picker-indicator { filter: invert(.8); }

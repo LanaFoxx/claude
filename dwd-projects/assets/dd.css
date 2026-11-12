@@ -448,3 +448,7 @@ i.dd-flag { width: 10px; height: 10px; cursor: inherit; }
 	.dd-stats.open .dd-statsmore .lu { transform: rotate(180deg); }
 }
 @media (max-width: 767px) { .dd-home .dd-home-r > .dd-card.dd-zoom { order: 99; } }
+/* to-dos in Today's schedule */
+.dd-tl-chk { width: 16px; height: 16px; margin: 3px auto 0; border-radius: 4px; border: 1.5px solid var(--border-strong); background: var(--surface); padding: 0; cursor: pointer; }
+.dd-tl-chk:hover { border-color: var(--accent); background: var(--accent-soft); }
+.dd-tl-r.td .dd-tl-t { color: var(--text-3); font-weight: 500; }
