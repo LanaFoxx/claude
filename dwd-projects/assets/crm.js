@@ -1723,7 +1723,7 @@
 				+ mcard('Top projects', rowsP || emptyRow('No payments yet.')) + mcard('Top clients', rowsC || emptyRow('No payments yet.'))
 				+ mcard('Repeat clients <span class="dwdc-cnt">' + repeat.length + '</span>', rowsR || emptyRow('No repeat clients yet.'))
 				+ '</div>' : '');
-		return top4 + '<div class="mv-grid">' + incomeBox + jobsBox + adsBox + trendBox + '</div>' + more;
+		return top4 + '<div class="mv-grid mv-cols"><div class="mv-col">' + incomeBox + adsBox + '</div><div class="mv-col">' + jobsBox + trendBox + '</div></div>' + more;
 	}
 	/* ---------- Get Reviews: pick past clients and email them a Google review request ---------- */
 	var REV_PER = 25;

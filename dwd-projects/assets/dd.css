@@ -422,3 +422,8 @@ i.dd-flag { width: 10px; height: 10px; cursor: inherit; }
 .dd .dwdc-modal .dwdc-arow.head { padding-top: 6px; }
 .dd .dwdc-modal .dwdc-wins-foot { margin-top: 16px !important; padding-top: 12px; border-top: 1px solid var(--border); line-height: 1.5; }
 .dd .dwdc-modal .dd-spendh { margin-top: 32px !important; }
+/* Business revenue: two independent columns so boxes don't leave gaps */
+.dd .mv-grid.mv-cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; align-items: start; }
+.dd .mv-cols > .mv-col { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+.dd .mv-cols > .mv-col > * { margin: 0 !important; }
+@media (max-width: 900px) { .dd .mv-grid.mv-cols { grid-template-columns: 1fr; } }
