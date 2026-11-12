@@ -130,6 +130,18 @@ $updated = $towns ? $towns[0]['updated'] : date_i18n('F Y');
 				<a class="npc-btn" href="#contact">Work with Nick</a>
 				<a class="npc-btn npc-btn--ghost" href="<?php echo esc_url(npc_featured_url()); ?>">Featured sales</a>
 			</div>
+			<?php
+			// "As seen in": add each article's URL as the second value to make the logo a link.
+			$press = [['npc-press-seacoastonline', '', 'Seacoastonline', 17], ['npc-press-bostoncom', '', 'Boston.com', 20], ['npc-press-unionleader', '', 'New Hampshire Union Leader', 24]];
+			?>
+			<div class="npc-press">
+				<p class="npc-press__k">As seen in</p>
+				<div class="npc-press__logos">
+					<?php foreach ($press as $pr) : $img = npc_img($pr[0], 'medium', ['alt' => $pr[2], 'style' => 'height:' . (int) $pr[3] . 'px']); ?>
+						<?php if ($pr[1]) : ?><a href="<?php echo esc_url($pr[1]); ?>" target="_blank" rel="noopener"><?php echo $img; ?></a><?php else : ?><span><?php echo $img; ?></span><?php endif; ?>
+					<?php endforeach; ?>
+				</div>
+			</div>
 		</div>
 	</div>
 </section>
