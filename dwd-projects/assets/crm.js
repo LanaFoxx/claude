@@ -1043,7 +1043,9 @@
 	function revBiz(k) { if (k.company) { return k.company; } var p = projectsOf(k.id).filter(function (c) { return c.name !== k.name; })[0]; return p ? p.name : ''; }
 	function reviewsView() {
 		S.revSel = S.revSel || {};
-		var list = S.clients.slice().sort(function (a, b) { return a.name.localeCompare(b.name); });
+		// Most recently finished project first; clients with nothing completed go last, A–Z.
+		var lastDone = {}; S.clients.forEach(function (k) { lastDone[k.id] = projectsOf(k.id).filter(function (c) { return c.list === 'complete'; }).map(function (c) { return doneDate(c) || ''; }).sort().pop() || ''; });
+		var list = S.clients.slice().sort(function (a, b) { return lastDone[a.id] !== lastDone[b.id] ? (lastDone[a.id] < lastDone[b.id] ? 1 : -1) : a.name.localeCompare(b.name); });
 		var pages = Math.max(1, Math.ceil(list.length / REV_PER)), pg = Math.min(Math.max(1, S.revPage || 1), pages);
 		var rows = list.slice((pg - 1) * REV_PER, pg * REV_PER);
 		var nSel = Object.keys(S.revSel).filter(function (k) { return S.revSel[k]; }).length;
@@ -1060,7 +1062,7 @@
 			+ '<div class="dwdc-card dwdc-tbl"><div class="dwdc-grid g-rev head"><span>Name</span><span>Business</span><span>Email</span><span class="r"><label class="dwdc-revall"><input type="checkbox" data-revall' + (allOn ? ' checked' : '') + '> Select page</label></span></div>'
 			+ rows.map(function (k) {
 				var em = revEmail(k), on = !!S.revSel[k.id];
-				return '<div class="dwdc-grid g-rev row' + (on ? ' sel' : '') + '"><span><a class="dwdc-clink" href="#cl/' + k.id + '">' + esc(k.name) + '</a></span><span class="sec ell">' + esc(revBiz(k) || '—') + '</span><span class="sec ell">' + esc(em || 'No email on file') + '</span>'
+				return '<div class="dwdc-grid g-rev row' + (on ? ' sel' : '') + '"><span><a class="dwdc-clink" href="#cl/' + k.id + '">' + esc(k.name) + '</a></span><span class="sec ell">' + esc(revBiz(k) || '—') + (lastDone[k.id] ? '<small class="dwdc-revdone">Finished ' + fmt(lastDone[k.id], true) + '</small>' : '') + '</span><span class="sec ell">' + esc(em || 'No email on file') + '</span>'
 					+ '<span class="r">' + (em ? '<label class="dwdc-revchk"><input type="checkbox" data-revpick="' + k.id + '"' + (on ? ' checked' : '') + '><span>Email review request</span></label>' : '<em class="mut">Add an email first</em>')
 					+ (k.review_sent ? '<small class="dwdc-revsent">Asked ' + fmt(k.review_sent, true) + '</small>' : '') + '</span></div>';
 			}).join('') + '</div>'
@@ -1348,7 +1350,7 @@
 	}
 	// To-Dos page: Work and Personal side by side.
 	function todosBoth() {
-		return '<div class="dwdc-todopage"><section><h2 class="dwdc-sech">Work</h2>' + todosView() + '</section><section><h2 class="dwdc-sech">Personal</h2>' + (pData() ? (function () { S.pNoEv = true; var h = personalView({ view: 'personal', arg: 'todo' }); S.pNoEv = false; return h; })() : emptyRow('Loading…')) + '</section></div>';
+		return '<div class="dwdc-todopage"><section><h2 class="dwdc-sech">Work</h2>' + todosView() + '</section><section><h2 class="dwdc-sech">Personal</h2>' + personalTodosView() + '</section></div>';
 	}
 	/* ---------- Home ---------- */
 	function home() {
@@ -1670,6 +1672,25 @@
 			+ (S.tasks.length ? '' : '<div class="dwdc-card">' + emptyRow('No to-dos yet. Add one above, or from any client’s page.') + '</div>') + '</div>';
 	}
 	function byDue(a, b) { return a.due < b.due ? -1 : 1; }
+	// Personal to-dos, laid out exactly like the Work list (same add bar, same groups, same rows).
+	function personalTodosView() {
+		var D = pData(); if (!D) { return emptyRow('Loading…'); }
+		var mine = D.todos.filter(function (t) { return !t.gevent; }), open = mine.filter(function (t) { return !t.done; }), done = mine.filter(function (t) { return t.done; }).sort(function (a, b) { return (b.done_at || '') < (a.done_at || '') ? -1 : 1; }).slice(0, 25);
+		var groups = [
+			['Overdue', 'red', open.filter(function (t) { return t.due && t.due < DWDC.today; }).sort(byDue)],
+			['Today', 'blue', open.filter(function (t) { return t.due === DWDC.today; })],
+			['Upcoming', 'navy', open.filter(function (t) { return t.due > DWDC.today; }).sort(byDue)],
+			['No date', 'mut', open.filter(function (t) { return !t.due; })],
+			['Done', 'green', done]
+		];
+		var row = function (t) { return pTodoRow(t).replace('<button class="dwdc-del"', due(t) + '<button class="dwdc-del"'); };
+		return '<div class="dwdc-narrow"><form class="dwdc-addbar dwdc-paddbar" data-pform="pdayadd">' + ic('plus', 18) + '<input name="text" placeholder="Add a to-do and press Enter…" autocomplete="off" required>'
+			+ '<input type="date" name="due" title="Due date"><button class="dwdc-btn">Add</button></form>'
+			+ groups.filter(function (g) { return g[2].length; }).map(function (g) {
+				return '<section class="dwdc-group"><h3><i class="t-' + g[1] + '"></i>' + g[0] + ' <b>' + g[2].length + '</b></h3><div class="dwdc-card dwdc-todos p6">' + g[2].map(row).join('') + '</div></section>';
+			}).join('')
+			+ (mine.length ? '' : '<div class="dwdc-card">' + emptyRow('No personal to-dos yet. Add one above.') + '</div>') + '</div>';
+	}
 
 	/* ---------- hosting ---------- */
 	function subActive(c) { return !!(c.sub && c.sub.status === 'active'); }
