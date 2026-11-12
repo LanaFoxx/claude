@@ -996,7 +996,9 @@ def build_home():
             direction="row", gap=(28, 12), flex_wrap="wrap", flex_align_items="center",
             padding=dims(8, 0, 0, 0))],
         gap=28, flex_justify_content="center",
-        padding=pads((115, 104, 78, 64), (86, 78, 59, 23), (115, 104, 78, 64), (86, 78, 59, 23)))
+        padding=pads((115, 104, 78, 64), (86, 78, 59, 23), (115, 104, 78, 64), (86, 78, 59, 23)),
+        **(dict(wood_texture(SPRUCE, 0.75), background_background="classic", background_color=SPRUCE,
+                background_attachment="fixed") if TEXTURE else {}))
     away = container("Away for the Season", [grid("Away / Layout", [
         photo_slot("Away / Photo", "#2A3236", 640, "Photo: mountain home in snow, lights on", image="deck"),
         away_text], cols=(2, 2, 1, 1), gap_col=0)],

@@ -280,3 +280,5 @@ Container `Seasonal Offer`: change the H2 to **Talk to us about your project** a
     - A 60px amber pill (padding 0 40px), then the builder note under it.
   - **Form actions:** unchanged (email, then redirect to /thank-you/).
 - **Updated full reference:** `top-notch-homepage-reference.html` is replaced with the latest version, which includes these two sections.
+- **Hero:** 80px bottom padding below the credentials row.
+- **Away for the Season text half:** the same wood texture, fixed while scrolling, under a Spruce (#24302A) overlay at 75%.
