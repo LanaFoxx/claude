@@ -709,7 +709,9 @@ def path_column(title, color, label, h2_text, body, items):
 _LINE = "rgba(242,236,227,0.07)"
 WHY_GRID_LINES = (
     "selector{position:relative;}"
-    "selector > .e-con{position:relative;padding:56px 48px 60px !important;}"
+    "selector > .e-con{position:relative;padding:56px 48px 60px !important;"
+    "transition:background-color .35s ease;}"
+    "selector > .e-con:hover{background-color:rgba(242,236,227,0.03);}"
     "selector > .e-con::before{content:'' !important;display:block;position:absolute;top:-3000px;bottom:-3000px;"
     "left:0;right:auto;width:1px;height:auto;background:" + _LINE + ";opacity:1;pointer-events:none;border:0;}"
     "selector > .e-con::after{content:'';position:absolute;left:0;right:0;top:0;height:1px;"

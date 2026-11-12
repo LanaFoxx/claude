@@ -239,3 +239,4 @@ Container `Seasonal Offer`: change the H2 to **Talk to us about your project** a
   - At 600px and below only the horizontal rules show.
 - **No visible placeholders:** all bracketed placeholders are replaced with temporary copy (email, offer dates and discount, paint brands, warranty length, Google count). `output/CLIENT-CHECKLIST.md` lists every item to confirm with the client. Both forms' Email To is temporarily `info@topnotch-painting.com`, so leads go there until it's changed.
 - **Why grid:** the horizontal rules now stop at the grid's outer edges; the vertical rules still run the full section height.
+- **Why grid hover:** each cell fades to rgba(242,236,227,0.03) on hover (0.35s), just a touch lighter than Spruce.
