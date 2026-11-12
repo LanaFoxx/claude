@@ -151,6 +151,21 @@ function dwddr_send( $pid ) {
 	return $email;
 }
 
+/** Let Mike know a client's Drive folder is ready, with the link. */
+function dwddr_tell_mike( $pid, $url, $sent_to = '' ) {
+	$name = dwddr_name( $pid );
+	$html = dwdp_email_html( array(
+		'eyebrow' => 'Google Drive',
+		'title'   => 'Drive folder ready: ' . $name,
+		'intro'   => 'A Google Drive upload folder was made for <strong>' . esc_html( $name ) . '</strong> after their onboarding form came in.<br><br>'
+			. ( $sent_to ? 'The upload link was emailed to ' . esc_html( $sent_to ) . '.' : 'The upload link was <strong>not</strong> emailed to the client (no email on the project). Copy it from the button below.' )
+			. '<br><br>Folder link: <a href="' . esc_url( $url ) . '">' . esc_html( $url ) . '</a>',
+		'buttons' => array( array( 'Open the folder', $url ), array( 'Open in Dream Desk', admin_url( 'admin.php?page=client-desk#client/' . $pid ) ) ),
+		'footer'  => 'Dream Web Digital ·',
+	) );
+	wp_mail( 'mike@dreamwebdigital.com', 'Drive folder ready: ' . $name, $html, array( 'Content-Type: text/html; charset=UTF-8', 'X-DWD-Own: 1' ) );
+}
+
 /* Automatic: when an onboarding form comes in, make the folder and email the client (in the background). */
 add_action( 'dwdc_entry_filed', function ( $cid, $form ) {
 	if ( dwddr_ready() && $cid && false !== stripos( (string) $form, 'onboard' ) ) {
@@ -171,6 +186,7 @@ add_action( 'dwddr_auto', function ( $pid ) {
 	if ( is_wp_error( $s ) ) {
 		dwddr_note( $pid, 'Drive folder made, but the upload email wasn’t sent: ' . $s->get_error_message() );
 	}
+	dwddr_tell_mike( $pid, $u, is_wp_error( $s ) ? '' : $s );
 } );
 
 add_action( 'rest_api_init', function () {

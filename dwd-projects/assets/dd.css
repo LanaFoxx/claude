@@ -434,3 +434,5 @@ i.dd-flag { width: 10px; height: 10px; cursor: inherit; }
 /* Ask button: bottom-right corner (the old phone tab bar it used to clear is gone) */
 @media (max-width: 768px) { .dwdc-askfab { bottom: calc(16px + env(safe-area-inset-bottom)) !important; right: 16px !important; } }
 .dwdc-askfab:hover { background: var(--accent-hover) !important; }
+/* Connections: cards only as tall as their content */
+.dd .dwdc-conns { align-items: start; }

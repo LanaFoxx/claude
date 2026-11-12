@@ -162,3 +162,6 @@
 .dd-drvc ol b { color: var(--text); font-weight: 500; }
 .dd-drvrow { max-width: 720px; }
 .dd-detob .dd-pbtns .dd-btn { height: 32px; font-size: 13px; }
+.dd-pdrive { display: flex; align-items: center; gap: 8px; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 13px; color: var(--text-2); }
+.dd-pdrive > span { flex: 1; }
+.dd-pdrive .lu { color: var(--text-3); }
