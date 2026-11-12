@@ -10,7 +10,7 @@ include NPC_DIR . 'templates/header.php';
 	<div class="npc-split__txt">
 		<nav class="npc-crumbs" aria-label="Breadcrumb"><a href="<?php echo esc_url($home); ?>">Home</a> / <a href="<?php echo esc_url(npc_default_town_url()); ?>">Towns</a> / <span aria-current="page"><?php echo esc_html($t['name']); ?></span></nav>
 		<p class="npc-eyebrow">Seacoast New Hampshire</p>
-		<h1 class="npc-split__h1"><?php echo esc_html($t['name']); ?><span class="npc-sr">, NH real estate</span></h1>
+		<h1 class="npc-split__h1"><b><?php echo esc_html($t['name']); ?></b><span class="npc-sr">, NH real estate</span></h1>
 		<p class="npc-split__intro"><?php echo esc_html($t['intro']); ?></p>
 		<div class="npc-actions">
 			<a class="npc-btn npc-btn--lg" href="tel:6039187593">Call Nick</a>
