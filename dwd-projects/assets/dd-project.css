@@ -154,3 +154,11 @@
 .dd-pc2.open > .dd-ntog .dd-tchev { transform: rotate(180deg); }
 .dd-pc2 > header .sum b.late { font-weight: 500; color: var(--danger-text); }
 .dd-pc2.k-ppl { background: var(--surface) !important; color: var(--text) !important; }
+/* Google Drive setup card (Connections) */
+.dd-drvc { padding: 18px 20px 20px; display: flex; flex-direction: column; gap: 12px; }
+.dd-drvh { display: flex; align-items: flex-start; gap: 12px; font-size: 13px; color: var(--text-2); }
+.dd-drvh .dd-pill { margin-top: 1px; }
+.dd-drvc ol { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; font-size: 13px; color: var(--text-2); }
+.dd-drvc ol b { color: var(--text); font-weight: 500; }
+.dd-drvrow { max-width: 720px; }
+.dd-detob .dd-pbtns .dd-btn { height: 32px; font-size: 13px; }

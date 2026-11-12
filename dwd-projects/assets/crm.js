@@ -718,7 +718,12 @@
 			})()
 			+ '<a href="#money" data-owed><span>Total owed</span><b>' + money(owed(owingList())) + '</b></a>'
 			+ '<a href="#projects/active"><span>Active projects</span><b>' + by('active').length + '</b></a>'
-			+ '<a href="#hosting"><span>Hosting clients</span><b>' + hosting().length + '</b></a></section>';
+			+ '<a href="#hosting"><span>Hosting clients</span><b>' + hosting().length + '</b></a>'
+			+ (function () {
+				var A = S.ads || {}, G = A.google, K = A.connects || {}, mn = new Date(DWDC.today + 'T12:00:00').toLocaleDateString('en-US', { month: 'long' });
+				return '<a href="#money" data-connmodal><span>Connects spent<small>' + mn + ' · last month ' + money(K.lastmonth || 0) + '</small></span><b>' + money(K.month || 0) + '</b></a>'
+					+ '<a href="#money" data-adsmodal><span>Google Ads spent<small>' + (G ? mn + ' · ' + money(G.week.cost) + ' this week' : 'Not connected') + '</small></span><b>' + (G ? money(G.month.cost) : '—') + '</b></a>';
+			})() + '</section>';
 		var rows = overdue.sort(function (a, b) { return a.t.due < b.t.due ? -1 : 1; }).concat(today), seenP = {};
 		rows = rows.filter(function (x) { if (!x.w || !x.t.contact) { return true; } if (seenP[x.t.contact]) { seenP[x.t.contact].n++; return false; } seenP[x.t.contact] = x; x.n = 1; return true; }).slice(0, 8);
 		var trow = function (x) {
@@ -1075,7 +1080,7 @@
 			+ '<span class="dd-pc due ' + dueCls + '">' + (dd ? fmt(dd) : '<i>—</i>') + '</span>'
 			+ '<span class="dd-pc st">' + statusSelect(c) + '</span>'
 			+ '<span class="dd-pc nx" title="' + esc(c.next || '') + '">' + (c.next ? esc(c.next) : '<i>—</i>') + '</span>'
-			+ '<span class="dd-pc acts"><button type="button" class="dd-ibtn sm" data-actmove="' + c.id + ':' + (seg === 'now' ? 'wait' : 'now') + '" title="' + (seg === 'now' ? 'Move to Waiting' : 'Move to Working on now') + '">' + lu(seg === 'now' ? 'chevrons-down' : 'chevrons-up', 16) + '</button><a class="dd-ibtn sm" href="#client/' + c.id + '" title="Open project">' + lu('chevron-right', 16) + '</a></span></div>';
+			+ '<span class="dd-pc acts">' + (c.drive ? '<button type="button" class="dd-ibtn sm" data-copy="' + esc(c.drive) + '" title="Copy Drive upload link">' + lu('link', 15) + '</button>' : '') + '<button type="button" class="dd-ibtn sm" data-actmove="' + c.id + ':' + (seg === 'now' ? 'wait' : 'now') + '" title="' + (seg === 'now' ? 'Move to Waiting' : 'Move to Working on now') + '">' + lu(seg === 'now' ? 'chevrons-down' : 'chevrons-up', 16) + '</button><a class="dd-ibtn sm" href="#client/' + c.id + '" title="Open project">' + lu('chevron-right', 16) + '</a></span></div>';
 	}
 	function actCard(c) {
 		var k = clientOf(c), ow = num(c.balance);
@@ -1859,7 +1864,19 @@
 	function connectionsView() {
 		S.pConnOpen = true;
 		return '<h2 class="dwdc-sech">Google, bank &amp; AI</h2>' + connPanel().replace('<button class="dwdc-cardh dwdc-colh" data-pconnopen', '<div class="dwdc-cardh" data-x').replace(/<\/button>(<div class="dwdc-conns">)/, '</div>$1')
+			+ '<h2 class="dwdc-sech">Google Drive · client upload folders</h2>' + driveConn()
 			+ '<h2 class="dwdc-sech">Payments &amp; Upwork</h2><section class="dwdc-card pad dwdc-mcard wide">' + connCard() + '</section>';
+	}
+	function driveConn() {
+		if (!S.drv && !S.drvLoading) { S.drvLoading = true; api('/drive').then(function (x) { S.drv = x; S.drvLoading = false; render(); }).catch(function () { S.drvLoading = false; }); }
+		var G = S.drv, ok = G ? G.ready : DWDC.driveReady;
+		return '<section class="dd-card dd-drvc"><div class="dd-drvh">' + ddPill(ok ? 'Connected' : 'Not connected', ok ? 'success' : 'neutral') + '<span>Each project gets a folder named after the company inside “Dream Desk – Client folders” in your Drive. When an onboarding form comes in, the folder is made and the client is emailed the link automatically.</span></div>'
+			+ '<ol><li>Open <a href="https://script.google.com/home/projects/create" target="_blank" rel="noopener"><b>script.google.com → New project</b></a> while signed in as mike@dreamwebdigital.com and name it “Dream Desk – Drive folders”.</li>'
+			+ '<li>Delete what’s in the editor and paste this script: ' + (G ? '<button type="button" class="dd-btn secondary sm" data-copy="' + esc(G.script) + '">' + lu('link', 13) + 'Copy script</button>' : '<i>loading…</i>') + '</li>'
+			+ '<li>Save, choose <b>setup</b> next to Run, press <b>Run</b> and allow Drive access.</li>'
+			+ '<li>Click <b>Deploy → New deployment</b>, pick type <b>Web app</b>, set <b>Execute as: Me</b> and <b>Who has access: Anyone</b>, then <b>Deploy</b>.</li>'
+			+ '<li>Copy the <b>Web app URL</b> and paste it here:</li></ol>'
+			+ '<div class="dd-frow dd-drvrow"><input data-drvurl type="url" placeholder="https://script.google.com/macros/s/…/exec" value="' + esc(G && G.url ? G.url : '') + '"><button type="button" class="dd-btn primary" data-drvsave>Save &amp; test</button></div></section>';
 	}
 	// To-Dos page: Work and Personal side by side.
 	function todosBoth() {
@@ -2459,7 +2476,7 @@
 		var started = imported(c) || !c.created ? '' : String(c.created).slice(0, 10);
 		var sub = [c.job ? esc(c.job) : '', site(c) ? '<a href="https://' + esc(site(c)) + '" target="_blank" rel="noopener">' + esc(site(c)) + '</a>' : '', c.lead_source ? 'Lead from ' + esc(c.lead_source) : '', started ? 'Started ' + fmt(started) : ''].filter(Boolean).join(' · ');
 		var head = '<div class="dd-pp-head"><span class="dd-pp-av">' + esc(ddInitials(c.company || c.name)) + '</span><div class="dd-pp-t"><div class="dd-pp-h1"><h1>' + esc(c.name) + '</h1>' + ddPill(stLabel, stTone) + (payState ? ddPill(payState, payTone) : '') + (num(c.hosting) ? ddPill('Hosting', 'neutral') : '') + '</div>'
-			+ (sub ? '<p>' + sub + '</p>' : '') + '</div><div class="dd-pp-acts">' + meetBtn(c) + main
+			+ (sub ? '<p>' + sub + '</p>' : '') + '</div><div class="dd-pp-acts">' + meetBtn(c) + (c.drive ? '<button type="button" class="dd-btn secondary" data-copy="' + esc(c.drive) + '" title="Copy the Google Drive upload link">' + lu('link', 14) + 'Drive link</button>' : '') + main
 			+ '<div class="pv3-more dd-pp-more"><button type="button" class="dd-btn secondary icon" data-pmore aria-haspopup="menu" aria-label="More actions">' + lu('more-horizontal') + '</button><div class="pv3-menu dd-menu2" role="menu">' + menu + '</div></div></div></div>';
 		// money strip
 		var strip;
@@ -2502,6 +2519,9 @@
 			+ (!nOpen ? '' : '<div class="dd-pnotes">' + (full ? notes.map(function (n) { var dt = d(n.date); return '<div class="dd-note"><p>' + esc(n.text).replace(/\n/g, '<br>') + '</p><small>Michael' + (dt ? ' · ' + dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ', ' + dt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : '') + '</small></div>'; }).join('') : '<p class="dd-pempty">Loading…</p>')
 			+ '<form class="dwdc-notef dd-notef"><textarea name="text" rows="3" placeholder="Add a note: what they need, call recap, budget, next step…" required></textarea><div class="dd-pbtns end"><button class="dd-btn secondary">Add note</button></div></form></div>') + '</section>';
 		// onboarding
+		var driveRow = '<div class="dd-detob"><div><b>Google Drive</b>' + (c.drive ? (c.drive_sent ? ddPill('Emailed ' + fmt(c.drive_sent), 'success') : ddPill('Not sent yet', 'warning')) : '') + '<small>' + (c.drive ? 'Upload folder for the client’s files' : DWDC.driveReady ? 'Make an upload folder named after the company' : 'Connect Google Drive once to make upload folders') + '</small></div><div class="dd-pbtns">'
+			+ (c.drive ? '<a class="dd-btn secondary" href="' + esc(c.drive) + '" target="_blank" rel="noopener">' + lu('external-link', 14) + 'Open folder</a><button type="button" class="dd-btn secondary" data-copy="' + esc(c.drive) + '">' + lu('link', 14) + 'Copy link</button><button type="button" class="dd-btn ghost" data-drivemk="' + c.id + ':email">' + lu('mail', 14) + (c.drive_sent ? 'Email again' : 'Email to client') + '</button>'
+				: DWDC.driveReady ? '<button type="button" class="dd-btn secondary" data-drivemk="' + c.id + ':email">' + lu('plus', 14) + 'Create &amp; email client</button><button type="button" class="dd-btn ghost" data-drivemk="' + c.id + '">Create only</button>' : '<a class="dd-btn secondary" href="#connections">Set up Google Drive</a>') + '</div></div>';
 		var obRow = obl.length ? '<div class="dd-detob"><div><b>Onboarding</b> ' + ddPill(obn + ' answers', 'info') + '<small>' + esc(obl[0].form || 'Form') + ' · submitted ' + fmt(obl[0].date) + '</small></div><div class="dd-pbtns">' + btn('data-viewob', lu('clipboard-list') + 'View answers') + '<button type="button" class="dd-btn ghost" data-copyob>Copy answers</button></div></div>'
 			: '<div class="dd-detob"><div><b>Onboarding</b><small>Not submitted yet</small></div><div class="dd-pbtns">' + btn('data-leadinvite="' + c.id + '"', lu('mail') + (c.stage === 'onboarding' ? 'Resend onboarding form' : 'Send onboarding form')) + '</div></div>';
 		var obBox = '' && card('ob', 'Onboarding' + (obl.length ? ' ' + ddPill(obn + ' answers', 'info') : ''), '', obl.length ? '<span class="dd-hmeta">' + esc(obl[0].form || 'Form') + ' · submitted ' + fmt(obl[0].date) + '</span>' : '<span class="dd-hmeta">Not submitted</span>',
@@ -2523,7 +2543,7 @@
 			'<div class="dd-kv">' + dr('Client', (k.id ? '<a href="#cl/' + k.id + '"><b>' + esc(k.name) + '</b></a> ' : '') + '<button type="button" class="dd-lnk sm" data-moveclient="' + c.id + '">' + (k.id ? 'Change' : 'Link one') + '</button>')
 			+ dr('Main contact', c.person || k.name ? '<b>' + esc(c.person || k.name) + '</b>' : '') + dr('Email', em ? '<a href="mailto:' + esc(em) + '">' + esc(em) + '</a>' : '') + dr('Phone', ph ? tel(ph) : '')
 			+ dr('Company', esc(c.company)) + dr('Website', site(c) ? '<a href="https://' + esc(site(c)) + '" target="_blank" rel="noopener">' + esc(site(c)) + '</a>' : '') + dr('Project', esc(c.job))
-			+ dr('Lead source', isel('lead_source', SOURCES, c.lead_source)) + dr('Pays via', isel('pay_method', PAYS, c.pay_method)) + dr('Started', started ? fmt(started, true) : '') + '</div>' + obRow);
+			+ dr('Lead source', isel('lead_source', SOURCES, c.lead_source)) + dr('Pays via', isel('pay_method', PAYS, c.pay_method)) + dr('Started', started ? fmt(started, true) : '') + '</div>' + driveRow + obRow);
 		// contacts
 		var ppl = peopleOf(c), pform = (peopleCard(c).match(/<form class="dwdc-pplf"[\s\S]*?<\/form>/) || [''])[0];
 		var contacts = card('k-ppl', 'Contacts', ppl.length ? String(ppl.length) : '', '<button type="button" class="dd-hlink" data-ppladd="1">+ Add</button>',
@@ -3401,6 +3421,19 @@
 			return;
 		}
 		if (t.closest('[data-upagain]')) { var mp = {}; app.querySelectorAll('[data-upmap]').forEach(function (x) { if (x.value) { mp[x.getAttribute('data-upmap')] = +x.value; } }); upImport(null, mp); return; }
+		if ((el = t.closest('[data-drivemk]'))) {
+			e.preventDefault(); e.stopPropagation();
+			var dv = el.getAttribute('data-drivemk').split(':'), did = +dv[0], dmail = dv[1] === 'email';
+			if (dmail && !confirm('Email the Google Drive upload link to the client now?')) { return; }
+			el.disabled = true; el.textContent = 'Working…';
+			api('/contact/' + did + '/drive', 'POST', { email: dmail ? 1 : 0 }).then(function (x) { if (x.project) { upsert(x.project); S.full[did] = x.project; } render(); toast(x.warn ? x.warn : x.sent ? 'Drive folder ready · emailed to ' + x.sent : 'Drive folder ready', !!x.warn); }).catch(function (er) { render(); fail(er); });
+			return;
+		}
+		if ((el = t.closest('[data-drvsave]'))) {
+			var du = app.querySelector('[data-drvurl]'); el.disabled = true; el.textContent = 'Testing…';
+			api('/drive', 'POST', { url: du ? du.value.trim() : '' }).then(function (x) { DWDC.driveReady = !!x.ready; S.drv = null; render(); toast(x.ready ? 'Google Drive connected' : 'Google Drive disconnected'); }).catch(function (er) { el.disabled = false; el.textContent = 'Save & test'; fail(er); });
+			return;
+		}
 		if ((el = t.closest('[data-copy]'))) { var cv = el.getAttribute('data-copy'); (navigator.clipboard ? navigator.clipboard.writeText(cv) : Promise.reject()).then(function () { toast('Link copied'); }, function () { prompt('Copy this link:', cv); }); return; }
 		if ((el = t.closest('[data-synsave]'))) {
 			var box = el.closest('.dwdc-conn'), body = {};

@@ -46,7 +46,7 @@ function dwdc_lists() {
 
 /** Contact fields kept on every contact. */
 function dwdc_fields() {
-	return array( 'job', 'manual', 'followup', 'markup', 'markup_sent', 'lead_source', 'pay_method', 'stage', 'completed', 'billed', 'stripe', 'paypal', 'person', 'email', 'phone', 'company', 'website', 'list', 'price', 'balance', 'deadline', 'hosting', 'renewal', 'source', 'next', 'pending', 'paymark', 'owedopen', 'flag' );
+	return array( 'job', 'manual', 'followup', 'markup', 'markup_sent', 'lead_source', 'pay_method', 'stage', 'completed', 'billed', 'stripe', 'paypal', 'person', 'email', 'phone', 'company', 'website', 'list', 'price', 'balance', 'deadline', 'hosting', 'renewal', 'source', 'next', 'pending', 'paymark', 'owedopen', 'flag', 'drive', 'drive_sent' );
 }
 
 function dwdc_contact( $post, $full = false ) {
@@ -516,6 +516,7 @@ add_action( 'elementor_pro/forms/new_record', function ( $record ) {
 	$cid = dwdc_file_entry( $form, $fields );
 	if ( $cid ) {
 		dwdc_ensure_client( $cid );
+		do_action( 'dwdc_entry_filed', $cid, $form ); // e.g. Google Drive upload folder for onboarding forms
 		$name = get_the_title( $cid );
 		// Only onboarding forms (sent to real clients) get a to-do. Quote/contact forms can be spam, so no automatic "Reply to …".
 		if ( false !== stripos( $form, 'onboard' ) ) {
@@ -1398,6 +1399,7 @@ function dwdc_vars( $mode = 'admin' ) {
 	$v['ver']     = DWDP_VERSION;
 	$v['aiReady'] = function_exists( 'dwdc_ai_key' ) && '' !== dwdc_ai_key();
 	$v['mkReady'] = '' !== (string) get_option( 'dwdc_markup_key', '' );
+	$v['driveReady'] = function_exists( 'dwddr_ready' ) && dwddr_ready();
 	$v['upLast']  = '';
 	if ( function_exists( 'dwds_files' ) ) {
 		foreach ( dwds_files() as $f ) {

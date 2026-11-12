@@ -383,3 +383,17 @@ i.dd-flag { width: 10px; height: 10px; cursor: inherit; }
 .dd-divrow.grid { height: 26px; border-top: 1px solid var(--border); }
 .dd-aplist .dd-divrow { padding: 0 12px; margin: 2px 0; }
 .dd-divrow.dwdc-dragging { border-radius: var(--radius-sm); }
+
+/* old-style buttons (client page etc.) in the new theme */
+.dd .dwdc-btn2 { display: inline-flex; align-items: center; gap: 6px; height: 34px; padding: 0 12px; border-radius: var(--radius-md) !important; background: var(--surface) !important; color: var(--text) !important; border: 1px solid var(--border-strong) !important; font: 500 var(--fs-sm) var(--font) !important; box-shadow: none !important; }
+.dd .dwdc-btn2:hover { background: var(--hover) !important; }
+.dd .dwdc-btn2.solid { background: var(--accent) !important; border-color: var(--accent) !important; color: #fff !important; }
+.dd .dwdc-btn2.solid:hover { background: var(--accent-hover) !important; }
+.dd .dwdc-btn2.red { color: var(--danger-text) !important; }
+.dd .dwdc-btn2.dwdc-revbtn, .dd .dwdc-btn2.dwdc-revbtn.sent { background: var(--surface) !important; color: var(--text) !important; border-color: var(--border-strong) !important; }
+.dd .dwdc-btn2.dwdc-revbtn svg { color: var(--warning-text); }
+
+/* WordPress gives headings its own dark colour; use the theme's */
+.dd h1, .dd h2, .dd h3, .dd h4, .dd h5 { color: var(--text); }
+.dd .dwdc-chead h2 { color: var(--text) !important; text-transform: none; font-size: 24px; font-weight: 600; letter-spacing: -.01em; }
+.dd .dwdc-chead p b, .dd .dwdc-chead p strong { color: var(--text); }
