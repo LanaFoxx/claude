@@ -600,3 +600,6 @@ html:has(body.npc) { scroll-behavior: smooth; }
 .npc-gcards { grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); align-items: start; }
 .npc-gcard__b.is-clamped { display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; }
 .npc .npc-gcard__more { margin-top: 8px; background: none; border: 0; padding: 0; cursor: pointer; font: 600 13px var(--npc-sans); color: var(--npc-steel); }
+/* Town pills: even, centered rows */
+.npc-pills { justify-content: center; }
+@media (min-width: 900px) { .npc-pills { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); } .npc .npc-pill { text-align: center; } }
