@@ -4,7 +4,7 @@
  "type": "page",
  "content": [
   {
-   "id": "7b49e62",
+   "id": "8df2fc5",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -18,6 +18,27 @@
      "unit": "px",
      "size": 0
     },
+    "flex_gap_laptop": {
+     "column": "0",
+     "row": "0",
+     "isLinked": true,
+     "unit": "px",
+     "size": 0
+    },
+    "flex_gap_tablet": {
+     "column": "0",
+     "row": "0",
+     "isLinked": true,
+     "unit": "px",
+     "size": 0
+    },
+    "flex_gap_mobile": {
+     "column": "0",
+     "row": "0",
+     "isLinked": true,
+     "unit": "px",
+     "size": 0
+    },
     "boxed_width": {
      "unit": "px",
      "size": 1280,
@@ -25,50 +46,49 @@
     },
     "padding": {
      "unit": "px",
-     "top": "128",
+     "top": "200",
      "right": "48",
-     "bottom": "128",
+     "bottom": "151",
      "left": "48",
      "isLinked": false
     },
     "padding_laptop": {
      "unit": "px",
-     "top": "120",
+     "top": "200",
      "right": "48",
-     "bottom": "120",
+     "bottom": "137",
      "left": "48",
      "isLinked": false
     },
     "padding_tablet": {
      "unit": "px",
-     "top": "96",
+     "top": "176",
      "right": "32",
-     "bottom": "96",
+     "bottom": "103",
      "left": "32",
      "isLinked": false
     },
     "padding_mobile": {
      "unit": "px",
-     "top": "72",
+     "top": "152",
      "right": "20",
-     "bottom": "72",
+     "bottom": "96",
      "left": "20",
      "isLinked": false
     },
     "background_background": "classic",
     "background_color": "#14110E",
     "html_tag": "section",
-    "css_classes": "tn-section",
     "min_height": {
      "unit": "px",
-     "size": 720,
+     "size": 640,
      "sizes": []
     },
     "flex_justify_content": "center"
    },
    "elements": [
     {
-     "id": "7797781",
+     "id": "ec56dc8",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -76,6 +96,27 @@
       "content_width": "full",
       "flex_direction": "column",
       "flex_gap": {
+       "column": "28",
+       "row": "28",
+       "isLinked": true,
+       "unit": "px",
+       "size": 28
+      },
+      "flex_gap_laptop": {
+       "column": "28",
+       "row": "28",
+       "isLinked": true,
+       "unit": "px",
+       "size": 28
+      },
+      "flex_gap_tablet": {
+       "column": "28",
+       "row": "28",
+       "isLinked": true,
+       "unit": "px",
+       "size": 28
+      },
+      "flex_gap_mobile": {
        "column": "28",
        "row": "28",
        "isLinked": true,
@@ -98,39 +139,7 @@
      },
      "elements": [
       {
-       "id": "7047bc8",
-       "elType": "widget",
-       "widgetType": "heading",
-       "isInner": false,
-       "settings": {
-        "title": "Thank you",
-        "header_size": "p",
-        "title_color": "#C68B4E",
-        "typography_typography": "custom",
-        "typography_font_family": "Manrope",
-        "typography_font_size": {
-         "unit": "px",
-         "size": 12,
-         "sizes": []
-        },
-        "typography_font_weight": "600",
-        "typography_line_height": {
-         "unit": "em",
-         "size": 1.4,
-         "sizes": []
-        },
-        "typography_letter_spacing": {
-         "unit": "px",
-         "size": 2.64,
-         "sizes": []
-        },
-        "typography_text_transform": "uppercase",
-        "_title": "Eyebrow"
-       },
-       "elements": []
-      },
-      {
-       "id": "afd19e6",
+       "id": "ba22007",
        "elType": "widget",
        "widgetType": "heading",
        "isInner": false,
@@ -142,17 +151,17 @@
         "typography_font_family": "Cormorant Garamond",
         "typography_font_size": {
          "unit": "px",
-         "size": 56,
+         "size": 60,
          "sizes": []
         },
         "typography_font_size_laptop": {
          "unit": "px",
-         "size": 52,
+         "size": 55,
          "sizes": []
         },
         "typography_font_size_tablet": {
          "unit": "px",
-         "size": 40,
+         "size": 41,
          "sizes": []
         },
         "typography_font_size_mobile": {
@@ -163,7 +172,12 @@
         "typography_font_weight": "500",
         "typography_line_height": {
          "unit": "em",
-         "size": 1.06,
+         "size": 1.04,
+         "sizes": []
+        },
+        "typography_letter_spacing": {
+         "unit": "px",
+         "size": -0.6,
          "sizes": []
         },
         "_title": "Thank You / Title (H1)"
@@ -171,7 +185,7 @@
        "elements": []
       },
       {
-       "id": "c8f6009",
+       "id": "a543c6c",
        "elType": "widget",
        "widgetType": "text-editor",
        "isInner": false,
@@ -187,33 +201,54 @@
         "typography_font_family": "Manrope",
         "typography_font_size": {
          "unit": "px",
-         "size": 17,
+         "size": 18,
          "sizes": []
         },
         "typography_line_height": {
          "unit": "em",
-         "size": 1.75,
+         "size": 1.7,
          "sizes": []
         },
-        "custom_css": "selector p:last-child{margin-block-end:0;}selector{max-width:620px !important;}",
+        "custom_css": "selector p:last-child{margin-block-end:0;}selector p{text-wrap:pretty;}selector{max-width:560px !important;}",
         "_title": "Thank You / Text"
        },
        "elements": []
       },
       {
-       "id": "f9e0ff6",
+       "id": "fd1ba5c",
        "elType": "container",
        "isInner": true,
        "settings": {
-        "_title": "Thank You / Call",
+        "_title": "Thank You / Actions",
         "content_width": "full",
-        "flex_direction": "column",
+        "flex_direction": "row",
         "flex_gap": {
-         "column": "6",
-         "row": "6",
-         "isLinked": true,
+         "column": "28",
+         "row": "12",
+         "isLinked": false,
          "unit": "px",
-         "size": 6
+         "size": 28
+        },
+        "flex_gap_laptop": {
+         "column": "28",
+         "row": "12",
+         "isLinked": false,
+         "unit": "px",
+         "size": 28
+        },
+        "flex_gap_tablet": {
+         "column": "28",
+         "row": "12",
+         "isLinked": false,
+         "unit": "px",
+         "size": 28
+        },
+        "flex_gap_mobile": {
+         "column": "28",
+         "row": "12",
+         "isLinked": false,
+         "unit": "px",
+         "size": 28
         },
         "width": {
          "unit": "%",
@@ -222,150 +257,49 @@
         },
         "padding": {
          "unit": "px",
-         "top": "24",
+         "top": "0",
          "right": "0",
          "bottom": "0",
          "left": "0",
-         "isLinked": false
+         "isLinked": true
         },
-        "border_border": "solid",
-        "border_width": {
-         "unit": "px",
-         "top": "1",
-         "right": "0",
-         "bottom": "0",
-         "left": "0",
-         "isLinked": false
-        },
-        "border_color": "#2A241F",
-        "custom_css": "selector{max-width:620px;}"
+        "flex_wrap": "wrap",
+        "flex_align_items": "center"
        },
        "elements": [
         {
-         "id": "2a81fb6",
+         "id": "a3043fc",
          "elType": "widget",
-         "widgetType": "heading",
+         "widgetType": "button",
          "isInner": false,
          "settings": {
-          "title": "Prefer to talk?",
-          "header_size": "p",
-          "title_color": "#B3A99C",
-          "typography_typography": "custom",
-          "typography_font_family": "Manrope",
-          "typography_font_size": {
-           "unit": "px",
-           "size": 12,
-           "sizes": []
-          },
-          "typography_font_weight": "600",
-          "typography_line_height": {
-           "unit": "em",
-           "size": 1.4,
-           "sizes": []
-          },
-          "typography_letter_spacing": {
-           "unit": "px",
-           "size": 2.16,
-           "sizes": []
-          },
-          "typography_text_transform": "uppercase",
-          "_title": "Thank You / Call / Label"
-         },
-         "elements": []
-        },
-        {
-         "id": "20f31fb",
-         "elType": "widget",
-         "widgetType": "heading",
-         "isInner": false,
-         "settings": {
-          "title": "(970) 524-7323",
-          "header_size": "p",
-          "title_color": "#F2ECE3",
-          "typography_typography": "custom",
-          "typography_font_family": "Cormorant Garamond",
-          "typography_font_size": {
-           "unit": "px",
-           "size": 38,
-           "sizes": []
-          },
-          "typography_font_weight": "500",
-          "typography_line_height": {
-           "unit": "em",
-           "size": 1.2,
-           "sizes": []
-          },
+          "text": "Or call (970) 524-7323",
           "link": {
            "url": "tel:+19705247323",
            "is_external": "",
            "nofollow": ""
           },
-          "title_hover_color": "#D9A66B",
-          "_css_classes": "tn-call",
-          "_title": "Thank You / Call / Phone"
-         },
-         "elements": []
-        }
-       ]
-      },
-      {
-       "id": "a281def",
-       "elType": "container",
-       "isInner": true,
-       "settings": {
-        "_title": "Thank You / Buttons",
-        "content_width": "full",
-        "flex_direction": "row",
-        "flex_gap": {
-         "column": "14",
-         "row": "14",
-         "isLinked": true,
-         "unit": "px",
-         "size": 14
-        },
-        "width": {
-         "unit": "%",
-         "size": 100,
-         "sizes": []
-        },
-        "padding": {
-         "unit": "px",
-         "top": "8",
-         "right": "0",
-         "bottom": "0",
-         "left": "0",
-         "isLinked": false
-        },
-        "flex_wrap": "wrap"
-       },
-       "elements": [
-        {
-         "id": "bdb907b",
-         "elType": "widget",
-         "widgetType": "button",
-         "isInner": false,
-         "settings": {
-          "text": "Back to Home",
-          "link": {
-           "url": "/",
-           "is_external": "",
-           "nofollow": ""
-          },
-          "border_radius": {
-           "unit": "px",
-           "top": "2",
-           "right": "2",
-           "bottom": "2",
-           "left": "2",
-           "isLinked": true
-          },
           "text_padding": {
            "unit": "px",
-           "top": "19.5",
-           "right": "26",
-           "bottom": "19.5",
-           "left": "26",
+           "top": "14.5",
+           "right": "0",
+           "bottom": "14.5",
+           "left": "0",
            "isLinked": false
+          },
+          "background_background": "classic",
+          "background_color": "#00000000",
+          "button_background_hover_background": "classic",
+          "button_background_hover_color": "#00000000",
+          "button_text_color": "#F2ECE3",
+          "hover_color": "#D9A66B",
+          "border_radius": {
+           "unit": "px",
+           "top": "0",
+           "right": "0",
+           "bottom": "0",
+           "left": "0",
+           "isLinked": true
           },
           "typography_typography": "custom",
           "typography_font_family": "Manrope",
@@ -380,24 +314,73 @@
            "size": 1,
            "sizes": []
           },
+          "selected_icon": {
+           "value": {
+            "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/phone.svg",
+            "id": 1444
+           },
+           "library": "svg"
+          },
+          "icon_indent": {
+           "unit": "px",
+           "size": 10,
+           "sizes": []
+          },
+          "_css_classes": "tn-call",
+          "custom_css": "selector .elementor-button{white-space:nowrap;}selector .elementor-button-text{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:7px;text-decoration-color:rgba(242,236,227,0.4);}selector .elementor-button-icon svg{width:16px;height:16px;}",
+          "_title": "Thank You / Call"
+         },
+         "elements": []
+        },
+        {
+         "id": "d4ffc64",
+         "elType": "widget",
+         "widgetType": "button",
+         "isInner": false,
+         "settings": {
+          "text": "Back to home →",
+          "link": {
+           "url": "/",
+           "is_external": "",
+           "nofollow": ""
+          },
+          "text_padding": {
+           "unit": "px",
+           "top": "14.5",
+           "right": "0",
+           "bottom": "14.5",
+           "left": "0",
+           "isLinked": false
+          },
           "background_background": "classic",
           "background_color": "#00000000",
-          "button_text_color": "#F2ECE3",
-          "hover_color": "#F2ECE3",
           "button_background_hover_background": "classic",
           "button_background_hover_color": "#00000000",
-          "border_border": "solid",
-          "border_width": {
+          "button_text_color": "#F2ECE3",
+          "hover_color": "#D9A66B",
+          "border_radius": {
            "unit": "px",
-           "top": "1",
-           "right": "1",
-           "bottom": "1",
-           "left": "1",
+           "top": "0",
+           "right": "0",
+           "bottom": "0",
+           "left": "0",
            "isLinked": true
           },
-          "border_color": "#F2ECE366",
-          "button_hover_border_color": "#C68B4E",
-          "_title": "Thank You / Back to home"
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 15,
+           "sizes": []
+          },
+          "typography_font_weight": "600",
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1,
+           "sizes": []
+          },
+          "custom_css": "selector .elementor-button{white-space:nowrap;}selector .elementor-button-text{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:7px;text-decoration-color:rgba(242,236,227,0.4);}",
+          "_title": "Thank You / Back home"
          },
          "elements": []
         }
