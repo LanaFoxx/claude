@@ -2,14 +2,14 @@
 /**
  * Plugin Name: Nick Ponte Coastal Light (preview)
  * Description: "Coastal Light" redesign preview: a homepage template (/home-preview/) and a Town post type (/town-preview/<town>/) with monthly market fields, FAQ and JSON-LD. Preview pages are noindex and use their own header and footer, so live pages are not affected. Deactivate to remove everything from the front end.
- * Version: 1.7.2
+ * Version: 1.7.3
  * Author: Dream Web Digital
  * Requires PHP: 7.4
  */
 
 if (!defined('ABSPATH')) exit;
 
-define('NPC_VER', '1.7.2');
+define('NPC_VER', '1.7.3');
 define('NPC_DIR', plugin_dir_path(__FILE__));
 define('NPC_URL', plugin_dir_url(__FILE__));
 const NPC_HOME_TEMPLATE = 'npc-home';
@@ -393,6 +393,12 @@ function npc_is_noindex() {
 // Once live, the preview URLs send visitors (and Google) to the real pages.
 add_action('template_redirect', function () {
 	if (!npc_live()) return;
+	// Old Free Home Valuation page (on Nick's postcards' QR code) -> the valuation form on the homepage. Keeps tracking codes.
+	if (is_page(5644)) {
+		$q = !empty($_SERVER['QUERY_STRING']) ? '?' . $_SERVER['QUERY_STRING'] : '';
+		wp_redirect(home_url('/') . $q . '#valuation', 301, 'Nick Ponte Coastal');
+		exit;
+	}
 	// Old /town-preview/<town>/ links (Markup.io, shared previews) go to the town's live page.
 	if (is_404() && preg_match('#^/town-preview/([a-z0-9-]+)/?#', (string) parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH), $m)) {
 		$t = get_posts(['post_type' => 'np_town', 'name' => $m[1], 'numberposts' => 1, 'post_status' => 'publish']);
