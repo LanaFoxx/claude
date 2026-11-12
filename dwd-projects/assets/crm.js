@@ -185,6 +185,12 @@
 		if (h[0] === 'personal' && !h[1]) { return { view: 'home', arg: '', id: 0 }; } // one dashboard now
 		return { view: TITLES[h[0]] || h[0] === 'client' || h[0] === 'cl' || h[0] === 'host' ? h[0] : 'home', arg: h[1] || '', id: +h[1] || 0 };
 	}
+	// Newer Dream Desk live? Reload on the next page change (never while typing or with a pop-up open).
+	var verNew = false, verAt = Date.now();
+	function verCheck() { if (verNew || !DWDC.ver || Date.now() - verAt < 5 * 60000) { return; } verAt = Date.now(); api('/version').then(function (x) { if (x && x.ver && x.ver !== DWDC.ver) { verNew = true; } }).catch(function () {}); }
+	setInterval(verCheck, 5 * 60000);
+	document.addEventListener('visibilitychange', function () { if (!document.hidden) { verAt = 0; verCheck(); } });
+	window.addEventListener('hashchange', function () { if (verNew && !S.modal) { location.reload(); } });
 	window.addEventListener('hashchange', function () {
 		var r = route();
 		if (r.view !== 'search' && S.prev !== r.view + r.arg) { S.q = ''; }

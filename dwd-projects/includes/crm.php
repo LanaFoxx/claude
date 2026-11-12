@@ -1375,6 +1375,7 @@ add_action( 'rest_api_init', function () {
 		update_option( 'dwdc_home_order', $all, false );
 		return array( 'ok' => true );
 	} ) );
+	register_rest_route( $ns, '/crm/version', array( 'methods' => 'GET', 'permission_callback' => $can, 'callback' => function () { return array( 'ver' => DWDP_VERSION ); } ) );
 	// A short personal email (plain text, Mike's signature) to any address, logged as a note on a lead or project.
 	register_rest_route( $ns, '/crm/send-email', array( 'methods' => 'POST', 'permission_callback' => function () { return current_user_can( 'manage_options' ); }, 'callback' => function ( $r ) {
 		$to   = sanitize_email( (string) $r->get_param( 'to' ) );
@@ -1451,6 +1452,7 @@ function dwdc_vars( $mode = 'admin' ) {
 	$v['mkReady'] = '' !== (string) get_option( 'dwdc_markup_key', '' );
 	$v['driveReady'] = function_exists( 'dwddr_ready' ) && dwddr_ready();
 	$v['zoomReady']  = function_exists( 'dwdz_ready' ) && dwdz_ready();
+	$v['ver']        = DWDP_VERSION; // the app reloads itself when a newer version is live
 	$v['upLast']  = '';
 	if ( function_exists( 'dwds_files' ) ) {
 		foreach ( dwds_files() as $f ) {
