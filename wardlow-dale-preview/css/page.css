@@ -5,8 +5,6 @@
 
 /* Eyebrow spacing (margin 0 where the eyebrow sits in a gap-spaced column) */
 #wd-2026 .wd-sec .wd-eyebrow{margin-bottom:20px !important}
-#wd-2026 .wd-owners-copy .wd-eyebrow,#wd-2026 .wd-team-copy .wd-eyebrow,#wd-2026 .wd-voices .wd-v-eb,#wd-2026 .wd-pb-head .wd-eyebrow,#wd-2026 .wd-sec .wd-pb-lab,#wd-2026 .wd-sec .wd-role,#wd-2026 .wd-sec .wd-kicker,#wd-2026 .wd-sec .wd-call-eb,#wd-2026 .wd-recog-eb{margin-bottom:0 !important}
-#wd-2026 .wd-sec .wd-pb-lab{margin-bottom:4px !important}
 
 /* Hero */
 #wd-2026 .wd-hero{position:relative;z-index:2;overflow:visible}
@@ -63,19 +61,29 @@
 #wd-2026 .wd-practice-foot{margin-top:32px !important}
 
 /* Playbook */
-#wd-2026 .wd-pb-intro{max-width:920px}
-#wd-2026 .wd-pb-head{margin-top:64px;padding-bottom:16px !important}
-#wd-2026 .wd-pb-head-them{padding-left:64px}
-#wd-2026 .wd-pb-head-us{padding-left:48px}
-#wd-2026 .wd-pb-row{border-top:1px solid rgba(168,179,174,.3)}
-#wd-2026 .wd-pb-them{padding:32px 48px 32px 0 !important}
-#wd-2026 .wd-pb-us{padding:32px 0 32px 48px !important;border-left:1px solid #C9A961}
-#wd-2026 .wd-pb-n{padding-top:4px}
-#wd-2026 .wd-pb-n .elementor-heading-title{font-variant-numeric:tabular-nums}
-#wd-2026 .wd-pb-lab{display:none}
-#wd-2026 .wd-pb-lab .elementor-heading-title{margin-bottom:4px}
-#wd-2026 .wd-pb-l{margin-top:6px !important}
-#wd-2026 .wd-pb-foot{padding-top:32px !important;border-top:1px solid rgba(168,179,174,.3)}
+
+/* Playbook: split board */
+#wd-2026 .wd-pb-foot{margin-top:40px}
+#wd-2026 .wd-pbv-board{margin-top:64px;border-radius:2px;overflow:hidden}
+#wd-2026 .wd-sec .wd-pbv-bh .wd-eyebrow{margin:0 !important}
+#wd-2026 .wd-pbv-bh-them,#wd-2026 .wd-pbv-bh-us{padding:20px 40px}
+#wd-2026 .wd-pbv-bh-them{background:#1B2F29}
+#wd-2026 .wd-pbv-bh-us{background:#0A3D31;padding-left:64px}
+#wd-2026 .wd-pbv-bh .elementor-heading-title{display:flex;align-items:center;gap:12px;font-weight:700 !important}
+#wd-2026 .wd-pbv-bh .elementor-heading-title::before{content:"";width:18px;height:18px;flex:0 0 18px;background:currentColor;-webkit-mask:var(--wd-ico) no-repeat center/contain;mask:var(--wd-ico) no-repeat center/contain}
+#wd-2026 .wd-pbv-bh-them{--wd-ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 6l12 12M18 6L6 18'/%3E%3C/svg%3E")}
+#wd-2026 .wd-pbv-bh-us{--wd-ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E")}
+#wd-2026 .wd-pbv-row{position:relative;border-top:2px solid #0B1F1A}
+#wd-2026 .wd-pbv-n{padding-top:5px}
+#wd-2026 .wd-pbv-n .elementor-heading-title{font-variant-numeric:tabular-nums}
+#wd-2026 .wd-sec .wd-pbv-lab{display:none}
+#wd-2026 .wd-sec .wd-pbv-row .wd-pbv-lab{margin-bottom:6px !important}
+#wd-2026 .wd-pbv-lab .elementor-heading-title{font-weight:700 !important}
+#wd-2026 .wd-pbv-d{margin-top:6px !important}
+#wd-2026 .wd-pbv-vs{position:absolute !important;left:50%;top:50%;transform:translate(-50%,-50%);z-index:1;width:auto !important}
+#wd-2026 .wd-pbv-vs .elementor-icon-wrapper{display:flex}
+#wd-2026 .wd-pbv-vs .elementor-icon{width:48px;height:48px;border-radius:50%;background:#C9A961;color:#0B1F1A;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 6px #0B1F1A}
+#wd-2026 .wd-pbv-vs .elementor-icon svg{width:20px;height:20px;stroke-width:2}
 
 /* How a case works: hairline rail with gold fill, dots */
 #wd-2026 .wd-how-head{margin-bottom:72px}
@@ -199,6 +207,13 @@
 
 /* ---------- Tablet: 601–980px ---------- */
 @media (max-width:980px){
+#wd-2026 .wd-pbv-head{grid-template-columns:minmax(0,1fr) !important}
+#wd-2026 .wd-pbv-bh-them,#wd-2026 .wd-pbv-bh-us{padding:16px 24px}
+#wd-2026 .wd-pbv-bh-us{padding-left:40px}
+#wd-2026 .wd-pbv-them{grid-template-columns:minmax(0,1fr) !important;gap:4px !important;padding:28px 40px 28px 24px !important}
+#wd-2026 .wd-pbv-us{padding:28px 24px 28px 40px !important}
+#wd-2026 .wd-pbv-t .elementor-heading-title{font-size:19px !important}
+#wd-2026 .wd-pbv-vs .elementor-icon{width:40px;height:40px}
 #wd-2026 .wd-sec,#wd-2026 .wd-proof{padding-left:40px !important;padding-right:40px !important}
 #wd-2026 .wd-sec{padding-top:96px !important;padding-bottom:96px !important}
 #wd-2026 .wd-h1 .elementor-heading-title{font-size:72px !important}
@@ -222,11 +237,6 @@
 #wd-2026 .wd-prow .wd-no{align-self:end}
 #wd-2026 .wd-prow .wd-ds{align-self:start;margin-top:4px !important}
 #wd-2026 .wd-nm .elementor-heading-title{font-size:28px !important}
-#wd-2026 .wd-pb-head-them{padding-left:52px}
-#wd-2026 .wd-pb-head-us{padding-left:32px}
-#wd-2026 .wd-pb-them{gap:20px !important;padding:28px 32px 28px 0 !important}
-#wd-2026 .wd-pb-us{padding:28px 0 28px 32px !important}
-#wd-2026 .wd-pb-t .elementor-heading-title{font-size:19px !important}
 #wd-2026 .wd-how-head{margin-bottom:48px}
 #wd-2026 .wd-steps{grid-template-columns:minmax(0,1fr) !important}
 #wd-2026 .wd-steps::before{right:auto;left:5px;top:6px;bottom:6px;width:1px;height:auto}
@@ -247,6 +257,16 @@
 
 /* ---------- Phone: up to 600px ---------- */
 @media (max-width:600px){
+#wd-2026 .wd-pbv-intro p{font-size:16px}
+#wd-2026 .wd-pbv-board{margin-top:36px}
+#wd-2026 .wd-pbv-bh{display:none !important}
+#wd-2026 .wd-pbv-row{grid-template-columns:minmax(0,1fr) !important;border-top:0;margin-top:16px}
+#wd-2026 .wd-pbv-them{padding:24px 20px 36px !important}
+#wd-2026 .wd-pbv-us{padding:36px 20px 24px !important}
+#wd-2026 .wd-sec .wd-pbv-lab{display:block}
+#wd-2026 .wd-pbv-n{display:none}
+#wd-2026 .wd-pbv-vs{position:relative !important;left:auto;top:auto;transform:rotate(90deg);margin:-20px auto !important;justify-self:center}
+#wd-2026 .wd-pbv-vs .elementor-icon{width:40px;height:40px;box-shadow:0 0 0 5px #0B1F1A}
 #wd-2026 .wd-sec,#wd-2026 .wd-proof{padding-left:16px !important;padding-right:16px !important}
 #wd-2026 .wd-sec{padding-top:64px !important;padding-bottom:64px !important}
 #wd-2026 .wd-team-p p{font-size:17px}
@@ -289,13 +309,6 @@
 #wd-2026 .wd-nm .elementor-heading-title{font-size:24px !important}
 #wd-2026 .wd-ds p{font-size:14px;line-height:1.45}
 #wd-2026 .wd-ar .elementor-icon,#wd-2026 .wd-prow:hover .wd-ar .elementor-icon{width:22px;height:22px;border:0;border-radius:0;background:none;color:#0F4A3C}
-#wd-2026 .wd-pb-head{display:none !important}
-#wd-2026 .wd-pb-row{grid-template-columns:minmax(0,1fr) !important}
-#wd-2026 .wd-pb-them{grid-template-columns:minmax(0,1fr) !important;gap:12px !important;padding:24px 0 16px !important}
-#wd-2026 .wd-pb-us{padding:0 0 24px 14px !important}
-#wd-2026 .wd-pb-lab{display:block}
-#wd-2026 .wd-pb-t .elementor-heading-title{font-size:18px !important}
-#wd-2026 .wd-pb-l p{font-size:15px}
 #wd-2026 .wd-how-head{margin-bottom:32px}
 #wd-2026 .wd-step-h .elementor-heading-title{font-size:22px !important}
 #wd-2026 .wd-step-p p{font-size:15px}

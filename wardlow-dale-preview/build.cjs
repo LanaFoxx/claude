@@ -184,34 +184,41 @@ function page(m, tpl) {
     TX(`<p>Not sure your case fits? ${tlink('Ask us')}.</p>`, 'wd-practice-foot', { size: 17 }),
   ]);
 
-  const pbRow = (n, them, themL, us, usL) => C('wd-pb-row', { grid: 'repeat(2,minmax(0,1fr))' }, [
-    C('wd-pb-them', { grid: '32px minmax(0,1fr)', gap: 32 }, [
-      H(n, 'span', 'wd-pb-n', { color: T.gold, size: 13, weight: 600, lh: 1.6 }),
-      C('wd-pb-tx', {}, [
-        EB('What insurers do', 'wd-pb-lab', T.mist, { size: 11 }),
-        H(them, 'p', 'wd-pb-t', { color: T.ivory, size: 21, weight: 600, lh: 1.35 }),
-        TX(`<p>${themL}</p>`, 'wd-pb-l', { color: T.mist, size: 16, lh: 1.55 }),
+  // Split board: their move (left) → our counter-move (right), gold arrow on the seam.
+  const pbRow = (n, them, themL, us, usL) => C('wd-pbv-row', { grid: 'repeat(2,minmax(0,1fr))' }, [
+    C('wd-pbv-them', { grid: '44px minmax(0,1fr)', gap: 12, bg: '#13261F', padding: box(36, 64, 36, 40) }, [
+      H(n, 'span', 'wd-pbv-n', { color: T.mist, size: 13, weight: 700, lh: 1.6 }),
+      C('wd-pbv-tx', {}, [
+        EB('Their move', 'wd-pbv-lab', T.mist, { size: 11 }),
+        H(them, 'h3', 'wd-pbv-t', { color: '#D5DDD9', size: 21, weight: 500, lh: 1.35 }),
+        TX(`<p>${themL}</p>`, 'wd-pbv-d', { color: T.mist, size: 16, lh: 1.55 }),
       ]),
     ]),
-    C('wd-pb-us', {}, [
-      EB('What we do', 'wd-pb-lab', T.gold, { size: 11 }),
-      H(us, 'p', 'wd-pb-t', { color: T.ivory, size: 21, weight: 600, lh: 1.35 }),
-      TX(`<p>${usL}</p>`, 'wd-pb-l', { color: T.mist, size: 16, lh: 1.55 }),
+    ICON(m.arrowRight, 'wd-pbv-vs', T.ink, 20),
+    C('wd-pbv-us', { bg: T.evergreen, padding: box(36, 40, 36, 64) }, [
+      EB('Our counter-move', 'wd-pbv-lab', T.gold, { size: 11 }),
+      H(us, 'h3', 'wd-pbv-t', { color: T.white, size: 21, weight: 700, lh: 1.35 }),
+      TX(`<p>${usL}</p>`, 'wd-pbv-d', { color: '#D2DDD8', size: 16, lh: 1.55 }),
     ]),
   ]);
   const playbook = sec('wd-pb', T.ink, [
-    C('wd-pb-intro', {}, [
-      EB('The other side’s playbook', '', T.gold),
-      H2('<strong>We’ve been on the other side.</strong> Here’s what that means for you.', '', T.ivory),
+    C('wd-pbv-head', { grid: 'minmax(0,7fr) minmax(0,5fr)', gap: gap(96, 24), gridAlign: 'end' }, [
+      C('wd-pb-intro', {}, [
+        EB('The other side’s playbook', '', T.gold),
+        H2('We’ve been on the other side. <strong>Here’s how we beat their playbook.</strong>', '', T.ivory),
+      ]),
+      TX('<p>Insurance companies use the same moves on almost every claim. On the left, what they do. On the right, what we do about it.</p>', 'wd-pbv-intro', { color: T.mist, size: 18, lh: 1.6 }),
     ]),
-    C('wd-pb-head', { grid: 'repeat(2,minmax(0,1fr))' }, [
-      EB('What insurers do', 'wd-pb-head-them', T.mist, { size: 12 }),
-      EB('What we do', 'wd-pb-head-us', T.gold, { size: 12 }),
+    C('wd-pbv-board', {}, [
+      C('wd-pbv-bh', { grid: 'repeat(2,minmax(0,1fr))' }, [
+        EB('Their move', 'wd-pbv-bh-them', T.mist, { size: 13 }),
+        EB('Our counter-move', 'wd-pbv-bh-us', T.gold, { size: 13 }),
+      ]),
+      pbRow('01', 'They call early for a recorded statement', 'Often within days, before you know how badly you’re hurt.', 'We take every insurer call for you', 'Once you hire us, the insurance company talks to us, not you.'),
+      pbRow('02', 'They make a quick, low offer', 'An early check can look generous. Accepting it usually ends your claim.', 'We value the full claim first', 'Medical costs, lost income and future needs are documented before any offer is considered.'),
+      pbRow('03', 'They watch your social media', 'One photo or post can be used to argue you aren’t really hurt.', 'We preserve evidence early', 'Photos, video, witness accounts and vehicle data are gathered before they disappear.'),
+      pbRow('04', 'They question your medical treatment', 'Gaps or delays in care are used to blame your injuries on something else.', 'We help document your treatment', 'A clear, consistent record of your care and recovery.'),
     ]),
-    pbRow('01', 'Call early for a recorded statement', 'Adjusters often call within days, before you know how badly you’re hurt.', 'We handle every insurer call', 'Once you hire us, the insurance company talks to us, not you.'),
-    pbRow('02', 'Make a quick, low offer', 'An early check can look generous. Accepting it usually ends your claim.', 'We value the full claim first', 'Medical costs, lost income and future needs are documented before any offer is considered.'),
-    pbRow('03', 'Watch your social media', 'One photo or post can be used to argue you aren’t really hurt.', 'We preserve evidence early', 'Photos, video, witness accounts and vehicle data are gathered before they disappear.'),
-    pbRow('04', 'Question your medical treatment', 'Gaps or delays in care are used to blame your injuries on something else.', 'We help document your treatment', 'A clear, consistent record of your care and recovery.'),
     C('wd-pb-foot', { dir: 'row', wrap: 'wrap', justify: 'space-between', align: 'center', gap: 24 }, [
       TX('<p><a class="wd-tlink wd-tlink-light" href="#">How we work, in detail</a></p>', 'wd-pb-more', { color: T.ivory, size: 17, weight: 600 }),
       TX(`<p>${chip('CONFIRM attorneys approve wording', true)}</p>`, 'wd-pb-chip', { size: 13 }),
@@ -328,7 +335,7 @@ function page(m, tpl) {
     field_text_color: T.ink, ...L.typo('field_typography', 17, 400, { lh: 1.5 }),
     field_background_color: T.white, field_border_color: T.field, field_border_width: box(1), field_border_radius: box(2),
     html_color: T.stone, ...L.typo('html_typography', 13, 500, { lh: 1.5 }),
-    button_background_color: T.gold, button_text_color: T.ink, button_background_hover_color: T.goldHover, button_hover_color: T.ink,
+    button_background_color: T.btn, button_text_color: T.white, button_background_hover_color: T.btnHover, button_hover_color: T.white,
     ...L.typo('button_typography', 16, 600, { lh: 1.2 }), button_border_radius: box(2), button_text_padding: box(0, 28),
     message_typography_typography: 'custom', success_message_color: T.evergreen, error_message_color: T.error,
   });

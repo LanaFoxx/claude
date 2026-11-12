@@ -7,11 +7,11 @@
 #wd-2026 .elementor-heading-title{margin:0;overflow-wrap:break-word}
 #wd-2026 h1 strong,#wd-2026 h2 strong{font-weight:800}
 #wd-2026 img{max-width:100%;display:block}
-#wd-2026 a{color:#0F4A3C;text-underline-offset:4px}
+#wd-2026 a:where(:not(.elementor-button)){color:#0F4A3C;text-underline-offset:4px}
 /* The site's font plugin styles links and buttons sitewide; keep the preview on Manrope */
 #wd-2026 a:not(.elementor-button),#wd-2026 .elementor-heading-title a{font-family:inherit !important;font-size:inherit;text-transform:inherit !important;letter-spacing:inherit !important;line-height:inherit}
 #wd-2026 .elementor-button,#wd-2026 button,#wd-2026 input,#wd-2026 textarea,#wd-2026 label{font-family:'Manrope',sans-serif !important;text-transform:none !important;letter-spacing:0 !important}
-#wd-2026 a:hover{color:#0B1F1A}
+#wd-2026 a:where(:not(.elementor-button)):hover{color:#0B1F1A}
 #wd-2026 .elementor-widget-text-editor a[href="#fees"],#wd-2026 .elementor-widget-text-editor a[href="#results"],#wd-2026 .wd-trust a{color:inherit;text-decoration:underline;text-underline-offset:2px}
 
 /* Focus: visible everywhere */

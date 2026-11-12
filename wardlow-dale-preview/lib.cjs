@@ -5,7 +5,7 @@ const crypto = require('crypto');
 
 const T = {
   ivory: '#F7F4EE', linen: '#EFEBE3', white: '#FFFFFF', ink: '#0B1F1A', stone: '#5A6661',
-  evergreen: '#0F4A3C', brand: '#015F4A', gold: '#C9A961', goldHover: '#D6BB7B', antique: '#7A5F22',
+  evergreen: '#0F4A3C', brand: '#015F4A', gold: '#C9A961', goldHover: '#D6BB7B', btn: '#8C6E2B', btnHover: '#7A5F22', antique: '#7A5F22',
   mist: '#A8B3AE', rule: '#DDD6C8', field: '#8C8579', error: '#B42318',
 };
 const FONT = 'Manrope';
@@ -93,7 +93,7 @@ function BTN(text, url, cls, o = {}) {
     border_radius: box(2), ...(o.icon ? { selected_icon: svg(o.icon), icon_align: o.iconBefore ? 'row' : 'row-reverse', icon_indent: px(o.iconGap ?? 10) } : {}),
   };
   const looks = {
-    gold: { background_color: T.gold, button_text_color: T.ink, button_background_hover_color: T.goldHover, hover_color: T.ink, text_padding: box(0, o.sm ? 24 : 28) },
+    gold: { background_color: T.btn, button_text_color: T.white, button_background_hover_color: T.btnHover, hover_color: T.white, text_padding: box(0, o.sm ? 24 : 28) },
     outline: { background_color: 'rgba(0,0,0,0)', button_text_color: T.evergreen, button_background_hover_color: T.evergreen, hover_color: T.white, border_border: 'solid', border_width: box(1.5), border_color: T.evergreen, text_padding: box(0, 24) },
     text: { background_color: 'rgba(0,0,0,0)', button_text_color: o.color || T.ink, hover_color: o.hover || T.evergreen, button_background_hover_color: 'rgba(0,0,0,0)', text_padding: box(0) },
   };
