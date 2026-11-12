@@ -466,6 +466,30 @@ function syncDreamDesk() {
   });
   (res.event_delete || []).forEach(function (eid) { try { Calendar.Events.remove('primary', eid); } catch (err) {} });
   if (links.length) { call({ links: links }); }
+  if (!ACCT) { syncWorkList(); }
+}
+
+// Your Dream Desk Work to-dos <-> a "Work" list in Google Tasks (add a Google Tasks widget for it on your phone).
+function syncWorkList() {
+  var wl = (Tasks.Tasklists.list({ maxResults: 100 }).items || []).filter(function (l) { return l.title === 'Work'; })[0];
+  if (!wl) { wl = Tasks.Tasklists.insert({ title: 'Work' }); }
+  var gt = [], page = null;
+  do {
+    var r = Tasks.Tasks.list(wl.id, { showCompleted: true, showHidden: true, maxResults: 100, pageToken: page });
+    (r.items || []).forEach(function (t) { gt.push({ id: t.id, title: t.title, notes: t.notes || '', due: t.due || '', done: t.status === 'completed', updated: t.updated }); });
+    page = r.nextPageToken;
+  } while (page);
+  var res = call({ work_sync: true, work_tasks: gt });
+  (res.create || []).forEach(function (t) { var b = { title: t.title, notes: t.notes || '' }; if (t.due) { b.due = t.due + 'T00:00:00.000Z'; } Tasks.Tasks.insert(b, wl.id); });
+  (res.update || []).forEach(function (t) {
+    try {
+      var g = Tasks.Tasks.get(wl.id, t.gid);
+      g.title = t.title; g.notes = t.notes || ''; g.due = t.due ? t.due + 'T00:00:00.000Z' : null;
+      g.status = t.done ? 'completed' : 'needsAction'; if (!t.done) { g.completed = null; }
+      Tasks.Tasks.update(g, wl.id, t.gid);
+    } catch (e) {}
+  });
+  (res['delete'] || []).forEach(function (gid) { try { Tasks.Tasks.remove(wl.id, gid); } catch (e) {} });
 }
 
 function call(payload) {
@@ -483,6 +507,76 @@ function setup() {
 JS;
 }
 
+/**
+ * Work to-dos <-> a "Work" list in Google Tasks (so the Google Tasks phone widget can show them).
+ * Each Google task carries "Dream Desk #<id>" in its notes. Dream Desk is the source for titles and dates;
+ * checking a task off on either side completes it on the other; tasks added to the Work list in Google
+ * become Work to-dos; tasks deleted in Dream Desk are removed from the Work list.
+ */
+function dwdpe_work_sync( $gtasks ) {
+	$create = array();
+	$update = array();
+	$delete = array();
+	$byid   = array();
+	foreach ( $gtasks as $g ) {
+		$gid = sanitize_text_field( (string) ( $g['id'] ?? '' ) );
+		if ( '' === $gid ) {
+			continue;
+		}
+		$g['gid']  = $gid;
+		$g['due']  = substr( (string) ( $g['due'] ?? '' ), 0, 10 );
+		$g['done'] = ! empty( $g['done'] );
+		if ( preg_match( '/Dream Desk #(\d+)/', (string) ( $g['notes'] ?? '' ), $m ) ) {
+			$byid[ (int) $m[1] ] = $g;
+		} elseif ( ! $g['done'] && '' !== trim( (string) ( $g['title'] ?? '' ) ) ) {
+			// Added in Google Tasks' Work list → new Work to-do in Dream Desk.
+			$tid = dwdc_add_task( sanitize_text_field( (string) $g['title'] ), 0, $g['due'] );
+			if ( $g['due'] ) {
+				update_post_meta( $tid, '_dwdc_due_manual', '1' );
+			}
+			$byid[ $tid ] = $g + array( 'fresh' => 1 );
+		}
+	}
+	$since = gmdate( 'Y-m-d H:i:s', time() - 30 * DAY_IN_SECONDS );
+	$seen  = array();
+	foreach ( get_posts( array( 'post_type' => DWDC_TASK, 'post_status' => 'private', 'posts_per_page' => -1, 'fields' => 'ids' ) ) as $tid ) {
+		$t = dwdc_task( $tid );
+		if ( ! $t ) {
+			continue;
+		}
+		$doneOld = $t['done'] && ( '' === $t['done_at'] || get_gmt_from_date( $t['done_at'] ) < $since );
+		$g       = $byid[ $tid ] ?? null;
+		$seen[ $tid ] = 1;
+		$c      = $t['contact'] ? html_entity_decode( get_the_title( $t['contact'] ), ENT_QUOTES ) : '';
+		$notes  = ( $c ? $c . "\n\n" : '' ) . 'Dream Desk #' . $tid;
+		if ( ! $g ) {
+			if ( ! $t['done'] ) {
+				$create[] = array( 'title' => $t['text'], 'notes' => $notes, 'due' => $t['due'] );
+			}
+			continue;
+		}
+		if ( $g['done'] && ! $t['done'] && empty( $g['fresh'] ) ) {
+			update_post_meta( $tid, '_dwdc_done', '1' ); // checked off on the phone
+			update_post_meta( $tid, '_dwdc_done_at', current_time( 'mysql' ) );
+			continue;
+		}
+		if ( $doneOld && $g['done'] ) {
+			continue;
+		}
+		$want = array( 'title' => $t['text'], 'due' => $t['due'], 'done' => $t['done'] );
+		if ( ! empty( $g['fresh'] ) || $want['title'] !== (string) ( $g['title'] ?? '' ) || $want['due'] !== $g['due'] || $want['done'] !== $g['done'] ) {
+			$update[] = array( 'gid' => $g['gid'], 'title' => $t['text'], 'notes' => $notes, 'due' => $t['due'], 'done' => $t['done'] );
+		}
+	}
+	foreach ( $byid as $tid => $g ) {
+		if ( ! isset( $seen[ $tid ] ) ) {
+			$delete[] = $g['gid']; // deleted in Dream Desk
+		}
+	}
+	update_option( 'dwdpe_work_last', array( 'at' => current_time( 'mysql' ), 'google' => count( $gtasks ), 'created' => count( $create ), 'updated' => count( $update ) ), false );
+	return array( 'create' => $create, 'update' => $update, 'delete' => $delete );
+}
+
 add_action( 'rest_api_init', function () {
 	register_rest_route( 'dwd/v1', '/personal-sync', array(
 		'methods'             => 'POST',
@@ -492,6 +586,9 @@ add_action( 'rest_api_init', function () {
 		},
 		'callback'            => function ( $r ) {
 			$d = (array) $r->get_json_params();
+			if ( ! empty( $d['work_sync'] ) ) {
+				return dwdpe_work_sync( (array) ( $d['work_tasks'] ?? array() ) );
+			}
 			return isset( $d['links'] ) ? dwdpe_link( $d['links'] ) : dwdpe_sync( $d );
 		},
 	) );
