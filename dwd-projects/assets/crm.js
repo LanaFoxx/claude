@@ -670,7 +670,7 @@
 			return '<div class="dd-ph home"><div><h1>' + new Date(DWDC.today + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }) + '</h1><p>' + greet + ', ' + esc(String(DWDC.user || 'Michael').split(' ')[0]) + '</p></div>'
 				+ (qm ? '<div class="dd-quote"><span>' + qm[1] + ' <i>— ' + qm[2] + '</i></span><button type="button" class="dd-ibtn sm" data-quotex aria-label="Hide for today">' + lu('x', 14) + '</button></div>' : '') + '</div>';
 		}
-		if (r.view === 'client' || r.view === 'cl' || r.view === 'host' || (r.view === 'personal' && r.arg === 'calendar')) { return ''; }
+		if (r.view === 'client' || r.view === 'cl' || r.view === 'host' || r.view === 'todos' || (r.view === 'personal' && r.arg === 'calendar')) { return ''; }
 		return '<div class="dd-ph"><h1>' + esc(ddTitle(r, t)) + '</h1></div>';
 	}
 	// Home (design 4.1): schedule + recent activity | stat list + to-dos.
@@ -939,6 +939,99 @@
 		});
 	})();
 
+	/* ================= To-dos (design 4a): Work and Personal lane cards ================= */
+	function tdView() { var v = {}; try { v = JSON.parse(ddGet('dreamdesk-todos-view', '{}')) || {}; } catch (e) { v = {}; } return { seg: ['open', 'done', 'all'].indexOf(v.seg) > -1 ? v.seg : 'open', q: S.tq != null ? S.tq : (v.q || '') }; }
+	function tdSave(seg, q) { ddSet('dreamdesk-todos-view', JSON.stringify({ seg: seg, q: q })); }
+	function tdExp() { if (!S.tgLoaded) { S.tgLoaded = 1; S.tgOpen = S.tgOpen || {}; try { (JSON.parse(ddGet('dreamdesk-todos-expanded', '[]')) || []).forEach(function (id) { S.tgOpen[id] = true; }); } catch (e) {} } return S.tgOpen || {}; }
+	function tdDue(t) {
+		var T = DWDC.today;
+		if (t.done) { var d = String(t.done_at || t.due || '').slice(0, 10); return d ? '<span class="dd-due done">' + fmt(d) + '</span>' : ''; }
+		if (!t.due) { return ''; }
+		if (t.due < T) { return '<span class="dd-due late">' + Math.round((Date.parse(T) - Date.parse(t.due)) / 864e5) + 'd overdue</span>'; }
+		if (t.due === T) { return '<span class="dd-due today">Today</span>'; }
+		return '<span class="dd-due">' + fmt(t.due) + '</span>';
+	}
+	var TD_CHECK = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+	function tdWorkRow(t) {
+		var c = t.contact ? contact(t.contact) : null, k = c ? clientOf(c) : null, pn = k ? k.name : (c ? c.person : '');
+		var chip = c ? '<a class="dd-tchip" href="#client/' + c.id + '">' + lu('clipboard-list', 12) + '<b>' + esc(c.name) + '</b>' + (pn && pn !== c.name ? '<span>· ' + esc(pn) + '</span>' : '') + '</a>' : '';
+		var dates = [t.due ? 'Due ' + fmt(t.due) : '', 'Added by Michael'].filter(Boolean).join(' · ');
+		return '<div class="dd-trow' + (t.done ? ' done' : '') + '" data-task="' + t.id + '"><button type="button" class="dd-tchk' + (t.done ? ' on' : '') + '" data-toggle="' + t.id + '" aria-label="' + (t.done ? 'Mark not done' : 'Mark done') + '">' + TD_CHECK + '</button>'
+			+ '<div class="dd-ttx"><b title="' + esc(t.text) + '">' + esc(t.text) + '</b><div class="dd-tmeta">' + chip + '<span>' + esc(dates) + '</span></div></div>'
+			+ '<div class="dd-trc">' + tdDue(t) + '<span class="dd-tacts"><button type="button" class="dd-ibtn sm" data-del-task="' + t.id + '" aria-label="Delete to-do" title="Delete">' + lu('x', 14) + '</button></span></div></div>';
+	}
+	function tdPersRow(t) {
+		var src = t.source === 'Google Tasks' ? '<span class="dd-tchip">Google Tasks</span>' : '';
+		var dates = t.due ? fmt(t.due) + (t.time ? ' · ' + t.time : '') : (t.note ? 'Has notes' : '');
+		return '<div class="dd-trow' + (t.done ? ' done' : '') + '" data-ptask="' + t.id + '"><button type="button" class="dd-tchk' + (t.done ? ' on' : '') + '" data-ptoggle="' + t.id + '" aria-label="' + (t.done ? 'Mark not done' : 'Mark done') + '">' + TD_CHECK + '</button>'
+			+ '<div class="dd-ttx"><b title="' + esc(ptx(t.text)) + '">' + esc(ptx(t.text)) + '</b>' + (src || dates ? '<div class="dd-tmeta">' + src + (dates ? '<span>' + esc(dates) + '</span>' : '') + '</div>' : '') + '</div>'
+			+ '<div class="dd-trc">' + tdDue(t) + '<span class="dd-tacts"><button type="button" class="dd-ibtn sm" data-pdel="todos:' + t.id + '" aria-label="Delete to-do" title="Delete">' + lu('x', 14) + '</button></span></div></div>';
+	}
+	function tdGroupRow(it) {
+		var c = contact(it.id), open = !!tdExp()[it.id], first = it.tasks[0], late = it.tasks.filter(function (t) { return t.due && t.due < DWDC.today; }).length;
+		return '<div class="dd-tgrp' + (open ? ' open' : '') + '"><div class="dd-trow g" data-tgrp="' + it.id + '" role="button" tabindex="0" aria-expanded="' + open + '"><span class="dd-tbadge">' + it.tasks.length + '</span>'
+			+ '<div class="dd-ttx"><b>' + esc(c ? c.name : 'Project') + '</b><div class="dd-tmeta"><span class="ell">' + esc(it.tasks.length + ' to-dos' + (late ? ' · ' + late + ' overdue' : '') + ' · next: ' + first.text) + '</span></div></div>'
+			+ '<div class="dd-trc">' + tdDue(first) + '<span class="dd-tchev">' + lu('chevron-down', 16) + '</span></div></div>'
+			+ (open ? '<div class="dd-tkids">' + it.tasks.map(tdWorkRow).join('') + (c ? '<a class="dd-tgo" href="#client/' + c.id + '">Open project ' + lu('chevron-right', 12) + '</a>' : '') + '</div>' : '') + '</div>';
+	}
+	function tdLane(kind, openList, doneList, V) {
+		var T = DWDC.today, q = V.q.toLowerCase().trim();
+		var hit = function (t) { if (!q) { return true; } var c = t.contact ? contact(t.contact) : null; return (String(t.text) + ' ' + (c ? c.name : '') + ' ' + (t.source || '')).toLowerCase().indexOf(q) > -1; };
+		var openF = openList.filter(hit), doneF = doneList.filter(hit);
+		var groups = [];
+		if (V.seg !== 'done') {
+			var b = kind === 'work' ? todoBuckets(openF) : [['Overdue', 'red', openF.filter(function (t) { return t.due && t.due < T; }).sort(byDue).map(function (t) { return { task: t }; })], ['Today', 'blue', openF.filter(function (t) { return t.due === T; }).map(function (t) { return { task: t }; })], ['Upcoming', 'navy', openF.filter(function (t) { return t.due > T; }).sort(byDue).map(function (t) { return { task: t }; })], ['No date', 'mut', openF.filter(function (t) { return !t.due; }).map(function (t) { return { task: t }; })]];
+			groups = b.map(function (g) { return { key: g[0], items: g[2] }; });
+		}
+		if (V.seg !== 'open') { groups.push({ key: 'Done', items: doneF.map(function (t) { return { task: t }; }) }); }
+		var dotc = { Overdue: 'late', Today: 'today', Upcoming: '', 'No date': '', Done: 'ok' };
+		var late = openList.filter(function (t) { return t.due && t.due < T; }).length;
+		S.tdDone = S.tdDone || {};
+		var body = groups.map(function (g) {
+			var n = g.items.reduce(function (a, it) { return a + (it.tasks ? it.tasks.length : 1); }, 0);
+			if (!g.items.length) {
+				if (g.key === 'Today' && !q && V.seg === 'open' && !groups[0].items.length) { return '<div class="dd-tgh"><i class="today"></i>Today<em>0</em></div><p class="dd-tnone">Nothing due today.</p>'; }
+				return '';
+			}
+			var isDone = g.key === 'Done', collapsed = isDone && V.seg === 'all' && g.items.length > 5 && !S.tdDone[kind];
+			return '<div class="dd-tgh' + (isDone ? ' btn' : '') + '"' + (isDone ? ' data-tddone="' + kind + '" role="button" tabindex="0"' : '') + '><i class="' + dotc[g.key] + '"></i>' + g.key + '<em>' + n + '</em></div>'
+				+ (collapsed ? '<button type="button" class="dd-tshow" data-tddone="' + kind + '">Show ' + g.items.length + ' done</button>' : g.items.map(function (it) { return it.tasks ? tdGroupRow(it) : kind === 'work' ? tdWorkRow(it.task) : tdPersRow(it.task); }).join(''));
+		}).join('');
+		if (!openF.length && !doneF.length) {
+			body = q ? '<div class="dd-emptyst sm"><b>No to-dos match “' + esc(V.q) + '”</b><button type="button" class="dd-lnk" data-tqclear>Clear search</button></div>'
+				: '<div class="dd-emptyst">' + '<span class="dd-eicon">' + lu('circle-check', 20) + '</span><b>All clear</b><span>Add a to-do above.</span></div>';
+		}
+		var dateLbl = S.tdDate && S.tdDate[kind] ? fmt(S.tdDate[kind]) : '';
+		var form = '<form class="dd-tadd' + (kind === 'work' ? ' dwdc-addbar' : '') + '"' + (kind === 'personal' ? ' data-pform="pdayadd"' : '') + ' data-lane="' + kind + '"><label class="dd-tin">' + lu('plus', 16) + '<input name="text" placeholder="Add a to-do and press Enter…" autocomplete="off" required data-lpignore="true" data-1p-ignore></label>'
+			+ '<span class="dd-btn secondary dd-tdate' + (dateLbl ? ' set' : '') + '" role="button" tabindex="0" data-tdpick="' + kind + '">' + lu('calendar', 14) + '<span>' + (dateLbl || 'Date') + '</span>' + (dateLbl ? '<i data-tdclear="' + kind + '" role="button" aria-label="Clear date">' + lu('x', 12) + '</i>' : '') + '<input type="date" name="due" value="' + esc((S.tdDate && S.tdDate[kind]) || '') + '" data-tdset="' + kind + '" tabindex="-1" aria-label="Due date"></span>'
+			+ '<button class="dd-btn primary">Add</button></form>';
+		return '<section class="dd-card dd-lane ' + kind + '"><header><span class="dd-lt">' + lu(kind === 'work' ? 'clipboard-list' : 'home', 16) + '</span><h2>' + (kind === 'work' ? 'Work' : 'Personal') + '</h2><span class="dd-lsum">' + openList.length + ' open' + (late ? ' · ' + late + ' overdue' : '') + (doneList.length ? ' · ' + doneList.length + ' done' : '') + '</span></header>'
+			+ form + '<div class="dd-lbody">' + body + '</div></section>';
+	}
+	function ddTodos() {
+		var V = tdView(), P = pData();
+		var wOpen = openTasks().sort(byDueN), wDone = doneTasks().slice(0, 40);
+		var pAll = P ? P.todos.filter(function (t) { return !t.gevent; }) : [], pOpen = pAll.filter(function (t) { return !t.done; }), pDone = pAll.filter(function (t) { return t.done; }).sort(function (a, b) { return (b.done_at || '') < (a.done_at || '') ? -1 : 1; }).slice(0, 40);
+		var lane = S.tlane || 'work';
+		var seg = function (v, l) { return '<button type="button" class="' + (V.seg === v ? 'on' : '') + '" data-tdseg="' + v + '">' + l + '</button>'; };
+		return '<div class="dd-tdt"><h1>To-dos<em>' + (wOpen.length + pOpen.length) + ' open</em></h1>'
+			+ '<label class="dd-input dd-tq">' + lu('search') + '<input type="search" data-tq placeholder="Search to-dos…" value="' + esc(V.q) + '" autocomplete="off" data-lpignore="true" data-1p-ignore></label>'
+			+ '<div class="dd-seg">' + seg('open', 'Open') + seg('done', 'Done') + seg('all', 'All') + '</div></div>'
+			+ '<div class="dd-seg dd-lanesw"><button type="button" class="' + (lane === 'work' ? 'on' : '') + '" data-tlane="work">Work</button><button type="button" class="' + (lane === 'personal' ? 'on' : '') + '" data-tlane="personal">Personal</button></div>'
+			+ '<div class="dd-lanes show-' + lane + '">' + tdLane('work', wOpen, wDone, V) + (P ? tdLane('personal', pOpen, pDone, V) : '<section class="dd-card dd-lane personal"><header><span class="dd-lt">' + lu('home', 16) + '</span><h2>Personal</h2></header><p class="dd-tnone">Loading…</p></section>') + '</div>';
+	}
+	function tdRerender() {
+		var keep = {}; app.querySelectorAll('.dd-tadd').forEach(function (f) { keep[f.getAttribute('data-lane')] = f.querySelector('[name=text]').value; });
+		render();
+		app.querySelectorAll('.dd-tadd').forEach(function (f) { var v = keep[f.getAttribute('data-lane')]; if (v) { f.querySelector('[name=text]').value = v; } });
+	}
+	document.addEventListener('keydown', function (e) {
+		if (route().view !== 'todos' || e.metaKey || e.ctrlKey || e.altKey || S.modal) { return; }
+		if (e.target && e.target.closest && e.target.closest('input, textarea, select, [contenteditable]')) { if (e.key === 'Escape' && e.target.closest('.dd-tadd')) { e.target.value = ''; e.target.blur(); } return; }
+		if (e.key === 'n' || e.key === 'N') { var lane = e.shiftKey ? 'personal' : 'work', inp = app.querySelector('.dd-tadd[data-lane="' + lane + '"] [name=text]'); if (inp) { e.preventDefault(); if (window.innerWidth < 768 && S.tlane !== lane) { S.tlane = lane; render(); inp = app.querySelector('.dd-tadd[data-lane="' + lane + '"] [name=text]'); } inp.focus(); } }
+	});
+	function byDueN(a, b) { return (a.due || '9') < (b.due || '9') ? -1 : (a.due || '9') > (b.due || '9') ? 1 : 0; }
+
 	/* ---------- shell ---------- */
 	// Phone / app only: a sticky tab bar at the bottom (hidden on desktop by CSS).
 	function tabBar(r) {
@@ -1062,7 +1155,7 @@
 			t = ['Client', kw[0], kw.slice(1).join(' ')];
 			body = personView(r.id);
 		} else {
-			body = r.view === 'personal' ? (r.arg === 'spending' ? personalView(r) + '<h2 class="dwdc-sech">Money in &amp; out (logged by hand)</h2>' + personalView({ view: 'personal', arg: 'finances' }) : r.arg === 'bills' ? personalView(r) + '<h2 class="dwdc-sech">Subscriptions</h2>' + personalView({ view: 'personal', arg: 'subs' }) : personalView(r)) : ({ home: ddHome, clients: ddClients, projects: projectsView, leads: leadsList, onboarding: onboardView, todos: todosBoth, connections: connectionsView, hosting: hostingView, money: moneyView, reviews: reviewsView, archive: archiveView, search: searchView }[r.view] || home)();
+			body = r.view === 'personal' ? (r.arg === 'spending' ? personalView(r) + '<h2 class="dwdc-sech">Money in &amp; out (logged by hand)</h2>' + personalView({ view: 'personal', arg: 'finances' }) : r.arg === 'bills' ? personalView(r) + '<h2 class="dwdc-sech">Subscriptions</h2>' + personalView({ view: 'personal', arg: 'subs' }) : personalView(r)) : ({ home: ddHome, clients: ddClients, projects: projectsView, leads: leadsList, onboarding: onboardView, todos: ddTodos, connections: connectionsView, hosting: hostingView, money: moneyView, reviews: reviewsView, archive: archiveView, search: searchView }[r.view] || home)();
 		}
 		app.setAttribute('data-view', r.view);
 		app.classList.add('dd');
@@ -3111,6 +3204,13 @@
 		if (S.flagOpen && !t.closest('.dd-flagm')) { S.flagOpen = 0; render(); }
 		if ((el = t.closest('[data-bankrefresh]'))) { e.preventDefault(); e.stopPropagation(); el.disabled = true; el.classList.add('spin'); api('/plaid', 'POST', { action: 'balances' }).then(function (b) { if (S.bank && b && b.accounts) { S.bank.balances = b; } render(); toast('Bank balance updated'); }).catch(fail); return; }
 		if ((el = t.closest('[data-tgopen]'))) { S.tgOpen = S.tgOpen || {}; S.tgOpen[+el.getAttribute('data-tgopen')] = true; }
+		if ((el = t.closest('[data-tdseg]'))) { var tv = tdView(); tdSave(el.getAttribute('data-tdseg'), tv.q); render(); return; }
+		if ((el = t.closest('[data-tlane]'))) { S.tlane = el.getAttribute('data-tlane'); render(); return; }
+		if ((el = t.closest('[data-tddone]'))) { S.tdDone = S.tdDone || {}; var dk = el.getAttribute('data-tddone'); S.tdDone[dk] = !S.tdDone[dk]; render(); return; }
+		if (t.closest('[data-tqclear]')) { S.tq = ''; tdSave(tdView().seg, ''); render(); return; }
+		if ((el = t.closest('[data-tdclear]'))) { e.preventDefault(); e.stopPropagation(); S.tdDate = S.tdDate || {}; S.tdDate[el.getAttribute('data-tdclear')] = ''; tdRerender(); return; }
+		if ((el = t.closest('[data-tdpick]'))) { var di = el.querySelector('input[type=date]'); if (di) { try { di.showPicker(); } catch (er) { di.focus(); di.click(); } } return; }
+		if ((el = t.closest('[data-tgrp]')) && el.classList.contains('dd-trow')) { var tg = +el.getAttribute('data-tgrp'), ex = tdExp(); ex[tg] = !ex[tg]; ddSet('dreamdesk-todos-expanded', JSON.stringify(Object.keys(ex).filter(function (k) { return ex[k]; }).map(Number))); render(); return; }
 		if ((el = t.closest('[data-tgrp]'))) { var gid = +el.getAttribute('data-tgrp'); S.tgOpen = S.tgOpen || {}; S.tgOpen[gid] = !S.tgOpen[gid]; render(); return; }
 		if ((el = t.closest('[data-showdone]'))) { S.showDone = !S.showDone; render(); return; }
 		if ((el = t.closest('[data-review]'))) { S.modal = { type: 'review', vals: {}, off: {} }; render(); return; }
@@ -3337,6 +3437,7 @@
 	app.addEventListener('mousedown', function (e) { var t = e.target.closest && e.target.closest('.dwdc-ssearch'); if (t) { var i = t.querySelector('input'); if (i) { i.removeAttribute('readonly'); } } });
 	app.addEventListener('input', function (e) {
 		var t = e.target;
+		if (t.hasAttribute('data-tq')) { S.tq = t.value; tdSave(tdView().seg, t.value); var pos = t.selectionStart; render(); var nq = app.querySelector('[data-tq]'); if (nq) { nq.focus(); try { nq.setSelectionRange(pos, pos); } catch (er) {} } return; }
 		if (t.hasAttribute('data-cq')) { S.cq = t.value; S.cpage = 1; var tb = app.querySelector('.dd-tbody'); if (tb) { tb.innerHTML = ddClientRows().html; } return; }
 		if (t.closest('.dwdc-ssearch')) {
 			// Only react to real typing (browser autofill fills unfocused fields).
@@ -3356,6 +3457,7 @@
 	document.addEventListener('input', function (e) { if (e.target && e.target.hasAttribute && e.target.hasAttribute('data-ptdraft') && S.modal) { S.modal.draft = e.target.value; e.target.style.height = ''; e.target.style.height = Math.min(140, e.target.scrollHeight) + 'px'; } });
 	document.addEventListener('keydown', function (e) { if (e.target && e.target.hasAttribute && e.target.hasAttribute('data-ptdraft') && e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); if (S.modal) { S.modal.draft = e.target.value; } ptSend(); } });
 	app.addEventListener('change', function (e) {
+		if (e.target.hasAttribute && e.target.hasAttribute('data-tdset')) { S.tdDate = S.tdDate || {}; S.tdDate[e.target.getAttribute('data-tdset')] = e.target.value; tdRerender(); return; }
 		if (e.target.hasAttribute && e.target.hasAttribute('data-lsort')) { setSort(e.target.getAttribute('data-lsort'), e.target.value); render(); return; }
 		var t = e.target;
 		if (t.hasAttribute('data-revpick')) { S.revSel = S.revSel || {}; S.revSel[t.getAttribute('data-revpick')] = t.checked; render(); return; }
@@ -3389,6 +3491,7 @@
 	app.addEventListener('submit', function (e) {
 		var f = e.target, data = {}; e.preventDefault();
 		new FormData(f).forEach(function (val, k) { data[k] = val; });
+		if (f.classList.contains('dd-tadd')) { S.tdDate = S.tdDate || {}; S.tdDate[f.getAttribute('data-lane')] = ''; }
 		if (f.classList.contains('dwdc-taskedit')) {
 			var tid = +f.getAttribute('data-tid'), tb = f.querySelector('.dwdc-btn'); tb.disabled = true;
 			api('/task/' + tid, 'POST', { text: data.text, due: data.due || '', contact: +data.contact || 0 }).then(function (x) {

@@ -1,0 +1,91 @@
+/* Dream Desk To-dos (design 4a). Colours only from dd-tokens.css. */
+.dd-tdt { display: flex; align-items: center; gap: 8px; }
+.dd-tdt h1 { flex: 1; display: flex; align-items: baseline; gap: 10px; font-size: var(--fs-title); font-weight: 600; letter-spacing: -.01em; color: var(--text); }
+.dd-tdt h1 em { font-style: normal; font-size: 14px; font-weight: 400; color: var(--text-3); letter-spacing: 0; }
+.dd-tq { width: 240px; flex: none; }
+.dd-lanesw { display: none !important; }
+.dd-main > .dwdc-screen > .dd-lanes { margin-top: 20px; }
+.dd-lanes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px; align-items: start; }
+.dd-lane { box-shadow: inset 0 2px 0 var(--accent); }
+.dd-lane.personal { box-shadow: inset 0 2px 0 var(--warning-text); }
+.dd-lane > header { display: flex; align-items: center; gap: 12px; padding: 18px 20px 16px; border-bottom: 1px solid var(--border); }
+.dd-lt { width: 32px; height: 32px; border-radius: var(--radius-md); background: var(--accent-soft); color: var(--accent-text); display: inline-flex; align-items: center; justify-content: center; flex: none; }
+.dd-lane.personal .dd-lt { background: var(--warning-bg); color: var(--warning-text); }
+.dd-lane > header h2 { flex: 1; font-size: 16px; font-weight: 600; color: var(--text); }
+.dd-lsum { font-size: 13px; color: var(--text-3); }
+.dd-tadd { display: flex; gap: 8px; padding: 12px 20px; border-bottom: 1px solid var(--border); margin: 0; }
+.dd-tin { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 12px; background: var(--bg); border: 1px solid var(--border-strong); border-radius: var(--radius-md); color: var(--text-3); margin: 0; cursor: text; }
+.dd-tin:focus-within { border-color: var(--accent); box-shadow: var(--ring); }
+.dd-tin input { flex: 1; min-width: 0; height: 100% !important; min-height: 0 !important; border: 0 !important; background: none !important; padding: 0 !important; color: var(--text) !important; font-size: 13px !important; box-shadow: none !important; }
+.dd-tdate { position: relative; height: 36px; gap: 6px; }
+.dd-tdate.set { color: var(--accent-text) !important; border-color: var(--accent); }
+.dd-tdate i { display: inline-flex; margin-left: 2px; color: var(--text-3); border-radius: 4px; }
+.dd-tdate i:hover { color: var(--text); background: var(--hover); }
+.dd-tdate input[type=date] { position: absolute; left: 0; bottom: 0; width: 100%; height: 0; opacity: 0; pointer-events: none; border: 0; padding: 0; }
+.dd-tadd > .dd-btn.primary { height: 36px; padding: 0 14px; }
+.dd-tgh { display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 20px; background: var(--bg); border-bottom: 1px solid var(--border); font-size: 12px; font-weight: 600; color: var(--text-2); }
+.dd-tgh.btn { cursor: pointer; }
+.dd-tgh i { width: 6px; height: 6px; border-radius: 50%; background: var(--text-3); }
+.dd-tgh i.late { background: var(--danger-text); } .dd-tgh i.today { background: var(--accent); } .dd-tgh i.ok { background: var(--success-text); }
+.dd-tgh em { font-style: normal; font-weight: 500; color: var(--text-3); }
+.dd-tnone { padding: 14px 20px; font-size: 13px; color: var(--text-3); border-bottom: 1px solid var(--border); }
+.dd-tshow { display: block; width: 100%; padding: 12px 20px; border: 0; border-bottom: 1px solid var(--border); background: none; text-align: left; color: var(--accent-text); font: 500 13px var(--font); cursor: pointer; }
+.dd-trow { display: flex; align-items: flex-start; gap: 14px; padding: 14px 20px; border-bottom: 1px solid var(--border); cursor: pointer; }
+.dd-trow:hover { background: var(--hover); }
+.dd-lbody > :last-child, .dd-lbody > .dd-tgrp:last-child > :last-child { border-bottom: 0; }
+.dd-tchk { position: relative; width: 18px; height: 18px; margin-top: 2px; border-radius: 5px; border: 1px solid var(--border-strong); background: var(--surface); color: transparent; display: inline-flex; align-items: center; justify-content: center; padding: 0; cursor: pointer; flex: none; transition: background .15s, border-color .15s; }
+.dd-tchk::after { content: ""; position: absolute; inset: -9px; }
+.dd-tchk:hover { border-color: var(--accent); }
+.dd-tchk.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+.dd-ttx { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.dd-ttx > b { font-size: 14px; font-weight: 500; line-height: 1.45; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dd-trow.done .dd-ttx > b { color: var(--text-3); text-decoration: line-through; }
+.dd-tmeta { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px; font-size: 12px; color: var(--text-3); min-width: 0; }
+.dd-tmeta .ell { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+.dd-tchip { display: inline-flex; align-items: center; gap: 6px; height: 22px; padding: 0 8px; border-radius: var(--radius-pill); background: var(--neutral-bg); color: var(--text-2) !important; font-size: 12px; font-weight: 500; max-width: 100%; min-width: 0; }
+.dd-tchip .lu { color: var(--text-3); }
+.dd-tchip b { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dd-tchip span { font-weight: 400; color: var(--text-3); white-space: nowrap; }
+a.dd-tchip:hover { color: var(--text) !important; }
+.dd-trc { display: flex; align-items: center; gap: 10px; flex: none; height: 22px; }
+.dd-due { font-size: 12px; font-weight: 500; color: var(--text-2); white-space: nowrap; }
+.dd-due.late { color: var(--danger-text); } .dd-due.today { color: var(--accent-text); } .dd-due.done { color: var(--text-3); }
+.dd-tacts { display: inline-flex; opacity: 0; transition: opacity .12s; }
+.dd-trow:hover .dd-tacts, .dd-trow:focus-within .dd-tacts { opacity: 1; }
+@media (hover: none) { .dd-tacts { opacity: 1; } }
+.dd-tbadge { width: 28px; height: 28px; border-radius: 7px; background: var(--accent-soft); color: var(--accent-text); font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; flex: none; margin-top: -2px; }
+.dd-tchev { display: inline-flex; color: var(--text-3); transition: transform .15s; }
+.dd-tgrp.open .dd-tchev { transform: rotate(180deg); }
+.dd-tgrp.open > .dd-trow.g { background: var(--hover); }
+.dd-tkids { margin-left: 62px; border-left: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.dd-tkids .dd-trow { padding-left: 16px; }
+.dd-tgo { display: inline-flex; align-items: center; gap: 4px; padding: 10px 16px 12px; font-size: 13px; font-weight: 500; color: var(--accent-text) !important; }
+.dd-eicon { width: 40px; height: 40px; border-radius: var(--radius-lg); background: var(--success-bg); color: var(--success-text); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 4px; }
+.dd-lane .dd-emptyst { border-top: 0; padding: 40px 20px; }
+@media (max-width: 1100px) { .dd-lanes { gap: 20px; } }
+@media (max-width: 900px) and (min-width: 768px) { .dd-lanes { grid-template-columns: 1fr; } }
+@media (max-width: 767px) {
+	.dd-tdt { flex-wrap: wrap; }
+	.dd-tdt h1 { flex-basis: 100%; }
+	.dd-tq { flex: 1; width: auto; height: 40px; }
+	.dd-tq input { font-size: 16px !important; }
+	.dd-tdt .dd-seg { width: auto; }
+	.dd-lanesw { display: flex !important; width: 100%; margin-top: 12px; }
+	.dd-lanesw button { flex: 1; height: 36px; }
+	.dd-main > .dwdc-screen > .dd-lanes { margin-top: 12px; }
+	.dd-lanes { grid-template-columns: 1fr; }
+	.dd-lanes.show-work .dd-lane.personal, .dd-lanes.show-personal .dd-lane.work { display: none; }
+	.dd-tadd { flex-wrap: wrap; padding: 12px 16px; }
+	.dd-tin { flex-basis: 100%; height: 44px; }
+	.dd-tin input { font-size: 16px !important; }
+	.dd-tdate, .dd-tadd > .dd-btn.primary { flex: 1; height: 44px; }
+	.dd-trow { padding: 14px 16px; }
+	.dd-tchk { width: 22px; height: 22px; }
+	.dd-tchk::after { inset: -11px; }
+	.dd-ttx > b { white-space: normal; }
+	.dd-tkids { margin-left: 24px; }
+	.dd-tgh { padding: 0 16px; }
+}
+.dd .dd-tadd.dwdc-addbar { background: none !important; border: 0 !important; border-bottom: 1px solid var(--border) !important; border-radius: 0 !important; box-shadow: none !important; padding: 12px 20px !important; margin: 0 !important; min-height: 0 !important; }
+.dd .dd-tadd.dwdc-addbar > .lu, .dd .dd-tadd.dwdc-addbar > svg.dwdc-ic { display: none; }
+@media (max-width: 767px) { .dd .dd-tadd.dwdc-addbar { padding: 12px 16px !important; } }
