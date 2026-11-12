@@ -225,27 +225,41 @@ a{color:#1B7EC3!important}
 } );
 
 /**
- * Form notices go to mike@dreamwebdigital.com only. Elementor's own form emails (one form had
- * "Email To" set to the personal Gmail) are dropped for that address: Dream Desk already sends
- * its own notice to mike@dreamwebdigital.com for every submission, so nothing is lost.
+ * One email per form: Dream Desk sends its own notice (dwdc_notify_form) for every submission,
+ * so Elementor's built-in form emails to Mike's addresses (work or personal Gmail) are dropped.
+ * Elementor's raw message is tagged before the branding filter rewrites it.
  */
+add_filter( 'wp_mail', function ( $args ) {
+	$msg = (string) ( $args['message'] ?? '' );
+	$h0  = $args['headers'] ?? array();
+	$own = false !== stripos( is_array( $h0 ) ? implode( "\n", $h0 ) : (string) $h0, 'X-DWD-Own' );
+	if ( ! $own && ( ! empty( $GLOBALS['dwd_elementor_form'] ) || preg_match( '/Powered by:?\s*Elementor|Remote IP:|User Agent:/i', $msg ) ) ) {
+		$h               = $args['headers'] ?? array();
+		$h               = is_array( $h ) ? $h : array_filter( explode( "\n", str_replace( "\r", '', (string) $h ) ) );
+		$h[]             = 'X-DWD-Form: elementor';
+		$args['headers'] = $h;
+	}
+	return $args;
+}, 1 );
+// An Elementor form is being submitted in this request (fires before its email action runs).
+add_action( 'elementor_pro/forms/validation', function () { $GLOBALS['dwd_elementor_form'] = true; }, 1 );
 add_filter( 'pre_wp_mail', function ( $short, $atts ) {
 	if ( null !== $short ) {
 		return $short;
 	}
-	$msg  = (string) ( $atts['message'] ?? '' );
-	$subj = (string) ( $atts['subject'] ?? '' );
-	$form = preg_match( '/Powered by:?\s*Elementor|Page URL:|Remote IP:/i', $msg ) || preg_match( '/onboard|new message from|form submission/i', $subj );
-	if ( ! $form ) {
+	$h = $atts['headers'] ?? array();
+	$h = is_array( $h ) ? implode( "\n", $h ) : (string) $h;
+	if ( false === stripos( $h, 'X-DWD-Form: elementor' ) ) {
 		return $short;
 	}
-	$to   = is_array( $atts['to'] ) ? $atts['to'] : explode( ',', (string) $atts['to'] );
-	$keep = array_values( array_filter( array_map( 'trim', $to ), function ( $a ) { return '' !== $a && ! preg_match( '/mptarr33@gmail\.com/i', $a ); } ) );
-	if ( count( $keep ) === count( array_filter( array_map( 'trim', $to ) ) ) ) {
+	$to   = array_filter( array_map( 'trim', is_array( $atts['to'] ) ? $atts['to'] : explode( ',', (string) $atts['to'] ) ) );
+	$keep = array_values( array_filter( $to, function ( $a ) { return ! preg_match( '/@dreamwebdigital\.com|mptarr33@gmail\.com/i', $a ); } ) );
+	if ( count( $keep ) === count( $to ) ) {
 		return $short;
 	}
 	if ( ! $keep ) {
-		return true; // was only for the personal Gmail: skip it
+		return true; // only Mike was on it: Dream Desk's own notice covers it
 	}
-	return wp_mail( $keep, $atts['subject'], $atts['message'], $atts['headers'] ?? '', $atts['attachments'] ?? array() );
+	$hs = array_values( array_filter( is_array( $atts['headers'] ) ? $atts['headers'] : explode( "\n", (string) $atts['headers'] ), function ( $x ) { return false === stripos( $x, 'X-DWD-Form' ); } ) );
+	return wp_mail( $keep, $atts['subject'], $atts['message'], $hs, $atts['attachments'] ?? array() );
 }, 10, 2 );

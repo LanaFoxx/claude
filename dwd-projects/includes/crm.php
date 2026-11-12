@@ -556,7 +556,7 @@ function dwdc_notify_form( $form, $fields, $cid ) {
 		'rows'    => $rows,
 		'buttons' => array_values( array_filter( array( $email ? array( 'Reply to ' . trim( strtok( $who, ' ' ) ), 'mailto:' . $email ) : null, $cid ? array( 'Open in Dream Desk', admin_url( 'admin.php?page=client-desk#client/' . $cid ) ) : null ) ) ),
 	) );
-	$headers = array( 'Content-Type: text/html; charset=UTF-8' );
+	$headers = array( 'Content-Type: text/html; charset=UTF-8', 'X-DWD-Own: 1' );
 	if ( $email && is_email( $email ) ) {
 		$headers[] = 'Reply-To: ' . str_replace( array( "\r", "\n", '<', '>' ), '', $who ) . ' <' . $email . '>';
 	}
@@ -1521,6 +1521,7 @@ add_action( 'admin_enqueue_scripts', function ( $hook ) {
 	wp_enqueue_style( 'dd', DWDP_URL . 'assets/dd.css', array( 'dd-tokens' ), DWDP_VERSION );
 	wp_enqueue_style( 'dd-cal', DWDP_URL . 'assets/dd-cal.css', array( 'dd' ), DWDP_VERSION );
 	wp_enqueue_style( 'dd-todos', DWDP_URL . 'assets/dd-todos.css', array( 'dd' ), DWDP_VERSION );
+	wp_enqueue_style( 'dd-active', DWDP_URL . 'assets/dd-active.css', array( 'dd' ), DWDP_VERSION );
 	wp_enqueue_script( 'dwdc', DWDP_URL . 'assets/crm.js', array(), DWDP_VERSION, true );
 	wp_localize_script( 'dwdc', 'DWDC', dwdc_vars() );
 } );

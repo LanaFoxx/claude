@@ -617,6 +617,10 @@
 		'chevron-right': '<path d="m9 18 6-6-6-6"/>',
 		'chevrons-right': '<path d="m6 17 5-5-5-5M13 17l5-5-5-5"/>',
 		menu: '<path d="M4 12h16M4 6h16M4 18h16"/>',
+		grip: '<circle cx="9" cy="6" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="18" r="1"/><circle cx="15" cy="6" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="18" r="1"/>',
+		'chevrons-down': '<path d="m7 6 5 5 5-5M7 13l5 5 5-5"/>',
+		'chevrons-up': '<path d="m17 11-5-5-5 5M17 18l-5-5-5 5"/>',
+		columns: '<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M12 3v18"/>',
 		'log-out': '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>'
 	};
 	function lu(n, s) { return '<svg class="lu" width="' + (s || 16) + '" height="' + (s || 16) + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (LU[n] || '') + '</svg>'; }
@@ -670,7 +674,7 @@
 			return '<div class="dd-ph home"><div><h1>' + new Date(DWDC.today + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }) + '</h1><p>' + greet + ', ' + esc(String(DWDC.user || 'Michael').split(' ')[0]) + '</p></div>'
 				+ (qm ? '<div class="dd-quote"><span>' + qm[1] + ' <i>— ' + qm[2] + '</i></span><button type="button" class="dd-ibtn sm" data-quotex aria-label="Hide for today">' + lu('x', 14) + '</button></div>' : '') + '</div>';
 		}
-		if (r.view === 'client' || r.view === 'cl' || r.view === 'host' || r.view === 'todos' || (r.view === 'personal' && r.arg === 'calendar')) { return ''; }
+		if (r.view === 'client' || r.view === 'cl' || r.view === 'host' || r.view === 'todos' || (r.view === 'projects' && (!r.arg || r.arg === 'active' || r.arg === 'all')) || (r.view === 'personal' && r.arg === 'calendar')) { return ''; }
 		return '<div class="dd-ph"><h1>' + esc(ddTitle(r, t)) + '</h1></div>';
 	}
 	// Home (design 4.1): schedule + recent activity | stat list + to-dos.
@@ -694,7 +698,7 @@
 			+ (S.schedAdd ? '<form class="dd-tl-add" data-pform="pdayadd"><input type="hidden" name="due" value="' + T + '"><input name="text" placeholder="Add a to-do for ' + dObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + '…" autocomplete="off" required><button class="dd-btn primary sm">Add</button></form>'
 				: '<button type="button" class="dd-ghostadd" data-schedadd>' + lu('plus') + 'Add a to-do for ' + dObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + '</button>') + '</div></section>';
 		// Active projects: every active project, in your order (drag to arrange) or a chosen sort.
-		var ap = withDiv('active', lsorted('active', by('active')));
+		var ap = sortMine('active') ? (function () { var g = actSegs(); return g.now.concat([{ div: true, id: DIVID }], g.wait); })() : lsorted('active', by('active'));
 		var act = '<section class="dd-card dd-ap"><header class="dd-ch"><div class="dd-ch-t"><h2>Active projects</h2><span>' + by('active').length + ' project' + (by('active').length === 1 ? '' : 's') + ' · ' + money(owed(by('active'))) + ' owed</span></div>' + sortSel('active') + '<a href="#projects/active">View all</a></header>'
 			+ '<div class="dd-aplist"' + sortAttr('active') + '>' + (ap.length ? ap.map(function (c) {
 				if (c.div) { return divRow(); }
@@ -1031,6 +1035,84 @@
 		if (e.key === 'n' || e.key === 'N') { var lane = e.shiftKey ? 'personal' : 'work', inp = app.querySelector('.dd-tadd[data-lane="' + lane + '"] [name=text]'); if (inp) { e.preventDefault(); if (window.innerWidth < 768 && S.tlane !== lane) { S.tlane = lane; render(); inp = app.querySelector('.dd-tadd[data-lane="' + lane + '"] [name=text]'); } inp.focus(); } }
 	});
 	function byDueN(a, b) { return (a.due || '9') < (b.due || '9') ? -1 : (a.due || '9') > (b.due || '9') ? 1 : 0; }
+
+	/* ================= Active projects (design 6a): Working on now / Waiting ================= */
+	// Same saved order as the Home card: projects before the divider id are "Working on now", after it "Waiting".
+	// New projects land at the bottom of Waiting.
+	function actSegs() {
+		var list = by('active'), ids = (S.order && S.order.active) || [], pos = ids.indexOf(DIVID), byId = {};
+		list.forEach(function (c) { byId[c.id] = c; });
+		if (pos < 0) { var all = inOrder('active', list), half = Math.ceil(all.length / 2); return { now: all.slice(0, half), wait: all.slice(half) }; }
+		var now = [], wait = [], seen = {};
+		ids.forEach(function (id, i) { var c = byId[id]; if (!c || seen[id]) { return; } seen[id] = 1; (i < pos ? now : wait).push(c); });
+		list.forEach(function (c) { if (!seen[c.id]) { wait.push(c); } });
+		return { now: now, wait: wait };
+	}
+	function actSave(now, wait, msg, undo) {
+		var ids = now.map(function (c) { return c.id; }).concat([DIVID], wait.map(function (c) { return c.id; }));
+		S.order = S.order || {}; S.order.active = ids; render();
+		api('/home-order', 'POST', { key: 'active', ids: ids }).then(function () { if (msg) { if (undo) { undoToast(msg, undo); } else { toast(msg); } } }).catch(fail);
+	}
+	function actMove(id, to) {
+		var g = actSegs(), prev = (S.order.active || []).slice();
+		var c = contact(id); if (!c) { return; }
+		var now = g.now.filter(function (x) { return x.id !== id; }), wait = g.wait.filter(function (x) { return x.id !== id; });
+		if (to === 'wait') { wait.unshift(c); } else { now.push(c); }
+		actSave(now, wait, 'Moved to ' + (to === 'wait' ? 'Waiting' : 'Working on now'), function () { S.order.active = prev; render(); api('/home-order', 'POST', { key: 'active', ids: prev }).catch(fail); });
+	}
+	function actRow(c, seg, mine) {
+		var k = clientOf(c), ow = num(c.balance), dd = c.deadline, dn = dd ? daysTo(dd) : null;
+		var dueCls = dn === null ? 'mut' : dn < 0 ? 'late' : dn <= 7 ? 'soon' : '';
+		var em = (k && k.email) || c.email;
+		return '<div class="dd-prow" data-go="client/' + c.id + '" data-sid="' + c.id + '">'
+			+ '<span class="dd-pgrip" title="' + (mine ? 'Drag to move' : 'Switch to My order to drag') + '">' + lu('grip', 16) + '</span>'
+			+ '<span class="dd-pc nm">' + flagDot(c) + '<span class="dd-st"><span class="dd-l1"><a href="#client/' + c.id + '"><b>' + esc(c.name) + '</b></a>' + (c.markup ? '<a class="dd-mtag" href="' + esc(url(c.markup)) + '" target="_blank" rel="noopener">Markup</a>' : '') + '<span class="dd-mob-pill">' + ddPill('Active', 'success') + '</span></span>'
+			+ (site(c) ? '<a class="dd-dom" href="' + esc(url(c.website)) + '" target="_blank" rel="noopener">' + esc(site(c)) + '</a>' : '')
+			+ '<span class="dd-mob-meta">' + esc([k ? k.name : (c.person || ''), ow ? 'Owed ' + money(ow) : 'Paid', dd ? 'Due ' + fmt(dd) : '', c.next ? 'Next: ' + c.next : ''].filter(Boolean).join(' · ')) + '</span></span></span>'
+			+ '<span class="dd-pc cl"><span>' + (k ? '<a href="#cl/' + k.id + '">' + esc(k.name) + '</a>' : esc(c.person || '—')) + '</span><small>' + (em ? esc(em) : 'No email on file') + '</small></span>'
+			+ '<span class="dd-pc num">' + (num(c.price) ? money(c.price) : '<i>—</i>') + '</span>'
+			+ '<span class="dd-pc num owed">' + (ow ? money(ow) : '<em>Paid</em>') + '</span>'
+			+ '<span class="dd-pc due ' + dueCls + '">' + (dd ? fmt(dd) : '<i>—</i>') + '</span>'
+			+ '<span class="dd-pc st">' + statusSelect(c) + '</span>'
+			+ '<span class="dd-pc nx" title="' + esc(c.next || '') + '">' + (c.next ? esc(c.next) : '<i>—</i>') + '</span>'
+			+ '<span class="dd-pc acts"><button type="button" class="dd-ibtn sm" data-actmove="' + c.id + ':' + (seg === 'now' ? 'wait' : 'now') + '" title="' + (seg === 'now' ? 'Move to Waiting' : 'Move to Working on now') + '">' + lu(seg === 'now' ? 'chevrons-down' : 'chevrons-up', 16) + '</button><a class="dd-ibtn sm" href="#client/' + c.id + '" title="Open project">' + lu('chevron-right', 16) + '</a></span></div>';
+	}
+	function actCard(c) {
+		var k = clientOf(c), ow = num(c.balance);
+		return '<a class="dd-bcard" href="#client/' + c.id + '" data-sid="' + c.id + '"><span class="dd-l1">' + flagDot(c) + '<b>' + esc(c.name) + '</b>' + (c.markup ? '<span class="dd-mtag">Markup</span>' : '') + '</span><small>' + esc(k ? k.name : (c.person || '—')) + '</small>'
+			+ '<span class="meta">' + (ow ? 'Owed ' + money(ow) : 'Paid') + (c.deadline ? ' · Due ' + fmt(c.deadline) : '') + '</span>' + (c.next ? '<span class="nx">' + esc(c.next) + '</span>' : '') + '</a>';
+	}
+	function ddActive() {
+		var g = actSegs(), mode = sortMode('active'), q = String(S.aq || '').toLowerCase().trim(), chip = S.achip || 'all', mine = mode === 'mine' && !(S.psort || {}).active && !q && chip === 'all';
+		var T = DWDC.today, soon = calAdd(T, 14);
+		var all = g.now.concat(g.wait);
+		var isOwed = function (c) { return num(c.balance) > 0; }, isSoon = function (c) { return c.deadline && c.deadline <= soon; };
+		var keep = function (c) {
+			if (chip === 'owed' && !isOwed(c)) { return false; }
+			if (chip === 'soon' && !isSoon(c)) { return false; }
+			if (!q) { return true; }
+			var k = clientOf(c); return [c.name, c.website, c.next, c.person, c.email, k ? k.name + ' ' + k.email : ''].join(' ').toLowerCase().indexOf(q) > -1;
+		};
+		var sortIn = function (l) { if ((S.psort || {}).active) { return psort('active', l); } return mode !== 'mine' && SORTS[mode] ? l.slice().sort(SORTS[mode][1]) : l; };
+		var now = sortIn(g.now.filter(keep)), wait = sortIn(g.wait.filter(keep));
+		var view = ddGet('dreamdesk-proj-view', 'table') === 'board' ? 'board' : 'table';
+		var chipB = function (k, l, n) { return '<button type="button" class="dd-chip' + (chip === k ? ' on' : '') + '" data-achip="' + k + '">' + l + ' <em>' + n + '</em></button>'; };
+		var head = '<div class="dd-atop"><h1>Active projects<em>' + all.length + '</em></h1>'
+			+ '<label class="dd-input dd-aq">' + lu('search') + '<input type="search" data-aq placeholder="Search projects…" value="' + esc(S.aq || '') + '" autocomplete="off" data-lpignore="true" data-1p-ignore></label>'
+			+ '<div class="dd-achips">' + chipB('all', 'All', all.length) + chipB('owed', 'Owed', all.filter(isOwed).length) + chipB('soon', 'Due soon', all.filter(isSoon).length) + '</div><span class="dd-chipdiv"></span>'
+			+ sortSel('active') + '<div class="dd-seg dd-vsw"><button type="button" class="' + (view === 'table' ? 'on' : '') + '" data-pview="table" aria-label="Table" title="Table">' + lu('menu', 16) + '</button><button type="button" class="' + (view === 'board' ? 'on' : '') + '" data-pview="board" aria-label="Board" title="Board">' + lu('columns', 16) + '</button></div></div>'
+			+ (q && !now.length && !wait.length ? '<p class="dd-aclear">No projects match “' + esc(S.aq) + '”. <button type="button" class="dd-lnk" data-aqclear>Clear search</button></p>' : '');
+		var sortNote = mine ? '' : '<span class="dd-sortnote">Sorted · <button type="button" class="dd-lnk" data-lsortmine="active">Back to My order</button></span>';
+		var drop = function (txt) { return '<div class="dd-pdrop">' + txt + '</div>'; };
+		var mark = '<div data-sid="' + DIVID + '" data-mark hidden></div>';
+		if (view === 'board') {
+			return head + '<div class="dd-board"><section class="dd-bcol"><header><i class="now"></i>Working on now<em>' + now.length + '</em>' + sortNote + '</header><div class="dd-bl"' + (mine ? ' data-sort="active" data-sortx' : '') + '>' + now.map(actCard).join('') + drop('Nothing in focus — drag a project here') + '</div></section>'
+				+ '<section class="dd-bcol"><header><i></i>Waiting<em>' + wait.length + '</em></header><div class="dd-bl"' + (mine ? ' data-sort="active" data-sortx' : '') + '>' + mark + wait.map(actCard).join('') + drop('Nothing waiting') + '</div></section></div>';
+		}
+		var cols = '<div class="dd-prow head"><span></span><span>Project</span><span>Client</span><span class="num">' + phead('active', 'Price') + '</span><span class="num">Owed</span><span>Due</span><span>Status</span><span>Next step</span><span></span></div>';
+		return head + '<div class="dd-asegs' + (mine ? '' : ' sorted') + '"><section class="dd-card dd-aseg">' + cols + '<div class="dd-agh"><i class="now"></i>Working on now<em>' + now.length + '</em><span class="dd-sp"></span>' + sortNote + '</div><div class="dd-arows"' + (mine ? ' data-sort="active" data-sortx' : '') + '>' + now.map(function (c) { return actRow(c, 'now', mine); }).join('') + drop('Nothing in focus — drag a project up here') + '</div></section>'
+			+ '<section class="dd-card dd-aseg"><div class="dd-agh"><i></i>Waiting<em>' + wait.length + '</em><span class="dd-sp"></span><span class="dd-hint">Drag a project here when it’s waiting on someone else</span></div><div class="dd-arows"' + (mine ? ' data-sort="active" data-sortx' : '') + '>' + mark + wait.map(function (c) { return actRow(c, 'wait', mine); }).join('') + drop('Nothing waiting') + '</div></section></div>';
+	}
 
 	/* ---------- shell ---------- */
 	// Phone / app only: a sticky tab bar at the bottom (hidden on desktop by CSS).
@@ -1922,6 +2004,7 @@
 	/* ---------- All Projects ---------- */
 	function projectsView() {
 		var f = route().arg || 'active';
+		if (f === 'active' || f === 'all' || !f) { return ddActive(); }
 		if (['active', 'limbo', 'hold', 'complete', 'paused'].indexOf(f) < 0) { f = 'active'; }
 		var all = S.contacts.filter(isProject).filter(match);
 		var chip = function (k, l) { var n = all.filter(function (c) { return k === 'all' || c.list === k; }).length; return '<a class="dwdc-fchip' + (f === k ? ' on' : '') + '" href="#projects/' + k + '">' + (k === 'all' ? '' : '<i class="dwdc-sdot t-' + TONE[k] + '"></i>') + l + ' <b>' + n + '</b></a>'; };
@@ -2981,10 +3064,16 @@
 				start();
 			}
 			e.preventDefault();
-			var sib = [].slice.call(D.list.querySelectorAll('[data-sid]')).filter(function (x) { return x !== D.it; });
+			if (D.list.hasAttribute('data-sortx')) {
+				var conts = [].slice.call(app.querySelectorAll('[data-sort="' + D.list.getAttribute('data-sort') + '"][data-sortx]')), best = null, bd = 1e9;
+				conts.forEach(function (cn) { var r = cn.closest('section').getBoundingClientRect(), dx = p.x < r.left ? r.left - p.x : p.x > r.right ? p.x - r.right : 0, dy = p.y < r.top ? r.top - p.y : p.y > r.bottom ? p.y - r.bottom : 0, d = dx * 3 + dy; if (d < bd) { bd = d; best = cn; } });
+				if (best && best !== D.list) { D.list.classList.remove('dwdc-sorting'); D.list = best; best.classList.add('dwdc-sorting'); }
+				app.querySelectorAll('.dd-dropt').forEach(function (x) { x.classList.remove('dd-dropt'); }); D.list.closest('section').classList.add('dd-dropt');
+			}
+			var sib = [].slice.call(D.list.querySelectorAll('[data-sid]')).filter(function (x) { return x !== D.it && !x.hasAttribute('data-mark'); });
 			var before = null;
 			for (var i = 0; i < sib.length; i++) { var r = sib[i].getBoundingClientRect(); if (p.y < r.top + r.height / 2) { before = sib[i]; break; } }
-			if (before) { if (D.it.nextElementSibling !== before) { D.list.insertBefore(D.it, before); } } else if (sib.length && D.list.lastElementChild !== D.it) { D.list.appendChild(D.it); }
+			if (before) { if (D.it.nextElementSibling !== before) { D.list.insertBefore(D.it, before); } } else if ((sib.length || D.list.hasAttribute('data-sortx')) && D.list.lastElementChild !== D.it) { D.list.appendChild(D.it); }
 			var lr = D.list.getBoundingClientRect(); // nudge a scrolling list along
 			if (p.y > lr.bottom - 24) { D.list.scrollTop += 10; } else if (p.y < lr.top + 24) { D.list.scrollTop -= 10; }
 		}
@@ -2993,8 +3082,9 @@
 			clearTimeout(D.timer);
 			if (D.on) {
 				var key = D.list.getAttribute('data-sort'), ids = [].map.call(app.querySelectorAll('[data-sort="' + key + '"] [data-sid]'), function (x) { return +x.getAttribute('data-sid'); });
-				D.it.classList.remove('dwdc-dragging'); D.list.classList.remove('dwdc-sorting');
+				D.it.classList.remove('dwdc-dragging'); D.list.classList.remove('dwdc-sorting'); app.querySelectorAll('.dd-dropt').forEach(function (x) { x.classList.remove('dd-dropt'); });
 				S.order = S.order || {}; ids = ids.concat((S.order[key] || []).filter(function (x) { return ids.indexOf(x) < 0; })); S.order[key] = ids; eatClick = true; setTimeout(function () { eatClick = false; }, 400);
+				if (key === 'active') { render(); }
 				api('/home-order', 'POST', { key: key, ids: ids }).then(function () { toast('Order saved'); }).catch(fail);
 			}
 			D = null;
@@ -3204,6 +3294,11 @@
 		if (S.flagOpen && !t.closest('.dd-flagm')) { S.flagOpen = 0; render(); }
 		if ((el = t.closest('[data-bankrefresh]'))) { e.preventDefault(); e.stopPropagation(); el.disabled = true; el.classList.add('spin'); api('/plaid', 'POST', { action: 'balances' }).then(function (b) { if (S.bank && b && b.accounts) { S.bank.balances = b; } render(); toast('Bank balance updated'); }).catch(fail); return; }
 		if ((el = t.closest('[data-tgopen]'))) { S.tgOpen = S.tgOpen || {}; S.tgOpen[+el.getAttribute('data-tgopen')] = true; }
+		if ((el = t.closest('[data-actmove]'))) { e.preventDefault(); e.stopPropagation(); var am = el.getAttribute('data-actmove').split(':'); actMove(+am[0], am[1]); return; }
+		if ((el = t.closest('[data-achip]'))) { S.achip = el.getAttribute('data-achip'); render(); return; }
+		if (t.closest('[data-aqclear]')) { S.aq = ''; render(); return; }
+		if ((el = t.closest('[data-pview]'))) { ddSet('dreamdesk-proj-view', el.getAttribute('data-pview')); render(); return; }
+		if ((el = t.closest('[data-lsortmine]'))) { setSort(el.getAttribute('data-lsortmine'), 'mine'); render(); return; }
 		if ((el = t.closest('[data-tdseg]'))) { var tv = tdView(); tdSave(el.getAttribute('data-tdseg'), tv.q); render(); return; }
 		if ((el = t.closest('[data-tlane]'))) { S.tlane = el.getAttribute('data-tlane'); render(); return; }
 		if ((el = t.closest('[data-tddone]'))) { S.tdDone = S.tdDone || {}; var dk = el.getAttribute('data-tddone'); S.tdDone[dk] = !S.tdDone[dk]; render(); return; }
@@ -3437,6 +3532,7 @@
 	app.addEventListener('mousedown', function (e) { var t = e.target.closest && e.target.closest('.dwdc-ssearch'); if (t) { var i = t.querySelector('input'); if (i) { i.removeAttribute('readonly'); } } });
 	app.addEventListener('input', function (e) {
 		var t = e.target;
+		if (t.hasAttribute('data-aq')) { S.aq = t.value; var ap2 = t.selectionStart; render(); var na = app.querySelector('[data-aq]'); if (na) { na.focus(); try { na.setSelectionRange(ap2, ap2); } catch (er) {} } return; }
 		if (t.hasAttribute('data-tq')) { S.tq = t.value; tdSave(tdView().seg, t.value); var pos = t.selectionStart; render(); var nq = app.querySelector('[data-tq]'); if (nq) { nq.focus(); try { nq.setSelectionRange(pos, pos); } catch (er) {} } return; }
 		if (t.hasAttribute('data-cq')) { S.cq = t.value; S.cpage = 1; var tb = app.querySelector('.dd-tbody'); if (tb) { tb.innerHTML = ddClientRows().html; } return; }
 		if (t.closest('.dwdc-ssearch')) {
