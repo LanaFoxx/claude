@@ -674,7 +674,7 @@
 			return '<div class="dd-ph home"><div><h1>' + new Date(DWDC.today + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }) + '</h1><p>' + greet + ', ' + esc(String(DWDC.user || 'Michael').split(' ')[0]) + '</p></div>'
 				+ (qm ? '<div class="dd-quote"><span>' + qm[1] + ' <i>— ' + qm[2] + '</i></span><button type="button" class="dd-ibtn sm" data-quotex aria-label="Hide for today">' + lu('x', 14) + '</button></div>' : '') + '</div>';
 		}
-		if (r.view === 'client' || r.view === 'cl' || r.view === 'host' || r.view === 'todos' || (r.view === 'projects' && (!r.arg || r.arg === 'active' || r.arg === 'all')) || (r.view === 'personal' && r.arg === 'calendar')) { return ''; }
+		if (r.view === 'client' || r.view === 'cl' || r.view === 'host' || r.view === 'todos' || (r.view === 'projects' && (!r.arg || r.arg === 'active' || r.arg === 'all')) || (r.view === 'personal' && (r.arg === 'calendar' || r.arg === 'bills'))) { return ''; }
 		return '<div class="dd-ph"><h1>' + esc(ddTitle(r, t)) + '</h1></div>';
 	}
 	// Home (design 4.1): schedule + recent activity | stat list + to-dos.
@@ -1129,6 +1129,76 @@
 			+ '<section class="dd-card dd-aseg"><div class="dd-agh"><i></i>Waiting<em>' + wait.length + '</em><span class="dd-sp"></span><span class="dd-hint">Drag a project here when it’s waiting on someone else</span></div><div class="dd-arows"' + (mine ? ' data-sort="active" data-sortx' : '') + '>' + mark + wait.map(function (c) { return actRow(c, 'wait', mine); }).join('') + drop('Nothing waiting') + '</div></section></div>';
 	}
 
+	/* ================= Bills & subscriptions (design 7a) ================= */
+	function ddStrip(cells) { return '<div class="dd-card dd-strip3">' + cells.map(function (c) { return '<div><span class="l">' + c[0] + '</span><div class="vr"><b class="' + (c[3] || '') + '">' + c[1] + '</b><small class="' + (c[4] || '') + '">' + c[2] + '</small></div></div>'; }).join('') + '</div>'; }
+	function ddBills() {
+		var D = pData(); if (!D) { return '<div class="dd-ph"><h1>Bills &amp; subscriptions</h1></div><p class="dd-empty-l">Loading…</p>'; }
+		var T = DWDC.today, wk = calAdd(T, 7), B = bData();
+		var bl = D.bills.map(function (b) { return { b: b, n: billNext(b) }; }).sort(function (a, b) { return a.n.due < b.n.due ? -1 : 1; });
+		var mo = D.bills.reduce(function (a, b) { return a + billMonthly(b); }, 0);
+		var late = bl.filter(function (x) { return x.n.late; }), soon = bl.filter(function (x) { return !x.n.paid && !x.n.late && x.n.due <= wk; }), later = bl.filter(function (x) { return late.indexOf(x) < 0 && soon.indexOf(x) < 0; });
+		var unit = function (u) { return '<i class="u">' + u + '</i>'; };
+		var updated = B && B.balances && B.balances.at ? (function () { var m = Math.round((Date.now() - new Date(B.balances.at.replace(' ', 'T') + 'Z').getTime()) / 60000); return 'Updated ' + (m < 60 ? Math.max(1, m) + ' min ago' : m < 1440 ? Math.round(m / 60) + 'h ago' : Math.round(m / 1440) + 'd ago'); })() : '';
+		var head = '<div class="dd-btop"><h1>Bills &amp; subscriptions</h1>' + (updated ? '<span>' + updated + '</span>' : '') + '</div>';
+		// Bills section
+		var bstrip = ddStrip([
+			['Bills per month', money(mo), D.bills.length + ' bill' + (D.bills.length === 1 ? '' : 's') + ' · ' + money(mo * 12) + ' a year'],
+			['Due in 7 days', String(soon.length), money(soon.reduce(function (a, x) { return a + x.b.amount; }, 0))],
+			['Late', String(late.length), late.length ? money(late.reduce(function (a, x) { return a + x.b.amount; }, 0)) + ' overdue' : 'All caught up', late.length ? 'late' : '', late.length ? '' : 'ok']
+		]);
+		var form = '<form class="dd-bform" data-pform="bills"><label class="f-name"><span>Bill</span><input name="name" placeholder="Rent, phone, insurance…" required autocomplete="off"></label>'
+			+ '<label class="f-amt"><span>Amount</span><input name="amount" inputmode="decimal" placeholder="$0.00" required autocomplete="off"></label>'
+			+ '<label class="f-rep"><span>Repeats</span><span class="dd-isel"><select name="freq" data-bfreq><option value="monthly">Monthly</option><option value="weekly">Weekly</option><option value="yearly">Yearly</option></select>' + lu('chevron-down', 14) + '</span></label>'
+			+ '<label class="f-day"><span data-bdaylbl>Due day</span><input name="day" type="number" min="1" max="31" value="1" required></label>'
+			+ '<label class="f-auto dd-btn secondary"><input type="checkbox" name="autopay"><span>Autopay</span></label>'
+			+ '<button class="dd-btn primary f-add">' + lu('plus', 14) + 'Add bill</button></form>'
+			+ '<p class="dd-bnote">Yearly bills use the due day of the month you add them in. Weekly bills use 1 = Monday … 7 = Sunday.</p>';
+		var brow = function (x) {
+			var b = x.b, n = x.n, dn = n.paid ? 'Paid' : n.late ? 'Late · ' + fmt(n.due) : fmt(n.due), cls = n.late ? 'late' : !n.paid && n.due <= wk ? 'soon' : '';
+			return '<div class="dd-brow' + (n.paid ? ' paid' : '') + '"><span class="nm">' + esc(b.name) + '</span><span class="num">' + money2(b.amount).replace('.00', '') + '</span><span class="rep">' + (b.freq === 'yearly' ? 'Yearly' : b.freq === 'weekly' ? 'Weekly' : 'Monthly') + '</span><span class="due ' + cls + '">' + dn + '</span><span>' + (b.autopay ? ddPill('Autopay', 'success') : '<i>—</i>') + '</span>'
+				+ '<span class="acts">' + (b.autopay ? '' : '<button type="button" class="dd-btn ghost sm" data-pbillpaid="' + b.id + '">' + (n.paid ? 'Undo paid' : 'Mark paid') + '</button>') + '<button type="button" class="dd-ibtn sm" data-pdel="bills:' + b.id + '" title="Delete bill" aria-label="Delete bill">' + lu('x', 14) + '</button></span></div>';
+		};
+		var grp = function (label, dot, list) { return list.length ? '<div class="dd-bgh"><i class="' + dot + '"></i>' + label + '<em>' + list.length + '</em></div>' + list.map(brow).join('') : ''; };
+		var blist = bl.length ? '<div class="dd-brow head"><span>Bill</span><span class="num">Amount</span><span>Repeats</span><span>Next due</span><span>Autopay</span><span></span></div>' + grp('Late', 'late', late) + grp('Due in 7 days', 'soon', soon) + grp('Later', '', later)
+			: '<div class="dd-bempty"><span>' + lu('repeat', 20) + '</span><b>No bills yet</b><small>Add your first bill above. Due dates will show on the Calendar and the dashboard.</small></div>';
+		var bills = '<div class="dd-bsec"><h2>Bills</h2><span>' + D.bills.length + ' bill' + (D.bills.length === 1 ? '' : 's') + '</span></div>' + bstrip + '<section class="dd-card dd-bcard">' + form + '<div class="dd-blist">' + blist + '</div></section>';
+		// Subscriptions section
+		var subsHead = '<div class="dd-bsec sub"><h2>Subscriptions</h2><span>Detected from your bank feed</span></div>';
+		if (!B) { return head + bills + subsHead + '<p class="dd-empty-l">Loading…</p>'; }
+		if (!B.count) {
+			return head + bills + subsHead + ddStrip([['Recurring charges', '—', ''], ['Marked to cancel', '—', ''], ['Price increases', '—', '']])
+				+ '<section class="dd-card"><div class="dd-bempty"><span>' + lu('credit-card', 20) + '</span><b>Connect your bank to detect subscriptions</b><a class="dd-btn primary" href="#connections">Go to Connections</a></div></section>';
+		}
+		var subsAll = B.subs || [], hidden = subsAll.filter(function (s) { return s.status === 'ignore'; }), subs = subsAll.filter(function (s) { return s.status !== 'ignore'; });
+		var act = subs.filter(function (s) { return !s.stopped && s.status !== 'cancel'; }), cancel = subs.filter(function (s) { return !s.stopped && s.status === 'cancel'; }), stopped = subs.filter(function (s) { return s.stopped; });
+		var smo = act.concat(cancel).reduce(function (a, s) { return a + s.monthly; }, 0), save = cancel.reduce(function (a, s) { return a + s.yearly; }, 0), raised = act.concat(cancel).filter(function (s) { return s.raised > 0; });
+		var sstrip = ddStrip([
+			['Recurring charges', money(smo) + unit('/mo'), act.concat(cancel).length + ' active · ' + money(smo * 12) + ' a year'],
+			['Marked to cancel', money(save) + unit('/yr'), cancel.length + ' subscription' + (cancel.length === 1 ? '' : 's')],
+			['Price increases', String(raised.length), raised.length ? raised.length + ' went up · +' + money(raised.reduce(function (a, s) { return a + s.raised; }, 0)) + '/mo' : 'None spotted', '', raised.length ? 'warn' : '']
+		]);
+		var chip = S.subChip || 'all', q = String(S.subQ || '').toLowerCase().trim(), showHidden = !!S.subHidden;
+		var hit = function (s) { return !q || String(s.name).toLowerCase().indexOf(q) > -1; };
+		var srow = function (s) {
+			var tags = (s.stopped ? ddPill('Looks stopped', 'neutral') : '') + (s.raised ? ddPill('Price went up', 'warning') : '') + (s.status === 'cancel' ? ddPill('Marked to cancel', 'warning') : '') + (s.status === 'keep' ? ddPill('Kept', 'success') : '');
+			var meta = money(s.amount) + ' ' + s.cycle + ' · ' + s.count + ' charges since ' + fmt(s.first, true) + (s.stopped ? ' · last ' + fmt(s.last || s.next) : ' · next ~' + fmt(s.next));
+			var m = esc(s.merchant);
+			return '<div class="dd-srow' + (s.stopped ? ' stopped' : '') + '"><div class="nm"><div class="l1"><b>' + esc(s.name) + '</b>' + tags + '</div><small>' + esc(meta) + '</small></div><span class="num">' + money(s.monthly) + '<i>/mo</i></span>'
+				+ '<span class="acts">' + (s.status === 'ignore' ? '<button type="button" class="dd-btn ghost sm" data-sub="' + m + '" data-st="ignore">Show again</button>'
+					: '<button type="button" class="dd-btn secondary sm' + (s.status === 'keep' ? ' on' : '') + '" data-sub="' + m + '" data-st="keep">' + (s.status === 'keep' ? 'Kept' : 'Keep') + '</button><button type="button" class="dd-btn ghost sm" data-sub="' + m + '" data-st="cancel">' + (s.status === 'cancel' ? 'Reactivate' : 'Cancel') + '</button><button type="button" class="dd-ibtn sm" data-subhide="' + m + '" data-name="' + esc(s.name) + '" title="Not a subscription" aria-label="Not a subscription">' + lu('x', 14) + '</button>') + '</span></div>';
+		};
+		var sg = function (label, dot, list) { list = list.filter(hit); return list.length ? '<div class="dd-bgh"><i class="' + dot + '"></i>' + label + '<em>' + list.length + '</em></div>' + list.map(srow).join('') : ''; };
+		var show = { all: [1, 1, 1], active: [1, 0, 0], cancel: [0, 1, 0], stopped: [0, 0, 1] }[chip] || [1, 1, 1];
+		var body = (show[0] ? sg('Active', 'ok', act) : '') + (show[1] ? sg('Marked to cancel', 'soon', cancel) : '') + (show[2] ? sg('Stopped or paused', '', stopped) : '') + (showHidden ? sg('Hidden', '', hidden) : '');
+		var c = function (k, l, n) { return '<button type="button" class="dd-chip' + (chip === k ? ' on' : '') + '" data-subchip="' + k + '">' + l + ' <em>' + n + '</em></button>'; };
+		var tools = '<div class="dd-stools"><label class="dd-input">' + lu('search') + '<input type="search" data-subq placeholder="Search charges…" value="' + esc(S.subQ || '') + '" autocomplete="off" data-lpignore="true" data-1p-ignore></label><span class="dd-chipdiv"></span>'
+			+ '<div class="dd-schips">' + c('all', 'All', subs.length) + c('active', 'Active', act.length) + c('cancel', 'Marked to cancel', cancel.length) + c('stopped', 'Stopped', stopped.length) + '</div><span class="dd-sp"></span><button type="button" class="dd-btn secondary dd-askcut" data-askai="personal">' + lu('zap', 14) + 'Ask AI what to cut</button></div>';
+		var foot = '<div class="dd-sfoot"><span>Showing ' + (act.length + cancel.length + stopped.length) + ' charges</span>' + (hidden.length ? '<button type="button" class="dd-lnk" data-subhidden>' + (showHidden ? 'Hide hidden' : 'Hidden ' + hidden.length) + '</button>' : '') + '</div>';
+		var subsCard = '<section class="dd-card dd-scard">' + tools + '<div class="dd-srow head"><span>Charge</span><span class="num">Per month</span><span></span></div>' + (body || '<p class="dd-empty-l">' + (q ? 'No charges match “' + esc(S.subQ) + '”.' : 'No repeating charges found yet. They show up after two or more months of transactions.') + '</p>') + foot + '</section>'
+			+ '<p class="dd-bnote out">Found by looking for the same merchant charging a similar amount on a regular schedule. Dream Desk can’t cancel for you; “Cancel” is your reminder list.</p>';
+		return head + bills + subsHead + sstrip + subsCard;
+	}
+
 	/* ---------- shell ---------- */
 	// Phone / app only: a sticky tab bar at the bottom (hidden on desktop by CSS).
 	function tabBar(r) {
@@ -1252,7 +1322,7 @@
 			t = ['Client', kw[0], kw.slice(1).join(' ')];
 			body = personView(r.id);
 		} else {
-			body = r.view === 'personal' ? (r.arg === 'spending' ? personalView(r) + '<h2 class="dwdc-sech">Money in &amp; out (logged by hand)</h2>' + personalView({ view: 'personal', arg: 'finances' }) : r.arg === 'bills' ? personalView(r) + '<h2 class="dwdc-sech">Subscriptions</h2>' + personalView({ view: 'personal', arg: 'subs' }) : personalView(r)) : ({ home: ddHome, clients: ddClients, projects: projectsView, leads: leadsList, onboarding: onboardView, todos: ddTodos, connections: connectionsView, hosting: hostingView, money: moneyView, reviews: reviewsView, archive: archiveView, search: searchView }[r.view] || home)();
+			body = r.view === 'personal' ? (r.arg === 'spending' ? personalView(r) + '<h2 class="dwdc-sech">Money in &amp; out (logged by hand)</h2>' + personalView({ view: 'personal', arg: 'finances' }) : r.arg === 'bills' ? ddBills() : personalView(r)) : ({ home: ddHome, clients: ddClients, projects: projectsView, leads: leadsList, onboarding: onboardView, todos: ddTodos, connections: connectionsView, hosting: hostingView, money: moneyView, reviews: reviewsView, archive: archiveView, search: searchView }[r.view] || home)();
 		}
 		app.setAttribute('data-view', r.view);
 		app.classList.add('dd');
@@ -3472,6 +3542,9 @@
 		if (t.closest('[data-openconn]')) { e.preventDefault(); S.pConnOpen = true; if (location.hash !== '#personal') { location.hash = 'personal'; } else { render(); } setTimeout(function () { var c = document.querySelector('.dwdc-pconn'); if (c) { c.scrollIntoView({ behavior: 'smooth' }); } }, 300); return; }
 		if ((el = t.closest('[data-bmonth]'))) { if (el.getAttribute('data-bmonth')) { S.bMonth = el.getAttribute('data-bmonth'); S.bCat = ''; render(); } return; }
 		if ((el = t.closest('[data-bcat]'))) { var bc = el.getAttribute('data-bcat'); S.bCat = S.bCat === bc ? '' : bc; render(); return; }
+		if ((el = t.closest('[data-subchip]'))) { S.subChip = el.getAttribute('data-subchip'); render(); return; }
+		if (t.closest('[data-subhidden]')) { S.subHidden = !S.subHidden; render(); return; }
+		if ((el = t.closest('[data-subhide]'))) { if (!confirm('Hide ' + el.getAttribute('data-name') + ' from subscriptions? You can show it again from “Hidden” at the bottom.')) { return; } api('/bank', 'POST', { sub: el.getAttribute('data-subhide'), status: 'ignore' }).then(function (d) { S.bank = d; render(); toast('Hidden'); }).catch(fail); return; }
 		if ((el = t.closest('[data-sub]'))) { var sst = el.getAttribute('data-st'), sm = el.getAttribute('data-sub'), scur = ((S.bank && S.bank.subs) || []).find(function (x) { return x.merchant === sm; }); api('/bank', 'POST', { sub: sm, status: scur && scur.status === sst ? '' : sst }).then(function (d) { S.bank = d; render(); }).catch(fail); return; }
 		if (t.closest('[data-plkeys]')) { var plk = {}; app.querySelectorAll('[data-plk]').forEach(function (x) { plk[x.getAttribute('data-plk')] = x.value.trim(); }); api('/plaid', 'POST', { action: 'keys', client_id: plk.client_id, secret: plk.secret }).then(function (d) { S.plaid = d; render(); toast('Plaid keys saved'); }).catch(fail); return; }
 		if (t.closest('[data-plconnect]')) { plaidConnect(); return; }
@@ -3591,6 +3664,7 @@
 	app.addEventListener('mousedown', function (e) { var t = e.target.closest && e.target.closest('.dwdc-ssearch'); if (t) { var i = t.querySelector('input'); if (i) { i.removeAttribute('readonly'); } } });
 	app.addEventListener('input', function (e) {
 		var t = e.target;
+		if (t.hasAttribute('data-subq')) { S.subQ = t.value; var sp2 = t.selectionStart; render(); var ns = app.querySelector('[data-subq]'); if (ns) { ns.focus(); try { ns.setSelectionRange(sp2, sp2); } catch (er) {} } return; }
 		if (t.hasAttribute('data-aq')) { S.aq = t.value; var ap2 = t.selectionStart; render(); var na = app.querySelector('[data-aq]'); if (na) { na.focus(); try { na.setSelectionRange(ap2, ap2); } catch (er) {} } return; }
 		if (t.hasAttribute('data-tq')) { S.tq = t.value; tdSave(tdView().seg, t.value); var pos = t.selectionStart; render(); var nq = app.querySelector('[data-tq]'); if (nq) { nq.focus(); try { nq.setSelectionRange(pos, pos); } catch (er) {} } return; }
 		if (t.hasAttribute('data-cq')) { S.cq = t.value; S.cpage = 1; var tb = app.querySelector('.dd-tbody'); if (tb) { tb.innerHTML = ddClientRows().html; } return; }
@@ -3613,6 +3687,7 @@
 	document.addEventListener('keydown', function (e) { if (e.target && e.target.hasAttribute && e.target.hasAttribute('data-ptdraft') && e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); if (S.modal) { S.modal.draft = e.target.value; } ptSend(); } });
 	app.addEventListener('change', function (e) {
 		if (e.target.hasAttribute && e.target.hasAttribute('data-ppdate')) { S.ppDate = S.ppDate || {}; S.ppDate[e.target.getAttribute('data-ppdate')] = e.target.value; var pb2 = e.target.closest('.dd-tdate'); if (pb2) { pb2.classList.toggle('set', !!e.target.value); pb2.querySelector('span').textContent = e.target.value ? fmt(e.target.value) : 'Date'; } return; }
+		if (e.target.hasAttribute && e.target.hasAttribute('data-bfreq')) { var bf = e.target.closest('form'), wkly = e.target.value === 'weekly', dl = bf.querySelector('[data-bdaylbl]'), di2 = bf.querySelector('[name=day]'); dl.textContent = wkly ? 'Weekday' : 'Due day'; di2.max = wkly ? 7 : 31; if (+di2.value > +di2.max) { di2.value = di2.max; } return; }
 		if (e.target.hasAttribute && e.target.hasAttribute('data-tdset')) { S.tdDate = S.tdDate || {}; S.tdDate[e.target.getAttribute('data-tdset')] = e.target.value; tdRerender(); return; }
 		if (e.target.hasAttribute && e.target.hasAttribute('data-lsort')) { setSort(e.target.getAttribute('data-lsort'), e.target.value); render(); return; }
 		var t = e.target;

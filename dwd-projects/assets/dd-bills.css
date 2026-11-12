@@ -1,0 +1,109 @@
+/* Dream Desk Bills & subscriptions (design 7a). Colours only from dd-tokens.css. */
+.dd-btop { display: flex; align-items: baseline; gap: 12px; }
+.dd-btop h1 { flex: 1; font-size: var(--fs-title); font-weight: 600; letter-spacing: -.01em; color: var(--text); }
+.dd-btop span { font-size: 13px; color: var(--text-3); }
+.dd-bsec { display: flex; align-items: baseline; gap: 10px; }
+.dd-bsec h2 { font-size: 16px; font-weight: 600; color: var(--text); }
+.dd-bsec span { font-size: 13px; color: var(--text-3); }
+.dd-main > .dwdc-screen > .dd-bsec.sub { margin-top: 32px; }
+.dd-main > .dwdc-screen > .dd-strip3, .dd-main > .dwdc-screen > .dd-bcard, .dd-main > .dwdc-screen > .dd-scard { margin-top: 12px; }
+.dd-strip3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.dd-strip3 > div { padding: 16px 20px; min-width: 0; }
+.dd-strip3 > div + div { border-left: 1px solid var(--border); }
+.dd-strip3 .l { font-size: 12px; font-weight: 500; color: var(--text-3); }
+.dd-strip3 .vr { display: flex; align-items: baseline; gap: 8px; margin-top: 4px; flex-wrap: wrap; }
+.dd-strip3 b { font-size: 24px; font-weight: 600; letter-spacing: -.02em; color: var(--text); }
+.dd-strip3 b.late { color: var(--danger-text); }
+.dd-strip3 b .u { font-style: normal; font-size: 13px; font-weight: 500; color: var(--text-3); letter-spacing: 0; margin-left: 1px; }
+.dd-strip3 small { font-size: 12px; color: var(--text-3); }
+.dd-strip3 small.ok { color: var(--success-text); } .dd-strip3 small.warn { color: var(--warning-text); }
+/* add form */
+.dd-bform { display: flex; align-items: flex-end; gap: 12px; padding: 16px 20px 10px; margin: 0; }
+.dd-bform > label:not(.f-auto) { display: flex; flex-direction: column; gap: 6px; margin: 0; }
+.dd-bform > label > span:first-child { font-size: 12px; font-weight: 500; color: var(--text-2); }
+.dd-bform .f-name { flex: 1; min-width: 0; }
+.dd-bform .f-amt { width: 140px; } .dd-bform .f-rep { width: 140px; } .dd-bform .f-day { width: 96px; }
+.dd-bform input[name] { height: 36px !important; min-height: 0 !important; padding: 0 12px !important; background: var(--bg) !important; border: 1px solid var(--border-strong) !important; border-radius: var(--radius-md) !important; color: var(--text) !important; font-size: 14px !important; box-shadow: none !important; width: 100%; }
+.dd-bform input[name=amount] { text-align: right; font-variant-numeric: tabular-nums; }
+.dd-bform input[name]:focus { border-color: var(--accent) !important; box-shadow: var(--ring) !important; }
+.dd-bform .dd-isel { width: 100%; }
+.dd-bform .dd-isel select { height: 36px !important; }
+.dd-bform .f-auto { height: 36px; gap: 8px; cursor: pointer; margin: 0; }
+.dd-bform .f-auto input { width: 16px; height: 16px; margin: 0; accent-color: var(--accent); }
+.dd-bform .f-add { height: 36px; }
+.dd-bnote { padding: 0 20px 14px; font-size: 12px; color: var(--text-3); }
+.dd-bnote.out { padding: 10px 2px 0; }
+/* lists */
+.dd-blist { border-top: 1px solid var(--border); }
+.dd-brow { display: grid; grid-template-columns: minmax(0, 1fr) 110px 110px 130px 100px 150px; align-items: center; gap: 12px; min-height: 48px; padding: 0 16px 0 20px; border-top: 1px solid var(--border); font-size: 14px; color: var(--text); }
+.dd-brow:hover:not(.head) { background: var(--hover); }
+.dd-brow.head { min-height: 40px; border-top: 0; font-size: 12px; font-weight: 500; color: var(--text-3); }
+.dd-brow .nm { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dd-brow .num, .dd-srow .num { text-align: right; font-weight: 500; font-variant-numeric: tabular-nums; }
+.dd-brow .rep { font-size: 13px; color: var(--text-2); }
+.dd-brow .due { font-size: 13px; } .dd-brow .due.soon { color: var(--warning-text); } .dd-brow .due.late { color: var(--danger-text); }
+.dd-brow.paid .nm, .dd-brow.paid .due { color: var(--text-3); }
+.dd-brow i { font-style: normal; color: var(--text-3); }
+.dd-brow .acts, .dd-srow .acts { display: flex; justify-content: flex-end; align-items: center; gap: 4px; }
+.dd-brow .acts { opacity: 0; transition: opacity .12s; }
+.dd-brow:hover .acts, .dd-brow:focus-within .acts { opacity: 1; }
+@media (hover: none) { .dd-brow .acts { opacity: 1; } }
+.dd-bgh { display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 20px; background: var(--bg); border-top: 1px solid var(--border); font-size: 12px; font-weight: 600; color: var(--text-2); }
+.dd-bgh i { width: 6px; height: 6px; border-radius: 50%; background: var(--text-3); }
+.dd-bgh i.late { background: var(--danger-text); } .dd-bgh i.soon { background: var(--warning-text); } .dd-bgh i.ok { background: var(--success-text); }
+.dd-bgh em { font-style: normal; font-weight: 500; color: var(--text-3); }
+.dd-bempty { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 40px 24px; text-align: center; }
+.dd-bempty > span { width: 40px; height: 40px; border-radius: var(--radius-lg); background: var(--accent-soft); color: var(--accent-text); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 4px; }
+.dd-bempty b { font-size: 14px; font-weight: 600; color: var(--text); }
+.dd-bempty small { font-size: 13px; color: var(--text-3); max-width: 320px; }
+.dd-bempty .dd-btn { margin-top: 8px; }
+/* subscriptions */
+.dd-stools { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+.dd-stools .dd-input { width: 240px; flex: none; background: var(--bg); }
+.dd-schips { display: flex; gap: 6px; }
+.dd-schips .dd-chip { height: 30px; }
+.dd-askcut .lu { color: var(--accent-text); }
+.dd-srow { display: grid; grid-template-columns: minmax(0, 1fr) 110px 240px; align-items: center; gap: 12px; min-height: 64px; padding: 0 16px 0 20px; border-top: 1px solid var(--border); }
+.dd-srow:hover:not(.head) { background: var(--hover); }
+.dd-srow.head { min-height: 40px; border-top: 0; font-size: 12px; font-weight: 500; color: var(--text-3); }
+.dd-srow .nm { min-width: 0; }
+.dd-srow .l1 { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.dd-srow .l1 b { font-size: 14px; font-weight: 500; color: var(--text); }
+.dd-srow .l1 .dd-pill { height: 20px; font-size: 11px; }
+.dd-srow small { display: block; font-size: 12px; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+.dd-srow .num { font-size: 14px; color: var(--text); }
+.dd-srow .num i { font-style: normal; font-size: 12px; font-weight: 400; color: var(--text-3); }
+.dd-srow.stopped .num { color: var(--text-2); }
+.dd-srow .acts .dd-btn { height: 30px; }
+.dd-srow .acts .dd-btn.on { opacity: .6; }
+.dd-sfoot { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; border-top: 1px solid var(--border); font-size: 13px; color: var(--text-2); }
+@media (max-width: 1100px) {
+	.dd-bform { flex-wrap: wrap; }
+	.dd-bform .f-name { flex-basis: 100%; }
+	.dd-brow { grid-template-columns: minmax(0, 1fr) 90px 110px 90px 130px; }
+	.dd-brow > :nth-child(3) { display: none; }
+}
+@media (max-width: 767px) {
+	.dd-strip3 { grid-template-columns: 1fr; }
+	.dd-strip3 > div { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 12px 16px; }
+	.dd-strip3 > div + div { border-left: 0; border-top: 1px solid var(--border); }
+	.dd-strip3 .vr { margin: 0; flex-direction: row-reverse; }
+	.dd-strip3 b { font-size: 18px; }
+	.dd-bform { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 16px; }
+	.dd-bform .f-name, .dd-bform .f-add { grid-column: 1 / -1; }
+	.dd-bform .f-amt, .dd-bform .f-rep, .dd-bform .f-day { width: auto; }
+	.dd-bform input[name], .dd-bform .dd-isel select, .dd-bform .f-auto, .dd-bform .f-add { height: 44px !important; font-size: 16px !important; }
+	.dd-brow.head, .dd-srow.head { display: none; }
+	.dd-brow { display: flex; flex-wrap: wrap; gap: 4px 10px; padding: 12px 16px; }
+	.dd-brow .nm { flex: 1; } .dd-brow .rep { display: none; } .dd-brow .acts { flex-basis: 100%; justify-content: flex-start; opacity: 1; }
+	.dd-srow { display: flex; flex-wrap: wrap; gap: 6px 10px; padding: 12px 16px; }
+	.dd-srow .nm { flex: 1; } .dd-srow .acts { flex-basis: 100%; justify-content: flex-start; }
+	.dd-stools .dd-input { width: auto; flex: 1 1 100%; height: 40px; }
+	.dd-stools .dd-chipdiv { display: none; }
+	.dd-schips { overflow-x: auto; flex: 1 1 100%; scrollbar-width: none; }
+	.dd-schips::-webkit-scrollbar { display: none; }
+	.dd-askcut { flex: 1 1 100%; height: 40px; }
+}
+.dd .dd-bform .f-auto input[type=checkbox] { width: 16px !important; height: 16px !important; min-height: 0 !important; padding: 0 !important; border-radius: 4px !important; flex: none; }
+.dd-srow.head .num, .dd-brow.head .num { font-size: 12px; font-weight: 500; color: var(--text-3); }
+.dd-bcard > .dd-bform { padding-top: 16px; }
