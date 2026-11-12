@@ -779,7 +779,8 @@
 			if (c && x.n > 1) { return '<a class="dd-todo dd-todo-g" href="#todos" data-tgopen="' + c.id + '"><span class="dd-gcnt">' + x.n + '</span><div class="dd-todo-b"><span>' + esc(c.name) + '</span><small><em class="' + (late ? 'late' : 'today') + '">' + (late ? Math.round((Date.parse(T) - Date.parse(t.due)) / 864e5) + 'd overdue' : 'Today') + '</em>' + x.n + ' to-dos · next: ' + esc(t.text) + '</small></div>' + lu('chevron-right') + '</a>'; }
 			return '<div class="dd-todo"><button type="button" class="dd-chk" ' + (x.w ? 'data-toggle="' + t.id + '"' : 'data-ptoggle="' + t.id + '"') + ' aria-label="Mark done"></button><div class="dd-todo-b" ' + (x.w ? 'data-task="' + t.id + '"' : 'data-ptask="' + t.id + '"') + ' role="button" tabindex="0"><span>' + esc(ptx(t.text)) + '</span><small><em class="' + (late ? 'late' : 'today') + '">' + (late ? Math.round((Date.parse(T) - Date.parse(t.due)) / 864e5) + 'd overdue' : 'Today') + '</em>' + (c ? esc(c.name) : x.w ? '' : 'Personal') + '</small></div></div>';
 		};
-		var todos = '<section class="dd-card"><header class="dd-ch"><div class="dd-ch-t"><h2>To-dos</h2></div><a href="#todos">All ' + all.length + '</a></header>' + (rows.length ? rows.map(trow).join('') : '<p class="dd-empty-l">Nothing overdue or due today.</p>') + '</section>';
+		var todos = '<section class="dd-card"><header class="dd-ch"><div class="dd-ch-t"><h2>To-dos</h2></div><div class="dd-ch-a"><button type="button" class="dd-hadd-btn" data-haddtog>' + lu('plus', 14) + 'Add</button><a href="#todos">All ' + all.length + '</a></div></header>'
+			+ (S.homeAdd ? '<form class="dd-hadd"><input name="text" placeholder="New to-do… e.g. Call Shane next Thursday at 4" autocomplete="off" required data-lpignore="true" data-1p-ignore><button class="dd-btn primary">Add</button></form>' : '') + (rows.length ? rows.map(trow).join('') : '<p class="dd-empty-l">Nothing overdue or due today.</p>') + '</section>';
 		return '<div class="dd-home"><div class="dd-home-l">' + sched + act + '</div><div class="dd-home-r">' + stats + todos + zoomBox('home') + '</div></div>';
 	}
 	// All clients (design 4.2): toolbar, chips, grouped table; rows stack on phones.
@@ -1353,7 +1354,7 @@
 		return { text: text, due: due, time: time };
 	}
 	function whenLabel(w) { if (!w.due) { return ''; } var d = new Date(w.due + 'T12:00:00'), t = DWDC.today; var day = w.due === t ? 'Today' : w.due === calAdd(t, 1) ? 'Tomorrow' : d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) + (w.due.slice(0, 4) !== t.slice(0, 4) ? ', ' + w.due.slice(0, 4) : ''); return day + (w.time ? ' · ' + w.time : ''); }
-	function isTodoAdd(f) { return !!(f && f.querySelector && f.querySelector('input[name=text]') && (f.matches('.dd-tadd, .dd-padd, .dd-qadd, .dd-tl-add, .dwdc-addbar, .dwdc-inlineadd, .dwdc-cardtodo') || /^(pdayadd|todos|ptask)$/.test(f.getAttribute('data-pform') || ''))); }
+	function isTodoAdd(f) { return !!(f && f.querySelector && f.querySelector('input[name=text]') && (f.matches('.dd-tadd, .dd-padd, .dd-qadd, .dd-tl-add, .dd-hadd, .dwdc-addbar, .dwdc-inlineadd, .dwdc-cardtodo') || /^(pdayadd|todos|ptask)$/.test(f.getAttribute('data-pform') || ''))); }
 	// Live: show the date/time found in what you're typing on the form's Date button (or a small hint).
 	function whenHint(inp) {
 		var f = inp.closest('form'); if (!isTodoAdd(f)) { return; }
@@ -3511,6 +3512,7 @@
 		if (t.closest('[data-ddtheme]')) { var th = ddTheme() === 'dark' ? 'light' : 'dark'; ddSet('dreamdesk-theme', th); document.documentElement.setAttribute('data-theme', th); render(); return; }
 		if (t.closest('[data-ddme]')) { S.meOpen = !S.meOpen; var me = app.querySelector('.dd-me .dd-menu'); if (me) { me.classList.toggle('open', S.meOpen); } return; }
 		if (S.meOpen && !t.closest('.dd-me')) { S.meOpen = false; var me2 = app.querySelector('.dd-me .dd-menu'); if (me2) { me2.classList.remove('open'); } }
+		if (t.closest('[data-haddtog]')) { S.homeAdd = !S.homeAdd; render(); var hi2 = app.querySelector('.dd-hadd [name=text]'); if (hi2) { hi2.focus(); } return; }
 		if (t.closest('[data-schedadd]')) { S.schedAdd = true; render(); var si2 = app.querySelector('.dd-tl-add input[name=text]'); if (si2) { si2.focus(); } return; }
 		if (t.closest('[data-cmore]')) { S.cpage = (S.cpage || 1) + 1; var tb = app.querySelector('.dd-tbody'); if (tb) { tb.innerHTML = ddClientRows().html; } return; }
 		if (t.closest('[data-newmenu]')) { S.newOpen = !S.newOpen; var mm = app.querySelector('.dwdc-ph-menu'); if (mm) { mm.classList.toggle('open', S.newOpen); mm.querySelector('[data-newmenu]').setAttribute('aria-expanded', S.newOpen); } return; }
@@ -3585,8 +3587,20 @@
 		}
 		if ((el = t.closest('[data-toggle]')) && !t.closest('a')) {
 			e.stopPropagation();
-			if (S.modal && S.modal.type === 'task') { S.modal = null; }
-			setDone(+el.getAttribute('data-toggle'));
+			var tgid = +el.getAttribute('data-toggle');
+			if (S.modal && S.modal.type === 'task') {
+				// Edits typed in the pop-up are saved too, not thrown away, when Mark done is clicked.
+				var tef = app.querySelector('.dwdc-taskedit'), tk0 = S.tasks.find(function (x) { return x.id === tgid; });
+				if (tef && tk0) {
+					var nt = tef.querySelector('[name=text]').value.trim(), nd = tef.querySelector('[name=due]').value, nc = +tef.querySelector('[name=contact]').value || 0;
+					if (nt && (nt !== tk0.text || nd !== (tk0.due || '') || nc !== (tk0.contact || 0))) {
+						tk0.text = nt; tk0.due = nd; tk0.contact = nc;
+						api('/task/' + tgid, 'POST', { text: nt, due: nd, contact: nc }).catch(fail);
+					}
+				}
+				S.modal = null;
+			}
+			setDone(tgid);
 			return;
 		}
 		if ((el = t.closest('[data-tdue]'))) {
@@ -4132,6 +4146,13 @@
 			api('/contact', 'POST', data).then(function (x) {
 				upsert(x);
 				return (note ? api('/contact/' + x.id + '/note', 'POST', { text: note }).then(upsert) : Promise.resolve()).then(reload).then(function () { S.modal = null; S.back = 'leads'; go('leads'); toast('Lead added'); });
+			}).catch(fail);
+		} else if (f.classList.contains('dd-hadd')) {
+			// Home to-do box: no date typed → due today, so it shows right here.
+			if (!String(data.text || '').trim()) { return; }
+			api('/task', 'POST', { text: data.text, contact: 0, due: data.due || DWDC.today, time: data.time || '' }).then(function (x) {
+				S.tasks.unshift(x); render(); toast('To-do added' + (x.due && x.due !== DWDC.today ? ' for ' + fmt(x.due) : ' for today'));
+				var hi = app.querySelector('.dd-hadd [name=text]'); if (hi) { hi.focus(); }
 			}).catch(fail);
 		} else if (f.classList.contains('dwdc-cardtodo') || f.classList.contains('dwdc-inlineadd') || f.classList.contains('dwdc-addbar')) {
 			if (!String(data.text || '').trim()) { return; }
