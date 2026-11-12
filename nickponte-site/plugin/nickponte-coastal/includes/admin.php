@@ -97,7 +97,7 @@ add_action('admin_head', function () {
 	.npc-dash__posts{margin:0}.npc-dash__posts li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid #E3ECF3;margin:0}.npc-dash__posts span{color:#7A8A9A;white-space:nowrap}
 	.npc-dash__help{margin:22px 0 0;color:#7A8A9A;font-size:12.5px}';
 	if ($simple) echo '
-	#wpbody-content > .notice, #wpbody-content > .updated, #wpbody-content > .error:not(.settings-error), #wpbody-content > .update-nag,
+	#wpbody-content .notice:not(#message):not(.settings-error):not(.inline), #wpbody-content > .updated:not(#message), #wpbody-content > .error:not(.settings-error), #wpbody-content .update-nag,
 	#wpbody-content > div[class*="notice"], .mwp-notice-container, .sbi_notice, .sbi_review_notice_step_1, .llms-vk-banner, .webpcContent--notice,
 	.quadlayers_insta-gallery_notice_delay, .e-notice, .elementor-message, .rank-math-notice, .ai1wm-message, .wpcode-admin-notice { display:none !important; }
 	.index-php #wpbody-content > .wrap > h1 { display:none; }
@@ -135,5 +135,5 @@ add_action('admin_menu', function () {
 // Admin bar: drop plugin clutter
 add_action('admin_bar_menu', function ($bar) {
 	if (!npc_simple_admin()) return;
-	foreach (['wp-logo', 'comments', 'new-content', 'rank-math', 'elementor_inspector', 'elementor_edit_page', 'google-site-kit', 'wpseo-menu', 'litespeed-menu', 'simply-static', 'updates'] as $id) $bar->remove_node($id);
+	foreach (['wp-logo', 'comments', 'new-content', 'rank-math', 'elementor_inspector', 'elementor_edit_page', 'google-site-kit', 'wpseo-menu', 'litespeed-menu', 'simply-static', 'wpcode-admin-bar-info', 'wpcode', 'updates', 'search'] as $id) $bar->remove_node($id);
 }, 999);
