@@ -705,7 +705,7 @@ def build_hero():
              gap_col=64, gap_row=32, grid_align_items="end", grid_justify_items="start",
              grid_justify_content="space-between", flex_align_items="flex-end"),
          creds],
-        bg="#2E231A", pad_top=200, pad_bottom=0, gap=40, min_height=px(800),
+        bg="#2E231A", pad_top=200, pad_bottom=80, gap=40, min_height=px(800),
         flex_justify_content="flex-end", overflow="hidden",
         **hero_slideshow(),
         background_overlay_background="gradient",

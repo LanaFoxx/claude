@@ -48,7 +48,7 @@
      "unit": "px",
      "top": "200",
      "right": "48",
-     "bottom": "0",
+     "bottom": "80",
      "left": "48",
      "isLinked": false
     },
@@ -56,7 +56,7 @@
      "unit": "px",
      "top": "200",
      "right": "48",
-     "bottom": "0",
+     "bottom": "80",
      "left": "48",
      "isLinked": false
     },
@@ -64,7 +64,7 @@
      "unit": "px",
      "top": "200",
      "right": "32",
-     "bottom": "0",
+     "bottom": "80",
      "left": "32",
      "isLinked": false
     },
@@ -72,7 +72,7 @@
      "unit": "px",
      "top": "200",
      "right": "20",
-     "bottom": "0",
+     "bottom": "80",
      "left": "20",
      "isLinked": false
     },
