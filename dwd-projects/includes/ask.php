@@ -34,7 +34,7 @@ function dwdc_ai_context() {
 		$byYear = array();
 		foreach ( is_array( $pays ) ? $pays : array() as $x ) {
 			$st = strtolower( (string) ( $x['status'] ?? 'paid' ) );
-			if ( in_array( $st, array( 'open', 'void', 'draft', 'failed', 'uncollectible' ), true ) ) {
+			if ( in_array( $st, array( 'open', 'void', 'draft', 'failed', 'uncollectible', 'held' ), true ) ) {
 				continue;
 			}
 			$d = (string) ( $x['date'] ?? '' );

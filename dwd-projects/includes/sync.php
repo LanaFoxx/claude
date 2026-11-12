@@ -291,10 +291,13 @@ function dwds_upwork_import( $csv ) {
 			continue;
 		}
 		$refund = 'Refund to client' === $t;
-		$pays[] = array( 'date' => $d, 'amount' => sprintf( '%.2f', abs( $net ) ), 'source' => 'Upwork', 'ref' => $ref, 'status' => $refund ? 'refunded' : 'paid', 'note' => mb_substr( ( $refund ? 'Refund · ' : '' ) . $x['Transaction summary'] . ' · after Upwork fee ($' . number_format( abs( $a ), 2 ) . ' gross)', 0, 140 ) );
+		list( $ust, $d ) = $refund ? array( 'refunded', $d ) : dwds_upwork_state( $pid, $ref, $d );
+		$pays[] = array( 'date' => $d, 'amount' => sprintf( '%.2f', abs( $net ) ), 'source' => 'Upwork', 'ref' => $ref, 'status' => $ust, 'note' => mb_substr( ( $refund ? 'Refund · ' : '' ) . $x['Transaction summary'] . ' · after Upwork fee ($' . number_format( abs( $a ), 2 ) . ' gross)', 0, 140 ) );
 		usort( $pays, function ( $p1, $p2 ) { return strcmp( (string) ( $p2['date'] ?? '' ), (string) ( $p1['date'] ?? '' ) ); } );
 		update_post_meta( $pid, '_dwdc_payments', $pays );
-		update_post_meta( $pid, '_dwdc_billed', (string) round( (float) get_post_meta( $pid, '_dwdc_billed', true ) + $net, 2 ) );
+		if ( 'held' !== $ust ) {
+			update_post_meta( $pid, '_dwdc_billed', (string) round( (float) get_post_meta( $pid, '_dwdc_billed', true ) + $net, 2 ) );
+		}
 		wp_update_post( array( 'ID' => $pid ) );
 		$out['added']++;
 		$out['amount'] += $net;
@@ -318,6 +321,10 @@ add_action( 'rest_api_init', function () {
 	register_rest_route( 'dwd/v1', '/stripe-webhook', array( 'methods' => 'POST', 'permission_callback' => '__return_true', 'callback' => 'dwds_stripe_webhook' ) );
 	register_rest_route( 'dwd/v1', '/paypal-webhook', array( 'methods' => 'POST', 'permission_callback' => '__return_true', 'callback' => 'dwds_paypal_webhook' ) );
 
+	register_rest_route( 'dwd/v1', '/crm/contact/(?P<id>\d+)/upwork-release', array( 'methods' => 'POST', 'permission_callback' => function () { return current_user_can( 'edit_posts' ); }, 'callback' => function ( $r ) {
+		$amt = dwds_upwork_release( (int) $r['id'] );
+		return array( 'amount' => $amt, 'project' => dwdc_contact( (int) $r['id'], true ) );
+	} ) );
 	register_rest_route( 'dwd/v1', '/crm/sync', array(
 		array( 'methods' => 'GET', 'permission_callback' => $can, 'callback' => function () {
 			return array(
@@ -466,6 +473,62 @@ function dwds_merge_manual_costs( $file_costs, $old ) {
  * Rebuild every project's Upwork payments from the files on the list.
  * Upwork money that never came from a file (older totals) is kept as it was.
  */
+/**
+ * Upwork money Mike hasn't withdrawn yet. On a project "on hold", payments from the Upwork file are kept but marked
+ * "held": they don't count as paid, in Made in <month> or in revenue. Mark paid releases them, dated the day Mike
+ * marks it (when the money reaches the bank), and the Upwork file never changes that back.
+ */
+function dwds_upwork_state( $pid, $ref, $date ) {
+	$on = (array) get_post_meta( $pid, '_dwdc_upwork_paid_on', true );
+	if ( isset( $on[ (string) $ref ] ) ) {
+		return array( 'paid', (string) $on[ (string) $ref ] );
+	}
+	return array( '1' === get_post_meta( $pid, '_dwdc_upwork_hold', true ) ? 'held' : 'paid', $date );
+}
+
+/** Put a project's Upwork payments on hold (true) or back to paid (false), keeping Paid in step. */
+function dwds_upwork_hold( $pid, $hold ) {
+	update_post_meta( $pid, '_dwdc_upwork_hold', $hold ? '1' : '' );
+	$pays = get_post_meta( $pid, '_dwdc_payments', true );
+	if ( ! is_array( $pays ) ) {
+		return;
+	}
+	$on = (array) get_post_meta( $pid, '_dwdc_upwork_paid_on', true );
+	foreach ( $pays as $i => $x ) {
+		if ( 'Upwork' === ( $x['source'] ?? '' ) && '' !== (string) ( $x['ref'] ?? '' ) && ! isset( $on[ (string) $x['ref'] ] ) && in_array( $x['status'] ?? 'paid', array( 'paid', 'held' ), true ) ) {
+			$pays[ $i ]['status'] = $hold ? 'held' : 'paid';
+		}
+	}
+	update_post_meta( $pid, '_dwdc_payments', $pays );
+}
+
+/** Mark paid on a held project: its Upwork money counts from today (it just reached the bank). */
+function dwds_upwork_release( $pid ) {
+	$pays  = get_post_meta( $pid, '_dwdc_payments', true );
+	$pays  = is_array( $pays ) ? $pays : array();
+	$on    = (array) get_post_meta( $pid, '_dwdc_upwork_paid_on', true );
+	$today = current_time( 'Y-m-d' );
+	$sum   = 0;
+	foreach ( $pays as $i => $x ) {
+		if ( 'held' === ( $x['status'] ?? '' ) ) {
+			$on[ (string) $x['ref'] ] = $today;
+			$pays[ $i ]['status']     = 'paid';
+			$pays[ $i ]['note']       = mb_substr( 'Withdrawn from Upwork · earned ' . $x['date'] . ' · ' . ( $x['note'] ?? '' ), 0, 160 );
+			$pays[ $i ]['date']       = $today;
+			$sum                     += (float) $x['amount'];
+		}
+	}
+	usort( $pays, function ( $a, $b ) { return strcmp( (string) ( $b['date'] ?? '' ), (string) ( $a['date'] ?? '' ) ); } );
+	update_post_meta( $pid, '_dwdc_payments', $pays );
+	update_post_meta( $pid, '_dwdc_upwork_paid_on', $on );
+	update_post_meta( $pid, '_dwdc_upwork_hold', '' );
+	if ( $sum ) {
+		update_post_meta( $pid, '_dwdc_billed', (string) round( (float) get_post_meta( $pid, '_dwdc_billed', true ) + $sum, 2 ) );
+	}
+	update_post_meta( $pid, '_dwdc_balance', '0' );
+	return round( $sum, 2 );
+}
+
 function dwds_upwork_rebuild() {
 	$earn  = array();
 	$costs = array();
@@ -497,7 +560,8 @@ function dwds_upwork_rebuild() {
 			$unmatched[ $e['team'] ] = ( $unmatched[ $e['team'] ] ?? 0 ) + $e['net'];
 			continue;
 		}
-		$by[ $pid ][] = array( 'date' => $e['date'], 'amount' => sprintf( '%.2f', abs( $e['net'] ) ), 'source' => 'Upwork', 'ref' => $e['ref'], 'status' => $e['refund'] ? 'refunded' : 'paid', 'note' => mb_substr( ( $e['refund'] ? 'Refund · ' : '' ) . $e['summary'] . ( in_array( $e['type'], array( 'Hourly', 'Bonus' ), true ) ? ' · ' . $e['type'] : '' ) . ' · after Upwork fee ($' . number_format( abs( $e['gross'] ), 2 ) . ' gross)', 0, 140 ) );
+		list( $ust, $udate ) = $e['refund'] ? array( 'refunded', $e['date'] ) : dwds_upwork_state( $pid, $e['ref'], $e['date'] );
+		$by[ $pid ][] = array( 'date' => $udate, 'amount' => sprintf( '%.2f', abs( $e['net'] ) ), 'source' => 'Upwork', 'ref' => $e['ref'], 'status' => $ust, 'note' => mb_substr( ( $e['refund'] ? 'Refund · ' : '' ) . $e['summary'] . ( in_array( $e['type'], array( 'Hourly', 'Bonus' ), true ) ? ' · ' . $e['type'] : '' ) . ' · after Upwork fee ($' . number_format( abs( $e['gross'] ), 2 ) . ' gross)', 0, 140 ) );
 	}
 	$touched = 0;
 	foreach ( get_posts( array( 'post_type' => DWDC_CONTACT, 'post_status' => 'private', 'posts_per_page' => -1, 'fields' => 'ids' ) ) as $pid ) {
@@ -507,7 +571,9 @@ function dwds_upwork_rebuild() {
 		$keep    = array();
 		foreach ( $pays as $x ) {
 			if ( 'Upwork' === ( $x['source'] ?? '' ) && '' !== (string) ( $x['ref'] ?? '' ) ) {
-				$oldFile += ( 'refunded' === ( $x['status'] ?? '' ) ? -1 : 1 ) * (float) $x['amount'];
+				if ( 'held' !== ( $x['status'] ?? '' ) ) { // held money was never counted in Paid
+					$oldFile += ( 'refunded' === ( $x['status'] ?? '' ) ? -1 : 1 ) * (float) $x['amount'];
+				}
 			} else {
 				$keep[] = $x;
 			}
@@ -518,7 +584,9 @@ function dwds_upwork_rebuild() {
 		}
 		$newSum = 0;
 		foreach ( $new as $x ) {
-			$newSum += ( 'refunded' === $x['status'] ? -1 : 1 ) * (float) $x['amount'];
+			if ( 'held' !== $x['status'] ) {
+				$newSum += ( 'refunded' === $x['status'] ? -1 : 1 ) * (float) $x['amount'];
+			}
 		}
 		$all = array_merge( $keep, $new );
 		usort( $all, function ( $a, $b ) { return strcmp( (string) ( $b['date'] ?? '' ), (string) ( $a['date'] ?? '' ) ); } );
@@ -763,7 +831,7 @@ add_action( 'rest_api_init', function () {
 			$cid = (int) get_post_meta( $pid, '_dwdc_client', true );
 			foreach ( $pays as $x ) {
 				$st = strtolower( (string) ( $x['status'] ?? 'paid' ) );
-				if ( 0 !== strpos( (string) ( $x['date'] ?? '' ), $ym ) || in_array( $st, array( 'open', 'void', 'draft', 'failed', 'uncollectible' ), true ) ) {
+				if ( 0 !== strpos( (string) ( $x['date'] ?? '' ), $ym ) || in_array( $st, array( 'open', 'void', 'draft', 'failed', 'uncollectible', 'held' ), true ) ) {
 					continue;
 				}
 				$src    = in_array( $x['source'] ?? '', array( 'Upwork', 'Stripe', 'PayPal' ), true ) ? $x['source'] : 'Other';

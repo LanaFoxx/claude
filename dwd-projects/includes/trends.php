@@ -20,7 +20,7 @@ function dwdt_monthly() {
 		}
 		foreach ( $pays as $p ) {
 			$st = strtolower( (string) ( $p['status'] ?? 'paid' ) );
-			if ( in_array( $st, array( 'open', 'void', 'draft', 'failed', 'uncollectible' ), true ) ) {
+			if ( in_array( $st, array( 'open', 'void', 'draft', 'failed', 'uncollectible', 'held' ), true ) ) {
 				continue;
 			}
 			$d   = (string) ( $p['date'] ?? '' );
@@ -94,7 +94,7 @@ function dwdt_build() {
 	foreach ( get_posts( array( 'post_type' => DWDC_CONTACT, 'post_status' => 'private', 'posts_per_page' => -1, 'fields' => 'ids' ) ) as $id ) {
 		foreach ( (array) get_post_meta( $id, '_dwdc_payments', true ) as $pp ) {
 			$st = strtolower( (string) ( $pp['status'] ?? 'paid' ) );
-			if ( ! is_array( $pp ) || in_array( $st, array( 'open', 'void', 'draft', 'failed', 'uncollectible' ), true ) ) {
+			if ( ! is_array( $pp ) || in_array( $st, array( 'open', 'void', 'draft', 'failed', 'uncollectible', 'held' ), true ) ) {
 				continue;
 			}
 			$d   = (string) ( $pp['date'] ?? '' );

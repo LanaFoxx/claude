@@ -140,6 +140,12 @@
 	// Upwork money is stored after Upwork's 10% fee (like the Upwork file), and the whole balance is cleared.
 	function markPaid(id, btn) {
 		var c = S.full[id] || contact(id), gross = c ? num(c.balance) : 0;
+		if (c && c.upwork_hold) { // Upwork money just reached the bank: count it from today
+			if (btn) { btn.disabled = true; }
+			api('/contact/' + id + '/upwork-release', 'POST', {}).then(function (x) { upsert(x.project); S.full[id] = x.project; return reload(); })
+				.then(function () { render(); toast('Marked paid · Upwork money added to this month'); }).catch(function (er) { if (btn) { btn.disabled = false; } fail(er); });
+			return;
+		}
 		if (!gross) { save(id, { balance: '0', paymark: '' }, 'Marked paid'); return; }
 		var pm = ['Upwork', 'Stripe', 'PayPal'].indexOf(c.pay_method) > -1 ? c.pay_method : 'Other', up = pm === 'Upwork';
 		var amt = up ? Math.round(gross * 90) / 100 : gross;
@@ -3050,7 +3056,7 @@
 		var foot = price ? money(paid) + ' of ' + money(price) + ' paid · ' + money(ow) + ' remaining' : '';
 		var paysBox = card('k-pay', 'Payments', pays.length ? String(pays.length) : '', '<button type="button" class="dd-hlink" data-plog="' + c.id + '">+ Log payment</button>',
 			logf + (!full ? '<p class="dd-pempty">Loading…</p>' : pays.length ? pays.map(function (x, i) {
-				return '<div class="dd-py"><span class="dt">' + (x.date ? fmt(String(x.date).slice(0, 10)) : '—') + '</span><span class="mt">' + esc(x.source || '') + (x.status && x.status !== 'paid' ? ' · ' + esc(x.status) : '') + (x.note ? '<small>' + esc(x.note) + '</small>' : '') + '</span><b>' + money2(x.amount).replace('.00', '') + '</b><button type="button" class="dd-ibtn sm dd-ptx" data-payrm="' + i + '" title="Remove payment" aria-label="Remove payment">' + lu('x', 14) + '</button></div>';
+				return '<div class="dd-py"><span class="dt">' + (x.date ? fmt(String(x.date).slice(0, 10)) : '—') + '</span><span class="mt">' + esc(x.source || '') + (x.status === 'held' ? ' · <b class="dd-held">Still in Upwork, not withdrawn</b>' : x.status && x.status !== 'paid' ? ' · ' + esc(x.status) : '') + (x.note ? '<small>' + esc(x.note) + '</small>' : '') + '</span><b>' + money2(x.amount).replace('.00', '') + '</b><button type="button" class="dd-ibtn sm dd-ptx" data-payrm="' + i + '" title="Remove payment" aria-label="Remove payment">' + lu('x', 14) + '</button></div>';
 			}).join('') + (foot ? '<p class="dd-pfoot">' + foot + '</p>' : '') : '<div class="dd-payempty"><span>' + lu('credit-card', 18) + '</span><b>No payments logged yet</b>' + (foot ? '<small>' + foot + '</small>' : '') + '</div>'));
 		var hosting = num(c.hosting) ? hostCard(c) : '';
 		return '<div class="dd-pp">' + head + strip

@@ -274,3 +274,5 @@
 .dd-mprev { border-top: 1px solid var(--border); }
 .dwdc-col > .k-mail { margin-top: 16px; }
 .dd-mmore[aria-expanded="true"] .lu { transform: rotate(180deg); }
+
+.dd-held { font-weight: 600; color: var(--warning-text, #e0a63a); }

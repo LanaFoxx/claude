@@ -80,6 +80,7 @@ function dwdc_contact( $post, $full = false ) {
 		}
 	}
 	$c['autopay'] = '1' === get_post_meta( $p->ID, '_dwdc_autopay', true );
+	$c['upwork_hold'] = '1' === get_post_meta( $p->ID, '_dwdc_upwork_hold', true ); // Upwork money not withdrawn yet
 	// Date of their most recent paid payment (Stripe, PayPal…), used to sort completed work.
 	$pays           = get_post_meta( $p->ID, '_dwdc_payments', true );
 	$c['last_paid'] = '';
@@ -223,6 +224,20 @@ function dwdc_save_contact( $id, $data ) {
 		if ( isset( $data[ $f ] ) ) {
 			$v = 'email' === $f ? strtolower( sanitize_email( $data[ $f ] ) ) : sanitize_text_field( $data[ $f ] );
 			update_post_meta( $id, '_dwdc_' . $f, $v );
+		}
+	}
+	// Mike typed a lower "Paid on Upwork" than the Upwork file shows → that money is still in Upwork (not withdrawn):
+	// hold it, so Update Finances doesn't mark it paid again. Typing the full amount back releases the hold.
+	if ( isset( $data['billed'] ) && function_exists( 'dwds_upwork_hold' ) && dwdc_is_upwork( $id, $data ) ) {
+		$file = 0;
+		foreach ( (array) get_post_meta( $id, '_dwdc_payments', true ) as $x ) {
+			if ( is_array( $x ) && 'Upwork' === ( $x['source'] ?? '' ) && '' !== (string) ( $x['ref'] ?? '' ) && in_array( $x['status'] ?? 'paid', array( 'paid', 'held' ), true ) ) {
+				$file += (float) $x['amount'];
+			}
+		}
+		$typed = (float) preg_replace( '/[^\d.]/', '', (string) $data['billed'] );
+		if ( $file > 0 ) {
+			dwds_upwork_hold( $id, $typed + 0.5 < $file );
 		}
 	}
 	// Finishing a project that still has money owed keeps it on the Owed list until it's paid.
@@ -1505,7 +1520,7 @@ function dwdc_money_by_year() {
 		}
 		foreach ( $pays as $p ) {
 			$st = strtolower( (string) ( $p['status'] ?? 'paid' ) );
-			if ( in_array( $st, array( 'open', 'void', 'draft', 'failed', 'uncollectible' ), true ) ) {
+			if ( in_array( $st, array( 'open', 'void', 'draft', 'failed', 'uncollectible', 'held' ), true ) ) {
 				continue;
 			}
 			$sign = 'refunded' === $st ? -1 : 1; // money sent back to a client comes off that year
