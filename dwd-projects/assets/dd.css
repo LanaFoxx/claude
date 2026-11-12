@@ -415,3 +415,10 @@ i.dd-flag { width: 10px; height: 10px; cursor: inherit; }
 .dd-tl-tm .dd-join { color: var(--text) !important; }
 /* logo: white "d" on the dark theme */
 [data-theme="dark"] .dd-mk-l, [data-theme="light"] .dd-mk-d { display: none; }
+
+/* popups: room above section titles and the footnote */
+.dd .dwdc-modal .dwdc-ch3 { margin: 28px 0 6px !important; font-size: 14px; font-weight: 600; color: var(--text); }
+.dd .dwdc-modal .dwdc-ch3:first-of-type { margin-top: 20px !important; }
+.dd .dwdc-modal .dwdc-arow.head { padding-top: 6px; }
+.dd .dwdc-modal .dwdc-wins-foot { margin-top: 16px !important; padding-top: 12px; border-top: 1px solid var(--border); line-height: 1.5; }
+.dd .dwdc-modal .dd-spendh { margin-top: 32px !important; }
