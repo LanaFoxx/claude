@@ -851,28 +851,83 @@ def build_featured_projects():
         bg=CHARRED, _element_id="tn-featured", custom_css=FEATURED_CSS)
 
 
+# ------------------------------------------------------------------ What We Do (Option A, split screen)
+WWD = [
+    ("What We Do / Painting", "#33261C", "Photo: finished interior, fills this half", None,
+     "Fine Interior &amp; Exterior Painting",
+     "Walls, ceilings, trim, doors, and specialty finishes, completed with the preparation, protection, and "
+     "clean lines a high-end home demands. We work in occupied and unoccupied homes, coordinate with property "
+     "managers, and keep you updated even when you're out of town.",
+     [("Interior Painting", "/interior-painting/"), ("Exterior Painting", "/exterior-painting/"),
+      ("Specialty Finishes &amp; Interior Wood", "/specialty-finishes-interior-wood/"),
+      ("Commercial &amp; HOA", "/commercial-hoa/")]),
+    ("What We Do / Staining", "#3A281B", "Photo: stained log home, fills this half", "fence",
+     "Log &amp; Timber Staining",
+     "Log home staining is where we started and what we're known for. We prepare the wood properly, apply "
+     "premium stains and sealers, and handle the chinking, check sealing, and rot repair that keep a log home "
+     "tight and protected. We build log homes, so we know what makes a finish last.",
+     [("Log Home Staining &amp; Restoration", "/log-home-staining-restoration/"),
+      ("Chinking &amp; Check Sealing", "/chinking-check-sealing/"),
+      ("Rot Repair &amp; Prevention", "/rot-repair-prevention/"), ("Deck Staining", "/deck-staining/")]),
+]
+
+WWD_CSS = """
+#tn-wwd .tn-wwd-half::before{background-color:transparent !important;background-image:linear-gradient(180deg, rgba(20,17,14,0.1) 0%, rgba(20,17,14,0.1) 35%, rgba(20,17,14,0.94) 100%) !important;opacity:1 !important;}
+#tn-wwd .tn-wwd-half > .e-con, #tn-wwd .tn-wwd-half > .elementor-widget{position:relative;z-index:1;}
+#tn-wwd .tn-wwd-label{position:absolute !important;left:32px;top:28px;z-index:1;}
+/* Both titles on one line and the same size: they scale together with the viewport. */
+#tn-wwd .tn-wwd-title .elementor-heading-title{white-space:nowrap;font-size:clamp(24px, 2.5vw, 40px) !important;}
+@media (max-width:1040px){
+  #tn-wwd .tn-wwd-grid{grid-template-columns:minmax(0,1fr) !important;}
+  #tn-wwd .tn-wwd-title .elementor-heading-title{font-size:clamp(30px, 4.6vw, 40px) !important;}
+}
+@media (max-width:760px){#tn-wwd .tn-wwd-title .elementor-heading-title{white-space:normal;}}
+#tn-wwd .tn-wwd-links .elementor-icon-list-items{display:grid !important;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:32px;}
+#tn-wwd .tn-wwd-links .elementor-icon-list-item{margin:0 !important;padding:0 !important;}
+#tn-wwd .tn-wwd-links .elementor-icon-list-item::after{display:none !important;}
+#tn-wwd .tn-wwd-links .elementor-icon-list-item > a{display:flex;align-items:center;gap:10px;min-height:44px;}
+#tn-wwd .tn-wwd-links .elementor-icon-list-item > a::before{content:'→';color:#C68B4E;font-weight:400;}
+@media (max-width:520px){#tn-wwd .tn-wwd-links .elementor-icon-list-items{grid-template-columns:1fr;}}
+""".strip()
+
+
+def build_what_we_do():
+    halves = []
+    for title, color, label, image, h2_text, body, items in WWD:
+        img = PHOTOS.get(image) if image else None
+        kids = []
+        if not img:
+            kids.append(photo_label(label, _css_classes="tn-wwd-label", _element_width="auto"))
+        kids.append(container(title + " / Content", [
+            heading(title + " / Title (H2)", h2_text, tag="h2", color=BONE,
+                    typ=typo(family=SERIF, size=(40, 36, 30, 30), weight=500, lh=1.08, ls=-0.4),
+                    _css_classes="tn-wwd-title"),
+            text(title + " / Text", "<p>%s</p>" % body, color=HERO_TEXT, size=16, lh=1.7),
+            widget("icon-list", title + " / Services", space_between=px(0), text_color=BONE,
+                   text_color_hover=AMBER_HOVER, _css_classes="tn-wwd-links", _margin=dims(8, 0, 0, 0),
+                   icon_list=[{"_id": eid(), "text": t, "link": link(u),
+                               "selected_icon": {"value": "", "library": ""}} for t, u in items],
+                   **typo(prefix="icon_typography", size=15, weight=600, lh=1.4))],
+            gap=22, padding=pads((72, 65, 49, 40), (72, 65, 49, 24), (72, 65, 49, 40), (72, 65, 49, 24))))
+        st = {"background_background": "classic", "background_color": color,
+              "background_position": "center center", "background_size": "cover",
+              "background_repeat": "no-repeat", "flex_justify_content": "flex-end", "overflow": "hidden",
+              "css_classes": "tn-photo tn-wwd-half",
+              "background_overlay_background": "classic", "background_overlay_color": CHARRED,
+              "background_overlay_opacity": {"unit": "px", "size": 1, "sizes": []}}
+        st.update(resp("min_height", (835, 754, 640, 640), px))
+        if img:
+            st["background_image"] = {"url": img["url"], "id": int(img["id"]), "size": "",
+                                      "alt": img.get("alt", ""), "source": "library"}
+        halves.append(container(title, kids, html_tag="article", **st))
+    return container("What We Do", [grid("What We Do / Halves", halves, cols=(2, 2, 1, 1), gap_col=0,
+                                         gap_row=0, css_classes="tn-wwd-grid")],
+                     top=True, html_tag="section", _element_id="tn-wwd",
+                     background_background="classic", background_color=CHARRED, custom_css=WWD_CSS)
+
+
 def build_home():
-    what = section("What We Do", [grid("What We Do / Columns", [
-        path_column("What We Do / Painting", "#33261C", "Photo: finished interior, beams and stone",
-                    "Fine Interior &amp; Exterior Painting",
-                    "Walls, ceilings, trim, doors, and specialty finishes, completed with the preparation, "
-                    "protection, and clean lines a high-end home demands. We work in occupied and "
-                    "unoccupied homes, coordinate with property managers, and keep you updated even when "
-                    "you're out of town.",
-                    [("Interior Painting", "/interior-painting/"), ("Exterior Painting", "/exterior-painting/"),
-                     ("Specialty Finishes &amp; Interior Wood", "/specialty-finishes-interior-wood/"),
-                     ("Commercial &amp; HOA", "/commercial-hoa/")]),
-        path_column("What We Do / Staining", "#3A281B", "Photo: freshly stained log home exterior",
-                    "Log &amp; Timber Staining",
-                    "Log home staining is where we started and what we're known for. We prepare the wood "
-                    "properly, apply premium stains and sealers, and handle the chinking, check sealing, "
-                    "and rot repair that keep a log home tight and protected. We build log homes, so we "
-                    "know what makes a finish last.",
-                    [("Log Home Staining &amp; Restoration", "/log-home-staining-restoration/"),
-                     ("Chinking &amp; Check Sealing", "/chinking-check-sealing/"),
-                     ("Rot Repair &amp; Prevention", "/rot-repair-prevention/"),
-                     ("Deck Staining", "/deck-staining/")], image="fence"),
-    ], cols=(2, 2, 1, 1), gap_col=(58, 52, 39, 32), gap_row=80)], bg=CHARRED)
+    what = build_what_we_do()
 
     who = section("Who We Are", [grid("Who We Are / Layout", [
         container("Who We Are / Text", [
@@ -1060,21 +1115,25 @@ def estimate_section(page="home"):
     chevron = ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' "
                "viewBox='0 0 24 24' fill='none' stroke='%235B5046' stroke-width='1.8'%3E%3Cpath "
                "d='M6 9l6 6 6-6'/%3E%3C/svg%3E")
+    # Option D form: filled fields (#E8E0D4, 62px), label inside top-left, chevron selects.
     form_css = (
-        "selector .elementor-field-group .elementor-field-textual{height:44px;min-height:44px;padding:0;"
-        "background:transparent;border:0 !important;border-bottom:1px solid #857A6E !important;"
-        "border-radius:0;font-family:Manrope, 'Helvetica Neue', Arial, sans-serif;box-shadow:none;}"
-        "selector .elementor-field-group .elementor-field-textual:focus{outline:none;"
-        "border-bottom-color:#14110E !important;box-shadow:0 1px 0 #14110E;}"
+        "selector .elementor-field-group{position:relative;}"
+        "selector .elementor-field-group:not(.elementor-field-type-submit) > .elementor-field-label{position:absolute;"
+        "left:18px;top:10px;z-index:2;margin:0;font-size:12px;font-weight:600;line-height:1.3;color:#5B5046;pointer-events:none;}"
+        "selector .elementor-field-group .elementor-field-textual{height:62px;min-height:62px;padding:28px 18px 8px;"
+        "background:#E8E0D4;border:0 !important;border-radius:4px;color:#14110E;font-size:16px;box-shadow:none;"
+        "font-family:Manrope, 'Helvetica Neue', Arial, sans-serif;}"
+        "selector .elementor-field-group .elementor-field-textual:focus{outline:2px solid #14110E;outline-offset:1px;}"
         "selector .elementor-select-wrapper .select-caret-down-wrapper{display:none;}"
         "selector .elementor-field-group .elementor-select-wrapper select.elementor-field-textual{"
-        "appearance:none;-webkit-appearance:none;padding:0 28px 0 0;color-scheme:light;cursor:pointer;"
-        "background-image:url(\"" + chevron + "\");background-repeat:no-repeat;"
-        "background-position:right 2px center;background-size:14px 14px;}"
-        "selector .e-form__buttons{margin-top:12px;}"
+        "appearance:none;-webkit-appearance:none;padding:26px 44px 6px 18px;color-scheme:light;cursor:pointer;"
+        "background-color:#E8E0D4;background-image:url(\"" + chevron + "\");background-repeat:no-repeat;"
+        "background-position:right 18px center;background-size:14px 14px;}"
         "selector .elementor-mark-required .elementor-field-label:after{color:#5B5046;}"
-        "@media (max-width:535px){selector .elementor-field-group:not(.elementor-field-type-submit){width:100% !important;flex-basis:100% !important;max-width:100% !important;}}"
-        "selector .elementor-button{min-height:56px;}"
+        "selector .e-form__buttons{margin-top:12px;}"
+        "selector .e-form__buttons .elementor-button{min-height:60px;}"
+        "@media (max-width:535px){selector .elementor-field-group:not(.elementor-field-type-submit){width:100% !important;"
+        "flex-basis:100% !important;max-width:100% !important;}}"
     )
     form = widget(
         "form", "Estimate / Form",
@@ -1082,65 +1141,83 @@ def estimate_section(page="home"):
         "Homeowner Estimate - Request an Estimate page",
         form_id="tn-estimate-form", form_fields=form_fields, input_size="md",
         show_labels="true", mark_required="true", label_position="above",
-        button_text="Request My Estimate", button_size="md", button_width="100",
-        button_align="stretch", submit_actions=["email", "redirect"],
+        button_text="Request My Estimate", button_size="md", button_width="",
+        button_align="start", submit_actions=["email", "redirect"],
         email_to="info@topnotch-painting.com",
         email_subject="New estimate request (%s)" % ("Homepage" if is_home else "Request an Estimate page"),
         email_content="[all-fields]", redirect_to="/thank-you/",
-        column_gap=px(32), row_gap=px(28), label_spacing=px(6),
+        column_gap=px(16), row_gap=px(16), label_spacing=px(0),
         label_color=BARK, mark_required_color=BARK,
-        field_text_color=CHARRED, field_background_color=TRANSPARENT,
-        field_border_color=FIELD_LINE, field_border_width=dims(0, 0, 1, 0),
-        field_border_radius=dims(0),
+        field_text_color=CHARRED, field_background_color="#E8E0D4",
+        field_border_color="#E8E0D4", field_border_width=dims(0), field_border_radius=dims(4),
         button_background_color=AMBER, button_text_color=CHARRED,
         button_background_hover_color=AMBER_HOVER, button_hover_color=CHARRED,
-        button_border_radius=dims(999), button_text_padding=dims(20.5, 32),
+        button_border_radius=dims(999), button_text_padding=dims(22.5, 40),
         custom_css=form_css,
-        **typo(prefix="label_typography", size=13, weight=400, lh=1.4),
+        **typo(prefix="label_typography", size=12, weight=600, lh=1.3),
         **typo(prefix="field_typography", size=16, weight=400, lh=1.4),
         **typo(prefix="button_typography", size=15, weight=600, lh=1))
 
-    card = container("Estimate / Form Card", [
-        container("Estimate / Form Card / Heading", [
+    note = text("Estimate / Builder note",
+                '<p>Builder or general contractor? <a href="/for-builders/#bid">Request a bid</a></p>',
+                color=BARK, size=13, lh=1.6, pretty=False, _css_classes="tn-est-note",
+                custom_css="selector a{color:#8A5A2B;font-weight:600;text-decoration:underline;"
+                           "text-decoration-thickness:1px;text-underline-offset:4px;}"
+                           "selector a:hover{color:#14110E;}")
+
+    right = container("Estimate / Form Half", [
+        container("Estimate / Form Half / Heading", [
             heading("Estimate / Form title", "Request your free estimate",
                     tag="h3" if is_home else "h2", color=CHARRED,
                     typ=typo(family=SERIF, size=34, weight=500, lh=1.1)),
             text("Estimate / Form intro", "<p>We'll call within one business day to set up a walkthrough.</p>",
                  color=BARK, size=14, lh=1.6, pretty=False)], gap=8),
-        container("Estimate / Form Card / Body", [
-            form,
-            text("Estimate / Builder note",
-                 '<p>Builder or general contractor? <a href="/for-builders/#bid">Request a bid</a></p>',
-                 color=BARK, size=13, lh=1.6, pretty=False, align="center",
-                 custom_css="selector a{color:#8A5A2B;font-weight:600;text-decoration:underline;"
-                            "text-decoration-thickness:1px;text-underline-offset:4px;}"
-                            "selector a:hover{color:#14110E;}")], gap=16)],
-        gap=32, background_background="classic", background_color=BONE, border_radius=dims(4),
-        padding={("padding" + d): dims(v) for d, v in zip(DEVICES, (64, 58, 44, 32))})
+        container("Estimate / Form Half / Body", [form, note], gap=16, css_classes="tn-est-body")],
+        gap=28, background_background="classic", background_color=BONE,
+        padding=pads((72, 65, 49, 40), (64, 58, 44, 28), (72, 65, 49, 40), (64, 58, 44, 28)))
 
     if is_home:
         offer = container("Seasonal Offer", [
-            h2("Seasonal Offer / Title (H2)", "Now scheduling winter interior projects"),
-            text("Seasonal Offer / Text", "<p>Book between November 1 and March 31 and receive 10% off interior projects.</p>",
-                 size=18, lh=1.7)], gap=24)
+            h2("Seasonal Offer / Title (H2)", "Now scheduling winter interior projects", sizes=(56, 51, 38, 30)),
+            text("Seasonal Offer / Text",
+                 "<p>Book between November 1 and March 31 and receive 10% off interior projects.</p>",
+                 size=17, lh=1.7)], gap=24)
     else:
         offer = container("Estimate Intro", [
             heading("Estimate Intro / Title (H1)", "Talk to us about your project", tag="h1", color=BONE,
-                    typ=typo(family=SERIF, size=H2, weight=500, lh=1.04, ls=-0.6),
+                    typ=typo(family=SERIF, size=(56, 51, 38, 34), weight=500, lh=1.04, ls=-0.6),
                     custom_css="selector .elementor-heading-title{text-wrap:balance;}"),
             text("Estimate Intro / Text",
                  "<p>We'll be in touch within one business day to set up a walkthrough.</p>",
-                 size=18, lh=1.7)], gap=24)
+                 size=17, lh=1.7)], gap=24)
 
-    left = container("Estimate / Text", [
-        offer, text_link("Estimate / Call", "Or call " + PHONE, TEL, icon="phone", classes="tn-call")],
-        gap=28, css="selector{max-width:520px;}")
+    left = container("Estimate / Offer Half", [
+        offer,
+        container("Estimate / Call", [
+            heading("Estimate / Call / Label", "Prefer to talk?", tag="div", color=DRIFT,
+                    typ=typo(size=14, weight=400, lh=1.5)),
+            heading("Estimate / Call / Phone", PHONE, tag="div", color=BONE,
+                    typ=typo(family=SERIF, size=40, weight=500, lh=1.2), link=link(TEL),
+                    title_hover_color=AMBER_HOVER, _css_classes="tn-call")],
+            gap=6, padding=dims(32, 0, 0, 0),
+            border_border="solid", border_width=dims(1, 0, 0, 0), border_color="#F2ECE324")],
+        gap=48, flex_justify_content="space-between", background_background="classic",
+        background_color=CHARRED,
+        padding=pads((72, 65, 49, 40), (64, 58, 44, 28), (72, 65, 49, 40), (64, 58, 44, 28)))
 
-    return section("Estimate", [grid("Estimate / Layout", [left, card], cols=(2, 2, 1, 1),
-                                     gap_col=(115, 104, 78, 56), gap_row=64,
-                                     grid_align_items="center", flex_align_items="center")],
-                   bg=EST_BROWN, pad_top=SECV_TALL if is_home else (200, 200, 176, 152),
-                   pad_bottom=SECV_TALL, _element_id="estimate",
+    panel_css = (
+        "selector{border-radius:6px;overflow:hidden;box-shadow:0 48px 96px -48px rgba(0,0,0,0.7);"
+        "grid-template-columns:repeat(2,minmax(0,1fr)) !important;}"
+        "@media (max-width:880px){selector{grid-template-columns:minmax(0,1fr) !important;}}"
+        # button with the builder note beside it
+        # builder note sits under the button (as the reference's wrapping row does at this width)
+    )
+    panel = grid("Estimate / Panel", [left, right], cols=(2, 2, 1, 1), gap_col=0, gap_row=0,
+                 css=panel_css)
+
+    return section("Estimate", [panel],
+                   bg=EST_BROWN, pad_top=SECV if is_home else (200, 200, 176, 152),
+                   pad_bottom=SECV, _element_id="estimate",
                    **(dict(wood_texture(EST_BROWN, 0.65), background_attachment="fixed") if TEXTURE else {}))
 
 

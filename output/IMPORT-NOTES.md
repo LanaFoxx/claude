@@ -259,3 +259,24 @@ Container `Seasonal Offer`: change the H2 to **Talk to us about your project** a
   - **Layout:** the menu panel fills the screen directly under the header bar, with a solid #14110E background, 18px items, 16px sub-items and its own scrolling. While it's open, the header bar turns solid too.
   - **Scroll lock:** page scrolling is locked while it's open (`html:has(.elementor-menu-toggle.elementor-active)`).
   - **How it works:** the main row gets `transform: translateZ(0)` at those widths so the fixed panel anchors to the bottom of the header bar (96px at the top of the page, 76px once scrolled, plus the 44px top bar on tablet at the top of the page).
+- **What We Do is now Option A, split screen** (`what-we-do-option-a.html`). It replaces the photo-and-index-list columns.
+  - **Layout:** a top-level Full Width section (`#tn-wwd`) with two edge-to-edge halves, no padding and no gap. The halves stack below 1040px, painting first.
+  - **Each half:** an article container with min-height 835 / 754 / 640 / 640, background photo Cover/Center, and the gradient overlay `180deg, 0.1 → 0.1 at 35% → 0.94`. Text sits at the bottom with 72 / 65 / 49 / 40px padding (sides down to 24px on phones).
+  - **Title rule:** both H2s use `white-space: nowrap` and share one fluid size (`clamp(24px, 2.5vw, 40px)` side by side, `clamp(30px, 4.6vw, 40px)` stacked), so they always match and never wrap on desktop or tablet. They may wrap at 760px and below.
+    - Checked at 1920 / 1440 / 1360 / 1100 / 1041 / 1040 / 980 / 600: both titles 1 line at equal size, and both paragraphs the same line count.
+    - At 1440 the titles are 36px rather than 40px, because 40px won't fit on one line in a 720px half.
+  - **Links:** an Icon List in 2 columns, 44px rows, amber "→" before the label, no lines.
+  - **Photos:** the Staining half uses the fence photo. The Painting half keeps its colored slot and "Photo label (delete when photo added)".
+- **Estimate is now Option D, one split panel** (`estimate-option-d.html`), on the homepage and the Request an Estimate page.
+  - **Background:** the fixed wood background is kept as is. Section padding is 128 / 117 / 88 / 80.
+  - **Panel:** a grid container "Estimate / Panel" (radius 6px, overflow hidden, shadow `0 48px 96px -48px rgba(0,0,0,0.7)`), two equal halves stacking below 880px with the dark half first.
+  - **Left half (#14110E):**
+    - The "Seasonal Offer" container (H2 56 / 51 / 38 / 30, offer line 17px Driftwood).
+    - A hairline, then "Prefer to talk?" and the phone number (Cormorant 40px, `tn-call`).
+    - The phone H2 is 30px on phones so it breaks into two even lines.
+  - **Right half (Bone):**
+    - The heading and intro line.
+    - The Pro Form (ID `tn-estimate-form`) with filled fields: #E8E0D4, radius 4, 62px tall, label inside at top-left 12px/600 Bark, 2px #14110E focus outline, thin chevron on selects.
+    - A 60px amber pill (padding 0 40px), then the builder note under it.
+  - **Form actions:** unchanged (email, then redirect to /thank-you/).
+- **Updated full reference:** `top-notch-homepage-reference.html` is replaced with the latest version, which includes these two sections.

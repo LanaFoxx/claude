@@ -4,7 +4,7 @@
  "type": "page",
  "content": [
   {
-   "id": "27985d0",
+   "id": "8383d49",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -48,7 +48,7 @@
      "unit": "px",
      "top": "200",
      "right": "48",
-     "bottom": "151",
+     "bottom": "128",
      "left": "48",
      "isLinked": false
     },
@@ -56,7 +56,7 @@
      "unit": "px",
      "top": "200",
      "right": "48",
-     "bottom": "137",
+     "bottom": "117",
      "left": "48",
      "isLinked": false
     },
@@ -64,7 +64,7 @@
      "unit": "px",
      "top": "176",
      "right": "32",
-     "bottom": "103",
+     "bottom": "88",
      "left": "32",
      "isLinked": false
     },
@@ -72,7 +72,7 @@
      "unit": "px",
      "top": "152",
      "right": "20",
-     "bottom": "96",
+     "bottom": "80",
      "left": "20",
      "isLinked": false
     },
@@ -101,40 +101,40 @@
    },
    "elements": [
     {
-     "id": "1397a31",
+     "id": "100e05d",
      "elType": "container",
      "isInner": true,
      "settings": {
-      "_title": "Estimate / Layout",
+      "_title": "Estimate / Panel",
       "content_width": "full",
       "flex_direction": "column",
       "flex_gap": {
-       "column": "115",
-       "row": "64",
-       "isLinked": false,
+       "column": "0",
+       "row": "0",
+       "isLinked": true,
        "unit": "px",
-       "size": 115
+       "size": 0
       },
       "flex_gap_laptop": {
-       "column": "104",
-       "row": "64",
-       "isLinked": false,
+       "column": "0",
+       "row": "0",
+       "isLinked": true,
        "unit": "px",
-       "size": 104
+       "size": 0
       },
       "flex_gap_tablet": {
-       "column": "78",
-       "row": "64",
-       "isLinked": false,
+       "column": "0",
+       "row": "0",
+       "isLinked": true,
        "unit": "px",
-       "size": 78
+       "size": 0
       },
       "flex_gap_mobile": {
-       "column": "56",
-       "row": "64",
-       "isLinked": false,
+       "column": "0",
+       "row": "0",
+       "isLinked": true,
        "unit": "px",
-       "size": 56
+       "size": 0
       },
       "width": {
        "unit": "%",
@@ -177,72 +177,71 @@
        "sizes": []
       },
       "grid_gaps": {
-       "column": "115",
-       "row": "64",
-       "isLinked": false,
+       "column": "0",
+       "row": "0",
+       "isLinked": true,
        "unit": "px",
-       "size": 115
+       "size": 0
       },
       "grid_gaps_laptop": {
-       "column": "104",
-       "row": "64",
-       "isLinked": false,
+       "column": "0",
+       "row": "0",
+       "isLinked": true,
        "unit": "px",
-       "size": 104
+       "size": 0
       },
       "grid_gaps_tablet": {
-       "column": "78",
-       "row": "64",
-       "isLinked": false,
+       "column": "0",
+       "row": "0",
+       "isLinked": true,
        "unit": "px",
-       "size": 78
+       "size": 0
       },
       "grid_gaps_mobile": {
-       "column": "56",
-       "row": "64",
-       "isLinked": false,
+       "column": "0",
+       "row": "0",
+       "isLinked": true,
        "unit": "px",
-       "size": 56
+       "size": 0
       },
-      "grid_align_items": "center",
-      "flex_align_items": "center"
+      "custom_css": "selector{border-radius:6px;overflow:hidden;box-shadow:0 48px 96px -48px rgba(0,0,0,0.7);grid-template-columns:repeat(2,minmax(0,1fr)) !important;}@media (max-width:880px){selector{grid-template-columns:minmax(0,1fr) !important;}}"
      },
      "elements": [
       {
-       "id": "fa9e7ab",
+       "id": "27985d0",
        "elType": "container",
        "isInner": true,
        "settings": {
-        "_title": "Estimate / Text",
+        "_title": "Estimate / Offer Half",
         "content_width": "full",
         "flex_direction": "column",
         "flex_gap": {
-         "column": "28",
-         "row": "28",
+         "column": "48",
+         "row": "48",
          "isLinked": true,
          "unit": "px",
-         "size": 28
+         "size": 48
         },
         "flex_gap_laptop": {
-         "column": "28",
-         "row": "28",
+         "column": "48",
+         "row": "48",
          "isLinked": true,
          "unit": "px",
-         "size": 28
+         "size": 48
         },
         "flex_gap_tablet": {
-         "column": "28",
-         "row": "28",
+         "column": "48",
+         "row": "48",
          "isLinked": true,
          "unit": "px",
-         "size": 28
+         "size": 48
         },
         "flex_gap_mobile": {
-         "column": "28",
-         "row": "28",
+         "column": "48",
+         "row": "48",
          "isLinked": true,
          "unit": "px",
-         "size": 28
+         "size": 48
         },
         "width": {
          "unit": "%",
@@ -251,13 +250,39 @@
         },
         "padding": {
          "unit": "px",
-         "top": "0",
-         "right": "0",
-         "bottom": "0",
-         "left": "0",
-         "isLinked": true
+         "top": "72",
+         "right": "64",
+         "bottom": "72",
+         "left": "64",
+         "isLinked": false
         },
-        "custom_css": "selector{max-width:520px;}"
+        "padding_laptop": {
+         "unit": "px",
+         "top": "65",
+         "right": "58",
+         "bottom": "65",
+         "left": "58",
+         "isLinked": false
+        },
+        "padding_tablet": {
+         "unit": "px",
+         "top": "49",
+         "right": "44",
+         "bottom": "49",
+         "left": "44",
+         "isLinked": false
+        },
+        "padding_mobile": {
+         "unit": "px",
+         "top": "40",
+         "right": "28",
+         "bottom": "40",
+         "left": "28",
+         "isLinked": false
+        },
+        "flex_justify_content": "space-between",
+        "background_background": "classic",
+        "background_color": "#14110E"
        },
        "elements": [
         {
@@ -324,22 +349,22 @@
             "typography_font_family": "Cormorant Garamond",
             "typography_font_size": {
              "unit": "px",
-             "size": 60,
+             "size": 56,
              "sizes": []
             },
             "typography_font_size_laptop": {
              "unit": "px",
-             "size": 55,
+             "size": 51,
              "sizes": []
             },
             "typography_font_size_tablet": {
              "unit": "px",
-             "size": 41,
+             "size": 38,
              "sizes": []
             },
             "typography_font_size_mobile": {
              "unit": "px",
-             "size": 36,
+             "size": 34,
              "sizes": []
             },
             "typography_font_weight": "500",
@@ -375,7 +400,7 @@
             "typography_font_family": "Manrope",
             "typography_font_size": {
              "unit": "px",
-             "size": 18,
+             "size": 17,
              "sizes": []
             },
             "typography_line_height": {
@@ -391,69 +416,126 @@
          ]
         },
         {
-         "id": "830b89d",
-         "elType": "widget",
-         "widgetType": "button",
-         "isInner": false,
+         "id": "1397a31",
+         "elType": "container",
+         "isInner": true,
          "settings": {
-          "text": "Or call (970) 524-7323",
-          "link": {
-           "url": "tel:+19705247323",
-           "is_external": "",
-           "nofollow": ""
-          },
-          "text_padding": {
+          "_title": "Estimate / Call",
+          "content_width": "full",
+          "flex_direction": "column",
+          "flex_gap": {
+           "column": "6",
+           "row": "6",
+           "isLinked": true,
            "unit": "px",
-           "top": "14.5",
-           "right": "0",
-           "bottom": "14.5",
-           "left": "0",
-           "isLinked": false
+           "size": 6
           },
-          "background_background": "classic",
-          "background_color": "#00000000",
-          "button_background_hover_background": "classic",
-          "button_background_hover_color": "#00000000",
-          "button_text_color": "#F2ECE3",
-          "hover_color": "#D9A66B",
-          "border_radius": {
+          "flex_gap_laptop": {
+           "column": "6",
+           "row": "6",
+           "isLinked": true,
            "unit": "px",
-           "top": "0",
+           "size": 6
+          },
+          "flex_gap_tablet": {
+           "column": "6",
+           "row": "6",
+           "isLinked": true,
+           "unit": "px",
+           "size": 6
+          },
+          "flex_gap_mobile": {
+           "column": "6",
+           "row": "6",
+           "isLinked": true,
+           "unit": "px",
+           "size": 6
+          },
+          "width": {
+           "unit": "%",
+           "size": 100,
+           "sizes": []
+          },
+          "padding": {
+           "unit": "px",
+           "top": "32",
            "right": "0",
            "bottom": "0",
            "left": "0",
-           "isLinked": true
+           "isLinked": false
           },
-          "typography_typography": "custom",
-          "typography_font_family": "Manrope",
-          "typography_font_size": {
+          "border_border": "solid",
+          "border_width": {
            "unit": "px",
-           "size": 15,
-           "sizes": []
+           "top": "1",
+           "right": "0",
+           "bottom": "0",
+           "left": "0",
+           "isLinked": false
           },
-          "typography_font_weight": "600",
-          "typography_line_height": {
-           "unit": "em",
-           "size": 1,
-           "sizes": []
-          },
-          "selected_icon": {
-           "value": {
-            "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/phone.svg",
-            "id": 1444
-           },
-           "library": "svg"
-          },
-          "icon_indent": {
-           "unit": "px",
-           "size": 10,
-           "sizes": []
-          },
-          "_css_classes": "tn-call",
-          "custom_css": "selector .elementor-button{white-space:nowrap;}selector .elementor-button-text{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:7px;text-decoration-color:rgba(242,236,227,0.4);}selector .elementor-button-icon svg{width:16px;height:16px;}",
-          "_title": "Estimate / Call"
+          "border_color": "#F2ECE324"
          },
-         "elements": []
+         "elements": [
+          {
+           "id": "830b89d",
+           "elType": "widget",
+           "widgetType": "heading",
+           "isInner": false,
+           "settings": {
+            "title": "Prefer to talk?",
+            "header_size": "div",
+            "title_color": "#B3A99C",
+            "typography_typography": "custom",
+            "typography_font_family": "Manrope",
+            "typography_font_size": {
+             "unit": "px",
+             "size": 14,
+             "sizes": []
+            },
+            "typography_font_weight": "400",
+            "typography_line_height": {
+             "unit": "em",
+             "size": 1.5,
+             "sizes": []
+            },
+            "_title": "Estimate / Call / Label"
+           },
+           "elements": []
+          },
+          {
+           "id": "fa9e7ab",
+           "elType": "widget",
+           "widgetType": "heading",
+           "isInner": false,
+           "settings": {
+            "title": "(970) 524-7323",
+            "header_size": "div",
+            "title_color": "#F2ECE3",
+            "typography_typography": "custom",
+            "typography_font_family": "Cormorant Garamond",
+            "typography_font_size": {
+             "unit": "px",
+             "size": 40,
+             "sizes": []
+            },
+            "typography_font_weight": "500",
+            "typography_line_height": {
+             "unit": "em",
+             "size": 1.2,
+             "sizes": []
+            },
+            "link": {
+             "url": "tel:+19705247323",
+             "is_external": "",
+             "nofollow": ""
+            },
+            "title_hover_color": "#D9A66B",
+            "_css_classes": "tn-call",
+            "_title": "Estimate / Call / Phone"
+           },
+           "elements": []
+          }
+         ]
         }
        ]
       },
@@ -462,36 +544,36 @@
        "elType": "container",
        "isInner": true,
        "settings": {
-        "_title": "Estimate / Form Card",
+        "_title": "Estimate / Form Half",
         "content_width": "full",
         "flex_direction": "column",
         "flex_gap": {
-         "column": "32",
-         "row": "32",
+         "column": "28",
+         "row": "28",
          "isLinked": true,
          "unit": "px",
-         "size": 32
+         "size": 28
         },
         "flex_gap_laptop": {
-         "column": "32",
-         "row": "32",
+         "column": "28",
+         "row": "28",
          "isLinked": true,
          "unit": "px",
-         "size": 32
+         "size": 28
         },
         "flex_gap_tablet": {
-         "column": "32",
-         "row": "32",
+         "column": "28",
+         "row": "28",
          "isLinked": true,
          "unit": "px",
-         "size": 32
+         "size": 28
         },
         "flex_gap_mobile": {
-         "column": "32",
-         "row": "32",
+         "column": "28",
+         "row": "28",
          "isLinked": true,
          "unit": "px",
-         "size": 32
+         "size": 28
         },
         "width": {
          "unit": "%",
@@ -500,54 +582,46 @@
         },
         "padding": {
          "unit": "px",
-         "top": "64",
+         "top": "72",
          "right": "64",
-         "bottom": "64",
+         "bottom": "72",
          "left": "64",
-         "isLinked": true
+         "isLinked": false
         },
         "padding_laptop": {
          "unit": "px",
-         "top": "58",
+         "top": "65",
          "right": "58",
-         "bottom": "58",
+         "bottom": "65",
          "left": "58",
-         "isLinked": true
+         "isLinked": false
         },
         "padding_tablet": {
          "unit": "px",
-         "top": "44",
+         "top": "49",
          "right": "44",
-         "bottom": "44",
+         "bottom": "49",
          "left": "44",
-         "isLinked": true
+         "isLinked": false
         },
         "padding_mobile": {
          "unit": "px",
-         "top": "32",
-         "right": "32",
-         "bottom": "32",
-         "left": "32",
-         "isLinked": true
+         "top": "40",
+         "right": "28",
+         "bottom": "40",
+         "left": "28",
+         "isLinked": false
         },
         "background_background": "classic",
-        "background_color": "#F2ECE3",
-        "border_radius": {
-         "unit": "px",
-         "top": "4",
-         "right": "4",
-         "bottom": "4",
-         "left": "4",
-         "isLinked": true
-        }
+        "background_color": "#F2ECE3"
        },
        "elements": [
         {
-         "id": "6ec0c26",
+         "id": "28bee07",
          "elType": "container",
          "isInner": true,
          "settings": {
-          "_title": "Estimate / Form Card / Heading",
+          "_title": "Estimate / Form Half / Heading",
           "content_width": "full",
           "flex_direction": "column",
           "flex_gap": {
@@ -594,7 +668,7 @@
          },
          "elements": [
           {
-           "id": "f73c49e",
+           "id": "8f9880a",
            "elType": "widget",
            "widgetType": "heading",
            "isInner": false,
@@ -620,7 +694,7 @@
            "elements": []
           },
           {
-           "id": "8f9880a",
+           "id": "6ec0c26",
            "elType": "widget",
            "widgetType": "text-editor",
            "isInner": false,
@@ -656,7 +730,7 @@
          "elType": "container",
          "isInner": true,
          "settings": {
-          "_title": "Estimate / Form Card / Body",
+          "_title": "Estimate / Form Half / Body",
           "content_width": "full",
           "flex_direction": "column",
           "flex_gap": {
@@ -699,7 +773,8 @@
            "bottom": "0",
            "left": "0",
            "isLinked": true
-          }
+          },
+          "css_classes": "tn-est-body"
          },
          "elements": [
           {
@@ -764,8 +839,8 @@
             "label_position": "above",
             "button_text": "Request My Estimate",
             "button_size": "md",
-            "button_width": "100",
-            "button_align": "stretch",
+            "button_width": "",
+            "button_align": "start",
             "submit_actions": [
              "email",
              "redirect"
@@ -776,38 +851,38 @@
             "redirect_to": "/thank-you/",
             "column_gap": {
              "unit": "px",
-             "size": 32,
+             "size": 16,
              "sizes": []
             },
             "row_gap": {
              "unit": "px",
-             "size": 28,
+             "size": 16,
              "sizes": []
             },
             "label_spacing": {
              "unit": "px",
-             "size": 6,
+             "size": 0,
              "sizes": []
             },
             "label_color": "#5B5046",
             "mark_required_color": "#5B5046",
             "field_text_color": "#14110E",
-            "field_background_color": "#00000000",
-            "field_border_color": "#857A6E",
+            "field_background_color": "#E8E0D4",
+            "field_border_color": "#E8E0D4",
             "field_border_width": {
-             "unit": "px",
-             "top": "0",
-             "right": "0",
-             "bottom": "1",
-             "left": "0",
-             "isLinked": false
-            },
-            "field_border_radius": {
              "unit": "px",
              "top": "0",
              "right": "0",
              "bottom": "0",
              "left": "0",
+             "isLinked": true
+            },
+            "field_border_radius": {
+             "unit": "px",
+             "top": "4",
+             "right": "4",
+             "bottom": "4",
+             "left": "4",
              "isLinked": true
             },
             "button_background_color": "#C68B4E",
@@ -824,24 +899,24 @@
             },
             "button_text_padding": {
              "unit": "px",
-             "top": "20.5",
-             "right": "32",
-             "bottom": "20.5",
-             "left": "32",
+             "top": "22.5",
+             "right": "40",
+             "bottom": "22.5",
+             "left": "40",
              "isLinked": false
             },
-            "custom_css": "selector .elementor-field-group .elementor-field-textual{height:44px;min-height:44px;padding:0;background:transparent;border:0 !important;border-bottom:1px solid #857A6E !important;border-radius:0;font-family:Manrope, 'Helvetica Neue', Arial, sans-serif;box-shadow:none;}selector .elementor-field-group .elementor-field-textual:focus{outline:none;border-bottom-color:#14110E !important;box-shadow:0 1px 0 #14110E;}selector .elementor-select-wrapper .select-caret-down-wrapper{display:none;}selector .elementor-field-group .elementor-select-wrapper select.elementor-field-textual{appearance:none;-webkit-appearance:none;padding:0 28px 0 0;color-scheme:light;cursor:pointer;background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%235B5046' stroke-width='1.8'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E\");background-repeat:no-repeat;background-position:right 2px center;background-size:14px 14px;}selector .e-form__buttons{margin-top:12px;}selector .elementor-mark-required .elementor-field-label:after{color:#5B5046;}@media (max-width:535px){selector .elementor-field-group:not(.elementor-field-type-submit){width:100% !important;flex-basis:100% !important;max-width:100% !important;}}selector .elementor-button{min-height:56px;}",
+            "custom_css": "selector .elementor-field-group{position:relative;}selector .elementor-field-group:not(.elementor-field-type-submit) > .elementor-field-label{position:absolute;left:18px;top:10px;z-index:2;margin:0;font-size:12px;font-weight:600;line-height:1.3;color:#5B5046;pointer-events:none;}selector .elementor-field-group .elementor-field-textual{height:62px;min-height:62px;padding:28px 18px 8px;background:#E8E0D4;border:0 !important;border-radius:4px;color:#14110E;font-size:16px;box-shadow:none;font-family:Manrope, 'Helvetica Neue', Arial, sans-serif;}selector .elementor-field-group .elementor-field-textual:focus{outline:2px solid #14110E;outline-offset:1px;}selector .elementor-select-wrapper .select-caret-down-wrapper{display:none;}selector .elementor-field-group .elementor-select-wrapper select.elementor-field-textual{appearance:none;-webkit-appearance:none;padding:26px 44px 6px 18px;color-scheme:light;cursor:pointer;background-color:#E8E0D4;background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%235B5046' stroke-width='1.8'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E\");background-repeat:no-repeat;background-position:right 18px center;background-size:14px 14px;}selector .elementor-mark-required .elementor-field-label:after{color:#5B5046;}selector .e-form__buttons{margin-top:12px;}selector .e-form__buttons .elementor-button{min-height:60px;}@media (max-width:535px){selector .elementor-field-group:not(.elementor-field-type-submit){width:100% !important;flex-basis:100% !important;max-width:100% !important;}}",
             "label_typography_typography": "custom",
             "label_typography_font_family": "Manrope",
             "label_typography_font_size": {
              "unit": "px",
-             "size": 13,
+             "size": 12,
              "sizes": []
             },
-            "label_typography_font_weight": "400",
+            "label_typography_font_weight": "600",
             "label_typography_line_height": {
              "unit": "em",
-             "size": 1.4,
+             "size": 1.3,
              "sizes": []
             },
             "field_typography_typography": "custom",
@@ -875,7 +950,7 @@
            "elements": []
           },
           {
-           "id": "28bee07",
+           "id": "f73c49e",
            "elType": "widget",
            "widgetType": "text-editor",
            "isInner": false,
@@ -899,7 +974,7 @@
              "size": 1.6,
              "sizes": []
             },
-            "align": "center",
+            "_css_classes": "tn-est-note",
             "custom_css": "selector p:last-child{margin-block-end:0;}selector a{color:#8A5A2B;font-weight:600;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px;}selector a:hover{color:#14110E;}",
             "_title": "Estimate / Builder note"
            },

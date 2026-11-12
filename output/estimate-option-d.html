@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Top Notch Painting — Estimate section (Option D, one split panel)</title>
+<!--
+DESIGN REFERENCE FOR CLAUDE CODE
+  Section: the estimate / winter offer section on the Top Notch Painting homepage (anchor ID "estimate").
+  Approved layout: Option D, "One split panel". This replaces the Estimate section in TOP-NOTCH-HOMEPAGE-BUILD.md.
+  Everything else in that file still applies (Elementor Flexbox Containers only, nested containers Full Width,
+  breakpoints 980 / 600, explicit color and font values, scoped CSS, no uppercase labels).
+
+  Background
+  - KEEP THE EXISTING FIXED WOOD BACKGROUND exactly as it is on the built site (background-attachment: fixed).
+    The dark plank pattern in this file is only a stand-in for it. Do not replace the real wood image.
+  - Section padding: clamp(80px, 9vw, 128px) top/bottom, 48 / 32 / 20px sides.
+
+  What it is
+  - ONE panel, max-width 1280px, radius 6px, overflow hidden, shadow 0 48px 96px -48px rgba(0,0,0,0.7).
+    It replaces the separate text-on-wood plus floating form card.
+  - Left half: solid Charred Timber #14110E. Top: H2 and one line of offer copy. Bottom: a hairline
+    (rgba(242,236,227,0.14)), "Prefer to talk?" (14px, #B3A99C) and the phone number in Cormorant Garamond 40px.
+    The phone number is a tel: link with class tn-call.
+  - Right half: Bone #F2ECE3 with the form.
+  - Halves are equal width on desktop and stack below 880px (dark half first).
+  - Half padding: clamp(40px, 5vw, 72px) top/bottom, clamp(28px, 4.5vw, 64px) sides.
+
+  Form (Elementor Pro Form, form ID tn-estimate-form, name "Homeowner Estimate - Homepage")
+  - Heading "Request your free estimate" (Cormorant Garamond 34px) and one 14px line under it.
+  - Fields are FILLED, not underlined: background #E8E0D4, radius 4px, 62px tall, no border.
+    The label sits INSIDE the field at the top left (12px / 600, #5B5046); the typed text sits below it (16px, #14110E).
+    Focus state: 2px #14110E outline.
+  - Layout: Name and Phone on one row, Email and Town on the next (16px gap), then "What do you need?" full width.
+    Selects use a thin chevron at the right instead of the default arrow.
+  - Fields: Name*, Phone*, Email*, Town* (Aspen, Snowmass, Basalt, Carbondale, Glenwood Springs, Vail, Beaver Creek,
+    Avon, Edwards, Eagle, Gypsum, Breckenridge, Other), What do you need?* (Interior painting, Exterior painting,
+    Cabinets / trim / specialty finish, Log home staining / restoration, Chinking / check sealing, Rot repair,
+    Deck staining, Commercial / HOA).
+  - Bottom row: amber pill button "Request My Estimate" (60px tall, padding 0 40px, radius 999px, #C68B4E, text #14110E)
+    on the left, and "Builder or general contractor? Request a bid" (13px, link in #8A5A2B to /for-builders/#bid) beside it.
+  - After submit: email to the painting address, then redirect to /thank-you/ (unchanged).
+
+  Copy is final: "Now scheduling winter interior projects" / "Book between November 1 and March 31 and receive
+  10% off interior projects." Keep the offer copy in its own container named "Seasonal Offer" so the client can edit it.
+-->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&amp;family=Manrope:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0;background:#14110E}
+a{color:#C68B4E}a:hover{color:#D9A66B}
+input:focus,select:focus{outline:2px solid #14110E;outline-offset:1px}
+.tn-menu-btn,.tn-show-sm,.tn-mobilebar{display:none}
+.tn-oneline{white-space:nowrap}
+@media (max-width:760px){.tn-oneline{white-space:normal}}
+@media (max-width:1359px){.tn-nav{display:none !important}.tn-menu-btn{display:inline-flex !important}}
+@media (max-width:760px){.tn-hide-sm{display:none !important}.tn-show-sm{display:inline-flex !important}.tn-mobilebar{display:flex !important}}
+</style>
+</head>
+<body>
+<div style="font-family: Manrope, 'Helvetica Neue', Arial, sans-serif; color: #F2ECE3; background: #14110E; min-width: 0; -webkit-font-smoothing: antialiased">
+<section id="estimate" style="background-color: #2A201A; background-image: repeating-linear-gradient(180deg, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 266px, rgba(0,0,0,0.38) 266px, rgba(0,0,0,0.38) 269px); padding: clamp(80px, 9vw, 128px) clamp(20px, 4vw, 48px)">
+<div style="max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(440px, 100%), 1fr)); border-radius: 6px; overflow: hidden; box-shadow: 0 48px 96px -48px rgba(0,0,0,0.7)">
+<div style="display: flex; flex-direction: column; justify-content: space-between; gap: 48px; padding: clamp(40px, 5vw, 72px) clamp(28px, 4.5vw, 64px); background: #14110E">
+<div style="display: flex; flex-direction: column; gap: 24px">
+<h2 style="margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: clamp(34px, 3.9vw, 56px); line-height: 1.04; letter-spacing: -0.01em; color: #F2ECE3; text-wrap: balance">Now scheduling winter interior projects</h2>
+<p style="margin: 0; font-size: 17px; line-height: 1.7; color: #B3A99C; text-wrap: pretty">Book between November 1 and March 31 and receive 10% off interior projects.</p>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px; padding-top: 32px; border-top: 1px solid rgba(242,236,227,0.14)">
+<span style="font-size: 14px; color: #B3A99C">Prefer to talk?</span>
+<a class="tn-call" href="tel:+19705247323" style="font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: 40px; line-height: 1.2; color: #F2ECE3; text-decoration: none">(970) 524-7323</a>
+</div>
+</div>
+<form aria-labelledby="est-title" id="tn-estimate-form" action="#" onsubmit="return false" style="display: flex; flex-direction: column; gap: 28px; padding: clamp(40px, 5vw, 72px) clamp(28px, 4.5vw, 64px); background: #F2ECE3; color: #14110E">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<h3 id="est-title" style="margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: 34px; line-height: 1.1; color: #14110E">Request your free estimate</h3>
+<p style="margin: 0; font-size: 14px; line-height: 1.6; color: #5B5046">We'll call within one business day to set up a walkthrough.</p>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 16px">
+<div style="position: relative; background: #E8E0D4; border-radius: 4px">
+<label for="est-name" style="position: absolute; left: 18px; top: 10px; z-index: 1; font-size: 12px; font-weight: 600; color: #5B5046; pointer-events: none">Name *</label>
+<input id="est-name" name="name" type="text" autocomplete="name" style="width: 100%; box-sizing: border-box; height: 62px; padding: 28px 18px 8px; background: transparent; border: 0; border-radius: 4px; color: #14110E; font-family: inherit; font-size: 16px">
+</div>
+<div style="position: relative; background: #E8E0D4; border-radius: 4px">
+<label for="est-phone" style="position: absolute; left: 18px; top: 10px; z-index: 1; font-size: 12px; font-weight: 600; color: #5B5046; pointer-events: none">Phone *</label>
+<input id="est-phone" name="phone" type="tel" autocomplete="tel" style="width: 100%; box-sizing: border-box; height: 62px; padding: 28px 18px 8px; background: transparent; border: 0; border-radius: 4px; color: #14110E; font-family: inherit; font-size: 16px">
+</div>
+<div style="position: relative; background: #E8E0D4; border-radius: 4px">
+<label for="est-email" style="position: absolute; left: 18px; top: 10px; z-index: 1; font-size: 12px; font-weight: 600; color: #5B5046; pointer-events: none">Email *</label>
+<input id="est-email" name="email" type="email" autocomplete="email" style="width: 100%; box-sizing: border-box; height: 62px; padding: 28px 18px 8px; background: transparent; border: 0; border-radius: 4px; color: #14110E; font-family: inherit; font-size: 16px">
+</div>
+<div style="position: relative; background: #E8E0D4; border-radius: 4px">
+<label for="est-town" style="position: absolute; left: 18px; top: 10px; z-index: 1; font-size: 12px; font-weight: 600; color: #5B5046; pointer-events: none">Town *</label>
+<div style="position: relative">
+<select id="est-town" name="town" style="width: 100%; box-sizing: border-box; height: 62px; padding: 26px 44px 6px 18px; background: transparent; border: 0; border-radius: 4px; color: #14110E; font-family: inherit; font-size: 16px; appearance: none; -webkit-appearance: none; color-scheme: light; cursor: pointer">
+<option value="">Select a town</option>
+<option>Aspen</option><option>Snowmass</option><option>Basalt</option><option>Carbondale</option><option>Glenwood Springs</option><option>Vail</option><option>Beaver Creek</option><option>Avon</option><option>Edwards</option><option>Eagle</option><option>Gypsum</option><option>Breckenridge</option><option>Other</option>
+</select>
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5B5046" stroke-width="1.8" aria-hidden="true" style="position: absolute; right: 18px; top: 26px; pointer-events: none"><path d="M6 9l6 6 6-6"></path></svg>
+</div>
+</div>
+</div>
+<div style="position: relative; background: #E8E0D4; border-radius: 4px">
+<label for="est-need" style="position: absolute; left: 18px; top: 10px; z-index: 1; font-size: 12px; font-weight: 600; color: #5B5046; pointer-events: none">What do you need? *</label>
+<div style="position: relative">
+<select id="est-need" name="need" style="width: 100%; box-sizing: border-box; height: 62px; padding: 26px 44px 6px 18px; background: transparent; border: 0; border-radius: 4px; color: #14110E; font-family: inherit; font-size: 16px; appearance: none; -webkit-appearance: none; color-scheme: light; cursor: pointer">
+<option value="">Choose a service</option>
+<option>Interior painting</option><option>Exterior painting</option><option>Cabinets / trim / specialty finish</option><option>Log home staining / restoration</option><option>Chinking / check sealing</option><option>Rot repair</option><option>Deck staining</option><option>Commercial / HOA</option>
+</select>
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5B5046" stroke-width="1.8" aria-hidden="true" style="position: absolute; right: 18px; top: 26px; pointer-events: none"><path d="M6 9l6 6 6-6"></path></svg>
+</div>
+</div>
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 28px; padding-top: 8px">
+<button type="submit" style="min-height: 60px; padding: 0 40px; border: 0; border-radius: 999px; background: #C68B4E; color: #14110E; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Request My Estimate</button>
+<p style="margin: 0; font-size: 13px; line-height: 1.6; color: #5B5046">Builder or general contractor? <a href="#" style="color: #8A5A2B; font-weight: 600; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px">Request a bid</a></p>
+</div>
+</form>
+</div>
+</section>
+</div>
+</body>
+</html>

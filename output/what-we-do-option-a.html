@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Top Notch Painting — What we do (Option A, split screen)</title>
+<!--
+DESIGN REFERENCE FOR CLAUDE CODE
+  Section: "What we do" on the Top Notch Painting homepage (the two services, directly under the hero).
+  Approved layout: Option A, "Split screen". This replaces the What We Do section in TOP-NOTCH-HOMEPAGE-BUILD.md.
+  Everything else in that file still applies (Elementor Flexbox Containers only, nested containers Full Width,
+  breakpoints 980 / 600, explicit color and font values, scoped CSS, no boxes or uppercase labels).
+
+  What it is
+  - Two photos fill the full width of the screen edge to edge, half each. No outer padding, no gap, no cards.
+  - Each half: the photo as a background (Cover, Center) with a dark overlay that fades in toward the bottom:
+    linear-gradient(180deg, rgba(20,17,14,0.1) 0%, rgba(20,17,14,0.1) 35%, rgba(20,17,14,0.94) 100%).
+  - Text sits over the bottom of each photo: H2, paragraph, then the four service links in 2 columns.
+
+  Sizes
+  - Each half: min-height clamp(640px, 58vw, 840px). Content padding clamp(40px, 5vw, 72px) top/bottom, clamp(24px, 5vw, 72px) sides.
+  - H2: Cormorant Garamond 500, clamp(30px, 2.8vw, 40px), Bone #F2ECE3.
+  - Paragraph: Manrope 16px, line-height 1.7, #D7CFC4.
+  - Links: Manrope 15px / 600, Bone, amber arrow (#C68B4E) BEFORE the label, 44px tall, no underline, no divider lines.
+  - Below 1040px wide the halves stack (painting first), each full width.
+
+  RULE: the two sides must always match line for line
+  - Both H2s stay on ONE line each on desktop and tablet (white-space: nowrap; they may wrap on phones only).
+    Never let one title wrap to 2 lines while the other is 1 line. If a title would wrap, shrink both titles together.
+  - Both paragraphs should run the same number of lines, and both link lists are 2 rows of 2.
+
+  Photos: none yet. Keep the colored slots and the "Photo:" label (widget named "Photo label (delete when photo added)").
+  Photos need a darker lower half so the text stays readable; the overlay handles most of it.
+  Copy is final. Use it word for word.
+-->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&amp;family=Manrope:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0;background:#14110E}
+a{color:#C68B4E}a:hover{color:#D9A66B}
+input:focus,select:focus{outline:2px solid #14110E;outline-offset:1px}
+.tn-menu-btn,.tn-show-sm,.tn-mobilebar{display:none}
+.tn-oneline{white-space:nowrap}
+@media (max-width:760px){.tn-oneline{white-space:normal}}
+@media (max-width:1359px){.tn-nav{display:none !important}.tn-menu-btn{display:inline-flex !important}}
+@media (max-width:760px){.tn-hide-sm{display:none !important}.tn-show-sm{display:inline-flex !important}.tn-mobilebar{display:flex !important}}
+</style>
+</head>
+<body>
+<div style="font-family: Manrope, 'Helvetica Neue', Arial, sans-serif; color: #F2ECE3; background: #14110E; min-width: 0; -webkit-font-smoothing: antialiased">
+<section style="background: #14110E">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(520px, 100%), 1fr))">
+<article style="position: relative; min-height: clamp(640px, 58vw, 840px); display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden; background-color: #33261C">
+<div aria-hidden="true" style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(20,17,14,0.1) 0%, rgba(20,17,14,0.1) 35%, rgba(20,17,14,0.94) 100%)"></div>
+<span style="position: absolute; left: 32px; top: 28px; display: flex; align-items: center; gap: 8px; font-size: 12px; color: rgba(242,236,227,0.6)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"></path><circle cx="12" cy="13" r="3.5"></circle></svg>Photo: finished interior, fills this half</span>
+<div style="position: relative; display: flex; flex-direction: column; gap: 22px; padding: clamp(40px, 5vw, 72px) clamp(24px, 5vw, 72px)">
+<h2 class="tn-oneline" style="margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: clamp(30px, 2.8vw, 40px); line-height: 1.08; letter-spacing: -0.01em; color: #F2ECE3">Fine Interior &amp; Exterior Painting</h2>
+<p style="margin: 0; font-size: 16px; line-height: 1.7; color: #D7CFC4">Walls, ceilings, trim, doors, and specialty finishes, completed with the preparation, protection, and clean lines a high-end home demands. We work in occupied and unoccupied homes, coordinate with property managers, and keep you updated even when you're out of town.</p>
+<ul style="list-style: none; margin: 8px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 0 32px">
+<li><a href="#" style="display: flex; flex-direction: row-reverse; align-items: center; justify-content: flex-end; gap: 10px; min-height: 44px; color: #F2ECE3; font-size: 15px; font-weight: 600; text-decoration: none">Interior Painting<span aria-hidden="true" style="color: #C68B4E">→</span></a></li>
+<li><a href="#" style="display: flex; flex-direction: row-reverse; align-items: center; justify-content: flex-end; gap: 10px; min-height: 44px; color: #F2ECE3; font-size: 15px; font-weight: 600; text-decoration: none">Exterior Painting<span aria-hidden="true" style="color: #C68B4E">→</span></a></li>
+<li><a href="#" style="display: flex; flex-direction: row-reverse; align-items: center; justify-content: flex-end; gap: 10px; min-height: 44px; color: #F2ECE3; font-size: 15px; font-weight: 600; text-decoration: none">Specialty Finishes &amp; Interior Wood<span aria-hidden="true" style="color: #C68B4E">→</span></a></li>
+<li><a href="#" style="display: flex; flex-direction: row-reverse; align-items: center; justify-content: flex-end; gap: 10px; min-height: 44px; color: #F2ECE3; font-size: 15px; font-weight: 600; text-decoration: none">Commercial &amp; HOA<span aria-hidden="true" style="color: #C68B4E">→</span></a></li>
+</ul>
+</div>
+</article>
+<article style="position: relative; min-height: clamp(640px, 58vw, 840px); display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden; background-color: #3A281B">
+<div aria-hidden="true" style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(20,17,14,0.1) 0%, rgba(20,17,14,0.1) 35%, rgba(20,17,14,0.94) 100%)"></div>
+<span style="position: absolute; left: 32px; top: 28px; display: flex; align-items: center; gap: 8px; font-size: 12px; color: rgba(242,236,227,0.6)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"></path><circle cx="12" cy="13" r="3.5"></circle></svg>Photo: stained log home, fills this half</span>
+<div style="position: relative; display: flex; flex-direction: column; gap: 22px; padding: clamp(40px, 5vw, 72px) clamp(24px, 5vw, 72px)">
+<h2 class="tn-oneline" style="margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: clamp(30px, 2.8vw, 40px); line-height: 1.08; letter-spacing: -0.01em; color: #F2ECE3">Log &amp; Timber Staining</h2>
+<p style="margin: 0; font-size: 16px; line-height: 1.7; color: #D7CFC4">Log home staining is where we started and what we're known for. We prepare the wood properly, apply premium stains and sealers, and handle the chinking, check sealing, and rot repair that keep a log home tight and protected. We build log homes, so we know what makes a finish last.</p>
+<ul style="list-style: none; margin: 8px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 0 32px">
+<li><a href="#" style="display: flex; flex-direction: row-reverse; align-items: center; justify-content: flex-end; gap: 10px; min-height: 44px; color: #F2ECE3; font-size: 15px; font-weight: 600; text-decoration: none">Log Home Staining &amp; Restoration<span aria-hidden="true" style="color: #C68B4E">→</span></a></li>
+<li><a href="#" style="display: flex; flex-direction: row-reverse; align-items: center; justify-content: flex-end; gap: 10px; min-height: 44px; color: #F2ECE3; font-size: 15px; font-weight: 600; text-decoration: none">Chinking &amp; Check Sealing<span aria-hidden="true" style="color: #C68B4E">→</span></a></li>
+<li><a href="#" style="display: flex; flex-direction: row-reverse; align-items: center; justify-content: flex-end; gap: 10px; min-height: 44px; color: #F2ECE3; font-size: 15px; font-weight: 600; text-decoration: none">Rot Repair &amp; Prevention<span aria-hidden="true" style="color: #C68B4E">→</span></a></li>
+<li><a href="#" style="display: flex; flex-direction: row-reverse; align-items: center; justify-content: flex-end; gap: 10px; min-height: 44px; color: #F2ECE3; font-size: 15px; font-weight: 600; text-decoration: none">Deck Staining<span aria-hidden="true" style="color: #C68B4E">→</span></a></li>
+</ul>
+</div>
+</article>
+</div>
+</section>
+</div>
+</body>
+</html>
