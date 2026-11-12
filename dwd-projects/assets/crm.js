@@ -4024,7 +4024,7 @@
 		if (t.closest('[data-spendmodal]')) { e.preventDefault(); S.modal = { type: 'spend' }; render(); return; }
 		if (t.closest('[data-adscopy]')) { var ta = app.querySelector('.dwdc-adscript'); if (ta) { ta.select(); (navigator.clipboard ? navigator.clipboard.writeText(ta.value) : Promise.reject()).then(function () { toast('Script copied'); }, function () { document.execCommand('copy'); toast('Script copied'); }); } return; }
 		if (t.closest('[data-connmodal]')) { e.preventDefault(); S.modal = { type: 'connects' }; render(); return; }
-		if (t.closest('[data-owed]')) { S.modal = { type: 'owed' }; render(); return; }
+		if (t.closest('[data-owed]')) { e.preventDefault(); S.modal = { type: 'owed' }; render(); return; } // pop-up only, stay on this page
 		if ((el = t.closest('[data-month]'))) {
 			var ym = el.getAttribute('data-month');
 			S.modal = { type: 'month', ym: ym, vals: {} }; render();
@@ -4136,7 +4136,7 @@
 			return;
 		}
 		if (t.closest('[data-complete]')) {
-			save(r.id, { list: 'complete', balance: '0', completed: DWDC.today }, 'Marked complete').then(function () { S.back = 'completed'; go('completed'); });
+			save(r.id, { list: 'complete', completed: DWDC.today }, 'Marked complete') // owed is never changed here: only Mike changes it.then(function () { S.back = 'completed'; go('completed'); });
 			return;
 		}
 		if ((el = t.closest('[data-del-job]'))) {
