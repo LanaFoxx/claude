@@ -446,7 +446,16 @@ def build_header():
               css="selector{max-width:1280px;}")],
         padding=pads(0, SIDE, 0, SIDE), flex_align_items="center",
         position="absolute", _offset_orientation_h="start", _offset_x=px(0),
-        _offset_orientation_v="start", _offset_y=px(100, "%"), z_index=20)
+        _offset_orientation_v="start", _offset_y=px(100, "%"), z_index=20,
+        # Sticky main row (top bar scrolls away). Gets a solid blurred background once scrolled.
+        sticky="top", sticky_on=["desktop", "laptop", "tablet", "mobile"], sticky_offset=0,
+        sticky_effects_offset=60,
+        custom_css="selector{transition:background-color .3s ease, backdrop-filter .3s ease;}"
+                   "selector.elementor-sticky--effects{background-color:rgba(15,13,11,0.92);"
+                   "-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);"
+                   "box-shadow:0 1px 0 rgba(242,236,227,0.08);}"
+                   "selector > .e-con{transition:min-height .3s ease;}"
+                   "selector.elementor-sticky--effects > .e-con{--min-height:76px;min-height:76px;}")
 
     header_css = """
 #tn-header{position:relative;z-index:20;}

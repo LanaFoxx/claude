@@ -628,7 +628,17 @@
        "size": 100,
        "sizes": []
       },
-      "z_index": 20
+      "z_index": 20,
+      "sticky": "top",
+      "sticky_on": [
+       "desktop",
+       "laptop",
+       "tablet",
+       "mobile"
+      ],
+      "sticky_offset": 0,
+      "sticky_effects_offset": 60,
+      "custom_css": "selector{transition:background-color .3s ease, backdrop-filter .3s ease;}selector.elementor-sticky--effects{background-color:rgba(15,13,11,0.92);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);box-shadow:0 1px 0 rgba(242,236,227,0.08);}selector > .e-con{transition:min-height .3s ease;}selector.elementor-sticky--effects > .e-con{--min-height:76px;min-height:76px;}"
      },
      "elements": [
       {

@@ -208,3 +208,8 @@ Container `Seasonal Offer`: change the H2 to **Talk to us about your project** a
   - Three images rotate with a fade every 6 seconds (Elementor background slideshow), under the same dark gradient overlay: a stain brush on a deck railing, a stained cedar fence, and a stained wood deck.
   - They are in the staging Media Library (IDs 1583–1585), listed in `tools/hero_slides.json`. On import, Elementor downloads them from staging, the same as the icons.
   - The hero's "Photo label" placeholder is removed.
+- **Sticky header:** the main row uses Pro Sticky (Top, all devices, effects offset 60px); the top bar scrolls away.
+  - Once scrolled, it gets rgba(15,13,11,0.92) with a 12px blur and a faint hairline, and shrinks from 96px to 76px.
+  - At the top of the page it stays transparent over the hero.
+  - Pro inserts a hidden spacer clone; because the row is absolute, the page doesn't shift.
+- **Hero left gradient:** an extra 90° layer (82% → 60% → 20% → 0 at 80%) under the vertical gradient keeps the hero text legible over the photos.
