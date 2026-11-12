@@ -45,7 +45,7 @@
      "isLinked": false
     },
     "border_color": "#2A241F",
-    "custom_css": "#tn-header .elementor-nav-menu--main .elementor-nav-menu{flex-wrap:nowrap;white-space:nowrap;justify-content:center;}\n#tn-header .elementor-nav-menu--main .elementor-item.has-submenu{gap:6px;}\n#tn-header .elementor-nav-menu--main .sub-arrow{padding:0 0 0 6px;font-size:10px;}\n#tn-header .elementor-nav-menu--main .sub-arrow svg{width:10px;height:10px;}\n#tn-header .elementor-nav-menu--main > .elementor-nav-menu > li > .sub-menu{min-width:260px !important;}\n#tn-header .elementor-menu-toggle{width:44px;height:44px;box-sizing:content-box;padding:0;display:flex;align-items:center;justify-content:center;border:1px solid rgba(242,236,227,0.32);border-radius:2px;}\n#tn-header .elementor-nav-menu--dropdown.elementor-nav-menu__container{margin-top:23px;border-top:1px solid #2A241F;}\n#tn-header .elementor-nav-menu--dropdown .elementor-item{justify-content:space-between;}\n#tn-header .tn-call .elementor-button-icon{font-size:18px;}\n#tn-header .tn-call .elementor-button-text:empty{display:none;}\n@media (max-width:760px){\n  #tn-header .tn-hide-sm{display:none !important;}\n  #tn-header .elementor-widget.tn-show-sm{display:block !important;}\n}",
+    "custom_css": "#tn-header .elementor-nav-menu--main .elementor-nav-menu{flex-wrap:nowrap;white-space:nowrap;justify-content:center;}\n#tn-header .elementor-nav-menu--main .sub-arrow{padding:0 0 0 6px;font-size:10px;}\n#tn-header .elementor-nav-menu--main .sub-arrow svg{width:10px;height:10px;}\n#tn-header .elementor-nav-menu--main > .elementor-nav-menu > li > .sub-menu{min-width:260px !important;}\n#tn-header .elementor-menu-toggle{width:44px;height:44px;box-sizing:content-box;padding:0;display:flex;align-items:center;justify-content:center;border:1px solid rgba(242,236,227,0.32);border-radius:2px;}\n#tn-header .elementor-nav-menu--dropdown.elementor-nav-menu__container{margin-top:23px;border-top:1px solid #2A241F;}\n#tn-header .elementor-nav-menu--dropdown .elementor-item{justify-content:space-between;}\n#tn-header .tn-call .elementor-button-icon{font-size:18px;}\n#tn-header .tn-call .elementor-button-text:empty{display:none;}\n@media (max-width:760px){\n  #tn-header .tn-hide-sm{display:none !important;}\n  #tn-header .elementor-widget.tn-show-sm{display:block !important;}\n}",
     "z_index": 50
    },
    "elements": [
@@ -124,8 +124,8 @@
          "size": 28
         },
         "width": {
-         "unit": "px",
-         "size": 1280,
+         "unit": "%",
+         "size": 100,
          "sizes": []
         },
         "padding": {
@@ -144,7 +144,8 @@
          "size": 40,
          "sizes": []
         },
-        "_flex_align_self": "center"
+        "_flex_align_self": "center",
+        "custom_css": "selector{max-width:1280px;}"
        },
        "elements": [
         {
@@ -178,6 +179,7 @@
            "size": 0.96,
            "sizes": []
           },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
           "_title": "Utility / Tagline"
          },
          "elements": []
@@ -379,8 +381,8 @@
          "size": 28
         },
         "width": {
-         "unit": "px",
-         "size": 1280,
+         "unit": "%",
+         "size": 100,
          "sizes": []
         },
         "padding": {
@@ -394,8 +396,8 @@
         "container_type": "grid",
         "grid_auto_flow": "row",
         "grid_rows_grid": {
-         "unit": "custom",
-         "size": "auto",
+         "unit": "fr",
+         "size": 1,
          "sizes": []
         },
         "grid_columns_grid": {
@@ -475,7 +477,8 @@
         "flex_align_items": "center",
         "grid_align_items": "center",
         "grid_justify_items": "stretch",
-        "_flex_align_self": "center"
+        "_flex_align_self": "center",
+        "custom_css": "selector{max-width:1280px;}"
        },
        "elements": [
         {
@@ -523,7 +526,7 @@
            "isInner": false,
            "settings": {
             "title": "TOP NOTCH",
-            "header_size": "span",
+            "header_size": "div",
             "title_color": "#F2ECE3",
             "typography_typography": "custom",
             "typography_font_family": "Cormorant Garamond",
@@ -554,7 +557,7 @@
            "isInner": false,
            "settings": {
             "title": "PAINTING &amp; STAINING",
-            "header_size": "span",
+            "header_size": "div",
             "title_color": "#C68B4E",
             "typography_typography": "custom",
             "typography_font_family": "Manrope",

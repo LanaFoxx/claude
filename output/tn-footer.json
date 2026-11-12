@@ -59,7 +59,7 @@
     "_element_id": "tn-footer",
     "background_background": "classic",
     "background_color": "#0F0D0B",
-    "custom_css": "#tn-footer a{text-decoration:none;}\n@media (max-width:760px){ #tn-footer{padding-bottom:76px !important;} }"
+    "custom_css": "#tn-footer a{text-decoration:none;}\n@media (max-width:760px){ #tn-footer{--padding-bottom:76px !important;} }"
    },
    "elements": [
     {
@@ -243,7 +243,7 @@
            "isInner": false,
            "settings": {
             "title": "TOP NOTCH",
-            "header_size": "span",
+            "header_size": "div",
             "title_color": "#F2ECE3",
             "typography_typography": "custom",
             "typography_font_family": "Cormorant Garamond",
@@ -274,7 +274,7 @@
            "isInner": false,
            "settings": {
             "title": "PAINTING &amp; STAINING",
-            "header_size": "span",
+            "header_size": "div",
             "title_color": "#C68B4E",
             "typography_typography": "custom",
             "typography_font_family": "Manrope",
@@ -325,6 +325,7 @@
            "size": 1.7,
            "sizes": []
           },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
           "_title": "Footer / Tagline"
          },
          "elements": []
@@ -504,7 +505,7 @@
           "icon_typography_font_weight": "400",
           "icon_typography_line_height": {
            "unit": "em",
-           "size": 1.5,
+           "size": 1.36,
            "sizes": []
           },
           "_title": "Footer / Fine Painting / Links"
@@ -654,7 +655,7 @@
           "icon_typography_font_weight": "400",
           "icon_typography_line_height": {
            "unit": "em",
-           "size": 1.5,
+           "size": 1.36,
            "sizes": []
           },
           "_title": "Footer / Log & Timber Staining / Links"
@@ -856,7 +857,7 @@
           "icon_typography_font_weight": "400",
           "icon_typography_line_height": {
            "unit": "em",
-           "size": 1.5,
+           "size": 1.36,
            "sizes": []
           },
           "_title": "Footer / Company / Links"
@@ -952,7 +953,7 @@
            "size": 1.6,
            "sizes": []
           },
-          "custom_css": "selector a.tn-call{color:#F2ECE3;font-weight:600;text-decoration:none;}selector a.tn-call:hover{color:#D9A66B;}",
+          "custom_css": "selector p:last-child{margin-block-end:0;}selector a.tn-call{color:#F2ECE3;font-weight:600;text-decoration:none;}selector a.tn-call:hover{color:#D9A66B;}",
           "_title": "Footer / Contact / Details"
          },
          "elements": []
@@ -1004,6 +1005,7 @@
        "isLinked": false
       },
       "_border_color": "#2A241F",
+      "custom_css": "selector p:last-child{margin-block-end:0;}",
       "_title": "Footer / Service Area"
      },
      "elements": []

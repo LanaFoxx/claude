@@ -37,12 +37,12 @@ DEVICES = ("", "_laptop", "_tablet", "_mobile")
 
 # responsive tuples: (desktop, laptop, tablet, mobile)
 SIDE = (48, 48, 32, 20)
-SECV = (128, 112, 96, 72)
-H1 = (80, 68, 52, 40)
-H2 = (56, 48, 40, 36)
-CARD_H3 = (42, 36, 32, 32)
+SECV = (128, 120, 96, 72)
+H1 = (80, 74, 52, 40)
+H2 = (56, 52, 40, 36)
+CARD_H3 = (40, 38, 32, 32)
 BUILDER_H2 = (38, 32, 30, 30)
-SPLIT_GAP = (86, 72, 40, 40)  # clamp(40px, 6vw, 96px)
+SPLIT_GAP = (86, 80, 40, 40)  # clamp(40px, 6vw, 96px)
 
 # ---------------------------------------------------------------- ids
 _rng = random.Random(1999)
@@ -208,6 +208,8 @@ def text(title, html, color=DRIFT, size=17, lh=1.75, weight=None, para_gap=0, **
     st = {"editor": html, "text_color": color, "paragraph_spacing": px(para_gap)}
     st.update(typo(size=size, weight=weight, lh=lh))
     st.update(s)
+    reset = "selector p:last-child{margin-block-end:0;}"
+    st["custom_css"] = reset + st.get("custom_css", "")
     return widget("text-editor", title, **st)
 
 
@@ -286,9 +288,9 @@ def stars(title, color, size=14, gap_=2):
 def wordmark(title, size=28, url="/"):
     return container(
         title,
-        [heading("Wordmark / Name", "TOP NOTCH", tag="span", color=BONE,
+        [heading("Wordmark / Name", "TOP NOTCH", tag="div", color=BONE,
                  typ=typo(family=SERIF, size=size, weight=600, lh=1, ls=round(size * 0.08, 2))),
-         heading("Wordmark / Descriptor", "PAINTING &amp; STAINING", tag="span", color=AMBER,
+         heading("Wordmark / Descriptor", "PAINTING &amp; STAINING", tag="div", color=AMBER,
                  typ=typo(size=10, weight=700, lh=1.2, ls=3.6))],
         gap=5, html_tag="a", link=link(url), _attributes="aria-label|Top Notch Painting home",
         flex_align_items="flex-start",
@@ -342,9 +344,9 @@ def build_header():
                        **typo(prefix="icon_typography", size=12, weight=600, lh=1.5, ls=0.96)),
             ],
             direction="row", gap=(28, 4),
-            width=px(1280), flex_justify_content="space-between", flex_align_items="center",
+            flex_justify_content="space-between", flex_align_items="center",
             flex_wrap="wrap", min_height=px(40),
-            _flex_align_self="center",
+            _flex_align_self="center", custom_css="selector{max-width:1280px;}",
         )],
         padding=side_pad(0, 0),
         background_background="classic", background_color=NIGHT,
@@ -411,16 +413,16 @@ def build_header():
             [wordmark("Header / Wordmark"), main_nav, actions],
             cols=("auto 1fr auto", "1fr auto", "1fr auto", "1fr auto"),
             gap_col=28, gap_row=0,
-            width=px(1280), min_height=px(88), flex_align_items="center",
+            min_height=px(88), flex_align_items="center",
             grid_align_items="center", grid_justify_items="stretch",
-            _flex_align_self="center",
+            rows=px(1, "fr"), _flex_align_self="center",
+            custom_css="selector{max-width:1280px;}",
         )],
         padding=side_pad(0, 0), flex_align_items="center",
     )
 
     header_css = """
 #tn-header .elementor-nav-menu--main .elementor-nav-menu{flex-wrap:nowrap;white-space:nowrap;justify-content:center;}
-#tn-header .elementor-nav-menu--main .elementor-item.has-submenu{gap:6px;}
 #tn-header .elementor-nav-menu--main .sub-arrow{padding:0 0 0 6px;font-size:10px;}
 #tn-header .elementor-nav-menu--main .sub-arrow svg{width:10px;height:10px;}
 #tn-header .elementor-nav-menu--main > .elementor-nav-menu > li > .sub-menu{min-width:260px !important;}
@@ -457,7 +459,7 @@ def footer_links(title, heading_text, items, aria):
                 text_color_hover=BONE,
                 icon_list=[{"_id": eid(), "text": t, "link": link(u),
                             "selected_icon": {"value": "", "library": ""}} for t, u in items],
-                **typo(prefix="icon_typography", size=14, weight=400, lh=1.5))],
+                **typo(prefix="icon_typography", size=14, weight=400, lh=1.36))],
         gap=16, html_tag="nav", _attributes="aria-label|" + aria,
     )
 
@@ -534,7 +536,7 @@ def build_footer():
 
     footer_css = """
 #tn-footer a{text-decoration:none;}
-@media (max-width:760px){ #tn-footer{padding-bottom:76px !important;} }
+@media (max-width:760px){ #tn-footer{--padding-bottom:76px !important;} }
 """
     footer = container(
         "Footer", [columns, service_line, bottom], top=True, boxed=True, gap=56,
@@ -658,13 +660,13 @@ def build_home():
                     "Fine painting and log home staining for exceptional mountain homes.",
                     tag="h1", color=BONE,
                     typ=typo(family=SERIF, size=H1, weight=500, lh=1.02, ls=-0.8),
-                    custom_css="selector{max-width:900px;}selector .elementor-heading-title{text-wrap:balance;letter-spacing:-0.01em;}"),
+                    custom_css="selector{max-width:900px !important;}selector .elementor-heading-title{text-wrap:balance;letter-spacing:-0.01em;}"),
             text("Hero / Subline",
                  "<p>High-end interior and exterior painting, plus log and timber home staining, "
                  "restoration and chinking, from Vail to Aspen. Backed by a company that has been "
                  "building log homes in these valleys since 1999.</p>",
                  color="#D7CFC4", size=19, lh=1.65,
-                 custom_css="selector{max-width:620px;}selector p{text-wrap:pretty;}"),
+                 custom_css="selector{max-width:620px !important;}selector p{text-wrap:pretty;}"),
             container("Hero / Buttons",
                       [button("Hero / Request an Estimate", "Request an Estimate", "#estimate"),
                        button("Hero / Call", "Call " + PHONE, TEL, kind="outline", pad_x=26,
@@ -687,7 +689,7 @@ def build_home():
 
     # 2 TRUST BAR -----------------------------------------------------------
     def trust_item(title, figure, caption, with_stars=False):
-        fig = heading(title + " / Figure", figure, tag="span", color=BONE,
+        fig = heading(title + " / Figure", figure, tag="div", color=BONE,
                       typ=typo(family=SERIF, size=26, weight=600, lh=1))
         top_el = fig
         if with_stars:
@@ -751,9 +753,9 @@ def build_home():
     # 4 WHO WE ARE --------------------------------------------------------------
     badge = container(
         "Who We Are / Photo / 1999 Badge",
-        [heading("Badge / Year", "1999", tag="span", color=BONE,
+        [heading("Badge / Year", "1999", tag="div", color=BONE,
                  typ=typo(family=SERIF, size=56, weight=500, lh=1)),
-         heading("Badge / Caption", "Top Notch Logworks founded", tag="span", color=DRIFT,
+         heading("Badge / Caption", "Top Notch Logworks founded", tag="div", color=DRIFT,
                  typ=typo(size=11, weight=600, lh=1.4, ls=1.98, transform="uppercase"))],
         gap=8, padding=dims(28, 36), background_background="classic", background_color=CHARRED,
         position="absolute", _offset_orientation_h="start", _offset_x=px(0),
@@ -849,14 +851,14 @@ def build_home():
         "Away / Content",
         [eyebrow("Second homes &amp; property managers"),
          h2("Away for the season? We'll take care of it.",
-            custom_css="selector{max-width:560px;}selector .elementor-heading-title{text-wrap:balance;}"),
+            custom_css="selector{max-width:560px !important;}selector .elementor-heading-title{text-wrap:balance;}"),
          text("Away / Text",
               "<p>Many of our clients aren't here full-time. We coordinate access with you or your "
               "property manager, send progress photos along the way, and finish the work before you "
               "arrive, with the home cleaned and ready to enjoy.</p>"
               "<p>Winter is an ideal time for interior projects, when the house is quiet and "
               "schedules are flexible.</p>",
-              color="#C9D1C4", para_gap=24, custom_css="selector{max-width:560px;}"),
+              color="#C9D1C4", para_gap=24, custom_css="selector{max-width:560px !important;}"),
          container("Away / Buttons",
                    [button("Away / Request an Estimate", "Request an Estimate", "#estimate"),
                     button("Away / Call", "Call " + PHONE, TEL, kind="outline", pad_x=26,
@@ -960,6 +962,7 @@ def build_home():
         "selector .elementor-field-group .elementor-field-textual:focus{border-color:#C68B4E;"
         "box-shadow:0 0 0 1px #C68B4E;outline:none;}"
         "selector .e-form__buttons{margin-top:4px;}"
+        "selector .elementor-mark-required .elementor-field-label:after{color:#C68B4E;}"
         "selector .elementor-button{min-height:54px;}"
     )
     form = widget(

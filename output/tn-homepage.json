@@ -234,7 +234,7 @@
       },
       "typography_font_size_laptop": {
        "unit": "px",
-       "size": 68,
+       "size": 74,
        "sizes": []
       },
       "typography_font_size_tablet": {
@@ -258,7 +258,7 @@
        "size": -0.8,
        "sizes": []
       },
-      "custom_css": "selector{max-width:900px;}selector .elementor-heading-title{text-wrap:balance;letter-spacing:-0.01em;}",
+      "custom_css": "selector{max-width:900px !important;}selector .elementor-heading-title{text-wrap:balance;letter-spacing:-0.01em;}",
       "_title": "Hero / Title (H1)"
      },
      "elements": []
@@ -288,7 +288,7 @@
        "size": 1.65,
        "sizes": []
       },
-      "custom_css": "selector{max-width:620px;}selector p{text-wrap:pretty;}",
+      "custom_css": "selector p:last-child{margin-block-end:0;}selector{max-width:620px !important;}selector p{text-wrap:pretty;}",
       "_title": "Hero / Subline"
      },
      "elements": []
@@ -727,7 +727,7 @@
            "isInner": false,
            "settings": {
             "title": "4.9",
-            "header_size": "span",
+            "header_size": "div",
             "title_color": "#F2ECE3",
             "typography_typography": "custom",
             "typography_font_family": "Cormorant Garamond",
@@ -813,7 +813,7 @@
          "isInner": false,
          "settings": {
           "title": "BBB A+",
-          "header_size": "span",
+          "header_size": "div",
           "title_color": "#F2ECE3",
           "typography_typography": "custom",
           "typography_font_family": "Cormorant Garamond",
@@ -897,7 +897,7 @@
          "isInner": false,
          "settings": {
           "title": "Since 1999",
-          "header_size": "span",
+          "header_size": "div",
           "title_color": "#F2ECE3",
           "typography_typography": "custom",
           "typography_font_family": "Cormorant Garamond",
@@ -981,7 +981,7 @@
          "isInner": false,
          "settings": {
           "title": "Fully insured",
-          "header_size": "span",
+          "header_size": "div",
           "title_color": "#F2ECE3",
           "typography_typography": "custom",
           "typography_font_family": "Cormorant Garamond",
@@ -1065,7 +1065,7 @@
          "isInner": false,
          "settings": {
           "title": "Sashco &amp; Perma-Chink",
-          "header_size": "span",
+          "header_size": "div",
           "title_color": "#F2ECE3",
           "typography_typography": "custom",
           "typography_font_family": "Cormorant Garamond",
@@ -1146,9 +1146,9 @@
     },
     "padding_laptop": {
      "unit": "px",
-     "top": "112",
+     "top": "120",
      "right": "48",
-     "bottom": "112",
+     "bottom": "120",
      "left": "48",
      "isLinked": false
     },
@@ -1584,12 +1584,12 @@
             "typography_font_family": "Cormorant Garamond",
             "typography_font_size": {
              "unit": "px",
-             "size": 42,
+             "size": 40,
              "sizes": []
             },
             "typography_font_size_laptop": {
              "unit": "px",
-             "size": 36,
+             "size": 38,
              "sizes": []
             },
             "typography_font_size_tablet": {
@@ -1637,6 +1637,7 @@
              "size": 1.7,
              "sizes": []
             },
+            "custom_css": "selector p:last-child{margin-block-end:0;}",
             "_title": "What We Do / Painting Card / Text"
            },
            "elements": []
@@ -2186,12 +2187,12 @@
             "typography_font_family": "Cormorant Garamond",
             "typography_font_size": {
              "unit": "px",
-             "size": 42,
+             "size": 40,
              "sizes": []
             },
             "typography_font_size_laptop": {
              "unit": "px",
-             "size": 36,
+             "size": 38,
              "sizes": []
             },
             "typography_font_size_tablet": {
@@ -2239,6 +2240,7 @@
              "size": 1.7,
              "sizes": []
             },
+            "custom_css": "selector p:last-child{margin-block-end:0;}",
             "_title": "What We Do / Staining Card / Text"
            },
            "elements": []
@@ -2612,9 +2614,9 @@
     },
     "padding_laptop": {
      "unit": "px",
-     "top": "112",
+     "top": "120",
      "right": "48",
-     "bottom": "112",
+     "bottom": "120",
      "left": "48",
      "isLinked": false
     },
@@ -2703,18 +2705,18 @@
        "size": 86
       },
       "grid_gaps_laptop": {
-       "column": "72",
-       "row": "72",
+       "column": "80",
+       "row": "80",
        "isLinked": true,
        "unit": "px",
-       "size": 72
+       "size": 80
       },
       "flex_gap_laptop": {
-       "column": "72",
-       "row": "72",
+       "column": "80",
+       "row": "80",
        "isLinked": true,
        "unit": "px",
-       "size": 72
+       "size": 80
       },
       "grid_gaps_tablet": {
        "column": "40",
@@ -2828,7 +2830,7 @@
           },
           "typography_font_size_laptop": {
            "unit": "px",
-           "size": 48,
+           "size": 52,
            "sizes": []
           },
           "typography_font_size_tablet": {
@@ -2877,6 +2879,7 @@
            "size": 1.75,
            "sizes": []
           },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
           "_title": "Who We Are / Text body"
          },
          "elements": []
@@ -3065,7 +3068,7 @@
            "isInner": false,
            "settings": {
             "title": "1999",
-            "header_size": "span",
+            "header_size": "div",
             "title_color": "#F2ECE3",
             "typography_typography": "custom",
             "typography_font_family": "Cormorant Garamond",
@@ -3091,7 +3094,7 @@
            "isInner": false,
            "settings": {
             "title": "Top Notch Logworks founded",
-            "header_size": "span",
+            "header_size": "div",
             "title_color": "#B3A99C",
             "typography_typography": "custom",
             "typography_font_family": "Manrope",
@@ -3154,9 +3157,9 @@
     },
     "padding_laptop": {
      "unit": "px",
-     "top": "112",
+     "top": "120",
      "right": "48",
-     "bottom": "112",
+     "bottom": "120",
      "left": "48",
      "isLinked": false
     },
@@ -3370,7 +3373,7 @@
           },
           "typography_font_size_laptop": {
            "unit": "px",
-           "size": 48,
+           "size": 52,
            "sizes": []
           },
           "typography_font_size_tablet": {
@@ -3421,6 +3424,7 @@
          "size": 1.75,
          "sizes": []
         },
+        "custom_css": "selector p:last-child{margin-block-end:0;}",
         "_title": "Why / Header / Text"
        },
        "elements": []
@@ -3635,6 +3639,7 @@
            "size": 1.7,
            "sizes": []
           },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
           "_title": "Why / Builders first / Text"
          },
          "elements": []
@@ -3743,6 +3748,7 @@
            "size": 1.7,
            "sizes": []
           },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
           "_title": "Why / Preparation / Text"
          },
          "elements": []
@@ -3851,6 +3857,7 @@
            "size": 1.7,
            "sizes": []
           },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
           "_title": "Why / Protected / Text"
          },
          "elements": []
@@ -3959,6 +3966,7 @@
            "size": 1.7,
            "sizes": []
           },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
           "_title": "Why / One contact / Text"
          },
          "elements": []
@@ -4067,6 +4075,7 @@
            "size": 1.7,
            "sizes": []
           },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
           "_title": "Why / Products / Text"
          },
          "elements": []
@@ -4175,6 +4184,7 @@
            "size": 1.7,
            "sizes": []
           },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
           "_title": "Why / Warranty / Text"
          },
          "elements": []
@@ -4215,9 +4225,9 @@
     },
     "padding_laptop": {
      "unit": "px",
-     "top": "112",
+     "top": "120",
      "right": "48",
-     "bottom": "112",
+     "bottom": "120",
      "left": "48",
      "isLinked": false
     },
@@ -4432,7 +4442,7 @@
           },
           "typography_font_size_laptop": {
            "unit": "px",
-           "size": 48,
+           "size": 52,
            "sizes": []
           },
           "typography_font_size_tablet": {
@@ -5883,7 +5893,7 @@
           },
           "typography_font_size_laptop": {
            "unit": "px",
-           "size": 48,
+           "size": 52,
            "sizes": []
           },
           "typography_font_size_tablet": {
@@ -5902,7 +5912,7 @@
            "size": 1.06,
            "sizes": []
           },
-          "custom_css": "selector{max-width:560px;}selector .elementor-heading-title{text-wrap:balance;}",
+          "custom_css": "selector{max-width:560px !important;}selector .elementor-heading-title{text-wrap:balance;}",
           "_title": "Section title (H2)"
          },
          "elements": []
@@ -5932,7 +5942,7 @@
            "size": 1.75,
            "sizes": []
           },
-          "custom_css": "selector{max-width:560px;}",
+          "custom_css": "selector p:last-child{margin-block-end:0;}selector{max-width:560px !important;}",
           "_title": "Away / Text"
          },
          "elements": []
@@ -6120,9 +6130,9 @@
     },
     "padding_laptop": {
      "unit": "px",
-     "top": "112",
+     "top": "120",
      "right": "48",
-     "bottom": "112",
+     "bottom": "120",
      "left": "48",
      "isLinked": false
     },
@@ -6231,7 +6241,7 @@
         },
         "typography_font_size_laptop": {
          "unit": "px",
-         "size": 48,
+         "size": 52,
          "sizes": []
         },
         "typography_font_size_tablet": {
@@ -6386,6 +6396,7 @@
              "size": 1.5,
              "sizes": []
             },
+            "custom_css": "selector p:last-child{margin-block-end:0;}",
             "_title": "Reviews / Ratings / HomeAdvisor text"
            },
            "elements": []
@@ -6417,6 +6428,7 @@
            "size": 1.5,
            "sizes": []
           },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
           "_title": "Reviews / Ratings / BBB"
          },
          "elements": []
@@ -6446,6 +6458,7 @@
            "size": 1.5,
            "sizes": []
           },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
           "_title": "Reviews / Ratings / Google"
          },
          "elements": []
@@ -6683,7 +6696,7 @@
            "size": 1.35,
            "sizes": []
           },
-          "custom_css": "selector blockquote{margin:0;padding:0;border:0;font:inherit;color:inherit;text-wrap:pretty;}",
+          "custom_css": "selector p:last-child{margin-block-end:0;}selector blockquote{margin:0;padding:0;border:0;font:inherit;color:inherit;text-wrap:pretty;}",
           "typography_font_weight": "500",
           "_title": "Reviews / Card 1 / Quote"
          },
@@ -6714,7 +6727,7 @@
            "size": 1.6,
            "sizes": []
           },
-          "custom_css": "selector{margin-top:auto;}selector strong{color:#14110E;font-weight:700;}",
+          "custom_css": "selector p:last-child{margin-block-end:0;}selector{margin-top:auto;}selector strong{color:#14110E;font-weight:700;}",
           "_title": "Reviews / Card 1 / Attribution"
          },
          "elements": []
@@ -6844,7 +6857,7 @@
            "size": 1.35,
            "sizes": []
           },
-          "custom_css": "selector blockquote{margin:0;padding:0;border:0;font:inherit;color:inherit;text-wrap:pretty;}",
+          "custom_css": "selector p:last-child{margin-block-end:0;}selector blockquote{margin:0;padding:0;border:0;font:inherit;color:inherit;text-wrap:pretty;}",
           "typography_font_weight": "500",
           "_title": "Reviews / Card 2 / Quote"
          },
@@ -6875,7 +6888,7 @@
            "size": 1.6,
            "sizes": []
           },
-          "custom_css": "selector{margin-top:auto;}selector strong{color:#14110E;font-weight:700;}",
+          "custom_css": "selector p:last-child{margin-block-end:0;}selector{margin-top:auto;}selector strong{color:#14110E;font-weight:700;}",
           "_title": "Reviews / Card 2 / Attribution"
          },
          "elements": []
@@ -7225,6 +7238,7 @@
            "size": 1.7,
            "sizes": []
           },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
           "_title": "Builder Strip / Text body"
          },
          "elements": []
@@ -7327,9 +7341,9 @@
     },
     "padding_laptop": {
      "unit": "px",
-     "top": "112",
+     "top": "120",
      "right": "48",
-     "bottom": "112",
+     "bottom": "120",
      "left": "48",
      "isLinked": false
     },
@@ -7419,18 +7433,18 @@
        "size": 86
       },
       "grid_gaps_laptop": {
-       "column": "72",
-       "row": "72",
+       "column": "80",
+       "row": "80",
        "isLinked": true,
        "unit": "px",
-       "size": 72
+       "size": 80
       },
       "flex_gap_laptop": {
-       "column": "72",
-       "row": "72",
+       "column": "80",
+       "row": "80",
        "isLinked": true,
        "unit": "px",
-       "size": 72
+       "size": 80
       },
       "grid_gaps_tablet": {
        "column": "40",
@@ -7574,7 +7588,7 @@
             },
             "typography_font_size_laptop": {
              "unit": "px",
-             "size": 48,
+             "size": 52,
              "sizes": []
             },
             "typography_font_size_tablet": {
@@ -7623,6 +7637,7 @@
              "size": 1.75,
              "sizes": []
             },
+            "custom_css": "selector p:last-child{margin-block-end:0;}",
             "_title": "Seasonal Offer / Text"
            },
            "elements": []
@@ -7761,6 +7776,7 @@
            "size": 1.7,
            "sizes": []
           },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
           "_title": "Estimate / Next steps"
          },
          "elements": []
@@ -7988,7 +8004,7 @@
            "left": "24",
            "isLinked": false
           },
-          "custom_css": "selector .elementor-field-group .elementor-field-textual{height:48px;min-height:48px;padding:0 14px;font-family:Manrope, 'Helvetica Neue', Arial, sans-serif;}selector select.elementor-field-textual{padding:0 36px 0 12px;color-scheme:dark;}selector .elementor-select-wrapper .select-caret-down-wrapper{color:#F2ECE3;}selector .elementor-field-group .elementor-field-textual:focus{border-color:#C68B4E;box-shadow:0 0 0 1px #C68B4E;outline:none;}selector .e-form__buttons{margin-top:4px;}selector .elementor-button{min-height:54px;}",
+          "custom_css": "selector .elementor-field-group .elementor-field-textual{height:48px;min-height:48px;padding:0 14px;font-family:Manrope, 'Helvetica Neue', Arial, sans-serif;}selector select.elementor-field-textual{padding:0 36px 0 12px;color-scheme:dark;}selector .elementor-select-wrapper .select-caret-down-wrapper{color:#F2ECE3;}selector .elementor-field-group .elementor-field-textual:focus{border-color:#C68B4E;box-shadow:0 0 0 1px #C68B4E;outline:none;}selector .e-form__buttons{margin-top:4px;}selector .elementor-mark-required .elementor-field-label:after{color:#C68B4E;}selector .elementor-button{min-height:54px;}",
           "label_typography_typography": "custom",
           "label_typography_font_family": "Manrope",
           "label_typography_font_size": {
@@ -8057,7 +8073,7 @@
            "size": 1.6,
            "sizes": []
           },
-          "custom_css": "selector a{color:#C68B4E;font-weight:700;text-decoration:none;}selector a:hover{color:#D9A66B;}",
+          "custom_css": "selector p:last-child{margin-block-end:0;}selector a{color:#C68B4E;font-weight:700;text-decoration:none;}selector a:hover{color:#D9A66B;}",
           "_title": "Estimate / Builder note"
          },
          "elements": []
