@@ -282,3 +282,4 @@ Container `Seasonal Offer`: change the H2 to **Talk to us about your project** a
 - **Updated full reference:** `top-notch-homepage-reference.html` is replaced with the latest version, which includes these two sections.
 - **Hero:** 80px bottom padding below the credentials row.
 - **Away for the Season text half:** the same wood texture, fixed while scrolling, under a Spruce (#24302A) overlay at 75%.
+- **Why grid boxes (updated):** default fill rgba(242,236,227,0.03), a touch lighter than Spruce. On hover they fade to rgba(0,0,0,0.12), slightly darker than the section (0.35s).
