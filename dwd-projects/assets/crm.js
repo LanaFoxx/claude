@@ -688,6 +688,23 @@
 	// Home (design 4.1): schedule + recent activity | stat list + to-dos.
 	function schedHidden() { var m = {}; try { m = JSON.parse(ddGet('dreamdesk-sched-hidden', '{}')) || {}; } catch (e) { m = {}; } return m[DWDC.today] || []; }
 	function schedHide(key) { var m = {}; try { m = JSON.parse(ddGet('dreamdesk-sched-hidden', '{}')) || {}; } catch (e) { m = {}; } var l = m[DWDC.today] || []; if (l.indexOf(key) < 0) { l.push(key); } m = {}; m[DWDC.today] = l; ddSet('dreamdesk-sched-hidden', JSON.stringify(m)); }
+	/* Email a client straight from Dream Desk: sent from mike@ with Mike's Gmail signature, saved to the project's notes. */
+	function emailModal(m) {
+		var c = m.pid ? contact(m.pid) : null, v = m.vals || {};
+		return '<div class="dwdc-overlay" data-close-modal></div><form class="dwdc-modal dd-drawer dd-emm dd-emf"><button type="button" class="dwdc-mx" data-close-modal>' + ic('x', 20) + '</button>'
+			+ '<p class="dd-stm-k">Email client' + (c ? ' · ' + esc(c.name) : '') + '</p><h2 class="dd-dh">New email</h2>'
+			+ '<label class="dd-eml"><span>To</span><input type="email" name="to" required value="' + esc(v.to != null ? v.to : m.to || '') + '"></label>'
+			+ '<label class="dd-eml"><span>Subject</span><input name="subject" required autocomplete="off" value="' + esc(v.subject || '') + '" placeholder="Subject"></label>'
+			+ '<label class="dd-eml"><span>Message</span><textarea name="text" rows="11" required placeholder="Hi ' + esc(m.first || 'there') + ',">' + esc(v.text || '') + '</textarea></label>'
+			+ '<p class="dd-stm-n">Sent from <b>mike@dreamwebdigital.com</b> with your signature added at the bottom. It shows in your Gmail Sent folder' + (c ? ', and a copy is saved in this project’s notes' : '') + '.</p>'
+			+ '<div class="dd-stm-b"><button class="dd-btn primary">' + lu('mail', 14) + 'Send email</button><button type="button" class="dd-btn ghost" data-close-modal>Cancel</button></div></form>';
+	}
+	function openEmail(to, pid) {
+		var c = pid ? contact(pid) : null, k = c ? clientOf(c) : null;
+		var who = (c && c.person) || (k && k.name) || '', first = String(who).trim().split(/\s+/)[0] || '';
+		S.modal = { type: 'email', to: to || (c && (c.email || (k && k.email))) || '', pid: pid || 0, first: first, vals: {} };
+		render(); focusIn('[name=subject]');
+	}
 	function schedTaskModal(m) {
 		var w = m.key.slice(0, 1) === 'w', id = m.key.slice(2), t = w ? S.tasks.find(function (x) { return String(x.id) === id; }) : (pData().todos || []).find(function (x) { return String(x.id) === id; });
 		if (!t) { return ''; }
@@ -1134,13 +1151,13 @@
 			+ '<span class="dd-pc nm">' + flagDot(c) + '<span class="dd-st"><span class="dd-l1"><a href="#client/' + c.id + '"><b>' + esc(c.name) + '</b></a>' + (c.markup ? '<a class="dd-mtag" href="' + esc(url(c.markup)) + '" target="_blank" rel="noopener">Markup</a>' : '') + '<span class="dd-mob-pill">' + ddPill('Active', 'success') + '</span></span>'
 			+ (site(c) ? '<a class="dd-dom" href="' + esc(url(c.website)) + '" target="_blank" rel="noopener">' + esc(site(c)) + '</a>' : '')
 			+ '<span class="dd-mob-meta">' + esc([k ? k.name : (c.person || ''), ow ? 'Owed ' + money(ow) : paidWord(c), dd ? 'Due ' + fmt(dd) : '', c.next ? 'Next: ' + c.next : ''].filter(Boolean).join(' · ')) + '</span></span></span>'
-			+ '<span class="dd-pc cl"><span>' + (k ? '<a href="#cl/' + k.id + '">' + esc(k.name) + '</a>' : esc(c.person || '—')) + '</span><small>' + (em ? esc(em) : 'No email on file') + '</small></span>'
+			+ '<span class="dd-pc cl"><span>' + (k ? '<a href="#cl/' + k.id + '">' + esc(k.name) + '</a>' : esc(c.person || '—')) + '</span><small>' + (em ? '<a href="mailto:' + esc(em) + '" data-emailp="' + c.id + '">' + esc(em) + '</a>' : 'No email on file') + '</small></span>'
 			+ '<span class="dd-pc num">' + (num(c.price) ? money(c.price) : '<i>—</i>') + '</span>'
-			+ '<span class="dd-pc num owed">' + (ow ? money(ow) : '<em>Paid</em>') + '</span>'
+			+ '<span class="dd-pc num owed">' + (ow ? money(ow) : '<em>' + paidWord(c) + '</em>') + '</span>'
 			+ '<span class="dd-pc due ' + dueCls + '">' + (dd ? fmt(dd) : '<i>—</i>') + '</span>'
 			+ '<span class="dd-pc st">' + statusSelect(c) + '</span>'
 			+ '<span class="dd-pc nx" title="' + esc(c.next || '') + '">' + (c.next ? esc(c.next) : '<i>—</i>') + '</span>'
-			+ '<span class="dd-pc acts">' + (c.staging ? '<a class="dd-ibtn sm" href="' + esc(c.staging) + '" target="_blank" rel="noopener" title="Open staging site (right-click to copy)">' + lu('globe', 15) + '</a>' : '') + (c.drive ? '<button type="button" class="dd-ibtn sm" data-copy="' + esc(c.drive) + '" title="Copy Drive upload link">' + lu('link', 15) + '</button>' : '') + '<button type="button" class="dd-ibtn sm" data-actmove="' + c.id + ':' + (seg === 'now' ? 'wait' : 'now') + '" title="' + (seg === 'now' ? 'Move to Waiting' : 'Move to Working on now') + '">' + lu(seg === 'now' ? 'chevrons-down' : 'chevrons-up', 16) + '</button><a class="dd-ibtn sm" href="#client/' + c.id + '" title="Open project">' + lu('chevron-right', 16) + '</a></span></div>';
+			+ '<span class="dd-pc acts">' + (em ? '<button type="button" class="dd-ibtn sm" data-emailc="' + c.id + '" title="Email ' + esc(em) + '">' + lu('mail', 15) + '</button>' : '') + (c.staging ? '<a class="dd-ibtn sm" href="' + esc(c.staging) + '" target="_blank" rel="noopener" title="Open staging site (right-click to copy)">' + lu('globe', 15) + '</a>' : '') + (c.drive ? '<button type="button" class="dd-ibtn sm" data-copy="' + esc(c.drive) + '" title="Copy Drive upload link">' + lu('link', 15) + '</button>' : '') + '<button type="button" class="dd-ibtn sm" data-actmove="' + c.id + ':' + (seg === 'now' ? 'wait' : 'now') + '" title="' + (seg === 'now' ? 'Move to Waiting' : 'Move to Working on now') + '">' + lu(seg === 'now' ? 'chevrons-down' : 'chevrons-up', 16) + '</button><a class="dd-ibtn sm" href="#client/' + c.id + '" title="Open project">' + lu('chevron-right', 16) + '</a></span></div>';
 	}
 	function actCard(c) {
 		var k = clientOf(c), ow = num(c.balance);
@@ -2287,7 +2304,8 @@
 			'<div class="dwdc-mini-t"><div class="g-ap head"><span>Project · Client</span><span>Price</span><span>Due</span><span class="r">Owed</span></div>'
 			+ (active.length ? active.filter(match).map(function (c) {
 				var late = c.deadline && c.deadline < DWDC.today, ow = c.balance === '' && num(c.price) && !/upwork/i.test([c.pay_method, c.lead_source, c.source].join(' ')) ? Math.max(0, num(c.price) - lifetime(c)) : num(c.balance);
-				return '<div class="g-ap row" data-go="client/' + c.id + '"><span><b class="dwdc-pname">' + esc(c.name) + '</b>' + (site(c) ? siteLine(c) : '') + '<small>' + esc([clientName(c), c.job].filter(Boolean).join(' · ')) + '</small></span><span class="b">' + (num(c.price) ? money(c.price) : '—') + '</span><span class="' + (late ? 'deep b' : '') + '">' + (c.deadline ? fmt(c.deadline) : '—') + '</span><span class="r b ' + (ow ? 'deep' : 'sec') + '">' + (ow ? money(ow) : paidWord(c)) + '</span></div>';
+				var gem = c.email || (clientOf(c) || {}).email;
+				return '<div class="g-ap row" data-go="client/' + c.id + '"><span><b class="dwdc-pname">' + esc(c.name) + (gem ? ' <button type="button" class="dd-ibtn sm dd-emi" data-emailc="' + c.id + '" title="Email ' + esc(gem) + '">' + lu('mail', 14) + '</button>' : '') + '</b>' + (site(c) ? siteLine(c) : '') + '<small>' + esc([clientName(c), c.job].filter(Boolean).join(' · ')) + '</small></span><span class="b">' + (num(c.price) ? money(c.price) : '—') + '</span><span class="' + (late ? 'deep b' : '') + '">' + (c.deadline ? fmt(c.deadline) : '—') + '</span><span class="r b ' + (ow ? 'deep' : 'sec') + '">' + (ow ? money(ow) : paidWord(c)) + '</span></div>';
 			}).join('') : emptyRow('No active projects.')) + '</div>',
 			'<footer class="dwdc-totals one"><div><small>Total amount due</small><strong class="deep">' + money(owed(active)) + '</strong></div></footer>');
 		var td = openTasks().sort(function (a, b) { return (a.due || '9') < (b.due || '9') ? -1 : 1; });
@@ -2693,7 +2711,7 @@
 		var ids = pp.map(function (c) { return c.id; }), tasks = S.tasks.filter(function (t) { return ids.indexOf(t.contact) > -1; }).sort(function (a, b) { return a.done - b.done; });
 		var biz = k.company || (pp[0] && pp[0].name !== k.name ? pp[0].name : '');
 		var btn = function (cls, attr, label) { return '<button class="dwdc-btn2 ' + cls + '" ' + attr + '>' + label + '</button>'; };
-		var acts = reviewBtn(k.id) + (first ? btn('', 'data-act="pay" data-project="' + first.id + '"', 'Log payment')
+		var acts = btn('', 'data-emailto="' + esc(k.email || '') + '"' + (first ? ' data-emailp="' + first.id + '"' : ''), 'Email client') + reviewBtn(k.id) + (first ? btn('', 'data-act="pay" data-project="' + first.id + '"', 'Log payment')
 			+ (first.list === 'limbo' ? btn('', 'data-pset="active" data-pid="' + first.id + '"', 'Back to active') : btn('', 'data-pset="limbo" data-pid="' + first.id + '"', 'Move to limbo'))
 			+ (first.list === 'hold' ? btn('', 'data-pset="active" data-pid="' + first.id + '"', 'Resume') : btn('', 'data-pset="hold" data-pid="' + first.id + '"', 'Put on hold'))
 			+ btn('solid navy', 'data-pset="complete" data-pid="' + first.id + '"', 'Mark complete')
@@ -2811,7 +2829,7 @@
 		var started = imported(c) || !c.created ? '' : String(c.created).slice(0, 10);
 		var sub = [c.job ? esc(c.job) : '', site(c) ? '<a href="https://' + esc(site(c)) + '" target="_blank" rel="noopener">' + esc(site(c)) + '</a>' : '', c.lead_source ? 'Lead from ' + esc(c.lead_source) : '', started ? 'Started ' + fmt(started) : ''].filter(Boolean).join(' · ');
 		var head = '<div class="dd-pp-head"><span class="dd-pp-av">' + esc(ddInitials(c.company || c.name)) + '</span><div class="dd-pp-t"><div class="dd-pp-h1"><h1>' + esc(c.name) + '</h1>' + ddPill(stLabel, stTone) + (payState ? ddPill(payState, payTone) : '') + (num(c.hosting) ? ddPill('Hosting', 'neutral') : '') + '</div>'
-			+ (sub ? '<p>' + sub + '</p>' : '') + '</div><div class="dd-pp-acts">' + meetBtn(c) + (c.drive ? '<button type="button" class="dd-btn secondary" data-copy="' + esc(c.drive) + '" title="Copy the Google Drive upload link">' + lu('link', 14) + 'Drive link</button>' : '') + main
+			+ (sub ? '<p>' + sub + '</p>' : '') + '</div><div class="dd-pp-acts">' + '<button type="button" class="dd-btn secondary" data-emailc="' + c.id + '"' + (em ? '' : ' title="No email on file: type it in"') + '>' + lu('mail', 14) + 'Email client</button>' + meetBtn(c) + (c.drive ? '<button type="button" class="dd-btn secondary" data-copy="' + esc(c.drive) + '" title="Copy the Google Drive upload link">' + lu('link', 14) + 'Drive link</button>' : '') + main
 			+ '<div class="pv3-more dd-pp-more"><button type="button" class="dd-btn secondary icon" data-pmore aria-haspopup="menu" aria-label="More actions">' + lu('more-horizontal') + '</button><div class="pv3-menu dd-menu2" role="menu">' + menu + '</div></div></div></div>';
 		// money strip
 		var strip;
@@ -3205,6 +3223,7 @@
 		}
 		if (m.type === 'billadd') { return billForm(m); }
 		if (m.type === 'schedtask') { return schedTaskModal(m); }
+		if (m.type === 'email') { return emailModal(m); }
 		if (m.type === 'spend') { // Ad spend tile: Google Ads and Upwork Connects together
 			var GS = (S.ads || {}).google, KS = (S.ads || {}).connects || {}, gm = GS ? GS.month.cost : 0, km = KS.month || 0;
 			var gPart = '';
@@ -3512,6 +3531,13 @@
 		if (t.closest('[data-ddtheme]')) { var th = ddTheme() === 'dark' ? 'light' : 'dark'; ddSet('dreamdesk-theme', th); document.documentElement.setAttribute('data-theme', th); render(); return; }
 		if (t.closest('[data-ddme]')) { S.meOpen = !S.meOpen; var me = app.querySelector('.dd-me .dd-menu'); if (me) { me.classList.toggle('open', S.meOpen); } return; }
 		if (S.meOpen && !t.closest('.dd-me')) { S.meOpen = false; var me2 = app.querySelector('.dd-me .dd-menu'); if (me2) { me2.classList.remove('open'); } }
+		if ((el = t.closest('[data-emailc]'))) { e.preventDefault(); e.stopPropagation(); openEmail('', +el.getAttribute('data-emailc')); return; }
+		if ((el = t.closest('[data-emailto]'))) { e.preventDefault(); e.stopPropagation(); openEmail(el.getAttribute('data-emailto'), +el.getAttribute('data-emailp') || 0); return; }
+		if ((el = t.closest('a[href^="mailto:"]')) && !el.closest('.dd-emf') && !e.ctrlKey && !e.metaKey) {
+			e.preventDefault(); e.stopPropagation();
+			var mr = route(), mpid = +el.getAttribute('data-emailp') || (mr && mr.id && contact(mr.id) ? mr.id : 0);
+			openEmail(decodeURIComponent(el.getAttribute('href').slice(7).split('?')[0]), mpid); return;
+		}
 		if (t.closest('[data-haddtog]')) { S.homeAdd = !S.homeAdd; render(); var hi2 = app.querySelector('.dd-hadd [name=text]'); if (hi2) { hi2.focus(); } return; }
 		if (t.closest('[data-schedadd]')) { S.schedAdd = true; render(); var si2 = app.querySelector('.dd-tl-add input[name=text]'); if (si2) { si2.focus(); } return; }
 		if (t.closest('[data-cmore]')) { S.cpage = (S.cpage || 1) + 1; var tb = app.querySelector('.dd-tbody'); if (tb) { tb.innerHTML = ddClientRows().html; } return; }
@@ -3988,6 +4014,7 @@
 	app.addEventListener('mousedown', function (e) { var t = e.target.closest && e.target.closest('.dwdc-ssearch'); if (t) { var i = t.querySelector('input'); if (i) { i.removeAttribute('readonly'); } } });
 	app.addEventListener('input', function (e) {
 		var t = e.target;
+		if (S.modal && S.modal.type === 'email' && t.closest('.dd-emf')) { S.modal.vals = S.modal.vals || {}; S.modal.vals[t.name] = t.value; }
 		if (t.name === 'text' && t.tagName === 'INPUT') { whenHint(t); }
 		if (t.hasAttribute('data-revq')) { S.revQ = t.value; S.revPage = 1; var rq2 = t.selectionStart; render(); var nr = app.querySelector('[data-revq]'); if (nr) { nr.focus(); try { nr.setSelectionRange(rq2, rq2); } catch (er) {} } return; }
 		if (t.hasAttribute('data-subq')) { S.subQ = t.value; var sp2 = t.selectionStart; render(); var ns = app.querySelector('[data-subq]'); if (ns) { ns.focus(); try { ns.setSelectionRange(sp2, sp2); } catch (er) {} } return; }
@@ -4147,6 +4174,12 @@
 				upsert(x);
 				return (note ? api('/contact/' + x.id + '/note', 'POST', { text: note }).then(upsert) : Promise.resolve()).then(reload).then(function () { S.modal = null; S.back = 'leads'; go('leads'); toast('Lead added'); });
 			}).catch(fail);
+		} else if (f.classList.contains('dd-emf')) {
+			var em0 = S.modal || {}, eb = f.querySelector('.dd-btn.primary'); eb.disabled = true; eb.lastChild.textContent = 'Sending…';
+			api('/send-email', 'POST', { to: data.to, subject: data.subject, text: data.text, contact: em0.pid || 0 }).then(function (x) {
+				if (!x.sent) { throw new Error('The email didn’t go out. Check WP Mail SMTP.'); }
+				S.modal = null; if (em0.pid) { delete S.full[em0.pid]; } render(); toast('Email sent to ' + data.to);
+			}).catch(function (er) { eb.disabled = false; eb.lastChild.textContent = 'Send email'; fail(er); });
 		} else if (f.classList.contains('dd-hadd')) {
 			// Home to-do box: no date typed → due today, so it shows right here.
 			if (!String(data.text || '').trim()) { return; }

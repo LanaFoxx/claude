@@ -132,6 +132,10 @@ function dwdp_email_parse( $message ) {
 }
 
 add_filter( 'wp_mail', function ( $args ) {
+	$hd = $args['headers'] ?? '';
+	if ( false !== stripos( is_array( $hd ) ? implode( "\n", $hd ) : (string) $hd, 'X-DWD-Own' ) ) {
+		return $args; // written by Dream Desk itself (e.g. Email client): send as is
+	}
 	if ( empty( $args['message'] ) || ! dwdp_email_is_mine( $args['to'] ?? '' ) || preg_match( '/<(html|table|body)\b/i', $args['message'] ) ) {
 		return $args;
 	}

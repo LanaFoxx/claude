@@ -164,6 +164,15 @@ add_action( 'rest_api_init', function () {
 	} ) );
 } );
 
+/** Mike's Gmail signature (same as in his mike@ inbox), for emails sent from Dream Desk. */
+function dwdc_mail_signature() {
+	$cal = 'https://calendly.com/dreamwebdigital/dream-web-digital-consultation-call';
+	return '<span>-- </span><br><div dir="ltr">Sincerely,<div><br></div><div><font size="4">Michael Tarr</font></div>'
+		. '<div>Owner | Dream Web Digital<br><div>(561) 425-0734</div><a href="https://dreamwebdigital.com/" target="_blank">dreamwebdigital.com</a><br>'
+		. '<a href="' . $cal . '" target="_blank"><b><font size="4">Schedule Zoom Here</font></b></a></div>'
+		. '<div><img width="200" height="47" src="https://ci3.googleusercontent.com/mail-sig/AIorK4xcbOGlnoqlP69pefVExxuy-vAG6A1SRpA1bS7U3rr8e8SfCYiSMcnq7Bkqc4ZyfQ3xtNoi-XQavUyf" alt="Dream Web Digital"></div></div>';
+}
+
 function dwdc_save_contact( $id, $data ) {
 	$is_new = ! $id;
 	if ( ! $id ) {
@@ -1404,8 +1413,8 @@ add_action( 'rest_api_init', function () {
 		if ( ! is_email( $to ) || '' === $subj || '' === $body ) {
 			return new WP_Error( 'dwdc_mail', 'Need a valid address, subject and message.', array( 'status' => 400 ) );
 		}
-		$html = '<div style="font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:1.6;color:#1f2937;max-width:560px">' . nl2br( esc_html( $body ) ) . '</div>';
-		$ok   = wp_mail( $to, $subj, $html, array( 'Content-Type: text/html; charset=UTF-8', 'Reply-To: Michael Tarr <mike@dreamwebdigital.com>', 'X-DWD-Own: 1' ) );
+		$html = '<div dir="ltr" style="font-family:Arial,Helvetica,sans-serif;font-size:small;color:#222">' . nl2br( esc_html( $body ) ) . '<br><br>' . dwdc_mail_signature() . '</div>';
+		$ok   = wp_mail( $to, $subj, $html, array( 'Content-Type: text/html; charset=UTF-8', 'From: Michael Tarr <mike@dreamwebdigital.com>', 'Reply-To: Michael Tarr <mike@dreamwebdigital.com>', 'X-DWD-Own: 1' ) );
 		if ( $ok && $pid && DWDC_CONTACT === get_post_type( $pid ) ) {
 			$notes   = get_post_meta( $pid, '_dwdc_notes', true );
 			$notes   = is_array( $notes ) ? $notes : array();

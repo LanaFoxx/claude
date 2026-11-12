@@ -481,3 +481,13 @@ i.dd-flag { width: 10px; height: 10px; cursor: inherit; }
 .dd-hadd input { flex: 1; min-width: 0; height: 38px; padding: 0 12px; border: 1px solid var(--border-strong); border-radius: 8px; background: var(--surface); color: var(--text); font: inherit; font-size: 14px; outline: none; }
 .dd-hadd input:focus { border-color: var(--accent); box-shadow: var(--ring); }
 .dd-hadd .dd-btn { height: 38px; }
+
+/* Email client pop-up */
+.dd-emm { width: min(640px, calc(100vw - 32px)); }
+.dd-eml { display: block; margin: 0 0 12px; }
+.dd-eml span { display: block; margin: 0 0 4px; font-size: 12px; font-weight: 600; color: var(--text-2); }
+.dd-eml input, .dd-eml textarea { width: 100%; box-sizing: border-box; padding: 9px 12px; border: 1px solid var(--border-strong); border-radius: 8px; background: var(--surface); color: var(--text); font: inherit; font-size: 14px; line-height: 1.5; outline: none; }
+.dd-eml textarea { resize: vertical; min-height: 200px; }
+.dd-eml input:focus, .dd-eml textarea:focus { border-color: var(--accent); box-shadow: var(--ring); }
+.dd-emi { vertical-align: middle; margin-left: 4px; width: 26px; height: 26px; }
+.dd-emm .dd-stm-n { margin: 4px 0 16px !important; }
