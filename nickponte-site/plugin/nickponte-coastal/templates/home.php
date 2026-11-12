@@ -177,7 +177,8 @@ $quotes = [
 	</section>
 <?php endif; ?>
 
-<section class="npc-wrap npc-section" id="valuation">
+<section class="npc-band npc-valband" id="valuation">
+<div class="npc-wrap">
 	<div class="npc-val">
 		<div class="npc-val__photo"><?php echo npc_img('npc-estate-dusk', 'large', ['alt' => 'Oceanfront home on the Seacoast at dusk', 'sizes' => '(max-width: 900px) 100vw, 560px']); ?></div>
 		<div class="npc-val__body">
@@ -195,11 +196,11 @@ $quotes = [
 			</form>
 		</div>
 	</div>
+</div>
 </section>
 
 <section class="npc-contact-wrap" id="contact">
 	<div class="npc-contact">
-		<?php echo npc_img('npc-contact-seawall', 'large', ['class' => 'npc-contact__photo', 'alt' => '', 'aria-hidden' => 'true']); ?>
 		<svg class="npc-contact__waves" viewBox="0 0 1200 400" preserveAspectRatio="none" aria-hidden="true">
 			<path d="M0 300 C 200 250, 400 350, 600 300 S 1000 250, 1200 300"/>
 			<path d="M0 325 C 200 275, 400 375, 600 325 S 1000 275, 1200 325"/>
