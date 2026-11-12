@@ -833,10 +833,9 @@ def build_home():
             stat("Stats / BBB", "A+", [stat_label("Stats / BBB / Label", "BBB accredited")]),
             stat("Stats / Google", "[X.X]", [stat_label("Stats / Google / Label", "[X] reviews on Google")])],
             direction="row", gap=tuple((v, 24) for v in (72, 65, 49, 32)), flex_wrap="wrap",
-            flex_align_items="center", auto_width=True),
-        text_link("Stats / Read all reviews", "Read all reviews →", "/reviews/")],
+            flex_align_items="center", flex_justify_content="center", auto_width=True)],
         bg=NIGHT, pad_top=32, pad_bottom=32, direction="row", gap=(48, 24),
-        flex_wrap="wrap", flex_justify_content="space-between", flex_align_items="center")
+        flex_wrap="wrap", flex_justify_content="center", flex_align_items="center")
 
     content = [build_hero(), what, who, why, projects, away, reviews, stats, estimate_section("home")]
     return {"version": "0.4", "title": "TN Homepage", "type": "page",

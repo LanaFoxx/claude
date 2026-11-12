@@ -4,7 +4,7 @@
  "type": "page",
  "content": [
   {
-   "id": "b60741f",
+   "id": "2075a5b",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -118,14 +118,14 @@
    },
    "elements": [
     {
-     "id": "fc0643b",
+     "id": "83f29c6",
      "elType": "widget",
      "widgetType": "icon-list",
      "isInner": false,
      "settings": {
       "icon_list": [
        {
-        "_id": "83f29c6",
+        "_id": "5242c22",
         "text": "Photo: high-end great room or log home at dusk",
         "selected_icon": {
          "value": {
@@ -203,7 +203,7 @@
      "elements": []
     },
     {
-     "id": "3edc49c",
+     "id": "fc0643b",
      "elType": "widget",
      "widgetType": "heading",
      "isInner": false,
@@ -245,7 +245,7 @@
      "elements": []
     },
     {
-     "id": "2075a5b",
+     "id": "8aa9541",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -355,7 +355,7 @@
      },
      "elements": [
       {
-       "id": "7cffb0f",
+       "id": "3edc49c",
        "elType": "widget",
        "widgetType": "text-editor",
        "isInner": false,
@@ -385,7 +385,7 @@
        "elements": []
       },
       {
-       "id": "8aa9541",
+       "id": "ca5c875",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -439,7 +439,7 @@
        },
        "elements": [
         {
-         "id": "e7aa220",
+         "id": "7cffb0f",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,
@@ -491,7 +491,7 @@
          "elements": []
         },
         {
-         "id": "ca5c875",
+         "id": "e7aa220",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,
@@ -560,7 +560,7 @@
      ]
     },
     {
-     "id": "5242c22",
+     "id": "93e2665",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -633,7 +633,7 @@
      },
      "elements": [
       {
-       "id": "803e53c",
+       "id": "292f09a",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -686,7 +686,7 @@
        },
        "elements": [
         {
-         "id": "dfd8c36",
+         "id": "fab42bd",
          "elType": "widget",
          "widgetType": "rating",
          "isInner": false,
@@ -718,7 +718,7 @@
          "elements": []
         },
         {
-         "id": "292f09a",
+         "id": "dfd8c36",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -750,7 +750,7 @@
        ]
       },
       {
-       "id": "c07822d",
+       "id": "803e53c",
        "elType": "widget",
        "widgetType": "text-editor",
        "isInner": false,
@@ -780,7 +780,7 @@
        "elements": []
       },
       {
-       "id": "c76dc0c",
+       "id": "c07822d",
        "elType": "widget",
        "widgetType": "text-editor",
        "isInner": false,
@@ -810,7 +810,7 @@
        "elements": []
       },
       {
-       "id": "d8fb445",
+       "id": "c76dc0c",
        "elType": "widget",
        "widgetType": "text-editor",
        "isInner": false,
@@ -840,7 +840,7 @@
        "elements": []
       },
       {
-       "id": "93e2665",
+       "id": "d8fb445",
        "elType": "widget",
        "widgetType": "text-editor",
        "isInner": false,
@@ -5539,7 +5539,7 @@
    ]
   },
   {
-   "id": "fab42bd",
+   "id": "8528ea7",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -5615,7 +5615,7 @@
     "background_color": "#0F0D0B",
     "html_tag": "section",
     "flex_wrap": "wrap",
-    "flex_justify_content": "space-between",
+    "flex_justify_content": "center",
     "flex_align_items": "center"
    },
    "elements": [
@@ -5670,6 +5670,7 @@
       },
       "flex_wrap": "wrap",
       "flex_align_items": "center",
+      "flex_justify_content": "center",
       "custom_css": "selector{--width:auto;width:auto;min-width:0;}"
      },
      "elements": [
@@ -6189,63 +6190,11 @@
        ]
       }
      ]
-    },
-    {
-     "id": "8528ea7",
-     "elType": "widget",
-     "widgetType": "button",
-     "isInner": false,
-     "settings": {
-      "text": "Read all reviews →",
-      "link": {
-       "url": "/reviews/",
-       "is_external": "",
-       "nofollow": ""
-      },
-      "text_padding": {
-       "unit": "px",
-       "top": "14.5",
-       "right": "0",
-       "bottom": "14.5",
-       "left": "0",
-       "isLinked": false
-      },
-      "background_background": "classic",
-      "background_color": "#00000000",
-      "button_background_hover_background": "classic",
-      "button_background_hover_color": "#00000000",
-      "button_text_color": "#F2ECE3",
-      "hover_color": "#D9A66B",
-      "border_radius": {
-       "unit": "px",
-       "top": "0",
-       "right": "0",
-       "bottom": "0",
-       "left": "0",
-       "isLinked": true
-      },
-      "typography_typography": "custom",
-      "typography_font_family": "Manrope",
-      "typography_font_size": {
-       "unit": "px",
-       "size": 15,
-       "sizes": []
-      },
-      "typography_font_weight": "600",
-      "typography_line_height": {
-       "unit": "em",
-       "size": 1,
-       "sizes": []
-      },
-      "custom_css": "selector .elementor-button{white-space:nowrap;}selector .elementor-button-text{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:7px;text-decoration-color:rgba(242,236,227,0.4);}",
-      "_title": "Stats / Read all reviews"
-     },
-     "elements": []
     }
    ]
   },
   {
-   "id": "fea33d4",
+   "id": "9bed5b6",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -6324,7 +6273,7 @@
    },
    "elements": [
     {
-     "id": "9bed5b6",
+     "id": "a4a4d29",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -6432,7 +6381,7 @@
      },
      "elements": [
       {
-       "id": "a4a4d29",
+       "id": "8383d49",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -6484,7 +6433,7 @@
        },
        "elements": [
         {
-         "id": "100e05d",
+         "id": "27985d0",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -6535,7 +6484,7 @@
          },
          "elements": [
           {
-           "id": "1397a31",
+           "id": "fa9e7ab",
            "elType": "widget",
            "widgetType": "heading",
            "isInner": false,
@@ -6582,7 +6531,7 @@
            "elements": []
           },
           {
-           "id": "27985d0",
+           "id": "1397a31",
            "elType": "widget",
            "widgetType": "text-editor",
            "isInner": false,
@@ -6614,7 +6563,7 @@
          ]
         },
         {
-         "id": "8383d49",
+         "id": "100e05d",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,
@@ -6681,7 +6630,7 @@
        ]
       },
       {
-       "id": "fa9e7ab",
+       "id": "830b89d",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -6766,7 +6715,7 @@
        },
        "elements": [
         {
-         "id": "794baad",
+         "id": "eb4c949",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -6817,7 +6766,7 @@
          },
          "elements": [
           {
-           "id": "cf5f85e",
+           "id": "41d06d9",
            "elType": "widget",
            "widgetType": "heading",
            "isInner": false,
@@ -6843,7 +6792,7 @@
            "elements": []
           },
           {
-           "id": "eb4c949",
+           "id": "cf5f85e",
            "elType": "widget",
            "widgetType": "text-editor",
            "isInner": false,
@@ -6875,7 +6824,7 @@
          ]
         },
         {
-         "id": "830b89d",
+         "id": "3577c32",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -6926,7 +6875,7 @@
          },
          "elements": [
           {
-           "id": "41d06d9",
+           "id": "28bee07",
            "elType": "widget",
            "widgetType": "form",
            "isInner": false,
@@ -6935,7 +6884,7 @@
             "form_id": "tn-estimate-form",
             "form_fields": [
              {
-              "_id": "54371ff",
+              "_id": "b60741f",
               "custom_id": "name",
               "field_type": "text",
               "field_label": "Name",
@@ -6944,7 +6893,7 @@
               "width_mobile": "50"
              },
              {
-              "_id": "f73c49e",
+              "_id": "54371ff",
               "custom_id": "phone",
               "field_type": "tel",
               "field_label": "Phone",
@@ -6953,7 +6902,7 @@
               "width_mobile": "50"
              },
              {
-              "_id": "8f9880a",
+              "_id": "f73c49e",
               "custom_id": "email",
               "field_type": "email",
               "field_label": "Email",
@@ -6962,7 +6911,7 @@
               "width_mobile": "50"
              },
              {
-              "_id": "6ec0c26",
+              "_id": "8f9880a",
               "custom_id": "town",
               "field_type": "select",
               "field_label": "Town",
@@ -6972,7 +6921,7 @@
               "field_options": "Select a town|\nAspen\nSnowmass\nBasalt\nCarbondale\nGlenwood Springs\nVail\nBeaver Creek\nAvon\nEdwards\nEagle\nGypsum\nBreckenridge\nOther"
              },
              {
-              "_id": "28bee07",
+              "_id": "6ec0c26",
               "custom_id": "need",
               "field_type": "select",
               "field_label": "What do you need?",
@@ -7098,7 +7047,7 @@
            "elements": []
           },
           {
-           "id": "3577c32",
+           "id": "794baad",
            "elType": "widget",
            "widgetType": "text-editor",
            "isInner": false,

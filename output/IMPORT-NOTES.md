@@ -168,7 +168,7 @@ Container `Seasonal Offer`: change the H2 to **Talk to us about your project** a
    - The call circle, the mobile call bar, and the review arrows below the quote are shown.
 3. **The mobile call bar is `position: fixed`.** A footer template can't be CSS-sticky against the page. Up to 760px, the footer gets 70px of extra bottom padding so the bar never covers content.
 4. **Review stars are drawn in CSS.** The Testimonial Carousel has no rating field, so the 5 Deep Amber stars are a CSS image above each quote, not editable per review. Add reviews in the carousel's Slides list: name = person, title = town. The "1 / 2" counter is the carousel's fraction pagination.
-5. **The stats strip is its own section,** "Reviews / Stats Strip", directly under Reviews, so it stays inside the Boxed 1280 rule. `#reviews` covers the testimonial block only.
+5. **The stats strip is its own section,** "Reviews / Stats Strip", directly under Reviews, so it stays inside the Boxed 1280 rule. `#reviews` covers the testimonial block only. **Changed at Mike's request:** the "Read all reviews →" link is removed and the three stats are centered.
 6. **Responsive switches that the reference does with auto-fit** use explicit columns:
    - The index lists go to 1 column below 512px.
    - The form fields stack below 536px.
