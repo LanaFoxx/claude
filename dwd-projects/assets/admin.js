@@ -138,8 +138,8 @@
 			if (!isMax) { continue; }
 			var best = y, bestD = -1;
 			for (j = Math.max(1, y - k); j < Math.min(ah - 1, y + k); j++) {
-				var d = dist(marg[j], marg[j - 1]);
-				if (d > bestD) { bestD = d; best = j; }
+				var dj = dist(marg[j], marg[j - 1]); // not "d": that's the image scale used below
+				if (dj > bestD) { bestD = dj; best = j; }
 			}
 			var cy = Math.round(best * s);
 			if (cuts.indexOf(cy) === -1) { cuts.push(cy); }
@@ -164,11 +164,12 @@
 		var extra = [], bounds = [0].concat(cuts, [H]);
 		for (q = 0; q < bounds.length - 1; q++) {
 			var t = bounds[q], bt = bounds[q + 1];
-			while (bt - t > 1600 * d) {
+			for (var guard = 0; bt - t > 1600 * d && guard < 50; guard++) {
 				var parts = Math.ceil((bt - t) / (1600 * d)), target = t + (bt - t) / parts;
 				var lo = Math.floor((target - 200 * d) / s), hi = Math.floor((target + 200 * d) / s), quiet = lo;
 				for (j = lo; j < hi; j++) { if (act[j] < act[quiet]) { quiet = j; } }
-				t = Math.round(quiet * s);
+				var nt = Math.round(quiet * s);
+				t = nt > t ? nt : Math.round(target); // always move down the page
 				extra.push(t);
 			}
 		}

@@ -967,6 +967,15 @@
 	}
 	// Colour mark on a project (click the dot: green, yellow, red or none).
 	var FLAGS = [['green', 'Green'], ['yellow', 'Yellow'], ['red', 'Red'], ['', 'No colour']];
+	// The colour menu floats above the page (fixed), so a card's edge never cuts it off; it opens upward near the bottom.
+	function placeFlagMenu() {
+		var m = app.querySelector('.dd-flagm'), btn = m && m.parentNode.querySelector('[data-flag]');
+		if (!m || !btn) { return; }
+		var r = btn.getBoundingClientRect(), h = m.offsetHeight, w = m.offsetWidth;
+		var top = r.bottom + 6 + h > window.innerHeight - 8 ? r.top - h - 6 : r.bottom + 6;
+		m.style.position = 'fixed'; m.style.top = Math.max(8, top) + 'px'; m.style.left = Math.min(Math.max(8, r.left - 6), window.innerWidth - w - 8) + 'px';
+	}
+	window.addEventListener('scroll', function () { if (S.flagOpen) { placeFlagMenu(); } }, true);
 	function flagDot(c) {
 		var open = S.flagOpen === c.id;
 		return '<span class="dd-flagw"><button type="button" class="dd-flag f-' + (c.flag || 'none') + '" data-flag="' + c.id + '" aria-haspopup="menu" aria-expanded="' + open + '" title="Mark this project green, yellow or red"></button>'
@@ -1686,6 +1695,7 @@
 		});
 	}
 	function render(anim) {
+		if (S.flagOpen) { setTimeout(placeFlagMenu, 0); }
 		var r = route(), t = (TITLES[r.view] || ['', '', '']).slice(), body;
 		if (r.view === 'home') { t[0] = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }); }
 		if (r.view === 'projects') {
@@ -3873,7 +3883,7 @@
 		if (t.closest('[data-winsmore]')) { S.winsMore = !S.winsMore; render(); return; }
 		if (t.closest('[data-connmore]')) { S.connMore = !S.connMore; render(); if (S.connMore) { setTimeout(function () { var c = document.querySelector('.dwdc-conn'); if (c) { c.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }, 50); } return; }
 		if ((el = t.closest('[data-flagset]'))) { e.preventDefault(); e.stopPropagation(); var fp = el.getAttribute('data-flagset').split(':'), fc = contact(+fp[0]); S.flagOpen = 0; if (fc) { fc.flag = fp[1]; } render(); api('/contact/' + fp[0], 'POST', { flag: fp[1] }).then(function (x) { upsert(x); }).catch(fail); return; }
-		if ((el = t.closest('[data-flag]'))) { e.preventDefault(); e.stopPropagation(); var fid = +el.getAttribute('data-flag'); S.flagOpen = S.flagOpen === fid ? 0 : fid; render(); return; }
+		if ((el = t.closest('[data-flag]'))) { e.preventDefault(); e.stopPropagation(); var fid = +el.getAttribute('data-flag'); S.flagOpen = S.flagOpen === fid ? 0 : fid; render(); placeFlagMenu(); return; }
 		if (S.flagOpen && !t.closest('.dd-flagm')) { S.flagOpen = 0; render(); }
 		if ((el = t.closest('[data-bankrefresh]'))) { e.preventDefault(); e.stopPropagation(); el.disabled = true; el.classList.add('spin'); api('/plaid', 'POST', { action: 'balances' }).then(function (b) { if (S.bank && b && b.accounts) { S.bank.balances = b; } render(); toast(b && b.live_error ? 'Live balance not available from Plaid (' + b.live_error + '). Showing Plaid’s last stored balance.' : 'Live bank balance updated', !!(b && b.live_error)); }).catch(fail); return; }
 		if ((el = t.closest('[data-tgopen]'))) { S.tgOpen = S.tgOpen || {}; S.tgOpen[+el.getAttribute('data-tgopen')] = true; }
