@@ -55,11 +55,13 @@ function dwdcm_addrs( $s ) {
 }
 
 /** Plain body without the quoted earlier emails, so each message reads on its own. */
-function dwdcm_clean( $body ) {
+function dwdcm_clean( $body, $subject = '' ) {
 	$b = str_replace( "\r", '', (string) $body );
-	$b = preg_split( '/\n(?:On [^\n]{4,200}?wrote:|-{2,} ?Original Message ?-{2,}|From: [^\n]+\nSent: )/i', $b )[0];
+	if ( ! preg_match( '/^\s*(fw|fwd)\s*:/i', (string) $subject ) ) { // forwards keep the forwarded email; replies drop the quoted thread
+		$b = preg_split( '/\n(?:On [^\n]{4,200}?wrote:|-{2,} ?Original Message ?-{2,}|_{10,}\s*\nFrom: |From: [^\n]+\nSent: )/i', $b )[0];
+	}
 	$b = implode( "\n", array_filter( explode( "\n", $b ), function ( $l ) { return 0 !== strpos( ltrim( $l ), '>' ); } ) );
-	return trim( mb_substr( preg_replace( "/\n{3,}/", "\n\n", $b ), 0, 6000 ) );
+	return trim( mb_substr( preg_replace( "/\n{3,}/", "\n\n", $b ), 0, 9000 ) );
 }
 
 /** File emails onto their clients. Returns how many were new. */
@@ -86,7 +88,7 @@ function dwdcm_apply( $messages ) {
 				'from'    => sanitize_text_field( strtr( (string) ( $m['from'] ?? '' ), '<>', '()' ) ), // keep the address: <…> would be stripped as a tag
 				'to'      => sanitize_text_field( mb_substr( strtr( (string) ( $m['to'] ?? '' ), '<>', '()' ), 0, 400 ) ),
 				'subject' => sanitize_text_field( (string) ( $m['subject'] ?? '' ) ),
-				'body'    => sanitize_textarea_field( dwdcm_clean( $m['body'] ?? '' ) ),
+				'body'    => wp_check_invalid_utf8( dwdcm_clean( $m['body'] ?? '', $m['subject'] ?? '' ), true ), // plain text, kept as written (code snippets too); escaped when shown
 				'in'      => $inbound,
 			);
 		}
