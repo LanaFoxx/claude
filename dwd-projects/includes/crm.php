@@ -1373,6 +1373,25 @@ add_action( 'rest_api_init', function () {
 		update_option( 'dwdc_home_order', $all, false );
 		return array( 'ok' => true );
 	} ) );
+	// A short personal email (plain text, Mike's signature) to any address, logged as a note on a lead or project.
+	register_rest_route( $ns, '/crm/send-email', array( 'methods' => 'POST', 'permission_callback' => function () { return current_user_can( 'manage_options' ); }, 'callback' => function ( $r ) {
+		$to   = sanitize_email( (string) $r->get_param( 'to' ) );
+		$subj = sanitize_text_field( (string) $r->get_param( 'subject' ) );
+		$body = sanitize_textarea_field( (string) $r->get_param( 'text' ) );
+		$pid  = (int) $r->get_param( 'contact' );
+		if ( ! is_email( $to ) || '' === $subj || '' === $body ) {
+			return new WP_Error( 'dwdc_mail', 'Need a valid address, subject and message.', array( 'status' => 400 ) );
+		}
+		$html = '<div style="font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:1.6;color:#1f2937;max-width:560px">' . nl2br( esc_html( $body ) ) . '</div>';
+		$ok   = wp_mail( $to, $subj, $html, array( 'Content-Type: text/html; charset=UTF-8', 'Reply-To: Michael Tarr <mike@dreamwebdigital.com>', 'X-DWD-Own: 1' ) );
+		if ( $ok && $pid && DWDC_CONTACT === get_post_type( $pid ) ) {
+			$notes   = get_post_meta( $pid, '_dwdc_notes', true );
+			$notes   = is_array( $notes ) ? $notes : array();
+			$notes[] = array( 'date' => current_time( 'mysql', true ), 'text' => 'Emailed ' . $to . ': "' . $subj . '"' . "\n\n" . $body );
+			update_post_meta( $pid, '_dwdc_notes', $notes );
+		}
+		return array( 'sent' => (bool) $ok );
+	} ) );
 	// Send a sample "New lead" email to check the form notifications arrive.
 	register_rest_route( $ns, '/crm/form-notify-test', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function () {
 		dwdc_notify_form( 'Quote (TEST)', array(

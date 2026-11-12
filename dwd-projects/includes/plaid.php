@@ -151,7 +151,17 @@ add_action( 'rest_api_init', function () {
 			$a = (string) ( $p['action'] ?? '' );
 			if ( 'balances' === $a ) { // refresh button on Home (/accounts/get, no Balance charge); at most every 2 minutes
 				$b = get_option( 'dwdpl_balances', array() );
-				return ( ! empty( $b['ts'] ) && time() - (int) $b['ts'] < 120 ) ? $b : dwdpl_balances( true );
+				if ( ! empty( $b['ts'] ) && time() - (int) $b['ts'] < 60 && ! empty( $b['live'] ) ) {
+					return $b;
+				}
+				$b = dwdpl_balances( true, true );
+				if ( ! empty( $GLOBALS['dwdpl_live_err'] ) ) {
+					$b['live_error'] = $GLOBALS['dwdpl_live_err'];
+				} else {
+					$b['live'] = true;
+					update_option( 'dwdpl_balances', $b, false );
+				}
+				return $b;
 			}
 			if ( 'keys' === $a ) {
 				$id  = trim( (string) ( $p['client_id'] ?? '' ) );
@@ -214,7 +224,7 @@ add_action( 'rest_api_init', function () {
  * /accounts/get returns each account's balance as of Plaid's last update (no extra Balance charge).
  * Checked once a day at 5 AM Eastern (and the first time, if nothing is saved yet), keyed by the account's last 4 digits.
  */
-function dwdpl_balances( $force = false ) {
+function dwdpl_balances( $force = false, $live = false ) {
 	$saved = get_option( 'dwdpl_balances', array() );
 	$saved = is_array( $saved ) ? $saved : array();
 	if ( ! dwdpl_ready() || ( ! $force && ! empty( $saved['at'] ) ) ) { // checked once a day (5 AM Eastern), not on page load
@@ -222,7 +232,14 @@ function dwdpl_balances( $force = false ) {
 	}
 	$accts = array();
 	foreach ( dwdpl_items() as $it ) {
-		$r = dwdpl_call( '/accounts/get', array( 'access_token' => $it['token'] ) );
+		// $live: ask the bank right now (Plaid's real-time Balance check, billed per call); otherwise Plaid's last stored balance (free).
+		$r = $live ? dwdpl_call( '/accounts/balance/get', array( 'access_token' => $it['token'] ) ) : null;
+		if ( ! $live || is_wp_error( $r ) ) {
+			if ( $live ) {
+				$GLOBALS['dwdpl_live_err'] = $r->get_error_message();
+			}
+			$r = dwdpl_call( '/accounts/get', array( 'access_token' => $it['token'] ) );
+		}
 		if ( is_wp_error( $r ) ) {
 			continue;
 		}
