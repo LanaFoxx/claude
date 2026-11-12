@@ -704,6 +704,26 @@ def path_column(title, color, label, h2_text, body, items):
         gap=36, html_tag="article")
 
 
+# Faint full-bleed grid behind the six Why points: vertical rules run the full section height,
+# horizontal rules run the full page width (clipped by the section's overflow:hidden).
+_LINE = "rgba(242,236,227,0.07)"
+WHY_GRID_LINES = (
+    "selector{position:relative;}"
+    "selector > .e-con{position:relative;padding:56px 48px 60px !important;}"
+    "selector > .e-con::before{content:'' !important;display:block;position:absolute;top:-3000px;bottom:-3000px;"
+    "left:0;right:auto;width:1px;height:auto;background:" + _LINE + ";opacity:1;pointer-events:none;border:0;}"
+    "selector > .e-con::after{content:'';position:absolute;left:-3000px;right:-3000px;top:0;height:1px;"
+    "background:" + _LINE + ";pointer-events:none;}"
+    "selector::before{content:'' !important;display:block;position:absolute;top:-3000px;bottom:-3000px;"
+    "right:0;left:auto;width:1px;height:auto;background:" + _LINE + ";opacity:1;pointer-events:none;border:0;}"
+    "selector::after{content:'';position:absolute;left:-3000px;right:-3000px;bottom:0;height:1px;"
+    "background:" + _LINE + ";pointer-events:none;}"
+    "@media (max-width:1359px){selector > .e-con{padding:48px 36px 52px !important;}}"
+    "@media (max-width:600px){selector > .e-con{padding:40px 0 44px !important;}"
+    "selector > .e-con::before,selector::before{display:none;}}"
+)
+
+
 def build_home():
     what = section("What We Do", [grid("What We Do / Columns", [
         path_column("What We Do / Painting", "#33261C", "Photo: finished interior, beams and stone",
@@ -774,8 +794,8 @@ def build_home():
             point("certificate-light", "Backed in writing",
                   "Detailed written estimates, clear schedules, and a [X-year] written warranty on our "
                   "work."),
-        ], cols=(3, 3, 2, 1), gap_col=(101, 91, 69, 48), gap_row=(96, 91, 69, 64))],
-        bg=SPRUCE, pad_top=SECV_TALL, pad_bottom=SECV_TALL, gap=(112, 104, 78, 72))
+        ], cols=(3, 3, 2, 1), gap_col=0, gap_row=0, css=WHY_GRID_LINES)],
+        bg=SPRUCE, pad_top=SECV_TALL, pad_bottom=SECV_TALL, gap=(112, 104, 78, 72), overflow="hidden")
 
     def project(n, color, caption, kind, basis, grow):
         t = "Projects / Project %d" % n

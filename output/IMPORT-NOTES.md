@@ -232,3 +232,8 @@ Container `Seasonal Offer`: change the H2 to **Talk to us about your project** a
   - The "Builders: Request a Bid" header link is removed; For Builders is in the nav, and the form keeps its "Request a bid" link.
   - The full nav now shows from 981px up (the Laptop breakpoint no longer swaps to the menu button). The menu button is used at 980px and below. Nav fits on one row at 981px.
 - **Builder Bids button:** "For Builders" is removed from the Main Menu (it stays in the Mobile Menu). The header has a "Builder Bids" pill with a 1px white outline and white text, white fill with dark text on hover, linking to `/for-builders/#bid`. It is 46px, the same height as Request an Estimate, and hidden at 760px and below with the other header buttons.
+- **Nav order:** Our Work · Services ▾ · About ▾. The Mobile Menu reads Our Work, Services, For Builders, About, Areas We Serve, Financing.
+- **Why Top Notch grid:** faint full-bleed grid lines (rgba(242,236,227,0.07)) in scoped CSS on "Why / Points".
+  - Vertical rules at each column edge run the full section height; horizontal rules above, between and below the rows run the full page width. The section clips them with overflow:hidden.
+  - Points sit in padded cells (56/48/60px desktop, 48/36/52px laptop and tablet, 40/0/44px mobile) instead of grid gaps.
+  - At 600px and below only the horizontal rules show.
