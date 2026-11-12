@@ -763,9 +763,11 @@
 			+ '<a href="#money" data-owed><span>Total owed</span><b>' + money(owed(owingList())) + '</b></a>'
 			+ '<a href="#projects/active"><span>Active projects</span><b>' + by('active').length + '</b></a>'
 			+ '<a href="#hosting"><span>Hosting clients</span><b>' + hosting().length + '</b></a></section>';
-		var rows = overdue.sort(function (a, b) { return a.t.due < b.t.due ? -1 : 1; }).concat(today).slice(0, 8);
+		var rows = overdue.sort(function (a, b) { return a.t.due < b.t.due ? -1 : 1; }).concat(today), seenP = {};
+		rows = rows.filter(function (x) { if (!x.w || !x.t.contact) { return true; } if (seenP[x.t.contact]) { seenP[x.t.contact].n++; return false; } seenP[x.t.contact] = x; x.n = 1; return true; }).slice(0, 8);
 		var trow = function (x) {
 			var t = x.t, c = x.w && t.contact ? contact(t.contact) : null, late = t.due < T;
+			if (c && x.n > 1) { return '<a class="dd-todo dd-todo-g" href="#todos" data-tgopen="' + c.id + '"><span class="dd-gcnt">' + x.n + '</span><div class="dd-todo-b"><span>' + esc(c.name) + '</span><small><em class="' + (late ? 'late' : 'today') + '">' + (late ? Math.round((Date.parse(T) - Date.parse(t.due)) / 864e5) + 'd overdue' : 'Today') + '</em>' + x.n + ' to-dos · next: ' + esc(t.text) + '</small></div>' + lu('chevron-right') + '</a>'; }
 			return '<div class="dd-todo"><button type="button" class="dd-chk" ' + (x.w ? 'data-toggle="' + t.id + '"' : 'data-ptoggle="' + t.id + '"') + ' aria-label="Mark done"></button><div class="dd-todo-b" ' + (x.w ? 'data-task="' + t.id + '"' : 'data-ptask="' + t.id + '"') + ' role="button" tabindex="0"><span>' + esc(ptx(t.text)) + '</span><small><em class="' + (late ? 'late' : 'today') + '">' + (late ? Math.round((Date.parse(T) - Date.parse(t.due)) / 864e5) + 'd overdue' : 'Today') + '</em>' + (c ? esc(c.name) : x.w ? '' : 'Personal') + '</small></div></div>';
 		};
 		var todos = '<section class="dd-card"><header class="dd-ch"><div class="dd-ch-t"><h2>To-dos</h2></div><a href="#todos">All ' + all.length + '</a></header>' + (rows.length ? rows.map(trow).join('') : '<p class="dd-empty-l">Nothing overdue or due today.</p>') + '</section>';
@@ -1890,23 +1892,39 @@
 	/* ---------- to-dos ---------- */
 	function todosView() {
 		var open = openTasks(), done = S.tasks.filter(function (t) { return t.done; });
-		var groups = [
-			['Overdue', 'red', open.filter(function (t) { return t.due && t.due < DWDC.today; }).sort(byDue)],
-			['Today', 'blue', open.filter(function (t) { return t.due === DWDC.today; })],
-			['Upcoming', 'navy', open.filter(function (t) { return t.due > DWDC.today; }).sort(byDue)],
-			['No date', 'mut', open.filter(function (t) { return !t.due; })],
-			['Done', 'green', done]
-		];
+		var groups = todoBuckets(open).concat([['Done', 'green', done.map(function (t) { return { task: t }; })]]);
 		var clients = S.contacts.filter(function (c) { return c.list !== 'archive'; }).sort(function (a, b) { return a.name.localeCompare(b.name); });
 		// Same add bar as the Personal list (to-do, date, Add). Pick a project afterwards in the to-do's edit window.
 		return '<div class="dwdc-narrow"><form class="dwdc-addbar">' + ic('plus', 18) + '<input name="text" placeholder="Add a to-do and press Enter…" autocomplete="off" required>'
 			+ '<input type="date" name="due" title="Due date"><button class="dwdc-btn">Add</button></form>'
 			+ groups.filter(function (g) { return g[2].length; }).map(function (g) {
-				return '<section class="dwdc-group"><h3><i class="t-' + g[1] + '"></i>' + g[0] + ' <b>' + g[2].length + '</b></h3><div class="dwdc-card dwdc-todos p6">' + g[2].map(function (t) { return todoRow(t); }).join('') + '</div></section>';
+				return '<section class="dwdc-group"><h3><i class="t-' + g[1] + '"></i>' + g[0] + ' <b>' + g[2].length + '</b></h3><div class="dwdc-card dwdc-todos p6">' + g[2].map(todoGroupRow).join('') + '</div></section>';
 			}).join('')
 			+ (S.tasks.length ? '' : '<div class="dwdc-card">' + emptyRow('No to-dos yet. Add one above, or from any client’s page.') + '</div>') + '</div>';
 	}
 	function byDue(a, b) { return a.due < b.due ? -1 : 1; }
+	// Project to-dos collapse into one row per project (click to open the list); single to-dos stay as they are.
+	function todoBuckets(open) {
+		var T = DWDC.today, by = {}, items = [];
+		open.forEach(function (t) { if (t.contact) { (by[t.contact] = by[t.contact] || []).push(t); } });
+		open.forEach(function (t) {
+			var g = t.contact && by[t.contact].length > 1 ? by[t.contact] : null;
+			if (!g) { items.push({ due: t.due, task: t }); return; }
+			if (g.placed) { return; }
+			g.placed = true;
+			var ts = g.slice().sort(function (a, b) { return (a.due || '9') < (b.due || '9') ? -1 : 1; });
+			items.push({ due: ts[0].due, id: t.contact, tasks: ts });
+		});
+		var pick = function (f) { return items.filter(function (x) { return f(x.due); }).sort(function (a, b) { return (a.due || '9') < (b.due || '9') ? -1 : 1; }); };
+		return [['Overdue', 'red', pick(function (d) { return d && d < T; })], ['Today', 'blue', pick(function (d) { return d === T; })], ['Upcoming', 'navy', pick(function (d) { return d > T; })], ['No date', 'mut', pick(function (d) { return !d; })]];
+	}
+	function todoGroupRow(it) {
+		if (!it.tasks) { return todoRow(it.task); }
+		var c = contact(it.id), open = S.tgOpen && S.tgOpen[it.id], first = it.tasks[0], late = it.tasks.filter(function (t) { return t.due && t.due < DWDC.today; }).length;
+		return '<div class="dwdc-tgrp' + (open ? ' open' : '') + '"><div class="dwdc-tgrp-h" data-tgrp="' + it.id + '" role="button" tabindex="0" aria-expanded="' + !!open + '"><span class="dwdc-tgrp-n">' + it.tasks.length + '</span>'
+			+ '<span class="dwdc-tt"><b>' + esc(c ? c.name : 'Project') + '</b><small>' + esc(it.tasks.length + ' to-dos' + (late ? ' · ' + late + ' overdue' : '') + ' · next: ' + first.text) + '</small></span>' + due(first) + '<span class="dwdc-tgrp-c">' + ic('down', 16) + '</span></div>'
+			+ (open ? '<div class="dwdc-tgrp-b">' + it.tasks.map(function (t) { return todoRow(t, true); }).join('') + (c ? '<a class="dwdc-tgrp-go" href="#client/' + c.id + '">Open project ' + ic('right', 12) + '</a>' : '') + '</div>' : '') + '</div>';
+	}
 	// Personal to-dos, laid out exactly like the Work list (same add bar, same groups, same rows).
 	function personalTodosView() {
 		var D = pData(); if (!D) { return emptyRow('Loading…'); }
@@ -2972,6 +2990,7 @@
 		if (t.closest('[data-moremoney]')) { S.moreMoney = !S.moreMoney; render(); return; }
 		if (t.closest('[data-winsmore]')) { S.winsMore = !S.winsMore; render(); return; }
 		if (t.closest('[data-connmore]')) { S.connMore = !S.connMore; render(); if (S.connMore) { setTimeout(function () { var c = document.querySelector('.dwdc-conn'); if (c) { c.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }, 50); } return; }
+		if ((el = t.closest('[data-tgopen]'))) { S.tgOpen = S.tgOpen || {}; S.tgOpen[+el.getAttribute('data-tgopen')] = true; }
 		if ((el = t.closest('[data-tgrp]'))) { var gid = +el.getAttribute('data-tgrp'); S.tgOpen = S.tgOpen || {}; S.tgOpen[gid] = !S.tgOpen[gid]; render(); return; }
 		if ((el = t.closest('[data-showdone]'))) { S.showDone = !S.showDone; render(); return; }
 		if ((el = t.closest('[data-review]'))) { S.modal = { type: 'review', vals: {}, off: {} }; render(); return; }

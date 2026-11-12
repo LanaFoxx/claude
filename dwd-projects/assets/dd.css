@@ -338,3 +338,15 @@ html[data-theme], .dwdc.dd { font-variant-numeric: normal; }
 	.dd-ph h1 { font-size: 23px; }
 }
 .dd .dwdc-tbl .dwdc-grid, .dd .dwdc-tbl > div, .dd .dwdc-card .dwdc-grid.row { border-color: var(--border) !important; }
+
+/* project to-do groups */
+.dd .dwdc-tgrp-h:hover, .dd .dwdc-tgrp.open .dwdc-tgrp-h { background: var(--hover) !important; }
+.dd .dwdc-tgrp-b { background: var(--bg) !important; border-top: 1px solid var(--border); padding: 4px 0 8px 24px; }
+.dd .dwdc-todos.p6 > .dwdc-tgrp:first-child { border-top: 0; }
+.dd .dwdc-tgrp-go { display: inline-flex; align-items: center; gap: 4px; margin: 6px 0 0 20px; font-size: var(--fs-sm); font-weight: 500; color: var(--accent-text) !important; }
+.dd-todo-g { color: var(--text) !important; align-items: center; }
+.dd-todo-g:hover { background: var(--hover); }
+.dd-todo-g > .lu { color: var(--text-3); }
+.dd-gcnt { width: 22px; height: 22px; border-radius: 6px; background: var(--accent-soft); color: var(--accent-text); font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; flex: none; }
+.dd .dwdc-addbar .dwdc-btn, .dd .dwdc-btn { background: var(--accent) !important; color: #fff !important; border-color: transparent !important; }
+.dd .dwdc-addbar .dwdc-btn:hover, .dd .dwdc-btn:hover { background: var(--accent-hover) !important; }
