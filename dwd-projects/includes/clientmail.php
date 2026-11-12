@@ -90,6 +90,7 @@ function dwdcm_apply( $messages ) {
 				'subject' => sanitize_text_field( (string) ( $m['subject'] ?? '' ) ),
 				'body'    => wp_check_invalid_utf8( dwdcm_clean( $m['body'] ?? '', $m['subject'] ?? '' ), true ), // plain text, kept as written (code snippets too); escaped when shown
 				'in'      => $inbound,
+				'unread'  => $inbound && ! empty( $m['unread'] ), // unread in Gmail when it was synced
 			);
 		}
 	}
@@ -100,6 +101,7 @@ function dwdcm_apply( $messages ) {
 		$ids  = array_flip( array_column( $have, 'id' ) );
 		foreach ( $list as $x ) {
 			if ( isset( $ids[ $x['id'] ] ) ) {
+				$x['seen'] = ! empty( $have[ $ids[ $x['id'] ] ]['seen'] ); // keep "opened in Dream Desk"
 				$have[ $ids[ $x['id'] ] ] = $x; // already filed: refresh it
 				continue;
 			}
@@ -123,18 +125,53 @@ function dwdcm_plan() {
 	}
 	$todo = array_keys( array_filter( $map, function ( $o, $e ) use ( $done ) { return ! isset( $done[ $e ] ); }, ARRAY_FILTER_USE_BOTH ) );
 	usort( $todo, function ( $a, $b ) use ( $map, $hot ) { return (int) ! isset( $hot[ $map[ $a ] ] ) - (int) ! isset( $hot[ $map[ $b ] ] ); } );
-	return array( 'emails' => array_keys( $map ), 'backfill' => array_slice( $todo, 0, 8 ) );
+	return array( 'emails' => array_keys( $map ), 'backfill' => array_slice( $todo, 0, 8 ), 'check' => dwdcm_unread_ids() );
 }
 
-/** Emails for a project page. */
-function dwdcm_for( $pid, $limit = 40 ) {
-	$all = get_post_meta( dwdcm_owner( $pid ), '_dwdcm_mail', true );
-	$all = is_array( $all ) ? $all : array();
-	return array( 'total' => count( $all ), 'list' => $limit ? array_slice( $all, 0, $limit ) : $all, 'synced' => (string) get_option( 'dwdcm_last', '' ) );
+/** New = from the client, unread in Gmail and not opened in Dream Desk yet. */
+function dwdcm_is_new( $x ) {
+	return ! empty( $x['unread'] ) && empty( $x['seen'] );
+}
+
+/** Emails for a client (owner id): the new ones, the total, and everything when $all. */
+function dwdcm_get( $owner, $all = false ) {
+	$list = get_post_meta( $owner, '_dwdcm_mail', true );
+	$list = is_array( $list ) ? $list : array();
+	return array( 'owner' => (int) $owner, 'total' => count( $list ), 'new' => array_values( array_filter( $list, 'dwdcm_is_new' ) ), 'list' => $all ? $list : array(), 'synced' => (string) get_option( 'dwdcm_last', '' ) );
+}
+function dwdcm_for( $pid, $all = false ) {
+	return dwdcm_get( dwdcm_owner( $pid ), $all );
+}
+
+/** Update fields on stored emails by id: $changes = array( id => array( field => value ) ). */
+function dwdcm_patch( $owner, $changes ) {
+	$list = get_post_meta( $owner, '_dwdcm_mail', true );
+	if ( ! is_array( $list ) || ! $changes ) {
+		return;
+	}
+	foreach ( $list as $i => $x ) {
+		if ( isset( $changes[ $x['id'] ] ) ) {
+			$list[ $i ] = array_merge( $x, $changes[ $x['id'] ] );
+		}
+	}
+	update_post_meta( $owner, '_dwdcm_mail', $list );
+}
+
+/** Ids of emails still shown as new, so the script can say which have been read in Gmail since. */
+function dwdcm_unread_ids() {
+	$ids = array();
+	foreach ( get_posts( array( 'post_type' => array( DWDC_CLIENT, DWDC_CONTACT ), 'post_status' => 'any', 'posts_per_page' => -1, 'fields' => 'ids', 'meta_key' => '_dwdcm_mail' ) ) as $o ) {
+		foreach ( (array) get_post_meta( $o, '_dwdcm_mail', true ) as $x ) {
+			if ( is_array( $x ) && dwdcm_is_new( $x ) ) {
+				$ids[] = $x['id'];
+			}
+		}
+	}
+	return array_slice( $ids, 0, 150 );
 }
 
 add_filter( 'dwdc_contact_full', function ( $c, $id ) {
-	$c['mail'] = dwdcm_for( $id );
+	$c['mail'] = dwdcm_for( $id ); // new emails + total; the rest loads on "Show all"
 	return $c;
 }, 12, 2 );
 
@@ -157,10 +194,40 @@ add_action( 'rest_api_init', function () {
 			}
 			update_option( 'dwdcm_done', $done, false );
 		}
+		// Read in Gmail since: { id: still unread? }
+		if ( ! empty( $d['state'] ) && is_array( $d['state'] ) ) {
+			$read = array();
+			foreach ( $d['state'] as $id => $un ) {
+				if ( ! $un ) {
+					$read[ sanitize_text_field( (string) $id ) ] = array( 'unread' => false );
+				}
+			}
+			if ( $read ) {
+				foreach ( get_posts( array( 'post_type' => array( DWDC_CLIENT, DWDC_CONTACT ), 'post_status' => 'any', 'posts_per_page' => -1, 'fields' => 'ids', 'meta_key' => '_dwdcm_mail' ) ) as $o ) {
+					dwdcm_patch( $o, $read );
+				}
+			}
+		}
 		update_option( 'dwdcm_last', current_time( 'mysql' ), false );
 		return array( 'new' => $new );
 	} ) );
-	register_rest_route( 'dwd/v1', '/crm/contact/(?P<id>\d+)/mail', array( 'methods' => 'GET', 'permission_callback' => function () { return current_user_can( 'edit_posts' ); }, 'callback' => function ( $r ) {
-		return dwdcm_for( (int) $r['id'], 0 );
+	$can = function () { return current_user_can( 'edit_posts' ); };
+	register_rest_route( 'dwd/v1', '/crm/contact/(?P<id>\d+)/mail', array( 'methods' => 'GET', 'permission_callback' => $can, 'callback' => function ( $r ) {
+		return dwdcm_for( (int) $r['id'], (bool) $r->get_param( 'all' ) );
+	} ) );
+	register_rest_route( 'dwd/v1', '/crm/client/(?P<id>\d+)/mail', array( 'methods' => 'GET', 'permission_callback' => $can, 'callback' => function ( $r ) {
+		return dwdcm_get( (int) $r['id'], (bool) $r->get_param( 'all' ) );
+	} ) );
+	// Opened in Dream Desk → no longer new.
+	register_rest_route( 'dwd/v1', '/crm/mail-seen', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
+		$owner = (int) $r->get_param( 'owner' );
+		$ch    = array();
+		foreach ( (array) $r->get_param( 'ids' ) as $id ) {
+			$ch[ sanitize_text_field( (string) $id ) ] = array( 'seen' => true );
+		}
+		if ( $owner && in_array( get_post_type( $owner ), array( DWDC_CLIENT, DWDC_CONTACT ), true ) ) {
+			dwdcm_patch( $owner, $ch );
+		}
+		return array( 'ok' => true );
 	} ) );
 } );

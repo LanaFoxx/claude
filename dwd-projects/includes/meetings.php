@@ -65,7 +65,7 @@ function syncClientMail(plan) {
   var want = {}; (plan.emails || []).forEach(function (e) { want[e] = 1; });
   var pack = function (m) {
     return { id: m.getId(), thread: m.getThread().getId(), date: Utilities.formatDate(m.getDate(), 'UTC', "yyyy-MM-dd'T'HH:mm:ss'Z'"),
-      from: m.getFrom(), to: m.getTo(), cc: m.getCc(), subject: m.getSubject(), body: m.getPlainBody().slice(0, 12000) };
+      from: m.getFrom(), to: m.getTo(), cc: m.getCc(), subject: m.getSubject(), body: m.getPlainBody().slice(0, 12000), unread: m.isUnread() };
   };
   var hits = function (m) { return (m.getFrom() + ' ' + m.getTo() + ' ' + m.getCc()).toLowerCase().match(/[a-z0-9._%+'-]+@[a-z0-9.-]+\.[a-z]{2,}/g) || []; };
   var out = [], seen = {};
@@ -74,6 +74,8 @@ function syncClientMail(plan) {
       if (!seen[m.getId()] && hits(m).some(function (a) { return want[a]; })) { seen[m.getId()] = 1; out.push(pack(m)); }
     });
   });
+  var state = {}; // emails still new in Dream Desk: read in Gmail since?
+  (plan.check || []).forEach(function (id) { try { var gm = GmailApp.getMessageById(id); if (gm) { state[id] = gm.isUnread(); } } catch (e) {} });
   var done = [], t0 = Date.now();
   (plan.backfill || []).forEach(function (e) {
     if (Date.now() - t0 > 200000) { return; } // stay well inside Apps Script's time limit
@@ -82,9 +84,9 @@ function syncClientMail(plan) {
     });
     done.push(e);
   });
-  for (var i = 0; i < out.length || (i === 0 && done.length); i += 150) {
+  for (var i = 0; i < out.length || (i === 0 && (done.length || Object.keys(state).length)); i += 150) {
     var r = UrlFetchApp.fetch(DREAM_DESK.replace('meetings-sync', 'client-mail'), { method: 'post', contentType: 'application/json', headers: { 'X-DWD-Token': TOKEN },
-      payload: JSON.stringify({ messages: out.slice(i, i + 150), done: i + 150 >= out.length ? done : [] }), muteHttpExceptions: true });
+      payload: JSON.stringify({ messages: out.slice(i, i + 150), done: i + 150 >= out.length ? done : [], state: i === 0 ? state : {} }), muteHttpExceptions: true });
     Logger.log('Client emails ' + r.getResponseCode() + ' ' + r.getContentText().slice(0, 200));
   }
 }

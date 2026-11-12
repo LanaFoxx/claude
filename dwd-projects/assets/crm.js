@@ -689,27 +689,40 @@
 	function schedHidden() { var m = {}; try { m = JSON.parse(ddGet('dreamdesk-sched-hidden', '{}')) || {}; } catch (e) { m = {}; } return m[DWDC.today] || []; }
 	function schedHide(key) { var m = {}; try { m = JSON.parse(ddGet('dreamdesk-sched-hidden', '{}')) || {}; } catch (e) { m = {}; } var l = m[DWDC.today] || []; if (l.indexOf(key) < 0) { l.push(key); } m = {}; m[DWDC.today] = l; ddSet('dreamdesk-sched-hidden', JSON.stringify(m)); }
 	/* Email a client straight from Dream Desk: sent from mike@ with Mike's Gmail signature, saved to the project's notes. */
-	/* Emails to and from the client (from the Gmail sync), under the project summary. */
-	function mailBox(c, full) {
-		if (!full) { return ''; }
-		var M = c.mail || { total: 0, list: [] }, all = S.mailAll && S.mailAll[c.id], list = all && all.list ? all.list : M.list || [];
-		var k = clientOf(c), em = c.email || (k && k.email) || '', open = S.mailOpen || {};
-		var shown = all ? list : list.slice(0, 6);
+	/* Emails to and from the client (from the Gmail sync). New (unread) ones show; the rest open on demand.
+	   key: 'p<projectId>' or 'k<clientId>'; data: { owner, total, new: [], list: [] (all, once loaded) }. */
+	function mailData(key) {
+		var D = S.mailD || (S.mailD = {});
+		if (key.charAt(0) === 'p') { var pc = S.full[+key.slice(1)]; if (pc && pc.mail && !D[key]) { return pc.mail; } }
+		if (!D[key] && !(S.mailBusy || {})[key]) {
+			(S.mailBusy = S.mailBusy || {})[key] = 1;
+			api(key.charAt(0) === 'p' ? '/contact/' + key.slice(1) + '/mail' : '/client/' + key.slice(1) + '/mail').then(function (x) { D[key] = x; render(); }).catch(function () {});
+		}
+		return D[key] || null;
+	}
+	function mailBox(key, em, pid) {
+		var M = mailData(key);
+		if (!M) { return ''; }
+		var open = S.mailOpen || {}, keep = S.mailKeep || {}, showAll = (S.mailAll || {})[key];
+		var newL = (M.new || []).concat((M.list || []).filter(function (x) { return keep[x.id] && !(M.new || []).some(function (y) { return y.id === x.id; }); }));
+		var newIds = {}; newL.forEach(function (x) { newIds[x.id] = 1; });
 		var when = function (d) { var t = new Date(d); return isNaN(t) ? '' : t.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: t.getFullYear() === new Date().getFullYear() ? undefined : 'numeric' }) + ', ' + t.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }); };
 		var who = function (s) { var m = String(s || '').match(/^\s*"?([^"<(]+?)"?\s*[<(]/); return m ? m[1] : String(s || '').replace(/[<>()]/g, ''); };
-		var rows = shown.map(function (x) {
-			var on = !!open[x.id], snip = String(x.body || '').replace(/\s+/g, ' ').slice(0, 160);
-			return '<div class="dd-mrow' + (on ? ' open' : '') + (x.in ? ' in' : ' out') + '"><button type="button" class="dd-mhead" data-mopen="' + esc(x.id) + '" aria-expanded="' + on + '">'
-				+ '<span class="dd-mdir">' + (x.in ? esc(who(x.from)) : 'You') + '</span><span class="dd-mt"><b>' + esc(x.subject || '(no subject)') + '</b>' + (on ? '' : '<small>' + esc(snip) + '</small>') + '</span><span class="dd-mdate">' + esc(when(x.date)) + '</span></button>'
+		var row = function (x) {
+			var on = !!open[x.id], snip = String(x.body || '').replace(/\s+/g, ' ').slice(0, 160), isNew = x.unread && !x.seen;
+			return '<div class="dd-mrow' + (on ? ' open' : '') + (x.in ? ' in' : ' out') + (isNew ? ' new' : '') + '"><button type="button" class="dd-mhead" data-mopen="' + esc(x.id) + '" data-mkey="' + key + '" aria-expanded="' + on + '">'
+				+ '<span class="dd-mdir">' + (isNew ? '<i class="dd-mdot"></i>' : '') + (x.in ? esc(who(x.from)) : 'You') + '</span><span class="dd-mt"><b>' + esc(x.subject || '(no subject)') + '</b>' + (on ? '' : '<small>' + esc(snip) + '</small>') + '</span><span class="dd-mdate">' + esc(when(x.date)) + '</span></button>'
 				+ (on ? '<div class="dd-mbody"><p class="dd-mmeta">From ' + esc(x.from) + '<br>To ' + esc(x.to) + '</p><div class="dd-mtext">' + esc(x.body || '(no text)') + '</div>'
-					+ '<div class="dd-macts"><button type="button" class="dd-btn secondary sm" data-mreply="' + esc(x.id) + '">' + lu('mail', 14) + 'Reply</button>'
+					+ '<div class="dd-macts"><button type="button" class="dd-btn secondary sm" data-mreply="' + esc(x.id) + '" data-mkey="' + key + '" data-mpid="' + (pid || 0) + '">' + lu('mail', 14) + 'Reply</button>'
 					+ (x.thread ? '<a class="dd-btn ghost sm" href="https://mail.google.com/mail/?authuser=mike@dreamwebdigital.com#all/' + esc(x.thread) + '" target="_blank" rel="noopener">Open in Gmail</a>' : '') + '</div></div>' : '')
 				+ '</div>';
-		}).join('');
-		var more = !all && M.total > shown.length ? '<button type="button" class="dd-mmore" data-mall="' + c.id + '">Show all ' + M.total + ' emails</button>' : '';
-		var empty = '<p class="dd-help dd-mempty">' + (em ? 'No emails with ' + esc(em) + ' yet. They show here once the Gmail sync picks them up (every 15 minutes).' : 'Add the client’s email address to see your emails with them here.') + '</p>';
-		return '<section class="dd-card dd-pc2 k-mail"><header><h2>' + lu('mail', 16) + 'Emails</h2><span class="sum">' + (M.total ? M.total + ' with ' + esc(em || 'this client') : 'None yet') + '</span><span class="dd-sp"></span><button type="button" class="dd-hlink" data-emailc="' + c.id + '">New email</button></header>'
-			+ '<div class="dd-mlist">' + (rows || empty) + more + '</div></section>';
+		};
+		var nNew = (M.new || []).length, rest = (M.list || []).filter(function (x) { return !newIds[x.id]; }), nRest = Math.max(0, M.total - newL.length);
+		var top = newL.length ? newL.map(row).join('') : '<p class="dd-help dd-mempty">' + (M.total ? 'No new emails.' : em ? 'No emails with ' + esc(em) + ' yet. They show here once the Gmail sync picks them up (every 15 minutes).' : 'Add the client’s email address to see your emails with them here.') + '</p>';
+		var tog = nRest ? '<button type="button" class="dd-mmore" data-mtog="' + key + '" aria-expanded="' + !!showAll + '">' + lu('chevron-down', 14) + (showAll ? 'Hide previous emails' : 'Show all ' + nRest + ' previous email' + (nRest === 1 ? '' : 's')) + '</button>' : '';
+		var prev = showAll ? (M.list && M.list.length ? '<div class="dd-mprev">' + rest.map(row).join('') + '</div>' : '<p class="dd-help dd-mempty">Loading…</p>') : '';
+		return '<section class="dd-card dd-pc2 k-mail"><header><h2>' + lu('mail', 16) + 'Emails</h2><span class="sum">' + (nNew ? '<b class="dd-mnew">' + nNew + ' new</b> · ' : '') + (M.total ? M.total + ' total' : 'None yet') + '</span><span class="dd-sp"></span><button type="button" class="dd-hlink" ' + (pid ? 'data-emailc="' + pid + '"' : 'data-emailto="' + esc(em || '') + '"') + '>New email</button></header>'
+			+ '<div class="dd-mlist">' + top + tog + prev + '</div></section>';
 	}
 	function emailModal(m) {
 		var c = m.pid ? contact(m.pid) : null, v = m.vals || {};
@@ -2769,7 +2782,7 @@
 			+ '<dt>Hosting</dt><dd>' + (host.length ? host.length + ' site' + (host.length > 1 ? 's' : '') + ' · ' + money(host.reduce(function (s, c) { return s + num(c.hosting); }, 0)) + '/yr' : 'No') + '</dd>'
 			+ '<dt>Source</dt><dd>' + esc((pp.filter(function (c) { return c.lead_source; })[0] || {}).lead_source || sourceOf(pp[0] || {}) || '—') + '</dd><dt>Client since</dt><dd>' + (pp.length && pp.every(imported) ? '—' : fmt(k.created, true)) + '</dd>'
 			+ (k.notes ? '<dt>Notes</dt><dd>' + esc(k.notes).replace(/\n/g, '<br>') + '</dd>' : '') + '</dl></section>'
-			+ '</div><div class="dwdc-col">' + zoomBox('k' + k.id, (pp.filter(isOpen).length ? pp.filter(isOpen) : pp).map(function (c) { return c.id; }))
+			+ '</div><div class="dwdc-col">' + zoomBox('k' + k.id, (pp.filter(isOpen).length ? pp.filter(isOpen) : pp).map(function (c) { return c.id; })) + mailBox('k' + k.id, k.email, first ? first.id : 0)
 			+ '<section class="dwdc-card"><div class="dwdc-cardh pad2"><h2>To-Dos <span class="dwdc-cnt">' + tasks.filter(function (t) { return !t.done; }).length + '</span></h2></div><div class="pad2">'
 			+ (tasks.length ? '<div class="dwdc-todos">' + tasks.map(function (t) { return todoRow(t); }).join('') + '</div>' : '')
 			+ (pp.length ? '<form class="dwdc-addbar home" data-contact="' + (first || pp[0]).id + '"><input name="text" placeholder="Add a to-do for ' + esc((first || pp[0]).name) + '..." autocomplete="off" required><button class="dwdc-btn">Add</button></form>' : '') + '</div></section>'
@@ -2955,7 +2968,7 @@
 		var hosting = num(c.hosting) ? hostCard(c) : '';
 		return '<div class="dd-pp">' + head + strip
 			+ (S.edit ? '<div class="dd-pp-edit" id="pv3-edit">' + details + peopleCard(c) + '</div>' : '')
-			+ '<div class="dd-pp-grid"><div class="dd-pp-col">' + sumBox + mailBox(c, full) + stgBox + mkBox + formBox + todos + (S.edit ? '' : '<div class="dd-pp-mob">' + details + '</div>') + notesBox + '</div><div class="dd-pp-col side">' + (S.edit ? '' : '<div class="dd-pp-desk">' + details + '</div>' + contacts) + zoomBox('p' + c.id, [c.id]) + (st === 'leads' ? '' : paysBox) + hosting + '</div></div></div>';
+			+ '<div class="dd-pp-grid"><div class="dd-pp-col">' + sumBox + (full ? mailBox('p' + c.id, c.email || (clientOf(c) || {}).email || '', c.id) : '') + stgBox + mkBox + formBox + todos + (S.edit ? '' : '<div class="dd-pp-mob">' + details + '</div>') + notesBox + '</div><div class="dd-pp-col side">' + (S.edit ? '' : '<div class="dd-pp-desk">' + details + '</div>' + contacts) + zoomBox('p' + c.id, [c.id]) + (st === 'leads' ? '' : paysBox) + hosting + '</div></div></div>';
 	}
 	// Onboarding answers as plain text, ready to paste into Claude.
 	function onboardEntries(c) {
@@ -3553,18 +3566,34 @@
 		if (t.closest('[data-ddtheme]')) { var th = ddTheme() === 'dark' ? 'light' : 'dark'; ddSet('dreamdesk-theme', th); document.documentElement.setAttribute('data-theme', th); render(); return; }
 		if (t.closest('[data-ddme]')) { S.meOpen = !S.meOpen; var me = app.querySelector('.dd-me .dd-menu'); if (me) { me.classList.toggle('open', S.meOpen); } return; }
 		if (S.meOpen && !t.closest('.dd-me')) { S.meOpen = false; var me2 = app.querySelector('.dd-me .dd-menu'); if (me2) { me2.classList.remove('open'); } }
-		if ((el = t.closest('[data-mopen]'))) { S.mailOpen = S.mailOpen || {}; var mo = el.getAttribute('data-mopen'); S.mailOpen[mo] = !S.mailOpen[mo]; render(); return; }
-		if ((el = t.closest('[data-mall]'))) {
-			var mpid0 = +el.getAttribute('data-mall'); el.disabled = true; el.textContent = 'Loading…';
-			api('/contact/' + mpid0 + '/mail').then(function (x) { S.mailAll = S.mailAll || {}; S.mailAll[mpid0] = x; render(); }).catch(fail);
+		if ((el = t.closest('[data-mopen]'))) {
+			S.mailOpen = S.mailOpen || {}; var mo = el.getAttribute('data-mopen'), mk = el.getAttribute('data-mkey'), MD = mailData(mk);
+			S.mailOpen[mo] = !S.mailOpen[mo];
+			var mx = MD && (MD.new || []).concat(MD.list || []).find(function (x) { return x.id === mo; });
+			if (mx && mx.unread && !mx.seen) { // opened here → not new any more (stays in view until you leave the page)
+				mx.seen = true; (S.mailKeep = S.mailKeep || {})[mo] = 1; MD.list = MD.list && MD.list.length ? MD.list : (MD.new || []).slice();
+				MD.list.forEach(function (x) { if (x.id === mo) { x.seen = true; } });
+				MD.new = (MD.new || []).filter(function (x) { return x.id !== mo; });
+				api('/mail-seen', 'POST', { owner: MD.owner, ids: [mo] }).catch(function () {});
+			}
+			render(); return;
+		}
+		if ((el = t.closest('[data-mtog]'))) {
+			var tk = el.getAttribute('data-mtog'), MD2 = mailData(tk); S.mailAll = S.mailAll || {}; S.mailAll[tk] = !S.mailAll[tk]; render();
+			if (S.mailAll[tk] && MD2 && (!MD2.list || MD2.list.length < MD2.total)) {
+				api((tk.charAt(0) === 'p' ? '/contact/' : '/client/') + tk.slice(1) + '/mail?all=1').then(function (x) {
+					(MD2.new || []).forEach(function (y) { x.list.forEach(function (z) { if (z.id === y.id) { z.seen = y.seen; } }); });
+					x.new = MD2.new; (S.mailD = S.mailD || {})[tk] = x; if (tk.charAt(0) === 'p' && S.full[+tk.slice(1)]) { S.full[+tk.slice(1)].mail = x; } render();
+				}).catch(fail);
+			}
 			return;
 		}
 		if ((el = t.closest('[data-mreply]'))) {
-			var rpid = route().id, rc = S.full[rpid] || contact(rpid), rid = el.getAttribute('data-mreply');
-			var rl = ((S.mailAll && S.mailAll[rpid] && S.mailAll[rpid].list) || (rc && rc.mail && rc.mail.list) || []).find(function (x) { return x.id === rid; });
+			var rk = el.getAttribute('data-mkey'), rpid = +el.getAttribute('data-mpid') || 0, rid = el.getAttribute('data-mreply'), RD = mailData(rk);
+			var rl = RD && (RD.new || []).concat(RD.list || []).find(function (x) { return x.id === rid; });
 			if (rl) {
 				var rto = rl.in ? ((String(rl.from).match(/[A-Za-z0-9._%+'-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/) || [''])[0]) : '';
-				openEmail(rto, rpid);
+				openEmail(rto || (rk.charAt(0) === 'k' ? (S.clients.find(function (k) { return k.id === +rk.slice(1); }) || {}).email || '' : ''), rpid);
 				S.modal.vals.subject = /^re:/i.test(rl.subject) ? rl.subject : 'Re: ' + rl.subject; render(); focusIn('[name=text]');
 			}
 			return;

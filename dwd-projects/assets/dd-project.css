@@ -265,3 +265,12 @@
 .dd-mmore:hover { background: var(--hover); }
 @media (max-width: 767px) { .dd-mhead { grid-template-columns: 1fr auto; } .dd-mdir { grid-column: 1 / -1; } }
 .dd-mlist .dd-mempty { padding: 0 20px 14px !important; }
+
+/* Emails: new ones first, the rest behind a toggle */
+.dd-mrow.new .dd-mt b { font-weight: 700; }
+.dd-mdot { display: inline-block; width: 8px; height: 8px; margin-right: 6px; border-radius: 50%; background: var(--accent); vertical-align: middle; }
+.dd-mnew { color: var(--accent-text); font-weight: 600; }
+.dd-mmore { display: flex; align-items: center; gap: 6px; }
+.dd-mprev { border-top: 1px solid var(--border); }
+.dwdc-col > .k-mail { margin-top: 16px; }
+.dd-mmore[aria-expanded="true"] .lu { transform: rotate(180deg); }
