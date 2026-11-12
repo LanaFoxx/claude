@@ -231,14 +231,12 @@ function dwdc_save_contact( $id, $data ) {
 	if ( isset( $data['billed'] ) && function_exists( 'dwds_upwork_hold' ) && dwdc_is_upwork( $id, $data ) ) {
 		$file = 0;
 		foreach ( (array) get_post_meta( $id, '_dwdc_payments', true ) as $x ) {
-			if ( is_array( $x ) && 'Upwork' === ( $x['source'] ?? '' ) && '' !== (string) ( $x['ref'] ?? '' ) && in_array( $x['status'] ?? 'paid', array( 'paid', 'held' ), true ) ) {
+			if ( is_array( $x ) && 'Upwork' === ( $x['source'] ?? '' ) && preg_match( '/^\d+$/', (string) ( $x['ref'] ?? '' ) ) && in_array( $x['status'] ?? 'paid', array( 'paid', 'held' ), true ) ) { // Upwork-file payments only, never ones Mike logged by hand
 				$file += (float) $x['amount'];
 			}
 		}
 		$typed = (float) preg_replace( '/[^\d.]/', '', (string) $data['billed'] );
-		if ( $file > 0 ) {
-			dwds_upwork_hold( $id, $typed + 0.5 < $file );
-		}
+		dwds_upwork_hold( $id, $file > 0 && $typed + 0.5 < $file );
 	}
 	// Finishing a project that still has money owed keeps it on the Owed list until it's paid.
 	if ( isset( $data['list'] ) && 'complete' === $data['list'] && ! isset( $data['balance'] ) && (float) preg_replace( '/[^\d.]/', '', (string) get_post_meta( $id, '_dwdc_balance', true ) ) > 0 ) {

@@ -495,7 +495,7 @@ function dwds_upwork_hold( $pid, $hold ) {
 	}
 	$on = (array) get_post_meta( $pid, '_dwdc_upwork_paid_on', true );
 	foreach ( $pays as $i => $x ) {
-		if ( 'Upwork' === ( $x['source'] ?? '' ) && '' !== (string) ( $x['ref'] ?? '' ) && ! isset( $on[ (string) $x['ref'] ] ) && in_array( $x['status'] ?? 'paid', array( 'paid', 'held' ), true ) ) {
+		if ( 'Upwork' === ( $x['source'] ?? '' ) && preg_match( '/^\d+$/', (string) ( $x['ref'] ?? '' ) ) && ! isset( $on[ (string) $x['ref'] ] ) && in_array( $x['status'] ?? 'paid', array( 'paid', 'held' ), true ) ) {
 			$pays[ $i ]['status'] = $hold ? 'held' : 'paid';
 		}
 	}
