@@ -24,8 +24,8 @@ function dwdmt_script() {
 		$extra = wp_json_encode( array_values( (array) get_option( 'dwdpe_extra_cals', array( 'mptarr33@gmail.com' ) ) ) );
 	return <<<JS
 // Dream Desk · Inbox. Read-only: every 15 minutes it sends the next 14 days of your Google Calendar
-// (Calendly, Upwork, Zoom and Meet calls) and the last 3 days of Upwork emails (invites, client
-// messages, hires) to Dream Desk. It never changes your calendar or your email.
+// (Calendly, Upwork, Zoom and Meet calls), the last 3 days of Upwork emails (invites, client
+// messages, hires) and emails to and from your clients (for their project pages) to Dream Desk. It never changes your calendar or your email.
 // Click Run on "setup" once; it then updates every 15 minutes.
 var DREAM_DESK = '{$url}';
 var TOKEN = '{$tok}';
@@ -56,6 +56,37 @@ function syncMeetings() {
   });
   var r = UrlFetchApp.fetch(DREAM_DESK, { method: 'post', contentType: 'application/json', headers: { 'X-DWD-Token': TOKEN }, payload: JSON.stringify({ events: events, messages: messages }), muteHttpExceptions: true });
   Logger.log(r.getResponseCode() + ' ' + r.getContentText().slice(0, 300));
+  try { var plan = JSON.parse(r.getContentText()).mail; if (plan) { syncClientMail(plan); } } catch (err) { Logger.log('Client emails: ' + err); }
+}
+
+// Client emails for the project pages: anything from the last 2 days to or from a client,
+// plus the full history of a few clients each run (until every client is loaded).
+function syncClientMail(plan) {
+  var want = {}; (plan.emails || []).forEach(function (e) { want[e] = 1; });
+  var pack = function (m) {
+    return { id: m.getId(), thread: m.getThread().getId(), date: Utilities.formatDate(m.getDate(), 'UTC', "yyyy-MM-dd'T'HH:mm:ss'Z'"),
+      from: m.getFrom(), to: m.getTo(), cc: m.getCc(), subject: m.getSubject(), body: m.getPlainBody().slice(0, 12000) };
+  };
+  var hits = function (m) { return (m.getFrom() + ' ' + m.getTo() + ' ' + m.getCc()).toLowerCase().match(/[a-z0-9._%+'-]+@[a-z0-9.-]+\.[a-z]{2,}/g) || []; };
+  var out = [], seen = {};
+  GmailApp.search('newer_than:2d -in:spam -in:trash -from:upwork.com', 0, 100).forEach(function (t) {
+    t.getMessages().forEach(function (m) {
+      if (!seen[m.getId()] && hits(m).some(function (a) { return want[a]; })) { seen[m.getId()] = 1; out.push(pack(m)); }
+    });
+  });
+  var done = [], t0 = Date.now();
+  (plan.backfill || []).forEach(function (e) {
+    if (Date.now() - t0 > 200000) { return; } // stay well inside Apps Script's time limit
+    GmailApp.search('(from:' + e + ' OR to:' + e + ' OR cc:' + e + ') -in:spam -in:trash', 0, 60).forEach(function (t) {
+      t.getMessages().forEach(function (m) { if (!seen[m.getId()]) { seen[m.getId()] = 1; out.push(pack(m)); } });
+    });
+    done.push(e);
+  });
+  for (var i = 0; i < out.length || (i === 0 && done.length); i += 150) {
+    var r = UrlFetchApp.fetch(DREAM_DESK.replace('meetings-sync', 'client-mail'), { method: 'post', contentType: 'application/json', headers: { 'X-DWD-Token': TOKEN },
+      payload: JSON.stringify({ messages: out.slice(i, i + 150), done: i + 150 >= out.length ? done : [] }), muteHttpExceptions: true });
+    Logger.log('Client emails ' + r.getResponseCode() + ' ' + r.getContentText().slice(0, 200));
+  }
 }
 
 function setup() {
@@ -207,6 +238,9 @@ add_action( 'rest_api_init', function () {
 			}
 			$res['calls'] = dwdin_apply_meetings( dwdmt_parse( (array) ( $d['events'] ?? array() ) ) );
 			update_option( 'dwdin_last', current_time( 'mysql' ), false );
+			if ( function_exists( 'dwdcm_plan' ) ) {
+				$res['mail'] = dwdcm_plan(); // the script then sends emails to/from these clients
+			}
 			return $res;
 		},
 	) );

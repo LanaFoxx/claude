@@ -166,11 +166,10 @@ add_action( 'rest_api_init', function () {
 
 /** Mike's Gmail signature (same as in his mike@ inbox), for emails sent from Dream Desk. */
 function dwdc_mail_signature() {
-	$cal = 'https://calendly.com/dreamwebdigital/dream-web-digital-consultation-call';
-	return '<span>-- </span><br><div dir="ltr">Sincerely,<div><br></div><div><font size="4">Michael Tarr</font></div>'
-		. '<div>Owner | Dream Web Digital<br><div>(561) 425-0734</div><a href="https://dreamwebdigital.com/" target="_blank">dreamwebdigital.com</a><br>'
-		. '<a href="' . $cal . '" target="_blank"><b><font size="4">Schedule Zoom Here</font></b></a></div>'
-		. '<div><img width="200" height="46" src="https://dreamwebdigital.com/wp-content/uploads/2026/11/dwd-email-signature-logo.png" alt="Dream Web Digital" style="display:block;width:200px;height:auto;border:0;margin-top:6px"></div></div>';
+	$k = 'color:#000000';
+	return '<span style="' . $k . '">-- </span><br><div dir="ltr" style="' . $k . '">Sincerely,<div><br></div><div style="' . $k . '"><font size="4" color="#000000">Michael Tarr</font></div>'
+		. '<div style="' . $k . '">Owner | Dream Web Digital<br><div style="' . $k . '">(561) 425-0734</div><a href="https://dreamwebdigital.com/" target="_blank">dreamwebdigital.com</a></div>'
+		. '<div><img width="152" height="35" src="https://dreamwebdigital.com/wp-content/uploads/2026/11/dwd-email-signature-logo.png" alt="Dream Web Digital" style="display:block;width:152px;height:auto;border:0;margin-top:6px"></div></div>';
 }
 
 function dwdc_save_contact( $id, $data ) {
@@ -1413,7 +1412,7 @@ add_action( 'rest_api_init', function () {
 		if ( ! is_email( $to ) || '' === $subj || '' === $body ) {
 			return new WP_Error( 'dwdc_mail', 'Need a valid address, subject and message.', array( 'status' => 400 ) );
 		}
-		$html = '<div dir="ltr" style="font-family:Arial,Helvetica,sans-serif;font-size:small;color:#222">' . nl2br( esc_html( $body ) ) . '<br><br>' . dwdc_mail_signature() . '</div>';
+		$html = '<div dir="ltr" style="font-family:Arial,Helvetica,sans-serif;font-size:small;color:#000000">' . nl2br( esc_html( $body ) ) . '<br><br>' . dwdc_mail_signature() . '</div>';
 		$ok   = wp_mail( $to, $subj, $html, array( 'Content-Type: text/html; charset=UTF-8', 'From: Michael Tarr <mike@dreamwebdigital.com>', 'Reply-To: Michael Tarr <mike@dreamwebdigital.com>', 'X-DWD-Own: 1' ) );
 		if ( $ok && $pid && DWDC_CONTACT === get_post_type( $pid ) ) {
 			$notes   = get_post_meta( $pid, '_dwdc_notes', true );

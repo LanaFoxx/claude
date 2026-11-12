@@ -689,6 +689,28 @@
 	function schedHidden() { var m = {}; try { m = JSON.parse(ddGet('dreamdesk-sched-hidden', '{}')) || {}; } catch (e) { m = {}; } return m[DWDC.today] || []; }
 	function schedHide(key) { var m = {}; try { m = JSON.parse(ddGet('dreamdesk-sched-hidden', '{}')) || {}; } catch (e) { m = {}; } var l = m[DWDC.today] || []; if (l.indexOf(key) < 0) { l.push(key); } m = {}; m[DWDC.today] = l; ddSet('dreamdesk-sched-hidden', JSON.stringify(m)); }
 	/* Email a client straight from Dream Desk: sent from mike@ with Mike's Gmail signature, saved to the project's notes. */
+	/* Emails to and from the client (from the Gmail sync), under the project summary. */
+	function mailBox(c, full) {
+		if (!full) { return ''; }
+		var M = c.mail || { total: 0, list: [] }, all = S.mailAll && S.mailAll[c.id], list = all && all.list ? all.list : M.list || [];
+		var k = clientOf(c), em = c.email || (k && k.email) || '', open = S.mailOpen || {};
+		var shown = all ? list : list.slice(0, 6);
+		var when = function (d) { var t = new Date(d); return isNaN(t) ? '' : t.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: t.getFullYear() === new Date().getFullYear() ? undefined : 'numeric' }) + ', ' + t.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }); };
+		var who = function (s) { var m = String(s || '').match(/^\s*"?([^"<(]+?)"?\s*[<(]/); return m ? m[1] : String(s || '').replace(/[<>()]/g, ''); };
+		var rows = shown.map(function (x) {
+			var on = !!open[x.id], snip = String(x.body || '').replace(/\s+/g, ' ').slice(0, 160);
+			return '<div class="dd-mrow' + (on ? ' open' : '') + (x.in ? ' in' : ' out') + '"><button type="button" class="dd-mhead" data-mopen="' + esc(x.id) + '" aria-expanded="' + on + '">'
+				+ '<span class="dd-mdir">' + (x.in ? esc(who(x.from)) : 'You') + '</span><span class="dd-mt"><b>' + esc(x.subject || '(no subject)') + '</b>' + (on ? '' : '<small>' + esc(snip) + '</small>') + '</span><span class="dd-mdate">' + esc(when(x.date)) + '</span></button>'
+				+ (on ? '<div class="dd-mbody"><p class="dd-mmeta">From ' + esc(x.from) + '<br>To ' + esc(x.to) + '</p><div class="dd-mtext">' + esc(x.body || '(no text)') + '</div>'
+					+ '<div class="dd-macts"><button type="button" class="dd-btn secondary sm" data-mreply="' + esc(x.id) + '">' + lu('mail', 14) + 'Reply</button>'
+					+ (x.thread ? '<a class="dd-btn ghost sm" href="https://mail.google.com/mail/?authuser=mike@dreamwebdigital.com#all/' + esc(x.thread) + '" target="_blank" rel="noopener">Open in Gmail</a>' : '') + '</div></div>' : '')
+				+ '</div>';
+		}).join('');
+		var more = !all && M.total > shown.length ? '<button type="button" class="dd-mmore" data-mall="' + c.id + '">Show all ' + M.total + ' emails</button>' : '';
+		var empty = '<p class="dd-help dd-mempty">' + (em ? 'No emails with ' + esc(em) + ' yet. They show here once the Gmail sync picks them up (every 15 minutes).' : 'Add the client’s email address to see your emails with them here.') + '</p>';
+		return '<section class="dd-card dd-pc2 k-mail"><header><h2>' + lu('mail', 16) + 'Emails</h2><span class="sum">' + (M.total ? M.total + ' with ' + esc(em || 'this client') : 'None yet') + '</span><span class="dd-sp"></span><button type="button" class="dd-hlink" data-emailc="' + c.id + '">New email</button></header>'
+			+ '<div class="dd-mlist">' + (rows || empty) + more + '</div></section>';
+	}
 	function emailModal(m) {
 		var c = m.pid ? contact(m.pid) : null, v = m.vals || {};
 		return '<div class="dwdc-overlay" data-close-modal></div><form class="dwdc-modal dd-drawer dd-emm dd-emf"><button type="button" class="dwdc-mx" data-close-modal>' + ic('x', 20) + '</button>'
@@ -2933,7 +2955,7 @@
 		var hosting = num(c.hosting) ? hostCard(c) : '';
 		return '<div class="dd-pp">' + head + strip
 			+ (S.edit ? '<div class="dd-pp-edit" id="pv3-edit">' + details + peopleCard(c) + '</div>' : '')
-			+ '<div class="dd-pp-grid"><div class="dd-pp-col">' + sumBox + stgBox + mkBox + formBox + todos + (S.edit ? '' : '<div class="dd-pp-mob">' + details + '</div>') + notesBox + '</div><div class="dd-pp-col side">' + (S.edit ? '' : '<div class="dd-pp-desk">' + details + '</div>' + contacts) + zoomBox('p' + c.id, [c.id]) + (st === 'leads' ? '' : paysBox) + hosting + '</div></div></div>';
+			+ '<div class="dd-pp-grid"><div class="dd-pp-col">' + sumBox + mailBox(c, full) + stgBox + mkBox + formBox + todos + (S.edit ? '' : '<div class="dd-pp-mob">' + details + '</div>') + notesBox + '</div><div class="dd-pp-col side">' + (S.edit ? '' : '<div class="dd-pp-desk">' + details + '</div>' + contacts) + zoomBox('p' + c.id, [c.id]) + (st === 'leads' ? '' : paysBox) + hosting + '</div></div></div>';
 	}
 	// Onboarding answers as plain text, ready to paste into Claude.
 	function onboardEntries(c) {
@@ -3531,6 +3553,22 @@
 		if (t.closest('[data-ddtheme]')) { var th = ddTheme() === 'dark' ? 'light' : 'dark'; ddSet('dreamdesk-theme', th); document.documentElement.setAttribute('data-theme', th); render(); return; }
 		if (t.closest('[data-ddme]')) { S.meOpen = !S.meOpen; var me = app.querySelector('.dd-me .dd-menu'); if (me) { me.classList.toggle('open', S.meOpen); } return; }
 		if (S.meOpen && !t.closest('.dd-me')) { S.meOpen = false; var me2 = app.querySelector('.dd-me .dd-menu'); if (me2) { me2.classList.remove('open'); } }
+		if ((el = t.closest('[data-mopen]'))) { S.mailOpen = S.mailOpen || {}; var mo = el.getAttribute('data-mopen'); S.mailOpen[mo] = !S.mailOpen[mo]; render(); return; }
+		if ((el = t.closest('[data-mall]'))) {
+			var mpid0 = +el.getAttribute('data-mall'); el.disabled = true; el.textContent = 'Loading…';
+			api('/contact/' + mpid0 + '/mail').then(function (x) { S.mailAll = S.mailAll || {}; S.mailAll[mpid0] = x; render(); }).catch(fail);
+			return;
+		}
+		if ((el = t.closest('[data-mreply]'))) {
+			var rpid = route().id, rc = S.full[rpid] || contact(rpid), rid = el.getAttribute('data-mreply');
+			var rl = ((S.mailAll && S.mailAll[rpid] && S.mailAll[rpid].list) || (rc && rc.mail && rc.mail.list) || []).find(function (x) { return x.id === rid; });
+			if (rl) {
+				var rto = rl.in ? ((String(rl.from).match(/[A-Za-z0-9._%+'-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/) || [''])[0]) : '';
+				openEmail(rto, rpid);
+				S.modal.vals.subject = /^re:/i.test(rl.subject) ? rl.subject : 'Re: ' + rl.subject; render(); focusIn('[name=text]');
+			}
+			return;
+		}
 		if ((el = t.closest('[data-emailc]'))) { e.preventDefault(); e.stopPropagation(); openEmail('', +el.getAttribute('data-emailc')); return; }
 		if ((el = t.closest('[data-emailto]'))) { e.preventDefault(); e.stopPropagation(); openEmail(el.getAttribute('data-emailto'), +el.getAttribute('data-emailp') || 0); return; }
 		if ((el = t.closest('a[href^="mailto:"]')) && !el.closest('.dd-emf') && !e.ctrlKey && !e.metaKey) {

@@ -240,3 +240,28 @@
 .dd .dd-insp li { display: flex !important; flex-direction: column; gap: 1px; }
 .dd-insp a { display: inline-flex; align-items: center; gap: 6px; font-weight: 500; color: var(--accent-text) !important; word-break: break-all; }
 .dd-insp li span { font-size: 13px; color: var(--text-2); padding-left: 19px; }
+
+/* Client emails under the project summary */
+.dd-pc2.k-mail > header h2 .lu { color: var(--accent-text); }
+@media (max-width: 767px) { .dd-pp-grid .k-mail { order: 3; margin: 0 !important; } }
+.dd-mlist { padding: 0 0 6px; }
+.dd-mempty { padding: 0 20px 14px; margin: 0 !important; }
+.dd-mrow { border-top: 1px solid var(--border); }
+.dd-mhead { display: grid; grid-template-columns: 120px 1fr auto; gap: 12px; align-items: baseline; width: 100%; padding: 10px 20px; border: 0; background: none; color: var(--text); font: inherit; text-align: left; cursor: pointer; }
+.dd-mhead:hover { background: var(--hover); }
+.dd-mdir { font-size: 13px; font-weight: 600; color: var(--text-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dd-mrow.in .dd-mdir { color: var(--accent-text); }
+.dd-mt { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.dd-mt b { font-size: 14px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dd-mt small { font-size: 13px; color: var(--text-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dd-mrow.open .dd-mt b { white-space: normal; }
+.dd-mdate { font-size: 12px; color: var(--text-3); white-space: nowrap; }
+.dd-mbody { padding: 0 20px 14px; }
+.dd-mmeta { margin: 0 0 10px !important; font-size: 12px; line-height: 1.5; color: var(--text-3); word-break: break-word; }
+.dd-mtext { white-space: pre-wrap; word-break: break-word; font-size: 14px; line-height: 1.55; color: var(--text); max-height: 420px; overflow-y: auto; padding: 12px 14px; border-radius: var(--radius-md); background: var(--bg); border: 1px solid var(--border); }
+.dd-macts { display: flex; gap: 8px; margin-top: 10px; }
+.dd-macts .dd-btn { height: 32px; }
+.dd-mmore { display: block; width: 100%; padding: 10px 20px; border: 0; border-top: 1px solid var(--border); background: none; color: var(--accent-text); font: 500 13px var(--font); text-align: left; cursor: pointer; }
+.dd-mmore:hover { background: var(--hover); }
+@media (max-width: 767px) { .dd-mhead { grid-template-columns: 1fr auto; } .dd-mdir { grid-column: 1 / -1; } }
+.dd-mlist .dd-mempty { padding: 0 20px 14px !important; }
