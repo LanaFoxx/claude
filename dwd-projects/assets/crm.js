@@ -828,7 +828,7 @@
 	function calD(ds) { return new Date(ds + 'T12:00:00'); }
 	function calAdd(ds, n) { var d = calD(ds); d.setDate(d.getDate() + n); return calIso(d); }
 	function calMon(ds) { var d = calD(ds); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return calIso(d); }
-	function calView() { var v = S.calView || ddGet('dreamdesk-cal-view', 'month'); return ['month', 'week', 'day'].indexOf(v) > -1 ? v : 'month'; }
+	function calView() { var v = S.calView || ddGet('dreamdesk-cal-view', 'month'); if (v === 'list' && window.innerWidth >= 768) { v = 'month'; } return ['month', 'week', 'day', 'list'].indexOf(v) > -1 ? v : 'month'; }
 	function calSrc() { var a = null; try { a = JSON.parse(ddGet('dreamdesk-cal-sources', 'null')); } catch (e) { a = null; } a = Array.isArray(a) ? a : ['td', 'ev', 'bill']; return { td: a.indexOf('td') > -1, ev: a.indexOf('ev') > -1, bill: a.indexOf('bill') > -1 }; }
 	function calShort(tm) { var q = /^(\d{1,2}):(\d{2})\s*([AP]M)$/i.exec(String(tm || '').trim()); return q ? (+q[1]) + (q[2] === '00' ? '' : ':' + q[2]) + q[3].toLowerCase() : String(tm || ''); }
 	function calMin(tm) { if (!tm) { return -1; } var q = /^(\d{1,2}):(\d{2})\s*([AP]M)?/i.exec(String(tm)); return q ? (+q[1] % 12 + (/p/i.test(q[3] || '') ? 12 : 0)) * 60 + +q[2] : -1; }
@@ -841,7 +841,7 @@
 			var fl = isFlight(x.text);
 			return { kind: x.gevent ? 'ev' : 'td', tint: fl ? 'rose' : x.gevent ? 'ev' : 'td', text: ptx(x.text), time: x.time, done: !!x.done, id: x.id, src: x.gevent ? 'Google Calendar' : (x.source === 'Google Tasks' ? 'Google Tasks' : 'Personal to-do') };
 		});
-		S.tasks.filter(function (x) { return x.due === ds && x.due_set; }).forEach(function (x) { var c = x.contact ? contact(x.contact) : null; list.push({ kind: 'td', tint: 'td', w: 1, text: x.text, time: '', done: !!x.done, id: x.id, src: 'Work to-do' + (c ? ' · ' + c.name : '') }); });
+		S.tasks.filter(function (x) { return x.due === ds && x.due_set; }).forEach(function (x) { var c = x.contact ? contact(x.contact) : null; list.push({ kind: 'td', tint: 'td', w: 1, text: x.text, time: x.time || '', done: !!x.done, id: x.id, src: 'Work to-do' + (c ? ' · ' + c.name : '') }); });
 		D.bills.filter(function (b) {
 			if (b.freq === 'weekly') { return ((dd.getDay() + 6) % 7) + 1 === b.day; }
 			if (b.freq === 'yearly' && b.month !== dd.getMonth() + 1) { return false; }
@@ -861,15 +861,24 @@
 		for (var dc = 1; dc <= dimM; dc++) { calItems(D, cm + '-' + ('0' + dc).slice(-2), true).forEach(function (x) { cnt[x.kind]++; }); }
 		var tog = function (k, label) { return '<button type="button" class="dd-srct ' + k + (F[k] ? '' : ' off') + '" data-calsrc="' + k + '" aria-pressed="' + F[k] + '"><i></i>' + label + '<em>' + cnt[k] + '</em></button>'; };
 		var sd = calD(sel), period;
-		if (view === 'month') { period = CAL_MF[cmo - 1] + ' ' + cy; }
+		if (view === 'month' || view === 'list') { period = CAL_MF[cmo - 1] + ' ' + cy; }
 		else if (view === 'day') { period = sd.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }); }
 		else { var ws = phone ? sel : calMon(sel), we = calAdd(ws, phone ? 2 : 6), a = calD(ws), b = calD(we); period = CAL_MN[a.getMonth()] + ' ' + a.getDate() + ' – ' + (a.getMonth() === b.getMonth() ? '' : CAL_MN[b.getMonth()] + ' ') + b.getDate() + ', ' + b.getFullYear(); }
 		var vbtn = function (v, l) { return '<button type="button" class="' + (view === v ? 'on' : '') + '" data-calview="' + v + '" aria-pressed="' + (view === v) + '">' + l + '</button>'; };
 		var head = '<div class="dd-calt"><h1>Calendar</h1><div class="dd-srcs">' + tog('td', 'To-dos') + tog('ev', 'Google Calendar') + tog('bill', 'Bills') + '</div></div>'
 			+ '<div class="dd-calbar"><div class="dd-navg"><button type="button" data-calnav="-1" aria-label="Previous">' + lu('chevron-right', 16).replace('<svg', '<svg style="transform:rotate(180deg)"') + '</button><button type="button" class="t" data-pcaltoday>Today</button><button type="button" data-calnav="1" aria-label="Next">' + lu('chevron-right', 16) + '</button></div>'
-			+ '<h2>' + period + '</h2><span class="dd-sp"></span><div class="dd-seg">' + vbtn('month', 'Month') + vbtn('week', phone ? '3 days' : 'Week') + vbtn('day', 'Day') + '</div></div>';
+			+ '<h2>' + period + '</h2><span class="dd-sp"></span><div class="dd-seg">' + (phone ? vbtn('list', 'All') : '') + vbtn('month', 'Month') + vbtn('week', phone ? '3 days' : 'Week') + vbtn('day', 'Day') + '</div></div>';
 		var main = '';
-		if (view === 'month') {
+		if (view === 'list') { // phones: every scheduled thing this month, day by day, with times
+			var dimL = new Date(cy, cmo, 0).getDate(), out = '';
+			for (var li = 1; li <= dimL; li++) {
+				var lds = cm + '-' + ('0' + li).slice(-2), lit = calItems(D, lds), ld = calD(lds);
+				if (!lit.length) { continue; }
+				out += '<section class="dd-lday' + (lds === T ? ' today' : '') + (lds < T ? ' past' : '') + '"><header><span class="dd-stile"><small>' + ld.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase() + '</small><b>' + li + '</b></span><span class="t">' + (lds === T ? 'Today' : lds === calAdd(T, 1) ? 'Tomorrow' : ld.toLocaleDateString('en-US', { weekday: 'long' })) + '<small>' + ld.toLocaleDateString('en-US', { month: 'long', day: 'numeric' }) + '</small></span><em>' + lit.length + '</em></header>'
+					+ lit.map(function (x) { return '<div class="dd-litem ' + x.tint + (x.done ? ' done' : '') + '"' + calOpen(x) + ' role="button" tabindex="0"><span class="tm">' + esc(x.time ? calShort(x.time) : 'All day') + '</span><i class="bar"></i><span class="tx"><b>' + esc(x.text) + '</b><small>' + esc(x.src) + '</small></span></div>'; }).join('') + '</section>';
+			}
+			main = '<div class="dd-list">' + (out || '<div class="dd-card"><p class="dd-empty-l">Nothing scheduled in ' + CAL_MF[cmo - 1] + '.</p></div>') + '</div>';
+		} else if (view === 'month') {
 			var first = new Date(cy, cmo - 1, 1), start = new Date(first); start.setDate(1 - ((first.getDay() + 6) % 7));
 			var cells = '';
 			for (var ci = 0; ci < 42; ci++) {
@@ -926,12 +935,13 @@
 		return head + '<div class="dd-calgrid"><div class="dd-calmain">' + main + '</div><aside class="dd-calside">' + side + soon + '</aside></div>';
 	}
 	// Calendar: scroll the hour grid to 6am, drag a to-do to another day, keyboard M/W/D, arrows, T.
-	function calScroll() { var b = app.querySelector('[data-calscroll]'); if (b && !b.dataset.done) { b.dataset.done = 1; b.scrollTop = 6 * (window.innerWidth < 768 ? 48 : 60) - 8; } }
+	function calListScroll() { var td = app.querySelector('.dd-lday.today') || app.querySelector('.dd-lday:not(.past)'); if (td && !S.calListDone) { S.calListDone = 1; setTimeout(function () { td.scrollIntoView({ block: 'start' }); window.scrollBy(0, -70); }, 30); } }
+	function calScroll() { if (app.querySelector('.dd-list')) { calListScroll(); } else { S.calListDone = 0; } var b = app.querySelector('[data-calscroll]'); if (b && !b.dataset.done) { b.dataset.done = 1; b.scrollTop = 6 * (window.innerWidth < 768 ? 48 : 60) - 8; } }
 	function calShift(n) {
 		var v = calView(), sel = S.pSel || DWDC.today;
-		if (v === 'month') { var cm = S.pCal || DWDC.today.slice(0, 7), d = new Date(+cm.slice(0, 4), +cm.slice(5, 7) - 1 + n, 1); S.pCal = calIso(d).slice(0, 7); if ((S.pSel || '').slice(0, 7) !== S.pCal) { S.pSel = S.pCal === DWDC.today.slice(0, 7) ? DWDC.today : S.pCal + '-01'; } }
+		if (v === 'month' || v === 'list') { var cm = S.pCal || DWDC.today.slice(0, 7), d = new Date(+cm.slice(0, 4), +cm.slice(5, 7) - 1 + n, 1); S.pCal = calIso(d).slice(0, 7); if ((S.pSel || '').slice(0, 7) !== S.pCal) { S.pSel = S.pCal === DWDC.today.slice(0, 7) ? DWDC.today : S.pCal + '-01'; } }
 		else { S.pSel = calAdd(sel, n * (v === 'day' ? 1 : window.innerWidth < 768 ? 3 : 7)); S.pCal = S.pSel.slice(0, 7); }
-		S.calMore = ''; render();
+		S.calMore = ''; S.calListDone = 0; render();
 	}
 	function calSetView(v, ds) { S.calView = v; ddSet('dreamdesk-cal-view', v); if (ds) { S.pSel = ds; S.pCal = ds.slice(0, 7); } S.calMore = ''; render(); }
 	function calMove(key, ds) {
@@ -951,7 +961,7 @@
 			var r = route(); if (r.view !== 'personal' || r.arg !== 'calendar' || e.metaKey || e.ctrlKey || e.altKey || S.modal) { return; }
 			if (e.target && e.target.closest && e.target.closest('input, textarea, select, [contenteditable]')) { return; }
 			var k = e.key.toLowerCase();
-			if (k === 'm' || k === 'w' || k === 'd') { e.preventDefault(); calSetView({ m: 'month', w: 'week', d: 'day' }[k]); }
+			if (k === 'm' || k === 'w' || k === 'd' || k === 'l') { e.preventDefault(); calSetView({ m: 'month', w: 'week', d: 'day', l: 'list' }[k]); }
 			else if (k === 'arrowleft' || k === 'arrowright') { e.preventDefault(); calShift(k === 'arrowleft' ? -1 : 1); }
 			else if (k === 't') { e.preventDefault(); S.pCal = DWDC.today.slice(0, 7); S.pSel = DWDC.today; render(); }
 			else if (k === 'escape' && S.calMore) { S.calMore = ''; render(); }
@@ -974,7 +984,7 @@
 	function tdWorkRow(t) {
 		var c = t.contact ? contact(t.contact) : null, k = c ? clientOf(c) : null, pn = k ? k.name : (c ? c.person : '');
 		var chip = c ? '<a class="dd-tchip" href="#client/' + c.id + '">' + lu('clipboard-list', 12) + '<b>' + esc(c.name) + '</b>' + (pn && pn !== c.name ? '<span>· ' + esc(pn) + '</span>' : '') + '</a>' : '';
-		var dates = [t.due ? 'Due ' + fmt(t.due) : '', 'Added by Michael'].filter(Boolean).join(' · ');
+		var dates = [t.due ? 'Due ' + fmt(t.due) + (t.time ? ' at ' + t.time : '') : '', 'Added by Michael'].filter(Boolean).join(' · ');
 		return '<div class="dd-trow' + (t.done ? ' done' : '') + '" data-task="' + t.id + '"><button type="button" class="dd-tchk' + (t.done ? ' on' : '') + '" data-toggle="' + t.id + '" aria-label="' + (t.done ? 'Mark not done' : 'Mark done') + '">' + TD_CHECK + '</button>'
 			+ '<div class="dd-ttx"><b title="' + esc(t.text) + '">' + esc(t.text) + '</b><div class="dd-tmeta">' + chip + '<span>' + esc(dates) + '</span></div></div>'
 			+ '<div class="dd-trc">' + tdDue(t) + '<span class="dd-tacts"><button type="button" class="dd-ibtn sm" data-del-task="' + t.id + '" aria-label="Delete to-do" title="Delete">' + lu('x', 14) + '</button></span></div></div>';
@@ -1021,7 +1031,7 @@
 				: '<div class="dd-emptyst">' + '<span class="dd-eicon">' + lu('circle-check', 20) + '</span><b>All clear</b><span>Add a to-do above.</span></div>';
 		}
 		var dateLbl = S.tdDate && S.tdDate[kind] ? fmt(S.tdDate[kind]) : '';
-		var form = '<form class="dd-tadd' + (kind === 'work' ? ' dwdc-addbar' : '') + '"' + (kind === 'personal' ? ' data-pform="pdayadd"' : '') + ' data-lane="' + kind + '"><label class="dd-tin">' + lu('plus', 16) + '<input name="text" placeholder="Add a to-do and press Enter…" autocomplete="off" required data-lpignore="true" data-1p-ignore></label>'
+		var form = '<form class="dd-tadd' + (kind === 'work' ? ' dwdc-addbar' : '') + '"' + (kind === 'personal' ? ' data-pform="pdayadd"' : '') + ' data-lane="' + kind + '"><label class="dd-tin">' + lu('plus', 16) + '<input name="text" placeholder="Add a to-do… e.g. Call Shane next Thursday at 4" autocomplete="off" required data-lpignore="true" data-1p-ignore></label>'
 			+ '<span class="dd-btn secondary dd-tdate' + (dateLbl ? ' set' : '') + '" role="button" tabindex="0" data-tdpick="' + kind + '">' + lu('calendar', 14) + '<span>' + (dateLbl || 'Date') + '</span>' + (dateLbl ? '<i data-tdclear="' + kind + '" role="button" aria-label="Clear date">' + lu('x', 12) + '</i>' : '') + '<input type="date" name="due" value="' + esc((S.tdDate && S.tdDate[kind]) || '') + '" data-tdset="' + kind + '" tabindex="-1" aria-label="Due date"></span>'
 			+ '<button class="dd-btn primary">Add</button></form>';
 		return '<section class="dd-card dd-lane ' + kind + '"><header><span class="dd-lt">' + lu(kind === 'work' ? 'clipboard-list' : 'home', 16) + '</span><h2>' + (kind === 'work' ? 'Work' : 'Personal') + '</h2><span class="dd-lsum">' + openList.length + ' open' + (late ? ' · ' + late + ' overdue' : '') + (doneList.length ? ' · ' + doneList.length + ' done' : '') + '</span></header>'
@@ -1197,6 +1207,90 @@
 		var subsCard = '<section class="dd-card dd-scard">' + tools + '<div class="dd-srow head"><span>Charge</span><span class="num">Per month</span><span></span></div>' + (body || '<p class="dd-empty-l">' + (q ? 'No charges match “' + esc(S.subQ) + '”.' : 'No repeating charges found yet. They show up after two or more months of transactions.') + '</p>') + foot + '</section>'
 			+ '<p class="dd-bnote out">Found by looking for the same merchant charging a similar amount on a regular schedule. Dream Desk can’t cancel for you; “Cancel” is your reminder list.</p>';
 		return head + bills + subsHead + sstrip + subsCard;
+	}
+
+	/* ================= Dates typed into a to-do ("next Thursday at 4", "tomorrow", "the 4th of November") ================= */
+	// Returns { text, due: 'YYYY-MM-DD' | '', time: '4:00 PM' | '' } with the date words taken out of the text.
+	function parseWhen(raw, todayIso) {
+		var T = todayIso || DWDC.today, text = ' ' + String(raw || '') + ' ', due = '', time = '';
+		var base = new Date(T + 'T12:00:00');
+		var iso = function (d) { return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); };
+		var add = function (n) { var d = new Date(base); d.setDate(d.getDate() + n); return iso(d); };
+		var cut = function (re) { text = text.replace(re, ' '); };
+		var MON = { jan: 0, january: 0, feb: 1, february: 1, mar: 2, march: 2, apr: 3, april: 3, may: 4, jun: 5, june: 5, jul: 6, july: 6, aug: 7, august: 7, sep: 8, sept: 8, september: 8, oct: 9, october: 9, nov: 10, november: 10, dec: 11, december: 11 };
+		var DAY = { sunday: 0, monday: 1, mon: 1, tuesday: 2, tue: 2, tues: 2, wednesday: 3, wed: 3, thursday: 4, thu: 4, thur: 4, thurs: 4, friday: 5, fri: 5, saturday: 6 };
+		var monRe = '(january|february|march|april|may|june|july|august|september|october|november|december|jan|feb|mar|apr|jun|jul|aug|sept|sep|oct|nov|dec)\\.?';
+		var ord = '(\\d{1,2})(?:st|nd|rd|th)?';
+		var pre = '(?:\\b(?:on|by|due|for|this coming)\\s+)?';
+		var ymd = function (y, m, d) {
+			var dt = new Date(y, m, d, 12); if (dt.getMonth() !== m) { return ''; }
+			if (iso(dt) < T && y === base.getFullYear()) { dt = new Date(y + 1, m, d, 12); }
+			return iso(dt);
+		};
+		var m;
+		// --- time ---
+		var setTime = function (h, mi, ap) {
+			h = +h; mi = +(mi || 0); ap = String(ap || '').toLowerCase().replace(/\./g, '');
+			if (h > 23 || mi > 59) { return false; }
+			if (ap === 'pm' || ap === 'p') { if (h < 12) { h += 12; } } else if (ap === 'am' || ap === 'a') { if (h === 12) { h = 0; } }
+			else if (h >= 1 && h <= 7) { h += 12; } // "at 4" means 4 PM; 8–11 stay morning
+			var hh = h % 12 || 12; time = hh + ':' + ('0' + mi).slice(-2) + ' ' + (h < 12 ? 'AM' : 'PM'); return true;
+		};
+		if ((m = /\b(?:at\s+)?(noon|midday)\b/i.exec(text))) { time = '12:00 PM'; cut(m[0]); }
+		else if ((m = /\b(?:at\s+)?midnight\b/i.exec(text))) { time = '12:00 AM'; cut(m[0]); }
+		else if ((m = /\b(?:at|@)\s*(\d{1,2})(?::(\d{2}))?\s*(a\.?m\.?|p\.?m\.?|a|p)?(?:\s*o'?\s?clock)?(?=\W)/i.exec(text)) && setTime(m[1], m[2], m[3])) { cut(m[0]); }
+		else if ((m = /\b(\d{1,2})(?::(\d{2}))?\s*(a\.?m\.?|p\.?m\.?)(?=\W)/i.exec(text)) && setTime(m[1], m[2], m[3])) { cut(m[0]); }
+		else if ((m = /\b(\d{1,2})(?::(\d{2}))?\s*o'?\s?clock\b/i.exec(text)) && setTime(m[1], m[2], '')) { cut(m[0]); }
+		else if ((m = /\b(\d{1,2}):(\d{2})\b/.exec(text)) && setTime(m[1], m[2], +m[1] > 12 ? 'x' : '')) { cut(m[0]); }
+		if ((m = /\b(?:in the\s+)?(morning)\b/i.exec(text)) && !time) { time = '9:00 AM'; cut(m[0]); }
+		else if ((m = /\b(?:in the\s+)?(afternoon)\b/i.exec(text)) && !time) { time = '2:00 PM'; cut(m[0]); }
+		else if ((m = /\b(?:in the\s+)?(evening)\b/i.exec(text)) && !time) { time = '6:00 PM'; cut(m[0]); }
+		// --- date ---
+		if ((m = new RegExp(pre + '\\b(?:the\\s+)?day after tomorrow\\b', 'i').exec(text))) { due = add(2); cut(m[0]); }
+		else if ((m = new RegExp(pre + '\\b(tomorrow|tmrw|tmr|tmw)\\b', 'i').exec(text))) { due = add(1); cut(m[0]); }
+		else if ((m = new RegExp(pre + '\\b(today|tonight|this evening)\\b', 'i').exec(text))) { due = T; if (/tonight|evening/i.test(m[1]) && !time) { time = '8:00 PM'; } cut(m[0]); }
+		else if ((m = new RegExp(pre + '\\bin\\s+(\\d{1,3}|a|an|one|two|three|four|five|six|seven|eight|nine|ten)\\s+(day|week|month)s?\\b', 'i').exec(text))) {
+			var nw = { a: 1, an: 1, one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10 }[m[1].toLowerCase()] || +m[1];
+			if (/month/i.test(m[2])) { var dm = new Date(base); dm.setMonth(dm.getMonth() + nw); due = iso(dm); } else { due = add(nw * (/week/i.test(m[2]) ? 7 : 1)); }
+			cut(m[0]);
+		}
+		else if ((m = new RegExp(pre + '\\b(next|this)\\s+(week|month)\\b', 'i').exec(text))) {
+			if (/week/i.test(m[2])) { due = /next/i.test(m[1]) ? add(7 - ((base.getDay() + 6) % 7)) : add(Math.max(0, 4 - ((base.getDay() + 6) % 7))); }
+			else { var nm = new Date(base.getFullYear(), base.getMonth() + (/next/i.test(m[1]) ? 1 : 0), 1, 12); due = /next/i.test(m[1]) ? iso(nm) : T; }
+			cut(m[0]);
+		}
+		else if ((m = new RegExp(pre + '\\b(?:(next|this)\\s+)?(sunday|monday|tuesday|wednesday|thursday|friday|saturday|mon|tues|tue|wed|thurs|thur|thu|fri)\\b\\.?', 'i').exec(text))) {
+			var want = DAY[m[2].toLowerCase()], dow = base.getDay(), diff = (want - dow + 7) % 7;
+			if (m[1] && /next/i.test(m[1])) { var monOff = (dow + 6) % 7; diff = 7 - monOff + ((want + 6) % 7); }
+			else if (diff === 0) { diff = 7; }
+			due = add(diff); cut(m[0]);
+		}
+		else if ((m = new RegExp(pre + '\\b(?:the\\s+)?' + ord + '\\s+of\\s+' + monRe + '(?:,?\\s+(\\d{4}))?\\b', 'i').exec(text))) { due = ymd(m[3] ? +m[3] : base.getFullYear(), MON[m[2].toLowerCase()], +m[1]); if (due) { cut(m[0]); } }
+		else if ((m = new RegExp(pre + '\\b' + monRe + '\\s+' + ord + '(?:,?\\s+(\\d{4}))?\\b', 'i').exec(text))) { due = ymd(m[3] ? +m[3] : base.getFullYear(), MON[m[1].toLowerCase()], +m[2]); if (due) { cut(m[0]); } }
+		else if ((m = new RegExp(pre + '\\b' + ord + '\\s+' + monRe + '(?:,?\\s+(\\d{4}))?\\b', 'i').exec(text))) { due = ymd(m[3] ? +m[3] : base.getFullYear(), MON[m[2].toLowerCase()], +m[1]); if (due) { cut(m[0]); } }
+		else if ((m = new RegExp(pre + '\\b(\\d{1,2})/(\\d{1,2})(?:/(\\d{2,4}))?\\b').exec(text))) { var yy = m[3] ? (+m[3] < 100 ? 2000 + +m[3] : +m[3]) : base.getFullYear(); due = ymd(yy, +m[1] - 1, +m[2]); if (due) { cut(m[0]); } }
+		else if ((m = new RegExp(pre + '\\bthe\\s+' + ord + '\\b(?!\\s*(?:%|minutes?|hours?|pages?))', 'i').exec(text))) {
+			var dn = +m[1], cand = new Date(base.getFullYear(), base.getMonth(), dn, 12);
+			if (dn >= 1 && dn <= 31) { if (iso(cand) < T) { cand = new Date(base.getFullYear(), base.getMonth() + 1, dn, 12); } due = iso(cand); cut(m[0]); }
+		}
+		if (time && !due) { due = T; } // a time with no day means today
+		text = text.replace(/\s+([,.;:!?])/g, '$1').replace(/\s{2,}/g, ' ').trim().replace(/^[,;:\-–]\s*|\s*[,;:\-–]$/g, '').replace(/\s+(?:on|by|at|due|for)$/i, '').trim();
+		if (!text) { text = String(raw || '').trim(); }
+		return { text: text, due: due, time: time };
+	}
+	function whenLabel(w) { if (!w.due) { return ''; } var d = new Date(w.due + 'T12:00:00'), t = DWDC.today; var day = w.due === t ? 'Today' : w.due === calAdd(t, 1) ? 'Tomorrow' : d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) + (w.due.slice(0, 4) !== t.slice(0, 4) ? ', ' + w.due.slice(0, 4) : ''); return day + (w.time ? ' · ' + w.time : ''); }
+	function isTodoAdd(f) { return !!(f && f.querySelector && f.querySelector('input[name=text]') && (f.matches('.dd-tadd, .dd-padd, .dd-qadd, .dd-tl-add, .dwdc-addbar, .dwdc-inlineadd, .dwdc-cardtodo') || /^(pdayadd|todos|ptask)$/.test(f.getAttribute('data-pform') || ''))); }
+	// Live: show the date/time found in what you're typing on the form's Date button (or a small hint).
+	function whenHint(inp) {
+		var f = inp.closest('form'); if (!isTodoAdd(f)) { return; }
+		var w = parseWhen(inp.value), lbl = whenLabel(w), btn = f.querySelector('.dd-tdate');
+		if (btn) {
+			var sp = btn.querySelector('span'); if (!btn.dataset.orig) { btn.dataset.orig = sp.textContent; }
+			sp.textContent = lbl || btn.dataset.orig; btn.classList.toggle('auto', !!lbl);
+			return;
+		}
+		var h = f.querySelector('.dd-whenhint'); if (!h) { h = document.createElement('small'); h.className = 'dd-whenhint'; f.appendChild(h); }
+		h.textContent = lbl ? '📅 ' + lbl : ''; h.hidden = !lbl;
 	}
 
 	/* ---------- shell ---------- */
@@ -2281,7 +2375,7 @@
 		var groups = todoBuckets(open).concat([['Done', 'green', done.map(function (t) { return { task: t }; })]]);
 		var clients = S.contacts.filter(function (c) { return c.list !== 'archive'; }).sort(function (a, b) { return a.name.localeCompare(b.name); });
 		// Same add bar as the Personal list (to-do, date, Add). Pick a project afterwards in the to-do's edit window.
-		return '<div class="dwdc-narrow"><form class="dwdc-addbar">' + ic('plus', 18) + '<input name="text" placeholder="Add a to-do and press Enter…" autocomplete="off" required>'
+		return '<div class="dwdc-narrow"><form class="dwdc-addbar">' + ic('plus', 18) + '<input name="text" placeholder="Add a to-do… e.g. Call Shane next Thursday at 4" autocomplete="off" required>'
 			+ '<input type="date" name="due" title="Due date"><button class="dwdc-btn">Add</button></form>'
 			+ groups.filter(function (g) { return g[2].length; }).map(function (g) {
 				return '<section class="dwdc-group"><h3><i class="t-' + g[1] + '"></i>' + g[0] + ' <b>' + g[2].length + '</b></h3><div class="dwdc-card dwdc-todos p6">' + g[2].map(todoGroupRow).join('') + '</div></section>';
@@ -2323,7 +2417,7 @@
 			['Done', 'green', done]
 		];
 		var row = function (t) { return pTodoRow(t).replace('<button class="dwdc-del"', due(t) + '<button class="dwdc-del"'); };
-		return '<div class="dwdc-narrow"><form class="dwdc-addbar dwdc-paddbar" data-pform="pdayadd">' + ic('plus', 18) + '<input name="text" placeholder="Add a to-do and press Enter…" autocomplete="off" required>'
+		return '<div class="dwdc-narrow"><form class="dwdc-addbar dwdc-paddbar" data-pform="pdayadd">' + ic('plus', 18) + '<input name="text" placeholder="Add a to-do… e.g. Call Shane next Thursday at 4" autocomplete="off" required>'
 			+ '<input type="date" name="due" title="Due date"><button class="dwdc-btn">Add</button></form>'
 			+ groups.filter(function (g) { return g[2].length; }).map(function (g) {
 				return '<section class="dwdc-group"><h3><i class="t-' + g[1] + '"></i>' + g[0] + ' <b>' + g[2].length + '</b></h3><div class="dwdc-card dwdc-todos p6">' + g[2].map(row).join('') + '</div></section>';
@@ -3664,6 +3758,7 @@
 	app.addEventListener('mousedown', function (e) { var t = e.target.closest && e.target.closest('.dwdc-ssearch'); if (t) { var i = t.querySelector('input'); if (i) { i.removeAttribute('readonly'); } } });
 	app.addEventListener('input', function (e) {
 		var t = e.target;
+		if (t.name === 'text' && t.tagName === 'INPUT') { whenHint(t); }
 		if (t.hasAttribute('data-subq')) { S.subQ = t.value; var sp2 = t.selectionStart; render(); var ns = app.querySelector('[data-subq]'); if (ns) { ns.focus(); try { ns.setSelectionRange(sp2, sp2); } catch (er) {} } return; }
 		if (t.hasAttribute('data-aq')) { S.aq = t.value; var ap2 = t.selectionStart; render(); var na = app.querySelector('[data-aq]'); if (na) { na.focus(); try { na.setSelectionRange(ap2, ap2); } catch (er) {} } return; }
 		if (t.hasAttribute('data-tq')) { S.tq = t.value; tdSave(tdView().seg, t.value); var pos = t.selectionStart; render(); var nq = app.querySelector('[data-tq]'); if (nq) { nq.focus(); try { nq.setSelectionRange(pos, pos); } catch (er) {} } return; }
@@ -3723,6 +3818,7 @@
 	app.addEventListener('submit', function (e) {
 		var f = e.target, data = {}; e.preventDefault();
 		new FormData(f).forEach(function (val, k) { data[k] = val; });
+		if (isTodoAdd(f) && data.text) { var pw = parseWhen(data.text); if (pw.due) { data.due = pw.due; } if (pw.time) { data.time = pw.time; } if (pw.due || pw.time) { data.text = pw.text; } }
 		if (f.classList.contains('dd-padd')) { S.ppDate = S.ppDate || {}; S.ppDate[f.getAttribute('data-contact')] = ''; }
 		if (f.classList.contains('dd-tadd')) { S.tdDate = S.tdDate || {}; S.tdDate[f.getAttribute('data-lane')] = ''; }
 		if (f.classList.contains('dwdc-taskedit')) {
@@ -3804,7 +3900,7 @@
 		} else if (f.classList.contains('dwdc-cardtodo') || f.classList.contains('dwdc-inlineadd') || f.classList.contains('dwdc-addbar')) {
 			if (!String(data.text || '').trim()) { return; }
 			var cid = +f.getAttribute('data-contact') || +data.contact || 0;
-			api('/task', 'POST', { text: data.text, contact: cid, due: data.due || '' }).then(function (x) {
+			api('/task', 'POST', { text: data.text, contact: cid, due: data.due || '', time: data.time || '' }).then(function (x) {
 				S.tasks.unshift(x); if (f.classList.contains('dwdc-cardtodo')) { S.cardTodo = 0; } render();
 				var again = app.querySelector(f.classList.contains('dwdc-addbar') ? '.dwdc-addbar [name=text]' : '.dwdc-inlineadd [name=text]'); if (again && !f.classList.contains('dwdc-cardtodo')) { again.focus(); }
 			}).catch(fail);

@@ -109,6 +109,7 @@ function dwdc_task( $post ) {
 		'text'    => $p->post_title,
 		'contact' => (int) get_post_meta( $p->ID, '_dwdc_contact', true ),
 		'due'     => (string) get_post_meta( $p->ID, '_dwdc_due', true ),
+		'time'    => (string) get_post_meta( $p->ID, '_dwdc_time', true ), // e.g. "4:00 PM" when typed with the to-do
 		'done'    => '1' === get_post_meta( $p->ID, '_dwdc_done', true ),
 		'done_at' => (string) get_post_meta( $p->ID, '_dwdc_done_at', true ),
 		'due_set' => '1' === get_post_meta( $p->ID, '_dwdc_due_manual', true ), // Mike gave it a date himself → it may show on the calendar
@@ -1305,6 +1306,9 @@ add_action( 'rest_api_init', function () {
 		if ( '' !== (string) $r->get_param( 'due' ) ) {
 			update_post_meta( $id, '_dwdc_due_manual', '1' ); // dated by hand → can show on the calendar
 		}
+		if ( '' !== (string) $r->get_param( 'time' ) ) {
+			update_post_meta( $id, '_dwdc_time', substr( sanitize_text_field( (string) $r->get_param( 'time' ) ), 0, 20 ) );
+		}
 		return dwdc_task( $id );
 	} ) );
 
@@ -1325,6 +1329,9 @@ add_action( 'rest_api_init', function () {
 			}
 			if ( isset( $d['contact'] ) ) {
 				update_post_meta( $id, '_dwdc_contact', (int) $d['contact'] );
+			}
+			if ( isset( $d['time'] ) ) {
+				update_post_meta( $id, '_dwdc_time', substr( sanitize_text_field( (string) $d['time'] ), 0, 20 ) );
 			}
 			return dwdc_task( $id );
 		} ),
