@@ -185,6 +185,25 @@ function dwdc_save_contact( $id, $data ) {
 			$data['balance'] = (string) max( 0, round( $price - $paid, 2 ) );
 		}
 	}
+	// Mike typed a new price (and didn't set owed himself): what's owed follows the price.
+	// Blank owed (or no price before) → owed = price − what's been paid; otherwise owed moves by the change in price.
+	if ( $id && isset( $data['price'] ) && ! isset( $data['balance'] ) && ! in_array( (string) ( $data['list'] ?? get_post_meta( $id, '_dwdc_list', true ) ), array( 'complete', 'archived' ), true ) ) {
+		$num  = function ( $v ) { return (float) preg_replace( '/[^\d.]/', '', (string) $v ); };
+		$newp = $num( $data['price'] );
+		$oldp = $num( get_post_meta( $id, '_dwdc_price', true ) );
+		$oldb = (string) get_post_meta( $id, '_dwdc_balance', true );
+		if ( $newp !== $oldp ) {
+			if ( '' === $oldb || $oldp <= 0 ) {
+				$paid = 0;
+				foreach ( array( 'billed', 'stripe', 'paypal', 'manual' ) as $f ) {
+					$paid += $num( get_post_meta( $id, '_dwdc_' . $f, true ) );
+				}
+				$data['balance'] = (string) max( 0, round( $newp - $paid, 2 ) );
+			} else {
+				$data['balance'] = (string) max( 0, round( $num( $oldb ) + ( $newp - $oldp ), 2 ) );
+			}
+		}
+	}
 	// Moving a project to Completed stamps today's date so the Completed list sorts newest first.
 	if ( isset( $data['list'] ) && 'complete' === $data['list'] && empty( $data['completed'] ) && 'complete' !== get_post_meta( $id, '_dwdc_list', true ) ) {
 		$data['completed'] = current_time( 'Y-m-d' );

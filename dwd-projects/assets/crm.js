@@ -153,6 +153,8 @@
 	// What a project will actually deposit: Upwork money arrives after Upwork's 10% fee.
 	function netOf(c) { var b = num(c.balance); return c.pay_method === 'Upwork' ? Math.round(b * 90) / 100 : b; }
 	function pendDeposit(list) { return list.filter(function (c) { return c.paymark === 'pending'; }).reduce(function (a, c) { return a + netOf(c); }, 0); }
+	/* 'Paid' only when there's a price or a payment; a project with no price yet says so. */
+	function paidWord(c) { return num(c.price) || num(c.billed) || num(c.stripe) || num(c.paypal) || num(c.manual) ? 'Paid' : 'No price yet'; }
 	function owed(list) { return list.reduce(function (s, c) { return s + num(c.balance); }, 0); }
 	function openTasks() { return S.tasks.filter(function (t) { return !t.done; }); }
 	function match(c) {
@@ -748,7 +750,7 @@
 				if (c.div) { return divRow(); }
 				var k = clientOf(c), ow = num(c.balance), late = c.deadline && c.deadline < DWDC.today;
 				return '<a class="dd-ap-r" href="#client/' + c.id + '" data-sid="' + c.id + '">' + (sortMine('active') ? '<span class="dd-grip" aria-hidden="true">⋮⋮</span>' : '') + flagDot(c) + '<span class="dd-av">' + esc(ddInitials(k ? k.name : (c.person || c.name))) + '</span><span class="dd-act-n"><b>' + esc(c.name) + '</b><small>' + esc(k ? k.name : (c.person || '—')) + (c.next ? ' · ' + esc(c.next) : '') + '</small></span>'
-					+ '<span class="dd-ap-m"><b class="' + (ow ? 'owe' : '') + '">' + (ow ? money(ow) : 'Paid') + '</b><small class="' + (late ? 'late' : '') + '">' + (c.deadline ? 'Due ' + fmt(c.deadline) : 'No due date') + '</small></span></a>';
+					+ '<span class="dd-ap-m"><b class="' + (ow ? 'owe' : '') + '">' + (ow ? money(ow) : paidWord(c)) + '</b><small class="' + (late ? 'late' : '') + '">' + (c.deadline ? 'Due ' + fmt(c.deadline) : 'No due date') + '</small></span></a>';
 			}).join('') : '<p class="dd-empty-l">No active projects right now.</p>') + '</div></section>';
 		var statsOpen = ddGet('dreamdesk-stats-open', '') === '1';
 		var stats = '<section class="dd-card dd-stats' + (statsOpen ? ' open' : '') + '">'
@@ -1130,7 +1132,7 @@
 			+ '<span class="dd-pgrip" title="' + (mine ? 'Drag to move' : 'Switch to My order to drag') + '">' + lu('grip', 16) + '</span>'
 			+ '<span class="dd-pc nm">' + flagDot(c) + '<span class="dd-st"><span class="dd-l1"><a href="#client/' + c.id + '"><b>' + esc(c.name) + '</b></a>' + (c.markup ? '<a class="dd-mtag" href="' + esc(url(c.markup)) + '" target="_blank" rel="noopener">Markup</a>' : '') + '<span class="dd-mob-pill">' + ddPill('Active', 'success') + '</span></span>'
 			+ (site(c) ? '<a class="dd-dom" href="' + esc(url(c.website)) + '" target="_blank" rel="noopener">' + esc(site(c)) + '</a>' : '')
-			+ '<span class="dd-mob-meta">' + esc([k ? k.name : (c.person || ''), ow ? 'Owed ' + money(ow) : 'Paid', dd ? 'Due ' + fmt(dd) : '', c.next ? 'Next: ' + c.next : ''].filter(Boolean).join(' · ')) + '</span></span></span>'
+			+ '<span class="dd-mob-meta">' + esc([k ? k.name : (c.person || ''), ow ? 'Owed ' + money(ow) : paidWord(c), dd ? 'Due ' + fmt(dd) : '', c.next ? 'Next: ' + c.next : ''].filter(Boolean).join(' · ')) + '</span></span></span>'
 			+ '<span class="dd-pc cl"><span>' + (k ? '<a href="#cl/' + k.id + '">' + esc(k.name) + '</a>' : esc(c.person || '—')) + '</span><small>' + (em ? esc(em) : 'No email on file') + '</small></span>'
 			+ '<span class="dd-pc num">' + (num(c.price) ? money(c.price) : '<i>—</i>') + '</span>'
 			+ '<span class="dd-pc num owed">' + (ow ? money(ow) : '<em>Paid</em>') + '</span>'
@@ -1142,7 +1144,7 @@
 	function actCard(c) {
 		var k = clientOf(c), ow = num(c.balance);
 		return '<a class="dd-bcard" href="#client/' + c.id + '" data-sid="' + c.id + '"><span class="dd-l1">' + flagDot(c) + '<b>' + esc(c.name) + '</b>' + (c.markup ? '<span class="dd-mtag">Markup</span>' : '') + '</span><small>' + esc(k ? k.name : (c.person || '—')) + '</small>'
-			+ '<span class="meta">' + (ow ? 'Owed ' + money(ow) : 'Paid') + (c.deadline ? ' · Due ' + fmt(c.deadline) : '') + '</span>' + (c.next ? '<span class="nx">' + esc(c.next) + '</span>' : '') + '</a>';
+			+ '<span class="meta">' + (ow ? 'Owed ' + money(ow) : paidWord(c)) + (c.deadline ? ' · Due ' + fmt(c.deadline) : '') + '</span>' + (c.next ? '<span class="nx">' + esc(c.next) + '</span>' : '') + '</a>';
 	}
 	function ddActive() {
 		var g = actSegs(), mode = sortMode('active'), q = String(S.aq || '').toLowerCase().trim(), chip = S.achip || 'all', mine = mode === 'mine' && !(S.psort || {}).active && !q && chip === 'all';
@@ -2249,7 +2251,7 @@
 			'<div class="dwdc-pl-head"><span>Project · Client</span><span>' + phead('active', 'Price') + '</span><span>Owed</span></div>'
 			+ '<div class="dwdc-pl-wrap"><div class="dwdc-pl"' + ((S.psort || {}).active ? '' : ' data-sort="active"') + '>' + (plist.length ? plist.map(function (c) {
 				var k = clientOf(c), ow = num(c.balance);
-				return '<a class="dwdc-pl-row" data-sid="' + c.id + '" href="#client/' + c.id + '"><span><b>' + esc(c.name) + '</b><small>' + esc(k ? k.name : (c.person || '')) + '</small></span><span>' + (num(c.price) ? money(c.price) : '—') + '</span><span class="' + (ow ? 'ow' : 'pd') + '">' + (ow ? money(ow) : 'Paid') + '</span></a>';
+				return '<a class="dwdc-pl-row" data-sid="' + c.id + '" href="#client/' + c.id + '"><span><b>' + esc(c.name) + '</b><small>' + esc(k ? k.name : (c.person || '')) + '</small></span><span>' + (num(c.price) ? money(c.price) : '—') + '</span><span class="' + (ow ? 'ow' : 'pd') + '">' + (ow ? money(ow) : paidWord(c)) + '</span></a>';
 			}).join('') : '<p class="dwdc-mutp">No active projects right now.</p>') + '</div></div>',
 			'<footer class="dwdc-pl-foot dwdc-pl-tot"><div><small>Total owed</small><strong class="deep">' + money(active.reduce(function (a, c) { return a + num(c.balance); }, 0)) + '</strong></div><a class="dwdc-pl-all" href="#projects/active" data-plall>View all ' + active.length + ' ' + ic('right', 12) + '</a></footer>');
 		// Money card (option 1b): a grid of tiles. Owed to you is the hero; short labels on a narrow card, full ones when it's wide.
@@ -2284,7 +2286,7 @@
 			'<div class="dwdc-mini-t"><div class="g-ap head"><span>Project · Client</span><span>Price</span><span>Due</span><span class="r">Owed</span></div>'
 			+ (active.length ? active.filter(match).map(function (c) {
 				var late = c.deadline && c.deadline < DWDC.today, ow = c.balance === '' && num(c.price) && !/upwork/i.test([c.pay_method, c.lead_source, c.source].join(' ')) ? Math.max(0, num(c.price) - lifetime(c)) : num(c.balance);
-				return '<div class="g-ap row" data-go="client/' + c.id + '"><span><b class="dwdc-pname">' + esc(c.name) + '</b>' + (site(c) ? siteLine(c) : '') + '<small>' + esc([clientName(c), c.job].filter(Boolean).join(' · ')) + '</small></span><span class="b">' + (num(c.price) ? money(c.price) : '—') + '</span><span class="' + (late ? 'deep b' : '') + '">' + (c.deadline ? fmt(c.deadline) : '—') + '</span><span class="r b ' + (ow ? 'deep' : 'sec') + '">' + (ow ? money(ow) : 'Paid') + '</span></div>';
+				return '<div class="g-ap row" data-go="client/' + c.id + '"><span><b class="dwdc-pname">' + esc(c.name) + '</b>' + (site(c) ? siteLine(c) : '') + '<small>' + esc([clientName(c), c.job].filter(Boolean).join(' · ')) + '</small></span><span class="b">' + (num(c.price) ? money(c.price) : '—') + '</span><span class="' + (late ? 'deep b' : '') + '">' + (c.deadline ? fmt(c.deadline) : '—') + '</span><span class="r b ' + (ow ? 'deep' : 'sec') + '">' + (ow ? money(ow) : paidWord(c)) + '</span></div>';
 			}).join('') : emptyRow('No active projects.')) + '</div>',
 			'<footer class="dwdc-totals one"><div><small>Total amount due</small><strong class="deep">' + money(owed(active)) + '</strong></div></footer>');
 		var td = openTasks().sort(function (a, b) { return (a.due || '9') < (b.due || '9') ? -1 : 1; });
@@ -2470,7 +2472,7 @@
 			+ '<header><div><h3>' + esc(c.name) + '</h3><small>' + esc(c.person || 'No contact on file') + '</small></div>' + statusSelect(c) + '</header>'
 			+ (c.job ? '<p class="dwdc-proj">' + esc(c.job) + '</p>' : '')
 			+ '<div class="dwdc-strip"><span><small>Price</small><b>' + (num(c.price) ? money(c.price) : '—') + '</b></span>'
-			+ '<span><small>Owed</small><b class="' + (ow ? 'orange' : 'green') + '">' + (ow ? money(ow) : 'Paid') + '</b></span>'
+			+ '<span><small>Owed</small><b class="' + (ow ? 'orange' : 'green') + '">' + (ow ? money(ow) : paidWord(c)) + '</b></span>'
 			+ '<span><small>Due</small><b class="' + (late ? 'red' : '') + '">' + (c.deadline ? fmt(c.deadline) : '—') + '</b></span></div>'
 			+ '<div class="dwdc-paid"><div><span>Paid</span><b class="' + (p >= 100 ? 'green' : 'orange') + '">' + p + '%</b></div><i><u class="' + (p >= 100 ? 'full' : '') + '" style="width:' + p + '%"></u></i></div>'
 			+ '<p class="dwdc-next"><b>Next</b> ' + esc(c.next || 'No next step set') + '</p>'
@@ -2784,8 +2786,8 @@
 		var k = clientOf(c) || {}, em = c.email || k.email, ph = c.phone || k.phone;
 		var tel = function (p) { var dg = String(p).replace(/[^\d]/g, ''), shown = dg.length === 10 ? '(' + dg.slice(0, 3) + ') ' + dg.slice(3, 6) + '-' + dg.slice(6) : dg.length === 11 && dg[0] === '1' ? '(' + dg.slice(1, 4) + ') ' + dg.slice(4, 7) + '-' + dg.slice(7) : String(p); return '<a href="tel:' + esc(String(p).replace(/[^\d+]/g, '')) + '">' + esc(shown) + '</a>'; };
 		var paid = price ? Math.max(0, price - ow) : 0, pct = price ? Math.max(0, Math.min(100, Math.round(paid / price * 100))) : (ow ? 0 : 100);
-		var payState = st === 'leads' ? '' : !ow ? 'Paid' : paid ? 'Partially paid' : 'Unpaid';
-		var payTone = { Paid: 'success', 'Partially paid': 'info', Unpaid: 'warning' }[payState];
+		var payState = st === 'leads' ? '' : !ow ? paidWord(c) : paid ? 'Partially paid' : 'Unpaid';
+		var payTone = { Paid: 'success', 'No price yet': 'neutral', 'Partially paid': 'info', Unpaid: 'warning' }[payState];
 		var btn = function (attr, label, cls) { return '<button type="button" class="dd-btn ' + (cls || 'secondary') + '" ' + attr + '>' + label + '</button>'; };
 		var mi = function (attr, label, cls) { return '<button type="button" role="menuitem" class="' + (cls || '') + '" ' + attr + '>' + label + '</button>'; };
 		var rv = reviewBtn(c.client), rvAttr = (/(data-[a-z]+="[^"]*")/.exec(rv) || [])[1];
