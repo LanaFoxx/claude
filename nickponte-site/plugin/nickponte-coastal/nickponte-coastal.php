@@ -2,14 +2,14 @@
 /**
  * Plugin Name: Nick Ponte Coastal Light (preview)
  * Description: "Coastal Light" redesign preview: a homepage template (/home-preview/) and a Town post type (/town-preview/<town>/) with monthly market fields, FAQ and JSON-LD. Preview pages are noindex and use their own header and footer, so live pages are not affected. Deactivate to remove everything from the front end.
- * Version: 1.14.0
+ * Version: 1.14.1
  * Author: Dream Web Digital
  * Requires PHP: 7.4
  */
 
 if (!defined('ABSPATH')) exit;
 
-define('NPC_VER', '1.14.0');
+define('NPC_VER', '1.14.1');
 define('NPC_DIR', plugin_dir_path(__FILE__));
 define('NPC_URL', plugin_dir_url(__FILE__));
 const NPC_HOME_TEMPLATE = 'npc-home';
@@ -428,7 +428,9 @@ add_action('template_redirect', function () {
 	if (is_singular('np_town') && isset(NPC_LIVE_TOWNS[get_queried_object()->post_name])) { wp_safe_redirect(get_permalink(NPC_LIVE_TOWNS[get_queried_object()->post_name]), 301); exit; }
 	if (is_404()) {
 		$path = trim((string) parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH), '/');
-		$map = ['home-preview' => home_url('/'), 'design-preview' => home_url('/'), 'buyers-guide-preview' => get_permalink(NPC_LIVE_PAGES['buyers-guide']), 'sellers-guide-preview' => get_permalink(NPC_LIVE_PAGES['sellers-guide']), 'featured-sales-preview' => get_permalink(NPC_LIVE_PAGES['featured'])];
+		$map = ['home-financing-in-seacoast-nh' => get_permalink(NPC_LIVE_PAGES['buyers-guide']), 'understanding-home-sale-contingencies-a-guide-to-buying-a-home' => get_permalink(NPC_LIVE_PAGES['buyers-guide']),
+			'thinking-about-starting-your-real-estate-career' => get_permalink(25), 'real-estate-services' => get_permalink(25),
+			'home-preview' => home_url('/'), 'design-preview' => home_url('/'), 'buyers-guide-preview' => get_permalink(NPC_LIVE_PAGES['buyers-guide']), 'sellers-guide-preview' => get_permalink(NPC_LIVE_PAGES['sellers-guide']), 'featured-sales-preview' => get_permalink(NPC_LIVE_PAGES['featured'])];
 		if (isset($map[$path])) { wp_redirect($map[$path], 301, 'Nick Ponte Coastal'); exit; }
 	}
 	if (is_page()) {

@@ -147,6 +147,7 @@ function npc_aside() {
 			<p class="npc-eyebrow">Resources</p>
 			<a href="<?php echo esc_url(npc_guide_url('buyers-guide')); ?>">Buyer Guide →</a>
 			<a href="<?php echo esc_url(npc_guide_url('sellers-guide')); ?>">Seller Guide →</a>
+			<a href="<?php echo esc_url(get_permalink(6182)); ?>">Cost to sell a home →</a>
 			<a href="<?php echo esc_url(get_permalink(6082)); ?>">Market data &amp; trends →</a>
 			<a href="<?php echo esc_url(get_permalink(6103)); ?>">Seacoast real estate FAQ →</a>
 			<a href="<?php echo esc_url(get_permalink(627)); ?>">Market news →</a>

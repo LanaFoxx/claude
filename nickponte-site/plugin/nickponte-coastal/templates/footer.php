@@ -13,6 +13,7 @@ $home = npc_home_url();
 				<a href="<?php echo esc_url(npc_featured_url()); ?>">Featured sales</a>
 				<a href="<?php echo esc_url(npc_guide_url('buyers-guide')); ?>">Buyer Guide</a>
 				<a href="<?php echo esc_url(npc_guide_url('sellers-guide')); ?>">Seller Guide</a>
+				<a href="<?php echo esc_url(get_permalink(6182)); ?>">Cost to sell</a>
 				<a href="<?php echo esc_url($home . '#valuation'); ?>">Home valuation</a>
 				<a href="<?php echo esc_url(npc_live() ? get_permalink(25) : $home . '#about'); ?>">About</a>
 			</nav>
