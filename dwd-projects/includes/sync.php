@@ -80,7 +80,7 @@ function dwds_log_payment( $source, $email, $who, $amount, $date, $ref, $note = 
 	$field = array( 'Stripe' => 'stripe', 'PayPal' => 'paypal', 'Upwork' => 'billed' )[ $source ] ?? 'manual';
 	update_post_meta( $pid, '_dwdc_' . $field, (string) round( (float) get_post_meta( $pid, '_dwdc_' . $field, true ) + $amount, 2 ) );
 	$bal = (float) get_post_meta( $pid, '_dwdc_balance', true );
-	if ( $bal > 0 ) {
+	if ( $bal > 0 && ! ( function_exists( 'dwdc_is_upwork' ) && dwdc_is_upwork( $pid ) ) ) { // Upwork projects: owed is only changed by hand
 		update_post_meta( $pid, '_dwdc_balance', (string) max( 0, round( $bal - $amount, 2 ) ) );
 	}
 	$notes   = get_post_meta( $pid, '_dwdc_notes', true );

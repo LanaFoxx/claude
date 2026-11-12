@@ -44,6 +44,15 @@ function dwdc_lists() {
 	return is_array( $saved ) && $saved ? $saved : $default;
 }
 
+/** An Upwork project (found on, or paid through, Upwork): its price, owed and paid numbers are only ever set by hand. */
+function dwdc_is_upwork( $id, $data = array() ) {
+	$hay = '';
+	foreach ( array( 'pay_method', 'lead_source', 'source' ) as $f ) {
+		$hay .= ' ' . ( $data[ $f ] ?? ( $id ? get_post_meta( $id, '_dwdc_' . $f, true ) : '' ) );
+	}
+	return false !== stripos( $hay, 'upwork' );
+}
+
 /** Contact fields kept on every contact. */
 function dwdc_fields() {
 	return array( 'job', 'manual', 'followup', 'markup', 'markup_sent', 'lead_source', 'pay_method', 'stage', 'completed', 'billed', 'stripe', 'paypal', 'person', 'email', 'phone', 'company', 'website', 'list', 'price', 'balance', 'deadline', 'hosting', 'renewal', 'source', 'next', 'pending', 'paymark', 'owedopen', 'flag', 'drive', 'drive_sent' );
@@ -165,7 +174,7 @@ function dwdc_save_contact( $id, $data ) {
 		wp_update_post( array( 'ID' => $id, 'post_title' => $data['name'] ) );
 	}
 	// Starting the job on a lead: nothing's been paid yet, so the whole price is owed (not shown as "Paid").
-	if ( isset( $data['list'] ) && 'active' === $data['list'] && 'leads' === get_post_meta( $id, '_dwdc_list', true ) && ! isset( $data['balance'] ) ) {
+	if ( isset( $data['list'] ) && 'active' === $data['list'] && 'leads' === get_post_meta( $id, '_dwdc_list', true ) && ! isset( $data['balance'] ) && ! dwdc_is_upwork( $id, $data ) ) { // Upwork projects: Mike sets owed himself
 		$price = (float) preg_replace( '/[^\d.]/', '', (string) ( $data['price'] ?? get_post_meta( $id, '_dwdc_price', true ) ) );
 		$paid  = 0;
 		foreach ( array( 'billed', 'stripe', 'paypal', 'manual' ) as $f ) {
