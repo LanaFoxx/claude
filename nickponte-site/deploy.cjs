@@ -24,7 +24,7 @@ const MEDIA = ['npc-rye-coast.jpg', 'npc-portsmouth.jpg', 'npc-hampton-beach.jpg
   'npc-logo-navy.png', 'npc-logo-reversed.png', 'npc-buyer-hero.jpg', 'npc-seller-hero.jpg',
   'npc-sale-98-beach-hill.jpg', 'npc-sale-805-central.jpg', 'npc-sale-1-franklin.jpg', 'npc-sale-39-chapel.jpg', 'npc-icon.png',
   'npc-press-seacoastonline.png', 'npc-press-bostoncom.png', 'npc-press-unionleader.png',
-  'npc-town-new-castle.jpg', 'npc-town-seabrook.jpg', 'npc-town-hampton.jpg', 'npc-town-hampton-falls.jpg', 'npc-town-newington.jpg', 'npc-share.jpg'];
+  'npc-town-new-castle.jpg', 'npc-town-seabrook.jpg', 'npc-town-hampton.jpg', 'npc-town-hampton-falls.jpg', 'npc-town-newington.jpg', 'npc-share.jpg', 'npc-hero.webp'];
 const ALT = {
   'npc-rye-coast': 'The Rye, NH coastline from above', 'npc-portsmouth': 'Portsmouth, NH South End harbor at sunset',
   'npc-hampton-beach': 'Hampton Beach, NH from above', 'npc-nick-ponte': 'Nick Ponte, Managing Broker',
@@ -84,7 +84,7 @@ async function deployMedia(p, nonce) {
     const found = await api(p, nonce, 'GET', `/wp/v2/media?slug=${slug}&_fields=id,source_url`);
     if (found.length) { ids[slug] = found[0].id; console.log(`media: ${slug} exists (${found[0].id})`); continue; }
     const r = await p.request.post(`${SITE}/wp-json/wp/v2/media`, {
-      headers: { 'X-WP-Nonce': nonce, 'Content-Disposition': `attachment; filename="${f}"`, 'Content-Type': f.endsWith('.png') ? 'image/png' : 'image/jpeg' },
+      headers: { 'X-WP-Nonce': nonce, 'Content-Disposition': `attachment; filename="${f}"`, 'Content-Type': f.endsWith('.png') ? 'image/png' : f.endsWith('.webp') ? 'image/webp' : 'image/jpeg' },
       data: fs.readFileSync(path.join(__dirname, 'media', f)),
     });
     const j = await r.json();

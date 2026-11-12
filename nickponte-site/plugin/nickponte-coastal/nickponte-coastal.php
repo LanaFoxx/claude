@@ -2,14 +2,14 @@
 /**
  * Plugin Name: Nick Ponte Coastal Light (preview)
  * Description: "Coastal Light" redesign preview: a homepage template (/home-preview/) and a Town post type (/town-preview/<town>/) with monthly market fields, FAQ and JSON-LD. Preview pages are noindex and use their own header and footer, so live pages are not affected. Deactivate to remove everything from the front end.
- * Version: 1.13.2
+ * Version: 1.14.0
  * Author: Dream Web Digital
  * Requires PHP: 7.4
  */
 
 if (!defined('ABSPATH')) exit;
 
-define('NPC_VER', '1.13.2');
+define('NPC_VER', '1.14.0');
 define('NPC_DIR', plugin_dir_path(__FILE__));
 define('NPC_URL', plugin_dir_url(__FILE__));
 const NPC_HOME_TEMPLATE = 'npc-home';
@@ -384,7 +384,7 @@ add_action('wp_head', function () {
 	if (!$k) return;
 	echo '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>' . "\n";
 	$id = 0;
-	if ($k === 'home') $id = npc_media_id('npc-hero-hampton');
+	if ($k === 'home') $id = npc_media_id('npc-hero') ?: npc_media_id('npc-hero-hampton');
 	elseif ($k === 'town') $id = npc_current_town() ? get_post_thumbnail_id(npc_current_town()) : 0;
 	elseif ($k === 'featured') $id = npc_media_id('npc-seller-hero');
 	elseif ($k === 'content' && is_page() && isset(NPC_CONTENT_PAGES[get_queried_object_id()])) { $ph = NPC_CONTENT_PAGES[get_queried_object_id()][3]; $id = $ph ? (is_numeric($ph) ? (int) $ph : npc_media_id($ph)) : 0; if (NPC_CONTENT_PAGES[get_queried_object_id()][0] === 'about') $id = npc_media_id('npc-nick-ponte'); }
@@ -426,6 +426,11 @@ add_action('template_redirect', function () {
 		if ($t) { wp_safe_redirect(npc_town_url($t[0]), 301); exit; }
 	}
 	if (is_singular('np_town') && isset(NPC_LIVE_TOWNS[get_queried_object()->post_name])) { wp_safe_redirect(get_permalink(NPC_LIVE_TOWNS[get_queried_object()->post_name]), 301); exit; }
+	if (is_404()) {
+		$path = trim((string) parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH), '/');
+		$map = ['home-preview' => home_url('/'), 'design-preview' => home_url('/'), 'buyers-guide-preview' => get_permalink(NPC_LIVE_PAGES['buyers-guide']), 'sellers-guide-preview' => get_permalink(NPC_LIVE_PAGES['sellers-guide']), 'featured-sales-preview' => get_permalink(NPC_LIVE_PAGES['featured'])];
+		if (isset($map[$path])) { wp_redirect($map[$path], 301, 'Nick Ponte Coastal'); exit; }
+	}
 	if (is_page()) {
 		$slug = get_post_field('post_name', get_queried_object_id());
 		$to = ['home-preview' => home_url('/'), 'buyers-guide-preview' => get_permalink(NPC_LIVE_PAGES['buyers-guide']), 'sellers-guide-preview' => get_permalink(NPC_LIVE_PAGES['sellers-guide']), 'featured-sales-preview' => get_permalink(NPC_LIVE_PAGES['featured'])];
@@ -498,6 +503,22 @@ add_filter('get_post_metadata', function ($v, $id, $key) {
 }, 10, 3);
 add_filter('rank_math/opengraph/facebook/og_site_name', function () { return 'Nick Ponte Realty'; });
 
+// Article schema only on blog posts: Rank Math adds NewsArticle to pages too.
+add_filter('rank_math/json_ld', function ($data) {
+	if (is_singular('post')) return $data;
+	foreach ($data as $k => $node) {
+		$t = is_array($node) ? (array) ($node['@type'] ?? []) : [];
+		if (array_intersect($t, ['NewsArticle', 'Article', 'BlogPosting'])) unset($data[$k]);
+	}
+	return $data;
+}, 99);
+
+// Old blog post kept out of llms.txt (and search): llms.txt skips posts Rank Math marks noindex.
+add_filter('get_post_metadata', function ($v, $id, $key) {
+	if ($key === 'rank_math_robots' && (int) $id === 3154) return [['noindex', 'follow']];
+	return $v;
+}, 10, 3);
+
 // FAQ page: FAQPage structured data from its question/answer items (Google rich results and AI answers).
 add_action('wp_head', function () {
 	if (!npc_live() || !is_page(6103)) return;
@@ -525,7 +546,7 @@ add_filter('pre_get_document_title', function ($t) {
 function npc_agent_schema($area = null) {
 	$s = [
 		'@type'     => ['RealEstateAgent', 'LocalBusiness'],
-		'@id'       => home_url('/#nick-ponte'),
+		'@id'       => home_url('/#localbusiness'),
 		'name'      => 'Nick Ponte Realty',
 		'url'       => home_url('/'),
 		'telephone' => '+1-603-918-7593',

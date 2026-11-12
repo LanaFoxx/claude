@@ -9,7 +9,7 @@ $more = array_slice($towns, 3);
 $updated = $towns ? $towns[0]['updated'] : date_i18n('F Y');
 ?>
 <section class="npc-hero">
-	<?php echo npc_img('npc-hero-hampton', 'full', ['class' => 'npc-hero__img', 'alt' => 'Hampton Beach, NH from above', 'loading' => 'eager', 'fetchpriority' => 'high', 'sizes' => '100vw']); ?>
+	<?php echo npc_img(npc_media_id('npc-hero') ?: 'npc-hero-hampton', 'full', ['class' => 'npc-hero__img', 'alt' => 'Hampton Beach, NH from above', 'loading' => 'eager', 'fetchpriority' => 'high', 'sizes' => '100vw']); ?>
 	<div class="npc-hero__veil" aria-hidden="true"></div>
 	<div class="npc-wrap npc-hero__in">
 		<p class="npc-eyebrow">Rye · Portsmouth · Hampton<span class="npc-hide-m"> · The New Hampshire Seacoast</span></p>

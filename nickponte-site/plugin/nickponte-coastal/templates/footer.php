@@ -14,7 +14,7 @@ $home = npc_home_url();
 				<a href="<?php echo esc_url(npc_guide_url('buyers-guide')); ?>">Buyer Guide</a>
 				<a href="<?php echo esc_url(npc_guide_url('sellers-guide')); ?>">Seller Guide</a>
 				<a href="<?php echo esc_url($home . '#valuation'); ?>">Home valuation</a>
-				<a href="<?php echo esc_url($home . '#about'); ?>">About</a>
+				<a href="<?php echo esc_url(npc_live() ? get_permalink(25) : $home . '#about'); ?>">About</a>
 			</nav>
 		</div>
 		<div class="npc-fmin__contact">
