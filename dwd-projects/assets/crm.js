@@ -1131,7 +1131,7 @@
 			+ '<span class="dd-pc due ' + dueCls + '">' + (dd ? fmt(dd) : '<i>—</i>') + '</span>'
 			+ '<span class="dd-pc st">' + statusSelect(c) + '</span>'
 			+ '<span class="dd-pc nx" title="' + esc(c.next || '') + '">' + (c.next ? esc(c.next) : '<i>—</i>') + '</span>'
-			+ '<span class="dd-pc acts">' + (c.drive ? '<button type="button" class="dd-ibtn sm" data-copy="' + esc(c.drive) + '" title="Copy Drive upload link">' + lu('link', 15) + '</button>' : '') + '<button type="button" class="dd-ibtn sm" data-actmove="' + c.id + ':' + (seg === 'now' ? 'wait' : 'now') + '" title="' + (seg === 'now' ? 'Move to Waiting' : 'Move to Working on now') + '">' + lu(seg === 'now' ? 'chevrons-down' : 'chevrons-up', 16) + '</button><a class="dd-ibtn sm" href="#client/' + c.id + '" title="Open project">' + lu('chevron-right', 16) + '</a></span></div>';
+			+ '<span class="dd-pc acts">' + (c.staging ? '<a class="dd-ibtn sm" href="' + esc(c.staging) + '" target="_blank" rel="noopener" title="Open staging site (right-click to copy)">' + lu('globe', 15) + '</a>' : '') + (c.drive ? '<button type="button" class="dd-ibtn sm" data-copy="' + esc(c.drive) + '" title="Copy Drive upload link">' + lu('link', 15) + '</button>' : '') + '<button type="button" class="dd-ibtn sm" data-actmove="' + c.id + ':' + (seg === 'now' ? 'wait' : 'now') + '" title="' + (seg === 'now' ? 'Move to Waiting' : 'Move to Working on now') + '">' + lu(seg === 'now' ? 'chevrons-down' : 'chevrons-up', 16) + '</button><a class="dd-ibtn sm" href="#client/' + c.id + '" title="Open project">' + lu('chevron-right', 16) + '</a></span></div>';
 	}
 	function actCard(c) {
 		var k = clientOf(c), ow = num(c.balance);
@@ -2853,9 +2853,13 @@
 		var obBox = '' && card('ob', 'Onboarding' + (obl.length ? ' ' + ddPill(obn + ' answers', 'info') : ''), '', obl.length ? '<span class="dd-hmeta">' + esc(obl[0].form || 'Form') + ' · submitted ' + fmt(obl[0].date) + '</span>' : '<span class="dd-hmeta">Not submitted</span>',
 			'<div class="dd-pbtns">' + (obl.length ? btn('data-viewob', lu('clipboard-list') + 'View answers') + '<button type="button" class="dd-btn ghost" data-copyob>Copy answers</button>' : btn('data-leadinvite="' + c.id + '"', lu('mail') + (c.stage === 'onboarding' ? 'Resend onboarding form' : 'Send onboarding form'))) + '</div>');
 		// markup review
+		var stg = c.staging || '', stgEdit = !stg || (S.stgEdit === c.id);
+		var stgBox = card('k-stg', 'Staging site', stg ? '' : 'Not added yet', stg && !stgEdit ? '<button type="button" class="dd-hlink" data-stgedit="' + c.id + '">Change</button>' : '',
+			'<div class="dd-stgb">' + (stg && !stgEdit ? '<div class="dd-stgurl">' + lu('globe', 16) + '<a href="' + esc(stg) + '" target="_blank" rel="noopener">' + esc(stg.replace(/^https?:\/\//, '').replace(/\/$/, '')) + '</a></div><div class="dd-pbtns"><a class="dd-btn primary" href="' + esc(stg) + '" target="_blank" rel="noopener">' + lu('external-link', 14) + 'Open staging site</a><button type="button" class="dd-btn secondary" data-copy="' + esc(stg) + '">' + lu('link', 14) + 'Copy URL</button>' + (DWDC.mkReady && !c.markup ? '<button type="button" class="dd-btn ghost" data-stgmk="' + c.id + '">Make a Markup link from it</button>' : '') + '</div>'
+				: '<form class="dd-stgf" data-stgform="' + c.id + '"><div class="dd-frow"><input name="staging" type="url" placeholder="https://staging.example.com" value="' + esc(stg) + '" required><button class="dd-btn primary">Save</button>' + (stg ? '<button type="button" class="dd-btn ghost" data-stgcancel>Cancel</button>' : '') + '</div><p class="dd-help">Paste the staging URL when you start working on the site. Making a Markup link from a staging URL saves it here too.</p></form>') + '</div>');
 		var mkBox = card('k-mk', 'Markup review', '', '<a class="dd-btn secondary" href="' + esc(DWDC.markupHome) + '" target="_blank" rel="noopener">Open Markup ' + lu('external-link', 14) + '</a>',
 			'<div class="dd-mkb">' + (DWDC.mkReady
-				? '<div class="dd-fg"><label>Staging site URL</label><div class="dd-frow"><input data-mkurl type="url" placeholder="https://staging.example.com"><button type="button" class="dd-btn primary" data-mkcreate>' + lu('plus', 14) + (c.markup ? 'Create new link' : 'Create markup link') + '</button></div><p class="dd-help">' + ddPill('Connected', 'success') + ' Markup is connected: paste the staging site and a review link is made for you.</p></div>'
+				? '<div class="dd-fg"><label>Staging site URL</label><div class="dd-frow"><input data-mkurl type="url" placeholder="https://staging.example.com" value="' + esc(c.staging || '') + '"><button type="button" class="dd-btn primary" data-mkcreate>' + lu('plus', 14) + (c.markup ? 'Create new link' : 'Create markup link') + '</button></div><p class="dd-help">' + ddPill('Connected', 'success') + ' Markup is connected: paste the staging site and a review link is made for you.</p></div>'
 				: '<div class="dd-fg"><label>Markup API key</label><div class="dd-frow"><input data-mkkey type="password" placeholder="Paste your API key"><button type="button" class="dd-btn secondary" data-mkkeysave>Connect</button></div><p class="dd-help">Connect Markup once to create review links automatically. In Markup: Workspace settings → Developer settings → create an API key. It’s saved on your server only.</p></div>')
 			+ '<hr><form class="dwdc-markupf dd-fg"><label>Client’s Markup link</label><div class="dd-frow"><input name="markup" type="url" value="' + esc(c.markup) + '" placeholder="https://app.markup.io/…"><button class="dd-btn secondary">Save</button></div>'
 			+ (em ? '' : '<label>Client’s email</label><div class="dd-frow"><input name="email" type="email" placeholder="Needed to send the link"></div>')
@@ -2891,7 +2895,7 @@
 		var hosting = num(c.hosting) ? hostCard(c) : '';
 		return '<div class="dd-pp">' + head + strip
 			+ (S.edit ? '<div class="dd-pp-edit" id="pv3-edit">' + details + peopleCard(c) + '</div>' : '')
-			+ '<div class="dd-pp-grid"><div class="dd-pp-col">' + mkBox + formBox + todos + (S.edit ? '' : '<div class="dd-pp-mob">' + details + '</div>') + notesBox + '</div><div class="dd-pp-col side">' + (S.edit ? '' : '<div class="dd-pp-desk">' + details + '</div>' + contacts) + zoomBox('p' + c.id, [c.id]) + (st === 'leads' ? '' : paysBox) + hosting + '</div></div></div>';
+			+ '<div class="dd-pp-grid"><div class="dd-pp-col">' + stgBox + mkBox + formBox + todos + (S.edit ? '' : '<div class="dd-pp-mob">' + details + '</div>') + notesBox + '</div><div class="dd-pp-col side">' + (S.edit ? '' : '<div class="dd-pp-desk">' + details + '</div>' + contacts) + zoomBox('p' + c.id, [c.id]) + (st === 'leads' ? '' : paysBox) + hosting + '</div></div></div>';
 	}
 	// Onboarding answers as plain text, ready to paste into Claude.
 	function onboardEntries(c) {
@@ -3795,6 +3799,9 @@
 		if ((el = t.closest('[data-bmonth]'))) { if (el.getAttribute('data-bmonth')) { S.bMonth = el.getAttribute('data-bmonth'); S.bCat = ''; render(); } return; }
 		if ((el = t.closest('[data-bcat]'))) { var bc = el.getAttribute('data-bcat'); S.bCat = S.bCat === bc ? '' : bc; render(); return; }
 		if ((el = t.closest('[data-statsmore]'))) { var sc2 = el.closest('.dd-stats'), so = !sc2.classList.contains('open'); sc2.classList.toggle('open', so); el.setAttribute('aria-expanded', so); el.querySelector('span').textContent = so ? 'Show less' : 'Show more'; ddSet('dreamdesk-stats-open', so ? '1' : ''); return; }
+		if ((el = t.closest('[data-stgedit]'))) { S.stgEdit = +el.getAttribute('data-stgedit'); render(); var si3 = app.querySelector('.dd-stgf input'); if (si3) { si3.focus(); si3.select(); } return; }
+		if (t.closest('[data-stgcancel]')) { S.stgEdit = 0; render(); return; }
+		if ((el = t.closest('[data-stgmk]'))) { var mu = app.querySelector('[data-mkurl]'); if (mu) { mu.scrollIntoView({ behavior: 'smooth', block: 'center' }); mu.focus(); } return; }
 		if ((el = t.closest('[data-schedtask]')) && !t.closest('a')) { S.modal = { type: 'schedtask', key: el.getAttribute('data-schedtask') }; render(); return; }
 		if ((el = t.closest('[data-stdone]'))) {
 			var sk = el.getAttribute('data-stdone'), sid = sk.slice(2); S.modal = null;
@@ -4011,6 +4018,12 @@
 		new FormData(f).forEach(function (val, k) { data[k] = val; });
 		if (isTodoAdd(f) && data.text) { var pw = parseWhen(data.text); if (pw.due) { data.due = pw.due; } if (pw.time) { data.time = pw.time; } if (pw.due || pw.time) { data.text = pw.text; } }
 		if (f.classList.contains('dd-padd')) { S.ppDate = S.ppDate || {}; S.ppDate[f.getAttribute('data-contact')] = ''; }
+		if (f.hasAttribute('data-stgform')) {
+			var sgid = +f.getAttribute('data-stgform'), sgu = String(data.staging || '').trim();
+			if (sgu && !/^https?:\/\//i.test(sgu)) { sgu = 'https://' + sgu; }
+			api('/contact/' + sgid, 'POST', { staging: sgu }).then(function (x) { upsert(x); S.full[sgid] = x; S.stgEdit = 0; render(); toast('Staging URL saved'); }).catch(fail);
+			return;
+		}
 		if (f.classList.contains('dd-zform')) {
 			var zk = f.getAttribute('data-zkey'), zb = f.querySelector('.dd-zgo'), zp = contact(+data.project);
 			if (!zp) { toast('Pick a lead or client first', true); return; }

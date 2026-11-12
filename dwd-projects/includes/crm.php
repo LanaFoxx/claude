@@ -55,7 +55,7 @@ function dwdc_is_upwork( $id, $data = array() ) {
 
 /** Contact fields kept on every contact. */
 function dwdc_fields() {
-	return array( 'job', 'manual', 'followup', 'markup', 'markup_sent', 'lead_source', 'pay_method', 'stage', 'completed', 'billed', 'stripe', 'paypal', 'person', 'email', 'phone', 'company', 'website', 'list', 'price', 'balance', 'deadline', 'hosting', 'renewal', 'source', 'next', 'pending', 'paymark', 'owedopen', 'flag', 'drive', 'drive_sent', 'zoom' );
+	return array( 'job', 'manual', 'followup', 'markup', 'markup_sent', 'lead_source', 'pay_method', 'stage', 'completed', 'billed', 'stripe', 'paypal', 'person', 'email', 'phone', 'company', 'website', 'list', 'price', 'balance', 'deadline', 'hosting', 'renewal', 'source', 'next', 'pending', 'paymark', 'owedopen', 'flag', 'drive', 'drive_sent', 'zoom', 'staging' );
 }
 
 function dwdc_contact( $post, $full = false ) {
@@ -1250,6 +1250,7 @@ add_action( 'rest_api_init', function () {
 		if ( ! $site || ! preg_match( '#^https?://#i', $site ) ) {
 			return new WP_Error( 'dwdc_url', 'Paste the full staging URL (starting with https://).', array( 'status' => 400 ) );
 		}
+		update_post_meta( (int) $r['id'], '_dwdc_staging', $site ); // the staging site used for Markup is this project's staging URL
 		$call = function ( $method, $path, $body = null ) use ( $key ) {
 			$res = wp_remote_request( 'https://api.markup.io/api/v2' . $path, array(
 				'method'  => $method,

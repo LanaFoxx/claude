@@ -195,3 +195,9 @@
 .dd .dd-dtw input[type=datetime-local]::-webkit-calendar-picker-indicator { position: absolute; inset: 0; width: auto; height: auto; margin: 0; opacity: 0; cursor: pointer; filter: none !important; }
 .dd .dd-dtw input[type=datetime-local]::-webkit-date-and-time-value { text-align: left; }
 .dd .dd-dtw > .lu { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--text-3); }
+/* Staging site box */
+.dd-stgb { padding: 4px 20px 18px; display: flex; flex-direction: column; gap: 12px; }
+.dd-stgurl { display: flex; align-items: center; gap: 8px; min-width: 0; padding: 10px 12px; border-radius: var(--radius-md); background: var(--bg); border: 1px solid var(--border); }
+.dd-stgurl .lu { color: var(--text-3); }
+.dd-stgurl a { font-size: 15px; font-weight: 500; color: var(--accent-text) !important; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dd-stgf { display: flex; flex-direction: column; gap: 8px; margin: 0; }
