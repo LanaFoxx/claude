@@ -609,3 +609,14 @@ html:has(body.npc) { scroll-behavior: smooth; }
 	.npc .npc-pills .npc-pill { grid-column: span 6; }
 	.npc .npc-pills .npc-pill:nth-child(n+8) { grid-column: span 7; }
 }
+
+/* Scan fixes: hide the listings plugin's off-screen compare panel; no sideways scroll; bigger tap targets on touch screens */
+body.npc .prop-compare, body.npc .rem-compare-table { display: none !important; }
+html:has(body.npc), body.npc { overflow-x: clip; }
+@media (max-width: 1024px) {
+	.npc .npc-fmin__nav a, .npc .npc-aside__links a, .npc .npc-aside__nav a, .npc .npc-fmin__contact a, .npc .npc-fmin__legal a, .npc .npc-crumbs a,
+	.npc .npc-link, .npc .npc-readmore, .npc .npc-gcard__more, .npc .npc-foot a, .npc .npc-towns__head .npc-link, .npc .npc-sales__head .npc-link { display: inline-flex; align-items: center; min-height: 44px; }
+	.npc-fmin__nav { gap: 0 22px; }
+	.npc .npc-more__row { min-height: 56px; }
+	.npc-quote__dot { width: 44px; height: 44px; }
+}

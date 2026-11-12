@@ -7,6 +7,8 @@ $home = npc_home_url();
 $blog = get_permalink(627);
 $content = apply_filters('the_content', get_the_content());
 // The article's own "By Nick Ponte ..." line and the rule under it are shown in the header instead.
+// One H1 per page: headings written as H1 inside the article become H2.
+$content = preg_replace(['#<h1(\s|>)#i', '#</h1>#i'], ['<h2$1', '</h2>'], $content);
 $content = preg_replace('#^\s*<p[^>]*>\s*<strong>\s*By Nick Ponte[^<]*</strong>\s*</p>\s*(<hr[^>]*>)?#i', '', $content, 1);
 include NPC_DIR . 'templates/header.php';
 ?>

@@ -2,14 +2,14 @@
 /**
  * Plugin Name: Nick Ponte Coastal Light (preview)
  * Description: "Coastal Light" redesign preview: a homepage template (/home-preview/) and a Town post type (/town-preview/<town>/) with monthly market fields, FAQ and JSON-LD. Preview pages are noindex and use their own header and footer, so live pages are not affected. Deactivate to remove everything from the front end.
- * Version: 1.9.3
+ * Version: 1.11.3
  * Author: Dream Web Digital
  * Requires PHP: 7.4
  */
 
 if (!defined('ABSPATH')) exit;
 
-define('NPC_VER', '1.9.3');
+define('NPC_VER', '1.11.3');
 define('NPC_DIR', plugin_dir_path(__FILE__));
 define('NPC_URL', plugin_dir_url(__FILE__));
 const NPC_HOME_TEMPLATE = 'npc-home';
@@ -96,6 +96,7 @@ add_action('init', 'npc_register');
 
 require_once NPC_DIR . 'includes/pages.php';
 require_once NPC_DIR . 'includes/town-guide.php';
+require_once NPC_DIR . 'includes/admin.php';
 
 register_activation_hook(__FILE__, function () {
 	npc_register();
@@ -433,6 +434,40 @@ add_filter('rank_math/sitemap/entry', function ($url, $type, $object) {
 	if ($type === 'post' && isset($object->post_type, $object->post_name) && $object->post_type === 'np_town' && isset(NPC_LIVE_TOWNS[$object->post_name])) return false;
 	return $url;
 }, 10, 3);
+// Sitemap: once live, list the Town posts that have no older page (Seabrook, Hampton Falls); drop the redirected valuation page.
+add_filter('option_rank-math-options-sitemap', function ($o) {
+	if (npc_live() && is_array($o)) { $o['pt_np_town_sitemap'] = 'on'; $ex = array_filter(array_map('trim', explode(',', (string) ($o['exclude_posts'] ?? '')))); $ex[] = '5644'; $o['exclude_posts'] = implode(',', array_unique($ex)); }
+	return $o;
+});
+
+// Search titles and descriptions: short, consistent, not cut off by Google (~60 / ~160 characters).
+function npc_short_title($t) {
+	if (is_front_page()) return 'Seacoast NH Real Estate | Nick Ponte, Realtor';
+	$t = trim(preg_replace('/\s+/', ' ', html_entity_decode((string) $t, ENT_QUOTES)));
+	$t = preg_replace('/\s*[-|–]\s*Nick Ponte Realty\s*\|\s*Seacoast NH Realtor &(amp;)? Real Estate Expert.*$/i', ' | Nick Ponte', $t);
+	if (mb_strlen($t) > 62) {
+		$base = preg_replace('/\s*\|\s*Nick Ponte$/', '', $t);
+		$t = mb_strlen($base) <= 62 ? $base : rtrim(mb_substr($base, 0, mb_strrpos(mb_substr($base, 0, 60), ' ') ?: 60), ' ,:-–—|') . '…';
+	}
+	return $t;
+}
+add_filter('rank_math/frontend/title', 'npc_short_title', 99);
+add_filter('rank_math/opengraph/facebook/og_title', 'npc_short_title', 99);
+add_filter('rank_math/frontend/description', function ($d) {
+	$d = trim(preg_replace('/\s+/', ' ', (string) $d));
+	if (mb_strlen($d) > 158) $d = rtrim(mb_substr($d, 0, mb_strrpos(mb_substr($d, 0, 155), ' ') ?: 155), ' ,:;-–—') . '…';
+	return $d;
+}, 99);
+
+// FAQ page: FAQPage structured data from its question/answer items (Google rich results and AI answers).
+add_action('wp_head', function () {
+	if (!npc_live() || !is_page(6103)) return;
+	$html = (string) get_post_meta(6103, '_npc_page_body', true);
+	if (!preg_match_all('#<details>\s*<summary>(.*?)</summary>(.*?)</details>#s', $html, $m, PREG_SET_ORDER)) return;
+	$q = array_map(function ($x) { return ['@type' => 'Question', 'name' => wp_strip_all_tags($x[1]), 'acceptedAnswer' => ['@type' => 'Answer', 'text' => trim(preg_replace('/\s+/', ' ', wp_strip_all_tags($x[2])))]]; }, $m);
+	echo '<script type="application/ld+json">' . wp_json_encode(['@context' => 'https://schema.org', '@type' => 'FAQPage', 'mainEntity' => $q], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "</script>\n";
+}, 31);
+
 add_filter('wp_sitemaps_post_types', function ($types) { if (!npc_live()) unset($types['np_town']); return $types; });
 
 add_filter('rank_math/frontend/title', function ($title) {
