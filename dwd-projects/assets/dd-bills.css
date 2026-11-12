@@ -107,3 +107,45 @@
 .dd .dd-bform .f-auto input[type=checkbox] { width: 16px !important; height: 16px !important; min-height: 0 !important; padding: 0 !important; border-radius: 4px !important; flex: none; }
 .dd-srow.head .num, .dd-brow.head .num { font-size: 12px; font-weight: 500; color: var(--text-3); }
 .dd-bcard > .dd-bform { padding-top: 16px; }
+/* Get reviews (design 8a) */
+.dd-btop h1 em { font-style: normal; font-size: 14px; font-weight: 400; color: var(--text-3); margin-left: 6px; letter-spacing: 0; }
+.dd-main > .dwdc-screen > .dd-rvcard { margin-top: 20px; }
+.dd-rvcard { overflow: visible; }
+.dd-rvrow { display: grid; grid-template-columns: 44px minmax(0, 1.1fr) minmax(0, 1.7fr) minmax(0, 1.6fr) 110px 150px 72px; align-items: center; min-height: 56px; padding: 0 8px 0 16px; border-top: 1px solid var(--border); font-size: 14px; color: var(--text); }
+.dd-rvrow:hover:not(.head) { background: var(--hover); }
+.dd-rvrow.sel { background: var(--selected); }
+.dd-rvrow.head { position: sticky; top: var(--topbar-h); z-index: 3; min-height: 40px; border-top: 0; font-size: 12px; font-weight: 500; color: var(--text-3); background: var(--surface); }
+.dd-rvrow > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 12px; }
+.dd-rvrow i { font-style: normal; color: var(--text-3); }
+.dd-rvrow .cl a { color: var(--text) !important; font-weight: 500; }
+.dd-rvrow .pj { display: flex; flex-direction: column; }
+.dd-rvrow .pj a { color: var(--text) !important; overflow: hidden; text-overflow: ellipsis; }
+.dd-rvrow .pj small { font-size: 12px; color: var(--text-3); }
+.dd-rvrow .em { color: var(--text-2); }
+.dd-rvrow .em a { font-size: 13px; font-weight: 500; }
+.dd-rvrow .rq { font-size: 13px; }
+.dd-rvrow .acts { display: flex; justify-content: flex-end; gap: 2px; opacity: 0; transition: opacity .12s; padding-right: 0; }
+.dd-rvrow:hover .acts { opacity: 1; }
+@media (hover: none) { .dd-rvrow .acts { opacity: 1; } }
+.dd-cb { width: 16px; height: 16px; border-radius: 4px; border: 1px solid var(--border-strong); background: var(--surface); color: transparent; display: inline-flex; align-items: center; justify-content: center; padding: 0; cursor: pointer; }
+.dd-cb svg { width: 10px; height: 10px; }
+.dd-cb.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+.dd-cb.some { background: var(--accent); border-color: var(--accent); }
+.dd-cb .minus { width: 8px; height: 2px; background: #fff; border-radius: 1px; }
+.dd-cb.none { border-style: dashed; opacity: .6; cursor: not-allowed; background: none; }
+.dd-upchip { display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 8px 0 6px; border-radius: var(--radius-pill); border: 1px solid var(--border-strong); background: transparent; color: var(--text-3); font: 500 12px var(--font); cursor: pointer; }
+.dd-upchip i { width: 12px; height: 12px; display: inline-block; }
+.dd-upchip.on { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-text); }
+.dd-rvfoot { display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-top: 1px solid var(--border); font-size: 13px; color: var(--text-2); }
+.dd-rvfoot b { font-weight: 500; color: var(--text); }
+.dd-rvfoot .dd-btn.sm { height: 30px; }
+.dd-pgb[disabled] { opacity: .35; cursor: default; }
+@media (max-width: 1100px) { .dd-rvrow { grid-template-columns: 40px minmax(0, 1fr) minmax(0, 1.4fr) 100px 120px 56px; } .dd-rvrow > :nth-child(4) { display: none; } }
+@media (max-width: 767px) {
+	.dd-rvrow.head { display: none; }
+	.dd-rvrow { display: grid; grid-template-columns: 32px 1fr auto; grid-template-areas: "c n u" "c p p" "c r r"; row-gap: 2px; padding: 12px 12px 12px 12px; }
+	.dd-rvrow > :nth-child(1) { grid-area: c; align-self: start; padding-top: 2px; }
+	.dd-rvrow > :nth-child(2) { grid-area: n; } .dd-rvrow > :nth-child(3) { grid-area: p; } .dd-rvrow > :nth-child(5) { grid-area: u; padding: 0; } .dd-rvrow > :nth-child(6) { grid-area: r; font-size: 12px; color: var(--text-3); }
+	.dd-rvrow > :nth-child(4), .dd-rvrow > :nth-child(7) { display: none; }
+	.dd-rvfoot { position: sticky; bottom: 0; background: var(--surface); flex-wrap: wrap; }
+}

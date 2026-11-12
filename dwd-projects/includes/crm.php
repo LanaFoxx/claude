@@ -188,6 +188,10 @@ function dwdc_save_contact( $id, $data ) {
 			update_post_meta( $id, '_dwdc_' . $f, $v );
 		}
 	}
+	// Finishing a project that still has money owed keeps it on the Owed list until it's paid.
+	if ( isset( $data['list'] ) && 'complete' === $data['list'] && ! isset( $data['balance'] ) && (float) preg_replace( '/[^\d.]/', '', (string) get_post_meta( $id, '_dwdc_balance', true ) ) > 0 ) {
+		update_post_meta( $id, '_dwdc_owedopen', '1' );
+	}
 	// A completed project you set an amount owed on (after finishing) shows in Owed until it's paid.
 	if ( isset( $data['balance'] ) ) {
 		$owe = (float) preg_replace( '/[^\d.]/', '', (string) $data['balance'] );
@@ -817,6 +821,14 @@ add_action( 'rest_api_init', function () {
 	register_rest_route( $ns, '/crm/reviews', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
 		$ids  = array_slice( array_filter( array_map( 'absint', (array) $r->get_param( 'ids' ) ) ), 0, 20 );
 		$upw  = array_map( 'absint', (array) $r->get_param( 'upwork' ) ); // clients who also get the Upwork feedback part
+		if ( $r->get_param( 'mark' ) ) { // "Mark as asked": record it without sending anything
+			foreach ( $ids as $cid ) {
+				if ( DWDC_CLIENT === get_post_type( $cid ) ) {
+					update_post_meta( $cid, '_dwdcl_review_sent', current_time( 'Y-m-d' ) );
+				}
+			}
+			return array( 'sent' => array(), 'marked' => $ids, 'failed' => array() );
+		}
 		$sent = array();
 		$fail = array();
 		foreach ( $ids as $cid ) {

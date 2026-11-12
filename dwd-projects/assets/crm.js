@@ -674,7 +674,7 @@
 			return '<div class="dd-ph home"><div><h1>' + new Date(DWDC.today + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }) + '</h1><p>' + greet + ', ' + esc(String(DWDC.user || 'Michael').split(' ')[0]) + '</p></div>'
 				+ (qm ? '<div class="dd-quote"><span>' + qm[1] + ' <i>— ' + qm[2] + '</i></span><button type="button" class="dd-ibtn sm" data-quotex aria-label="Hide for today">' + lu('x', 14) + '</button></div>' : '') + '</div>';
 		}
-		if (r.view === 'client' || r.view === 'cl' || r.view === 'host' || r.view === 'todos' || (r.view === 'projects' && (!r.arg || r.arg === 'active' || r.arg === 'all')) || (r.view === 'personal' && (r.arg === 'calendar' || r.arg === 'bills'))) { return ''; }
+		if (r.view === 'client' || r.view === 'cl' || r.view === 'host' || r.view === 'todos' || r.view === 'reviews' || (r.view === 'projects' && (!r.arg || r.arg === 'active' || r.arg === 'all')) || (r.view === 'personal' && (r.arg === 'calendar' || r.arg === 'bills'))) { return ''; }
 		return '<div class="dd-ph"><h1>' + esc(ddTitle(r, t)) + '</h1></div>';
 	}
 	// Home (design 4.1): schedule + recent activity | stat list + to-dos.
@@ -809,7 +809,7 @@
 		renewal: ['Renewal date', function (a, b) { return (a.renewal || '9') < (b.renewal || '9') ? -1 : 1; }],
 		finished: ['Recently finished', function (a, b) { return byDone(a, b); }]
 	};
-	var SORT_OPTS = { active: ['due', 'price', 'owed', 'name', 'updated'], leads: ['newest', 'price', 'name'], onboarding: ['newest', 'name'], paused: ['updated', 'price', 'owed', 'name'], complete: ['finished', 'price', 'name'], hosting: ['renewal', 'name'], clients: ['name'] };
+	var SORT_OPTS = { owed: ['owed', 'due', 'name'], active: ['due', 'price', 'owed', 'name', 'updated'], leads: ['newest', 'price', 'name'], onboarding: ['newest', 'name'], paused: ['updated', 'price', 'owed', 'name'], complete: ['finished', 'price', 'name'], hosting: ['renewal', 'name'], clients: ['name'] };
 	function sortMode(key) { var m = {}; try { m = JSON.parse(ddGet('dreamdesk-sort', '{}')) || {}; } catch (e) { m = {}; } return m[key] || 'mine'; }
 	function sortMine(key) { return sortMode(key) === 'mine' && !(S.psort || {})[key]; }
 	function sortAttr(key) { return sortMine(key) ? ' data-sort="' + key + '"' : ''; }
@@ -1293,6 +1293,54 @@
 		h.textContent = lbl ? '📅 ' + lbl : ''; h.hidden = !lbl;
 	}
 
+	/* ================= Get reviews (design 8a) ================= */
+	function revUpSaved() { try { return JSON.parse(ddGet('dreamdesk-rev-upwork', '{}')) || {}; } catch (e) { return {}; } }
+	function ddReviews() {
+		S.revSel = S.revSel || {};
+		var lastDone = {}, lastProj = {};
+		S.clients.forEach(function (k) {
+			var done = projectsOf(k.id).filter(function (c) { return c.list === 'complete'; }).sort(function (a, b) { return (doneDate(b) || '') < (doneDate(a) || '') ? -1 : 1; });
+			if (done.length) { lastDone[k.id] = doneDate(done[0]) || ''; lastProj[k.id] = done[0]; }
+		});
+		var all = S.clients.filter(function (k) { return lastProj[k.id]; }).sort(function (a, b) { return lastDone[a.id] !== lastDone[b.id] ? (lastDone[a.id] < lastDone[b.id] ? 1 : -1) : a.name.localeCompare(b.name); });
+		var q = String(S.revQ || '').toLowerCase().trim(), chip = S.revChip || 'all';
+		var asked = function (k) { return !!k.review_sent; };
+		var cnt = { all: all.length, not: all.filter(function (k) { return !asked(k) && revEmail(k); }).length, asked: all.filter(asked).length, up: all.filter(revUp).length, none: all.filter(function (k) { return !revEmail(k); }).length };
+		var list = all.filter(function (k) {
+			if (chip === 'not' && (asked(k) || !revEmail(k))) { return false; }
+			if (chip === 'asked' && !asked(k)) { return false; }
+			if (chip === 'up' && !revUp(k)) { return false; }
+			if (chip === 'none' && revEmail(k)) { return false; }
+			return !q || [k.name, revEmail(k), lastProj[k.id] ? lastProj[k.id].name : ''].join(' ').toLowerCase().indexOf(q) > -1;
+		});
+		var pages = Math.max(1, Math.ceil(list.length / REV_PER)), pg = Math.min(Math.max(1, S.revPage || 1), pages);
+		var rows = list.slice((pg - 1) * REV_PER, pg * REV_PER);
+		var sel = Object.keys(S.revSel).filter(function (k) { return S.revSel[k]; }), nSel = sel.length;
+		var pageIds = rows.filter(function (k) { return revEmail(k); }).map(function (k) { return k.id; });
+		var onN = pageIds.filter(function (id) { return S.revSel[id]; }).length, hstate = !onN ? '' : onN === pageIds.length ? ' on' : ' some';
+		var c = function (k, l, n) { return '<button type="button" class="dd-chip' + (chip === k ? ' on' : '') + '" data-revchip="' + k + '">' + l + ' <em>' + n + '</em></button>'; };
+		var tools = '<div class="dd-stools"><label class="dd-input">' + lu('search') + '<input type="search" data-revq placeholder="Search clients…" value="' + esc(S.revQ || '') + '" autocomplete="off" data-lpignore="true" data-1p-ignore></label><span class="dd-chipdiv"></span>'
+			+ '<div class="dd-schips">' + c('all', 'All', cnt.all) + c('not', 'Not asked', cnt.not) + c('asked', 'Asked', cnt.asked) + c('up', 'Upwork', cnt.up) + c('none', 'No email', cnt.none) + '</div><span class="dd-sp"></span>'
+			+ '<a class="dd-btn ghost" href="' + esc(DWDC.api + '/reviews/preview?_wpnonce=' + DWDC.nonce) + '" target="_blank" rel="noopener">' + lu('mail', 14) + 'Preview email</a><a class="dd-btn ghost" href="' + esc(DWDC.api + '/reviews/preview?upwork=1&_wpnonce=' + DWDC.nonce) + '" target="_blank" rel="noopener">With Upwork</a></div>';
+		var head = '<div class="dd-rvrow head"><span><button type="button" class="dd-cb' + hstate + '" data-rvall aria-label="Select page">' + (hstate === ' some' ? '<i class="minus"></i>' : TD_CHECK) + '</button></span><span>Client</span><span>Project</span><span>Email</span><span>Upwork</span><span>Review request</span><span></span></div>';
+		var body = rows.length ? rows.map(function (k) {
+			var em = revEmail(k), on = !!S.revSel[k.id], up = revUp(k), p = lastProj[k.id];
+			return '<div class="dd-rvrow' + (on ? ' sel' : '') + '">'
+				+ '<span>' + (em ? '<button type="button" class="dd-cb' + (on ? ' on' : '') + '" data-rvpick="' + k.id + '" aria-label="Select ' + esc(k.name) + '">' + TD_CHECK + '</button>' : '<i class="dd-cb none" title="Add an email first"></i>') + '</span>'
+				+ '<span class="cl"><a href="#cl/' + k.id + '">' + esc(k.name) + '</a></span>'
+				+ '<span class="pj">' + (p ? '<a href="#client/' + p.id + '">' + esc(p.name === k.name ? '—' : p.name) + '</a>' : '<i>—</i>') + '<small>Finished ' + fmt(lastDone[k.id], true) + '</small></span>'
+				+ '<span class="em">' + (em ? esc(em) : '<i>No email on file · </i><a href="#cl/' + k.id + '">Add email</a>') + '</span>'
+				+ '<span><button type="button" class="dd-upchip' + (up ? ' on' : '') + '" data-revupt="' + k.id + '" title="Upwork client: the email also asks for Upwork feedback">' + (up ? lu('check', 12) : '<i></i>') + 'Upwork</button></span>'
+				+ '<span class="rq">' + (!em ? '<i>—</i>' : k.review_sent ? 'Asked ' + fmt(String(k.review_sent).slice(0, 10), true) : '<i>Not asked yet</i>') + '</span>'
+				+ '<span class="acts">' + (em ? '<button type="button" class="dd-ibtn sm" data-askreview="' + k.id + '" title="Send the review request to ' + esc(k.name) + '">' + lu('mail', 15) + '</button>' : '') + '<a class="dd-ibtn sm" href="#cl/' + k.id + '" title="Open client">' + lu('chevron-right', 15) + '</a></span></div>';
+		}).join('') : '<div class="dd-emptyst"><b>No clients match</b><button type="button" class="dd-lnk" data-revreset>Clear filters</button></div>';
+		var from = list.length ? (pg - 1) * REV_PER + 1 : 0, to = Math.min(pg * REV_PER, list.length);
+		var foot = '<div class="dd-rvfoot">' + (nSel ? '<b>' + nSel + ' selected</b><button type="button" class="dd-btn primary sm" data-revsend>' + lu('mail', 14) + 'Send review request</button><button type="button" class="dd-btn ghost sm" data-revmark>Mark as asked</button><button type="button" class="dd-btn ghost sm" data-revclear>Clear</button>' : '<span>Showing ' + from + '–' + to + ' of ' + list.length + '</span>')
+			+ '<span class="dd-sp"></span><span>' + from + '–' + to + ' of ' + list.length + '</span><button type="button" class="dd-ibtn sm dd-pgb"' + (pg > 1 ? ' data-revpage="' + (pg - 1) + '"' : ' disabled') + ' aria-label="Previous page">' + lu('chevron-right', 15).replace('<svg', '<svg style="transform:rotate(180deg)"') + '</button><button type="button" class="dd-ibtn sm dd-pgb"' + (pg < pages ? ' data-revpage="' + (pg + 1) + '"' : ' disabled') + ' aria-label="Next page">' + lu('chevron-right', 15) + '</button></div>';
+		return '<div class="dd-btop"><h1>Get reviews <em>' + (cnt.not ? all.length + ' finished projects' : 'All finished projects have been asked') + '</em></h1></div>'
+			+ '<section class="dd-card dd-rvcard">' + tools + head + body + foot + '</section>';
+	}
+
 	/* ---------- shell ---------- */
 	// Phone / app only: a sticky tab bar at the bottom (hidden on desktop by CSS).
 	function tabBar(r) {
@@ -1416,7 +1464,7 @@
 			t = ['Client', kw[0], kw.slice(1).join(' ')];
 			body = personView(r.id);
 		} else {
-			body = r.view === 'personal' ? (r.arg === 'spending' ? personalView(r) + '<h2 class="dwdc-sech">Money in &amp; out (logged by hand)</h2>' + personalView({ view: 'personal', arg: 'finances' }) : r.arg === 'bills' ? ddBills() : personalView(r)) : ({ home: ddHome, clients: ddClients, projects: projectsView, leads: leadsList, onboarding: onboardView, todos: ddTodos, connections: connectionsView, hosting: hostingView, money: moneyView, reviews: reviewsView, archive: archiveView, search: searchView }[r.view] || home)();
+			body = r.view === 'personal' ? (r.arg === 'spending' ? personalView(r) + '<h2 class="dwdc-sech">Money in &amp; out (logged by hand)</h2>' + personalView({ view: 'personal', arg: 'finances' }) : r.arg === 'bills' ? ddBills() : personalView(r)) : ({ home: ddHome, clients: ddClients, projects: projectsView, leads: leadsList, onboarding: onboardView, todos: ddTodos, connections: connectionsView, hosting: hostingView, money: moneyView, reviews: ddReviews, archive: archiveView, search: searchView }[r.view] || home)();
 		}
 		app.setAttribute('data-view', r.view);
 		app.classList.add('dd');
@@ -1758,7 +1806,7 @@
 	}
 	// Upwork client? (a project came from or was paid through Upwork) → the Upwork box starts checked.
 	function revUpDefault(k) { return projectsOf(k.id).some(function (c) { return /upwork/i.test([c.lead_source, c.pay_method, c.source].join(' ')); }); }
-	function revUp(k) { S.revUp = S.revUp || {}; return S.revUp[k.id] === undefined ? revUpDefault(k) : !!S.revUp[k.id]; }
+	function revUp(k) { S.revUp = S.revUp || revUpSaved(); return S.revUp[k.id] === undefined ? revUpDefault(k) : !!S.revUp[k.id]; }
 	function sendReviews(btn) {
 		var ids = Object.keys(S.revSel).filter(function (k) { return S.revSel[k]; }).map(Number);
 		if (!ids.length) { return; }
@@ -3043,15 +3091,15 @@
 			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide">' + head('Upwork', 'Connects', 'spending') + connSpend() + '<div class="dwdc-farow end"><a class="dwdc-btn2" href="#money" data-close-modal>Open in Money Stats</a></div></div>';
 		}
 		if (m.type === 'owed') {
-			var ol = owingList().sort(function (a, b) { return num(b.balance) - num(a.balance); });
+			var ol = lsorted('owed', owingList().sort(function (a, b) { return num(b.balance) - num(a.balance); }));
 			var pdep = pendDeposit(ol), pN = ol.filter(function (c) { return c.paymark === 'pending'; }).length;
 			var obody = ol.length ? '<div class="dwdc-mo-sum"><span>Projects<b>' + ol.length + '</b></span><span>Total owed<b>' + money(owed(ol)) + '</b></span>' + (pdep ? '<span class="pend" title="Projects marked Pending: paid, waiting to be transferred to your bank (Upwork after its 10% fee)">Next deposit · ' + pN + ' pending<b>' + money(pdep) + '</b></span>' : '') + '</div>'
-				+ ol.map(function (c) {
+				+ '<div class="dd-owbar">' + sortSel('owed') + (sortMine('owed') ? '<small>Drag rows to put them in your order</small>' : '') + '</div><div class="dd-owlist"' + sortAttr('owed') + '>' + ol.map(function (c) {
 					var k = clientOf(c), pm = c.paymark || '';
 					var tb = function (v, label) { return '<button type="button" class="dwdc-btn2 sm' + (pm === v ? ' on-' + v : '') + '" data-owmark="' + c.id + '" data-v="' + (pm === v ? '' : v) + '">' + label + '</button>'; };
-					return '<div class="dwdc-mo-r dwdc-owr" data-owgo="client/' + c.id + '"><span class="d">' + (c.deadline ? 'Due ' + fmt(c.deadline) : '') + '</span><span class="w"><b>' + esc(c.name) + (pm === 'pending' ? ' <em class="dwdc-pendtag pending">Pending</em>' : '') + '</b><small>' + esc([k ? k.name : c.person, num(c.price) ? 'Price ' + money(c.price) : '', c.list === 'complete' ? 'Completed' : ''].filter(Boolean).join(' · ')) + '</small></span><strong>' + money(c.balance) + '</strong>'
+					return '<div class="dwdc-mo-r dwdc-owr" data-owgo="client/' + c.id + '" data-sid="' + c.id + '"><span class="d">' + (c.deadline ? 'Due ' + fmt(c.deadline) : '') + '</span><span class="w"><b>' + esc(c.name) + (pm === 'pending' ? ' <em class="dwdc-pendtag pending">Pending</em>' : '') + '</b><small>' + esc([k ? k.name : c.person, num(c.price) ? 'Price ' + money(c.price) : '', c.list === 'complete' ? 'Completed' : ''].filter(Boolean).join(' · ')) + '</small></span><strong>' + money(c.balance) + '</strong>'
 						+ '<span class="dwdc-owacts">' + tb('pending', 'Pending') + '<button type="button" class="dwdc-btn sm" data-owpaid="' + c.id + '">Paid</button></span></div>';
-				}).join('') : emptyRow('Nothing is owed on open projects.');
+				}).join('') + '</div>' : emptyRow('Nothing is owed on open projects.');
 			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide">' + head('Projects', 'Owed', money(owed(ol))) + obody + '</div>';
 		}
 		if (m.type === 'month') {
@@ -3483,7 +3531,7 @@
 		if ((el = t.closest('[data-quotex]'))) { hideQuote(el.closest('[data-quote]')); return; }
 		if ((el = t.closest('[data-askreview]'))) {
 			var rk = clientRec(+el.getAttribute('data-askreview'));
-			var rku = rk && revUpDefault(rk);
+			var rku = rk && revUp(rk);
 			if (!rk || !confirm('Send ' + rk.name + ' the review request email' + (rku ? ' (Google review + Upwork feedback)' : '') + '?' + (rk.review_sent ? '\n\nYou already asked on ' + fmt(String(rk.review_sent).slice(0, 10), true) + '.' : ''))) { return; }
 			el.disabled = true; el.textContent = 'Sending…';
 			api('/reviews', 'POST', { ids: [rk.id], upwork: rku ? [rk.id] : [] }).then(function (r) {
@@ -3648,6 +3696,17 @@
 		if (t.closest('[data-syncopen]')) { S.syncOpen = !S.syncOpen; render(); return; }
 		if (t.closest('[data-connopen]')) { S.connOpen = !S.connOpen; render(); return; }
 		if ((el = t.closest('[data-cyear]'))) { S.cYear = el.getAttribute('data-cyear'); render(); return; }
+		if ((el = t.closest('[data-rvpick]'))) { S.revSel = S.revSel || {}; var rp = el.getAttribute('data-rvpick'); S.revSel[rp] = !S.revSel[rp]; render(); return; }
+		if (t.closest('[data-rvall]')) { S.revSel = S.revSel || {}; var rbs = app.querySelectorAll('[data-rvpick]'), anyOff = [].some.call(rbs, function (x) { return !S.revSel[x.getAttribute('data-rvpick')]; }); rbs.forEach(function (x) { S.revSel[x.getAttribute('data-rvpick')] = anyOff; }); render(); return; }
+		if ((el = t.closest('[data-revchip]'))) { S.revChip = el.getAttribute('data-revchip'); S.revPage = 1; render(); return; }
+		if (t.closest('[data-revreset]')) { S.revChip = 'all'; S.revQ = ''; render(); return; }
+		if ((el = t.closest('[data-revupt]'))) { var ruk = clientRec(+el.getAttribute('data-revupt')); if (ruk) { S.revUp = S.revUp || revUpSaved(); S.revUp[ruk.id] = !revUp(ruk); ddSet('dreamdesk-rev-upwork', JSON.stringify(S.revUp)); render(); } return; }
+		if ((el = t.closest('[data-revmark]'))) {
+			var mids = Object.keys(S.revSel || {}).filter(function (k) { return S.revSel[k]; }).map(Number);
+			if (!mids.length || !confirm('Mark ' + mids.length + ' client' + (mids.length === 1 ? '' : 's') + ' as asked (no email is sent)?')) { return; }
+			api('/reviews', 'POST', { ids: mids, mark: 1 }).then(function () { S.revSel = {}; return reload(); }).then(function () { render(); toast('Marked as asked'); }).catch(fail);
+			return;
+		}
 		if ((el = t.closest('[data-revpage]'))) { S.revPage = +el.getAttribute('data-revpage'); render(); window.scrollTo(0, 0); return; }
 		if (t.closest('[data-revclear]')) { S.revSel = {}; render(); return; }
 		if ((el = t.closest('[data-revsend]'))) { sendReviews(el); return; }
@@ -3759,6 +3818,7 @@
 	app.addEventListener('input', function (e) {
 		var t = e.target;
 		if (t.name === 'text' && t.tagName === 'INPUT') { whenHint(t); }
+		if (t.hasAttribute('data-revq')) { S.revQ = t.value; S.revPage = 1; var rq2 = t.selectionStart; render(); var nr = app.querySelector('[data-revq]'); if (nr) { nr.focus(); try { nr.setSelectionRange(rq2, rq2); } catch (er) {} } return; }
 		if (t.hasAttribute('data-subq')) { S.subQ = t.value; var sp2 = t.selectionStart; render(); var ns = app.querySelector('[data-subq]'); if (ns) { ns.focus(); try { ns.setSelectionRange(sp2, sp2); } catch (er) {} } return; }
 		if (t.hasAttribute('data-aq')) { S.aq = t.value; var ap2 = t.selectionStart; render(); var na = app.querySelector('[data-aq]'); if (na) { na.focus(); try { na.setSelectionRange(ap2, ap2); } catch (er) {} } return; }
 		if (t.hasAttribute('data-tq')) { S.tq = t.value; tdSave(tdView().seg, t.value); var pos = t.selectionStart; render(); var nq = app.querySelector('[data-tq]'); if (nq) { nq.focus(); try { nq.setSelectionRange(pos, pos); } catch (er) {} } return; }

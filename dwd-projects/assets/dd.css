@@ -427,3 +427,7 @@ i.dd-flag { width: 10px; height: 10px; cursor: inherit; }
 .dd .mv-cols > .mv-col { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
 .dd .mv-cols > .mv-col > * { margin: 0 !important; }
 @media (max-width: 900px) { .dd .mv-grid.mv-cols { grid-template-columns: 1fr; } }
+/* Owed popup: order */
+.dd-owbar { display: flex; align-items: center; gap: 10px; margin: 12px 0 4px; }
+.dd-owbar small { font-size: 12px; color: var(--text-3); }
+.dd-owlist[data-sort] .dwdc-owr { cursor: grab; }
