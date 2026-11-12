@@ -2517,3 +2517,11 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 .dwdc .dwdc-wa-nav button:hover { background: rgba(255,255,255,.12); }
 .dwdc .cd-week > .dwdc-dhead > a { margin-left: 14px; }
 .dwdc .dwdc-htop-side .dwdc-pbal { flex: 1; }
+/* Home: Work and Personal boxes are built the same; only the header color differs */
+.dwdc .dwdc-todos2 > .cd-ptodo-h > .dwdc-dhead { background: #1a73e8 !important; }
+.dwdc .dwdc-todos2 > .cd-ptodo-h > .dwdc-dhead .dwdc-cnt { color: #1a73e8 !important; }
+.dwdc .dwdc-addbar.home { display: flex; gap: 8px; align-items: center; }
+.dwdc .dwdc-addbar.home [name=text] { flex: 1; min-width: 0; }
+.dwdc .dwdc-addbar.home [name=due] { flex: 0 0 150px; height: 42px; border: 1px solid var(--input); border-radius: 8px; padding: 0 10px; font: 500 13.5px Poppins, sans-serif; color: #0f2447; background: #fff; }
+.dwdc .dwdc-addbar.home .dwdc-btn { height: 42px; }
+@media (max-width: 768px) { .dwdc .dwdc-addbar.home [name=due] { flex: 1 1 auto; } }

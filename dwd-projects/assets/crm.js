@@ -1456,7 +1456,7 @@
 			'<footer class="dwdc-totals one"><div><small>Total amount due</small><strong class="deep">' + money(owed(active)) + '</strong></div></footer>');
 		var td = openTasks().sort(function (a, b) { return (a.due || '9') < (b.due || '9') ? -1 : 1; });
 		var tl = card('cd-plain cd-todo', '<header class="dwdc-dhead"><h2>Work <span class="dwdc-cnt">' + td.length + '</span></h2><a href="#todos">Open ' + ic('right', 14) + '</a></header>',
-			'<form class="dwdc-addbar home"><input name="text" placeholder="Add something we need to do..." autocomplete="off" required><button class="dwdc-btn">Add</button></form>'
+			'<form class="dwdc-addbar home"><input name="text" placeholder="Add a work to-do…" autocomplete="off" required><input type="date" name="due" title="Due date (optional)"><button class="dwdc-btn">Add</button></form>'
 			+ (td.length ? '<div class="dwdc-todos" data-sort="todos">' + todoItems(td).map(function (it) {
 				if (!it.tasks) { return todoRow(it.task).replace('<div class="dwdc-todo', '<div data-sid="' + it.id + '" class="dwdc-todo'); }
 				var c = contact(it.id), open = S.tgOpen && S.tgOpen[it.id], first = it.tasks[0];
@@ -1476,7 +1476,14 @@
 			lds.length ? '<footer class="dwdc-totals one"><div><small>Estimated value</small><strong class="deep">' + money(lds.reduce(function (a, c) { return a + num(c.price); }, 0)) + '</strong></div></footer>' : '');
 		// One dashboard: calendar + bank on top, Work and Personal to-dos side by side, Projects + Leads, Business revenue.
 		var P = pData(), pt = '';
-		if (P) { S.pNoEv = true; personalView({ view: 'personal', arg: '' }); S.pNoEv = false; pt = (S.pParts || {}).todo || ''; }
+		if (P) {
+			S.pNoEv = true; personalView({ view: 'personal', arg: '' }); S.pNoEv = false; // builds the bank box
+			var pOpen = P.todos.filter(function (x) { return !x.done && !x.gevent; }).sort(function (a, b) { return (a.due || '9') < (b.due || '9') ? -1 : 1; });
+			var pRow = function (x) { return pTodoRow(x).replace('<button class="dwdc-del"', due(x) + '<button class="dwdc-del"'); };
+			pt = card('cd-plain cd-todo cd-ptodo-h', '<header class="dwdc-dhead"><h2>Personal <span class="dwdc-cnt">' + pOpen.length + '</span></h2><a href="#todos">Open ' + ic('right', 14) + '</a></header>',
+				'<form class="dwdc-addbar home" data-pform="pdayadd"><input name="text" placeholder="Add a personal to-do…" autocomplete="off" required><input type="date" name="due" title="Due date (optional)"><button class="dwdc-btn">Add</button></form>'
+				+ (pOpen.length ? '<div class="dwdc-todos">' + pOpen.map(pRow).join('') + '</div>' : emptyRow('Nothing on your list. Nice.')));
+		}
 		var bank = P && S.pParts ? S.pParts.bank : '<div class="dwdc-pbal"><small>Bank balance today</small><strong>…</strong></div>';
 		var ol = owingList(), mk = DWDC.today.slice(0, 7), MYm = S.money || {}, yy = DWDC.today.slice(0, 4), mo = +DWDC.today.slice(5, 7) - 1;
 		var madeNow = MYm[yy] && MYm[yy].m ? Math.max(0, +MYm[yy].m[mo] || 0) : 0;
@@ -1691,8 +1698,8 @@
 			['Done', 'green', done]
 		];
 		var clients = S.contacts.filter(function (c) { return c.list !== 'archive'; }).sort(function (a, b) { return a.name.localeCompare(b.name); });
+		// Same add bar as the Personal list (to-do, date, Add). Pick a project afterwards in the to-do's edit window.
 		return '<div class="dwdc-narrow"><form class="dwdc-addbar">' + ic('plus', 18) + '<input name="text" placeholder="Add a to-do and press Enter…" autocomplete="off" required>'
-			+ '<select name="contact" title="Client"><option value="0">No client</option>' + clients.map(function (c) { return '<option value="' + c.id + '">' + esc(c.name) + '</option>'; }).join('') + '</select>'
 			+ '<input type="date" name="due" title="Due date"><button class="dwdc-btn">Add</button></form>'
 			+ groups.filter(function (g) { return g[2].length; }).map(function (g) {
 				return '<section class="dwdc-group"><h3><i class="t-' + g[1] + '"></i>' + g[0] + ' <b>' + g[2].length + '</b></h3><div class="dwdc-card dwdc-todos p6">' + g[2].map(function (t) { return todoRow(t); }).join('') + '</div></section>';
