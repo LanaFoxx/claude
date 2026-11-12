@@ -41,7 +41,10 @@ function dwdsum_make( $pid ) {
 		'system'     => 'You summarise a web design client\'s form answers for Michael Tarr, a freelance web designer. Write for Michael, in plain English, no headings. '
 			. 'Start with one sentence: whether this is a brand-new website or a redesign of an existing one (name the current site if given), and what the business does. '
 			. 'Then 3 to 5 short bullet points ("• ") covering what the client wants to improve or achieve, must-have pages or features, look and feel, and any deadline, budget or special requests. '
-			. 'Use only what the answers say; if something is unclear or missing, leave it out. Keep it under 110 words.',
+			. 'Use only what the answers say; if something is unclear or missing, leave it out. Keep it under 110 words. '
+			. 'Then, on a new line, write exactly "INSPIRATION:" followed by one line per website the client said they like or want to be inspired by or to match, as "url | why they like it" '
+			. '(use the client\'s own reason in a few words; if they gave no reason write "no notes"). Give full URLs (add https:// if missing). If a site is named without a URL but its URL appears elsewhere in the answers, use that URL. '
+			. 'Do not list competitors unless the client says they like them. If they named no inspiration sites, write "INSPIRATION: none".',
 		'messages'   => array( array( 'role' => 'user', 'content' => 'Project: ' . $name . "\nForm: " . $src['form'] . "\n\n" . $src['text'] ) ),
 	);
 	$res = wp_remote_post( 'https://api.anthropic.com/v1/messages', array(
@@ -62,11 +65,34 @@ function dwdsum_make( $pid ) {
 			$text .= $b['text'];
 		}
 	}
-	$text = trim( $text );
+	$text  = trim( $text );
+	$sites = array();
+	if ( false !== ( $p = stripos( $text, 'INSPIRATION:' ) ) ) {
+		$tail = trim( substr( $text, $p + 12 ) );
+		$text = trim( substr( $text, 0, $p ) );
+		foreach ( preg_split( '/\r?\n/', $tail ) as $line ) {
+			$line = trim( preg_replace( '/^[\s•\-*\d.)]+/u', '', $line ) );
+			if ( '' === $line || preg_match( '/^none\b/i', $line ) ) {
+				continue;
+			}
+			$parts = array_map( 'trim', explode( '|', $line, 2 ) );
+			if ( ! preg_match( '#(https?://)?([a-z0-9-]+\.)+[a-z]{2,}(/\S*)?#i', $parts[0], $u ) ) {
+				continue;
+			}
+			$url     = preg_match( '#^https?://#i', $u[0] ) ? $u[0] : 'https://' . $u[0];
+			$note    = isset( $parts[1] ) && ! preg_match( '/^no notes?$/i', $parts[1] ) ? $parts[1] : '';
+			$sites[] = array( 'url' => esc_url_raw( rtrim( $url, '.,;)' ) ), 'note' => sanitize_text_field( $note ) );
+		}
+	}
 	if ( '' === $text ) {
 		return new WP_Error( 'dwdsum_empty', 'Claude didn’t return a summary.' );
 	}
-	$out = array( 'text' => $text, 'at' => current_time( 'mysql' ), 'form' => $src['form'], 'date' => $src['date'], 'onboarding' => $src['onboarding'] );
+	// No sites listed: keep what they wrote in the inspiration question (e.g. "Provided in chat already").
+	$insp_note = '';
+	if ( ! $sites && preg_match( '/^(?:List 3.{1,3}4 websites you like[^:]*|Inspiration[^:]*|Websites you like[^:]*):\s*(.+)$/mi', $src['text'], $im ) ) {
+		$insp_note = sanitize_text_field( mb_substr( trim( $im[1] ), 0, 200 ) );
+	}
+	$out = array( 'text' => $text, 'sites' => array_slice( $sites, 0, 8 ), 'insp_note' => $insp_note, 'at' => current_time( 'mysql' ), 'form' => $src['form'], 'date' => $src['date'], 'onboarding' => $src['onboarding'] );
 	update_post_meta( $pid, '_dwdc_ai_summary', $out );
 	return $out;
 }

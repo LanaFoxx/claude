@@ -234,3 +234,9 @@
 .dd-sumb li::marker { color: var(--accent-text); }
 @media (max-width: 767px) { .dd-pp-grid .k-sum { order: 3; margin: 0 !important; } }
 .dd .dd-sumb ul { list-style: disc !important; padding-left: 18px !important; } .dd .dd-sumb li { display: list-item !important; }
+.dd-insp { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border); }
+.dd-insp h4 { font-size: 12px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--text-3); margin: 0 0 8px !important; }
+.dd .dd-insp ul { list-style: none !important; padding: 0 !important; display: flex; flex-direction: column; gap: 8px; }
+.dd .dd-insp li { display: flex !important; flex-direction: column; gap: 1px; }
+.dd-insp a { display: inline-flex; align-items: center; gap: 6px; font-weight: 500; color: var(--accent-text) !important; word-break: break-all; }
+.dd-insp li span { font-size: 13px; color: var(--text-2); padding-left: 19px; }
