@@ -40,9 +40,33 @@ function dwdpe_dedupe( $d ) {
 			$drop[] = $i;
 		}
 	}
+	// Same meeting twice: Gmail adds its own copy of bookings (Calendly, Zoom…) next to the real event.
+	// Two calendar items at the same day and time → keep the one with a link (or more detail), hide the other.
+	$slot = array();
+	$hide = (array) get_option( 'dwdpe_hide_ev', array() );
+	foreach ( $d['todos'] as $i => $t ) {
+		if ( ! empty( $t['done'] ) || empty( $t['gevent'] ) || '' === (string) ( $t['time'] ?? '' ) || in_array( $i, $drop, true ) ) {
+			continue;
+		}
+		$k = ( $t['due'] ?? '' ) . '|' . strtolower( (string) $t['time'] );
+		if ( ! isset( $slot[ $k ] ) ) {
+			$slot[ $k ] = $i;
+			continue;
+		}
+		$j     = $slot[ $k ];
+		$score = function ( $x ) { return ( false !== stripos( (string) ( $x['note'] ?? '' ), 'http' ) ? 1000 : 0 ) + strlen( (string) ( $x['note'] ?? '' ) ); };
+		$lose  = $score( $t ) > $score( $d['todos'][ $j ] ) ? $j : $i;
+		if ( $lose === $j ) {
+			$slot[ $k ] = $i;
+		}
+		$drop[] = $lose;
+		$hide[] = $d['todos'][ $lose ]['gevent'];
+	}
+	update_option( 'dwdpe_hide_ev', array_slice( array_values( array_unique( $hide ) ), -300 ), false );
 	if ( ! $drop ) {
 		return $d;
 	}
+	$drop = array_values( array_unique( $drop ) );
 	$gone = (array) get_option( 'dwdpe_gone', array() );
 	foreach ( $drop as $i ) {
 		if ( ! empty( $d['todos'][ $i ]['gtask'] ) && empty( $d['todos'][ $i ]['gevent'] ) ) {
@@ -265,7 +289,7 @@ function dwdpe_sync( $d ) {
 		}
 		$seen_e[ $eid ] = 1;
 		$fields = array( 'text' => $e['title'] ?? '', 'due' => substr( (string) ( $e['date'] ?? '' ), 0, 10 ), 'time' => $e['time'] ?? '', 'note' => $e['notes'] ?? '' );
-		if ( in_array( $eid, (array) get_option( 'dwdpe_gone_ev', array() ), true ) ) {
+		if ( in_array( $eid, (array) get_option( 'dwdpe_gone_ev', array() ), true ) || in_array( $eid, (array) get_option( 'dwdpe_hide_ev', array() ), true ) ) {
 			continue;
 		}
 		$idx    = array_search( $eid, array_column( $todos, 'gevent' ), true );
