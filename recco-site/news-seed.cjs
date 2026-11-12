@@ -14,11 +14,11 @@ const SITE = process.env.WP_URL || 'https://staging154.dreamweb.digital';
 const CATEGORY = { name: 'AI Updates', slug: 'ai-updates' };
 // Placeholder headlines (no real news): [logo file, headline]. Oldest first, so the first row is newest.
 const SAMPLES = [
-  ['recco-logo-openai.png', 'Sample headline: the latest release summarized in one line by the news engine.'],
-  ['recco-logo-microsoft-official.png', 'Sample headline: Copilot developments summarized for decision makers.'],
-  ['recco-logo-servicenow.png', 'Sample headline: what changed in the latest release and who should pay attention.'],
-  ['recco-logo-salesforce.png', 'Sample headline: the most relevant platform update for CRM and service teams.'],
-  ['recco-logo-anthropic-official.png', 'Sample headline: one sentence on what shipped and why it matters to enterprise buyers.'],
+  ['recco-news-logo-openai.webp', 'Sample headline: the latest release summarized in one line by the news engine.'],
+  ['recco-news-logo-microsoft.webp', 'Sample headline: Copilot developments summarized for decision makers.'],
+  ['recco-news-logo-servicenow.webp', 'Sample headline: what changed in the latest release and who should pay attention.'],
+  ['recco-news-logo-salesforce.webp', 'Sample headline: the most relevant platform update for CRM and service teams.'],
+  ['recco-news-logo-anthropic.webp', 'Sample headline: one sentence on what shipped and why it matters to enterprise buyers.'],
 ];
 
 (async () => {

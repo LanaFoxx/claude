@@ -62,3 +62,17 @@ Playwright's own HTTP client, so every REST call runs inside the logged-in admin
 * Elementor > Settings > Performance: Google Fonts loaded locally, font-display swap, optimized image loading, lazy background images; Features: inline font icons, optimized markup, optimized CSS loading.
 * The "Fonts Plugin" (Olympus) is deactivated: it only loaded an unused Adobe Typekit kit.
 * After deploying, regenerate Elementor CSS (Elementor > Tools) and purge the SG cache.
+
+## Kinsta (reccoconsulting.kinsta.cloud)
+
+Moved from SiteGround staging with All-in-One WP Migration (Kinsta bans that plugin, so it was removed right after the import).
+Set `WP_URL=https://reccoconsulting.kinsta.cloud` for every script.
+
+* Plugins: Elementor 4.3.4, Elementor Pro 4.3.1, The SEO Framework. The SiteGround plugins and the unused add-ons (Unlimited Elements, Skyboot Icons, Envato Elements, Duplicate Page) were left behind.
+* Images: Kinsta does not convert to WebP, so the photos, logo, badge, banner and news logos are uploaded as `.webp` copies (deploy.cjs uses those). Logo, badge and small arch are stored at 2x display size.
+* Enterprise Apps hero uses `recco-dome-hero-soft.webp`, a slightly blurred copy (it sits under a 72-92% navy overlay) that is far lighter on phones.
+* Elementor > Custom Code: four "Hero image preload" snippets (Home, Enterprise Apps, AI Platforms, SEED), each limited to its page, preload the hero background for phone/tablet/desktop. Update the matching snippet if a hero image changes.
+* Elementor CSS print method stays **external**: internal printing adds a `<style>` tag to REST API responses, which breaks the news app.
+* SEO: The SEO Framework sets the page titles ("Title | Recco Consulting"); meta descriptions come from the page excerpts (Hello's own description tag is turned off to avoid duplicates).
+* `*.kinsta.cloud` sends `X-Robots-Tag: noindex`, so PageSpeed's SEO score stays at 69 until the real domain is connected.
+* `assets/recco-source-serif-4-300-400.woff2`: the serif trimmed to the 300-400 weights the design uses (76 KB instead of 120 KB). Uploading it needs Elementor > Settings > Advanced > "Enable Unfiltered File Uploads" on while uploading (turn it off again), then point the "Source Serif 4" custom font rows at it.

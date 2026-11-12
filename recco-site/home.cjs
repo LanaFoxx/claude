@@ -56,7 +56,8 @@ const point = ([title, body], i) => container({
     _element_width: 'initial', _element_custom_width: px(40), _element_custom_width_mobile: px(32), _flex_size: 'none',
   }),
   stack([
-    widget('heading', { title, header_size: 'h3', title_color: C.white, ...typo('typography', SANS, [17, 16, 16], 700, { lh: 1.3 }) }),
+    // h2 so the outline runs h1 (discipline) > h2 (point).
+    widget('heading', { title, header_size: 'h2', title_color: C.white, ...typo('typography', SANS, [17, 16, 16], 700, { lh: 1.3 }) }),
     text(body, { color: 'rgba(255,255,255,0.82)', size: [15.5, 15, 15], lh: 1.5 }),
   ], { gap: 4, settings: { custom_css: 'selector { flex: 1 1 0; min-width: 0; }' } }),
 ]);
@@ -196,6 +197,8 @@ const newsItemTemplate = () => [container({
   grid_gaps: gap(24), grid_gaps_mobile: gap(16), grid_align_items: 'center',
   border_border: 'solid', border_width: box(0, 0, 1, 0), border_color: C.line,
   custom_css: 'selector { height: 100%; }',
+  // The Loop Grid wrapper is role="list"; each row needs the matching listitem role.
+  _attributes: 'role|listitem',
   _title: 'News row',
 }, [
   widget('theme-post-featured-image', {

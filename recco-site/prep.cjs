@@ -21,6 +21,14 @@ const ALT = {
   'recco-logo-microsoft-official.png': 'Microsoft',
   'recco-erp-badge.png': 'Emissions Reduction Program, Level 1 Action, validated by RyeStrategy',
 };
+// WebP copies (Kinsta has no automatic WebP conversion) share the alt text of their originals.
+for (const [webp, orig] of Object.entries({
+  'recco-consulting-logo-240.webp': 'recco-consulting-logo.png', 'recco-hero-tower.webp': 'recco-hero-tower.jpg', 'recco-dome.webp': 'recco-dome.jpg',
+  'recco-city-data.webp': 'recco-city-data.jpg', 'recco-team.webp': 'recco-team.jpg', 'recco-office-bokeh.webp': 'recco-office-bokeh.jpg',
+  'recco-server-blur.webp': 'recco-server-blur.jpg', 'recco-erp-banner.webp': 'recco-erp-banner.png', 'recco-erp-badge-112.webp': 'recco-erp-badge.png', 'recco-dome-hero-soft.webp': 'recco-dome.jpg',
+})) ALT[webp] = ALT[orig];
+Object.assign(ALT, { 'recco-news-logo-openai.webp': 'OpenAI', 'recco-news-logo-salesforce.webp': 'Salesforce', 'recco-news-logo-servicenow.webp': 'ServiceNow',
+  'recco-news-logo-anthropic.webp': 'Anthropic', 'recco-news-logo-microsoft.webp': 'Microsoft' });
 // Platform icons: new ones from platforms.cjs, plus the earlier files the V3 list reuses.
 const ICON_KEYS = { ...ICON_FILES, icCopilot: 'recco-icon-copilot.png', icOpenai: 'recco-icon-openai.png', icCopilotStudio: 'recco-icon-copilot-studio.png',
   icLovable: 'recco-icon-lovable.png', icReplit: 'recco-icon-replit.png', icSalesforce: 'recco-icon-salesforce.png', icDynamics: 'recco-icon-dynamics-365.png',
@@ -84,7 +92,7 @@ for (const [k, f] of Object.entries(ICON_KEYS)) if (ICON_ALT[k]) ALT[f] = ICON_A
       media[f] = { id: x.id, source_url: x.source_url }; continue;
     }
     const b64 = fs.readFileSync(path.join(process.env.UPLOADS, f)).toString('base64');
-    const type = f.endsWith('.png') ? 'image/png' : 'image/jpeg';
+    const type = f.endsWith('.png') ? 'image/png' : f.endsWith('.webp') ? 'image/webp' : 'image/jpeg';
     const j = await api('/wp/v2/media', { method: 'POST', headers: { 'Content-Type': type, 'Content-Disposition': `attachment; filename="${f}"` }, b64 });
     if (ALT[f]) await api(`/wp/v2/media/${j.id}`, { method: 'POST', data: { alt_text: ALT[f] } });
     media[f] = { id: j.id, source_url: j.source_url };

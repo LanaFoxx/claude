@@ -10,7 +10,7 @@ const enterpriseApps = {
   meta: 'Vendor-agnostic advice on Salesforce, Dynamics 365, ServiceNow, SAP, Oracle, and more, plus testing of how AI agents perform inside your apps.',
   build: (m) => [
     subHero(m, {
-      label: 'Enterprise Apps', image: 'dome',
+      label: 'Enterprise Apps', image: 'domeHero',
       title: 'Enterprise Application Orchestration & Workflow Intelligence',
       lede: 'See how generative AI really performs inside your CRM, ERP, service, and collaboration platforms.',
     }),

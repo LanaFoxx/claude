@@ -118,7 +118,7 @@ function grid(children, o = {}) {
 // right when scrolled into view, like the design's SVG stroke: Elementor's entrance animation
 // (Advanced > Motion Effects) supplies the in-view trigger, the custom CSS swaps the fade for a wipe.
 const arch = (m, w = 56, align = 'left') => widget('image', {
-  image: m.arch, image_size: 'full', align, width: px(w), _element_width: 'initial', _element_custom_width: px(w), _title: 'Arch accent',
+  image: m.archSmall || m.arch, image_size: 'full', align, width: px(w), _element_width: 'initial', _element_custom_width: px(w), _title: 'Arch accent',
   _animation: 'fadeIn', _animation_mobile: 'fadeIn', _animation_tablet: 'fadeIn', _animation_delay: 150,
   custom_css: [
     'selector.animated { animation-name: none; }',
@@ -218,7 +218,7 @@ function header(m, menuId) {
     custom_css: 'selector { -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }',
     _title: 'Header',
   }, [
-    image(m.logo, { width: [119, 119, 96], size: 'custom', link: '/', settings: { _element_width: 'initial', _element_custom_width: px(119), _element_custom_width_mobile: px(96), _flex_size: 'none', _title: 'Logo' } }),
+    image(m.logo, { width: [119, 119, 96], link: '/', settings: { _element_width: 'initial', _element_custom_width: px(119), _element_custom_width_mobile: px(96), _flex_size: 'none', _title: 'Logo' } }),
     widget('nav-menu', {
       menu: menuId, layout: 'horizontal', align_items: 'end', pointer: 'none',
       dropdown: 'tablet', toggle: 'burger', toggle_align: 'right', full_width: 'stretch',
@@ -260,7 +260,7 @@ function footer(m) {
     border_border: 'solid', border_width: box(1, 0, 0, 0), border_color: C.lineSoft, _title: 'Footer',
   }, [
     rowBox([
-      image(m.logo, { width: 100, size: 'medium', link: '/', settings: { _element_width: 'initial', _element_custom_width: px(100), _flex_size: 'none', _title: 'Logo' } }),
+      image(m.logo, { width: 100, link: '/', settings: { _element_width: 'initial', _element_custom_width: px(100), _flex_size: 'none', _title: 'Logo' } }),
       iconList(NAV, {
         inline: true, space: 26, size: 13.5, weight: 500, color: C.slate,
         settings: { space_between_mobile: px(20), icon_align_mobile: 'center', _element_width: 'auto', _title: 'Footer links', custom_css: TAP },
@@ -271,7 +271,7 @@ function footer(m) {
         content_width: 'full', width: auto, width_tablet: auto, width_mobile: auto, flex_direction: 'row', flex_wrap: 'nowrap',
         flex_align_items: 'center', flex_gap: gap(14), padding: box(0), _title: 'ERP badge',
       }, [
-        image(m.erpBadge, { width: 56, size: 'medium', link: '/#sustainability', settings: { _element_width: 'initial', _element_custom_width: px(56), _flex_size: 'none' } }),
+        image(m.erpBadge, { width: 56, link: '/#sustainability', settings: { _element_width: 'initial', _element_custom_width: px(56), _flex_size: 'none' } }),
         text('Emissions Reduction Program, Level 1 · Action 2026. Validated by RyeStrategy.', {
           color: C.grayText, size: 12, lh: 1.5, settings: { _element_width: 'initial', _element_custom_width: px(280), _element_custom_width_mobile: px(220) },
         }),

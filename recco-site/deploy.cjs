@@ -19,15 +19,13 @@ const md = (f) => {
   return { id: x.id, url: x.source_url, alt: '', source: 'library' };
 };
 const m = {
-  logo: md('recco-consulting-logo.png'), arch: md('recco-arch.png'),
-  heroTower: md('recco-hero-tower.jpg'), dome: md('recco-dome.jpg'), cityData: md('recco-city-data.jpg'),
-  team: md('recco-team.jpg'), officeBokeh: md('recco-office-bokeh.jpg'),
-  icOpenai: md('recco-icon-openai.png'), icAnthropic: md('recco-icon-anthropic.png'), icAzure: md('recco-icon-azure.png'),
-  icGoogle: md('recco-icon-google.png'), icSalesforce: md('recco-icon-salesforce.png'), icServicenow: md('recco-icon-servicenow.png'),
-  icSnowflake: md('recco-icon-snowflake.png'), icAws: md('recco-icon-aws.png'), icWorkday: md('recco-icon-workday.png'),
-  logoOpenai: md('recco-logo-openai.png'), logoAnthropic: md('recco-logo-anthropic-official.png'), logoSalesforce: md('recco-logo-salesforce.png'),
-  logoServicenow: md('recco-logo-servicenow.png'), logoMicrosoft: md('recco-logo-microsoft-official.png'),
-  erpBadge: md('recco-erp-badge.png'), erpBanner: md('recco-erp-banner.png'), serverBlur: md('recco-server-blur.jpg'),
+  // WebP copies; the logo, badge and small arch are stored at twice their display size.
+  logo: md('recco-consulting-logo-240.webp'), arch: md('recco-arch.png'), archSmall: md('recco-arch-240.webp'),
+  heroTower: md('recco-hero-tower.webp'), dome: md('recco-dome.webp'), domeHero: md('recco-dome-hero-soft.webp'), cityData: md('recco-city-data.webp'),
+  team: md('recco-team.webp'), officeBokeh: md('recco-office-bokeh.webp'),
+  icOpenai: md('recco-icon-openai.png'), icSalesforce: md('recco-icon-salesforce.png'), icServicenow: md('recco-icon-servicenow.png'),
+  icAws: md('recco-icon-aws.png'),
+  erpBadge: md('recco-erp-badge-112.webp'), erpBanner: md('recco-erp-banner.webp'), serverBlur: md('recco-server-blur.webp'),
   icDynamics: md('recco-icon-dynamics-365.png'), icCopilot: md('recco-icon-copilot.png'), icCopilotStudio: md('recco-icon-copilot-studio.png'),
   icReplit: md('recco-icon-replit.png'), icLovable: md('recco-icon-lovable.png'),
   ...Object.fromEntries(Object.entries(ICON_FILES).map(([k, f]) => [k, md(f)])),
@@ -71,7 +69,7 @@ async function openEditor(p, postId) {
 }
 
 // Background photos get smaller copies for tablet (1536px) and mobile (1024px), see L.band.
-const BG = ['heroTower', 'dome', 'cityData', 'team', 'officeBokeh', 'serverBlur'];
+const BG = ['heroTower', 'dome', 'domeHero', 'cityData', 'team', 'officeBokeh', 'serverBlur'];
 async function attachSizes(p) {
   const ids = BG.map((k) => m[k].id).join(',');
   const list = await rest(p, `/wp/v2/media?include=${ids}&per_page=100&_fields=id,media_details`);
