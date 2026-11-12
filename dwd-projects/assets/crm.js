@@ -666,7 +666,7 @@
 			+ '<div class="dd-me"><button type="button" class="dd-avatar" data-ddme aria-label="Profile">' + esc(ddInitials(DWDC.user || 'M')[0]) + '</button>'
 			+ '<ul class="dd-menu' + (S.meOpen ? ' open' : '') + '"><li class="dd-menu-h">' + esc(DWDC.user || 'Michael Tarr') + '</li><li><a href="' + esc(DWDC.logout) + '">' + lu('log-out') + 'Sign out</a></li></ul></div></header>';
 	}
-	function ddTitle(r, t) { return r.view === 'home' ? 'Home' : [t[1], t[2]].filter(Boolean).join(' ').replace(/\s+/g, ' ').replace(/^(.)/, function (m) { return m.toUpperCase(); }).replace(/ (\S)/g, function (m) { return m.toLowerCase(); }); }
+	function ddTitle(r, t) { if (r.view === 'client') { var pc = contact(r.id); if (pc) { return pc.name; } } return r.view === 'home' ? 'Home' : [t[1], t[2]].filter(Boolean).join(' ').replace(/\s+/g, ' ').replace(/^(.)/, function (m) { return m.toUpperCase(); }).replace(/ (\S)/g, function (m) { return m.toLowerCase(); }); }
 	function ddHead(r, t) {
 		if (r.view === 'home') {
 			var h = new Date().getHours(), greet = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
@@ -2425,126 +2425,127 @@
 		return projectPage(c, full, st, ow, price, late, tasks, openN);
 	}
 	document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && S.plog) { S.plog = null; render(); } });
-	/* ---------- Project page (v2 handoff): header, money card, two columns of boxes ---------- */
+	/* ---------- Project page (design 5a): header, money strip, work column + record column ---------- */
 	function projectPage(c, full, st, ow, price, late, tasks, openN) {
-		var nm = String(c.name || ''), sp = nm.lastIndexOf(' ');
-		var title = sp > 0 ? '<span class="lt">' + esc(nm.slice(0, sp)) + '</span> <strong>' + esc(nm.slice(sp + 1)) + '</strong>' : '<strong>' + esc(nm) + '</strong>';
-		var stLabel = st === 'leads' ? (STAGES.filter(function (x) { return x[0] === stageOf(c); })[0] || ['', 'Lead'])[1] : ({ active: 'Active', hold: 'On hold', limbo: 'Limbo', complete: 'Complete', archive: 'Archived' }[st] || LABEL[st]);
-		var daysTo2 = function (iso) { return Math.round((new Date(iso + 'T00:00:00') - new Date(DWDC.today + 'T00:00:00')) / 864e5); };
-		var rel = function (n) { return n > 1 ? 'In ' + n + ' days' : n === 1 ? 'Tomorrow' : n === 0 ? 'Today' : n === -1 ? 'Yesterday' : -n + ' days ago'; };
-		var sb = function (attr, label, cls) { return '<button type="button" class="pv3-btn' + (cls ? ' ' + cls : '') + '" ' + attr + '>' + label + '</button>'; };
-		var svg = function (d, w) { return '<svg width="' + (w || 15) + '" height="' + (w || 15) + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + d + '</svg>'; };
-		var I = { check: '<path d="m5 12 5 5L20 7"/>', star: '<path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/>', more: '<circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/>', card: '<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/>', list: '<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>', copy: '<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>', ext: '<path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>', plus: '<path d="M12 5v14M5 12h14"/>', send: '<path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z"/>' };
-		var band = function (h, cnt, right) { return '<header class="pv3-band"><h2>' + h + (cnt !== undefined && cnt !== null ? ' <span class="pv3-cnt">' + cnt + '</span>' : '') + '</h2>' + (right || '') + '</header>'; };
-		var card = function (cls, head, body) { return '<section class="pv3-card ' + cls + '">' + head + '<div class="pv3-body">' + body + '</div></section>'; };
+		var T = DWDC.today;
+		var stLabel = st === 'leads' ? (STAGES.filter(function (x) { return x[0] === stageOf(c); })[0] || ['', 'Lead'])[1] : ({ active: 'Active', hold: 'On hold', limbo: 'Limbo', complete: 'Completed', archive: 'Archived' }[st] || LABEL[st]);
+		var stTone = { active: 'success', leads: 'warning', hold: 'neutral', limbo: 'neutral', complete: 'neutral', archive: 'neutral' }[st] || 'neutral';
+		if (c.onboarded && st === 'leads') { stLabel = 'Onboarding'; stTone = 'info'; }
+		var dn = function (iso) { return Math.round((new Date(iso + 'T00:00:00') - new Date(T + 'T00:00:00')) / 864e5); };
 		var k = clientOf(c) || {}, em = c.email || k.email, ph = c.phone || k.phone;
+		var tel = function (p) { var dg = String(p).replace(/[^\d]/g, ''), shown = dg.length === 10 ? '(' + dg.slice(0, 3) + ') ' + dg.slice(3, 6) + '-' + dg.slice(6) : dg.length === 11 && dg[0] === '1' ? '(' + dg.slice(1, 4) + ') ' + dg.slice(4, 7) + '-' + dg.slice(7) : String(p); return '<a href="tel:' + esc(String(p).replace(/[^\d+]/g, '')) + '">' + esc(shown) + '</a>'; };
+		var paid = price ? Math.max(0, price - ow) : 0, pct = price ? Math.max(0, Math.min(100, Math.round(paid / price * 100))) : (ow ? 0 : 100);
+		var payState = st === 'leads' ? '' : !ow ? 'Paid' : paid ? 'Partially paid' : 'Unpaid';
+		var payTone = { Paid: 'success', 'Partially paid': 'info', Unpaid: 'warning' }[payState];
+		var btn = function (attr, label, cls) { return '<button type="button" class="dd-btn ' + (cls || 'secondary') + '" ' + attr + '>' + label + '</button>'; };
+		var mi = function (attr, label, cls) { return '<button type="button" role="menuitem" class="' + (cls || '') + '" ' + attr + '>' + label + '</button>'; };
+		var rv = reviewBtn(c.client), rvAttr = (/(data-[a-z]+="[^"]*")/.exec(rv) || [])[1];
 		// header
-		var meta = (k.id ? 'Client <a href="#cl/' + k.id + '"><b>' + esc(k.name) + '</b></a> <button class="pv3-lnk sm" data-moveclient="' + c.id + '">Change</button>' : 'No client linked <button class="pv3-lnk sm" data-moveclient="' + c.id + '">Link one</button>')
-			+ ([em ? '<a href="mailto:' + esc(em) + '">' + esc(em) + '</a>' : '', ph ? '<a href="tel:' + esc(String(ph).replace(/[^\d+]/g, '')) + '">' + esc(ph) + '</a>' : '', site(c) ? '<a href="https://' + esc(site(c)) + '" target="_blank" rel="noopener">' + esc(site(c)) + '</a>' : ''].filter(Boolean).length ? '<span class="bar">|</span>' + [em ? '<a href="mailto:' + esc(em) + '">' + esc(em) + '</a>' : '', ph ? '<a href="tel:' + esc(String(ph).replace(/[^\d+]/g, '')) + '">' + esc(ph) + '</a>' : '', site(c) ? '<a href="https://' + esc(site(c)) + '" target="_blank" rel="noopener">' + esc(site(c)) + '</a>' : ''].filter(Boolean).join('<i>·</i>') : '');
-		var rv = reviewBtn(c.client).replace('class="dwdc-btn2 dwdc-revbtn"', 'class="pv3-btn"').replace(/<svg[\s\S]*?<\/svg>/, svg(I.star, 14));
-		var mi = function (attr, label) { return '<button type="button" role="menuitem" ' + attr + '>' + label + '</button>'; };
-		var main, menu;
+		var main = '', menu = mi('data-edit', S.edit ? 'Close edit' : 'Edit project');
 		if (st === 'active' || st === 'hold' || st === 'limbo') {
-			main = (c.onboarded ? '' : sb('data-leadinvite="' + c.id + '"', svg(I.send, 14) + (c.stage === 'onboarding' ? 'Resend onboarding form' : 'Send onboarding form'))) + rv + sb('data-complete', svg(I.check, 14) + 'Mark complete', 'primary');
-			menu = mi('data-leadinvite="' + c.id + '"', c.onboarded ? 'Send onboarding form again' : 'Send onboarding form') + mi(st === 'hold' ? 'data-set="active"' : 'data-set="hold"', st === 'hold' ? 'Resume project' : 'Put on hold') + mi(st === 'limbo' ? 'data-set="active"' : 'data-set="limbo"', st === 'limbo' ? 'Take out of limbo' : 'Move to limbo') + mi('data-act="job" data-client="' + (c.client || 0) + '"', 'New project for this client');
+			main = (ow ? btn('data-paid', 'Mark paid') : '') + btn('data-plog="' + c.id + '"', lu('credit-card') + 'Log payment', 'primary');
+			menu += mi('data-leadinvite="' + c.id + '"', c.onboarded ? 'Send onboarding form again' : (c.stage === 'onboarding' ? 'Resend onboarding form' : 'Send onboarding form')) + (rvAttr ? mi(rvAttr, 'Ask for a review') : '') + mi('data-complete', 'Mark complete')
+				+ mi(st === 'hold' ? 'data-set="active"' : 'data-set="hold"', st === 'hold' ? 'Resume project' : 'Pause (on hold)') + mi(st === 'limbo' ? 'data-set="active"' : 'data-set="limbo"', st === 'limbo' ? 'Take out of limbo' : 'Move to limbo') + mi('data-act="job" data-client="' + (c.client || 0) + '"', 'New project for this client') + mi('data-set="archive"', 'Archive');
 		} else if (st === 'complete') {
-			main = rv + sb('data-set="active"', 'Reopen', 'primary');
-			menu = mi('data-act="job" data-client="' + (c.client || 0) + '"', 'New project for this client');
+			main = (ow ? btn('data-paid', 'Mark paid') : '') + btn('data-set="active"', 'Reopen');
+			menu += (rvAttr ? mi(rvAttr, 'Ask for a review') : '') + mi('data-plog="' + c.id + '"', 'Log payment') + mi('data-act="job" data-client="' + (c.client || 0) + '"', 'New project for this client');
 		} else if (st === 'leads') {
-			main = sb('data-leadinvite="' + c.id + '"', svg(I.send, 14) + 'Send onboarding form') + sb('data-set="active"', 'Start the job', 'primary');
-			menu = mi('data-set="archive"', 'Archive lead') + mi('data-purge="' + c.id + '"', 'Delete lead');
+			main = btn('data-leadinvite="' + c.id + '"', lu('mail') + (c.stage === 'onboarding' ? 'Resend onboarding form' : 'Send onboarding form')) + btn('data-set="active"', 'Start the job', 'primary');
+			menu += mi('data-set="archive"', 'Archive lead') + mi('data-purge="' + c.id + '"', 'Delete lead', 'danger');
 		} else {
-			main = sb('data-set="leads"', 'Restore to leads', 'primary');
-			menu = mi('data-trash="' + c.id + '"', 'Delete');
+			main = btn('data-set="leads"', 'Restore to leads', 'primary');
+			menu += mi('data-trash="' + c.id + '"', 'Delete', 'danger');
 		}
-		var head = '<div class="pv3-head"><div class="pv3-ht"><div class="pv3-h1row"><h1>' + title + '</h1><span class="pv3-pill s-' + st + '">' + esc(stLabel) + '</span>' + (num(c.hosting) ? '<span class="pv3-pill s-host">Hosting</span>' : '') + '</div><div class="pv3-meta">' + meta + '</div></div>'
-			+ '<div class="pv3-ha">' + meetBtn(c) + '<button type="button" class="pv3-lnk tall" data-edit>' + (S.edit ? 'Close edit' : 'Edit') + '</button>' + main
-			+ '<div class="pv3-more"><button type="button" class="pv3-btn icon" data-pmore aria-haspopup="menu" aria-label="More actions">' + svg(I.more, 18) + '</button><div class="pv3-menu" role="menu">' + menu + '</div></div></div></div>';
-		// money card
-		var money3;
+		var started = imported(c) || !c.created ? '' : String(c.created).slice(0, 10);
+		var sub = [c.job ? esc(c.job) : '', site(c) ? '<a href="https://' + esc(site(c)) + '" target="_blank" rel="noopener">' + esc(site(c)) + '</a>' : '', c.lead_source ? 'Lead from ' + esc(c.lead_source) : '', started ? 'Started ' + fmt(started) : ''].filter(Boolean).join(' · ');
+		var head = '<div class="dd-pp-head"><span class="dd-pp-av">' + esc(ddInitials(c.company || c.name)) + '</span><div class="dd-pp-t"><div class="dd-pp-h1"><h1>' + esc(c.name) + '</h1>' + ddPill(stLabel, stTone) + (payState ? ddPill(payState, payTone) : '') + (num(c.hosting) ? ddPill('Hosting', 'neutral') : '') + '</div>'
+			+ (sub ? '<p>' + sub + '</p>' : '') + '</div><div class="dd-pp-acts">' + meetBtn(c) + main
+			+ '<div class="pv3-more dd-pp-more"><button type="button" class="dd-btn secondary icon" data-pmore aria-haspopup="menu" aria-label="More actions">' + lu('more-horizontal') + '</button><div class="pv3-menu dd-menu2" role="menu">' + menu + '</div></div></div></div>';
+		// money strip
+		var strip;
 		if (st === 'leads') {
-			money3 = '<div class="pv3-money">' + '<div class="pv3-stat"><span class="l">Estimated value</span><span class="v">' + (price ? money(price) : '—') + '</span><span class="s">If they sign</span></div>'
-				+ '<div class="pv3-stat"><span class="l">Follow up</span><span class="v' + (c.followup && c.followup < DWDC.today ? ' red' : '') + '">' + (c.followup ? fmt(c.followup) : '—') + '</span><span class="s">' + (c.followup ? rel(daysTo2(c.followup)) : 'No date set') + '</span></div>'
-				+ '<div class="pv3-stat"><span class="l">Source</span><span class="v sm">' + esc(String(c.source || '—').replace(/^Website form: /, '')) + '</span><span class="s">Stage: ' + esc(stLabel) + '</span></div></div>';
+			strip = '<div class="dd-card dd-strip"><div><span class="l">Estimated value</span><b>' + (price ? money(price) : '—') + '</b><small>If they sign</small></div>'
+				+ '<div><span class="l">Follow up</span><b>' + (c.followup ? fmt(c.followup) : '—') + '</b><small class="' + (c.followup && c.followup < T ? 'late' : '') + '">' + (c.followup ? (dn(c.followup) < 0 ? 'Overdue by ' + -dn(c.followup) + ' days' : dn(c.followup) === 0 ? 'Today' : 'In ' + dn(c.followup) + ' days') : 'No date set') + '</small></div>'
+				+ '<div><span class="l">Source</span><b class="sm">' + esc(String(c.source || '—').replace(/^Website form: /, '')) + '</b><small>Stage: ' + esc(stLabel) + '</small></div></div>';
 		} else {
-			var paid = price ? Math.max(0, price - ow) : 0, pct = price ? Math.max(0, Math.min(100, Math.round(paid / price * 100))) : (ow ? 0 : 100);
-			var via = c.pay_method ? ' · via ' + esc(c.pay_method) : '';
-			money3 = '<div class="pv3-money">'
-				+ '<div class="pv3-stat"><span class="l">Owed</span><span class="v ' + (ow ? 'orange' : 'green') + '">' + money(ow) + '</span><span class="s">' + (ow ? (paid ? 'Partially paid' : 'Unpaid') + via + (c.paymark === 'pending' ? ' · pending deposit' : '') : 'Paid in full') + '</span></div>'
-				+ (st === 'complete'
-					? '<div class="pv3-stat"><span class="l">Completed</span><span class="v">' + (doneDate(c) ? fmt(doneDate(c)) : '—') + '</span><span class="s">' + (c.created ? 'Started ' + fmt(String(c.created).slice(0, 10)) : '') + '</span></div>'
-					: '<div class="pv3-stat"><span class="l">Due</span><span class="v' + (late ? ' red' : '') + '">' + (c.deadline ? fmt(c.deadline) : '—') + '</span><span class="s">' + [c.deadline ? rel(daysTo2(c.deadline)) : 'No due date', c.created ? 'started ' + fmt(String(c.created).slice(0, 10)) : ''].filter(Boolean).join(' · ') + '</span></div>')
-				+ '<div class="pv3-stat"><span class="l">Paid</span><span class="v green">' + money(paid) + (price ? ' <em>of ' + money(price) + '</em>' : '') + '</span><span class="pv3-prog"><i><b style="width:' + pct + '%"></b></i><small>' + pct + '%</small></span></div>'
-				+ '<div class="pv3-mact">' + (ow ? sb('data-paid', 'Mark paid') : '') + sb('data-plog="' + c.id + '"', svg(I.card, 15) + 'Log payment', 'pay') + '</div></div>';
+			var dueCell = st === 'complete'
+				? '<div><span class="l">Completed</span><b>' + (doneDate(c) ? fmt(doneDate(c)) : '—') + '</b><small>' + (started ? 'Started ' + fmt(started) : '') + '</small></div>'
+				: '<div><span class="l">Due</span><b>' + (c.deadline ? fmt(c.deadline) : '—') + '</b>' + (c.deadline ? (function () { var n = dn(c.deadline); return '<small class="' + (n < 0 ? 'late' : n <= 7 ? 'soon' : '') + '">' + (n < 0 ? 'Overdue by ' + -n + ' day' + (n === -1 ? '' : 's') : n === 0 ? 'Today' : n === 1 ? 'Tomorrow' : 'In ' + n + ' days') + '</small>'; })() : '<small>No due date</small>') + '</div>';
+			strip = '<div class="dd-card dd-strip"><div><span class="l">Owed</span><b>' + money(ow) + '</b><small>' + (ow ? payState + (c.pay_method ? ' · via ' + esc(c.pay_method) : '') + (c.paymark === 'pending' ? ' · pending deposit' : '') : 'Paid in full') + '</small></div>' + dueCell
+				+ '<div><span class="l">Paid</span><b>' + money(paid) + (price ? ' <em>of ' + money(price) + '</em>' : '') + '</b><span class="dd-prog' + (pct >= 100 ? ' full' : '') + '"><i><s style="width:' + pct + '%"></s></i><small>' + pct + '%</small></span></div></div>';
 		}
+		var card = function (cls, h, sum, right, body) { return '<section class="dd-card dd-pc2 ' + cls + '"><header><h2>' + h + '</h2>' + (sum ? '<span class="sum">' + sum + '</span>' : '') + '<span class="dd-sp"></span>' + (right || '') + '</header>' + body + '</section>'; };
 		// to-dos
-		var dueTxt = function (t) {
-			if (t.done) { return '<span class="du g">Done</span>'; }
-			if (!t.due) { return '<span class="du">No date</span>'; }
-			var n = daysTo2(t.due);
-			return n < 0 ? '<span class="du r">' + -n + 'd overdue</span>' : n === 0 ? '<span class="du a">Due today</span>' : '<span class="du">Due in ' + n + 'd</span>';
+		var doneN = tasks.length - openN, dueOf = function (t) {
+			if (t.done) { return ddPill('Done', 'success'); }
+			if (!t.due) { return '<span class="dd-due">No date</span>'; }
+			var n = dn(t.due); return n < 0 ? '<span class="dd-due late">' + -n + 'd overdue</span>' : n === 0 ? '<span class="dd-due today">Today</span>' : '<span class="dd-due">' + fmt(t.due) + '</span>';
 		};
-		var lateN = tasks.filter(function (t) { return !t.done && t.due && t.due < DWDC.today; }).length;
-		var todos = card('pv3-todos', band('To-dos', openN, lateN ? '<span class="pv3-late">' + lateN + ' overdue</span>' : ''),
-			tasks.map(function (t) { return '<div class="pv3-todo' + (t.done ? ' done' : '') + '"><button type="button" class="pv3-chk" data-toggle="' + t.id + '" aria-label="' + (t.done ? 'Mark not done' : 'Mark done') + '">' + svg(I.check, 13) + '</button><span class="tx">' + esc(t.text) + '</span>' + dueTxt(t) + '<button type="button" class="pv3-x" data-del-task="' + t.id + '" title="Delete to-do" aria-label="Delete to-do">×</button></div>'; }).join('')
-			+ '<form class="dwdc-inlineadd pv3-addrow" data-contact="' + c.id + '">' + svg(I.plus, 18) + '<input name="text" placeholder="Add a to-do…" autocomplete="off"><input type="date" name="due" title="Due date"><button class="pv3-btn">Add</button></form>');
+		var pDate = (S.ppDate || {})[c.id] || '';
+		var tOpen = !!(S.ptodoOpen || {})[c.id], lateT = tasks.filter(function (t) { return !t.done && t.due && t.due < T; }).length;
+		var todos = '<section class="dd-card dd-pc2 k-todos' + (tOpen ? ' open' : ' shut') + '"><header class="dd-ntog" data-ptodotog="' + c.id + '" role="button" tabindex="0" aria-expanded="' + tOpen + '"><h2>To-dos</h2><span class="sum">' + openN + ' open' + (lateT ? ' · <b class="late">' + lateT + ' overdue</b>' : '') + ' · ' + doneN + ' done</span><span class="dd-sp"></span><a class="dd-hlink" href="#todos" data-tgopen="' + c.id + '">All to-dos</a><span class="dd-tchev">' + lu('chevron-down', 16) + '</span></header>'
+			+ (!tOpen ? '' : (tasks.length ? tasks.map(function (t) {
+				return '<div class="dd-pt' + (t.done ? ' done' : '') + '" data-task="' + t.id + '"><button type="button" class="dd-tchk' + (t.done ? ' on' : '') + '" data-toggle="' + t.id + '" aria-label="' + (t.done ? 'Mark not done' : 'Mark done') + '">' + TD_CHECK + '</button><span class="tx">' + esc(t.text) + '</span>' + dueOf(t) + '<button type="button" class="dd-ibtn sm dd-ptx" data-del-task="' + t.id + '" aria-label="Delete to-do" title="Delete">' + lu('x', 14) + '</button></div>';
+			}).join('') : '<p class="dd-pempty">No to-dos yet</p>')
+			+ '<form class="dwdc-inlineadd dd-padd" data-contact="' + c.id + '"><label class="dd-tin">' + lu('plus', 16) + '<input name="text" placeholder="Add a to-do…" autocomplete="off" data-lpignore="true" data-1p-ignore></label>'
+			+ '<span class="dd-btn secondary dd-tdate' + (pDate ? ' set' : '') + '" role="button" tabindex="0" data-tdpick="p' + c.id + '">' + lu('calendar', 14) + '<span>' + (pDate ? fmt(pDate) : 'Date') + '</span><input type="date" name="due" value="' + esc(pDate) + '" data-ppdate="' + c.id + '" tabindex="-1" aria-label="Due date"></span><button class="dd-btn primary">Add</button></form>') + '</section>';
+		// form answers (quote / contact form) stay above the to-dos
+		var fval = function (v) { v = String(v == null ? '' : v); return /^\S+@\S+\.\S+$/.test(v) ? '<a href="mailto:' + esc(v) + '">' + esc(v) + '</a>' : /^[\d\s().+-]{7,}$/.test(v) ? tel(v) : /^https?:\/\//i.test(v) ? '<a href="' + esc(v) + '" target="_blank" rel="noopener">' + esc(v) + '</a>' : esc(v).replace(/\n/g, '<br>'); };
+		var obl = full ? (c.files || []).filter(function (e) { return /onboard/i.test(e.form || ''); }) : [], obn = obl.reduce(function (s2, e) { return s2 + (e.fields || []).length; }, 0);
+		var fe = full ? (c.files || []).filter(function (e) { return !/onboard/i.test(e.form || '') && (e.fields || []).length; })[0] : null;
+		var formBox = fe ? card('k-form', esc(fe.form || 'Website form') + ' form', 'Submitted ' + fmt(fe.date), '', '<div class="dd-kv">' + fe.fields.filter(function (f) { return String(f.value || '').trim() !== ''; }).map(function (f) { return '<span>' + esc(f.label || f.id) + '</span><div>' + fval(f.value) + '</div>'; }).join('') + '</div>'
+			+ (st === 'leads' || !obl.length ? '<div class="dd-pbtns">' + btn('data-leadinvite="' + c.id + '"', lu('mail') + (c.stage === 'onboarding' ? 'Resend onboarding form' : 'Send onboarding form'), 'primary') + '</div>' : '')) : '';
 		// notes
 		var notes = full ? (c.notes || []).slice().sort(function (a, b) { return (d(a.date) || 0) < (d(b.date) || 0) ? 1 : -1; }) : [];
-		var notesBox = card('pv3-notes', band('Notes', notes.length),
-			'<form class="dwdc-notef pv3-notef"><textarea name="text" rows="3" placeholder="Add a note: what they need, call recap, budget, next step…" required></textarea><div class="pv3-nrow"><span>' + (full && !notes.length ? 'No notes yet.' : '') + '</span><button class="pv3-btn">Add note</button></div></form>'
-			+ (full && notes.length ? '<button type="button" class="pv3-lnk pv3-ntog" data-notestog="' + c.id + '">' + ((S.notesOpen || {})[c.id] ? 'Hide notes' : 'View all notes (' + notes.length + ')') + '</button>' : '')
-			+ (full ? ((S.notesOpen || {})[c.id] ? notes : []).map(function (n) { var dt = d(n.date); return '<div class="pv3-note"><p>' + esc(n.text).replace(/\n/g, '<br>') + '</p><time>' + (dt ? dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' · ' + dt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : '') + '</time></div>'; }).join('') : '<p class="pv3-mut">Loading…</p>'));
+		var nOpen = !!(S.notesOpen || {})[c.id];
+		var notesBox = '<section class="dd-card dd-pc2 k-notes' + (nOpen ? ' open' : ' shut') + '"><header class="dd-ntog" data-notestog="' + c.id + '" role="button" tabindex="0" aria-expanded="' + nOpen + '"><h2>Notes</h2><span class="sum">' + (full ? (notes.length ? notes.length + ' note' + (notes.length === 1 ? '' : 's') : 'No notes yet') : '') + '</span><span class="dd-sp"></span><span class="dd-tchev">' + lu('chevron-down', 16) + '</span></header>'
+			+ (!nOpen ? '' : '<div class="dd-pnotes">' + (full ? notes.map(function (n) { var dt = d(n.date); return '<div class="dd-note"><p>' + esc(n.text).replace(/\n/g, '<br>') + '</p><small>Michael' + (dt ? ' · ' + dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ', ' + dt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : '') + '</small></div>'; }).join('') : '<p class="dd-pempty">Loading…</p>')
+			+ '<form class="dwdc-notef dd-notef"><textarea name="text" rows="3" placeholder="Add a note: what they need, call recap, budget, next step…" required></textarea><div class="dd-pbtns end"><button class="dd-btn secondary">Add note</button></div></form></div>') + '</section>';
 		// onboarding
-		var obl = full ? (c.files || []).filter(function (e) { return /onboard/i.test(e.form || ''); }) : [], obn = obl.reduce(function (s2, e) { return s2 + (e.fields || []).length; }, 0);
-		// What they filled out on a website form (Quote, Contact…): shown in full, above the to-dos.
-		var fe = full ? (c.files || []).filter(function (e) { return !/onboard/i.test(e.form || '') && (e.fields || []).length; })[0] : null;
-		var fval = function (v) { v = String(v == null ? '' : v); return /^\S+@\S+\.\S+$/.test(v) ? '<a href="mailto:' + esc(v) + '">' + esc(v) + '</a>' : /^[\d\s().+-]{7,}$/.test(v) ? '<a href="tel:' + esc(v.replace(/[^\d+]/g, '')) + '">' + esc(v) + '</a>' : /^https?:\/\//i.test(v) ? '<a href="' + esc(v) + '" target="_blank" rel="noopener">' + esc(v) + '</a>' : esc(v).replace(/\n/g, '<br>'); };
-		var formBox = fe ? card('pv3-form', band(esc(fe.form || 'Website form') + ' form', null, '<span class="pv3-hmeta">Submitted ' + fmt(fe.date) + '</span>'),
-			fe.fields.filter(function (f) { return String(f.value || '').trim() !== ''; }).map(function (f) { return '<div class="pv3-dr"><span>' + esc(f.label || f.id) + '</span><div>' + fval(f.value) + '</div></div>'; }).join('')
-			+ (st === 'leads' || !obl.length ? '<div class="pv3-btns pv3-formacts">' + sb('data-leadinvite="' + c.id + '"', svg(I.send, 14) + (c.stage === 'onboarding' ? 'Resend onboarding form' : 'Send onboarding form'), 'primary') + '</div>' : '')) : '';
-		var obBox = obl.length ? card('pv3-ob', band('Onboarding', obn + ' answers', '<span class="pv3-hmeta">' + esc(obl[0].form || 'Form') + ' · submitted ' + fmt(obl[0].date) + '</span>'),
-			'<div class="pv3-btns">' + sb('data-viewob', svg(I.list, 15) + 'View answers') + sb('data-copyob', svg(I.copy, 15) + 'Copy answers') + '</div>') : '';
+		var obRow = obl.length ? '<div class="dd-detob"><div><b>Onboarding</b> ' + ddPill(obn + ' answers', 'info') + '<small>' + esc(obl[0].form || 'Form') + ' · submitted ' + fmt(obl[0].date) + '</small></div><div class="dd-pbtns">' + btn('data-viewob', lu('clipboard-list') + 'View answers') + '<button type="button" class="dd-btn ghost" data-copyob>Copy answers</button></div></div>'
+			: '<div class="dd-detob"><div><b>Onboarding</b><small>Not submitted yet</small></div><div class="dd-pbtns">' + btn('data-leadinvite="' + c.id + '"', lu('mail') + (c.stage === 'onboarding' ? 'Resend onboarding form' : 'Send onboarding form')) + '</div></div>';
+		var obBox = '' && card('ob', 'Onboarding' + (obl.length ? ' ' + ddPill(obn + ' answers', 'info') : ''), '', obl.length ? '<span class="dd-hmeta">' + esc(obl[0].form || 'Form') + ' · submitted ' + fmt(obl[0].date) + '</span>' : '<span class="dd-hmeta">Not submitted</span>',
+			'<div class="dd-pbtns">' + (obl.length ? btn('data-viewob', lu('clipboard-list') + 'View answers') + '<button type="button" class="dd-btn ghost" data-copyob>Copy answers</button>' : btn('data-leadinvite="' + c.id + '"', lu('mail') + (c.stage === 'onboarding' ? 'Resend onboarding form' : 'Send onboarding form'))) + '</div>');
 		// markup review
-		var mem = em || '';
-		var mkBox = card('pv3-mk', band('Markup review', null, '<a class="pv3-btn" href="' + esc(DWDC.markupHome) + '" target="_blank" rel="noopener">Open Markup ' + svg(I.ext, 14) + '</a>'),
-			(DWDC.mkReady
-				? '<div class="pv3-mkauto"><label class="pv3-lab">Staging site URL</label><div class="pv3-row"><input data-mkurl type="url" placeholder="https://staging.example.com"><button type="button" class="pv3-btn pv3-btn-pri" data-mkcreate>' + svg(I.plus, 14) + (c.markup ? 'Create new link' : 'Create markup link') + '</button></div></div>'
-				: '<div class="pv3-mkauto"><label class="pv3-lab">Connect Markup once to create review links automatically</label><div class="pv3-row"><input data-mkkey type="password" placeholder="Markup API key"><button type="button" class="pv3-btn" data-mkkeysave>Connect</button></div><p class="pv3-mut">In Markup: Workspace settings → Developer Settings → create an API key, then paste it here. It’s saved on your server only.</p></div>')
-			+ '<form class="dwdc-markupf pv3-mkf"><label class="pv3-lab">Client’s Markup link</label><div class="pv3-row"><input name="markup" type="url" value="' + esc(c.markup) + '" placeholder="https://app.markup.io/…"><button class="pv3-btn">Save</button></div>'
-			+ (mem ? '' : '<label class="pv3-lab">Client’s email</label><div class="pv3-row"><input name="email" type="email" placeholder="Needed to send the link"></div>')
-			+ (c.markup ? '<div class="pv3-btns">' + '<a class="pv3-btn" href="' + esc(url(c.markup)) + '" target="_blank" rel="noopener">Open their link</a>' + sb('data-mksend', svg(I.send, 14) + 'Email link to client') + '</div>' : '')
-			+ (c.markup_sent ? '<p class="pv3-mut ok">' + svg(I.check, 14) + 'Sent to ' + esc(mem) + ' on ' + fmt(c.markup_sent, true) + '</p>' : '') + '</form>');
+		var mkBox = card('k-mk', 'Markup review', '', '<a class="dd-btn secondary" href="' + esc(DWDC.markupHome) + '" target="_blank" rel="noopener">Open Markup ' + lu('external-link', 14) + '</a>',
+			'<div class="dd-mkb">' + (DWDC.mkReady
+				? '<div class="dd-fg"><label>Staging site URL</label><div class="dd-frow"><input data-mkurl type="url" placeholder="https://staging.example.com"><button type="button" class="dd-btn primary" data-mkcreate>' + lu('plus', 14) + (c.markup ? 'Create new link' : 'Create markup link') + '</button></div><p class="dd-help">' + ddPill('Connected', 'success') + ' Markup is connected: paste the staging site and a review link is made for you.</p></div>'
+				: '<div class="dd-fg"><label>Markup API key</label><div class="dd-frow"><input data-mkkey type="password" placeholder="Paste your API key"><button type="button" class="dd-btn secondary" data-mkkeysave>Connect</button></div><p class="dd-help">Connect Markup once to create review links automatically. In Markup: Workspace settings → Developer settings → create an API key. It’s saved on your server only.</p></div>')
+			+ '<hr><form class="dwdc-markupf dd-fg"><label>Client’s Markup link</label><div class="dd-frow"><input name="markup" type="url" value="' + esc(c.markup) + '" placeholder="https://app.markup.io/…"><button class="dd-btn secondary">Save</button></div>'
+			+ (em ? '' : '<label>Client’s email</label><div class="dd-frow"><input name="email" type="email" placeholder="Needed to send the link"></div>')
+			+ '<div class="dd-pbtns">' + (c.markup ? '<a class="dd-btn ghost" href="' + esc(url(c.markup)) + '" target="_blank" rel="noopener">' + lu('external-link', 14) + 'Open their link</a>' : '<span class="dd-btn ghost off">' + lu('external-link', 14) + 'Open their link</span>') + (c.markup ? '<button type="button" class="dd-btn ghost" data-mksend>' + lu('mail', 14) + 'Email link to client</button>' : '<span class="dd-btn ghost off">' + lu('mail', 14) + 'Email link to client</span>') + '</div>'
+			+ (c.markup_sent ? '<p class="dd-help ok">' + lu('check', 14) + 'Sent to ' + esc(em || '') + ' on ' + fmt(c.markup_sent, true) + '</p>' : '') + '</form></div>');
 		// details
 		var opt = function (list, cur) { return (cur && list.indexOf(cur) < 0 ? ['<option selected>' + esc(cur) + '</option>'] : ['<option value="">—</option>']).concat(list.map(function (o) { return '<option' + (o === cur ? ' selected' : '') + '>' + o + '</option>'; })).join(''); };
-		var drow = function (kk, v, sel) { return '<div class="pv3-dr' + (sel ? ' sel' : '') + '"><span>' + kk + '</span><div>' + (v || '<span class="pv3-mut">—</span>') + '</div></div>'; };
-		var isel = function (field, list, cur) { return '<span class="pv3-isel"><select data-field="' + field + '">' + opt(list, cur) + '</select>' + svg('<path d="m6 9 6 6 6-6"/>', 14) + '</span>'; };
-		var details = S.edit ? editCard(c) : card('pv3-det', band('Details', null, '<button type="button" class="pv3-lnk" data-edit>Edit</button>'),
-			drow('Main contact', esc(c.person || k.name)) + drow('Email', em ? '<a href="mailto:' + esc(em) + '">' + esc(em) + '</a>' : '') + drow('Phone', ph ? '<a href="tel:' + esc(String(ph).replace(/[^\d+]/g, '')) + '">' + esc(ph) + '</a>' : '')
-			+ drow('Company', esc(c.company)) + drow('Website', site(c) ? '<a href="https://' + esc(site(c)) + '" target="_blank" rel="noopener">' + esc(site(c)) + '</a>' : '') + drow('Project', esc(c.job))
-			+ drow('Lead source', isel('lead_source', SOURCES, c.lead_source), true) + drow('Pays via', isel('pay_method', PAYS, c.pay_method), true)
-			+ drow('Started', imported(c) || !c.created ? '' : fmt(String(c.created).slice(0, 10), true)));
+		var dr = function (kk, v) { return '<span>' + kk + '</span><div>' + (v || '<i>—</i>') + '</div>'; };
+		var isel = function (field, list, cur) { return '<label class="dd-isel"><select data-field="' + field + '">' + opt(list, cur) + '</select>' + lu('chevron-down', 14) + '</label>'; };
+		var details = S.edit ? editCard(c) : card('k-det', 'Details', '', '<button type="button" class="dd-hlink" data-edit>Edit</button>',
+			'<div class="dd-kv">' + dr('Client', (k.id ? '<a href="#cl/' + k.id + '"><b>' + esc(k.name) + '</b></a> ' : '') + '<button type="button" class="dd-lnk sm" data-moveclient="' + c.id + '">' + (k.id ? 'Change' : 'Link one') + '</button>')
+			+ dr('Main contact', c.person || k.name ? '<b>' + esc(c.person || k.name) + '</b>' : '') + dr('Email', em ? '<a href="mailto:' + esc(em) + '">' + esc(em) + '</a>' : '') + dr('Phone', ph ? tel(ph) : '')
+			+ dr('Company', esc(c.company)) + dr('Website', site(c) ? '<a href="https://' + esc(site(c)) + '" target="_blank" rel="noopener">' + esc(site(c)) + '</a>' : '') + dr('Project', esc(c.job))
+			+ dr('Lead source', isel('lead_source', SOURCES, c.lead_source)) + dr('Pays via', isel('pay_method', PAYS, c.pay_method)) + dr('Started', started ? fmt(started, true) : '') + '</div>' + obRow);
 		// contacts
 		var ppl = peopleOf(c), pform = (peopleCard(c).match(/<form class="dwdc-pplf"[\s\S]*?<\/form>/) || [''])[0];
-		var contacts = card('pv3-ppl', band('Contacts', ppl.length || null, '<button type="button" class="pv3-lnk" data-ppladd="1">+ Add</button>'),
+		var contacts = card('k-ppl', 'Contacts', ppl.length ? String(ppl.length) : '', '<button type="button" class="dd-hlink" data-ppladd="1">+ Add</button>',
 			ppl.map(function (x, i) {
-				var bits = [x.email ? '<a href="mailto:' + esc(x.email) + '">' + esc(x.email) + '</a>' : '', x.phone ? '<a href="tel:' + esc(String(x.phone).replace(/[^\d+]/g, '')) + '">' + esc(x.phone) + '</a>' : ''].filter(Boolean).join('<i>·</i>');
-				return '<div class="pv3-pr"><div><b>' + esc(x.name || x.email) + '</b>' + (x.role ? '<small>' + esc(x.role) + '</small>' : '') + (bits ? '<span>' + bits + '</span>' : '') + '</div>'
-					+ (x.main ? '<em>Main contact</em>' : '<div class="pv3-pa"><button type="button" class="pv3-lnk sm" data-pplmain="' + i + '">Make main</button><button type="button" class="pv3-lnk sm mute" data-pplrm="' + i + '">Remove</button></div>') + '</div>';
-			}).join('') + (ppl.length ? '' : '<p class="pv3-mut top">No contacts yet.</p>') + pform);
+				var bits = [x.email ? '<a href="mailto:' + esc(x.email) + '">' + esc(x.email) + '</a>' : '', x.phone ? tel(x.phone) : ''].filter(Boolean).join(' · ');
+				return '<div class="dd-ppr"><span class="dd-av">' + esc(ddInitials(x.name || x.email)) + '</span><div class="dd-act-n"><b>' + esc(x.name || x.email) + (x.role ? ' <small class="role">' + esc(x.role) + '</small>' : '') + '</b>' + (bits ? '<small>' + bits + '</small>' : '') + '</div>'
+					+ (x.main ? ddPill('Main', 'neutral') : '<span class="dd-ppa"><button type="button" class="dd-lnk sm" data-pplmain="' + i + '">Make main</button><button type="button" class="dd-lnk sm mute" data-pplrm="' + i + '">Remove</button></span>') + '</div>';
+			}).join('') + (ppl.length ? '' : '<p class="dd-pempty">No contacts yet.</p>') + (pform ? '<div class="dd-pplform">' + pform + '</div>' : ''));
 		// payments
 		var pays = full ? (c.payments || []) : [];
-		var plogOpen = S.plog === c.id, PM = ['Upwork', 'Stripe', 'Bank transfer', 'Check', 'PayPal'].concat(PAYS.filter(function (x) { return ['Upwork', 'Stripe', 'Bank transfer', 'Check', 'PayPal'].indexOf(x) < 0; }));
-		var logf = plogOpen ? '<form class="pv3-logf"><div class="pv3-lg"><label><span>Amount</span><span class="pv3-dol"><i>$</i><input name="amount" type="number" step="0.01" min="0.01" value="' + (ow ? ow : '') + '" required></span></label><label><span>Date</span><input name="date" type="date" value="' + DWDC.today + '" required></label><label><span>Method</span><select name="method">' + PM.map(function (x) { return '<option' + (x === (c.pay_method || 'Upwork') ? ' selected' : '') + '>' + x + '</option>'; }).join('') + '</select></label></div>'
-			+ '<label><span>Note</span><input name="note" placeholder="e.g. 50% deposit, final payment…"></label><div class="pv3-btns end"><button type="button" class="pv3-btn" data-plogx>Cancel</button><button class="pv3-btn pay">Save payment</button></div></form>' : '';
-		var paidSum = price ? Math.max(0, price - ow) : 0;
-		var paysBox = card('pv3-pay', band('Payments', pays.length || null, '<button type="button" class="pv3-lnk" data-plog="' + c.id + '">+ Log payment</button>'),
-			logf + (!full ? '<p class="pv3-mut top">Loading…</p>' : pays.length ? pays.map(function (x, i) {
-				return '<div class="pv3-py"><span class="dt">' + (x.date ? fmt(String(x.date).slice(0, 10)) : '—') + '</span><div><b>' + money2(x.amount).replace('.00', '') + ' <small>' + esc(x.source || '') + (x.status && x.status !== 'paid' ? ' · ' + esc(x.status) : '') + '</small></b>' + (x.note || (x.ref && x.ref !== 'Logged in Dream Desk') ? '<span>' + esc([x.note, x.ref && x.ref !== 'Logged in Dream Desk' ? x.ref : ''].filter(Boolean).join(' · ')) + '</span>' : '') + '</div><button type="button" class="pv3-rm" data-payrm="' + i + '">Remove</button></div>';
-			}).join('') : '<p class="pv3-mut top">No payments logged yet.</p>')
-			+ (price ? '<p class="pv3-pfoot">' + money(paidSum) + ' of ' + money(price) + ' paid · ' + money(ow) + ' remaining</p>' : ''));
+		var PM = ['Upwork', 'Stripe', 'Bank transfer', 'Check', 'PayPal'].concat(PAYS.filter(function (x) { return ['Upwork', 'Stripe', 'Bank transfer', 'Check', 'PayPal'].indexOf(x) < 0; }));
+		var logf = S.plog === c.id ? '<form class="pv3-logf dd-logf"><div class="dd-lgrid"><label><span>Amount</span><span class="dd-dol"><i>$</i><input name="amount" type="number" step="0.01" min="0.01" value="' + (ow ? ow : '') + '" required></span></label><label><span>Date</span><input name="date" type="date" value="' + T + '" required></label><label><span>Method</span><select name="method">' + PM.map(function (x) { return '<option' + (x === (c.pay_method || 'Upwork') ? ' selected' : '') + '>' + x + '</option>'; }).join('') + '</select></label></div>'
+			+ '<label><span>Note</span><input name="note" placeholder="e.g. 50% deposit, final payment…"></label><div class="dd-pbtns end"><button type="button" class="dd-btn secondary" data-plogx>Cancel</button><button class="dd-btn primary pay">Save payment</button></div></form>' : '';
+		var foot = price ? money(paid) + ' of ' + money(price) + ' paid · ' + money(ow) + ' remaining' : '';
+		var paysBox = card('k-pay', 'Payments', pays.length ? String(pays.length) : '', '<button type="button" class="dd-hlink" data-plog="' + c.id + '">+ Log payment</button>',
+			logf + (!full ? '<p class="dd-pempty">Loading…</p>' : pays.length ? pays.map(function (x, i) {
+				return '<div class="dd-py"><span class="dt">' + (x.date ? fmt(String(x.date).slice(0, 10)) : '—') + '</span><span class="mt">' + esc(x.source || '') + (x.status && x.status !== 'paid' ? ' · ' + esc(x.status) : '') + (x.note ? '<small>' + esc(x.note) + '</small>' : '') + '</span><b>' + money2(x.amount).replace('.00', '') + '</b><button type="button" class="dd-ibtn sm dd-ptx" data-payrm="' + i + '" title="Remove payment" aria-label="Remove payment">' + lu('x', 14) + '</button></div>';
+			}).join('') + (foot ? '<p class="dd-pfoot">' + foot + '</p>' : '') : '<div class="dd-payempty"><span>' + lu('credit-card', 18) + '</span><b>No payments logged yet</b>' + (foot ? '<small>' + foot + '</small>' : '') + '</div>'));
 		var hosting = num(c.hosting) ? hostCard(c) : '';
-		return '<div class="pv3">' + head + money3
-			+ (S.edit ? '<div class="pv3-editwrap" id="pv3-edit">' + details + peopleCard(c) + '</div>' : '') + '<div class="pv3-cols"><div class="pv3-col">' + formBox + todos + notesBox + obBox + mkBox + '</div><div class="pv3-col">' + (S.edit ? '' : details + contacts) + (st === 'leads' ? '' : paysBox) + hosting + '</div></div></div>';
+		return '<div class="dd-pp">' + head + strip
+			+ (S.edit ? '<div class="dd-pp-edit" id="pv3-edit">' + details + peopleCard(c) + '</div>' : '')
+			+ '<div class="dd-pp-grid"><div class="dd-pp-col">' + mkBox + formBox + todos + (S.edit ? '' : '<div class="dd-pp-mob">' + details + '</div>') + notesBox + '</div><div class="dd-pp-col side">' + (S.edit ? '' : '<div class="dd-pp-desk">' + details + '</div>' + contacts) + (st === 'leads' ? '' : paysBox) + hosting + '</div></div></div>';
 	}
 	// Onboarding answers as plain text, ready to paste into Claude.
 	function onboardEntries(c) {
@@ -3101,6 +3102,7 @@
 	})();
 	app.addEventListener('click', function (e) {
 		var t = e.target, el;
+		if ((el = t.closest('[data-ptodotog]')) && !t.closest('a')) { var ptid = el.getAttribute('data-ptodotog'); S.ptodoOpen = S.ptodoOpen || {}; S.ptodoOpen[ptid] = !S.ptodoOpen[ptid]; render(); return; }
 		if ((el = t.closest('[data-notestog]'))) { var nid = el.getAttribute('data-notestog'); S.notesOpen = S.notesOpen || {}; S.notesOpen[nid] = !S.notesOpen[nid]; render(); return; }
 		// project page: ⋯ menu, payment log form, remove a payment
 		if ((el = t.closest('[data-pmore]'))) { var mw = el.closest('.pv3-more'); mw.classList.toggle('open'); return; }
@@ -3553,6 +3555,7 @@
 	document.addEventListener('input', function (e) { if (e.target && e.target.hasAttribute && e.target.hasAttribute('data-ptdraft') && S.modal) { S.modal.draft = e.target.value; e.target.style.height = ''; e.target.style.height = Math.min(140, e.target.scrollHeight) + 'px'; } });
 	document.addEventListener('keydown', function (e) { if (e.target && e.target.hasAttribute && e.target.hasAttribute('data-ptdraft') && e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); if (S.modal) { S.modal.draft = e.target.value; } ptSend(); } });
 	app.addEventListener('change', function (e) {
+		if (e.target.hasAttribute && e.target.hasAttribute('data-ppdate')) { S.ppDate = S.ppDate || {}; S.ppDate[e.target.getAttribute('data-ppdate')] = e.target.value; var pb2 = e.target.closest('.dd-tdate'); if (pb2) { pb2.classList.toggle('set', !!e.target.value); pb2.querySelector('span').textContent = e.target.value ? fmt(e.target.value) : 'Date'; } return; }
 		if (e.target.hasAttribute && e.target.hasAttribute('data-tdset')) { S.tdDate = S.tdDate || {}; S.tdDate[e.target.getAttribute('data-tdset')] = e.target.value; tdRerender(); return; }
 		if (e.target.hasAttribute && e.target.hasAttribute('data-lsort')) { setSort(e.target.getAttribute('data-lsort'), e.target.value); render(); return; }
 		var t = e.target;
@@ -3587,6 +3590,7 @@
 	app.addEventListener('submit', function (e) {
 		var f = e.target, data = {}; e.preventDefault();
 		new FormData(f).forEach(function (val, k) { data[k] = val; });
+		if (f.classList.contains('dd-padd')) { S.ppDate = S.ppDate || {}; S.ppDate[f.getAttribute('data-contact')] = ''; }
 		if (f.classList.contains('dd-tadd')) { S.tdDate = S.tdDate || {}; S.tdDate[f.getAttribute('data-lane')] = ''; }
 		if (f.classList.contains('dwdc-taskedit')) {
 			var tid = +f.getAttribute('data-tid'), tb = f.querySelector('.dwdc-btn'); tb.disabled = true;
