@@ -7,7 +7,7 @@ $towns = array_map('npc_town_data', npc_towns());
 ?>
 <div class="npc-wrap npc-review">
 	<p class="npc-eyebrow">Website redesign · Preview for review</p>
-	<h1 class="npc-h2">Nick, here's the new website design.</h1>
+	<h1 class="npc-h2">Nick, here's the <b>new website design.</b></h1>
 	<p class="npc-review__intro">These are private preview pages built on your live site. They are hidden from Google and nothing on your current website has changed. Click through the new homepage and any town page, then send your notes or approval to Mike.</p>
 	<ul class="npc-review__notes">
 		<li>Market figures (median price, days on market, listings, sale-to-list, homes sold, the 12-month chart) are sample numbers for layout. Real numbers go in before launch, and you can update them each month in WordPress under <em>Towns</em>.</li>

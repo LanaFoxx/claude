@@ -13,7 +13,7 @@ $updated = $towns ? $towns[0]['updated'] : date_i18n('F Y');
 	<div class="npc-hero__veil" aria-hidden="true"></div>
 	<div class="npc-wrap npc-hero__in">
 		<p class="npc-eyebrow">Rye · Portsmouth · Hampton · The New Hampshire Seacoast</p>
-		<h1 class="npc-hero__h1">Find your home on the New Hampshire Seacoast.</h1>
+		<h1 class="npc-hero__h1">Find your home on the <b>New Hampshire Seacoast.</b></h1>
 		<p class="npc-hero__lede">Nick Ponte is a Managing Broker at Carey &amp; Giampa Realtors, representing buyers and sellers from Rye to Portsmouth to Hampton Beach.</p>
 		<div class="npc-actions">
 			<a class="npc-btn npc-btn--lg" href="tel:6039187593">Call Nick</a>
@@ -38,7 +38,7 @@ $updated = $towns ? $towns[0]['updated'] : date_i18n('F Y');
 		<div class="npc-towns__head">
 			<div>
 				<p class="npc-eyebrow">Town markets</p>
-				<h2 class="npc-h2">Twelve Seacoast towns, one page each.</h2>
+				<h2 class="npc-h2"><b>Twelve Seacoast towns,</b> one page each.</h2>
 			</div>
 			<p class="npc-towns__note">Median price, days on market and Nick's recent sales for every town, updated monthly. Last update: <?php echo esc_html($updated); ?>.</p>
 		</div>
@@ -70,7 +70,7 @@ $updated = $towns ? $towns[0]['updated'] : date_i18n('F Y');
 		<div class="npc-towns__head">
 			<div>
 				<p class="npc-eyebrow">Resources</p>
-				<h2 class="npc-h2">Guides and market news.</h2>
+				<h2 class="npc-h2"><b>Guides</b> and market news.</h2>
 			</div>
 			<a class="npc-link" href="<?php echo esc_url(home_url('/seacoast-nh-real-estate-blog/')); ?>">All market news →</a>
 		</div>
@@ -105,12 +105,20 @@ $updated = $towns ? $towns[0]['updated'] : date_i18n('F Y');
 <section class="npc-band npc-about" id="about">
 	<div class="npc-wrap npc-about__in">
 		<div class="npc-portrait">
-			<span class="npc-portrait__plate" aria-hidden="true"></span>
-			<?php echo npc_img('npc-nick-ponte', 'full', ['class' => 'npc-portrait__img', 'alt' => 'Nick Ponte', 'loading' => 'eager']); ?>
+			<span class="npc-portrait__frame" aria-hidden="true"></span>
+			<span class="npc-portrait__glow" aria-hidden="true"></span>
+			<div class="npc-portrait__photo">
+				<?php echo npc_img('npc-nick-ponte', 'full', ['class' => 'npc-portrait__img', 'alt' => 'Nick Ponte', 'loading' => 'eager']); ?>
+			</div>
+			<div class="npc-portrait__badge">
+				<span class="npc-portrait__badge-k">Managing Broker</span>
+				<span class="npc-portrait__badge-v">Carey &amp; Giampa Realtors</span>
+				<span class="npc-portrait__badge-row"><span><b>$110M+</b> sold</span><span><b>32+</b> five-star reviews</span></span>
+			</div>
 		</div>
 		<div>
 			<p class="npc-eyebrow">About</p>
-			<h2 class="npc-h2">Nick Ponte, Managing Broker</h2>
+			<h2 class="npc-h2"><b>Nick Ponte,</b> Managing Broker</h2>
 			<p class="npc-about__p1">Nick Ponte is a Managing Broker at Carey &amp; Giampa Realtors and one of the top-producing agents on the NH Seacoast. He joined the firm in 2014 and rose from agent to Associate Broker to Managing Broker.</p>
 			<p class="npc-about__p2">Born and raised on the Seacoast, with a business and economics degree from Plymouth State University and a prior career as an IT analyst that drives a data-first approach to pricing. First-time buyers to $5M+ waterfront estates.</p>
 			<div class="npc-about__stats">
@@ -132,7 +140,7 @@ $updated = $towns ? $towns[0]['updated'] : date_i18n('F Y');
 	<div class="npc-wrap npc-ocean__in">
 		<div class="npc-ocean__card">
 			<p class="npc-eyebrow">Current project</p>
-			<h2 class="npc-h2 npc-ocean__h">387 Ocean, Hampton</h2>
+			<h2 class="npc-h2 npc-ocean__h"><b>387 Ocean,</b> Hampton</h2>
 			<p>Two boutique luxury condominium buildings with ocean and marsh views, direct-entry elevators, floor-to-ceiling windows and premium modern finishes. Breaking ground this spring, from $1,500,000, with completion expected in late 2027.</p>
 			<a class="npc-btn" href="http://www.387oceanboulevard.com" target="_blank" rel="noopener">Explore 387 Ocean →</a>
 		</div>
@@ -170,7 +178,7 @@ $quotes = [
 		<div class="npc-towns__head">
 			<div>
 				<p class="npc-eyebrow">Instagram</p>
-				<h2 class="npc-h2">On the Seacoast this week.</h2>
+				<h2 class="npc-h2">On the Seacoast <b>this week.</b></h2>
 			</div>
 		</div>
 		<div class="npc-insta__feed"><?php echo do_shortcode('[instagram-feed feed=1 num=6 cols=6 colsmobile=3 showheader=false showbutton=false showfollow=true imagepadding=6]'); ?></div>
@@ -183,7 +191,7 @@ $quotes = [
 		<div class="npc-val__photo"><?php echo npc_img('npc-estate-dusk', 'large', ['alt' => 'Oceanfront home on the Seacoast at dusk', 'sizes' => '(max-width: 900px) 100vw, 560px']); ?></div>
 		<div class="npc-val__body">
 			<p class="npc-eyebrow">Free home valuation</p>
-			<h2 class="npc-h2">What is your home worth?</h2>
+			<h2 class="npc-h2">What is your <b>home worth?</b></h2>
 			<p class="npc-val__p">Nick prepares a confidential valuation from recent comparable sales and your home's specifics, at no cost.</p>
 			<?php /* Posts to the site's existing Elementor Pro valuation form (page 5644, form 4acdcf3): same email action as the live Home Valuation page. */ ?>
 			<form class="npc-val__form npc-eform" data-post-id="5644" data-form-id="4acdcf3" data-queried-id="<?php echo (int) get_queried_object_id(); ?>" novalidate>
@@ -210,7 +218,7 @@ $quotes = [
 		<div class="npc-contact__in">
 			<div>
 				<p class="npc-eyebrow npc-eyebrow--light">Contact</p>
-				<h2 class="npc-h2 npc-h2--light">We look forward to connecting.</h2>
+				<h2 class="npc-h2 npc-h2--light">We look forward <b>to connecting.</b></h2>
 				<p class="npc-contact__p">Whether you're looking to buy, sell, or relocate, Nick Ponte is here to deliver tailored support and professional expertise.</p>
 				<dl class="npc-contact__dl">
 					<div><dt>Email</dt><dd><a href="mailto:nponte@careyandgiampa.com">nponte@careyandgiampa.com</a></dd></div>

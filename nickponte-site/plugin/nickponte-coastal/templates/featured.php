@@ -18,7 +18,7 @@ include NPC_DIR . 'templates/header.php';
 	<div class="npc-split__txt">
 		<nav class="npc-crumbs" aria-label="Breadcrumb"><a href="<?php echo esc_url($home); ?>">Home</a> / <span aria-current="page">Featured sales</span></nav>
 		<p class="npc-eyebrow">Featured sales</p>
-		<h1 class="npc-split__h1">Recent sales and listings</h1>
+		<h1 class="npc-split__h1"><b>Recent sales</b> and listings</h1>
 		<p class="npc-split__intro">A selection of homes Nick has represented on the New Hampshire Seacoast, from Rye Beach to New Castle. More than $110 million in total sales.</p>
 		<div class="npc-actions">
 			<a class="npc-btn npc-btn--lg" href="tel:6039187593">Call Nick</a>

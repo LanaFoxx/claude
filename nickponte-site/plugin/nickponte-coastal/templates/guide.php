@@ -31,7 +31,7 @@ include NPC_DIR . 'templates/header.php';
 	<div class="npc-split__txt">
 		<nav class="npc-crumbs" aria-label="Breadcrumb"><a href="<?php echo esc_url($home); ?>">Home</a> / <a href="<?php echo esc_url($home . '#resources'); ?>">Resources</a> / <span aria-current="page"><?php echo esc_html($g['name']); ?></span></nav>
 		<p class="npc-eyebrow">Free download</p>
-		<h1 class="npc-split__h1"><?php echo esc_html($g['name']); ?></h1>
+		<h1 class="npc-split__h1"><b><?php echo esc_html(strtok($g['name'], ' ')); ?></b> Guide</h1>
 		<p class="npc-split__intro"><?php echo esc_html($g['lede']); ?></p>
 		<div class="npc-actions">
 			<a class="npc-btn npc-btn--lg" href="#get-guide">Get the free guide</a>
@@ -51,7 +51,7 @@ include NPC_DIR . 'templates/header.php';
 		</div>
 		<div class="npc-card npc-guidepage__card">
 			<p class="npc-eyebrow">Download your free</p>
-			<h2 class="npc-h2"><?php echo esc_html($g['name']); ?></h2>
+			<h2 class="npc-h2"><b><?php echo esc_html(strtok($g['name'], ' ')); ?></b> Guide</h2>
 			<p class="npc-guidepage__intro"><?php echo esc_html($g['intro']); ?></p>
 			<h3 class="npc-guidepage__h3">What's inside</h3>
 			<ul class="npc-checks">

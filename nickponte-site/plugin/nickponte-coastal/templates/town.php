@@ -115,7 +115,7 @@ include NPC_DIR . 'templates/header.php';
 	<section class="npc-faq npc-section">
 		<div>
 			<p class="npc-eyebrow">Questions</p>
-			<h2 class="npc-h2">Buying and selling in <?php echo esc_html($t['name']); ?></h2>
+			<h2 class="npc-h2">Buying and selling in <b><?php echo esc_html($t['name']); ?></b></h2>
 		</div>
 		<div class="npc-faq__list">
 			<?php foreach ($t['faqs'] as $i => $f) : ?>
