@@ -543,8 +543,27 @@ def build_footer():
 
 
 # =================================================================== HOMEPAGE
+def hero_slideshow():
+    """Rotating hero background (Elementor background slideshow, fade). Falls back to a photo slot."""
+    path = os.path.join(HERE, "hero_slides.json")
+    if not os.path.exists(path):
+        return {"background_position": "center center", "background_size": "cover",
+                "background_repeat": "no-repeat"}
+    slides = json.load(open(path))
+    return {"background_background": "slideshow",
+            "background_slideshow_gallery": [{"id": int(x["id"]), "url": x["url"]} for x in slides],
+            "background_slideshow_loop": "yes",
+            "background_slideshow_slide_duration": 6000,
+            "background_slideshow_slide_transition": "fade",
+            "background_slideshow_transition_duration": 1200,
+            "background_slideshow_background_size": "cover",
+            "background_slideshow_background_position": "center center",
+            "background_slideshow_lazyload": ""}
+
+
 def build_hero():
-    overlay = ("selector::before{background-image:linear-gradient(180deg, rgba(20,17,14,0.7) 0%, "
+    overlay = ("selector{background-color:#2E231A;}"
+               "selector::before,selector > .elementor-background-slideshow::before{background-image:linear-gradient(180deg, rgba(20,17,14,0.7) 0%, "
                "rgba(20,17,14,0.05) 28%, rgba(20,17,14,0.3) 55%, rgba(20,17,14,0.95) 100%) !important;"
                "opacity:1 !important;}"
                "selector > .e-con-inner{position:relative;z-index:1;}")
@@ -570,12 +589,7 @@ def build_hero():
         css="selector strong{color:#F2ECE3;font-weight:600;}")
     return section(
         "Hero",
-        [photo_label("Photo: high-end great room or log home at dusk",
-                     _position="absolute", _element_width="auto", _offset_orientation_h="end",
-                     **resp("_offset_x_end", SIDE, px), _offset_y=px(128), _z_index=2,
-                     _css_classes="tn-hide-sm", **HIDE_MOBILE,
-                     custom_css="@media (max-width:760px){selector{display:none !important;}}"),
-         heading("Hero / Title (H1)",
+        [heading("Hero / Title (H1)",
                  "Fine painting and log home staining for exceptional mountain homes.", tag="h1",
                  color=BONE, typ=typo(family=SERIF, size=H1, weight=500, lh=1),
                  custom_css="selector{max-width:1000px !important;}"
@@ -597,7 +611,7 @@ def build_hero():
          creds],
         bg="#2E231A", pad_top=200, pad_bottom=0, gap=40, min_height=px(800),
         flex_justify_content="flex-end", overflow="hidden",
-        background_position="center center", background_size="cover", background_repeat="no-repeat",
+        **hero_slideshow(),
         background_overlay_background="gradient",
         background_overlay_color="#14110EB3", background_overlay_color_stop=px(0, "%"),
         background_overlay_color_b="#14110EF2", background_overlay_color_b_stop=px(100, "%"),

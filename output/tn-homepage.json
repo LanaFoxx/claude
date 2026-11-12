@@ -4,7 +4,7 @@
  "type": "page",
  "content": [
   {
-   "id": "189b512",
+   "id": "b9f5307",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -76,7 +76,7 @@
      "left": "20",
      "isLinked": false
     },
-    "background_background": "classic",
+    "background_background": "slideshow",
     "background_color": "#2E231A",
     "html_tag": "section",
     "min_height": {
@@ -86,9 +86,27 @@
     },
     "flex_justify_content": "flex-end",
     "overflow": "hidden",
-    "background_position": "center center",
-    "background_size": "cover",
-    "background_repeat": "no-repeat",
+    "background_slideshow_gallery": [
+     {
+      "id": 1583,
+      "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-hero-staining-deck-railing.webp"
+     },
+     {
+      "id": 1584,
+      "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-hero-stained-cedar-fence.webp"
+     },
+     {
+      "id": 1585,
+      "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-hero-stained-wood-deck.webp"
+     }
+    ],
+    "background_slideshow_loop": "yes",
+    "background_slideshow_slide_duration": 6000,
+    "background_slideshow_slide_transition": "fade",
+    "background_slideshow_transition_duration": 1200,
+    "background_slideshow_background_size": "cover",
+    "background_slideshow_background_position": "center center",
+    "background_slideshow_lazyload": "",
     "background_overlay_background": "gradient",
     "background_overlay_color": "#14110EB3",
     "background_overlay_color_stop": {
@@ -114,96 +132,11 @@
      "sizes": []
     },
     "css_classes": "tn-photo",
-    "custom_css": "selector::before{background-image:linear-gradient(180deg, rgba(20,17,14,0.7) 0%, rgba(20,17,14,0.05) 28%, rgba(20,17,14,0.3) 55%, rgba(20,17,14,0.95) 100%) !important;opacity:1 !important;}selector > .e-con-inner{position:relative;z-index:1;}"
+    "custom_css": "selector{background-color:#2E231A;}selector::before,selector > .elementor-background-slideshow::before{background-image:linear-gradient(180deg, rgba(20,17,14,0.7) 0%, rgba(20,17,14,0.05) 28%, rgba(20,17,14,0.3) 55%, rgba(20,17,14,0.95) 100%) !important;opacity:1 !important;}selector > .e-con-inner{position:relative;z-index:1;}"
    },
    "elements": [
     {
-     "id": "e3801b7",
-     "elType": "widget",
-     "widgetType": "icon-list",
-     "isInner": false,
-     "settings": {
-      "icon_list": [
-       {
-        "_id": "d446ab8",
-        "text": "Photo: high-end great room or log home at dusk",
-        "selected_icon": {
-         "value": {
-          "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/camera.svg",
-          "id": 1433
-         },
-         "library": "svg"
-        }
-       }
-      ],
-      "icon_color": "#F2ECE399",
-      "text_color": "#F2ECE399",
-      "icon_size": {
-       "unit": "px",
-       "size": 14,
-       "sizes": []
-      },
-      "text_indent": {
-       "unit": "px",
-       "size": 8,
-       "sizes": []
-      },
-      "space_between": {
-       "unit": "px",
-       "size": 0,
-       "sizes": []
-      },
-      "icon_typography_typography": "custom",
-      "icon_typography_font_family": "Manrope",
-      "icon_typography_font_size": {
-       "unit": "px",
-       "size": 12,
-       "sizes": []
-      },
-      "icon_typography_font_weight": "400",
-      "icon_typography_line_height": {
-       "unit": "em",
-       "size": 1.4,
-       "sizes": []
-      },
-      "_position": "absolute",
-      "_element_width": "auto",
-      "_offset_orientation_h": "end",
-      "_offset_x_end": {
-       "unit": "px",
-       "size": 48,
-       "sizes": []
-      },
-      "_offset_x_end_laptop": {
-       "unit": "px",
-       "size": 48,
-       "sizes": []
-      },
-      "_offset_x_end_tablet": {
-       "unit": "px",
-       "size": 32,
-       "sizes": []
-      },
-      "_offset_x_end_mobile": {
-       "unit": "px",
-       "size": 20,
-       "sizes": []
-      },
-      "_offset_y": {
-       "unit": "px",
-       "size": 128,
-       "sizes": []
-      },
-      "_z_index": 2,
-      "_css_classes": "tn-hide-sm",
-      "hide_mobile": "hidden-mobile",
-      "custom_css": "@media (max-width:760px){selector{display:none !important;}}",
-      "_title": "Photo label (delete when photo added)"
-     },
-     "elements": []
-    },
-    {
-     "id": "8f45b09",
+     "id": "d446ab8",
      "elType": "widget",
      "widgetType": "heading",
      "isInner": false,
@@ -245,7 +178,7 @@
      "elements": []
     },
     {
-     "id": "f842997",
+     "id": "9ece78b",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -355,7 +288,7 @@
      },
      "elements": [
       {
-       "id": "ded66b4",
+       "id": "e3801b7",
        "elType": "widget",
        "widgetType": "text-editor",
        "isInner": false,
@@ -385,7 +318,7 @@
        "elements": []
       },
       {
-       "id": "b9f5307",
+       "id": "7f29a9f",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -439,7 +372,7 @@
        },
        "elements": [
         {
-         "id": "7f29a9f",
+         "id": "8f45b09",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,
@@ -491,7 +424,7 @@
          "elements": []
         },
         {
-         "id": "9ece78b",
+         "id": "ded66b4",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,
@@ -6182,7 +6115,7 @@
    ]
   },
   {
-   "id": "ca5c875",
+   "id": "7cffb0f",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -6261,7 +6194,7 @@
    },
    "elements": [
     {
-     "id": "e7aa220",
+     "id": "3edc49c",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -6369,7 +6302,7 @@
      },
      "elements": [
       {
-       "id": "7cffb0f",
+       "id": "fc0643b",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -6421,7 +6354,7 @@
        },
        "elements": [
         {
-         "id": "fc0643b",
+         "id": "5242c22",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -6472,7 +6405,7 @@
          },
          "elements": [
           {
-           "id": "5242c22",
+           "id": "d8fb445",
            "elType": "widget",
            "widgetType": "heading",
            "isInner": false,
@@ -6519,7 +6452,7 @@
            "elements": []
           },
           {
-           "id": "83f29c6",
+           "id": "93e2665",
            "elType": "widget",
            "widgetType": "text-editor",
            "isInner": false,
@@ -6551,7 +6484,7 @@
          ]
         },
         {
-         "id": "3edc49c",
+         "id": "83f29c6",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,
@@ -6618,7 +6551,7 @@
        ]
       },
       {
-       "id": "93e2665",
+       "id": "c76dc0c",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -6703,7 +6636,7 @@
        },
        "elements": [
         {
-         "id": "c07822d",
+         "id": "292f09a",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -6754,7 +6687,7 @@
          },
          "elements": [
           {
-           "id": "292f09a",
+           "id": "fab42bd",
            "elType": "widget",
            "widgetType": "heading",
            "isInner": false,
@@ -6780,7 +6713,7 @@
            "elements": []
           },
           {
-           "id": "803e53c",
+           "id": "dfd8c36",
            "elType": "widget",
            "widgetType": "text-editor",
            "isInner": false,
@@ -6812,7 +6745,7 @@
          ]
         },
         {
-         "id": "d8fb445",
+         "id": "c07822d",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -6863,7 +6796,7 @@
          },
          "elements": [
           {
-           "id": "dfd8c36",
+           "id": "8528ea7",
            "elType": "widget",
            "widgetType": "form",
            "isInner": false,
@@ -6872,7 +6805,7 @@
             "form_id": "tn-estimate-form",
             "form_fields": [
              {
-              "_id": "e4d6d27",
+              "_id": "f842997",
               "custom_id": "name",
               "field_type": "text",
               "field_label": "Name",
@@ -6881,7 +6814,7 @@
               "width_mobile": "50"
              },
              {
-              "_id": "5a41f8e",
+              "_id": "189b512",
               "custom_id": "phone",
               "field_type": "tel",
               "field_label": "Phone",
@@ -6890,7 +6823,7 @@
               "width_mobile": "50"
              },
              {
-              "_id": "611070a",
+              "_id": "e4d6d27",
               "custom_id": "email",
               "field_type": "email",
               "field_label": "Email",
@@ -6899,7 +6832,7 @@
               "width_mobile": "50"
              },
              {
-              "_id": "8528ea7",
+              "_id": "5a41f8e",
               "custom_id": "town",
               "field_type": "select",
               "field_label": "Town",
@@ -6909,7 +6842,7 @@
               "field_options": "Select a town|\nAspen\nSnowmass\nBasalt\nCarbondale\nGlenwood Springs\nVail\nBeaver Creek\nAvon\nEdwards\nEagle\nGypsum\nBreckenridge\nOther"
              },
              {
-              "_id": "fab42bd",
+              "_id": "611070a",
               "custom_id": "need",
               "field_type": "select",
               "field_label": "What do you need?",
@@ -7035,7 +6968,7 @@
            "elements": []
           },
           {
-           "id": "c76dc0c",
+           "id": "803e53c",
            "elType": "widget",
            "widgetType": "text-editor",
            "isInner": false,

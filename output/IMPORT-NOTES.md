@@ -204,3 +204,7 @@ Container `Seasonal Offer`: change the H2 to **Talk to us about your project** a
   - Removed from the brief's footer: the brand paragraph, the four link columns, the service-area line and the Hours placeholder.
   - Height is about 210px on desktop, down from 657.
 - **Wood texture:** the generator can put a subtle wood texture (Charred overlay at 88%) behind the Charred Timber sections. It is off until `tools/texture.json` exists with the uploaded image's `id` and `url`.
+- **Hero background slideshow:**
+  - Three images rotate with a fade every 6 seconds (Elementor background slideshow), under the same dark gradient overlay: a stain brush on a deck railing, a stained cedar fence, and a stained wood deck.
+  - They are in the staging Media Library (IDs 1583–1585), listed in `tools/hero_slides.json`. On import, Elementor downloads them from staging, the same as the icons.
+  - The hero's "Photo label" placeholder is removed.
