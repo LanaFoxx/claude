@@ -603,3 +603,9 @@ html:has(body.npc) { scroll-behavior: smooth; }
 /* Town pills: even, centered rows */
 .npc-pills { justify-content: center; }
 @media (min-width: 900px) { .npc-pills { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); } .npc .npc-pill { text-align: center; } }
+/* 13 towns: 7 on the first row, 6 slightly wider on the second, both rows flush left and right */
+@media (min-width: 900px) {
+	.npc-pills { grid-template-columns: repeat(42, minmax(0, 1fr)); }
+	.npc .npc-pills .npc-pill { grid-column: span 6; }
+	.npc .npc-pills .npc-pill:nth-child(n+8) { grid-column: span 7; }
+}
