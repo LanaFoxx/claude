@@ -620,3 +620,60 @@ html:has(body.npc), body.npc { overflow-x: clip; }
 	.npc .npc-more__row { min-height: 56px; }
 	.npc-quote__dot { width: 44px; height: 44px; }
 }
+
+/* ===== Mobile header with menu button (all pages) ===== */
+.npc-menubtn { display: none; }
+.npc-nav__extra { display: none !important; }
+.npc-hide-m { display: inline; }
+.npc-ic { flex: none; }
+@media (max-width: 1024px) {
+	.npc-header__in { min-height: 60px; flex-wrap: nowrap; padding: 0 8px 0 20px !important; }
+	.npc-logo__img { height: 24px !important; }
+	.npc-menubtn { display: grid; place-items: center; width: 44px; height: 44px; margin-left: auto; border: 0; background: none; color: var(--npc-deep); cursor: pointer; border-radius: 10px; }
+	.npc-menubtn path { transition: transform .2s, d .2s; transform-origin: 12px 12px; }
+	.npc-menubtn[aria-expanded="true"] .npc-menubtn__a { transform: translateY(4px) rotate(45deg); }
+	.npc-menubtn[aria-expanded="true"] .npc-menubtn__b { transform: translateY(-4px) rotate(-45deg); }
+	.npc-nav { position: fixed; left: 0; right: 0; top: calc(60px + var(--npc-bar)); bottom: 0; z-index: 30; display: flex; flex-direction: column; align-items: stretch; gap: 0;
+		padding: 8px 20px 32px; background: #fff; overflow-y: auto; transform: translateY(-8px); opacity: 0; visibility: hidden; transition: opacity .2s, transform .2s, visibility .2s; }
+	.npc-nav.is-open { opacity: 1; visibility: visible; transform: none; }
+	.npc .npc-nav a:not(.npc-btn), .npc .npc-nav .npc-nav__extra { display: flex !important; align-items: center; min-height: 56px; font: 600 18px var(--npc-sans); border-bottom: 1px solid var(--npc-div) !important; padding: 0; }
+	.npc .npc-nav a[aria-current="page"] { color: var(--npc-steel); }
+	.npc .npc-nav .npc-btn { margin-top: 20px; height: 54px; font-size: 16px; border-radius: 12px; }
+	body.npc-menu-open { overflow: hidden; }
+}
+
+/* ===== Mobile homepage hero (Nov 2026 mobile design) ===== */
+@media (max-width: 767px) {
+	.npc-hide-m { display: none; }
+	.npc-hero { display: block; min-height: 0; background: #F6F9FC; }
+	.npc-hero__img { position: relative !important; inset: auto; height: 290px !important; width: 100%; }
+	.npc-hero__veil { inset: 0 0 auto; height: 292px; background: linear-gradient(180deg, rgba(246, 249, 252, 0) 0%, rgba(246, 249, 252, 0) 34%, rgba(246, 249, 252, .82) 62%, #F6F9FC 100%) !important; }
+	.npc-hero__in { margin-top: -70px; padding: 0 24px 0 !important; }
+	.npc-hero .npc-eyebrow { font: 700 12px var(--npc-sans); letter-spacing: .16em; color: #2F5D88; margin-bottom: 16px; }
+	.npc-hero__h1 { font-size: 38px !important; line-height: 1.08 !important; letter-spacing: -.02em !important; color: #1F3A5F; }
+	.npc-hero__lede { font-size: 17px; line-height: 1.55; color: #33475E; margin-top: 16px; }
+	.npc-hero .npc-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 28px; }
+	.npc .npc-hero .npc-btn { height: 54px; padding: 0 12px !important; border-radius: 12px; font-size: 16px !important; font-weight: 700; gap: 8px; }
+	.npc .npc-hero .npc-btn--call { background: #1F3A5F; border-color: #1F3A5F; }
+	.npc .npc-hero .npc-btn--text { background: #fff; border-color: #1F3A5F; color: #1F3A5F; }
+	.npc .npc-hero .npc-link--arrow { grid-column: 1 / -1; justify-self: center; display: inline-flex; align-items: center; gap: 8px; border: 0; padding: 8px 0; font-size: 16px; font-weight: 600; color: #1F3A5F; }
+	.npc .npc-hero .npc-link--arrow span { border-bottom: 1px solid #1F3A5F; padding-bottom: 1px; }
+	.npc-stats { margin-top: 32px; grid-template-columns: 1fr 1fr !important; border-radius: 16px; border-color: #E3EAF1; box-shadow: none; }
+	.npc-stats__cell { padding: 20px 18px; }
+	.npc-stats .npc-label { font-size: 11px; letter-spacing: .14em; color: #2F5D88; }
+	.npc-stats__v { font-size: clamp(22px, 6.6vw, 28px) !important; font-weight: 800 !important; letter-spacing: -.02em !important; color: #14283F; margin: 6px 0 4px; white-space: nowrap; }
+	.npc-stats__c { font-size: 13px; line-height: 1.4; color: #4A5D73; }
+}
+@media (min-width: 768px) { .npc-link--arrow .npc-ic { display: none; } .npc-btn .npc-ic { margin-right: 8px; } }
+
+/* Mobile hero headline in Figtree (per the mobile design) */
+@media (max-width: 767px) { .npc-hero__h1 { font-family: var(--npc-sans) !important; font-weight: 300 !important; } .npc-hero__h1 b { font-weight: 800; } }
+.npc button.npc-menubtn, .npc button.npc-menubtn:hover, .npc button.npc-menubtn:focus { background: none; border: 0; color: var(--npc-deep); padding: 0; }
+@media (max-width: 1024px) {
+	.npc-header { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; background: #fff !important; }
+}
+@media (min-width: 768px) and (max-width: 1100px) {
+	.npc-stats { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
+	.npc-stats__cell { padding: 22px 18px; }
+	.npc-stats__v { font-size: clamp(22px, 2.9vw, 32px) !important; }
+}

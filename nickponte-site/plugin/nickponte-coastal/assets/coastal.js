@@ -21,6 +21,15 @@
 		});
 	});
 
+	// Mobile menu
+	var mb = document.querySelector('.npc-menubtn'), nav = document.getElementById('npc-nav');
+	if (mb && nav) {
+		var setMenu = function (open) { mb.setAttribute('aria-expanded', String(open)); mb.setAttribute('aria-label', open ? 'Close menu' : 'Open menu'); nav.classList.toggle('is-open', open); document.body.classList.toggle('npc-menu-open', open); };
+		mb.addEventListener('click', function () { setMenu(mb.getAttribute('aria-expanded') !== 'true'); });
+		nav.addEventListener('click', function (e) { if (e.target.closest('a')) setMenu(false); });
+		document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && nav.classList.contains('is-open')) { setMenu(false); mb.focus(); } });
+	}
+
 	// Town guide tabs (arrow keys move between tabs) and "Read more"
 	document.querySelectorAll('[data-npc-tabs]').forEach(function (box) {
 		var tabs = [].slice.call(box.querySelectorAll('[role=tab]'));

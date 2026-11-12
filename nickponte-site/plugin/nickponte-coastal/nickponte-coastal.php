@@ -2,14 +2,14 @@
 /**
  * Plugin Name: Nick Ponte Coastal Light (preview)
  * Description: "Coastal Light" redesign preview: a homepage template (/home-preview/) and a Town post type (/town-preview/<town>/) with monthly market fields, FAQ and JSON-LD. Preview pages are noindex and use their own header and footer, so live pages are not affected. Deactivate to remove everything from the front end.
- * Version: 1.12.1
+ * Version: 1.13.2
  * Author: Dream Web Digital
  * Requires PHP: 7.4
  */
 
 if (!defined('ABSPATH')) exit;
 
-define('NPC_VER', '1.12.1');
+define('NPC_VER', '1.13.2');
 define('NPC_DIR', plugin_dir_path(__FILE__));
 define('NPC_URL', plugin_dir_url(__FILE__));
 const NPC_HOME_TEMPLATE = 'npc-home';
@@ -339,7 +339,20 @@ add_action('wp_enqueue_scripts', function () {
 }, 20);
 
 // The preview pages carry their own header, footer and styles: drop the theme's and Elementor's page CSS there.
+function npc_drop_foreign_styles() {
+	if (!npc_is_preview()) return;
+	global $wp_styles;
+	foreach ((array) $wp_styles->queue as $h) {
+		$src = isset($wp_styles->registered[$h]) ? (string) $wp_styles->registered[$h]->src : '';
+		if (preg_match('/^(hello-|elementor|e-|swiper|widget-|font-awesome|property-compare|iziModal|google-fonts-1|wp-block-library|global-styles|classic-theme)/', $h)
+			|| preg_match('#/(themes/hello-elementor|elementor|elementor-pro|real-estate-manager-pro|rem-[a-z-]+)/#', $src)) wp_dequeue_style($h);
+	}
+}
+// Styles some plugins add late (printed in the footer) are dropped too.
+add_action('wp_footer', 'npc_drop_foreign_styles', 1);
+add_action('wp_print_footer_scripts', 'npc_drop_foreign_styles', 1);
 add_action('wp_print_styles', function () {
+	npc_drop_foreign_styles();
 	if (!npc_is_preview()) return;
 	global $wp_styles;
 	foreach ((array) $wp_styles->queue as $h) {

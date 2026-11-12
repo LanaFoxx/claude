@@ -12,13 +12,13 @@ $updated = $towns ? $towns[0]['updated'] : date_i18n('F Y');
 	<?php echo npc_img('npc-hero-hampton', 'full', ['class' => 'npc-hero__img', 'alt' => 'Hampton Beach, NH from above', 'loading' => 'eager', 'fetchpriority' => 'high', 'sizes' => '100vw']); ?>
 	<div class="npc-hero__veil" aria-hidden="true"></div>
 	<div class="npc-wrap npc-hero__in">
-		<p class="npc-eyebrow">Rye · Portsmouth · Hampton · The New Hampshire Seacoast</p>
+		<p class="npc-eyebrow">Rye · Portsmouth · Hampton<span class="npc-hide-m"> · The New Hampshire Seacoast</span></p>
 		<h1 class="npc-hero__h1">Find your home on the <b>New Hampshire Seacoast.</b></h1>
 		<p class="npc-hero__lede">Nick Ponte is a Managing Broker at Carey &amp; Giampa Realtors, representing buyers and sellers from Rye to Portsmouth to Hampton Beach.</p>
 		<div class="npc-actions">
-			<a class="npc-btn npc-btn--lg" href="tel:6039187593">Call Nick</a>
-			<a class="npc-btn npc-btn--ghost npc-btn--lg" href="sms:6039187593">Text me</a>
-			<a class="npc-link" href="#valuation">Free home valuation</a>
+			<a class="npc-btn npc-btn--lg npc-btn--call" href="tel:6039187593"><svg class="npc-ic" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.6 3.5h2.6l1.4 4-2 1.3a12 12 0 0 0 6.6 6.6l1.3-2 4 1.4v2.6a2 2 0 0 1-2.2 2A17 17 0 0 1 4.6 5.7a2 2 0 0 1 2-2.2Z"/></svg><span>Call Nick</span></a>
+			<a class="npc-btn npc-btn--ghost npc-btn--lg npc-btn--text" href="sms:6039187593"><svg class="npc-ic" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 0 1-11.6 7.1L4 20l1-4.4A8 8 0 1 1 20 12Z"/></svg><span>Text me</span></a>
+			<a class="npc-link npc-link--arrow" href="#valuation"><span>Free home valuation</span><svg class="npc-ic" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
 		</div>
 	</div>
 </section>
