@@ -365,9 +365,9 @@ html:has(body.npc) { scroll-behavior: smooth; }
 .npc-valband { padding-block: clamp(64px, 8vw, 104px); margin-top: var(--npc-section); }
 .npc-insta { padding-bottom: 0; }
 
-/* Titles: heavy, wide sans to match the Nick Ponte Realty logo (Archivo, 112% width). Quotes keep the italic serif. */
-:root { --npc-serif: "Archivo", "Helvetica Neue", Arial, sans-serif; --npc-quote: "EB Garamond", Garamond, "Times New Roman", serif; }
-.npc :is(.npc-hero__h1, .npc-split__h1, .npc-h2, .npc-card__t, .npc-tile__name, .npc-more__name, .npc-guide__t, .npc-post__t, .npc-review__h3, .npc-offmarket h3, .npc-footer__tag, .npc-article__body h2, .npc-stats__v, .npc-about__v, .npc-metric dd, .npc-sale__price, .npc-fs__price, .npc-guidepage__card .npc-h2) { font-stretch: 112%; font-variation-settings: "wdth" 112; }
+/* Titles: Manrope (bold modern sans, chosen by the client). Quotes keep the italic serif. */
+:root { --npc-serif: "Manrope", "Helvetica Neue", Arial, sans-serif; --npc-quote: "EB Garamond", Garamond, "Times New Roman", serif; }
+.npc :is(.npc-hero__h1, .npc-split__h1, .npc-h2, .npc-card__t, .npc-tile__name, .npc-more__name, .npc-guide__t, .npc-post__t, .npc-review__h3, .npc-offmarket h3, .npc-footer__tag, .npc-article__body h2, .npc-stats__v, .npc-about__v, .npc-metric dd, .npc-sale__price, .npc-fs__price, .npc-guidepage__card .npc-h2) { font-stretch: normal; }
 .npc-hero__h1 { font-weight: 800 !important; font-size: clamp(34px, 4.4vw, 64px) !important; line-height: 1.05 !important; letter-spacing: -.02em !important; max-width: 1100px !important; }
 .npc-split__h1 { font-weight: 800 !important; font-size: clamp(38px, 4.8vw, 68px) !important; line-height: 1.04 !important; letter-spacing: -.02em !important; }
 .npc-h2 { font-weight: 700 !important; font-size: clamp(28px, 3.2vw, 42px) !important; line-height: 1.1 !important; letter-spacing: -.015em !important; }

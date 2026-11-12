@@ -2,14 +2,14 @@
 /**
  * Plugin Name: Nick Ponte Coastal Light (preview)
  * Description: "Coastal Light" redesign preview: a homepage template (/home-preview/) and a Town post type (/town-preview/<town>/) with monthly market fields, FAQ and JSON-LD. Preview pages are noindex and use their own header and footer, so live pages are not affected. Deactivate to remove everything from the front end.
- * Version: 1.5.1
+ * Version: 1.5.2
  * Author: Dream Web Digital
  * Requires PHP: 7.4
  */
 
 if (!defined('ABSPATH')) exit;
 
-define('NPC_VER', '1.5.1');
+define('NPC_VER', '1.5.2');
 define('NPC_DIR', plugin_dir_path(__FILE__));
 define('NPC_URL', plugin_dir_url(__FILE__));
 const NPC_HOME_TEMPLATE = 'npc-home';
@@ -310,7 +310,7 @@ add_filter('template_include', function ($template) {
 
 add_action('wp_enqueue_scripts', function () {
 	if (!npc_is_preview()) return;
-	wp_enqueue_style('npc-fonts', 'https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@112,600;112,700;112,800&family=EB+Garamond:ital,wght@1,500&family=Figtree:wght@400;500;600&display=swap', [], null);
+	wp_enqueue_style('npc-fonts', 'https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=EB+Garamond:ital,wght@1,500&family=Figtree:wght@400;500;600&display=swap', [], null);
 	wp_enqueue_style('npc', NPC_URL . 'assets/coastal.css', [], NPC_VER);
 	wp_enqueue_script('npc', NPC_URL . 'assets/coastal.js', [], NPC_VER, true);
 	wp_localize_script('npc', 'npcForm', ['ajax' => admin_url('admin-ajax.php')]);
