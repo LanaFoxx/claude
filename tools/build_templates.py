@@ -219,8 +219,7 @@ def text(title, html, color=DRIFT, size=17, lh=1.75, weight=None, para_gap=0, ma
     st.update(typo(size=size, weight=weight, lh=lh))
     st.update(s)
     css = "selector p:last-child{margin-block-end:0;}"
-    if pretty:
-        css += "selector p{text-wrap:pretty;}"
+    # (line balancing is site-wide; see NO_WIDOWS in the header)
     if max_w:
         css += "selector{max-width:%dpx !important;}" % max_w
     st["custom_css"] = css + st.get("custom_css", "")
@@ -373,6 +372,53 @@ def index_list(title, items):
                   **typo(prefix="icon_typography", size=15, weight=400, lh=1.4))
 
 
+# Glues the last three words of every paragraph (and review quote) with non-breaking spaces,
+# so a line never ends with just one or two words. Complements CSS text-wrap:balance, which
+# browsers skip on paragraphs longer than ~6 lines. Runs on the rendered page only.
+NO_WIDOWS_JS = """<script>
+(function(){
+  function glue(el){
+    if (el.dataset.tnGlued) return; el.dataset.tnGlued = '1';
+    var w = el.textContent.trim().split(/\\s+/); if (w.length < 6) return;
+    var nodes = [], tw = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), n;
+    while ((n = tw.nextNode())) nodes.push(n);
+    var need = 2;
+    for (var i = nodes.length - 1; i >= 0 && need > 0; i--) {
+      var t = nodes[i].nodeValue.replace(/\\s+$/, '');
+      for (var j = t.length - 1; j >= 0 && need > 0; j--) {
+        if (t[j] === ' ') { t = t.slice(0, j) + '\\u00a0' + t.slice(j + 1); need--; }
+      }
+      nodes[i].nodeValue = t + nodes[i].nodeValue.slice(t.length);
+    }
+  }
+  function lineWidths(el){
+    var r = document.createRange(); r.selectNodeContents(el); var rows = {};
+    [].forEach.call(r.getClientRects(), function(x){ if (x.width < 1) return; var k = Math.round(x.top / 4);
+      rows[k] = rows[k] || [1e9, -1e9]; rows[k][0] = Math.min(rows[k][0], x.left); rows[k][1] = Math.max(rows[k][1], x.right); });
+    return Object.keys(rows).sort(function(a, b){ return a - b; }).map(function(k){ return rows[k][1] - rows[k][0]; });
+  }
+  /* Long paragraphs (which browsers won't balance): narrow to the tightest width that keeps
+     the same line count, so the last line isn't left short. */
+  function balance(el){
+    el.style.maxWidth = '';
+    var L = lineWidths(el); if (L.length < 3) return;
+    if (L[L.length - 1] / Math.max.apply(null, L) >= 0.5) return;
+    var n = L.length, hi = el.getBoundingClientRect().width, lo = hi * 0.6;
+    while (hi - lo > 2) { var mid = (lo + hi) / 2; el.style.maxWidth = mid + 'px';
+      if (lineWidths(el).length > n) lo = mid; else hi = mid; }
+    el.style.maxWidth = Math.ceil(hi) + 'px';
+  }
+  function run(){
+    document.querySelectorAll('.elementor-widget-text-editor p, .elementor-testimonial__text').forEach(glue);
+    document.querySelectorAll('.elementor-widget-text-editor p').forEach(balance);
+  }
+  var t; window.addEventListener('resize', function(){ clearTimeout(t); t = setTimeout(run, 150); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(run);
+  if (document.readyState !== 'loading') run(); else document.addEventListener('DOMContentLoaded', run);
+})();
+</script>"""
+
+
 # =================================================================== HEADER
 def build_header():
     social = container(
@@ -474,12 +520,16 @@ def build_header():
 #tn-header .elementor-menu-toggle{width:44px;height:44px;padding:0;border:0;border-radius:999px;display:flex;align-items:center;justify-content:center;}
 #tn-header .elementor-menu-toggle svg{width:20px;height:20px;}
 #tn-header .elementor-nav-menu--dropdown.elementor-nav-menu__container{border-top:1px solid rgba(242,236,227,0.1);}
+/* Site-wide: even line lengths, no 1-2 word last lines */
+.elementor-widget-text-editor p,.elementor-widget-heading .elementor-heading-title,.elementor-testimonial__text{text-wrap:balance;}
+#tn-header > .elementor-widget-html{position:absolute;width:0;height:0;overflow:hidden;}
 @media (max-width:760px){
   #tn-header .tn-hide-sm{display:none !important;}
   #tn-header .elementor-widget.tn-show-sm{display:block !important;}
 }
 """
-    header = container("Header", [top_bar, main_row], top=True, html_tag="header",
+    no_widows = widget("html", "Header / Typography helper (no short last lines)", html=NO_WIDOWS_JS)
+    header = container("Header", [no_widows, top_bar, main_row], top=True, html_tag="header",
                        _element_id="tn-header", custom_css=header_css.strip())
     return {"version": "0.4", "title": "TN Header", "type": "header",
             "content": [header], "page_settings": []}
@@ -617,7 +667,8 @@ def build_hero():
                   "<p>High-end interior and exterior painting, plus log and timber home staining, "
                   "restoration and chinking, from Vail to Aspen. Backed by a company that has been "
                   "building log homes in these valleys since 1999.</p>",
-                  color=HERO_TEXT, size=18, lh=1.65, max_w=560),
+                  color=HERO_TEXT, size=18, lh=1.65, max_w=560, pretty=False,
+                  custom_css="selector p{text-wrap:balance;}"),
              container("Hero / Actions",
                        [pill("Hero / Request an Estimate", "Request an Estimate", "#estimate"),
                         text_link("Hero / Call", "Call " + PHONE, TEL, icon="phone", classes="tn-call")],

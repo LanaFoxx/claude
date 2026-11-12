@@ -4,7 +4,7 @@
  "type": "page",
  "content": [
   {
-   "id": "27985d0",
+   "id": "100e05d",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -83,7 +83,7 @@
    },
    "elements": [
     {
-     "id": "1397a31",
+     "id": "27985d0",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -191,7 +191,7 @@
      },
      "elements": [
       {
-       "id": "fa9e7ab",
+       "id": "1397a31",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -243,7 +243,7 @@
        },
        "elements": [
         {
-         "id": "3577c32",
+         "id": "830b89d",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -294,7 +294,7 @@
          },
          "elements": [
           {
-           "id": "eb4c949",
+           "id": "794baad",
            "elType": "widget",
            "widgetType": "heading",
            "isInner": false,
@@ -341,7 +341,7 @@
            "elements": []
           },
           {
-           "id": "794baad",
+           "id": "3577c32",
            "elType": "widget",
            "widgetType": "text-editor",
            "isInner": false,
@@ -365,7 +365,7 @@
              "size": 1.7,
              "sizes": []
             },
-            "custom_css": "selector p:last-child{margin-block-end:0;}selector p{text-wrap:pretty;}",
+            "custom_css": "selector p:last-child{margin-block-end:0;}",
             "_title": "Estimate Intro / Text"
            },
            "elements": []
@@ -373,7 +373,7 @@
          ]
         },
         {
-         "id": "830b89d",
+         "id": "fa9e7ab",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,
@@ -440,7 +440,7 @@
        ]
       },
       {
-       "id": "cf5f85e",
+       "id": "eb4c949",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -525,7 +525,7 @@
        },
        "elements": [
         {
-         "id": "6ec0c26",
+         "id": "28bee07",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -576,7 +576,7 @@
          },
          "elements": [
           {
-           "id": "f73c49e",
+           "id": "8f9880a",
            "elType": "widget",
            "widgetType": "heading",
            "isInner": false,
@@ -602,7 +602,7 @@
            "elements": []
           },
           {
-           "id": "8f9880a",
+           "id": "6ec0c26",
            "elType": "widget",
            "widgetType": "text-editor",
            "isInner": false,
@@ -634,7 +634,7 @@
          ]
         },
         {
-         "id": "41d06d9",
+         "id": "cf5f85e",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -685,7 +685,7 @@
          },
          "elements": [
           {
-           "id": "54371ff",
+           "id": "f73c49e",
            "elType": "widget",
            "widgetType": "form",
            "isInner": false,
@@ -694,7 +694,7 @@
             "form_id": "tn-estimate-form",
             "form_fields": [
              {
-              "_id": "e7aa220",
+              "_id": "ca5c875",
               "custom_id": "name",
               "field_type": "text",
               "field_label": "Name",
@@ -703,7 +703,7 @@
               "width_mobile": "50"
              },
              {
-              "_id": "ca5c875",
+              "_id": "8aa9541",
               "custom_id": "phone",
               "field_type": "tel",
               "field_label": "Phone",
@@ -712,7 +712,7 @@
               "width_mobile": "50"
              },
              {
-              "_id": "8aa9541",
+              "_id": "2075a5b",
               "custom_id": "email",
               "field_type": "email",
               "field_label": "Email",
@@ -721,7 +721,7 @@
               "width_mobile": "50"
              },
              {
-              "_id": "2075a5b",
+              "_id": "b60741f",
               "custom_id": "town",
               "field_type": "select",
               "field_label": "Town",
@@ -731,7 +731,7 @@
               "field_options": "Select a town|\nAspen\nSnowmass\nBasalt\nCarbondale\nGlenwood Springs\nVail\nBeaver Creek\nAvon\nEdwards\nEagle\nGypsum\nBreckenridge\nOther"
              },
              {
-              "_id": "b60741f",
+              "_id": "54371ff",
               "custom_id": "need",
               "field_type": "select",
               "field_label": "What do you need?",
@@ -857,7 +857,7 @@
            "elements": []
           },
           {
-           "id": "28bee07",
+           "id": "41d06d9",
            "elType": "widget",
            "widgetType": "text-editor",
            "isInner": false,

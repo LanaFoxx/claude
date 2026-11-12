@@ -4,7 +4,7 @@
  "type": "header",
  "content": [
   {
-   "id": "8dabe92",
+   "id": "d0433cb",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -54,9 +54,20 @@
     },
     "html_tag": "header",
     "_element_id": "tn-header",
-    "custom_css": "#tn-header{position:relative;z-index:20;}\n#tn-header > .e-con:last-child{left:0;right:0;}\n#tn-header .elementor-nav-menu--main .elementor-nav-menu{flex-wrap:nowrap;white-space:nowrap;justify-content:center;}\n#tn-header .elementor-nav-menu--main .sub-arrow{padding:0 0 0 6px;opacity:0.6;}\n#tn-header .elementor-nav-menu--main .sub-arrow svg{width:10px;height:10px;}\n#tn-header .elementor-nav-menu--main .sub-menu{min-width:240px !important;padding:8px 0;}\n#tn-header .elementor-nav-menu--dropdown .sub-arrow svg{width:12px;height:12px;}\n#tn-header .elementor-menu-toggle{width:44px;height:44px;padding:0;border:0;border-radius:999px;display:flex;align-items:center;justify-content:center;}\n#tn-header .elementor-menu-toggle svg{width:20px;height:20px;}\n#tn-header .elementor-nav-menu--dropdown.elementor-nav-menu__container{border-top:1px solid rgba(242,236,227,0.1);}\n@media (max-width:760px){\n  #tn-header .tn-hide-sm{display:none !important;}\n  #tn-header .elementor-widget.tn-show-sm{display:block !important;}\n}"
+    "custom_css": "#tn-header{position:relative;z-index:20;}\n#tn-header > .e-con:last-child{left:0;right:0;}\n#tn-header .elementor-nav-menu--main .elementor-nav-menu{flex-wrap:nowrap;white-space:nowrap;justify-content:center;}\n#tn-header .elementor-nav-menu--main .sub-arrow{padding:0 0 0 6px;opacity:0.6;}\n#tn-header .elementor-nav-menu--main .sub-arrow svg{width:10px;height:10px;}\n#tn-header .elementor-nav-menu--main .sub-menu{min-width:240px !important;padding:8px 0;}\n#tn-header .elementor-nav-menu--dropdown .sub-arrow svg{width:12px;height:12px;}\n#tn-header .elementor-menu-toggle{width:44px;height:44px;padding:0;border:0;border-radius:999px;display:flex;align-items:center;justify-content:center;}\n#tn-header .elementor-menu-toggle svg{width:20px;height:20px;}\n#tn-header .elementor-nav-menu--dropdown.elementor-nav-menu__container{border-top:1px solid rgba(242,236,227,0.1);}\n/* Site-wide: even line lengths, no 1-2 word last lines */\n.elementor-widget-text-editor p,.elementor-widget-heading .elementor-heading-title,.elementor-testimonial__text{text-wrap:balance;}\n#tn-header > .elementor-widget-html{position:absolute;width:0;height:0;overflow:hidden;}\n@media (max-width:760px){\n  #tn-header .tn-hide-sm{display:none !important;}\n  #tn-header .elementor-widget.tn-show-sm{display:block !important;}\n}"
    },
    "elements": [
+    {
+     "id": "8dabe92",
+     "elType": "widget",
+     "widgetType": "html",
+     "isInner": false,
+     "settings": {
+      "html": "<script>\n(function(){\n  function glue(el){\n    if (el.dataset.tnGlued) return; el.dataset.tnGlued = '1';\n    var w = el.textContent.trim().split(/\\s+/); if (w.length < 6) return;\n    var nodes = [], tw = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), n;\n    while ((n = tw.nextNode())) nodes.push(n);\n    var need = 2;\n    for (var i = nodes.length - 1; i >= 0 && need > 0; i--) {\n      var t = nodes[i].nodeValue.replace(/\\s+$/, '');\n      for (var j = t.length - 1; j >= 0 && need > 0; j--) {\n        if (t[j] === ' ') { t = t.slice(0, j) + '\\u00a0' + t.slice(j + 1); need--; }\n      }\n      nodes[i].nodeValue = t + nodes[i].nodeValue.slice(t.length);\n    }\n  }\n  function lineWidths(el){\n    var r = document.createRange(); r.selectNodeContents(el); var rows = {};\n    [].forEach.call(r.getClientRects(), function(x){ if (x.width < 1) return; var k = Math.round(x.top / 4);\n      rows[k] = rows[k] || [1e9, -1e9]; rows[k][0] = Math.min(rows[k][0], x.left); rows[k][1] = Math.max(rows[k][1], x.right); });\n    return Object.keys(rows).sort(function(a, b){ return a - b; }).map(function(k){ return rows[k][1] - rows[k][0]; });\n  }\n  /* Long paragraphs (which browsers won't balance): narrow to the tightest width that keeps\n     the same line count, so the last line isn't left short. */\n  function balance(el){\n    el.style.maxWidth = '';\n    var L = lineWidths(el); if (L.length < 3) return;\n    if (L[L.length - 1] / Math.max.apply(null, L) >= 0.5) return;\n    var n = L.length, hi = el.getBoundingClientRect().width, lo = hi * 0.6;\n    while (hi - lo > 2) { var mid = (lo + hi) / 2; el.style.maxWidth = mid + 'px';\n      if (lineWidths(el).length > n) lo = mid; else hi = mid; }\n    el.style.maxWidth = Math.ceil(hi) + 'px';\n  }\n  function run(){\n    document.querySelectorAll('.elementor-widget-text-editor p, .elementor-testimonial__text').forEach(glue);\n    document.querySelectorAll('.elementor-widget-text-editor p').forEach(balance);\n  }\n  var t; window.addEventListener('resize', function(){ clearTimeout(t); t = setTimeout(run, 150); });\n  if (document.fonts && document.fonts.ready) document.fonts.ready.then(run);\n  if (document.readyState !== 'loading') run(); else document.addEventListener('DOMContentLoaded', run);\n})();\n</script>",
+      "_title": "Header / Typography helper (no short last lines)"
+     },
+     "elements": []
+    },
     {
      "id": "f512148",
      "elType": "container",

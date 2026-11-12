@@ -213,3 +213,8 @@ Container `Seasonal Offer`: change the H2 to **Talk to us about your project** a
   - At the top of the page it stays transparent over the hero.
   - Pro inserts a hidden spacer clone; because the row is absolute, the page doesn't shift.
 - **Hero left gradient:** an extra 90° layer (82% → 60% → 20% → 0 at 80%) under the vertical gradient keeps the hero text legible over the photos.
+- **No short last lines, site-wide:**
+  - The header carries scoped CSS (`text-wrap: balance` on Text Editor paragraphs, headings and review quotes) and a small HTML widget, "Header / Typography helper".
+  - The helper glues each paragraph's last three words together and, for long paragraphs that browsers won't balance, narrows the paragraph to the tightest width that keeps its line count. It re-runs on resize and after fonts load.
+  - It works on the rendered page only, so content stays normally editable in Elementor.
+  - Audited at 1440 / 1360 / 1100 / 980 / 600 / 390 on Home, Request an Estimate and Thank You: no last line under 35% of the paragraph width.
