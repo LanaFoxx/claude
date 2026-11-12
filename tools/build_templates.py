@@ -1015,7 +1015,7 @@ def estimate_section(page="home"):
                                      grid_align_items="center", flex_align_items="center")],
                    bg=EST_BROWN, pad_top=SECV_TALL if is_home else (200, 200, 176, 152),
                    pad_bottom=SECV_TALL, _element_id="estimate",
-                   **(wood_texture(EST_BROWN, 0.8) if TEXTURE else {}))
+                   **(dict(wood_texture(EST_BROWN, 0.65), background_attachment="fixed") if TEXTURE else {}))
 
 
 def build_estimate_page():

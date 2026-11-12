@@ -6290,9 +6290,10 @@
     "background_overlay_color": "#2A1F17",
     "background_overlay_opacity": {
      "unit": "px",
-     "size": 0.8,
+     "size": 0.65,
      "sizes": []
-    }
+    },
+    "background_attachment": "fixed"
    },
    "elements": [
     {
