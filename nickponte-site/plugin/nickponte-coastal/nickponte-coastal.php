@@ -2,14 +2,14 @@
 /**
  * Plugin Name: Nick Ponte Coastal Light (preview)
  * Description: "Coastal Light" redesign preview: a homepage template (/home-preview/) and a Town post type (/town-preview/<town>/) with monthly market fields, FAQ and JSON-LD. Preview pages are noindex and use their own header and footer, so live pages are not affected. Deactivate to remove everything from the front end.
- * Version: 1.6.0
+ * Version: 1.6.1
  * Author: Dream Web Digital
  * Requires PHP: 7.4
  */
 
 if (!defined('ABSPATH')) exit;
 
-define('NPC_VER', '1.6.0');
+define('NPC_VER', '1.6.1');
 define('NPC_DIR', plugin_dir_path(__FILE__));
 define('NPC_URL', plugin_dir_url(__FILE__));
 const NPC_HOME_TEMPLATE = 'npc-home';
@@ -338,6 +338,19 @@ add_action('wp_print_styles', function () {
 		}
 	}
 }, 100);
+
+// Site icon: Nick's NP Realty square on the preview pages (the live site keeps its own until launch).
+add_action('template_redirect', function () {
+	if (npc_is_preview() && npc_media_id('npc-icon')) remove_action('wp_head', 'wp_site_icon', 99);
+});
+add_action('wp_head', function () {
+	if (!npc_is_preview() || !($id = npc_media_id('npc-icon'))) return;
+	foreach ([[32, 'icon'], [192, 'icon'], [180, 'apple-touch-icon']] as $s) {
+		$src = wp_get_attachment_image_src($id, [$s[0], $s[0]]);
+		if ($src) echo '<link rel="' . $s[1] . '" sizes="' . $s[0] . 'x' . $s[0] . '" href="' . esc_url($src[0]) . '">' . "\n";
+	}
+	echo '<meta name="theme-color" content="#1F3A5F">' . "\n";
+}, 2);
 
 // Speed: connect to the font host early and fetch the page's main photo first (largest contentful paint).
 add_action('wp_head', function () {

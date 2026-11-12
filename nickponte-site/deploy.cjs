@@ -22,7 +22,7 @@ const MEDIA = ['npc-rye-coast.jpg', 'npc-portsmouth.jpg', 'npc-hampton-beach.jpg
   // Photos Nick supplied in the Markup.io review (Nov 2026)
   'npc-hero-hampton.jpg', 'npc-contact-seawall.jpg', 'npc-quote-rye.jpg', 'npc-exeter-downtown.jpg', 'npc-estate-dusk.jpg',
   'npc-logo-navy.png', 'npc-logo-reversed.png', 'npc-buyer-hero.jpg', 'npc-seller-hero.jpg',
-  'npc-sale-98-beach-hill.jpg', 'npc-sale-805-central.jpg', 'npc-sale-1-franklin.jpg', 'npc-sale-39-chapel.jpg'];
+  'npc-sale-98-beach-hill.jpg', 'npc-sale-805-central.jpg', 'npc-sale-1-franklin.jpg', 'npc-sale-39-chapel.jpg', 'npc-icon.png'];
 const ALT = {
   'npc-rye-coast': 'The Rye, NH coastline from above', 'npc-portsmouth': 'Portsmouth, NH South End harbor at sunset',
   'npc-hampton-beach': 'Hampton Beach, NH from above', 'npc-nick-ponte': 'Nick Ponte, Managing Broker',
