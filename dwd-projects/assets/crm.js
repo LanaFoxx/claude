@@ -184,7 +184,7 @@
 	var TITLES = {
 		home: ['', '', 'Dream Web Digital'], leads: ['Clients', 'All', 'Leads'], onboarding: ['Clients', 'Onboarding', 'Forms'],
 		todos: ['Plan', '', 'To-Dos'], connections: ['Settings', 'Connections', ''], hosting: ['Clients', 'Hosting', 'Clients'], archive: ['More', 'Archive', ''],
-		search: ['Search', 'Search', 'Results'], personal: ['Personal', 'To-Do', 'List'], money: ['Money', 'Business', 'Revenue'], reviews: ['Clients', 'Get', 'Reviews'], clients: ['Clients', 'All', 'Clients'], projects: ['Projects', 'All', 'Projects']
+		search: ['Search', 'Search', 'Results'], personal: ['Personal', 'To-Do', 'List'], money: ['Money', 'Business', 'Revenue'], reviews: ['Clients', 'Get', 'Reviews'], claude: ['', 'Claude', ''], clients: ['Clients', 'All', 'Clients'], projects: ['Projects', 'All', 'Projects']
 	};
 	var OLD = { dashboard: 'home', jobs: 'projects/active', completed: 'projects/complete', forms: 'leads' };
 	function route() {
@@ -613,6 +613,9 @@
 		repeat: '<path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/>',
 		link: '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
 		'layout-dashboard': '<rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/>',
+		sparkles: '<path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/>',
+		'arrow-up': '<path d="m5 12 7-7 7 7"/><path d="M12 19V5"/>',
+		copy: '<rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>',
 		globe: '<circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20M2 12h20"/>',
 		'external-link': '<path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>',
 		'panel-left': '<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/>',
@@ -665,7 +668,7 @@
 			+ group('clients', 'Clients', item('clients', 'users', 'All clients', S.clients.length) + item('hosting', 'cloud', 'Hosting', hosting().length) + item('reviews', 'star', 'Get reviews'))
 			+ group('money', 'Money', item('money', 'bar-chart-3', 'Business revenue') + item('personal/spending', 'pie-chart', 'Spending') + item('personal/bills', 'repeat', 'Bills & subscriptions'))
 			+ group('settings', 'Settings', item('connections', 'link', 'Connections'))
-			+ '</nav><div class="dd-side-f"><a class="dd-nav" href="' + esc(DWDC.wpadmin || DWDC.wp) + '" data-tip="WordPress admin">' + lu('layout-dashboard') + '<span class="dd-nav-l">WordPress admin</span></a>'
+			+ '</nav><div class="dd-side-f">' + item('claude', 'sparkles', 'Claude') + '<a class="dd-nav" href="' + esc(DWDC.wpadmin || DWDC.wp) + '" data-tip="WordPress admin">' + lu('layout-dashboard') + '<span class="dd-nav-l">WordPress admin</span></a>'
 				+ '<a class="dd-nav" href="' + esc(DWDC.home || '/') + '" target="_blank" rel="noopener" data-tip="Website">' + lu('globe') + '<span class="dd-nav-l">Website</span><i class="dd-ext">' + lu('external-link', 14) + '</i></a>'
 			+ '<button type="button" class="dd-nav dd-expand" data-ddcollapse data-tip="Expand">' + lu('chevrons-right') + '<span class="dd-nav-l">Expand</span></button></div></aside>';
 	}
@@ -1718,7 +1721,7 @@
 			t = ['Client', kw[0], kw.slice(1).join(' ')];
 			body = personView(r.id);
 		} else {
-			body = r.view === 'personal' ? (r.arg === 'spending' ? personalView(r) + '<h2 class="dwdc-sech">Money in &amp; out (logged by hand)</h2>' + personalView({ view: 'personal', arg: 'finances' }) : r.arg === 'bills' ? ddBills() : personalView(r)) : ({ home: ddHome, clients: ddClients, projects: projectsView, leads: leadsList, onboarding: onboardView, todos: ddTodos, connections: connectionsView, hosting: hostingView, money: moneyView, reviews: ddReviews, archive: archiveView, search: searchView }[r.view] || home)();
+			body = r.view === 'personal' ? (r.arg === 'spending' ? personalView(r) + '<h2 class="dwdc-sech">Money in &amp; out (logged by hand)</h2>' + personalView({ view: 'personal', arg: 'finances' }) : r.arg === 'bills' ? ddBills() : personalView(r)) : ({ home: ddHome, clients: ddClients, projects: projectsView, leads: leadsList, onboarding: onboardView, todos: ddTodos, connections: connectionsView, hosting: hostingView, money: moneyView, reviews: ddReviews, claude: ddClaude, archive: archiveView, search: searchView }[r.view] || home)();
 		}
 		app.setAttribute('data-view', r.view);
 		app.classList.add('dd');
@@ -2076,8 +2079,33 @@
 	}
 	/* ---------- Ask AI: a small chat window about money, projects and trends ---------- */
 	var CHAT = { msgs: [], busy: false, needKey: !DWDC.aiReady, scope: '' };
+	/* Claude: a full page to ask anything (general questions, web search, writing) with Dream Desk's data and tools. */
+	var CL = { msgs: [], busy: false };
+	try { CL.msgs = JSON.parse(ddGet('dreamdesk-claude', '[]')) || []; } catch (e) { CL.msgs = []; }
+	function clSave() { try { ddSet('dreamdesk-claude', JSON.stringify(CL.msgs.slice(-40))); } catch (e) {} }
+	function ddClaude() {
+		var sug = ['Write a friendly follow-up to a lead who went quiet', 'What should I charge for a 10-page WordPress site with booking?', 'Who owes me money right now?', 'Best way to speed up an Elementor site?'];
+		var log = CL.msgs.length ? CL.msgs.map(function (m) { return '<div class="dd-cl-m ' + m.role + '">' + (m.role === 'assistant' ? '<span class="dd-cl-av">' + lu('sparkles', 16) + '</span><div class="dd-cl-b">' + mdLite(m.content) + '<button type="button" class="dd-cl-copy" data-clcopy aria-label="Copy">' + lu('copy', 14) + 'Copy</button></div>' : '<div class="dd-cl-b">' + esc(m.content).replace(/\n/g, '<br>') + '</div>') + '</div>'; }).join('')
+			: '<div class="dd-cl-hi"><span class="dd-cl-logo">' + lu('sparkles', 28) + '</span><h2>How can I help, ' + esc(String(DWDC.user || 'Michael').split(' ')[0]) + '?</h2><p>Ask anything: questions, research, emails and proposals, or anything about your clients, projects and money in Dream Desk.</p><div class="dd-cl-sugs">' + sug.map(function (x) { return '<button type="button" data-clsug>' + esc(x) + '</button>'; }).join('') + '</div></div>';
+		return '<div class="dd-cl"><div class="dd-cl-top"><span>' + lu('sparkles', 16) + '<b>Claude</b><small>Web search on · knows your Dream Desk</small></span>' + (CL.msgs.length ? '<button type="button" class="dd-btn ghost sm" data-clnew>' + lu('plus', 14) + 'New chat</button>' : '') + '</div>'
+			+ '<div class="dd-cl-log">' + log + (CL.busy ? '<div class="dd-cl-m assistant"><span class="dd-cl-av">' + lu('sparkles', 16) + '</span><div class="dd-cl-b dd-cl-typing"><i></i><i></i><i></i></div></div>' : '') + '</div>'
+			+ '<form class="dd-cl-f"><textarea name="q" rows="1" placeholder="Message Claude…" autocomplete="off"></textarea><button class="dd-btn primary" aria-label="Send"' + (CL.busy ? ' disabled' : '') + '>' + lu('arrow-up', 16) + '</button></form>'
+			+ '<p class="dd-cl-note">Claude can make mistakes. Check important details.</p></div>';
+	}
+	function clScroll() { var lg = app.querySelector('.dd-cl-log'); if (lg) { lg.scrollTop = lg.scrollHeight; } }
+	function clSend(q) {
+		q = String(q || '').trim(); if (!q || CL.busy) { return; }
+		CL.msgs.push({ role: 'user', content: q }); CL.busy = true; clSave(); render(); clScroll();
+		api('/ask', 'POST', { messages: CL.msgs, scope: 'claude' }).then(function (r) {
+			CL.msgs.push({ role: 'assistant', content: r.answer });
+			if (r.changed) { reload(); }
+		}).catch(function (e) {
+			if (e.data && e.data.needs_key) { CL.msgs.pop(); toast('Add your Claude API key first: open Ask (bottom left) and paste it.', true); }
+			else { CL.msgs.push({ role: 'assistant', content: 'Sorry, that didn’t work: ' + e.message }); }
+		}).then(function () { CL.busy = false; clSave(); if (route().view === 'claude') { render(); clScroll(); var ta = app.querySelector('.dd-cl-f textarea'); if (ta) { ta.focus(); } } });
+	}
 	function mdLite(t) {
-		var h = esc(t).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+		var h = esc(t).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/`([^`]+)`/g, '<code>$1</code>').replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
 		var out = [], list = [];
 		h.split('\n').forEach(function (l) {
 			var m = l.match(/^\s*[-*•]\s+(.*)/) || l.match(/^\s*\d+[.)]\s+(.*)/);
@@ -3710,6 +3738,9 @@
 			var mr = route(), mpid = +el.getAttribute('data-emailp') || (mr && mr.id && contact(mr.id) ? mr.id : 0);
 			openEmail(decodeURIComponent(el.getAttribute('href').slice(7).split('?')[0]), mpid); return;
 		}
+		if ((el = t.closest('[data-clsug]'))) { clSend(el.textContent); return; }
+		if (t.closest('[data-clnew]')) { CL.msgs = []; clSave(); render(); return; }
+		if ((el = t.closest('[data-clcopy]'))) { var cb = el.closest('.dd-cl-b').cloneNode(true); var cx = cb.querySelector('.dd-cl-copy'); if (cx) { cx.remove(); } (navigator.clipboard ? navigator.clipboard.writeText(cb.innerText.trim()) : Promise.reject()).then(function () { toast('Copied'); }, function () { toast('Couldn’t copy', true); }); return; }
 		if (t.closest('[data-haddtog]')) { S.homeAdd = !S.homeAdd; render(); var hi2 = app.querySelector('.dd-hadd [name=text]'); if (hi2) { hi2.focus(); } return; }
 		if (t.closest('[data-schedadd]')) { S.schedAdd = true; render(); var si2 = app.querySelector('.dd-tl-add input[name=text]'); if (si2) { si2.focus(); } return; }
 		if (t.closest('[data-cmore]')) { S.cpage = (S.cpage || 1) + 1; var tb = app.querySelector('.dd-tbody'); if (tb) { tb.innerHTML = ddClientRows().html; } return; }
@@ -4184,8 +4215,12 @@
 	// The search box starts read-only so browsers don't autofill a saved email into it; unlock it on focus.
 	app.addEventListener('focusin', function (e) { var t = e.target; if (t.matches && t.matches('.dwdc-ssearch input') && t.hasAttribute('readonly')) { t.removeAttribute('readonly'); } });
 	app.addEventListener('mousedown', function (e) { var t = e.target.closest && e.target.closest('.dwdc-ssearch'); if (t) { var i = t.querySelector('input'); if (i) { i.removeAttribute('readonly'); } } });
+	app.addEventListener('keydown', function (e) {
+		if (e.target.closest && e.target.closest('.dd-cl-f') && e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); e.target.closest('form').requestSubmit(); }
+	});
 	app.addEventListener('input', function (e) {
 		var t = e.target;
+		if (t.closest && t.closest('.dd-cl-f')) { t.style.height = ''; t.style.height = Math.min(200, t.scrollHeight) + 'px'; }
 		if (S.modal && S.modal.type === 'email' && t.closest('.dd-emf')) { S.modal.vals = S.modal.vals || {}; S.modal.vals[t.name] = t.value; }
 		if (t.name === 'text' && t.tagName === 'INPUT') { whenHint(t); }
 		if (t.hasAttribute('data-revq')) { S.revQ = t.value; S.revPage = 1; var rq2 = t.selectionStart; render(); var nr = app.querySelector('[data-revq]'); if (nr) { nr.focus(); try { nr.setSelectionRange(rq2, rq2); } catch (er) {} } return; }
@@ -4346,6 +4381,8 @@
 				upsert(x);
 				return (note ? api('/contact/' + x.id + '/note', 'POST', { text: note }).then(upsert) : Promise.resolve()).then(reload).then(function () { S.modal = null; S.back = 'leads'; go('leads'); toast('Lead added'); });
 			}).catch(fail);
+		} else if (f.classList.contains('dd-cl-f')) {
+			var cq = f.querySelector('textarea'); var cv = cq.value; cq.value = ''; clSend(cv);
 		} else if (f.classList.contains('dd-emf')) {
 			var em0 = S.modal || {}, eb = f.querySelector('.dd-btn.primary'); eb.disabled = true; eb.lastChild.textContent = 'Sending…';
 			api('/send-email', 'POST', { to: data.to, subject: data.subject, text: data.text, contact: em0.pid || 0 }).then(function (x) {

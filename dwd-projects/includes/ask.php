@@ -298,13 +298,14 @@ add_action( 'rest_api_init', function () {
 		if ( ! $key ) {
 			return new WP_Error( 'dwdc_nokey', 'Add your Claude API key first.', array( 'status' => 400, 'needs_key' => true ) );
 		}
-		$msgs = array();
-		foreach ( array_slice( (array) $r->get_param( 'messages' ), -12 ) as $m ) {
+		$claude = 'claude' === $r->get_param( 'scope' ); // the full-page Claude in Dream Desk: anything, plus the business data
+		$msgs   = array();
+		foreach ( array_slice( (array) $r->get_param( 'messages' ), $claude ? -30 : -12 ) as $m ) {
 			$m    = (array) $m;
 			$role = 'assistant' === ( $m['role'] ?? '' ) ? 'assistant' : 'user';
 			$text = trim( wp_strip_all_tags( (string) ( $m['content'] ?? '' ) ) );
 			if ( '' !== $text ) {
-				$msgs[] = array( 'role' => $role, 'content' => mb_substr( $text, 0, 4000 ) );
+				$msgs[] = array( 'role' => $role, 'content' => mb_substr( $text, 0, $claude ? 16000 : 4000 ) );
 			}
 		}
 		if ( ! $msgs || 'user' !== end( $msgs )['role'] ) {
@@ -315,8 +316,14 @@ add_action( 'rest_api_init', function () {
 		}
 
 		$personal = 'personal' === $r->get_param( 'scope' ) && function_exists( 'dwdbk_ai_context' );
-		$desk = 'desk' === $r->get_param( 'scope' );
-		if ( $desk && ! $personal ) {
+		$desk = 'desk' === $r->get_param( 'scope' ) || $claude;
+		if ( $claude ) {
+			$system = array( array(
+				'type' => 'text',
+				'text' => "You are Claude, built into Dream Desk, the private CRM and business dashboard of Michael Tarr (Dream Web Digital: custom WordPress and Webflow websites and hosting for small businesses, based in Stuart, Florida). Michael uses this page like the Claude app: ask anything. Help with general questions, web design and development, WordPress, Elementor, SEO, writing emails, quotes and proposals in his voice, pricing ideas, and research. Use web search for anything current or that you aren't sure of, and mention where the information came from. You also have his Dream Desk data below, so you can answer questions about his clients, leads, projects, money and to-dos; name projects exactly as they appear and never invent clients, amounts or events. You can make changes with your tools when he asks (log Connects purchases, log payments, add notes and to-dos, check off or reschedule to-dos, update project and lead fields, create leads); just do it with the right tool, then confirm in a line or two what changed, and only say it was done if the tool returned OK. You can't delete anything or send emails; say where in Dream Desk to do that. Today is " . current_time( 'l, F j, Y' ) . ". Write in plain, friendly English. Lead with the answer. Use short paragraphs, **bold** for key points, and bullet or numbered lists where they help.\n\nDREAM DESK DATA (JSON):\n" . wp_json_encode( dwdc_ai_desk_context() ),
+				'cache_control' => array( 'type' => 'ephemeral' ),
+			) );
+		} elseif ( $desk && ! $personal ) {
 			$system = array( array(
 				'type' => 'text',
 				'text' => "You are the assistant built into Dream Desk, the private CRM and business dashboard of Michael Tarr (Dream Web Digital, websites and hosting for small businesses). Michael asks quick questions about anything in it: how the workflow works, clients, leads, projects, amounts owed and paid, to-dos, and what was done or noted before. Answer only from the data below; today is " . current_time( 'l, F j, Y' ) . ". Lead with the direct answer (names, dates, dollar amounts rounded to the nearest dollar), then add a line of context only when it helps. Keep it short; use a short bullet list when listing several items. When a project is relevant, name it exactly as it appears. If the data can't answer the question, say so plainly and say where in Dream Desk he could check. Never invent clients, amounts or events. You can also make changes with your tools when he asks (log Connects purchases, log payments, add notes and to-dos, check off or reschedule to-dos, update project and lead fields, create leads). When he asks for a change, just do it with the right tool, no need to ask permission first; only ask a short question if it's genuinely unclear which project he means or a required amount is missing. Use the ids from the data. After acting, confirm in one or two lines exactly what changed (and new totals when relevant). Only say something was done if the tool returned OK. You can't delete anything or send emails; for those, tell him where in Dream Desk to do it.\n\nDATA (JSON):\n" . wp_json_encode( dwdc_ai_desk_context() ),
@@ -349,8 +356,11 @@ add_action( 'rest_api_init', function () {
 			if ( ! empty( $desk ) && ! $personal ) {
 				$req['tools'] = dwdc_ai_tools();
 			}
+			if ( $claude ) {
+				$req['tools'][] = array( 'type' => 'web_search_20260209', 'name' => 'web_search', 'max_uses' => 5 );
+			}
 			$res = wp_remote_post( 'https://api.anthropic.com/v1/messages', array(
-				'timeout' => 90,
+				'timeout' => $claude ? 150 : 90,
 				'headers' => array(
 					'x-api-key'         => $key,
 					'anthropic-version' => '2026-10-21',
@@ -373,6 +383,10 @@ add_action( 'rest_api_init', function () {
 			}
 			if ( 'refusal' === ( $body['stop_reason'] ?? '' ) ) {
 				return array( 'answer' => 'I can’t answer that one. Try asking it a different way.', 'changed' => $changed );
+			}
+			if ( 'pause_turn' === ( $body['stop_reason'] ?? '' ) ) { // a long web search: let Claude carry on where it paused
+				$msgs[] = array( 'role' => 'assistant', 'content' => $body['content'] );
+				continue;
 			}
 			if ( 'tool_use' !== ( $body['stop_reason'] ?? '' ) ) {
 				break;
