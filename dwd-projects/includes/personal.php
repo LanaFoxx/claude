@@ -325,11 +325,14 @@ function dwdpe_link( $links ) {
 function dwdpe_script() {
 	$url = rest_url( 'dwd/v1/personal-sync' );
 	$tok = dwdpe_token();
+		$extra = wp_json_encode( array_values( (array) get_option( 'dwdpe_extra_cals', array( 'mptarr33@gmail.com' ) ) ) );
 	return <<<JS
 // Dream Desk · Personal to-dos <-> Google Tasks & Google Calendar (two-way).
 // Before running: click "Services +" on the left and add BOTH "Google Tasks API" and "Google Calendar API".
 var DREAM_DESK = '{$url}';
 var TOKEN = '{$tok}';
+// Other people's / accounts' calendars shared with you (read-only), e.g. your personal Gmail calendar.
+var EXTRA_CALENDARS = {$extra};
 
 function syncDreamDesk() {
   var tz = Session.getScriptTimeZone();
@@ -340,16 +343,24 @@ function syncDreamDesk() {
     page = r.nextPageToken;
   } while (page);
   var now = new Date(), from = Utilities.formatDate(now, tz, 'yyyy-MM-dd'), end = new Date(now.getTime() + 365 * 864e5), events = [];
+  // Your own calendar plus every other calendar you have turned on (shared ones too, e.g. your personal Gmail),
+  // except holiday and birthday calendars.
+  var cals = ['primary'].concat(EXTRA_CALENDARS);
+  (Calendar.CalendarList.list({ maxResults: 50 }).items || []).forEach(function (c) { if (c.selected && !c.primary && c.id.indexOf('#') < 0 && cals.indexOf(c.id) < 0) { cals.push(c.id); } });
+  var seenEv = {};
+  cals.forEach(function (cal) {
   page = null;
   do {
-    var ev = Calendar.Events.list('primary', { timeMin: new Date(from + 'T00:00:00').toISOString(), timeMax: end.toISOString(), singleEvents: true, orderBy: 'startTime', maxResults: 250, pageToken: page });
+    var ev = Calendar.Events.list(cal, { timeMin: new Date(from + 'T00:00:00').toISOString(), timeMax: end.toISOString(), singleEvents: true, orderBy: 'startTime', maxResults: 250, pageToken: page });
     (ev.items || []).forEach(function (e) {
-      if (e.status === 'cancelled' || !e.summary) { return; }
+      if (e.status === 'cancelled' || !e.summary || seenEv[e.id]) { return; }
+      seenEv[e.id] = 1;
       var allDay = !!e.start.date, s = allDay ? null : new Date(e.start.dateTime);
       events.push({ id: e.id, title: e.summary, date: allDay ? e.start.date : Utilities.formatDate(s, tz, 'yyyy-MM-dd'), time: allDay ? '' : Utilities.formatDate(s, tz, 'h:mm a'), notes: e.location || '', link: e.hangoutLink || ((e.conferenceData && e.conferenceData.entryPoints || []).filter(function (p) { return p.entryPointType === 'video'; })[0] || {}).uri || '' });
     });
     page = ev.nextPageToken;
   } while (page);
+  });
   var res = call({ tasks: tasks, tasks_complete: true, events: events, from: from });
   var links = [];
   (res.create || []).forEach(function (t) {
@@ -413,6 +424,22 @@ add_action( 'rest_api_init', function () {
 		'callback'            => function ( $r ) {
 			$d = (array) $r->get_json_params();
 			return isset( $d['links'] ) ? dwdpe_link( $d['links'] ) : dwdpe_sync( $d );
+		},
+	) );
+	register_rest_route( 'dwd/v1', '/crm/personal/event', array(
+		'methods'             => 'POST',
+		'permission_callback' => function () { return current_user_can( 'manage_options' ); },
+		'callback'            => function ( $r ) {
+			// Add one calendar event as a Personal to-do (linked to the event, so the Google sync updates it later).
+			$e   = (array) $r->get_json_params();
+			$eid = sanitize_text_field( (string) ( $e['id'] ?? '' ) );
+			$all = dwdpe_get();
+			if ( '' === $eid || in_array( $eid, array_column( $all['todos'], 'gevent' ), true ) ) {
+				return array( 'ok' => true, 'added' => false );
+			}
+			$all['todos'][] = dwdpe_clean( 'todos', array( 'id' => strtolower( wp_generate_password( 10, false ) ), 'text' => $e['title'] ?? '', 'due' => substr( (string) ( $e['date'] ?? '' ), 0, 10 ), 'time' => $e['time'] ?? '', 'note' => $e['notes'] ?? '', 'done' => false, 'gevent' => $eid, 'source' => 'Google Calendar', 'dirty' => false ) );
+			update_option( 'dwdpe_data', $all, false );
+			return array( 'ok' => true, 'added' => true );
 		},
 	) );
 	register_rest_route( 'dwd/v1', '/crm/personal/google', array(

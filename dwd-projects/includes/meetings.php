@@ -21,6 +21,7 @@ function dwdmt_token() {
 function dwdmt_script() {
 	$url = rest_url( 'dwd/v1/meetings-sync' );
 	$tok = dwdmt_token();
+		$extra = wp_json_encode( array_values( (array) get_option( 'dwdpe_extra_cals', array( 'mptarr33@gmail.com' ) ) ) );
 	return <<<JS
 // Dream Desk · Inbox. Read-only: every 15 minutes it sends the next 14 days of your Google Calendar
 // (Calendly, Upwork, Zoom and Meet calls) and the last 3 days of Upwork emails (invites, client
@@ -28,11 +29,18 @@ function dwdmt_script() {
 // Click Run on "setup" once; it then updates every 15 minutes.
 var DREAM_DESK = '{$url}';
 var TOKEN = '{$tok}';
+var EXTRA_CALENDARS = {$extra}; // calendars shared with you, e.g. your personal Gmail calendar
 
 function syncMeetings() {
   var me = Session.getEffectiveUser().getEmail().toLowerCase();
   var now = new Date(), start = new Date(now.getFullYear(), now.getMonth(), now.getDate()), end = new Date(start.getTime() + 14 * 864e5);
-  var events = CalendarApp.getDefaultCalendar().getEvents(start, end).filter(function (e) { return !e.isAllDayEvent(); }).map(function (e) {
+  // Every calendar you have turned on in Google Calendar (your own plus shared ones, e.g. your personal Gmail),
+  // except holiday and birthday calendars.
+  var cals = CalendarApp.getAllCalendars().filter(function (c) { return (c.isSelected() || c.getId() === Session.getEffectiveUser().getEmail()) && c.getId().indexOf('#') < 0; });
+  EXTRA_CALENDARS.forEach(function (id) { var c = CalendarApp.getCalendarById(id); if (c && cals.every(function (x) { return x.getId() !== id; })) { cals.push(c); } });
+  var seen = {}, all = [];
+  cals.forEach(function (c) { c.getEvents(start, end).forEach(function (e) { if (!seen[e.getId()]) { seen[e.getId()] = 1; all.push(e); } }); });
+  var events = all.filter(function (e) { return !e.isAllDayEvent(); }).map(function (e) {
     return { id: e.getId(), title: e.getTitle(), start: e.getStartTime().toISOString(), end: e.getEndTime().toISOString(), location: e.getLocation() || '',
       desc: (e.getDescription() || '').slice(0, 3000), guests: e.getGuestList().map(function (g) { return g.getEmail(); }).filter(function (m) { return m.toLowerCase() !== me; }),
       mine: e.getMyStatus() !== CalendarApp.GuestStatus.NO };
