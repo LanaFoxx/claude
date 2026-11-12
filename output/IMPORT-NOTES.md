@@ -88,7 +88,9 @@ Go to **Templates → Saved Templates → Import Templates** and import the file
    - In Page Settings, set **Page Layout → Elementor Full Width**. This removes Hello's page title and the content-width wrapper.
    - Open the page in Elementor, then use **Add Template → My Templates → TN Homepage → Insert**, and publish.
    - Go to **Settings → Reading** and set a static front page: Home.
-4. **Still to do on staging:** create a placeholder **`/thank-you/`** page so the form redirect doesn't 404, and a **`/request-an-estimate/`** page, because the header and the mobile bar link to it.
+4. **`/request-an-estimate/` and `/thank-you/`** are built from `tn-request-an-estimate.json` and `tn-thank-you.json`. Import and insert them the same way as the homepage (Elementor Full Width layout).
+   - The estimate page reuses the homepage estimate section, using the brief's no-offer copy with an H1.
+   - Its form name is `Homeowner Estimate - Request an Estimate page`. It keeps the form ID `tn-estimate-form` and the redirect to `/thank-you/`.
 
 ## 4. Form
 
@@ -105,7 +107,7 @@ Go to **Templates → Saved Templates → Import Templates** and import the file
   | What do you need? | `need` | select | yes | Empty first option "Choose a service" |
 
 - **Actions after submit:** Email, then Redirect to `/thank-you/`.
-- **Email To** is the placeholder `[painting email address]`. Replace it, or the notification won't send.
+- **Email To** is the placeholder `[painting email address]`. **Until a real address is set, every submission fails:** the visitor sees "Your submission failed because of a server error" and is never redirected to `/thank-you/`. This was confirmed with a test submission on staging. Replace the address in **both** forms (homepage and `/request-an-estimate/`).
 
 ## 5. Seasonal offer copy (no offer running)
 

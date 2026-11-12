@@ -638,6 +638,153 @@ def review_card(n, quote, name, town):
     )
 
 
+def estimate_section(page="home"):
+    """Offer/intro copy + call block + estimate form. Used on the homepage and /request-an-estimate/."""
+    if page == "home":
+        form_name = "Homeowner Estimate - Homepage"
+        form_title_tag = "h3"
+        section_kw = {}
+        offer = container("Seasonal Offer", [
+            eyebrow("Seasonal offer"),
+            h2("Now scheduling winter interior projects"),
+            text("Seasonal Offer / Text",
+                 "<p>Winter is the best time to refresh your interior. Book your project "
+                 "between [dates] and receive [10% off / our winter rate].</p>")], gap=24)
+    else:
+        form_name = "Homeowner Estimate - Request an Estimate page"
+        form_title_tag = "h2"
+        section_kw = {"min_height": px(720), "flex_justify_content": "center"}
+        offer = container("Estimate Intro", [
+            eyebrow("Request an estimate"),
+            heading("Estimate Intro / Title (H1)", "Talk to us about your project", tag="h1",
+                    color=BONE, typ=typo(family=SERIF, size=H2, weight=500, lh=1.06),
+                    custom_css="selector .elementor-heading-title{text-wrap:balance;}"),
+            text("Estimate Intro / Text",
+                 "<p>Tell us a little about your project and we'll be in touch within one "
+                 "business day to set up a walkthrough.</p>")], gap=24)
+    form_fields = [
+        {"_id": eid(), "custom_id": "name", "field_type": "text", "field_label": "Name",
+         "required": "true", "width": "50", "width_mobile": "100"},
+        {"_id": eid(), "custom_id": "phone", "field_type": "tel", "field_label": "Phone",
+         "required": "true", "width": "50", "width_mobile": "100"},
+        {"_id": eid(), "custom_id": "email", "field_type": "email", "field_label": "Email",
+         "required": "true", "width": "50", "width_mobile": "100"},
+        {"_id": eid(), "custom_id": "town", "field_type": "select", "field_label": "Town",
+         "required": "true", "width": "50", "width_mobile": "100",
+         "field_options": "Select a town|\nAspen\nSnowmass\nBasalt\nCarbondale\nGlenwood Springs\n"
+                          "Vail\nBeaver Creek\nAvon\nEdwards\nEagle\nGypsum\nBreckenridge\nOther"},
+        {"_id": eid(), "custom_id": "need", "field_type": "select",
+         "field_label": "What do you need?", "required": "true", "width": "100",
+         "field_options": "Choose a service|\nInterior painting\nExterior painting\n"
+                          "Cabinets / trim / specialty finish\nLog home staining / restoration\n"
+                          "Chinking / check sealing\nRot repair\nDeck staining\nCommercial / HOA"},
+    ]
+    form_css = (
+        "selector .elementor-field-group .elementor-field-textual{height:48px;min-height:48px;"
+        "padding:0 14px;font-family:Manrope, 'Helvetica Neue', Arial, sans-serif;}"
+        "selector select.elementor-field-textual{padding:0 36px 0 12px;color-scheme:dark;}"
+        "selector .elementor-select-wrapper .select-caret-down-wrapper{color:#F2ECE3;}"
+        "selector .elementor-field-group .elementor-field-textual:focus{border-color:#C68B4E;"
+        "box-shadow:0 0 0 1px #C68B4E;outline:none;}"
+        "selector .e-form__buttons{margin-top:4px;}"
+        "selector .elementor-mark-required .elementor-field-label:after{color:#C68B4E;}"
+        "selector .elementor-button{min-height:54px;}"
+    )
+    form = widget(
+        "form", "Estimate / Form",
+        form_name=form_name, form_id="tn-estimate-form",
+        form_fields=form_fields, input_size="md", show_labels="true", mark_required="true",
+        label_position="above", button_text="Request My Estimate", button_size="md",
+        button_width="100", button_align="stretch",
+        submit_actions=["email", "redirect"],
+        email_to="[painting email address]",
+        email_subject="New estimate request (%s)" % form_name,
+        email_content="[all-fields]",
+        redirect_to="/thank-you/",
+        success_message="Thank you. We'll call within one business day.",
+        column_gap=px(16), row_gap=px(20), label_spacing=px(8),
+        label_color=BONE, mark_required_color=AMBER,
+        field_text_color=BONE, field_background_color=CHARRED, field_border_color=INPUT,
+        field_border_width=dims(1), field_border_radius=dims(2),
+        button_background_color=AMBER, button_text_color=CHARRED,
+        button_background_hover_color=AMBER_HOVER, button_hover_color=CHARRED,
+        button_border_radius=dims(2), button_text_padding=dims(19.5, 24),
+        custom_css=form_css,
+        **typo(prefix="label_typography", size=13, weight=600, lh=1.4),
+        **typo(prefix="field_typography", size=15, weight=400, lh=1.4),
+        **typo(prefix="button_typography", size=15, weight=700, lh=1),
+    )
+    estimate = section(
+        "Estimate",
+        [grid("Estimate / Layout", [
+            container("Estimate / Text", [
+                offer,
+                container("Estimate / Call", [
+                    heading("Estimate / Call / Label", "Prefer to talk?", tag="p", color=DRIFT,
+                            typ=typo(size=12, weight=600, lh=1.4, ls=2.16, transform="uppercase")),
+                    heading("Estimate / Call / Phone", PHONE, tag="p", color=BONE,
+                            typ=typo(family=SERIF, size=38, weight=500, lh=1.2),
+                            link=link(TEL), title_hover_color=AMBER_HOVER, _css_classes="tn-call")],
+                    gap=6, padding=dims(24, 0, 0, 0),
+                    border_border="solid", border_width=dims(1, 0, 0, 0), border_color=HAIR),
+                text("Estimate / Next steps",
+                     "<p>What happens next: we'll call within one business day to schedule a "
+                     "walkthrough at a time that works for you.</p>", color=DRIFT, size=14, lh=1.7),
+            ], gap=28),
+            container("Estimate / Form Card", [
+                heading("Estimate / Form title", "Request your free estimate", tag=form_title_tag,
+                        color=BONE, typ=typo(family=SERIF, size=32, weight=500, lh=1.1)),
+                form,
+                text("Estimate / Builder note",
+                     '<p>Builder or general contractor? <a href="/for-builders/#bid">Use our bid '
+                     'request form →</a></p>', color=DRIFT, size=13, lh=1.6,
+                     custom_css="selector a{color:#C68B4E;font-weight:700;text-decoration:none;}"
+                                "selector a:hover{color:#D9A66B;}"),
+            ], gap=20, background_background="classic", background_color=SMOKE,
+                border_border="solid", border_width=dims(1), border_color=HAIR,
+                **{("padding" + d): dims(v) for d, v in zip(DEVICES, (44, 42, 34, 28))}),
+        ], cols=(2, 2, 1, 1), gap_col=SPLIT_GAP, grid_align_items="center",
+            flex_align_items="center")],
+        bg=CHARRED, _element_id="estimate", **section_kw,
+    )
+    return estimate
+
+
+def build_estimate_page():
+    return {"version": "0.4", "title": "TN Request an Estimate", "type": "page",
+            "content": [estimate_section("estimate-page")], "page_settings": []}
+
+
+def build_thank_you_page():
+    thanks = section(
+        "Thank You",
+        [container("Thank You / Content", [
+            eyebrow("Thank you"),
+            heading("Thank You / Title (H1)", "We've received your request", tag="h1", color=BONE,
+                    typ=typo(family=SERIF, size=H2, weight=500, lh=1.06)),
+            text("Thank You / Text",
+                 "<p>What happens next: we'll call within one business day to schedule a "
+                 "walkthrough at a time that works for you.</p>",
+                 custom_css="selector{max-width:620px !important;}"),
+            container("Thank You / Call", [
+                heading("Thank You / Call / Label", "Prefer to talk?", tag="p", color=DRIFT,
+                        typ=typo(size=12, weight=600, lh=1.4, ls=2.16, transform="uppercase")),
+                heading("Thank You / Call / Phone", PHONE, tag="p", color=BONE,
+                        typ=typo(family=SERIF, size=38, weight=500, lh=1.2),
+                        link=link(TEL), title_hover_color=AMBER_HOVER, _css_classes="tn-call")],
+                gap=6, padding=dims(24, 0, 0, 0),
+                border_border="solid", border_width=dims(1, 0, 0, 0), border_color=HAIR,
+                custom_css="selector{max-width:620px;}"),
+            container("Thank You / Buttons", [
+                button("Thank You / Back to home", "Back to Home", "/", kind="outline", pad_x=26)],
+                direction="row", gap=14, flex_wrap="wrap", padding=dims(8, 0, 0, 0)),
+        ], gap=28)],
+        bg=CHARRED, min_height=px(720), flex_justify_content="center",
+    )
+    return {"version": "0.4", "title": "TN Thank You", "type": "page",
+            "content": [thanks], "page_settings": []}
+
+
 def build_home():
     # 1 HERO --------------------------------------------------------------
     hero_css = (
@@ -936,97 +1083,7 @@ def build_home():
         border_border="solid", border_width=dims(1, 0, 0, 0), border_color=HAIR,
     )
 
-    # 10 SEASONAL OFFER + ESTIMATE FORM --------------------------------------------
-    form_fields = [
-        {"_id": eid(), "custom_id": "name", "field_type": "text", "field_label": "Name",
-         "required": "true", "width": "50", "width_mobile": "100"},
-        {"_id": eid(), "custom_id": "phone", "field_type": "tel", "field_label": "Phone",
-         "required": "true", "width": "50", "width_mobile": "100"},
-        {"_id": eid(), "custom_id": "email", "field_type": "email", "field_label": "Email",
-         "required": "true", "width": "50", "width_mobile": "100"},
-        {"_id": eid(), "custom_id": "town", "field_type": "select", "field_label": "Town",
-         "required": "true", "width": "50", "width_mobile": "100",
-         "field_options": "Select a town|\nAspen\nSnowmass\nBasalt\nCarbondale\nGlenwood Springs\n"
-                          "Vail\nBeaver Creek\nAvon\nEdwards\nEagle\nGypsum\nBreckenridge\nOther"},
-        {"_id": eid(), "custom_id": "need", "field_type": "select",
-         "field_label": "What do you need?", "required": "true", "width": "100",
-         "field_options": "Choose a service|\nInterior painting\nExterior painting\n"
-                          "Cabinets / trim / specialty finish\nLog home staining / restoration\n"
-                          "Chinking / check sealing\nRot repair\nDeck staining\nCommercial / HOA"},
-    ]
-    form_css = (
-        "selector .elementor-field-group .elementor-field-textual{height:48px;min-height:48px;"
-        "padding:0 14px;font-family:Manrope, 'Helvetica Neue', Arial, sans-serif;}"
-        "selector select.elementor-field-textual{padding:0 36px 0 12px;color-scheme:dark;}"
-        "selector .elementor-select-wrapper .select-caret-down-wrapper{color:#F2ECE3;}"
-        "selector .elementor-field-group .elementor-field-textual:focus{border-color:#C68B4E;"
-        "box-shadow:0 0 0 1px #C68B4E;outline:none;}"
-        "selector .e-form__buttons{margin-top:4px;}"
-        "selector .elementor-mark-required .elementor-field-label:after{color:#C68B4E;}"
-        "selector .elementor-button{min-height:54px;}"
-    )
-    form = widget(
-        "form", "Estimate / Form",
-        form_name="Homeowner Estimate - Homepage", form_id="tn-estimate-form",
-        form_fields=form_fields, input_size="md", show_labels="true", mark_required="true",
-        label_position="above", button_text="Request My Estimate", button_size="md",
-        button_width="100", button_align="stretch",
-        submit_actions=["email", "redirect"],
-        email_to="[painting email address]",
-        email_subject="New estimate request (Homepage form)",
-        email_content="[all-fields]",
-        redirect_to="/thank-you/",
-        success_message="Thank you. We'll call within one business day.",
-        column_gap=px(16), row_gap=px(20), label_spacing=px(8),
-        label_color=BONE, mark_required_color=AMBER,
-        field_text_color=BONE, field_background_color=CHARRED, field_border_color=INPUT,
-        field_border_width=dims(1), field_border_radius=dims(2),
-        button_background_color=AMBER, button_text_color=CHARRED,
-        button_background_hover_color=AMBER_HOVER, button_hover_color=CHARRED,
-        button_border_radius=dims(2), button_text_padding=dims(19.5, 24),
-        custom_css=form_css,
-        **typo(prefix="label_typography", size=13, weight=600, lh=1.4),
-        **typo(prefix="field_typography", size=15, weight=400, lh=1.4),
-        **typo(prefix="button_typography", size=15, weight=700, lh=1),
-    )
-    estimate = section(
-        "Estimate",
-        [grid("Estimate / Layout", [
-            container("Estimate / Text", [
-                container("Seasonal Offer", [
-                    eyebrow("Seasonal offer"),
-                    h2("Now scheduling winter interior projects"),
-                    text("Seasonal Offer / Text",
-                         "<p>Winter is the best time to refresh your interior. Book your project "
-                         "between [dates] and receive [10% off / our winter rate].</p>")], gap=24),
-                container("Estimate / Call", [
-                    heading("Estimate / Call / Label", "Prefer to talk?", tag="p", color=DRIFT,
-                            typ=typo(size=12, weight=600, lh=1.4, ls=2.16, transform="uppercase")),
-                    heading("Estimate / Call / Phone", PHONE, tag="p", color=BONE,
-                            typ=typo(family=SERIF, size=38, weight=500, lh=1.2),
-                            link=link(TEL), title_hover_color=AMBER_HOVER, _css_classes="tn-call")],
-                    gap=6, padding=dims(24, 0, 0, 0),
-                    border_border="solid", border_width=dims(1, 0, 0, 0), border_color=HAIR),
-                text("Estimate / Next steps",
-                     "<p>What happens next: we'll call within one business day to schedule a "
-                     "walkthrough at a time that works for you.</p>", color=DRIFT, size=14, lh=1.7),
-            ], gap=28),
-            container("Estimate / Form Card", [
-                heading("Estimate / Form title (H3)", "Request your free estimate", tag="h3",
-                        color=BONE, typ=typo(family=SERIF, size=32, weight=500, lh=1.1)),
-                form,
-                text("Estimate / Builder note",
-                     '<p>Builder or general contractor? <a href="/for-builders/#bid">Use our bid '
-                     'request form →</a></p>', color=DRIFT, size=13, lh=1.6,
-                     custom_css="selector a{color:#C68B4E;font-weight:700;text-decoration:none;}"
-                                "selector a:hover{color:#D9A66B;}"),
-            ], gap=20, background_background="classic", background_color=SMOKE,
-                border_border="solid", border_width=dims(1), border_color=HAIR,
-                **{("padding" + d): dims(v) for d, v in zip(DEVICES, (44, 42, 34, 28))}),
-        ], cols=(2, 2, 1, 1), gap_col=SPLIT_GAP, grid_align_items="center",
-            flex_align_items="center")],
-        bg=CHARRED, _element_id="estimate",
-    )
+    estimate = estimate_section("home")
 
     content = [hero, trust, what, who, why, projects, away, reviews, builder, estimate]
     return {"version": "0.4", "title": "TN Homepage", "type": "page",
@@ -1058,7 +1115,9 @@ def validate(doc):
 def main():
     os.makedirs(OUT, exist_ok=True)
     docs = {"tn-header.json": build_header(), "tn-footer.json": build_footer(),
-            "tn-homepage.json": build_home()}
+            "tn-homepage.json": build_home(),
+            "tn-request-an-estimate.json": build_estimate_page(),
+            "tn-thank-you.json": build_thank_you_page()}
     all_ids = []
     for name, doc in docs.items():
         all_ids += validate(doc)

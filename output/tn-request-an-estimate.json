@@ -1,0 +1,787 @@
+{
+ "version": "0.4",
+ "title": "TN Request an Estimate",
+ "type": "page",
+ "content": [
+  {
+   "id": "f9433c0",
+   "elType": "container",
+   "isInner": false,
+   "settings": {
+    "_title": "Estimate",
+    "content_width": "boxed",
+    "flex_direction": "column",
+    "flex_gap": {
+     "column": "0",
+     "row": "0",
+     "isLinked": true,
+     "unit": "px",
+     "size": 0
+    },
+    "boxed_width": {
+     "unit": "px",
+     "size": 1280,
+     "sizes": []
+    },
+    "padding": {
+     "unit": "px",
+     "top": "128",
+     "right": "48",
+     "bottom": "128",
+     "left": "48",
+     "isLinked": false
+    },
+    "padding_laptop": {
+     "unit": "px",
+     "top": "120",
+     "right": "48",
+     "bottom": "120",
+     "left": "48",
+     "isLinked": false
+    },
+    "padding_tablet": {
+     "unit": "px",
+     "top": "96",
+     "right": "32",
+     "bottom": "96",
+     "left": "32",
+     "isLinked": false
+    },
+    "padding_mobile": {
+     "unit": "px",
+     "top": "72",
+     "right": "20",
+     "bottom": "72",
+     "left": "20",
+     "isLinked": false
+    },
+    "background_background": "classic",
+    "background_color": "#14110E",
+    "html_tag": "section",
+    "css_classes": "tn-section",
+    "_element_id": "estimate",
+    "min_height": {
+     "unit": "px",
+     "size": 720,
+     "sizes": []
+    },
+    "flex_justify_content": "center"
+   },
+   "elements": [
+    {
+     "id": "1d1432f",
+     "elType": "container",
+     "isInner": true,
+     "settings": {
+      "_title": "Estimate / Layout",
+      "content_width": "full",
+      "flex_direction": "column",
+      "flex_gap": {
+       "column": "86",
+       "row": "86",
+       "isLinked": true,
+       "unit": "px",
+       "size": 86
+      },
+      "width": {
+       "unit": "%",
+       "size": 100,
+       "sizes": []
+      },
+      "padding": {
+       "unit": "px",
+       "top": "0",
+       "right": "0",
+       "bottom": "0",
+       "left": "0",
+       "isLinked": true
+      },
+      "container_type": "grid",
+      "grid_auto_flow": "row",
+      "grid_rows_grid": {
+       "unit": "custom",
+       "size": "auto",
+       "sizes": []
+      },
+      "grid_columns_grid": {
+       "unit": "fr",
+       "size": 2,
+       "sizes": []
+      },
+      "grid_columns_grid_laptop": {
+       "unit": "fr",
+       "size": 2,
+       "sizes": []
+      },
+      "grid_columns_grid_tablet": {
+       "unit": "fr",
+       "size": 1,
+       "sizes": []
+      },
+      "grid_columns_grid_mobile": {
+       "unit": "fr",
+       "size": 1,
+       "sizes": []
+      },
+      "grid_gaps": {
+       "column": "86",
+       "row": "86",
+       "isLinked": true,
+       "unit": "px",
+       "size": 86
+      },
+      "grid_gaps_laptop": {
+       "column": "80",
+       "row": "80",
+       "isLinked": true,
+       "unit": "px",
+       "size": 80
+      },
+      "flex_gap_laptop": {
+       "column": "80",
+       "row": "80",
+       "isLinked": true,
+       "unit": "px",
+       "size": 80
+      },
+      "grid_gaps_tablet": {
+       "column": "40",
+       "row": "40",
+       "isLinked": true,
+       "unit": "px",
+       "size": 40
+      },
+      "flex_gap_tablet": {
+       "column": "40",
+       "row": "40",
+       "isLinked": true,
+       "unit": "px",
+       "size": 40
+      },
+      "grid_gaps_mobile": {
+       "column": "40",
+       "row": "40",
+       "isLinked": true,
+       "unit": "px",
+       "size": 40
+      },
+      "flex_gap_mobile": {
+       "column": "40",
+       "row": "40",
+       "isLinked": true,
+       "unit": "px",
+       "size": 40
+      },
+      "grid_align_items": "center",
+      "flex_align_items": "center"
+     },
+     "elements": [
+      {
+       "id": "f0b816a",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Estimate / Text",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "28",
+         "row": "28",
+         "isLinked": true,
+         "unit": "px",
+         "size": 28
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "0",
+         "right": "0",
+         "bottom": "0",
+         "left": "0",
+         "isLinked": true
+        }
+       },
+       "elements": [
+        {
+         "id": "8ccb53a",
+         "elType": "container",
+         "isInner": true,
+         "settings": {
+          "_title": "Estimate Intro",
+          "content_width": "full",
+          "flex_direction": "column",
+          "flex_gap": {
+           "column": "24",
+           "row": "24",
+           "isLinked": true,
+           "unit": "px",
+           "size": 24
+          },
+          "width": {
+           "unit": "%",
+           "size": 100,
+           "sizes": []
+          },
+          "padding": {
+           "unit": "px",
+           "top": "0",
+           "right": "0",
+           "bottom": "0",
+           "left": "0",
+           "isLinked": true
+          }
+         },
+         "elements": [
+          {
+           "id": "81b0a40",
+           "elType": "widget",
+           "widgetType": "heading",
+           "isInner": false,
+           "settings": {
+            "title": "Request an estimate",
+            "header_size": "p",
+            "title_color": "#C68B4E",
+            "typography_typography": "custom",
+            "typography_font_family": "Manrope",
+            "typography_font_size": {
+             "unit": "px",
+             "size": 12,
+             "sizes": []
+            },
+            "typography_font_weight": "600",
+            "typography_line_height": {
+             "unit": "em",
+             "size": 1.4,
+             "sizes": []
+            },
+            "typography_letter_spacing": {
+             "unit": "px",
+             "size": 2.64,
+             "sizes": []
+            },
+            "typography_text_transform": "uppercase",
+            "_title": "Eyebrow"
+           },
+           "elements": []
+          },
+          {
+           "id": "64de303",
+           "elType": "widget",
+           "widgetType": "heading",
+           "isInner": false,
+           "settings": {
+            "title": "Talk to us about your project",
+            "header_size": "h1",
+            "title_color": "#F2ECE3",
+            "typography_typography": "custom",
+            "typography_font_family": "Cormorant Garamond",
+            "typography_font_size": {
+             "unit": "px",
+             "size": 56,
+             "sizes": []
+            },
+            "typography_font_size_laptop": {
+             "unit": "px",
+             "size": 52,
+             "sizes": []
+            },
+            "typography_font_size_tablet": {
+             "unit": "px",
+             "size": 40,
+             "sizes": []
+            },
+            "typography_font_size_mobile": {
+             "unit": "px",
+             "size": 36,
+             "sizes": []
+            },
+            "typography_font_weight": "500",
+            "typography_line_height": {
+             "unit": "em",
+             "size": 1.06,
+             "sizes": []
+            },
+            "custom_css": "selector .elementor-heading-title{text-wrap:balance;}",
+            "_title": "Estimate Intro / Title (H1)"
+           },
+           "elements": []
+          },
+          {
+           "id": "c765dd8",
+           "elType": "widget",
+           "widgetType": "text-editor",
+           "isInner": false,
+           "settings": {
+            "editor": "<p>Tell us a little about your project and we'll be in touch within one business day to set up a walkthrough.</p>",
+            "text_color": "#B3A99C",
+            "paragraph_spacing": {
+             "unit": "px",
+             "size": 0,
+             "sizes": []
+            },
+            "typography_typography": "custom",
+            "typography_font_family": "Manrope",
+            "typography_font_size": {
+             "unit": "px",
+             "size": 17,
+             "sizes": []
+            },
+            "typography_line_height": {
+             "unit": "em",
+             "size": 1.75,
+             "sizes": []
+            },
+            "custom_css": "selector p:last-child{margin-block-end:0;}",
+            "_title": "Estimate Intro / Text"
+           },
+           "elements": []
+          }
+         ]
+        },
+        {
+         "id": "bd9901a",
+         "elType": "container",
+         "isInner": true,
+         "settings": {
+          "_title": "Estimate / Call",
+          "content_width": "full",
+          "flex_direction": "column",
+          "flex_gap": {
+           "column": "6",
+           "row": "6",
+           "isLinked": true,
+           "unit": "px",
+           "size": 6
+          },
+          "width": {
+           "unit": "%",
+           "size": 100,
+           "sizes": []
+          },
+          "padding": {
+           "unit": "px",
+           "top": "24",
+           "right": "0",
+           "bottom": "0",
+           "left": "0",
+           "isLinked": false
+          },
+          "border_border": "solid",
+          "border_width": {
+           "unit": "px",
+           "top": "1",
+           "right": "0",
+           "bottom": "0",
+           "left": "0",
+           "isLinked": false
+          },
+          "border_color": "#2A241F"
+         },
+         "elements": [
+          {
+           "id": "4940741",
+           "elType": "widget",
+           "widgetType": "heading",
+           "isInner": false,
+           "settings": {
+            "title": "Prefer to talk?",
+            "header_size": "p",
+            "title_color": "#B3A99C",
+            "typography_typography": "custom",
+            "typography_font_family": "Manrope",
+            "typography_font_size": {
+             "unit": "px",
+             "size": 12,
+             "sizes": []
+            },
+            "typography_font_weight": "600",
+            "typography_line_height": {
+             "unit": "em",
+             "size": 1.4,
+             "sizes": []
+            },
+            "typography_letter_spacing": {
+             "unit": "px",
+             "size": 2.16,
+             "sizes": []
+            },
+            "typography_text_transform": "uppercase",
+            "_title": "Estimate / Call / Label"
+           },
+           "elements": []
+          },
+          {
+           "id": "88622bd",
+           "elType": "widget",
+           "widgetType": "heading",
+           "isInner": false,
+           "settings": {
+            "title": "(970) 524-7323",
+            "header_size": "p",
+            "title_color": "#F2ECE3",
+            "typography_typography": "custom",
+            "typography_font_family": "Cormorant Garamond",
+            "typography_font_size": {
+             "unit": "px",
+             "size": 38,
+             "sizes": []
+            },
+            "typography_font_weight": "500",
+            "typography_line_height": {
+             "unit": "em",
+             "size": 1.2,
+             "sizes": []
+            },
+            "link": {
+             "url": "tel:+19705247323",
+             "is_external": "",
+             "nofollow": ""
+            },
+            "title_hover_color": "#D9A66B",
+            "_css_classes": "tn-call",
+            "_title": "Estimate / Call / Phone"
+           },
+           "elements": []
+          }
+         ]
+        },
+        {
+         "id": "2f518db",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>What happens next: we'll call within one business day to schedule a walkthrough at a time that works for you.</p>",
+          "text_color": "#B3A99C",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 14,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.7,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "Estimate / Next steps"
+         },
+         "elements": []
+        }
+       ]
+      },
+      {
+       "id": "50e1d72",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Estimate / Form Card",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "20",
+         "row": "20",
+         "isLinked": true,
+         "unit": "px",
+         "size": 20
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "44",
+         "right": "44",
+         "bottom": "44",
+         "left": "44",
+         "isLinked": true
+        },
+        "background_background": "classic",
+        "background_color": "#1E1A16",
+        "border_border": "solid",
+        "border_width": {
+         "unit": "px",
+         "top": "1",
+         "right": "1",
+         "bottom": "1",
+         "left": "1",
+         "isLinked": true
+        },
+        "border_color": "#2A241F",
+        "padding_laptop": {
+         "unit": "px",
+         "top": "42",
+         "right": "42",
+         "bottom": "42",
+         "left": "42",
+         "isLinked": true
+        },
+        "padding_tablet": {
+         "unit": "px",
+         "top": "34",
+         "right": "34",
+         "bottom": "34",
+         "left": "34",
+         "isLinked": true
+        },
+        "padding_mobile": {
+         "unit": "px",
+         "top": "28",
+         "right": "28",
+         "bottom": "28",
+         "left": "28",
+         "isLinked": true
+        }
+       },
+       "elements": [
+        {
+         "id": "816eea0",
+         "elType": "widget",
+         "widgetType": "heading",
+         "isInner": false,
+         "settings": {
+          "title": "Request your free estimate",
+          "header_size": "h2",
+          "title_color": "#F2ECE3",
+          "typography_typography": "custom",
+          "typography_font_family": "Cormorant Garamond",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 32,
+           "sizes": []
+          },
+          "typography_font_weight": "500",
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.1,
+           "sizes": []
+          },
+          "_title": "Estimate / Form title"
+         },
+         "elements": []
+        },
+        {
+         "id": "47041fe",
+         "elType": "widget",
+         "widgetType": "form",
+         "isInner": false,
+         "settings": {
+          "form_name": "Homeowner Estimate - Request an Estimate page",
+          "form_id": "tn-estimate-form",
+          "form_fields": [
+           {
+            "_id": "887e14b",
+            "custom_id": "name",
+            "field_type": "text",
+            "field_label": "Name",
+            "required": "true",
+            "width": "50",
+            "width_mobile": "100"
+           },
+           {
+            "_id": "f20ab83",
+            "custom_id": "phone",
+            "field_type": "tel",
+            "field_label": "Phone",
+            "required": "true",
+            "width": "50",
+            "width_mobile": "100"
+           },
+           {
+            "_id": "b4a84cc",
+            "custom_id": "email",
+            "field_type": "email",
+            "field_label": "Email",
+            "required": "true",
+            "width": "50",
+            "width_mobile": "100"
+           },
+           {
+            "_id": "bdf3e63",
+            "custom_id": "town",
+            "field_type": "select",
+            "field_label": "Town",
+            "required": "true",
+            "width": "50",
+            "width_mobile": "100",
+            "field_options": "Select a town|\nAspen\nSnowmass\nBasalt\nCarbondale\nGlenwood Springs\nVail\nBeaver Creek\nAvon\nEdwards\nEagle\nGypsum\nBreckenridge\nOther"
+           },
+           {
+            "_id": "adfda6f",
+            "custom_id": "need",
+            "field_type": "select",
+            "field_label": "What do you need?",
+            "required": "true",
+            "width": "100",
+            "field_options": "Choose a service|\nInterior painting\nExterior painting\nCabinets / trim / specialty finish\nLog home staining / restoration\nChinking / check sealing\nRot repair\nDeck staining\nCommercial / HOA"
+           }
+          ],
+          "input_size": "md",
+          "show_labels": "true",
+          "mark_required": "true",
+          "label_position": "above",
+          "button_text": "Request My Estimate",
+          "button_size": "md",
+          "button_width": "100",
+          "button_align": "stretch",
+          "submit_actions": [
+           "email",
+           "redirect"
+          ],
+          "email_to": "[painting email address]",
+          "email_subject": "New estimate request (Homeowner Estimate - Request an Estimate page)",
+          "email_content": "[all-fields]",
+          "redirect_to": "/thank-you/",
+          "success_message": "Thank you. We'll call within one business day.",
+          "column_gap": {
+           "unit": "px",
+           "size": 16,
+           "sizes": []
+          },
+          "row_gap": {
+           "unit": "px",
+           "size": 20,
+           "sizes": []
+          },
+          "label_spacing": {
+           "unit": "px",
+           "size": 8,
+           "sizes": []
+          },
+          "label_color": "#F2ECE3",
+          "mark_required_color": "#C68B4E",
+          "field_text_color": "#F2ECE3",
+          "field_background_color": "#14110E",
+          "field_border_color": "#6B6259",
+          "field_border_width": {
+           "unit": "px",
+           "top": "1",
+           "right": "1",
+           "bottom": "1",
+           "left": "1",
+           "isLinked": true
+          },
+          "field_border_radius": {
+           "unit": "px",
+           "top": "2",
+           "right": "2",
+           "bottom": "2",
+           "left": "2",
+           "isLinked": true
+          },
+          "button_background_color": "#C68B4E",
+          "button_text_color": "#14110E",
+          "button_background_hover_color": "#D9A66B",
+          "button_hover_color": "#14110E",
+          "button_border_radius": {
+           "unit": "px",
+           "top": "2",
+           "right": "2",
+           "bottom": "2",
+           "left": "2",
+           "isLinked": true
+          },
+          "button_text_padding": {
+           "unit": "px",
+           "top": "19.5",
+           "right": "24",
+           "bottom": "19.5",
+           "left": "24",
+           "isLinked": false
+          },
+          "custom_css": "selector .elementor-field-group .elementor-field-textual{height:48px;min-height:48px;padding:0 14px;font-family:Manrope, 'Helvetica Neue', Arial, sans-serif;}selector select.elementor-field-textual{padding:0 36px 0 12px;color-scheme:dark;}selector .elementor-select-wrapper .select-caret-down-wrapper{color:#F2ECE3;}selector .elementor-field-group .elementor-field-textual:focus{border-color:#C68B4E;box-shadow:0 0 0 1px #C68B4E;outline:none;}selector .e-form__buttons{margin-top:4px;}selector .elementor-mark-required .elementor-field-label:after{color:#C68B4E;}selector .elementor-button{min-height:54px;}",
+          "label_typography_typography": "custom",
+          "label_typography_font_family": "Manrope",
+          "label_typography_font_size": {
+           "unit": "px",
+           "size": 13,
+           "sizes": []
+          },
+          "label_typography_font_weight": "600",
+          "label_typography_line_height": {
+           "unit": "em",
+           "size": 1.4,
+           "sizes": []
+          },
+          "field_typography_typography": "custom",
+          "field_typography_font_family": "Manrope",
+          "field_typography_font_size": {
+           "unit": "px",
+           "size": 15,
+           "sizes": []
+          },
+          "field_typography_font_weight": "400",
+          "field_typography_line_height": {
+           "unit": "em",
+           "size": 1.4,
+           "sizes": []
+          },
+          "button_typography_typography": "custom",
+          "button_typography_font_family": "Manrope",
+          "button_typography_font_size": {
+           "unit": "px",
+           "size": 15,
+           "sizes": []
+          },
+          "button_typography_font_weight": "700",
+          "button_typography_line_height": {
+           "unit": "em",
+           "size": 1,
+           "sizes": []
+          },
+          "_title": "Estimate / Form"
+         },
+         "elements": []
+        },
+        {
+         "id": "e67a3bc",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>Builder or general contractor? <a href=\"/for-builders/#bid\">Use our bid request form →</a></p>",
+          "text_color": "#B3A99C",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 13,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.6,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}selector a{color:#C68B4E;font-weight:700;text-decoration:none;}selector a:hover{color:#D9A66B;}",
+          "_title": "Estimate / Builder note"
+         },
+         "elements": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "page_settings": []
+}
