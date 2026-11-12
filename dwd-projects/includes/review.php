@@ -47,6 +47,13 @@ function dwdq_apply( $item ) {
 		return new WP_Error( 'dwdq_gone', 'That project no longer exists.' );
 	}
 	$data = (array) ( $op['data'] ?? array() );
+	// Prices are never taken from Upwork (Mike enters them himself, after Upwork's fee).
+	if ( false !== stripos( (string) ( $item['source'] ?? '' ), 'upwork' ) ) {
+		unset( $data['price'], $data['balance'] );
+		if ( ! empty( $op['job'] ) ) {
+			$op['job']['price'] = '';
+		}
+	}
 	if ( ! empty( $op['job'] ) ) {
 		$jobs = $pid ? (array) get_post_meta( $pid, '_dwdc_jobs', true ) : array();
 		$has  = false;

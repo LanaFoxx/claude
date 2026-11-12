@@ -214,7 +214,7 @@ function dwdm_apply( $messages, $dry = false ) {
 							'source' => 'Upwork email · ' . $date,
 							'key'    => 'hired:' . $key,
 							'pid'    => $pid,
-							'op'     => array( 'project' => $pid, 'data' => array( 'list' => 'active', 'price' => $price ), 'job' => array( 'title' => $e['title'], 'price' => $price, 'date' => $date ), 'meta' => array( '_dwdc_upwork_contract' => $e['contract'] ), 'task' => 'Re-hired on Upwork: ' . $e['title'] . ' — check the price and details' ),
+							'op'     => array( 'project' => $pid, 'data' => array( 'list' => 'active' ), 'job' => array( 'title' => $e['title'], 'price' => '', 'date' => $date ), 'meta' => array( '_dwdc_upwork_contract' => $e['contract'] ), 'task' => 'Re-hired on Upwork: ' . $e['title'] . ' — check the price and details' ),
 						) );
 					} elseif ( ! $dry && $e['contract'] ) {
 						update_post_meta( $pid, '_dwdc_upwork_contract', $e['contract'] ); // bookkeeping only, nothing visible changes
@@ -227,10 +227,10 @@ function dwdm_apply( $messages, $dry = false ) {
 						dwdq_add( array(
 							'kind'   => 'new_project',
 							'title'  => 'New project: ' . $name,
-							'lines'  => array_filter( array( 'Job: ' . $e['title'], $price ? 'Price: $' . number_format( $price ) : 'Price: not in the email (hourly or unknown)', $person ? 'Client: ' . $person . ( $comp ? ' · ' . $comp : '' ) : '', $finished ? 'Already ended on Upwork → goes in Completed' : 'Goes in Active projects' ) ),
+							'lines'  => array_filter( array( 'Job: ' . $e['title'], 'Price: add it yourself (Upwork amounts are never copied)', $person ? 'Client: ' . $person . ( $comp ? ' · ' . $comp : '' ) : '', $finished ? 'Already ended on Upwork → goes in Completed' : 'Goes in Active projects' ) ),
 							'source' => 'Upwork email · ' . $date,
 							'key'    => 'hired:' . $key,
-							'op'     => array( 'project' => 0, 'data' => array( 'name' => $name, 'person' => $person, 'company' => $comp, 'list' => $finished ? 'complete' : 'active', 'price' => $price, 'lead_source' => 'Upwork', 'pay_method' => 'Upwork', 'source' => 'Upwork email' ), 'job' => array( 'title' => $e['title'], 'price' => $price, 'date' => $date ), 'meta' => array( '_dwdc_upwork_contract' => $e['contract'] ), 'map' => $comp, 'task' => 'New Upwork project: ' . $name . ' — add the client’s email and details' ),
+							'op'     => array( 'project' => 0, 'data' => array( 'name' => $name, 'person' => $person, 'company' => $comp, 'list' => $finished ? 'complete' : 'active', 'lead_source' => 'Upwork', 'pay_method' => 'Upwork', 'source' => 'Upwork email' ), 'job' => array( 'title' => $e['title'], 'price' => '', 'date' => $date ), 'meta' => array( '_dwdc_upwork_contract' => $e['contract'] ), 'map' => $comp, 'task' => 'New Upwork project: ' . $name . ' — add the price, the client’s email and details' ),
 						) );
 					}
 				}
