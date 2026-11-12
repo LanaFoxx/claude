@@ -23,7 +23,8 @@ const MEDIA = ['npc-rye-coast.jpg', 'npc-portsmouth.jpg', 'npc-hampton-beach.jpg
   'npc-hero-hampton.jpg', 'npc-contact-seawall.jpg', 'npc-quote-rye.jpg', 'npc-exeter-downtown.jpg', 'npc-estate-dusk.jpg',
   'npc-logo-navy.png', 'npc-logo-reversed.png', 'npc-buyer-hero.jpg', 'npc-seller-hero.jpg',
   'npc-sale-98-beach-hill.jpg', 'npc-sale-805-central.jpg', 'npc-sale-1-franklin.jpg', 'npc-sale-39-chapel.jpg', 'npc-icon.png',
-  'npc-press-seacoastonline.png', 'npc-press-bostoncom.png', 'npc-press-unionleader.png'];
+  'npc-press-seacoastonline.png', 'npc-press-bostoncom.png', 'npc-press-unionleader.png',
+  'npc-town-new-castle.jpg'];
 const ALT = {
   'npc-rye-coast': 'The Rye, NH coastline from above', 'npc-portsmouth': 'Portsmouth, NH South End harbor at sunset',
   'npc-hampton-beach': 'Hampton Beach, NH from above', 'npc-nick-ponte': 'Nick Ponte, Managing Broker',
@@ -177,9 +178,9 @@ function seed(t, i) {
 }
 
 // Town photos supplied by Nick that replace the Rye fallback.
-const PHOTO = { Exeter: 'npc-exeter-downtown' };
+const PHOTO = { Exeter: 'npc-exeter-downtown', 'New Castle': 'npc-town-new-castle' };
 // Nick's own drone photos (and one licensed stock photo) already in the Media Library, attached to his current town pages.
-const PHOTO_ID = { 'New Castle': 7585, Hampton: 7583, Dover: 7578, Newington: 4940, Rye: 7636 };
+const PHOTO_ID = { Hampton: 7583, Dover: 7578, Newington: 4940, Rye: 7636 };
 
 async function deployTowns(p, nonce, ids) {
   const towns = require('./content/towns-source.cjs');
