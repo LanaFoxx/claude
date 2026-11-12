@@ -170,7 +170,7 @@ function dwdc_mail_signature() {
 	return '<span>-- </span><br><div dir="ltr">Sincerely,<div><br></div><div><font size="4">Michael Tarr</font></div>'
 		. '<div>Owner | Dream Web Digital<br><div>(561) 425-0734</div><a href="https://dreamwebdigital.com/" target="_blank">dreamwebdigital.com</a><br>'
 		. '<a href="' . $cal . '" target="_blank"><b><font size="4">Schedule Zoom Here</font></b></a></div>'
-		. '<div><img width="200" height="47" src="https://ci3.googleusercontent.com/mail-sig/AIorK4xcbOGlnoqlP69pefVExxuy-vAG6A1SRpA1bS7U3rr8e8SfCYiSMcnq7Bkqc4ZyfQ3xtNoi-XQavUyf" alt="Dream Web Digital"></div></div>';
+		. '<div><img width="200" height="46" src="https://dreamwebdigital.com/wp-content/uploads/2026/11/dwd-email-signature-logo.png" alt="Dream Web Digital" style="display:block;width:200px;height:auto;border:0;margin-top:6px"></div></div>';
 }
 
 function dwdc_save_contact( $id, $data ) {
