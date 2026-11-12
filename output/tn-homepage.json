@@ -4,7 +4,7 @@
  "type": "page",
  "content": [
   {
-   "id": "f842997",
+   "id": "8528ea7",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -136,7 +136,7 @@
    },
    "elements": [
     {
-     "id": "e3801b7",
+     "id": "b9f5307",
      "elType": "widget",
      "widgetType": "heading",
      "isInner": false,
@@ -178,7 +178,7 @@
      "elements": []
     },
     {
-     "id": "b9f5307",
+     "id": "611070a",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -288,7 +288,7 @@
      },
      "elements": [
       {
-       "id": "8f45b09",
+       "id": "f842997",
        "elType": "widget",
        "widgetType": "text-editor",
        "isInner": false,
@@ -318,7 +318,7 @@
        "elements": []
       },
       {
-       "id": "9ece78b",
+       "id": "5a41f8e",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -372,7 +372,7 @@
        },
        "elements": [
         {
-         "id": "ded66b4",
+         "id": "189b512",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,
@@ -424,7 +424,7 @@
          "elements": []
         },
         {
-         "id": "7f29a9f",
+         "id": "e4d6d27",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,
@@ -493,7 +493,7 @@
      ]
     },
     {
-     "id": "d446ab8",
+     "id": "9ece78b",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -566,7 +566,7 @@
      },
      "elements": [
       {
-       "id": "52969a5",
+       "id": "d446ab8",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -619,7 +619,7 @@
        },
        "elements": [
         {
-         "id": "fbe80fa",
+         "id": "8776c65",
          "elType": "widget",
          "widgetType": "rating",
          "isInner": false,
@@ -661,7 +661,7 @@
          "elements": []
         },
         {
-         "id": "43288e1",
+         "id": "92e2612",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -708,7 +708,7 @@
        ]
       },
       {
-       "id": "c1515ff",
+       "id": "e3801b7",
        "elType": "widget",
        "widgetType": "text-editor",
        "isInner": false,
@@ -753,7 +753,7 @@
        "elements": []
       },
       {
-       "id": "8c4e424",
+       "id": "8f45b09",
        "elType": "widget",
        "widgetType": "text-editor",
        "isInner": false,
@@ -798,7 +798,7 @@
        "elements": []
       },
       {
-       "id": "8776c65",
+       "id": "ded66b4",
        "elType": "widget",
        "widgetType": "text-editor",
        "isInner": false,
@@ -843,7 +843,7 @@
        "elements": []
       },
       {
-       "id": "92e2612",
+       "id": "7f29a9f",
        "elType": "widget",
        "widgetType": "text-editor",
        "isInner": false,
@@ -3372,7 +3372,7 @@
    ]
   },
   {
-   "id": "fdf165d",
+   "id": "bb74fe5",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -3380,32 +3380,32 @@
     "content_width": "boxed",
     "flex_direction": "column",
     "flex_gap": {
-     "column": "56",
-     "row": "56",
+     "column": "0",
+     "row": "0",
      "isLinked": true,
      "unit": "px",
-     "size": 56
+     "size": 0
     },
     "flex_gap_laptop": {
-     "column": "56",
-     "row": "56",
+     "column": "0",
+     "row": "0",
      "isLinked": true,
      "unit": "px",
-     "size": 56
+     "size": 0
     },
     "flex_gap_tablet": {
-     "column": "56",
-     "row": "56",
+     "column": "0",
+     "row": "0",
      "isLinked": true,
      "unit": "px",
-     "size": 56
+     "size": 0
     },
     "flex_gap_mobile": {
-     "column": "56",
-     "row": "56",
+     "column": "0",
+     "row": "0",
      "isLinked": true,
      "unit": "px",
-     "size": 56
+     "size": 0
     },
     "boxed_width": {
      "unit": "px",
@@ -3446,44 +3446,57 @@
     },
     "background_background": "classic",
     "background_color": "#14110E",
-    "html_tag": "section"
+    "html_tag": "section",
+    "_element_id": "tn-featured",
+    "custom_css": "#tn-featured .tn-f-layout{grid-template-columns:520px minmax(0,1fr) !important;grid-template-rows:auto auto 1fr !important;\n  grid-template-areas:\"head photo\" \"list photo\" \"link photo\";column-gap:80px !important;row-gap:52px !important;align-items:start !important;}\n#tn-featured .tn-f-head{grid-area:head;padding-top:40px;}\n#tn-featured .tn-f-list{grid-area:list;border-bottom:1px solid rgba(242,236,227,0.14);}\n#tn-featured .tn-f-link{grid-area:link;justify-self:start;}\n#tn-featured .tn-f-photos{grid-area:photo;position:relative;height:680px;}\n#tn-featured .tn-f-photo{position:absolute !important;inset:0;min-height:0 !important;height:auto;opacity:0;transition:opacity .35s ease;}\n#tn-featured .tn-f-photo.is-active{opacity:1;}\n#tn-featured .tn-row{cursor:pointer;border-top:1px solid rgba(242,236,227,0.14);padding:26px 0 !important;}\n#tn-featured .tn-row:focus-visible{outline:2px solid #C68B4E;outline-offset:4px;}\n#tn-featured .tn-row .elementor-heading-title{transition:color .2s ease;}\n#tn-featured .tn-row-title .elementor-heading-title,#tn-featured .tn-row-meta .elementor-heading-title{color:#8F867B !important;}\n#tn-featured .tn-row[aria-pressed=\"true\"] .tn-row-title .elementor-heading-title{color:#F2ECE3 !important;}\n#tn-featured .tn-row[aria-pressed=\"true\"] .tn-row-meta .elementor-heading-title{color:#B3A99C !important;}\n#tn-featured .tn-row-arrow{opacity:0;transition:opacity .2s ease;}\n#tn-featured .tn-row[aria-pressed=\"true\"] .tn-row-arrow{opacity:1;}\n#tn-featured > .elementor-widget-html,#tn-featured .e-con-inner > .elementor-widget-html{position:absolute;width:0;height:0;overflow:hidden;}\n@media (max-width:980px){\n  #tn-featured .tn-f-layout{grid-template-columns:minmax(0,1fr) !important;grid-template-rows:auto !important;\n    grid-template-areas:\"head\" \"photo\" \"list\" \"link\";row-gap:40px !important;}\n  #tn-featured .tn-f-head{padding-top:0;}\n  #tn-featured .tn-f-photos{height:520px;}\n}\n@media (max-width:600px){\n  #tn-featured .tn-f-photos{height:360px;}\n  #tn-featured .tn-row{padding:22px 0 !important;}\n}\n@media (prefers-reduced-motion:reduce){\n  #tn-featured .tn-f-photo,#tn-featured .tn-row .elementor-heading-title,#tn-featured .tn-row-arrow{transition:none;}\n}"
    },
    "elements": [
     {
-     "id": "1c83e78",
+     "id": "76eebc5",
+     "elType": "widget",
+     "widgetType": "html",
+     "isInner": false,
+     "settings": {
+      "html": "<script>\n(function(){\n  function init(){\n    var root = document.getElementById('tn-featured'); if (!root || root.dataset.tnInit) return; root.dataset.tnInit = '1';\n    var rows = root.querySelectorAll('.tn-row'), photos = root.querySelectorAll('.tn-f-photo');\n    function select(i){\n      rows.forEach(function(r){ r.setAttribute('aria-pressed', r.getAttribute('data-project') === String(i) ? 'true' : 'false'); });\n      photos.forEach(function(p){ p.classList.toggle('is-active', p.getAttribute('data-project') === String(i)); });\n    }\n    var canHover = window.matchMedia && window.matchMedia('(hover: hover)').matches;\n    rows.forEach(function(r){\n      var i = r.getAttribute('data-project');\n      r.setAttribute('role', 'button'); r.setAttribute('tabindex', '0');\n      r.addEventListener('click', function(){ select(i); });\n      r.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(i); } });\n      if (canHover) r.addEventListener('mouseenter', function(){ select(i); });\n    });\n    select(0);\n  }\n  if (document.readyState !== 'loading') init(); else document.addEventListener('DOMContentLoaded', init);\n})();\n</script>",
+      "_title": "Featured / Photo switcher (script)"
+     },
+     "elements": []
+    },
+    {
+     "id": "9f4ecb4",
      "elType": "container",
      "isInner": true,
      "settings": {
-      "_title": "Projects / Header",
+      "_title": "Featured / Layout",
       "content_width": "full",
       "flex_direction": "column",
       "flex_gap": {
-       "column": "24",
-       "row": "12",
-       "isLinked": false,
+       "column": "0",
+       "row": "0",
+       "isLinked": true,
        "unit": "px",
-       "size": 24
+       "size": 0
       },
       "flex_gap_laptop": {
-       "column": "24",
-       "row": "12",
-       "isLinked": false,
+       "column": "0",
+       "row": "0",
+       "isLinked": true,
        "unit": "px",
-       "size": 24
+       "size": 0
       },
       "flex_gap_tablet": {
-       "column": "24",
-       "row": "12",
-       "isLinked": false,
+       "column": "0",
+       "row": "0",
+       "isLinked": true,
        "unit": "px",
-       "size": 24
+       "size": 0
       },
       "flex_gap_mobile": {
-       "column": "24",
-       "row": "12",
-       "isLinked": false,
+       "column": "0",
+       "row": "0",
+       "isLinked": true,
        "unit": "px",
-       "size": 24
+       "size": 0
       },
       "width": {
        "unit": "%",
@@ -3499,67 +3512,11 @@
        "isLinked": true
       },
       "container_type": "grid",
-      "grid_auto_flow": "row",
-      "grid_rows_grid": {
-       "unit": "custom",
-       "size": "auto",
-       "sizes": []
-      },
-      "grid_columns_grid": {
-       "unit": "custom",
-       "size": "1fr auto",
-       "sizes": []
-      },
-      "grid_columns_grid_laptop": {
-       "unit": "custom",
-       "size": "1fr auto",
-       "sizes": []
-      },
-      "grid_columns_grid_tablet": {
-       "unit": "custom",
-       "size": "1fr auto",
-       "sizes": []
-      },
-      "grid_columns_grid_mobile": {
-       "unit": "custom",
-       "size": "1fr",
-       "sizes": []
-      },
-      "grid_gaps": {
-       "column": "24",
-       "row": "12",
-       "isLinked": false,
-       "unit": "px",
-       "size": 24
-      },
-      "grid_gaps_laptop": {
-       "column": "24",
-       "row": "12",
-       "isLinked": false,
-       "unit": "px",
-       "size": 24
-      },
-      "grid_gaps_tablet": {
-       "column": "24",
-       "row": "12",
-       "isLinked": false,
-       "unit": "px",
-       "size": 24
-      },
-      "grid_gaps_mobile": {
-       "column": "24",
-       "row": "12",
-       "isLinked": false,
-       "unit": "px",
-       "size": 24
-      },
-      "grid_align_items": "end",
-      "grid_justify_items": "start",
-      "flex_align_items": "flex-end"
+      "css_classes": "tn-f-layout"
      },
      "elements": [
       {
-       "id": "3106119",
+       "id": "c6eafff",
        "elType": "widget",
        "widgetType": "heading",
        "isInner": false,
@@ -3600,12 +3557,694 @@
          "size": -0.6,
          "sizes": []
         },
-        "_title": "Projects / Title (H2)"
+        "_css_classes": "tn-f-head",
+        "_title": "Featured / Title (H2)"
        },
        "elements": []
       },
       {
-       "id": "e1711cb",
+       "id": "fdf165d",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Featured / List",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "0",
+         "row": "0",
+         "isLinked": true,
+         "unit": "px",
+         "size": 0
+        },
+        "flex_gap_laptop": {
+         "column": "0",
+         "row": "0",
+         "isLinked": true,
+         "unit": "px",
+         "size": 0
+        },
+        "flex_gap_tablet": {
+         "column": "0",
+         "row": "0",
+         "isLinked": true,
+         "unit": "px",
+         "size": 0
+        },
+        "flex_gap_mobile": {
+         "column": "0",
+         "row": "0",
+         "isLinked": true,
+         "unit": "px",
+         "size": 0
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "0",
+         "right": "0",
+         "bottom": "0",
+         "left": "0",
+         "isLinked": true
+        },
+        "css_classes": "tn-f-list"
+       },
+       "elements": [
+        {
+         "id": "95f184e",
+         "elType": "container",
+         "isInner": true,
+         "settings": {
+          "_title": "Featured / Row 1",
+          "content_width": "full",
+          "flex_direction": "row",
+          "flex_gap": {
+           "column": "24",
+           "row": "24",
+           "isLinked": true,
+           "unit": "px",
+           "size": 24
+          },
+          "flex_gap_laptop": {
+           "column": "24",
+           "row": "24",
+           "isLinked": true,
+           "unit": "px",
+           "size": 24
+          },
+          "flex_gap_tablet": {
+           "column": "24",
+           "row": "24",
+           "isLinked": true,
+           "unit": "px",
+           "size": 24
+          },
+          "flex_gap_mobile": {
+           "column": "24",
+           "row": "24",
+           "isLinked": true,
+           "unit": "px",
+           "size": 24
+          },
+          "width": {
+           "unit": "%",
+           "size": 100,
+           "sizes": []
+          },
+          "padding": {
+           "unit": "px",
+           "top": "0",
+           "right": "0",
+           "bottom": "0",
+           "left": "0",
+           "isLinked": true
+          },
+          "flex_align_items": "center",
+          "flex_wrap": "nowrap",
+          "flex_justify_content": "space-between",
+          "css_classes": "tn-row",
+          "_attributes": "data-project|0\naria-pressed|true"
+         },
+         "elements": [
+          {
+           "id": "1c83e78",
+           "elType": "container",
+           "isInner": true,
+           "settings": {
+            "_title": "Featured / Row 1 / Text",
+            "content_width": "full",
+            "flex_direction": "column",
+            "flex_gap": {
+             "column": "8",
+             "row": "8",
+             "isLinked": true,
+             "unit": "px",
+             "size": 8
+            },
+            "flex_gap_laptop": {
+             "column": "8",
+             "row": "8",
+             "isLinked": true,
+             "unit": "px",
+             "size": 8
+            },
+            "flex_gap_tablet": {
+             "column": "8",
+             "row": "8",
+             "isLinked": true,
+             "unit": "px",
+             "size": 8
+            },
+            "flex_gap_mobile": {
+             "column": "8",
+             "row": "8",
+             "isLinked": true,
+             "unit": "px",
+             "size": 8
+            },
+            "width": {
+             "unit": "%",
+             "size": 100,
+             "sizes": []
+            },
+            "padding": {
+             "unit": "px",
+             "top": "0",
+             "right": "0",
+             "bottom": "0",
+             "left": "0",
+             "isLinked": true
+            },
+            "custom_css": "selector{--width:auto;width:auto;flex:1 1 0;min-width:0;}"
+           },
+           "elements": [
+            {
+             "id": "3106119",
+             "elType": "widget",
+             "widgetType": "heading",
+             "isInner": false,
+             "settings": {
+              "title": "Great room walls and ceilings",
+              "header_size": "div",
+              "title_color": "#8F867B",
+              "typography_typography": "custom",
+              "typography_font_family": "Cormorant Garamond",
+              "typography_font_size": {
+               "unit": "px",
+               "size": 34,
+               "sizes": []
+              },
+              "typography_font_size_laptop": {
+               "unit": "px",
+               "size": 34,
+               "sizes": []
+              },
+              "typography_font_size_tablet": {
+               "unit": "px",
+               "size": 34,
+               "sizes": []
+              },
+              "typography_font_size_mobile": {
+               "unit": "px",
+               "size": 28,
+               "sizes": []
+              },
+              "typography_font_weight": "500",
+              "typography_line_height": {
+               "unit": "em",
+               "size": 1.12,
+               "sizes": []
+              },
+              "_css_classes": "tn-row-title",
+              "_title": "Featured / Row 1 / Title"
+             },
+             "elements": []
+            },
+            {
+             "id": "e1711cb",
+             "elType": "widget",
+             "widgetType": "heading",
+             "isInner": false,
+             "settings": {
+              "title": "Interior painting · Snowmass",
+              "header_size": "div",
+              "title_color": "#8F867B",
+              "typography_typography": "custom",
+              "typography_font_family": "Manrope",
+              "typography_font_size": {
+               "unit": "px",
+               "size": 14,
+               "sizes": []
+              },
+              "typography_font_weight": "400",
+              "typography_line_height": {
+               "unit": "em",
+               "size": 1.4,
+               "sizes": []
+              },
+              "_css_classes": "tn-row-meta",
+              "_title": "Featured / Row 1 / Meta"
+             },
+             "elements": []
+            }
+           ]
+          },
+          {
+           "id": "c464c55",
+           "elType": "widget",
+           "widgetType": "heading",
+           "isInner": false,
+           "settings": {
+            "title": "→",
+            "header_size": "div",
+            "title_color": "#C68B4E",
+            "typography_typography": "custom",
+            "typography_font_family": "Manrope",
+            "typography_font_size": {
+             "unit": "px",
+             "size": 22,
+             "sizes": []
+            },
+            "typography_font_weight": "400",
+            "typography_line_height": {
+             "unit": "em",
+             "size": 1,
+             "sizes": []
+            },
+            "_css_classes": "tn-row-arrow",
+            "_attributes": "aria-hidden|true",
+            "_title": "Featured / Row 1 / Arrow"
+           },
+           "elements": []
+          }
+         ]
+        },
+        {
+         "id": "3475263",
+         "elType": "container",
+         "isInner": true,
+         "settings": {
+          "_title": "Featured / Row 2",
+          "content_width": "full",
+          "flex_direction": "row",
+          "flex_gap": {
+           "column": "24",
+           "row": "24",
+           "isLinked": true,
+           "unit": "px",
+           "size": 24
+          },
+          "flex_gap_laptop": {
+           "column": "24",
+           "row": "24",
+           "isLinked": true,
+           "unit": "px",
+           "size": 24
+          },
+          "flex_gap_tablet": {
+           "column": "24",
+           "row": "24",
+           "isLinked": true,
+           "unit": "px",
+           "size": 24
+          },
+          "flex_gap_mobile": {
+           "column": "24",
+           "row": "24",
+           "isLinked": true,
+           "unit": "px",
+           "size": 24
+          },
+          "width": {
+           "unit": "%",
+           "size": 100,
+           "sizes": []
+          },
+          "padding": {
+           "unit": "px",
+           "top": "0",
+           "right": "0",
+           "bottom": "0",
+           "left": "0",
+           "isLinked": true
+          },
+          "flex_align_items": "center",
+          "flex_wrap": "nowrap",
+          "flex_justify_content": "space-between",
+          "css_classes": "tn-row",
+          "_attributes": "data-project|1\naria-pressed|false"
+         },
+         "elements": [
+          {
+           "id": "7dedc86",
+           "elType": "container",
+           "isInner": true,
+           "settings": {
+            "_title": "Featured / Row 2 / Text",
+            "content_width": "full",
+            "flex_direction": "column",
+            "flex_gap": {
+             "column": "8",
+             "row": "8",
+             "isLinked": true,
+             "unit": "px",
+             "size": 8
+            },
+            "flex_gap_laptop": {
+             "column": "8",
+             "row": "8",
+             "isLinked": true,
+             "unit": "px",
+             "size": 8
+            },
+            "flex_gap_tablet": {
+             "column": "8",
+             "row": "8",
+             "isLinked": true,
+             "unit": "px",
+             "size": 8
+            },
+            "flex_gap_mobile": {
+             "column": "8",
+             "row": "8",
+             "isLinked": true,
+             "unit": "px",
+             "size": 8
+            },
+            "width": {
+             "unit": "%",
+             "size": 100,
+             "sizes": []
+            },
+            "padding": {
+             "unit": "px",
+             "top": "0",
+             "right": "0",
+             "bottom": "0",
+             "left": "0",
+             "isLinked": true
+            },
+            "custom_css": "selector{--width:auto;width:auto;flex:1 1 0;min-width:0;}"
+           },
+           "elements": [
+            {
+             "id": "c7a1774",
+             "elType": "widget",
+             "widgetType": "heading",
+             "isInner": false,
+             "settings": {
+              "title": "Exterior repaint for a returning client",
+              "header_size": "div",
+              "title_color": "#8F867B",
+              "typography_typography": "custom",
+              "typography_font_family": "Cormorant Garamond",
+              "typography_font_size": {
+               "unit": "px",
+               "size": 34,
+               "sizes": []
+              },
+              "typography_font_size_laptop": {
+               "unit": "px",
+               "size": 34,
+               "sizes": []
+              },
+              "typography_font_size_tablet": {
+               "unit": "px",
+               "size": 34,
+               "sizes": []
+              },
+              "typography_font_size_mobile": {
+               "unit": "px",
+               "size": 28,
+               "sizes": []
+              },
+              "typography_font_weight": "500",
+              "typography_line_height": {
+               "unit": "em",
+               "size": 1.12,
+               "sizes": []
+              },
+              "_css_classes": "tn-row-title",
+              "_title": "Featured / Row 2 / Title"
+             },
+             "elements": []
+            },
+            {
+             "id": "af4fb02",
+             "elType": "widget",
+             "widgetType": "heading",
+             "isInner": false,
+             "settings": {
+              "title": "Exterior painting · Arrowhead",
+              "header_size": "div",
+              "title_color": "#8F867B",
+              "typography_typography": "custom",
+              "typography_font_family": "Manrope",
+              "typography_font_size": {
+               "unit": "px",
+               "size": 14,
+               "sizes": []
+              },
+              "typography_font_weight": "400",
+              "typography_line_height": {
+               "unit": "em",
+               "size": 1.4,
+               "sizes": []
+              },
+              "_css_classes": "tn-row-meta",
+              "_title": "Featured / Row 2 / Meta"
+             },
+             "elements": []
+            }
+           ]
+          },
+          {
+           "id": "8854901",
+           "elType": "widget",
+           "widgetType": "heading",
+           "isInner": false,
+           "settings": {
+            "title": "→",
+            "header_size": "div",
+            "title_color": "#C68B4E",
+            "typography_typography": "custom",
+            "typography_font_family": "Manrope",
+            "typography_font_size": {
+             "unit": "px",
+             "size": 22,
+             "sizes": []
+            },
+            "typography_font_weight": "400",
+            "typography_line_height": {
+             "unit": "em",
+             "size": 1,
+             "sizes": []
+            },
+            "_css_classes": "tn-row-arrow",
+            "_attributes": "aria-hidden|true",
+            "_title": "Featured / Row 2 / Arrow"
+           },
+           "elements": []
+          }
+         ]
+        },
+        {
+         "id": "c3618e1",
+         "elType": "container",
+         "isInner": true,
+         "settings": {
+          "_title": "Featured / Row 3",
+          "content_width": "full",
+          "flex_direction": "row",
+          "flex_gap": {
+           "column": "24",
+           "row": "24",
+           "isLinked": true,
+           "unit": "px",
+           "size": 24
+          },
+          "flex_gap_laptop": {
+           "column": "24",
+           "row": "24",
+           "isLinked": true,
+           "unit": "px",
+           "size": 24
+          },
+          "flex_gap_tablet": {
+           "column": "24",
+           "row": "24",
+           "isLinked": true,
+           "unit": "px",
+           "size": 24
+          },
+          "flex_gap_mobile": {
+           "column": "24",
+           "row": "24",
+           "isLinked": true,
+           "unit": "px",
+           "size": 24
+          },
+          "width": {
+           "unit": "%",
+           "size": 100,
+           "sizes": []
+          },
+          "padding": {
+           "unit": "px",
+           "top": "0",
+           "right": "0",
+           "bottom": "0",
+           "left": "0",
+           "isLinked": true
+          },
+          "flex_align_items": "center",
+          "flex_wrap": "nowrap",
+          "flex_justify_content": "space-between",
+          "css_classes": "tn-row",
+          "_attributes": "data-project|2\naria-pressed|false"
+         },
+         "elements": [
+          {
+           "id": "2f3c42b",
+           "elType": "container",
+           "isInner": true,
+           "settings": {
+            "_title": "Featured / Row 3 / Text",
+            "content_width": "full",
+            "flex_direction": "column",
+            "flex_gap": {
+             "column": "8",
+             "row": "8",
+             "isLinked": true,
+             "unit": "px",
+             "size": 8
+            },
+            "flex_gap_laptop": {
+             "column": "8",
+             "row": "8",
+             "isLinked": true,
+             "unit": "px",
+             "size": 8
+            },
+            "flex_gap_tablet": {
+             "column": "8",
+             "row": "8",
+             "isLinked": true,
+             "unit": "px",
+             "size": 8
+            },
+            "flex_gap_mobile": {
+             "column": "8",
+             "row": "8",
+             "isLinked": true,
+             "unit": "px",
+             "size": 8
+            },
+            "width": {
+             "unit": "%",
+             "size": 100,
+             "sizes": []
+            },
+            "padding": {
+             "unit": "px",
+             "top": "0",
+             "right": "0",
+             "bottom": "0",
+             "left": "0",
+             "isLinked": true
+            },
+            "custom_css": "selector{--width:auto;width:auto;flex:1 1 0;min-width:0;}"
+           },
+           "elements": [
+            {
+             "id": "e981455",
+             "elType": "widget",
+             "widgetType": "heading",
+             "isInner": false,
+             "settings": {
+              "title": "Log wash and restain",
+              "header_size": "div",
+              "title_color": "#8F867B",
+              "typography_typography": "custom",
+              "typography_font_family": "Cormorant Garamond",
+              "typography_font_size": {
+               "unit": "px",
+               "size": 34,
+               "sizes": []
+              },
+              "typography_font_size_laptop": {
+               "unit": "px",
+               "size": 34,
+               "sizes": []
+              },
+              "typography_font_size_tablet": {
+               "unit": "px",
+               "size": 34,
+               "sizes": []
+              },
+              "typography_font_size_mobile": {
+               "unit": "px",
+               "size": 28,
+               "sizes": []
+              },
+              "typography_font_weight": "500",
+              "typography_line_height": {
+               "unit": "em",
+               "size": 1.12,
+               "sizes": []
+              },
+              "_css_classes": "tn-row-title",
+              "_title": "Featured / Row 3 / Title"
+             },
+             "elements": []
+            },
+            {
+             "id": "f2cbbb9",
+             "elType": "widget",
+             "widgetType": "heading",
+             "isInner": false,
+             "settings": {
+              "title": "Log &amp; timber staining · Edwards",
+              "header_size": "div",
+              "title_color": "#8F867B",
+              "typography_typography": "custom",
+              "typography_font_family": "Manrope",
+              "typography_font_size": {
+               "unit": "px",
+               "size": 14,
+               "sizes": []
+              },
+              "typography_font_weight": "400",
+              "typography_line_height": {
+               "unit": "em",
+               "size": 1.4,
+               "sizes": []
+              },
+              "_css_classes": "tn-row-meta",
+              "_title": "Featured / Row 3 / Meta"
+             },
+             "elements": []
+            }
+           ]
+          },
+          {
+           "id": "b06d7a6",
+           "elType": "widget",
+           "widgetType": "heading",
+           "isInner": false,
+           "settings": {
+            "title": "→",
+            "header_size": "div",
+            "title_color": "#C68B4E",
+            "typography_typography": "custom",
+            "typography_font_family": "Manrope",
+            "typography_font_size": {
+             "unit": "px",
+             "size": 22,
+             "sizes": []
+            },
+            "typography_font_weight": "400",
+            "typography_line_height": {
+             "unit": "em",
+             "size": 1,
+             "sizes": []
+            },
+            "_css_classes": "tn-row-arrow",
+            "_attributes": "aria-hidden|true",
+            "_title": "Featured / Row 3 / Arrow"
+           },
+           "elements": []
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "9bae8e6",
        "elType": "widget",
        "widgetType": "button",
        "isInner": false,
@@ -3651,104 +4290,51 @@
          "size": 1,
          "sizes": []
         },
+        "_css_classes": "tn-f-link",
         "custom_css": "selector .elementor-button{white-space:nowrap;}selector .elementor-button-text{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:7px;text-decoration-color:rgba(242,236,227,0.4);}",
-        "_title": "Projects / See our work"
+        "_title": "Featured / See our work"
        },
        "elements": []
-      }
-     ]
-    },
-    {
-     "id": "c6eafff",
-     "elType": "container",
-     "isInner": true,
-     "settings": {
-      "_title": "Projects / Row",
-      "content_width": "full",
-      "flex_direction": "row",
-      "flex_gap": {
-       "column": "24",
-       "row": "48",
-       "isLinked": false,
-       "unit": "px",
-       "size": 24
       },
-      "flex_gap_laptop": {
-       "column": "24",
-       "row": "48",
-       "isLinked": false,
-       "unit": "px",
-       "size": 24
-      },
-      "flex_gap_tablet": {
-       "column": "24",
-       "row": "48",
-       "isLinked": false,
-       "unit": "px",
-       "size": 24
-      },
-      "flex_gap_mobile": {
-       "column": "24",
-       "row": "48",
-       "isLinked": false,
-       "unit": "px",
-       "size": 24
-      },
-      "width": {
-       "unit": "%",
-       "size": 100,
-       "sizes": []
-      },
-      "padding": {
-       "unit": "px",
-       "top": "0",
-       "right": "0",
-       "bottom": "0",
-       "left": "0",
-       "isLinked": true
-      },
-      "flex_wrap": "wrap"
-     },
-     "elements": [
       {
-       "id": "af4fb02",
+       "id": "5041f5e",
        "elType": "container",
        "isInner": true,
        "settings": {
-        "_title": "Projects / Project 1",
+        "_title": "Featured / Photos",
         "content_width": "full",
         "flex_direction": "column",
         "flex_gap": {
-         "column": "18",
-         "row": "18",
+         "column": "0",
+         "row": "0",
          "isLinked": true,
          "unit": "px",
-         "size": 18
+         "size": 0
         },
         "flex_gap_laptop": {
-         "column": "18",
-         "row": "18",
+         "column": "0",
+         "row": "0",
          "isLinked": true,
          "unit": "px",
-         "size": 18
+         "size": 0
         },
         "flex_gap_tablet": {
-         "column": "18",
-         "row": "18",
+         "column": "0",
+         "row": "0",
          "isLinked": true,
          "unit": "px",
-         "size": 18
+         "size": 0
         },
         "flex_gap_mobile": {
-         "column": "18",
-         "row": "18",
+         "column": "0",
+         "row": "0",
          "isLinked": true,
          "unit": "px",
-         "size": 18
+         "size": 0
         },
         "width": {
-         "unit": "px",
-         "size": 560,
+         "unit": "%",
+         "size": 100,
          "sizes": []
         },
         "padding": {
@@ -3759,39 +4345,15 @@
          "left": "0",
          "isLinked": true
         },
-        "html_tag": "a",
-        "link": {
-         "url": "/our-work/",
-         "is_external": "",
-         "nofollow": ""
-        },
-        "_flex_size": "custom",
-        "_flex_grow": 2,
-        "_flex_shrink": 1,
-        "width_laptop": {
-         "unit": "px",
-         "size": 560,
-         "sizes": []
-        },
-        "width_tablet": {
-         "unit": "px",
-         "size": 560,
-         "sizes": []
-        },
-        "width_mobile": {
-         "unit": "%",
-         "size": 100,
-         "sizes": []
-        },
-        "custom_css": "selector{min-width:0;}"
+        "css_classes": "tn-f-photos"
        },
        "elements": [
         {
-         "id": "f306f0c",
+         "id": "2a42721",
          "elType": "container",
          "isInner": true,
          "settings": {
-          "_title": "Projects / Project 1 / Photo",
+          "_title": "Featured / Photo 1",
           "content_width": "full",
           "flex_direction": "column",
           "flex_gap": {
@@ -3841,355 +4403,25 @@
           "background_size": "cover",
           "background_repeat": "no-repeat",
           "flex_justify_content": "flex-end",
-          "css_classes": "tn-photo",
+          "css_classes": "tn-photo tn-f-photo is-active",
           "min_height": {
            "unit": "px",
-           "size": 500,
+           "size": 680,
            "sizes": []
           },
-          "min_height_laptop": {
-           "unit": "px",
-           "size": 468,
-           "sizes": []
-          },
-          "min_height_tablet": {
-           "unit": "px",
-           "size": 353,
-           "sizes": []
-          },
-          "min_height_mobile": {
-           "unit": "px",
-           "size": 340,
-           "sizes": []
-          }
-         },
-         "elements": [
-          {
-           "id": "95f184e",
-           "elType": "widget",
-           "widgetType": "icon-list",
-           "isInner": false,
-           "settings": {
-            "icon_list": [
-             {
-              "_id": "c464c55",
-              "text": "Our project photo",
-              "selected_icon": {
-               "value": {
-                "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/camera.svg",
-                "id": 1433
-               },
-               "library": "svg"
-              }
-             }
-            ],
-            "icon_color": "#F2ECE399",
-            "text_color": "#F2ECE399",
-            "icon_size": {
-             "unit": "px",
-             "size": 14,
-             "sizes": []
-            },
-            "text_indent": {
-             "unit": "px",
-             "size": 8,
-             "sizes": []
-            },
-            "space_between": {
-             "unit": "px",
-             "size": 0,
-             "sizes": []
-            },
-            "icon_typography_typography": "custom",
-            "icon_typography_font_family": "Manrope",
-            "icon_typography_font_size": {
-             "unit": "px",
-             "size": 12,
-             "sizes": []
-            },
-            "icon_typography_font_weight": "400",
-            "icon_typography_line_height": {
-             "unit": "em",
-             "size": 1.4,
-             "sizes": []
-            },
-            "_title": "Photo label (delete when photo added)"
-           },
-           "elements": []
-          }
-         ]
-        },
-        {
-         "id": "c7a1774",
-         "elType": "container",
-         "isInner": true,
-         "settings": {
-          "_title": "Projects / Project 1 / Caption",
-          "content_width": "full",
-          "flex_direction": "column",
-          "flex_gap": {
-           "column": "6",
-           "row": "6",
-           "isLinked": true,
-           "unit": "px",
-           "size": 6
-          },
-          "flex_gap_laptop": {
-           "column": "6",
-           "row": "6",
-           "isLinked": true,
-           "unit": "px",
-           "size": 6
-          },
-          "flex_gap_tablet": {
-           "column": "6",
-           "row": "6",
-           "isLinked": true,
-           "unit": "px",
-           "size": 6
-          },
-          "flex_gap_mobile": {
-           "column": "6",
-           "row": "6",
-           "isLinked": true,
-           "unit": "px",
-           "size": 6
-          },
-          "width": {
-           "unit": "%",
-           "size": 100,
-           "sizes": []
-          },
-          "padding": {
-           "unit": "px",
-           "top": "0",
-           "right": "0",
-           "bottom": "0",
-           "left": "0",
-           "isLinked": true
-          }
+          "_attributes": "data-project|0"
          },
          "elements": [
           {
            "id": "bba4c70",
            "elType": "widget",
-           "widgetType": "heading",
-           "isInner": false,
-           "settings": {
-            "title": "Great room walls and ceilings, Snowmass",
-            "header_size": "p",
-            "title_color": "#F2ECE3",
-            "typography_typography": "custom",
-            "typography_font_family": "Manrope",
-            "typography_font_size": {
-             "unit": "px",
-             "size": 17,
-             "sizes": []
-            },
-            "typography_font_weight": "500",
-            "typography_line_height": {
-             "unit": "em",
-             "size": 1.45,
-             "sizes": []
-            },
-            "_title": "Projects / Project 1 / Title"
-           },
-           "elements": []
-          },
-          {
-           "id": "2a42721",
-           "elType": "widget",
-           "widgetType": "heading",
-           "isInner": false,
-           "settings": {
-            "title": "Interior painting",
-            "header_size": "p",
-            "title_color": "#B3A99C",
-            "typography_typography": "custom",
-            "typography_font_family": "Manrope",
-            "typography_font_size": {
-             "unit": "px",
-             "size": 14,
-             "sizes": []
-            },
-            "typography_font_weight": "400",
-            "typography_line_height": {
-             "unit": "em",
-             "size": 1.5,
-             "sizes": []
-            },
-            "_title": "Projects / Project 1 / Service"
-           },
-           "elements": []
-          }
-         ]
-        }
-       ]
-      },
-      {
-       "id": "e981455",
-       "elType": "container",
-       "isInner": true,
-       "settings": {
-        "_title": "Projects / Project 2",
-        "content_width": "full",
-        "flex_direction": "column",
-        "flex_gap": {
-         "column": "18",
-         "row": "18",
-         "isLinked": true,
-         "unit": "px",
-         "size": 18
-        },
-        "flex_gap_laptop": {
-         "column": "18",
-         "row": "18",
-         "isLinked": true,
-         "unit": "px",
-         "size": 18
-        },
-        "flex_gap_tablet": {
-         "column": "18",
-         "row": "18",
-         "isLinked": true,
-         "unit": "px",
-         "size": 18
-        },
-        "flex_gap_mobile": {
-         "column": "18",
-         "row": "18",
-         "isLinked": true,
-         "unit": "px",
-         "size": 18
-        },
-        "width": {
-         "unit": "px",
-         "size": 280,
-         "sizes": []
-        },
-        "padding": {
-         "unit": "px",
-         "top": "0",
-         "right": "0",
-         "bottom": "0",
-         "left": "0",
-         "isLinked": true
-        },
-        "html_tag": "a",
-        "link": {
-         "url": "/our-work/",
-         "is_external": "",
-         "nofollow": ""
-        },
-        "_flex_size": "custom",
-        "_flex_grow": 1,
-        "_flex_shrink": 1,
-        "width_laptop": {
-         "unit": "px",
-         "size": 280,
-         "sizes": []
-        },
-        "width_tablet": {
-         "unit": "px",
-         "size": 280,
-         "sizes": []
-        },
-        "width_mobile": {
-         "unit": "%",
-         "size": 100,
-         "sizes": []
-        },
-        "custom_css": "selector{min-width:0;}"
-       },
-       "elements": [
-        {
-         "id": "3475263",
-         "elType": "container",
-         "isInner": true,
-         "settings": {
-          "_title": "Projects / Project 2 / Photo",
-          "content_width": "full",
-          "flex_direction": "column",
-          "flex_gap": {
-           "column": "0",
-           "row": "0",
-           "isLinked": true,
-           "unit": "px",
-           "size": 0
-          },
-          "flex_gap_laptop": {
-           "column": "0",
-           "row": "0",
-           "isLinked": true,
-           "unit": "px",
-           "size": 0
-          },
-          "flex_gap_tablet": {
-           "column": "0",
-           "row": "0",
-           "isLinked": true,
-           "unit": "px",
-           "size": 0
-          },
-          "flex_gap_mobile": {
-           "column": "0",
-           "row": "0",
-           "isLinked": true,
-           "unit": "px",
-           "size": 0
-          },
-          "width": {
-           "unit": "%",
-           "size": 100,
-           "sizes": []
-          },
-          "padding": {
-           "unit": "px",
-           "top": "0",
-           "right": "20",
-           "bottom": "18",
-           "left": "20",
-           "isLinked": false
-          },
-          "background_background": "classic",
-          "background_color": "#222B25",
-          "background_position": "center center",
-          "background_size": "cover",
-          "background_repeat": "no-repeat",
-          "flex_justify_content": "flex-end",
-          "css_classes": "tn-photo",
-          "min_height": {
-           "unit": "px",
-           "size": 500,
-           "sizes": []
-          },
-          "min_height_laptop": {
-           "unit": "px",
-           "size": 468,
-           "sizes": []
-          },
-          "min_height_tablet": {
-           "unit": "px",
-           "size": 353,
-           "sizes": []
-          },
-          "min_height_mobile": {
-           "unit": "px",
-           "size": 340,
-           "sizes": []
-          }
-         },
-         "elements": [
-          {
-           "id": "8854901",
-           "elType": "widget",
            "widgetType": "icon-list",
            "isInner": false,
            "settings": {
             "icon_list": [
              {
-              "_id": "7dedc86",
-              "text": "Our project photo",
+              "_id": "f306f0c",
+              "text": "Our project photo: Snowmass great room",
               "selected_icon": {
                "value": {
                 "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/camera.svg",
@@ -4240,36 +4472,36 @@
          "elType": "container",
          "isInner": true,
          "settings": {
-          "_title": "Projects / Project 2 / Caption",
+          "_title": "Featured / Photo 2",
           "content_width": "full",
           "flex_direction": "column",
           "flex_gap": {
-           "column": "6",
-           "row": "6",
+           "column": "0",
+           "row": "0",
            "isLinked": true,
            "unit": "px",
-           "size": 6
+           "size": 0
           },
           "flex_gap_laptop": {
-           "column": "6",
-           "row": "6",
+           "column": "0",
+           "row": "0",
            "isLinked": true,
            "unit": "px",
-           "size": 6
+           "size": 0
           },
           "flex_gap_tablet": {
-           "column": "6",
-           "row": "6",
+           "column": "0",
+           "row": "0",
            "isLinked": true,
            "unit": "px",
-           "size": 6
+           "size": 0
           },
           "flex_gap_mobile": {
-           "column": "6",
-           "row": "6",
+           "column": "0",
+           "row": "0",
            "isLinked": true,
            "unit": "px",
-           "size": 6
+           "size": 0
           },
           "width": {
            "unit": "%",
@@ -4279,151 +4511,87 @@
           "padding": {
            "unit": "px",
            "top": "0",
-           "right": "0",
-           "bottom": "0",
-           "left": "0",
-           "isLinked": true
-          }
+           "right": "20",
+           "bottom": "18",
+           "left": "20",
+           "isLinked": false
+          },
+          "background_background": "classic",
+          "background_color": "#222B25",
+          "background_position": "center center",
+          "background_size": "cover",
+          "background_repeat": "no-repeat",
+          "flex_justify_content": "flex-end",
+          "css_classes": "tn-photo tn-f-photo",
+          "min_height": {
+           "unit": "px",
+           "size": 680,
+           "sizes": []
+          },
+          "_attributes": "data-project|1"
          },
          "elements": [
           {
-           "id": "8b6bc3c",
-           "elType": "widget",
-           "widgetType": "heading",
-           "isInner": false,
-           "settings": {
-            "title": "Exterior repaint for a returning client, Arrowhead",
-            "header_size": "p",
-            "title_color": "#F2ECE3",
-            "typography_typography": "custom",
-            "typography_font_family": "Manrope",
-            "typography_font_size": {
-             "unit": "px",
-             "size": 17,
-             "sizes": []
-            },
-            "typography_font_weight": "500",
-            "typography_line_height": {
-             "unit": "em",
-             "size": 1.45,
-             "sizes": []
-            },
-            "_title": "Projects / Project 2 / Title"
-           },
-           "elements": []
-          },
-          {
            "id": "f261e34",
            "elType": "widget",
-           "widgetType": "heading",
+           "widgetType": "icon-list",
            "isInner": false,
            "settings": {
-            "title": "Exterior painting",
-            "header_size": "p",
-            "title_color": "#B3A99C",
-            "typography_typography": "custom",
-            "typography_font_family": "Manrope",
-            "typography_font_size": {
+            "icon_list": [
+             {
+              "_id": "8b6bc3c",
+              "text": "Our project photo: Arrowhead exterior",
+              "selected_icon": {
+               "value": {
+                "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/camera.svg",
+                "id": 1433
+               },
+               "library": "svg"
+              }
+             }
+            ],
+            "icon_color": "#F2ECE399",
+            "text_color": "#F2ECE399",
+            "icon_size": {
              "unit": "px",
              "size": 14,
              "sizes": []
             },
-            "typography_font_weight": "400",
-            "typography_line_height": {
-             "unit": "em",
-             "size": 1.5,
+            "text_indent": {
+             "unit": "px",
+             "size": 8,
              "sizes": []
             },
-            "_title": "Projects / Project 2 / Service"
+            "space_between": {
+             "unit": "px",
+             "size": 0,
+             "sizes": []
+            },
+            "icon_typography_typography": "custom",
+            "icon_typography_font_family": "Manrope",
+            "icon_typography_font_size": {
+             "unit": "px",
+             "size": 12,
+             "sizes": []
+            },
+            "icon_typography_font_weight": "400",
+            "icon_typography_line_height": {
+             "unit": "em",
+             "size": 1.4,
+             "sizes": []
+            },
+            "_title": "Photo label (delete when photo added)"
            },
            "elements": []
           }
          ]
-        }
-       ]
-      },
-      {
-       "id": "882afe6",
-       "elType": "container",
-       "isInner": true,
-       "settings": {
-        "_title": "Projects / Project 3",
-        "content_width": "full",
-        "flex_direction": "column",
-        "flex_gap": {
-         "column": "18",
-         "row": "18",
-         "isLinked": true,
-         "unit": "px",
-         "size": 18
         },
-        "flex_gap_laptop": {
-         "column": "18",
-         "row": "18",
-         "isLinked": true,
-         "unit": "px",
-         "size": 18
-        },
-        "flex_gap_tablet": {
-         "column": "18",
-         "row": "18",
-         "isLinked": true,
-         "unit": "px",
-         "size": 18
-        },
-        "flex_gap_mobile": {
-         "column": "18",
-         "row": "18",
-         "isLinked": true,
-         "unit": "px",
-         "size": 18
-        },
-        "width": {
-         "unit": "px",
-         "size": 280,
-         "sizes": []
-        },
-        "padding": {
-         "unit": "px",
-         "top": "0",
-         "right": "0",
-         "bottom": "0",
-         "left": "0",
-         "isLinked": true
-        },
-        "html_tag": "a",
-        "link": {
-         "url": "/our-work/",
-         "is_external": "",
-         "nofollow": ""
-        },
-        "_flex_size": "custom",
-        "_flex_grow": 1,
-        "_flex_shrink": 1,
-        "width_laptop": {
-         "unit": "px",
-         "size": 280,
-         "sizes": []
-        },
-        "width_tablet": {
-         "unit": "px",
-         "size": 280,
-         "sizes": []
-        },
-        "width_mobile": {
-         "unit": "%",
-         "size": 100,
-         "sizes": []
-        },
-        "custom_css": "selector{min-width:0;}"
-       },
-       "elements": [
         {
-         "id": "b06d7a6",
+         "id": "882afe6",
          "elType": "container",
          "isInner": true,
          "settings": {
-          "_title": "Projects / Project 3 / Photo",
+          "_title": "Featured / Photo 3",
           "content_width": "full",
           "flex_direction": "column",
           "flex_gap": {
@@ -4473,39 +4641,25 @@
           "background_size": "cover",
           "background_repeat": "no-repeat",
           "flex_justify_content": "flex-end",
-          "css_classes": "tn-photo",
+          "css_classes": "tn-photo tn-f-photo",
           "min_height": {
            "unit": "px",
-           "size": 500,
+           "size": 680,
            "sizes": []
           },
-          "min_height_laptop": {
-           "unit": "px",
-           "size": 468,
-           "sizes": []
-          },
-          "min_height_tablet": {
-           "unit": "px",
-           "size": 353,
-           "sizes": []
-          },
-          "min_height_mobile": {
-           "unit": "px",
-           "size": 340,
-           "sizes": []
-          }
+          "_attributes": "data-project|2"
          },
          "elements": [
           {
-           "id": "2f3c42b",
+           "id": "bc9f21d",
            "elType": "widget",
            "widgetType": "icon-list",
            "isInner": false,
            "settings": {
             "icon_list": [
              {
-              "_id": "f2cbbb9",
-              "text": "Our project photo",
+              "_id": "84f09af",
+              "text": "Our project photo: Edwards log home",
               "selected_icon": {
                "value": {
                 "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/camera.svg",
@@ -4550,111 +4704,6 @@
            "elements": []
           }
          ]
-        },
-        {
-         "id": "bc9f21d",
-         "elType": "container",
-         "isInner": true,
-         "settings": {
-          "_title": "Projects / Project 3 / Caption",
-          "content_width": "full",
-          "flex_direction": "column",
-          "flex_gap": {
-           "column": "6",
-           "row": "6",
-           "isLinked": true,
-           "unit": "px",
-           "size": 6
-          },
-          "flex_gap_laptop": {
-           "column": "6",
-           "row": "6",
-           "isLinked": true,
-           "unit": "px",
-           "size": 6
-          },
-          "flex_gap_tablet": {
-           "column": "6",
-           "row": "6",
-           "isLinked": true,
-           "unit": "px",
-           "size": 6
-          },
-          "flex_gap_mobile": {
-           "column": "6",
-           "row": "6",
-           "isLinked": true,
-           "unit": "px",
-           "size": 6
-          },
-          "width": {
-           "unit": "%",
-           "size": 100,
-           "sizes": []
-          },
-          "padding": {
-           "unit": "px",
-           "top": "0",
-           "right": "0",
-           "bottom": "0",
-           "left": "0",
-           "isLinked": true
-          }
-         },
-         "elements": [
-          {
-           "id": "c3618e1",
-           "elType": "widget",
-           "widgetType": "heading",
-           "isInner": false,
-           "settings": {
-            "title": "Log wash and restain, Edwards",
-            "header_size": "p",
-            "title_color": "#F2ECE3",
-            "typography_typography": "custom",
-            "typography_font_family": "Manrope",
-            "typography_font_size": {
-             "unit": "px",
-             "size": 17,
-             "sizes": []
-            },
-            "typography_font_weight": "500",
-            "typography_line_height": {
-             "unit": "em",
-             "size": 1.45,
-             "sizes": []
-            },
-            "_title": "Projects / Project 3 / Title"
-           },
-           "elements": []
-          },
-          {
-           "id": "84f09af",
-           "elType": "widget",
-           "widgetType": "heading",
-           "isInner": false,
-           "settings": {
-            "title": "Log &amp; timber staining",
-            "header_size": "p",
-            "title_color": "#B3A99C",
-            "typography_typography": "custom",
-            "typography_font_family": "Manrope",
-            "typography_font_size": {
-             "unit": "px",
-             "size": 14,
-             "sizes": []
-            },
-            "typography_font_weight": "400",
-            "typography_line_height": {
-             "unit": "em",
-             "size": 1.5,
-             "sizes": []
-            },
-            "_title": "Projects / Project 3 / Service"
-           },
-           "elements": []
-          }
-         ]
         }
        ]
       }
@@ -4663,7 +4712,7 @@
    ]
   },
   {
-   "id": "c2c5552",
+   "id": "7edd77d",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -4717,7 +4766,7 @@
    },
    "elements": [
     {
-     "id": "907c7e3",
+     "id": "76e6112",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -4823,7 +4872,7 @@
      },
      "elements": [
       {
-       "id": "b598d0d",
+       "id": "f26b524",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -4886,14 +4935,14 @@
        },
        "elements": [
         {
-         "id": "dcbfd2e",
+         "id": "de0d8d8",
          "elType": "widget",
          "widgetType": "icon-list",
          "isInner": false,
          "settings": {
           "icon_list": [
            {
-            "_id": "9c53765",
+            "_id": "8a98b9a",
             "text": "Photo: mountain home in snow, lights on",
             "selected_icon": {
              "value": {
@@ -4941,7 +4990,7 @@
        ]
       },
       {
-       "id": "5ec0a95",
+       "id": "c2c5552",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -5017,7 +5066,7 @@
        },
        "elements": [
         {
-         "id": "9bae8e6",
+         "id": "5ec0a95",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -5064,7 +5113,7 @@
          "elements": []
         },
         {
-         "id": "5041f5e",
+         "id": "9c53765",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -5094,7 +5143,7 @@
          "elements": []
         },
         {
-         "id": "bb74fe5",
+         "id": "907c7e3",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -5147,7 +5196,7 @@
          },
          "elements": [
           {
-           "id": "9f4ecb4",
+           "id": "dcbfd2e",
            "elType": "widget",
            "widgetType": "button",
            "isInner": false,
@@ -5199,7 +5248,7 @@
            "elements": []
           },
           {
-           "id": "76eebc5",
+           "id": "b598d0d",
            "elType": "widget",
            "widgetType": "button",
            "isInner": false,
@@ -5260,7 +5309,7 @@
    ]
   },
   {
-   "id": "7edd77d",
+   "id": "125ff87",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -5341,7 +5390,7 @@
    },
    "elements": [
     {
-     "id": "8a98b9a",
+     "id": "43d9180",
      "elType": "widget",
      "widgetType": "heading",
      "isInner": false,
@@ -5388,14 +5437,14 @@
      "elements": []
     },
     {
-     "id": "76e6112",
+     "id": "54df8a1",
      "elType": "widget",
      "widgetType": "testimonial-carousel",
      "isInner": false,
      "settings": {
       "slides": [
        {
-        "_id": "de0d8d8",
+        "_id": "5b5c1a9",
         "content": "“Oto and his crew were wonderful. They were efficient, professional and very conscious of our budget. We would absolutely use them again.”",
         "image": {
          "url": "",
@@ -5405,7 +5454,7 @@
         "title": "Eagle"
        },
        {
-        "_id": "f26b524",
+        "_id": "e4f398e",
         "content": "“Excellent job! Christian and his father were on time, professional, clean and did an excellent job on my accent wall. Very clean lines.”",
         "image": {
          "url": "",
@@ -5512,7 +5561,7 @@
    ]
   },
   {
-   "id": "6c24c1a",
+   "id": "8c4e424",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -5593,7 +5642,7 @@
    },
    "elements": [
     {
-     "id": "8d51055",
+     "id": "c1515ff",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -5648,7 +5697,7 @@
      },
      "elements": [
       {
-       "id": "125ff87",
+       "id": "a8e6e5b",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -5701,7 +5750,7 @@
        },
        "elements": [
         {
-         "id": "e4f398e",
+         "id": "b7d8335",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -5728,7 +5777,7 @@
          "elements": []
         },
         {
-         "id": "54df8a1",
+         "id": "f1cd7be",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -5780,7 +5829,7 @@
          },
          "elements": [
           {
-           "id": "43d9180",
+           "id": "1879d95",
            "elType": "widget",
            "widgetType": "rating",
            "isInner": false,
@@ -5812,7 +5861,7 @@
            "elements": []
           },
           {
-           "id": "5b5c1a9",
+           "id": "365c28e",
            "elType": "widget",
            "widgetType": "heading",
            "isInner": false,
@@ -5842,173 +5891,11 @@
        ]
       },
       {
-       "id": "f1cd7be",
-       "elType": "container",
-       "isInner": true,
-       "settings": {
-        "_title": "Stats / BBB",
-        "content_width": "full",
-        "flex_direction": "row",
-        "flex_gap": {
-         "column": "18",
-         "row": "18",
-         "isLinked": true,
-         "unit": "px",
-         "size": 18
-        },
-        "flex_gap_laptop": {
-         "column": "18",
-         "row": "18",
-         "isLinked": true,
-         "unit": "px",
-         "size": 18
-        },
-        "flex_gap_tablet": {
-         "column": "18",
-         "row": "18",
-         "isLinked": true,
-         "unit": "px",
-         "size": 18
-        },
-        "flex_gap_mobile": {
-         "column": "18",
-         "row": "18",
-         "isLinked": true,
-         "unit": "px",
-         "size": 18
-        },
-        "width": {
-         "unit": "%",
-         "size": 100,
-         "sizes": []
-        },
-        "padding": {
-         "unit": "px",
-         "top": "0",
-         "right": "0",
-         "bottom": "0",
-         "left": "0",
-         "isLinked": true
-        },
-        "flex_align_items": "center",
-        "custom_css": "selector{--width:auto;width:auto;min-width:0;}"
-       },
-       "elements": [
-        {
-         "id": "365c28e",
-         "elType": "widget",
-         "widgetType": "heading",
-         "isInner": false,
-         "settings": {
-          "title": "A+",
-          "header_size": "div",
-          "title_color": "#F2ECE3",
-          "typography_typography": "custom",
-          "typography_font_family": "Cormorant Garamond",
-          "typography_font_size": {
-           "unit": "px",
-           "size": 60,
-           "sizes": []
-          },
-          "typography_font_weight": "500",
-          "typography_line_height": {
-           "unit": "em",
-           "size": 1,
-           "sizes": []
-          },
-          "custom_css": "selector .elementor-heading-title{font-variant-numeric:lining-nums;font-feature-settings:'lnum' 1;}",
-          "_title": "Stats / BBB / Figure"
-         },
-         "elements": []
-        },
-        {
-         "id": "b7d8335",
-         "elType": "container",
-         "isInner": true,
-         "settings": {
-          "_title": "Stats / BBB / Label",
-          "content_width": "full",
-          "flex_direction": "column",
-          "flex_gap": {
-           "column": "6",
-           "row": "6",
-           "isLinked": true,
-           "unit": "px",
-           "size": 6
-          },
-          "flex_gap_laptop": {
-           "column": "6",
-           "row": "6",
-           "isLinked": true,
-           "unit": "px",
-           "size": 6
-          },
-          "flex_gap_tablet": {
-           "column": "6",
-           "row": "6",
-           "isLinked": true,
-           "unit": "px",
-           "size": 6
-          },
-          "flex_gap_mobile": {
-           "column": "6",
-           "row": "6",
-           "isLinked": true,
-           "unit": "px",
-           "size": 6
-          },
-          "width": {
-           "unit": "%",
-           "size": 100,
-           "sizes": []
-          },
-          "padding": {
-           "unit": "px",
-           "top": "0",
-           "right": "0",
-           "bottom": "0",
-           "left": "0",
-           "isLinked": true
-          },
-          "custom_css": "selector{--width:auto;width:auto;min-width:0;}"
-         },
-         "elements": [
-          {
-           "id": "1879d95",
-           "elType": "widget",
-           "widgetType": "heading",
-           "isInner": false,
-           "settings": {
-            "title": "BBB accredited",
-            "header_size": "div",
-            "title_color": "#B3A99C",
-            "typography_typography": "custom",
-            "typography_font_family": "Manrope",
-            "typography_font_size": {
-             "unit": "px",
-             "size": 14,
-             "sizes": []
-            },
-            "typography_font_weight": "400",
-            "typography_line_height": {
-             "unit": "em",
-             "size": 1.4,
-             "sizes": []
-            },
-            "_title": "Stats / BBB / Label"
-           },
-           "elements": []
-          }
-         ]
-        }
-       ]
-      },
-      {
        "id": "fd4d19b",
        "elType": "container",
        "isInner": true,
        "settings": {
-        "_title": "Stats / Google",
+        "_title": "Stats / BBB",
         "content_width": "full",
         "flex_direction": "row",
         "flex_gap": {
@@ -6062,6 +5949,168 @@
          "widgetType": "heading",
          "isInner": false,
          "settings": {
+          "title": "A+",
+          "header_size": "div",
+          "title_color": "#F2ECE3",
+          "typography_typography": "custom",
+          "typography_font_family": "Cormorant Garamond",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 60,
+           "sizes": []
+          },
+          "typography_font_weight": "500",
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1,
+           "sizes": []
+          },
+          "custom_css": "selector .elementor-heading-title{font-variant-numeric:lining-nums;font-feature-settings:'lnum' 1;}",
+          "_title": "Stats / BBB / Figure"
+         },
+         "elements": []
+        },
+        {
+         "id": "95dc0a6",
+         "elType": "container",
+         "isInner": true,
+         "settings": {
+          "_title": "Stats / BBB / Label",
+          "content_width": "full",
+          "flex_direction": "column",
+          "flex_gap": {
+           "column": "6",
+           "row": "6",
+           "isLinked": true,
+           "unit": "px",
+           "size": 6
+          },
+          "flex_gap_laptop": {
+           "column": "6",
+           "row": "6",
+           "isLinked": true,
+           "unit": "px",
+           "size": 6
+          },
+          "flex_gap_tablet": {
+           "column": "6",
+           "row": "6",
+           "isLinked": true,
+           "unit": "px",
+           "size": 6
+          },
+          "flex_gap_mobile": {
+           "column": "6",
+           "row": "6",
+           "isLinked": true,
+           "unit": "px",
+           "size": 6
+          },
+          "width": {
+           "unit": "%",
+           "size": 100,
+           "sizes": []
+          },
+          "padding": {
+           "unit": "px",
+           "top": "0",
+           "right": "0",
+           "bottom": "0",
+           "left": "0",
+           "isLinked": true
+          },
+          "custom_css": "selector{--width:auto;width:auto;min-width:0;}"
+         },
+         "elements": [
+          {
+           "id": "854e64f",
+           "elType": "widget",
+           "widgetType": "heading",
+           "isInner": false,
+           "settings": {
+            "title": "BBB accredited",
+            "header_size": "div",
+            "title_color": "#B3A99C",
+            "typography_typography": "custom",
+            "typography_font_family": "Manrope",
+            "typography_font_size": {
+             "unit": "px",
+             "size": 14,
+             "sizes": []
+            },
+            "typography_font_weight": "400",
+            "typography_line_height": {
+             "unit": "em",
+             "size": 1.4,
+             "sizes": []
+            },
+            "_title": "Stats / BBB / Label"
+           },
+           "elements": []
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "52969a5",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Stats / Google",
+        "content_width": "full",
+        "flex_direction": "row",
+        "flex_gap": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "flex_gap_laptop": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "flex_gap_tablet": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "flex_gap_mobile": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "0",
+         "right": "0",
+         "bottom": "0",
+         "left": "0",
+         "isLinked": true
+        },
+        "flex_align_items": "center",
+        "custom_css": "selector{--width:auto;width:auto;min-width:0;}"
+       },
+       "elements": [
+        {
+         "id": "fbe80fa",
+         "elType": "widget",
+         "widgetType": "heading",
+         "isInner": false,
+         "settings": {
           "title": "5.0",
           "header_size": "div",
           "title_color": "#F2ECE3",
@@ -6084,7 +6133,7 @@
          "elements": []
         },
         {
-         "id": "95dc0a6",
+         "id": "43288e1",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -6136,7 +6185,7 @@
          },
          "elements": [
           {
-           "id": "a8e6e5b",
+           "id": "8d51055",
            "elType": "widget",
            "widgetType": "rating",
            "isInner": false,
@@ -6168,7 +6217,7 @@
            "elements": []
           },
           {
-           "id": "854e64f",
+           "id": "6c24c1a",
            "elType": "widget",
            "widgetType": "heading",
            "isInner": false,
@@ -6202,7 +6251,7 @@
    ]
   },
   {
-   "id": "e7aa220",
+   "id": "54371ff",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -6299,7 +6348,7 @@
    },
    "elements": [
     {
-     "id": "7cffb0f",
+     "id": "b60741f",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -6407,7 +6456,7 @@
      },
      "elements": [
       {
-       "id": "3edc49c",
+       "id": "2075a5b",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -6459,7 +6508,7 @@
        },
        "elements": [
         {
-         "id": "83f29c6",
+         "id": "ca5c875",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -6510,7 +6559,7 @@
          },
          "elements": [
           {
-           "id": "93e2665",
+           "id": "7cffb0f",
            "elType": "widget",
            "widgetType": "heading",
            "isInner": false,
@@ -6557,7 +6606,7 @@
            "elements": []
           },
           {
-           "id": "5242c22",
+           "id": "e7aa220",
            "elType": "widget",
            "widgetType": "text-editor",
            "isInner": false,
@@ -6589,7 +6638,7 @@
          ]
         },
         {
-         "id": "fc0643b",
+         "id": "8aa9541",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,
@@ -6656,7 +6705,7 @@
        ]
       },
       {
-       "id": "d8fb445",
+       "id": "3edc49c",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -6741,7 +6790,7 @@
        },
        "elements": [
         {
-         "id": "803e53c",
+         "id": "5242c22",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -6792,7 +6841,7 @@
          },
          "elements": [
           {
-           "id": "dfd8c36",
+           "id": "d8fb445",
            "elType": "widget",
            "widgetType": "heading",
            "isInner": false,
@@ -6818,7 +6867,7 @@
            "elements": []
           },
           {
-           "id": "292f09a",
+           "id": "93e2665",
            "elType": "widget",
            "widgetType": "text-editor",
            "isInner": false,
@@ -6850,7 +6899,7 @@
          ]
         },
         {
-         "id": "c76dc0c",
+         "id": "fc0643b",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -6901,7 +6950,7 @@
          },
          "elements": [
           {
-           "id": "fab42bd",
+           "id": "c76dc0c",
            "elType": "widget",
            "widgetType": "form",
            "isInner": false,
@@ -6910,7 +6959,7 @@
             "form_id": "tn-estimate-form",
             "form_fields": [
              {
-              "_id": "189b512",
+              "_id": "fab42bd",
               "custom_id": "name",
               "field_type": "text",
               "field_label": "Name",
@@ -6919,7 +6968,7 @@
               "width_mobile": "50"
              },
              {
-              "_id": "e4d6d27",
+              "_id": "dfd8c36",
               "custom_id": "phone",
               "field_type": "tel",
               "field_label": "Phone",
@@ -6928,7 +6977,7 @@
               "width_mobile": "50"
              },
              {
-              "_id": "5a41f8e",
+              "_id": "292f09a",
               "custom_id": "email",
               "field_type": "email",
               "field_label": "Email",
@@ -6937,7 +6986,7 @@
               "width_mobile": "50"
              },
              {
-              "_id": "611070a",
+              "_id": "803e53c",
               "custom_id": "town",
               "field_type": "select",
               "field_label": "Town",
@@ -6947,7 +6996,7 @@
               "field_options": "Select a town|\nAspen\nSnowmass\nBasalt\nCarbondale\nGlenwood Springs\nVail\nBeaver Creek\nAvon\nEdwards\nEagle\nGypsum\nBreckenridge\nOther"
              },
              {
-              "_id": "8528ea7",
+              "_id": "c07822d",
               "custom_id": "need",
               "field_type": "select",
               "field_label": "What do you need?",
@@ -7073,7 +7122,7 @@
            "elements": []
           },
           {
-           "id": "c07822d",
+           "id": "83f29c6",
            "elType": "widget",
            "widgetType": "text-editor",
            "isInner": false,

@@ -240,3 +240,11 @@ Container `Seasonal Offer`: change the H2 to **Talk to us about your project** a
 - **No visible placeholders:** all bracketed placeholders are replaced with temporary copy (email, offer dates and discount, paint brands, warranty length, Google count). `output/CLIENT-CHECKLIST.md` lists every item to confirm with the client. Both forms' Email To is temporarily `info@topnotch-painting.com`, so leads go there until it's changed.
 - **Why grid:** the horizontal rules now stop at the grid's outer edges; the vertical rules still run the full section height.
 - **Why grid hover:** each cell fades to rgba(242,236,227,0.03) on hover (0.35s), just a touch lighter than Spruce.
+- **Featured Projects is now Option C, the "project index"** (replaces the 2:1:1 photo row; see `featured-projects-option-c.html`).
+  - **Section and layout:** the section has ID `tn-featured`. A grid sets a 520px list column plus a photo column (gap 80px). On tablet and phone it becomes one column in this order: heading, photo, list, link.
+  - **Rows:** each row is a container ("Featured / Row 1–3") with two Heading widgets (title, meta) and an amber "→". Attributes carry `data-project` and `aria-pressed`.
+  - **Photos:** three stacked photo slots ("Featured / Photo 1–3", same `data-project`) in a 680 / 520 / 360px frame, each with its "Photo label (delete when photo added)". Drop each project's photo into its slot's background.
+  - **Script:** the HTML widget "Featured / Photo switcher (script)" gives each row role=button and tabindex 0. Click, tap, Enter or Space select a row, as does hover on devices that support it. It keeps aria-pressed in sync, cross-fades the photo, and selects the first project on load.
+  - **CSS:** all section CSS is scoped to `#tn-featured` in the section's Custom CSS, including prefers-reduced-motion.
+  - **Testing:** hover, click and keyboard Enter switching were checked on staging. No overflow at 1440 / 980 / 600 / 390.
+  - **Project links:** rows only switch the photo for now. Add a link per row once project pages exist.

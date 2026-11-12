@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Top Notch Painting — Featured projects (Option C, project index)</title>
+<!--
+  DESIGN REFERENCE FOR CLAUDE CODE
+  Section: "Featured projects" on the Top Notch Painting homepage. Approved layout: Option C, "Project index".
+  This replaces the Featured Projects section described in TOP-NOTCH-HOMEPAGE-BUILD.md (three photos in a row).
+  Everything else in that file still applies (Elementor Flexbox Containers only, nested containers Full Width,
+  breakpoints 980 / 600, explicit color and font values, scoped CSS under #tn-home, no boxes or uppercase labels).
+
+  What it is
+  - Left: H2, then a list of project names in large serif type, then a "See our work" text link.
+  - Right: one large photo of whichever project is selected in the list.
+  - Selecting a row (click, tap, or keyboard focus + Enter/Space) swaps the photo. Hovering a row on desktop also swaps it.
+  - The selected row is Bone (#F2ECE3) with an amber arrow. Unselected rows are dimmed (#8F867B) with no arrow.
+  - First project is selected on load.
+
+  Layout
+  - Background Charred Timber #14110E. Vertical padding clamp(80px, 9vw, 128px), side padding 48 / 32 / 20px.
+  - Content width 1280px. Two columns: list column 520px, photo column fills the rest, gap 80px, vertically centered.
+  - Photo slot height 680px desktop, 520px tablet, 360px mobile. Size Cover, position Center.
+  - Tablet (<= 980px) and mobile: one column in this order: heading, photo, list, link.
+  - Rows: 26px top and bottom padding, 1px hairline rgba(242,236,227,0.14) above each row and below the last.
+  - Row title: Cormorant Garamond 500, 34px (28px mobile), line-height 1.12. Row meta: Manrope 14px.
+
+  Building it in Elementor
+  - Prefer native widgets. One workable build: a Loop Grid or a set of containers for the rows, plus stacked photo
+    containers on the right that are shown and hidden with a small script. Keep any script and CSS scoped to this
+    section (#tn-featured) and list it in IMPORT-NOTES.md.
+  - Each row must be a real button or link so it works with a keyboard. Keep aria-pressed in sync.
+  - Each row also links to its project: add a "View project" link target per row if project pages exist; until then
+    rows only switch the photo.
+  - Photos: none yet. Keep the colored slots and the "Our project photo" label (widget named
+    "Photo label (delete when photo added)"). Only the client's own project photos go here, never stock.
+  - Copy is final. Use it word for word.
+-->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&amp;family=Manrope:wght@400;500;600;700&amp;display=swap">
+<style>
+  body { margin: 0; background: #14110E; }
+
+  #tn-featured {
+    background: #14110E;
+    padding: clamp(80px, 9vw, 128px) clamp(20px, 4vw, 48px);
+    font-family: Manrope, 'Helvetica Neue', Arial, sans-serif;
+    color: #F2ECE3;
+    -webkit-font-smoothing: antialiased;
+  }
+  #tn-featured .tn-wrap {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 520px minmax(0, 1fr);
+    grid-template-areas: "head photo" "list photo" "link photo";
+    grid-template-rows: auto auto 1fr;
+    column-gap: 80px;
+    row-gap: 52px;
+    align-items: start;
+  }
+  #tn-featured h2 {
+    grid-area: head;
+    margin: 0;
+    padding-top: 40px;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-weight: 500;
+    font-size: clamp(36px, 4.2vw, 60px);
+    line-height: 1.04;
+    letter-spacing: -0.01em;
+    color: #F2ECE3;
+  }
+  #tn-featured .tn-list {
+    grid-area: list;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-bottom: 1px solid rgba(242,236,227,0.14);
+  }
+  #tn-featured .tn-row {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 26px 0;
+    background: transparent;
+    border: 0;
+    border-top: 1px solid rgba(242,236,227,0.14);
+    text-align: left;
+    font-family: inherit;
+    color: #8F867B;
+    cursor: pointer;
+    transition: color 0.2s ease;
+  }
+  #tn-featured .tn-row:focus-visible { outline: 2px solid #C68B4E; outline-offset: 4px; }
+  #tn-featured .tn-row-text { display: flex; flex-direction: column; gap: 8px; }
+  #tn-featured .tn-row-title {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-weight: 500;
+    font-size: 34px;
+    line-height: 1.12;
+  }
+  #tn-featured .tn-row-meta { font-size: 14px; color: #8F867B; transition: color 0.2s ease; }
+  #tn-featured .tn-row-arrow { font-size: 22px; color: #C68B4E; opacity: 0; transition: opacity 0.2s ease; }
+  #tn-featured .tn-row[aria-pressed="true"] { color: #F2ECE3; }
+  #tn-featured .tn-row[aria-pressed="true"] .tn-row-meta { color: #B3A99C; }
+  #tn-featured .tn-row[aria-pressed="true"] .tn-row-arrow { opacity: 1; }
+
+  #tn-featured .tn-link {
+    grid-area: link;
+    justify-self: start;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: #F2ECE3;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 7px;
+    text-decoration-color: rgba(242,236,227,0.4);
+  }
+  #tn-featured .tn-link:hover { color: #D9A66B; }
+
+  #tn-featured .tn-photos { grid-area: photo; position: relative; height: 680px; }
+  #tn-featured .tn-photo {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+  #tn-featured .tn-photo.is-active { opacity: 1; }
+  #tn-featured .tn-photo-label {
+    position: absolute;
+    left: 20px;
+    bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: rgba(242,236,227,0.6);
+  }
+
+  @media (max-width: 980px) {
+    #tn-featured .tn-wrap {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas: "head" "photo" "list" "link";
+      grid-template-rows: auto;
+      row-gap: 40px;
+    }
+    #tn-featured h2 { padding-top: 0; }
+    #tn-featured .tn-photos { height: 520px; }
+  }
+  @media (max-width: 600px) {
+    #tn-featured .tn-photos { height: 360px; }
+    #tn-featured .tn-row { padding: 22px 0; }
+    #tn-featured .tn-row-title { font-size: 28px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #tn-featured .tn-photo, #tn-featured .tn-row, #tn-featured .tn-row-meta, #tn-featured .tn-row-arrow { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<section id="tn-featured" aria-labelledby="tn-featured-title">
+  <div class="tn-wrap">
+    <h2 id="tn-featured-title">Featured projects</h2>
+
+    <ul class="tn-list">
+      <li>
+        <button class="tn-row" type="button" aria-pressed="true" data-project="0">
+          <span class="tn-row-text">
+            <span class="tn-row-title">Great room walls and ceilings</span>
+            <span class="tn-row-meta">Interior painting · Snowmass</span>
+          </span>
+          <span class="tn-row-arrow" aria-hidden="true">→</span>
+        </button>
+      </li>
+      <li>
+        <button class="tn-row" type="button" aria-pressed="false" data-project="1">
+          <span class="tn-row-text">
+            <span class="tn-row-title">Exterior repaint for a returning client</span>
+            <span class="tn-row-meta">Exterior painting · Arrowhead</span>
+          </span>
+          <span class="tn-row-arrow" aria-hidden="true">→</span>
+        </button>
+      </li>
+      <li>
+        <button class="tn-row" type="button" aria-pressed="false" data-project="2">
+          <span class="tn-row-text">
+            <span class="tn-row-title">Log wash and restain</span>
+            <span class="tn-row-meta">Log &amp; timber staining · Edwards</span>
+          </span>
+          <span class="tn-row-arrow" aria-hidden="true">→</span>
+        </button>
+      </li>
+    </ul>
+
+    <a class="tn-link" href="/our-work/">See our work →</a>
+
+    <!-- Photo slots: one per project, stacked. Swap each background-color for the project's photo. -->
+    <div class="tn-photos">
+      <div class="tn-photo is-active" data-project="0" style="background-color: #33261C">
+        <span class="tn-photo-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"></path><circle cx="12" cy="13" r="3.5"></circle></svg>Our project photo: Snowmass great room</span>
+      </div>
+      <div class="tn-photo" data-project="1" style="background-color: #222B25">
+        <span class="tn-photo-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"></path><circle cx="12" cy="13" r="3.5"></circle></svg>Our project photo: Arrowhead exterior</span>
+      </div>
+      <div class="tn-photo" data-project="2" style="background-color: #3A281B">
+        <span class="tn-photo-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"></path><circle cx="12" cy="13" r="3.5"></circle></svg>Our project photo: Edwards log home</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+(function () {
+  var root = document.getElementById('tn-featured');
+  if (!root) return;
+  var rows = root.querySelectorAll('.tn-row');
+  var photos = root.querySelectorAll('.tn-photo');
+  function select(index) {
+    rows.forEach(function (row) {
+      row.setAttribute('aria-pressed', row.getAttribute('data-project') === String(index) ? 'true' : 'false');
+    });
+    photos.forEach(function (photo) {
+      photo.classList.toggle('is-active', photo.getAttribute('data-project') === String(index));
+    });
+  }
+  var canHover = window.matchMedia && window.matchMedia('(hover: hover)').matches;
+  rows.forEach(function (row) {
+    var index = row.getAttribute('data-project');
+    row.addEventListener('click', function () { select(index); });
+    if (canHover) row.addEventListener('mouseenter', function () { select(index); });
+  });
+})();
+</script>
+
+</body>
+</html>

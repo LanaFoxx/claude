@@ -726,6 +726,106 @@ WHY_GRID_LINES = (
 )
 
 
+# ------------------------------------------------------------------ Featured projects (Option C)
+FEATURED = [
+    ("Great room walls and ceilings", "Interior painting · Snowmass", "#33261C",
+     "Our project photo: Snowmass great room"),
+    ("Exterior repaint for a returning client", "Exterior painting · Arrowhead", "#222B25",
+     "Our project photo: Arrowhead exterior"),
+    ("Log wash and restain", "Log &amp; timber staining · Edwards", "#3A281B",
+     "Our project photo: Edwards log home"),
+]
+DIM = "#8F867B"
+
+FEATURED_CSS = """
+#tn-featured .tn-f-layout{grid-template-columns:520px minmax(0,1fr) !important;grid-template-rows:auto auto 1fr !important;
+  grid-template-areas:"head photo" "list photo" "link photo";column-gap:80px !important;row-gap:52px !important;align-items:start !important;}
+#tn-featured .tn-f-head{grid-area:head;padding-top:40px;}
+#tn-featured .tn-f-list{grid-area:list;border-bottom:1px solid rgba(242,236,227,0.14);}
+#tn-featured .tn-f-link{grid-area:link;justify-self:start;}
+#tn-featured .tn-f-photos{grid-area:photo;position:relative;height:680px;}
+#tn-featured .tn-f-photo{position:absolute !important;inset:0;min-height:0 !important;height:auto;opacity:0;transition:opacity .35s ease;}
+#tn-featured .tn-f-photo.is-active{opacity:1;}
+#tn-featured .tn-row{cursor:pointer;border-top:1px solid rgba(242,236,227,0.14);padding:26px 0 !important;}
+#tn-featured .tn-row:focus-visible{outline:2px solid #C68B4E;outline-offset:4px;}
+#tn-featured .tn-row .elementor-heading-title{transition:color .2s ease;}
+#tn-featured .tn-row-title .elementor-heading-title,#tn-featured .tn-row-meta .elementor-heading-title{color:#8F867B !important;}
+#tn-featured .tn-row[aria-pressed="true"] .tn-row-title .elementor-heading-title{color:#F2ECE3 !important;}
+#tn-featured .tn-row[aria-pressed="true"] .tn-row-meta .elementor-heading-title{color:#B3A99C !important;}
+#tn-featured .tn-row-arrow{opacity:0;transition:opacity .2s ease;}
+#tn-featured .tn-row[aria-pressed="true"] .tn-row-arrow{opacity:1;}
+#tn-featured > .elementor-widget-html,#tn-featured .e-con-inner > .elementor-widget-html{position:absolute;width:0;height:0;overflow:hidden;}
+@media (max-width:980px){
+  #tn-featured .tn-f-layout{grid-template-columns:minmax(0,1fr) !important;grid-template-rows:auto !important;
+    grid-template-areas:"head" "photo" "list" "link";row-gap:40px !important;}
+  #tn-featured .tn-f-head{padding-top:0;}
+  #tn-featured .tn-f-photos{height:520px;}
+}
+@media (max-width:600px){
+  #tn-featured .tn-f-photos{height:360px;}
+  #tn-featured .tn-row{padding:22px 0 !important;}
+}
+@media (prefers-reduced-motion:reduce){
+  #tn-featured .tn-f-photo,#tn-featured .tn-row .elementor-heading-title,#tn-featured .tn-row-arrow{transition:none;}
+}
+""".strip()
+
+FEATURED_JS = """<script>
+(function(){
+  function init(){
+    var root = document.getElementById('tn-featured'); if (!root || root.dataset.tnInit) return; root.dataset.tnInit = '1';
+    var rows = root.querySelectorAll('.tn-row'), photos = root.querySelectorAll('.tn-f-photo');
+    function select(i){
+      rows.forEach(function(r){ r.setAttribute('aria-pressed', r.getAttribute('data-project') === String(i) ? 'true' : 'false'); });
+      photos.forEach(function(p){ p.classList.toggle('is-active', p.getAttribute('data-project') === String(i)); });
+    }
+    var canHover = window.matchMedia && window.matchMedia('(hover: hover)').matches;
+    rows.forEach(function(r){
+      var i = r.getAttribute('data-project');
+      r.setAttribute('role', 'button'); r.setAttribute('tabindex', '0');
+      r.addEventListener('click', function(){ select(i); });
+      r.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(i); } });
+      if (canHover) r.addEventListener('mouseenter', function(){ select(i); });
+    });
+    select(0);
+  }
+  if (document.readyState !== 'loading') init(); else document.addEventListener('DOMContentLoaded', init);
+})();
+</script>"""
+
+
+def build_featured_projects():
+    rows = []
+    photos = []
+    for i, (title, meta, color, label) in enumerate(FEATURED):
+        rows.append(container("Featured / Row %d" % (i + 1), [
+            container("Featured / Row %d / Text" % (i + 1), [
+                heading("Featured / Row %d / Title" % (i + 1), title, tag="div", color=DIM,
+                        typ=typo(family=SERIF, size=(34, 34, 34, 28), weight=500, lh=1.12),
+                        _css_classes="tn-row-title"),
+                heading("Featured / Row %d / Meta" % (i + 1), meta, tag="div", color=DIM,
+                        typ=typo(size=14, weight=400, lh=1.4), _css_classes="tn-row-meta")],
+                gap=8, css="selector{--width:auto;width:auto;flex:1 1 0;min-width:0;}"),
+            heading("Featured / Row %d / Arrow" % (i + 1), "→", tag="div", color=AMBER,
+                    typ=typo(family="Manrope", size=22, weight=400, lh=1),
+                    _css_classes="tn-row-arrow", _attributes="aria-hidden|true")],
+            direction="row", gap=24, flex_align_items="center", flex_wrap="nowrap",
+            flex_justify_content="space-between", css_classes="tn-row",
+            _attributes="data-project|%d\naria-pressed|%s" % (i, "true" if i == 0 else "false")))
+        photos.append(photo_slot("Featured / Photo %d" % (i + 1), color, 680, label,
+                                 css_classes="tn-photo tn-f-photo" + (" is-active" if i == 0 else ""),
+                                 _attributes="data-project|%d" % i))
+    layout = container("Featured / Layout", [
+        h2("Featured / Title (H2)", "Featured projects", balance=False, _css_classes="tn-f-head"),
+        container("Featured / List", rows, gap=0, css_classes="tn-f-list"),
+        text_link("Featured / See our work", "See our work →", "/our-work/", _css_classes="tn-f-link"),
+        container("Featured / Photos", photos, css_classes="tn-f-photos"),
+    ], container_type="grid", css_classes="tn-f-layout")
+    return section("Featured Projects", [
+        widget("html", "Featured / Photo switcher (script)", html=FEATURED_JS), layout],
+        bg=CHARRED, _element_id="tn-featured", custom_css=FEATURED_CSS)
+
+
 def build_home():
     what = section("What We Do", [grid("What We Do / Columns", [
         path_column("What We Do / Painting", "#33261C", "Photo: finished interior, beams and stone",
@@ -799,32 +899,7 @@ def build_home():
         ], cols=(3, 3, 2, 1), gap_col=0, gap_row=0, css=WHY_GRID_LINES)],
         bg=SPRUCE, pad_top=SECV_TALL, pad_bottom=SECV_TALL, gap=(112, 104, 78, 72), overflow="hidden")
 
-    def project(n, color, caption, kind, basis, grow):
-        t = "Projects / Project %d" % n
-        return container(t, [
-            photo_slot(t + " / Photo", color, (500, 468, 353, 340), "Our project photo"),
-            container(t + " / Caption", [
-                heading(t + " / Title", caption, tag="p", color=BONE,
-                        typ=typo(size=17, weight=500, lh=1.45)),
-                heading(t + " / Service", kind, tag="p", color=DRIFT,
-                        typ=typo(size=14, weight=400, lh=1.5))], gap=6)],
-            gap=18, html_tag="a", link=link("/our-work/"),
-            _flex_size="custom", _flex_grow=grow, _flex_shrink=1,
-            **resp("width", (px(basis), px(basis), px(basis), px(100, "%"))),
-            css="selector{min-width:0;}")
-
-    projects = section("Featured Projects", [
-        grid("Projects / Header", [
-            h2("Projects / Title (H2)", "Featured projects", balance=False),
-            text_link("Projects / See our work", "See our work →", "/our-work/")],
-            cols=("1fr auto", "1fr auto", "1fr auto", "1fr"), gap_col=24, gap_row=12,
-            grid_align_items="end", grid_justify_items="start", flex_align_items="flex-end"),
-        container("Projects / Row", [
-            project(1, "#33261C", "Great room walls and ceilings, Snowmass", "Interior painting", 560, 2),
-            project(2, "#222B25", "Exterior repaint for a returning client, Arrowhead", "Exterior painting", 280, 1),
-            project(3, "#3A281B", "Log wash and restain, Edwards", "Log &amp; timber staining", 280, 1),
-        ], direction="row", gap=(24, 48), flex_wrap="wrap")],
-        bg=CHARRED, gap=56)
+    projects = build_featured_projects()
 
     away_text = container("Away / Text", [
         h2("Away / Title (H2)", "Away for the season? We'll take care of it.", max_w=560),
