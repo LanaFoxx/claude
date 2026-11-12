@@ -218,3 +218,7 @@ Container `Seasonal Offer`: change the H2 to **Talk to us about your project** a
   - The helper glues each paragraph's last three words together and, for long paragraphs that browsers won't balance, narrows the paragraph to the tightest width that keeps its line count. It re-runs on resize and after fonts load.
   - It works on the rendered page only, so content stays normally editable in Elementor.
   - Audited at 1440 / 1360 / 1100 / 980 / 600 / 390 on Home, Request an Estimate and Thank You: no last line under 35% of the paragraph width.
+- **Estimate section background:**
+  - Lighter warm brown (#2A1F17) over a subtle wood-plank texture (overlay #2A1F17 at 65%). It applies to the homepage estimate section and the Request an Estimate page.
+  - The texture is `output/textures/tn-wood-texture.jpg`, generated in code by `tools/make_wood_texture.py` (no stock photo). It's in the staging Media Library, ID 1678.
+  - Elementor lazy-loads background images, so the grain appears as the section scrolls into view.

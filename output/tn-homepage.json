@@ -6273,9 +6273,26 @@
      "isLinked": false
     },
     "background_background": "classic",
-    "background_color": "#14110E",
+    "background_color": "#2A1F17",
     "html_tag": "section",
-    "_element_id": "estimate"
+    "_element_id": "estimate",
+    "background_image": {
+     "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-wood-texture.jpg",
+     "id": 1678,
+     "size": "",
+     "alt": "",
+     "source": "library"
+    },
+    "background_position": "center center",
+    "background_size": "cover",
+    "background_repeat": "no-repeat",
+    "background_overlay_background": "classic",
+    "background_overlay_color": "#2A1F17",
+    "background_overlay_opacity": {
+     "unit": "px",
+     "size": 0.65,
+     "sizes": []
+    }
    },
    "elements": [
     {

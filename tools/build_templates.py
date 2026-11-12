@@ -22,6 +22,7 @@ TEXTURE_OPACITY = 0.88  # Charred overlay strength over the texture (higher = su
 CHARRED = "#14110E"
 NIGHT = "#0F0D0B"
 SPRUCE = "#24302A"
+EST_BROWN = "#2A1F17"      # lighter warm brown for the estimate section (client request)
 BONE = "#F2ECE3"
 AMBER = "#C68B4E"
 AMBER_HOVER = "#D9A66B"
@@ -334,21 +335,19 @@ def wordmark(title, size=28):
 
 def section(title, children, bg, pad_top=SECV, pad_bottom=SECV, gap=0, **s):
     st = {"background_background": "classic", "background_color": bg, "html_tag": "section"}
-    if bg == CHARRED and TEXTURE:
-        st.update(wood_texture())
     st.update(s)
     return container(title, children, top=True, boxed=True, gap=gap,
                      padding=pads(pad_top, SIDE, pad_bottom, SIDE), **st)
 
 
-def wood_texture():
-    """Dark wood photo under a Charred Timber overlay: reads as a faint grain, not a photo."""
+def wood_texture(overlay=CHARRED, opacity=None):
+    """Wood-plank texture under a solid color overlay: reads as a faint grain, not a photo."""
     return {"background_image": {"url": TEXTURE["url"], "id": int(TEXTURE["id"]), "size": "",
                                  "alt": "", "source": "library"},
             "background_position": "center center", "background_size": "cover",
             "background_repeat": "no-repeat",
-            "background_overlay_background": "classic", "background_overlay_color": CHARRED,
-            "background_overlay_opacity": {"unit": "px", "size": TEXTURE_OPACITY, "sizes": []}}
+            "background_overlay_background": "classic", "background_overlay_color": overlay,
+            "background_overlay_opacity": {"unit": "px", "size": opacity or TEXTURE_OPACITY, "sizes": []}}
 
 
 def index_list(title, items):
@@ -1014,8 +1013,9 @@ def estimate_section(page="home"):
     return section("Estimate", [grid("Estimate / Layout", [left, card], cols=(2, 2, 1, 1),
                                      gap_col=(115, 104, 78, 56), gap_row=64,
                                      grid_align_items="center", flex_align_items="center")],
-                   bg=CHARRED, pad_top=SECV_TALL if is_home else (200, 200, 176, 152),
-                   pad_bottom=SECV_TALL, _element_id="estimate")
+                   bg=EST_BROWN, pad_top=SECV_TALL if is_home else (200, 200, 176, 152),
+                   pad_bottom=SECV_TALL, _element_id="estimate",
+                   **(wood_texture(EST_BROWN, 0.65) if TEXTURE else {}))
 
 
 def build_estimate_page():
