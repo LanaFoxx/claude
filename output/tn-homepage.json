@@ -2560,7 +2560,7 @@
        "unit": "px",
        "size": 0
       },
-      "custom_css": "selector{position:relative;}selector > .e-con{position:relative;padding:56px 48px 60px !important;}selector > .e-con::before{content:'' !important;display:block;position:absolute;top:-3000px;bottom:-3000px;left:0;right:auto;width:1px;height:auto;background:rgba(242,236,227,0.07);opacity:1;pointer-events:none;border:0;}selector > .e-con::after{content:'';position:absolute;left:-3000px;right:-3000px;top:0;height:1px;background:rgba(242,236,227,0.07);pointer-events:none;}selector::before{content:'' !important;display:block;position:absolute;top:-3000px;bottom:-3000px;right:0;left:auto;width:1px;height:auto;background:rgba(242,236,227,0.07);opacity:1;pointer-events:none;border:0;}selector::after{content:'';position:absolute;left:-3000px;right:-3000px;bottom:0;height:1px;background:rgba(242,236,227,0.07);pointer-events:none;}@media (max-width:1359px){selector > .e-con{padding:48px 36px 52px !important;}}@media (max-width:600px){selector > .e-con{padding:40px 0 44px !important;}selector > .e-con::before,selector::before{display:none;}}"
+      "custom_css": "selector{position:relative;}selector > .e-con{position:relative;padding:56px 48px 60px !important;}selector > .e-con::before{content:'' !important;display:block;position:absolute;top:-3000px;bottom:-3000px;left:0;right:auto;width:1px;height:auto;background:rgba(242,236,227,0.07);opacity:1;pointer-events:none;border:0;}selector > .e-con::after{content:'';position:absolute;left:0;right:0;top:0;height:1px;background:rgba(242,236,227,0.07);pointer-events:none;}selector::before{content:'' !important;display:block;position:absolute;top:-3000px;bottom:-3000px;right:0;left:auto;width:1px;height:auto;background:rgba(242,236,227,0.07);opacity:1;pointer-events:none;border:0;}selector::after{content:'';position:absolute;left:0;right:0;bottom:0;height:1px;background:rgba(242,236,227,0.07);pointer-events:none;}@media (max-width:1359px){selector > .e-con{padding:48px 36px 52px !important;}}@media (max-width:600px){selector > .e-con{padding:40px 0 44px !important;}selector > .e-con::before,selector::before{display:none;}}"
      },
      "elements": [
       {
@@ -3207,7 +3207,7 @@
          "widgetType": "text-editor",
          "isInner": false,
          "settings": {
-          "editor": "<p>We use top-tier coatings, including [paint brands], and Sashco and Perma-Chink systems on log and timber homes.</p>",
+          "editor": "<p>We use top-tier coatings, including Benjamin Moore and Sherwin-Williams, and Sashco and Perma-Chink systems on log and timber homes.</p>",
           "text_color": "#C9D1C4",
           "paragraph_spacing": {
            "unit": "px",
@@ -3341,7 +3341,7 @@
          "widgetType": "text-editor",
          "isInner": false,
          "settings": {
-          "editor": "<p>Detailed written estimates, clear schedules, and a [X-year] written warranty on our work.</p>",
+          "editor": "<p>Detailed written estimates, clear schedules, and a two-year written warranty on our work.</p>",
           "text_color": "#C9D1C4",
           "paragraph_spacing": {
            "unit": "px",
@@ -6173,7 +6173,7 @@
            "widgetType": "heading",
            "isInner": false,
            "settings": {
-            "title": "[X] reviews on Google",
+            "title": "24 reviews on Google",
             "header_size": "div",
             "title_color": "#B3A99C",
             "typography_typography": "custom",
@@ -6562,7 +6562,7 @@
            "widgetType": "text-editor",
            "isInner": false,
            "settings": {
-            "editor": "<p>Book between [dates] and receive [10% off / our winter rate].</p>",
+            "editor": "<p>Book between November 1 and March 31 and receive 10% off interior projects.</p>",
             "text_color": "#B3A99C",
             "paragraph_spacing": {
              "unit": "px",
@@ -6968,7 +6968,7 @@
              "email",
              "redirect"
             ],
-            "email_to": "[painting email address]",
+            "email_to": "info@topnotch-painting.com",
             "email_subject": "New estimate request (Homepage)",
             "email_content": "[all-fields]",
             "redirect_to": "/thank-you/",

@@ -237,3 +237,5 @@ Container `Seasonal Offer`: change the H2 to **Talk to us about your project** a
   - Vertical rules at each column edge run the full section height; horizontal rules above, between and below the rows run the full page width. The section clips them with overflow:hidden.
   - Points sit in padded cells (56/48/60px desktop, 48/36/52px laptop and tablet, 40/0/44px mobile) instead of grid gaps.
   - At 600px and below only the horizontal rules show.
+- **No visible placeholders:** all bracketed placeholders are replaced with temporary copy (email, offer dates and discount, paint brands, warranty length, Google count). `output/CLIENT-CHECKLIST.md` lists every item to confirm with the client. Both forms' Email To is temporarily `info@topnotch-painting.com`, so leads go there until it's changed.
+- **Why grid:** the horizontal rules now stop at the grid's outer edges; the vertical rules still run the full section height.

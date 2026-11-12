@@ -575,7 +575,7 @@ def build_footer():
         "title": '[elementor-tag id="%s" name="current-date-time" settings="%s"]' % (eid(), tag_settings)}
     bottom = container("Footer / Fine Print", [
         year,
-        heading("Footer / Address", "4722 Hwy US-6, Gypsum, CO 81637 · [painting email address]", tag="p",
+        heading("Footer / Address", "4722 Hwy US-6, Gypsum, CO 81637 · info@topnotch-painting.com", tag="p",
                 color=DRIFT, typ=typo(size=13, weight=400, lh=1.6))],
         direction="row", gap=(32, 6), flex_wrap="wrap", flex_justify_content="space-between",
         flex_align_items="center", padding=dims(20, 0, 28, 0),
@@ -705,18 +705,18 @@ def path_column(title, color, label, h2_text, body, items):
 
 
 # Faint full-bleed grid behind the six Why points: vertical rules run the full section height,
-# horizontal rules run the full page width (clipped by the section's overflow:hidden).
+# horizontal rules span the grid only (no extension past the outer columns).
 _LINE = "rgba(242,236,227,0.07)"
 WHY_GRID_LINES = (
     "selector{position:relative;}"
     "selector > .e-con{position:relative;padding:56px 48px 60px !important;}"
     "selector > .e-con::before{content:'' !important;display:block;position:absolute;top:-3000px;bottom:-3000px;"
     "left:0;right:auto;width:1px;height:auto;background:" + _LINE + ";opacity:1;pointer-events:none;border:0;}"
-    "selector > .e-con::after{content:'';position:absolute;left:-3000px;right:-3000px;top:0;height:1px;"
+    "selector > .e-con::after{content:'';position:absolute;left:0;right:0;top:0;height:1px;"
     "background:" + _LINE + ";pointer-events:none;}"
     "selector::before{content:'' !important;display:block;position:absolute;top:-3000px;bottom:-3000px;"
     "right:0;left:auto;width:1px;height:auto;background:" + _LINE + ";opacity:1;pointer-events:none;border:0;}"
-    "selector::after{content:'';position:absolute;left:-3000px;right:-3000px;bottom:0;height:1px;"
+    "selector::after{content:'';position:absolute;left:0;right:0;bottom:0;height:1px;"
     "background:" + _LINE + ";pointer-events:none;}"
     "@media (max-width:1359px){selector > .e-con{padding:48px 36px 52px !important;}}"
     "@media (max-width:600px){selector > .e-con{padding:40px 0 44px !important;}"
@@ -789,10 +789,10 @@ def build_home():
                   "A dedicated project lead manages your job from your first call to your final "
                   "walkthrough, with regular updates and photos if you're away."),
             point("paint-bucket-light", "Premium products",
-                  "We use top-tier coatings, including [paint brands], and Sashco and Perma-Chink "
+                  "We use top-tier coatings, including Benjamin Moore and Sherwin-Williams, and Sashco and Perma-Chink "
                   "systems on log and timber homes."),
             point("certificate-light", "Backed in writing",
-                  "Detailed written estimates, clear schedules, and a [X-year] written warranty on our "
+                  "Detailed written estimates, clear schedules, and a two-year written warranty on our "
                   "work."),
         ], cols=(3, 3, 2, 1), gap_col=0, gap_row=0, css=WHY_GRID_LINES)],
         bg=SPRUCE, pad_top=SECV_TALL, pad_bottom=SECV_TALL, gap=(112, 104, 78, 72), overflow="hidden")
@@ -923,7 +923,7 @@ def build_home():
                                                            "19 reviews on HomeAdvisor")]),
             stat("Stats / BBB", "A+", [stat_label("Stats / BBB / Label", "BBB accredited")]),
             stat("Stats / Google", "5.0", [stars("Stats / Google / Stars", AMBER, 13, 2),
-                                           stat_label("Stats / Google / Label", "[X] reviews on Google")])],
+                                           stat_label("Stats / Google / Label", "24 reviews on Google")])],
             direction="row", gap=tuple((v, 24) for v in (72, 65, 49, 32)), flex_wrap="wrap",
             flex_align_items="center", flex_justify_content="center", auto_width=True)],
         bg=NIGHT, pad_top=32, pad_bottom=32, direction="row", gap=(48, 24),
@@ -981,7 +981,7 @@ def estimate_section(page="home"):
         show_labels="true", mark_required="true", label_position="above",
         button_text="Request My Estimate", button_size="md", button_width="100",
         button_align="stretch", submit_actions=["email", "redirect"],
-        email_to="[painting email address]",
+        email_to="info@topnotch-painting.com",
         email_subject="New estimate request (%s)" % ("Homepage" if is_home else "Request an Estimate page"),
         email_content="[all-fields]", redirect_to="/thank-you/",
         column_gap=px(32), row_gap=px(28), label_spacing=px(6),
@@ -1018,7 +1018,7 @@ def estimate_section(page="home"):
     if is_home:
         offer = container("Seasonal Offer", [
             h2("Seasonal Offer / Title (H2)", "Now scheduling winter interior projects"),
-            text("Seasonal Offer / Text", "<p>Book between [dates] and receive [10% off / our winter rate].</p>",
+            text("Seasonal Offer / Text", "<p>Book between November 1 and March 31 and receive 10% off interior projects.</p>",
                  size=18, lh=1.7)], gap=24)
     else:
         offer = container("Estimate Intro", [

@@ -770,7 +770,7 @@
              "email",
              "redirect"
             ],
-            "email_to": "[painting email address]",
+            "email_to": "info@topnotch-painting.com",
             "email_subject": "New estimate request (Request an Estimate page)",
             "email_content": "[all-fields]",
             "redirect_to": "/thank-you/",
