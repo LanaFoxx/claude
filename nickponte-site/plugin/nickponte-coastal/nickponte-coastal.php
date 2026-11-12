@@ -2,14 +2,14 @@
 /**
  * Plugin Name: Nick Ponte Coastal Light (preview)
  * Description: "Coastal Light" redesign preview: a homepage template (/home-preview/) and a Town post type (/town-preview/<town>/) with monthly market fields, FAQ and JSON-LD. Preview pages are noindex and use their own header and footer, so live pages are not affected. Deactivate to remove everything from the front end.
- * Version: 1.5.4
+ * Version: 1.6.0
  * Author: Dream Web Digital
  * Requires PHP: 7.4
  */
 
 if (!defined('ABSPATH')) exit;
 
-define('NPC_VER', '1.5.4');
+define('NPC_VER', '1.6.0');
 define('NPC_DIR', plugin_dir_path(__FILE__));
 define('NPC_URL', plugin_dir_url(__FILE__));
 const NPC_HOME_TEMPLATE = 'npc-home';
@@ -248,6 +248,15 @@ function npc_current_town() {
 		return $p ? $p[0] : null;
 	}
 	return null;
+}
+// Minimal 24px line icons (stroke uses currentColor).
+function npc_icon($name) {
+	$paths = [
+		'mail'  => '<rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m4 7 8 6 8-6"/>',
+		'phone' => '<path d="M6.6 3.5h2.6l1.4 4-2 1.3a12 12 0 0 0 6.6 6.6l1.3-2 4 1.4v2.6a2 2 0 0 1-2.2 2A17 17 0 0 1 4.6 5.7a2 2 0 0 1 2-2.2Z"/>',
+		'pin'   => '<path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11Z"/><circle cx="12" cy="10" r="2.4"/>',
+	];
+	return '<svg class="npc-icon" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' . ($paths[$name] ?? '') . '</svg>';
 }
 function npc_home_url() {
 	if (npc_live()) return home_url('/');

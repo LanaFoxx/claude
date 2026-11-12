@@ -221,9 +221,9 @@ $quotes = [
 				<h2 class="npc-h2 npc-h2--light">We look forward <b>to connecting.</b></h2>
 				<p class="npc-contact__p">Whether you're looking to buy, sell, or relocate, Nick Ponte is here to deliver tailored support and professional expertise.</p>
 				<dl class="npc-contact__dl">
-					<div><dt>Email</dt><dd><a href="mailto:nponte@careyandgiampa.com">nponte@careyandgiampa.com</a></dd></div>
-					<div><dt>Phone</dt><dd><a href="tel:6039187593">603-918-7593</a></dd></div>
-					<div><dt>Office</dt><dd>655 Wallis Road, Rye, NH 03870</dd></div>
+					<div><span class="npc-contact__ic"><?php echo npc_icon('mail'); ?></span><span><dt>Email</dt><dd><a href="mailto:nponte@careyandgiampa.com">nponte@careyandgiampa.com</a></dd></span></div>
+					<div><span class="npc-contact__ic"><?php echo npc_icon('phone'); ?></span><span><dt>Phone</dt><dd><a href="tel:6039187593">603-918-7593</a></dd></span></div>
+					<div><span class="npc-contact__ic"><?php echo npc_icon('pin'); ?></span><span><dt>Office</dt><dd>655 Wallis Road, Rye, NH 03870</dd></span></div>
 				</dl>
 			</div>
 			<div class="npc-offmarket">

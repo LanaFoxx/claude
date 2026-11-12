@@ -408,3 +408,33 @@ html:has(body.npc) { scroll-behavior: smooth; }
 .npc-portrait__badge-row b { color: var(--npc-deep); font-weight: 700; }
 @media (max-width: 560px) { .npc-portrait__badge { right: 0; left: 0; bottom: -40px; min-width: 0; } }
 @media (prefers-reduced-motion: reduce) { .npc .npc-portrait__img { transition: none; } .npc-portrait:hover .npc-portrait__img { transform: none; } }
+/* Hero: the bold phrase starts its own line on tablet and desktop */
+@media (min-width: 720px) { .npc-hero__h1 b { display: block; } }
+/* Reviews: clean upright sans instead of the italic serif */
+.npc .npc-quote__slide p { font-family: var(--npc-sans) !important; font-style: normal; font-weight: 400; font-size: clamp(20px, 2.2vw, 27px); line-height: 1.5; letter-spacing: -.005em; color: var(--npc-deep); }
+.npc .npc-quote__mark { font-family: var(--npc-serif) !important; font-weight: 800; font-size: 72px; color: var(--npc-steel); opacity: .35; }
+
+/* Centered section headings (Town markets, Resources, Instagram) */
+.npc-towns__head { flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 10px; }
+.npc-towns__head .npc-towns__note { max-width: 560px; }
+
+/* Contact details: larger, with minimal line icons */
+.npc-contact__dl { gap: 22px !important; }
+.npc-contact__dl > div { display: flex; align-items: center; gap: 16px; }
+.npc-contact__ic { flex: none; width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; color: #fff;
+	background: rgba(255, 255, 255, .08); border: 1px solid rgba(185, 204, 220, .35); }
+.npc-contact__ic .npc-icon { width: 22px; height: 22px; }
+.npc-contact__dl dd, .npc .npc-contact__dl a { font-size: 19px; font-weight: 500; }
+
+/* Footer: minimal (logo + one-line nav, contact row, quiet legal line) */
+.npc-footer--min { background: #fff; border-top: 1px solid var(--npc-border); padding: 44px 0 28px; }
+.npc-fmin__top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px 32px; }
+.npc-fmin__nav { display: flex; flex-wrap: wrap; gap: 8px 28px; }
+.npc .npc-fmin__nav a { font: 500 14px var(--npc-sans); color: var(--npc-deep); }
+.npc .npc-fmin__nav a:hover { color: var(--npc-steel); }
+.npc-fmin__contact { display: flex; flex-wrap: wrap; gap: 10px 32px; margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--npc-div); font-size: 14px; color: var(--npc-muted); }
+.npc .npc-fmin__contact a, .npc-fmin__contact span { display: inline-flex; align-items: center; gap: 8px; color: var(--npc-text); }
+.npc-fmin__contact .npc-icon { width: 18px; height: 18px; color: var(--npc-steel); }
+.npc-fmin__legal { margin-top: 24px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 32px; font-size: 12px; line-height: 1.6; color: var(--npc-muted); }
+.npc-fmin__legal p:first-child { max-width: 760px; }
+.npc .npc-fmin__legal a { color: var(--npc-muted); text-decoration: underline; text-underline-offset: 2px; }
