@@ -1521,7 +1521,7 @@
 			+ stat('data-month="' + m0.key + '"', 'Made in ' + m0.name, money(made(0)), m1.name + ': ' + money(made(1)), 'g')
 			+ stat('data-owed', 'Owed to you', money(owed(ol)), pend ? money(pend) + ' pending deposit' : ol.length + ' projects', 'o')
 			+ stat('data-wins="' + m0.from + '|' + T + '|' + m0.name + '"', 'Jobs won in ' + m0.name, String(j0.length), (winVal(j0) ? money(winVal(j0)) + ' · ' : '') + m1.name + ': ' + j1.length, 'b')
-			+ stat('data-adsmodal', 'Ad spend in ' + m0.name, money(gNow + cNow), 'Google Ads ' + money(gNow) + ' · Connects ' + money(cNow), 'n')
+			+ stat('data-spendmodal', 'Ad spend in ' + m0.name, money(gNow + cNow), 'Google Ads ' + money(gNow) + ' · Connects ' + money(cNow), 'n')
 			+ '</div>';
 		var box = function (cls, title, right, body) { return '<section class="mv-card ' + cls + '"><header><h2>' + title + '</h2>' + (right || '') + '</header><div class="mv-body">' + body + '</div></section>'; };
 		// Income: last 12 months
@@ -1572,16 +1572,19 @@
 			pager += (pg < pages ? '<button data-revpage="' + (pg + 1) + '">Next ›</button>' : '') + '</nav>';
 		}
 		return '<div class="dwdc-revbar"><div><b>' + nSel + '</b> selected' + (nSel ? ' <button class="dwdc-lnk sm2" data-revclear>Clear</button>' : '') + '<small>Check the clients you want to ask, on any page. Your picks stay checked as you move between pages.</small></div>'
-			+ '<a class="dwdc-lnk dwdc-revprev" href="' + esc(DWDC.api + '/reviews/preview?_wpnonce=' + DWDC.nonce) + '" target="_blank" rel="noopener">Preview email</a><button class="dwdc-btn coral" data-revsend' + (nSel ? '' : ' disabled') + '>' + ic('mail', 15) + 'Send mass review request email' + (nSel ? ' (' + nSel + ')' : '') + '</button></div>'
+			+ '<a class="dwdc-lnk dwdc-revprev" href="' + esc(DWDC.api + '/reviews/preview?_wpnonce=' + DWDC.nonce) + '" target="_blank" rel="noopener">Preview email</a><a class="dwdc-lnk dwdc-revprev" href="' + esc(DWDC.api + '/reviews/preview?upwork=1&_wpnonce=' + DWDC.nonce) + '" target="_blank" rel="noopener">Preview with Upwork</a><button class="dwdc-btn coral" data-revsend' + (nSel ? '' : ' disabled') + '>' + ic('mail', 15) + 'Send mass review request email' + (nSel ? ' (' + nSel + ')' : '') + '</button></div>'
 			+ '<div class="dwdc-card dwdc-tbl"><div class="dwdc-grid g-rev head"><span>Name</span><span>Business</span><span>Email</span><span class="r"><label class="dwdc-revall"><input type="checkbox" data-revall' + (allOn ? ' checked' : '') + '> Select page</label></span></div>'
 			+ rows.map(function (k) {
 				var em = revEmail(k), on = !!S.revSel[k.id];
 				return '<div class="dwdc-grid g-rev row' + (on ? ' sel' : '') + '"><span><a class="dwdc-clink" href="#cl/' + k.id + '">' + esc(k.name) + '</a></span><span class="sec ell">' + esc(revBiz(k) || '—') + (lastDone[k.id] ? '<small class="dwdc-revdone">Finished ' + fmt(lastDone[k.id], true) + '</small>' : '') + '</span><span class="sec ell">' + esc(em || 'No email on file') + '</span>'
-					+ '<span class="r">' + (em ? '<label class="dwdc-revchk"><input type="checkbox" data-revpick="' + k.id + '"' + (on ? ' checked' : '') + '><span>Email review request</span></label>' : '<em class="mut">Add an email first</em>')
+					+ '<span class="r dd-revacts">' + (em ? '<label class="dwdc-revchk dd-revup" title="Also ask for 5-star feedback on the Upwork contract"><input type="checkbox" data-revup="' + k.id + '"' + (revUp(k) ? ' checked' : '') + '><span>Upwork</span></label><label class="dwdc-revchk"><input type="checkbox" data-revpick="' + k.id + '"' + (on ? ' checked' : '') + '><span>Email review request</span></label>' : '<em class="mut">Add an email first</em>')
 					+ (k.review_sent ? '<small class="dwdc-revsent">Asked ' + fmt(k.review_sent, true) + '</small>' : '') + '</span></div>';
 			}).join('') + '</div>'
 			+ '<div class="dwdc-revfoot"><span class="mut">Showing ' + ((pg - 1) * REV_PER + 1) + '–' + Math.min(pg * REV_PER, list.length) + ' of ' + list.length + ' clients</span>' + pager + '</div>';
 	}
+	// Upwork client? (a project came from or was paid through Upwork) → the Upwork box starts checked.
+	function revUpDefault(k) { return projectsOf(k.id).some(function (c) { return /upwork/i.test([c.lead_source, c.pay_method, c.source].join(' ')); }); }
+	function revUp(k) { S.revUp = S.revUp || {}; return S.revUp[k.id] === undefined ? revUpDefault(k) : !!S.revUp[k.id]; }
 	function sendReviews(btn) {
 		var ids = Object.keys(S.revSel).filter(function (k) { return S.revSel[k]; }).map(Number);
 		if (!ids.length) { return; }
@@ -1589,7 +1592,7 @@
 		btn.disabled = true; btn.textContent = 'Sending…';
 		var sent = 0, failed = 0, chunks = [];
 		for (var i = 0; i < ids.length; i += 20) { chunks.push(ids.slice(i, i + 20)); }
-		chunks.reduce(function (p, ch) { return p.then(function () { return api('/reviews', 'POST', { ids: ch }).then(function (r) { sent += (r.sent || []).length; failed += (r.failed || []).length; }); }); }, Promise.resolve())
+		chunks.reduce(function (p, ch) { return p.then(function () { return api('/reviews', 'POST', { ids: ch, upwork: ch.filter(function (id) { var k = clientRec(id); return k && revUp(k); }) }).then(function (r) { sent += (r.sent || []).length; failed += (r.failed || []).length; }); }); }, Promise.resolve())
 			.then(function () { S.revSel = {}; return reload(); })
 			.then(function () { render(); toast('Review request sent to ' + sent + ' client' + (sent === 1 ? '' : 's') + (failed ? ' · ' + failed + ' didn’t send' : ''), !!failed); })
 			.catch(function (e) { render(); fail(e); });
@@ -2853,6 +2856,15 @@
 				+ (m.script ? '<textarea class="dwdc-adscript" readonly rows="10">' + esc(m.script) + '</textarea><div class="dwdc-farow end"><button type="button" class="dwdc-btn" data-adscopy>Copy script</button></div>' : emptyRow('Loading the script…'))
 				+ '<p class="dwdc-wins-foot">Every 15 minutes the script reads the next two weeks of your Google Calendar and the last 3 days of Upwork emails. Booked calls go on the lead, your Business to-dos and your Personal to-dos; Upwork interview invites and client messages become leads (or notes on the existing one); hires become active projects. It never changes your calendar or email.</p></div>';
 		}
+		if (m.type === 'spend') { // Ad spend tile: Google Ads and Upwork Connects together
+			var GS = (S.ads || {}).google, KS = (S.ads || {}).connects || {}, gm = GS ? GS.month.cost : 0, km = KS.month || 0;
+			var gPart = '';
+			if (GS) { S.modal = { type: 'ads' }; var am = modal(); S.modal = m; gPart = am.slice(am.indexOf('</h2>') + 5).replace(/<\/div>$/, ''); }
+			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide">' + head('Advertising', 'Ad', 'spend')
+				+ '<div class="dd-spendsum"><div><span>Google Ads this month</span><b>' + (GS ? money(gm) : '—') + '</b></div><div><span>Upwork Connects this month</span><b>' + money(km) + '</b></div><div><span>Total</span><b>' + money(gm + km) + '</b></div></div>'
+				+ '<h3 class="dwdc-ch3 dd-spendh">Google Ads</h3>' + (GS ? gPart : '<p class="dwdc-mutp">Google Ads isn’t connected. <button type="button" class="dwdc-lnk" data-adsconnect>Connect Google Ads</button></p>')
+				+ '<h3 class="dwdc-ch3 dd-spendh">Upwork Connects</h3>' + connSpend() + '</div>';
+		}
 		if (m.type === 'connects') {
 			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide">' + head('Upwork', 'Connects', 'spending') + connSpend() + '<div class="dwdc-farow end"><a class="dwdc-btn2" href="#money" data-close-modal>Open in Money Stats</a></div></div>';
 		}
@@ -3297,9 +3309,10 @@
 		if ((el = t.closest('[data-quotex]'))) { hideQuote(el.closest('[data-quote]')); return; }
 		if ((el = t.closest('[data-askreview]'))) {
 			var rk = clientRec(+el.getAttribute('data-askreview'));
-			if (!rk || !confirm('Send ' + rk.name + ' the review request email?' + (rk.review_sent ? '\n\nYou already asked on ' + fmt(String(rk.review_sent).slice(0, 10), true) + '.' : ''))) { return; }
+			var rku = rk && revUpDefault(rk);
+			if (!rk || !confirm('Send ' + rk.name + ' the review request email' + (rku ? ' (Google review + Upwork feedback)' : '') + '?' + (rk.review_sent ? '\n\nYou already asked on ' + fmt(String(rk.review_sent).slice(0, 10), true) + '.' : ''))) { return; }
 			el.disabled = true; el.textContent = 'Sending…';
-			api('/reviews', 'POST', { ids: [rk.id] }).then(function (r) {
+			api('/reviews', 'POST', { ids: [rk.id], upwork: rku ? [rk.id] : [] }).then(function (r) {
 				if ((r.sent || []).length) { toast('Review request sent to ' + rk.name); }
 				else { toast('Couldn’t send — ' + (((r.failed || [])[0] || {}).why === 'no email' ? 'no email address on file for ' + rk.name : 'the email didn’t go out'), true); }
 				return reload();
@@ -3405,6 +3418,7 @@
 			return;
 		}
 		if (t.closest('[data-adsmodal]')) { e.preventDefault(); S.modal = { type: 'ads' }; render(); return; }
+		if (t.closest('[data-spendmodal]')) { e.preventDefault(); S.modal = { type: 'spend' }; render(); return; }
 		if (t.closest('[data-adscopy]')) { var ta = app.querySelector('.dwdc-adscript'); if (ta) { ta.select(); (navigator.clipboard ? navigator.clipboard.writeText(ta.value) : Promise.reject()).then(function () { toast('Script copied'); }, function () { document.execCommand('copy'); toast('Script copied'); }); } return; }
 		if (t.closest('[data-connmodal]')) { e.preventDefault(); S.modal = { type: 'connects' }; render(); return; }
 		if (t.closest('[data-owed]')) { S.modal = { type: 'owed' }; render(); return; }
@@ -3592,6 +3606,7 @@
 		if (e.target.hasAttribute && e.target.hasAttribute('data-tdset')) { S.tdDate = S.tdDate || {}; S.tdDate[e.target.getAttribute('data-tdset')] = e.target.value; tdRerender(); return; }
 		if (e.target.hasAttribute && e.target.hasAttribute('data-lsort')) { setSort(e.target.getAttribute('data-lsort'), e.target.value); render(); return; }
 		var t = e.target;
+		if (t.hasAttribute('data-revup')) { S.revUp = S.revUp || {}; S.revUp[t.getAttribute('data-revup')] = t.checked; return; }
 		if (t.hasAttribute('data-revpick')) { S.revSel = S.revSel || {}; S.revSel[t.getAttribute('data-revpick')] = t.checked; render(); return; }
 		if (t.hasAttribute('data-revall')) { S.revSel = S.revSel || {}; app.querySelectorAll('[data-revpick]').forEach(function (x) { S.revSel[x.getAttribute('data-revpick')] = t.checked; }); render(); return; }
 		if (t.hasAttribute('data-upcsv') && t.files && t.files[0]) { upImport(t.files[0]); return; }

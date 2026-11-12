@@ -809,12 +809,13 @@ add_action( 'rest_api_init', function () {
 	// Preview of the review-request email, exactly as clients see it.
 	register_rest_route( $ns, '/crm/reviews/preview', array( 'methods' => 'GET', 'permission_callback' => $can, 'callback' => function () {
 		header( 'Content-Type: text/html; charset=utf-8' );
-		echo dwdc_review_html( 'Sarah' ); // phpcs:ignore WordPress.Security.EscapeOutput
+		echo dwdc_review_html( 'Sarah', ! empty( $_GET['upwork'] ) ); // phpcs:ignore WordPress.Security.EscapeOutput,WordPress.Security.NonceVerification
 		exit;
 	} ) );
 	// Review requests: a branded email asking past clients for a Google review.
 	register_rest_route( $ns, '/crm/reviews', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
 		$ids  = array_slice( array_filter( array_map( 'absint', (array) $r->get_param( 'ids' ) ) ), 0, 20 );
+		$upw  = array_map( 'absint', (array) $r->get_param( 'upwork' ) ); // clients who also get the Upwork feedback part
 		$sent = array();
 		$fail = array();
 		foreach ( $ids as $cid ) {
@@ -835,7 +836,7 @@ add_action( 'rest_api_init', function () {
 				$fail[] = array( 'id' => $cid, 'why' => 'no email' );
 				continue;
 			}
-			if ( dwdc_send_review_request( $cid, $email ) ) {
+			if ( dwdc_send_review_request( $cid, $email, in_array( $cid, $upw, true ) ) ) {
 				update_post_meta( $cid, '_dwdcl_review_sent', current_time( 'Y-m-d' ) );
 				$sent[] = $cid;
 			} else {
@@ -1453,15 +1454,17 @@ function dwdc_money_by_year() {
 /** The Google review link clients are sent to. */
 define( 'DWDC_REVIEW_URL', 'https://g.page/r/CTqmN38PVOg7EBM/review' );
 
-function dwdc_review_html( $first ) {
+function dwdc_review_html( $first, $upwork = false ) {
+	$upw = $upwork ? '<br><br><strong>We worked together on Upwork, so one more small favor:</strong> please also leave <strong>5-star feedback</strong> on our Upwork contract, with a few kind words about what it was like working together. Upwork feedback helps me win new projects there.<br><br>'
+		. 'To leave it: open Upwork, go to <strong>Jobs → Contracts</strong> (or <strong>Reports → All contracts</strong>), choose our contract and click <strong>Give feedback</strong>. If our contract is still open, you can end it and leave feedback in the same step.' : '';
 	$html = dwdp_email_html( array(
 		'eyebrow' => 'A quick favor',
-		'title'   => 'Would you leave me a review?',
+		'title'   => $upwork ? 'Would you leave me two quick reviews?' : 'Would you leave me a review?',
 		'intro'   => 'Hi ' . esc_html( $first ) . ',<br><br>'
 			. 'Thank you again for trusting me with your website. It was a pleasure working with you.<br><br>'
 			. 'I have a small favor to ask. Would you take a minute to leave me a review on Google? Building websites is my full-time career, and reviews help me more than anything else. Every new review builds trust and gives the next business owner the confidence to hire me.<br><br>'
-			. 'If you were happy with your experience, a <strong>5-star review</strong> with a few kind words about working together would mean the world to me. It only takes a minute.',
-		'buttons' => array( array( 'Click here to leave a review', DWDC_REVIEW_URL ) ),
+			. 'If you were happy with your experience, a <strong>5-star review</strong> with a few kind words about working together would mean the world to me. It only takes a minute.' . $upw,
+		'buttons' => $upwork ? array( array( 'Leave a Google review', DWDC_REVIEW_URL ), array( 'Open Upwork to leave feedback', 'https://www.upwork.com/' ) ) : array( array( 'Click here to leave a review', DWDC_REVIEW_URL ) ),
 		'outro'   => 'If you’ve already left a review, thank you so much, and please disregard this email.<br><br>With gratitude,<br>Michael Tarr<br>Dream Web Digital',
 		'footer'  => 'Dream Web Digital ·',
 	) );
@@ -1475,11 +1478,11 @@ function dwdc_review_html( $first ) {
  * @param int    $cid   Client ID.
  * @param string $email Where to send it.
  */
-function dwdc_send_review_request( $cid, $email ) {
+function dwdc_send_review_request( $cid, $email, $upwork = false ) {
 	$first = trim( strtok( (string) get_post_field( 'post_title', $cid ), ' ' ) );
 	$first = $first && ! preg_match( '/[.@]/', $first ) ? $first : 'there';
-	$html  = dwdc_review_html( $first );
-	return wp_mail( $email, 'A quick favor: would you leave me a review?', $html, array( 'Content-Type: text/html; charset=UTF-8', 'Reply-To: Michael Tarr <mike@dreamwebdigital.com>' ) );
+	$html  = dwdc_review_html( $first, $upwork );
+	return wp_mail( $email, $upwork ? 'A quick favor: two quick reviews?' : 'A quick favor: would you leave me a review?', $html, array( 'Content-Type: text/html; charset=UTF-8', 'Reply-To: Michael Tarr <mike@dreamwebdigital.com>' ) );
 }
 
 /** Upwork Connects and membership spending per year and month. */

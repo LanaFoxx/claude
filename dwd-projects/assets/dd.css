@@ -397,3 +397,11 @@ i.dd-flag { width: 10px; height: 10px; cursor: inherit; }
 .dd h1, .dd h2, .dd h3, .dd h4, .dd h5 { color: var(--text); }
 .dd .dwdc-chead h2 { color: var(--text) !important; text-transform: none; font-size: 24px; font-weight: 600; letter-spacing: -.01em; }
 .dd .dwdc-chead p b, .dd .dwdc-chead p strong { color: var(--text); }
+.dd-spendsum { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1px solid var(--border); border-radius: var(--radius-lg); margin: 16px 0 8px; }
+.dd-spendsum > div { padding: 12px 16px; display: flex; flex-direction: column; gap: 2px; }
+.dd-spendsum > div + div { border-left: 1px solid var(--border); }
+.dd-spendsum span { font-size: 12px; color: var(--text-3); }
+.dd-spendsum b { font-size: 20px; font-weight: 600; color: var(--text); }
+.dd-spendh { margin-top: 20px !important; font-size: 15px !important; color: var(--text) !important; }
+.dd-revacts { display: flex; align-items: center; justify-content: flex-end; gap: 16px; flex-wrap: wrap; }
+@media (max-width: 767px) { .dd-spendsum { grid-template-columns: 1fr; } .dd-spendsum > div + div { border-left: 0; border-top: 1px solid var(--border); } }
