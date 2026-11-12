@@ -110,7 +110,9 @@
 #wd-2026 .wd-v-count{font-variant-numeric:tabular-nums}
 
 /* Team */
-#wd-2026 .wd-team-copy{position:sticky;top:120px}
+#wd-2026 .wd-team-copy{position:sticky;top:120px;container-type:inline-size}
+/* Team headline: always two lines; shrinks with its column if it would otherwise wrap */
+#wd-2026 .wd-h2-2l .elementor-heading-title{white-space:nowrap;font-size:min(52px,var(--wd-fit,11.5cqw)) !important}
 #wd-2026 .wd-es .elementor-icon-list-item{align-items:center}
 #wd-2026 .wd-es .elementor-icon-list-text{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 #wd-2026 .wd-es .elementor-icon-list-icon{color:#015F4A}

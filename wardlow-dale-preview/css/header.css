@@ -22,6 +22,68 @@ body.admin-bar #wd-2026 .wd-hdr{top:32px}
 #wd-2026 .wd-icon-btn .elementor-button-icon svg{width:24px;height:24px}
 #wd-2026 .wd-icon-call .elementor-button-icon svg{width:22px;height:22px}
 
+
+#wd-2026 .wd-js{display:none}
+
+/* Desktop dropdowns */
+#wd-2026 .wd-nav{align-self:stretch}
+#wd-2026 .wd-dd{position:relative;height:100%;justify-content:center}
+#wd-2026 .wd-dd-trigger .elementor-button-icon svg{transition:transform .15s}
+#wd-2026 .wd-dd.open .wd-dd-trigger .elementor-button-icon svg{transform:rotate(180deg)}
+#wd-2026 .wd-dd.open .wd-dd-trigger .elementor-button{color:#0F4A3C}
+#wd-2026 .wd-dd-panel{display:none !important;position:absolute !important;top:100%;left:-32px;z-index:70;border:1px solid #DDD6C8;border-top:2px solid #0F4A3C;border-radius:0 0 2px 2px;box-shadow:0 16px 40px rgba(11,31,26,.12)}
+#wd-2026 .wd-dd.open .wd-dd-panel{display:grid !important}
+#wd-2026 .wd-dd.open .wd-dd-narrow{display:flex !important}
+#wd-2026 .wd-dd-wide{width:760px}
+#wd-2026 .wd-dd-narrow{width:320px}
+#wd-2026 .wd-dd-eb{margin-bottom:8px !important}
+#wd-2026 .wd-dd-item{padding:12px !important;margin:0 -12px !important;border-radius:2px;color:#0B1F1A;text-decoration:none;transition:background-color .12s}
+#wd-2026 .wd-dd-item:hover,#wd-2026 .wd-dd-item:focus-visible{background:#F7F4EE}
+#wd-2026 .wd-dd-item:hover .wd-dd-name .elementor-heading-title{color:#0F4A3C}
+#wd-2026 .wd-dd-item .wd-dd-no{grid-row:1 / span 2;padding-top:3px}
+#wd-2026 .wd-dd-no .elementor-heading-title{font-variant-numeric:tabular-nums}
+#wd-2026 .wd-dd-all{margin-top:12px !important}
+#wd-2026 .wd-dd-card{padding:16px !important;border-radius:2px;align-self:start}
+#wd-2026 .wd-dd-photo img{width:100%;aspect-ratio:16/10;object-fit:cover;object-position:58% 25%;border-radius:2px;margin-bottom:8px}
+#wd-2026 .wd-dd-phone .elementor-button{height:40px;font-variant-numeric:tabular-nums}
+#wd-2026 .wd-dd-phone .elementor-button-icon{color:#015F4A}
+#wd-2026 .wd-dd-phone .elementor-button-icon svg{width:20px;height:20px}
+
+/* Full-screen menu (opened from the menu icon at 1180px and below) */
+#wd-2026 .wd-mmenu{display:none !important;position:fixed !important;inset:0;z-index:200;overflow-y:auto;padding-bottom:32px !important}
+html.wd-menu-open,html.wd-menu-open body{overflow:hidden}
+html.wd-menu-open #wd-2026 .wd-mmenu{display:flex !important}
+html.wd-menu-open #wd-2026 .wd-mbar{display:none !important}
+body.admin-bar #wd-2026 .wd-mmenu{top:32px}
+#wd-2026 .wd-mm-top{height:64px;flex-shrink:0;padding:0 8px 0 16px !important;border-bottom:1px solid #DDD6C8}
+#wd-2026 .wd-mm-logo img{height:28px !important;width:auto !important;max-width:none}
+#wd-2026 .wd-mm-close .elementor-button{width:44px;height:44px;padding:0;position:relative}
+#wd-2026 .wd-mm-close .elementor-button::before{content:"";position:absolute;inset:10px;background:#0B1F1A;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 6l12 12M18 6L6 18'/%3E%3C/svg%3E") no-repeat center/contain;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 6l12 12M18 6L6 18'/%3E%3C/svg%3E") no-repeat center/contain}
+#wd-2026 .wd-mm-close .elementor-button-text{position:absolute !important;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+#wd-2026 .wd-mm-nav{padding:20px 16px 0 !important;max-width:640px}
+#wd-2026 .wd-mm-cta{margin-bottom:16px !important}
+#wd-2026 .wd-mm-cta .elementor-button{width:100%;height:52px}
+#wd-2026 .wd-acc,#wd-2026 .wd-mm-link{border-top:1px solid #DDD6C8}
+#wd-2026 .wd-mm-nav>.wd-mm-link:last-child{border-bottom:1px solid #DDD6C8}
+#wd-2026 .wd-acc-btn .elementor-button,#wd-2026 .wd-mm-link .elementor-button{width:100%;height:52px;padding:0;justify-content:space-between;color:#0B1F1A}
+#wd-2026 .wd-acc-btn .elementor-button-content-wrapper{width:100%;justify-content:space-between}
+#wd-2026 .wd-mm-link .elementor-button{justify-content:flex-start}
+#wd-2026 .wd-acc-btn .elementor-button::after{content:"";width:22px;height:22px;flex:0 0 22px;background:#015F4A;-webkit-mask:var(--wd-ico) no-repeat center/contain;mask:var(--wd-ico) no-repeat center/contain;--wd-ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 5v14M5 12h14'/%3E%3C/svg%3E")}
+#wd-2026 .wd-acc.open .wd-acc-btn .elementor-button::after{--wd-ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14'/%3E%3C/svg%3E")}
+#wd-2026 .wd-acc-body{display:none !important;padding-bottom:10px !important}
+#wd-2026 .wd-acc.open .wd-acc-body{display:flex !important}
+#wd-2026 .wd-mm-sub{min-height:44px;color:#0B1F1A;text-decoration:none}
+#wd-2026 .wd-mm-no{width:18px;flex-shrink:0}
+#wd-2026 .wd-mm-no .elementor-heading-title{font-variant-numeric:tabular-nums}
+#wd-2026 .wd-mm-sub:hover .wd-mm-subt .elementor-heading-title{color:#0F4A3C}
+#wd-2026 .wd-mm-all{padding:10px 0 4px 32px}
+#wd-2026 .wd-mm-addr{padding:18px 16px 0 !important}
+#wd-2026 .wd-mm-addr .elementor-icon-list-item:first-child .elementor-icon-list-text{font-weight:600;font-variant-numeric:tabular-nums}
+#wd-2026 .wd-mm-addr .elementor-icon-list-item:last-child .elementor-icon-list-text{color:#5A6661;font-size:14px}
+#wd-2026 .wd-mm-addr .elementor-icon-list-icon{color:#015F4A}
+@media (min-width:1181px){html.wd-menu-open #wd-2026 .wd-mmenu{display:none !important}html.wd-menu-open,html.wd-menu-open body{overflow:auto}}
+@media (min-width:601px) and (max-width:1180px){#wd-2026 .wd-mm-top{padding:0 32px 0 40px !important}#wd-2026 .wd-mm-nav{padding:28px 40px 0 !important}#wd-2026 .wd-mm-addr{padding:24px 40px 0 !important}}
+
 /* The header template sits inside a Template widget; let the bar stick for the whole page. */
 .wd-tpl-hdr,.wd-tpl-hdr>.elementor-widget-container,.wd-tpl-hdr .elementor-template,.wd-tpl-hdr .elementor,.wd-tpl-hdr #wd-2026.wd-hdr-root{display:contents !important}
 

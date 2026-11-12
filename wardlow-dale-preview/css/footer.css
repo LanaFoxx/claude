@@ -1,23 +1,22 @@
-/* WD 2026 – Footer (compliance strip and phone action bar included) */
+/* WD 2026 – Footer: one top row, one contact line, compact compliance, slim bottom row */
 #wd-2026 .wd-ftr{color:#F7F4EE}
-#wd-2026 .wd-ftr-top{padding-bottom:64px !important}
-#wd-2026 .wd-ftr-logo img{width:280px !important;height:auto !important}
-#wd-2026 .wd-ftr-desc{max-width:400px}
-#wd-2026 .wd-ftr-col{gap:12px}
-#wd-2026 .wd-ftr-col-h .elementor-heading-title{margin-bottom:4px}
+#wd-2026 .wd-ftr-logo img{width:220px !important;height:auto !important}
 #wd-2026 .wd-list .elementor-icon-list-items{margin:0;padding:0;list-style:none}
-#wd-2026 .wd-list .elementor-icon-list-item>a{display:inline-flex;align-items:flex-start;text-decoration:none}
-#wd-2026 .wd-ftr-links .elementor-icon-list-item>a{display:inline-block}
-#wd-2026 .wd-ftr-addr .elementor-icon-list-item{align-items:flex-start}
-#wd-2026 .wd-ftr-addr .elementor-icon-list-icon{margin-top:3px;flex-shrink:0;color:#C9A961}
-#wd-2026 .wd-ftr-addr .elementor-icon-list-icon svg{width:18px;height:18px}
-#wd-2026 .wd-ftr-addr .elementor-icon-list-item:first-child .elementor-icon-list-text{font-weight:600;font-variant-numeric:tabular-nums}
-#wd-2026 .wd-ftr-addr .elementor-icon-list-item:last-child .elementor-icon-list-text{color:#A8B3AE}
-#wd-2026 .wd-map{display:inline !important;color:#C9A961 !important;font-weight:600}
-#wd-2026 .wd-comp{padding-top:32px;border-top:1px solid rgba(168,179,174,.3);max-width:1040px}
-#wd-2026 .wd-comp p+p{margin-top:12px}
-#wd-2026 .wd-ftr-bot{margin-top:32px;padding-top:24px !important;border-top:1px solid rgba(168,179,174,.3)}
-#wd-2026 .wd-ftr-bot-links .elementor-icon-list-text{text-decoration:underline;text-underline-offset:4px}
+#wd-2026 .wd-list .elementor-icon-list-item>a{text-decoration:none}
+#wd-2026 .wd-ftr-links .elementor-icon-list-items{display:flex;flex-wrap:wrap;gap:12px 32px;margin:0 !important}
+#wd-2026 .wd-ftr-links .elementor-icon-list-item,#wd-2026 .wd-ftr-bot-links .elementor-icon-list-item{margin:0 !important;padding:0 !important}
+#wd-2026 .wd-ftr-links .elementor-icon-list-item::after,#wd-2026 .wd-ftr-bot-links .elementor-icon-list-item::after{display:none !important}
+#wd-2026 .wd-ftr-links .elementor-icon-list-text{font-size:15px;font-weight:500}
+#wd-2026 .wd-ftr-bot-links .elementor-icon-list-text{font-size:13px;color:#A8B3AE}
+#wd-2026 .wd-ftr-phone .elementor-button{height:44px;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-.01em !important}
+#wd-2026 .wd-ftr-phone .elementor-button-icon{color:#C9A961}
+#wd-2026 .wd-ftr-phone .elementor-button-icon svg{width:20px;height:20px}
+#wd-2026 .wd-ftr-meta{margin-top:48px !important;padding-top:28px;border-top:1px solid rgba(168,179,174,.25)}
+#wd-2026 .wd-ftr-meta a{color:#F7F4EE !important;text-decoration:none}
+#wd-2026 .wd-ftr-meta a:hover{color:#C9A961 !important}
+#wd-2026 .wd-comp{margin-top:16px !important;max-width:980px}
+#wd-2026 .wd-ftr-bot{margin-top:40px}
+#wd-2026 .wd-ftr-bot-links .elementor-icon-list-items{display:flex;flex-wrap:wrap;gap:8px 24px;margin:0 !important}
 #wd-2026 .wd-ftr a:hover .elementor-icon-list-text{color:#C9A961}
 
 /* Phone action bar */
@@ -28,14 +27,17 @@
 #wd-2026 .wd-mbar-call .elementor-button-icon svg{width:20px;height:20px}
 #wd-2026 .wd-js{display:none}
 
+
 @media (max-width:980px){
 #wd-2026 .wd-ftr{padding-left:40px !important;padding-right:40px !important}
-#wd-2026 .wd-ftr-top{grid-template-columns:minmax(0,1fr) !important}
 }
 @media (max-width:600px){
-#wd-2026 .wd-ftr{padding:56px 16px 120px !important}
-#wd-2026 .wd-ftr-logo img{width:230px !important}
-#wd-2026 .wd-ftr-nav{grid-template-columns:repeat(2,minmax(0,1fr)) !important;gap:28px 16px !important}
+#wd-2026 .wd-ftr{padding:56px 16px 112px !important}
+#wd-2026 .wd-ftr-top{flex-direction:column !important;align-items:flex-start !important;gap:28px !important}
+#wd-2026 .wd-ftr-logo img{width:200px !important}
+#wd-2026 .wd-ftr-links .elementor-icon-list-items{gap:12px 24px}
+#wd-2026 .wd-ftr-meta{margin-top:32px !important}
+#wd-2026 .wd-ftr-bot{flex-direction:column-reverse !important;align-items:flex-start !important;margin-top:28px}
 #wd-2026 .wd-mbar{display:flex !important}
 html.wd-typing #wd-2026 .wd-mbar{display:none !important}
 }

@@ -43,5 +43,6 @@ because the site's Elementor breakpoints are 1024/767 and were left alone.
 * **Headshots and logo**: the originals on staging have no alt text (and the logo's fallback would be "1"), and existing media can't be edited, so
   WebP copies with SPEC.md alt text were uploaded (`wd-2026-headshot-*` cropped 4:5 from the staging originals; logo from the package).
 * `#wd-2026` is used as the top container ID on the page and on both templates, as asked, so the ID appears three times in the page HTML.
-* Header nav items are links to `#` (no dropdowns yet), and the menu icon links to `#`. The review prev/next buttons are static placeholders, as in the reference.
+* Header: Practice areas and About open dropdown panels (hover, click or keyboard; Esc closes). At 1180px and below the menu icon opens the full-screen menu from the canvas artboard "Home · 375 · menu open". All menu links go to `#` until those pages exist. The review prev/next buttons are static placeholders.
+* Later client/design changes: playbook is the canvas "split board" design; buttons are dark gold #8C6E2B with white text (hover #7A5F22); closing and team headlines are fixed at two lines; the footer is a minimal single-row version; [CONFIRM] chips were replaced by plain [placeholders].
 * The text-field focus style is the reference's 2px Evergreen border (not an outline).

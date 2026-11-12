@@ -11,11 +11,93 @@ const tlink = (t, href = '#') => `<a class="wd-tlink" href="${href}">${t}</a>`;
 // Section: full-bleed background, content 1320px max via side padding.
 const sec = (cls, bg, children, o = {}) => C(`wd-sec ${cls}`, { bg, padding: cbox(`${o.pt ?? 144}px`, SIDE, `${o.pb ?? 144}px`, SIDE), ...o }, children);
 
+
+const navItem = (icon) => ({ variant: 'text', size: 15, ...(icon ? { icon, iconGap: 6 } : {}), extra: { typography_font_weight: '500' } });
+const PRACTICES = [
+  ['01', 'Auto accidents', 'Rear-end, intersection and distracted-driver crashes.'],
+  ['02', 'Truck accidents', 'Tractor-trailer and commercial vehicle crashes.'],
+  ['03', 'Premises liability', 'Slip, trip and fall injuries on unsafe property.'],
+];
+const ABOUT = [
+  ['About the firm', 'How we work and who we work for.'],
+  ['Sara J. Wardlow', 'Co-Founder & Managing Partner'],
+  ['Torrie L. Dale', 'Co-Founder & Managing Partner'],
+  ['Our team', 'Paralegals, staff and the office dogs.'],
+];
+
+// Full-screen menu for widths up to 1180px (opened by the header's menu icon).
+function mobileMenu(m) {
+  const group = (title, items, open) => C(`wd-acc${open ? ' wd-acc-open' : ''}`, {}, [
+    BTN(title, '#', 'wd-acc-btn', { variant: 'text', size: 24, extra: { typography_font_weight: '700' } }),
+    C('wd-acc-body', {}, items),
+  ]);
+  const sub = (text, no) => C('wd-mm-sub', { tag: 'a', link: '#', dir: 'row', align: 'center', gap: 14 }, [
+    H(no || '', 'span', 'wd-mm-no', { color: T.antique, size: 12, weight: 600, lh: 1.5 }),
+    H(text, 'span', 'wd-mm-subt', { size: 16, weight: 500, lh: 1.4 }),
+  ]);
+  return C('wd-mmenu', { bg: T.ivory }, [
+    C('wd-mm-top', { dir: 'row', justify: 'space-between', align: 'center' }, [
+      IMG(m.logoCompact, 'wd-mm-logo', { link: HOME }),
+      BTN('Close menu', '#', 'wd-icon-btn wd-mm-close', { variant: 'text' }),
+    ]),
+    C('wd-mm-nav', { tag: 'nav', attrs: 'aria-label|Mobile' }, [
+      BTN('Free case review', FORM, 'wd-mm-cta', { icon: m.arrowRight }),
+      group('Practice areas', [
+        ...PRACTICES.map(([no, name]) => sub(name, no)),
+        TX(`<p>${tlink('All practice areas')}</p>`, 'wd-mm-all', { size: 15 }),
+      ], true),
+      group('About', ABOUT.map(([name]) => sub(name))),
+      BTN('Insights', '#', 'wd-mm-link', { variant: 'text', size: 24, extra: { typography_font_weight: '700' } }),
+      BTN('Contact', '#', 'wd-mm-link', { variant: 'text', size: 24, extra: { typography_font_weight: '700' } }),
+    ]),
+    iconList([
+      { text: PHONE, link: TEL, icon: m.phone },
+      { text: 'info@wardlowdale.com', link: '#', icon: m.mail },
+      { text: '3343 Peachtree Rd. NE, Atlanta, GA 30326', icon: m.pin },
+    ], 'wd-mm-addr', { color: T.ink, iconColor: T.brand, hover: T.evergreen, size: 15, space: 6, indent: 10 }),
+  ]);
+}
+
+// Desktop dropdowns (hover, click, keyboard, Esc) and the full-screen menu with its accordions.
+const HEADER_SCRIPT = `<script>
+(function(){
+  function init(){
+    var root=document.documentElement;
+    document.querySelectorAll('#wd-2026 .wd-dd').forEach(function(dd){
+      var t=dd.querySelector('.wd-dd-trigger a');if(!t||t.dataset.wd)return;t.dataset.wd=1;
+      t.setAttribute('role','button');t.setAttribute('aria-haspopup','true');t.setAttribute('aria-expanded','false');
+      var set=function(o){dd.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');};
+      t.addEventListener('click',function(e){e.preventDefault();var o=!dd.classList.contains('open');
+        document.querySelectorAll('#wd-2026 .wd-dd.open').forEach(function(x){if(x!==dd){x.classList.remove('open');x.querySelector('.wd-dd-trigger a').setAttribute('aria-expanded','false');}});set(o);});
+      dd.addEventListener('mouseenter',function(){set(true);});dd.addEventListener('mouseleave',function(){set(false);});
+      dd.addEventListener('focusout',function(e){if(!dd.contains(e.relatedTarget))set(false);});
+      dd.addEventListener('keydown',function(e){if(e.key==='Escape'){set(false);t.focus();}});
+    });
+    var menu=document.querySelector('#wd-2026 .wd-mmenu'),ob=document.querySelector('#wd-2026 .wd-icon-menu a');
+    if(!menu||!ob||ob.dataset.wd)return;ob.dataset.wd=1;
+    var cb=menu.querySelector('.wd-mm-close a');
+    menu.setAttribute('role','dialog');menu.setAttribute('aria-modal','true');menu.setAttribute('aria-label','Menu');
+    ob.setAttribute('role','button');ob.setAttribute('aria-expanded','false');cb.setAttribute('role','button');
+    var open=function(o){root.classList.toggle('wd-menu-open',o);ob.setAttribute('aria-expanded',o?'true':'false');(o?cb:ob).focus();};
+    ob.addEventListener('click',function(e){e.preventDefault();open(true);});
+    cb.addEventListener('click',function(e){e.preventDefault();open(false);});
+    menu.addEventListener('keydown',function(e){if(e.key==='Escape')open(false);});
+    menu.querySelectorAll('a[href^="#"]:not([href="#"])').forEach(function(a){a.addEventListener('click',function(){root.classList.remove('wd-menu-open');ob.setAttribute('aria-expanded','false');});});
+    menu.querySelectorAll('.wd-acc').forEach(function(g){
+      var b=g.querySelector('.wd-acc-btn a');b.setAttribute('role','button');
+      var s=function(o){g.classList.toggle('open',o);b.setAttribute('aria-expanded',o?'true':'false');};
+      s(g.classList.contains('wd-acc-open'));b.addEventListener('click',function(e){e.preventDefault();s(!g.classList.contains('open'));});
+    });
+  }
+  if(document.readyState!=='loading')init();else document.addEventListener('DOMContentLoaded',init);
+})();
+</script>`;
+
 /* ------------------------------------------------------------------ header */
 function header(m) {
   return [C('wd-root wd-hdr-root', { cssId: 'wd-2026' }, [
     C('wd-util', { dir: 'row', justify: 'space-between', align: 'center', gap: 16, bg: T.ink, padding: cbox('0', SIDE, '0', SIDE), minH: 40 }, [
-      TX(`Free consultations · <span lang="es">Hablamos español</span> ${chip('CONFIRM both', true)}`, 'wd-util-l', { color: T.mist, size: 13, lh: 1.5 }),
+      TX('Free consultations · <span lang="es">Hablamos español</span>', 'wd-util-l', { color: T.mist, size: 13, lh: 1.5 }),
       TX('3343 Peachtree Rd. NE, Atlanta', 'wd-util-r', { color: T.mist, size: 13, lh: 1.5 }),
     ]),
     C('wd-hdr', { tag: 'header', dir: 'row', justify: 'space-between', align: 'center', gap: 24, bg: T.white, padding: cbox('0', SIDE, '0', SIDE), minH: 88 }, [
@@ -24,10 +106,37 @@ function header(m) {
         IMG(m.logoCompact, 'wd-logo-compact', { link: HOME }),
       ]),
       C('wd-nav', { tag: 'nav', dir: 'row', align: 'center', gap: 32, attrs: 'aria-label|Main' }, [
-        BTN('Practice areas', '#', 'wd-nav-item', { variant: 'text', size: 15, icon: m.chevron, iconGap: 6, extra: { typography_font_weight: '500' } }),
-        BTN('About', '#', 'wd-nav-item', { variant: 'text', size: 15, icon: m.chevron, iconGap: 6, extra: { typography_font_weight: '500' } }),
-        BTN('Insights', '#', 'wd-nav-item', { variant: 'text', size: 15, extra: { typography_font_weight: '500' } }),
-        BTN('Contact', '#', 'wd-nav-item', { variant: 'text', size: 15, extra: { typography_font_weight: '500' } }),
+        C('wd-dd wd-dd-practice', {}, [
+          BTN('Practice areas', '#', 'wd-nav-item wd-dd-trigger', navItem(m.chevron)),
+          C('wd-dd-panel wd-dd-wide', { grid: 'minmax(0,1.25fr) minmax(0,1fr)', gap: 32, bg: T.white, padding: box(32) }, [
+            C('wd-dd-list', { gap: 4 }, [
+              EB('Practice areas', 'wd-dd-eb', T.evergreen, { size: 12 }),
+              ...PRACTICES.map(([no, name, line]) => C('wd-dd-item', { tag: 'a', link: '#', grid: '28px minmax(0,1fr)', gap: gap(8, 2) }, [
+                H(no, 'span', 'wd-dd-no', { color: T.antique, size: 12, weight: 600, lh: 1.7 }),
+                H(name, 'span', 'wd-dd-name', { size: 17, weight: 700, lh: 1.35 }),
+                TX(`<p>${line}</p>`, 'wd-dd-line', { color: T.stone, size: 14, lh: 1.45 }),
+              ])),
+              TX(`<p>${tlink('All practice areas')}</p>`, 'wd-dd-all', { size: 15 }),
+            ]),
+            C('wd-dd-card', { bg: T.ivory, gap: 8 }, [
+              IMG(m.partners, 'wd-dd-photo', { size: 'medium_large' }),
+              H('Talk to Sara or Torrie directly.', 'p', 'wd-dd-card-h', { size: 18, weight: 700, lh: 1.3 }),
+              BTN(PHONE, TEL, 'wd-dd-phone', { variant: 'text', size: 20, icon: m.phone, iconGap: 8, iconBefore: true, extra: { typography_font_weight: '600' } }),
+              TX('<p>Free, confidential case review. No fee unless we recover.</p>', 'wd-dd-card-p', { color: T.stone, size: 14, lh: 1.45 }),
+            ]),
+          ]),
+        ]),
+        C('wd-dd wd-dd-about', {}, [
+          BTN('About', '#', 'wd-nav-item wd-dd-trigger', navItem(m.chevron)),
+          C('wd-dd-panel wd-dd-narrow', { gap: 4, bg: T.white, padding: box(24) }, [
+            ...ABOUT.map(([name, line]) => C('wd-dd-item wd-dd-item-plain', { tag: 'a', link: '#', gap: 2 }, [
+              H(name, 'span', 'wd-dd-name', { size: 17, weight: 700, lh: 1.35 }),
+              TX(`<p>${line}</p>`, 'wd-dd-line', { color: T.stone, size: 14, lh: 1.45 }),
+            ])),
+          ]),
+        ]),
+        BTN('Insights', '#', 'wd-nav-item', navItem()),
+        BTN('Contact', '#', 'wd-nav-item', navItem()),
       ]),
       C('wd-hdr-right', { dir: 'row', align: 'center', gap: 24 }, [
         BTN(PHONE, TEL, 'wd-hdr-phone', { variant: 'text', size: 15, icon: m.phone, iconGap: 8, iconBefore: true }),
@@ -36,44 +145,30 @@ function header(m) {
         BTN('Open menu', '#', 'wd-icon-btn wd-icon-menu', { variant: 'text', icon: m.menu }),
       ]),
     ]),
+    mobileMenu(m),
+    W('html', 'wd-js', { html: HEADER_SCRIPT }),
   ], false)];
 }
 
 /* ------------------------------------------------------------------ footer */
 function footer(m) {
-  const col = (title, links) => C('wd-ftr-col', { gap: 12 }, [
-    EB(title, 'wd-ftr-col-h', T.gold, { size: 12 }),
-    iconList(links.map((t) => ({ text: t, link: '#' })), 'wd-ftr-links', { color: T.ivory, hover: T.gold, size: 16, space: 12 }),
-  ]);
   return [C('wd-root wd-ftr-root', { cssId: 'wd-2026' }, [
-    C('wd-ftr', { tag: 'footer', bg: T.ink, padding: cbox('96px', SIDE, '48px', SIDE) }, [
-      C('wd-ftr-top', { grid: 'minmax(0,4fr) minmax(0,7fr)', gap: gap(96, 56) }, [
-        C('wd-ftr-brand', { gap: 24 }, [
-          IMG(m.logoReversed, 'wd-ftr-logo', { link: HOME }),
-          TX('<p>A Georgia personal injury law firm in Atlanta, owned and led by attorneys Sara J. Wardlow and Torrie L. Dale.</p>', 'wd-ftr-desc', { color: T.mist, size: 16, lh: 1.55 }),
-          iconList([
-            { text: PHONE, link: TEL, icon: m.phone },
-            { text: 'info@wardlowdale.com', link: '#', icon: m.mail },
-            { text: '3343 Peachtree Rd. NE, Suite 145-906, Atlanta, GA 30326 · <a class="wd-map" href="#">Map</a>', icon: m.pin },
-            { text: 'Office hours [CONFIRM]', icon: m.clock },
-          ], 'wd-ftr-addr', { color: T.ivory, size: 16, space: 10, iconSize: 18 }),
+    C('wd-ftr', { tag: 'footer', bg: T.ink, padding: cbox('80px', SIDE, '40px', SIDE) }, [
+      C('wd-ftr-top', { dir: 'row', wrap: 'wrap', justify: 'space-between', align: 'center', gap: gap(48, 32) }, [
+        IMG(m.logoReversed, 'wd-ftr-logo', { link: HOME }),
+        C('wd-ftr-nav', { tag: 'nav', dir: 'row', align: 'center', attrs: 'aria-label|Footer' }, [
+          iconList(['Practice areas', 'About', 'Insights', 'Contact'].map((t) => ({ text: t, link: '#' })), 'wd-ftr-links', { inline: true, color: T.ivory, hover: T.gold, size: 15, space: 32 }),
         ]),
-        C('wd-ftr-nav', { tag: 'nav', grid: 'repeat(3,minmax(0,1fr))', gap: gap(48, 40), attrs: 'aria-label|Footer' }, [
-          col('Practice areas', ['Auto accidents', 'Truck accidents', 'Premises liability']),
-          col('The firm', ['About', 'Sara J. Wardlow', 'Torrie L. Dale', 'Insights', 'Contact']),
-          col('Resources', ['Free case review', 'Privacy policy', 'Disclaimer', 'Accessibility']),
-        ]),
+        BTN(PHONE, TEL, 'wd-ftr-phone', { variant: 'text', color: T.ivory, hover: T.gold, size: 20, icon: m.phone, iconGap: 10, iconBefore: true }),
       ]),
-      TX([
-        `<p>${chip('DRAFT · FOR ATTORNEY APPROVAL', true)}</p>`,
-        `<p>Attorney advertising. Wardlow &amp; Dale, LLC. Attorneys responsible for this website: Sara J. Wardlow and Torrie L. Dale. Principal office: 3343 Peachtree Rd. NE, Suite 145-906, Atlanta, GA 30326 [CONFIRM] · ${PHONE}.</p>`,
-        '<p>*No attorney fee unless we recover: our contingency fee covers attorney’s fees only. Court costs and case expenses are separate and may still be owed by the client. Contingency fees are not permitted in all types of cases.</p>',
-        '<p id="results">*Past results depend on the facts of each case and do not guarantee or predict a similar outcome in any future matter.</p>',
-        '<p>The information on this website is for general information only and is not legal advice. Contacting us does not create an attorney-client relationship.</p>',
-      ].join(''), 'wd-comp', { color: T.mist, size: 14, lh: 1.6, cssId: 'fees' }),
+      TX('<p>3343 Peachtree Rd. NE, Suite 145-906, Atlanta, GA 30326 · <a href="#">info@wardlowdale.com</a> · Office hours: [Hours]</p>', 'wd-ftr-meta', { color: T.mist, size: 14, lh: 1.6 }),
+      TX('<p>Attorney advertising. Wardlow &amp; Dale, LLC. Attorneys responsible for this website: Sara J. Wardlow and Torrie L. Dale. '
+        + '*No attorney fee unless we recover: our contingency fee covers attorney’s fees only; court costs and case expenses are separate and may still be owed, and contingency fees are not permitted in all types of cases. '
+        + '<span id="results">*Past results depend on the facts of each case and do not guarantee a similar outcome.</span> '
+        + 'This website is general information, not legal advice, and contacting us does not create an attorney-client relationship.</p>', 'wd-comp', { color: T.mist, size: 13, lh: 1.65, cssId: 'fees' }),
       C('wd-ftr-bot', { dir: 'row', wrap: 'wrap', justify: 'space-between', align: 'center', gap: 16 }, [
-        iconList(['Privacy policy', 'Disclaimer', 'Accessibility'].map((t) => ({ text: t, link: '#' })), 'wd-ftr-bot-links', { inline: true, color: T.ivory, hover: T.gold, size: 14, space: 24 }),
-        TX('© 2026 Wardlow &amp; Dale, LLC', 'wd-ftr-copy', { color: T.mist, size: 14 }),
+        TX('<p>© 2026 Wardlow &amp; Dale, LLC</p>', 'wd-ftr-copy', { color: T.mist, size: 13 }),
+        iconList(['Privacy policy', 'Disclaimer', 'Accessibility'].map((t) => ({ text: t, link: '#' })), 'wd-ftr-bot-links', { inline: true, color: T.mist, hover: T.ivory, size: 13, space: 24 }),
       ]),
     ]),
     C('wd-mbar', { dir: 'row', gap: 10, bg: T.white }, [
@@ -112,7 +207,7 @@ function page(m, tpl) {
 
   const hero = C('wd-hero', { bg: T.ivory, grid: 'minmax(0,7fr) minmax(0,5fr)', padding: cbox('0', '0', '0', SIDE) }, [
     C('wd-hero-copy', { justify: 'center', padding: box(96, 64, 128, 0) }, [
-      EB(`Georgia personal injury attorneys ${chip('CONFIRM service area')}`, 'wd-hero-eyebrow'),
+      EB('Georgia personal injury attorneys', 'wd-hero-eyebrow'),
       H('Your injury.<br>Their fault.<br><strong>Our fight.</strong>', 'h1', 'wd-h1', { size: 'clamp(56px, 6.6vw, 96px)', weight: 300, lh: 1.02, ls: -0.03 }),
       lead('<p>Wardlow &amp; Dale is a Georgia personal injury firm that holds at-fault parties accountable. From your first call to the close of your case, you work directly with the two attorneys who own the firm.</p>', 'wd-hero-lead wd-lead-long'),
       lead('<p>Work directly with the two attorneys who own the firm, from your first call to the close of your case.</p>', 'wd-hero-lead wd-lead-short'),
@@ -130,7 +225,7 @@ function page(m, tpl) {
     TX(`<p>${label}</p>`, 'wd-num-l', { color: T.mist, size: 14, lh: 1.5 }),
   ]);
   const badge = (t) => C('wd-badge', { dir: 'row', align: 'center', gap: 16 }, [
-    TX('<p>Official badge</p>', 'wd-badge-ph', { color: T.mist, size: 11, lh: 1.2 }),
+    TX('<p>[Badge]</p>', 'wd-badge-ph', { color: T.mist, size: 11, lh: 1.2 }),
     TX(`<p>${t}</p>`, 'wd-badge-t', { color: T.mist, size: 13, lh: 1.45 }),
   ]);
   const proof = C('wd-proof', { tag: 'section', bg: T.ink, padding: cbox('144px', SIDE, '104px', SIDE), attrs: 'aria-label|The firm in numbers' }, [
@@ -139,9 +234,8 @@ function page(m, tpl) {
     ]),
     C('wd-recog', { dir: 'row', wrap: 'wrap', align: 'center', gap: gap(40, 24) }, [
       EB('Recognition', 'wd-recog-eb', T.mist),
-      badge('Super Lawyers Rising Star<br>Torrie L. Dale · [year]'),
-      badge('Top 40 Under 40, The National Trial Lawyers<br>Torrie L. Dale · [year]'),
-      TX(`<p>${chip('CONFIRM stats, years, badge licences', true)}</p>`, 'wd-recog-chip', { size: 13 }),
+      badge('Super Lawyers Rising Star<br>Torrie L. Dale · [Year]'),
+      badge('Top 40 Under 40, The National Trial Lawyers<br>Torrie L. Dale · [Year]'),
     ]),
   ]);
 
@@ -162,7 +256,7 @@ function page(m, tpl) {
     ]),
     C('wd-partners', { grid: 'repeat(2,minmax(0,1fr))', gap: gap(32, 40) }, [
       partner(m.sara, 'Sara J. Wardlow', '14+ years of legal experience on both sides of the courtroom. Has worked on and resolved multiple seven-figure cases.<a href="#results">*</a>', 'Read Sara’s bio'),
-      partner(m.torrie, 'Torrie L. Dale', `Trial-tested in Georgia state and federal courts. Super Lawyers Rising Star and a Top 40 Under 40 by The National Trial Lawyers, [years]. ${chip('CONFIRM years')}`, 'Read Torrie’s bio'),
+      partner(m.torrie, 'Torrie L. Dale', `Trial-tested in Georgia state and federal courts. Super Lawyers Rising Star and a Top 40 Under 40 by The National Trial Lawyers, [Years].`, 'Read Torrie’s bio'),
     ]),
   ], { grid: 'minmax(0,5fr) minmax(0,7fr)', gap: gap(80, 56), gridAlign: 'start' });
 
@@ -221,7 +315,6 @@ function page(m, tpl) {
     ]),
     C('wd-pb-foot', { dir: 'row', wrap: 'wrap', justify: 'space-between', align: 'center', gap: 24 }, [
       TX('<p><a class="wd-tlink wd-tlink-light" href="#">How we work, in detail</a></p>', 'wd-pb-more', { color: T.ivory, size: 17, weight: 600 }),
-      TX(`<p>${chip('CONFIRM attorneys approve wording', true)}</p>`, 'wd-pb-chip', { size: 13 }),
     ]),
   ]);
 
@@ -247,8 +340,8 @@ function page(m, tpl) {
   const voices = sec('wd-voices', T.linen, [
     EB('Client voices', 'wd-v-eb'),
     C('wd-v-q', { gap: 28 }, [
-      TX('<blockquote>“A real client review goes here, quoted exactly as written and used with the client’s permission. Shown one at a time, with no autoplay.”</blockquote>', 'wd-quote', { size: 34, weight: 300, lh: 1.35, ls: -0.01 }),
-      muted(`<p>[First name, last initial] · [Case type] · ${tlink('Google review')} ${chip('CONFIRM real reviews, or cut this section')}</p>`, 'wd-v-cap', 15),
+      TX('<blockquote>“[Client review]”</blockquote>', 'wd-quote', { size: 34, weight: 300, lh: 1.35, ls: -0.01 }),
+      muted(`<p>[Client name] · [Case type] · ${tlink('Google review')}</p>`, 'wd-v-cap', 15),
     ]),
     C('wd-v-ctl', { dir: 'row', align: 'center', gap: 16 }, [
       BTN('Previous review', '#', 'wd-sq', { variant: 'outline', icon: m.arrowLeft }),
@@ -267,9 +360,9 @@ function page(m, tpl) {
   const team = sec('wd-team', T.ivory, [
     C('wd-team-copy', { gap: 20 }, [
       EB('Our team'),
-      H2('A small team that <strong>knows your name.</strong>'),
+      H2('A small team that<br><strong>knows your name.</strong>', 'wd-h2-2l'),
       TX('<p>Every member of our team is here because they believe in fighting for the people who need it most. Rebekah is bilingual, so Spanish-speaking clients get the same attentive support throughout their case.</p>', 'wd-team-p'),
-      iconList([{ text: `<span lang="es">Hablamos español</span> ${chip('CONFIRM')}`, icon: m.globe }], 'wd-es', { color: T.evergreen, iconColor: T.brand, size: 17, weight: 600, iconSize: 22, indent: 10 }),
+      iconList([{ text: '<span lang="es">Hablamos español</span>', icon: m.globe }], 'wd-es', { color: T.evergreen, iconColor: T.brand, size: 17, weight: 600, iconSize: 22, indent: 10 }),
       BTN('Meet the team', '#', 'wd-team-btn', { variant: 'outline' }),
     ]),
     C('wd-collage', { grid: 'minmax(0,1.15fr) minmax(0,1fr) minmax(0,1fr)', gap: gap(24, 40), gridAlign: 'start' }, [
@@ -281,7 +374,6 @@ function page(m, tpl) {
         C('wd-dogs-cap', { gap: 4 }, [
           H('Braxton &amp; Mojo', 'p', 'wd-tm-name', { size: 20, weight: 700, lh: 1.25 }),
           TX('<p>Office managers and founding fathers. They greet visitors, supervise lunch breaks and keep stress levels low.</p>', 'wd-tm-role', { color: T.stone, size: 15, lh: 1.5 }),
-          TX(`<p>${chip('CONFIRM photo of Mojo')}</p>`, 'wd-dogs-chip', { size: 13 }),
         ]),
       ]),
     ]),
@@ -319,7 +411,7 @@ function page(m, tpl) {
       { _id: L.id(), custom_id: 'case_type', field_type: 'radio', field_label: 'What kind of case?', field_options: ['Auto accident', 'Truck accident', 'Premises liability', 'Other / not sure'].map(opt).join('\n'), inline_list: 'elementor-subgroup-inline', width: '100' },
       { _id: L.id(), custom_id: 'message', field_type: 'textarea', field_label: 'Briefly, what happened?', rows: 4, width: '100' },
       { _id: L.id(), custom_id: 'trust', field_type: 'html', field_label: 'Trust line', width: '60',
-        field_html: '<div class="wd-trust"><span class="wd-t-shield">No cost to talk</span><span class="wd-t-check">No attorney fee unless we recover<a href="#fees">*</a></span><span class="wd-t-clock">Reply within [CONFIRM]</span></div>' },
+        field_html: '<div class="wd-trust"><span class="wd-t-shield">No cost to talk</span><span class="wd-t-check">No attorney fee unless we recover<a href="#fees">*</a></span><span class="wd-t-clock">Reply within [time]</span></div>' },
       { _id: L.id(), custom_id: 'hp', field_type: 'honeypot', field_label: 'Honeypot', width: '100' },
     ],
     show_labels: 'yes', mark_required: '', label_position: 'above', input_size: 'md',
