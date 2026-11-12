@@ -75,7 +75,8 @@ function meetSnow(ctx) {
     container({ content_width: 'full', flex_direction: 'row', flex_wrap: 'wrap', flex_align_items: 'center', padding: box(0),
       flex_gap: { unit: 'custom', size: 'clamp(32px, 6vw, 120px)', column: 'clamp(32px, 6vw, 120px)', row: '40px', isLinked: false },
       custom_css: 'selector { max-width: 1540px; margin: 0 auto; }' }, [
-      image(ctx.m('sb-snow-bentley-headshot'), { ratio: '563 / 805', settings: { _element_width: 'initial', _element_custom_width: px(563), _element_custom_width_mobile: px(100, '%'), _flex_size: 'none', custom_css: 'selector { flex: 1 1 360px; max-width: 563px; } selector img { aspect-ratio: 563 / 805; object-fit: cover; width: 100%; }' } }),
+      // New 2026 portrait on the homepage (the About page keeps the earlier headshot)
+      image(ctx.m('sb-snow-bentley-headshot-2026'), { ratio: '563 / 805', settings: { _element_width: 'initial', _element_custom_width: px(563), _element_custom_width_mobile: px(100, '%'), _flex_size: 'none', custom_css: 'selector { flex: 1 1 360px; max-width: 563px; } selector img { aspect-ratio: 563 / 805; object-fit: cover; width: 100%; }' } }),
       stack([
         eyebrow('Meet', { mb: 12 }),
         H2('Snow Bentley', { mb: 44 }),
