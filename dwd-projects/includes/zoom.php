@@ -31,7 +31,14 @@ function dwdz_token( $force = false ) {
 	}
 	$j = json_decode( (string) wp_remote_retrieve_body( $r ), true );
 	if ( empty( $j['access_token'] ) ) {
-		return new WP_Error( 'dwdz_auth', 'Zoom didn’t accept the app keys' . ( ! empty( $j['reason'] ) ? ': ' . $j['reason'] : '.' ) );
+		$why = (string) ( $j['reason'] ?? ( $j['error'] ?? '' ) );
+		if ( false !== stripos( $why, 'account_credential' ) ) {
+			return new WP_Error( 'dwdz_auth', 'These keys are from a Zoom “General App”. Dream Desk needs a “Server-to-Server OAuth” app: in marketplace.zoom.us go to Develop → Build App → Server-to-Server OAuth App, then paste its Account ID, Client ID and Client Secret here. (Or use Option 2, your personal meeting link.)' );
+		}
+		if ( false !== stripos( $why, 'invalid client' ) || false !== stripos( $why, 'invalid_client' ) ) {
+			return new WP_Error( 'dwdz_auth', 'Zoom doesn’t recognise that Client ID / Client Secret. Copy both again from the app’s App Credentials page.' );
+		}
+		return new WP_Error( 'dwdz_auth', 'Zoom didn’t accept the app keys' . ( $why ? ': ' . $why : '.' ) . ' Make sure the app is a Server-to-Server OAuth app and that it’s activated.' );
 	}
 	set_transient( 'dwdz_token', $j['access_token'], max( 60, (int) ( $j['expires_in'] ?? 3600 ) - 120 ) );
 	return $j['access_token'];
