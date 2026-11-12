@@ -497,60 +497,7 @@
 				+ '<div class="dwdc-phcal">' + calHtml + '</div>'
 				+ '</div></div>' + connPanel();
 		}
-		if (tab === 'calendar') {
-			var today = DWDC.today, MNs = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], MNf = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-			var cm = S.pCal || pMonthKey(), cy = +cm.slice(0, 4), cmo = +cm.slice(5, 7), F = S.pCalF || { td: true, ev: true, bill: true };
-			var sel = S.pSel || today;
-			var iso = function (d) { return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); };
-			var short = function (tm) { var q = /^(\d{1,2}):(\d{2})\s*([AP]M)$/i.exec(String(tm || '').trim()); return q ? (+q[1]) + (q[2] === '00' ? '' : ':' + q[2]) + q[3].toLowerCase() : String(tm || ''); };
-			var tmin = function (x) { if (!x.time) { return -1; } var q = /^(\d{1,2}):(\d{2})\s*([AP]M)?/i.exec(x.time) || [0, 0, 0]; return (+q[1] % 12 + (/p/i.test(q[3] || '') ? 12 : 0)) * 60 + +q[2]; };
-			var billsOn = function (ds) {
-				var dd = new Date(ds + 'T12:00:00'), dim = new Date(dd.getFullYear(), dd.getMonth() + 1, 0).getDate();
-				return D.bills.filter(function (b) {
-					if (b.freq === 'weekly') { return ((dd.getDay() + 6) % 7) + 1 === b.day; }
-					if (b.freq === 'yearly' && b.month !== dd.getMonth() + 1) { return false; }
-					return Math.min(b.day, dim) === dd.getDate();
-				}).map(function (b) { var key = b.freq === 'yearly' ? ds.slice(0, 4) : b.freq === 'weekly' ? ds : ds.slice(0, 7); return { kind: 'bill', text: b.name + ' · ' + money(b.amount), done: !!(b.paid && b.paid[key]), b: b }; });
-			};
-			var itemsOn = function (ds, all) {
-				var list = D.todos.filter(function (x) { return x.due === ds; }).map(function (x) { return { kind: x.gevent ? 'ev' : 'td', fl: isFlight(x.text), text: ptx(x.text), time: x.time, done: x.done, id: x.id, src: x.gevent ? 'Google Calendar' : (x.source === 'Google Tasks' ? 'Google Tasks' : 'Personal') }; });
-				list = list.concat(billsOn(ds));
-				if (!all) { list = list.filter(function (x) { return F[x.kind]; }); }
-				return list.sort(function (a, b) { return a.done - b.done || tmin(a) - tmin(b); });
-			};
-			// counts for the visible month (chips)
-			var cnt = { td: 0, ev: 0, bill: 0 }, dimM = new Date(cy, cmo, 0).getDate();
-			for (var dc = 1; dc <= dimM; dc++) { itemsOn(cm + '-' + ('0' + dc).slice(-2), true).forEach(function (x) { cnt[x.kind]++; }); }
-			var first = new Date(cy, cmo - 1, 1), start = new Date(first); start.setDate(1 - ((first.getDay() + 6) % 7));
-			var weeks = Math.ceil((((first.getDay() + 6) % 7) + dimM) / 7), cells = '';
-			for (var ci = 0; ci < weeks * 7; ci++) {
-				var cd = new Date(start); cd.setDate(start.getDate() + ci); var ds = iso(cd), inM = cd.getMonth() === cmo - 1;
-				var its = itemsOn(ds), lbl = cd.getDate() === 1 && !inM ? MNs[cd.getMonth()] + ' 1' : String(cd.getDate());
-				cells += '<div class="dwdc-c2-d' + (inM ? '' : ' out') + (ds === today ? ' today' : '') + (ds === sel ? ' sel' : '') + '" data-psel="' + ds + '">'
-					+ '<div class="dwdc-c2-n">' + (ds === today ? '<b>' + cd.getDate() + '</b><span>Today</span>' : lbl) + '</div>'
-					+ its.slice(0, 3).map(function (x) { return '<button type="button" class="dwdc-c2-i ' + x.kind + (x.fl ? ' flight' : '') + (x.done ? ' done' : '') + '"' + (x.id ? ' data-ptask="' + x.id + '"' : ' data-gobills') + '>' + (x.time ? '<em>' + esc(short(x.time)) + '</em> ' : '') + esc(x.text) + '</button>'; }).join('')
-					+ (its.length > 3 ? '<span class="dwdc-c2-more">+' + (its.length - 3) + ' more</span>' : '') + '</div>';
-			}
-			var shift = function (n) { var d = new Date(cy, cmo - 1 + n, 1); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2); };
-			var chip = function (k, label) { return '<button type="button" class="dwdc-c2-chip ' + k + (F[k] ? ' on' : '') + '" data-pcalf="' + k + '"><i></i>' + label + '<b>' + cnt[k] + '</b></button>'; };
-			// side: selected day
-			var sd = new Date(sel + 'T12:00:00'), sitems = itemsOn(sel, true);
-			var kindLbl = { td: 'To-do', ev: 'Event', bill: 'Bill' };
-			var side = '<section class="dwdc-c2-day"><header><div class="dwdc-c2-badge"><small>' + MNs[sd.getMonth()].toUpperCase() + '</small><b>' + sd.getDate() + '</b></div><div><small>' + (sel === today ? 'Today · ' : '') + sd.toLocaleDateString('en-US', { weekday: 'long' }) + '</small><h3>' + MNf[sd.getMonth()] + ' ' + sd.getDate() + '</h3></div><span class="dwdc-c2-cnt">' + sitems.length + ' item' + (sitems.length === 1 ? '' : 's') + '</span></header>'
-				+ '<div class="dwdc-c2-list">' + (sitems.length ? sitems.map(function (x) {
-					return '<div class="dwdc-c2-row ' + x.kind + (x.fl ? ' flight' : '') + (x.done ? ' done' : '') + '"' + (x.id ? ' data-ptask="' + x.id + '"' : ' data-gobills') + '><div><p><b>' + esc(x.time ? short(x.time) : 'All day') + '</b><span>' + kindLbl[x.kind] + '</span></p><h4>' + esc(x.text) + '</h4><small>' + esc(x.src || 'Bills') + '</small></div>'
-						+ (x.kind === 'td' ? '<span class="dwdc-chk' + (x.done ? ' on' : '') + '" data-ptoggle="' + x.id + '">' + ic('check', 12) + '</span>' : '') + '</div>';
-				}).join('') : '<p class="dwdc-c2-empty">Nothing on this day.</p>') + '</div>'
-				+ '<form class="dwdc-c2-add" data-pform="pdayadd"><input type="hidden" name="due" value="' + sel + '"><input name="text" placeholder="Add a to-do for ' + MNs[sd.getMonth()] + ' ' + sd.getDate() + '…" autocomplete="off" required><button class="dwdc-btn">Add</button></form></section>';
-			// side: coming up 7 days
-			var up = [];
-			for (var ui = 0; ui < 7; ui++) { var ud = new Date(today + 'T12:00:00'); ud.setDate(ud.getDate() + ui + 1); var us = iso(ud); itemsOn(us, true).filter(function (x) { return !x.done; }).forEach(function (x) { up.push({ d: ud, x: x }); }); }
-			var soon = '<section class="dwdc-c2-up"><header><h3>Coming up</h3><span>Next 7 days</span></header>' + (up.length ? up.slice(0, 12).map(function (u) {
-				var x = u.x; return '<div class="dwdc-c2-urow"' + (x.id ? ' data-ptask="' + x.id + '"' : ' data-gobills') + '><div class="d"><small>' + u.d.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase() + '</small><b>' + u.d.getDate() + '</b></div><i class="' + x.kind + (x.fl ? ' flight' : '') + '"></i><div class="t"><b>' + esc(x.text) + '</b><small>' + esc(x.time ? short(x.time) : 'All day') + ' · ' + (x.kind === 'ev' ? 'Google Calendar' : kindLbl[x.kind]) + '</small></div></div>';
-			}).join('') : '<p class="dwdc-c2-empty">Nothing in the next week.</p>') + '</section>';
-			return '<div class="dwdc-c2-top"><div class="dwdc-c2-nav"><button type="button" data-pcal="' + shift(-1) + '" aria-label="Previous month">' + ic('left', 16) + '</button><button type="button" data-pcaltoday>Today</button><button type="button" data-pcal="' + shift(1) + '" aria-label="Next month">' + ic('right', 16) + '</button></div><h2 class="dwdc-c2-month">' + MNf[cmo - 1] + ' ' + cy + '</h2><div class="dwdc-c2-chips">' + chip('td', 'To-dos') + chip('ev', 'Google Calendar') + chip('bill', 'Bills') + '</div></div>'
-				+ '<div class="dwdc-c2"><section class="dwdc-c2-cal"><div class="dwdc-c2-h">' + ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(function (x) { return '<span>' + x + '</span>'; }).join('') + '</div><div class="dwdc-c2-g">' + cells + '</div></section><aside class="dwdc-c2-side">' + side + soon + '</aside></div>';
-		}
+		if (tab === 'calendar') { return calPage(D); }
 		if (tab === 'done') {
 			var dn = D.todos.filter(function (t) { return t.done; }).sort(function (a, b) { return (b.done_at || '') < (a.done_at || '') ? -1 : 1; });
 			return '<section class="dwdc-card">' + (dn.length ? '<div class="dwdc-todos donelist">' + dn.map(pTodoRow).join('') + '</div>' : emptyRow('Nothing completed yet.')) + '</section>';
@@ -723,7 +670,7 @@
 			return '<div class="dd-ph home"><div><h1>' + new Date(DWDC.today + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }) + '</h1><p>' + greet + ', ' + esc(String(DWDC.user || 'Michael').split(' ')[0]) + '</p></div>'
 				+ (qm ? '<div class="dd-quote"><span>' + qm[1] + ' <i>— ' + qm[2] + '</i></span><button type="button" class="dd-ibtn sm" data-quotex aria-label="Hide for today">' + lu('x', 14) + '</button></div>' : '') + '</div>';
 		}
-		if (r.view === 'client' || r.view === 'cl' || r.view === 'host') { return ''; }
+		if (r.view === 'client' || r.view === 'cl' || r.view === 'host' || (r.view === 'personal' && r.arg === 'calendar')) { return ''; }
 		return '<div class="dd-ph"><h1>' + esc(ddTitle(r, t)) + '</h1></div>';
 	}
 	// Home (design 4.1): schedule + recent activity | stat list + to-dos.
@@ -836,6 +783,143 @@
 			+ (SORT_OPTS[key] || []).map(function (k) { return '<option value="' + k + '"' + (m === k ? ' selected' : '') + '>' + SORTS[k][0] + '</option>'; }).join('') + '</select></label>';
 	}
 	function setSort(key, v) { var m = {}; try { m = JSON.parse(ddGet('dreamdesk-sort', '{}')) || {}; } catch (e) { m = {}; } m[key] = v; ddSet('dreamdesk-sort', JSON.stringify(m)); if (S.psort) { delete S.psort[key]; } }
+
+	/* ================= Calendar (design 3a): Month / Week / Day, Today + Coming up ================= */
+	var CAL_MN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+	var CAL_MF = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+	function calIso(d) { return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+	function calD(ds) { return new Date(ds + 'T12:00:00'); }
+	function calAdd(ds, n) { var d = calD(ds); d.setDate(d.getDate() + n); return calIso(d); }
+	function calMon(ds) { var d = calD(ds); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return calIso(d); }
+	function calView() { var v = S.calView || ddGet('dreamdesk-cal-view', 'month'); return ['month', 'week', 'day'].indexOf(v) > -1 ? v : 'month'; }
+	function calSrc() { var a = null; try { a = JSON.parse(ddGet('dreamdesk-cal-sources', 'null')); } catch (e) { a = null; } a = Array.isArray(a) ? a : ['td', 'ev', 'bill']; return { td: a.indexOf('td') > -1, ev: a.indexOf('ev') > -1, bill: a.indexOf('bill') > -1 }; }
+	function calShort(tm) { var q = /^(\d{1,2}):(\d{2})\s*([AP]M)$/i.exec(String(tm || '').trim()); return q ? (+q[1]) + (q[2] === '00' ? '' : ':' + q[2]) + q[3].toLowerCase() : String(tm || ''); }
+	function calMin(tm) { if (!tm) { return -1; } var q = /^(\d{1,2}):(\d{2})\s*([AP]M)?/i.exec(String(tm)); return q ? (+q[1] % 12 + (/p/i.test(q[3] || '') ? 12 : 0)) * 60 + +q[2] : -1; }
+	function calNowMin() { var p = new Date().toLocaleTimeString('en-US', { timeZone: 'America/New_York', hour12: false, hour: '2-digit', minute: '2-digit' }).split(':'); return (+p[0] % 24) * 60 + +p[1]; }
+	// Everything on one day: personal to-dos + Google Calendar events, work to-dos you dated yourself, and bills.
+	function calItems(D, ds, all) {
+		var F = calSrc();
+		var dd = calD(ds), dim = new Date(dd.getFullYear(), dd.getMonth() + 1, 0).getDate();
+		var list = D.todos.filter(function (x) { return x.due === ds; }).map(function (x) {
+			var fl = isFlight(x.text);
+			return { kind: x.gevent ? 'ev' : 'td', tint: fl ? 'rose' : x.gevent ? 'ev' : 'td', text: ptx(x.text), time: x.time, done: !!x.done, id: x.id, src: x.gevent ? 'Google Calendar' : (x.source === 'Google Tasks' ? 'Google Tasks' : 'Personal to-do') };
+		});
+		S.tasks.filter(function (x) { return x.due === ds && x.due_set; }).forEach(function (x) { var c = x.contact ? contact(x.contact) : null; list.push({ kind: 'td', tint: 'td', w: 1, text: x.text, time: '', done: !!x.done, id: x.id, src: 'Work to-do' + (c ? ' · ' + c.name : '') }); });
+		D.bills.filter(function (b) {
+			if (b.freq === 'weekly') { return ((dd.getDay() + 6) % 7) + 1 === b.day; }
+			if (b.freq === 'yearly' && b.month !== dd.getMonth() + 1) { return false; }
+			return Math.min(b.day, dim) === dd.getDate();
+		}).forEach(function (b) { var key = b.freq === 'yearly' ? ds.slice(0, 4) : b.freq === 'weekly' ? ds : ds.slice(0, 7); list.push({ kind: 'bill', tint: 'bill', text: b.name + ' · ' + money(b.amount), done: !!(b.paid && b.paid[key]), src: 'Bills' }); });
+		if (!all) { list = list.filter(function (x) { return F[x.kind]; }); }
+		return list.sort(function (a, b) { return a.done - b.done || calMin(a.time) - calMin(b.time); });
+	}
+	function calOpen(x) { return x.w ? ' data-task="' + x.id + '"' : x.id ? ' data-ptask="' + x.id + '"' : ' data-gobills'; }
+	function calDrag(x) { return x.kind === 'td' && !x.done ? ' draggable="true" data-caldrag="' + (x.w ? 'w' : 'p') + ':' + x.id + '"' : ''; }
+	function calBlock(x) { return '<button type="button" class="dd-ev ' + x.tint + (x.done ? ' done' : '') + '"' + calOpen(x) + calDrag(x) + ' title="' + esc((x.time ? calShort(x.time) + ' ' : '') + x.text) + '">' + (x.time ? '<em>' + esc(calShort(x.time)) + '</em>' : '') + esc(x.text) + '</button>'; }
+	function calPage(D) {
+		var T = DWDC.today, view = calView(), F = calSrc(), sel = S.pSel || T, phone = window.innerWidth < 768;
+		var cm = S.pCal || T.slice(0, 7), cy = +cm.slice(0, 4), cmo = +cm.slice(5, 7);
+		// counts for the visible month
+		var cnt = { td: 0, ev: 0, bill: 0 }, dimM = new Date(cy, cmo, 0).getDate();
+		for (var dc = 1; dc <= dimM; dc++) { calItems(D, cm + '-' + ('0' + dc).slice(-2), true).forEach(function (x) { cnt[x.kind]++; }); }
+		var tog = function (k, label) { return '<button type="button" class="dd-srct ' + k + (F[k] ? '' : ' off') + '" data-calsrc="' + k + '" aria-pressed="' + F[k] + '"><i></i>' + label + '<em>' + cnt[k] + '</em></button>'; };
+		var sd = calD(sel), period;
+		if (view === 'month') { period = CAL_MF[cmo - 1] + ' ' + cy; }
+		else if (view === 'day') { period = sd.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }); }
+		else { var ws = phone ? sel : calMon(sel), we = calAdd(ws, phone ? 2 : 6), a = calD(ws), b = calD(we); period = CAL_MN[a.getMonth()] + ' ' + a.getDate() + ' – ' + (a.getMonth() === b.getMonth() ? '' : CAL_MN[b.getMonth()] + ' ') + b.getDate() + ', ' + b.getFullYear(); }
+		var vbtn = function (v, l) { return '<button type="button" class="' + (view === v ? 'on' : '') + '" data-calview="' + v + '" aria-pressed="' + (view === v) + '">' + l + '</button>'; };
+		var head = '<div class="dd-calt"><h1>Calendar</h1><div class="dd-srcs">' + tog('td', 'To-dos') + tog('ev', 'Google Calendar') + tog('bill', 'Bills') + '</div></div>'
+			+ '<div class="dd-calbar"><div class="dd-navg"><button type="button" data-calnav="-1" aria-label="Previous">' + lu('chevron-right', 16).replace('<svg', '<svg style="transform:rotate(180deg)"') + '</button><button type="button" class="t" data-pcaltoday>Today</button><button type="button" data-calnav="1" aria-label="Next">' + lu('chevron-right', 16) + '</button></div>'
+			+ '<h2>' + period + '</h2><span class="dd-sp"></span><div class="dd-seg">' + vbtn('month', 'Month') + vbtn('week', phone ? '3 days' : 'Week') + vbtn('day', 'Day') + '</div></div>';
+		var main = '';
+		if (view === 'month') {
+			var first = new Date(cy, cmo - 1, 1), start = new Date(first); start.setDate(1 - ((first.getDay() + 6) % 7));
+			var cells = '';
+			for (var ci = 0; ci < 42; ci++) {
+				var cd = new Date(start); cd.setDate(start.getDate() + ci);
+				var ds = calIso(cd), inM = cd.getMonth() === cmo - 1, its = inM ? calItems(D, ds) : [];
+				cells += '<div class="dd-mc' + (inM ? '' : ' out') + (ds === T ? ' today' : '') + (ds === sel ? ' sel' : '') + '" data-psel="' + ds + '" data-caldrop="' + ds + '">'
+					+ '<div class="dd-mn"><button type="button" data-calday="' + ds + '" aria-label="Open ' + ds + '">' + cd.getDate() + '</button>' + (ds === T ? '<span>Today</span>' : '') + '</div>'
+					+ its.slice(0, 3).map(calBlock).join('')
+					+ (its.length > 3 ? '<button type="button" class="dd-more" data-calmore="' + ds + '">+' + (its.length - 3) + ' more</button>' : '')
+					+ (its.length ? '<span class="dd-mdots">' + its.slice(0, 3).map(function (x) { return '<i class="' + x.tint + (x.done ? ' done' : '') + '"></i>'; }).join('') + '</span>' : '')
+					+ (S.calMore === ds ? '<div class="dd-pop" role="dialog"><header><b>' + cd.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) + '</b><button type="button" class="dd-ibtn sm" data-calmore="">' + lu('x', 14) + '</button></header>' + its.map(calBlock).join('') + '</div>' : '')
+					+ '</div>';
+			}
+			main = '<section class="dd-card dd-month"><div class="dd-wkh">' + ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(function (x) { return '<span>' + x + '</span>'; }).join('') + '</div><div class="dd-mg">' + cells + '</div></section>';
+		} else {
+			var days = [];
+			if (view === 'day') { days = [sel]; } else { var w0 = phone ? sel : calMon(sel); for (var wi = 0; wi < (phone ? 3 : 7); wi++) { days.push(calAdd(w0, wi)); } }
+			var nowM = calNowMin(), HR = phone ? 48 : 60;
+			var hdr = '<div class="dd-wh"><span class="dd-gut"></span>' + days.map(function (ds) { var d = calD(ds); return '<button type="button" class="dd-whd' + (ds === T ? ' today' : '') + '" data-calday="' + ds + '"><small>' + d.toLocaleDateString('en-US', { weekday: 'short' }) + '</small><b>' + d.getDate() + '</b></button>'; }).join('') + '</div>';
+			var allday = '<div class="dd-wad"><span class="dd-gut">all-day</span>' + days.map(function (ds) { return '<div class="dd-wadc" data-caldrop="' + ds + '">' + calItems(D, ds).filter(function (x) { return calMin(x.time) < 0; }).map(calBlock).join('') + '</div>'; }).join('') + '</div>';
+			var hours = '';
+			for (var h = 0; h < 24; h++) { hours += '<div class="dd-hr" style="top:' + h * HR + 'px"><span>' + (h === 0 ? '' : (h % 12 || 12) + (h < 12 ? 'am' : 'pm')) + '</span></div>'; }
+			var cols = days.map(function (ds) {
+				var timed = calItems(D, ds).filter(function (x) { return calMin(x.time) >= 0; }).map(function (x) { return { x: x, s: calMin(x.time), e: calMin(x.time) + 60 }; });
+				// overlapping events share the column width
+				var clusters = [], cur = null;
+				timed.sort(function (a, b) { return a.s - b.s; }).forEach(function (ev) {
+					if (!cur || ev.s >= cur.end) { cur = { end: ev.e, lanes: [] }; clusters.push(cur); }
+					var li = 0; while (cur.lanes[li] !== undefined && cur.lanes[li] > ev.s) { li++; }
+					cur.lanes[li] = ev.e; ev.lane = li; ev.cl = cur; cur.end = Math.max(cur.end, ev.e);
+				});
+				var blocks = timed.map(function (ev) {
+					var n = ev.cl.lanes.length, x = ev.x;
+					return '<button type="button" class="dd-wev ' + x.tint + (x.done ? ' done' : '') + '"' + calOpen(x) + calDrag(x) + ' style="top:' + (ev.s / 60 * HR) + 'px;height:' + Math.max(22, HR - 2) + 'px;left:calc(' + (ev.lane / n * 100) + '% + 2px);width:calc(' + (100 / n) + '% - 4px)"><em>' + esc(calShort(x.time)) + '</em><b>' + esc(x.text) + '</b></button>';
+				}).join('');
+				return '<div class="dd-wc' + (ds === T ? ' today' : '') + '" data-caldrop="' + ds + '">' + blocks + (ds === T ? '<i class="dd-now" style="top:' + (nowM / 60 * HR) + 'px"></i>' : '') + '</div>';
+			}).join('');
+			main = '<section class="dd-card dd-week' + (view === 'day' ? ' one' : '') + '" style="--hr:' + HR + 'px;--cols:' + days.length + '">' + hdr + allday + '<div class="dd-wbody" data-calscroll><div class="dd-wgrid" style="height:' + 24 * HR + 'px"><div class="dd-gut">' + hours + '</div><div class="dd-wcols">' + cols + '</div></div></div></section>';
+		}
+		// Today (selected day) card
+		var sit = calItems(D, sel, true).filter(function (x) { return F[x.kind]; }), kindL = { td: 'To-do', ev: 'Event', bill: 'Bill' };
+		var side = '<section class="dd-card dd-today"><header><div class="dd-dtile lg"><small>' + CAL_MN[sd.getMonth()].toUpperCase() + '</small><b>' + sd.getDate() + '</b></div><div class="dd-ch-t"><span class="ac">' + (sel === T ? 'Today · ' : '') + sd.toLocaleDateString('en-US', { weekday: 'long' }) + '</span><h2>' + CAL_MF[sd.getMonth()] + ' ' + sd.getDate() + '</h2></div><span class="dd-pill neutral">' + sit.length + ' item' + (sit.length === 1 ? '' : 's') + '</span></header>'
+			+ (sit.length ? sit.map(function (x) {
+				return '<div class="dd-ti ' + x.tint + (x.done ? ' done' : '') + '"><i class="bar"></i><div class="dd-ti-b"' + calOpen(x) + ' role="button" tabindex="0"><p><b>' + esc(x.time ? calShort(x.time) : 'All day') + '</b><span>' + kindL[x.kind] + '</span></p><h4>' + esc(x.text) + '</h4><small>' + esc(x.src) + '</small></div>'
+					+ (x.kind === 'td' ? '<button type="button" class="dd-chk' + (x.done ? ' on' : '') + '" ' + (x.w ? 'data-toggle' : 'data-ptoggle') + '="' + x.id + '" aria-label="' + (x.done ? 'Mark not done' : 'Mark done') + '">' + (x.done ? lu('check', 12) : '') + '</button>' : '') + '</div>';
+			}).join('') : '<div class="dd-emptyst sm">' + lu('calendar', 20) + '<b>Nothing scheduled' + (sel === T ? ' today' : '') + '</b><span>Add a to-do below.</span></div>')
+			+ '<form class="dd-qadd" data-pform="pdayadd"><input type="hidden" name="due" value="' + sel + '"><input name="text" placeholder="Add a to-do for ' + CAL_MN[sd.getMonth()] + ' ' + sd.getDate() + '…" autocomplete="off" required><button class="dd-btn primary">Add</button></form></section>';
+		var up = [];
+		for (var ui = 1; ui <= 7; ui++) { var us = calAdd(T, ui); calItems(D, us).filter(function (x) { return !x.done; }).forEach(function (x) { up.push({ ds: us, x: x }); }); }
+		var soon = '<section class="dd-card dd-soon"><header><h2>Coming up</h2><span>Next 7 days</span></header>' + (up.length ? up.slice(0, 8).map(function (u) {
+			var x = u.x, d = calD(u.ds);
+			return '<div class="dd-soon-r"' + calOpen(x) + ' role="button" tabindex="0"><div class="dd-stile"><small>' + d.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase() + '</small><b>' + d.getDate() + '</b></div><i class="dot ' + x.tint + '"></i><div class="dd-act-n"><b>' + esc(x.text) + '</b><small>' + esc(x.time ? calShort(x.time) : 'All day') + ' · ' + esc(x.kind === 'ev' ? 'Google Calendar' : kindL[x.kind]) + '</small></div></div>';
+		}).join('') + (up.length > 8 ? '<footer><button type="button" class="dd-lnk" data-calview="week" data-calgo="' + T + '">View all ' + up.length + '</button></footer>' : '') : '<p class="dd-empty-l">Nothing in the next week.</p>') + '</section>';
+		return head + '<div class="dd-calgrid"><div class="dd-calmain">' + main + '</div><aside class="dd-calside">' + side + soon + '</aside></div>';
+	}
+	// Calendar: scroll the hour grid to 6am, drag a to-do to another day, keyboard M/W/D, arrows, T.
+	function calScroll() { var b = app.querySelector('[data-calscroll]'); if (b && !b.dataset.done) { b.dataset.done = 1; b.scrollTop = 6 * (window.innerWidth < 768 ? 48 : 60) - 8; } }
+	function calShift(n) {
+		var v = calView(), sel = S.pSel || DWDC.today;
+		if (v === 'month') { var cm = S.pCal || DWDC.today.slice(0, 7), d = new Date(+cm.slice(0, 4), +cm.slice(5, 7) - 1 + n, 1); S.pCal = calIso(d).slice(0, 7); if ((S.pSel || '').slice(0, 7) !== S.pCal) { S.pSel = S.pCal === DWDC.today.slice(0, 7) ? DWDC.today : S.pCal + '-01'; } }
+		else { S.pSel = calAdd(sel, n * (v === 'day' ? 1 : window.innerWidth < 768 ? 3 : 7)); S.pCal = S.pSel.slice(0, 7); }
+		S.calMore = ''; render();
+	}
+	function calSetView(v, ds) { S.calView = v; ddSet('dreamdesk-cal-view', v); if (ds) { S.pSel = ds; S.pCal = ds.slice(0, 7); } S.calMore = ''; render(); }
+	function calMove(key, ds) {
+		var p = key.split(':'), id = +p[1];
+		if (p[0] === 'w') { var t = S.tasks.find(function (x) { return x.id === id; }); if (!t || t.due === ds) { return; } t.due = ds; t.due_set = true; render(); api('/task/' + id, 'POST', { due: ds }).then(function () { toast('Moved to ' + fmt(ds)); }).catch(fail); return; }
+		var P = pData(), it = P && P.todos.find(function (x) { return x.id === id; });
+		if (!it || it.due === ds) { return; }
+		it.due = ds; render(); pSave('todos', it, 'Moved to ' + fmt(ds));
+	}
+	(function () {
+		var dragKey = '';
+		app.addEventListener('dragstart', function (e) { var el = e.target.closest && e.target.closest('[data-caldrag]'); if (!el) { return; } dragKey = el.getAttribute('data-caldrag'); e.dataTransfer.effectAllowed = 'move'; try { e.dataTransfer.setData('text/plain', dragKey); } catch (er) {} });
+		app.addEventListener('dragover', function (e) { if (!dragKey) { return; } var c = e.target.closest && e.target.closest('[data-caldrop]'); if (!c) { return; } e.preventDefault(); app.querySelectorAll('.dd-drop').forEach(function (x) { if (x !== c) { x.classList.remove('dd-drop'); } }); c.classList.add('dd-drop'); });
+		app.addEventListener('drop', function (e) { var c = e.target.closest && e.target.closest('[data-caldrop]'); if (!dragKey || !c) { return; } e.preventDefault(); var k = dragKey; dragKey = ''; calMove(k, c.getAttribute('data-caldrop')); });
+		app.addEventListener('dragend', function () { dragKey = ''; app.querySelectorAll('.dd-drop').forEach(function (x) { x.classList.remove('dd-drop'); }); });
+		document.addEventListener('keydown', function (e) {
+			var r = route(); if (r.view !== 'personal' || r.arg !== 'calendar' || e.metaKey || e.ctrlKey || e.altKey || S.modal) { return; }
+			if (e.target && e.target.closest && e.target.closest('input, textarea, select, [contenteditable]')) { return; }
+			var k = e.key.toLowerCase();
+			if (k === 'm' || k === 'w' || k === 'd') { e.preventDefault(); calSetView({ m: 'month', w: 'week', d: 'day' }[k]); }
+			else if (k === 'arrowleft' || k === 'arrowright') { e.preventDefault(); calShift(k === 'arrowleft' ? -1 : 1); }
+			else if (k === 't') { e.preventDefault(); S.pCal = DWDC.today.slice(0, 7); S.pSel = DWDC.today; render(); }
+			else if (k === 'escape' && S.calMore) { S.calMore = ''; render(); }
+		});
+	})();
 
 	/* ---------- shell ---------- */
 	// Phone / app only: a sticky tab bar at the bottom (hidden on desktop by CSS).
@@ -971,6 +1055,8 @@
 		syncWpMenu(r);
 		fitProjects();
 		labelTables();
+		calScroll();
+		if (S.calFocus) { S.calFocus = false; var qa = app.querySelector('.dd-qadd input[name=text]'); if (qa && window.innerWidth > 1100) { qa.focus(); } }
 		if (S.focusSearch) { var q = app.querySelector('.dwdc-ssearch input'); if (q) { q.focus(); q.setSelectionRange(q.value.length, q.value.length); } S.focusSearch = false; }
 		if (S.cardTodo) { var ti = app.querySelector('.dwdc-cardtodo input'); if (ti) { ti.focus(); } }
 	}
@@ -2953,12 +3039,18 @@
 		}
 		if ((el = t.closest('[data-ptask]')) && !t.closest('a') && (!t.closest('button') || t.closest('button') === el)) { S.modal = { type: 'ptask', id: el.getAttribute('data-ptask'), back: S.modal && S.modal.type === 'pday' ? S.modal.day : '', vals: {} }; render(); return; }
 		if ((el = t.closest('[data-pshowdone]'))) { S.pShowDone = !S.pShowDone; render(); return; }
+		if ((el = t.closest('[data-calsrc]'))) { var csF = calSrc(), ck = el.getAttribute('data-calsrc'); csF[ck] = !csF[ck]; ddSet('dreamdesk-cal-sources', JSON.stringify(Object.keys(csF).filter(function (k) { return csF[k]; }))); render(); return; }
+		if ((el = t.closest('[data-calview]'))) { calSetView(el.getAttribute('data-calview'), el.getAttribute('data-calgo') || ''); return; }
+		if ((el = t.closest('[data-calnav]'))) { calShift(+el.getAttribute('data-calnav')); return; }
+		if ((el = t.closest('[data-calday]'))) { calSetView('day', el.getAttribute('data-calday')); return; }
+		if ((el = t.closest('[data-calmore]'))) { e.stopPropagation(); S.calMore = el.getAttribute('data-calmore'); render(); return; }
+		if (S.calMore && !t.closest('.dd-pop')) { S.calMore = ''; render(); }
 		if ((el = t.closest('[data-pcal]'))) { S.pCal = el.getAttribute('data-pcal'); render(); return; }
 		if (t.closest('[data-pcaltoday]')) { S.pCal = DWDC.today.slice(0, 7); S.pSel = DWDC.today; render(); return; }
 		if ((el = t.closest('[data-pcalf]'))) { var fk = el.getAttribute('data-pcalf'); S.pCalF = S.pCalF || { td: true, ev: true, bill: true }; S.pCalF[fk] = !S.pCalF[fk]; render(); return; }
 		if (t.closest('[data-gobills]') && !t.closest('[data-ptask]')) { location.hash = 'personal/bills'; return; }
 		if ((el = t.closest('.dwdc-phcal [data-psel]')) && !t.closest('[data-ptask], [data-gobills], a')) { S.modal = { type: 'pday', day: el.getAttribute('data-psel'), vals: {} }; render(); return; }
-		if ((el = t.closest('[data-psel]')) && !t.closest('[data-ptask], [data-gobills], a')) { S.pSel = el.getAttribute('data-psel'); var pm = S.pSel.slice(0, 7); if (pm !== (S.pCal || DWDC.today.slice(0, 7))) { S.pCal = pm; } render(); if (window.innerWidth <= 1100) { setTimeout(function () { var dd = document.querySelector('.dwdc-c2-day'); if (dd) { dd.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }, 50); } return; }
+		if ((el = t.closest('[data-psel]')) && !t.closest('[data-ptask], [data-task], [data-gobills], a, button')) { S.calFocus = true; S.pSel = el.getAttribute('data-psel'); var pm = S.pSel.slice(0, 7); if (pm !== (S.pCal || DWDC.today.slice(0, 7))) { S.pCal = pm; } render(); if (window.innerWidth <= 1100) { setTimeout(function () { var dd = document.querySelector('.dd-today'); if (dd) { dd.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }, 50); } return; }
 		if (t.closest('[data-addtask]')) { S.modal = { type: 'paddtask', msgs: [], tasks: [], draft: '', vals: {} }; render(); setTimeout(function () { var ta = document.querySelector('[data-ptdraft]'); if (ta) { ta.focus(); } }, 60); return; }
 		if (t.closest('[data-ptsend]')) { var ta0 = document.querySelector('[data-ptdraft]'); if (ta0 && S.modal) { S.modal.draft = ta0.value; } ptSend(); return; }
 		if (t.closest('[data-ptmic]')) { var ta1 = document.querySelector('[data-ptdraft]'); if (ta1 && S.modal) { S.modal.draft = ta1.value; } ptMic(); return; }

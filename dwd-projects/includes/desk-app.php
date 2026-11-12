@@ -105,6 +105,7 @@ function dwda_app() {
 <link rel="stylesheet" href="<?php echo esc_url( DWDP_URL . 'assets/crm.css?ver=' . DWDP_VERSION ); ?>">
 <link rel="stylesheet" href="<?php echo esc_url( DWDP_URL . 'assets/dd-tokens.css?ver=' . DWDP_VERSION ); ?>">
 <link rel="stylesheet" href="<?php echo esc_url( DWDP_URL . 'assets/dd.css?ver=' . DWDP_VERSION ); ?>">
+<link rel="stylesheet" href="<?php echo esc_url( DWDP_URL . 'assets/dd-cal.css?ver=' . DWDP_VERSION ); ?>">
 <style>html,body{margin:0;background:var(--bg)}body{-webkit-tap-highlight-color:transparent}.dwdc{padding-top:env(safe-area-inset-top)}</style>
 </head>
 <body class="dwdc-standalone">

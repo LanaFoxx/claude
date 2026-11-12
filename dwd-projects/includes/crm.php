@@ -1516,6 +1516,7 @@ add_action( 'admin_enqueue_scripts', function ( $hook ) {
 	wp_enqueue_style( 'dwdc', DWDP_URL . 'assets/crm.css', array(), DWDP_VERSION );
 	wp_enqueue_style( 'dd-tokens', DWDP_URL . 'assets/dd-tokens.css', array( 'dwdc' ), DWDP_VERSION );
 	wp_enqueue_style( 'dd', DWDP_URL . 'assets/dd.css', array( 'dd-tokens' ), DWDP_VERSION );
+	wp_enqueue_style( 'dd-cal', DWDP_URL . 'assets/dd-cal.css', array( 'dd' ), DWDP_VERSION );
 	wp_enqueue_script( 'dwdc', DWDP_URL . 'assets/crm.js', array(), DWDP_VERSION, true );
 	wp_localize_script( 'dwdc', 'DWDC', dwdc_vars() );
 } );

@@ -1,0 +1,155 @@
+/* Dream Desk Calendar (design 3a). Colours only from dd-tokens.css. */
+.dd-calt { display: flex; align-items: center; gap: 8px; }
+.dd-calt h1 { flex: 1; font-size: var(--fs-title); font-weight: 600; letter-spacing: -.01em; color: var(--text); }
+.dd-srcs { display: flex; gap: 8px; }
+.dd-srct { display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 12px 0 10px; border-radius: var(--radius-pill); background: var(--surface); border: 1px solid var(--border-strong); color: var(--text); font: 500 var(--fs-sm) var(--font); cursor: pointer; flex: none; }
+.dd-srct:hover { background: var(--hover); }
+.dd-srct i { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+.dd-srct.ev i { background: var(--warning-text); }
+.dd-srct.bill i { background: var(--success-text); }
+.dd-srct em { font-style: normal; color: var(--text-3); }
+.dd-srct.off { opacity: .6; color: var(--text-3); }
+.dd-srct.off i { background: var(--text-3); }
+.dd-main > .dwdc-screen > .dd-calbar { margin-top: 16px; }
+.dd-calbar { display: flex; align-items: center; gap: 16px; }
+.dd-calbar h2 { font-size: 18px; font-weight: 600; color: var(--text); white-space: nowrap; }
+.dd-navg { display: inline-flex; border: 1px solid var(--border-strong); border-radius: var(--radius-md); background: var(--surface); overflow: hidden; flex: none; }
+.dd-navg button { height: 32px; width: 34px; border: 0; background: none; color: var(--text-2); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; }
+.dd-navg button.t { width: auto; padding: 0 12px; color: var(--text); font: 500 var(--fs-sm) var(--font); border-left: 1px solid var(--border); border-right: 1px solid var(--border); }
+.dd-navg button:hover { background: var(--hover); }
+.dd-seg { display: inline-flex; padding: 2px; gap: 2px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); flex: none; }
+.dd-seg button { height: 28px; padding: 0 12px; border: 0; border-radius: var(--radius-sm); background: none; color: var(--text-2); font: 500 var(--fs-sm) var(--font); cursor: pointer; }
+.dd-seg button:hover { color: var(--text); }
+.dd-seg button.on { background: var(--accent-soft); color: var(--accent-text); }
+.dd-calgrid { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 24px; align-items: start; }
+.dd-calside { display: flex; flex-direction: column; gap: 24px; min-width: 0; }
+.dd-calmain { min-width: 0; }
+
+/* month */
+.dd-month { overflow: visible; }
+.dd-wkh { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); height: 36px; align-items: center; }
+.dd-wkh span { padding-left: 10px; font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--text-3); }
+.dd-mg { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 1px; background: var(--border); border-top: 1px solid var(--border); border-radius: 0 0 var(--radius-xl) var(--radius-xl); overflow: visible; }
+.dd-mc { position: relative; min-height: 118px; padding: 6px 6px 8px; display: flex; flex-direction: column; gap: 3px; min-width: 0; background: var(--surface); cursor: pointer; }
+.dd-mg > .dd-mc:nth-last-child(7) { border-bottom-left-radius: var(--radius-xl); }
+.dd-mg > .dd-mc:last-child { border-bottom-right-radius: var(--radius-xl); }
+.dd-mc:hover { background: var(--hover); }
+.dd-mc.out { background: var(--bg); }
+.dd-mc.sel:not(.today) .dd-mn button { box-shadow: inset 0 0 0 1px var(--accent); color: var(--accent-text); }
+.dd-mc.dd-drop, .dd-wadc.dd-drop, .dd-wc.dd-drop { background: var(--selected) !important; }
+.dd-mn { display: flex; align-items: center; gap: 6px; height: 24px; margin-bottom: 3px; }
+.dd-mn button { min-width: 24px; height: 24px; padding: 0 4px; border-radius: var(--radius-pill); border: 0; background: none; font: 500 13px var(--font); color: var(--text-2); cursor: pointer; font-variant-numeric: tabular-nums; }
+.dd-mn button:hover { background: var(--hover); color: var(--text); }
+.dd-mc.out .dd-mn button { color: var(--text-3); }
+.dd-mc.today .dd-mn button { background: var(--accent); color: var(--text-inverse); font-weight: 600; }
+.dd-mn span { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--accent-text); }
+.dd-ev { display: block; width: 100%; height: 22px; line-height: 22px; padding: 0 6px; border-radius: 5px; border: 0; font: 500 12px var(--font); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left; cursor: pointer; flex: none; }
+.dd-ev em { font-style: normal; opacity: .8; margin-right: 4px; }
+.dd-ev:hover, .dd-wev:hover { box-shadow: inset 0 0 0 1px var(--border-strong); }
+.dd-ev[draggable="true"], .dd-wev[draggable="true"] { cursor: grab; }
+.dd-ev.td, .dd-wev.td { background: var(--info-bg); color: var(--info-text); }
+.dd-ev.ev, .dd-wev.ev { background: var(--warning-bg); color: var(--warning-text); }
+.dd-ev.bill, .dd-wev.bill { background: var(--success-bg); color: var(--success-text); }
+.dd-ev.rose, .dd-wev.rose { background: var(--rose-bg); color: var(--rose-text); }
+.dd-ev.done, .dd-wev.done { background: var(--neutral-bg); color: var(--text-3); text-decoration: line-through; }
+.dd-more { align-self: flex-start; border: 0; background: none; padding: 0 6px; line-height: 20px; font: 500 12px var(--font); color: var(--accent-text); cursor: pointer; }
+.dd-more:hover { text-decoration: underline; }
+.dd-mdots { display: none; }
+.dd-pop { position: absolute; top: 4px; left: 4px; z-index: 20; width: 280px; max-height: 360px; overflow-y: auto; padding: 8px; display: flex; flex-direction: column; gap: 4px; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-menu); cursor: default; }
+.dd-mc:nth-child(7n) .dd-pop, .dd-mc:nth-child(7n-1) .dd-pop { left: auto; right: 4px; }
+.dd-pop header { display: flex; align-items: center; justify-content: space-between; padding: 0 0 4px 4px; font-size: var(--fs-sm); color: var(--text); }
+
+/* week / day */
+.dd-week { --gut: 56px; }
+.dd-wh, .dd-wad { display: grid; grid-template-columns: var(--gut) repeat(var(--cols), minmax(0, 1fr)); }
+.dd-wh { height: 52px; align-items: center; border-bottom: 1px solid var(--border); }
+.dd-whd { display: flex; align-items: center; justify-content: center; gap: 8px; height: 100%; border: 0; background: none; cursor: pointer; color: var(--text); }
+.dd-whd small { font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--text-3); }
+.dd-whd b { font-size: 16px; font-weight: 600; min-width: 26px; height: 26px; line-height: 26px; border-radius: var(--radius-pill); }
+.dd-whd.today b { background: var(--accent); color: var(--text-inverse); }
+.dd-whd:hover { background: var(--hover); }
+.dd-wad { border-bottom: 1px solid var(--border); min-height: 30px; }
+.dd-gut { font-size: 11px; color: var(--text-3); text-align: right; padding-right: 8px; }
+.dd-wad > .dd-gut { padding-top: 7px; }
+.dd-wadc { display: flex; flex-direction: column; gap: 3px; padding: 3px; border-left: 1px solid var(--border); min-width: 0; }
+.dd-wbody { height: min(720px, calc(100vh - 300px)); overflow-y: auto; position: relative; }
+.dd-wgrid { position: relative; display: grid; grid-template-columns: var(--gut) minmax(0, 1fr); }
+.dd-wgrid > .dd-gut { position: relative; padding: 0; }
+.dd-hr { position: absolute; left: 0; right: 0; height: 0; }
+.dd-hr span { position: absolute; right: 8px; top: -7px; font-size: 11px; color: var(--text-3); line-height: 1; }
+.dd-wcols { position: relative; display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); background-image: repeating-linear-gradient(to bottom, var(--border) 0, var(--border) 1px, transparent 1px, transparent var(--hr)); }
+.dd-wc { position: relative; border-left: 1px solid var(--border); min-width: 0; }
+.dd-wc.today { background: var(--selected); }
+.dd-wev { position: absolute; display: flex; flex-direction: column; align-items: flex-start; padding: 4px 8px 4px 10px; border: 0; border-radius: 6px; overflow: hidden; text-align: left; cursor: pointer; font-family: var(--font); }
+.dd-wev::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: currentColor; }
+.dd-wev em { font-style: normal; font-size: 11px; font-weight: 500; opacity: .8; line-height: 1.3; }
+.dd-wev b { font-size: 12px; font-weight: 500; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+.dd-now { position: absolute; left: 0; right: 0; height: 1px; background: var(--accent); z-index: 3; pointer-events: none; }
+.dd-now::before { content: ""; position: absolute; left: -4px; top: -3px; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+
+/* Today card */
+.dd-today > header { display: flex; align-items: center; gap: 14px; padding: 16px 20px; }
+.dd-dtile.lg { width: 48px; height: 52px; }
+.dd-today .dd-ch-t .ac { font-size: 12px; font-weight: 500; color: var(--accent-text); }
+.dd-today .dd-ch-t h2 { font-size: 16px; font-weight: 600; color: var(--text); }
+.dd-today .dd-pill { height: 22px; }
+.dd-ti { display: flex; gap: 12px; padding: 12px 20px; border-top: 1px solid var(--border); align-items: flex-start; }
+.dd-ti:hover { background: var(--hover); }
+.dd-ti .bar { width: 2px; align-self: stretch; border-radius: 2px; background: var(--accent); flex: none; }
+.dd-ti.ev .bar { background: var(--warning-text); } .dd-ti.bill .bar { background: var(--success-text); } .dd-ti.rose .bar { background: var(--rose-text); }
+.dd-ti.done .bar { background: var(--border-strong); }
+.dd-ti-b { flex: 1; min-width: 0; cursor: pointer; }
+.dd-ti-b p { display: flex; gap: 8px; font-size: 12px; font-weight: 600; }
+.dd-ti-b p b { color: var(--text-2); font-weight: 600; }
+.dd-ti-b p span { text-transform: uppercase; letter-spacing: .06em; color: var(--accent-text); }
+.dd-ti.ev .dd-ti-b p span { color: var(--warning-text); } .dd-ti.bill .dd-ti-b p span { color: var(--success-text); } .dd-ti.rose .dd-ti-b p span { color: var(--rose-text); }
+.dd-ti.done .dd-ti-b p span { color: var(--text-3); }
+.dd-ti-b h4 { font-size: var(--fs-body); font-weight: 500; color: var(--text); margin: 2px 0 1px; line-height: 1.35; }
+.dd-ti.done .dd-ti-b h4 { color: var(--text-3); text-decoration: line-through; }
+.dd-ti-b small { font-size: 12px; color: var(--text-3); }
+.dd-ti .dd-chk { margin-top: 4px; display: inline-flex; align-items: center; justify-content: center; color: #fff; }
+.dd-chk.on { background: var(--accent); border-color: var(--accent); }
+@media (hover: hover) { .dd-ti .dd-chk:not(.on) { opacity: 0; } .dd-ti:hover .dd-chk { opacity: 1; } }
+.dd-qadd { display: flex; gap: 8px; padding: 12px 20px 16px; border-top: 1px solid var(--border); }
+.dd-qadd input[name=text] { flex: 1; min-width: 0; height: 36px; padding: 0 12px !important; background: var(--bg) !important; border: 1px solid var(--border-strong) !important; border-radius: var(--radius-md) !important; color: var(--text) !important; font-size: var(--fs-sm) !important; box-shadow: none !important; }
+.dd-qadd .dd-btn { height: 36px; padding: 0 14px; }
+.dd-emptyst.sm { padding: 24px 20px; }
+.dd-emptyst.sm .lu { color: var(--text-3); }
+
+/* Coming up */
+.dd-soon > header { display: flex; align-items: baseline; gap: 8px; padding: 16px 20px 12px; }
+.dd-soon > header h2 { font-size: 16px; font-weight: 600; color: var(--text); }
+.dd-soon > header span { font-size: 13px; color: var(--text-3); }
+.dd-soon-r { display: flex; align-items: center; gap: 12px; padding: 10px 20px; border-top: 1px solid var(--border); cursor: pointer; }
+.dd-soon-r:hover { background: var(--hover); }
+.dd-stile { width: 36px; display: flex; flex-direction: column; align-items: center; flex: none; line-height: 1.15; }
+.dd-stile small { font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-3); }
+.dd-stile b { font-size: 16px; font-weight: 600; color: var(--text); }
+.dd-soon-r .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex: none; }
+.dd-soon-r .dot.ev { background: var(--warning-text); } .dd-soon-r .dot.bill { background: var(--success-text); } .dd-soon-r .dot.rose { background: var(--rose-text); }
+.dd-soon footer { padding: 8px 20px 12px; border-top: 1px solid var(--border); }
+
+@media (max-width: 1279px) { .dd-calgrid { grid-template-columns: minmax(0, 1fr) 320px; } }
+@media (max-width: 1100px) { .dd-calgrid { grid-template-columns: 1fr; } }
+@media (max-width: 767px) {
+	.dd-calt { flex-direction: column; align-items: stretch; }
+	.dd-srcs { overflow-x: auto; margin: 0 -16px; padding: 0 16px; scrollbar-width: none; }
+	.dd-srcs::-webkit-scrollbar { display: none; }
+	.dd-calbar { gap: 10px; flex-wrap: wrap; }
+	.dd-calbar h2 { font-size: 16px; }
+	.dd-calbar .dd-sp { display: none; }
+	.dd-seg { width: 100%; }
+	.dd-seg button { flex: 1; height: 32px; }
+	.dd-mc { min-height: 48px; padding: 4px 2px; align-items: center; gap: 2px; }
+	.dd-mc .dd-ev, .dd-mc .dd-more, .dd-mn span { display: none; }
+	.dd-mn { margin: 0; justify-content: center; }
+	.dd-mdots { display: flex; gap: 3px; justify-content: center; }
+	.dd-mdots i { width: 4px; height: 4px; border-radius: 50%; background: var(--accent); }
+	.dd-mdots i.ev { background: var(--warning-text); } .dd-mdots i.bill { background: var(--success-text); } .dd-mdots i.rose { background: var(--rose-text); } .dd-mdots i.done { background: var(--text-3); }
+	.dd-wkh span { padding: 0; text-align: center; }
+	.dd-pop { display: none; }
+	.dd-week { --gut: 44px; }
+	.dd-wbody { height: 60vh; }
+	.dd-qadd input[name=text], .dd-qadd .dd-btn { height: 44px; }
+	.dd-qadd input[name=text] { font-size: 16px !important; }
+}

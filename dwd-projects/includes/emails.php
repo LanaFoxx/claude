@@ -223,3 +223,29 @@ h2,h3{font-family:Urbanist,'Helvetica Neue',Helvetica,Arial,sans-serif!important
 a{color:#1B7EC3!important}
 ";
 } );
+
+/**
+ * Form notices go to mike@dreamwebdigital.com only. Elementor's own form emails (one form had
+ * "Email To" set to the personal Gmail) are dropped for that address: Dream Desk already sends
+ * its own notice to mike@dreamwebdigital.com for every submission, so nothing is lost.
+ */
+add_filter( 'pre_wp_mail', function ( $short, $atts ) {
+	if ( null !== $short ) {
+		return $short;
+	}
+	$msg  = (string) ( $atts['message'] ?? '' );
+	$subj = (string) ( $atts['subject'] ?? '' );
+	$form = preg_match( '/Powered by:?\s*Elementor|Page URL:|Remote IP:/i', $msg ) || preg_match( '/onboard|new message from|form submission/i', $subj );
+	if ( ! $form ) {
+		return $short;
+	}
+	$to   = is_array( $atts['to'] ) ? $atts['to'] : explode( ',', (string) $atts['to'] );
+	$keep = array_values( array_filter( array_map( 'trim', $to ), function ( $a ) { return '' !== $a && ! preg_match( '/mptarr33@gmail\.com/i', $a ); } ) );
+	if ( count( $keep ) === count( array_filter( array_map( 'trim', $to ) ) ) ) {
+		return $short;
+	}
+	if ( ! $keep ) {
+		return true; // was only for the personal Gmail: skip it
+	}
+	return wp_mail( $keep, $atts['subject'], $atts['message'], $atts['headers'] ?? '', $atts['attachments'] ?? array() );
+}, 10, 2 );
