@@ -17,6 +17,76 @@ function dwda_path() {
 	return '/' . ltrim( substr( $path, strlen( rtrim( $base, '/' ) ) ), '/' );
 }
 
+/* /todo-widget/ — a small to-do window (Work / Personal) that installs as its own app. */
+add_action( 'init', function () {
+	$p = dwda_path();
+	if ( ! preg_match( '#^/todo-widget(/|$)#', $p ) ) {
+		return;
+	}
+	if ( ! defined( 'DONOTCACHEPAGE' ) ) {
+		define( 'DONOTCACHEPAGE', true );
+	}
+	if ( '/todo-widget/manifest.webmanifest' === $p ) {
+		$u     = DWDP_URL . 'assets/app/';
+		$start = wp_parse_url( home_url( '/todo-widget/' ), PHP_URL_PATH );
+		header( 'Content-Type: application/manifest+json; charset=utf-8' );
+		echo wp_json_encode( array(
+			'id' => $start, 'name' => 'Dream Desk To-dos', 'short_name' => 'To-dos', 'description' => 'Your Work and Personal to-do lists.',
+			'start_url' => $start, 'scope' => $start, 'display' => 'standalone', 'background_color' => '#0B0D12', 'theme_color' => '#0B0D12',
+			'icons' => array(
+				array( 'src' => $u . 'icon-192.png?v=2', 'sizes' => '192x192', 'type' => 'image/png', 'purpose' => 'any' ),
+				array( 'src' => $u . 'icon-512.png?v=2', 'sizes' => '512x512', 'type' => 'image/png', 'purpose' => 'any' ),
+			),
+		), JSON_UNESCAPED_SLASHES );
+		exit;
+	}
+	if ( '/todo-widget/sw.js' === $p ) {
+		header( 'Content-Type: application/javascript; charset=utf-8' );
+		header( 'Service-Worker-Allowed: ' . wp_parse_url( home_url( '/todo-widget/' ), PHP_URL_PATH ) );
+		echo "self.addEventListener('install',function(){self.skipWaiting();});self.addEventListener('activate',function(e){e.waitUntil(self.clients.claim());});self.addEventListener('fetch',function(){});";
+		exit;
+	}
+	if ( '/todo-widget/' !== $p ) {
+		wp_safe_redirect( home_url( '/todo-widget/' ) );
+		exit;
+	}
+	nocache_headers();
+	header( 'X-Robots-Tag: noindex, nofollow' );
+	if ( ! is_user_logged_in() || ! current_user_can( 'manage_options' ) ) {
+		wp_safe_redirect( home_url( '/desk/' ) ); // sign in there, then reopen the widget
+		exit;
+	}
+	$u = DWDP_URL . 'assets/app/';
+	?>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0B0D12">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="To-dos">
+<title>To-dos · Dream Desk</title>
+<link rel="manifest" href="<?php echo esc_url( home_url( '/todo-widget/manifest.webmanifest' ) ); ?>">
+<link rel="icon" href="<?php echo esc_url( $u . 'favicon-32.png?v=2' ); ?>" sizes="32x32">
+<link rel="apple-touch-icon" href="<?php echo esc_url( $u . 'apple-touch-icon.png?v=2' ); ?>">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+<script>(function(){var t="dark";try{t=localStorage.getItem("dreamdesk-theme")||"dark";}catch(e){}document.documentElement.setAttribute("data-theme",t);})();</script>
+<link rel="stylesheet" href="<?php echo esc_url( DWDP_URL . 'assets/dd-tokens.css?ver=' . DWDP_VERSION ); ?>">
+<link rel="stylesheet" href="<?php echo esc_url( DWDP_URL . 'assets/widget.css?ver=' . DWDP_VERSION ); ?>">
+</head>
+<body>
+<div id="w"><p class="w-load">Loading…</p></div>
+<script>var DWDC = <?php echo wp_json_encode( array( 'api' => esc_url_raw( rest_url( 'dwd/v1/crm' ) ), 'nonce' => wp_create_nonce( 'wp_rest' ), 'today' => wp_date( 'Y-m-d', null, new DateTimeZone( 'America/New_York' ) ), 'desk' => home_url( '/desk/' ) ) ); ?>;</script>
+<script src="<?php echo esc_url( DWDP_URL . 'assets/widget.js?ver=' . DWDP_VERSION ); ?>"></script>
+<script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('<?php echo esc_js( home_url( '/todo-widget/sw.js' ) ); ?>', { scope: '<?php echo esc_js( wp_parse_url( home_url( '/todo-widget/' ), PHP_URL_PATH ) ); ?>' }).catch(function () {}); }</script>
+</body>
+</html>
+	<?php
+	exit;
+}, 1 );
+
 add_action( 'init', function () {
 	$p = dwda_path();
 	if ( ! preg_match( '#^/desk(/|$)#', $p ) ) {

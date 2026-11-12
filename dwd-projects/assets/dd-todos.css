@@ -120,3 +120,4 @@ a.dd-tchip:hover { color: var(--text) !important; }
 	.dd-lanecol .dd-tin, .dd-lanecol .dd-tdate, .dd-lanecol .dd-tadd > .dd-btn.primary { height: 44px; }
 	.dd-tgh.band { padding: 0 16px; }
 }
+@media (max-width: 767px) { .dd-wopen { display: none !important; } }
