@@ -187,11 +187,11 @@ async function deployTowns(p, nonce, ids) {
   const imgFor = { 'assets/rye-coast.jpg': 'npc-rye-coast', 'assets/portsmouth.jpg': 'npc-portsmouth', 'assets/hampton-beach.jpg': 'npc-hampton-beach' };
   for (const [i, t] of towns.entries()) {
     const slug = t.name.toLowerCase().replace(/\s+/g, '-');
-    const media = ids[PHOTO[t.name] || imgFor[t.img] || 'npc-rye-coast'] || 0;
+    const media = PHOTO_ID[t.name] || ids[PHOTO[t.name] || imgFor[t.img]] || 0; // 0 = branded placeholder
     const ex = await api(p, nonce, 'GET', `/wp/v2/np-towns?slug=${slug}&status=publish,draft&_fields=id,link`);
     let j;
     if (ex.length && !RESEED) {
-      j = await api(p, nonce, 'POST', `/wp/v2/np-towns/${ex[0].id}`, { menu_order: i, ...(PHOTO[t.name] && ids[PHOTO[t.name]] ? { featured_media: ids[PHOTO[t.name]] } : {}) });
+      j = await api(p, nonce, 'POST', `/wp/v2/np-towns/${ex[0].id}`, { menu_order: i, featured_media: media });
       console.log(`town: ${t.name} kept (owner edits preserved) ${j.link}`);
       continue;
     }

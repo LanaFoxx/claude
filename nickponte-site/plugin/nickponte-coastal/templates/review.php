@@ -17,10 +17,10 @@ $towns = array_map('npc_town_data', npc_towns());
 	</ul>
 
 	<section class="npc-review__home">
-		<a class="npc-review__shot" href="<?php echo esc_url(npc_home_url()); ?>"><?php echo npc_img('npc-rye-coast', 'large', ['alt' => '']); ?></a>
+		<a class="npc-review__shot" href="<?php echo esc_url(npc_home_url()); ?>"><?php echo npc_img('npc-hero-hampton', 'large', ['alt' => '']); ?></a>
 		<div>
 			<h2 class="npc-review__h3">New homepage</h2>
-			<p>Hero, your numbers, the twelve town markets, About, 387 Ocean, a testimonial and the contact and off-market sign-up.</p>
+			<p>Hero, your numbers, the town markets, About, 387 Ocean, a testimonial and the contact and off-market sign-up.</p>
 			<div class="npc-actions"><a class="npc-btn npc-btn--lg" href="<?php echo esc_url(npc_home_url()); ?>">Open the homepage</a></div>
 		</div>
 	</section>
@@ -43,7 +43,7 @@ $towns = array_map('npc_town_data', npc_towns());
 	<div class="npc-review__towns">
 		<?php foreach ($towns as $t) : ?>
 			<a class="npc-review__town" href="<?php echo esc_url($t['url']); ?>">
-				<?php echo npc_img($t['img'] ?: 'npc-rye-coast', 'thumbnail', ['alt' => '']); ?>
+				<?php echo npc_town_photo($t, 'thumbnail', ['alt' => '']); ?>
 				<span><strong><?php echo esc_html($t['name']); ?></strong><span>Median <?php echo esc_html(npc_short($t['median'])); ?> (sample)</span></span>
 			</a>
 		<?php endforeach; ?>

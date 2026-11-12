@@ -18,7 +18,7 @@ include NPC_DIR . 'templates/header.php';
 		</div>
 	</div>
 	<div class="npc-split__photo">
-		<?php echo npc_img($t['img'] ?: 'npc-rye-coast', 'full', ['alt' => $t['name'] . ', New Hampshire', 'loading' => 'eager', 'fetchpriority' => 'high', 'sizes' => '(max-width: 920px) 100vw, 50vw']); ?>
+		<?php echo npc_town_photo($t, 'full', ['alt' => $t['name'] . ', New Hampshire', 'loading' => 'eager', 'fetchpriority' => 'high', 'sizes' => '(max-width: 920px) 100vw, 50vw']); ?>
 	</div>
 </section>
 
@@ -71,7 +71,7 @@ include NPC_DIR . 'templates/header.php';
 				</ol>
 			</section>
 			<section class="npc-card npc-talk">
-				<?php echo npc_img($t['img'] ?: 'npc-rye-coast', 'large', ['class' => 'npc-talk__img', 'alt' => '', 'aria-hidden' => 'true']); ?>
+				<?php echo npc_town_photo($t, 'large', ['class' => 'npc-talk__img', 'alt' => '', 'aria-hidden' => 'true']); ?>
 				<div class="npc-talk__in">
 					<h2 class="npc-card__t">Talk to Nick</h2>
 					<p>Questions about <?php echo esc_html($t['name']); ?>? A candid read on the market, a valuation of your home, or an off-market introduction.</p>
@@ -96,7 +96,7 @@ include NPC_DIR . 'templates/header.php';
 			<ul class="npc-sales__list">
 				<?php foreach ($t['sales'] as $s) : ?>
 					<li class="npc-sale">
-						<?php if (!empty($s[5])) : ?><img class="npc-sale__img" src="<?php echo esc_url($s[5]); ?>" alt="" loading="lazy" width="96" height="72"><?php else : echo npc_img($t['img'] ?: 'npc-rye-coast', 'thumbnail', ['class' => 'npc-sale__img', 'alt' => '']); endif; ?>
+						<?php if (!empty($s[5])) : ?><img class="npc-sale__img" src="<?php echo esc_url($s[5]); ?>" alt="" loading="lazy" width="96" height="72"><?php else : echo npc_town_photo($t, 'thumbnail', ['class' => 'npc-sale__img', 'alt' => '']); endif; ?>
 						<div class="npc-sale__main"><p class="npc-sale__st"><?php echo esc_html($s[0]); ?></p><p class="npc-sale__meta"><?php echo esc_html($s[1]); ?></p></div>
 						<div class="npc-sale__right"><p class="npc-sale__price"><?php echo esc_html($s[2]); ?></p><?php if (!empty($s[3])) : ?><p class="npc-sale__side"><?php echo esc_html($s[3]); ?></p><?php endif; ?><?php if (!empty($s[4])) : ?><p class="npc-sale__date"><?php echo esc_html($s[4]); ?></p><?php endif; ?></div>
 					</li>

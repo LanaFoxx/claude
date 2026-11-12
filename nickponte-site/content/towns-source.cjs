@@ -38,4 +38,7 @@ module.exports = [
     { name: 'Dover', tag: "The Seacoast's largest city, with mill-district condos and Amtrak.", median: 560000, dom: 26, active: 70, ratio: 99.6, sold: 112, streets: ['Silver St', 'Back River Rd', 'Dover Point Rd'],
       areas: [['Downtown mills', 'Converted mill condos and new construction on the Cochecho'], ['Garrison Hill', 'Established neighborhoods near the tower'], ['Dover Point', 'Waterfront near Little Bay and the bridges'], ['Back River Road', 'Newer subdivisions on the Madbury side']],
       intro: "Dover is the largest city on the Seacoast and its fastest-growing, with converted mill condos downtown, Amtrak service, and more inventory than the coastal towns. It is the entry point for many Seacoast buyers." },
+  { name: 'Newmarket', tag: "Riverfront mill-town downtown on the Lamprey River.", median: 585000, dom: 28, active: 18, ratio: 100.5, sold: 24, streets: ['Main St', 'Packers Falls Rd'],
+    areas: [['Downtown & the Mills', 'Converted mill condos and walk-to-Main-Street homes along the Lamprey River'], ['Lamprey River', 'Riverfront homes with kayak access and conservation trails'], ['Packers Falls', 'Larger lots and newer colonials toward Durham'], ['Great Bay side', 'Quiet roads and shoreline near Great Bay']],
+    intro: "Newmarket is the Seacoast town people discover and never want to leave: a walkable Main Street of independent restaurants, a craft brewery and converted mill buildings along the Lamprey River, with easy access to Portsmouth, Durham, Exeter and Route 101." },
 ];

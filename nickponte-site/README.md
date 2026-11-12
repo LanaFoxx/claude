@@ -60,6 +60,14 @@ Applied from Nick's comments on the homepage preview:
   low-contrast grey text darkened, text links underlined. Lighthouse (mobile): home 78, Rye 89, accessibility 98–99.
   The rest is site-wide scripts (Google Tag Manager, Crisp chat, jQuery), to tackle at launch.
 
+## Round 4
+
+* Newmarket added as a 13th town (Nick has a live Newmarket page, 4753, mapped for go-live); its text comes from that page,
+  its market figures are samples.
+* Towns without their own photo (North Hampton, Stratham, Greenland, Newmarket) show a branded navy placeholder with the
+  town name instead of a stand-in photo. Adding a featured image to the Town replaces it.
+* Nick's own photos on Rye, Hampton, New Castle, Seabrook, Hampton Falls, Newington.
+
 ## Going live (only after client approval)
 
 One reversible switch: `node deploy.cjs golive` (or Settings > Reading > "Coastal Light design is live").

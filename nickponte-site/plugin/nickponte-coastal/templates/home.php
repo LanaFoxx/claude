@@ -38,14 +38,15 @@ $updated = $towns ? $towns[0]['updated'] : date_i18n('F Y');
 		<div class="npc-towns__head">
 			<div>
 				<p class="npc-eyebrow">Town markets</p>
-				<h2 class="npc-h2"><b>Twelve Seacoast towns,</b> one page each.</h2>
+				<?php $nw = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen'][count($towns)] ?? count($towns); ?>
+				<h2 class="npc-h2"><b><?php echo esc_html($nw); ?> Seacoast towns,</b> one page each.</h2>
 			</div>
 			<p class="npc-towns__note">Median price, days on market and Nick's recent sales for every town, updated monthly. Last update: <?php echo esc_html($updated); ?>.</p>
 		</div>
 		<div class="npc-tiles">
 			<?php foreach ($tiles as $t) : ?>
 				<a class="npc-tile" href="<?php echo esc_url($t['url']); ?>">
-					<?php echo npc_img($t['img'] ?: 'npc-rye-coast', 'large', ['class' => 'npc-tile__img', 'alt' => '', 'sizes' => '(max-width: 900px) 100vw, 380px']); ?>
+					<?php echo npc_town_photo($t, 'large', ['class' => 'npc-tile__img', 'alt' => '', 'sizes' => '(max-width: 900px) 100vw, 380px']); ?>
 					<span class="npc-tile__txt">
 						<span class="npc-tile__name"><?php echo esc_html($t['name']); ?></span>
 						<span class="npc-tile__tag"><?php echo esc_html($t['tag']); ?></span>

@@ -2,14 +2,14 @@
 /**
  * Plugin Name: Nick Ponte Coastal Light (preview)
  * Description: "Coastal Light" redesign preview: a homepage template (/home-preview/) and a Town post type (/town-preview/<town>/) with monthly market fields, FAQ and JSON-LD. Preview pages are noindex and use their own header and footer, so live pages are not affected. Deactivate to remove everything from the front end.
- * Version: 1.6.3
+ * Version: 1.7.0
  * Author: Dream Web Digital
  * Requires PHP: 7.4
  */
 
 if (!defined('ABSPATH')) exit;
 
-define('NPC_VER', '1.6.3');
+define('NPC_VER', '1.7.0');
 define('NPC_DIR', plugin_dir_path(__FILE__));
 define('NPC_URL', plugin_dir_url(__FILE__));
 const NPC_HOME_TEMPLATE = 'npc-home';
@@ -25,7 +25,7 @@ const NPC_FEATURED_TEMPLATE = 'npc-featured';
 // to them. Turning it off restores the old pages exactly (their Elementor content is never edited).
 // Toggle: Settings > Reading > "Coastal Light design is live", or REST POST /wp/v2/settings {"npc_live": true}.
 const NPC_LIVE_PAGES = ['home' => 2579, 'featured' => 590, 'buyers-guide' => 5725, 'sellers-guide' => 5742];
-const NPC_LIVE_TOWNS = ['rye' => 4300, 'portsmouth' => 4302, 'hampton' => 4459, 'north-hampton' => 4304, 'new-castle' => 4927,
+const NPC_LIVE_TOWNS = ['newmarket' => 4753, 'rye' => 4300, 'portsmouth' => 4302, 'hampton' => 4459, 'north-hampton' => 4304, 'new-castle' => 4927,
 	'exeter' => 4325, 'stratham' => 4952, 'greenland' => 4706, 'newington' => 4936, 'dover' => 432];
 
 function npc_live() { return (bool) get_option('npc_live', false); }
@@ -258,6 +258,14 @@ function npc_icon($name) {
 	];
 	return '<svg class="npc-icon" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' . ($paths[$name] ?? '') . '</svg>';
 }
+// Town photo, or a branded placeholder (navy, town name, wave lines) when the town has no photo yet.
+function npc_town_photo($t, $size, $attrs = []) {
+	if (!empty($t['img'])) return npc_img($t['img'], $size, $attrs);
+	$cls = 'npc-ph' . (!empty($attrs['class']) ? ' ' . $attrs['class'] : '');
+	return '<div class="' . esc_attr($cls) . '" role="img" aria-label="' . esc_attr($t['name'] . ', New Hampshire') . '">'
+		. '<svg class="npc-ph__waves" viewBox="0 0 600 400" preserveAspectRatio="none" aria-hidden="true"><path d="M0 250 C 120 210 240 290 360 250 S 520 210 600 250"/><path d="M0 280 C 120 240 240 320 360 280 S 520 240 600 280"/><path d="M0 310 C 120 270 240 350 360 310 S 520 270 600 310"/><path d="M0 220 C 120 180 240 260 360 220 S 520 180 600 220"/></svg>'
+		. '<span class="npc-ph__k">Seacoast New Hampshire</span><span class="npc-ph__name">' . esc_html($t['name']) . '</span></div>';
+}
 function npc_home_url() {
 	if (npc_live()) return home_url('/');
 	$p = get_posts(['post_type' => 'page', 'name' => 'home-preview', 'numberposts' => 1, 'post_status' => 'publish']);
@@ -359,7 +367,7 @@ add_action('wp_head', function () {
 	echo '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>' . "\n";
 	$id = 0;
 	if ($k === 'home') $id = npc_media_id('npc-hero-hampton');
-	elseif ($k === 'town') $id = (npc_current_town() ? get_post_thumbnail_id(npc_current_town()) : 0) ?: npc_media_id('npc-rye-coast');
+	elseif ($k === 'town') $id = npc_current_town() ? get_post_thumbnail_id(npc_current_town()) : 0;
 	elseif ($k === 'featured') $id = npc_media_id('npc-seller-hero');
 	elseif ($k === 'guide') $id = npc_media_id(strpos((string) get_post_field('post_name', get_queried_object_id()), 'seller') !== false ? 'npc-seller-hero' : 'npc-buyer-hero');
 	if ($id && ($src = wp_get_attachment_image_src($id, 'full'))) {
