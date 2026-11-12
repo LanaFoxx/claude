@@ -354,3 +354,32 @@ html[data-theme], .dwdc.dd { font-variant-numeric: normal; }
 .dd-stats > a.dd-bank .dd-ibtn { margin-left: -4px; color: var(--text-3); }
 .dd-ibtn.spin .lu { animation: ddspin .8s linear infinite; }
 @keyframes ddspin { to { transform: rotate(360deg); } }
+
+/* project colour marks */
+.dd-flagw { position: relative; display: inline-flex; flex: none; }
+.dd-flag { width: 12px; height: 12px; border-radius: 50%; border: 0; padding: 0; cursor: pointer; background: var(--accent); flex: none; box-shadow: 0 0 0 4px transparent; transition: box-shadow .12s; }
+button.dd-flag:hover { box-shadow: 0 0 0 4px var(--hover); }
+.dd-flag.f-none { background: transparent; box-shadow: inset 0 0 0 1.5px var(--text-3); }
+button.dd-flag.f-none:hover { box-shadow: inset 0 0 0 1.5px var(--text-2), 0 0 0 4px var(--hover); }
+.dd-flag.f-green { background: var(--success-text); }
+.dd-flag.f-yellow { background: var(--warning-text); }
+.dd-flag.f-red { background: #F87171; }
+[data-theme="light"] .dd-flag.f-red { background: #DC2626; }
+[data-theme="light"] .dd-flag.f-green { background: #16A34A; }
+[data-theme="light"] .dd-flag.f-yellow { background: #EAB308; }
+i.dd-flag { width: 10px; height: 10px; cursor: inherit; }
+.dd-flagm { position: absolute; left: -6px; top: calc(100% + 6px); z-index: 30; min-width: 150px; padding: 4px; display: flex; flex-direction: column; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: var(--shadow-menu); }
+.dd-flagm button { display: flex; align-items: center; gap: 10px; height: 32px; padding: 0 10px; border: 0; background: none; border-radius: var(--radius-sm); color: var(--text); font: 400 var(--fs-sm) var(--font); cursor: pointer; text-align: left; white-space: nowrap; }
+.dd-flagm button:hover { background: var(--hover); }
+.dd-flagm button.on { background: var(--selected); }
+.dd .dwdc-pn { align-items: flex-start; gap: 12px; }
+.dd .dwdc-pn > .dd-flagw { margin-top: 5px; }
+.dd .dwdc-tbl, .dd .dd-rows, .dd .dwdc-grid.row { overflow: visible; }
+/* divider in the Active list */
+.dd-divrow { display: flex; align-items: center; gap: 10px; height: 22px; padding: 0 20px; cursor: grab; user-select: none; }
+.dd-divrow i { flex: 1; height: 2px; border-radius: 2px; background: var(--accent); opacity: .55; }
+.dd-divrow span { font-size: 11px; letter-spacing: -2px; color: var(--accent-text); padding-right: 2px; }
+.dd-divrow:hover i { opacity: 1; }
+.dd-divrow.grid { height: 26px; border-top: 1px solid var(--border); }
+.dd-aplist .dd-divrow { padding: 0 12px; margin: 2px 0; }
+.dd-divrow.dwdc-dragging { border-radius: var(--radius-sm); }

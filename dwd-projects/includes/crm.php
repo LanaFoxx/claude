@@ -46,7 +46,7 @@ function dwdc_lists() {
 
 /** Contact fields kept on every contact. */
 function dwdc_fields() {
-	return array( 'job', 'manual', 'followup', 'markup', 'markup_sent', 'lead_source', 'pay_method', 'stage', 'completed', 'billed', 'stripe', 'paypal', 'person', 'email', 'phone', 'company', 'website', 'list', 'price', 'balance', 'deadline', 'hosting', 'renewal', 'source', 'next', 'pending', 'paymark', 'owedopen' );
+	return array( 'job', 'manual', 'followup', 'markup', 'markup_sent', 'lead_source', 'pay_method', 'stage', 'completed', 'billed', 'stripe', 'paypal', 'person', 'email', 'phone', 'company', 'website', 'list', 'price', 'balance', 'deadline', 'hosting', 'renewal', 'source', 'next', 'pending', 'paymark', 'owedopen', 'flag' );
 }
 
 function dwdc_contact( $post, $full = false ) {
@@ -177,6 +177,9 @@ function dwdc_save_contact( $id, $data ) {
 	// Moving a project to Completed stamps today's date so the Completed list sorts newest first.
 	if ( isset( $data['list'] ) && 'complete' === $data['list'] && empty( $data['completed'] ) && 'complete' !== get_post_meta( $id, '_dwdc_list', true ) ) {
 		$data['completed'] = current_time( 'Y-m-d' );
+	}
+	if ( isset( $data['flag'] ) && ! in_array( (string) $data['flag'], array( 'green', 'yellow', 'red', '' ), true ) ) {
+		$data['flag'] = ''; // colour mark on a project: green, yellow, red or none
 	}
 	foreach ( dwdc_fields() as $f ) {
 		if ( isset( $data[ $f ] ) ) {

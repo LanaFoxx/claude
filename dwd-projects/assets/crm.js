@@ -694,11 +694,12 @@
 			+ (S.schedAdd ? '<form class="dd-tl-add" data-pform="pdayadd"><input type="hidden" name="due" value="' + T + '"><input name="text" placeholder="Add a to-do for ' + dObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + '…" autocomplete="off" required><button class="dd-btn primary sm">Add</button></form>'
 				: '<button type="button" class="dd-ghostadd" data-schedadd>' + lu('plus') + 'Add a to-do for ' + dObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + '</button>') + '</div></section>';
 		// Active projects: every active project, in your order (drag to arrange) or a chosen sort.
-		var ap = lsorted('active', by('active'));
-		var act = '<section class="dd-card dd-ap"><header class="dd-ch"><div class="dd-ch-t"><h2>Active projects</h2><span>' + ap.length + ' project' + (ap.length === 1 ? '' : 's') + ' · ' + money(owed(by('active'))) + ' owed</span></div>' + sortSel('active') + '<a href="#projects/active">View all</a></header>'
+		var ap = withDiv('active', lsorted('active', by('active')));
+		var act = '<section class="dd-card dd-ap"><header class="dd-ch"><div class="dd-ch-t"><h2>Active projects</h2><span>' + by('active').length + ' project' + (by('active').length === 1 ? '' : 's') + ' · ' + money(owed(by('active'))) + ' owed</span></div>' + sortSel('active') + '<a href="#projects/active">View all</a></header>'
 			+ '<div class="dd-aplist"' + sortAttr('active') + '>' + (ap.length ? ap.map(function (c) {
+				if (c.div) { return divRow(); }
 				var k = clientOf(c), ow = num(c.balance), late = c.deadline && c.deadline < DWDC.today;
-				return '<a class="dd-ap-r" href="#client/' + c.id + '" data-sid="' + c.id + '">' + (sortMine('active') ? '<span class="dd-grip" aria-hidden="true">⋮⋮</span>' : '') + '<span class="dd-av">' + esc(ddInitials(k ? k.name : (c.person || c.name))) + '</span><span class="dd-act-n"><b>' + esc(c.name) + '</b><small>' + esc(k ? k.name : (c.person || '—')) + (c.next ? ' · ' + esc(c.next) : '') + '</small></span>'
+				return '<a class="dd-ap-r" href="#client/' + c.id + '" data-sid="' + c.id + '">' + (sortMine('active') ? '<span class="dd-grip" aria-hidden="true">⋮⋮</span>' : '') + flagDot(c) + '<span class="dd-av">' + esc(ddInitials(k ? k.name : (c.person || c.name))) + '</span><span class="dd-act-n"><b>' + esc(c.name) + '</b><small>' + esc(k ? k.name : (c.person || '—')) + (c.next ? ' · ' + esc(c.next) : '') + '</small></span>'
 					+ '<span class="dd-ap-m"><b class="' + (ow ? 'owe' : '') + '">' + (ow ? money(ow) : 'Paid') + '</b><small class="' + (late ? 'late' : '') + '">' + (c.deadline ? 'Due ' + fmt(c.deadline) : 'No due date') + '</small></span></a>';
 			}).join('') : '<p class="dd-empty-l">No active projects right now.</p>') + '</div></section>';
 		var stats = '<section class="dd-card dd-stats">'
@@ -761,6 +762,23 @@
 			+ '<div class="dd-chips">' + chip('all', 'All', c.all) + chip('projects', 'Projects', c.Project) + chip('hosting', 'Hosting', c.Hosting) + chip('past', 'Past', c['Past client']) + '<span class="dd-chipdiv"></span><a class="dd-chip" href="#leads">' + lu('bookmark', 14) + 'Leads <em>' + leadList().length + '</em></a><span class="dd-sp"></span>' + sortSel('clients') + '</div>'
 			+ '<div class="dd-card dd-table cl"><div class="dd-tr head"><span class="dd-td nm">Client</span><span class="dd-td c-biz">Business</span><span class="dd-td c-em">Email</span><span class="dd-td c-ty">Type</span><span class="dd-td c-pr num">Projects</span><span class="dd-td c-ho">Hosting</span><span class="dd-td c-la">Last activity</span></div><div class="dd-tbody">' + R.html + '</div></div>';
 	}
+	// Colour mark on a project (click the dot: green, yellow, red or none).
+	var FLAGS = [['green', 'Green'], ['yellow', 'Yellow'], ['red', 'Red'], ['', 'No colour']];
+	function flagDot(c) {
+		var open = S.flagOpen === c.id;
+		return '<span class="dd-flagw"><button type="button" class="dd-flag f-' + (c.flag || 'none') + '" data-flag="' + c.id + '" aria-haspopup="menu" aria-expanded="' + open + '" title="Mark this project green, yellow or red"></button>'
+			+ (open ? '<span class="dd-flagm" role="menu">' + FLAGS.map(function (f) { return '<button type="button" role="menuitem" class="' + ((c.flag || '') === f[0] ? 'on' : '') + '" data-flagset="' + c.id + ':' + f[0] + '"><i class="dd-flag f-' + (f[0] || 'none') + '"></i>' + f[1] + '</button>'; }).join('') + '</span>' : '') + '</span>';
+	}
+	// A divider line in the Active list: starts in the middle, drag it (or projects) to move projects above or below it.
+	var DIVID = 2147480000;
+	function withDiv(key, list) {
+		if (!sortMine(key) || list.length < 2) { return list; }
+		var ids = (S.order && S.order[key]) || [], pos = ids.indexOf(DIVID), at;
+		if (pos < 0) { at = Math.ceil(list.length / 2); }
+		else { at = list.filter(function (c) { var i = ids.indexOf(c.id); return i < 0 || i < pos; }).length; }
+		return list.slice(0, at).concat([{ div: true, id: DIVID }], list.slice(at));
+	}
+	function divRow(cls) { return '<div class="dd-divrow ' + (cls || '') + '" data-sid="' + DIVID + '" title="Drag to move the line"><i></i><span>⋮⋮</span><i></i></div>'; }
 	// List order: "My order" (drag rows to arrange, saved on the site) or a sort you pick. Remembered per list.
 	var SORTS = {
 		name: ['Name A–Z', function (a, b) { return String(a.name || '').localeCompare(String(b.name || '')); }],
@@ -1049,7 +1067,7 @@
 		app.setAttribute('data-view', r.view);
 		app.classList.add('dd');
 		app.classList.toggle('dd-rail', ddGet('dreamdesk-sidebar', 'expanded') === 'rail');
-		if (S.prev !== r.view + r.arg) { document.body.classList.remove('dd-menu-open'); S.meOpen = false; }
+		if (S.prev !== r.view + r.arg) { document.body.classList.remove('dd-menu-open'); S.meOpen = false; S.flagOpen = 0; }
 		app.innerHTML = ddSide(r) + '<div class="dd-shade" data-ddmenu></div><div class="dd-col">' + ddTop(r, t) + '<main class="dwdc-main dd-main"><div class="dwdc-screen' + (anim ? ' in' : '') + '">' + appBanner() + ddHead(r, t) + body + '</div></main></div>' + modal();
 		S.prev = r.view + r.arg;
 		syncWpMenu(r);
@@ -1819,6 +1837,7 @@
 		if (f === 'complete') { all.filter(function (c) { return c.list === 'complete'; }).forEach(function (c) { var y = (doneDate(c) || '').slice(0, 4); years[y || 'none'] = (years[y || 'none'] || 0) + 1; }); }
 		var rows = all.filter(function (c) { return f === 'all' || c.list === f || (f === 'paused' && (c.list === 'hold' || c.list === 'limbo')); }).filter(function (c) { if (f !== 'complete' || !yr) { return true; } var y = (doneDate(c) || '').slice(0, 4); return yr === 'none' ? !y : y === yr; }).sort(function (a, b) { return order.indexOf(a.list) - order.indexOf(b.list) || (a.list === 'complete' ? byDone(a, b) : (a.deadline || '9') < (b.deadline || '9') ? -1 : 1); });
 		rows = lsorted(f, rows);
+		if (f === 'active') { rows = withDiv('active', rows); }
 		var cap = S.more['p' + f] || S.q || sortMine(f) ? rows.length : 50;
 		var empties = { paused: 'Nothing paused. Projects on hold or in limbo (waiting on the client) show here.', active: 'No active projects right now.', limbo: 'Nothing in limbo. Clients you haven’t heard back from in a while go here.', hold: 'No projects on hold. Paused or waiting projects go here.', complete: 'No completed projects yet.', all: 'No projects match.' };
 		var ylist = Object.keys(years).filter(function (y) { return y !== 'none'; }).sort().reverse();
@@ -1829,8 +1848,9 @@
 		return '<div class="dwdc-chips dd-listbar">' + yearBar + '<span class="dd-sp"></span>' + sortSel(f) + '</div>'
 			+ '<div class="dwdc-card dwdc-tbl">' + (rows.length ? '<div class="dwdc-grid g-projects head"><span>Project</span><span>Client</span><span>' + (f === 'complete' ? 'Total' : phead('active', 'Price')) + '</span><span>Owed</span><span>' + (f === 'complete' ? 'Finished' : 'Due') + '</span><span>Status</span><span>Next step</span></div>'
 				+ '<div class="dd-rows"' + sortAttr(f) + '>' + rows.slice(0, cap).map(function (c) {
+					if (c.div) { return divRow('grid'); }
 					var k = clientOf(c), ow = num(c.balance), done = c.list === 'complete', dd = done ? doneDate(c) : c.deadline, late = !done && c.deadline && c.deadline < DWDC.today, amt = done ? lifetime(c) : num(c.price);
-					return '<div class="dwdc-grid g-projects row" data-go="client/' + c.id + '" data-sid="' + c.id + '"><span class="dwdc-pn">' + dot(c) + '<span><b class="dwdc-pname">' + esc(c.name) + '</b><span class="dwdc-subl">' + siteLine(c) + (c.markup ? '<a class="dwdc-mkpill" href="' + esc(url(c.markup)) + '" target="_blank" rel="noopener">Markup</a>' : '') + '</span></span></span>'
+					return '<div class="dwdc-grid g-projects row" data-go="client/' + c.id + '" data-sid="' + c.id + '"><span class="dwdc-pn">' + flagDot(c) + '<span><b class="dwdc-pname">' + esc(c.name) + '</b><span class="dwdc-subl">' + siteLine(c) + (c.markup ? '<a class="dwdc-mkpill" href="' + esc(url(c.markup)) + '" target="_blank" rel="noopener">Markup</a>' : '') + '</span></span></span>'
 						+ '<span class="dwdc-nm"><span>' + (k ? '<a class="dwdc-clink" href="#cl/' + k.id + '">' + esc(k.name) + '</a>' : '<b>' + esc(c.person || '—') + '</b>') + '<small>' + esc((k && k.email) || c.email || 'No email on file') + '</small></span></span>'
 						+ '<span class="b">' + (amt ? money(amt) : '—') + '</span><span class="b ' + (ow ? 'deep' : 'sec') + '">' + (ow ? money(ow) : 'Paid') + '</span>'
 						+ '<span class="' + (late ? 'deep b' : 'b') + '">' + (dd ? fmt(dd, done) : '—') + '</span><span>' + statusSelect(c) + '</span><span class="sec ell">' + esc(c.next || '—') + '</span></div>';
@@ -3086,6 +3106,9 @@
 		if (t.closest('[data-moremoney]')) { S.moreMoney = !S.moreMoney; render(); return; }
 		if (t.closest('[data-winsmore]')) { S.winsMore = !S.winsMore; render(); return; }
 		if (t.closest('[data-connmore]')) { S.connMore = !S.connMore; render(); if (S.connMore) { setTimeout(function () { var c = document.querySelector('.dwdc-conn'); if (c) { c.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }, 50); } return; }
+		if ((el = t.closest('[data-flagset]'))) { e.preventDefault(); e.stopPropagation(); var fp = el.getAttribute('data-flagset').split(':'), fc = contact(+fp[0]); S.flagOpen = 0; if (fc) { fc.flag = fp[1]; } render(); api('/contact/' + fp[0], 'POST', { flag: fp[1] }).then(function (x) { upsert(x); }).catch(fail); return; }
+		if ((el = t.closest('[data-flag]'))) { e.preventDefault(); e.stopPropagation(); var fid = +el.getAttribute('data-flag'); S.flagOpen = S.flagOpen === fid ? 0 : fid; render(); return; }
+		if (S.flagOpen && !t.closest('.dd-flagm')) { S.flagOpen = 0; render(); }
 		if ((el = t.closest('[data-bankrefresh]'))) { e.preventDefault(); e.stopPropagation(); el.disabled = true; el.classList.add('spin'); api('/plaid', 'POST', { action: 'balances' }).then(function (b) { if (S.bank && b && b.accounts) { S.bank.balances = b; } render(); toast('Bank balance updated'); }).catch(fail); return; }
 		if ((el = t.closest('[data-tgopen]'))) { S.tgOpen = S.tgOpen || {}; S.tgOpen[+el.getAttribute('data-tgopen')] = true; }
 		if ((el = t.closest('[data-tgrp]'))) { var gid = +el.getAttribute('data-tgrp'); S.tgOpen = S.tgOpen || {}; S.tgOpen[gid] = !S.tgOpen[gid]; render(); return; }
