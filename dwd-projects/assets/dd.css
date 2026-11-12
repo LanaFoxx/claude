@@ -571,3 +571,4 @@ input[type=date], input[type=datetime-local] { cursor: pointer; }
 @media (max-width: 767px) { .dd-cl { height: calc(100vh - 150px); } .dd-cl-sugs { grid-template-columns: 1fr; } .dd-cl-m.user .dd-cl-b { max-width: 88%; } }
 .dd-tl-r { column-gap: 12px; } .dd-tl-chk { margin: 3px 0 0; }
 .dd-zcopy { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 20px 12px; } .dd-zcopy .dd-btn { height: 32px; flex: 1 1 auto; justify-content: center; }
+.dd-zcopy { padding-top: 14px; }
