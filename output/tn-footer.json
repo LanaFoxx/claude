@@ -4,7 +4,7 @@
  "type": "footer",
  "content": [
   {
-   "id": "75b00a2",
+   "id": "45d1488",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -84,7 +84,7 @@
    },
    "elements": [
     {
-     "id": "bf67d46",
+     "id": "f416320",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -193,7 +193,7 @@
      },
      "elements": [
       {
-       "id": "f416320",
+       "id": "e094499",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -253,7 +253,7 @@
        },
        "elements": [
         {
-         "id": "12f0ee9",
+         "id": "831c945",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -284,7 +284,7 @@
          "elements": []
         },
         {
-         "id": "e094499",
+         "id": "12f0ee9",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -317,7 +317,7 @@
        ]
       },
       {
-       "id": "24aa4e7",
+       "id": "ad3c7de",
        "elType": "widget",
        "widgetType": "icon-list",
        "isInner": false,
@@ -332,7 +332,7 @@
         "text_color_hover": "#F2ECE3",
         "icon_list": [
          {
-          "_id": "d5e818f",
+          "_id": "d0433cb",
           "text": "Fine Painting",
           "link": {
            "url": "/interior-painting/",
@@ -345,7 +345,7 @@
           }
          },
          {
-          "_id": "a6263ae",
+          "_id": "d5e818f",
           "text": "Log &amp; Timber Staining",
           "link": {
            "url": "/log-home-staining-restoration/",
@@ -358,7 +358,7 @@
           }
          },
          {
-          "_id": "80eb9a0",
+          "_id": "a6263ae",
           "text": "Our Work",
           "link": {
            "url": "/our-work/",
@@ -371,7 +371,7 @@
           }
          },
          {
-          "_id": "4d6c51e",
+          "_id": "80eb9a0",
           "text": "For Builders",
           "link": {
            "url": "/for-builders/",
@@ -384,7 +384,7 @@
           }
          },
          {
-          "_id": "10a61f9",
+          "_id": "4d6c51e",
           "text": "About",
           "link": {
            "url": "/our-story/",
@@ -397,7 +397,7 @@
           }
          },
          {
-          "_id": "ad3c7de",
+          "_id": "10a61f9",
           "text": "Reviews",
           "link": {
            "url": "/reviews/",
@@ -429,7 +429,7 @@
        "elements": []
       },
       {
-       "id": "831c945",
+       "id": "2919e93",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -482,7 +482,7 @@
        },
        "elements": [
         {
-         "id": "2c593af",
+         "id": "24aa4e7",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -515,7 +515,7 @@
          "elements": []
         },
         {
-         "id": "2919e93",
+         "id": "e11745a",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -568,7 +568,7 @@
          },
          "elements": [
           {
-           "id": "5988931",
+           "id": "2c593af",
            "elType": "widget",
            "widgetType": "button",
            "isInner": false,
@@ -633,7 +633,7 @@
            "elements": []
           },
           {
-           "id": "e11745a",
+           "id": "5988931",
            "elType": "widget",
            "widgetType": "button",
            "isInner": false,
@@ -704,7 +704,7 @@
      ]
     },
     {
-     "id": "45d1488",
+     "id": "6071950",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -768,7 +768,7 @@
      },
      "elements": [
       {
-       "id": "8d836e7",
+       "id": "bf67d46",
        "elType": "widget",
        "widgetType": "heading",
        "isInner": false,
@@ -791,13 +791,13 @@
         },
         "_title": "Footer / Copyright (auto year)",
         "__dynamic__": {
-         "title": "[elementor-tag id=\"bdec6f1\" name=\"current-date-time\" settings=\"%7B%22date_format%22%3A%22custom%22%2C%22custom_format%22%3A%22Y%22%2C%22before%22%3A%22%C2%A9%20%22%2C%22after%22%3A%22%20Top%20Notch%20Painting%20%C2%B7%20A%20Top%20Notch%20Logworks%20company%22%7D\"]"
+         "title": "[elementor-tag id=\"8d836e7\" name=\"current-date-time\" settings=\"%7B%22date_format%22%3A%22custom%22%2C%22custom_format%22%3A%22Y%22%2C%22before%22%3A%22%C2%A9%20%22%2C%22after%22%3A%22%20Top%20Notch%20Painting%20%C2%B7%20A%20Top%20Notch%20Logworks%20company%22%7D\"]"
         }
        },
        "elements": []
       },
       {
-       "id": "6071950",
+       "id": "bdec6f1",
        "elType": "widget",
        "widgetType": "heading",
        "isInner": false,
@@ -827,7 +827,7 @@
    ]
   },
   {
-   "id": "fde7bd0",
+   "id": "69001ac",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -899,7 +899,7 @@
    },
    "elements": [
     {
-     "id": "506329b",
+     "id": "75b00a2",
      "elType": "widget",
      "widgetType": "button",
      "isInner": false,
@@ -966,7 +966,7 @@
      "elements": []
     },
     {
-     "id": "69001ac",
+     "id": "506329b",
      "elType": "widget",
      "widgetType": "button",
      "isInner": false,

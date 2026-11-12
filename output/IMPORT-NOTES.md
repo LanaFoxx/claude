@@ -222,3 +222,12 @@ Container `Seasonal Offer`: change the H2 to **Talk to us about your project** a
   - Lighter warm brown (#2A1F17) over a subtle wood-plank texture (overlay #2A1F17 at 65%, background fixed while scrolling on desktop). It applies to the homepage estimate section and the Request an Estimate page.
   - The texture is the client-supplied `output/textures/tn-wood-texture-client.jpg` (staging Media Library ID 1699). A code-generated fallback is in `output/textures/tn-wood-texture.jpg` (`tools/make_wood_texture.py`).
   - Elementor lazy-loads background images, so the grain appears as the section scrolls into view.
+- **Header consolidated (overrides section 3 and the brief's header):**
+  - **Main Menu (`main-menu`):**
+    - **Services** (link `/interior-painting/`) → Interior Painting, Exterior Painting, Specialty Finishes & Interior Wood, Commercial & HOA, Log Home Staining & Restoration, Chinking & Check Sealing, Rot Repair & Prevention, Deck Staining.
+    - **Our Work** → `/our-work/`
+    - **For Builders** → `/for-builders/`
+    - **About** (link `/our-story/`) → Our Story, Core Values, Reviews.
+  - **Mobile Menu (`mobile-menu`):** the same, plus Areas We Serve and Financing.
+  - The "Builders: Request a Bid" header link is removed; For Builders is in the nav, and the form keeps its "Request a bid" link.
+  - The full nav now shows from 981px up (the Laptop breakpoint no longer swaps to the menu button). The menu button is used at 980px and below. Nav fits on one row at 981px.

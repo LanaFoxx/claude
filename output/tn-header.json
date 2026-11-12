@@ -4,7 +4,7 @@
  "type": "header",
  "content": [
   {
-   "id": "d0433cb",
+   "id": "8dabe92",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -58,7 +58,7 @@
    },
    "elements": [
     {
-     "id": "8dabe92",
+     "id": "d4a334b",
      "elType": "widget",
      "widgetType": "html",
      "isInner": false,
@@ -553,7 +553,7 @@
      ]
     },
     {
-     "id": "d4a334b",
+     "id": "d6cd75e",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -653,7 +653,7 @@
      },
      "elements": [
       {
-       "id": "d6cd75e",
+       "id": "cb049a7",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -715,7 +715,7 @@
         },
         "grid_columns_grid_laptop": {
          "unit": "custom",
-         "size": "1fr auto",
+         "size": "auto 1fr auto",
          "sizes": []
         },
         "grid_columns_grid_tablet": {
@@ -768,7 +768,7 @@
        },
        "elements": [
         {
-         "id": "cb049a7",
+         "id": "e7a7a3c",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -828,7 +828,7 @@
          },
          "elements": [
           {
-           "id": "9c3d5f1",
+           "id": "a293de8",
            "elType": "widget",
            "widgetType": "heading",
            "isInner": false,
@@ -859,7 +859,7 @@
            "elements": []
           },
           {
-           "id": "e7a7a3c",
+           "id": "9c3d5f1",
            "elType": "widget",
            "widgetType": "heading",
            "isInner": false,
@@ -930,7 +930,6 @@
           "color_menu_item": "#F2ECE3",
           "color_menu_item_hover": "#D9A66B",
           "color_menu_item_active": "#F2ECE3",
-          "hide_laptop": "hidden-laptop",
           "hide_tablet": "hidden-tablet",
           "hide_mobile": "hidden-mobile",
           "menu_typography_typography": "custom",
@@ -975,12 +974,12 @@
            "size": 1.4,
            "sizes": []
           },
-          "_title": "Header / Main Nav (1360px and wider)"
+          "_title": "Header / Main Nav (981px and wider)"
          },
          "elements": []
         },
         {
-         "id": "a293de8",
+         "id": "d88b287",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -1039,60 +1038,6 @@
            "widgetType": "button",
            "isInner": false,
            "settings": {
-            "text": "Builders: Request a Bid",
-            "link": {
-             "url": "/for-builders/#bid",
-             "is_external": "",
-             "nofollow": ""
-            },
-            "text_padding": {
-             "unit": "px",
-             "top": "15",
-             "right": "0",
-             "bottom": "15",
-             "left": "0",
-             "isLinked": false
-            },
-            "background_background": "classic",
-            "background_color": "#00000000",
-            "button_background_hover_background": "classic",
-            "button_background_hover_color": "#00000000",
-            "button_text_color": "#D7CFC4",
-            "hover_color": "#F2ECE3",
-            "border_radius": {
-             "unit": "px",
-             "top": "0",
-             "right": "0",
-             "bottom": "0",
-             "left": "0",
-             "isLinked": true
-            },
-            "typography_typography": "custom",
-            "typography_font_family": "Manrope",
-            "typography_font_size": {
-             "unit": "px",
-             "size": 14,
-             "sizes": []
-            },
-            "typography_font_weight": "600",
-            "typography_line_height": {
-             "unit": "em",
-             "size": 1,
-             "sizes": []
-            },
-            "_css_classes": "tn-hide-sm",
-            "hide_mobile": "hidden-mobile",
-            "custom_css": "selector .elementor-button{white-space:nowrap;}",
-            "_title": "Header / Builders link"
-           },
-           "elements": []
-          },
-          {
-           "id": "7bad6be",
-           "elType": "widget",
-           "widgetType": "button",
-           "isInner": false,
-           "settings": {
             "text": "Request an Estimate",
             "link": {
              "url": "/request-an-estimate/",
@@ -1142,7 +1087,7 @@
            "elements": []
           },
           {
-           "id": "d88b287",
+           "id": "7bad6be",
            "elType": "widget",
            "widgetType": "button",
            "isInner": false,
@@ -1248,6 +1193,7 @@
              "sizes": []
             },
             "hide_desktop": "hidden-desktop",
+            "hide_laptop": "hidden-laptop",
             "color_dropdown_item": "#F2ECE3",
             "background_color_dropdown_item": "#14110E",
             "color_dropdown_item_hover": "#D9A66B",
@@ -1277,7 +1223,7 @@
              "size": 1.4,
              "sizes": []
             },
-            "_title": "Header / Menu Button (1359px and below)"
+            "_title": "Header / Menu Button (980px and below)"
            },
            "elements": []
           }

@@ -457,30 +457,28 @@ def build_header():
         **typo(prefix="dropdown_typography", size=14, weight=500, lh=1.4))
 
     main_nav = widget(
-        "nav-menu", "Header / Main Nav (1360px and wider)",
+        "nav-menu", "Header / Main Nav (981px and wider)",
         menu="main-menu", menu_name="Main", layout="horizontal", align_items="center",
         pointer="none", dropdown="none", submenu_icon=FA_CHEVRON,
         menu_space_between=px(22), padding_horizontal_menu_item=px(0),
         padding_vertical_menu_item=px(12), dropdown_top_distance=px(14),
         color_menu_item=BONE, color_menu_item_hover=AMBER_HOVER, color_menu_item_active=BONE,
-        hide_laptop="hidden-laptop", hide_tablet="hidden-tablet", hide_mobile="hidden-mobile",
+        hide_tablet="hidden-tablet", hide_mobile="hidden-mobile",
         **typo(prefix="menu_typography", size=14, weight=500, lh=1.4), **dropdown_style)
 
     menu_button = widget(
-        "nav-menu", "Header / Menu Button (1359px and below)",
+        "nav-menu", "Header / Menu Button (980px and below)",
         menu="mobile-menu", menu_name="Main", layout="dropdown", toggle="burger",
         toggle_icon_normal=svg("menu"), toggle_align="right", full_width="stretch",
         text_align="aside", submenu_icon=FA_CHEVRON,
         toggle_color=BONE, toggle_color_hover=BONE, toggle_background_color=FILL_12,
         toggle_size=px(20), dropdown_top_distance=px(26), hide_desktop="hidden-desktop",
+        hide_laptop="hidden-laptop",
         **dropdown_style)
 
     actions = container(
         "Header / Actions",
-        [text_link("Header / Builders link", "Builders: Request a Bid", "/for-builders/#bid",
-                   color=HERO_TEXT, hover=BONE, size=14, plain=True, classes="tn-hide-sm",
-                   **HIDE_MOBILE),
-         pill("Header / Request an Estimate", "Request an Estimate", "/request-an-estimate/",
+        [pill("Header / Request an Estimate", "Request an Estimate", "/request-an-estimate/",
               height=46, size=14, pad_x=22, classes="tn-hide-sm", **HIDE_MOBILE),
          icon_button("Header / Call (mobile)", TEL, "phone", "Call (970) 524-7323",
                      classes="tn-call tn-show-sm", **MOBILE_ONLY),
@@ -491,7 +489,7 @@ def build_header():
     main_row = container(
         "Header / Main Row",
         [grid("Header / Main Row / Inner", [wordmark("Header / Wordmark"), main_nav, actions],
-              cols=("auto 1fr auto", "1fr auto", "1fr auto", "1fr auto"), gap_col=28, gap_row=0,
+              cols=("auto 1fr auto", "auto 1fr auto", "1fr auto", "1fr auto"), gap_col=28, gap_row=0,
               min_height=px(96), rows=px(1, "fr"), grid_align_items="center",
               flex_align_items="center", _flex_align_self="center",
               css="selector{max-width:1280px;}")],
