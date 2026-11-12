@@ -53,6 +53,7 @@ module.exports = {
         ], { gap: 28 }),
       ], { cols: ['minmax(0,2fr) minmax(0,1fr)', 1, 1], gap: 60, rowGap: 56, align: 'start' }),
     ], { pad: [100, 100], width: 1320 }),
+    P.awardsStrip(m, { bg: C.light, border: true }), // Jen's emblems
     P.ctaBand(),
   ],
 };

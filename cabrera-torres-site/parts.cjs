@@ -226,4 +226,16 @@ const LIT = [
   ['Trial', 'When insurers refuse to be fair, we are ready to present your case to a jury.'],
 ];
 
-module.exports = { svg, ICON, PILLARS, LIT, emblem, pageHero, ctaBand, plusList, resultNote, numberCard, framedPhoto, faqAccordion, fld, detail, phoneDetail, emailDetail, contactForm, blogCard, articleUrl, ART_IMG };
+/* ------------------------------------------------------------ awards */
+// Jen's association / award emblems (Nov 12), full colour on a light band so their navy and blue read correctly.
+const AWARDS = ['awardStateBar', 'awardGtla', 'awardBestGeorgia', 'awardBestGwinnett', 'awardNtlTop40'];
+function awardsStrip(m, o = {}) {
+  return L.band(o.bg || C.ivory, [
+    L.eyebrow('Recognition & Memberships', C.wood, 'center', { weight: 700, ls: 0.3, settings: { _margin: box(0, 0, 30, 0) } }),
+    L.row(AWARDS.map((k) => L.image(m[k], {
+      settings: { _element_width: 'auto', _flex_size: 'none', custom_css: 'selector img { display: block; height: 110px; width: auto; max-width: none; }\n@media (max-width: 767px) { selector img { height: 78px; } }' },
+    })), { gap: 56, rowGap: 30, justify: 'center', settings: { flex_gap_mobile: { unit: 'px', size: 28, column: '28', row: '24', isLinked: false } } }),
+  ], { pad: [64, 64], width: 1240, align: 'center', settings: o.border ? { border_border: 'solid', border_width: box(1, 0, 0, 0), border_color: C.hair } : {} });
+}
+
+module.exports = { awardsStrip, svg, ICON, PILLARS, LIT, emblem, pageHero, ctaBand, plusList, resultNote, numberCard, framedPhoto, faqAccordion, fld, detail, phoneDetail, emailDetail, contactForm, blogCard, articleUrl, ART_IMG };

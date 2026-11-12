@@ -26,7 +26,11 @@ const media = {
   logoDark: md('cabrera-torres-law-firm-logo-dark.webp'), logoLight: md('cabrera-torres-law-firm-logo-light.webp'),
   // PageSpeed: a 482px logo (2x of its 241px slot) and the 768px hero background for tablet/phone.
   logoLight482: md('cabrera-torres-law-firm-logo-light-482.webp'),
-  heroJenNatural: md('jennifer-cabrera-torres-cream-dress-natural-hero.webp'), // Jen (Nov 7): "less AI" hero photo
+  heroJenNatural: md('jennifer-cabrera-torres-cream-dress-natural-hero.webp'),
+  // Jen's association / award emblems (Nov 12)
+  awardStateBar: md('cabrera-torres-state-bar-of-georgia.webp'), awardGtla: md('cabrera-torres-georgia-trial-lawyers-association-member-2024.webp'),
+  awardBestGeorgia: md('cabrera-torres-best-of-georgia-2024-honorable-mention.webp'), awardBestGwinnett: md('cabrera-torres-best-of-gwinnett-2023.webp'),
+  awardNtlTop40: md('cabrera-torres-national-trial-lawyers-top-40-under-40.webp'), // Jen (Nov 7): "less AI" hero photo
   officeMd: (() => { const o = md('cabrera-torres-law-firm-office-norcross-ga.webp'); return { ...o, url: o.url.replace(/\.webp$/, '-768x334.webp') }; })(),
   office: md('cabrera-torres-law-firm-office-norcross-ga.webp'), heroJen: md('jennifer-cabrera-torres-personal-injury-lawyer-hero.webp'),
   storyJen: md('jennifer-cabrera-torres-attorney-story-portrait.webp'), heroJenReal: md('jennifer-cabrera-torres-cream-dress-hero-portrait.webp'), jenDeskPortrait: md('jennifer-cabrera-torres-attorney-desk-portrait.webp'), // heroJenReal = Jen's own retouched version (Markup)

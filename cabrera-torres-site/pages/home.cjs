@@ -187,5 +187,5 @@ module.exports = {
     description: 'Injured in Norcross or Gwinnett County? Attorney Jennifer Cabrera-Torres handles car, truck, dog bite and slip and fall cases. Free consultation.',
     focus: 'personal injury lawyer Norcross GA',
   },
-  build: (m) => [hero(m), practice(), results(), story(m), approach(), litigation(m), testimonials(), P.ctaBand()],
+  build: (m) => [hero(m), practice(), results(), P.awardsStrip(m), story(m), approach(), litigation(m), testimonials(), P.ctaBand()],
 };

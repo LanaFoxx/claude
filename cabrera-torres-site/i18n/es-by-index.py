@@ -1,7 +1,7 @@
 # Spanish translations, keyed by index into es-seg.json (the English text pieces extracted from the built pages).
 # Formal "usted" register. Run build-es.py to turn this into i18n/es.json (English -> Spanish).
 T = {
-0: "Hay fortaleza en su historia.",
+0: "Hay fuerza en tu historia.",
 1: "Y un propósito detrás de la nuestra.",
 2: "En Cabrera Torres Law Firm representamos a personas que han sufrido lesiones y cuyas vidas cambiaron de forma inesperada. Luchamos por sus derechos con resiliencia, compasión y un profundo compromiso de ayudarle a seguir adelante.",
 3: "Consulta gratuita  →",
@@ -54,7 +54,7 @@ T = {
 50: "Contraté a Jennifer después de un accidente. Demostró un conocimiento excepcional, fue transparente sobre los posibles resultados y luchó por el mejor desenlace. 100% satisfecho.",
 51: "Illene S. · Google (traducida)",
 52: "Leer más reseñas  →",
-53: "Hay fortaleza en su historia",
+53: "Hay fuerza en tu historia",
 54: "Programe su consulta gratuita.",
 55: "Estamos aquí para escucharle, responder sus preguntas y ayudarle a entender sus opciones. Llame al",
 57: "Sobre la firma",
@@ -231,7 +231,7 @@ T = {
 229: "Su propia cobertura de motorista sin seguro o con seguro insuficiente (UM/UIM) puede pagar sus daños. Revisamos cada póliza disponible para encontrar cobertura.",
 230: "Sí. Jennifer y nuestro equipo trabajan en español e inglés, para que usted entienda cada paso de su caso.",
 231: "Consulta gratuita",
-232: "Hay fortaleza en su historia. Queremos escuchar la suya.",
+232: "Hay fuerza en tu historia. Queremos escuchar la tuya.",
 233: "Cuéntenos lo que pasó. Respondemos rápido, todo es confidencial y usted no paga nada a menos que obtengamos una compensación para usted.",
 234: "Teléfono",
 235: "Correo electrónico",
@@ -256,7 +256,7 @@ T = {
 258: "Enviar solicitud",
 259: "Gracias, nos comunicaremos con usted muy pronto.",
 260: "Defender. Proteger. Cumplir.",
-261: "Hay fortaleza en su historia.",
+261: "Hay fuerza en tu historia.",
 262: "Oficina",
 263: "Contacto",
 264: "Firma",
@@ -269,4 +269,5 @@ T = {
 271: "© 2026 Cabrera Torres Law Firm. Todos los derechos reservados.",
 272: "Publicidad de abogados. Los resultados anteriores no garantizan un resultado similar.",
 }
+# Added later (not in es-seg.json): "Recognition & Memberships" -> "Reconocimientos y membresías" (edit i18n/es.json directly).
 # Kept in English on purpose: 56 phone, 120 / 236 email, 238-240 street address.
