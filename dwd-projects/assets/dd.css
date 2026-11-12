@@ -431,3 +431,6 @@ i.dd-flag { width: 10px; height: 10px; cursor: inherit; }
 .dd-owbar { display: flex; align-items: center; gap: 10px; margin: 12px 0 4px; }
 .dd-owbar small { font-size: 12px; color: var(--text-3); }
 .dd-owlist[data-sort] .dwdc-owr { cursor: grab; }
+/* Ask button: bottom-right corner (the old phone tab bar it used to clear is gone) */
+@media (max-width: 768px) { .dwdc-askfab { bottom: calc(16px + env(safe-area-inset-bottom)) !important; right: 16px !important; } }
+.dwdc-askfab:hover { background: var(--accent-hover) !important; }

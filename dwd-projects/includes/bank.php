@@ -170,6 +170,8 @@ function dwdbk_recurring( $tx, $flags ) {
 			'raised'    => -$last['amt'] > $prev * 1.02 ? round( -$last['amt'] - $prev, 2 ) : 0,
 			'cat'       => $last['cat'],
 			'status'    => $flags[ $m ] ?? '',
+			'scope'     => (string) ( ( (array) get_option( 'dwdbk_scopes', array() ) )[ $m ] ?? '' ), // business | personal | '' (unlabeled)
+			'prev'      => round( $prev, 2 ),
 		);
 	}
 	usort( $out, function ( $a, $b ) { return $b['monthly'] <=> $a['monthly']; } );
@@ -273,6 +275,17 @@ add_action( 'rest_api_init', function () {
 				$s['added'] = $new;
 				$s['read']  = count( $rows );
 				return $s;
+			}
+			if ( isset( $p['sub'], $p['scope'] ) ) { // label a subscription Business or Personal (remembered for that merchant)
+				$sc = (array) get_option( 'dwdbk_scopes', array() );
+				$m2 = sanitize_text_field( (string) $p['sub'] );
+				if ( in_array( $p['scope'], array( 'business', 'personal' ), true ) ) {
+					$sc[ $m2 ] = $p['scope'];
+				} else {
+					unset( $sc[ $m2 ] );
+				}
+				update_option( 'dwdbk_scopes', $sc, false );
+				return dwdbk_summary();
 			}
 			if ( isset( $p['sub'] ) ) {
 				$m = sanitize_text_field( (string) $p['sub'] );

@@ -1139,76 +1139,111 @@
 			+ '<section class="dd-card dd-aseg"><div class="dd-agh"><i></i>Waiting<em>' + wait.length + '</em><span class="dd-sp"></span><span class="dd-hint">Drag a project here when it’s waiting on someone else</span></div><div class="dd-arows"' + (mine ? ' data-sort="active" data-sortx' : '') + '>' + mark + wait.map(function (c) { return actRow(c, 'wait', mine); }).join('') + drop('Nothing waiting') + '</div></section></div>';
 	}
 
-	/* ================= Bills & subscriptions (design 7a) ================= */
-	function ddStrip(cells) { return '<div class="dd-card dd-strip3">' + cells.map(function (c) { return '<div><span class="l">' + c[0] + '</span><div class="vr"><b class="' + (c[3] || '') + '">' + c[1] + '</b><small class="' + (c[4] || '') + '">' + c[2] + '</small></div></div>'; }).join('') + '</div>'; }
+	/* ================= Bills & subscriptions v2 (design 9a) ================= */
+	function ddStrip(cells) { return '<div class="dd-card dd-strip3 n' + cells.length + '">' + cells.map(function (c) { return '<div' + (c[5] ? ' ' + c[5] : '') + '><span class="l">' + c[0] + '</span><div class="vr"><b class="' + (c[3] || '') + '">' + c[1] + '</b></div><small class="' + (c[4] || '') + '">' + c[2] + '</small></div>'; }).join('') + '</div>'; }
+	function cuDismissed() { var d = {}; try { d = JSON.parse(ddGet('dreamdesk-cleanup-dismissed', '{}')) || {}; } catch (e) { d = {}; } var now = Date.now(); Object.keys(d).forEach(function (k) { if (now - d[k] > 90 * 864e5) { delete d[k]; } }); return d; }
+	function ordDay(n) { var s = ['th', 'st', 'nd', 'rd'], v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); }
 	function ddBills() {
 		var D = pData(); if (!D) { return '<div class="dd-ph"><h1>Bills &amp; subscriptions</h1></div><p class="dd-empty-l">Loading…</p>'; }
-		var T = DWDC.today, wk = calAdd(T, 7), B = bData();
-		var bl = D.bills.map(function (b) { return { b: b, n: billNext(b) }; }).sort(function (a, b) { return a.n.due < b.n.due ? -1 : 1; });
-		var mo = D.bills.reduce(function (a, b) { return a + billMonthly(b); }, 0);
-		var late = bl.filter(function (x) { return x.n.late; }), soon = bl.filter(function (x) { return !x.n.paid && !x.n.late && x.n.due <= wk; }), later = bl.filter(function (x) { return late.indexOf(x) < 0 && soon.indexOf(x) < 0; });
-		var unit = function (u) { return '<i class="u">' + u + '</i>'; };
-		var updated = B && B.balances && B.balances.at ? (function () { var m = Math.round((Date.now() - new Date(B.balances.at.replace(' ', 'T') + 'Z').getTime()) / 60000); return 'Updated ' + (m < 60 ? Math.max(1, m) + ' min ago' : m < 1440 ? Math.round(m / 60) + 'h ago' : Math.round(m / 1440) + 'd ago'); })() : '';
-		var head = '<div class="dd-btop"><h1>Bills &amp; subscriptions</h1>' + (updated ? '<span>' + updated + '</span>' : '') + '</div>';
-		// Bills section
-		var bstrip = ddStrip([
-			['Bills per month', money(mo), D.bills.length + ' bill' + (D.bills.length === 1 ? '' : 's') + ' · ' + money(mo * 12) + ' a year'],
-			['Due in 7 days', String(soon.length), money(soon.reduce(function (a, x) { return a + x.b.amount; }, 0))],
-			['Late', String(late.length), late.length ? money(late.reduce(function (a, x) { return a + x.b.amount; }, 0)) + ' overdue' : 'All caught up', late.length ? 'late' : '', late.length ? '' : 'ok']
+		var T = DWDC.today, wk = calAdd(T, 7), B = bData(), unit = function (u) { return '<i class="u">' + u + '</i>'; };
+		var bl = D.bills.map(function (b) { return { b: b, n: billNext(b), sc: b.scope === 'business' ? 'business' : 'personal' }; }).sort(function (a, b) { return a.n.due < b.n.due ? -1 : 1; });
+		var lane = function (sc) { return bl.filter(function (x) { return x.sc === sc; }); };
+		var moOf = function (l) { return l.reduce(function (a, x) { return a + billMonthly(x.b); }, 0); };
+		var bizL = lane('business'), perL = lane('personal');
+		var late = bl.filter(function (x) { return x.n.late; }), soon = bl.filter(function (x) { return !x.n.paid && !x.n.late && x.n.due <= wk; });
+		var manual = soon.filter(function (x) { return !x.b.autopay; });
+		var updated = B && B.balances && B.balances.at ? (function () { var m = Math.round((Date.now() - new Date(B.balances.at.replace(' ', 'T') + 'Z').getTime()) / 60000); return 'Bank feed updated ' + (m < 60 ? Math.max(1, m) + ' min ago' : m < 1440 ? Math.round(m / 60) + 'h ago' : Math.round(m / 1440) + 'd ago'); })() : '';
+		// subscriptions + clean up suggestions
+		var subsAll = B && B.count ? (B.subs || []) : null;
+		var subs = subsAll ? subsAll.filter(function (s) { return s.status !== 'ignore'; }) : [], hidden = subsAll ? subsAll.filter(function (s) { return s.status === 'ignore'; }) : [];
+		var live = subs.filter(function (s) { return !s.stopped; }), stopped = subs.filter(function (s) { return s.stopped; });
+		var subMo = live.reduce(function (a, s) { return a + s.monthly; }, 0);
+		var dis = cuDismissed(), sug = [];
+		subs.forEach(function (s) {
+			var m = s.merchant;
+			if (s.stopped && !dis['stop:' + m]) { sug.push({ k: 'stop:' + m, kind: 'Stopped', tone: 'neutral', s: s, save: 0, text: 'Was ' + money(s.amount) + ' ' + s.cycle + '. No charge since ' + fmt(s.last) + ', so it is no longer costing you anything. Remove it from the list?', a: ['Remove', 'data-cuhide="' + esc(m) + '"'], b: ['Keep watching', 'data-cudis="stop:' + esc(m) + '"'] }); return; }
+			if ((s.count <= 1 || /\b(fee|refund|interest|overdraft|transfer|deposit)\b/i.test(s.name)) && !dis['nr:' + m]) { sug.push({ k: 'nr:' + m, kind: 'Not recurring', tone: 'neutral', s: s, save: 0, text: (s.count <= 1 ? 'A single ' + money(s.amount) + ' charge on ' + fmt(s.last) + '.' : money(s.amount) + ' charges named like a fee or transfer.') + ' Fees are not subscriptions; hide it so it stops counting.', a: ['Hide', 'data-cuhide="' + esc(m) + '"'], b: ['It repeats', 'data-cudis="nr:' + esc(m) + '"'] }); return; }
+			if (s.raised > 0 && !dis['up:' + m]) { sug.push({ k: 'up:' + m, kind: 'Price went up', tone: 'warning', s: s, save: s.raised * 12, text: money2(s.prev || s.amount - s.raised) + ' → ' + money2(s.amount) + ' (+' + money(s.raised * 12) + '/yr).', a: ['Mark to cancel', 'data-sub="' + esc(m) + '" data-st="cancel"'], b: ['Fine, keep', 'data-cudis="up:' + esc(m) + '"'] }); }
+			if (!s.scope && !dis['lab:' + m]) { sug.push({ k: 'lab:' + m, kind: 'Unlabeled', tone: 'warning', s: s, save: s.yearly, lab: 1, text: money(s.amount) + ' ' + s.cycle + ' since ' + fmt(s.first, true) + ' with no label. Pick business or personal so it lands in the right total.', a: ['Business', 'data-subscope="' + esc(m) + '" data-v="business"'], b: ['Personal', 'data-subscope="' + esc(m) + '" data-v="personal"'] }); }
+		});
+		var seenN = {}; live.forEach(function (s) { var n = String(s.name).toLowerCase().replace(/[^a-z]/g, '').slice(0, 10); if (seenN[n] && !dis['dup:' + s.merchant]) { sug.push({ k: 'dup:' + s.merchant, kind: 'Duplicate', tone: 'neutral', s: s, save: Math.min(s.yearly, seenN[n].yearly), text: 'Looks like the same service as ' + seenN[n].name + '. Two active charges of ' + money(s.amount) + ' and ' + money(seenN[n].amount) + '.', a: ['Mark to cancel', 'data-sub="' + esc(s.merchant) + '" data-st="cancel"'], b: ['They’re different', 'data-cudis="dup:' + esc(s.merchant) + '"'] }); } seenN[n] = s; });
+		sug.sort(function (a, b) { return b.save - a.save || (b.lab || 0) - (a.lab || 0); });
+		var head = '<div class="dd-btop"><h1>Bills &amp; subscriptions</h1>' + (updated ? '<span>' + updated + '</span>' : '') + '<button type="button" class="dd-btn primary" data-billadd="">' + lu('plus', 14) + 'Add bill</button></div>';
+		var strip = ddStrip([
+			['<i class="dot biz"></i>Business bills', money(moOf(bizL)) + unit('/mo'), bizL.length + ' bill' + (bizL.length === 1 ? '' : 's') + ' · ' + money(moOf(bizL) * 12) + ' a year', '', '', 'data-jump="biz"'],
+			['<i class="dot per"></i>Personal bills', money(moOf(perL)) + unit('/mo'), perL.length + ' bill' + (perL.length === 1 ? '' : 's') + ' · ' + money(moOf(perL) * 12) + ' a year', '', '', 'data-jump="per"'],
+			['Subscriptions', subsAll ? money(subMo) + unit('/mo') : '—', subsAll ? live.length + ' active · ' + stopped.length + ' stopped' : 'Connect your bank', '', '', 'data-jump="subs"'],
+			late.length ? ['Late', String(late.length), money(late.reduce(function (a, x) { return a + x.b.amount; }, 0)) + ' overdue', 'late', 'late'] : ['Due in 7 days', String(soon.length), soon.length ? money(soon.reduce(function (a, x) { return a + x.b.amount; }, 0)) + ' · ' + manual.length + ' to pay manually' : 'Nothing due', '', soon.length ? 'warn' : ''],
+			['Clean up', subsAll ? String(sug.length) : '—', subsAll ? (sug.length ? 'suggestion' + (sug.length === 1 ? '' : 's') + ' · ' + Math.max(1, Math.round(sug.length * 0.6)) + ' min to review' : 'Nothing to clean up') : '', sug.length ? 'ok' : '', '', 'data-jump="clean"']
 		]);
-		var form = '<form class="dd-bform" data-pform="bills"><label class="f-name"><span>Bill</span><input name="name" placeholder="Rent, phone, insurance…" required autocomplete="off"></label>'
-			+ '<label class="f-amt"><span>Amount</span><input name="amount" inputmode="decimal" placeholder="$0.00" required autocomplete="off"></label>'
-			+ '<label class="f-rep"><span>Repeats</span><span class="dd-isel"><select name="freq" data-bfreq><option value="monthly">Monthly</option><option value="weekly">Weekly</option><option value="yearly">Yearly</option></select>' + lu('chevron-down', 14) + '</span></label>'
-			+ '<label class="f-day"><span data-bdaylbl>Due day</span><input name="day" type="number" min="1" max="31" value="1" required></label>'
-			+ '<label class="f-auto dd-btn secondary"><input type="checkbox" name="autopay"><span>Autopay</span></label>'
-			+ '<button class="dd-btn primary f-add">' + lu('plus', 14) + 'Add bill</button></form>'
-			+ '<p class="dd-bnote">Yearly bills use the due day of the month you add them in. Weekly bills use 1 = Monday … 7 = Sunday.</p>';
+		// bill lanes
+		var bmenu = function (x) {
+			var b = x.b, open = S.billMenu === b.id;
+			return '<span class="dd-bm"><button type="button" class="dd-ibtn sm" data-billmenu="' + b.id + '" aria-label="Bill actions">' + lu('more-horizontal', 16) + '</button>' + (open ? '<span class="dd-menu2 dd-bmenu">' + (b.autopay ? '' : '<button type="button" data-pbillpaid="' + b.id + '">' + (x.n.paid ? 'Undo paid' : 'Mark paid') + '</button>') + '<button type="button" data-billedit="' + b.id + '">Edit</button><button type="button" data-billmove="' + b.id + '">Move to ' + (x.sc === 'business' ? 'Personal' : 'Business') + '</button><button type="button" class="danger" data-pdel="bills:' + b.id + '">Delete</button></span>' : '') + '</span>';
+		};
 		var brow = function (x) {
-			var b = x.b, n = x.n, dn = n.paid ? 'Paid' : n.late ? 'Late · ' + fmt(n.due) : fmt(n.due), cls = n.late ? 'late' : !n.paid && n.due <= wk ? 'soon' : '';
-			return '<div class="dd-brow' + (n.paid ? ' paid' : '') + '"><span class="nm">' + esc(b.name) + '</span><span class="num">' + money2(b.amount).replace('.00', '') + '</span><span class="rep">' + (b.freq === 'yearly' ? 'Yearly' : b.freq === 'weekly' ? 'Weekly' : 'Monthly') + '</span><span class="due ' + cls + '">' + dn + '</span><span>' + (b.autopay ? ddPill('Autopay', 'success') : '<i>—</i>') + '</span>'
-				+ '<span class="acts">' + (b.autopay ? '' : '<button type="button" class="dd-btn ghost sm" data-pbillpaid="' + b.id + '">' + (n.paid ? 'Undo paid' : 'Mark paid') + '</button>') + '<button type="button" class="dd-ibtn sm" data-pdel="bills:' + b.id + '" title="Delete bill" aria-label="Delete bill">' + lu('x', 14) + '</button></span></div>';
+			var b = x.b, n = x.n, cls = n.late ? 'late' : !n.paid && n.due <= wk ? 'soon' : '';
+			var rep = b.freq === 'weekly' ? 'Weekly · ' + ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][(b.day - 1) % 7] + 's' : b.freq === 'yearly' ? 'Yearly · ' + CAL_MF[(b.month || 1) - 1] + ' ' + ordDay(b.day) : 'Monthly · due on the ' + ordDay(b.day);
+			return '<div class="dd-lbill' + (n.paid ? ' paid' : '') + '"><div class="t"><b>' + esc(b.name) + (b.autopay ? ' ' + ddPill('Autopay', 'success') : '') + '</b><small>' + rep + '</small></div><div class="r"><b>' + money2(b.amount) + '</b><small class="' + cls + '">' + (n.paid ? 'Paid' : n.late ? 'Late · ' + fmt(n.due) : fmt(n.due)) + '</small></div>' + bmenu(x) + '</div>';
 		};
-		var grp = function (label, dot, list) { return list.length ? '<div class="dd-bgh"><i class="' + dot + '"></i>' + label + '<em>' + list.length + '</em></div>' + list.map(brow).join('') : ''; };
-		var blist = bl.length ? '<div class="dd-brow head"><span>Bill</span><span class="num">Amount</span><span>Repeats</span><span>Next due</span><span>Autopay</span><span></span></div>' + grp('Late', 'late', late) + grp('Due in 7 days', 'soon', soon) + grp('Later', '', later)
-			: '<div class="dd-bempty"><span>' + lu('repeat', 20) + '</span><b>No bills yet</b><small>Add your first bill above. Due dates will show on the Calendar and the dashboard.</small></div>';
-		var bills = '<div class="dd-bsec"><h2>Bills</h2><span>' + D.bills.length + ' bill' + (D.bills.length === 1 ? '' : 's') + '</span></div>' + bstrip + '<section class="dd-card dd-bcard">' + form + '<div class="dd-blist">' + blist + '</div></section>';
-		// Subscriptions section
-		var subsHead = '<div class="dd-bsec sub"><h2>Subscriptions</h2><span>Detected from your bank feed</span></div>';
-		if (!B) { return head + bills + subsHead + '<p class="dd-empty-l">Loading…</p>'; }
-		if (!B.count) {
-			return head + bills + subsHead + ddStrip([['Recurring charges', '—', ''], ['Marked to cancel', '—', ''], ['Price increases', '—', '']])
-				+ '<section class="dd-card"><div class="dd-bempty"><span>' + lu('credit-card', 20) + '</span><b>Connect your bank to detect subscriptions</b><a class="dd-btn primary" href="#connections">Go to Connections</a></div></section>';
+		var lanes = ['business', 'personal'].map(function (sc) {
+			var L = lane(sc), lt = L.filter(function (x) { return x.n.late; }), sn = L.filter(function (x) { return !x.n.paid && !x.n.late && x.n.due <= wk; }), lr = L.filter(function (x) { return lt.indexOf(x) < 0 && sn.indexOf(x) < 0; });
+			var g = function (lbl, dot, l) { return l.length ? '<div class="dd-bgh"><i class="' + dot + '"></i>' + lbl + '<em>' + l.length + '</em></div>' + l.map(brow).join('') : ''; };
+			var biz = sc === 'business';
+			return '<section class="dd-card dd-lane ' + (biz ? 'work' : 'personal') + '" id="dd-lane-' + (biz ? 'biz' : 'per') + '"><header><span class="dd-lt">' + lu(biz ? 'clipboard-list' : 'home', 16) + '</span><h2>' + (biz ? 'Business' : 'Personal') + ' bills</h2><span class="dd-lsum">' + money(moOf(L)) + '/mo · ' + L.length + ' bill' + (L.length === 1 ? '' : 's') + '</span><button type="button" class="dd-hlink" data-billadd="' + sc + '">+ Add</button></header>'
+				+ (L.length ? g('Late', 'late', lt) + g('Due in 7 days', 'soon', sn) + g('Later', '', lr) : '<div class="dd-bempty"><span>' + lu('repeat', 20) + '</span><b>No ' + sc + ' bills yet</b><small>Add one — due dates show on the Calendar and dashboard.</small><button type="button" class="dd-btn secondary" data-billadd="' + sc + '">Add bill</button></div>') + '</section>';
+		}).join('');
+		// subscriptions card
+		var subsCard, cleanCard;
+		if (!subsAll) {
+			var nob = '<div class="dd-bempty"><span>' + lu('credit-card', 20) + '</span><b>Connect your bank to detect subscriptions</b><a class="dd-btn primary" href="#connections">Go to Connections</a></div>';
+			subsCard = '<section class="dd-card dd-subs2" id="dd-lane-subs"><header class="dd-ch2"><span class="dd-lt n">' + lu('repeat', 16) + '</span><h2>Subscriptions</h2></header>' + (B ? nob : '<p class="dd-empty-l">Loading…</p>') + '</section>';
+			cleanCard = '<section class="dd-card dd-clean" id="dd-lane-clean"><header class="dd-ch2"><span class="dd-lt g">' + lu('zap', 16) + '</span><div><h2>Clean up</h2><small>Connect your bank first</small></div></header></section>';
+		} else {
+			var chip = S.subChip || 'all', q = String(S.subQ || '').toLowerCase().trim(), showHidden = !!S.subHidden;
+			var keep = function (s) { if (q && String(s.name).toLowerCase().indexOf(q) < 0) { return false; } return chip === 'all' || (chip === 'business' && s.scope === 'business') || (chip === 'personal' && s.scope === 'personal') || (chip === 'none' && !s.scope) || (chip === 'stopped' && s.stopped); };
+			var labelChip = function (s) {
+				var m = esc(s.merchant), open = S.subLabel === s.merchant;
+				return '<span class="dd-bm"><button type="button" class="dd-labchip' + (s.scope ? '' : ' none') + '" data-sublabel="' + m + '">' + (s.scope === 'business' ? 'Business' : s.scope === 'personal' ? 'Personal' : 'Unlabeled') + lu('chevron-down', 12) + '</button>'
+					+ (open ? '<span class="dd-menu2 dd-bmenu left"><button type="button" data-subscope="' + m + '" data-v="business">Business</button><button type="button" data-subscope="' + m + '" data-v="personal">Personal</button>' + (s.scope ? '<button type="button" data-subscope="' + m + '" data-v="">Unlabeled</button>' : '') + '</span>' : '') + '</span>';
+			};
+			var srow = function (s) {
+				var tags = (s.stopped ? ddPill('Looks stopped', 'neutral') : '') + (s.raised ? ddPill('Price went up', 'warning') : '') + (s.status === 'cancel' ? ddPill('Marked to cancel', 'warning') : '') + (s.status === 'keep' ? ddPill('Kept', 'success') : '');
+				var meta = money(s.amount) + ' ' + s.cycle + ' · ' + s.count + ' charge' + (s.count === 1 ? '' : 's') + ' since ' + fmt(s.first, true) + (s.stopped ? ' · last ' + fmt(s.last) : ' · next ~' + fmt(s.next));
+				var m = esc(s.merchant);
+				return '<div class="dd-srow v2' + (s.stopped ? ' stopped' : '') + '"><div class="nm"><div class="l1"><b>' + esc(s.name) + '</b>' + tags + '</div><small>' + esc(meta) + '</small></div><span class="lab">' + labelChip(s) + '</span><span class="num">' + money(s.monthly) + '<i>/mo</i></span>'
+					+ '<span class="acts">' + (s.status === 'ignore' ? '<button type="button" class="dd-btn ghost sm" data-sub="' + m + '" data-st="ignore">Show again</button>' : '<button type="button" class="dd-btn secondary sm' + (s.status === 'keep' ? ' on' : '') + '" data-sub="' + m + '" data-st="keep">' + (s.status === 'keep' ? 'Kept' : 'Keep') + '</button><button type="button" class="dd-btn ghost sm" data-sub="' + m + '" data-st="cancel">' + (s.status === 'cancel' ? 'Reactivate' : 'Cancel') + '</button><button type="button" class="dd-ibtn sm" data-subhide="' + m + '" data-name="' + esc(s.name) + '" title="Not a subscription" aria-label="Not a subscription">' + lu('x', 14) + '</button>') + '</span></div>';
+			};
+			var act = live.filter(function (s) { return s.status !== 'cancel'; }), canc = live.filter(function (s) { return s.status === 'cancel'; });
+			var sg = function (label, dot, list) { list = list.filter(keep); return list.length ? '<div class="dd-bgh"><i class="' + dot + '"></i>' + label + '<em>' + list.length + '</em></div>' + list.map(srow).join('') : ''; };
+			var cn = function (k, l, n, dot) { return '<button type="button" class="dd-chip' + (chip === k ? ' on' : '') + '" data-subchip="' + k + '">' + (dot ? '<i class="dot ' + dot + '"></i>' : '') + l + ' <em>' + n + '</em></button>'; };
+			var body = sg('Active', 'ok', act) + sg('Marked to cancel', 'soon', canc) + sg('Stopped or paused', '', stopped) + (showHidden ? sg('Hidden', '', hidden) : '');
+			subsCard = '<section class="dd-card dd-subs2" id="dd-lane-subs"><header class="dd-ch2"><span class="dd-lt n">' + lu('repeat', 16) + '</span><h2>Subscriptions</h2><small>Detected from your bank feed</small></header>'
+				+ '<div class="dd-stools"><label class="dd-input">' + lu('search') + '<input type="search" data-subq placeholder="Search charges…" value="' + esc(S.subQ || '') + '" autocomplete="off" data-lpignore="true" data-1p-ignore></label><span class="dd-chipdiv"></span><div class="dd-schips">'
+				+ cn('all', 'All', subs.length) + cn('business', 'Business', subs.filter(function (s) { return s.scope === 'business'; }).length, 'biz') + cn('personal', 'Personal', subs.filter(function (s) { return s.scope === 'personal'; }).length, 'per') + cn('none', 'Unlabeled', subs.filter(function (s) { return !s.scope; }).length) + cn('stopped', 'Stopped', stopped.length) + '</div></div>'
+				+ '<div class="dd-srow v2 head"><span>Charge</span><span>Label</span><span class="num">Per month</span><span></span></div>' + (body || '<p class="dd-empty-l">' + (q ? 'No charges match “' + esc(S.subQ) + '”.' : 'No repeating charges found yet.') + '</p>')
+				+ '<div class="dd-sfoot"><span>Showing ' + subs.length + ' charges</span>' + (hidden.length ? '<button type="button" class="dd-lnk" data-subhidden>' + (showHidden ? 'Hide hidden' : 'Hidden ' + hidden.length) + '</button>' : '') + '</div></section>';
+			cleanCard = '<section class="dd-card dd-clean" id="dd-lane-clean"><header class="dd-ch2"><span class="dd-lt g">' + lu('zap', 16) + '</span><div><h2>Clean up</h2><small>' + sug.length + ' suggestion' + (sug.length === 1 ? '' : 's') + ' from your bank feed</small></div></header>'
+				+ (sug.length ? sug.map(function (x) {
+					return '<div class="dd-sug"><div class="r1">' + ddPill(x.kind, x.tone) + '<b>' + esc(x.s.name) + '</b>' + (x.save ? '<em>' + money(x.save) + '/yr</em>' : '') + '</div><p>' + esc(x.text) + '</p><div class="r3"><button type="button" class="dd-btn secondary sm" ' + x.a[1] + '>' + x.a[0] + '</button><button type="button" class="dd-btn ghost sm" ' + x.b[1] + '>' + x.b[0] + '</button><span class="dd-sp"></span><button type="button" class="dd-ibtn sm" data-cudis="' + esc(x.k) + '" title="Dismiss for 90 days" aria-label="Dismiss">' + lu('x', 14) + '</button></div></div>';
+				}).join('') : '<div class="dd-bempty"><span class="g">' + lu('circle-check', 20) + '</span><b>All clean</b><small>New suggestions appear after each bank sync.</small></div>')
+				+ '<div class="dd-cfoot"><small>Looks at the last 12 months of charges and your labels.</small><button type="button" class="dd-btn secondary" data-askai="personal">' + lu('zap', 14) + 'Ask AI what to cut</button></div></section>';
 		}
-		var subsAll = B.subs || [], hidden = subsAll.filter(function (s) { return s.status === 'ignore'; }), subs = subsAll.filter(function (s) { return s.status !== 'ignore'; });
-		var act = subs.filter(function (s) { return !s.stopped && s.status !== 'cancel'; }), cancel = subs.filter(function (s) { return !s.stopped && s.status === 'cancel'; }), stopped = subs.filter(function (s) { return s.stopped; });
-		var smo = act.concat(cancel).reduce(function (a, s) { return a + s.monthly; }, 0), save = cancel.reduce(function (a, s) { return a + s.yearly; }, 0), raised = act.concat(cancel).filter(function (s) { return s.raised > 0; });
-		var sstrip = ddStrip([
-			['Recurring charges', money(smo) + unit('/mo'), act.concat(cancel).length + ' active · ' + money(smo * 12) + ' a year'],
-			['Marked to cancel', money(save) + unit('/yr'), cancel.length + ' subscription' + (cancel.length === 1 ? '' : 's')],
-			['Price increases', String(raised.length), raised.length ? raised.length + ' went up · +' + money(raised.reduce(function (a, s) { return a + s.raised; }, 0)) + '/mo' : 'None spotted', '', raised.length ? 'warn' : '']
-		]);
-		var chip = S.subChip || 'all', q = String(S.subQ || '').toLowerCase().trim(), showHidden = !!S.subHidden;
-		var hit = function (s) { return !q || String(s.name).toLowerCase().indexOf(q) > -1; };
-		var srow = function (s) {
-			var tags = (s.stopped ? ddPill('Looks stopped', 'neutral') : '') + (s.raised ? ddPill('Price went up', 'warning') : '') + (s.status === 'cancel' ? ddPill('Marked to cancel', 'warning') : '') + (s.status === 'keep' ? ddPill('Kept', 'success') : '');
-			var meta = money(s.amount) + ' ' + s.cycle + ' · ' + s.count + ' charges since ' + fmt(s.first, true) + (s.stopped ? ' · last ' + fmt(s.last || s.next) : ' · next ~' + fmt(s.next));
-			var m = esc(s.merchant);
-			return '<div class="dd-srow' + (s.stopped ? ' stopped' : '') + '"><div class="nm"><div class="l1"><b>' + esc(s.name) + '</b>' + tags + '</div><small>' + esc(meta) + '</small></div><span class="num">' + money(s.monthly) + '<i>/mo</i></span>'
-				+ '<span class="acts">' + (s.status === 'ignore' ? '<button type="button" class="dd-btn ghost sm" data-sub="' + m + '" data-st="ignore">Show again</button>'
-					: '<button type="button" class="dd-btn secondary sm' + (s.status === 'keep' ? ' on' : '') + '" data-sub="' + m + '" data-st="keep">' + (s.status === 'keep' ? 'Kept' : 'Keep') + '</button><button type="button" class="dd-btn ghost sm" data-sub="' + m + '" data-st="cancel">' + (s.status === 'cancel' ? 'Reactivate' : 'Cancel') + '</button><button type="button" class="dd-ibtn sm" data-subhide="' + m + '" data-name="' + esc(s.name) + '" title="Not a subscription" aria-label="Not a subscription">' + lu('x', 14) + '</button>') + '</span></div>';
-		};
-		var sg = function (label, dot, list) { list = list.filter(hit); return list.length ? '<div class="dd-bgh"><i class="' + dot + '"></i>' + label + '<em>' + list.length + '</em></div>' + list.map(srow).join('') : ''; };
-		var show = { all: [1, 1, 1], active: [1, 0, 0], cancel: [0, 1, 0], stopped: [0, 0, 1] }[chip] || [1, 1, 1];
-		var body = (show[0] ? sg('Active', 'ok', act) : '') + (show[1] ? sg('Marked to cancel', 'soon', cancel) : '') + (show[2] ? sg('Stopped or paused', '', stopped) : '') + (showHidden ? sg('Hidden', '', hidden) : '');
-		var c = function (k, l, n) { return '<button type="button" class="dd-chip' + (chip === k ? ' on' : '') + '" data-subchip="' + k + '">' + l + ' <em>' + n + '</em></button>'; };
-		var tools = '<div class="dd-stools"><label class="dd-input">' + lu('search') + '<input type="search" data-subq placeholder="Search charges…" value="' + esc(S.subQ || '') + '" autocomplete="off" data-lpignore="true" data-1p-ignore></label><span class="dd-chipdiv"></span>'
-			+ '<div class="dd-schips">' + c('all', 'All', subs.length) + c('active', 'Active', act.length) + c('cancel', 'Marked to cancel', cancel.length) + c('stopped', 'Stopped', stopped.length) + '</div><span class="dd-sp"></span><button type="button" class="dd-btn secondary dd-askcut" data-askai="personal">' + lu('zap', 14) + 'Ask AI what to cut</button></div>';
-		var foot = '<div class="dd-sfoot"><span>Showing ' + (act.length + cancel.length + stopped.length) + ' charges</span>' + (hidden.length ? '<button type="button" class="dd-lnk" data-subhidden>' + (showHidden ? 'Hide hidden' : 'Hidden ' + hidden.length) + '</button>' : '') + '</div>';
-		var subsCard = '<section class="dd-card dd-scard">' + tools + '<div class="dd-srow head"><span>Charge</span><span class="num">Per month</span><span></span></div>' + (body || '<p class="dd-empty-l">' + (q ? 'No charges match “' + esc(S.subQ) + '”.' : 'No repeating charges found yet. They show up after two or more months of transactions.') + '</p>') + foot + '</section>'
-			+ '<p class="dd-bnote out">Found by looking for the same merchant charging a similar amount on a regular schedule. Dream Desk can’t cancel for you; “Cancel” is your reminder list.</p>';
-		return head + bills + subsHead + sstrip + subsCard;
+		var jump = '<div class="dd-seg dd-bjump"><button type="button" data-jump="biz">Business</button><button type="button" data-jump="per">Personal</button><button type="button" data-jump="subs">Subscriptions</button></div>';
+		return head + strip + jump + '<div class="dd-blanes">' + lanes + '</div><div class="dd-bsubs' + (sug.length ? ' hasclean' : '') + '">' + subsCard + cleanCard + '</div>';
 	}
-
+	function billForm(m) {
+		var b = m.bill || {}, sc = m.scope || b.scope || ddGet('dreamdesk-bill-scope', 'personal');
+		return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal dd-drawer"><button type="button" class="dwdc-mx" data-close-modal>' + ic('x', 20) + '</button><h2 class="dd-dh">' + (b.id ? 'Edit bill' : 'Add bill') + '</h2>'
+			+ '<form class="dd-billf" data-pform="bills">' + (b.id ? '<input type="hidden" name="id" value="' + esc(b.id) + '">' : '')
+			+ '<div class="dd-seg dd-scope"><label><input type="radio" name="scope" value="business"' + (sc === 'business' ? ' checked' : '') + '><span>Business</span></label><label><input type="radio" name="scope" value="personal"' + (sc !== 'business' ? ' checked' : '') + '><span>Personal</span></label></div>'
+			+ '<label><span>Bill</span><input name="name" required placeholder="Rent, phone, insurance…" value="' + esc(b.name || '') + '" autocomplete="off"></label>'
+			+ '<div class="dd-2"><label><span>Amount</span><input name="amount" inputmode="decimal" required placeholder="$0.00" value="' + (b.amount ? esc(b.amount) : '') + '"></label><label><span>Repeats</span><span class="dd-isel"><select name="freq" data-bfreq><option value="monthly"' + (b.freq === 'monthly' || !b.freq ? ' selected' : '') + '>Monthly</option><option value="weekly"' + (b.freq === 'weekly' ? ' selected' : '') + '>Weekly</option><option value="yearly"' + (b.freq === 'yearly' ? ' selected' : '') + '>Yearly</option></select>' + lu('chevron-down', 14) + '</span></label></div>'
+			+ '<div class="dd-2"><label><span data-bdaylbl>' + (b.freq === 'weekly' ? 'Weekday' : 'Due day') + '</span><input name="day" type="number" min="1" max="' + (b.freq === 'weekly' ? 7 : 31) + '" value="' + (b.day || 1) + '" required></label><label class="dd-auto"><input type="checkbox" name="autopay"' + (b.autopay ? ' checked' : '') + '><span>Autopay</span></label></div>'
+			+ (b.month ? '<input type="hidden" name="month" value="' + b.month + '">' : '')
+			+ '<p class="dd-bnote">Yearly bills use the due day of the month you add them in. Weekly bills use 1 = Monday … 7 = Sunday.</p>'
+			+ '<div class="dd-pbtns end"><button type="button" class="dd-btn secondary" data-close-modal>Cancel</button><button class="dd-btn primary">' + (b.id ? 'Save' : 'Add bill') + '</button></div></form></div>';
+	}
 	/* ================= Dates typed into a to-do ("next Thursday at 4", "tomorrow", "the 4th of November") ================= */
 	// Returns { text, due: 'YYYY-MM-DD' | '', time: '4:00 PM' | '' } with the date words taken out of the text.
 	function parseWhen(raw, todayIso) {
@@ -3078,6 +3113,7 @@
 				+ (m.script ? '<textarea class="dwdc-adscript" readonly rows="10">' + esc(m.script) + '</textarea><div class="dwdc-farow end"><button type="button" class="dwdc-btn" data-adscopy>Copy script</button></div>' : emptyRow('Loading the script…'))
 				+ '<p class="dwdc-wins-foot">Every 15 minutes the script reads the next two weeks of your Google Calendar and the last 3 days of Upwork emails. Booked calls go on the lead, your Business to-dos and your Personal to-dos; Upwork interview invites and client messages become leads (or notes on the existing one); hires become active projects. It never changes your calendar or email.</p></div>';
 		}
+		if (m.type === 'billadd') { return billForm(m); }
 		if (m.type === 'spend') { // Ad spend tile: Google Ads and Upwork Connects together
 			var GS = (S.ads || {}).google, KS = (S.ads || {}).connects || {}, gm = GS ? GS.month.cost : 0, km = KS.month || 0;
 			var gPart = '';
@@ -3684,6 +3720,16 @@
 		if (t.closest('[data-openconn]')) { e.preventDefault(); S.pConnOpen = true; if (location.hash !== '#personal') { location.hash = 'personal'; } else { render(); } setTimeout(function () { var c = document.querySelector('.dwdc-pconn'); if (c) { c.scrollIntoView({ behavior: 'smooth' }); } }, 300); return; }
 		if ((el = t.closest('[data-bmonth]'))) { if (el.getAttribute('data-bmonth')) { S.bMonth = el.getAttribute('data-bmonth'); S.bCat = ''; render(); } return; }
 		if ((el = t.closest('[data-bcat]'))) { var bc = el.getAttribute('data-bcat'); S.bCat = S.bCat === bc ? '' : bc; render(); return; }
+		if ((el = t.closest('[data-billadd]'))) { var bsc = el.getAttribute('data-billadd'); S.modal = { type: 'billadd', scope: bsc || '', vals: {} }; render(); focusIn('.dd-billf [name=name]'); return; }
+		if ((el = t.closest('[data-billedit]'))) { var be = (pData().bills || []).find(function (x) { return x.id === el.getAttribute('data-billedit'); }); S.billMenu = 0; if (be) { S.modal = { type: 'billadd', bill: be, vals: {} }; render(); } return; }
+		if ((el = t.closest('[data-billmove]'))) { var bmv = (pData().bills || []).find(function (x) { return x.id === el.getAttribute('data-billmove'); }); S.billMenu = 0; if (bmv) { var nb = JSON.parse(JSON.stringify(bmv)); nb.scope = bmv.scope === 'business' ? 'personal' : 'business'; pSave('bills', nb, 'Moved to ' + (nb.scope === 'business' ? 'Business' : 'Personal')); } return; }
+		if ((el = t.closest('[data-billmenu]'))) { e.stopPropagation(); var bmid = el.getAttribute('data-billmenu'); S.billMenu = S.billMenu === bmid ? 0 : bmid; S.subLabel = 0; render(); return; }
+		if ((el = t.closest('[data-sublabel]'))) { e.stopPropagation(); var slm = el.getAttribute('data-sublabel'); S.subLabel = S.subLabel === slm ? 0 : slm; S.billMenu = 0; render(); return; }
+		if ((el = t.closest('[data-subscope]'))) { var ssm = el.getAttribute('data-subscope'), ssv = el.getAttribute('data-v'); S.subLabel = 0; api('/bank', 'POST', { sub: ssm, scope: ssv }).then(function (d2) { S.bank = d2; render(); toast(ssv ? 'Label saved' : 'Label removed'); }).catch(fail); return; }
+		if ((el = t.closest('[data-cudis]'))) { var cd = cuDismissed(); cd[el.getAttribute('data-cudis')] = Date.now(); ddSet('dreamdesk-cleanup-dismissed', JSON.stringify(cd)); render(); return; }
+		if ((el = t.closest('[data-cuhide]'))) { api('/bank', 'POST', { sub: el.getAttribute('data-cuhide'), status: 'ignore' }).then(function (d3) { S.bank = d3; render(); toast('Hidden'); }).catch(fail); return; }
+		if ((el = t.closest('[data-jump]'))) { var jt = document.getElementById('dd-lane-' + el.getAttribute('data-jump')); if (jt) { jt.scrollIntoView({ behavior: 'smooth', block: 'start' }); } return; }
+		if ((S.billMenu || S.subLabel) && !t.closest('.dd-bm')) { S.billMenu = 0; S.subLabel = 0; render(); }
 		if ((el = t.closest('[data-subchip]'))) { S.subChip = el.getAttribute('data-subchip'); render(); return; }
 		if (t.closest('[data-subhidden]')) { S.subHidden = !S.subHidden; render(); return; }
 		if ((el = t.closest('[data-subhide]'))) { if (!confirm('Hide ' + el.getAttribute('data-name') + ' from subscriptions? You can show it again from “Hidden” at the bottom.')) { return; } api('/bank', 'POST', { sub: el.getAttribute('data-subhide'), status: 'ignore' }).then(function (d) { S.bank = d; render(); toast('Hidden'); }).catch(fail); return; }
@@ -3898,7 +3944,7 @@
 		}
 		if (f.hasAttribute('data-pform')) {
 			var pk = f.getAttribute('data-pform');
-			if (pk === 'bills') { data.autopay = !!f.querySelector('[name=autopay]:checked'); data.month = +DWDC.today.slice(5, 7); }
+			if (pk === 'bills') { data.autopay = !!f.querySelector('[name=autopay]:checked'); data.month = data.month ? +data.month : +DWDC.today.slice(5, 7); if (data.scope) { ddSet('dreamdesk-bill-scope', data.scope); } if (data.id) { var ob = (pData().bills || []).find(function (x) { return x.id === data.id; }); if (ob) { data.paid = ob.paid; } } if (S.modal && S.modal.type === 'billadd') { S.modal = null; } }
 			if (pk === 'ptask') { pk = 'todos'; S.modal = S.modal && S.modal.back ? { type: 'pday', day: S.modal.back, vals: {} } : null; }
 			if (pk === 'pdayadd') { pk = 'todos'; }
 			pSave(pk, data, pk === 'todos' ? (data.id ? 'Saved' : 'Added') : pk === 'bills' ? 'Bill added' : 'Added').then(function () { var x = document.querySelector('[data-pform="' + pk + '"] input[name=text], [data-pform="' + pk + '"] input[name=label], [data-pform="' + pk + '"] input[name=name]'); if (x) { x.focus(); } });

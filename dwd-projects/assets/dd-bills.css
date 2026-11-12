@@ -149,3 +149,90 @@
 	.dd-rvrow > :nth-child(4), .dd-rvrow > :nth-child(7) { display: none; }
 	.dd-rvfoot { position: sticky; bottom: 0; background: var(--surface); flex-wrap: wrap; }
 }
+/* ---------- Bills v2 (design 9a) ---------- */
+.dd-btop { align-items: center; }
+.dd-btop .dd-btn { height: 36px; margin-left: 8px; }
+.dd-strip3.n5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.dd-strip3 > div[data-jump] { cursor: pointer; }
+.dd-strip3 > div[data-jump]:hover { background: var(--hover); }
+.dd-strip3 > div > small { display: block; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dd-strip3 .l .dot, .dd-chip .dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+.dot.biz { background: var(--accent); } .dot.per { background: var(--warning-text); }
+.dd-strip3 b.ok { color: var(--success-text); }
+.dd-bjump { display: none !important; }
+.dd-main > .dwdc-screen > .dd-blanes, .dd-main > .dwdc-screen > .dd-bsubs { margin-top: 24px; }
+.dd-blanes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; align-items: start; }
+.dd-blanes .dd-lane { overflow: visible; }
+.dd-lane > header .dd-hlink { margin-left: 4px; }
+.dd-lbill { display: flex; align-items: center; gap: 14px; min-height: 56px; padding: 8px 12px 8px 20px; border-top: 1px solid var(--border); }
+.dd-lbill:hover { background: var(--hover); }
+.dd-lbill .t { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.dd-lbill .t b { font-size: 14px; font-weight: 500; color: var(--text); display: flex; align-items: center; gap: 8px; }
+.dd-lbill .t b .dd-pill { height: 20px; font-size: 11px; }
+.dd-lbill .t small, .dd-lbill .r small { font-size: 12px; color: var(--text-3); }
+.dd-lbill .r { display: flex; flex-direction: column; align-items: flex-end; }
+.dd-lbill .r b { font-size: 14px; font-weight: 500; color: var(--text); font-variant-numeric: tabular-nums; }
+.dd-lbill .r small.soon { color: var(--warning-text); } .dd-lbill .r small.late { color: var(--danger-text); }
+.dd-lbill.paid .t b, .dd-lbill.paid .r b { color: var(--text-3); }
+.dd-bm { position: relative; display: inline-flex; }
+.dd .dd-bmenu { display: flex; flex-direction: column; position: absolute; right: 0; top: calc(100% + 4px); z-index: 40; min-width: 180px; padding: 4px; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: var(--shadow-menu); }
+.dd .dd-bmenu.left { left: 0; right: auto; min-width: 140px; }
+.dd-bsubs { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 24px; align-items: start; }
+.dd-subs2, .dd-clean { overflow: visible; }
+.dd-ch2 { display: flex; align-items: center; gap: 12px; padding: 18px 20px 14px; border-bottom: 1px solid var(--border); }
+.dd-ch2 h2 { font-size: 16px; font-weight: 600; color: var(--text); }
+.dd-subs2 .dd-ch2 h2 { flex: 1; }
+.dd-ch2 small { font-size: 13px; color: var(--text-3); }
+.dd-clean .dd-ch2 small { font-size: 12px; display: block; }
+.dd-lt.n { background: var(--neutral-bg); color: var(--text-2); }
+.dd-lt.g { background: var(--success-bg); color: var(--success-text); }
+.dd-srow.v2 { grid-template-columns: minmax(0, 1fr) 120px 100px 200px; }
+.dd-labchip { display: inline-flex; align-items: center; gap: 4px; height: 24px; padding: 0 8px 0 10px; border-radius: var(--radius-pill); border: 0; background: var(--neutral-bg); color: var(--neutral-text); font: 500 12px var(--font); cursor: pointer; }
+.dd-labchip.none { background: var(--warning-bg); color: var(--warning-text); }
+.dd-sug { display: flex; flex-direction: column; gap: 8px; padding: 14px 20px; border-bottom: 1px solid var(--border); }
+.dd-sug .r1 { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.dd-sug .r1 .dd-pill { height: 20px; font-size: 11px; }
+.dd-sug .r1 b { flex: 1; min-width: 0; font-size: 14px; font-weight: 500; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dd-sug .r1 em { font-style: normal; font-size: 12px; font-weight: 500; color: var(--success-text); }
+.dd-sug p { font-size: 13px; color: var(--text-2); line-height: 1.45; }
+.dd-sug .r3 { display: flex; align-items: center; gap: 6px; }
+.dd-sug .r3 .dd-btn { height: 30px; }
+.dd-cfoot { display: flex; flex-direction: column; gap: 10px; padding: 14px 20px 16px; }
+.dd-cfoot small { font-size: 12px; color: var(--text-3); }
+.dd-cfoot .dd-btn { width: 100%; height: 36px; }
+.dd-cfoot .lu { color: var(--accent-text); }
+.dd-bempty > span.g { background: var(--success-bg); color: var(--success-text); }
+/* add / edit bill drawer */
+.dd .dwdc-modal.dd-drawer { max-width: 480px; }
+.dd-dh { font-size: 18px !important; font-weight: 600; color: var(--text); margin-bottom: 16px !important; text-transform: none; }
+.dd-billf { display: flex; flex-direction: column; gap: 14px; margin: 0; }
+.dd-billf > label, .dd-billf .dd-2 > label { display: flex; flex-direction: column; gap: 6px; margin: 0; font-size: 12px; font-weight: 500; color: var(--text-2); }
+.dd-billf input[name]:not([type=checkbox]):not([type=radio]) { height: 40px !important; min-height: 0 !important; padding: 0 12px !important; background: var(--bg) !important; border: 1px solid var(--border-strong) !important; border-radius: var(--radius-md) !important; color: var(--text) !important; font-size: 14px !important; box-shadow: none !important; width: 100%; }
+.dd-billf .dd-isel { width: 100%; } .dd-billf .dd-isel select { height: 40px !important; }
+.dd-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.dd-billf .dd-auto { flex-direction: row !important; align-items: center; gap: 8px !important; align-self: end; height: 40px; font-size: 14px !important; color: var(--text) !important; cursor: pointer; }
+.dd-billf .dd-auto input { width: 16px !important; height: 16px !important; min-height: 0 !important; accent-color: var(--accent); }
+.dd-scope { width: 100%; }
+.dd-scope label { flex: 1; margin: 0; cursor: pointer; }
+.dd-scope input { position: absolute; opacity: 0; pointer-events: none; }
+.dd-scope span { display: flex; align-items: center; justify-content: center; height: 32px; border-radius: var(--radius-sm); font: 500 13px var(--font); color: var(--text-2); }
+.dd-scope input:checked + span { background: var(--accent-soft); color: var(--accent-text); }
+.dd-billf .dd-bnote { padding: 0; }
+@media (max-width: 1100px) { .dd-strip3.n5 { grid-template-columns: repeat(3, minmax(0, 1fr)); } .dd-strip3.n5 > div:nth-child(4) { border-left: 0; border-top: 1px solid var(--border); } .dd-strip3.n5 > div:nth-child(5) { border-top: 1px solid var(--border); } .dd-bsubs { grid-template-columns: 1fr; } }
+@media (max-width: 767px) {
+	.dd-strip3.n5 { grid-template-columns: 1fr; }
+	.dd-strip3.n5 > div { border-left: 0 !important; }
+	.dd-strip3.n5 > div + div { border-top: 1px solid var(--border); }
+	.dd-strip3 > div > small { flex-basis: 100%; }
+	.dd-bjump { display: flex !important; position: sticky; top: var(--topbar-h); z-index: 20; margin-top: 12px; }
+	.dd-bjump button { flex: 1; height: 32px; }
+	.dd-blanes { grid-template-columns: 1fr; gap: 16px; }
+	.dd-bsubs { display: flex; flex-direction: column; gap: 16px; }
+	.dd-bsubs.hasclean .dd-clean { order: -1; }
+	.dd-srow.v2 { display: flex; flex-wrap: wrap; }
+	.dd-srow.v2 .lab { order: 3; }
+	.dd-btop { flex-wrap: wrap; }
+	.dd-btop h1 { flex-basis: 100%; }
+	.dd-2 { grid-template-columns: 1fr 1fr; }
+	.dd-billf input[name]:not([type=checkbox]):not([type=radio]) { height: 44px !important; font-size: 16px !important; }
+}

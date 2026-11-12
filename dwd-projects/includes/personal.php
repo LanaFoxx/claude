@@ -130,6 +130,7 @@ function dwdpe_clean( $kind, $x, $old = array() ) {
 			'month'   => max( 1, min( 12, (int) ( $x['month'] ?? 1 ) ) ),
 			'freq'    => $freq,
 			'autopay' => ! empty( $x['autopay'] ),
+			'scope'   => 'business' === ( $x['scope'] ?? '' ) ? 'business' : 'personal',
 			'cat'     => $txt( $x['cat'] ?? '', 60 ),
 			'paid'    => array_slice( $paid, -36, null, true ),
 		);
