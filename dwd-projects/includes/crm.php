@@ -104,6 +104,7 @@ function dwdc_contact( $post, $full = false ) {
 		$pays          = get_post_meta( $p->ID, '_dwdc_payments', true );
 		$c['payments'] = is_array( $pays ) ? $pays : array();
 		$c['files'] = array_reverse( $entries );
+		$c          = apply_filters( 'dwdc_contact_full', $c, $p->ID );
 	}
 	return $c;
 }

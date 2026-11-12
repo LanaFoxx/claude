@@ -225,3 +225,12 @@
 	.dd .dwdc-two .dd-zoom { order: 2; }
 }
 @media (max-width: 767px) { .dd-pp-grid { align-items: stretch !important; } .dd-pp-grid > .dd-pp-col > * { width: 100%; } }
+/* AI project summary */
+.dd-pc2.k-sum { box-shadow: inset 0 2px 0 var(--accent); }
+.dd-pc2.k-sum > header h2 .lu { color: var(--accent-text); }
+.dd-sumb { padding: 2px 20px 18px; font-size: 14px; line-height: 1.55; color: var(--text); }
+.dd-sumb p { margin: 0 0 8px !important; }
+.dd-sumb ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; color: var(--text-2); }
+.dd-sumb li::marker { color: var(--accent-text); }
+@media (max-width: 767px) { .dd-pp-grid .k-sum { order: 3; margin: 0 !important; } }
+.dd .dd-sumb ul { list-style: disc !important; padding-left: 18px !important; } .dd .dd-sumb li { display: list-item !important; }

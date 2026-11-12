@@ -2853,6 +2853,14 @@
 		var obBox = '' && card('ob', 'Onboarding' + (obl.length ? ' ' + ddPill(obn + ' answers', 'info') : ''), '', obl.length ? '<span class="dd-hmeta">' + esc(obl[0].form || 'Form') + ' · submitted ' + fmt(obl[0].date) + '</span>' : '<span class="dd-hmeta">Not submitted</span>',
 			'<div class="dd-pbtns">' + (obl.length ? btn('data-viewob', lu('clipboard-list') + 'View answers') + '<button type="button" class="dd-btn ghost" data-copyob>Copy answers</button>' : btn('data-leadinvite="' + c.id + '"', lu('mail') + (c.stage === 'onboarding' ? 'Resend onboarding form' : 'Send onboarding form'))) + '</div>');
 		// markup review
+		var SM = full ? c.ai_summary : null, sumBox = '';
+		if (full && (SM || c.has_form)) {
+			if (!SM && c.has_form && !(S.sumTried || {})[c.id]) { S.sumTried = S.sumTried || {}; S.sumTried[c.id] = 1; S.sumBusy = c.id; api('/contact/' + c.id + '/summary', 'POST', {}).then(function (x) { if (S.full[c.id]) { S.full[c.id].ai_summary = x; } S.sumBusy = 0; render(); }).catch(function (er) { S.sumBusy = 0; S.sumErr = er && er.message; render(); }); }
+			var sumHtml = function (txt) { return esc(txt).split(/\n+/).map(function (l) { l = l.trim(); return !l ? '' : /^[•\-*]\s*/.test(l) ? '<li>' + l.replace(/^[•\-*]\s*/, '') + '</li>' : '<p>' + l + '</p>'; }).join('').replace(/(<li>[\s\S]*<\/li>)/, '<ul>$1</ul>'); };
+			var busy = S.sumBusy === c.id;
+			sumBox = card('k-sum', lu('zap', 16) + 'Project summary', SM ? 'From the ' + esc(SM.form || 'form') + (SM.date ? ' · ' + fmt(String(SM.date).slice(0, 10)) : '') : '', SM ? '<button type="button" class="dd-hlink" data-sumgo="' + c.id + '"' + (busy ? ' disabled' : '') + '>' + (busy ? 'Updating…' : 'Refresh') + '</button>' : '',
+				'<div class="dd-sumb">' + (SM ? sumHtml(SM.text) : busy ? '<p class="dd-help">Reading their answers and writing a summary…</p>' : '<p class="dd-help">' + esc(S.sumErr || 'No summary yet.') + ' <button type="button" class="dd-lnk sm" data-sumgo="' + c.id + '">Try again</button></p>') + '</div>');
+		}
 		var stg = c.staging || '', stgEdit = !stg || (S.stgEdit === c.id);
 		var stgBox = card('k-stg', 'Staging site', stg ? '' : 'Not added yet', stg && !stgEdit ? '<button type="button" class="dd-hlink" data-stgedit="' + c.id + '">Change</button>' : '',
 			'<div class="dd-stgb">' + (stg && !stgEdit ? '<div class="dd-stgurl">' + lu('globe', 16) + '<a href="' + esc(stg) + '" target="_blank" rel="noopener">' + esc(stg.replace(/^https?:\/\//, '').replace(/\/$/, '')) + '</a></div><div class="dd-pbtns"><a class="dd-btn primary" href="' + esc(stg) + '" target="_blank" rel="noopener">' + lu('external-link', 14) + 'Open staging site</a><button type="button" class="dd-btn secondary" data-copy="' + esc(stg) + '">' + lu('link', 14) + 'Copy URL</button>' + (DWDC.mkReady && !c.markup ? '<button type="button" class="dd-btn ghost" data-stgmk="' + c.id + '">Make a Markup link from it</button>' : '') + '</div>'
@@ -2895,7 +2903,7 @@
 		var hosting = num(c.hosting) ? hostCard(c) : '';
 		return '<div class="dd-pp">' + head + strip
 			+ (S.edit ? '<div class="dd-pp-edit" id="pv3-edit">' + details + peopleCard(c) + '</div>' : '')
-			+ '<div class="dd-pp-grid"><div class="dd-pp-col">' + stgBox + mkBox + formBox + todos + (S.edit ? '' : '<div class="dd-pp-mob">' + details + '</div>') + notesBox + '</div><div class="dd-pp-col side">' + (S.edit ? '' : '<div class="dd-pp-desk">' + details + '</div>' + contacts) + zoomBox('p' + c.id, [c.id]) + (st === 'leads' ? '' : paysBox) + hosting + '</div></div></div>';
+			+ '<div class="dd-pp-grid"><div class="dd-pp-col">' + sumBox + stgBox + mkBox + formBox + todos + (S.edit ? '' : '<div class="dd-pp-mob">' + details + '</div>') + notesBox + '</div><div class="dd-pp-col side">' + (S.edit ? '' : '<div class="dd-pp-desk">' + details + '</div>' + contacts) + zoomBox('p' + c.id, [c.id]) + (st === 'leads' ? '' : paysBox) + hosting + '</div></div></div>';
 	}
 	// Onboarding answers as plain text, ready to paste into Claude.
 	function onboardEntries(c) {
@@ -3799,6 +3807,7 @@
 		if ((el = t.closest('[data-bmonth]'))) { if (el.getAttribute('data-bmonth')) { S.bMonth = el.getAttribute('data-bmonth'); S.bCat = ''; render(); } return; }
 		if ((el = t.closest('[data-bcat]'))) { var bc = el.getAttribute('data-bcat'); S.bCat = S.bCat === bc ? '' : bc; render(); return; }
 		if ((el = t.closest('[data-statsmore]'))) { var sc2 = el.closest('.dd-stats'), so = !sc2.classList.contains('open'); sc2.classList.toggle('open', so); el.setAttribute('aria-expanded', so); el.querySelector('span').textContent = so ? 'Show less' : 'Show more'; ddSet('dreamdesk-stats-open', so ? '1' : ''); return; }
+		if ((el = t.closest('[data-sumgo]'))) { var sgo = +el.getAttribute('data-sumgo'); S.sumBusy = sgo; S.sumErr = ''; render(); api('/contact/' + sgo + '/summary', 'POST', {}).then(function (x) { if (S.full[sgo]) { S.full[sgo].ai_summary = x; } S.sumBusy = 0; render(); toast('Summary updated'); }).catch(function (er) { S.sumBusy = 0; S.sumErr = er && er.message; render(); }); return; }
 		if ((el = t.closest('[data-stgedit]'))) { S.stgEdit = +el.getAttribute('data-stgedit'); render(); var si3 = app.querySelector('.dd-stgf input'); if (si3) { si3.focus(); si3.select(); } return; }
 		if (t.closest('[data-stgcancel]')) { S.stgEdit = 0; render(); return; }
 		if ((el = t.closest('[data-stgmk]'))) { var mu = app.querySelector('[data-mkurl]'); if (mu) { mu.scrollIntoView({ behavior: 'smooth', block: 'center' }); mu.focus(); } return; }
