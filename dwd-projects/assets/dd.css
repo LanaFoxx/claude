@@ -461,3 +461,14 @@ i.dd-flag { width: 10px; height: 10px; cursor: inherit; }
 .dd-tl-kids .dd-tl-r .dd-tl-t { display: none; }
 .dd-tl-go { display: inline-flex; align-items: center; gap: 4px; margin: 6px 0 8px 24px; font-size: 13px; font-weight: 500; color: var(--accent-text) !important; }
 @media (max-width: 767px) { .dd-tl-kids { margin-left: 64px; } }
+/* Today's schedule: task pop-up */
+.dd .dwdc-modal.dd-stm { max-width: 460px; }
+.dd-stm-k { font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--accent-text); margin-bottom: 6px !important; }
+.dd-stm .dd-dh { line-height: 1.35; padding-right: 28px; }
+.dd-stm-d { display: grid; grid-template-columns: 80px 1fr; gap: 8px 12px; margin: 0 0 18px !important; font-size: 14px; }
+.dd-stm-d dt { color: var(--text-3); } .dd-stm-d dd { margin: 0; color: var(--text); }
+.dd-stm-b { display: flex; flex-wrap: wrap; gap: 8px; }
+.dd-stm-b .dd-btn { height: 38px; }
+.dd-stm-n { margin-top: 12px !important; font-size: 12px; color: var(--text-3); }
+@media (max-width: 767px) { .dd-stm-b .dd-btn { flex: 1 1 100%; height: 44px; } }
+.dd .dwdc-modal .dd-dh { text-transform: none !important; letter-spacing: -.01em !important; font-size: 20px !important; }

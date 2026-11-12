@@ -678,6 +678,18 @@
 		return '<div class="dd-ph"><h1>' + esc(ddTitle(r, t)) + '</h1></div>';
 	}
 	// Home (design 4.1): schedule + recent activity | stat list + to-dos.
+	function schedHidden() { var m = {}; try { m = JSON.parse(ddGet('dreamdesk-sched-hidden', '{}')) || {}; } catch (e) { m = {}; } return m[DWDC.today] || []; }
+	function schedHide(key) { var m = {}; try { m = JSON.parse(ddGet('dreamdesk-sched-hidden', '{}')) || {}; } catch (e) { m = {}; } var l = m[DWDC.today] || []; if (l.indexOf(key) < 0) { l.push(key); } m = {}; m[DWDC.today] = l; ddSet('dreamdesk-sched-hidden', JSON.stringify(m)); }
+	function schedTaskModal(m) {
+		var w = m.key.slice(0, 1) === 'w', id = m.key.slice(2), t = w ? S.tasks.find(function (x) { return String(x.id) === id; }) : (pData().todos || []).find(function (x) { return String(x.id) === id; });
+		if (!t) { return ''; }
+		var c = w && t.contact ? contact(t.contact) : null;
+		return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal dd-drawer dd-stm"><button type="button" class="dwdc-mx" data-close-modal>' + ic('x', 20) + '</button>'
+			+ '<p class="dd-stm-k">' + (w ? 'Work to-do' : 'Personal to-do') + (t.done ? ' · Done' : '') + '</p><h2 class="dd-dh">' + esc(w ? t.text : ptx(t.text)) + '</h2>'
+			+ '<dl class="dd-stm-d">' + (c ? '<dt>Project</dt><dd><a href="#client/' + c.id + '">' + esc(c.name) + '</a></dd>' : '') + '<dt>Due</dt><dd>' + (t.due ? (t.due === DWDC.today ? 'Today' : fmt(t.due)) + (t.time ? ' at ' + esc(t.time) : '') : 'No date') + '</dd>' + (!w && t.source ? '<dt>From</dt><dd>' + esc(t.source) + '</dd>' : '') + (t.note ? '<dt>Notes</dt><dd>' + esc(t.note) + '</dd>' : '') + '</dl>'
+			+ '<div class="dd-stm-b"><button type="button" class="dd-btn primary" data-stdone="' + esc(m.key) + '">' + lu('check', 14) + (t.done ? 'Mark not done' : 'Complete') + '</button><button type="button" class="dd-btn secondary" data-sthide="' + esc(m.key) + '">Remove from today’s schedule</button><button type="button" class="dd-btn ghost" data-stedit="' + esc(m.key) + '">Open / edit</button></div>'
+			+ '<p class="dd-stm-n">Removing only hides it from Today’s schedule. It stays on your to-do list with the same date.</p></div>';
+	}
 	function ddHome() {
 		var P = pData(), T = DWDC.today, dObj = new Date(T + 'T12:00:00');
 		var meet = (S.meet && S.meet.list) || [];
@@ -698,14 +710,15 @@
 			if (!dup) { items.push({ time: e.time || 'All day', min: mins(e.time), title: ptx(e.text), sub: 'Google Calendar', id: e.id, biz: isBiz(e) }); }
 		});
 		// To-dos due today (Work and Personal) are part of today's schedule too.
-		var tdT = openTasks().filter(function (t) { return t.due === T; }), byP = {};
+		var hid = schedHidden();
+		var tdT = openTasks().filter(function (t) { return t.due === T && hid.indexOf('w:' + t.id) < 0; }), byP = {};
 		tdT.forEach(function (t) { if (t.contact) { (byP[t.contact] = byP[t.contact] || []).push(t); } });
 		tdT.forEach(function (t) {
 			var grp = t.contact && byP[t.contact].length > 1 ? byP[t.contact] : null;
 			if (grp) { if (grp.done1) { return; } grp.done1 = 1; var gc = contact(t.contact); items.push({ time: 'To-do', min: -2, title: gc ? gc.name : 'Project', group: grp, pid: t.contact }); return; }
 			var c = t.contact ? contact(t.contact) : null; items.push({ time: t.time || 'To-do', min: t.time ? mins(t.time) : -2, title: t.text, sub: 'Work to-do' + (c ? ' · ' + c.name : ''), todo: 'w', tid: t.id });
 		});
-		(P ? P.todos.filter(function (t) { return !t.gevent && !t.done && t.due === T; }) : []).forEach(function (t) { items.push({ time: t.time || 'To-do', min: t.time ? mins(t.time) : -2, title: ptx(t.text), sub: 'Personal to-do' + (t.source === 'Google Tasks' ? ' · Google Tasks' : ''), todo: 'p', tid: t.id }); });
+		(P ? P.todos.filter(function (t) { return !t.gevent && !t.done && t.due === T && hid.indexOf('p:' + t.id) < 0; }) : []).forEach(function (t) { items.push({ time: t.time || 'To-do', min: t.time ? mins(t.time) : -2, title: ptx(t.text), sub: 'Personal to-do' + (t.source === 'Google Tasks' ? ' · Google Tasks' : ''), todo: 'p', tid: t.id }); });
 		items.sort(function (x, y) { return x.min - y.min; });
 		var TM = calAdd(T, 1), tmr = meet.filter(function (m) { return m.ts && nyD(m.ts) === TM; }).sort(function (x, y) { return x.ts - y.ts; });
 		var tmrHtml = tmr.length ? '<div class="dd-tl-tm"><h3>Tomorrow</h3>' + tmr.map(function (m) { var tm = nyT(m.ts); return '<div class="dd-tl-r"><span class="dd-tl-t">' + esc(tm) + '</span><span class="dd-tl-dot biz"></span><div class="dd-tl-c">' + (m.link ? '<a href="' + esc(m.link) + '" target="_blank" rel="noopener">' + esc(m.title || m.who) + '</a>' : '<b>' + esc(m.title || m.who) + '</b>') + '<small>Business' + (m.kind ? ' · ' + esc(m.kind) : '') + '</small></div>' + (m.link ? '<a class="dd-btn secondary sm dd-join" href="' + esc(m.link) + '" target="_blank" rel="noopener">Join</a>' : '') + '</div>'; }).join('') + '</div>' : '';
@@ -714,9 +727,9 @@
 				if (it.group) {
 					var gOpen = !!(S.schedOpen || {})[it.pid];
 					return '<div class="dd-tl-r td grp' + (gOpen ? ' open' : '') + '"><span class="dd-tl-t">To-do</span><span class="dd-tl-n">' + it.group.length + '</span><div class="dd-tl-c" data-schedgrp="' + it.pid + '" role="button" tabindex="0" aria-expanded="' + gOpen + '"><b>' + esc(it.title) + ' ' + lu('chevron-down', 14) + '</b><small>' + it.group.length + ' to-dos today · next: ' + esc(it.group[0].text) + '</small></div></div>'
-						+ (gOpen ? '<div class="dd-tl-kids">' + it.group.map(function (t) { return '<div class="dd-tl-r td kid"><span class="dd-tl-t">' + esc(t.time || '') + '</span><button type="button" class="dd-tl-chk" data-toggle="' + t.id + '" aria-label="Mark done"></button><div class="dd-tl-c" data-task="' + t.id + '" role="button" tabindex="0"><b>' + esc(t.text) + '</b></div></div>'; }).join('') + '<a class="dd-tl-go" href="#client/' + it.pid + '">Open project ' + lu('chevron-right', 12) + '</a></div>' : '');
+						+ (gOpen ? '<div class="dd-tl-kids">' + it.group.map(function (t) { return '<div class="dd-tl-r td kid"><span class="dd-tl-t">' + esc(t.time || '') + '</span><button type="button" class="dd-tl-chk" data-toggle="' + t.id + '" aria-label="Mark done"></button><div class="dd-tl-c" data-schedtask="w:' + t.id + '" role="button" tabindex="0"><b>' + esc(t.text) + '</b></div></div>'; }).join('') + '<a class="dd-tl-go" href="#client/' + it.pid + '">Open project ' + lu('chevron-right', 12) + '</a></div>' : '');
 				}
-				if (it.todo) { return '<div class="dd-tl-r td"><span class="dd-tl-t">' + esc(it.time) + '</span><button type="button" class="dd-tl-chk" ' + (it.todo === 'w' ? 'data-toggle' : 'data-ptoggle') + '="' + it.tid + '" aria-label="Mark done"></button><div class="dd-tl-c" ' + (it.todo === 'w' ? 'data-task' : 'data-ptask') + '="' + it.tid + '" role="button" tabindex="0"><b>' + esc(it.title) + '</b><small>' + esc(it.sub) + '</small></div></div>'; }
+				if (it.todo) { return '<div class="dd-tl-r td"><span class="dd-tl-t">' + esc(it.time) + '</span><button type="button" class="dd-tl-chk" ' + (it.todo === 'w' ? 'data-toggle' : 'data-ptoggle') + '="' + it.tid + '" aria-label="Mark done"></button><div class="dd-tl-c" data-schedtask="' + it.todo + ':' + it.tid + '" role="button" tabindex="0"><b>' + esc(it.title) + '</b><small>' + esc(it.sub) + '</small></div></div>'; }
 				return '<div class="dd-tl-r' + (it.ended ? ' past' : '') + '"><span class="dd-tl-t">' + esc(it.time) + '</span><span class="dd-tl-dot ' + (it.biz ? 'biz' : 'pers') + '"></span><div class="dd-tl-c"' + (it.id ? ' data-ptask="' + it.id + '" role="button" tabindex="0"' : '') + '>' + (it.link ? '<a href="' + esc(it.link) + '" target="_blank" rel="noopener">' + esc(it.title) + '</a>' : '<b>' + esc(it.title) + '</b>') + '<small>' + esc(it.sub) + '</small></div>'
 					+ (it.link && !it.ended ? '<a class="dd-btn primary sm dd-join" href="' + esc(it.link) + '" target="_blank" rel="noopener">Join</a>' : '') + '</div>';
 			}).join('') : '<p class="dd-empty-l">Nothing scheduled today.</p>')
@@ -3167,6 +3180,7 @@
 				+ '<p class="dwdc-wins-foot">Every 15 minutes the script reads the next two weeks of your Google Calendar and the last 3 days of Upwork emails. Booked calls go on the lead, your Business to-dos and your Personal to-dos; Upwork interview invites and client messages become leads (or notes on the existing one); hires become active projects. It never changes your calendar or email.</p></div>';
 		}
 		if (m.type === 'billadd') { return billForm(m); }
+		if (m.type === 'schedtask') { return schedTaskModal(m); }
 		if (m.type === 'spend') { // Ad spend tile: Google Ads and Upwork Connects together
 			var GS = (S.ads || {}).google, KS = (S.ads || {}).connects || {}, gm = GS ? GS.month.cost : 0, km = KS.month || 0;
 			var gPart = '';
@@ -3781,6 +3795,14 @@
 		if ((el = t.closest('[data-bmonth]'))) { if (el.getAttribute('data-bmonth')) { S.bMonth = el.getAttribute('data-bmonth'); S.bCat = ''; render(); } return; }
 		if ((el = t.closest('[data-bcat]'))) { var bc = el.getAttribute('data-bcat'); S.bCat = S.bCat === bc ? '' : bc; render(); return; }
 		if ((el = t.closest('[data-statsmore]'))) { var sc2 = el.closest('.dd-stats'), so = !sc2.classList.contains('open'); sc2.classList.toggle('open', so); el.setAttribute('aria-expanded', so); el.querySelector('span').textContent = so ? 'Show less' : 'Show more'; ddSet('dreamdesk-stats-open', so ? '1' : ''); return; }
+		if ((el = t.closest('[data-schedtask]')) && !t.closest('a')) { S.modal = { type: 'schedtask', key: el.getAttribute('data-schedtask') }; render(); return; }
+		if ((el = t.closest('[data-stdone]'))) {
+			var sk = el.getAttribute('data-stdone'), sid = sk.slice(2); S.modal = null;
+			if (sk.slice(0, 1) === 'w') { setDone(+sid); } else { var sp = (pData().todos || []).find(function (x) { return String(x.id) === sid; }); if (sp) { sp.done = !sp.done; render(); pSave('todos', { id: sp.id, done: sp.done }, sp.done ? 'Done' : 'Not done'); } }
+			return;
+		}
+		if ((el = t.closest('[data-sthide]'))) { schedHide(el.getAttribute('data-sthide')); S.modal = null; render(); toast('Removed from today’s schedule (still on your to-do list)'); return; }
+		if ((el = t.closest('[data-stedit]'))) { var ek = el.getAttribute('data-stedit'); S.modal = ek.slice(0, 1) === 'w' ? { type: 'task', id: +ek.slice(2), vals: {} } : { type: 'ptask', id: ek.slice(2), vals: {} }; render(); return; }
 		if ((el = t.closest('[data-schedgrp]'))) { S.schedOpen = S.schedOpen || {}; var sgp = el.getAttribute('data-schedgrp'); S.schedOpen[sgp] = !S.schedOpen[sgp]; render(); return; }
 		if ((el = t.closest('[data-billadd]'))) { var bsc = el.getAttribute('data-billadd'); S.modal = { type: 'billadd', scope: bsc || '', vals: {} }; render(); focusIn('.dd-billf [name=name]'); return; }
 		if ((el = t.closest('[data-billedit]'))) { var be = (pData().bills || []).find(function (x) { return x.id === el.getAttribute('data-billedit'); }); S.billMenu = 0; if (be) { S.modal = { type: 'billadd', bill: be, vals: {} }; render(); } return; }
