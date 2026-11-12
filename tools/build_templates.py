@@ -563,7 +563,9 @@ def hero_slideshow():
 
 def build_hero():
     overlay = ("selector{background-color:#2E231A;}"
-               "selector::before,selector > .elementor-background-slideshow::before{background-image:linear-gradient(180deg, rgba(20,17,14,0.7) 0%, "
+               "selector::before,selector > .elementor-background-slideshow::before{background-image:"
+               "linear-gradient(90deg, rgba(20,17,14,0.82) 0%, rgba(20,17,14,0.6) 35%, rgba(20,17,14,0.2) 62%, rgba(20,17,14,0) 80%), "
+               "linear-gradient(180deg, rgba(20,17,14,0.7) 0%, "
                "rgba(20,17,14,0.05) 28%, rgba(20,17,14,0.3) 55%, rgba(20,17,14,0.95) 100%) !important;"
                "opacity:1 !important;}"
                "selector > .e-con-inner{position:relative;z-index:1;}")
