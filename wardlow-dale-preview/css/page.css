@@ -135,6 +135,9 @@
 #wd-2026 .wd-close::before{content:"";position:absolute;inset:auto;height:auto;border:0;transition:none;width:980px;aspect-ratio:1600/1288;right:-380px;top:-60px;background:url({{longhornIvory}}) no-repeat center/contain;opacity:.06;pointer-events:none}
 #wd-2026 .wd-close>.e-con{position:relative}
 #wd-2026 .wd-close-top{margin-bottom:64px}
+/* Closing headline: always two lines; shrinks with its column if it would otherwise wrap */
+#wd-2026 .wd-close-title{container-type:inline-size}
+#wd-2026 .wd-close-h2 .elementor-heading-title{white-space:nowrap;font-size:min(56px,10.5cqw) !important}
 #wd-2026 .wd-call-block{padding-top:20px !important;border-top:1px solid rgba(201,169,97,.5)}
 #wd-2026 .wd-phone-big a{color:#F7F4EE;text-decoration:none;font-variant-numeric:tabular-nums}
 #wd-2026 .wd-phone-big a:hover{color:#FFFFFF}
@@ -237,7 +240,7 @@
 #wd-2026 .wd-ins-in{padding-top:96px !important}
 #wd-2026 .wd-feat-h .elementor-heading-title{font-size:28px !important}
 #wd-2026 .wd-close-top{gap:24px !important;margin-bottom:48px}
-#wd-2026 .wd-close-h2 .elementor-heading-title{font-size:44px !important}
+#wd-2026 .wd-close-h2 .elementor-heading-title{font-size:min(44px,10.5cqw) !important}
 #wd-2026 .wd-form-panel{padding:36px !important}
 #wd-2026 .wd-form .elementor-field-type-radio .elementor-field-subgroup{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
@@ -317,7 +320,7 @@
 #wd-2026 .wd-post-h .elementor-heading-title{font-size:21px !important}
 #wd-2026 .wd-close::before{width:460px;right:-230px;top:24px}
 #wd-2026 .wd-close-top{margin-bottom:36px}
-#wd-2026 .wd-close-h2 .elementor-heading-title{font-size:34px !important}
+#wd-2026 .wd-close-h2 .elementor-heading-title{font-size:min(34px,10.5cqw) !important}
 #wd-2026 .wd-close-p p{font-size:16px}
 #wd-2026 .wd-phone-big .elementor-heading-title{font-size:32px !important}
 #wd-2026 .wd-form-wrap{padding:0 10px 10px 0 !important}

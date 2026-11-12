@@ -337,7 +337,7 @@ function page(m, tpl) {
     C('wd-close-top', { grid: 'minmax(0,7fr) minmax(0,5fr)', gap: gap(96, 32), gridAlign: 'end' }, [
       C('wd-close-title', {}, [
         EB('Free, confidential case review', '', T.gold),
-        H2('The clock is ticking <strong>on your claim.</strong>', 'wd-close-h2', T.ivory, { size: 56, lh: 1.06 }),
+        H2('The clock is ticking<br><strong>on your claim.</strong>', 'wd-close-h2', T.ivory, { size: 56, lh: 1.06 }),
       ]),
       C('wd-close-side', { gap: 24 }, [
         TX('<p>In Georgia, you generally have two years from the date of an injury to file a personal injury lawsuit. Some claims have shorter deadlines, so it helps to talk early.</p>', 'wd-close-p', { color: T.ivory, size: 18, lh: 1.55 }),
