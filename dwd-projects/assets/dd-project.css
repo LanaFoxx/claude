@@ -201,3 +201,27 @@
 .dd-stgurl .lu { color: var(--text-3); }
 .dd-stgurl a { font-size: 15px; font-weight: 500; color: var(--accent-text) !important; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .dd-stgf { display: flex; flex-direction: column; gap: 8px; margin: 0; }
+/* Phones: project page order — Details, Zoom, Staging, Markup, (form answers, To-dos), Notes, Contacts, Payments */
+@media (max-width: 767px) {
+	.dd-pp-grid { display: flex !important; flex-direction: column; gap: 16px; }
+	.dd-pp-grid > .dd-pp-col { display: contents; }
+	.dd-pp-grid .dd-pp-mob { order: 1; }
+	.dd-pp-grid .dd-zoom { order: 2; }
+	.dd-pp-grid .k-stg { order: 3; }
+	.dd-pp-grid .k-mk { order: 4; }
+	.dd-pp-grid .k-form { order: 5; }
+	.dd-pp-grid .k-todos { order: 6; }
+	.dd-pp-grid .k-notes { order: 7; }
+	.dd-pp-grid .k-ppl { order: 8; }
+	.dd-pp-grid .k-pay { order: 9; }
+	:where(.dd-pp-grid > .dd-pp-col > *) { order: 10; }
+	.dd-pp-grid .dd-pp-mob, .dd-pp-grid .dd-zoom, .dd-pp-grid .k-stg, .dd-pp-grid .k-mk, .dd-pp-grid .k-form, .dd-pp-grid .k-todos, .dd-pp-grid .k-notes, .dd-pp-grid .k-ppl, .dd-pp-grid .k-pay { margin: 0 !important; }
+	/* client page: Details, then Zoom, then the rest */
+	.dd .dwdc-two { display: flex !important; flex-direction: column; gap: 16px; }
+	.dd .dwdc-two > .dwdc-col { display: contents; }
+	:where(.dd .dwdc-two > .dwdc-col > *) { order: 5; }
+	.dd .dwdc-two > .dwdc-col > * { margin: 0 !important; }
+	.dd .dwdc-two .cl-det { order: 1; }
+	.dd .dwdc-two .dd-zoom { order: 2; }
+}
+@media (max-width: 767px) { .dd-pp-grid { align-items: stretch !important; } .dd-pp-grid > .dd-pp-col > * { width: 100%; } }

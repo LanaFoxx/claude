@@ -2715,7 +2715,7 @@
 					+ (c.next && isOpen(c) ? '<div class="dwdc-nextp"><small>Next</small> ' + esc(c.next) + '</div>' : '')
 					+ (c.drive ? '<div class="dd-pdrive">' + lu('link', 14) + '<span>Google Drive folder</span><a class="dd-btn secondary sm" href="' + esc(c.drive) + '" target="_blank" rel="noopener">Open</a><button type="button" class="dd-btn ghost sm" data-copy="' + esc(c.drive) + '">Copy link</button></div>' : '') + '</div>';
 			}).join('') : emptyRow('No projects yet.')) + '</section>'
-			+ '<section class="dwdc-card"><div class="dwdc-cardh pad2"><h2>Details</h2><button class="dwdc-lnk" data-edit>' + (S.edit ? 'Close' : 'Edit') + '</button></div><dl class="dwdc-dl pad2">'
+			+ '<section class="dwdc-card cl-det"><div class="dwdc-cardh pad2"><h2>Details</h2><button class="dwdc-lnk" data-edit>' + (S.edit ? 'Close' : 'Edit') + '</button></div><dl class="dwdc-dl pad2">'
 			+ '<dt>Client</dt><dd>' + esc(k.name) + '</dd><dt>Business</dt><dd>' + esc(biz || '—') + '</dd><dt>Email</dt><dd>' + (k.email ? '<a href="mailto:' + esc(k.email) + '">' + esc(k.email) + '</a>' : '—') + '</dd><dt>Phone</dt><dd>' + esc(k.phone || '—') + '</dd>'
 			+ '<dt>Hosting</dt><dd>' + (host.length ? host.length + ' site' + (host.length > 1 ? 's' : '') + ' · ' + money(host.reduce(function (s, c) { return s + num(c.hosting); }, 0)) + '/yr' : 'No') + '</dd>'
 			+ '<dt>Source</dt><dd>' + esc((pp.filter(function (c) { return c.lead_source; })[0] || {}).lead_source || sourceOf(pp[0] || {}) || '—') + '</dd><dt>Client since</dt><dd>' + (pp.length && pp.every(imported) ? '—' : fmt(k.created, true)) + '</dd>'
