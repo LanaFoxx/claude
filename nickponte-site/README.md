@@ -60,6 +60,19 @@ Applied from Nick's comments on the homepage preview:
   low-contrast grey text darkened, text links underlined. Lighthouse (mobile): home 78, Rye 89, accessibility 98–99.
   The rest is site-wide scripts (Google Tag Manager, Crisp chat, jQuery), to tackle at launch.
 
+## Rest of the site (live)
+
+All remaining pages use the new design (`includes/pages.php`, templates `content.php`, `blog.php`, `post.php`):
+About (25), Contact (31), Services (370), FAQ (6103), Market Data (6082), Hampton Beach (7513), Home Financing (4268),
+Cost to Sell (6182, with a live seller net sheet calculator), Contingencies (3455), Career (5531), Privacy (1145),
+the blog index (627) and every blog post.
+* Text was copied from each old page into its "Coastal Light page" box (`content/pages-content.json`,
+  `node deploy.cjs pages [--reseed] [--enable]`). The old Elementor content is untouched underneath.
+* Per page: untick "Use the new design for this page" to show the old page again. Blog posts follow the blog page's box.
+* Forms post to the same Elementor forms as before (Contact 31/`35df42e`, Career 5531/`0ad2c6e`).
+* `?npc_preview=1` (logged in) previews a page in the new design before it is switched on.
+* Old Free Home Valuation page (5644, on Nick's postcard QR code) 301s to `/#valuation`, keeping any tracking query.
+
 ## Round 4
 
 * Newmarket added as a 13th town (Nick has a live Newmarket page, 4753, mapped for go-live); its text comes from that page,

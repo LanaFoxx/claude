@@ -21,6 +21,22 @@
 		});
 	});
 
+	// Seller net sheet calculator
+	document.querySelectorAll('[data-npc-net]').forEach(function (box) {
+		var price = box.querySelector('#npc-net-price'), comm = box.querySelector('#npc-net-comm');
+		var fmt = function (n) { return '$' + Math.round(n).toLocaleString('en-US'); };
+		function calc() {
+			var p = parseFloat(String(price.value).replace(/[^0-9.]/g, '')) || 0, c = parseFloat(String(comm.value).replace(/[^0-9.]/g, '')) || 0;
+			var cm = p * c / 100, tax = p / 100 * 0.75, deed = 175;
+			box.querySelector('[data-net=comm]').textContent = '− ' + fmt(cm);
+			box.querySelector('[data-net=tax]').textContent = '− ' + fmt(tax);
+			box.querySelector('[data-net=net]').textContent = fmt(Math.max(0, p - cm - tax - deed));
+		}
+		price.addEventListener('input', calc); comm.addEventListener('input', calc);
+		price.addEventListener('blur', function () { var p = parseFloat(String(price.value).replace(/[^0-9.]/g, '')) || 0; price.value = p.toLocaleString('en-US'); });
+		calc();
+	});
+
 	// Rotating reviews: advance every 8s, pause on hover/focus, dots to pick one.
 	document.querySelectorAll('.npc-quote').forEach(function (box) {
 		var slides = box.querySelectorAll('.npc-quote__slide'), dots = box.querySelectorAll('.npc-quote__dot'), cur = 0, timer = null, paused = false;

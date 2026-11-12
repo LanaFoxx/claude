@@ -148,6 +148,21 @@ async function deployFeatured(p, nonce) {
   console.log('featured: ' + j.link);
 }
 
+// Content pages: copy the cleaned-up text from the old pages (content/pages-content.json) into each page's
+// "Coastal Light page" fields. --enable also ticks "Use the new design" (otherwise only the text is loaded).
+async function deployPages(p, nonce) {
+  const pages = require('./content/pages-content.json');
+  const enable = args.includes('--enable');
+  for (const [k, v] of Object.entries(pages)) {
+    const meta = { _npc_page_intro: v.intro, _npc_page_body: v.body, _npc_page_form: v.form };
+    if (enable) meta._npc_page_enabled = true;
+    const ex = await api(p, nonce, 'GET', `/wp/v2/pages/${v.id}?_fields=id,meta`);
+    if (ex.meta && ex.meta._npc_page_body && !args.includes('--reseed')) { delete meta._npc_page_body; delete meta._npc_page_intro; delete meta._npc_page_form; }
+    const j = await api(p, nonce, 'POST', `/wp/v2/pages/${v.id}`, { meta });
+    console.log(`page: ${k} (${v.id}) ${Object.keys(meta).join(', ') || 'kept'} ${j.link}`);
+  }
+}
+
 async function deployHome(p, nonce) {
   const ex = await api(p, nonce, 'GET', '/wp/v2/pages?slug=home-preview&status=publish,draft,private&_fields=id,link,template');
   const body = { title: 'Home (Coastal Light preview)', slug: 'home-preview', status: 'publish', template: 'npc-home', content: '' };
@@ -212,6 +227,7 @@ async function deployTowns(p, nonce, ids) {
   if (want('review')) await deployReview(p, nonce);
   if (want('guides')) await deployGuides(p, nonce);
   if (want('featured')) await deployFeatured(p, nonce);
+  if (want('pages')) await deployPages(p, nonce);
   if (want('livedata')) await deployLiveData(p, nonce, ids);
   // Launch / rollback: only when named explicitly (never part of a no-argument run).
   if (args.includes('golive') || args.includes('rollback')) {

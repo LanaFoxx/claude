@@ -2,14 +2,14 @@
 /**
  * Plugin Name: Nick Ponte Coastal Light (preview)
  * Description: "Coastal Light" redesign preview: a homepage template (/home-preview/) and a Town post type (/town-preview/<town>/) with monthly market fields, FAQ and JSON-LD. Preview pages are noindex and use their own header and footer, so live pages are not affected. Deactivate to remove everything from the front end.
- * Version: 1.7.3
+ * Version: 1.8.2
  * Author: Dream Web Digital
  * Requires PHP: 7.4
  */
 
 if (!defined('ABSPATH')) exit;
 
-define('NPC_VER', '1.7.3');
+define('NPC_VER', '1.8.2');
 define('NPC_DIR', plugin_dir_path(__FILE__));
 define('NPC_URL', plugin_dir_url(__FILE__));
 const NPC_HOME_TEMPLATE = 'npc-home';
@@ -93,6 +93,8 @@ function npc_register() {
 	}
 }
 add_action('init', 'npc_register');
+
+require_once NPC_DIR . 'includes/pages.php';
 
 register_activation_hook(__FILE__, function () {
 	npc_register();
@@ -300,6 +302,7 @@ add_filter('theme_page_templates', function ($templates) {
 });
 
 function npc_is_preview() {
+	if (function_exists('npc_content_kind') && npc_content_kind()) return 'content';
 	if (is_singular('np_town')) return 'town';
 	if (npc_live() && is_page()) {
 		$id = get_queried_object_id();
@@ -369,6 +372,8 @@ add_action('wp_head', function () {
 	if ($k === 'home') $id = npc_media_id('npc-hero-hampton');
 	elseif ($k === 'town') $id = npc_current_town() ? get_post_thumbnail_id(npc_current_town()) : 0;
 	elseif ($k === 'featured') $id = npc_media_id('npc-seller-hero');
+	elseif ($k === 'content' && is_page() && isset(NPC_CONTENT_PAGES[get_queried_object_id()])) { $ph = NPC_CONTENT_PAGES[get_queried_object_id()][3]; $id = $ph ? (is_numeric($ph) ? (int) $ph : npc_media_id($ph)) : 0; if (NPC_CONTENT_PAGES[get_queried_object_id()][0] === 'about') $id = npc_media_id('npc-nick-ponte'); }
+	elseif ($k === 'content' && is_singular('post')) $id = get_post_thumbnail_id(get_queried_object_id());
 	elseif ($k === 'guide') $id = npc_media_id(strpos((string) get_post_field('post_name', get_queried_object_id()), 'seller') !== false ? 'npc-seller-hero' : 'npc-buyer-hero');
 	if ($id && ($src = wp_get_attachment_image_src($id, 'full'))) {
 		$srcset = wp_get_attachment_image_srcset($id, 'full');
@@ -386,6 +391,7 @@ function npc_is_noindex() {
 	$k = npc_is_preview();
 	if (!$k) return false;
 	if (!npc_live()) return true;
+	if ($k === 'content') return false; // real pages and posts keep their own (Rank Math) robots settings
 	if ($k === 'review') return true;
 	if (is_page() && !is_front_page() && !in_array(get_queried_object_id(), array_merge(array_values(NPC_LIVE_PAGES), array_values(NPC_LIVE_TOWNS)), true)) return true;
 	return false;
