@@ -623,6 +623,7 @@
 		'credit-card': '<rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/>',
 		'chevron-down': '<path d="m6 9 6 6 6-6"/>',
 		'chevron-right': '<path d="m9 18 6-6-6-6"/>',
+		'chevron-left': '<path d="m15 18-6-6 6-6"/>',
 		'chevrons-right': '<path d="m6 17 5-5-5-5M13 17l5-5-5-5"/>',
 		menu: '<path d="M4 12h16M4 6h16M4 18h16"/>',
 		grip: '<circle cx="9" cy="6" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="18" r="1"/><circle cx="15" cy="6" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="18" r="1"/>',
@@ -689,6 +690,92 @@
 	function schedHidden() { var m = {}; try { m = JSON.parse(ddGet('dreamdesk-sched-hidden', '{}')) || {}; } catch (e) { m = {}; } return m[DWDC.today] || []; }
 	function schedHide(key) { var m = {}; try { m = JSON.parse(ddGet('dreamdesk-sched-hidden', '{}')) || {}; } catch (e) { m = {}; } var l = m[DWDC.today] || []; if (l.indexOf(key) < 0) { l.push(key); } m = {}; m[DWDC.today] = l; ddSet('dreamdesk-sched-hidden', JSON.stringify(m)); }
 	/* Email a client straight from Dream Desk: sent from mike@ with Mike's Gmail signature, saved to the project's notes. */
+	/* Date / date-time picker in Dream Desk's own style, used for every date and date-time box
+	   instead of the browser's. The real input keeps its value, so forms work the same. */
+	var DTP = null;
+	function dtpPad(n) { return (n < 10 ? '0' : '') + n; }
+	function dtpIso(d) { return d.getFullYear() + '-' + dtpPad(d.getMonth() + 1) + '-' + dtpPad(d.getDate()); }
+	function dtpClose() { if (DTP) { DTP.el.remove(); DTP = null; document.removeEventListener('mousedown', dtpOut, true); } }
+	function dtpOut(e) { if (DTP && !DTP.el.contains(e.target) && e.target !== DTP.input && !(DTP.anchor && DTP.anchor.contains(e.target))) { dtpClose(); } }
+	function dtpSet(v, done) {
+		var inp = DTP.input; inp.value = v;
+		inp.dispatchEvent(new Event('input', { bubbles: true })); inp.dispatchEvent(new Event('change', { bubbles: true }));
+		if (done) { dtpClose(); } else { dtpDraw(); }
+	}
+	function dtpDraw() {
+		var s = DTP, v = s.input.value || '', dt = s.input.type === 'datetime-local';
+		var selD = v.slice(0, 10), selT = dt ? v.slice(11, 16) : '', today = DWDC.today || dtpIso(new Date());
+		var y = s.y, m = s.m, first = new Date(y, m, 1), start = new Date(y, m, 1 - first.getDay());
+		var days = '';
+		for (var i = 0; i < 42; i++) {
+			var d = new Date(start.getFullYear(), start.getMonth(), start.getDate() + i), iso = dtpIso(d);
+			days += '<button type="button" class="dtp-d' + (d.getMonth() !== m ? ' out' : '') + (iso === today ? ' today' : '') + (iso === selD ? ' sel' : '') + '" data-dtpd="' + iso + '">' + d.getDate() + '</button>';
+		}
+		var mn = first.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+		var add = function (n) { var d = new Date(today + 'T12:00:00'); d.setDate(d.getDate() + n); return dtpIso(d); };
+		var quick = '<div class="dtp-q"><button type="button" data-dtpd="' + today + '">Today</button><button type="button" data-dtpd="' + add(1) + '">Tomorrow</button><button type="button" data-dtpd="' + add(7) + '">Next week</button></div>';
+		var cal = '<div class="dtp-cal"><div class="dtp-h"><b>' + mn + '</b><span><button type="button" class="dtp-nav" data-dtpm="-1" aria-label="Previous month">' + lu('chevron-left', 16) + '</button><button type="button" class="dtp-nav" data-dtpm="1" aria-label="Next month">' + lu('chevron-right', 16) + '</button></span></div>'
+			+ '<div class="dtp-w">' + ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(function (x) { return '<span>' + x + '</span>'; }).join('') + '</div><div class="dtp-g">' + days + '</div>' + quick + '</div>';
+		var times = '';
+		if (dt) {
+			for (var mi = 7 * 60; mi <= 21 * 60; mi += 15) {
+				var hh = Math.floor(mi / 60), mm = mi % 60, val = dtpPad(hh) + ':' + dtpPad(mm);
+				times += '<button type="button" class="dtp-t' + (val === selT ? ' sel' : '') + '" data-dtpt="' + val + '">' + ((hh % 12) || 12) + ':' + dtpPad(mm) + ' ' + (hh < 12 ? 'AM' : 'PM') + '</button>';
+			}
+			times = '<div class="dtp-times"><p>Time</p><div class="dtp-tl">' + times + '</div></div>';
+		}
+		var foot = '<div class="dtp-f"><button type="button" class="dtp-clear" data-dtpclear>Clear</button>' + (dt ? '<span class="dtp-val">' + (v ? new Date(v).toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : 'Pick a day and time') + '</span><button type="button" class="dd-btn primary sm" data-dtpdone>Done</button>' : '') + '</div>';
+		s.el.className = 'dtp' + (dt ? ' wide' : '');
+		s.el.innerHTML = '<div class="dtp-b">' + cal + times + '</div>' + foot;
+		var st = s.el.querySelector('.dtp-t.sel') || s.el.querySelector('[data-dtpt="09:00"]');
+		if (st) { var tl = s.el.querySelector('.dtp-tl'); tl.scrollTop = st.offsetTop - tl.offsetTop - 60; }
+	}
+	function dtpPlace() {
+		var r = (DTP.anchor || DTP.input).getBoundingClientRect(), el = DTP.el, w = el.offsetWidth, h = el.offsetHeight;
+		var left = Math.min(Math.max(8, r.left), window.innerWidth - w - 8), top = r.bottom + 6;
+		if (top + h > window.innerHeight - 8 && r.top - h - 6 > 8) { top = r.top - h - 6; }
+		el.style.left = left + 'px'; el.style.top = Math.max(8, top) + 'px';
+	}
+	function openDtp(input, anchor) {
+		if (DTP && DTP.input === input) { dtpClose(); return; }
+		dtpClose();
+		var v = input.value, base = v ? new Date(v.slice(0, 10) + 'T12:00:00') : new Date((DWDC.today || dtpIso(new Date())) + 'T12:00:00');
+		var el = document.createElement('div');
+		el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', 'Pick a date');
+		document.body.appendChild(el);
+		DTP = { input: input, anchor: anchor || null, el: el, y: base.getFullYear(), m: base.getMonth() };
+		dtpDraw(); dtpPlace();
+		document.addEventListener('mousedown', dtpOut, true);
+		el.addEventListener('mousedown', function (e) { e.preventDefault(); }); // keep focus where it was
+		el.addEventListener('click', function (e) {
+			var b = e.target.closest('button'); if (!b || !DTP) { return; }
+			e.stopPropagation();
+			var dt = DTP.input.type === 'datetime-local', cur = DTP.input.value;
+			if (b.hasAttribute('data-dtpm')) { var nm = new Date(DTP.y, DTP.m + +b.getAttribute('data-dtpm'), 1); DTP.y = nm.getFullYear(); DTP.m = nm.getMonth(); dtpDraw(); return; }
+			if (b.hasAttribute('data-dtpd')) {
+				var day = b.getAttribute('data-dtpd'), nd = new Date(day + 'T12:00:00'); DTP.y = nd.getFullYear(); DTP.m = nd.getMonth();
+				if (dt) { dtpSet(day + 'T' + (cur.slice(11, 16) || '09:00'), false); } else { dtpSet(day, true); }
+				return;
+			}
+			if (b.hasAttribute('data-dtpt')) { dtpSet((cur.slice(0, 10) || DWDC.today || dtpIso(new Date())) + 'T' + b.getAttribute('data-dtpt'), false); return; }
+			if (b.hasAttribute('data-dtpclear')) { dtpSet('', true); return; }
+			if (b.hasAttribute('data-dtpdone')) { dtpClose(); }
+		});
+	}
+	document.addEventListener('mousedown', function (e) {
+		var t = e.target;
+		if (t && t.matches && t.matches('input[type=date], input[type=datetime-local]') && !t.disabled && !t.readOnly && t.closest('#dwdc-app, .dd, .dwdc-modal')) {
+			e.preventDefault(); var tdb = t.closest('[data-tdpick]'); if (!tdb) { t.focus(); } openDtp(t, tdb);
+		}
+	}, true);
+	document.addEventListener('keydown', function (e) {
+		if (DTP && e.key === 'Escape') { dtpClose(); return; }
+		var t = e.target;
+		if (t && t.matches && t.matches('input[type=date], input[type=datetime-local]') && (e.key === 'Enter' || e.key === ' ' || (e.altKey && e.key === 'ArrowDown'))) { e.preventDefault(); openDtp(t); }
+	}, true);
+	window.addEventListener('resize', dtpClose);
+	document.addEventListener('scroll', function (e) { if (DTP && !DTP.el.contains(e.target)) { dtpPlace(); } }, true);
+
 	/* Emails to and from the client (from the Gmail sync). New (unread) ones show; the rest open on demand.
 	   key: 'p<projectId>' or 'k<clientId>'; data: { owner, total, new: [], list: [] (all, once loaded) }. */
 	function mailData(key) {
@@ -3795,7 +3882,7 @@
 		if ((el = t.closest('[data-tddone]'))) { S.tdDone = S.tdDone || {}; var dk = el.getAttribute('data-tddone'); S.tdDone[dk] = !S.tdDone[dk]; render(); return; }
 		if (t.closest('[data-tqclear]')) { S.tq = ''; tdSave(tdView().seg, ''); render(); return; }
 		if ((el = t.closest('[data-tdclear]'))) { e.preventDefault(); e.stopPropagation(); S.tdDate = S.tdDate || {}; S.tdDate[el.getAttribute('data-tdclear')] = ''; tdRerender(); return; }
-		if ((el = t.closest('[data-tdpick]'))) { var di = el.querySelector('input[type=date]'); if (di) { try { di.showPicker(); } catch (er) { di.focus(); di.click(); } } return; }
+		if ((el = t.closest('[data-tdpick]'))) { var di = el.querySelector('input[type=date]'); if (di && !(DTP && DTP.input === di)) { openDtp(di, el); } return; }
 		if ((el = t.closest('[data-tgrp]')) && el.classList.contains('dd-trow')) { var tg = +el.getAttribute('data-tgrp'), ex = tdExp(); ex[tg] = !ex[tg]; ddSet('dreamdesk-todos-expanded', JSON.stringify(Object.keys(ex).filter(function (k) { return ex[k]; }).map(Number))); render(); return; }
 		if ((el = t.closest('[data-tgrp]'))) { var gid = +el.getAttribute('data-tgrp'); S.tgOpen = S.tgOpen || {}; S.tgOpen[gid] = !S.tgOpen[gid]; render(); return; }
 		if ((el = t.closest('[data-showdone]'))) { S.showDone = !S.showDone; render(); return; }
@@ -4307,5 +4394,6 @@
 		var rr = route(); if (rr.view === 'client' || rr.view === 'host') { load(rr.id); }
 		render(true);
 		loadPending(true);
+
 	}).catch(function (e) { app.innerHTML = '<p class="dwdc-loading">Couldn’t load Client Desk: ' + esc(e.message) + '</p>'; });
 })();
