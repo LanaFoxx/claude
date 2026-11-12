@@ -5,6 +5,9 @@
  */
 defined( 'ABSPATH' ) || exit;
 
+/** A Google Task whose name says "business list" (or "business to-do") belongs on the Work list. */
+const DWDPE_BIZ_RE = '/[\\(\\[]?\\s*\\bbusiness\\s+(?:list|to-?do(?:\\s+list)?)\\b\\s*[\\)\\]]?/i';
+
 function dwdpe_get() {
 	$d = get_option( 'dwdpe_data', array() );
 	$d = is_array( $d ) ? $d : array();
@@ -239,18 +242,37 @@ function dwdpe_sync( $d ) {
 		}
 	}
 	$gone    = (array) get_option( 'dwdpe_gone', array() );
+	$bizdone = (array) get_option( 'dwdpe_biz_moved', array() ); // Google Tasks already moved to the Work list
+	$moved   = array();
 	$seen_g  = array();
 	$added   = 0;
 	// 1. Google Tasks → Dream Desk.
 	foreach ( (array) ( $d['tasks'] ?? array() ) as $g ) {
 		$gid = sanitize_text_field( (string) ( $g['id'] ?? '' ) );
 		$gid = '' === $gid ? '' : $pfx . $gid;
-		if ( '' === $gid || in_array( $gid, $gone, true ) ) {
+		if ( '' === $gid || in_array( $gid, $gone, true ) || in_array( $gid, $bizdone, true ) ) {
 			continue;
 		}
 		$seen_g[ $gid ] = 1;
 		$gdone = ! empty( $g['done'] );
 		$gdue  = substr( (string) ( $g['due'] ?? '' ), 0, 10 );
+		// "business list" in the task name → it goes on the Work to-do list instead (once), not the personal one.
+		$gtitle = (string) ( $g['title'] ?? '' );
+		if ( preg_match( DWDPE_BIZ_RE, $gtitle ) ) {
+			if ( ! $gdone && function_exists( 'dwdc_add_task' ) ) {
+				$clean = trim( preg_replace( '/\s{2,}/', ' ', preg_replace( '/^[\s,;:\-–]+|[\s,;:\-–]+$/u', '', preg_replace( DWDPE_BIZ_RE, ' ', $gtitle ) ) ) );
+				$tid   = dwdc_add_task( sanitize_text_field( '' !== $clean ? $clean : $gtitle ), 0, $gdue );
+				if ( $gdue ) {
+					update_post_meta( $tid, '_dwdc_due_manual', '1' );
+				}
+			}
+			if ( isset( $byg[ $gid ] ) ) { // it was on the personal list already: take it off
+				unset( $todos[ $byg[ $gid ] ] );
+				unset( $byg[ $gid ] );
+			}
+			$moved[] = $gid; // never import it again (the Google task itself is left alone)
+			continue;
+		}
 		if ( isset( $byg[ $gid ] ) ) {
 			$i = $byg[ $gid ];
 			$t = $todos[ $i ];
@@ -262,6 +284,10 @@ function dwdpe_sync( $d ) {
 			$todos[] = dwdpe_clean( 'todos', array( 'id' => strtolower( wp_generate_password( 10, false ) ), 'text' => $g['title'], 'note' => $g['notes'] ?? '', 'due' => $gdue, 'done' => false, 'gtask' => $gid, 'source' => 'Google Tasks', 'dirty' => false ) );
 			$added++;
 		}
+	}
+	$todos = array_values( $todos );
+	if ( $moved ) {
+		update_option( 'dwdpe_biz_moved', array_slice( array_values( array_unique( array_merge( (array) get_option( 'dwdpe_biz_moved', array() ), $moved ) ) ), -500 ), false );
 	}
 	// Deleted in Google Tasks → delete here (only for tasks that were linked).
 	if ( ! empty( $d['tasks_complete'] ) ) {
