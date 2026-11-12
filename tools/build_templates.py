@@ -52,7 +52,7 @@ SECV_TALL = (151, 137, 103, 96)          # clamp(96px, 10.5vw, 152px)
 H1 = (86, 78, 59, 44)                    # clamp(44px, 6vw, 88px)
 H2 = (60, 55, 41, 36)                    # clamp(36px, 4.2vw, 60px)
 H2_PATH = (43, 39, 32, 32)               # clamp(32px, 3vw, 44px)
-QUOTE = (48, 43, 32, 30)                 # clamp(30px, 3.3vw, 48px)
+QUOTE = (40, 36, 30, 26)                 # smaller than the reference at Mike's request
 
 # ---------------------------------------------------------------- ids
 _rng = random.Random(2026)
@@ -471,87 +471,56 @@ def build_header():
 
 
 # =================================================================== FOOTER
-def footer_col(title, items):
-    return container(
-        "Footer / " + title,
-        [heading("Footer / %s / Heading" % title, title.replace("&", "&amp;"), tag="p", color=BONE,
-                 typ=typo(size=14, weight=600, lh=1.4)),
-         widget("icon-list", "Footer / %s / Links" % title, space_between=px(10), text_color=DRIFT,
-                text_color_hover=BONE,
-                icon_list=[{"_id": eid(), "text": t, "link": link(u),
-                            "selected_icon": {"value": "", "library": ""}} for t, u in items],
-                **typo(prefix="icon_typography", size=14, weight=400, lh=1.5))],
-        gap=16, html_tag="nav", _attributes="aria-label|" + title.replace("&", "and"))
-
-
 def build_footer():
-    brand = container(
-        "Footer / Brand",
-        [wordmark("Footer / Wordmark", size=26),
-         text("Footer / About",
-              "<p>Fine painting and log home staining for mountain homes. A division of Top Notch "
-              "Logworks, Inc., building in the Vail and Roaring Fork Valleys since 1999.</p>",
-              size=14, lh=1.7, pretty=False),
-         text_link("Footer / Logworks link", "Visit Top Notch Logworks",
-                   "https://topnotch-logworks.com/", size=14, offset=5, text_padding=dims(4, 0))],
-        gap=18, css="selector{max-width:360px;}")
-    cols = grid("Footer / Link Columns", [
-        footer_col("Fine Painting", [
-            ("Interior Painting", "/interior-painting/"), ("Exterior Painting", "/exterior-painting/"),
-            ("Specialty Finishes &amp; Interior Wood", "/specialty-finishes-interior-wood/"),
-            ("Commercial &amp; HOA", "/commercial-hoa/")]),
-        footer_col("Log & Timber Staining", [
-            ("Log Home Staining &amp; Restoration", "/log-home-staining-restoration/"),
-            ("Chinking &amp; Check Sealing", "/chinking-check-sealing/"),
-            ("Rot Repair &amp; Prevention", "/rot-repair-prevention/"),
-            ("Deck Staining", "/deck-staining/")]),
-        footer_col("Company", [
-            ("Our Work", "/our-work/"), ("Project Stories", "/project-stories/"),
-            ("For Builders", "/for-builders/"), ("Our Story", "/our-story/"),
-            ("Core Values", "/core-values/"), ("Reviews", "/reviews/"),
-            ("Areas We Serve", "/areas-we-serve/"), ("Financing", "/financing/")]),
-        container("Footer / Contact", [
-            heading("Footer / Contact / Heading", "Contact", tag="p", color=BONE,
-                    typ=typo(size=14, weight=600, lh=1.4)),
-            text("Footer / Contact / Details",
-                 "<p>4722 Hwy US-6<br>Gypsum, CO 81637</p>"
-                 '<p><a class="tn-call" href="tel:+19705247323">(970) 524-7323</a></p>'
-                 "<p>[painting email address]</p><p>Hours: [Monday to Friday, X to X]</p>",
-                 size=14, lh=1.5, para_gap=10, pretty=False,
-                 custom_css="selector a.tn-call{color:#F2ECE3;font-weight:600;text-decoration:none;}"
-                            "selector a.tn-call:hover{color:#D9A66B;}")], gap=16),
-    ], cols=(4, 4, 4, 2), gap_col=32, gap_row=40)
-    top_row = grid("Footer / Top", [brand, cols],
-                   cols=("minmax(0, 360px) minmax(0, 1fr)", "minmax(0, 360px) minmax(0, 1fr)", "1fr", "1fr"),
-                   gap_col=48, gap_row=56, grid_justify_content="space-between")
+    """Minimal two-row footer: wordmark | main links | phone + social, then a fine-print line."""
+    links = widget(
+        "icon-list", "Footer / Links", view="inline", space_between=px(28), text_color=DRIFT,
+        text_color_hover=BONE,
+        icon_list=[{"_id": eid(), "text": t, "link": link(u), "selected_icon": {"value": "", "library": ""}}
+                   for t, u in [("Fine Painting", "/interior-painting/"),
+                                ("Log &amp; Timber Staining", "/log-home-staining-restoration/"),
+                                ("Our Work", "/our-work/"), ("For Builders", "/for-builders/"),
+                                ("About", "/our-story/"), ("Reviews", "/reviews/")]],
+        custom_css="selector .elementor-icon-list-items{justify-content:center;row-gap:10px;}"
+                   "@media (max-width:980px){selector .elementor-icon-list-items{justify-content:flex-start;}}",
+        **typo(prefix="icon_typography", size=14, weight=500, lh=1.5))
+    contact = container("Footer / Contact", [
+        heading("Footer / Phone", PHONE, tag="div", color=BONE, typ=typo(size=15, weight=600, lh=1.4),
+                link=link(TEL), title_hover_color=AMBER_HOVER, _css_classes="tn-call"),
+        container("Footer / Social", [
+            icon_button("Footer / Facebook", "#", "facebook-logo-light", "Top Notch Painting on Facebook",
+                        w=36, h=44, fill=TRANSPARENT, color=HERO_TEXT),
+            icon_button("Footer / Instagram", "#", "instagram-logo-light", "Top Notch Painting on Instagram",
+                        w=36, h=44, fill=TRANSPARENT, color=HERO_TEXT)],
+            direction="row", gap=0, flex_align_items="center", auto_width=True)],
+        direction="row", gap=20, flex_align_items="center", auto_width=True)
+    top_row = grid("Footer / Top Row", [wordmark("Footer / Wordmark", size=24), links, contact],
+                   cols=("auto 1fr auto", "auto 1fr auto", "1fr", "1fr"), gap_col=48, gap_row=28,
+                   grid_align_items="center", grid_justify_items="stretch", flex_align_items="center",
+                   padding=dims(56, 0, 40, 0))
 
-    year = heading("Footer / Copyright (auto year)", "© 2026 Top Notch Painting", tag="p",
-                   color=DRIFT, typ=typo(size=13, weight=400, lh=1.6))
+    year = heading("Footer / Copyright (auto year)", "© 2026 Top Notch Painting · A Top Notch Logworks company",
+                   tag="p", color=DRIFT, typ=typo(size=13, weight=400, lh=1.6))
     tag_settings = ("%7B%22date_format%22%3A%22custom%22%2C%22custom_format%22%3A%22Y%22%2C"
-                    "%22before%22%3A%22%C2%A9%20%22%2C%22after%22%3A%22%20Top%20Notch%20Painting%22%7D")
+                    "%22before%22%3A%22%C2%A9%20%22%2C%22after%22%3A%22%20Top%20Notch%20Painting%20%C2%B7"
+                    "%20A%20Top%20Notch%20Logworks%20company%22%7D")
     year["settings"]["__dynamic__"] = {
         "title": '[elementor-tag id="%s" name="current-date-time" settings="%s"]' % (eid(), tag_settings)}
+    bottom = container("Footer / Fine Print", [
+        year,
+        heading("Footer / Address", "4722 Hwy US-6, Gypsum, CO 81637 · [painting email address]", tag="p",
+                color=DRIFT, typ=typo(size=13, weight=400, lh=1.6))],
+        direction="row", gap=(32, 6), flex_wrap="wrap", flex_justify_content="space-between",
+        flex_align_items="center", padding=dims(20, 0, 28, 0),
+        border_border="solid", border_width=dims(1, 0, 0, 0), border_color=HAIR_10)
 
-    footer_css = """
-#tn-footer a{text-decoration:none;}
-@media (max-width:760px){ #tn-footer{--padding-bottom:70px !important;} }
-"""
     footer = container(
-        "Footer",
-        [top_row,
-         text("Footer / Service Area",
-              "<p>Serving Aspen, Snowmass, Basalt, Carbondale, Glenwood Springs, Vail, Beaver Creek, "
-              "Avon, Edwards, Eagle, Gypsum, and Breckenridge.</p>", size=13, lh=1.7, pretty=False),
-         container("Footer / Bottom Row",
-                   [year, heading("Footer / Parent company", "A Top Notch Logworks company", tag="p",
-                                  color=DRIFT, typ=typo(size=13, weight=400, lh=1.6))],
-                   direction="row", gap=(32, 12), flex_wrap="wrap",
-                   flex_justify_content="space-between", padding=dims(28, 0, 72, 0),
-                   border_border="solid", border_width=dims(1, 0, 0, 0), border_color=HAIR_10)],
-        top=True, boxed=True, gap=64,
-        padding=pads((112, 104, 78, 72), SIDE, (0, 0, 0, 70), SIDE),
+        "Footer", [top_row, bottom], top=True, boxed=True, gap=0,
+        padding=pads(0, SIDE, (0, 0, 0, 70), SIDE),
         html_tag="footer", _element_id="tn-footer",
-        background_background="classic", background_color=NIGHT, custom_css=footer_css.strip())
+        background_background="classic", background_color=NIGHT,
+        custom_css="#tn-footer a{text-decoration:none;}"
+                   "@media (max-width:760px){ #tn-footer{--padding-bottom:70px !important;} }")
 
     mobile_bar = container(
         "Mobile Call Bar",
@@ -701,7 +670,6 @@ def build_home():
                  max_w=360, pretty=False)], gap=18)
 
     why = section("Why Top Notch", [
-        h2("Why / Title (H2)", "Your home is in experienced hands", max_w=720),
         grid("Why / Points", [
             point("hammer-light", "Builders first",
                   "Our parent company has been building log and timber homes in these valleys since "
@@ -778,13 +746,13 @@ def build_home():
         "selector{max-width:1140px !important;width:100%;margin:0 auto;}"
         "selector{position:relative;}"
         "selector .swiper-slide{padding:0 !important;background:transparent;}"
-        "selector .elementor-main-swiper{max-width:900px;margin:0 auto;padding-bottom:0;overflow:hidden;}"
+        "selector .elementor-main-swiper{width:auto !important;max-width:900px;margin:0 auto;padding-bottom:0;overflow:hidden;}"
         "selector .elementor-testimonial{display:flex;flex-direction:column;align-items:center;gap:32px;}"
         "selector .elementor-testimonial__content{display:flex;flex-direction:column;align-items:center;}"
         "selector .elementor-testimonial__content::before{content:'';display:block;width:106px;height:18px;"
         "margin-bottom:32px;background:url(\"" + star_svg + "\") repeat-x 0 0/22px 18px;}"
         "selector .elementor-testimonial__text{text-wrap:balance;font-style:normal !important;color:#14110E !important;"
-        "font-family:'Cormorant Garamond', Georgia, serif;}"
+        "font-family:'Cormorant Garamond', Georgia, serif;font-weight:400 !important;}"
         "selector .elementor-testimonial__name{color:#14110E !important;font-style:normal;}"
         "selector .elementor-testimonial__title{color:#5B5046 !important;font-style:normal;}"
         "selector .elementor-testimonial__footer{margin:0;}"
@@ -798,7 +766,7 @@ def build_home():
         "font-size:20px;}"
         "selector .elementor-swiper-button svg{width:20px;height:20px;fill:#14110E;}"
         "selector .elementor-swiper-button-prev{left:0;}selector .elementor-swiper-button-next{right:0;}"
-        "@media (max-width:1359px){selector .elementor-main-swiper{margin:0 120px;}}"
+        "@media (max-width:1359px){selector .elementor-main-swiper{margin:0 120px;max-width:none;}}"
         "@media (max-width:980px){selector .elementor-main-swiper{margin:0 95px;}}"
         "@media (max-width:760px){"
         "selector .elementor-main-swiper{display:flex;flex-wrap:wrap;justify-content:center;column-gap:16px;"
@@ -825,7 +793,7 @@ def build_home():
                space_between=px(40), arrows_size=px(20), arrows_color=CHARRED, pagination_color=BARK,
                content_text_color=CHARRED, name_text_color=CHARRED, title_text_color=BARK,
                custom_css=carousel_css,
-               **typo(prefix="content_typography", family=SERIF, size=QUOTE, weight=500, lh=1.22),
+               **typo(prefix="content_typography", family=SERIF, size=QUOTE, weight=400, lh=1.25),
                **typo(prefix="name_typography", size=15, weight=600, lh=1.5),
                **typo(prefix="title_typography", size=15, weight=400, lh=1.5)),
     ], bg=BONE, pad_top=(144, 130, 98, 88), pad_bottom=(115, 104, 78, 72), gap=56,
@@ -834,7 +802,9 @@ def build_home():
     def stat(title, figure, label_widgets):
         return container(title, [
             heading(title + " / Figure", figure, tag="div", color=BONE,
-                    typ=typo(family=SERIF, size=60, weight=500, lh=1)),
+                    typ=typo(family=SERIF, size=60, weight=500, lh=1),
+                    custom_css="selector .elementor-heading-title{font-variant-numeric:lining-nums;"
+                               "font-feature-settings:'lnum' 1;}"),
             container(title + " / Label", label_widgets, gap=6, auto_width=True)],
             direction="row", gap=18, flex_align_items="center", auto_width=True)
 
@@ -847,7 +817,8 @@ def build_home():
                                                 stat_label("Stats / HomeAdvisor / Label",
                                                            "19 reviews on HomeAdvisor")]),
             stat("Stats / BBB", "A+", [stat_label("Stats / BBB / Label", "BBB accredited")]),
-            stat("Stats / Google", "[X.X]", [stat_label("Stats / Google / Label", "[X] reviews on Google")])],
+            stat("Stats / Google", "5.0", [stars("Stats / Google / Stars", AMBER, 13, 2),
+                                           stat_label("Stats / Google / Label", "[X] reviews on Google")])],
             direction="row", gap=tuple((v, 24) for v in (72, 65, 49, 32)), flex_wrap="wrap",
             flex_align_items="center", flex_justify_content="center", auto_width=True)],
         bg=NIGHT, pad_top=32, pad_bottom=32, direction="row", gap=(48, 24),

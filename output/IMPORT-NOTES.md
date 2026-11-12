@@ -150,7 +150,6 @@ Container `Seasonal Offer`: change the H2 to **Talk to us about your project** a
 
 - Every phone link is `tel:+19705247323` with class `tn-call`.
   - On Button and Heading widgets the class is on the widget wrapper.
-  - In the footer's Text Editor it is on the `<a>` itself.
   - Use the selector `.tn-call a, a.tn-call`, or Click URL starts with `tel:`.
 - No Google tags are in the templates. Add `AW-18542572239` through Elementor → Custom Code. The conversion fires on `/thank-you/` only.
 
@@ -168,7 +167,7 @@ Container `Seasonal Offer`: change the H2 to **Talk to us about your project** a
    - The call circle, the mobile call bar, and the review arrows below the quote are shown.
 3. **The mobile call bar is `position: fixed`.** A footer template can't be CSS-sticky against the page. Up to 760px, the footer gets 70px of extra bottom padding so the bar never covers content.
 4. **Review stars are drawn in CSS.** The Testimonial Carousel has no rating field, so the 5 Deep Amber stars are a CSS image above each quote, not editable per review. Add reviews in the carousel's Slides list: name = person, title = town. The "1 / 2" counter is the carousel's fraction pagination.
-5. **The stats strip is its own section,** "Reviews / Stats Strip", directly under Reviews, so it stays inside the Boxed 1280 rule. `#reviews` covers the testimonial block only. **Changed at Mike's request:** the "Read all reviews →" link is removed and the three stats are centered.
+5. **The stats strip is its own section,** "Reviews / Stats Strip", directly under Reviews, so it stays inside the Boxed 1280 rule. `#reviews` covers the testimonial block only. **Changed on request:** the "Read all reviews →" link is removed and the three stats are centered.
 6. **Responsive switches that the reference does with auto-fit** use explicit columns:
    - The index lists go to 1 column below 512px.
    - The form fields stack below 536px.
@@ -190,3 +189,18 @@ Container `Seasonal Offer`: change the H2 to **Talk to us about your project** a
   All three are overridden in scoped CSS.
 - **A general field `background` rule wiped the select chevron.** The select rule now has higher specificity.
 - **Testing tip:** SmartMenus only opens dropdowns on hover after it detects a real mouse. A scripted test that jumps the pointer won't open them.
+
+## 10. Changes requested after review (these override the brief)
+
+- **Why Top Notch:** the H2 "Your home is in experienced hands" is removed. The section opens directly with the six points.
+- **Review quotes:** smaller and lighter, at Cormorant Garamond 400, 40 / 36 / 30 / 26px, line-height 1.25. The reference uses 500 at 48px.
+- **Stats strip:**
+  - The "Read all reviews →" link is removed and the stats are centered.
+  - Google shows "5.0" with five amber stars over "[X] reviews on Google". The count is still a placeholder.
+  - Figures use lining numerals (`lnum`) so they sit vertically centered beside their labels.
+- **Footer, minimal version:**
+  - The top row is the wordmark | the six main links | the phone and the Facebook/Instagram icons.
+  - Below a hairline is one fine-print row: "© [year] Top Notch Painting · A Top Notch Logworks company" | "4722 Hwy US-6, Gypsum, CO 81637 · [painting email address]".
+  - Removed from the brief's footer: the brand paragraph, the four link columns, the service-area line and the Hours placeholder.
+  - Height is about 210px on desktop, down from 657.
+- **Wood texture:** the generator can put a subtle wood texture (Charred overlay at 88%) behind the Charred Timber sections. It is off until `tools/texture.json` exists with the uploaded image's `id` and `url`.
