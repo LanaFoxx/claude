@@ -513,7 +513,10 @@ add_action( 'elementor_pro/forms/new_record', function ( $record ) {
 	if ( $cid ) {
 		dwdc_ensure_client( $cid );
 		$name = get_the_title( $cid );
-		dwdc_add_task( ( false !== stripos( $form, 'onboard' ) ? 'Review onboarding form from ' : 'Reply to ' ) . $name, $cid, current_time( 'Y-m-d' ) );
+		// Only onboarding forms (sent to real clients) get a to-do. Quote/contact forms can be spam, so no automatic "Reply to …".
+		if ( false !== stripos( $form, 'onboard' ) ) {
+			dwdc_add_task( 'Review onboarding form from ' . $name, $cid, current_time( 'Y-m-d' ) );
+		}
 	}
 	dwdc_notify_form( $form, $fields, $cid );
 }, 20 );
@@ -545,7 +548,7 @@ function dwdc_notify_form( $form, $fields, $cid ) {
 	$html    = dwdp_email_html( array(
 		'eyebrow' => $onboard ? 'Onboarding form' : 'New lead',
 		'title'   => $who . ' filled out your ' . ( $form ? $form : 'website' ) . ' form',
-		'intro'   => $onboard ? 'Their onboarding answers are below and saved on the project in Dream Desk.' : 'Here’s what they sent. They’re saved as a lead in Dream Desk with a to-do to reply today. Reply to this email to answer them directly.',
+		'intro'   => $onboard ? 'Their onboarding answers are below and saved on the project in Dream Desk.' : 'Here’s what they sent. They’re saved as a lead in Dream Desk. Reply to this email to answer them directly.',
 		'rows'    => $rows,
 		'buttons' => array_values( array_filter( array( $email ? array( 'Reply to ' . trim( strtok( $who, ' ' ) ), 'mailto:' . $email ) : null, $cid ? array( 'Open in Dream Desk', admin_url( 'admin.php?page=client-desk#client/' . $cid ) ) : null ) ) ),
 	) );
