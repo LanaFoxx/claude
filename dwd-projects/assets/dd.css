@@ -405,3 +405,13 @@ i.dd-flag { width: 10px; height: 10px; cursor: inherit; }
 .dd-spendh { margin-top: 20px !important; font-size: 15px !important; color: var(--text) !important; }
 .dd-revacts { display: flex; align-items: center; justify-content: flex-end; gap: 16px; flex-wrap: wrap; }
 @media (max-width: 767px) { .dd-spendsum { grid-template-columns: 1fr; } .dd-spendsum > div + div { border-left: 0; border-top: 1px solid var(--border); } }
+.dd-tl-r { grid-template-columns: 72px 20px 1fr auto !important; }
+.dd-tl-r .dd-join { align-self: center; height: 28px; color: #fff !important; text-decoration: none !important; }
+.dd-tl-r.past .dd-tl-c a, .dd-tl-r.past .dd-tl-c b, .dd-tl-r.past .dd-tl-t { color: var(--text-3) !important; }
+@media (max-width: 767px) { .dd-tl-r { grid-template-columns: 64px 20px 1fr auto !important; } }
+.dd-tl-tm { margin-top: 8px; padding-top: 10px; border-top: 1px solid var(--border); }
+.dd-tl-tm h3 { font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--text-3); margin-bottom: 2px; }
+.dd-tl-tm .dd-tl-r:last-child { border-bottom: 0; }
+.dd-tl-tm .dd-join { color: var(--text) !important; }
+/* logo: white "d" on the dark theme */
+[data-theme="dark"] .dd-mk-l, [data-theme="light"] .dd-mk-d { display: none; }

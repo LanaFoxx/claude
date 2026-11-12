@@ -642,7 +642,7 @@
 		var item = function (h, icon, label, count) { var on = cur === h; return '<a class="dd-nav' + (on ? ' on' : '') + '" href="#' + h + '" data-tip="' + esc(label) + (count ? ' · ' + count : '') + '">' + lu(icon) + '<span class="dd-nav-l">' + label + '</span>' + (count ? '<em>' + count + '</em>' : '') + '</a>'; };
 		var group = function (id, label, items) { var closed = shut.indexOf(id) > -1; return '<div class="dd-grp' + (closed ? ' closed' : '') + '"><button type="button" class="dd-grp-h" data-ddgrp="' + id + '"><span>' + label + '</span>' + lu('chevron-down', 12) + '</button><div class="dd-grp-b">' + items + '</div></div>'; };
 		return '<aside class="dd-side">'
-			+ '<div class="dd-brand"><a href="#home" class="dd-brand-a"><img src="' + esc(DWDC.mark) + '" alt=""><b>Dream Desk</b></a><button type="button" class="dd-ibtn dd-collapse" data-ddcollapse aria-label="Collapse sidebar">' + lu('panel-left') + '</button><button type="button" class="dd-ibtn dd-mclose" data-ddmenu aria-label="Close menu">' + lu('x', 18) + '</button></div>'
+			+ '<div class="dd-brand"><a href="#home" class="dd-brand-a"><img class="dd-mk-l" src="' + esc(DWDC.mark) + '" alt=""><img class="dd-mk-d" src="' + esc(String(DWDC.mark).replace('db-mark.png', 'db-mark-dark.png')) + '" alt=""><b>Dream Desk</b></a><button type="button" class="dd-ibtn dd-collapse" data-ddcollapse aria-label="Collapse sidebar">' + lu('panel-left') + '</button><button type="button" class="dd-ibtn dd-mclose" data-ddmenu aria-label="Close menu">' + lu('x', 18) + '</button></div>'
 			+ '<nav class="dd-navs">' + item('home', 'home', 'Home')
 			+ group('plan', 'Plan', item('personal/calendar', 'calendar', 'Calendar') + item('todos', 'circle-check', 'To-dos', openTasks().length + pOpen))
 			+ group('projects', 'Projects', item('projects/active', 'play', 'Active', by('active').length) + item('leads', 'user-plus', 'Leads', leadList().length) + item('onboarding', 'clipboard-list', 'Onboarding', onboardList().length) + item('projects/paused', 'pause', 'Paused', by('hold').length + by('limbo').length) + item('projects/complete', 'check', 'Completed', by('complete').length))
@@ -689,14 +689,24 @@
 		var overdue = all.filter(function (x) { return x.t.due && x.t.due < T; }), today = all.filter(function (x) { return x.t.due === T; });
 		var dueToday = today.length;
 		var isBiz = function (e) { return meet.some(function (m) { return (m.title || '') === (e.text || '') || ((m.who || '') && String(e.text).indexOf(m.who) > -1); }); };
-		var sched = '<section class="dd-card dd-sched"><header class="dd-ch"><div class="dd-dtile"><small>' + dObj.toLocaleDateString('en-US', { month: 'short' }).toUpperCase() + '</small><b>' + dObj.getDate() + '</b></div><div class="dd-ch-t"><h2>Today’s schedule</h2><span>' + evs.length + ' event' + (evs.length === 1 ? '' : 's') + ' · ' + dueToday + ' to-do' + (dueToday === 1 ? '' : 's') + ' due</span></div><a href="#personal/calendar">Open calendar</a></header>'
-			+ '<div class="dd-tl">' + (evs.length ? evs.map(function (e) {
-				var m = meet.filter(function (x) { return (x.title || '') === e.text; })[0], biz = isBiz(e);
-				var href = m && m.link ? m.link : '';
-				return '<div class="dd-tl-r"><span class="dd-tl-t">' + esc(e.time || 'All day') + '</span><span class="dd-tl-dot ' + (biz ? 'biz' : 'pers') + '"></span><div class="dd-tl-c"' + (href ? '' : ' data-ptask="' + e.id + '" role="button" tabindex="0"') + '>' + (href ? '<a href="' + esc(href) + '" target="_blank" rel="noopener">' + esc(ptx(e.text)) + '</a>' : '<b>' + esc(ptx(e.text)) + '</b>') + '<small>' + (biz ? 'Business' : 'Google Calendar') + (m && m.kind && m.kind !== 'Meeting' ? ' · ' + esc(m.kind) : '') + '</small></div></div>';
+		var nyD = function (ts) { return new Date(ts * 1000).toLocaleDateString('en-CA', { timeZone: 'America/New_York' }); };
+		var nyT = function (ts) { return new Date(ts * 1000).toLocaleTimeString('en-US', { timeZone: 'America/New_York', hour: 'numeric', minute: '2-digit' }); };
+		var nowS = Date.now() / 1000, items = [];
+		meet.filter(function (m) { return m.ts && nyD(m.ts) === T; }).forEach(function (m) { var tm = nyT(m.ts); items.push({ time: tm, min: mins(tm), title: m.title || m.who || 'Meeting', sub: 'Business' + (m.kind ? ' · ' + m.kind : ''), link: m.link || '', ended: m.te && m.te < nowS, biz: true }); });
+		evs.forEach(function (e) {
+			var dup = items.some(function (it) { return it.biz && (it.title === e.text || (it.min === mins(e.time) && it.min >= 0)); });
+			if (!dup) { items.push({ time: e.time || 'All day', min: mins(e.time), title: ptx(e.text), sub: 'Google Calendar', id: e.id, biz: isBiz(e) }); }
+		});
+		items.sort(function (x, y) { return x.min - y.min; });
+		var TM = calAdd(T, 1), tmr = meet.filter(function (m) { return m.ts && nyD(m.ts) === TM; }).sort(function (x, y) { return x.ts - y.ts; });
+		var tmrHtml = tmr.length ? '<div class="dd-tl-tm"><h3>Tomorrow</h3>' + tmr.map(function (m) { var tm = nyT(m.ts); return '<div class="dd-tl-r"><span class="dd-tl-t">' + esc(tm) + '</span><span class="dd-tl-dot biz"></span><div class="dd-tl-c">' + (m.link ? '<a href="' + esc(m.link) + '" target="_blank" rel="noopener">' + esc(m.title || m.who) + '</a>' : '<b>' + esc(m.title || m.who) + '</b>') + '<small>Business' + (m.kind ? ' · ' + esc(m.kind) : '') + '</small></div>' + (m.link ? '<a class="dd-btn secondary sm dd-join" href="' + esc(m.link) + '" target="_blank" rel="noopener">Join</a>' : '') + '</div>'; }).join('') + '</div>' : '';
+		var sched = '<section class="dd-card dd-sched"><header class="dd-ch"><div class="dd-dtile"><small>' + dObj.toLocaleDateString('en-US', { month: 'short' }).toUpperCase() + '</small><b>' + dObj.getDate() + '</b></div><div class="dd-ch-t"><h2>Today’s schedule</h2><span>' + items.length + ' event' + (items.length === 1 ? '' : 's') + ' · ' + dueToday + ' to-do' + (dueToday === 1 ? '' : 's') + ' due</span></div><a href="#personal/calendar">Open calendar</a></header>'
+			+ '<div class="dd-tl">' + (items.length ? items.map(function (it) {
+				return '<div class="dd-tl-r' + (it.ended ? ' past' : '') + '"><span class="dd-tl-t">' + esc(it.time) + '</span><span class="dd-tl-dot ' + (it.biz ? 'biz' : 'pers') + '"></span><div class="dd-tl-c"' + (it.id ? ' data-ptask="' + it.id + '" role="button" tabindex="0"' : '') + '>' + (it.link ? '<a href="' + esc(it.link) + '" target="_blank" rel="noopener">' + esc(it.title) + '</a>' : '<b>' + esc(it.title) + '</b>') + '<small>' + esc(it.sub) + '</small></div>'
+					+ (it.link && !it.ended ? '<a class="dd-btn primary sm dd-join" href="' + esc(it.link) + '" target="_blank" rel="noopener">Join</a>' : '') + '</div>';
 			}).join('') : '<p class="dd-empty-l">Nothing scheduled today.</p>')
 			+ (S.schedAdd ? '<form class="dd-tl-add" data-pform="pdayadd"><input type="hidden" name="due" value="' + T + '"><input name="text" placeholder="Add a to-do for ' + dObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + '…" autocomplete="off" required><button class="dd-btn primary sm">Add</button></form>'
-				: '<button type="button" class="dd-ghostadd" data-schedadd>' + lu('plus') + 'Add a to-do for ' + dObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + '</button>') + '</div></section>';
+				: '<button type="button" class="dd-ghostadd" data-schedadd>' + lu('plus') + 'Add a to-do for ' + dObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + '</button>') + tmrHtml + '</div></section>';
 		// Active projects: every active project, in your order (drag to arrange) or a chosen sort.
 		var ap = sortMine('active') ? (function () { var g = actSegs(); return g.now.concat([{ div: true, id: DIVID }], g.wait); })() : lsorted('active', by('active'));
 		var act = '<section class="dd-card dd-ap"><header class="dd-ch"><div class="dd-ch-t"><h2>Active projects</h2><span>' + by('active').length + ' project' + (by('active').length === 1 ? '' : 's') + ' · ' + money(owed(by('active'))) + ' owed</span></div>' + sortSel('active') + '<a href="#projects/active">View all</a></header>'
@@ -732,7 +742,7 @@
 			return '<div class="dd-todo"><button type="button" class="dd-chk" ' + (x.w ? 'data-toggle="' + t.id + '"' : 'data-ptoggle="' + t.id + '"') + ' aria-label="Mark done"></button><div class="dd-todo-b" ' + (x.w ? 'data-task="' + t.id + '"' : 'data-ptask="' + t.id + '"') + ' role="button" tabindex="0"><span>' + esc(ptx(t.text)) + '</span><small><em class="' + (late ? 'late' : 'today') + '">' + (late ? Math.round((Date.parse(T) - Date.parse(t.due)) / 864e5) + 'd overdue' : 'Today') + '</em>' + (c ? esc(c.name) : x.w ? '' : 'Personal') + '</small></div></div>';
 		};
 		var todos = '<section class="dd-card"><header class="dd-ch"><div class="dd-ch-t"><h2>To-dos</h2></div><a href="#todos">All ' + all.length + '</a></header>' + (rows.length ? rows.map(trow).join('') : '<p class="dd-empty-l">Nothing overdue or due today.</p>') + '</section>';
-		return meetBar() + '<div class="dd-home"><div class="dd-home-l">' + sched + act + '</div><div class="dd-home-r">' + stats + todos + '</div></div>';
+		return '<div class="dd-home"><div class="dd-home-l">' + sched + act + '</div><div class="dd-home-r">' + stats + todos + '</div></div>';
 	}
 	// All clients (design 4.2): toolbar, chips, grouped table; rows stack on phones.
 	var DD_TONE = { Project: 'info', Hosting: 'success', Lead: 'warning', 'Past client': 'neutral' };
