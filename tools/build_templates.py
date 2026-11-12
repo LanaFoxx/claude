@@ -853,7 +853,7 @@ def build_featured_projects():
 
 # ------------------------------------------------------------------ What We Do (Option A, split screen)
 WWD = [
-    ("What We Do / Painting", "#33261C", "Photo: finished interior, fills this half", None,
+    ("What We Do / Painting", "#33261C", "Photo: finished interior", None,
      "Fine Interior &amp; Exterior Painting",
      "Walls, ceilings, trim, doors, and specialty finishes, completed with the preparation, protection, and "
      "clean lines a high-end home demands. We work in occupied and unoccupied homes, coordinate with property "
@@ -861,7 +861,7 @@ WWD = [
      [("Interior Painting", "/interior-painting/"), ("Exterior Painting", "/exterior-painting/"),
       ("Specialty Finishes &amp; Interior Wood", "/specialty-finishes-interior-wood/"),
       ("Commercial &amp; HOA", "/commercial-hoa/")]),
-    ("What We Do / Staining", "#3A281B", "Photo: stained log home, fills this half", "fence",
+    ("What We Do / Staining", "#3A281B", "Photo: stained log home", "fence",
      "Log &amp; Timber Staining",
      "Log home staining is where we started and what we're known for. We prepare the wood properly, apply "
      "premium stains and sealers, and handle the chinking, check sealing, and rot repair that keep a log home "
@@ -872,9 +872,6 @@ WWD = [
 ]
 
 WWD_CSS = """
-#tn-wwd .tn-wwd-half::before{background-color:transparent !important;background-image:linear-gradient(180deg, rgba(20,17,14,0.1) 0%, rgba(20,17,14,0.1) 35%, rgba(20,17,14,0.94) 100%) !important;opacity:1 !important;}
-#tn-wwd .tn-wwd-half > .e-con, #tn-wwd .tn-wwd-half > .elementor-widget{position:relative;z-index:1;}
-#tn-wwd .tn-wwd-label{position:absolute !important;left:32px;top:28px;z-index:1;}
 /* Both titles on one line and the same size: they scale together with the viewport. */
 #tn-wwd .tn-wwd-title .elementor-heading-title{white-space:nowrap;font-size:clamp(24px, 2.5vw, 40px) !important;}
 @media (max-width:1040px){
@@ -892,13 +889,11 @@ WWD_CSS = """
 
 
 def build_what_we_do():
+    """Two solid dark-brown halves (two shades), each with a large photo above the title."""
+    shades = ["#1C1612", "#271D16"]
     halves = []
-    for title, color, label, image, h2_text, body, items in WWD:
-        img = PHOTOS.get(image) if image else None
-        kids = []
-        if not img:
-            kids.append(photo_label(label, _css_classes="tn-wwd-label", _element_width="auto"))
-        kids.append(container(title + " / Content", [
+    for (title, color, label, image, h2_text, body, items), shade in zip(WWD, shades):
+        content = container(title + " / Content", [
             heading(title + " / Title (H2)", h2_text, tag="h2", color=BONE,
                     typ=typo(family=SERIF, size=(40, 36, 30, 30), weight=500, lh=1.08, ls=-0.4),
                     _css_classes="tn-wwd-title"),
@@ -907,19 +902,12 @@ def build_what_we_do():
                    text_color_hover=AMBER_HOVER, _css_classes="tn-wwd-links", _margin=dims(8, 0, 0, 0),
                    icon_list=[{"_id": eid(), "text": t, "link": link(u),
                                "selected_icon": {"value": "", "library": ""}} for t, u in items],
-                   **typo(prefix="icon_typography", size=15, weight=600, lh=1.4))],
-            gap=22, padding=pads((72, 65, 49, 40), (72, 65, 49, 24), (72, 65, 49, 40), (72, 65, 49, 24))))
-        st = {"background_background": "classic", "background_color": color,
-              "background_position": "center center", "background_size": "cover",
-              "background_repeat": "no-repeat", "flex_justify_content": "flex-end", "overflow": "hidden",
-              "css_classes": "tn-photo tn-wwd-half",
-              "background_overlay_background": "classic", "background_overlay_color": CHARRED,
-              "background_overlay_opacity": {"unit": "px", "size": 1, "sizes": []}}
-        st.update(resp("min_height", (835, 754, 640, 640), px))
-        if img:
-            st["background_image"] = {"url": img["url"], "id": int(img["id"]), "size": "",
-                                      "alt": img.get("alt", ""), "source": "library"}
-        halves.append(container(title, kids, html_tag="article", **st))
+                   **typo(prefix="icon_typography", size=15, weight=600, lh=1.4))], gap=22)
+        photo = photo_slot(title + " / Photo", color, (440, 400, 380, 260), label, image=image)
+        halves.append(container(title, [photo, content], html_tag="article", gap=(40, 36, 32, 28),
+                                background_background="classic", background_color=shade,
+                                padding=pads((72, 65, 49, 40), (72, 65, 49, 20), (72, 65, 49, 48),
+                                             (72, 65, 49, 20))))
     return container("What We Do", [grid("What We Do / Halves", halves, cols=(2, 2, 1, 1), gap_col=0,
                                          gap_row=0, css_classes="tn-wwd-grid")],
                      top=True, html_tag="section", _element_id="tn-wwd",

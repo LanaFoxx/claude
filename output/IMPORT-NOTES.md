@@ -283,3 +283,9 @@ Container `Seasonal Offer`: change the H2 to **Talk to us about your project** a
 - **Hero:** 80px bottom padding below the credentials row.
 - **Away for the Season text half:** the same wood texture, fixed while scrolling, under a Spruce (#24302A) overlay at 75%.
 - **Why grid boxes (updated):** default fill rgba(242,236,227,0.03), a touch lighter than Spruce. On hover they fade to rgba(0,0,0,0.12), slightly darker than the section (0.35s).
+- **What We Do (revised, overrides the full-bleed photo halves):**
+  - Two solid dark-brown halves, left #1C1612 and right #271D16, with no background photos.
+  - Each half has a large photo slot above the title, 440 / 400 / 380 / 260px tall, full content width.
+  - Padding is 72 / 65 / 49 / 40px top and bottom, 72 / 65 / 49 / 20px sides; gap below the photo is 40 / 36 / 32 / 28px.
+  - The one-line matching-title rule is unchanged and was re-checked from 1920 to 600px.
+  - The Staining photo is the fence. The Painting slot keeps its "Photo: finished interior" label until a photo arrives.
