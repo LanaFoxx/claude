@@ -308,7 +308,7 @@ document.addEventListener('click', e => {
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(false); });
 
-// Portfolio filter pills: All / WordPress / Webflow. Card widths follow the same rhythm as the design.
+// Portfolio filter pills: All / WordPress / Webflow / categories. Card widths follow the same rhythm as the design.
 function filterTo(f) {
   const grid = document.getElementById('pf-grid'); if (grid) grid.setAttribute('data-f', f);
   document.querySelectorAll('[data-filter]').forEach(b => {
@@ -319,7 +319,9 @@ function filterTo(f) {
   });
   let i = 0;
   document.querySelectorAll('[data-dw-card]').forEach(c => {
-    const show = f === 'all' ? !c.hasAttribute('data-dup') : c.getAttribute('data-platform') === f;
+    const show = f === 'all' ? !c.hasAttribute('data-dup')
+      : f.indexOf('cat-') === 0 ? c.getAttribute('data-cat') === f.slice(4) && !c.hasAttribute('data-dup')
+      : c.getAttribute('data-platform') === f;
     // Only hide/show: the layout itself always comes from the stylesheet, never from this script.
     c.hidden = !show;
     c.style.removeProperty('display');
@@ -360,7 +362,7 @@ function boot() {
   fx.start();
   window.__dwFx = fx;
   pinLeft();
-  if (location.hash === '#webflow' || location.hash === '#wordpress') filterTo(location.hash.slice(1));
+  if (location.hash === '#webflow' || location.hash === '#wordpress' || (/^#cat-[a-z0-9-]+$/.test(location.hash) && document.querySelector('[data-filter="' + location.hash.slice(1) + '"]'))) filterTo(location.hash.slice(1));
 }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
 })();

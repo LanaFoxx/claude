@@ -140,6 +140,7 @@ function dwdp_box_details( $post ) {
 	?>
 	<table class="form-table dwdp-details">
 		<tr><th><label for="dwdp-industry">Industry label</label></th><td><input id="dwdp-industry" name="dwdp[industry]" class="regular-text" value="<?php echo esc_attr( $v( 'industry' ) ); ?>" placeholder="Flight school"><p class="description">Shown as “01 · Flight school”. The number comes from the project order.</p></td></tr>
+		<tr><th><label for="dwdp-category">Portfolio category</label></th><td><select id="dwdp-category" name="dwdp[category]"><option value="">Automatic (from the industry label: <?php echo esc_html( dwdp_category( $post->ID ) ); ?>)</option><?php foreach ( dwdp_categories() as $cat ) : ?><option value="<?php echo esc_attr( $cat ); ?>" <?php selected( (string) get_post_meta( $post->ID, '_dwdp_category', true ), $cat ); ?>><?php echo esc_html( $cat ); ?></option><?php endforeach; ?></select><p class="description">The filter tag this project appears under on the Portfolio page.</p></td></tr>
 		<tr><th><label for="dwdp-summary">Short description</label></th><td><textarea id="dwdp-summary" name="dwdp[summary]" rows="3" class="large-text" placeholder="Flight training school with course info and enrollment. Built to get new students booking intro flights."><?php echo esc_textarea( $v( 'summary' ) ); ?></textarea></td></tr>
 		<tr><th><label for="dwdp-together">Working together</label></th><td><textarea id="dwdp-together" name="dwdp[together]" rows="4" class="large-text" placeholder="How the project went, in your words."><?php echo esc_textarea( $together ); ?></textarea></td></tr>
 		<tr><th><label for="dwdp-review">Client review</label></th><td><textarea id="dwdp-review" name="dwdp[review]" rows="3" class="large-text" placeholder="Leave empty to hide the review box."><?php echo esc_textarea( $v( 'review' ) ); ?></textarea></td></tr>
@@ -173,7 +174,7 @@ add_action( 'save_post_' . DWDP_CPT, function ( $post_id ) {
 		return;
 	}
 	$in = isset( $_POST['dwdp'] ) ? wp_unslash( (array) $_POST['dwdp'] ) : array(); // phpcs:ignore
-	foreach ( array( 'industry', 'review_by', 'platform', 'scope', 'responsive', 'aftercare' ) as $k ) {
+	foreach ( array( 'industry', 'category', 'review_by', 'platform', 'scope', 'responsive', 'aftercare' ) as $k ) {
 		if ( isset( $in[ $k ] ) ) {
 			update_post_meta( $post_id, '_dwdp_' . $k, sanitize_text_field( $in[ $k ] ) );
 		}
@@ -230,7 +231,7 @@ add_filter( 'wp_insert_post_data', function ( $data, $postarr ) {
 add_action( 'wp_ajax_dwdp_set_fields', function () {
 	$post_id = dwdp_check_request();
 	$in      = isset( $_POST['fields'] ) ? (array) json_decode( wp_unslash( $_POST['fields'] ), true ) : array(); // phpcs:ignore
-	foreach ( array( 'industry', 'review_by', 'platform', 'scope', 'responsive', 'aftercare' ) as $k ) {
+	foreach ( array( 'industry', 'category', 'review_by', 'platform', 'scope', 'responsive', 'aftercare' ) as $k ) {
 		if ( isset( $in[ $k ] ) ) {
 			update_post_meta( $post_id, '_dwdp_' . $k, sanitize_text_field( $in[ $k ] ) );
 		}

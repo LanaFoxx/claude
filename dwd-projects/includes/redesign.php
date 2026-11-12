@@ -169,6 +169,7 @@ function dwdr_project( $p ) {
 		'cat'      => (string) dwdp_get( $p->ID, 'industry' ),
 		'desc'     => (string) dwdp_get( $p->ID, 'summary' ),
 		'platform' => $wf ? 'Webflow' : 'WordPress',
+		'group'    => dwdp_category( $p->ID ),
 		'cover'    => dwdr_img_url( dwdp_get( $p->ID, 'cover' ) ),
 		'phone'    => dwdr_img_url( dwdp_get( $p->ID, 'mockup' ), 'large' ),
 		'site'     => '1' === (string) dwdp_get( $p->ID, 'hide_link' ) ? '' : (string) dwdp_get( $p->ID, 'url' ),
@@ -221,6 +222,7 @@ function dwdr_body( $page ) {
 			if ( $p['dup'] ) {
 				$card = preg_replace( '/^<a /', '<a data-dup="1" ', $card, 1 ); // hidden in All by the stylesheet (keeps its own layout styles)
 			}
+			$card = preg_replace( '/^<a /', '<a data-cat="' . esc_attr( sanitize_title( $p['group'] ) ) . '" ', $card, 1 ); // category filter tag
 			$cards .= $card;
 		}
 		$count = function ( $pl ) use ( $list ) {
@@ -234,6 +236,15 @@ function dwdr_body( $page ) {
 				$v[ $k . $prop ] = $val;
 			}
 		}
+		// Category tags, styled exactly like the WordPress / Webflow ones (a site and its Webflow rebuild count once).
+		$tags = '';
+		foreach ( dwdp_categories() as $cat ) {
+			$n = count( array_filter( $list, function ( $p ) use ( $cat ) { return $p['group'] === $cat && ! $p['dup']; } ) );
+			if ( $n ) {
+				$tags .= '<button type="button" data-filter="cat-' . esc_attr( sanitize_title( $cat ) ) . '" aria-pressed="false" style="min-height:44px;padding:0 18px;border-radius:999px;border:1px solid #3A3A3A;background:transparent;color:#fff;font:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:background .3s ease,color .3s ease,border-color .3s ease">' . esc_html( $cat ) . ' <span style="color:inherit;opacity:.6">' . $n . '</span></button>';
+			}
+		}
+		$v['catTags'] = $tags;
 		return dwdr_render( 'portfolio', $v );
 	}
 	if ( 'project' === $page ) {

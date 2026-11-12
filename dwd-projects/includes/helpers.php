@@ -65,6 +65,7 @@ function dwdp_fields() {
 		'video'      => '', // Loom or YouTube link for the walkthrough video
 		'video_cover'=> '', // optional image address shown on the video before it plays
 		'industry'   => '',
+		'category'   => '', // portfolio filter tag (e.g. Software & SaaS); empty = worked out from the industry
 		'summary'    => '',
 		'together'   => '',
 		'review'     => '',
@@ -269,3 +270,33 @@ add_filter( 'wp_check_filetype_and_ext', function ( $data, $file, $filename ) {
 	}
 	return $data;
 }, 10, 3 );
+
+/** Portfolio categories, in the order the filter tags show. */
+function dwdp_categories() {
+	return array( 'Software & SaaS', 'Professional Services', 'Real Estate', 'Education', 'Local Business' );
+}
+
+/** A project's portfolio category: the one picked in the editor, else worked out from its industry label. */
+function dwdp_category( $post_id ) {
+	$c = (string) get_post_meta( $post_id, '_dwdp_category', true );
+	if ( in_array( $c, dwdp_categories(), true ) ) {
+		return $c;
+	}
+	$i = strtolower( (string) dwdp_get( $post_id, 'industry' ) );
+	if ( preg_match( '/fitness|gym|salon|spa|retail|thrift|shop|store|vending|restaurant|food|cafe/', $i ) ) {
+		return 'Local Business';
+	}
+	if ( preg_match( '/software|saas|app|backend|platform|tech/', $i ) ) {
+		return 'Software & SaaS';
+	}
+	if ( preg_match( '/real estate|realty|realtor|property|mortgage/', $i ) ) {
+		return 'Real Estate';
+	}
+	if ( preg_match( '/school|course|education|training|academy|tutor/', $i ) ) {
+		return 'Education';
+	}
+	if ( preg_match( '/account|consult|legal|law|records|medical|insurance|finance|agency|marketing/', $i ) ) {
+		return 'Professional Services';
+	}
+	return 'Local Business';
+}
