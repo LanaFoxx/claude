@@ -1,0 +1,106 @@
+/* Dream Desk design tokens — one set of variables, two value sets.
+   Apply data-theme="dark" | "light" on the CRM root element (default dark).
+   Persist the choice in localStorage (key: dreamdesk-theme) and set the
+   attribute before first paint to avoid a flash. */
+
+[data-theme="dark"] {
+  --bg: #0B0D12;
+  --surface: #12151C;
+  --surface-2: #181C25;
+  --border: rgba(255,255,255,0.07);
+  --border-strong: rgba(255,255,255,0.13);
+  --hover: rgba(255,255,255,0.035);
+  --selected: rgba(67,97,238,0.10);
+
+  --text: #E6E8EC;
+  --text-2: #9AA3B2;
+  --text-3: #7D8594;
+  --text-inverse: #FFFFFF;
+
+  --accent: #4361EE;
+  --accent-hover: #3A55D6;
+  --accent-text: #8DA0F7;
+  --accent-soft: rgba(67,97,238,0.16);
+
+  --success-bg: rgba(74,222,128,0.12);  --success-text: #4ADE80;
+  --warning-bg: rgba(251,191,36,0.12);  --warning-text: #FBBF24;
+  --danger-bg: rgba(248,113,113,0.12);  --danger-text: #FCA5A5;
+  --info-bg: rgba(99,130,255,0.16);     --info-text: #A5B4FC;
+  --neutral-bg: rgba(255,255,255,0.06); --neutral-text: #9AA3B2;
+
+  --ring: 0 0 0 3px rgba(67,97,238,0.35);
+  --shadow-menu: 0 8px 24px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.04);
+  color-scheme: dark;
+}
+
+[data-theme="light"] {
+  --bg: #F7F8FA;
+  --surface: #FFFFFF;
+  --surface-2: #FFFFFF;
+  --border: #E4E7EC;
+  --border-strong: #D5DAE1;
+  --hover: rgba(15,23,42,0.035);
+  --selected: #EEF1FE;
+
+  --text: #0F172A;
+  --text-2: #475569;
+  --text-3: #64748B;
+  --text-inverse: #FFFFFF;
+
+  --accent: #4361EE;
+  --accent-hover: #3A55D6;
+  --accent-text: #4361EE;
+  --accent-soft: #EEF1FE;
+
+  --success-bg: #DCFCE7; --success-text: #166534;
+  --warning-bg: #FEF3C7; --warning-text: #92400E;
+  --danger-bg: #FEE2E2;  --danger-text: #B91C1C;
+  --info-bg: #E0E7FF;    --info-text: #3730A3;
+  --neutral-bg: #F1F5F9; --neutral-text: #475569;
+
+  --ring: 0 0 0 3px rgba(67,97,238,0.30);
+  --shadow-menu: 0 8px 24px rgba(15,23,42,0.08), 0 0 0 1px rgba(15,23,42,0.04);
+  color-scheme: light;
+}
+
+/* Theme-independent scale */
+[data-theme] {
+  --font: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --fs-title: 24px;   /* page title, 600, letter-spacing -0.01em */
+  --fs-h2: 16px;      /* section heading, 600 */
+  --fs-body: 14px;    /* body + table text, 400 */
+  --fs-sm: 13px;      /* secondary, buttons, table meta, 500 for buttons */
+  --fs-xs: 12px;      /* labels, pills, timestamps */
+  --fs-overline: 11px;/* uppercase group labels, 600, letter-spacing .06em */
+  --lh: 1.5;
+
+  --space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px;
+  --space-5: 20px; --space-6: 24px; --space-7: 28px; --space-8: 32px;
+
+  --radius-sm: 6px;   /* ghost buttons, nav items, drawer tabs */
+  --radius-md: 8px;   /* buttons, inputs, menus */
+  --radius-lg: 10px;  /* inner cards, toasts */
+  --radius-xl: 12px;  /* page cards, tables */
+  --radius-pill: 999px;
+
+  --sidebar-w: 232px;
+  --rail-w: 56px;
+  --topbar-h: 56px;
+  --row-h: 48px;
+  --control-h: 32px;  /* top bar buttons, inputs */
+  --control-h-lg: 36px;
+}
+
+[data-theme] body, [data-theme] {
+  font-family: var(--font);
+  font-size: var(--fs-body);
+  line-height: var(--lh);
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+  background: var(--bg);
+  color: var(--text);
+}
+[data-theme] a { color: var(--accent-text); text-decoration: none; }
+[data-theme] a:hover { color: var(--accent-text); text-decoration: underline; }
+[data-theme] :focus-visible { outline: none; box-shadow: var(--ring); }
+[data-theme] ::placeholder { color: var(--text-3); }

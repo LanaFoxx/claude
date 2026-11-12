@@ -88,7 +88,8 @@ function dwda_head( $title ) {
 <link rel="icon" href="<?php echo esc_url( $u . 'favicon-32.png?v=2' ); ?>" sizes="32x32">
 <link rel="apple-touch-icon" href="<?php echo esc_url( $u . 'apple-touch-icon.png?v=2' ); ?>">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap">
+<script>(function(){var t="dark";try{t=localStorage.getItem("dreamdesk-theme")||"dark";}catch(e){}document.documentElement.setAttribute("data-theme",t);})();</script>
 	<?php
 }
 
@@ -102,7 +103,9 @@ function dwda_app() {
 	dwda_head( 'Dream Desk' );
 	?>
 <link rel="stylesheet" href="<?php echo esc_url( DWDP_URL . 'assets/crm.css?ver=' . DWDP_VERSION ); ?>">
-<style>html,body{margin:0;background:#F4F8F6}body{-webkit-tap-highlight-color:transparent}.dwdc{padding-top:env(safe-area-inset-top)}</style>
+<link rel="stylesheet" href="<?php echo esc_url( DWDP_URL . 'assets/dd-tokens.css?ver=' . DWDP_VERSION ); ?>">
+<link rel="stylesheet" href="<?php echo esc_url( DWDP_URL . 'assets/dd.css?ver=' . DWDP_VERSION ); ?>">
+<style>html,body{margin:0;background:var(--bg)}body{-webkit-tap-highlight-color:transparent}.dwdc{padding-top:env(safe-area-inset-top)}</style>
 </head>
 <body class="dwdc-standalone">
 <div id="dwdc-app" class="dwdc"><div class="dwdc-loading">Loading Dream Desk…</div></div>

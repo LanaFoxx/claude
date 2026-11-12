@@ -1332,7 +1332,7 @@ add_action( 'rest_api_init', function () {
 	// Home page lists (Leads, active Projects) in the order Mike dragged them into.
 	register_rest_route( $ns, '/crm/home-order', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
 		$key = (string) $r->get_param( 'key' );
-		if ( ! in_array( $key, array( 'leads', 'active', 'todos' ), true ) ) {
+		if ( ! preg_match( '/^[a-z0-9_-]{1,32}$/', $key ) ) {
 			return new WP_Error( 'dwdc_key', 'Unknown list.', array( 'status' => 400 ) );
 		}
 		$all         = (array) get_option( 'dwdc_home_order', array() );
@@ -1512,8 +1512,10 @@ add_action( 'admin_enqueue_scripts', function ( $hook ) {
 	if ( 'toplevel_page_client-desk' !== $hook ) {
 		return;
 	}
-	wp_enqueue_style( 'dwdc-fonts', 'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap', array(), null );
+	wp_enqueue_style( 'dwdc-fonts', 'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap', array(), null );
 	wp_enqueue_style( 'dwdc', DWDP_URL . 'assets/crm.css', array(), DWDP_VERSION );
+	wp_enqueue_style( 'dd-tokens', DWDP_URL . 'assets/dd-tokens.css', array( 'dwdc' ), DWDP_VERSION );
+	wp_enqueue_style( 'dd', DWDP_URL . 'assets/dd.css', array( 'dd-tokens' ), DWDP_VERSION );
 	wp_enqueue_script( 'dwdc', DWDP_URL . 'assets/crm.js', array(), DWDP_VERSION, true );
 	wp_localize_script( 'dwdc', 'DWDC', dwdc_vars() );
 } );
@@ -1522,7 +1524,9 @@ add_action( 'admin_enqueue_scripts', function ( $hook ) {
 add_action( 'admin_head', function () {
 	$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
 	if ( $screen && 'toplevel_page_client-desk' === $screen->id ) {
-		echo '<style>#wpfooter{display:none!important}</style>';
+		// Dream Desk runs full screen with its own sidebar and top bar: hide the WordPress admin chrome.
+		echo '<style>#wpfooter,#adminmenumain,#adminmenuback,#adminmenuwrap,#wpadminbar{display:none!important}html.wp-toolbar{padding-top:0!important}#wpcontent,#wpbody-content{margin-left:0!important;padding:0!important}#wpbody-content>*:not(#dwdc-app){display:none!important}</style>';
+		echo '<script>(function(){var t="dark";try{t=localStorage.getItem("dreamdesk-theme")||"dark";}catch(e){}document.documentElement.setAttribute("data-theme",t);})();</script>';
 	}
 } );
 

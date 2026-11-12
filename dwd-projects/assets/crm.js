@@ -634,6 +634,203 @@
 			+ '<div><ol>' + (isPhone() ? (isIOS() ? ios : and) : ios + and) + '<li>Sign in once. Dream Desk keeps you signed in.</li></ol>'
 			+ '<p class="dwdc-mutp">App link: <a href="' + esc(DWDC.app) + '" target="_blank" rel="noopener">' + esc(DWDC.app) + '</a></p></div></div>';
 	}
+	/* ================= Dream Desk 1c shell (design handoff): tokens, sidebar, top bar, Home ================= */
+	var LU = {
+		home: '<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>',
+		calendar: '<rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+		'circle-check': '<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',
+		play: '<polygon points="6 3 20 12 6 21 6 3"/>',
+		'user-plus': '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/>',
+		'clipboard-list': '<rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4M12 16h4M8 11h.01M8 16h.01"/>',
+		pause: '<rect x="14" y="4" width="4" height="16" rx="1"/><rect x="6" y="4" width="4" height="16" rx="1"/>',
+		check: '<path d="M20 6 9 17l-5-5"/>',
+		users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
+		cloud: '<path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>',
+		star: '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>',
+		'bar-chart-3': '<path d="M3 3v18h18M18 17V9M13 17V5M8 17v-3"/>',
+		'pie-chart': '<path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/>',
+		repeat: '<path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/>',
+		link: '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
+		globe: '<circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20M2 12h20"/>',
+		'external-link': '<path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>',
+		'panel-left': '<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/>',
+		search: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+		plus: '<path d="M5 12h14M12 5v14"/>',
+		sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2m-7.07-17.07 1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>',
+		moon: '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>',
+		mail: '<rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>',
+		'more-horizontal': '<circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>',
+		'list-filter': '<path d="M3 6h18M7 12h10M10 18h4"/>',
+		bookmark: '<path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/>',
+		'arrow-up-down': '<path d="m21 16-4 4-4-4M17 20V4M3 8l4-4 4 4M7 4v16"/>',
+		zap: '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
+		x: '<path d="M18 6 6 18M6 6l12 12"/>',
+		'credit-card': '<rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/>',
+		'chevron-down': '<path d="m6 9 6 6 6-6"/>',
+		'chevron-right': '<path d="m9 18 6-6-6-6"/>',
+		'chevrons-right': '<path d="m6 17 5-5-5-5M13 17l5-5-5-5"/>',
+		menu: '<path d="M4 12h16M4 6h16M4 18h16"/>',
+		'log-out': '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>'
+	};
+	function lu(n, s) { return '<svg class="lu" width="' + (s || 16) + '" height="' + (s || 16) + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (LU[n] || '') + '</svg>'; }
+	function ddGet(k, d) { try { var v = localStorage.getItem(k); return v === null ? d : v; } catch (e) { return d; } }
+	function ddSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+	function ddTheme() { return ddGet('dreamdesk-theme', 'dark') === 'light' ? 'light' : 'dark'; }
+	function ddInitials(n) { var p = String(n || '?').trim().split(/\s+/); return ((p[0] || '?')[0] + (p.length > 1 ? p[p.length - 1][0] : '')).toUpperCase(); }
+	function ddAgo(iso) {
+		var t = Date.parse(iso); if (!t) { return ''; }
+		var m = Math.max(0, Math.round((Date.now() - t) / 60000));
+		return m < 60 ? m + 'm ago' : m < 1440 ? Math.round(m / 60) + 'h ago' : Math.round(m / 1440) + 'd ago';
+	}
+	// Sidebar (1c): groups in a fixed order; counts are the plugin's own.
+	function ddSide(r) {
+		var cur = r.view === 'client' || r.view === 'cl' ? S.back : r.view + (r.arg ? '/' + r.arg : '');
+		if (cur === 'projects' || cur === 'projects/all') { cur = 'projects/active'; }
+		var shut = []; try { shut = JSON.parse(ddGet('dreamdesk-nav-collapsed', '[]')) || []; } catch (e) { shut = []; }
+		var pOpen = S.pers ? S.pers.todos.filter(function (x) { return !x.done && !x.gevent; }).length : 0;
+		var item = function (h, icon, label, count) { var on = cur === h; return '<a class="dd-nav' + (on ? ' on' : '') + '" href="#' + h + '" data-tip="' + esc(label) + (count ? ' · ' + count : '') + '">' + lu(icon) + '<span class="dd-nav-l">' + label + '</span>' + (count ? '<em>' + count + '</em>' : '') + '</a>'; };
+		var group = function (id, label, items) { var closed = shut.indexOf(id) > -1; return '<div class="dd-grp' + (closed ? ' closed' : '') + '"><button type="button" class="dd-grp-h" data-ddgrp="' + id + '"><span>' + label + '</span>' + lu('chevron-down', 12) + '</button><div class="dd-grp-b">' + items + '</div></div>'; };
+		return '<aside class="dd-side">'
+			+ '<div class="dd-brand"><a href="#home" class="dd-brand-a"><img src="' + esc(DWDC.mark) + '" alt=""><b>Dream Desk</b></a><button type="button" class="dd-ibtn dd-collapse" data-ddcollapse aria-label="Collapse sidebar">' + lu('panel-left') + '</button><button type="button" class="dd-ibtn dd-mclose" data-ddmenu aria-label="Close menu">' + lu('x', 18) + '</button></div>'
+			+ '<nav class="dd-navs">' + item('home', 'home', 'Home')
+			+ group('plan', 'Plan', item('personal/calendar', 'calendar', 'Calendar') + item('todos', 'circle-check', 'To-dos', openTasks().length + pOpen))
+			+ group('projects', 'Projects', item('projects/active', 'play', 'Active', by('active').length) + item('leads', 'user-plus', 'Leads', leadList().length) + item('onboarding', 'clipboard-list', 'Onboarding', onboardList().length) + item('projects/paused', 'pause', 'Paused', by('hold').length + by('limbo').length) + item('projects/complete', 'check', 'Completed', by('complete').length))
+			+ group('clients', 'Clients', item('clients', 'users', 'All clients', S.clients.length) + item('hosting', 'cloud', 'Hosting', hosting().length) + item('reviews', 'star', 'Get reviews'))
+			+ group('money', 'Money', item('money', 'bar-chart-3', 'Business revenue') + item('personal/spending', 'pie-chart', 'Spending') + item('personal/bills', 'repeat', 'Bills & subscriptions'))
+			+ group('settings', 'Settings', item('connections', 'link', 'Connections'))
+			+ '</nav><div class="dd-side-f"><a class="dd-nav" href="' + esc(DWDC.wp) + '" data-tip="Website">' + lu('globe') + '<span class="dd-nav-l">Website</span><i class="dd-ext">' + lu('external-link', 14) + '</i></a>'
+			+ '<button type="button" class="dd-nav dd-expand" data-ddcollapse data-tip="Expand">' + lu('chevrons-right') + '<span class="dd-nav-l">Expand</span></button></div></aside>';
+	}
+	// Top bar: breadcrumb · Search · + New · Log payment | theme · avatar
+	function ddTop(r, t) {
+		var crumbs = r.view === 'home' ? '<b>Home</b>' : (t[0] ? '<span>' + esc(t[0]) + '</span>' + lu('chevron-right', 14) : '') + '<b>' + esc(ddTitle(r, t)) + '</b>';
+		var open = !!S.newOpen, dark = ddTheme() === 'dark';
+		return '<header class="dd-top"><button type="button" class="dd-ibtn dd-burger" data-ddmenu aria-label="Menu">' + lu('menu', 18) + '</button><div class="dd-crumbs">' + crumbs + '</div>'
+			+ '<label class="dd-search dwdc-ssearch">' + lu('search') + '<input type="search" name="dwdc-find" placeholder="Search" aria-label="Search" value="" autocomplete="off" readonly data-lpignore="true" data-1p-ignore data-form-type="other"><kbd>⌘K</kbd></label>'
+			+ '<div class="dd-new dwdc-ph-menu' + (open ? ' open' : '') + '"><button type="button" class="dd-btn primary" data-newmenu aria-haspopup="menu" aria-expanded="' + open + '">' + lu('plus') + '<span>New</span>' + lu('chevron-down', 14) + '</button>'
+			+ '<ul role="menu" class="dd-menu"><li><button role="menuitem" type="button" data-act="job">' + lu('play') + 'Project</button></li><li><button role="menuitem" type="button" data-act="lead">' + lu('user-plus') + 'Lead</button></li><li><button role="menuitem" type="button" data-act="newclient">' + lu('users') + 'Client</button></li><li><button role="menuitem" type="button" data-act="hosting">' + lu('cloud') + 'Website hosting</button></li><li class="dd-mob"><button role="menuitem" type="button" data-act="pay">' + lu('credit-card') + 'Log payment</button></li></ul></div>'
+			+ '<button type="button" class="dd-btn secondary dd-logpay" data-act="pay">' + lu('credit-card') + 'Log payment</button>'
+			+ '<span class="dd-div"></span>'
+			+ '<button type="button" class="dd-ibtn" data-ddtheme aria-label="' + (dark ? 'Light theme' : 'Dark theme') + '">' + lu(dark ? 'sun' : 'moon', 18) + '</button>'
+			+ '<div class="dd-me"><button type="button" class="dd-avatar" data-ddme aria-label="Profile">' + esc(ddInitials(DWDC.user || 'M')[0]) + '</button>'
+			+ '<ul class="dd-menu' + (S.meOpen ? ' open' : '') + '"><li class="dd-menu-h">' + esc(DWDC.user || 'Michael Tarr') + '</li><li><a href="' + esc(DWDC.logout) + '">' + lu('log-out') + 'Sign out</a></li></ul></div></header>';
+	}
+	function ddTitle(r, t) { return r.view === 'home' ? 'Home' : [t[1], t[2]].filter(Boolean).join(' ').replace(/\s+/g, ' ').replace(/^(.)/, function (m) { return m.toUpperCase(); }).replace(/ (\S)/g, function (m) { return m.toLowerCase(); }); }
+	function ddHead(r, t) {
+		if (r.view === 'home') {
+			var h = new Date().getHours(), greet = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
+			var q = quoteBar(), qm = /dwdc-quote-q">(.*?)<\/span><span class="dwdc-quote-a">— (.*?)<\/span>/.exec(q);
+			return '<div class="dd-ph home"><div><h1>' + new Date(DWDC.today + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }) + '</h1><p>' + greet + ', ' + esc(String(DWDC.user || 'Michael').split(' ')[0]) + '</p></div>'
+				+ (qm ? '<div class="dd-quote"><span>' + qm[1] + ' <i>— ' + qm[2] + '</i></span><button type="button" class="dd-ibtn sm" data-quotex aria-label="Hide for today">' + lu('x', 14) + '</button></div>' : '') + '</div>';
+		}
+		if (r.view === 'client' || r.view === 'cl' || r.view === 'host') { return ''; }
+		return '<div class="dd-ph"><h1>' + esc(ddTitle(r, t)) + '</h1></div>';
+	}
+	// Home (design 4.1): schedule + recent activity | stat list + to-dos.
+	function ddHome() {
+		var P = pData(), T = DWDC.today, dObj = new Date(T + 'T12:00:00');
+		var meet = (S.meet && S.meet.list) || [];
+		var evs = P ? P.todos.filter(function (x) { return x.gevent && x.due === T && !x.done; }) : [];
+		var mins = function (tm) { var q = /^(\d{1,2}):(\d{2})\s*([AP]M)?/i.exec(String(tm || '')); return q ? (+q[1] % 12 + (/p/i.test(q[3] || '') ? 12 : 0)) * 60 + +q[2] : -1; };
+		evs.sort(function (a, b) { return mins(a.time) - mins(b.time); });
+		var wOpen = openTasks(), pOpenT = P ? P.todos.filter(function (x) { return !x.done && !x.gevent; }) : [];
+		var all = wOpen.map(function (t) { return { w: 1, t: t }; }).concat(pOpenT.map(function (t) { return { w: 0, t: t }; }));
+		var overdue = all.filter(function (x) { return x.t.due && x.t.due < T; }), today = all.filter(function (x) { return x.t.due === T; });
+		var dueToday = today.length;
+		var isBiz = function (e) { return meet.some(function (m) { return (m.title || '') === (e.text || '') || ((m.who || '') && String(e.text).indexOf(m.who) > -1); }); };
+		var sched = '<section class="dd-card dd-sched"><header class="dd-ch"><div class="dd-dtile"><small>' + dObj.toLocaleDateString('en-US', { month: 'short' }).toUpperCase() + '</small><b>' + dObj.getDate() + '</b></div><div class="dd-ch-t"><h2>Today’s schedule</h2><span>' + evs.length + ' event' + (evs.length === 1 ? '' : 's') + ' · ' + dueToday + ' to-do' + (dueToday === 1 ? '' : 's') + ' due</span></div><a href="#personal/calendar">Open calendar</a></header>'
+			+ '<div class="dd-tl">' + (evs.length ? evs.map(function (e) {
+				var m = meet.filter(function (x) { return (x.title || '') === e.text; })[0], biz = isBiz(e);
+				var href = m && m.link ? m.link : '';
+				return '<div class="dd-tl-r"><span class="dd-tl-t">' + esc(e.time || 'All day') + '</span><span class="dd-tl-dot ' + (biz ? 'biz' : 'pers') + '"></span><div class="dd-tl-c"' + (href ? '' : ' data-ptask="' + e.id + '" role="button" tabindex="0"') + '>' + (href ? '<a href="' + esc(href) + '" target="_blank" rel="noopener">' + esc(ptx(e.text)) + '</a>' : '<b>' + esc(ptx(e.text)) + '</b>') + '<small>' + (biz ? 'Business' : 'Google Calendar') + (m && m.kind && m.kind !== 'Meeting' ? ' · ' + esc(m.kind) : '') + '</small></div></div>';
+			}).join('') : '<p class="dd-empty-l">Nothing scheduled today.</p>')
+			+ (S.schedAdd ? '<form class="dd-tl-add" data-pform="pdayadd"><input type="hidden" name="due" value="' + T + '"><input name="text" placeholder="Add a to-do for ' + dObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + '…" autocomplete="off" required><button class="dd-btn primary sm">Add</button></form>'
+				: '<button type="button" class="dd-ghostadd" data-schedadd>' + lu('plus') + 'Add a to-do for ' + dObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + '</button>') + '</div></section>';
+		// Active projects: every active project, in your order (drag to arrange) or a chosen sort.
+		var ap = lsorted('active', by('active'));
+		var act = '<section class="dd-card dd-ap"><header class="dd-ch"><div class="dd-ch-t"><h2>Active projects</h2><span>' + ap.length + ' project' + (ap.length === 1 ? '' : 's') + ' · ' + money(owed(by('active'))) + ' owed</span></div>' + sortSel('active') + '<a href="#projects/active">View all</a></header>'
+			+ '<div class="dd-aplist"' + sortAttr('active') + '>' + (ap.length ? ap.map(function (c) {
+				var k = clientOf(c), ow = num(c.balance), late = c.deadline && c.deadline < DWDC.today;
+				return '<a class="dd-ap-r" href="#client/' + c.id + '" data-sid="' + c.id + '">' + (sortMine('active') ? '<span class="dd-grip" aria-hidden="true">⋮⋮</span>' : '') + '<span class="dd-av">' + esc(ddInitials(k ? k.name : (c.person || c.name))) + '</span><span class="dd-act-n"><b>' + esc(c.name) + '</b><small>' + esc(k ? k.name : (c.person || '—')) + (c.next ? ' · ' + esc(c.next) : '') + '</small></span>'
+					+ '<span class="dd-ap-m"><b class="' + (ow ? 'owe' : '') + '">' + (ow ? money(ow) : 'Paid') + '</b><small class="' + (late ? 'late' : '') + '">' + (c.deadline ? 'Due ' + fmt(c.deadline) : 'No due date') + '</small></span></a>';
+			}).join('') : '<p class="dd-empty-l">No active projects right now.</p>') + '</div></section>';
+		var stats = '<section class="dd-card dd-stats">'
+			+ (function () {
+				var BK = bData(), BA = BK && BK.balances && BK.balances.accounts ? BK.balances.accounts.filter(function (x) { return x.type !== 'credit' && x.type !== 'loan'; }) : [];
+				var tot = BA.reduce(function (a, x) { return a + (x.available != null ? x.available : (x.current || 0)); }, 0);
+				return '<a href="#personal/spending" title="' + esc(BA.map(function (x) { return (x.business ? 'Business' : 'Personal') + ' ••' + x.mask + ': ' + money2(x.available != null ? x.available : x.current); }).join('\n')) + '"><span>Bank balance<small>' + (BK ? (BA.length ? 'All ' + BA.length + ' account' + (BA.length === 1 ? '' : 's') + ' combined' : 'No bank connected') : 'Loading…') + '</small></span><b>' + (BA.length ? money2(tot) : '—') + '</b></a>';
+			})()
+			+ '<a href="#money" data-owed><span>Total owed</span><b>' + money(owed(owingList())) + '</b></a>'
+			+ '<a href="#projects/active"><span>Active projects</span><b>' + by('active').length + '</b></a>'
+			+ '<a href="#hosting"><span>Hosting clients</span><b>' + hosting().length + '</b></a></section>';
+		var rows = overdue.sort(function (a, b) { return a.t.due < b.t.due ? -1 : 1; }).concat(today).slice(0, 8);
+		var trow = function (x) {
+			var t = x.t, c = x.w && t.contact ? contact(t.contact) : null, late = t.due < T;
+			return '<div class="dd-todo"><button type="button" class="dd-chk" ' + (x.w ? 'data-toggle="' + t.id + '"' : 'data-ptoggle="' + t.id + '"') + ' aria-label="Mark done"></button><div class="dd-todo-b" ' + (x.w ? 'data-task="' + t.id + '"' : 'data-ptask="' + t.id + '"') + ' role="button" tabindex="0"><span>' + esc(ptx(t.text)) + '</span><small><em class="' + (late ? 'late' : 'today') + '">' + (late ? Math.round((Date.parse(T) - Date.parse(t.due)) / 864e5) + 'd overdue' : 'Today') + '</em>' + (c ? esc(c.name) : x.w ? '' : 'Personal') + '</small></div></div>';
+		};
+		var todos = '<section class="dd-card"><header class="dd-ch"><div class="dd-ch-t"><h2>To-dos</h2></div><a href="#todos">All ' + all.length + '</a></header>' + (rows.length ? rows.map(trow).join('') : '<p class="dd-empty-l">Nothing overdue or due today.</p>') + '</section>';
+		return meetBar() + '<div class="dd-home"><div class="dd-home-l">' + sched + act + '</div><div class="dd-home-r">' + stats + todos + '</div></div>';
+	}
+	// All clients (design 4.2): toolbar, chips, grouped table; rows stack on phones.
+	var DD_TONE = { Project: 'info', Hosting: 'success', Lead: 'warning', 'Past client': 'neutral' };
+	function ddPill(t, tone) { return '<span class="dd-pill ' + (tone || 'neutral') + '">' + esc(t) + '</span>'; }
+	function ddClientRows() {
+		var f = S.clientFilter || 'all', q = String(S.cq || '').toLowerCase().trim();
+		var rows = S.clients.map(function (k) { return { id: k.id, name: k.name, updated: k.updated, k: k, t: clientType(k.id), pp: projectsOf(k.id) }; })
+			.filter(function (x) { return !q || [x.k.name, x.k.email, x.k.company, x.pp.map(function (c) { return c.name + ' ' + c.website; }).join(' ')].join(' ').toLowerCase().indexOf(q) > -1; });
+		var counts = { all: rows.length };
+		['Project', 'Hosting', 'Past client', 'Lead'].forEach(function (t) { counts[t] = rows.filter(function (x) { return x.t === t; }).length; });
+		var want = { projects: 'Project', hosting: 'Hosting', past: 'Past client' }[f];
+		var list = rows.filter(function (x) { return !want || x.t === want; });
+		var cap = S.more.clients || q || sortMine('clients') ? list.length : 25 * (S.cpage || 1), shown = 0, html = '';
+		[['Project', 'Projects'], ['Hosting', 'Hosting'], ['Lead', 'Leads'], ['Past client', 'Past clients']].forEach(function (g) {
+			var grp = lsorted('clients', list.filter(function (x) { return x.t === g[0]; }).sort(function (a, b) { return a.k.name.localeCompare(b.k.name); }));
+			if (!grp.length || shown >= cap) { return; }
+			html += '<div class="dd-tr grp"><span>' + g[1] + ' <em>' + grp.length + '</em></span></div><div class="dd-grows"' + sortAttr('clients') + '>';
+			grp.slice(0, cap - shown).forEach(function (x) {
+				shown++;
+				var k = x.k, biz = k.company || (x.pp[0] ? x.pp[0].name : ''), host = x.pp.some(function (c) { return num(c.hosting) > 0; });
+				var last = x.pp.filter(isOpen).reduce(function (m, c) { return c.updated > m ? c.updated : m; }, '');
+				var bz = biz && biz !== k.name ? esc(biz) : '<i>—</i>', em = k.email ? esc(k.email) : '<i>No email on file</i>';
+				html += '<a class="dd-tr" href="#cl/' + k.id + '" data-sid="' + k.id + '"><span class="dd-td nm"><span class="dd-av">' + esc(ddInitials(k.name)) + '</span><span class="dd-st"><span class="dd-l1"><b>' + esc(k.name) + '</b>' + ddPill(x.t, DD_TONE[x.t]) + '</span><span class="dd-l2">' + bz + '</span><span class="dd-l3">' + em + '</span><span class="dd-l4">' + x.pp.length + ' project' + (x.pp.length === 1 ? '' : 's') + ' · ' + (host ? 'Hosting' : 'No hosting') + (last ? ' · ' + ago(last) : '') + '</span></span>' + lu('chevron-right') + '</span>'
+					+ '<span class="dd-td c-biz">' + bz + '</span><span class="dd-td c-em">' + em + '</span><span class="dd-td c-ty">' + ddPill(x.t, DD_TONE[x.t]) + '</span><span class="dd-td c-pr num">' + x.pp.length + '</span><span class="dd-td c-ho">' + (host ? 'Yes' : '<i>No</i>') + '</span><span class="dd-td c-la">' + (last ? ago(last) : '<i>—</i>') + '</span></a>';
+			});
+			html += '</div>';
+		});
+		if (!list.length) { html = '<div class="dd-emptyst">' + lu('users', 24) + '<b>No clients match</b><span>Try a different search or filter.</span></div>'; }
+		var foot = list.length ? '<div class="dd-tfoot"><span>Showing ' + shown + ' of ' + list.length + '</span>' + (shown < list.length ? '<button type="button" class="dd-lnk" data-cmore>Load 25 more</button>' : '') + '</div>' : '';
+		return { html: html + foot, counts: counts };
+	}
+	function ddClients() {
+		var f = S.clientFilter || 'all', R = ddClientRows(), c = R.counts;
+		var chip = function (k, l, n) { return '<button type="button" class="dd-chip' + (f === k ? ' on' : '') + '" data-cfilter="' + k + '">' + l + ' <em>' + n + '</em></button>'; };
+		return '<div class="dd-tools"><label class="dd-input">' + lu('search') + '<input type="search" data-cq placeholder="Search clients" value="' + esc(S.cq || '') + '" autocomplete="off" data-lpignore="true" data-1p-ignore></label><button type="button" class="dd-btn secondary dd-filt" aria-label="Filter">' + lu('list-filter') + '<span>Filter</span></button></div>'
+			+ '<div class="dd-chips">' + chip('all', 'All', c.all) + chip('projects', 'Projects', c.Project) + chip('hosting', 'Hosting', c.Hosting) + chip('past', 'Past', c['Past client']) + '<span class="dd-chipdiv"></span><a class="dd-chip" href="#leads">' + lu('bookmark', 14) + 'Leads <em>' + leadList().length + '</em></a><span class="dd-sp"></span>' + sortSel('clients') + '</div>'
+			+ '<div class="dd-card dd-table cl"><div class="dd-tr head"><span class="dd-td nm">Client</span><span class="dd-td c-biz">Business</span><span class="dd-td c-em">Email</span><span class="dd-td c-ty">Type</span><span class="dd-td c-pr num">Projects</span><span class="dd-td c-ho">Hosting</span><span class="dd-td c-la">Last activity</span></div><div class="dd-tbody">' + R.html + '</div></div>';
+	}
+	// List order: "My order" (drag rows to arrange, saved on the site) or a sort you pick. Remembered per list.
+	var SORTS = {
+		name: ['Name A–Z', function (a, b) { return String(a.name || '').localeCompare(String(b.name || '')); }],
+		price: ['Price high–low', function (a, b) { return num(b.price) - num(a.price); }],
+		owed: ['Owed high–low', function (a, b) { return num(b.balance) - num(a.balance); }],
+		due: ['Due date', function (a, b) { return (a.deadline || '9') < (b.deadline || '9') ? -1 : (a.deadline || '9') > (b.deadline || '9') ? 1 : 0; }],
+		newest: ['Newest first', function (a, b) { return (received(b) || '') < (received(a) || '') ? -1 : 1; }],
+		updated: ['Recently updated', function (a, b) { return (b.updated || '') < (a.updated || '') ? -1 : 1; }],
+		renewal: ['Renewal date', function (a, b) { return (a.renewal || '9') < (b.renewal || '9') ? -1 : 1; }],
+		finished: ['Recently finished', function (a, b) { return byDone(a, b); }]
+	};
+	var SORT_OPTS = { active: ['due', 'price', 'owed', 'name', 'updated'], leads: ['newest', 'price', 'name'], onboarding: ['newest', 'name'], paused: ['updated', 'price', 'owed', 'name'], complete: ['finished', 'price', 'name'], hosting: ['renewal', 'name'], clients: ['name'] };
+	function sortMode(key) { var m = {}; try { m = JSON.parse(ddGet('dreamdesk-sort', '{}')) || {}; } catch (e) { m = {}; } return m[key] || 'mine'; }
+	function sortMine(key) { return sortMode(key) === 'mine' && !(S.psort || {})[key]; }
+	function sortAttr(key) { return sortMine(key) ? ' data-sort="' + key + '"' : ''; }
+	function lsorted(key, list) { var m = sortMode(key); if ((S.psort || {})[key]) { return psort(key, list); } return m !== 'mine' && SORTS[m] ? list.slice().sort(SORTS[m][1]) : inOrder(key, list); }
+	function sortSel(key) {
+		var m = sortMode(key);
+		return '<label class="dd-sort" title="Order">' + lu('arrow-up-down', 14) + '<select data-lsort="' + key + '" aria-label="Order"><option value="mine"' + (m === 'mine' ? ' selected' : '') + '>My order (drag)</option>'
+			+ (SORT_OPTS[key] || []).map(function (k) { return '<option value="' + k + '"' + (m === k ? ' selected' : '') + '>' + SORTS[k][0] + '</option>'; }).join('') + '</select></label>';
+	}
+	function setSort(key, v) { var m = {}; try { m = JSON.parse(ddGet('dreamdesk-sort', '{}')) || {}; } catch (e) { m = {}; } m[key] = v; ddSet('dreamdesk-sort', JSON.stringify(m)); if (S.psort) { delete S.psort[key]; } }
+
 	/* ---------- shell ---------- */
 	// Phone / app only: a sticky tab bar at the bottom (hidden on desktop by CSS).
 	function tabBar(r) {
@@ -757,10 +954,13 @@
 			t = ['Client', kw[0], kw.slice(1).join(' ')];
 			body = personView(r.id);
 		} else {
-			body = r.view === 'personal' ? (r.arg === 'spending' ? personalView(r) + '<h2 class="dwdc-sech">Money in &amp; out (logged by hand)</h2>' + personalView({ view: 'personal', arg: 'finances' }) : r.arg === 'bills' ? personalView(r) + '<h2 class="dwdc-sech">Subscriptions</h2>' + personalView({ view: 'personal', arg: 'subs' }) : personalView(r)) : ({ home: home, clients: clientsView, projects: projectsView, leads: leadsList, onboarding: onboardView, todos: todosBoth, connections: connectionsView, hosting: hostingView, money: moneyView, reviews: reviewsView, archive: archiveView, search: searchView }[r.view] || home)();
+			body = r.view === 'personal' ? (r.arg === 'spending' ? personalView(r) + '<h2 class="dwdc-sech">Money in &amp; out (logged by hand)</h2>' + personalView({ view: 'personal', arg: 'finances' }) : r.arg === 'bills' ? personalView(r) + '<h2 class="dwdc-sech">Subscriptions</h2>' + personalView({ view: 'personal', arg: 'subs' }) : personalView(r)) : ({ home: ddHome, clients: ddClients, projects: projectsView, leads: leadsList, onboarding: onboardView, todos: todosBoth, connections: connectionsView, hosting: hostingView, money: moneyView, reviews: reviewsView, archive: archiveView, search: searchView }[r.view] || home)();
 		}
 		app.setAttribute('data-view', r.view);
-		app.innerHTML = sidebar(r) + '<div class="dwdc-shade-m" data-menu></div><main class="dwdc-main">' + quoteBar() + appBanner() + top(r, t) + '<div class="dwdc-screen' + (anim ? ' in' : '') + '">' + body + '</div></main>' + tabBar(r) + modal();
+		app.classList.add('dd');
+		app.classList.toggle('dd-rail', ddGet('dreamdesk-sidebar', 'expanded') === 'rail');
+		if (S.prev !== r.view + r.arg) { document.body.classList.remove('dd-menu-open'); S.meOpen = false; }
+		app.innerHTML = ddSide(r) + '<div class="dd-shade" data-ddmenu></div><div class="dd-col">' + ddTop(r, t) + '<main class="dwdc-main dd-main"><div class="dwdc-screen' + (anim ? ' in' : '') + '">' + appBanner() + ddHead(r, t) + body + '</div></main></div>' + modal();
 		S.prev = r.view + r.arg;
 		syncWpMenu(r);
 		fitProjects();
@@ -1526,23 +1726,23 @@
 		var yr = S.year || '', years = {};
 		if (f === 'complete') { all.filter(function (c) { return c.list === 'complete'; }).forEach(function (c) { var y = (doneDate(c) || '').slice(0, 4); years[y || 'none'] = (years[y || 'none'] || 0) + 1; }); }
 		var rows = all.filter(function (c) { return f === 'all' || c.list === f || (f === 'paused' && (c.list === 'hold' || c.list === 'limbo')); }).filter(function (c) { if (f !== 'complete' || !yr) { return true; } var y = (doneDate(c) || '').slice(0, 4); return yr === 'none' ? !y : y === yr; }).sort(function (a, b) { return order.indexOf(a.list) - order.indexOf(b.list) || (a.list === 'complete' ? byDone(a, b) : (a.deadline || '9') < (b.deadline || '9') ? -1 : 1); });
-		if (f === 'active') { rows = psort('active', rows); }
-		var cap = S.more['p' + f] || S.q ? rows.length : 50;
+		rows = lsorted(f, rows);
+		var cap = S.more['p' + f] || S.q || sortMine(f) ? rows.length : 50;
 		var empties = { paused: 'Nothing paused. Projects on hold or in limbo (waiting on the client) show here.', active: 'No active projects right now.', limbo: 'Nothing in limbo. Clients you haven’t heard back from in a while go here.', hold: 'No projects on hold. Paused or waiting projects go here.', complete: 'No completed projects yet.', all: 'No projects match.' };
 		var ylist = Object.keys(years).filter(function (y) { return y !== 'none'; }).sort().reverse();
 		var yearBar = f === 'complete' ? '<div class="dwdc-years"><span>Finished in</span><select class="dwdc-yearsel" data-year>'
 			+ '<option value="">All years (' + all.filter(function (c) { return c.list === 'complete'; }).length + ')</option>'
 			+ ylist.map(function (y) { return '<option value="' + y + '"' + (yr === y ? ' selected' : '') + '>' + y + ' (' + years[y] + ')</option>'; }).join('')
 			+ (years.none ? '<option value="none"' + (yr === 'none' ? ' selected' : '') + '>No date yet (' + years.none + ')</option>' : '') + '</select></div>' : '';
-		return (yearBar ? '<div class="dwdc-chips">' + yearBar + '</div>' : '')
+		return '<div class="dwdc-chips dd-listbar">' + yearBar + '<span class="dd-sp"></span>' + sortSel(f) + '</div>'
 			+ '<div class="dwdc-card dwdc-tbl">' + (rows.length ? '<div class="dwdc-grid g-projects head"><span>Project</span><span>Client</span><span>' + (f === 'complete' ? 'Total' : phead('active', 'Price')) + '</span><span>Owed</span><span>' + (f === 'complete' ? 'Finished' : 'Due') + '</span><span>Status</span><span>Next step</span></div>'
-				+ rows.slice(0, cap).map(function (c) {
+				+ '<div class="dd-rows"' + sortAttr(f) + '>' + rows.slice(0, cap).map(function (c) {
 					var k = clientOf(c), ow = num(c.balance), done = c.list === 'complete', dd = done ? doneDate(c) : c.deadline, late = !done && c.deadline && c.deadline < DWDC.today, amt = done ? lifetime(c) : num(c.price);
-					return '<div class="dwdc-grid g-projects row" data-go="client/' + c.id + '"><span class="dwdc-pn">' + dot(c) + '<span><b class="dwdc-pname">' + esc(c.name) + '</b><span class="dwdc-subl">' + siteLine(c) + (c.markup ? '<a class="dwdc-mkpill" href="' + esc(url(c.markup)) + '" target="_blank" rel="noopener">Markup</a>' : '') + '</span></span></span>'
+					return '<div class="dwdc-grid g-projects row" data-go="client/' + c.id + '" data-sid="' + c.id + '"><span class="dwdc-pn">' + dot(c) + '<span><b class="dwdc-pname">' + esc(c.name) + '</b><span class="dwdc-subl">' + siteLine(c) + (c.markup ? '<a class="dwdc-mkpill" href="' + esc(url(c.markup)) + '" target="_blank" rel="noopener">Markup</a>' : '') + '</span></span></span>'
 						+ '<span class="dwdc-nm"><span>' + (k ? '<a class="dwdc-clink" href="#cl/' + k.id + '">' + esc(k.name) + '</a>' : '<b>' + esc(c.person || '—') + '</b>') + '<small>' + esc((k && k.email) || c.email || 'No email on file') + '</small></span></span>'
 						+ '<span class="b">' + (amt ? money(amt) : '—') + '</span><span class="b ' + (ow ? 'deep' : 'sec') + '">' + (ow ? money(ow) : 'Paid') + '</span>'
 						+ '<span class="' + (late ? 'deep b' : 'b') + '">' + (dd ? fmt(dd, done) : '—') + '</span><span>' + statusSelect(c) + '</span><span class="sec ell">' + esc(c.next || '—') + '</span></div>';
-				}).join('') : emptyRow(S.q ? 'No matches.' : empties[f])) + moreFoot('p' + f, cap, rows.length) + '</div>';
+				}).join('') + '</div>' : emptyRow(S.q ? 'No matches.' : empties[f])) + moreFoot('p' + f, cap, rows.length) + '</div>';
 	}
 
 	/* ---------- Leads (website forms other than onboarding, plus leads added by hand) ---------- */
@@ -1555,12 +1755,12 @@
 	function onboardList() { return S.contacts.filter(function (c) { return !!c.onboarded && c.list !== 'archive'; }).sort(function (a, b) { return received(a) < received(b) ? 1 : -1; }); }
 	var LSTAGES = [['new', 'New'], ['contacted', 'Contacted'], ['active', 'Won → Active'], ['lost', 'Lost']];
 	function leadsList() {
-		var rows = psort('leads', leadList().filter(match));
-		return '<div class="dwdc-ltop"><p>People you’re talking to who haven’t hired you yet. When one signs up, click <b>Start project</b> and they become a client with an active project.</p><button type="button" class="dwdc-btn" data-act="lead">' + ic('plus', 15) + 'Add lead</button></div>'
+		var rows = lsorted('leads', leadList().filter(match));
+		return '<div class="dwdc-ltop"><p>People you’re talking to who haven’t hired you yet. When one signs up, click <b>Start project</b> and they become a client with an active project.</p>' + sortSel('leads') + '<button type="button" class="dwdc-btn" data-act="lead">' + ic('plus', 15) + 'Add lead</button></div>'
 			+ '<div class="dwdc-card dwdc-tbl"><div class="dwdc-grid g-leads2 head"><span>Name</span><span>Contact</span><span>Source</span><span>' + phead('leads', 'Price') + '</span><span>Stage</span><span>Received</span><span>Follow up</span><span></span></div>'
-			+ (rows.length ? rows.map(function (c) {
+			+ (rows.length ? '<div class="dd-rows"' + sortAttr('leads') + '>' + rows.map(function (c) {
 				var st = c.stage && c.stage !== 'onboarding' ? c.stage : 'new', fu = c.followup;
-				return '<div class="dwdc-grid g-leads2 row" data-go="client/' + c.id + '"><span><b>' + esc(clientName(c) || c.name) + '</b>' + (c.company || (clientName(c) && clientName(c) !== c.name) ? '<small>' + esc(c.company || c.name) + '</small>' : '') + '</span>'
+				return '<div class="dwdc-grid g-leads2 row" data-go="client/' + c.id + '" data-sid="' + c.id + '"><span><b>' + esc(clientName(c) || c.name) + '</b>' + (c.company || (clientName(c) && clientName(c) !== c.name) ? '<small>' + esc(c.company || c.name) + '</small>' : '') + '</span>'
 					+ '<span class="dwdc-nm"><span><b class="nm2">' + esc(c.email || '—') + '</b><small>' + esc(c.phone || '') + '</small></span></span>'
 					+ '<span class="sec ell">' + esc(c.last_entry || String(c.source || 'Added by hand').replace(/^Website form: /, '')) + '</span>'
 					+ '<span><input class="dwdc-lprice" type="text" inputmode="decimal" data-lprice="' + c.id + '" value="' + (num(c.price) ? money(c.price) : '') + '" placeholder="Add $" title="Estimated price"></span>'
@@ -1568,18 +1768,18 @@
 					+ '<span class="mut">' + ago(received(c)) + '</span>'
 					+ '<span>' + (fu && fu >= DWDC.today ? '<span class="dwdc-fu">' + ic('clock', 13) + fmt(fu) + '</span>' : '<button class="dwdc-btn3" data-followup="' + c.id + '">' + ic('clock', 13) + ' Follow up</button>') + '</span>'
 					+ '<span class="r dwdc-lacts"><button class="dwdc-btn3 dwdc-lstart" data-lstart="' + c.id + '">Start project</button><button class="dwdc-del show" data-arch="' + c.id + '" title="Archive">' + ic('archive', 15) + '</button><button class="dwdc-del show red" data-purge="' + c.id + '" title="Delete lead for good">' + ic('x', 15) + '</button></span></div>';
-			}).join('') : emptyRow('No leads yet. Click “Add lead” to add someone you’re talking to.')) + '</div>';
+			}).join('') + '</div>' : emptyRow('No leads yet. Click “Add lead” to add someone you’re talking to.')) + '</div>';
 	}
 	/* ---------- Onboarding (everyone who sent the onboarding form) ---------- */
 	function onboardView() {
-		var rows = onboardList().filter(match);
-		return '<div class="dwdc-card dwdc-tbl"><div class="dwdc-grid g-onb head"><span>Client</span><span>Project</span><span>Email</span><span>Status</span><span>Received</span><span></span></div>'
-			+ (rows.length ? rows.map(function (c) {
-				return '<div class="dwdc-grid g-onb row" data-go="client/' + c.id + '"><span><b>' + esc(clientName(c) || c.person || c.name) + '</b>' + (c.phone ? '<small>' + esc(c.phone) + '</small>' : '') + '</span>'
+		var rows = lsorted('onboarding', onboardList().filter(match));
+		return '<div class="dwdc-chips dd-listbar"><span class="dd-sp"></span>' + sortSel('onboarding') + '</div><div class="dwdc-card dwdc-tbl"><div class="dwdc-grid g-onb head"><span>Client</span><span>Project</span><span>Email</span><span>Status</span><span>Received</span><span></span></div>'
+			+ (rows.length ? '<div class="dd-rows"' + sortAttr('onboarding') + '>' + rows.map(function (c) {
+				return '<div class="dwdc-grid g-onb row" data-go="client/' + c.id + '" data-sid="' + c.id + '"><span><b>' + esc(clientName(c) || c.person || c.name) + '</b>' + (c.phone ? '<small>' + esc(c.phone) + '</small>' : '') + '</span>'
 					+ '<span><b class="dwdc-pname">' + esc(c.name) + '</b>' + (site(c) ? siteLine(c) : '') + '</span><span class="sec ell">' + esc(c.email || '—') + '</span>'
 					+ '<span>' + (c.list === 'leads' ? pill('Onboarding', 'deep') : statusPill(c)) + '</span><span class="mut">' + ago(received(c)) + '</span>'
 					+ '<span class="r"><a class="dwdc-btn3" href="#client/' + c.id + '">View answers</a></span></div>';
-			}).join('') : emptyRow('No onboarding forms yet. Use + Project → Add new client to send one.')) + '</div>';
+			}).join('') + '</div>' : emptyRow('No onboarding forms yet. Use + Project → Add new client to send one.')) + '</div>';
 	}
 
 	/* ---------- Form Entries ---------- */
@@ -1735,19 +1935,19 @@
 		var next = rows.filter(function (c) { return c.renewal && c.renewal >= DWDC.today; })[0];
 		var soon = rows.filter(function (c) { return c.renewal && daysTo(c.renewal) >= 0 && daysTo(c.renewal) <= 30; }).length;
 		var auto = rows.filter(subActive).length;
-		var list = rows.filter(match), cap = S.more.hosting || S.q ? list.length : 15;
+		var list = lsorted('hosting', rows.filter(match)), cap = S.more.hosting || S.q || sortMine('hosting') ? list.length : 15;
 		return '<div class="dwdc-minis">' + mini('teal', 'Hosting clients', rows.length) + mini('navy', 'Annual recurring', money(annual)) + mini('green', 'On auto-renew', auto + ' of ' + rows.length) + mini('orange', 'Renewing in 30 days', soon) + '</div>'
-			+ '<div class="dwdc-card dwdc-tbl"><div class="dwdc-grid g-host head"><span>Website</span><span>Client</span><span>Subscription</span><span>Per year</span><span>Renews</span><span>Status</span></div>'
-			+ (list.length ? list.slice(0, cap).map(function (c) {
+			+ '<div class="dwdc-chips dd-listbar"><span class="dd-sp"></span>' + sortSel('hosting') + '</div><div class="dwdc-card dwdc-tbl"><div class="dwdc-grid g-host head"><span>Website</span><span>Client</span><span>Subscription</span><span>Per year</span><span>Renews</span><span>Status</span></div>'
+			+ (list.length ? '<div class="dd-rows"' + sortAttr('hosting') + '>' + list.slice(0, cap).map(function (c) {
 				var on = subActive(c), n = c.renewal ? daysTo(c.renewal) : null;
 				var st = on ? ['Auto-renew', 'green'] : n === null ? ['No date', 'gray'] : n < 0 ? ['Past due', 'red'] : n <= 30 ? ['Renewing soon', 'orange'] : ['Not on auto-pay', 'amber'];
 				var when = on && c.sub.next ? c.sub.next : c.renewal;
-				return '<div class="dwdc-grid g-host row" data-go="host/' + c.id + '"><span class="dwdc-nm"><span><b>' + esc(c.name) + '</b><small>' + esc(site(c) || '') + '</small></span></span>'
+				return '<div class="dwdc-grid g-host row" data-go="host/' + c.id + '" data-sid="' + c.id + '"><span class="dwdc-nm"><span><b>' + esc(c.name) + '</b><small>' + esc(site(c) || '') + '</small></span></span>'
 					+ clientCell(c)
 					+ '<span>' + (on ? '<b class="green">Active</b>' + (c.sub.method ? '<small class="dwdc-sm">&nbsp;· ' + esc(c.sub.method) + '</small>' : '') : (c.sub ? '<span class="mut">' + esc(c.sub.status) + '</span>' : '<span class="mut">None</span>')) + '</span>'
 					+ '<span class="b">' + money(on && num(c.sub.amount) ? c.sub.amount : c.hosting) + '</span>'
 					+ '<span class="b ' + (on ? '' : n === null ? 'mut' : n < 0 ? 'red' : n <= 30 ? 'orange' : '') + '">' + (when ? fmt(when, true) : '—') + '</span><span>' + pill(st[0], st[1]) + '</span></div>';
-			}).join('') : emptyRow('No hosting clients match.')) + moreFoot('hosting', cap, list.length) + '</div>';
+			}).join('') + '</div>' : emptyRow('No hosting clients match.')) + moreFoot('hosting', cap, list.length) + '</div>';
 	}
 
 	/* ---------- completed ---------- */
@@ -2544,6 +2744,7 @@
 		function pt(e) { var t = e.touches ? e.touches[0] : e; return { x: t.clientX, y: t.clientY }; }
 		function begin(e) {
 			var it = e.target.closest('[data-sort] [data-sid]');
+			if (it && e.target.closest('select, input, textarea, button, label')) { return; }
 			if (!it || (e.button !== undefined && e.button !== 0)) { return; }
 			var p = pt(e);
 			D = { it: it, list: it.closest('[data-sort]'), x: p.x, y: p.y, on: false, touch: !!e.touches };
@@ -2570,14 +2771,14 @@
 			if (!D) { return; }
 			clearTimeout(D.timer);
 			if (D.on) {
-				var key = D.list.getAttribute('data-sort'), ids = [].map.call(D.list.querySelectorAll('[data-sid]'), function (x) { return +x.getAttribute('data-sid'); });
+				var key = D.list.getAttribute('data-sort'), ids = [].map.call(app.querySelectorAll('[data-sort="' + key + '"] [data-sid]'), function (x) { return +x.getAttribute('data-sid'); });
 				D.it.classList.remove('dwdc-dragging'); D.list.classList.remove('dwdc-sorting');
-				S.order = S.order || {}; S.order[key] = ids; eatClick = true; setTimeout(function () { eatClick = false; }, 400);
+				S.order = S.order || {}; ids = ids.concat((S.order[key] || []).filter(function (x) { return ids.indexOf(x) < 0; })); S.order[key] = ids; eatClick = true; setTimeout(function () { eatClick = false; }, 400);
 				api('/home-order', 'POST', { key: key, ids: ids }).then(function () { toast('Order saved'); }).catch(fail);
 			}
 			D = null;
 		}
-		app.addEventListener('mousedown', function (e) { if (e.target.closest('[data-sort] [data-sid]')) { e.preventDefault(); begin(e); } });
+		app.addEventListener('mousedown', function (e) { if (e.target.closest('[data-sort] [data-sid]') && !e.target.closest('select, input, textarea, button, label')) { e.preventDefault(); begin(e); } });
 		document.addEventListener('mousemove', move);
 		document.addEventListener('mouseup', end);
 		app.addEventListener('touchstart', begin, { passive: true });
@@ -2611,7 +2812,14 @@
 			api('/contact/' + mid, 'POST', { paymark: mv }).then(function (x) { upsert(x); S.full[mid] = x; render(); }).catch(fail);
 			return;
 		}
-		if (t.closest('[data-menu]')) { document.body.classList.toggle('dwdc-menu-open'); return; }
+		if (t.closest('[data-menu]') || t.closest('[data-ddmenu]')) { document.body.classList.toggle('dd-menu-open'); return; }
+		if (t.closest('[data-ddcollapse]')) { ddSet('dreamdesk-sidebar', ddGet('dreamdesk-sidebar', 'expanded') === 'rail' ? 'expanded' : 'rail'); render(); return; }
+		if ((el = t.closest('[data-ddgrp]'))) { var gid = el.getAttribute('data-ddgrp'), gs = []; try { gs = JSON.parse(ddGet('dreamdesk-nav-collapsed', '[]')) || []; } catch (er) { gs = []; } var gi = gs.indexOf(gid); if (gi > -1) { gs.splice(gi, 1); } else { gs.push(gid); } ddSet('dreamdesk-nav-collapsed', JSON.stringify(gs)); el.parentNode.classList.toggle('closed', gi < 0); return; }
+		if (t.closest('[data-ddtheme]')) { var th = ddTheme() === 'dark' ? 'light' : 'dark'; ddSet('dreamdesk-theme', th); document.documentElement.setAttribute('data-theme', th); render(); return; }
+		if (t.closest('[data-ddme]')) { S.meOpen = !S.meOpen; var me = app.querySelector('.dd-me .dd-menu'); if (me) { me.classList.toggle('open', S.meOpen); } return; }
+		if (S.meOpen && !t.closest('.dd-me')) { S.meOpen = false; var me2 = app.querySelector('.dd-me .dd-menu'); if (me2) { me2.classList.remove('open'); } }
+		if (t.closest('[data-schedadd]')) { S.schedAdd = true; render(); var si2 = app.querySelector('.dd-tl-add input[name=text]'); if (si2) { si2.focus(); } return; }
+		if (t.closest('[data-cmore]')) { S.cpage = (S.cpage || 1) + 1; var tb = app.querySelector('.dd-tbody'); if (tb) { tb.innerHTML = ddClientRows().html; } return; }
 		if (t.closest('[data-newmenu]')) { S.newOpen = !S.newOpen; var mm = app.querySelector('.dwdc-ph-menu'); if (mm) { mm.classList.toggle('open', S.newOpen); mm.querySelector('[data-newmenu]').setAttribute('aria-expanded', S.newOpen); } return; }
 		if (S.newOpen && !t.closest('.dwdc-ph-menu')) { S.newOpen = false; var m2 = app.querySelector('.dwdc-ph-menu'); if (m2) { m2.classList.remove('open'); } }
 		if (t.closest('.dwdc-ph-menu [role=menuitem]')) { S.newOpen = false; }
@@ -2990,6 +3198,7 @@
 	app.addEventListener('mousedown', function (e) { var t = e.target.closest && e.target.closest('.dwdc-ssearch'); if (t) { var i = t.querySelector('input'); if (i) { i.removeAttribute('readonly'); } } });
 	app.addEventListener('input', function (e) {
 		var t = e.target;
+		if (t.hasAttribute('data-cq')) { S.cq = t.value; S.cpage = 1; var tb = app.querySelector('.dd-tbody'); if (tb) { tb.innerHTML = ddClientRows().html; } return; }
 		if (t.closest('.dwdc-ssearch')) {
 			// Only react to real typing (browser autofill fills unfocused fields).
 			if (document.activeElement !== t) { t.value = ''; return; }
@@ -3008,6 +3217,7 @@
 	document.addEventListener('input', function (e) { if (e.target && e.target.hasAttribute && e.target.hasAttribute('data-ptdraft') && S.modal) { S.modal.draft = e.target.value; e.target.style.height = ''; e.target.style.height = Math.min(140, e.target.scrollHeight) + 'px'; } });
 	document.addEventListener('keydown', function (e) { if (e.target && e.target.hasAttribute && e.target.hasAttribute('data-ptdraft') && e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); if (S.modal) { S.modal.draft = e.target.value; } ptSend(); } });
 	app.addEventListener('change', function (e) {
+		if (e.target.hasAttribute && e.target.hasAttribute('data-lsort')) { setSort(e.target.getAttribute('data-lsort'), e.target.value); render(); return; }
 		var t = e.target;
 		if (t.hasAttribute('data-revpick')) { S.revSel = S.revSel || {}; S.revSel[t.getAttribute('data-revpick')] = t.checked; render(); return; }
 		if (t.hasAttribute('data-revall')) { S.revSel = S.revSel || {}; app.querySelectorAll('[data-revpick]').forEach(function (x) { S.revSel[x.getAttribute('data-revpick')] = t.checked; }); render(); return; }
