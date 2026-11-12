@@ -436,3 +436,15 @@ i.dd-flag { width: 10px; height: 10px; cursor: inherit; }
 .dwdc-askfab:hover { background: var(--accent-hover) !important; }
 /* Connections: cards only as tall as their content */
 .dd .dwdc-conns { align-items: start; }
+/* Home on phones: Zoom box last; stats show bank + owed, the rest behind "Show more" */
+.dd-statsmore { display: none; }
+@media (max-width: 767px) {
+	.dd-home .dd-zoom { order: 99; }
+	.dd-stats > a.more { display: none; }
+	.dd-stats.open > a.more { display: flex; }
+	.dd-statsmore { display: flex; align-items: center; justify-content: center; gap: 6px; order: 50; width: 100%; height: 40px; border: 0; border-top: 1px solid var(--border); background: none; color: var(--accent-text); font: 500 13px var(--font); cursor: pointer; }
+	.dd-stats { display: flex; flex-direction: column; }
+	.dd-stats > a { order: 0; }
+	.dd-stats.open .dd-statsmore .lu { transform: rotate(180deg); }
+}
+@media (max-width: 767px) { .dd-home .dd-home-r > .dd-card.dd-zoom { order: 99; } }

@@ -716,7 +716,8 @@
 				return '<a class="dd-ap-r" href="#client/' + c.id + '" data-sid="' + c.id + '">' + (sortMine('active') ? '<span class="dd-grip" aria-hidden="true">⋮⋮</span>' : '') + flagDot(c) + '<span class="dd-av">' + esc(ddInitials(k ? k.name : (c.person || c.name))) + '</span><span class="dd-act-n"><b>' + esc(c.name) + '</b><small>' + esc(k ? k.name : (c.person || '—')) + (c.next ? ' · ' + esc(c.next) : '') + '</small></span>'
 					+ '<span class="dd-ap-m"><b class="' + (ow ? 'owe' : '') + '">' + (ow ? money(ow) : 'Paid') + '</b><small class="' + (late ? 'late' : '') + '">' + (c.deadline ? 'Due ' + fmt(c.deadline) : 'No due date') + '</small></span></a>';
 			}).join('') : '<p class="dd-empty-l">No active projects right now.</p>') + '</div></section>';
-		var stats = '<section class="dd-card dd-stats">'
+		var statsOpen = ddGet('dreamdesk-stats-open', '') === '1';
+		var stats = '<section class="dd-card dd-stats' + (statsOpen ? ' open' : '') + '">'
 			+ (function () {
 				// Cash only: checking + savings (credit cards and loans are left out). Available balance, as Plaid last reported it.
 				var BK = bData(), BA = BK && BK.balances && BK.balances.accounts ? BK.balances.accounts.filter(function (x) { return /checking|savings|money market|cd|depository/i.test(x.type || ''); }) : [];
@@ -727,12 +728,13 @@
 					+ (BA.length ? '<button type="button" class="dd-ibtn sm" data-bankrefresh aria-label="Refresh balance" title="Get the latest balance">' + lu('repeat', 14) + '</button>' : '') + '</a>';
 			})()
 			+ '<a href="#money" data-owed><span>Total owed</span><b>' + money(owed(owingList())) + '</b></a>'
-			+ '<a href="#projects/active"><span>Active projects</span><b>' + by('active').length + '</b></a>'
-			+ '<a href="#hosting"><span>Hosting clients</span><b>' + hosting().length + '</b></a>'
+			+ '<button type="button" class="dd-statsmore" data-statsmore aria-expanded="' + statsOpen + '"><span>' + (statsOpen ? 'Show less' : 'Show more') + '</span>' + lu('chevron-down', 14) + '</button>'
+			+ '<a class="more" href="#projects/active"><span>Active projects</span><b>' + by('active').length + '</b></a>'
+			+ '<a class="more" href="#hosting"><span>Hosting clients</span><b>' + hosting().length + '</b></a>'
 			+ (function () {
 				var A = S.ads || {}, G = A.google, K = A.connects || {}, mn = new Date(DWDC.today + 'T12:00:00').toLocaleDateString('en-US', { month: 'long' });
-				return '<a href="#money" data-connmodal><span>Connects spent<small>' + mn + ' · last month ' + money(K.lastmonth || 0) + '</small></span><b>' + money(K.month || 0) + '</b></a>'
-					+ '<a href="#money" data-adsmodal><span>Google Ads spent<small>' + (G ? mn + ' · ' + money(G.week.cost) + ' this week' : 'Not connected') + '</small></span><b>' + (G ? money(G.month.cost) : '—') + '</b></a>';
+				return '<a class="more" href="#money" data-connmodal><span>Connects spent<small>' + mn + ' · last month ' + money(K.lastmonth || 0) + '</small></span><b>' + money(K.month || 0) + '</b></a>'
+					+ '<a class="more" href="#money" data-adsmodal><span>Google Ads spent<small>' + (G ? mn + ' · ' + money(G.week.cost) + ' this week' : 'Not connected') + '</small></span><b>' + (G ? money(G.month.cost) : '—') + '</b></a>';
 			})() + '</section>';
 		var rows = overdue.sort(function (a, b) { return a.t.due < b.t.due ? -1 : 1; }).concat(today), seenP = {};
 		rows = rows.filter(function (x) { if (!x.w || !x.t.contact) { return true; } if (seenP[x.t.contact]) { seenP[x.t.contact].n++; return false; } seenP[x.t.contact] = x; x.n = 1; return true; }).slice(0, 8);
@@ -3763,6 +3765,7 @@
 		if (t.closest('[data-openconn]')) { e.preventDefault(); S.pConnOpen = true; if (location.hash !== '#personal') { location.hash = 'personal'; } else { render(); } setTimeout(function () { var c = document.querySelector('.dwdc-pconn'); if (c) { c.scrollIntoView({ behavior: 'smooth' }); } }, 300); return; }
 		if ((el = t.closest('[data-bmonth]'))) { if (el.getAttribute('data-bmonth')) { S.bMonth = el.getAttribute('data-bmonth'); S.bCat = ''; render(); } return; }
 		if ((el = t.closest('[data-bcat]'))) { var bc = el.getAttribute('data-bcat'); S.bCat = S.bCat === bc ? '' : bc; render(); return; }
+		if ((el = t.closest('[data-statsmore]'))) { var sc2 = el.closest('.dd-stats'), so = !sc2.classList.contains('open'); sc2.classList.toggle('open', so); el.setAttribute('aria-expanded', so); el.querySelector('span').textContent = so ? 'Show less' : 'Show more'; ddSet('dreamdesk-stats-open', so ? '1' : ''); return; }
 		if ((el = t.closest('[data-billadd]'))) { var bsc = el.getAttribute('data-billadd'); S.modal = { type: 'billadd', scope: bsc || '', vals: {} }; render(); focusIn('.dd-billf [name=name]'); return; }
 		if ((el = t.closest('[data-billedit]'))) { var be = (pData().bills || []).find(function (x) { return x.id === el.getAttribute('data-billedit'); }); S.billMenu = 0; if (be) { S.modal = { type: 'billadd', bill: be, vals: {} }; render(); } return; }
 		if ((el = t.closest('[data-billmove]'))) { var bmv = (pData().bills || []).find(function (x) { return x.id === el.getAttribute('data-billmove'); }); S.billMenu = 0; if (bmv) { var nb = JSON.parse(JSON.stringify(bmv)); nb.scope = bmv.scope === 'business' ? 'personal' : 'business'; pSave('bills', nb, 'Moved to ' + (nb.scope === 'business' ? 'Business' : 'Personal')); } return; }
