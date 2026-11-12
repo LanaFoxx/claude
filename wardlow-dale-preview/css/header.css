@@ -1,0 +1,46 @@
+/* WD 2026 – Header */
+#wd-2026 .wd-util{min-height:40px}
+#wd-2026 .wd-util .elementor-widget-text-editor{font-size:13px}
+#wd-2026 .wd-util .wd-chip{margin-left:6px}
+#wd-2026 .wd-hdr{position:sticky;top:0;z-index:50;height:88px;box-shadow:0 1px 0 #DDD6C8,0 4px 16px rgba(11,31,26,.06)}
+body.admin-bar #wd-2026 .wd-hdr{top:32px}
+#wd-2026 .wd-logo{flex:0 0 auto}
+#wd-2026 .wd-logo-full img{height:48px !important;width:auto !important;max-width:none}
+#wd-2026 .wd-logo-compact{display:none}
+#wd-2026 .wd-logo-compact img{height:28px !important;width:auto !important;max-width:none}
+#wd-2026 .wd-logo a{display:flex}
+#wd-2026 .wd-nav{flex:0 1 auto}
+#wd-2026 .wd-nav .elementor-button{height:44px;padding:0}
+#wd-2026 .wd-nav .elementor-button-icon svg{width:16px;height:16px}
+#wd-2026 .wd-hdr-right{flex:0 0 auto}
+#wd-2026 .wd-hdr-phone .elementor-button{height:44px;font-variant-numeric:tabular-nums}
+#wd-2026 .wd-hdr-phone .elementor-button-icon svg{width:20px;height:20px;color:#015F4A}
+#wd-2026 .wd-hdr-cta .elementor-button{height:48px;padding:0 24px;font-size:15px}
+#wd-2026 .wd-icon-btn{display:none}
+#wd-2026 .wd-icon-btn .elementor-button{width:44px;height:44px;padding:0;color:#015F4A}
+#wd-2026 .wd-icon-menu .elementor-button{color:#0B1F1A}
+#wd-2026 .wd-icon-btn .elementor-button-icon svg{width:24px;height:24px}
+#wd-2026 .wd-icon-call .elementor-button-icon svg{width:22px;height:22px}
+
+/* The header template sits inside a Template widget; let the bar stick for the whole page. */
+.wd-tpl-hdr,.wd-tpl-hdr>.elementor-widget-container,.wd-tpl-hdr .elementor-template,.wd-tpl-hdr .elementor,.wd-tpl-hdr #wd-2026.wd-hdr-root{display:contents !important}
+
+@media (max-width:1180px){
+#wd-2026 .wd-nav,#wd-2026 .wd-hdr-phone{display:none !important}
+#wd-2026 .wd-icon-btn{display:block}
+#wd-2026 .wd-hdr-right{--gap:8px;gap:8px !important}
+}
+@media (max-width:980px){
+#wd-2026 .wd-util,#wd-2026 .wd-hdr{padding-left:40px !important;padding-right:40px !important}
+#wd-2026 .wd-hdr{height:72px;min-height:72px}
+#wd-2026 .wd-logo-full img{height:40px !important}
+}
+@media (max-width:782px){body.admin-bar #wd-2026 .wd-hdr{top:46px}}
+@media (max-width:600px){
+#wd-2026 .wd-util{display:none !important}
+#wd-2026 .wd-hdr{height:64px;min-height:64px;padding:0 8px 0 16px !important}
+#wd-2026 .wd-logo-full{display:none}
+#wd-2026 .wd-logo-compact{display:block}
+#wd-2026 .wd-hdr-cta{display:none}
+#wd-2026 .wd-hdr-right{gap:0 !important}
+}
