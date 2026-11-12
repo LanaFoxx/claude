@@ -2,19 +2,46 @@
 /**
  * Plugin Name: Nick Ponte Coastal Light (preview)
  * Description: "Coastal Light" redesign preview: a homepage template (/home-preview/) and a Town post type (/town-preview/<town>/) with monthly market fields, FAQ and JSON-LD. Preview pages are noindex and use their own header and footer, so live pages are not affected. Deactivate to remove everything from the front end.
- * Version: 1.2.0
+ * Version: 1.4.0
  * Author: Dream Web Digital
  * Requires PHP: 7.4
  */
 
 if (!defined('ABSPATH')) exit;
 
-define('NPC_VER', '1.2.0');
+define('NPC_VER', '1.4.0');
 define('NPC_DIR', plugin_dir_path(__FILE__));
 define('NPC_URL', plugin_dir_url(__FILE__));
 const NPC_HOME_TEMPLATE = 'npc-home';
 const NPC_REVIEW_TEMPLATE = 'npc-review';
 const NPC_GUIDE_TEMPLATE = 'npc-guide';
+const NPC_FEATURED_TEMPLATE = 'npc-featured';
+
+/* ------------------------------------------------------------------ */
+/* Go-live switch                                                      */
+/* ------------------------------------------------------------------ */
+// Off (default): everything is a noindex preview under its own URLs.
+// On: the design takes over the EXISTING pages below, keeping their URLs and Rank Math SEO; the preview URLs 301
+// to them. Turning it off restores the old pages exactly (their Elementor content is never edited).
+// Toggle: Settings > Reading > "Coastal Light design is live", or REST POST /wp/v2/settings {"npc_live": true}.
+const NPC_LIVE_PAGES = ['home' => 2579, 'featured' => 590, 'buyers-guide' => 5725, 'sellers-guide' => 5742];
+const NPC_LIVE_TOWNS = ['rye' => 4300, 'portsmouth' => 4302, 'hampton' => 4459, 'north-hampton' => 4304, 'new-castle' => 4927,
+	'exeter' => 4325, 'stratham' => 4952, 'greenland' => 4706, 'newington' => 4936, 'dover' => 432];
+
+function npc_live() { return (bool) get_option('npc_live', false); }
+
+add_action('init', function () {
+	register_setting('reading', 'npc_live', ['type' => 'boolean', 'default' => false, 'show_in_rest' => true, 'sanitize_callback' => 'rest_sanitize_boolean']);
+});
+add_action('admin_init', function () {
+	add_settings_field('npc_live', 'Coastal Light design is live', function () {
+		echo '<label><input type="checkbox" name="npc_live" value="1" ' . checked(npc_live(), true, false) . '> Show the new design on the real homepage, town, guide and Featured Sales pages</label>';
+		echo '<p class="description">Untick to go back to the old pages instantly. Their content is never changed.</p>';
+	}, 'reading');
+});
+add_action('update_option_npc_live', function () { update_option('npc_flush_rewrite', 1); });
+add_action('add_option_npc_live', function () { update_option('npc_flush_rewrite', 1); });
+add_action('init', function () { if (get_option('npc_flush_rewrite')) { delete_option('npc_flush_rewrite'); flush_rewrite_rules(); } }, 99);
 
 /* ------------------------------------------------------------------ */
 /* Town post type and fields                                          */
@@ -35,6 +62,7 @@ function npc_fields() {
 		'read'          => ["Nick's read", 'textarea', '2–3 sentences of commentary.'],
 		'neighborhoods' => ['Neighborhoods', 'textarea', 'One per line: Name | short note'],
 		'sales'         => ['Recent sales', 'textarea', 'One per line: Street | Town, NH · 4 bd · 3 ba | $1,250,000 | Represented the seller | Closed Sep 2026 | optional image URL'],
+		'body'          => ['Town guide (long text)', 'html', 'Shown below Recent sales: the in-depth guide to the town (neighborhoods, market, schools, things to do). Carried over from the current town page.'],
 		'sample'        => ['Figures are sample data', 'checkbox', 'Shows a "sample figures" note on the page. Untick once real numbers are entered.'],
 		'zillow'        => ['Show "All sales on Zillow" link', 'checkbox', ''],
 	];
@@ -52,7 +80,7 @@ function npc_register() {
 		'menu_position'       => 21,
 		'supports'            => ['title', 'thumbnail', 'page-attributes', 'custom-fields'],
 		'has_archive'         => false,
-		'rewrite'             => ['slug' => 'town-preview', 'with_front' => false],
+		'rewrite'             => ['slug' => npc_live() ? 'nh-towns' : 'town-preview', 'with_front' => false],
 	]);
 	foreach (npc_fields() as $k => $f) {
 		register_post_meta('np_town', "_npc_$k", [
@@ -60,6 +88,7 @@ function npc_register() {
 			'single'        => true,
 			'show_in_rest'  => true,
 			'auth_callback' => function () { return current_user_can('edit_posts'); },
+			'sanitize_callback' => $f[1] === 'html' ? 'wp_kses_post' : null,
 		]);
 	}
 }
@@ -88,7 +117,9 @@ function npc_render_metabox($post) {
 		$v = get_post_meta($post->ID, "_npc_$k", true);
 		$id = "npc_$k";
 		echo '<tr><th scope="row"><label for="' . esc_attr($id) . '">' . esc_html($label) . '</label></th><td>';
-		if ($type === 'textarea') {
+		if ($type === 'html') {
+			wp_editor((string) $v, $id, ['textarea_name' => $id, 'textarea_rows' => 14, 'media_buttons' => false, 'teeny' => true]);
+		} elseif ($type === 'textarea') {
 			echo '<textarea class="large-text" rows="' . (in_array($k, ['sales', 'neighborhoods'], true) ? 6 : 4) . '" id="' . esc_attr($id) . '" name="' . esc_attr($id) . '">' . esc_textarea($v) . '</textarea>';
 		} elseif ($type === 'checkbox') {
 			echo '<label><input type="checkbox" id="' . esc_attr($id) . '" name="' . esc_attr($id) . '" value="1" ' . checked((bool) $v, true, false) . '> Yes</label>';
@@ -113,7 +144,7 @@ add_action('save_post_np_town', function ($id) {
 		}
 		if (!isset($_POST[$name])) continue;
 		$raw = wp_unslash($_POST[$name]);
-		$val = $f[1] === 'textarea' ? sanitize_textarea_field($raw) : ($f[1] === 'number' ? ($raw === '' ? '' : (float) $raw) : sanitize_text_field($raw));
+		$val = $f[1] === 'html' ? wp_kses_post($raw) : ($f[1] === 'textarea' ? sanitize_textarea_field($raw) : ($f[1] === 'number' ? ($raw === '' ? '' : (float) $raw) : sanitize_text_field($raw)));
 		update_post_meta($id, "_npc_$k", $val);
 	}
 });
@@ -172,7 +203,7 @@ function npc_town_data($post) {
 		["How do I find out what my $name home is worth?", "Automated estimates struggle in $name because of the price spread between neighborhoods and the small number of annual sales. Nick prepares a confidential valuation from comparable closed sales, absorption rate and your property's specifics, at no cost."],
 	];
 	return [
-		'id' => $id, 'name' => $name, 'slug' => $post->post_name, 'url' => get_permalink($post),
+		'id' => $id, 'name' => $name, 'slug' => $post->post_name, 'url' => npc_town_url($post),
 		'tag' => npc_meta($id, 'tag'), 'intro' => npc_meta($id, 'intro'), 'updated' => $updated,
 		'median' => $median, 'img' => get_post_thumbnail_id($post),
 		'metrics' => [
@@ -184,6 +215,7 @@ function npc_town_data($post) {
 		],
 		'spark' => $spark, 'read' => npc_meta($id, 'read'),
 		'areas' => npc_lines(npc_meta($id, 'neighborhoods')), 'sales' => npc_lines(npc_meta($id, 'sales'), 3),
+		'body' => npc_meta($id, 'body'),
 		'sample' => (bool) npc_meta($id, 'sample', false), 'zillow' => (bool) npc_meta($id, 'zillow', false),
 		'faqs' => $faqs,
 	];
@@ -203,18 +235,39 @@ function npc_img($id_or_slug, $size, $attrs = []) {
 	return $id ? wp_get_attachment_image($id, $size, false, $attrs) : '';
 }
 
+// The town's public URL: its existing page once live, otherwise the preview.
+function npc_town_url($post) {
+	if (npc_live() && isset(NPC_LIVE_TOWNS[$post->post_name])) return get_permalink(NPC_LIVE_TOWNS[$post->post_name]);
+	return get_permalink($post);
+}
+// The Town post shown on this request: a /town-preview/ page, or (once live) an existing town page.
+function npc_current_town() {
+	if (is_singular('np_town')) return get_queried_object();
+	if (npc_live() && is_page() && ($slug = array_search(get_queried_object_id(), NPC_LIVE_TOWNS, true)) !== false) {
+		$p = get_posts(['post_type' => 'np_town', 'name' => $slug, 'numberposts' => 1, 'post_status' => 'publish']);
+		return $p ? $p[0] : null;
+	}
+	return null;
+}
 function npc_home_url() {
+	if (npc_live()) return home_url('/');
 	$p = get_posts(['post_type' => 'page', 'name' => 'home-preview', 'numberposts' => 1, 'post_status' => 'publish']);
 	return $p ? get_permalink($p[0]) : home_url('/home-preview/');
 }
 // The restyled guide preview if it exists (e.g. /buyers-guide-preview/), otherwise the live guide page.
 function npc_guide_url($slug) {
+	if (npc_live()) return get_permalink(NPC_LIVE_PAGES[$slug]);
 	$p = get_posts(['post_type' => 'page', 'name' => $slug . '-preview', 'numberposts' => 1, 'post_status' => 'publish']);
 	return $p ? get_permalink($p[0]) : home_url('/' . $slug . '/');
 }
+function npc_featured_url() {
+	if (npc_live()) return get_permalink(NPC_LIVE_PAGES['featured']);
+	$p = get_posts(['post_type' => 'page', 'name' => 'featured-sales-preview', 'numberposts' => 1, 'post_status' => 'publish']);
+	return $p ? get_permalink($p[0]) : home_url('/featured-properties/');
+}
 function npc_default_town_url() {
 	$t = npc_towns();
-	return $t ? get_permalink($t[0]) : home_url('/town-preview/rye/');
+	return $t ? npc_town_url($t[0]) : home_url('/town-preview/rye/');
 }
 
 /* ------------------------------------------------------------------ */
@@ -225,14 +278,23 @@ add_filter('theme_page_templates', function ($templates) {
 	$templates[NPC_HOME_TEMPLATE] = 'Coastal Light – Home (preview)';
 	$templates[NPC_REVIEW_TEMPLATE] = 'Coastal Light – Review hub';
 	$templates[NPC_GUIDE_TEMPLATE] = 'Coastal Light – Buyer/Seller Guide (preview)';
+	$templates[NPC_FEATURED_TEMPLATE] = 'Coastal Light – Featured Sales (preview)';
 	return $templates;
 });
 
 function npc_is_preview() {
 	if (is_singular('np_town')) return 'town';
+	if (npc_live() && is_page()) {
+		$id = get_queried_object_id();
+		if ($id === NPC_LIVE_PAGES['home'] || is_front_page()) return 'home';
+		if ($id === NPC_LIVE_PAGES['featured']) return 'featured';
+		if ($id === NPC_LIVE_PAGES['buyers-guide'] || $id === NPC_LIVE_PAGES['sellers-guide']) return 'guide';
+		if (in_array($id, NPC_LIVE_TOWNS, true) && npc_current_town()) return 'town';
+	}
 	if (is_page() && get_page_template_slug(get_queried_object_id()) === NPC_HOME_TEMPLATE) return 'home';
 	if (is_page() && get_page_template_slug(get_queried_object_id()) === NPC_REVIEW_TEMPLATE) return 'review';
 	if (is_page() && get_page_template_slug(get_queried_object_id()) === NPC_GUIDE_TEMPLATE) return 'guide';
+	if (is_page() && get_page_template_slug(get_queried_object_id()) === NPC_FEATURED_TEMPLATE) return 'featured';
 	return false;
 }
 
@@ -242,6 +304,7 @@ add_filter('template_include', function ($template) {
 	if ($k === 'home') return NPC_DIR . 'templates/home.php';
 	if ($k === 'review') return NPC_DIR . 'templates/review.php';
 	if ($k === 'guide') return NPC_DIR . 'templates/guide.php';
+	if ($k === 'featured') return NPC_DIR . 'templates/featured.php';
 	return $template;
 }, 99);
 
@@ -258,39 +321,82 @@ add_action('wp_print_styles', function () {
 	if (!npc_is_preview()) return;
 	global $wp_styles;
 	foreach ((array) $wp_styles->queue as $h) {
-		if (preg_match('/^(astra|elementor|e-|swiper|font-awesome|google-fonts-1|wp-block-library|global-styles|classic-theme)/', $h)) wp_dequeue_style($h);
+		$src = isset($wp_styles->registered[$h]) ? (string) $wp_styles->registered[$h]->src : '';
+		if (preg_match('/^(astra|elementor|e-|swiper|font-awesome|google-fonts-1|wp-block-library|global-styles|classic-theme)/', $h)
+			|| preg_match('#/(elementor|elementor-pro|mortgage-calculator-free|real-estate-manager-pro|rem-[a-z-]+|astra[a-z-]*)/#', $src)
+			|| strpos($src, 'sb-elementor') !== false) {
+			wp_dequeue_style($h);
+		}
 	}
 }, 100);
+
+// Speed: connect to the font host early and fetch the page's main photo first (largest contentful paint).
+add_action('wp_head', function () {
+	$k = npc_is_preview();
+	if (!$k) return;
+	echo '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>' . "\n";
+	$id = 0;
+	if ($k === 'home') $id = npc_media_id('npc-hero-hampton');
+	elseif ($k === 'town') $id = (npc_current_town() ? get_post_thumbnail_id(npc_current_town()) : 0) ?: npc_media_id('npc-rye-coast');
+	elseif ($k === 'featured') $id = npc_media_id('npc-seller-hero');
+	elseif ($k === 'guide') $id = npc_media_id(strpos((string) get_post_field('post_name', get_queried_object_id()), 'seller') !== false ? 'npc-seller-hero' : 'npc-buyer-hero');
+	if ($id && ($src = wp_get_attachment_image_src($id, 'full'))) {
+		$srcset = wp_get_attachment_image_srcset($id, 'full');
+		$sizes = $k === 'home' ? '100vw' : '(max-width: 920px) 100vw, 50vw';
+		echo '<link rel="preload" as="image" href="' . esc_url($src[0]) . '"' . ($srcset ? ' imagesrcset="' . esc_attr($srcset) . '" imagesizes="' . esc_attr($sizes) . '"' : '') . ' fetchpriority="high">' . "\n";
+	}
+}, 1);
 
 /* ------------------------------------------------------------------ */
 /* SEO: noindex previews, titles, schema                               */
 /* ------------------------------------------------------------------ */
 
+// Noindex: every page while previewing. Once live, only the leftover preview copies and the review hub.
+function npc_is_noindex() {
+	$k = npc_is_preview();
+	if (!$k) return false;
+	if (!npc_live()) return true;
+	if ($k === 'review') return true;
+	if (is_page() && !is_front_page() && !in_array(get_queried_object_id(), array_merge(array_values(NPC_LIVE_PAGES), array_values(NPC_LIVE_TOWNS)), true)) return true;
+	return false;
+}
+// Once live, the preview URLs send visitors (and Google) to the real pages.
+add_action('template_redirect', function () {
+	if (!npc_live()) return;
+	if (is_singular('np_town') && isset(NPC_LIVE_TOWNS[get_queried_object()->post_name])) { wp_safe_redirect(get_permalink(NPC_LIVE_TOWNS[get_queried_object()->post_name]), 301); exit; }
+	if (is_page()) {
+		$slug = get_post_field('post_name', get_queried_object_id());
+		$to = ['home-preview' => home_url('/'), 'buyers-guide-preview' => get_permalink(NPC_LIVE_PAGES['buyers-guide']), 'sellers-guide-preview' => get_permalink(NPC_LIVE_PAGES['sellers-guide']), 'featured-sales-preview' => get_permalink(NPC_LIVE_PAGES['featured'])];
+		if (isset($to[$slug])) { wp_safe_redirect($to[$slug], 301); exit; }
+	}
+});
+
 add_filter('rank_math/frontend/robots', function ($robots) {
-	if (npc_is_preview()) { $robots['index'] = 'noindex'; $robots['follow'] = 'nofollow'; }
+	if (npc_is_noindex()) { $robots['index'] = 'noindex'; $robots['follow'] = 'nofollow'; }
 	return $robots;
 });
 add_filter('wp_robots', function ($robots) {
-	if (npc_is_preview()) { $robots['noindex'] = true; $robots['nofollow'] = true; unset($robots['index'], $robots['follow']); }
+	if (npc_is_noindex()) { $robots['noindex'] = true; $robots['nofollow'] = true; unset($robots['index'], $robots['follow']); }
 	return $robots;
 });
-add_filter('rank_math/sitemap/exclude_post_type', function ($exclude, $type) { return $type === 'np_town' ? true : $exclude; }, 10, 2);
+add_filter('rank_math/sitemap/exclude_post_type', function ($exclude, $type) { return ($type === 'np_town' && !npc_live()) ? true : $exclude; }, 10, 2);
 add_filter('rank_math/sitemap/entry', function ($url, $type, $object) {
-	if ($type === 'post' && isset($object->ID) && in_array(get_page_template_slug($object->ID), [NPC_HOME_TEMPLATE, NPC_REVIEW_TEMPLATE, NPC_GUIDE_TEMPLATE], true)) return false;
+	if ($type === 'post' && isset($object->ID) && in_array(get_page_template_slug($object->ID), [NPC_HOME_TEMPLATE, NPC_REVIEW_TEMPLATE, NPC_GUIDE_TEMPLATE, NPC_FEATURED_TEMPLATE], true)) return false;
+	if ($type === 'post' && isset($object->post_type, $object->post_name) && $object->post_type === 'np_town' && isset(NPC_LIVE_TOWNS[$object->post_name])) return false;
 	return $url;
 }, 10, 3);
-add_filter('wp_sitemaps_post_types', function ($types) { unset($types['np_town']); return $types; });
+add_filter('wp_sitemaps_post_types', function ($types) { if (!npc_live()) unset($types['np_town']); return $types; });
 
 add_filter('rank_math/frontend/title', function ($title) {
-	if (npc_is_preview() === 'town') return 'Top Realtor in ' . get_the_title() . ' NH | Nick Ponte';
+	if (is_singular('np_town')) return 'Top Realtor in ' . get_the_title() . ' NH | Nick Ponte';
 	return $title;
 });
 add_filter('rank_math/frontend/description', function ($d) {
-	if (npc_is_preview() === 'town') return wp_trim_words(npc_meta(get_queried_object_id(), 'intro'), 28, '…');
+	if (is_singular('np_town')) return wp_trim_words(npc_meta(get_queried_object_id(), 'intro'), 28, '…');
 	return $d;
 });
 add_filter('pre_get_document_title', function ($t) {
-	if (npc_is_preview() === 'town') return 'Top Realtor in ' . get_the_title() . ' NH | Nick Ponte';
+	if (is_singular('np_town')) return 'Top Realtor in ' . get_the_title() . ' NH | Nick Ponte';
 	return $t;
 }, 20);
 
@@ -316,7 +422,7 @@ add_action('wp_head', function () {
 	if (!$k) return;
 	$graph = [];
 	if ($k === 'town') {
-		$t = npc_town_data(get_queried_object());
+		$t = npc_town_data(npc_current_town());
 		$graph[] = npc_agent_schema($t['name']);
 		$graph[] = ['@type' => 'FAQPage', 'mainEntity' => array_map(function ($f) {
 			return ['@type' => 'Question', 'name' => $f[0], 'acceptedAnswer' => ['@type' => 'Answer', 'text' => $f[1]]];
@@ -334,6 +440,6 @@ add_action('wp_head', function () {
 /* ------------------------------------------------------------------ */
 
 add_filter('display_post_states', function ($states, $post) {
-	if ($post->post_type === 'page' && in_array(get_page_template_slug($post->ID), [NPC_HOME_TEMPLATE, NPC_REVIEW_TEMPLATE, NPC_GUIDE_TEMPLATE], true)) $states['npc'] = 'Coastal Light preview (noindex)';
+	if ($post->post_type === 'page' && in_array(get_page_template_slug($post->ID), [NPC_HOME_TEMPLATE, NPC_REVIEW_TEMPLATE, NPC_GUIDE_TEMPLATE, NPC_FEATURED_TEMPLATE], true)) $states['npc'] = 'Coastal Light preview (noindex)';
 	return $states;
 }, 10, 2);

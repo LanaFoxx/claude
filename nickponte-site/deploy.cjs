@@ -5,7 +5,7 @@
 //   3. creates/updates the page /home-preview/ (template "Coastal Light – Home (preview)") and the
 //      review hub /design-preview/ that links every preview for the client
 //   4. creates/updates the 12 Town posts at /town-preview/<town>/
-// Usage: WPU=... WPP=... node deploy.cjs [plugin] [media] [home] [review] [guides] [towns] [--reseed]
+// Usage: WPU=... WPP=... node deploy.cjs [plugin] [media] [home] [review] [guides] [featured] [livedata] [towns] | golive | rollback [--reseed]
 // No step args = all steps. Existing towns keep the owner's edits unless --reseed is passed.
 const { chromium } = require('playwright');
 const { execSync } = require('child_process');
@@ -21,7 +21,8 @@ const RESEED = args.includes('--reseed');
 const MEDIA = ['npc-rye-coast.jpg', 'npc-portsmouth.jpg', 'npc-hampton-beach.jpg', 'npc-nick-ponte.jpg', 'npc-387-ocean.jpg', 'npc-logo-black.png', 'npc-logo-white.png',
   // Photos Nick supplied in the Markup.io review (Nov 2026)
   'npc-hero-hampton.jpg', 'npc-contact-seawall.jpg', 'npc-quote-rye.jpg', 'npc-exeter-downtown.jpg', 'npc-estate-dusk.jpg',
-  'npc-logo-navy.png', 'npc-logo-reversed.png', 'npc-buyer-hero.jpg', 'npc-seller-hero.jpg'];
+  'npc-logo-navy.png', 'npc-logo-reversed.png', 'npc-buyer-hero.jpg', 'npc-seller-hero.jpg',
+  'npc-sale-98-beach-hill.jpg', 'npc-sale-805-central.jpg', 'npc-sale-1-franklin.jpg', 'npc-sale-39-chapel.jpg'];
 const ALT = {
   'npc-rye-coast': 'The Rye, NH coastline from above', 'npc-portsmouth': 'Portsmouth, NH South End harbor at sunset',
   'npc-hampton-beach': 'Hampton Beach, NH from above', 'npc-nick-ponte': 'Nick Ponte, Managing Broker',
@@ -108,6 +109,43 @@ async function deployGuides(p, nonce) {
   }
 }
 
+// Real numbers and long-form text from Nick's current town pages (content/town-pages-live.json, pulled Nov 2026).
+// Median (and days on market where the page had it) replace the sample figures; the rest stay sample until Nick sends them.
+const LIVE = { rye: { median: 1350000 }, portsmouth: { median: 875000, ratio: 104 }, hampton: { median: 595000 }, 'north-hampton': { median: 1150000, dom: 30 },
+  'new-castle': { median: 2650000 }, exeter: { median: 587000, dom: 35 }, stratham: { median: 865000, dom: 42 }, greenland: { median: 851000, dom: 61 },
+  newington: { median: 1650000, dom: 24 }, dover: { median: 556000, dom: 66 } };
+const SALE_IMG = { '805 Central Road': 'npc-sale-805-central', '98 Beach Hill Road': 'npc-sale-98-beach-hill', '1 Franklin Street': 'npc-sale-1-franklin', '39 Chapel Road': 'npc-sale-39-chapel' };
+
+async function deployLiveData(p, nonce, ids) {
+  const towns = require('./content/towns-source.cjs');
+  const pages = require('./content/town-pages-live.json');
+  for (const t of towns) {
+    const slug = t.name.toLowerCase().replace(/\s+/g, '-');
+    const ex = await api(p, nonce, 'GET', `/wp/v2/np-towns?slug=${slug}&_fields=id`);
+    if (!ex.length) continue;
+    const live = LIVE[slug] || {};
+    const merged = { ...t, median: live.median || t.median, dom: live.dom || t.dom, ratio: live.ratio || t.ratio };
+    const meta = seed(merged);
+    const out = { _npc_median: merged.median, _npc_dom: merged.dom, _npc_ratio: merged.ratio, _npc_trend: meta._npc_trend, _npc_read: meta._npc_read };
+    if (pages[slug]) out._npc_body = pages[slug].html;
+    if (t.real && SALE_IMG[t.real.street] && ids[SALE_IMG[t.real.street]]) {
+      const src = await api(p, nonce, 'GET', `/wp/v2/media/${ids[SALE_IMG[t.real.street]]}?_fields=media_details`);
+      const thumb = src.media_details?.sizes?.medium?.source_url || src.media_details?.sizes?.full?.source_url;
+      out._npc_sales = meta._npc_sales.split('\n').map((line, i) => (i === 0 && thumb ? `${line} | ${thumb}` : line)).join('\n');
+    }
+    const body = { meta: out, ...(PHOTO_ID[t.name] ? { featured_media: PHOTO_ID[t.name] } : {}) };
+    await api(p, nonce, 'POST', `/wp/v2/np-towns/${ex[0].id}`, body);
+    console.log(`livedata: ${t.name} median ${merged.median}${live.dom ? ', dom ' + live.dom : ''}${pages[slug] ? ', guide text' : ''}${PHOTO_ID[t.name] ? ', photo' : ''}${out._npc_sales ? ', sale photo' : ''}`);
+  }
+}
+
+async function deployFeatured(p, nonce) {
+  const ex = await api(p, nonce, 'GET', '/wp/v2/pages?slug=featured-sales-preview&status=publish,draft,private&_fields=id,link');
+  const j = ex.length ? await api(p, nonce, 'POST', `/wp/v2/pages/${ex[0].id}`, { template: 'npc-featured', status: 'publish' })
+    : await api(p, nonce, 'POST', '/wp/v2/pages', { title: 'Featured Sales (Coastal Light preview)', slug: 'featured-sales-preview', status: 'publish', template: 'npc-featured', content: '' });
+  console.log('featured: ' + j.link);
+}
+
 async function deployHome(p, nonce) {
   const ex = await api(p, nonce, 'GET', '/wp/v2/pages?slug=home-preview&status=publish,draft,private&_fields=id,link,template');
   const body = { title: 'Home (Coastal Light preview)', slug: 'home-preview', status: 'publish', template: 'npc-home', content: '' };
@@ -139,6 +177,8 @@ function seed(t, i) {
 
 // Town photos supplied by Nick that replace the Rye fallback.
 const PHOTO = { Exeter: 'npc-exeter-downtown' };
+// Nick's own drone photos (and one licensed stock photo) already in the Media Library, attached to his current town pages.
+const PHOTO_ID = { 'New Castle': 7585, Hampton: 7583, Dover: 7578, Newington: 4940 };
 
 async function deployTowns(p, nonce, ids) {
   const towns = require('./content/towns-source.cjs');
@@ -165,10 +205,18 @@ async function deployTowns(p, nonce, ids) {
   const p = await c.newPage();
   let nonce = await login(p);
   if (want('plugin')) { await deployPlugin(p); await p.goto(`${SITE}/wp-admin/`, { waitUntil: 'domcontentloaded' }); nonce = await p.evaluate(() => wpApiSettings.nonce); }
-  const ids = (want('media') || want('towns')) ? await deployMedia(p, nonce) : {};
+  const ids = (want('media') || want('towns') || want('livedata')) ? await deployMedia(p, nonce) : {};
   if (want('home')) await deployHome(p, nonce);
   if (want('review')) await deployReview(p, nonce);
   if (want('guides')) await deployGuides(p, nonce);
+  if (want('featured')) await deployFeatured(p, nonce);
+  if (want('livedata')) await deployLiveData(p, nonce, ids);
+  // Launch / rollback: only when named explicitly (never part of a no-argument run).
+  if (args.includes('golive') || args.includes('rollback')) {
+    const on = args.includes('golive');
+    const r = await api(p, nonce, 'POST', '/wp/v2/settings', { npc_live: on });
+    console.log(`npc_live = ${r.npc_live}` + (on ? ' (new design is on the real URLs)' : ' (old pages restored)'));
+  }
   if (want('towns')) await deployTowns(p, nonce, ids);
   await b.close();
 })().catch((e) => { console.error(e); process.exit(1); });

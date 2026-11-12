@@ -2,8 +2,7 @@
 /** Coastal Light town page (preview). */
 if (!defined('ABSPATH')) exit;
 $npc_active = 'town';
-the_post();
-$t = npc_town_data(get_post());
+$t = npc_town_data(npc_current_town());
 $home = npc_home_url();
 include NPC_DIR . 'templates/header.php';
 ?>
@@ -26,7 +25,7 @@ include NPC_DIR . 'templates/header.php';
 <div class="npc-wrap">
 	<nav class="npc-pills" aria-label="Seacoast towns">
 		<?php foreach (npc_towns() as $p) : $on = $p->ID === $t['id']; ?>
-			<a class="npc-pill<?php echo $on ? ' is-on' : ''; ?>" href="<?php echo esc_url(get_permalink($p)); ?>" <?php if ($on) echo 'aria-current="page"'; ?>><?php echo esc_html(get_the_title($p)); ?></a>
+			<a class="npc-pill<?php echo $on ? ' is-on' : ''; ?>" href="<?php echo esc_url(npc_town_url($p)); ?>" <?php if ($on) echo 'aria-current="page"'; ?>><?php echo esc_html(get_the_title($p)); ?></a>
 		<?php endforeach; ?>
 	</nav>
 
@@ -92,7 +91,7 @@ include NPC_DIR . 'templates/header.php';
 					<h2 class="npc-card__t">Recent sales</h2>
 					<p class="npc-card__sub">Closed transactions where Nick represented the buyer, the seller, or both</p>
 				</div>
-				<a class="npc-link" href="<?php echo esc_url(home_url('/featured-properties/')); ?>">All featured sales →</a>
+				<a class="npc-link" href="<?php echo esc_url(npc_featured_url()); ?>">All featured sales →</a>
 			</div>
 			<ul class="npc-sales__list">
 				<?php foreach ($t['sales'] as $s) : ?>
@@ -103,6 +102,13 @@ include NPC_DIR . 'templates/header.php';
 					</li>
 				<?php endforeach; ?>
 			</ul>
+		</section>
+	<?php endif; ?>
+
+	<?php if (trim(wp_strip_all_tags($t['body']))) : ?>
+		<section class="npc-section npc-article">
+			<p class="npc-eyebrow">Town guide</p>
+			<div class="npc-article__body"><?php echo wp_kses_post(wpautop($t['body'])); ?></div>
 		</section>
 	<?php endif; ?>
 

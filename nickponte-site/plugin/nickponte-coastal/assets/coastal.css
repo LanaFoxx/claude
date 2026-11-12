@@ -3,7 +3,7 @@
 	--npc-bg: #F3F7FA; --npc-panel: #E6EFF5; --npc-plate: #C9DBE8; --npc-ph: #DCE8F0;
 	--npc-border: #D7E3EC; --npc-div: #E3ECF3; --npc-btn-border: #B9CCDC;
 	--npc-deep: #1F3A5F; --npc-steel: #3F6E99; --npc-hover: #2F5A80;
-	--npc-text: #243447; --npc-muted: #5A6B7D; --npc-faint: #7A8A9A;
+	--npc-text: #243447; --npc-muted: #5A6B7D; --npc-faint: #637387; /* handoff #7A8A9A darkened for WCAG AA contrast on white */
 	--npc-serif: "EB Garamond", Garamond, "Times New Roman", serif;
 	--npc-sans: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
 	--npc-gutter: clamp(20px, 4vw, 32px);
@@ -242,12 +242,12 @@ html:has(body.npc) { scroll-behavior: smooth; }
 .npc-read { font-size: 15px; margin-top: 22px; }
 .npc-read strong { color: var(--npc-deep); }
 .npc-foot { font-size: 12px; color: var(--npc-faint); margin-top: 16px; }
-.npc .npc-foot a { color: var(--npc-steel); }
+.npc .npc-foot a, .npc .npc-footer__bar a { color: var(--npc-steel); text-decoration: underline; text-underline-offset: 2px; }
 
 .npc-areas { margin-top: 14px; }
 .npc-areas li { display: flex; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--npc-div); }
 .npc-areas li:last-child { border-bottom: 0; }
-.npc-areas__n { font: 500 22px/1.1 var(--npc-serif); color: #B9CCDC; min-width: 28px; }
+.npc-areas__n { font: 500 22px/1.1 var(--npc-serif); color: var(--npc-steel); min-width: 28px; }
 .npc-areas strong { display: block; font: 600 16px var(--npc-sans); color: var(--npc-deep); }
 .npc-areas li > span:last-child > span { font-size: 14px; color: var(--npc-muted); }
 
@@ -322,3 +322,34 @@ html:has(body.npc) { scroll-behavior: smooth; }
 .npc-consent input { margin-top: 3px; width: 16px; height: 16px; accent-color: var(--npc-steel); flex: none; }
 .npc .npc-consent a { color: var(--npc-steel); text-decoration: underline; }
 .npc-guidecta { padding-bottom: 40px; }
+
+/* Featured sales */
+.npc-fs { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap: 24px; }
+.npc-fs__card { background: #fff; border: 1px solid var(--npc-border); border-radius: 18px; overflow: hidden; box-shadow: var(--npc-shadow-card); display: flex; flex-direction: column; }
+.npc-fs__media { position: relative; aspect-ratio: 16 / 10; background: var(--npc-ph); }
+.npc-fs__media img, .npc-fs__video { position: absolute; inset: 0; width: 100%; height: 100% !important; object-fit: cover; border: 0; background: #000; }
+.npc-fs__media img { background: none; }
+.npc-fs__play { position: absolute; inset: 0; border: 0; background: linear-gradient(180deg, transparent 50%, rgba(31, 58, 95, .35)); cursor: pointer; display: grid; place-items: center; }
+.npc-fs__play span { width: 64px; height: 64px; border-radius: 50%; background: rgba(255, 255, 255, .92); box-shadow: 0 10px 30px -10px rgba(0, 0, 0, .5); position: relative; transition: transform .15s; }
+.npc-fs__play span::after { content: ""; position: absolute; left: 26px; top: 20px; border-style: solid; border-width: 12px 0 12px 19px; border-color: transparent transparent transparent var(--npc-steel); }
+.npc-fs__play:hover span { transform: scale(1.06); }
+.npc-fs__badge { position: absolute; left: 14px; top: 14px; z-index: 1; padding: 6px 11px; border-radius: 999px; background: rgba(255, 255, 255, .92); font: 600 12px var(--npc-sans); letter-spacing: .06em; text-transform: uppercase; color: var(--npc-deep); pointer-events: none; }
+.npc-fs__badge.is-active { background: var(--npc-steel); color: #fff; }
+.npc-fs__body { padding: 20px 22px 24px; display: grid; gap: 2px; }
+.npc-fs__t { font: 600 18px var(--npc-sans); color: var(--npc-deep); }
+.npc-fs__town { font-size: 14px; color: var(--npc-muted); }
+.npc-fs__price { font: 600 28px/1.2 var(--npc-serif); color: var(--npc-deep); margin-top: 8px; font-variant-numeric: lining-nums; }
+
+/* Town guide (long-form text carried over from the current town pages) */
+.npc-article { max-width: 760px; }
+.npc-article__body { font-size: 16px; line-height: 1.7; color: var(--npc-text); }
+.npc-article__body h2 { font: 500 clamp(28px, 3vw, 38px)/1.15 var(--npc-serif); color: var(--npc-deep); margin: 44px 0 14px; text-wrap: balance; }
+.npc-article__body h2:first-child { margin-top: 0; }
+.npc-article__body h3 { font: 600 18px/1.35 var(--npc-sans); color: var(--npc-deep); margin: 26px 0 8px; }
+.npc-article__body p { margin: 0 0 14px; }
+.npc-article__body ul, .npc-article__body ol { margin: 0 0 16px; padding-left: 22px; list-style: disc; }
+.npc-article__body li { margin-bottom: 6px; }
+.npc .npc-article__body a { color: var(--npc-steel); text-decoration: underline; text-underline-offset: 2px; }
+.npc-article__body ul.npc-stats-list { list-style: none; padding: 0; margin: 4px 0 28px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(160px, 100%), 1fr)); gap: 12px; }
+.npc-article__body ul.npc-stats-list li { margin: 0; background: var(--npc-panel); border-radius: 12px; padding: 16px 18px; font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--npc-muted); }
+.npc-article__body ul.npc-stats-list strong { display: block; font: 600 26px/1.15 var(--npc-serif); letter-spacing: 0; text-transform: none; color: var(--npc-deep); margin-bottom: 4px; }

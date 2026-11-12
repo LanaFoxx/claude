@@ -38,6 +38,25 @@
 		if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) timer = setInterval(function () { if (!paused) show(cur + 1); }, 8000);
 	});
 
+	// Featured sales: load a video only when the visitor clicks play.
+	document.querySelectorAll('.npc-fs__play').forEach(function (btn) {
+		btn.addEventListener('click', function () {
+			var box = btn.parentElement, el;
+			if (btn.dataset.yt) {
+				el = document.createElement('iframe');
+				el.src = 'https://www.youtube-nocookie.com/embed/' + btn.dataset.yt + '?autoplay=1&rel=0';
+				el.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+				el.title = btn.getAttribute('aria-label');
+			} else {
+				el = document.createElement('video');
+				el.src = btn.dataset.mp4; el.controls = true; el.autoplay = true; el.playsInline = true;
+			}
+			el.className = 'npc-fs__video';
+			box.appendChild(el);
+			btn.remove();
+		});
+	});
+
 	// Both forms send to the site's existing Elementor Pro forms, so the same email actions and submission logs apply.
 	document.querySelectorAll('.npc-eform').forEach(function (form) {
 		var msg = form.querySelector('.npc-eform__msg');

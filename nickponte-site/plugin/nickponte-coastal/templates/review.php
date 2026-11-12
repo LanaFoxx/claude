@@ -33,6 +33,11 @@ $towns = array_map('npc_town_data', npc_towns());
 		<?php endforeach; ?>
 	</div>
 
+	<h2 class="npc-review__h3" style="margin-top:56px">Featured sales</h2>
+	<div class="npc-review__towns">
+		<a class="npc-review__town" href="<?php echo esc_url(npc_featured_url()); ?>"><?php echo npc_img('npc-sale-805-central', 'thumbnail', ['alt' => '']); ?><span><strong>Featured sales</strong><span>Sold homes and video tours</span></span></a>
+	</div>
+
 	<h2 class="npc-review__h3" style="margin-top:56px">Town pages</h2>
 	<p class="npc-muted" style="margin-top:8px;font-size:15px">One page per town with a monthly market snapshot, neighborhoods, recent sales and FAQ.</p>
 	<div class="npc-review__towns">

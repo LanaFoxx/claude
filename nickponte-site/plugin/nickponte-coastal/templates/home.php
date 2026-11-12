@@ -120,7 +120,7 @@ $updated = $towns ? $towns[0]['updated'] : date_i18n('F Y');
 			</div>
 			<div class="npc-actions">
 				<a class="npc-btn" href="#contact">Work with Nick</a>
-				<a class="npc-btn npc-btn--ghost" href="<?php echo esc_url(home_url('/featured-properties/')); ?>">Featured sales</a>
+				<a class="npc-btn npc-btn--ghost" href="<?php echo esc_url(npc_featured_url()); ?>">Featured sales</a>
 			</div>
 		</div>
 	</div>
