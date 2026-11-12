@@ -179,7 +179,7 @@ function seed(t, i) {
 // Town photos supplied by Nick that replace the Rye fallback.
 const PHOTO = { Exeter: 'npc-exeter-downtown' };
 // Nick's own drone photos (and one licensed stock photo) already in the Media Library, attached to his current town pages.
-const PHOTO_ID = { 'New Castle': 7585, Hampton: 7583, Dover: 7578, Newington: 4940 };
+const PHOTO_ID = { 'New Castle': 7585, Hampton: 7583, Dover: 7578, Newington: 4940, Rye: 7636 };
 
 async function deployTowns(p, nonce, ids) {
   const towns = require('./content/towns-source.cjs');
