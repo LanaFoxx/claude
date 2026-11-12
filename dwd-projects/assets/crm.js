@@ -1348,7 +1348,8 @@
 	}
 	// Home calendar: the next 7 days — calendar events (both Google accounts), personal and work to-dos, bills, meetings.
 	function weekAgenda(P) {
-		var t0 = new Date(DWDC.today + 'T12:00:00'), iso = function (d) { return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); };
+		var off = S.wkOff || 0, t0 = new Date(DWDC.today + 'T12:00:00'); t0.setDate(t0.getDate() + off * 7);
+		var iso = function (d) { return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); };
 		var short = function (tm) { var q = /^(\d{1,2}):(\d{2})\s*([AP]M)$/i.exec(String(tm || '').trim()); return q ? (+q[1]) + (q[2] === '00' ? '' : ':' + q[2]) + q[3].toLowerCase() : ''; };
 		var mins = function (tm) { var q = /^(\d{1,2}):(\d{2})\s*([AP]M)?/i.exec(String(tm || '')); return q ? (+q[1] % 12 + (/p/i.test(q[3] || '') ? 12 : 0)) * 60 + +q[2] : -1; };
 		var days = '';
@@ -1360,11 +1361,13 @@
 			}
 			S.tasks.filter(function (x) { return !x.done && x.due === ds; }).forEach(function (x) { its.push({ k: 'wt', t: x.text, tm: '', go: 'data-task="' + x.id + '"' }); });
 			its.sort(function (a, b) { return mins(a.tm) - mins(b.tm); });
-			var lbl = i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : d.toLocaleDateString('en-US', { weekday: 'short' });
-			days += '<div class="dwdc-wa-d' + (i === 0 ? ' today' : '') + '"><div class="dwdc-wa-h"><b>' + lbl + '</b><small>' + d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + '</small></div><div class="dwdc-wa-list">'
+			var rel = off * 7 + i, lbl = rel === 0 ? 'Today' : rel === 1 ? 'Tomorrow' : d.toLocaleDateString('en-US', { weekday: 'short' });
+			days += '<div class="dwdc-wa-d' + (rel === 0 ? ' today' : '') + '"><div class="dwdc-wa-h"><b>' + lbl + '</b><small>' + d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + '</small></div><div class="dwdc-wa-list">'
 				+ (its.length ? its.slice(0, 6).map(function (x) { return '<div role="button" tabindex="0" class="dwdc-wa-i ' + x.k + '" ' + x.go + ' title="' + esc(x.t) + '">' + (x.tm ? '<em>' + short(x.tm) + '</em>' : '') + esc(ptx(x.t)) + '</div>'; }).join('') + (its.length > 6 ? '<a class="dwdc-wa-more" href="#personal/calendar">+' + (its.length - 6) + ' more</a>' : '') : '<span class="dwdc-wa-none">—</span>') + '</div></div>';
 		}
-		return card('cd-plain cd-week', '<header class="dwdc-dhead"><h2>This week</h2><a href="#personal/calendar">Calendar ' + ic('right', 14) + '</a></header>', '<div class="dwdc-wa">' + days + '</div>');
+		var e7 = new Date(t0); e7.setDate(t0.getDate() + 6);
+		var ttl = off === 0 ? 'Next 7 days' : off === 1 ? 'The 7 days after' : off === -1 ? 'Last 7 days' : t0.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' – ' + e7.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+		return card('cd-plain cd-week', '<header class="dwdc-dhead"><h2>' + ttl + '</h2><span class="dwdc-wa-nav"><button type="button" data-wkoff="-1" aria-label="Previous week">' + ic('left', 16) + '</button>' + (off ? '<button type="button" data-wkoff="0">Today</button>' : '') + '<button type="button" data-wkoff="1" aria-label="Next week">' + ic('right', 16) + '</button></span><a href="#personal/calendar">Calendar ' + ic('right', 14) + '</a></header>', '<div class="dwdc-wa">' + days + '</div>');
 	}
 	// Settings → Connections: every hookup in one place (Google accounts, bank, AI, Upwork, Stripe, PayPal).
 	function connectionsView() {
@@ -1478,9 +1481,9 @@
 		var madeNow = MYm[yy] && MYm[yy].m ? Math.max(0, +MYm[yy].m[mo] || 0) : 0;
 		var quick = '<div class="dwdc-hq"><a href="#money" data-owed><small>Owed to you</small><b class="o">' + money(owed(ol)) + '</b></a><a href="#money" data-month="' + mk + '"><small>Made in ' + new Date(DWDC.today + 'T12:00:00').toLocaleDateString('en-US', { month: 'short' }) + '</small><b class="g">' + money(madeNow) + '</b></a></div>';
 		return meetBar() + reviewBar()
+			+ '<div class="dwdc-row3 dwdc-top2 dwdc-hproj">' + c2 + lb + '</div>'
 			+ '<div class="dwdc-htop"><div class="dwdc-htop-cal">' + weekAgenda(P) + '</div><div class="dwdc-htop-side">' + bank + quick + '</div></div>'
 			+ '<div class="dwdc-row3 dwdc-top2 dwdc-todos2">' + tl + (pt || card('cd-ptodo1', '<header class="dwdc-dhead"><h2>Personal</h2></header>', emptyRow('Loading…'))) + '</div>'
-			+ '<div class="dwdc-row3 dwdc-top2">' + c2 + lb + '</div>'
 			+ '<div class="dwdc-moneywide">' + c3.replace('Money</', 'Business revenue</') + '</div>';
 	}
 
@@ -2749,6 +2752,7 @@
 			return;
 		}
 		if ((el = t.closest('[data-psort]'))) { e.preventDefault(); e.stopPropagation(); var pk = el.getAttribute('data-psort'); S.psort = S.psort || {}; S.psort[pk] = { '': 'desc', desc: 'asc', asc: '' }[S.psort[pk] || '']; try { localStorage.setItem('dwdc-psort', JSON.stringify(S.psort)); } catch (er) {} render(); return; }
+		if ((el = t.closest('[data-wkoff]'))) { var wo = +el.getAttribute('data-wkoff'); S.wkOff = wo === 0 ? 0 : (S.wkOff || 0) + wo; render(); return; }
 		if (t.closest('[data-moremoney]')) { S.moreMoney = !S.moreMoney; render(); return; }
 		if (t.closest('[data-winsmore]')) { S.winsMore = !S.winsMore; render(); return; }
 		if (t.closest('[data-connmore]')) { S.connMore = !S.connMore; render(); if (S.connMore) { setTimeout(function () { var c = document.querySelector('.dwdc-conn'); if (c) { c.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }, 50); } return; }

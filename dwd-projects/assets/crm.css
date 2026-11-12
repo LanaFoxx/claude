@@ -2505,3 +2505,15 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
 .dwdc .mv-grid + .dwdc-more { margin-top: 20px; }
 @media (max-width: 1100px) { .dwdc .mv-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } .dwdc .mv-grid { grid-template-columns: 1fr; } }
 @media (max-width: 600px) { .dwdc .mv-stats { gap: 10px; } .dwdc .mv-stat { padding: 12px 14px; } .dwdc .mv-stat strong { font-size: 22px; } .dwdc .mv-row { grid-template-columns: minmax(0, 1fr) 80px 80px; } .dwdc .mv-card > header { flex-wrap: wrap; } }
+/* Home order + equal heights: the week calendar fills its row next to the bank box */
+.dwdc .dwdc-hproj { margin-bottom: 22px; }
+.dwdc .dwdc-htop { align-items: stretch !important; }
+.dwdc .dwdc-htop-cal { display: flex; }
+.dwdc .dwdc-htop-cal > .cd-week { flex: 1; display: flex; flex-direction: column; min-height: 0 !important; height: auto !important; }
+.dwdc .cd-week > .dwdc-dbody { flex: 1; display: flex; }
+.dwdc .cd-week .dwdc-wa { flex: 1; }
+.dwdc .dwdc-wa-nav { display: inline-flex; gap: 6px; margin-left: auto; }
+.dwdc .dwdc-wa-nav button { height: 30px; min-width: 30px; padding: 0 8px; border: 1px solid rgba(255,255,255,.35); border-radius: 8px; background: transparent; color: #fff; font: 600 12.5px Poppins, sans-serif; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+.dwdc .dwdc-wa-nav button:hover { background: rgba(255,255,255,.12); }
+.dwdc .cd-week > .dwdc-dhead > a { margin-left: 14px; }
+.dwdc .dwdc-htop-side .dwdc-pbal { flex: 1; }
