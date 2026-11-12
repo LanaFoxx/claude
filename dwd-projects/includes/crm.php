@@ -111,6 +111,7 @@ function dwdc_task( $post ) {
 		'due'     => (string) get_post_meta( $p->ID, '_dwdc_due', true ),
 		'done'    => '1' === get_post_meta( $p->ID, '_dwdc_done', true ),
 		'done_at' => (string) get_post_meta( $p->ID, '_dwdc_done_at', true ),
+		'due_set' => '1' === get_post_meta( $p->ID, '_dwdc_due_manual', true ), // Mike gave it a date himself → it may show on the calendar
 		'order'   => (int) $p->menu_order,
 		'created' => get_post_time( 'c', true, $p ),
 	);
@@ -1296,6 +1297,9 @@ add_action( 'rest_api_init', function () {
 
 	register_rest_route( $ns, '/crm/task', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
 		$id = dwdc_add_task( sanitize_text_field( (string) $r->get_param( 'text' ) ), (int) $r->get_param( 'contact' ), sanitize_text_field( (string) $r->get_param( 'due' ) ) );
+		if ( '' !== (string) $r->get_param( 'due' ) ) {
+			update_post_meta( $id, '_dwdc_due_manual', '1' ); // dated by hand → can show on the calendar
+		}
 		return dwdc_task( $id );
 	} ) );
 
@@ -1312,6 +1316,7 @@ add_action( 'rest_api_init', function () {
 			}
 			if ( isset( $d['due'] ) ) {
 				update_post_meta( $id, '_dwdc_due', sanitize_text_field( $d['due'] ) );
+				update_post_meta( $id, '_dwdc_due_manual', '' !== (string) $d['due'] ? '1' : '' );
 			}
 			if ( isset( $d['contact'] ) ) {
 				update_post_meta( $id, '_dwdc_contact', (int) $d['contact'] );

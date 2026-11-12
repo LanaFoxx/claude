@@ -1359,7 +1359,8 @@
 				P.todos.filter(function (x) { return x.due === ds && !x.done; }).forEach(function (x) { its.push({ k: x.gevent ? (isFlight(x.text) ? 'fl' : 'ev') : 'pt', t: x.text, tm: x.time || '', go: 'data-ptask="' + x.id + '"' }); });
 				P.bills.forEach(function (b) { var n = billNext(b); if (!n.paid && n.due === ds) { its.push({ k: 'bill', t: b.name + ' · ' + money(b.amount), tm: '', go: 'data-gobills' }); } });
 			}
-			S.tasks.filter(function (x) { return !x.done && x.due === ds; }).forEach(function (x) { its.push({ k: 'wt', t: x.text, tm: '', go: 'data-task="' + x.id + '"' }); });
+			// Work to-dos only show here when you dated them yourself (not project to-dos dated automatically).
+			S.tasks.filter(function (x) { return !x.done && x.due === ds && x.due_set; }).forEach(function (x) { its.push({ k: 'wt', t: x.text, tm: '', go: 'data-task="' + x.id + '"' }); });
 			its.sort(function (a, b) { return mins(a.tm) - mins(b.tm); });
 			var rel = off * 7 + i, lbl = rel === 0 ? 'Today' : rel === 1 ? 'Tomorrow' : d.toLocaleDateString('en-US', { weekday: 'short' });
 			days += '<div class="dwdc-wa-d' + (rel === 0 ? ' today' : '') + '"><div class="dwdc-wa-h"><b>' + lbl + '</b><small>' + d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + '</small></div><div class="dwdc-wa-list">'
