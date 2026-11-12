@@ -24,7 +24,7 @@ const MEDIA = ['npc-rye-coast.jpg', 'npc-portsmouth.jpg', 'npc-hampton-beach.jpg
   'npc-logo-navy.png', 'npc-logo-reversed.png', 'npc-buyer-hero.jpg', 'npc-seller-hero.jpg',
   'npc-sale-98-beach-hill.jpg', 'npc-sale-805-central.jpg', 'npc-sale-1-franklin.jpg', 'npc-sale-39-chapel.jpg', 'npc-icon.png',
   'npc-press-seacoastonline.png', 'npc-press-bostoncom.png', 'npc-press-unionleader.png',
-  'npc-town-new-castle.jpg', 'npc-town-seabrook.jpg', 'npc-town-hampton.jpg', 'npc-town-hampton-falls.jpg', 'npc-town-newington.jpg'];
+  'npc-town-new-castle.jpg', 'npc-town-seabrook.jpg', 'npc-town-hampton.jpg', 'npc-town-hampton-falls.jpg', 'npc-town-newington.jpg', 'npc-share.jpg'];
 const ALT = {
   'npc-rye-coast': 'The Rye, NH coastline from above', 'npc-portsmouth': 'Portsmouth, NH South End harbor at sunset',
   'npc-hampton-beach': 'Hampton Beach, NH from above', 'npc-nick-ponte': 'Nick Ponte, Managing Broker',
@@ -222,7 +222,7 @@ async function deployTowns(p, nonce, ids) {
   const p = await c.newPage();
   let nonce = await login(p);
   if (want('plugin')) { await deployPlugin(p); await p.goto(`${SITE}/wp-admin/`, { waitUntil: 'domcontentloaded' }); nonce = await p.evaluate(() => wpApiSettings.nonce); }
-  const ids = (want('media') || want('towns') || want('livedata')) ? await deployMedia(p, nonce) : {};
+  const ids = (want('media') || want('towns') || want('livedata') || want('brand')) ? await deployMedia(p, nonce) : {};
   if (want('home')) await deployHome(p, nonce);
   if (want('review')) await deployReview(p, nonce);
   if (want('guides')) await deployGuides(p, nonce);
@@ -230,6 +230,11 @@ async function deployTowns(p, nonce, ids) {
   if (want('pages')) await deployPages(p, nonce);
   if (want('livedata')) await deployLiveData(p, nonce, ids);
   // Launch / rollback: only when named explicitly (never part of a no-argument run).
+  // Brand: site name, tagline, favicon (NP square), logo (navy wordmark).
+  if (want('brand')) {
+    const r = await api(p, nonce, 'POST', '/wp/v2/settings', { title: 'Nick Ponte Realty', description: 'Seacoast NH Real Estate | Rye, Portsmouth & Hampton', site_icon: ids['npc-icon'], site_logo: ids['npc-logo-navy'] });
+    console.log('brand:', r.title, '|', r.description, '| icon', r.site_icon, '| logo', r.site_logo);
+  }
   if (args.includes('golive') || args.includes('rollback')) {
     const on = args.includes('golive');
     const r = await api(p, nonce, 'POST', '/wp/v2/settings', { npc_live: on });

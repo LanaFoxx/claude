@@ -2,14 +2,14 @@
 /**
  * Plugin Name: Nick Ponte Coastal Light (preview)
  * Description: "Coastal Light" redesign preview: a homepage template (/home-preview/) and a Town post type (/town-preview/<town>/) with monthly market fields, FAQ and JSON-LD. Preview pages are noindex and use their own header and footer, so live pages are not affected. Deactivate to remove everything from the front end.
- * Version: 1.11.4
+ * Version: 1.12.1
  * Author: Dream Web Digital
  * Requires PHP: 7.4
  */
 
 if (!defined('ABSPATH')) exit;
 
-define('NPC_VER', '1.11.4');
+define('NPC_VER', '1.12.1');
 define('NPC_DIR', plugin_dir_path(__FILE__));
 define('NPC_URL', plugin_dir_url(__FILE__));
 const NPC_HOME_TEMPLATE = 'npc-home';
@@ -458,6 +458,32 @@ add_filter('rank_math/frontend/description', function ($d) {
 	if (mb_strlen($d) > 158) $d = rtrim(mb_substr($d, 0, mb_strrpos(mb_substr($d, 0, 155), ' ') ?: 155), ' ,:;-–—') . '…';
 	return $d;
 }, 99);
+
+// Site-wide RealEstateAgent + Person schema (moved here from the Code Snippets plugin, which is removed).
+add_action('wp_head', function () {
+	if (function_exists('ihaf_insert_header') || class_exists('WPCode')) return; // still printed by Code Snippets while it is installed
+	$f = NPC_DIR . 'includes/schema-agent.html';
+	if (is_readable($f)) echo file_get_contents($f) . "\n";
+}, 5);
+
+// Link previews (Facebook, iMessage, Slack, LinkedIn, X): pages without their own image use the branded share image.
+function npc_share_image($img) {
+	if ($img) return $img;
+	$id = npc_media_id('npc-share');
+	return $id ? wp_get_attachment_image_url($id, 'full') : $img;
+}
+add_filter('rank_math/opengraph/facebook/image', 'npc_share_image', 20);
+add_filter('rank_math/opengraph/twitter/image', 'npc_share_image', 20);
+// Pages (not blog posts) always share the branded image: Rank Math reads these keys for the preview image.
+add_filter('get_post_metadata', function ($v, $id, $key) {
+	if (!in_array($key, ['rank_math_facebook_image', 'rank_math_facebook_image_id', 'rank_math_twitter_use_facebook'], true)) return $v;
+	if (get_post_type($id) !== 'page' && get_post_type($id) !== 'np_town') return $v;
+	static $sid = null; if ($sid === null) $sid = npc_media_id('npc-share');
+	if (!$sid) return $v;
+	if ($key === 'rank_math_twitter_use_facebook') return ['on'];
+	return [$key === 'rank_math_facebook_image_id' ? $sid : wp_get_attachment_image_url($sid, 'full')];
+}, 10, 3);
+add_filter('rank_math/opengraph/facebook/og_site_name', function () { return 'Nick Ponte Realty'; });
 
 // FAQ page: FAQPage structured data from its question/answer items (Google rich results and AI answers).
 add_action('wp_head', function () {
