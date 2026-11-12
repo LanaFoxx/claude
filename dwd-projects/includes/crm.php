@@ -1496,6 +1496,7 @@ function dwdc_vars( $mode = 'admin' ) {
 	$v['zoomReady']  = function_exists( 'dwdz_ready' ) && dwdz_ready();
 	$v['zoomLink']   = function_exists( 'dwdz_personal_link' ) && dwdz_ready() ? dwdz_personal_link() : ''; // empty until made on the first Copy click
 	$v['zoomApi']    = function_exists( 'dwdz_api_ready' ) && dwdz_api_ready(); // copy-to-send links in the Zoom box
+	$v['obLink']     = get_permalink( 2993 ) ?: home_url( '/onboarding/' ); // the onboarding form, for Copy onboarding link
 	$v['calendly']   = (string) get_option( 'dwdc_calendly', 'https://calendly.com/dreamwebdigital/dream-web-digital-consultation-call' );
 	$v['ver']        = DWDP_VERSION; // the app reloads itself when a newer version is live
 	$v['upLast']  = '';

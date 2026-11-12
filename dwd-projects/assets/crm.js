@@ -1529,6 +1529,8 @@
 
 	/* ================= Zoom invite box (Home, project and client pages) ================= */
 	// ids: limit the picker to these projects (client page) or a single fixed project (project page).
+	// "Copy onboarding link": sits on its own line under each Send onboarding form button.
+	function obCopy() { return DWDC.obLink ? '<span class="dd-obcopy"><button type="button" class="dd-btn ghost sm" data-copy="' + esc(DWDC.obLink) + '" title="' + esc(DWDC.obLink) + '">' + lu('link', 14) + 'Copy onboarding link</button></span>' : ''; }
 	function zoomBox(key, ids) {
 		var title = '<header class="dd-ch2"><span class="dd-lt z">' + lu('play', 16) + '</span><div><h2>Zoom meeting</h2><small>Send a Zoom invite and join from here</small></div></header>'
 			// Quick links to paste into a message: your Zoom room and your Calendly booking page.
@@ -3035,7 +3037,7 @@
 		var obl = full ? (c.files || []).filter(function (e) { return /onboard/i.test(e.form || ''); }) : [], obn = obl.reduce(function (s2, e) { return s2 + (e.fields || []).length; }, 0);
 		var fe = full ? (c.files || []).filter(function (e) { return !/onboard/i.test(e.form || '') && (e.fields || []).length; })[0] : null;
 		var formBox = fe ? card('k-form', esc(fe.form || 'Website form') + ' form', 'Submitted ' + fmt(fe.date), '', '<div class="dd-kv">' + fe.fields.filter(function (f) { return String(f.value || '').trim() !== ''; }).map(function (f) { return '<span>' + esc(f.label || f.id) + '</span><div>' + fval(f.value) + '</div>'; }).join('') + '</div>'
-			+ (st === 'leads' || !obl.length ? '<div class="dd-pbtns">' + btn('data-leadinvite="' + c.id + '"', lu('mail') + (c.stage === 'onboarding' ? 'Resend onboarding form' : 'Send onboarding form'), 'primary') + '</div>' : '')) : '';
+			+ (st === 'leads' || !obl.length ? '<div class="dd-pbtns">' + btn('data-leadinvite="' + c.id + '"', lu('mail') + (c.stage === 'onboarding' ? 'Resend onboarding form' : 'Send onboarding form'), 'primary') + obCopy() + '</div>' : '')) : '';
 		// notes
 		var notes = full ? (c.notes || []).slice().sort(function (a, b) { return (d(a.date) || 0) < (d(b.date) || 0) ? 1 : -1; }) : [];
 		var nOpen = !!(S.notesOpen || {})[c.id];
@@ -3047,13 +3049,13 @@
 			+ (c.drive ? '<a class="dd-btn secondary" href="' + esc(c.drive) + '" target="_blank" rel="noopener">' + lu('external-link', 14) + 'Open folder</a><button type="button" class="dd-btn secondary" data-copy="' + esc(c.drive) + '">' + lu('link', 14) + 'Copy link</button><button type="button" class="dd-btn ghost" data-drivemk="' + c.id + ':email">' + lu('mail', 14) + (c.drive_sent ? 'Email again' : 'Email to client') + '</button>'
 				: DWDC.driveReady ? '<button type="button" class="dd-btn secondary" data-drivemk="' + c.id + ':email">' + lu('plus', 14) + 'Create &amp; email client</button><button type="button" class="dd-btn ghost" data-drivemk="' + c.id + '">Create only</button>' : '<a class="dd-btn secondary" href="#connections">Set up Google Drive</a>') + '</div></div>';
 		var obRow = obl.length ? '<div class="dd-detob"><div><b>Onboarding</b> ' + ddPill(obn + ' answers', 'info') + '<small>' + esc(obl[0].form || 'Form') + ' · submitted ' + fmt(obl[0].date) + '</small></div><div class="dd-pbtns">' + btn('data-viewob', lu('clipboard-list') + 'View answers') + '<button type="button" class="dd-btn ghost" data-copyob>Copy answers</button></div></div>'
-			: '<div class="dd-detob"><div><b>Onboarding</b><small>Not submitted yet</small></div><div class="dd-pbtns">' + btn('data-leadinvite="' + c.id + '"', lu('mail') + (c.stage === 'onboarding' ? 'Resend onboarding form' : 'Send onboarding form')) + '</div></div>';
+			: '<div class="dd-detob"><div><b>Onboarding</b><small>Not submitted yet</small></div><div class="dd-pbtns">' + btn('data-leadinvite="' + c.id + '"', lu('mail') + (c.stage === 'onboarding' ? 'Resend onboarding form' : 'Send onboarding form')) + obCopy() + '</div></div>';
 		var obBox = '' && card('ob', 'Onboarding' + (obl.length ? ' ' + ddPill(obn + ' answers', 'info') : ''), '', obl.length ? '<span class="dd-hmeta">' + esc(obl[0].form || 'Form') + ' · submitted ' + fmt(obl[0].date) + '</span>' : '<span class="dd-hmeta">Not submitted</span>',
 			'<div class="dd-pbtns">' + (obl.length ? btn('data-viewob', lu('clipboard-list') + 'View answers') + '<button type="button" class="dd-btn ghost" data-copyob>Copy answers</button>' : btn('data-leadinvite="' + c.id + '"', lu('mail') + (c.stage === 'onboarding' ? 'Resend onboarding form' : 'Send onboarding form'))) + '</div>');
 		// markup review
 		var SM = full ? c.ai_summary : null, sumBox = '';
 		if (full && !SM && !c.has_form) {
-			sumBox = card('k-sum', lu('zap', 16) + 'Project summary', 'No onboarding answers yet', '', '<div class="dd-sumb"><p class="dd-help">A summary of what the client wants appears here once they fill out the onboarding form.</p><div class="dd-pbtns"><button type="button" class="dd-btn secondary" data-leadinvite="' + c.id + '">' + lu('mail', 14) + (c.stage === 'onboarding' ? 'Resend onboarding form' : 'Send onboarding form') + '</button></div></div>');
+			sumBox = card('k-sum', lu('zap', 16) + 'Project summary', 'No onboarding answers yet', '', '<div class="dd-sumb"><p class="dd-help">A summary of what the client wants appears here once they fill out the onboarding form.</p><div class="dd-pbtns"><button type="button" class="dd-btn secondary" data-leadinvite="' + c.id + '">' + lu('mail', 14) + (c.stage === 'onboarding' ? 'Resend onboarding form' : 'Send onboarding form') + '</button>' + obCopy() + '</div></div>');
 		}
 		if (full && (SM || c.has_form)) {
 			if (!SM && c.has_form && !(S.sumTried || {})[c.id]) { S.sumTried = S.sumTried || {}; S.sumTried[c.id] = 1; S.sumBusy = c.id; api('/contact/' + c.id + '/summary', 'POST', {}).then(function (x) { if (S.full[c.id]) { S.full[c.id].ai_summary = x; } S.sumBusy = 0; render(); }).catch(function (er) { S.sumBusy = 0; S.sumErr = er && er.message; render(); }); }
@@ -3564,7 +3566,7 @@
 				who = '<div class="dwdc-invite"><p><b class="navy">New client.</b> Enter their email or phone number and send them the onboarding form. When they fill it out, their client profile and project are created automatically.</p>'
 					+ '<label><span>Email or phone number</span><input name="invite_to" placeholder="name@business.com or (555) 555-5555" autocomplete="off" value="' + esc(v.invite_to || '') + '"></label>'
 					+ (m.textMsg ? '<p>No email for a phone number, so text them this message:</p><textarea class="dwdc-sms" rows="4" readonly>' + esc(m.textMsg) + '</textarea><div class="dwdc-mkacts"><button type="button" class="dwdc-btn" data-copysms>Copy message</button><a class="dwdc-btn2" href="sms:' + esc((v.invite_to || '').replace(/[^\d+]/g, '')) + '?&body=' + encodeURIComponent(m.textMsg) + '">Open in Messages</a></div>'
-						: '<button type="button" class="dwdc-btn wide" data-invite>' + ic('mail', 16) + 'Send them the onboarding form</button>')
+						: '<button type="button" class="dwdc-btn wide" data-invite>' + ic('mail', 16) + 'Send them the onboarding form</button>' + obCopy())
 					+ '</div><div class="dwdc-farow"><button type="button" class="dwdc-lnk" data-oldc>' + ic('left', 14) + 'Back to search</button><button type="button" class="dwdc-lnk" data-newc>Enter their details myself instead</button></div>';
 			} else {
 				who = '<label class="dwdc-search wide">' + ic('search', 16) + '<input class="dwdc-pick" placeholder="Start typing a client’s name, business or email…" autocomplete="off" value="' + esc(m.q || '') + '"></label><div class="dwdc-picks">' + pickList(m.q || '') + '</div>'

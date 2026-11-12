@@ -572,3 +572,4 @@ input[type=date], input[type=datetime-local] { cursor: pointer; }
 .dd-tl-r { column-gap: 12px; } .dd-tl-chk { margin: 3px 0 0; }
 .dd-zcopy { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 20px 12px; } .dd-zcopy .dd-btn { height: 32px; flex: 1 1 auto; justify-content: center; }
 .dd-zcopy { padding-top: 14px; }
+.dd-obcopy { flex-basis: 100%; display: flex; } .dwdc-modal .dd-obcopy { margin-top: 10px; justify-content: center; }
