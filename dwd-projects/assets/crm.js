@@ -706,7 +706,7 @@
 					+ (it.link && !it.ended ? '<a class="dd-btn primary sm dd-join" href="' + esc(it.link) + '" target="_blank" rel="noopener">Join</a>' : '') + '</div>';
 			}).join('') : '<p class="dd-empty-l">Nothing scheduled today.</p>')
 			+ (S.schedAdd ? '<form class="dd-tl-add" data-pform="pdayadd"><input type="hidden" name="due" value="' + T + '"><input name="text" placeholder="Add a to-do for ' + dObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + '…" autocomplete="off" required><button class="dd-btn primary sm">Add</button></form>'
-				: '<button type="button" class="dd-ghostadd" data-schedadd>' + lu('plus') + 'Add a to-do for ' + dObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + '</button>') + tmrHtml + '</div></section>';
+				: '<button type="button" class="dd-ghostadd" data-schedadd>' + lu('plus') + 'Add a to-do for ' + dObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + '</button>') + '</div></section>';
 		// Active projects: every active project, in your order (drag to arrange) or a chosen sort.
 		var ap = sortMine('active') ? (function () { var g = actSegs(); return g.now.concat([{ div: true, id: DIVID }], g.wait); })() : lsorted('active', by('active'));
 		var act = '<section class="dd-card dd-ap"><header class="dd-ch"><div class="dd-ch-t"><h2>Active projects</h2><span>' + by('active').length + ' project' + (by('active').length === 1 ? '' : 's') + ' · ' + money(owed(by('active'))) + ' owed</span></div>' + sortSel('active') + '<a href="#projects/active">View all</a></header>'
@@ -2103,7 +2103,7 @@
 		M.list.forEach(function (m) { var d = new Date(m.ts * 1000); m.date = iso(d); m.time = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }); });
 		var left = M.list.filter(function (m) { return m.date === tdy && m.te > now; });
 		var day = 'Today', list = left;
-		if (!list.length) { list = M.list.filter(function (m) { return m.date === tmd; }); day = 'Tomorrow'; }
+		// Only today's meetings here; tomorrow's live on the calendar.
 		if (!list.length) { return ''; }
 		var name = function (m) { var w = m.who && m.who !== m.title ? m.who : (m.title.match(/\bwith\s+([A-Z][\w'-]+(?:\s+[A-Z][\w'-]*\.?)?)/) || [])[1]; return w || m.title; };
 		var until = function (m) { var d = Math.round((m.ts - now) / 60); return day !== 'Today' ? '' : m.ts <= now ? 'now' : d < 60 ? 'in ' + d + ' min' : d < 600 ? 'in ' + Math.floor(d / 60) + 'h' + (d % 60 ? ' ' + d % 60 + 'm' : '') : ''; };
