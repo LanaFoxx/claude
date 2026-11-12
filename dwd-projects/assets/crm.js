@@ -175,13 +175,14 @@
 	/* ---------- routing ---------- */
 	var TITLES = {
 		home: ['', '', 'Dream Web Digital'], leads: ['Clients', 'All', 'Leads'], onboarding: ['Clients', 'Onboarding', 'Forms'],
-		todos: ['Everything open', 'To-Do', 'List'], hosting: ['Clients', 'Hosting', 'Clients'], archive: ['More', 'Archive', ''],
-		search: ['Search', 'Search', 'Results'], personal: ['Personal', 'To-Do', 'List'], money: ['Finances', 'Money', 'Stats'], reviews: ['Clients', 'Get', 'Reviews'], clients: ['Clients', 'All', 'Clients'], projects: ['Projects', 'All', 'Projects']
+		todos: ['Plan', '', 'To-Dos'], connections: ['Settings', 'Connections', ''], hosting: ['Clients', 'Hosting', 'Clients'], archive: ['More', 'Archive', ''],
+		search: ['Search', 'Search', 'Results'], personal: ['Personal', 'To-Do', 'List'], money: ['Money', 'Business', 'Revenue'], reviews: ['Clients', 'Get', 'Reviews'], clients: ['Clients', 'All', 'Clients'], projects: ['Projects', 'All', 'Projects']
 	};
-	var OLD = { dashboard: 'home', jobs: 'projects/active', completed: 'projects/complete', forms: 'leads', todos: 'home' };
+	var OLD = { dashboard: 'home', jobs: 'projects/active', completed: 'projects/complete', forms: 'leads' };
 	function route() {
 		var h = location.hash.replace(/^#/, '').replace(/^clients\/active$/, 'projects/active').split('/'); // Clients → Active opens the active projects list
 		if (OLD[h[0]]) { return { view: OLD[h[0]].split('/')[0], arg: OLD[h[0]].split('/')[1] || '', id: 0 }; }
+		if (h[0] === 'personal' && !h[1]) { return { view: 'home', arg: '', id: 0 }; } // one dashboard now
 		return { view: TITLES[h[0]] || h[0] === 'client' || h[0] === 'cl' || h[0] === 'host' ? h[0] : 'home', arg: h[1] || '', id: +h[1] || 0 };
 	}
 	window.addEventListener('hashchange', function () {
@@ -482,13 +483,14 @@
 			var allOpen = openT.filter(function (x) { return !x.gevent; });
 			var pills = '<div class="dwdc-ptagf"><button type="button" class="' + (!ftag ? 'on' : '') + '" data-ptagf="">All <b>' + allOpen.length + '</b></button>' + Object.keys(PTAGS).map(function (k) { var n = allOpen.filter(function (x) { return tagOf(x) === k; }).length; return n || ftag === k ? '<button type="button" class="t-' + k + (ftag === k ? ' on' : '') + '" data-ptagf="' + k + '">' + PTAGS[k] + ' <b>' + n + '</b></button>' : ''; }).join('') + '</div>';
 			var listHtml = secs.map(function (sc) {
-				var its = sc[1].filter(okTag);
+				var its = sc[1].filter(okTag).filter(function (x) { return !S.pNoEv || !x.gevent; });
 				return its.length ? '<p class="dwdc-ptl-h' + (sc[0] === 'Overdue' ? ' late' : '') + '">' + sc[0] + ' <b>' + its.length + '</b></p>' + its.map(function (x) { return trow(x, sc[2]); }).join('') : '';
 			}).join('');
-			var todoCard = card('cd-ptodo1', '<header class="dwdc-dhead"><span class="dwdc-dic">' + ic('todo', 18) + '</span><h2>To-Do List <span class="dwdc-cnt">' + allOpen.length + '</span></h2><button type="button" class="dwdc-btn coral sm dwdc-addtask" data-addtask>' + ic('plus', 14) + 'Add task</button></header>',
+			var todoCard = card('cd-ptodo1', '<header class="dwdc-dhead"><span class="dwdc-dic">' + ic('todo', 18) + '</span><h2>' + (S.pNoEv ? 'Personal' : 'To-Do List') + ' <span class="dwdc-cnt">' + allOpen.length + '</span></h2>' + (S.pNoEv ? '<a href="#todos">Open ' + ic('right', 14) + '</a>' : '') + '<button type="button" class="dwdc-btn coral sm dwdc-addtask" data-addtask>' + ic('plus', 14) + 'Add task</button></header>',
 				pills + '<div class="dwdc-ptl">' + (listHtml || emptyRow(ftag ? 'Nothing tagged ' + PTAGS[ftag] + '.' : 'Nothing on your list. Nice.')) + '</div>');
 			// Right side: bank balance, then the month calendar (day squares; clicking a day opens that day).
 			var calHtml = personalView({ view: 'personal', arg: 'calendar' });
+			S.pParts = { todo: todoCard, bank: bbox };
 			return '<p class="dwdc-pgreet">' + greet + ', Michael. Here’s your day.</p>'
 				+ '<div class="dwdc-phome"><div class="dwdc-phl">' + todoCard + '</div><div class="dwdc-phr">'
 				+ bbox
@@ -554,7 +556,7 @@
 			return '<section class="dwdc-card">' + (dn.length ? '<div class="dwdc-todos donelist">' + dn.map(pTodoRow).join('') + '</div>' : emptyRow('Nothing completed yet.')) + '</section>';
 		}
 		// To-do
-		var open = D.todos.filter(function (t) { return !t.done; }).sort(function (a, b) { return (a.due || '9') < (b.due || '9') ? -1 : 1; });
+		var open = D.todos.filter(function (t) { return !t.done && (!S.pNoEv || !t.gevent); }).sort(function (a, b) { return (a.due || '9') < (b.due || '9') ? -1 : 1; });
 		var done = D.todos.filter(function (t) { return t.done; }).sort(function (a, b) { return (b.done_at || '') < (a.done_at || '') ? -1 : 1; });
 		var G = S.pGoogle, GL = G && G.last;
 		if (!G && !S.pGoogleLoading) { S.pGoogleLoading = true; api('/personal/google').then(function (x) { S.pGoogle = x; render(); }).catch(function () {}); }
@@ -636,11 +638,10 @@
 	// Phone / app only: a sticky tab bar at the bottom (hidden on desktop by CSS).
 	function tabBar(r) {
 		var pers = r.view === 'personal', a = r.arg || '';
-		var tabs = pers
-			? [['personal/todo', 'todo', 'To-Do', 'c1', a === 'todo' || a === 'calendar' || a === 'done'], ['personal/spending', 'dollar', 'Finances', 'c3', a === 'spending' || a === 'subs' || a === 'finances'], ['personal/bills', 'card', 'Bills', 'c4', a === 'bills']]
-			: [['home', 'home', 'Home', 'c1', r.view === 'home' || r.view === ''], ['projects/active', 'brief', 'Projects', 'c0', r.view === 'projects' || r.view === 'client'], ['money', 'dollar', 'Finances', 'c3', r.view === 'money']];
+		var a2 = r.view + (r.arg ? '/' + r.arg : '');
+		var tabs = [['home', 'home', 'Home', 'c1', r.view === 'home'], ['todos', 'todo', 'To-Dos', 'c4', r.view === 'todos' || a2 === 'personal/todo' || a2 === 'personal/calendar'], ['projects/active', 'brief', 'Projects', 'c0', ['projects', 'client', 'leads', 'onboarding', 'clients', 'cl', 'hosting'].indexOf(r.view) > -1], ['money', 'dollar', 'Money', 'c3', r.view === 'money' || (pers && a !== 'todo' && a !== 'calendar')]];
 		if (window.innerWidth > 768) { return ''; }
-		return '<nav class="dwdc-tabbar' + (pers ? ' pers' : '') + '" aria-label="Quick menu" style="position:fixed;left:0;right:0;bottom:0;z-index:9990">' + tabs.map(function (x) { return '<a class="' + x[3] + (x[4] ? ' on' : '') + '" href="#' + x[0] + '">' + ic(x[1], 20) + '<span>' + x[2] + '</span></a>'; }).join('') + '</nav>';
+		return '<nav class="dwdc-tabbar t4" aria-label="Quick menu" style="position:fixed;left:0;right:0;bottom:0;z-index:9990">' + tabs.map(function (x) { return '<a class="' + x[3] + (x[4] ? ' on' : '') + '" href="#' + x[0] + '">' + ic(x[1], 20) + '<span>' + x[2] + '</span></a>'; }).join('') + '</nav>';
 	}
 	function sidebar(r) {
 		var cur = r.view === 'client' || r.view === 'cl' ? S.back : r.view + (r.arg ? '/' + r.arg : '');
@@ -652,22 +653,20 @@
 		return '<aside class="dwdc-side">'
 			+ '<a class="dwdc-brand" href="#home"><span class="dwdc-mark"><img src="' + esc(DWDC.mark) + '" alt=""></span><span><strong>Dream Desk</strong><small>Dream Web Digital</small></span></a>'
 			+ (true ? '' : '<label class="dwdc-ssearch">' + ic('search', 16) + '<input type="search" placeholder="Search..." value="' + esc(S.q) + '"><kbd>Ctrl K</kbd></label>')
-			+ '<nav>' + nav('home', 'brief', 'Business') + '<a class="dwdc-nav dwdc-pswitch' + (r.view === 'personal' ? ' on' : '') + '" href="#personal">' + ic('user', 18) + '<span>Personal</span></a>'
-			+ (r.view === 'personal' ? '<div class="dwdc-navh"><i class="b2"></i>To-Do</div>' + nav('personal/todo', 'todo', 'My To-Dos', S.pers ? S.pers.todos.filter(function (x) { return !x.done; }).length : '') + nav('personal/calendar', 'clock', 'Calendar') + nav('personal/done', 'done', 'Completed', S.pers ? S.pers.todos.filter(function (x) { return x.done; }).length : '')
-				+ '<div class="dwdc-navh fin"><i class="b4"></i>Finances</div>' + nav('personal/spending', 'card', 'Spending') + nav('personal/subs', 'refresh', 'Subscriptions') + nav('personal/finances', 'dollar', 'Money In &amp; Out') + '<div class="dwdc-navh pb"><i class="b5"></i>Bills</div>' + nav('personal/bills', 'card', 'Upcoming Bills') + '</nav><a class="dwdc-me" href="' + esc(DWDC.logout) + '" title="Sign out"><span class="dwdc-me-av">MT</span><span><strong>' + esc(DWDC.user || 'Michael Tarr') + '</strong><small>Owner · Sign out</small></span>' + ic('logout', 17) + '</a></aside>' : '')
-			+ (r.view === 'personal' ? '' : '<div class="dwdc-navh"><i class="b1"></i>Projects</div>'
+			+ '<nav>' + nav('home', 'home', 'Home')
+			+ '<div class="dwdc-navh"><i class="b1"></i>Plan</div>' + nav('personal/calendar', 'clock', 'Calendar') + nav('todos', 'todo', 'To-Dos', openTasks().length + (S.pers ? S.pers.todos.filter(function (x) { return !x.done && !x.gevent; }).length : 0))
+			+ '<div class="dwdc-navh"><i class="b1"></i>Projects</div>'
 			+ nav('projects/active', 'bolt', 'Active', by('active').length) + nav('leads', 'user', 'Leads', leadList().length) + nav('onboarding', 'filter', 'Onboarding', onboardList().length)
-			+ nav('projects/hold', 'pause', 'On Hold', by('hold').length)
-			+ nav('projects/limbo', 'clock', 'Limbo', by('limbo').length) + nav('projects/complete', 'done', 'Completed', by('complete').length)
+			+ nav('projects/paused', 'pause', 'Paused', by('hold').length + by('limbo').length) + nav('projects/complete', 'done', 'Completed', by('complete').length)
 			+ '<div class="dwdc-navh"><i class="b2"></i>Clients</div>'
 			+ nav('clients', 'users', 'All Clients', S.clients.length) + nav('hosting', 'server', 'Hosting', hosting().length) + nav('reviews', 'mail', 'Get Reviews')
-			+ '<div class="dwdc-navh fin"><i class="b4"></i>Finances</div>' + nav('money', 'dollar', 'Money Stats')
-			+ '<div class="dwdc-navh"><i class="b3"></i>More</div>'
-			+ '<a class="dwdc-nav" href="' + esc(DWDC.wp) + '">' + ic('wp') + '<span>WordPress Admin</span></a>'
-			+ '</nav><a class="dwdc-me" href="' + esc(DWDC.logout) + '" title="Sign out"><span class="dwdc-me-av">MT</span><span><strong>' + esc(DWDC.user || 'Michael Tarr') + '</strong><small>Owner · Sign out</small></span>' + ic('logout', 17) + '</a></aside>');
+			+ '<div class="dwdc-navh fin"><i class="b4"></i>Money</div>' + nav('money', 'dollar', 'Business Revenue') + nav('personal/spending', 'card', 'Spending') + nav('personal/bills', 'refresh', 'Bills &amp; Subscriptions')
+			+ '<div class="dwdc-navh"><i class="b3"></i>Settings</div>' + nav('connections', 'link', 'Connections')
+			+ '<a class="dwdc-nav" href="' + esc(DWDC.wp) + '">' + ic('wp') + '<span>Website (WordPress)</span></a>'
+			+ '</nav><a class="dwdc-me" href="' + esc(DWDC.logout) + '" title="Sign out"><span class="dwdc-me-av">MT</span><span><strong>' + esc(DWDC.user || 'Michael Tarr') + '</strong><small>Owner · Sign out</small></span>' + ic('logout', 17) + '</a></aside>';
 	}
 	function top(r, t) {
-		var SEC = { Projects: 'projects/active', Project: 'projects/active', Clients: 'clients', Client: 'clients', Finances: 'money', 'Website Hosted': 'hosting', Search: 'home' };
+		var SEC = { Projects: 'projects/active', Project: 'projects/active', Clients: 'clients', Client: 'clients', Finances: 'money', Money: 'money', Plan: 'todos', Settings: 'connections', 'Website Hosted': 'hosting', Search: 'home' };
 		var page = [t[1], t[2]].filter(Boolean).join(' ').toLowerCase().replace(/(^|\s)\S/g, function (m) { return m.toUpperCase(); });
 		var crumb = r.view === 'home'
 			? '<a href="#home">Dream Desk</a><span aria-hidden="true">/</span><strong>' + esc(t[0]) + '</strong>'
@@ -695,7 +694,7 @@
 	}
 
 	function syncWpMenu(r) {
-		document.body.classList.toggle('dwd-pmode', r.view === 'personal');
+		document.body.classList.remove('dwd-pmode'); // one menu now (no Personal mode)
 		if (r.view === 'personal' && S.pers) {
 			var pc = { 'personal/todo': S.pers.todos.filter(function (x) { return !x.done; }).length, 'personal/done': S.pers.todos.filter(function (x) { return x.done; }).length, 'personal/bills': S.pers.bills.filter(function (b) { var n = billNext(b); return !n.paid && n.due <= new Date(Date.now() + 7 * 864e5).toISOString().slice(0, 10); }).length };
 			Object.keys(pc).forEach(function (h) { var li = document.getElementById('dwd-dd-' + h.replace('/', '-')); if (!li) { return; } var nm = li.querySelector('.wp-menu-name'), b = nm && nm.querySelector('.dwdc-mcount'); if (!nm) { return; } if (!b) { b = document.createElement('span'); b.className = 'dwdc-mcount'; nm.appendChild(b); } b.textContent = pc[h]; });
@@ -704,7 +703,7 @@
 		if (!menu) { return; }
 		var cur = r.view === 'client' || r.view === 'cl' ? S.back : r.view + (r.arg ? '/' + r.arg : '');
 		if (cur === 'projects' || cur === 'projects/all') { cur = 'projects/active'; }
-		var counts = { 'projects/active': by('active').length, 'projects/hold': by('hold').length, 'projects/limbo': by('limbo').length, 'projects/complete': by('complete').length, onboarding: onboardList().length, hosting: hosting().length, leads: leadList().length, clients: S.clients.length };
+		var counts = { todos: openTasks().length + (S.pers ? S.pers.todos.filter(function (x) { return !x.done && !x.gevent; }).length : 0), 'projects/paused': by('hold').length + by('limbo').length, 'projects/active': by('active').length, 'projects/hold': by('hold').length, 'projects/limbo': by('limbo').length, 'projects/complete': by('complete').length, onboarding: onboardList().length, hosting: hosting().length, leads: leadList().length, clients: S.clients.length };
 		var home = document.getElementById('toplevel_page_client-desk');
 		if (home) { var onHome = cur === 'home' || cur === ''; home.classList.toggle('current', onHome); home.classList.toggle('wp-has-current-submenu', onHome); var ha = home.querySelector('a.menu-top'); if (ha) { ha.classList.toggle('current', onHome); ha.classList.toggle('wp-has-current-submenu', onHome); } }
 		menu.querySelectorAll('li.dwd-dd').forEach(function (li) {
@@ -741,10 +740,10 @@
 		var r = route(), t = (TITLES[r.view] || ['', '', '']).slice(), body;
 		if (r.view === 'home') { t[0] = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }); }
 		if (r.view === 'projects') {
-			var pl = { active: ['Active', 'Projects'], limbo: ['Limbo', 'Projects'], hold: ['On Hold', 'Projects'], complete: ['Completed', 'Projects'] }[r.arg];
+			var pl = { active: ['Active', 'Projects'], paused: ['Paused', 'Projects'], limbo: ['Limbo', 'Projects'], hold: ['On Hold', 'Projects'], complete: ['Completed', 'Projects'] }[r.arg];
 			if (pl) { t = ['Projects', pl[0], pl[1]]; }
 		}
-		if (r.view === 'personal') { t = ['Personal'].concat(!r.arg ? ['Personal', 'Dashboard'] : { finances: ['Money In &', 'Out'], bills: ['Upcoming', 'Bills'], done: ['Completed', 'To-Dos'], calendar: ['My', 'Calendar'], spending: ['My', 'Spending'], subs: ['My', 'Subscriptions'] }[r.arg] || ['My', 'To-Dos']); if (!r.arg) { t = ['Personal', 'Personal', 'Dashboard']; } }
+		if (r.view === 'personal') { t = [['todo', 'calendar', 'done'].indexOf(r.arg) > -1 ? 'Plan' : 'Money'].concat(!r.arg ? ['Personal', 'Dashboard'] : { finances: ['Money In &', 'Out'], bills: ['Bills &', 'Subscriptions'], done: ['Completed', 'To-Dos'], calendar: ['', 'Calendar'], spending: ['', 'Spending'], subs: ['', 'Subscriptions'] }[r.arg] || ['My', 'To-Dos']); if (!r.arg) { t = ['Personal', 'Personal', 'Dashboard']; } }
 		if (r.view === 'client') {
 			var c = contact(r.id), words = String(c ? c.name : 'Project').split(' ');
 			t = ['Project', words.slice(0, Math.max(1, words.length - 1)).join(' '), words.length > 1 ? words[words.length - 1] : ''];
@@ -758,7 +757,7 @@
 			t = ['Client', kw[0], kw.slice(1).join(' ')];
 			body = personView(r.id);
 		} else {
-			body = r.view === 'personal' ? personalView(r) : ({ home: home, clients: clientsView, projects: projectsView, leads: leadsList, onboarding: onboardView, todos: todosView, hosting: hostingView, money: moneyView, reviews: reviewsView, archive: archiveView, search: searchView }[r.view] || home)();
+			body = r.view === 'personal' ? (r.arg === 'spending' ? personalView(r) + '<h2 class="dwdc-sech">Money in &amp; out (logged by hand)</h2>' + personalView({ view: 'personal', arg: 'finances' }) : r.arg === 'bills' ? personalView(r) + '<h2 class="dwdc-sech">Subscriptions</h2>' + personalView({ view: 'personal', arg: 'subs' }) : personalView(r)) : ({ home: home, clients: clientsView, projects: projectsView, leads: leadsList, onboarding: onboardView, todos: todosBoth, connections: connectionsView, hosting: hostingView, money: moneyView, reviews: reviewsView, archive: archiveView, search: searchView }[r.view] || home)();
 		}
 		app.setAttribute('data-view', r.view);
 		app.innerHTML = sidebar(r) + '<div class="dwdc-shade-m" data-menu></div><main class="dwdc-main">' + quoteBar() + appBanner() + top(r, t) + '<div class="dwdc-screen' + (anim ? ' in' : '') + '">' + body + '</div></main>' + tabBar(r) + modal();
@@ -850,7 +849,7 @@
 	}
 	/* ---------- Connections: Stripe & PayPal live sync, Upwork CSV import ---------- */
 	function connCard() {
-		if (!S.sync) { if (!S.syncLoading) { S.syncLoading = true; api('/sync').then(function (x) { S.sync = x; S.syncLoading = false; if (route().view === 'money') { render(); } }).catch(function () { S.syncLoading = false; }); } return emptyRow('Loading…'); }
+		if (!S.sync) { if (!S.syncLoading) { S.syncLoading = true; api('/sync').then(function (x) { S.sync = x; S.syncLoading = false; render(); }).catch(function () { S.syncLoading = false; }); } return emptyRow('Loading…'); }
 		var X = S.sync, U = S.upRes;
 		var st = function (ok, last) { return '<span class="dwdc-conn-st ' + (ok ? 'on' : 'off') + '">' + (ok ? 'Connected' : 'Not set up') + '</span>' + (last ? '<small class="dwdc-conn-last">Last payment synced ' + fmt(String(last).slice(0, 10), true) + '</small>' : ''); };
 		var copy = function (u) { return '<div class="dwdc-conn-url"><code>' + esc(u) + '</code><button class="dwdc-lnk sm2" data-copy="' + esc(u) + '">Copy</button></div>'; };
@@ -1321,6 +1320,36 @@
 				+ (u ? '<span class="dwdc-mtl-u">' + u + '</span>' : '') + (m.link ? '<span class="dwdc-mtl-j">Join</span>' : (who ? '<span class="dwdc-mtl-j ghost">Open</span>' : '')) + '</' + (href ? 'a' : 'div') + '>';
 		}).join('') + '</section>';
 	}
+	// Home calendar: the next 7 days — calendar events (both Google accounts), personal and work to-dos, bills, meetings.
+	function weekAgenda(P) {
+		var t0 = new Date(DWDC.today + 'T12:00:00'), iso = function (d) { return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); };
+		var short = function (tm) { var q = /^(\d{1,2}):(\d{2})\s*([AP]M)$/i.exec(String(tm || '').trim()); return q ? (+q[1]) + (q[2] === '00' ? '' : ':' + q[2]) + q[3].toLowerCase() : ''; };
+		var mins = function (tm) { var q = /^(\d{1,2}):(\d{2})\s*([AP]M)?/i.exec(String(tm || '')); return q ? (+q[1] % 12 + (/p/i.test(q[3] || '') ? 12 : 0)) * 60 + +q[2] : -1; };
+		var days = '';
+		for (var i = 0; i < 7; i++) {
+			var d = new Date(t0); d.setDate(t0.getDate() + i); var ds = iso(d), its = [];
+			if (P) {
+				P.todos.filter(function (x) { return x.due === ds && !x.done; }).forEach(function (x) { its.push({ k: x.gevent ? (isFlight(x.text) ? 'fl' : 'ev') : 'pt', t: x.text, tm: x.time || '', go: 'data-ptask="' + x.id + '"' }); });
+				P.bills.forEach(function (b) { var n = billNext(b); if (!n.paid && n.due === ds) { its.push({ k: 'bill', t: b.name + ' · ' + money(b.amount), tm: '', go: 'data-gobills' }); } });
+			}
+			S.tasks.filter(function (x) { return !x.done && x.due === ds; }).forEach(function (x) { its.push({ k: 'wt', t: x.text, tm: '', go: 'data-task="' + x.id + '"' }); });
+			its.sort(function (a, b) { return mins(a.tm) - mins(b.tm); });
+			var lbl = i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : d.toLocaleDateString('en-US', { weekday: 'short' });
+			days += '<div class="dwdc-wa-d' + (i === 0 ? ' today' : '') + '"><div class="dwdc-wa-h"><b>' + lbl + '</b><small>' + d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + '</small></div><div class="dwdc-wa-list">'
+				+ (its.length ? its.slice(0, 6).map(function (x) { return '<div role="button" tabindex="0" class="dwdc-wa-i ' + x.k + '" ' + x.go + ' title="' + esc(x.t) + '">' + (x.tm ? '<em>' + short(x.tm) + '</em>' : '') + esc(ptx(x.t)) + '</div>'; }).join('') + (its.length > 6 ? '<a class="dwdc-wa-more" href="#personal/calendar">+' + (its.length - 6) + ' more</a>' : '') : '<span class="dwdc-wa-none">—</span>') + '</div></div>';
+		}
+		return card('cd-plain cd-week', '<header class="dwdc-dhead"><h2>This week</h2><a href="#personal/calendar">Calendar ' + ic('right', 14) + '</a></header>', '<div class="dwdc-wa">' + days + '</div>');
+	}
+	// Settings → Connections: every hookup in one place (Google accounts, bank, AI, Upwork, Stripe, PayPal).
+	function connectionsView() {
+		S.pConnOpen = true;
+		return '<h2 class="dwdc-sech">Google, bank &amp; AI</h2>' + connPanel().replace('<button class="dwdc-cardh dwdc-colh" data-pconnopen', '<div class="dwdc-cardh" data-x').replace(/<\/button>(<div class="dwdc-conns">)/, '</div>$1')
+			+ '<h2 class="dwdc-sech">Payments &amp; Upwork</h2><section class="dwdc-card pad dwdc-mcard wide">' + connCard() + '</section>';
+	}
+	// To-Dos page: Work and Personal side by side.
+	function todosBoth() {
+		return '<div class="dwdc-todopage"><section><h2 class="dwdc-sech">Work</h2>' + todosView() + '</section><section><h2 class="dwdc-sech">Personal</h2>' + (pData() ? (function () { S.pNoEv = true; var h = personalView({ view: 'personal', arg: 'todo' }); S.pNoEv = false; return h; })() : emptyRow('Loading…')) + '</section></div>';
+	}
 	/* ---------- Home ---------- */
 	function home() {
 		var types = S.clients.map(function (k) { return clientType(k.id); });
@@ -1396,7 +1425,7 @@
 			}).join('') : emptyRow('No active projects.')) + '</div>',
 			'<footer class="dwdc-totals one"><div><small>Total amount due</small><strong class="deep">' + money(owed(active)) + '</strong></div></footer>');
 		var td = openTasks().sort(function (a, b) { return (a.due || '9') < (b.due || '9') ? -1 : 1; });
-		var tl = card('cd-plain cd-todo', '<header class="dwdc-dhead"><h2>To-Do List <span class="dwdc-cnt">' + td.length + '</span></h2></header>',
+		var tl = card('cd-plain cd-todo', '<header class="dwdc-dhead"><h2>Work <span class="dwdc-cnt">' + td.length + '</span></h2><a href="#todos">Open ' + ic('right', 14) + '</a></header>',
 			'<form class="dwdc-addbar home"><input name="text" placeholder="Add something we need to do..." autocomplete="off" required><button class="dwdc-btn">Add</button></form>'
 			+ (td.length ? '<div class="dwdc-todos" data-sort="todos">' + todoItems(td).map(function (it) {
 				if (!it.tasks) { return todoRow(it.task).replace('<div class="dwdc-todo', '<div data-sid="' + it.id + '" class="dwdc-todo'); }
@@ -1415,7 +1444,18 @@
 					+ '<span class="v"><b>' + (num(c.price) ? money(c.price) : '—') + '</b><small class="' + (due ? 'deep' : '') + '">' + (c.followup ? (due ? 'Follow up ' + (c.followup < DWDC.today ? fmt(c.followup) : 'today') : 'Follow up ' + fmt(c.followup)) : 'No follow-up') + '</small></span></a>';
 			}).join('') + '</div>' : emptyRow('No open leads.'),
 			lds.length ? '<footer class="dwdc-totals one"><div><small>Estimated value</small><strong class="deep">' + money(lds.reduce(function (a, c) { return a + num(c.price); }, 0)) + '</strong></div></footer>' : '');
-		return meetBar() + reviewBar() + '<div class="dwdc-row3 dwdc-top2">' + c2 + lb + '</div><div class="dwdc-moneywide">' + c3 + '</div><div class="dwdc-row2c">' + card('cd-plain cd-trends', '<header class="dwdc-dhead"><h2>Patterns &amp; Trends</h2><button class="dwdc-askbtn light" data-askai>' + ic('bolt', 14) + 'Ask AI</button><a href="#money">Money Stats ' + ic('right', 14) + '</a></header>', trendsBox()) + tl + '</div>';
+		// One dashboard: calendar + bank on top, Work and Personal to-dos side by side, Projects + Leads, Business revenue.
+		var P = pData(), pt = '';
+		if (P) { S.pNoEv = true; personalView({ view: 'personal', arg: '' }); S.pNoEv = false; pt = (S.pParts || {}).todo || ''; }
+		var bank = P && S.pParts ? S.pParts.bank : '<div class="dwdc-pbal"><small>Bank balance today</small><strong>…</strong></div>';
+		var ol = owingList(), mk = DWDC.today.slice(0, 7), MYm = S.money || {}, yy = DWDC.today.slice(0, 4), mo = +DWDC.today.slice(5, 7) - 1;
+		var madeNow = MYm[yy] && MYm[yy].m ? Math.max(0, +MYm[yy].m[mo] || 0) : 0;
+		var quick = '<div class="dwdc-hq"><a href="#money" data-owed><small>Owed to you</small><b class="o">' + money(owed(ol)) + '</b></a><a href="#money" data-month="' + mk + '"><small>Made in ' + new Date(DWDC.today + 'T12:00:00').toLocaleDateString('en-US', { month: 'short' }) + '</small><b class="g">' + money(madeNow) + '</b></a></div>';
+		return meetBar() + reviewBar()
+			+ '<div class="dwdc-htop"><div class="dwdc-htop-cal">' + weekAgenda(P) + '</div><div class="dwdc-htop-side">' + bank + quick + '</div></div>'
+			+ '<div class="dwdc-row3 dwdc-top2 dwdc-todos2">' + tl + (pt || card('cd-ptodo1', '<header class="dwdc-dhead"><h2>Personal</h2></header>', emptyRow('Loading…'))) + '</div>'
+			+ '<div class="dwdc-row3 dwdc-top2">' + c2 + lb + '</div>'
+			+ '<div class="dwdc-moneywide">' + c3.replace('Money</', 'Business revenue</') + '</div>';
 	}
 
 	/* ---------- All Clients ---------- */
@@ -1442,16 +1482,16 @@
 	/* ---------- All Projects ---------- */
 	function projectsView() {
 		var f = route().arg || 'active';
-		if (['active', 'limbo', 'hold', 'complete'].indexOf(f) < 0) { f = 'active'; }
+		if (['active', 'limbo', 'hold', 'complete', 'paused'].indexOf(f) < 0) { f = 'active'; }
 		var all = S.contacts.filter(isProject).filter(match);
 		var chip = function (k, l) { var n = all.filter(function (c) { return k === 'all' || c.list === k; }).length; return '<a class="dwdc-fchip' + (f === k ? ' on' : '') + '" href="#projects/' + k + '">' + (k === 'all' ? '' : '<i class="dwdc-sdot t-' + TONE[k] + '"></i>') + l + ' <b>' + n + '</b></a>'; };
 		var order = ['active', 'hold', 'limbo', 'complete'];
 		var yr = S.year || '', years = {};
 		if (f === 'complete') { all.filter(function (c) { return c.list === 'complete'; }).forEach(function (c) { var y = (doneDate(c) || '').slice(0, 4); years[y || 'none'] = (years[y || 'none'] || 0) + 1; }); }
-		var rows = all.filter(function (c) { return f === 'all' || c.list === f; }).filter(function (c) { if (f !== 'complete' || !yr) { return true; } var y = (doneDate(c) || '').slice(0, 4); return yr === 'none' ? !y : y === yr; }).sort(function (a, b) { return order.indexOf(a.list) - order.indexOf(b.list) || (a.list === 'complete' ? byDone(a, b) : (a.deadline || '9') < (b.deadline || '9') ? -1 : 1); });
+		var rows = all.filter(function (c) { return f === 'all' || c.list === f || (f === 'paused' && (c.list === 'hold' || c.list === 'limbo')); }).filter(function (c) { if (f !== 'complete' || !yr) { return true; } var y = (doneDate(c) || '').slice(0, 4); return yr === 'none' ? !y : y === yr; }).sort(function (a, b) { return order.indexOf(a.list) - order.indexOf(b.list) || (a.list === 'complete' ? byDone(a, b) : (a.deadline || '9') < (b.deadline || '9') ? -1 : 1); });
 		if (f === 'active') { rows = psort('active', rows); }
 		var cap = S.more['p' + f] || S.q ? rows.length : 50;
-		var empties = { active: 'No active projects right now.', limbo: 'Nothing in limbo. Clients you haven’t heard back from in a while go here.', hold: 'No projects on hold. Paused or waiting projects go here.', complete: 'No completed projects yet.', all: 'No projects match.' };
+		var empties = { paused: 'Nothing paused. Projects on hold or in limbo (waiting on the client) show here.', active: 'No active projects right now.', limbo: 'Nothing in limbo. Clients you haven’t heard back from in a while go here.', hold: 'No projects on hold. Paused or waiting projects go here.', complete: 'No completed projects yet.', all: 'No projects match.' };
 		var ylist = Object.keys(years).filter(function (y) { return y !== 'none'; }).sort().reverse();
 		var yearBar = f === 'complete' ? '<div class="dwdc-years"><span>Finished in</span><select class="dwdc-yearsel" data-year>'
 			+ '<option value="">All years (' + all.filter(function (c) { return c.list === 'complete'; }).length + ')</option>'

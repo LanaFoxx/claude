@@ -1352,7 +1352,7 @@ add_action( 'rest_api_init', function () {
 /* ---------------------------------------------------------------- admin screen */
 
 add_action( 'admin_menu', function () {
-	add_menu_page( 'Dream Desk', 'Business', 'manage_options', 'client-desk', 'dwdc_page', 'dashicons-portfolio', 2 );
+	add_menu_page( 'Dream Desk', 'Home', 'manage_options', 'client-desk', 'dwdc_page', 'dashicons-admin-home', 2 );
 } );
 
 add_action( 'admin_init', function () {
