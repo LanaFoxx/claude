@@ -147,8 +147,6 @@ $quotes = [
 ];
 ?>
 <section class="npc-quote" aria-roledescription="carousel" aria-label="Client reviews">
-	<?php echo npc_img('npc-quote-rye', 'full', ['class' => 'npc-quote__img', 'alt' => '', 'aria-hidden' => 'true', 'sizes' => '100vw']); ?>
-	<div class="npc-quote__veil" aria-hidden="true"></div>
 	<div class="npc-wrap npc-quote__in">
 		<p class="npc-quote__mark" aria-hidden="true">“</p>
 		<div class="npc-quote__slides">
@@ -199,7 +197,7 @@ $quotes = [
 	</div>
 </section>
 
-<section class="npc-wrap npc-contact-wrap" id="contact" style="padding-top:40px">
+<section class="npc-contact-wrap" id="contact">
 	<div class="npc-contact">
 		<?php echo npc_img('npc-contact-seawall', 'large', ['class' => 'npc-contact__photo', 'alt' => '', 'aria-hidden' => 'true']); ?>
 		<svg class="npc-contact__waves" viewBox="0 0 1200 400" preserveAspectRatio="none" aria-hidden="true">
