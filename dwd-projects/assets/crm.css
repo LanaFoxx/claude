@@ -2467,3 +2467,41 @@ select.dwdc-sel.pm-stripe { color: #fff !important; }
   .dwdc .dwdc-wa-list { flex: 1; }
 }
 .dwdc .dwdc-revdone { display: block; font-size: 11.5px; color: #137333; font-weight: 600; }
+/* ===== Business Revenue: calm, simple ===== */
+.dwdc .mv-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin: 0 0 20px; }
+.dwdc .mv-stat { display: flex; flex-direction: column; gap: 4px; padding: 16px 18px; background: #fff; border: 1px solid #dfe5ee; border-radius: 14px; cursor: pointer; min-width: 0; }
+.dwdc .mv-stat:hover { border-color: #b9c6d6; }
+.dwdc .mv-stat small { font: 600 13px Poppins, sans-serif; color: #5b6b82; }
+.dwdc .mv-stat strong { font: 700 30px/1.15 Poppins, sans-serif; color: #0f2447; letter-spacing: -.01em; }
+.dwdc .mv-stat span { font-size: 13px; color: #5b6b82; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dwdc .mv-stat.g strong { color: #137333; } .dwdc .mv-stat.o strong { color: #d35f12; } .dwdc .mv-stat.b strong { color: #1a64c8; }
+.dwdc .mv-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; align-items: start; }
+.dwdc .mv-card { background: #fff; border: 1px solid #dfe5ee; border-radius: 14px; overflow: hidden; min-width: 0; }
+.dwdc .mv-card > header { display: flex; align-items: center; gap: 10px; padding: 14px 20px; border-bottom: 1px solid #edf1f6; }
+.dwdc .mv-card > header h2 { margin: 0; font: 600 16.5px Poppins, sans-serif; color: #0f2447; text-transform: none; letter-spacing: 0; }
+.dwdc .mv-sub { margin-left: auto; font-size: 12.5px; color: #8392a7; }
+.dwdc .mv-lnk { margin-left: auto; display: inline-flex; align-items: center; gap: 5px; border: 0; background: none; padding: 0; font: 600 13px Poppins, sans-serif; color: #1a64c8; cursor: pointer; }
+.dwdc .mv-body { padding: 8px 20px 14px; }
+.dwdc .mv-bar { display: grid; grid-template-columns: 56px minmax(0, 1fr) 84px; align-items: center; gap: 12px; width: 100%; padding: 6px 0; border: 0; background: none; cursor: pointer; font: 500 13.5px Poppins, sans-serif; color: #0f2447; text-align: left; }
+.dwdc .mv-bar i { height: 10px; border-radius: 6px; background: #eef2f7; overflow: hidden; }
+.dwdc .mv-bar i b { display: block; height: 100%; border-radius: 6px; background: #34a36b; }
+.dwdc .mv-bar em { font-style: normal; font-weight: 600; text-align: right; }
+.dwdc .mv-bar:hover span { color: #1a64c8; }
+.dwdc .mv-row { display: grid; grid-template-columns: minmax(0, 1fr) 100px 100px; align-items: center; gap: 10px; width: 100%; padding: 11px 0; border: 0; border-top: 1px solid #edf1f6; background: none; font: 500 14px Poppins, sans-serif; color: #0f2447; text-align: left; }
+.dwdc .mv-row:first-child, .dwdc .mv-row.head + .mv-row { border-top: 0; }
+.dwdc button.mv-row, .dwdc .mv-row.go { cursor: pointer; }
+.dwdc button.mv-row:hover, .dwdc .mv-row.go:hover { background: #f7f9fc; }
+.dwdc .mv-row b, .dwdc .mv-row em { text-align: right; font-style: normal; }
+.dwdc .mv-row b { font-weight: 700; } .dwdc .mv-row em { color: #5b6b82; }
+.dwdc .mv-row.head { padding: 4px 0; font-size: 11.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #8392a7; }
+.dwdc .mv-row.head b, .dwdc .mv-row.head em { color: #8392a7; font-weight: 700; }
+.dwdc .mv-ads .mv-row:last-of-type { font-weight: 700; }
+.dwdc .mv-more { margin-top: 10px; }
+.dwdc .mv-more .dwdc-card { border: 0 !important; box-shadow: none !important; padding: 0 !important; }
+.dwdc .mv-more .dwdc-cardh { display: none; }
+.dwdc .mv-more .dwdc-kpis { display: none; }
+.dwdc .mv-more .dwdc-more { display: none; }
+.dwdc .mv-trends .mv-body { padding-top: 12px; }
+.dwdc .mv-grid + .dwdc-more { margin-top: 20px; }
+@media (max-width: 1100px) { .dwdc .mv-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } .dwdc .mv-grid { grid-template-columns: 1fr; } }
+@media (max-width: 600px) { .dwdc .mv-stats { gap: 10px; } .dwdc .mv-stat { padding: 12px 14px; } .dwdc .mv-stat strong { font-size: 22px; } .dwdc .mv-row { grid-template-columns: minmax(0, 1fr) 80px 80px; } .dwdc .mv-card > header { flex-wrap: wrap; } }

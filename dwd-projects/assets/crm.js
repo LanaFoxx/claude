@@ -1017,25 +1017,49 @@
 		var rowsC = topClients.map(function (x, i) { return '<a class="dwdc-mrow" href="' + (x.id ? '#cl/' + x.id : '#client/' + x.list[0].id) + '"><em>' + (i + 1) + '</em><span><b>' + esc(cname(x)) + '</b><small>' + x.list.length + ' project' + (x.list.length === 1 ? '' : 's') + '</small></span><strong>' + money(x.total) + '</strong></a>'; }).join('');
 		var rowsR = repeat.slice(0, 12).map(function (x) { return '<a class="dwdc-mrow" href="' + (x.id ? '#cl/' + x.id : '#client/' + x.list[0].id) + '"><span><b>' + esc(cname(x)) + '</b><small>' + x.list.map(function (c) { return esc(c.name); }).join(' · ') + '</small></span><strong>' + money(x.total) + '</strong></a>'; }).join('');
 		var mcard = function (title, inner, extra) { return '<section class="dwdc-card pad dwdc-mcard' + (extra ? ' ' + extra : '') + '"><div class="dwdc-cardh"><h2>' + title + '</h2></div>' + inner + '</section>'; };
-		return moneySnap(MY) + winsCard() + '<section class="dwdc-card pad dwdc-wins dwdc-conn"><div class="dwdc-cardh"><h2>Connects spending</h2></div>' + connSpend() + '</section>' + '<div class="dwdc-kpis k3 dwdc-mkpis">'
-			+ kpi('All-time income', money(total), 'Every payment since you started · ' + paid.length + ' projects', 'navy')
-			+ kpi('Average project', money(avg), 'Middle project ' + money(mid))
-			+ kpi('Top project', top ? money(lifetime(top)) : '—', top ? esc(top.name) : '')
-			+ '</div>'
-			+ '<div class="dwdc-mgrid">'
-			+ mcard('Patterns &amp; Trends <button class="dwdc-askbtn" data-askai>' + ic('bolt', 14) + 'Ask AI</button>', trendsBox(), 'trends')
-			+ mcard('Where it came from', '<div class="dwdc-chanbar">' + chan.map(function (x) { return x[1] ? '<i class="' + x[2] + '" style="width:' + Math.max(1, pct(x[1])) + '%"></i>' : ''; }).join('') + '</div>'
-				+ '<ul class="dwdc-chans">' + chan.map(function (x) { return '<li><i class="' + x[2] + '"></i><span>' + x[0] + '</span><b>' + money(x[1]) + '</b><em>' + pct(x[1]) + '%</em></li>'; }).join('') + '</ul>')
-			+ mcard('By year', (ylist.length ? '<ul class="dwdc-years2">' + ylist.map(function (y) { var o = MY[y], t = ytot(y); return '<li><span>' + y + '</span><div>' + [['Upwork', 'upw'], ['Stripe', 'str'], ['PayPal', 'ppl'], ['Other', 'oth']].map(function (x) { return o[x[0]] > 0 ? '<i class="' + x[1] + '" style="width:' + Math.max(1, Math.round(o[x[0]] / ymax * 100)) + '%" title="' + x[0] + ' ' + money(o[x[0]]) + '"></i>' : ''; }).join('') + '</div><b>' + money(t) + '</b></li>'; }).join('') + '</ul>' : emptyRow('No dated payments yet.'))
-				+ '<div class="dwdc-ylegend"><span><i class="upw"></i>Upwork</span><span><i class="str"></i>Stripe</span><span><i class="ppl"></i>PayPal</span><span><i class="oth"></i>Zelle & other</span></div>'
-				)
-			+ mcard('Busiest months <small class="dwdc-bm-sub">Click any month to see every payment · after Upwork fees</small>', busyMonths(MY, ylist), 'wide bm')
-			+ '<section class="dwdc-card pad dwdc-mcard wide dwdc-collapse' + (S.connOpen ? ' open' : '') + '"><button class="dwdc-cardh dwdc-colh" data-connopen aria-expanded="' + !!S.connOpen + '"><h2>Upwork Connects</h2><span class="dwdc-colsum">' + connSummary() + '</span>' + ic('right', 16) + '</button>' + (S.connOpen ? connectsCard(MY) : '') + '</section>'
-			+ mcard('Top projects', rowsP || emptyRow('No payments yet.'))
-			+ mcard('Top clients', rowsC || emptyRow('No payments yet.'))
-			+ mcard('Repeat clients <span class="dwdc-cnt">' + repeat.length + '</span>', rowsR || emptyRow('No repeat clients yet.'))
-			+ '<section class="dwdc-card pad dwdc-mcard wide dwdc-collapse' + (S.syncOpen ? ' open' : '') + '"><button class="dwdc-cardh dwdc-colh" data-syncopen aria-expanded="' + !!S.syncOpen + '"><h2>Connections</h2><span class="dwdc-colsum">Upwork files, Stripe &amp; PayPal sync, Update Finances</span>' + ic('right', 16) + '</button>' + (S.syncOpen ? connCard() : '') + '</section>'
+		// Simple, calm layout: 4 numbers, then Income, Jobs won, Ad spending, Trends. Everything else under "More stats".
+		var MNf = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+		var T = DWDC.today, ty = +T.slice(0, 4), tm = +T.slice(5, 7) - 1;
+		var mAt = function (n) { var d = new Date(ty, tm - n, 1); return { y: d.getFullYear(), m: d.getMonth(), key: d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2), from: dIso(d), to: dIso(new Date(d.getFullYear(), d.getMonth() + 1, 0)), name: MNf[d.getMonth()] }; };
+		var made = function (n) { var x = mAt(n), o = MY[String(x.y)]; return o && o.m ? Math.max(0, +o.m[x.m] || 0) : 0; };
+		var m0 = mAt(0), m1 = mAt(1), ol = owingList(), pend = pendDeposit(ol);
+		var G = (S.ads || {}).google, gNow = G && G.month ? G.month.cost : 0, gPrev = G && G.lastmonth ? G.lastmonth.cost : 0;
+		var cNow = connMonth(m0.y, m0.m).v, cPrev = connMonth(m1.y, m1.m).v;
+		var j0 = winsIn(m0.from, T), j1 = winsIn(m1.from, m1.to);
+		var stat = function (attr, label, val, sub, cls) { return '<div class="mv-stat ' + cls + '" role="button" tabindex="0" ' + attr + '><small>' + label + '</small><strong>' + val + '</strong><span>' + sub + '</span></div>'; };
+		var top4 = '<div class="mv-stats">'
+			+ stat('data-month="' + m0.key + '"', 'Made in ' + m0.name, money(made(0)), m1.name + ': ' + money(made(1)), 'g')
+			+ stat('data-owed', 'Owed to you', money(owed(ol)), pend ? money(pend) + ' pending deposit' : ol.length + ' projects', 'o')
+			+ stat('data-wins="' + m0.from + '|' + T + '|' + m0.name + '"', 'Jobs won in ' + m0.name, String(j0.length), (winVal(j0) ? money(winVal(j0)) + ' · ' : '') + m1.name + ': ' + j1.length, 'b')
+			+ stat('data-adsmodal', 'Ad spend in ' + m0.name, money(gNow + cNow), 'Google Ads ' + money(gNow) + ' · Connects ' + money(cNow), 'n')
 			+ '</div>';
+		var box = function (cls, title, right, body) { return '<section class="mv-card ' + cls + '"><header><h2>' + title + '</h2>' + (right || '') + '</header><div class="mv-body">' + body + '</div></section>'; };
+		// Income: last 12 months
+		var inc = [], imax = 1;
+		for (var i = 0; i < 12; i++) { var mx = mAt(i), v = made(i); inc.push({ x: mx, v: v }); imax = Math.max(imax, v); }
+		var incomeBox = box('mv-inc', 'Income by month', '<span class="mv-sub">after Upwork fees</span>', inc.map(function (r) { return '<button type="button" class="mv-bar" data-month="' + r.x.key + '"><span>' + r.x.name.slice(0, 3) + (r.x.y !== ty ? ' ' + String(r.x.y).slice(2) : '') + '</span><i><b style="width:' + Math.round(r.v / imax * 100) + '%"></b></i><em>' + (r.v ? money(r.v) : '—') + '</em></button>'; }).join(''));
+		// Jobs won
+		var ws = weekStart(T), wkR = function (n) { var a1 = new Date(ws); a1.setDate(a1.getDate() - 7 * n); var b1 = new Date(a1); b1.setDate(b1.getDate() + 6); return { from: dIso(a1), to: dIso(b1) }; };
+		var jrow = function (label, r) { var l = winsIn(r.from, r.to); return '<button type="button" class="mv-row" data-wins="' + r.from + '|' + r.to + '|' + esc(label) + '"><span>' + label + '</span><b>' + l.length + ' job' + (l.length === 1 ? '' : 's') + '</b><em>' + (winVal(l) ? money(winVal(l)) : '—') + '</em></button>'; };
+		var jobsBox = box('mv-jobs', 'Jobs won', '<button type="button" class="mv-lnk" data-winsmore>' + (S.winsMore ? 'Hide' : 'Every week &amp; month') + '</button>',
+			jrow('This week', wkR(0)) + jrow('Last week', wkR(1)) + jrow(m0.name + ' so far', { from: m0.from, to: T }) + jrow(m1.name, m1) + (S.winsMore ? '<div class="mv-more">' + winsCard() + '</div>' : ''));
+		// Ad spending
+		var arow = function (label, a1, b1, attr) { return '<div class="mv-row' + (attr ? ' go' : '') + '"' + (attr ? ' role="button" tabindex="0" ' + attr : '') + '><span>' + label + '</span><b>' + money(a1) + '</b><em>' + money(b1) + '</em></div>'; };
+		var perJob = j0.length ? money((gNow + cNow) / j0.length) + ' per job won this month' : 'No jobs won yet this month';
+		var adsBox = box('mv-ads', 'Ad spending', '<span class="mv-sub">' + perJob + '</span>',
+			'<div class="mv-row head"><span></span><b>' + m0.name.slice(0, 3) + '</b><em>' + m1.name.slice(0, 3) + '</em></div>'
+			+ arow('Google Ads', gNow, gPrev, G ? 'data-adsmodal' : 'data-adsconnect') + arow('Upwork Connects', cNow, cPrev, 'data-connmore') + arow('Total', gNow + cNow, gPrev + cPrev, '')
+			+ (S.connMore ? '<div class="mv-more">' + connSpend() + '</div>' : ''));
+		var trendBox = box('mv-trends', 'Patterns &amp; trends', '<button class="mv-lnk" data-askai>' + ic('bolt', 14) + ' Ask AI</button>', trendsBox());
+		var more = '<button type="button" class="dwdc-more" data-moremoney>' + (S.moreMoney ? 'Hide' : 'More stats: all-time, by year, busiest months, top clients') + ' ' + ic('down', 15) + '</button>'
+			+ (S.moreMoney ? '<div class="dwdc-kpis k3 dwdc-mkpis">' + kpi('All-time income', money(total), paid.length + ' projects', '') + kpi('Average project', money(avg), 'Middle project ' + money(mid)) + kpi('Top project', top ? money(lifetime(top)) : '—', top ? esc(top.name) : '') + '</div>'
+				+ '<div class="dwdc-mgrid">'
+				+ mcard('Where it came from', '<div class="dwdc-chanbar">' + chan.map(function (x) { return x[1] ? '<i class="' + x[2] + '" style="width:' + Math.max(1, pct(x[1])) + '%"></i>' : ''; }).join('') + '</div><ul class="dwdc-chans">' + chan.map(function (x) { return '<li><i class="' + x[2] + '"></i><span>' + x[0] + '</span><b>' + money(x[1]) + '</b><em>' + pct(x[1]) + '%</em></li>'; }).join('') + '</ul>')
+				+ mcard('Busiest months <small class="dwdc-bm-sub">Click a month to see every payment</small>', busyMonths(MY, ylist), 'wide bm')
+				+ mcard('Top projects', rowsP || emptyRow('No payments yet.')) + mcard('Top clients', rowsC || emptyRow('No payments yet.'))
+				+ mcard('Repeat clients <span class="dwdc-cnt">' + repeat.length + '</span>', rowsR || emptyRow('No repeat clients yet.'))
+				+ '</div>' : '');
+		return top4 + '<div class="mv-grid">' + incomeBox + jobsBox + adsBox + trendBox + '</div>' + more;
 	}
 	/* ---------- Get Reviews: pick past clients and email them a Google review request ---------- */
 	var REV_PER = 25;
@@ -2725,6 +2749,7 @@
 			return;
 		}
 		if ((el = t.closest('[data-psort]'))) { e.preventDefault(); e.stopPropagation(); var pk = el.getAttribute('data-psort'); S.psort = S.psort || {}; S.psort[pk] = { '': 'desc', desc: 'asc', asc: '' }[S.psort[pk] || '']; try { localStorage.setItem('dwdc-psort', JSON.stringify(S.psort)); } catch (er) {} render(); return; }
+		if (t.closest('[data-moremoney]')) { S.moreMoney = !S.moreMoney; render(); return; }
 		if (t.closest('[data-winsmore]')) { S.winsMore = !S.winsMore; render(); return; }
 		if (t.closest('[data-connmore]')) { S.connMore = !S.connMore; render(); if (S.connMore) { setTimeout(function () { var c = document.querySelector('.dwdc-conn'); if (c) { c.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }, 50); } return; }
 		if ((el = t.closest('[data-tgrp]'))) { var gid = +el.getAttribute('data-tgrp'); S.tgOpen = S.tgOpen || {}; S.tgOpen[gid] = !S.tgOpen[gid]; render(); return; }
