@@ -2860,6 +2860,9 @@
 			'<div class="dd-pbtns">' + (obl.length ? btn('data-viewob', lu('clipboard-list') + 'View answers') + '<button type="button" class="dd-btn ghost" data-copyob>Copy answers</button>' : btn('data-leadinvite="' + c.id + '"', lu('mail') + (c.stage === 'onboarding' ? 'Resend onboarding form' : 'Send onboarding form'))) + '</div>');
 		// markup review
 		var SM = full ? c.ai_summary : null, sumBox = '';
+		if (full && !SM && !c.has_form) {
+			sumBox = card('k-sum', lu('zap', 16) + 'Project summary', 'No onboarding answers yet', '', '<div class="dd-sumb"><p class="dd-help">A summary of what the client wants appears here once they fill out the onboarding form.</p><div class="dd-pbtns"><button type="button" class="dd-btn secondary" data-leadinvite="' + c.id + '">' + lu('mail', 14) + (c.stage === 'onboarding' ? 'Resend onboarding form' : 'Send onboarding form') + '</button></div></div>');
+		}
 		if (full && (SM || c.has_form)) {
 			if (!SM && c.has_form && !(S.sumTried || {})[c.id]) { S.sumTried = S.sumTried || {}; S.sumTried[c.id] = 1; S.sumBusy = c.id; api('/contact/' + c.id + '/summary', 'POST', {}).then(function (x) { if (S.full[c.id]) { S.full[c.id].ai_summary = x; } S.sumBusy = 0; render(); }).catch(function (er) { S.sumBusy = 0; S.sumErr = er && er.message; render(); }); }
 			var sumHtml = function (txt) { return esc(txt).split(/\n+/).map(function (l) { l = l.trim(); return !l ? '' : /^[•\-*]\s*/.test(l) ? '<li>' + l.replace(/^[•\-*]\s*/, '') + '</li>' : '<p>' + l + '</p>'; }).join('').replace(/(<li>[\s\S]*<\/li>)/, '<ul>$1</ul>'); };

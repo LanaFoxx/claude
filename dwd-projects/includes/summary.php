@@ -36,7 +36,8 @@ function dwdsum_make( $pid ) {
 	$name = html_entity_decode( get_the_title( $pid ), ENT_QUOTES );
 	$req  = array(
 		'model'      => 'claude-opus-5-5',
-		'max_tokens' => 1200,
+		'max_tokens'    => 6000,
+		'output_config' => array( 'effort' => 'low' ),
 		'system'     => 'You summarise a web design client\'s form answers for Michael Tarr, a freelance web designer. Write for Michael, in plain English, no headings. '
 			. 'Start with one sentence: whether this is a brand-new website or a redesign of an existing one (name the current site if given), and what the business does. '
 			. 'Then 3 to 5 short bullet points ("• ") covering what the client wants to improve or achieve, must-have pages or features, look and feel, and any deadline, budget or special requests. '
