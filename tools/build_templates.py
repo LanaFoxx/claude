@@ -478,13 +478,18 @@ def build_header():
 
     actions = container(
         "Header / Actions",
-        [pill("Header / Request an Estimate", "Request an Estimate", "/request-an-estimate/",
+        [pill("Header / Builder Bids", "Builder Bids", "/for-builders/#bid", height=46, size=14, pad_x=22,
+              classes="tn-hide-sm", background_color=TRANSPARENT, button_text_color="#FFFFFF",
+              hover_color="#14110E", button_background_hover_color="#FFFFFF",
+              border_border="solid", border_width=dims(1), border_color="#FFFFFF",
+              button_hover_border_color="#FFFFFF", text_padding=dims(15, 22), **HIDE_MOBILE),
+         pill("Header / Request an Estimate", "Request an Estimate", "/request-an-estimate/",
               height=46, size=14, pad_x=22, classes="tn-hide-sm", **HIDE_MOBILE),
          icon_button("Header / Call (mobile)", TEL, "phone", "Call (970) 524-7323",
                      classes="tn-call tn-show-sm", **MOBILE_ONLY),
          menu_button],
-        direction="row", gap=20, flex_align_items="center", flex_justify_content="flex-end",
-        auto_width=True, css="@media (max-width:760px){selector{--gap:12px;gap:12px;}}")
+        direction="row", gap=12, flex_align_items="center", flex_justify_content="flex-end",
+        auto_width=True)
 
     main_row = container(
         "Header / Main Row",

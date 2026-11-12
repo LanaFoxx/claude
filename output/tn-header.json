@@ -4,7 +4,7 @@
  "type": "header",
  "content": [
   {
-   "id": "8dabe92",
+   "id": "d0433cb",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -58,7 +58,7 @@
    },
    "elements": [
     {
-     "id": "d4a334b",
+     "id": "8dabe92",
      "elType": "widget",
      "widgetType": "html",
      "isInner": false,
@@ -553,7 +553,7 @@
      ]
     },
     {
-     "id": "d6cd75e",
+     "id": "d4a334b",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -653,7 +653,7 @@
      },
      "elements": [
       {
-       "id": "cb049a7",
+       "id": "d6cd75e",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -768,7 +768,7 @@
        },
        "elements": [
         {
-         "id": "e7a7a3c",
+         "id": "cb049a7",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -828,7 +828,7 @@
          },
          "elements": [
           {
-           "id": "a293de8",
+           "id": "9c3d5f1",
            "elType": "widget",
            "widgetType": "heading",
            "isInner": false,
@@ -859,7 +859,7 @@
            "elements": []
           },
           {
-           "id": "9c3d5f1",
+           "id": "e7a7a3c",
            "elType": "widget",
            "widgetType": "heading",
            "isInner": false,
@@ -979,7 +979,7 @@
          "elements": []
         },
         {
-         "id": "d88b287",
+         "id": "a293de8",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -987,32 +987,32 @@
           "content_width": "full",
           "flex_direction": "row",
           "flex_gap": {
-           "column": "20",
-           "row": "20",
+           "column": "12",
+           "row": "12",
            "isLinked": true,
            "unit": "px",
-           "size": 20
+           "size": 12
           },
           "flex_gap_laptop": {
-           "column": "20",
-           "row": "20",
+           "column": "12",
+           "row": "12",
            "isLinked": true,
            "unit": "px",
-           "size": 20
+           "size": 12
           },
           "flex_gap_tablet": {
-           "column": "20",
-           "row": "20",
+           "column": "12",
+           "row": "12",
            "isLinked": true,
            "unit": "px",
-           "size": 20
+           "size": 12
           },
           "flex_gap_mobile": {
-           "column": "20",
-           "row": "20",
+           "column": "12",
+           "row": "12",
            "isLinked": true,
            "unit": "px",
-           "size": 20
+           "size": 12
           },
           "width": {
            "unit": "%",
@@ -1029,11 +1029,76 @@
           },
           "flex_align_items": "center",
           "flex_justify_content": "flex-end",
-          "custom_css": "selector{--width:auto;width:auto;min-width:0;}@media (max-width:760px){selector{--gap:12px;gap:12px;}}"
+          "custom_css": "selector{--width:auto;width:auto;min-width:0;}"
          },
          "elements": [
           {
            "id": "9e7aa6e",
+           "elType": "widget",
+           "widgetType": "button",
+           "isInner": false,
+           "settings": {
+            "text": "Builder Bids",
+            "link": {
+             "url": "/for-builders/#bid",
+             "is_external": "",
+             "nofollow": ""
+            },
+            "border_radius": {
+             "unit": "px",
+             "top": "999",
+             "right": "999",
+             "bottom": "999",
+             "left": "999",
+             "isLinked": true
+            },
+            "text_padding": {
+             "unit": "px",
+             "top": "15",
+             "right": "22",
+             "bottom": "15",
+             "left": "22",
+             "isLinked": false
+            },
+            "background_background": "classic",
+            "background_color": "#00000000",
+            "button_text_color": "#FFFFFF",
+            "hover_color": "#14110E",
+            "button_background_hover_background": "classic",
+            "button_background_hover_color": "#FFFFFF",
+            "typography_typography": "custom",
+            "typography_font_family": "Manrope",
+            "typography_font_size": {
+             "unit": "px",
+             "size": 14,
+             "sizes": []
+            },
+            "typography_font_weight": "600",
+            "typography_line_height": {
+             "unit": "em",
+             "size": 1,
+             "sizes": []
+            },
+            "_css_classes": "tn-hide-sm",
+            "border_border": "solid",
+            "border_width": {
+             "unit": "px",
+             "top": "1",
+             "right": "1",
+             "bottom": "1",
+             "left": "1",
+             "isLinked": true
+            },
+            "border_color": "#FFFFFF",
+            "button_hover_border_color": "#FFFFFF",
+            "hide_mobile": "hidden-mobile",
+            "custom_css": "selector .elementor-button{white-space:nowrap;}",
+            "_title": "Header / Builder Bids"
+           },
+           "elements": []
+          },
+          {
+           "id": "7bad6be",
            "elType": "widget",
            "widgetType": "button",
            "isInner": false,
@@ -1087,7 +1152,7 @@
            "elements": []
           },
           {
-           "id": "7bad6be",
+           "id": "d88b287",
            "elType": "widget",
            "widgetType": "button",
            "isInner": false,

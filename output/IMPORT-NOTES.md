@@ -231,3 +231,4 @@ Container `Seasonal Offer`: change the H2 to **Talk to us about your project** a
   - **Mobile Menu (`mobile-menu`):** the same, plus Areas We Serve and Financing.
   - The "Builders: Request a Bid" header link is removed; For Builders is in the nav, and the form keeps its "Request a bid" link.
   - The full nav now shows from 981px up (the Laptop breakpoint no longer swaps to the menu button). The menu button is used at 980px and below. Nav fits on one row at 981px.
+- **Builder Bids button:** "For Builders" is removed from the Main Menu (it stays in the Mobile Menu). The header has a "Builder Bids" pill with a 1px white outline and white text, white fill with dark text on hover, linking to `/for-builders/#bid`. It is 46px, the same height as Request an Estimate, and hidden at 760px and below with the other header buttons.
