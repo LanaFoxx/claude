@@ -309,6 +309,12 @@ def photo_slot(title, color, heights, label, **s):
     return container(title, [photo_label(label)], padding=dims(0, 20, 18, 20), **st)
 
 
+def _with(el, **extra):
+    """Return a widget/container with extra settings merged in."""
+    el["settings"].update(extra)
+    return el
+
+
 def stars(title, color, size, gap_):
     return widget("rating", title, rating_scale=px(5), rating_value=5,
                   rating_icon={"value": "fas fa-star", "library": "fa-solid"},
@@ -581,19 +587,20 @@ def build_hero():
     creds = container(
         "Hero / Credentials",
         [container("Hero / Credentials / HomeAdvisor",
-                   [stars("Hero / Credentials / Stars", AMBER, 12, 2),
+                   [_with(stars("Hero / Credentials / Stars", AMBER, 16, 3),
+                                               icon_size_mobile=px(13), icon_gap_mobile=px(2)),
                     text("Hero / Credentials / HomeAdvisor text",
                          "<p><strong>4.9</strong> from 19 reviews on HomeAdvisor</p>",
-                         size=14, lh=1.5, pretty=False)],
-                   direction="row", gap=8, flex_align_items="center", auto_width=True),
+                         size=(16, 16, 16, 14), lh=1.5, pretty=False)],
+                   direction="row", gap=10, flex_align_items="center", auto_width=True),
          text("Hero / Credentials / BBB", "<p><strong>BBB A+</strong> accredited</p>",
-              size=14, lh=1.5, pretty=False),
+              size=(16, 16, 16, 14), lh=1.5, pretty=False),
          text("Hero / Credentials / Since", "<p>Building mountain homes <strong>since 1999</strong></p>",
-              size=14, lh=1.5, pretty=False),
-         text("Hero / Credentials / Insured", "<p>Fully insured</p>", size=14, lh=1.5, pretty=False),
+              size=(16, 16, 16, 14), lh=1.5, pretty=False),
+         text("Hero / Credentials / Insured", "<p>Fully insured</p>", size=(16, 16, 16, 14), lh=1.5, pretty=False),
          text("Hero / Credentials / Partners", "<p>Sashco &amp; Perma-Chink partners</p>",
-              size=14, lh=1.5, pretty=False)],
-        direction="row", gap=(40, 12), flex_wrap="wrap", flex_align_items="center",
+              size=(16, 16, 16, 14), lh=1.5, pretty=False)],
+        direction="row", gap=((36, 12), (32, 12), (40, 12), (40, 12)), flex_wrap="wrap", flex_align_items="center",
         padding=dims(28, 0, 36, 0), margin=dims(16, 0, 0, 0),
         border_border="solid", border_width=dims(1, 0, 0, 0), border_color=HAIR_16,
         _attributes="aria-label|Credentials",

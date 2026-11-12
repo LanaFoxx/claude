@@ -501,18 +501,18 @@
       "content_width": "full",
       "flex_direction": "row",
       "flex_gap": {
-       "column": "40",
+       "column": "36",
        "row": "12",
        "isLinked": false,
        "unit": "px",
-       "size": 40
+       "size": 36
       },
       "flex_gap_laptop": {
-       "column": "40",
+       "column": "32",
        "row": "12",
        "isLinked": false,
        "unit": "px",
-       "size": 40
+       "size": 32
       },
       "flex_gap_tablet": {
        "column": "40",
@@ -574,32 +574,32 @@
         "content_width": "full",
         "flex_direction": "row",
         "flex_gap": {
-         "column": "8",
-         "row": "8",
+         "column": "10",
+         "row": "10",
          "isLinked": true,
          "unit": "px",
-         "size": 8
+         "size": 10
         },
         "flex_gap_laptop": {
-         "column": "8",
-         "row": "8",
+         "column": "10",
+         "row": "10",
          "isLinked": true,
          "unit": "px",
-         "size": 8
+         "size": 10
         },
         "flex_gap_tablet": {
-         "column": "8",
-         "row": "8",
+         "column": "10",
+         "row": "10",
          "isLinked": true,
          "unit": "px",
-         "size": 8
+         "size": 10
         },
         "flex_gap_mobile": {
-         "column": "8",
-         "row": "8",
+         "column": "10",
+         "row": "10",
          "isLinked": true,
          "unit": "px",
-         "size": 8
+         "size": 10
         },
         "width": {
          "unit": "%",
@@ -636,17 +636,27 @@
           },
           "icon_size": {
            "unit": "px",
-           "size": 12,
+           "size": 16,
            "sizes": []
           },
           "icon_gap": {
            "unit": "px",
-           "size": 2,
+           "size": 3,
            "sizes": []
           },
           "icon_marked_color": "#C68B4E",
           "icon_unmarked_color": "#C68B4E",
-          "_title": "Hero / Credentials / Stars"
+          "_title": "Hero / Credentials / Stars",
+          "icon_size_mobile": {
+           "unit": "px",
+           "size": 13,
+           "sizes": []
+          },
+          "icon_gap_mobile": {
+           "unit": "px",
+           "size": 2,
+           "sizes": []
+          }
          },
          "elements": []
         },
@@ -666,6 +676,21 @@
           "typography_typography": "custom",
           "typography_font_family": "Manrope",
           "typography_font_size": {
+           "unit": "px",
+           "size": 16,
+           "sizes": []
+          },
+          "typography_font_size_laptop": {
+           "unit": "px",
+           "size": 16,
+           "sizes": []
+          },
+          "typography_font_size_tablet": {
+           "unit": "px",
+           "size": 16,
+           "sizes": []
+          },
+          "typography_font_size_mobile": {
            "unit": "px",
            "size": 14,
            "sizes": []
@@ -699,6 +724,21 @@
         "typography_font_family": "Manrope",
         "typography_font_size": {
          "unit": "px",
+         "size": 16,
+         "sizes": []
+        },
+        "typography_font_size_laptop": {
+         "unit": "px",
+         "size": 16,
+         "sizes": []
+        },
+        "typography_font_size_tablet": {
+         "unit": "px",
+         "size": 16,
+         "sizes": []
+        },
+        "typography_font_size_mobile": {
+         "unit": "px",
          "size": 14,
          "sizes": []
         },
@@ -728,6 +768,21 @@
         "typography_typography": "custom",
         "typography_font_family": "Manrope",
         "typography_font_size": {
+         "unit": "px",
+         "size": 16,
+         "sizes": []
+        },
+        "typography_font_size_laptop": {
+         "unit": "px",
+         "size": 16,
+         "sizes": []
+        },
+        "typography_font_size_tablet": {
+         "unit": "px",
+         "size": 16,
+         "sizes": []
+        },
+        "typography_font_size_mobile": {
          "unit": "px",
          "size": 14,
          "sizes": []
@@ -759,6 +814,21 @@
         "typography_font_family": "Manrope",
         "typography_font_size": {
          "unit": "px",
+         "size": 16,
+         "sizes": []
+        },
+        "typography_font_size_laptop": {
+         "unit": "px",
+         "size": 16,
+         "sizes": []
+        },
+        "typography_font_size_tablet": {
+         "unit": "px",
+         "size": 16,
+         "sizes": []
+        },
+        "typography_font_size_mobile": {
+         "unit": "px",
          "size": 14,
          "sizes": []
         },
@@ -788,6 +858,21 @@
         "typography_typography": "custom",
         "typography_font_family": "Manrope",
         "typography_font_size": {
+         "unit": "px",
+         "size": 16,
+         "sizes": []
+        },
+        "typography_font_size_laptop": {
+         "unit": "px",
+         "size": 16,
+         "sizes": []
+        },
+        "typography_font_size_tablet": {
+         "unit": "px",
+         "size": 16,
+         "sizes": []
+        },
+        "typography_font_size_mobile": {
          "unit": "px",
          "size": 14,
          "sizes": []
