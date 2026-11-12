@@ -13,6 +13,10 @@ import random
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "..", "output")
 ICONS = json.load(open(os.path.join(HERE, "icon_map.json")))
+# Subtle wood texture behind the Charred Timber sections (Media Library image), or None.
+_TEX = os.path.join(HERE, "texture.json")
+TEXTURE = json.load(open(_TEX)) if os.path.exists(_TEX) else None
+TEXTURE_OPACITY = 0.88  # Charred overlay strength over the texture (higher = subtler)
 
 # ---------------------------------------------------------------- tokens
 CHARRED = "#14110E"
@@ -325,9 +329,21 @@ def wordmark(title, size=28):
 
 def section(title, children, bg, pad_top=SECV, pad_bottom=SECV, gap=0, **s):
     st = {"background_background": "classic", "background_color": bg, "html_tag": "section"}
+    if bg == CHARRED and TEXTURE:
+        st.update(wood_texture())
     st.update(s)
     return container(title, children, top=True, boxed=True, gap=gap,
                      padding=pads(pad_top, SIDE, pad_bottom, SIDE), **st)
+
+
+def wood_texture():
+    """Dark wood photo under a Charred Timber overlay: reads as a faint grain, not a photo."""
+    return {"background_image": {"url": TEXTURE["url"], "id": int(TEXTURE["id"]), "size": "",
+                                 "alt": "", "source": "library"},
+            "background_position": "center center", "background_size": "cover",
+            "background_repeat": "no-repeat",
+            "background_overlay_background": "classic", "background_overlay_color": CHARRED,
+            "background_overlay_opacity": {"unit": "px", "size": TEXTURE_OPACITY, "sizes": []}}
 
 
 def index_list(title, items):
