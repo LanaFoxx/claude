@@ -477,7 +477,8 @@ i.dd-flag { width: 10px; height: 10px; cursor: inherit; }
 .dd-ch-a { display: flex; align-items: center; gap: 12px; }
 .dd-hadd-btn { display: inline-flex; align-items: center; gap: 4px; height: 28px; padding: 0 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--text); font: inherit; font-size: 13px; font-weight: 500; cursor: pointer; }
 .dd-hadd-btn:hover { background: var(--hover); border-color: var(--border-strong); }
-.dd-hadd { display: flex; gap: 8px; padding: 0 20px 12px; }
+.dd-hadd { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 20px 12px; }
+.dd-hadd .dd-whenhint { margin-top: 0; }
 .dd-hadd input { flex: 1; min-width: 0; height: 38px; padding: 0 12px; border: 1px solid var(--border-strong); border-radius: 8px; background: var(--surface); color: var(--text); font: inherit; font-size: 14px; outline: none; }
 .dd-hadd input:focus { border-color: var(--accent); box-shadow: var(--ring); }
 .dd-hadd .dd-btn { height: 38px; }
@@ -491,3 +492,6 @@ i.dd-flag { width: 10px; height: 10px; cursor: inherit; }
 .dd-eml input:focus, .dd-eml textarea:focus { border-color: var(--accent); box-shadow: var(--ring); }
 .dd-emi { vertical-align: middle; margin-left: 4px; width: 26px; height: 26px; }
 .dd-emm .dd-stm-n { margin: 4px 0 16px !important; }
+/* To-do pop-up: Mark done is green so it can't be mistaken for Save changes */
+.dwdc-btn.dwdc-tdone { background: var(--success-bg) !important; color: var(--success-text) !important; border: 1px solid color-mix(in srgb, var(--success-text) 45%, transparent) !important; box-shadow: none !important; }
+.dwdc-btn.dwdc-tdone:hover { background: color-mix(in srgb, var(--success-text) 22%, transparent) !important; }

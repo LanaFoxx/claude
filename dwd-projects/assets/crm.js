@@ -3292,7 +3292,7 @@
 				+ '<dt>Added</dt><dd>' + (tk.created ? fmt(tk.created.slice(0, 10)) : '—') + '</dd>'
 				+ (tk.done ? '<dt>Completed</dt><dd>' + (tk.done_at ? fmt(tk.done_at.slice(0, 10)) : 'Yes') + '</dd>' : '')
 				+ '</dl><div class="dwdc-farow end"><button type="button" class="dwdc-btn2 danger" data-del-task="' + tk.id + '">Delete</button>'
-				+ '<button type="button" class="dwdc-btn" data-toggle="' + tk.id + '">' + ic('check', 14) + (tk.done ? 'Mark not done' : 'Mark done') + '</button></div></div>';
+				+ '<button type="button" class="dwdc-btn dwdc-tdone" data-toggle="' + tk.id + '">' + ic('check', 14) + (tk.done ? 'Mark not done' : 'Mark done') + '</button></div></div>';
 		}
 		if (m.type === 'paddtask') {
 			var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
