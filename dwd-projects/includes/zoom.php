@@ -45,6 +45,36 @@ function dwdz_token( $force = false ) {
 }
 
 /** Create a meeting. $when = 'YYYY-MM-DDTHH:MM' (New York time) or '' for right now. */
+/**
+ * The Zoom link Mike pastes to clients: his saved personal link, else one reusable Dream Web Digital meeting
+ * (a "no fixed time" meeting, so the link never expires), made once and kept.
+ */
+function dwdz_personal_link( $make = false ) {
+	$c = dwdz_cfg();
+	if ( '' !== $c['pmi'] ) {
+		return $c['pmi'];
+	}
+	$saved = (string) get_option( 'dwdz_room_link', '' );
+	if ( '' !== $saved || ! $make || ! dwdz_api_ready() ) {
+		return $saved;
+	}
+	$tok = dwdz_token();
+	if ( is_wp_error( $tok ) ) {
+		return $tok;
+	}
+	$body = array( 'topic' => 'Meeting with Michael Tarr · Dream Web Digital', 'type' => 3, 'timezone' => 'America/New_York', 'settings' => array( 'join_before_host' => true, 'waiting_room' => false, 'jbh_time' => 0 ) );
+	$r    = wp_remote_post( 'https://api.zoom.us/v2/users/me/meetings', array( 'timeout' => 20, 'headers' => array( 'Authorization' => 'Bearer ' . $tok, 'Content-Type' => 'application/json' ), 'body' => wp_json_encode( $body ) ) );
+	if ( is_wp_error( $r ) ) {
+		return $r;
+	}
+	$j = json_decode( (string) wp_remote_retrieve_body( $r ), true );
+	if ( empty( $j['join_url'] ) ) {
+		return new WP_Error( 'dwdz_room', 'Zoom didn’t make the meeting link' . ( ! empty( $j['message'] ) ? ': ' . $j['message'] : '.' ) );
+	}
+	update_option( 'dwdz_room_link', esc_url_raw( $j['join_url'] ), false );
+	return esc_url_raw( $j['join_url'] );
+}
+
 function dwdz_create( $topic, $when = '', $minutes = 30 ) {
 	$tok = dwdz_token();
 	if ( is_wp_error( $tok ) ) {
@@ -156,6 +186,10 @@ add_action( 'rest_api_init', function () {
 			return array( 'ready' => dwdz_ready(), 'api' => dwdz_api_ready() );
 		} ),
 	) );
+	register_rest_route( 'dwd/v1', '/crm/zoom/link', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function () {
+		$u = dwdz_personal_link( true );
+		return is_wp_error( $u ) ? new WP_Error( 'dwdz_room', $u->get_error_message(), array( 'status' => 400 ) ) : array( 'link' => $u );
+	} ) );
 	register_rest_route( 'dwd/v1', '/crm/zoom/invite', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
 		$pid = (int) $r->get_param( 'project' );
 		if ( ! $pid || DWDC_CONTACT !== get_post_type( $pid ) ) {

@@ -1496,6 +1496,9 @@ function dwdc_vars( $mode = 'admin' ) {
 	$v['mkReady'] = '' !== (string) get_option( 'dwdc_markup_key', '' );
 	$v['driveReady'] = function_exists( 'dwddr_ready' ) && dwddr_ready();
 	$v['zoomReady']  = function_exists( 'dwdz_ready' ) && dwdz_ready();
+	$v['zoomLink']   = function_exists( 'dwdz_personal_link' ) && dwdz_ready() ? dwdz_personal_link() : ''; // empty until made on the first Copy click
+	$v['zoomApi']    = function_exists( 'dwdz_api_ready' ) && dwdz_api_ready(); // copy-to-send links in the Zoom box
+	$v['calendly']   = (string) get_option( 'dwdc_calendly', 'https://calendly.com/dreamwebdigital/dream-web-digital-consultation-call' );
 	$v['ver']        = DWDP_VERSION; // the app reloads itself when a newer version is live
 	$v['upLast']  = '';
 	if ( function_exists( 'dwds_files' ) ) {

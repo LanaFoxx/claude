@@ -1530,7 +1530,10 @@
 	/* ================= Zoom invite box (Home, project and client pages) ================= */
 	// ids: limit the picker to these projects (client page) or a single fixed project (project page).
 	function zoomBox(key, ids) {
-		var title = '<header class="dd-ch2"><span class="dd-lt z">' + lu('play', 16) + '</span><div><h2>Zoom meeting</h2><small>Send a Zoom invite and join from here</small></div></header>';
+		var title = '<header class="dd-ch2"><span class="dd-lt z">' + lu('play', 16) + '</span><div><h2>Zoom meeting</h2><small>Send a Zoom invite and join from here</small></div></header>'
+			// Quick links to paste into a message: your Zoom room and your Calendly booking page.
+			+ '<div class="dd-zcopy">' + (DWDC.zoomLink ? '<button type="button" class="dd-btn secondary sm" data-copy="' + esc(DWDC.zoomLink) + '" title="' + esc(DWDC.zoomLink) + '">' + lu('copy', 14) + 'Copy Zoom link</button>' : DWDC.zoomApi ? '<button type="button" class="dd-btn secondary sm" data-zoomlink>' + lu('copy', 14) + 'Copy Zoom link</button>' : '')
+			+ (DWDC.calendly ? '<button type="button" class="dd-btn secondary sm" data-copy="' + esc(DWDC.calendly) + '" title="' + esc(DWDC.calendly) + '">' + lu('calendar', 14) + 'Copy Calendly link</button>' : '') + '</div>';
 		if (!DWDC.zoomReady) { return '<section class="dd-card dd-zoom">' + title + '<div class="dd-zb"><p class="dd-zhelp">Connect Zoom once and you can send invites from here.</p><a class="dd-btn secondary" href="#connections">Set up Zoom</a></div></section>'; }
 		var pool = ids ? ids.map(contact).filter(Boolean) : null;
 		var leads = pool ? [] : leadList(), act = pool ? [] : by('active').concat(by('hold'), by('limbo'));
@@ -3737,6 +3740,14 @@
 			e.preventDefault(); e.stopPropagation();
 			var mr = route(), mpid = +el.getAttribute('data-emailp') || (mr && mr.id && contact(mr.id) ? mr.id : 0);
 			openEmail(decodeURIComponent(el.getAttribute('href').slice(7).split('?')[0]), mpid); return;
+		}
+		if ((el = t.closest('[data-zoomlink]'))) { // first time: make the reusable meeting, then copy its link
+			el.disabled = true;
+			api('/zoom/link', 'POST', {}).then(function (x) {
+				DWDC.zoomLink = x.link; render();
+				(navigator.clipboard ? navigator.clipboard.writeText(x.link) : Promise.reject()).then(function () { toast('Zoom link copied'); }, function () { prompt('Copy this link:', x.link); });
+			}).catch(function (er) { el.disabled = false; fail(er); });
+			return;
 		}
 		if ((el = t.closest('[data-clsug]'))) { clSend(el.textContent); return; }
 		if (t.closest('[data-clnew]')) { CL.msgs = []; clSave(); render(); return; }
