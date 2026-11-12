@@ -612,6 +612,7 @@
 		'pie-chart': '<path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/>',
 		repeat: '<path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/>',
 		link: '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
+		'layout-dashboard': '<rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/>',
 		globe: '<circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20M2 12h20"/>',
 		'external-link': '<path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>',
 		'panel-left': '<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/>',
@@ -664,7 +665,8 @@
 			+ group('clients', 'Clients', item('clients', 'users', 'All clients', S.clients.length) + item('hosting', 'cloud', 'Hosting', hosting().length) + item('reviews', 'star', 'Get reviews'))
 			+ group('money', 'Money', item('money', 'bar-chart-3', 'Business revenue') + item('personal/spending', 'pie-chart', 'Spending') + item('personal/bills', 'repeat', 'Bills & subscriptions'))
 			+ group('settings', 'Settings', item('connections', 'link', 'Connections'))
-			+ '</nav><div class="dd-side-f"><a class="dd-nav" href="' + esc(DWDC.wp) + '" data-tip="Website">' + lu('globe') + '<span class="dd-nav-l">Website</span><i class="dd-ext">' + lu('external-link', 14) + '</i></a>'
+			+ '</nav><div class="dd-side-f"><a class="dd-nav" href="' + esc(DWDC.wpadmin || DWDC.wp) + '" data-tip="WordPress admin">' + lu('layout-dashboard') + '<span class="dd-nav-l">WordPress admin</span></a>'
+				+ '<a class="dd-nav" href="' + esc(DWDC.home || '/') + '" target="_blank" rel="noopener" data-tip="Website">' + lu('globe') + '<span class="dd-nav-l">Website</span><i class="dd-ext">' + lu('external-link', 14) + '</i></a>'
 			+ '<button type="button" class="dd-nav dd-expand" data-ddcollapse data-tip="Expand">' + lu('chevrons-right') + '<span class="dd-nav-l">Expand</span></button></div></aside>';
 	}
 	// Top bar: breadcrumb · Search · + New · Log payment | theme · avatar

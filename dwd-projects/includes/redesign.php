@@ -603,7 +603,7 @@ add_action( 'wp_enqueue_scripts', function () {
 		. '[data-dw-intro]{opacity:1!important}' // speed: intro content is visible at first paint (only slides), so Google sees the page load right away
 		. '@media(max-width:600px){#dw-trustbar{justify-content:center!important;text-align:center}#dw-trustbar .dwr-tstat{justify-content:center}#dw-trustbar .dwr-tstat:nth-of-type(2){display:none!important}}' // phones: trust bar centered, no Job Success line
 		. '.dwr-band-light .dwr-bc-k,.dwr-band-light .dwr-eyebrow,.dwr-astep-n,.dwr-asec .dwr-eyebrow,#pf-grid [data-dw-num],.dwr-eyebrow{color:#0A659F}.dwr-band-dark .dwr-eyebrow,.dwr-band-dark .dwr-bc-k,.dwr-obhero .dwr-eyebrow,.dwr-astats .dwr-eyebrow,.dwr-aclose .dwr-eyebrow,[data-theme=dark] .dwr-eyebrow,.dwr-doall .dwr-eyebrow{color:#13A6EE!important}' // readable label contrast (accessibility)
-		. '.dwr-pill,.dwr-pill:hover,.dwr-mbar-quote,#ho-card a.dwh14,.dwr-obcard .elementor-button:not(.e-form__buttons__wrapper__button-previous),.dwr-allwork{color:#0B1626!important}.dwr-pill svg,.dwr-allwork svg{stroke:#0B1626}.dwr-pill.dark,.dwr-pill.dark:hover{color:#fff!important}.dwr-pill.dark svg{stroke:#fff}' // blue buttons: dark text, like the hero button (white on this blue is too low contrast)
+		. '.dwr-mbar-quote,#ho-card a.dwh14,.dwr-obcard .elementor-button:not(.e-form__buttons__wrapper__button-previous),.dwr-allwork{color:#0B1626!important}.dwr-allwork svg{stroke:#0B1626}.dwr-pill,.dwr-pill:hover{color:#fff!important}.dwr-pill svg{stroke:#fff}.dwr-pill.dark,.dwr-pill.dark:hover{color:#fff!important}.dwr-pill.dark svg{stroke:#fff}' // blue buttons: dark text, except the project page's Visit the live site button (white, as Mike asked)
 		. '.dwr-qdot{position:relative;width:24px!important;height:24px!important;background:transparent!important;display:inline-flex;align-items:center;justify-content:center}.dwr-qdot:before{content:"";width:8px;height:8px;border-radius:99px;background:#444;transition:width .3s,background .3s}.dwr-qdot.on:before{width:24px;background:#13A6EE}.dwr-qdots{gap:2px!important}' // review dots: 24px tap targets
 		. 'a[style*="background:#13A6EE"][style*="color:#fff"]{color:#0B1626!important}a[style*="background:#13A6EE"][style*="color:#fff"] svg{stroke:#0B1626}.dwr-obcard .e-form__indicators__indicator{color:#5F6672!important}' // remaining blue buttons with white text + onboarding step labels: readable contrast
 		. '.dwr-proof{display:flex;flex-wrap:wrap;gap:0;margin-top:28px;border-top:1px solid #E3E3E3;padding-top:20px}.dwr-proof span{display:flex;flex-direction:column;gap:4px;padding:0 22px}.dwr-proof span:first-child{padding-left:0}.dwr-proof span+span{border-left:1px solid #E3E3E3}.dwr-proof b{display:inline-flex;align-items:center;gap:6px;font-size:clamp(24px,2.2vw,32px);line-height:1;letter-spacing:-.03em;font-weight:600;color:#121212}.dwr-proof b i{font-style:normal;color:#F5B301;font-size:.8em}.dwr-proof small{font-size:13px;color:#6B6B6B}#dw-phone-copy .dwr-proof{justify-content:inherit}@media(max-width:600px){.dwr-proof{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}.dwr-proof span{padding:0 10px;min-width:0}.dwr-proof b{font-size:21px;gap:4px}.dwr-proof b svg{width:14px;height:14px}.dwr-proof small{font-size:11.5px;line-height:1.3}}' // proof under the homepage projects
@@ -778,12 +778,11 @@ add_action( 'wp_enqueue_scripts', function () {
 /** The proof row (PageSpeed, Google rating, Upwork record) used under projects. */
 function dwdr_proof( $slug = '' ) {
 	// A project's own rating where Michael has one (Finesse: 5-star Upwork review); otherwise the Google average.
-	$own = array( 'finesse-by-witney' => array( '5.0', 'Upwork review' ) );
-	$r   = $own[ $slug ] ?? array( '4.9', 'Google reviews' );
+	// 5 stars on Google and 5 stars on Upwork, on every project page (Mike's call).
 	return '<div class="dwr-proof">'
 		. '<span><b><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#13A6EE" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>95+</b><small>Google PageSpeed</small></span>'
-		. '<span><b><i>★</i>' . $r[0] . '</b><small>' . $r[1] . '</small></span>'
-		. '<span><b>100%</b><small>Job Success on Upwork</small></span>'
+		. '<span><b><i>★</i>5.0</b><small>Stars on Google</small></span>'
+		. '<span><b><i>★</i>5.0</b><small>Stars on Upwork</small></span>'
 		. '</div>';
 }
 
