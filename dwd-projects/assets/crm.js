@@ -742,7 +742,7 @@
 			return '<div class="dd-todo"><button type="button" class="dd-chk" ' + (x.w ? 'data-toggle="' + t.id + '"' : 'data-ptoggle="' + t.id + '"') + ' aria-label="Mark done"></button><div class="dd-todo-b" ' + (x.w ? 'data-task="' + t.id + '"' : 'data-ptask="' + t.id + '"') + ' role="button" tabindex="0"><span>' + esc(ptx(t.text)) + '</span><small><em class="' + (late ? 'late' : 'today') + '">' + (late ? Math.round((Date.parse(T) - Date.parse(t.due)) / 864e5) + 'd overdue' : 'Today') + '</em>' + (c ? esc(c.name) : x.w ? '' : 'Personal') + '</small></div></div>';
 		};
 		var todos = '<section class="dd-card"><header class="dd-ch"><div class="dd-ch-t"><h2>To-dos</h2></div><a href="#todos">All ' + all.length + '</a></header>' + (rows.length ? rows.map(trow).join('') : '<p class="dd-empty-l">Nothing overdue or due today.</p>') + '</section>';
-		return '<div class="dd-home"><div class="dd-home-l">' + sched + act + '</div><div class="dd-home-r">' + stats + todos + '</div></div>';
+		return '<div class="dd-home"><div class="dd-home-l">' + sched + act + '</div><div class="dd-home-r">' + stats + todos + zoomBox('home') + '</div></div>';
 	}
 	// All clients (design 4.2): toolbar, chips, grouped table; rows stack on phones.
 	var DD_TONE = { Project: 'info', Hosting: 'success', Lead: 'warning', 'Past client': 'neutral' };
@@ -1327,6 +1327,28 @@
 		}
 		var h = f.querySelector('.dd-whenhint'); if (!h) { h = document.createElement('small'); h.className = 'dd-whenhint'; f.appendChild(h); }
 		h.textContent = lbl ? '📅 ' + lbl : ''; h.hidden = !lbl;
+	}
+
+	/* ================= Zoom invite box (Home, project and client pages) ================= */
+	// ids: limit the picker to these projects (client page) or a single fixed project (project page).
+	function zoomBox(key, ids) {
+		var title = '<header class="dd-ch2"><span class="dd-lt z">' + lu('play', 16) + '</span><div><h2>Zoom meeting</h2><small>Send a Zoom invite and join from here</small></div></header>';
+		if (!DWDC.zoomReady) { return '<section class="dd-card dd-zoom">' + title + '<div class="dd-zb"><p class="dd-zhelp">Connect Zoom once and you can send invites from here.</p><a class="dd-btn secondary" href="#connections">Set up Zoom</a></div></section>'; }
+		var pool = ids ? ids.map(contact).filter(Boolean) : null;
+		var leads = pool ? [] : leadList(), act = pool ? [] : by('active').concat(by('hold'), by('limbo'));
+		var who = function (c) { var k = clientOf(c); return esc(c.name + (k && k.name !== c.name ? ' · ' + k.name : c.person && c.person !== c.name ? ' · ' + c.person : '')); };
+		var sel = (S.zoomSel || {})[key] || (pool && pool.length === 1 ? pool[0].id : '');
+		var opt = function (c) { return '<option value="' + c.id + '"' + (+sel === c.id ? ' selected' : '') + '>' + who(c) + '</option>'; };
+		var pick = pool && pool.length === 1 ? '<input type="hidden" name="project" value="' + pool[0].id + '">'
+			: '<label class="dd-zf"><span>Who</span><span class="dd-isel"><select name="project" data-zsel="' + key + '" required><option value="">Pick a lead or client…</option>'
+				+ (pool ? pool.map(opt).join('') : (act.length ? '<optgroup label="Active clients">' + act.map(opt).join('') + '</optgroup>' : '') + (leads.length ? '<optgroup label="Leads">' + leads.map(opt).join('') + '</optgroup>' : ''))
+				+ '</select>' + lu('chevron-down', 14) + '</span></label>';
+		var R = (S.zoomRes || {})[key];
+		var res = R ? '<div class="dd-zres"><p>' + (R.sent ? 'Invite sent to <b>' + esc(R.sent) + '</b>' : 'Meeting ready' + (R.noEmail ? ' · no email on file, send the link yourself' : '')) + (R.when ? ' · ' + esc(R.when) : '') + '</p>'
+			+ '<div class="dd-pbtns"><a class="dd-btn primary dd-zjoin" href="' + esc(R.join) + '" target="_blank" rel="noopener" title="Right-click to copy the link">' + lu('play', 14) + 'Join meeting</a><button type="button" class="dd-btn secondary" data-copy="' + esc(R.join) + '">' + lu('link', 14) + 'Copy link</button></div></div>' : '';
+		return '<section class="dd-card dd-zoom">' + title + '<form class="dd-zb dd-zform" data-zkey="' + key + '">' + pick
+			+ '<label class="dd-zf"><span>When <i>(leave empty to start now)</i></span><input type="datetime-local" name="when"></label>'
+			+ '<button class="dd-btn primary dd-zgo">' + lu('mail', 14) + 'Send Zoom invite</button></form>' + res + '</section>';
 	}
 
 	/* ================= Get reviews (design 8a) ================= */
@@ -2127,7 +2149,18 @@
 		S.pConnOpen = true;
 		return '<h2 class="dwdc-sech">Google, bank &amp; AI</h2>' + connPanel().replace('<button class="dwdc-cardh dwdc-colh" data-pconnopen', '<div class="dwdc-cardh" data-x').replace(/<\/button>(<div class="dwdc-conns">)/, '</div>$1')
 			+ '<h2 class="dwdc-sech">Google Drive · client upload folders</h2>' + driveConn()
+			+ '<h2 class="dwdc-sech">Zoom · meeting invites</h2>' + zoomConn()
 			+ '<h2 class="dwdc-sech">Payments &amp; Upwork</h2><section class="dwdc-card pad dwdc-mcard wide">' + connCard() + '</section>';
+	}
+	function zoomConn() {
+		if (!S.zm && !S.zmLoading) { S.zmLoading = true; api('/zoom').then(function (x) { S.zm = x; S.zmLoading = false; render(); }).catch(function () { S.zmLoading = false; }); }
+		var Z = S.zm || {}, ok = Z.api ? 'New meeting each time' : Z.pmi ? 'Personal link' : '';
+		return '<section class="dd-card dd-drvc"><div class="dd-drvh">' + ddPill(ok ? 'Connected · ' + ok : 'Not connected', ok ? 'success' : 'neutral') + '<span>Send a Zoom invite to a lead or client from Home, a project or a client page. They get an email with a Join button, and you get a Join meeting button.</span></div>'
+			+ '<p class="dd-zhelp"><b>Option 1 — a new meeting each time (recommended).</b></p><ol><li>Open <a href="https://marketplace.zoom.us/develop/create" target="_blank" rel="noopener"><b>marketplace.zoom.us → Develop → Build App</b></a> and pick <b>Server-to-Server OAuth</b>. Name it “Dream Desk”.</li>'
+			+ '<li>On <b>App Credentials</b>, copy the <b>Account ID</b>, <b>Client ID</b> and <b>Client Secret</b> into the boxes below.</li><li>On <b>Scopes</b>, click <b>Add Scopes</b> → <b>Meeting</b> → check <b>Create a meeting for a user</b> (meeting:write:meeting). Fill in the short Information page, then click <b>Activate</b>.</li></ol>'
+			+ '<div class="dd-zgrid"><input data-zacc placeholder="Account ID" value="' + esc(Z.account || '') + '" autocomplete="off"><input data-zcli placeholder="Client ID" value="' + esc(Z.client || '') + '" autocomplete="off"><input data-zsec type="password" placeholder="' + (Z.has_secret ? 'Client Secret (saved)' : 'Client Secret') + '" autocomplete="new-password"></div>'
+			+ '<p class="dd-zhelp"><b>Option 2 — quick:</b> paste your Zoom personal meeting link (zoom.us/j/…). The same link is sent each time.</p>'
+			+ '<div class="dd-frow dd-drvrow"><input data-zpmi type="url" placeholder="https://zoom.us/j/1234567890" value="' + esc(Z.pmi || '') + '"><button type="button" class="dd-btn primary" data-zsave>Save &amp; test</button></div></section>';
 	}
 	function driveConn() {
 		if (!S.drv && !S.drvLoading) { S.drvLoading = true; api('/drive').then(function (x) { S.drv = x; S.drvLoading = false; render(); }).catch(function () { S.drvLoading = false; }); }
@@ -2657,7 +2690,7 @@
 			+ '<dt>Hosting</dt><dd>' + (host.length ? host.length + ' site' + (host.length > 1 ? 's' : '') + ' · ' + money(host.reduce(function (s, c) { return s + num(c.hosting); }, 0)) + '/yr' : 'No') + '</dd>'
 			+ '<dt>Source</dt><dd>' + esc((pp.filter(function (c) { return c.lead_source; })[0] || {}).lead_source || sourceOf(pp[0] || {}) || '—') + '</dd><dt>Client since</dt><dd>' + (pp.length && pp.every(imported) ? '—' : fmt(k.created, true)) + '</dd>'
 			+ (k.notes ? '<dt>Notes</dt><dd>' + esc(k.notes).replace(/\n/g, '<br>') + '</dd>' : '') + '</dl></section>'
-			+ '</div><div class="dwdc-col">'
+			+ '</div><div class="dwdc-col">' + zoomBox('k' + k.id, (pp.filter(isOpen).length ? pp.filter(isOpen) : pp).map(function (c) { return c.id; }))
 			+ '<section class="dwdc-card"><div class="dwdc-cardh pad2"><h2>To-Dos <span class="dwdc-cnt">' + tasks.filter(function (t) { return !t.done; }).length + '</span></h2></div><div class="pad2">'
 			+ (tasks.length ? '<div class="dwdc-todos">' + tasks.map(function (t) { return todoRow(t); }).join('') + '</div>' : '')
 			+ (pp.length ? '<form class="dwdc-addbar home" data-contact="' + (first || pp[0]).id + '"><input name="text" placeholder="Add a to-do for ' + esc((first || pp[0]).name) + '..." autocomplete="off" required><button class="dwdc-btn">Add</button></form>' : '') + '</div></section>'
@@ -2828,7 +2861,7 @@
 		var hosting = num(c.hosting) ? hostCard(c) : '';
 		return '<div class="dd-pp">' + head + strip
 			+ (S.edit ? '<div class="dd-pp-edit" id="pv3-edit">' + details + peopleCard(c) + '</div>' : '')
-			+ '<div class="dd-pp-grid"><div class="dd-pp-col">' + mkBox + formBox + todos + (S.edit ? '' : '<div class="dd-pp-mob">' + details + '</div>') + notesBox + '</div><div class="dd-pp-col side">' + (S.edit ? '' : '<div class="dd-pp-desk">' + details + '</div>' + contacts) + (st === 'leads' ? '' : paysBox) + hosting + '</div></div></div>';
+			+ '<div class="dd-pp-grid"><div class="dd-pp-col">' + mkBox + formBox + todos + (S.edit ? '' : '<div class="dd-pp-mob">' + details + '</div>') + notesBox + '</div><div class="dd-pp-col side">' + (S.edit ? '' : '<div class="dd-pp-desk">' + details + '</div>' + contacts) + zoomBox('p' + c.id, [c.id]) + (st === 'leads' ? '' : paysBox) + hosting + '</div></div></div>';
 	}
 	// Onboarding answers as plain text, ready to paste into Claude.
 	function onboardEntries(c) {
@@ -3705,6 +3738,12 @@
 			api('/contact/' + did + '/drive', 'POST', { email: dmail ? 1 : 0 }).then(function (x) { if (x.project) { upsert(x.project); S.full[did] = x.project; } render(); toast(x.warn ? x.warn : x.sent ? 'Drive folder ready · emailed to ' + x.sent : 'Drive folder ready', !!x.warn); }).catch(function (er) { render(); fail(er); });
 			return;
 		}
+		if ((el = t.closest('[data-zsave]'))) {
+			var zv = function (a) { var x = app.querySelector('[' + a + ']'); return x ? x.value.trim() : ''; };
+			el.disabled = true; el.textContent = 'Testing…';
+			api('/zoom', 'POST', { account: zv('data-zacc'), client: zv('data-zcli'), secret: zv('data-zsec'), pmi: zv('data-zpmi') }).then(function (x) { DWDC.zoomReady = !!x.ready; S.zm = null; render(); toast(x.api ? 'Zoom connected' : x.ready ? 'Zoom link saved' : 'Saved'); }).catch(function (er) { el.disabled = false; el.textContent = 'Save & test'; fail(er); });
+			return;
+		}
 		if ((el = t.closest('[data-drvsave]'))) {
 			var du = app.querySelector('[data-drvurl]'); el.disabled = true; el.textContent = 'Testing…';
 			api('/drive', 'POST', { url: du ? du.value.trim() : '' }).then(function (x) { DWDC.driveReady = !!x.ready; S.drv = null; render(); toast(x.ready ? 'Google Drive connected' : 'Google Drive disconnected'); }).catch(function (er) { el.disabled = false; el.textContent = 'Save & test'; fail(er); });
@@ -3892,6 +3931,7 @@
 	document.addEventListener('keydown', function (e) { if (e.target && e.target.hasAttribute && e.target.hasAttribute('data-ptdraft') && e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); if (S.modal) { S.modal.draft = e.target.value; } ptSend(); } });
 	app.addEventListener('change', function (e) {
 		if (e.target.hasAttribute && e.target.hasAttribute('data-ppdate')) { S.ppDate = S.ppDate || {}; S.ppDate[e.target.getAttribute('data-ppdate')] = e.target.value; var pb2 = e.target.closest('.dd-tdate'); if (pb2) { pb2.classList.toggle('set', !!e.target.value); pb2.querySelector('span').textContent = e.target.value ? fmt(e.target.value) : 'Date'; } return; }
+		if (e.target.hasAttribute && e.target.hasAttribute('data-zsel')) { S.zoomSel = S.zoomSel || {}; S.zoomSel[e.target.getAttribute('data-zsel')] = e.target.value; return; }
 		if (e.target.hasAttribute && e.target.hasAttribute('data-bfreq')) { var bf = e.target.closest('form'), wkly = e.target.value === 'weekly', dl = bf.querySelector('[data-bdaylbl]'), di2 = bf.querySelector('[name=day]'); dl.textContent = wkly ? 'Weekday' : 'Due day'; di2.max = wkly ? 7 : 31; if (+di2.value > +di2.max) { di2.value = di2.max; } return; }
 		if (e.target.hasAttribute && e.target.hasAttribute('data-tdset')) { S.tdDate = S.tdDate || {}; S.tdDate[e.target.getAttribute('data-tdset')] = e.target.value; tdRerender(); return; }
 		if (e.target.hasAttribute && e.target.hasAttribute('data-lsort')) { setSort(e.target.getAttribute('data-lsort'), e.target.value); render(); return; }
@@ -3930,6 +3970,18 @@
 		new FormData(f).forEach(function (val, k) { data[k] = val; });
 		if (isTodoAdd(f) && data.text) { var pw = parseWhen(data.text); if (pw.due) { data.due = pw.due; } if (pw.time) { data.time = pw.time; } if (pw.due || pw.time) { data.text = pw.text; } }
 		if (f.classList.contains('dd-padd')) { S.ppDate = S.ppDate || {}; S.ppDate[f.getAttribute('data-contact')] = ''; }
+		if (f.classList.contains('dd-zform')) {
+			var zk = f.getAttribute('data-zkey'), zb = f.querySelector('.dd-zgo'), zp = contact(+data.project);
+			if (!zp) { toast('Pick a lead or client first', true); return; }
+			if (!confirm('Create a Zoom meeting ' + (data.when ? 'for ' + new Date(data.when).toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : 'now') + ' and email the invite to ' + zp.name + '?')) { return; }
+			zb.disabled = true; zb.textContent = 'Sending…';
+			api('/zoom/invite', 'POST', { project: zp.id, when: data.when || '' }).then(function (x) {
+				S.zoomRes = S.zoomRes || {}; S.zoomRes[zk] = { join: x.join, sent: x.sent, when: x.when, noEmail: !x.email };
+				if (x.project) { upsert(x.project); S.full[x.project.id] = x.project; }
+				render(); toast(x.sent ? 'Zoom invite sent to ' + x.sent : 'Zoom meeting ready');
+			}).catch(function (er) { zb.disabled = false; zb.textContent = 'Send Zoom invite'; fail(er); });
+			return;
+		}
 		if (f.classList.contains('dd-tadd')) { S.tdDate = S.tdDate || {}; S.tdDate[f.getAttribute('data-lane')] = ''; }
 		if (f.classList.contains('dwdc-taskedit')) {
 			var tid = +f.getAttribute('data-tid'), tb = f.querySelector('.dwdc-btn'); tb.disabled = true;

@@ -165,3 +165,22 @@
 .dd-pdrive { display: flex; align-items: center; gap: 8px; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 13px; color: var(--text-2); }
 .dd-pdrive > span { flex: 1; }
 .dd-pdrive .lu { color: var(--text-3); }
+/* Zoom box */
+.dd-zoom { overflow: visible; }
+.dd-lt.z { background: var(--info-bg); color: var(--info-text); }
+.dd-zb { display: flex; flex-direction: column; gap: 12px; padding: 16px 20px 18px; margin: 0; }
+.dd-zf { display: flex; flex-direction: column; gap: 6px; margin: 0; font-size: 12px; font-weight: 500; color: var(--text-2); }
+.dd-zf i { font-style: normal; font-weight: 400; color: var(--text-3); }
+.dd-zf .dd-isel { width: 100%; }
+.dd-zf .dd-isel select, .dd-zf input { height: 40px !important; min-height: 0 !important; width: 100%; padding: 0 12px !important; background: var(--bg) !important; border: 1px solid var(--border-strong) !important; border-radius: var(--radius-md) !important; color: var(--text) !important; font-size: 14px !important; box-shadow: none !important; color-scheme: inherit; }
+.dd-zf .dd-isel select { padding-right: 30px !important; }
+.dd-zgo { height: 40px; }
+.dd-zhelp { font-size: 13px; color: var(--text-2); }
+.dd-zres { display: flex; flex-direction: column; gap: 10px; padding: 14px 20px 18px; border-top: 1px solid var(--border); background: var(--bg); border-radius: 0 0 var(--radius-xl) var(--radius-xl); }
+.dd-zres p { font-size: 13px; color: var(--text-2); }
+.dd-zres b { color: var(--text); font-weight: 500; }
+.dd-zjoin { color: #fff !important; text-decoration: none !important; }
+.dd-zgrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; max-width: 720px; }
+.dd-zgrid input { height: 36px !important; min-height: 0 !important; padding: 0 12px !important; background: var(--bg) !important; border: 1px solid var(--border-strong) !important; border-radius: var(--radius-md) !important; color: var(--text) !important; font-size: 13px !important; box-shadow: none !important; }
+@media (max-width: 767px) { .dd-zgrid { grid-template-columns: 1fr; } .dd-zf input, .dd-zf .dd-isel select { height: 44px !important; font-size: 16px !important; } }
+.dd .dd-zf .dd-isel select, .dd .dd-billf .dd-isel select, .dd .dd-bform .dd-isel select { max-width: none !important; width: 100% !important; }

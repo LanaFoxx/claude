@@ -55,7 +55,7 @@ function dwdc_is_upwork( $id, $data = array() ) {
 
 /** Contact fields kept on every contact. */
 function dwdc_fields() {
-	return array( 'job', 'manual', 'followup', 'markup', 'markup_sent', 'lead_source', 'pay_method', 'stage', 'completed', 'billed', 'stripe', 'paypal', 'person', 'email', 'phone', 'company', 'website', 'list', 'price', 'balance', 'deadline', 'hosting', 'renewal', 'source', 'next', 'pending', 'paymark', 'owedopen', 'flag', 'drive', 'drive_sent' );
+	return array( 'job', 'manual', 'followup', 'markup', 'markup_sent', 'lead_source', 'pay_method', 'stage', 'completed', 'billed', 'stripe', 'paypal', 'person', 'email', 'phone', 'company', 'website', 'list', 'price', 'balance', 'deadline', 'hosting', 'renewal', 'source', 'next', 'pending', 'paymark', 'owedopen', 'flag', 'drive', 'drive_sent', 'zoom' );
 }
 
 function dwdc_contact( $post, $full = false ) {
@@ -1429,6 +1429,7 @@ function dwdc_vars( $mode = 'admin' ) {
 	$v['aiReady'] = function_exists( 'dwdc_ai_key' ) && '' !== dwdc_ai_key();
 	$v['mkReady'] = '' !== (string) get_option( 'dwdc_markup_key', '' );
 	$v['driveReady'] = function_exists( 'dwddr_ready' ) && dwddr_ready();
+	$v['zoomReady']  = function_exists( 'dwdz_ready' ) && dwdz_ready();
 	$v['upLast']  = '';
 	if ( function_exists( 'dwds_files' ) ) {
 		foreach ( dwds_files() as $f ) {
