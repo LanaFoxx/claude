@@ -149,6 +149,10 @@ add_action( 'rest_api_init', function () {
 		array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) use ( $status ) {
 			$p = (array) $r->get_json_params();
 			$a = (string) ( $p['action'] ?? '' );
+			if ( 'balances' === $a ) { // refresh button on Home (/accounts/get, no Balance charge); at most every 2 minutes
+				$b = get_option( 'dwdpl_balances', array() );
+				return ( ! empty( $b['ts'] ) && time() - (int) $b['ts'] < 120 ) ? $b : dwdpl_balances( true );
+			}
 			if ( 'keys' === $a ) {
 				$id  = trim( (string) ( $p['client_id'] ?? '' ) );
 				$sec = trim( (string) ( $p['secret'] ?? '' ) );

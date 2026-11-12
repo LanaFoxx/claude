@@ -350,3 +350,7 @@ html[data-theme], .dwdc.dd { font-variant-numeric: normal; }
 .dd-gcnt { width: 22px; height: 22px; border-radius: 6px; background: var(--accent-soft); color: var(--accent-text); font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; flex: none; }
 .dd .dwdc-addbar .dwdc-btn, .dd .dwdc-btn { background: var(--accent) !important; color: #fff !important; border-color: transparent !important; }
 .dd .dwdc-addbar .dwdc-btn:hover, .dd .dwdc-btn:hover { background: var(--accent-hover) !important; }
+.dd-stats > a.dd-bank > span { flex: 1; }
+.dd-stats > a.dd-bank .dd-ibtn { margin-left: -4px; color: var(--text-3); }
+.dd-ibtn.spin .lu { animation: ddspin .8s linear infinite; }
+@keyframes ddspin { to { transform: rotate(360deg); } }

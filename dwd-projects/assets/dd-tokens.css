@@ -27,6 +27,7 @@
   --danger-bg: rgba(248,113,113,0.12);  --danger-text: #FCA5A5;
   --info-bg: rgba(99,130,255,0.16);     --info-text: #A5B4FC;
   --neutral-bg: rgba(255,255,255,0.06); --neutral-text: #9AA3B2;
+  --rose-bg: rgba(244,114,182,0.14);    --rose-text: #F9A8D4;   /* personal calendar */
 
   --ring: 0 0 0 3px rgba(67,97,238,0.35);
   --shadow-menu: 0 8px 24px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.04);
@@ -57,6 +58,7 @@
   --danger-bg: #FEE2E2;  --danger-text: #B91C1C;
   --info-bg: #E0E7FF;    --info-text: #3730A3;
   --neutral-bg: #F1F5F9; --neutral-text: #475569;
+  --rose-bg: #FCE7F3;    --rose-text: #9D174D;   /* personal calendar */
 
   --ring: 0 0 0 3px rgba(67,97,238,0.30);
   --shadow-menu: 0 8px 24px rgba(15,23,42,0.08), 0 0 0 1px rgba(15,23,42,0.04);

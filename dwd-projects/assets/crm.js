@@ -756,9 +756,13 @@
 			}).join('') : '<p class="dd-empty-l">No active projects right now.</p>') + '</div></section>';
 		var stats = '<section class="dd-card dd-stats">'
 			+ (function () {
-				var BK = bData(), BA = BK && BK.balances && BK.balances.accounts ? BK.balances.accounts.filter(function (x) { return x.type !== 'credit' && x.type !== 'loan'; }) : [];
-				var tot = BA.reduce(function (a, x) { return a + (x.available != null ? x.available : (x.current || 0)); }, 0);
-				return '<a href="#personal/spending" title="' + esc(BA.map(function (x) { return (x.business ? 'Business' : 'Personal') + ' ••' + x.mask + ': ' + money2(x.available != null ? x.available : x.current); }).join('\n')) + '"><span>Bank balance<small>' + (BK ? (BA.length ? 'All ' + BA.length + ' account' + (BA.length === 1 ? '' : 's') + ' combined' : 'No bank connected') : 'Loading…') + '</small></span><b>' + (BA.length ? money2(tot) : '—') + '</b></a>';
+				// Cash only: checking + savings (credit cards and loans are left out). Available balance, as Plaid last reported it.
+				var BK = bData(), BA = BK && BK.balances && BK.balances.accounts ? BK.balances.accounts.filter(function (x) { return /checking|savings|money market|cd|depository/i.test(x.type || ''); }) : [];
+				var bv = function (x) { return x.available != null ? x.available : (x.current || 0); }, tot = BA.reduce(function (a, x) { return a + bv(x); }, 0);
+				var at = BK && BK.balances && BK.balances.at ? new Date(BK.balances.at.replace(' ', 'T') + 'Z') : null;
+				var when = at ? (at.toDateString() === new Date().toDateString() ? '' : at.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ', ') + at.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : '';
+				return '<a href="#personal/spending" class="dd-bank" title="' + esc(BA.map(function (x) { return x.name + ' ••' + x.mask + ': ' + money2(bv(x)); }).join('\n')) + '"><span>Bank balance<small>' + (BK ? (BA.length ? 'Checking + savings · as of ' + when : 'No bank connected') : 'Loading…') + '</small></span><b>' + (BA.length ? money2(tot) : '—') + '</b>'
+					+ (BA.length ? '<button type="button" class="dd-ibtn sm" data-bankrefresh aria-label="Refresh balance" title="Get the latest balance">' + lu('repeat', 14) + '</button>' : '') + '</a>';
 			})()
 			+ '<a href="#money" data-owed><span>Total owed</span><b>' + money(owed(owingList())) + '</b></a>'
 			+ '<a href="#projects/active"><span>Active projects</span><b>' + by('active').length + '</b></a>'
@@ -2990,6 +2994,7 @@
 		if (t.closest('[data-moremoney]')) { S.moreMoney = !S.moreMoney; render(); return; }
 		if (t.closest('[data-winsmore]')) { S.winsMore = !S.winsMore; render(); return; }
 		if (t.closest('[data-connmore]')) { S.connMore = !S.connMore; render(); if (S.connMore) { setTimeout(function () { var c = document.querySelector('.dwdc-conn'); if (c) { c.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }, 50); } return; }
+		if ((el = t.closest('[data-bankrefresh]'))) { e.preventDefault(); e.stopPropagation(); el.disabled = true; el.classList.add('spin'); api('/plaid', 'POST', { action: 'balances' }).then(function (b) { if (S.bank && b && b.accounts) { S.bank.balances = b; } render(); toast('Bank balance updated'); }).catch(fail); return; }
 		if ((el = t.closest('[data-tgopen]'))) { S.tgOpen = S.tgOpen || {}; S.tgOpen[+el.getAttribute('data-tgopen')] = true; }
 		if ((el = t.closest('[data-tgrp]'))) { var gid = +el.getAttribute('data-tgrp'); S.tgOpen = S.tgOpen || {}; S.tgOpen[gid] = !S.tgOpen[gid]; render(); return; }
 		if ((el = t.closest('[data-showdone]'))) { S.showDone = !S.showDone; render(); return; }
