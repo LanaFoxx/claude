@@ -452,3 +452,12 @@ i.dd-flag { width: 10px; height: 10px; cursor: inherit; }
 .dd-tl-chk { width: 16px; height: 16px; margin: 3px auto 0; border-radius: 4px; border: 1.5px solid var(--border-strong); background: var(--surface); padding: 0; cursor: pointer; }
 .dd-tl-chk:hover { border-color: var(--accent); background: var(--accent-soft); }
 .dd-tl-r.td .dd-tl-t { color: var(--text-3); font-weight: 500; }
+.dd-tl-n { width: 20px; height: 20px; margin: 1px auto 0; border-radius: 5px; background: var(--accent-soft); color: var(--accent-text); font-size: 11px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; }
+.dd-tl-r.grp .dd-tl-c b { display: flex; align-items: center; gap: 6px; }
+.dd-tl-r.grp .dd-tl-c b .lu { color: var(--text-3); transition: transform .15s; }
+.dd-tl-r.grp.open .dd-tl-c b .lu { transform: rotate(180deg); }
+.dd-tl-kids { margin-left: 92px; border-left: 1px solid var(--border); padding-left: 4px; }
+.dd-tl-kids .dd-tl-r { grid-template-columns: 0 20px 1fr !important; padding: 8px 0; }
+.dd-tl-kids .dd-tl-r .dd-tl-t { display: none; }
+.dd-tl-go { display: inline-flex; align-items: center; gap: 4px; margin: 6px 0 8px 24px; font-size: 13px; font-weight: 500; color: var(--accent-text) !important; }
+@media (max-width: 767px) { .dd-tl-kids { margin-left: 64px; } }
