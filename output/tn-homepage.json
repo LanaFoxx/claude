@@ -4,7 +4,7 @@
  "type": "page",
  "content": [
   {
-   "id": "8528ea7",
+   "id": "b9f5307",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -136,7 +136,7 @@
    },
    "elements": [
     {
-     "id": "b9f5307",
+     "id": "d446ab8",
      "elType": "widget",
      "widgetType": "heading",
      "isInner": false,
@@ -178,7 +178,7 @@
      "elements": []
     },
     {
-     "id": "611070a",
+     "id": "9ece78b",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -288,7 +288,7 @@
      },
      "elements": [
       {
-       "id": "f842997",
+       "id": "e3801b7",
        "elType": "widget",
        "widgetType": "text-editor",
        "isInner": false,
@@ -318,7 +318,7 @@
        "elements": []
       },
       {
-       "id": "5a41f8e",
+       "id": "7f29a9f",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -372,7 +372,7 @@
        },
        "elements": [
         {
-         "id": "189b512",
+         "id": "8f45b09",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,
@@ -424,7 +424,7 @@
          "elements": []
         },
         {
-         "id": "e4d6d27",
+         "id": "ded66b4",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,
@@ -493,7 +493,7 @@
      ]
     },
     {
-     "id": "9ece78b",
+     "id": "92e2612",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -566,7 +566,7 @@
      },
      "elements": [
       {
-       "id": "d446ab8",
+       "id": "43288e1",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -619,7 +619,7 @@
        },
        "elements": [
         {
-         "id": "8776c65",
+         "id": "6c24c1a",
          "elType": "widget",
          "widgetType": "rating",
          "isInner": false,
@@ -661,7 +661,7 @@
          "elements": []
         },
         {
-         "id": "92e2612",
+         "id": "fbe80fa",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -708,7 +708,7 @@
        ]
       },
       {
-       "id": "e3801b7",
+       "id": "52969a5",
        "elType": "widget",
        "widgetType": "text-editor",
        "isInner": false,
@@ -753,7 +753,7 @@
        "elements": []
       },
       {
-       "id": "8f45b09",
+       "id": "c1515ff",
        "elType": "widget",
        "widgetType": "text-editor",
        "isInner": false,
@@ -798,7 +798,7 @@
        "elements": []
       },
       {
-       "id": "ded66b4",
+       "id": "8c4e424",
        "elType": "widget",
        "widgetType": "text-editor",
        "isInner": false,
@@ -843,7 +843,7 @@
        "elements": []
       },
       {
-       "id": "7f29a9f",
+       "id": "8776c65",
        "elType": "widget",
        "widgetType": "text-editor",
        "isInner": false,
@@ -892,7 +892,7 @@
    ]
   },
   {
-   "id": "6e6c999",
+   "id": "e9090b8",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -970,7 +970,7 @@
    },
    "elements": [
     {
-     "id": "c5fb12e",
+     "id": "1655509",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -1480,7 +1480,7 @@
        ]
       },
       {
-       "id": "e9090b8",
+       "id": "5f1a8a1",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1532,7 +1532,7 @@
        },
        "elements": [
         {
-         "id": "851b4c8",
+         "id": "5ac87fc",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -1606,66 +1606,19 @@
            "unit": "px",
            "size": 360,
            "sizes": []
+          },
+          "background_image": {
+           "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-hero-stained-cedar-fence.webp",
+           "id": 1584,
+           "size": "",
+           "alt": "Freshly stained cedar fence and gate",
+           "source": "library"
           }
          },
-         "elements": [
-          {
-           "id": "59a047d",
-           "elType": "widget",
-           "widgetType": "icon-list",
-           "isInner": false,
-           "settings": {
-            "icon_list": [
-             {
-              "_id": "5ac87fc",
-              "text": "Photo: freshly stained log home exterior",
-              "selected_icon": {
-               "value": {
-                "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/camera.svg",
-                "id": 1433
-               },
-               "library": "svg"
-              }
-             }
-            ],
-            "icon_color": "#F2ECE399",
-            "text_color": "#F2ECE399",
-            "icon_size": {
-             "unit": "px",
-             "size": 14,
-             "sizes": []
-            },
-            "text_indent": {
-             "unit": "px",
-             "size": 8,
-             "sizes": []
-            },
-            "space_between": {
-             "unit": "px",
-             "size": 0,
-             "sizes": []
-            },
-            "icon_typography_typography": "custom",
-            "icon_typography_font_family": "Manrope",
-            "icon_typography_font_size": {
-             "unit": "px",
-             "size": 12,
-             "sizes": []
-            },
-            "icon_typography_font_weight": "400",
-            "icon_typography_line_height": {
-             "unit": "em",
-             "size": 1.4,
-             "sizes": []
-            },
-            "_title": "Photo label (delete when photo added)"
-           },
-           "elements": []
-          }
-         ]
+         "elements": []
         },
         {
-         "id": "1655509",
+         "id": "a3d2047",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -1716,7 +1669,7 @@
          },
          "elements": [
           {
-           "id": "3411425",
+           "id": "59a047d",
            "elType": "widget",
            "widgetType": "heading",
            "isInner": false,
@@ -1757,7 +1710,7 @@
            "elements": []
           },
           {
-           "id": "f060a72",
+           "id": "851b4c8",
            "elType": "widget",
            "widgetType": "text-editor",
            "isInner": false,
@@ -1787,7 +1740,7 @@
            "elements": []
           },
           {
-           "id": "5f1a8a1",
+           "id": "c766ff1",
            "elType": "widget",
            "widgetType": "icon-list",
            "isInner": false,
@@ -1801,7 +1754,7 @@
             "text_color_hover": "#D9A66B",
             "icon_list": [
              {
-              "_id": "b51149b",
+              "_id": "3411425",
               "text": "Log Home Staining &amp; Restoration",
               "link": {
                "url": "/log-home-staining-restoration/",
@@ -1814,7 +1767,7 @@
               }
              },
              {
-              "_id": "c437bdb",
+              "_id": "f060a72",
               "text": "Chinking &amp; Check Sealing",
               "link": {
                "url": "/chinking-check-sealing/",
@@ -1827,7 +1780,7 @@
               }
              },
              {
-              "_id": "c766ff1",
+              "_id": "b51149b",
               "text": "Rot Repair &amp; Prevention",
               "link": {
                "url": "/rot-repair-prevention/",
@@ -1840,7 +1793,7 @@
               }
              },
              {
-              "_id": "a3d2047",
+              "_id": "c437bdb",
               "text": "Deck Staining",
               "link": {
                "url": "/deck-staining/",
@@ -1888,7 +1841,7 @@
    ]
   },
   {
-   "id": "8f9ac09",
+   "id": "7616022",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -1966,7 +1919,7 @@
    },
    "elements": [
     {
-     "id": "9df05f2",
+     "id": "2737147",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -2074,7 +2027,7 @@
      },
      "elements": [
       {
-       "id": "2737147",
+       "id": "8608d94",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -2125,7 +2078,7 @@
        },
        "elements": [
         {
-         "id": "6d111a9",
+         "id": "c5fb12e",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -2172,7 +2125,7 @@
          "elements": []
         },
         {
-         "id": "8608d94",
+         "id": "6e6c999",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -2202,7 +2155,7 @@
          "elements": []
         },
         {
-         "id": "7c16722",
+         "id": "6d111a9",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,
@@ -2256,7 +2209,7 @@
        ]
       },
       {
-       "id": "a5f19a5",
+       "id": "7c16722",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -2315,70 +2268,23 @@
          "unit": "px",
          "size": 560,
          "sizes": []
+        },
+        "background_image": {
+         "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-hero-staining-deck-railing.webp",
+         "id": 1583,
+         "size": "",
+         "alt": "Staining a deck railing with a brush",
+         "source": "library"
         }
        },
-       "elements": [
-        {
-         "id": "f41686c",
-         "elType": "widget",
-         "widgetType": "icon-list",
-         "isInner": false,
-         "settings": {
-          "icon_list": [
-           {
-            "_id": "7616022",
-            "text": "Photo: Logworks crew on a log or timber build",
-            "selected_icon": {
-             "value": {
-              "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/camera.svg",
-              "id": 1433
-             },
-             "library": "svg"
-            }
-           }
-          ],
-          "icon_color": "#F2ECE399",
-          "text_color": "#F2ECE399",
-          "icon_size": {
-           "unit": "px",
-           "size": 14,
-           "sizes": []
-          },
-          "text_indent": {
-           "unit": "px",
-           "size": 8,
-           "sizes": []
-          },
-          "space_between": {
-           "unit": "px",
-           "size": 0,
-           "sizes": []
-          },
-          "icon_typography_typography": "custom",
-          "icon_typography_font_family": "Manrope",
-          "icon_typography_font_size": {
-           "unit": "px",
-           "size": 12,
-           "sizes": []
-          },
-          "icon_typography_font_weight": "400",
-          "icon_typography_line_height": {
-           "unit": "em",
-           "size": 1.4,
-           "sizes": []
-          },
-          "_title": "Photo label (delete when photo added)"
-         },
-         "elements": []
-        }
-       ]
+       "elements": []
       }
      ]
     }
    ]
   },
   {
-   "id": "d40d31b",
+   "id": "de1fd3d",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -2457,7 +2363,7 @@
    },
    "elements": [
     {
-     "id": "497a762",
+     "id": "949acfb",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -2560,15 +2466,149 @@
        "unit": "px",
        "size": 0
       },
-      "custom_css": "selector{position:relative;}selector > .e-con{position:relative;padding:56px 48px 60px !important;transition:background-color .35s ease;}selector > .e-con:hover{background-color:rgba(242,236,227,0.03);}selector > .e-con::before{content:'' !important;display:block;position:absolute;top:-3000px;bottom:-3000px;left:0;right:auto;width:1px;height:auto;background:rgba(242,236,227,0.07);opacity:1;pointer-events:none;border:0;}selector > .e-con::after{content:'';position:absolute;left:0;right:0;top:0;height:1px;background:rgba(242,236,227,0.07);pointer-events:none;}selector::before{content:'' !important;display:block;position:absolute;top:-3000px;bottom:-3000px;right:0;left:auto;width:1px;height:auto;background:rgba(242,236,227,0.07);opacity:1;pointer-events:none;border:0;}selector::after{content:'';position:absolute;left:0;right:0;bottom:0;height:1px;background:rgba(242,236,227,0.07);pointer-events:none;}@media (max-width:1359px){selector > .e-con{padding:48px 36px 52px !important;}}@media (max-width:600px){selector > .e-con{padding:40px 0 44px !important;}selector > .e-con::before,selector::before{display:none;}}"
+      "custom_css": "selector{position:relative;}selector > .e-con{position:relative;padding:56px 48px 60px !important;transition:background-color .35s ease;}selector > .e-con:hover{background-color:rgba(242,236,227,0.03);}selector > .e-con::before{content:'' !important;display:block;position:absolute;top:0;bottom:0;left:0;right:auto;width:1px;height:auto;background:rgba(242,236,227,0.07);opacity:1;pointer-events:none;border:0;}selector > .e-con::after{content:'';position:absolute;left:0;right:0;top:0;height:1px;background:rgba(242,236,227,0.07);pointer-events:none;}selector::before{content:'' !important;display:block;position:absolute;top:0;bottom:0;right:0;left:auto;width:1px;height:auto;background:rgba(242,236,227,0.07);opacity:1;pointer-events:none;border:0;}selector::after{content:'';position:absolute;left:0;right:0;bottom:0;height:1px;background:rgba(242,236,227,0.07);pointer-events:none;}@media (max-width:1359px){selector > .e-con{padding:48px 36px 52px !important;}}@media (max-width:600px){selector > .e-con{padding:40px 0 44px !important;}selector > .e-con::before,selector::before{display:none;}}"
      },
      "elements": [
+      {
+       "id": "8f9ac09",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Why / Builders first",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "flex_gap_laptop": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "flex_gap_tablet": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "flex_gap_mobile": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "0",
+         "right": "0",
+         "bottom": "0",
+         "left": "0",
+         "isLinked": true
+        }
+       },
+       "elements": [
+        {
+         "id": "f41686c",
+         "elType": "widget",
+         "widgetType": "icon",
+         "isInner": false,
+         "settings": {
+          "selected_icon": {
+           "value": {
+            "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/hammer-light.svg",
+            "id": 1439
+           },
+           "library": "svg"
+          },
+          "primary_color": "#C68B4E",
+          "size": {
+           "unit": "px",
+           "size": 44,
+           "sizes": []
+          },
+          "align": "left",
+          "custom_css": "selector .elementor-icon{display:block;line-height:0;}selector .elementor-icon svg{width:44px;height:44px;}",
+          "_title": "Why / Builders first / Icon"
+         },
+         "elements": []
+        },
+        {
+         "id": "a5f19a5",
+         "elType": "widget",
+         "widgetType": "heading",
+         "isInner": false,
+         "settings": {
+          "title": "Builders first",
+          "header_size": "h3",
+          "title_color": "#F2ECE3",
+          "typography_typography": "custom",
+          "typography_font_family": "Cormorant Garamond",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 28,
+           "sizes": []
+          },
+          "typography_font_weight": "500",
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.15,
+           "sizes": []
+          },
+          "_title": "Why / Builders first / Title (H3)"
+         },
+         "elements": []
+        },
+        {
+         "id": "9df05f2",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>Our parent company has been building log and timber homes in these valleys since 1999. We understand your home from the framing out.</p>",
+          "text_color": "#C9D1C4",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 15,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.75,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}selector{max-width:360px !important;}",
+          "_title": "Why / Builders first / Text"
+         },
+         "elements": []
+        }
+       ]
+      },
       {
        "id": "91a0ba0",
        "elType": "container",
        "isInner": true,
        "settings": {
-        "_title": "Why / Builders first",
+        "_title": "Why / Preparation is the job",
         "content_width": "full",
         "flex_direction": "column",
         "flex_gap": {
@@ -2622,8 +2662,8 @@
          "settings": {
           "selected_icon": {
            "value": {
-            "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/hammer-light.svg",
-            "id": 1439
+            "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/paint-roller-light.svg",
+            "id": 1443
            },
            "library": "svg"
           },
@@ -2635,7 +2675,7 @@
           },
           "align": "left",
           "custom_css": "selector .elementor-icon{display:block;line-height:0;}selector .elementor-icon svg{width:44px;height:44px;}",
-          "_title": "Why / Builders first / Icon"
+          "_title": "Why / Preparation is the job / Icon"
          },
          "elements": []
         },
@@ -2645,7 +2685,7 @@
          "widgetType": "heading",
          "isInner": false,
          "settings": {
-          "title": "Builders first",
+          "title": "Preparation is the job",
           "header_size": "h3",
           "title_color": "#F2ECE3",
           "typography_typography": "custom",
@@ -2661,7 +2701,7 @@
            "size": 1.15,
            "sizes": []
           },
-          "_title": "Why / Builders first / Title (H3)"
+          "_title": "Why / Preparation is the job / Title (H3)"
          },
          "elements": []
         },
@@ -2671,7 +2711,7 @@
          "widgetType": "text-editor",
          "isInner": false,
          "settings": {
-          "editor": "<p>Our parent company has been building log and timber homes in these valleys since 1999. We understand your home from the framing out.</p>",
+          "editor": "<p>Patching, sanding, caulking, priming, and masking done right is what makes a finish look flawless and last. We never rush it.</p>",
           "text_color": "#C9D1C4",
           "paragraph_spacing": {
            "unit": "px",
@@ -2691,7 +2731,7 @@
            "sizes": []
           },
           "custom_css": "selector p:last-child{margin-block-end:0;}selector{max-width:360px !important;}",
-          "_title": "Why / Builders first / Text"
+          "_title": "Why / Preparation is the job / Text"
          },
          "elements": []
         }
@@ -2702,7 +2742,7 @@
        "elType": "container",
        "isInner": true,
        "settings": {
-        "_title": "Why / Preparation is the job",
+        "_title": "Why / Your home, protected",
         "content_width": "full",
         "flex_direction": "column",
         "flex_gap": {
@@ -2756,8 +2796,8 @@
          "settings": {
           "selected_icon": {
            "value": {
-            "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/paint-roller-light.svg",
-            "id": 1443
+            "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/shield-check-light.svg",
+            "id": 1445
            },
            "library": "svg"
           },
@@ -2769,7 +2809,7 @@
           },
           "align": "left",
           "custom_css": "selector .elementor-icon{display:block;line-height:0;}selector .elementor-icon svg{width:44px;height:44px;}",
-          "_title": "Why / Preparation is the job / Icon"
+          "_title": "Why / Your home, protected / Icon"
          },
          "elements": []
         },
@@ -2779,7 +2819,7 @@
          "widgetType": "heading",
          "isInner": false,
          "settings": {
-          "title": "Preparation is the job",
+          "title": "Your home, protected",
           "header_size": "h3",
           "title_color": "#F2ECE3",
           "typography_typography": "custom",
@@ -2795,7 +2835,7 @@
            "size": 1.15,
            "sizes": []
           },
-          "_title": "Why / Preparation is the job / Title (H3)"
+          "_title": "Why / Your home, protected / Title (H3)"
          },
          "elements": []
         },
@@ -2805,7 +2845,7 @@
          "widgetType": "text-editor",
          "isInner": false,
          "settings": {
-          "editor": "<p>Patching, sanding, caulking, priming, and masking done right is what makes a finish look flawless and last. We never rush it.</p>",
+          "editor": "<p>Floors, furnishings, fixtures, and landscaping are covered and protected. Work areas are cleaned at the end of every day.</p>",
           "text_color": "#C9D1C4",
           "paragraph_spacing": {
            "unit": "px",
@@ -2825,7 +2865,7 @@
            "sizes": []
           },
           "custom_css": "selector p:last-child{margin-block-end:0;}selector{max-width:360px !important;}",
-          "_title": "Why / Preparation is the job / Text"
+          "_title": "Why / Your home, protected / Text"
          },
          "elements": []
         }
@@ -2836,7 +2876,7 @@
        "elType": "container",
        "isInner": true,
        "settings": {
-        "_title": "Why / Your home, protected",
+        "_title": "Why / One point of contact",
         "content_width": "full",
         "flex_direction": "column",
         "flex_gap": {
@@ -2890,8 +2930,8 @@
          "settings": {
           "selected_icon": {
            "value": {
-            "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/shield-check-light.svg",
-            "id": 1445
+            "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/user-circle-check-light.svg",
+            "id": 1446
            },
            "library": "svg"
           },
@@ -2903,7 +2943,7 @@
           },
           "align": "left",
           "custom_css": "selector .elementor-icon{display:block;line-height:0;}selector .elementor-icon svg{width:44px;height:44px;}",
-          "_title": "Why / Your home, protected / Icon"
+          "_title": "Why / One point of contact / Icon"
          },
          "elements": []
         },
@@ -2913,7 +2953,7 @@
          "widgetType": "heading",
          "isInner": false,
          "settings": {
-          "title": "Your home, protected",
+          "title": "One point of contact",
           "header_size": "h3",
           "title_color": "#F2ECE3",
           "typography_typography": "custom",
@@ -2929,7 +2969,7 @@
            "size": 1.15,
            "sizes": []
           },
-          "_title": "Why / Your home, protected / Title (H3)"
+          "_title": "Why / One point of contact / Title (H3)"
          },
          "elements": []
         },
@@ -2939,7 +2979,7 @@
          "widgetType": "text-editor",
          "isInner": false,
          "settings": {
-          "editor": "<p>Floors, furnishings, fixtures, and landscaping are covered and protected. Work areas are cleaned at the end of every day.</p>",
+          "editor": "<p>A dedicated project lead manages your job from your first call to your final walkthrough, with regular updates and photos if you're away.</p>",
           "text_color": "#C9D1C4",
           "paragraph_spacing": {
            "unit": "px",
@@ -2959,7 +2999,7 @@
            "sizes": []
           },
           "custom_css": "selector p:last-child{margin-block-end:0;}selector{max-width:360px !important;}",
-          "_title": "Why / Your home, protected / Text"
+          "_title": "Why / One point of contact / Text"
          },
          "elements": []
         }
@@ -2970,7 +3010,7 @@
        "elType": "container",
        "isInner": true,
        "settings": {
-        "_title": "Why / One point of contact",
+        "_title": "Why / Premium products",
         "content_width": "full",
         "flex_direction": "column",
         "flex_gap": {
@@ -3024,8 +3064,8 @@
          "settings": {
           "selected_icon": {
            "value": {
-            "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/user-circle-check-light.svg",
-            "id": 1446
+            "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/paint-bucket-light.svg",
+            "id": 1442
            },
            "library": "svg"
           },
@@ -3037,7 +3077,7 @@
           },
           "align": "left",
           "custom_css": "selector .elementor-icon{display:block;line-height:0;}selector .elementor-icon svg{width:44px;height:44px;}",
-          "_title": "Why / One point of contact / Icon"
+          "_title": "Why / Premium products / Icon"
          },
          "elements": []
         },
@@ -3047,7 +3087,7 @@
          "widgetType": "heading",
          "isInner": false,
          "settings": {
-          "title": "One point of contact",
+          "title": "Premium products",
           "header_size": "h3",
           "title_color": "#F2ECE3",
           "typography_typography": "custom",
@@ -3063,7 +3103,7 @@
            "size": 1.15,
            "sizes": []
           },
-          "_title": "Why / One point of contact / Title (H3)"
+          "_title": "Why / Premium products / Title (H3)"
          },
          "elements": []
         },
@@ -3073,7 +3113,7 @@
          "widgetType": "text-editor",
          "isInner": false,
          "settings": {
-          "editor": "<p>A dedicated project lead manages your job from your first call to your final walkthrough, with regular updates and photos if you're away.</p>",
+          "editor": "<p>We use top-tier coatings, including Benjamin Moore and Sherwin-Williams, and Sashco and Perma-Chink systems on log and timber homes.</p>",
           "text_color": "#C9D1C4",
           "paragraph_spacing": {
            "unit": "px",
@@ -3093,7 +3133,7 @@
            "sizes": []
           },
           "custom_css": "selector p:last-child{margin-block-end:0;}selector{max-width:360px !important;}",
-          "_title": "Why / One point of contact / Text"
+          "_title": "Why / Premium products / Text"
          },
          "elements": []
         }
@@ -3104,7 +3144,7 @@
        "elType": "container",
        "isInner": true,
        "settings": {
-        "_title": "Why / Premium products",
+        "_title": "Why / Backed in writing",
         "content_width": "full",
         "flex_direction": "column",
         "flex_gap": {
@@ -3158,140 +3198,6 @@
          "settings": {
           "selected_icon": {
            "value": {
-            "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/paint-bucket-light.svg",
-            "id": 1442
-           },
-           "library": "svg"
-          },
-          "primary_color": "#C68B4E",
-          "size": {
-           "unit": "px",
-           "size": 44,
-           "sizes": []
-          },
-          "align": "left",
-          "custom_css": "selector .elementor-icon{display:block;line-height:0;}selector .elementor-icon svg{width:44px;height:44px;}",
-          "_title": "Why / Premium products / Icon"
-         },
-         "elements": []
-        },
-        {
-         "id": "fd1d9d1",
-         "elType": "widget",
-         "widgetType": "heading",
-         "isInner": false,
-         "settings": {
-          "title": "Premium products",
-          "header_size": "h3",
-          "title_color": "#F2ECE3",
-          "typography_typography": "custom",
-          "typography_font_family": "Cormorant Garamond",
-          "typography_font_size": {
-           "unit": "px",
-           "size": 28,
-           "sizes": []
-          },
-          "typography_font_weight": "500",
-          "typography_line_height": {
-           "unit": "em",
-           "size": 1.15,
-           "sizes": []
-          },
-          "_title": "Why / Premium products / Title (H3)"
-         },
-         "elements": []
-        },
-        {
-         "id": "8aac319",
-         "elType": "widget",
-         "widgetType": "text-editor",
-         "isInner": false,
-         "settings": {
-          "editor": "<p>We use top-tier coatings, including Benjamin Moore and Sherwin-Williams, and Sashco and Perma-Chink systems on log and timber homes.</p>",
-          "text_color": "#C9D1C4",
-          "paragraph_spacing": {
-           "unit": "px",
-           "size": 0,
-           "sizes": []
-          },
-          "typography_typography": "custom",
-          "typography_font_family": "Manrope",
-          "typography_font_size": {
-           "unit": "px",
-           "size": 15,
-           "sizes": []
-          },
-          "typography_line_height": {
-           "unit": "em",
-           "size": 1.75,
-           "sizes": []
-          },
-          "custom_css": "selector p:last-child{margin-block-end:0;}selector{max-width:360px !important;}",
-          "_title": "Why / Premium products / Text"
-         },
-         "elements": []
-        }
-       ]
-      },
-      {
-       "id": "a355084",
-       "elType": "container",
-       "isInner": true,
-       "settings": {
-        "_title": "Why / Backed in writing",
-        "content_width": "full",
-        "flex_direction": "column",
-        "flex_gap": {
-         "column": "18",
-         "row": "18",
-         "isLinked": true,
-         "unit": "px",
-         "size": 18
-        },
-        "flex_gap_laptop": {
-         "column": "18",
-         "row": "18",
-         "isLinked": true,
-         "unit": "px",
-         "size": 18
-        },
-        "flex_gap_tablet": {
-         "column": "18",
-         "row": "18",
-         "isLinked": true,
-         "unit": "px",
-         "size": 18
-        },
-        "flex_gap_mobile": {
-         "column": "18",
-         "row": "18",
-         "isLinked": true,
-         "unit": "px",
-         "size": 18
-        },
-        "width": {
-         "unit": "%",
-         "size": 100,
-         "sizes": []
-        },
-        "padding": {
-         "unit": "px",
-         "top": "0",
-         "right": "0",
-         "bottom": "0",
-         "left": "0",
-         "isLinked": true
-        }
-       },
-       "elements": [
-        {
-         "id": "949acfb",
-         "elType": "widget",
-         "widgetType": "icon",
-         "isInner": false,
-         "settings": {
-          "selected_icon": {
-           "value": {
             "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/certificate-light.svg",
             "id": 1434
            },
@@ -3310,7 +3216,7 @@
          "elements": []
         },
         {
-         "id": "de1fd3d",
+         "id": "fd1d9d1",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -3336,7 +3242,7 @@
          "elements": []
         },
         {
-         "id": "167f0cf",
+         "id": "8aac319",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -3372,7 +3278,7 @@
    ]
   },
   {
-   "id": "bb74fe5",
+   "id": "9bae8e6",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -3452,7 +3358,7 @@
    },
    "elements": [
     {
-     "id": "76eebc5",
+     "id": "fdf165d",
      "elType": "widget",
      "widgetType": "html",
      "isInner": false,
@@ -3463,7 +3369,7 @@
      "elements": []
     },
     {
-     "id": "9f4ecb4",
+     "id": "c6eafff",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -3516,7 +3422,7 @@
      },
      "elements": [
       {
-       "id": "c6eafff",
+       "id": "c3618e1",
        "elType": "widget",
        "widgetType": "heading",
        "isInner": false,
@@ -3563,7 +3469,7 @@
        "elements": []
       },
       {
-       "id": "fdf165d",
+       "id": "84f09af",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -3615,7 +3521,7 @@
        },
        "elements": [
         {
-         "id": "95f184e",
+         "id": "3106119",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -3671,7 +3577,7 @@
          },
          "elements": [
           {
-           "id": "1c83e78",
+           "id": "497a762",
            "elType": "container",
            "isInner": true,
            "settings": {
@@ -3723,7 +3629,7 @@
            },
            "elements": [
             {
-             "id": "3106119",
+             "id": "167f0cf",
              "elType": "widget",
              "widgetType": "heading",
              "isInner": false,
@@ -3765,7 +3671,7 @@
              "elements": []
             },
             {
-             "id": "e1711cb",
+             "id": "a355084",
              "elType": "widget",
              "widgetType": "heading",
              "isInner": false,
@@ -3794,7 +3700,7 @@
            ]
           },
           {
-           "id": "c464c55",
+           "id": "d40d31b",
            "elType": "widget",
            "widgetType": "heading",
            "isInner": false,
@@ -3824,7 +3730,7 @@
          ]
         },
         {
-         "id": "3475263",
+         "id": "c7a1774",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -3880,7 +3786,7 @@
          },
          "elements": [
           {
-           "id": "7dedc86",
+           "id": "bba4c70",
            "elType": "container",
            "isInner": true,
            "settings": {
@@ -3932,7 +3838,7 @@
            },
            "elements": [
             {
-             "id": "c7a1774",
+             "id": "95f184e",
              "elType": "widget",
              "widgetType": "heading",
              "isInner": false,
@@ -3974,7 +3880,7 @@
              "elements": []
             },
             {
-             "id": "af4fb02",
+             "id": "f306f0c",
              "elType": "widget",
              "widgetType": "heading",
              "isInner": false,
@@ -4003,7 +3909,7 @@
            ]
           },
           {
-           "id": "8854901",
+           "id": "2a42721",
            "elType": "widget",
            "widgetType": "heading",
            "isInner": false,
@@ -4033,7 +3939,7 @@
          ]
         },
         {
-         "id": "c3618e1",
+         "id": "e981455",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -4089,7 +3995,7 @@
          },
          "elements": [
           {
-           "id": "2f3c42b",
+           "id": "f261e34",
            "elType": "container",
            "isInner": true,
            "settings": {
@@ -4141,7 +4047,7 @@
            },
            "elements": [
             {
-             "id": "e981455",
+             "id": "3475263",
              "elType": "widget",
              "widgetType": "heading",
              "isInner": false,
@@ -4183,7 +4089,7 @@
              "elements": []
             },
             {
-             "id": "f2cbbb9",
+             "id": "8b6bc3c",
              "elType": "widget",
              "widgetType": "heading",
              "isInner": false,
@@ -4212,7 +4118,7 @@
            ]
           },
           {
-           "id": "b06d7a6",
+           "id": "4a9afa3",
            "elType": "widget",
            "widgetType": "heading",
            "isInner": false,
@@ -4244,7 +4150,7 @@
        ]
       },
       {
-       "id": "9bae8e6",
+       "id": "bc9f21d",
        "elType": "widget",
        "widgetType": "button",
        "isInner": false,
@@ -4297,7 +4203,7 @@
        "elements": []
       },
       {
-       "id": "5041f5e",
+       "id": "882afe6",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -4349,7 +4255,7 @@
        },
        "elements": [
         {
-         "id": "2a42721",
+         "id": "c464c55",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -4413,14 +4319,14 @@
          },
          "elements": [
           {
-           "id": "bba4c70",
+           "id": "1c83e78",
            "elType": "widget",
            "widgetType": "icon-list",
            "isInner": false,
            "settings": {
             "icon_list": [
              {
-              "_id": "f306f0c",
+              "_id": "e1711cb",
               "text": "Our project photo: Snowmass great room",
               "selected_icon": {
                "value": {
@@ -4468,7 +4374,7 @@
          ]
         },
         {
-         "id": "4a9afa3",
+         "id": "8854901",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -4532,14 +4438,14 @@
          },
          "elements": [
           {
-           "id": "f261e34",
+           "id": "7dedc86",
            "elType": "widget",
            "widgetType": "icon-list",
            "isInner": false,
            "settings": {
             "icon_list": [
              {
-              "_id": "8b6bc3c",
+              "_id": "af4fb02",
               "text": "Our project photo: Arrowhead exterior",
               "selected_icon": {
                "value": {
@@ -4587,7 +4493,7 @@
          ]
         },
         {
-         "id": "882afe6",
+         "id": "b06d7a6",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -4651,14 +4557,14 @@
          },
          "elements": [
           {
-           "id": "bc9f21d",
+           "id": "2f3c42b",
            "elType": "widget",
            "widgetType": "icon-list",
            "isInner": false,
            "settings": {
             "icon_list": [
              {
-              "_id": "84f09af",
+              "_id": "f2cbbb9",
               "text": "Our project photo: Edwards log home",
               "selected_icon": {
                "value": {
@@ -4712,7 +4618,7 @@
    ]
   },
   {
-   "id": "7edd77d",
+   "id": "907c7e3",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -4766,7 +4672,7 @@
    },
    "elements": [
     {
-     "id": "76e6112",
+     "id": "b598d0d",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -4872,7 +4778,7 @@
      },
      "elements": [
       {
-       "id": "f26b524",
+       "id": "dcbfd2e",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -4931,66 +4837,19 @@
          "unit": "px",
          "size": 640,
          "sizes": []
+        },
+        "background_image": {
+         "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-hero-stained-wood-deck.webp",
+         "id": 1585,
+         "size": "",
+         "alt": "Stained wood deck outside a lit home",
+         "source": "library"
         }
        },
-       "elements": [
-        {
-         "id": "de0d8d8",
-         "elType": "widget",
-         "widgetType": "icon-list",
-         "isInner": false,
-         "settings": {
-          "icon_list": [
-           {
-            "_id": "8a98b9a",
-            "text": "Photo: mountain home in snow, lights on",
-            "selected_icon": {
-             "value": {
-              "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/camera.svg",
-              "id": 1433
-             },
-             "library": "svg"
-            }
-           }
-          ],
-          "icon_color": "#F2ECE399",
-          "text_color": "#F2ECE399",
-          "icon_size": {
-           "unit": "px",
-           "size": 14,
-           "sizes": []
-          },
-          "text_indent": {
-           "unit": "px",
-           "size": 8,
-           "sizes": []
-          },
-          "space_between": {
-           "unit": "px",
-           "size": 0,
-           "sizes": []
-          },
-          "icon_typography_typography": "custom",
-          "icon_typography_font_family": "Manrope",
-          "icon_typography_font_size": {
-           "unit": "px",
-           "size": 12,
-           "sizes": []
-          },
-          "icon_typography_font_weight": "400",
-          "icon_typography_line_height": {
-           "unit": "em",
-           "size": 1.4,
-           "sizes": []
-          },
-          "_title": "Photo label (delete when photo added)"
-         },
-         "elements": []
-        }
-       ]
+       "elements": []
       },
       {
-       "id": "c2c5552",
+       "id": "9c53765",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -5066,7 +4925,7 @@
        },
        "elements": [
         {
-         "id": "5ec0a95",
+         "id": "5041f5e",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -5113,7 +4972,7 @@
          "elements": []
         },
         {
-         "id": "9c53765",
+         "id": "9f4ecb4",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -5143,7 +5002,7 @@
          "elements": []
         },
         {
-         "id": "907c7e3",
+         "id": "5ec0a95",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -5196,7 +5055,7 @@
          },
          "elements": [
           {
-           "id": "dcbfd2e",
+           "id": "76eebc5",
            "elType": "widget",
            "widgetType": "button",
            "isInner": false,
@@ -5248,7 +5107,7 @@
            "elements": []
           },
           {
-           "id": "b598d0d",
+           "id": "bb74fe5",
            "elType": "widget",
            "widgetType": "button",
            "isInner": false,
@@ -5309,7 +5168,7 @@
    ]
   },
   {
-   "id": "125ff87",
+   "id": "76e6112",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -5390,7 +5249,7 @@
    },
    "elements": [
     {
-     "id": "43d9180",
+     "id": "c2c5552",
      "elType": "widget",
      "widgetType": "heading",
      "isInner": false,
@@ -5437,14 +5296,14 @@
      "elements": []
     },
     {
-     "id": "54df8a1",
+     "id": "f26b524",
      "elType": "widget",
      "widgetType": "testimonial-carousel",
      "isInner": false,
      "settings": {
       "slides": [
        {
-        "_id": "5b5c1a9",
+        "_id": "8a98b9a",
         "content": "“Oto and his crew were wonderful. They were efficient, professional and very conscious of our budget. We would absolutely use them again.”",
         "image": {
          "url": "",
@@ -5454,7 +5313,7 @@
         "title": "Eagle"
        },
        {
-        "_id": "e4f398e",
+        "_id": "de0d8d8",
         "content": "“Excellent job! Christian and his father were on time, professional, clean and did an excellent job on my accent wall. Very clean lines.”",
         "image": {
          "url": "",
@@ -5561,7 +5420,7 @@
    ]
   },
   {
-   "id": "8c4e424",
+   "id": "8d51055",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -5642,7 +5501,7 @@
    },
    "elements": [
     {
-     "id": "c1515ff",
+     "id": "fd4d19b",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -5697,7 +5556,7 @@
      },
      "elements": [
       {
-       "id": "a8e6e5b",
+       "id": "54df8a1",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -5750,7 +5609,7 @@
        },
        "elements": [
         {
-         "id": "b7d8335",
+         "id": "5b5c1a9",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -5777,7 +5636,7 @@
          "elements": []
         },
         {
-         "id": "f1cd7be",
+         "id": "e4f398e",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -5829,7 +5688,7 @@
          },
          "elements": [
           {
-           "id": "1879d95",
+           "id": "7edd77d",
            "elType": "widget",
            "widgetType": "rating",
            "isInner": false,
@@ -5861,7 +5720,7 @@
            "elements": []
           },
           {
-           "id": "365c28e",
+           "id": "43d9180",
            "elType": "widget",
            "widgetType": "heading",
            "isInner": false,
@@ -5891,7 +5750,7 @@
        ]
       },
       {
-       "id": "fd4d19b",
+       "id": "b7d8335",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -5944,7 +5803,7 @@
        },
        "elements": [
         {
-         "id": "ddb5408",
+         "id": "1879d95",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -5971,7 +5830,7 @@
          "elements": []
         },
         {
-         "id": "95dc0a6",
+         "id": "365c28e",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -6023,7 +5882,7 @@
          },
          "elements": [
           {
-           "id": "854e64f",
+           "id": "125ff87",
            "elType": "widget",
            "widgetType": "heading",
            "isInner": false,
@@ -6053,7 +5912,7 @@
        ]
       },
       {
-       "id": "52969a5",
+       "id": "95dc0a6",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -6106,7 +5965,7 @@
        },
        "elements": [
         {
-         "id": "fbe80fa",
+         "id": "854e64f",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -6133,7 +5992,7 @@
          "elements": []
         },
         {
-         "id": "43288e1",
+         "id": "ddb5408",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -6185,7 +6044,7 @@
          },
          "elements": [
           {
-           "id": "8d51055",
+           "id": "f1cd7be",
            "elType": "widget",
            "widgetType": "rating",
            "isInner": false,
@@ -6217,7 +6076,7 @@
            "elements": []
           },
           {
-           "id": "6c24c1a",
+           "id": "a8e6e5b",
            "elType": "widget",
            "widgetType": "heading",
            "isInner": false,
@@ -6251,7 +6110,7 @@
    ]
   },
   {
-   "id": "54371ff",
+   "id": "7cffb0f",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -6348,7 +6207,7 @@
    },
    "elements": [
     {
-     "id": "b60741f",
+     "id": "3edc49c",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -6456,7 +6315,7 @@
      },
      "elements": [
       {
-       "id": "2075a5b",
+       "id": "fc0643b",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -6508,7 +6367,7 @@
        },
        "elements": [
         {
-         "id": "ca5c875",
+         "id": "5242c22",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -6559,7 +6418,7 @@
          },
          "elements": [
           {
-           "id": "7cffb0f",
+           "id": "d8fb445",
            "elType": "widget",
            "widgetType": "heading",
            "isInner": false,
@@ -6606,7 +6465,7 @@
            "elements": []
           },
           {
-           "id": "e7aa220",
+           "id": "93e2665",
            "elType": "widget",
            "widgetType": "text-editor",
            "isInner": false,
@@ -6638,7 +6497,7 @@
          ]
         },
         {
-         "id": "8aa9541",
+         "id": "83f29c6",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,
@@ -6705,7 +6564,7 @@
        ]
       },
       {
-       "id": "3edc49c",
+       "id": "c76dc0c",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -6790,7 +6649,7 @@
        },
        "elements": [
         {
-         "id": "5242c22",
+         "id": "292f09a",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -6841,7 +6700,7 @@
          },
          "elements": [
           {
-           "id": "d8fb445",
+           "id": "fab42bd",
            "elType": "widget",
            "widgetType": "heading",
            "isInner": false,
@@ -6867,7 +6726,7 @@
            "elements": []
           },
           {
-           "id": "93e2665",
+           "id": "dfd8c36",
            "elType": "widget",
            "widgetType": "text-editor",
            "isInner": false,
@@ -6899,7 +6758,7 @@
          ]
         },
         {
-         "id": "fc0643b",
+         "id": "c07822d",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -6950,7 +6809,7 @@
          },
          "elements": [
           {
-           "id": "c76dc0c",
+           "id": "8528ea7",
            "elType": "widget",
            "widgetType": "form",
            "isInner": false,
@@ -6959,7 +6818,7 @@
             "form_id": "tn-estimate-form",
             "form_fields": [
              {
-              "_id": "fab42bd",
+              "_id": "f842997",
               "custom_id": "name",
               "field_type": "text",
               "field_label": "Name",
@@ -6968,7 +6827,7 @@
               "width_mobile": "50"
              },
              {
-              "_id": "dfd8c36",
+              "_id": "189b512",
               "custom_id": "phone",
               "field_type": "tel",
               "field_label": "Phone",
@@ -6977,7 +6836,7 @@
               "width_mobile": "50"
              },
              {
-              "_id": "292f09a",
+              "_id": "e4d6d27",
               "custom_id": "email",
               "field_type": "email",
               "field_label": "Email",
@@ -6986,7 +6845,7 @@
               "width_mobile": "50"
              },
              {
-              "_id": "803e53c",
+              "_id": "5a41f8e",
               "custom_id": "town",
               "field_type": "select",
               "field_label": "Town",
@@ -6996,7 +6855,7 @@
               "field_options": "Select a town|\nAspen\nSnowmass\nBasalt\nCarbondale\nGlenwood Springs\nVail\nBeaver Creek\nAvon\nEdwards\nEagle\nGypsum\nBreckenridge\nOther"
              },
              {
-              "_id": "c07822d",
+              "_id": "611070a",
               "custom_id": "need",
               "field_type": "select",
               "field_label": "What do you need?",
@@ -7122,7 +6981,7 @@
            "elements": []
           },
           {
-           "id": "83f29c6",
+           "id": "803e53c",
            "elType": "widget",
            "widgetType": "text-editor",
            "isInner": false,

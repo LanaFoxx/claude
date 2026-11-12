@@ -248,3 +248,14 @@ Container `Seasonal Offer`: change the H2 to **Talk to us about your project** a
   - **CSS:** all section CSS is scoped to `#tn-featured` in the section's Custom CSS, including prefers-reduced-motion.
   - **Testing:** hover, click and keyboard Enter switching were checked on staging. No overflow at 1440 / 980 / 600 / 390.
   - **Project links:** rows only switch the photo for now. Add a link per row once project pages exist.
+- **Why grid:** the vertical rules now span the grid only, so just the six boxes are outlined; no lines run above or below them.
+- **Photos placed** (from the client's hero set, reused until real job photos arrive; mapped in `tools/photos.json`):
+  - What We Do → Log & Timber Staining: stained cedar fence (ID 1584).
+  - Who We Are: brush staining a railing (ID 1583).
+  - Away for the Season: stained deck and lit house (ID 1585).
+  - The photo labels are removed from those slots.
+  - Still placeholders: What We Do → Painting (no painting photo yet) and the three Featured Projects frames (client project photos only, per the Option C spec).
+- **Full-screen mobile menu (980px and below):**
+  - **Layout:** the menu panel fills the screen directly under the header bar, with a solid #14110E background, 18px items, 16px sub-items and its own scrolling. While it's open, the header bar turns solid too.
+  - **Scroll lock:** page scrolling is locked while it's open (`html:has(.elementor-menu-toggle.elementor-active)`).
+  - **How it works:** the main row gets `transform: translateZ(0)` at those widths so the fixed panel anchors to the bottom of the header bar (96px at the top of the page, 76px once scrolled, plus the 44px top bar on tablet at the top of the page).

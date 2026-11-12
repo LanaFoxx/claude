@@ -299,14 +299,24 @@ def photo_label(text_, **s):
     return widget("icon-list", "Photo label (delete when photo added)", **st)
 
 
-def photo_slot(title, color, heights, label, **s):
+PHOTOS = {x["key"]: x for x in json.load(open(os.path.join(HERE, "photos.json")))} \
+    if os.path.exists(os.path.join(HERE, "photos.json")) else {}
+
+
+def photo_slot(title, color, heights, label, image=None, **s):
+    """Photo slot: colored container ready for a background image. With `image` (a key in
+    tools/photos.json) the photo is set and the placeholder label is left out."""
+    img = PHOTOS.get(image) if image else None
     st = {"background_background": "classic", "background_color": color,
           "background_position": "center center", "background_size": "cover",
           "background_repeat": "no-repeat", "flex_justify_content": "flex-end",
           "css_classes": "tn-photo"}
     st.update(resp("min_height", heights, px))
+    if img:
+        st["background_image"] = {"url": img["url"], "id": int(img["id"]), "size": "", "alt": img.get("alt", ""),
+                                  "source": "library"}
     st.update(s)
-    return container(title, [photo_label(label)], padding=dims(0, 20, 18, 20), **st)
+    return container(title, [] if img else [photo_label(label)], padding=dims(0, 20, 18, 20), **st)
 
 
 def _with(el, **extra):
@@ -522,6 +532,21 @@ def build_header():
 #tn-header .elementor-menu-toggle{width:44px;height:44px;padding:0;border:0;border-radius:999px;display:flex;align-items:center;justify-content:center;}
 #tn-header .elementor-menu-toggle svg{width:20px;height:20px;}
 #tn-header .elementor-nav-menu--dropdown.elementor-nav-menu__container{border-top:1px solid rgba(242,236,227,0.1);}
+/* Full-screen menu (980px and below): fills the screen under the header bar */
+@media (max-width:980px){
+  #tn-header > .e-con.elementor-sticky:not(.elementor-sticky__spacer), #tn-header > .e-con:last-child{transform:translateZ(0);}
+  #tn-header .elementor-menu-toggle + .elementor-nav-menu__container{position:fixed !important;top:100% !important;left:0 !important;
+    width:100% !important;height:100dvh;background:#14110E;padding:12px 0 160px;overflow-y:auto;margin-top:0 !important;}
+  #tn-header:has(.elementor-menu-toggle.elementor-active) > .e-con{background-color:#14110E !important;}
+  #tn-header .elementor-menu-toggle.elementor-active + .elementor-nav-menu__container{max-height:none !important;}
+  #tn-header .elementor-nav-menu--dropdown .elementor-item{font-size:18px !important;padding:18px 32px !important;}
+  #tn-header .elementor-nav-menu--dropdown .elementor-sub-item{font-size:16px !important;padding:12px 32px 12px 48px !important;}
+  html:has(#tn-header .elementor-menu-toggle.elementor-active){overflow:hidden;}
+}
+@media (max-width:600px){
+  #tn-header .elementor-nav-menu--dropdown .elementor-item{padding:18px 20px !important;}
+  #tn-header .elementor-nav-menu--dropdown .elementor-sub-item{padding:12px 20px 12px 36px !important;}
+}
 /* Site-wide: even line lengths, no 1-2 word last lines */
 .elementor-widget-text-editor p,.elementor-widget-heading .elementor-heading-title,.elementor-testimonial__text{text-wrap:balance;}
 #tn-header > .elementor-widget-html{position:absolute;width:0;height:0;overflow:hidden;}
@@ -692,10 +717,10 @@ def build_hero():
         custom_css=overlay, css_classes="tn-photo")
 
 
-def path_column(title, color, label, h2_text, body, items):
+def path_column(title, color, label, h2_text, body, items, image=None):
     return container(
         title,
-        [photo_slot(title + " / Photo", color, (540, 494, 372, 360), label),
+        [photo_slot(title + " / Photo", color, (540, 494, 372, 360), label, image=image),
          container(title + " / Text", [
              heading(title + " / Title (H2)", h2_text, tag="h2", color=BONE,
                      typ=typo(family=SERIF, size=H2_PATH, weight=500, lh=1.08)),
@@ -704,7 +729,7 @@ def path_column(title, color, label, h2_text, body, items):
         gap=36, html_tag="article")
 
 
-# Faint full-bleed grid behind the six Why points: vertical rules run the full section height,
+# Faint grid around the six Why points: vertical rules span the grid rows only,
 # horizontal rules span the grid only (no extension past the outer columns).
 _LINE = "rgba(242,236,227,0.07)"
 WHY_GRID_LINES = (
@@ -712,11 +737,11 @@ WHY_GRID_LINES = (
     "selector > .e-con{position:relative;padding:56px 48px 60px !important;"
     "transition:background-color .35s ease;}"
     "selector > .e-con:hover{background-color:rgba(242,236,227,0.03);}"
-    "selector > .e-con::before{content:'' !important;display:block;position:absolute;top:-3000px;bottom:-3000px;"
+    "selector > .e-con::before{content:'' !important;display:block;position:absolute;top:0;bottom:0;"
     "left:0;right:auto;width:1px;height:auto;background:" + _LINE + ";opacity:1;pointer-events:none;border:0;}"
     "selector > .e-con::after{content:'';position:absolute;left:0;right:0;top:0;height:1px;"
     "background:" + _LINE + ";pointer-events:none;}"
-    "selector::before{content:'' !important;display:block;position:absolute;top:-3000px;bottom:-3000px;"
+    "selector::before{content:'' !important;display:block;position:absolute;top:0;bottom:0;"
     "right:0;left:auto;width:1px;height:auto;background:" + _LINE + ";opacity:1;pointer-events:none;border:0;}"
     "selector::after{content:'';position:absolute;left:0;right:0;bottom:0;height:1px;"
     "background:" + _LINE + ";pointer-events:none;}"
@@ -846,7 +871,7 @@ def build_home():
                     [("Log Home Staining &amp; Restoration", "/log-home-staining-restoration/"),
                      ("Chinking &amp; Check Sealing", "/chinking-check-sealing/"),
                      ("Rot Repair &amp; Prevention", "/rot-repair-prevention/"),
-                     ("Deck Staining", "/deck-staining/")]),
+                     ("Deck Staining", "/deck-staining/")], image="fence"),
     ], cols=(2, 2, 1, 1), gap_col=(58, 52, 39, 32), gap_row=80)], bg=CHARRED)
 
     who = section("Who We Are", [grid("Who We Are / Layout", [
@@ -861,7 +886,8 @@ def build_home():
                  "sun do to a finish.</p>", color=BARK),
             text_link("Who We Are / Read our story", "Read our story →", "/our-story/", color=DEEP,
                       underline=DEEP, hover=CHARRED)], gap=28),
-        photo_slot("Who We Are / Photo", "#3A281B", 560, "Photo: Logworks crew on a log or timber build"),
+        photo_slot("Who We Are / Photo", "#3A281B", 560, "Photo: Logworks crew on a log or timber build",
+                   image="railing"),
     ], cols=(2, 2, 1, 1), gap_col=(101, 91, 69, 48), grid_align_items="center",
         flex_align_items="center")], bg=BONE)
 
@@ -917,7 +943,7 @@ def build_home():
         gap=28, flex_justify_content="center",
         padding=pads((115, 104, 78, 64), (86, 78, 59, 23), (115, 104, 78, 64), (86, 78, 59, 23)))
     away = container("Away for the Season", [grid("Away / Layout", [
-        photo_slot("Away / Photo", "#2A3236", 640, "Photo: mountain home in snow, lights on"),
+        photo_slot("Away / Photo", "#2A3236", 640, "Photo: mountain home in snow, lights on", image="deck"),
         away_text], cols=(2, 2, 1, 1), gap_col=0)],
         top=True, html_tag="section", background_background="classic", background_color=SPRUCE)
 
