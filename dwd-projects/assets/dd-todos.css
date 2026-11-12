@@ -92,3 +92,31 @@ a.dd-tchip:hover { color: var(--text) !important; }
 /* date found in what you typed */
 .dd-tdate.auto { color: var(--accent-text) !important; border-color: var(--accent) !important; background: var(--accent-soft) !important; }
 .dd-whenhint { display: block; flex-basis: 100%; width: 100%; margin-top: 6px; font-size: 12px; font-weight: 500; color: var(--accent-text); }
+/* ---------- To-dos v2 (design 10a): lane card + task card, tinted bands, due pills ---------- */
+.dd-lanecol { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.dd-lanecol .dd-lane > header { border-bottom: 0; padding: 18px 20px 14px; }
+.dd .dd-lanecol .dd-tadd, .dd .dd-lanecol .dd-tadd.dwdc-addbar { border-bottom: 0 !important; padding: 0 20px 16px !important; }
+.dd-lanecol .dd-tin, .dd-lanecol .dd-tdate, .dd-lanecol .dd-tadd > .dd-btn.primary { height: 40px; }
+.dd-lanecol .dd-tin input { font-size: 14px !important; }
+.dd-lanecol .dd-tadd > .dd-btn.primary { padding: 0 16px; }
+.dd-tcard { overflow: hidden; }
+.dd-tgh.band { height: 40px; gap: 8px; padding: 0 20px; font-size: 13px; font-weight: 600; cursor: pointer; border-top: 0; border-bottom: 1px solid var(--border); user-select: none; }
+.dd-tgh.band i { width: 8px; height: 8px; }
+.dd-tgh.band em { font-weight: 500; opacity: .8; color: inherit; }
+.dd-tgh.band .lu { opacity: .7; transition: transform .15s; }
+.dd-tgh.band.shut .lu { transform: rotate(-90deg); }
+.dd-tgh.band.late { background: var(--danger-bg); color: var(--danger-text); } .dd-tgh.band.late i { background: var(--danger-text); }
+.dd-tgh.band.today { background: var(--accent-soft); color: var(--accent-text); } .dd-tgh.band.today i { background: var(--accent); }
+.dd-tgh.band.up { background: var(--neutral-bg); color: var(--text-2); } .dd-tgh.band.up i { background: var(--text-3); }
+.dd-tgh.band.nd { background: var(--bg); color: var(--text-3); } .dd-tgh.band.nd i { background: var(--text-3); }
+.dd-tgh.band.ok { background: var(--success-bg); color: var(--success-text); } .dd-tgh.band.ok i { background: var(--success-text); }
+.dd-tcard .dd-tnone { height: 44px; display: flex; align-items: center; padding: 0 20px; border-bottom: 1px solid var(--border); }
+.dd-tcard .dd-lbody > :last-child { border-bottom: 0; }
+.dd-due.late, .dd-due.today { height: 22px; display: inline-flex; align-items: center; padding: 0 8px; border-radius: var(--radius-pill); }
+.dd-due.late { background: var(--danger-bg); } .dd-due.today { background: var(--accent-soft); }
+@media (max-width: 767px) {
+	.dd-lanes.show-work .dd-lanecol.personal, .dd-lanes.show-personal .dd-lanecol.work { display: none; }
+	.dd .dd-lanecol .dd-tadd, .dd .dd-lanecol .dd-tadd.dwdc-addbar { padding: 0 16px 16px !important; }
+	.dd-lanecol .dd-tin, .dd-lanecol .dd-tdate, .dd-lanecol .dd-tadd > .dd-btn.primary { height: 44px; }
+	.dd-tgh.band { padding: 0 16px; }
+}

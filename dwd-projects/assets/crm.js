@@ -1013,18 +1013,19 @@
 			groups = b.map(function (g) { return { key: g[0], items: g[2] }; });
 		}
 		if (V.seg !== 'open') { groups.push({ key: 'Done', items: doneF.map(function (t) { return { task: t }; }) }); }
-		var dotc = { Overdue: 'late', Today: 'today', Upcoming: '', 'No date': '', Done: 'ok' };
+		var dotc = { Overdue: 'late', Today: 'today', Upcoming: 'up', 'No date': 'nd', Done: 'ok' };
+		var coll = {}; try { coll = JSON.parse(ddGet('dreamdesk-todos-collapsed', '{}')) || {}; } catch (e) { coll = {}; }
+		var band = function (key, n, extra) { var ck = kind + ':' + key, shut = coll[ck] === undefined ? (key === 'Done' && n > 5) : !!coll[ck]; return { shut: shut, html: '<div class="dd-tgh band ' + dotc[key] + (shut ? ' shut' : '') + '" data-tdband="' + ck + '" role="button" tabindex="0" aria-expanded="' + !shut + '"><i></i>' + key + '<em>' + n + '</em><span class="dd-sp"></span>' + lu('chevron-down', 14) + '</div>' + (extra || '') }; };
 		var late = openList.filter(function (t) { return t.due && t.due < T; }).length;
 		S.tdDone = S.tdDone || {};
 		var body = groups.map(function (g) {
 			var n = g.items.reduce(function (a, it) { return a + (it.tasks ? it.tasks.length : 1); }, 0);
 			if (!g.items.length) {
-				if (g.key === 'Today' && !q && V.seg === 'open' && !groups[0].items.length) { return '<div class="dd-tgh"><i class="today"></i>Today<em>0</em></div><p class="dd-tnone">Nothing due today.</p>'; }
+				if (g.key === 'Today' && !q && V.seg === 'open' && !groups[0].items.length) { return band('Today', 0).html + '<p class="dd-tnone">Nothing due today.</p>'; }
 				return '';
 			}
-			var isDone = g.key === 'Done', collapsed = isDone && V.seg === 'all' && g.items.length > 5 && !S.tdDone[kind];
-			return '<div class="dd-tgh' + (isDone ? ' btn' : '') + '"' + (isDone ? ' data-tddone="' + kind + '" role="button" tabindex="0"' : '') + '><i class="' + dotc[g.key] + '"></i>' + g.key + '<em>' + n + '</em></div>'
-				+ (collapsed ? '<button type="button" class="dd-tshow" data-tddone="' + kind + '">Show ' + g.items.length + ' done</button>' : g.items.map(function (it) { return it.tasks ? tdGroupRow(it) : kind === 'work' ? tdWorkRow(it.task) : tdPersRow(it.task); }).join(''));
+			var bd = band(g.key, n);
+			return bd.html + (bd.shut ? '' : g.items.map(function (it) { return it.tasks ? tdGroupRow(it) : kind === 'work' ? tdWorkRow(it.task) : tdPersRow(it.task); }).join(''));
 		}).join('');
 		if (!openF.length && !doneF.length) {
 			body = q ? '<div class="dd-emptyst sm"><b>No to-dos match “' + esc(V.q) + '”</b><button type="button" class="dd-lnk" data-tqclear>Clear search</button></div>'
@@ -1034,8 +1035,8 @@
 		var form = '<form class="dd-tadd' + (kind === 'work' ? ' dwdc-addbar' : '') + '"' + (kind === 'personal' ? ' data-pform="pdayadd"' : '') + ' data-lane="' + kind + '"><label class="dd-tin">' + lu('plus', 16) + '<input name="text" placeholder="Add a to-do… e.g. Call Shane next Thursday at 4" autocomplete="off" required data-lpignore="true" data-1p-ignore></label>'
 			+ '<span class="dd-btn secondary dd-tdate' + (dateLbl ? ' set' : '') + '" role="button" tabindex="0" data-tdpick="' + kind + '">' + lu('calendar', 14) + '<span>' + (dateLbl || 'Date') + '</span>' + (dateLbl ? '<i data-tdclear="' + kind + '" role="button" aria-label="Clear date">' + lu('x', 12) + '</i>' : '') + '<input type="date" name="due" value="' + esc((S.tdDate && S.tdDate[kind]) || '') + '" data-tdset="' + kind + '" tabindex="-1" aria-label="Due date"></span>'
 			+ '<button class="dd-btn primary">Add</button></form>';
-		return '<section class="dd-card dd-lane ' + kind + '"><header><span class="dd-lt">' + lu(kind === 'work' ? 'clipboard-list' : 'home', 16) + '</span><h2>' + (kind === 'work' ? 'Work' : 'Personal') + '</h2><span class="dd-lsum">' + openList.length + ' open' + (late ? ' · ' + late + ' overdue' : '') + (doneList.length ? ' · ' + doneList.length + ' done' : '') + '</span></header>'
-			+ form + '<div class="dd-lbody">' + body + '</div></section>';
+		return '<div class="dd-lanecol ' + kind + '"><section class="dd-card dd-lane ' + kind + '"><header><span class="dd-lt">' + lu(kind === 'work' ? 'clipboard-list' : 'home', 16) + '</span><h2>' + (kind === 'work' ? 'Work' : 'Personal') + '</h2><span class="dd-lsum">' + openList.length + ' open' + (late ? ' · ' + late + ' overdue' : '') + (doneList.length ? ' · ' + doneList.length + ' done' : '') + '</span></header>'
+			+ form + '</section><section class="dd-card dd-tcard"><div class="dd-lbody">' + body + '</div></section></div>';
 	}
 	function ddTodos() {
 		var V = tdView(), P = pData();
@@ -3592,6 +3593,7 @@
 		if (t.closest('[data-aqclear]')) { S.aq = ''; render(); return; }
 		if ((el = t.closest('[data-pview]'))) { ddSet('dreamdesk-proj-view', el.getAttribute('data-pview')); render(); return; }
 		if ((el = t.closest('[data-lsortmine]'))) { setSort(el.getAttribute('data-lsortmine'), 'mine'); render(); return; }
+		if ((el = t.closest('[data-tdband]'))) { var tbk = el.getAttribute('data-tdband'), tco = {}; try { tco = JSON.parse(ddGet('dreamdesk-todos-collapsed', '{}')) || {}; } catch (er) { tco = {}; } tco[tbk] = !el.classList.contains('shut'); ddSet('dreamdesk-todos-collapsed', JSON.stringify(tco)); render(); return; }
 		if ((el = t.closest('[data-tdseg]'))) { var tv = tdView(); tdSave(el.getAttribute('data-tdseg'), tv.q); render(); return; }
 		if ((el = t.closest('[data-tlane]'))) { S.tlane = el.getAttribute('data-tlane'); render(); return; }
 		if ((el = t.closest('[data-tddone]'))) { S.tdDone = S.tdDone || {}; var dk = el.getAttribute('data-tddone'); S.tdDone[dk] = !S.tdDone[dk]; render(); return; }
