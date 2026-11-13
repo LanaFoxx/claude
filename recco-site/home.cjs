@@ -47,19 +47,21 @@ const DISCIPLINES = [
   ]],
 ];
 const point = ([title, body], i) => container({
-  content_width: 'full', flex_direction: 'row', flex_wrap: 'nowrap', flex_align_items: 'flex-start', flex_gap: gap(18), flex_gap_mobile: gap(14), padding: box(0),
+  // On phones the number sits above the title and everything is centered.
+  content_width: 'full', flex_direction: 'row', flex_direction_mobile: 'column', flex_wrap: 'nowrap', flex_align_items: 'flex-start', flex_align_items_mobile: 'center',
+  flex_gap: gap(18), flex_gap_mobile: gap(8), padding: box(0),
   _title: `Point ${i + 1}`,
 }, [
   widget('heading', {
     title: String(i + 1).padStart(2, '0'), header_size: 'p', title_color: C.greenOnDark,
-    ...typo('typography', SERIF, [30, 28, 24], 300, { lh: 1 }),
-    _element_width: 'initial', _element_custom_width: px(40), _element_custom_width_mobile: px(32), _flex_size: 'none',
+    ...typo('typography', SERIF, [30, 28, 24], 300, { lh: 1 }), align_mobile: 'center',
+    _element_width: 'initial', _element_custom_width: px(40), _element_custom_width_mobile: px(40), _flex_size: 'none',
   }),
   stack([
     // h2 so the outline runs h1 (discipline) > h2 (point).
-    widget('heading', { title, header_size: 'h2', title_color: C.white, ...typo('typography', SANS, [17, 16, 16], 700, { lh: 1.3 }) }),
-    text(body, { color: 'rgba(255,255,255,0.82)', size: [15.5, 15, 15], lh: 1.5 }),
-  ], { gap: 4, settings: { custom_css: 'selector { flex: 1 1 0; min-width: 0; }' } }),
+    widget('heading', { title, header_size: 'h2', title_color: C.white, align_mobile: 'center', ...typo('typography', SANS, [17, 16, 16], 700, { lh: 1.3 }) }),
+    text(body, { color: 'rgba(255,255,255,0.82)', size: [15.5, 15, 15], lh: 1.5, settings: { align_mobile: 'center' } }),
+  ], { gap: 4, settings: { custom_css: 'selector { flex: 1 1 0; min-width: 0; }\n@media (max-width: 767px) { selector { flex: 0 0 auto; width: 100%; } }' } }),
 ]);
 // Halves are split by a thin rule: vertical side by side, horizontal when stacked on phones.
 const half = ([title, points], i) => container({
@@ -70,7 +72,7 @@ const half = ([title, points], i) => container({
   _title: title,
 }, [
   widget('heading', {
-    title, header_size: 'h1', title_color: C.white, align: 'left',
+    title, header_size: 'h1', title_color: C.white, align: 'left', align_mobile: 'center',
     ...typo('typography', SERIF, [42, 34, 28], 300, { lh: 1.12, ls: -0.5 }),
   }),
   stack(points.map(point), { gap: 24, settings: { flex_gap_mobile: gap(18) } }),
