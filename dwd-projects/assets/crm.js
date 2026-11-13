@@ -582,10 +582,12 @@
 
 	function appBanner() {
 		if (isInstalled()) { return ''; }
-		try { if (localStorage.getItem('dwdcAppOff')) { return ''; } } catch (e) {}
+		try { if (localStorage.getItem('dwdcAppOff2')) { return ''; } } catch (e) {} // new key: shows again for anyone who hid the old banner
+		// Install right here when the browser offers it; on a computer otherwise open /desk/, where Chrome shows its Install button.
 		var btn = INSTALL ? '<button class="dwdc-appb-go" data-appinstall>Install app</button>'
-			: '<button class="dwdc-appb-go" data-appinfo>' + (isPhone() ? 'How to install' : 'Get it on your phone') + '</button>';
-		return '<div class="dwdc-appb"><img src="' + esc(DWDC.appIcon) + '" alt=""><div><b>Get the Dream Desk app</b><span>Open your clients, projects and payments from your phone’s home screen.</span></div>' + btn + '<button class="dwdc-appb-x" data-appoff aria-label="Hide">' + ic('x', 16) + '</button></div>';
+			: isPhone() ? '<button class="dwdc-appb-go" data-appinfo>How to install</button>'
+			: '<a class="dwdc-appb-go" href="' + esc(DWDC.app || '/desk/') + '?install=1" target="_blank" rel="noopener">Install on this computer</a><button class="dwdc-appb-go dwdc-appb-alt" data-appinfo>Get it on your phone</button>';
+		return '<div class="dwdc-appb"><img src="' + esc(DWDC.appIcon) + '" alt=""><div><b>Get the Dream Desk app</b><span>Open your clients, projects and payments from your desktop or your phone’s home screen.</span></div>' + btn + '<button class="dwdc-appb-x" data-appoff aria-label="Hide">' + ic('x', 16) + '</button></div>';
 	}
 	function appModal() {
 		var ios = '<li><b>iPhone:</b> open <a href="' + esc(DWDC.app) + '">' + esc(DWDC.app.replace(/^https?:\/\//, '')) + '</a> in <b>Safari</b>, tap the <b>Share</b> button, then <b>Add to Home Screen</b>.</li>';
@@ -4125,7 +4127,7 @@
 		if ((el = t.closest('[data-revsend]'))) { sendReviews(el); return; }
 		if (t.closest('[data-appinstall]')) { if (INSTALL) { INSTALL.prompt(); INSTALL.userChoice.then(function () { INSTALL = null; render(); }); } return; }
 		if (t.closest('[data-appinfo]')) { S.modal = { type: 'app', vals: {} }; render(); return; }
-		if (t.closest('[data-appoff]')) { try { localStorage.setItem('dwdcAppOff', '1'); } catch (er) {} render(); return; }
+		if (t.closest('[data-appoff]')) { try { localStorage.setItem('dwdcAppOff2', '1'); } catch (er) {} render(); return; }
 		if ((el = t.closest('[data-ppladd]'))) { S.addPpl = el.getAttribute('data-ppladd') === '1' ? route().id : 0; render(); setTimeout(function () { var x = app.querySelector('.dwdc-pplf [name=name]'); if (x) { x.focus(); } }, 0); return; }
 		if ((el = t.closest('[data-pplmain]'))) { var pc = S.full[route().id] || contact(route().id), pl = peopleOf(pc); savePeople(pc, pl, pl[+el.getAttribute('data-pplmain')]); return; }
 		if ((el = t.closest('[data-pplrm]'))) { var rc = S.full[route().id] || contact(route().id), rl = peopleOf(rc), gone = rl[+el.getAttribute('data-pplrm')]; if (confirm('Remove ' + (gone.name || gone.email) + ' from this project?')) { rl.splice(+el.getAttribute('data-pplrm'), 1); savePeople(rc, rl); } return; }

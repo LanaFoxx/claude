@@ -573,3 +573,5 @@ input[type=date], input[type=datetime-local] { cursor: pointer; }
 .dd-zcopy { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 20px 12px; } .dd-zcopy .dd-btn { height: 32px; flex: 1 1 auto; justify-content: center; }
 .dd-zcopy { padding-top: 14px; }
 .dd-obcopy { flex-basis: 100%; display: flex; } .dwdc-modal .dd-obcopy { margin-top: 10px; justify-content: center; }
+
+.dwdc-appb-go{text-decoration:none!important;display:inline-flex;align-items:center}.dwdc-appb-alt{background:transparent!important;color:var(--accent-text)!important;border:1px solid var(--border-strong)!important;margin-left:6px}
