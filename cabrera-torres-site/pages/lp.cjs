@@ -129,7 +129,7 @@ function hero(m, v) {
       button(`Call ${L.PHONE}`, L.TEL, 'outlineDark', { size: 13, ls: 0.1, pad: box(18, 24, 18, 24) }),
     ], { gap: 12 }),
   ], { gap: 18, settings: { padding: box(56, 0, 56, 0), padding_tablet: box(48, 0, 24, 0), padding_mobile: box(32, 0, 8, 0) } });
-  const photo = container({ content_width: 'full', flex_direction: 'column', flex_justify_content: 'flex-end', padding: box(0), hide_tablet: 'hidden-tablet', hide_mobile: 'hidden-mobile', css_classes: 'e-no-lazyload' }, [
+  const photo = container({ content_width: 'full', flex_direction: 'column', flex_justify_content: 'flex-end', padding: box(0), hide_tablet: 'hidden-tablet', hide_mobile: 'hidden-mobile', css_classes: 'e-no-lazyload', custom_css: 'selector { align-self: end; }' }, [
     image(m.heroJenNatural, { size: 'large', settings: { custom_css: 'selector img { display: block; width: auto; max-width: 100%; height: 560px; object-fit: contain; object-position: bottom; filter: drop-shadow(0 30px 50px rgba(0,0,0,.55)); }' } }),
   ]);
   const form = container({ content_width: 'full', flex_direction: 'column', padding: box(40, 0, 40, 0), padding_tablet: box(24, 0, 48, 0), padding_mobile: box(16, 0, 40, 0) }, [
@@ -138,7 +138,7 @@ function hero(m, v) {
   return container({
     content_width: 'boxed', boxed_width: px(1320), container_type: 'grid',
     grid_columns_grid: { unit: 'custom', size: 'minmax(0,1.05fr) minmax(0,.7fr) minmax(0,1fr)' }, grid_columns_grid_tablet: px(2, 'fr'), grid_columns_grid_mobile: px(1, 'fr'),
-    grid_rows_grid: L.auto, grid_rows_grid_tablet: L.auto, grid_rows_grid_mobile: L.auto, grid_gaps: gap(32, 0), grid_gaps_mobile: gap(0, 0), grid_align_items: 'end',
+    grid_rows_grid: L.auto, grid_rows_grid_tablet: L.auto, grid_rows_grid_mobile: L.auto, grid_gaps: gap(32, 0), grid_gaps_mobile: gap(0, 0), grid_align_items: 'center',
     padding: box(0, 32, 0, 32), padding_mobile: box(0, 16, 0, 16),
     background_background: 'gradient', background_color: C.heroBlack, background_color_b: C.wood, background_gradient_angle: { unit: 'deg', size: 160, sizes: [] },
   }, [copy, photo, form], false);
@@ -239,14 +239,14 @@ const lpFooter = () => container({
   text(`<p>© 2026 Cabrera Torres Law Firm · <a href="/privacy-policy/" style="text-decoration:underline">Privacy Policy</a> · <a href="/sms-terms/" style="text-decoration:underline">SMS Terms</a></p>`, { color: C.smoke, size: 12, lh: 1.6, linkColor: C.sand, linkHover: C.rose }),
 ]);
 
-// Sticky phone bar: always one tap from calling or from the form.
-const stickyBar = () => widget('html', {
+// Sticky phone bar: always one tap from calling or from the form. (Wrapped in a container: Elementor drops widgets
+// placed directly at the top level of a container-based page.)
+const stickyBar = () => container({ content_width: 'full', padding: box(0), min_height: px(0), css_classes: 'ct-lp-bar-wrap' }, [widget('html', {
   html: `<div class="ct-lp-bar" role="navigation" aria-label="Contact"><a class="call" href="${L.TEL}">Call now</a><a class="form" href="#${FORM_ID}">Free case review</a></div>
 <style>.ct-lp-bar{display:none}@media (max-width:767px){.ct-lp-bar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:9999;box-shadow:0 -6px 24px rgba(0,0,0,.3)}
 .ct-lp-bar a{flex:1;display:flex;align-items:center;justify-content:center;min-height:60px;padding-bottom:env(safe-area-inset-bottom);font:700 14px/1.2 Montserrat,sans-serif;letter-spacing:.1em;text-transform:uppercase;text-decoration:none}
 .ct-lp-bar .call{background:${C.rose};color:${C.wood}}.ct-lp-bar .form{background:${C.wood};color:${C.ivory}}}</style>`,
-  _element_width: 'initial', _element_custom_width: px(0), _position: 'absolute',
-});
+})]);
 
 const pageSettings = {
   ...L.pageSettings, template: 'elementor_canvas', background_color: C.ivory,
