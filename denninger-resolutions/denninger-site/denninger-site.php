@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Denninger Resolutions Site
  * Description: Design system, header/footer, page template, forms (inquiry, booking request, payment reference) and SEO for the Denninger Resolutions website.
- * Version: 1.0.3
+ * Version: 1.0.4
  * Author: Dream Web Digital
  * Requires at least: 6.2
  * Requires PHP: 7.4
@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DR_SITE_VER', '1.0.3' );
+define( 'DR_SITE_VER', '1.0.4' );
 define( 'DR_SITE_DIR', plugin_dir_path( __FILE__ ) );
 define( 'DR_SITE_URL', plugin_dir_url( __FILE__ ) );
 define( 'DR_TEMPLATE', 'dr-full-width.php' );
@@ -285,8 +285,16 @@ add_action( 'wp_head', function () {
 		echo '<meta property="og:type" content="website"><meta property="og:site_name" content="Denninger Resolutions">' . "\n";
 		echo '<meta property="og:title" content="' . esc_attr( wp_get_document_title() ) . '">' . "\n";
 		echo '<meta property="og:url" content="' . esc_url( get_permalink( $id ) ) . '">' . "\n";
-		echo '<meta property="og:image" content="' . esc_url( DR_SITE_URL . 'assets/img/logo-mark.png' ) . '">' . "\n";
+		echo '<meta property="og:image" content="' . esc_url( DR_SITE_URL . 'assets/img/share.jpg' ) . '">' . "\n";
+		echo '<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">' . "\n";
+		echo '<meta property="og:image:alt" content="Denninger Resolutions, Superior Court Trial Mediation">' . "\n";
+		echo '<meta property="og:locale" content="en_US">' . "\n";
+		echo '<meta name="twitter:card" content="summary_large_image">' . "\n";
 	}
+
+	$portrait = wp_get_attachment_url( 25 );
+	$tel      = substr( dr_tel( $o['phone'] ), 4 );
+	$maps     = 'https://maps.google.com/?q=' . rawurlencode( $o['address'] );
 
 	$graph = array();
 	$org   = array(
@@ -294,9 +302,12 @@ add_action( 'wp_head', function () {
 		'@id'       => home_url( '/#org' ),
 		'name'      => 'Denninger Resolutions',
 		'url'       => home_url( '/' ),
-		'telephone' => $o['phone'],
+		'telephone' => $tel,
 		'email'     => $o['public_email'],
-		'logo'      => DR_SITE_URL . 'assets/img/logo-mark.png',
+		'logo'      => array( '@type' => 'ImageObject', 'url' => DR_SITE_URL . 'assets/img/logo-mark.png' ),
+		'image'     => $portrait ? $portrait : DR_SITE_URL . 'assets/img/share.jpg',
+		'hasMap'    => $maps,
+		'description' => 'Superior Court mediated settlement conferences for civil cases, in downtown Asheville or by Zoom.',
 		'address'   => array(
 			'@type'           => 'PostalAddress',
 			'streetAddress'   => '9 SW Pack Square, Suite 210B',
@@ -305,21 +316,43 @@ add_action( 'wp_head', function () {
 			'postalCode'      => '28801',
 			'addressCountry'  => 'US',
 		),
-		'areaServed' => 'North Carolina',
+		'areaServed' => array( '@type' => 'State', 'name' => 'North Carolina' ),
 		'founder'    => array( '@id' => home_url( '/#david' ) ),
+		'employee'   => array( '@id' => home_url( '/#david' ) ),
+		'location'   => array( '@id' => home_url( '/mediation-center/#place' ) ),
 	);
 	$person = array(
 		'@type'    => 'Person',
 		'@id'      => home_url( '/#david' ),
 		'name'     => $o['mediator_name'],
-		'jobTitle' => $o['credential'] ? $o['credential'] : 'Mediator',
+		'jobTitle' => 'Superior Court Mediator',
+		'url'      => home_url( '/#about' ),
 		'worksFor' => array( '@id' => home_url( '/#org' ) ),
 	);
+	if ( $portrait ) {
+		$person['image'] = $portrait;
+	}
+	if ( $o['credential'] ) {
+		$person['hasCredential'] = array(
+			'@type'              => 'EducationalOccupationalCredential',
+			'name'               => $o['credential'],
+			'credentialCategory' => 'certification',
+			'recognizedBy'       => array( '@type' => 'Organization', 'name' => 'North Carolina Dispute Resolution Commission', 'url' => 'https://www.nccourts.gov/commissions/dispute-resolution-commission' ),
+		);
+	}
 	if ( is_front_page() ) {
+		$graph[] = array(
+			'@type'     => 'WebSite',
+			'@id'       => home_url( '/#website' ),
+			'name'      => 'Denninger Resolutions',
+			'url'       => home_url( '/' ),
+			'publisher' => array( '@id' => home_url( '/#org' ) ),
+			'inLanguage' => 'en-US',
+		);
 		$graph[] = $org;
 		$graph[] = $person;
 		foreach ( array( 'Superior Court mediated settlement conference (in person)', 'Superior Court mediated settlement conference (Zoom)' ) as $svc ) {
-			$graph[] = array( '@type' => 'Service', 'name' => $svc, 'provider' => array( '@id' => home_url( '/#org' ) ), 'areaServed' => 'North Carolina' );
+			$graph[] = array( '@type' => 'Service', 'name' => $svc, 'serviceType' => 'Mediated settlement conference', 'provider' => array( '@id' => home_url( '/#org' ) ), 'areaServed' => array( '@type' => 'State', 'name' => 'North Carolina' ) );
 		}
 	}
 	$slug = is_singular( 'page' ) ? get_post_field( 'post_name', $id ) : '';
@@ -328,7 +361,7 @@ add_action( 'wp_head', function () {
 		foreach ( array( 'Joint session room', 'Private caucus rooms', 'Quiet room', 'Wi-Fi', 'Display for screen sharing', 'Printing and scanning', 'Coffee and water', 'Elevator and accessible entrance' ) as $a ) {
 			$feat[] = array( '@type' => 'LocationFeatureSpecification', 'name' => $a, 'value' => true );
 		}
-		$graph[] = array( '@type' => 'Place', 'name' => 'Denninger Resolutions mediation center', 'address' => $org['address'], 'amenityFeature' => $feat );
+		$graph[] = array( '@type' => 'Place', '@id' => home_url( '/mediation-center/#place' ), 'name' => 'Denninger Resolutions mediation center', 'url' => home_url( '/mediation-center/' ), 'address' => $org['address'], 'hasMap' => $maps, 'publicAccess' => true, 'amenityFeature' => $feat );
 	}
 	if ( 'schedule' === $slug ) {
 		$content = get_post_field( 'post_content', $id );
