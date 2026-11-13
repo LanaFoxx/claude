@@ -160,7 +160,8 @@
 	function netOf(c) { var b = num(c.balance); return c.pay_method === 'Upwork' ? Math.round(b * 90) / 100 : b; }
 	function pendDeposit(list) { return list.filter(function (c) { return c.paymark === 'pending'; }).reduce(function (a, c) { return a + netOf(c); }, 0); }
 	/* 'Paid' only when there's a price or a payment; a project with no price yet says so. */
-	function paidWord(c) { return num(c.price) || num(c.billed) || num(c.stripe) || num(c.paypal) || num(c.manual) ? 'Paid' : 'No price yet'; }
+	// Shown when nothing is owed: 'Paid' only if money was actually recorded; never just because a price is set.
+	function paidWord(c) { return num(c.billed) || num(c.stripe) || num(c.paypal) || num(c.manual) || (c.payments || []).some(function (x) { return x.status === 'paid'; }) ? 'Paid' : num(c.price) ? 'Unpaid' : 'No price yet'; }
 	function owed(list) { return list.reduce(function (s, c) { return s + num(c.balance); }, 0); }
 	function openTasks() { return S.tasks.filter(function (t) { return !t.done; }); }
 	function match(c) {
