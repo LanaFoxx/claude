@@ -211,7 +211,7 @@
 		return '<span class="dwdc-nm"><span>' + (k ? '<a class="dwdc-clink" href="#cl/' + k.id + '">' + esc(k.name) + '</a>' : '<b class="nm2">' + esc(c.person || '—') + '</b>') + (em ? '<small>' + esc(em) + '</small>' : '') + '</span></span>';
 	}
 	function reload() {
-		return api('').then(function (r) { S.contacts = r.contacts.filter(Boolean); S.tasks = r.tasks.filter(Boolean); S.clients = (r.clients || []).filter(Boolean); S.money = r.money || {}; S.costs = r.costs || {}; S.trends = r.trends || null; S.wins = r.wins || { list: [], undated: 0 }; S.ads = r.ads || null; S.meet = r.meetings || null; S.order = r.order || {}; });
+		return api('').then(function (r) { S.contacts = r.contacts.filter(Boolean); S.tasks = r.tasks.filter(Boolean); S.clients = (r.clients || []).filter(Boolean); S.money = r.money || {}; S.upfeed = r.upfeed || null; S.costs = r.costs || {}; S.trends = r.trends || null; S.wins = r.wins || { list: [], undated: 0 }; S.ads = r.ads || null; S.meet = r.meetings || null; S.order = r.order || {}; });
 	}
 
 	/* ---------- routing ---------- */
@@ -889,6 +889,30 @@
 			+ '<label class="dd-btn secondary sm dd-aup">' + lu('upload', 14) + (up ? 'Uploading ' + up + '…' : 'Upload') + '<input type="file" multiple hidden data-aup="' + c.id + '"></label></header>'
 			+ '<div class="dd-abody">' + grid + list + empty + '</div></section>';
 	}
+	// From Upwork: what the daily Upwork check found. Only suggestions; Mike clicks Log it or Dismiss.
+	function upfeedBox() {
+		var F = S.upfeed || { last: '', items: [] }, its = F.items || [];
+		var opts = S.contacts.filter(function (c) { return c.list !== 'archive' && c.list !== 'leads'; }).sort(function (a, b) { return (isOpen(b) - isOpen(a)) || a.name.localeCompare(b.name); });
+		var when = F.last ? new Date(F.last.replace(' ', 'T')) : null;
+		var lastTxt = when && !isNaN(when) ? 'Checked ' + (F.last.slice(0, 10) === DWDC.today ? 'today' : fmt(F.last.slice(0, 10))) + ', ' + when.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : 'Not checked yet';
+		var row = function (x) {
+			var acts;
+			if (x.kind === 'earning') {
+				acts = '<select class="dd-upf-p" data-upfp="' + esc(x.ref) + '"><option value="">Which project?</option>' + opts.map(function (c) { return '<option value="' + c.id + '"' + (+x.pid === c.id ? ' selected' : '') + '>' + esc(c.name) + '</option>'; }).join('') + '</select>'
+					+ '<button type="button" class="dd-btn primary sm" data-upflog="' + esc(x.ref) + '">Log it</button>';
+			} else {
+				acts = '<button type="button" class="dd-btn primary sm" data-upmoney>Tick In bank…</button><button type="button" class="dd-btn secondary sm" data-upfdone="' + esc(x.ref) + '">Done</button>';
+			}
+			return '<div class="dd-upf-r"><div class="dd-upf-t"><b>' + (x.kind === 'earning' ? 'Client paid ' : 'Withdrawn to your bank ') + money2(x.amount).replace('.00', '') + '</b><small>' + esc([fmt(x.date), x.client, x.desc].filter(Boolean).join(' · ')) + '</small></div>'
+				+ '<div class="dd-upf-a">' + acts + '<button type="button" class="dd-btn ghost sm" data-upfdis="' + esc(x.ref) + '">Dismiss</button></div></div>';
+		};
+		return '<section class="dd-card dd-upf"><header class="dd-ch2"><span class="dd-lt">' + lu('repeat', 16) + '</span><div><h2>From Upwork' + (its.length ? ' <b class="dd-mnew">' + its.length + ' new</b>' : '') + '</h2><small>' + lastTxt + '</small></div></header>'
+			+ (its.length ? '<div class="dd-upf-l">' + its.map(row).join('') + '</div>' : '<p class="dd-help dd-upf-e">' + (F.last ? 'Nothing new from Upwork.' : 'Your daily Upwork check will list new client payments and withdrawals here.') + '</p>')
+			+ '<details class="dd-upf-paste"><summary>Paste Upwork data</summary><textarea id="dd-upfeed-in" rows="4" placeholder="Paste the Upwork transactions here (JSON list)"></textarea><button type="button" class="dd-btn secondary sm" id="dd-upfeed-go" data-upfsend>Check</button></details></section>';
+	}
+	function upfSet(ref, state, pid) {
+		return api('/upwork-feed/' + encodeURIComponent(ref), 'POST', { state: state, pid: pid || 0 }).then(function (f) { S.upfeed = f; render(); });
+	}
 	function bankSet(key, bank, date) {
 		var pid = +key.split(':')[0], i = +key.split(':')[1];
 		api('/contact/' + pid + '/payment/' + i + '/bank', 'POST', { bank: bank ? 1 : 0, date: date || DWDC.today })
@@ -1034,7 +1058,7 @@
 		};
 		var todos = '<section class="dd-card"><header class="dd-ch"><div class="dd-ch-t"><h2>To-dos</h2></div><div class="dd-ch-a"><button type="button" class="dd-hadd-btn" data-haddtog>' + lu('plus', 14) + 'Add</button><a href="#todos">All ' + all.length + '</a></div></header>'
 			+ (S.homeAdd ? '<form class="dd-hadd"><input name="text" placeholder="New to-do… e.g. Call Shane next Thursday at 4" autocomplete="off" required data-lpignore="true" data-1p-ignore><button class="dd-btn primary">Add</button></form>' : '') + (rows.length ? rows.map(trow).join('') : '<p class="dd-empty-l">Nothing overdue or due today.</p>') + '</section>';
-		return '<div class="dd-home"><div class="dd-home-l">' + sched + act + '</div><div class="dd-home-r">' + stats + todos + zoomBox('home') + '</div></div>';
+		return '<div class="dd-home"><div class="dd-home-l">' + sched + act + '</div><div class="dd-home-r">' + upfeedBox() + stats + todos + zoomBox('home') + '</div></div>';
 	}
 	// All clients (design 4.2): toolbar, chips, grouped table; rows stack on phones.
 	var DD_TONE = { Project: 'info', Hosting: 'success', Lead: 'warning', 'Past client': 'neutral' };
@@ -3841,6 +3865,30 @@
 		if ((el = t.closest('[data-ddrefresh]'))) { el.classList.add('spin'); el.disabled = true; location.reload(); return; }
 		if ((el = t.closest('[data-pbanksave]'))) { var bdi = el.parentNode.querySelector('[data-pbankdate]'); el.disabled = true; bankSet(el.getAttribute('data-pbanksave'), true, bdi && bdi.value); return; }
 		if (t.closest('[data-pbankx]')) { S.pbank = null; render(); return; }
+		if ((el = t.closest('[data-upfsend]'))) {
+			var uin = app.querySelector('#dd-upfeed-in'), utx = uin ? uin.value.trim() : '', urows;
+			try { urows = JSON.parse(utx.replace(/^```(json)?|```$/g, '').trim()); } catch (er) { toast('That isn’t valid Upwork data (a JSON list)', true); return; }
+			el.disabled = true;
+			api('/upwork-feed', 'POST', { rows: urows }).then(function (x) { S.upfeed = x.feed; render(); toast(x.new ? x.new + ' new from Upwork' : 'Nothing new from Upwork'); }).catch(function (er) { el.disabled = false; fail(er); });
+			return;
+		}
+		if ((el = t.closest('[data-upflog]'))) {
+			var lref = el.getAttribute('data-upflog'), lsel = app.querySelector('[data-upfp="' + lref + '"]'), lpid = lsel ? +lsel.value : 0;
+			var lit = ((S.upfeed || {}).items || []).filter(function (x) { return x.ref === lref; })[0];
+			if (!lpid) { toast('Choose which project this payment is for', true); if (lsel) { lsel.focus(); } return; }
+			if (!lit) { return; }
+			el.disabled = true;
+			api('/contact/' + lpid + '/payment', 'POST', { amount: lit.amount, method: 'Upwork', date: lit.date, stage: 'upwork', note: 'From Upwork' + (lit.desc ? ' · ' + lit.desc : '') })
+				.then(function (x) { upsert(x); if (S.full[x.id]) { S.full[x.id] = x; } return upfSet(lref, 'logged', lpid); })
+				.then(reload).then(function () { render(); toast(money(lit.amount) + ' logged · in Upwork until you tick In bank'); })
+				.catch(function (er) { el.disabled = false; fail(er); });
+			return;
+		}
+		if ((el = t.closest('[data-upfdis]')) || (el = t.closest('[data-upfdone]'))) {
+			el.disabled = true;
+			upfSet(el.getAttribute('data-upfdis') || el.getAttribute('data-upfdone'), el.hasAttribute('data-upfdone') ? 'logged' : 'dismissed').catch(function (er) { el.disabled = false; fail(er); });
+			return;
+		}
 		if (t.closest('[data-upmoney]')) { e.preventDefault(); S.modal = { type: 'upmoney' }; render(); return; }
 		if ((el = t.closest('[data-adel]'))) {
 			var adp = +el.getAttribute('data-apid'), ada = el.getAttribute('data-adel'), adn = ((S.full[adp] && S.full[adp].assets) || []).filter(function (x) { return String(x.id) === ada; })[0];
@@ -4604,7 +4652,7 @@
 	/* ---------- start ---------- */
 	document.body.classList.add('dwdc-app-on');
 	api('').then(function (r) {
-		S.contacts = r.contacts.filter(Boolean); S.tasks = r.tasks.filter(Boolean); S.clients = (r.clients || []).filter(Boolean); S.money = r.money || {}; S.costs = r.costs || {}; S.trends = r.trends || null; S.wins = r.wins || { list: [], undated: 0 }; S.ads = r.ads || null; S.meet = r.meetings || null; S.order = r.order || {};
+		S.contacts = r.contacts.filter(Boolean); S.tasks = r.tasks.filter(Boolean); S.clients = (r.clients || []).filter(Boolean); S.money = r.money || {}; S.upfeed = r.upfeed || null; S.costs = r.costs || {}; S.trends = r.trends || null; S.wins = r.wins || { list: [], undated: 0 }; S.ads = r.ads || null; S.meet = r.meetings || null; S.order = r.order || {};
 		var m = /[?&]contact=(\d+)/.exec(location.search), em = /[?&]email=([^&]+)/.exec(location.search);
 		var who = m ? contact(+m[1]) : em ? S.contacts.find(function (c) { return c.email && c.email.toLowerCase() === decodeURIComponent(em[1]).toLowerCase(); }) : null;
 		if (who) { location.hash = 'client/' + who.id; }

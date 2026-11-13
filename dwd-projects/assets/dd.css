@@ -598,3 +598,16 @@ input[type=date], input[type=datetime-local] { cursor: pointer; }
 /* Refresh button (top bar) */
 .dd-refresh.spin .lu { animation: dd-spin .7s linear infinite; }
 @keyframes dd-spin { to { transform: rotate(360deg); } }
+
+/* From Upwork (daily Upwork check suggestions) */
+.dd-upf .dd-mnew { font-size: 12px; margin-left: 6px; }
+.dd-upf-l { display: flex; flex-direction: column; }
+.dd-upf-r { display: flex; flex-direction: column; gap: 8px; padding: 12px 20px; border-top: 1px solid var(--border); }
+.dd-upf-t b { display: block; font-size: 14px; }
+.dd-upf-t small { display: block; color: var(--text-3); font-size: 12px; margin-top: 2px; }
+.dd-upf-a { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.dd-upf-p { flex: 1 1 160px; min-width: 0; height: 32px; padding: 0 8px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg); color: inherit; font: inherit; font-size: 13px; }
+.dd-upf-e { margin: 0; padding: 0 20px 12px; }
+.dd-upf-paste { padding: 0 20px 12px; font-size: 12px; color: var(--text-3); }
+.dd-upf-paste summary { cursor: pointer; width: max-content; }
+.dd-upf-paste textarea { display: block; width: 100%; margin: 8px 0; padding: 8px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg); color: inherit; font: 12px/1.4 ui-monospace, monospace; box-sizing: border-box; }
