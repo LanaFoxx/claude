@@ -26,7 +26,7 @@ const media = {
   logoDark: md('cabrera-torres-law-firm-logo-dark.webp'), logoLight: md('cabrera-torres-law-firm-logo-light.webp'),
   // PageSpeed: a 482px logo (2x of its 241px slot) and the 768px hero background for tablet/phone.
   logoLight482: md('cabrera-torres-law-firm-logo-light-482.webp'),
-  heroJenNatural: md('jennifer-cabrera-torres-cream-dress-natural-hero.webp'),
+  heroJenNatural: md('jennifer-cabrera-torres-cream-dress-natural-hero.webp'), jenHeadshot: md('jennifer-cabrera-torres-headshot.webp'),
   // Jen's association / award emblems (Nov 12)
   awardStateBar: md('cabrera-torres-state-bar-of-georgia.webp'), awardGtla: md('cabrera-torres-georgia-trial-lawyers-association-member-2024.webp'),
   awardBestGeorgia: md('cabrera-torres-best-of-georgia-2024-honorable-mention.webp'), awardBestGwinnett: md('cabrera-torres-best-of-gwinnett-2023.webp'),
@@ -57,6 +57,8 @@ const PAGES = !ESL ? EN_PAGES : EN_PAGES.filter((d) => I.PAGES[d.slug]).map((d) 
   build: (m) => I.translate(d.build(m)),
 }));
 const POSTS = ESL ? [] : require('./posts.cjs');
+// Meta ad landing pages + thank-you page (English only, Elementor Canvas, noindex).
+if (!ESL) PAGES.push(...require('./pages/lp.cjs').pages);
 // Main menu order (labels from homepage-v2). A leading "/" means a custom link instead of a page.
 const MENU = ESL ? I.MENU : [['About', 'about'], ['Cases We Handle', 'practice-areas'], ['Results', 'case-results'], ['Our Approach', 'our-approach'], ['Testimonials', 'testimonials'], ['Contact', 'contact']];
 
@@ -75,12 +77,12 @@ async function ensurePage(p, def) {
     const pq = parent === null ? '' : `&parent=${parent}`;
     const ex = await (await fetch(`/wp-json/wp/v2/pages?slug=${def.slug}${pq}&status=publish,draft,private&_fields=id,link`, { headers: h })).json();
     if (ex.length) return ex[0];
-    const body = { title: def.title, slug: def.slug, status: 'publish', template: 'elementor_header_footer', ...(parent ? { parent } : {}) };
+    const body = { title: def.title, slug: def.slug, status: 'publish', template: def.template || 'elementor_header_footer', ...(parent ? { parent } : {}) };
     const r = await fetch('/wp-json/wp/v2/pages', { method: 'POST', headers: h, body: JSON.stringify(body) });
     const j = await r.json();
     if (!j.id) throw new Error(`Creating page ${def.slug} failed: ${JSON.stringify(j).slice(0, 200)}`);
     return { id: j.id, link: j.link };
-  }, [{ slug: def.slug, title: def.title }, parent === undefined ? null : parent, restNonce.toString()]);
+  }, [{ slug: def.slug, title: def.title, template: def.template }, parent === undefined ? null : parent, restNonce.toString()]);
 }
 let esHome;
 async function esHomeId(p) {
@@ -196,6 +198,8 @@ async function setYoast(p, seo) {
     set('yoast_wpseo_title', seo.title);
     set('yoast_wpseo_metadesc', seo.description);
     set('yoast_wpseo_focuskw', seo.focus);
+    // Ad landing / thank-you pages stay out of search results (and the sitemap).
+    const ni = form.querySelector('[name="yoast_wpseo_meta-robots-noindex"]'); if (ni) ni.value = seo.noindex ? '1' : '0';
     const body = new FormData(form);
     body.set('action', 'wpseo_elementor_save');
     const r = await fetch(window.ajaxurl || '/wp-admin/admin-ajax.php', { method: 'POST', body, credentials: 'same-origin' });
@@ -243,7 +247,7 @@ async function setYoast(p, seo) {
     await p.goto(`${SITE}/wp-admin/`, { waitUntil: 'domcontentloaded' });
     const doc = def.type === 'post' ? await ensurePost(p, def, m[def.imageKey].id) : await ensurePage(p, def);
     await openEditor(p, doc.id);
-    if (args.length === 0 || selected(def)) console.log(def.slug, doc.id, 'elements saved:', await replaceContent(p, def.build(m), L.pageSettings));
+    if (args.length === 0 || selected(def)) console.log(def.slug, doc.id, 'elements saved:', await replaceContent(p, def.build(m), def.pageSettings || L.pageSettings));
     if (want('seo') && def.seo) console.log(def.slug, 'yoast:', await setYoast(p, def.seo));
     out[def.slug] = doc;
   }
