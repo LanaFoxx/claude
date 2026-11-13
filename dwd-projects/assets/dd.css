@@ -575,3 +575,12 @@ input[type=date], input[type=datetime-local] { cursor: pointer; }
 .dd-obcopy { flex-basis: 100%; display: flex; } .dwdc-modal .dd-obcopy { margin-top: 10px; justify-content: center; }
 
 .dwdc-appb-go{text-decoration:none!important;display:inline-flex;align-items:center}.dwdc-appb-alt{background:transparent!important;color:var(--accent-text)!important;border:1px solid var(--border-strong)!important;margin-left:6px}
+
+/* Phone: bigger menu text and icons */
+@media (max-width: 767px) {
+	.dd-side .dd-nav { height: 50px !important; gap: 16px; font-size: 19px !important; padding: 0 12px; }
+	.dd-side .dd-nav svg { width: 25px !important; height: 25px !important; flex: none; }
+	.dd-side .dd-nav .dd-nav-c, .dd-side .dd-nav span:last-child:not(.dd-nav-l) { font-size: 17px; }
+	.dd-side .dd-grp-h { height: 36px; font-size: 14px !important; padding: 0 12px; }
+	.dd-side .dd-brand b { font-size: 21px; }
+}
