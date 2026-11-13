@@ -128,10 +128,10 @@ endif;
 		<p class="dr-ft-note">I serve as a neutral: I do not represent any party or decide the case, and the conference is confidential and never recorded.</p>
 	</div>
 </footer>
-<div class="dr-bottombar">
+<nav class="dr-bottombar" aria-label="Quick actions">
 	<a class="dr-btn dr-btn-primary" href="<?php echo esc_url( home_url( '/schedule/' ) ); ?>">Check dates</a>
 	<a class="dr-btn dr-btn-secondary" href="<?php echo esc_attr( dr_tel( $o['phone'] ) ); ?>"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#24394A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><?php echo $ico['phone']; // phpcs:ignore ?></svg>Call</a>
-</div>
+</nav>
 <?php wp_footer(); ?>
 </body>
 </html>
