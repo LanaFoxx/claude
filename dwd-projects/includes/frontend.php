@@ -584,3 +584,17 @@ foreach ( array( 'script_loader_src', 'style_loader_src' ) as $dwdp_hook ) {
 		return $src;
 	}, 99 );
 }
+
+/**
+ * Link previews (Facebook, iMessage, Slack, LinkedIn…): the share image with the new logo replaces the old
+ * starry "Featured Site Image" wherever Yoast would use it, and is also used for the homepage.
+ */
+const DWDP_SHARE_IMG = 'https://dreamwebdigital.com/wp-content/uploads/2026/11/dream-web-digital-share.jpg';
+function dwdp_share_img( $url ) {
+	if ( is_front_page() || '' === (string) $url || false !== stripos( (string) $url, 'Featured-Site-Image' ) ) {
+		return DWDP_SHARE_IMG;
+	}
+	return $url;
+}
+add_filter( 'wpseo_opengraph_image', 'dwdp_share_img', 20 );
+add_filter( 'wpseo_twitter_image', 'dwdp_share_img', 20 );
