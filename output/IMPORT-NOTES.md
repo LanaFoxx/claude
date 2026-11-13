@@ -307,3 +307,4 @@ Container `Seasonal Offer`: change the H2 to **Talk to us about your project** a
   - **Alignment check:** side by side, the photos, giant words, titles, paragraphs and link lists start at identical heights at 1920 / 1440 / 1360 / 1100. Titles are 1 line each, paragraphs 3/3 lines (4/4 at 1100), and link columns 2/2 (1/1 at 1100, as in the reference). No overflow at any width.
   - **Photos:** the Staining photo is the fence. The Painting slot keeps "Photo: finished interior".
 - **Brief updated** (`TOP-NOTCH-HOMEPAGE-BUILD.md`, `top-notch-homepage-reference.html`). Later client requests listed in this file still override the brief where they conflict: header and nav, stats strip, footer, Why grid, placeholders, and the hero and Away backgrounds.
+- **What We Do (client request):** the "What we do" H2 is removed, and section top padding is reduced to 64 / 56 / 48 / 40px, so the photos start about 144px below the hero credentials at 1440.

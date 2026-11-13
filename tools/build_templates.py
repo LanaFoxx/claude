@@ -936,10 +936,9 @@ def build_what_we_do():
                    **typo(prefix="icon_typography", size=15, weight=600, lh=1.4))],
             html_tag="article", gap=0, css="selector{min-width:0;}"))
     return section("What We Do", [
-        h2("What We Do / Title (H2)", "What we do", balance=False),
         grid("What We Do / Columns", cols, cols=(2, 2, 1, 1), gap_col=(79, 72, 56, 56), gap_row=56,
              grid_align_items="stretch", css_classes="tn-wwd-grid tn-match-lines")],
-        bg=CHARRED, gap=(60, 58, 44, 40), _element_id="what-we-do", custom_css=WWD_CSS)
+        bg=CHARRED, pad_top=(64, 56, 48, 40), _element_id="what-we-do", custom_css=WWD_CSS)
 
 
 def build_home():
