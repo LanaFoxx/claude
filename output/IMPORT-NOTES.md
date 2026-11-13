@@ -294,3 +294,16 @@ Container `Seasonal Offer`: change the H2 to **Talk to us about your project** a
   - **Titles:** both share a size computed from the half's content width, `min(40px, ((min(100vw,1376px) - 96px) / 2 - 112px) / 16.2)` (with a laptop variant). That gives about 33px at 1440, still one line and matching.
   - **Paragraphs:** they also match line for line side by side. The header typography helper gives `.tn-match-lines` groups (the What We Do grid) equal line counts by narrowing the shorter paragraph. Results: 5/5 at 1920–1360 and 6/6 at 1100. Stacked layouts are left alone.
 - **Typography helper:** now re-runs after web fonts finish loading and on window load (plus once more 1s later), so first-load layouts are balanced too.
+- **What We Do is now Option E, giant words** (`what-we-do-option-e.html`). It replaces all earlier What We Do layouts; the Option A file is removed.
+  - **Section:** Boxed 1280, Charred Timber, section ID `what-we-do`. H2 "What we do", then a gap of 60 / 58 / 44 / 40px.
+  - **Columns:** a grid "What We Do / Columns" with two equal columns (gap 79 / 72 / 56 / 56) that stack at 980px and below.
+  - **Each column**, an article container stretched to equal height:
+    - Photo slot 520 / 468 / 353 / 340px with an overlay on the photo only (`180deg, 0 at 55% → 0.7`). The label sits top-left.
+    - Giant word: a Heading widget with a DIV tag and aria-hidden, Cormorant 500. It uses `clamp(88px, 10.2vw, 148px)` side by side and `clamp(72px, 17vw, 132px)` stacked, with `margin: -0.57em 0 0 -0.04em` and z-index above the photo.
+    - Amber H3 (Manrope 600 17px, nowrap above 760px), 26px below the word.
+    - Paragraph 16px Driftwood, max-width 500px, 14px below the title.
+    - Service links: an Icon List pushed to the bottom (margin-top auto, padding-top 20px), at most 2 columns with a 24px gap, one column when two don't fit. Amber "→" before each label, 44px rows, nowrap.
+  - **CSS:** scoped to `#what-we-do`.
+  - **Alignment check:** side by side, the photos, giant words, titles, paragraphs and link lists start at identical heights at 1920 / 1440 / 1360 / 1100. Titles are 1 line each, paragraphs 3/3 lines (4/4 at 1100), and link columns 2/2 (1/1 at 1100, as in the reference). No overflow at any width.
+  - **Photos:** the Staining photo is the fence. The Painting slot keeps "Photo: finished interior".
+- **Brief updated** (`TOP-NOTCH-HOMEPAGE-BUILD.md`, `top-notch-homepage-reference.html`). Later client requests listed in this file still override the brief where they conflict: header and nav, stats strip, footer, Why grid, placeholders, and the hero and Away backgrounds.

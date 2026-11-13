@@ -316,7 +316,8 @@ def photo_slot(title, color, heights, label, image=None, **s):
         st["background_image"] = {"url": img["url"], "id": int(img["id"]), "size": "", "alt": img.get("alt", ""),
                                   "source": "library"}
     st.update(s)
-    return container(title, [] if img else [photo_label(label)], padding=dims(0, 20, 18, 20), **st)
+    pad = st.pop("padding", dims(0, 20, 18, 20))
+    return container(title, [] if img else [photo_label(label)], padding=pad, **st)
 
 
 def _with(el, **extra):
@@ -870,69 +871,75 @@ def build_featured_projects():
         bg=CHARRED, _element_id="tn-featured", custom_css=FEATURED_CSS)
 
 
-# ------------------------------------------------------------------ What We Do (Option A, split screen)
+# ------------------------------------------------------------------ What We Do (Option E, giant words)
 WWD = [
-    ("What We Do / Painting", "#33261C", "Photo: finished interior", None,
+    ("What We Do / Painting", "#33261C", "Photo: finished interior", None, "Painting",
      "Fine Interior &amp; Exterior Painting",
      "Walls, ceilings, trim, doors, and specialty finishes, completed with the preparation, protection, and "
-     "clean lines a high-end home demands. We work in occupied and unoccupied homes, coordinate with property "
-     "managers, and keep you updated even when you're out of town.",
+     "clean lines a high-end home demands.",
      [("Interior Painting", "/interior-painting/"), ("Exterior Painting", "/exterior-painting/"),
       ("Specialty Finishes &amp; Interior Wood", "/specialty-finishes-interior-wood/"),
       ("Commercial &amp; HOA", "/commercial-hoa/")]),
-    ("What We Do / Staining", "#3A281B", "Photo: stained log home", "fence",
+    ("What We Do / Staining", "#3A281B", "Photo: stained log home", "fence", "Staining",
      "Log &amp; Timber Staining",
-     "Log home staining is where we started and what we're known for. We prepare the wood properly, apply "
-     "premium stains and sealers, and handle the chinking, check sealing, and rot repair that keep a log home "
-     "tight and protected. We build log homes, so we know what makes a finish last.",
+     "Log home staining is where we started and what we're known for. We prepare the wood properly and apply "
+     "premium stains and sealers. We build log homes, so we know what makes a finish last.",
      [("Log Home Staining &amp; Restoration", "/log-home-staining-restoration/"),
       ("Chinking &amp; Check Sealing", "/chinking-check-sealing/"),
       ("Rot Repair &amp; Prevention", "/rot-repair-prevention/"), ("Deck Staining", "/deck-staining/")]),
 ]
 
 WWD_CSS = """
-/* Both titles on one line and the same size: they scale together with the viewport. */
-#tn-wwd .tn-wwd-title .elementor-heading-title{white-space:nowrap;font-size:min(40px, calc(((min(100vw, 1376px) - 96px) / 2 - 112px) / 16.2)) !important;}
-@media (max-width:1359px){#tn-wwd .tn-wwd-title .elementor-heading-title{font-size:min(40px, calc(((100vw - 96px) / 2 - 96px) / 16.2)) !important;}}
-@media (max-width:1040px){
-  #tn-wwd .tn-wwd-grid{grid-template-columns:minmax(0,1fr) !important;}
-  #tn-wwd .tn-wwd-title .elementor-heading-title{font-size:clamp(30px, 4.6vw, 40px) !important;}
+#what-we-do .tn-wwd-photo{position:relative;overflow:hidden;}
+#what-we-do .tn-wwd-photo::before{content:'' !important;display:block;position:absolute;inset:0;z-index:0;
+  background:linear-gradient(180deg, rgba(20,17,14,0) 55%, rgba(20,17,14,0.7) 100%) !important;opacity:1 !important;}
+#what-we-do .tn-wwd-photo > .elementor-widget{position:relative;z-index:1;}
+#what-we-do .tn-wwd-giant{position:relative;z-index:2;margin:-0.57em 0 0 -0.04em !important;font-size:clamp(88px, 10.2vw, 148px);}
+#what-we-do .tn-wwd-giant .elementor-heading-title{font-size:inherit !important;line-height:1 !important;letter-spacing:-0.025em;text-wrap:nowrap;}
+#what-we-do .tn-wwd-title{margin-top:26px !important;}
+#what-we-do .tn-wwd-title .elementor-heading-title{white-space:nowrap;}
+#what-we-do .tn-wwd-text{margin-top:14px !important;max-width:500px;}
+#what-we-do .tn-wwd-links{margin-top:auto !important;padding-top:20px;}
+#what-we-do .tn-wwd-links .elementor-icon-list-items{display:grid !important;
+  grid-template-columns:repeat(auto-fill, minmax(min(100%, max(250px, calc((100% - 24px) / 2))), 1fr));column-gap:24px;}
+#what-we-do .tn-wwd-links .elementor-icon-list-item{margin:0 !important;padding:0 !important;}
+#what-we-do .tn-wwd-links .elementor-icon-list-item::after{display:none !important;}
+#what-we-do .tn-wwd-links .elementor-icon-list-item > a{display:inline-flex;align-items:center;gap:10px;min-height:44px;white-space:nowrap;}
+#what-we-do .tn-wwd-links .elementor-icon-list-item > a::before{content:'→';color:#C68B4E;font-weight:400;}
+@media (max-width:980px){
+  #what-we-do .tn-wwd-grid{grid-template-columns:minmax(0,1fr) !important;}
+  #what-we-do .tn-wwd-giant{font-size:clamp(72px, 17vw, 132px);}
 }
-@media (max-width:760px){#tn-wwd .tn-wwd-title .elementor-heading-title{white-space:normal;}}
-#tn-wwd .tn-wwd-links .elementor-icon-list-items{display:grid !important;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:32px;}
-#tn-wwd .tn-wwd-links .elementor-icon-list-item{margin:0 !important;padding:0 !important;}
-#tn-wwd .tn-wwd-links .elementor-icon-list-item::after{display:none !important;}
-#tn-wwd .tn-wwd-links .elementor-icon-list-item > a{display:flex;align-items:center;gap:10px;min-height:44px;}
-#tn-wwd .tn-wwd-links .elementor-icon-list-item > a::before{content:'→';color:#C68B4E;font-weight:400;}
-@media (max-width:520px){#tn-wwd .tn-wwd-links .elementor-icon-list-items{grid-template-columns:1fr;}}
+@media (max-width:760px){#what-we-do .tn-wwd-title .elementor-heading-title{white-space:normal;}}
 """.strip()
 
 
 def build_what_we_do():
-    """Two solid dark-brown halves (two shades), each with a large photo above the title."""
-    shades = ["#1C1612", "#271D16"]
-    halves = []
-    for (title, color, label, image, h2_text, body, items), shade in zip(WWD, shades):
-        content = container(title + " / Content", [
-            heading(title + " / Title (H2)", h2_text, tag="h2", color=BONE,
-                    typ=typo(family=SERIF, size=(40, 36, 30, 30), weight=500, lh=1.08, ls=-0.4),
-                    _css_classes="tn-wwd-title"),
-            text(title + " / Text", "<p>%s</p>" % body, color=HERO_TEXT, size=16, lh=1.7),
+    cols = []
+    for title, color, label, image, word, h3, body, items in WWD:
+        photo = photo_slot(title + " / Photo", color, (520, 468, 353, 340), label, image=image,
+                           css_classes="tn-photo tn-wwd-photo", flex_justify_content="flex-start",
+                           padding=dims(18, 20, 0, 20))
+        cols.append(container(title, [
+            photo,
+            heading(title + " / Giant word", word, tag="div", color=BONE,
+                    typ=typo(family=SERIF, size=(148, 133, 132, 72), weight=500, lh=1),
+                    _css_classes="tn-wwd-giant", _attributes="aria-hidden|true"),
+            heading(title + " / Title (H3)", h3, tag="h3", color=AMBER,
+                    typ=typo(size=17, weight=600, lh=1.3), _css_classes="tn-wwd-title"),
+            text(title + " / Text", "<p>%s</p>" % body, color=DRIFT, size=16, lh=1.7,
+                 _css_classes="tn-wwd-text"),
             widget("icon-list", title + " / Services", space_between=px(0), text_color=BONE,
-                   text_color_hover=AMBER_HOVER, _css_classes="tn-wwd-links", _margin=dims(8, 0, 0, 0),
+                   text_color_hover=AMBER_HOVER, _css_classes="tn-wwd-links",
                    icon_list=[{"_id": eid(), "text": t, "link": link(u),
                                "selected_icon": {"value": "", "library": ""}} for t, u in items],
-                   **typo(prefix="icon_typography", size=15, weight=600, lh=1.4))], gap=22)
-        photo = photo_slot(title + " / Photo", color, (440, 400, 380, 260), label, image=image)
-        halves.append(container(title, [photo, content], html_tag="article", gap=(40, 36, 32, 28),
-                                background_background="classic", background_color=shade,
-                                padding=pads((56, 48, 44, 40), (56, 48, 44, 20), (56, 48, 44, 48),
-                                             (56, 48, 44, 20))))
-    return container("What We Do", [grid("What We Do / Halves", halves, cols=(2, 2, 1, 1), gap_col=0,
-                                         gap_row=0, css_classes="tn-wwd-grid tn-match-lines")],
-                     top=True, boxed=True, html_tag="section", _element_id="tn-wwd",
-                     padding=pads(0, SIDE, 0, SIDE),
-                     background_background="classic", background_color=CHARRED, custom_css=WWD_CSS)
+                   **typo(prefix="icon_typography", size=15, weight=600, lh=1.4))],
+            html_tag="article", gap=0, css="selector{min-width:0;}"))
+    return section("What We Do", [
+        h2("What We Do / Title (H2)", "What we do", balance=False),
+        grid("What We Do / Columns", cols, cols=(2, 2, 1, 1), gap_col=(79, 72, 56, 56), gap_row=56,
+             grid_align_items="stretch", css_classes="tn-wwd-grid tn-match-lines")],
+        bg=CHARRED, gap=(60, 58, 44, 40), _element_id="what-we-do", custom_css=WWD_CSS)
 
 
 def build_home():
