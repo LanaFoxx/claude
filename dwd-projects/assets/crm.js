@@ -606,6 +606,11 @@
 	}
 	/* ================= Dream Desk 1c shell (design handoff): tokens, sidebar, top bar, Home ================= */
 	var LU = {
+		paperclip: '<path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/>',
+		upload: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>',
+		download: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/>',
+		'file': '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/>',
+		'trash-2': '<path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>',
 		home: '<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>',
 		calendar: '<rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
 		'circle-check': '<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',
@@ -830,6 +835,46 @@
 		var prev = showAll ? (M.list && M.list.length ? '<div class="dd-mprev">' + rest.map(row).join('') + '</div>' : '<p class="dd-help dd-mempty">Loading…</p>') : '';
 		return '<section class="dd-card dd-pc2 k-mail"><header><h2>' + lu('mail', 16) + 'Emails</h2><span class="sum">' + (nNew ? '<b class="dd-mnew">' + nNew + ' new</b> · ' : '') + (M.total ? M.total + ' total' : 'None yet') + '</span><span class="dd-sp"></span><button type="button" class="dd-hlink" ' + (pid ? 'data-emailc="' + pid + '"' : 'data-emailto="' + esc(em || '') + '"') + '>New email</button></header>'
 			+ '<div class="dd-mlist">' + top + tog + prev + '</div></section>';
+	}
+	// Assets: files kept with the project (photos, logos, fonts, zips). Drop files on the box or use Upload.
+	function fileSize(b) { b = +b || 0; return b > 1048576 ? (b / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(b / 1024)) + ' KB'; }
+	function assetsBox(c) {
+		var A = c.assets || [], imgs = A.filter(function (x) { return x.thumb; }), files = A.filter(function (x) { return !x.thumb; }), up = (S.assetUp || {})[c.id];
+		var del = function (x) { return '<button type="button" class="dd-adel" data-adel="' + x.id + '" data-apid="' + c.id + '" title="Delete ' + esc(x.name) + '" aria-label="Delete ' + esc(x.name) + '">' + lu('trash-2', 14) + '</button>'; };
+		var grid = imgs.length ? '<div class="dd-agrid">' + imgs.map(function (x) {
+			return '<div class="dd-aimg"><a href="' + esc(x.url) + '" target="_blank" rel="noopener" title="' + esc(x.name) + '"><img src="' + esc(x.thumb) + '" alt="' + esc(x.name) + '" loading="lazy"></a>' + del(x) + '</div>';
+		}).join('') + '</div>' : '';
+		var list = files.length ? '<div class="dd-alist">' + files.map(function (x) {
+			return '<div class="dd-arow"><span class="dd-aic">' + lu('file', 16) + '</span><a class="dd-anm" href="' + esc(x.url) + '" download>' + esc(x.name) + '</a><small>' + fileSize(x.size) + '</small>'
+				+ '<a class="dd-adl" href="' + esc(x.url) + '" download title="Download" aria-label="Download ' + esc(x.name) + '">' + lu('download', 15) + '</a>' + del(x) + '</div>';
+		}).join('') + '</div>' : '';
+		var empty = A.length ? '' : '<p class="dd-help dd-aempty">No files yet. Drop photos, logos, fonts or zips here.</p>';
+		return '<section class="dd-card dd-pc2 k-assets" data-adrop="' + c.id + '"><header><h2>' + lu('paperclip', 16) + 'Assets</h2><span class="sum">' + (A.length ? A.length + ' file' + (A.length === 1 ? '' : 's') : 'None yet') + '</span><span class="dd-sp"></span>'
+			+ (c.drive ? '<a class="dd-btn ghost sm" href="' + esc(c.drive) + '" target="_blank" rel="noopener">' + lu('external-link', 14) + 'Drive folder</a>' : '')
+			+ '<label class="dd-btn secondary sm dd-aup">' + lu('upload', 14) + (up ? 'Uploading ' + up + '…' : 'Upload') + '<input type="file" multiple hidden data-aup="' + c.id + '"></label></header>'
+			+ '<div class="dd-abody">' + grid + list + empty + '</div></section>';
+	}
+	function uploadAssets(pid, fl) {
+		var files = Array.prototype.slice.call(fl || []);
+		if (!files.length) { return; }
+		S.assetUp = S.assetUp || {};
+		var done = 0, bad = [];
+		var next = function () {
+			if (!files.length) {
+				delete S.assetUp[pid]; render();
+				toast(bad.length ? 'Could not upload: ' + bad.join(', ') : done + ' file' + (done === 1 ? '' : 's') + ' added', !!bad.length);
+				return;
+			}
+			var f = files.shift(), fd = new FormData();
+			fd.append('file', f, f.name);
+			S.assetUp[pid] = (done + bad.length + 1) + ' of ' + (done + bad.length + 1 + files.length); render();
+			fetch(DWDC.api + '/contact/' + pid + '/asset', { method: 'POST', credentials: 'same-origin', headers: { 'X-WP-Nonce': DWDC.nonce }, body: fd })
+				.then(function (r) { return r.json().then(function (j) { if (!r.ok) { throw new Error(j.message || 'Upload failed'); } return j; }); })
+				.then(function (j) { done++; if (S.full[pid]) { S.full[pid].assets = j.assets; } })
+				.catch(function (e) { bad.push(f.name + ' (' + e.message + ')'); })
+				.then(next);
+		};
+		next();
 	}
 	function emailModal(m) {
 		var c = m.pid ? contact(m.pid) : null, v = m.vals || {};
@@ -1161,6 +1206,9 @@
 	(function () {
 		var dragKey = '';
 		app.addEventListener('dragstart', function (e) { var el = e.target.closest && e.target.closest('[data-caldrag]'); if (!el) { return; } dragKey = el.getAttribute('data-caldrag'); e.dataTransfer.effectAllowed = 'move'; try { e.dataTransfer.setData('text/plain', dragKey); } catch (er) {} });
+		app.addEventListener('dragover', function (e) { var ab = !dragKey && e.target.closest && e.target.closest('[data-adrop]'); if (!ab || !e.dataTransfer || Array.prototype.indexOf.call(e.dataTransfer.types || [], 'Files') < 0) { return; } e.preventDefault(); ab.classList.add('dd-adrag'); });
+		app.addEventListener('dragleave', function (e) { var ab = e.target.closest && e.target.closest('[data-adrop]'); if (ab && !ab.contains(e.relatedTarget)) { ab.classList.remove('dd-adrag'); } });
+		app.addEventListener('drop', function (e) { var ab = !dragKey && e.target.closest && e.target.closest('[data-adrop]'); if (!ab || !e.dataTransfer || !e.dataTransfer.files.length) { return; } e.preventDefault(); ab.classList.remove('dd-adrag'); uploadAssets(+ab.getAttribute('data-adrop'), e.dataTransfer.files); });
 		app.addEventListener('dragover', function (e) { if (!dragKey) { return; } var c = e.target.closest && e.target.closest('[data-caldrop]'); if (!c) { return; } e.preventDefault(); app.querySelectorAll('.dd-drop').forEach(function (x) { if (x !== c) { x.classList.remove('dd-drop'); } }); c.classList.add('dd-drop'); });
 		app.addEventListener('drop', function (e) { var c = e.target.closest && e.target.closest('[data-caldrop]'); if (!dragKey || !c) { return; } e.preventDefault(); var k = dragKey; dragKey = ''; calMove(k, c.getAttribute('data-caldrop')); });
 		app.addEventListener('dragend', function () { dragKey = ''; app.querySelectorAll('.dd-drop').forEach(function (x) { x.classList.remove('dd-drop'); }); });
@@ -3115,7 +3163,7 @@
 		var hosting = num(c.hosting) ? hostCard(c) : '';
 		return '<div class="dd-pp">' + head + strip
 			+ (S.edit ? '<div class="dd-pp-edit" id="pv3-edit">' + details + peopleCard(c) + '</div>' : '')
-			+ '<div class="dd-pp-grid"><div class="dd-pp-col">' + sumBox + (full ? mailBox('p' + c.id, c.email || (clientOf(c) || {}).email || '', c.id) : '') + stgBox + mkBox + formBox + todos + (S.edit ? '' : '<div class="dd-pp-mob">' + details + '</div>') + notesBox + '</div><div class="dd-pp-col side">' + (S.edit ? '' : '<div class="dd-pp-desk">' + details + '</div>' + contacts) + zoomBox('p' + c.id, [c.id]) + (st === 'leads' ? '' : paysBox) + hosting + '</div></div></div>';
+			+ '<div class="dd-pp-grid"><div class="dd-pp-col">' + sumBox + (full ? mailBox('p' + c.id, c.email || (clientOf(c) || {}).email || '', c.id) + assetsBox(c) : '') + stgBox + mkBox + formBox + todos + (S.edit ? '' : '<div class="dd-pp-mob">' + details + '</div>') + notesBox + '</div><div class="dd-pp-col side">' + (S.edit ? '' : '<div class="dd-pp-desk">' + details + '</div>' + contacts) + zoomBox('p' + c.id, [c.id]) + (st === 'leads' ? '' : paysBox) + hosting + '</div></div></div>';
 	}
 	// Onboarding answers as plain text, ready to paste into Claude.
 	function onboardEntries(c) {
@@ -3726,6 +3774,12 @@
 			}
 			render(); return;
 		}
+		if ((el = t.closest('[data-adel]'))) {
+			var adp = +el.getAttribute('data-apid'), ada = el.getAttribute('data-adel'), adn = ((S.full[adp] && S.full[adp].assets) || []).filter(function (x) { return String(x.id) === ada; })[0];
+			if (!confirm('Delete ' + (adn ? adn.name : 'this file') + ' from this project? This removes the file for good.')) { return; }
+			api('/contact/' + adp + '/asset/' + ada, 'DELETE').then(function (j2) { if (S.full[adp]) { S.full[adp].assets = j2.assets; } render(); toast('File deleted'); }).catch(fail);
+			return;
+		}
 		if ((el = t.closest('[data-mtog]'))) {
 			var tk = el.getAttribute('data-mtog'), MD2 = mailData(tk); S.mailAll = S.mailAll || {}; S.mailAll[tk] = !S.mailAll[tk]; render();
 			if (S.mailAll[tk] && MD2 && (!MD2.list || MD2.list.length < MD2.total)) {
@@ -4275,6 +4329,7 @@
 	document.addEventListener('input', function (e) { if (e.target && e.target.hasAttribute && e.target.hasAttribute('data-ptdraft') && S.modal) { S.modal.draft = e.target.value; e.target.style.height = ''; e.target.style.height = Math.min(140, e.target.scrollHeight) + 'px'; } });
 	document.addEventListener('keydown', function (e) { if (e.target && e.target.hasAttribute && e.target.hasAttribute('data-ptdraft') && e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); if (S.modal) { S.modal.draft = e.target.value; } ptSend(); } });
 	app.addEventListener('change', function (e) {
+		if (e.target.hasAttribute && e.target.hasAttribute('data-aup')) { uploadAssets(+e.target.getAttribute('data-aup'), e.target.files); e.target.value = ''; return; }
 		if (e.target.hasAttribute && e.target.hasAttribute('data-ppdate')) { S.ppDate = S.ppDate || {}; S.ppDate[e.target.getAttribute('data-ppdate')] = e.target.value; var pb2 = e.target.closest('.dd-tdate'); if (pb2) { pb2.classList.toggle('set', !!e.target.value); pb2.querySelector('span').textContent = e.target.value ? fmt(e.target.value) : 'Date'; } return; }
 		if (e.target.hasAttribute && e.target.hasAttribute('data-zsel')) { S.zoomSel = S.zoomSel || {}; S.zoomSel[e.target.getAttribute('data-zsel')] = e.target.value; return; }
 		if (e.target.hasAttribute && e.target.hasAttribute('data-bfreq')) { var bf = e.target.closest('form'), wkly = e.target.value === 'weekly', dl = bf.querySelector('[data-bdaylbl]'), di2 = bf.querySelector('[name=day]'); dl.textContent = wkly ? 'Weekday' : 'Due day'; di2.max = wkly ? 7 : 31; if (+di2.value > +di2.max) { di2.value = di2.max; } return; }

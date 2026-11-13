@@ -276,3 +276,30 @@
 .dd-mmore[aria-expanded="true"] .lu { transform: rotate(180deg); }
 
 .dd-held { font-weight: 600; color: var(--warning-text, #e0a63a); }
+
+/* Assets box */
+.dd-pc2.k-assets > header h2 .lu { color: var(--accent-text); }
+.k-assets > header { flex-wrap: wrap; gap: 8px; }
+.k-assets .dd-aup { cursor: pointer; }
+.dd-abody { padding: 0 20px 16px; }
+.k-assets.dd-adrag { outline: 2px dashed var(--accent, #13A6EE); outline-offset: -6px; }
+.dd-agrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; }
+.dd-aimg { position: relative; aspect-ratio: 1; border-radius: 8px; overflow: hidden; background: var(--surface-2, #f2f4f8); }
+.dd-aimg a { display: block; width: 100%; height: 100%; }
+.dd-aimg img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.dd-aimg .dd-adel { position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,.6); color: #fff; opacity: 0; transition: opacity .15s; }
+.dd-aimg:hover .dd-adel, .dd-aimg .dd-adel:focus-visible { opacity: 1; }
+@media (hover: none) { .dd-aimg .dd-adel { opacity: 1; } }
+.dd-alist { margin-top: 10px; display: flex; flex-direction: column; gap: 2px; }
+.dd-agrid + .dd-alist { margin-top: 12px; }
+.dd-arow { display: flex; align-items: center; gap: 10px; padding: 8px 4px; border-radius: 8px; min-width: 0; }
+.dd-arow:hover { background: var(--surface-2, #f2f4f8); }
+.dd-aic { color: var(--muted, #6b7280); display: flex; }
+.dd-anm { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: inherit; text-decoration: none; font-weight: 500; }
+.dd-anm:hover { text-decoration: underline; }
+.dd-arow small { color: var(--muted, #6b7280); white-space: nowrap; }
+.dd-adl, .dd-adel { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 6px; border: 0; background: none; color: var(--muted, #6b7280); cursor: pointer; padding: 0; }
+.dd-adl:hover { color: var(--accent-text); background: var(--surface-3, #e8ecf3); }
+.dd-arow .dd-adel:hover { color: #d03b3b; background: var(--surface-3, #e8ecf3); }
+.dd-aempty { margin: 0 !important; }
+@media (max-width: 767px) { .dd-pp-grid .k-assets { order: 3; margin: 0 !important; } }
