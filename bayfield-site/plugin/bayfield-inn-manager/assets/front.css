@@ -307,3 +307,10 @@ body.woocommerce-order-received .bi-checkout { padding-top: 40px; }
 .bi-buy .bi-buy__row { display: flex; gap: 8px; align-items: stretch; }
 .bi-buy .bi-buy__qty { width: 72px !important; flex: 0 0 72px; min-width: 0; }
 .bi-buy .bi-buy__btn { flex: 1 1 auto; min-width: 0; width: auto; }
+
+/* Cart icon only once something is in the cart; remove links on checkout; gift card note */
+.bi-cart-link.is-empty { display: none; }
+.bi-remove-item { margin-left: 8px; font: 400 12px Geist, system-ui, sans-serif; color: #6B7268 !important; text-decoration: underline; text-underline-offset: 2px; }
+.bi-remove-item:hover { color: #b32d2e !important; }
+.bi-gc__note { margin: 4px 0 0; padding: 12px 14px; background: #fff; border: 1px solid var(--bi-line); border-radius: 2px; font: 400 14px/1.5 Geist, system-ui, sans-serif; color: var(--bi-muted); }
+.woocommerce-checkout-review-order-table td.product-name dl.variation { margin: 6px 0 0; font: 400 13px/1.5 Geist, system-ui, sans-serif; color: var(--bi-muted); }

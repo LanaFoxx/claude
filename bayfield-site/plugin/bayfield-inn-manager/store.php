@@ -93,22 +93,9 @@ function bi_gc_from_request( $src ) {
 		'type'     => $type,
 		'amount'   => round( $value, 2 ),
 		'to'       => $get( 'bi_gc_to' ),
-		'address1' => $get( 'bi_gc_address1' ),
-		'address2' => $get( 'bi_gc_address2' ),
-		'city'     => $get( 'bi_gc_city' ),
-		'state'    => strtoupper( $get( 'bi_gc_state' ) ),
-		'zip'      => $get( 'bi_gc_zip' ),
 		'from'     => $get( 'bi_gc_from' ),
 		'message'  => isset( $src['bi_gc_message'] ) ? sanitize_textarea_field( wp_unslash( $src['bi_gc_message'] ) ) : '',
 	);
-	foreach ( array( 'to' => 'the recipient’s name', 'address1' => 'the street address', 'city' => 'the city', 'state' => 'the state', 'zip' => 'the ZIP code' ) as $k => $label ) {
-		if ( '' === $d[ $k ] ) {
-			$errors[] = 'Please add ' . $label . ' for mailing the card.';
-		}
-	}
-	if ( '' !== $d['zip'] && ! preg_match( '/^\d{5}(-\d{4})?$/', $d['zip'] ) ) {
-		$errors[] = 'Please enter a 5-digit ZIP code.';
-	}
 	return $errors ? new WP_Error( 'bi_gc', implode( ' ', $errors ) ) : $d;
 }
 
@@ -151,13 +138,11 @@ add_filter( 'woocommerce_cart_item_name', function ( $name, $item ) {
 }, 10, 2 );
 
 function bi_gc_lines( $d ) {
-	$addr = trim( $d['address1'] . ( $d['address2'] ? ', ' . $d['address2'] : '' ) . ', ' . $d['city'] . ', ' . $d['state'] . ' ' . $d['zip'], ', ' );
 	return array_filter( array(
-		'Card'          => BI_GC_TYPES[ $d['type'] ] . ' · $' . number_format( $d['amount'], 2 ),
-		'Mail to'       => $d['to'],
-		'Address'       => $addr,
-		'From'          => $d['from'],
-		'Message'       => $d['message'],
+		'Card'    => BI_GC_TYPES[ $d['type'] ] . ' · $' . number_format( $d['amount'], 2 ),
+		'To'      => $d['to'] ?? '',
+		'From'    => $d['from'] ?? '',
+		'Message' => $d['message'] ?? '',
 	), 'strlen' );
 }
 add_filter( 'woocommerce_get_item_data', function ( $rows, $item ) {
@@ -214,9 +199,9 @@ function bi_cart_count() {
 }
 function bi_cart_link_html() {
 	$n   = bi_cart_count();
-	$url = bi_store_on() ? wc_get_cart_url() : home_url( '/cart/' );
-	return sprintf( '<a class="bi-cart-link" href="%s" aria-label="Cart, %d item%s"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1.2 11.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></svg><span class="bi-cart-count%s">%d</span></a>',
-		esc_url( $url ), $n, 1 === $n ? '' : 's', $n ? '' : ' is-empty', $n );
+	$url = bi_store_on() ? wc_get_checkout_url() : home_url( '/checkout/' );
+	return sprintf( '<a class="bi-cart-link%s" href="%s" aria-label="Checkout: %d item%s in your cart"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1.2 11.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></svg><span class="bi-cart-count%s">%d</span></a>',
+		$n ? '' : ' is-empty', esc_url( $url ), $n, 1 === $n ? '' : 's', $n ? '' : ' is-empty', $n );
 }
 // WooCommerce refreshes these pieces after add-to-cart and on cached pages.
 add_filter( 'woocommerce_add_to_cart_fragments', function ( $f ) {
@@ -232,13 +217,37 @@ add_action( 'wp_enqueue_scripts', function () {
 		wp_enqueue_style( 'bi-front' );
 	}
 }, 20 );
-// Successful gift card / merch add-to-cart from a form post: go to the cart.
+// No separate cart step: a gift card goes straight to checkout, and /cart/ forwards to checkout.
 add_filter( 'woocommerce_add_to_cart_redirect', function ( $url, $product ) {
 	if ( $product && (int) $product->get_id() === bi_gc_product_id() ) {
-		return wc_get_cart_url();
+		return wc_get_checkout_url();
 	}
 	return $url;
 }, 10, 2 );
+add_action( 'template_redirect', function () {
+	// With items, the cart page isn't needed. (Empty: WooCommerce sends empty checkouts to the cart,
+	// which shows "Your cart is empty" with a link back to the shop.)
+	if ( bi_store_on() && is_cart() && WC()->cart && ! WC()->cart->is_empty() ) {
+		wp_safe_redirect( wc_get_checkout_url() );
+		exit;
+	}
+}, 5 );
+// Checkout is the only place to review the order, so each item gets a remove link there.
+add_filter( 'woocommerce_cart_item_name', function ( $name, $item, $key ) {
+	if ( is_checkout() && ! is_wc_endpoint_url( 'order-received' ) && ! empty( $key ) ) {
+		$name .= sprintf( ' <a href="%s" class="bi-remove-item" aria-label="Remove %s">Remove</a>', esc_url( add_query_arg( '_wp_http_referer', rawurlencode( wc_get_checkout_url() ), wc_get_cart_remove_url( $key ) ) ), esc_attr( wp_strip_all_tags( $name ) ) );
+	}
+	return $name;
+}, 20, 3 );
+// After removing an item from checkout, stay on checkout (or go to the shop when it's empty).
+add_action( 'woocommerce_cart_item_removed', function () {
+	add_filter( 'wp_redirect', function ( $loc ) {
+		if ( false !== strpos( (string) wp_get_referer(), '/checkout' ) ) {
+			return WC()->cart->is_empty() ? home_url( '/merchandise/' ) : wc_get_checkout_url();
+		}
+		return $loc;
+	} );
+} );
 
 /* -------------------------------------------------------------- widgets */
 add_action( 'elementor/widgets/register', function ( $manager ) {
@@ -247,10 +256,10 @@ add_action( 'elementor/widgets/register', function ( $manager ) {
 	$manager->register( new BI_Cart_Link_Widget() );
 } );
 
-// Gift card goes straight to the cart, so its "added" notice doesn't need a "View cart" button.
+// Gift card goes straight to checkout, so its "added" notice needs no "View cart" button.
 add_filter( 'wc_add_to_cart_message_html', function ( $message, $products ) {
 	if ( isset( $products[ bi_gc_product_id() ] ) && 1 === count( $products ) ) {
-		return 'Your gift card has been added to the cart.';
+		return 'Your gift card has been added. It will be mailed to the shipping address you enter below.';
 	}
 	return $message;
 }, 10, 2 );

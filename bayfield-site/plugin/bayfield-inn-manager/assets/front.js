@@ -112,7 +112,7 @@
           if (!d || d.error) throw new Error('That size just sold out, or the item is unavailable.');
           Object.keys(d.fragments || {}).forEach(function (sel) { document.querySelectorAll(sel).forEach(function (el) { el.outerHTML = d.fragments[sel]; }); });
           if (window.jQuery) jQuery(document.body).trigger('added_to_cart', [d.fragments, d.cart_hash]);
-          msg.className = 'bi-buy__msg is-ok'; msg.innerHTML = 'Added to your cart. <a href="/cart/">View cart &rarr;</a>';
+          msg.className = 'bi-buy__msg is-ok'; msg.innerHTML = 'Added to your cart. <a href="/checkout/">Checkout &rarr;</a>';
         })
         .catch(function (er) { msg.className = 'bi-buy__msg is-error'; msg.textContent = er.message || 'Something went wrong. Please try again.'; })
         .then(function () { btn.disabled = false; btn.textContent = 'Add to cart'; });

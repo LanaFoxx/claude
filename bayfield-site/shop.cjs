@@ -302,10 +302,11 @@ function orderReceived(m) {
 const storeBody = (code, cls) => section({ background_background: 'classic', background_color: C.cream, ...pad(28, 110), ...boxed, flex_direction: 'column' }, [
   widget('shortcode', { shortcode: code, _css_classes: 'bi-store-wrap ' + cls }),
 ]);
+// No cart step any more (items go straight to checkout), so no step indicator either.
 const storeTitle = (title, active, cls) => section({
   background_background: 'classic', background_color: C.cream, flex_direction: 'column', flex_align_items: 'center', flex_gap: gap(22),
   padding: box(64, 20, 8, 20), padding_mobile: box(44, 20, 4, 20), css_classes: cls,
-}, [steps(active), heading(title, 'h1', [52, 44, 36], C.green, { align: 'center', ls: -1 })]);
+}, [heading(title, 'h1', [52, 44, 36], C.green, { align: 'center', ls: -1 })]);
 const wooCart = () => [storeTitle('Your cart', 1, 'bi-title-cart'), storeBody('[woocommerce_cart]', 'bi-cart')];
 const wooCheckout = () => [storeTitle('Checkout', 2, 'bi-title-checkout'), storeBody('[woocommerce_checkout]', 'bi-checkout')];
 

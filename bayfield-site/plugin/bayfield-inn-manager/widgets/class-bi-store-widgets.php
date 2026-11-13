@@ -1,7 +1,7 @@
 <?php
 defined( 'ABSPATH' ) || exit;
 
-/** Gift card order form: card type, amount, recipient mailing address, note. Adds to the cart. */
+/** Gift card order form: card type, amount, To / From and a note. Adds to the cart and goes to checkout (the card is mailed to the checkout shipping address). */
 class BI_Gift_Card_Widget extends \Elementor\Widget_Base {
 
 	public function get_name() { return 'bi-gift-card'; }
@@ -58,35 +58,21 @@ class BI_Gift_Card_Widget extends \Elementor\Widget_Base {
 				<label class="bi-field">Or choose an amount<input type="number" name="bi_gc_custom" min="<?php echo (int) BI_GC_MIN; ?>" max="<?php echo (int) BI_GC_MAX; ?>" step="1" placeholder="$" inputmode="numeric" value="<?php echo esc_attr( $val( 'bi_gc_custom' ) ); ?>"></label>
 				<label class="bi-field">Quantity<input type="number" name="quantity" min="1" max="20" value="<?php echo esc_attr( $val( 'quantity', '1' ) ); ?>" inputmode="numeric"></label>
 			</div>
-			<p class="bi-gc__heading">Mail the card to</p>
-			<label class="bi-field">Recipient’s name<input type="text" name="bi_gc_to" required autocomplete="off" value="<?php echo esc_attr( $val( 'bi_gc_to' ) ); ?>"></label>
-			<label class="bi-field">Address 1<input type="text" name="bi_gc_address1" required placeholder="Street address" value="<?php echo esc_attr( $val( 'bi_gc_address1' ) ); ?>"></label>
-			<label class="bi-field">Address 2 <span class="bi-opt">(optional)</span><input type="text" name="bi_gc_address2" placeholder="Apartment, suite, unit" value="<?php echo esc_attr( $val( 'bi_gc_address2' ) ); ?>"></label>
-			<div class="bi-gc__row bi-gc__row--3">
-				<label class="bi-field">City<input type="text" name="bi_gc_city" required value="<?php echo esc_attr( $val( 'bi_gc_city' ) ); ?>"></label>
-				<label class="bi-field">State
-					<select name="bi_gc_state" required>
-						<option value="">State</option>
-						<?php
-						$states = function_exists( 'WC' ) ? WC()->countries->get_states( 'US' ) : array();
-						foreach ( $states as $code => $name ) {
-							printf( '<option value="%1$s"%3$s>%2$s</option>', esc_attr( $code ), esc_html( $name ), selected( $val( 'bi_gc_state' ), $code, false ) );
-						}
-						?>
-					</select>
-				</label>
-				<label class="bi-field">ZIP<input type="text" name="bi_gc_zip" required inputmode="numeric" pattern="\d{5}(-\d{4})?" maxlength="10" value="<?php echo esc_attr( $val( 'bi_gc_zip' ) ); ?>"></label>
+			<p class="bi-gc__heading">On the card</p>
+			<div class="bi-gc__row">
+				<label class="bi-field">To<input type="text" name="bi_gc_to" placeholder="Recipient’s name" autocomplete="off" value="<?php echo esc_attr( $val( 'bi_gc_to' ) ); ?>"></label>
+				<label class="bi-field">From<input type="text" name="bi_gc_from" placeholder="Your name" value="<?php echo esc_attr( $val( 'bi_gc_from' ) ); ?>"></label>
 			</div>
-			<label class="bi-field">From<input type="text" name="bi_gc_from" placeholder="Your name, as it should appear on the card" value="<?php echo esc_attr( $val( 'bi_gc_from' ) ); ?>"></label>
 			<label class="bi-field">Personal message <span class="bi-opt">(optional)</span><textarea name="bi_gc_message" rows="3" maxlength="400"><?php echo esc_textarea( $posted['bi_gc_message'] ?? '' ); ?></textarea></label>
-			<button type="submit" class="bi-btn bi-gc__btn">Add to cart <span aria-hidden="true">&#8594;</span></button>
+			<p class="bi-gc__note">We’ll mail the card to the shipping address you enter at checkout. Sending it as a gift? Use the recipient’s address there. Mailing is free.</p>
+			<button type="submit" class="bi-btn bi-gc__btn">Add to cart &amp; check out <span aria-hidden="true">&#8594;</span></button>
 		</form>
 		<?php
 		echo '</div>';
 	}
 }
 
-/** Header cart: bag icon + item count, linking to the cart. The count refreshes after add-to-cart. */
+/** Header cart: bag icon + item count linking to checkout; shown only when the cart has items. */
 class BI_Cart_Link_Widget extends \Elementor\Widget_Base {
 
 	public function get_name() { return 'bi-cart-link'; }
