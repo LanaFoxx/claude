@@ -32,6 +32,10 @@ function dwdob_walk( &$els, $fn ) {
 		}
 	}
 }
+/** File types every onboarding upload box accepts (also checked in the browser by assets/onboarding.js). */
+function dwdob_upload_types() {
+	return 'jpg,jpeg,png,gif,webp,heic,svg,ai,eps,psd,pdf,doc,docx,txt,rtf,pages,odt,xls,xlsx,csv,ppt,pptx,key,ttf,otf,woff,woff2,zip,mp4,mov,webm,m4v';
+}
 /** Make every answer field required (uploads stay optional), add the intro note, and sharpen the inspiration question. */
 function dwdob_apply() {
 	$intro = '<div class="dwo-must" style="margin:0 0 18px;padding:14px 16px;border-radius:10px;background:#EEF4FF;border:1px solid #C9D8F5;color:#0F2447;font-size:15px;line-height:1.55">'
@@ -49,6 +53,23 @@ function dwdob_apply() {
 				if ( 'step_contact_intro' === $cid && false === strpos( (string) $x['field_html'], 'dwo-must' ) ) {
 					$x['field_html'] = $intro . $x['field_html'];
 					$changed[]       = 'intro';
+				}
+				// Upload boxes: one broad list of file types for every box (a logo pack often comes as a zip),
+				// bigger size limits. Files too big for the form go in the shared-folder link instead.
+				if ( 'upload' === $t ) {
+					$types = dwdob_upload_types();
+					$size  = 'media_upload' === $cid ? '100' : '50';
+					if ( ( $x['file_types'] ?? '' ) !== $types || (string) ( $x['file_sizes'] ?? '' ) !== $size ) {
+						$x['file_types'] = $types;
+						$x['file_sizes'] = $size;
+						$changed[]       = $cid . ':types';
+					}
+					continue;
+				}
+				if ( 'shared_folder' === $cid && false === strpos( (string) ( $x['field_label'] ?? '' ), 'Dropbox' ) ) {
+					$x['field_label'] = 'Link to a Google Drive, Dropbox or WeTransfer folder with your files (use this for anything too big to upload above)';
+					$x['placeholder'] = 'Paste the folder link, or write N/A';
+					$changed[]        = 'shared_folder:label';
 				}
 				if ( in_array( $t, array( 'step', 'html', 'upload', 'hidden', 'recaptcha', 'recaptcha_v3', 'honeypot' ), true ) ) {
 					continue;
@@ -94,11 +115,12 @@ add_action( 'rest_api_init', function () {
 			dwdob_walk( $data, function ( &$st ) use ( &$res, $id ) {
 				$f = array();
 				foreach ( (array) ( $st['form_fields'] ?? array() ) as $x ) {
-					$f[] = array( 'id' => $x['custom_id'] ?? '', 'type' => $x['field_type'] ?? 'text', 'label' => $x['field_label'] ?? '', 'required' => ( $x['required'] ?? '' ) === 'true', 'html' => mb_substr( (string) ( $x['field_html'] ?? '' ), 0, 300 ) );
+					$f[] = array( 'id' => $x['custom_id'] ?? '', 'type' => $x['field_type'] ?? 'text', 'label' => $x['field_label'] ?? '', 'required' => ( $x['required'] ?? '' ) === 'true', 'file_types' => $x['file_types'] ?? '', 'file_sizes' => $x['file_sizes'] ?? '', 'multi' => $x['allow_multiple_upload'] ?? '', 'html' => mb_substr( (string) ( $x['field_html'] ?? '' ), 0, 300 ) );
 				}
 				$res[] = array( 'page' => $id, 'title' => get_the_title( $id ), 'url' => get_permalink( $id ), 'form' => $st['form_name'] ?? '', 'fields' => $f );
 			} );
 		}
+		$res[] = array( 'php' => array( 'upload_max_filesize' => ini_get( 'upload_max_filesize' ), 'post_max_size' => ini_get( 'post_max_size' ), 'max_file_uploads' => ini_get( 'max_file_uploads' ), 'max_execution_time' => ini_get( 'max_execution_time' ), 'memory_limit' => ini_get( 'memory_limit' ) ) );
 		return $res;
 	} ) );
 } );
