@@ -606,6 +606,7 @@
 	}
 	/* ================= Dream Desk 1c shell (design handoff): tokens, sidebar, top bar, Home ================= */
 	var LU = {
+		'refresh-cw': '<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>',
 		paperclip: '<path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/>',
 		upload: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>',
 		download: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/>',
@@ -696,6 +697,7 @@
 			+ '<ul role="menu" class="dd-menu"><li><button role="menuitem" type="button" data-act="job">' + lu('play') + 'Project</button></li><li><button role="menuitem" type="button" data-act="lead">' + lu('user-plus') + 'Lead</button></li><li><button role="menuitem" type="button" data-act="newclient">' + lu('users') + 'Client</button></li><li><button role="menuitem" type="button" data-act="hosting">' + lu('cloud') + 'Website hosting</button></li><li class="dd-mob"><button role="menuitem" type="button" data-act="pay">' + lu('credit-card') + 'Log payment</button></li></ul></div>'
 			+ '<button type="button" class="dd-btn secondary dd-logpay" data-act="pay">' + lu('credit-card') + 'Log payment</button>'
 			+ '<span class="dd-div"></span>'
+			+ '<button type="button" class="dd-ibtn dd-refresh" data-ddrefresh aria-label="Refresh" title="Refresh">' + lu('refresh-cw', 18) + '</button>'
 			+ '<button type="button" class="dd-ibtn" data-ddtheme aria-label="' + (dark ? 'Light theme' : 'Dark theme') + '">' + lu(dark ? 'sun' : 'moon', 18) + '</button>'
 			+ '<div class="dd-me"><button type="button" class="dd-avatar" data-ddme aria-label="Profile">' + esc(ddInitials(DWDC.user || 'M')[0]) + '</button>'
 			+ '<ul class="dd-menu' + (S.meOpen ? ' open' : '') + '"><li class="dd-menu-h">' + esc(DWDC.user || 'Michael Tarr') + '</li><li><a href="' + esc(DWDC.logout) + '">' + lu('log-out') + 'Sign out</a></li></ul></div></header>';
@@ -3774,6 +3776,7 @@
 			}
 			render(); return;
 		}
+		if ((el = t.closest('[data-ddrefresh]'))) { el.classList.add('spin'); el.disabled = true; location.reload(); return; }
 		if ((el = t.closest('[data-adel]'))) {
 			var adp = +el.getAttribute('data-apid'), ada = el.getAttribute('data-adel'), adn = ((S.full[adp] && S.full[adp].assets) || []).filter(function (x) { return String(x.id) === ada; })[0];
 			if (!confirm('Delete ' + (adn ? adn.name : 'this file') + ' from this project? This removes the file for good.')) { return; }
