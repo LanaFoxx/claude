@@ -6,6 +6,8 @@
 (function () {
   function open() {
     if (window.innerWidth < 1200) { return; }
+    // Login, forgot-password and sign-up pages have no menu: keep the login panel at the far left.
+    if (document.body && document.body.classList.contains('pagelayout-login')) { return; }
     var w = document.getElementById('page-wrapper');
     if (w && !w.classList.contains('l-with-sidebar')) { w.classList.add('l-with-sidebar'); }
   }
