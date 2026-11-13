@@ -897,7 +897,7 @@
    "isInner": false,
    "settings": {
     "_title": "What We Do",
-    "content_width": "full",
+    "content_width": "boxed",
     "flex_direction": "column",
     "flex_gap": {
      "column": "0",
@@ -927,24 +927,48 @@
      "unit": "px",
      "size": 0
     },
-    "width": {
-     "unit": "%",
-     "size": 100,
+    "boxed_width": {
+     "unit": "px",
+     "size": 1280,
      "sizes": []
     },
     "padding": {
      "unit": "px",
      "top": "0",
-     "right": "0",
+     "right": "48",
      "bottom": "0",
-     "left": "0",
-     "isLinked": true
+     "left": "48",
+     "isLinked": false
+    },
+    "padding_laptop": {
+     "unit": "px",
+     "top": "0",
+     "right": "48",
+     "bottom": "0",
+     "left": "48",
+     "isLinked": false
+    },
+    "padding_tablet": {
+     "unit": "px",
+     "top": "0",
+     "right": "32",
+     "bottom": "0",
+     "left": "32",
+     "isLinked": false
+    },
+    "padding_mobile": {
+     "unit": "px",
+     "top": "0",
+     "right": "20",
+     "bottom": "0",
+     "left": "20",
+     "isLinked": false
     },
     "html_tag": "section",
     "_element_id": "tn-wwd",
     "background_background": "classic",
     "background_color": "#14110E",
-    "custom_css": "/* Both titles on one line and the same size: they scale together with the viewport. */\n#tn-wwd .tn-wwd-title .elementor-heading-title{white-space:nowrap;font-size:clamp(24px, 2.5vw, 40px) !important;}\n@media (max-width:1040px){\n  #tn-wwd .tn-wwd-grid{grid-template-columns:minmax(0,1fr) !important;}\n  #tn-wwd .tn-wwd-title .elementor-heading-title{font-size:clamp(30px, 4.6vw, 40px) !important;}\n}\n@media (max-width:760px){#tn-wwd .tn-wwd-title .elementor-heading-title{white-space:normal;}}\n#tn-wwd .tn-wwd-links .elementor-icon-list-items{display:grid !important;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:32px;}\n#tn-wwd .tn-wwd-links .elementor-icon-list-item{margin:0 !important;padding:0 !important;}\n#tn-wwd .tn-wwd-links .elementor-icon-list-item::after{display:none !important;}\n#tn-wwd .tn-wwd-links .elementor-icon-list-item > a{display:flex;align-items:center;gap:10px;min-height:44px;}\n#tn-wwd .tn-wwd-links .elementor-icon-list-item > a::before{content:'→';color:#C68B4E;font-weight:400;}\n@media (max-width:520px){#tn-wwd .tn-wwd-links .elementor-icon-list-items{grid-template-columns:1fr;}}"
+    "custom_css": "/* Both titles on one line and the same size: they scale together with the viewport. */\n#tn-wwd .tn-wwd-title .elementor-heading-title{white-space:nowrap;font-size:min(40px, calc(((min(100vw, 1376px) - 96px) / 2 - 112px) / 16.2)) !important;}\n@media (max-width:1359px){#tn-wwd .tn-wwd-title .elementor-heading-title{font-size:min(40px, calc(((100vw - 96px) / 2 - 96px) / 16.2)) !important;}}\n@media (max-width:1040px){\n  #tn-wwd .tn-wwd-grid{grid-template-columns:minmax(0,1fr) !important;}\n  #tn-wwd .tn-wwd-title .elementor-heading-title{font-size:clamp(30px, 4.6vw, 40px) !important;}\n}\n@media (max-width:760px){#tn-wwd .tn-wwd-title .elementor-heading-title{white-space:normal;}}\n#tn-wwd .tn-wwd-links .elementor-icon-list-items{display:grid !important;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:32px;}\n#tn-wwd .tn-wwd-links .elementor-icon-list-item{margin:0 !important;padding:0 !important;}\n#tn-wwd .tn-wwd-links .elementor-icon-list-item::after{display:none !important;}\n#tn-wwd .tn-wwd-links .elementor-icon-list-item > a{display:flex;align-items:center;gap:10px;min-height:44px;}\n#tn-wwd .tn-wwd-links .elementor-icon-list-item > a::before{content:'→';color:#C68B4E;font-weight:400;}\n@media (max-width:520px){#tn-wwd .tn-wwd-links .elementor-icon-list-items{grid-template-columns:1fr;}}"
    },
    "elements": [
     {
@@ -1051,7 +1075,7 @@
        "unit": "px",
        "size": 0
       },
-      "css_classes": "tn-wwd-grid"
+      "css_classes": "tn-wwd-grid tn-match-lines"
      },
      "elements": [
       {
@@ -1097,26 +1121,26 @@
         },
         "padding": {
          "unit": "px",
-         "top": "72",
-         "right": "72",
-         "bottom": "72",
-         "left": "72",
+         "top": "56",
+         "right": "56",
+         "bottom": "56",
+         "left": "56",
          "isLinked": true
         },
         "padding_laptop": {
          "unit": "px",
-         "top": "65",
-         "right": "65",
-         "bottom": "65",
-         "left": "65",
+         "top": "48",
+         "right": "48",
+         "bottom": "48",
+         "left": "48",
          "isLinked": true
         },
         "padding_tablet": {
          "unit": "px",
-         "top": "49",
-         "right": "49",
-         "bottom": "49",
-         "left": "49",
+         "top": "44",
+         "right": "44",
+         "bottom": "44",
+         "left": "44",
          "isLinked": true
         },
         "padding_mobile": {
@@ -1533,26 +1557,26 @@
         },
         "padding": {
          "unit": "px",
-         "top": "72",
-         "right": "72",
-         "bottom": "72",
-         "left": "72",
+         "top": "56",
+         "right": "56",
+         "bottom": "56",
+         "left": "56",
          "isLinked": true
         },
         "padding_laptop": {
          "unit": "px",
-         "top": "65",
-         "right": "65",
-         "bottom": "65",
-         "left": "65",
+         "top": "48",
+         "right": "48",
+         "bottom": "48",
+         "left": "48",
          "isLinked": true
         },
         "padding_tablet": {
          "unit": "px",
-         "top": "49",
-         "right": "49",
-         "bottom": "49",
-         "left": "49",
+         "top": "44",
+         "right": "44",
+         "bottom": "44",
+         "left": "44",
          "isLinked": true
         },
         "padding_mobile": {

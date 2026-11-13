@@ -289,3 +289,8 @@ Container `Seasonal Offer`: change the H2 to **Talk to us about your project** a
   - Padding is 72 / 65 / 49 / 40px top and bottom, 72 / 65 / 49 / 20px sides; gap below the photo is 40 / 36 / 32 / 28px.
   - The one-line matching-title rule is unchanged and was re-checked from 1920 to 600px.
   - The Staining photo is the fence. The Painting slot keeps its "Photo: finished interior" label until a photo arrives.
+- **What We Do width:** the section is now Boxed 1280 with the hero's side padding (48 / 48 / 32 / 20), so it lines up exactly with the hero content (80–1360 at 1440).
+  - **Half padding:** 56 / 48 / 44 / 40px.
+  - **Titles:** both share a size computed from the half's content width, `min(40px, ((min(100vw,1376px) - 96px) / 2 - 112px) / 16.2)` (with a laptop variant). That gives about 33px at 1440, still one line and matching.
+  - **Paragraphs:** they also match line for line side by side. The header typography helper gives `.tn-match-lines` groups (the What We Do grid) equal line counts by narrowing the shorter paragraph. Results: 5/5 at 1920–1360 and 6/6 at 1100. Stacked layouts are left alone.
+- **Typography helper:** now re-runs after web fonts finish loading and on window load (plus once more 1s later), so first-load layouts are balanced too.

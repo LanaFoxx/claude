@@ -417,12 +417,31 @@ NO_WIDOWS_JS = """<script>
       if (lineWidths(el).length > n) lo = mid; else hi = mid; }
     el.style.maxWidth = Math.ceil(hi) + 'px';
   }
+  /* Side-by-side paragraphs in a .tn-match-lines group get the same line count: the shorter
+     one is narrowed until it wraps to as many lines as the longest. */
+  function matchLines(g){
+    var ps = [].slice.call(g.querySelectorAll('.elementor-widget-text-editor p'));
+    if (ps.length < 2) return;
+    var tops = ps.map(function(p){ return Math.round(p.getBoundingClientRect().top); });
+    if (Math.max.apply(null, tops) - Math.min.apply(null, tops) > 4) return; /* stacked: nothing to match */
+    var counts = ps.map(function(p){ return lineWidths(p).length; }), target = Math.max.apply(null, counts);
+    ps.forEach(function(p, i){
+      if (counts[i] >= target) return;
+      var hi = p.getBoundingClientRect().width, lo = hi * 0.5;
+      while (hi - lo > 2) { var mid = (lo + hi) / 2; p.style.maxWidth = mid + 'px';
+        if (lineWidths(p).length >= target) lo = mid; else hi = mid; }
+      p.style.maxWidth = Math.floor(lo) + 'px';
+    });
+  }
   function run(){
     document.querySelectorAll('.elementor-widget-text-editor p, .elementor-testimonial__text').forEach(glue);
     document.querySelectorAll('.elementor-widget-text-editor p').forEach(balance);
+    document.querySelectorAll('.tn-match-lines').forEach(matchLines);
   }
   var t; window.addEventListener('resize', function(){ clearTimeout(t); t = setTimeout(run, 150); });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(run);
+  if (document.fonts && document.fonts.addEventListener) document.fonts.addEventListener('loadingdone', function(){ clearTimeout(t); t = setTimeout(run, 50); });
+  window.addEventListener('load', function(){ run(); setTimeout(run, 1000); });
   if (document.readyState !== 'loading') run(); else document.addEventListener('DOMContentLoaded', run);
 })();
 </script>"""
@@ -873,7 +892,8 @@ WWD = [
 
 WWD_CSS = """
 /* Both titles on one line and the same size: they scale together with the viewport. */
-#tn-wwd .tn-wwd-title .elementor-heading-title{white-space:nowrap;font-size:clamp(24px, 2.5vw, 40px) !important;}
+#tn-wwd .tn-wwd-title .elementor-heading-title{white-space:nowrap;font-size:min(40px, calc(((min(100vw, 1376px) - 96px) / 2 - 112px) / 16.2)) !important;}
+@media (max-width:1359px){#tn-wwd .tn-wwd-title .elementor-heading-title{font-size:min(40px, calc(((100vw - 96px) / 2 - 96px) / 16.2)) !important;}}
 @media (max-width:1040px){
   #tn-wwd .tn-wwd-grid{grid-template-columns:minmax(0,1fr) !important;}
   #tn-wwd .tn-wwd-title .elementor-heading-title{font-size:clamp(30px, 4.6vw, 40px) !important;}
@@ -906,11 +926,12 @@ def build_what_we_do():
         photo = photo_slot(title + " / Photo", color, (440, 400, 380, 260), label, image=image)
         halves.append(container(title, [photo, content], html_tag="article", gap=(40, 36, 32, 28),
                                 background_background="classic", background_color=shade,
-                                padding=pads((72, 65, 49, 40), (72, 65, 49, 20), (72, 65, 49, 48),
-                                             (72, 65, 49, 20))))
+                                padding=pads((56, 48, 44, 40), (56, 48, 44, 20), (56, 48, 44, 48),
+                                             (56, 48, 44, 20))))
     return container("What We Do", [grid("What We Do / Halves", halves, cols=(2, 2, 1, 1), gap_col=0,
-                                         gap_row=0, css_classes="tn-wwd-grid")],
-                     top=True, html_tag="section", _element_id="tn-wwd",
+                                         gap_row=0, css_classes="tn-wwd-grid tn-match-lines")],
+                     top=True, boxed=True, html_tag="section", _element_id="tn-wwd",
+                     padding=pads(0, SIDE, 0, SIDE),
                      background_background="classic", background_color=CHARRED, custom_css=WWD_CSS)
 
 
