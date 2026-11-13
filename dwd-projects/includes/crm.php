@@ -183,34 +183,37 @@ function dwdc_save_contact( $id, $data ) {
 	} elseif ( isset( $data['name'] ) ) {
 		wp_update_post( array( 'ID' => $id, 'post_title' => $data['name'] ) );
 	}
-	// Starting the job on a lead: nothing's been paid yet, so the whole price is owed (not shown as "Paid").
-	if ( isset( $data['list'] ) && 'active' === $data['list'] && 'leads' === get_post_meta( $id, '_dwdc_list', true ) && ! isset( $data['balance'] ) && ! dwdc_is_upwork( $id, $data ) ) { // Upwork projects: Mike sets owed himself
-		$price = (float) preg_replace( '/[^\d.]/', '', (string) ( $data['price'] ?? get_post_meta( $id, '_dwdc_price', true ) ) );
-		$paid  = 0;
+	// What's owed follows the project price (Mike's rule), for every project including Upwork:
+	// Upwork projects owe the price after Upwork's 10% fee. Anything already paid is taken off.
+	// Only fills owed when it's blank (or follows a price change); an owed amount Mike types always wins.
+	$num     = function ( $v ) { return (float) preg_replace( '/[^\d.]/', '', (string) $v ); };
+	$net     = function ( $price ) use ( $id, $data ) { return dwdc_is_upwork( $id, $data ) ? round( $price * 0.9, 2 ) : $price; };
+	$paidNow = function () use ( $id, $num ) {
+		$p = 0;
 		foreach ( array( 'billed', 'stripe', 'paypal', 'manual' ) as $f ) {
-			$paid += (float) preg_replace( '/[^\d.]/', '', (string) get_post_meta( $id, '_dwdc_' . $f, true ) );
+			$p += $id ? $num( get_post_meta( $id, '_dwdc_' . $f, true ) ) : 0;
 		}
-		if ( $price > 0 && '' === (string) get_post_meta( $id, '_dwdc_balance', true ) ) {
-			$data['balance'] = (string) max( 0, round( $price - $paid, 2 ) );
+		return $p;
+	};
+	$listNow = (string) ( $data['list'] ?? ( $id ? get_post_meta( $id, '_dwdc_list', true ) : '' ) );
+	$isOpen  = in_array( $listNow, array( 'active', 'hold', 'limbo' ), true );
+	// 1. Start project on a lead, or a brand-new project: owed = price.
+	$starting = isset( $data['list'] ) && $isOpen && ( $is_new || 'leads' === get_post_meta( $id, '_dwdc_list', true ) );
+	if ( $starting && ! isset( $data['balance'] ) ) {
+		$price = $num( $data['price'] ?? ( $id ? get_post_meta( $id, '_dwdc_price', true ) : '' ) );
+		if ( $price > 0 && '' === (string) ( $id ? get_post_meta( $id, '_dwdc_balance', true ) : '' ) ) {
+			$data['balance'] = (string) max( 0, round( $net( $price ) - $paidNow(), 2 ) );
 		}
 	}
-	// Mike typed a new price (and didn't set owed himself): what's owed follows the price.
-	// Blank owed (or no price before) → owed = price − what's been paid; otherwise owed moves by the change in price.
-	if ( $id && isset( $data['price'] ) && ! isset( $data['balance'] ) && ! in_array( (string) ( $data['list'] ?? get_post_meta( $id, '_dwdc_list', true ) ), array( 'complete', 'archived' ), true ) ) {
-		$num  = function ( $v ) { return (float) preg_replace( '/[^\d.]/', '', (string) $v ); };
+	// 2. Price typed or changed on a project that isn't finished: owed follows it.
+	if ( $id && ! $is_new && isset( $data['price'] ) && ! isset( $data['balance'] ) && ! in_array( $listNow, array( 'complete', 'archived', 'archive', 'leads' ), true ) ) {
 		$newp = $num( $data['price'] );
 		$oldp = $num( get_post_meta( $id, '_dwdc_price', true ) );
 		$oldb = (string) get_post_meta( $id, '_dwdc_balance', true );
 		if ( $newp !== $oldp ) {
-			if ( '' === $oldb || $oldp <= 0 ) {
-				$paid = 0;
-				foreach ( array( 'billed', 'stripe', 'paypal', 'manual' ) as $f ) {
-					$paid += $num( get_post_meta( $id, '_dwdc_' . $f, true ) );
-				}
-				$data['balance'] = (string) max( 0, round( $newp - $paid, 2 ) );
-			} else {
-				$data['balance'] = (string) max( 0, round( $num( $oldb ) + ( $newp - $oldp ), 2 ) );
-			}
+			$data['balance'] = ( '' === $oldb || $oldp <= 0 )
+				? (string) max( 0, round( $net( $newp ) - $paidNow(), 2 ) )
+				: (string) max( 0, round( $num( $oldb ) + $net( $newp ) - $net( $oldp ), 2 ) );
 		}
 	}
 	// Moving a project to Completed stamps today's date so the Completed list sorts newest first.
