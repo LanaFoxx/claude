@@ -121,3 +121,10 @@ a.dd-tchip:hover { color: var(--text) !important; }
 	.dd-tgh.band { padding: 0 16px; }
 }
 @media (max-width: 767px) { .dd-wopen { display: none !important; } }
+
+/* Filters on the left, search on the right, one line (phone too) */
+@media (max-width: 767px) {
+	.dd-tdt .dd-seg { flex: none; order: 1; }
+	.dd-tdt .dd-tq { order: 2; flex: 1 1 0; min-width: 0; }
+	.dd-tdt .dd-wopen { display: none; }
+}

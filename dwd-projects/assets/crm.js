@@ -1245,8 +1245,8 @@
 		var lane = S.tlane || 'work';
 		var seg = function (v, l) { return '<button type="button" class="' + (V.seg === v ? 'on' : '') + '" data-tdseg="' + v + '">' + l + '</button>'; };
 		return '<div class="dd-tdt"><h1>To-dos<em>' + (wOpen.length + pOpen.length) + ' open</em></h1>'
-			+ '<label class="dd-input dd-tq">' + lu('search') + '<input type="search" data-tq placeholder="Search to-dos…" value="' + esc(V.q) + '" autocomplete="off" data-lpignore="true" data-1p-ignore></label>'
-			+ '<div class="dd-seg">' + seg('open', 'Open') + seg('done', 'Done') + seg('all', 'All') + '</div><a class="dd-btn secondary dd-wopen" href="/todo-widget/" target="_blank" rel="noopener" title="A small to-do window you can install and keep open on your desktop">' + lu('external-link', 14) + 'To-do window</a></div>'
+			+ '<div class="dd-seg">' + seg('open', 'Open') + seg('all', 'All') + seg('done', 'Done') + '</div>'
+			+ '<label class="dd-input dd-tq">' + lu('search') + '<input type="search" data-tq placeholder="Search to-dos…" value="' + esc(V.q) + '" autocomplete="off" data-lpignore="true" data-1p-ignore></label><a class="dd-btn secondary dd-wopen" href="/todo-widget/" target="_blank" rel="noopener" title="A small to-do window you can install and keep open on your desktop">' + lu('external-link', 14) + 'To-do window</a></div>'
 			+ '<div class="dd-seg dd-lanesw"><button type="button" class="' + (lane === 'work' ? 'on' : '') + '" data-tlane="work">Work</button><button type="button" class="' + (lane === 'personal' ? 'on' : '') + '" data-tlane="personal">Personal</button></div>'
 			+ '<div class="dd-lanes show-' + lane + '">' + tdLane('work', wOpen, wDone, V) + (P ? tdLane('personal', pOpen, pDone, V) : '<section class="dd-card dd-lane personal"><header><span class="dd-lt">' + lu('home', 16) + '</span><h2>Personal</h2></header><p class="dd-tnone">Loading…</p></section>') + '</div>';
 	}

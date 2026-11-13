@@ -584,3 +584,10 @@ input[type=date], input[type=datetime-local] { cursor: pointer; }
 	.dd-side .dd-grp-h { height: 36px; font-size: 14px !important; padding: 0 12px; }
 	.dd-side .dd-brand b { font-size: 21px; }
 }
+
+/* Phone menu: the whole menu scrolls as one list, so every section is reachable */
+@media (max-width: 767px) {
+	.dd-side { overflow-y: auto !important; -webkit-overflow-scrolling: touch; }
+	.dd-side .dd-navs { flex: none !important; overflow: visible !important; }
+	.dd-side .dd-side-f { padding-bottom: 24px; }
+}
