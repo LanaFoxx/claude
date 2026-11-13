@@ -153,7 +153,7 @@
 		api('/contact/' + id + '/payment', 'POST', { amount: amt, method: pm, date: DWDC.today, note: 'Marked paid' + (up ? ' · after Upwork fee (' + money(gross) + ' gross)' : '') })
 			.then(function () { return api('/contact/' + id, 'POST', { balance: '0', paymark: '' }); })
 			.then(function (x) { upsert(x); S.full[x.id] = x; return reload(); })
-			.then(function () { render(); toast(money(amt) + ' paid · added to this month'); })
+			.then(function () { render(); toast(up ? money(amt) + ' client paid · in Upwork until you tick In bank' : money(amt) + ' paid · added to this month'); })
 			.catch(function (er) { if (btn) { btn.disabled = false; } fail(er); });
 	}
 	// What a project will actually deposit: Upwork money arrives after Upwork's 10% fee.
@@ -161,8 +161,41 @@
 	function pendDeposit(list) { return list.filter(function (c) { return c.paymark === 'pending'; }).reduce(function (a, c) { return a + netOf(c); }, 0); }
 	/* 'Paid' only when there's a price or a payment; a project with no price yet says so. */
 	// Shown when nothing is owed: 'Paid' only if money was actually recorded; never just because a price is set.
-	function paidWord(c) { return num(c.billed) || num(c.stripe) || num(c.paypal) || num(c.manual) || (c.payments || []).some(function (x) { return x.status === 'paid'; }) ? 'Paid' : num(c.price) ? 'Unpaid' : 'No price yet'; }
+	function paidWord(c) { var uw = upOf(c); if (!num(c.billed) && !num(c.stripe) && !num(c.paypal) && !num(c.manual) && (num(uw.pend) || num(uw.avail))) { return 'In Upwork'; } return num(c.billed) || num(c.stripe) || num(c.paypal) || num(c.manual) || (c.payments || []).some(function (x) { return x.status === 'paid'; }) ? 'Paid' : num(c.price) ? 'Unpaid' : 'No price yet'; }
 	function owed(list) { return list.reduce(function (s, c) { return s + num(c.balance); }, 0); }
+	// Upwork money stages (Mike moves each payment himself): owed → pending in Upwork (5-day hold) → ready to withdraw → in bank.
+	function upOf(c) { return (c && c.up) || { pend: 0, avail: 0, pnext: '', items: [] }; }
+	function inBankOf(c) { return num(c.billed) + num(c.stripe) + num(c.paypal) + num(c.manual); }
+	function upTotals() {
+		var t = { pend: 0, avail: 0, pnext: '', items: [] };
+		S.contacts.forEach(function (c) { var u = upOf(c); t.pend += num(u.pend); t.avail += num(u.avail); if (u.pnext && (!t.pnext || u.pnext < t.pnext)) { t.pnext = u.pnext; } (u.items || []).forEach(function (x) { t.items.push({ c: c, x: x }); }); });
+		return t;
+	}
+	// Coloured bar + words: where a project's money sits.
+	function stageBar(c) {
+		var u = upOf(c), ow = num(c.balance), bank = inBankOf(c), pe = num(u.pend), av = num(u.avail), tot = ow + bank + pe + av;
+		if (!tot || !(pe || av || (bank && ow))) { return ''; }
+		var seg = function (v, cls, tip) { return v > 0 ? '<i class="' + cls + '" style="width:' + (v / tot * 100).toFixed(1) + '%" title="' + tip + ': ' + money(v) + '"></i>' : ''; };
+		var words = [pe ? money(pe) + ' pending' + (u.pnext ? ' · ' + fmt(u.pnext) : '') : '', av ? money(av) + ' ready to withdraw' : ''].filter(Boolean).join(' · ');
+		return '<span class="dd-sbar">' + seg(bank, 'b', 'In bank') + seg(av, 'a', 'Ready to withdraw') + seg(pe, 'p', 'Pending in Upwork') + seg(ow, 'o', 'Owed') + '</span>' + (words ? '<small class="dd-swords">' + words + '</small>' : '');
+	}
+	function upChip(x) {
+		if ((x.source || '') !== 'Upwork' && x.status !== 'held') { return x.status === 'paid' || !x.status ? '<em class="dd-schip b">In bank</em>' : ''; }
+		if (x.status === 'held') {
+			var free = new Date(Date.parse(String(x.date).slice(0, 10) + 'T12:00:00') + 5 * 864e5).toISOString().slice(0, 10);
+			return free > DWDC.today ? '<em class="dd-schip p">Pending in Upwork · available ' + fmt(free) + '</em>' : '<em class="dd-schip a">Ready to withdraw</em>';
+		}
+		return x.status === 'paid' ? '<em class="dd-schip b">In bank</em>' + (x.earned ? '<em class="dd-schip-s">client paid ' + fmt(x.earned) + '</em>' : '') : '';
+	}
+	// "In bank" checkbox for one Upwork payment, with a date row once ticked.
+	function bankChk(pid, i, x) {
+		if ((x.source || '') !== 'Upwork' || ['held', 'paid'].indexOf(x.status || 'paid') < 0) { return ''; }
+		var k = pid + ':' + i;
+		if (S.pbank === k) {
+			return '<span class="dd-bankf"><span>Reached your bank on</span><input type="date" data-pbankdate value="' + DWDC.today + '" max="' + DWDC.today + '"><button type="button" class="dd-btn primary sm" data-pbanksave="' + k + '">Save</button><button type="button" class="dd-btn ghost sm" data-pbankx>Cancel</button></span>';
+		}
+		return '<label class="dd-bankchk" title="Tick when this money has been transferred to your bank"><input type="checkbox" data-pbank="' + k + '"' + (x.status === 'paid' ? ' checked' : '') + '>In bank</label>';
+	}
 	function openTasks() { return S.tasks.filter(function (t) { return !t.done; }); }
 	function match(c) {
 		var q = S.q.toLowerCase().trim();
@@ -856,6 +889,13 @@
 			+ '<label class="dd-btn secondary sm dd-aup">' + lu('upload', 14) + (up ? 'Uploading ' + up + '…' : 'Upload') + '<input type="file" multiple hidden data-aup="' + c.id + '"></label></header>'
 			+ '<div class="dd-abody">' + grid + list + empty + '</div></section>';
 	}
+	function bankSet(key, bank, date) {
+		var pid = +key.split(':')[0], i = +key.split(':')[1];
+		api('/contact/' + pid + '/payment/' + i + '/bank', 'POST', { bank: bank ? 1 : 0, date: date || DWDC.today })
+			.then(function (x) { upsert(x); S.full[x.id] = x; S.pbank = null; return reload(); })
+			.then(function () { render(); toast(bank ? 'Marked in bank' + (date && date !== DWDC.today ? ' on ' + fmt(date) : '') + ' · counts in Made in ' + new Date((date || DWDC.today) + 'T12:00:00').toLocaleDateString('en-US', { month: 'long' }) : 'Moved back to “in Upwork”'); })
+			.catch(function (er) { S.pbank = null; render(); fail(er); });
+	}
 	function uploadAssets(pid, fl) {
 		var files = Array.prototype.slice.call(fl || []);
 		if (!files.length) { return; }
@@ -969,7 +1009,14 @@
 				return '<a href="#personal/spending" class="dd-bank" title="' + esc(BA.map(function (x) { return x.name + ' ••' + x.mask + ': ' + money2(bv(x)); }).join('\n')) + '"><span>Bank balance<small>' + (BK ? (BA.length ? 'Checking + savings · as of ' + when : 'No bank connected') : 'Loading…') + '</small></span><b>' + (BA.length ? money2(tot) : '—') + '</b>'
 					+ (BA.length ? '<button type="button" class="dd-ibtn sm" data-bankrefresh aria-label="Refresh balance" title="Get the latest balance">' + lu('repeat', 14) + '</button>' : '') + '</a>';
 			})()
-			+ '<a href="#money" data-owed><span>Total owed</span><b>' + money(owed(owingList())) + '</b></a>'
+			+ (function () {
+				var UT = upTotals(), MYh = S.money || {}, yh = DWDC.today.slice(0, 4), mh = +DWDC.today.slice(5, 7) - 1, mn2 = new Date(DWDC.today + 'T12:00:00').toLocaleDateString('en-US', { month: 'long' });
+				var bankM = MYh[yh] && MYh[yh].m ? Math.max(0, +MYh[yh].m[mh] || 0) : 0;
+				return '<a href="#money" data-owed><span>Owed<small>Not paid yet by clients</small></span><b>' + money(owed(owingList())) + '</b></a>'
+					+ '<a href="#money" data-upmoney><span>Pending in Upwork<small>' + (UT.pnext ? 'Next frees up ' + fmt(UT.pnext) : 'Nothing on hold') + '</small></span><b>' + money(UT.pend) + '</b></a>'
+					+ '<a href="#money" data-upmoney><span>Ready to withdraw<small>Available in Upwork now</small></span><b>' + money(UT.avail) + '</b></a>'
+					+ '<a href="#money" data-month="' + DWDC.today.slice(0, 7) + '"><span>In bank this month<small>Made in ' + mn2 + '</small></span><b>' + money(bankM) + '</b></a>';
+			})()
 			+ '<button type="button" class="dd-statsmore" data-statsmore aria-expanded="' + statsOpen + '"><span>' + (statsOpen ? 'Show less' : 'Show more') + '</span>' + lu('chevron-down', 14) + '</button>'
 			+ '<a class="more" href="#projects/active"><span>Active projects</span><b>' + by('active').length + '</b></a>'
 			+ '<a class="more" href="#hosting"><span>Hosting clients</span><b>' + hosting().length + '</b></a>'
@@ -1351,10 +1398,10 @@
 			+ '<span class="dd-pgrip" title="' + (mine ? 'Drag to move' : 'Switch to My order to drag') + '">' + lu('grip', 16) + '</span>'
 			+ '<span class="dd-pc nm">' + flagDot(c) + '<span class="dd-st"><span class="dd-l1"><a href="#client/' + c.id + '"><b>' + esc(c.name) + '</b></a>' + (c.markup ? '<a class="dd-mtag" href="' + esc(url(c.markup)) + '" target="_blank" rel="noopener">Markup</a>' : '') + '<span class="dd-mob-pill">' + ddPill('Active', 'success') + '</span></span>'
 			+ (site(c) ? '<a class="dd-dom" href="' + esc(url(c.website)) + '" target="_blank" rel="noopener">' + esc(site(c)) + '</a>' : '')
-			+ '<span class="dd-mob-meta">' + esc([k ? k.name : (c.person || ''), ow ? 'Owed ' + money(ow) : paidWord(c), dd ? 'Due ' + fmt(dd) : '', c.next ? 'Next: ' + c.next : ''].filter(Boolean).join(' · ')) + '</span></span></span>'
+			+ '<span class="dd-mob-meta">' + esc([k ? k.name : (c.person || ''), ow ? 'Owed ' + money(ow) : paidWord(c), num(upOf(c).pend) ? money(upOf(c).pend) + ' pending in Upwork' : '', num(upOf(c).avail) ? money(upOf(c).avail) + ' ready to withdraw' : '', dd ? 'Due ' + fmt(dd) : '', c.next ? 'Next: ' + c.next : ''].filter(Boolean).join(' · ')) + '</span></span></span>'
 			+ '<span class="dd-pc cl"><span>' + (k ? '<a href="#cl/' + k.id + '">' + esc(k.name) + '</a>' : esc(c.person || '—')) + '</span><small>' + (em ? '<a href="mailto:' + esc(em) + '" data-emailp="' + c.id + '">' + esc(em) + '</a>' : 'No email on file') + '</small></span>'
 			+ '<span class="dd-pc num">' + (num(c.price) ? money(c.price) : '<i>—</i>') + '</span>'
-			+ '<span class="dd-pc num owed">' + (ow ? money(ow) : '<em>' + paidWord(c) + '</em>') + '</span>'
+			+ '<span class="dd-pc num owed">' + (ow ? money(ow) + (num(upOf(c).pend) || num(upOf(c).avail) ? ' <small class="dd-owl">owed</small>' : '') : '<em>' + paidWord(c) + '</em>') + stageBar(c) + '</span>'
 			+ '<span class="dd-pc due ' + dueCls + '">' + (dd ? fmt(dd) : '<i>—</i>') + '</span>'
 			+ '<span class="dd-pc st">' + statusSelect(c) + '</span>'
 			+ '<span class="dd-pc nx" title="' + esc(c.next || '') + '">' + (c.next ? esc(c.next) : '<i>—</i>') + '</span>'
@@ -3156,11 +3203,13 @@
 		var pays = full ? (c.payments || []) : [];
 		var PM = ['Upwork', 'Stripe', 'Bank transfer', 'Check', 'PayPal'].concat(PAYS.filter(function (x) { return ['Upwork', 'Stripe', 'Bank transfer', 'Check', 'PayPal'].indexOf(x) < 0; }));
 		var logf = S.plog === c.id ? '<form class="pv3-logf dd-logf"><div class="dd-lgrid"><label><span>Amount</span><span class="dd-dol"><i>$</i><input name="amount" type="number" step="0.01" min="0.01" value="' + (ow ? ow : '') + '" required></span></label><label><span>Date</span><input name="date" type="date" value="' + T + '" required></label><label><span>Method</span><select name="method">' + PM.map(function (x) { return '<option' + (x === (c.pay_method || 'Upwork') ? ' selected' : '') + '>' + x + '</option>'; }).join('') + '</select></label></div>'
+			+ '<label class="dd-upst"' + ((c.pay_method || 'Upwork') === 'Upwork' ? '' : ' hidden') + '><span>Where’s the money?</span><select name="stage"><option value="upwork">Client paid · in Upwork (5-day hold)</option><option value="bank">Already transferred to my bank</option></select></label>'
 			+ '<label><span>Note</span><input name="note" placeholder="e.g. 50% deposit, final payment…"></label><div class="dd-pbtns end"><button type="button" class="dd-btn secondary" data-plogx>Cancel</button><button class="dd-btn primary pay">Save payment</button></div></form>' : '';
-		var foot = price ? money(paid) + ' of ' + money(price) + ' paid · ' + money(ow) + ' remaining' : '';
+		var uP = upOf(c), sumL = [ow ? money(ow) + ' owed' : '', num(uP.pend) ? money(uP.pend) + ' pending in Upwork' + (uP.pnext ? ' (available ' + fmt(uP.pnext) + ')' : '') : '', num(uP.avail) ? money(uP.avail) + ' ready to withdraw' : '', inBankOf(c) ? money(inBankOf(c)) + ' in bank' : ''].filter(Boolean);
+		var foot = (stageBar(c) ? '<span class="dd-pstg">' + stageBar(c).replace(/<small[\s\S]*$/, '') + '</span>' : '') + (sumL.length > 1 || num(uP.pend) || num(uP.avail) ? sumL.join(' · ') : price ? money(paid) + ' of ' + money(price) + ' paid · ' + money(ow) + ' remaining' : '');
 		var paysBox = card('k-pay', 'Payments', pays.length ? String(pays.length) : '', '<button type="button" class="dd-hlink" data-plog="' + c.id + '">+ Log payment</button>',
 			logf + (!full ? '<p class="dd-pempty">Loading…</p>' : pays.length ? pays.map(function (x, i) {
-				return '<div class="dd-py"><span class="dt">' + (x.date ? fmt(String(x.date).slice(0, 10)) : '—') + '</span><span class="mt">' + esc(x.source || '') + (x.status === 'held' ? ' · <b class="dd-held">Still in Upwork, not withdrawn</b>' : x.status && x.status !== 'paid' ? ' · ' + esc(x.status) : '') + (x.note ? '<small>' + esc(x.note) + '</small>' : '') + '</span><b>' + money2(x.amount).replace('.00', '') + '</b><button type="button" class="dd-ibtn sm dd-ptx" data-payrm="' + i + '" title="Remove payment" aria-label="Remove payment">' + lu('x', 14) + '</button></div>';
+				return '<div class="dd-py"><span class="dt">' + (x.date ? fmt(String(x.date).slice(0, 10)) : '—') + '</span><span class="mt">' + esc(x.source || '') + (x.status && ['paid', 'held'].indexOf(x.status) < 0 ? ' · ' + esc(x.status) : '') + '<span class="dd-schips">' + upChip(x) + '</span>' + (x.note ? '<small>' + esc(x.note) + '</small>' : '') + bankChk(c.id, i, x) + '</span><b>' + money2(x.amount).replace('.00', '') + '</b><button type="button" class="dd-ibtn sm dd-ptx" data-payrm="' + i + '" title="Remove payment" aria-label="Remove payment">' + lu('x', 14) + '</button></div>';
 			}).join('') + (foot ? '<p class="dd-pfoot">' + foot + '</p>' : '') : '<div class="dd-payempty"><span>' + lu('credit-card', 18) + '</span><b>No payments logged yet</b>' + (foot ? '<small>' + foot + '</small>' : '') + '</div>'));
 		var hosting = num(c.hosting) ? hostCard(c) : '';
 		return '<div class="dd-pp">' + head + strip
@@ -3469,6 +3518,18 @@
 		if (m.type === 'connects') {
 			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide">' + head('Upwork', 'Connects', 'spending') + connSpend() + '<div class="dwdc-farow end"><a class="dwdc-btn2" href="#money" data-close-modal>Open in Money Stats</a></div></div>';
 		}
+		if (m.type === 'upmoney') {
+			var UT = upTotals(), its = UT.items.slice().sort(function (a, b) { return a.x.free < b.x.free ? -1 : 1; });
+			var urow = function (o) {
+				var k2 = o.c.id + ':' + o.x.i, ready = o.x.free <= DWDC.today;
+				return '<div class="dwdc-mo-r dd-upr"><span class="d">' + (ready ? '<em class="dd-schip a">Ready</em>' : '<em class="dd-schip p">' + fmt(o.x.free) + '</em>') + '</span><span class="w"><b><a href="#client/' + o.c.id + '" data-close-modal>' + esc(o.c.name) + '</a></b><small>Client paid ' + fmt(o.x.date) + (o.x.note ? ' · ' + esc(o.x.note) : '') + '</small></span><b class="a">' + money2(o.x.amount).replace('.00', '') + '</b>'
+					+ (S.pbank === k2 ? bankChk(o.c.id, o.x.i, { source: 'Upwork', status: 'held' }) : '<label class="dd-bankchk"><input type="checkbox" data-pbank="' + k2 + '">In bank</label>') + '</div>';
+			};
+			var ubody = its.length ? '<div class="dwdc-mo-sum"><span>Pending in Upwork<b>' + money(UT.pend) + '</b></span><span>Ready to withdraw<b>' + money(UT.avail) + '</b></span>' + (UT.pnext ? '<span>Next frees up<b>' + fmt(UT.pnext) + '</b></span>' : '') + '</div>'
+				+ '<div class="dd-uplist">' + its.map(urow).join('') + '</div><p class="dwdc-mutp">Tick <b>In bank</b> when you’ve transferred it. It then counts in Made in that month. Nothing moves on its own.</p>'
+				: emptyRow('No client money is waiting in Upwork.');
+			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide">' + head('Money', 'In Upwork', money(UT.pend + UT.avail)) + ubody + '</div>';
+		}
 		if (m.type === 'owed') {
 			var ol = lsorted('owed', owingList().sort(function (a, b) { return num(b.balance) - num(a.balance); }));
 			var pdep = pendDeposit(ol), pN = ol.filter(function (c) { return c.paymark === 'pending'; }).length;
@@ -3601,6 +3662,7 @@
 				+ '<label class="wide"><span>Project</span><select name="project" class="dwdc-sel" required><option value="">Choose a project…</option>' + opts.map(function (c) { return '<option value="' + c.id + '"' + (c.id === m.project ? ' selected' : '') + '>' + esc(c.name + (clientName(c) && clientName(c) !== c.name ? ' · ' + clientName(c) : '') + (num(c.balance) ? ' · ' + money(c.balance) + ' owed' : '')) + '</option>'; }).join('') + '</select></label>'
 				+ inp('amount', 'Amount ($)', 'e.g. 1500') + '<label><span>Date</span><input name="date" type="date" value="' + esc(v.date || DWDC.today) + '"></label>'
 				+ '<label><span>Paid by</span><select name="method" class="dwdc-sel">' + ['Stripe', 'PayPal', 'Zelle', 'Upwork', 'Check', 'Cash', 'Bank transfer', 'Venmo', 'Other'].map(function (o) { return '<option>' + o + '</option>'; }).join('') + '</select></label>'
+				+ '<label class="wide dd-upst" hidden><span>Where’s the money?</span><select name="stage" class="dwdc-sel"><option value="upwork">Client paid · in Upwork (5-day hold)</option><option value="bank">Already transferred to my bank</option></select></label>'
 				+ inp('note', 'Note', 'e.g. Deposit, final payment, hosting', '', false)
 				+ '<label class="wide dwdc-chkl"><input type="checkbox" name="renew" value="1"' + (m.renew ? ' checked' : '') + '> This is a hosting renewal (moves the renewal date a year ahead)</label>'
 				+ '</div><p class="dwdc-mutp">It’s added to the project’s payment history and taken off what they owe.</p><div class="dwdc-farow end"><button type="button" class="dwdc-btn2" data-close-modal>Cancel</button><button class="dwdc-btn">Log payment</button></div></form>';
@@ -3777,6 +3839,9 @@
 			render(); return;
 		}
 		if ((el = t.closest('[data-ddrefresh]'))) { el.classList.add('spin'); el.disabled = true; location.reload(); return; }
+		if ((el = t.closest('[data-pbanksave]'))) { var bdi = el.parentNode.querySelector('[data-pbankdate]'); el.disabled = true; bankSet(el.getAttribute('data-pbanksave'), true, bdi && bdi.value); return; }
+		if (t.closest('[data-pbankx]')) { S.pbank = null; render(); return; }
+		if (t.closest('[data-upmoney]')) { e.preventDefault(); S.modal = { type: 'upmoney' }; render(); return; }
 		if ((el = t.closest('[data-adel]'))) {
 			var adp = +el.getAttribute('data-apid'), ada = el.getAttribute('data-adel'), adn = ((S.full[adp] && S.full[adp].assets) || []).filter(function (x) { return String(x.id) === ada; })[0];
 			if (!confirm('Delete ' + (adn ? adn.name : 'this file') + ' from this project? This removes the file for good.')) { return; }
@@ -4332,6 +4397,13 @@
 	document.addEventListener('input', function (e) { if (e.target && e.target.hasAttribute && e.target.hasAttribute('data-ptdraft') && S.modal) { S.modal.draft = e.target.value; e.target.style.height = ''; e.target.style.height = Math.min(140, e.target.scrollHeight) + 'px'; } });
 	document.addEventListener('keydown', function (e) { if (e.target && e.target.hasAttribute && e.target.hasAttribute('data-ptdraft') && e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); if (S.modal) { S.modal.draft = e.target.value; } ptSend(); } });
 	app.addEventListener('change', function (e) {
+		if (e.target.name === 'method' && e.target.form) { var ust = e.target.form.querySelector('.dd-upst'); if (ust) { ust.hidden = e.target.value !== 'Upwork'; } }
+		if (e.target.hasAttribute && e.target.hasAttribute('data-pbank')) {
+			var pbk = e.target.getAttribute('data-pbank');
+			if (e.target.checked) { S.pbank = pbk; render(); return; } // ask for the bank date first
+			e.target.disabled = true; bankSet(pbk, false);
+			return;
+		}
 		if (e.target.hasAttribute && e.target.hasAttribute('data-aup')) { uploadAssets(+e.target.getAttribute('data-aup'), e.target.files); e.target.value = ''; return; }
 		if (e.target.hasAttribute && e.target.hasAttribute('data-ppdate')) { S.ppDate = S.ppDate || {}; S.ppDate[e.target.getAttribute('data-ppdate')] = e.target.value; var pb2 = e.target.closest('.dd-tdate'); if (pb2) { pb2.classList.toggle('set', !!e.target.value); pb2.querySelector('span').textContent = e.target.value ? fmt(e.target.value) : 'Date'; } return; }
 		if (e.target.hasAttribute && e.target.hasAttribute('data-zsel')) { S.zoomSel = S.zoomSel || {}; S.zoomSel[e.target.getAttribute('data-zsel')] = e.target.value; return; }
@@ -4402,7 +4474,7 @@
 		}
 		if (f.classList.contains('pv3-logf')) {
 			var lid = route().id, lb = f.querySelector('.pay'); lb.disabled = true;
-			api('/contact/' + lid + '/payment', 'POST', { amount: data.amount, date: data.date, method: data.method, note: data.note })
+			api('/contact/' + lid + '/payment', 'POST', { amount: data.amount, date: data.date, method: data.method, note: data.note, stage: data.stage })
 				.then(function (x) { upsert(x); S.full[x.id] = x; S.plog = null; return reload(); })
 				.then(function () { render(); toast(money(data.amount) + ' payment saved'); }).catch(function (er) { lb.disabled = false; fail(er); });
 			return;

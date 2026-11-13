@@ -303,3 +303,40 @@
 .dd-arow .dd-adel:hover { color: #d03b3b; background: var(--surface-3, #e8ecf3); }
 .dd-aempty { margin: 0 !important; }
 @media (max-width: 767px) { .dd-pp-grid .k-assets { order: 3; margin: 0 !important; } }
+
+/* Upwork money stages */
+.dd-upst[hidden] { display: none !important; }
+.dd-sbar { display: flex; width: 100%; max-width: 140px; height: 5px; border-radius: 3px; overflow: hidden; background: var(--surface-3, #e8ecf3); margin: 5px 0 0 auto; }
+.dd-sbar i { display: block; height: 100%; }
+.dd-sbar .b { background: #22A45D; }
+.dd-sbar .a { background: #13A6EE; }
+.dd-sbar .p { background: #E8A33B; }
+.dd-sbar .o { background: #E8573B; opacity: .75; }
+.dd-swords { display: block; font-size: 11.5px; line-height: 1.3; color: var(--muted, #6b7280); margin-top: 3px; font-weight: 500; white-space: normal; }
+.dd-owl { font-size: 11px; color: var(--muted, #6b7280); font-weight: 500; }
+.dd-pc.owed .dd-sbar { margin-left: auto; }
+.dd-schips { display: inline-flex; flex-wrap: wrap; gap: 4px; margin-left: 6px; vertical-align: middle; }
+.dd-schip { font-style: normal; font-size: 11.5px; font-weight: 600; line-height: 1; padding: 4px 7px; border-radius: 999px; white-space: nowrap; }
+.dd-schip.p { background: rgba(232,163,59,.16); color: #A86A0F; }
+.dd-schip.a { background: rgba(19,166,238,.15); color: #0B76B8; }
+.dd-schip.b { background: rgba(34,164,93,.14); color: #1B7A45; }
+.dd-schip-s { font-style: normal; font-size: 11.5px; color: var(--muted, #6b7280); align-self: center; }
+[data-theme="dark"] .dd-schip.p, .dd-dark .dd-schip.p { color: #F2B865; }
+[data-theme="dark"] .dd-schip.a, .dd-dark .dd-schip.a { color: #5CC4F5; }
+[data-theme="dark"] .dd-schip.b, .dd-dark .dd-schip.b { color: #5FD08E; }
+.dd-bankchk { display: inline-flex; align-items: center; gap: 6px; margin-top: 6px; font-size: 13px; font-weight: 600; cursor: pointer; user-select: none; }
+.dd-bankchk input { width: 16px; height: 16px; accent-color: #22A45D; cursor: pointer; margin: 0; }
+.dd-py .dd-bankchk { display: flex; width: max-content; }
+.dd-bankf { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 6px; font-size: 13px; }
+.dd-bankf input[type=date] { height: 32px; padding: 0 8px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg); color: inherit; font: inherit; font-size: 13px; }
+.dd-pstg { display: block; margin-bottom: 6px; }
+.dd-pstg .dd-sbar { max-width: none; height: 7px; margin: 0; }
+.dd-upr { align-items: center; }
+.dd-upr .a { margin-left: auto; white-space: nowrap; }
+.dd-upr .dd-bankchk, .dd-upr .dd-bankf { margin: 0 0 0 12px; }
+.k-pay .dd-pfoot { padding: 10px 20px 14px !important; line-height: 1.5; }
+@media (max-width: 767px) { .k-pay .dd-pfoot { padding-left: 16px !important; padding-right: 16px !important; } }
+.dd-py .mt .dd-schips { display: flex; margin: 4px 0 2px; }
+.dd-py .mt .dd-schip { white-space: normal; line-height: 1.25; }
+.dd-bankchk { white-space: nowrap; flex: none; }
+.dd-upr .dd-bankchk { margin-top: 0; }

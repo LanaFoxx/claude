@@ -247,6 +247,7 @@ function dwds_upwork_import( $csv ) {
 		}
 	}
 	$out     = array( 'added' => 0, 'already' => 0, 'amount' => 0, 'costs' => 0, 'unmatched' => array() );
+	$twinAll = array();
 	$costs   = (array) get_option( 'dwdc_upwork_costs', array() );
 	$costRef = array();
 	foreach ( $costs as $c ) {
@@ -286,7 +287,10 @@ function dwds_upwork_import( $csv ) {
 				break;
 			}
 		}
-		if ( $dup ) {
+		if ( ! isset( $twinAll[ $pid ] ) ) {
+			$twinAll[ $pid ] = array();
+		}
+		if ( $dup || ( 'Refund to client' !== $t && dwds_manual_twin( $pays, $net, $d, $twinAll[ $pid ] ) ) ) {
 			$out['already']++;
 			continue;
 		}
@@ -483,7 +487,27 @@ function dwds_upwork_state( $pid, $ref, $date ) {
 	if ( isset( $on[ (string) $ref ] ) ) {
 		return array( 'paid', (string) $on[ (string) $ref ] );
 	}
-	return array( '1' === get_post_meta( $pid, '_dwdc_upwork_hold', true ) ? 'held' : 'paid', $date );
+	$start = (string) get_option( 'dwdc_stage_start', '' );
+	$fresh = '' !== $start && (string) $date >= $start;
+	return array( $fresh || '1' === get_post_meta( $pid, '_dwdc_upwork_hold', true ) ? 'held' : 'paid', $date );
+}
+
+/**
+ * A payment Mike logged by hand on Upwork that the Upwork file now also lists (same amount within $1, within
+ * 10 days): the hand-logged one stands and the file row is skipped, so nothing counts twice. $used tracks matches.
+ */
+function dwds_manual_twin( $pays, $amt, $date, &$used ) {
+	foreach ( (array) $pays as $k => $x ) {
+		if ( isset( $used[ $k ] ) || 'Upwork' !== ( $x['source'] ?? '' ) || preg_match( '/^\d+$/', (string) ( $x['ref'] ?? '' ) ) ) {
+			continue;
+		}
+		$d0 = (string) ( $x['earned'] ?? $x['date'] ?? '' );
+		if ( abs( (float) $x['amount'] - abs( $amt ) ) < 1 && $d0 && abs( strtotime( $d0 ) - strtotime( (string) $date ) ) <= 10 * 86400 ) {
+			$used[ $k ] = 1;
+			return true;
+		}
+	}
+	return false;
 }
 
 /** Put a project's Upwork payments on hold (true) or back to paid (false), keeping Paid in step. */
@@ -570,7 +594,7 @@ function dwds_upwork_rebuild() {
 		$oldFile = 0;
 		$keep    = array();
 		foreach ( $pays as $x ) {
-			if ( 'Upwork' === ( $x['source'] ?? '' ) && '' !== (string) ( $x['ref'] ?? '' ) ) {
+			if ( 'Upwork' === ( $x['source'] ?? '' ) && preg_match( '/^\d+$/', (string) ( $x['ref'] ?? '' ) ) ) {
 				if ( 'held' !== ( $x['status'] ?? '' ) ) { // held money was never counted in Paid
 					$oldFile += ( 'refunded' === ( $x['status'] ?? '' ) ? -1 : 1 ) * (float) $x['amount'];
 				}
@@ -578,7 +602,11 @@ function dwds_upwork_rebuild() {
 				$keep[] = $x;
 			}
 		}
-		$new = $by[ $pid ] ?? array();
+		$new  = $by[ $pid ] ?? array();
+		$used = array();
+		$new  = array_values( array_filter( $new, function ( $x ) use ( $keep, &$used ) {
+			return 'refunded' === $x['status'] || ! dwds_manual_twin( $keep, (float) $x['amount'], $x['date'], $used );
+		} ) );
 		if ( ! $new && ! $oldFile ) {
 			continue;
 		}
@@ -870,4 +898,11 @@ add_action( 'rest_api_init', function () {
 		}
 		return array( 'charges' => $out, 'error' => $j['error']['message'] ?? null );
 	} ) );
+} );
+
+// The day the Upwork money stages started: Upwork-file payments from this date on come in as "in Upwork".
+add_action( 'init', function () {
+	if ( '' === (string) get_option( 'dwdc_stage_start', '' ) ) {
+		update_option( 'dwdc_stage_start', current_time( 'Y-m-d' ), false );
+	}
 } );

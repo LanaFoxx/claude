@@ -81,6 +81,7 @@ function dwdc_contact( $post, $full = false ) {
 	}
 	$c['autopay'] = '1' === get_post_meta( $p->ID, '_dwdc_autopay', true );
 	$c['upwork_hold'] = '1' === get_post_meta( $p->ID, '_dwdc_upwork_hold', true ); // Upwork money not withdrawn yet
+	$c['up'] = dwdc_upwork_stages( $p->ID );
 	// Date of their most recent paid payment (Stripe, PayPal…), used to sort completed work.
 	$pays           = get_post_meta( $p->ID, '_dwdc_payments', true );
 	$c['last_paid'] = '';
@@ -1218,11 +1219,15 @@ add_action( 'rest_api_init', function () {
 		$note   = sanitize_text_field( (string) $r->get_param( 'note' ) );
 		$pays   = get_post_meta( $id, '_dwdc_payments', true );
 		$pays   = is_array( $pays ) ? $pays : array();
-		$pays[] = array( 'date' => $date, 'amount' => (string) $amt, 'source' => $method, 'ref' => 'Logged in Dream Desk', 'status' => 'paid', 'note' => $note );
+		// Upwork: client paid, so the money sits in Upwork (5-day hold, then ready to withdraw) until Mike ticks "In bank".
+		$inUp   = 'Upwork' === $method && 'bank' !== (string) $r->get_param( 'stage' );
+		$pays[] = array( 'date' => $date, 'amount' => (string) $amt, 'source' => $method, 'ref' => 'Upwork' === $method ? 'dd' . substr( md5( uniqid( '', true ) ), 0, 10 ) : 'Logged in Dream Desk', 'status' => $inUp ? 'held' : 'paid', 'note' => $note );
 		usort( $pays, function ( $a, $b ) { return strcmp( (string) ( $b['date'] ?? '' ), (string) ( $a['date'] ?? '' ) ); } );
 		update_post_meta( $id, '_dwdc_payments', $pays );
 		$field = array( 'Stripe' => 'stripe', 'PayPal' => 'paypal', 'Upwork' => 'billed' )[ $method ] ?? 'manual';
-		update_post_meta( $id, '_dwdc_' . $field, (string) round( (float) get_post_meta( $id, '_dwdc_' . $field, true ) + $amt, 2 ) );
+		if ( ! $inUp ) { // money still in Upwork isn't counted as received yet
+			update_post_meta( $id, '_dwdc_' . $field, (string) round( (float) get_post_meta( $id, '_dwdc_' . $field, true ) + $amt, 2 ) );
+		}
 		$bal = (float) preg_replace( '/[^\d.]/', '', (string) get_post_meta( $id, '_dwdc_balance', true ) );
 		if ( $bal > 0 ) {
 			update_post_meta( $id, '_dwdc_balance', (string) max( 0, round( $bal - $amt, 2 ) ) );
@@ -1241,9 +1246,59 @@ add_action( 'rest_api_init', function () {
 		}
 		$notes   = get_post_meta( $id, '_dwdc_notes', true );
 		$notes   = is_array( $notes ) ? $notes : array();
-		$notes[] = array( 'date' => current_time( 'mysql', true ), 'text' => 'Payment of $' . number_format( $amt, $amt == (int) $amt ? 0 : 2 ) . ' logged (' . $method . ( $note ? ', ' . $note : '' ) . ').' );
+		$notes[] = array( 'date' => current_time( 'mysql', true ), 'text' => 'Payment of $' . number_format( $amt, $amt == (int) $amt ? 0 : 2 ) . ' logged (' . $method . ( $note ? ', ' . $note : '' ) . ( $inUp ? ', in Upwork until transferred' : '' ) . ').' );
 		update_post_meta( $id, '_dwdc_notes', $notes );
 		wp_update_post( array( 'ID' => $id ) );
+		return dwdc_contact( $id, true );
+	} ) );
+
+	// "In bank" on one Upwork payment: ticked = Mike transferred it (counts as received on the bank date);
+	// unticked = back to "in Upwork". Only ever changes when Mike clicks.
+	register_rest_route( $ns, '/crm/contact/(?P<id>\d+)/payment/(?P<i>\d+)/bank', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
+		$id   = (int) $r['id'];
+		$i    = (int) $r['i'];
+		$pays = get_post_meta( $id, '_dwdc_payments', true );
+		if ( DWDC_CONTACT !== get_post_type( $id ) || ! is_array( $pays ) || ! isset( $pays[ $i ] ) || 'Upwork' !== ( $pays[ $i ]['source'] ?? '' ) ) {
+			return new WP_Error( 'dwdc_nf', 'Upwork payment not found. Refresh and try again.', array( 'status' => 404 ) );
+		}
+		$x    = $pays[ $i ];
+		$amt  = (float) preg_replace( '/[^\d.]/', '', (string) ( $x['amount'] ?? 0 ) );
+		$on   = (array) get_post_meta( $id, '_dwdc_upwork_paid_on', true );
+		$ref  = (string) ( $x['ref'] ?? '' );
+		$bill = (float) get_post_meta( $id, '_dwdc_billed', true );
+		$st   = (string) ( $x['status'] ?? 'paid' );
+		if ( $r->get_param( 'bank' ) ) {
+			if ( 'held' !== $st ) {
+				return dwdc_contact( $id, true );
+			}
+			$bd = preg_match( '/^\d{4}-\d{2}-\d{2}$/', (string) $r->get_param( 'date' ) ) ? (string) $r->get_param( 'date' ) : current_time( 'Y-m-d' );
+			$pays[ $i ]['status'] = 'paid';
+			$pays[ $i ]['earned'] = (string) ( $x['date'] ?? '' );
+			$pays[ $i ]['date']   = $bd;
+			if ( '' !== $ref ) {
+				$on[ $ref ] = $bd;
+			}
+			update_post_meta( $id, '_dwdc_billed', (string) round( $bill + $amt, 2 ) );
+			$msg = 'transferred to the bank';
+		} else {
+			if ( 'paid' !== $st ) {
+				return dwdc_contact( $id, true );
+			}
+			$pays[ $i ]['status'] = 'held';
+			if ( ! empty( $x['earned'] ) ) {
+				$pays[ $i ]['date'] = (string) $x['earned'];
+			}
+			unset( $pays[ $i ]['earned'] );
+			unset( $on[ $ref ] );
+			update_post_meta( $id, '_dwdc_billed', $bill - $amt > 0.004 ? (string) round( $bill - $amt, 2 ) : '' );
+			$msg = 'moved back to "in Upwork"';
+		}
+		usort( $pays, function ( $a, $b ) { return strcmp( (string) ( $b['date'] ?? '' ), (string) ( $a['date'] ?? '' ) ); } );
+		update_post_meta( $id, '_dwdc_payments', $pays );
+		update_post_meta( $id, '_dwdc_upwork_paid_on', $on );
+		$notes   = (array) get_post_meta( $id, '_dwdc_notes', true );
+		$notes[] = array( 'date' => current_time( 'mysql', true ), 'text' => 'Upwork payment of $' . number_format( $amt, $amt == (int) $amt ? 0 : 2 ) . ' ' . $msg . '.' );
+		update_post_meta( $id, '_dwdc_notes', array_values( array_filter( $notes, 'is_array' ) ) );
 		return dwdc_contact( $id, true );
 	} ) );
 
@@ -1261,10 +1316,12 @@ add_action( 'rest_api_init', function () {
 		update_post_meta( $id, '_dwdc_payments', $pays );
 		$field = array( 'Stripe' => 'stripe', 'PayPal' => 'paypal', 'Upwork' => 'billed' )[ (string) ( $p['source'] ?? '' ) ] ?? 'manual';
 		$cur   = (float) get_post_meta( $id, '_dwdc_' . $field, true );
-		update_post_meta( $id, '_dwdc_' . $field, $cur - $amt > 0 ? (string) round( $cur - $amt, 2 ) : '' );
+		if ( 'held' !== ( $p['status'] ?? 'paid' ) ) {
+			update_post_meta( $id, '_dwdc_' . $field, $cur - $amt > 0 ? (string) round( $cur - $amt, 2 ) : '' );
+		}
 		$price = (float) preg_replace( '/[^\d.]/', '', (string) get_post_meta( $id, '_dwdc_price', true ) );
 		$bal   = (float) preg_replace( '/[^\d.]/', '', (string) get_post_meta( $id, '_dwdc_balance', true ) );
-		if ( $price > 0 && ( $p['status'] ?? 'paid' ) === 'paid' ) {
+		if ( $price > 0 && in_array( $p['status'] ?? 'paid', array( 'paid', 'held' ), true ) ) {
 			update_post_meta( $id, '_dwdc_balance', (string) min( $price, round( $bal + $amt, 2 ) ) );
 		}
 		$notes   = (array) get_post_meta( $id, '_dwdc_notes', true );
@@ -1512,6 +1569,37 @@ function dwdc_vars( $mode = 'admin' ) {
 		$v['logout'] = html_entity_decode( wp_logout_url( home_url( '/desk/' ) ) );
 	}
 	return $v;
+}
+
+/**
+ * Upwork money stages for one project (Mike moves each payment by hand; nothing here changes money):
+ * a payment with status "held" is client-paid money still in Upwork. It's "pending" until 5 days after the
+ * payment date, then "available" (ready to withdraw). "paid" means Mike marked it transferred to the bank.
+ */
+function dwdc_upwork_stages( $id ) {
+	$out   = array( 'pend' => 0, 'avail' => 0, 'pnext' => '', 'items' => array() );
+	$pays  = get_post_meta( $id, '_dwdc_payments', true );
+	$today = current_time( 'Y-m-d' );
+	foreach ( is_array( $pays ) ? $pays : array() as $i => $x ) {
+		if ( 'held' !== ( $x['status'] ?? '' ) ) {
+			continue;
+		}
+		$amt  = round( (float) preg_replace( '/[^\d.]/', '', (string) ( $x['amount'] ?? 0 ) ), 2 );
+		$d    = (string) ( $x['date'] ?? '' );
+		$free = $d ? gmdate( 'Y-m-d', strtotime( $d . ' +5 days' ) ) : $today;
+		if ( $free > $today ) {
+			$out['pend'] += $amt;
+			if ( '' === $out['pnext'] || $free < $out['pnext'] ) {
+				$out['pnext'] = $free;
+			}
+		} else {
+			$out['avail'] += $amt;
+		}
+		$out['items'][] = array( 'i' => $i, 'amount' => $amt, 'date' => $d, 'free' => $free, 'note' => (string) ( $x['note'] ?? '' ) );
+	}
+	$out['pend']  = round( $out['pend'], 2 );
+	$out['avail'] = round( $out['avail'], 2 );
+	return $out;
 }
 
 /**
