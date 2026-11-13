@@ -1002,7 +1002,7 @@ function dwdr_article_sections( $html ) {
 		}
 		if ( $i === $st_at ) {
 			$out .= '<section data-theme="dark" data-nocta="1" class="dwr-asec dwr-astats"><div class="dwr-ainner"><span class="dwr-eyebrow"><i></i>Why business owners hire me</span>'
-				. '<div class="dwr-results dwr-ratings"><div><b>200+</b><span>websites designed and built by me, not a team</span></div><div><b>4.9</b><span class="dwr-rsub"><i>★★★★★</i></span><span>average rating on Google</span></div><div><b>95+</b><span>Google PageSpeed score on every site I build</span></div></div></div></section>';
+				. '<div class="dwr-results dwr-ratings"><div><b>500+</b><span>websites designed and built by me, not a team</span></div><div><b>4.9</b><span class="dwr-rsub"><i>★★★★★</i></span><span>average rating on Google</span></div><div><b>95+</b><span>Google PageSpeed score on every site I build</span></div></div></div></section>';
 		}
 	}
 	// 3. Closing thought

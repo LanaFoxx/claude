@@ -15,7 +15,7 @@ function dwdp_local_pages() {
 			'state'  => 'NC',
 			'title'  => 'Charlotte Web Design',
 			'seo'    => 'Charlotte Web Design | Custom WordPress Websites | Dream Web Digital',
-			'desc'   => 'Charlotte web designer building custom WordPress websites for small businesses. 5.0★ on Google, Top Rated Plus on Upwork, 200+ sites built. Same-day replies.',
+			'desc'   => 'Charlotte web designer building custom WordPress websites for small businesses. 5.0★ on Google, Top Rated Plus on Upwork, 500+ sites built. Same-day replies.',
 			'hoods'  => array( 'Uptown', 'South End', 'NoDa', 'Plaza Midwood', 'Dilworth', 'Myers Park', 'SouthPark', 'Ballantyne', 'University City', 'Steele Creek' ),
 			'towns'  => array( 'Matthews', 'Mint Hill', 'Huntersville', 'Cornelius', 'Davidson', 'Mooresville', 'Concord', 'Kannapolis', 'Gastonia', 'Belmont', 'Mount Holly', 'Indian Trail', 'Waxhaw', 'Monroe', 'Fort Mill, SC', 'Rock Hill, SC', 'Lake Norman' ),
 		),

@@ -25,7 +25,7 @@ $services = array(
 $why = array(
 	'You work directly with me, Michael, from the first call through launch. No sales team, no handoffs.',
 	'5.0★ on Google, 100% Job Success and Top Rated Plus on Upwork.',
-	'200+ websites built over 12+ years for small businesses, law firms, contractors, consultants and more.',
+	'500+ websites built over 12+ years for small businesses, law firms, contractors, consultants and more.',
 	'A flat quote up front, unlimited revisions and nothing goes live until you approve it.',
 	'Same-day replies by phone, text or email.',
 	'Two months of free support after launch and a lifetime workmanship warranty.',
@@ -58,7 +58,7 @@ get_header();
 					<a class="dwdp-btn" href="<?php echo esc_url( home_url( '/contact/' ) ); ?>">Get a free quote</a>
 					<?php if ( $tel ) : ?><a class="dwbp-ghost" href="tel:+1<?php echo esc_attr( $tel ); ?>">Call <?php echo esc_html( $phone ); ?></a><?php endif; ?>
 				</div>
-				<div class="dwlp-proof"><span>★★★★★ 5.0 on Google</span><span>100% Job Success · Upwork</span><span>Top Rated Plus</span><span>200+ websites built</span></div>
+				<div class="dwlp-proof"><span>★★★★★ 5.0 on Google</span><span>100% Job Success · Upwork</span><span>Top Rated Plus</span><span>500+ websites built</span></div>
 			</div>
 			<?php if ( $hero ) : ?>
 				<figure class="dwbp-hero-img dwlp-hero-img"><?php echo wp_get_attachment_image( $hero, 'full', false, array( 'alt' => 'Custom website designed by Dream Web Digital, shown on a laptop and phone', 'loading' => 'eager', 'fetchpriority' => 'high', 'sizes' => '(max-width: 900px) 92vw, 560px' ) ); // phpcs:ignore ?></figure>
