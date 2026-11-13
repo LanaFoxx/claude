@@ -34,8 +34,8 @@ add_action( 'init', function () {
 			'id' => $start, 'name' => 'Dream Desk To-dos', 'short_name' => 'To-dos', 'description' => 'Your Work and Personal to-do lists.',
 			'start_url' => $start, 'scope' => $start, 'display' => 'standalone', 'background_color' => '#0B0D12', 'theme_color' => '#0B0D12',
 			'icons' => array(
-				array( 'src' => $u . 'icon-192.png?v=2', 'sizes' => '192x192', 'type' => 'image/png', 'purpose' => 'any' ),
-				array( 'src' => $u . 'icon-512.png?v=2', 'sizes' => '512x512', 'type' => 'image/png', 'purpose' => 'any' ),
+				array( 'src' => $u . 'icon-192.png?v=3', 'sizes' => '192x192', 'type' => 'image/png', 'purpose' => 'any' ),
+				array( 'src' => $u . 'icon-512.png?v=3', 'sizes' => '512x512', 'type' => 'image/png', 'purpose' => 'any' ),
 			),
 		), JSON_UNESCAPED_SLASHES );
 		exit;
@@ -69,8 +69,8 @@ add_action( 'init', function () {
 <meta name="apple-mobile-web-app-title" content="To-dos">
 <title>To-dos · Dream Desk</title>
 <link rel="manifest" href="<?php echo esc_url( home_url( '/todo-widget/manifest.webmanifest' ) ); ?>">
-<link rel="icon" href="<?php echo esc_url( $u . 'favicon-32.png?v=2' ); ?>" sizes="32x32">
-<link rel="apple-touch-icon" href="<?php echo esc_url( $u . 'apple-touch-icon.png?v=2' ); ?>">
+<link rel="icon" href="<?php echo esc_url( $u . 'favicon-32.png?v=3' ); ?>" sizes="32x32">
+<link rel="apple-touch-icon" href="<?php echo esc_url( $u . 'apple-touch-icon.png?v=3' ); ?>">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
 <script>(function(){var t="dark";try{t=localStorage.getItem("dreamdesk-theme")||"dark";}catch(e){}document.documentElement.setAttribute("data-theme",t);})();</script>
 <link rel="stylesheet" href="<?php echo esc_url( DWDP_URL . 'assets/dd-tokens.css?ver=' . DWDP_VERSION ); ?>">
@@ -155,8 +155,8 @@ function dwda_head( $title ) {
 <meta name="apple-mobile-web-app-title" content="Dream Desk">
 <title><?php echo esc_html( $title ); ?></title>
 <link rel="manifest" href="<?php echo esc_url( home_url( '/desk/manifest.webmanifest' ) ); ?>">
-<link rel="icon" href="<?php echo esc_url( $u . 'favicon-32.png?v=2' ); ?>" sizes="32x32">
-<link rel="apple-touch-icon" href="<?php echo esc_url( $u . 'apple-touch-icon.png?v=2' ); ?>">
+<link rel="icon" href="<?php echo esc_url( $u . 'favicon-32.png?v=3' ); ?>" sizes="32x32">
+<link rel="apple-touch-icon" href="<?php echo esc_url( $u . 'apple-touch-icon.png?v=3' ); ?>">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap">
 <script>(function(){var t="dark";try{t=localStorage.getItem("dreamdesk-theme")||"dark";}catch(e){}document.documentElement.setAttribute("data-theme",t);})();</script>
@@ -226,7 +226,7 @@ input[type=text]:focus,input[type=password]:focus{border-color:#13A6EE;box-shado
 <body>
 <main class="wrap">
 	<div class="brand">
-		<img src="<?php echo esc_url( $u . 'icon-192.png?v=2' ); ?>" alt="">
+		<img src="<?php echo esc_url( $u . 'icon-192.png?v=3' ); ?>" alt="">
 		<h1>Dream Desk</h1>
 		<p>Sign in to your workspace</p>
 	</div>
@@ -263,12 +263,12 @@ function dwda_manifest() {
 		'scope'            => $start,
 		'display'          => 'standalone',
 		'orientation'      => 'portrait',
-		'background_color' => '#FFFFFF',
+		'background_color' => '#0B1F3A',
 		'theme_color'      => '#0B203D',
 		'icons'            => array(
-			array( 'src' => $u . 'icon-192.png?v=2', 'sizes' => '192x192', 'type' => 'image/png', 'purpose' => 'any' ),
-			array( 'src' => $u . 'icon-512.png?v=2', 'sizes' => '512x512', 'type' => 'image/png', 'purpose' => 'any' ),
-			array( 'src' => $u . 'icon-maskable-512.png?v=2', 'sizes' => '512x512', 'type' => 'image/png', 'purpose' => 'maskable' ),
+			array( 'src' => $u . 'icon-192.png?v=3', 'sizes' => '192x192', 'type' => 'image/png', 'purpose' => 'any' ),
+			array( 'src' => $u . 'icon-512.png?v=3', 'sizes' => '512x512', 'type' => 'image/png', 'purpose' => 'any' ),
+			array( 'src' => $u . 'icon-maskable-512.png?v=3', 'sizes' => '512x512', 'type' => 'image/png', 'purpose' => 'maskable' ),
 		),
 	), JSON_UNESCAPED_SLASHES );
 	exit;
