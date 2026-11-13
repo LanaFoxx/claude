@@ -184,7 +184,7 @@ function contactForm(rows = 4) {
         { ...fld('sms_consent', 'acceptance', 'Text message consent (optional)', '100'), acceptance_text: 'Optional: Yes, I agree to receive text messages from Cabrera Torres Law Firm about my case, including case updates, appointment reminders, and document requests. Message frequency varies. Msg &amp; data rates may apply. Reply STOP to opt out or HELP for help. Consent is not required to hire us. See our <a href="/privacy-policy/" target="_blank" style="text-decoration:underline;color:#2B1D17;font-weight:600">Privacy Policy</a> and <a href="/sms-terms/" target="_blank" style="text-decoration:underline;color:#2B1D17;font-weight:600">SMS Terms</a>.' },
       ],
       show_labels: '', mark_required: '', input_size: 'md', button_text: 'Submit request', button_size: 'md', button_width: '', button_align: 'start',
-      submit_actions: ['email'], email_subject: 'New free case evaluation request – Cabrera Torres Law Firm',
+      submit_actions: ['save-to-database', 'email'], email_subject: 'New free case evaluation request – Cabrera Torres Law Firm',
       success_message: 'Thank you, we’ll be in touch shortly.',
       column_gap: px(16), row_gap: px(16),
       field_text_color: C.ink, field_background_color: C.light, field_border_color: C.line, field_border_width: box(1), field_border_radius: box(0),

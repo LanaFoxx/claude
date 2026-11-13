@@ -65,10 +65,11 @@ function leadForm(v, o = {}) {
       { ...hidden('lp_variant'), field_value: v.key },
     ],
     show_labels: '', mark_required: '', input_size: 'md', button_text: 'Request my free case review', button_size: 'lg', button_width: '100',
-    submit_actions: ['email', 'redirect'],
+    submit_actions: ['save-to-database', 'email', 'redirect'], // save-to-database: every lead is kept in WordPress even if an email fails
     email_subject: `New ad lead: [field id="accident_type"] (${v.key}) – Cabrera Torres Law Firm`,
-    redirect_to: '/thank-you/?eid=[field id="event_id"]&lp=[field id="lp_variant"]',
-    success_message: 'Thank you, we received your request.',
+    // Absolute URL: Elementor's redirect action silently ignores relative ones.
+    redirect_to: 'https://cabreratorres.com/thank-you/?eid=[field id="event_id"]&lp=[field id="lp_variant"]',
+    custom_messages: 'yes', success_message: 'Thank you, we received your request.',
     column_gap: px(12), row_gap: px(12),
     field_text_color: C.ink, field_background_color: '#FFFFFF', field_border_color: C.line, field_border_width: box(1), field_border_radius: box(0),
     ...L.typo('field_typography', 16, 400, { lh: 1.5 }),
