@@ -3258,7 +3258,8 @@
 	function editCard(c) {
 		var f = function (k, label, type, ph) { return '<label><span>' + label + '</span><input name="' + k + '" type="' + (type || 'text') + '" value="' + esc(c[k]) + '" placeholder="' + esc(ph || '') + '"></label>'; };
 		return '<form class="dwdc-card pad dwdc-editf"><div class="dwdc-cardh"><h2>Edit details</h2></div><div class="dwdc-fgrid">'
-			+ f('name', 'Client / business') + f('person', 'Contact person') + f('email', 'Email', 'email') + f('phone', 'Phone') + f('company', 'Company') + f('website', 'Website')
+			+ (clientOf(c) ? '<label><span>Client name</span><input name="client_name" value="' + esc(clientOf(c).name) + '" placeholder="The client this project belongs to"></label>' : '')
+			+ f('name', 'Project / business name') + f('person', 'Contact person') + f('email', 'Email', 'email') + f('phone', 'Phone') + f('company', 'Company') + f('website', 'Website')
 			+ '<label class="wide"><span>Project (current job)</span><input name="job" value="' + esc(c.job) + '" placeholder="e.g. Booking site redesign"></label>'
 			+ '<label class="wide"><span>Markup link</span><input name="markup" value="' + esc(c.markup) + '" placeholder="Paste the markup.io link"></label>'
 			+ '<label class="wide"><span>Next step (shows on the job card)</span><input name="next" value="' + esc(c.next) + '" placeholder="e.g. Send wireframes Friday"></label>'
@@ -4441,7 +4442,10 @@
 		} else if (f.classList.contains('dwdc-nextf')) {
 			save(r.id, { next: data.next }, 'Next step saved');
 		} else if (f.classList.contains('dwdc-editf')) {
-			save(r.id, data, 'Saved').then(function () { S.edit = false; render(); });
+			// "Client name" renames the linked client record; everything else saves on the project.
+			var ek = clientOf(S.full[r.id] || contact(r.id)), ecn = String(data.client_name || '').trim(); delete data.client_name;
+			var renameK = ek && ecn && ecn !== ek.name ? api('/client/' + ek.id, 'POST', { name: ecn }).then(function () { ek.name = ecn; }) : Promise.resolve();
+			renameK.then(function () { return save(r.id, data, 'Saved'); }).then(function () { S.edit = false; return reload(); }).then(render).catch(fail);
 		} else if (f.classList.contains('dwdc-logjob')) {
 			var c = S.full[r.id] || contact(r.id);
 			save(r.id, { jobs: (c.jobs || []).concat([data]) }, 'Job logged');
