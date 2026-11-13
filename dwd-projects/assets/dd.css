@@ -591,3 +591,6 @@ input[type=date], input[type=datetime-local] { cursor: pointer; }
 	.dd-side .dd-navs { flex: none !important; overflow: visible !important; }
 	.dd-side .dd-side-f { padding-bottom: 24px; }
 }
+
+/* Phone menu: space between the Dream Desk name and Home */
+@media (max-width: 767px) { .dd-side .dd-brand { margin-bottom: 25px !important; } }

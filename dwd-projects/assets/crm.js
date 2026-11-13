@@ -581,7 +581,13 @@
 	}
 
 	function appBanner() {
-		if (isInstalled()) { return ''; }
+		if (isInstalled()) {
+			// Inside the installed app (e.g. on the phone): on Home, a way to get Dream Desk onto the computer too.
+			if (route().view !== 'home') { return ''; }
+			var dl = DWDC.app || (location.origin + '/desk/');
+			return '<div class="dwdc-appb"><img src="' + esc(DWDC.appIcon) + '" alt=""><div><b>Install Dream Desk on your computer</b><span>Open ' + esc(dl.replace(/^https?:\/\//, '')) + ' in Chrome on your computer and click Install in the address bar.</span></div>'
+				+ '<button class="dwdc-appb-go" data-copy="' + esc(dl) + '">Copy link</button><button class="dwdc-appb-go dwdc-appb-alt" data-appmail>Email me the link</button></div>';
+		}
 		try { if (localStorage.getItem('dwdcAppOff2')) { return ''; } } catch (e) {} // new key: shows again for anyone who hid the old banner
 		// Install right here when the browser offers it; on a computer otherwise open /desk/, where Chrome shows its Install button.
 		var btn = INSTALL ? '<button class="dwdc-appb-go" data-appinstall>Install app</button>'
@@ -4126,6 +4132,12 @@
 		if (t.closest('[data-revclear]')) { S.revSel = {}; render(); return; }
 		if ((el = t.closest('[data-revsend]'))) { sendReviews(el); return; }
 		if (t.closest('[data-appinstall]')) { if (INSTALL) { INSTALL.prompt(); INSTALL.userChoice.then(function () { INSTALL = null; render(); }); } return; }
+		if ((el = t.closest('[data-appmail]'))) { // send the install link to Mike's own inbox, to open on the computer
+			el.disabled = true;
+			api('/send-email', 'POST', { to: 'mike@dreamwebdigital.com', subject: 'Install Dream Desk on this computer', text: 'Open this link on your computer in Chrome, sign in, then click the install icon at the right end of the address bar:\n\n' + (DWDC.app || location.origin + '/desk/') + '?install=1' })
+				.then(function () { toast('Link emailed to mike@dreamwebdigital.com'); }).catch(function (er) { el.disabled = false; fail(er); });
+			return;
+		}
 		if (t.closest('[data-appinfo]')) { S.modal = { type: 'app', vals: {} }; render(); return; }
 		if (t.closest('[data-appoff]')) { try { localStorage.setItem('dwdcAppOff2', '1'); } catch (er) {} render(); return; }
 		if ((el = t.closest('[data-ppladd]'))) { S.addPpl = el.getAttribute('data-ppladd') === '1' ? route().id : 0; render(); setTimeout(function () { var x = app.querySelector('.dwdc-pplf [name=name]'); if (x) { x.focus(); } }, 0); return; }
