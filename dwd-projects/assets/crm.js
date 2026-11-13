@@ -615,12 +615,14 @@
 	}
 
 	function appBanner() {
+		if (DWDC.appOff) { return ''; } // closed with the X or a swipe: never shown again
+		try { if (localStorage.getItem('dwdcAppOff3')) { return ''; } } catch (e) {}
 		if (isInstalled()) {
 			// Inside the installed app (e.g. on the phone): on Home, a way to get Dream Desk onto the computer too.
 			if (route().view !== 'home') { return ''; }
 			var dl = DWDC.app || (location.origin + '/desk/');
 			return '<div class="dwdc-appb"><img src="' + esc(DWDC.appIcon) + '" alt=""><div><b>Install Dream Desk on your computer</b><span>Open ' + esc(dl.replace(/^https?:\/\//, '')) + ' in Chrome on your computer and click Install in the address bar.</span></div>'
-				+ '<button class="dwdc-appb-go" data-copy="' + esc(dl) + '">Copy link</button><button class="dwdc-appb-go dwdc-appb-alt" data-appmail>Email me the link</button></div>';
+				+ '<button class="dwdc-appb-go" data-copy="' + esc(dl) + '">Copy link</button><button class="dwdc-appb-go dwdc-appb-alt" data-appmail>Email me the link</button><button class="dwdc-appb-x" data-appoff aria-label="Close" title="Close">' + ic('x', 16) + '</button></div>';
 		}
 		try { if (localStorage.getItem('dwdcAppOff2')) { return ''; } } catch (e) {} // new key: shows again for anyone who hid the old banner
 		// Install right here when the browser offers it; on a computer otherwise open /desk/, where Chrome shows its Install button.
@@ -629,6 +631,25 @@
 			: '<a class="dwdc-appb-go" href="' + esc(DWDC.app || '/desk/') + '?install=1" target="_blank" rel="noopener">Install on this computer</a><button class="dwdc-appb-go dwdc-appb-alt" data-appinfo>Get it on your phone</button>';
 		return '<div class="dwdc-appb"><img src="' + esc(DWDC.appIcon) + '" alt=""><div><b>Get the Dream Desk app</b><span>Open your clients, projects and payments from your desktop or your phone’s home screen.</span></div>' + btn + '<button class="dwdc-appb-x" data-appoff aria-label="Hide">' + ic('x', 16) + '</button></div>';
 	}
+	// Close the install banner for good (this device right away, and every device through the account).
+	function appOff() {
+		DWDC.appOff = true;
+		try { localStorage.setItem('dwdcAppOff2', '1'); localStorage.setItem('dwdcAppOff3', '1'); } catch (er) {}
+		render();
+		api('/app-off', 'POST', {}).catch(function () {});
+	}
+	// Swipe the banner sideways to close it.
+	(function () {
+		var sx = 0, sy = 0, el = null, dx = 0;
+		document.addEventListener('touchstart', function (e) { el = e.target.closest && e.target.closest('.dwdc-appb'); if (!el || e.target.closest('button,a')) { el = null; return; } sx = e.touches[0].clientX; sy = e.touches[0].clientY; dx = 0; el.style.transition = 'none'; }, { passive: true });
+		document.addEventListener('touchmove', function (e) { if (!el) { return; } dx = e.touches[0].clientX - sx; if (Math.abs(e.touches[0].clientY - sy) > Math.abs(dx)) { return; } el.style.transform = 'translateX(' + dx + 'px)'; el.style.opacity = String(Math.max(0.2, 1 - Math.abs(dx) / 300)); }, { passive: true });
+		document.addEventListener('touchend', function () {
+			if (!el) { return; }
+			var b = el; el = null; b.style.transition = 'transform .2s, opacity .2s';
+			if (Math.abs(dx) > 90) { b.style.transform = 'translateX(' + (dx > 0 ? 120 : -120) + '%)'; b.style.opacity = '0'; setTimeout(appOff, 200); }
+			else { b.style.transform = ''; b.style.opacity = ''; }
+		});
+	})();
 	function appModal() {
 		var ios = '<li><b>iPhone:</b> open <a href="' + esc(DWDC.app) + '">' + esc(DWDC.app.replace(/^https?:\/\//, '')) + '</a> in <b>Safari</b>, tap the <b>Share</b> button, then <b>Add to Home Screen</b>.</li>';
 		var and = '<li><b>Android:</b> open the link in <b>Chrome</b>, tap the <b>⋮</b> menu, then <b>Install app</b> (or <b>Add to Home screen</b>).</li>';
@@ -4311,7 +4332,7 @@
 			return;
 		}
 		if (t.closest('[data-appinfo]')) { S.modal = { type: 'app', vals: {} }; render(); return; }
-		if (t.closest('[data-appoff]')) { try { localStorage.setItem('dwdcAppOff2', '1'); } catch (er) {} render(); return; }
+		if (t.closest('[data-appoff]')) { appOff(); return; }
 		if ((el = t.closest('[data-ppladd]'))) { S.addPpl = el.getAttribute('data-ppladd') === '1' ? route().id : 0; render(); setTimeout(function () { var x = app.querySelector('.dwdc-pplf [name=name]'); if (x) { x.focus(); } }, 0); return; }
 		if ((el = t.closest('[data-pplmain]'))) { var pc = S.full[route().id] || contact(route().id), pl = peopleOf(pc); savePeople(pc, pl, pl[+el.getAttribute('data-pplmain')]); return; }
 		if ((el = t.closest('[data-pplrm]'))) { var rc = S.full[route().id] || contact(route().id), rl = peopleOf(rc), gone = rl[+el.getAttribute('data-pplrm')]; if (confirm('Remove ' + (gone.name || gone.email) + ' from this project?')) { rl.splice(+el.getAttribute('data-pplrm'), 1); savePeople(rc, rl); } return; }

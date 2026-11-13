@@ -1207,6 +1207,12 @@ add_action( 'rest_api_init', function () {
 		);
 	} ) );
 
+	// Install banner closed (X or swipe): hidden for this user on every device.
+	register_rest_route( $ns, '/crm/app-off', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function () {
+		update_user_meta( get_current_user_id(), 'dwdc_app_off', '1' );
+		return array( 'ok' => true );
+	} ) );
+
 	// Log a payment on a project: adds it to the payment history, counts it in the right total, lowers what's owed.
 	register_rest_route( $ns, '/crm/contact/(?P<id>\d+)/payment', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
 		$id  = (int) $r['id'];
@@ -1547,6 +1553,7 @@ function dwdc_vars( $mode = 'admin' ) {
 	);
 	$v['app']     = home_url( '/desk/' );
 	$v['appIcon'] = DWDP_URL . 'assets/app/icon-192.png?v=3';
+	$v['appOff']  = '1' === get_user_meta( get_current_user_id(), 'dwdc_app_off', true ); // install banner closed for good
 	$v['appQr']   = DWDP_URL . 'assets/app/qr-desk.png';
 	$v['mode']    = $mode;
 	$v['ver']     = DWDP_VERSION;
