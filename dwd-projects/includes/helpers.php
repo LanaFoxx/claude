@@ -271,9 +271,9 @@ add_filter( 'wp_check_filetype_and_ext', function ( $data, $file, $filename ) {
 	return $data;
 }, 10, 3 );
 
-/** Portfolio categories, in the order the filter tags show. */
+/** Portfolio categories, in the order the filter tags show (a tag only shows when a project is in it). */
 function dwdp_categories() {
-	return array( 'Software & SaaS', 'Professional Services', 'Real Estate', 'Education', 'Local Business' );
+	return array( 'Software & SaaS', 'Financial', 'Tax', 'Online Learning', 'Fitness & Health', 'Real Estate', 'Education', 'Professional Services', 'Local Business' );
 }
 
 /** A project's portfolio category: the one picked in the editor, else worked out from its industry label. */
@@ -282,21 +282,21 @@ function dwdp_category( $post_id ) {
 	if ( in_array( $c, dwdp_categories(), true ) ) {
 		return $c;
 	}
-	$i = strtolower( (string) dwdp_get( $post_id, 'industry' ) );
-	if ( preg_match( '/fitness|gym|salon|spa|retail|thrift|shop|store|vending|restaurant|food|cafe/', $i ) ) {
-		return 'Local Business';
-	}
-	if ( preg_match( '/software|saas|app|backend|platform|tech/', $i ) ) {
-		return 'Software & SaaS';
-	}
-	if ( preg_match( '/real estate|realty|realtor|property|mortgage/', $i ) ) {
-		return 'Real Estate';
-	}
-	if ( preg_match( '/school|course|education|training|academy|tutor/', $i ) ) {
-		return 'Education';
-	}
-	if ( preg_match( '/account|consult|legal|law|records|medical|insurance|finance|agency|marketing/', $i ) ) {
-		return 'Professional Services';
+	$i = strtolower( (string) dwdp_get( $post_id, 'industry' ) . ' ' . get_the_title( $post_id ) );
+	$map = array(
+		'Online Learning'       => '/moodle|online learning|e-?learning|\blms\b|learning platform/',
+		'Tax'                   => '/\btax/',
+		'Financial'             => '/account|financ|bookkeep|cpa\b|wealth|invest/',
+		'Fitness & Health'      => '/fitness|health|gym|wellness|yoga|trainer/',
+		'Software & SaaS'       => '/software|saas|\bapp\b|backend|platform|tech/',
+		'Real Estate'           => '/real estate|realty|realtor|property|mortgage/',
+		'Education'             => '/school|course|education|training|academy|tutor/',
+		'Professional Services' => '/consult|legal|law|records|medical|insurance|agency|marketing/',
+	);
+	foreach ( $map as $cat => $re ) {
+		if ( preg_match( $re, $i ) ) {
+			return $cat;
+		}
 	}
 	return 'Local Business';
 }
