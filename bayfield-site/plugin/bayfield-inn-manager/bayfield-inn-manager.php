@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Bayfield Inn Manager
  * Description: Simple dashboard for the Bayfield Inn team to edit restaurant menus, the photo gallery and merchandise. The site's Elementor pages show whatever is saved here.
- * Version: 1.9.1
+ * Version: 2.1.3
  * Author: Dream Web Digital
  * Requires at least: 6.0
  * Requires PHP: 7.4
@@ -10,7 +10,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'BI_MANAGER_VERSION', '1.9.1' );
+define( 'BI_MANAGER_VERSION', '2.1.3' );
 define( 'BI_MANAGER_URL', plugin_dir_url( __FILE__ ) );
 define( 'BI_MANAGER_DIR', plugin_dir_path( __FILE__ ) );
 define( 'BI_MANAGER_CAP', 'edit_pages' ); // Administrators and Editors.
@@ -65,7 +65,9 @@ add_action( 'admin_menu', function () {
 	add_menu_page( 'Bayfield Inn', 'Bayfield Inn', BI_MANAGER_CAP, 'bi-menus', 'bi_render_admin', 'dashicons-building', 3 );
 	add_submenu_page( 'bi-menus', 'Restaurant Menus', 'Restaurant Menus', BI_MANAGER_CAP, 'bi-menus', 'bi_render_admin' );
 	add_submenu_page( 'bi-menus', 'Gallery', 'Gallery', BI_MANAGER_CAP, 'bi-gallery', 'bi_render_admin' );
-	add_submenu_page( 'bi-menus', 'Merchandise', 'Merchandise', BI_MANAGER_CAP, 'bi-merch', 'bi_render_admin' );
+	if ( ! class_exists( 'WooCommerce' ) ) { // merchandise now lives in WooCommerce › Products
+		add_submenu_page( 'bi-menus', 'Merchandise', 'Merchandise', BI_MANAGER_CAP, 'bi-merch', 'bi_render_admin' );
+	}
 } );
 
 function bi_render_admin() {
@@ -189,6 +191,8 @@ require_once BI_MANAGER_DIR . 'booking.php';
 require_once BI_MANAGER_DIR . 'performance.php';
 require_once BI_MANAGER_DIR . 'visibility.php';
 require_once BI_MANAGER_DIR . 'hours.php';
+require_once BI_MANAGER_DIR . 'store.php';
+require_once BI_MANAGER_DIR . 'store-dashboard.php';
 require_once BI_MANAGER_DIR . 'admin-clean.php';
 require_once BI_MANAGER_DIR . 'analytics.php';
 require_once BI_MANAGER_DIR . 'dashboard.php';

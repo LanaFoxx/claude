@@ -83,8 +83,13 @@ function bi_dash_links() {
 		array( 'admin.php?page=bi-hours', 'clock', 'Restaurant hours', 'Opening hours shown on each restaurant page.', 'hours' ),
 		array( 'admin.php?page=bi-menus', 'food', 'Restaurant menus', 'Dishes, prices, and switching a menu on or off.' ),
 		array( 'admin.php?page=bi-gallery', 'format-gallery', 'Gallery', 'Photos and sections on the Gallery page.' ),
-		array( 'admin.php?page=bi-merch', 'cart', 'Merchandise', 'All items: edit, reorder, sold out.' ),
+		bi_store_on()
+			? array( 'admin.php?page=wc-orders', 'cart', 'Orders', 'See and fulfill store orders (merchandise and gift cards).' )
+			: array( 'admin.php?page=bi-merch', 'cart', 'Merchandise', 'All items: edit, reorder, sold out.' ),
 	);
+	if ( bi_store_on() ) {
+		$links[] = array( 'edit.php?post_type=product', 'products', 'Products', 'All merchandise: photos, sizes, prices, stock.' );
+	}
 	if ( current_user_can( 'list_users' ) ) {
 		$links[] = array( 'users.php', 'admin-users', 'Users', 'Add people who can log in, and choose what they can do.' );
 	}
@@ -458,7 +463,7 @@ add_action( 'admin_enqueue_scripts', function ( $hook ) {
 
 /* ============================================================ left menu */
 // Everyday items first; the rest fold under "More tools" (click to open, remembered per browser).
-const BI_MENU_MAIN = array( 'index.php', 'bi-menus', 'edit.php?post_type=page', 'upload.php', 'users.php', 'profile.php' );
+const BI_MENU_MAIN = array( 'index.php', 'bi-menus', 'woocommerce', 'edit.php?post_type=product', 'edit.php?post_type=page', 'upload.php', 'users.php', 'profile.php' );
 
 add_filter( 'custom_menu_order', '__return_true' );
 add_filter( 'menu_order', function ( $order ) {

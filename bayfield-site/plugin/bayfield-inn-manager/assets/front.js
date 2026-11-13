@@ -93,7 +93,34 @@
     dots.forEach(function (d, k) { d.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); stop(); show(k); }); });
   }
 
+  // Merchandise: size + quantity + Add to cart without leaving the page (WooCommerce AJAX).
+  function initBuy(form) {
+    if (form.dataset.biReady) return; form.dataset.biReady = '1';
+    var card = form.closest('.bi-product'), price = card && card.querySelector('.bi-product__price'), size = form.querySelector('.bi-buy__size'), msg = form.querySelector('.bi-buy__msg'), btn = form.querySelector('.bi-buy__btn');
+    if (size && price) size.addEventListener('change', function () {
+      var o = size.options[size.selectedIndex]; price.textContent = o && o.dataset.price ? o.dataset.price : price.dataset.priceDefault; size.classList.remove('is-invalid'); msg.textContent = '';
+    });
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var id = size ? size.value : form.querySelector('[name=product_id]').value;
+      if (!id) { size.classList.add('is-invalid'); size.focus(); msg.className = 'bi-buy__msg is-error'; msg.textContent = 'Please choose a size.'; return; }
+      var body = new URLSearchParams(); body.set('product_id', id); body.set('quantity', Math.max(1, parseInt(form.querySelector('[name=quantity]').value, 10) || 1));
+      btn.disabled = true; btn.textContent = 'Adding…'; msg.className = 'bi-buy__msg'; msg.textContent = '';
+      fetch('/?wc-ajax=add_to_cart', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: body.toString() })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (!d || d.error) throw new Error('That size just sold out, or the item is unavailable.');
+          Object.keys(d.fragments || {}).forEach(function (sel) { document.querySelectorAll(sel).forEach(function (el) { el.outerHTML = d.fragments[sel]; }); });
+          if (window.jQuery) jQuery(document.body).trigger('added_to_cart', [d.fragments, d.cart_hash]);
+          msg.className = 'bi-buy__msg is-ok'; msg.innerHTML = 'Added to your cart. <a href="/cart/">View cart &rarr;</a>';
+        })
+        .catch(function (er) { msg.className = 'bi-buy__msg is-error'; msg.textContent = er.message || 'Something went wrong. Please try again.'; })
+        .then(function () { btn.disabled = false; btn.textContent = 'Add to cart'; });
+    });
+  }
+
   function init(scope) {
+    (scope || document).querySelectorAll('[data-bi-buy]').forEach(initBuy);
     (scope || document).querySelectorAll('[data-bi-cycle]').forEach(initCycle);
     (scope || document).querySelectorAll('[data-bi-show]').forEach(initShow);
     (scope || document).querySelectorAll('[data-bi-tabs]').forEach(initTabs);

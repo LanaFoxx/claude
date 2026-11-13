@@ -236,6 +236,7 @@ selector .elementor-nav-menu--main .bi-menu-cam > a::after { display: none; }`,
       flex_direction: 'row', flex_align_items: 'center', flex_gap: gap(18), flex_gap_mobile: gap(10),
       flex_justify_content: 'flex-end', _flex_size: 'none', _flex_size_tablet: 'grow', _flex_size_mobile: 'grow', padding: box(0),
     }, [
+      widget('bi-cart-link', { _flex_size: 'none' }), // cart icon + count (Bayfield Inn Manager plugin)
       button('715.779.3363', 'tel:7157793363', 'text', { color: 'rgba(22,27,23,0.8)', size: 14, upper: false, pad: box(10, 0, 10, 0),
         settings: { hover_color: C.ink, hide_mobile: 'hidden-mobile', typography_letter_spacing: px(0) } }),
       button('Book a Room', EXT.book, 'dark', { size: 13.5, upper: false, pad: box(15, 26, 15, 26),

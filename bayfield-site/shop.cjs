@@ -1,8 +1,6 @@
-// Gift card store pages (placeholder content until WooCommerce is installed):
-// product page, cart, checkout and order received. Native Elementor widgets only.
-// When WooCommerce goes live: point WooCommerce › Settings › Advanced at the cart and
-// checkout pages, and swap these placeholder layouts for Elementor Pro's WooCommerce
-// widgets (Product template, Cart, Checkout, Purchase Summary) in the same design.
+// Store pages: gift card product page (form from the Bayfield Inn Manager plugin), and the
+// WooCommerce cart and checkout on /cart/ and /checkout/. The older static cart/checkout/
+// order-received layouts below (cart, checkout, orderReceived) are kept for reference only.
 const B = require('./build.cjs');
 const { C, SERIF, SANS, EXT, id, px, box, gap, auto, link, fa, typo, container, widget, stack, row, gridSettings, radial,
   eyebrow, heading, text, button, image } = B;
@@ -101,7 +99,6 @@ selector .elementor-field-group > .elementor-field-label { width: 100%; }`,
   });
   const col = (title, html) => stack([sub(title), small(html, { size: 15, lh: 1.7, settings: { paragraph_spacing: px(12) } })], { gap: 14 });
   return [
-    previewNote(),
     section({ background_background: 'classic', background_color: C.cream, ...pad(40, 110), ...boxed, flex_direction: 'column', flex_gap: gap(28) }, [
       small(`<a href="/">Home</a>  /  Gift Cards`, { size: 13, linkColor: C.green, settings: { link_hover_color: '#0F2113' } }),
       container({ ...gridSettings(['7fr 6fr', 1, 1]), content_width: 'full', padding: box(0), grid_gaps: gap(72, 40), grid_gaps_tablet: gap(40, 40), grid_align_items: 'start' }, [
@@ -121,7 +118,7 @@ selector .elementor-field-group > .elementor-field-label { width: 100%; }`,
         small('Spend $50, get a $10 bonus card for yourself. Spend $100, get $20.', { size: 14.5, color: C.cream, inline: true }),
       ]),
       widget('divider', { style: 'solid', weight: px(1), color: C.line, gap: px(4) }),
-          form,
+          widget('bi-gift-card', {}), // WooCommerce gift card form (Bayfield Inn Manager plugin)
           widget('icon-list', {
             view: 'traditional',
             icon_list: [['far fa-envelope', 'Mailed to you or the recipient as a physical card'], ['fas fa-bed', 'Choose a card for rooms at the Inn, or for dining'], ['fas fa-phone-alt', 'Questions? Call (715) 779-3363']]
@@ -301,11 +298,22 @@ function orderReceived(m) {
   ];
 }
 
+// WooCommerce cart / checkout on the site's own pages (Shortcode widget keeps Elementor header/footer).
+const storeBody = (code, cls) => section({ background_background: 'classic', background_color: C.cream, ...pad(28, 110), ...boxed, flex_direction: 'column' }, [
+  widget('shortcode', { shortcode: code, _css_classes: 'bi-store-wrap ' + cls }),
+]);
+const storeTitle = (title, active, cls) => section({
+  background_background: 'classic', background_color: C.cream, flex_direction: 'column', flex_align_items: 'center', flex_gap: gap(22),
+  padding: box(64, 20, 8, 20), padding_mobile: box(44, 20, 4, 20), css_classes: cls,
+}, [steps(active), heading(title, 'h1', [52, 44, 36], C.green, { align: 'center', ls: -1 })]);
+const wooCart = () => [storeTitle('Your cart', 1, 'bi-title-cart'), storeBody('[woocommerce_cart]', 'bi-cart')];
+const wooCheckout = () => [storeTitle('Checkout', 2, 'bi-title-checkout'), storeBody('[woocommerce_checkout]', 'bi-checkout')];
+
 const SHOP_PAGES = [
   { slug: 'gift-card', title: 'Bayfield Inn Gift Card', build: product },
-  { slug: 'cart', title: 'Cart', build: cart },
-  { slug: 'checkout', title: 'Checkout', build: checkout },
-  { slug: 'order-received', title: 'Order Received', build: orderReceived },
+  { slug: 'cart', title: 'Cart', build: wooCart },
+  { slug: 'checkout', title: 'Checkout', build: wooCheckout },
+  // The old 'order-received' preview page is retired: WooCommerce shows the thank-you on /checkout/.
 ];
 
 module.exports = { SHOP_PAGES, URL };
