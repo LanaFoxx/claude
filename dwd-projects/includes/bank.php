@@ -373,11 +373,6 @@ function dwdbk_insights() {
 			$pat[] = array( 't' => 'Direction:', 'x' => 'The last 3 full months averaged ' . $usd( $a ) . ' a month, ' . ( abs( $ch ) < 3 ? 'about the same as' : ( round( abs( $ch ) ) . '% ' . ( $ch > 0 ? 'more' : 'less' ) . ' than' ) ) . ' the 3 months before (' . $usd( $b ) . ').' );
 		}
 	}
-	$dsum = array_sum( $dow );
-	if ( $dsum > 0 ) {
-		$wk    = $dow[5] + $dow[6] + $dow[0];
-		$pat[] = array( 't' => 'Weekends:', 'x' => round( $wk / $dsum * 100 ) . '% of your restaurant, fun and shopping money (' . $usd( $wk ) . ' of ' . $usd( $dsum ) . ') is spent Friday to Sunday.' );
-	}
 	$ptot = array_sum( array_column( $plist, 'year' ) );
 	if ( $ptot > 0 && $spent > 0 ) {
 		$pat[] = array( 't' => 'Zelle:', 'x' => $usd( $ptot ) . ' went to people by Zelle, ' . round( $ptot / $spent * 100 ) . '% of everything that left your accounts.' );
