@@ -459,8 +459,12 @@ i.dd-flag { width: 10px; height: 10px; cursor: inherit; }
 .dd-tl-r.grp .dd-tl-c b { display: flex; align-items: center; gap: 6px; }
 .dd-tl-r.grp .dd-tl-c b .lu { color: var(--text-3); transition: transform .15s; }
 .dd-tl-r.grp.open .dd-tl-c b .lu { transform: rotate(180deg); }
-.dd-tl-kids { margin-left: 92px; border-left: 1px solid var(--border); padding-left: 4px; }
-.dd-tl-kids .dd-tl-r { grid-template-columns: 0 20px 1fr !important; padding: 8px 0; }
+.dd-tl-kids { margin-left: 0 !important; border-left: 0 !important; padding-left: 0 !important; }
+.dd-tl-kids .dd-tl-r { padding-left: 4px !important; }
+.dd-tl-kids .dd-tl-chk { margin: 2px 0 0 !important; }
+.dd-tl-kids .dd-tl-go { display: inline-flex; padding: 10px 4px 4px !important; margin: 0 !important; }
+.dd-tl-kids .dd-tl-r { grid-template-columns: 20px 1fr !important; padding: 8px 0; } /* time cell is hidden, so only checkbox + text */
+.dd-tl-kids .dd-tl-c small { display: block; }
 .dd-tl-kids .dd-tl-r .dd-tl-t { display: none; }
 .dd-tl-go { display: inline-flex; align-items: center; gap: 4px; margin: 6px 0 8px 24px; font-size: 13px; font-weight: 500; color: var(--accent-text) !important; }
 @media (max-width: 767px) { .dd-tl-kids { margin-left: 64px; } }
@@ -660,3 +664,13 @@ input[type=date], input[type=datetime-local] { cursor: pointer; }
 /* Lists: red New email pill next to a client or project name */
 .dd-mnew { margin-left: 8px; font-weight: 500; vertical-align: middle; flex: none; }
 .dd .dd-pill.dd-mnew { display: inline-flex !important; }
+
+/* Today's schedule: View to-dos + Open calendar links, overdue label */
+.dd-sched .dd-sched-links { display: flex; gap: 16px; align-items: center; margin-left: auto; }
+.dd-sched .dd-sched-links a { white-space: nowrap; }
+.dd-sched em.late { font-style: normal; color: var(--danger, #E8573B); font-weight: 600; }
+@media (max-width: 767px) {
+	.dd-sched > .dd-ch { flex-wrap: wrap; }
+	.dd-sched .dd-ch-t { flex: 1 1 0; min-width: 0; }
+	.dd-sched .dd-sched-links { flex: 0 0 100%; margin: 6px 0 0; gap: 18px; font-size: 14px; }
+}
