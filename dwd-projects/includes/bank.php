@@ -250,6 +250,9 @@ function dwdbk_insights( $side = '', $want = '' ) {
 			}
 			continue;
 		}
+		if ( $amt > 0 && preg_match( '/MASTERCARD|VISA|REWARDS|CREDIT CARD|BANKAMERICARD/i', (string) $t['acct'] ) ) {
+			continue; // a payment arriving on a credit card is your own money, not income
+		}
 		if ( preg_match( $inv, $u ) ) { // money put away is not money spent
 			if ( $win && $amt < 0 ) {
 				$invest += -$amt;

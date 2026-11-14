@@ -72,6 +72,16 @@ function dwdpl_sync( $fresh = false, $use = null, $min = 0 ) {
 	}
 	$added = 0;
 	$errors = array();
+	// One link per account: when the same bank is linked twice, the first link to bring an account keeps it and the other link's copy is skipped.
+	$ids   = array_column( $items, 'id' );
+	$owner = $fresh ? array() : array_filter( (array) get_option( 'dwdpl_owner', array() ), function ( $id ) use ( $ids ) { return in_array( $id, $ids, true ); } );
+	foreach ( $items as $it ) {
+		foreach ( (array) ( $it['accounts'] ?? array() ) as $an ) {
+			if ( ! $fresh && ! isset( $owner[ (string) $an ] ) ) {
+				$owner[ (string) $an ] = $it['id'];
+			}
+		}
+	}
 	foreach ( $items as $k => $it ) {
 		$cursor = (string) ( $it['cursor'] ?? '' );
 		$accts  = array();
@@ -88,6 +98,15 @@ function dwdpl_sync( $fresh = false, $use = null, $min = 0 ) {
 			foreach ( array_merge( (array) $r['added'], (array) $r['modified'] ) as $t ) {
 				if ( ! empty( $t['pending'] ) ) {
 					continue;
+				}
+				$an = (string) ( $accts[ $t['account_id'] ] ?? '' );
+				if ( '' !== $an ) {
+					if ( ! isset( $owner[ $an ] ) ) {
+						$owner[ $an ] = $it['id'];
+					}
+					if ( $owner[ $an ] !== $it['id'] ) {
+						continue; // another link already brings this account
+					}
 				}
 				$row = array(
 					'id'   => 'p' . substr( md5( $t['transaction_id'] ), 0, 15 ),
@@ -134,6 +153,7 @@ function dwdpl_sync( $fresh = false, $use = null, $min = 0 ) {
 	}
 	dwdbk_put( $d );
 	update_option( 'dwdpl_items', $items, false );
+	update_option( 'dwdpl_owner', $owner, false );
 	return array( 'added' => $added, 'errors' => $errors );
 }
 
