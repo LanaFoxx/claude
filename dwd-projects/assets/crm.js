@@ -894,6 +894,28 @@
 	}
 	// Assets: files kept with the project (photos, logos, fonts, zips). Drop files on the box or use Upload.
 	function fileSize(b) { b = +b || 0; return b > 1048576 ? (b / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(b / 1024)) + ' KB'; }
+	// Files the client added to the project's Google Drive folder (drive.php: /drive-files), shown in the Assets box.
+	function driveFiles(c) {
+		if (!c.drive) { return null; }
+		var D = S.drvF || (S.drvF = {}), B = S.drvBusy || (S.drvBusy = {});
+		if (!D[c.id] && !B[c.id]) { B[c.id] = 1; api('/contact/' + c.id + '/drive-files').then(function (x) { D[c.id] = x || { state: 'error', files: [] }; B[c.id] = 0; render(); }).catch(function () { D[c.id] = { state: 'error', files: [] }; B[c.id] = 0; render(); }); }
+		return D[c.id] || null;
+	}
+	function driveFilesHtml(c) {
+		var DF = driveFiles(c);
+		if (!c.drive) { return ''; }
+		var fresh = '<button type="button" class="dd-hlink" data-drvfresh="' + c.id + '">' + ((S.drvBusy || {})[c.id] ? 'Checking…' : 'Refresh') + '</button>';
+		var head = function (t) { return '<p class="dd-adrvh"><span>' + t + '</span>' + fresh + '</p>'; };
+		if (!DF) { return '<div class="dd-adrv">' + head('Checking the Drive folder…') + '</div>'; }
+		if (DF.state === 'update') { return '<div class="dd-adrv"><p class="dd-help">To show the files clients add to the Drive folder here, update the Drive script once: Connections → Google Drive → copy the script again, paste it over the old one at script.google.com, then Deploy → Manage deployments → Edit → New version → Deploy.</p></div>'; }
+		var F = DF.files || [];
+		if (!F.length) { return '<div class="dd-adrv">' + head(DF.state === 'error' ? 'Couldn’t check the Drive folder' : 'Nothing in the Drive folder yet') + '</div>'; }
+		var imgs = F.filter(function (x) { return x.thumb; }), files = F.filter(function (x) { return !x.thumb; });
+		return '<div class="dd-adrv">' + head('From the Drive folder · ' + F.length + ' file' + (F.length === 1 ? '' : 's') + (DF.state === 'error' ? ' (couldn’t refresh just now)' : ''))
+			+ (imgs.length ? '<div class="dd-agrid">' + imgs.map(function (x) { return '<div class="dd-aimg"><a href="' + esc(x.url) + '" target="_blank" rel="noopener" title="' + esc((x.path ? x.path + ' / ' : '') + x.name) + '"><img src="' + esc(x.thumb) + '" alt="' + esc(x.name) + '" loading="lazy" referrerpolicy="no-referrer"></a></div>'; }).join('') + '</div>' : '')
+			+ (files.length ? '<div class="dd-alist">' + files.map(function (x) { return '<div class="dd-arow"><span class="dd-aic">' + lu('file', 16) + '</span><a class="dd-anm" href="' + esc(x.url) + '" target="_blank" rel="noopener">' + esc((x.path ? x.path + ' / ' : '') + x.name) + '</a><small>' + (x.size ? fileSize(x.size) : '') + '</small><a class="dd-adl" href="' + esc(x.dl) + '" target="_blank" rel="noopener" title="Download" aria-label="Download ' + esc(x.name) + '">' + lu('download', 15) + '</a></div>'; }).join('') + '</div>' : '')
+			+ '</div>';
+	}
 	function assetsBox(c) {
 		var A = c.assets || [], imgs = A.filter(function (x) { return x.thumb; }), files = A.filter(function (x) { return !x.thumb; }), up = (S.assetUp || {})[c.id];
 		var del = function (x) { return '<button type="button" class="dd-adel" data-adel="' + x.id + '" data-apid="' + c.id + '" title="Delete ' + esc(x.name) + '" aria-label="Delete ' + esc(x.name) + '">' + lu('trash-2', 14) + '</button>'; };
@@ -904,11 +926,12 @@
 			return '<div class="dd-arow"><span class="dd-aic">' + lu('file', 16) + '</span><a class="dd-anm" href="' + esc(x.url) + '" download>' + esc(x.name) + '</a><small>' + fileSize(x.size) + '</small>'
 				+ '<a class="dd-adl" href="' + esc(x.url) + '" download title="Download" aria-label="Download ' + esc(x.name) + '">' + lu('download', 15) + '</a>' + del(x) + '</div>';
 		}).join('') + '</div>' : '';
-		var empty = A.length ? '' : '<p class="dd-help dd-aempty">No files yet. Drop photos, logos, fonts or zips here.</p>';
-		return '<section class="dd-card dd-pc2 k-assets" data-adrop="' + c.id + '"><header><h2>' + lu('paperclip', 16) + 'Assets</h2><span class="sum">' + (A.length ? A.length + ' file' + (A.length === 1 ? '' : 's') : 'None yet') + '</span><span class="dd-sp"></span>'
+		var nDrv = ((driveFiles(c) || {}).files || []).length;
+		var empty = A.length || c.drive ? '' : '<p class="dd-help dd-aempty">No files yet. Drop photos, logos, fonts or zips here.</p>';
+		return '<section class="dd-card dd-pc2 k-assets" data-adrop="' + c.id + '"><header><h2>' + lu('paperclip', 16) + 'Assets</h2><span class="sum">' + (A.length + nDrv ? (A.length + nDrv) + ' file' + (A.length + nDrv === 1 ? '' : 's') : 'None yet') + '</span><span class="dd-sp"></span>'
 			+ (c.drive ? '<a class="dd-btn ghost sm" href="' + esc(c.drive) + '" target="_blank" rel="noopener">' + lu('external-link', 14) + 'Drive folder</a>' : '')
 			+ '<label class="dd-btn secondary sm dd-aup">' + lu('upload', 14) + (up ? 'Uploading ' + up + '…' : 'Upload') + '<input type="file" multiple hidden data-aup="' + c.id + '"></label></header>'
-			+ '<div class="dd-abody">' + grid + list + empty + '</div></section>';
+			+ '<div class="dd-abody">' + grid + list + empty + driveFilesHtml(c) + '</div></section>';
 	}
 	// From Upwork: what the daily Upwork check found. Only suggestions; Mike clicks Log it or Dismiss.
 	// Home: unread emails from clients, across every client (clientmail.php: /mail-recent). Open, reply or start a new email here.
@@ -4397,6 +4420,7 @@
 		if ((el = t.closest('[data-sumgo]'))) { var sgo = +el.getAttribute('data-sumgo'); S.sumBusy = sgo; S.sumErr = ''; render(); api('/contact/' + sgo + '/summary', 'POST', {}).then(function (x) { if (S.full[sgo]) { S.full[sgo].ai_summary = x; } S.sumBusy = 0; render(); toast('Summary updated'); }).catch(function (er) { S.sumBusy = 0; S.sumErr = er && er.message; render(); }); return; }
 		if ((el = t.closest('[data-stgedit]'))) { S.stgEdit = +el.getAttribute('data-stgedit'); render(); var si3 = app.querySelector('.dd-stgf input'); if (si3) { si3.focus(); si3.select(); } return; }
 		if (t.closest('[data-stgcancel]')) { S.stgEdit = 0; render(); return; }
+		if ((el = t.closest('[data-drvfresh]'))) { var dfi = +el.getAttribute('data-drvfresh'); if ((S.drvBusy = S.drvBusy || {})[dfi]) { return; } S.drvBusy[dfi] = 1; render(); api('/contact/' + dfi + '/drive-files?fresh=1').then(function (x) { (S.drvF = S.drvF || {})[dfi] = x; S.drvBusy[dfi] = 0; render(); }).catch(function (e) { S.drvBusy[dfi] = 0; render(); fail(e); }); return; }
 		if ((el = t.closest('[data-stgclear]'))) { var sgc = +el.getAttribute('data-stgclear'); el.disabled = true; api('/contact/' + sgc, 'POST', { staging: '' }).then(function (x) { upsert(x); S.full[sgc] = x; S.stgEdit = 0; render(); toast('Staging URL removed'); }).catch(function (e) { el.disabled = false; fail(e); }); return; }
 		if ((el = t.closest('[data-stgmk]'))) { var mu = app.querySelector('[data-mkurl]'); if (mu) { mu.scrollIntoView({ behavior: 'smooth', block: 'center' }); mu.focus(); } return; }
 		if ((el = t.closest('[data-schedtask]')) && !t.closest('a')) { S.modal = { type: 'schedtask', key: el.getAttribute('data-schedtask') }; render(); return; }

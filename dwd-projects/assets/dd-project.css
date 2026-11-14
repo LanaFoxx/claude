@@ -366,3 +366,7 @@
 .dd-tn > .dd-card:not(:last-child) { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
 .dd-tn > .dd-card + .dd-card { border-top: 0; border-top-left-radius: 0; border-top-right-radius: 0; }
 @media (max-width: 767px) { .dd-pp-grid .dd-tn { order: 6; margin: 0 !important; } }
+/* Assets box: files from the project's Google Drive folder */
+.dd-adrv { display: flex; flex-direction: column; gap: 8px; }
+.dd-abody > * + .dd-adrv { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+.dd-adrvh { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 !important; padding: 0 !important; font-size: 12px; font-weight: 500; color: var(--text-2); }

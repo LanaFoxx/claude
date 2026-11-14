@@ -36,6 +36,7 @@ function doPost(e) {
   var b = {};
   try { b = JSON.parse(e.postData.contents || '{}'); } catch (err) { return out({ error: 'Bad request' }); }
   if (b.token !== TOKEN) { return out({ error: 'Wrong token' }); }
+  if (b.list) { return out(list_(String(b.list))); }
   if (b.ping) { return out({ ok: true, parent: parent_().getUrl() }); }
   var name = String(b.name || 'New client').replace(/[\\/\\\\]/g, '-').slice(0, 120);
   var p = parent_(), it = p.getFoldersByName(name), folder = it.hasNext() ? it.next() : p.createFolder(name);
@@ -47,6 +48,22 @@ function doPost(e) {
 }
 function parent_() { var it = DriveApp.getFoldersByName(PARENT); return it.hasNext() ? it.next() : DriveApp.createFolder(PARENT); }
 function out(o) { return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON); }
+/** Files in a client folder and its sub-folders (two levels down), newest first: Dream Desk shows them in the project's Assets box. */
+function list_(id) {
+  var folder;
+  try { folder = DriveApp.getFolderById(id); } catch (err) { return { error: 'That folder was not found' }; }
+  var files = [];
+  (function walk(f, path, depth) {
+    var it = f.getFiles();
+    while (it.hasNext() && files.length < 300) {
+      var x = it.next();
+      files.push({ id: x.getId(), name: x.getName(), path: path, size: x.getSize(), mime: x.getMimeType(), updated: x.getLastUpdated().toISOString(), url: x.getUrl() });
+    }
+    if (depth < 2) { var sub = f.getFolders(); while (sub.hasNext()) { var s = sub.next(); walk(s, (path ? path + ' / ' : '') + s.getName(), depth + 1); } }
+  })(folder, '', 0);
+  files.sort(function (a, b) { return a.updated < b.updated ? 1 : -1; });
+  return { files: files, version: 2 };
+}
 /** Run once from the editor so Google asks for Drive access. */
 function setup() { Logger.log(parent_().getUrl()); }
 JS;
@@ -98,6 +115,56 @@ function dwddr_email_of( $pid ) {
 		$em  = $cid ? (string) get_post_meta( $cid, '_dwdcl_email', true ) : '';
 	}
 	return is_email( $em ) ? $em : '';
+}
+
+/** The folder id inside a Drive folder link. */
+function dwddr_folder_id( $url ) {
+	return preg_match( '#/folders/([A-Za-z0-9_-]{10,})#', (string) $url, $m ) ? $m[1] : '';
+}
+
+/**
+ * What the client has put in the project's Drive folder, for the Assets box. Asked from the web app
+ * (action "list") and kept for 5 minutes in _dwdc_drive_files. state: ok | none (no folder) |
+ * update (the deployed script is the old one without "list") | error.
+ */
+function dwddr_files( $pid, $force = false ) {
+	$fid = dwddr_folder_id( get_post_meta( $pid, '_dwdc_drive', true ) );
+	if ( '' === $fid || ! dwddr_ready() ) {
+		return array( 'state' => 'none', 'files' => array() );
+	}
+	$c = get_post_meta( $pid, '_dwdc_drive_files', true );
+	$c = is_array( $c ) && isset( $c['files'] ) && ( $c['fid'] ?? '' ) === $fid ? $c : null;
+	if ( $c && ! $force && time() - (int) $c['at'] < 5 * MINUTE_IN_SECONDS ) {
+		return array( 'state' => 'ok', 'files' => $c['files'], 'at' => (int) $c['at'] );
+	}
+	$j = dwddr_call( array( 'list' => $fid, 'ping' => 1 ) ); // "ping" keeps an old script from doing anything but answer
+	if ( is_wp_error( $j ) ) {
+		return array( 'state' => 'error', 'error' => $j->get_error_message(), 'files' => $c ? $c['files'] : array(), 'at' => $c ? (int) $c['at'] : 0 );
+	}
+	if ( ! isset( $j['files'] ) || ! is_array( $j['files'] ) ) {
+		return array( 'state' => 'update', 'files' => array() );
+	}
+	$files = array();
+	foreach ( $j['files'] as $x ) {
+		$id = preg_replace( '/[^A-Za-z0-9_-]/', '', (string) ( $x['id'] ?? '' ) );
+		if ( '' === $id ) {
+			continue;
+		}
+		$mime    = sanitize_text_field( (string) ( $x['mime'] ?? '' ) );
+		$files[] = array(
+			'id'      => $id,
+			'name'    => sanitize_text_field( (string) ( $x['name'] ?? '' ) ),
+			'path'    => sanitize_text_field( (string) ( $x['path'] ?? '' ) ),
+			'size'    => (int) ( $x['size'] ?? 0 ),
+			'updated' => sanitize_text_field( (string) ( $x['updated'] ?? '' ) ),
+			'url'     => esc_url_raw( (string) ( $x['url'] ?? '' ) ),
+			'dl'      => 'https://drive.google.com/uc?export=download&id=' . $id,
+			'thumb'   => 0 === strpos( $mime, 'image/' ) ? 'https://drive.google.com/thumbnail?id=' . $id . '&sz=w300' : '',
+		);
+	}
+	$at = time();
+	update_post_meta( $pid, '_dwdc_drive_files', array( 'fid' => $fid, 'at' => $at, 'files' => $files ) );
+	return array( 'state' => 'ok', 'files' => $files, 'at' => $at );
 }
 
 /** Make (or reuse) the project's folder. Returns the link or WP_Error. */
@@ -213,6 +280,10 @@ add_action( 'rest_api_init', function () {
 			return array( 'ready' => true, 'parent' => $t['parent'] ?? '' );
 		} ),
 	) );
+	// The Assets box: files the client added to the project's Drive folder (?fresh=1 skips the 5-minute cache).
+	register_rest_route( 'dwd/v1', '/crm/contact/(?P<id>\d+)/drive-files', array( 'methods' => 'GET', 'permission_callback' => $can, 'callback' => function ( $r ) {
+		return dwddr_files( (int) $r['id'], (bool) $r->get_param( 'fresh' ) );
+	} ) );
 	register_rest_route( 'dwd/v1', '/crm/contact/(?P<id>\d+)/drive', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
 		$pid = (int) $r['id'];
 		$u   = dwddr_create( $pid );
