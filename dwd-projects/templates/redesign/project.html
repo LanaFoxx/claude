@@ -1,0 +1,65 @@
+<section id="pj-hero" data-theme="dark" style="position:relative;isolation:isolate;overflow:hidden;background:#121212;color:#fff;padding:clamp(150px,22vh,240px) clamp(20px,4vw,56px) 0">
+  <canvas id="dw-hero-canvas" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none;-webkit-mask-image:radial-gradient(ellipse 60% 55% at 22% 30%,transparent 0%,rgba(0,0,0,.3) 45%,#000 80%);mask-image:radial-gradient(ellipse 60% 55% at 22% 30%,transparent 0%,rgba(0,0,0,.3) 45%,#000 80%)"></canvas>
+  <a class="dwh4" href="%HOME%/portfolio/" style="display:inline-flex;align-items:center;gap:8px;color:#9A9A9A;font-size:14px;font-weight:500;text-decoration:none;min-height:44px;margin-bottom:8px"><svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 7H2M7 2 2 7l5 5"></path></svg> All work</a>
+  <span style="display:block;font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#13A6EE;margin:16px 0 24px">{{ cat }}</span>
+  <h1 data-dw-reveal="1" data-dw-kind="lines" data-dw-intro="1" style="margin:0;font-size:clamp(44px,9vw,160px);line-height:.9;letter-spacing:-.045em;font-weight:600;color:#fff">
+    <span style="display:block;overflow:hidden;padding-bottom:.08em;margin-bottom:-.08em"><span data-dw-line="1">{{ name }}</span></span>
+  </h1>
+  <div id="pj-meta" data-dw-reveal="1" data-dw-intro="1" style="display:grid;grid-template-columns:7fr 5fr;gap:24px 48px;align-items:end;margin-top:clamp(32px,4vw,56px);transition-delay:.3s">
+    <p style="margin:0;max-width:600px;font-size:clamp(18px,1.5vw,23px);line-height:1.4;color:#C9C9C9;text-wrap:pretty">{{ summary }}</p>
+    <div style="display:flex;flex-wrap:wrap;justify-content:flex-end;gap:12px 24px;align-items:center">
+      <!--if:hasSite-->
+        <a class="dwh14" href="{{ site }}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:10px;min-height:54px;padding:0 26px;border-radius:999px;background:#13A6EE;color:#fff;font-size:16px;font-weight:600;text-decoration:none;transition:background .3s ease,transform .3s ease">Visit the live site <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12 12 2M4 2h8v8"></path></svg></a>
+      <!--/if:hasSite-->
+    </div>
+  </div>
+  <div id="pj-cover" data-dw-reveal="1" data-dw-intro="1" style="position:relative;overflow:hidden;border-radius:10px 10px 0 0;aspect-ratio:16/10;background:#1C1C1C;margin-top:clamp(40px,6vw,88px);transition-delay:.45s">
+    <div style="position:absolute;inset:0"><img data-dw-zoom="1" src="{{ cover }}" alt="{{ name }} website" style="width:100%;height:100%;object-fit:cover;object-position:top;display:block"></div>
+  </div>
+</section>
+
+<section data-theme="light" style="background:#fff;color:#121212;padding:clamp(80px,10vw,160px) clamp(20px,4vw,56px)">
+  <div id="pj-body" style="display:grid;grid-template-columns:4fr 8fr;gap:clamp(32px,5vw,80px);align-items:start">
+    <div id="pj-facts" style="display:grid;grid-template-columns:1fr;gap:0;border-top:1px solid #121212">
+      <div style="display:flex;flex-direction:column;gap:4px;padding:18px 0;border-bottom:1px solid #D9D9D9"><span style="font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#13A6EE">Client</span><span style="font-size:17px;font-weight:500">{{ name }}</span></div>
+      <div style="display:flex;flex-direction:column;gap:4px;padding:18px 0;border-bottom:1px solid #D9D9D9"><span style="font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#13A6EE">Industry</span><span style="font-size:17px;font-weight:500">{{ cat }}</span></div>
+      <div style="display:flex;flex-direction:column;gap:4px;padding:18px 0;border-bottom:1px solid #D9D9D9"><span style="font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#13A6EE">Platform</span><span style="font-size:17px;font-weight:500">{{ platform }}</span></div>
+      <div style="display:flex;flex-direction:column;gap:4px;padding:18px 0;border-bottom:1px solid #D9D9D9"><span style="font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#13A6EE">Scope</span><span style="font-size:17px;font-weight:500">{{ scope }}</span></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:clamp(40px,5vw,72px)">
+      <div data-dw-reveal="1" style="display:flex;flex-direction:column;gap:20px">
+        <h2 style="margin:0;font-size:clamp(28px,3.2vw,52px);line-height:1.02;letter-spacing:-.035em;font-weight:600">{{ h2a }}</h2>
+        <p style="margin:0;max-width:600px;font-size:18px;line-height:1.55;color:#333;text-wrap:pretty">{{ p1 }}</p>
+        <p style="margin:0;max-width:600px;font-size:18px;line-height:1.55;color:#333;text-wrap:pretty">{{ p2 }}</p>
+      </div>
+      <figure data-dw-reveal="1" style="margin:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,220px);gap:clamp(20px,3vw,40px);align-items:end">
+        <div style="position:relative;overflow:hidden;border-radius:8px;aspect-ratio:16/10;background:#EDEDED">
+          <div style="position:absolute;inset:0"><img data-dw-zoom="1" src="{{ cover }}" alt="{{ name }} website, desktop view" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:top;display:block"></div>
+        </div>
+        <img src="{{ phone }}" alt="{{ name }} website on a phone" loading="lazy" style="width:100%;height:auto;display:block;filter:drop-shadow(0 24px 40px rgba(0,0,0,.25))">
+      </figure>
+      <div data-dw-reveal="1" style="display:flex;flex-direction:column;gap:20px">
+        <h2 style="margin:0;font-size:clamp(28px,3.2vw,52px);line-height:1.02;letter-spacing:-.035em;font-weight:600">{{ h2b }}</h2>
+        <p style="margin:0;max-width:600px;font-size:18px;line-height:1.55;color:#333;text-wrap:pretty">{{ p3 }}</p>
+      </div>
+      <!--if:hasSite-->
+        <a class="dwh9" data-dw-reveal="1" href="{{ site }}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:10px;align-self:flex-start;color:#121212;font-size:clamp(20px,1.8vw,26px);font-weight:600;letter-spacing:-.01em;text-decoration:none;min-height:44px;padding-bottom:4px;background-image:linear-gradient(currentColor,currentColor);background-size:100% 2px;background-position:0 100%;background-repeat:no-repeat;transition:background-size .4s cubic-bezier(.2,.7,.1,1),color .3s ease">Visit the live site <svg width="16" height="16" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12 12 2M4 2h8v8"></path></svg></a>
+      <!--/if:hasSite-->
+    </div>
+  </div>
+</section>
+
+<section data-theme="dark" style="position:relative;isolation:isolate;overflow:hidden;background:#121212;color:#fff;padding:clamp(80px,10vw,160px) clamp(20px,4vw,56px)">
+  <canvas id="dw-about-canvas" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none;opacity:.85;-webkit-mask-image:linear-gradient(90deg,rgba(0,0,0,.35) 0%,rgba(0,0,0,.5) 45%,#000 75%);mask-image:linear-gradient(90deg,rgba(0,0,0,.35) 0%,rgba(0,0,0,.5) 45%,#000 75%)"></canvas>
+  <span style="display:inline-flex;align-items:center;gap:10px;font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#13A6EE;margin-bottom:24px"><span style="width:24px;height:2px;background:#13A6EE;flex:0 0 auto"></span>Next project</span>
+  <a class="dwh3" data-dw-reveal="1" href="{{ nextHref }}" style="display:grid;grid-template-columns:5fr 7fr;gap:clamp(24px,4vw,64px);align-items:center;text-decoration:none;color:#fff" id="pj-next">
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <span style="font-size:clamp(36px,5vw,88px);line-height:.95;letter-spacing:-.04em;font-weight:600;color:inherit">{{ nextName }}</span>
+      <span style="font-size:16px;color:#9A9A9A">{{ nextCat }}</span>
+      <span style="display:inline-flex;align-items:center;gap:8px;font-size:15px;font-weight:600;color:inherit;margin-top:8px">View project <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12 12 2M4 2h8v8"></path></svg></span>
+    </div>
+    <div style="position:relative;overflow:hidden;border-radius:8px;aspect-ratio:16/10;background:#1C1C1C">
+      <div style="position:absolute;inset:0"><img data-dw-zoom="1" src="{{ nextCover }}" alt="{{ nextName }} website" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:top;display:block"></div>
+    </div>
+  </a>
+</section>

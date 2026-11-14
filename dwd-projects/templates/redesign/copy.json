@@ -1,0 +1,101 @@
+{
+ "the-goods-vending": {
+  "summary": "A premium vending company needed a website that felt as polished as the machines it places in offices and gyms. I designed and built a custom WordPress site around a full-screen hero video, a browsable product menu and a quote flow that turns visitors into placements.",
+  "scope": "Design, WordPress build, hero video, hosting",
+  "h2a": "Selling a premium service, not a snack machine",
+  "p1": "The Goods places high-end vending in offices, gyms and apartment communities. The old perception of vending is a dusty machine in a hallway, so the site had to do the opposite: open on motion, lead with the brands people recognize, and make the request process feel effortless.",
+  "p2": "The home page opens on a full-screen video of the machines in use, then moves through a dark, product-forward section (\"Premium brands. Options for everyone.\"), the placement process and proof from existing locations. Every section ends with a single call to action: request a machine.",
+  "h2b": "Built to be run by the owner",
+  "p3": "The site runs on WordPress with Elementor, so the team can update the product menu, add locations and publish promotions without touching code. It is hosted and monitored on my managed hosting, with daily backups and same-day support."
+ },
+ "finesse-by-witney": {
+  "summary": "Launch website for Finesse, the fitness app by Dancing with the Stars pro Witney Carson. Built to drive App Store downloads with a video-led hero, program highlights and real App Store reviews.",
+  "scope": "Design, WordPress build, video, App Store funnels",
+  "h2a": "One job: get the app installed",
+  "p1": "Every section of the page points at the same action. The hero pairs the commercial with a direct \"Find your program\" button, the programs are shown as cards with level and length, and the reviews are pulled from the App Store.",
+  "p2": "The visual language borrows from the app itself: dark surfaces, a single pink accent and large uppercase headlines that match the brand.",
+  "h2b": "Fast on phones, where the audience is",
+  "p3": "Most visitors arrive from Instagram and TikTok on a phone, so the page is built mobile-first, with lazy-loaded video and a smart app banner at the top."
+ },
+ "mojos-flight-school": {
+  "summary": "Mojo’s Flight School is my own paramotor school, so this site had one job: get someone who has never flown to book a first lesson. It opens on the experience, explains the training clearly and makes booking a two-tap process.",
+  "scope": "Design, WordPress build, booking, photography and video",
+  "h2a": "Selling a feeling first, a course second",
+  "p1": "Nobody wakes up wanting a syllabus. They want to run off a field and climb into the sky. The home page leads with that moment, in video and large photography, before it explains how training works.",
+  "p2": "Courses are laid out as a simple progression, with what you learn, how long it takes and what it costs on one page. Reviews from past students sit next to the booking button, where the decision gets made.",
+  "h2b": "Built to run while I’m flying",
+  "p3": "Bookings, deposits and the training calendar are handled on the site, so students can reserve a date without a phone call. The site runs on WordPress and I keep it current from my phone between lessons."
+ },
+ "mojos-flight-desk": {
+  "summary": "A custom back office for the flight school: one place to schedule students, log each training flight and keep the fleet’s maintenance on track. Built as a private WordPress application for staff, not the public.",
+  "scope": "UX design, custom WordPress application, data model",
+  "h2a": "A dashboard built around a day at the field",
+  "p1": "The old system was a mix of text messages, a paper logbook and a shared spreadsheet. Flight Desk replaces all three: the morning view shows who is flying, what they are working on and which wing and motor they are assigned.",
+  "p2": "Each student has a progress record that follows the training syllabus, so any instructor can pick up exactly where the last lesson ended. Maintenance hours roll up automatically from logged flights.",
+  "h2b": "Simple enough to use on a phone, in a field",
+  "p3": "Big touch targets, high-contrast type for bright sunlight and forms that take seconds to fill in. It is built on WordPress with custom post types and roles, so there is no monthly software fee and the data stays with the school."
+ },
+ "recordflow": {
+  "summary": "RecordFLOW makes water management software for utilities and operators. The marketing site turns a technical product into a clear story: what it does, who it is for and how to get a demo.",
+  "scope": "Design, WordPress build, product screens, demo funnel",
+  "h2a": "Explaining a technical product in plain English",
+  "p1": "Utility managers do not have time to decode feature lists. The site opens with the problem RecordFLOW solves, then shows the product in context with annotated screens and short, direct descriptions.",
+  "p2": "Features are grouped by the job they do, from field data collection to reporting, and every section ends with the same request: book a demo.",
+  "h2b": "A site the team can grow",
+  "p3": "Built on WordPress with reusable sections, so the team can add case studies, release notes and new feature pages without a developer. It is fast, secure and hosted on my managed hosting."
+ },
+ "california-tax-courses": {
+  "summary": "California Tax Courses is an IRS-approved education provider. The site had to make enrollment simple for busy tax preparers: find the right course, see the price and register in minutes.",
+  "scope": "Design, WordPress build, course catalog, enrollment flow",
+  "h2a": "From course list to enrollment in a few clicks",
+  "p1": "Students arrive knowing roughly what they need: a renewal, a qualifying course or continuing education hours. The home page sorts them in one step and sends each group to a page written for them.",
+  "p2": "Course pages state the hours, the approval, the price and the deadline up front, with enrollment on the same screen. Student resources and FAQs answer the recurring support questions before they become emails.",
+  "h2b": "Credibility for an industry that checks",
+  "p3": "Approvals, provider numbers and policies are easy to find, because tax professionals look for them. The site runs on WordPress so the team can update course dates and pricing each season themselves."
+ },
+ "recco-consulting": {
+  "summary": "A clean, credible website for a consulting firm. The design gets out of the way of the work: clear services, a direct voice and one path to booking a first conversation.",
+  "scope": "Design, WordPress build, copy structure, scheduling",
+  "h2a": "Credibility through restraint",
+  "p1": "Consulting is bought on trust, so the site avoids stock-photo clichés and lets typography, white space and a confident structure carry it. Each service is explained in a few sentences with the outcome a client can expect.",
+  "p2": "The about page puts the people and their experience front and center, because that is what a prospective client is really evaluating.",
+  "h2b": "One call to action, everywhere",
+  "p3": "Every page leads to the same place: schedule a conversation. The scheduling link is in the header, after each service and in the footer, so a visitor never has to look for it."
+ },
+ "framework-accounting": {
+  "summary": "A website for an accounting firm that needed to look as organized as its work. Services, the team and a clear path to a consultation, built on WordPress.",
+  "scope": "Design, WordPress build, service pages, consultation form",
+  "h2a": "Structure you can feel",
+  "p1": "Accounting clients want to know they are in careful hands. The site uses a strict grid, generous spacing and a calm palette so the firm reads as precise before a word is read.",
+  "p2": "Services are split into the questions clients actually arrive with, from bookkeeping to tax planning, each with a plain explanation of what the firm does and who it is for.",
+  "h2b": "Easy to book, easy to maintain",
+  "p3": "A short consultation form sits on every service page, and the team can add staff bios, update pricing and publish tax-season reminders without a developer."
+ },
+ "express-records": {
+  "summary": "Express Records retrieves medical records for law firms and insurers. The website is built around one thing: making a records request fast, clear and trustworthy.",
+  "scope": "Design, WordPress build, request process, secure forms",
+  "h2a": "Designed around the request",
+  "p1": "Visitors arrive with a job to do. The home page explains the process in three steps and puts the request button in front of them immediately, with turnaround expectations stated plainly.",
+  "p2": "Supporting pages cover compliance, pricing and the types of records handled, written for paralegals and claims adjusters who need a quick, confident answer.",
+  "h2b": "Trust signals where they matter",
+  "p3": "HIPAA and security information sits next to the request form, not buried in a footer. The site runs on WordPress with secure, encrypted form handling and is hosted on my managed hosting."
+ },
+ "talize": {
+  "summary": "A retail website for Talize, a thrift chain, that does three things well: helps shoppers find a store, promotes what is on sale this week and tells the brand’s story.",
+  "scope": "Design, WordPress build, store locator, promotions",
+  "h2a": "Built for the weekly shopper",
+  "p1": "Thrift customers come back often, so the site is organized around what changes: this week’s deals, new arrivals and store hours. The store finder is one tap from every page.",
+  "p2": "Photography of real finds and real stores replaces generic retail imagery, and the brand story explains the chain’s reuse mission without preaching.",
+  "h2b": "Easy for the marketing team to update",
+  "p3": "Promotions, store pages and events are editable by staff on WordPress, with templates that keep every new page on brand. The site is fast on phones, where most shoppers look up hours and locations."
+ },
+ "the-goods-vending-webflow": {
+  "summary": "The Goods Vending rebuilt on Webflow: the same brand, video-led hero and quote flow, delivered on a different platform for a team that wanted a visual editor and hosted infrastructure.",
+  "scope": "Webflow build, CMS setup, interactions",
+  "h2a": "Same brand, different platform",
+  "p1": "The design was already proven on WordPress. The Webflow build reproduces it faithfully, from the full-screen hero video to the product menu, while using Webflow’s native interactions.",
+  "p2": "Products and locations live in the Webflow CMS, so the team can add items and placements from a simple editor.",
+  "h2b": "Choosing the right platform",
+  "p3": "I build on both WordPress and Webflow and recommend whichever fits the business. This project is a good side-by-side: identical design, two platforms, each with its own strengths."
+ }
+}

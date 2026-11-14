@@ -1,0 +1,600 @@
+<?php
+defined( 'ABSPATH' ) || exit;
+
+add_action( 'wp_enqueue_scripts', function () {
+	// The site's one typeface, Urbanist, loaded on every page (Elementor's own Google Fonts are switched off below).
+	// Self-hosted: one variable woff2 covers every weight, preloaded in the head (no Google round trips).
+	wp_register_style( 'dwdp-fonts', false, array(), null );
+	wp_add_inline_style( 'dwdp-fonts', "@font-face{font-family:'Urbanist';font-style:normal;font-weight:100 900;font-display:swap;src:url(" . DWDP_URL . "assets/fonts/urbanist-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}@font-face{font-family:'Urbanist Fallback';src:local('Arial'),local('Helvetica'),local('Roboto');size-adjust:102.7%;ascent-override:92.5%;descent-override:24.3%;line-gap-override:0%}" );
+	wp_enqueue_style( 'dwdp-pages', DWDP_URL . 'assets/dw-pages.css', array(), DWDP_VERSION );
+	if ( is_page( 'onboarding' ) ) {
+		wp_enqueue_script( 'dwdp-onboarding', DWDP_URL . 'assets/onboarding.js', array( 'jquery' ), DWDP_VERSION, true );
+	}
+	wp_enqueue_style( 'dwdp-fonts' );
+	wp_register_style( 'dwdp-front', DWDP_URL . 'assets/front.css', array( 'dwdp-fonts' ), DWDP_VERSION );
+	wp_register_script( 'dwdp-front', DWDP_URL . 'assets/front.js', array(), DWDP_VERSION, true );
+	if ( is_singular( DWDP_CPT ) ) {
+		wp_enqueue_style( 'dwdp-front' );
+	}
+} );
+
+add_action( 'wp_head', function () {
+	echo '<link rel="preload" href="' . esc_url( DWDP_URL . 'assets/fonts/urbanist-latin.woff2' ) . '" as="font" type="font/woff2" crossorigin>' . "\n";
+}, 1 );
+
+function dwdp_enqueue_front() {
+	wp_enqueue_style( 'dwdp-front' );
+	wp_enqueue_script( 'dwdp-front' );
+}
+
+/**
+ * The site-wide design styles (layout, header, menu, cards, forms, dots). They used to be printed
+ * from outside this plugin; keeping them here means they always load. Printed early in <head>,
+ * in the same place and with the same ids as before, so later rules still override them.
+ */
+add_action( 'wp_head', function () {
+	foreach ( array( 'dw-site', 'dwd-site' ) as $name ) {
+		$file = DWDP_DIR . 'assets/' . $name . '.css';
+		if ( is_readable( $file ) ) {
+			echo '<style id="' . esc_attr( $name ) . '-css">' . file_get_contents( $file ) . '</style>' . "\n"; // phpcs:ignore
+		}
+	}
+}, 9 );
+
+/**
+ * Dotted backgrounds only on the dark sections, so a dotted section never sits directly
+ * against another one. The light sections (dw-dots-light, plus the Elementor sections that
+ * got the same dots by ID) become plain.
+ */
+add_action( 'wp_head', function () {
+	$ids = array( '89a6760f', '7d8e8aa3', '7f41de1b', '969108eb', '9ec54d3c', 'b8fbd2ba', '51ae0a9b', 'a5de6e96', '8fc7c8a7', 'c33bf56b', '28747d18', 'f5415e51', 'bbaddbd9', '8b5f9ec2', 'a1ecfee3', '96459fde' );
+	$sel = array( 'html body .dw-dots-light' );
+	foreach ( $ids as $id ) {
+		$sel[] = 'html body .elementor-element-' . $id;
+	}
+	echo '<style id="dwdp-no-light-dots">' . implode( ',', $sel ) . '{background-image:none!important}'
+		// Anything marked dark gets the white dots, even if an old rule lists it as a light section.
+		. 'html body .dw-dots-dark.dw-dots-dark{background-image:radial-gradient(rgba(255,255,255,0.12) 1px,transparent 1px)!important;background-size:22px 22px!important}</style>' . "\n";
+}, 99 );
+
+/**
+ * Tablet and small-laptop layout fixes for the Elementor header and homepage hero:
+ * - 1025-1280px: tighter menu so it never wraps onto two lines; buttons never wrap.
+ * - up to 1180px: the hero stacks, text centred on top and the laptop underneath at full width.
+ */
+add_action( 'wp_head', function () {
+	echo '<style id="dwdp-tablet">'
+		. '.elementor-location-header .elementor-button,.elementor-location-header .elementor-button-text{white-space:nowrap}'
+		. '.elementor-location-header .elementor-menu-toggle{background:transparent!important;border:0!important}'
+		. '@media(min-width:1025px) and (max-width:1280px){'
+		. '.elementor-element-0df6828 .elementor-nav-menu{flex-wrap:nowrap!important}'
+		. '.elementor-element-0df6828 .elementor-nav-menu .elementor-item{padding-left:11px!important;padding-right:11px!important;font-size:15.5px!important;white-space:nowrap}'
+		. '.elementor-location-header .elementor-button{padding-left:18px!important;padding-right:18px!important}}'
+		. '@media(min-width:768px) and (max-width:1180px){'
+		. '.elementor-element-dw0000a{flex-direction:column!important;align-items:center!important;gap:46px!important}'
+		. '.elementor-element-dw00007{width:100%!important;max-width:680px;align-items:center!important;text-align:center}'
+		. '.elementor-element-dw00007 .elementor-heading-title,.elementor-element-dw00007 .elementor-widget-text-editor{text-align:center!important}'
+		. '.elementor-element-dw00009{width:100%!important;max-width:860px}'
+		. '.elementor-element-dw00009 .dwdp-laptop{width:90%}}'
+		. '</style>' . "\n";
+	// Reusable hero glow for dark sections (class "dw-glow" on an Elementor container).
+	// Homepage hero glow sits behind the headline (left column on desktop, centered when the hero stacks).
+	echo '<style id="dwdp-hero-glow">.elementor-element-f28e5483::before{top:-60px!important;right:auto!important;left:calc(50% - 760px)!important;width:820px!important;height:720px!important;background:radial-gradient(circle,rgba(27,126,195,.38),transparent 64%)!important}'
+		. '@media(max-width:1180px){.elementor-element-f28e5483::before{left:50%!important;transform:translateX(-50%);top:-120px!important}}</style>' . "\n";
+	echo '<style id="dwdp-glow">.dw-glow{position:relative;overflow:hidden}.dw-glow::before{content:"";position:absolute;top:-180px;left:50%;transform:translateX(-50%);width:820px;max-width:120%;height:620px;background:radial-gradient(circle,rgba(27,126,195,.32),transparent 65%);pointer-events:none}.dw-glow>*{position:relative;z-index:1}</style>' . "\n";
+}, 99 );
+
+/** The About page was retired; its content lives in the homepage "Why Dream Web" section. */
+add_action( 'template_redirect', function () {
+	$path = trim( (string) wp_parse_url( isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '', PHP_URL_PATH ), '/' ); // phpcs:ignore
+	if ( 'about' === $path ) {
+		wp_safe_redirect( home_url( '/#about' ), 301 );
+		exit;
+	}
+}, 1 );
+
+/**
+ * Buttons: all caps with wide letter spacing, for a more upscale feel. Covers Elementor
+ * buttons and form submits plus the plugin's own buttons.
+ */
+add_action( 'wp_head', function () {
+	// One button style everywhere: same thin uppercase type, same height, padding and minimum width.
+	$btn = 'a.elementor-button,button.elementor-button,.elementor-button[type=submit],.dwdp-btn,.dwf-zoom,.dw-pbtn,.dw-form button,.dw-host-btn';
+	$txt = '.elementor-button .elementor-button-text,.elementor-button .elementor-button-content-wrapper';
+	echo '<style id="dwdp-buttons">'
+		. $btn . ',' . $txt . '{text-transform:uppercase!important;letter-spacing:.16em!important;font-family:Urbanist,sans-serif!important;font-size:14px!important;font-weight:600!important;line-height:1.2!important}'
+		. $btn . '{display:inline-flex!important;align-items:center;justify-content:center;box-sizing:border-box;height:52px!important;padding:0 32px!important;min-width:232px;border-radius:8px!important;white-space:nowrap}'
+		. '@media(max-width:480px){' . $btn . '{min-width:0;padding:0 26px!important}}'
+		// Shared closing band: dark, dots, glow, even spacing (class dw-cta-band on an Elementor container).
+		. '.dw-cta-band{border-top:1px solid rgba(255,255,255,.07)}.dw-cta-band>.e-con-inner{gap:0!important}'
+		. '.dw-cta-band>.e-con-inner>.elementor-widget-heading{margin-bottom:16px!important}.dw-cta-band>.e-con-inner>.elementor-widget-text-editor{margin-bottom:32px!important}.dw-cta-band .elementor-widget-text-editor p{margin:0}'
+		. '</style>' . "\n";
+}, 99 );
+
+/** A phone icon in front of every phone-number link on the site. */
+add_action( 'wp_head', function () {
+	$svg = rawurlencode( '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>' );
+	echo '<style id="dwdp-phone-icon">a[href^="tel:"].dw-phone-ico::before{content:"";display:inline-block;width:.95em;height:.95em;margin-right:.45em;vertical-align:-.12em;background-color:currentColor;-webkit-mask:url("data:image/svg+xml,' . $svg . '") center/contain no-repeat;mask:url("data:image/svg+xml,' . $svg . '") center/contain no-repeat}a[href^="tel:"].dw-phone-ico:has(svg,img,i)::before{display:none}</style>' . "\n";
+}, 99 );
+
+/**
+ * The icon only goes on standalone numbers (footer, contact cards). A number that sits inside a
+ * sentence ("or call ...", "Call or text ... and") stays plain text.
+ */
+add_action( 'wp_footer', function () {
+	echo "<script>document.querySelectorAll('a[href^=\"tel:\"]').forEach(function(a){var p=a.parentElement;if(!p||a.querySelector('svg,img,i')||a.closest('.dwf-phonew,.elementor-icon-box-wrapper,.dw-form-note'))return;var t=p.textContent.replace(a.textContent,'');if(!/[A-Za-z]/.test(t))a.classList.add('dw-phone-ico');});</script>\n";
+}, 99 );
+
+// Phones: the reviews row advances one card every 4 seconds and loops; a swipe pauses it for a moment.
+add_action( 'wp_footer', function () {
+	echo "<script>(function(){var r=document.querySelector('.elementor-element-dw0001t');if(!r)return;var hold=0;['touchstart','pointerdown','wheel'].forEach(function(e){r.addEventListener(e,function(){hold=Date.now()+8000;},{passive:true});});"
+		. "setInterval(function(){if(!matchMedia('(max-width:767px)').matches||Date.now()<hold)return;var c=r.children;if(!c.length)return;var w=c[0].getBoundingClientRect().width+parseFloat(getComputedStyle(r).columnGap||0),i=Math.round(r.scrollLeft/w)+1;if(i>=c.length)i=0;r.scrollTo({left:i*w,behavior:'smooth'});},4000);})();</script>\n";
+}, 99 );
+
+/**
+ * Inner-page hero titles: one size on every page (as large as the homepage headline).
+ */
+add_action( 'wp_head', function () {
+	$h = '.elementor-element-7e6232a .elementor-heading-title,.elementor-element-dw0008r .elementor-heading-title,.elementor-element-dw0005k .elementor-heading-title,.elementor-element-18a049b .elementor-heading-title,.elementor-element-4bbde7c .elementor-heading-title';
+	echo '<style id="dwdp-h1">' . $h . '{font-size:60px!important;line-height:1.04!important}@media(max-width:1024px){' . $h . '{font-size:48px!important}}@media(max-width:767px){' . $h . '{font-size:34px!important}}</style>' . "\n";
+}, 99 );
+
+/**
+ * Homepage "What's included": less space above and below "See how the process works".
+ */
+add_action( 'wp_head', function () {
+	echo '<style id="dwdp-included-space">.elementor-element-9e67fb33{padding-bottom:0!important}.elementor-element-9e67fb33>.e-con-inner{padding-bottom:52px!important}'
+		. '@media(min-width:768px){.elementor-element-dw0000g{margin-top:-20px!important}.elementor-element-9e67fb33>.e-con-inner{padding-bottom:44px!important}}@media(max-width:767px){.elementor-element-9e67fb33>.e-con-inner{padding-bottom:40px!important}.elementor-element-dw0000g{margin-top:8px!important}}</style>' . "\n";
+}, 99 );
+
+/**
+ * Page header eyebrows ("Step by step", "Hosting", "My work"...) in the same outlined pill as the blog's.
+ */
+add_action( 'wp_head', function () {
+	$e = '.elementor-element-a9c373f .elementor-heading-title,.elementor-element-dw0008q .elementor-heading-title,.elementor-element-dw0005j .elementor-heading-title,.elementor-element-3b3802c .elementor-heading-title,.elementor-element-20d4377 .elementor-heading-title';
+	echo '<style id="dwdp-eyebrow-pill">' . $e . '{display:inline-block!important;border:1px solid rgba(255,255,255,0.22)!important;border-radius:100px!important;padding:9px 18px!important;font:500 15.5px/1.5 Urbanist,sans-serif!important;color:#C9DAE8!important;letter-spacing:.02em!important;text-transform:capitalize!important}.dw-badge,.dww-eyebrow{text-transform:capitalize!important}'
+		// Same height on every page (the blog's): pull up the eyebrows that sit lower.
+		. '@media(min-width:1025px){.elementor-element-a9c373f{margin-top:-18px!important}.elementor-element-dw0008q{margin-top:-20px!important}.elementor-element-3b3802c{margin-top:-28px!important}}</style>' . "\n";
+}, 99 );
+
+// Elementor would otherwise load six unused Google Fonts families (Roboto, Karla, Archivo, Poppins...) in every weight.
+add_filter( 'elementor/frontend/print_google_fonts', '__return_false' );
+
+/**
+ * Typography: Urbanist everywhere. Headings 900, body 300, nav 500 (active 600), buttons 600.
+ * Small text (under 14px) and inputs stay at 400 for legibility; those weights are set where each style is defined.
+ */
+add_action( 'wp_head', function () {
+	$not_icons = ':not(i):not(svg):not(svg *):not([class*="eicon"]):not([class*="fa-"]):not(.fa):not(.fas):not(.far):not(.fab)';
+	echo '<style id="dwdp-type">'
+		. 'body,body *' . $not_icons . ',input,select,textarea,button{font-family:"Urbanist",sans-serif!important}'
+		. 'h1,h2,h3,h4{font-weight:900;letter-spacing:.01em}'
+		. 'body{font-weight:300}.elementor-widget-html h1,.elementor-widget-html h2,.elementor-widget-html h3,.elementor-widget-html h4{font-weight:900!important}'
+		. '.elementor-field-subgroup label,.elementor-field-option label,.screen-reader-text{font-weight:400}'
+		. '.elementor-element-90f59da .elementor-tab-content,.elementor-element-90f59da .elementor-tab-content p{font-weight:400!important}'
+		. 'h1,h1.elementor-heading-title,.elementor-element-2460b52 .elementor-heading-title{line-height:1.04!important}'
+		. 'h2,h2.elementor-heading-title{line-height:1.08!important}'
+		. '.elementor-widget-heading h1.elementor-heading-title,.elementor-widget-heading h2.elementor-heading-title,.elementor-widget-heading h3.elementor-heading-title,.elementor-widget-heading h4.elementor-heading-title,.elementor-element-2460b52 .elementor-heading-title{letter-spacing:.01em!important}'
+		. '.dwb-article h2,.dwb-article h3,.dwb-related-title{font-weight:900!important}'
+		// Nav links.
+		. '.elementor-nav-menu a.elementor-item,.elementor-nav-menu--dropdown a{font-weight:500!important}'
+		. '.elementor-nav-menu a.elementor-item-active,.elementor-nav-menu .current-menu-item>a{font-weight:600!important}'
+		// Hero: "You dream it." thin, "I build it." heavy in light blue.
+		. '.elementor-element-dw00002 .elementor-heading-title{font-weight:200!important}'
+		. '.elementor-element-2460b52 .elementor-heading-title{font-weight:900!important;color:#4BA3DC!important}'
+		. '.elementor-element-dw00003,.elementor-element-dw00003 p{color:#C9DAE8!important;font-weight:300!important}'
+		. '@media(min-width:1025px){.elementor-element-dw00002 .elementor-heading-title{font-size:52px!important}.elementor-element-dw00003,.elementor-element-dw00003 p{font-size:16.5px!important}}'
+		. '</style>' . "\n";
+}, 999 );
+
+// No underline arcs under any title.
+add_action( 'wp_head', function () {
+	echo '<style id="dwdp-no-arcs">.dw-swoosh .elementor-heading-title::after,.dw-swoosh.elementor-widget-heading .elementor-heading-title::after,.dw-swoosh-c .elementor-heading-title::after,.dww-title::after{display:none!important;content:none!important}</style>' . "\n";
+}, 999 );
+
+// Phones: easier reading. Body text at a regular weight and at least 16px, thin heading halves a touch heavier, larger section and card headings.
+add_action( 'wp_head', function () {
+	echo '<style id="dwdp-mobile-read">@media(max-width:767px){body{font-weight:400}.elementor-widget-text-editor,.elementor-widget-text-editor p:not([style*="font-weight"]),.elementor-widget-html p:not([style*="font-weight"]),li,.dwt-note,.dwt-note span,.dw-wt p,.dw-review p,.dwdp-single p,.dwb-article,.dwb-article p,.dwb-card-ex,.dww-card,.elementor-tab-content,.elementor-tab-content p{font-weight:400!important}.elementor-widget-text-editor:not(.elementor-element-dw0001g),.elementor-widget-text-editor:not(.elementor-element-dw0001g) p:not([style*="font-size"]),.elementor-widget-html p:not([style*="font-size"]):not([class*="eyebrow"]):not([class*="-k"]),.elementor-widget-html li,.dwt-card>p,.dwt-note,.elementor-tab-content p,.dwo-sec>p{font-size:17px!important;line-height:1.65!important}span[style*="font-weight:200"],.elementor-element-dw00002 .elementor-heading-title{font-weight:300!important}.elementor-widget-heading h2.elementor-heading-title{font-size:32px!important}.elementor-widget-heading h3.elementor-heading-title,.dwt-card h3,.elementor-widget-html h3,.dwo-sec h3{font-size:22px!important}}</style>' . "\n";
+}, 1000 );
+
+// Every screen: each part of a heading stays on one line; if a part is too wide, all parts scale down together (same size).
+add_action( 'wp_footer', function () {
+	?>
+<script>(function(){var mq=matchMedia('(max-width:767px)');
+function fit(){var hs=document.querySelectorAll('.elementor-heading-title,.dww-title,.dwdp-cta-title,.elementor-widget-html h2');
+hs.forEach(function(h){h.style.removeProperty('font-size');h.querySelectorAll('span').forEach(function(s){s.style.fontSize='';});
+var parts=h.querySelectorAll(':scope>span');if(!parts.length)return;var w=h.clientWidth;if(!w)return;var k=1;parts.forEach(function(s){s.style.display='inline-block';var sw=s.scrollWidth;if(sw>w)k=Math.min(k,w/sw);s.style.display='';});if(k<1){var fs=parseFloat(getComputedStyle(h).fontSize);h.style.setProperty('font-size',Math.max(14,Math.floor(fs*k*10)/10)+'px','important');}});}
+var t;function later(){clearTimeout(t);t=setTimeout(fit,80);}
+fit();if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fit);addEventListener('resize',later);addEventListener('load',fit);})();</script>
+	<?php
+}, 70 );
+
+// One paragraph size everywhere (20px desktop, 18px tablet, 17px phones) and larger headings.
+add_action( 'wp_head', function () {
+	echo '<style id="dwdp-sizes">@media(min-width:1025px){.elementor-widget-text-editor:not(.elementor-element-dw0001g),.elementor-widget-text-editor:not(.elementor-element-dw0001g) p:not([style*="font-size"]),.elementor-widget-html p:not([style*="font-size"]):not([class*="eyebrow"]):not([class*="-k"]):not(.dw-fnote),.elementor-widget-html li:not(.dw-host-list li),.dwt-card>p,.dwt-note,.elementor-tab-content,.elementor-tab-content p,.dw-wt p,.dw-review p,.dwdp-summary p,.dwdp-cta-text,.dwb-article p,.dwb-article li,.dwb-card-ex,.dww-card p,.dwo-sec>p{font-size:20px!important;line-height:1.7!important;font-weight:400!important}.elementor-widget-heading h2.elementor-heading-title,.elementor-widget-html h2,.dwdp-cta-title{font-size:48px!important}.elementor-element-dw00002 .elementor-heading-title{font-size:60px!important}.elementor-element-2460b52 .elementor-heading-title{font-size:84px!important}.elementor-widget-heading h3.elementor-heading-title,.dwt-card h3,.elementor-widget-html h3,.dwo-sec h3{font-size:24px!important}.dw-pmeta b{font-size:22px!important}}@media(min-width:768px) and (max-width:1024px){.elementor-widget-text-editor:not(.elementor-element-dw0001g),.elementor-widget-text-editor:not(.elementor-element-dw0001g) p:not([style*="font-size"]),.elementor-widget-html p:not([style*="font-size"]):not([class*="eyebrow"]):not([class*="-k"]):not(.dw-fnote),.elementor-widget-html li:not(.dw-host-list li),.dwt-card>p,.dwt-note,.elementor-tab-content,.elementor-tab-content p,.dw-wt p,.dw-review p,.dwdp-summary p,.dwdp-cta-text,.dwb-article p,.dwb-article li,.dwb-card-ex,.dww-card p,.dwo-sec>p{font-size:18px!important;line-height:1.7!important;font-weight:400!important}.elementor-widget-heading h2.elementor-heading-title,.elementor-widget-html h2,.dwdp-cta-title{font-size:40px!important}.elementor-widget-heading h3.elementor-heading-title,.dwt-card h3,.elementor-widget-html h3,.dwo-sec h3{font-size:22px!important}}</style>' . "\n";
+}, 1000 );
+
+// Project video: swap the cover for the YouTube player (playing, minimal branding) on click.
+add_action( 'wp_footer', function () {
+	if ( ! is_singular( DWDP_CPT ) ) {
+		return;
+	}
+	echo "<script>document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('.dw-yt');if(!b)return;var f=document.createElement('iframe');f.src='https://www.youtube-nocookie.com/embed/'+b.dataset.yt+'?autoplay=1&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3';f.title=b.getAttribute('aria-label')||'Video';f.allow='autoplay; fullscreen; picture-in-picture; encrypted-media';f.allowFullscreen=true;var w=document.createElement('div');w.className='dw-video-frame is-yt';w.style.aspectRatio=b.style.aspectRatio;var r=parseFloat(b.style.aspectRatio)||16/9;f.style.width=(100*Math.max(1,(16/9)/r)).toFixed(2)+'%';w.appendChild(f);b.replaceWith(w);});</script>\n";
+}, 60 );
+
+// Even line lengths: centered text is balanced (lines of similar length instead of long-short-long),
+// other paragraphs avoid a lone word on the last line. Headings are balanced everywhere.
+add_action( 'wp_head', function () {
+	echo '<style id="dwdp-wrap">.dwdp-cta-text{max-width:640px;margin-left:auto!important;margin-right:auto!important}.elementor-heading-title>span[style*="color"],.elementor-widget-html h2>span[style*="color"],.dwdp-cta-title>span[style*="color"],.dww-title>span[style*="color"]{font-size:1.08em}.elementor-heading-title span,.elementor-widget-html h2>span,.dwdp-cta-title>span,.dww-title>span{white-space:nowrap}.dw-host-top>div{min-width:0;max-width:100%}.dw-host h2{max-width:100%!important;overflow:visible}p,li,.elementor-widget-text-editor{text-wrap:pretty}h1,h2,h3,h4,.elementor-heading-title,.dw-wrap-balance,.dw-wrap-balance p{text-wrap:balance}'
+		. '@media(max-width:767px){.elementor-element-dw0001g br{display:none}}</style>' . "\n";
+}, 99 );
+add_action( 'wp_footer', function () {
+	if ( function_exists( 'dwdr_page' ) && 'article' === dwdr_page() ) {
+		return; // articles use CSS text-wrap; re-measuring here moved the summary after load (layout shift)
+	}
+	echo "<script>(function(){
+function lines(e){var r=document.createRange();r.selectNodeContents(e);var t={};[].forEach.call(r.getClientRects(),function(x){if(x.width>1)t[Math.round(x.top)]=1;});return Object.keys(t).length;}
+function even(e){e.style.maxWidth='';var n=lines(e);if(n<2)return;var w=e.getBoundingClientRect().width,lo=w*0.5,hi=w;for(var i=0;i<9;i++){var m=(lo+hi)/2;e.style.maxWidth=m+'px';if(lines(e)>n)lo=m;else hi=m;}e.style.maxWidth=Math.ceil(hi)+'px';e.style.marginLeft='auto';e.style.marginRight='auto';}
+function lastShort(e){var r=document.createRange();r.selectNodeContents(e);var rs=[].filter.call(r.getClientRects(),function(x){return x.width>1;});if(rs.length<2)return false;var top=Math.max.apply(null,rs.map(function(x){return Math.round(x.top);}));var w=0;rs.forEach(function(x){if(Math.round(x.top)===top)w+=x.width;});return w<e.getBoundingClientRect().width*0.6;}function evenLeft(e){e.style.maxWidth='';var n=lines(e);if(n<2||!lastShort(e))return;var w=e.getBoundingClientRect().width,lo=w*0.85,hi=w;for(var i=0;i<8;i++){var m=(lo+hi)/2;e.style.maxWidth=m+'px';if(lines(e)>n)lo=m;else hi=m;}e.style.maxWidth=Math.ceil(hi)+'px';}function run(){document.querySelectorAll('p').forEach(function(e){if(e.closest('form,.elementor-tab-content,.dwb-article,.dw-host,.dwdp-cta,.dwbp-card,.dwt-card,.dwx-item,.elementor-icon-box-description,.dwc-stepw'))return;var ta=getComputedStyle(e).textAlign;if(ta==='center'&&e.textContent.trim().length>40){e.classList.add('dw-wrap-balance');even(e);}else{e.classList.remove('dw-wrap-balance');if(e.textContent.trim().length>60&&(ta==='left'||ta==='start'||ta==='justify'))evenLeft(e);}});}
+var go=function(){run();};if(document.fonts&&document.fonts.ready)document.fonts.ready.then(go);else go();var t;addEventListener('resize',function(){clearTimeout(t);t=setTimeout(run,150);});})();</script>\n";
+}, 70 );
+
+// Homepage quote: 34px on wide screens; a little smaller on small laptops so it stays on two lines.
+add_action( 'wp_head', function () {
+	echo '<style id="dwdp-quote">@media(min-width:1025px) and (max-width:1279px){.elementor-element-dw0001g,.elementor-element-dw0001g p:first-child{font-size:30px!important}}</style>' . "\n";
+}, 99 );
+
+// Homepage "What's included": one column of six long boxes (icon, title, then the description).
+add_action( 'wp_head', function () {
+	echo '<style id="dwdp-included-row">@media(min-width:768px){.elementor-element-dw00016{flex-direction:column!important;flex-wrap:nowrap!important;gap:14px!important}.elementor-element-dw00016>.e-con{width:100%!important;max-width:none!important;flex:0 0 auto!important;display:grid!important;grid-template-columns:48px 320px minmax(0,1fr);align-items:center;column-gap:24px;padding:22px 30px!important}.elementor-element-dw00016>.e-con>*{margin:0!important;width:auto!important}.elementor-element-dw00016>.e-con .elementor-heading-title{white-space:nowrap}.elementor-element-dw00016>.e-con .elementor-widget-text-editor p{margin:0!important}.elementor-element-dw00016>.e-con:nth-child(even){background-color:#F6F9FD!important}}@media(min-width:768px) and (max-width:1024px){.elementor-element-dw00016>.e-con{grid-template-columns:44px 250px minmax(0,1fr);column-gap:18px;padding:20px 22px!important}.elementor-element-dw00016>.e-con .elementor-heading-title{font-size:19px!important;white-space:nowrap}}</style>' . "\n";
+}, 1001 );
+
+// Tablets and small laptops (768–1199px): the hero is stacked and centred there, so the About and FAQ sections stack and centre too, and the hero buttons centre.
+add_action( 'wp_head', function () {
+	echo '<style id="dwdp-mid-center">@media(min-width:768px) and (max-width:1199px){.elementor-element-dw00006{justify-content:center!important}.elementor-element-dw0001f,.elementor-element-b7cb422{flex-direction:column!important;align-items:center!important;gap:40px!important}.elementor-element-dw00018{width:100%!important;max-width:440px!important}.elementor-element-dw0001e,.elementor-element-b7671e0{width:100%!important;max-width:720px!important;align-items:center!important;text-align:center!important}.elementor-element-dw0001e .elementor-heading-title,.elementor-element-dw0001e .elementor-widget-text-editor,.elementor-element-b7671e0 .elementor-heading-title,.elementor-element-b7671e0 .elementor-widget-text-editor,.elementor-element-b7671e0 .elementor-button-wrapper{text-align:center!important}.elementor-element-ac6d515{width:100%!important;max-width:820px!important}}</style>' . "\n";
+}, 1001 );
+
+// Shared styles for Elementor widgets: pill eyebrow headings (class dw-eyebrow-pill) and the captioned photo (class dw-photo).
+add_action( 'wp_head', function () {
+	echo '<style id="dwdp-widgets">.elementor-element.dw-eyebrow-pill,.elementor-1858 .elementor-element.elementor-element-dw00007>.elementor-widget-heading.dw-eyebrow-pill{margin-bottom:22px!important}@media(max-width:767px){.elementor-element.dw-eyebrow-pill,.elementor-1858 .elementor-element.elementor-element-dw00007>.elementor-widget-heading.dw-eyebrow-pill{margin-bottom:16px!important}}.dw-eyebrow-pill .elementor-heading-title{display:inline-block;border:1px solid rgba(255,255,255,0.22);border-radius:100px;padding:9px 18px;font:500 15.5px/1.5 Urbanist,sans-serif!important;color:#C9DAE8;letter-spacing:.02em;white-space:nowrap}@media(max-width:767px){.dw-eyebrow-pill .elementor-heading-title{font-size:clamp(10px,3vw,13px)!important;letter-spacing:0;padding:6px 12px}}.dw-photo figure.wp-caption{position:relative;margin:0;z-index:1}.dw-photo figcaption.widget-image-caption{position:absolute;z-index:2;bottom:18px;left:18px;margin:0;background:#12293E;color:#fff;font:600 15px Urbanist,sans-serif;padding:9px 17px;border-radius:8px;text-align:left}.dw-form-note a{color:#1B7EC3!important;font-weight:600;text-decoration:none}.elementor-element.dw-host-card{max-width:720px;width:100%;margin:-16px auto 0!important;background:#fff;border-radius:16px;box-shadow:0 30px 70px rgba(6,12,28,.4);padding:56px 60px 48px!important}.dw-host-card>.e-con,.dw-host-price-row{--padding-top:0px;--padding-right:0px;--padding-bottom:0px;--padding-left:0px;padding:0!important}.dw-host-price-row{margin-bottom:18px}.elementor-widget-heading.dw-host-title h2.elementor-heading-title{font-size:30px!important;line-height:1.15!important;text-transform:uppercase}.dw-host-checks .elementor-icon-list-items{margin:32px 0!important;padding:32px 0!important;border-top:1px solid #E4E9F5;border-bottom:1px solid #E4E9F5;display:flex;flex-direction:column;gap:18px}.dw-host-checks .elementor-icon-list-item{margin:0!important;padding:0!important;align-items:flex-start!important}.dw-host-checks .elementor-icon-list-item::after{display:none!important}.dw-host-checks .elementor-icon-list-text{font:400 18px/1.5 Urbanist,sans-serif!important;color:#303B58;padding-left:6px}.dw-host-order .elementor-button{width:100%}.dw-host-note-w{margin-top:16px}.elementor-widget-text-editor.dw-host-note-w,.elementor-widget-text-editor.dw-host-note-w p{margin:0;font-size:15px!important;line-height:1.6!important}@media(max-width:767px){.elementor-element.dw-host-card{padding:36px 24px 32px!important}.elementor-widget-heading.dw-host-title h2.elementor-heading-title{font-size:24px!important}.dw-host-checks .elementor-icon-list-items{margin:26px 0!important;padding:26px 0!important}.dw-host-checks .elementor-icon-list-text{font-size:17px!important}}.dwt{max-width:1100px;margin:0 auto;width:100%}.dwt-card{position:relative;overflow:hidden;background:#fff;border-radius:16px;padding:30px 34px 28px!important;box-shadow:0 24px 50px rgba(0,0,0,.28);transition:transform .25s ease,box-shadow .25s ease}.dwt-card::before{content:\'\';position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(#4BA3DC,#1B7EC3)}.dwt-card:hover{transform:translateY(-4px);box-shadow:0 30px 60px rgba(0,0,0,.34)}.dwt-k .elementor-heading-title{font:600 12px Urbanist,sans-serif!important;letter-spacing:.18em!important;text-transform:uppercase;color:#1B7EC3!important}.dwt-h .elementor-heading-title{font-weight:900!important;text-transform:uppercase;color:#0E1526!important;line-height:1.2!important}.dwt-p p{margin:0;color:#4A5470}.dwt-p a{color:#1B7EC3;font-weight:600}.dwt-note{background:#F1F7FD;border:1px solid #DCEAF6;border-radius:10px;padding:13px 18px}.dwt-note p{margin:0;color:#303B58}.dwt-note strong{color:#1B7EC3;font-weight:600;margin-right:6px}.dwt-card .e-con{--padding-top:0px;--padding-right:0px;--padding-bottom:0px;--padding-left:0px;padding:0!important}.elementor-element.dw-inc-list{width:100%!important;max-width:760px!important;margin-left:auto!important;margin-right:auto!important}@media(max-width:767px){.dwt-note strong{display:block;margin:0 0 4px}}@media(max-width:767px){.dwt-card{padding:22px 20px!important}.dwt-ic{display:none}}.dw-inc-list .elementor-icon-list-items{display:grid!important;grid-template-columns:1fr;gap:14px}.dw-inc-list .elementor-icon-list-item{display:flex;align-items:center;gap:14px;margin:0!important;padding:17px 22px!important;background:#F4F9FE;border:1px solid #E4E9F5;border-radius:12px}.dw-inc-list .elementor-icon-list-item::after{display:none!important}.dw-inc-list .elementor-icon-list-text{font:600 18px Urbanist,sans-serif!important;color:#0E1526;padding:0!important}.dwx-item{background:#fff;border:1px solid #E4E9F5;border-radius:12px;padding:18px 20px;box-shadow:0 8px 24px rgba(18,41,62,.05)}.dwx-item .elementor-icon-box-wrapper{display:flex;gap:14px;text-align:left!important;align-items:flex-start}.dwx-item .elementor-icon-box-icon{margin:2px 0 0!important}.dwx-item .elementor-icon-box-title{margin:0 0 4px!important;font:700 17px/1.4 Urbanist,sans-serif!important;text-transform:uppercase;letter-spacing:.3px;color:#0E1526}.dwx-item .elementor-icon-box-description{margin:0;color:#4A5470}</style>' . "\n";
+}, 99 );
+
+// Review cards that link out (Google, Upwork): no underline, a slight lift on hover.
+add_action( 'wp_head', function () {
+	echo '<style id="dwdp-review-links">' . '.elementor-element-dw0001t>a.e-con{text-decoration:none!important;color:inherit;cursor:pointer;transition:transform .2s ease,box-shadow .2s ease}.elementor-element-dw0001t>a.e-con:hover{transform:translateY(-3px);box-shadow:0 14px 34px rgba(18,41,62,.12)!important}' . '</style>' . "\n";
+}, 99 );
+
+/**
+ * Header: frosted glass on every page. A mostly-white background with a blur, so the page shows
+ * faintly through it as it scrolls underneath.
+ */
+add_action( 'wp_head', function () {
+	echo '<style id="dwdp-header-glass">'
+		// The glass lives on a pseudo-element: a backdrop-filter on the header itself would trap the fixed mobile menu.
+		. '.dw-header{background:transparent!important;box-shadow:0 6px 24px rgba(18,41,62,.06)!important}'
+		. '.dw-header::before{content:"";position:absolute;inset:0;z-index:-1;background:rgba(255,255,255,.86)!important;-webkit-backdrop-filter:blur(16px) saturate(160%)!important;backdrop-filter:blur(16px) saturate(160%)!important;opacity:1!important}'
+		. '.dw-header .elementor-menu-toggle{background:transparent!important}'
+		// Logo lines up with the left edge of the page content.
+		. '.dw-header .elementor-widget-image{margin-left:20px!important}@media(max-width:767px){.dw-header .elementor-widget-image{margin-left:24px!important}}'
+		. '</style>' . "\n";
+}, 99 );
+
+/**
+ * On phones, card sections that would stack into a long column become one swipeable row
+ * (scroll snap, next card peeking in): homepage "included" cards and review badges, hosting
+ * cards and the contact steps.
+ */
+add_action( 'wp_head', function () {
+	$rows  = '.elementor-element-dw00016,.elementor-element-dw0001t,.elementor-element-dw000ad';
+	$cards = '.elementor-element-dw00016>.e-con,.elementor-element-dw0001t>.e-con,.elementor-element-dw000ad>.e-con';
+	echo '<style id="dwdp-swipe">@media(max-width:767px){'
+		. $rows . ',.dwc-steps{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;overflow-x:auto!important;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;gap:14px!important;margin-left:-20px!important;margin-right:-20px!important;padding:6px 20px 26px!important;width:calc(100% + 40px)!important;max-width:none!important;scroll-padding:0 20px}'
+		. $rows . ',.dwc-steps{}' . str_replace( ',', '::-webkit-scrollbar,', $rows ) . '::-webkit-scrollbar,.dwc-steps::-webkit-scrollbar{display:none}'
+		. $cards . ',.dwc-steps>.dwc-step{flex:0 0 82%!important;width:82%!important;max-width:82%!important;scroll-snap-align:start;margin:0!important}'
+		// No tinted band behind the swipe rows: drop the row backgrounds and the clipped card shadows.
+		. $rows . ',.dwc-steps{background:transparent!important}' . $cards . ',.dwc-steps>.dwc-step{box-shadow:0 1px 0 rgba(18,41,62,.04)!important}'
+		// Homepage hero: everything centered and the laptop fully on screen.
+		. '.elementor-element-dw00007{align-items:center!important;text-align:center}.elementor-element-dw00007 .elementor-heading-title,.elementor-element-dw00007 .elementor-widget-text-editor{text-align:center!important}'
+		. '.elementor-element-dw00007 .elementor-widget-html{align-self:center}.elementor-element-dw00006{justify-content:center!important;flex-direction:column!important;align-items:center!important}'
+		. '.elementor-element-dw00009 .dwdp-laptop{width:100%!important}.dwdp-vslider.is-laptop{align-items:center!important}'
+		// "What's included" heading centered; less space around "See how the process works".
+		. '.elementor-element-dw0000f{align-items:center!important;text-align:center}.elementor-element-dw0000f .elementor-heading-title,.elementor-element-dw0000f .elementor-widget-text-editor{text-align:center!important}'
+		. '.elementor-element-dw0000g{margin-top:0!important}.elementor-element-9e67fb33>.e-con-inner{row-gap:14px!important;gap:14px!important}.elementor-element-dw0000f{padding-bottom:0!important;margin-bottom:0!important}.elementor-element-dw00016{padding-bottom:14px!important}'
+		// Homepage FAQ intro and "Let's build your website": centered, buttons stacked in the middle.
+		. '.elementor-element-b7671e0,.elementor-element-dw0002c{align-items:center!important;text-align:center!important}'
+		. '.elementor-element-b7671e0 .elementor-heading-title,.elementor-element-b7671e0 .elementor-widget-text-editor,.elementor-element-b7671e0 .elementor-button-wrapper,.elementor-element-dw0002c .elementor-heading-title,.elementor-element-dw0002c .elementor-widget-text-editor,.elementor-element-dw0002c .elementor-button-wrapper{text-align:center!important}'
+		. '.elementor-element-b7671e0 .elementor-heading-title::after,.elementor-element-dw0002c .elementor-heading-title::after{margin-left:auto!important;margin-right:auto!important;background-position:center!important}'
+		. '.elementor-element-dw0002b{flex-direction:column!important;align-items:center!important;justify-content:center!important}'
+		// Footer: everything centered, "Call today" above the number with a small phone icon beside it.
+		. '.dwf{flex-direction:column!important;justify-content:center!important;gap:20px!important}'
+		. '.dwf .dwf-phone{display:grid!important;grid-template-columns:auto auto;justify-content:center;align-items:center;column-gap:8px;row-gap:2px}.dwf .dwf-call-t{display:contents!important}'
+		. '.dwf .dwf-call-t small{grid-column:1/-1;grid-row:1;text-align:center}.dwf .dwf-call-ic{grid-column:1;grid-row:2}.dwf .dwf-call-t b{grid-column:1/-1;grid-row:2;margin-top:0!important}'
+		// Reviews: one full-width card at a time, centered (auto-advances every 4 seconds, below).
+		. '.elementor-element-dw0001t{padding-top:6px!important;padding-bottom:6px!important}.elementor-element-dw0001t>.e-con{flex:0 0 100%!important;width:100%!important;max-width:100%!important;scroll-snap-align:center;justify-content:center!important;align-items:center!important;text-align:center}'
+		. '}</style>' . "\n";
+	// Footer icons everywhere: small, no circles. Review cards: equal space above and below.
+	echo '<style id="dwdp-footer-icons">.dwf .dwf-call-ic{display:none!important}.dwf .dwf-call-t{align-items:center!important;text-align:center!important}.dwf-icons{gap:20px!important;align-items:center}.dwf-ico,.dwf-ico:hover,.dwf-call-ic{width:auto!important;height:auto!important;border:0!important;border-radius:0!important;background:none!important}'
+		. '.dwf-ico svg{width:15px!important;height:15px!important}.dwf-ico:hover svg{fill:#fff}.dwf-ico[href*="linkedin"] svg{width:18px!important;height:18px!important}.dwf-call-ic svg{width:15px!important;height:15px!important}'
+		. '.elementor-element-dw0001t>.e-con .elementor-widget:last-child p:last-child{margin-bottom:0!important}.elementor-element-dw0001t>.e-con{padding-top:34px!important;padding-bottom:30px!important}</style>' . "\n";
+}, 99 );
+
+/** Case-study pages use the plugin template (inside the site's header/footer). */
+add_filter( 'template_include', function ( $template ) {
+	if ( is_singular( DWDP_CPT ) ) {
+		$theme = locate_template( array( 'single-' . DWDP_CPT . '.php' ) );
+		return $theme ? $theme : DWDP_DIR . 'templates/single-project.php';
+	}
+	return $template;
+} );
+
+/**
+ * /portfolio/<slug>/ belongs to projects, but keep any real child page of the
+ * Portfolio page working if no project has that slug.
+ */
+add_filter( 'request', function ( $vars ) {
+	if ( empty( $vars[ DWDP_CPT ] ) || ! empty( $vars['post_type'] ) && DWDP_CPT !== $vars['post_type'] ) {
+		return $vars;
+	}
+	$slug  = $vars[ DWDP_CPT ];
+	$found = get_posts(
+		array(
+			'post_type'      => DWDP_CPT,
+			'name'           => $slug,
+			'post_status'    => is_user_logged_in() ? 'any' : 'publish',
+			'posts_per_page' => 1,
+			'fields'         => 'ids',
+		)
+	);
+	if ( $found ) {
+		return $vars;
+	}
+	$path = dwdp_base_slug() . '/' . $slug;
+	$page = get_page_by_path( $path );
+	return ( $page && 'publish' === $page->post_status ) ? array( 'pagename' => $path ) : $vars;
+} );
+
+/** Project card used on the Portfolio page: the hero on a laptop with the phone view beside it, then name and industry. */
+function dwdp_card_html( $p ) {
+	$mock  = absint( dwdp_get( $p->ID, 'mockup' ) );
+	static $n = 0;
+	$first = $n++ < 2; // the first cards are on screen right away: load them first
+	$phone = $mock ? '<span class="dw-pphone">' . dwdp_img( $mock, get_the_title( $p ) . ' website on mobile', array( 'loading' => $first ? 'eager' : 'lazy', 'sizes' => '(max-width: 767px) 80px, 120px' ) ) . '</span>' : '';
+	$label = dwdp_number( $p->ID ) . ' · ' . dwdp_get( $p->ID, 'industry' );
+	$name  = get_the_title( $p );
+	$img   = dwdp_img( dwdp_get( $p->ID, 'cover' ), $name . ' website', array_merge( array( 'loading' => $first ? 'eager' : 'lazy', 'sizes' => '(max-width: 767px) 72vw, 440px' ), 1 === $n ? array( 'fetchpriority' => 'high' ) : array() ) );
+	return sprintf(
+		'<a class="dw-pcard" data-builder="%6$s" href="%1$s"><span class="dw-pshot"><span class="dwdp-laptop"><span class="dwdp-lid"><i class="dwdp-cam"></i><span class="dwdp-lscreen">%3$s</span></span><span class="dwdp-base"></span></span>%5$s</span><span class="dw-pfoot"><span class="dw-pmeta"><b>%2$s</b><em>%4$s</em></span><span class="dw-pbtn">View project →</span></span></a>',
+		esc_url( get_permalink( $p ) ),
+		esc_html( $name ),
+		$img,
+		esc_html( $label ),
+		$phone,
+		esc_attr( dwdp_get( $p->ID, 'builder' ) )
+	);
+}
+
+/**
+ * [dwd_portfolio] — grid of every published project. Optional: limit="4", and style="carousel"
+ * for a sliding row (three cards on desktop, two on tablets, one on phones) with buttons above.
+ */
+add_shortcode( 'dwd_portfolio', function ( $atts ) {
+	$atts     = shortcode_atts( array( 'limit' => 0, 'style' => 'grid' ), $atts );
+	$projects = dwdp_projects();
+	if ( $atts['limit'] ) {
+		$projects = array_slice( $projects, 0, absint( $atts['limit'] ) );
+	}
+	if ( ! $projects ) {
+		return '';
+	}
+	dwdp_enqueue_front();
+	$cards = '';
+	foreach ( $projects as $p ) {
+		$cards .= dwdp_card_html( $p );
+	}
+	if ( 'carousel' !== $atts['style'] ) {
+		$builders = array_unique( array_map( function ( $p ) { return dwdp_get( $p->ID, 'builder' ); }, $projects ) );
+		if ( count( $builders ) < 2 ) {
+			return '<div class="dw-pgrid dwdp-grid">' . $cards . '</div>';
+		}
+		// WordPress / Webflow toggle above the grid; #webflow in the address opens the Webflow tab.
+		return '<div class="dw-ptoggle-wrap"><div class="dw-ptoggle" role="tablist" aria-label="Platform">'
+			. '<button type="button" role="tab" class="is-on" aria-selected="true" data-b="wordpress"><span class="dw-ptoggle-ic dw-ic-wp" aria-hidden="true"></span>WordPress</button>'
+			. '<button type="button" role="tab" aria-selected="false" data-b="webflow"><span class="dw-ptoggle-ic dw-ic-wf" aria-hidden="true"></span>Webflow</button>'
+			. '</div></div>'
+			. '<div class="dw-pgrid dwdp-grid" data-show="wordpress">' . $cards . '</div>'
+			. "<script>(function(){var w=document.currentScript.previousElementSibling,t=w.previousElementSibling;function set(b){w.setAttribute('data-show',b);t.querySelectorAll('button').forEach(function(x){var on=x.getAttribute('data-b')===b;x.classList.toggle('is-on',on);x.setAttribute('aria-selected',on);});}"
+			. "t.addEventListener('click',function(e){var x=e.target.closest('button');if(!x)return;set(x.getAttribute('data-b'));history.replaceState(null,'',x.getAttribute('data-b')==='webflow'?'#webflow':location.pathname);});if(location.hash==='#webflow')set('webflow');})();</script>";
+	}
+	$arrow = '<svg viewBox="0 0 22 22" aria-hidden="true"><path d="%s"></path></svg>';
+	return '<div class="dwdp-pcarousel">'
+		. '<div class="dwdp-pnav">'
+		. '<button type="button" class="dwdp-pbtn dwdp-prev" aria-label="Previous projects">' . sprintf( $arrow, 'M14 4 L7 11 L14 18' ) . '</button>'
+		. '<button type="button" class="dwdp-pbtn dwdp-next" aria-label="Next projects">' . sprintf( $arrow, 'M8 4 L15 11 L8 18' ) . '</button>'
+		. '</div>'
+		. '<div class="dwdp-ptrack" tabindex="0" aria-label="Projects">' . $cards . '</div>'
+		. '</div>';
+} );
+
+/**
+ * [dwd_project_slider] — homepage showcase of every project's full hero (projects marked
+ * "Show on homepage"). One design at a time; up/down buttons slide vertically between them.
+ * Each hero links to its project. The heroes sit on a large laptop screen that runs off the
+ * right edge of the section; use frame="none" for a plain screen, or style="classic" for the
+ * older one-at-a-time slider.
+ */
+/** How wide the slider's laptop screen shows, so phones download a phone-sized hero. */
+const DWDP_SLIDE_SIZES = '(max-width: 1439px) 78vw, 1000px';
+
+/** Front page: load the slider's styles in the head and preload its first hero (the page's largest paint). */
+add_action( 'wp_head', function () {
+	if ( ! is_front_page() ) {
+		return;
+	}
+	foreach ( dwdp_projects( true ) as $p ) {
+		$hero = absint( dwdp_get( $p->ID, 'cover' ) );
+		if ( ! $hero ) {
+			continue;
+		}
+		$src = wp_get_attachment_image_src( $hero, 'full' );
+		$set = wp_get_attachment_image_srcset( $hero, 'full' );
+		if ( $src ) {
+			printf( '<link rel="preload" as="image" href="%s"%s imagesizes="%s" fetchpriority="high">' . "\n", esc_url( $src[0] ), $set ? ' imagesrcset="' . esc_attr( $set ) . '"' : '', esc_attr( DWDP_SLIDE_SIZES ) );
+		}
+		break;
+	}
+}, 2 );
+/** Does this page show the project grid/slider? Then its styles load in the head (no late layout shift). */
+function dwdp_page_uses_cards() {
+	if ( is_front_page() || is_singular( DWDP_CPT ) ) {
+		return true;
+	}
+	if ( ! is_singular() ) {
+		return false;
+	}
+	$id  = get_queried_object_id();
+	$raw = (string) get_post_field( 'post_content', $id ) . (string) get_post_meta( $id, '_elementor_data', true );
+	return false !== strpos( $raw, '[dwd_portfolio' ) || false !== strpos( $raw, '[dwd_project_slider' ) || false !== strpos( $raw, 'dwd_portfolio' );
+}
+add_action( 'wp_enqueue_scripts', function () {
+	if ( dwdp_page_uses_cards() ) {
+		wp_enqueue_style( 'dwdp-front' );
+	}
+}, 20 );
+
+add_shortcode( 'dwd_project_slider', function ( $atts ) {
+	$atts     = shortcode_atts( array( 'style' => 'vertical', 'frame' => 'laptop' ), $atts );
+	$projects = dwdp_projects( true );
+	if ( ! $projects ) {
+		return '';
+	}
+	dwdp_enqueue_front();
+	if ( 'classic' === $atts['style'] ) {
+		return dwdp_classic_slider( $projects );
+	}
+	$items = '';
+	$count = 0;
+	foreach ( $projects as $p ) {
+		$hero = absint( dwdp_get( $p->ID, 'cover' ) );
+		if ( ! $hero ) {
+			continue;
+		}
+		// One shared frame; each hero fills it from the top (short heroes lose a little of their
+		// empty side margins, tall ones a sliver of their bottom edge).
+		$lazy   = $count < 2 ? 'eager' : 'lazy';
+		$items .= sprintf(
+			'<a class="dwdp-vitem" href="%1$s" aria-label="%2$s">%3$s</a>',
+			esc_url( get_permalink( $p ) ),
+			esc_attr( 'View the ' . get_the_title( $p ) . ' project' ),
+			dwdp_img( $hero, get_the_title( $p ) . ' website design', array_merge( array( 'loading' => $lazy, 'sizes' => DWDP_SLIDE_SIZES ), $count ? array() : array( 'fetchpriority' => 'high', 'decoding' => 'sync' ) ) )
+		);
+		$count++;
+	}
+	if ( ! $count ) {
+		return '';
+	}
+	$chev   = '<svg viewBox="0 0 22 22" aria-hidden="true"><path d="%s"></path></svg>';
+	$screen = '<div class="dwdp-vview"><div class="dwdp-vtrack">' . $items . '</div></div>';
+	if ( 'laptop' === $atts['frame'] ) {
+		$screen = '<div class="dwdp-laptop"><div class="dwdp-lid"><i class="dwdp-cam"></i>' . $screen . '</div><div class="dwdp-base"></div></div>';
+	}
+	return '<div class="dwdp-vslider' . ( 'laptop' === $atts['frame'] ? ' is-laptop' : '' ) . '">'
+		. '<div class="dwdp-vnav">'
+		. '<button type="button" class="dwdp-vbtn dwdp-up" aria-label="Previous design">' . sprintf( $chev, 'M4 14 L11 7 L18 14' ) . '</button>'
+		. '<button type="button" class="dwdp-vbtn dwdp-down" aria-label="Next design">' . sprintf( $chev, 'M4 8 L11 15 L18 8' ) . '</button>'
+		. '</div>'
+		. $screen
+		. '</div>';
+} );
+
+/** The original one-at-a-time browser slider. */
+function dwdp_classic_slider( $projects ) {
+	$imgs = '';
+	foreach ( $projects as $i => $p ) {
+		$cover = absint( dwdp_get( $p->ID, 'cover' ) );
+		if ( ! $cover ) {
+			continue;
+		}
+		$imgs .= sprintf(
+			'<a href="%1$s" class="%2$s" data-url="%3$s" aria-label="%4$s">%5$s</a>',
+			esc_url( get_permalink( $p ) ),
+			'' === $imgs ? 'on' : '',
+			esc_attr( dwdp_domain( $p->ID ) ),
+			esc_attr( 'View the ' . get_the_title( $p ) . ' project' ),
+			dwdp_img( $cover, get_the_title( $p ) . ' website', array( 'loading' => 0 === $i ? 'eager' : 'lazy' ) )
+		);
+	}
+	if ( '' === $imgs ) {
+		return '';
+	}
+	$arrow = '<svg style="width:20px;height:20px" viewBox="0 0 22 22"><path d="%s"></path></svg>';
+	return '<div class="dw-slider dwdp-slider">'
+		. '<div class="dw-snavcol">'
+		. '<button type="button" class="dw-snav dw-prev" aria-label="Previous site">' . sprintf( $arrow, 'M14 4 L7 11 L14 18' ) . '</button>'
+		. '<button type="button" class="dw-snav dw-next" aria-label="Next site">' . sprintf( $arrow, 'M8 4 L15 11 L8 18' ) . '</button>'
+		. '</div>'
+		. '<div class="dw-browser"><div class="dw-bscreen">' . $imgs . '</div></div>'
+		. '</div>';
+}
+
+/** Shared closing call to action. $context "blog" uses wording that fits articles instead of the portfolio. */
+function dwdp_cta_html( $context = '' ) {
+	$s     = dwdp_settings();
+	if ( 'blog' === $context ) {
+		$s['cta_title'] = 'Need help with your website?';
+		$s['cta_text']  = 'If you’re planning a new website or a redesign, I’d be glad to discuss it. A brief Zoom call is all it takes to receive a quote and timeline.';
+	}
+	$phone = trim( $s['cta_phone'] );
+	$tel   = preg_replace( '/[^0-9+]/', '', $phone );
+	ob_start();
+	?>
+	<section class="dwdp-cta dw-dots-dark dw-glow">
+		<div class="dwdp-cta-inner">
+			<h2 class="dwdp-cta-title"><?php echo dwdp_two_tone( $s['cta_title'], '#4BA3DC', 3, true ); // phpcs:ignore WordPress.Security.EscapeOutput ?></h2>
+			<p class="dwdp-cta-text"><?php echo esc_html( $s['cta_text'] ); ?></p>
+			<div class="dwdp-cta-row">
+				<a class="dwdp-btn" href="<?php echo esc_url( $s['cta_url'] ); ?>" target="_blank" rel="noopener"><?php echo esc_html( $s['cta_button'] ); ?></a>
+				<?php if ( $phone ) : ?>
+					<span class="dwdp-cta-call">or call <a href="tel:<?php echo esc_attr( $tel ); ?>"><?php echo esc_html( $phone ); ?></a></span>
+				<?php endif; ?>
+			</div>
+		</div>
+	</section>
+	<?php
+	return ob_get_clean();
+}
+add_shortcode( 'dwd_projects_cta', function ( $atts ) {
+	$atts = shortcode_atts( array( 'context' => '' ), $atts );
+	dwdp_enqueue_front();
+	return dwdp_cta_html( $atts['context'] );
+} );
+
+/**
+ * Cache busting for this plugin's own CSS/JS. SiteGround's "remove query strings" strips ?ver=, and the files are
+ * cached for a year, so browsers kept running old copies after updates (e.g. the portfolio filter breaking).
+ * Our handles are excluded from that, and each URL also carries ?v=<plugin version>, which it never strips.
+ */
+add_filter( 'sgo_rqs_exclude', function ( $ex ) {
+	return array_merge( (array) $ex, array( 'dwdr', 'dwdc', 'dwdp-admin', 'dwdp-front', 'dwdp-onboarding', 'dwdp-pages', 'dwdp-skin', 'dwdp-upwork' ) );
+} );
+foreach ( array( 'script_loader_src', 'style_loader_src' ) as $dwdp_hook ) {
+	add_filter( $dwdp_hook, function ( $src ) {
+		if ( is_string( $src ) && 0 === strpos( $src, DWDP_URL ) ) {
+			$src = add_query_arg( 'v', DWDP_VERSION, $src );
+		}
+		return $src;
+	}, 99 );
+}
+
+/**
+ * Link previews (Facebook, iMessage, Slack, LinkedIn…): the share image with the new logo replaces the old
+ * starry "Featured Site Image" wherever Yoast would use it, and is also used for the homepage.
+ */
+const DWDP_SHARE_IMG = 'https://dreamwebdigital.com/wp-content/uploads/2026/11/dream-web-digital-share.jpg';
+function dwdp_share_img( $url ) {
+	if ( is_front_page() || '' === (string) $url || false !== stripos( (string) $url, 'Featured-Site-Image' ) ) {
+		return DWDP_SHARE_IMG;
+	}
+	return $url;
+}
+add_filter( 'wpseo_opengraph_image', 'dwdp_share_img', 20 );
+add_filter( 'wpseo_twitter_image', 'dwdp_share_img', 20 );

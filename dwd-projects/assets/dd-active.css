@@ -1,0 +1,96 @@
+/* Dream Desk Active projects (design 6a). Colours only from dd-tokens.css. */
+.dd-atop { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.dd-atop h1 { flex: 1; display: flex; align-items: baseline; gap: 10px; font-size: var(--fs-title); font-weight: 600; letter-spacing: -.01em; color: var(--text); white-space: nowrap; }
+.dd-atop h1 em { font-style: normal; font-size: 14px; font-weight: 400; color: var(--text-3); }
+.dd-aq { width: 240px; flex: none; }
+.dd-achips { display: flex; gap: 6px; }
+.dd-achips .dd-chip { height: 32px; }
+.dd-atop .dd-sort { height: 32px; }
+.dd-vsw button { width: 32px; height: 28px; padding: 0; display: inline-flex; align-items: center; justify-content: center; }
+.dd-aclear { font-size: 13px; color: var(--text-3); }
+.dd-main > .dwdc-screen > .dd-asegs, .dd-main > .dwdc-screen > .dd-board { margin-top: 20px; }
+.dd-asegs { display: flex; flex-direction: column; gap: 20px; }
+.dd-aseg { overflow: visible; transition: border-color .12s; }
+.dd-aseg.dd-dropt, .dd-bcol.dd-dropt { border-color: var(--accent); }
+.dd-prow { display: grid; grid-template-columns: 28px minmax(0, 1.7fr) minmax(0, 1.4fr) 100px 100px 90px 120px minmax(0, 1.4fr) 64px; align-items: center; column-gap: 12px; min-height: 64px; padding: 0 8px 0 12px; border-top: 1px solid var(--border); font-size: 14px; color: var(--text); cursor: pointer; background: var(--surface); }
+.dd-prow:hover { background: var(--hover); }
+.dd-prow.head { position: sticky; top: var(--topbar-h); z-index: 4; min-height: 40px; border-top: 0; font-size: 12px; font-weight: 500; color: var(--text-3); cursor: default; border-radius: var(--radius-xl) var(--radius-xl) 0 0; }
+.dd-prow.head:hover { background: var(--surface); }
+.dd-prow.head .dwdc-sorth { font: inherit; color: inherit; padding: 0; background: none; border: 0; }
+.dd-prow .num { text-align: right; justify-content: flex-end; }
+.dd-pgrip { display: inline-flex; color: var(--text-3); cursor: grab; justify-content: center; }
+.dd-asegs.sorted .dd-pgrip { opacity: .4; cursor: default; }
+.dd-pc { min-width: 0; overflow: hidden; }
+.dd-pc i { font-style: normal; color: var(--text-3); }
+.dd-pc.nm { display: flex; align-items: center; gap: 12px; overflow: visible; }
+.dd-pc.nm .dd-st { display: flex; flex-direction: column; min-width: 0; }
+.dd-pc.nm .dd-l1 { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.dd-pc.nm .dd-l1 > a { color: var(--text) !important; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dd-pc.nm .dd-l1 > a b { font-weight: 500; }
+.dd-pc.nm .dd-l1 > a:hover { color: var(--accent-text) !important; }
+.dd-mtag { display: inline-flex; align-items: center; height: 20px; padding: 0 7px; border-radius: var(--radius-pill); background: var(--neutral-bg); color: var(--neutral-text) !important; font-size: 11px; font-weight: 500; flex: none; }
+.dd-dom { font-size: 12px; color: var(--accent-text) !important; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dd-mob-pill, .dd-mob-meta { display: none; }
+.dd-pc.cl { display: flex; flex-direction: column; }
+.dd-pc.cl span, .dd-pc.cl small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dd-pc.cl a { color: var(--text) !important; }
+.dd-pc.cl a:hover { color: var(--accent-text) !important; }
+.dd-pc.cl small { font-size: 12px; color: var(--text-3); }
+.dd-pc.owed { font-weight: 500; }
+.dd-pc.owed em { font-style: normal; font-weight: 400; color: var(--success-text); }
+.dd-pc.due { font-size: 13px; }
+.dd-pc.due.soon { color: var(--warning-text); } .dd-pc.due.late { color: var(--danger-text); }
+.dd-pc.st select.dwdc-stage { height: 24px !important; min-height: 0 !important; padding: 0 22px 0 10px !important; border-radius: var(--radius-pill) !important; border: 0 !important; background-color: var(--success-bg) !important; color: var(--success-text) !important; font: 500 12px var(--font) !important; text-transform: none !important; letter-spacing: 0 !important; width: auto; max-width: 100%; }
+.dd-pc.nx { font-size: 13px; color: var(--text-2); white-space: nowrap; text-overflow: ellipsis; }
+.dd-pc.acts { display: flex; gap: 2px; justify-content: flex-end; opacity: 0; transition: opacity .12s; }
+.dd-prow:hover .dd-pc.acts, .dd-prow:focus-within .dd-pc.acts { opacity: 1; }
+.dd-agh { display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 16px; background: var(--bg); border-top: 1px solid var(--border); font-size: 12px; font-weight: 600; color: var(--text-2); }
+.dd-aseg > .dd-agh:first-child { border-top: 0; border-radius: var(--radius-xl) var(--radius-xl) 0 0; }
+.dd-agh i, .dd-bcol header i { width: 6px; height: 6px; border-radius: 50%; background: var(--text-3); }
+.dd-agh i.now, .dd-bcol header i.now { background: var(--accent); }
+.dd-agh em, .dd-bcol header em { font-style: normal; font-weight: 500; color: var(--text-3); }
+.dd-hint, .dd-sortnote { font-size: 12px; font-weight: 400; color: var(--text-3); }
+.dd-sortnote .dd-lnk { font-size: 12px; padding: 0; }
+.dd-arows > :last-child.dd-prow { border-radius: 0 0 var(--radius-xl) var(--radius-xl); }
+.dd-pdrop { margin: 8px; height: 40px; display: flex; align-items: center; justify-content: center; border: 1px dashed var(--border-strong); border-radius: var(--radius-md); font-size: 13px; color: var(--text-3); }
+.dd-arows:has(> .dd-prow) > .dd-pdrop, .dd-bl:has(> .dd-bcard) > .dd-pdrop { display: none; }
+.dd-arows .dd-prow.dwdc-dragging { background: var(--surface-2) !important; box-shadow: var(--shadow-menu); transform: scale(.98); }
+/* board */
+.dd-board { display: grid; grid-template-columns: repeat(2, minmax(320px, 1fr)); gap: 16px; align-items: start; }
+.dd-bcol { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 0 8px 8px; }
+.dd-bcol header { display: flex; align-items: center; gap: 8px; height: 44px; padding: 0 8px; font-size: 13px; font-weight: 600; color: var(--text); }
+.dd-bl { display: flex; flex-direction: column; gap: 8px; min-height: 40px; }
+.dd-bcard { display: flex; flex-direction: column; gap: 4px; padding: 14px 16px; border-radius: var(--radius-lg); background: var(--surface); border: 1px solid var(--border); color: var(--text) !important; }
+.dd-bcard:hover { border-color: var(--border-strong); }
+.dd-bcard .dd-l1 { display: flex; align-items: center; gap: 8px; }
+.dd-bcard .dd-l1 b { font-size: 14px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dd-bcard small { font-size: 12px; color: var(--text-3); }
+.dd-bcard .meta { font-size: 12px; color: var(--text-2); }
+.dd-bcard .nx { font-size: 12px; color: var(--text-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dd-bl .dd-pdrop { margin: 0; }
+@media (max-width: 1279px) {
+	.dd-prow { grid-template-columns: 28px minmax(0, 1.7fr) minmax(0, 1.3fr) 90px 90px 80px 110px 56px; }
+	.dd-prow > :nth-child(8) { display: none; }
+}
+@media (max-width: 767px) {
+	.dd-atop h1 { flex-basis: 100%; }
+	.dd-aq { width: auto; flex: 1 1 100%; height: 40px; }
+	.dd-aq input { font-size: 16px !important; }
+	.dd-achips { overflow-x: auto; flex: 1 1 100%; scrollbar-width: none; margin: 0 -16px; padding: 0 16px; }
+	.dd-achips::-webkit-scrollbar { display: none; }
+	.dd-atop .dd-chipdiv { display: none; }
+	.dd-asegs { gap: 16px; }
+	.dd-prow.head { display: none; }
+	.dd-aseg > .dd-agh:nth-child(2) { border-top: 0; border-radius: var(--radius-xl) var(--radius-xl) 0 0; }
+	.dd-prow { display: flex; align-items: center; gap: 8px; padding: 12px 12px 12px 4px; min-height: 0; }
+	.dd-prow > .dd-pc:not(.nm) { display: none; }
+	.dd-pgrip { width: 32px; height: 44px; align-items: center; flex: none; }
+	.dd-pc.nm { flex: 1; align-items: flex-start; }
+	.dd-pc.nm > .dd-flagw { margin-top: 5px; }
+	.dd-pc.nm .dd-st { flex: 1; }
+	.dd-mob-pill { display: inline-flex; margin-left: auto; }
+	.dd-mob-meta { display: block; font-size: 12px; color: var(--text-3); margin-top: 2px; white-space: normal; }
+	.dd-hint { display: none; }
+	.dd-board { grid-template-columns: 1fr; }
+}
+.dd-prow > .due, .dd-prow.head > :nth-child(6) { padding-left: 20px; }

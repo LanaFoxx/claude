@@ -1,0 +1,719 @@
+<?php
+/**
+ * Personal: Mike's own to-do list, money log and bills — kept apart from the business CRM.
+ * Stored in one private option (never autoloaded, never shown on the site).
+ */
+defined( 'ABSPATH' ) || exit;
+
+/** A Google Task whose name says "business list" (or "business to-do") belongs on the Work list. */
+const DWDPE_BIZ_RE = '/[\\(\\[]?\\s*\\bbusiness\\s+(?:list|to-?do(?:\\s+list)?)\\b\\s*[\\)\\]]?/i';
+
+function dwdpe_get() {
+	$d = get_option( 'dwdpe_data', array() );
+	$d = is_array( $d ) ? $d : array();
+	foreach ( array( 'todos', 'money', 'bills' ) as $k ) {
+		$d[ $k ] = isset( $d[ $k ] ) && is_array( $d[ $k ] ) ? array_values( $d[ $k ] ) : array();
+	}
+	return dwdpe_dedupe( $d );
+}
+
+/**
+ * Duplicate personal to-dos (same text, ignoring case and spacing, same day and time, both open):
+ * keep one and delete the copy. The kept one is the one linked to Google, if either is.
+ * A deleted copy that was itself a Google task is removed from Google Tasks on the next sync.
+ */
+function dwdpe_dedupe( $d ) {
+	$keep = array();
+	$drop = array();
+	foreach ( $d['todos'] as $i => $t ) {
+		if ( ! empty( $t['done'] ) ) {
+			continue;
+		}
+		$k = strtolower( preg_replace( '/\s+/', ' ', trim( (string) ( $t['text'] ?? '' ) ) ) ) . '|' . ( $t['due'] ?? '' ) . '|' . strtolower( (string) ( $t['time'] ?? '' ) );
+		if ( ! isset( $keep[ $k ] ) ) {
+			$keep[ $k ] = $i;
+			continue;
+		}
+		$j    = $keep[ $k ];
+		$link = function ( $x ) { return ! empty( $x['gevent'] ) ? 2 : ( ! empty( $x['gtask'] ) ? 1 : 0 ); };
+		if ( $link( $t ) > $link( $d['todos'][ $j ] ) ) { // the new one is the better-linked copy: keep it instead
+			$drop[]     = $j;
+			$keep[ $k ] = $i;
+		} else {
+			$drop[] = $i;
+		}
+	}
+	// Same meeting twice: Gmail adds its own copy of bookings (Calendly, Zoom…) next to the real event.
+	// Two calendar items at the same day and time → keep the one with a link (or more detail), hide the other.
+	$slot = array();
+	$hide = (array) get_option( 'dwdpe_hide_ev', array() );
+	foreach ( $d['todos'] as $i => $t ) {
+		if ( ! empty( $t['done'] ) || empty( $t['gevent'] ) || '' === (string) ( $t['time'] ?? '' ) || in_array( $i, $drop, true ) ) {
+			continue;
+		}
+		$k = ( $t['due'] ?? '' ) . '|' . strtolower( (string) $t['time'] );
+		if ( ! isset( $slot[ $k ] ) ) {
+			$slot[ $k ] = $i;
+			continue;
+		}
+		$j     = $slot[ $k ];
+		$score = function ( $x ) { return ( false !== stripos( (string) ( $x['note'] ?? '' ), 'http' ) ? 1000 : 0 ) + strlen( (string) ( $x['note'] ?? '' ) ); };
+		$lose  = $score( $t ) > $score( $d['todos'][ $j ] ) ? $j : $i;
+		if ( $lose === $j ) {
+			$slot[ $k ] = $i;
+		}
+		$drop[] = $lose;
+		$hide[] = $d['todos'][ $lose ]['gevent'];
+	}
+	update_option( 'dwdpe_hide_ev', array_slice( array_values( array_unique( $hide ) ), -300 ), false );
+	if ( ! $drop ) {
+		return $d;
+	}
+	$drop = array_values( array_unique( $drop ) );
+	$gone = (array) get_option( 'dwdpe_gone', array() );
+	foreach ( $drop as $i ) {
+		if ( ! empty( $d['todos'][ $i ]['gtask'] ) && empty( $d['todos'][ $i ]['gevent'] ) ) {
+			$gone[] = $d['todos'][ $i ]['gtask'];
+		}
+		unset( $d['todos'][ $i ] );
+	}
+	$d['todos'] = array_values( $d['todos'] );
+	update_option( 'dwdpe_gone', array_slice( array_values( array_unique( $gone ) ), -200 ), false );
+	update_option( 'dwdpe_data', $d, false );
+	return $d;
+}
+
+/** Clean one item of a given kind. */
+function dwdpe_clean( $kind, $x, $old = array() ) {
+	$x   = array_merge( (array) $old, (array) $x );
+	$txt = function ( $v, $n = 200 ) { return mb_substr( sanitize_text_field( (string) $v ), 0, $n ); };
+	$day = function ( $v ) { return preg_match( '/^\d{4}-\d{2}-\d{2}$/', (string) $v ) ? (string) $v : ''; };
+	$amt = function ( $v ) { return round( (float) str_replace( array( '$', ',' ), '', (string) $v ), 2 ); };
+	$out = array( 'id' => preg_replace( '/[^a-z0-9]/', '', (string) ( $x['id'] ?? '' ) ) );
+	if ( 'todos' === $kind ) {
+		$out += array(
+			'text'    => $txt( $x['text'] ?? '', 300 ),
+			'note'    => mb_substr( sanitize_textarea_field( (string) ( $x['note'] ?? '' ) ), 0, 4000 ),
+			'due'     => $day( $x['due'] ?? '' ),
+			'done'    => ! empty( $x['done'] ),
+			'done_at' => ! empty( $x['done'] ) ? ( $txt( $x['done_at'] ?? '' ) ? $txt( $x['done_at'] ) : current_time( 'mysql' ) ) : '',
+			'created' => $txt( $x['created'] ?? '' ) ? $txt( $x['created'] ) : current_time( 'mysql' ),
+			'gtask'   => $txt( $x['gtask'] ?? '', 120 ),
+			'gevent'  => $txt( $x['gevent'] ?? '', 200 ),
+			'gacct'   => preg_replace( '/[^a-z]/', '', (string) ( $x['gacct'] ?? '' ) ), // which Google account owns the link ('' = work, 'personal' = mptarr33)
+			'source'  => $txt( $x['source'] ?? '', 40 ),
+			'time'    => $txt( $x['time'] ?? '', 40 ),
+			'tag'     => in_array( (string) ( $x['tag'] ?? '' ), array( 'urgent', 'important', 'errand', 'birthday', 'home', 'work', 'health', 'bills' ), true ) ? (string) $x['tag'] : '',
+			'updated' => gmdate( 'c' ),
+			'dirty'   => array_key_exists( 'dirty', (array) $x ) ? ! empty( $x['dirty'] ) : true,
+		);
+	} elseif ( 'money' === $kind ) {
+		$out += array(
+			'date'  => $day( $x['date'] ?? '' ) ? $day( $x['date'] ) : current_time( 'Y-m-d' ),
+			'label' => $txt( $x['label'] ?? '' ),
+			'amount' => abs( $amt( $x['amount'] ?? 0 ) ),
+			'type'  => 'income' === ( $x['type'] ?? '' ) ? 'income' : 'expense',
+			'cat'   => $txt( $x['cat'] ?? '', 60 ),
+		);
+	} else {
+		$freq  = in_array( $x['freq'] ?? '', array( 'monthly', 'yearly', 'weekly' ), true ) ? $x['freq'] : 'monthly';
+		$paid  = array();
+		foreach ( (array) ( $x['paid'] ?? array() ) as $k => $v ) {
+			if ( preg_match( '/^\d{4}-\d{2}(-\d{2})?$/', (string) $k ) ) {
+				$paid[ $k ] = $day( $v ) ? $day( $v ) : current_time( 'Y-m-d' );
+			}
+		}
+		$out += array(
+			'name'    => $txt( $x['name'] ?? '' ),
+			'amount'  => abs( $amt( $x['amount'] ?? 0 ) ),
+			'day'     => max( 1, min( 31, (int) ( $x['day'] ?? 1 ) ) ),
+			'month'   => max( 1, min( 12, (int) ( $x['month'] ?? 1 ) ) ),
+			'freq'    => $freq,
+			'autopay' => ! empty( $x['autopay'] ),
+			'scope'   => 'business' === ( $x['scope'] ?? '' ) ? 'business' : 'personal',
+			'cat'     => $txt( $x['cat'] ?? '', 60 ),
+			'paid'    => array_slice( $paid, -36, null, true ),
+		);
+	}
+	return $out;
+}
+
+add_action( 'rest_api_init', function () {
+	register_rest_route( 'dwd/v1', '/crm/personal', array(
+		array(
+			'methods'             => 'GET',
+			'permission_callback' => function () { return current_user_can( 'manage_options' ); },
+			'callback'            => 'dwdpe_get',
+		),
+		array(
+			'methods'             => 'POST',
+			'permission_callback' => function () { return current_user_can( 'manage_options' ); },
+			'callback'            => function ( $r ) {
+				$d    = (array) $r->get_json_params();
+				$kind = in_array( $d['kind'] ?? '', array( 'todos', 'money', 'bills' ), true ) ? $d['kind'] : '';
+				if ( ! $kind ) {
+					return new WP_Error( 'dwdpe_kind', 'Unknown list', array( 'status' => 400 ) );
+				}
+				$all  = dwdpe_get();
+				$list = $all[ $kind ];
+				if ( ! empty( $d['delete'] ) ) {
+					foreach ( $list as $x ) {
+						if ( 'todos' === $kind && ( $x['id'] ?? '' ) === (string) $d['delete'] && ! empty( $x['gevent'] ) ) {
+							$ge   = (array) get_option( 'dwdpe_gone_ev', array() );
+							$ge[] = $x['gevent'];
+							update_option( 'dwdpe_gone_ev', array_slice( $ge, -200 ), false );
+						}
+						if ( 'todos' === $kind && ( $x['id'] ?? '' ) === (string) $d['delete'] && ! empty( $x['gtask'] ) ) {
+							$gone   = (array) get_option( 'dwdpe_gone', array() );
+							$gone[] = $x['gtask'];
+							update_option( 'dwdpe_gone', array_slice( $gone, -200 ), false );
+						}
+					}
+					$list = array_values( array_filter( $list, function ( $x ) use ( $d ) { return ( $x['id'] ?? '' ) !== (string) $d['delete']; } ) );
+				} else {
+					$item = (array) ( $d['item'] ?? array() );
+					$id   = preg_replace( '/[^a-z0-9]/', '', (string) ( $item['id'] ?? '' ) );
+					$hit  = -1;
+					foreach ( $list as $i => $x ) {
+						if ( $id && ( $x['id'] ?? '' ) === $id ) {
+							$hit = $i;
+						}
+					}
+					unset( $item['gtask'], $item['gevent'], $item['source'] );
+					$item['dirty'] = true;
+					$clean         = dwdpe_clean( $kind, $item, $hit > -1 ? $list[ $hit ] : array() );
+					if ( '' === $clean['id'] ) {
+						$clean['id'] = strtolower( wp_generate_password( 10, false ) );
+					}
+					if ( ( 'todos' === $kind && '' === $clean['text'] ) || ( 'bills' === $kind && '' === $clean['name'] ) || ( 'money' === $kind && ! $clean['amount'] ) ) {
+						return new WP_Error( 'dwdpe_empty', 'Fill in the details first.', array( 'status' => 400 ) );
+					}
+					if ( $hit > -1 ) {
+						$list[ $hit ] = $clean;
+					} else {
+						if ( 'todos' === $kind && '' === $clean['due'] ) {
+							$clean['due'] = current_time( 'Y-m-d' ); // no date given: it's for today
+						}
+						$list[] = $clean;
+					}
+				}
+				$all[ $kind ] = array_values( $list );
+				update_option( 'dwdpe_data', $all, false );
+				return $all;
+			},
+		),
+	) );
+} );
+
+/* ---------------------------------------------------------------- Google Tasks & Calendar sync
+ * A Google Apps Script in Mike's account runs every 15 minutes. It sends his Google Tasks and the
+ * next two weeks of calendar events here; Dream Desk merges them into the personal to-do list and
+ * answers with what to create, update or delete on the Google Tasks side.
+ */
+function dwdpe_token() {
+	$t = (string) get_option( 'dwdpe_token', '' );
+	if ( '' === $t ) {
+		$t = wp_generate_password( 40, false );
+		update_option( 'dwdpe_token', $t, false );
+	}
+	return $t;
+}
+
+function dwdpe_ts( $s ) {
+	$t = strtotime( (string) $s );
+	return $t ? $t : 0;
+}
+
+function dwdpe_sync( $d ) {
+	// Two Google accounts sync here: the work account ('') and the personal Gmail account ('personal').
+	// Each one only adds, updates and removes the Google Tasks and calendar events it owns.
+	$acct = preg_replace( '/[^a-z]/', '', (string) ( $d['acct'] ?? '' ) );
+	$pfx  = $acct ? $acct . ':' : '';
+	$mine = function ( $gt ) use ( $pfx ) { $gt = (string) $gt; return $pfx ? 0 === strpos( $gt, $pfx ) : false === strpos( $gt, ':' ); };
+	$all    = dwdpe_get();
+	$todos  = $all['todos'];
+	$byg    = array();
+	$bye    = array();
+	foreach ( $todos as $i => $t ) {
+		if ( ! empty( $t['gtask'] ) ) {
+			$byg[ $t['gtask'] ] = $i;
+		}
+		if ( ! empty( $t['gevent'] ) ) {
+			$bye[ $t['gevent'] ] = $i;
+		}
+	}
+	$gone    = (array) get_option( 'dwdpe_gone', array() );
+	$bizdone = (array) get_option( 'dwdpe_biz_moved', array() ); // Google Tasks already moved to the Work list
+	$moved   = array();
+	$seen_g  = array();
+	$added   = 0;
+	// 1. Google Tasks → Dream Desk.
+	foreach ( (array) ( $d['tasks'] ?? array() ) as $g ) {
+		$gid = sanitize_text_field( (string) ( $g['id'] ?? '' ) );
+		$gid = '' === $gid ? '' : $pfx . $gid;
+		if ( '' === $gid || in_array( $gid, $gone, true ) || in_array( $gid, $bizdone, true ) ) {
+			continue;
+		}
+		$seen_g[ $gid ] = 1;
+		$gdone = ! empty( $g['done'] );
+		$gdue  = substr( (string) ( $g['due'] ?? '' ), 0, 10 );
+		// "business list" in the task name → it goes on the Work to-do list instead (once), not the personal one.
+		$gtitle = (string) ( $g['title'] ?? '' );
+		if ( preg_match( DWDPE_BIZ_RE, $gtitle ) ) {
+			if ( ! $gdone && function_exists( 'dwdc_add_task' ) ) {
+				$clean = trim( preg_replace( '/\s{2,}/', ' ', preg_replace( '/^[\s,;:\-–]+|[\s,;:\-–]+$/u', '', preg_replace( DWDPE_BIZ_RE, ' ', $gtitle ) ) ) );
+				$tid   = dwdc_add_task( sanitize_text_field( '' !== $clean ? $clean : $gtitle ), 0, $gdue );
+				if ( $gdue ) {
+					update_post_meta( $tid, '_dwdc_due_manual', '1' );
+				}
+			}
+			if ( isset( $byg[ $gid ] ) ) { // it was on the personal list already: take it off
+				unset( $todos[ $byg[ $gid ] ] );
+				unset( $byg[ $gid ] );
+			}
+			$moved[] = $gid; // never import it again (the Google task itself is left alone)
+			continue;
+		}
+		if ( isset( $byg[ $gid ] ) ) {
+			$i = $byg[ $gid ];
+			$t = $todos[ $i ];
+			// Whichever side changed last wins.
+			if ( empty( $t['dirty'] ) || dwdpe_ts( $g['updated'] ?? '' ) > dwdpe_ts( $t['updated'] ?? '' ) ) {
+				$todos[ $i ] = dwdpe_clean( 'todos', array( 'text' => $g['title'] ?? $t['text'], 'note' => $g['notes'] ?? $t['note'], 'due' => $gdue, 'done' => $gdone, 'done_at' => $gdone ? ( $t['done_at'] ?: current_time( 'mysql' ) ) : '', 'dirty' => false ), $t );
+			}
+		} elseif ( '' !== trim( (string) ( $g['title'] ?? '' ) ) && ! $gdone ) {
+			$todos[] = dwdpe_clean( 'todos', array( 'id' => strtolower( wp_generate_password( 10, false ) ), 'text' => $g['title'], 'note' => $g['notes'] ?? '', 'due' => $gdue, 'done' => false, 'gtask' => $gid, 'source' => 'Google Tasks', 'dirty' => false ) );
+			$added++;
+		}
+	}
+	$todos = array_values( $todos );
+	if ( $moved ) {
+		update_option( 'dwdpe_biz_moved', array_slice( array_values( array_unique( array_merge( (array) get_option( 'dwdpe_biz_moved', array() ), $moved ) ) ), -500 ), false );
+	}
+	// Deleted in Google Tasks → delete here (only for tasks that were linked).
+	if ( ! empty( $d['tasks_complete'] ) ) {
+		$todos = array_values( array_filter( $todos, function ( $t ) use ( $seen_g, $mine ) {
+			return empty( $t['gtask'] ) || ! $mine( $t['gtask'] ) || isset( $seen_g[ $t['gtask'] ] ) || ! empty( $t['dirty'] );
+		} ) );
+	}
+	// 2. Calendar events (next 14 days) → Dream Desk to-dos on that day.
+	$seen_e = array();
+	if ( function_exists( 'dwdmt_save_links' ) ) { // Meet/Zoom links for the Home meetings line
+		$lm = array();
+		foreach ( (array) ( $d['events'] ?? array() ) as $e ) {
+			if ( ! empty( $e['link'] ) && ! empty( $e['id'] ) ) {
+				$lm[ (string) $e['id'] ] = (string) $e['link'];
+			}
+		}
+		if ( $lm ) {
+			dwdmt_save_links( $lm );
+		}
+	}
+	foreach ( (array) ( $d['events'] ?? array() ) as $e ) {
+		$eid = sanitize_text_field( (string) ( $e['id'] ?? '' ) );
+		if ( '' === $eid ) {
+			continue;
+		}
+		$seen_e[ $eid ] = 1;
+		$fields = array( 'text' => $e['title'] ?? '', 'due' => substr( (string) ( $e['date'] ?? '' ), 0, 10 ), 'time' => $e['time'] ?? '', 'note' => $e['notes'] ?? '' );
+		if ( in_array( $eid, (array) get_option( 'dwdpe_gone_ev', array() ), true ) || in_array( $eid, (array) get_option( 'dwdpe_hide_ev', array() ), true ) ) {
+			continue;
+		}
+		$idx    = array_search( $eid, array_column( $todos, 'gevent' ), true );
+		if ( false !== $idx && ! empty( $todos[ $idx ]['dirty'] ) ) {
+			// Edited in Dream Desk and not pushed yet: Dream Desk wins.
+		} elseif ( false !== $idx ) {
+			$todos[ $idx ] = dwdpe_clean( 'todos', $fields + array( 'dirty' => false ), $todos[ $idx ] );
+		} elseif ( '' !== trim( (string) $fields['text'] ) ) {
+			$todos[] = dwdpe_clean( 'todos', $fields + array( 'id' => strtolower( wp_generate_password( 10, false ) ), 'done' => false, 'gevent' => $eid, 'gacct' => $acct, 'source' => 'Google Calendar', 'dirty' => false ) );
+			$added++;
+		}
+	}
+	// Events that were cancelled (still in the window, not done) drop off.
+	if ( isset( $d['events'] ) ) {
+		$from  = (string) ( $d['from'] ?? '' );
+		$todos = array_values( array_filter( $todos, function ( $t ) use ( $seen_e, $from, $acct ) {
+			return empty( $t['gevent'] ) || ( $t['gacct'] ?? '' ) !== $acct || isset( $seen_e[ $t['gevent'] ] ) || ! empty( $t['done'] ) || ( $from && (string) $t['due'] < $from );
+		} ) );
+	}
+	// 3. Dream Desk → Google Tasks: what the script should do.
+	$create = array();
+	$update = array();
+	$evup   = array();
+	foreach ( $todos as $i => $t ) {
+		if ( ! empty( $t['gevent'] ) ) {
+			if ( ! empty( $t['dirty'] ) && ( $t['gacct'] ?? '' ) === $acct ) {
+				$evup[]               = array( 'eid' => $t['gevent'], 'title' => preg_replace( '/^🎂\s*/u', '', $t['text'] ), 'date' => $t['due'], 'time' => $t['time'] );
+				$todos[ $i ]['dirty'] = false;
+			}
+			continue; // calendar items stay on the calendar
+		}
+		if ( empty( $t['gtask'] ) && empty( $t['done'] ) && '' === $acct ) { // new Dream Desk to-dos go to the work account's Google Tasks
+			$create[] = array( 'id' => $t['id'], 'title' => $t['text'], 'notes' => $t['note'], 'due' => $t['due'] );
+		} elseif ( ! empty( $t['gtask'] ) && ! empty( $t['dirty'] ) && $mine( $t['gtask'] ) ) {
+			$update[]            = array( 'gid' => substr( $t['gtask'], strlen( $pfx ) ), 'title' => $t['text'], 'notes' => $t['note'], 'due' => $t['due'], 'done' => ! empty( $t['done'] ) );
+			$todos[ $i ]['dirty'] = false;
+		}
+	}
+	$all['todos'] = array_values( $todos );
+	update_option( 'dwdpe_data', $all, false );
+	$del  = array();
+	$keep = array();
+	foreach ( array_unique( $gone ) as $g ) {
+		if ( $mine( $g ) ) {
+			$del[] = substr( $g, strlen( $pfx ) );
+		} else {
+			$keep[] = $g;
+		}
+	}
+	update_option( 'dwdpe_gone', $keep, false );
+	// Deleted calendar events: both accounts try (only the owner can); the list stays so they aren't re-added.
+	$evdel = array_values( array_unique( (array) get_option( 'dwdpe_gone_ev', array() ) ) );
+	update_option( 'dwdpe_last_sync' . ( $acct ? '_' . $acct : '' ), array( 'at' => current_time( 'mysql' ), 'added' => $added, 'sent' => count( $create ) + count( $update ) ), false );
+	return array( 'create' => $create, 'update' => $update, 'delete' => $del, 'event_update' => $evup, 'event_delete' => $evdel );
+}
+
+/** After the script creates Google Tasks it reports their ids back. */
+function dwdpe_link( $links ) {
+	$all = dwdpe_get();
+	foreach ( (array) $links as $l ) {
+		foreach ( $all['todos'] as $i => $t ) {
+			if ( $t['id'] === (string) ( $l['id'] ?? '' ) ) {
+				$all['todos'][ $i ]['gtask'] = sanitize_text_field( (string) ( $l['gid'] ?? '' ) );
+				$all['todos'][ $i ]['dirty'] = false;
+			}
+		}
+	}
+	update_option( 'dwdpe_data', $all, false );
+	return array( 'ok' => true );
+}
+
+function dwdpe_script( $acct = '' ) {
+	$url = rest_url( 'dwd/v1/personal-sync' );
+	$tok = dwdpe_token();
+	$extra = wp_json_encode( $acct ? array() : array_values( (array) get_option( 'dwdpe_extra_cals', array( 'mptarr33@gmail.com' ) ) ) );
+	$who   = $acct ? 'your PERSONAL Google account (mptarr33@gmail.com)' : 'your WORK Google account (mike@dreamwebdigital.com)';
+	return <<<JS
+// Dream Desk · Personal to-dos <-> Google Tasks & Google Calendar (two-way).
+// Install this one while signed in to {$who}.
+// Before running: click "Services +" on the left and add BOTH "Google Tasks API" and "Google Calendar API".
+var DREAM_DESK = '{$url}';
+var TOKEN = '{$tok}';
+var ACCT = '{$acct}';
+// Other people's / accounts' calendars shared with you (read-only), e.g. your personal Gmail calendar.
+var EXTRA_CALENDARS = {$extra};
+
+function syncDreamDesk() {
+  var tz = Session.getScriptTimeZone();
+  var list = Tasks.Tasklists.list().items[0].id, tasks = [], page;
+  do {
+    var r = Tasks.Tasks.list(list, { showCompleted: true, showHidden: true, maxResults: 100, pageToken: page });
+    (r.items || []).forEach(function (t) { tasks.push({ id: t.id, title: t.title, notes: t.notes || '', due: t.due || '', done: t.status === 'completed', updated: t.updated }); });
+    page = r.nextPageToken;
+  } while (page);
+  var now = new Date(), from = Utilities.formatDate(now, tz, 'yyyy-MM-dd'), end = new Date(now.getTime() + 365 * 864e5), events = [];
+  // Your own calendar plus every other calendar you have turned on (shared ones too, e.g. your personal Gmail),
+  // except holiday and birthday calendars.
+  var cals = ['primary'].concat(EXTRA_CALENDARS);
+  (Calendar.CalendarList.list({ maxResults: 50 }).items || []).forEach(function (c) { if (c.selected && !c.primary && c.id.indexOf('#') < 0 && cals.indexOf(c.id) < 0) { cals.push(c.id); } });
+  var seenEv = {};
+  cals.forEach(function (cal) {
+  page = null;
+  do {
+    var ev = Calendar.Events.list(cal, { timeMin: new Date(from + 'T00:00:00').toISOString(), timeMax: end.toISOString(), singleEvents: true, orderBy: 'startTime', maxResults: 250, pageToken: page });
+    (ev.items || []).forEach(function (e) {
+      if (e.status === 'cancelled' || !e.summary || seenEv[e.id]) { return; }
+      seenEv[e.id] = 1;
+      var allDay = !!e.start.date, s = allDay ? null : new Date(e.start.dateTime);
+      events.push({ id: e.id, title: e.summary, date: allDay ? e.start.date : Utilities.formatDate(s, tz, 'yyyy-MM-dd'), time: allDay ? '' : Utilities.formatDate(s, tz, 'h:mm a'), notes: e.location || '', link: e.hangoutLink || ((e.conferenceData && e.conferenceData.entryPoints || []).filter(function (p) { return p.entryPointType === 'video'; })[0] || {}).uri || '' });
+    });
+    page = ev.nextPageToken;
+  } while (page);
+  });
+  var res = call({ acct: ACCT, tasks: tasks, tasks_complete: true, events: events, from: from });
+  var links = [];
+  (res.create || []).forEach(function (t) {
+    var body = { title: t.title, notes: t.notes || '' };
+    if (t.due) { body.due = t.due + 'T00:00:00.000Z'; }
+    links.push({ id: t.id, gid: Tasks.Tasks.insert(body, list).id });
+  });
+  (res.update || []).forEach(function (t) {
+    try {
+      var g = Tasks.Tasks.get(list, t.gid);
+      g.title = t.title; g.notes = t.notes || ''; g.due = t.due ? t.due + 'T00:00:00.000Z' : null;
+      g.status = t.done ? 'completed' : 'needsAction'; if (!t.done) { g.completed = null; }
+      Tasks.Tasks.update(g, list, t.gid);
+    } catch (e) {}
+  });
+  (res['delete'] || []).forEach(function (gid) { try { Tasks.Tasks.remove(list, gid); } catch (e) {} });
+  // Calendar events edited or deleted in Dream Desk.
+  (res.event_update || []).forEach(function (u) {
+    try {
+      var e = Calendar.Events.get('primary', u.eid), patch = { summary: u.title };
+      if (e.start.date) {
+        var len = (new Date(e.end.date) - new Date(e.start.date)) || 864e5;
+        patch.start = { date: u.date }; patch.end = { date: Utilities.formatDate(new Date(new Date(u.date + 'T12:00:00').getTime() + len), tz, 'yyyy-MM-dd') };
+      } else {
+        var dur = new Date(e.end.dateTime) - new Date(e.start.dateTime), oldStart = new Date(e.start.dateTime);
+        var hm = Utilities.formatDate(oldStart, tz, 'HH:mm');
+        var m = /^(\d{1,2}):(\d{2})\s*([AaPp][Mm])?$/.exec((u.time || '').trim());
+        if (m) { var h = +m[1] % 12 + (m[3] && /p/i.test(m[3]) ? 12 : (!m[3] && +m[1] === 12 ? 12 : 0)); hm = ('0' + h).slice(-2) + ':' + m[2]; }
+        var ns = new Date(Utilities.formatDate(new Date(u.date + 'T12:00:00'), tz, 'yyyy-MM-dd') + 'T' + hm + ':00' + Utilities.formatDate(new Date(u.date + 'T12:00:00'), tz, 'XXX'));
+        patch.start = { dateTime: ns.toISOString(), timeZone: e.start.timeZone || tz }; patch.end = { dateTime: new Date(ns.getTime() + dur).toISOString(), timeZone: e.end.timeZone || tz };
+      }
+      Calendar.Events.patch(patch, 'primary', u.eid);
+    } catch (err) { Logger.log('event update failed ' + u.eid + ' ' + err); }
+  });
+  (res.event_delete || []).forEach(function (eid) { try { Calendar.Events.remove('primary', eid); } catch (err) {} });
+  if (links.length) { call({ links: links }); }
+  if (!ACCT) { syncWorkList(); }
+}
+
+// Your Dream Desk Work to-dos <-> a "Work" list in Google Tasks (add a Google Tasks widget for it on your phone).
+function syncWorkList() {
+  var wl = (Tasks.Tasklists.list({ maxResults: 100 }).items || []).filter(function (l) { return l.title === 'Work'; })[0];
+  if (!wl) { wl = Tasks.Tasklists.insert({ title: 'Work' }); }
+  var gt = [], page = null;
+  do {
+    var r = Tasks.Tasks.list(wl.id, { showCompleted: true, showHidden: true, maxResults: 100, pageToken: page });
+    (r.items || []).forEach(function (t) { gt.push({ id: t.id, title: t.title, notes: t.notes || '', due: t.due || '', done: t.status === 'completed', updated: t.updated }); });
+    page = r.nextPageToken;
+  } while (page);
+  var res = call({ work_sync: true, work_tasks: gt });
+  (res.create || []).forEach(function (t) { var b = { title: t.title, notes: t.notes || '' }; if (t.due) { b.due = t.due + 'T00:00:00.000Z'; } Tasks.Tasks.insert(b, wl.id); });
+  (res.update || []).forEach(function (t) {
+    try {
+      var g = Tasks.Tasks.get(wl.id, t.gid);
+      g.title = t.title; g.notes = t.notes || ''; g.due = t.due ? t.due + 'T00:00:00.000Z' : null;
+      g.status = t.done ? 'completed' : 'needsAction'; if (!t.done) { g.completed = null; }
+      Tasks.Tasks.update(g, wl.id, t.gid);
+    } catch (e) {}
+  });
+  (res['delete'] || []).forEach(function (gid) { try { Tasks.Tasks.remove(wl.id, gid); } catch (e) {} });
+}
+
+function call(payload) {
+  var r = UrlFetchApp.fetch(DREAM_DESK, { method: 'post', contentType: 'application/json', headers: { 'X-DWD-Token': TOKEN }, payload: JSON.stringify(payload), muteHttpExceptions: true });
+  Logger.log(r.getResponseCode() + ' ' + r.getContentText().slice(0, 500));
+  return JSON.parse(r.getContentText() || '{}');
+}
+
+// Run this once: it syncs now and then every 15 minutes.
+function setup() {
+  ScriptApp.getProjectTriggers().forEach(function (t) { ScriptApp.deleteTrigger(t); });
+  ScriptApp.newTrigger('syncDreamDesk').timeBased().everyMinutes(15).create();
+  syncDreamDesk();
+}
+JS;
+}
+
+/**
+ * Work to-dos <-> a "Work" list in Google Tasks (so the Google Tasks phone widget can show them).
+ * Each Google task carries "Dream Desk #<id>" in its notes. Dream Desk is the source for titles and dates;
+ * checking a task off on either side completes it on the other; tasks added to the Work list in Google
+ * become Work to-dos; tasks deleted in Dream Desk are removed from the Work list.
+ */
+function dwdpe_work_sync( $gtasks ) {
+	$create = array();
+	$update = array();
+	$delete = array();
+	$byid   = array();
+	foreach ( $gtasks as $g ) {
+		$gid = sanitize_text_field( (string) ( $g['id'] ?? '' ) );
+		if ( '' === $gid ) {
+			continue;
+		}
+		$g['gid']  = $gid;
+		$g['due']  = substr( (string) ( $g['due'] ?? '' ), 0, 10 );
+		$g['done'] = ! empty( $g['done'] );
+		if ( preg_match( '/Dream Desk #(\d+)/', (string) ( $g['notes'] ?? '' ), $m ) ) {
+			$byid[ (int) $m[1] ] = $g;
+		} elseif ( ! $g['done'] && '' !== trim( (string) ( $g['title'] ?? '' ) ) ) {
+			// Added in Google Tasks' Work list → new Work to-do in Dream Desk.
+			$tid = dwdc_add_task( sanitize_text_field( (string) $g['title'] ), 0, $g['due'] );
+			if ( $g['due'] ) {
+				update_post_meta( $tid, '_dwdc_due_manual', '1' );
+			}
+			$byid[ $tid ] = $g + array( 'fresh' => 1 );
+		}
+	}
+	$since = gmdate( 'Y-m-d H:i:s', time() - 30 * DAY_IN_SECONDS );
+	$seen  = array();
+	foreach ( get_posts( array( 'post_type' => DWDC_TASK, 'post_status' => 'private', 'posts_per_page' => -1, 'fields' => 'ids' ) ) as $tid ) {
+		$t = dwdc_task( $tid );
+		if ( ! $t ) {
+			continue;
+		}
+		$doneOld = $t['done'] && ( '' === $t['done_at'] || get_gmt_from_date( $t['done_at'] ) < $since );
+		$g       = $byid[ $tid ] ?? null;
+		$seen[ $tid ] = 1;
+		$c      = $t['contact'] ? html_entity_decode( get_the_title( $t['contact'] ), ENT_QUOTES ) : '';
+		$notes  = ( $c ? $c . "\n\n" : '' ) . 'Dream Desk #' . $tid;
+		if ( ! $g ) {
+			if ( ! $t['done'] ) {
+				$create[] = array( 'title' => $t['text'], 'notes' => $notes, 'due' => $t['due'] );
+			}
+			continue;
+		}
+		if ( $g['done'] && ! $t['done'] && empty( $g['fresh'] ) ) {
+			update_post_meta( $tid, '_dwdc_done', '1' ); // checked off on the phone
+			update_post_meta( $tid, '_dwdc_done_at', current_time( 'mysql' ) );
+			continue;
+		}
+		if ( $doneOld && $g['done'] ) {
+			continue;
+		}
+		$want = array( 'title' => $t['text'], 'due' => $t['due'], 'done' => $t['done'] );
+		if ( ! empty( $g['fresh'] ) || $want['title'] !== (string) ( $g['title'] ?? '' ) || $want['due'] !== $g['due'] || $want['done'] !== $g['done'] ) {
+			$update[] = array( 'gid' => $g['gid'], 'title' => $t['text'], 'notes' => $notes, 'due' => $t['due'], 'done' => $t['done'] );
+		}
+	}
+	foreach ( $byid as $tid => $g ) {
+		if ( ! isset( $seen[ $tid ] ) ) {
+			$delete[] = $g['gid']; // deleted in Dream Desk
+		}
+	}
+	update_option( 'dwdpe_work_last', array( 'at' => current_time( 'mysql' ), 'google' => count( $gtasks ), 'created' => count( $create ), 'updated' => count( $update ) ), false );
+	return array( 'create' => $create, 'update' => $update, 'delete' => $delete );
+}
+
+add_action( 'rest_api_init', function () {
+	register_rest_route( 'dwd/v1', '/personal-sync', array(
+		'methods'             => 'POST',
+		'permission_callback' => function ( $r ) {
+			$t = (string) $r->get_header( 'x_dwd_token' );
+			return '' !== $t && hash_equals( dwdpe_token(), $t );
+		},
+		'callback'            => function ( $r ) {
+			$d = (array) $r->get_json_params();
+			if ( ! empty( $d['work_sync'] ) ) {
+				return dwdpe_work_sync( (array) ( $d['work_tasks'] ?? array() ) );
+			}
+			return isset( $d['links'] ) ? dwdpe_link( $d['links'] ) : dwdpe_sync( $d );
+		},
+	) );
+	register_rest_route( 'dwd/v1', '/crm/personal/event', array(
+		'methods'             => 'POST',
+		'permission_callback' => function () { return current_user_can( 'manage_options' ); },
+		'callback'            => function ( $r ) {
+			// Add one calendar event as a Personal to-do (linked to the event, so the Google sync updates it later).
+			$e   = (array) $r->get_json_params();
+			$eid = sanitize_text_field( (string) ( $e['id'] ?? '' ) );
+			$all = dwdpe_get();
+			if ( '' === $eid || in_array( $eid, array_column( $all['todos'], 'gevent' ), true ) ) {
+				return array( 'ok' => true, 'added' => false );
+			}
+			$all['todos'][] = dwdpe_clean( 'todos', array( 'id' => strtolower( wp_generate_password( 10, false ) ), 'text' => $e['title'] ?? '', 'due' => substr( (string) ( $e['date'] ?? '' ), 0, 10 ), 'time' => $e['time'] ?? '', 'note' => $e['notes'] ?? '', 'done' => false, 'gevent' => $eid, 'source' => 'Google Calendar', 'dirty' => false ) );
+			update_option( 'dwdpe_data', $all, false );
+			return array( 'ok' => true, 'added' => true );
+		},
+	) );
+	register_rest_route( 'dwd/v1', '/crm/personal/google', array(
+		'methods'             => 'GET',
+		'permission_callback' => function () { return current_user_can( 'manage_options' ); },
+		'callback'            => function () { return array( 'script' => dwdpe_script(), 'script_personal' => dwdpe_script( 'personal' ), 'last' => get_option( 'dwdpe_last_sync', null ), 'last_personal' => get_option( 'dwdpe_last_sync_personal', null ) ); },
+	) );
+} );
+
+/** One-time import of calendar events (admin only): keeps the Google link so the sync won't duplicate them. */
+add_action( 'rest_api_init', function () {
+	register_rest_route( 'dwd/v1', '/crm/personal/import', array(
+		'methods'             => 'POST',
+		'permission_callback' => function () { return current_user_can( 'manage_options' ); },
+		'callback'            => function ( $r ) {
+			$all  = dwdpe_get();
+			$have = array();
+			foreach ( $all['todos'] as $t ) {
+				$have[ $t['gevent'] ? 'e:' . $t['gevent'] : 'x' ] = 1;
+				$have[ 't:' . strtolower( trim( $t['text'] ) ) . '|' . $t['due'] ] = 1;
+			}
+			$n = 0;
+			foreach ( (array) ( $r->get_json_params()['items'] ?? array() ) as $x ) {
+				$k1 = 'e:' . ( $x['gevent'] ?? '' );
+				$k2 = 't:' . strtolower( trim( (string) ( $x['text'] ?? '' ) ) ) . '|' . ( $x['due'] ?? '' );
+				if ( isset( $have[ $k1 ] ) || isset( $have[ $k2 ] ) ) {
+					continue;
+				}
+				$have[ $k1 ] = $have[ $k2 ] = 1;
+				$all['todos'][] = dwdpe_clean( 'todos', array( 'text' => $x['text'] ?? '', 'due' => $x['due'] ?? '', 'time' => $x['time'] ?? '', 'note' => $x['note'] ?? '', 'gevent' => $x['gevent'] ?? '', 'source' => $x['source'] ?? 'Google Calendar', 'done' => false, 'dirty' => false, 'id' => strtolower( wp_generate_password( 10, false ) ) ) );
+				$n++;
+			}
+			update_option( 'dwdpe_data', $all, false );
+			return array( 'added' => $n, 'total' => count( $all['todos'] ) );
+		},
+	) );
+} );
+
+// One-time cleanup: forget the sync status left by setup testing, so "Connected" only shows after the real script runs.
+add_action( 'init', function () {
+	if ( ! get_option( 'dwdpe_reset1' ) ) {
+		delete_option( 'dwdpe_last_sync' );
+		update_option( 'dwdpe_reset1', 1, false );
+	}
+} );
+
+/* ---------------------------------------------------------------- Add task by talking to Claude
+ * Mike types or dictates ("dentist next Tuesday at 3, remind me to bring insurance card") and Claude
+ * turns it into one or more to-dos with dates and times. Nothing is saved until he confirms.
+ */
+add_action( 'rest_api_init', function () {
+	register_rest_route( 'dwd/v1', '/crm/personal/plan', array(
+		'methods'             => 'POST',
+		'permission_callback' => function () { return current_user_can( 'manage_options' ); },
+		'callback'            => function ( $r ) {
+			$key = function_exists( 'dwdc_ai_key' ) ? dwdc_ai_key() : '';
+			if ( ! $key ) {
+				return new WP_Error( 'dwdc_nokey', 'Add your Claude API key first (Personal → Connections → Claude AI).', array( 'status' => 400, 'needs_key' => true ) );
+			}
+			$msgs = array();
+			foreach ( array_slice( (array) $r->get_param( 'messages' ), -10 ) as $m ) {
+				$m    = (array) $m;
+				$text = trim( wp_strip_all_tags( (string) ( $m['content'] ?? '' ) ) );
+				if ( '' !== $text ) {
+					$msgs[] = array( 'role' => 'assistant' === ( $m['role'] ?? '' ) ? 'assistant' : 'user', 'content' => mb_substr( $text, 0, 3000 ) );
+				}
+			}
+			while ( $msgs && 'user' !== $msgs[0]['role'] ) {
+				array_shift( $msgs );
+			}
+			if ( ! $msgs || 'user' !== end( $msgs )['role'] ) {
+				return new WP_Error( 'dwdpe_plan', 'Tell me what to add.', array( 'status' => 400 ) );
+			}
+			$now    = current_time( 'l, F j, Y g:i A' );
+			$system = "You turn Michael's spoken or typed requests into to-do items for his personal Dream Desk list. Today is {$now} (" . wp_timezone_string() . "). Resolve relative dates ('tomorrow', 'next Tuesday', 'the 15th', 'in two weeks') to real dates. Split separate things into separate tasks. Keep titles short and clear (start with a verb when natural, fix speech-to-text slips), put extra details in notes. Only set a time if he gave one. If something essential is genuinely ambiguous, ask one short question instead of guessing. Respond with ONLY a JSON object, no prose around it: {\"reply\": \"one short friendly sentence summarising what you'll add or asking your question\", \"tasks\": [{\"text\": \"...\", \"due\": \"YYYY-MM-DD or empty\", \"time\": \"h:mm AM/PM or empty\", \"note\": \"... or empty\"}]}. Use an empty tasks list when you're asking a question.";
+			$res = wp_remote_post( 'https://api.anthropic.com/v1/messages', array(
+				'timeout' => 60,
+				'headers' => array( 'x-api-key' => $key, 'anthropic-version' => '2026-10-21', 'anthropic-beta' => 'server-side-fallback-2026-07-01', 'content-type' => 'application/json' ),
+				'body'    => wp_json_encode( array( 'model' => 'claude-opus-5-5', 'max_tokens' => 4000, 'output_config' => array( 'effort' => 'low' ), 'fallbacks' => 'default', 'system' => $system, 'messages' => $msgs ) ),
+			) );
+			if ( is_wp_error( $res ) ) {
+				return new WP_Error( 'dwdpe_ai', 'Couldn’t reach Claude: ' . $res->get_error_message(), array( 'status' => 502 ) );
+			}
+			$code = wp_remote_retrieve_response_code( $res );
+			$body = json_decode( wp_remote_retrieve_body( $res ), true );
+			if ( 200 !== $code ) {
+				return new WP_Error( 'dwdpe_ai', 401 === $code ? 'Your Claude API key was rejected.' : ( $body['error']['message'] ?? 'Claude returned an error.' ), array( 'status' => 400, 'needs_key' => 401 === $code ) );
+			}
+			$text = '';
+			foreach ( (array) ( $body['content'] ?? array() ) as $b ) {
+				if ( 'text' === ( $b['type'] ?? '' ) ) {
+					$text .= $b['text'];
+				}
+			}
+			$a = strpos( $text, '{' );
+			$z = strrpos( $text, '}' );
+			$j = ( false !== $a && false !== $z ) ? json_decode( substr( $text, $a, $z - $a + 1 ), true ) : null;
+			if ( ! is_array( $j ) ) {
+				return array( 'reply' => trim( $text ) ? trim( $text ) : 'Sorry, I didn’t catch that. Try again?', 'tasks' => array() );
+			}
+			$tasks = array();
+			foreach ( (array) ( $j['tasks'] ?? array() ) as $t ) {
+				$c = dwdpe_clean( 'todos', array( 'text' => $t['text'] ?? '', 'due' => $t['due'] ?? '', 'time' => $t['time'] ?? '', 'note' => $t['note'] ?? '' ) );
+				if ( '' !== $c['text'] ) {
+					$tasks[] = array( 'text' => $c['text'], 'due' => $c['due'], 'time' => $c['time'], 'note' => $c['note'] );
+				}
+			}
+			return array( 'reply' => sanitize_text_field( (string) ( $j['reply'] ?? '' ) ), 'tasks' => array_slice( $tasks, 0, 20 ) );
+		},
+	) );
+} );
