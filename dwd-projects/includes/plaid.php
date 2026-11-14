@@ -246,6 +246,43 @@ add_action( 'rest_api_init', function () {
 				}
 				return array_merge( $status(), array( 'dedupe' => array( 'unlinked' => count( $drop ), 'stored_before' => count( $before['tx'] ), 'counted_before' => $want, 'stored_now' => count( dwdbk_get()['tx'] ) ) ) );
 			}
+			if ( 'restore_unlinked' === $a ) { // history from accounts that are no longer linked (old card links), kept from the last backup
+				$bk = get_option( 'dwdbk_data_backup', array() );
+				if ( empty( $bk['data']['tx'] ) ) {
+					return new WP_Error( 'dwdpl_restore', 'No backup to restore from.', array( 'status' => 400 ) );
+				}
+				$d    = dwdbk_get();
+				$have = array();
+				$live = array();
+				foreach ( $d['tx'] as $t ) {
+					$have[ $t['id'] ]          = 1;
+					$live[ (string) $t['acct'] ] = 1;
+				}
+				$rows = array();
+				$keys = array();
+				foreach ( $bk['data']['tx'] as $t ) {
+					if ( isset( $have[ $t['id'] ] ) || isset( $live[ (string) $t['acct'] ] ) ) {
+						continue;
+					}
+					$rows[] = $t;
+					$keys[ $t['date'] . '|' . $t['desc'] . '|' . $t['amt'] . '|' . $t['acct'] ] = 1;
+				}
+				$k    = count( $rows ) >= 1.8 * max( 1, count( $keys ) ) ? 2 : 1; // stored twice? keep one of each pair
+				$n    = array();
+				$back = array();
+				foreach ( $rows as $t ) {
+					$key       = $t['date'] . '|' . $t['desc'] . '|' . $t['amt'] . '|' . $t['acct'];
+					$n[ $key ] = ( $n[ $key ] ?? 0 ) + 1;
+					if ( 1 === $k || 1 === $n[ $key ] % $k ) {
+						$d['tx'][]                    = $t;
+						$back[ (string) $t['acct'] ] = ( $back[ (string) $t['acct'] ] ?? 0 ) + 1;
+					}
+				}
+				if ( $back ) {
+					dwdbk_put( $d );
+				}
+				return array( 'restored' => array_sum( $back ), 'accounts' => $back, 'found' => count( $rows ), 'copies' => $k, 'stored_now' => count( $d['tx'] ) );
+			}
 			if ( 'remove' === $a ) {
 				$items = array();
 				foreach ( dwdpl_items() as $i ) {
