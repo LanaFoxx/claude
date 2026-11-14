@@ -1638,7 +1638,7 @@
 		var pats = (G.patterns || []).map(function (p) { return '<div class="dd-sg-p"><b>' + esc(p.t) + '</b> ' + esc(p.x) + '</div>'; }).join('');
 		return head + '<div class="dd-sg">'
 			+ '<p class="dd-sg-i">From your bank transactions, ' + fmt(G.from, true) + ' to ' + fmt(G.to, true) + '. Transfers between your own accounts are left out.' + (whole ? '' : ' Yearly figures are scaled up from ' + G.days + ' days.') + '</p>'
-			+ '<div class="dd-sg-ts">' + tile('Spent in ' + per, money(G.spent), 'About ' + money(G.spent_month) + ' a month') + tile('Money in', money(G.income), 'Deposits and income, same period') + tile('Sent to people by Zelle', money(G.people_total), times(G.people_count, 'person') + ' in ' + per) + tile('You could keep next year', money(hAll / 2) + ' – ' + money(hAll), 'Halving or stopping the habits below', 'good') + '</div>'
+			+ '<div class="dd-sg-ts">' + tile('Spent in ' + per, money(G.spent), 'About ' + money(G.spent_month) + ' a month') + tile('Money in', money(G.income), 'Deposits and income, same period') + tile('Sent to people by Zelle', money(G.people_total), G.people_count + (G.people_count === 1 ? ' person' : ' people') + ' in ' + per) + tile('You could keep next year', money(hAll / 2) + ' – ' + money(hAll), 'Halving or stopping the habits below', 'good') + '</div>'
 			+ box('Where you could save next year', 'What each habit cost in ' + per + ', and what you would keep next year if you stopped. Card purchases are not included.', habits)
 			+ box('Money sent to people (Zelle)', 'Everyone you paid by Zelle, biggest first.', people)
 			+ '<div class="dd-sg-g">' + box('Biggest spending categories', 'Where the money went in ' + per + '.', cats) + box('Where the most money goes', 'The 15 places you paid the most.', merch) + '</div>'
@@ -2017,7 +2017,7 @@
 			var pl = { active: ['Active', 'Projects'], paused: ['Paused', 'Projects'], limbo: ['Limbo', 'Projects'], hold: ['On Hold', 'Projects'], complete: ['Completed', 'Projects'] }[r.arg];
 			if (pl) { t = ['Projects', pl[0], pl[1]]; }
 		}
-		if (r.view === 'personal') { t = [['todo', 'calendar', 'done'].indexOf(r.arg) > -1 ? 'Plan' : 'Money'].concat(!r.arg ? ['Personal', 'Dashboard'] : { finances: ['Money In &', 'Out'], bills: ['Bills &', 'Subscriptions'], done: ['Completed', 'To-Dos'], calendar: ['', 'Calendar'], spending: ['', 'Spending'], subs: ['', 'Subscriptions'] }[r.arg] || ['My', 'To-Dos']); if (!r.arg) { t = ['Personal', 'Personal', 'Dashboard']; } }
+		if (r.view === 'personal') { t = [['todo', 'calendar', 'done'].indexOf(r.arg) > -1 ? 'Plan' : 'Money'].concat(!r.arg ? ['Personal', 'Dashboard'] : { finances: ['Money In &', 'Out'], bills: ['Bills &', 'Subscriptions'], done: ['Completed', 'To-Dos'], calendar: ['', 'Calendar'], spending: ['', 'Spending'], suggestions: ['', 'Suggestions'], subs: ['', 'Subscriptions'] }[r.arg] || ['My', 'To-Dos']); if (!r.arg) { t = ['Personal', 'Personal', 'Dashboard']; } }
 		if (r.view === 'client') {
 			var c = contact(r.id), words = String(c ? c.name : 'Project').split(' ');
 			t = ['Project', words.slice(0, Math.max(1, words.length - 1)).join(' '), words.length > 1 ? words[words.length - 1] : ''];

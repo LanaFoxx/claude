@@ -468,27 +468,32 @@ function dwdbk_recurring( $tx, $flags ) {
 		}
 		$last = end( $list );
 		$amts = array_map( function ( $t ) { return -$t['amt']; }, $list );
-		// Paid most months but not on a steady day (or more than once a month): still a monthly charge.
-		if ( ! $cycle && ! in_array( $last['cat'], array( 'Groceries', 'Dining', 'Shopping', 'Fun', 'Travel', 'Gas & Car' ), true ) ) {
-			$ms = array();
-			foreach ( $list as $t ) {
-				$ms[ substr( $t['date'], 0, 7 ) ] = ( $ms[ substr( $t['date'], 0, 7 ) ] ?? 0 ) - $t['amt'];
-			}
-			$span = ( (int) substr( $last['date'], 0, 4 ) - (int) substr( $list[0]['date'], 0, 4 ) ) * 12 + (int) substr( $last['date'], 5, 2 ) - (int) substr( $list[0]['date'], 5, 2 ) + 1;
-			if ( count( $ms ) >= 3 && count( $ms ) >= 0.75 * $span ) {
-				$cycle = 'monthly';
-				$amts  = array_values( $ms );
-			}
+		// What each month added up to (rent paid in two parts, two phone lines, a bill with no steady day).
+		$ms = array();
+		foreach ( $list as $t ) {
+			$ms[ substr( $t['date'], 0, 7 ) ] = ( $ms[ substr( $t['date'], 0, 7 ) ] ?? 0 ) - $t['amt'];
+		}
+		$span    = ( (int) substr( $last['date'], 0, 4 ) - (int) substr( $list[0]['date'], 0, 4 ) ) * 12 + (int) substr( $last['date'], 5, 2 ) - (int) substr( $list[0]['date'], 5, 2 ) + 1;
+		$monthly = count( $ms ) >= 3 && count( $ms ) >= 0.75 * $span;
+		if ( count( $ms ) > 3 && gmdate( 'Y-m' ) === substr( $last['date'], 0, 7 ) ) {
+			array_pop( $ms ); // the month still in progress
+		}
+		$wide  = function ( $a ) { return ( max( $a ) - min( $a ) ) / max( 1, array_sum( $a ) / count( $a ) ); };
+		$zelle = 0 === strpos( (string) $m, 'ZELLE ' );
+		// Bills (phone, power, insurance, services) move around more than a subscription does.
+		$loose = in_array( $last['cat'], array( 'Bills & Utilities', 'Services', 'Business', 'Taxes & Gov' ), true ) && ! $zelle;
+		$limit = 'Subscriptions' === $last['cat'] ? 99 : ( $loose ? 1.5 : 0.35 );
+		$daily = in_array( $last['cat'], array( 'Groceries', 'Dining', 'Shopping', 'Fun', 'Travel', 'Gas & Car' ), true );
+		if ( $monthly && ! $daily && ( ! $cycle || ( 'monthly' === $cycle && $wide( $amts ) > $limit ) ) ) {
+			$cycle = 'monthly';
+			$amts  = array_values( $ms );
+			$limit = $zelle ? 0.6 : $limit;
 		}
 		if ( ! $cycle || ( count( $list ) < 3 && ! in_array( $cycle, array( 'monthly', 'yearly', 'every 3 months' ), true ) ) ) {
 			continue;
 		}
-		$now    = end( $amts );
-		$avg    = array_sum( $amts ) / count( $amts );
-		$spread = ( max( $amts ) - min( $amts ) ) / max( 1, $avg );
-		// Bills (phone, power, insurance, services) move around more than a subscription does.
-		$loose = in_array( $last['cat'], array( 'Bills & Utilities', 'Services', 'Business', 'Taxes & Gov' ), true ) && 0 !== strpos( (string) $m, 'ZELLE ' );
-		if ( 'Subscriptions' !== $last['cat'] && $spread > ( $loose ? 1.5 : 0.35 ) ) {
+		$now = end( $amts );
+		if ( $wide( $amts ) > $limit ) {
 			continue; // amounts too different to be a repeating charge (e.g. groceries)
 		}
 		$prev = count( $amts ) > 1 ? $amts[ count( $amts ) - 2 ] : $amts[0];
