@@ -130,6 +130,9 @@ function sponsor(m, file, url, alt, o = {}) {
     _css_classes: 'bi-sponsor bi-no-lazy', custom_css: `selector { width: 100% !important; max-width: 100% !important; }\nselector a { display: block; }\nselector img { display: block; width: 100% !important; max-width: 100% !important; height: auto; border-radius: 4px; box-shadow: 0 20px 40px -30px rgba(23,48,27,.5); transition: transform .3s ease; }\nselector a:hover img { transform: translateY(-2px); }${o.css ? '\n' + o.css : ''}` } });
 }
 
+const sponsorCol = (m, file, url, alt) => container({ content_width: 'full', padding: box(0), width: px(280), _flex_size: 'none', css_classes: 'bi-sponsor-col',
+  custom_css: '@media (max-width: 1024px) { selector { width: auto !important; } }' }, [sponsor(m, file, url, alt)]);
+
 function webcam(m) {
   // Live player: the "Bayfield interactions" snippet loads Angelcam into #player_bayfieldlive
   // and fills the weather card (.bi-wx-*) from Open-Meteo. The marina photo and "—" values
@@ -173,15 +176,16 @@ function webcam(m) {
       flex_direction: 'column', flex_align_items: 'center', flex_gap: gap(14), _element_id: 'live' }, [
       sponsor(m, 'ad-bayfield-adventure-awaits.jpg', 'https://www.bayfield.org/', 'Bayfield and the Apostle Islands: Adventure awaits. Plan your escape.',
         { css: 'selector { max-width: 1480px !important; }' }),
-      container({ content_width: 'full', padding: box(0), width: px(100, '%'), flex_direction: 'row', flex_direction_tablet: 'column', flex_gap: gap(24), flex_gap_tablet: gap(16),
-        flex_align_items: 'stretch', flex_align_items_tablet: 'center', flex_wrap: 'nowrap', custom_css: 'selector { max-width: 1480px; }' }, [
-        container({ content_width: 'full', padding: box(0), custom_css: 'selector { flex: 1 1 0 !important; min-width: 0; width: auto !important; }\n@media (max-width: 1024px) { selector { flex: none !important; width: 100% !important; } }' }, [stage]),
-        container({ content_width: 'full', padding: box(0), width: px(280), width_tablet: px(100, '%'), _flex_size: 'none', flex_direction: 'column', flex_direction_tablet: 'row', flex_gap: gap(16),
-          flex_justify_content: 'space-between', flex_justify_content_tablet: 'center', flex_align_items_tablet: 'flex-start',
-          css_classes: 'bi-sponsors', custom_css: 'selector > .elementor-element { width: 100%; flex: none; }\n@media (max-width: 1024px) { selector > .elementor-element { flex: 0 1 280px; width: auto; min-width: 0; } }' }, [
-          sponsor(m, 'ad-bayfield-travel-guide.jpg', 'https://www.bayfield.org/plan-your-visit/travel-guide/', 'Get your free 2026-2027 Bayfield travel guide'),
-          sponsor(m, 'ad-superior-charters.jpg', 'https://www.superiorcharters.com/', 'Superior Charters: See you at the dock'),
-        ]),
+      // Live feed centered between two equal sponsor columns; on tablet/phone the feed goes first
+      // and the two ads sit side by side underneath.
+      container({ content_width: 'full', padding: box(0), width: px(100, '%'), flex_direction: 'row', flex_gap: gap(24), flex_align_items: 'flex-start', flex_wrap: 'nowrap',
+        css_classes: 'bi-cam-row', custom_css: `selector { max-width: 1480px; }
+@media (max-width: 1024px) { selector { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px !important; }
+  selector > .bi-sponsor-col { justify-self: center; width: 100% !important; max-width: 280px; }
+  selector > .bi-cam-main { grid-column: 1 / -1; order: -1; width: 100% !important; } }` }, [
+        sponsorCol(m, 'ad-bayfield-travel-guide.jpg', 'https://www.bayfield.org/plan-your-visit/travel-guide/', 'Get your free 2026-2027 Bayfield travel guide'),
+        container({ content_width: 'full', padding: box(0), css_classes: 'bi-cam-main', custom_css: 'selector { flex: 1 1 0 !important; min-width: 0; width: auto !important; }' }, [stage]),
+        sponsorCol(m, 'ad-superior-charters.jpg', 'https://www.superiorcharters.com/', 'Superior Charters: See you at the dock'),
       ]),
       text('The marina, the ferry dock and Madeline Island, around the clock. Also on <a href="https://bayfieldlive.com" target="_blank" rel="noopener">bayfieldlive.com</a> · Weather from Open-Meteo',
         { color: C.muted, size: 13, align: 'center' }),
