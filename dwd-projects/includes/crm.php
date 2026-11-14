@@ -194,8 +194,19 @@ function dwdc_save_contact( $id, $data ) {
 		foreach ( array( 'billed', 'stripe', 'paypal', 'manual' ) as $f ) {
 			$p += $id ? $num( get_post_meta( $id, '_dwdc_' . $f, true ) ) : 0;
 		}
+		if ( $id && function_exists( 'dwdc_upwork_stages' ) ) { // client money already paid into Upwork isn't owed either
+			$u  = dwdc_upwork_stages( $id );
+			$p += (float) $u['pend'] + (float) $u['avail'];
+		}
 		return $p;
 	};
+	// The Edit form always sends the Owed box back; it only counts as typed when Mike changed it.
+	if ( isset( $data['balance'] ) && $id && ! $is_new && trim( (string) $data['balance'] ) === trim( (string) get_post_meta( $id, '_dwdc_balance', true ) ) ) {
+		unset( $data['balance'] );
+	}
+	if ( isset( $data['balance'] ) && $is_new && '' === trim( (string) $data['balance'] ) ) {
+		unset( $data['balance'] );
+	}
 	$listNow = (string) ( $data['list'] ?? ( $id ? get_post_meta( $id, '_dwdc_list', true ) : '' ) );
 	$isOpen  = in_array( $listNow, array( 'active', 'hold', 'limbo' ), true );
 	// 1. Start project on a lead, or a brand-new project: owed = price.

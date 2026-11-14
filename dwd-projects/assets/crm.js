@@ -3246,7 +3246,7 @@
 		// Paid = money actually recorded: in your bank plus client money still sitting in Upwork. Never price minus owed
 		// (that counted Upwork's 10% fee, and money not yet received, as paid). Total = paid + still owed (after Upwork's fee).
 		var upP = upOf(c), inUp = num(upP.pend) + num(upP.avail), banked = inBankOf(c);
-		var paid = Math.round((banked + inUp) * 100) / 100, payTot = paid + ow, pct = payTot ? Math.max(0, Math.min(100, Math.round(paid / payTot * 100))) : (ow ? 0 : 100);
+		var paid = Math.round((banked + inUp) * 100) / 100, payTot = paid + ow || (price ? (c.pay_method === 'Upwork' ? Math.round(price * 90) / 100 : price) : 0), pct = payTot ? Math.max(0, Math.min(100, Math.round(paid / payTot * 100))) : (ow ? 0 : 100);
 		var payState = st === 'leads' ? '' : !ow ? paidWord(c) : paid ? 'Partially paid' : 'Unpaid';
 		var payTone = { Paid: 'success', 'No price yet': 'neutral', 'Partially paid': 'info', Unpaid: 'warning' }[payState];
 		var btn = function (attr, label, cls) { return '<button type="button" class="dd-btn ' + (cls || 'secondary') + '" ' + attr + '>' + label + '</button>'; };
@@ -3283,7 +3283,7 @@
 			var dueCell = st === 'complete'
 				? '<div><span class="l">Completed</span><b>' + (doneDate(c) ? fmt(doneDate(c)) : '—') + '</b><small>' + (started ? 'Started ' + fmt(started) : '') + '</small></div>'
 				: '<div><span class="l">Due</span><b>' + (c.deadline ? fmt(c.deadline) : '—') + '</b>' + (c.deadline ? (function () { var n = dn(c.deadline); return '<small class="' + (n < 0 ? 'late' : n <= 7 ? 'soon' : '') + '">' + (n < 0 ? 'Overdue by ' + -n + ' day' + (n === -1 ? '' : 's') : n === 0 ? 'Today' : n === 1 ? 'Tomorrow' : 'In ' + n + ' days') + '</small>'; })() : '<small>No due date</small>') + '</div>';
-			strip = '<div class="dd-card dd-strip"><div><span class="l">Owed</span><b>' + money(ow) + '</b><small>' + (ow ? payState + (c.pay_method ? ' · via ' + esc(c.pay_method) : '') + (c.paymark === 'pending' ? ' · pending deposit' : '') : 'Paid in full') + '</small></div>' + dueCell
+			strip = '<div class="dd-card dd-strip"><div><span class="l">Owed</span><b>' + money(ow) + '</b><small>' + (ow ? payState + (c.pay_method ? ' · via ' + esc(c.pay_method) : '') + (c.paymark === 'pending' ? ' · pending deposit' : '') : (paid ? 'Paid in full' : price ? 'Nothing owed set · price ' + money(price) : 'No price yet')) + '</small></div>' + dueCell
 				+ '<div><span class="l">Client paid</span><b>' + money(paid) + (payTot ? ' <em>of ' + money(payTot) + (c.pay_method === 'Upwork' && price && Math.abs(payTot - price) > 1 ? ' after Upwork fee' : '') + '</em>' : '') + '</b>'
 				+ (inUp ? '<small class="dd-strip-sub">' + (banked ? money(banked) + ' in your bank · ' : 'Nothing in your bank yet · ') + money(inUp) + ' still in Upwork' + (num(upP.pend) && upP.pnext ? ' (available ' + fmt(upP.pnext) + ')' : '') + '</small>' : '')
 				+ '<span class="dd-prog' + (pct >= 100 ? ' full' : '') + '"><i><s style="width:' + pct + '%"></s></i><small>' + pct + '%</small></span></div></div>';
