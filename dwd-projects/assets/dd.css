@@ -108,6 +108,9 @@ html[data-theme], html[data-theme] body, html[data-theme] #wpwrap, html[data-the
 .dd-ch-t span { display: block; font-size: var(--fs-sm); color: var(--text-3); margin-top: 1px; }
 .dd-ch > a, .dd-ch-a > a { font-size: var(--fs-sm); font-weight: 500; color: var(--accent-text) !important; white-space: nowrap; }
 .dd-empty-l { padding: 16px 20px 20px; color: var(--text-3); font-size: var(--fs-sm); }
+/* WordPress admin's own p styles were wiping this padding (empty To-dos box text sat on the card edge). */
+.dd .dd-card p.dd-empty-l { margin: 0 !important; padding: 4px 20px 20px !important; }
+@media (max-width: 767px) { .dd .dd-card p.dd-empty-l { padding-left: 16px !important; padding-right: 16px !important; } }
 .dd-pill { display: inline-flex; align-items: center; height: 20px; padding: 0 8px; border-radius: var(--radius-pill); font-size: var(--fs-xs); font-weight: 500; white-space: nowrap; flex: none; }
 .dd-pill.neutral { background: var(--neutral-bg); color: var(--neutral-text); }
 .dd-pill.info { background: var(--info-bg); color: var(--info-text); }
