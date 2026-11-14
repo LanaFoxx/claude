@@ -989,6 +989,19 @@
 			return typeof window.dwdSetUpworkBalance === 'function' ? window.dwdSetUpworkBalance(pending, available) : 'saved';
 		}).catch(function () { return 'failed'; });
 	};
+	// Red "New email" pill on the lists: which clients / projects have unread client emails (clientmail.php: /mail-new).
+	function mailNewMap() {
+		if ((!S.mailNew || Date.now() - (S.mailNewAt || 0) > 60000) && !S.mailNewBusy) {
+			S.mailNewBusy = 1;
+			api('/mail-new').then(function (x) { var was = JSON.stringify(S.mailNew || {}), now = (x && x.owners) || {}; S.mailNew = now; S.mailNewAt = Date.now(); S.mailNewBusy = 0; if (JSON.stringify(now) !== was) { render(); } }).catch(function () { S.mailNew = S.mailNew || {}; S.mailNewAt = Date.now(); S.mailNewBusy = 0; });
+		}
+		return S.mailNew || {};
+	}
+	// owner: the client's id, or the project's id when it has no client (emails are kept on the client).
+	function mailPill(owner) {
+		var n = +mailNewMap()[owner] || 0;
+		return n ? '<span class="dd-pill danger dd-mnew">' + (n > 1 ? n + ' new emails' : 'New email') + '</span>' : '';
+	}
 	function hmPeople() {
 		var seen = {}, out = [];
 		var add = function (name, sub, email, rank) { var e = String(email || '').trim().toLowerCase(); if (!e || seen[e]) { return; } seen[e] = 1; out.push({ name: String(name || '').trim() || e, sub: String(sub || '').trim(), email: e, rank: rank }); };
@@ -1136,7 +1149,7 @@
 			+ '<div class="dd-aplist"' + sortAttr('active') + '>' + (ap.length ? ap.map(function (c) {
 				if (c.div) { return divRow(); }
 				var k = clientOf(c), ow = num(c.balance), late = c.deadline && c.deadline < DWDC.today;
-				return '<a class="dd-ap-r" href="#client/' + c.id + '" data-sid="' + c.id + '">' + (sortMine('active') ? '<span class="dd-grip" aria-hidden="true">⋮⋮</span>' : '') + flagDot(c) + '<span class="dd-av">' + esc(ddInitials(k ? k.name : (c.person || c.name))) + '</span><span class="dd-act-n"><b>' + esc(c.name) + '</b><small>' + esc(k ? k.name : (c.person || '—')) + (c.next ? ' · ' + esc(c.next) : '') + '</small></span>'
+				return '<a class="dd-ap-r" href="#client/' + c.id + '" data-sid="' + c.id + '">' + (sortMine('active') ? '<span class="dd-grip" aria-hidden="true">⋮⋮</span>' : '') + flagDot(c) + '<span class="dd-av">' + esc(ddInitials(k ? k.name : (c.person || c.name))) + '</span><span class="dd-act-n"><b>' + esc(c.name) + mailPill(c.client || c.id) + '</b><small>' + esc(k ? k.name : (c.person || '—')) + (c.next ? ' · ' + esc(c.next) : '') + '</small></span>'
 					+ '<span class="dd-ap-m"><b class="' + (ow ? 'owe' : '') + '">' + (ow ? money(ow) : paidWord(c)) + '</b><small class="' + (late ? 'late' : '') + '">' + (c.deadline ? 'Due ' + fmt(c.deadline) : 'No due date') + '</small></span></a>';
 			}).join('') : '<p class="dd-empty-l">No active projects right now.</p>') + '</div></section>';
 		var statsOpen = ddGet('dreamdesk-stats-open', '') === '1';
@@ -1198,7 +1211,7 @@
 				var k = x.k, biz = k.company || (x.pp[0] ? x.pp[0].name : ''), host = x.pp.some(function (c) { return num(c.hosting) > 0; });
 				var last = x.pp.filter(isOpen).reduce(function (m, c) { return c.updated > m ? c.updated : m; }, '');
 				var bz = biz && biz !== k.name ? esc(biz) : '<i>—</i>', em = k.email ? esc(k.email) : '<i>No email on file</i>';
-				html += '<a class="dd-tr" href="#cl/' + k.id + '" data-sid="' + k.id + '"><span class="dd-td nm"><span class="dd-av">' + esc(ddInitials(k.name)) + '</span><span class="dd-st"><span class="dd-l1"><b>' + esc(k.name) + '</b>' + ddPill(x.t, DD_TONE[x.t]) + '</span><span class="dd-l2">' + bz + '</span><span class="dd-l3">' + em + '</span><span class="dd-l4">' + x.pp.length + ' project' + (x.pp.length === 1 ? '' : 's') + ' · ' + (host ? 'Hosting' : 'No hosting') + (last ? ' · ' + ago(last) : '') + '</span></span>' + lu('chevron-right') + '</span>'
+				html += '<a class="dd-tr" href="#cl/' + k.id + '" data-sid="' + k.id + '"><span class="dd-td nm"><span class="dd-av">' + esc(ddInitials(k.name)) + '</span><span class="dd-st"><span class="dd-l1"><b>' + esc(k.name) + '</b>' + ddPill(x.t, DD_TONE[x.t]) + mailPill(k.id) + '</span><span class="dd-l2">' + bz + '</span><span class="dd-l3">' + em + '</span><span class="dd-l4">' + x.pp.length + ' project' + (x.pp.length === 1 ? '' : 's') + ' · ' + (host ? 'Hosting' : 'No hosting') + (last ? ' · ' + ago(last) : '') + '</span></span>' + lu('chevron-right') + '</span>'
 					+ '<span class="dd-td c-biz">' + bz + '</span><span class="dd-td c-em">' + em + '</span><span class="dd-td c-ty">' + ddPill(x.t, DD_TONE[x.t]) + '</span><span class="dd-td c-pr num">' + x.pp.length + '</span><span class="dd-td c-ho">' + (host ? 'Yes' : '<i>No</i>') + '</span><span class="dd-td c-la">' + (last ? ago(last) : '<i>—</i>') + '</span></a>';
 			});
 			html += '</div>';
@@ -1537,7 +1550,7 @@
 		var em = (k && k.email) || c.email;
 		return '<div class="dd-prow" data-go="client/' + c.id + '" data-sid="' + c.id + '">'
 			+ '<span class="dd-pgrip" title="' + (mine ? 'Drag to move' : 'Switch to My order to drag') + '">' + lu('grip', 16) + '</span>'
-			+ '<span class="dd-pc nm">' + flagDot(c) + '<span class="dd-st"><span class="dd-l1"><a href="#client/' + c.id + '"><b>' + esc(c.name) + '</b></a>' + (c.markup ? '<a class="dd-mtag" href="' + esc(url(c.markup)) + '" target="_blank" rel="noopener">Markup</a>' : '') + '<span class="dd-mob-pill">' + ddPill('Active', 'success') + '</span></span>'
+			+ '<span class="dd-pc nm">' + flagDot(c) + '<span class="dd-st"><span class="dd-l1"><a href="#client/' + c.id + '"><b>' + esc(c.name) + '</b></a>' + mailPill(c.client || c.id) + (c.markup ? '<a class="dd-mtag" href="' + esc(url(c.markup)) + '" target="_blank" rel="noopener">Markup</a>' : '') + '<span class="dd-mob-pill">' + ddPill('Active', 'success') + '</span></span>'
 			+ (site(c) ? '<a class="dd-dom" href="' + esc(url(c.website)) + '" target="_blank" rel="noopener">' + esc(site(c)) + '</a>' : '')
 			+ '<span class="dd-mob-meta">' + esc([k ? k.name : (c.person || ''), ow ? 'Owed ' + money(ow) : paidWord(c), num(upOf(c).pend) ? money(upOf(c).pend) + ' pending in Upwork' : '', num(upOf(c).avail) ? money(upOf(c).avail) + ' ready to withdraw' : '', dd ? 'Due ' + fmt(dd) : '', c.next ? 'Next: ' + c.next : ''].filter(Boolean).join(' · ')) + '</span></span></span>'
 			+ '<span class="dd-pc cl"><span>' + (k ? '<a href="#cl/' + k.id + '">' + esc(k.name) + '</a>' : esc(c.person || '—')) + '</span><small>' + (em ? '<a href="mailto:' + esc(em) + '" data-emailp="' + c.id + '">' + esc(em) + '</a>' : 'No email on file') + '</small></span>'
@@ -1550,7 +1563,7 @@
 	}
 	function actCard(c) {
 		var k = clientOf(c), ow = num(c.balance);
-		return '<a class="dd-bcard" href="#client/' + c.id + '" data-sid="' + c.id + '"><span class="dd-l1">' + flagDot(c) + '<b>' + esc(c.name) + '</b>' + (c.markup ? '<span class="dd-mtag">Markup</span>' : '') + '</span><small>' + esc(k ? k.name : (c.person || '—')) + '</small>'
+		return '<a class="dd-bcard" href="#client/' + c.id + '" data-sid="' + c.id + '"><span class="dd-l1">' + flagDot(c) + '<b>' + esc(c.name) + '</b>' + mailPill(c.client || c.id) + (c.markup ? '<span class="dd-mtag">Markup</span>' : '') + '</span><small>' + esc(k ? k.name : (c.person || '—')) + '</small>'
 			+ '<span class="meta">' + (ow ? 'Owed ' + money(ow) : paidWord(c)) + (c.deadline ? ' · Due ' + fmt(c.deadline) : '') + '</span>' + (c.next ? '<span class="nx">' + esc(c.next) + '</span>' : '') + '</a>';
 	}
 	function ddActive() {

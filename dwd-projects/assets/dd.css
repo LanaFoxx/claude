@@ -656,3 +656,6 @@ input[type=date], input[type=datetime-local] { cursor: pointer; }
 
 /* Home: bank balance number in green */
 .dd-stats > a.dd-bank > b { color: var(--success-text); }
+
+/* Lists: red New email pill next to a client or project name */
+.dd-mnew { margin-left: 8px; font-weight: 500; vertical-align: middle; flex: none; }

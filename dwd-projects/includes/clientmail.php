@@ -268,3 +268,25 @@ add_action( 'rest_api_init', function () {
 		return array( 'list' => dwdcm_recent( 25 ), 'synced' => (string) get_option( 'dwdcm_last', '' ) );
 	} ) );
 } );
+
+/** How many new (unread, not opened here) client emails each client or project has: the red "New email" pill on the lists. */
+function dwdcm_new_counts() {
+	$out = array();
+	foreach ( get_posts( array( 'post_type' => array( DWDC_CLIENT, DWDC_CONTACT ), 'post_status' => 'any', 'posts_per_page' => -1, 'fields' => 'ids', 'meta_key' => '_dwdcm_mail' ) ) as $o ) {
+		$n = 0;
+		foreach ( (array) get_post_meta( $o, '_dwdcm_mail', true ) as $x ) {
+			if ( is_array( $x ) && ! empty( $x['in'] ) && dwdcm_is_new( $x ) ) {
+				$n++;
+			}
+		}
+		if ( $n ) {
+			$out[ (int) $o ] = $n;
+		}
+	}
+	return $out;
+}
+add_action( 'rest_api_init', function () {
+	register_rest_route( 'dwd/v1', '/crm/mail-new', array( 'methods' => 'GET', 'permission_callback' => function () { return current_user_can( 'edit_posts' ); }, 'callback' => function () {
+		return array( 'owners' => (object) dwdcm_new_counts() );
+	} ) );
+} );
