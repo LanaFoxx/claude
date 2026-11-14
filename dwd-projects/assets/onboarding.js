@@ -87,7 +87,7 @@
 
 	function fields() {
 		return [].slice.call(form.querySelectorAll('input[name^="form_fields"], textarea[name^="form_fields"], select[name^="form_fields"]'))
-			.filter(function (f) { return f.type !== 'file' && f.type !== 'hidden' && f.type !== 'submit'; });
+			.filter(function (f) { return f.type !== 'file' && f.type !== 'hidden' && f.type !== 'submit' && f.type !== 'password'; }); // never keep a password in the browser
 	}
 
 	var timer;
