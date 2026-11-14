@@ -165,7 +165,7 @@ function dwdc_ai_desk_context() {
 	$clients = array();
 	foreach ( get_posts( array( 'post_type' => DWDC_CLIENT, 'post_status' => 'private', 'posts_per_page' => -1 ) ) as $p ) {
 		$k         = dwdc_client( $p );
-		$clients[] = $clean( array( 'name' => $k['name'], 'email' => $k['email'], 'phone' => $k['phone'], 'company' => $k['company'], 'review_request_sent' => $k['review_sent'], 'notes' => $cut( $k['notes'], 200 ) ) );
+		$clients[] = $clean( array( 'client_id' => $k['id'], 'name' => $k['name'], 'email' => $k['email'], 'phone' => $k['phone'], 'company' => $k['company'], 'review_request_sent' => $k['review_sent'], 'notes' => $cut( $k['notes'], 200 ) ) );
 	}
 	return array(
 		'workflow' => array(
@@ -200,9 +200,167 @@ function dwdc_ai_tools() {
 	);
 }
 
+/** Read tools: let the assistant look up anything in Dream Desk in full (the context above is only a summary). */
+function dwdc_ai_read_tools() {
+	$s = function ( $d ) { return array( 'type' => 'string', 'description' => $d ); };
+	$i = function ( $d ) { return array( 'type' => 'integer', 'description' => $d ); };
+	return array(
+		array( 'name' => 'get_project_details', 'description' => 'Everything Dream Desk holds on one project or lead: all fields, every onboarding/form answer in full, all notes, every payment, to-dos, staging and Markup links, uploaded assets, files in the client\'s Google Drive folder, and how many emails there are. Use it for any detailed question about a project.', 'input_schema' => array( 'type' => 'object', 'properties' => array( 'project_id' => $i( 'Project id' ) ), 'required' => array( 'project_id' ) ) ),
+		array( 'name' => 'get_client_details', 'description' => 'Everything on one client record (contact details, notes, hosting, review request) and the ids of their projects.', 'input_schema' => array( 'type' => 'object', 'properties' => array( 'client_id' => $i( 'Client id' ) ), 'required' => array( 'client_id' ) ) ),
+		array( 'name' => 'get_emails', 'description' => 'Emails exchanged with clients (synced from Gmail), newest first, with their text. Give a project_id or client_id to read one client\'s emails, a search phrase to search every client\'s emails, or unread_only for emails that have not been opened yet. With nothing set it returns the newest emails across all clients.', 'input_schema' => array( 'type' => 'object', 'properties' => array( 'project_id' => $i( 'Project id (optional)' ), 'client_id' => $i( 'Client id (optional)' ), 'search' => $s( 'Words to look for in the sender, subject or text (optional)' ), 'unread_only' => array( 'type' => 'boolean' ), 'limit' => $i( 'How many to return, 1 to 40 (default 15)' ) ) ) ),
+		array( 'name' => 'get_dashboard_data', 'description' => 'Other parts of Dream Desk. section: upwork_balances (pending and available in Upwork, and each pending payment), bank (bank balances, spending summary, Google Ads spend), meetings (upcoming and recent meetings), personal (the personal calendar, to-dos, bills and plans).', 'input_schema' => array( 'type' => 'object', 'properties' => array( 'section' => array( 'type' => 'string', 'enum' => array( 'upwork_balances', 'bank', 'meetings', 'personal' ) ) ), 'required' => array( 'section' ) ) ),
+	);
+}
+
+/** Never hand keys, tokens or setup scripts to the model. */
+function dwdc_ai_scrub( $v, $depth = 0 ) {
+	if ( ! is_array( $v ) || $depth > 12 ) {
+		return is_object( $v ) ? dwdc_ai_scrub( (array) $v, $depth + 1 ) : $v;
+	}
+	$out = array();
+	foreach ( $v as $k => $x ) {
+		if ( is_string( $k ) && preg_match( '/token|secret|passw|api_?key|^key$|authorization|script|nonce/i', $k ) ) {
+			continue;
+		}
+		$out[ $k ] = dwdc_ai_scrub( $x, $depth + 1 );
+	}
+	return $out;
+}
+
+/** Form answers that are passwords stay in Dream Desk: the assistant is told one was given, not what it is. */
+function dwdc_ai_hide_passwords( $v, $depth = 0 ) {
+	if ( ! is_array( $v ) || $depth > 12 ) {
+		return $v;
+	}
+	if ( isset( $v['value'] ) && is_string( $v['value'] ) && '' !== $v['value'] && preg_match( '/passw|pass code|passcode|\\bpwd\\b|\\bpin\\b/i', (string) ( $v['label'] ?? $v['id'] ?? '' ) ) ) {
+		$v['value'] = '(a password was given; it is only shown on the project page)';
+	}
+	foreach ( $v as $k => $x ) {
+		$v[ $k ] = dwdc_ai_hide_passwords( $x, $depth + 1 );
+	}
+	return $v;
+}
+
+/** JSON for the model, cut to a sensible size. */
+function dwdc_ai_data( $v, $max = 60000 ) {
+	$j = (string) wp_json_encode( dwdc_ai_scrub( $v ), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
+	return 'DATA: ' . ( strlen( $j ) > $max ? mb_strcut( $j, 0, $max ) . ' …(cut: ask for something narrower to see the rest)' : $j );
+}
+
+/** One read tool. Returns "DATA: …" or "Error: …". */
+function dwdc_ai_read( $name, $in ) {
+	$proj = function ( $id ) {
+		$id = (int) $id;
+		return $id && DWDC_CONTACT === get_post_type( $id ) ? $id : 0;
+	};
+	switch ( $name ) {
+		case 'get_project_details':
+			$id = $proj( $in['project_id'] ?? 0 );
+			if ( ! $id ) {
+				return 'Error: no project with that id.';
+			}
+			$c = dwdc_contact( $id, true );
+			if ( ! is_array( $c ) ) {
+				return 'Error: that project could not be read.';
+			}
+			if ( function_exists( 'dwddr_files' ) && ! empty( $c['drive'] ) ) {
+				$c['drive_folder_files'] = dwddr_files( $id );
+			}
+			foreach ( array( '_dwdc_entries', '_dwdc_notes', '_dwdc_payments' ) as $mk ) { // the full lists, in case the page view shortens them
+				$mv = get_post_meta( $id, $mk, true );
+				if ( is_array( $mv ) && $mv ) {
+					$c[ 'all' . substr( $mk, 5 ) ] = $mv;
+				}
+			}
+			return dwdc_ai_data( dwdc_ai_hide_passwords( $c ), 90000 );
+		case 'get_client_details':
+			$kid = (int) ( $in['client_id'] ?? 0 );
+			if ( ! $kid || DWDC_CLIENT !== get_post_type( $kid ) ) {
+				return 'Error: no client with that id.';
+			}
+			$k        = dwdc_client( get_post( $kid ) );
+			$projects = array();
+			foreach ( get_posts( array( 'post_type' => DWDC_CONTACT, 'post_status' => 'any', 'posts_per_page' => -1, 'fields' => 'ids', 'meta_key' => '_dwdc_client', 'meta_value' => $kid ) ) as $pid ) {
+				$projects[] = array( 'project_id' => (int) $pid, 'name' => html_entity_decode( (string) get_the_title( $pid ), ENT_QUOTES, 'UTF-8' ) );
+			}
+			return dwdc_ai_data( array( 'client' => $k, 'projects' => $projects ) );
+		case 'get_emails':
+			if ( ! function_exists( 'dwdcm_get' ) ) {
+				return 'Error: client emails are not set up.';
+			}
+			$owners = array();
+			if ( ! empty( $in['project_id'] ) && $proj( $in['project_id'] ) ) {
+				$owners[] = (int) dwdcm_owner( $proj( $in['project_id'] ) );
+			} elseif ( ! empty( $in['client_id'] ) && DWDC_CLIENT === get_post_type( (int) $in['client_id'] ) ) {
+				$owners[] = (int) $in['client_id'];
+			} else {
+				$owners = get_posts( array( 'post_type' => array( DWDC_CLIENT, DWDC_CONTACT ), 'post_status' => 'any', 'posts_per_page' => -1, 'fields' => 'ids', 'meta_key' => '_dwdcm_mail' ) );
+			}
+			$q     = strtolower( trim( (string) ( $in['search'] ?? '' ) ) );
+			$limit = max( 1, min( 40, (int) ( $in['limit'] ?? 15 ) ) );
+			$rows  = array();
+			foreach ( $owners as $o ) {
+				$who = html_entity_decode( (string) get_the_title( $o ), ENT_QUOTES, 'UTF-8' );
+				foreach ( (array) get_post_meta( $o, '_dwdcm_mail', true ) as $x ) {
+					if ( ! is_array( $x ) ) {
+						continue;
+					}
+					$new = dwdcm_is_new( $x );
+					if ( ! empty( $in['unread_only'] ) && ! ( $new && ! empty( $x['in'] ) ) ) {
+						continue;
+					}
+					if ( '' !== $q && false === strpos( strtolower( ( $x['from'] ?? '' ) . ' ' . ( $x['to'] ?? '' ) . ' ' . ( $x['subject'] ?? '' ) . ' ' . ( $x['body'] ?? '' ) ), $q ) ) {
+						continue;
+					}
+					$body   = trim( (string) preg_replace( '/[ \t]+/', ' ', (string) ( $x['body'] ?? '' ) ) );
+					$rows[] = array(
+						'client_or_project' => $who,
+						'owner_id'          => (int) $o,
+						'direction'         => ! empty( $x['in'] ) ? 'received from client' : 'sent by Michael',
+						'date'              => (string) ( $x['date'] ?? '' ),
+						'from'              => (string) ( $x['from'] ?? '' ),
+						'to'                => (string) ( $x['to'] ?? '' ),
+						'subject'           => (string) ( $x['subject'] ?? '' ),
+						'unread'            => $new && ! empty( $x['in'] ),
+						'text'              => mb_strlen( $body ) > 3000 ? mb_substr( $body, 0, 3000 ) . '…' : $body,
+					);
+				}
+			}
+			usort( $rows, function ( $a, $b ) { return strtotime( $b['date'] ) <=> strtotime( $a['date'] ); } );
+			return dwdc_ai_data( array( 'found' => count( $rows ), 'showing' => min( $limit, count( $rows ) ), 'last_gmail_sync' => (string) get_option( 'dwdcm_last', '' ), 'emails' => array_slice( $rows, 0, $limit ) ), 90000 );
+		case 'get_dashboard_data':
+			switch ( (string) ( $in['section'] ?? '' ) ) {
+				case 'upwork_balances':
+					$u = get_option( 'dwd_upwork_snap', array() );
+					return is_array( $u ) && $u ? dwdc_ai_data( $u ) : 'DATA: {"note":"No Upwork balances have been saved yet."}';
+				case 'bank':
+					if ( ! function_exists( 'dwdbk_summary' ) ) {
+						return 'Error: the bank section is not set up.';
+					}
+					$b             = dwdbk_summary();
+					$b['balances'] = function_exists( 'dwdpl_balances' ) ? dwdpl_balances() : null;
+					$b['adspend']  = function_exists( 'dwdbk_adspend' ) ? dwdbk_adspend() : null;
+					return dwdc_ai_data( $b );
+				case 'meetings':
+					return function_exists( 'dwdmt_summary' ) ? dwdc_ai_data( dwdmt_summary() ) : 'Error: meetings are not set up.';
+				case 'personal':
+					return function_exists( 'dwdpe_get' ) ? dwdc_ai_data( dwdpe_get() ) : 'Error: the personal section is not set up.';
+			}
+			return 'Error: section must be upwork_balances, bank, meetings or personal.';
+	}
+	return 'Error: unknown lookup.';
+}
+
 /** Run one assistant action. Returns a short result string for the model. */
 function dwdc_ai_run_tool( $name, $in ) {
 	$in   = (array) $in;
+	if ( in_array( $name, array( 'get_project_details', 'get_client_details', 'get_emails', 'get_dashboard_data' ), true ) ) {
+		try {
+			return dwdc_ai_read( $name, $in );
+		} catch ( \Throwable $e ) {
+			return 'Error: that could not be read (' . $e->getMessage() . ').';
+		}
+	}
 	$rest = function ( $method, $route, $body ) {
 		$q = new WP_REST_Request( $method, '/dwd/v1/crm' . $route );
 		$q->set_header( 'content-type', 'application/json' );
@@ -343,8 +501,14 @@ add_action( 'rest_api_init', function () {
 				'cache_control' => array( 'type' => 'ephemeral' ),
 			),
 		);
+		if ( ! empty( $desk ) && ! $personal ) {
+			$system[] = array(
+				'type' => 'text',
+				'text' => "Looking things up: the data above is a summary. For anything it does not show in full, use the read tools before answering, and never guess: get_project_details (everything on one project: every onboarding and form answer, all notes, every payment, to-dos, staging and Markup links, files in the Assets box and in the client's Google Drive folder), get_client_details, get_emails (the emails exchanged with clients, with their text; filter by project, client, a search phrase, or unread only; use it for 'did an email come in', 'what did X say'), and get_dashboard_data (Upwork pending and available balances, bank balances and spending, meetings, the calendar and personal items). Use the project id or client_id from the data above. Quote figures and wording exactly as the tools return them, and say so plainly when Dream Desk does not have something.",
+			);
+		}
 		$changed = false;
-		for ( $turn = 0; $turn < 8; $turn++ ) {
+		for ( $turn = 0; $turn < 12; $turn++ ) {
 			$req = array(
 				'model'         => 'claude-opus-5-5',
 				'max_tokens'    => 16000,
@@ -354,7 +518,7 @@ add_action( 'rest_api_init', function () {
 				'messages'      => $msgs,
 			);
 			if ( ! empty( $desk ) && ! $personal ) {
-				$req['tools'] = dwdc_ai_tools();
+				$req['tools'] = array_merge( dwdc_ai_tools(), dwdc_ai_read_tools() );
 			}
 			if ( $claude ) {
 				$req['tools'][] = array( 'type' => 'web_search_20260209', 'name' => 'web_search', 'max_uses' => 5 );
@@ -397,7 +561,7 @@ add_action( 'rest_api_init', function () {
 				if ( 'tool_use' === ( $b['type'] ?? '' ) ) {
 					$out       = dwdc_ai_run_tool( (string) $b['name'], $b['input'] ?? array() );
 					$changed   = $changed || 0 === strpos( $out, 'OK' );
-					$results[] = array( 'type' => 'tool_result', 'tool_use_id' => $b['id'], 'content' => $out, 'is_error' => 0 !== strpos( $out, 'OK' ) );
+					$results[] = array( 'type' => 'tool_result', 'tool_use_id' => $b['id'], 'content' => $out, 'is_error' => 0 !== strpos( $out, 'OK' ) && 0 !== strpos( $out, 'DATA' ) );
 				}
 			}
 			$msgs[] = array( 'role' => 'user', 'content' => $results );
