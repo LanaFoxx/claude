@@ -245,3 +245,10 @@
 .dd .dd-catnew input { height: 28px !important; min-height: 28px !important; width: 150px; padding: 0 10px !important; border: 1px solid var(--border-strong) !important; border-radius: var(--radius-md) !important; background: var(--surface) !important; color: var(--text) !important; font: 500 13px var(--font) !important; box-shadow: none !important; }
 .dd-sug .r2 { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 10px; }
 .dd-sug .r2 > span:first-child { font-size: 12px; color: var(--text-3); }
+/* Recurring charges: type in the monthly amount yourself */
+.dd button.dd-amtbtn { background: none; border: 0; padding: 0; margin: 0; font: inherit; color: inherit; text-align: right; cursor: pointer; }
+.dd button.dd-amtbtn:hover { text-decoration: underline; text-underline-offset: 3px; }
+.dd-amtbtn em { display: block; font-style: normal; font-size: 11px; font-weight: 500; color: var(--text-3); }
+.dd-amted { margin-top: 8px; }
+.dd-amted > span { font-size: 12px; color: var(--text-3); }
+.dd .dd-amted input { width: 110px; }

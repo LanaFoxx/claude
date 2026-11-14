@@ -54,12 +54,18 @@ function dwdpl_cat( $t ) {
 }
 
 /** Pull new/changed/removed transactions for every connected bank. */
-function dwdpl_sync() {
+function dwdpl_sync( $fresh = false, $use = null, $min = 0 ) {
 	if ( ! dwdpl_ready() ) {
 		return array( 'skipped' => 'Plaid keys not added' );
 	}
-	$items = dwdpl_items();
+	$items = is_array( $use ) ? $use : dwdpl_items();
 	$d     = dwdbk_get();
+	if ( $fresh ) { // start over from the bank: drop what Plaid sent before and pull it all again (saved only if it all works)
+		$d['tx'] = array_values( array_filter( $d['tx'], function ( $t ) { return 'p' !== substr( (string) $t['id'], 0, 1 ); } ) );
+		foreach ( $items as $k => $it ) {
+			$items[ $k ]['cursor'] = '';
+		}
+	}
 	$index = array();
 	foreach ( $d['tx'] as $i => $t ) {
 		$index[ $t['id'] ] = $i;
@@ -122,6 +128,9 @@ function dwdpl_sync() {
 		if ( empty( $errors ) ) {
 			unset( $items[ $k ]['error'] );
 		}
+	}
+	if ( $fresh && ( $errors || $added < $min ) ) {
+		return array( 'added' => 0, 'errors' => $errors ? $errors : array( 'The bank sent ' . $added . ' transactions, fewer than the ' . $min . ' expected' ) ); // nothing saved
 	}
 	dwdbk_put( $d );
 	update_option( 'dwdpl_items', $items, false );
@@ -202,6 +211,40 @@ add_action( 'rest_api_init', function () {
 				$s['sync'] = dwdpl_sync();
 				$s         = array_merge( $s, $status() );
 				return $s;
+			}
+			if ( 'dedupe' === $a ) { // the same bank linked more than once: keep one link, pull its history fresh, then unlink the rest
+				$seen = array();
+				$keep = array();
+				$drop = array();
+				foreach ( dwdpl_items() as $i ) {
+					$ac = array_map( 'strval', (array) ( $i['accounts'] ?? array() ) );
+					sort( $ac );
+					$k = strtolower( (string) ( $i['institution'] ?? '' ) ) . '|' . implode( ',', $ac );
+					if ( isset( $seen[ $k ] ) ) {
+						$drop[] = $i;
+					} else {
+						$seen[ $k ] = 1;
+						$keep[]     = $i;
+					}
+				}
+				if ( ! $drop ) {
+					return array_merge( $status(), array( 'dedupe' => 'none' ) );
+				}
+				if ( function_exists( 'set_time_limit' ) ) {
+					@set_time_limit( 280 );
+				}
+				$before = dwdbk_get();
+				$isp    = function ( $t ) { return 'p' === substr( (string) $t['id'], 0, 1 ); };
+				$want   = count( array_filter( dwdbk_dedupe( $before['tx'] ), $isp ) );
+				update_option( 'dwdbk_data_backup', array( 'at' => current_time( 'mysql' ), 'data' => $before ), false );
+				$res = dwdpl_sync( true, $keep, (int) floor( 0.97 * $want ) );
+				if ( ! empty( $res['errors'] ) || ! empty( $res['skipped'] ) ) {
+					return new WP_Error( 'dwdpl_dedupe', 'Nothing was changed. ' . implode( ' ', (array) ( $res['errors'] ?? array( 'Plaid is not set up.' ) ) ), array( 'status' => 400 ) );
+				}
+				foreach ( $drop as $i ) {
+					dwdpl_call( '/item/remove', array( 'access_token' => $i['token'] ) );
+				}
+				return array_merge( $status(), array( 'dedupe' => array( 'unlinked' => count( $drop ), 'stored_before' => count( $before['tx'] ), 'counted_before' => $want, 'stored_now' => count( dwdbk_get()['tx'] ) ) ) );
 			}
 			if ( 'remove' === $a ) {
 				$items = array();

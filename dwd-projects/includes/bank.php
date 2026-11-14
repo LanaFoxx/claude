@@ -237,6 +237,7 @@ function dwdbk_insights( $side = '', $want = '' ) {
 	$income = 0;
 	$keep   = 0;
 	$invest = 0;
+	$selfpay = 0;
 	$cardp  = 0;
 	foreach ( $tx as $t ) {
 		$u   = strtoupper( (string) $t['desc'] );
@@ -253,6 +254,13 @@ function dwdbk_insights( $side = '', $want = '' ) {
 			if ( $win && $amt < 0 ) {
 				$invest += -$amt;
 				$hit( 'saved', $t );
+			}
+			continue;
+		}
+		if ( false !== strpos( $u, 'GUSTO' ) && 'Transfers' === $t['cat'] && $amt < 0 ) { // your own pay leaving the business: not an expense
+			if ( $win ) {
+				$selfpay += -$amt;
+				$hit( 'selfpay', $t );
 			}
 			continue;
 		}
@@ -297,7 +305,7 @@ function dwdbk_insights( $side = '', $want = '' ) {
 		}
 		$out   = -$amt;
 		$is_cd = (bool) preg_match( $card, $u );
-		$cat   = '' !== $who ? 'Sent to people (Zelle)' : ( $is_cd ? 'Credit card payments' : ( false !== strpos( $u, 'GUSTO' ) ? 'Payroll (Gusto)' : ( 'Transfers' === $t['cat'] ? 'Other transfers' : (string) $t['cat'] ) ) );
+		$cat   = '' !== $who ? 'Sent to people (Zelle)' : ( $is_cd ? 'Credit card payments' : ( false !== strpos( $u, 'GUSTO' ) ? ( 'Taxes & Gov' === $t['cat'] ? 'Payroll taxes (Gusto)' : 'Payroll service (Gusto)' ) : ( 'Transfers' === $t['cat'] ? 'Other transfers' : (string) $t['cat'] ) ) );
 		$spent += $out;
 		$hit( 'spent', $t );
 		$hit( 'cat:' . $cat, $t );
@@ -435,6 +443,9 @@ function dwdbk_insights( $side = '', $want = '' ) {
 	if ( $suby > 0 ) {
 		$pat[] = array( 't' => 'Repeating charges:', 'x' => count( $subs ) . ' charges repeat on a schedule and add up to about ' . $usd( $suby ) . ' a year.' );
 	}
+	if ( $selfpay > 0 ) {
+		$pat[] = array( 't' => 'Paid to yourself:', 'x' => $usd( $selfpay ) . ' went from the business to you as pay through Gusto. That is your own money moving, not an expense, so it is left out of spending here. Only the payroll taxes and Gusto\'s fee count.' );
+	}
 	if ( $keep + $invest > 0 ) {
 		$pat[] = array( 't' => 'Already saving:', 'x' => $usd( $keep + $invest ) . ' was put away' . ( $invest > 0 ? ': ' . $usd( $invest ) . ' into investing accounts (Fidelity, Acorns and the like)' . ( $keep > 0 ? ' and ' . $usd( $keep ) . ' through Keep the Change' : '' ) : ' through Keep the Change' ) . '. That is not counted as spending on this page.' );
 	}
@@ -454,6 +465,7 @@ function dwdbk_insights( $side = '', $want = '' ) {
 		'spent'        => round( $spent ),
 		'spent_month'  => round( $spent * $mth ),
 		'income'       => round( $income ),
+		'selfpay'      => round( $selfpay ),
 		'people_total' => round( $ptot ),
 		'people_count' => count( array_filter( $plist, function ( $p ) { return $p['year'] > 0; } ) ),
 		'habits'       => $habits,
@@ -475,6 +487,7 @@ function dwdbk_recurring( $tx, $flags ) {
 	$own   = '/KEEP ?THE ?CHANGE|ONLINE BANKING TRANSFER|TRANSFER (TO|FROM) (CHK|SAV|ACCT|CHECKING|SAVINGS)|OVERDRAFT PROTECTION|SCHEDULED? TRANSFER|ACCTVERIFY|ONLINE BANKING PAYMENT TO CRD|CREDIT CARD PAYMENT|CRD PMT|PAYMENT - THANK YOU|BANK OF AMERICA CREDIT CARD|CREDIT CARD BILL PAYMENT/';
 	$kinds = (array) get_option( 'dwdbk_kinds', array() );
 	$mycat = (array) get_option( 'dwdbk_subcats', array() );
+	$myamt = (array) get_option( 'dwdbk_amounts', array() );
 	$scope = (array) get_option( 'dwdbk_scopes', array() );
 	$by    = array();
 	$names = array();
@@ -485,6 +498,16 @@ function dwdbk_recurring( $tx, $flags ) {
 		$key = (string) $t['m'];
 		if ( preg_match( $own, strtoupper( (string) $t['desc'] ) ) ) {
 			continue;
+		}
+		// Gusto payroll is three different things: your own pay (business to you, not an expense), payroll taxes, and Gusto's fee.
+		if ( false !== stripos( (string) $t['desc'], 'GUSTO' ) ) {
+			if ( 'Transfers' === $t['cat'] ) {
+				continue;
+			}
+			if ( 'Taxes & Gov' === $t['cat'] ) {
+				$key = 'GUSTO TAXES';
+			}
+			$names[ $key ] = 'GUSTO TAXES' === $key ? 'Gusto payroll taxes' : 'Gusto subscription and fees';
 		}
 		// Zelle to a person (rent, a sitter): one line per person, not one for all of Zelle.
 		if ( preg_match( '/ZELLE\b.*?\bTO\s+(.+)$/i', (string) $t['desc'], $mm ) ) {
@@ -524,6 +547,8 @@ function dwdbk_recurring( $tx, $flags ) {
 		}
 		$span    = ( (int) substr( $last['date'], 0, 4 ) - (int) substr( $list[0]['date'], 0, 4 ) ) * 12 + (int) substr( $last['date'], 5, 2 ) - (int) substr( $list[0]['date'], 5, 2 ) + 1;
 		$monthly = count( $ms ) >= 3 && count( $ms ) >= 0.75 * $span;
+		$multi   = count( $list ) >= 1.5 * count( $ms ); // usually more than one charge a month: go by the month's total
+		$bymonth = false;
 		if ( count( $ms ) > 3 && gmdate( 'Y-m' ) === substr( $last['date'], 0, 7 ) ) {
 			array_pop( $ms ); // the month still in progress
 		}
@@ -539,7 +564,8 @@ function dwdbk_recurring( $tx, $flags ) {
 		$loose = in_array( $last['cat'], array( 'Bills & Utilities', 'Services', 'Business', 'Taxes & Gov' ), true ) && ! $zelle;
 		$limit = 'Subscriptions' === $last['cat'] ? 99 : ( $loose ? 1.5 : 0.35 );
 		$daily = in_array( $last['cat'], array( 'Groceries', 'Dining', 'Shopping', 'Fun', 'Travel', 'Gas & Car' ), true );
-		if ( $monthly && ! $daily && ( ! $cycle || ( 'monthly' === $cycle && $wide( $amts ) > $limit ) ) ) {
+		if ( $monthly && ! $daily && ( ! $cycle || ( 'monthly' === $cycle && ( $multi || $wide( $amts ) > $limit ) ) ) ) {
+			$bymonth = true;
 			$cycle = 'monthly';
 			$amts  = array_values( $ms );
 			$limit = $zelle ? 0.6 : $limit;
@@ -548,7 +574,7 @@ function dwdbk_recurring( $tx, $flags ) {
 			continue;
 		}
 		$now = end( $amts );
-		if ( $zelle && count( $amts ) >= 3 ) { // the usual amount, not a part payment
+		if ( ( $zelle || $loose || $bymonth ) && count( $amts ) >= 3 ) { // the usual amount (middle of the last three), not one odd month or a part payment
 			$l3 = array_slice( $amts, -3 );
 			sort( $l3 );
 			$now = $l3[1];
@@ -560,6 +586,10 @@ function dwdbk_recurring( $tx, $flags ) {
 		$step = array( 'weekly' => 7, 'every 2 weeks' => 14, 'monthly' => 30, 'every 3 months' => 91, 'yearly' => 365 )[ $cycle ];
 		$next = gmdate( 'Y-m-d', strtotime( $last['date'] ) + $step * DAY_IN_SECONDS );
 		$per_mo = 'monthly' === $cycle ? $now : $now * ( 30.4 / $step );
+		$manual = isset( $myamt[ $m ] ) && is_numeric( $myamt[ $m ] );
+		if ( $manual ) { // the monthly amount you typed in yourself
+			$per_mo = (float) $myamt[ $m ];
+		}
 		$out[] = array(
 			'merchant'  => $m,
 			'name'      => $names[ $m ] ?? ucwords( strtolower( $m ) ),
@@ -578,6 +608,8 @@ function dwdbk_recurring( $tx, $flags ) {
 			'scope'     => (string) ( $scope[ $m ] ?? '' ), // business | personal | '' (unlabeled)
 			'kind'      => in_array( $kinds[ $m ] ?? '', array( 'bill', 'subscription' ), true ) ? $kinds[ $m ] : ( 'Subscriptions' === $last['cat'] ? 'subscription' : 'bill' ),
 			'acct'      => (string) ( $last['acct'] ?? '' ),
+			'manual'    => $manual,
+			'found'     => round( 'monthly' === $cycle ? $now : $now * ( 30.4 / $step ), 2 ),
 			'category'  => '' !== (string) ( $mycat[ $m ] ?? '' ) ? (string) $mycat[ $m ] : (string) $last['cat'], // yours if you picked one, else the bank's
 			'prev'      => round( $prev, 2 ),
 		);
@@ -662,7 +694,7 @@ add_action( 'rest_api_init', function () {
 		if ( '' !== $w ) {
 			return dwdbk_insights( $sd, $w );
 		}
-		return array( 'count' => count( dwdbk_get()['tx'] ), 'personal' => dwdbk_insights( 'personal' ), 'business' => dwdbk_insights( 'business' ) );
+		return array( 'count' => count( dwdbk_get()['tx'] ), 'personal' => dwdbk_insights( 'personal' ), 'business' => dwdbk_insights( 'business' ), 'all' => dwdbk_insights( '' ) );
 	} ) );
 	register_rest_route( 'dwd/v1', '/crm/bank', array(
 		array( 'methods' => 'GET', 'permission_callback' => $can, 'callback' => function () {
@@ -701,6 +733,17 @@ add_action( 'rest_api_init', function () {
 				$s['added'] = $new;
 				$s['read']  = count( $rows );
 				return $s;
+			}
+			if ( isset( $p['sub'] ) && array_key_exists( 'monthly', $p ) ) { // your own monthly amount for a repeating charge (empty = back to what the bank shows)
+				$am = (array) get_option( 'dwdbk_amounts', array() );
+				$m5 = sanitize_text_field( (string) $p['sub'] );
+				if ( is_numeric( $p['monthly'] ) && (float) $p['monthly'] >= 0 ) {
+					$am[ $m5 ] = round( (float) $p['monthly'], 2 );
+				} else {
+					unset( $am[ $m5 ] );
+				}
+				update_option( 'dwdbk_amounts', $am, false );
+				return dwdbk_summary();
 			}
 			if ( isset( $p['sub'], $p['category'] ) ) { // your own category for a repeating charge (empty = back to the bank's)
 				$mc = (array) get_option( 'dwdbk_subcats', array() );

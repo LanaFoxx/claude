@@ -722,3 +722,10 @@ input[type=date], input[type=datetime-local] { cursor: pointer; }
 .dd-sp-trend { margin: 0 0 22px; }
 @media (max-width: 1340px) { .dd-sg-2 { grid-template-columns: minmax(0, 1fr); } .dd-sg-2 > .dd-sg-side:not(.on) { display: none; } .dd-sg-sw { display: flex; } }
 @media (min-width: 768px) and (max-width: 1340px) { .dd-sg-side .dd-sg-ts { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+/* Suggestions: one combined column */
+.dd-sg-sw { display: flex; flex-wrap: wrap; }
+.dd-sg-sw .nar { display: none; }
+.dd-sg-2.one { grid-template-columns: minmax(0, 1fr); }
+.dd-sg-sh .dot.all { background: var(--text-3); }
+@media (min-width: 768px) { .dd-sg-2.one .dd-sg-ts { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (max-width: 1340px) { .dd-sg-sw .nar { display: inline-flex; } .dd-sg-sw .wid { display: none; } .dd-sg-2.one > .dd-sg-side { display: flex; } }
