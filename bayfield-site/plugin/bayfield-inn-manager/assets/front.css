@@ -420,3 +420,9 @@ body.woocommerce-checkout::after { display: none !important; } /* no film grain 
 body.woocommerce-cart::after { display: none !important; }
 .bi-cart .woocommerce table.shop_table, .bi-cart .woocommerce .cart_totals table.shop_table { box-shadow: 0 30px 60px -44px rgba(23,48,27,.35); }
 .bi-cart .woocommerce button[name=update_cart] { background: #fff !important; color: var(--bi-g) !important; border: 1px solid var(--bi-line) !important; box-shadow: none; }
+/* Continue shopping (checkout) */
+.bi-keep-shopping { display: flex; align-items: center; flex-wrap: wrap; gap: 14px; margin: 0 0 18px; }
+.bi-checkout .bi-keep-shopping a.bi-keep-shopping__btn { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 10px 20px; border: 1px solid var(--bi-g); border-radius: 2px; background: #fff; color: var(--bi-g); text-decoration: none; font: 500 12.5px/1.2 Geist, system-ui, sans-serif; letter-spacing: .1em; text-transform: uppercase; transition: background .2s, color .2s; }
+.bi-checkout .bi-keep-shopping a.bi-keep-shopping__btn:hover { background: var(--bi-g); color: var(--bi-cream); }
+.bi-keep-shopping__or { font: 400 14px Geist, system-ui, sans-serif; color: var(--bi-muted); }
+.bi-store-wrap .woocommerce a.bi-keep-shopping__btn { text-decoration: none !important; }

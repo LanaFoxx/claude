@@ -374,3 +374,12 @@ add_action( 'rest_api_init', function () {
 		'callback'            => function () { return get_option( 'bi_mail_log', array() ); },
 	) );
 } );
+
+// "Continue shopping" on checkout: "Add to cart" goes straight here, so make it easy to go back for more.
+add_action( 'woocommerce_before_checkout_form', function () {
+	if ( is_wc_endpoint_url( 'order-received' ) ) {
+		return;
+	}
+	printf( '<div class="bi-keep-shopping"><a class="bi-keep-shopping__btn" href="%s"><span aria-hidden="true">&larr;</span> Continue shopping</a><span class="bi-keep-shopping__or">or add a <a href="%s">gift card</a></span></div>',
+		esc_url( home_url( '/merchandise/' ) ), esc_url( home_url( '/gift-card/' ) ) );
+}, 4 );
