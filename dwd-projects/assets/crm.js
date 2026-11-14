@@ -1777,7 +1777,7 @@
 	/* ================= Zoom invite box (Home, project and client pages) ================= */
 	// ids: limit the picker to these projects (client page) or a single fixed project (project page).
 	// "Copy onboarding link": sits on its own line under each Send onboarding form button.
-	function obCopy() { return DWDC.obLink ? '<span class="dd-obcopy"><button type="button" class="dd-btn ghost sm" data-copy="' + esc(DWDC.obLink) + '" title="' + esc(DWDC.obLink) + '">' + lu('link', 14) + 'Copy onboarding link</button></span>' : ''; }
+	function obCopy() { return DWDC.obLink ? '<span class="dd-obcopy"><button type="button" class="dd-btn secondary sm" data-copy="' + esc(DWDC.obLink) + '" title="' + esc(DWDC.obLink) + '">' + lu('link', 14) + 'Copy onboarding link</button></span>' : ''; }
 	function zoomBox(key, ids) {
 		var title = '<header class="dd-ch2"><span class="dd-lt z">' + lu('play', 16) + '</span><div><h2>Zoom meeting</h2><small>Send a Zoom invite and join from here</small></div></header>'
 			// Quick links to paste into a message: your Zoom room and your Calendly booking page.
@@ -3301,7 +3301,7 @@
 			+ (c.drive ? '<a class="dd-btn secondary" href="' + esc(c.drive) + '" target="_blank" rel="noopener">' + lu('external-link', 14) + 'Open folder</a><button type="button" class="dd-btn secondary" data-copy="' + esc(c.drive) + '">' + lu('link', 14) + 'Copy link</button><button type="button" class="dd-btn ghost" data-drivemk="' + c.id + ':email">' + lu('mail', 14) + (c.drive_sent ? 'Email again' : 'Email to client') + '</button>'
 				: DWDC.driveReady ? '<button type="button" class="dd-btn secondary" data-drivemk="' + c.id + ':email">' + lu('plus', 14) + 'Create &amp; email client</button><button type="button" class="dd-btn ghost" data-drivemk="' + c.id + '">Create only</button>' : '<a class="dd-btn secondary" href="#connections">Set up Google Drive</a>') + '</div></div>';
 		var obRow = obl.length ? '<div class="dd-detob"><div><b>Onboarding</b> ' + ddPill(obn + ' answers', 'info') + '<small>' + esc(obl[0].form || 'Form') + ' · submitted ' + fmt(obl[0].date) + '</small></div><div class="dd-pbtns">' + btn('data-viewob', lu('clipboard-list') + 'View answers') + '<button type="button" class="dd-btn ghost" data-copyob>Copy answers</button></div></div>'
-			: '<div class="dd-detob"><div><b>Onboarding</b><small>Not submitted yet</small></div><div class="dd-pbtns">' + btn('data-leadinvite="' + c.id + '"', lu('mail') + (c.stage === 'onboarding' ? 'Resend onboarding form' : 'Send onboarding form')) + obCopy() + '</div></div>';
+			: '<div class="dd-detob"><div><b>Onboarding</b><small>Not submitted yet</small></div><div class="dd-pbtns">' + btn('data-leadinvite="' + c.id + '"', lu('mail') + (c.stage === 'onboarding' ? 'Resend onboarding form' : 'Send onboarding form'), 'primary') + obCopy() + '</div></div>';
 		var obBox = '' && card('ob', 'Onboarding' + (obl.length ? ' ' + ddPill(obn + ' answers', 'info') : ''), '', obl.length ? '<span class="dd-hmeta">' + esc(obl[0].form || 'Form') + ' · submitted ' + fmt(obl[0].date) + '</span>' : '<span class="dd-hmeta">Not submitted</span>',
 			'<div class="dd-pbtns">' + (obl.length ? btn('data-viewob', lu('clipboard-list') + 'View answers') + '<button type="button" class="dd-btn ghost" data-copyob>Copy answers</button>' : btn('data-leadinvite="' + c.id + '"', lu('mail') + (c.stage === 'onboarding' ? 'Resend onboarding form' : 'Send onboarding form'))) + '</div>');
 		// markup review
