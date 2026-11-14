@@ -310,7 +310,12 @@
 		var diff = prev ? mo.out - prev.out : 0;
 		var cats = Object.keys(mo.cats || {});
 		var maxC = cats.length ? mo.cats[cats[0]] : 1;
-		var tx = (B.tx || []).filter(function (t) { return t.date.slice(0, 7) === ym && (!S.bCat || t.cat === S.bCat); });
+		var bSide = S.bSide === 'business' || S.bSide === 'personal' ? S.bSide : '';
+		var tx = (B.tx || []).filter(function (t) { return t.date.slice(0, 7) === ym && (!S.bCat || t.cat === S.bCat) && (!bSide || (bSide === 'business') === !!t.biz); });
+		var wentBox = function (sk) {
+			var X = mo[sk === 'business' ? 'b' : 'p'] || { out: 0, cats: {} }, ks = Object.keys(X.cats || {}), mxc = ks.length ? X.cats[ks[0]] : 1, on = bSide === sk;
+			return '<section class="dwdc-card pad"><div class="dwdc-cardh"><h2>' + (sk === 'business' ? 'Business' : 'Personal') + ' · ' + money(X.out) + '</h2>' + (on ? '<button class="dwdc-lnk sm2" data-bside="" data-bcat="">Show all</button>' : '<button class="dwdc-lnk sm2" data-bside="' + sk + '">See transactions</button>') + '</div><div class="dwdc-pcats">' + (ks.length ? ks.map(function (c) { return '<div class="' + (on && S.bCat === c ? 'on' : '') + '" data-bside="' + sk + '" data-bcat="' + esc(c) + '"><span>' + esc(c) + '</span><i style="width:' + Math.max(3, Math.round(X.cats[c] / mxc * 100)) + '%"></i><b>' + money(X.cats[c]) + '</b></div>'; }).join('') : '<p class="dwdc-mutp">No ' + sk + ' spending this month.</p>') + '</div></section>';
+		};
 		var trend = months.slice(0, 12).reverse(), maxT = Math.max.apply(null, trend.map(function (k) { return B.months[k].out; }).concat([1]));
 		return '<div class="dwdc-pmonth"><button class="dwdc-btn2 sm" data-bmonth="' + (months[idx + 1] || '') + '"' + (months[idx + 1] ? '' : ' disabled') + '>‹</button><b>' + label(ym) + '</b><button class="dwdc-btn2 sm" data-bmonth="' + (months[idx - 1] || '') + '"' + (idx > 0 ? '' : ' disabled') + '>›</button></div>'
 			+ (function () {
@@ -324,11 +329,11 @@
 				return '<div class="dwdc-kpis two">' + bal + inBox + '</div><div class="dwdc-kpis one">' + ads + '</div>';
 			})()
 			+ '<div class="dwdc-prow2 top">'
-			+ '<section class="dwdc-card pad"><div class="dwdc-cardh"><h2>Where it went</h2>' + (S.bCat ? '<button class="dwdc-lnk sm2" data-bcat="">Show all</button>' : '') + '</div><div class="dwdc-pcats">' + (cats.length ? cats.map(function (c) { return '<div class="' + (S.bCat === c ? 'on' : '') + '" data-bcat="' + esc(c) + '"><span>' + esc(c) + '</span><i style="width:' + Math.max(3, Math.round(mo.cats[c] / maxC * 100)) + '%"></i><b>' + money(mo.cats[c]) + '</b></div>'; }).join('') : '<p class="dwdc-mutp">No spending this month.</p>') + '</div></section>'
+			+ wentBox('personal') + wentBox('business') + '</div><div class="dd-sp-trend">'
 			+ '<section class="dwdc-card pad"><div class="dwdc-cardh"><h2>Spending by month</h2><button class="dwdc-askbtn sm" data-askai="personal">' + ic('bolt', 13) + 'Ask AI</button></div><div class="dwdc-btrend">' + trend.map(function (k) { return '<button class="' + (k === ym ? 'on' : '') + '" data-bmonth="' + k + '" title="' + label(k) + ': ' + money(B.months[k].out) + '"><i style="height:' + Math.max(4, Math.round(B.months[k].out / maxT * 100)) + '%"></i><small>' + MN[+k.slice(5, 7) - 1].slice(0, 3) + '</small></button>'; }).join('') + '</div></section>'
 			+ '</div>'
-			+ '<section class="dwdc-card"><div class="dwdc-cardh pad2 split"><h2>' + (S.bCat ? esc(S.bCat) + ' · ' : '') + label(ym) + ' transactions</h2>' + upl + '</div>' + (tx.length ? tx.map(function (t) {
-				return '<div class="dwdc-prow"><span class="d">' + fmt(t.date) + '</span><span class="w"><b>' + esc(t.desc) + '</b><small>' + esc(t.cat) + ' · ' + esc(t.acct) + '</small></span><span class="a ' + (t.amt > 0 ? 'in' : 'out') + '">' + (t.amt > 0 ? '+' : '−') + money(Math.abs(t.amt)) + '</span><span></span></div>';
+			+ '<section class="dwdc-card"><div class="dwdc-cardh pad2 split"><h2>' + (bSide ? (bSide === 'business' ? 'Business · ' : 'Personal · ') : '') + (S.bCat ? esc(S.bCat) + ' · ' : '') + label(ym) + ' transactions</h2>' + upl + '</div>' + (tx.length ? tx.map(function (t) {
+				return '<div class="dwdc-prow"><span class="d">' + fmt(t.date) + '</span><span class="w"><b>' + esc(t.desc) + '</b><small>' + (t.biz ? 'Business' : 'Personal') + ' · ' + esc(t.cat) + ' · ' + esc(t.acct) + '</small></span><span class="a ' + (t.amt > 0 ? 'in' : 'out') + '">' + (t.amt > 0 ? '+' : '−') + money(Math.abs(t.amt)) + '</span><span></span></div>';
 			}).join('') : emptyRow('No transactions here.')) + '</section>'
 			+ '<p class="dwdc-mutp sm">' + B.count + ' transactions on file · latest ' + (B.last ? fmt(B.last) : '—') + '</p>';
 	}
@@ -1614,37 +1619,56 @@
 		return S.sg;
 	}
 	function ddSuggest() {
-		var G = sgData(), head = '<div class="dd-ph"><h1>Suggestions</h1></div>';
-		if (!G) { return head + '<p class="dd-empty-l">Reading your bank transactions…</p>'; }
-		if (G.error || !G.count) { return head + '<section class="dd-card"><p class="dd-empty-l">' + (G.error ? 'Could not load your bank transactions. Reload the page to try again.' : 'No bank transactions yet. Connect your bank under Settings → Connections and this page fills in.') + '</p></section>'; }
-		var whole = G.days >= 360, per = whole ? 'the last 12 months' : 'the last ' + G.days + ' days', perS = whole ? 'last 12 months' : 'last ' + G.days + ' days';
+		var A = sgData(), head = '<div class="dd-ph"><h1>Suggestions</h1></div>';
+		if (!A) { return head + '<p class="dd-empty-l">Reading your bank transactions…</p>'; }
+		if (A.error || !A.count) { return head + '<section class="dd-card"><p class="dd-empty-l">' + (A.error ? 'Could not load your bank transactions. Reload the page to try again.' : 'No bank transactions yet. Connect your bank under Settings → Connections and this page fills in.') + '</p></section>'; }
+		var P0 = A.personal || {}, B0 = A.business || {}, R = P0.from ? P0 : B0, cur = S.sgSide === 'business' ? 'business' : 'personal';
+		var whole = R.days >= 360, per = whole ? 'the last 12 months' : 'the last ' + R.days + ' days', perS = whole ? 'last 12 months' : 'last ' + R.days + ' days';
 		var times = function (n, w) { return (+n || 0).toLocaleString() + ' ' + w + (n === 1 ? '' : 's'); };
 		var names = function (a) { return (a || []).map(function (x) { return esc(x.name); }).join(', '); };
-		var row = function (title, sub, val, vsub, pct, tone) { return '<div class="dd-sg-r"><div class="dd-sg-m"><b>' + title + '</b>' + (sub ? '<small>' + sub + '</small>' : '') + (pct != null ? '<span class="dd-sg-bar"><i style="width:' + Math.max(2, Math.min(100, Math.round(pct))) + '%"></i></span>' : '') + '</div><div class="dd-sg-v' + (tone ? ' ' + tone : '') + '"><b>' + val + '</b>' + (vsub ? '<small>' + vsub + '</small>' : '') + '</div></div>'; };
-		var box = function (title, note, body) { return '<section class="dd-card dd-sg-c"><header class="dd-ch"><h2>' + title + '</h2></header>' + (note ? '<p class="dd-sg-n">' + note + '</p>' : '') + '<div class="dd-sg-l">' + (body || '<div class="dd-sg-p">Nothing to show here yet.</div>') + '</div></section>'; };
-		var tile = function (label, val, sub, tone) { return '<div class="dd-sg-t' + (tone ? ' ' + tone : '') + '"><small>' + label + '</small><b>' + val + '</b><span>' + sub + '</span></div>'; };
 		var mx = function (a, k) { return Math.max.apply(null, a.map(function (x) { return +x[k] || 0; }).concat([1])); };
-		var H = G.habits || [], hAll = H.reduce(function (a, h) { return a + h.yearly; }, 0), hMax = mx(H, 'yearly');
-		var P = G.people || [], pMax = mx(P, 'year'), pShow = S.sgAll ? P : P.slice(0, 12);
-		var C = G.cats || [], cMax = mx(C, 'total'), M = G.merchants || [], mMax = mx(M, 'total'), SM = G.small || [], SB = G.subs || { yearly: 0, list: [] }, BG = G.big || [];
-		var habits = H.map(function (h) { return row(esc(h.label), times(h.count, 'purchase') + ' · about ' + money(h.monthly) + ' a month' + (h.top && h.top.length ? ' · mostly ' + names(h.top) : ''), money(h.yearly) + ' a year', h.key === 'fees' ? 'Avoid them and keep it all' : 'Half as often keeps ' + money(h.yearly / 2), h.yearly / hMax * 100, 'good'); }).join('');
-		var people = pShow.map(function (p) { return row(esc(p.name), times(p.count_all, 'payment') + ' · about ' + money(p.avg) + ' each · last on ' + fmt(p.last, true) + (p.memo ? ' · “' + esc(p.memo) + '”' : '') + (p.back ? ' · sent you ' + money(p.back) : ''), money(p.year), perS + (p.all > p.year + 1 ? '<br>' + money(p.all) + ' since ' + fmt(G.first, true) : ''), p.year / pMax * 100); }).join('')
-			+ (P.length > 12 ? '<button type="button" class="dd-sg-more" data-sgall>' + (S.sgAll ? 'Show fewer' : 'Show all ' + P.length + ' people') + '</button>' : '');
-		var cats = C.map(function (c) { return row(esc(c.name), times(c.count, 'payment') + (c.top && c.top.length ? ' · mostly ' + names(c.top) : ''), money(c.total), Math.round(c.total / Math.max(1, G.spent) * 100) + '% of spending', c.total / cMax * 100); }).join('');
-		var merch = M.map(function (m) { return row(esc(m.name), times(m.count, 'payment') + ' · ' + esc(m.cat), money(m.total), 'about ' + money(m.total / Math.max(1, G.days) * 30.44) + ' a month', m.total / mMax * 100); }).join('');
-		var small = SM.map(function (m) { return row(esc(m.name), times(m.count, 'purchase') + ' · about ' + money2(m.avg) + ' each', money(m.yearly) + ' a year', ''); }).join('');
-		var subs = (SB.list || []).map(function (s) { return row(esc(s.name), money2(s.amount) + ' ' + esc(s.cycle), money(s.yearly) + ' a year', ''); }).join('');
-		var big = BG.map(function (b) { return row(esc(b.name), fmt(b.date, true) + ' · ' + esc(b.cat), money(b.amt), ''); }).join('');
-		var pats = (G.patterns || []).map(function (p) { return '<div class="dd-sg-p"><b>' + esc(p.t) + '</b> ' + esc(p.x) + '</div>'; }).join('');
+		var side = function (G, sk) {
+			var biz = sk === 'business', who = biz ? 'Business' : 'Personal';
+			var go = function (want, title) { return want ? ' role="button" tabindex="0" data-sgtx="' + esc(want) + '" data-side="' + sk + '" data-t="' + esc(who + ' · ' + title) + '"' : ''; };
+			var row = function (title, sub, val, vsub, pct, tone, want) { return '<div class="dd-sg-r' + (want ? ' go' : '') + '"' + go(want, title) + '><div class="dd-sg-m"><b>' + esc(title) + '</b>' + (sub ? '<small>' + sub + '</small>' : '') + (pct != null ? '<span class="dd-sg-bar"><i style="width:' + Math.max(2, Math.min(100, Math.round(pct))) + '%"></i></span>' : '') + '</div><div class="dd-sg-v' + (tone ? ' ' + tone : '') + '"><b>' + val + '</b>' + (vsub ? '<small>' + vsub + '</small>' : '') + '</div></div>'; };
+			var box = function (title, note, body) { return '<section class="dd-card dd-sg-c"><header class="dd-ch"><h2>' + title + '</h2></header>' + (note ? '<p class="dd-sg-n">' + note + '</p>' : '') + '<div class="dd-sg-l">' + (body || '<div class="dd-sg-p">Nothing to show here yet.</div>') + '</div></section>'; };
+			var tile = function (label, val, sub, tone, want) { return '<div class="dd-sg-t' + (tone ? ' ' + tone : '') + (want ? ' go' : '') + '"' + go(want, label) + '><small>' + label + '</small><b>' + val + '</b><span>' + sub + '</span></div>'; };
+			var hd = '<div class="dd-sg-sh"><i class="dot ' + (biz ? 'biz' : 'per') + '"></i><h2>' + who + '</h2><span>' + ((G.accounts || []).map(function (x) { return esc(String(x.name).replace(/^.*·\s*/, '')); }).join(' · ') || 'No spending found') + '</span></div>';
+			if (!G.count) { return '<div class="dd-sg-side' + (cur === sk ? ' on' : '') + '">' + hd + '<section class="dd-card"><p class="dd-empty-l">No ' + who.toLowerCase() + ' transactions in ' + per + '.</p></section></div>'; }
+			var H = G.habits || [], hAll = H.reduce(function (a, h) { return a + h.yearly; }, 0), hMax = mx(H, 'yearly');
+			var P = G.people || [], pMax = mx(P, 'year'), open = (S.sgAll || {})[sk], pShow = open ? P : P.slice(0, 8);
+			var C = G.cats || [], cMax = mx(C, 'total'), M = G.merchants || [], mMax = mx(M, 'total'), SM = G.small || [], SB = G.subs || { yearly: 0, list: [] }, BG = G.big || [];
+			var habits = H.map(function (h) { return row(h.label, times(h.count, 'purchase') + ' · about ' + money(h.monthly) + ' a month' + (h.top && h.top.length ? ' · mostly ' + names(h.top) : ''), money(h.yearly) + ' a year', h.key === 'fees' ? 'Avoid them and keep it all' : 'Half as often keeps ' + money(h.yearly / 2), h.yearly / hMax * 100, 'good', 'habit:' + h.key); }).join('');
+			var people = pShow.map(function (p) { return row(p.name, times(p.count_all, 'payment') + ' · about ' + money(p.avg) + ' each · last on ' + fmt(p.last, true) + (p.memo ? ' · “' + esc(p.memo) + '”' : '') + (p.back ? ' · sent you ' + money(p.back) : ''), money(p.year), perS + (p.all > p.year + 1 ? '<br>' + money(p.all) + ' since ' + fmt(G.first, true) : ''), p.year / pMax * 100, '', 'person:' + p.key); }).join('')
+				+ (P.length > 8 ? '<button type="button" class="dd-sg-more" data-sgall="' + sk + '">' + (open ? 'Show fewer' : 'Show all ' + P.length + ' people') + '</button>' : '');
+			var cats = C.map(function (c) { return row(c.name, times(c.count, 'payment') + (c.top && c.top.length ? ' · mostly ' + names(c.top) : ''), money(c.total), Math.round(c.total / Math.max(1, G.spent) * 100) + '% of spending', c.total / cMax * 100, '', 'cat:' + c.name); }).join('');
+			var merch = M.map(function (m) { return row(m.name, times(m.count, 'payment') + ' · ' + esc(m.cat), money(m.total), 'about ' + money(m.total / Math.max(1, G.days) * 30.44) + ' a month', m.total / mMax * 100, '', 'merchant:' + m.key); }).join('');
+			var small = SM.map(function (m) { return row(m.name, times(m.count, 'purchase') + ' · about ' + money2(m.avg) + ' each', money(m.yearly) + ' a year', '', null, '', 'merchant:' + m.key); }).join('');
+			var subs = (SB.list || []).map(function (s) { return row(s.name, money2(s.amount) + ' ' + esc(s.cycle), money(s.yearly) + ' a year', ''); }).join('');
+			var big = BG.map(function (b) { return row(b.name, fmt(b.date, true) + ' · ' + esc(b.cat), money(b.amt), ''); }).join('');
+			var pats = (G.patterns || []).map(function (p) { return '<div class="dd-sg-p"><b>' + esc(p.t) + '</b> ' + esc(p.x) + '</div>'; }).join('');
+			return '<div class="dd-sg-side' + (cur === sk ? ' on' : '') + '">' + hd
+				+ '<div class="dd-sg-ts">' + tile('Spent in ' + per, money(G.spent), 'About ' + money(G.spent_month) + ' a month', '', 'spent') + tile('Money in', money(G.income), 'Deposits and income, same period', '', 'income') + tile('Sent to people by Zelle', money(G.people_total), G.people_count + (G.people_count === 1 ? ' person' : ' people') + ' in ' + per, '', G.people_total ? 'people' : '') + tile(biz ? 'The business could keep' : 'You could keep next year', money(hAll / 2) + ' – ' + money(hAll), 'Halving or stopping the habits below', 'good', hAll ? 'habits' : '') + '</div>'
+				+ box(biz ? 'Where the business could save' : 'Where you could save next year', 'What each habit cost in ' + per + ', and what stopping would keep next year. Tap a line to see every payment in it.', habits)
+				+ box('Money sent to people (Zelle)', 'Everyone paid by Zelle, biggest first.', people)
+				+ box('Biggest spending categories', 'Where the money went in ' + per + '.', cats)
+				+ box('Where the most money goes', 'The 15 places paid the most.', merch)
+				+ box('Patterns worth knowing', '', pats)
+				+ box('Small purchases that add up', 'Places paid 10 or more times, about $25 or less each time.', small)
+				+ box('Repeating charges', SB.yearly ? 'About ' + money(SB.yearly) + ' a year in total. Manage them under Bills &amp; subscriptions.' : '', subs)
+				+ box('Biggest single payments', 'The 10 largest in ' + per + '.', big)
+				+ '</div>';
+		};
 		return head + '<div class="dd-sg">'
-			+ '<p class="dd-sg-i">From your bank transactions, ' + fmt(G.from, true) + ' to ' + fmt(G.to, true) + '. Transfers between your own accounts are left out.' + (whole ? '' : ' Yearly figures are scaled up from ' + G.days + ' days.') + '</p>'
-			+ '<div class="dd-sg-ts">' + tile('Spent in ' + per, money(G.spent), 'About ' + money(G.spent_month) + ' a month') + tile('Money in', money(G.income), 'Deposits and income, same period') + tile('Sent to people by Zelle', money(G.people_total), G.people_count + (G.people_count === 1 ? ' person' : ' people') + ' in ' + per) + tile('You could keep next year', money(hAll / 2) + ' – ' + money(hAll), 'Halving or stopping the habits below', 'good') + '</div>'
-			+ box('Where you could save next year', 'What each habit cost in ' + per + ', and what you would keep next year if you stopped. Card purchases are not included.', habits)
-			+ box('Money sent to people (Zelle)', 'Everyone you paid by Zelle, biggest first.', people)
-			+ '<div class="dd-sg-g">' + box('Biggest spending categories', 'Where the money went in ' + per + '.', cats) + box('Where the most money goes', 'The 15 places you paid the most.', merch) + '</div>'
-			+ '<div class="dd-sg-g">' + box('Patterns worth knowing', '', pats) + box('Small purchases that add up', 'Places you paid 10 or more times, about $25 or less each time.', small) + '</div>'
-			+ '<div class="dd-sg-g">' + box('Repeating charges', SB.yearly ? 'About ' + money(SB.yearly) + ' a year in total. Manage them under Bills &amp; subscriptions.' : '', subs) + box('Biggest single payments', 'The 10 largest in ' + per + '.', big) + '</div>'
-			+ '</div>';
+			+ '<p class="dd-sg-i">From your bank transactions, ' + fmt(R.from, true) + ' to ' + fmt(R.to, true) + '. Transfers between your own accounts are left out. Business is anything paid from the business account, or that you labeled Business; everything else is personal.' + (whole ? '' : ' Yearly figures are scaled up from ' + R.days + ' days.') + '</p>'
+			+ '<div class="dd-sg-sw"><button type="button" class="dd-chip' + (cur === 'personal' ? ' on' : '') + '" data-sgside="personal"><i class="dot per"></i>Personal</button><button type="button" class="dd-chip' + (cur === 'business' ? ' on' : '') + '" data-sgside="business"><i class="dot biz"></i>Business</button></div>'
+			+ '<div class="dd-sg-2">' + side(P0, 'personal') + side(B0, 'business') + '</div></div>';
+	}
+	function sgOpen(el) {
+		var want = el.getAttribute('data-sgtx'), sd = el.getAttribute('data-side') || '';
+		var m = S.modal = { type: 'sgtx', want: want, side: sd, title: el.getAttribute('data-t') || 'Payments', data: null };
+		render();
+		api('/bank/insights?side=' + encodeURIComponent(sd) + '&want=' + encodeURIComponent(want)).then(function (x) { if (S.modal === m) { m.data = x; render(); } }).catch(function (e) { if (S.modal === m) { S.modal = null; render(); } fail(e); });
 	}
 	function ddBills() {
 		var D = pData(); if (!D) { return '<div class="dd-ph"><h1>Bills &amp; subscriptions</h1></div><p class="dd-empty-l">Loading…</p>'; }
@@ -1672,9 +1696,13 @@
 		var seenN = {}; live.forEach(function (s) { var n = String(s.name).toLowerCase().replace(/[^a-z]/g, '').slice(0, 10); if (seenN[n] && !dis['dup:' + s.merchant]) { sug.push({ k: 'dup:' + s.merchant, kind: 'Duplicate', tone: 'neutral', s: s, save: Math.min(s.yearly, seenN[n].yearly), text: 'Looks like the same service as ' + seenN[n].name + '. Two active charges of ' + money(s.amount) + ' and ' + money(seenN[n].amount) + '.', a: ['Mark to cancel', 'data-sub="' + esc(s.merchant) + '" data-st="cancel"'], b: ['They’re different', 'data-cudis="dup:' + esc(s.merchant) + '"'] }); } seenN[n] = s; });
 		sug.sort(function (a, b) { return b.save - a.save || (b.lab || 0) - (a.lab || 0); });
 		var head = '<div class="dd-btop"><h1>Bills &amp; subscriptions</h1>' + (updated ? '<span>' + updated + '</span>' : '') + '<button type="button" class="dd-btn primary" data-billadd="">' + lu('plus', 14) + 'Add bill</button></div>';
+		var sideOf = function (s) { return s.scope ? s.scope : (/business/i.test(s.acct || '') ? 'business' : 'personal'); };
+		var recOf = function (sc) { return live.filter(function (s) { return s.status !== 'cancel' && sideOf(s) === sc; }); };
+		var recMo = function (sc) { return recOf(sc).reduce(function (a, s) { return a + s.monthly; }, 0); };
+		var sideTile = function (sc, L) { var bm = moOf(L), rm = recMo(sc), tot = bm + rm; return ['<i class="dot ' + (sc === 'business' ? 'biz' : 'per') + '"></i>' + (sc === 'business' ? 'Business' : 'Personal') + ' per month', money(tot) + unit('/mo'), 'Bills ' + money(bm) + ' · recurring charges ' + money(rm) + ' (' + recOf(sc).length + ') · ' + money(tot * 12) + ' a year', '', '', 'data-jump="' + (sc === 'business' ? 'biz' : 'per') + '"']; };
 		var strip = ddStrip([
-			['<i class="dot biz"></i>Business bills', money(moOf(bizL)) + unit('/mo'), bizL.length + ' bill' + (bizL.length === 1 ? '' : 's') + ' · ' + money(moOf(bizL) * 12) + ' a year', '', '', 'data-jump="biz"'],
-			['<i class="dot per"></i>Personal bills', money(moOf(perL)) + unit('/mo'), perL.length + ' bill' + (perL.length === 1 ? '' : 's') + ' · ' + money(moOf(perL) * 12) + ' a year', '', '', 'data-jump="per"'],
+			sideTile('business', bizL),
+			sideTile('personal', perL),
 			['Recurring charges', subsAll ? money(subMo) + unit('/mo') : '—', subsAll ? live.length + ' active · ' + stopped.length + ' stopped' : 'Connect your bank', '', '', 'data-jump="subs"'],
 			late.length ? ['Late', String(late.length), money(late.reduce(function (a, x) { return a + x.b.amount; }, 0)) + ' overdue', 'late', 'late'] : ['Due in 7 days', String(soon.length), soon.length ? money(soon.reduce(function (a, x) { return a + x.b.amount; }, 0)) + ' · ' + manual.length + ' to pay manually' : 'Nothing due', '', soon.length ? 'warn' : ''],
 			['Clean up', subsAll ? String(sug.length) : '—', subsAll ? (sug.length ? 'suggestion' + (sug.length === 1 ? '' : 's') + ' · ' + Math.max(1, Math.round(sug.length * 0.6)) + ' min to review' : 'Nothing to clean up') : '', sug.length ? 'ok' : '', '', 'data-jump="clean"']
@@ -1704,7 +1732,14 @@
 			cleanCard = '<section class="dd-card dd-clean" id="dd-lane-clean"><header class="dd-ch2"><span class="dd-lt g">' + lu('zap', 16) + '</span><div><h2>Clean up</h2><small>Connect your bank first</small></div></header></section>';
 		} else {
 			var chip = S.subChip || 'all', q = String(S.subQ || '').toLowerCase().trim(), showHidden = !!S.subHidden;
-			var keep = function (s) { if (q && String(s.name).toLowerCase().indexOf(q) < 0) { return false; } return chip === 'all' || (chip === 'business' && s.scope === 'business') || (chip === 'personal' && s.scope === 'personal') || (chip === 'none' && !s.scope) || (chip === 'stopped' && s.stopped) || (chip === 'kbill' && s.kind !== 'subscription') || (chip === 'ksub' && s.kind === 'subscription'); };
+			var keep = function (s) { if (S.subCatF && s.category !== S.subCatF) { return false; } if (q && String(s.name).toLowerCase().indexOf(q) < 0) { return false; } return chip === 'all' || (chip === 'business' && s.scope === 'business') || (chip === 'personal' && s.scope === 'personal') || (chip === 'none' && !s.scope) || (chip === 'stopped' && s.stopped) || (chip === 'kbill' && s.kind !== 'subscription') || (chip === 'ksub' && s.kind === 'subscription'); };
+			var catSel = function (s) {
+				var m = esc(s.merchant);
+				if (S.subCatNew === s.merchant) { return '<span class="dd-catnew"><input type="text" data-subcatnew maxlength="40" placeholder="New category" autocomplete="off" data-lpignore="true"><button type="button" class="dd-btn secondary sm" data-subcatsave="' + m + '">Save</button><button type="button" class="dd-btn ghost sm" data-subcatcancel>Cancel</button></span>'; }
+				var L = (B.subcats || []).slice(); if (s.category && L.indexOf(s.category) < 0) { L.push(s.category); }
+				return '<select class="dd-catsel" data-subcat="' + m + '" aria-label="Category for ' + esc(s.name) + '">' + L.map(function (c) { return '<option' + (c === s.category ? ' selected' : '') + '>' + esc(c) + '</option>'; }).join('') + '<option value="__new">+ New category…</option></select>';
+			};
+			var catF = (function () { var u = {}; subs.forEach(function (s) { if (s.category) { u[s.category] = (u[s.category] || 0) + 1; } }); return '<select class="dd-catsel f" data-subcatf aria-label="Filter by category"><option value="">All categories</option>' + Object.keys(u).sort(function (a, b) { return a.toLowerCase() < b.toLowerCase() ? -1 : 1; }).map(function (c) { return '<option value="' + esc(c) + '"' + (S.subCatF === c ? ' selected' : '') + '>' + esc(c) + ' (' + u[c] + ')</option>'; }).join('') + '</select>'; })();
 			var kindChip = function (s) { var sb = s.kind === 'subscription'; return '<button type="button" class="dd-labchip kind" data-subkind="' + esc(s.merchant) + '" data-v="' + (sb ? 'bill' : 'subscription') + '" title="Change to ' + (sb ? 'Bill' : 'Subscription') + '">' + (sb ? 'Subscription' : 'Bill') + lu('arrow-up-down', 12) + '</button>'; };
 			var labelChip = function (s) {
 				var m = esc(s.merchant), open = S.subLabel === s.merchant;
@@ -1715,7 +1750,7 @@
 				var tags = (s.stopped ? ddPill('Looks stopped', 'neutral') : '') + (s.raised ? ddPill('Price went up', 'warning') : '') + (s.status === 'cancel' ? ddPill('Marked to cancel', 'warning') : '') + (s.status === 'keep' ? ddPill('Kept', 'success') : '');
 				var meta = money(s.amount) + ' ' + s.cycle + ' · ' + s.count + ' charge' + (s.count === 1 ? '' : 's') + ' since ' + fmt(s.first, true) + (s.stopped ? ' · last ' + fmt(s.last) : ' · next ~' + fmt(s.next));
 				var m = esc(s.merchant);
-				return '<div class="dd-srow v2' + (s.stopped ? ' stopped' : '') + '"><div class="nm"><div class="l1"><b>' + esc(s.name) + '</b>' + tags + '</div><small>' + esc(meta) + '</small></div><span class="lab">' + labelChip(s) + kindChip(s) + '</span><span class="num">' + money(s.monthly) + '<i>/mo</i></span>'
+				return '<div class="dd-srow v2' + (s.stopped ? ' stopped' : '') + '"><div class="nm"><div class="l1"><b>' + esc(s.name) + '</b>' + tags + '</div><small>' + esc(meta) + '</small></div><span class="lab">' + labelChip(s) + kindChip(s) + catSel(s) + '</span><span class="num">' + money(s.monthly) + '<i>/mo</i></span>'
 					+ '<span class="acts">' + (s.status === 'ignore' ? '<button type="button" class="dd-btn ghost sm" data-sub="' + m + '" data-st="ignore">Show again</button>' : '<button type="button" class="dd-btn secondary sm' + (s.status === 'keep' ? ' on' : '') + '" data-sub="' + m + '" data-st="keep">' + (s.status === 'keep' ? 'Kept' : 'Keep') + '</button><button type="button" class="dd-btn ghost sm" data-sub="' + m + '" data-st="cancel">' + (s.status === 'cancel' ? 'Reactivate' : 'Cancel') + '</button><button type="button" class="dd-ibtn sm" data-subhide="' + m + '" data-name="' + esc(s.name) + '" title="Not a recurring charge" aria-label="Not a recurring charge">' + lu('x', 14) + '</button>') + '</span></div>';
 			};
 			var act = live.filter(function (s) { return s.status !== 'cancel'; }), canc = live.filter(function (s) { return s.status === 'cancel'; });
@@ -1723,13 +1758,13 @@
 			var cn = function (k, l, n, dot) { return '<button type="button" class="dd-chip' + (chip === k ? ' on' : '') + '" data-subchip="' + k + '">' + (dot ? '<i class="dot ' + dot + '"></i>' : '') + l + ' <em>' + n + '</em></button>'; };
 			var body = sg('Active', 'ok', act) + sg('Marked to cancel', 'soon', canc) + sg('Stopped or paused', '', stopped) + (showHidden ? sg('Hidden', '', hidden) : '');
 			subsCard = '<section class="dd-card dd-subs2" id="dd-lane-subs"><header class="dd-ch2"><span class="dd-lt n">' + lu('repeat', 16) + '</span><h2>Recurring charges</h2><small>Found in your personal and business bank accounts</small></header>'
-				+ '<div class="dd-stools"><label class="dd-input">' + lu('search') + '<input type="search" data-subq placeholder="Search charges…" value="' + esc(S.subQ || '') + '" autocomplete="off" data-lpignore="true" data-1p-ignore></label><span class="dd-chipdiv"></span><div class="dd-schips">'
+				+ '<div class="dd-stools"><label class="dd-input">' + lu('search') + '<input type="search" data-subq placeholder="Search charges…" value="' + esc(S.subQ || '') + '" autocomplete="off" data-lpignore="true" data-1p-ignore></label>' + catF + '<span class="dd-chipdiv"></span><div class="dd-schips">'
 				+ cn('all', 'All', subs.length) + cn('business', 'Business', subs.filter(function (s) { return s.scope === 'business'; }).length, 'biz') + cn('personal', 'Personal', subs.filter(function (s) { return s.scope === 'personal'; }).length, 'per') + cn('none', 'Unlabeled', subs.filter(function (s) { return !s.scope; }).length) + cn('kbill', 'Bills', subs.filter(function (s) { return s.kind !== 'subscription'; }).length) + cn('ksub', 'Subscriptions', subs.filter(function (s) { return s.kind === 'subscription'; }).length) + cn('stopped', 'Stopped', stopped.length) + '</div></div>'
 				+ '<div class="dd-srow v2 head"><span>Charge</span><span>Labels</span><span class="num">Per month</span><span></span></div>' + (body || '<p class="dd-empty-l">' + (q ? 'No charges match “' + esc(S.subQ) + '”.' : 'No repeating charges found yet.') + '</p>')
 				+ '<div class="dd-sfoot"><span>Showing ' + subs.length + ' charges</span>' + (hidden.length ? '<button type="button" class="dd-lnk" data-subhidden>' + (showHidden ? 'Hide hidden' : 'Hidden ' + hidden.length) + '</button>' : '') + '</div></section>';
 			cleanCard = '<section class="dd-card dd-clean" id="dd-lane-clean"><header class="dd-ch2"><span class="dd-lt g">' + lu('zap', 16) + '</span><div><h2>Clean up</h2><small>' + sug.length + ' suggestion' + (sug.length === 1 ? '' : 's') + ' from your bank feed</small></div></header>'
 				+ (sug.length ? sug.map(function (x) {
-					return '<div class="dd-sug"><div class="r1">' + ddPill(x.kind, x.tone) + '<b>' + esc(x.s.name) + '</b>' + (x.save ? '<em>' + money(x.save) + '/yr</em>' : '') + '</div><p>' + esc(x.text) + '</p><div class="r3"><button type="button" class="dd-btn secondary sm" ' + x.a[1] + '>' + x.a[0] + '</button><button type="button" class="dd-btn ghost sm" ' + x.b[1] + '>' + x.b[0] + '</button><span class="dd-sp"></span><button type="button" class="dd-ibtn sm" data-cudis="' + esc(x.k) + '" title="Dismiss for 90 days" aria-label="Dismiss">' + lu('x', 14) + '</button></div></div>';
+					return '<div class="dd-sug"><div class="r1">' + ddPill(x.kind, x.tone) + '<b>' + esc(x.s.name) + '</b>' + (x.save ? '<em>' + money(x.save) + '/yr</em>' : '') + '</div><p>' + esc(x.text) + '</p><div class="r2"><span>Category</span>' + catSel(x.s) + '</div><div class="r3"><button type="button" class="dd-btn secondary sm" ' + x.a[1] + '>' + x.a[0] + '</button><button type="button" class="dd-btn ghost sm" ' + x.b[1] + '>' + x.b[0] + '</button><span class="dd-sp"></span><button type="button" class="dd-ibtn sm" data-cudis="' + esc(x.k) + '" title="Dismiss for 90 days" aria-label="Dismiss">' + lu('x', 14) + '</button></div></div>';
 				}).join('') : '<div class="dd-bempty"><span class="g">' + lu('circle-check', 20) + '</span><b>All clean</b><small>New suggestions appear after each bank sync.</small></div>')
 				+ '<div class="dd-cfoot"><small>Looks at the last 12 months of charges and your labels.</small><button type="button" class="dd-btn secondary" data-askai="personal">' + lu('zap', 14) + 'Ask AI what to cut</button></div></section>';
 		}
@@ -3725,6 +3760,13 @@
 				+ '<h3 class="dwdc-ch3 dd-spendh">Google Ads</h3>' + (GS ? gPart : '<p class="dwdc-mutp">Google Ads isn’t connected. <button type="button" class="dwdc-lnk" data-adsconnect>Connect Google Ads</button></p>')
 				+ '<h3 class="dwdc-ch3 dd-spendh">Upwork Connects</h3>' + connSpend() + '</div>';
 		}
+		if (m.type === 'sgtx') {
+			var SX = m.data, sxp = String(m.title).split(' · ');
+			var sxb = !SX ? emptyRow('Loading…') : (SX.tx || []).length ? '<div class="dwdc-mo-sum"><span>Payments<b>' + (+SX.count || 0).toLocaleString() + '</b></span><span>Total<b>' + money(SX.total) + '</b></span></div>'
+				+ SX.tx.map(function (x) { return '<div class="dd-sg-r"><div class="dd-sg-m"><b>' + esc(x.name) + '</b><small>' + fmt(x.date, true) + ' · ' + esc(x.cat) + ' · ' + esc(String(x.acct).replace(/^.*·\s*/, '')) + '</small></div><div class="dd-sg-v"><b>' + (x.amt > 0 ? '+' : '−') + money2(Math.abs(x.amt)) + '</b></div></div>'; }).join('')
+				+ (SX.count > SX.tx.length ? '<p class="dwdc-mutp sm">Showing the latest ' + SX.tx.length + ' of ' + SX.count + '.</p>' : '') : emptyRow('No payments found.');
+			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide dd-sg-mod">' + head(esc(sxp[0]), esc(sxp.slice(1).join(' · ')), '') + sxb + '</div>';
+		}
 		if (m.type === 'connects') {
 			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide">' + head('Upwork', 'Connects', 'spending') + connSpend() + '<div class="dwdc-farow end"><a class="dwdc-btn2" href="#money" data-close-modal>Open in Money Stats</a></div></div>';
 		}
@@ -4290,7 +4332,10 @@
 		if ((el = t.closest('[data-pcal]'))) { S.pCal = el.getAttribute('data-pcal'); render(); return; }
 		if (t.closest('[data-pcaltoday]')) { S.pCal = DWDC.today.slice(0, 7); S.pSel = DWDC.today; render(); return; }
 		if ((el = t.closest('[data-pcalf]'))) { var fk = el.getAttribute('data-pcalf'); S.pCalF = S.pCalF || { td: true, ev: true, bill: true }; S.pCalF[fk] = !S.pCalF[fk]; render(); return; }
-		if (t.closest('[data-sgall]')) { S.sgAll = !S.sgAll; render(); return; }
+		if ((el = t.closest('[data-sgall]'))) { S.sgAll = S.sgAll && typeof S.sgAll === 'object' ? S.sgAll : {}; var sga = el.getAttribute('data-sgall'); S.sgAll[sga] = !S.sgAll[sga]; render(); return; }
+		if ((el = t.closest('[data-sgside]'))) { S.sgSide = el.getAttribute('data-sgside'); render(); return; }
+		if ((el = t.closest('[data-sgtx]'))) { sgOpen(el); return; }
+		if ((el = t.closest('[data-bside]'))) { var bsv = el.getAttribute('data-bside'), bcv = el.getAttribute('data-bcat'); if (bcv === null) { S.bSide = bsv; S.bCat = ''; } else { var same = S.bSide === bsv && S.bCat === bcv; S.bSide = bsv; S.bCat = same ? '' : bcv; } render(); return; }
 		if (t.closest('[data-gobills]') && !t.closest('[data-ptask]')) { location.hash = 'personal/bills'; return; }
 		if ((el = t.closest('.dwdc-phcal [data-psel]')) && !t.closest('[data-ptask], [data-gobills], a')) { S.modal = { type: 'pday', day: el.getAttribute('data-psel'), vals: {} }; render(); return; }
 		if ((el = t.closest('[data-psel]')) && !t.closest('[data-ptask], [data-task], [data-gobills], a, button')) { S.calFocus = true; S.pSel = el.getAttribute('data-psel'); var pm = S.pSel.slice(0, 7); if (pm !== (S.pCal || DWDC.today.slice(0, 7))) { S.pCal = pm; } render(); if (window.innerWidth <= 1100) { setTimeout(function () { var dd = document.querySelector('.dd-today'); if (dd) { dd.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }, 50); } return; }
@@ -4496,6 +4541,8 @@
 		if ((el = t.closest('[data-billmove]'))) { var bmv = (pData().bills || []).find(function (x) { return x.id === el.getAttribute('data-billmove'); }); S.billMenu = 0; if (bmv) { var nb = JSON.parse(JSON.stringify(bmv)); nb.scope = bmv.scope === 'business' ? 'personal' : 'business'; pSave('bills', nb, 'Moved to ' + (nb.scope === 'business' ? 'Business' : 'Personal')); } return; }
 		if ((el = t.closest('[data-billmenu]'))) { e.stopPropagation(); var bmid = el.getAttribute('data-billmenu'); S.billMenu = S.billMenu === bmid ? 0 : bmid; S.subLabel = 0; render(); return; }
 		if ((el = t.closest('[data-sublabel]'))) { e.stopPropagation(); var slm = el.getAttribute('data-sublabel'); S.subLabel = S.subLabel === slm ? 0 : slm; S.billMenu = 0; render(); return; }
+		if (t.closest('[data-subcatcancel]')) { S.subCatNew = 0; render(); return; }
+		if ((el = t.closest('[data-subcatsave]'))) { var sci = el.parentNode.querySelector('[data-subcatnew]'), scn = sci ? String(sci.value).trim() : ''; if (!scn) { if (sci) { sci.focus(); } return; } S.subCatNew = 0; api('/bank', 'POST', { sub: el.getAttribute('data-subcatsave'), category: scn }).then(function (d5) { S.bank = d5; render(); toast('Category “' + scn + '” saved'); }).catch(fail); return; }
 		if ((el = t.closest('[data-subkind]'))) { var skv = el.getAttribute('data-v'); api('/bank', 'POST', { sub: el.getAttribute('data-subkind'), kind: skv }).then(function (d3) { S.bank = d3; render(); toast(skv === 'bill' ? 'Filed as a bill' : 'Filed as a subscription'); }).catch(fail); return; }
 		if ((el = t.closest('[data-subscope]'))) { var ssm = el.getAttribute('data-subscope'), ssv = el.getAttribute('data-v'); S.subLabel = 0; api('/bank', 'POST', { sub: ssm, scope: ssv }).then(function (d2) { S.bank = d2; render(); toast(ssv ? 'Label saved' : 'Label removed'); }).catch(fail); return; }
 		if ((el = t.closest('[data-cudis]'))) { var cd = cuDismissed(); cd[el.getAttribute('data-cudis')] = Date.now(); ddSet('dreamdesk-cleanup-dismissed', JSON.stringify(cd)); render(); return; }
@@ -4673,6 +4720,8 @@
 	// Remember whether "Websites they like" is open, so it stays that way when the page redraws.
 	app.addEventListener('toggle', function (e) { var d = e.target; if (d && d.hasAttribute && d.hasAttribute('data-insp')) { S.inspOpen = S.inspOpen || {}; S.inspOpen[d.getAttribute('data-insp')] = d.open; } }, true);
 	app.addEventListener('change', function (e) {
+		if (e.target.hasAttribute && e.target.hasAttribute('data-subcatf')) { S.subCatF = e.target.value; render(); return; }
+		if (e.target.hasAttribute && e.target.hasAttribute('data-subcat')) { var scm = e.target.getAttribute('data-subcat'), scv = e.target.value; if (scv === '__new') { S.subCatNew = scm; render(); var scf = e.target.closest('.dd-sug') ? '.dd-sug [data-subcatnew]' : '.dd-srow [data-subcatnew]', sce = app.querySelector(scf) || app.querySelector('[data-subcatnew]'); if (sce) { sce.focus(); } return; } api('/bank', 'POST', { sub: scm, category: scv }).then(function (d4) { S.bank = d4; render(); toast('Category saved'); }).catch(fail); return; }
 		if (e.target.name === 'method' && e.target.form) { var ust = e.target.form.querySelector('.dd-upst'); if (ust) { ust.hidden = e.target.value !== 'Upwork'; } }
 		if (e.target.hasAttribute && e.target.hasAttribute('data-pbank')) {
 			var pbk = e.target.getAttribute('data-pbank');

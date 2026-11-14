@@ -408,7 +408,7 @@ function dwdc_ai_read( $name, $in ) {
 					}
 					return dwdc_ai_data( array( 'note' => 'Read-only numbers sent by the Google Ads script (last sync is "at"). days: one row per day with cost in dollars, clicks, impr (impressions) and conv (conversions). campaigns: this month so far. Dream Desk does not hold keywords, search terms, ads or the change history; for those Michael asks Claude in the Claude app.', 'google_ads' => $g ), 90000 );
 				case 'spending_insights':
-					return function_exists( 'dwdbk_insights' ) ? dwdc_ai_data( dwdbk_insights(), 90000 ) : 'Error: bank data is not available.';
+					return function_exists( 'dwdbk_insights' ) ? dwdc_ai_data( array( 'personal' => dwdbk_insights( 'personal' ), 'business' => dwdbk_insights( 'business' ) ), 120000 ) : 'Error: bank data is not available.';
 				case 'bank':
 					if ( ! function_exists( 'dwdbk_summary' ) ) {
 						return 'Error: the bank section is not set up.';

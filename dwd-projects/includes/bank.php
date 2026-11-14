@@ -154,13 +154,36 @@ function dwdbk_dedupe( $tx ) {
 	return $out;
 }
 
-/** Money → Suggestions: spending patterns over the last 12 months, people paid by Zelle, where to save. */
-function dwdbk_insights() {
+/** Business or personal: the label you gave that merchant wins, otherwise the account it was paid from. */
+function dwdbk_is_biz( $t ) {
+	static $sc = null;
+	if ( null === $sc ) {
+		$sc = (array) get_option( 'dwdbk_scopes', array() );
+	}
+	$l = (string) ( $sc[ (string) ( $t['m'] ?? '' ) ] ?? '' );
+	if ( 'business' === $l || 'personal' === $l ) {
+		return 'business' === $l;
+	}
+	return false !== stripos( (string) ( $t['acct'] ?? '' ), 'business' );
+}
+
+/**
+ * Money → Suggestions: spending patterns over the last 12 months, people paid by Zelle, where to save.
+ * $side: personal | business | '' (everything). $want: return the transactions behind one number instead
+ * (spent, income, people, habits, saved, habit:KEY, cat:NAME, person:KEY, merchant:KEY).
+ */
+function dwdbk_insights( $side = '', $want = '' ) {
 	$d  = dwdbk_get();
 	$tx = dwdbk_dedupe( $d['tx'] );
 	if ( ! $tx ) {
 		return array( 'count' => 0 );
 	}
+	$hits = array();
+	$hit  = function ( $tag, $t ) use ( &$hits, $want ) {
+		if ( '' !== $want && $want === $tag ) {
+			$hits[] = $t;
+		}
+	};
 	foreach ( $tx as &$t ) {
 		if ( isset( $d['cats'][ $t['m'] ] ) ) {
 			$t['cat'] = $d['cats'][ $t['m'] ];
@@ -172,6 +195,9 @@ function dwdbk_insights() {
 	$first = min( $dates );
 	$from  = max( $first, gmdate( 'Y-m-d', strtotime( $to . ' -1 year +1 day' ) ) );
 	$days  = max( 1, (int) round( ( strtotime( $to ) - strtotime( $from ) ) / DAY_IN_SECONDS ) + 1 );
+	if ( '' !== $side ) { // same 12 months for both sides
+		$tx = array_values( array_filter( $tx, function ( $t ) use ( $side ) { return dwdbk_is_biz( $t ) === ( 'business' === $side ); } ) );
+	}
 	$yr    = 365 / $days;
 	$mth   = 30.44 / $days;
 	$usd   = function ( $n ) { return '$' . number_format( round( (float) $n ) ); };
@@ -219,12 +245,14 @@ function dwdbk_insights() {
 		if ( preg_match( $own, $u ) ) {
 			if ( $win && $amt < 0 && preg_match( '/KEEP ?THE ?CHANGE/', $u ) ) {
 				$keep += -$amt;
+				$hit( 'saved', $t );
 			}
 			continue;
 		}
 		if ( preg_match( $inv, $u ) ) { // money put away is not money spent
 			if ( $win && $amt < 0 ) {
 				$invest += -$amt;
+				$hit( 'saved', $t );
 			}
 			continue;
 		}
@@ -235,9 +263,10 @@ function dwdbk_insights() {
 			if ( '' !== $who ) {
 				$pk = strtoupper( (string) preg_replace( '/\s+/', ' ', $who ) );
 				if ( ! isset( $people[ $pk ] ) ) {
-					$people[ $pk ] = array( 'name' => $nice( $who ), 'year' => 0, 'count' => 0, 'all' => 0, 'count_all' => 0, 'back' => 0, 'first' => $t['date'], 'last' => '', 'years' => array(), 'memos' => array() );
+					$people[ $pk ] = array( 'key' => $pk, 'name' => $nice( $who ), 'year' => 0, 'count' => 0, 'all' => 0, 'count_all' => 0, 'back' => 0, 'first' => $t['date'], 'last' => '', 'years' => array(), 'memos' => array() );
 				}
 				$p = &$people[ $pk ];
+				$hit( 'person:' . $pk, $t );
 				if ( $amt < 0 ) {
 					$p['all'] += -$amt;
 					$p['count_all']++;
@@ -263,12 +292,18 @@ function dwdbk_insights() {
 		}
 		if ( $amt > 0 ) {
 			$income += $amt;
+			$hit( 'income', $t );
 			continue;
 		}
 		$out   = -$amt;
 		$is_cd = (bool) preg_match( $card, $u );
 		$cat   = '' !== $who ? 'Sent to people (Zelle)' : ( $is_cd ? 'Credit card payments' : ( false !== strpos( $u, 'GUSTO' ) ? 'Payroll (Gusto)' : ( 'Transfers' === $t['cat'] ? 'Other transfers' : (string) $t['cat'] ) ) );
 		$spent += $out;
+		$hit( 'spent', $t );
+		$hit( 'cat:' . $cat, $t );
+		if ( '' !== $who ) {
+			$hit( 'people', $t );
+		}
 		$ym     = substr( $t['date'], 0, 7 );
 		$months[ $ym ]['out']          = ( $months[ $ym ]['out'] ?? 0 ) + $out;
 		$months[ $ym ]['cats'][ $cat ] = ( $months[ $ym ]['cats'][ $cat ] ?? 0 ) + $out;
@@ -287,14 +322,17 @@ function dwdbk_insights() {
 		$mk = (string) $t['m'];
 		$cats[ $cat ]['m'][ $mk ] = ( $cats[ $cat ]['m'][ $mk ] ?? 0 ) + $out;
 		if ( ! isset( $merch[ $mk ] ) ) {
-			$merch[ $mk ] = array( 'name' => $nice( $t['desc'] ), 'total' => 0, 'count' => 0, 'cat' => $cat );
+			$merch[ $mk ] = array( 'key' => $mk, 'name' => $nice( $t['desc'] ), 'total' => 0, 'count' => 0, 'cat' => $cat );
 		}
 		$merch[ $mk ]['total'] += $out;
+		$hit( 'merchant:' . $mk, $t );
 		$merch[ $mk ]['count']++;
 		$big[] = array( 'date' => $t['date'], 'name' => $nice( $t['desc'] ), 'amt' => round( $out, 2 ), 'cat' => $cat );
 		foreach ( $defs as $k => $x ) {
 			if ( ( '' !== $x[1] && preg_match( $x[1], $u ) ) || ( '' !== $x[2] && $x[2] === $t['cat'] ) ) {
 				$hab[ $k ]['total'] += $out;
+				$hit( 'habit:' . $k, $t );
+				$hit( 'habits', $t );
 				$hab[ $k ]['count']++;
 				$hab[ $k ]['m'][ $mk ] = ( $hab[ $k ]['m'][ $mk ] ?? 0 ) + $out;
 				break;
@@ -303,6 +341,20 @@ function dwdbk_insights() {
 		if ( in_array( $t['cat'], array( 'Dining', 'Fun', 'Shopping' ), true ) ) {
 			$dow[ (int) gmdate( 'w', strtotime( $t['date'] . ' 12:00:00' ) ) ] += $out;
 		}
+	}
+	if ( '' !== $want ) { // the transactions behind one number
+		usort( $hits, function ( $a, $b ) { return strcmp( $b['date'], $a['date'] ); } );
+		$sum = 0;
+		foreach ( $hits as $t ) {
+			$sum += abs( (float) $t['amt'] );
+		}
+		return array(
+			'count' => count( $hits ),
+			'total' => round( $sum, 2 ),
+			'from'  => $from,
+			'to'    => $to,
+			'tx'    => array_map( function ( $t ) use ( $nice ) { return array( 'date' => $t['date'], 'name' => $nice( $t['desc'] ), 'amt' => (float) $t['amt'], 'cat' => (string) $t['cat'], 'acct' => (string) $t['acct'] ); }, array_slice( $hits, 0, 800 ) ),
+		);
 	}
 	$top = function ( $map, $n ) use ( $merch ) {
 		arsort( $map );
@@ -327,7 +379,7 @@ function dwdbk_insights() {
 		}
 		arsort( $p['memos'] );
 		ksort( $p['years'] );
-		$plist[] = array( 'name' => $p['name'], 'year' => round( $p['year'] ), 'count' => $p['count'], 'all' => round( $p['all'] ), 'count_all' => $p['count_all'], 'avg' => round( $p['all'] / max( 1, $p['count_all'] ) ), 'back' => round( $p['back'] ), 'first' => $p['first'], 'last' => $p['last'], 'years' => array_map( 'round', $p['years'] ), 'memo' => (string) ( array_keys( $p['memos'] )[0] ?? '' ) );
+		$plist[] = array( 'key' => $p['key'], 'name' => $p['name'], 'year' => round( $p['year'] ), 'count' => $p['count'], 'all' => round( $p['all'] ), 'count_all' => $p['count_all'], 'avg' => round( $p['all'] / max( 1, $p['count_all'] ) ), 'back' => round( $p['back'] ), 'first' => $p['first'], 'last' => $p['last'], 'years' => array_map( 'round', $p['years'] ), 'memo' => (string) ( array_keys( $p['memos'] )[0] ?? '' ) );
 	}
 	usort( $plist, function ( $a, $b ) { return ( $b['year'] <=> $a['year'] ) ?: ( $b['all'] <=> $a['all'] ); } );
 	$clist = array();
@@ -338,9 +390,9 @@ function dwdbk_insights() {
 	$mlist = array_values( $merch );
 	usort( $mlist, function ( $a, $b ) { return $b['total'] <=> $a['total']; } );
 	$small = array_values( array_filter( $mlist, function ( $x ) { return $x['count'] >= 10 && $x['total'] / $x['count'] <= 25 && ! in_array( $x['cat'], array( 'Subscriptions', 'Bills & Utilities', 'Fees' ), true ); } ) );
-	$fix   = function ( $x ) use ( $yr ) { return array( 'name' => $x['name'], 'total' => round( $x['total'] ), 'count' => $x['count'], 'avg' => round( $x['total'] / max( 1, $x['count'] ), 2 ), 'cat' => $x['cat'], 'yearly' => round( $x['total'] * $yr ) ); };
+	$fix   = function ( $x ) use ( $yr ) { return array( 'key' => $x['key'], 'name' => $x['name'], 'total' => round( $x['total'] ), 'count' => $x['count'], 'avg' => round( $x['total'] / max( 1, $x['count'] ), 2 ), 'cat' => $x['cat'], 'yearly' => round( $x['total'] * $yr ) ); };
 	usort( $big, function ( $a, $b ) { return $b['amt'] <=> $a['amt']; } );
-	$subs = array_values( array_filter( dwdbk_recurring( $tx, $d['subs'] ), function ( $s ) { return empty( $s['stopped'] ) && 'ignore' !== $s['status']; } ) );
+	$subs = array_values( array_filter( dwdbk_recurring( $tx, $d['subs'] ), function ( $s ) use ( $side ) { return empty( $s['stopped'] ) && 'ignore' !== $s['status'] && ( '' === $side || ( 'business' === $side ) === ( '' !== $s['scope'] ? 'business' === $s['scope'] : false !== stripos( $s['acct'], 'business' ) ) ); } ) );
 	$suby = array_sum( array_column( $subs, 'yearly' ) );
 	ksort( $months );
 	$mrows = array();
@@ -393,6 +445,7 @@ function dwdbk_insights() {
 	}
 	return array(
 		'count'        => count( $tx ),
+		'side'         => $side,
 		'copies'       => dwdbk_copies(),
 		'from'         => $from,
 		'to'           => $to,
@@ -421,6 +474,7 @@ function dwdbk_recurring( $tx, $flags ) {
 	// Money moved between your own accounts or onto your own credit cards is not a charge.
 	$own   = '/KEEP ?THE ?CHANGE|ONLINE BANKING TRANSFER|TRANSFER (TO|FROM) (CHK|SAV|ACCT|CHECKING|SAVINGS)|OVERDRAFT PROTECTION|SCHEDULED? TRANSFER|ACCTVERIFY|ONLINE BANKING PAYMENT TO CRD|CREDIT CARD PAYMENT|CRD PMT|PAYMENT - THANK YOU|BANK OF AMERICA CREDIT CARD|CREDIT CARD BILL PAYMENT/';
 	$kinds = (array) get_option( 'dwdbk_kinds', array() );
+	$mycat = (array) get_option( 'dwdbk_subcats', array() );
 	$scope = (array) get_option( 'dwdbk_scopes', array() );
 	$by    = array();
 	$names = array();
@@ -524,6 +578,7 @@ function dwdbk_recurring( $tx, $flags ) {
 			'scope'     => (string) ( $scope[ $m ] ?? '' ), // business | personal | '' (unlabeled)
 			'kind'      => in_array( $kinds[ $m ] ?? '', array( 'bill', 'subscription' ), true ) ? $kinds[ $m ] : ( 'Subscriptions' === $last['cat'] ? 'subscription' : 'bill' ),
 			'acct'      => (string) ( $last['acct'] ?? '' ),
+			'category'  => '' !== (string) ( $mycat[ $m ] ?? '' ) ? (string) $mycat[ $m ] : (string) $last['cat'], // yours if you picked one, else the bank's
 			'prev'      => round( $prev, 2 ),
 		);
 	}
@@ -531,13 +586,14 @@ function dwdbk_recurring( $tx, $flags ) {
 	return $out;
 }
 
-function dwdbk_summary( $limit_tx = 400 ) {
+function dwdbk_summary( $limit_tx = 900 ) {
 	$d  = dwdbk_get();
 	$tx = dwdbk_dedupe( $d['tx'] ); // a bank linked twice is counted once
 	foreach ( $tx as &$t ) {
 		if ( isset( $d['cats'][ $t['m'] ] ) ) {
 			$t['cat'] = $d['cats'][ $t['m'] ];
 		}
+		$t['biz'] = dwdbk_is_biz( $t );
 	}
 	unset( $t );
 	usort( $tx, function ( $a, $b ) { return strcmp( $b['date'], $a['date'] ); } );
@@ -545,7 +601,7 @@ function dwdbk_summary( $limit_tx = 400 ) {
 	foreach ( $tx as $t ) {
 		$ym = substr( $t['date'], 0, 7 );
 		if ( ! isset( $months[ $ym ] ) ) {
-			$months[ $ym ] = array( 'in' => 0, 'out' => 0, 'cats' => array() );
+			$months[ $ym ] = array( 'in' => 0, 'out' => 0, 'cats' => array(), 'p' => array( 'out' => 0, 'cats' => array() ), 'b' => array( 'out' => 0, 'cats' => array() ) );
 		}
 		if ( 'Transfers' === $t['cat'] ) {
 			continue;
@@ -555,19 +611,28 @@ function dwdbk_summary( $limit_tx = 400 ) {
 		} else {
 			$months[ $ym ]['out'] += -$t['amt'];
 			$months[ $ym ]['cats'][ $t['cat'] ] = round( ( $months[ $ym ]['cats'][ $t['cat'] ] ?? 0 ) - $t['amt'], 2 );
+			$sd = $t['biz'] ? 'b' : 'p';
+			$months[ $ym ][ $sd ]['out']                = round( $months[ $ym ][ $sd ]['out'] - $t['amt'], 2 );
+			$months[ $ym ][ $sd ]['cats'][ $t['cat'] ] = round( ( $months[ $ym ][ $sd ]['cats'][ $t['cat'] ] ?? 0 ) - $t['amt'], 2 );
 		}
 	}
 	foreach ( $months as &$mo ) {
 		$mo['in']  = round( $mo['in'], 2 );
 		$mo['out'] = round( $mo['out'], 2 );
 		arsort( $mo['cats'] );
+		arsort( $mo['p']['cats'] );
+		arsort( $mo['b']['cats'] );
 	}
 	unset( $mo );
 	krsort( $months );
+	$subs    = dwdbk_recurring( $tx, $d['subs'] );
+	$subcats = array_values( array_unique( array_filter( array_merge( array( 'Bills & Utilities', 'Business', 'Insurance', 'Loans & Debt', 'Rent & Housing', 'Services', 'Software', 'Subscriptions', 'Taxes & Gov' ), array_column( $subs, 'category' ), array_values( (array) get_option( 'dwdbk_subcats', array() ) ) ) ) ) );
+	natcasesort( $subcats );
 	return array(
 		'files'  => array_values( $d['files'] ),
 		'months' => $months,
-		'subs'   => dwdbk_recurring( $tx, $d['subs'] ),
+		'subs'   => $subs,
+		'subcats' => array_values( $subcats ),
 		'tx'     => array_slice( $tx, 0, $limit_tx ),
 		'count'  => count( $tx ),
 		'last'   => $tx ? $tx[0]['date'] : '',
@@ -591,7 +656,14 @@ function dwdbk_ai_context() {
 
 add_action( 'rest_api_init', function () {
 	$can = function () { return current_user_can( 'manage_options' ); };
-	register_rest_route( 'dwd/v1', '/crm/bank/insights', array( 'methods' => 'GET', 'permission_callback' => $can, 'callback' => function () { return dwdbk_insights(); } ) );
+	register_rest_route( 'dwd/v1', '/crm/bank/insights', array( 'methods' => 'GET', 'permission_callback' => $can, 'callback' => function ( $r ) {
+		$w  = sanitize_text_field( (string) $r->get_param( 'want' ) );
+		$sd = in_array( $r->get_param( 'side' ), array( 'personal', 'business' ), true ) ? (string) $r->get_param( 'side' ) : '';
+		if ( '' !== $w ) {
+			return dwdbk_insights( $sd, $w );
+		}
+		return array( 'count' => count( dwdbk_get()['tx'] ), 'personal' => dwdbk_insights( 'personal' ), 'business' => dwdbk_insights( 'business' ) );
+	} ) );
 	register_rest_route( 'dwd/v1', '/crm/bank', array(
 		array( 'methods' => 'GET', 'permission_callback' => $can, 'callback' => function () {
 			$out             = dwdbk_summary();
@@ -629,6 +701,18 @@ add_action( 'rest_api_init', function () {
 				$s['added'] = $new;
 				$s['read']  = count( $rows );
 				return $s;
+			}
+			if ( isset( $p['sub'], $p['category'] ) ) { // your own category for a repeating charge (empty = back to the bank's)
+				$mc = (array) get_option( 'dwdbk_subcats', array() );
+				$m4 = sanitize_text_field( (string) $p['sub'] );
+				$cv = mb_substr( trim( sanitize_text_field( (string) $p['category'] ) ), 0, 40 );
+				if ( '' !== $cv ) {
+					$mc[ $m4 ] = $cv;
+				} else {
+					unset( $mc[ $m4 ] );
+				}
+				update_option( 'dwdbk_subcats', $mc, false );
+				return dwdbk_summary();
 			}
 			if ( isset( $p['sub'], $p['kind'] ) ) { // file a repeating charge as a bill or a subscription (remembered for that merchant)
 				$kn = (array) get_option( 'dwdbk_kinds', array() );

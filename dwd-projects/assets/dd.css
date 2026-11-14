@@ -704,3 +704,21 @@ input[type=date], input[type=datetime-local] { cursor: pointer; }
 .dd-sg-more { display: block; width: 100%; margin: 0; padding: 12px 0 4px; border: 0; border-top: 1px solid var(--border); background: none; font: inherit; font-size: var(--fs-sm); font-weight: 500; color: var(--accent-text); text-align: left; cursor: pointer; }
 @media (max-width: 1100px) { .dd-sg-ts { grid-template-columns: repeat(2, minmax(0, 1fr)); } .dd-sg-g { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 767px) { .dd-sg-l { padding: 0 16px 10px; } .dd .dd-card p.dd-sg-n { padding-left: 16px !important; padding-right: 16px !important; } .dd-sg-t { padding: 14px; } .dd-sg-t b { font-size: 19px; } .dd-sg-v { max-width: 42%; } }
+/* Suggestions: personal side and business side, and lines that open their payments */
+.dd-sg-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; align-items: start; }
+.dd-sg-side { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.dd-sg-side .dd-sg-ts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.dd-sg-sh { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; padding: 2px 2px 0; }
+.dd-sg-sh h2 { font-size: var(--fs-h2); font-weight: 600; color: var(--text); margin: 0; }
+.dd-sg-sh span { font-size: var(--fs-xs); color: var(--text-3); }
+.dd-sg-sh .dot, .dd-sg-sw .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--success-text); align-self: center; }
+.dd-sg-sh .dot.biz, .dd-sg-sw .dot.biz { background: var(--accent); }
+.dd-sg-sw { display: none; gap: 8px; }
+.dd-sg-r.go, .dd-sg-t.go { cursor: pointer; }
+.dd-sg-r.go { margin: 0 -10px; padding-left: 10px; padding-right: 10px; border-radius: var(--radius-md); }
+.dd-sg-r.go:hover, .dd-sg-r.go:focus-visible { background: var(--hover); outline: none; }
+.dd-sg-t.go:hover, .dd-sg-t.go:focus-visible { border-color: var(--border-strong); background: var(--hover); outline: none; }
+.dd-sg-mod .dd-sg-r:first-of-type { border-top: 0; }
+.dd-sp-trend { margin: 0 0 22px; }
+@media (max-width: 1340px) { .dd-sg-2 { grid-template-columns: minmax(0, 1fr); } .dd-sg-2 > .dd-sg-side:not(.on) { display: none; } .dd-sg-sw { display: flex; } }
+@media (min-width: 768px) and (max-width: 1340px) { .dd-sg-side .dd-sg-ts { grid-template-columns: repeat(4, minmax(0, 1fr)); } }

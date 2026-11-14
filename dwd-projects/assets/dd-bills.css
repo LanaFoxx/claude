@@ -238,3 +238,10 @@
 	.dd-2 { grid-template-columns: 1fr 1fr; }
 	.dd-billf input[name]:not([type=checkbox]):not([type=radio]) { height: 44px !important; font-size: 16px !important; }
 }
+/* Recurring charges: your own category per charge, and a filter for it */
+.dd select.dd-catsel { height: 26px !important; min-height: 26px !important; max-width: 170px; padding: 0 24px 0 10px !important; border: 1px solid var(--border-strong) !important; border-radius: var(--radius-pill) !important; background-color: var(--surface) !important; color: var(--text-2) !important; font: 500 12px var(--font) !important; line-height: 1 !important; box-shadow: none !important; cursor: pointer; }
+.dd select.dd-catsel.f { height: var(--control-h) !important; min-height: var(--control-h) !important; max-width: 200px; font-size: 13px !important; border-radius: var(--radius-md) !important; }
+.dd-catnew { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.dd .dd-catnew input { height: 28px !important; min-height: 28px !important; width: 150px; padding: 0 10px !important; border: 1px solid var(--border-strong) !important; border-radius: var(--radius-md) !important; background: var(--surface) !important; color: var(--text) !important; font: 500 13px var(--font) !important; box-shadow: none !important; }
+.dd-sug .r2 { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 10px; }
+.dd-sug .r2 > span:first-child { font-size: 12px; color: var(--text-3); }
