@@ -259,18 +259,19 @@ def fcol(title, items):
     lis = ''.join('<li>%s</li>' % i for i in items)
     return C([H(title,'h2',None,'ink'), HTML('<ul class="g-flinks">%s</ul>' % lis)], 'g-fcol', gap=16)
 L = lambda t,u,c='': '<a href="%s"%s>%s</a>' % (u, (' class="%s"' % c) if c else '', t)
+L = lambda t,u,c='': '<a href="%s"%s>%s</a>' % (u, (' class="%s"' % c) if c else '', t)
+fnav = '<nav aria-label="Footer"><ul class="g-fnav">' + ''.join('<li>%s</li>' % L(t,u) for t,u in [
+    ('License classes',SITE+'/#classes'),('CEU classes',SITE+'/#ceu'),('How to get licensed',SITE+'/how-to-get-licensed/'),
+    ('Board dates','#'),('About',SITE+'/about/'),('Testimonials',SITE+'/#testimonials'),('Contact',SITE+'/contact/')]) + '</ul></nav>'
+fcontact = '<div class="g-fcontact"><a href="mailto:Info@GeorgiaLicenseExam.com">%sInfo@GeorgiaLicenseExam.com</a><span>%s%s</span></div>' % (ic(I['mail'],18), ic(I['phone'],18), PHONE)
+flegal = '<ul class="g-flegal">' + ''.join('<li>%s</li>' % x for x in [L('Policies',SITE+'/policies/'), L('Hold Harmless policy',SITE+'/policies/#hold-harmless')]) + '</ul>'
 footer = [C([
-    C([C([IMG('glec-logo.png','g-logo', link=SITE+'/'), TX('<p>Online classes for the Georgia Conditioned Air contractor license and Board-approved CEUs, since 2006.</p>','small','slate')], gap=18, extra={"width":px(300)}),
-       fcol('Classes',[L('License classes',SITE+'/#classes'),L('CEU classes',SITE+'/#ceu'),L('Technician certifications','#')]),
-       fcol('Help',[L('How to get licensed',SITE+'/how-to-get-licensed/'),L('Quick links','#'),L('Board application and meeting dates','#'),L('Contact',SITE+'/contact/')]),
-       fcol('Company',[L('About',SITE+'/about/'),L('Testimonials',SITE+'/#testimonials'),L('Policies',SITE+'/policies/')]),
-       fcol('Contact',['2625 Piedmont Road NE<br>UPS Store, Ste 56, PMB-320<br>Atlanta, Georgia 30324-3086<small>Mailing address only</small>', L('Info@GeorgiaLicenseExam.com','mailto:Info@GeorgiaLicenseExam.com','g-blue'), PHONE]),
-    ], 'g-fgrid', gap=48, gap_t=32, gap_m=28),
-    C([TX('<p>© 2026 Georgia License Exam Company</p>',None,None), HTML('<ul class="g-flinks">%s</ul>' % ''.join('<li>%s</li>' % x for x in [L('Policies',SITE+'/policies/'), L('Hold Harmless policy',SITE+'/policies/#hold-harmless')]))],
-      'g-fine', direction='row', justify='space-between', gap=40, gap_m=12, extra={"margin":dims(56,0,0,0),"margin_mobile":dims(40,0,0,0),"padding":dims(24,0,0,0)}),
-], 'g-footer g-on-navy', boxed=True, bg='navy', pad=(72,64,40,64), pad_t=(56,40,40,40), pad_m=(48,20,32,20), html_tag='div')]
-for c in footer[0]["elements"][0]["elements"][1:]:
-    c["elements"][0]["settings"]["header_size"]="h2"
+    C([IMG('glec-logo.png','g-logo', link=SITE+'/'), HTML(fnav,'g-fnav-w'), HTML(fcontact,'g-fcontact-w')],
+      'g-frow', direction='row', justify='space-between', align='center', gap=40, gap_t=24, gap_m=24, dir_t='column', wrap=False),
+    C([TX('<p>© 2026 Georgia License Exam Company <span class="g-dot">·</span> 2625 Piedmont Road NE, UPS Store Ste 56, PMB-320, Atlanta, GA 30324-3086 <span class="g-muted">(mailing address only)</span></p>',None,None),
+       HTML(flegal)], 'g-fine', direction='row', justify='space-between', align='center', gap=24, gap_m=12, dir_t='column',
+      extra={"margin":dims(32,0,0,0),"margin_mobile":dims(28,0,0,0),"padding":dims(24,0,0,0)}),
+], 'g-footer g-on-navy', boxed=True, bg='navy', pad=(48,64,28,64), pad_t=(40,40,28,40), pad_m=(36,20,28,20), html_tag='div')]
 
 out = {"home":home,"header":header,"footer":footer}
 json.dump(out, open(os.path.join(BASE,'build/elementor.json'),'w'))
