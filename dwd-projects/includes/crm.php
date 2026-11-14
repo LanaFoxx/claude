@@ -1853,6 +1853,8 @@ function dwdsg_queue() {
 			'name'    => (string) $q['name'],
 			'at'      => (string) ( $q['at'] ?? '' ),
 			'error'   => (string) ( $q['error'] ?? '' ),
+			'kind'    => 'delete' === ( $q['kind'] ?? '' ) ? 'delete' : 'create',
+			'url'     => (string) ( $q['url'] ?? '' ),
 			'fired'   => ! empty( $q['fired'] ),
 			'fire_no' => (string) ( $q['fire_no'] ?? '' ),
 		);
@@ -1910,6 +1912,31 @@ add_action( 'rest_api_init', function () {
 			return array( 'ready' => true );
 		} ),
 	) );
+	// The Delete button: ask for this project's staging copy to be deleted on SiteGround. The link stays on the
+	// project until Claude has deleted the copy (it asks Michael to confirm first) and calls staging-deleted.
+	register_rest_route( 'dwd/v1', '/crm/staging-delete-request', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) use ( $pid ) {
+		$id  = $pid( $r );
+		$url = $id ? (string) get_post_meta( $id, '_dwdc_staging', true ) : '';
+		if ( ! $id || '' === $url ) {
+			return new WP_Error( 'dwdsg_none', 'This project has no staging URL.', array( 'status' => 400 ) );
+		}
+		update_post_meta( $id, '_dwdc_stg_req', array( 'kind' => 'delete', 'name' => dwdsg_name( get_the_title( $id ) ), 'url' => esc_url_raw( $url ), 'at' => gmdate( 'c' ) ) );
+		return dwdsg_queue();
+	} ) );
+	// The copy is gone from SiteGround: take the link off the project (the Markup box uses the same URL).
+	register_rest_route( 'dwd/v1', '/crm/staging-deleted', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) use ( $pid ) {
+		$id = $pid( $r );
+		if ( ! $id ) {
+			return new WP_Error( 'dwdsg_id', 'That project was not found.', array( 'status' => 404 ) );
+		}
+		$q = get_post_meta( $id, '_dwdc_stg_req', true );
+		if ( ! is_array( $q ) || 'delete' !== ( $q['kind'] ?? '' ) ) {
+			return new WP_Error( 'dwdsg_req', 'No delete was requested for this project.', array( 'status' => 400 ) );
+		}
+		update_post_meta( $id, '_dwdc_staging', '' );
+		delete_post_meta( $id, '_dwdc_stg_req' );
+		return array( 'project' => dwdc_contact( get_post( $id ), true ), 'queue' => dwdsg_queue() );
+	} ) );
 	// Cancel a request, or clear it once the staging URL has been saved.
 	register_rest_route( 'dwd/v1', '/crm/staging-request/clear', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) use ( $pid ) {
 		$id = $pid( $r );

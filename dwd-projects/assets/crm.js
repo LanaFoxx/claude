@@ -971,27 +971,35 @@
 		if (!S.stgQ && !S.stgQBusy) { S.stgQBusy = 1; api('/staging-requests').then(function (x) { S.stgQ = x || []; S.stgQBusy = 0; if (S.stgQ.length) { render(); } }).catch(function () { S.stgQ = []; S.stgQBusy = 0; }); }
 		return S.stgQ || [];
 	}
-	function stgFire() {
-		if (!S.stgFire && !S.stgFireBusy) { S.stgFireBusy = 1; api('/staging-fire').then(function (x) { S.stgFire = x || { ready: false }; S.stgFireBusy = 0; render(); }).catch(function () { S.stgFire = { ready: false }; S.stgFireBusy = 0; }); }
-		return !!(S.stgFire && S.stgFire.ready);
-	}
+	// The Claude task that does the SiteGround step. The buttons open it so "Run now" starts it straight away
+	// (this kind of task cannot be started by the site itself); otherwise its next scheduled run picks the request up.
+	var STG_TASK = 'https://claude.ai/scheduled-task/trig_011dGvwVQJLB6QYPVAZHrnHR';
 	function stgNewHtml(c) {
-		var q = stgQueue().filter(function (x) { return x.id === c.id; })[0], inst = stgFire();
+		var q = stgQueue().filter(function (x) { return x.id === c.id; })[0];
+		var run = ' <a class="dd-hlink" href="' + STG_TASK + '" target="_blank" rel="noopener">Open the Claude task</a> and click <b>Run now</b>.';
 		if (q && q.error) { return '<div class="dd-stgq"><p class="dd-help">' + ddPill('Not created', 'danger') + ' ' + esc(q.error) + '</p><div class="dd-pbtns"><button type="button" class="dd-btn secondary" data-stgnew="' + c.id + '">' + lu('plus', 14) + 'Try again</button><button type="button" class="dd-btn ghost" data-stgunq="' + c.id + '">Dismiss</button></div></div>'; }
-		if (q) { return '<div class="dd-stgq"><p class="dd-help">' + ddPill(q.fired ? 'Creating now' : 'Requested', 'info') + ' A staging copy named <b>' + esc(q.name) + '</b> is being created on SiteGround. Its URL shows here, and in the Markup box, ' + (q.fired ? 'in about a minute or two (refresh to see it).' : 'once it’s ready (checked every hour).' + (q.fire_no ? ' The instant start didn’t work: ' + esc(q.fire_no) + '.' : '')) + '</p><div class="dd-pbtns"><button type="button" class="dd-btn ghost" data-stgunq="' + c.id + '">Cancel request</button></div></div>'; }
-		var setup = S.stgFireEdit
-			? '<form class="dd-stgfire" data-stgfireform><p class="dd-help">At claude.ai/code/routines open <b>Dream Desk staging copies (SiteGround)</b> → Edit → Add another trigger → API → Generate token. Paste the URL and the token it shows:</p><div class="dd-frow"><input name="url" type="url" placeholder="https://api.anthropic.com/v1/claude_code/routines/trig_…/fire" required></div><div class="dd-frow"><input name="token" type="password" placeholder="Token (starts with sk-ant-oat01-)" autocomplete="off" required><button class="dd-btn primary">Save</button><button type="button" class="dd-btn ghost" data-stgfirecancel>Cancel</button></div></form>'
-			: '<p class="dd-help">' + (inst ? 'Starts right away. <button type="button" class="dd-hlink" data-stgfireset>Change</button>' : 'Created within the hour. <button type="button" class="dd-hlink" data-stgfireset>Make it instant</button>') + '</p>';
-		return '<div class="dd-stgq"><div class="dd-pbtns"><button type="button" class="dd-btn secondary" data-stgnew="' + c.id + '">' + lu('plus', 14) + 'Create new staging URL</button></div>' + setup + '</div>';
+		if (q) { return '<div class="dd-stgq"><p class="dd-help">' + ddPill('Requested', 'info') + ' A staging copy named <b>' + esc(q.name) + '</b> is waiting to be created on SiteGround.' + run + ' Its URL shows here, and in the Markup box, about a minute later (refresh to see it).</p><div class="dd-pbtns"><button type="button" class="dd-btn ghost" data-stgunq="' + c.id + '">Cancel request</button></div></div>'; }
+		return '<div class="dd-stgq"><div class="dd-pbtns"><button type="button" class="dd-btn secondary" data-stgnew="' + c.id + '">' + lu('plus', 14) + 'Create new staging URL</button></div><p class="dd-help">Opens the Claude task in a new tab: click <b>Run now</b> there and the copy is made in about a minute.</p></div>';
+	}
+	// Delete: shown under a saved staging URL. Deletes the copy on SiteGround and takes the link off the project.
+	function stgDelHtml(c) {
+		var q = stgQueue().filter(function (x) { return x.id === c.id; })[0];
+		if (q && q.kind === 'delete' && q.error) { return '<div class="dd-stgq"><p class="dd-help">' + ddPill('Not deleted', 'danger') + ' ' + esc(q.error) + '</p><div class="dd-pbtns"><button type="button" class="dd-btn ghost" data-stgunq="' + c.id + '">Dismiss</button></div></div>'; }
+		if (q && q.kind === 'delete') { return '<div class="dd-stgq"><p class="dd-help">' + ddPill('Delete requested', 'warning') + ' <a class="dd-hlink" href="' + STG_TASK + '" target="_blank" rel="noopener">Open the Claude task</a>, click <b>Run now</b>, and answer yes when it asks. The copy is then deleted on SiteGround and this link is removed.</p><div class="dd-pbtns"><button type="button" class="dd-btn ghost" data-stgunq="' + c.id + '">Keep it (cancel)</button></div></div>'; }
+		if (S.stgDelAsk === c.id) { return '<div class="dd-stgq"><p class="dd-help">Delete this staging site from SiteGround and remove the link from this project? The staging site and everything on it will be gone for good.</p><div class="dd-pbtns"><button type="button" class="dd-btn danger" data-stgdelgo="' + c.id + '">Yes, delete it</button><button type="button" class="dd-btn ghost" data-stgdelno>Cancel</button></div></div>'; }
+		return '<div class="dd-stgq"><div class="dd-pbtns"><button type="button" class="dd-btn ghost" data-stgdel="' + c.id + '">' + lu('trash-2', 14) + 'Delete staging site</button></div></div>';
 	}
 	// For the Claude check (results avoid the characters = ? & so the browser tool can return them).
 	window.dwdStagingQueue = function () {
-		return api('/staging-requests').then(function (x) { S.stgQ = x || []; return JSON.stringify(S.stgQ.filter(function (q) { return !q.error; }).map(function (q) { return { id: q.id, name: q.name, project: q.project }; })); }).catch(function () { return 'failed'; });
+		return api('/staging-requests').then(function (x) { S.stgQ = x || []; return JSON.stringify(S.stgQ.filter(function (q) { return !q.error; }).map(function (q) { return { id: q.id, action: q.kind === 'delete' ? 'delete' : 'create', name: q.name, project: q.project, url: String(q.url || '').replace(/[=?&]/g, '') }; })); }).catch(function () { return 'failed'; });
 	};
 	window.dwdStagingDone = function (id, url) {
 		url = String(url || '').trim();
 		if (!/^https:\/\/[a-z0-9.-]+\.[a-z]{2,}\/?$/i.test(url)) { return Promise.resolve('failed: not a plain https address'); }
 		return api('/contact/' + (+id), 'POST', { staging: url }).then(function (x) { upsert(x); S.full[+id] = x; return api('/staging-request/clear', 'POST', { id: +id }); }).then(function (q) { S.stgQ = q || []; render(); return 'saved'; }).catch(function (e) { return 'failed: ' + String((e && e.message) || '').replace(/[=?&]/g, ' '); });
+	};
+	window.dwdStagingDeleted = function (id) {
+		return api('/staging-deleted', 'POST', { id: +id }).then(function (x) { upsert(x.project); S.full[+id] = x.project; S.stgQ = x.queue || []; render(); return 'removed'; }).catch(function (e) { return 'failed: ' + String((e && e.message) || '').replace(/[=?&]/g, ' '); });
 	};
 	window.dwdStagingFailed = function (id, why) {
 		return api('/staging-request/failed', 'POST', { id: +id, error: String(why || '') }).then(function (q) { S.stgQ = q || []; render(); return 'noted'; }).catch(function () { return 'failed'; });
@@ -3325,7 +3333,7 @@
 		}
 		var stg = c.staging || '', stgEdit = !stg || (S.stgEdit === c.id);
 		var stgBox = card('k-stg', 'Staging site', stg ? '' : 'Not added yet', stg && !stgEdit ? '<button type="button" class="dd-hlink" data-stgedit="' + c.id + '">Change</button>' : '',
-			'<div class="dd-stgb">' + (stg && !stgEdit ? '<div class="dd-stgurl">' + lu('globe', 16) + '<a href="' + esc(stg) + '" target="_blank" rel="noopener">' + esc(stg.replace(/^https?:\/\//, '').replace(/\/$/, '')) + '</a></div><div class="dd-pbtns"><a class="dd-btn primary" href="' + esc(stg) + '" target="_blank" rel="noopener">' + lu('external-link', 14) + 'Open staging site</a><button type="button" class="dd-btn secondary" data-copy="' + esc(stg) + '">' + lu('link', 14) + 'Copy URL</button>' + (DWDC.mkReady && !c.markup ? '<button type="button" class="dd-btn ghost" data-stgmk="' + c.id + '">Make a Markup link from it</button>' : '') + '</div>'
+			'<div class="dd-stgb">' + (stg && !stgEdit ? '<div class="dd-stgurl">' + lu('globe', 16) + '<a href="' + esc(stg) + '" target="_blank" rel="noopener">' + esc(stg.replace(/^https?:\/\//, '').replace(/\/$/, '')) + '</a></div><div class="dd-pbtns"><a class="dd-btn primary" href="' + esc(stg) + '" target="_blank" rel="noopener">' + lu('external-link', 14) + 'Open staging site</a><button type="button" class="dd-btn secondary" data-copy="' + esc(stg) + '">' + lu('link', 14) + 'Copy URL</button>' + (DWDC.mkReady && !c.markup ? '<button type="button" class="dd-btn ghost" data-stgmk="' + c.id + '">Make a Markup link from it</button>' : '') + '</div>' + stgDelHtml(c)
 				: '<form class="dd-stgf" data-stgform="' + c.id + '"><div class="dd-frow"><input name="staging" type="url" placeholder="https://staging.example.com" value="' + esc(stg) + '" required><button class="dd-btn primary">Save</button>' + (stg ? '<button type="button" class="dd-btn ghost" data-stgcancel>Cancel</button>' : '') + '</div><p class="dd-help">Paste the staging URL when you start working on the site. Making a Markup link from a staging URL saves it here too.</p></form>' + stgNewHtml(c)) + '</div>');
 		var mkBox = card('k-mk', 'Markup review', '', '<a class="dd-btn secondary" href="' + esc(DWDC.markupHome) + '" target="_blank" rel="noopener">Open Markup ' + lu('external-link', 14) + '</a>',
 			'<div class="dd-mkb">' + (DWDC.mkReady
@@ -4421,9 +4429,10 @@
 		if ((el = t.closest('[data-sumgo]'))) { var sgo = +el.getAttribute('data-sumgo'); S.sumBusy = sgo; S.sumErr = ''; render(); api('/contact/' + sgo + '/summary', 'POST', {}).then(function (x) { if (S.full[sgo]) { S.full[sgo].ai_summary = x; } S.sumBusy = 0; render(); toast('Summary updated'); }).catch(function (er) { S.sumBusy = 0; S.sumErr = er && er.message; render(); }); return; }
 		if ((el = t.closest('[data-stgedit]'))) { S.stgEdit = +el.getAttribute('data-stgedit'); render(); var si3 = app.querySelector('.dd-stgf input'); if (si3) { si3.focus(); si3.select(); } return; }
 		if (t.closest('[data-stgcancel]')) { S.stgEdit = 0; render(); return; }
-		if ((el = t.closest('[data-stgnew]'))) { el.disabled = true; api('/staging-request', 'POST', { id: +el.getAttribute('data-stgnew') }).then(function (q) { S.stgQ = q || []; render(); toast('Staging copy requested'); }).catch(function (e) { el.disabled = false; fail(e); }); return; }
-		if (t.closest('[data-stgfireset]')) { S.stgFireEdit = 1; render(); return; }
-		if (t.closest('[data-stgfirecancel]')) { S.stgFireEdit = 0; render(); return; }
+		if ((el = t.closest('[data-stgnew]'))) { el.disabled = true; window.open(STG_TASK, '_blank', 'noopener'); api('/staging-request', 'POST', { id: +el.getAttribute('data-stgnew') }).then(function (q) { S.stgQ = q || []; render(); toast('Staging copy requested: click Run now in the Claude tab'); }).catch(function (e) { el.disabled = false; fail(e); }); return; }
+		if ((el = t.closest('[data-stgdel]'))) { S.stgDelAsk = +el.getAttribute('data-stgdel'); render(); return; }
+		if (t.closest('[data-stgdelno]')) { S.stgDelAsk = 0; render(); return; }
+		if ((el = t.closest('[data-stgdelgo]'))) { el.disabled = true; S.stgDelAsk = 0; window.open(STG_TASK, '_blank', 'noopener'); api('/staging-delete-request', 'POST', { id: +el.getAttribute('data-stgdelgo') }).then(function (q) { S.stgQ = q || []; render(); toast('Delete requested: click Run now in the Claude tab'); }).catch(fail); return; }
 		if ((el = t.closest('[data-stgunq]'))) { api('/staging-request/clear', 'POST', { id: +el.getAttribute('data-stgunq') }).then(function (q) { S.stgQ = q || []; render(); }).catch(fail); return; }
 		if ((el = t.closest('[data-stgmk]'))) { var mu = app.querySelector('[data-mkurl]'); if (mu) { mu.scrollIntoView({ behavior: 'smooth', block: 'center' }); mu.focus(); } return; }
 		if ((el = t.closest('[data-schedtask]')) && !t.closest('a')) { S.modal = { type: 'schedtask', key: el.getAttribute('data-schedtask') }; render(); return; }
@@ -4664,10 +4673,6 @@
 		new FormData(f).forEach(function (val, k) { data[k] = val; });
 		if (isTodoAdd(f) && data.text) { var pw = parseWhen(data.text); if (pw.due) { data.due = pw.due; } if (pw.time) { data.time = pw.time; } if (pw.due || pw.time) { data.text = pw.text; } }
 		if (f.classList.contains('dd-padd')) { S.ppDate = S.ppDate || {}; S.ppDate[f.getAttribute('data-contact')] = ''; }
-		if (f.hasAttribute('data-stgfireform')) {
-			api('/staging-fire', 'POST', { url: String(data.url || '').trim(), token: String(data.token || '').trim() }).then(function (x) { S.stgFire = x; S.stgFireEdit = 0; render(); toast('Instant start is on'); }).catch(fail);
-			return;
-		}
 		if (f.hasAttribute('data-stgform')) {
 			var sgid = +f.getAttribute('data-stgform'), sgu = String(data.staging || '').trim();
 			if (sgu && !/^https?:\/\//i.test(sgu)) { sgu = 'https://' + sgu; }

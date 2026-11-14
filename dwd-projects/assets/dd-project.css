@@ -357,3 +357,4 @@
 .dd-stgq .dd-help { margin: 0; }
 .dd-stgfire { display: flex; flex-direction: column; gap: 8px; }
 .dd-stgq .dd-hlink { display: inline; padding: 0; }
+.dd-stgq .dd-btn.danger { background: var(--danger-bg); color: var(--danger-text); border-color: transparent; }
