@@ -176,10 +176,11 @@ function dwdbk_insights() {
 	$mth   = 30.44 / $days;
 	$usd   = function ( $n ) { return '$' . number_format( round( (float) $n ) ); };
 	$nice  = function ( $s ) {
-		$s = trim( (string) preg_replace( '/\s+/', ' ', (string) $s ) );
+		$s = trim( (string) preg_replace( '/\s+/', ' ', (string) preg_replace( '/\s+(DES:|ID:|INDN:|CO ID:).*$/i', '', (string) $s ) ) );
 		return mb_substr( $s === strtoupper( $s ) ? ucwords( strtolower( $s ) ) : $s, 0, 44 );
 	};
-	$own   = '/KEEP ?THE ?CHANGE|ONLINE BANKING TRANSFER|TRANSFER (TO|FROM) (CHK|SAV|ACCT|CHECKING|SAVINGS)|OVERDRAFT PROTECTION/';
+	$own   = '/KEEP ?THE ?CHANGE|ONLINE BANKING TRANSFER|TRANSFER (TO|FROM) (CHK|SAV|ACCT|CHECKING|SAVINGS)|OVERDRAFT PROTECTION|SCHEDULED? TRANSFER|ACCTVERIFY/';
+	$inv   = '/FIDELITY|ACORNS|VANGUARD|SCHWAB|ROBINHOOD|BETTERMENT|WEALTHFRONT/';
 	$card  = '/ONLINE BANKING PAYMENT TO CRD|CREDIT CARD PAYMENT|CRD PMT|PAYMENT - THANK YOU|BANK OF AMERICA CREDIT CARD|CREDIT CARD BILL PAYMENT/';
 	// First match wins. label, words to look for, or a category.
 	$defs = array(
@@ -209,6 +210,7 @@ function dwdbk_insights() {
 	$spent  = 0;
 	$income = 0;
 	$keep   = 0;
+	$invest = 0;
 	$cardp  = 0;
 	foreach ( $tx as $t ) {
 		$u   = strtoupper( (string) $t['desc'] );
@@ -217,6 +219,12 @@ function dwdbk_insights() {
 		if ( preg_match( $own, $u ) ) {
 			if ( $win && $amt < 0 && preg_match( '/KEEP ?THE ?CHANGE/', $u ) ) {
 				$keep += -$amt;
+			}
+			continue;
+		}
+		if ( preg_match( $inv, $u ) ) { // money put away is not money spent
+			if ( $win && $amt < 0 ) {
+				$invest += -$amt;
 			}
 			continue;
 		}
@@ -259,7 +267,7 @@ function dwdbk_insights() {
 		}
 		$out   = -$amt;
 		$is_cd = (bool) preg_match( $card, $u );
-		$cat   = '' !== $who ? 'Sent to people (Zelle)' : ( $is_cd ? 'Credit card payments' : ( 'Transfers' === $t['cat'] ? 'Other transfers' : (string) $t['cat'] ) );
+		$cat   = '' !== $who ? 'Sent to people (Zelle)' : ( $is_cd ? 'Credit card payments' : ( false !== strpos( $u, 'GUSTO' ) ? 'Payroll (Gusto)' : ( 'Transfers' === $t['cat'] ? 'Other transfers' : (string) $t['cat'] ) ) );
 		$spent += $out;
 		$ym     = substr( $t['date'], 0, 7 );
 		$months[ $ym ]['out']          = ( $months[ $ym ]['out'] ?? 0 ) + $out;
@@ -380,8 +388,8 @@ function dwdbk_insights() {
 	if ( $suby > 0 ) {
 		$pat[] = array( 't' => 'Repeating charges:', 'x' => count( $subs ) . ' charges repeat on a schedule and add up to about ' . $usd( $suby ) . ' a year.' );
 	}
-	if ( $keep > 0 ) {
-		$pat[] = array( 't' => 'Already saving:', 'x' => 'Keep the Change moved ' . $usd( $keep ) . ' into savings.' );
+	if ( $keep + $invest > 0 ) {
+		$pat[] = array( 't' => 'Already saving:', 'x' => $usd( $keep + $invest ) . ' was put away' . ( $invest > 0 ? ': ' . $usd( $invest ) . ' into investing accounts (Fidelity, Acorns and the like)' . ( $keep > 0 ? ' and ' . $usd( $keep ) . ' through Keep the Change' : '' ) : ' through Keep the Change' ) . '. That is not counted as spending on this page.' );
 	}
 	arsort( $accts );
 	$alist = array();
@@ -416,7 +424,7 @@ function dwdbk_insights() {
 /** Repeating charges: same merchant, regular spacing, similar amounts. */
 function dwdbk_recurring( $tx, $flags ) {
 	// Money moved between your own accounts or onto your own credit cards is not a charge.
-	$own   = '/KEEP ?THE ?CHANGE|ONLINE BANKING TRANSFER|TRANSFER (TO|FROM) (CHK|SAV|ACCT|CHECKING|SAVINGS)|OVERDRAFT PROTECTION|ONLINE BANKING PAYMENT TO CRD|CREDIT CARD PAYMENT|CRD PMT|PAYMENT - THANK YOU|BANK OF AMERICA CREDIT CARD|CREDIT CARD BILL PAYMENT/';
+	$own   = '/KEEP ?THE ?CHANGE|ONLINE BANKING TRANSFER|TRANSFER (TO|FROM) (CHK|SAV|ACCT|CHECKING|SAVINGS)|OVERDRAFT PROTECTION|SCHEDULED? TRANSFER|ACCTVERIFY|ONLINE BANKING PAYMENT TO CRD|CREDIT CARD PAYMENT|CRD PMT|PAYMENT - THANK YOU|BANK OF AMERICA CREDIT CARD|CREDIT CARD BILL PAYMENT/';
 	$kinds = (array) get_option( 'dwdbk_kinds', array() );
 	$scope = (array) get_option( 'dwdbk_scopes', array() );
 	$by    = array();
@@ -426,19 +434,17 @@ function dwdbk_recurring( $tx, $flags ) {
 			continue;
 		}
 		$key = (string) $t['m'];
-		if ( 'Transfers' === $t['cat'] ) {
-			if ( preg_match( $own, strtoupper( (string) $t['desc'] ) ) ) {
+		if ( preg_match( $own, strtoupper( (string) $t['desc'] ) ) ) {
+			continue;
+		}
+		// Zelle to a person (rent, a sitter): one line per person, not one for all of Zelle.
+		if ( preg_match( '/ZELLE\b.*?\bTO\s+(.+)$/i', (string) $t['desc'], $mm ) ) {
+			$who = trim( (string) preg_replace( '/\s*(;|CONF\s*#|\bCONF\b|\bFOR\s+["\'\x{201C}]).*$/iu', '', $mm[1] ) );
+			if ( '' === $who ) {
 				continue;
 			}
-			// Zelle to a person (rent, a sitter): one line per person, not one for all of Zelle.
-			if ( preg_match( '/ZELLE\b.*?\bTO\s+(.+)$/i', (string) $t['desc'], $mm ) ) {
-				$who = trim( (string) preg_replace( '/\s*(;|CONF\s*#|\bCONF\b|\bFOR\s+["\'\x{201C}]).*$/iu', '', $mm[1] ) );
-				if ( '' === $who ) {
-					continue;
-				}
-				$key           = 'ZELLE ' . strtoupper( (string) preg_replace( '/\s+/', ' ', $who ) );
-				$names[ $key ] = ucwords( strtolower( $who ) ) . ' (Zelle)';
-			}
+			$key           = 'ZELLE ' . strtoupper( (string) preg_replace( '/\s+/', ' ', $who ) );
+			$names[ $key ] = ucwords( strtolower( $who ) ) . ' (Zelle)';
 		}
 		$by[ $key ][] = $t;
 	}
@@ -481,7 +487,7 @@ function dwdbk_recurring( $tx, $flags ) {
 		$avg    = array_sum( $amts ) / count( $amts );
 		$spread = ( max( $amts ) - min( $amts ) ) / max( 1, $avg );
 		// Bills (phone, power, insurance, services) move around more than a subscription does.
-		$loose = in_array( $last['cat'], array( 'Bills & Utilities', 'Services', 'Business', 'Taxes & Gov' ), true ) && 0 !== strpos( $m, 'ZELLE ' );
+		$loose = in_array( $last['cat'], array( 'Bills & Utilities', 'Services', 'Business', 'Taxes & Gov' ), true ) && 0 !== strpos( (string) $m, 'ZELLE ' );
 		if ( 'Subscriptions' !== $last['cat'] && $spread > ( $loose ? 1.5 : 0.35 ) ) {
 			continue; // amounts too different to be a repeating charge (e.g. groceries)
 		}
