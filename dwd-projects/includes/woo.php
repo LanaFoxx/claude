@@ -25,6 +25,17 @@ function dwdp_is_woo_page() {
 	return function_exists( 'is_checkout' ) && ( is_checkout() || is_account_page() );
 }
 
+/* ---------- Yearly renewal: always on ---------- */
+
+// Hosting must be sold as a yearly subscription (Subscriptions for WooCommerce). If that plugin's main
+// switch is ever off (it was never turned on until Nov 2026, so 26 hosting orders went through as one-time
+// payments), turn it back on, so every hosting checkout sets up a yearly renewal and saves the card.
+add_action( 'init', function () {
+	if ( function_exists( 'wps_sfw_check_plugin_enable' ) && 'on' !== get_option( 'wps_sfw_enable_plugin', '' ) ) {
+		update_option( 'wps_sfw_enable_plugin', 'on' );
+	}
+} );
+
 /* ---------- Ordering ---------- */
 
 add_action( 'wp_loaded', function () {
