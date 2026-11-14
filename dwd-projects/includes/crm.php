@@ -1777,3 +1777,82 @@ function dwdc_dedupe_tasks() {
 		}
 	}
 }
+
+/* ---------- Create new staging URL ---------- */
+
+/**
+ * "Create new staging URL" on a project page.
+ *
+ * SiteGround has no way for this site to create a staging copy by itself, so the button only
+ * queues a request (post meta _dwdc_stg_req on the project). A Claude scheduled task then opens
+ * SiteGround's Staging Copies page in the Claude desktop app's browser, creates the copy with the
+ * requested name, and saves the new URL as the project's staging URL (window.dwdStagingDone in
+ * crm.js), which is also the staging URL the Markup box uses.
+ */
+
+/** A name SiteGround's "Staging Name" box accepts: letters, numbers, spaces and hyphens. */
+function dwdsg_name( $s ) {
+	$s = html_entity_decode( (string) $s, ENT_QUOTES, 'UTF-8' );
+	$s = trim( (string) preg_replace( '/\s+/', ' ', (string) preg_replace( '/[^A-Za-z0-9 \-]+/', ' ', $s ) ) );
+	return trim( substr( $s, 0, 40 ) );
+}
+
+/** Every waiting (or failed) request, oldest first. */
+function dwdsg_queue() {
+	$out = array();
+	foreach ( get_posts( array( 'post_type' => DWDC_CONTACT, 'post_status' => 'any', 'posts_per_page' => -1, 'fields' => 'ids', 'meta_key' => '_dwdc_stg_req' ) ) as $pid ) {
+		$q = get_post_meta( $pid, '_dwdc_stg_req', true );
+		if ( ! is_array( $q ) || empty( $q['name'] ) ) {
+			continue;
+		}
+		$out[] = array(
+			'id'      => (int) $pid,
+			'project' => dwdsg_name( get_the_title( $pid ) ),
+			'name'    => (string) $q['name'],
+			'at'      => (string) ( $q['at'] ?? '' ),
+			'error'   => (string) ( $q['error'] ?? '' ),
+		);
+	}
+	usort( $out, function ( $a, $b ) { return strcmp( $a['at'], $b['at'] ); } );
+	return $out;
+}
+
+add_action( 'rest_api_init', function () {
+	$can = function () { return current_user_can( 'manage_options' ); };
+	$pid = function ( $r ) {
+		$id = (int) $r->get_param( 'id' );
+		return $id && DWDC_CONTACT === get_post_type( $id ) ? $id : 0;
+	};
+	register_rest_route( 'dwd/v1', '/crm/staging-requests', array( 'methods' => 'GET', 'permission_callback' => $can, 'callback' => 'dwdsg_queue' ) );
+	// The button: ask for a staging copy named after the project.
+	register_rest_route( 'dwd/v1', '/crm/staging-request', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) use ( $pid ) {
+		$id = $pid( $r );
+		if ( ! $id ) {
+			return new WP_Error( 'dwdsg_id', 'That project was not found.', array( 'status' => 404 ) );
+		}
+		$name = dwdsg_name( $r->get_param( 'name' ) ?: get_the_title( $id ) );
+		if ( '' === $name ) {
+			return new WP_Error( 'dwdsg_name', 'Give the project a name first.', array( 'status' => 400 ) );
+		}
+		update_post_meta( $id, '_dwdc_stg_req', array( 'name' => $name, 'at' => gmdate( 'c' ) ) );
+		return dwdsg_queue();
+	} ) );
+	// Cancel a request, or clear it once the staging URL has been saved.
+	register_rest_route( 'dwd/v1', '/crm/staging-request/clear', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) use ( $pid ) {
+		$id = $pid( $r );
+		if ( $id ) {
+			delete_post_meta( $id, '_dwdc_stg_req' );
+		}
+		return dwdsg_queue();
+	} ) );
+	// The SiteGround step did not work: keep the reason so the project page can show it (it is not retried until asked again).
+	register_rest_route( 'dwd/v1', '/crm/staging-request/failed', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) use ( $pid ) {
+		$id = $pid( $r );
+		$q  = $id ? get_post_meta( $id, '_dwdc_stg_req', true ) : null;
+		if ( is_array( $q ) ) {
+			$q['error'] = sanitize_text_field( (string) $r->get_param( 'error' ) ) ?: 'It could not be created.';
+			update_post_meta( $id, '_dwdc_stg_req', $q );
+		}
+		return dwdsg_queue();
+	} ) );
+} );
