@@ -128,9 +128,26 @@ function dwdcm_plan() {
 	return array( 'emails' => array_keys( $map ), 'backfill' => array_slice( $todo, 0, 8 ), 'check' => dwdcm_unread_ids() );
 }
 
-/** New = from the client, unread in Gmail and not opened in Dream Desk yet. */
+/**
+ * New = from the client, unread in Gmail, not opened in Dream Desk yet, AND a real recent email:
+ * received in the last 7 days, not a calendar reply ("Accepted: …") and not a marketing email
+ * (anything with an unsubscribe link). Old unread mail in Gmail never counts as new.
+ */
 function dwdcm_is_new( $x ) {
-	return ! empty( $x['unread'] ) && empty( $x['seen'] );
+	if ( empty( $x['unread'] ) || ! empty( $x['seen'] ) ) {
+		return false;
+	}
+	$t = strtotime( (string) ( $x['date'] ?? '' ) );
+	if ( ! $t || $t < time() - 7 * DAY_IN_SECONDS ) {
+		return false;
+	}
+	if ( preg_match( '/^\s*(accepted|declined|tentative(ly accepted)?|invitation|updated invitation|canceled event|cancelled event)\s*:/i', (string) ( $x['subject'] ?? '' ) ) ) {
+		return false;
+	}
+	if ( false !== stripos( (string) ( $x['body'] ?? '' ), 'unsubscribe' ) ) {
+		return false;
+	}
+	return true;
 }
 
 /** Emails for a client (owner id): the new ones, the total, and everything when $all. */
