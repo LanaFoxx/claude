@@ -1797,6 +1797,48 @@ function dwdsg_name( $s ) {
 	return trim( substr( $s, 0, 40 ) );
 }
 
+/**
+ * Instant start: the Claude scheduled task that creates the copies can also be fired over the web
+ * (its "API trigger": a fire URL and a token made at claude.ai/code/routines). When both are saved
+ * here (option dwdsg_fire, kept on the server only), clicking the button starts that task right
+ * away instead of waiting for its next hourly run.
+ */
+function dwdsg_fire_cfg() {
+	$c = get_option( 'dwdsg_fire', array() );
+	$c = is_array( $c ) ? $c : array();
+	return array( 'url' => (string) ( $c['url'] ?? '' ), 'token' => (string) ( $c['token'] ?? '' ) );
+}
+function dwdsg_fire_ready() {
+	$c = dwdsg_fire_cfg();
+	return '' !== $c['url'] && '' !== $c['token'];
+}
+/** Start the Claude task now. Returns '' when it started, or a short reason when it did not. */
+function dwdsg_fire( $note ) {
+	$c = dwdsg_fire_cfg();
+	if ( '' === $c['url'] || '' === $c['token'] ) {
+		return 'not set up';
+	}
+	$res = wp_remote_post( $c['url'], array(
+		'timeout' => 15,
+		'headers' => array(
+			'Authorization'     => 'Bearer ' . $c['token'],
+			'anthropic-beta'    => 'experimental-cc-routine-2026-04-01',
+			'anthropic-version' => '2023-06-01',
+			'Content-Type'      => 'application/json',
+		),
+		'body'    => wp_json_encode( array( 'text' => (string) $note ) ),
+	) );
+	if ( is_wp_error( $res ) ) {
+		return 'Claude could not be reached';
+	}
+	$code = (int) wp_remote_retrieve_response_code( $res );
+	if ( $code >= 200 && $code < 300 ) {
+		return '';
+	}
+	$j = json_decode( (string) wp_remote_retrieve_body( $res ), true );
+	return 'Claude answered ' . $code . ( ! empty( $j['error']['message'] ) ? ': ' . sanitize_text_field( (string) $j['error']['message'] ) : '' );
+}
+
 /** Every waiting (or failed) request, oldest first. */
 function dwdsg_queue() {
 	$out = array();
@@ -1811,6 +1853,8 @@ function dwdsg_queue() {
 			'name'    => (string) $q['name'],
 			'at'      => (string) ( $q['at'] ?? '' ),
 			'error'   => (string) ( $q['error'] ?? '' ),
+			'fired'   => ! empty( $q['fired'] ),
+			'fire_no' => (string) ( $q['fire_no'] ?? '' ),
 		);
 	}
 	usort( $out, function ( $a, $b ) { return strcmp( $a['at'], $b['at'] ); } );
@@ -1834,9 +1878,38 @@ add_action( 'rest_api_init', function () {
 		if ( '' === $name ) {
 			return new WP_Error( 'dwdsg_name', 'Give the project a name first.', array( 'status' => 400 ) );
 		}
-		update_post_meta( $id, '_dwdc_stg_req', array( 'name' => $name, 'at' => gmdate( 'c' ) ) );
+		$q = array( 'name' => $name, 'at' => gmdate( 'c' ) );
+		update_post_meta( $id, '_dwdc_stg_req', $q );
+		if ( dwdsg_fire_ready() ) { // start the Claude task now; if that fails the hourly run still picks the request up
+			$no = dwdsg_fire( 'Staging requested for ' . $name . ' (project ' . $id . ').' );
+			$q['fired']   = '' === $no;
+			$q['fire_no'] = $no;
+			update_post_meta( $id, '_dwdc_stg_req', $q );
+		}
 		return dwdsg_queue();
 	} ) );
+	// Instant start: is it set up, and save the fire URL + token (the token is never sent back to the browser).
+	register_rest_route( 'dwd/v1', '/crm/staging-fire', array(
+		array( 'methods' => 'GET', 'permission_callback' => $can, 'callback' => function () {
+			return array( 'ready' => dwdsg_fire_ready() );
+		} ),
+		array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
+			$url   = esc_url_raw( trim( (string) $r->get_param( 'url' ) ) );
+			$token = trim( sanitize_text_field( (string) $r->get_param( 'token' ) ) );
+			if ( '' === $url && '' === $token ) {
+				delete_option( 'dwdsg_fire' );
+				return array( 'ready' => false );
+			}
+			if ( ! preg_match( '#^https://api\.anthropic\.com/v1/claude_code/routines/[A-Za-z0-9_]+/fire$#', $url ) ) {
+				return new WP_Error( 'dwdsg_url', 'That is not the fire URL. It looks like https://api.anthropic.com/v1/claude_code/routines/trig_…/fire', array( 'status' => 400 ) );
+			}
+			if ( strlen( $token ) < 20 ) {
+				return new WP_Error( 'dwdsg_token', 'Paste the whole token.', array( 'status' => 400 ) );
+			}
+			update_option( 'dwdsg_fire', array( 'url' => $url, 'token' => $token ), false );
+			return array( 'ready' => true );
+		} ),
+	) );
 	// Cancel a request, or clear it once the staging URL has been saved.
 	register_rest_route( 'dwd/v1', '/crm/staging-request/clear', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) use ( $pid ) {
 		$id = $pid( $r );

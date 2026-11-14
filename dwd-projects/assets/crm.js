@@ -971,11 +971,18 @@
 		if (!S.stgQ && !S.stgQBusy) { S.stgQBusy = 1; api('/staging-requests').then(function (x) { S.stgQ = x || []; S.stgQBusy = 0; if (S.stgQ.length) { render(); } }).catch(function () { S.stgQ = []; S.stgQBusy = 0; }); }
 		return S.stgQ || [];
 	}
+	function stgFire() {
+		if (!S.stgFire && !S.stgFireBusy) { S.stgFireBusy = 1; api('/staging-fire').then(function (x) { S.stgFire = x || { ready: false }; S.stgFireBusy = 0; render(); }).catch(function () { S.stgFire = { ready: false }; S.stgFireBusy = 0; }); }
+		return !!(S.stgFire && S.stgFire.ready);
+	}
 	function stgNewHtml(c) {
-		var q = stgQueue().filter(function (x) { return x.id === c.id; })[0];
+		var q = stgQueue().filter(function (x) { return x.id === c.id; })[0], inst = stgFire();
 		if (q && q.error) { return '<div class="dd-stgq"><p class="dd-help">' + ddPill('Not created', 'danger') + ' ' + esc(q.error) + '</p><div class="dd-pbtns"><button type="button" class="dd-btn secondary" data-stgnew="' + c.id + '">' + lu('plus', 14) + 'Try again</button><button type="button" class="dd-btn ghost" data-stgunq="' + c.id + '">Dismiss</button></div></div>'; }
-		if (q) { return '<div class="dd-stgq"><p class="dd-help">' + ddPill('Requested', 'info') + ' A staging copy named <b>' + esc(q.name) + '</b> is being created on SiteGround. Its URL shows here, and in the Markup box, once it’s ready (checked every hour).</p><div class="dd-pbtns"><button type="button" class="dd-btn ghost" data-stgunq="' + c.id + '">Cancel request</button></div></div>'; }
-		return '<div class="dd-stgq"><div class="dd-pbtns"><button type="button" class="dd-btn secondary" data-stgnew="' + c.id + '">' + lu('plus', 14) + 'Create new staging URL</button></div></div>';
+		if (q) { return '<div class="dd-stgq"><p class="dd-help">' + ddPill(q.fired ? 'Creating now' : 'Requested', 'info') + ' A staging copy named <b>' + esc(q.name) + '</b> is being created on SiteGround. Its URL shows here, and in the Markup box, ' + (q.fired ? 'in about a minute or two (refresh to see it).' : 'once it’s ready (checked every hour).' + (q.fire_no ? ' The instant start didn’t work: ' + esc(q.fire_no) + '.' : '')) + '</p><div class="dd-pbtns"><button type="button" class="dd-btn ghost" data-stgunq="' + c.id + '">Cancel request</button></div></div>'; }
+		var setup = S.stgFireEdit
+			? '<form class="dd-stgfire" data-stgfireform><p class="dd-help">At claude.ai/code/routines open <b>Dream Desk staging copies (SiteGround)</b> → Edit → Add another trigger → API → Generate token. Paste the URL and the token it shows:</p><div class="dd-frow"><input name="url" type="url" placeholder="https://api.anthropic.com/v1/claude_code/routines/trig_…/fire" required></div><div class="dd-frow"><input name="token" type="password" placeholder="Token (starts with sk-ant-oat01-)" autocomplete="off" required><button class="dd-btn primary">Save</button><button type="button" class="dd-btn ghost" data-stgfirecancel>Cancel</button></div></form>'
+			: '<p class="dd-help">' + (inst ? 'Starts right away. <button type="button" class="dd-hlink" data-stgfireset>Change</button>' : 'Created within the hour. <button type="button" class="dd-hlink" data-stgfireset>Make it instant</button>') + '</p>';
+		return '<div class="dd-stgq"><div class="dd-pbtns"><button type="button" class="dd-btn secondary" data-stgnew="' + c.id + '">' + lu('plus', 14) + 'Create new staging URL</button></div>' + setup + '</div>';
 	}
 	// For the Claude check (results avoid the characters = ? & so the browser tool can return them).
 	window.dwdStagingQueue = function () {
@@ -4415,6 +4422,8 @@
 		if ((el = t.closest('[data-stgedit]'))) { S.stgEdit = +el.getAttribute('data-stgedit'); render(); var si3 = app.querySelector('.dd-stgf input'); if (si3) { si3.focus(); si3.select(); } return; }
 		if (t.closest('[data-stgcancel]')) { S.stgEdit = 0; render(); return; }
 		if ((el = t.closest('[data-stgnew]'))) { el.disabled = true; api('/staging-request', 'POST', { id: +el.getAttribute('data-stgnew') }).then(function (q) { S.stgQ = q || []; render(); toast('Staging copy requested'); }).catch(function (e) { el.disabled = false; fail(e); }); return; }
+		if (t.closest('[data-stgfireset]')) { S.stgFireEdit = 1; render(); return; }
+		if (t.closest('[data-stgfirecancel]')) { S.stgFireEdit = 0; render(); return; }
 		if ((el = t.closest('[data-stgunq]'))) { api('/staging-request/clear', 'POST', { id: +el.getAttribute('data-stgunq') }).then(function (q) { S.stgQ = q || []; render(); }).catch(fail); return; }
 		if ((el = t.closest('[data-stgmk]'))) { var mu = app.querySelector('[data-mkurl]'); if (mu) { mu.scrollIntoView({ behavior: 'smooth', block: 'center' }); mu.focus(); } return; }
 		if ((el = t.closest('[data-schedtask]')) && !t.closest('a')) { S.modal = { type: 'schedtask', key: el.getAttribute('data-schedtask') }; render(); return; }
@@ -4655,6 +4664,10 @@
 		new FormData(f).forEach(function (val, k) { data[k] = val; });
 		if (isTodoAdd(f) && data.text) { var pw = parseWhen(data.text); if (pw.due) { data.due = pw.due; } if (pw.time) { data.time = pw.time; } if (pw.due || pw.time) { data.text = pw.text; } }
 		if (f.classList.contains('dd-padd')) { S.ppDate = S.ppDate || {}; S.ppDate[f.getAttribute('data-contact')] = ''; }
+		if (f.hasAttribute('data-stgfireform')) {
+			api('/staging-fire', 'POST', { url: String(data.url || '').trim(), token: String(data.token || '').trim() }).then(function (x) { S.stgFire = x; S.stgFireEdit = 0; render(); toast('Instant start is on'); }).catch(fail);
+			return;
+		}
 		if (f.hasAttribute('data-stgform')) {
 			var sgid = +f.getAttribute('data-stgform'), sgu = String(data.staging || '').trim();
 			if (sgu && !/^https?:\/\//i.test(sgu)) { sgu = 'https://' + sgu; }

@@ -355,3 +355,5 @@
 /* Staging box: Create new staging URL (request / waiting / failed) */
 .dd-stgq { display: flex; flex-direction: column; gap: 10px; }
 .dd-stgq .dd-help { margin: 0; }
+.dd-stgfire { display: flex; flex-direction: column; gap: 8px; }
+.dd-stgq .dd-hlink { display: inline; padding: 0; }
