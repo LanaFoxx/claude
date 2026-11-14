@@ -115,13 +115,332 @@ function dwdbk_parse( $csv, $acct ) {
 	return $out;
 }
 
+/** The same bank linked twice through Plaid stores every transaction twice: how many copies to expect. */
+function dwdbk_copies() {
+	if ( ! function_exists( 'dwdpl_items' ) ) {
+		return 1;
+	}
+	$seen = array();
+	$max  = 1;
+	foreach ( (array) dwdpl_items() as $it ) {
+		$a = array_map( 'strval', (array) ( $it['accounts'] ?? array() ) );
+		sort( $a );
+		$k          = strtolower( (string) ( $it['institution'] ?? '' ) ) . '|' . implode( ',', $a );
+		$seen[ $k ] = ( $seen[ $k ] ?? 0 ) + 1;
+		$max        = max( $max, $seen[ $k ] );
+	}
+	return $max;
+}
+
+/** Count each real transaction once when a bank is linked more than once (nothing is deleted). */
+function dwdbk_dedupe( $tx ) {
+	$k = dwdbk_copies();
+	if ( $k < 2 ) {
+		return $tx;
+	}
+	$n   = array();
+	$out = array();
+	foreach ( $tx as $t ) {
+		if ( 'p' !== substr( (string) $t['id'], 0, 1 ) ) { // uploaded file rows are never doubled
+			$out[] = $t;
+			continue;
+		}
+		$key       = $t['date'] . '|' . $t['desc'] . '|' . $t['amt'] . '|' . $t['acct'];
+		$n[ $key ] = ( $n[ $key ] ?? 0 ) + 1;
+		if ( 1 === $n[ $key ] % $k ) {
+			$out[] = $t;
+		}
+	}
+	return $out;
+}
+
+/** Money → Suggestions: spending patterns over the last 12 months, people paid by Zelle, where to save. */
+function dwdbk_insights() {
+	$d  = dwdbk_get();
+	$tx = dwdbk_dedupe( $d['tx'] );
+	if ( ! $tx ) {
+		return array( 'count' => 0 );
+	}
+	foreach ( $tx as &$t ) {
+		if ( isset( $d['cats'][ $t['m'] ] ) ) {
+			$t['cat'] = $d['cats'][ $t['m'] ];
+		}
+	}
+	unset( $t );
+	$dates = array_column( $tx, 'date' );
+	$to    = max( $dates );
+	$first = min( $dates );
+	$from  = max( $first, gmdate( 'Y-m-d', strtotime( $to . ' -1 year +1 day' ) ) );
+	$days  = max( 1, (int) round( ( strtotime( $to ) - strtotime( $from ) ) / DAY_IN_SECONDS ) + 1 );
+	$yr    = 365 / $days;
+	$mth   = 30.44 / $days;
+	$usd   = function ( $n ) { return '$' . number_format( round( (float) $n ) ); };
+	$nice  = function ( $s ) {
+		$s = trim( (string) preg_replace( '/\s+/', ' ', (string) $s ) );
+		return mb_substr( $s === strtoupper( $s ) ? ucwords( strtolower( $s ) ) : $s, 0, 44 );
+	};
+	$own   = '/KEEP ?THE ?CHANGE|ONLINE BANKING TRANSFER|TRANSFER (TO|FROM) (CHK|SAV|ACCT|CHECKING|SAVINGS)|OVERDRAFT PROTECTION/';
+	$card  = '/ONLINE BANKING PAYMENT TO CRD|CREDIT CARD PAYMENT|CRD PMT|PAYMENT - THANK YOU|BANK OF AMERICA CREDIT CARD|CREDIT CARD BILL PAYMENT/';
+	// First match wins. label, words to look for, or a category.
+	$defs = array(
+		'fees'     => array( 'Bank fees and interest', '/OVERDRAFT|LATE FEE|INTEREST CHARGE|MAINTENANCE FEE|\bNSF\b|ATM FEE|FOREIGN TRANSACTION|SERVICE FEE|MONTHLY FEE/', 'Fees' ),
+		'delivery' => array( 'Food delivery (DoorDash, Uber Eats, Grubhub)', '/DOORDASH|UBER\s*EATS|GRUBHUB|POSTMATES|GOPUFF|CAVIAR/', '' ),
+		'coffee'   => array( 'Coffee shops', '/STARBUCKS|DUNKIN|DUTCH BROS|COFFEE|CARIBOU|7 BREW|BLACK RIFLE/', '' ),
+		'ride'     => array( 'Uber and Lyft rides', '/\bUBER\b|\bLYFT\b/', '' ),
+		'amazon'   => array( 'Amazon', '/AMAZON|AMZN/', '' ),
+		'betting'  => array( 'Betting and lottery', '/DRAFTKINGS|FANDUEL|BETMGM|LOTTERY|CASINO|PRIZEPICKS/', '' ),
+		'drinks'   => array( 'Bars, breweries and liquor stores', '/ABC STORE|LIQUOR|TOTAL WINE|WINE & SPIRITS|BREWERY|BREWING|TAPROOM|\bPUB\b|\bBAR\b/', '' ),
+		'subs'     => array( 'Subscriptions', '', 'Subscriptions' ),
+		'dining'   => array( 'Restaurants and eating out', '', 'Dining' ),
+		'fun'      => array( 'Entertainment and fun', '', 'Fun' ),
+		'shopping' => array( 'Other shopping', '', 'Shopping' ),
+	);
+	$hab = array();
+	foreach ( $defs as $k => $x ) {
+		$hab[ $k ] = array( 'key' => $k, 'label' => $x[0], 'total' => 0, 'count' => 0, 'm' => array() );
+	}
+	$people = array();
+	$cats   = array();
+	$merch  = array();
+	$months = array();
+	$accts  = array();
+	$big    = array();
+	$dow    = array_fill( 0, 7, 0 );
+	$spent  = 0;
+	$income = 0;
+	$keep   = 0;
+	$cardp  = 0;
+	foreach ( $tx as $t ) {
+		$u   = strtoupper( (string) $t['desc'] );
+		$amt = (float) $t['amt'];
+		$win = $t['date'] >= $from;
+		if ( preg_match( $own, $u ) ) {
+			if ( $win && $amt < 0 && preg_match( '/KEEP ?THE ?CHANGE/', $u ) ) {
+				$keep += -$amt;
+			}
+			continue;
+		}
+		$who = '';
+		if ( preg_match( '/ZELLE\b.*?\b(TO|FROM)\s+(.+)$/i', (string) $t['desc'], $m ) ) {
+			$who  = trim( (string) preg_replace( '/\s*(;|CONF\s*#|\bCONF\b|\bFOR\s+["\'\x{201C}]).*$/iu', '', $m[2] ) );
+			$memo = preg_match( '/\bFOR\s+["\'\x{201C}](.+?)["\'\x{201D}]/iu', $m[2], $mm ) ? trim( $mm[1] ) : '';
+			if ( '' !== $who ) {
+				$pk = strtoupper( (string) preg_replace( '/\s+/', ' ', $who ) );
+				if ( ! isset( $people[ $pk ] ) ) {
+					$people[ $pk ] = array( 'name' => $nice( $who ), 'year' => 0, 'count' => 0, 'all' => 0, 'count_all' => 0, 'back' => 0, 'first' => $t['date'], 'last' => '', 'years' => array(), 'memos' => array() );
+				}
+				$p = &$people[ $pk ];
+				if ( $amt < 0 ) {
+					$p['all'] += -$amt;
+					$p['count_all']++;
+					$p['first'] = min( $p['first'], $t['date'] );
+					$p['last']  = max( $p['last'], $t['date'] );
+					$y          = substr( $t['date'], 0, 4 );
+					$p['years'][ $y ] = ( $p['years'][ $y ] ?? 0 ) - $amt;
+					if ( $win ) {
+						$p['year'] += -$amt;
+						$p['count']++;
+					}
+					if ( '' !== $memo ) {
+						$p['memos'][ strtolower( $memo ) ] = ( $p['memos'][ strtolower( $memo ) ] ?? 0 ) + 1;
+					}
+				} else {
+					$p['back'] += $amt;
+				}
+				unset( $p );
+			}
+		}
+		if ( ! $win ) {
+			continue;
+		}
+		if ( $amt > 0 ) {
+			$income += $amt;
+			continue;
+		}
+		$out   = -$amt;
+		$is_cd = (bool) preg_match( $card, $u );
+		$cat   = '' !== $who ? 'Sent to people (Zelle)' : ( $is_cd ? 'Credit card payments' : ( 'Transfers' === $t['cat'] ? 'Other transfers' : (string) $t['cat'] ) );
+		$spent += $out;
+		$ym     = substr( $t['date'], 0, 7 );
+		$months[ $ym ]['out']          = ( $months[ $ym ]['out'] ?? 0 ) + $out;
+		$months[ $ym ]['cats'][ $cat ] = ( $months[ $ym ]['cats'][ $cat ] ?? 0 ) + $out;
+		$accts[ (string) $t['acct'] ]  = ( $accts[ (string) $t['acct'] ] ?? 0 ) + $out;
+		if ( ! isset( $cats[ $cat ] ) ) {
+			$cats[ $cat ] = array( 'name' => $cat, 'total' => 0, 'count' => 0, 'm' => array() );
+		}
+		$cats[ $cat ]['total'] += $out;
+		$cats[ $cat ]['count']++;
+		if ( $is_cd ) {
+			$cardp += $out;
+		}
+		if ( '' !== $who || $is_cd ) {
+			continue;
+		}
+		$mk = (string) $t['m'];
+		$cats[ $cat ]['m'][ $mk ] = ( $cats[ $cat ]['m'][ $mk ] ?? 0 ) + $out;
+		if ( ! isset( $merch[ $mk ] ) ) {
+			$merch[ $mk ] = array( 'name' => $nice( $t['desc'] ), 'total' => 0, 'count' => 0, 'cat' => $cat );
+		}
+		$merch[ $mk ]['total'] += $out;
+		$merch[ $mk ]['count']++;
+		$big[] = array( 'date' => $t['date'], 'name' => $nice( $t['desc'] ), 'amt' => round( $out, 2 ), 'cat' => $cat );
+		foreach ( $defs as $k => $x ) {
+			if ( ( '' !== $x[1] && preg_match( $x[1], $u ) ) || ( '' !== $x[2] && $x[2] === $t['cat'] ) ) {
+				$hab[ $k ]['total'] += $out;
+				$hab[ $k ]['count']++;
+				$hab[ $k ]['m'][ $mk ] = ( $hab[ $k ]['m'][ $mk ] ?? 0 ) + $out;
+				break;
+			}
+		}
+		if ( in_array( $t['cat'], array( 'Dining', 'Fun', 'Shopping' ), true ) ) {
+			$dow[ (int) gmdate( 'w', strtotime( $t['date'] . ' 12:00:00' ) ) ] += $out;
+		}
+	}
+	$top = function ( $map, $n ) use ( $merch ) {
+		arsort( $map );
+		$o = array();
+		foreach ( array_slice( $map, 0, $n, true ) as $mk => $v ) {
+			$o[] = array( 'name' => $merch[ $mk ]['name'] ?? $mk, 'total' => round( $v ) );
+		}
+		return $o;
+	};
+	$habits = array();
+	foreach ( $hab as $h ) {
+		if ( $h['total'] <= 0 ) {
+			continue;
+		}
+		$habits[] = array( 'key' => $h['key'], 'label' => $h['label'], 'total' => round( $h['total'] ), 'count' => $h['count'], 'monthly' => round( $h['total'] * $mth ), 'yearly' => round( $h['total'] * $yr ), 'top' => $top( $h['m'], 3 ) );
+	}
+	usort( $habits, function ( $a, $b ) { return $b['yearly'] <=> $a['yearly']; } );
+	$plist = array();
+	foreach ( $people as $p ) {
+		if ( $p['all'] <= 0 ) {
+			continue;
+		}
+		arsort( $p['memos'] );
+		ksort( $p['years'] );
+		$plist[] = array( 'name' => $p['name'], 'year' => round( $p['year'] ), 'count' => $p['count'], 'all' => round( $p['all'] ), 'count_all' => $p['count_all'], 'avg' => round( $p['all'] / max( 1, $p['count_all'] ) ), 'back' => round( $p['back'] ), 'first' => $p['first'], 'last' => $p['last'], 'years' => array_map( 'round', $p['years'] ), 'memo' => (string) ( array_keys( $p['memos'] )[0] ?? '' ) );
+	}
+	usort( $plist, function ( $a, $b ) { return ( $b['year'] <=> $a['year'] ) ?: ( $b['all'] <=> $a['all'] ); } );
+	$clist = array();
+	foreach ( $cats as $c ) {
+		$clist[] = array( 'name' => $c['name'], 'total' => round( $c['total'] ), 'count' => $c['count'], 'yearly' => round( $c['total'] * $yr ), 'top' => $top( $c['m'], 3 ) );
+	}
+	usort( $clist, function ( $a, $b ) { return $b['total'] <=> $a['total']; } );
+	$mlist = array_values( $merch );
+	usort( $mlist, function ( $a, $b ) { return $b['total'] <=> $a['total']; } );
+	$small = array_values( array_filter( $mlist, function ( $x ) { return $x['count'] >= 10 && $x['total'] / $x['count'] <= 25 && ! in_array( $x['cat'], array( 'Subscriptions', 'Bills & Utilities', 'Fees' ), true ); } ) );
+	$fix   = function ( $x ) use ( $yr ) { return array( 'name' => $x['name'], 'total' => round( $x['total'] ), 'count' => $x['count'], 'avg' => round( $x['total'] / max( 1, $x['count'] ), 2 ), 'cat' => $x['cat'], 'yearly' => round( $x['total'] * $yr ) ); };
+	usort( $big, function ( $a, $b ) { return $b['amt'] <=> $a['amt']; } );
+	$subs = array_values( array_filter( dwdbk_recurring( $tx, $d['subs'] ), function ( $s ) { return empty( $s['stopped'] ) && 'ignore' !== $s['status']; } ) );
+	$suby = array_sum( array_column( $subs, 'yearly' ) );
+	ksort( $months );
+	$mrows = array();
+	foreach ( $months as $ym => $x ) {
+		arsort( $x['cats'] );
+		$mrows[] = array( 'ym' => $ym, 'out' => round( $x['out'] ), 'top' => (string) array_keys( $x['cats'] )[0], 'top_amt' => round( (float) reset( $x['cats'] ) ) );
+	}
+	// Whole months only for month-to-month comparisons.
+	$full = $mrows;
+	if ( $full && '01' !== substr( $from, 8, 2 ) ) {
+		array_shift( $full );
+	}
+	if ( $full && gmdate( 'Y-m-t', strtotime( $to ) ) !== $to ) {
+		array_pop( $full );
+	}
+	$label = function ( $ym ) { return gmdate( 'F Y', strtotime( $ym . '-15' ) ); };
+	$pat   = array();
+	if ( count( $full ) >= 3 ) {
+		$outs = array_column( $full, 'out' );
+		$avg  = array_sum( $outs ) / count( $outs );
+		$hi   = $full[ array_search( max( $outs ), $outs, true ) ];
+		$lo   = $full[ array_search( min( $outs ), $outs, true ) ];
+		$pat[] = array( 't' => 'Most expensive month:', 'x' => $label( $hi['ym'] ) . ' at ' . $usd( $hi['out'] ) . ', against a typical ' . $usd( $avg ) . '. The biggest part was ' . $hi['top'] . ' (' . $usd( $hi['top_amt'] ) . '). Your lightest month was ' . $label( $lo['ym'] ) . ' at ' . $usd( $lo['out'] ) . '.' );
+	}
+	if ( count( $full ) >= 6 ) {
+		$a = array_sum( array_column( array_slice( $full, -3 ), 'out' ) ) / 3;
+		$b = array_sum( array_column( array_slice( $full, -6, 3 ), 'out' ) ) / 3;
+		if ( $b > 0 ) {
+			$ch    = ( $a - $b ) / $b * 100;
+			$pat[] = array( 't' => 'Direction:', 'x' => 'The last 3 full months averaged ' . $usd( $a ) . ' a month, ' . ( abs( $ch ) < 3 ? 'about the same as' : ( round( abs( $ch ) ) . '% ' . ( $ch > 0 ? 'more' : 'less' ) . ' than' ) ) . ' the 3 months before (' . $usd( $b ) . ').' );
+		}
+	}
+	$dsum = array_sum( $dow );
+	if ( $dsum > 0 ) {
+		$wk    = $dow[5] + $dow[6] + $dow[0];
+		$pat[] = array( 't' => 'Weekends:', 'x' => round( $wk / $dsum * 100 ) . '% of your restaurant, fun and shopping money (' . $usd( $wk ) . ' of ' . $usd( $dsum ) . ') is spent Friday to Sunday.' );
+	}
+	$ptot = array_sum( array_column( $plist, 'year' ) );
+	if ( $ptot > 0 && $spent > 0 ) {
+		$pat[] = array( 't' => 'Zelle:', 'x' => $usd( $ptot ) . ' went to people by Zelle, ' . round( $ptot / $spent * 100 ) . '% of everything that left your accounts.' );
+	}
+	if ( $cardp > 0 ) {
+		$pat[] = array( 't' => 'Credit cards:', 'x' => $usd( $cardp ) . ' went to credit card payments. What was bought on those cards is not in the bank feed, so your real totals for restaurants, shopping and the rest are higher than shown here.' );
+	}
+	if ( $suby > 0 ) {
+		$pat[] = array( 't' => 'Repeating charges:', 'x' => count( $subs ) . ' charges repeat on a schedule and add up to about ' . $usd( $suby ) . ' a year.' );
+	}
+	if ( $keep > 0 ) {
+		$pat[] = array( 't' => 'Already saving:', 'x' => 'Keep the Change moved ' . $usd( $keep ) . ' into savings.' );
+	}
+	arsort( $accts );
+	$alist = array();
+	foreach ( $accts as $a => $v ) {
+		$alist[] = array( 'name' => $a, 'total' => round( $v ) );
+	}
+	return array(
+		'count'        => count( $tx ),
+		'copies'       => dwdbk_copies(),
+		'from'         => $from,
+		'to'           => $to,
+		'first'        => $first,
+		'days'         => $days,
+		'spent'        => round( $spent ),
+		'spent_month'  => round( $spent * $mth ),
+		'income'       => round( $income ),
+		'people_total' => round( $ptot ),
+		'people_count' => count( array_filter( $plist, function ( $p ) { return $p['year'] > 0; } ) ),
+		'habits'       => $habits,
+		'people'       => $plist,
+		'cats'         => $clist,
+		'merchants'    => array_map( $fix, array_slice( $mlist, 0, 15 ) ),
+		'small'        => array_map( $fix, array_slice( $small, 0, 10 ) ),
+		'subs'         => array( 'yearly' => round( $suby ), 'list' => array_map( function ( $s ) { return array( 'name' => $s['name'], 'cycle' => $s['cycle'], 'amount' => $s['amount'], 'yearly' => round( $s['yearly'] ) ); }, array_slice( $subs, 0, 12 ) ) ),
+		'big'          => array_slice( $big, 0, 10 ),
+		'months'       => $mrows,
+		'patterns'     => $pat,
+		'accounts'     => $alist,
+	);
+}
+
 /** Repeating charges: same merchant, regular spacing, similar amounts. */
 function dwdbk_recurring( $tx, $flags ) {
-	$by = array();
+	// Money moved between your own accounts or onto your own credit cards is not a charge.
+	$own   = '/KEEP ?THE ?CHANGE|ONLINE BANKING TRANSFER|TRANSFER (TO|FROM) (CHK|SAV|ACCT|CHECKING|SAVINGS)|OVERDRAFT PROTECTION|ONLINE BANKING PAYMENT TO CRD|CREDIT CARD PAYMENT|CRD PMT|PAYMENT - THANK YOU|BANK OF AMERICA CREDIT CARD|CREDIT CARD BILL PAYMENT/';
+	$kinds = (array) get_option( 'dwdbk_kinds', array() );
+	$scope = (array) get_option( 'dwdbk_scopes', array() );
+	$by    = array();
+	$names = array();
 	foreach ( $tx as $t ) {
-		if ( $t['amt'] < 0 && 'Transfers' !== $t['cat'] ) {
-			$by[ $t['m'] ][] = $t;
+		if ( $t['amt'] >= 0 ) {
+			continue;
 		}
+		$key = (string) $t['m'];
+		if ( 'Transfers' === $t['cat'] ) {
+			if ( preg_match( $own, strtoupper( (string) $t['desc'] ) ) ) {
+				continue;
+			}
+			// Zelle to a person (rent, a sitter): one line per person, not one for all of Zelle.
+			if ( preg_match( '/ZELLE\b.*?\bTO\s+(.+)$/i', (string) $t['desc'], $mm ) ) {
+				$who = trim( (string) preg_replace( '/\s*(;|CONF\s*#|\bCONF\b|\bFOR\s+["\'\x{201C}]).*$/iu', '', $mm[1] ) );
+				if ( '' === $who ) {
+					continue;
+				}
+				$key           = 'ZELLE ' . strtoupper( (string) preg_replace( '/\s+/', ' ', $who ) );
+				$names[ $key ] = ucwords( strtolower( $who ) ) . ' (Zelle)';
+			}
+		}
+		$by[ $key ][] = $t;
 	}
 	$out = array();
 	foreach ( $by as $m => $list ) {
@@ -141,25 +460,40 @@ function dwdbk_recurring( $tx, $flags ) {
 				$cycle = $name;
 			}
 		}
+		$last = end( $list );
+		$amts = array_map( function ( $t ) { return -$t['amt']; }, $list );
+		// Paid most months but not on a steady day (or more than once a month): still a monthly charge.
+		if ( ! $cycle && ! in_array( $last['cat'], array( 'Groceries', 'Dining', 'Shopping', 'Fun', 'Travel', 'Gas & Car' ), true ) ) {
+			$ms = array();
+			foreach ( $list as $t ) {
+				$ms[ substr( $t['date'], 0, 7 ) ] = ( $ms[ substr( $t['date'], 0, 7 ) ] ?? 0 ) - $t['amt'];
+			}
+			$span = ( (int) substr( $last['date'], 0, 4 ) - (int) substr( $list[0]['date'], 0, 4 ) ) * 12 + (int) substr( $last['date'], 5, 2 ) - (int) substr( $list[0]['date'], 5, 2 ) + 1;
+			if ( count( $ms ) >= 3 && count( $ms ) >= 0.75 * $span ) {
+				$cycle = 'monthly';
+				$amts  = array_values( $ms );
+			}
+		}
 		if ( ! $cycle || ( count( $list ) < 3 && ! in_array( $cycle, array( 'monthly', 'yearly', 'every 3 months' ), true ) ) ) {
 			continue;
 		}
-		$amts = array_map( function ( $t ) { return -$t['amt']; }, $list );
-		$last = end( $list );
-		$avg  = array_sum( $amts ) / count( $amts );
+		$now    = end( $amts );
+		$avg    = array_sum( $amts ) / count( $amts );
 		$spread = ( max( $amts ) - min( $amts ) ) / max( 1, $avg );
-		if ( $spread > 0.35 && 'Subscriptions' !== $last['cat'] ) {
-			continue; // amounts too different to be a subscription (e.g. groceries)
+		// Bills (phone, power, insurance, services) move around more than a subscription does.
+		$loose = in_array( $last['cat'], array( 'Bills & Utilities', 'Services', 'Business', 'Taxes & Gov' ), true ) && 0 !== strpos( $m, 'ZELLE ' );
+		if ( 'Subscriptions' !== $last['cat'] && $spread > ( $loose ? 1.5 : 0.35 ) ) {
+			continue; // amounts too different to be a repeating charge (e.g. groceries)
 		}
 		$prev = count( $amts ) > 1 ? $amts[ count( $amts ) - 2 ] : $amts[0];
 		$step = array( 'weekly' => 7, 'every 2 weeks' => 14, 'monthly' => 30, 'every 3 months' => 91, 'yearly' => 365 )[ $cycle ];
 		$next = gmdate( 'Y-m-d', strtotime( $last['date'] ) + $step * DAY_IN_SECONDS );
-		$per_mo = -$last['amt'] * ( 30.4 / $step );
+		$per_mo = 'monthly' === $cycle ? $now : $now * ( 30.4 / $step );
 		$out[] = array(
 			'merchant'  => $m,
-			'name'      => ucwords( strtolower( $m ) ),
+			'name'      => $names[ $m ] ?? ucwords( strtolower( $m ) ),
 			'cycle'     => $cycle,
-			'amount'    => -$last['amt'],
+			'amount'    => round( $now, 2 ),
 			'monthly'   => round( $per_mo, 2 ),
 			'yearly'    => round( $per_mo * 12, 2 ),
 			'count'     => count( $list ),
@@ -167,10 +501,12 @@ function dwdbk_recurring( $tx, $flags ) {
 			'last'      => $last['date'],
 			'next'      => $next,
 			'stopped'   => strtotime( $next ) < time() - 20 * DAY_IN_SECONDS,
-			'raised'    => -$last['amt'] > $prev * 1.02 ? round( -$last['amt'] - $prev, 2 ) : 0,
+			'raised'    => $now > $prev * 1.02 && ! $loose ? round( $now - $prev, 2 ) : 0,
 			'cat'       => $last['cat'],
 			'status'    => $flags[ $m ] ?? '',
-			'scope'     => (string) ( ( (array) get_option( 'dwdbk_scopes', array() ) )[ $m ] ?? '' ), // business | personal | '' (unlabeled)
+			'scope'     => (string) ( $scope[ $m ] ?? '' ), // business | personal | '' (unlabeled)
+			'kind'      => in_array( $kinds[ $m ] ?? '', array( 'bill', 'subscription' ), true ) ? $kinds[ $m ] : ( 'Subscriptions' === $last['cat'] ? 'subscription' : 'bill' ),
+			'acct'      => (string) ( $last['acct'] ?? '' ),
 			'prev'      => round( $prev, 2 ),
 		);
 	}
@@ -180,7 +516,7 @@ function dwdbk_recurring( $tx, $flags ) {
 
 function dwdbk_summary( $limit_tx = 400 ) {
 	$d  = dwdbk_get();
-	$tx = $d['tx'];
+	$tx = dwdbk_dedupe( $d['tx'] ); // a bank linked twice is counted once
 	foreach ( $tx as &$t ) {
 		if ( isset( $d['cats'][ $t['m'] ] ) ) {
 			$t['cat'] = $d['cats'][ $t['m'] ];
@@ -238,6 +574,7 @@ function dwdbk_ai_context() {
 
 add_action( 'rest_api_init', function () {
 	$can = function () { return current_user_can( 'manage_options' ); };
+	register_rest_route( 'dwd/v1', '/crm/bank/insights', array( 'methods' => 'GET', 'permission_callback' => $can, 'callback' => function () { return dwdbk_insights(); } ) );
 	register_rest_route( 'dwd/v1', '/crm/bank', array(
 		array( 'methods' => 'GET', 'permission_callback' => $can, 'callback' => function () {
 			$out             = dwdbk_summary();
@@ -275,6 +612,17 @@ add_action( 'rest_api_init', function () {
 				$s['added'] = $new;
 				$s['read']  = count( $rows );
 				return $s;
+			}
+			if ( isset( $p['sub'], $p['kind'] ) ) { // file a repeating charge as a bill or a subscription (remembered for that merchant)
+				$kn = (array) get_option( 'dwdbk_kinds', array() );
+				$m3 = sanitize_text_field( (string) $p['sub'] );
+				if ( in_array( $p['kind'], array( 'bill', 'subscription' ), true ) ) {
+					$kn[ $m3 ] = $p['kind'];
+				} else {
+					unset( $kn[ $m3 ] );
+				}
+				update_option( 'dwdbk_kinds', $kn, false );
+				return dwdbk_summary();
 			}
 			if ( isset( $p['sub'], $p['scope'] ) ) { // label a subscription Business or Personal (remembered for that merchant)
 				$sc = (array) get_option( 'dwdbk_scopes', array() );
