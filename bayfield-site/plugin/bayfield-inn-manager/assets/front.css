@@ -416,3 +416,7 @@ body.woocommerce-checkout::after { display: none !important; } /* no film grain 
 .bi-checkout .woocommerce-shipping-fields { margin-top: 4px; }
 .bi-checkout #customer_details .woocommerce-additional-fields h3 { font-size: 17px !important; margin: 20px 0 10px !important; }
 @media (max-width: 600px) { .bi-checkout .form-row.bi-third[id$=address_2_field] { grid-column: span 6 !important; } }
+/* Cart page matches the clean checkout */
+body.woocommerce-cart::after { display: none !important; }
+.bi-cart .woocommerce table.shop_table, .bi-cart .woocommerce .cart_totals table.shop_table { box-shadow: 0 30px 60px -44px rgba(23,48,27,.35); }
+.bi-cart .woocommerce button[name=update_cart] { background: #fff !important; color: var(--bi-g) !important; border: 1px solid var(--bi-line) !important; box-shadow: none; }

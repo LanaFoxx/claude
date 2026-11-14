@@ -260,8 +260,8 @@ function bi_cart_count() {
 }
 function bi_cart_link_html() {
 	$n   = bi_cart_count();
-	$url = bi_store_on() ? wc_get_checkout_url() : home_url( '/checkout/' );
-	return sprintf( '<a class="bi-cart-link%s" href="%s" aria-label="Checkout: %d item%s in your cart"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1.2 11.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></svg><span class="bi-cart-count%s">%d</span></a>',
+	$url = bi_store_on() ? wc_get_cart_url() : home_url( '/cart/' );
+	return sprintf( '<a class="bi-cart-link%s" href="%s" aria-label="Cart: %d item%s"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1.2 11.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></svg><span class="bi-cart-count%s">%d</span></a>',
 		$n ? '' : ' is-empty', esc_url( $url ), $n, 1 === $n ? '' : 's', $n ? '' : ' is-empty', $n );
 }
 // WooCommerce refreshes these pieces after add-to-cart and on cached pages.
@@ -278,21 +278,14 @@ add_action( 'wp_enqueue_scripts', function () {
 		wp_enqueue_style( 'bi-front' );
 	}
 }, 20 );
-// No separate cart step: a gift card goes straight to checkout, and /cart/ forwards to checkout.
+// "Add to cart" goes straight to checkout; the header cart icon opens /cart/ for editing.
 add_filter( 'woocommerce_add_to_cart_redirect', function ( $url, $product ) {
 	if ( $product && (int) $product->get_id() === bi_gc_product_id() ) {
 		return wc_get_checkout_url();
 	}
 	return $url;
 }, 10, 2 );
-add_action( 'template_redirect', function () {
-	// With items, the cart page isn't needed. (Empty: WooCommerce sends empty checkouts to the cart,
-	// which shows "Your cart is empty" with a link back to the shop.)
-	if ( bi_store_on() && is_cart() && WC()->cart && ! WC()->cart->is_empty() ) {
-		wp_safe_redirect( wc_get_checkout_url() );
-		exit;
-	}
-}, 5 );
+// The cart page (header cart icon) is where shoppers edit quantities before checkout.
 // Checkout is the only place to review the order, so each item gets a remove link there.
 add_filter( 'woocommerce_cart_item_name', function ( $name, $item, $key ) {
 	if ( is_checkout() && ! is_wc_endpoint_url( 'order-received' ) && ! empty( $key ) ) {

@@ -72,7 +72,7 @@ class BI_Gift_Card_Widget extends \Elementor\Widget_Base {
 	}
 }
 
-/** Header cart: bag icon + item count linking to checkout; shown only when the cart has items. */
+/** Header cart: bag icon + item count linking to the cart page; shown only when the cart has items. */
 class BI_Cart_Link_Widget extends \Elementor\Widget_Base {
 
 	public function get_name() { return 'bi-cart-link'; }
