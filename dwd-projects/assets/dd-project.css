@@ -43,6 +43,9 @@
 .dd-pc2 > header .sum, .dd-hmeta { font-size: 13px; color: var(--text-3); }
 .dd-hlink { border: 0; background: none; padding: 0; font: 500 13px var(--font); color: var(--accent-text) !important; cursor: pointer; white-space: nowrap; }
 .dd-pempty { padding: 12px 20px 16px; font-size: 13px; color: var(--text-3); }
+/* WordPress admin's own p styles were wiping this padding (No to-dos yet, No contacts yet, Loading… sat on the card edge). */
+.dd .dd-card p.dd-pempty { margin: 0 !important; padding: 12px 20px 16px !important; }
+@media (max-width: 767px) { .dd .dd-card p.dd-pempty { padding-left: 16px !important; padding-right: 16px !important; } }
 .dd-pbtns { display: flex; gap: 8px; flex-wrap: wrap; }
 .dd-pbtns.end { justify-content: flex-end; }
 .dd-pbtns .dd-btn { height: 36px; }
