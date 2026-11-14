@@ -618,3 +618,38 @@ input[type=date], input[type=datetime-local] { cursor: pointer; }
 /* Install banner: X in the top-right corner, swipe to close */
 .dwdc-appb { position: relative; padding-right: 44px !important; touch-action: pan-y; }
 .dwdc-appb .dwdc-appb-x { position: absolute; top: 8px; right: 8px; }
+
+/* Home stats: Active projects + Hosting clients share one row */
+.dd-stats { flex-direction: row; flex-wrap: wrap; }
+.dd-stats > * { flex: 0 0 100%; box-sizing: border-box; }
+.dd-stats > a.dd-half { flex: 0 0 50%; border-top: 1px solid var(--border); }
+.dd-stats > a.dd-half + a.dd-half { border-left: 1px solid var(--border); }
+
+/* Home: Client emails box (unread emails from all clients; open, reply, new email) */
+.dd-hm-r + .dd-hm-r { border-top: 1px solid var(--border); }
+.dd-hm-b { display: block; width: 100%; box-sizing: border-box; padding: 12px 20px; margin: 0; border: 0; background: none; color: var(--text); font: inherit; text-align: left; cursor: pointer; }
+.dd-hm-b:hover { background: var(--hover); }
+.dd-hm-h { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+.dd-hm-h b { font-weight: 600; font-size: var(--fs-body); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dd-hm-h b em { font-style: normal; font-weight: 400; color: var(--text-2); }
+.dd-hm-h small { color: var(--text-3); font-size: var(--fs-xs); white-space: nowrap; }
+.dd-hm-s { display: block; font-size: var(--fs-body); color: var(--text-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 2px; }
+.dd-hm-s em { font-style: normal; color: var(--text-3); }
+.dd-hm-r.open .dd-hm-s { white-space: normal; color: var(--text); font-weight: 600; }
+.dd-hm-x { padding: 0 20px 16px; }
+.dd-hm-meta { margin: 0 0 10px; font-size: var(--fs-xs); color: var(--text-3); line-height: 1.5; overflow-wrap: anywhere; }
+.dd-hm-text { font-size: var(--fs-body); line-height: 1.55; color: var(--text); white-space: pre-wrap; overflow-wrap: anywhere; max-height: 340px; overflow-y: auto; }
+.dd-hm-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 14px; }
+.dd-hm-e { padding: 16px 20px; margin: 0; color: var(--text-3); }
+/* New email: client name suggestions under the To field */
+.dd-emsug { margin: -6px 0 12px; border: 1px solid var(--border-strong); border-radius: 8px; background: var(--surface); overflow: hidden; }
+.dd-emsug[hidden] { display: none; }
+.dd-emsug-i { display: flex; flex-direction: column; gap: 1px; width: 100%; box-sizing: border-box; padding: 8px 12px; margin: 0; border: 0; background: none; color: var(--text); font: inherit; text-align: left; cursor: pointer; }
+.dd-emsug-i + .dd-emsug-i { border-top: 1px solid var(--border); }
+.dd-emsug-i:hover, .dd-emsug-i:focus { background: var(--hover); outline: none; }
+.dd-emsug-i b { font-size: 14px; font-weight: 600; }
+.dd-emsug-i small { font-size: 12px; color: var(--text-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (max-width: 767px) { .dd-hm-b { padding: 12px 16px; } .dd-hm-x { padding: 0 16px 14px; } }
+
+/* Home: bank balance number in green */
+.dd-stats > a.dd-bank > b { color: var(--success-text); }

@@ -911,6 +911,79 @@
 			+ '<div class="dd-abody">' + grid + list + empty + '</div></section>';
 	}
 	// From Upwork: what the daily Upwork check found. Only suggestions; Mike clicks Log it or Dismiss.
+	// Home: unread emails from clients, across every client (clientmail.php: /mail-recent). Open, reply or start a new email here.
+	function homeMailBox() {
+		var stale = S.homeMail && Date.now() - (S.homeMailAt || 0) > 120000;
+		if ((!S.homeMail || stale) && !S.homeMailBusy) {
+			S.homeMailBusy = 1;
+			api('/mail-recent').then(function (x) {
+				var open = S.mailOpen || {}, had = (S.homeMail && S.homeMail.list) || [], got = (x && x.list) || [];
+				had.forEach(function (m) { if (open[m.id] && !got.some(function (g) { return g.id === m.id; })) { got.push(m); } }); // keep the one you are reading
+				got.sort(function (a, b) { return (b.ts || 0) - (a.ts || 0); });
+				var same = S.homeMail && had.map(function (m) { return m.id; }).join() === got.map(function (m) { return m.id; }).join();
+				S.homeMail = { list: got }; S.homeMailAt = Date.now(); S.homeMailBusy = 0;
+				if (!same) { render(); }
+			}).catch(function () { S.homeMail = S.homeMail || { list: [] }; S.homeMailAt = Date.now(); S.homeMailBusy = 0; });
+		}
+		var M = S.homeMail, list = (M && M.list) || [], open = S.mailOpen || {};
+		var who = function (s) { var m = String(s || '').match(/^\s*"?([^"<(]+?)"?\s*[<(]/); return m ? m[1] : String(s || '').replace(/[<>()]/g, ''); };
+		var when = function (d) { var t = new Date(d); return isNaN(t) ? '' : t.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ', ' + t.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }); };
+		var rows = list.map(function (m) {
+			var w = who(m.from), on = !!open[m.id];
+			return '<div class="dd-hm-r' + (m.new ? ' new' : '') + (on ? ' open' : '') + '"><button type="button" class="dd-hm-b" data-hmopen="' + esc(m.id) + '" aria-expanded="' + on + '"><span class="dd-hm-h"><b>' + (m.new ? '<i class="dd-mdot"></i>' : '') + esc(w)
+				+ (m.name && m.name.toLowerCase() !== w.toLowerCase() ? '<em> · ' + esc(m.name) + '</em>' : '') + '</b><small>' + esc(when(m.date)) + '</small></span>'
+				+ '<span class="dd-hm-s">' + esc(m.subject || '(no subject)') + (!on && m.snip ? '<em> — ' + esc(m.snip) + '</em>' : '') + '</span></button>'
+				+ (on ? '<div class="dd-hm-x"><p class="dd-hm-meta">From ' + esc(m.from) + '<br>To ' + esc(m.to || '') + '</p><div class="dd-hm-text">' + esc(m.body || m.snip || '(no text)') + '</div>'
+					+ '<div class="dd-hm-acts"><button type="button" class="dd-btn primary sm" data-hmreply="' + esc(m.id) + '">' + lu('mail', 14) + 'Reply</button>'
+					+ (m.thread ? '<a class="dd-btn ghost sm" href="https://mail.google.com/mail/?authuser=mike@dreamwebdigital.com#all/' + esc(m.thread) + '" target="_blank" rel="noopener">Open in Gmail</a>' : '')
+					+ '<a class="dd-btn ghost sm" href="#' + (m.kind === 'k' ? 'cl' : 'client') + '/' + m.owner + '">Open client</a></div></div>' : '')
+				+ '</div>';
+		}).join('');
+		var nNew = list.filter(function (m) { return m.new; }).length;
+		return '<section class="dd-card dd-hm"><header class="dd-ch"><div class="dd-ch-t"><h2>Client emails</h2><span>' + (!M ? 'Checking…' : nNew ? nNew + ' unread' : 'All caught up') + '</span></div>'
+			+ '<div class="dd-ch-a"><button type="button" class="dd-btn secondary sm" data-hmnew>' + lu('mail', 14) + 'New email</button></div></header>'
+			+ (rows ? '<div class="dd-hm-l">' + rows + '</div>' : '<p class="dd-hm-e">' + (M ? 'You’re all caught up. No unread client emails.' : 'Loading…') + '</p>') + '</section>';
+	}
+	// New email from Home: people to suggest under the To field (active projects first, then other open projects, then all clients).
+	// Upwork snapshot (upfeed.php: /upwork-snap): the two balances and the pending payments exactly as Upwork's Financial overview lists them.
+	function upSnap() {
+		if (!S.upsnap && !S.upsnapBusy) {
+			S.upsnapBusy = 1;
+			api('/upwork-snap').then(function (x) { S.upsnap = x || { none: true }; S.upsnapBusy = 0; if (!S.upsnap.none) { render(); } }).catch(function () { S.upsnap = { none: true }; S.upsnapBusy = 0; });
+		}
+		return S.upsnap && !S.upsnap.none ? S.upsnap : null;
+	}
+	// Home tiles: Upwork's own numbers when there is a snapshot (otherwise the old per-project sums).
+	function upHome() {
+		var t = upTotals(), s = upSnap();
+		if (s) { t.pend = num(s.pending); t.avail = num(s.available); t.pnext = (s.items || []).map(function (x) { return x.date; }).filter(Boolean).sort()[0] || ''; }
+		return t;
+	}
+	// Called by the Upwork check: dwdSetUpwork(pending, available, [{ date: 'YYYY-MM-DD', client: '', job: '', amount: 0 }, …]).
+	window.dwdSetUpwork = function (pending, available, items) {
+		return api('/upwork-snap', 'POST', { pending: pending, available: available, items: items || [] }).then(function (x) {
+			S.upsnap = x; render();
+			return typeof window.dwdSetUpworkBalance === 'function' ? window.dwdSetUpworkBalance(pending, available) : 'saved';
+		}).catch(function () { return 'failed'; });
+	};
+	function hmPeople() {
+		var seen = {}, out = [];
+		var add = function (name, sub, email, rank) { var e = String(email || '').trim().toLowerCase(); if (!e || seen[e]) { return; } seen[e] = 1; out.push({ name: String(name || '').trim() || e, sub: String(sub || '').trim(), email: e, rank: rank }); };
+		(S.contacts || []).forEach(function (c) { if (c.list === 'active') { var k = clientOf(c); add(c.person || (k && k.name) || c.name, c.name, c.email || (k && k.email), 2); } });
+		(S.contacts || []).forEach(function (c) { if (c.list === 'limbo' || c.list === 'hold') { var k = clientOf(c); add(c.person || (k && k.name) || c.name, c.name, c.email || (k && k.email), 1); } });
+		(S.clients || []).forEach(function (k) { add(k.name, '', k.email, 0); });
+		return out;
+	}
+	function hmSuggest(inp) {
+		var form = inp.closest('form'), box = form && form.querySelector('.dd-emsug');
+		if (!box) { return; }
+		var q = inp.value.trim().toLowerCase();
+		var hits = !q ? [] : hmPeople().filter(function (p) { return (' ' + (p.name + ' ' + p.sub).toLowerCase()).indexOf(' ' + q) >= 0 || p.email.indexOf(q) === 0; });
+		if (hits.length === 1 && hits[0].email === q) { hits = []; }
+		hits.sort(function (a, b) { return (b.rank - a.rank) || a.name.localeCompare(b.name); });
+		box.innerHTML = hits.slice(0, 8).map(function (p) { return '<button type="button" class="dd-emsug-i" data-emsug="' + esc(p.email) + '"><b>' + esc(p.name) + '</b><small>' + esc((p.sub && p.sub !== p.name ? p.sub + ' · ' : '') + p.email) + '</small></button>'; }).join('');
+		box.hidden = !hits.length;
+	}
 	function upfeedBox() {
 		var F = S.upfeed || { last: '', items: [] }, its = F.items || [];
 		var opts = S.contacts.filter(function (c) { return c.list !== 'archive' && c.list !== 'leads'; }).sort(function (a, b) { return (isOpen(b) - isOpen(a)) || a.name.localeCompare(b.name); });
@@ -967,7 +1040,7 @@
 		var c = m.pid ? contact(m.pid) : null, v = m.vals || {};
 		return '<div class="dwdc-overlay" data-close-modal></div><form class="dwdc-modal dd-drawer dd-emm dd-emf"><button type="button" class="dwdc-mx" data-close-modal>' + ic('x', 20) + '</button>'
 			+ '<p class="dd-stm-k">Email client' + (c ? ' · ' + esc(c.name) : '') + '</p><h2 class="dd-dh">New email</h2>'
-			+ '<label class="dd-eml"><span>To</span><input type="email" name="to" required value="' + esc(v.to != null ? v.to : m.to || '') + '"></label>'
+			+ '<label class="dd-eml"><span>To</span><input type="email" name="to" required value="' + esc(v.to != null ? v.to : m.to || '') + '"' + (m.pick ? ' autocomplete="off" placeholder="Type a client’s name or an email address"' : '') + '></label>' + (m.pick ? '<div class="dd-emsug" hidden></div>' : '')
 			+ '<label class="dd-eml"><span>Subject</span><input name="subject" required autocomplete="off" value="' + esc(v.subject || '') + '" placeholder="Subject"></label>'
 			+ '<label class="dd-eml"><span>Message</span><textarea name="text" rows="11" required placeholder="Hi ' + esc(m.first || 'there') + ',">' + esc(v.text || '') + '</textarea></label>'
 			+ '<p class="dd-stm-n">Sent from <b>mike@dreamwebdigital.com</b> with your signature added at the bottom. It shows in your Gmail Sent folder' + (c ? ', and a copy is saved in this project’s notes' : '') + '.</p>'
@@ -1055,16 +1128,16 @@
 					+ (BA.length ? '<button type="button" class="dd-ibtn sm" data-bankrefresh aria-label="Refresh balance" title="Get the latest balance">' + lu('repeat', 14) + '</button>' : '') + '</a>';
 			})()
 			+ (function () {
-				var UT = upTotals(), MYh = S.money || {}, yh = DWDC.today.slice(0, 4), mh = +DWDC.today.slice(5, 7) - 1, mn2 = new Date(DWDC.today + 'T12:00:00').toLocaleDateString('en-US', { month: 'long' });
+				var UT = upHome(), MYh = S.money || {}, yh = DWDC.today.slice(0, 4), mh = +DWDC.today.slice(5, 7) - 1, mn2 = new Date(DWDC.today + 'T12:00:00').toLocaleDateString('en-US', { month: 'long' });
 				var bankM = MYh[yh] && MYh[yh].m ? Math.max(0, +MYh[yh].m[mh] || 0) : 0;
 				return '<a href="#money" data-owed><span>Owed<small>Not paid yet by clients</small></span><b>' + money(owed(owingList())) + '</b></a>'
 					+ '<a href="#money" data-upmoney><span>Pending in Upwork<small>' + (UT.pnext ? 'Next frees up ' + fmt(UT.pnext) : 'Nothing on hold') + '</small></span><b>' + money(UT.pend) + '</b></a>'
 					+ '<a href="#money" data-upmoney><span>Ready to withdraw<small>Available in Upwork now</small></span><b>' + money(UT.avail) + '</b></a>'
-					+ '<a href="#money" data-month="' + DWDC.today.slice(0, 7) + '"><span>In bank this month<small>Made in ' + mn2 + '</small></span><b>' + money(bankM) + '</b></a>';
+					;
 			})()
 			+ '<button type="button" class="dd-statsmore" data-statsmore aria-expanded="' + statsOpen + '"><span>' + (statsOpen ? 'Show less' : 'Show more') + '</span>' + lu('chevron-down', 14) + '</button>'
-			+ '<a class="more" href="#projects/active"><span>Active projects</span><b>' + by('active').length + '</b></a>'
-			+ '<a class="more" href="#hosting"><span>Hosting clients</span><b>' + hosting().length + '</b></a>'
+			+ '<a class="more dd-half" href="#projects/active"><span>Active projects</span><b>' + by('active').length + '</b></a>'
+			+ '<a class="more dd-half" href="#hosting"><span>Hosting clients</span><b>' + hosting().length + '</b></a>'
 			+ (function () {
 				var A = S.ads || {}, G = A.google, K = A.connects || {}, mn = new Date(DWDC.today + 'T12:00:00').toLocaleDateString('en-US', { month: 'long' });
 				return '<a class="more" href="#money" data-connmodal><span>Connects spent<small>' + mn + ' · last month ' + money(K.lastmonth || 0) + '</small></span><b>' + money(K.month || 0) + '</b></a>'
@@ -1079,7 +1152,7 @@
 		};
 		var todos = '<section class="dd-card"><header class="dd-ch"><div class="dd-ch-t"><h2>To-dos</h2></div><div class="dd-ch-a"><button type="button" class="dd-hadd-btn" data-haddtog>' + lu('plus', 14) + 'Add</button><a href="#todos">All ' + all.length + '</a></div></header>'
 			+ (S.homeAdd ? '<form class="dd-hadd"><input name="text" placeholder="New to-do… e.g. Call Shane next Thursday at 4" autocomplete="off" required data-lpignore="true" data-1p-ignore><button class="dd-btn primary">Add</button></form>' : '') + (rows.length ? rows.map(trow).join('') : '<p class="dd-empty-l">Nothing overdue or due today.</p>') + '</section>';
-		return '<div class="dd-home"><div class="dd-home-l">' + sched + act + '</div><div class="dd-home-r">' + upfeedBox() + stats + todos + zoomBox('home') + '</div></div>';
+		return '<div class="dd-home"><div class="dd-home-l">' + sched + act + '</div><div class="dd-home-r">' + stats + todos + homeMailBox() + zoomBox('home') + '</div></div>';
 	}
 	// All clients (design 4.2): toolbar, chips, grouped table; rows stack on phones.
 	var DD_TONE = { Project: 'info', Hosting: 'success', Lead: 'warning', 'Past client': 'neutral' };
@@ -3564,6 +3637,16 @@
 			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide">' + head('Upwork', 'Connects', 'spending') + connSpend() + '<div class="dwdc-farow end"><a class="dwdc-btn2" href="#money" data-close-modal>Open in Money Stats</a></div></div>';
 		}
 		if (m.type === 'upmoney') {
+			var US = upSnap();
+			if (US) { // straight from Upwork: no project matching, nothing to tick
+				var usI = (US.items || []).slice().sort(function (a, b) { return a.date < b.date ? -1 : a.date > b.date ? 1 : 0; });
+				var usC = US.checked ? new Date(US.checked) : null;
+				var usL = usI.map(function (x) { return '<div class="dwdc-mo-r dd-upr dd-upr-s"><span class="d"><em class="dd-schip p">' + (x.date ? fmt(x.date) : 'Pending') + '</em></span><span class="w"><b>' + esc(x.client) + '</b><small>' + esc(x.job) + '</small></span><b class="a">' + money2(x.amount).replace('.00', '') + '</b></div>'; }).join('');
+				return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide">' + head('Money', 'In Upwork', money(num(US.pending) + num(US.available)))
+					+ '<div class="dwdc-mo-sum"><span>Pending in Upwork<b>' + money(num(US.pending)) + '</b></span><span>Ready to withdraw<b>' + money(num(US.available)) + '</b></span>' + (usI.length && usI[0].date ? '<span>Next frees up<b>' + fmt(usI[0].date) + '</b></span>' : '') + '</div>'
+					+ (usL ? '<div class="dd-uplist">' + usL + '</div>' : emptyRow('Nothing is pending in Upwork.'))
+					+ '<p class="dwdc-mutp">Straight from Upwork’s Financial overview' + (usC && !isNaN(usC) ? ' · checked ' + usC.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ', ' + usC.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : '') + '. Each date is when Upwork releases that payment.</p></div>';
+			}
 			var UT = upTotals(), its = UT.items.slice().sort(function (a, b) { return a.x.free < b.x.free ? -1 : 1; });
 			var urow = function (o) {
 				var k2 = o.c.id + ':' + o.x.i, ready = o.x.free <= DWDC.today;
@@ -3871,6 +3954,29 @@
 		if (t.closest('[data-ddtheme]')) { var th = ddTheme() === 'dark' ? 'light' : 'dark'; ddSet('dreamdesk-theme', th); document.documentElement.setAttribute('data-theme', th); render(); return; }
 		if (t.closest('[data-ddme]')) { S.meOpen = !S.meOpen; var me = app.querySelector('.dd-me .dd-menu'); if (me) { me.classList.toggle('open', S.meOpen); } return; }
 		if (S.meOpen && !t.closest('.dd-me')) { S.meOpen = false; var me2 = app.querySelector('.dd-me .dd-menu'); if (me2) { me2.classList.remove('open'); } }
+			if ((el = t.closest('[data-hmopen]'))) { // Home "Client emails": open / close an email; opening marks it read in Dream Desk
+				S.mailOpen = S.mailOpen || {}; var hmid = el.getAttribute('data-hmopen'), hmx = ((S.homeMail || {}).list || []).find(function (x) { return x.id === hmid; });
+				S.mailOpen[hmid] = !S.mailOpen[hmid];
+				if (hmx && hmx.new) { hmx.new = false; if (S.mailD) { delete S.mailD['k' + hmx.owner]; } api('/mail-seen', 'POST', { owner: hmx.owner, ids: [hmid] }).catch(function () {}); }
+				render(); return;
+			}
+			if ((el = t.closest('[data-hmreply]'))) {
+				var hrid = el.getAttribute('data-hmreply'), hrx = ((S.homeMail || {}).list || []).find(function (x) { return x.id === hrid; });
+				if (hrx) {
+					var hrto = (String(hrx.from).match(/[A-Za-z0-9._%+'-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/) || [''])[0];
+					var hrpid = hrx.kind === 'p' ? hrx.owner : (((S.contacts || []).filter(function (c) { return +c.client === +hrx.owner && isOpen(c); })[0] || {}).id || 0);
+					openEmail(hrto, hrpid);
+					S.modal.vals.subject = /^re:/i.test(hrx.subject) ? hrx.subject : 'Re: ' + hrx.subject; render(); focusIn('[name=text]');
+				}
+				return;
+			}
+			if (t.closest('[data-hmnew]')) { openEmail('', 0); S.modal.pick = 1; render(); focusIn('[name=to]'); return; }
+			if ((el = t.closest('[data-emsug]'))) {
+				var emf = el.closest('form'), emi = emf.querySelector('[name=to]');
+				emi.value = el.getAttribute('data-emsug'); if (S.modal) { (S.modal.vals = S.modal.vals || {}).to = emi.value; }
+				el.parentNode.hidden = true; var emn = emf.querySelector('[name=subject]'); if (emn) { emn.focus(); }
+				return;
+			}
 		if ((el = t.closest('[data-mopen]'))) {
 			S.mailOpen = S.mailOpen || {}; var mo = el.getAttribute('data-mopen'), mk = el.getAttribute('data-mkey'), MD = mailData(mk);
 			S.mailOpen[mo] = !S.mailOpen[mo];
@@ -4442,6 +4548,7 @@
 		var t = e.target;
 		if (t.closest && t.closest('.dd-cl-f')) { t.style.height = ''; t.style.height = Math.min(200, t.scrollHeight) + 'px'; }
 		if (S.modal && S.modal.type === 'email' && t.closest('.dd-emf')) { S.modal.vals = S.modal.vals || {}; S.modal.vals[t.name] = t.value; }
+			if (t.name === 'to' && t.closest('.dd-emf')) { hmSuggest(t); }
 		if (t.name === 'text' && t.tagName === 'INPUT') { whenHint(t); }
 		if (t.hasAttribute('data-revq')) { S.revQ = t.value; S.revPage = 1; var rq2 = t.selectionStart; render(); var nr = app.querySelector('[data-revq]'); if (nr) { nr.focus(); try { nr.setSelectionRange(rq2, rq2); } catch (er) {} } return; }
 		if (t.hasAttribute('data-subq')) { S.subQ = t.value; var sp2 = t.selectionStart; render(); var ns = app.querySelector('[data-subq]'); if (ns) { ns.focus(); try { ns.setSelectionRange(sp2, sp2); } catch (er) {} } return; }

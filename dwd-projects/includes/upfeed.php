@@ -126,3 +126,41 @@ add_action( 'rest_api_init', function () {
 		return dwduf_summary();
 	} ) );
 } );
+
+/**
+ * Upwork snapshot for the Home tiles and the "In Upwork" popup: the two balances and the pending payments
+ * exactly as Upwork's Financial overview lists them. Set by the Upwork check (window.dwdSetUpwork in crm.js).
+ * Stored in the option dwd_upwork_snap. Nothing here is matched to projects.
+ */
+add_action( 'rest_api_init', function () {
+	$can = function () { return current_user_can( 'manage_options' ); };
+	register_rest_route( 'dwd/v1', '/crm/upwork-snap', array(
+		array( 'methods' => 'GET', 'permission_callback' => $can, 'callback' => function () {
+			$s = get_option( 'dwd_upwork_snap', array() );
+			return is_array( $s ) && $s ? $s : array( 'none' => true );
+		} ),
+		array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
+			$items = array();
+			foreach ( (array) $r->get_param( 'items' ) as $x ) {
+				if ( ! is_array( $x ) ) {
+					continue;
+				}
+				$date    = (string) ( $x['date'] ?? '' );
+				$items[] = array(
+					'date'   => preg_match( '/^\d{4}-\d{2}-\d{2}$/', $date ) ? $date : '',
+					'client' => sanitize_text_field( (string) ( $x['client'] ?? '' ) ),
+					'job'    => sanitize_text_field( (string) ( $x['job'] ?? '' ) ),
+					'amount' => round( (float) ( $x['amount'] ?? 0 ), 2 ),
+				);
+			}
+			$s = array(
+				'pending'   => round( (float) $r->get_param( 'pending' ), 2 ),
+				'available' => round( (float) $r->get_param( 'available' ), 2 ),
+				'items'     => array_slice( $items, 0, 50 ),
+				'checked'   => gmdate( 'c' ),
+			);
+			update_option( 'dwd_upwork_snap', $s, false );
+			return $s;
+		} ),
+	) );
+} );
