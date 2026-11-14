@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="./image-slot.js"></script>
+<style>body{margin:0;background:#E6E9EE;font-family:Inter,system-ui,sans-serif;color:#0F172A;-webkit-font-smoothing:antialiased}*{box-sizing:border-box}a{color:#10476E}a:hover{color:#0B2A42}h1,h2,h3,p{margin:0}</style>
+</helmet>
+<div style="padding:40px;display:flex;flex-direction:column;gap:32px;align-items:flex-start">
+  <div style="max-width:1100px;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:12px;padding:28px 32px;display:grid;grid-template-columns:1fr 1fr;gap:28px;font-size:14px;line-height:1.55;color:#475569">
+    <div>
+      <div style="font:600 11px/1 ui-monospace,Menlo,monospace;color:#0B2A42;margin-bottom:10px;letter-spacing:.06em">GLEC HOMEPAGE · V2 · PHOTO-LED, LAYERED, REAL LOGO</div>
+      <div style="font:600 16px/1.3 'Inter Tight',sans-serif;color:#0F172A;margin-bottom:10px">What changed from v1</div>
+      <p style="margin-bottom:8px"><strong style="color:#0F172A">Real assets.</strong> The existing GLEC logo from georgialicenseexam.com in the header, footer and mobile menu; Garrison's photo from the live About page; the four supplied HVAC scenes.</p>
+      <p style="margin-bottom:8px"><strong style="color:#0F172A">Full-bleed photography and depth.</strong> Heir Tight's hero pattern: a real scene with a floating progress card over it and a navy scrim. Blueprint grid texture on navy and mist surfaces, safety-stripe rules, offset photo frames, a proof strip that overlaps the hero.</p>
+      <p><strong style="color:#0F172A">Featured class card.</strong> Priced course cards like Contractors Intelligence School: the required Residential class gets a navy feature card; the other four sit beside it, each with price and Add to cart.</p>
+    </div>
+    <div>
+      <div style="font:600 16px/1.3 'Inter Tight',sans-serif;color:#0F172A;margin-bottom:10px">Placeholders</div>
+      <p style="margin-bottom:6px">Drop a replacement onto any photo to swap it. [CONFIRM: phone] · [CONFIRM: tab count 317 or 328] · [CONFIRM: Facebook link] · [CONFIRM: a higher-resolution logo file; the site copy is 300 px wide].</p>
+      <p>Palette tuned to the logo's orange: buttons #C2410C (accessible with white text), large numerals and accents #E46312, Navy #0B2A42, Blue #10476E. Inter Tight + Inter.</p>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:56px;align-items:flex-start">
+
+  <!-- ================= DESKTOP 1440 ================= -->
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <div style="font:600 11px/1 ui-monospace,Menlo,monospace;color:#475569;letter-spacing:.06em">DESKTOP · 1440</div>
+    <div data-screen-label="Homepage v2 desktop" style="width:1440px;background:#fff;border-radius:8px;box-shadow:0 2px 12px rgba(15,23,42,.10);overflow:hidden;font-size:18px;line-height:1.6">
+
+      <header style="height:76px;background:#fff;border-bottom:1px solid #E2E8F0;display:flex;align-items:center;padding:0 64px;gap:32px;white-space:nowrap">
+        <a href="#" style="display:flex;align-items:center;text-decoration:none"><img src="./assets/glec-logo.png" alt="GLEC, Georgia License Exam Company" style="height:46px;width:auto;display:block"></a>
+        <nav style="display:flex;gap:28px;margin:0 auto;font:500 17px/1 Inter,sans-serif">
+          <a href="#" style="text-decoration:none;color:#0F172A">License classes</a>
+          <a href="#" style="text-decoration:none;color:#0F172A">CEU classes</a>
+          <a href="#" style="text-decoration:none;color:#0F172A">How to get licensed</a>
+          <a href="#" style="text-decoration:none;color:#0F172A">About</a>
+          <a href="#" style="text-decoration:none;color:#0F172A">Contact</a>
+        </nav>
+        <div style="display:flex;align-items:center;gap:24px">
+          <a href="#" style="font:500 17px/1 Inter,sans-serif;text-decoration:none;color:#0F172A">Log in</a>
+          <sc-if value="{{ hasCart }}" hint-placeholder-val="{{ false }}"><a href="#" aria-label="{{ cartLabel }}" style="position:relative;display:flex;color:#0F172A"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg><span style="position:absolute;top:-8px;right:-10px;min-width:18px;height:18px;border-radius:9px;background:#C2410C;color:#fff;font:600 11px/18px Inter,sans-serif;text-align:center;padding:0 5px">{{ cartCount }}</span></a></sc-if>
+          <a href="#" style="display:inline-flex;align-items:center;height:48px;padding:0 24px;border-radius:10px;background:#C2410C;color:#fff;font:600 17px/1 Inter,sans-serif;text-decoration:none" style-hover="background:#9A3412">Start here</a>
+        </div>
+      </header>
+
+      <!-- 1 Hero -->
+      <section style="position:relative;height:700px;background:#0B2A42;overflow:hidden">
+        <div style="position:absolute;top:0;right:0;bottom:0;width:66%"><image-slot id="v2-hero" shape="rect" src="./assets/hero-home-study.png" placeholder="Hero photo"></image-slot></div>
+        <div style="position:absolute;inset:0;background:linear-gradient(90deg,#0B2A42 0%,#0B2A42 36%,rgba(11,42,66,.92) 46%,rgba(11,42,66,.45) 64%,rgba(11,42,66,.08) 82%,rgba(11,42,66,0) 100%);pointer-events:none"></div>
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,42,66,0) 70%,rgba(11,42,66,.55) 100%);pointer-events:none"></div>
+        <div style="position:absolute;left:0;top:0;bottom:0;width:48%;background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);background-size:40px 40px;-webkit-mask-image:linear-gradient(90deg,#000 55%,transparent 100%);mask-image:linear-gradient(90deg,#000 55%,transparent 100%);pointer-events:none"></div>
+        <div style="position:relative;padding:92px 64px 0;max-width:760px;display:flex;flex-direction:column;gap:26px;color:#fff;pointer-events:none">
+          <div style="display:flex;align-items:center;gap:14px;font:600 15px/1.3 Inter,sans-serif;letter-spacing:.01em"><span style="width:36px;height:4px;background:repeating-linear-gradient(135deg,#E46312 0 6px,transparent 6px 12px)"></span>Georgia Conditioned Air (HVAC) contractor license</div>
+          <sc-if value="{{ h1A }}" hint-placeholder-val="{{ true }}"><h1 style="font:700 64px/1.05 'Inter Tight',sans-serif;letter-spacing:-.03em;max-width:640px;text-wrap:pretty">Get your Georgia HVAC license. We’ll show you every step.</h1></sc-if>
+          <sc-if value="{{ h1B }}" hint-placeholder-val="{{ false }}"><h1 style="font:700 64px/1.05 'Inter Tight',sans-serif;letter-spacing:-.03em;max-width:640px;text-wrap:pretty">Georgia HVAC license classes, taught step by step.</h1></sc-if>
+          <sc-if value="{{ h1C }}" hint-placeholder-val="{{ false }}"><h1 style="font:700 64px/1.05 'Inter Tight',sans-serif;letter-spacing:-.03em;max-width:640px;text-wrap:pretty">Get licensed in Georgia. Every step, shown in full.</h1></sc-if>
+          <p style="font-size:20px;color:#E2E8F0;max-width:520px;text-wrap:pretty">Online classes taught by Garrison Michael, with full step-by-step solutions. Unlimited 24/7 access for up to a year or until you pass.</p>
+          <div style="display:flex;gap:16px;margin-top:6px;pointer-events:auto">
+            <a href="#" style="display:inline-flex;align-items:center;height:52px;padding:0 28px;border-radius:10px;background:#C2410C;color:#fff;font:600 18px/1 Inter,sans-serif;text-decoration:none;box-shadow:0 8px 24px rgba(0,0,0,.25)" style-hover="background:#9A3412">Start here</a>
+            <a href="#classes" style="display:inline-flex;align-items:center;height:52px;padding:0 28px;border-radius:10px;border:1.5px solid rgba(255,255,255,.7);color:#fff;font:600 18px/1 Inter,sans-serif;text-decoration:none" style-hover="background:rgba(255,255,255,.1)">See classes and prices</a>
+          </div>
+        </div>
+        <div style="position:absolute;right:96px;bottom:120px;width:320px;background:#fff;border-radius:12px;box-shadow:0 24px 60px rgba(0,0,0,.35);padding:18px 20px;display:flex;flex-direction:column;gap:12px;pointer-events:none">
+          <div style="display:flex;justify-content:space-between;align-items:center"><span style="font:600 12px/1 Inter,sans-serif;background:#F5F7FA;border-radius:6px;padding:7px 8px">CA-OL</span><span style="font:500 13px/1 Inter,sans-serif;color:#15803D;display:inline-flex;align-items:center;gap:6px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>8 of 20 complete</span></div>
+          <div style="font:600 17px/1.3 'Inter Tight',sans-serif;color:#0B2A42">Exam Prep Review Class</div>
+          <div style="height:8px;border-radius:4px;background:#E2E8F0;overflow:hidden"><div style="width:40%;height:100%;background:#15803D"></div></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:14px;color:#475569"><span>Lesson 9 · Gas pipe sizing</span><span style="font-weight:600;color:#C2410C">Continue →</span></div>
+        </div>
+        <div style="position:absolute;right:360px;bottom:300px;background:#fff;border-radius:999px;box-shadow:0 12px 32px rgba(0,0,0,.3);padding:10px 16px 10px 10px;display:flex;align-items:center;gap:10px;font:600 14px/1 Inter,sans-serif;color:#0B2A42;pointer-events:none"><span style="width:28px;height:28px;border-radius:50%;background:#15803D;display:flex;align-items:center;justify-content:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>Certificate prints instantly</div>
+      </section>
+
+      <!-- Proof strip -->
+      <div style="position:relative;z-index:2;margin:-72px 64px 0;background:#fff;border-radius:12px;box-shadow:0 20px 50px rgba(11,42,66,.14);display:grid;grid-template-columns:repeat(3,1fr);overflow:hidden">
+        <div style="padding:30px 40px;display:flex;align-items:center;gap:18px;border-right:1px solid #E2E8F0"><span style="font:700 48px/1 'Inter Tight',sans-serif;letter-spacing:-.03em;color:#0B2A42;font-variant-numeric:tabular-nums">20</span><span style="font-size:16px;color:#475569;line-height:1.35">years in business<br><span style="color:#0F172A;font-weight:500">since 2006</span></span></div>
+        <div style="padding:30px 40px;display:flex;align-items:center;gap:18px;border-right:1px solid #E2E8F0"><span style="font:700 48px/1 'Inter Tight',sans-serif;letter-spacing:-.03em;color:#0B2A42;font-variant-numeric:tabular-nums">82%</span><span style="font-size:16px;color:#475569;line-height:1.35">exam pass rate<br><span style="color:#0F172A;font-weight:500">Georgia CA exam</span></span></div>
+        <div style="padding:30px 40px;display:flex;align-items:center;gap:18px"><span style="font:700 48px/1 'Inter Tight',sans-serif;letter-spacing:-.03em;color:#0B2A42;font-variant-numeric:tabular-nums">5,400+</span><span style="font-size:16px;color:#475569;line-height:1.35">student members<br><span style="color:#0F172A;font-weight:500">GA, SC, AL, TN and beyond</span></span></div>
+      </div>
+
+      <!-- 2 Steps -->
+      <section style="padding:144px 64px 104px;margin-top:-40px;background:#F5F7FA;background-image:linear-gradient(rgba(11,42,66,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(11,42,66,.055) 1px,transparent 1px);background-size:40px 40px">
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:40px;margin-bottom:48px">
+          <div style="display:flex;flex-direction:column;gap:14px"><div style="font:600 15px/1 Inter,sans-serif;color:#10476E">Start here</div><h2 style="font:600 44px/1.1 'Inter Tight',sans-serif;letter-spacing:-.02em;color:#0B2A42">How to get licensed, in three steps</h2></div>
+          <a href="#" style="font:600 18px/1 Inter,sans-serif;white-space:nowrap;display:inline-flex;align-items:center;gap:8px">See all 10 steps <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;position:relative">
+          <div style="position:absolute;left:12%;right:12%;top:58px;border-top:2px dashed #CBD5E1;z-index:0"></div>
+          <div style="position:relative;background:#fff;border-radius:12px;padding:32px 32px 36px;box-shadow:0 10px 30px rgba(11,42,66,.08);display:flex;flex-direction:column;gap:16px">
+            <div style="display:flex;align-items:center;justify-content:space-between"><span style="font:700 56px/1 'Inter Tight',sans-serif;letter-spacing:-.04em;color:#E46312">01</span><span style="width:52px;height:52px;border-radius:12px;background:#0B2A42;color:#fff;display:flex;align-items:center;justify-content:center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg></span></div>
+            <h3 style="font:600 26px/1.2 'Inter Tight',sans-serif;letter-spacing:-.01em;color:#0B2A42">Check which license fits</h3>
+            <p style="color:#475569;text-wrap:pretty">Restricted (Class 1) for units up to 5 tons, or Non-Restricted (Class 2) for all sizes. Our chart shows which one matches your experience.</p>
+          </div>
+          <div style="position:relative;background:#fff;border-radius:12px;padding:32px 32px 36px;box-shadow:0 10px 30px rgba(11,42,66,.08);display:flex;flex-direction:column;gap:16px">
+            <div style="display:flex;align-items:center;justify-content:space-between"><span style="font:700 56px/1 'Inter Tight',sans-serif;letter-spacing:-.04em;color:#E46312">02</span><span style="width:52px;height:52px;border-radius:12px;background:#0B2A42;color:#fff;display:flex;align-items:center;justify-content:center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m10 8 6 4-6 4Z"/></svg></span></div>
+            <h3 style="font:600 26px/1.2 'Inter Tight',sans-serif;letter-spacing:-.01em;color:#0B2A42">Take the design classes</h3>
+            <p style="color:#475569;text-wrap:pretty">Residential Design is required for every license. Non-Restricted adds Commercial Design. Then apply to the Board online through GOALS.</p>
+          </div>
+          <div style="position:relative;background:#fff;border-radius:12px;padding:32px 32px 36px;box-shadow:0 10px 30px rgba(11,42,66,.08);display:flex;flex-direction:column;gap:16px">
+            <div style="display:flex;align-items:center;justify-content:space-between"><span style="font:700 56px/1 'Inter Tight',sans-serif;letter-spacing:-.04em;color:#E46312">03</span><span style="width:52px;height:52px;border-radius:12px;background:#0B2A42;color:#fff;display:flex;align-items:center;justify-content:center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg></span></div>
+            <h3 style="font:600 26px/1.2 'Inter Tight',sans-serif;letter-spacing:-.01em;color:#0B2A42">Prep for the exam and pass</h3>
+            <p style="color:#475569;text-wrap:pretty">After Board approval, take the Exam Prep Review Class, tab your books and schedule your PSI exam.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3 License classes -->
+      <section id="classes" style="padding:104px 64px">
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:40px;margin-bottom:48px">
+          <div style="display:flex;flex-direction:column;gap:14px;max-width:720px"><div style="font:600 15px/1 Inter,sans-serif;color:#10476E">Prices up front</div><h2 style="font:600 44px/1.1 'Inter Tight',sans-serif;letter-spacing:-.02em;color:#0B2A42">Conditioned Air license classes</h2><p style="font-size:19px;color:#475569;text-wrap:pretty">All online. Unlimited 24/7 access for up to a year or until you pass. You buy the reference books separately.</p></div>
+          <a href="#" style="font:600 18px/1 Inter,sans-serif;white-space:nowrap;display:inline-flex;align-items:center;gap:8px">Order the books <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a>
+        </div>
+        <div style="display:grid;grid-template-columns:1.2fr 1fr 1fr;grid-template-rows:auto auto;gap:24px">
+          <div style="grid-row:1 / span 2;position:relative;overflow:hidden;background:#0B2A42;background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);background-size:40px 40px;border-radius:12px;padding:40px;color:#fff;display:flex;flex-direction:column;gap:20px;box-shadow:0 20px 50px rgba(11,42,66,.22)">
+            <div style="position:absolute;right:-60px;top:-60px;width:260px;height:260px;border-radius:50%;background:radial-gradient(closest-side,rgba(228,99,18,.4),rgba(228,99,18,0))"></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;position:relative;gap:12px"><span style="font:600 13px/1 Inter,sans-serif;letter-spacing:.02em;background:rgba(255,255,255,.12);border-radius:6px;padding:8px 10px">HLG-DD-R-OL</span><span style="font:600 13px/1 Inter,sans-serif;background:#C2410C;border-radius:999px;padding:8px 12px">Required for every CA license</span></div>
+            <h3 style="font:600 32px/1.15 'Inter Tight',sans-serif;letter-spacing:-.02em;position:relative">Residential Design Class</h3>
+            <p style="color:#CBD5E1;font-size:17px;position:relative">ACCA Manual J &amp; D: heat loss and gain, duct design. About 16 hours online.</p>
+            <div style="display:flex;flex-direction:column;gap:10px;font-size:16px;position:relative;border-top:1px solid rgba(255,255,255,.15);padding-top:18px">
+              <span style="display:flex;gap:10px;align-items:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E46312" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Residential Design Study Guide included</span>
+              <span style="display:flex;gap:10px;align-items:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E46312" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>SOS-APP application videos included free</span>
+              <span style="display:flex;gap:10px;align-items:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E46312" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Certificate prints when you finish the videos</span>
+            </div>
+            <div style="margin-top:auto;display:flex;align-items:flex-end;justify-content:space-between;gap:20px;position:relative;padding-top:20px">
+              <div style="display:flex;flex-direction:column"><span style="font-size:14px;color:#CBD5E1">Restricted and Non-Restricted</span><span style="font:700 56px/1 'Inter Tight',sans-serif;letter-spacing:-.03em;color:#E46312;font-variant-numeric:tabular-nums">$470</span></div>
+              <a href="#" style="display:inline-flex;align-items:center;height:52px;padding:0 28px;border-radius:10px;background:#C2410C;color:#fff;font:600 18px/1 Inter,sans-serif;text-decoration:none" style-hover="background:#9A3412">Add to cart</a>
+            </div>
+          </div>
+
+          <div style="background:#fff;border:1px solid #E2E8F0;border-radius:12px;padding:28px;display:flex;flex-direction:column;gap:12px;box-shadow:0 10px 30px rgba(11,42,66,.06)">
+            <div style="display:flex;justify-content:space-between;align-items:center"><span style="font:600 13px/1 Inter,sans-serif;letter-spacing:.02em;background:#FDEBDD;color:#9A3412;border-radius:6px;padding:8px 10px">HLG-DD-C-OL</span><span style="font-size:14px;color:#475569">Non-Restricted only</span></div>
+            <h3 style="font:600 23px/1.2 'Inter Tight',sans-serif;letter-spacing:-.01em;color:#0B2A42">Commercial Design Class</h3>
+            <p style="font-size:16px;color:#475569;flex:1">Carrier System Design Manuals 1, 2 and 3. About 8 hours online.</p>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:8px"><span style="font:700 32px/1 'Inter Tight',sans-serif;letter-spacing:-.02em;color:#0B2A42;font-variant-numeric:tabular-nums">$270</span><a href="#" style="display:inline-flex;align-items:center;height:48px;padding:0 22px;border-radius:10px;border:1.5px solid #10476E;color:#10476E;font:600 16px/1 Inter,sans-serif;text-decoration:none;background:#fff" style-hover="background:#F5F7FA">Add to cart</a></div>
+          </div>
+          <div style="background:#fff;border:1px solid #E2E8F0;border-radius:12px;padding:28px;display:flex;flex-direction:column;gap:12px;box-shadow:0 10px 30px rgba(11,42,66,.06)">
+            <div style="display:flex;justify-content:space-between;align-items:center"><span style="font:600 13px/1 Inter,sans-serif;letter-spacing:.02em;background:#FDEBDD;color:#9A3412;border-radius:6px;padding:8px 10px">CA-OL</span><span style="font-size:14px;color:#475569">After Board approval</span></div>
+            <h3 style="font:600 23px/1.2 'Inter Tight',sans-serif;letter-spacing:-.01em;color:#0B2A42">Exam Prep Review Class</h3>
+            <p style="font-size:16px;color:#475569;flex:1">Every reference book except Manuals J &amp; D, plus quizzes. Ships a printed study guide.</p>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:8px"><span style="font:700 32px/1 'Inter Tight',sans-serif;letter-spacing:-.02em;color:#0B2A42;font-variant-numeric:tabular-nums">$535</span><a href="#" style="display:inline-flex;align-items:center;height:48px;padding:0 22px;border-radius:10px;border:1.5px solid #10476E;color:#10476E;font:600 16px/1 Inter,sans-serif;text-decoration:none;background:#fff" style-hover="background:#F5F7FA">Add to cart</a></div>
+          </div>
+          <div style="background:#fff;border:1px solid #E2E8F0;border-radius:12px;padding:28px;display:flex;flex-direction:column;gap:12px;box-shadow:0 10px 30px rgba(11,42,66,.06)">
+            <div style="display:flex;justify-content:space-between;align-items:center"><span style="font:600 13px/1 Inter,sans-serif;letter-spacing:.02em;background:#FDEBDD;color:#9A3412;border-radius:6px;padding:8px 10px">CA-TABs</span><span style="font-size:14px;color:#475569">Shipped</span></div>
+            <h3 style="font:600 23px/1.2 'Inter Tight',sans-serif;letter-spacing:-.01em;color:#0B2A42">Permanent reference tabs</h3>
+            <p style="font-size:16px;color:#475569;flex:1">317+ laser-printed tabs with placement charts. Best bought with CA-OL. [CONFIRM: 317 or 328]</p>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:8px"><span style="font:700 32px/1 'Inter Tight',sans-serif;letter-spacing:-.02em;color:#0B2A42;font-variant-numeric:tabular-nums">$155</span><a href="#" style="display:inline-flex;align-items:center;height:48px;padding:0 22px;border-radius:10px;border:1.5px solid #10476E;color:#10476E;font:600 16px/1 Inter,sans-serif;text-decoration:none;background:#fff" style-hover="background:#F5F7FA">Add to cart</a></div>
+          </div>
+          <div style="background:#fff;border:1px solid #E2E8F0;border-radius:12px;padding:28px;display:flex;flex-direction:column;gap:12px;box-shadow:0 10px 30px rgba(11,42,66,.06)">
+            <div style="display:flex;justify-content:space-between;align-items:center"><span style="font:600 13px/1 Inter,sans-serif;letter-spacing:.02em;background:#FDEBDD;color:#9A3412;border-radius:6px;padding:8px 10px">SOS-APP</span><span style="font:600 13px/1 Inter,sans-serif;color:#C2410C">Free with design classes</span></div>
+            <h3 style="font:600 23px/1.2 'Inter Tight',sans-serif;letter-spacing:-.01em;color:#0B2A42">Application Overview videos</h3>
+            <p style="font-size:16px;color:#475569;flex:1">How to complete the Board application in GOALS, with checklists.</p>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:8px"><span style="font:700 32px/1 'Inter Tight',sans-serif;letter-spacing:-.02em;color:#0B2A42;font-variant-numeric:tabular-nums">$96</span><a href="#" style="display:inline-flex;align-items:center;height:48px;padding:0 22px;border-radius:10px;border:1.5px solid #10476E;color:#10476E;font:600 16px/1 Inter,sans-serif;text-decoration:none;background:#fff" style-hover="background:#F5F7FA">Add to cart</a></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4 Why GLEC -->
+      <section style="padding:40px 64px 104px;display:grid;grid-template-columns:minmax(0,1fr) 560px;gap:80px;align-items:center">
+        <div style="display:flex;flex-direction:column;gap:36px">
+          <div style="display:flex;flex-direction:column;gap:14px"><div style="font:600 15px/1 Inter,sans-serif;color:#10476E">Why GLEC</div><h2 style="font:600 44px/1.1 'Inter Tight',sans-serif;letter-spacing:-.02em;color:#0B2A42">Taught the way the exam is written</h2></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+            <div style="background:#F5F7FA;border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:12px"><span style="width:44px;height:44px;border-radius:10px;background:#fff;color:#10476E;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(11,42,66,.08)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/></svg></span><h3 style="font:600 21px/1.3 'Inter Tight',sans-serif;color:#0B2A42">Solutions, not answers</h3><p style="font-size:16px;color:#475569">Every example shows the chart lookup, the equation and the calculator keys.</p></div>
+            <div style="background:#F5F7FA;border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:12px"><span style="width:44px;height:44px;border-radius:10px;background:#fff;color:#10476E;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(11,42,66,.08)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span><h3 style="font:600 21px/1.3 'Inter Tight',sans-serif;color:#0B2A42">Only the Georgia CA exam</h3><p style="font-size:16px;color:#475569">One exam, one Board, one application. We know exactly what is on the test.</p></div>
+            <div style="background:#F5F7FA;border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:12px"><span style="width:44px;height:44px;border-radius:10px;background:#fff;color:#10476E;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(11,42,66,.08)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><h3 style="font:600 21px/1.3 'Inter Tight',sans-serif;color:#0B2A42">24/7 for up to a year</h3><p style="font-size:16px;color:#475569">Watch from home or the job, as many times as you need, until you pass.</p></div>
+            <div style="background:#F5F7FA;border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:12px"><span style="width:44px;height:44px;border-radius:10px;background:#fff;color:#10476E;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(11,42,66,.08)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg></span><h3 style="font:600 21px/1.3 'Inter Tight',sans-serif;color:#0B2A42">Tabs, guide, application</h3><p style="font-size:16px;color:#475569">Permanent tabs, a printed study guide and application help, ready before exam day.</p></div>
+          </div>
+        </div>
+        <div style="position:relative;height:520px">
+          <div style="position:absolute;right:-24px;top:-24px;width:70%;height:70%;border-radius:12px;background:#0B2A42;background-image:linear-gradient(rgba(255,255,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.07) 1px,transparent 1px);background-size:24px 24px"></div>
+          <div style="position:absolute;left:0;top:0;width:calc(100% - 24px);height:calc(100% - 24px);border-radius:12px;overflow:hidden;box-shadow:0 24px 60px rgba(11,42,66,.22)"><image-slot id="v2-why" shape="rect" src="./assets/practice-exam.png" placeholder="Practice exam photo"></image-slot></div>
+          <div style="position:absolute;left:32px;bottom:8px;background:#fff;border-radius:10px;box-shadow:0 12px 32px rgba(11,42,66,.22);padding:14px 18px;display:flex;align-items:center;gap:14px;pointer-events:none"><span style="font:700 34px/1 'Inter Tight',sans-serif;letter-spacing:-.03em;color:#E46312">1,740+</span><span style="font-size:14px;line-height:1.3;color:#475569">online design<br>classes sold</span></div>
+        </div>
+      </section>
+
+      <!-- Stats band -->
+      <section style="position:relative;padding:72px 64px;background:#0B2A42;background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:40px 40px;color:#fff;overflow:hidden">
+        <div style="position:absolute;left:0;right:0;top:0;height:6px;background:repeating-linear-gradient(135deg,#E46312 0 14px,transparent 14px 28px)"></div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:40px">
+          <div style="display:flex;flex-direction:column;gap:8px;border-left:1px solid rgba(255,255,255,.18);padding-left:28px"><span style="font:700 72px/1 'Inter Tight',sans-serif;letter-spacing:-.04em;color:#E46312;font-variant-numeric:tabular-nums">82%</span><span style="font-size:18px">exam pass rate</span></div>
+          <div style="display:flex;flex-direction:column;gap:8px;border-left:1px solid rgba(255,255,255,.18);padding-left:28px"><span style="font:700 72px/1 'Inter Tight',sans-serif;letter-spacing:-.04em;color:#E46312;font-variant-numeric:tabular-nums">5,400+</span><span style="font-size:18px">student members</span></div>
+          <div style="display:flex;flex-direction:column;gap:8px;border-left:1px solid rgba(255,255,255,.18);padding-left:28px"><span style="font:700 72px/1 'Inter Tight',sans-serif;letter-spacing:-.04em;color:#E46312;font-variant-numeric:tabular-nums">1,740+</span><span style="font-size:18px">online design classes sold</span></div>
+          <div style="display:flex;flex-direction:column;gap:8px;border-left:1px solid rgba(255,255,255,.18);padding-left:28px"><span style="font:700 72px/1 'Inter Tight',sans-serif;letter-spacing:-.04em;color:#E46312;font-variant-numeric:tabular-nums">20</span><span style="font-size:18px">years in business, since 2006</span></div>
+        </div>
+      </section>
+
+      <!-- 5 Instructor -->
+      <section style="padding:104px 64px;background:#F5F7FA;display:grid;grid-template-columns:480px minmax(0,1fr);gap:96px;align-items:center">
+        <div style="position:relative;height:540px">
+          <div style="position:absolute;left:-20px;bottom:-20px;width:60%;height:50%;border-radius:12px;background:repeating-linear-gradient(135deg,rgba(11,42,66,.12) 0 2px,transparent 2px 10px)"></div>
+          <div style="position:absolute;inset:0;border-radius:12px;overflow:hidden;box-shadow:0 24px 60px rgba(11,42,66,.18);background:#fff"><image-slot id="v2-garrison" shape="rect" src="./assets/garrison.png" placeholder="Photo of Garrison Michael"></image-slot></div>
+          <div style="position:absolute;right:-28px;top:28px;width:124px;height:124px;border-radius:50%;background:#C2410C;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 12px 32px rgba(194,65,12,.35);pointer-events:none"><span style="font:700 36px/1 'Inter Tight',sans-serif;letter-spacing:-.03em">20</span><span style="font:600 12px/1.2 Inter,sans-serif;text-align:center">years<br>2006–2026</span></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:20px">
+          <div style="font:600 15px/1 Inter,sans-serif;color:#10476E">Meet your instructor</div>
+          <h2 style="font:600 44px/1.1 'Inter Tight',sans-serif;letter-spacing:-.02em;color:#0B2A42">Garrison Michael</h2>
+          <p style="font-size:20px;color:#475569">Owner and instructor. Founded GLEC in 2006 after teaching the Conditioned Air review classes at the Georgia Trane Training Center.</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:8px">
+            <div style="background:#fff;border-radius:12px;padding:20px;box-shadow:0 10px 30px rgba(11,42,66,.06);display:flex;flex-direction:column;gap:6px"><span style="font:700 34px/1 'Inter Tight',sans-serif;letter-spacing:-.03em;color:#0B2A42">34+</span><span style="font-size:15px;color:#475569">years in HVAC</span></div>
+            <div style="background:#fff;border-radius:12px;padding:20px;box-shadow:0 10px 30px rgba(11,42,66,.06);display:flex;flex-direction:column;gap:6px"><span style="font:700 34px/1 'Inter Tight',sans-serif;letter-spacing:-.03em;color:#0B2A42">6</span><span style="font-size:15px;color:#475569">states licensed</span></div>
+            <div style="background:#fff;border-radius:12px;padding:20px;box-shadow:0 10px 30px rgba(11,42,66,.06);display:flex;flex-direction:column;gap:6px"><span style="font:700 34px/1 'Inter Tight',sans-serif;letter-spacing:-.03em;color:#0B2A42">B.S.</span><span style="font-size:15px;color:#475569">Building Construction Engineering</span></div>
+          </div>
+          <p style="color:#475569;font-size:17px">Formerly with Trane and Johnson Controls. GA Conditioned Air Non-Restricted, GA Low Voltage Universal, EPA 608/609, LEED AP, DET.</p>
+          <a href="#" style="font:600 18px/1 Inter,sans-serif;display:inline-flex;align-items:center;gap:8px;margin-top:4px">About GLEC <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+        </div>
+      </section>
+
+      <!-- 6 CEU -->
+      <section style="padding:104px 64px;display:grid;grid-template-columns:minmax(0,1fr) 600px;gap:80px;align-items:center">
+        <div style="position:relative;height:520px">
+          <div style="position:absolute;inset:0;border-radius:12px;overflow:hidden;box-shadow:0 24px 60px rgba(11,42,66,.18)"><image-slot id="v2-ceu" shape="rect" src="./assets/workshop-mentorship.png" placeholder="HVAC workshop scene"></image-slot></div>
+          <div style="position:absolute;left:28px;bottom:28px;background:#fff;border-radius:12px;box-shadow:0 12px 32px rgba(11,42,66,.25);padding:16px 20px;display:flex;align-items:center;gap:14px;pointer-events:none"><span style="width:44px;height:44px;border-radius:50%;background:#15803D;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg></span><span style="font-size:15px;line-height:1.35;color:#475569"><span style="display:block;font:600 16px/1.3 Inter,sans-serif;color:#0B2A42">Board-approved</span>Georgia Conditioned Air Licensing Board</span></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:20px">
+          <div style="font:600 15px/1 Inter,sans-serif;color:#10476E">License renewal</div>
+          <h2 style="font:600 44px/1.1 'Inter Tight',sans-serif;letter-spacing:-.02em;color:#0B2A42;text-wrap:pretty">Renewing your license? Board-approved CEU classes.</h2>
+          <p style="font-size:19px;color:#475569;text-wrap:pretty">Licensed CA contractors need 4 CEU hours a year. All online, 4 months of access, certificate prints the moment you finish the videos.</p>
+          <div style="background:#fff;border:1px solid #E2E8F0;border-radius:12px;box-shadow:0 10px 30px rgba(11,42,66,.08);padding:8px 24px">
+            <div style="display:grid;grid-template-columns:minmax(0,1fr) 80px 64px;gap:16px;padding:14px 0;border-bottom:1px solid #E2E8F0;align-items:center;font-size:17px"><span>Carrier System Design Manuals 1, 2, 3</span><span style="color:#475569;font-size:15px;text-align:right">4 hours</span><span style="font:600 20px/1 'Inter Tight',sans-serif;color:#0B2A42;text-align:right">$50</span></div>
+            <div style="display:grid;grid-template-columns:minmax(0,1fr) 80px 64px;gap:16px;padding:14px 0;border-bottom:1px solid #E2E8F0;align-items:center;font-size:17px"><span>EPA Mold Remediation, an HVAC perspective</span><span style="color:#475569;font-size:15px;text-align:right">4 hours</span><span style="font:600 20px/1 'Inter Tight',sans-serif;color:#0B2A42;text-align:right">$50</span></div>
+            <div style="display:grid;grid-template-columns:minmax(0,1fr) 80px 64px;gap:16px;padding:14px 0;border-bottom:1px solid #E2E8F0;align-items:center;font-size:17px"><span>Wire Helix Trunk &amp; Branch Duct Sizing</span><span style="color:#475569;font-size:15px;text-align:right">4 hours</span><span style="font:600 20px/1 'Inter Tight',sans-serif;color:#0B2A42;text-align:right">$50</span></div>
+            <div style="display:grid;grid-template-columns:minmax(0,1fr) 80px 64px;gap:16px;padding:14px 0;border-bottom:1px solid #E2E8F0;align-items:center;font-size:17px"><span>2018, 2021 or 2024 Code Changes, IFGC &amp; IMC</span><span style="color:#475569;font-size:15px;text-align:right">4 hours</span><span style="font:600 20px/1 'Inter Tight',sans-serif;color:#0B2A42;text-align:right">$50</span></div>
+            <div style="display:grid;grid-template-columns:minmax(0,1fr) 80px 64px;gap:16px;padding:14px 0;align-items:center;font-size:17px"><span>ADC Flex Duct Installation Standards</span><span style="color:#475569;font-size:15px;text-align:right">1 hour</span><span style="font:600 20px/1 'Inter Tight',sans-serif;color:#0B2A42;text-align:right">$15</span></div>
+          </div>
+          <a href="#" style="display:inline-flex;align-self:flex-start;align-items:center;height:52px;padding:0 28px;border-radius:10px;background:#C2410C;color:#fff;font:600 18px/1 Inter,sans-serif;text-decoration:none" style-hover="background:#9A3412">See CEU classes</a>
+        </div>
+      </section>
+
+      <!-- 7 Testimonials -->
+      <section style="position:relative;padding:104px 64px;overflow:hidden;background:#0B2A42">
+        <div style="position:absolute;inset:0"><image-slot id="v2-testi-bg" shape="rect" src="./assets/classroom.png" placeholder="Classroom photo"></image-slot></div>
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,42,66,.86) 0%,rgba(11,42,66,.94) 100%);pointer-events:none"></div>
+        <div style="position:relative;display:flex;align-items:flex-end;justify-content:space-between;gap:40px;margin-bottom:48px;color:#fff;pointer-events:none">
+          <div style="display:flex;flex-direction:column;gap:14px"><div style="font:600 15px/1 Inter,sans-serif;color:#E2E8F0">Student stories</div><h2 style="font:600 44px/1.1 'Inter Tight',sans-serif;letter-spacing:-.02em">What students say</h2></div>
+          <a href="#" style="font:600 18px/1 Inter,sans-serif;white-space:nowrap;display:inline-flex;align-items:center;gap:8px;color:#fff;pointer-events:auto">Read more student stories <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+        </div>
+        <div style="position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;pointer-events:none">
+          <figure style="margin:0;background:#fff;border-radius:12px;padding:32px;display:flex;flex-direction:column;gap:18px;box-shadow:0 24px 60px rgba(0,0,0,.3)">
+            <span style="font:700 72px/0.6 'Inter Tight',sans-serif;color:#E46312;height:34px">“</span>
+            <blockquote style="margin:0;font-size:18px;color:#0F172A;text-wrap:pretty;flex:1">I passed my exam with an adjusted score of 93. I could not have done this without your courses. With 21 years of experience I still could not have passed this exam without your exam prep review course.</blockquote>
+            <figcaption style="display:flex;align-items:center;gap:12px;border-top:1px solid #E2E8F0;padding-top:16px"><span style="width:40px;height:40px;border-radius:50%;background:#0B2A42;color:#fff;display:flex;align-items:center;justify-content:center;font:600 15px/1 Inter,sans-serif">JO</span><span style="display:flex;flex-direction:column"><span style="font:600 16px/1.3 Inter,sans-serif;color:#0B2A42">James O.</span><span style="font-size:14px;color:#475569">Student</span></span></figcaption>
+          </figure>
+          <figure style="margin:0;background:#fff;border-radius:12px;padding:32px;display:flex;flex-direction:column;gap:18px;box-shadow:0 24px 60px rgba(0,0,0,.3)">
+            <span style="font:700 72px/0.6 'Inter Tight',sans-serif;color:#E46312;height:34px">“</span>
+            <blockquote style="margin:0;font-size:18px;color:#0F172A;text-wrap:pretty;flex:1">I just got an email confirmation that I passed my exam and was approved by the board. Thanks for all your help. I don’t think that your classes could have been any better. Your Manual J &amp; D, and the exam prep review class had me way over prepared to the point that the test was no sweat. Thanks again.</blockquote>
+            <figcaption style="display:flex;align-items:center;gap:12px;border-top:1px solid #E2E8F0;padding-top:16px"><span style="width:40px;height:40px;border-radius:50%;background:#0B2A42;color:#fff;display:flex;align-items:center;justify-content:center;font:600 15px/1 Inter,sans-serif">BR</span><span style="display:flex;flex-direction:column"><span style="font:600 16px/1.3 Inter,sans-serif;color:#0B2A42">Brett R.</span><span style="font-size:14px;color:#475569">Student</span></span></figcaption>
+          </figure>
+          <figure style="margin:0;background:#fff;border-radius:12px;padding:32px;display:flex;flex-direction:column;gap:18px;box-shadow:0 24px 60px rgba(0,0,0,.3)">
+            <span style="font:700 72px/0.6 'Inter Tight',sans-serif;color:#E46312;height:34px">“</span>
+            <blockquote style="margin:0;font-size:18px;color:#0F172A;text-wrap:pretty;flex:1">I would have never passed the CA License Exam without your help. Your classes even helped me tremendously in passing the Tennessee exams. I have been doing HVAC for over 40 years and I learned a lot. Thanks so much.</blockquote>
+            <figcaption style="display:flex;align-items:center;gap:12px;border-top:1px solid #E2E8F0;padding-top:16px"><span style="width:40px;height:40px;border-radius:50%;background:#0B2A42;color:#fff;display:flex;align-items:center;justify-content:center;font:600 15px/1 Inter,sans-serif">MS</span><span style="display:flex;flex-direction:column"><span style="font:600 16px/1.3 Inter,sans-serif;color:#0B2A42">Marroll S.</span><span style="font-size:14px;color:#475569">Student</span></span></figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <!-- 8 Closing CTA -->
+      <section style="padding:104px 64px;background:#F5F7FA;background-image:linear-gradient(rgba(11,42,66,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(11,42,66,.055) 1px,transparent 1px);background-size:40px 40px">
+        <div style="background:#fff;border-radius:16px;box-shadow:0 24px 60px rgba(11,42,66,.12);padding:64px 72px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:48px;align-items:center;position:relative;overflow:hidden">
+          <div style="position:absolute;left:0;top:0;bottom:0;width:8px;background:repeating-linear-gradient(135deg,#E46312 0 10px,transparent 10px 20px)"></div>
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <h2 style="font:600 44px/1.1 'Inter Tight',sans-serif;letter-spacing:-.02em;color:#0B2A42">Not sure where to start?</h2>
+            <p style="font-size:19px;color:#475569;max-width:600px;text-wrap:pretty">The 10-step guide walks you from your first question to your license. Or ask us directly.</p>
+            <div style="display:flex;gap:28px;font-size:16px;color:#475569;margin-top:4px">
+              <a href="mailto:Info@GeorgiaLicenseExam.com" style="text-decoration:none;display:inline-flex;align-items:center;gap:8px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>Info@GeorgiaLicenseExam.com</a>
+              <span style="display:inline-flex;align-items:center;gap:8px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10476E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>{{ phoneText }}</span>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px;min-width:240px">
+            <a href="#" style="display:flex;align-items:center;justify-content:center;height:56px;padding:0 32px;border-radius:10px;background:#C2410C;color:#fff;font:600 18px/1 Inter,sans-serif;text-decoration:none;box-shadow:0 10px 24px rgba(194,65,12,.3)" style-hover="background:#9A3412">Start here</a>
+            <a href="#" style="display:flex;align-items:center;justify-content:center;height:56px;padding:0 32px;border-radius:10px;border:1.5px solid #10476E;color:#10476E;font:600 18px/1 Inter,sans-serif;text-decoration:none;background:#fff" style-hover="background:#F5F7FA">Contact us</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer style="padding:72px 64px 40px;background:#fff;border-top:1px solid #E2E8F0;font-size:16px">
+        <div style="display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr 1.3fr;gap:48px">
+          <div style="display:flex;flex-direction:column;gap:18px">
+            <img src="./assets/glec-logo.png" alt="GLEC, Georgia License Exam Company" style="height:44px;width:auto;display:block;align-self:flex-start">
+            <p style="color:#475569;max-width:300px;text-wrap:pretty">Online classes for the Georgia Conditioned Air contractor license and Board-approved CEUs, since 2006.</p>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px"><h3 style="font:600 15px/1 Inter,sans-serif;color:#0F172A;margin-bottom:4px">Classes</h3><a href="#" style="text-decoration:none;color:#475569">License classes</a><a href="#" style="text-decoration:none;color:#475569">CEU classes</a><a href="#" style="text-decoration:none;color:#475569">Technician certifications</a></div>
+          <div style="display:flex;flex-direction:column;gap:12px"><h3 style="font:600 15px/1 Inter,sans-serif;color:#0F172A;margin-bottom:4px">Help</h3><a href="#" style="text-decoration:none;color:#475569">How to get licensed</a><a href="#" style="text-decoration:none;color:#475569">Quick links</a><a href="#" style="text-decoration:none;color:#475569">Board application and meeting dates</a><a href="#" style="text-decoration:none;color:#475569">Contact</a></div>
+          <div style="display:flex;flex-direction:column;gap:12px"><h3 style="font:600 15px/1 Inter,sans-serif;color:#0F172A;margin-bottom:4px">Company</h3><a href="#" style="text-decoration:none;color:#475569">About</a><a href="#" style="text-decoration:none;color:#475569">Testimonials</a><a href="#" style="text-decoration:none;color:#475569">Policies</a></div>
+          <div style="display:flex;flex-direction:column;gap:12px;color:#475569"><h3 style="font:600 15px/1 Inter,sans-serif;color:#0F172A;margin-bottom:4px">Contact</h3><span>2625 Piedmont Road NE<br>UPS Store, Ste 56, PMB-320<br>Atlanta, Georgia 30324-3086<br><span style="font-size:14px">Mailing address only</span></span><a href="mailto:Info@GeorgiaLicenseExam.com" style="text-decoration:none;color:#10476E">Info@GeorgiaLicenseExam.com</a><span>{{ phoneText }}</span><sc-if value="{{ showFacebook }}" hint-placeholder-val="{{ false }}"><a href="#" style="text-decoration:none;color:#10476E">Facebook</a></sc-if></div>
+        </div>
+        <div style="margin-top:56px;padding-top:24px;border-top:1px solid #E2E8F0;display:flex;justify-content:space-between;gap:40px;font-size:14px;color:#475569"><span>© 2026 Georgia License Exam Company</span><div style="display:flex;gap:24px"><a href="#" style="color:#475569">Policies</a><a href="#" style="color:#475569">Hold Harmless policy</a></div></div>
+      </footer>
+    </div>
+  </div>
+
+  <!-- ================= MOBILE 375 ================= -->
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <div style="font:600 11px/1 ui-monospace,Menlo,monospace;color:#475569;letter-spacing:.06em">MOBILE · 375</div>
+    <div data-screen-label="Homepage v2 mobile" style="width:375px;background:#fff;border-radius:8px;box-shadow:0 2px 12px rgba(15,23,42,.10);overflow:hidden;font-size:17px;line-height:1.6">
+      <header style="height:64px;background:#fff;border-bottom:1px solid #E2E8F0;display:flex;align-items:center;justify-content:space-between;padding:0 16px 0 20px">
+        <a href="#" style="display:flex;align-items:center;text-decoration:none"><img src="./assets/glec-logo.png" alt="GLEC, Georgia License Exam Company" style="height:38px;width:auto;display:block"></a>
+        <div style="display:flex;align-items:center;gap:4px">
+          <sc-if value="{{ hasCart }}" hint-placeholder-val="{{ false }}"><a href="#" aria-label="{{ cartLabel }}" style="position:relative;width:44px;height:44px;display:flex;align-items:center;justify-content:center;color:#0F172A"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg><span style="position:absolute;top:2px;right:2px;min-width:18px;height:18px;border-radius:9px;background:#C2410C;color:#fff;font:600 11px/18px Inter,sans-serif;text-align:center;padding:0 5px">{{ cartCount }}</span></a></sc-if>
+          <button aria-label="Menu" style="width:44px;height:44px;border:0;background:none;display:flex;align-items:center;justify-content:center;color:#0F172A;cursor:pointer"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="7" y2="7"/><line x1="4" x2="20" y1="17" y2="17"/></svg></button>
+        </div>
+      </header>
+
+      <section style="position:relative;background:#0B2A42;background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);background-size:32px 32px;color:#fff;padding:48px 20px 0;display:flex;flex-direction:column;gap:18px;overflow:hidden">
+        <div style="display:flex;align-items:center;gap:12px;font:600 14px/1.3 Inter,sans-serif"><span style="width:28px;height:4px;background:repeating-linear-gradient(135deg,#E46312 0 6px,transparent 6px 12px);flex:none"></span>Georgia Conditioned Air (HVAC) contractor license</div>
+        <sc-if value="{{ h1A }}" hint-placeholder-val="{{ true }}"><h1 style="font:700 40px/1.08 'Inter Tight',sans-serif;letter-spacing:-.03em;text-wrap:pretty">Get your Georgia HVAC license. We’ll show you every step.</h1></sc-if>
+        <sc-if value="{{ h1B }}" hint-placeholder-val="{{ false }}"><h1 style="font:700 40px/1.08 'Inter Tight',sans-serif;letter-spacing:-.03em;text-wrap:pretty">Georgia HVAC license classes, taught step by step.</h1></sc-if>
+        <sc-if value="{{ h1C }}" hint-placeholder-val="{{ false }}"><h1 style="font:700 40px/1.08 'Inter Tight',sans-serif;letter-spacing:-.03em;text-wrap:pretty">Get licensed in Georgia. Every step, shown in full.</h1></sc-if>
+        <p style="color:#E2E8F0;text-wrap:pretty">Online classes taught by Garrison Michael, with full step-by-step solutions. Unlimited 24/7 access for up to a year or until you pass.</p>
+        <div style="display:flex;flex-direction:column;gap:12px;margin-top:4px">
+          <a href="#" style="display:flex;align-items:center;justify-content:center;height:52px;border-radius:10px;background:#C2410C;color:#fff;font:600 18px/1 Inter,sans-serif;text-decoration:none;box-shadow:0 8px 24px rgba(0,0,0,.25)">Start here</a>
+          <a href="#" style="display:flex;align-items:center;justify-content:center;height:52px;border-radius:10px;border:1.5px solid rgba(255,255,255,.7);color:#fff;font:600 18px/1 Inter,sans-serif;text-decoration:none">See classes and prices</a>
+        </div>
+        <div style="position:relative;margin:24px -20px 0;height:300px">
+          <div style="position:absolute;inset:0"><image-slot id="v2-hero-m" shape="rect" src="./assets/hero-home-study.png" placeholder="Hero photo"></image-slot></div>
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg,#0B2A42 0%,rgba(11,42,66,0) 40%,rgba(11,42,66,0) 70%,rgba(11,42,66,.5) 100%);pointer-events:none"></div>
+          <div style="position:absolute;left:20px;right:20px;bottom:20px;background:#fff;border-radius:12px;box-shadow:0 20px 50px rgba(0,0,0,.35);padding:14px 16px;display:flex;flex-direction:column;gap:10px;pointer-events:none">
+            <div style="display:flex;justify-content:space-between;align-items:center"><span style="font:600 12px/1 Inter,sans-serif;background:#F5F7FA;border-radius:6px;padding:6px 8px;color:#0F172A">CA-OL</span><span style="font:500 13px/1 Inter,sans-serif;color:#15803D">8 of 20 complete</span></div>
+            <div style="font:600 16px/1.3 'Inter Tight',sans-serif;color:#0B2A42">Exam Prep Review Class</div>
+            <div style="height:7px;border-radius:4px;background:#E2E8F0;overflow:hidden"><div style="width:40%;height:100%;background:#15803D"></div></div>
+          </div>
+        </div>
+      </section>
+      <div style="margin:-32px 20px 0;position:relative;z-index:2;background:#fff;border-radius:12px;box-shadow:0 16px 40px rgba(11,42,66,.14);display:grid;grid-template-columns:repeat(3,1fr)">
+        <div style="padding:18px 12px;display:flex;flex-direction:column;gap:2px;align-items:center;text-align:center;border-right:1px solid #E2E8F0"><span style="font:700 26px/1 'Inter Tight',sans-serif;letter-spacing:-.03em;color:#0B2A42">20</span><span style="font-size:12px;color:#475569;line-height:1.3">years in business</span></div>
+        <div style="padding:18px 12px;display:flex;flex-direction:column;gap:2px;align-items:center;text-align:center;border-right:1px solid #E2E8F0"><span style="font:700 26px/1 'Inter Tight',sans-serif;letter-spacing:-.03em;color:#0B2A42">82%</span><span style="font-size:12px;color:#475569;line-height:1.3">exam pass rate</span></div>
+        <div style="padding:18px 12px;display:flex;flex-direction:column;gap:2px;align-items:center;text-align:center"><span style="font:700 26px/1 'Inter Tight',sans-serif;letter-spacing:-.03em;color:#0B2A42">5,400+</span><span style="font-size:12px;color:#475569;line-height:1.3">student members</span></div>
+      </div>
+
+      <section style="padding:72px 20px 64px;margin-top:-28px;background:#F5F7FA;background-image:linear-gradient(rgba(11,42,66,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(11,42,66,.055) 1px,transparent 1px);background-size:32px 32px;display:flex;flex-direction:column;gap:16px">
+        <div style="font:600 14px/1 Inter,sans-serif;color:#10476E">Start here</div>
+        <h2 style="font:600 30px/1.1 'Inter Tight',sans-serif;letter-spacing:-.02em;color:#0B2A42;margin-bottom:8px">How to get licensed, in three steps</h2>
+        <div style="background:#fff;border-radius:12px;padding:24px;box-shadow:0 10px 30px rgba(11,42,66,.08);display:flex;flex-direction:column;gap:12px"><div style="display:flex;align-items:center;justify-content:space-between"><span style="font:700 44px/1 'Inter Tight',sans-serif;letter-spacing:-.04em;color:#E46312">01</span><span style="width:44px;height:44px;border-radius:10px;background:#0B2A42;color:#fff;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg></span></div><h3 style="font:600 22px/1.2 'Inter Tight',sans-serif;color:#0B2A42">Check which license fits</h3><p style="font-size:16px;color:#475569">Restricted (Class 1) for units up to 5 tons, or Non-Restricted (Class 2) for all sizes.</p></div>
+        <div style="background:#fff;border-radius:12px;padding:24px;box-shadow:0 10px 30px rgba(11,42,66,.08);display:flex;flex-direction:column;gap:12px"><div style="display:flex;align-items:center;justify-content:space-between"><span style="font:700 44px/1 'Inter Tight',sans-serif;letter-spacing:-.04em;color:#E46312">02</span><span style="width:44px;height:44px;border-radius:10px;background:#0B2A42;color:#fff;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m10 8 6 4-6 4Z"/></svg></span></div><h3 style="font:600 22px/1.2 'Inter Tight',sans-serif;color:#0B2A42">Take the design classes</h3><p style="font-size:16px;color:#475569">Residential Design is required for every license. Non-Restricted adds Commercial. Then apply to the Board.</p></div>
+        <div style="background:#fff;border-radius:12px;padding:24px;box-shadow:0 10px 30px rgba(11,42,66,.08);display:flex;flex-direction:column;gap:12px"><div style="display:flex;align-items:center;justify-content:space-between"><span style="font:700 44px/1 'Inter Tight',sans-serif;letter-spacing:-.04em;color:#E46312">03</span><span style="width:44px;height:44px;border-radius:10px;background:#0B2A42;color:#fff;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg></span></div><h3 style="font:600 22px/1.2 'Inter Tight',sans-serif;color:#0B2A42">Prep for the exam and pass</h3><p style="font-size:16px;color:#475569">After Board approval, take the Exam Prep Review Class and schedule your PSI exam.</p></div>
+        <a href="#" style="font:600 17px/1 Inter,sans-serif;display:inline-flex;align-items:center;gap:8px;min-height:44px">See all 10 steps <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+      </section>
+
+      <section style="padding:64px 20px;display:flex;flex-direction:column;gap:16px">
+        <div style="font:600 14px/1 Inter,sans-serif;color:#10476E">Prices up front</div>
+        <h2 style="font:600 30px/1.1 'Inter Tight',sans-serif;letter-spacing:-.02em;color:#0B2A42">Conditioned Air license classes</h2>
+        <p style="color:#475569;margin-bottom:8px">All online. Unlimited 24/7 access for up to a year or until you pass.</p>
+        <div style="position:relative;overflow:hidden;background:#0B2A42;background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);background-size:32px 32px;border-radius:12px;padding:24px;color:#fff;display:flex;flex-direction:column;gap:14px;box-shadow:0 16px 40px rgba(11,42,66,.22)">
+          <div style="position:absolute;right:-50px;top:-50px;width:200px;height:200px;border-radius:50%;background:radial-gradient(closest-side,rgba(228,99,18,.4),rgba(228,99,18,0))"></div>
+          <span style="align-self:flex-start;font:600 12px/1 Inter,sans-serif;background:#C2410C;border-radius:999px;padding:7px 11px;position:relative">Required for every CA license</span>
+          <span style="font:600 12px/1 Inter,sans-serif;letter-spacing:.02em;color:#CBD5E1;position:relative">HLG-DD-R-OL</span>
+          <h3 style="font:600 26px/1.15 'Inter Tight',sans-serif;letter-spacing:-.02em;position:relative">Residential Design Class</h3>
+          <p style="color:#CBD5E1;font-size:16px;position:relative">ACCA Manual J &amp; D, about 16 hours online. Study guide and SOS-APP videos included.</p>
+          <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px;position:relative;padding-top:6px"><span style="font:700 44px/1 'Inter Tight',sans-serif;letter-spacing:-.03em;color:#E46312">$470</span><a href="#" style="display:inline-flex;align-items:center;height:48px;padding:0 22px;border-radius:10px;background:#C2410C;color:#fff;font:600 17px/1 Inter,sans-serif;text-decoration:none">Add to cart</a></div>
+        </div>
+        <div style="border:1px solid #E2E8F0;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:10px;box-shadow:0 10px 30px rgba(11,42,66,.06)"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font:600 12px/1 Inter,sans-serif;background:#FDEBDD;color:#9A3412;border-radius:6px;padding:7px 9px">HLG-DD-C-OL</span><span style="font-size:13px;color:#475569">Non-Restricted only</span></div><h3 style="font:600 22px/1.2 'Inter Tight',sans-serif;color:#0B2A42">Commercial Design Class</h3><p style="font-size:16px;color:#475569">Carrier System Design Manuals 1, 2 and 3. About 8 hours online.</p><div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:4px"><span style="font:700 28px/1 'Inter Tight',sans-serif;color:#0B2A42">$270</span><a href="#" style="display:inline-flex;align-items:center;height:48px;padding:0 20px;border-radius:10px;border:1.5px solid #10476E;color:#10476E;font:600 16px/1 Inter,sans-serif;text-decoration:none;background:#fff">Add to cart</a></div></div>
+        <div style="border:1px solid #E2E8F0;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:10px;box-shadow:0 10px 30px rgba(11,42,66,.06)"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font:600 12px/1 Inter,sans-serif;background:#FDEBDD;color:#9A3412;border-radius:6px;padding:7px 9px">CA-OL</span><span style="font-size:13px;color:#475569">After Board approval</span></div><h3 style="font:600 22px/1.2 'Inter Tight',sans-serif;color:#0B2A42">Exam Prep Review Class</h3><p style="font-size:16px;color:#475569">Every reference book except Manuals J &amp; D, plus quizzes. Ships a printed study guide.</p><div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:4px"><span style="font:700 28px/1 'Inter Tight',sans-serif;color:#0B2A42">$535</span><a href="#" style="display:inline-flex;align-items:center;height:48px;padding:0 20px;border-radius:10px;border:1.5px solid #10476E;color:#10476E;font:600 16px/1 Inter,sans-serif;text-decoration:none;background:#fff">Add to cart</a></div></div>
+        <div style="border:1px solid #E2E8F0;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:10px;box-shadow:0 10px 30px rgba(11,42,66,.06)"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font:600 12px/1 Inter,sans-serif;background:#FDEBDD;color:#9A3412;border-radius:6px;padding:7px 9px">CA-TABs</span><span style="font-size:13px;color:#475569">Shipped</span></div><h3 style="font:600 22px/1.2 'Inter Tight',sans-serif;color:#0B2A42">Permanent reference tabs</h3><p style="font-size:16px;color:#475569">317+ laser-printed tabs with placement charts. [CONFIRM: 317 or 328]</p><div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:4px"><span style="font:700 28px/1 'Inter Tight',sans-serif;color:#0B2A42">$155</span><a href="#" style="display:inline-flex;align-items:center;height:48px;padding:0 20px;border-radius:10px;border:1.5px solid #10476E;color:#10476E;font:600 16px/1 Inter,sans-serif;text-decoration:none;background:#fff">Add to cart</a></div></div>
+        <div style="border:1px solid #E2E8F0;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:10px;box-shadow:0 10px 30px rgba(11,42,66,.06)"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font:600 12px/1 Inter,sans-serif;background:#FDEBDD;color:#9A3412;border-radius:6px;padding:7px 9px">SOS-APP</span><span style="font:600 12px/1 Inter,sans-serif;color:#C2410C">Free with design classes</span></div><h3 style="font:600 22px/1.2 'Inter Tight',sans-serif;color:#0B2A42">Application Overview videos</h3><p style="font-size:16px;color:#475569">How to complete the Board application in GOALS, with checklists.</p><div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:4px"><span style="font:700 28px/1 'Inter Tight',sans-serif;color:#0B2A42">$96</span><a href="#" style="display:inline-flex;align-items:center;height:48px;padding:0 20px;border-radius:10px;border:1.5px solid #10476E;color:#10476E;font:600 16px/1 Inter,sans-serif;text-decoration:none;background:#fff">Add to cart</a></div></div>
+      </section>
+
+      <section style="padding:0 20px 64px;display:flex;flex-direction:column;gap:16px">
+        <div style="position:relative;height:280px;margin-bottom:16px">
+          <div style="position:absolute;right:-20px;top:-16px;width:60%;height:60%;border-radius:12px;background:#0B2A42;background-image:linear-gradient(rgba(255,255,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.07) 1px,transparent 1px);background-size:20px 20px"></div>
+          <div style="position:absolute;left:0;top:0;width:calc(100% - 16px);height:calc(100% - 16px);border-radius:12px;overflow:hidden;box-shadow:0 16px 40px rgba(11,42,66,.2)"><image-slot id="v2-why-m" shape="rect" src="./assets/practice-exam.png" placeholder="Practice exam photo"></image-slot></div>
+        </div>
+        <div style="font:600 14px/1 Inter,sans-serif;color:#10476E">Why GLEC</div>
+        <h2 style="font:600 30px/1.1 'Inter Tight',sans-serif;letter-spacing:-.02em;color:#0B2A42">Taught the way the exam is written</h2>
+        <div style="background:#F5F7FA;border-radius:12px;padding:20px;display:flex;gap:14px;align-items:flex-start"><span style="flex:none;width:40px;height:40px;border-radius:10px;background:#fff;color:#10476E;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(11,42,66,.08)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/></svg></span><div><h3 style="font:600 19px/1.3 'Inter Tight',sans-serif;color:#0B2A42">Solutions, not answers</h3><p style="font-size:15px;color:#475569">Chart lookup, equation and calculator keys, every time.</p></div></div>
+        <div style="background:#F5F7FA;border-radius:12px;padding:20px;display:flex;gap:14px;align-items:flex-start"><span style="flex:none;width:40px;height:40px;border-radius:10px;background:#fff;color:#10476E;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(11,42,66,.08)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span><div><h3 style="font:600 19px/1.3 'Inter Tight',sans-serif;color:#0B2A42">Only the Georgia CA exam</h3><p style="font-size:15px;color:#475569">One exam, one Board, one application.</p></div></div>
+        <div style="background:#F5F7FA;border-radius:12px;padding:20px;display:flex;gap:14px;align-items:flex-start"><span style="flex:none;width:40px;height:40px;border-radius:10px;background:#fff;color:#10476E;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(11,42,66,.08)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><div><h3 style="font:600 19px/1.3 'Inter Tight',sans-serif;color:#0B2A42">24/7 for up to a year</h3><p style="font-size:15px;color:#475569">From home or the job, until you pass.</p></div></div>
+        <div style="background:#F5F7FA;border-radius:12px;padding:20px;display:flex;gap:14px;align-items:flex-start"><span style="flex:none;width:40px;height:40px;border-radius:10px;background:#fff;color:#10476E;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(11,42,66,.08)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg></span><div><h3 style="font:600 19px/1.3 'Inter Tight',sans-serif;color:#0B2A42">Tabs, guide, application</h3><p style="font-size:15px;color:#475569">Permanent tabs, printed study guide and application help.</p></div></div>
+      </section>
+
+      <section aria-roledescription="carousel" aria-label="GLEC by the numbers" style="position:relative;padding:48px 0 40px;background:#0B2A42;background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:32px 32px;color:#fff;overflow:hidden">
+        <div style="position:absolute;left:0;right:0;top:0;height:6px;background:repeating-linear-gradient(135deg,#E46312 0 12px,transparent 12px 24px)"></div>
+        <div style="overflow:hidden">
+          <div style="display:flex;transition:transform .35s ease;transform:{{ statX }}">
+            <sc-for list="{{ stats }}" as="s" hint-placeholder-count="4">
+              <div role="group" aria-roledescription="slide" style="flex:0 0 100%;padding:0 56px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px">
+                <span style="font:700 88px/1 'Inter Tight',sans-serif;letter-spacing:-.045em;color:#E46312;font-variant-numeric:tabular-nums">{{ s.n }}</span>
+                <span style="font:600 20px/1.3 'Inter Tight',sans-serif">{{ s.label }}</span>
+                <span style="font-size:15px;color:#CBD5E1;line-height:1.5;max-width:240px">{{ s.note }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <button aria-label="Previous" onClick="{{ statPrev }}" style="position:absolute;left:8px;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:rgba(11,42,66,.6);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+        <button aria-label="Next" onClick="{{ statNext }}" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:rgba(11,42,66,.6);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+        <div style="display:flex;justify-content:center;gap:8px;margin-top:28px">
+          <sc-for list="{{ stats }}" as="s" hint-placeholder-count="4">
+            <button aria-label="{{ s.dotLabel }}" onClick="{{ s.go }}" style="width:28px;height:28px;border:0;background:none;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer"><span style="display:block;height:8px;border-radius:4px;transition:all .25s;width:{{ s.dotW }};background:{{ s.dotBg }}"></span></button>
+          </sc-for>
+        </div>
+      </section>
+
+      <section style="padding:64px 20px;background:#F5F7FA;display:flex;flex-direction:column;gap:16px">
+        <div style="position:relative;height:300px;margin-bottom:20px">
+          <div style="position:absolute;inset:0;border-radius:12px;overflow:hidden;box-shadow:0 16px 40px rgba(11,42,66,.18);background:#fff"><image-slot id="v2-garrison-m" shape="rect" src="./assets/garrison.png" placeholder="Photo of Garrison Michael"></image-slot></div>
+          <div style="position:absolute;right:-8px;bottom:-16px;width:96px;height:96px;border-radius:50%;background:#C2410C;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 12px 32px rgba(194,65,12,.35);pointer-events:none"><span style="font:700 28px/1 'Inter Tight',sans-serif;letter-spacing:-.03em">20</span><span style="font:600 11px/1.2 Inter,sans-serif;text-align:center">years<br>2006–2026</span></div>
+        </div>
+        <div style="font:600 14px/1 Inter,sans-serif;color:#10476E">Meet your instructor</div>
+        <h2 style="font:600 30px/1.1 'Inter Tight',sans-serif;letter-spacing:-.02em;color:#0B2A42">Garrison Michael</h2>
+        <p style="color:#475569">Owner and instructor. Founded GLEC in 2006 after teaching the Conditioned Air review classes at the Georgia Trane Training Center.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+          <div style="background:#fff;border-radius:12px;padding:14px 12px;box-shadow:0 10px 30px rgba(11,42,66,.06);display:flex;flex-direction:column;gap:4px"><span style="font:700 26px/1 'Inter Tight',sans-serif;letter-spacing:-.03em;color:#0B2A42">34+</span><span style="font-size:13px;color:#475569;line-height:1.3">years in HVAC</span></div>
+          <div style="background:#fff;border-radius:12px;padding:14px 12px;box-shadow:0 10px 30px rgba(11,42,66,.06);display:flex;flex-direction:column;gap:4px"><span style="font:700 26px/1 'Inter Tight',sans-serif;letter-spacing:-.03em;color:#0B2A42">6</span><span style="font-size:13px;color:#475569;line-height:1.3">states licensed</span></div>
+          <div style="background:#fff;border-radius:12px;padding:14px 12px;box-shadow:0 10px 30px rgba(11,42,66,.06);display:flex;flex-direction:column;gap:4px"><span style="font:700 26px/1 'Inter Tight',sans-serif;letter-spacing:-.03em;color:#0B2A42">B.S.</span><span style="font-size:13px;color:#475569;line-height:1.3">Bldg Construction Eng.</span></div>
+        </div>
+        <p style="font-size:15px;color:#475569">Formerly with Trane and Johnson Controls. GA Conditioned Air Non-Restricted, GA Low Voltage Universal, EPA 608/609, LEED AP, DET.</p>
+        <a href="#" style="font:600 17px/1 Inter,sans-serif;display:inline-flex;align-items:center;gap:8px;min-height:44px">About GLEC <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+      </section>
+
+      <section style="padding:64px 20px;display:flex;flex-direction:column;gap:16px">
+        <div style="position:relative;height:240px;margin-bottom:12px">
+          <div style="position:absolute;inset:0;border-radius:12px;overflow:hidden;box-shadow:0 16px 40px rgba(11,42,66,.18)"><image-slot id="v2-ceu-m" shape="rect" src="./assets/workshop-mentorship.png" placeholder="HVAC workshop scene"></image-slot></div>
+          <div style="position:absolute;left:16px;bottom:16px;background:#fff;border-radius:10px;box-shadow:0 12px 32px rgba(11,42,66,.25);padding:10px 14px;display:flex;align-items:center;gap:10px;pointer-events:none"><span style="width:32px;height:32px;border-radius:50%;background:#15803D;display:flex;align-items:center;justify-content:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg></span><span style="font:600 14px/1.2 Inter,sans-serif;color:#0B2A42">Board-approved</span></div>
+        </div>
+        <div style="font:600 14px/1 Inter,sans-serif;color:#10476E">License renewal</div>
+        <h2 style="font:600 30px/1.1 'Inter Tight',sans-serif;letter-spacing:-.02em;color:#0B2A42;text-wrap:pretty">Renewing your license? Board-approved CEU classes.</h2>
+        <p style="color:#475569;text-wrap:pretty">Licensed CA contractors need 4 CEU hours a year. All online, certificate prints the moment you finish the videos.</p>
+        <div style="background:#fff;border:1px solid #E2E8F0;border-radius:12px;box-shadow:0 10px 30px rgba(11,42,66,.08);padding:4px 18px;font-size:16px">
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) 56px 44px;gap:10px;padding:12px 0;border-bottom:1px solid #E2E8F0;align-items:center"><span>Carrier System Design Manuals 1, 2, 3</span><span style="color:#475569;font-size:13px;text-align:right">4 hours</span><span style="font:600 18px/1 'Inter Tight',sans-serif;color:#0B2A42;text-align:right">$50</span></div>
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) 56px 44px;gap:10px;padding:12px 0;border-bottom:1px solid #E2E8F0;align-items:center"><span>EPA Mold Remediation, an HVAC perspective</span><span style="color:#475569;font-size:13px;text-align:right">4 hours</span><span style="font:600 18px/1 'Inter Tight',sans-serif;color:#0B2A42;text-align:right">$50</span></div>
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) 56px 44px;gap:10px;padding:12px 0;border-bottom:1px solid #E2E8F0;align-items:center"><span>Wire Helix Trunk &amp; Branch Duct Sizing</span><span style="color:#475569;font-size:13px;text-align:right">4 hours</span><span style="font:600 18px/1 'Inter Tight',sans-serif;color:#0B2A42;text-align:right">$50</span></div>
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) 56px 44px;gap:10px;padding:12px 0;border-bottom:1px solid #E2E8F0;align-items:center"><span>2018, 2021 or 2024 Code Changes</span><span style="color:#475569;font-size:13px;text-align:right">4 hours</span><span style="font:600 18px/1 'Inter Tight',sans-serif;color:#0B2A42;text-align:right">$50</span></div>
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) 56px 44px;gap:10px;padding:12px 0;align-items:center"><span>ADC Flex Duct Installation Standards</span><span style="color:#475569;font-size:13px;text-align:right">1 hour</span><span style="font:600 18px/1 'Inter Tight',sans-serif;color:#0B2A42;text-align:right">$15</span></div>
+        </div>
+        <a href="#" style="display:flex;align-items:center;justify-content:center;height:52px;border-radius:10px;background:#C2410C;color:#fff;font:600 18px/1 Inter,sans-serif;text-decoration:none;margin-top:4px">See CEU classes</a>
+      </section>
+
+      <section style="position:relative;padding:64px 20px;background:#0B2A42;overflow:hidden">
+        <div style="position:absolute;inset:0"><image-slot id="v2-testi-bg-m" shape="rect" src="./assets/classroom.png" placeholder="Classroom photo"></image-slot></div>
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,42,66,.88) 0%,rgba(11,42,66,.95) 100%);pointer-events:none"></div>
+        <div style="position:relative;display:flex;flex-direction:column;gap:16px;pointer-events:none">
+          <div style="font:600 14px/1 Inter,sans-serif;color:#E2E8F0">Student stories</div>
+          <h2 style="font:600 30px/1.1 'Inter Tight',sans-serif;letter-spacing:-.02em;color:#fff;margin-bottom:8px">What students say</h2>
+          <figure style="margin:0;background:#fff;border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:14px;box-shadow:0 20px 50px rgba(0,0,0,.3)"><span style="font:700 60px/0.6 'Inter Tight',sans-serif;color:#E46312;height:28px">“</span><blockquote style="margin:0;font-size:17px;text-wrap:pretty">I passed my exam with an adjusted score of 93. I could not have done this without your courses. With 21 years of experience I still could not have passed this exam without your exam prep review course.</blockquote><figcaption style="display:flex;align-items:center;gap:12px;border-top:1px solid #E2E8F0;padding-top:14px"><span style="width:36px;height:36px;border-radius:50%;background:#0B2A42;color:#fff;display:flex;align-items:center;justify-content:center;font:600 13px/1 Inter,sans-serif">JO</span><span style="display:flex;flex-direction:column"><span style="font:600 15px/1.3 Inter,sans-serif;color:#0B2A42">James O.</span><span style="font-size:13px;color:#475569">Student</span></span></figcaption></figure>
+          <figure style="margin:0;background:#fff;border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:14px;box-shadow:0 20px 50px rgba(0,0,0,.3)"><span style="font:700 60px/0.6 'Inter Tight',sans-serif;color:#E46312;height:28px">“</span><blockquote style="margin:0;font-size:17px;text-wrap:pretty">I just got an email confirmation that I passed my exam and was approved by the board. Thanks for all your help. I don’t think that your classes could have been any better. Your Manual J &amp; D, and the exam prep review class had me way over prepared to the point that the test was no sweat. Thanks again.</blockquote><figcaption style="display:flex;align-items:center;gap:12px;border-top:1px solid #E2E8F0;padding-top:14px"><span style="width:36px;height:36px;border-radius:50%;background:#0B2A42;color:#fff;display:flex;align-items:center;justify-content:center;font:600 13px/1 Inter,sans-serif">BR</span><span style="display:flex;flex-direction:column"><span style="font:600 15px/1.3 Inter,sans-serif;color:#0B2A42">Brett R.</span><span style="font-size:13px;color:#475569">Student</span></span></figcaption></figure>
+          <figure style="margin:0;background:#fff;border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:14px;box-shadow:0 20px 50px rgba(0,0,0,.3)"><span style="font:700 60px/0.6 'Inter Tight',sans-serif;color:#E46312;height:28px">“</span><blockquote style="margin:0;font-size:17px;text-wrap:pretty">I would have never passed the CA License Exam without your help. Your classes even helped me tremendously in passing the Tennessee exams. I have been doing HVAC for over 40 years and I learned a lot. Thanks so much.</blockquote><figcaption style="display:flex;align-items:center;gap:12px;border-top:1px solid #E2E8F0;padding-top:14px"><span style="width:36px;height:36px;border-radius:50%;background:#0B2A42;color:#fff;display:flex;align-items:center;justify-content:center;font:600 13px/1 Inter,sans-serif">MS</span><span style="display:flex;flex-direction:column"><span style="font:600 15px/1.3 Inter,sans-serif;color:#0B2A42">Marroll S.</span><span style="font-size:13px;color:#475569">Student</span></span></figcaption></figure>
+          <a href="#" style="font:600 17px/1 Inter,sans-serif;display:inline-flex;align-items:center;gap:8px;min-height:44px;color:#fff;pointer-events:auto">Read more student stories <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+        </div>
+      </section>
+
+      <section style="padding:64px 20px;background:#F5F7FA;background-image:linear-gradient(rgba(11,42,66,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(11,42,66,.055) 1px,transparent 1px);background-size:32px 32px">
+        <div style="position:relative;overflow:hidden;background:#fff;border-radius:14px;box-shadow:0 20px 50px rgba(11,42,66,.12);padding:32px 24px 28px 30px;display:flex;flex-direction:column;gap:16px">
+          <div style="position:absolute;left:0;top:0;bottom:0;width:6px;background:repeating-linear-gradient(135deg,#E46312 0 8px,transparent 8px 16px)"></div>
+          <h2 style="font:600 30px/1.1 'Inter Tight',sans-serif;letter-spacing:-.02em;color:#0B2A42">Not sure where to start?</h2>
+          <p style="color:#475569;text-wrap:pretty">The 10-step guide walks you from your first question to your license. Or ask us directly.</p>
+          <a href="#" style="display:flex;align-items:center;justify-content:center;height:52px;border-radius:10px;background:#C2410C;color:#fff;font:600 18px/1 Inter,sans-serif;text-decoration:none;box-shadow:0 10px 24px rgba(194,65,12,.3);margin-top:4px">Start here</a>
+          <a href="#" style="display:flex;align-items:center;justify-content:center;height:52px;border-radius:10px;border:1.5px solid #10476E;color:#10476E;font:600 18px/1 Inter,sans-serif;text-decoration:none;background:#fff">Contact us</a>
+          <div style="display:flex;flex-direction:column;gap:6px;font-size:15px;color:#475569;margin-top:4px"><a href="mailto:Info@GeorgiaLicenseExam.com" style="text-decoration:none">Info@GeorgiaLicenseExam.com</a><span>{{ phoneText }}</span></div>
+        </div>
+      </section>
+
+      <footer style="padding:48px 20px 32px;border-top:1px solid #E2E8F0;font-size:16px;display:flex;flex-direction:column;gap:32px">
+        <div style="display:flex;flex-direction:column;gap:14px"><img src="./assets/glec-logo.png" alt="GLEC, Georgia License Exam Company" style="height:40px;width:auto;display:block;align-self:flex-start"><p style="color:#475569;text-wrap:pretty">Online classes for the Georgia Conditioned Air contractor license and Board-approved CEUs, since 2006.</p></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px 20px">
+          <div style="display:flex;flex-direction:column;gap:12px"><h3 style="font:600 15px/1 Inter,sans-serif;color:#0F172A">Classes</h3><a href="#" style="text-decoration:none;color:#475569">License classes</a><a href="#" style="text-decoration:none;color:#475569">CEU classes</a><a href="#" style="text-decoration:none;color:#475569">Technician certifications</a></div>
+          <div style="display:flex;flex-direction:column;gap:12px"><h3 style="font:600 15px/1 Inter,sans-serif;color:#0F172A">Company</h3><a href="#" style="text-decoration:none;color:#475569">About</a><a href="#" style="text-decoration:none;color:#475569">Testimonials</a><a href="#" style="text-decoration:none;color:#475569">Policies</a></div>
+          <div style="display:flex;flex-direction:column;gap:12px"><h3 style="font:600 15px/1 Inter,sans-serif;color:#0F172A">Help</h3><a href="#" style="text-decoration:none;color:#475569">How to get licensed</a><a href="#" style="text-decoration:none;color:#475569">Quick links</a><a href="#" style="text-decoration:none;color:#475569">Board application and meeting dates</a><a href="#" style="text-decoration:none;color:#475569">Contact</a></div>
+          <div style="display:flex;flex-direction:column;gap:12px;color:#475569"><h3 style="font:600 15px/1 Inter,sans-serif;color:#0F172A">Contact</h3><span style="font-size:15px">2625 Piedmont Road NE<br>UPS Store, Ste 56, PMB-320<br>Atlanta, GA 30324-3086<br>Mailing address only</span><a href="mailto:Info@GeorgiaLicenseExam.com" style="text-decoration:none;color:#10476E;font-size:15px;word-break:break-all">Info@GeorgiaLicenseExam.com</a><span style="font-size:15px">{{ phoneText }}</span></div>
+        </div>
+        <div style="padding-top:20px;border-top:1px solid #E2E8F0;display:flex;flex-direction:column;gap:10px;font-size:14px;color:#475569"><span>© 2026 Georgia License Exam Company</span><div style="display:flex;gap:20px"><a href="#" style="color:#475569">Policies</a><a href="#" style="color:#475569">Hold Harmless policy</a></div></div>
+      </footer>
+    </div>
+  </div>
+
+  <!-- ================= MOBILE MENU OPEN ================= -->
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <div style="font:600 11px/1 ui-monospace,Menlo,monospace;color:#475569;letter-spacing:.06em">MOBILE MENU · OPEN</div>
+    <div data-screen-label="Mobile menu open" style="width:375px;height:812px;background:#fff;border-radius:8px;box-shadow:0 2px 12px rgba(15,23,42,.10);overflow:hidden;display:flex;flex-direction:column;font-size:17px;line-height:1.6">
+      <header style="height:64px;border-bottom:1px solid #E2E8F0;display:flex;align-items:center;justify-content:space-between;padding:0 16px 0 20px">
+        <img src="./assets/glec-logo.png" alt="GLEC, Georgia License Exam Company" style="height:38px;width:auto;display:block">
+        <button aria-label="Close menu" style="width:44px;height:44px;border:0;background:none;display:flex;align-items:center;justify-content:center;color:#0F172A;cursor:pointer"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+      </header>
+      <nav style="padding:24px 20px 0;display:flex;flex-direction:column">
+        <a href="#" style="font:600 28px/1.2 'Inter Tight',sans-serif;letter-spacing:-.02em;color:#0B2A42;text-decoration:none;padding:14px 0">License classes</a>
+        <a href="#" style="font:600 28px/1.2 'Inter Tight',sans-serif;letter-spacing:-.02em;color:#0B2A42;text-decoration:none;padding:14px 0">CEU classes</a>
+        <a href="#" style="font:600 28px/1.2 'Inter Tight',sans-serif;letter-spacing:-.02em;color:#0B2A42;text-decoration:none;padding:14px 0">How to get licensed</a>
+        <a href="#" style="font:600 28px/1.2 'Inter Tight',sans-serif;letter-spacing:-.02em;color:#0B2A42;text-decoration:none;padding:14px 0">About</a>
+        <a href="#" style="font:600 28px/1.2 'Inter Tight',sans-serif;letter-spacing:-.02em;color:#0B2A42;text-decoration:none;padding:14px 0">Contact</a>
+      </nav>
+      <div style="margin:20px 20px 0;padding-top:20px;border-top:1px solid #E2E8F0;display:flex;flex-direction:column;gap:4px">
+        <a href="#" style="font:500 18px/1 Inter,sans-serif;color:#0F172A;text-decoration:none;padding:12px 0">Log in</a>
+        <a href="#" style="font:500 18px/1 Inter,sans-serif;color:#0F172A;text-decoration:none;padding:12px 0">My courses</a>
+      </div>
+      <div style="margin:auto 20px 20px;display:flex;flex-direction:column;gap:16px">
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:16px;color:#475569"><span>{{ phoneText }}</span><a href="mailto:Info@GeorgiaLicenseExam.com" style="text-decoration:none">Info@GeorgiaLicenseExam.com</a></div>
+        <a href="#" style="display:flex;align-items:center;justify-content:center;height:52px;border-radius:10px;background:#C2410C;color:#fff;font:600 18px/1 Inter,sans-serif;text-decoration:none">Start here</a>
+      </div>
+    </div>
+  </div>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;h1Variant&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;A&quot;,&quot;options&quot;:[&quot;A&quot;,&quot;B&quot;,&quot;C&quot;],&quot;tsType&quot;:&quot;'A'|'B'|'C'&quot;,&quot;section&quot;:&quot;Hero headline&quot;},&quot;cartCount&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:0,&quot;min&quot;:0,&quot;max&quot;:9,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Header&quot;},&quot;phone&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Contact&quot;},&quot;showFacebook&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Footer&quot;}}">
+class Component extends DCLogic {
+  state = { statIdx: 0 };
+  renderVals() {
+    const v = this.props.h1Variant ?? 'A';
+    const phone = (this.props.phone || '').trim();
+    const cartCount = Math.max(0, parseInt(this.props.cartCount, 10) || 0);
+    const base = [
+      { n: '82%', label: 'exam pass rate', note: 'On the Georgia Conditioned Air exam.' },
+      { n: '5,400+', label: 'student members', note: 'From Georgia, SC, AL, TN and nationwide companies.' },
+      { n: '1,740+', label: 'online design classes sold', note: 'Residential and Commercial Design, online since 2018.' },
+      { n: '20', label: 'years in business', note: 'Founded 2006. 20th anniversary October 2026.' }
+    ];
+    const idx = this.state.statIdx;
+    const go = (i) => () => this.setState({ statIdx: (i + base.length) % base.length });
+    const stats = base.map((s, i) => ({
+      ...s, go: go(i), dotLabel: `Go to ${s.label}`,
+      dotW: i === idx ? '28px' : '8px', dotBg: i === idx ? '#E46312' : 'rgba(255,255,255,.35)'
+    }));
+    return {
+      h1A: v === 'A', h1B: v === 'B', h1C: v === 'C',
+      phoneText: phone || '[CONFIRM: phone number]',
+      showFacebook: !!this.props.showFacebook,
+      hasCart: cartCount > 0, cartCount, cartLabel: `Cart, ${cartCount} ${cartCount === 1 ? 'item' : 'items'}`,
+      stats, statX: `translateX(-${idx * 100}%)`,
+      statPrev: go(idx - 1), statNext: go(idx + 1)
+    };
+  }
+}
+</script>
+</body>
+</html>
