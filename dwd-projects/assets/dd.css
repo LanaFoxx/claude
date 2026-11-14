@@ -641,6 +641,9 @@ input[type=date], input[type=datetime-local] { cursor: pointer; }
 .dd-hm-text { font-size: var(--fs-body); line-height: 1.55; color: var(--text); white-space: pre-wrap; overflow-wrap: anywhere; max-height: 340px; overflow-y: auto; }
 .dd-hm-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 14px; }
 .dd-hm-e { padding: 16px 20px; margin: 0; color: var(--text-3); }
+/* WordPress admin's own p styles were wiping this padding too (same fix as the empty To-dos text). */
+.dd .dd-card p.dd-hm-e { margin: 0 !important; padding: 4px 20px 20px !important; }
+@media (max-width: 767px) { .dd .dd-card p.dd-hm-e { padding-left: 16px !important; padding-right: 16px !important; } }
 /* New email: client name suggestions under the To field */
 .dd-emsug { margin: -6px 0 12px; border: 1px solid var(--border-strong); border-radius: 8px; background: var(--surface); overflow: hidden; }
 .dd-emsug[hidden] { display: none; }
