@@ -610,7 +610,7 @@ const grain = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' widt
 const pageSettings = {
   background_background: 'classic', background_color: C.cream,
   custom_css: `html { scroll-behavior: smooth; }
-body::after { content: ""; position: fixed; inset: 0; z-index: 40; pointer-events: none; background-image: url("${grain}"); opacity: .38; mix-blend-mode: multiply; }
+/* Film-grain overlay removed at the client's request (was: body::after with the "grain" SVG noise). */
 @keyframes bi-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { animation: none !important; transition: none !important; } }
 `,

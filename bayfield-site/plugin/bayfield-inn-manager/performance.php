@@ -22,7 +22,9 @@ add_action( 'wp_head', function () {
 	// underlined links inside paragraphs so they don't rely on color alone.
 	echo '<style id="bi-a11y">.bi-btn-dark .elementor-button:not(:hover):not(:focus){background-color:#17301B!important}'
 		. '.bi-btn-light .elementor-button:not(:hover):not(:focus){background-color:#F5F2EC!important}'
-		. '.elementor-widget-text-editor a:not(.elementor-button),.bi-menu__fine a{text-decoration:underline;text-underline-offset:2px}</style>' . "\n";
+		. '.elementor-widget-text-editor a:not(.elementor-button),.bi-menu__fine a{text-decoration:underline;text-underline-offset:2px}'
+		. 'body::after{display:none!important}' // film-grain texture from the original mockup: switched off site-wide
+		. '</style>' . "\n";
 }, 1 );
 
 /** First photo of the homepage hero slideshow (container #book), from the page's Elementor data. */

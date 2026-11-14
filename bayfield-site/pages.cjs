@@ -124,6 +124,12 @@ function gallery() {
   ];
 }
 
+// Sponsor ad on the Webcam page: image linking to the advertiser (new tab, marked sponsored).
+function sponsor(m, file, url, alt, o = {}) {
+  return image(m.file(file), { link: url, settings: { image_size: 'full', alt_text: alt, link: { url, is_external: 'on', nofollow: 'on', custom_attributes: 'rel|sponsored noopener' },
+    _css_classes: 'bi-sponsor bi-no-lazy', custom_css: `selector { width: 100% !important; max-width: 100% !important; }\nselector a { display: block; }\nselector img { display: block; width: 100% !important; max-width: 100% !important; height: auto; border-radius: 4px; box-shadow: 0 20px 40px -30px rgba(23,48,27,.5); transition: transform .3s ease; }\nselector a:hover img { transform: translateY(-2px); }${o.css ? '\n' + o.css : ''}` } });
+}
+
 function webcam(m) {
   // Live player: the "Bayfield interactions" snippet loads Angelcam into #player_bayfieldlive
   // and fills the weather card (.bi-wx-*) from Open-Meteo. The marina photo and "—" values
@@ -162,11 +168,21 @@ function webcam(m) {
         light('Book a Room', EXT.book),
       ], { gap: 20, align: 'center', justify: 'space-between' }),
     ]),
-    // Stream, centered with side margins (room for sponsor spots later).
+    // Stream with sponsor spots: wide banner on top, two ads in a sidebar (under the player on tablet/phone).
     section({ background_background: 'classic', background_color: C.cream, padding: box(36, 48, 72, 48), padding_tablet: box(28, 32, 56, 32), padding_mobile: box(16, 12, 40, 12),
       flex_direction: 'column', flex_align_items: 'center', flex_gap: gap(14), _element_id: 'live' }, [
-      container({ content_width: 'full', padding: box(0), width: px(76, '%'), width_tablet: px(100, '%'), width_mobile: px(100, '%'),
-        custom_css: 'selector { max-width: 1180px; }' }, [stage]),
+      sponsor(m, 'ad-bayfield-adventure-awaits.jpg', 'https://www.bayfield.org/', 'Bayfield and the Apostle Islands: Adventure awaits. Plan your escape.',
+        { css: 'selector { max-width: 1480px !important; }' }),
+      container({ content_width: 'full', padding: box(0), width: px(100, '%'), flex_direction: 'row', flex_direction_tablet: 'column', flex_gap: gap(24), flex_gap_tablet: gap(16),
+        flex_align_items: 'stretch', flex_align_items_tablet: 'center', flex_wrap: 'nowrap', custom_css: 'selector { max-width: 1480px; }' }, [
+        container({ content_width: 'full', padding: box(0), custom_css: 'selector { flex: 1 1 0 !important; min-width: 0; width: auto !important; }\n@media (max-width: 1024px) { selector { flex: none !important; width: 100% !important; } }' }, [stage]),
+        container({ content_width: 'full', padding: box(0), width: px(280), width_tablet: px(100, '%'), _flex_size: 'none', flex_direction: 'column', flex_direction_tablet: 'row', flex_gap: gap(16),
+          flex_justify_content: 'space-between', flex_justify_content_tablet: 'center', flex_align_items_tablet: 'flex-start',
+          css_classes: 'bi-sponsors', custom_css: 'selector > .elementor-element { width: 100%; flex: none; }\n@media (max-width: 1024px) { selector > .elementor-element { flex: 0 1 280px; width: auto; min-width: 0; } }' }, [
+          sponsor(m, 'ad-bayfield-travel-guide.jpg', 'https://www.bayfield.org/plan-your-visit/travel-guide/', 'Get your free 2026-2027 Bayfield travel guide'),
+          sponsor(m, 'ad-superior-charters.jpg', 'https://www.superiorcharters.com/', 'Superior Charters: See you at the dock'),
+        ]),
+      ]),
       text('The marina, the ferry dock and Madeline Island, around the clock. Also on <a href="https://bayfieldlive.com" target="_blank" rel="noopener">bayfieldlive.com</a> · Weather from Open-Meteo',
         { color: C.muted, size: 13, align: 'center' }),
     ]),
