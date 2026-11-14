@@ -349,3 +349,6 @@
 .dd-py .mt .dd-schip { white-space: normal; line-height: 1.25; }
 .dd-bankchk { white-space: nowrap; flex: none; }
 .dd-upr .dd-bankchk { margin-top: 0; }
+/* Staging box: Create new staging URL (request / waiting / failed) */
+.dd-stgq { display: flex; flex-direction: column; gap: 10px; }
+.dd-stgq .dd-help { margin: 0; }

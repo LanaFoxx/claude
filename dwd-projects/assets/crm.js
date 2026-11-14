@@ -966,6 +966,29 @@
 			return typeof window.dwdSetUpworkBalance === 'function' ? window.dwdSetUpworkBalance(pending, available) : 'saved';
 		}).catch(function () { return 'failed'; });
 	};
+	// Staging copies made on SiteGround (crm.php): the button queues a request; the Claude check creates the copy and saves its URL on the project.
+	function stgQueue() {
+		if (!S.stgQ && !S.stgQBusy) { S.stgQBusy = 1; api('/staging-requests').then(function (x) { S.stgQ = x || []; S.stgQBusy = 0; if (S.stgQ.length) { render(); } }).catch(function () { S.stgQ = []; S.stgQBusy = 0; }); }
+		return S.stgQ || [];
+	}
+	function stgNewHtml(c) {
+		var q = stgQueue().filter(function (x) { return x.id === c.id; })[0];
+		if (q && q.error) { return '<div class="dd-stgq"><p class="dd-help">' + ddPill('Not created', 'danger') + ' ' + esc(q.error) + '</p><div class="dd-pbtns"><button type="button" class="dd-btn secondary" data-stgnew="' + c.id + '">' + lu('plus', 14) + 'Try again</button><button type="button" class="dd-btn ghost" data-stgunq="' + c.id + '">Dismiss</button></div></div>'; }
+		if (q) { return '<div class="dd-stgq"><p class="dd-help">' + ddPill('Requested', 'info') + ' A staging copy named <b>' + esc(q.name) + '</b> is being created on SiteGround. Its URL shows here, and in the Markup box, once it’s ready (checked every hour).</p><div class="dd-pbtns"><button type="button" class="dd-btn ghost" data-stgunq="' + c.id + '">Cancel request</button></div></div>'; }
+		return '<div class="dd-stgq"><div class="dd-pbtns"><button type="button" class="dd-btn secondary" data-stgnew="' + c.id + '">' + lu('plus', 14) + 'Create new staging URL</button></div></div>';
+	}
+	// For the Claude check (results avoid the characters = ? & so the browser tool can return them).
+	window.dwdStagingQueue = function () {
+		return api('/staging-requests').then(function (x) { S.stgQ = x || []; return JSON.stringify(S.stgQ.filter(function (q) { return !q.error; }).map(function (q) { return { id: q.id, name: q.name, project: q.project }; })); }).catch(function () { return 'failed'; });
+	};
+	window.dwdStagingDone = function (id, url) {
+		url = String(url || '').trim();
+		if (!/^https:\/\/[a-z0-9.-]+\.[a-z]{2,}\/?$/i.test(url)) { return Promise.resolve('failed: not a plain https address'); }
+		return api('/contact/' + (+id), 'POST', { staging: url }).then(function (x) { upsert(x); S.full[+id] = x; return api('/staging-request/clear', 'POST', { id: +id }); }).then(function (q) { S.stgQ = q || []; render(); return 'saved'; }).catch(function (e) { return 'failed: ' + String((e && e.message) || '').replace(/[=?&]/g, ' '); });
+	};
+	window.dwdStagingFailed = function (id, why) {
+		return api('/staging-request/failed', 'POST', { id: +id, error: String(why || '') }).then(function (q) { S.stgQ = q || []; render(); return 'noted'; }).catch(function () { return 'failed'; });
+	};
 	function hmPeople() {
 		var seen = {}, out = [];
 		var add = function (name, sub, email, rank) { var e = String(email || '').trim().toLowerCase(); if (!e || seen[e]) { return; } seen[e] = 1; out.push({ name: String(name || '').trim() || e, sub: String(sub || '').trim(), email: e, rank: rank }); };
@@ -3291,7 +3314,7 @@
 		var stg = c.staging || '', stgEdit = !stg || (S.stgEdit === c.id);
 		var stgBox = card('k-stg', 'Staging site', stg ? '' : 'Not added yet', stg && !stgEdit ? '<button type="button" class="dd-hlink" data-stgedit="' + c.id + '">Change</button>' : '',
 			'<div class="dd-stgb">' + (stg && !stgEdit ? '<div class="dd-stgurl">' + lu('globe', 16) + '<a href="' + esc(stg) + '" target="_blank" rel="noopener">' + esc(stg.replace(/^https?:\/\//, '').replace(/\/$/, '')) + '</a></div><div class="dd-pbtns"><a class="dd-btn primary" href="' + esc(stg) + '" target="_blank" rel="noopener">' + lu('external-link', 14) + 'Open staging site</a><button type="button" class="dd-btn secondary" data-copy="' + esc(stg) + '">' + lu('link', 14) + 'Copy URL</button>' + (DWDC.mkReady && !c.markup ? '<button type="button" class="dd-btn ghost" data-stgmk="' + c.id + '">Make a Markup link from it</button>' : '') + '</div>'
-				: '<form class="dd-stgf" data-stgform="' + c.id + '"><div class="dd-frow"><input name="staging" type="url" placeholder="https://staging.example.com" value="' + esc(stg) + '" required><button class="dd-btn primary">Save</button>' + (stg ? '<button type="button" class="dd-btn ghost" data-stgcancel>Cancel</button>' : '') + '</div><p class="dd-help">Paste the staging URL when you start working on the site. Making a Markup link from a staging URL saves it here too.</p></form>') + '</div>');
+				: '<form class="dd-stgf" data-stgform="' + c.id + '"><div class="dd-frow"><input name="staging" type="url" placeholder="https://staging.example.com" value="' + esc(stg) + '" required><button class="dd-btn primary">Save</button>' + (stg ? '<button type="button" class="dd-btn ghost" data-stgcancel>Cancel</button>' : '') + '</div><p class="dd-help">Paste the staging URL when you start working on the site. Making a Markup link from a staging URL saves it here too.</p></form>' + stgNewHtml(c)) + '</div>');
 		var mkBox = card('k-mk', 'Markup review', '', '<a class="dd-btn secondary" href="' + esc(DWDC.markupHome) + '" target="_blank" rel="noopener">Open Markup ' + lu('external-link', 14) + '</a>',
 			'<div class="dd-mkb">' + (DWDC.mkReady
 				? '<div class="dd-fg"><label>Staging site URL</label><div class="dd-frow"><input data-mkurl type="url" placeholder="https://staging.example.com" value="' + esc(c.staging || '') + '"><button type="button" class="dd-btn primary" data-mkcreate>' + lu('plus', 14) + (c.markup ? 'Create new link' : 'Create markup link') + '</button></div><p class="dd-help">' + ddPill('Connected', 'success') + ' Markup is connected: paste the staging site and a review link is made for you.</p></div>'
@@ -4386,6 +4409,8 @@
 		if ((el = t.closest('[data-sumgo]'))) { var sgo = +el.getAttribute('data-sumgo'); S.sumBusy = sgo; S.sumErr = ''; render(); api('/contact/' + sgo + '/summary', 'POST', {}).then(function (x) { if (S.full[sgo]) { S.full[sgo].ai_summary = x; } S.sumBusy = 0; render(); toast('Summary updated'); }).catch(function (er) { S.sumBusy = 0; S.sumErr = er && er.message; render(); }); return; }
 		if ((el = t.closest('[data-stgedit]'))) { S.stgEdit = +el.getAttribute('data-stgedit'); render(); var si3 = app.querySelector('.dd-stgf input'); if (si3) { si3.focus(); si3.select(); } return; }
 		if (t.closest('[data-stgcancel]')) { S.stgEdit = 0; render(); return; }
+		if ((el = t.closest('[data-stgnew]'))) { el.disabled = true; api('/staging-request', 'POST', { id: +el.getAttribute('data-stgnew') }).then(function (q) { S.stgQ = q || []; render(); toast('Staging copy requested'); }).catch(function (e) { el.disabled = false; fail(e); }); return; }
+		if ((el = t.closest('[data-stgunq]'))) { api('/staging-request/clear', 'POST', { id: +el.getAttribute('data-stgunq') }).then(function (q) { S.stgQ = q || []; render(); }).catch(fail); return; }
 		if ((el = t.closest('[data-stgmk]'))) { var mu = app.querySelector('[data-mkurl]'); if (mu) { mu.scrollIntoView({ behavior: 'smooth', block: 'center' }); mu.focus(); } return; }
 		if ((el = t.closest('[data-schedtask]')) && !t.closest('a')) { S.modal = { type: 'schedtask', key: el.getAttribute('data-schedtask') }; render(); return; }
 		if ((el = t.closest('[data-stdone]'))) {
