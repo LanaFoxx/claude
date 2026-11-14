@@ -729,3 +729,6 @@ input[type=date], input[type=datetime-local] { cursor: pointer; }
 .dd-sg-sh .dot.all { background: var(--text-3); }
 @media (min-width: 768px) { .dd-sg-2.one .dd-sg-ts { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 @media (max-width: 1340px) { .dd-sg-sw .nar { display: inline-flex; } .dd-sg-sw .wid { display: none; } .dd-sg-2.one > .dd-sg-side { display: flex; } }
+
+/* Hosting list on phones: space between the client cards */
+@media (max-width: 767px) { .dd-rows > .dwdc-grid.g-host.row + .dwdc-grid.g-host.row { margin-top: 14px !important; } }
