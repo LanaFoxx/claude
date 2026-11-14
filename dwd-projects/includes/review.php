@@ -54,6 +54,21 @@ function dwdq_apply( $item ) {
 			$op['job']['price'] = '';
 		}
 	}
+	// Returning client hired again: start a brand-new project (no price) with the same client and contact details.
+	$from = (int) ( $op['newfor'] ?? 0 );
+	if ( ! $pid && $from && DWDC_CONTACT === get_post_type( $from ) ) {
+		$base = html_entity_decode( get_the_title( $from ), ENT_QUOTES );
+		$job  = trim( (string) ( $op['job']['title'] ?? '' ) );
+		$data['name'] = $job ? $base . ' — ' . $job : $base . ' (new project)';
+		foreach ( array( 'person', 'email', 'phone', 'company', 'website', 'pay_method', 'lead_source', 'source' ) as $f ) {
+			$v = (string) get_post_meta( $from, '_dwdc_' . $f, true );
+			if ( '' !== $v && ! isset( $data[ $f ] ) ) {
+				$data[ $f ] = $v;
+			}
+		}
+		$data['list'] = 'active';
+		unset( $data['price'], $data['balance'] );
+	}
 	if ( ! empty( $op['job'] ) ) {
 		$jobs = $pid ? (array) get_post_meta( $pid, '_dwdc_jobs', true ) : array();
 		$has  = false;
@@ -67,6 +82,12 @@ function dwdq_apply( $item ) {
 	}
 	if ( $pid || $data ) {
 		$pid = dwdc_save_contact( $pid, $data );
+	}
+	if ( $from && $pid && $pid !== $from ) {
+		$cid = (int) get_post_meta( $from, '_dwdc_client', true );
+		if ( $cid ) {
+			update_post_meta( $pid, '_dwdc_client', $cid ); // same client: past payments show on the client's page
+		}
 	}
 	foreach ( (array) ( $op['meta'] ?? array() ) as $k => $v ) {
 		update_post_meta( $pid, $k, $v );

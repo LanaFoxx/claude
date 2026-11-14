@@ -203,9 +203,23 @@ function dwdm_apply( $messages, $dry = false ) {
 					} elseif ( $open ) {
 						$out['skipped'][] = array( 'project' => html_entity_decode( get_the_title( $pid ), ENT_QUOTES ), 'id' => $pid, 'email' => $label, 'why' => 'Already an active project (matched by ' . $how . ')' );
 					} else {
-						$out['reopened'][] = array( 'project' => html_entity_decode( get_the_title( $pid ), ENT_QUOTES ), 'id' => $pid, 'email' => $label, 'why' => 'Returning client (matched by ' . $how . ') — moved back to Active with the new job' );
+						$out['reopened'][] = array( 'project' => html_entity_decode( get_the_title( $pid ), ENT_QUOTES ), 'id' => $pid, 'email' => $label, 'why' => in_array( $list, array( 'complete', 'archive', 'archived' ), true ) ? 'Returning client (matched by ' . $how . ') — new project under the same client' : 'Returning client (matched by ' . $how . ') — moved back to Active with the new job' );
 					}
-					if ( ! $dry && ! $open ) {
+					$pastJob = in_array( $list, array( 'complete', 'archive', 'archived' ), true );
+					if ( ! $dry && ! $open && $pastJob ) {
+						// A returning client hired again: a NEW project under the same client, with no price yet.
+						// The finished project (its price and payments) stays as it is.
+						$pname = html_entity_decode( get_the_title( $pid ), ENT_QUOTES );
+						dwdq_add( array(
+							'kind'   => 'new_project',
+							'title'  => 'New project for returning client: ' . $pname,
+							'lines'  => array( 'Job: ' . $e['title'], 'Hired again on Upwork. A new project is made under the same client; the old project stays Completed', 'Price: add it yourself on the new project', 'Matched by ' . $how ),
+							'source' => 'Upwork email · ' . $date,
+							'key'    => 'hired:' . $key,
+							'pid'    => $pid,
+							'op'     => array( 'project' => 0, 'newfor' => $pid, 'job' => array( 'title' => $e['title'], 'price' => '', 'date' => $date ), 'meta' => array( '_dwdc_upwork_contract' => $e['contract'] ), 'task' => 'New Upwork job from ' . $pname . ': ' . $e['title'] . ' — add the price' ),
+						) );
+					} elseif ( ! $dry && ! $open ) {
 						$pname = html_entity_decode( get_the_title( $pid ), ENT_QUOTES );
 						dwdq_add( array(
 							'kind'   => 'update',
