@@ -478,7 +478,13 @@ function dwdbk_recurring( $tx, $flags ) {
 		if ( count( $ms ) > 3 && gmdate( 'Y-m' ) === substr( $last['date'], 0, 7 ) ) {
 			array_pop( $ms ); // the month still in progress
 		}
-		$wide  = function ( $a ) { return ( max( $a ) - min( $a ) ) / max( 1, array_sum( $a ) / count( $a ) ); };
+		// How far the amounts stray from normal; with 6 or more, the odd high and low ones (a part payment, a one-off) are set aside.
+		$wide  = function ( $a ) {
+			sort( $a );
+			$cut = count( $a ) >= 6 ? (int) floor( count( $a ) * 0.2 ) : 0;
+			$a   = array_slice( $a, $cut, count( $a ) - 2 * $cut );
+			return ( max( $a ) - min( $a ) ) / max( 1, array_sum( $a ) / count( $a ) );
+		};
 		$zelle = 0 === strpos( (string) $m, 'ZELLE ' );
 		// Bills (phone, power, insurance, services) move around more than a subscription does.
 		$loose = in_array( $last['cat'], array( 'Bills & Utilities', 'Services', 'Business', 'Taxes & Gov' ), true ) && ! $zelle;
@@ -493,6 +499,11 @@ function dwdbk_recurring( $tx, $flags ) {
 			continue;
 		}
 		$now = end( $amts );
+		if ( $zelle && count( $amts ) >= 3 ) { // the usual amount, not a part payment
+			$l3 = array_slice( $amts, -3 );
+			sort( $l3 );
+			$now = $l3[1];
+		}
 		if ( $wide( $amts ) > $limit ) {
 			continue; // amounts too different to be a repeating charge (e.g. groceries)
 		}
