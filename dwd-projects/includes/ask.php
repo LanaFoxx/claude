@@ -208,7 +208,8 @@ function dwdc_ai_read_tools() {
 		array( 'name' => 'get_project_details', 'description' => 'Everything Dream Desk holds on one project or lead: all fields, every onboarding/form answer in full, all notes, every payment, to-dos, staging and Markup links, uploaded assets, files in the client\'s Google Drive folder, and how many emails there are. Use it for any detailed question about a project.', 'input_schema' => array( 'type' => 'object', 'properties' => array( 'project_id' => $i( 'Project id' ) ), 'required' => array( 'project_id' ) ) ),
 		array( 'name' => 'get_client_details', 'description' => 'Everything on one client record (contact details, notes, hosting, review request) and the ids of their projects.', 'input_schema' => array( 'type' => 'object', 'properties' => array( 'client_id' => $i( 'Client id' ) ), 'required' => array( 'client_id' ) ) ),
 		array( 'name' => 'get_emails', 'description' => 'Emails exchanged with clients (synced from Gmail), newest first, with their text. Give a project_id or client_id to read one client\'s emails, a search phrase to search every client\'s emails, or unread_only for emails that have not been opened yet. With nothing set it returns the newest emails across all clients.', 'input_schema' => array( 'type' => 'object', 'properties' => array( 'project_id' => $i( 'Project id (optional)' ), 'client_id' => $i( 'Client id (optional)' ), 'search' => $s( 'Words to look for in the sender, subject or text (optional)' ), 'unread_only' => array( 'type' => 'boolean' ), 'limit' => $i( 'How many to return, 1 to 40 (default 15)' ) ) ) ),
-		array( 'name' => 'get_dashboard_data', 'description' => 'Other parts of Dream Desk. section: upwork_balances (pending and available in Upwork, and each pending payment), bank (bank balances, spending summary, Google Ads spend), meetings (upcoming and recent meetings), personal (the personal calendar, to-dos, bills and plans).', 'input_schema' => array( 'type' => 'object', 'properties' => array( 'section' => array( 'type' => 'string', 'enum' => array( 'upwork_balances', 'bank', 'meetings', 'personal' ) ) ), 'required' => array( 'section' ) ) ),
+		array( 'name' => 'get_dashboard_data', 'description' => 'Other parts of Dream Desk. section: upwork_balances (pending and available in Upwork, and each pending payment), google_ads (the Google Ads account as synced every hour: spend, clicks, impressions and conversions for each of the last ~75 days, and this month\'s campaigns with status, daily budget, spend and results), bank (bank balances, spending summary, monthly ad spend), meetings (upcoming and recent meetings), personal (personal money log and bills; for calendar items use get_calendar).', 'input_schema' => array( 'type' => 'object', 'properties' => array( 'section' => array( 'type' => 'string', 'enum' => array( 'upwork_balances', 'google_ads', 'bank', 'meetings', 'personal' ) ) ), 'required' => array( 'section' ) ) ),
+		array( 'name' => 'get_calendar', 'description' => 'Michael\'s calendar, work and personal together, for a date range: Google Calendar events from both his work and personal Google accounts, Google Tasks, reminders and personal to-dos, birthdays that are on his calendars, work meetings (with Zoom/Meet links), and business to-dos with due dates. Defaults to today through the next 30 days. Use it for anything about his schedule: what is on a day, when something is, what is coming up, what is overdue.', 'input_schema' => array( 'type' => 'object', 'properties' => array( 'from' => $s( 'First day, YYYY-MM-DD (default today)' ), 'to' => $s( 'Last day, YYYY-MM-DD (default 30 days after from)' ), 'search' => $s( 'Only items containing these words (optional)' ), 'include_done' => array( 'type' => 'boolean' ) ) ) ),
 	);
 }
 
@@ -328,11 +329,84 @@ function dwdc_ai_read( $name, $in ) {
 			}
 			usort( $rows, function ( $a, $b ) { return strtotime( $b['date'] ) <=> strtotime( $a['date'] ); } );
 			return dwdc_ai_data( array( 'found' => count( $rows ), 'showing' => min( $limit, count( $rows ) ), 'last_gmail_sync' => (string) get_option( 'dwdcm_last', '' ), 'emails' => array_slice( $rows, 0, $limit ) ), 90000 );
+		case 'get_calendar':
+			$ok   = function ( $d ) { return preg_match( '/^\d{4}-\d{2}-\d{2}$/', (string) $d ); };
+			$from = $ok( $in['from'] ?? '' ) ? (string) $in['from'] : current_time( 'Y-m-d' );
+			$to   = $ok( $in['to'] ?? '' ) ? (string) $in['to'] : gmdate( 'Y-m-d', strtotime( $from . ' +30 days' ) );
+			$q    = strtolower( trim( (string) ( $in['search'] ?? '' ) ) );
+			$done = ! empty( $in['include_done'] );
+			$cut  = function ( $t, $n ) { $t = trim( (string) preg_replace( '/\s+/', ' ', (string) $t ) ); return mb_strlen( $t ) > $n ? mb_substr( $t, 0, $n ) . '…' : $t; };
+			$rows = array();
+			if ( function_exists( 'dwdpe_get' ) ) {
+				$p = dwdpe_get();
+				foreach ( (array) ( $p['todos'] ?? array() ) as $t ) {
+					$due = (string) ( $t['due'] ?? '' );
+					if ( '' === $due || $due < $from || $due > $to || ( ! $done && ! empty( $t['done'] ) ) ) {
+						continue;
+					}
+					$text = (string) ( $t['text'] ?? '' );
+					$bday = 'birthday' === ( $t['tag'] ?? '' ) || false !== stripos( $text, 'birthday' );
+					$rows[] = array(
+						'date'    => $due,
+						'time'    => (string) ( $t['time'] ?? '' ),
+						'what'    => $text,
+						'kind'    => $bday ? 'birthday' : ( ! empty( $t['gevent'] ) ? 'Google Calendar event' : ( ! empty( $t['gtask'] ) ? 'Google Task' : 'personal to-do / reminder' ) ),
+						'account' => (string) ( $t['gacct'] ?? '' ),
+						'tag'     => (string) ( $t['tag'] ?? '' ),
+						'details' => $cut( $t['note'] ?? '', 300 ),
+						'done'    => ! empty( $t['done'] ),
+					);
+				}
+			}
+			if ( function_exists( 'dwdmt_summary' ) ) {
+				$m = dwdmt_summary();
+				foreach ( (array) ( $m['list'] ?? array() ) as $x ) {
+					$d = (string) ( $x['date'] ?? '' );
+					if ( '' === $d || $d < $from || $d > $to ) {
+						continue;
+					}
+					$rows[] = array(
+						'date'    => $d,
+						'time'    => (string) ( $x['time'] ?? '' ),
+						'what'    => (string) ( $x['title'] ?? $x['name'] ?? $x['summary'] ?? 'Meeting' ),
+						'kind'    => 'work meeting' . ( ! empty( $x['kind'] ) ? ' (' . $x['kind'] . ')' : '' ),
+						'account' => 'work calendar',
+						'details' => $cut( ( $x['with'] ?? '' ) . ' ' . ( $x['link'] ?? '' ), 300 ),
+						'done'    => false,
+					);
+				}
+			}
+			foreach ( get_posts( array( 'post_type' => DWDC_TASK, 'post_status' => 'private', 'posts_per_page' => -1 ) ) as $tp ) {
+				$t = dwdc_task( $tp );
+				if ( ! is_array( $t ) || '' === (string) ( $t['due'] ?? '' ) || $t['due'] < $from || $t['due'] > $to || ( ! $done && ! empty( $t['done'] ) ) ) {
+					continue;
+				}
+				$rows[] = array(
+					'date'    => (string) $t['due'],
+					'time'    => (string) ( $t['time'] ?? '' ),
+					'what'    => (string) $t['text'],
+					'kind'    => 'business to-do' . ( ! empty( $t['contact'] ) ? ' for ' . html_entity_decode( (string) get_the_title( (int) $t['contact'] ), ENT_QUOTES, 'UTF-8' ) : '' ),
+					'account' => 'Dream Desk',
+					'done'    => ! empty( $t['done'] ),
+				);
+			}
+			if ( '' !== $q ) {
+				$rows = array_values( array_filter( $rows, function ( $r ) use ( $q ) { return false !== strpos( strtolower( $r['what'] . ' ' . ( $r['details'] ?? '' ) . ' ' . $r['kind'] ), $q ); } ) );
+			}
+			usort( $rows, function ( $a, $b ) { return strcmp( $a['date'] . ' ' . gmdate( 'H:i', (int) strtotime( '2000-01-01 ' . ( $a['time'] ?: '00:00' ) ) ), $b['date'] . ' ' . gmdate( 'H:i', (int) strtotime( '2000-01-01 ' . ( $b['time'] ?: '00:00' ) ) ) ); } );
+			$rows = array_map( function ( $r ) { return array_filter( $r, function ( $v ) { return '' !== $v && false !== $v; } ); }, $rows );
+			return dwdc_ai_data( array( 'from' => $from, 'to' => $to, 'today' => current_time( 'Y-m-d' ), 'count' => count( $rows ), 'note' => 'The same meeting can appear twice (once from the personal calendar sync, once as a work meeting): treat same day and time as one. Birthdays only appear if they are on one of the synced Google calendars.', 'items' => array_slice( $rows, 0, 250 ) ), 90000 );
 		case 'get_dashboard_data':
 			switch ( (string) ( $in['section'] ?? '' ) ) {
 				case 'upwork_balances':
 					$u = get_option( 'dwd_upwork_snap', array() );
 					return is_array( $u ) && $u ? dwdc_ai_data( $u ) : 'DATA: {"note":"No Upwork balances have been saved yet."}';
+				case 'google_ads':
+					$g = get_option( 'dwdads_data', array() );
+					if ( ! is_array( $g ) || empty( $g['at'] ) ) {
+						return 'DATA: {"note":"Google Ads has not sent any numbers to Dream Desk yet."}';
+					}
+					return dwdc_ai_data( array( 'note' => 'Read-only numbers sent by the Google Ads script (last sync is "at"). days: one row per day with cost in dollars, clicks, impr (impressions) and conv (conversions). campaigns: this month so far. Dream Desk does not hold keywords, search terms, ads or the change history; for those Michael asks Claude in the Claude app.', 'google_ads' => $g ), 90000 );
 				case 'bank':
 					if ( ! function_exists( 'dwdbk_summary' ) ) {
 						return 'Error: the bank section is not set up.';
@@ -346,7 +420,7 @@ function dwdc_ai_read( $name, $in ) {
 				case 'personal':
 					return function_exists( 'dwdpe_get' ) ? dwdc_ai_data( dwdpe_get() ) : 'Error: the personal section is not set up.';
 			}
-			return 'Error: section must be upwork_balances, bank, meetings or personal.';
+			return 'Error: section must be upwork_balances, google_ads, bank, meetings or personal.';
 	}
 	return 'Error: unknown lookup.';
 }
@@ -354,7 +428,7 @@ function dwdc_ai_read( $name, $in ) {
 /** Run one assistant action. Returns a short result string for the model. */
 function dwdc_ai_run_tool( $name, $in ) {
 	$in   = (array) $in;
-	if ( in_array( $name, array( 'get_project_details', 'get_client_details', 'get_emails', 'get_dashboard_data' ), true ) ) {
+	if ( in_array( $name, array( 'get_project_details', 'get_client_details', 'get_emails', 'get_dashboard_data', 'get_calendar' ), true ) ) {
 		try {
 			return dwdc_ai_read( $name, $in );
 		} catch ( \Throwable $e ) {
@@ -504,7 +578,7 @@ add_action( 'rest_api_init', function () {
 		if ( ! empty( $desk ) && ! $personal ) {
 			$system[] = array(
 				'type' => 'text',
-				'text' => "Looking things up: the data above is a summary. For anything it does not show in full, use the read tools before answering, and never guess: get_project_details (everything on one project: every onboarding and form answer, all notes, every payment, to-dos, staging and Markup links, files in the Assets box and in the client's Google Drive folder), get_client_details, get_emails (the emails exchanged with clients, with their text; filter by project, client, a search phrase, or unread only; use it for 'did an email come in', 'what did X say'), and get_dashboard_data (Upwork pending and available balances, bank balances and spending, meetings, the calendar and personal items). Use the project id or client_id from the data above. Quote figures and wording exactly as the tools return them, and say so plainly when Dream Desk does not have something.",
+				'text' => "Looking things up: the data above is a summary. For anything it does not show in full, use the read tools before answering, and never guess: get_project_details (everything on one project: every onboarding and form answer, all notes, every payment, to-dos, staging and Markup links, files in the Assets box and in the client's Google Drive folder), get_client_details, get_emails (the emails exchanged with clients, with their text; filter by project, client, a search phrase, or unread only; use it for 'did an email come in', 'what did X say'), get_calendar (his whole schedule, work and personal: Google Calendar events from both accounts, Google Tasks, reminders, birthdays, meetings and to-dos with due dates, for any date range), and get_dashboard_data (Upwork pending and available balances, the Google Ads account's daily spend, clicks, impressions, conversions and campaigns, bank balances and spending, meetings, personal money and bills). Use the project id or client_id from the data above. Quote figures and wording exactly as the tools return them, and say so plainly when Dream Desk does not have something.",
 			);
 		}
 		$changed = false;
