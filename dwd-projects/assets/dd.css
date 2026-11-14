@@ -659,3 +659,4 @@ input[type=date], input[type=datetime-local] { cursor: pointer; }
 
 /* Lists: red New email pill next to a client or project name */
 .dd-mnew { margin-left: 8px; font-weight: 500; vertical-align: middle; flex: none; }
+.dd .dd-pill.dd-mnew { display: inline-flex !important; }
