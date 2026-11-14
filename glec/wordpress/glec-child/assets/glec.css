@@ -433,3 +433,8 @@ html,body{overflow-x:clip}
 .g-footer .g-fine a:hover{color:#fff!important}
 .g-footer .g-logo img{background:#fff;border-radius:10px;padding:8px 12px;height:60px!important;box-sizing:border-box}
 .g-footer a:focus-visible{outline-color:#fff}
+/* Proof strip: no border (removes the light line above the stripe); thicker stripe flush to the top edge */
+.g-proof{border:0!important}
+.g-proof::before{top:0!important;left:0!important;right:0!important;height:8px!important;width:auto!important;background:repeating-linear-gradient(135deg,var(--g-hi) 0 12px,var(--g-orange) 12px 24px)!important}
+.g-proof__cell{padding-top:40px!important}
+@media (max-width:600px){.g-proof::before{height:6px!important}.g-proof__cell{padding-top:20px!important}}
