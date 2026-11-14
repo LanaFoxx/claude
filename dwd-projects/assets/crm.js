@@ -972,8 +972,8 @@
 		return S.stgQ || [];
 	}
 	// The Claude task that does the SiteGround step. The buttons open it so "Run now" starts it straight away
-	// (this kind of task cannot be started by the site itself); otherwise its next scheduled run picks the request up.
-	var STG_TASK = 'https://claude.ai/scheduled-task/trig_011dGvwVQJLB6QYPVAZHrnHR';
+	// (this kind of task cannot be started by the site itself); it has no schedule, so nothing happens until Run now is clicked.
+	var STG_TASK = 'https://claude.ai/scheduled-task/trig_01MZzLB2bKoFTVUX7FgyVnPR';
 	function stgNewHtml(c) {
 		var q = stgQueue().filter(function (x) { return x.id === c.id; })[0];
 		var run = ' <a class="dd-hlink" href="' + STG_TASK + '" target="_blank" rel="noopener">Open the Claude task</a> and click <b>Run now</b>.';
