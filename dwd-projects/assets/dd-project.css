@@ -349,3 +349,6 @@
 .dd-py .mt .dd-schip { white-space: normal; line-height: 1.25; }
 .dd-bankchk { white-space: nowrap; flex: none; }
 .dd-upr .dd-bankchk { margin-top: 0; }
+
+/* Project strip: where the paid money is (bank vs still in Upwork) */
+.dd-strip .dd-strip-sub { display: block; margin: 2px 0 6px; font-size: 12px; color: var(--text-3); }

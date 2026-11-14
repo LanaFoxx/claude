@@ -3201,7 +3201,10 @@
 		var dn = function (iso) { return Math.round((new Date(iso + 'T00:00:00') - new Date(T + 'T00:00:00')) / 864e5); };
 		var k = clientOf(c) || {}, em = c.email || k.email, ph = c.phone || k.phone;
 		var tel = function (p) { var dg = String(p).replace(/[^\d]/g, ''), shown = dg.length === 10 ? '(' + dg.slice(0, 3) + ') ' + dg.slice(3, 6) + '-' + dg.slice(6) : dg.length === 11 && dg[0] === '1' ? '(' + dg.slice(1, 4) + ') ' + dg.slice(4, 7) + '-' + dg.slice(7) : String(p); return '<a href="tel:' + esc(String(p).replace(/[^\d+]/g, '')) + '">' + esc(shown) + '</a>'; };
-		var paid = price ? Math.max(0, price - ow) : 0, pct = price ? Math.max(0, Math.min(100, Math.round(paid / price * 100))) : (ow ? 0 : 100);
+		// Paid = money actually recorded: in your bank plus client money still sitting in Upwork. Never price minus owed
+		// (that counted Upwork's 10% fee, and money not yet received, as paid). Total = paid + still owed (after Upwork's fee).
+		var upP = upOf(c), inUp = num(upP.pend) + num(upP.avail), banked = inBankOf(c);
+		var paid = Math.round((banked + inUp) * 100) / 100, payTot = paid + ow, pct = payTot ? Math.max(0, Math.min(100, Math.round(paid / payTot * 100))) : (ow ? 0 : 100);
 		var payState = st === 'leads' ? '' : !ow ? paidWord(c) : paid ? 'Partially paid' : 'Unpaid';
 		var payTone = { Paid: 'success', 'No price yet': 'neutral', 'Partially paid': 'info', Unpaid: 'warning' }[payState];
 		var btn = function (attr, label, cls) { return '<button type="button" class="dd-btn ' + (cls || 'secondary') + '" ' + attr + '>' + label + '</button>'; };
@@ -3239,7 +3242,9 @@
 				? '<div><span class="l">Completed</span><b>' + (doneDate(c) ? fmt(doneDate(c)) : '—') + '</b><small>' + (started ? 'Started ' + fmt(started) : '') + '</small></div>'
 				: '<div><span class="l">Due</span><b>' + (c.deadline ? fmt(c.deadline) : '—') + '</b>' + (c.deadline ? (function () { var n = dn(c.deadline); return '<small class="' + (n < 0 ? 'late' : n <= 7 ? 'soon' : '') + '">' + (n < 0 ? 'Overdue by ' + -n + ' day' + (n === -1 ? '' : 's') : n === 0 ? 'Today' : n === 1 ? 'Tomorrow' : 'In ' + n + ' days') + '</small>'; })() : '<small>No due date</small>') + '</div>';
 			strip = '<div class="dd-card dd-strip"><div><span class="l">Owed</span><b>' + money(ow) + '</b><small>' + (ow ? payState + (c.pay_method ? ' · via ' + esc(c.pay_method) : '') + (c.paymark === 'pending' ? ' · pending deposit' : '') : 'Paid in full') + '</small></div>' + dueCell
-				+ '<div><span class="l">Paid</span><b>' + money(paid) + (price ? ' <em>of ' + money(price) + '</em>' : '') + '</b><span class="dd-prog' + (pct >= 100 ? ' full' : '') + '"><i><s style="width:' + pct + '%"></s></i><small>' + pct + '%</small></span></div></div>';
+				+ '<div><span class="l">Client paid</span><b>' + money(paid) + (payTot ? ' <em>of ' + money(payTot) + (c.pay_method === 'Upwork' && price && Math.abs(payTot - price) > 1 ? ' after Upwork fee' : '') + '</em>' : '') + '</b>'
+				+ (inUp ? '<small class="dd-strip-sub">' + (banked ? money(banked) + ' in your bank · ' : 'Nothing in your bank yet · ') + money(inUp) + ' still in Upwork' + (num(upP.pend) && upP.pnext ? ' (available ' + fmt(upP.pnext) + ')' : '') + '</small>' : '')
+				+ '<span class="dd-prog' + (pct >= 100 ? ' full' : '') + '"><i><s style="width:' + pct + '%"></s></i><small>' + pct + '%</small></span></div></div>';
 		}
 		var card = function (cls, h, sum, right, body) { return '<section class="dd-card dd-pc2 ' + cls + '"><header><h2>' + h + '</h2>' + (sum ? '<span class="sum">' + sum + '</span>' : '') + '<span class="dd-sp"></span>' + (right || '') + '</header>' + body + '</section>'; };
 		// to-dos
@@ -3324,7 +3329,7 @@
 			+ '<label class="dd-upst"' + ((c.pay_method || 'Upwork') === 'Upwork' ? '' : ' hidden') + '><span>Where’s the money?</span><select name="stage"><option value="upwork">Client paid · in Upwork (5-day hold)</option><option value="bank">Already transferred to my bank</option></select></label>'
 			+ '<label><span>Note</span><input name="note" placeholder="e.g. 50% deposit, final payment…"></label><div class="dd-pbtns end"><button type="button" class="dd-btn secondary" data-plogx>Cancel</button><button class="dd-btn primary pay">Save payment</button></div></form>' : '';
 		var uP = upOf(c), sumL = [ow ? money(ow) + ' owed' : '', num(uP.pend) ? money(uP.pend) + ' pending in Upwork' + (uP.pnext ? ' (available ' + fmt(uP.pnext) + ')' : '') : '', num(uP.avail) ? money(uP.avail) + ' ready to withdraw' : '', inBankOf(c) ? money(inBankOf(c)) + ' in bank' : ''].filter(Boolean);
-		var foot = (stageBar(c) ? '<span class="dd-pstg">' + stageBar(c).replace(/<small[\s\S]*$/, '') + '</span>' : '') + (sumL.length > 1 || num(uP.pend) || num(uP.avail) ? sumL.join(' · ') : price ? money(paid) + ' of ' + money(price) + ' paid · ' + money(ow) + ' remaining' : '');
+		var foot = (stageBar(c) ? '<span class="dd-pstg">' + stageBar(c).replace(/<small[\s\S]*$/, '') + '</span>' : '') + (sumL.length > 1 || num(uP.pend) || num(uP.avail) ? sumL.join(' · ') : payTot ? money(paid) + ' of ' + money(payTot) + ' paid · ' + money(ow) + ' remaining' : '');
 		var paysBox = card('k-pay', 'Payments', pays.length ? String(pays.length) : '', '<button type="button" class="dd-hlink" data-plog="' + c.id + '">+ Log payment</button>',
 			logf + (!full ? '<p class="dd-pempty">Loading…</p>' : pays.length ? pays.map(function (x, i) {
 				return '<div class="dd-py"><span class="dt">' + (x.date ? fmt(String(x.date).slice(0, 10)) : '—') + '</span><span class="mt">' + esc(x.source || '') + (x.status && ['paid', 'held'].indexOf(x.status) < 0 ? ' · ' + esc(x.status) : '') + '<span class="dd-schips">' + upChip(x) + '</span>' + (x.note ? '<small>' + esc(x.note) + '</small>' : '') + bankChk(c.id, i, x) + '</span><b>' + money2(x.amount).replace('.00', '') + '</b><button type="button" class="dd-ibtn sm dd-ptx" data-payrm="' + i + '" title="Remove payment" aria-label="Remove payment">' + lu('x', 14) + '</button></div>';
