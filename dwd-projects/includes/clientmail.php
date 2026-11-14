@@ -231,3 +231,40 @@ add_action( 'rest_api_init', function () {
 		return array( 'ok' => true );
 	} ) );
 } );
+
+/** Unread emails received from clients (newest first), across every client and project: the Home "Client emails" box. */
+function dwdcm_recent( $n = 12 ) {
+	$out = array();
+	foreach ( get_posts( array( 'post_type' => array( DWDC_CLIENT, DWDC_CONTACT ), 'post_status' => 'any', 'posts_per_page' => -1, 'fields' => 'ids', 'meta_key' => '_dwdcm_mail' ) ) as $o ) {
+		$kind = DWDC_CLIENT === get_post_type( $o ) ? 'k' : 'p';
+		$name = html_entity_decode( (string) get_the_title( $o ), ENT_QUOTES, 'UTF-8' );
+		foreach ( (array) get_post_meta( $o, '_dwdcm_mail', true ) as $x ) {
+			if ( ! is_array( $x ) || empty( $x['in'] ) || ! dwdcm_is_new( $x ) ) { // unread in Gmail and not opened in Dream Desk yet
+				continue;
+			}
+			$body  = trim( (string) preg_replace( '/\s+/', ' ', (string) ( $x['body'] ?? '' ) ) );
+			$out[] = array(
+				'id'      => (string) ( $x['id'] ?? '' ),
+				'owner'   => (int) $o,
+				'kind'    => $kind,
+				'name'    => $name,
+				'from'    => (string) ( $x['from'] ?? '' ),
+				'subject' => (string) ( $x['subject'] ?? '' ),
+				'to'      => (string) ( $x['to'] ?? '' ),
+				'thread'  => (string) ( $x['thread'] ?? '' ),
+				'body'    => (string) ( $x['body'] ?? '' ),
+				'date'    => (string) ( $x['date'] ?? '' ),
+				'ts'      => (int) strtotime( (string) ( $x['date'] ?? '' ) ),
+				'snip'    => function_exists( 'mb_substr' ) ? mb_substr( $body, 0, 160 ) : substr( $body, 0, 160 ),
+				'new'     => dwdcm_is_new( $x ),
+			);
+		}
+	}
+	usort( $out, function ( $a, $b ) { return $b['ts'] <=> $a['ts']; } );
+	return array_slice( $out, 0, max( 1, (int) $n ) );
+}
+add_action( 'rest_api_init', function () {
+	register_rest_route( 'dwd/v1', '/crm/mail-recent', array( 'methods' => 'GET', 'permission_callback' => function () { return current_user_can( 'edit_posts' ); }, 'callback' => function () {
+		return array( 'list' => dwdcm_recent( 25 ), 'synced' => (string) get_option( 'dwdcm_last', '' ) );
+	} ) );
+} );
