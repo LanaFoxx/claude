@@ -5,7 +5,12 @@
  *
  * - a hidden "honeypot" field that people never see but bots fill in;
  * - proof that a person was there: the page's script marks the form once someone types, taps or
- *   clicks, and records how long the form was open (bots submit instantly, or without running scripts).
+ *   clicks, and records how long the form was open (bots submit instantly, or without running scripts);
+ * - Google reCAPTCHA v3 (invisible score), once the keys are saved under Elementor > Settings >
+ *   Integrations > reCAPTCHA V3. Google's script loads only when someone starts using a form. A
+ *   submission is blocked when Google scores it below the threshold set there (0.5 by default). If
+ *   Google can't be reached, or the visitor's browser blocks it, the checks above decide alone, so
+ *   a real lead is never lost to an outage.
  *
  * The fields are added by script, so they work on cached pages.
  * The homepage form also now sends its message here (it used to open the visitor's mail app).
@@ -24,24 +29,109 @@ function dwdp_spam_ok( $src = null ) {
 	if ( empty( $src['dwdp_h'] ) || '1' !== (string) $src['dwdp_h'] ) {
 		return false;
 	}
-	return isset( $src['dwdp_e'] ) && (float) $src['dwdp_e'] >= DWDP_SPAM_MIN_SECONDS;
+	if ( ! isset( $src['dwdp_e'] ) || (float) $src['dwdp_e'] < DWDP_SPAM_MIN_SECONDS ) {
+		return false;
+	}
+	return dwdp_rc_ok( $src );
+}
+
+/* ---------- Google reCAPTCHA v3 ---------- */
+
+/** Keys and threshold (Elementor's own reCAPTCHA V3 settings, so there is one place to keep them). */
+function dwdp_rc() {
+	static $c = null;
+	if ( null === $c ) {
+		$c = array(
+			'site'   => trim( (string) get_option( 'elementor_pro_recaptcha_v3_site_key', '' ) ),
+			'secret' => trim( (string) get_option( 'elementor_pro_recaptcha_v3_secret_key', '' ) ),
+			'min'    => (float) get_option( 'elementor_pro_recaptcha_v3_threshold', 0.5 ),
+		);
+		if ( $c['min'] <= 0 || $c['min'] > 1 ) {
+			$c['min'] = 0.5;
+		}
+		$c['on'] = '' !== $c['site'] && '' !== $c['secret'];
+	}
+	return $c;
+}
+
+/** Counts what reCAPTCHA decided (option dwdp_rc_stats), so it is easy to see that it is working. */
+function dwdp_rc_note( $what, $score = null ) {
+	$st = get_option( 'dwdp_rc_stats', array() );
+	$st = is_array( $st ) ? $st : array();
+	$st[ $what ] = (int) ( $st[ $what ] ?? 0 ) + 1;
+	if ( 'blocked' === $what ) {
+		$st['last_blocked'] = gmdate( 'c' );
+		$st['last_score']   = $score;
+	}
+	update_option( 'dwdp_rc_stats', $st, false );
+}
+
+/** False only when Google says the sender is a bot (low score or a made-up token). */
+function dwdp_rc_ok( $src ) {
+	static $seen = array(); // a token can be checked once, and some forms run the check twice
+	$c = dwdp_rc();
+	if ( ! $c['on'] ) {
+		return true;
+	}
+	$token = isset( $src['dwdp_rc'] ) ? sanitize_text_field( wp_unslash( (string) $src['dwdp_rc'] ) ) : '';
+	if ( '' === $token ) {
+		dwdp_rc_note( 'no_token' );
+		return true;
+	}
+	if ( isset( $seen[ $token ] ) ) {
+		return $seen[ $token ];
+	}
+	$ok  = true;
+	$res = wp_remote_post( 'https://www.google.com/recaptcha/api/siteverify', array(
+		'timeout' => 5,
+		'body'    => array(
+			'secret'   => $c['secret'],
+			'response' => $token,
+			'remoteip' => isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '',
+		),
+	) );
+	$j = is_wp_error( $res ) ? null : json_decode( (string) wp_remote_retrieve_body( $res ), true );
+	if ( ! is_array( $j ) ) {
+		dwdp_rc_note( 'google_unreachable' );
+	} elseif ( empty( $j['success'] ) ) {
+		$codes = (array) ( $j['error-codes'] ?? array() );
+		if ( in_array( 'invalid-input-response', $codes, true ) ) {
+			$ok = false; // not a token Google issued
+			dwdp_rc_note( 'blocked', 'invalid token' );
+		} else {
+			dwdp_rc_note( array_intersect( $codes, array( 'invalid-input-secret', 'missing-input-secret' ) ) ? 'bad_keys' : 'expired_token' );
+		}
+	} elseif ( (float) ( $j['score'] ?? 0 ) < $c['min'] ) {
+		$ok = false;
+		dwdp_rc_note( 'blocked', (float) ( $j['score'] ?? 0 ) );
+	} else {
+		dwdp_rc_note( 'passed' );
+	}
+	$seen[ $token ] = $ok;
+	return $ok;
 }
 
 add_action( 'wp_footer', function () {
 	$ajax = esc_url( admin_url( 'admin-ajax.php' ) );
+	$rc   = dwdp_rc();
 	?>
 <script>(function(){
-var t0=Date.now(),human=false;
+var t0=Date.now(),human=false,RC='<?php echo esc_js( $rc['on'] ? $rc['site'] : '' ); ?>',rcL=0,rcT=0,SEL='form.elementor-form,form.dw-form,form.dwr-form,form.checkout,form.woocommerce-checkout';
 ['keydown','pointerdown','touchstart','focusin'].forEach(function(ev){window.addEventListener(ev,function(){human=true;mark();},{passive:true,once:true});});
 function sel(){return document.querySelectorAll('form.elementor-form,form.dw-form,form.dwr-form,form.checkout,form.woocommerce-checkout');}
 function add(f){if(f.querySelector('[name=dwdp_hp]'))return;
 var w=document.createElement('div');w.setAttribute('aria-hidden','true');w.style.cssText='position:absolute!important;left:-9999px!important;top:auto;width:1px;height:1px;overflow:hidden';
 w.innerHTML='<label>Leave this empty<input type="text" name="dwdp_hp" tabindex="-1" autocomplete="off" value=""></label>';
-f.appendChild(w);['dwdp_h','dwdp_e'].forEach(function(n){var i=document.createElement('input');i.type='hidden';i.name=n;i.value='0';f.appendChild(i);});}
+f.appendChild(w);['dwdp_h','dwdp_e'].forEach(function(n){var i=document.createElement('input');i.type='hidden';i.name=n;i.value='0';f.appendChild(i);});if(RC){var r=document.createElement('input');r.type='hidden';r.name='dwdp_rc';r.value='';f.appendChild(r);}}
 function mark(){sel().forEach(function(f){add(f);var h=f.querySelector('[name=dwdp_h]'),e=f.querySelector('[name=dwdp_e]');if(h)h.value=human?'1':'0';if(e)e.value=((Date.now()-t0)/1000).toFixed(1);});}
 sel().forEach(add);
 // Keep the timer current right before any of these forms is sent (Elementor and WooCommerce read the fields then).
-document.addEventListener('submit',function(){mark();},true);
+document.addEventListener('submit',function(){mark();if(rcL){setTimeout(rcSet,1500);}},true);
+// reCAPTCHA v3: Google's script loads the first time someone uses a form; the token is kept fresh (it lasts 2 minutes) and sent with the form.
+function rcSet(){if(!window.grecaptcha||!grecaptcha.ready)return;grecaptcha.ready(function(){grecaptcha.execute(RC,{action:'dwd_form'}).then(function(tok){rcT=Date.now();sel().forEach(function(f){add(f);var i=f.querySelector('[name=dwdp_rc]');if(i)i.value=tok;});},function(){});});}
+function rcLoad(){if(!RC||rcL)return;rcL=1;var s=document.createElement('script');s.src='https://www.google.com/recaptcha/api.js?render='+encodeURIComponent(RC);s.async=true;s.onload=rcSet;document.head.appendChild(s);
+setInterval(function(){if(document.visibilityState!=='hidden')rcSet();},90000);document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible'&&Date.now()-rcT>90000)rcSet();});}
+if(RC){['focusin','pointerdown','keydown'].forEach(function(ev){document.addEventListener(ev,function(e){if(!rcL&&e.target&&e.target.closest&&e.target.closest(SEL))rcLoad();},true);});}
 document.addEventListener('click',function(ev){if(ev.target.closest&&ev.target.closest('button,[type=submit],#place_order'))mark();},true);
 if(window.jQuery){jQuery(document.body).on('updated_checkout',function(){sel().forEach(add);mark();});}
 // Homepage message form and the redesigned Contact form (dwr-form): send to the site instead of opening the mail app.
