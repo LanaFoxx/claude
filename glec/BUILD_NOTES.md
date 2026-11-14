@@ -41,6 +41,17 @@ Exports in `wordpress/elementor-templates/` (`glec-homepage.json`, `glec-header.
 - Mobile stats slider: prev/next, wraps both ways, dots jump, swipe, no autoplay, `aria-live` announcements.
 - `prefers-reduced-motion` disables transitions and Elementor entrance animations.
 
+## Changes after review (requested by Dream Web Digital)
+
+- Hero: floating progress card and "Certificate prints instantly" pill removed. Above 1440 px the navy band stays full-bleed while text, photo, scrims and grid anchor to the centred 1440 artboard. Photo anchored right so the subject sits further left; taller mobile photo band.
+- Proof strip: safety-stripe top rule, orange Lucide icons (award / target / users), no icon tiles, dividers inset; labels stack under numbers between 601 and 1180 px.
+- Step cards: icon tiles removed, 44 px blue icons.
+- Instructor stats: no boxes; open row with hairline dividers, centred number and label.
+- "How to get licensed" section: plain Mist, no grid. Rule: grid textures never on two adjacent sections. It now starts under the hero so there's no white band.
+- Footer: navy, orange 19 px bold column titles (large-text contrast), white links, logo on a white plate.
+- Standard pages + WooCommerce: `assets/pages.css` (page padding/titles, orange buttons, notices, forms, cart/checkout type scale at 18 px, faint outlined totals/summary boxes, no inner borders). WooCommerce "coming soon" mode switched off on staging so visitors can reach cart/checkout.
+- Fixed: Elementor forces `width/height:100%` on container `::before`, which stretched the steps connector line; all decorative pseudo-elements are now pinned explicitly.
+
 ## Deviations from the brief (and why)
 
 1. **Mobile menu**: built as a `[glec_mobile_menu]` shortcode (button + full-screen dialog, focus trap and Escape in `glec.js`) instead of an Elementor Off-Canvas/Popup. That gave reliable focus trapping, Escape handling and a pinned "Start here" footer. Links come from the WP "Primary" menu, so they stay editable. "My courses" appears only when logged in (`[glec_account_links]`).
@@ -65,5 +76,5 @@ Exports in `wordpress/elementor-templates/` (`glec-homepage.json`, `glec-header.
 ## Needs attention
 
 - **Elementor Pro license shows "Mismatch" on staging158** (license is tied to another domain), so Pro could not update from 4.3.3 → 4.4.0 here. Reconnect under Elementor → License (Disconnect, then Connect) and update.
-- The WooCommerce store isn't configured beyond prices: no payment gateway, shipping, tax or store address yet (CA-TABs needs shipping; the license classes are virtual).
+- The WooCommerce store isn't configured beyond prices: **no payment gateway** (checkout shows "no payment methods" and a "Missing parameter(s): billing_address" banner, which goes away as soon as any gateway is enabled; verified), and no shipping, tax or store address yet (CA-TABs needs shipping; the license classes are virtual).
 - Next stage (Moodle course page theme) waits on Moodle admin access.

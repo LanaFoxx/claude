@@ -14,7 +14,8 @@ def process(block):
         j = block.find('{', i)
         if j < 0: res += block[i:]; break
         sel = block[i:j]
-        if sel.strip().startswith('@media') or sel.strip().startswith('@supports'):
+        sel_nc = re.sub(r'/\*.*?\*/', '', sel, flags=re.S).strip()
+        if sel_nc.startswith('@media') or sel_nc.startswith('@supports'):
             depth=1; k=j+1
             while depth: 
                 if block[k]=='{': depth+=1

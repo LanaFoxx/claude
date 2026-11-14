@@ -123,15 +123,16 @@ home.append(C([
         TX('<p>Online classes taught by Garrison Michael, with full step-by-step solutions. Unlimited 24/7 access for up to a year or until you pass.</p>', None, 'line', 'g-hero-sub'),
         C([BTN('Start here', START, 'g-btn g-btn-shadow'), BTN('See classes and prices', '#classes', 'g-btn-ghost')], 'g-hero-btns', direction='row', gap=16, dir_m='column', gap_m=12, extra={"margin":dims(6,0,0,0)}),
     ], 'g-hero-content g-on-navy', gap=26, pad=(92,64,0,64), pad_t=(64,40,48,40), pad_m=(40,20,40,20), gap_m=20, extra={"width":px(760),"width_tablet":{"unit":"%","size":100},"_flex_size":"none"}),
-    HTML(hero_card, 'g-hero-float'),
 ], 'g-hero', bg='navy', extra={"min_height":px(700),"min_height_tablet":px(0),"overflow":"hidden"}, html_tag='section'))
 # subtitle typography (20px)
 home[-1]["elements"][2]["elements"][2]["settings"].update({"typography_typography":"custom","typography_font_family":"Inter","typography_font_size":px(20),"typography_font_size_mobile":px(17),"typography_line_height":{"unit":"em","size":1.6}})
 
 # Proof strip
-def proof(num, a, b):
-    return C([H(num,'span',None,None,'g-num'), TX('<p class="g-proof__lbl">%s<strong>%s</strong></p>' % (a,b), None, None)], 'g-proof__cell', direction='row', gap=18, align='center', pad=(30,40,30,40), pad_t=(24,24,24,24))
-home.append(C([proof('20','years in business','since 2006'), proof('82%','exam pass rate','Georgia CA exam'), proof('5,400+','student members','GA, SC, AL, TN and beyond')], 'g-proof', direction='row'))
+I['users']='<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>'
+def proof(icon, num, suf, a, b):
+    title = num + ('<span class="g-suf">%s</span>' % suf if suf else '')
+    return C([HTML('<span class="g-proof__ico" aria-hidden="true">%s</span>' % ic(I[icon],24)), H(title,'span',None,None,'g-num'), TX('<p class="g-proof__lbl">%s<strong>%s</strong></p>' % (a,b), None, None)], 'g-proof__cell', direction='row', gap=16, align='center', pad=(32,36,32,36), pad_t=(24,24,24,24))
+home.append(C([proof('award','20','','years in business','since 2006'), proof('target','82','%','exam pass rate','Georgia CA exam'), proof('users','5,400','+','student members','GA, SC, AL, TN and beyond')], 'g-proof', direction='row'))
 
 # Steps
 def step(n, icon, h3, body):
@@ -142,7 +143,7 @@ home.append(C([
     C([step('01','clip','Check which license fits','Restricted (Class 1) for units up to 5 tons, or Non-Restricted (Class 2) for all sizes. Our chart shows which one matches your experience.'),
        step('02','play','Take the design classes','Residential Design is required for every license. Non-Restricted adds Commercial Design. Then apply to the Board online through GOALS.'),
        step('03','award','Prep for the exam and pass','After Board approval, take the Exam Prep Review Class, tab your books and schedule your PSI exam.')], 'g-g3 g-steps-grid', gap=24, gap_m=16),
-], 'g-tex-mist', boxed=True, pad=(144,64,104,64), pad_t=(112,40,80,40), pad_m=(64,20,64,20), extra={"margin":dims(-40,0,0,0),"margin_mobile":dims(-24,0,0,0)}, html_tag='section'))
+], 'g-steps', boxed=True, bg='mist', pad=(304,64,104,64), pad_t=(272,40,80,40), pad_m=(240,20,64,20), extra={"margin":dims(-200,0,0,0),"margin_tablet":dims(-200,0,0,0),"margin_mobile":dims(-200,0,0,0)}, html_tag='section'))
 
 # Classes
 def pcard(code, qual, h3, body, pid, free=False):
@@ -267,7 +268,7 @@ footer = [C([
     ], 'g-fgrid', gap=48, gap_t=32, gap_m=28),
     C([TX('<p>© 2026 Georgia License Exam Company</p>',None,None), HTML('<ul class="g-flinks">%s</ul>' % ''.join('<li>%s</li>' % x for x in [L('Policies',SITE+'/policies/'), L('Hold Harmless policy',SITE+'/policies/#hold-harmless')]))],
       'g-fine', direction='row', justify='space-between', gap=40, gap_m=12, extra={"margin":dims(56,0,0,0),"margin_mobile":dims(40,0,0,0),"padding":dims(24,0,0,0)}),
-], 'g-footer', boxed=True, bg='white', pad=(72,64,40,64), pad_t=(56,40,40,40), pad_m=(48,20,32,20), html_tag='div')]
+], 'g-footer g-on-navy', boxed=True, bg='navy', pad=(72,64,40,64), pad_t=(56,40,40,40), pad_m=(48,20,32,20), html_tag='div')]
 for c in footer[0]["elements"][0]["elements"][1:]:
     c["elements"][0]["settings"]["header_size"]="h2"
 

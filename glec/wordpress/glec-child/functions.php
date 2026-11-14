@@ -1,6 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) { exit; }
-define( 'GLEC_CHILD_VER', '1.0.5' );
+define( 'GLEC_CHILD_VER', '1.2.2' );
 
 /* Fonts are self-hosted: tell Elementor that Inter / Inter Tight are local so it never loads Google Fonts. */
 add_filter( 'elementor/fonts/additional_fonts', function ( $fonts ) {
@@ -14,6 +14,7 @@ add_action( 'wp_enqueue_scripts', function () {
 	$uri = get_stylesheet_directory_uri();
 	wp_enqueue_style( 'glec-fonts', $uri . '/assets/fonts.css', [], GLEC_CHILD_VER );
 	wp_enqueue_style( 'glec-child', $uri . '/assets/glec.min.css', [ 'glec-fonts' ], GLEC_CHILD_VER );
+	wp_enqueue_style( 'glec-pages', $uri . '/assets/pages.css', [ 'glec-child' ], GLEC_CHILD_VER );
 	wp_enqueue_script( 'glec-child', $uri . '/assets/glec.js', [], GLEC_CHILD_VER, true );
 }, 20 );
 

@@ -22,7 +22,7 @@ a:focus-visible,button:focus-visible,[tabindex]:focus-visible,.elementor-button:
 .elementor-widget-text-editor p{margin:0 0 .8em} .elementor-widget-text-editor p:last-child{margin-bottom:0}
 .elementor-widget-heading .elementor-heading-title{margin:0}
 .g-num .elementor-heading-title,.g-num{font-variant-numeric:tabular-nums}
-.site-main.post-1, .page-header{display:none}
+
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}.elementor-invisible{visibility:visible!important}}
 html{scroll-behavior:smooth} #classes,#ceu{scroll-margin-top:90px}
 
@@ -64,7 +64,8 @@ html{scroll-behavior:smooth} #classes,#ceu{scroll-margin-top:90px}
 .g-header{border-bottom:1px solid var(--g-line);white-space:nowrap}
 .g-header .g-logo img{height:46px;width:auto;display:block}
 .g-nav .elementor-nav-menu--main .elementor-item{font:500 17px/1 Inter,sans-serif;color:var(--g-ink);padding:8px 0;margin:0 14px}
-.g-nav .elementor-nav-menu--main .elementor-item:hover,.g-nav .elementor-nav-menu--main .elementor-item.elementor-item-active{color:var(--g-blue)}
+.g-nav .elementor-nav-menu--main .elementor-item.elementor-item-active,.g-nav .elementor-nav-menu--main .elementor-item.elementor-item-anchor{color:var(--g-ink)}
+.g-nav .elementor-nav-menu--main .elementor-item:hover,.g-nav .elementor-nav-menu--main .elementor-item:focus{color:var(--g-blue)!important}
 .g-nav .elementor-menu-toggle,.g-nav .elementor-nav-menu--dropdown{display:none!important}
 .g-loginlink a,.g-loginlink .elementor-heading-title a{font:500 17px/1 Inter,sans-serif;color:var(--g-ink);text-decoration:none;display:inline-flex;align-items:center;min-height:44px}
 .g-hdr-btn .elementor-button{height:48px;padding:0 24px;font-size:17px}
@@ -311,7 +312,7 @@ html,body{overflow-x:clip}
 .g-feature-foot{flex-wrap:nowrap!important}
 .g-nav .elementor-nav-menu--main .elementor-nav-menu{justify-content:center}
 .g-burger{width:auto!important}
-.page-header,.entry-title{display:none}
+.home .page-header,.home .entry-title{display:none}
 .g-footer .g-logo img,.g-header .g-logo img{margin:0}
 .g-footer .g-logo{text-align:left}
 .elementor-widget-wc-add-to-cart .elementor-button-icon{display:none}
@@ -330,11 +331,105 @@ html,body{overflow-x:clip}
 /* Tap targets >= 44px */
 .g-link a{min-height:44px}
 .g-flinks{gap:0!important}
-.g-flinks li{min-height:44px;display:flex;align-items:center}
+.g-flinks li{display:block}
 .g-flinks a{display:inline-flex;align-items:center;min-height:44px}
 .g-fcol .g-flinks{margin-top:-10px}
+.g-fcol .g-flinks li:not(:has(a)){padding:10px 0}
 .g-fine .g-flinks{gap:16px!important}
 .g-logo a{display:inline-flex;align-items:center;min-height:44px}
 .g-sl__dots{gap:0}
 .g-sl__dots button{width:44px;height:44px}
 .g-sl__dots button[aria-current="true"]{width:44px}
+/* Wide screens: hero keeps the 1440 artboard width, centred, aligned with header + content column */
+@media (min-width:1441px){
+  /* Full-bleed navy band; content, photo, scrims and floating card anchored to the centred 1440 artboard */
+  .g-hero{--g-side:calc((100% - 1440px) / 2)}
+  .g-hero-content{margin-left:max(0px, calc((100% - 1440px) / 2))!important}
+  .g-hero-photo{width:calc(950px + (100% - 1440px) / 2)!important}
+  .g-hero-decor .s1{right:auto;left:max(0px, calc((100% - 1440px) / 2));width:1440px}
+  .g-hero-decor .gr{width:calc(691px + (100% - 1440px) / 2)}
+  .g-pcard{right:calc((100% - 1440px) / 2 + 96px)}
+  .g-cpill{right:calc((100% - 1440px) / 2 + 360px)}
+}
+
+@media (max-width:600px){.g-fgrid > .g-fcol:last-child{grid-column:1 / -1}}
+.g-flinks li,.g-flinks a{overflow-wrap:normal}
+
+/* Proof strip v2 */
+.g-proof{border:1px solid var(--g-line);box-shadow:0 24px 60px rgba(11,42,66,.16)!important}
+.g-proof::before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:repeating-linear-gradient(135deg,var(--g-hi) 0 10px,var(--g-orange) 10px 20px);z-index:1}
+.g-proof__cell{position:relative;border-right:0!important}
+.g-proof__cell + .g-proof__cell::before{content:"";position:absolute;left:0;top:24px;bottom:24px;width:1px;background:var(--g-line)}
+.g-proof__ico{width:52px;height:52px;border-radius:12px;background:var(--g-tint);color:var(--g-orange-h);display:flex;align-items:center;justify-content:center;flex:none}
+.g-proof__cell .elementor-widget-html{flex:none}
+.g-suf{color:var(--g-hi);margin-left:1px}
+.g-proof__lbl{font-size:15px!important;line-height:1.35}
+.g-proof__lbl strong{font-weight:600!important;font-size:16px;color:var(--g-navy)!important;margin-top:2px}
+@media (max-width:1180px){.g-proof__ico{display:none}}
+@media (max-width:600px){.g-proof__cell + .g-proof__cell::before{top:14px;bottom:14px}.g-proof__lbl{font-size:12px!important}}
+/* Hero photo: anchor right so the subject sits further left */
+.g-hero-photo{background-position:78% center!important}
+/* Elementor forces width/height 100% on container ::before; pin ours explicitly */
+.g-steps-grid::before{width:auto!important;height:0!important}
+.g-proof__cell + .g-proof__cell::before{width:1px!important;height:auto!important}
+.g-proof::before{width:auto!important;height:4px!important}
+.g-cta::before{width:8px!important;height:auto!important}
+.g-feature::before{width:260px!important;height:260px!important}
+.g-stats::before{width:auto!important;height:6px!important}
+/* Icons: no tile, larger, blue */
+.g-ico--navy{width:auto;height:auto;background:none!important;color:var(--g-blue)!important;border-radius:0}
+.g-ico--navy svg{width:44px!important;height:44px!important}
+.g-proof__ico{width:auto!important;height:auto!important;background:none!important;color:var(--g-blue)!important;border-radius:0}
+.g-proof__ico svg{width:40px!important;height:40px!important}
+.g-proof__cell .g-num{flex:none!important;width:auto!important;white-space:nowrap}
+.g-proof__cell .elementor-widget-text-editor{flex:1 1 0!important;min-width:0;width:auto!important}
+.g-proof__cell{padding-left:32px!important;padding-right:28px!important}
+@media (max-width:1180px) and (min-width:601px){.g-proof__cell .g-num .elementor-heading-title{font-size:40px}}
+@media (max-width:600px){.g-proof__cell{padding:14px 6px!important}.g-proof__cell .g-num{white-space:nowrap}}
+@media (max-width:980px){.g-hero-photo{background-position:70% 18%!important}}
+@media (max-width:1180px) and (min-width:601px){
+  .g-proof__cell{flex-direction:column!important;align-items:flex-start!important;gap:8px!important;padding:24px 28px!important}
+  .g-proof__cell .elementor-widget-text-editor{flex:none!important;width:100%!important}
+}
+/* Instructor stats: open row with dividers, no boxes */
+.g-instr .g-g3{gap:0!important;border-top:1px solid var(--g-lslate);border-bottom:1px solid var(--g-lslate)}
+.g-tile{background:none!important;box-shadow:none!important;border-radius:0!important;padding:22px 24px!important;border-left:1px solid var(--g-lslate)}
+.g-tile:first-child{border-left:0;padding-left:0!important}
+.g-tile .g-num .elementor-heading-title{font-size:40px!important;color:var(--g-navy)}
+.g-tile .elementor-widget-text-editor{font-size:16px!important;color:var(--g-slate)}
+@media (max-width:600px){.g-tile{padding:14px 10px!important}.g-tile:first-child{padding-left:0!important}.g-tile .g-num .elementor-heading-title{font-size:26px!important}.g-tile .elementor-widget-text-editor{font-size:13px!important}}
+/* Proof strip: icons orange, numerals one colour */
+.g-proof__ico{color:var(--g-hi)!important}
+.g-suf{color:inherit!important;margin-left:0}
+/* Certificate pill: sits to the left of the progress card, vertically centred on it */
+.g-cpill{right:436px;bottom:172px}
+@media (min-width:1441px){.g-cpill{right:calc((100% - 1440px) / 2 + 436px)}}
+/* Instructor stats: centred number with label below */
+.g-tile{align-items:center!important;text-align:center;padding-left:16px!important;padding-right:16px!important}
+.g-tile:first-child{padding-left:16px!important}
+.g-tile .elementor-widget-heading,.g-tile .elementor-widget-text-editor{width:100%!important;text-align:center}
+@media (max-width:600px){.g-tile,.g-tile:first-child{padding:14px 6px!important}}
+/* Mobile hero photo: taller band, face kept clear of the progress card */
+@media (max-width:980px){.g-hero-photo{height:460px!important;background-position:68% 10%!important}.g-hero-float{height:460px!important}.g-hero-decor{bottom:460px!important}}
+@media (max-width:600px){.g-hero-photo{height:420px!important;background-position:66% 6%!important}.g-hero-float{height:420px!important}.g-hero-decor{bottom:420px!important}.g-pcard{bottom:48px!important}}
+@media (max-width:980px) and (min-width:601px){.g-pcard{bottom:100px!important;left:auto!important;right:40px!important;width:340px!important}}
+/* Hero floating card + pill removed; mobile photo band sized for the photo alone */
+@media (max-width:980px){.g-hero-photo{height:400px!important;background-position:66% 12%!important}.g-hero-decor{bottom:400px!important}}
+@media (max-width:600px){.g-hero-photo{height:340px!important;background-position:64% 10%!important}.g-hero-decor{bottom:340px!important}}
+/* Steps section sits under the hero (hero paints above it) so mist runs straight from the hero edge */
+.g-hero{z-index:1}
+.g-proof{z-index:3}
+/* ---------- FOOTER (navy) ---------- */
+.g-footer{border-top:0!important;color:#fff}
+.g-footer .g-fcol .elementor-heading-title{font:700 19px/1.2 "Inter Tight",sans-serif!important;color:var(--g-hi)!important;letter-spacing:-.01em!important}
+.g-footer .elementor-widget-text-editor,.g-footer .elementor-widget-text-editor p{color:var(--g-lslate)!important}
+.g-footer .g-flinks,.g-footer .g-flinks li{color:var(--g-lslate)}
+.g-footer .g-flinks a{color:#fff!important;text-decoration:none}
+.g-footer .g-flinks a:hover{color:var(--g-hi)!important;text-decoration:underline}
+.g-footer .g-flinks a.g-blue{color:#fff!important;text-decoration:underline;text-underline-offset:3px}
+.g-footer .g-fine{border-top:1px solid rgba(255,255,255,.15)!important}
+.g-footer .g-fine,.g-footer .g-fine p{color:var(--g-lslate)!important}
+.g-footer .g-fine a{color:var(--g-lslate)!important}
+.g-footer .g-fine a:hover{color:#fff!important}
+.g-footer .g-logo img{background:#fff;border-radius:10px;padding:8px 12px;height:60px!important;box-sizing:border-box}
+.g-footer a:focus-visible{outline-color:#fff}
