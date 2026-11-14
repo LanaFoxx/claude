@@ -987,7 +987,12 @@
 		if (q && q.kind === 'delete' && q.error) { return '<div class="dd-stgq"><p class="dd-help">' + ddPill('Not deleted', 'danger') + ' ' + esc(q.error) + '</p><div class="dd-pbtns"><button type="button" class="dd-btn ghost" data-stgunq="' + c.id + '">Dismiss</button></div></div>'; }
 		if (q && q.kind === 'delete') { return '<div class="dd-stgq"><p class="dd-help">' + ddPill('Delete requested', 'warning') + ' <a class="dd-hlink" href="' + STG_TASK + '" target="_blank" rel="noopener">Open the Claude task</a>, click <b>Run now</b>, and answer yes when it asks. The copy is then deleted on SiteGround and this link is removed.</p><div class="dd-pbtns"><button type="button" class="dd-btn ghost" data-stgunq="' + c.id + '">Keep it (cancel)</button></div></div>'; }
 		if (S.stgDelAsk === c.id) { return '<div class="dd-stgq"><p class="dd-help">Delete this staging site from SiteGround and remove the link from this project? The staging site and everything on it will be gone for good.</p><div class="dd-pbtns"><button type="button" class="dd-btn danger" data-stgdelgo="' + c.id + '">Yes, delete it</button><button type="button" class="dd-btn ghost" data-stgdelno>Cancel</button></div></div>'; }
-		return '<div class="dd-stgq"><div class="dd-pbtns"><button type="button" class="dd-btn ghost" data-stgdel="' + c.id + '">' + lu('trash-2', 14) + 'Delete staging site</button></div></div>';
+		return '';
+	}
+	// The Delete button itself sits on the same row as Open staging site / Copy URL.
+	function stgDelBtn(c) {
+		var q = stgQueue().filter(function (x) { return x.id === c.id; })[0];
+		return (q && q.kind === 'delete') || S.stgDelAsk === c.id ? '' : '<button type="button" class="dd-btn ghost" data-stgdel="' + c.id + '">' + lu('trash-2', 14) + 'Delete staging site</button>';
 	}
 	// For the Claude check (results avoid the characters = ? & so the browser tool can return them).
 	window.dwdStagingQueue = function () {
@@ -3333,7 +3338,7 @@
 		}
 		var stg = c.staging || '', stgEdit = !stg || (S.stgEdit === c.id);
 		var stgBox = card('k-stg', 'Staging site', stg ? '' : 'Not added yet', stg && !stgEdit ? '<button type="button" class="dd-hlink" data-stgedit="' + c.id + '">Change</button>' : '',
-			'<div class="dd-stgb">' + (stg && !stgEdit ? '<div class="dd-stgurl">' + lu('globe', 16) + '<a href="' + esc(stg) + '" target="_blank" rel="noopener">' + esc(stg.replace(/^https?:\/\//, '').replace(/\/$/, '')) + '</a></div><div class="dd-pbtns"><a class="dd-btn primary" href="' + esc(stg) + '" target="_blank" rel="noopener">' + lu('external-link', 14) + 'Open staging site</a><button type="button" class="dd-btn secondary" data-copy="' + esc(stg) + '">' + lu('link', 14) + 'Copy URL</button>' + (DWDC.mkReady && !c.markup ? '<button type="button" class="dd-btn ghost" data-stgmk="' + c.id + '">Make a Markup link from it</button>' : '') + '</div>' + stgDelHtml(c)
+			'<div class="dd-stgb">' + (stg && !stgEdit ? '<div class="dd-stgurl">' + lu('globe', 16) + '<a href="' + esc(stg) + '" target="_blank" rel="noopener">' + esc(stg.replace(/^https?:\/\//, '').replace(/\/$/, '')) + '</a></div><div class="dd-pbtns"><a class="dd-btn primary" href="' + esc(stg) + '" target="_blank" rel="noopener">' + lu('external-link', 14) + 'Open staging site</a><button type="button" class="dd-btn secondary" data-copy="' + esc(stg) + '">' + lu('link', 14) + 'Copy URL</button>' + (DWDC.mkReady && !c.markup ? '<button type="button" class="dd-btn ghost" data-stgmk="' + c.id + '">Make a Markup link from it</button>' : '') + stgDelBtn(c) + '</div>' + stgDelHtml(c)
 				: '<form class="dd-stgf" data-stgform="' + c.id + '"><div class="dd-frow"><input name="staging" type="url" placeholder="https://staging.example.com" value="' + esc(stg) + '" required><button class="dd-btn primary">Save</button>' + (stg ? '<button type="button" class="dd-btn ghost" data-stgcancel>Cancel</button>' : '') + '</div><p class="dd-help">Paste the staging URL when you start working on the site. Making a Markup link from a staging URL saves it here too.</p></form>' + stgNewHtml(c)) + '</div>');
 		var mkBox = card('k-mk', 'Markup review', '', '<a class="dd-btn secondary" href="' + esc(DWDC.markupHome) + '" target="_blank" rel="noopener">Open Markup ' + lu('external-link', 14) + '</a>',
 			'<div class="dd-mkb">' + (DWDC.mkReady
