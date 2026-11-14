@@ -355,3 +355,14 @@
 
 /* Project strip: where the paid money is (bank vs still in Upwork) */
 .dd-strip .dd-strip-sub { display: block; margin: 2px 0 6px; font-size: 12px; color: var(--text-3); }
+/* Staging & Markup: one box (URL + its buttons on one row, the Markup link under a divider) */
+.dd-sm-top { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.dd-sm-top .dd-stgurl { flex: 1 1 240px; }
+.dd-sm-top .dd-pbtns { flex: none; }
+.dd-sm-mk { display: flex; flex-direction: column; gap: 10px; padding-top: 14px; border-top: 1px solid var(--border); }
+/* To-dos + Notes: one box with two rows */
+.dd-tn { display: flex; flex-direction: column; min-width: 0; }
+.dd-tn > .dd-card { margin: 0 !important; }
+.dd-tn > .dd-card:not(:last-child) { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+.dd-tn > .dd-card + .dd-card { border-top: 0; border-top-left-radius: 0; border-top-right-radius: 0; }
+@media (max-width: 767px) { .dd-pp-grid .dd-tn { order: 6; margin: 0 !important; } }
