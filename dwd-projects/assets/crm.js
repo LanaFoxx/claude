@@ -3957,6 +3957,8 @@
 			if ((el = t.closest('[data-hmopen]'))) { // Home "Client emails": open / close an email; opening marks it read in Dream Desk
 				S.mailOpen = S.mailOpen || {}; var hmid = el.getAttribute('data-hmopen'), hmx = ((S.homeMail || {}).list || []).find(function (x) { return x.id === hmid; });
 				S.mailOpen[hmid] = !S.mailOpen[hmid];
+				// Closing an email you've read takes it off the list straight away (the box only lists unread ones).
+				if (!S.mailOpen[hmid] && hmx && !hmx.new) { S.homeMail.list = S.homeMail.list.filter(function (x) { return x.id !== hmid; }); render(); return; }
 				if (hmx && hmx.new) { hmx.new = false; if (S.mailD) { delete S.mailD['k' + hmx.owner]; } api('/mail-seen', 'POST', { owner: hmx.owner, ids: [hmid] }).catch(function () {}); }
 				render(); return;
 			}
