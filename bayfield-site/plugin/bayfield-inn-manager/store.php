@@ -184,13 +184,74 @@ add_filter( 'woocommerce_no_available_payment_methods_message', function () {
 } );
 
 /* --------------------------------------------------------------- checkout fields */
+// Compact layout: fields sit side by side (bi-half / bi-third / bi-twothird on a 6-column grid).
 add_filter( 'woocommerce_checkout_fields', function ( $f ) {
 	unset( $f['billing']['billing_company'], $f['shipping']['shipping_company'] );
+	$layout = array(
+		'email'      => array( 'bi-half', 100, 'Email address' ), // after the address: WooCommerce's
+		'phone'      => array( 'bi-half', 110, 'Phone' ), // address script keeps these last
+		'first_name' => array( 'bi-half', 10, 'First name' ),
+		'last_name'  => array( 'bi-half', 20, 'Last name' ),
+		'country'    => array( 'bi-hidden', 30, null ), // US only: no need to show it
+		'address_1'  => array( 'bi-twothird', 50, 'Street address' ),
+		'address_2'  => array( 'bi-third', 60, 'Apt, suite' ),
+		'city'       => array( 'bi-third', 70, 'City' ),
+		'state'      => array( 'bi-third', 80, 'State' ),
+		'postcode'   => array( 'bi-third', 90, 'ZIP code' ),
+	);
+	foreach ( array( 'billing', 'shipping' ) as $group ) {
+		foreach ( $layout as $key => $l ) {
+			$k = $group . '_' . $key;
+			if ( ! isset( $f[ $group ][ $k ] ) ) {
+				continue;
+			}
+			$f[ $group ][ $k ]['class']    = array( 'form-row', $l[0] );
+			$f[ $group ][ $k ]['priority'] = $l[1];
+			if ( $l[2] ) {
+				$f[ $group ][ $k ]['label'] = $l[2];
+			}
+			if ( 'address_2' === $key ) {
+				$f[ $group ][ $k ]['label_class'] = array();
+				$f[ $group ][ $k ]['placeholder'] = 'Apt, suite, unit';
+			}
+			if ( 'address_1' === $key ) {
+				$f[ $group ][ $k ]['placeholder'] = 'House number and street';
+			}
+		}
+	}
+	if ( isset( $f['billing']['billing_email'] ) ) {
+		$f['billing']['billing_email']['placeholder'] = 'For your receipt';
+	}
 	if ( isset( $f['order']['order_comments'] ) ) {
 		$f['order']['order_comments']['placeholder'] = 'Anything we should know about your order?';
+		$f['order']['order_comments']['label']       = 'Notes';
 	}
 	return $f;
+}, 20 );
+// The address JS re-applies country rules; keep our labels/classes for the US.
+add_filter( 'woocommerce_get_country_locale', function ( $locale ) {
+	$locale['US']['address_2'] = array( 'label' => 'Apt, suite', 'label_class' => array(), 'placeholder' => 'Apt, suite, unit' );
+	$locale['US']['postcode']  = array( 'label' => 'ZIP code' );
+	$locale['US']['city']      = array( 'label' => 'City' );
+	return $locale;
 } );
+// Friendlier checkout headings.
+add_filter( 'gettext', function ( $t, $text, $domain ) {
+	if ( 'woocommerce' !== $domain ) {
+		return $t;
+	}
+	$map = array(
+		'Billing details'                     => 'Your details',
+		'Billing &amp; Shipping'              => 'Your details',
+		'Ship to a different address?'        => 'Send to a different address? (for a gift, for example)',
+		'Additional information'              => 'Order notes',
+		'Your order'                          => 'Order summary',
+		'Have a coupon?'                      => 'Have a promo code?',
+		'Click here to enter your code'       => 'Enter it here',
+		'If you have a coupon code, please apply it below.' => 'Enter your promo code below.',
+	);
+	return $map[ $text ] ?? $t;
+}, 10, 3 );
 add_filter( 'woocommerce_enable_order_notes_field', '__return_true' );
 
 /* ------------------------------------------------------------- header cart icon */

@@ -314,3 +314,105 @@ body.woocommerce-order-received .bi-checkout { padding-top: 40px; }
 .bi-remove-item:hover { color: #b32d2e !important; }
 .bi-gc__note { margin: 4px 0 0; padding: 12px 14px; background: #fff; border: 1px solid var(--bi-line); border-radius: 2px; font: 400 14px/1.5 Geist, system-ui, sans-serif; color: var(--bi-muted); }
 .woocommerce-checkout-review-order-table td.product-name dl.variation { margin: 6px 0 0; font: 400 13px/1.5 Geist, system-ui, sans-serif; color: var(--bi-muted); }
+
+/* ===================== Checkout layout (modern two-column) ===================== */
+.bi-checkout .woocommerce { max-width: 1180px; margin: 0 auto; }
+.bi-checkout form.checkout { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(320px, 1fr); grid-template-rows: auto 1fr; column-gap: 32px; align-items: start; }
+.bi-checkout form.checkout > #customer_details { grid-column: 1; grid-row: 1 / span 2; }
+.bi-checkout form.checkout > #order_review_heading { grid-column: 2; grid-row: 1; }
+.bi-checkout form.checkout > #order_review { grid-column: 2; grid-row: 2; }
+@media (min-width: 1025px) {
+  .bi-checkout form.checkout > #order_review_heading, .bi-checkout form.checkout > #order_review { position: sticky; }
+  .bi-checkout form.checkout > #order_review_heading { top: 120px; }
+  .bi-checkout form.checkout > #order_review { top: 176px; }
+}
+/* Cards */
+.bi-checkout #customer_details, .bi-checkout #order_review { background: #fff; border: 1px solid var(--bi-line); border-radius: 6px; box-shadow: 0 30px 60px -44px rgba(23,48,27,.35); }
+.bi-checkout #customer_details { padding: 32px; }
+.bi-checkout #order_review_heading { margin: 0; padding: 26px 28px 0; background: #fff; border: 1px solid var(--bi-line); border-bottom: 0; border-radius: 6px 6px 0 0; font: 400 26px/1.2 Newsreader, Georgia, serif !important; }
+.bi-checkout #order_review { border-top: 0; border-radius: 0 0 6px 6px; padding: 8px 28px 28px; box-shadow: 0 30px 60px -44px rgba(23,48,27,.35); }
+/* Both columns of customer details stacked inside the card */
+.bi-checkout #customer_details.col2-set .col-1, .bi-checkout #customer_details.col2-set .col-2 { float: none; width: 100%; max-width: none; padding: 0; }
+.bi-checkout #customer_details .col-2 { margin-top: 18px; padding-top: 22px; border-top: 1px solid var(--bi-line); }
+.bi-checkout #customer_details h3, .bi-checkout #ship-to-different-address { font: 400 24px/1.2 Newsreader, Georgia, serif !important; color: var(--bi-g); margin: 0 0 18px; }
+.bi-checkout #ship-to-different-address { font-size: 17px !important; margin: 0 0 6px; }
+.bi-checkout #ship-to-different-address label { display: flex; align-items: center; gap: 10px; cursor: pointer; font: inherit; letter-spacing: 0; text-transform: none; }
+.bi-checkout #ship-to-different-address input { width: 18px; height: 18px; margin: 0; }
+.bi-checkout .woocommerce-additional-fields > h3 { font-size: 17px !important; margin: 18px 0 8px; }
+/* Fields on a 6-column grid */
+.bi-checkout .woocommerce-billing-fields__field-wrapper, .bi-checkout .woocommerce-shipping-fields__field-wrapper { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); column-gap: 14px; row-gap: 14px; }
+.bi-checkout .woocommerce-billing-fields__field-wrapper > .form-row, .bi-checkout .woocommerce-shipping-fields__field-wrapper > .form-row { grid-column: span 6; float: none !important; width: auto !important; margin: 0 !important; padding: 0 !important; }
+.bi-checkout .form-row.bi-half { grid-column: span 3 !important; }
+.bi-checkout .form-row.bi-third { grid-column: span 2 !important; }
+.bi-checkout .form-row.bi-twothird { grid-column: span 4 !important; }
+.bi-checkout .form-row.bi-hidden { display: none !important; }
+.bi-checkout form .form-row label { margin: 0 0 6px; }
+.bi-checkout form .form-row .woocommerce-input-wrapper { display: block; }
+.bi-checkout form .form-row input.input-text, .bi-checkout form .form-row select, .bi-checkout form .form-row textarea, .bi-checkout .select2-container .select2-selection--single { width: 100%; background: #fff !important; }
+.bi-checkout form .form-row textarea { min-height: 84px; }
+.bi-checkout .woocommerce-shipping-fields .shipping_address { margin-top: 16px; }
+.bi-checkout abbr.required { color: #b32d2e; text-decoration: none; }
+/* Promo code bar */
+.bi-checkout .woocommerce-form-coupon-toggle .woocommerce-info { margin: 0 0 18px !important; background: transparent !important; border: 0 !important; padding: 0 !important; font-size: 14px; color: var(--bi-muted) !important; }
+.bi-checkout form.checkout_coupon { margin: 0 0 22px !important; padding: 18px !important; border: 1px solid var(--bi-line) !important; border-radius: 6px; background: #fff; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.bi-checkout form.checkout_coupon p { margin: 0; }
+.bi-checkout form.checkout_coupon .form-row-first { flex: 1 1 220px; float: none; width: auto; }
+.bi-checkout form.checkout_coupon .form-row-last { float: none; width: auto; }
+/* Order summary card */
+.bi-checkout table.shop_table.woocommerce-checkout-review-order-table { border: 0 !important; border-radius: 0 !important; margin: 0 0 18px; }
+.bi-checkout .woocommerce-checkout-review-order-table thead { display: none; }
+.bi-checkout .woocommerce-checkout-review-order-table td, .bi-checkout .woocommerce-checkout-review-order-table th { padding: 14px 0 !important; border-top: 1px solid var(--bi-line) !important; background: transparent !important; }
+.bi-checkout .woocommerce-checkout-review-order-table tbody tr:first-child td { border-top: 0 !important; }
+.bi-checkout .woocommerce-checkout-review-order-table td.product-name { font: 400 16px/1.35 Newsreader, Georgia, serif; color: var(--bi-g); padding-right: 12px !important; }
+.bi-checkout .woocommerce-checkout-review-order-table .product-quantity { font: 500 13px Geist, system-ui, sans-serif; color: var(--bi-muted); white-space: nowrap; }
+.bi-checkout .woocommerce-checkout-review-order-table td.product-total, .bi-checkout .woocommerce-checkout-review-order-table tfoot td { text-align: right; white-space: nowrap; font: 400 15px Geist, system-ui, sans-serif; }
+.bi-checkout .woocommerce-checkout-review-order-table tfoot th { font: 500 11px/1.4 Geist, system-ui, sans-serif; letter-spacing: .14em; text-transform: uppercase; color: var(--bi-g); text-align: left; }
+.bi-checkout .woocommerce-checkout-review-order-table tfoot td ul#shipping_method { text-align: left; margin: 0; }
+.bi-checkout .woocommerce-checkout-review-order-table tfoot td ul#shipping_method li { font-size: 14px; line-height: 1.4; margin: 0 0 8px; display: flex; gap: 8px; align-items: flex-start; }
+.bi-checkout .woocommerce-checkout-review-order-table tfoot td ul#shipping_method li input { margin: 3px 0 0; flex: none; }
+.bi-checkout .woocommerce-checkout-review-order-table tr.woocommerce-shipping-totals th { vertical-align: top; }
+.bi-checkout .woocommerce-checkout-review-order-table .order-total td, .bi-checkout .woocommerce-checkout-review-order-table .order-total td strong { font: 400 28px/1 Newsreader, Georgia, serif !important; color: var(--bi-g); }
+.bi-checkout .bi-remove-item { display: inline-block; margin: 4px 0 0 0; }
+.bi-checkout #payment { background: var(--bi-cream) !important; border-radius: 6px !important; padding: 4px 0 0; }
+.bi-checkout #payment ul.payment_methods { border-bottom: 1px solid var(--bi-line) !important; padding: 14px 16px !important; }
+.bi-checkout #payment div.form-row.place-order { padding: 16px !important; margin: 0 !important; }
+.bi-checkout #payment .woocommerce-terms-and-conditions-wrapper { font-size: 13px; }
+.bi-checkout #payment #place_order { width: 100%; float: none; min-height: 54px; font-size: 13.5px !important; }
+.bi-checkout #payment .woocommerce-info { margin: 12px 16px !important; }
+@media (max-width: 1024px) {
+  .bi-checkout form.checkout { grid-template-columns: 1fr; row-gap: 0; }
+  .bi-checkout form.checkout > #customer_details { grid-row: 1; margin-bottom: 24px; }
+  .bi-checkout form.checkout > #order_review_heading { grid-column: 1; grid-row: 2; }
+  .bi-checkout form.checkout > #order_review { grid-column: 1; grid-row: 3; }
+}
+@media (max-width: 600px) {
+  .bi-checkout #customer_details { padding: 22px 18px; }
+  .bi-checkout #order_review { padding: 6px 18px 20px; }
+  .bi-checkout #order_review_heading { padding: 20px 18px 0; }
+  .bi-checkout .form-row.bi-half, .bi-checkout .form-row.bi-twothird { grid-column: span 6 !important; }
+  .bi-checkout .form-row.bi-third { grid-column: span 3 !important; }
+  .bi-checkout .form-row.bi-third.address-field[id$=city_field] { grid-column: span 6 !important; }
+}
+/* Checkout polish */
+.bi-checkout .woocommerce-checkout-review-order-table { table-layout: auto; width: 100%; }
+.bi-checkout .woocommerce-checkout-review-order-table td.product-name { width: 100%; }
+.bi-checkout .woocommerce-checkout-review-order-table td.product-total { width: 1%; padding-left: 12px !important; }
+.bi-checkout #customer_details h3#ship-to-different-address { font-size: 17px !important; line-height: 1.3; margin: 0 0 6px; }
+.bi-checkout .woocommerce-additional-fields > h3 { font-size: 17px !important; }
+body.woocommerce-checkout::after { display: none !important; } /* no film grain over the form */
+/* Order summary rows as flexible lines (no table squeeze) */
+.bi-checkout table.woocommerce-checkout-review-order-table, .bi-checkout table.woocommerce-checkout-review-order-table tbody, .bi-checkout table.woocommerce-checkout-review-order-table tfoot { display: block; width: 100%; }
+.bi-checkout .woocommerce-checkout-review-order-table tr { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; border-top: 1px solid var(--bi-line); padding: 14px 0; }
+.bi-checkout .woocommerce-checkout-review-order-table tbody tr:first-child { border-top: 0; }
+.bi-checkout .woocommerce-checkout-review-order-table td, .bi-checkout .woocommerce-checkout-review-order-table th { display: block; border: 0 !important; padding: 0 !important; width: auto !important; }
+.bi-checkout .woocommerce-checkout-review-order-table td.product-name { flex: 1 1 auto; min-width: 0; }
+.bi-checkout .woocommerce-checkout-review-order-table td.product-total { flex: none; }
+.bi-checkout .woocommerce-checkout-review-order-table tr.woocommerce-shipping-totals { flex-direction: column; align-items: stretch; gap: 10px; }
+.bi-checkout .woocommerce-checkout-review-order-table tr.woocommerce-shipping-totals td { text-align: left; white-space: normal; }
+.bi-checkout .woocommerce-checkout-review-order-table tr.order-total { align-items: center; }
+.bi-checkout .woocommerce table.shop_table.woocommerce-checkout-review-order-table td, .bi-checkout .woocommerce table.shop_table.woocommerce-checkout-review-order-table th { border: 0 !important; padding: 0 !important; background: transparent !important; }
+.bi-checkout .woocommerce table.shop_table.woocommerce-checkout-review-order-table { border: 0 !important; }
+.bi-checkout .woocommerce-additional-fields h3 { font-size: 17px !important; margin: 20px 0 10px !important; }
+.bi-checkout .woocommerce-shipping-fields { margin-top: 4px; }
+.bi-checkout #customer_details .woocommerce-additional-fields h3 { font-size: 17px !important; margin: 20px 0 10px !important; }
+@media (max-width: 600px) { .bi-checkout .form-row.bi-third[id$=address_2_field] { grid-column: span 6 !important; } }
