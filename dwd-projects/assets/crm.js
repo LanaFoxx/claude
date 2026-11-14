@@ -1699,7 +1699,7 @@
 		var sideOf = function (s) { return s.scope ? s.scope : (/business/i.test(s.acct || '') ? 'business' : 'personal'); };
 		var recOf = function (sc) { return live.filter(function (s) { return s.status !== 'cancel' && sideOf(s) === sc; }); };
 		var recMo = function (sc) { return recOf(sc).reduce(function (a, s) { return a + s.monthly; }, 0); };
-		var sideTile = function (sc, L) { var bm = moOf(L), rm = recMo(sc), tot = bm + rm; return ['<i class="dot ' + (sc === 'business' ? 'biz' : 'per') + '"></i>' + (sc === 'business' ? 'Business' : 'Personal') + ' per month', money(tot) + unit('/mo'), 'Bills ' + money(bm) + ' · recurring charges ' + money(rm) + ' (' + recOf(sc).length + ') · ' + money(tot * 12) + ' a year', '', '', 'data-jump="' + (sc === 'business' ? 'biz' : 'per') + '"']; };
+		var sideTile = function (sc, L) { var bm = moOf(L), rm = recMo(sc), tot = bm + rm; return ['<i class="dot ' + (sc === 'business' ? 'biz' : 'per') + '"></i>' + (sc === 'business' ? 'Business' : 'Personal') + ' per month', money(tot) + unit('/mo'), money(tot * 12) + ' a year · ' + recOf(sc).length + ' recurring' + (L.length ? ' + ' + L.length + ' bill' + (L.length === 1 ? '' : 's') : ''), '', '', 'data-jump="' + (sc === 'business' ? 'biz' : 'per') + '"']; };
 		var strip = ddStrip([
 			sideTile('business', bizL),
 			sideTile('personal', perL),
