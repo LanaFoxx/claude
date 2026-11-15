@@ -993,6 +993,7 @@
 		var aOpen = !!(S.assetOpen || {})[c.id];
 		return '<section class="dd-card dd-pc2 k-assets' + (aOpen ? ' aopen' : '') + '" data-adrop="' + c.id + '"><header><h2 data-atog="' + c.id + '" role="button" tabindex="0" aria-expanded="' + aOpen + '">' + lu('paperclip', 16) + 'Assets<span class="dd-atogi">' + lu('chevron-down', 14) + '</span></h2><span class="sum" data-atog="' + c.id + '">' + (A.length + nDrv ? (A.length + nDrv) + ' file' + (A.length + nDrv === 1 ? '' : 's') : 'None yet') + '</span><span class="dd-sp"></span>'
 			+ (c.drive ? '<a class="dd-btn ghost sm" href="' + esc(c.drive) + '" target="_blank" rel="noopener">' + lu('external-link', 14) + 'Drive folder</a>' : '')
+			+ (A.length + nDrv ? '<button type="button" class="dd-btn secondary sm" data-azip="' + c.id + '"' + ((S.azBusy || {})[c.id] ? ' disabled' : '') + '>' + lu('download', 14) + ((S.azBusy || {})[c.id] ? 'Zipping…' : 'Download all') + '</button>' : '')
 			+ '<label class="dd-btn secondary sm dd-aup">' + lu('upload', 14) + (up ? 'Uploading ' + up + '…' : 'Upload') + '<input type="file" multiple hidden data-aup="' + c.id + '"></label></header>'
 			+ '<div class="dd-abody">' + grid + list + empty + driveFilesHtml(c) + '</div></section>';
 	}
@@ -4825,6 +4826,16 @@
 		if ((el = t.closest('[data-billmove]'))) { var bmv = (pData().bills || []).find(function (x) { return x.id === el.getAttribute('data-billmove'); }); S.billMenu = 0; if (bmv) { var nb = JSON.parse(JSON.stringify(bmv)); nb.scope = bmv.scope === 'business' ? 'personal' : 'business'; pSave('bills', nb, 'Moved to ' + (nb.scope === 'business' ? 'Business' : 'Personal')); } return; }
 		if ((el = t.closest('[data-billmenu]'))) { e.stopPropagation(); var bmid = el.getAttribute('data-billmenu'); S.billMenu = S.billMenu === bmid ? 0 : bmid; S.subLabel = 0; render(); return; }
 		if ((el = t.closest('[data-sublabel]'))) { e.stopPropagation(); var slm = el.getAttribute('data-sublabel'); S.subLabel = S.subLabel === slm ? 0 : slm; S.billMenu = 0; render(); return; }
+		if ((el = t.closest('[data-azip]'))) {
+			var zid = +el.getAttribute('data-azip'); S.azBusy = S.azBusy || {}; if (S.azBusy[zid]) { return; }
+			S.azBusy[zid] = 1; render(); toast('Putting every file into one zip…');
+			api('/contact/' + zid + '/assets-zip', 'POST', {}).then(function (x) {
+				S.azBusy[zid] = 0; render();
+				var a = document.createElement('a'); a.href = x.url; a.download = x.name; document.body.appendChild(a); a.click(); a.remove();
+				toast(x.files + ' file' + (x.files === 1 ? '' : 's') + ' in the zip' + (x.skipped ? '. ' + x.skipped + ' could not be added and are listed inside as links' : ''));
+			}).catch(function (e) { S.azBusy[zid] = 0; render(); fail(e); });
+			return;
+		}
 		if ((el = t.closest('[data-meetcopy]'))) { meetCopy(el.getAttribute('data-meetcopy').split(','), el); return; }
 		if ((el = t.closest('[data-meetopen]'))) { S.meetOpen = S.meetOpen || {}; var mo = el.getAttribute('data-meetopen'); S.meetOpen[mo] = !S.meetOpen[mo]; render(); return; }
 		if ((el = t.closest('[data-meettx]'))) { var mx2 = S.modal = { type: 'meettx', title: el.getAttribute('data-t') || 'Transcript', text: null }; render(); api('/fireflies?transcript=' + encodeURIComponent(el.getAttribute('data-meettx'))).then(function (x) { if (S.modal === mx2) { mx2.text = x.text; render(); } }).catch(function (e) { if (S.modal === mx2) { S.modal = null; render(); } fail(e); }); return; }

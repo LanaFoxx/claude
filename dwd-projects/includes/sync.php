@@ -2135,3 +2135,95 @@ add_action( 'rest_api_init', function () {
 		} ),
 	) );
 } );
+
+/* ---------------------------------------------------------------- Download all assets of a project as one zip
+ * Files uploaded in Dream Desk plus the files in the client's Google Drive folder. Kept for an hour.
+ */
+function dwdx_assets_zip( $pid ) {
+	if ( ! class_exists( 'ZipArchive' ) ) {
+		return new WP_Error( 'dwdx', 'This server cannot make zip files (ZipArchive is missing).', array( 'status' => 500 ) );
+	}
+	if ( ! get_post( $pid ) ) {
+		return new WP_Error( 'dwdx', 'Project not found.', array( 'status' => 404 ) );
+	}
+	require_once ABSPATH . 'wp-admin/includes/file.php';
+	if ( function_exists( 'set_time_limit' ) ) {
+		@set_time_limit( 300 );
+	}
+	$up  = wp_upload_dir();
+	$dir = trailingslashit( $up['basedir'] ) . 'dwd-exports';
+	wp_mkdir_p( $dir );
+	if ( ! file_exists( $dir . '/index.html' ) ) {
+		file_put_contents( $dir . '/index.html', '' ); // phpcs:ignore
+	}
+	foreach ( (array) glob( $dir . '/*.zip' ) as $old ) {
+		if ( filemtime( $old ) < time() - HOUR_IN_SECONDS ) {
+			@unlink( $old ); // phpcs:ignore
+		}
+	}
+	$name = dwdx_slug( html_entity_decode( get_the_title( $pid ), ENT_QUOTES ) ) . '-assets';
+	$file = $name . '-' . wp_generate_password( 20, false ) . '.zip';
+	$zip  = new ZipArchive();
+	if ( true !== $zip->open( $dir . '/' . $file, ZipArchive::CREATE | ZipArchive::OVERWRITE ) ) {
+		return new WP_Error( 'dwdx', 'Could not create the zip file on the server.', array( 'status' => 500 ) );
+	}
+	$R     = $name . '/';
+	$tmp   = array();
+	$used  = array();
+	$total = 0;
+	$n     = 0;
+	$skip  = array();
+	$uniq  = function ( $path ) use ( &$used ) {
+		$p = $path;
+		for ( $i = 2; isset( $used[ strtolower( $p ) ] ); $i++ ) {
+			$p = preg_replace( '/(\.[^.\/]+)?$/', '-' . $i . '$1', $path, 1 );
+		}
+		$used[ strtolower( $p ) ] = 1;
+		return $p;
+	};
+	foreach ( function_exists( 'dwda_list' ) ? dwda_list( $pid ) : array() as $a ) {
+		$f = get_attached_file( $a['id'] );
+		if ( $f && file_exists( $f ) && $total + filesize( $f ) < 450 * MB_IN_BYTES ) {
+			$zip->addFile( $f, $R . $uniq( sanitize_file_name( $a['name'] ) ) );
+			$total += filesize( $f );
+			$n++;
+		} else {
+			$skip[] = $a['name'] . ' | ' . $a['url'];
+		}
+	}
+	$drive = function_exists( 'dwddr_files' ) ? dwddr_files( $pid, true ) : array( 'files' => array() );
+	foreach ( (array) ( $drive['files'] ?? array() ) as $d ) {
+		$ok = false;
+		if ( (int) $d['size'] <= 100 * MB_IN_BYTES && $total + (int) $d['size'] <= 450 * MB_IN_BYTES ) {
+			$t  = wp_tempnam( 'dwdx' );
+			$r  = wp_remote_get( $d['dl'], array( 'timeout' => 120, 'redirection' => 5, 'stream' => true, 'filename' => $t ) );
+			$ct = is_wp_error( $r ) ? '' : (string) wp_remote_retrieve_header( $r, 'content-type' );
+			if ( ! is_wp_error( $r ) && 200 === (int) wp_remote_retrieve_response_code( $r ) && 0 !== strpos( $ct, 'text/html' ) && filesize( $t ) ) {
+				$zip->addFile( $t, $R . $uniq( 'drive/' . ( '' !== (string) $d['path'] ? trim( preg_replace( '/[^A-Za-z0-9 _\-\/]/', '', (string) $d['path'] ), '/' ) . '/' : '' ) . sanitize_file_name( $d['name'] ) ) );
+				$tmp[]  = $t;
+				$total += filesize( $t );
+				$n++;
+				$ok = true;
+			} else {
+				@unlink( $t ); // phpcs:ignore
+			}
+		}
+		if ( ! $ok ) {
+			$skip[] = $d['name'] . ' | ' . $d['url'];
+		}
+	}
+	if ( $skip ) {
+		$zip->addFromString( $R . 'not-included.txt', "These files could not be added automatically. Open each link to download it:\n\n" . implode( "\n", $skip ) . "\n" );
+	}
+	if ( ! $n && ! $skip ) {
+		$zip->addFromString( $R . 'empty.txt', "No files on this project yet.\n" );
+	}
+	$zip->close();
+	foreach ( $tmp as $t ) {
+		@unlink( $t ); // phpcs:ignore
+	}
+	return array( 'url' => trailingslashit( $up['baseurl'] ) . 'dwd-exports/' . $file, 'name' => $name . '.zip', 'files' => $n, 'skipped' => count( $skip ) );
+}
+add_action( 'rest_api_init', function () {
+	register_rest_route( 'dwd/v1', '/crm/contact/(?P<id>\d+)/assets-zip', array( 'methods' => 'POST', 'permission_callback' => function () { return current_user_can( 'manage_options' ); }, 'callback' => function ( $r ) { return dwdx_assets_zip( (int) $r['id'] ); } ) );
+} );
