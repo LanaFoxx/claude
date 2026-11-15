@@ -665,6 +665,7 @@
 	}
 	/* ================= Dream Desk 1c shell (design handoff): tokens, sidebar, top bar, Home ================= */
 	var LU = {
+		'dollar-sign': '<line x1="12" x2="12" y1="2" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>',
 		smartphone: '<rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/>',
 		image: '<rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>',
 		video: '<path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/><rect x="2" y="6" width="14" height="12" rx="2"/>',
@@ -3584,7 +3585,7 @@
 				+ (inUp ? '<small class="dd-strip-sub">' + (banked ? money(banked) + ' in your bank · ' : 'Nothing in your bank yet · ') + money(inUp) + ' still in Upwork' + (num(upP.pend) && upP.pnext ? ' (available ' + fmt(upP.pnext) + ')' : '') + '</small>' : '')
 				+ '<span class="dd-prog' + (pct >= 100 ? ' full' : '') + '"><i><s style="width:' + pct + '%"></s></i><small>' + pct + '%</small></span></div></div>';
 		}
-		var cardIc = { 'Staging & Markup': 'globe', Payments: 'credit-card', Details: 'file-text', Contacts: 'users', 'Project summary': 'sparkles' };
+		var cardIc = { 'Staging & Markup': 'globe', Payments: 'dollar-sign', Details: 'file-text', Contacts: 'user', 'Project summary': 'sparkles' };
 		var card = function (cls, h, sum, right, body) { var hi = cardIc[String(h).replace(/\s*<[\s\S]*$/, '')]; return '<section class="dd-card dd-pc2 ' + cls + '"><header><h2>' + (hi ? lu(hi, 16) : '') + h + '</h2>' + (sum ? '<span class="sum">' + sum + '</span>' : '') + '<span class="dd-sp"></span>' + (right || '') + '</header>' + body + '</section>'; };
 		// to-dos
 		var doneN = tasks.length - openN, dueOf = function (t) {
