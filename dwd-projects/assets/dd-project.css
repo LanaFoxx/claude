@@ -405,3 +405,11 @@
 	.dd .dd-sumtog { display: flex; align-items: center; gap: 6px; margin: 2px 0 6px; padding: 4px 0; border: 0; background: none; font: 500 var(--fs-sm) var(--font); color: var(--accent); cursor: pointer; }
 	.dd .dd-sumtog[aria-expanded="true"] svg { transform: rotate(180deg); }
 }
+/* Phones: Assets stays closed (just the count) until tapped */
+.dd .dd-atogi { display: none; }
+@media (max-width: 767px) {
+	.dd .k-assets:not(.aopen) .dd-abody { display: none; }
+	.dd .k-assets [data-atog] { cursor: pointer; }
+	.dd .dd-atogi { display: inline-flex; margin-left: 6px; color: var(--text-3); }
+	.dd .k-assets.aopen .dd-atogi svg { transform: rotate(180deg); }
+}

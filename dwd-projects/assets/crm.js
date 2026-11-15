@@ -990,7 +990,8 @@
 		}).join('') + '</div>' : '';
 		var nDrv = ((driveFiles(c) || {}).files || []).length;
 		var empty = A.length || c.drive ? '' : '<p class="dd-help dd-aempty">No files yet. Drop photos, logos, fonts or zips here.</p>';
-		return '<section class="dd-card dd-pc2 k-assets" data-adrop="' + c.id + '"><header><h2>' + lu('paperclip', 16) + 'Assets</h2><span class="sum">' + (A.length + nDrv ? (A.length + nDrv) + ' file' + (A.length + nDrv === 1 ? '' : 's') : 'None yet') + '</span><span class="dd-sp"></span>'
+		var aOpen = !!(S.assetOpen || {})[c.id];
+		return '<section class="dd-card dd-pc2 k-assets' + (aOpen ? ' aopen' : '') + '" data-adrop="' + c.id + '"><header><h2 data-atog="' + c.id + '" role="button" tabindex="0" aria-expanded="' + aOpen + '">' + lu('paperclip', 16) + 'Assets<span class="dd-atogi">' + lu('chevron-down', 14) + '</span></h2><span class="sum" data-atog="' + c.id + '">' + (A.length + nDrv ? (A.length + nDrv) + ' file' + (A.length + nDrv === 1 ? '' : 's') : 'None yet') + '</span><span class="dd-sp"></span>'
 			+ (c.drive ? '<a class="dd-btn ghost sm" href="' + esc(c.drive) + '" target="_blank" rel="noopener">' + lu('external-link', 14) + 'Drive folder</a>' : '')
 			+ '<label class="dd-btn secondary sm dd-aup">' + lu('upload', 14) + (up ? 'Uploading ' + up + '…' : 'Upload') + '<input type="file" multiple hidden data-aup="' + c.id + '"></label></header>'
 			+ '<div class="dd-abody">' + grid + list + empty + driveFilesHtml(c) + '</div></section>';
@@ -4303,6 +4304,7 @@
 		if ((el = t.closest('[data-rdyq]'))) { var rqid = +el.getAttribute('data-rdyq'); S.rdyBusy = S.rdyBusy || {}; S.rdyBusy[rqid] = 1; S.rdyOpen = S.rdyOpen || {}; S.rdyOpen[rqid] = true; render(); readySet(rqid, { act: 'questions' }).then(function (x) { S.rdyBusy[rqid] = 0; render(); toast(x.questions && x.questions.list && x.questions.list.length ? x.questions.list.length + ' open question' + (x.questions.list.length === 1 ? '' : 's') + ' found' : 'Nothing important left open'); }).catch(function (er) { S.rdyBusy[rqid] = 0; render(); fail(er); }); return; }
 		if ((el = t.closest('[data-rdyemail]'))) { readyEmail(+el.getAttribute('data-rdyemail')); return; }
 		if ((el = t.closest('[data-healthtog]'))) { S.healthOpen = !S.healthOpen; render(); return; }
+		if ((el = t.closest('[data-atog]')) && window.innerWidth < 768) { var atid = el.getAttribute('data-atog'); S.assetOpen = S.assetOpen || {}; S.assetOpen[atid] = !S.assetOpen[atid]; render(); return; }
 		if ((el = t.closest('[data-sumtog]'))) { var stid = el.getAttribute('data-sumtog'); S.sumOpen = S.sumOpen || {}; S.sumOpen[stid] = !S.sumOpen[stid]; render(); return; }
 		if ((el = t.closest('[data-dettog]'))) { var dtid = el.getAttribute('data-dettog'); S.detOpen = S.detOpen || {}; S.detOpen[dtid] = !S.detOpen[dtid]; render(); return; }
 		if ((el = t.closest('[data-taxsave]'))) {
