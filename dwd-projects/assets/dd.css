@@ -1001,3 +1001,5 @@ section.dd-health.warn .dd-healthb .dd-hld { background: var(--warning-text); }
 .dd .dd-home-l > .dd-wait > header { position: sticky; top: 0; z-index: 2; background: var(--surface); border-bottom: 1px solid var(--border); }
 /* Needs your attention: one line under the title, not two */
 .dd .dd-home-l > .dd-wait > header + * { border-top: 0 !important; }
+/* Today's schedule: no list link under an opened to-do group */
+.dd .dd-tl-kids .dd-tl-go { display: none !important; }
