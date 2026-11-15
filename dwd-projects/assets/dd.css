@@ -1032,3 +1032,7 @@ section.dd-health.warn .dd-healthb .dd-hld { background: var(--warning-text); }
 	.dd .k-ready .dd-rdybtns > .dd-btn { flex: 1 1 0 !important; min-width: 0; margin-left: 0 !important; overflow: visible !important; text-overflow: clip !important; }
 	.dd .k-ready .dd-rdybtns > [data-xport] { flex: 1 1 100% !important; }
 }
+
+/* Home header: "All connections syncing" next to the date */
+.dd-ph-t { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 18px; }
+.dd-ph-t .dd-health.ok { margin: 4px 0 0 !important; padding: 0 !important; }

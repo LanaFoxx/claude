@@ -777,7 +777,8 @@
 		if (r.view === 'home') {
 			var h = new Date().getHours(), greet = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
 			var q = quoteBar(), qm = /dwdc-quote-q">(.*?)<\/span><span class="dwdc-quote-a">— (.*?)<\/span>/.exec(q);
-			return '<div class="dd-ph home"><div><h1>' + new Date(DWDC.today + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }) + '</h1><p>' + greet + ', ' + esc(String(DWDC.user || 'Michael').split(' ')[0]) + '</p></div>'
+			var hOk = S.health && S.health.items && S.health.ok && !S.health.setup; // all syncing: the small notice sits next to the date
+			return '<div class="dd-ph home"><div><div class="dd-ph-t"><h1>' + new Date(DWDC.today + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }) + '</h1>' + (hOk ? healthStrip() : '') + '</div><p>' + greet + ', ' + esc(String(DWDC.user || 'Michael').split(' ')[0]) + '</p></div>'
 				+ (qm ? '<div class="dd-quote"><span>' + qm[1] + ' <i>— ' + qm[2] + '</i></span><button type="button" class="dd-ibtn sm" data-quotex aria-label="Hide for today">' + lu('x', 14) + '</button></div>' : '') + '</div>';
 		}
 		if (r.view === 'client' || r.view === 'cl' || r.view === 'host' || r.view === 'todos' || r.view === 'reviews' || (r.view === 'projects' && (!r.arg || r.arg === 'active' || r.arg === 'all')) || (r.view === 'personal' && (r.arg === 'calendar' || r.arg === 'bills' || r.arg === 'suggestions'))) { return ''; }
@@ -1407,7 +1408,7 @@
 		};
 		var todos = '<section class="dd-card"><header class="dd-ch"><div class="dd-ch-t"><h2>To-dos</h2></div><div class="dd-ch-a"><button type="button" class="dd-hadd-btn" data-haddtog>' + lu('plus', 14) + 'Add</button><a href="#todos">All ' + all.length + '</a></div></header>'
 			+ (S.homeAdd ? '<form class="dd-hadd"><input name="text" placeholder="New to-do… e.g. Call Shane next Thursday at 4" autocomplete="off" required data-lpignore="true" data-1p-ignore><button class="dd-btn primary">Add</button></form>' : '') + (rows.length ? rows.map(trow).join('') : '<p class="dd-empty-l">Nothing overdue or due today.</p>') + '</section>';
-		return '<div class="dd-home"><div class="dd-home-l">' + waitBox() + sched + act + '</div><div class="dd-home-r">' + healthStrip() + stats + homeMailBox() + zoomBox('home') + '</div></div>';
+		return '<div class="dd-home"><div class="dd-home-l">' + waitBox() + sched + act + '</div><div class="dd-home-r">' + (S.health && S.health.ok && !S.health.setup ? '' : healthStrip()) + stats + homeMailBox() + zoomBox('home') + '</div></div>';
 	}
 	// All clients (design 4.2): toolbar, chips, grouped table; rows stack on phones.
 	var DD_TONE = { Project: 'info', Hosting: 'success', Lead: 'warning', 'Past client': 'neutral' };
