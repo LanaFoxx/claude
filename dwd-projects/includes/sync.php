@@ -1730,10 +1730,14 @@ function dwdx_build( $pid ) {
 	// 2. Meetings.
 	$meet = (array) ( $c['meetings'] ?? array() );
 	$mlist = '';
+	$mtext = '';
+	$etext = '';
+	$ttext = '';
 	foreach ( array_reverse( $meet ) as $i => $m ) {
 		$txt = dwdff_text( $m['id'] );
 		$fn  = sprintf( '03-meetings/%02d-%s-%s.md', $i + 1, substr( $m['date'], 0, 10 ), dwdx_slug( $m['title'], 40 ) );
 		$zip->addFromString( $R . $fn, '# ' . $m['title'] . "\n\n" . substr( $m['date'], 0, 10 ) . ' · ' . $m['mins'] . " minutes\n\n" . ( $m['summary'] ? "## Summary\n\n" . $m['summary'] . "\n\n" : '' ) . ( $m['actions'] ? "## Action items\n\n" . $m['actions'] . "\n\n" : '' ) . "## Transcript\n\n" . ( is_wp_error( $txt ) ? 'Could not fetch the transcript: ' . $txt->get_error_message() : $txt ) . "\n" );
+		$mtext .= "\n\n=== CALL " . substr( $m['date'], 0, 10 ) . ': ' . $m['title'] . " ===\n" . ( $m['summary'] ? 'Summary: ' . $m['summary'] . "\n" : '' ) . ( $m['actions'] ? 'Action items: ' . $m['actions'] . "\n" : '' ) . ( is_wp_error( $txt ) ? '' : mb_substr( $txt, 0, 60000 ) );
 		$mlist .= '- ' . substr( $m['date'], 0, 10 ) . ': ' . $m['title'] . ' → `' . $fn . "`\n";
 	}
 	if ( $meet ) {
@@ -1749,6 +1753,7 @@ function dwdx_build( $pid ) {
 			$t .= '## ' . ( $x['subject'] ?? '(no subject)' ) . "\n\n" . substr( (string) ( $x['date'] ?? '' ), 0, 16 ) . ' · from ' . ( $x['from'] ?? '' ) . "\n\n" . trim( (string) ( $x['body'] ?? '' ) ) . "\n\n---\n\n";
 		}
 		$zip->addFromString( $R . '04-emails.md', $t );
+		$etext = $t;
 		$has[] = '`04-emails.md`: ' . count( $mail ) . ' emails to and from the client, oldest first.';
 	}
 	if ( '' !== $phone && get_option( 'dwds_quo_key', '' ) ) {
@@ -1759,6 +1764,7 @@ function dwdx_build( $pid ) {
 				$t .= '**' . ( $x['in'] ? ( $person ?: 'Client' ) : 'Michael' ) . '** (' . substr( $x['at'], 0, 16 ) . '): ' . $x['text'] . "\n\n";
 			}
 			$zip->addFromString( $R . '05-texts.md', $t );
+			$ttext = $t;
 			$has[] = '`05-texts.md`: the text message thread with the client.';
 		}
 	}
@@ -1841,7 +1847,44 @@ function dwdx_build( $pid ) {
 	$zip->addFromString( $R . '01-project-brief.md', $brief );
 	array_unshift( $has, '`01-project-brief.md`: who the client is, their current site, the staging site, deadline, a short summary of what they want, my notes and open to-dos.' );
 
-	// 6. Instructions for Claude Code.
+	// 6. Design brief for Claude Design, written by Claude from everything above.
+	$design = '';
+	$derr   = '';
+	if ( function_exists( 'dwdc_ai_key' ) && dwdc_ai_key() ) {
+		$pack = "PROJECT BRIEF\n" . $brief . "\n\nFORM ANSWERS\n" . mb_substr( $forms, 0, 40000 ) . "\n\nCALLS (oldest first)" . mb_substr( $mtext, 0, 150000 ) . "\n\nEMAILS\n" . mb_substr( $etext, 0, 40000 ) . "\n\nTEXTS\n" . mb_substr( $ttext, 0, 10000 ) . "\n\nFILES SUPPLIED\n" . $files;
+		$res  = wp_remote_post( 'https://api.anthropic.com/v1/messages', array(
+			'timeout' => 180,
+			'headers' => array( 'x-api-key' => dwdc_ai_key(), 'anthropic-version' => '2026-10-21', 'content-type' => 'application/json' ),
+			'body'    => wp_json_encode( array(
+				'model'         => 'claude-opus-5-5',
+				'max_tokens'    => 8000,
+				'output_config' => array( 'effort' => 'medium' ),
+				'system'        => 'You write the design brief that a freelance web designer hands to Claude Design (an AI design tool that produces website page designs) for a website project. You are given everything known about the project: the brief, the form answers, call transcripts, emails, texts and the list of files supplied. '
+					. 'Write the brief in Markdown, addressed directly to Claude Design, telling it exactly what to design. Use these sections: "The business" (who they are, what they sell, who their customers are); "Goal of the site" (new build or redesign, what it must achieve, the main action a visitor should take); "Pages to design" (each page, and for each the sections in order with what each section says and shows, using the real wording from the material where it exists); "Look and feel" (colours, fonts, mood, the websites they like and what to take from each, what they dislike); "Content and assets" (which supplied logos, photos and documents to use and where, and what is missing); "Must-haves and constraints" (features, integrations, things they insisted on, deadline); "Open questions" (what is unclear or contradictory, to settle before designing). '
+					. 'Rules: use only what the material says and never invent facts about the business; where sources disagree the most recent call or message wins, and say so; be specific enough that a designer could start without reading anything else; design mobile first; the site will be built in WordPress with Elementor, so keep layouts buildable with standard sections; in side-by-side layouts keep headings to the same number of lines on both sides. No preamble and no closing remarks.',
+				'messages'      => array( array( 'role' => 'user', 'content' => $pack ) ),
+			) ),
+		) );
+		$body = is_wp_error( $res ) ? array() : (array) json_decode( wp_remote_retrieve_body( $res ), true );
+		if ( is_wp_error( $res ) || 200 !== (int) wp_remote_retrieve_response_code( $res ) ) {
+			$derr = is_wp_error( $res ) ? 'Claude could not be reached in time.' : (string) ( $body['error']['message'] ?? 'Claude returned an error.' );
+		} else {
+			foreach ( (array) ( $body['content'] ?? array() ) as $b ) {
+				if ( 'text' === ( $b['type'] ?? '' ) ) {
+					$design .= $b['text'];
+				}
+			}
+			$design = trim( $design );
+		}
+	} else {
+		$derr = 'No Claude API key saved in Dream Desk (open Ask AI and paste it).';
+	}
+	if ( '' !== $design ) {
+		$zip->addFromString( $R . '00-design-brief-for-claude-design.md', '# Design brief for Claude Design: ' . $c['name'] . "\n\n" . $design . "\n" );
+		array_unshift( $has, '`00-design-brief-for-claude-design.md`: the design brief, written from all the material here. Give this file to Claude Design to produce the page designs, and follow it as the plan for the build. If it disagrees with a source file, the source file wins.' );
+	}
+
+	// 7. Instructions for Claude Code.
 	$claude = '# ' . $c['name'] . ": website build\n\n"
 		. 'You are helping Michael Tarr of Dream Web Digital build this client\'s website. Everything known about the project is in this folder. Read it all before writing anything.' . "\n\n"
 		. "## What is in this folder\n\n- " . implode( "\n- ", $has ) . "\n\n"
@@ -1868,7 +1911,7 @@ function dwdx_build( $pid ) {
 	foreach ( $tmp as $t ) {
 		@unlink( $t ); // phpcs:ignore
 	}
-	return array( 'url' => trailingslashit( $up['baseurl'] ) . 'dwd-exports/' . $file, 'name' => $name . '.zip', 'size' => filesize( $dir . '/' . $file ), 'meetings' => count( $meet ), 'emails' => count( $mail ), 'forms' => '' !== $forms, 'files' => substr_count( $files, "\n" ), 'skipped' => substr_count( $files, 'open it here' ) );
+	return array( 'url' => trailingslashit( $up['baseurl'] ) . 'dwd-exports/' . $file, 'name' => $name . '.zip', 'size' => filesize( $dir . '/' . $file ), 'meetings' => count( $meet ), 'emails' => count( $mail ), 'forms' => '' !== $forms, 'design' => '' !== $design, 'design_error' => $derr, 'files' => substr_count( $files, "\n" ), 'skipped' => substr_count( $files, 'open it here' ) );
 }
 
 add_action( 'rest_api_init', function () {

@@ -3505,7 +3505,7 @@
 		var hosting = num(c.hosting) ? hostCard(c) : '';
 		return '<div class="dd-pp">' + head + strip
 			+ (S.edit ? '<div class="dd-pp-edit" id="pv3-edit">' + details + peopleCard(c) + '</div>' : '')
-			+ '<div class="dd-pp-grid"><div class="dd-pp-col">' + sumBox + (full ? '<div class="dd-mt2">' + mailBox('p' + c.id, c.email || (clientOf(c) || {}).email || '', c.id) + textsBox(c) + '</div>' + meetBox(c) + '<div class="dd-xport"><div><b>Export for Claude Code</b><small>One zip with instructions, the brief, onboarding answers, meeting transcripts, emails, texts and every file from Dream Desk and the Drive folder.</small></div><button type="button" class="dd-btn primary" data-xport="' + c.id + '"' + ((S.xBusy || {})[c.id] ? ' disabled' : '') + '>' + ((S.xBusy || {})[c.id] ? 'Building the zip…' : 'Download zip') + '</button></div>' + assetsBox(c) : '') + stgBox + mkBox + formBox + (S.edit ? '' : '<div class="dd-pp-mob">' + details + '</div>') + '<div class="dd-tn">' + todos + notesBox + '</div>' + '</div><div class="dd-pp-col side">' + (S.edit ? '' : '<div class="dd-pp-desk">' + details + '</div>' + contacts) + zoomBox('p' + c.id, [c.id]) + (st === 'leads' ? '' : paysBox) + hosting + '</div></div></div>';
+			+ '<div class="dd-pp-grid"><div class="dd-pp-col">' + sumBox + (full ? '<div class="dd-mt2">' + mailBox('p' + c.id, c.email || (clientOf(c) || {}).email || '', c.id) + textsBox(c) + '</div>' + meetBox(c) + '<div class="dd-xport"><div><b>Export for Claude Code</b><small>One zip with a design brief for Claude Design written by Claude, build instructions, the project brief, onboarding answers, meeting transcripts, emails, texts and every file from Dream Desk and the Drive folder.</small></div><button type="button" class="dd-btn primary" data-xport="' + c.id + '"' + ((S.xBusy || {})[c.id] ? ' disabled' : '') + '>' + ((S.xBusy || {})[c.id] ? 'Building the zip…' : 'Download zip') + '</button></div>' + assetsBox(c) : '') + stgBox + mkBox + formBox + (S.edit ? '' : '<div class="dd-pp-mob">' + details + '</div>') + '<div class="dd-tn">' + todos + notesBox + '</div>' + '</div><div class="dd-pp-col side">' + (S.edit ? '' : '<div class="dd-pp-desk">' + details + '</div>' + contacts) + zoomBox('p' + c.id, [c.id]) + (st === 'leads' ? '' : paysBox) + hosting + '</div></div></div>';
 	}
 	// Onboarding answers as plain text, ready to paste into Claude.
 	function onboardEntries(c) {
@@ -4608,11 +4608,11 @@
 		if ((el = t.closest('[data-meettx]'))) { var mx2 = S.modal = { type: 'meettx', title: el.getAttribute('data-t') || 'Transcript', text: null }; render(); api('/fireflies?transcript=' + encodeURIComponent(el.getAttribute('data-meettx'))).then(function (x) { if (S.modal === mx2) { mx2.text = x.text; render(); } }).catch(function (e) { if (S.modal === mx2) { S.modal = null; render(); } fail(e); }); return; }
 		if ((el = t.closest('[data-xport]'))) {
 			var xid = +el.getAttribute('data-xport'); S.xBusy = S.xBusy || {}; if (S.xBusy[xid]) { return; }
-			S.xBusy[xid] = 1; render(); toast('Collecting everything for Claude Code. This can take a minute.');
+			S.xBusy[xid] = 1; render(); toast('Collecting everything and writing the design brief. This can take a minute or two.');
 			api('/contact/' + xid + '/export', 'POST', {}).then(function (x) {
 				S.xBusy[xid] = 0; render();
 				var a = document.createElement('a'); a.href = x.url; a.download = x.name; document.body.appendChild(a); a.click(); a.remove();
-				toast('Zip ready: ' + x.meetings + ' meeting' + (x.meetings === 1 ? '' : 's') + ', ' + x.emails + ' emails, ' + x.files + ' file' + (x.files === 1 ? '' : 's') + (x.skipped ? ' (' + x.skipped + ' listed as links)' : ''));
+				toast('Zip ready: ' + x.meetings + ' meeting' + (x.meetings === 1 ? '' : 's') + ', ' + x.emails + ' emails, ' + x.files + ' file' + (x.files === 1 ? '' : 's') + (x.skipped ? ' (' + x.skipped + ' listed as links)' : '') + (x.design ? ', plus the design brief' : '. No design brief: ' + (x.design_error || 'Claude returned nothing')));
 			}).catch(function (e) { S.xBusy[xid] = 0; render(); fail(e); });
 			return;
 		}
