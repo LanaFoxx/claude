@@ -890,7 +890,7 @@
 		var when = function (d) { var t = new Date(d); return isNaN(t) ? '' : t.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ', ' + t.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }); };
 		return '<section class="dd-card dd-pc2 k-txt">' + hd(esc(ph) + (L.length ? ' · ' + L.length + (L.length >= 50 ? ' latest' : '') : ''), '<button type="button" class="dd-hlink" data-txtfresh="' + c.id + '">Refresh</button>')
 			+ (T.error ? '<p class="dd-pempty">' + esc(T.error) + '</p>' : '')
-			+ (L.length ? '<div class="dd-txl" data-txl>' + L.slice(-30).map(function (m) { return '<div class="dd-tx ' + (m.in ? 'in' : 'out') + '"><p>' + esc(m.text).replace(/\n/g, '<br>') + '</p><small>' + (m.in ? esc(who || 'Client') : 'You') + ' · ' + when(m.at) + (!m.in && m.status && m.status !== 'delivered' && m.status !== 'sent' ? ' · ' + esc(m.status) : '') + '</small></div>'; }).join('') + '</div>' : (T.error ? '' : '<p class="dd-pempty">No texts with this number yet.</p>'))
+			+ (L.length ? '<div class="dd-txl" data-txl>' + L.slice(-30).reverse().map(function (m) { return '<div class="dd-tx ' + (m.in ? 'in' : 'out') + '"><p>' + esc(m.text).replace(/\n/g, '<br>') + '</p><small>' + (m.in ? esc(who || 'Client') : 'You') + ' · ' + when(m.at) + (!m.in && m.status && m.status !== 'delivered' && m.status !== 'sent' ? ' · ' + esc(m.status) : '') + '</small></div>'; }).join('') + '</div>' : (T.error ? '' : '<p class="dd-pempty">No texts with this number yet.</p>'))
 			+ '<div class="dd-txf"><textarea rows="2" maxlength="1600" data-txtin="' + c.id + '" placeholder="Text ' + esc(who || 'them') + '…">' + esc(dr) + '</textarea><button type="button" class="dd-btn primary" data-txtsend="' + c.id + '" data-ph="' + esc(ph) + '"' + (busy ? ' disabled' : '') + '>' + (busy ? 'Sending…' : 'Send text') + '</button></div></section>';
 	}
 	function mailBox(key, em, pid) {
@@ -4596,7 +4596,7 @@
 				S.txtBusy[tid] = 0; S.txtDraft[tid] = '';
 				if (S.txt && S.txt[tid]) { S.txt[tid].list = (S.txt[tid].list || []).concat([x.message]); S.txt[tid].error = ''; }
 				render(); toast('Text sent to ' + (x.phone || tph));
-				var tl = app.querySelector('[data-txl]'); if (tl) { tl.scrollTop = tl.scrollHeight; }
+				var tl = app.querySelector('[data-txl]'); if (tl) { tl.scrollTop = 0; }
 			}).catch(function (e) { S.txtBusy[tid] = 0; render(); fail(e); });
 			return;
 		}

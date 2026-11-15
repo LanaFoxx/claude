@@ -771,3 +771,5 @@ input[type=date], input[type=datetime-local] { cursor: pointer; }
 .dd-mt2 .dd-mlist { max-height: 380px; overflow-y: auto; }
 .dd-mt2 .dd-txf { flex-direction: column; align-items: stretch; }
 @media (max-width: 1100px) { .dd-mt2 { grid-template-columns: minmax(0, 1fr); } }
+/* Texts open at the newest message (newest is first in the page, shown at the bottom) */
+.dd-txl { flex-direction: column-reverse; }
