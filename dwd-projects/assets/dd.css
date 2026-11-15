@@ -902,3 +902,14 @@ section.dd-health.warn .dd-healthb .dd-hld { background: var(--warning-text); }
 .dd .dd-home-l > .dd-wait, .dd .dd-home-l > .dd-card { margin-bottom: 0 !important; margin-top: 0 !important; }
 /* Home: the drag handle shows on every project row, not only on hover */
 .dd .dd-aplist .dd-ap-r .dd-apg { opacity: 1 !important; visibility: visible !important; }
+/* Project page, Payments card: date and amount on the first line, details underneath at full width */
+.dd .k-pay .dd-py { grid-template-columns: minmax(0, 1fr) auto auto; grid-template-rows: auto auto; column-gap: 12px; row-gap: 8px; padding: 16px 20px; align-items: center; }
+.dd .k-pay .dd-py > .dt { grid-column: 1; grid-row: 1; font-size: 13px; font-weight: 500; color: var(--text); }
+.dd .k-pay .dd-py > b { grid-column: 2; grid-row: 1; font-size: 15px; font-weight: 600; }
+.dd .k-pay .dd-py > :not(.dt):not(.mt):not(b) { grid-column: 3; grid-row: 1; }
+.dd .k-pay .dd-py > .mt { grid-column: 1 / -1; grid-row: 2; overflow: visible; white-space: normal; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; font-size: 13px; color: var(--text-2); }
+.dd .k-pay .dd-py > .mt .dd-schips { display: inline-flex; margin: 0; }
+.dd .k-pay .dd-py > .mt .dd-schip { white-space: nowrap; line-height: 1; }
+.dd .k-pay .dd-py > .mt small { flex: 1 1 100%; display: block; font-size: 12px; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dd .k-pay .dd-py > .mt .dd-bankchk { flex: 1 1 100%; margin-top: 2px; }
+.dd .k-pay .dd-pfoot { padding: 14px 20px 16px !important; }
