@@ -907,7 +907,7 @@
 		return '<section class="dd-card dd-pc2 k-meet"><header><h2>Meetings</h2><span class="sum">' + L.length + ' recorded</span><span class="dd-sp"></span><button type="button" class="dd-btn secondary sm" data-meetcopy="' + esc(L.map(function (m) { return m.id; }).join(',')) + '">' + (L.length > 1 ? 'Copy all transcripts' : 'Copy transcript') + '</button></header><div class="dd-mtl">' + L.map(function (m) {
 			var on = !!open[m.id];
 			return '<div class="dd-mtg' + (on ? ' open' : '') + '"><button type="button" class="dd-mtgh" data-meetopen="' + esc(m.id) + '" aria-expanded="' + on + '"><b>' + esc(m.title) + '</b><small>' + fmt(String(m.date).slice(0, 10)) + ' · ' + m.mins + ' min</small></button>'
-				+ (on ? '<div class="dd-mtgb">' + (m.summary ? '<p>' + esc(m.summary) + '</p>' : '<p>No summary from Fireflies for this call.</p>') + (m.actions ? '<h4>Action items</h4><pre>' + esc(String(m.actions).replace(/\*\*/g, '')) + '</pre>' : '') + '<div class="dd-inva"><a class="dd-hlink" href="' + esc(m.url) + '" target="_blank" rel="noopener">Open in Fireflies</a><button type="button" class="dd-hlink" data-meettx="' + esc(m.id) + '" data-t="' + esc(m.title) + '">Read the transcript</button><span class="dd-sp"></span><button type="button" class="dd-btn secondary sm" data-meetcopy="' + esc(m.id) + '">' + lu('copy', 14) + 'Copy transcript</button></div></div>' : '') + '</div>';
+				+ (on ? '<div class="dd-mtgb">' + (m.summary ? '<p>' + esc(m.summary) + '</p>' : '<p>No summary from Fireflies for this call.</p>') + (m.actions ? '<h4>Action items</h4><pre>' + esc(String(m.actions).replace(/\*\*/g, '')) + '</pre>' : '') + '<div class="dd-inva"><a class="dd-hlink" href="' + esc(m.url) + '" target="_blank" rel="noopener">Open in Fireflies</a><button type="button" class="dd-hlink" data-meettx="' + esc(m.id) + '" data-t="' + esc(m.title) + '">Read the transcript</button><span class="dd-sp"></span><button type="button" class="dd-btn ghost sm" data-meetdel="' + esc(m.id) + '" data-pid="' + c.id + '" data-t="' + esc(m.title) + '">' + lu('trash-2', 14) + 'Remove</button><button type="button" class="dd-btn secondary sm" data-meetcopy="' + esc(m.id) + '">' + lu('copy', 14) + 'Copy transcript</button></div></div>' : '') + '</div>';
 		}).join('') + '</div></section>';
 	}
 	// Texts: the Quo conversation with this project's phone number, and a box to send a new text.
@@ -4871,6 +4871,12 @@
 				var a = document.createElement('a'); a.href = x.url; a.download = x.name; document.body.appendChild(a); a.click(); a.remove();
 				toast(x.files + ' file' + (x.files === 1 ? '' : 's') + ' in the zip' + (x.skipped ? '. ' + x.skipped + ' could not be added and are listed inside as links' : ''));
 			}).catch(function (e) { S.azBusy[zid] = 0; render(); fail(e); });
+			return;
+		}
+		if ((el = t.closest('[data-meetdel]'))) {
+			var mdId = el.getAttribute('data-meetdel'), mdP = +el.getAttribute('data-pid');
+			if (!confirm('Remove “' + (el.getAttribute('data-t') || 'this meeting') + '” from this project? It stays in Fireflies.')) { return; }
+			api('/fireflies', 'POST', { id: mdId, pid: 0 }).then(function () { if (S.full[mdP]) { S.full[mdP].meetings = (S.full[mdP].meetings || []).filter(function (x) { return x.id !== mdId; }); } render(); toast('Meeting removed from this project'); }).catch(fail);
 			return;
 		}
 		if ((el = t.closest('[data-meetcopy]'))) { meetCopy(el.getAttribute('data-meetcopy').split(','), el); return; }

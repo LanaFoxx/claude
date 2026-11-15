@@ -1621,7 +1621,7 @@ function dwdff_sync() {
 			$title = sanitize_text_field( (string) ( $t['title'] ?? '' ) );
 			$pid   = (int) ( $old['pid'] ?? 0 );
 			$how   = (string) ( $old['how'] ?? '' );
-			if ( ! $pid || empty( $old['fixed'] ) ) {
+			if ( empty( $old['fixed'] ) ) {
 				$pid = 0;
 				$how = '';
 				foreach ( $guests as $e ) {
