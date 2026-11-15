@@ -1022,3 +1022,5 @@ section.dd-health.warn .dd-healthb .dd-hld { background: var(--warning-text); }
 	.dd .k-stg .dwdc-markupf > .dd-mkbtns > .dd-btn:first-child { padding-left: 0 !important; }
 	.dd .k-stg .dwdc-markupf > p { flex: 1 1 100%; margin: 0 !important; }
 }
+/* Zoom box: plain icon, no tile behind it */
+.dd .dd-ch2 .dd-lt.z { background: none !important; border: 0 !important; width: auto; height: auto; padding: 0; color: var(--accent-text, #8da0f7); }
