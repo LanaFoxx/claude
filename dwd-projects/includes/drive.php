@@ -231,9 +231,9 @@ function dwddr_send( $pid ) {
 	$html   = dwdp_email_html( array(
 		'eyebrow' => 'Your project folder',
 		'title'   => 'Upload your files for ' . dwddr_name( $pid ),
-		'intro'   => 'Hi' . ( $first ? ' ' . esc_html( $first ) : ' there' ) . ',<br><br>I made a Google Drive folder just for your website. Please upload everything you’d like me to use, for example:<br><br>'
-			. '• Your logo (the original files if you have them: AI, EPS, SVG or a large PNG)<br>• Photos of your work, team, location and products<br>• Brand colors, fonts or a brand guide<br>• Any text you’ve written: about us, services, bios, reviews<br>• Anything else you’d like on the site<br><br>'
-			. 'Click the button below and drag your files into the folder. If Google asks you to sign in, any Google account works. You can add more files any time.',
+		'intro'   => 'Hi' . ( $first ? ' ' . esc_html( $first ) : ' there' ) . ',<br><br>Thanks for sending over your details. This is your own Google Drive folder for the website. If you forgot any files, or need to add more later, upload them here any time and I’ll see them right away.<br><br>'
+			. 'Things that help most:<br><br>• Your logo (the original files if you have them: AI, EPS, SVG or a large PNG)<br>• Photos of your work, team, location and products<br>• Brand colors, fonts or a brand guide<br>• Any text you’ve written: about us, services, bios, reviews<br><br>'
+			. 'Click the button below and drag your files into the folder. If Google asks you to sign in, any Google account works.',
 		'buttons' => array( array( 'Open your upload folder', $url ) ),
 		'outro'   => 'Questions? Just reply to this email.<br>Michael Tarr, Dream Web Digital',
 		'footer'  => 'Dream Web Digital ·',

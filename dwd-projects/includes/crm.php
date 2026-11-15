@@ -80,6 +80,7 @@ function dwdc_contact( $post, $full = false ) {
 		}
 	}
 	$c['autopay'] = '1' === get_post_meta( $p->ID, '_dwdc_autopay', true );
+	$c['new_assets_n'] = (int) get_post_meta( $p->ID, '_dwdx_newn', true ); // files added since the last export (sync.php)
 	$c['upwork_hold'] = '1' === get_post_meta( $p->ID, '_dwdc_upwork_hold', true ); // Upwork money not withdrawn yet
 	$c['up'] = dwdc_upwork_stages( $p->ID );
 	// Date of their most recent paid payment (Stripe, PayPal…), used to sort completed work.

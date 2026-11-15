@@ -1005,6 +1005,7 @@
 		var aOpen = !!(S.assetOpen || {})[c.id];
 		return '<section class="dd-card dd-pc2 k-assets' + (aOpen ? ' aopen' : '') + '" data-adrop="' + c.id + '"><header><h2 data-atog="' + c.id + '" role="button" tabindex="0" aria-expanded="' + aOpen + '">' + lu('paperclip', 16) + 'Assets<span class="dd-atogi">' + lu('chevron-down', 14) + '</span></h2><span class="sum" data-atog="' + c.id + '">' + (A.length + nDrv ? (A.length + nDrv) + ' file' + (A.length + nDrv === 1 ? '' : 's') : 'None yet') + '</span><span class="dd-sp"></span>'
 			+ (c.drive ? '<a class="dd-btn ghost sm" href="' + esc(c.drive) + '" target="_blank" rel="noopener">' + lu('external-link', 14) + 'Drive folder</a>' : '')
+			+ ((c.new_assets || []).length ? '<button type="button" class="dd-btn primary sm" data-azip="' + c.id + '" data-new="1"' + ((S.azBusy || {})[c.id] ? ' disabled' : '') + ' title="' + esc((c.new_assets || []).map(function (x) { return x.name; }).join(', ')) + '">' + lu('download', 14) + (c.new_assets.length + ' new since export') + '</button>' : '')
 			+ (A.length + nDrv ? '<button type="button" class="dd-btn secondary sm" data-azip="' + c.id + '"' + ((S.azBusy || {})[c.id] ? ' disabled' : '') + '>' + lu('download', 14) + ((S.azBusy || {})[c.id] ? 'Zipping…' : 'Download all') + '</button>' : '')
 			+ '<label class="dd-btn secondary sm dd-aup">' + lu('upload', 14) + (up ? 'Uploading ' + up + '…' : 'Upload') + '<input type="file" multiple hidden data-aup="' + c.id + '"></label></header>'
 			+ '<div class="dd-abody">' + grid + list + (FF.length ? '' : empty) + formList + driveFilesHtml(c) + '</div></section>';
@@ -1074,6 +1075,8 @@
 		return S.mailNew || {};
 	}
 	// owner: the client's id, or the project's id when it has no client (emails are kept on the client).
+	// Files the client added since the last export (count kept by sync.php).
+	function newPill(c) { var n = +(c && c.new_assets_n) || 0; return n ? '<span class="dd-newf" title="Added by the client since your last export">' + n + ' new file' + (n === 1 ? '' : 's') + '</span>' : ''; }
 	function mailPill(owner) {
 		var n = +mailNewMap()[owner] || 0;
 		return n ? '<span class="dd-pill danger dd-mnew">' + (n > 1 ? n + ' new emails' : 'New email') + '</span>' : '';
@@ -1293,7 +1296,7 @@
 			+ '<div class="dd-aplist"' + sortAttr('active') + '>' + (ap.length ? ap.map(function (c) {
 				if (c.div) { return divRow(); }
 				var k = clientOf(c), ow = num(c.balance), late = c.deadline && c.deadline < DWDC.today;
-				return '<a class="dd-ap-r" href="#client/' + c.id + '" data-sid="' + c.id + '">' + '<span class="dd-grip dd-apg" aria-hidden="true">' + (sortMine('active') ? lu('grip', 16) : '') + '</span><span class="dd-act-n"><b>' + esc(c.name) + (c.markup ? '<span class="dd-mtag" role="link" data-ext="' + esc(url(c.markup)) + '">Markup</span>' : '') + mailPill(c.client || c.id) + waitPill(c) + '</b>' + (site(c) ? '<small><span class="dd-dom" role="link" data-ext="' + esc(url(c.website)) + '">' + esc(site(c)) + '</span></small>' : '') + '</span>'
+				return '<a class="dd-ap-r" href="#client/' + c.id + '" data-sid="' + c.id + '">' + '<span class="dd-grip dd-apg" aria-hidden="true">' + (sortMine('active') ? lu('grip', 16) : '') + '</span><span class="dd-act-n"><b>' + esc(c.name) + (c.markup ? '<span class="dd-mtag" role="link" data-ext="' + esc(url(c.markup)) + '">Markup</span>' : '') + mailPill(c.client || c.id) + newPill(c) + waitPill(c) + '</b>' + (site(c) ? '<small><span class="dd-dom" role="link" data-ext="' + esc(url(c.website)) + '">' + esc(site(c)) + '</span></small>' : '') + '</span>'
 					+ '<span class="dd-ap-m"><b class="' + (ow ? 'owe' : '') + '">' + (ow ? money(ow) : paidWord(c)) + '</b><small class="' + (late ? 'late' : '') + '">' + (c.deadline ? 'Due ' + fmt(c.deadline) : 'No due date') + '</small></span></a>';
 			}).join('') : '<p class="dd-empty-l">No active projects right now.</p>') + '</div></section>';
 		var statsOpen = ddGet('dreamdesk-stats-open', '') === '1';
@@ -1698,7 +1701,7 @@
 		var em = (k && k.email) || c.email;
 		return '<div class="dd-prow" data-go="client/' + c.id + '" data-sid="' + c.id + '">'
 			+ '<span class="dd-pgrip" title="' + (mine ? 'Drag to move' : 'Switch to My order to drag') + '">' + lu('grip', 16) + '</span>'
-			+ '<span class="dd-pc nm">' + flagDot(c) + '<span class="dd-st"><span class="dd-l1"><a href="#client/' + c.id + '"><b>' + esc(c.name) + '</b></a>' + mailPill(c.client || c.id) + (c.markup ? '<a class="dd-mtag" href="' + esc(url(c.markup)) + '" target="_blank" rel="noopener">Markup</a>' : '') + '<span class="dd-mob-pill">' + ddPill('Active', 'success') + waitPill(c) + '</span></span>'
+			+ '<span class="dd-pc nm">' + flagDot(c) + '<span class="dd-st"><span class="dd-l1"><a href="#client/' + c.id + '"><b>' + esc(c.name) + '</b></a>' + mailPill(c.client || c.id) + newPill(c) + (c.markup ? '<a class="dd-mtag" href="' + esc(url(c.markup)) + '" target="_blank" rel="noopener">Markup</a>' : '') + '<span class="dd-mob-pill">' + ddPill('Active', 'success') + waitPill(c) + '</span></span>'
 			+ (site(c) ? '<a class="dd-dom" href="' + esc(url(c.website)) + '" target="_blank" rel="noopener">' + esc(site(c)) + '</a>' : '')
 			+ '<span class="dd-mob-meta">' + esc([k ? k.name : (c.person || ''), ow ? 'Owed ' + money(ow) : paidWord(c), num(upOf(c).pend) ? money(upOf(c).pend) + ' pending in Upwork' : '', num(upOf(c).avail) ? money(upOf(c).avail) + ' ready to withdraw' : '', dd ? 'Due ' + fmt(dd) : '', c.next ? 'Next: ' + c.next : ''].filter(Boolean).join(' · ')) + '</span></span></span>'
 			+ '<span class="dd-pc cl"><span>' + (k ? '<a href="#cl/' + k.id + '">' + esc(k.name) + '</a>' : esc(c.person || '—')) + '</span><small>' + (em ? '<a href="mailto:' + esc(em) + '" data-emailp="' + c.id + '">' + esc(em) + '</a>' : 'No email on file') + '</small></span>'
@@ -1712,7 +1715,7 @@
 	}
 	function actCard(c) {
 		var k = clientOf(c), ow = num(c.balance);
-		return '<a class="dd-bcard" href="#client/' + c.id + '" data-sid="' + c.id + '"><span class="dd-l1">' + flagDot(c) + '<b>' + esc(c.name) + '</b>' + mailPill(c.client || c.id) + waitPill(c) +(c.markup ? '<span class="dd-mtag">Markup</span>' : '') + '</span><small>' + esc(k ? k.name : (c.person || '—')) + '</small>'
+		return '<a class="dd-bcard" href="#client/' + c.id + '" data-sid="' + c.id + '"><span class="dd-l1">' + flagDot(c) + '<b>' + esc(c.name) + '</b>' + mailPill(c.client || c.id) + newPill(c) + waitPill(c) +(c.markup ? '<span class="dd-mtag">Markup</span>' : '') + '</span><small>' + esc(k ? k.name : (c.person || '—')) + '</small>'
 			+ '<span class="meta">' + (ow ? 'Owed ' + money(ow) : paidWord(c)) + (c.deadline ? ' · Due ' + fmt(c.deadline) : '') + '</span>' + (c.next ? '<span class="nx">' + esc(c.next) + '</span>' : '') + '</a>';
 	}
 	function ddActive() {
@@ -3580,7 +3583,7 @@
 			+ '<form class="dwdc-notef dd-notef"><textarea name="text" rows="3" placeholder="Add a note: what they need, call recap, budget, next step…" required></textarea><div class="dd-pbtns end"><button class="dd-btn secondary">Add note</button></div></form></div>') + '</section>';
 		// onboarding
 		var driveRow = '<div class="dd-detob"><div><b>Google Drive</b>' + (c.drive ? (c.drive_sent ? ddPill('Emailed ' + fmt(c.drive_sent), 'success') : ddPill('Not sent yet', 'warning')) : '') + '<small>' + (c.drive ? 'Upload folder for the client’s files' : DWDC.driveReady ? 'Make an upload folder named after the company' : 'Connect Google Drive once to make upload folders') + '</small></div><div class="dd-pbtns dd-drvbtns">'
-			+ (c.drive ? '<a class="dd-btn secondary" href="' + esc(c.drive) + '" target="_blank" rel="noopener">' + lu('external-link', 14) + '<span class="dd-nomob">Open folder</span><span class="dd-mobonly">Open</span></a><button type="button" class="dd-btn secondary" data-copy="' + esc(c.drive) + '">' + lu('link', 14) + '<span class="dd-nomob">Copy link</span><span class="dd-mobonly">Copy</span></button><button type="button" class="dd-btn ghost" data-drivemk="' + c.id + ':email">' + lu('mail', 14) + (c.drive_sent ? 'Email again' : '<span class="dd-nomob">Email to client</span><span class="dd-mobonly">Email</span>') + '</button>'
+			+ (c.drive ? '<a class="dd-btn secondary" href="' + esc(c.drive) + '" target="_blank" rel="noopener">' + lu('external-link', 14) + '<span class="dd-nomob">Open folder</span><span class="dd-mobonly">Open</span></a><button type="button" class="dd-btn ghost" data-drivemk="' + c.id + ':email">' + lu('mail', 14) + (c.drive_sent ? 'Email again' : '<span class="dd-nomob">Email to client</span><span class="dd-mobonly">Email</span>') + '</button>'
 				: DWDC.driveReady ? '<button type="button" class="dd-btn secondary" data-drivemk="' + c.id + ':email">' + lu('plus', 14) + 'Create &amp; email client</button><button type="button" class="dd-btn ghost" data-drivemk="' + c.id + '">Create only</button>' : '<a class="dd-btn secondary" href="#connections">Set up Google Drive</a>') + '</div></div>';
 		var obRow = obl.length ? '<div class="dd-detob"><div><b>Onboarding</b> ' + ddPill(obn + ' answers', 'info') + '<small>' + esc(obl[0].form || 'Form') + ' · submitted ' + fmt(obl[0].date) + '</small></div><div class="dd-pbtns">' + btn('data-viewob', lu('clipboard-list') + 'View answers', 'primary') + '<button type="button" class="dd-btn secondary" data-copyob>Copy answers</button></div></div>'
 			: '<div class="dd-detob"><div><b>Onboarding</b><small>Not submitted yet</small></div><div class="dd-pbtns">' + btn('data-leadinvite="' + c.id + '"', lu('mail') + (c.stage === 'onboarding' ? 'Resend onboarding form' : 'Send onboarding form'), 'primary') + obCopy() + '</div></div>';
@@ -4841,8 +4844,8 @@
 		if ((el = t.closest('[data-azip]'))) {
 			var zid = +el.getAttribute('data-azip'); S.azBusy = S.azBusy || {}; if (S.azBusy[zid]) { return; }
 			S.azBusy[zid] = 1; render(); toast('Putting every file into one zip…');
-			api('/contact/' + zid + '/assets-zip', 'POST', {}).then(function (x) {
-				S.azBusy[zid] = 0; render();
+			api('/contact/' + zid + '/assets-zip', 'POST', el.getAttribute('data-new') ? { new: 1 } : {}).then(function (x) {
+				S.azBusy[zid] = 0; if (S.full[zid]) { S.full[zid].new_assets = []; S.full[zid].new_assets_n = 0; } var zc = contact(zid); if (zc) { zc.new_assets_n = 0; } render();
 				var a = document.createElement('a'); a.href = x.url; a.download = x.name; document.body.appendChild(a); a.click(); a.remove();
 				toast(x.files + ' file' + (x.files === 1 ? '' : 's') + ' in the zip' + (x.skipped ? '. ' + x.skipped + ' could not be added and are listed inside as links' : ''));
 			}).catch(function (e) { S.azBusy[zid] = 0; render(); fail(e); });
@@ -4855,7 +4858,7 @@
 			var xid = +el.getAttribute('data-xport'); S.xBusy = S.xBusy || {}; if (S.xBusy[xid]) { return; }
 			S.xBusy[xid] = 1; render(); toast('Collecting everything and writing the design brief. This can take a minute or two.');
 			api('/contact/' + xid + '/export', 'POST', {}).then(function (x) {
-				S.xBusy[xid] = 0; if (x.task && S.tasks) { S.tasks.push(x.task); S.ptodoOpen = S.ptodoOpen || {}; S.ptodoOpen[xid] = true; } render();
+				S.xBusy[xid] = 0; if (S.full[xid]) { S.full[xid].new_assets = []; S.full[xid].new_assets_n = 0; } var xc = contact(xid); if (xc) { xc.new_assets_n = 0; } if (x.task && S.tasks) { S.tasks.push(x.task); S.ptodoOpen = S.ptodoOpen || {}; S.ptodoOpen[xid] = true; } render();
 				var a = document.createElement('a'); a.href = x.url; a.download = x.name; document.body.appendChild(a); a.click(); a.remove();
 				toast('Zip ready: ' + x.meetings + ' meeting' + (x.meetings === 1 ? '' : 's') + ', ' + x.emails + ' emails, ' + x.files + ' file' + (x.files === 1 ? '' : 's') + (x.skipped ? ' (' + x.skipped + ' listed as links)' : '') + (x.task ? '. Added a to-do to review it' : '') + (x.design ? ', plus the design brief' : '. No design brief: ' + (x.design_error || 'Claude returned nothing')));
 			}).catch(function (e) { S.xBusy[xid] = 0; render(); fail(e); });

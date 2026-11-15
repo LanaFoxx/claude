@@ -2096,6 +2096,7 @@ function dwdx_build( $pid ) {
 	foreach ( $tmp as $t ) {
 		@unlink( $t ); // phpcs:ignore
 	}
+	dwdx_mark_exported( $pid );
 	// Put a to-do on the project to review the export (one open copy at a time).
 	$task = null;
 	if ( function_exists( 'dwdc_add_task' ) ) {
@@ -2162,7 +2163,7 @@ add_action( 'rest_api_init', function () {
 /* ---------------------------------------------------------------- Download all assets of a project as one zip
  * Files uploaded in Dream Desk plus the files in the client's Google Drive folder. Kept for an hour.
  */
-function dwdx_assets_zip( $pid ) {
+function dwdx_assets_zip( $pid, $only_new = false ) {
 	if ( ! class_exists( 'ZipArchive' ) ) {
 		return new WP_Error( 'dwdx', 'This server cannot make zip files (ZipArchive is missing).', array( 'status' => 500 ) );
 	}
@@ -2184,7 +2185,8 @@ function dwdx_assets_zip( $pid ) {
 			@unlink( $old ); // phpcs:ignore
 		}
 	}
-	$name = dwdx_slug( html_entity_decode( get_the_title( $pid ), ENT_QUOTES ) ) . '-assets';
+	$only = $only_new ? dwdx_new_files( $pid, true ) : null;
+	$name = dwdx_slug( html_entity_decode( get_the_title( $pid ), ENT_QUOTES ) ) . ( $only_new ? '-new-files-' . current_time( 'Y-m-d' ) : '-assets' );
 	$file = $name . '-' . wp_generate_password( 20, false ) . '.zip';
 	$zip  = new ZipArchive();
 	if ( true !== $zip->open( $dir . '/' . $file, ZipArchive::CREATE | ZipArchive::OVERWRITE ) ) {
@@ -2205,6 +2207,9 @@ function dwdx_assets_zip( $pid ) {
 		return $p;
 	};
 	foreach ( function_exists( 'dwda_list' ) ? dwda_list( $pid ) : array() as $a ) {
+		if ( null !== $only && ! isset( $only[ 'a:' . $a['id'] ] ) ) {
+			continue;
+		}
 		$f = get_attached_file( $a['id'] );
 		if ( $f && file_exists( $f ) && $total + filesize( $f ) < 450 * MB_IN_BYTES ) {
 			$zip->addFile( $f, $R . $uniq( sanitize_file_name( $a['name'] ) ) );
@@ -2215,6 +2220,9 @@ function dwdx_assets_zip( $pid ) {
 		}
 	}
 	foreach ( dwdx_form_files( $pid ) as $a ) {
+		if ( null !== $only && ! isset( $only[ 'f:' . md5( $a['url'] ) ] ) ) {
+			continue;
+		}
 		if ( $a['file'] && $total + $a['size'] < 450 * MB_IN_BYTES ) {
 			$zip->addFile( $a['file'], $R . $uniq( 'onboarding-form/' . sanitize_file_name( $a['name'] ) ) );
 			$total += $a['size'];
@@ -2225,6 +2233,9 @@ function dwdx_assets_zip( $pid ) {
 	}
 	$drive = function_exists( 'dwddr_files' ) ? dwddr_files( $pid, true ) : array( 'files' => array() );
 	foreach ( (array) ( $drive['files'] ?? array() ) as $d ) {
+		if ( null !== $only && ! isset( $only[ 'd:' . $d['id'] ] ) ) {
+			continue;
+		}
 		$ok = false;
 		if ( (int) $d['size'] <= 100 * MB_IN_BYTES && $total + (int) $d['size'] <= 450 * MB_IN_BYTES ) {
 			$t  = wp_tempnam( 'dwdx' );
@@ -2250,14 +2261,22 @@ function dwdx_assets_zip( $pid ) {
 	if ( ! $n && ! $skip ) {
 		$zip->addFromString( $R . 'empty.txt', "No files on this project yet.\n" );
 	}
+	if ( null !== $only && $only ) {
+		$note = '# New files from the client (' . current_time( 'Y-m-d' ) . ")\n\nThe client added these after the last export. Add them to the project's assets folder and use them in the build where they fit.\n\n";
+		foreach ( $only as $x ) {
+			$note .= '- ' . $x['name'] . ' (' . $x['from'] . ")\n";
+		}
+		$zip->addFromString( $R . 'NEW-FILES.md', $note );
+	}
 	$zip->close();
+	dwdx_mark_exported( $pid );
 	foreach ( $tmp as $t ) {
 		@unlink( $t ); // phpcs:ignore
 	}
 	return array( 'url' => trailingslashit( $up['baseurl'] ) . 'dwd-exports/' . $file, 'name' => $name . '.zip', 'files' => $n, 'skipped' => count( $skip ) );
 }
 add_action( 'rest_api_init', function () {
-	register_rest_route( 'dwd/v1', '/crm/contact/(?P<id>\d+)/assets-zip', array( 'methods' => 'POST', 'permission_callback' => function () { return current_user_can( 'manage_options' ); }, 'callback' => function ( $r ) { return dwdx_assets_zip( (int) $r['id'] ); } ) );
+	register_rest_route( 'dwd/v1', '/crm/contact/(?P<id>\d+)/assets-zip', array( 'methods' => 'POST', 'permission_callback' => function () { return current_user_can( 'manage_options' ); }, 'callback' => function ( $r ) { return dwdx_assets_zip( (int) $r['id'], (bool) $r->get_param( 'new' ) ); } ) );
 } );
 
 /* ---------------------------------------------------------------- Files clients upload in the onboarding form
@@ -2303,3 +2322,78 @@ add_filter( 'dwdc_contact_full', function ( $c, $pid ) {
 	$c['form_files'] = array_map( function ( $x ) { unset( $x['file'] ); return $x; }, dwdx_form_files( $pid ) );
 	return $c;
 }, 12, 2 );
+
+/* ---------------------------------------------------------------- New files since the last export
+ * Every export remembers which files it held. Files the client adds later (form, Drive folder, uploads) count as
+ * new until the next export: a badge on the project, a to-do, and a "new files only" zip.
+ */
+function dwdx_file_keys( $pid, $fresh = false ) {
+	$out = array();
+	foreach ( function_exists( 'dwda_list' ) ? dwda_list( $pid ) : array() as $a ) {
+		$out[ 'a:' . $a['id'] ] = array( 'name' => (string) $a['name'], 'from' => 'Uploaded in Dream Desk' );
+	}
+	foreach ( dwdx_form_files( $pid ) as $a ) {
+		$out[ 'f:' . md5( $a['url'] ) ] = array( 'name' => (string) $a['name'], 'from' => 'Onboarding form' );
+	}
+	if ( $fresh && function_exists( 'dwddr_files' ) ) {
+		$df = (array) ( dwddr_files( $pid, true )['files'] ?? array() );
+	} else {
+		$m  = get_post_meta( $pid, '_dwdc_drive_files', true );
+		$df = is_array( $m ) ? (array) ( $m['files'] ?? array() ) : array();
+	}
+	foreach ( $df as $x ) {
+		$out[ 'd:' . $x['id'] ] = array( 'name' => ( '' !== (string) ( $x['path'] ?? '' ) ? $x['path'] . ' / ' : '' ) . $x['name'], 'from' => 'Drive folder' );
+	}
+	return $out;
+}
+function dwdx_mark_exported( $pid ) {
+	update_post_meta( $pid, '_dwdx_exported', array( 'at' => current_time( 'mysql' ), 'keys' => array_keys( dwdx_file_keys( $pid ) ) ) );
+	update_post_meta( $pid, '_dwdx_newn', 0 );
+}
+function dwdx_new_files( $pid, $fresh = false ) {
+	$e = get_post_meta( $pid, '_dwdx_exported', true );
+	if ( ! is_array( $e ) || ! isset( $e['keys'] ) ) {
+		return array(); // never exported: nothing to compare with
+	}
+	return array_diff_key( dwdx_file_keys( $pid, $fresh ), array_flip( (array) $e['keys'] ) );
+}
+add_filter( 'dwdc_contact_full', function ( $c, $pid ) {
+	$new = dwdx_new_files( $pid );
+	if ( count( $new ) !== (int) get_post_meta( $pid, '_dwdx_newn', true ) ) {
+		update_post_meta( $pid, '_dwdx_newn', count( $new ) );
+	}
+	$e                 = get_post_meta( $pid, '_dwdx_exported', true );
+	$c['new_assets']   = array_values( $new );
+	$c['new_assets_n'] = count( $new );
+	$c['exported_at']  = is_array( $e ) ? (string) ( $e['at'] ?? '' ) : '';
+	return $c;
+}, 13, 2 );
+
+/** Hourly: look in the Drive folder of every exported, still-open project; flag and add a to-do when files arrived. */
+add_action( 'dwdx_hourly', function () {
+	$ids = get_posts( array( 'post_type' => DWDC_CONTACT, 'post_status' => 'private', 'posts_per_page' => -1, 'fields' => 'ids', 'meta_key' => '_dwdx_exported' ) ); // phpcs:ignore
+	foreach ( $ids as $id ) {
+		if ( in_array( get_post_meta( $id, '_dwdc_list', true ), array( 'complete', 'archive' ), true ) ) {
+			continue;
+		}
+		$n   = count( dwdx_new_files( $id, '' !== (string) get_post_meta( $id, '_dwdc_drive', true ) ) );
+		$old = (int) get_post_meta( $id, '_dwdx_newn', true );
+		update_post_meta( $id, '_dwdx_newn', $n );
+		if ( $n > $old && function_exists( 'dwdc_add_task' ) ) {
+			$text = 'New assets from client: add to the build';
+			$open = false;
+			foreach ( get_posts( array( 'post_type' => DWDC_TASK, 'post_status' => 'private', 'posts_per_page' => -1, 'meta_key' => '_dwdc_contact', 'meta_value' => $id ) ) as $tp ) { // phpcs:ignore
+				$t = dwdc_task( $tp );
+				$open = $open || ( is_array( $t ) && empty( $t['done'] ) && $t['text'] === $text );
+			}
+			if ( ! $open ) {
+				dwdc_add_task( $text, (int) $id, '' );
+			}
+		}
+	}
+} );
+add_action( 'init', function () {
+	if ( ! wp_next_scheduled( 'dwdx_hourly' ) ) {
+		wp_schedule_event( time() + 900, 'hourly', 'dwdx_hourly' );
+	}
+} );
