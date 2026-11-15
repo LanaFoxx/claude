@@ -919,3 +919,17 @@ section.dd-health.warn .dd-healthb .dd-hld { background: var(--warning-text); }
 .dd .dd-drvbtns > .dd-btn.ghost { border-color: var(--border-strong); background: var(--surface); color: var(--text) !important; }
 .dd .dd-drvbtns > .dd-btn.ghost:hover { background: var(--hover); }
 .dd .dd-drvbtns > .dd-btn svg { display: none; }
+/* Project page, Staging & Markup: staging URL, Markup link and its buttons on one line (wide screens) */
+@media (min-width: 1280px) {
+	.dd .k-stg .dd-stgb { display: flex; align-items: center; gap: 12px; }
+	.dd .k-stg .dd-stgb > * { flex: 1 1 0; min-width: 0; margin: 0 !important; }
+	.dd .k-stg .dd-stgb > .dd-sm-mk { flex: 1.7 1 0; border: 0 !important; padding: 0 !important; }
+	.dd .k-stg .dwdc-markupf { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin: 0 !important; padding: 0 !important; }
+	.dd .k-stg .dwdc-markupf > label { display: none; }
+	.dd .k-stg .dwdc-markupf > .dd-frow { flex: 1 1 160px; min-width: 0; margin: 0 !important; }
+	.dd .k-stg .dwdc-markupf > .dd-mkbtns { flex: none; display: flex; flex-wrap: nowrap; gap: 2px; margin: 0 !important; }
+	.dd .k-stg .dd-mkbtns .dd-btn { padding: 0 8px; white-space: nowrap; }
+	.dd .k-stg .dd-mkbtns .dd-nomob { display: none !important; }
+	.dd .k-stg .dd-mkbtns .dd-mobonly { display: inline !important; }
+	.dd .k-stg .dwdc-markupf > p { flex: 1 1 100%; margin: 0 !important; }
+}
