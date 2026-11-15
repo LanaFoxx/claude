@@ -335,18 +335,26 @@ add_action( 'rest_api_init', function () {
 				'stripe' => array( 'url' => rest_url( 'dwd/v1/stripe-webhook' ), 'ready' => (bool) get_option( 'dwds_stripe_whsec', '' ), 'key' => (bool) get_option( 'dwds_stripe_key', '' ), 'last' => get_option( 'dwds_last_stripe', '' ) ),
 				'paypal' => array( 'url' => rest_url( 'dwd/v1/paypal-webhook' ), 'ready' => (bool) ( get_option( 'dwds_paypal_id' ) && get_option( 'dwds_paypal_secret' ) && get_option( 'dwds_paypal_hook' ) ), 'last' => get_option( 'dwds_last_paypal', '' ) ),
 				'upwork' => array( 'last' => get_option( 'dwds_last_upwork', '' ), 'files' => array_values( dwds_files() ) ),
+				'quo'    => array( 'ready' => (bool) get_option( 'dwds_quo_key', '' ), 'from' => (string) get_option( 'dwds_quo_from', '' ), 'numbers' => array_values( (array) get_option( 'dwds_quo_numbers', array() ) ) ),
 				'refreshed' => get_option( 'dwds_last_refresh', '' ),
 			);
 		} ),
 		array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
 			$d = (array) $r->get_json_params();
-			foreach ( array( 'stripe_key' => '/^(rk|sk)_live_[A-Za-z0-9]+$/', 'stripe_whsec' => '/^whsec_[A-Za-z0-9]+$/', 'paypal_id' => '/^[A-Za-z0-9_\-]{20,}$/', 'paypal_secret' => '/^[A-Za-z0-9_\-]{20,}$/', 'paypal_hook' => '/^[A-Za-z0-9]{8,}$/' ) as $k => $re ) {
+			foreach ( array( 'stripe_key' => '/^(rk|sk)_live_[A-Za-z0-9]+$/', 'stripe_whsec' => '/^whsec_[A-Za-z0-9]+$/', 'paypal_id' => '/^[A-Za-z0-9_\-]{20,}$/', 'paypal_secret' => '/^[A-Za-z0-9_\-]{20,}$/', 'paypal_hook' => '/^[A-Za-z0-9]{8,}$/', 'quo_key' => '/^[A-Za-z0-9_\-]{20,}$/' ) as $k => $re ) {
 				if ( isset( $d[ $k ] ) && '' !== trim( (string) $d[ $k ] ) ) {
 					$v = trim( (string) $d[ $k ] );
 					if ( ! preg_match( $re, $v ) ) {
 						return new WP_Error( 'dwds_bad', 'That ' . str_replace( '_', ' ', $k ) . ' doesn’t look right.', array( 'status' => 400 ) );
 					}
 					update_option( 'dwds_' . $k, $v, false );
+				}
+			}
+			if ( ! empty( $d['quo_key'] ) ) { // check the key by asking Quo for your numbers
+				$qn = dwdq_numbers( true );
+				if ( is_wp_error( $qn ) ) {
+					delete_option( 'dwds_quo_key' );
+					return new WP_Error( 'dwds_quo', 'Quo didn’t accept that API key. Copy it again from Quo → Settings → API.', array( 'status' => 400 ) );
 				}
 			}
 			if ( ! empty( $d['paypal_id'] ) && ! dwds_paypal_token() ) {
@@ -1192,4 +1200,166 @@ add_action( 'rest_api_init', function () {
 			'paypal' => array( 'connected' => null !== $pp, 'invoicing' => null !== $pp && ! is_wp_error( $pp ), 'note' => is_wp_error( $pp ) ? $pp->get_error_message() : '' ),
 		);
 	} ) );
+} );
+
+
+/* ---------------------------------------------------------------- Texting clients through Quo (formerly OpenPhone)
+ * Uses your own Quo API key (saved under Connections, never sent to the browser). Texts go out from your Quo
+ * number and show in Quo as usual; the project page reads the conversation back from Quo.
+ */
+function dwdq_call( $method, $path, $body = null ) {
+	$key = (string) get_option( 'dwds_quo_key', '' );
+	if ( '' === $key ) {
+		return new WP_Error( 'dwdq_off', 'Quo is not connected yet. Paste your Quo API key under Settings → Connections.', array( 'status' => 400 ) );
+	}
+	$args = array( 'method' => $method, 'timeout' => 25, 'headers' => array( 'Authorization' => $key, 'Content-Type' => 'application/json' ) );
+	if ( null !== $body ) {
+		$args['body'] = wp_json_encode( $body );
+	}
+	$r = wp_remote_request( 'https://api.openphone.com/v1' . $path, $args );
+	if ( is_wp_error( $r ) ) {
+		return new WP_Error( 'dwdq', 'Could not reach Quo. Try again in a minute.', array( 'status' => 502 ) );
+	}
+	$code = (int) wp_remote_retrieve_response_code( $r );
+	$j    = json_decode( wp_remote_retrieve_body( $r ), true );
+	if ( $code >= 300 ) {
+		$msg = (string) ( $j['message'] ?? $j['errors'][0]['message'] ?? 'request failed' );
+		if ( in_array( $code, array( 401, 403 ), true ) ) {
+			$msg = 'Quo did not accept the saved API key. Paste a new one under Settings → Connections.';
+		} elseif ( 402 === $code ) {
+			$msg = 'Quo says the account has no credit for this text. Add credit in Quo, then try again.';
+		} else {
+			$msg = 'Quo: ' . $msg;
+		}
+		return new WP_Error( 'dwdq', $msg, array( 'status' => 400 ) );
+	}
+	return is_array( $j ) ? $j : array();
+}
+
+/** Your Quo phone numbers: [ { id, number, name } ]. */
+function dwdq_numbers( $fresh = false ) {
+	$n = get_option( 'dwds_quo_numbers', array() );
+	if ( ! $fresh && is_array( $n ) && $n ) {
+		return $n;
+	}
+	$j = dwdq_call( 'GET', '/phone-numbers' );
+	if ( is_wp_error( $j ) ) {
+		return $j;
+	}
+	$n = array();
+	foreach ( (array) ( $j['data'] ?? array() ) as $x ) {
+		if ( ! empty( $x['id'] ) && ! empty( $x['number'] ) ) {
+			$n[] = array( 'id' => (string) $x['id'], 'number' => (string) $x['number'], 'name' => sanitize_text_field( (string) ( $x['name'] ?? '' ) ) );
+		}
+	}
+	update_option( 'dwds_quo_numbers', $n, false );
+	if ( $n && ! in_array( get_option( 'dwds_quo_from', '' ), array_column( $n, 'number' ), true ) ) {
+		update_option( 'dwds_quo_from', $n[0]['number'], false );
+	}
+	return $n;
+}
+
+/** The number texts are sent from: [ id, number ] or WP_Error. */
+function dwdq_from() {
+	$n = dwdq_numbers();
+	if ( is_wp_error( $n ) ) {
+		return $n;
+	}
+	$from = (string) get_option( 'dwds_quo_from', '' );
+	foreach ( $n as $x ) {
+		if ( $x['number'] === $from ) {
+			return $x;
+		}
+	}
+	return $n ? $n[0] : new WP_Error( 'dwdq', 'No phone number was found in your Quo account.', array( 'status' => 400 ) );
+}
+
+/** "(704) 555-0100" → "+17045550100". Empty string when it is not a usable number. */
+function dwdq_e164( $p ) {
+	$p    = trim( (string) $p );
+	$plus = 0 === strpos( $p, '+' );
+	$d    = preg_replace( '/\D/', '', $p );
+	if ( $plus && strlen( $d ) >= 8 && strlen( $d ) <= 15 ) {
+		return '+' . $d;
+	}
+	if ( 10 === strlen( $d ) ) {
+		return '+1' . $d;
+	}
+	if ( 11 === strlen( $d ) && '1' === $d[0] ) {
+		return '+' . $d;
+	}
+	return '';
+}
+
+/** The text conversation with one number, oldest first. */
+function dwdq_thread( $phone ) {
+	$to   = dwdq_e164( $phone );
+	$from = dwdq_from();
+	if ( is_wp_error( $from ) ) {
+		return $from;
+	}
+	if ( '' === $to ) {
+		return new WP_Error( 'dwdq', 'That phone number doesn’t look complete. Use the full number with area code.', array( 'status' => 400 ) );
+	}
+	$j = dwdq_call( 'GET', '/messages?phoneNumberId=' . rawurlencode( $from['id'] ) . '&participants=' . rawurlencode( $to ) . '&maxResults=50' );
+	if ( is_wp_error( $j ) ) {
+		return $j;
+	}
+	$out = array();
+	foreach ( (array) ( $j['data'] ?? array() ) as $m ) {
+		$out[] = array( 'id' => (string) ( $m['id'] ?? '' ), 'in' => 'incoming' === ( $m['direction'] ?? '' ), 'text' => (string) ( $m['text'] ?? '' ), 'at' => (string) ( $m['createdAt'] ?? '' ), 'status' => (string) ( $m['status'] ?? '' ) );
+	}
+	usort( $out, function ( $a, $b ) { return strcmp( $a['at'], $b['at'] ); } );
+	return array( 'phone' => $to, 'from' => $from['number'], 'list' => $out );
+}
+
+add_action( 'rest_api_init', function () {
+	$can = function () { return current_user_can( 'manage_options' ); };
+	register_rest_route( 'dwd/v1', '/crm/quo', array(
+		array( 'methods' => 'GET', 'permission_callback' => $can, 'callback' => function () {
+			$n = get_option( 'dwds_quo_key', '' ) ? dwdq_numbers( true ) : array();
+			return is_wp_error( $n ) ? $n : array( 'ready' => (bool) get_option( 'dwds_quo_key', '' ), 'from' => (string) get_option( 'dwds_quo_from', '' ), 'numbers' => $n );
+		} ),
+		array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
+			$p = (array) $r->get_json_params();
+			$n = dwdq_numbers();
+			if ( is_wp_error( $n ) ) {
+				return $n;
+			}
+			if ( ! in_array( (string) ( $p['from'] ?? '' ), array_column( $n, 'number' ), true ) ) {
+				return new WP_Error( 'dwdq', 'That number is not in your Quo account.', array( 'status' => 400 ) );
+			}
+			update_option( 'dwds_quo_from', (string) $p['from'], false );
+			return array( 'ready' => true, 'from' => (string) $p['from'], 'numbers' => $n );
+		} ),
+	) );
+	register_rest_route( 'dwd/v1', '/crm/contact/(?P<id>\d+)/texts', array(
+		array( 'methods' => 'GET', 'permission_callback' => $can, 'callback' => function ( $r ) {
+			if ( ! get_option( 'dwds_quo_key', '' ) ) {
+				return array( 'connected' => false, 'list' => array() );
+			}
+			$t = dwdq_thread( (string) $r->get_param( 'phone' ) );
+			return is_wp_error( $t ) ? array( 'connected' => true, 'error' => $t->get_error_message(), 'list' => array() ) : array_merge( array( 'connected' => true ), $t );
+		} ),
+		array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
+			$p    = (array) $r->get_json_params();
+			$to   = dwdq_e164( (string) ( $p['to'] ?? '' ) );
+			$text = trim( sanitize_textarea_field( (string) ( $p['text'] ?? '' ) ) );
+			$from = dwdq_from();
+			if ( is_wp_error( $from ) ) {
+				return $from;
+			}
+			if ( '' === $to ) {
+				return new WP_Error( 'dwdq', 'That phone number doesn’t look complete. Use the full number with area code.', array( 'status' => 400 ) );
+			}
+			if ( '' === $text ) {
+				return new WP_Error( 'dwdq', 'Type a message first.', array( 'status' => 400 ) );
+			}
+			$j = dwdq_call( 'POST', '/messages', array( 'content' => mb_substr( $text, 0, 1600 ), 'from' => $from['number'], 'to' => array( $to ) ) );
+			if ( is_wp_error( $j ) ) {
+				return $j;
+			}
+			return array( 'ok' => true, 'message' => array( 'id' => (string) ( $j['data']['id'] ?? '' ), 'in' => false, 'text' => $text, 'at' => gmdate( 'c' ), 'status' => (string) ( $j['data']['status'] ?? 'sent' ) ), 'phone' => $to );
+		} ),
+	) );
 } );

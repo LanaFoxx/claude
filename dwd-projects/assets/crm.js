@@ -873,6 +873,26 @@
 		}
 		return D[key] || null;
 	}
+	// Texts: the Quo conversation with this project's phone number, and a box to send a new text.
+	function txtData(c, ph) {
+		S.txt = S.txt || {}; S.txtLoad = S.txtLoad || {};
+		if (!S.txt[c.id] && !S.txtLoad[c.id]) { S.txtLoad[c.id] = 1; api('/contact/' + c.id + '/texts?phone=' + encodeURIComponent(ph)).then(function (x) { S.txt[c.id] = x; S.txtLoad[c.id] = 0; render(); }).catch(function () { S.txt[c.id] = { connected: true, error: 'Could not load texts.', list: [] }; S.txtLoad[c.id] = 0; render(); }); }
+		return S.txt[c.id];
+	}
+	function textsBox(c) {
+		var k = clientOf(c) || {}, ph = c.phone || k.phone || '', who = (c.person || k.name || c.name || '').split(' ')[0];
+		var hd = function (sum, btn) { return '<header><h2>' + 'Texts</h2><span class="sum">' + sum + '</span><span class="dd-sp"></span>' + (btn || '') + '</header>'; };
+		if (!ph) { return '<section class="dd-card dd-pc2 k-txt">' + hd('No phone number') + '<p class="dd-pempty">Add a phone number to this project or its client to text them from here.</p></section>'; }
+		var T = txtData(c, ph);
+		if (!T) { return '<section class="dd-card dd-pc2 k-txt">' + hd('Loading…') + '</section>'; }
+		if (T.connected === false) { return '<section class="dd-card dd-pc2 k-txt">' + hd('Not connected') + '<p class="dd-pempty">Connect Quo under <a href="#connections">Settings → Connections</a> to text clients from here.</p></section>'; }
+		var L = T.list || [], dr = (S.txtDraft || {})[c.id] || '', busy = (S.txtBusy || {})[c.id];
+		var when = function (d) { var t = new Date(d); return isNaN(t) ? '' : t.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ', ' + t.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }); };
+		return '<section class="dd-card dd-pc2 k-txt">' + hd(esc(ph) + (L.length ? ' · ' + L.length + (L.length >= 50 ? ' latest' : '') : ''), '<button type="button" class="dd-hlink" data-txtfresh="' + c.id + '">Refresh</button>')
+			+ (T.error ? '<p class="dd-pempty">' + esc(T.error) + '</p>' : '')
+			+ (L.length ? '<div class="dd-txl" data-txl>' + L.slice(-30).map(function (m) { return '<div class="dd-tx ' + (m.in ? 'in' : 'out') + '"><p>' + esc(m.text).replace(/\n/g, '<br>') + '</p><small>' + (m.in ? esc(who || 'Client') : 'You') + ' · ' + when(m.at) + (!m.in && m.status && m.status !== 'delivered' && m.status !== 'sent' ? ' · ' + esc(m.status) : '') + '</small></div>'; }).join('') + '</div>' : (T.error ? '' : '<p class="dd-pempty">No texts with this number yet.</p>'))
+			+ '<div class="dd-txf"><textarea rows="2" maxlength="1600" data-txtin="' + c.id + '" placeholder="Text ' + esc(who || 'them') + '…">' + esc(dr) + '</textarea><button type="button" class="dd-btn primary" data-txtsend="' + c.id + '" data-ph="' + esc(ph) + '"' + (busy ? ' disabled' : '') + '>' + (busy ? 'Sending…' : 'Send text') + '</button></div></section>';
+	}
 	function mailBox(key, em, pid) {
 		var M = mailData(key);
 		if (!M) { return ''; }
@@ -2187,6 +2207,11 @@
 		var pp = '<div class="dwdc-conn"><h3><i class="ppl"></i>PayPal' + st(X.paypal.ready, X.paypal.last) + '</h3>'
 			+ '<ol><li>Go to <b>developer.paypal.com → Apps &amp; Credentials</b>, switch to <b>Live</b>, and <b>Create App</b>.</li><li>In the app, under <b>Live Webhooks</b>, add this link:' + copy(X.paypal.url) + 'with the events <b>Invoicing invoice paid</b> and <b>Payment capture completed</b>.</li><li>Under the app’s <b>Features</b>, tick <b>Transaction search</b> (used by Update Finances).</li><li>Paste the app’s Client ID, Secret and the Webhook ID here:</li></ol>'
 			+ '<div class="dwdc-conn-f col"><input placeholder="Client ID" data-sk="paypal_id"><input type="password" placeholder="Secret" data-sk="paypal_secret"><input placeholder="Webhook ID" data-sk="paypal_hook"><button class="dwdc-btn" data-synsave="paypal">Save</button></div></div>';
+		var QO = X.quo || {}, QN = QO.numbers || [];
+		var quo = '<div class="dwdc-conn"><h3><i class="str"></i>Quo (texting clients)' + st(!!QO.ready, '') + '</h3>'
+			+ '<ol><li>In Quo, open <b>Settings → API</b> and <b>generate an API key</b>.</li><li>Paste it here and save. Texts you send from a project page go out from your Quo number and show in Quo as usual.</li></ol>'
+			+ '<div class="dwdc-conn-f col"><input type="password" placeholder="Quo API key" data-sk="quo_key" autocomplete="off"><button class="dwdc-btn" data-synsave="quo">Save</button>'
+			+ (QN.length ? '<small class="dwdc-conn-last">Texts are sent from ' + (QN.length > 1 ? '<select data-quofrom>' + QN.map(function (n) { return '<option value="' + esc(n.number) + '"' + (n.number === QO.from ? ' selected' : '') + '>' + esc(n.number + (n.name ? ' · ' + n.name : '')) + '</option>'; }).join('') + '</select>' : '<b>' + esc(QN[0].number) + '</b>') + '</small>' : '') + '</div></div>';
 		var R = S.refreshRes;
 		var bar = '<div class="dwdc-refbar"><div><b>Update Finances</b><span>Re-reads your Upwork files, pulls every paid Stripe and PayPal payment, keeps the payments you logged by hand, then re-checks trends.' + (X.refreshed ? ' Last run ' + fmt(String(X.refreshed).slice(0, 10), true) + '.' : '') + '</span></div><button class="dwdc-btn dwdc-refbtn" data-refresh>' + ic('refresh', 15) + 'Update Finances</button></div>'
 			+ (R ? '<div class="dwdc-conn-res big">' + refreshText(R) + '</div>' : '');
@@ -2195,7 +2220,7 @@
 		var mail = '<div class="dwdc-conn"><h3><i class="upw"></i>Upwork emails' + '<span class="dwdc-conn-st ' + (ML ? 'on' : 'off') + '">' + (ML ? 'Connected' : 'Not set up') + '</span>' + (ML ? '<small class="dwdc-conn-last">Last checked ' + fmt(ML.at, true) + ' · ' + (ML.created + ML.reopened + ML.completed + ML.check) + ' sent for your review</small>' : '') + '</h3>'
 			+ '<p>Twice a week (Monday and Thursday mornings) your Gmail sends new Upwork “hired you”, offer and “contract ended” emails here. New contracts become Active projects (never duplicates), returning clients are reopened, and ended contracts move to Completed. Money still comes from the Upwork CSV.</p>'
 			+ '<ol><li>Open <a href="https://script.google.com/home/projects/create" target="_blank" rel="noopener"><b>script.google.com → New project</b></a> while signed in as mike@dreamwebdigital.com.</li><li>Delete what’s there, then paste this script:' + (M ? '<div class="dwdc-conn-url"><code>Dream Desk Upwork sync script</code><button class="dwdc-lnk sm2" data-copy="' + esc(M.script) + '">Copy script</button></div>' : ' <i>loading…</i>') + '</li><li>Pick <b>setup</b> in the function menu and press <b>Run</b>. Allow access to Gmail when Google asks.</li></ol></div>';
-		return bar + '<div class="dwdc-conns">' + gin + up + mail + stripe + pp + '</div><p class="dwdc-mutp sm">Payments are matched to clients by email. Anything that doesn’t match becomes a to-do on your dashboard so you can assign it. Keys are saved on your server and never shown again.</p>';
+		return bar + '<div class="dwdc-conns">' + gin + up + mail + stripe + pp + quo + '</div><p class="dwdc-mutp sm">Payments are matched to clients by email. Anything that doesn’t match becomes a to-do on your dashboard so you can assign it. Keys are saved on your server and never shown again.</p>';
 	}
 	function refreshText(R) {
 		if (R.busy) { return 'Updating… this can take up to a minute.'; }
@@ -3466,7 +3491,7 @@
 		var hosting = num(c.hosting) ? hostCard(c) : '';
 		return '<div class="dd-pp">' + head + strip
 			+ (S.edit ? '<div class="dd-pp-edit" id="pv3-edit">' + details + peopleCard(c) + '</div>' : '')
-			+ '<div class="dd-pp-grid"><div class="dd-pp-col">' + sumBox + (full ? mailBox('p' + c.id, c.email || (clientOf(c) || {}).email || '', c.id) + assetsBox(c) : '') + stgBox + mkBox + formBox + (S.edit ? '' : '<div class="dd-pp-mob">' + details + '</div>') + '<div class="dd-tn">' + todos + notesBox + '</div>' + '</div><div class="dd-pp-col side">' + (S.edit ? '' : '<div class="dd-pp-desk">' + details + '</div>' + contacts) + zoomBox('p' + c.id, [c.id]) + (st === 'leads' ? '' : paysBox) + hosting + '</div></div></div>';
+			+ '<div class="dd-pp-grid"><div class="dd-pp-col">' + sumBox + (full ? mailBox('p' + c.id, c.email || (clientOf(c) || {}).email || '', c.id) + textsBox(c) + assetsBox(c) : '') + stgBox + mkBox + formBox + (S.edit ? '' : '<div class="dd-pp-mob">' + details + '</div>') + '<div class="dd-tn">' + todos + notesBox + '</div>' + '</div><div class="dd-pp-col side">' + (S.edit ? '' : '<div class="dd-pp-desk">' + details + '</div>' + contacts) + zoomBox('p' + c.id, [c.id]) + (st === 'leads' ? '' : paysBox) + hosting + '</div></div></div>';
 	}
 	// Onboarding answers as plain text, ready to paste into Claude.
 	function onboardEntries(c) {
@@ -4562,6 +4587,19 @@
 		if ((el = t.closest('[data-billmove]'))) { var bmv = (pData().bills || []).find(function (x) { return x.id === el.getAttribute('data-billmove'); }); S.billMenu = 0; if (bmv) { var nb = JSON.parse(JSON.stringify(bmv)); nb.scope = bmv.scope === 'business' ? 'personal' : 'business'; pSave('bills', nb, 'Moved to ' + (nb.scope === 'business' ? 'Business' : 'Personal')); } return; }
 		if ((el = t.closest('[data-billmenu]'))) { e.stopPropagation(); var bmid = el.getAttribute('data-billmenu'); S.billMenu = S.billMenu === bmid ? 0 : bmid; S.subLabel = 0; render(); return; }
 		if ((el = t.closest('[data-sublabel]'))) { e.stopPropagation(); var slm = el.getAttribute('data-sublabel'); S.subLabel = S.subLabel === slm ? 0 : slm; S.billMenu = 0; render(); return; }
+		if ((el = t.closest('[data-txtfresh]'))) { if (S.txt) { delete S.txt[+el.getAttribute('data-txtfresh')]; } render(); return; }
+		if ((el = t.closest('[data-txtsend]'))) {
+			var tid = +el.getAttribute('data-txtsend'), tin = app.querySelector('[data-txtin="' + tid + '"]'), tval = tin ? tin.value.trim() : '', tph = el.getAttribute('data-ph');
+			if (!tval) { if (tin) { tin.focus(); } return; }
+			S.txtBusy = S.txtBusy || {}; S.txtDraft = S.txtDraft || {}; S.txtBusy[tid] = 1; S.txtDraft[tid] = tval; render();
+			api('/contact/' + tid + '/texts', 'POST', { to: tph, text: tval }).then(function (x) {
+				S.txtBusy[tid] = 0; S.txtDraft[tid] = '';
+				if (S.txt && S.txt[tid]) { S.txt[tid].list = (S.txt[tid].list || []).concat([x.message]); S.txt[tid].error = ''; }
+				render(); toast('Text sent to ' + (x.phone || tph));
+				var tl = app.querySelector('[data-txl]'); if (tl) { tl.scrollTop = tl.scrollHeight; }
+			}).catch(function (e) { S.txtBusy[tid] = 0; render(); fail(e); });
+			return;
+		}
 		if ((el = t.closest('[data-invnew]'))) { var ivc = S.full[+el.getAttribute('data-invnew')] || {}; S.modal = { type: 'invoice', project: +el.getAttribute('data-invnew'), vals: { via: ivc.pay_method === 'PayPal' ? 'paypal' : 'stripe', due: '7', email: ivc.email || '', name: ivc.person || clientName(ivc) || '', memo: '' }, items: [{ d: ivc.name || '', a: num(ivc.balance) ? String(num(ivc.balance)) : '' }] }; render(); focusIn(ivc.email ? '[name=a]' : '[name=email]'); return; }
 		if (S.modal && S.modal.type === 'invoice' && (t.closest('[data-invadd]') || t.closest('[data-invdel]') || t.closest('[data-invsave]'))) {
 			var ivm = S.modal, ivf = app.querySelector('[data-invform]'), ivd = [].slice.call(ivf.querySelectorAll('[name=d]')), iva = [].slice.call(ivf.querySelectorAll('[name=a]'));
@@ -4768,8 +4806,9 @@
 	document.addEventListener('keydown', function (e) { if (e.target && e.target.hasAttribute && e.target.hasAttribute('data-ptdraft') && e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); if (S.modal) { S.modal.draft = e.target.value; } ptSend(); } });
 	// Remember whether "Websites they like" is open, so it stays that way when the page redraws.
 	app.addEventListener('toggle', function (e) { var d = e.target; if (d && d.hasAttribute && d.hasAttribute('data-insp')) { S.inspOpen = S.inspOpen || {}; S.inspOpen[d.getAttribute('data-insp')] = d.open; } }, true);
-	app.addEventListener('input', function (e) { var ivf2 = e.target.closest && e.target.closest('[data-invform]'); if (!ivf2 || e.target.name !== 'a') { return; } var ivt = 0; [].forEach.call(ivf2.querySelectorAll('[name=a]'), function (x) { ivt += parseFloat(x.value) || 0; }); var ivo = ivf2.querySelector('[data-invtot]'); if (ivo) { ivo.textContent = money2(ivt); } });
+	app.addEventListener('input', function (e) { if (e.target.hasAttribute && e.target.hasAttribute('data-txtin')) { S.txtDraft = S.txtDraft || {}; S.txtDraft[+e.target.getAttribute('data-txtin')] = e.target.value; return; } var ivf2 = e.target.closest && e.target.closest('[data-invform]'); if (!ivf2 || e.target.name !== 'a') { return; } var ivt = 0; [].forEach.call(ivf2.querySelectorAll('[name=a]'), function (x) { ivt += parseFloat(x.value) || 0; }); var ivo = ivf2.querySelector('[data-invtot]'); if (ivo) { ivo.textContent = money2(ivt); } });
 	app.addEventListener('change', function (e) {
+		if (e.target.hasAttribute && e.target.hasAttribute('data-quofrom')) { api('/quo', 'POST', { from: e.target.value }).then(function (x) { if (S.sync) { S.sync.quo = x; } render(); toast('Texts will be sent from ' + x.from); }).catch(fail); return; }
 		if (e.target.hasAttribute && e.target.hasAttribute('data-subcatf')) { S.subCatF = e.target.value; render(); return; }
 		if (e.target.hasAttribute && e.target.hasAttribute('data-subcat')) { var scm = e.target.getAttribute('data-subcat'), scv = e.target.value; if (scv === '__new') { S.subCatNew = scm; render(); var scf = e.target.closest('.dd-sug') ? '.dd-sug [data-subcatnew]' : '.dd-srow [data-subcatnew]', sce = app.querySelector(scf) || app.querySelector('[data-subcatnew]'); if (sce) { sce.focus(); } return; } api('/bank', 'POST', { sub: scm, category: scv }).then(function (d4) { S.bank = d4; render(); toast('Category saved'); }).catch(fail); return; }
 		if (e.target.name === 'method' && e.target.form) { var ust = e.target.form.querySelector('.dd-upst'); if (ust) { ust.hidden = e.target.value !== 'Upwork'; } }
