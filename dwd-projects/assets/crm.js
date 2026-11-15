@@ -873,14 +873,38 @@
 		}
 		return D[key] || null;
 	}
+	// Copy one or more meeting transcripts (the whole dialogue) to the clipboard.
+	function meetCopy(ids, el) {
+		S.meetTx = S.meetTx || {};
+		var by = S.meetBy || {};
+		var put = function (txt) {
+			var done = function () { toast(ids.length > 1 ? ids.length + ' transcripts copied' : 'Transcript copied'); };
+			var old = function () {
+				var ta = document.createElement('textarea'); ta.value = txt; ta.style.cssText = 'position:fixed;left:-9999px;top:0'; document.body.appendChild(ta); ta.select();
+				var ok = false; try { ok = document.execCommand('copy'); } catch (e) {} ta.remove();
+				if (ok) { done(); } else { toast('Transcript is ready. Press Copy once more.'); }
+			};
+			if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(txt).then(done, old); } else { old(); }
+		};
+		var build = function () {
+			return ids.map(function (id) { var m = by[id] || {}; return (m.title || 'Meeting') + '\n' + String(m.date || '').slice(0, 10) + (m.mins ? ' · ' + m.mins + ' minutes' : '') + '\n\n' + S.meetTx[id]; }).join('\n\n\n==========\n\n\n');
+		};
+		var need = ids.filter(function (id) { return S.meetTx[id] == null; });
+		if (!need.length) { put(build()); return; }
+		var was = el.textContent; el.textContent = 'Getting transcript…'; el.disabled = true;
+		Promise.all(need.map(function (id) { return api('/fireflies?transcript=' + encodeURIComponent(id)).then(function (x) { S.meetTx[id] = x.text; }); }))
+			.then(function () { el.textContent = was; el.disabled = false; put(build()); })
+			.catch(function (e) { el.textContent = was; el.disabled = false; fail(e); });
+	}
 	// Meetings: recorded calls from Fireflies filed on this project.
 	function meetBox(c) {
 		var L = c.meetings || [], open = S.meetOpen || {};
+		S.meetBy = S.meetBy || {}; L.forEach(function (m) { S.meetBy[m.id] = m; });
 		if (!L.length) { return ''; }
-		return '<section class="dd-card dd-pc2 k-meet"><header><h2>Meetings</h2><span class="sum">' + L.length + ' recorded</span></header><div class="dd-mtl">' + L.map(function (m) {
+		return '<section class="dd-card dd-pc2 k-meet"><header><h2>Meetings</h2><span class="sum">' + L.length + ' recorded</span><span class="dd-sp"></span><button type="button" class="dd-hlink" data-meetcopy="' + esc(L.map(function (m) { return m.id; }).join(',')) + '">' + (L.length > 1 ? 'Copy all transcripts' : 'Copy transcript') + '</button></header><div class="dd-mtl">' + L.map(function (m) {
 			var on = !!open[m.id];
 			return '<div class="dd-mtg' + (on ? ' open' : '') + '"><button type="button" class="dd-mtgh" data-meetopen="' + esc(m.id) + '" aria-expanded="' + on + '"><b>' + esc(m.title) + '</b><small>' + fmt(String(m.date).slice(0, 10)) + ' · ' + m.mins + ' min</small></button>'
-				+ (on ? '<div class="dd-mtgb">' + (m.summary ? '<p>' + esc(m.summary) + '</p>' : '<p>No summary from Fireflies for this call.</p>') + (m.actions ? '<h4>Action items</h4><pre>' + esc(String(m.actions).replace(/\*\*/g, '')) + '</pre>' : '') + '<div class="dd-inva"><a class="dd-hlink" href="' + esc(m.url) + '" target="_blank" rel="noopener">Open in Fireflies</a><button type="button" class="dd-hlink" data-meettx="' + esc(m.id) + '" data-t="' + esc(m.title) + '">Read the transcript</button></div></div>' : '') + '</div>';
+				+ (on ? '<div class="dd-mtgb">' + (m.summary ? '<p>' + esc(m.summary) + '</p>' : '<p>No summary from Fireflies for this call.</p>') + (m.actions ? '<h4>Action items</h4><pre>' + esc(String(m.actions).replace(/\*\*/g, '')) + '</pre>' : '') + '<div class="dd-inva"><a class="dd-hlink" href="' + esc(m.url) + '" target="_blank" rel="noopener">Open in Fireflies</a><button type="button" class="dd-hlink" data-meettx="' + esc(m.id) + '" data-t="' + esc(m.title) + '">Read the transcript</button><button type="button" class="dd-hlink" data-meetcopy="' + esc(m.id) + '">Copy transcript</button></div></div>' : '') + '</div>';
 		}).join('') + '</div></section>';
 	}
 	// Texts: the Quo conversation with this project's phone number, and a box to send a new text.
@@ -4604,6 +4628,7 @@
 		if ((el = t.closest('[data-billmove]'))) { var bmv = (pData().bills || []).find(function (x) { return x.id === el.getAttribute('data-billmove'); }); S.billMenu = 0; if (bmv) { var nb = JSON.parse(JSON.stringify(bmv)); nb.scope = bmv.scope === 'business' ? 'personal' : 'business'; pSave('bills', nb, 'Moved to ' + (nb.scope === 'business' ? 'Business' : 'Personal')); } return; }
 		if ((el = t.closest('[data-billmenu]'))) { e.stopPropagation(); var bmid = el.getAttribute('data-billmenu'); S.billMenu = S.billMenu === bmid ? 0 : bmid; S.subLabel = 0; render(); return; }
 		if ((el = t.closest('[data-sublabel]'))) { e.stopPropagation(); var slm = el.getAttribute('data-sublabel'); S.subLabel = S.subLabel === slm ? 0 : slm; S.billMenu = 0; render(); return; }
+		if ((el = t.closest('[data-meetcopy]'))) { meetCopy(el.getAttribute('data-meetcopy').split(','), el); return; }
 		if ((el = t.closest('[data-meetopen]'))) { S.meetOpen = S.meetOpen || {}; var mo = el.getAttribute('data-meetopen'); S.meetOpen[mo] = !S.meetOpen[mo]; render(); return; }
 		if ((el = t.closest('[data-meettx]'))) { var mx2 = S.modal = { type: 'meettx', title: el.getAttribute('data-t') || 'Transcript', text: null }; render(); api('/fireflies?transcript=' + encodeURIComponent(el.getAttribute('data-meettx'))).then(function (x) { if (S.modal === mx2) { mx2.text = x.text; render(); } }).catch(function (e) { if (S.modal === mx2) { S.modal = null; render(); } fail(e); }); return; }
 		if ((el = t.closest('[data-xport]'))) {
