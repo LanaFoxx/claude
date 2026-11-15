@@ -1039,3 +1039,9 @@ section.dd-health.warn .dd-healthb .dd-hld { background: var(--warning-text); }
 
 /* Phones: hide "Needs your attention" when there is nothing in it */
 @media (max-width: 767px) { .dd-wait.empty { display: none !important; } }
+
+/* Today's schedule: Business / Personal to-do group rows read as section headers */
+.dd-tl-r.grp { background: var(--surface-2, rgba(255,255,255,.045)); margin: 6px -10px 0 !important; padding: 10px 10px !important; border-radius: 8px; border-bottom: 0 !important; }
+[data-theme="dark"] .dd-tl-r.grp, .dd-dark .dd-tl-r.grp { background: rgba(255,255,255,.055); }
+.dd-tl-r.grp:hover { background: var(--hover, rgba(255,255,255,.07)); }
+.dd-tl-r.grp + .dd-tl-kids { margin-top: 2px !important; }
