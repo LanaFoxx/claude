@@ -999,3 +999,5 @@ section.dd-health.warn .dd-healthb .dd-hld { background: var(--warning-text); }
 .dd .dd-tl-r.evdone .dd-tl-c b, .dd .dd-tl-r.evdone .dd-tl-c a { text-decoration: line-through; }
 /* Needs your attention: the title stays put while the list scrolls */
 .dd .dd-home-l > .dd-wait > header { position: sticky; top: 0; z-index: 2; background: var(--surface); border-bottom: 1px solid var(--border); }
+/* Needs your attention: one line under the title, not two */
+.dd .dd-home-l > .dd-wait > header + * { border-top: 0 !important; }
