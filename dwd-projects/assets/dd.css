@@ -1003,3 +1003,6 @@ section.dd-health.warn .dd-healthb .dd-hld { background: var(--warning-text); }
 .dd .dd-home-l > .dd-wait > header + * { border-top: 0 !important; }
 /* Today's schedule: no list link under an opened to-do group */
 .dd .dd-tl-kids .dd-tl-go { display: none !important; }
+/* Home, Active projects: the Waiting bar runs edge to edge, and no sort picker */
+.dd .dd-ap .dd-aplist > .dd-divrow.dd-aphd { margin-left: -8px; margin-right: -8px; padding-left: 28px; padding-right: 28px; }
+.dd .dd-ap > header.dd-ch > :not(.dd-ch-t):not(a) { display: none !important; }
