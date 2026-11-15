@@ -997,3 +997,5 @@ section.dd-health.warn .dd-healthb .dd-hld { background: var(--warning-text); }
 .dd .dd-tl-chk.dd-evchk.on { background: #22c55e; border-color: #22c55e; }
 .dd .dd-tl-chk.dd-evchk.biz.on { background: var(--accent); border-color: var(--accent); }
 .dd .dd-tl-r.evdone .dd-tl-c b, .dd .dd-tl-r.evdone .dd-tl-c a { text-decoration: line-through; }
+/* Needs your attention: the title stays put while the list scrolls */
+.dd .dd-home-l > .dd-wait > header { position: sticky; top: 0; z-index: 2; background: var(--surface); border-bottom: 1px solid var(--border); }
