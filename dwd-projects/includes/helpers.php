@@ -357,7 +357,7 @@ function dwdh_items() {
 	}
 	$up = get_option( 'dwd_upwork_snap', array() );
 	if ( ! empty( $up['checked'] ) ) {
-		$add( 'Upwork balances', $up['checked'], 14, 'twice a day', 'The Upwork check runs in Chrome on your computer: make sure the computer is on and Chrome is open, or press refresh on Home.' );
+		$add( 'Upwork balances', $up['checked'], 30, 'every morning at 5', 'The Upwork check runs in Chrome on your computer at 5 AM: the computer has to be on and awake with Chrome open. Or press refresh on Home.' );
 	}
 	if ( get_option( 'dwds_fireflies_key', '' ) ) {
 		$add( 'Fireflies meetings', get_option( 'dwdff_last', '' ), 4, 'hourly', 'Fireflies has not answered. Check the API key under Settings → Connections.' );
