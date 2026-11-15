@@ -972,20 +972,20 @@
 		if (DF.state === 'update') { return '<div class="dd-adrv"><p class="dd-help">To show the files clients add to the Drive folder here, update the Drive script once: Connections → Google Drive → copy the script again, paste it over the old one at script.google.com, then Deploy → Manage deployments → Edit → New version → Deploy.</p></div>'; }
 		var F = DF.files || [];
 		if (!F.length) { return '<div class="dd-adrv">' + head(DF.state === 'error' ? 'Couldn’t check the Drive folder' : 'Nothing in the Drive folder yet') + '</div>'; }
-		var imgs = F.filter(function (x) { return x.thumb; }), files = F.filter(function (x) { return !x.thumb; });
+		var imgs = [], files = F;
 		return '<div class="dd-adrv">' + head('From the Drive folder · ' + F.length + ' file' + (F.length === 1 ? '' : 's') + (DF.state === 'error' ? ' (couldn’t refresh just now)' : ''))
 			+ (imgs.length ? '<div class="dd-agrid">' + imgs.map(function (x) { return '<div class="dd-aimg"><a href="' + esc(x.url) + '" target="_blank" rel="noopener" title="' + esc((x.path ? x.path + ' / ' : '') + x.name) + '"><img src="' + esc(x.thumb) + '" alt="' + esc(x.name) + '" loading="lazy" referrerpolicy="no-referrer"></a></div>'; }).join('') + '</div>' : '')
-			+ (files.length ? '<div class="dd-alist">' + files.map(function (x) { return '<div class="dd-arow"><span class="dd-aic">' + lu('file', 16) + '</span><a class="dd-anm" href="' + esc(x.url) + '" target="_blank" rel="noopener">' + esc((x.path ? x.path + ' / ' : '') + x.name) + '</a><small>' + (x.size ? fileSize(x.size) : '') + '</small><a class="dd-adl" href="' + esc(x.dl) + '" target="_blank" rel="noopener" title="Download" aria-label="Download ' + esc(x.name) + '">' + lu('download', 15) + '</a></div>'; }).join('') + '</div>' : '')
+			+ (files.length ? '<div class="dd-alist">' + files.map(function (x) { return '<div class="dd-arow"><span class="dd-aic">' + lu(x.thumb ? 'image' : 'file', 16) + '</span><a class="dd-anm" href="' + esc(x.url) + '" target="_blank" rel="noopener">' + esc((x.path ? x.path + ' / ' : '') + x.name) + '</a><small>' + (x.size ? fileSize(x.size) : '') + '</small><a class="dd-adl" href="' + esc(x.dl) + '" target="_blank" rel="noopener" title="Download" aria-label="Download ' + esc(x.name) + '">' + lu('download', 15) + '</a></div>'; }).join('') + '</div>' : '')
 			+ '</div>';
 	}
 	function assetsBox(c) {
-		var A = c.assets || [], imgs = A.filter(function (x) { return x.thumb; }), files = A.filter(function (x) { return !x.thumb; }), up = (S.assetUp || {})[c.id];
+		var A = c.assets || [], imgs = [], files = A, up = (S.assetUp || {})[c.id];
 		var del = function (x) { return '<button type="button" class="dd-adel" data-adel="' + x.id + '" data-apid="' + c.id + '" title="Delete ' + esc(x.name) + '" aria-label="Delete ' + esc(x.name) + '">' + lu('trash-2', 14) + '</button>'; };
 		var grid = imgs.length ? '<div class="dd-agrid">' + imgs.map(function (x) {
 			return '<div class="dd-aimg"><a href="' + esc(x.url) + '" target="_blank" rel="noopener" title="' + esc(x.name) + '"><img src="' + esc(x.thumb) + '" alt="' + esc(x.name) + '" loading="lazy"></a>' + del(x) + '</div>';
 		}).join('') + '</div>' : '';
 		var list = files.length ? '<div class="dd-alist">' + files.map(function (x) {
-			return '<div class="dd-arow"><span class="dd-aic">' + lu('file', 16) + '</span><a class="dd-anm" href="' + esc(x.url) + '" download>' + esc(x.name) + '</a><small>' + fileSize(x.size) + '</small>'
+			return '<div class="dd-arow"><span class="dd-aic">' + lu(x.thumb ? 'image' : 'file', 16) + '</span><a class="dd-anm" href="' + esc(x.url) + '" download>' + esc(x.name) + '</a><small>' + fileSize(x.size) + '</small>'
 				+ '<a class="dd-adl" href="' + esc(x.url) + '" download title="Download" aria-label="Download ' + esc(x.name) + '">' + lu('download', 15) + '</a>' + del(x) + '</div>';
 		}).join('') + '</div>' : '';
 		var nDrv = ((driveFiles(c) || {}).files || []).length;
