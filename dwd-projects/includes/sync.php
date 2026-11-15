@@ -906,3 +906,290 @@ add_action( 'init', function () {
 		update_option( 'dwdc_stage_start', current_time( 'Y-m-d' ), false );
 	}
 } );
+
+
+/* ---------------------------------------------------------------- Invoices made in Dream Desk
+ * Created in Stripe or PayPal with the keys saved under Connections. Stripe / PayPal email the client and take
+ * the payment; their "paid" webhooks (above) then log it on the project as usual. Nothing is charged from here.
+ */
+function dwdi_stripe( $method, $path, $body = null ) {
+	$key = (string) get_option( 'dwds_stripe_key', '' );
+	if ( '' === $key ) {
+		return new WP_Error( 'dwdi_stripe', 'Stripe is not connected yet. Add your Stripe key under Settings → Connections.', array( 'status' => 400 ) );
+	}
+	$args = array( 'method' => $method, 'timeout' => 30, 'headers' => array( 'Authorization' => 'Bearer ' . $key ) );
+	if ( null !== $body ) {
+		$args['body'] = $body;
+	}
+	$r = wp_remote_request( 'https://api.stripe.com/v1/' . $path, $args );
+	if ( is_wp_error( $r ) ) {
+		return new WP_Error( 'dwdi_stripe', 'Could not reach Stripe. Try again in a minute.', array( 'status' => 502 ) );
+	}
+	$j = json_decode( wp_remote_retrieve_body( $r ), true );
+	if ( wp_remote_retrieve_response_code( $r ) >= 300 ) {
+		$msg = (string) ( $j['error']['message'] ?? 'request failed' );
+		if ( 403 === (int) wp_remote_retrieve_response_code( $r ) || false !== stripos( $msg, 'permission' ) ) {
+			$msg = 'Your saved Stripe key can only read. In Stripe open Developers → API keys, edit the restricted key Dream Desk uses and set Customers and Invoices to Write. Nothing needs changing in Dream Desk after that.';
+		} else {
+			$msg = 'Stripe: ' . preg_replace( '/(rk|sk)_live_\S+/', 'your key', $msg );
+		}
+		return new WP_Error( 'dwdi_stripe', $msg, array( 'status' => 400 ) );
+	}
+	return is_array( $j ) ? $j : array();
+}
+
+function dwdi_paypal( $method, $path, $body = null ) {
+	$token = dwds_paypal_token();
+	if ( '' === $token ) {
+		return new WP_Error( 'dwdi_paypal', 'PayPal is not connected yet. Add your PayPal app under Settings → Connections.', array( 'status' => 400 ) );
+	}
+	$args = array( 'method' => $method, 'timeout' => 30, 'headers' => array( 'Authorization' => 'Bearer ' . $token, 'Content-Type' => 'application/json' ) );
+	if ( null !== $body ) {
+		$args['body'] = wp_json_encode( $body );
+	}
+	$r = wp_remote_request( 'https://api-m.paypal.com' . $path, $args );
+	if ( is_wp_error( $r ) ) {
+		return new WP_Error( 'dwdi_paypal', 'Could not reach PayPal. Try again in a minute.', array( 'status' => 502 ) );
+	}
+	$code = (int) wp_remote_retrieve_response_code( $r );
+	$j    = json_decode( wp_remote_retrieve_body( $r ), true );
+	if ( $code >= 300 ) {
+		$name = (string) ( $j['name'] ?? '' );
+		$msg  = (string) ( $j['details'][0]['description'] ?? $j['message'] ?? 'request failed' );
+		if ( in_array( $code, array( 401, 403 ), true ) || in_array( $name, array( 'NOT_AUTHORIZED', 'PERMISSION_DENIED', 'AUTHORIZATION_ERROR' ), true ) ) {
+			$msg = 'Your PayPal app is not allowed to make invoices. In PayPal Developer → Apps & Credentials, open the app Dream Desk uses and tick Invoicing under Features, then save.';
+		} else {
+			$msg = 'PayPal: ' . $msg;
+		}
+		return new WP_Error( 'dwdi_paypal', $msg, array( 'status' => 400 ) );
+	}
+	return is_array( $j ) ? $j : array();
+}
+
+function dwdi_list( $pid ) {
+	$l = get_post_meta( (int) $pid, '_dwdc_invoices', true );
+	return is_array( $l ) ? array_values( $l ) : array();
+}
+
+/** One word for where an invoice stands, whichever service it lives in. */
+function dwdi_status( $via, $raw ) {
+	$raw = strtoupper( (string) $raw );
+	$map = array( 'DRAFT' => 'draft', 'OPEN' => 'sent', 'SENT' => 'sent', 'UNPAID' => 'sent', 'SCHEDULED' => 'sent', 'PAYMENT_PENDING' => 'sent', 'PAID' => 'paid', 'MARKED_AS_PAID' => 'paid', 'PARTIALLY_PAID' => 'part paid', 'VOID' => 'cancelled', 'CANCELLED' => 'cancelled', 'UNCOLLECTIBLE' => 'cancelled', 'REFUNDED' => 'refunded', 'PARTIALLY_REFUNDED' => 'refunded', 'MARKED_AS_REFUNDED' => 'refunded' );
+	return $map[ $raw ] ?? strtolower( $raw );
+}
+
+/** Ask Stripe / PayPal where the open invoices stand (at most every 3 minutes per project). */
+function dwdi_refresh( $pid, $force = false ) {
+	$list = dwdi_list( $pid );
+	if ( ! $list || ( ! $force && get_transient( 'dwdi_r_' . $pid ) ) ) {
+		return $list;
+	}
+	set_transient( 'dwdi_r_' . $pid, 1, 3 * MINUTE_IN_SECONDS );
+	$changed = false;
+	foreach ( $list as $k => $v ) {
+		if ( in_array( $v['status'] ?? '', array( 'paid', 'cancelled', 'refunded' ), true ) || empty( $v['id'] ) ) {
+			continue;
+		}
+		if ( 'stripe' === $v['via'] ) {
+			$j = dwdi_stripe( 'GET', 'invoices/' . rawurlencode( $v['id'] ) );
+			if ( is_wp_error( $j ) ) {
+				continue;
+			}
+			$st  = dwdi_status( 'stripe', $j['status'] ?? '' );
+			$url = (string) ( $j['hosted_invoice_url'] ?? '' );
+			$num = (string) ( $j['number'] ?? '' );
+		} else {
+			$j = dwdi_paypal( 'GET', '/v2/invoicing/invoices/' . rawurlencode( $v['id'] ) );
+			if ( is_wp_error( $j ) ) {
+				continue;
+			}
+			$st  = dwdi_status( 'paypal', $j['status'] ?? '' );
+			$url = (string) ( $j['detail']['metadata']['recipient_view_url'] ?? '' );
+			$num = (string) ( $j['detail']['invoice_number'] ?? '' );
+		}
+		foreach ( array( 'status' => $st, 'url' => $url, 'number' => $num ) as $f => $val ) {
+			if ( '' !== $val && ( $v[ $f ] ?? '' ) !== $val ) {
+				$list[ $k ][ $f ] = $val;
+				$changed          = true;
+			}
+		}
+		if ( 'paid' === $st && empty( $v['paid_at'] ) ) {
+			$list[ $k ]['paid_at'] = current_time( 'Y-m-d' );
+			$changed               = true;
+		}
+	}
+	if ( $changed ) {
+		update_post_meta( (int) $pid, '_dwdc_invoices', $list );
+	}
+	return $list;
+}
+
+/** Make an invoice in Stripe or PayPal; $p: via, email, name, items [{d, a}], due (days), memo, send. */
+function dwdi_create( $pid, $p ) {
+	$via   = 'paypal' === ( $p['via'] ?? '' ) ? 'paypal' : 'stripe';
+	$email = sanitize_email( (string) ( $p['email'] ?? '' ) );
+	$name  = sanitize_text_field( (string) ( $p['name'] ?? '' ) );
+	$memo  = sanitize_textarea_field( (string) ( $p['memo'] ?? '' ) );
+	$days  = max( 1, min( 90, (int) ( $p['due'] ?? 7 ) ) );
+	$send  = ! empty( $p['send'] );
+	$items = array();
+	$total = 0;
+	foreach ( (array) ( $p['items'] ?? array() ) as $it ) {
+		$d = sanitize_text_field( (string) ( $it['d'] ?? '' ) );
+		$a = round( (float) preg_replace( '/[^\d.]/', '', (string) ( $it['a'] ?? '' ) ), 2 );
+		if ( $a > 0 ) {
+			$items[] = array( 'd' => '' !== $d ? $d : 'Services', 'a' => $a );
+			$total  += $a;
+		}
+	}
+	if ( ! is_email( $email ) ) {
+		return new WP_Error( 'dwdi', 'Add the client’s email address so the invoice has somewhere to go.', array( 'status' => 400 ) );
+	}
+	if ( ! $items ) {
+		return new WP_Error( 'dwdi', 'Add at least one line with an amount.', array( 'status' => 400 ) );
+	}
+	$rec = array( 'id' => '', 'via' => $via, 'number' => '', 'amount' => round( $total, 2 ), 'status' => 'draft', 'url' => '', 'email' => $email, 'name' => $name, 'items' => $items, 'memo' => $memo, 'due' => gmdate( 'Y-m-d', time() + $days * DAY_IN_SECONDS ), 'created' => current_time( 'Y-m-d' ), 'sent' => '' );
+	if ( 'stripe' === $via ) {
+		$c = dwdi_stripe( 'GET', 'customers?limit=1&email=' . rawurlencode( $email ) );
+		if ( is_wp_error( $c ) ) {
+			return $c;
+		}
+		$cus = (string) ( $c['data'][0]['id'] ?? '' );
+		if ( '' === $cus ) {
+			$n = dwdi_stripe( 'POST', 'customers', array_filter( array( 'email' => $email, 'name' => $name ) ) );
+			if ( is_wp_error( $n ) ) {
+				return $n;
+			}
+			$cus = (string) $n['id'];
+		}
+		$inv = dwdi_stripe( 'POST', 'invoices', array_filter( array( 'customer' => $cus, 'collection_method' => 'send_invoice', 'days_until_due' => $days, 'auto_advance' => 'false', 'pending_invoice_items_behavior' => 'exclude', 'description' => $memo, 'metadata' => array( 'dream_desk_project' => (string) $pid ) ) ) );
+		if ( is_wp_error( $inv ) ) {
+			return $inv;
+		}
+		$rec['id'] = (string) $inv['id'];
+		foreach ( $items as $it ) {
+			$li = dwdi_stripe( 'POST', 'invoiceitems', array( 'customer' => $cus, 'invoice' => $rec['id'], 'amount' => (int) round( $it['a'] * 100 ), 'currency' => 'usd', 'description' => $it['d'] ) );
+			if ( is_wp_error( $li ) ) {
+				dwdi_stripe( 'DELETE', 'invoices/' . rawurlencode( $rec['id'] ) ); // don't leave a half-made draft behind
+				return $li;
+			}
+		}
+	} else {
+		$nn  = dwdi_paypal( 'POST', '/v2/invoicing/generate-next-invoice-number' );
+		if ( is_wp_error( $nn ) ) {
+			return $nn;
+		}
+		$parts = preg_split( '/\s+/', trim( $name ), 2 );
+		$bill  = array( 'email_address' => $email );
+		if ( '' !== $name ) {
+			$bill['name'] = array_filter( array( 'given_name' => (string) $parts[0], 'surname' => (string) ( $parts[1] ?? '' ) ) );
+		}
+		$body = array(
+			'detail'             => array_filter( array( 'invoice_number' => (string) ( $nn['invoice_number'] ?? '' ), 'currency_code' => 'USD', 'note' => $memo, 'reference' => 'Dream Desk project ' . $pid, 'payment_term' => array( 'term_type' => 'DUE_ON_DATE_SPECIFIED', 'due_date' => $rec['due'] ) ) ),
+			'primary_recipients' => array( array( 'billing_info' => $bill ) ),
+			'items'              => array_map( function ( $it ) { return array( 'name' => mb_substr( $it['d'], 0, 200 ), 'quantity' => '1', 'unit_amount' => array( 'currency_code' => 'USD', 'value' => number_format( $it['a'], 2, '.', '' ) ) ); }, $items ),
+		);
+		$inv = dwdi_paypal( 'POST', '/v2/invoicing/invoices', $body );
+		if ( is_wp_error( $inv ) ) {
+			return $inv;
+		}
+		$rec['id']     = (string) ( $inv['id'] ?? basename( (string) ( $inv['href'] ?? '' ) ) );
+		$rec['number'] = (string) ( $nn['invoice_number'] ?? '' );
+		if ( '' === $rec['id'] ) {
+			return new WP_Error( 'dwdi_paypal', 'PayPal did not confirm the invoice. Check PayPal before trying again.', array( 'status' => 502 ) );
+		}
+	}
+	$list   = dwdi_list( $pid );
+	$list[] = $rec;
+	update_post_meta( (int) $pid, '_dwdc_invoices', $list );
+	if ( $send ) {
+		$s = dwdi_act( $pid, $rec['id'], 'send' );
+		if ( is_wp_error( $s ) ) {
+			return new WP_Error( 'dwdi', 'The invoice was saved as a draft but could not be sent. ' . $s->get_error_message(), array( 'status' => 400 ) );
+		}
+	}
+	return dwdi_refresh( $pid, true );
+}
+
+/** Send a draft, or cancel an invoice that should not be paid. */
+function dwdi_act( $pid, $iid, $act ) {
+	$list = dwdi_list( $pid );
+	$k    = null;
+	foreach ( $list as $i => $v ) {
+		if ( (string) $v['id'] === (string) $iid ) {
+			$k = $i;
+		}
+	}
+	if ( null === $k ) {
+		return new WP_Error( 'dwdi', 'That invoice is not on this project.', array( 'status' => 404 ) );
+	}
+	$v  = $list[ $k ];
+	$id = rawurlencode( (string) $v['id'] );
+	if ( 'send' === $act ) {
+		if ( 'draft' !== $v['status'] ) {
+			return new WP_Error( 'dwdi', 'That invoice has already been sent.', array( 'status' => 400 ) );
+		}
+		if ( 'stripe' === $v['via'] ) {
+			$f = dwdi_stripe( 'POST', 'invoices/' . $id . '/finalize', array( 'auto_advance' => 'false' ) );
+			$r = is_wp_error( $f ) ? $f : dwdi_stripe( 'POST', 'invoices/' . $id . '/send' );
+		} else {
+			$r = dwdi_paypal( 'POST', '/v2/invoicing/invoices/' . $id . '/send', array( 'send_to_invoicer' => true ) );
+		}
+		if ( is_wp_error( $r ) ) {
+			return $r;
+		}
+		$list[ $k ]['status'] = 'sent';
+		$list[ $k ]['sent']   = current_time( 'Y-m-d' );
+	} elseif ( 'cancel' === $act ) {
+		if ( in_array( $v['status'], array( 'paid', 'part paid', 'refunded' ), true ) ) {
+			return new WP_Error( 'dwdi', 'That invoice has money on it, so it can’t be cancelled here. Refund it in ' . ( 'stripe' === $v['via'] ? 'Stripe' : 'PayPal' ) . ' instead.', array( 'status' => 400 ) );
+		}
+		if ( 'draft' === $v['status'] ) {
+			$r = 'stripe' === $v['via'] ? dwdi_stripe( 'DELETE', 'invoices/' . $id ) : dwdi_paypal( 'DELETE', '/v2/invoicing/invoices/' . $id );
+		} else {
+			$r = 'stripe' === $v['via'] ? dwdi_stripe( 'POST', 'invoices/' . $id . '/void' ) : dwdi_paypal( 'POST', '/v2/invoicing/invoices/' . $id . '/cancel', array( 'send_to_invoicer' => true, 'send_to_recipient' => true ) );
+		}
+		if ( is_wp_error( $r ) ) {
+			return $r;
+		}
+		if ( 'draft' === $v['status'] ) {
+			unset( $list[ $k ] ); // a draft nobody saw: just gone
+		} else {
+			$list[ $k ]['status'] = 'cancelled';
+		}
+	} else {
+		return new WP_Error( 'dwdi', 'Unknown action', array( 'status' => 400 ) );
+	}
+	update_post_meta( (int) $pid, '_dwdc_invoices', array_values( $list ) );
+	return dwdi_list( $pid );
+}
+
+add_filter( 'dwdc_contact_full', function ( $c, $pid ) {
+	$c['invoices'] = dwdi_refresh( $pid );
+	return $c;
+}, 10, 2 );
+
+add_action( 'rest_api_init', function () {
+	$can = function () { return current_user_can( 'manage_options' ); };
+	register_rest_route( 'dwd/v1', '/crm/contact/(?P<id>\d+)/invoices', array(
+		array( 'methods' => 'GET', 'permission_callback' => $can, 'callback' => function ( $r ) { return array( 'invoices' => dwdi_refresh( (int) $r['id'], true ) ); } ),
+		array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
+			$pid = (int) $r['id'];
+			if ( ! get_post( $pid ) || DWDC_CONTACT !== get_post_type( $pid ) ) {
+				return new WP_Error( 'dwdi', 'Project not found.', array( 'status' => 404 ) );
+			}
+			$p   = (array) $r->get_json_params();
+			$out = isset( $p['act'], $p['invoice'] ) ? dwdi_act( $pid, (string) $p['invoice'], (string) $p['act'] ) : dwdi_create( $pid, $p );
+			return is_wp_error( $out ) ? $out : array( 'invoices' => $out );
+		} ),
+	) );
+	// Which services can make invoices right now (reads only; nothing is created).
+	register_rest_route( 'dwd/v1', '/crm/invoice-status', array( 'methods' => 'GET', 'permission_callback' => $can, 'callback' => function () {
+		$pp = dwds_paypal_token() ? dwdi_paypal( 'GET', '/v2/invoicing/invoices?page_size=1&total_required=false' ) : null;
+		$st = get_option( 'dwds_stripe_key', '' ) ? dwdi_stripe( 'GET', 'invoices?limit=1' ) : null;
+		return array(
+			'stripe' => array( 'connected' => null !== $st, 'reads' => null !== $st && ! is_wp_error( $st ), 'note' => is_wp_error( $st ) ? $st->get_error_message() : '', 'key' => preg_match( '/^(rk|sk)_/', (string) get_option( 'dwds_stripe_key', '' ), $m ) ? ( 'rk' === $m[1] ? 'restricted' : 'full' ) : '' ),
+			'paypal' => array( 'connected' => null !== $pp, 'invoicing' => null !== $pp && ! is_wp_error( $pp ), 'note' => is_wp_error( $pp ) ? $pp->get_error_message() : '' ),
+		);
+	} ) );
+} );

@@ -3454,8 +3454,13 @@
 			+ '<label><span>Note</span><input name="note" placeholder="e.g. 50% deposit, final payment…"></label><div class="dd-pbtns end"><button type="button" class="dd-btn secondary" data-plogx>Cancel</button><button class="dd-btn primary pay">Save payment</button></div></form>' : '';
 		var uP = upOf(c), sumL = [ow ? money(ow) + ' owed' : '', num(uP.pend) ? money(uP.pend) + ' pending in Upwork' + (uP.pnext ? ' (available ' + fmt(uP.pnext) + ')' : '') : '', num(uP.avail) ? money(uP.avail) + ' ready to withdraw' : '', inBankOf(c) ? money(inBankOf(c)) + ' in bank' : ''].filter(Boolean);
 		var foot = (stageBar(c) ? '<span class="dd-pstg">' + stageBar(c).replace(/<small[\s\S]*$/, '') + '</span>' : '') + (sumL.length > 1 || num(uP.pend) || num(uP.avail) ? sumL.join(' · ') : payTot ? money(paid) + ' of ' + money(payTot) + ' paid · ' + money(ow) + ' remaining' : '');
-		var paysBox = card('k-pay', 'Payments', pays.length ? String(pays.length) : '', '<button type="button" class="dd-hlink" data-plog="' + c.id + '">+ Log payment</button>',
-			logf + (!full ? '<p class="dd-pempty">Loading…</p>' : pays.length ? pays.map(function (x, i) {
+		var invs = c.invoices || [], invTone = { paid: 'success', sent: 'info', draft: 'neutral', cancelled: 'neutral', refunded: 'warning', 'part paid': 'warning' };
+		var invBox = invs.length ? '<div class="dd-invs"><p class="dd-invh">Invoices</p>' + invs.slice().reverse().map(function (x) {
+			var live = x.status === 'draft' || x.status === 'sent';
+			return '<div class="dd-py dd-inv"><span class="dt">' + fmt(String(x.sent || x.created).slice(0, 10)) + '</span><span class="mt">' + (x.via === 'paypal' ? 'PayPal' : 'Stripe') + (x.number ? ' · #' + esc(x.number) : '') + '<span class="dd-schips">' + ddPill(x.status === 'sent' ? 'Sent · due ' + fmt(x.due) : x.status.charAt(0).toUpperCase() + x.status.slice(1), invTone[x.status] || 'neutral') + '</span><small>' + esc((x.items || []).map(function (i) { return i.d; }).join(', ')) + ' · to ' + esc(x.email) + '</small><span class="dd-inva">' + (x.url ? '<a class="dd-hlink" href="' + esc(x.url) + '" target="_blank" rel="noopener">View</a>' : '') + (x.url ? '<button type="button" class="dd-hlink" data-copy="' + esc(x.url) + '">Copy link</button>' : '') + (x.status === 'draft' ? '<button type="button" class="dd-hlink" data-invact="send" data-inv="' + esc(x.id) + '">Send now</button>' : '') + (live ? '<button type="button" class="dd-hlink" data-invact="cancel" data-inv="' + esc(x.id) + '">' + (x.status === 'draft' ? 'Delete draft' : 'Cancel invoice') + '</button>' : '') + '</span></span><b>' + money2(x.amount).replace('.00', '') + '</b></div>';
+		}).join('') + '</div>' : '';
+		var paysBox = card('k-pay', 'Payments', pays.length ? String(pays.length) : '', '<button type="button" class="dd-hlink" data-invnew="' + c.id + '">+ Invoice</button><button type="button" class="dd-hlink" data-plog="' + c.id + '">+ Log payment</button>',
+			logf + invBox + (!full ? '<p class="dd-pempty">Loading…</p>' : pays.length ? pays.map(function (x, i) {
 				return '<div class="dd-py"><span class="dt">' + (x.date ? fmt(String(x.date).slice(0, 10)) : '—') + '</span><span class="mt">' + esc(x.source || '') + (x.status && ['paid', 'held'].indexOf(x.status) < 0 ? ' · ' + esc(x.status) : '') + '<span class="dd-schips">' + upChip(x) + '</span>' + (x.note ? '<small>' + esc(x.note) + '</small>' : '') + bankChk(c.id, i, x) + '</span><b>' + money2(x.amount).replace('.00', '') + '</b><button type="button" class="dd-ibtn sm dd-ptx" data-payrm="' + i + '" title="Remove payment" aria-label="Remove payment">' + lu('x', 14) + '</button></div>';
 			}).join('') + (foot ? '<p class="dd-pfoot">' + foot + '</p>' : '') : '<div class="dd-payempty"><span>' + lu('credit-card', 18) + '</span><b>No payments logged yet</b>' + (foot ? '<small>' + foot + '</small>' : '') + '</div>'));
 		var hosting = num(c.hosting) ? hostCard(c) : '';
@@ -3761,6 +3766,20 @@
 				+ '<div class="dd-spendsum"><div><span>Google Ads this month</span><b>' + (GS ? money(gm) : '—') + '</b></div><div><span>Upwork Connects this month</span><b>' + money(km) + '</b></div><div><span>Total</span><b>' + money(gm + km) + '</b></div></div>'
 				+ '<h3 class="dwdc-ch3 dd-spendh">Google Ads</h3>' + (GS ? gPart : '<p class="dwdc-mutp">Google Ads isn’t connected. <button type="button" class="dwdc-lnk" data-adsconnect>Connect Google Ads</button></p>')
 				+ '<h3 class="dwdc-ch3 dd-spendh">Upwork Connects</h3>' + connSpend() + '</div>';
+		}
+		if (m.type === 'invoice') {
+			var iv = m.vals || {}, its = m.items && m.items.length ? m.items : [{ d: '', a: '' }];
+			var itot = its.reduce(function (a, x) { return a + (parseFloat(x.a) || 0); }, 0);
+			return '<div class="dwdc-overlay" data-close-modal></div><form class="dwdc-modal wide dd-invf" data-invform novalidate>' + head('Money', 'New', 'invoice')
+				+ '<div class="dwdc-fgrid"><label><span>Send with</span><select name="via" class="dwdc-sel"><option value="stripe"' + (iv.via !== 'paypal' ? ' selected' : '') + '>Stripe</option><option value="paypal"' + (iv.via === 'paypal' ? ' selected' : '') + '>PayPal</option></select></label>'
+				+ '<label><span>Due</span><select name="due" class="dwdc-sel">' + [['1', 'On receipt'], ['7', 'In 7 days'], ['14', 'In 14 days'], ['30', 'In 30 days']].map(function (o) { return '<option value="' + o[0] + '"' + (String(iv.due || '7') === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select></label>'
+				+ inp('email', 'Client email', 'name@example.com', 'email') + inp('name', 'Client name', 'Who it is addressed to')
+				+ '<div class="wide dd-inv-items">' + its.map(function (x, i) { return '<div class="dd-inv-it"><label><span>' + (i ? 'Line ' + (i + 1) : 'What it is for') + '</span><input name="d" value="' + esc(x.d || '') + '" placeholder="e.g. Website design, 50% deposit"></label><label><span>Amount ($)</span><input name="a" type="number" min="0" step="0.01" inputmode="decimal" value="' + esc(x.a || '') + '" placeholder="0.00"></label>' + (its.length > 1 ? '<button type="button" class="dwdc-mx dd-inv-x" data-invdel="' + i + '" title="Remove this line" aria-label="Remove this line">' + ic('x', 16) + '</button>' : '<span></span>') + '</div>'; }).join('')
+				+ '<div class="dd-inv-ft"><button type="button" class="dwdc-lnk" data-invadd>+ Add a line</button><span>Total <b data-invtot>' + money2(itot) + '</b></span></div></div>'
+				+ '<label class="wide"><span>Note to the client (optional)</span><textarea name="memo" rows="2" placeholder="Shown on the invoice">' + esc(iv.memo || '') + '</textarea></label></div>'
+				+ (m.err ? '<p class="dd-inv-err">' + esc(m.err) + '</p>' : '')
+				+ '<p class="dwdc-mutp sm">' + (m.busy ? 'Working…' : 'The client gets the invoice by email from Stripe or PayPal and pays there. The payment is logged on this project when it arrives.') + '</p>'
+				+ '<div class="dwdc-farow end"><button type="button" class="dwdc-btn2" data-invsave="draft"' + (m.busy ? ' disabled' : '') + '>Save as draft</button><button type="button" class="dwdc-btn" data-invsave="send"' + (m.busy ? ' disabled' : '') + '>Create and send</button></div></form>';
 		}
 		if (m.type === 'sgtx') {
 			var SX = m.data, sxp = String(m.title).split(' · ');
@@ -4543,6 +4562,31 @@
 		if ((el = t.closest('[data-billmove]'))) { var bmv = (pData().bills || []).find(function (x) { return x.id === el.getAttribute('data-billmove'); }); S.billMenu = 0; if (bmv) { var nb = JSON.parse(JSON.stringify(bmv)); nb.scope = bmv.scope === 'business' ? 'personal' : 'business'; pSave('bills', nb, 'Moved to ' + (nb.scope === 'business' ? 'Business' : 'Personal')); } return; }
 		if ((el = t.closest('[data-billmenu]'))) { e.stopPropagation(); var bmid = el.getAttribute('data-billmenu'); S.billMenu = S.billMenu === bmid ? 0 : bmid; S.subLabel = 0; render(); return; }
 		if ((el = t.closest('[data-sublabel]'))) { e.stopPropagation(); var slm = el.getAttribute('data-sublabel'); S.subLabel = S.subLabel === slm ? 0 : slm; S.billMenu = 0; render(); return; }
+		if ((el = t.closest('[data-invnew]'))) { var ivc = S.full[+el.getAttribute('data-invnew')] || {}; S.modal = { type: 'invoice', project: +el.getAttribute('data-invnew'), vals: { via: ivc.pay_method === 'PayPal' ? 'paypal' : 'stripe', due: '7', email: ivc.email || '', name: ivc.person || clientName(ivc) || '', memo: '' }, items: [{ d: ivc.name || '', a: num(ivc.balance) ? String(num(ivc.balance)) : '' }] }; render(); focusIn(ivc.email ? '[name=a]' : '[name=email]'); return; }
+		if (S.modal && S.modal.type === 'invoice' && (t.closest('[data-invadd]') || t.closest('[data-invdel]') || t.closest('[data-invsave]'))) {
+			var ivm = S.modal, ivf = app.querySelector('[data-invform]'), ivd = [].slice.call(ivf.querySelectorAll('[name=d]')), iva = [].slice.call(ivf.querySelectorAll('[name=a]'));
+			ivm.items = ivd.map(function (x, i) { return { d: x.value.trim(), a: iva[i].value }; });
+			['via', 'due', 'email', 'name', 'memo'].forEach(function (k) { ivm.vals[k] = ivf.querySelector('[name=' + k + ']').value.trim(); });
+			ivm.err = '';
+			if (t.closest('[data-invadd]')) { ivm.items.push({ d: '', a: '' }); render(); var ivl = app.querySelectorAll('[data-invform] [name=d]'); if (ivl.length) { ivl[ivl.length - 1].focus(); } return; }
+			if ((el = t.closest('[data-invdel]'))) { ivm.items.splice(+el.getAttribute('data-invdel'), 1); render(); return; }
+			var ivsend = t.closest('[data-invsave]').getAttribute('data-invsave') === 'send', ivok = ivm.items.filter(function (x) { return parseFloat(x.a) > 0; });
+			if (!/^\S+@\S+\.\S+$/.test(ivm.vals.email)) { ivm.err = 'Add the client’s email address so the invoice has somewhere to go.'; render(); focusIn('[name=email]'); return; }
+			if (!ivok.length) { ivm.err = 'Add at least one line with an amount.'; render(); focusIn('[name=a]'); return; }
+			ivm.busy = true; render();
+			api('/contact/' + ivm.project + '/invoices', 'POST', { via: ivm.vals.via, due: ivm.vals.due, email: ivm.vals.email, name: ivm.vals.name, memo: ivm.vals.memo, items: ivok, send: ivsend }).then(function (x) {
+				if (S.full[ivm.project]) { S.full[ivm.project].invoices = x.invoices; }
+				if (S.modal === ivm) { S.modal = null; } render(); toast(ivsend ? 'Invoice sent to ' + ivm.vals.email : 'Draft invoice saved');
+			}).catch(function (e) { ivm.busy = false; ivm.err = (e && e.message) || 'Something went wrong.'; api('/contact/' + ivm.project + '/invoices').then(function (x) { if (S.full[ivm.project]) { S.full[ivm.project].invoices = x.invoices; } render(); }).catch(function () { render(); }); });
+			return;
+		}
+		if ((el = t.closest('[data-invact]'))) {
+			var iact = el.getAttribute('data-invact'), ipid = route().id, iid = el.getAttribute('data-inv');
+			if (iact === 'cancel' && !confirm(el.textContent.indexOf('Delete') === 0 ? 'Delete this draft invoice?' : 'Cancel this invoice? The client is told it no longer needs paying.')) { return; }
+			el.disabled = true;
+			api('/contact/' + ipid + '/invoices', 'POST', { act: iact, invoice: iid }).then(function (x) { if (S.full[ipid]) { S.full[ipid].invoices = x.invoices; } render(); toast(iact === 'send' ? 'Invoice sent' : 'Invoice cancelled'); }).catch(function (e) { el.disabled = false; fail(e); });
+			return;
+		}
 		if ((el = t.closest('[data-subamt]'))) { S.subAmt = el.getAttribute('data-subamt'); render(); var sai = app.querySelector('[data-subamtv]'); if (sai) { sai.focus(); sai.select(); } return; }
 		if (t.closest('[data-subamtcancel]')) { S.subAmt = 0; render(); return; }
 		if ((el = t.closest('[data-subamtsave]'))) { var sav = el.parentNode.querySelector('[data-subamtv]'), rst = el.hasAttribute('data-reset'), sam = rst ? '' : (sav ? String(sav.value).trim() : ''); if (!rst && (sam === '' || isNaN(+sam) || +sam < 0)) { if (sav) { sav.focus(); } return; } S.subAmt = 0; api('/bank', 'POST', { sub: el.getAttribute('data-subamtsave'), monthly: rst ? '' : +sam }).then(function (d6) { S.bank = d6; S.sg = null; render(); toast(rst ? 'Back to the bank amount' : 'Monthly amount saved'); }).catch(fail); return; }
@@ -4724,6 +4768,7 @@
 	document.addEventListener('keydown', function (e) { if (e.target && e.target.hasAttribute && e.target.hasAttribute('data-ptdraft') && e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); if (S.modal) { S.modal.draft = e.target.value; } ptSend(); } });
 	// Remember whether "Websites they like" is open, so it stays that way when the page redraws.
 	app.addEventListener('toggle', function (e) { var d = e.target; if (d && d.hasAttribute && d.hasAttribute('data-insp')) { S.inspOpen = S.inspOpen || {}; S.inspOpen[d.getAttribute('data-insp')] = d.open; } }, true);
+	app.addEventListener('input', function (e) { var ivf2 = e.target.closest && e.target.closest('[data-invform]'); if (!ivf2 || e.target.name !== 'a') { return; } var ivt = 0; [].forEach.call(ivf2.querySelectorAll('[name=a]'), function (x) { ivt += parseFloat(x.value) || 0; }); var ivo = ivf2.querySelector('[data-invtot]'); if (ivo) { ivo.textContent = money2(ivt); } });
 	app.addEventListener('change', function (e) {
 		if (e.target.hasAttribute && e.target.hasAttribute('data-subcatf')) { S.subCatF = e.target.value; render(); return; }
 		if (e.target.hasAttribute && e.target.hasAttribute('data-subcat')) { var scm = e.target.getAttribute('data-subcat'), scv = e.target.value; if (scv === '__new') { S.subCatNew = scm; render(); var scf = e.target.closest('.dd-sug') ? '.dd-sug [data-subcatnew]' : '.dd-srow [data-subcatnew]', sce = app.querySelector(scf) || app.querySelector('[data-subcatnew]'); if (sce) { sce.focus(); } return; } api('/bank', 'POST', { sub: scm, category: scv }).then(function (d4) { S.bank = d4; render(); toast('Category saved'); }).catch(fail); return; }
