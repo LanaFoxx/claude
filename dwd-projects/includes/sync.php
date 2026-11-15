@@ -2096,7 +2096,22 @@ function dwdx_build( $pid ) {
 	foreach ( $tmp as $t ) {
 		@unlink( $t ); // phpcs:ignore
 	}
-	return array( 'url' => trailingslashit( $up['baseurl'] ) . 'dwd-exports/' . $file, 'name' => $name . '.zip', 'size' => filesize( $dir . '/' . $file ), 'meetings' => count( $meet ), 'emails' => count( $mail ), 'forms' => '' !== $forms, 'design' => '' !== $design, 'design_error' => $derr, 'files' => substr_count( $files, "\n" ), 'skipped' => substr_count( $files, 'open it here' ) );
+	// Put a to-do on the project to review the export (one open copy at a time).
+	$task = null;
+	if ( function_exists( 'dwdc_add_task' ) ) {
+		$ttext = 'Review the AI Instructions zip';
+		$has_t = false;
+		foreach ( get_posts( array( 'post_type' => DWDC_TASK, 'post_status' => 'private', 'posts_per_page' => -1, 'meta_key' => '_dwdc_contact', 'meta_value' => $pid ) ) as $tp ) { // phpcs:ignore
+			$t0 = dwdc_task( $tp );
+			if ( is_array( $t0 ) && empty( $t0['done'] ) && $t0['text'] === $ttext ) {
+				$has_t = true;
+			}
+		}
+		if ( ! $has_t ) {
+			$task = dwdc_task( dwdc_add_task( $ttext, (int) $pid, '' ) );
+		}
+	}
+	return array( 'task' => $task, 'url' => trailingslashit( $up['baseurl'] ) . 'dwd-exports/' . $file, 'name' => $name . '.zip', 'size' => filesize( $dir . '/' . $file ), 'meetings' => count( $meet ), 'emails' => count( $mail ), 'forms' => '' !== $forms, 'design' => '' !== $design, 'design_error' => $derr, 'files' => substr_count( $files, "\n" ), 'skipped' => substr_count( $files, 'open it here' ) );
 }
 
 add_action( 'rest_api_init', function () {

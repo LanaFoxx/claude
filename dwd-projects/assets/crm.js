@@ -4855,9 +4855,9 @@
 			var xid = +el.getAttribute('data-xport'); S.xBusy = S.xBusy || {}; if (S.xBusy[xid]) { return; }
 			S.xBusy[xid] = 1; render(); toast('Collecting everything and writing the design brief. This can take a minute or two.');
 			api('/contact/' + xid + '/export', 'POST', {}).then(function (x) {
-				S.xBusy[xid] = 0; render();
+				S.xBusy[xid] = 0; if (x.task && S.tasks) { S.tasks.push(x.task); S.ptodoOpen = S.ptodoOpen || {}; S.ptodoOpen[xid] = true; } render();
 				var a = document.createElement('a'); a.href = x.url; a.download = x.name; document.body.appendChild(a); a.click(); a.remove();
-				toast('Zip ready: ' + x.meetings + ' meeting' + (x.meetings === 1 ? '' : 's') + ', ' + x.emails + ' emails, ' + x.files + ' file' + (x.files === 1 ? '' : 's') + (x.skipped ? ' (' + x.skipped + ' listed as links)' : '') + (x.design ? ', plus the design brief' : '. No design brief: ' + (x.design_error || 'Claude returned nothing')));
+				toast('Zip ready: ' + x.meetings + ' meeting' + (x.meetings === 1 ? '' : 's') + ', ' + x.emails + ' emails, ' + x.files + ' file' + (x.files === 1 ? '' : 's') + (x.skipped ? ' (' + x.skipped + ' listed as links)' : '') + (x.task ? '. Added a to-do to review it' : '') + (x.design ? ', plus the design brief' : '. No design brief: ' + (x.design_error || 'Claude returned nothing')));
 			}).catch(function (e) { S.xBusy[xid] = 0; render(); fail(e); });
 			return;
 		}
