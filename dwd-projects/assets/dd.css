@@ -960,3 +960,9 @@ section.dd-health.warn .dd-healthb .dd-hld { background: var(--warning-text); }
 /* Emails: unread rows sit on a slightly brighter background */
 .dd .dd-mrow.new, .dd .dd-mrow.new > .dd-mhead { background: var(--surface-2); }
 .dd .dd-mrow.new > .dd-mhead:hover { background: var(--hover); }
+/* Ready to build card: green check or red x beside the title */
+.dd .dd-rdyh { display: inline-flex; align-items: center; gap: 8px; }
+.dd .dd-rdyh i { flex: none; width: 20px; height: 20px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-style: normal; color: #fff; }
+.dd .dd-rdyh i.ok { background: #16a34a; }
+.dd .dd-rdyh i.no { background: #dc2626; }
+.dd .dd-rdyh i svg { stroke-width: 3; }
