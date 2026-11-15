@@ -752,7 +752,7 @@ input[type=date], input[type=datetime-local] { cursor: pointer; }
 .g-projects.nodue > span:nth-child(5) { display: none !important; }
 .g-projects.nodue { grid-template-columns: minmax(250px, 2fr) minmax(170px, 1.2fr) 90px 90px 130px minmax(130px, 1.1fr) !important; }
 /* Active projects list: no colored marker dot in front of the name */
-.dd .dd-prow .dd-flagw { display: none; }
+.dd .dd-flagw, .dd-flagw { display: none !important; }
 /* Texts box on a project page (Quo) */
 .dd-txl { display: flex; flex-direction: column; gap: 10px; max-height: 340px; overflow-y: auto; padding: 4px 20px 14px; }
 .dd-tx { max-width: 82%; display: flex; flex-direction: column; gap: 3px; }
