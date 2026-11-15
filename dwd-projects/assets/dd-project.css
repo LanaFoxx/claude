@@ -453,3 +453,6 @@
 /* Project page: Today box (to-dos due + meetings with this client) */
 .dd-ptoday { margin-bottom: 0; }
 .dd-ptoday .dd-tl-r:last-child { border-bottom: 0; }
+
+/* Schedule & to-dos box: the whole top section reads as the header (line under it) */
+.dd-ptoday > .dd-ch { border-bottom: 1px solid var(--border); padding-bottom: 16px !important; margin-bottom: 4px; }
