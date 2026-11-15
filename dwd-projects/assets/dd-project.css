@@ -449,3 +449,7 @@
 	.dd .k-mail [data-mbtog] { cursor: pointer; }
 	.dd .k-mail.mopen .dd-atogi svg { transform: rotate(180deg); }
 }
+
+/* Project page: Today box (to-dos due + meetings with this client) */
+.dd-ptoday { margin-bottom: 0; }
+.dd-ptoday .dd-tl-r:last-child { border-bottom: 0; }

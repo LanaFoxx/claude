@@ -1219,6 +1219,35 @@
 	function upfSet(ref, state, pid) {
 		return api('/upwork-feed/' + encodeURIComponent(ref), 'POST', { state: state, pid: pid || 0 }).then(function (f) { S.upfeed = f; render(); });
 	}
+	// Project page "Today": this project's to-dos due today (and overdue) plus today's meetings with this client.
+	function projTodayBox(c) {
+		var T = DWDC.today, k = clientOf(c);
+		// Every to-do on this project that isn't done: overdue first, then today, then dated ones, then no date.
+		var rank = function (t) { return !t.due ? 3 : t.due < T ? 0 : t.due === T ? 1 : 2; };
+		var tasks = openTasks().filter(function (t) { return +t.contact === +c.id; })
+			.sort(function (a, b) { return (rank(a) - rank(b)) || String(a.due || '').localeCompare(String(b.due || '')) || String(a.time || '').localeCompare(String(b.time || '')); });
+		var mails = [c.email, k && k.email].concat((c.contacts || []).map(function (p) { return p.email; })).filter(Boolean).map(function (e) { return String(e).toLowerCase(); });
+		var names = [c.person, k && k.name, c.name].concat((c.contacts || []).map(function (p) { return p.name; })).filter(function (n) { return n && String(n).trim().length > 3; }).map(function (n) { return String(n).toLowerCase(); });
+		var meets = ((S.meet && S.meet.list) || []).filter(function (m) {
+			if (m.date !== T) { return false; }
+			var g = JSON.stringify(m.guests || []).toLowerCase(), txt = [m.who, m.title, m.about].join(' ').toLowerCase();
+			return mails.some(function (e) { return g.indexOf(e) > -1; }) || names.some(function (n) { return txt.indexOf(n) > -1; });
+		});
+		var nowS = Date.now() / 1000;
+		var rows = meets.map(function (m) {
+			var ended = m.te && m.te < nowS;
+			return '<div class="dd-tl-r' + (ended ? ' past' : '') + '"><span class="dd-tl-t">' + esc(m.time || '') + '</span><span class="dd-tl-dot biz"></span><div class="dd-tl-c">' + (m.link ? '<a href="' + esc(m.link) + '" target="_blank" rel="noopener">' + esc(m.title || m.who || 'Meeting') + '</a>' : '<b>' + esc(m.title || m.who || 'Meeting') + '</b>') + '<small>' + esc(m.kind || 'Meeting') + '</small></div>'
+				+ (m.link && !ended ? '<a class="dd-btn primary sm dd-join" href="' + esc(m.link) + '" target="_blank" rel="noopener">Join</a>' : '') + '</div>';
+		}).concat(tasks.map(function (t) {
+			var late = t.due && t.due < T, when = !t.due ? 'No due date' : late ? '<em class="late">Overdue · ' + fmt(t.due) + '</em>' : t.due === T ? 'Due today' : 'Due ' + fmt(t.due);
+			return '<div class="dd-tl-r td"><span class="dd-tl-t">' + esc(t.time || 'To-do') + '</span><button type="button" class="dd-tl-chk" data-toggle="' + t.id + '" aria-label="Mark done"></button><div class="dd-tl-c" data-schedtask="w:' + t.id + '" role="button" tabindex="0"><b>' + esc(t.text) + '</b><small>' + when + '</small></div></div>';
+		}));
+		var nLate = tasks.filter(function (t) { return t.due && t.due < T; }).length, nToday = tasks.filter(function (t) { return t.due === T; }).length;
+		var sum = [meets.length ? meets.length + ' meeting' + (meets.length === 1 ? '' : 's') + ' today' : '', tasks.length ? tasks.length + ' open to-do' + (tasks.length === 1 ? '' : 's') : '', nToday ? nToday + ' due today' : '', nLate ? '<em class="late">' + nLate + ' overdue</em>' : ''].filter(Boolean).join(' · ');
+		var dObj = new Date(T + 'T12:00:00');
+		return '<section class="dd-card dd-sched dd-ptoday"><header class="dd-ch"><div class="dd-dtile"><small>' + dObj.toLocaleDateString('en-US', { month: 'short' }).toUpperCase() + '</small><b>' + dObj.getDate() + '</b></div><div class="dd-ch-t"><h2>Schedule &amp; to-dos</h2><span>' + (sum || 'Nothing open or scheduled') + '</span></div><div class="dd-ch-a dd-sched-links"><a href="#todos">View to-dos</a></div></header>'
+			+ '<div class="dd-tl">' + (rows.length ? rows.join('') : '<p class="dd-empty-l">All clear. Every to-do on this project is done and nothing is scheduled today.</p>') + '</div></section>';
+	}
 	function bankSet(key, bank, date) {
 		var pid = +key.split(':')[0], i = +key.split(':')[1];
 		api('/contact/' + pid + '/payment/' + i + '/bank', 'POST', { bank: bank ? 1 : 0, date: date || DWDC.today })
@@ -3700,7 +3729,7 @@
 		var hosting = num(c.hosting) ? hostCard(c) : '';
 		return '<div class="dd-pp">' + head + strip
 			+ (S.edit ? '<div class="dd-pp-edit" id="pv3-edit">' + details + peopleCard(c) + '</div>' : '')
-			+ '<div class="dd-pp-grid"><div class="dd-pp-col">' + sumBox + (full && ['active', 'hold', 'limbo', 'leads'].indexOf(st) > -1 ? readyBox(c) : '') + (full ? '<div class="dd-mt2">' + mailBox('p' + c.id, c.email || (clientOf(c) || {}).email || '', c.id) + textsBox(c) + '</div>' + meetBox(c) + assetsBox(c) : '') + stgBox + mkBox + formBox + (S.edit ? '' : '<div class="dd-pp-mob">' + details + '</div>') + '<div class="dd-tn">' + todos + notesBox + '</div>' + '</div><div class="dd-pp-col side">' + (S.edit ? '' : '<div class="dd-pp-desk">' + details + '</div>') + zoomBox('p' + c.id, [c.id]) + (S.edit ? '' : contacts) + (st === 'leads' ? '' : paysBox) + hosting + '</div></div></div>';
+			+ '<div class="dd-pp-grid"><div class="dd-pp-col">' + (st === 'leads' ? '' : projTodayBox(c)) + sumBox + (full && ['active', 'hold', 'limbo', 'leads'].indexOf(st) > -1 ? readyBox(c) : '') + (full ? '<div class="dd-mt2">' + mailBox('p' + c.id, c.email || (clientOf(c) || {}).email || '', c.id) + textsBox(c) + '</div>' + meetBox(c) + assetsBox(c) : '') + stgBox + mkBox + formBox + (S.edit ? '' : '<div class="dd-pp-mob">' + details + '</div>') + '<div class="dd-tn">' + todos + notesBox + '</div>' + '</div><div class="dd-pp-col side">' + (S.edit ? '' : '<div class="dd-pp-desk">' + details + '</div>') + zoomBox('p' + c.id, [c.id]) + (S.edit ? '' : contacts) + (st === 'leads' ? '' : paysBox) + hosting + '</div></div></div>';
 	}
 	// Ready to build (ready.php): what's in hand, what's missing from the client, and open questions, before AI Instructions.
 	function readyBox(c) {
