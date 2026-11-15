@@ -1279,12 +1279,12 @@
 		// The To-dos box is gone from Home, so overdue to-dos show here too. Two or more business (or personal)
 		// to-dos collapse into one row that drops down to list them all.
 		var hid = schedHidden();
-		var byDue = function (a, b) { return (a.due || '') < (b.due || '') ? -1 : (a.due || '') > (b.due || '') ? 1 : mins(a.time) - mins(b.time); };
-		var tdW = openTasks().filter(function (t) { return t.due && t.due <= T && hid.indexOf('w:' + t.id) < 0; }).sort(byDue);
+		var byDue = function (a, b) { return (a.due || '9') < (b.due || '9') ? -1 : (a.due || '9') > (b.due || '9') ? 1 : mins(a.time) - mins(b.time); };
+		var tdW = openTasks().filter(function (t) { return (!t.due || t.due <= T) && hid.indexOf('w:' + t.id) < 0; }).sort(byDue);
 		var tdP = (P ? P.todos.filter(function (t) { return !t.gevent && !t.done && t.due && t.due <= T && hid.indexOf('p:' + t.id) < 0; }) : []).sort(byDue);
-		var nLate = tdW.concat(tdP).filter(function (t) { return t.due < T; }).length;
+		var nLate = tdW.concat(tdP).filter(function (t) { return t.due && t.due < T; }).length;
 		if (tdW.length > 1) { items.push({ time: 'To-do', min: -3, title: 'Business to-dos', group: tdW, gkey: 'w' }); }
-		else { tdW.forEach(function (t) { var c = t.contact ? contact(t.contact) : null; items.push({ time: t.time || 'To-do', min: t.time ? mins(t.time) : -2, title: t.text, sub: (t.due < T ? 'Overdue · ' : '') + 'Business to-do' + (c ? ' · ' + c.name : ''), todo: 'w', tid: t.id }); }); }
+		else { tdW.forEach(function (t) { var c = t.contact ? contact(t.contact) : null; items.push({ time: t.time || 'To-do', min: t.time ? mins(t.time) : -2, title: t.text, sub: (t.due && t.due < T ? 'Overdue · ' : '') + 'Business to-do' + (c ? ' · ' + c.name : ''), todo: 'w', tid: t.id }); }); }
 		if (tdP.length > 1) { items.push({ time: 'To-do', min: -2.5, title: 'Personal to-dos', group: tdP, gkey: 'p' }); }
 		else { tdP.forEach(function (t) { items.push({ time: t.time || 'To-do', min: t.time ? mins(t.time) : -2, title: ptx(t.text), sub: (t.due < T ? 'Overdue · ' : '') + 'Personal to-do' + (t.source === 'Google Tasks' ? ' · Google Tasks' : ''), todo: 'p', tid: t.id }); }); }
 		items.sort(function (x, y) { return x.min - y.min; });
@@ -1293,10 +1293,10 @@
 		var sched = '<section class="dd-card dd-sched"><header class="dd-ch"><div class="dd-dtile"><small>' + dObj.toLocaleDateString('en-US', { month: 'short' }).toUpperCase() + '</small><b>' + dObj.getDate() + '</b></div><div class="dd-ch-t"><h2>Today’s schedule</h2><span>' + items.filter(function (x) { return !x.todo && !x.group; }).length + ' event' + (items.filter(function (x) { return !x.todo && !x.group; }).length === 1 ? '' : 's') + ' · ' + dueToday + ' to-do' + (dueToday === 1 ? '' : 's') + ' due' + (nLate ? ' · <em class="late">' + nLate + ' overdue</em>' : '') + '</span></div><div class="dd-ch-a dd-sched-links"><a href="#todos">View to-dos</a><a href="#personal/calendar">Open calendar</a></div></header>'
 			+ '<div class="dd-tl">' + (items.length ? items.map(function (it) {
 				if (it.group) {
-					var gk = it.gkey, gw = gk === 'w', gOpen = !!(S.schedOpen || {})[gk], gl = it.group.filter(function (t) { return t.due < T; }).length;
+					var gk = it.gkey, gw = gk === 'w', gOpen = (S.schedOpen || {})[gk] === undefined ? true : !!(S.schedOpen || {})[gk], gl = it.group.filter(function (t) { return t.due && t.due < T; }).length;
 					return '<div class="dd-tl-r td grp' + (gOpen ? ' open' : '') + '"><span class="dd-tl-t">To-do</span><span class="dd-tl-n' + (it.group.some(function (t) { return t.due === T; }) ? ' today' : gl ? ' late' : '') + '" title="' + (it.group.filter(function (t) { return t.due === T; }).length) + ' due today' + (gl ? ', ' + gl + ' overdue' : '') + '">' + it.group.length + '</span><div class="dd-tl-c" data-schedgrp="' + gk + '" role="button" tabindex="0" aria-expanded="' + gOpen + '"><b>' + esc(it.title) + ' ' + lu('chevron-down', 14) + '</b><small>' + it.group.length + ' to-dos' + (gl ? ' · <em class="late">' + gl + ' overdue</em>' : '') + (gOpen ? '' : ' · ' + esc(it.group.slice(0, 3).map(function (t) { return gw ? t.text : ptx(t.text); }).join(', ')) + (it.group.length > 3 ? '…' : '')) + '</small></div></div>'
 						+ (gOpen ? '<div class="dd-tl-kids">' + it.group.map(function (t) {
-							var c = gw && t.contact ? contact(t.contact) : null, late = t.due < T;
+							var c = gw && t.contact ? contact(t.contact) : null, late = t.due && t.due < T;
 							var sub = [late ? '<em class="late">Overdue · ' + fmt(t.due) + '</em>' : '', c ? esc(c.name) : ''].filter(Boolean).join(' · ');
 							return '<div class="dd-tl-r td kid"><span class="dd-tl-t">' + (t.time ? esc(t.time) : '') + '</span><button type="button" class="dd-tl-chk" ' + (gw ? 'data-toggle' : 'data-ptoggle') + '="' + t.id + '" aria-label="Mark done"></button><div class="dd-tl-c" data-schedtask="' + gk + ':' + t.id + '" role="button" tabindex="0"><b>' + esc(gw ? t.text : ptx(t.text)) + '</b>' + (sub ? '<small>' + sub + '</small>' : '') + '</div></div>';
 						}).join('') + '<a class="dd-tl-go" href="#' + (gw ? 'todos' : 'personal') + '">' + (gw ? 'All business to-dos' : 'Personal to-do list') + ' ' + lu('chevron-right', 12) + '</a></div>' : '');
@@ -4855,7 +4855,7 @@
 		}
 		if ((el = t.closest('[data-sthide]'))) { schedHide(el.getAttribute('data-sthide')); S.modal = null; render(); toast('Removed from today’s schedule (still on your to-do list)'); return; }
 		if ((el = t.closest('[data-stedit]'))) { var ek = el.getAttribute('data-stedit'); S.modal = ek.slice(0, 1) === 'w' ? { type: 'task', id: +ek.slice(2), vals: {} } : { type: 'ptask', id: ek.slice(2), vals: {} }; render(); return; }
-		if ((el = t.closest('[data-schedgrp]'))) { S.schedOpen = S.schedOpen || {}; var sgp = el.getAttribute('data-schedgrp'); S.schedOpen[sgp] = !S.schedOpen[sgp]; render(); return; }
+		if ((el = t.closest('[data-schedgrp]'))) { S.schedOpen = S.schedOpen || {}; var sgp = el.getAttribute('data-schedgrp'); S.schedOpen[sgp] = el.getAttribute('aria-expanded') !== 'true'; render(); return; }
 		if ((el = t.closest('[data-billadd]'))) { var bsc = el.getAttribute('data-billadd'); S.modal = { type: 'billadd', scope: bsc || '', vals: {} }; render(); focusIn('.dd-billf [name=name]'); return; }
 		if ((el = t.closest('[data-billedit]'))) { var be = (pData().bills || []).find(function (x) { return x.id === el.getAttribute('data-billedit'); }); S.billMenu = 0; if (be) { S.modal = { type: 'billadd', bill: be, vals: {} }; render(); } return; }
 		if ((el = t.closest('[data-billmove]'))) { var bmv = (pData().bills || []).find(function (x) { return x.id === el.getAttribute('data-billmove'); }); S.billMenu = 0; if (bmv) { var nb = JSON.parse(JSON.stringify(bmv)); nb.scope = bmv.scope === 'business' ? 'personal' : 'business'; pSave('bills', nb, 'Moved to ' + (nb.scope === 'business' ? 'Business' : 'Personal')); } return; }
