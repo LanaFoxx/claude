@@ -989,3 +989,5 @@ section.dd-health.warn .dd-healthb .dd-hld { background: var(--warning-text); }
 .dd .dd-home-l > .dd-wait { max-height: 300px; overflow-y: auto; }
 .dd .dd-wait .dd-wrow { padding-top: 8px; padding-bottom: 8px; }
 .dd .dd-wait .dd-wsub { margin-top: 2px !important; margin-bottom: 0 !important; }
+/* Working on now sections get a green dot */
+.dd .dd-agh i.now, .dd .dd-bcol header i.now, .dd .dd-ap .dd-aphd i.now { background: #22c55e; }
