@@ -3700,7 +3700,7 @@
 		var Q = (R.questions && R.questions.list) || [], busy = (S.rdyBusy || {})[c.id];
 		var op = (S.rdyOpen || {})[c.id], open = op == null ? !!(miss.length || Q.length) : op;
 		var icon = { ok: lu('check', 14), missing: lu('alert-circle', 14), you: lu('user', 14) };
-		var sum = miss.length || Q.length ? have + ' of ' + I.length + ' in hand' + (miss.length ? ' · <b class="late">' + miss.length + ' missing</b>' : '') + (Q.length ? ' · ' + Q.length + ' open question' + (Q.length === 1 ? '' : 's') : '') : 'Everything’s in · ready to build';
+		var sum = miss.length ? '<b class="late">' + miss.length + ' missing</b>' : Q.length ? Q.length + ' question' + (Q.length === 1 ? '' : 's') : 'Everything’s in';
 		return '<section class="dd-card dd-pc2 k-ready' + (open ? ' open' : ' shut') + '"><header class="dd-ntog" data-rdytog="' + c.id + '" role="button" tabindex="0" aria-expanded="' + open + '"><h2 class="dd-rdyh">' + (miss.length || Q.length ? '<i class="no">' + lu('x', 13) + '</i>Not ready to build' : '<i class="ok">' + lu('check', 13) + '</i>Ready to build') + '</h2><span class="sum">' + (miss.length || Q.length ? sum : 'Everything’s in') + '</span><span class="dd-sp"></span><span class="dd-tchev">' + lu('chevron-down', 16) + '</span></header>'
 			+ (!open ? '' : '<div class="dd-rdy">' + I.map(function (x) {
 				var act = x.state === 'missing' ? '<button type="button" class="dd-lnk sm" data-rdytick="' + c.id + ':' + x.key + ':1">Got it</button>' : x.note === 'Checked by hand' ? '<button type="button" class="dd-lnk sm mute" data-rdytick="' + c.id + ':' + x.key + ':0">Undo</button>' : '';
@@ -3708,7 +3708,7 @@
 			}).join('') + '</div>'
 			+ '<div class="dd-rdyq"><p class="dd-invh">Open questions' + (R.questions && R.questions.at ? ' <small>checked ' + fmt(String(R.questions.at).slice(0, 10)) + '</small>' : '') + '</p>'
 			+ (Q.length ? '<ol>' + Q.map(function (q, i) { return '<li><span>' + esc(q) + '</span><button type="button" class="dd-ibtn sm" data-rdydrop="' + c.id + ':' + i + '" aria-label="Remove question" title="Settled: remove">' + lu('x', 13) + '</button></li>'; }).join('') + '</ol>' : '<p class="dd-help">' + (R.questions ? 'Nothing important left open.' : 'Claude reads the answers, calls, emails and notes and lists anything still unclear.') + '</p>')
-			+ '<div class="dd-pbtns"><button type="button" class="dd-btn secondary sm" data-rdyq="' + c.id + '"' + (busy ? ' disabled' : '') + '>' + lu('zap', 13) + (busy ? 'Reading everything…' : R.questions ? 'Check again' : 'Find open questions') + '</button>'
+			+ '<div class="dd-pbtns dd-rdybtns"><button type="button" class="dd-btn secondary sm" data-rdyq="' + c.id + '"' + (busy ? ' disabled' : '') + '>' + lu('zap', 13) + (busy ? 'Reading…' : R.questions ? 'Check again' : '<span class="dd-nomob">Find open questions</span><span class="dd-mobonly">Find questions</span>') + '</button>'
 			+ (miss.length || Q.length ? '<button type="button" class="dd-btn primary sm" data-rdyemail="' + c.id + '">' + lu('mail', 13) + '<span class="dd-nomob">Email the client what’s missing</span><span class="dd-mobonly">Email what’s missing</span></button>' : '')
 			+ '<button type="button" class="dd-btn primary sm" style="margin-left:auto" data-xport="' + c.id + '"' + ((S.xBusy || {})[c.id] ? ' disabled' : '') + ' title="One zip for Claude Code: design brief, instructions, onboarding answers, meeting transcripts, emails, texts and files">' + lu('download', 13) + ((S.xBusy || {})[c.id] ? 'Building the zip…' : 'AI Instructions') + '</button></div></div>') + '</section>';
 	}

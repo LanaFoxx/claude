@@ -1024,3 +1024,11 @@ section.dd-health.warn .dd-healthb .dd-hld { background: var(--warning-text); }
 }
 /* Zoom box: plain icon, no tile behind it */
 .dd .dd-ch2 .dd-lt.z { background: none !important; border: 0 !important; width: auto; height: auto; padding: 0; color: var(--accent-text, #8da0f7); }
+/* Ready to build: title always on one line; on phones the buttons wrap instead of being cut off */
+.dd .k-ready > header .dd-rdyh { white-space: nowrap; flex: none; }
+.dd .k-ready > header .sum { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+@media (max-width: 767px) {
+	.dd .k-ready .dd-rdybtns { flex-wrap: wrap !important; }
+	.dd .k-ready .dd-rdybtns > .dd-btn { flex: 1 1 0 !important; min-width: 0; margin-left: 0 !important; overflow: visible !important; text-overflow: clip !important; }
+	.dd .k-ready .dd-rdybtns > [data-xport] { flex: 1 1 100% !important; }
+}
