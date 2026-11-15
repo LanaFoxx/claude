@@ -3393,7 +3393,7 @@
 		var rv = reviewBtn(c.client), rvAttr = (/(data-[a-z]+="[^"]*")/.exec(rv) || [])[1];
 		// header
 		var main = '', menu = mi('data-edit', S.edit ? 'Close edit' : 'Edit project');
-		var xb = (S.xBusy || {})[c.id], xbtn = function (cls) { return btn('data-xport="' + c.id + '"' + (xb ? ' disabled' : '') + ' title="One zip for Claude Code: design brief, instructions, onboarding answers, meeting transcripts, emails, texts and files"', lu('download') + (xb ? 'Building the zip…' : 'Export'), cls); };
+		var xb = (S.xBusy || {})[c.id], xbtn = function (cls) { return btn('data-xport="' + c.id + '"' + (xb ? ' disabled' : '') + ' title="One zip for Claude Code: design brief, instructions, onboarding answers, meeting transcripts, emails, texts and files"', lu('download') + (xb ? 'Building the zip…' : 'AI Instructions'), cls); };
 		if (st === 'active' || st === 'hold' || st === 'limbo') {
 			main = (ow ? btn('data-paid', 'Mark paid') : '') + btn('data-plog="' + c.id + '"', lu('credit-card') + 'Log payment') + xbtn('primary');
 			menu += mi('data-leadinvite="' + c.id + '"', c.onboarded ? 'Send onboarding form again' : (c.stage === 'onboarding' ? 'Resend onboarding form' : 'Send onboarding form')) + (rvAttr ? mi(rvAttr, 'Ask for a review') : '') + mi('data-complete', 'Mark complete')
