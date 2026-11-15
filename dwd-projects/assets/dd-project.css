@@ -382,3 +382,11 @@
 	.dd-strip.dd-strip-p .dd-nomob { display: none; }
 	.dd-strip.dd-strip-p .dd-mobonly { display: inline; }
 }
+/* Details: project, lead source, pays via and started are tucked away until opened */
+.dd .dd-dettog { display: flex; align-items: center; gap: 6px; width: 100%; margin: 0; padding: 10px 20px 14px; border: 0; background: none; font: 500 var(--fs-sm) var(--font); color: var(--accent); text-align: left; cursor: pointer; }
+.dd .dd-dettog[aria-expanded="true"] svg { transform: rotate(180deg); }
+.dd-kvmore { padding-top: 0 !important; margin-top: -4px; }
+@media (max-width: 767px) { .dd .dd-dettog { padding: 8px 16px 12px; } }
+.dd-kv + .dd-dettog { margin-top: -10px !important; }
+/* Phones: the line under the project name repeats Details (project, site, lead source, started), so it's left out */
+@media (max-width: 767px) { .dd-pp-head .dd-pp-t > p { display: none; } }

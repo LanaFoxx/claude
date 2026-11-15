@@ -3607,8 +3607,9 @@
 		var details = S.edit ? editCard(c) : card('k-det', 'Details', '', '<button type="button" class="dd-hlink" data-edit>Edit</button>',
 			'<div class="dd-kv">' + dr('Client', (k.id ? '<a href="#cl/' + k.id + '"><b>' + esc(k.name) + '</b></a> ' : '') + '<button type="button" class="dd-lnk sm" data-moveclient="' + c.id + '">' + (k.id ? 'Change' : 'Link one') + '</button>')
 			+ dr('Main contact', c.person || k.name ? '<b>' + esc(c.person || k.name) + '</b>' : '') + dr('Email', em ? '<a href="mailto:' + esc(em) + '">' + esc(em) + '</a>' : '') + dr('Phone', ph ? tel(ph) : '')
-			+ dr('Company', esc(c.company)) + dr('Website', site(c) ? '<a href="https://' + esc(site(c)) + '" target="_blank" rel="noopener">' + esc(site(c)) + '</a>' : '') + dr('Project', esc(c.job))
-			+ dr('Lead source', isel('lead_source', SOURCES, c.lead_source)) + dr('Pays via', isel('pay_method', PAYS, c.pay_method)) + dr('Started', started ? fmt(started, true) : '') + '</div>' + driveRow + obRow);
+			+ dr('Company', esc(c.company)) + dr('Website', site(c) ? '<a href="https://' + esc(site(c)) + '" target="_blank" rel="noopener">' + esc(site(c)) + '</a>' : '') + '</div>'
+			+ ((S.detOpen || {})[c.id] ? '<div class="dd-kv dd-kvmore">' + dr('Project', esc(c.job)) + dr('Lead source', isel('lead_source', SOURCES, c.lead_source)) + dr('Pays via', isel('pay_method', PAYS, c.pay_method)) + dr('Started', started ? fmt(started, true) : '') + '</div>' : '')
+			+ '<button type="button" class="dd-dettog" data-dettog="' + c.id + '" aria-expanded="' + !!(S.detOpen || {})[c.id] + '">' + ((S.detOpen || {})[c.id] ? 'Fewer details' : 'Project, lead source, pays via, started') + lu('chevron-down', 14) + '</button>' + driveRow + obRow);
 		// contacts
 		var ppl = peopleOf(c), pform = (peopleCard(c).match(/<form class="dwdc-pplf"[\s\S]*?<\/form>/) || [''])[0];
 		var contacts = card('k-ppl', 'Contacts', ppl.length ? String(ppl.length) : '', '<button type="button" class="dd-hlink" data-ppladd="1">+ Add</button>',
@@ -4302,6 +4303,7 @@
 		if ((el = t.closest('[data-rdyq]'))) { var rqid = +el.getAttribute('data-rdyq'); S.rdyBusy = S.rdyBusy || {}; S.rdyBusy[rqid] = 1; S.rdyOpen = S.rdyOpen || {}; S.rdyOpen[rqid] = true; render(); readySet(rqid, { act: 'questions' }).then(function (x) { S.rdyBusy[rqid] = 0; render(); toast(x.questions && x.questions.list && x.questions.list.length ? x.questions.list.length + ' open question' + (x.questions.list.length === 1 ? '' : 's') + ' found' : 'Nothing important left open'); }).catch(function (er) { S.rdyBusy[rqid] = 0; render(); fail(er); }); return; }
 		if ((el = t.closest('[data-rdyemail]'))) { readyEmail(+el.getAttribute('data-rdyemail')); return; }
 		if ((el = t.closest('[data-healthtog]'))) { S.healthOpen = !S.healthOpen; render(); return; }
+		if ((el = t.closest('[data-dettog]'))) { var dtid = el.getAttribute('data-dettog'); S.detOpen = S.detOpen || {}; S.detOpen[dtid] = !S.detOpen[dtid]; render(); return; }
 		if ((el = t.closest('[data-taxsave]'))) {
 			var tpct = app.querySelector('[data-taxpct]'), tpaid = app.querySelector('[data-taxpaid]'), tcal = app.querySelector('[data-taxcal]');
 			var taccts = [].map.call(app.querySelectorAll('[data-taxacct]:checked'), function (x) { return x.value; });
