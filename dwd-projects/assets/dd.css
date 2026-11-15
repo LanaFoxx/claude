@@ -957,3 +957,6 @@ section.dd-health.warn .dd-healthb .dd-hld { background: var(--warning-text); }
 .dd .dd-txf .dd-btn[data-txtsend] { background: var(--text); border-color: var(--text); color: var(--surface) !important; }
 .dd .dd-txf .dd-btn[data-txtsend]:hover { opacity: .88; background: var(--text); }
 @media (min-width: 1101px) { .dd .dd-mt2 > .k-txt:not(:only-child) > p { flex: 1 1 0; } }
+/* Emails: unread rows sit on a slightly brighter background */
+.dd .dd-mrow.new, .dd .dd-mrow.new > .dd-mhead { background: var(--surface-2); }
+.dd .dd-mrow.new > .dd-mhead:hover { background: var(--hover); }
