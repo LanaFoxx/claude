@@ -390,3 +390,11 @@
 .dd-kv + .dd-dettog { margin-top: -10px !important; }
 /* Phones: the line under the project name repeats Details (project, site, lead source, started), so it's left out */
 @media (max-width: 767px) { .dd-pp-head .dd-pp-t > p { display: none; } }
+/* Phones: short labels, and the Drive folder's Open / Copy / Email on one line */
+@media (max-width: 767px) {
+	.dd .dd-nomob { display: none !important; }
+	.dd .dd-mobonly { display: inline !important; }
+	.dd .dd-drvbtns { flex-wrap: nowrap !important; gap: 8px !important; }
+	.dd .dd-drvbtns > .dd-btn { flex: 1 1 auto; min-width: 0; padding-left: 10px !important; padding-right: 10px !important; gap: 6px; white-space: nowrap; justify-content: center; }
+	.dd .dd-drvbtns > .dd-btn.ghost { border: 1px solid var(--border-strong); }
+}
