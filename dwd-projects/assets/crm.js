@@ -2046,7 +2046,7 @@
 	// "Copy onboarding link": sits on its own line under each Send onboarding form button.
 	function obCopy() { return DWDC.obLink ? '<span class="dd-obcopy"><button type="button" class="dd-btn secondary sm" data-copy="' + esc(DWDC.obLink) + '" title="' + esc(DWDC.obLink) + '">' + lu('link', 14) + 'Copy onboarding link</button></span>' : ''; }
 	function zoomBox(key, ids) {
-		var title = '<header class="dd-ch2"><span class="dd-lt z">' + lu('play', 16) + '</span><div><h2>Zoom meeting</h2><small>Send a Zoom invite and join from here</small></div></header>'
+		var title = '<header class="dd-ch2"><span class="dd-lt z">' + lu('video', 16) + '</span><div><h2>Zoom meeting</h2></div></header>'
 			// Quick links to paste into a message: your Zoom room and your Calendly booking page.
 			+ '<div class="dd-zcopy">' + (DWDC.zoomLink ? '<button type="button" class="dd-btn secondary sm" data-copy="' + esc(DWDC.zoomLink) + '" title="' + esc(DWDC.zoomLink) + '">' + lu('copy', 14) + 'Copy Zoom link</button>' : DWDC.zoomApi ? '<button type="button" class="dd-btn secondary sm" data-zoomlink>' + lu('copy', 14) + 'Copy Zoom link</button>' : '')
 			+ (DWDC.calendly ? '<button type="button" class="dd-btn secondary sm" data-copy="' + esc(DWDC.calendly) + '" title="' + esc(DWDC.calendly) + '">' + lu('calendar', 14) + 'Copy Calendly link</button>' : '') + '</div>';

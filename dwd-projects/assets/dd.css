@@ -1033,3 +1033,5 @@ section.dd-health.warn .dd-healthb .dd-hld { background: var(--warning-text); }
 }
 /* Project page: every box title icon is the same blue as the Emails envelope */
 .dd .dd-pc2 > header h2 > .lu { color: var(--accent-text, #8da0f7) !important; }
+/* Zoom box: title sits level with its icon now that there is no line under it */
+.dd .dd-ch2 { align-items: center; }
