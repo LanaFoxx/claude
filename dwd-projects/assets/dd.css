@@ -746,7 +746,8 @@ input[type=date], input[type=datetime-local] { cursor: pointer; }
 @media (max-width: 767px) { .dd-inv-it { grid-template-columns: minmax(0, 1fr) 104px 28px; gap: 8px; } .dd .dd-card p.dd-invh { padding-left: 16px !important; padding-right: 16px !important; } }
 /* Project lists: no due-date column (Completed keeps its Finished date) */
 .dd .dd-prow > .due, .dd .dd-prow.head > :nth-child(6) { display: none; }
-@media (min-width: 1280px) { .dd .dd-prow { grid-template-columns: 28px minmax(0, 1.7fr) minmax(0, 1.4fr) 100px 100px 120px minmax(0, 1.4fr) 64px; } }
-@media (min-width: 768px) and (max-width: 1279px) { .dd .dd-prow { grid-template-columns: 28px minmax(0, 1.7fr) minmax(0, 1.3fr) 90px 90px 110px 56px; } }
+/* Roomier: wider money columns, more space between columns, taller rows */
+@media (min-width: 1280px) { .dd .dd-prow { grid-template-columns: 28px minmax(0, 1.6fr) minmax(0, 1.3fr) 104px 150px 132px minmax(0, 1.3fr) 64px; column-gap: 28px; min-height: 76px; padding-left: 16px; padding-right: 12px; } .dd .dd-prow.head { min-height: 44px; } }
+@media (min-width: 768px) and (max-width: 1279px) { .dd .dd-prow { grid-template-columns: 28px minmax(0, 1.7fr) minmax(0, 1.2fr) 92px 132px 120px 56px; column-gap: 20px; min-height: 72px; } .dd .dd-prow.head { min-height: 42px; } }
 .g-projects.nodue > span:nth-child(5) { display: none !important; }
 .g-projects.nodue { grid-template-columns: minmax(250px, 2fr) minmax(170px, 1.2fr) 90px 90px 130px minmax(130px, 1.1fr) !important; }
