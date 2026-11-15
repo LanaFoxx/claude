@@ -43,11 +43,62 @@ function dwds_project_for( $email, $name = '' ) {
 }
 
 /**
+ * The project an invoice made in Dream Desk belongs to. Every invoice carries its project: Stripe in the metadata
+ * (dream_desk_project), PayPal in the reference ("Dream Desk project 123"); failing that, the invoice id or number
+ * is looked up in the projects' invoice lists. Never guessed from the client's email, so a client with two open
+ * projects gets the payment on the project the invoice was made from.
+ */
+function dwds_invoice_project( $via, $id = '', $number = '', $tag = '' ) {
+	$tag = (int) preg_replace( '/\D/', '', (string) $tag );
+	if ( $tag && DWDC_CONTACT === get_post_type( $tag ) ) {
+		return $tag;
+	}
+	$id     = (string) $id;
+	$number = (string) $number;
+	if ( '' === $id && '' === $number ) {
+		return 0;
+	}
+	foreach ( get_posts( array( 'post_type' => DWDC_CONTACT, 'post_status' => 'any', 'posts_per_page' => -1, 'fields' => 'ids', 'meta_key' => '_dwdc_invoices' ) ) as $pid ) { // phpcs:ignore
+		foreach ( (array) get_post_meta( $pid, '_dwdc_invoices', true ) as $v ) {
+			if ( ! is_array( $v ) || ( $v['via'] ?? '' ) !== $via ) {
+				continue;
+			}
+			if ( ( '' !== $id && (string) ( $v['id'] ?? '' ) === $id ) || ( '' !== $number && (string) ( $v['number'] ?? '' ) === $number ) ) {
+				return (int) $pid;
+			}
+		}
+	}
+	return 0;
+}
+
+/** PayPal's reference on Dream Desk invoices reads "Dream Desk project 123": the project id, or ''. */
+function dwds_paypal_tag( $reference ) {
+	return preg_match( '/Dream Desk project\s+(\d+)/i', (string) $reference, $m ) ? $m[1] : '';
+}
+
+/** Mark a Dream Desk invoice paid on its project as soon as its payment is logged. */
+function dwds_invoice_paid( $pid, $via, $id = '', $number = '' ) {
+	$list = get_post_meta( (int) $pid, '_dwdc_invoices', true );
+	if ( ! is_array( $list ) ) {
+		return;
+	}
+	foreach ( $list as $k => $v ) {
+		if ( is_array( $v ) && ( $v['via'] ?? '' ) === $via && ( ( '' !== (string) $id && (string) ( $v['id'] ?? '' ) === (string) $id ) || ( '' !== (string) $number && (string) ( $v['number'] ?? '' ) === (string) $number ) ) ) {
+			$list[ $k ]['status']  = 'paid';
+			$list[ $k ]['paid_at'] = $list[ $k ]['paid_at'] ?? current_time( 'Y-m-d' );
+			update_post_meta( (int) $pid, '_dwdc_invoices', $list );
+			return;
+		}
+	}
+}
+
+/**
  * Add a payment to a project unless that reference is already there.
+ * $pid: the project when it is already known (an invoice made in Dream Desk); otherwise found by email.
  *
  * @return string 'added', 'duplicate' or 'unmatched'.
  */
-function dwds_log_payment( $source, $email, $who, $amount, $date, $ref, $note = '' ) {
+function dwds_log_payment( $source, $email, $who, $amount, $date, $ref, $note = '', $pid = 0 ) {
 	$amount = round( (float) $amount, 2 );
 	if ( $amount <= 0 || ! $ref ) {
 		return 'skipped';
@@ -56,7 +107,7 @@ function dwds_log_payment( $source, $email, $who, $amount, $date, $ref, $note = 
 	if ( isset( $seen[ $source . ':' . $ref ] ) ) {
 		return 'duplicate';
 	}
-	$pid = dwds_project_for( $email, $who );
+	$pid = ( $pid && DWDC_CONTACT === get_post_type( (int) $pid ) ) ? (int) $pid : dwds_project_for( $email, $who );
 	if ( ! $pid ) {
 		if ( function_exists( 'dwdc_add_task' ) ) {
 			dwdc_add_task( sprintf( '%s payment of $%s from %s (%s) – assign it to a project', $source, number_format( $amount, 2 ), $who ?: $email ?: 'unknown payer', $date ), 0, current_time( 'Y-m-d' ) );
@@ -126,7 +177,11 @@ function dwds_stripe_webhook( WP_REST_Request $r ) {
 	$obj = $e['data']['object'] ?? array();
 	$res = 'ignored';
 	if ( 'invoice.paid' === ( $e['type'] ?? '' ) ) {
-		$res = dwds_log_payment( 'Stripe', $obj['customer_email'] ?? '', $obj['customer_name'] ?? '', ( $obj['amount_paid'] ?? 0 ) / 100, gmdate( 'Y-m-d', (int) ( $obj['status_transitions']['paid_at'] ?? time() ) ), $obj['number'] ?? $obj['id'] ?? '', 'Stripe invoice ' . ( $obj['number'] ?? '' ) );
+		$ipid = dwds_invoice_project( 'stripe', $obj['id'] ?? '', $obj['number'] ?? '', $obj['metadata']['dream_desk_project'] ?? '' );
+		$res  = dwds_log_payment( 'Stripe', $obj['customer_email'] ?? '', $obj['customer_name'] ?? '', ( $obj['amount_paid'] ?? 0 ) / 100, gmdate( 'Y-m-d', (int) ( $obj['status_transitions']['paid_at'] ?? time() ) ), $obj['number'] ?? $obj['id'] ?? '', 'Stripe invoice ' . ( $obj['number'] ?? '' ), $ipid );
+		if ( $ipid ) {
+			dwds_invoice_paid( $ipid, 'stripe', $obj['id'] ?? '', $obj['number'] ?? '' );
+		}
 	} elseif ( 'charge.succeeded' === ( $e['type'] ?? '' ) && empty( $obj['invoice'] ) && empty( $obj['metadata']['order_id'] ) ) {
 		// One-off charges that aren't invoices and aren't WooCommerce hosting orders (those are tracked by WooCommerce).
 		$res = dwds_log_payment( 'Stripe', $obj['billing_details']['email'] ?? $obj['receipt_email'] ?? '', $obj['billing_details']['name'] ?? '', ( $obj['amount'] ?? 0 ) / 100, gmdate( 'Y-m-d', (int) ( $obj['created'] ?? time() ) ), $obj['id'] ?? '', 'Stripe payment' );
@@ -183,7 +238,11 @@ function dwds_paypal_webhook( WP_REST_Request $r ) {
 		$email = $inv['primary_recipients'][0]['billing_info']['email_address'] ?? '';
 		$name  = trim( ( $inv['primary_recipients'][0]['billing_info']['name']['given_name'] ?? '' ) . ' ' . ( $inv['primary_recipients'][0]['billing_info']['name']['surname'] ?? '' ) );
 		$amt   = $inv['payments']['paid_amount']['value'] ?? $inv['amount']['value'] ?? 0;
-		$res   = dwds_log_payment( 'PayPal', $email, $name, $amt, substr( (string) ( $inv['payments']['transactions'][0]['payment_date'] ?? current_time( 'Y-m-d' ) ), 0, 10 ), 'INV-' . ( $inv['detail']['invoice_number'] ?? $inv['id'] ?? '' ), 'PayPal invoice ' . ( $inv['detail']['invoice_number'] ?? '' ) );
+		$ipid  = dwds_invoice_project( 'paypal', $inv['id'] ?? '', $inv['detail']['invoice_number'] ?? '', dwds_paypal_tag( $inv['detail']['reference'] ?? '' ) );
+		$res   = dwds_log_payment( 'PayPal', $email, $name, $amt, substr( (string) ( $inv['payments']['transactions'][0]['payment_date'] ?? current_time( 'Y-m-d' ) ), 0, 10 ), 'INV-' . ( $inv['detail']['invoice_number'] ?? $inv['id'] ?? '' ), 'PayPal invoice ' . ( $inv['detail']['invoice_number'] ?? '' ), $ipid );
+		if ( $ipid ) {
+			dwds_invoice_paid( $ipid, 'paypal', $inv['id'] ?? '', $inv['detail']['invoice_number'] ?? '' );
+		}
 	} elseif ( in_array( $t, array( 'PAYMENT.CAPTURE.COMPLETED', 'PAYMENT.SALE.COMPLETED' ), true ) && empty( $o['invoice_id'] ) ) {
 		$amt = $o['amount']['value'] ?? $o['amount']['total'] ?? 0;
 		$res = dwds_log_payment( 'PayPal', $o['payer']['email_address'] ?? '', '', $amt, substr( (string) ( $o['create_time'] ?? current_time( 'c' ) ), 0, 10 ), $o['id'] ?? '', 'PayPal payment' );
@@ -335,7 +394,7 @@ add_action( 'rest_api_init', function () {
 				'stripe' => array( 'url' => rest_url( 'dwd/v1/stripe-webhook' ), 'ready' => (bool) get_option( 'dwds_stripe_whsec', '' ), 'key' => (bool) get_option( 'dwds_stripe_key', '' ), 'last' => get_option( 'dwds_last_stripe', '' ) ),
 				'paypal' => array( 'url' => rest_url( 'dwd/v1/paypal-webhook' ), 'ready' => (bool) ( get_option( 'dwds_paypal_id' ) && get_option( 'dwds_paypal_secret' ) && get_option( 'dwds_paypal_hook' ) ), 'last' => get_option( 'dwds_last_paypal', '' ) ),
 				'upwork' => array( 'last' => get_option( 'dwds_last_upwork', '' ), 'files' => array_values( dwds_files() ) ),
-				'fireflies' => array( 'ready' => (bool) get_option( 'dwds_fireflies_key', '' ), 'last' => (string) get_option( 'dwdff_last', '' ), 'count' => count( (array) get_option( 'dwdff_data', array() ) ) ),
+				'fireflies' => array( 'ready' => (bool) get_option( 'dwds_fireflies_key', '' ), 'last' => (string) get_option( 'dwdff_last', '' ), 'count' => count( (array) get_option( 'dwdff_data', array() ) ), 'unfiled' => dwdff_unfiled() ),
 				'quo'    => array( 'ready' => (bool) get_option( 'dwds_quo_key', '' ), 'from' => (string) get_option( 'dwds_quo_from', '' ), 'numbers' => array_values( (array) get_option( 'dwds_quo_numbers', array() ) ) ),
 				'refreshed' => get_option( 'dwds_last_refresh', '' ),
 			);
@@ -695,8 +754,8 @@ function dwds_stripe_pull() {
 		$r = wp_remote_get( 'https://api.stripe.com/v1/' . $path, array( 'timeout' => 30, 'headers' => array( 'Authorization' => 'Bearer ' . $key ) ) );
 		return json_decode( wp_remote_retrieve_body( $r ), true );
 	};
-	$take = function ( $email, $who, $amount, $date, $ref, $note ) use ( &$out ) {
-		$pid = dwds_project_for( $email, $who );
+	$take = function ( $email, $who, $amount, $date, $ref, $note, $ipid = 0 ) use ( &$out ) {
+		$pid = $ipid ? $ipid : dwds_project_for( $email, $who );
 		if ( dwds_seen_anywhere( 'Stripe', $ref, $amount, $date ) ) {
 			$out['already']++;
 			return;
@@ -705,7 +764,7 @@ function dwds_stripe_pull() {
 			$out['unmatched']++; // old and unmatched: count it, don't flood the to-do list
 			return;
 		}
-		$r = dwds_log_payment( 'Stripe', $email, $who, $amount, $date, $ref, $note );
+		$r = dwds_log_payment( 'Stripe', $email, $who, $amount, $date, $ref, $note, $ipid );
 		$out[ 'added' === $r ? 'added' : ( 'unmatched' === $r ? 'unmatched' : 'already' ) ]++;
 	};
 	$after = '';
@@ -718,7 +777,7 @@ function dwds_stripe_pull() {
 			break;
 		}
 		foreach ( $j['data'] as $o ) {
-			$take( $o['customer_email'] ?? '', $o['customer_name'] ?? '', ( $o['amount_paid'] ?? 0 ) / 100, gmdate( 'Y-m-d', (int) ( $o['status_transitions']['paid_at'] ?? $o['created'] ) ), $o['number'] ?? $o['id'], 'Stripe invoice ' . ( $o['number'] ?? '' ) );
+			$take( $o['customer_email'] ?? '', $o['customer_name'] ?? '', ( $o['amount_paid'] ?? 0 ) / 100, gmdate( 'Y-m-d', (int) ( $o['status_transitions']['paid_at'] ?? $o['created'] ) ), $o['number'] ?? $o['id'], 'Stripe invoice ' . ( $o['number'] ?? '' ), dwds_invoice_project( 'stripe', $o['id'] ?? '', $o['number'] ?? '', $o['metadata']['dream_desk_project'] ?? '' ) );
 			$after = $o['id'];
 		}
 		if ( empty( $j['has_more'] ) ) {
@@ -773,7 +832,8 @@ function dwds_paypal_pull() {
 				$who   = $t['payer_info']['payer_name']['alternate_full_name'] ?? '';
 				$date  = substr( (string) ( $ti['transaction_initiation_date'] ?? '' ), 0, 10 );
 				$ref   = (string) ( $ti['transaction_id'] ?? '' );
-				$pid   = dwds_project_for( $email, $who );
+				$ipid  = ! empty( $ti['invoice_id'] ) ? dwds_invoice_project( 'paypal', '', (string) $ti['invoice_id'] ) : 0; // paid a Dream Desk invoice
+				$pid   = $ipid ? $ipid : dwds_project_for( $email, $who );
 				if ( dwds_seen_anywhere( 'PayPal', $ref, $amt, $date ) ) {
 					$out['already']++;
 					continue;
@@ -782,7 +842,7 @@ function dwds_paypal_pull() {
 					$out['unmatched']++;
 					continue;
 				}
-				$res = dwds_log_payment( 'PayPal', $email, $who, $amt, $date, $ref, 'PayPal payment' );
+				$res = dwds_log_payment( 'PayPal', $email, $who, $amt, $date, $ref, $ipid ? 'PayPal invoice ' . $ti['invoice_id'] : 'PayPal payment', $ipid );
 				$out[ 'added' === $res ? 'added' : ( 'unmatched' === $res ? 'unmatched' : 'already' ) ]++;
 			}
 			$page++;
@@ -1410,6 +1470,8 @@ function dwdq_match() {
 		return $own;
 	}
 	$mine = array_column( $own, 'number' );
+	$line = dwdq_from(); // only the Dream Web Digital line: Mojo's and Tax Pro Design numbers are other businesses
+	$line = is_wp_error( $line ) ? '' : (string) $line['id'];
 	$seen = array();
 	$tok  = '';
 	for ( $i = 0; $i < 15; $i++ ) {
@@ -1418,6 +1480,9 @@ function dwdq_match() {
 			return $j;
 		}
 		foreach ( (array) ( $j['data'] ?? array() ) as $c ) {
+			if ( '' !== $line && ! empty( $c['phoneNumberId'] ) && (string) $c['phoneNumberId'] !== $line ) {
+				continue;
+			}
 			foreach ( (array) ( $c['participants'] ?? array() ) as $n ) {
 				$n = dwdq_e164( (string) $n );
 				if ( '' !== $n && ! in_array( $n, $mine, true ) ) {
@@ -1555,13 +1620,19 @@ function dwdff_sync() {
 			}
 			$title = sanitize_text_field( (string) ( $t['title'] ?? '' ) );
 			$pid   = (int) ( $old['pid'] ?? 0 );
+			$how   = (string) ( $old['how'] ?? '' );
 			if ( ! $pid || empty( $old['fixed'] ) ) {
 				$pid = 0;
+				$how = '';
 				foreach ( $guests as $e ) {
 					$pid = $pid ? $pid : dwds_project_for( $e );
 				}
 				if ( ! $pid && preg_match( '/^(.+?)\s+and\s+Dream Web Digital/i', $title, $m ) ) { // "Blake Reynolds and Dream Web Digital"
 					$pid = dwdff_by_name( $m[1] );
+				}
+				if ( ! $pid ) { // no guest or name to go on: the calendar call happening at the same time
+					$pid = dwdff_cal_match( gmdate( 'c', (int) ( (float) ( $t['date'] ?? 0 ) / 1000 ) ), (float) ( $t['duration'] ?? 0 ) );
+					$how = $pid ? 'calendar' : '';
 				}
 			}
 			$sum = (array) ( $t['summary'] ?? array() );
@@ -1576,6 +1647,7 @@ function dwdff_sync() {
 				'actions' => sanitize_textarea_field( (string) ( $sum['action_items'] ?? '' ) ),
 				'pid'     => (int) $pid,
 				'fixed'   => ! empty( $old['fixed'] ),
+				'how'     => $how,
 			);
 			if ( ! $old ) {
 				$new++;
@@ -1587,11 +1659,108 @@ function dwdff_sync() {
 			break;
 		}
 	}
+	// Older recordings still not filed: try the calendar again (calls are added to the log as the calendar syncs).
+	foreach ( $all as $id => $x ) {
+		if ( empty( $x['pid'] ) && empty( $x['fixed'] ) ) {
+			$p = dwdff_cal_match( $x['date'], (float) ( $x['mins'] ?? 0 ) );
+			if ( $p ) {
+				$all[ $id ]['pid'] = $p;
+				$all[ $id ]['how'] = 'calendar';
+			}
+		}
+	}
 	uasort( $all, function ( $a, $b ) { return strcmp( $b['date'], $a['date'] ); } );
 	$all = array_slice( $all, 0, 400, true );
 	update_option( 'dwdff_data', $all, false );
 	update_option( 'dwdff_last', current_time( 'mysql' ), false );
 	return array( 'new' => $new, 'total' => count( $all ) );
+}
+
+/**
+ * Calendar calls kept for matching recordings (6 months): event id => start, end, title, who, guests, pid.
+ * Fed by the Google Calendar sync every 15 minutes (meetings.php), and seeded with the booked calls already on file.
+ */
+function dwdff_cal_log( $meetings ) {
+	$log   = (array) get_option( 'dwdff_cal', array() );
+	$known = (array) get_option( 'dwdin_meets', array() );
+	if ( ! $log ) {
+		foreach ( $known as $id => $k ) {
+			if ( ! empty( $k['start'] ) && ! empty( $k['pid'] ) ) {
+				$log[ $id ] = array( 'start' => gmdate( 'c', strtotime( $k['start'] ) ), 'end' => gmdate( 'c', strtotime( $k['start'] ) + HOUR_IN_SECONDS ), 'title' => '', 'who' => '', 'guests' => array(), 'pid' => (int) $k['pid'] );
+			}
+		}
+	}
+	foreach ( (array) $meetings as $m ) {
+		if ( empty( $m['id'] ) || empty( $m['start'] ) ) {
+			continue;
+		}
+		$ext = array_values( array_filter( (array) ( $m['guests'] ?? array() ), function ( $g ) { return false === stripos( (string) $g, 'dreamwebdigital.com' ); } ) );
+		$log[ $m['id'] ] = array(
+			'start'  => gmdate( 'c', strtotime( $m['start'] ) ),
+			'end'    => gmdate( 'c', strtotime( $m['end'] ?? $m['start'] ) ),
+			'title'  => (string) ( $m['title'] ?? '' ),
+			'who'    => (string) ( $m['who'] ?? '' ),
+			'guests' => array_slice( $ext, 0, 5 ),
+			'pid'    => (int) ( $known[ $m['id'] ]['pid'] ?? ( $log[ $m['id'] ]['pid'] ?? 0 ) ),
+		);
+	}
+	$cut = gmdate( 'c', time() - 180 * DAY_IN_SECONDS );
+	$log = array_filter( $log, function ( $x ) use ( $cut ) { return (string) $x['start'] >= $cut; } );
+	update_option( 'dwdff_cal', $log, false );
+	return count( $log );
+}
+
+/** The project of a calendar call: its booked-call link, then a guest's email, then the name in the title. */
+function dwdff_cal_pid( $ev ) {
+	if ( ! empty( $ev['pid'] ) && DWDC_CONTACT === get_post_type( (int) $ev['pid'] ) ) {
+		return (int) $ev['pid'];
+	}
+	foreach ( (array) ( $ev['guests'] ?? array() ) as $g ) {
+		$p = dwds_project_for( $g );
+		if ( $p ) {
+			return $p;
+		}
+	}
+	$name = (string) ( $ev['who'] ?? '' );
+	if ( '' === $name && preg_match( '/\bwith\s+([A-Z][\w\'-]+(?:\s+[A-Z][\w\'-]*)?)/', (string) ( $ev['title'] ?? '' ), $m ) ) {
+		$name = $m[1];
+	}
+	return '' !== trim( $name ) ? dwdff_by_name( $name ) : 0;
+}
+
+/** The project of the calendar call that was on at this time (recording start within the call, 20 minutes either side). */
+function dwdff_cal_match( $start, $mins = 0 ) {
+	$t = strtotime( (string) $start );
+	if ( ! $t ) {
+		return 0;
+	}
+	$best = array( 0, PHP_INT_MAX );
+	foreach ( (array) get_option( 'dwdff_cal', array() ) as $ev ) {
+		$s = strtotime( (string) $ev['start'] );
+		$e = max( $s + 15 * MINUTE_IN_SECONDS, (int) strtotime( (string) $ev['end'] ) );
+		if ( $t < $s - 20 * MINUTE_IN_SECONDS || $t > $e + 5 * MINUTE_IN_SECONDS ) {
+			continue;
+		}
+		$gap = abs( $t - $s );
+		if ( $gap < $best[1] ) {
+			$p = dwdff_cal_pid( $ev );
+			if ( $p ) {
+				$best = array( $p, $gap );
+			}
+		}
+	}
+	return $best[0];
+}
+
+/** Recordings not filed on any project, newest first, for filing by hand. */
+function dwdff_unfiled() {
+	$out = array();
+	foreach ( (array) get_option( 'dwdff_data', array() ) as $x ) {
+		if ( empty( $x['pid'] ) && empty( $x['fixed'] ) ) {
+			$out[] = array( 'id' => $x['id'], 'title' => $x['title'], 'date' => $x['date'], 'mins' => (int) ( $x['mins'] ?? 0 ), 'summary' => mb_substr( (string) ( $x['summary'] ?? '' ), 0, 220 ) );
+		}
+	}
+	return array_slice( $out, 0, 80 );
 }
 
 /** A project whose contact person or client is called this (exact, then first name). */
@@ -1794,7 +1963,14 @@ function dwdx_build( $pid ) {
 	foreach ( (array) ( $drive['files'] ?? array() ) as $d ) {
 		$p    = $uniq( 'assets/drive/' . ( '' !== (string) $d['path'] ? trim( preg_replace( '/[^A-Za-z0-9 _\-\/]/', '', (string) $d['path'] ), '/' ) . '/' : '' ) . sanitize_file_name( $d['name'] ) );
 		$note = '';
-		if ( (int) $d['size'] > 80 * MB_IN_BYTES || $total + (int) $d['size'] > 400 * MB_IN_BYTES ) {
+		$got = (int) $d['size'] <= 20 * MB_IN_BYTES && $total + (int) $d['size'] <= 400 * MB_IN_BYTES && function_exists( 'dwddr_get' ) ? dwddr_get( $d['id'] ) : null;
+		if ( is_array( $got ) ) { // through the Drive script: private files too, Google Docs / Sheets / Slides as PDF
+			if ( preg_match( '/\.pdf$/i', $got['name'] ) && ! preg_match( '/\.pdf$/i', $p ) ) {
+				$p = $uniq( $p . '.pdf' );
+			}
+			$zip->addFromString( $R . $p, $got['bytes'] );
+			$total += strlen( $got['bytes'] );
+		} elseif ( (int) $d['size'] > 80 * MB_IN_BYTES || $total + (int) $d['size'] > 400 * MB_IN_BYTES ) {
 			$note = 'too large to include';
 		} else {
 			$t = wp_tempnam( 'dwdx' );
@@ -1851,7 +2027,7 @@ function dwdx_build( $pid ) {
 	$design = '';
 	$derr   = '';
 	if ( function_exists( 'dwdc_ai_key' ) && dwdc_ai_key() ) {
-		$pack = "PROJECT BRIEF\n" . $brief . "\n\nFORM ANSWERS\n" . mb_substr( $forms, 0, 40000 ) . "\n\nCALLS (oldest first)" . mb_substr( $mtext, 0, 150000 ) . "\n\nEMAILS\n" . mb_substr( $etext, 0, 40000 ) . "\n\nTEXTS\n" . mb_substr( $ttext, 0, 10000 ) . "\n\nFILES SUPPLIED\n" . $files;
+		$pack = "MICHAEL'S HOUSE RULES (the design must follow these)\n" . dwdrb_rules() . "\n\n" . dwdrb_export_status( $pid ) . "PROJECT BRIEF\n" . $brief . "\n\nFORM ANSWERS\n" . mb_substr( $forms, 0, 40000 ) . "\n\nCALLS (oldest first)" . mb_substr( $mtext, 0, 150000 ) . "\n\nEMAILS\n" . mb_substr( $etext, 0, 40000 ) . "\n\nTEXTS\n" . mb_substr( $ttext, 0, 10000 ) . "\n\nFILES SUPPLIED\n" . $files;
 		$res  = wp_remote_post( 'https://api.anthropic.com/v1/messages', array(
 			'timeout' => 180,
 			'headers' => array( 'x-api-key' => dwdc_ai_key(), 'anthropic-version' => '2026-10-21', 'content-type' => 'application/json' ),
@@ -1893,14 +2069,8 @@ function dwdx_build( $pid ) {
 		. "2. Look through `assets/` so you know which logos, photos and documents exist.\n"
 		. "3. Write a short plan first: sitemap, the sections on each page, what content is still missing, and questions for the client. Show Michael the plan before building.\n"
 		. "4. Build the homepage first and show it before the inner pages.\n\n"
-		. "## How Michael builds\n\n"
-		. "- WordPress with Elementor Pro on the Hello Elementor theme, unless the brief says otherwise.\n"
-		. "- Fast pages: compressed images, no heavy plugins, nothing that hurts page speed.\n"
-		. "- On-page SEO on every page: one H1, sensible heading order, title and meta description, image alt text.\n"
-		. "- Mobile first. Check every section at phone width.\n"
-		. "- In side-by-side layouts, headings should wrap to the same number of lines on both sides.\n"
-		. "- Use the client's real words, photos and logo from this folder. Mark anything invented as a placeholder.\n"
-		. "- The client will edit the site themselves afterwards, so keep it simple to manage.\n\n"
+		. "## How Michael builds (his house rules)\n\n" . dwdrb_rules() . "\n\n"
+		. dwdrb_export_status( $pid )
 		. "## Rules\n\n"
 		. "- Where sources disagree, the most recent call or message wins. Say so when it happens.\n"
 		. "- Do not guess facts about the business (prices, addresses, licence numbers, claims). List them as questions instead.\n"
@@ -1917,6 +2087,24 @@ function dwdx_build( $pid ) {
 add_action( 'rest_api_init', function () {
 	$can = function () { return current_user_can( 'manage_options' ); };
 	register_rest_route( 'dwd/v1', '/crm/contact/(?P<id>\d+)/export', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) { return dwdx_build( (int) $r['id'] ); } ) );
+	// Past calendar events (same shape the calendar script sends), to file older recordings by their call.
+	register_rest_route( 'dwd/v1', '/crm/fireflies/calendar', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
+		$n   = dwdff_cal_log( dwdmt_parse( (array) $r->get_param( 'events' ) ) );
+		$all = (array) get_option( 'dwdff_data', array() );
+		$hit = 0;
+		foreach ( $all as $id => $x ) {
+			if ( empty( $x['pid'] ) && empty( $x['fixed'] ) ) {
+				$p = dwdff_cal_match( $x['date'], (float) ( $x['mins'] ?? 0 ) );
+				if ( $p ) {
+					$all[ $id ]['pid'] = $p;
+					$all[ $id ]['how'] = 'calendar';
+					$hit++;
+				}
+			}
+		}
+		update_option( 'dwdff_data', $all, false );
+		return array( 'calendar_calls' => $n, 'filed' => $hit, 'unfiled' => count( dwdff_unfiled() ) );
+	} ) );
 	register_rest_route( 'dwd/v1', '/crm/fireflies', array(
 		array( 'methods' => 'GET', 'permission_callback' => $can, 'callback' => function ( $r ) {
 			if ( $r->get_param( 'transcript' ) ) {

@@ -307,3 +307,241 @@ add_action( 'rest_api_init', function () {
 		return array( 'owners' => (object) dwdcm_new_counts() );
 	} ) );
 } );
+
+/**
+ * Who is waiting on whom, for every open project and lead.
+ *
+ * The latest message either way decides:
+ * - client emails (from the Gmail sync, calendar replies and newsletters left out),
+ * - texts on the Dream Web Digital Quo line (checked hourly for open projects; Mojo's and Tax Pro Design lines are ignored),
+ * - Upwork "sent you a message" emails (they arrive as notes on the project) count as the client writing,
+ * - emails sent from Dream Desk (notes starting "Emailed …") count as you writing.
+ * The client wrote last → "Waiting on you". You wrote last → "Waiting on client", with the number of days.
+ * "No reply needed" closes the conversation until the client writes again (also the way to clear an Upwork
+ * message you answered inside Upwork, since Dream Desk can't see your Upwork replies).
+ */
+
+/** Lists where a conversation can be open. */
+function dwdw_lists() {
+	return array( 'active', 'hold', 'limbo', 'leads' );
+}
+
+/** A real conversation email, not a calendar reply or a newsletter. */
+function dwdw_real_mail( $x ) {
+	if ( ! is_array( $x ) || empty( $x['date'] ) ) {
+		return false;
+	}
+	if ( preg_match( '/^\s*(accepted|declined|tentative(ly accepted)?|invitation|updated invitation|canceled event|cancelled event)\s*:/i', (string) ( $x['subject'] ?? '' ) ) ) {
+		return false;
+	}
+	if ( ! empty( $x['in'] ) && false !== stripos( (string) ( $x['body'] ?? '' ), 'unsubscribe' ) ) {
+		return false;
+	}
+	return true;
+}
+
+/** Latest email in and out for a list of stored emails: array( in => ISO, out => ISO ). */
+function dwdw_mail_last( $list ) {
+	$res = array( 'in' => '', 'out' => '' );
+	foreach ( is_array( $list ) ? $list : array() as $x ) {
+		if ( ! dwdw_real_mail( $x ) ) {
+			continue;
+		}
+		$t = strtotime( (string) $x['date'] );
+		if ( ! $t ) {
+			continue;
+		}
+		$k = ! empty( $x['in'] ) ? 'in' : 'out';
+		$t = gmdate( 'Y-m-d\TH:i:s\Z', $t );
+		if ( $t > $res[ $k ] ) {
+			$res[ $k ] = $t;
+		}
+	}
+	return $res;
+}
+
+// Keep a small summary next to the stored emails, so the lists never have to read every email.
+foreach ( array( 'added_post_meta', 'updated_post_meta' ) as $dwdw_hook ) {
+	add_action( $dwdw_hook, function ( $mid, $obj, $key, $val ) {
+		if ( '_dwdcm_mail' === $key ) {
+			update_post_meta( $obj, '_dwdw_mail', dwdw_mail_last( maybe_unserialize( $val ) ) );
+		}
+	}, 10, 4 );
+}
+
+function dwdw_mail_for( $pid ) {
+	$owner = function_exists( 'dwdcm_owner' ) ? (int) dwdcm_owner( $pid ) : (int) $pid;
+	$sum   = get_post_meta( $owner, '_dwdw_mail', true );
+	if ( ! is_array( $sum ) ) {
+		$sum = dwdw_mail_last( get_post_meta( $owner, '_dwdcm_mail', true ) ); // first time only
+		update_post_meta( $owner, '_dwdw_mail', $sum );
+	}
+	return $sum;
+}
+
+/** Notes: Upwork messages from the client (in) and emails sent from Dream Desk (out). */
+function dwdw_note_last( $pid ) {
+	$res   = array( 'in' => '', 'out' => '' );
+	$notes = get_post_meta( $pid, '_dwdc_notes', true );
+	foreach ( is_array( $notes ) ? $notes : array() as $n ) {
+		$txt = (string) ( $n['text'] ?? '' );
+		$k   = 0 === strpos( $txt, 'Upwork message' ) ? 'in' : ( 0 === strpos( $txt, 'Emailed ' ) ? 'out' : '' );
+		$t   = $k ? strtotime( (string) ( $n['date'] ?? '' ) . ' UTC' ) : 0;
+		if ( $t ) {
+			$t = gmdate( 'Y-m-d\TH:i:s\Z', $t );
+			if ( $t > $res[ $k ] ) {
+				$res[ $k ] = $t;
+			}
+		}
+	}
+	return $res;
+}
+
+/** Waiting state for one project: array( who => you|client|'', since, days, via ) or null when there is nothing to show. */
+function dwdw_state( $pid ) {
+	$list = (string) get_post_meta( $pid, '_dwdc_list', true );
+	if ( ! in_array( $list, dwdw_lists(), true ) || ( 'leads' === $list && 'lost' === get_post_meta( $pid, '_dwdc_stage', true ) ) ) {
+		return null;
+	}
+	$in    = array( '', '' );
+	$out   = array( '', '' );
+	$take  = function ( $t, $via, &$slot ) {
+		if ( $t && $t > $slot[0] ) {
+			$slot = array( $t, $via );
+		}
+	};
+	$m = dwdw_mail_for( $pid );
+	$take( $m['in'] ?? '', 'email', $in );
+	$take( $m['out'] ?? '', 'email', $out );
+	$x = get_post_meta( $pid, '_dwdw_txt', true );
+	if ( is_array( $x ) ) {
+		$take( $x['in'] ?? '', 'text', $in );
+		$take( $x['out'] ?? '', 'text', $out );
+	}
+	$n = dwdw_note_last( $pid );
+	$take( $n['in'], 'Upwork', $in );
+	$take( $n['out'], 'email', $out );
+	$clear = (string) get_post_meta( $pid, '_dwdw_clear', true );
+	$take( $clear, 'closed', $out );
+	if ( '' === $in[0] && '' === $out[0] ) {
+		return null;
+	}
+	if ( $in[0] > $out[0] ) {
+		$who   = 'you';
+		$since = $in[0];
+		$via   = $in[1];
+	} else {
+		$who   = 'closed' === $out[1] ? '' : 'client';
+		$since = $out[0];
+		$via   = $out[1];
+	}
+	return array( 'who' => $who, 'since' => $since, 'days' => max( 0, (int) floor( ( time() - strtotime( $since ) ) / DAY_IN_SECONDS ) ), 'via' => $via );
+}
+
+add_filter( 'dwdc_contact_row', function ( $c, $pid ) {
+	$c['wait'] = dwdw_state( $pid );
+	return $c;
+}, 10, 2 );
+
+/* ---------- Texts: latest message each way on the Dream Web Digital line, for open projects ---------- */
+
+/** Every phone number on a project (its own, its client's, extra contacts). */
+function dwdw_phones( $pid ) {
+	$out = array( get_post_meta( $pid, '_dwdc_phone', true ) );
+	$cl  = (int) get_post_meta( $pid, '_dwdc_client', true );
+	if ( $cl ) {
+		$out[] = get_post_meta( $cl, '_dwdcl_phone', true );
+	}
+	foreach ( (array) get_post_meta( $pid, '_dwdc_contacts', true ) as $x ) {
+		if ( is_array( $x ) && ! empty( $x['phone'] ) ) {
+			$out[] = $x['phone'];
+		}
+	}
+	$out = array_filter( array_map( 'dwdq_e164', array_filter( $out ) ) );
+	return array_values( array_unique( $out ) );
+}
+
+/** Store the latest text in and out from a list of messages [ { in, at } ]. */
+function dwdw_txt_store( $pid, $msgs ) {
+	$cur = get_post_meta( $pid, '_dwdw_txt', true );
+	$cur = is_array( $cur ) ? $cur : array( 'in' => '', 'out' => '' );
+	foreach ( (array) $msgs as $m ) {
+		$t = strtotime( (string) ( $m['at'] ?? '' ) );
+		if ( ! $t ) {
+			continue;
+		}
+		$k = ! empty( $m['in'] ) ? 'in' : 'out';
+		$t = gmdate( 'Y-m-d\TH:i:s\Z', $t );
+		if ( $t > (string) ( $cur[ $k ] ?? '' ) ) {
+			$cur[ $k ] = $t;
+		}
+	}
+	update_post_meta( $pid, '_dwdw_txt', $cur );
+}
+
+function dwdw_txt_sync() {
+	if ( ! get_option( 'dwds_quo_key', '' ) || ! function_exists( 'dwdq_from' ) ) {
+		return array( 'skipped' => 'Quo not connected' );
+	}
+	$from = dwdq_from();
+	if ( is_wp_error( $from ) ) {
+		return array( 'error' => $from->get_error_message() );
+	}
+	$n = 0;
+	foreach ( get_posts( array( 'post_type' => DWDC_CONTACT, 'post_status' => 'private', 'posts_per_page' => 60, 'fields' => 'ids', 'meta_key' => '_dwdc_list', 'meta_value' => dwdw_lists(), 'meta_compare' => 'IN', 'orderby' => 'modified', 'order' => 'DESC' ) ) as $pid ) { // phpcs:ignore
+		foreach ( dwdw_phones( $pid ) as $ph ) {
+			$j = dwdq_call( 'GET', '/messages?phoneNumberId=' . rawurlencode( $from['id'] ) . '&participants=' . rawurlencode( $ph ) . '&maxResults=20' );
+			if ( is_wp_error( $j ) ) {
+				continue;
+			}
+			$msgs = array();
+			foreach ( (array) ( $j['data'] ?? array() ) as $m ) {
+				$msgs[] = array( 'in' => 'incoming' === ( $m['direction'] ?? '' ), 'at' => (string) ( $m['createdAt'] ?? '' ) );
+			}
+			if ( $msgs ) {
+				dwdw_txt_store( $pid, $msgs );
+			}
+			$n++;
+		}
+	}
+	update_option( 'dwdw_txt_last', current_time( 'mysql' ), false );
+	return array( 'checked' => $n );
+}
+add_action( 'dwdw_hourly', 'dwdw_txt_sync' );
+add_action( 'init', function () {
+	if ( ! wp_next_scheduled( 'dwdw_hourly' ) ) {
+		wp_schedule_event( time() + 300, 'hourly', 'dwdw_hourly' );
+	}
+} );
+
+// Opening a project's texts, or sending one from Dream Desk, updates its state straight away.
+add_filter( 'rest_post_dispatch', function ( $res, $server, $req ) {
+	if ( ! preg_match( '#^/dwd/v1/crm/contact/(\d+)/texts$#', (string) $req->get_route(), $m ) || ! ( $res instanceof WP_REST_Response ) || $res->get_status() >= 300 ) {
+		return $res;
+	}
+	$d = $res->get_data();
+	if ( 'GET' === $req->get_method() && ! empty( $d['list'] ) ) {
+		dwdw_txt_store( (int) $m[1], $d['list'] );
+	} elseif ( 'POST' === $req->get_method() && ! empty( $d['ok'] ) ) {
+		dwdw_txt_store( (int) $m[1], array( array( 'in' => false, 'at' => gmdate( 'c' ) ) ) );
+		delete_post_meta( (int) $m[1], '_dwdw_clear' );
+	}
+	return $res;
+}, 10, 3 );
+
+add_action( 'rest_api_init', function () {
+	$can = function () { return current_user_can( 'manage_options' ); };
+	// "No reply needed" (act: clear) or undo it (act: undo).
+	register_rest_route( 'dwd/v1', '/crm/contact/(?P<id>\d+)/wait', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
+		$pid = (int) $r['id'];
+		if ( DWDC_CONTACT !== get_post_type( $pid ) ) {
+			return new WP_Error( 'dwdw', 'Project not found.', array( 'status' => 404 ) );
+		}
+		if ( 'undo' === $r->get_param( 'act' ) ) {
+			delete_post_meta( $pid, '_dwdw_clear' );
+		} else {
+			update_post_meta( $pid, '_dwdw_clear', gmdate( 'Y-m-d\TH:i:s\Z' ) );
+		}
+		return array( 'wait' => dwdw_state( $pid ) );
+	} ) );
+} );

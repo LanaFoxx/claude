@@ -821,3 +821,298 @@ function dwdbk_adspend() {
 	}
 	return array( 'months' => $m, 'google_on' => ! empty( $g['at'] ) );
 }
+
+/**
+ * Taxes: how much of this year's business income should be sitting aside, next to what is actually in the
+ * account(s) you keep it in, the estimated-tax due dates on the calendar, and a one-click year-end CSV for the CPA.
+ * The set-aside percentage is yours to set (ask the CPA once). Dream Desk does not give tax advice.
+ */
+
+function dwdtax_cfg() {
+	$c = (array) get_option( 'dwdtax', array() );
+	return array(
+		'pct'  => isset( $c['pct'] ) ? max( 0, min( 60, (float) $c['pct'] ) ) : 25.0,
+		'acct' => array_values( array_filter( array_map( 'strval', (array) ( $c['acct'] ?? array() ) ) ) ), // account last-4s the tax money sits in
+		'paid' => (array) ( $c['paid'] ?? array() ), // year => estimated tax already paid
+		'cal'  => ! empty( $c['cal'] ),
+		'made' => (array) ( $c['made'] ?? array() ), // due-date to-dos already added
+	);
+}
+
+/** Federal (and NC) estimated tax due dates for a tax year, moved off weekends. */
+function dwdtax_due_dates( $y ) {
+	$out = array();
+	foreach ( array( 'Q1' => $y . '-04-15', 'Q2' => $y . '-06-15', 'Q3' => $y . '-09-15', 'Q4' => ( $y + 1 ) . '-01-15' ) as $q => $d ) {
+		$t = strtotime( $d . ' 12:00:00' );
+		while ( (int) gmdate( 'N', $t ) >= 6 ) {
+			$t += DAY_IN_SECONDS;
+		}
+		$out[] = array( 'q' => $q, 'year' => (int) $y, 'date' => gmdate( 'Y-m-d', $t ) );
+	}
+	return $out;
+}
+
+/** Business income by month for a year (the same numbers as Money → Business revenue). */
+function dwdtax_months( $y ) {
+	$m = function_exists( 'dwdc_money_by_year' ) ? dwdc_money_by_year() : array();
+	return isset( $m[ $y ]['m'] ) ? array_map( 'floatval', $m[ $y ]['m'] ) : array_fill( 0, 12, 0 );
+}
+
+function dwdtax_summary() {
+	$c     = dwdtax_cfg();
+	$today = current_time( 'Y-m-d' );
+	$y     = (int) substr( $today, 0, 4 );
+	$mo    = (int) substr( $today, 5, 2 );
+	$q     = (int) ceil( $mo / 3 );
+	$m     = dwdtax_months( (string) $y );
+	$inQ   = array_sum( array_slice( $m, ( $q - 1 ) * 3, 3 ) );
+	$ytd   = array_sum( array_slice( $m, 0, $mo ) );
+	$paid  = (float) ( $c['paid'][ (string) $y ] ?? 0 );
+	$need  = max( 0, round( $ytd * $c['pct'] / 100 - $paid, 2 ) );
+	// Accounts that can hold the tax money (from the bank balances), and what's in the chosen ones.
+	$accts = array();
+	$held  = null;
+	$bal   = get_option( 'dwdpl_balances', array() );
+	foreach ( (array) ( $bal['accounts'] ?? array() ) as $a ) {
+		if ( ! preg_match( '/checking|savings|money market|depository|cd/i', (string) ( $a['type'] ?? '' ) ) ) {
+			continue;
+		}
+		$v       = isset( $a['available'] ) && null !== $a['available'] ? (float) $a['available'] : (float) ( $a['current'] ?? 0 );
+		$accts[] = array( 'mask' => (string) ( $a['mask'] ?? '' ), 'name' => (string) ( $a['name'] ?? '' ), 'type' => (string) ( $a['type'] ?? '' ), 'business' => ! empty( $a['business'] ), 'balance' => round( $v, 2 ) );
+		if ( in_array( (string) ( $a['mask'] ?? '' ), $c['acct'], true ) ) {
+			$held = round( (float) $held + $v, 2 );
+		}
+	}
+	$next = null;
+	foreach ( array_merge( dwdtax_due_dates( $y - 1 ), dwdtax_due_dates( $y ) ) as $d ) {
+		if ( $d['date'] >= $today ) {
+			$next = $d;
+			break;
+		}
+	}
+	return array(
+		'pct'      => $c['pct'],
+		'year'     => $y,
+		'quarter'  => $q,
+		'income_q' => round( $inQ, 2 ),
+		'set_q'    => round( $inQ * $c['pct'] / 100, 2 ),
+		'income_y' => round( $ytd, 2 ),
+		'set_y'    => round( $ytd * $c['pct'] / 100, 2 ),
+		'paid'     => $paid,
+		'need'     => $need,
+		'held'     => $held,
+		'held_at'  => (string) ( $bal['at'] ?? '' ),
+		'acct'     => $c['acct'],
+		'accounts' => $accts,
+		'next'     => $next,
+		'cal'      => $c['cal'],
+	);
+}
+
+add_filter( 'dwdc_crm_payload', function ( $p ) {
+	$p['tax'] = dwdtax_summary();
+	return $p;
+} );
+
+/** Put the next estimated-tax due dates on the business to-do list (and so the calendar), once each. */
+function dwdtax_calendar() {
+	$c = dwdtax_cfg();
+	if ( ! $c['cal'] || ! function_exists( 'dwdc_add_task' ) ) {
+		return 0;
+	}
+	$y     = (int) current_time( 'Y' );
+	$today = current_time( 'Y-m-d' );
+	$n     = 0;
+	foreach ( array_merge( dwdtax_due_dates( $y - 1 ), dwdtax_due_dates( $y ), dwdtax_due_dates( $y + 1 ) ) as $d ) {
+		$k = $d['year'] . $d['q'];
+		if ( $d['date'] < $today || $d['date'] > gmdate( 'Y-m-d', strtotime( $today ) + 400 * DAY_IN_SECONDS ) || isset( $c['made'][ $k ] ) ) {
+			continue;
+		}
+		$tid = dwdc_add_task( 'Estimated tax payment due (' . $d['q'] . ' ' . $d['year'] . ')', 0, $d['date'] );
+		if ( $tid ) {
+			update_post_meta( $tid, '_dwdc_due_manual', '1' );
+		}
+		$c['made'][ $k ] = 1;
+		$n++;
+	}
+	$raw         = (array) get_option( 'dwdtax', array() );
+	$raw['made'] = $c['made'];
+	update_option( 'dwdtax', $raw, false );
+	return $n;
+}
+add_action( 'dwdh_daily', 'dwdtax_calendar' );
+
+/** Every Upwork earning in the uploaded transaction reports (deduplicated): ref => row with gross and net. */
+function dwdtax_upwork_rows() {
+	$rows = array();
+	$span = array( '', '' );
+	foreach ( function_exists( 'dwds_files' ) ? dwds_files() : array() as $f ) {
+		$p = dwds_upwork_parse( (string) get_option( 'dwds_upf_' . $f['id'], '' ) );
+		if ( ! $p ) {
+			continue;
+		}
+		$span = array( '' === $span[0] ? $p['from'] : min( $span[0], $p['from'] ), max( $span[1], $p['to'] ) );
+		foreach ( $p['earn'] as $e ) {
+			$rows[ $e['ref'] . '|' . $e['date'] . '|' . $e['gross'] ] = $e;
+		}
+	}
+	return array( 'rows' => $rows, 'from' => $span[0], 'to' => $span[1] );
+}
+
+/** The year-end CSV for the CPA: income by source (Upwork at the full amount with its fees apart), Upwork costs, ads, business spending. */
+function dwdtax_export( $year ) {
+	$y   = (string) (int) $year;
+	$out = array();
+	$add = function ( $sec, $date, $what, $cat, $from, $amt, $note = '' ) use ( &$out ) {
+		$out[] = array( $sec, $date, $what, $cat, $from, '' === $amt ? '' : number_format( (float) $amt, 2, '.', '' ), $note );
+	};
+	// Income: Upwork from the transaction reports (gross and fees), everything else from the projects' payments.
+	$up    = dwdtax_upwork_rows();
+	$ugross = 0;
+	$ufee   = 0;
+	foreach ( $up['rows'] as $e ) {
+		if ( 0 !== strpos( (string) $e['date'], $y ) ) {
+			continue;
+		}
+		$ugross += $e['gross'];
+		$ufee   += $e['net'] - $e['gross'];
+	}
+	$src  = array( 'Stripe' => 0, 'PayPal' => 0, 'Other' => 0 );
+	$det  = array();
+	foreach ( get_posts( array( 'post_type' => DWDC_CONTACT, 'post_status' => 'private', 'posts_per_page' => -1, 'fields' => 'ids' ) ) as $pid ) {
+		foreach ( (array) get_post_meta( $pid, '_dwdc_payments', true ) as $p ) {
+			if ( ! is_array( $p ) || 0 !== strpos( (string) ( $p['date'] ?? '' ), $y ) ) {
+				continue;
+			}
+			$st = strtolower( (string) ( $p['status'] ?? 'paid' ) );
+			if ( in_array( $st, array( 'open', 'void', 'draft', 'failed', 'uncollectible', 'held' ), true ) ) {
+				continue;
+			}
+			$s   = (string) ( $p['source'] ?? 'Other' );
+			$amt = (float) preg_replace( '/[^\d.]/', '', (string) ( $p['amount'] ?? 0 ) ) * ( 'refunded' === $st ? -1 : 1 );
+			if ( 'Upwork' === $s ) {
+				continue; // from the Upwork reports instead, at the full amount
+			}
+			$k         = isset( $src[ $s ] ) ? $s : 'Other';
+			$src[ $k ] += $amt;
+			$det[]      = array( (string) $p['date'], html_entity_decode( get_the_title( $pid ), ENT_QUOTES ), $k, $amt, (string) ( $p['note'] ?? '' ) );
+		}
+	}
+	$total = $ugross + $src['Stripe'] + $src['PayPal'] + $src['Other'];
+	$add( 'Income summary', '', 'Upwork (full amount clients paid, before fees)', 'Income', 'Upwork', $ugross, $up['from'] ? 'From Upwork transaction reports covering ' . $up['from'] . ' to ' . $up['to'] : 'No Upwork reports uploaded' );
+	$add( 'Income summary', '', 'Stripe', 'Income', 'Stripe', $src['Stripe'] );
+	$add( 'Income summary', '', 'PayPal', 'Income', 'PayPal', $src['PayPal'] );
+	$add( 'Income summary', '', 'Other (Zelle, checks, bank transfers logged by hand)', 'Income', 'Other', $src['Other'] );
+	$add( 'Income summary', '', 'Total income', 'Income', '', $total );
+	$costs = array();
+	foreach ( (array) get_option( 'dwdc_upwork_costs', array() ) as $x ) {
+		if ( is_array( $x ) && 0 === strpos( (string) ( $x['date'] ?? '' ), $y ) ) {
+			$costs[] = $x;
+		}
+	}
+	$con = array_sum( array_map( function ( $x ) { return 'connects' === ( $x['type'] ?? '' ) ? (float) $x['amount'] : 0; }, $costs ) );
+	$mem = array_sum( array_map( function ( $x ) { return 'membership' === ( $x['type'] ?? '' ) ? (float) $x['amount'] : 0; }, $costs ) );
+	$ads = 0;
+	$adm = array();
+	foreach ( (array) ( get_option( 'dwdads_data', array() )['days'] ?? array() ) as $d => $x ) {
+		if ( 0 === strpos( (string) $d, $y ) ) {
+			$ads                       += (float) ( $x['cost'] ?? 0 );
+			$adm[ substr( $d, 0, 7 ) ] = ( $adm[ substr( $d, 0, 7 ) ] ?? 0 ) + (float) ( $x['cost'] ?? 0 );
+		}
+	}
+	$add( 'Expense summary', '', 'Upwork service fees', 'Platform fees', 'Upwork', -$ufee );
+	$add( 'Expense summary', '', 'Upwork Connects', 'Advertising', 'Upwork', $con );
+	$add( 'Expense summary', '', 'Upwork membership (Freelancer Plus)', 'Platform fees', 'Upwork', $mem );
+	$add( 'Expense summary', '', 'Google Ads', 'Advertising', 'Google Ads', $ads, $ads ? '' : 'No Google Ads data for this year' );
+	// Business spending from the bank feed (business side only).
+	$bk     = function_exists( 'dwdbk_get' ) ? dwdbk_get() : array( 'tx' => array(), 'cats' => array() );
+	$bycat  = array();
+	$rows   = array();
+	$owner  = 0;
+	foreach ( (array) $bk['tx'] as $t ) {
+		$amt = (float) ( $t['amt'] ?? 0 );
+		if ( 0 !== strpos( (string) ( $t['date'] ?? '' ), $y ) || $amt >= 0 || ! function_exists( 'dwdbk_is_biz' ) || ! dwdbk_is_biz( $t ) ) {
+			continue;
+		}
+		$u   = strtoupper( (string) ( $t['desc'] ?? '' ) );
+		$cat = (string) ( $bk['cats'][ (string) ( $t['m'] ?? '' ) ] ?? $t['cat'] ?? 'Other' );
+		if ( false !== strpos( $u, 'GUSTO' ) ) {
+			if ( 'Transfers' === (string) ( $t['cat'] ?? '' ) ) {
+				$owner += -$amt; // your own pay: listed for the CPA, not an expense
+				$rows[] = array( 'Owner pay through Gusto (not an expense)', $t['date'], (string) $t['desc'], 'Owner pay', (string) ( $t['acct'] ?? '' ), -$amt );
+				continue;
+			}
+			$cat = 'Taxes & Gov' === (string) ( $t['cat'] ?? '' ) ? 'Payroll taxes (Gusto)' : 'Payroll service (Gusto)';
+		} elseif ( 'Transfers' === $cat || preg_match( '/CRD PMT|CREDIT CARD PAYMENT|AUTOPAY PAYMENT|PAYMENT - THANK/', $u ) ) {
+			continue; // money moving between your own accounts
+		}
+		$bycat[ $cat ] = ( $bycat[ $cat ] ?? 0 ) + -$amt;
+		$rows[]        = array( 'Business spending detail', $t['date'], (string) $t['desc'], $cat, (string) ( $t['acct'] ?? '' ), -$amt );
+	}
+	arsort( $bycat );
+	foreach ( $bycat as $cat => $v ) {
+		$add( 'Business spending by category', '', $cat, $cat, 'Bank feed (business side)', $v );
+	}
+	if ( $owner ) {
+		$add( 'Business spending by category', '', 'Owner pay through Gusto (not an expense, for reference)', 'Owner pay', 'Bank feed', $owner );
+	}
+	foreach ( $det as $d ) {
+		$add( 'Income detail (Stripe, PayPal, other)', $d[0], $d[1], 'Income', $d[2], $d[3], $d[4] );
+	}
+	foreach ( $up['rows'] as $e ) {
+		if ( 0 === strpos( (string) $e['date'], $y ) ) {
+			$add( 'Income detail (Upwork)', $e['date'], $e['team'] . ( $e['summary'] ? ': ' . $e['summary'] : '' ), $e['refund'] ? 'Refund to client' : 'Income', 'Upwork', $e['gross'], 'Fee ' . number_format( $e['net'] - $e['gross'], 2 ) . ' · paid out ' . number_format( $e['net'], 2 ) );
+		}
+	}
+	foreach ( $costs as $x ) {
+		$add( 'Upwork costs detail', (string) $x['date'], 'connects' === ( $x['type'] ?? '' ) ? ( (int) ( $x['qty'] ?? 0 ) . ' Connects' ) : 'Membership', 'connects' === ( $x['type'] ?? '' ) ? 'Advertising' : 'Platform fees', 'Upwork', (float) $x['amount'] );
+	}
+	ksort( $adm );
+	foreach ( $adm as $m => $v ) {
+		$add( 'Google Ads by month', $m, 'Google Ads spend', 'Advertising', 'Google Ads', $v );
+	}
+	foreach ( $rows as $r ) {
+		$add( $r[0], $r[1], $r[2], $r[3], $r[4], $r[5] );
+	}
+	$fh = fopen( 'php://temp', 'w+' );
+	fputcsv( $fh, array( 'Dream Web Digital: ' . $y . ' figures for the CPA, exported from Dream Desk on ' . current_time( 'Y-m-d' ) . '. Check against bank and Upwork statements.' ) );
+	fputcsv( $fh, array( 'Section', 'Date', 'Description', 'Category', 'Source / account', 'Amount', 'Notes' ) );
+	foreach ( $out as $r ) {
+		fputcsv( $fh, $r );
+	}
+	rewind( $fh );
+	$csv = stream_get_contents( $fh );
+	fclose( $fh );
+	return array( 'name' => 'dream-web-digital-' . $y . '-for-cpa.csv', 'csv' => $csv, 'income' => round( $total, 2 ), 'upwork_from' => $up['from'], 'upwork_to' => $up['to'] );
+}
+
+add_action( 'rest_api_init', function () {
+	$can = function () { return current_user_can( 'manage_options' ); };
+	register_rest_route( 'dwd/v1', '/crm/tax', array(
+		array( 'methods' => 'GET', 'permission_callback' => $can, 'callback' => function () { return dwdtax_summary(); } ),
+		array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
+			$raw = (array) get_option( 'dwdtax', array() );
+			$p   = (array) $r->get_json_params();
+			if ( isset( $p['pct'] ) ) {
+				$raw['pct'] = max( 0, min( 60, (float) $p['pct'] ) );
+			}
+			if ( isset( $p['acct'] ) ) {
+				$raw['acct'] = array_values( array_filter( array_map( function ( $x ) { return preg_replace( '/[^0-9A-Za-z]/', '', (string) $x ); }, (array) $p['acct'] ) ) );
+			}
+			if ( isset( $p['paid'] ) ) {
+				$raw['paid'] = (array) ( $raw['paid'] ?? array() );
+				$raw['paid'][ (string) (int) current_time( 'Y' ) ] = max( 0, round( (float) $p['paid'], 2 ) );
+			}
+			if ( isset( $p['cal'] ) ) {
+				$raw['cal'] = (bool) $p['cal'];
+			}
+			update_option( 'dwdtax', $raw, false );
+			$made = dwdtax_calendar();
+			return array_merge( dwdtax_summary(), array( 'added_dates' => $made ) );
+		} ),
+	) );
+	register_rest_route( 'dwd/v1', '/crm/tax-export', array( 'methods' => 'GET', 'permission_callback' => $can, 'callback' => function ( $r ) {
+		$y = (int) $r->get_param( 'year' );
+		return dwdtax_export( $y >= 2015 && $y <= 2100 ? $y : (int) current_time( 'Y' ) );
+	} ) );
+} );

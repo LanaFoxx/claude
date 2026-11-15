@@ -37,6 +37,7 @@ function doPost(e) {
   try { b = JSON.parse(e.postData.contents || '{}'); } catch (err) { return out({ error: 'Bad request' }); }
   if (b.token !== TOKEN) { return out({ error: 'Wrong token' }); }
   if (b.list) { return out(list_(String(b.list))); }
+  if (b.get) { return out(get_(String(b.get))); }
   if (b.ping) { return out({ ok: true, parent: parent_().getUrl() }); }
   var name = String(b.name || 'New client').replace(/[\\/\\\\]/g, '-').slice(0, 120);
   var p = parent_(), it = p.getFoldersByName(name), folder = it.hasNext() ? it.next() : p.createFolder(name);
@@ -62,7 +63,16 @@ function list_(id) {
     if (depth < 2) { var sub = f.getFolders(); while (sub.hasNext()) { var s = sub.next(); walk(s, (path ? path + ' / ' : '') + s.getName(), depth + 1); } }
   })(folder, '', 0);
   files.sort(function (a, b) { return a.updated < b.updated ? 1 : -1; });
-  return { files: files, version: 2 };
+  return { files: files, version: 3 };
+}
+/** One file's contents for the AI Instructions zip, even when it isn't shared by link. Google Docs, Sheets and Slides come as PDF. */
+function get_(id) {
+  var f;
+  try { f = DriveApp.getFileById(id); } catch (err) { return { error: 'That file was not found' }; }
+  if (f.getSize() > 20 * 1024 * 1024) { return { error: 'too large' }; }
+  var mt = f.getMimeType(), google = mt.indexOf('application/vnd.google-apps.') === 0, blob;
+  try { blob = google ? f.getAs('application/pdf') : f.getBlob(); } catch (err) { return { error: 'This kind of file can\\'t be downloaded' }; }
+  return { name: f.getName() + (google ? '.pdf' : ''), mime: blob.getContentType(), b64: Utilities.base64Encode(blob.getBytes()), version: 3 };
 }
 /** Run once from the editor so Google asks for Drive access. */
 function setup() { Logger.log(parent_().getUrl()); }
@@ -144,6 +154,7 @@ function dwddr_files( $pid, $force = false ) {
 	if ( ! isset( $j['files'] ) || ! is_array( $j['files'] ) ) {
 		return array( 'state' => 'update', 'files' => array() );
 	}
+	update_option( 'dwddr_ver', (int) ( $j['version'] ?? 2 ), false ); // 3+ can hand over private files and Google Docs
 	$files = array();
 	foreach ( $j['files'] as $x ) {
 		$id = preg_replace( '/[^A-Za-z0-9_-]/', '', (string) ( $x['id'] ?? '' ) );
@@ -165,6 +176,25 @@ function dwddr_files( $pid, $force = false ) {
 	$at = time();
 	update_post_meta( $pid, '_dwdc_drive_files', array( 'fid' => $fid, 'at' => $at, 'files' => $files ) );
 	return array( 'state' => 'ok', 'files' => $files, 'at' => $at );
+}
+
+/**
+ * One Drive file's contents through the web app (works for private files; Google Docs, Sheets and Slides come
+ * back as PDF). array( name, mime, bytes ) or WP_Error ('dwddr_update' when the deployed script is older).
+ */
+function dwddr_get( $file_id ) {
+	$j = dwddr_call( array( 'get' => preg_replace( '/[^A-Za-z0-9_-]/', '', (string) $file_id ), 'ping' => 1 ) );
+	if ( is_wp_error( $j ) ) {
+		return $j;
+	}
+	if ( ! isset( $j['b64'] ) ) {
+		return new WP_Error( 'dwddr_update', ! empty( $j['error'] ) ? (string) $j['error'] : 'The Drive script needs updating to hand over files.' );
+	}
+	$bytes = base64_decode( (string) $j['b64'], true ); // phpcs:ignore
+	if ( false === $bytes || '' === $bytes ) {
+		return new WP_Error( 'dwddr_bad', 'The file came back empty.' );
+	}
+	return array( 'name' => sanitize_file_name( (string) ( $j['name'] ?? 'file' ) ), 'mime' => (string) ( $j['mime'] ?? '' ), 'bytes' => $bytes );
 }
 
 /** Make (or reuse) the project's folder. Returns the link or WP_Error. */
@@ -260,7 +290,7 @@ add_action( 'rest_api_init', function () {
 	$can = function () { return current_user_can( 'edit_posts' ); };
 	register_rest_route( 'dwd/v1', '/crm/drive', array(
 		array( 'methods' => 'GET', 'permission_callback' => $can, 'callback' => function () {
-			return array( 'ready' => dwddr_ready(), 'url' => dwddr_url(), 'script' => dwddr_script() );
+			return array( 'ready' => dwddr_ready(), 'url' => dwddr_url(), 'script' => dwddr_script(), 'ver' => (int) get_option( 'dwddr_ver', 0 ) );
 		} ),
 		array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
 			$u = trim( (string) $r->get_param( 'url' ) );

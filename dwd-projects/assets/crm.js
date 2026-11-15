@@ -211,7 +211,7 @@
 		return '<span class="dwdc-nm"><span>' + (k ? '<a class="dwdc-clink" href="#cl/' + k.id + '">' + esc(k.name) + '</a>' : '<b class="nm2">' + esc(c.person || '—') + '</b>') + (em ? '<small>' + esc(em) + '</small>' : '') + '</span></span>';
 	}
 	function reload() {
-		return api('').then(function (r) { S.contacts = r.contacts.filter(Boolean); S.tasks = r.tasks.filter(Boolean); S.clients = (r.clients || []).filter(Boolean); S.money = r.money || {}; S.upfeed = r.upfeed || null; S.costs = r.costs || {}; S.trends = r.trends || null; S.wins = r.wins || { list: [], undated: 0 }; S.ads = r.ads || null; S.meet = r.meetings || null; S.order = r.order || {}; });
+		return api('').then(function (r) { S.health = r.health || null; S.tax = r.tax || null; S.contacts = r.contacts.filter(Boolean); S.tasks = r.tasks.filter(Boolean); S.clients = (r.clients || []).filter(Boolean); S.money = r.money || {}; S.upfeed = r.upfeed || null; S.costs = r.costs || {}; S.trends = r.trends || null; S.wins = r.wins || { list: [], undated: 0 }; S.ads = r.ads || null; S.meet = r.meetings || null; S.order = r.order || {}; });
 	}
 
 	/* ---------- routing ---------- */
@@ -714,7 +714,10 @@
 		'chevrons-down': '<path d="m7 6 5 5 5-5M7 13l5 5 5-5"/>',
 		'chevrons-up': '<path d="m17 11-5-5-5 5M17 18l-5-5-5 5"/>',
 		columns: '<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M12 3v18"/>',
-		'log-out': '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>'
+		'log-out': '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',
+		'alert-circle': '<circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>',
+		user: '<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+		activity: '<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>'
 	};
 	function lu(n, s) { return '<svg class="lu" width="' + (s || 16) + '" height="' + (s || 16) + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (LU[n] || '') + '</svg>'; }
 	function ddGet(k, d) { try { var v = localStorage.getItem(k); return v === null ? d : v; } catch (e) { return d; } }
@@ -1061,6 +1064,68 @@
 		var n = +mailNewMap()[owner] || 0;
 		return n ? '<span class="dd-pill danger dd-mnew">' + (n > 1 ? n + ' new emails' : 'New email') + '</span>' : '';
 	}
+	// Who is waiting on whom (followup.php): c.wait = { who: 'you' | 'client' | '', since, days, via: email | text | Upwork }.
+	function waitAge(w) { var h = Math.max(0, Math.floor((Date.now() - new Date(w.since).getTime()) / 36e5)); return h < 1 ? 'under 1h' : h < 24 ? h + 'h' : Math.floor(h / 24) + 'd'; }
+	function waitHow(w) { return w.via === 'Upwork' ? 'Upwork message' : w.via === 'text' ? 'Text' : 'Email'; }
+	function isQuiet(c) { return !!(c.wait && c.wait.who === 'client' && c.wait.days >= 7 && (c.list === 'active' || c.list === 'leads')); }
+	function waitPill(c) {
+		var w = c && c.wait;
+		if (!w || !w.who) { return ''; }
+		if (w.who === 'you') { return '<span class="dd-pill warning dd-wpill" title="' + waitHow(w) + ' from the client, not answered yet">Waiting on you · ' + waitAge(w) + '</span>'; }
+		return isQuiet(c) ? '<span class="dd-pill neutral dd-wpill" title="You wrote last, ' + w.days + ' days ago">Client quiet ' + w.days + 'd</span>' : '';
+	}
+	function waitCell(c) {
+		var w = c.wait;
+		if (!w || !w.who) { return '<i>—</i>'; }
+		if (w.who === 'you') { return '<span class="dd-wcell you"><b>Waiting on you</b><small>' + waitHow(w) + ' · ' + waitAge(w) + '</small></span>'; }
+		return '<span class="dd-wcell' + (isQuiet(c) ? ' quiet' : '') + '"><b>Waiting on client</b><small>' + waitAge(w) + (isQuiet(c) ? ' · follow up' : '') + '</small></span>';
+	}
+	function waitSet(id, act) {
+		return api('/contact/' + id + '/wait', 'POST', { act: act }).then(function (x) { var c = contact(id); if (c) { c.wait = x.wait; } if (S.full[id]) { S.full[id].wait = x.wait; } render(); });
+	}
+	function openFollowUp(id) {
+		var c = contact(id);
+		if (!c) { return; }
+		openEmail('', id);
+		var first = S.modal.first;
+		S.modal.vals = { subject: 'Checking in: ' + c.name, text: 'Hi ' + (first || 'there') + ',\n\nJust checking in on ' + c.name + '. Is there anything you need from me, or anything I can help with to keep things moving?\n\nThanks,' };
+		render(); focusIn('[name=text]');
+	}
+	// "3h ago" for an ISO time.
+	function agoShort(iso) { var t = new Date(iso).getTime(); if (!t) { return ''; } var m = Math.max(0, Math.round((Date.now() - t) / 6e4)); return m < 60 ? (m < 2 ? 'just now' : m + 'm ago') : m < 1440 ? Math.round(m / 60) + 'h ago' : Math.round(m / 1440) + 'd ago'; }
+	// Sync health (health.php): a green "all syncing" line, or a red pill that opens the list of feeds that stopped.
+	function healthList(H, all) {
+		var L = (H.items || []).filter(function (x) { return all || x.state !== 'ok'; });
+		var tone = { ok: 'success', stale: 'danger', error: 'danger', setup: 'warning' }, word = { ok: 'Syncing', stale: 'Stopped', error: 'Error', setup: 'To finish' };
+		return '<div class="dd-hl">' + L.map(function (x) {
+			return '<div class="dd-hlr ' + x.state + '"><span class="dd-hld"></span><span class="dd-hlt"><b>' + esc(x.name) + '</b><small>' + (x.at ? 'Last worked ' + agoShort(x.at) : x.state === 'setup' ? '' : 'Hasn’t run yet') + (x.every ? ' · runs ' + esc(x.every) : '') + '</small>' + (x.note ? '<em>' + esc(x.note) + '</em>' : '') + '</span>' + ddPill(word[x.state], tone[x.state]) + '</div>';
+		}).join('') + '</div>';
+	}
+	function healthStrip() {
+		var H = S.health;
+		if (!H || !H.items) { return ''; }
+		var open = !!S.healthOpen;
+		if (H.ok && !H.setup) { return '<a class="dd-health ok" href="#connections"><span class="dd-hld"></span>All ' + H.items.length + ' connections syncing</a>'; }
+		var lbl = H.problems ? H.problems + ' connection' + (H.problems === 1 ? '' : 's') + ' need' + (H.problems === 1 ? 's' : '') + ' attention' : H.setup + ' setup item' + (H.setup === 1 ? '' : 's') + ' to finish';
+		return '<section class="dd-card dd-health ' + (H.problems ? 'bad' : 'warn') + (open ? ' open' : '') + '"><button type="button" class="dd-healthb" data-healthtog aria-expanded="' + open + '"><span class="dd-hld"></span><b>' + lbl + '</b>' + (H.problems && H.setup ? '<small>+ ' + H.setup + ' to finish</small>' : '') + '<span class="dd-sp"></span>' + lu('chevron-down', 14) + '</button>' + (open ? healthList(H, false) + '<a class="dd-hlgo" href="#connections">All connections ' + lu('chevron-right', 12) + '</a>' : '') + '</section>';
+	}
+	// Home: who's waiting on you (oldest first), then clients who have been quiet for a week or more.
+	function waitBox() {
+		var open = S.contacts.filter(function (c) { return c.wait && c.wait.who; });
+		var old = function (a, b) { return a.wait.since < b.wait.since ? -1 : 1; };
+		var you = open.filter(function (c) { return c.wait.who === 'you'; }).sort(old), quiet = open.filter(isQuiet).sort(old);
+		var row = function (c, quietRow) {
+			var w = c.wait, k = clientOf(c), em = c.email || (k && k.email);
+			var sub = [quietRow ? 'You wrote ' + w.days + ' days ago' : waitHow(w) + ' ' + waitAge(w) + ' ago', k ? k.name : (c.person || '')].filter(Boolean).map(esc).join(' · ');
+			return '<div class="dd-wrow' + (quietRow ? ' quiet' : '') + '"><a class="dd-wn" href="#client/' + c.id + '"><b>' + esc(c.name) + '</b><small>' + sub + '</small></a><span class="dd-wa">'
+				+ (quietRow && em ? '<button type="button" class="dd-btn secondary sm" data-followup="' + c.id + '">' + lu('mail', 13) + 'Follow up</button>' : '')
+				+ '<button type="button" class="dd-btn ghost sm" data-waitclear="' + c.id + '" title="' + (quietRow ? 'Stop flagging this one until someone writes again' : 'Answered somewhere else, or nothing to answer') + '">' + (quietRow ? 'Dismiss' : 'No reply needed') + '</button></span></div>';
+		};
+		return '<section class="dd-card dd-wait"><header class="dd-ch"><div class="dd-ch-t"><h2>Waiting on you</h2><span>' + (you.length ? you.length + ' client' + (you.length === 1 ? '' : 's') + ' wrote last' : 'You’re all caught up') + (quiet.length ? ' · ' + quiet.length + ' quiet 7+ days' : '') + '</span></div></header>'
+			+ you.map(function (c) { return row(c, false); }).join('')
+			+ (quiet.length ? '<p class="dd-wsub">Client quiet 7+ days</p>' + quiet.map(function (c) { return row(c, true); }).join('') : '')
+			+ (!you.length && !quiet.length ? '<p class="dd-empty-l">Every client conversation is answered.</p>' : '') + '</section>';
+	}
 	function hmPeople() {
 		var seen = {}, out = [];
 		var add = function (name, sub, email, rank) { var e = String(email || '').trim().toLowerCase(); if (!e || seen[e]) { return; } seen[e] = 1; out.push({ name: String(name || '').trim() || e, sub: String(sub || '').trim(), email: e, rank: rank }); };
@@ -1214,7 +1279,7 @@
 			+ '<div class="dd-aplist"' + sortAttr('active') + '>' + (ap.length ? ap.map(function (c) {
 				if (c.div) { return divRow(); }
 				var k = clientOf(c), ow = num(c.balance), late = c.deadline && c.deadline < DWDC.today;
-				return '<a class="dd-ap-r" href="#client/' + c.id + '" data-sid="' + c.id + '">' + (sortMine('active') ? '<span class="dd-grip" aria-hidden="true">⋮⋮</span>' : '') + flagDot(c) + '<span class="dd-av">' + esc(ddInitials(k ? k.name : (c.person || c.name))) + '</span><span class="dd-act-n"><b>' + esc(c.name) + mailPill(c.client || c.id) + '</b><small>' + esc(k ? k.name : (c.person || '—')) + (c.next ? ' · ' + esc(c.next) : '') + '</small></span>'
+				return '<a class="dd-ap-r" href="#client/' + c.id + '" data-sid="' + c.id + '">' + (sortMine('active') ? '<span class="dd-grip" aria-hidden="true">⋮⋮</span>' : '') + flagDot(c) + '<span class="dd-av">' + esc(ddInitials(k ? k.name : (c.person || c.name))) + '</span><span class="dd-act-n"><b>' + esc(c.name) + mailPill(c.client || c.id) + waitPill(c) + '</b><small>' + esc(k ? k.name : (c.person || '—')) + (c.next ? ' · ' + esc(c.next) : '') + '</small></span>'
 					+ '<span class="dd-ap-m"><b class="' + (ow ? 'owe' : '') + '">' + (ow ? money(ow) : paidWord(c)) + '</b><small class="' + (late ? 'late' : '') + '">' + (c.deadline ? 'Due ' + fmt(c.deadline) : 'No due date') + '</small></span></a>';
 			}).join('') : '<p class="dd-empty-l">No active projects right now.</p>') + '</div></section>';
 		var statsOpen = ddGet('dreamdesk-stats-open', '') === '1';
@@ -1231,9 +1296,10 @@
 			+ (function () {
 				var UT = upHome(), MYh = S.money || {}, yh = DWDC.today.slice(0, 4), mh = +DWDC.today.slice(5, 7) - 1, mn2 = new Date(DWDC.today + 'T12:00:00').toLocaleDateString('en-US', { month: 'long' });
 				var bankM = MYh[yh] && MYh[yh].m ? Math.max(0, +MYh[yh].m[mh] || 0) : 0;
+				var usn = upSnap(), uchk = usn && usn.checked ? 'checked ' + agoShort(usn.checked) : '';
 				return '<a href="#money" data-owed><span>Owed<small>Not paid yet by clients</small></span><b>' + money(owed(owingList())) + '</b></a>'
-					+ '<a href="#money" data-upmoney><span>Pending in Upwork<small>' + (UT.pnext ? 'Next frees up ' + fmt(UT.pnext) : 'Nothing on hold') + '</small></span><b>' + money(UT.pend) + '</b></a>'
-					+ '<a href="#money" data-upmoney><span>Ready to withdraw<small>Available in Upwork now</small></span><b>' + money(UT.avail) + '</b></a>'
+					+ '<a href="#money" data-upmoney><span>Pending in Upwork<small>' + (UT.pnext ? 'Next frees up ' + fmt(UT.pnext) : 'Nothing on hold') + (uchk ? ' · ' + uchk : '') + '</small></span><b>' + money(UT.pend) + '</b></a>'
+					+ '<a href="#money" data-upmoney><span>Ready to withdraw<small>' + (uchk ? 'Upwork ' + uchk : 'Available in Upwork now') + '</small></span><b>' + money(UT.avail) + '</b></a>'
 					;
 			})()
 			+ '<button type="button" class="dd-statsmore" data-statsmore aria-expanded="' + statsOpen + '"><span>' + (statsOpen ? 'Show less' : 'Show more') + '</span>' + lu('chevron-down', 14) + '</button>'
@@ -1242,7 +1308,8 @@
 			+ (function () {
 				var A = S.ads || {}, G = A.google, K = A.connects || {}, mn = new Date(DWDC.today + 'T12:00:00').toLocaleDateString('en-US', { month: 'long' });
 				return '<a class="more" href="#money" data-connmodal><span>Connects spent<small>' + mn + ' · last month ' + money(K.lastmonth || 0) + '</small></span><b>' + money(K.month || 0) + '</b></a>'
-					+ '<a class="more" href="#money" data-adsmodal><span>Google Ads spent<small>' + (G ? mn + ' · ' + money(G.week.cost) + ' this week' : 'Not connected') + '</small></span><b>' + (G ? money(G.month.cost) : '—') + '</b></a>';
+					+ '<a class="more" href="#money" data-adsmodal><span>Google Ads spent<small>' + (G ? mn + ' · ' + money(G.week.cost) + ' this week' : 'Not connected') + '</small></span><b>' + (G ? money(G.month.cost) : '—') + '</b></a>'
+					+ (S.tax ? '<a class="more" href="#money"><span>Tax set-aside<small>' + (S.tax.held == null ? S.tax.pct + '% of this year’s income' : S.tax.held >= S.tax.need ? 'Covered · ' + money(S.tax.held) + ' set aside' : 'Short ' + money(S.tax.need - S.tax.held)) + '</small></span><b>' + money(S.tax.need) + '</b></a>' : '');
 			})() + '</section>';
 		var rows = overdue.sort(function (a, b) { return a.t.due < b.t.due ? -1 : 1; }).concat(today), seenP = {};
 		rows = rows.filter(function (x) { if (!x.w || !x.t.contact) { return true; } if (seenP[x.t.contact]) { seenP[x.t.contact].n++; return false; } seenP[x.t.contact] = x; x.n = 1; return true; }).slice(0, 8);
@@ -1253,7 +1320,7 @@
 		};
 		var todos = '<section class="dd-card"><header class="dd-ch"><div class="dd-ch-t"><h2>To-dos</h2></div><div class="dd-ch-a"><button type="button" class="dd-hadd-btn" data-haddtog>' + lu('plus', 14) + 'Add</button><a href="#todos">All ' + all.length + '</a></div></header>'
 			+ (S.homeAdd ? '<form class="dd-hadd"><input name="text" placeholder="New to-do… e.g. Call Shane next Thursday at 4" autocomplete="off" required data-lpignore="true" data-1p-ignore><button class="dd-btn primary">Add</button></form>' : '') + (rows.length ? rows.map(trow).join('') : '<p class="dd-empty-l">Nothing overdue or due today.</p>') + '</section>';
-		return '<div class="dd-home"><div class="dd-home-l">' + sched + act + '</div><div class="dd-home-r">' + stats + homeMailBox() + zoomBox('home') + '</div></div>';
+		return '<div class="dd-home"><div class="dd-home-l">' + waitBox() + sched + act + '</div><div class="dd-home-r">' + healthStrip() + stats + homeMailBox() + zoomBox('home') + '</div></div>';
 	}
 	// All clients (design 4.2): toolbar, chips, grouped table; rows stack on phones.
 	var DD_TONE = { Project: 'info', Hosting: 'success', Lead: 'warning', 'Past client': 'neutral' };
@@ -1615,7 +1682,7 @@
 		var em = (k && k.email) || c.email;
 		return '<div class="dd-prow" data-go="client/' + c.id + '" data-sid="' + c.id + '">'
 			+ '<span class="dd-pgrip" title="' + (mine ? 'Drag to move' : 'Switch to My order to drag') + '">' + lu('grip', 16) + '</span>'
-			+ '<span class="dd-pc nm">' + flagDot(c) + '<span class="dd-st"><span class="dd-l1"><a href="#client/' + c.id + '"><b>' + esc(c.name) + '</b></a>' + mailPill(c.client || c.id) + (c.markup ? '<a class="dd-mtag" href="' + esc(url(c.markup)) + '" target="_blank" rel="noopener">Markup</a>' : '') + '<span class="dd-mob-pill">' + ddPill('Active', 'success') + '</span></span>'
+			+ '<span class="dd-pc nm">' + flagDot(c) + '<span class="dd-st"><span class="dd-l1"><a href="#client/' + c.id + '"><b>' + esc(c.name) + '</b></a>' + mailPill(c.client || c.id) + (c.markup ? '<a class="dd-mtag" href="' + esc(url(c.markup)) + '" target="_blank" rel="noopener">Markup</a>' : '') + '<span class="dd-mob-pill">' + ddPill('Active', 'success') + waitPill(c) + '</span></span>'
 			+ (site(c) ? '<a class="dd-dom" href="' + esc(url(c.website)) + '" target="_blank" rel="noopener">' + esc(site(c)) + '</a>' : '')
 			+ '<span class="dd-mob-meta">' + esc([k ? k.name : (c.person || ''), ow ? 'Owed ' + money(ow) : paidWord(c), num(upOf(c).pend) ? money(upOf(c).pend) + ' pending in Upwork' : '', num(upOf(c).avail) ? money(upOf(c).avail) + ' ready to withdraw' : '', dd ? 'Due ' + fmt(dd) : '', c.next ? 'Next: ' + c.next : ''].filter(Boolean).join(' · ')) + '</span></span></span>'
 			+ '<span class="dd-pc cl"><span>' + (k ? '<a href="#cl/' + k.id + '">' + esc(k.name) + '</a>' : esc(c.person || '—')) + '</span><small>' + (em ? '<a href="mailto:' + esc(em) + '" data-emailp="' + c.id + '">' + esc(em) + '</a>' : 'No email on file') + '</small></span>'
@@ -1624,11 +1691,12 @@
 			+ '<span class="dd-pc due ' + dueCls + '">' + (dd ? fmt(dd) : '<i>—</i>') + '</span>'
 			+ '<span class="dd-pc st">' + statusSelect(c) + '</span>'
 			+ '<span class="dd-pc nx" title="' + esc(c.next || '') + '">' + (c.next ? esc(c.next) : '<i>—</i>') + '</span>'
+			+ '<span class="dd-pc wt">' + waitCell(c) + '</span>'
 			+ '<span class="dd-pc acts">' + (em ? '<button type="button" class="dd-ibtn sm" data-emailc="' + c.id + '" title="Email ' + esc(em) + '">' + lu('mail', 15) + '</button>' : '') + (c.staging ? '<a class="dd-ibtn sm" href="' + esc(c.staging) + '" target="_blank" rel="noopener" title="Open staging site (right-click to copy)">' + lu('globe', 15) + '</a>' : '') + (c.drive ? '<button type="button" class="dd-ibtn sm" data-copy="' + esc(c.drive) + '" title="Copy Drive upload link">' + lu('link', 15) + '</button>' : '') + '<button type="button" class="dd-ibtn sm" data-actmove="' + c.id + ':' + (seg === 'now' ? 'wait' : 'now') + '" title="' + (seg === 'now' ? 'Move to Waiting' : 'Move to Working on now') + '">' + lu(seg === 'now' ? 'chevrons-down' : 'chevrons-up', 16) + '</button><a class="dd-ibtn sm" href="#client/' + c.id + '" title="Open project">' + lu('chevron-right', 16) + '</a></span></div>';
 	}
 	function actCard(c) {
 		var k = clientOf(c), ow = num(c.balance);
-		return '<a class="dd-bcard" href="#client/' + c.id + '" data-sid="' + c.id + '"><span class="dd-l1">' + flagDot(c) + '<b>' + esc(c.name) + '</b>' + mailPill(c.client || c.id) + (c.markup ? '<span class="dd-mtag">Markup</span>' : '') + '</span><small>' + esc(k ? k.name : (c.person || '—')) + '</small>'
+		return '<a class="dd-bcard" href="#client/' + c.id + '" data-sid="' + c.id + '"><span class="dd-l1">' + flagDot(c) + '<b>' + esc(c.name) + '</b>' + mailPill(c.client || c.id) + waitPill(c) +(c.markup ? '<span class="dd-mtag">Markup</span>' : '') + '</span><small>' + esc(k ? k.name : (c.person || '—')) + '</small>'
 			+ '<span class="meta">' + (ow ? 'Owed ' + money(ow) : paidWord(c)) + (c.deadline ? ' · Due ' + fmt(c.deadline) : '') + '</span>' + (c.next ? '<span class="nx">' + esc(c.next) + '</span>' : '') + '</a>';
 	}
 	function ddActive() {
@@ -1658,7 +1726,7 @@
 			return head + '<div class="dd-board"><section class="dd-bcol"><header><i class="now"></i>Working on now<em>' + now.length + '</em>' + sortNote + '</header><div class="dd-bl"' + (mine ? ' data-sort="active" data-sortx' : '') + '>' + now.map(actCard).join('') + drop('Nothing in focus — drag a project here') + '</div></section>'
 				+ '<section class="dd-bcol"><header><i></i>Waiting<em>' + wait.length + '</em></header><div class="dd-bl"' + (mine ? ' data-sort="active" data-sortx' : '') + '>' + mark + wait.map(actCard).join('') + drop('Nothing waiting') + '</div></section></div>';
 		}
-		var cols = '<div class="dd-prow head"><span></span><span>Project</span><span>Client</span><span class="num">' + phead('active', 'Price') + '</span><span class="num">Owed</span><span>Due</span><span>Status</span><span>Next step</span><span></span></div>';
+		var cols = '<div class="dd-prow head"><span></span><span>Project</span><span>Client</span><span class="num">' + phead('active', 'Price') + '</span><span class="num">Owed</span><span>Due</span><span>Status</span><span>Next step</span><span>Reply</span><span></span></div>';
 		return head + '<div class="dd-asegs' + (mine ? '' : ' sorted') + '"><section class="dd-card dd-aseg">' + cols + '<div class="dd-agh"><i class="now"></i>Working on now<em>' + now.length + '</em><span class="dd-sp"></span>' + sortNote + '</div><div class="dd-arows"' + (mine ? ' data-sort="active" data-sortx' : '') + '>' + now.map(function (c) { return actRow(c, 'now', mine); }).join('') + drop('Nothing in focus — drag a project up here') + '</div></section>'
 			+ '<section class="dd-card dd-aseg"><div class="dd-agh"><i></i>Waiting<em>' + wait.length + '</em><span class="dd-sp"></span><span class="dd-hint">Drag a project here when it’s waiting on someone else</span></div><div class="dd-arows"' + (mine ? ' data-sort="active" data-sortx' : '') + '>' + mark + wait.map(function (c) { return actRow(c, 'wait', mine); }).join('') + drop('Nothing waiting') + '</div></section></div>';
 	}
@@ -2249,7 +2317,11 @@
 		var FF = X.fireflies || {};
 		var ffc = '<div class="dwdc-conn"><h3><i class="str"></i>Fireflies (meeting transcripts)' + st(!!FF.ready, FF.last) + '</h3>'
 			+ '<ol><li>In Fireflies, open <b>Integrations → Fireflies API</b> and copy your API key.</li><li>Paste it here and save. Each recorded call is filed on the client’s project with its summary, action items and transcript.</li></ol>'
-			+ '<div class="dwdc-conn-f col"><input type="password" placeholder="Fireflies API key" data-sk="fireflies_key" autocomplete="off"><button class="dwdc-btn" data-synsave="fireflies">Save</button>' + (FF.ready ? '<small class="dwdc-conn-last">' + (FF.count || 0) + ' meetings on file.</small>' : '') + '</div></div>';
+			+ '<div class="dwdc-conn-f col"><input type="password" placeholder="Fireflies API key" data-sk="fireflies_key" autocomplete="off"><button class="dwdc-btn" data-synsave="fireflies">Save</button>' + (FF.ready ? '<small class="dwdc-conn-last">' + (FF.count || 0) + ' meetings on file · matched by guest email, the name in the title, or the calendar call at the same time.</small>' : '') + '</div>'
+			+ (FF.unfiled && FF.unfiled.length ? '<div class="dwdc-conn-map dd-ffun"><p><b>' + FF.unfiled.length + ' recording' + (FF.unfiled.length === 1 ? '' : 's') + ' not filed.</b> Pick the project, or mark it as not a client call.</p>' + FF.unfiled.map(function (x) {
+				var dt = new Date(x.date);
+				return '<div class="dd-ffr"><span><b>' + esc(x.title || 'Untitled call') + '</b><small>' + dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + ', ' + dt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) + ' · ' + x.mins + ' min' + (x.summary ? ' · ' + esc(x.summary) : '') + '</small></span><select data-ffpick="' + esc(x.id) + '">' + pick() + '</select><button type="button" class="dwdc-btn2 sm" data-fffile="' + esc(x.id) + '">File</button><button type="button" class="dwdc-lnk sm2" data-ffnone="' + esc(x.id) + '">Not a client call</button></div>';
+			}).join('') + '</div>' : '') + '</div>';
 		var R = S.refreshRes;
 		var bar = '<div class="dwdc-refbar"><div><b>Update Finances</b><span>Re-reads your Upwork files, pulls every paid Stripe and PayPal payment, keeps the payments you logged by hand, then re-checks trends.' + (X.refreshed ? ' Last run ' + fmt(String(X.refreshed).slice(0, 10), true) + '.' : '') + '</span></div><button class="dwdc-btn dwdc-refbtn" data-refresh>' + ic('refresh', 15) + 'Update Finances</button></div>'
 			+ (R ? '<div class="dwdc-conn-res big">' + refreshText(R) + '</div>' : '');
@@ -2439,7 +2511,30 @@
 				+ mcard('Top projects', rowsP || emptyRow('No payments yet.')) + mcard('Top clients', rowsC || emptyRow('No payments yet.'))
 				+ mcard('Repeat clients <span class="dwdc-cnt">' + repeat.length + '</span>', rowsR || emptyRow('No repeat clients yet.'))
 				+ '</div>' : '');
-		return top4 + '<div class="mv-grid mv-cols"><div class="mv-col">' + incomeBox + adsBox + '</div><div class="mv-col">' + jobsBox + trendBox + '</div></div>' + more;
+		return top4 + taxCard() + '<div class="mv-grid mv-cols"><div class="mv-col">' + incomeBox + adsBox + '</div><div class="mv-col">' + jobsBox + trendBox + '</div></div>' + more;
+	}
+	// Taxes (tax.php): what should be set aside this year vs what's in the account(s) you keep it in.
+	function taxCard() {
+		var X = S.tax;
+		if (!X) { return ''; }
+		var heldTxt = X.held == null ? '<a href="#connections">Pick the account you keep tax money in</a>' : (X.held >= X.need ? '<b class="ok">Covered</b> · ' + money2(X.held) + ' in the tax account' : '<b class="late">Short ' + money(X.need - X.held) + '</b> · ' + money2(X.held) + ' in the tax account');
+		return '<section class="dd-card dd-tax"><div class="dd-taxm"><small>Tax set-aside · ' + X.year + '</small><strong>' + money(X.need) + '</strong><span>' + X.pct + '% of ' + money(X.income_y) + ' received this year' + (X.paid ? ', less ' + money(X.paid) + ' already paid' : '') + '</span></div>'
+			+ '<div class="dd-taxm"><small>This quarter (Q' + X.quarter + ')</small><strong>' + money(X.set_q) + '</strong><span>' + X.pct + '% of ' + money(X.income_q) + ' received since the quarter began</span></div>'
+			+ '<div class="dd-taxm"><small>In the bank</small><strong>' + (X.held == null ? '—' : money(X.held)) + '</strong><span>' + heldTxt + '</span></div>'
+			+ '<div class="dd-taxm"><small>Next estimated payment</small><strong>' + (X.next ? fmt(X.next.date) : '—') + '</strong><span>' + (X.next ? X.next.q + ' ' + X.next.year + ' · <a href="#connections">Settings and CPA export</a>' : '') + '</span></div></section>';
+	}
+	function taxConn() {
+		var X = S.tax;
+		if (!X) { return '<section class="dd-card dd-drvc"><p class="dd-help">Loading…</p></section>'; }
+		var yNow = X.year;
+		return '<section class="dd-card dd-drvc"><div class="dd-drvh">' + ddPill(X.held == null ? 'Set up' : 'On', X.held == null ? 'neutral' : 'success') + '<span>Shows how much of this year’s business income should be set aside for taxes, next to what’s in the account you keep it in. Use the percentage your CPA gives you. This is a guide, not tax advice.</span></div>'
+			+ '<div class="dd-taxf"><label><span>Set aside</span><span class="dd-dol"><input type="number" min="0" max="60" step="0.5" data-taxpct value="' + X.pct + '"><i>%</i></span></label>'
+			+ '<label><span>Estimated tax already paid in ' + yNow + '</span><span class="dd-dol"><i>$</i><input type="number" min="0" step="1" data-taxpaid value="' + (X.paid || '') + '" placeholder="0"></span></label></div>'
+			+ '<p class="dd-taxh">The account(s) the tax money sits in</p><div class="dd-taxa">' + (X.accounts.length ? X.accounts.map(function (a) { return '<label><input type="checkbox" data-taxacct value="' + esc(a.mask) + '"' + (X.acct.indexOf(a.mask) > -1 ? ' checked' : '') + '><span>' + esc((a.business ? 'Business ' : 'Personal ') + (a.type || '') + ' ••' + a.mask) + '</span><b>' + money2(a.balance) + '</b></label>'; }).join('') : '<p class="dd-help">Connect the bank under Google, bank &amp; AI to pick an account.</p>') + '</div>'
+			+ '<label class="dd-taxcal"><input type="checkbox" data-taxcal' + (X.cal ? ' checked' : '') + '><span>Put the estimated tax due dates (Apr 15, Jun 15, Sep 15, Jan 15) on my business to-dos and calendar</span></label>'
+			+ '<div class="dd-pbtns"><button type="button" class="dd-btn primary" data-taxsave>Save</button></div>'
+			+ '<p class="dd-taxh">Year-end export for your CPA</p><p class="dd-help">One spreadsheet (CSV): income by source with Upwork at the full amount and its fees as a separate line, Connects and membership, Google Ads, business spending by category from the bank feed (Gusto payroll taxes and fees included; your own pay listed apart), and every transaction behind the totals.</p>'
+			+ '<div class="dd-pbtns">' + [yNow, yNow - 1].map(function (y) { return '<button type="button" class="dd-btn secondary" data-taxcsv="' + y + '">' + lu('download', 14) + y + ' for the CPA</button>'; }).join('') + '</div></section>';
 	}
 	/* ---------- Get Reviews: pick past clients and email them a Google review request ---------- */
 	var REV_PER = 25;
@@ -2781,10 +2876,19 @@
 	// Settings → Connections: every hookup in one place (Google accounts, bank, AI, Upwork, Stripe, PayPal).
 	function connectionsView() {
 		S.pConnOpen = true;
-		return '<h2 class="dwdc-sech">Google, bank &amp; AI</h2>' + connPanel().replace('<button class="dwdc-cardh dwdc-colh" data-pconnopen', '<div class="dwdc-cardh" data-x').replace(/<\/button>(<div class="dwdc-conns">)/, '</div>$1')
+		return (S.health && S.health.items ? '<h2 class="dwdc-sech">Sync health</h2><section class="dd-card dd-healthall">' + healthList(S.health, true) + '</section>' : '')
+			+ '<h2 class="dwdc-sech">Google, bank &amp; AI</h2>' + connPanel().replace('<button class="dwdc-cardh dwdc-colh" data-pconnopen', '<div class="dwdc-cardh" data-x').replace(/<\/button>(<div class="dwdc-conns">)/, '</div>$1')
 			+ '<h2 class="dwdc-sech">Google Drive · client upload folders</h2>' + driveConn()
+			+ '<h2 class="dwdc-sech">AI Instructions · your house rules</h2>' + rulesConn()
+			+ '<h2 class="dwdc-sech">Taxes · set-aside and CPA export</h2>' + taxConn()
 			+ '<h2 class="dwdc-sech">Zoom · meeting invites</h2>' + zoomConn()
 			+ '<h2 class="dwdc-sech">Payments &amp; Upwork</h2><section class="dwdc-card pad dwdc-mcard wide">' + connCard() + '</section>';
+	}
+	function rulesConn() {
+		if (!S.rules && !S.rulesLoading) { S.rulesLoading = true; api('/house-rules').then(function (x) { S.rules = x; S.rulesLoading = false; render(); }).catch(function () { S.rulesLoading = false; }); }
+		var H = S.rules;
+		return '<section class="dd-card dd-drvc"><div class="dd-drvh">' + ddPill(H && H.custom ? 'Your rules' : 'Starting rules', H && H.custom ? 'success' : 'neutral') + '<span>Written into every AI Instructions zip (CLAUDE.md and the design brief), so each build starts with your standards. One rule per line.</span></div>'
+			+ (H ? '<textarea data-rulestxt rows="9" class="dd-rulestxt">' + esc(H.rules) + '</textarea><div class="dd-pbtns"><button type="button" class="dd-btn primary" data-rulessave>Save house rules</button>' + (H.custom ? '<button type="button" class="dd-btn ghost" data-rulesreset>Back to the starting rules</button>' : '') + '</div>' : '<p class="dd-help">Loading…</p>') + '</section>';
 	}
 	function zoomConn() {
 		if (!S.zm && !S.zmLoading) { S.zmLoading = true; api('/zoom').then(function (x) { S.zm = x; S.zmLoading = false; render(); }).catch(function () { S.zmLoading = false; }); }
@@ -2800,6 +2904,7 @@
 		if (!S.drv && !S.drvLoading) { S.drvLoading = true; api('/drive').then(function (x) { S.drv = x; S.drvLoading = false; render(); }).catch(function () { S.drvLoading = false; }); }
 		var G = S.drv, ok = G ? G.ready : DWDC.driveReady;
 		return '<section class="dd-card dd-drvc"><div class="dd-drvh">' + ddPill(ok ? 'Connected' : 'Not connected', ok ? 'success' : 'neutral') + '<span>Each project gets a folder named after the company inside “Dream Desk – Client folders” in your Drive. When an onboarding form comes in, the folder is made and the client is emailed the link automatically.</span></div>'
+			+ (G && G.ready && G.ver && G.ver < 3 ? '<p class="dd-help"><b>Update available:</b> the newer script lets AI Instructions include files that aren’t shared by link, and Google Docs, Sheets and Slides (as PDF). Copy the script below, paste it over the old one at script.google.com, then Deploy → Manage deployments → Edit → New version → Deploy. The web app link stays the same.</p>' : '')
 			+ '<ol><li>Open <a href="https://script.google.com/home/projects/create" target="_blank" rel="noopener"><b>script.google.com → New project</b></a> while signed in as mike@dreamwebdigital.com and name it “Dream Desk – Drive folders”.</li>'
 			+ '<li>Delete what’s in the editor and paste this script: ' + (G ? '<button type="button" class="dd-btn secondary sm" data-copy="' + esc(G.script) + '">' + lu('link', 13) + 'Copy script</button>' : '<i>loading…</i>') + '</li>'
 			+ '<li>Save, choose <b>setup</b> next to Run, press <b>Run</b> and allow Drive access.</li>'
@@ -3410,8 +3515,10 @@
 		}
 		var started = imported(c) || !c.created ? '' : String(c.created).slice(0, 10);
 		var sub = [c.job ? esc(c.job) : '', site(c) ? '<a href="https://' + esc(site(c)) + '" target="_blank" rel="noopener">' + esc(site(c)) + '</a>' : '', c.lead_source ? 'Lead from ' + esc(c.lead_source) : '', started ? 'Started ' + fmt(started) : ''].filter(Boolean).join(' · ');
-		var head = '<div class="dd-pp-head"><span class="dd-pp-av">' + esc(ddInitials(c.company || c.name)) + '</span><div class="dd-pp-t"><div class="dd-pp-h1"><h1>' + esc(c.name) + '</h1>' + ddPill(stLabel, stTone) + (payState ? ddPill(payState, payTone) : '') + (num(c.hosting) ? ddPill('Hosting', 'neutral') : '') + '</div>'
-			+ (sub ? '<p>' + sub + '</p>' : '') + '</div><div class="dd-pp-acts">' + '<button type="button" class="dd-btn secondary" data-emailc="' + c.id + '"' + (em ? '' : ' title="No email on file: type it in"') + '>' + lu('mail', 14) + 'Email client</button>' + meetBtn(c) + (c.drive ? '<button type="button" class="dd-btn secondary" data-copy="' + esc(c.drive) + '" title="Copy the Google Drive upload link">' + lu('link', 14) + 'Drive link</button>' : '') + main
+		var head = '<div class="dd-pp-head"><span class="dd-pp-av">' + esc(ddInitials(c.company || c.name)) + '</span><div class="dd-pp-t"><div class="dd-pp-h1"><h1>' + esc(c.name) + '</h1>' + ddPill(stLabel, stTone) + (payState ? ddPill(payState, payTone) : '') + (num(c.hosting) ? ddPill('Hosting', 'neutral') : '')
+			+ (c.wait && c.wait.who === 'you' ? '<span class="dd-pp-wait">' + waitPill(c) + '<button type="button" class="dd-lnk sm" data-waitclear="' + c.id + '">No reply needed</button></span>'
+				: c.wait && c.wait.who === 'client' ? '<span class="dd-pp-wait">' + ddPill('Waiting on client · ' + waitAge(c.wait), isQuiet(c) ? 'warning' : 'neutral') + (isQuiet(c) && em ? '<button type="button" class="dd-lnk sm" data-followup="' + c.id + '">Follow up</button>' : '') + '</span>' : '') + '</div>'
+			+ (sub ? '<p>' + sub + '</p>' : '') + '</div><div class="dd-pp-acts">' + meetBtn(c) + main
 			+ '<div class="pv3-more dd-pp-more"><button type="button" class="dd-btn secondary icon" data-pmore aria-haspopup="menu" aria-label="More actions">' + lu('more-horizontal') + '</button><div class="pv3-menu dd-menu2" role="menu">' + menu + '</div></div></div></div>';
 		// money strip
 		var strip;
@@ -3530,7 +3637,42 @@
 		var hosting = num(c.hosting) ? hostCard(c) : '';
 		return '<div class="dd-pp">' + head + strip
 			+ (S.edit ? '<div class="dd-pp-edit" id="pv3-edit">' + details + peopleCard(c) + '</div>' : '')
-			+ '<div class="dd-pp-grid"><div class="dd-pp-col">' + sumBox + (full ? '<div class="dd-mt2">' + mailBox('p' + c.id, c.email || (clientOf(c) || {}).email || '', c.id) + textsBox(c) + '</div>' + meetBox(c) + assetsBox(c) : '') + stgBox + mkBox + formBox + (S.edit ? '' : '<div class="dd-pp-mob">' + details + '</div>') + '<div class="dd-tn">' + todos + notesBox + '</div>' + '</div><div class="dd-pp-col side">' + (S.edit ? '' : '<div class="dd-pp-desk">' + details + '</div>' + contacts) + zoomBox('p' + c.id, [c.id]) + (st === 'leads' ? '' : paysBox) + hosting + '</div></div></div>';
+			+ '<div class="dd-pp-grid"><div class="dd-pp-col">' + sumBox + (full && ['active', 'hold', 'limbo', 'leads'].indexOf(st) > -1 ? readyBox(c) : '') + (full ? '<div class="dd-mt2">' + mailBox('p' + c.id, c.email || (clientOf(c) || {}).email || '', c.id) + textsBox(c) + '</div>' + meetBox(c) + assetsBox(c) : '') + stgBox + mkBox + formBox + (S.edit ? '' : '<div class="dd-pp-mob">' + details + '</div>') + '<div class="dd-tn">' + todos + notesBox + '</div>' + '</div><div class="dd-pp-col side">' + (S.edit ? '' : '<div class="dd-pp-desk">' + details + '</div>') + zoomBox('p' + c.id, [c.id]) + (S.edit ? '' : contacts) + (st === 'leads' ? '' : paysBox) + hosting + '</div></div></div>';
+	}
+	// Ready to build (ready.php): what's in hand, what's missing from the client, and open questions, before AI Instructions.
+	function readyBox(c) {
+		var R = c.ready;
+		if (!R || !R.items) { return ''; }
+		var I = R.items, miss = I.filter(function (x) { return x.state === 'missing'; }), have = I.length - miss.length;
+		var Q = (R.questions && R.questions.list) || [], busy = (S.rdyBusy || {})[c.id];
+		var op = (S.rdyOpen || {})[c.id], open = op == null ? !!(miss.length || Q.length) : op;
+		var icon = { ok: lu('check', 14), missing: lu('alert-circle', 14), you: lu('user', 14) };
+		var sum = miss.length || Q.length ? have + ' of ' + I.length + ' in hand' + (miss.length ? ' · <b class="late">' + miss.length + ' missing</b>' : '') + (Q.length ? ' · ' + Q.length + ' open question' + (Q.length === 1 ? '' : 's') : '') : 'Everything’s in · ready to build';
+		return '<section class="dd-card dd-pc2 k-ready' + (open ? ' open' : ' shut') + '"><header class="dd-ntog" data-rdytog="' + c.id + '" role="button" tabindex="0" aria-expanded="' + open + '"><h2>Ready to build</h2><span class="sum">' + sum + '</span><span class="dd-sp"></span><span class="dd-tchev">' + lu('chevron-down', 16) + '</span></header>'
+			+ (!open ? '' : '<div class="dd-rdy">' + I.map(function (x) {
+				var act = x.state === 'missing' ? '<button type="button" class="dd-lnk sm" data-rdytick="' + c.id + ':' + x.key + ':1">Got it</button>' : x.note === 'Checked by hand' ? '<button type="button" class="dd-lnk sm mute" data-rdytick="' + c.id + ':' + x.key + ':0">Undo</button>' : '';
+				return '<div class="dd-rdyr ' + x.state + '"><span class="dd-rdyi">' + icon[x.state] + '</span><span class="dd-rdyt"><b>' + esc(x.label) + '</b>' + (x.note ? '<small>' + esc(x.note) + '</small>' : x.state === 'missing' ? '<small>Not received yet</small>' : '') + '</span>' + act + '</div>';
+			}).join('') + '</div>'
+			+ '<div class="dd-rdyq"><p class="dd-invh">Open questions' + (R.questions && R.questions.at ? ' <small>checked ' + fmt(String(R.questions.at).slice(0, 10)) + '</small>' : '') + '</p>'
+			+ (Q.length ? '<ol>' + Q.map(function (q, i) { return '<li><span>' + esc(q) + '</span><button type="button" class="dd-ibtn sm" data-rdydrop="' + c.id + ':' + i + '" aria-label="Remove question" title="Settled: remove">' + lu('x', 13) + '</button></li>'; }).join('') + '</ol>' : '<p class="dd-help">' + (R.questions ? 'Nothing important left open.' : 'Claude reads the answers, calls, emails and notes and lists anything still unclear.') + '</p>')
+			+ '<div class="dd-pbtns"><button type="button" class="dd-btn secondary sm" data-rdyq="' + c.id + '"' + (busy ? ' disabled' : '') + '>' + lu('zap', 13) + (busy ? 'Reading everything…' : R.questions ? 'Check again' : 'Find open questions') + '</button>'
+			+ (miss.length || Q.length ? '<button type="button" class="dd-btn primary sm" data-rdyemail="' + c.id + '">' + lu('mail', 13) + 'Email the client what’s missing</button>' : '') + '</div></div>') + '</section>';
+	}
+	function readySet(id, body) {
+		return api('/contact/' + id + '/ready', 'POST', body).then(function (x) { if (S.full[id]) { S.full[id].ready = x; } render(); return x; });
+	}
+	function readyEmail(id) {
+		var c = S.full[id] || contact(id);
+		if (!c) { return; }
+		var R = c.ready || {}, miss = (R.items || []).filter(function (x) { return x.state === 'missing'; }), Q = (R.questions && R.questions.list) || [];
+		openEmail('', id);
+		var first = S.modal.first;
+		var text = 'Hi ' + (first || 'there') + ',\n\nBefore I start on the design, '
+			+ (miss.length ? 'there are a few things I still need from you:\n\n' + miss.map(function (x) { return '• ' + x.ask; }).join('\n') + '\n\n' : '')
+			+ (Q.length ? (miss.length ? 'And a few quick questions:\n\n' : 'I have a few quick questions:\n\n') + Q.map(function (q, i) { return (i + 1) + '. ' + q; }).join('\n') + '\n\n' : '')
+			+ (c.drive ? 'You can upload files to your folder here: ' + c.drive + '\n\n' : '') + 'Thanks!';
+		S.modal.vals = { subject: 'A few things before I start on ' + c.name, text: text };
+		render(); focusIn('[name=text]');
 	}
 	// Onboarding answers as plain text, ready to paste into Claude.
 	function onboardEntries(c) {
@@ -4147,6 +4289,50 @@
 	})();
 	app.addEventListener('click', function (e) {
 		var t = e.target, el;
+		if ((el = t.closest('[data-waitclear]'))) {
+			e.preventDefault(); e.stopPropagation();
+			var wid = +el.getAttribute('data-waitclear'); el.disabled = true;
+			waitSet(wid, 'clear').then(function () { undoToast('Marked as answered', function () { waitSet(wid, 'undo').catch(fail); }); }).catch(function (er) { el.disabled = false; fail(er); });
+			return;
+		}
+		if ((el = t.closest('[data-followup]'))) { e.preventDefault(); e.stopPropagation(); openFollowUp(+el.getAttribute('data-followup')); return; }
+		if ((el = t.closest('[data-rdytog]'))) { var rtid = el.getAttribute('data-rdytog'), rc = S.full[rtid] || {}, rmiss = ((rc.ready && rc.ready.items) || []).some(function (x) { return x.state === 'missing'; }) || !!(rc.ready && rc.ready.questions && rc.ready.questions.list && rc.ready.questions.list.length); S.rdyOpen = S.rdyOpen || {}; S.rdyOpen[rtid] = !(S.rdyOpen[rtid] == null ? rmiss : S.rdyOpen[rtid]); render(); return; }
+		if ((el = t.closest('[data-rdytick]'))) { var rk = el.getAttribute('data-rdytick').split(':'); el.disabled = true; readySet(+rk[0], { act: 'tick', key: rk[1], on: rk[2] === '1' }).catch(function (er) { el.disabled = false; fail(er); }); return; }
+		if ((el = t.closest('[data-rdydrop]'))) { var rd = el.getAttribute('data-rdydrop').split(':'), rq = ((S.full[rd[0]] || {}).ready || {}).questions; if (rq && rq.list) { readySet(+rd[0], { act: 'dropq', q: rq.list[+rd[1]] }).catch(fail); } return; }
+		if ((el = t.closest('[data-rdyq]'))) { var rqid = +el.getAttribute('data-rdyq'); S.rdyBusy = S.rdyBusy || {}; S.rdyBusy[rqid] = 1; S.rdyOpen = S.rdyOpen || {}; S.rdyOpen[rqid] = true; render(); readySet(rqid, { act: 'questions' }).then(function (x) { S.rdyBusy[rqid] = 0; render(); toast(x.questions && x.questions.list && x.questions.list.length ? x.questions.list.length + ' open question' + (x.questions.list.length === 1 ? '' : 's') + ' found' : 'Nothing important left open'); }).catch(function (er) { S.rdyBusy[rqid] = 0; render(); fail(er); }); return; }
+		if ((el = t.closest('[data-rdyemail]'))) { readyEmail(+el.getAttribute('data-rdyemail')); return; }
+		if ((el = t.closest('[data-healthtog]'))) { S.healthOpen = !S.healthOpen; render(); return; }
+		if ((el = t.closest('[data-taxsave]'))) {
+			var tpct = app.querySelector('[data-taxpct]'), tpaid = app.querySelector('[data-taxpaid]'), tcal = app.querySelector('[data-taxcal]');
+			var taccts = [].map.call(app.querySelectorAll('[data-taxacct]:checked'), function (x) { return x.value; });
+			el.disabled = true;
+			api('/tax', 'POST', { pct: tpct ? tpct.value : 25, paid: tpaid ? tpaid.value || 0 : 0, acct: taccts, cal: !!(tcal && tcal.checked) }).then(function (x) { S.tax = x; render(); toast('Tax settings saved' + (x.added_dates ? ' · ' + x.added_dates + ' due date' + (x.added_dates === 1 ? '' : 's') + ' added to your to-dos' : '')); }).catch(function (er) { el.disabled = false; fail(er); });
+			return;
+		}
+		if ((el = t.closest('[data-taxcsv]'))) {
+			var ty2 = el.getAttribute('data-taxcsv'), tlab = el.innerHTML; el.disabled = true; el.textContent = 'Building…';
+			api('/tax-export?year=' + ty2).then(function (x) {
+				var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([x.csv], { type: 'text/csv' })); a.download = x.name; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+				el.disabled = false; el.innerHTML = tlab; toast('Downloaded ' + x.name);
+			}).catch(function (er) { el.disabled = false; el.innerHTML = tlab; fail(er); });
+			return;
+		}
+		if ((el = t.closest('[data-rulessave], [data-rulesreset]'))) {
+			var rtx = app.querySelector('[data-rulestxt]'), rval = el.hasAttribute('data-rulesreset') ? (S.rules || {}).default : (rtx ? rtx.value : '');
+			el.disabled = true;
+			api('/house-rules', 'POST', { rules: rval || '' }).then(function (x) { S.rules = x; render(); toast(el.hasAttribute('data-rulesreset') ? 'Back to the starting rules' : 'House rules saved'); }).catch(function (er) { el.disabled = false; fail(er); });
+			return;
+		}
+		if ((el = t.closest('[data-fffile], [data-ffnone]'))) {
+			var ffid = el.getAttribute('data-fffile') || el.getAttribute('data-ffnone'), ffsel = app.querySelector('[data-ffpick="' + ffid + '"]'), ffpid = el.hasAttribute('data-fffile') ? +(ffsel && ffsel.value) : 0;
+			if (el.hasAttribute('data-fffile') && !ffpid) { toast('Pick the project first', true); return; }
+			el.disabled = true;
+			api('/fireflies', 'POST', { id: ffid, pid: ffpid }).then(function () {
+				if (S.sync && S.sync.fireflies && S.sync.fireflies.unfiled) { S.sync.fireflies.unfiled = S.sync.fireflies.unfiled.filter(function (x) { return x.id !== ffid; }); }
+				render(); toast(ffpid ? 'Filed on ' + ((contact(ffpid) || {}).name || 'the project') : 'Marked as not a client call');
+			}).catch(function (er) { el.disabled = false; fail(er); });
+			return;
+		}
 		if ((el = t.closest('[data-ptodotog]')) && !t.closest('a')) { var ptid = el.getAttribute('data-ptodotog'); S.ptodoOpen = S.ptodoOpen || {}; S.ptodoOpen[ptid] = !S.ptodoOpen[ptid]; render(); return; }
 		if ((el = t.closest('[data-notestog]'))) { var nid = el.getAttribute('data-notestog'); S.notesOpen = S.notesOpen || {}; S.notesOpen[nid] = !S.notesOpen[nid]; render(); return; }
 		// project page: ⋯ menu, payment log form, remove a payment

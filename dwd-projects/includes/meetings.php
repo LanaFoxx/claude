@@ -183,6 +183,9 @@ function dwdmt_save_links( $map ) {
 function dwdmt_store( $events, $via ) {
 	$m = dwdmt_parse( $events );
 	update_option( 'dwdmt_data', array( 'at' => current_time( 'mysql' ), 'via' => $via, 'meetings' => $m ), false );
+	if ( function_exists( 'dwdff_cal_log' ) ) {
+		dwdff_cal_log( $m ); // kept so Fireflies recordings can be filed by the call they belong to
+	}
 	return array( 'ok' => true, 'meetings' => count( $m ) );
 }
 

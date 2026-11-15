@@ -300,3 +300,131 @@ function dwdp_category( $post_id ) {
 	}
 	return 'Local Business';
 }
+
+/**
+ * Sync health: is every automatic feed still running?
+ *
+ * Each feed already records when it last worked. Anything past its expected gap (or reporting an error) shows as a
+ * red "needs attention" pill on Home and a list on Connections, and a short email goes out once a day while
+ * something is wrong (again only when the list changes, or every 3 days). Setup gaps (Zoom login, reCAPTCHA keys)
+ * are listed too, in amber.
+ */
+
+/** A stored local "Y-m-d H:i:s" (site time zone) or an ISO date → Unix time; 0 when unknown. */
+function dwdh_time( $v ) {
+	$v = (string) $v;
+	if ( '' === $v ) {
+		return 0;
+	}
+	if ( preg_match( '/T.*(Z|[+-]\d\d:?\d\d)$/', $v ) ) {
+		return (int) strtotime( $v );
+	}
+	try {
+		return ( new DateTime( $v, wp_timezone() ) )->getTimestamp();
+	} catch ( Exception $e ) {
+		return 0;
+	}
+}
+
+/** Every feed: [ name, state ok|stale|error|setup, at (ISO), every, note ]. */
+function dwdh_items() {
+	$out = array();
+	$add = function ( $name, $at, $hours, $every, $fix, $err = '' ) use ( &$out ) {
+		$t     = dwdh_time( $at );
+		$state = '' !== $err ? 'error' : ( ! $t ? 'stale' : ( time() - $t > $hours * HOUR_IN_SECONDS ? 'stale' : 'ok' ) );
+		$out[] = array( 'name' => $name, 'state' => $state, 'at' => $t ? gmdate( 'c', $t ) : '', 'every' => $every, 'note' => 'ok' === $state ? '' : ( '' !== $err ? $err : $fix ) );
+	};
+	if ( get_option( 'dwdmt_token', '' ) ) {
+		$add( 'Gmail and Google Calendar', get_option( 'dwdin_last', '' ), 2, 'every 15 minutes', 'The Dream Desk · Inbox script in your work Google account has stopped. Open script.google.com and check its trigger.' );
+	}
+	$pe = get_option( 'dwdpe_last_sync', null );
+	if ( is_array( $pe ) ) {
+		$add( 'Personal calendar and Google Tasks', $pe['at'] ?? '', 3, 'every 15 minutes', 'The personal calendar script has stopped. Open script.google.com and check its trigger.' );
+	}
+	$ads = get_option( 'dwdads_data', array() );
+	if ( ! empty( $ads['at'] ) ) {
+		$add( 'Google Ads', $ads['at'], 6, 'hourly', 'The script inside Google Ads has stopped sending. Check Tools → Scripts in Google Ads.' );
+	}
+	if ( function_exists( 'dwdpl_items' ) ) {
+		foreach ( dwdpl_items() as $it ) {
+			$name = 'Bank: ' . ( $it['institution'] ?? 'account' ) . ( ! empty( $it['accounts'] ) ? ' (' . implode( ', ', array_slice( array_map( function ( $a ) { return is_array( $a ) ? ( $a['name'] ?? '' ) . ( ! empty( $a['mask'] ) ? ' ••' . $a['mask'] : '' ) : (string) $a; }, (array) $it['accounts'] ), 0, 3 ) ) . ')' : '' );
+			$add( $name, $it['synced'] ?? '', 36, 'daily', 'Transactions have stopped coming in. Re-link it under Settings → Connections → Bank.', ! empty( $it['error'] ) ? 'Needs re-linking: ' . (string) $it['error'] : '' );
+		}
+		$bal = get_option( 'dwdpl_balances', array() );
+		if ( ! empty( $bal['at'] ) ) {
+			$add( 'Bank balances', $bal['at'], 30, 'daily at 5 AM', 'Balances have not updated today. Press refresh next to the bank balance on Home.' );
+		}
+	}
+	$up = get_option( 'dwd_upwork_snap', array() );
+	if ( ! empty( $up['checked'] ) ) {
+		$add( 'Upwork balances', $up['checked'], 14, 'twice a day', 'The Upwork check runs in Chrome on your computer: make sure the computer is on and Chrome is open, or press refresh on Home.' );
+	}
+	if ( get_option( 'dwds_fireflies_key', '' ) ) {
+		$add( 'Fireflies meetings', get_option( 'dwdff_last', '' ), 4, 'hourly', 'Fireflies has not answered. Check the API key under Settings → Connections.' );
+	}
+	if ( get_option( 'dwds_quo_key', '' ) ) {
+		$add( 'Quo texts', get_option( 'dwdw_txt_last', '' ), 4, 'hourly', 'The hourly text check has not run. It runs on the site’s scheduler, so a visit to Dream Desk usually starts it again.' );
+	}
+	// Setup still to finish.
+	$z = get_option( 'dwdh_zoom', array() );
+	if ( ! empty( $z['error'] ) ) {
+		$out[] = array( 'name' => 'Zoom', 'state' => 'setup', 'at' => '', 'every' => '', 'note' => 'New meetings can’t be created: ' . $z['error'] . ' Fix the login under Settings → Connections → Zoom.' );
+	}
+	if ( '' === trim( (string) get_option( 'elementor_pro_recaptcha_v3_site_key', '' ) ) || '' === trim( (string) get_option( 'elementor_pro_recaptcha_v3_secret_key', '' ) ) ) {
+		$out[] = array( 'name' => 'Form spam protection (reCAPTCHA v3)', 'state' => 'setup', 'at' => '', 'every' => '', 'note' => 'Built and waiting for its two keys: Elementor → Settings → Integrations → reCAPTCHA v3.' );
+	}
+	return $out;
+}
+
+function dwdh_summary() {
+	$items = dwdh_items();
+	$bad   = array_values( array_filter( $items, function ( $x ) { return 'ok' !== $x['state']; } ) );
+	return array( 'ok' => ! array_filter( $bad, function ( $x ) { return 'setup' !== $x['state']; } ), 'problems' => count( array_filter( $bad, function ( $x ) { return 'setup' !== $x['state']; } ) ), 'setup' => count( $bad ) - count( array_filter( $bad, function ( $x ) { return 'setup' !== $x['state']; } ) ), 'items' => $items );
+}
+
+add_filter( 'dwdc_crm_payload', function ( $p ) {
+	$p['health'] = dwdh_summary();
+	return $p;
+} );
+
+/** Daily: test the Zoom login, then email a short list if a feed has stopped. */
+function dwdh_daily() {
+	if ( function_exists( 'dwdz_api_ready' ) && dwdz_api_ready() && function_exists( 'dwdz_token' ) ) {
+		$t = dwdz_token( true );
+		update_option( 'dwdh_zoom', is_wp_error( $t ) ? array( 'error' => $t->get_error_message(), 'at' => current_time( 'mysql' ) ) : array( 'at' => current_time( 'mysql' ) ), false );
+	}
+	$bad = array_values( array_filter( dwdh_items(), function ( $x ) { return in_array( $x['state'], array( 'stale', 'error' ), true ); } ) );
+	if ( ! $bad ) {
+		delete_option( 'dwdh_sent' );
+		return;
+	}
+	$key  = md5( wp_json_encode( array_column( $bad, 'name' ) ) );
+	$sent = (array) get_option( 'dwdh_sent', array() );
+	if ( ( $sent['key'] ?? '' ) === $key && time() - (int) ( $sent['at'] ?? 0 ) < 3 * DAY_IN_SECONDS ) {
+		return;
+	}
+	$rows = '';
+	foreach ( $bad as $x ) {
+		$rows .= '<li style="margin:0 0 10px"><b>' . esc_html( $x['name'] ) . '</b>' . ( $x['at'] ? ' · last worked ' . esc_html( wp_date( 'M j, g:i A', strtotime( $x['at'] ) ) ) : ' · never ran' ) . '<br>' . esc_html( $x['note'] ) . '</li>';
+	}
+	$html = '<div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.5;color:#0F2447"><p>' . count( $bad ) . ' Dream Desk connection' . ( 1 === count( $bad ) ? ' has' : 's have' ) . ' stopped updating, so some numbers may be out of date:</p><ul>' . $rows . '</ul><p><a href="' . esc_url( admin_url( 'admin.php?page=client-desk#connections' ) ) . '">Open Connections in Dream Desk</a></p></div>';
+	wp_mail( get_option( 'admin_email' ), 'Dream Desk: ' . count( $bad ) . ' connection' . ( 1 === count( $bad ) ? '' : 's' ) . ' need' . ( 1 === count( $bad ) ? 's' : '' ) . ' attention', $html, array( 'Content-Type: text/html; charset=UTF-8', 'X-DWD-Own: 1' ) );
+	update_option( 'dwdh_sent', array( 'key' => $key, 'at' => time() ), false );
+}
+add_action( 'dwdh_daily', 'dwdh_daily' );
+add_action( 'init', function () {
+	if ( ! wp_next_scheduled( 'dwdh_daily' ) ) {
+		$t = new DateTime( 'tomorrow 08:20', wp_timezone() );
+		wp_schedule_event( $t->getTimestamp(), 'daily', 'dwdh_daily' );
+	}
+} );
+
+add_action( 'rest_api_init', function () {
+	register_rest_route( 'dwd/v1', '/crm/health', array( 'methods' => 'GET', 'permission_callback' => function () { return current_user_can( 'manage_options' ); }, 'callback' => function ( $r ) {
+		if ( $r->get_param( 'zoom' ) && function_exists( 'dwdz_api_ready' ) && dwdz_api_ready() ) {
+			$t = dwdz_token( true );
+			update_option( 'dwdh_zoom', is_wp_error( $t ) ? array( 'error' => $t->get_error_message(), 'at' => current_time( 'mysql' ) ) : array( 'at' => current_time( 'mysql' ) ), false );
+		}
+		return dwdh_summary();
+	} ) );
+} );
