@@ -831,7 +831,7 @@ function dwdbk_adspend() {
 function dwdtax_cfg() {
 	$c = (array) get_option( 'dwdtax', array() );
 	return array(
-		'pct'  => isset( $c['pct'] ) ? max( 0, min( 60, (float) $c['pct'] ) ) : 25.0,
+		'pct'  => isset( $c['pct'] ) ? max( 0, min( 60, (float) $c['pct'] ) ) : 10.0,
 		'acct' => array_values( array_filter( array_map( 'strval', (array) ( $c['acct'] ?? array() ) ) ) ), // account last-4s the tax money sits in
 		'paid' => (array) ( $c['paid'] ?? array() ), // year => estimated tax already paid
 		'cal'  => ! empty( $c['cal'] ),
@@ -868,7 +868,7 @@ function dwdtax_summary() {
 	$inQ   = array_sum( array_slice( $m, ( $q - 1 ) * 3, 3 ) );
 	$ytd   = array_sum( array_slice( $m, 0, $mo ) );
 	$paid  = (float) ( $c['paid'][ (string) $y ] ?? 0 );
-	$need  = max( 0, round( $ytd * $c['pct'] / 100 - $paid, 2 ) );
+	$need  = max( 0, round( $inQ * $c['pct'] / 100, 2 ) ); // this quarter only: what the next estimated payment covers
 	// Accounts that can hold the tax money (from the bank balances), and what's in the chosen ones.
 	$accts = array();
 	$held  = null;
