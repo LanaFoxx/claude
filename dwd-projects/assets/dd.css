@@ -979,3 +979,5 @@ section.dd-health.warn .dd-healthb .dd-hld { background: var(--warning-text); }
 .dd .dd-ap .dd-aphd em { font-style: normal; font-weight: 500; color: var(--text-3); }
 .dd .dd-ap .dd-divrow.dd-aphd { cursor: grab; }
 .dd .dd-ap .dd-aphd + .dd-aplist > .dd-ap-r:first-child, .dd .dd-ap .dd-divrow.dd-aphd + .dd-ap-r { border-top: 0; }
+/* Waiting sections get a yellow dot (Home, Active list and board) */
+.dd .dd-agh i:not(.now), .dd .dd-bcol header i:not(.now), .dd .dd-ap .dd-aphd i:not(.now) { background: #f5b301; }
