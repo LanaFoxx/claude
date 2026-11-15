@@ -921,7 +921,9 @@ section.dd-health.warn .dd-healthb .dd-hld { background: var(--warning-text); }
 .dd .dd-drvbtns > .dd-btn svg { display: none; }
 /* Project page, Staging & Markup: staging URL, Markup link and its buttons on one line (wide screens) */
 @media (min-width: 1280px) {
-	.dd .k-stg .dd-stgb { display: flex; align-items: center; gap: 12px; }
+	.dd .k-stg .dd-stgb { display: flex; flex-direction: row !important; flex-wrap: nowrap; align-items: center; gap: 12px; }
+	.dd .k-stg .dd-stgb .dd-pbtns { flex-wrap: nowrap; }
+	.dd .k-stg .dd-stgb .dd-sm-top .dd-btn { padding: 0 10px; }
 	.dd .k-stg .dd-stgb > * { flex: 0 1 auto; min-width: 0; margin: 0 !important; }
 	.dd .k-stg .dd-stgb > form.dd-stgf { flex: 1 1 0; }
 	.dd .k-stg .dd-stgb > .dd-sm-mk { flex: 1.4 1 0; display: block; border: 0 !important; padding: 0 !important; }
