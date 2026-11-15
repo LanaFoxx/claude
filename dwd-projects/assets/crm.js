@@ -891,20 +891,20 @@
 		};
 		var need = ids.filter(function (id) { return S.meetTx[id] == null; });
 		if (!need.length) { put(build()); return; }
-		var was = el.textContent; el.textContent = 'Getting transcript…'; el.disabled = true;
+		var was = el.innerHTML; el.textContent = 'Getting transcript…'; el.disabled = true;
 		Promise.all(need.map(function (id) { return api('/fireflies?transcript=' + encodeURIComponent(id)).then(function (x) { S.meetTx[id] = x.text; }); }))
-			.then(function () { el.textContent = was; el.disabled = false; put(build()); })
-			.catch(function (e) { el.textContent = was; el.disabled = false; fail(e); });
+			.then(function () { el.innerHTML = was; el.disabled = false; put(build()); })
+			.catch(function (e) { el.innerHTML = was; el.disabled = false; fail(e); });
 	}
 	// Meetings: recorded calls from Fireflies filed on this project.
 	function meetBox(c) {
 		var L = c.meetings || [], open = S.meetOpen || {};
 		S.meetBy = S.meetBy || {}; L.forEach(function (m) { S.meetBy[m.id] = m; });
 		if (!L.length) { return ''; }
-		return '<section class="dd-card dd-pc2 k-meet"><header><h2>Meetings</h2><span class="sum">' + L.length + ' recorded</span><span class="dd-sp"></span><button type="button" class="dd-hlink" data-meetcopy="' + esc(L.map(function (m) { return m.id; }).join(',')) + '">' + (L.length > 1 ? 'Copy all transcripts' : 'Copy transcript') + '</button></header><div class="dd-mtl">' + L.map(function (m) {
+		return '<section class="dd-card dd-pc2 k-meet"><header><h2>Meetings</h2><span class="sum">' + L.length + ' recorded</span><span class="dd-sp"></span><button type="button" class="dd-btn secondary sm" data-meetcopy="' + esc(L.map(function (m) { return m.id; }).join(',')) + '">' + (L.length > 1 ? 'Copy all transcripts' : 'Copy transcript') + '</button></header><div class="dd-mtl">' + L.map(function (m) {
 			var on = !!open[m.id];
 			return '<div class="dd-mtg' + (on ? ' open' : '') + '"><button type="button" class="dd-mtgh" data-meetopen="' + esc(m.id) + '" aria-expanded="' + on + '"><b>' + esc(m.title) + '</b><small>' + fmt(String(m.date).slice(0, 10)) + ' · ' + m.mins + ' min</small></button>'
-				+ (on ? '<div class="dd-mtgb">' + (m.summary ? '<p>' + esc(m.summary) + '</p>' : '<p>No summary from Fireflies for this call.</p>') + (m.actions ? '<h4>Action items</h4><pre>' + esc(String(m.actions).replace(/\*\*/g, '')) + '</pre>' : '') + '<div class="dd-inva"><a class="dd-hlink" href="' + esc(m.url) + '" target="_blank" rel="noopener">Open in Fireflies</a><button type="button" class="dd-hlink" data-meettx="' + esc(m.id) + '" data-t="' + esc(m.title) + '">Read the transcript</button><button type="button" class="dd-hlink" data-meetcopy="' + esc(m.id) + '">Copy transcript</button></div></div>' : '') + '</div>';
+				+ (on ? '<div class="dd-mtgb">' + (m.summary ? '<p>' + esc(m.summary) + '</p>' : '<p>No summary from Fireflies for this call.</p>') + (m.actions ? '<h4>Action items</h4><pre>' + esc(String(m.actions).replace(/\*\*/g, '')) + '</pre>' : '') + '<div class="dd-inva"><a class="dd-hlink" href="' + esc(m.url) + '" target="_blank" rel="noopener">Open in Fireflies</a><button type="button" class="dd-hlink" data-meettx="' + esc(m.id) + '" data-t="' + esc(m.title) + '">Read the transcript</button><span class="dd-sp"></span><button type="button" class="dd-btn secondary sm" data-meetcopy="' + esc(m.id) + '">' + lu('copy', 14) + 'Copy transcript</button></div></div>' : '') + '</div>';
 		}).join('') + '</div></section>';
 	}
 	// Texts: the Quo conversation with this project's phone number, and a box to send a new text.

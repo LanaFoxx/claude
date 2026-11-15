@@ -793,3 +793,5 @@ input[type=date], input[type=datetime-local] { cursor: pointer; }
 /* Project list: no Next step column; the space goes to the project and client names */
 .dd .dd-prow > .dd-pc.nx, .dd .dd-prow.head > :nth-child(8) { display: none; }
 @media (min-width: 1280px) { .dd .dd-prow { grid-template-columns: 28px minmax(0, 2.3fr) minmax(0, 1.4fr) 110px 150px 140px 56px; } }
+.dd-mtgb .dd-inva { align-items: center; margin-top: 10px; }
+.dd-mtgb .dd-inva .dd-sp { flex: 1; }
