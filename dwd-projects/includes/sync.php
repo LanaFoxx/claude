@@ -1363,3 +1363,136 @@ add_action( 'rest_api_init', function () {
 		} ),
 	) );
 } );
+
+/* ---------- Quo contacts: people you have already texted or called, matched to Dream Desk clients ---------- */
+
+/** Every phone number Dream Desk knows: e164 => [ name, company, email, id ]. Clients first, then projects, then extra contacts. */
+function dwdq_people() {
+	$out = array();
+	$put = function ( $phone, $name, $company, $email, $id ) use ( &$out ) {
+		$e = dwdq_e164( $phone );
+		$name = trim( (string) $name );
+		if ( '' === $e || isset( $out[ $e ] ) || '' === $name ) {
+			return;
+		}
+		$out[ $e ] = array( 'phone' => $e, 'name' => $name, 'company' => trim( (string) $company ), 'email' => strtolower( trim( (string) $email ) ), 'id' => (int) $id );
+	};
+	foreach ( get_posts( array( 'post_type' => DWDC_CLIENT, 'post_status' => 'any', 'posts_per_page' => -1, 'fields' => 'ids' ) ) as $id ) {
+		$name = html_entity_decode( (string) get_the_title( $id ), ENT_QUOTES, 'UTF-8' );
+		$put( get_post_meta( $id, '_dwdcl_phone', true ), $name, get_post_meta( $id, '_dwdcl_company', true ), get_post_meta( $id, '_dwdcl_email', true ), $id );
+	}
+	foreach ( get_posts( array( 'post_type' => DWDC_CONTACT, 'post_status' => 'any', 'posts_per_page' => -1, 'fields' => 'ids' ) ) as $id ) {
+		$title  = html_entity_decode( (string) get_the_title( $id ), ENT_QUOTES, 'UTF-8' );
+		$person = (string) get_post_meta( $id, '_dwdc_person', true );
+		$put( get_post_meta( $id, '_dwdc_phone', true ), '' !== trim( $person ) ? $person : $title, '' !== trim( $person ) ? $title : '', get_post_meta( $id, '_dwdc_email', true ), $id );
+		foreach ( (array) get_post_meta( $id, '_dwdc_contacts', true ) as $x ) {
+			if ( is_array( $x ) ) {
+				$put( $x['phone'] ?? '', $x['name'] ?? '', $title, $x['email'] ?? '', $id );
+			}
+		}
+	}
+	return $out;
+}
+
+/** Numbers you have a Quo conversation with, who is already a Quo contact, and which of the rest are Dream Desk clients. */
+function dwdq_match() {
+	$own = dwdq_numbers();
+	if ( is_wp_error( $own ) ) {
+		return $own;
+	}
+	$mine = array_column( $own, 'number' );
+	$seen = array();
+	$tok  = '';
+	for ( $i = 0; $i < 15; $i++ ) {
+		$j = dwdq_call( 'GET', '/conversations?maxResults=100' . ( $tok ? '&pageToken=' . rawurlencode( $tok ) : '' ) );
+		if ( is_wp_error( $j ) ) {
+			return $j;
+		}
+		foreach ( (array) ( $j['data'] ?? array() ) as $c ) {
+			foreach ( (array) ( $c['participants'] ?? array() ) as $n ) {
+				$n = dwdq_e164( (string) $n );
+				if ( '' !== $n && ! in_array( $n, $mine, true ) ) {
+					$seen[ $n ] = max( (string) ( $seen[ $n ] ?? '' ), (string) ( $c['lastActivityAt'] ?? $c['updatedAt'] ?? '' ) );
+				}
+			}
+		}
+		$tok = (string) ( $j['nextPageToken'] ?? '' );
+		if ( '' === $tok ) {
+			break;
+		}
+	}
+	$have  = array();
+	$tok   = '';
+	$known = true;
+	for ( $i = 0; $i < 40; $i++ ) {
+		$j = dwdq_call( 'GET', '/contacts?maxResults=50' . ( $tok ? '&pageToken=' . rawurlencode( $tok ) : '' ) );
+		if ( is_wp_error( $j ) ) {
+			$known = false; // can't tell who is already a contact: nothing gets added
+			break;
+		}
+		foreach ( (array) ( $j['data'] ?? array() ) as $c ) {
+			foreach ( (array) ( $c['defaultFields']['phoneNumbers'] ?? array() ) as $ph ) {
+				$n = dwdq_e164( (string) ( $ph['value'] ?? '' ) );
+				if ( '' !== $n ) {
+					$have[ $n ] = 1;
+				}
+			}
+		}
+		$tok = (string) ( $j['nextPageToken'] ?? '' );
+		if ( '' === $tok ) {
+			break;
+		}
+	}
+	$people = dwdq_people();
+	$add    = array();
+	$none   = array();
+	$already = 0;
+	foreach ( $seen as $n => $last ) {
+		if ( isset( $have[ $n ] ) ) {
+			$already++;
+		} elseif ( isset( $people[ $n ] ) ) {
+			$add[] = array_merge( $people[ $n ], array( 'last' => substr( $last, 0, 10 ) ) );
+		} else {
+			$none[] = array( 'phone' => $n, 'last' => substr( $last, 0, 10 ) );
+		}
+	}
+	return array( 'conversations' => count( $seen ), 'already_contacts' => $already, 'contacts_readable' => $known, 'add' => $add, 'no_match' => $none, 'dream_desk_numbers' => count( $people ) );
+}
+
+add_action( 'rest_api_init', function () {
+	$can = function () { return current_user_can( 'manage_options' ); };
+	register_rest_route( 'dwd/v1', '/crm/quo/contacts', array(
+		array( 'methods' => 'GET', 'permission_callback' => $can, 'callback' => function () { return dwdq_match(); } ),
+		array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function () {
+			$m = dwdq_match();
+			if ( is_wp_error( $m ) ) {
+				return $m;
+			}
+			if ( empty( $m['contacts_readable'] ) ) {
+				return new WP_Error( 'dwdq', 'Quo would not list your existing contacts, so nothing was added (to avoid doubles).', array( 'status' => 400 ) );
+			}
+			$done = array();
+			$fail = array();
+			foreach ( $m['add'] as $p ) {
+				$parts  = preg_split( '/\s+/', $p['name'], 2 );
+				$fields = array( 'firstName' => (string) $parts[0], 'phoneNumbers' => array( array( 'name' => 'mobile', 'value' => $p['phone'] ) ) );
+				if ( ! empty( $parts[1] ) ) {
+					$fields['lastName'] = (string) $parts[1];
+				}
+				if ( '' !== $p['company'] ) {
+					$fields['company'] = $p['company'];
+				}
+				if ( is_email( $p['email'] ) ) {
+					$fields['emails'] = array( array( 'name' => 'email', 'value' => $p['email'] ) );
+				}
+				$r = dwdq_call( 'POST', '/contacts', array( 'defaultFields' => $fields, 'source' => 'dream-desk', 'externalId' => 'dreamdesk-' . $p['id'] . '-' . preg_replace( '/\D/', '', $p['phone'] ) ) );
+				if ( is_wp_error( $r ) ) {
+					$fail[] = array( 'name' => $p['name'], 'phone' => $p['phone'], 'why' => $r->get_error_message() );
+				} else {
+					$done[] = array( 'name' => $p['name'], 'phone' => $p['phone'], 'company' => $p['company'] );
+				}
+			}
+			return array( 'added' => $done, 'failed' => $fail, 'no_match' => $m['no_match'], 'already_contacts' => $m['already_contacts'] );
+		} ),
+	) );
+} );
