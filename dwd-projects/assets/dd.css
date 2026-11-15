@@ -920,7 +920,7 @@ section.dd-health.warn .dd-healthb .dd-hld { background: var(--warning-text); }
 .dd .dd-drvbtns > .dd-btn.ghost:hover { background: var(--hover); }
 .dd .dd-drvbtns > .dd-btn svg { display: none; }
 /* Project page, Staging & Markup: staging URL, Markup link and its buttons on one line (wide screens) */
-@media (min-width: 1280px) {
+@media (min-width: 1700px) {
 	.dd .k-stg .dd-stgb { display: flex; flex-direction: row !important; flex-wrap: nowrap; align-items: center; gap: 12px; }
 	.dd .k-stg .dd-stgb .dd-pbtns { flex-wrap: nowrap; }
 	.dd .k-stg .dd-stgb .dd-sm-top .dd-btn { padding: 0 10px; }
@@ -1016,3 +1016,18 @@ section.dd-health.warn .dd-healthb .dd-hld { background: var(--warning-text); }
 .dd .k-ready .dd-rdyq .dd-pbtns { margin: 0; padding: 0; gap: 8px; align-items: center; }
 @media (max-width: 767px) { .dd .k-ready .dd-rdyq { padding: 14px 16px 16px; } }
 .dd .dd-pc2 > header h2 > .lu { flex: none; color: var(--text-2); }
+/* Staging & Markup on normal desktop widths: two tidy rows (staging site, then the client's Markup link) */
+@media (min-width: 768px) and (max-width: 1699px) {
+	.dd .k-stg .dd-stgb { display: flex; flex-direction: column !important; gap: 12px; padding: 4px 20px 18px; }
+	.dd .k-stg .dd-stgb > * { margin: 0 !important; }
+	.dd .k-stg .dd-sm-top { display: flex; flex-wrap: nowrap; align-items: center; gap: 8px; padding: 0 !important; }
+	.dd .k-stg .dd-sm-top .dd-stgurl { flex: 1 1 0; min-width: 0; margin: 0 !important; }
+	.dd .k-stg .dd-sm-top .dd-pbtns { flex: none; flex-wrap: nowrap; gap: 6px; margin: 0 !important; }
+	.dd .k-stg .dd-sm-mk { border: 0 !important; padding: 0 !important; }
+	.dd .k-stg .dwdc-markupf { display: flex; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 !important; padding: 0 !important; }
+	.dd .k-stg .dwdc-markupf > label { display: none; }
+	.dd .k-stg .dwdc-markupf > .dd-frow { flex: 1 1 0; min-width: 220px; margin: 0 !important; }
+	.dd .k-stg .dwdc-markupf > .dd-mkbtns { flex: none; display: flex; flex-wrap: nowrap; gap: 2px; margin: 0 !important; }
+	.dd .k-stg .dwdc-markupf > p { flex: 1 1 100%; margin: 0 !important; }
+	.dd .k-stg form.dd-stgf .dd-frow { margin: 0 !important; }
+}
