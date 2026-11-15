@@ -56,7 +56,7 @@ function dwdob_apply() {
 	foreach ( dwdob_pages() as $pg ) {
 		list( $id, $data ) = $pg;
 		$orig = get_post_meta( $id, '_elementor_data', true );
-		dwdob_walk( $data, function ( &$st ) use ( $intro, &$changed ) {
+		dwdob_walk( $data, function ( &$st ) use ( $intro, $optional, $labels, &$changed ) {
 			foreach ( $st['form_fields'] as &$x ) {
 				$t   = $x['field_type'] ?? 'text';
 				$cid = $x['custom_id'] ?? '';
