@@ -763,3 +763,11 @@ input[type=date], input[type=datetime-local] { cursor: pointer; }
 .dd-txf { display: flex; gap: 10px; align-items: flex-end; padding: 12px 20px 18px; border-top: 1px solid var(--border); }
 .dd .dd-txf textarea { flex: 1; min-height: 44px; resize: vertical; padding: 10px 12px !important; border: 1px solid var(--border-strong) !important; border-radius: var(--radius-md) !important; background: var(--surface) !important; color: var(--text) !important; font: 400 var(--fs-body)/1.45 var(--font) !important; box-shadow: none !important; }
 @media (max-width: 767px) { .dd-txl { padding: 4px 16px 12px; } .dd-txf { padding: 12px 16px 16px; flex-direction: column; align-items: stretch; } }
+/* Project page: Emails and Texts side by side */
+.dd-mt2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; align-items: start; }
+.dd-mt2 > :only-child { grid-column: 1 / -1; }
+.dd-mt2 > .dd-card { margin: 0; min-width: 0; }
+.dd-mt2 .dd-txl { max-height: 300px; }
+.dd-mt2 .dd-mlist { max-height: 380px; overflow-y: auto; }
+.dd-mt2 .dd-txf { flex-direction: column; align-items: stretch; }
+@media (max-width: 1100px) { .dd-mt2 { grid-template-columns: minmax(0, 1fr); } }

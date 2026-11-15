@@ -3491,7 +3491,7 @@
 		var hosting = num(c.hosting) ? hostCard(c) : '';
 		return '<div class="dd-pp">' + head + strip
 			+ (S.edit ? '<div class="dd-pp-edit" id="pv3-edit">' + details + peopleCard(c) + '</div>' : '')
-			+ '<div class="dd-pp-grid"><div class="dd-pp-col">' + sumBox + (full ? mailBox('p' + c.id, c.email || (clientOf(c) || {}).email || '', c.id) + textsBox(c) + assetsBox(c) : '') + stgBox + mkBox + formBox + (S.edit ? '' : '<div class="dd-pp-mob">' + details + '</div>') + '<div class="dd-tn">' + todos + notesBox + '</div>' + '</div><div class="dd-pp-col side">' + (S.edit ? '' : '<div class="dd-pp-desk">' + details + '</div>' + contacts) + zoomBox('p' + c.id, [c.id]) + (st === 'leads' ? '' : paysBox) + hosting + '</div></div></div>';
+			+ '<div class="dd-pp-grid"><div class="dd-pp-col">' + sumBox + (full ? '<div class="dd-mt2">' + mailBox('p' + c.id, c.email || (clientOf(c) || {}).email || '', c.id) + textsBox(c) + '</div>' + assetsBox(c) : '') + stgBox + mkBox + formBox + (S.edit ? '' : '<div class="dd-pp-mob">' + details + '</div>') + '<div class="dd-tn">' + todos + notesBox + '</div>' + '</div><div class="dd-pp-col side">' + (S.edit ? '' : '<div class="dd-pp-desk">' + details + '</div>' + contacts) + zoomBox('p' + c.id, [c.id]) + (st === 'leads' ? '' : paysBox) + hosting + '</div></div></div>';
 	}
 	// Onboarding answers as plain text, ready to paste into Claude.
 	function onboardEntries(c) {
