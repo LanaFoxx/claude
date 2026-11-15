@@ -1075,6 +1075,8 @@
 		return S.mailNew || {};
 	}
 	// owner: the client's id, or the project's id when it has no client (emails are kept on the client).
+	// Calendar events ticked off on Today's schedule (kept in this browser; old days are dropped).
+	function evDone() { var d = {}; try { d = JSON.parse(ddGet('dreamdesk-ev-done', '{}')) || {}; } catch (e) { d = {}; } return d; }
 	// Files the client added since the last export (count kept by sync.php).
 	function newPill(c) { var n = +(c && c.new_assets_n) || 0; return n ? '<span class="dd-newf" title="Added by the client since your last export">' + n + ' new file' + (n === 1 ? '' : 's') + '</span>' : ''; }
 	function mailPill(owner) {
@@ -1299,7 +1301,8 @@
 						}).join('') + '<a class="dd-tl-go" href="#' + (gw ? 'todos' : 'personal') + '">' + (gw ? 'All business to-dos' : 'Personal to-do list') + ' ' + lu('chevron-right', 12) + '</a></div>' : '');
 				}
 				if (it.todo) { return '<div class="dd-tl-r td"><span class="dd-tl-t">' + esc(it.time) + '</span><button type="button" class="dd-tl-chk" ' + (it.todo === 'w' ? 'data-toggle' : 'data-ptoggle') + '="' + it.tid + '" aria-label="Mark done"></button><div class="dd-tl-c" data-schedtask="' + it.todo + ':' + it.tid + '" role="button" tabindex="0"><b>' + esc(it.title) + '</b><small>' + esc(it.sub) + '</small></div></div>'; }
-				return '<div class="dd-tl-r' + (it.ended ? ' past' : '') + '"><span class="dd-tl-t">' + esc(it.time) + '</span><span class="dd-tl-dot ' + (it.biz ? 'biz' : 'pers') + '"></span><div class="dd-tl-c"' + (it.id ? ' data-ptask="' + it.id + '" role="button" tabindex="0"' : '') + '>' + (it.link ? '<a href="' + esc(it.link) + '" target="_blank" rel="noopener">' + esc(it.title) + '</a>' : '<b>' + esc(it.title) + '</b>') + '<small>' + esc(it.sub) + '</small></div>'
+				var evK = T + '|' + (it.id || (it.title + '|' + it.time)), evD = !!evDone()[evK];
+				return '<div class="dd-tl-r ev' + (it.ended || evD ? ' past' : '') + (evD ? ' evdone' : '') + '"><span class="dd-tl-t">' + esc(it.time) + '</span><button type="button" class="dd-tl-chk dd-evchk ' + (it.biz ? 'biz' : 'pers') + (evD ? ' on' : '') + '" data-evdone="' + esc(evK) + '" aria-label="' + (evD ? 'Mark not done' : 'Mark done') + '" aria-pressed="' + evD + '">' + (evD ? lu('check', 12) : '') + '</button><div class="dd-tl-c"' + (it.id ? ' data-ptask="' + it.id + '" role="button" tabindex="0"' : '') + '>' + (it.link ? '<a href="' + esc(it.link) + '" target="_blank" rel="noopener">' + esc(it.title) + '</a>' : '<b>' + esc(it.title) + '</b>') + '<small>' + esc(it.sub) + '</small></div>'
 					+ (it.link && !it.ended ? '<a class="dd-btn primary sm dd-join" href="' + esc(it.link) + '" target="_blank" rel="noopener">Join</a>' : '') + '</div>';
 			}).join('') : '<p class="dd-empty-l">Nothing scheduled today.</p>')
 			+ (S.schedAdd ? '<form class="dd-tl-add" data-pform="pdayadd"><input type="hidden" name="due" value="' + T + '"><input name="text" placeholder="Add a to-do for ' + dObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + '…" autocomplete="off" required><button class="dd-btn primary sm">Add</button></form>'
@@ -4857,6 +4860,7 @@
 		if ((el = t.closest('[data-billmove]'))) { var bmv = (pData().bills || []).find(function (x) { return x.id === el.getAttribute('data-billmove'); }); S.billMenu = 0; if (bmv) { var nb = JSON.parse(JSON.stringify(bmv)); nb.scope = bmv.scope === 'business' ? 'personal' : 'business'; pSave('bills', nb, 'Moved to ' + (nb.scope === 'business' ? 'Business' : 'Personal')); } return; }
 		if ((el = t.closest('[data-billmenu]'))) { e.stopPropagation(); var bmid = el.getAttribute('data-billmenu'); S.billMenu = S.billMenu === bmid ? 0 : bmid; S.subLabel = 0; render(); return; }
 		if ((el = t.closest('[data-sublabel]'))) { e.stopPropagation(); var slm = el.getAttribute('data-sublabel'); S.subLabel = S.subLabel === slm ? 0 : slm; S.billMenu = 0; render(); return; }
+		if ((el = t.closest('[data-evdone]'))) { var ek = el.getAttribute('data-evdone'), ed0 = evDone(), ed1 = {}; Object.keys(ed0).forEach(function (k) { if (k.slice(0, 10) >= DWDC.today) { ed1[k] = 1; } }); if (ed1[ek]) { delete ed1[ek]; } else { ed1[ek] = 1; } ddSet('dreamdesk-ev-done', JSON.stringify(ed1)); render(); return; }
 		if ((el = t.closest('[data-attign]'))) { var ig = {}; try { ig = JSON.parse(ddGet('dreamdesk-att-ignored', '{}')) || {}; } catch (e2) { ig = {}; } ig[el.getAttribute('data-attign')] = 1; ddSet('dreamdesk-att-ignored', JSON.stringify(ig)); render(); toast('Notice hidden'); return; }
 		if ((el = t.closest('[data-azip]'))) {
 			var zid = +el.getAttribute('data-azip'); S.azBusy = S.azBusy || {}; if (S.azBusy[zid]) { return; }
