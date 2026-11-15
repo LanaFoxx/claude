@@ -1138,10 +1138,23 @@
 				+ (quietRow && em ? '<button type="button" class="dd-btn secondary sm" data-followup="' + c.id + '">' + lu('mail', 13) + 'Follow up</button>' : '')
 				+ '<button type="button" class="dd-btn ghost sm" data-waitclear="' + c.id + '" title="' + (quietRow ? 'Stop flagging this one until someone writes again' : 'Answered somewhere else, or nothing to answer') + '">' + (quietRow ? 'Dismiss' : 'No reply needed') + '</button></span></div>';
 		};
-		return '<section class="dd-card dd-wait"><header class="dd-ch"><div class="dd-ch-t"><h2>Waiting on you</h2><span>' + (you.length ? you.length + ' client' + (you.length === 1 ? '' : 's') + ' wrote last' : 'You’re all caught up') + (quiet.length ? ' · ' + quiet.length + ' quiet 7+ days' : '') + '</span></div></header>'
-			+ you.map(function (c) { return row(c, false); }).join('')
+		// Other things that need a look, gathered from every project so nothing depends on opening each one.
+		var att = [], C = S.contacts || [], openL = function (c) { return c.list !== 'complete' && c.list !== 'archive'; };
+		var note = function (href, name, sub, btn) { att.push('<div class="dd-wrow"><a class="dd-wn" href="' + href + '"><b>' + esc(name) + '</b><small>' + esc(sub) + '</small></a><span class="dd-wa">' + (btn || '') + '</span></div>'); };
+		(S.tasks || []).filter(function (t) { return !t.done && /^Open questions answered/i.test(t.text || '') && t.contact; }).forEach(function (t) { var c = contact(t.contact); if (c) { note('#client/' + c.id, c.name, 'Open questions answered · download the updated AI Instructions'); } });
+		C.filter(function (c) { return openL(c) && +c.new_assets_n > 0; }).forEach(function (c) { note('#client/' + c.id, c.name, c.new_assets_n + ' new file' + (+c.new_assets_n === 1 ? '' : 's') + ' from the client since your last export'); });
+		C.filter(function (c) { return (c.list === 'leads' || c.list === 'active') && c.stage === 'onboarding' && !c.onboarded; }).forEach(function (c) { note('#client/' + c.id, c.name, 'Onboarding form sent, not filled out yet', '<button type="button" class="dd-btn secondary sm" data-leadinvite="' + c.id + '">' + lu('mail', 13) + 'Send again</button>'); });
+		C.filter(function (c) { return c.list === 'active' && c.deadline && c.deadline < DWDC.today; }).forEach(function (c) { var d = -daysTo(c.deadline); note('#client/' + c.id, c.name, 'Due date passed ' + d + ' day' + (d === 1 ? '' : 's') + ' ago (' + fmt(c.deadline) + ')'); });
+		var owedDone = C.filter(function (c) { return c.list === 'complete' && num(c.balance) > 0; }).sort(function (x, y) { return String(y.completed || '') < String(x.completed || '') ? -1 : 1; });
+		owedDone.slice(0, 4).forEach(function (c) { note('#client/' + c.id, c.name, 'Finished, still owes ' + money(num(c.balance))); });
+		if (owedDone.length > 4) { note('#projects/complete', (owedDone.length - 4) + ' more finished projects still owe money', 'Open Completed to see them'); }
+		C.filter(function (c) { if (!(num(c.hosting) > 0) || !c.renewal || c.list === 'archive') { return false; } var d = daysTo(String(c.renewal).slice(0, 10)); return !isNaN(d) && d <= 30 && d >= -30; }).forEach(function (c) { var d = daysTo(String(c.renewal).slice(0, 10)); note('#client/' + c.id, c.name, 'Hosting ' + (d < 0 ? 'renewal was due ' + fmt(String(c.renewal).slice(0, 10)) : 'renews ' + fmt(String(c.renewal).slice(0, 10)) + (d === 0 ? ' (today)' : ' (in ' + d + ' day' + (d === 1 ? '' : 's') + ')'))); });
+		var headBits = [you.length ? you.length + ' waiting on your reply' : '', quiet.length ? quiet.length + ' quiet 7+ days' : '', att.length ? att.length + ' notice' + (att.length === 1 ? '' : 's') : ''].filter(Boolean).join(' · ');
+		return '<section class="dd-card dd-wait"><header class="dd-ch"><div class="dd-ch-t"><h2>Needs your attention</h2><span>' + (headBits || 'You’re all caught up') + '</span></div></header>'
+			+ (you.length ? '<p class="dd-wsub">Waiting on your reply</p>' : '') + you.map(function (c) { return row(c, false); }).join('')
 			+ (quiet.length ? '<p class="dd-wsub">Client quiet 7+ days</p>' + quiet.map(function (c) { return row(c, true); }).join('') : '')
-			+ (!you.length && !quiet.length ? '<p class="dd-empty-l">Every client conversation is answered.</p>' : '') + '</section>';
+			+ (att.length ? '<p class="dd-wsub">Notices</p>' + att.join('') : '')
+			+ (!you.length && !quiet.length && !att.length ? '<p class="dd-empty-l">Nothing needs you right now.</p>' : '') + '</section>';
 	}
 	function hmPeople() {
 		var seen = {}, out = [];
