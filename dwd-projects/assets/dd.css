@@ -898,3 +898,5 @@ section.dd-health.warn .dd-healthb .dd-hld { background: var(--warning-text); }
 .dd .dd-aplist .dd-act-n .dd-dom { font-size: 13px; color: var(--accent); cursor: pointer; }
 .dd .dd-aplist .dd-act-n .dd-dom:hover { text-decoration: underline; }
 .dd .dd-aplist .dd-mtag { cursor: pointer; }
+/* Home: the Waiting on you card sits the same distance from the next card as every other card */
+.dd .dd-home-l > .dd-wait, .dd .dd-home-l > .dd-card { margin-bottom: 0 !important; margin-top: 0 !important; }
