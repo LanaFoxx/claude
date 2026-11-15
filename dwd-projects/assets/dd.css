@@ -956,3 +956,4 @@ section.dd-health.warn .dd-healthb .dd-hld { background: var(--warning-text); }
 /* Texts box: Send text is a white button (dark in the light theme) */
 .dd .dd-txf .dd-btn[data-txtsend] { background: var(--text); border-color: var(--text); color: var(--surface) !important; }
 .dd .dd-txf .dd-btn[data-txtsend]:hover { opacity: .88; background: var(--text); }
+@media (min-width: 1101px) { .dd .dd-mt2 > .k-txt:not(:only-child) > p { flex: 1 1 0; } }
