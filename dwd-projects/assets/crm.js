@@ -934,6 +934,15 @@
 		var M = mailData(key);
 		if (!M) { return ''; }
 		var open = S.mailOpen || {}, keep = S.mailKeep || {}, showAll = (S.mailAll || {})[key];
+		// On a project page the earlier emails show straight away, so the box is never an empty shell.
+		if (showAll === undefined && key.charAt(0) === 'p') { showAll = true; }
+		if (showAll && M.total && (!M.list || M.list.length < M.total) && !(S.mailLd || (S.mailLd = {}))[key]) {
+			S.mailLd[key] = 1;
+			api((key.charAt(0) === 'p' ? '/contact/' : '/client/') + key.slice(1) + '/mail?all=1').then(function (x) {
+				(M.new || []).forEach(function (y) { x.list.forEach(function (z) { if (z.id === y.id) { z.seen = y.seen; } }); });
+				x.new = M.new; (S.mailD = S.mailD || {})[key] = x; if (key.charAt(0) === 'p' && S.full[+key.slice(1)]) { S.full[+key.slice(1)].mail = x; } render();
+			}).catch(function () {});
+		}
 		var newL = (M.new || []).concat((M.list || []).filter(function (x) { return keep[x.id] && !(M.new || []).some(function (y) { return y.id === x.id; }); }));
 		var newIds = {}; newL.forEach(function (x) { newIds[x.id] = 1; });
 		var when = function (d) { var t = new Date(d); return isNaN(t) ? '' : t.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: t.getFullYear() === new Date().getFullYear() ? undefined : 'numeric' }) + ', ' + t.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }); };
@@ -4448,7 +4457,7 @@
 			return;
 		}
 		if ((el = t.closest('[data-mtog]'))) {
-			var tk = el.getAttribute('data-mtog'), MD2 = mailData(tk); S.mailAll = S.mailAll || {}; S.mailAll[tk] = !S.mailAll[tk]; render();
+			var tk = el.getAttribute('data-mtog'), MD2 = mailData(tk); S.mailAll = S.mailAll || {}; S.mailAll[tk] = el.getAttribute('aria-expanded') !== 'true'; render();
 			if (S.mailAll[tk] && MD2 && (!MD2.list || MD2.list.length < MD2.total)) {
 				api((tk.charAt(0) === 'p' ? '/contact/' : '/client/') + tk.slice(1) + '/mail?all=1').then(function (x) {
 					(MD2.new || []).forEach(function (y) { x.list.forEach(function (z) { if (z.id === y.id) { z.seen = y.seen; } }); });
