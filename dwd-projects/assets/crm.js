@@ -665,6 +665,13 @@
 	}
 	/* ================= Dream Desk 1c shell (design handoff): tokens, sidebar, top bar, Home ================= */
 	var LU = {
+		smartphone: '<rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/>',
+		image: '<rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>',
+		video: '<path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/><rect x="2" y="6" width="14" height="12" rx="2"/>',
+		'sticky-note': '<path d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8Z"/><path d="M15 3v4a2 2 0 0 0 2 2h4"/>',
+		'list-checks': '<path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/>',
+		'file-text': '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/>',
+		hammer: '<path d="m15 12-8.373 8.373a1 1 0 1 1-3-3L12 9"/><path d="m18 15 4-4"/><path d="m21.5 11.5-1.914-1.914A2 2 0 0 1 19 8.172V7l-2.26-2.26a6 6 0 0 0-4.202-1.756L9 2.96l.92.82A6.18 6.18 0 0 1 12 8.4V10l2 2h1.172a2 2 0 0 1 1.414.586L18.5 14.5"/>',
 		'refresh-cw': '<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>',
 		paperclip: '<path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/>',
 		upload: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>',
@@ -904,7 +911,7 @@
 		var L = c.meetings || [], open = S.meetOpen || {};
 		S.meetBy = S.meetBy || {}; L.forEach(function (m) { S.meetBy[m.id] = m; });
 		if (!L.length) { return ''; }
-		return '<section class="dd-card dd-pc2 k-meet"><header><h2>Meetings</h2><span class="sum">' + L.length + ' recorded</span><span class="dd-sp"></span><button type="button" class="dd-btn secondary sm" data-meetcopy="' + esc(L.map(function (m) { return m.id; }).join(',')) + '">' + (L.length > 1 ? 'Copy all transcripts' : 'Copy transcript') + '</button></header><div class="dd-mtl">' + L.map(function (m) {
+		return '<section class="dd-card dd-pc2 k-meet"><header><h2>' + lu('video', 16) + 'Meetings</h2><span class="sum">' + L.length + ' recorded</span><span class="dd-sp"></span><button type="button" class="dd-btn secondary sm" data-meetcopy="' + esc(L.map(function (m) { return m.id; }).join(',')) + '">' + (L.length > 1 ? 'Copy all transcripts' : 'Copy transcript') + '</button></header><div class="dd-mtl">' + L.map(function (m) {
 			var on = !!open[m.id];
 			return '<div class="dd-mtg' + (on ? ' open' : '') + '"><button type="button" class="dd-mtgh" data-meetopen="' + esc(m.id) + '" aria-expanded="' + on + '"><b>' + esc(m.title) + '</b><small>' + fmt(String(m.date).slice(0, 10)) + ' · ' + m.mins + ' min</small></button>'
 				+ (on ? '<div class="dd-mtgb">' + (m.summary ? '<p>' + esc(m.summary) + '</p>' : '<p>No summary from Fireflies for this call.</p>') + (m.actions ? '<h4>Action items</h4><pre>' + esc(String(m.actions).replace(/\*\*/g, '')) + '</pre>' : '') + '<div class="dd-inva"><a class="dd-hlink" href="' + esc(m.url) + '" target="_blank" rel="noopener">Open in Fireflies</a><button type="button" class="dd-hlink" data-meettx="' + esc(m.id) + '" data-t="' + esc(m.title) + '">Read the transcript</button><span class="dd-sp"></span><button type="button" class="dd-btn ghost sm" data-meetdel="' + esc(m.id) + '" data-pid="' + c.id + '" data-t="' + esc(m.title) + '">' + lu('trash-2', 14) + 'Remove</button><button type="button" class="dd-btn secondary sm" data-meetcopy="' + esc(m.id) + '">' + lu('copy', 14) + 'Copy transcript</button></div></div>' : '') + '</div>';
@@ -918,7 +925,7 @@
 	}
 	function textsBox(c) {
 		var k = clientOf(c) || {}, ph = c.phone || k.phone || '', who = (c.person || k.name || c.name || '').split(' ')[0];
-		var hd = function (sum, btn) { return '<header><h2>' + 'Texts</h2><span class="sum">' + sum + '</span><span class="dd-sp"></span>' + (btn || '') + '</header>'; };
+		var hd = function (sum, btn) { return '<header><h2>' + lu('smartphone', 16) + 'Texts</h2><span class="sum">' + sum + '</span><span class="dd-sp"></span>' + (btn || '') + '</header>'; };
 		if (!ph) { return '<section class="dd-card dd-pc2 k-txt">' + hd('No phone number') + '<p class="dd-pempty">Add a phone number to this project or its client to text them from here.</p></section>'; }
 		var T = txtData(c, ph);
 		if (!T) { return '<section class="dd-card dd-pc2 k-txt">' + hd('Loading…') + '</section>'; }
@@ -3577,7 +3584,8 @@
 				+ (inUp ? '<small class="dd-strip-sub">' + (banked ? money(banked) + ' in your bank · ' : 'Nothing in your bank yet · ') + money(inUp) + ' still in Upwork' + (num(upP.pend) && upP.pnext ? ' (available ' + fmt(upP.pnext) + ')' : '') + '</small>' : '')
 				+ '<span class="dd-prog' + (pct >= 100 ? ' full' : '') + '"><i><s style="width:' + pct + '%"></s></i><small>' + pct + '%</small></span></div></div>';
 		}
-		var card = function (cls, h, sum, right, body) { return '<section class="dd-card dd-pc2 ' + cls + '"><header><h2>' + h + '</h2>' + (sum ? '<span class="sum">' + sum + '</span>' : '') + '<span class="dd-sp"></span>' + (right || '') + '</header>' + body + '</section>'; };
+		var cardIc = { 'Staging & Markup': 'globe', Payments: 'credit-card', Details: 'file-text', Contacts: 'users', 'Project summary': 'sparkles' };
+		var card = function (cls, h, sum, right, body) { var hi = cardIc[String(h).replace(/\s*<[\s\S]*$/, '')]; return '<section class="dd-card dd-pc2 ' + cls + '"><header><h2>' + (hi ? lu(hi, 16) : '') + h + '</h2>' + (sum ? '<span class="sum">' + sum + '</span>' : '') + '<span class="dd-sp"></span>' + (right || '') + '</header>' + body + '</section>'; };
 		// to-dos
 		var doneN = tasks.length - openN, dueOf = function (t) {
 			if (t.done) { return ddPill('Done', 'success'); }
@@ -3586,7 +3594,7 @@
 		};
 		var pDate = (S.ppDate || {})[c.id] || '';
 		var tSet = (S.ptodoOpen || {})[c.id], tOpen = tSet === undefined ? tasks.some(function (t) { return !t.done; }) : !!tSet, lateT = tasks.filter(function (t) { return !t.done && t.due && t.due < T; }).length;
-		var todos = '<section class="dd-card dd-pc2 k-todos' + (tOpen ? ' open' : ' shut') + '"><header class="dd-ntog" data-ptodotog="' + c.id + '" role="button" tabindex="0" aria-expanded="' + tOpen + '"><h2>To-dos</h2><span class="sum">' + openN + ' open' + (lateT ? ' · <b class="late">' + lateT + ' overdue</b>' : '') + ' · ' + doneN + ' done</span><span class="dd-sp"></span><a class="dd-hlink" href="#todos" data-tgopen="' + c.id + '">All to-dos</a><span class="dd-tchev">' + lu('chevron-down', 16) + '</span></header>'
+		var todos = '<section class="dd-card dd-pc2 k-todos' + (tOpen ? ' open' : ' shut') + '"><header class="dd-ntog" data-ptodotog="' + c.id + '" role="button" tabindex="0" aria-expanded="' + tOpen + '"><h2>' + lu('list-checks', 16) + 'To-dos</h2><span class="sum">' + openN + ' open' + (lateT ? ' · <b class="late">' + lateT + ' overdue</b>' : '') + ' · ' + doneN + ' done</span><span class="dd-sp"></span><a class="dd-hlink" href="#todos" data-tgopen="' + c.id + '">All to-dos</a><span class="dd-tchev">' + lu('chevron-down', 16) + '</span></header>'
 			+ (!tOpen ? '' : (tasks.length ? tasks.map(function (t) {
 				return '<div class="dd-pt' + (t.done ? ' done' : '') + '" data-task="' + t.id + '"><button type="button" class="dd-tchk' + (t.done ? ' on' : '') + '" data-toggle="' + t.id + '" aria-label="' + (t.done ? 'Mark not done' : 'Mark done') + '">' + TD_CHECK + '</button><span class="tx">' + esc(t.text) + '</span>' + dueOf(t) + '<button type="button" class="dd-ibtn sm dd-ptx" data-del-task="' + t.id + '" aria-label="Delete to-do" title="Delete">' + lu('x', 14) + '</button></div>';
 			}).join('') : '<p class="dd-pempty">No to-dos yet</p>')
@@ -3601,7 +3609,7 @@
 		// notes
 		var notes = full ? (c.notes || []).slice().sort(function (a, b) { return (d(a.date) || 0) < (d(b.date) || 0) ? 1 : -1; }) : [];
 		var nOpen = !!(S.notesOpen || {})[c.id];
-		var notesBox = '<section class="dd-card dd-pc2 k-notes' + (nOpen ? ' open' : ' shut') + '"><header class="dd-ntog" data-notestog="' + c.id + '" role="button" tabindex="0" aria-expanded="' + nOpen + '"><h2>Notes</h2><span class="sum">' + (full ? (notes.length ? notes.length + ' note' + (notes.length === 1 ? '' : 's') : 'No notes yet') : '') + '</span><span class="dd-sp"></span><span class="dd-tchev">' + lu('chevron-down', 16) + '</span></header>'
+		var notesBox = '<section class="dd-card dd-pc2 k-notes' + (nOpen ? ' open' : ' shut') + '"><header class="dd-ntog" data-notestog="' + c.id + '" role="button" tabindex="0" aria-expanded="' + nOpen + '"><h2>' + lu('sticky-note', 16) + 'Notes</h2><span class="sum">' + (full ? (notes.length ? notes.length + ' note' + (notes.length === 1 ? '' : 's') : 'No notes yet') : '') + '</span><span class="dd-sp"></span><span class="dd-tchev">' + lu('chevron-down', 16) + '</span></header>'
 			+ (!nOpen ? '' : '<div class="dd-pnotes">' + (full ? notes.map(function (n) { var dt = d(n.date); return '<div class="dd-note"><p>' + esc(n.text).replace(/\n/g, '<br>') + '</p><small>Michael' + (dt ? ' · ' + dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ', ' + dt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : '') + '</small></div>'; }).join('') : '<p class="dd-pempty">Loading…</p>')
 			+ '<form class="dwdc-notef dd-notef"><textarea name="text" rows="3" placeholder="Add a note: what they need, call recap, budget, next step…" required></textarea><div class="dd-pbtns end"><button class="dd-btn secondary">Add note</button></div></form></div>') + '</section>';
 		// onboarding

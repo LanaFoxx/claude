@@ -1008,3 +1008,11 @@ section.dd-health.warn .dd-healthb .dd-hld { background: var(--warning-text); }
 .dd .dd-ap > header.dd-ch > :not(.dd-ch-t):not(a) { display: none !important; }
 /* Needs your attention with nothing in it: just the title and "You're all caught up" */
 .dd .dd-home-l > .dd-wait.empty > header { border-bottom: 0; }
+/* Ready to build, Open questions: title, text and buttons share one left edge with even gaps */
+.dd .k-ready .dd-rdyq { padding: 16px 20px 18px; }
+.dd .k-ready .dd-rdyq p.dd-invh { margin: 0 0 8px !important; padding: 0 !important; }
+.dd .k-ready .dd-rdyq p.dd-help { margin: 0 0 14px !important; padding: 0 !important; }
+.dd .k-ready .dd-rdyq ol { margin: 0 0 14px; }
+.dd .k-ready .dd-rdyq .dd-pbtns { margin: 0; padding: 0; gap: 8px; align-items: center; }
+@media (max-width: 767px) { .dd .k-ready .dd-rdyq { padding: 14px 16px 16px; } }
+.dd .dd-pc2 > header h2 > .lu { flex: none; color: var(--text-2); }
