@@ -889,3 +889,12 @@ section.dd-health.warn .dd-healthb .dd-hld { background: var(--warning-text); }
 .dd-taxa label b { font-weight: 500; color: var(--text-2); }
 .dd-taxcal { display: flex; align-items: flex-start; gap: 10px; margin: 14px 0 4px; font-size: var(--fs-sm); color: var(--text-2); }
 @media (max-width: 600px) { .dd-taxf { grid-template-columns: minmax(0, 1fr); } }
+/* Home: Active projects rows match the Active list (grip, bold name, site link under it, no avatar) */
+.dd .dd-aplist .dd-ap-r { min-height: 72px; padding: 12px 20px 12px 12px; gap: 14px; align-items: center; border-top: 1px solid var(--border); border-radius: 0; }
+.dd .dd-aplist .dd-ap-r:first-child { border-top: 0; }
+.dd .dd-aplist .dd-apg { flex: none; width: 28px; display: inline-flex; align-items: center; justify-content: center; color: var(--text-3); letter-spacing: 0; }
+.dd .dd-aplist .dd-act-n b { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; font-size: 15px; font-weight: 600; color: var(--text); }
+.dd .dd-aplist .dd-act-n small { display: block; margin-top: 3px; }
+.dd .dd-aplist .dd-act-n .dd-dom { font-size: 13px; color: var(--accent); cursor: pointer; }
+.dd .dd-aplist .dd-act-n .dd-dom:hover { text-decoration: underline; }
+.dd .dd-aplist .dd-mtag { cursor: pointer; }

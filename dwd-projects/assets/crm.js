@@ -1280,7 +1280,7 @@
 			+ '<div class="dd-aplist"' + sortAttr('active') + '>' + (ap.length ? ap.map(function (c) {
 				if (c.div) { return divRow(); }
 				var k = clientOf(c), ow = num(c.balance), late = c.deadline && c.deadline < DWDC.today;
-				return '<a class="dd-ap-r" href="#client/' + c.id + '" data-sid="' + c.id + '">' + (sortMine('active') ? '<span class="dd-grip" aria-hidden="true">⋮⋮</span>' : '') + flagDot(c) + '<span class="dd-av">' + esc(ddInitials(k ? k.name : (c.person || c.name))) + '</span><span class="dd-act-n"><b>' + esc(c.name) + mailPill(c.client || c.id) + waitPill(c) + '</b><small>' + esc(k ? k.name : (c.person || '—')) + (c.next ? ' · ' + esc(c.next) : '') + '</small></span>'
+				return '<a class="dd-ap-r" href="#client/' + c.id + '" data-sid="' + c.id + '">' + '<span class="dd-grip dd-apg" aria-hidden="true">' + (sortMine('active') ? lu('grip', 16) : '') + '</span><span class="dd-act-n"><b>' + esc(c.name) + (c.markup ? '<span class="dd-mtag" role="link" data-ext="' + esc(url(c.markup)) + '">Markup</span>' : '') + mailPill(c.client || c.id) + waitPill(c) + '</b>' + (site(c) ? '<small><span class="dd-dom" role="link" data-ext="' + esc(url(c.website)) + '">' + esc(site(c)) + '</span></small>' : '') + '</span>'
 					+ '<span class="dd-ap-m"><b class="' + (ow ? 'owe' : '') + '">' + (ow ? money(ow) : paidWord(c)) + '</b><small class="' + (late ? 'late' : '') + '">' + (c.deadline ? 'Due ' + fmt(c.deadline) : 'No due date') + '</small></span></a>';
 			}).join('') : '<p class="dd-empty-l">No active projects right now.</p>') + '</div></section>';
 		var statsOpen = ddGet('dreamdesk-stats-open', '') === '1';
@@ -1371,6 +1371,8 @@
 		m.style.position = 'fixed'; m.style.top = Math.max(8, top) + 'px'; m.style.left = Math.min(Math.max(8, r.left - 6), window.innerWidth - w - 8) + 'px';
 	}
 	window.addEventListener('scroll', function () { if (S.flagOpen) { placeFlagMenu(); } }, true);
+	// A link inside a row that is itself a link (website, Markup): open it in a new tab instead of the row.
+	document.addEventListener('click', function (e) { var x = e.target.closest && e.target.closest('[data-ext]'); if (x) { e.preventDefault(); e.stopPropagation(); window.open(x.getAttribute('data-ext'), '_blank', 'noopener'); } }, true);
 	function flagDot(c) {
 		var open = S.flagOpen === c.id;
 		return '<span class="dd-flagw"><button type="button" class="dd-flag f-' + (c.flag || 'none') + '" data-flag="' + c.id + '" aria-haspopup="menu" aria-expanded="' + open + '" title="Mark this project green, yellow or red"></button>'
