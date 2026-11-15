@@ -43,7 +43,7 @@ function dwdob_apply() {
 		. 'Your answers save as you go, so you can come back and finish later.<br><br>'
 		. '<strong>Most important:</strong> the websites you like for inspiration (in step 4). Please paste the links and tell me what you like about each one.</div>';
 	// Answers that are nice to have but never block a build.
-	$optional = array( 'social_links', 'competitors', 'differentiators', 'existing_url', 'redesign_feedback', 'preserve_content', 'integrations', 'avoid', 'shared_folder', 'social_proof', 'domain_details', 'hosting_provider', 'email_service', 'deadline_event', 'anything_else', 'features_other', 'visitor_action_other', 'accounts_access' );
+	$optional = array( 'social_links', 'competitors', 'differentiators', 'existing_url', 'redesign_feedback', 'preserve_content', 'integrations', 'avoid', 'shared_folder', 'social_proof', 'domain_details', 'hosting_provider', 'email_service', 'deadline_event', 'anything_else', 'features_other', 'visitor_action_other', 'accounts_access', 'top_questions', 'search_terms', 'hours', 'credentials', 'color_mode', 'photo_source', 'mobile_tap' );
 	$labels   = array(
 		'approver'       => array( 'Who will give feedback and approve the website? (name and email)', 'Jane Smith, jane@company.com' ),
 		'pages_needed'   => array( 'List every page you need, with one line on what each page should say or do', "Home – who we are and a button to book\nServices – our three services with prices\nAbout – our story and team\nContact – form, phone and map" ),
@@ -141,6 +141,19 @@ https://example2.com – I like how easy it is to book
 			$add( 'social_proof', 'has_logo', 'site_updates', 'Who will update the website after it launches?', '', true, "Choose one…\nI will\nSomeone on my team\nI’d like you to handle updates\nNot sure yet" );
 			$add( 'email_service', 'integrations', 'accounts_access', 'Do you have a Google Business Profile or Google Analytics? If yes, which email address owns them?', 'Yes, both under name@company.com… or leave blank', false );
 			$add( 'hosting_provider', 'has_logo', 'needs_hosting', 'Would you like me to host your website? (fast managed hosting with backups, security and updates included)', '', true, "Choose one…\nYes, please host it for me\nNo, I’ll keep my own hosting\nNot sure, tell me more" );
+			// Questions that feed the build instructions: voice, message, proof, design direction, where leads go.
+			$add( 'display_contact', 'approver', 'hours', 'Business hours, and how quickly you usually reply to inquiries', 'Mon–Fri 9–5, we reply within one business day', false );
+			$add( 'services', 'has_logo', 'pricing_display', 'Should prices be shown on the website?', '', true, "Choose one…\nYes, show exact prices\nShow “starting at” prices\nNo prices on the site\nNot sure yet" );
+			$add( 'differentiators', 'integrations', 'key_message', 'In one or two sentences, what do you want a visitor to remember about you?', 'We’re the family-owned painters who show up on time and leave your home spotless.', true );
+			$add( 'key_message', 'integrations', 'top_questions', 'What are the top 3 questions customers ask before they buy or book?', "How much does it cost?\nHow soon can you start?\nAre you licensed and insured?", false );
+			$add( 'top_questions', 'integrations', 'search_terms', 'What would a customer type into Google to find a business like yours?', 'house painters Charlotte NC, cabinet painting near me', false );
+			$add( 'features_other', 'approver', 'form_recipient', 'Which email address should website inquiries be sent to? Would you also like a text?', 'info@company.com, and text 555-123-4567', true );
+			$add( 'form_recipient', 'approver', 'mobile_tap', 'Is there anything a visitor on a phone should be able to do in one tap? (call, book, get directions)', '', false );
+			$add( 'inspiration', 'approver', 'closest_site', 'Which ONE of those websites is closest to what you want?', 'Paste the link', true );
+			$add( 'look_feel', 'has_logo', 'site_tone', 'How should your website sound?', '', true, "Choose one…\nFriendly and casual\nProfessional and polished\nBold and direct\nWarm and personal\nNot sure, you decide" );
+			$add( 'site_tone', 'has_logo', 'color_mode', 'Light or dark design?', '', false, "No preference\nLight\nDark" );
+			$add( 'has_media', 'has_logo', 'photo_source', 'Which photos should the website use?', '', false, "No preference\nOnly my own photos\nMy photos plus stock photos\nStock photos only" );
+			$add( 'social_proof', 'integrations', 'credentials', 'Licenses, insurance, years in business, number of customers served: anything factual I should mention', 'Licensed and insured in NC, 12 years in business, 800+ homes painted', false );
 			$st['form_fields'] = $ff;
 		} );
 		if ( $changed ) {
