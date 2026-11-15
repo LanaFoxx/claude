@@ -2507,3 +2507,70 @@ add_action( 'dwdqa_run', function () {
 add_action( 'rest_api_init', function () {
 	register_rest_route( 'dwd/v1', '/crm/contact/(?P<id>\d+)/answers-check', array( 'methods' => 'POST', 'permission_callback' => function () { return current_user_can( 'manage_options' ); }, 'callback' => function ( $r ) { return array( 'answered' => dwdqa_check( (int) $r['id'] ) ); } ) );
 } );
+
+/* ---------------------------------------------------------------- Daily Upwork check
+ * A scheduled task reads Upwork's Transaction History page each morning and sends the rows here. They are kept
+ * together and stored as one file on the Upwork list ("upwork-daily-check.csv"), so they are handled exactly like
+ * a CSV added by hand: same rules, nothing counted twice, and a real CSV added later simply overlaps.
+ */
+function dwds_upwork_rows( $rows ) {
+	$types = array( 'Fixed-price', 'Hourly', 'Bonus', 'Miscellaneous', 'Refund to client', 'Connects', 'Subscription' );
+	$all   = (array) get_option( 'dwds_upwork_auto_rows', array() );
+	$new   = 0;
+	foreach ( array_slice( (array) $rows, 0, 400 ) as $r ) {
+		$r    = (array) $r;
+		$date = (string) ( $r['date'] ?? '' );
+		$type = (string) ( $r['type'] ?? '' );
+		$ref  = preg_replace( '/\D/', '', (string) ( $r['ref'] ?? '' ) );
+		if ( ! preg_match( '/^\d{4}-\d{2}-\d{2}$/', $date ) || ! in_array( $type, $types, true ) || '' === $ref || ! is_numeric( $r['amount'] ?? null ) ) {
+			continue;
+		}
+		$k = $ref . '|' . $type;
+		if ( ! isset( $all[ $k ] ) ) {
+			$new++;
+		}
+		$all[ $k ] = array(
+			'date'    => $date,
+			'type'    => $type,
+			'ref'     => $ref,
+			'amount'  => round( (float) $r['amount'], 2 ),
+			'fee'     => round( abs( (float) ( $r['fee'] ?? 0 ) ), 2 ),
+			'team'    => sanitize_text_field( (string) ( $r['team'] ?? '' ) ),
+			'summary' => sanitize_text_field( (string) ( $r['summary'] ?? '' ) ),
+		);
+	}
+	if ( ! $all ) {
+		return new WP_Error( 'dwds_rows', 'No usable Upwork rows were sent.', array( 'status' => 400 ) );
+	}
+	update_option( 'dwds_upwork_auto_rows', $all, false );
+	$q   = function ( $v ) { return '"' . str_replace( '"', '""', (string) $v ) . '"'; };
+	$csv = "Date,Ref ID,Transaction ID,Transaction type,Transaction summary,Client team,Amount $\n";
+	foreach ( $all as $x ) {
+		$csv .= implode( ',', array( $x['date'], $x['ref'], $x['ref'], $q( $x['type'] ), $q( $x['summary'] ), $q( $x['team'] ), $x['amount'] ) ) . "\n";
+		if ( $x['fee'] > 0 && ! in_array( $x['type'], array( 'Connects', 'Subscription' ), true ) ) {
+			$csv .= implode( ',', array( $x['date'], $x['ref'] . '9', $x['ref'], $q( 'Service Fee' ), $q( 'Service Fee' ), $q( $x['team'] ), -$x['fee'] ) ) . "\n";
+		}
+	}
+	// one rolling file: drop the previous daily-check file, then add the new one
+	$files = dwds_files();
+	foreach ( $files as $i => $f ) {
+		if ( 'upwork-daily-check.csv' === ( $f['name'] ?? '' ) ) {
+			delete_option( 'dwds_upf_' . $f['id'] );
+			unset( $files[ $i ] );
+		}
+	}
+	update_option( 'dwds_upwork_files', array_values( $files ), false );
+	$f = dwds_file_add( 'upwork-daily-check.csv', $csv );
+	if ( is_wp_error( $f ) ) {
+		return $f;
+	}
+	$out = dwds_upwork_rebuild();
+	update_option( 'dwds_last_upwork', current_time( 'mysql' ), false );
+	if ( function_exists( 'dwdt_get' ) ) {
+		dwdt_get( true );
+	}
+	return array( 'new' => $new, 'kept' => count( $all ), 'unmatched' => array_map( function ( $u ) { return $u['team']; }, (array) ( $out['unmatched'] ?? array() ) ) );
+}
+add_action( 'rest_api_init', function () {
+	register_rest_route( 'dwd/v1', '/crm/upwork-rows', array( 'methods' => 'POST', 'permission_callback' => function () { return current_user_can( 'manage_options' ); }, 'callback' => function ( $r ) { return dwds_upwork_rows( (array) $r->get_param( 'rows' ) ); } ) );
+} );

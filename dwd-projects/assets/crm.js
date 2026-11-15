@@ -1069,6 +1069,11 @@
 		return t;
 	}
 	// Called by the Upwork check: dwdSetUpwork(pending, available, [{ date: 'YYYY-MM-DD', client: '', job: '', amount: 0 }, …]).
+	// Called by the morning Upwork check with rows read from Upwork's Transaction History:
+	// dwdAddUpworkRows([{ date: 'YYYY-MM-DD', type: 'Fixed-price', summary: '', team: 'Client name', amount: 1500, fee: 150, ref: '123456789' }, …])
+	window.dwdAddUpworkRows = function (rows) {
+		return api('/upwork-rows', 'POST', { rows: rows }).then(function (x) { return 'saved: ' + x.new + ' new rows, ' + x.kept + ' kept in total' + (x.unmatched && x.unmatched.length ? '; Upwork names that need a project: ' + x.unmatched.join(', ').replace(/[=?&]/g, ' ') : ''); }, function (e) { return 'failed: ' + String(e && e.message || e).replace(/[=?&]/g, ' '); });
+	};
 	window.dwdSetUpwork = function (pending, available, items) {
 		return api('/upwork-snap', 'POST', { pending: pending, available: available, items: items || [] }).then(function (x) {
 			S.upsnap = x; render();
