@@ -1006,3 +1006,5 @@ section.dd-health.warn .dd-healthb .dd-hld { background: var(--warning-text); }
 /* Home, Active projects: the Waiting bar runs edge to edge, and no sort picker */
 .dd .dd-ap .dd-aplist > .dd-divrow.dd-aphd { margin-left: -8px; margin-right: -8px; padding-left: 28px; padding-right: 28px; }
 .dd .dd-ap > header.dd-ch > :not(.dd-ch-t):not(a) { display: none !important; }
+/* Needs your attention with nothing in it: just the title and "You're all caught up" */
+.dd .dd-home-l > .dd-wait.empty > header { border-bottom: 0; }

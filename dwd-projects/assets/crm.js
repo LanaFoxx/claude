@@ -1154,11 +1154,11 @@
 		if (owedDone.length > 4) { note('owedmore', '#projects/complete', (owedDone.length - 4) + ' more finished projects still owe money', 'Open Completed to see them'); }
 		C.filter(function (c) { if (!(num(c.hosting) > 0) || !c.renewal || c.list === 'archive') { return false; } var d = daysTo(String(c.renewal).slice(0, 10)); return !isNaN(d) && d <= 30 && d >= -30; }).forEach(function (c) { var d = daysTo(String(c.renewal).slice(0, 10)); note('host:' + c.id + ':' + c.renewal, '#client/' + c.id, c.name, 'Hosting ' + (d < 0 ? 'renewal was due ' + fmt(String(c.renewal).slice(0, 10)) : 'renews ' + fmt(String(c.renewal).slice(0, 10)) + (d === 0 ? ' (today)' : ' (in ' + d + ' day' + (d === 1 ? '' : 's') + ')'))); });
 		var headBits = [you.length ? you.length + ' waiting on your reply' : '', quiet.length ? quiet.length + ' quiet 7+ days' : '', att.length ? att.length + ' notice' + (att.length === 1 ? '' : 's') : ''].filter(Boolean).join(' · ');
-		return '<section class="dd-card dd-wait"><header class="dd-ch"><div class="dd-ch-t"><h2>Needs your attention</h2><span>' + (headBits || 'You’re all caught up') + '</span></div></header>'
+		return '<section class="dd-card dd-wait' + (!you.length && !quiet.length && !att.length ? ' empty' : '') + '"><header class="dd-ch"><div class="dd-ch-t"><h2>Needs your attention</h2><span>' + (headBits || 'You’re all caught up') + '</span></div></header>'
 			+ (you.length ? '<p class="dd-wsub">Waiting on your reply</p>' : '') + you.map(function (c) { return row(c, false); }).join('')
 			+ (quiet.length ? '<p class="dd-wsub">Client quiet 7+ days</p>' + quiet.map(function (c) { return row(c, true); }).join('') : '')
 			+ (att.length ? '<p class="dd-wsub">Notices</p>' + att.join('') : '')
-			+ (!you.length && !quiet.length && !att.length ? '<p class="dd-empty-l">Nothing needs you right now.</p>' : '') + '</section>';
+			+ '</section>';
 	}
 	function hmPeople() {
 		var seen = {}, out = [];
