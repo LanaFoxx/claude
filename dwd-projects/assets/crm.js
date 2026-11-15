@@ -3393,15 +3393,16 @@
 		var rv = reviewBtn(c.client), rvAttr = (/(data-[a-z]+="[^"]*")/.exec(rv) || [])[1];
 		// header
 		var main = '', menu = mi('data-edit', S.edit ? 'Close edit' : 'Edit project');
+		var xb = (S.xBusy || {})[c.id], xbtn = function (cls) { return btn('data-xport="' + c.id + '"' + (xb ? ' disabled' : '') + ' title="One zip for Claude Code: design brief, instructions, onboarding answers, meeting transcripts, emails, texts and files"', lu('download') + (xb ? 'Building the zip…' : 'Export'), cls); };
 		if (st === 'active' || st === 'hold' || st === 'limbo') {
-			main = (ow ? btn('data-paid', 'Mark paid') : '') + btn('data-plog="' + c.id + '"', lu('credit-card') + 'Log payment', 'primary');
+			main = (ow ? btn('data-paid', 'Mark paid') : '') + btn('data-plog="' + c.id + '"', lu('credit-card') + 'Log payment') + xbtn('primary');
 			menu += mi('data-leadinvite="' + c.id + '"', c.onboarded ? 'Send onboarding form again' : (c.stage === 'onboarding' ? 'Resend onboarding form' : 'Send onboarding form')) + (rvAttr ? mi(rvAttr, 'Ask for a review') : '') + mi('data-complete', 'Mark complete')
 				+ mi(st === 'hold' ? 'data-set="active"' : 'data-set="hold"', st === 'hold' ? 'Resume project' : 'Pause (on hold)') + mi(st === 'limbo' ? 'data-set="active"' : 'data-set="limbo"', st === 'limbo' ? 'Take out of limbo' : 'Move to limbo') + mi('data-act="job" data-client="' + (c.client || 0) + '"', 'New project for this client') + mi('data-set="archive"', 'Archive');
 		} else if (st === 'complete') {
-			main = (ow ? btn('data-paid', 'Mark paid') : '') + btn('data-set="active"', 'Reopen');
+			main = (ow ? btn('data-paid', 'Mark paid') : '') + btn('data-set="active"', 'Reopen') + xbtn('primary');
 			menu += (rvAttr ? mi(rvAttr, 'Ask for a review') : '') + mi('data-plog="' + c.id + '"', 'Log payment') + mi('data-act="job" data-client="' + (c.client || 0) + '"', 'New project for this client');
 		} else if (st === 'leads') {
-			main = btn('data-leadinvite="' + c.id + '"', lu('mail') + (c.stage === 'onboarding' ? 'Resend onboarding form' : 'Send onboarding form')) + btn('data-set="active"', 'Start the job', 'primary');
+			main = btn('data-leadinvite="' + c.id + '"', lu('mail') + (c.stage === 'onboarding' ? 'Resend onboarding form' : 'Send onboarding form')) + xbtn() + btn('data-set="active"', 'Start the job', 'primary');
 			menu += mi('data-set="archive"', 'Archive lead') + mi('data-purge="' + c.id + '"', 'Delete lead', 'danger');
 		} else {
 			main = btn('data-set="leads"', 'Restore to leads', 'primary');
@@ -3529,7 +3530,7 @@
 		var hosting = num(c.hosting) ? hostCard(c) : '';
 		return '<div class="dd-pp">' + head + strip
 			+ (S.edit ? '<div class="dd-pp-edit" id="pv3-edit">' + details + peopleCard(c) + '</div>' : '')
-			+ '<div class="dd-pp-grid"><div class="dd-pp-col">' + sumBox + (full ? '<div class="dd-mt2">' + mailBox('p' + c.id, c.email || (clientOf(c) || {}).email || '', c.id) + textsBox(c) + '</div>' + meetBox(c) + '<div class="dd-xport"><div><b>Export for Claude Code</b><small>One zip with a design brief for Claude Design written by Claude, build instructions, the project brief, onboarding answers, meeting transcripts, emails, texts and every file from Dream Desk and the Drive folder.</small></div><button type="button" class="dd-btn primary" data-xport="' + c.id + '"' + ((S.xBusy || {})[c.id] ? ' disabled' : '') + '>' + ((S.xBusy || {})[c.id] ? 'Building the zip…' : 'Download zip') + '</button></div>' + assetsBox(c) : '') + stgBox + mkBox + formBox + (S.edit ? '' : '<div class="dd-pp-mob">' + details + '</div>') + '<div class="dd-tn">' + todos + notesBox + '</div>' + '</div><div class="dd-pp-col side">' + (S.edit ? '' : '<div class="dd-pp-desk">' + details + '</div>' + contacts) + zoomBox('p' + c.id, [c.id]) + (st === 'leads' ? '' : paysBox) + hosting + '</div></div></div>';
+			+ '<div class="dd-pp-grid"><div class="dd-pp-col">' + sumBox + (full ? '<div class="dd-mt2">' + mailBox('p' + c.id, c.email || (clientOf(c) || {}).email || '', c.id) + textsBox(c) + '</div>' + meetBox(c) + assetsBox(c) : '') + stgBox + mkBox + formBox + (S.edit ? '' : '<div class="dd-pp-mob">' + details + '</div>') + '<div class="dd-tn">' + todos + notesBox + '</div>' + '</div><div class="dd-pp-col side">' + (S.edit ? '' : '<div class="dd-pp-desk">' + details + '</div>' + contacts) + zoomBox('p' + c.id, [c.id]) + (st === 'leads' ? '' : paysBox) + hosting + '</div></div></div>';
 	}
 	// Onboarding answers as plain text, ready to paste into Claude.
 	function onboardEntries(c) {
