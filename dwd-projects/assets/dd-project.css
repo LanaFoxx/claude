@@ -413,3 +413,16 @@
 	.dd .dd-atogi { display: inline-flex; margin-left: 6px; color: var(--text-3); }
 	.dd .k-assets.aopen .dd-atogi svg { transform: rotate(180deg); }
 }
+/* Phones: Staging & Markup is compact: each field and its Save on one line, short button labels on one line */
+@media (max-width: 767px) {
+	.dd .k-stg .dd-frow { flex-wrap: nowrap !important; }
+	.dd .k-stg .dd-frow input { flex: 1 1 auto !important; height: 40px !important; }
+	.dd .k-stg .dd-frow .dd-btn { height: 40px; flex: none; }
+	.dd .k-stg .dd-stgb { gap: 10px; }
+	.dd .k-stg .dd-sm-mk { gap: 8px; padding-top: 10px; }
+	.dd .k-stg .dd-mkbtns { flex-wrap: nowrap !important; gap: 6px !important; }
+	.dd .k-stg .dd-mkbtns > .dd-btn { flex: 1 1 0; min-width: 0; justify-content: center; padding-left: 8px !important; padding-right: 8px !important; gap: 6px; white-space: nowrap; }
+	.dd .k-stg > header h2 { white-space: nowrap; }
+	.dd .k-stg .dd-sm-top .dd-pbtns { flex-wrap: nowrap; gap: 6px; }
+}
+@media (max-width: 767px) { .dd .k-stg .dd-sm-top .dd-pbtns > .dd-btn { flex: 1 1 auto; min-width: 0; justify-content: center; padding-left: 8px !important; padding-right: 8px !important; white-space: nowrap; } }
