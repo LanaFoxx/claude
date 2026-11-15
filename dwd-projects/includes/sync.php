@@ -1776,6 +1776,13 @@ function dwdff_by_name( $name ) {
 		$cl     = (int) get_post_meta( $id, '_dwdc_client', true );
 		$client = $cl ? strtolower( trim( html_entity_decode( (string) get_the_title( $cl ), ENT_QUOTES, 'UTF-8' ) ) ) : '';
 		$score  = ( $person === $name || $client === $name ) ? 0 : ( ( '' !== $person && 0 === strpos( $name, $person . ' ' ) ) || ( '' !== $client && 0 === strpos( $name, $client . ' ' ) ) || 0 === strpos( $person . ' ', $name . ' ' ) || 0 === strpos( $client . ' ', $name . ' ' ) ? 10 : 99 );
+		if ( 99 === $score && preg_match( '/^([a-z\'-]{2,})\s+([a-z])\.?$/', $name, $ini ) ) { // "Nicolla E" → Nicolla Eddy
+			foreach ( array( $person, $client ) as $full ) {
+				if ( preg_match( '/^' . preg_quote( $ini[1], '/' ) . '\s+' . $ini[2] . '/', $full ) ) {
+					$score = 15;
+				}
+			}
+		}
 		$score += $rank[ get_post_meta( $id, '_dwdc_list', true ) ] ?? 9;
 		if ( $score < 50 && $score < $best[1] ) {
 			$best = array( (int) $id, $score );

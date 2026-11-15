@@ -3528,10 +3528,10 @@
 				+ '<div><span class="l">Source</span><b class="sm">' + esc(String(c.source || '—').replace(/^Website form: /, '')) + '</b><small>Stage: ' + esc(stLabel) + '</small></div></div>';
 		} else {
 			var dueCell = st === 'complete'
-				? '<div><span class="l">Completed</span><b>' + (doneDate(c) ? fmt(doneDate(c)) : '—') + '</b><small>' + (started ? 'Started ' + fmt(started) : '') + '</small></div>'
-				: '<div><span class="l">Due</span><b>' + (c.deadline ? fmt(c.deadline) : '—') + '</b>' + (c.deadline ? (function () { var n = dn(c.deadline); return '<small class="' + (n < 0 ? 'late' : n <= 7 ? 'soon' : '') + '">' + (n < 0 ? 'Overdue by ' + -n + ' day' + (n === -1 ? '' : 's') : n === 0 ? 'Today' : n === 1 ? 'Tomorrow' : 'In ' + n + ' days') + '</small>'; })() : '<small>No due date</small>') + '</div>';
-			strip = '<div class="dd-card dd-strip"><div><span class="l">Owed</span><b>' + money(ow) + '</b><small>' + (ow ? payState + (c.pay_method ? ' · via ' + esc(c.pay_method) : '') + (c.paymark === 'pending' ? ' · pending deposit' : '') : (paid ? 'Paid in full' : price ? 'Nothing owed set · price ' + money(price) : 'No price yet')) + '</small></div>' + dueCell
-				+ '<div><span class="l">Client paid</span><b>' + money(paid) + (payTot ? ' <em>of ' + money(payTot) + (c.pay_method === 'Upwork' && price && Math.abs(payTot - price) > 1 ? ' after Upwork fee' : '') + '</em>' : '') + '</b>'
+				? '<div class="du"><span class="l">Completed</span><b>' + (doneDate(c) ? fmt(doneDate(c)) : '—') + '</b><small>' + (started ? 'Started ' + fmt(started) : '') + '</small></div>'
+				: '<div class="du"><span class="l">Due</span><b>' + (c.deadline ? fmt(c.deadline) : '—') + '</b>' + (c.deadline ? (function () { var n = dn(c.deadline); return '<small class="' + (n < 0 ? 'late' : n <= 7 ? 'soon' : '') + '">' + (n < 0 ? 'Overdue by ' + -n + ' day' + (n === -1 ? '' : 's') : n === 0 ? 'Today' : n === 1 ? 'Tomorrow' : 'In ' + n + ' days') + '</small>'; })() : '<small>No due date</small>') + '</div>';
+			strip = '<div class="dd-card dd-strip dd-strip-p"><div class="ow"><span class="l">Owed</span><b>' + money(ow) + '</b><small>' + (ow ? payState + (c.pay_method ? ' · via ' + esc(c.pay_method) : '') + (c.paymark === 'pending' ? ' · pending deposit' : '') : (paid ? 'Paid in full' : price ? 'Nothing owed set · price ' + money(price) : 'No price yet')) + '</small></div>' + dueCell
+				+ '<div class="pd"><span class="l"><span class="dd-nomob">Client paid</span><span class="dd-mobonly">Paid</span></span><b>' + money(paid) + (payTot ? ' <em>of ' + money(payTot) + (c.pay_method === 'Upwork' && price && Math.abs(payTot - price) > 1 ? ' after Upwork fee' : '') + '</em>' : '') + '</b>'
 				+ (inUp ? '<small class="dd-strip-sub">' + (banked ? money(banked) + ' in your bank · ' : 'Nothing in your bank yet · ') + money(inUp) + ' still in Upwork' + (num(upP.pend) && upP.pnext ? ' (available ' + fmt(upP.pnext) + ')' : '') + '</small>' : '')
 				+ '<span class="dd-prog' + (pct >= 100 ? ' full' : '') + '"><i><s style="width:' + pct + '%"></s></i><small>' + pct + '%</small></span></div></div>';
 		}
@@ -5259,6 +5259,7 @@
 	/* ---------- start ---------- */
 	document.body.classList.add('dwdc-app-on');
 	api('').then(function (r) {
+		S.health = r.health || null; S.tax = r.tax || null;
 		S.contacts = r.contacts.filter(Boolean); S.tasks = r.tasks.filter(Boolean); S.clients = (r.clients || []).filter(Boolean); S.money = r.money || {}; S.upfeed = r.upfeed || null; S.costs = r.costs || {}; S.trends = r.trends || null; S.wins = r.wins || { list: [], undated: 0 }; S.ads = r.ads || null; S.meet = r.meetings || null; S.order = r.order || {};
 		var m = /[?&]contact=(\d+)/.exec(location.search), em = /[?&]email=([^&]+)/.exec(location.search);
 		var who = m ? contact(+m[1]) : em ? S.contacts.find(function (c) { return c.email && c.email.toLowerCase() === decodeURIComponent(em[1]).toLowerCase(); }) : null;

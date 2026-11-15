@@ -370,3 +370,15 @@
 .dd-adrv { display: flex; flex-direction: column; gap: 8px; }
 .dd-abody > * + .dd-adrv { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
 .dd-adrvh { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 !important; padding: 0 !important; font-size: 12px; font-weight: 500; color: var(--text-2); }
+/* Phones: Ready to build first, notes and to-dos last */
+@media (max-width: 767px) { .dd-pp-grid .k-ready { order: -1 !important; margin: 0 !important; } .dd-pp-grid .dd-tn { order: 99 !important; } }
+/* Phones: the Owed / Paid strip is one short row (no due date, no extra lines) */
+.dd-mobonly { display: none; }
+@media (max-width: 767px) {
+	.dd-strip.dd-strip-p { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+	.dd-strip.dd-strip-p > .du, .dd-strip.dd-strip-p small, .dd-strip.dd-strip-p b em, .dd-strip.dd-strip-p .dd-prog { display: none !important; }
+	.dd-strip.dd-strip-p > div { flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 0; padding: 10px 16px; }
+	.dd-strip.dd-strip-p > div + div { border-top: 0; border-left: 1px solid var(--border); }
+	.dd-strip.dd-strip-p .dd-nomob { display: none; }
+	.dd-strip.dd-strip-p .dd-mobonly { display: inline; }
+}
