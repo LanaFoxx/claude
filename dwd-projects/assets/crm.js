@@ -873,6 +873,16 @@
 		}
 		return D[key] || null;
 	}
+	// Meetings: recorded calls from Fireflies filed on this project.
+	function meetBox(c) {
+		var L = c.meetings || [], open = S.meetOpen || {};
+		if (!L.length) { return ''; }
+		return '<section class="dd-card dd-pc2 k-meet"><header><h2>Meetings</h2><span class="sum">' + L.length + ' recorded</span></header><div class="dd-mtl">' + L.map(function (m) {
+			var on = !!open[m.id];
+			return '<div class="dd-mtg' + (on ? ' open' : '') + '"><button type="button" class="dd-mtgh" data-meetopen="' + esc(m.id) + '" aria-expanded="' + on + '"><b>' + esc(m.title) + '</b><small>' + fmt(String(m.date).slice(0, 10)) + ' · ' + m.mins + ' min</small></button>'
+				+ (on ? '<div class="dd-mtgb">' + (m.summary ? '<p>' + esc(m.summary) + '</p>' : '<p>No summary from Fireflies for this call.</p>') + (m.actions ? '<h4>Action items</h4><pre>' + esc(String(m.actions).replace(/\*\*/g, '')) + '</pre>' : '') + '<div class="dd-inva"><a class="dd-hlink" href="' + esc(m.url) + '" target="_blank" rel="noopener">Open in Fireflies</a><button type="button" class="dd-hlink" data-meettx="' + esc(m.id) + '" data-t="' + esc(m.title) + '">Read the transcript</button></div></div>' : '') + '</div>';
+		}).join('') + '</div></section>';
+	}
 	// Texts: the Quo conversation with this project's phone number, and a box to send a new text.
 	function txtData(c, ph) {
 		S.txt = S.txt || {}; S.txtLoad = S.txtLoad || {};
@@ -2212,6 +2222,10 @@
 			+ '<ol><li>In Quo, open <b>Settings → API</b> and <b>generate an API key</b>.</li><li>Paste it here and save. Texts you send from a project page go out from your Quo number and show in Quo as usual.</li></ol>'
 			+ '<div class="dwdc-conn-f col"><input type="password" placeholder="Quo API key" data-sk="quo_key" autocomplete="off"><button class="dwdc-btn" data-synsave="quo">Save</button>'
 			+ (QN.length ? '<small class="dwdc-conn-last">Texts are sent from ' + (QN.length > 1 ? '<select data-quofrom>' + QN.map(function (n) { return '<option value="' + esc(n.number) + '"' + (n.number === QO.from ? ' selected' : '') + '>' + esc(n.number + (n.name ? ' · ' + n.name : '')) + '</option>'; }).join('') + '</select>' : '<b>' + esc(QN[0].number) + '</b>') + '</small>' : '') + '</div></div>';
+		var FF = X.fireflies || {};
+		var ffc = '<div class="dwdc-conn"><h3><i class="str"></i>Fireflies (meeting transcripts)' + st(!!FF.ready, FF.last) + '</h3>'
+			+ '<ol><li>In Fireflies, open <b>Integrations → Fireflies API</b> and copy your API key.</li><li>Paste it here and save. Each recorded call is filed on the client’s project with its summary, action items and transcript.</li></ol>'
+			+ '<div class="dwdc-conn-f col"><input type="password" placeholder="Fireflies API key" data-sk="fireflies_key" autocomplete="off"><button class="dwdc-btn" data-synsave="fireflies">Save</button>' + (FF.ready ? '<small class="dwdc-conn-last">' + (FF.count || 0) + ' meetings on file.</small>' : '') + '</div></div>';
 		var R = S.refreshRes;
 		var bar = '<div class="dwdc-refbar"><div><b>Update Finances</b><span>Re-reads your Upwork files, pulls every paid Stripe and PayPal payment, keeps the payments you logged by hand, then re-checks trends.' + (X.refreshed ? ' Last run ' + fmt(String(X.refreshed).slice(0, 10), true) + '.' : '') + '</span></div><button class="dwdc-btn dwdc-refbtn" data-refresh>' + ic('refresh', 15) + 'Update Finances</button></div>'
 			+ (R ? '<div class="dwdc-conn-res big">' + refreshText(R) + '</div>' : '');
@@ -2220,7 +2234,7 @@
 		var mail = '<div class="dwdc-conn"><h3><i class="upw"></i>Upwork emails' + '<span class="dwdc-conn-st ' + (ML ? 'on' : 'off') + '">' + (ML ? 'Connected' : 'Not set up') + '</span>' + (ML ? '<small class="dwdc-conn-last">Last checked ' + fmt(ML.at, true) + ' · ' + (ML.created + ML.reopened + ML.completed + ML.check) + ' sent for your review</small>' : '') + '</h3>'
 			+ '<p>Twice a week (Monday and Thursday mornings) your Gmail sends new Upwork “hired you”, offer and “contract ended” emails here. New contracts become Active projects (never duplicates), returning clients are reopened, and ended contracts move to Completed. Money still comes from the Upwork CSV.</p>'
 			+ '<ol><li>Open <a href="https://script.google.com/home/projects/create" target="_blank" rel="noopener"><b>script.google.com → New project</b></a> while signed in as mike@dreamwebdigital.com.</li><li>Delete what’s there, then paste this script:' + (M ? '<div class="dwdc-conn-url"><code>Dream Desk Upwork sync script</code><button class="dwdc-lnk sm2" data-copy="' + esc(M.script) + '">Copy script</button></div>' : ' <i>loading…</i>') + '</li><li>Pick <b>setup</b> in the function menu and press <b>Run</b>. Allow access to Gmail when Google asks.</li></ol></div>';
-		return bar + '<div class="dwdc-conns">' + gin + up + mail + stripe + pp + quo + '</div><p class="dwdc-mutp sm">Payments are matched to clients by email. Anything that doesn’t match becomes a to-do on your dashboard so you can assign it. Keys are saved on your server and never shown again.</p>';
+		return bar + '<div class="dwdc-conns">' + gin + up + mail + stripe + pp + quo + ffc + '</div><p class="dwdc-mutp sm">Payments are matched to clients by email. Anything that doesn’t match becomes a to-do on your dashboard so you can assign it. Keys are saved on your server and never shown again.</p>';
 	}
 	function refreshText(R) {
 		if (R.busy) { return 'Updating… this can take up to a minute.'; }
@@ -3491,7 +3505,7 @@
 		var hosting = num(c.hosting) ? hostCard(c) : '';
 		return '<div class="dd-pp">' + head + strip
 			+ (S.edit ? '<div class="dd-pp-edit" id="pv3-edit">' + details + peopleCard(c) + '</div>' : '')
-			+ '<div class="dd-pp-grid"><div class="dd-pp-col">' + sumBox + (full ? '<div class="dd-mt2">' + mailBox('p' + c.id, c.email || (clientOf(c) || {}).email || '', c.id) + textsBox(c) + '</div>' + assetsBox(c) : '') + stgBox + mkBox + formBox + (S.edit ? '' : '<div class="dd-pp-mob">' + details + '</div>') + '<div class="dd-tn">' + todos + notesBox + '</div>' + '</div><div class="dd-pp-col side">' + (S.edit ? '' : '<div class="dd-pp-desk">' + details + '</div>' + contacts) + zoomBox('p' + c.id, [c.id]) + (st === 'leads' ? '' : paysBox) + hosting + '</div></div></div>';
+			+ '<div class="dd-pp-grid"><div class="dd-pp-col">' + sumBox + (full ? '<div class="dd-mt2">' + mailBox('p' + c.id, c.email || (clientOf(c) || {}).email || '', c.id) + textsBox(c) + '</div>' + meetBox(c) + '<div class="dd-xport"><div><b>Export for Claude Code</b><small>One zip with instructions, the brief, onboarding answers, meeting transcripts, emails, texts and every file from Dream Desk and the Drive folder.</small></div><button type="button" class="dd-btn primary" data-xport="' + c.id + '"' + ((S.xBusy || {})[c.id] ? ' disabled' : '') + '>' + ((S.xBusy || {})[c.id] ? 'Building the zip…' : 'Download zip') + '</button></div>' + assetsBox(c) : '') + stgBox + mkBox + formBox + (S.edit ? '' : '<div class="dd-pp-mob">' + details + '</div>') + '<div class="dd-tn">' + todos + notesBox + '</div>' + '</div><div class="dd-pp-col side">' + (S.edit ? '' : '<div class="dd-pp-desk">' + details + '</div>' + contacts) + zoomBox('p' + c.id, [c.id]) + (st === 'leads' ? '' : paysBox) + hosting + '</div></div></div>';
 	}
 	// Onboarding answers as plain text, ready to paste into Claude.
 	function onboardEntries(c) {
@@ -3805,6 +3819,9 @@
 				+ (m.err ? '<p class="dd-inv-err">' + esc(m.err) + '</p>' : '')
 				+ '<p class="dwdc-mutp sm">' + (m.busy ? 'Working…' : 'The client gets the invoice by email from Stripe or PayPal and pays there. The payment is logged on this project when it arrives.') + '</p>'
 				+ '<div class="dwdc-farow end"><button type="button" class="dwdc-btn2" data-invsave="draft"' + (m.busy ? ' disabled' : '') + '>Save as draft</button><button type="button" class="dwdc-btn" data-invsave="send"' + (m.busy ? ' disabled' : '') + '>Create and send</button></div></form>';
+		}
+		if (m.type === 'meettx') {
+			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide dd-sg-mod">' + head('Meeting', esc(m.title), '') + (m.text == null ? emptyRow('Loading the transcript…') : '<pre class="dd-mtx">' + esc(m.text) + '</pre>') + '</div>';
 		}
 		if (m.type === 'sgtx') {
 			var SX = m.data, sxp = String(m.title).split(' · ');
@@ -4587,6 +4604,18 @@
 		if ((el = t.closest('[data-billmove]'))) { var bmv = (pData().bills || []).find(function (x) { return x.id === el.getAttribute('data-billmove'); }); S.billMenu = 0; if (bmv) { var nb = JSON.parse(JSON.stringify(bmv)); nb.scope = bmv.scope === 'business' ? 'personal' : 'business'; pSave('bills', nb, 'Moved to ' + (nb.scope === 'business' ? 'Business' : 'Personal')); } return; }
 		if ((el = t.closest('[data-billmenu]'))) { e.stopPropagation(); var bmid = el.getAttribute('data-billmenu'); S.billMenu = S.billMenu === bmid ? 0 : bmid; S.subLabel = 0; render(); return; }
 		if ((el = t.closest('[data-sublabel]'))) { e.stopPropagation(); var slm = el.getAttribute('data-sublabel'); S.subLabel = S.subLabel === slm ? 0 : slm; S.billMenu = 0; render(); return; }
+		if ((el = t.closest('[data-meetopen]'))) { S.meetOpen = S.meetOpen || {}; var mo = el.getAttribute('data-meetopen'); S.meetOpen[mo] = !S.meetOpen[mo]; render(); return; }
+		if ((el = t.closest('[data-meettx]'))) { var mx2 = S.modal = { type: 'meettx', title: el.getAttribute('data-t') || 'Transcript', text: null }; render(); api('/fireflies?transcript=' + encodeURIComponent(el.getAttribute('data-meettx'))).then(function (x) { if (S.modal === mx2) { mx2.text = x.text; render(); } }).catch(function (e) { if (S.modal === mx2) { S.modal = null; render(); } fail(e); }); return; }
+		if ((el = t.closest('[data-xport]'))) {
+			var xid = +el.getAttribute('data-xport'); S.xBusy = S.xBusy || {}; if (S.xBusy[xid]) { return; }
+			S.xBusy[xid] = 1; render(); toast('Collecting everything for Claude Code. This can take a minute.');
+			api('/contact/' + xid + '/export', 'POST', {}).then(function (x) {
+				S.xBusy[xid] = 0; render();
+				var a = document.createElement('a'); a.href = x.url; a.download = x.name; document.body.appendChild(a); a.click(); a.remove();
+				toast('Zip ready: ' + x.meetings + ' meeting' + (x.meetings === 1 ? '' : 's') + ', ' + x.emails + ' emails, ' + x.files + ' file' + (x.files === 1 ? '' : 's') + (x.skipped ? ' (' + x.skipped + ' listed as links)' : ''));
+			}).catch(function (e) { S.xBusy[xid] = 0; render(); fail(e); });
+			return;
+		}
 		if ((el = t.closest('[data-txtfresh]'))) { if (S.txt) { delete S.txt[+el.getAttribute('data-txtfresh')]; } render(); return; }
 		if ((el = t.closest('[data-txtsend]'))) {
 			var tid = +el.getAttribute('data-txtsend'), tin = app.querySelector('[data-txtin="' + tid + '"]'), tval = tin ? tin.value.trim() : '', tph = el.getAttribute('data-ph');

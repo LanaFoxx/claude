@@ -773,3 +773,23 @@ input[type=date], input[type=datetime-local] { cursor: pointer; }
 @media (max-width: 1100px) { .dd-mt2 { grid-template-columns: minmax(0, 1fr); } }
 /* Texts open at the newest message (newest is first in the page, shown at the bottom) */
 .dd-txl { flex-direction: column-reverse; }
+/* Project page: Meetings box, transcript window and the Claude Code export bar */
+.dd-mtl { padding: 0 0 6px; }
+.dd-mtg { border-top: 1px solid var(--border); }
+.dd button.dd-mtgh { display: flex; width: 100%; align-items: baseline; justify-content: space-between; gap: 16px; padding: 12px 20px; margin: 0; border: 0; background: none; font: inherit; color: inherit; text-align: left; cursor: pointer; }
+.dd button.dd-mtgh:hover { background: var(--hover); }
+.dd-mtgh b { font-size: var(--fs-body); font-weight: 600; color: var(--text); overflow-wrap: anywhere; }
+.dd-mtgh small { flex: none; font-size: var(--fs-xs); color: var(--text-3); }
+.dd-mtgb { padding: 0 20px 14px; }
+.dd .dd-mtgb p { margin: 0 0 10px !important; font-size: var(--fs-sm); line-height: 1.55; color: var(--text-2); }
+.dd-mtgb h4 { margin: 0 0 6px; font-size: var(--fs-xs); font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: .04em; }
+.dd-mtgb pre, .dd pre.dd-mtx { margin: 0 0 10px; padding: 0; background: none; border: 0; white-space: pre-wrap; overflow-wrap: anywhere; font: 400 var(--fs-sm)/1.55 var(--font); color: var(--text-2); }
+.dd pre.dd-mtx { color: var(--text); max-height: 70vh; overflow-y: auto; }
+.dd-xport { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 20px; border: 1px solid var(--border); border-radius: var(--radius-xl); background: var(--surface); }
+.dd-xport b { display: block; font-size: var(--fs-body); font-weight: 600; color: var(--text); }
+.dd-xport small { display: block; margin-top: 3px; font-size: var(--fs-xs); line-height: 1.45; color: var(--text-3); }
+.dd-xport .dd-btn { flex: none; }
+@media (max-width: 767px) { .dd-xport { flex-direction: column; align-items: stretch; padding: 14px 16px; } .dd button.dd-mtgh { padding: 12px 16px; flex-direction: column; gap: 2px; } .dd-mtgb { padding: 0 16px 12px; } }
+/* Project list: no Next step column; the space goes to the project and client names */
+.dd .dd-prow > .dd-pc.nx, .dd .dd-prow.head > :nth-child(8) { display: none; }
+@media (min-width: 1280px) { .dd .dd-prow { grid-template-columns: 28px minmax(0, 2.3fr) minmax(0, 1.4fr) 110px 150px 140px 56px; } }

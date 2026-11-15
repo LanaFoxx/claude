@@ -335,13 +335,14 @@ add_action( 'rest_api_init', function () {
 				'stripe' => array( 'url' => rest_url( 'dwd/v1/stripe-webhook' ), 'ready' => (bool) get_option( 'dwds_stripe_whsec', '' ), 'key' => (bool) get_option( 'dwds_stripe_key', '' ), 'last' => get_option( 'dwds_last_stripe', '' ) ),
 				'paypal' => array( 'url' => rest_url( 'dwd/v1/paypal-webhook' ), 'ready' => (bool) ( get_option( 'dwds_paypal_id' ) && get_option( 'dwds_paypal_secret' ) && get_option( 'dwds_paypal_hook' ) ), 'last' => get_option( 'dwds_last_paypal', '' ) ),
 				'upwork' => array( 'last' => get_option( 'dwds_last_upwork', '' ), 'files' => array_values( dwds_files() ) ),
+				'fireflies' => array( 'ready' => (bool) get_option( 'dwds_fireflies_key', '' ), 'last' => (string) get_option( 'dwdff_last', '' ), 'count' => count( (array) get_option( 'dwdff_data', array() ) ) ),
 				'quo'    => array( 'ready' => (bool) get_option( 'dwds_quo_key', '' ), 'from' => (string) get_option( 'dwds_quo_from', '' ), 'numbers' => array_values( (array) get_option( 'dwds_quo_numbers', array() ) ) ),
 				'refreshed' => get_option( 'dwds_last_refresh', '' ),
 			);
 		} ),
 		array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
 			$d = (array) $r->get_json_params();
-			foreach ( array( 'stripe_key' => '/^(rk|sk)_live_[A-Za-z0-9]+$/', 'stripe_whsec' => '/^whsec_[A-Za-z0-9]+$/', 'paypal_id' => '/^[A-Za-z0-9_\-]{20,}$/', 'paypal_secret' => '/^[A-Za-z0-9_\-]{20,}$/', 'paypal_hook' => '/^[A-Za-z0-9]{8,}$/', 'quo_key' => '/^[A-Za-z0-9_\-]{20,}$/' ) as $k => $re ) {
+			foreach ( array( 'stripe_key' => '/^(rk|sk)_live_[A-Za-z0-9]+$/', 'stripe_whsec' => '/^whsec_[A-Za-z0-9]+$/', 'paypal_id' => '/^[A-Za-z0-9_\-]{20,}$/', 'paypal_secret' => '/^[A-Za-z0-9_\-]{20,}$/', 'paypal_hook' => '/^[A-Za-z0-9]{8,}$/', 'quo_key' => '/^[A-Za-z0-9_\-]{20,}$/', 'fireflies_key' => '/^[A-Za-z0-9_\-]{20,}$/' ) as $k => $re ) {
 				if ( isset( $d[ $k ] ) && '' !== trim( (string) $d[ $k ] ) ) {
 					$v = trim( (string) $d[ $k ] );
 					if ( ! preg_match( $re, $v ) ) {
@@ -349,6 +350,14 @@ add_action( 'rest_api_init', function () {
 					}
 					update_option( 'dwds_' . $k, $v, false );
 				}
+			}
+			if ( ! empty( $d['fireflies_key'] ) ) { // check the key, then pull the meetings
+				$fu = dwdff_call( '{ user { email } }' );
+				if ( is_wp_error( $fu ) ) {
+					delete_option( 'dwds_fireflies_key' );
+					return new WP_Error( 'dwds_ff', 'Fireflies didn’t accept that API key. Copy it again from Fireflies → Integrations → Fireflies API.', array( 'status' => 400 ) );
+				}
+				dwdff_sync();
 			}
 			if ( ! empty( $d['quo_key'] ) ) { // check the key by asking Quo for your numbers
 				$qn = dwdq_numbers( true );
@@ -1493,6 +1502,398 @@ add_action( 'rest_api_init', function () {
 				}
 			}
 			return array( 'added' => $done, 'failed' => $fail, 'no_match' => $m['no_match'], 'already_contacts' => $m['already_contacts'] );
+		} ),
+	) );
+} );
+
+
+/* ---------------------------------------------------------------- Meeting transcripts (Fireflies)
+ * Fireflies records the Zoom / Meet calls. With your Fireflies API key (Connections) Dream Desk pulls each
+ * meeting's summary and action items every hour, files it on the client's project (matched by the guest's
+ * email, or the name in the meeting title), and fetches the full transcript when you open or export it.
+ */
+function dwdff_call( $query, $vars = array() ) {
+	$key = (string) get_option( 'dwds_fireflies_key', '' );
+	if ( '' === $key ) {
+		return new WP_Error( 'dwdff_off', 'Fireflies is not connected yet. Paste your Fireflies API key under Settings → Connections.', array( 'status' => 400 ) );
+	}
+	$r = wp_remote_post( 'https://api.fireflies.ai/graphql', array( 'timeout' => 45, 'headers' => array( 'Authorization' => 'Bearer ' . $key, 'Content-Type' => 'application/json' ), 'body' => wp_json_encode( array_filter( array( 'query' => $query, 'variables' => $vars ? $vars : null ) ) ) ) );
+	if ( is_wp_error( $r ) ) {
+		return new WP_Error( 'dwdff', 'Could not reach Fireflies. Try again in a minute.', array( 'status' => 502 ) );
+	}
+	$j = json_decode( wp_remote_retrieve_body( $r ), true );
+	if ( wp_remote_retrieve_response_code( $r ) >= 300 || ! empty( $j['errors'] ) || ! isset( $j['data'] ) ) {
+		return new WP_Error( 'dwdff', 'Fireflies: ' . (string) ( $j['errors'][0]['message'] ?? 'request failed' ), array( 'status' => 400 ) );
+	}
+	return (array) $j['data'];
+}
+
+/** Pull the latest meetings (summaries only) and file each on a project. */
+function dwdff_sync() {
+	$all = (array) get_option( 'dwdff_data', array() );
+	$me  = strtolower( (string) get_option( 'admin_email', '' ) );
+	$new = 0;
+	for ( $skip = 0; $skip < 150; $skip += 50 ) {
+		$d = dwdff_call( 'query($limit:Int,$skip:Int){ transcripts(limit:$limit, skip:$skip){ id title date duration participants organizer_email transcript_url summary { short_summary overview action_items keywords } } }', array( 'limit' => 50, 'skip' => $skip ) );
+		if ( is_wp_error( $d ) ) {
+			return $d;
+		}
+		$rows = (array) ( $d['transcripts'] ?? array() );
+		$hit  = 0;
+		foreach ( $rows as $t ) {
+			$id = (string) ( $t['id'] ?? '' );
+			if ( '' === $id ) {
+				continue;
+			}
+			$old    = $all[ $id ] ?? null;
+			$guests = array();
+			foreach ( (array) ( $t['participants'] ?? array() ) as $e ) {
+				$e = strtolower( trim( (string) $e ) );
+				if ( is_email( $e ) && $e !== $me && $e !== strtolower( (string) ( $t['organizer_email'] ?? '' ) ) && false === strpos( $e, 'fireflies.ai' ) ) {
+					$guests[] = $e;
+				}
+			}
+			$title = sanitize_text_field( (string) ( $t['title'] ?? '' ) );
+			$pid   = (int) ( $old['pid'] ?? 0 );
+			if ( ! $pid || empty( $old['fixed'] ) ) {
+				$pid = 0;
+				foreach ( $guests as $e ) {
+					$pid = $pid ? $pid : dwds_project_for( $e );
+				}
+				if ( ! $pid && preg_match( '/^(.+?)\s+and\s+Dream Web Digital/i', $title, $m ) ) { // "Blake Reynolds and Dream Web Digital"
+					$pid = dwdff_by_name( $m[1] );
+				}
+			}
+			$sum = (array) ( $t['summary'] ?? array() );
+			$all[ $id ] = array(
+				'id'      => $id,
+				'title'   => $title,
+				'date'    => gmdate( 'c', (int) ( (float) ( $t['date'] ?? 0 ) / 1000 ) ),
+				'mins'    => (int) round( (float) ( $t['duration'] ?? 0 ) ),
+				'guests'  => $guests,
+				'url'     => esc_url_raw( (string) ( $t['transcript_url'] ?? '' ) ) ?: 'https://app.fireflies.ai/view/' . rawurlencode( $id ),
+				'summary' => sanitize_textarea_field( (string) ( $sum['short_summary'] ?? $sum['overview'] ?? '' ) ),
+				'actions' => sanitize_textarea_field( (string) ( $sum['action_items'] ?? '' ) ),
+				'pid'     => (int) $pid,
+				'fixed'   => ! empty( $old['fixed'] ),
+			);
+			if ( ! $old ) {
+				$new++;
+			} else {
+				$hit++;
+			}
+		}
+		if ( count( $rows ) < 50 || $hit >= 45 ) { // reached meetings already on file
+			break;
+		}
+	}
+	uasort( $all, function ( $a, $b ) { return strcmp( $b['date'], $a['date'] ); } );
+	$all = array_slice( $all, 0, 400, true );
+	update_option( 'dwdff_data', $all, false );
+	update_option( 'dwdff_last', current_time( 'mysql' ), false );
+	return array( 'new' => $new, 'total' => count( $all ) );
+}
+
+/** A project whose contact person or client is called this (exact, then first name). */
+function dwdff_by_name( $name ) {
+	$name = strtolower( trim( (string) $name ) );
+	if ( strlen( $name ) < 3 ) {
+		return 0;
+	}
+	$rank = array( 'active' => 0, 'hold' => 1, 'limbo' => 2, 'leads' => 3, 'complete' => 4, 'archive' => 5 );
+	$best = array( 0, 99 );
+	foreach ( get_posts( array( 'post_type' => DWDC_CONTACT, 'post_status' => 'private', 'posts_per_page' => -1, 'fields' => 'ids' ) ) as $id ) {
+		$person = strtolower( trim( (string) get_post_meta( $id, '_dwdc_person', true ) ) );
+		$cl     = (int) get_post_meta( $id, '_dwdc_client', true );
+		$client = $cl ? strtolower( trim( html_entity_decode( (string) get_the_title( $cl ), ENT_QUOTES, 'UTF-8' ) ) ) : '';
+		$score  = ( $person === $name || $client === $name ) ? 0 : ( ( '' !== $person && 0 === strpos( $name, $person . ' ' ) ) || ( '' !== $client && 0 === strpos( $name, $client . ' ' ) ) || 0 === strpos( $person . ' ', $name . ' ' ) || 0 === strpos( $client . ' ', $name . ' ' ) ? 10 : 99 );
+		$score += $rank[ get_post_meta( $id, '_dwdc_list', true ) ] ?? 9;
+		if ( $score < 50 && $score < $best[1] ) {
+			$best = array( (int) $id, $score );
+		}
+	}
+	return $best[0];
+}
+
+/** Meetings filed on a project, newest first. */
+function dwdff_for( $pid ) {
+	if ( get_option( 'dwds_fireflies_key', '' ) && time() - (int) strtotime( (string) get_option( 'dwdff_last', '2000-01-01' ) . ' ' . wp_timezone_string() ) > 20 * MINUTE_IN_SECONDS && ! get_transient( 'dwdff_lock' ) ) {
+		set_transient( 'dwdff_lock', 1, 5 * MINUTE_IN_SECONDS );
+		dwdff_sync();
+	}
+	return array_values( array_filter( (array) get_option( 'dwdff_data', array() ), function ( $t ) use ( $pid ) { return (int) $t['pid'] === (int) $pid; } ) );
+}
+
+/** The whole transcript of one meeting as plain text: "Speaker: words". Kept for a day. */
+function dwdff_text( $id ) {
+	$k = 'dwdff_t_' . md5( (string) $id );
+	$c = get_transient( $k );
+	if ( is_string( $c ) && '' !== $c ) {
+		return $c;
+	}
+	$d = dwdff_call( 'query($id:String!){ transcript(id:$id){ sentences { speaker_name text } } }', array( 'id' => (string) $id ) );
+	if ( is_wp_error( $d ) ) {
+		return $d;
+	}
+	$out  = array();
+	$last = '';
+	foreach ( (array) ( $d['transcript']['sentences'] ?? array() ) as $s ) {
+		$sp = trim( (string) ( $s['speaker_name'] ?? '' ) ) ?: 'Speaker';
+		if ( $sp === $last && $out ) {
+			$out[ count( $out ) - 1 ] .= ' ' . trim( (string) $s['text'] );
+		} else {
+			$out[] = $sp . ': ' . trim( (string) $s['text'] );
+		}
+		$last = $sp;
+	}
+	$txt = $out ? implode( "\n\n", $out ) : 'Fireflies has no transcript text for this meeting (it may have been silent or too short).';
+	set_transient( $k, $txt, DAY_IN_SECONDS );
+	return $txt;
+}
+
+add_filter( 'dwdc_contact_full', function ( $c, $pid ) {
+	$c['meetings'] = dwdff_for( $pid );
+	return $c;
+}, 11, 2 );
+add_action( 'dwdff_hourly', function () { if ( get_option( 'dwds_fireflies_key', '' ) ) { dwdff_sync(); } } );
+add_action( 'init', function () {
+	if ( ! wp_next_scheduled( 'dwdff_hourly' ) ) {
+		wp_schedule_event( time() + 600, 'hourly', 'dwdff_hourly' );
+	}
+} );
+
+/* ---------------------------------------------------------------- Export a project for Claude Code
+ * One zip with everything needed to start the build: instructions, the brief, onboarding answers, meeting
+ * transcripts, emails, texts, the files you uploaded and the client's Google Drive files.
+ */
+function dwdx_slug( $s, $max = 60 ) {
+	$s = sanitize_title( (string) $s );
+	return '' !== $s ? substr( $s, 0, $max ) : 'file';
+}
+
+function dwdx_build( $pid ) {
+	if ( ! class_exists( 'ZipArchive' ) ) {
+		return new WP_Error( 'dwdx', 'This server cannot make zip files (ZipArchive is missing).', array( 'status' => 500 ) );
+	}
+	$c = dwdc_contact( $pid, true );
+	if ( ! $c ) {
+		return new WP_Error( 'dwdx', 'Project not found.', array( 'status' => 404 ) );
+	}
+	if ( function_exists( 'set_time_limit' ) ) {
+		@set_time_limit( 300 );
+	}
+	require_once ABSPATH . 'wp-admin/includes/file.php'; // wp_tempnam()
+	$up  = wp_upload_dir();
+	$dir = trailingslashit( $up['basedir'] ) . 'dwd-exports';
+	wp_mkdir_p( $dir );
+	if ( ! file_exists( $dir . '/index.html' ) ) {
+		file_put_contents( $dir . '/index.html', '' ); // phpcs:ignore
+	}
+	foreach ( (array) glob( $dir . '/*.zip' ) as $old ) { // exports are kept for an hour
+		if ( filemtime( $old ) < time() - HOUR_IN_SECONDS ) {
+			@unlink( $old ); // phpcs:ignore
+		}
+	}
+	$name = dwdx_slug( $c['name'] ) . '-claude-code';
+	$file = $name . '-' . wp_generate_password( 20, false ) . '.zip';
+	$zip  = new ZipArchive();
+	if ( true !== $zip->open( $dir . '/' . $file, ZipArchive::CREATE | ZipArchive::OVERWRITE ) ) {
+		return new WP_Error( 'dwdx', 'Could not create the zip file on the server.', array( 'status' => 500 ) );
+	}
+	$R      = $name . '/';
+	$client = $c['client'] ? dwdc_client( $c['client'] ) : null;
+	$person = trim( (string) ( $c['person'] ?: ( $client['name'] ?? '' ) ) );
+	$email  = (string) ( $c['email'] ?: ( $client['email'] ?? '' ) );
+	$phone  = (string) ( $c['phone'] ?: ( $client['phone'] ?? '' ) );
+	$has    = array();
+	$tmp    = array();
+
+	// 1. Onboarding and every other form they sent.
+	$forms = '';
+	foreach ( array_reverse( (array) ( $c['files'] ?? array() ) ) as $e ) {
+		if ( ! is_array( $e ) ) {
+			continue;
+		}
+		$forms .= '## ' . ( $e['form'] ?? 'Form' ) . ' (' . substr( (string) ( $e['date'] ?? '' ), 0, 10 ) . ")\n\n";
+		foreach ( (array) ( $e['fields'] ?? array() ) as $f ) {
+			$v = trim( (string) ( $f['value'] ?? '' ) );
+			if ( '' !== $v ) {
+				$forms .= '**' . trim( (string) ( $f['label'] ?? $f['id'] ?? 'Answer' ) ) . "**\n\n" . $v . "\n\n";
+			}
+		}
+	}
+	if ( '' !== $forms ) {
+		$zip->addFromString( $R . '02-onboarding-answers.md', '# What ' . ( $person ?: 'the client' ) . " told us in the forms\n\n" . $forms );
+		$has[] = '`02-onboarding-answers.md`: the client\'s own answers (onboarding form and any quote or contact forms). Treat these as the source of truth for what they want.';
+	}
+
+	// 2. Meetings.
+	$meet = (array) ( $c['meetings'] ?? array() );
+	$mlist = '';
+	foreach ( array_reverse( $meet ) as $i => $m ) {
+		$txt = dwdff_text( $m['id'] );
+		$fn  = sprintf( '03-meetings/%02d-%s-%s.md', $i + 1, substr( $m['date'], 0, 10 ), dwdx_slug( $m['title'], 40 ) );
+		$zip->addFromString( $R . $fn, '# ' . $m['title'] . "\n\n" . substr( $m['date'], 0, 10 ) . ' · ' . $m['mins'] . " minutes\n\n" . ( $m['summary'] ? "## Summary\n\n" . $m['summary'] . "\n\n" : '' ) . ( $m['actions'] ? "## Action items\n\n" . $m['actions'] . "\n\n" : '' ) . "## Transcript\n\n" . ( is_wp_error( $txt ) ? 'Could not fetch the transcript: ' . $txt->get_error_message() : $txt ) . "\n" );
+		$mlist .= '- ' . substr( $m['date'], 0, 10 ) . ': ' . $m['title'] . ' → `' . $fn . "`\n";
+	}
+	if ( $meet ) {
+		$has[] = '`03-meetings/`: ' . count( $meet ) . ' recorded call' . ( 1 === count( $meet ) ? '' : 's' ) . ' with summary, action items and full transcript, oldest first. Decisions made on a later call override earlier ones and the forms.';
+	}
+
+	// 3. Emails and texts.
+	$mail = function_exists( 'dwdcm_for' ) ? (array) ( dwdcm_for( $pid, true )['list'] ?? array() ) : array();
+	if ( $mail ) {
+		usort( $mail, function ( $a, $b ) { return strcmp( (string) ( $a['date'] ?? '' ), (string) ( $b['date'] ?? '' ) ); } );
+		$t = "# Emails with the client (oldest first)\n\n";
+		foreach ( $mail as $x ) {
+			$t .= '## ' . ( $x['subject'] ?? '(no subject)' ) . "\n\n" . substr( (string) ( $x['date'] ?? '' ), 0, 16 ) . ' · from ' . ( $x['from'] ?? '' ) . "\n\n" . trim( (string) ( $x['body'] ?? '' ) ) . "\n\n---\n\n";
+		}
+		$zip->addFromString( $R . '04-emails.md', $t );
+		$has[] = '`04-emails.md`: ' . count( $mail ) . ' emails to and from the client, oldest first.';
+	}
+	if ( '' !== $phone && get_option( 'dwds_quo_key', '' ) ) {
+		$th = dwdq_thread( $phone );
+		if ( ! is_wp_error( $th ) && ! empty( $th['list'] ) ) {
+			$t = "# Texts with the client (oldest first)\n\n";
+			foreach ( $th['list'] as $x ) {
+				$t .= '**' . ( $x['in'] ? ( $person ?: 'Client' ) : 'Michael' ) . '** (' . substr( $x['at'], 0, 16 ) . '): ' . $x['text'] . "\n\n";
+			}
+			$zip->addFromString( $R . '05-texts.md', $t );
+			$has[] = '`05-texts.md`: the text message thread with the client.';
+		}
+	}
+
+	// 4. Files: uploaded in Dream Desk, then the client's Google Drive folder.
+	$files = '';
+	$total = 0;
+	$used  = array();
+	$uniq  = function ( $path ) use ( &$used ) {
+		$p = $path;
+		for ( $n = 2; isset( $used[ strtolower( $p ) ] ); $n++ ) {
+			$p = preg_replace( '/(\.[^.\/]+)?$/', '-' . $n . '$1', $path, 1 );
+		}
+		$used[ strtolower( $p ) ] = 1;
+		return $p;
+	};
+	foreach ( function_exists( 'dwda_list' ) ? dwda_list( $pid ) : array() as $a ) {
+		$f = get_attached_file( $a['id'] );
+		if ( $f && file_exists( $f ) && $total + filesize( $f ) < 400 * MB_IN_BYTES ) {
+			$p = $uniq( 'assets/uploaded/' . sanitize_file_name( $a['name'] ) );
+			$zip->addFile( $f, $R . $p );
+			$total += filesize( $f );
+			$files .= '- `' . $p . "` (added in Dream Desk)\n";
+		}
+	}
+	$drive = function_exists( 'dwddr_files' ) ? dwddr_files( $pid, true ) : array( 'files' => array() );
+	foreach ( (array) ( $drive['files'] ?? array() ) as $d ) {
+		$p    = $uniq( 'assets/drive/' . ( '' !== (string) $d['path'] ? trim( preg_replace( '/[^A-Za-z0-9 _\-\/]/', '', (string) $d['path'] ), '/' ) . '/' : '' ) . sanitize_file_name( $d['name'] ) );
+		$note = '';
+		if ( (int) $d['size'] > 80 * MB_IN_BYTES || $total + (int) $d['size'] > 400 * MB_IN_BYTES ) {
+			$note = 'too large to include';
+		} else {
+			$t = wp_tempnam( 'dwdx' );
+			$r = wp_remote_get( $d['dl'], array( 'timeout' => 120, 'redirection' => 5, 'stream' => true, 'filename' => $t ) );
+			$ct = is_wp_error( $r ) ? '' : (string) wp_remote_retrieve_header( $r, 'content-type' );
+			if ( is_wp_error( $r ) || 200 !== (int) wp_remote_retrieve_response_code( $r ) || 0 === strpos( $ct, 'text/html' ) || ! filesize( $t ) ) {
+				$note = 'could not be downloaded automatically';
+				@unlink( $t ); // phpcs:ignore
+			} else {
+				$zip->addFile( $t, $R . $p );
+				$tmp[]  = $t;
+				$total += filesize( $t );
+			}
+		}
+		$files .= '- ' . ( $note ? $d['name'] . ' (' . $note . ', open it here: ' . $d['url'] . ')' : '`' . $p . '` (from the client\'s Google Drive folder)' ) . "\n";
+	}
+	if ( '' !== $files ) {
+		$zip->addFromString( $R . '06-files.md', "# Files from the client\n\n" . $files );
+		$has[] = '`assets/` and `06-files.md`: logos, photos and documents the client supplied, with a list of what each one is. Use these real assets before any placeholder.';
+	}
+
+	// 5. The brief.
+	$ai      = get_post_meta( $pid, '_dwdc_ai_summary', true );
+	$summary = is_array( $ai ) ? (string) ( $ai['text'] ?? '' ) : '';
+	$insp    = '';
+	foreach ( is_array( $ai ) ? (array) ( $ai['sites'] ?? array() ) : array() as $x ) {
+		$insp .= '- ' . ( $x['url'] ?? '' ) . ( ! empty( $x['note'] ) ? ' (' . $x['note'] . ')' : '' ) . "\n";
+	}
+	$todos   = array();
+	foreach ( get_posts( array( 'post_type' => DWDC_TASK, 'post_status' => 'private', 'posts_per_page' => -1 ) ) as $tp ) {
+		$t = dwdc_task( $tp );
+		if ( is_array( $t ) && (int) ( $t['contact'] ?? 0 ) === (int) $pid && empty( $t['done'] ) ) {
+			$todos[] = '- ' . $t['text'] . ( ! empty( $t['due'] ) ? ' (due ' . $t['due'] . ')' : '' );
+		}
+	}
+	$notes = array();
+	foreach ( (array) ( $c['notes'] ?? array() ) as $n ) {
+		$notes[] = '- ' . substr( (string) ( $n['date'] ?? '' ), 0, 10 ) . ': ' . trim( (string) ( $n['text'] ?? ( is_string( $n ) ? $n : '' ) ) );
+	}
+	$row   = function ( $k, $v ) { return '' !== trim( (string) $v ) ? '- **' . $k . ':** ' . trim( (string) $v ) . "\n" : ''; };
+	$brief = '# ' . $c['name'] . "\n\n"
+		. $row( 'Client', $person ) . $row( 'Company', (string) ( $client['company'] ?? '' ) ) . $row( 'Email', $email ) . $row( 'Phone', $phone )
+		. $row( 'Current website', (string) ( $c['website'] ?? '' ) ) . $row( 'Staging site', (string) ( $c['staging'] ?? '' ) ) . $row( 'Markup review link', (string) ( $c['markup'] ?? '' ) )
+		. $row( 'Deadline', (string) ( $c['deadline'] ?? '' ) ) . $row( 'Next step', (string) ( $c['next'] ?? '' ) ) . $row( 'Google Drive folder', (string) get_post_meta( $pid, '_dwdc_drive', true ) )
+		. ( '' !== trim( $summary ) ? "\n## What they want (summary)\n\n" . trim( wp_strip_all_tags( $summary ) ) . "\n" : '' )
+		. ( '' !== $insp ? "\n## Websites they like\n\n" . $insp : '' )
+		. ( $meet ? "\n## Calls so far\n\n" . $mlist : '' )
+		. ( $todos ? "\n## Open to-dos\n\n" . implode( "\n", $todos ) . "\n" : '' )
+		. ( $notes ? "\n## My notes\n\n" . implode( "\n", $notes ) . "\n" : '' );
+	$zip->addFromString( $R . '01-project-brief.md', $brief );
+	array_unshift( $has, '`01-project-brief.md`: who the client is, their current site, the staging site, deadline, a short summary of what they want, my notes and open to-dos.' );
+
+	// 6. Instructions for Claude Code.
+	$claude = '# ' . $c['name'] . ": website build\n\n"
+		. 'You are helping Michael Tarr of Dream Web Digital build this client\'s website. Everything known about the project is in this folder. Read it all before writing anything.' . "\n\n"
+		. "## What is in this folder\n\n- " . implode( "\n- ", $has ) . "\n\n"
+		. "## How to start\n\n"
+		. "1. Read `01-project-brief.md`, then the onboarding answers, then the meetings in date order, then the emails and texts.\n"
+		. "2. Look through `assets/` so you know which logos, photos and documents exist.\n"
+		. "3. Write a short plan first: sitemap, the sections on each page, what content is still missing, and questions for the client. Show Michael the plan before building.\n"
+		. "4. Build the homepage first and show it before the inner pages.\n\n"
+		. "## How Michael builds\n\n"
+		. "- WordPress with Elementor Pro on the Hello Elementor theme, unless the brief says otherwise.\n"
+		. "- Fast pages: compressed images, no heavy plugins, nothing that hurts page speed.\n"
+		. "- On-page SEO on every page: one H1, sensible heading order, title and meta description, image alt text.\n"
+		. "- Mobile first. Check every section at phone width.\n"
+		. "- In side-by-side layouts, headings should wrap to the same number of lines on both sides.\n"
+		. "- Use the client's real words, photos and logo from this folder. Mark anything invented as a placeholder.\n"
+		. "- The client will edit the site themselves afterwards, so keep it simple to manage.\n\n"
+		. "## Rules\n\n"
+		. "- Where sources disagree, the most recent call or message wins. Say so when it happens.\n"
+		. "- Do not guess facts about the business (prices, addresses, licence numbers, claims). List them as questions instead.\n"
+		. "- This folder contains private client information. Keep it out of any public repository.\n\n"
+		. 'Exported from Dream Desk on ' . current_time( 'Y-m-d' ) . ".\n";
+	$zip->addFromString( $R . 'CLAUDE.md', $claude );
+	$zip->close();
+	foreach ( $tmp as $t ) {
+		@unlink( $t ); // phpcs:ignore
+	}
+	return array( 'url' => trailingslashit( $up['baseurl'] ) . 'dwd-exports/' . $file, 'name' => $name . '.zip', 'size' => filesize( $dir . '/' . $file ), 'meetings' => count( $meet ), 'emails' => count( $mail ), 'forms' => '' !== $forms, 'files' => substr_count( $files, "\n" ), 'skipped' => substr_count( $files, 'open it here' ) );
+}
+
+add_action( 'rest_api_init', function () {
+	$can = function () { return current_user_can( 'manage_options' ); };
+	register_rest_route( 'dwd/v1', '/crm/contact/(?P<id>\d+)/export', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) { return dwdx_build( (int) $r['id'] ); } ) );
+	register_rest_route( 'dwd/v1', '/crm/fireflies', array(
+		array( 'methods' => 'GET', 'permission_callback' => $can, 'callback' => function ( $r ) {
+			if ( $r->get_param( 'transcript' ) ) {
+				$t = dwdff_text( sanitize_text_field( (string) $r->get_param( 'transcript' ) ) );
+				return is_wp_error( $t ) ? $t : array( 'text' => $t );
+			}
+			$s = dwdff_sync();
+			return is_wp_error( $s ) ? $s : array_merge( $s, array( 'unmatched' => array_values( array_map( function ( $t ) { return array( 'id' => $t['id'], 'title' => $t['title'], 'date' => substr( $t['date'], 0, 10 ), 'guests' => count( $t['guests'] ) ); }, array_filter( (array) get_option( 'dwdff_data', array() ), function ( $t ) { return ! $t['pid']; } ) ) ) ) );
+		} ),
+		array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) { // file a meeting on a project by hand (pid 0 = take it off)
+			$p   = (array) $r->get_json_params();
+			$all = (array) get_option( 'dwdff_data', array() );
+			$id  = (string) ( $p['id'] ?? '' );
+			if ( ! isset( $all[ $id ] ) ) {
+				return new WP_Error( 'dwdff', 'Meeting not found.', array( 'status' => 404 ) );
+			}
+			$all[ $id ]['pid']   = (int) ( $p['pid'] ?? 0 );
+			$all[ $id ]['fixed'] = true;
+			update_option( 'dwdff_data', $all, false );
+			return array( 'ok' => true );
 		} ),
 	) );
 } );
