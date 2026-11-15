@@ -1291,10 +1291,12 @@
 			+ (S.schedAdd ? '<form class="dd-tl-add" data-pform="pdayadd"><input type="hidden" name="due" value="' + T + '"><input name="text" placeholder="Add a to-do for ' + dObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + '…" autocomplete="off" required><button class="dd-btn primary sm">Add</button></form>'
 				: '<button type="button" class="dd-ghostadd" data-schedadd>' + lu('plus') + 'Add a to-do for ' + dObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + '</button>') + '</div></section>';
 		// Active projects: every active project, in your order (drag to arrange) or a chosen sort.
-		var ap = sortMine('active') ? (function () { var g = actSegs(); return g.now.concat([{ div: true, id: DIVID }], g.wait); })() : lsorted('active', by('active'));
+		var apG = sortMine('active') ? actSegs() : null;
+		var ap = apG ? apG.now.concat([{ div: true, id: DIVID }], apG.wait) : lsorted('active', by('active'));
 		var act = '<section class="dd-card dd-ap"><header class="dd-ch"><div class="dd-ch-t"><h2>Active projects</h2><span>' + by('active').length + ' project' + (by('active').length === 1 ? '' : 's') + ' · ' + money(owed(by('active'))) + ' owed</span></div>' + sortSel('active') + '<a href="#projects/active">View all</a></header>'
+			+ (apG ? '<div class="dd-agh dd-aphd"><i class="now"></i>Working on now<em>' + apG.now.length + '</em></div>' : '')
 			+ '<div class="dd-aplist"' + sortAttr('active') + '>' + (ap.length ? ap.map(function (c) {
-				if (c.div) { return divRow(); }
+				if (c.div) { return '<div class="dd-divrow dd-agh dd-aphd" data-sid="' + DIVID + '" title="Drag to move projects between Working on now and Waiting"><i></i>Waiting<em>' + (apG ? apG.wait.length : 0) + '</em></div>'; }
 				var k = clientOf(c), ow = num(c.balance), late = c.deadline && c.deadline < DWDC.today;
 				return '<a class="dd-ap-r" href="#client/' + c.id + '" data-sid="' + c.id + '">' + '<span class="dd-grip dd-apg" aria-hidden="true">' + (sortMine('active') ? lu('grip', 16) : '') + '</span><span class="dd-act-n"><b>' + esc(c.name) + (c.markup ? '<span class="dd-mtag" role="link" data-ext="' + esc(url(c.markup)) + '">Markup</span>' : '') + mailPill(c.client || c.id) + newPill(c) + waitPill(c) + '</b>' + (site(c) ? '<small><span class="dd-dom" role="link" data-ext="' + esc(url(c.website)) + '">' + esc(site(c)) + '</span></small>' : '') + '</span>'
 					+ '<span class="dd-ap-m"><b class="' + (ow ? 'owe' : '') + '">' + (ow ? money(ow) : paidWord(c)) + '</b><small class="' + (late ? 'late' : '') + '">' + (c.deadline ? 'Due ' + fmt(c.deadline) : 'No due date') + '</small></span></a>';

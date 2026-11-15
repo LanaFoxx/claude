@@ -972,3 +972,10 @@ section.dd-health.warn .dd-healthb .dd-hld { background: var(--warning-text); }
 .dd .k-txt > header { border-bottom: 1px solid var(--border); }
 /* Home: no Client emails box */
 .dd section.dd-card.dd-hm { display: none !important; }
+/* Home: Active projects split into Working on now and Waiting, like the Active list */
+.dd .dd-ap .dd-aphd { display: flex; align-items: center; justify-content: flex-start; gap: 8px; height: 36px; min-height: 36px; margin: 0; padding: 0 20px; background: var(--bg); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); font-size: 12px; font-weight: 600; color: var(--text-2); }
+.dd .dd-ap .dd-aphd i { flex: none; width: 6px; height: 6px; border-radius: 50%; background: var(--text-3); border: 0; }
+.dd .dd-ap .dd-aphd i.now { background: var(--accent); }
+.dd .dd-ap .dd-aphd em { font-style: normal; font-weight: 500; color: var(--text-3); }
+.dd .dd-ap .dd-divrow.dd-aphd { cursor: grab; }
+.dd .dd-ap .dd-aphd + .dd-aplist > .dd-ap-r:first-child, .dd .dd-ap .dd-divrow.dd-aphd + .dd-ap-r { border-top: 0; }
