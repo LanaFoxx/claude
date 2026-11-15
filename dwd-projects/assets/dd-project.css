@@ -398,3 +398,10 @@
 	.dd .dd-drvbtns > .dd-btn { flex: 1 1 auto; min-width: 0; padding-left: 10px !important; padding-right: 10px !important; gap: 6px; white-space: nowrap; justify-content: center; }
 	.dd .dd-drvbtns > .dd-btn.ghost { border: 1px solid var(--border-strong); }
 }
+/* Phones: Project summary shows its opening line; the bullet points open on tap */
+.dd .dd-sumtog { display: none; }
+@media (max-width: 767px) {
+	.dd .dd-sumb:not(.open) > ul { display: none; }
+	.dd .dd-sumtog { display: flex; align-items: center; gap: 6px; margin: 2px 0 6px; padding: 4px 0; border: 0; background: none; font: 500 var(--fs-sm) var(--font); color: var(--accent); cursor: pointer; }
+	.dd .dd-sumtog[aria-expanded="true"] svg { transform: rotate(180deg); }
+}
