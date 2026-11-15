@@ -3503,14 +3503,14 @@
 		var main = '', menu = mi('data-edit', S.edit ? 'Close edit' : 'Edit project');
 		var xb = (S.xBusy || {})[c.id], xbtn = function (cls) { return btn('data-xport="' + c.id + '"' + (xb ? ' disabled' : '') + ' title="One zip for Claude Code: design brief, instructions, onboarding answers, meeting transcripts, emails, texts and files"', lu('download') + (xb ? 'Building the zip…' : 'AI Instructions'), cls); };
 		if (st === 'active' || st === 'hold' || st === 'limbo') {
-			main = (ow ? btn('data-paid', 'Mark paid') : '') + btn('data-plog="' + c.id + '"', lu('credit-card') + 'Log payment') + xbtn('primary');
+			main = (ow ? btn('data-paid', 'Mark paid') : '') + btn('data-plog="' + c.id + '"', lu('credit-card') + 'Log payment');
 			menu += mi('data-leadinvite="' + c.id + '"', c.onboarded ? 'Send onboarding form again' : (c.stage === 'onboarding' ? 'Resend onboarding form' : 'Send onboarding form')) + (rvAttr ? mi(rvAttr, 'Ask for a review') : '') + mi('data-complete', 'Mark complete')
 				+ mi(st === 'hold' ? 'data-set="active"' : 'data-set="hold"', st === 'hold' ? 'Resume project' : 'Pause (on hold)') + mi(st === 'limbo' ? 'data-set="active"' : 'data-set="limbo"', st === 'limbo' ? 'Take out of limbo' : 'Move to limbo') + mi('data-act="job" data-client="' + (c.client || 0) + '"', 'New project for this client') + mi('data-set="archive"', 'Archive');
 		} else if (st === 'complete') {
-			main = (ow ? btn('data-paid', 'Mark paid') : '') + btn('data-set="active"', 'Reopen') + xbtn('primary');
+			main = (ow ? btn('data-paid', 'Mark paid') : '') + btn('data-set="active"', 'Reopen');
 			menu += (rvAttr ? mi(rvAttr, 'Ask for a review') : '') + mi('data-plog="' + c.id + '"', 'Log payment') + mi('data-act="job" data-client="' + (c.client || 0) + '"', 'New project for this client');
 		} else if (st === 'leads') {
-			main = btn('data-leadinvite="' + c.id + '"', lu('mail') + (c.stage === 'onboarding' ? 'Resend onboarding form' : 'Send onboarding form')) + xbtn() + btn('data-set="active"', 'Start the job', 'primary');
+			main = btn('data-leadinvite="' + c.id + '"', lu('mail') + (c.stage === 'onboarding' ? 'Resend onboarding form' : 'Send onboarding form')) + btn('data-set="active"', 'Start the job', 'primary');
 			menu += mi('data-set="archive"', 'Archive lead') + mi('data-purge="' + c.id + '"', 'Delete lead', 'danger');
 		} else {
 			main = btn('data-set="leads"', 'Restore to leads', 'primary');
@@ -3661,7 +3661,8 @@
 			+ '<div class="dd-rdyq"><p class="dd-invh">Open questions' + (R.questions && R.questions.at ? ' <small>checked ' + fmt(String(R.questions.at).slice(0, 10)) + '</small>' : '') + '</p>'
 			+ (Q.length ? '<ol>' + Q.map(function (q, i) { return '<li><span>' + esc(q) + '</span><button type="button" class="dd-ibtn sm" data-rdydrop="' + c.id + ':' + i + '" aria-label="Remove question" title="Settled: remove">' + lu('x', 13) + '</button></li>'; }).join('') + '</ol>' : '<p class="dd-help">' + (R.questions ? 'Nothing important left open.' : 'Claude reads the answers, calls, emails and notes and lists anything still unclear.') + '</p>')
 			+ '<div class="dd-pbtns"><button type="button" class="dd-btn secondary sm" data-rdyq="' + c.id + '"' + (busy ? ' disabled' : '') + '>' + lu('zap', 13) + (busy ? 'Reading everything…' : R.questions ? 'Check again' : 'Find open questions') + '</button>'
-			+ (miss.length || Q.length ? '<button type="button" class="dd-btn primary sm" data-rdyemail="' + c.id + '">' + lu('mail', 13) + '<span class="dd-nomob">Email the client what’s missing</span><span class="dd-mobonly">Email what’s missing</span></button>' : '') + '</div></div>') + '</section>';
+			+ (miss.length || Q.length ? '<button type="button" class="dd-btn primary sm" data-rdyemail="' + c.id + '">' + lu('mail', 13) + '<span class="dd-nomob">Email the client what’s missing</span><span class="dd-mobonly">Email what’s missing</span></button>' : '')
+			+ '<button type="button" class="dd-btn primary sm" style="margin-left:auto" data-xport="' + c.id + '"' + ((S.xBusy || {})[c.id] ? ' disabled' : '') + ' title="One zip for Claude Code: design brief, instructions, onboarding answers, meeting transcripts, emails, texts and files">' + lu('download', 13) + ((S.xBusy || {})[c.id] ? 'Building the zip…' : 'AI Instructions') + '</button></div></div>') + '</section>';
 	}
 	function readySet(id, body) {
 		return api('/contact/' + id + '/ready', 'POST', body).then(function (x) { if (S.full[id]) { S.full[id].ready = x; } render(); return x; });
