@@ -1036,3 +1036,6 @@ section.dd-health.warn .dd-healthb .dd-hld { background: var(--warning-text); }
 /* Home header: "All connections syncing" next to the date */
 .dd-ph-t { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 18px; }
 .dd-ph-t .dd-health.ok { margin: 4px 0 0 !important; padding: 0 !important; }
+
+/* Phones: hide "Needs your attention" when there is nothing in it */
+@media (max-width: 767px) { .dd-wait.empty { display: none !important; } }
