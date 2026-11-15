@@ -988,14 +988,17 @@
 			return '<div class="dd-arow"><span class="dd-aic">' + lu(x.thumb ? 'image' : 'file', 16) + '</span><a class="dd-anm" href="' + esc(x.url) + '" download>' + esc(x.name) + '</a><small>' + fileSize(x.size) + '</small>'
 				+ '<a class="dd-adl" href="' + esc(x.url) + '" download title="Download" aria-label="Download ' + esc(x.name) + '">' + lu('download', 15) + '</a>' + del(x) + '</div>';
 		}).join('') + '</div>' : '';
-		var nDrv = ((driveFiles(c) || {}).files || []).length;
+		var FF = c.form_files || [], nDrv = ((driveFiles(c) || {}).files || []).length + FF.length;
+		var formList = FF.length ? '<div class="dd-adrv"><p class="dd-adrvh"><span>From the onboarding form · ' + FF.length + ' file' + (FF.length === 1 ? '' : 's') + '</span></p><div class="dd-alist">' + FF.map(function (x) {
+			return '<div class="dd-arow"><span class="dd-aic">' + lu(x.img ? 'image' : 'file', 16) + '</span><a class="dd-anm" href="' + esc(x.url) + '" target="_blank" rel="noopener">' + esc(x.name) + '</a><small>' + esc(x.label || '') + (x.size ? ' · ' + fileSize(x.size) : '') + '</small><a class="dd-adl" href="' + esc(x.url) + '" download title="Download" aria-label="Download ' + esc(x.name) + '">' + lu('download', 15) + '</a></div>';
+		}).join('') + '</div></div>' : '';
 		var empty = A.length || c.drive ? '' : '<p class="dd-help dd-aempty">No files yet. Drop photos, logos, fonts or zips here.</p>';
 		var aOpen = !!(S.assetOpen || {})[c.id];
 		return '<section class="dd-card dd-pc2 k-assets' + (aOpen ? ' aopen' : '') + '" data-adrop="' + c.id + '"><header><h2 data-atog="' + c.id + '" role="button" tabindex="0" aria-expanded="' + aOpen + '">' + lu('paperclip', 16) + 'Assets<span class="dd-atogi">' + lu('chevron-down', 14) + '</span></h2><span class="sum" data-atog="' + c.id + '">' + (A.length + nDrv ? (A.length + nDrv) + ' file' + (A.length + nDrv === 1 ? '' : 's') : 'None yet') + '</span><span class="dd-sp"></span>'
 			+ (c.drive ? '<a class="dd-btn ghost sm" href="' + esc(c.drive) + '" target="_blank" rel="noopener">' + lu('external-link', 14) + 'Drive folder</a>' : '')
 			+ (A.length + nDrv ? '<button type="button" class="dd-btn secondary sm" data-azip="' + c.id + '"' + ((S.azBusy || {})[c.id] ? ' disabled' : '') + '>' + lu('download', 14) + ((S.azBusy || {})[c.id] ? 'Zipping…' : 'Download all') + '</button>' : '')
 			+ '<label class="dd-btn secondary sm dd-aup">' + lu('upload', 14) + (up ? 'Uploading ' + up + '…' : 'Upload') + '<input type="file" multiple hidden data-aup="' + c.id + '"></label></header>'
-			+ '<div class="dd-abody">' + grid + list + empty + driveFilesHtml(c) + '</div></section>';
+			+ '<div class="dd-abody">' + grid + list + (FF.length ? '' : empty) + formList + driveFilesHtml(c) + '</div></section>';
 	}
 	// From Upwork: what the daily Upwork check found. Only suggestions; Mike clicks Log it or Dismiss.
 	// Home: unread emails from clients, across every client (clientmail.php: /mail-recent). Open, reply or start a new email here.

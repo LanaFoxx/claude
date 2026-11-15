@@ -937,3 +937,9 @@ section.dd-health.warn .dd-healthb .dd-hld { background: var(--warning-text); }
 	.dd .k-stg .dwdc-markupf > p { flex: 0 1 auto; margin: 0 !important; white-space: nowrap; }
 	.dd .k-stg .dwdc-markupf > .dd-frow { height: auto; }
 }
+/* Project page, Assets: closed until the heading is clicked, on every screen size */
+.dd .k-assets:not(.aopen) .dd-abody { display: none; }
+.dd .k-assets h2[data-atog], .dd .k-assets .sum[data-atog] { cursor: pointer; }
+.dd .k-assets .dd-atogi { display: inline-flex; margin-left: 6px; color: var(--text-3); }
+.dd .k-assets.aopen .dd-atogi svg { transform: rotate(180deg); }
+.dd .k-assets .dd-abody > .dd-adrv:first-child { margin-top: 0; padding-top: 0; border-top: 0; }

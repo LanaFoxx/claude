@@ -1966,6 +1966,14 @@ function dwdx_build( $pid ) {
 			$files .= '- `' . $p . "` (added in Dream Desk)\n";
 		}
 	}
+	foreach ( dwdx_form_files( $pid ) as $a ) {
+		if ( $a['file'] && $total + $a['size'] < 400 * MB_IN_BYTES ) {
+			$p = $uniq( 'assets/onboarding-form/' . sanitize_file_name( $a['name'] ) );
+			$zip->addFile( $a['file'], $R . $p );
+			$total += $a['size'];
+			$files .= '- `' . $p . '` (uploaded by the client in the form: ' . $a['label'] . ")\n";
+		}
+	}
 	$drive = function_exists( 'dwddr_files' ) ? dwddr_files( $pid, true ) : array( 'files' => array() );
 	foreach ( (array) ( $drive['files'] ?? array() ) as $d ) {
 		$p    = $uniq( 'assets/drive/' . ( '' !== (string) $d['path'] ? trim( preg_replace( '/[^A-Za-z0-9 _\-\/]/', '', (string) $d['path'] ), '/' ) . '/' : '' ) . sanitize_file_name( $d['name'] ) );
@@ -2191,6 +2199,15 @@ function dwdx_assets_zip( $pid ) {
 			$skip[] = $a['name'] . ' | ' . $a['url'];
 		}
 	}
+	foreach ( dwdx_form_files( $pid ) as $a ) {
+		if ( $a['file'] && $total + $a['size'] < 450 * MB_IN_BYTES ) {
+			$zip->addFile( $a['file'], $R . $uniq( 'onboarding-form/' . sanitize_file_name( $a['name'] ) ) );
+			$total += $a['size'];
+			$n++;
+		} else {
+			$skip[] = $a['name'] . ' | ' . $a['url'];
+		}
+	}
 	$drive = function_exists( 'dwddr_files' ) ? dwddr_files( $pid, true ) : array( 'files' => array() );
 	foreach ( (array) ( $drive['files'] ?? array() ) as $d ) {
 		$ok = false;
@@ -2227,3 +2244,47 @@ function dwdx_assets_zip( $pid ) {
 add_action( 'rest_api_init', function () {
 	register_rest_route( 'dwd/v1', '/crm/contact/(?P<id>\d+)/assets-zip', array( 'methods' => 'POST', 'permission_callback' => function () { return current_user_can( 'manage_options' ); }, 'callback' => function ( $r ) { return dwdx_assets_zip( (int) $r['id'] ); } ) );
 } );
+
+/* ---------------------------------------------------------------- Files clients upload in the onboarding form
+ * The form's upload boxes (logo, brand files, website content, photos) save into uploads/elementor/forms and the
+ * answer holds the links. This lists them for the project's Assets box and the zips.
+ */
+function dwdx_form_files( $pid ) {
+	$up   = wp_upload_dir();
+	$base = trailingslashit( $up['baseurl'] );
+	$out  = array();
+	$seen = array();
+	foreach ( (array) get_post_meta( $pid, '_dwdc_entries', true ) as $e ) {
+		foreach ( is_array( $e ) ? (array) ( $e['fields'] ?? array() ) : array() as $f ) {
+			$v = (string) ( $f['value'] ?? '' );
+			if ( false === strpos( $v, '/uploads/elementor/forms/' ) ) {
+				continue;
+			}
+			foreach ( preg_split( '/\s*,\s*|\s+/', $v ) as $u ) {
+				$u = esc_url_raw( trim( $u ) );
+				if ( '' === $u || isset( $seen[ $u ] ) || false === strpos( $u, '/uploads/elementor/forms/' ) ) {
+					continue;
+				}
+				$seen[ $u ] = 1;
+				$rel  = preg_replace( '#^https?://[^/]+#', '', $u );
+				$brel = preg_replace( '#^https?://[^/]+#', '', $base );
+				$file = 0 === strpos( $rel, $brel ) ? trailingslashit( $up['basedir'] ) . rawurldecode( substr( $rel, strlen( $brel ) ) ) : '';
+				$file = $file && false === strpos( $file, '..' ) && file_exists( $file ) ? $file : '';
+				$name = rawurldecode( wp_basename( $rel ) );
+				$out[] = array(
+					'name'  => $name,
+					'url'   => $u,
+					'size'  => $file ? filesize( $file ) : 0,
+					'label' => sanitize_text_field( preg_replace( '/^Upload( your)?\s*/i', '', (string) ( $f['label'] ?? '' ) ) ),
+					'img'   => (bool) preg_match( '/\.(png|jpe?g|gif|webp|svg|avif)$/i', $name ),
+					'file'  => $file,
+				);
+			}
+		}
+	}
+	return $out;
+}
+add_filter( 'dwdc_contact_full', function ( $c, $pid ) {
+	$c['form_files'] = array_map( function ( $x ) { unset( $x['file'] ); return $x; }, dwdx_form_files( $pid ) );
+	return $c;
+}, 12, 2 );
