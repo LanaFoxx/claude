@@ -913,3 +913,9 @@ section.dd-health.warn .dd-healthb .dd-hld { background: var(--warning-text); }
 .dd .k-pay .dd-py > .mt small { flex: 1 1 100%; display: block; font-size: 12px; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .dd .k-pay .dd-py > .mt .dd-bankchk { flex: 1 1 100%; margin-top: 2px; }
 .dd .k-pay .dd-pfoot { padding: 14px 20px 16px !important; }
+/* Project page, Google Drive box: Open folder, Copy link and Email again on one line */
+.dd .dd-drvbtns { display: flex; flex-wrap: nowrap; gap: 6px; }
+.dd .dd-drvbtns > .dd-btn { flex: 1 1 0; min-width: 0; padding: 0 8px; gap: 5px; font-size: 12.5px; white-space: nowrap; }
+.dd .dd-drvbtns > .dd-btn.ghost { border-color: var(--border-strong); background: var(--surface); color: var(--text) !important; }
+.dd .dd-drvbtns > .dd-btn.ghost:hover { background: var(--hover); }
+.dd .dd-drvbtns > .dd-btn svg { display: none; }
