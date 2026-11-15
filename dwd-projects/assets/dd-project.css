@@ -426,3 +426,20 @@
 	.dd .k-stg .dd-sm-top .dd-pbtns { flex-wrap: nowrap; gap: 6px; }
 }
 @media (max-width: 767px) { .dd .k-stg .dd-sm-top .dd-pbtns > .dd-btn { flex: 1 1 auto; min-width: 0; justify-content: center; padding-left: 8px !important; padding-right: 8px !important; white-space: nowrap; } }
+/* Phones: Payments closed (title, count and the + links) until tapped */
+@media (max-width: 767px) {
+	.dd .k-pay:not(.popen) > :not(header) { display: none !important; }
+	.dd .k-pay [data-ptog] { cursor: pointer; display: inline-flex; align-items: center; }
+	.dd .k-pay.popen .dd-atogi svg { transform: rotate(180deg); }
+	/* Ready to build: two columns of short rows, notes only where something is missing */
+	.dd .dd-rdy { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 0 12px; padding: 0 16px 6px; }
+	.dd .dd-rdyr { padding: 7px 0; gap: 8px; }
+	.dd .dd-rdyr.ok small { display: none; }
+	.dd .dd-rdyi { width: 20px; height: 20px; }
+	.dd .dd-rdyi svg { width: 12px; height: 12px; }
+	.dd .dd-rdyt b { font-size: 13px; line-height: 1.3; }
+	.dd .dd-rdyr .dd-lnk { font-size: 12px; }
+	.dd .dd-rdyq { padding: 2px 16px 14px; }
+	.dd .dd-rdyq .dd-pbtns { flex-wrap: nowrap; gap: 6px; }
+	.dd .dd-rdyq .dd-pbtns .dd-btn { flex: 1 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; justify-content: center; padding-left: 8px !important; padding-right: 8px !important; }
+}
