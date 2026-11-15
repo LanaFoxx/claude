@@ -968,3 +968,5 @@ section.dd-health.warn .dd-healthb .dd-hld { background: var(--warning-text); }
 .dd .dd-rdyh i svg { stroke-width: 3; }
 /* "N new files" pill on project lists: files the client added since the last export */
 .dd .dd-newf { display: inline-flex; align-items: center; height: 20px; padding: 0 8px; border-radius: var(--radius-pill); background: var(--accent); color: #fff; font-size: 11px; font-weight: 600; white-space: nowrap; }
+/* Texts box: a line under the title, like the Emails box */
+.dd .k-txt > header { border-bottom: 1px solid var(--border); }

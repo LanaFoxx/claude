@@ -263,3 +263,36 @@
 		setTimeout(ready, 50);
 	})();
 })();
+
+/*
+ * Onboarding form: only show the questions that apply (dwdOnboardShow).
+ * Redesign questions show for a redesign; upload boxes hide when the answer is "No"; the "Other" follow-ups show
+ * when Other is ticked. Hidden questions are all optional, so nothing blocks sending the form.
+ */
+(function () {
+	'use strict';
+	var form = document.getElementById('onboarding');
+	if (!form) { return; }
+	var group = function (id) { return form.querySelector('.elementor-field-group-' + id); };
+	var val = function (id) { var s = form.querySelector('[name="form_fields[' + id + ']"]'); return s ? String(s.value || '') : ''; };
+	var other = function (id) {
+		var c = form.querySelectorAll('[name="form_fields[' + id + '][]"]');
+		for (var i = 0; i < c.length; i++) { if (c[i].checked && /other/i.test(c[i].value)) { return true; } }
+		return false;
+	};
+	var show = function (id, on) { var e = group(id); if (e) { e.style.display = on ? '' : 'none'; } };
+	function update() {
+		var redesign = !/^new/i.test(val('site_type'));
+		['existing_url', 'site_login_note', 'redesign_feedback', 'preserve_content'].forEach(function (id) { show(id, redesign); });
+		show('logo_upload', !/^(no|i need)/i.test(val('has_logo')));
+		show('brand_upload', !/^no/i.test(val('has_brand')));
+		show('content_upload', !/^no/i.test(val('text_ready')));
+		show('media_upload', !/^no/i.test(val('has_media')));
+		show('features_other', other('features'));
+		show('visitor_action_other', other('visitor_action'));
+	}
+	form.addEventListener('change', update);
+	form.addEventListener('click', function () { setTimeout(update, 0); });
+	var n = 0, t = setInterval(function () { update(); if (++n > 20) { clearInterval(t); } }, 400); // answers restored from an earlier visit
+	update();
+})();

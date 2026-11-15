@@ -38,10 +38,20 @@ function dwdob_upload_types() {
 }
 /** Make every answer field required (uploads stay optional), add the intro note, and sharpen the inspiration question. */
 function dwdob_apply() {
-	$intro = '<div class="dwo-must" style="margin:0 0 18px;padding:14px 16px;border-radius:10px;background:#EEF4FF;border:1px solid #C9D8F5;color:#0F2447;font-size:15px;line-height:1.55">'
-		. '<strong>Please fill out every part of this form and take your time.</strong> The more complete your answers, the better we can work together, and the faster and smoother your website comes together. '
-		. 'If a question doesn’t apply to you, just write <strong>N/A</strong>.<br><br>'
+	$intro = '<div class="dwo-must dwo-v2" style="margin:0 0 18px;padding:14px 16px;border-radius:10px;background:#EEF4FF;border:1px solid #C9D8F5;color:#0F2447;font-size:15px;line-height:1.55">'
+		. '<strong>Take your time with this.</strong> Questions marked with * are the ones I need to get started. Anything else is optional: skip it if it doesn’t apply. '
+		. 'Your answers save as you go, so you can come back and finish later.<br><br>'
 		. '<strong>Most important:</strong> the websites you like for inspiration (in step 4). Please paste the links and tell me what you like about each one.</div>';
+	// Answers that are nice to have but never block a build.
+	$optional = array( 'social_links', 'competitors', 'differentiators', 'existing_url', 'redesign_feedback', 'preserve_content', 'integrations', 'avoid', 'shared_folder', 'social_proof', 'domain_details', 'hosting_provider', 'email_service', 'deadline_event', 'anything_else', 'features_other', 'visitor_action_other', 'accounts_access' );
+	$labels   = array(
+		'approver'       => array( 'Who will give feedback and approve the website? (name and email)', 'Jane Smith, jane@company.com' ),
+		'pages_needed'   => array( 'List every page you need, with one line on what each page should say or do', "Home – who we are and a button to book\nServices – our three services with prices\nAbout – our story and team\nContact – form, phone and map" ),
+		'integrations'   => array( 'Tools you already use that the website should connect to (booking, CRM, email marketing, payments)', 'Calendly, Mailchimp, Stripe… or leave blank' ),
+		'deadline_event' => array( 'Is there an event or launch tied to that date? If so, what is it and on what date?', 'Grand opening on March 14' ),
+		'existing_url'   => array( 'Your current website address', 'https://' ),
+		'shared_folder'  => array( 'Link to a Google Drive, Dropbox or WeTransfer folder with your files (optional, for anything too big to upload above)', 'Paste the folder link' ),
+	);
 	$changed = array();
 	foreach ( dwdob_pages() as $pg ) {
 		list( $id, $data ) = $pg;
@@ -50,9 +60,13 @@ function dwdob_apply() {
 			foreach ( $st['form_fields'] as &$x ) {
 				$t   = $x['field_type'] ?? 'text';
 				$cid = $x['custom_id'] ?? '';
-				if ( 'step_contact_intro' === $cid && false === strpos( (string) $x['field_html'], 'dwo-must' ) ) {
-					$x['field_html'] = $intro . $x['field_html'];
+				if ( 'step_contact_intro' === $cid && false === strpos( (string) $x['field_html'], 'dwo-v2' ) ) {
+					$x['field_html'] = $intro . preg_replace( '#<div class="dwo-must".*?</div>#s', '', (string) $x['field_html'] );
 					$changed[]       = 'intro';
+				}
+				if ( 'site_login_note' === $cid && false === strpos( (string) $x['field_html'], 'dwo-safe' ) ) {
+					$x['field_html'] = '<p class="dwo-safe" style="margin:0;font-size:14px;line-height:1.55"><strong>Access to your current website:</strong> please don’t type passwords into this form. After you send it, I’ll email you a safe way to share your login, or you can add me as an admin user on your site.</p>';
+					$changed[]       = 'login_note';
 				}
 				// Upload boxes: one broad list of file types for every box (a logo pack often comes as a zip),
 				// bigger size limits. Files too big for the form go in the shared-folder link instead.
@@ -66,22 +80,23 @@ function dwdob_apply() {
 					}
 					continue;
 				}
-				if ( 'shared_folder' === $cid && false === strpos( (string) ( $x['field_label'] ?? '' ), 'Dropbox' ) ) {
-					$x['field_label'] = 'Link to a Google Drive, Dropbox or WeTransfer folder with your files (use this for anything too big to upload above)';
-					$x['placeholder'] = 'Paste the folder link, or write N/A';
-					$changed[]        = 'shared_folder:label';
-				}
 				if ( in_array( $t, array( 'step', 'html', 'upload', 'hidden', 'recaptcha', 'recaptcha_v3', 'honeypot' ), true ) ) {
 					continue;
 				}
 				if ( 'url' === $t ) { // allow "N/A" for people without a site / folder
 					$x['field_type']  = 'text';
-					$x['placeholder'] = 'Paste the link, or write N/A';
+					$x['placeholder'] = 'Paste the link';
 					$changed[]        = $cid . ':text';
 				}
-				if ( 'true' !== ( $x['required'] ?? '' ) ) {
-					$x['required'] = 'true';
-					$changed[]     = $cid . ':required';
+				$want = in_array( $cid, $optional, true ) ? '' : 'true';
+				if ( $want !== (string) ( $x['required'] ?? '' ) ) {
+					$x['required'] = $want;
+					$changed[]     = $cid . ( $want ? ':required' : ':optional' );
+				}
+				if ( isset( $labels[ $cid ] ) && ( $x['field_label'] ?? '' ) !== $labels[ $cid ][0] ) {
+					$x['field_label'] = $labels[ $cid ][0];
+					$x['placeholder'] = $labels[ $cid ][1];
+					$changed[]        = $cid . ':label';
 				}
 				if ( 'inspiration' === $cid ) {
 					$x['field_label'] = 'List 3–4 websites you like (paste the links) and what you like about each one';
@@ -91,6 +106,42 @@ https://example2.com – I like how easy it is to book
 					$changed[]        = 'inspiration:label';
 				}
 			}
+			unset( $x );
+			$ff   = array_values( array_filter( (array) $st['form_fields'], function ( $f ) { return ! in_array( $f['custom_id'] ?? '', array( 'site_login_user', 'site_login_pass', 'page_count' ), true ); } ) );
+			if ( count( $ff ) !== count( $st['form_fields'] ) ) {
+				$changed[] = 'removed:login+page_count';
+			}
+			$find = function ( $id ) use ( &$ff ) {
+				foreach ( $ff as $i => $f ) {
+					if ( ( $f['custom_id'] ?? '' ) === $id ) {
+						return $i;
+					}
+				}
+				return -1;
+			};
+			$add  = function ( $after, $like, $id, $label, $ph, $req, $opts = '' ) use ( &$ff, &$changed, $find ) {
+				if ( $find( $id ) > -1 || $find( $after ) < 0 || $find( $like ) < 0 ) {
+					return;
+				}
+				$n                = $ff[ $find( $like ) ];
+				$n['custom_id']   = $id;
+				$n['_id']         = substr( md5( 'dwdob' . $id ), 0, 7 );
+				$n['field_label'] = $label;
+				$n['placeholder'] = $ph;
+				$n['required']    = $req ? 'true' : '';
+				$n['width']       = '100';
+				if ( '' !== $opts ) {
+					$n['field_options'] = $opts;
+				}
+				array_splice( $ff, $find( $after ) + 1, 0, array( $n ) );
+				$changed[] = 'added:' . $id;
+			};
+			$add( 'visitor_action', 'approver', 'visitor_action_other', 'If you ticked Other above, what should visitors do?', '', false );
+			$add( 'features', 'approver', 'features_other', 'If you ticked Other above, which features do you mean?', '', false );
+			$add( 'social_proof', 'has_logo', 'site_updates', 'Who will update the website after it launches?', '', true, "Choose one…\nI will\nSomeone on my team\nI’d like you to handle updates\nNot sure yet" );
+			$add( 'email_service', 'integrations', 'accounts_access', 'Do you have a Google Business Profile or Google Analytics? If yes, which email address owns them?', 'Yes, both under name@company.com… or leave blank', false );
+			$add( 'hosting_provider', 'has_logo', 'needs_hosting', 'Would you like me to host your website? (fast managed hosting with backups, security and updates included)', '', true, "Choose one…\nYes, please host it for me\nNo, I’ll keep my own hosting\nNot sure, tell me more" );
+			$st['form_fields'] = $ff;
 		} );
 		if ( $changed ) {
 			if ( ! get_post_meta( $id, '_dwdob_backup', true ) ) {
