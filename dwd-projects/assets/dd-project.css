@@ -443,3 +443,9 @@
 	.dd .dd-rdyq .dd-pbtns { flex-wrap: nowrap; gap: 6px; }
 	.dd .dd-rdyq .dd-pbtns .dd-btn { flex: 1 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; justify-content: center; padding-left: 8px !important; padding-right: 8px !important; }
 }
+/* Phones: Emails closed (title, new and total counts, New email) until tapped */
+@media (max-width: 767px) {
+	.dd .k-mail:not(.mopen) > .dd-mlist { display: none !important; }
+	.dd .k-mail [data-mbtog] { cursor: pointer; }
+	.dd .k-mail.mopen .dd-atogi svg { transform: rotate(180deg); }
+}
