@@ -3550,7 +3550,7 @@
 			var n = dn(t.due); return n < 0 ? '<span class="dd-due late">' + -n + 'd overdue</span>' : n === 0 ? '<span class="dd-due today">Today</span>' : '<span class="dd-due">' + fmt(t.due) + '</span>';
 		};
 		var pDate = (S.ppDate || {})[c.id] || '';
-		var tOpen = !!(S.ptodoOpen || {})[c.id], lateT = tasks.filter(function (t) { return !t.done && t.due && t.due < T; }).length;
+		var tSet = (S.ptodoOpen || {})[c.id], tOpen = tSet === undefined ? tasks.some(function (t) { return !t.done; }) : !!tSet, lateT = tasks.filter(function (t) { return !t.done && t.due && t.due < T; }).length;
 		var todos = '<section class="dd-card dd-pc2 k-todos' + (tOpen ? ' open' : ' shut') + '"><header class="dd-ntog" data-ptodotog="' + c.id + '" role="button" tabindex="0" aria-expanded="' + tOpen + '"><h2>To-dos</h2><span class="sum">' + openN + ' open' + (lateT ? ' · <b class="late">' + lateT + ' overdue</b>' : '') + ' · ' + doneN + ' done</span><span class="dd-sp"></span><a class="dd-hlink" href="#todos" data-tgopen="' + c.id + '">All to-dos</a><span class="dd-tchev">' + lu('chevron-down', 16) + '</span></header>'
 			+ (!tOpen ? '' : (tasks.length ? tasks.map(function (t) {
 				return '<div class="dd-pt' + (t.done ? ' done' : '') + '" data-task="' + t.id + '"><button type="button" class="dd-tchk' + (t.done ? ' on' : '') + '" data-toggle="' + t.id + '" aria-label="' + (t.done ? 'Mark not done' : 'Mark done') + '">' + TD_CHECK + '</button><span class="tx">' + esc(t.text) + '</span>' + dueOf(t) + '<button type="button" class="dd-ibtn sm dd-ptx" data-del-task="' + t.id + '" aria-label="Delete to-do" title="Delete">' + lu('x', 14) + '</button></div>';
@@ -4313,7 +4313,7 @@
 		if ((el = t.closest('[data-rdyemail]'))) { readyEmail(+el.getAttribute('data-rdyemail')); return; }
 		if ((el = t.closest('[data-healthtog]'))) { S.healthOpen = !S.healthOpen; render(); return; }
 		if ((el = t.closest('[data-ptog]')) && window.innerWidth < 768) { var ptid = el.getAttribute('data-ptog'); S.payOpen = S.payOpen || {}; S.payOpen[ptid] = !S.payOpen[ptid]; if (!S.payOpen[ptid] && String(S.plog) === ptid) { S.plog = 0; } render(); return; }
-		if ((el = t.closest('[data-atog]')) && window.innerWidth < 768) { var atid = el.getAttribute('data-atog'); S.assetOpen = S.assetOpen || {}; S.assetOpen[atid] = !S.assetOpen[atid]; render(); return; }
+		if ((el = t.closest('[data-atog]'))) { var atid = el.getAttribute('data-atog'); S.assetOpen = S.assetOpen || {}; S.assetOpen[atid] = !S.assetOpen[atid]; render(); return; }
 		if ((el = t.closest('[data-sumtog]'))) { var stid = el.getAttribute('data-sumtog'); S.sumOpen = S.sumOpen || {}; S.sumOpen[stid] = !S.sumOpen[stid]; render(); return; }
 		if ((el = t.closest('[data-dettog]'))) { var dtid = el.getAttribute('data-dettog'); S.detOpen = S.detOpen || {}; S.detOpen[dtid] = !S.detOpen[dtid]; render(); return; }
 		if ((el = t.closest('[data-taxsave]'))) {
@@ -4347,7 +4347,7 @@
 			}).catch(function (er) { el.disabled = false; fail(er); });
 			return;
 		}
-		if ((el = t.closest('[data-ptodotog]')) && !t.closest('a')) { var ptid = el.getAttribute('data-ptodotog'); S.ptodoOpen = S.ptodoOpen || {}; S.ptodoOpen[ptid] = !S.ptodoOpen[ptid]; render(); return; }
+		if ((el = t.closest('[data-ptodotog]')) && !t.closest('a')) { var ptid = el.getAttribute('data-ptodotog'); S.ptodoOpen = S.ptodoOpen || {}; S.ptodoOpen[ptid] = el.getAttribute('aria-expanded') !== 'true'; render(); return; }
 		if ((el = t.closest('[data-notestog]'))) { var nid = el.getAttribute('data-notestog'); S.notesOpen = S.notesOpen || {}; S.notesOpen[nid] = !S.notesOpen[nid]; render(); return; }
 		// project page: ⋯ menu, payment log form, remove a payment
 		if ((el = t.closest('[data-pmore]'))) { var mw = el.closest('.pv3-more'); mw.classList.toggle('open'); return; }
