@@ -1271,9 +1271,10 @@
 		var nyT = function (ts) { return new Date(ts * 1000).toLocaleTimeString('en-US', { timeZone: 'America/New_York', hour: 'numeric', minute: '2-digit' }); };
 		var nowS = Date.now() / 1000, items = [];
 		meet.filter(function (m) { return m.ts && nyD(m.ts) === T; }).forEach(function (m) { var tm = nyT(m.ts); items.push({ time: tm, min: mins(tm), title: m.title || m.who || 'Meeting', sub: 'Business' + (m.kind ? ' · ' + m.kind : ''), link: m.link || '', ended: m.te && m.te < nowS, biz: true }); });
+		var evP = [];
 		evs.forEach(function (e) {
 			var dup = items.some(function (it) { return it.biz && (it.title === e.text || (it.min === mins(e.time) && it.min >= 0)); });
-			if (!dup) { items.push({ time: e.time || 'All day', min: mins(e.time), title: ptx(e.text), sub: 'Google Calendar', id: e.id, biz: isBiz(e) }); }
+			if (!dup) { if (isBiz(e)) { items.push({ time: e.time || 'All day', min: mins(e.time), title: ptx(e.text), sub: 'Google Calendar', id: e.id, biz: true }); } else { evP.push({ id: e.id, text: e.text, time: e.time || '', due: T, ev: true }); } }
 		});
 		// To-dos due today (Work and Personal) are part of today's schedule too.
 		// The To-dos box is gone from Home, so overdue to-dos show here too. Two or more business (or personal)
@@ -1283,10 +1284,11 @@
 		var tdW = openTasks().filter(function (t) { return (!t.due || t.due <= T) && hid.indexOf('w:' + t.id) < 0; }).sort(byDue);
 		var tdP = (P ? P.todos.filter(function (t) { return !t.gevent && !t.done && t.due && t.due <= T && hid.indexOf('p:' + t.id) < 0; }) : []).sort(byDue);
 		var nLate = tdW.concat(tdP).filter(function (t) { return t.due && t.due < T; }).length;
+		tdP = tdP.concat(evP).sort(function (x, y) { return (x.due || '9') < (y.due || '9') ? -1 : (x.due || '9') > (y.due || '9') ? 1 : (x.time ? mins(x.time) : -1) - (y.time ? mins(y.time) : -1); });
 		if (tdW.length > 1) { items.push({ time: 'To-do', min: -3, title: 'Business to-dos', group: tdW, gkey: 'w' }); }
 		else { tdW.forEach(function (t) { var c = t.contact ? contact(t.contact) : null; items.push({ time: t.time || 'To-do', min: t.time ? mins(t.time) : -2, title: t.text, sub: (t.due && t.due < T ? 'Overdue · ' : '') + 'Business to-do' + (c ? ' · ' + c.name : ''), todo: 'w', tid: t.id }); }); }
 		if (tdP.length > 1) { items.push({ time: 'To-do', min: -2.5, title: 'Personal to-dos', group: tdP, gkey: 'p' }); }
-		else { tdP.forEach(function (t) { items.push({ time: t.time || 'To-do', min: t.time ? mins(t.time) : -2, title: ptx(t.text), sub: (t.due < T ? 'Overdue · ' : '') + 'Personal to-do' + (t.source === 'Google Tasks' ? ' · Google Tasks' : ''), todo: 'p', tid: t.id }); }); }
+		else { tdP.forEach(function (t) { if (t.ev) { items.push({ time: t.time || 'All day', min: mins(t.time), title: ptx(t.text), sub: 'Personal · Google Calendar', id: t.id, biz: false }); return; } items.push({ time: t.time || 'To-do', min: t.time ? mins(t.time) : -2, title: ptx(t.text), sub: (t.due < T ? 'Overdue · ' : '') + 'Personal to-do' + (t.source === 'Google Tasks' ? ' · Google Tasks' : ''), todo: 'p', tid: t.id }); }); }
 		items.sort(function (x, y) { return x.min - y.min; });
 		var TM = calAdd(T, 1), tmr = meet.filter(function (m) { return m.ts && nyD(m.ts) === TM; }).sort(function (x, y) { return x.ts - y.ts; });
 		var tmrHtml = tmr.length ? '<div class="dd-tl-tm"><h3>Tomorrow</h3>' + tmr.map(function (m) { var tm = nyT(m.ts); return '<div class="dd-tl-r"><span class="dd-tl-t">' + esc(tm) + '</span><span class="dd-tl-dot biz"></span><div class="dd-tl-c">' + (m.link ? '<a href="' + esc(m.link) + '" target="_blank" rel="noopener">' + esc(m.title || m.who) + '</a>' : '<b>' + esc(m.title || m.who) + '</b>') + '<small>Business' + (m.kind ? ' · ' + esc(m.kind) : '') + '</small></div>' + (m.link ? '<a class="dd-btn secondary sm dd-join" href="' + esc(m.link) + '" target="_blank" rel="noopener">Join</a>' : '') + '</div>'; }).join('') + '</div>' : '';
@@ -1298,6 +1300,7 @@
 						+ (gOpen ? '<div class="dd-tl-kids">' + it.group.map(function (t) {
 							var c = gw && t.contact ? contact(t.contact) : null, late = t.due && t.due < T;
 							var sub = [late ? '<em class="late">Overdue · ' + fmt(t.due) + '</em>' : '', c ? esc(c.name) : ''].filter(Boolean).join(' · ');
+							if (t.ev) { var ek2 = T + '|' + t.id, ed2 = !!evDone()[ek2]; return '<div class="dd-tl-r td kid ev' + (ed2 ? ' past evdone' : '') + '"><span class="dd-tl-t">' + (t.time ? esc(t.time) : '') + '</span><button type="button" class="dd-tl-chk dd-evchk pers' + (ed2 ? ' on' : '') + '" data-evdone="' + esc(ek2) + '" aria-label="' + (ed2 ? 'Mark not done' : 'Mark done') + '">' + (ed2 ? lu('check', 12) : '') + '</button><div class="dd-tl-c" data-ptask="' + esc(t.id) + '" role="button" tabindex="0"><b>' + esc(ptx(t.text)) + '</b><small>Google Calendar</small></div></div>'; }
 							return '<div class="dd-tl-r td kid"><span class="dd-tl-t">' + (t.time ? esc(t.time) : '') + '</span><button type="button" class="dd-tl-chk" ' + (gw ? 'data-toggle' : 'data-ptoggle') + '="' + t.id + '" aria-label="Mark done"></button><div class="dd-tl-c" data-schedtask="' + gk + ':' + t.id + '" role="button" tabindex="0"><b>' + esc(gw ? t.text : ptx(t.text)) + '</b>' + (sub ? '<small>' + sub + '</small>' : '') + '</div></div>';
 						}).join('') + '<a class="dd-tl-go" href="#' + (gw ? 'todos' : 'personal') + '">' + (gw ? 'All business to-dos' : 'Personal to-do list') + ' ' + lu('chevron-right', 12) + '</a></div>' : '');
 				}
