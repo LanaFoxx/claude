@@ -455,7 +455,7 @@ i.dd-flag { width: 10px; height: 10px; cursor: inherit; }
 .dd-tl-chk { width: 16px; height: 16px; margin: 3px auto 0; border-radius: 4px; border: 1.5px solid var(--border-strong); background: var(--surface); padding: 0; cursor: pointer; }
 .dd-tl-chk:hover { border-color: var(--accent); background: var(--accent-soft); }
 .dd-tl-r.td .dd-tl-t { color: var(--text-3); font-weight: 500; }
-.dd-tl-n { width: 20px; height: 20px; margin: 1px auto 0; border-radius: 5px; background: var(--accent-soft); color: var(--accent-text); font-size: 11px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; }
+.dd-tl-n { width: 20px; height: 20px; margin: 1px auto 0; border-radius: 5px; background: var(--accent); color: #fff; box-shadow: 0 0 0 3px var(--accent-soft); font-size: 11px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; }
 /* Count badge: green = to-dos due today, red = only overdue ones left */
 .dd-tl-n.today { background: #22A45D; color: #fff; box-shadow: 0 0 0 3px rgba(34,164,93,.18); }
 .dd-tl-n.late { background: #E8573B; color: #fff; box-shadow: 0 0 0 3px rgba(232,87,59,.18); }
