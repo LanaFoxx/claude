@@ -900,3 +900,5 @@ section.dd-health.warn .dd-healthb .dd-hld { background: var(--warning-text); }
 .dd .dd-aplist .dd-mtag { cursor: pointer; }
 /* Home: the Waiting on you card sits the same distance from the next card as every other card */
 .dd .dd-home-l > .dd-wait, .dd .dd-home-l > .dd-card { margin-bottom: 0 !important; margin-top: 0 !important; }
+/* Home: the drag handle shows on every project row, not only on hover */
+.dd .dd-aplist .dd-ap-r .dd-apg { opacity: 1 !important; visibility: visible !important; }
