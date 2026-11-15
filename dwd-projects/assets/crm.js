@@ -1069,6 +1069,15 @@
 		return t;
 	}
 	// Called by the Upwork check: dwdSetUpwork(pending, available, [{ date: 'YYYY-MM-DD', client: '', job: '', amount: 0 }, …]).
+	// Called by the morning Upwork check: dwdUpworkFeed([{ date, type, client, desc, amount }], [{ date, type, qty, amount }]).
+	// Payments and withdrawals land in the "From Upwork" box as suggestions (nothing is logged on a project); Connects and
+	// membership charges go to the Connects spend list.
+	window.dwdUpworkFeed = function (rows, costs) {
+		return api('/upwork-feed', 'POST', { rows: rows || [], costs: costs || [] }).then(function (x) {
+			S.upfeed = x.feed; render();
+			return 'saved: ' + (x.new || 0) + ' new payments or withdrawals, ' + (x.costs || 0) + ' new Connects or membership charges';
+		}).catch(function () { return 'failed'; });
+	};
 	window.dwdSetUpwork = function (pending, available, items) {
 		return api('/upwork-snap', 'POST', { pending: pending, available: available, items: items || [] }).then(function (x) {
 			S.upsnap = x; render();

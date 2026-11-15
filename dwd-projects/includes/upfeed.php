@@ -81,6 +81,44 @@ function dwduf_add( $rows ) {
 	return $new;
 }
 
+/**
+ * Connects and membership charges the morning Upwork check saw on the Transactions page. They are added to the same
+ * list the Upwork file fills (ref "manual"), unless a charge of that amount on that date is already there. When a
+ * later Upwork file brings in the same charge, the file's row replaces this one (dwds_merge_manual_costs).
+ */
+function dwduf_costs( $rows ) {
+	$costs = (array) get_option( 'dwdc_upwork_costs', array() );
+	$have  = array();
+	foreach ( $costs as $c ) {
+		$k          = ( $c['date'] ?? '' ) . '|' . number_format( (float) ( $c['amount'] ?? 0 ), 2, '.', '' );
+		$have[ $k ] = ( $have[ $k ] ?? 0 ) + 1;
+	}
+	$seen = array();
+	$new  = 0;
+	foreach ( array_slice( (array) $rows, 0, 200 ) as $r ) {
+		if ( ! is_array( $r ) ) {
+			continue;
+		}
+		$amt = round( abs( (float) preg_replace( '/[^\d.\-]/', '', (string) ( $r['amount'] ?? '' ) ) ), 2 );
+		$t   = strtotime( (string) ( $r['date'] ?? '' ) );
+		if ( ! $amt || ! $t ) {
+			continue;
+		}
+		$date       = gmdate( 'Y-m-d', $t );
+		$k          = $date . '|' . number_format( $amt, 2, '.', '' );
+		$seen[ $k ] = ( $seen[ $k ] ?? 0 ) + 1;
+		if ( $seen[ $k ] <= ( $have[ $k ] ?? 0 ) ) {
+			continue; // already on the list
+		}
+		$costs[] = array( 'date' => $date, 'amount' => $amt, 'type' => preg_match( '/subscription|membership/i', (string) ( $r['type'] ?? '' ) ) ? 'membership' : 'connects', 'qty' => absint( $r['qty'] ?? 0 ), 'ref' => 'manual' );
+		$new++;
+	}
+	if ( $new ) {
+		update_option( 'dwdc_upwork_costs', $costs, false );
+	}
+	return $new;
+}
+
 /** What Dream Desk shows: the open suggestions, newest first, and when Upwork was last checked. */
 function dwduf_summary() {
 	$f    = dwduf_get();
@@ -99,8 +137,9 @@ add_action( 'rest_api_init', function () {
 		if ( ! is_array( $rows ) ) {
 			return new WP_Error( 'dwduf', 'That isn’t a list of Upwork transactions.', array( 'status' => 400 ) );
 		}
-		$n = dwduf_add( $rows );
-		return array( 'new' => $n, 'feed' => dwduf_summary() );
+		$n  = dwduf_add( $rows );
+		$nc = dwduf_costs( $r->get_param( 'costs' ) );
+		return array( 'new' => $n, 'costs' => $nc, 'feed' => dwduf_summary() );
 	} ) );
 	// Mike handled a suggestion: logged (he logged the payment) or dismissed. Optional pid fixes the project match.
 	register_rest_route( 'dwd/v1', '/crm/upwork-feed/(?P<ref>[A-Za-z0-9_\-]+)', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
