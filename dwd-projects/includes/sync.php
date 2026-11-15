@@ -2397,3 +2397,113 @@ add_action( 'init', function () {
 		wp_schedule_event( time() + 900, 'hourly', 'dwdx_hourly' );
 	}
 } );
+
+/* ---------------------------------------------------------------- Open questions answered by email
+ * When a client's email arrives after the open questions were listed, Claude reads it and pulls out the answers.
+ * Answered questions leave the open list, the answers are filed with the form answers (so the next AI Instructions
+ * zip and its design brief include them), and a to-do says so.
+ */
+function dwdqa_check( $pid ) {
+	$q = get_post_meta( $pid, '_dwdrb_q', true );
+	if ( ! is_array( $q ) || empty( $q['list'] ) || ! function_exists( 'dwdc_ai_key' ) || ! dwdc_ai_key() || ! function_exists( 'dwdcm_owner' ) ) {
+		return 0;
+	}
+	$since = (int) strtotime( get_gmt_from_date( (string) ( $q['at'] ?? '' ) ) . ' UTC' );
+	$seen  = (array) get_post_meta( $pid, '_dwdqa_seen', true );
+	$mails = array();
+	foreach ( (array) get_post_meta( dwdcm_owner( $pid ), '_dwdcm_mail', true ) as $x ) {
+		if ( is_array( $x ) && ! empty( $x['in'] ) && ! in_array( (string) $x['id'], $seen, true ) && (int) strtotime( (string) ( $x['date'] ?? '' ) ) > $since ) {
+			$mails[] = $x;
+		}
+	}
+	if ( ! $mails ) {
+		return 0;
+	}
+	usort( $mails, function ( $a, $b ) { return strcmp( (string) $a['date'], (string) $b['date'] ); } );
+	$mails = array_slice( $mails, -6 );
+	$pack  = "OPEN QUESTIONS\n";
+	foreach ( array_values( (array) $q['list'] ) as $i => $t ) {
+		$pack .= ( $i + 1 ) . '. ' . $t . "\n";
+	}
+	$pack .= "\nEMAILS FROM THE CLIENT (oldest first)\n";
+	foreach ( $mails as $x ) {
+		$pack .= '--- ' . substr( (string) $x['date'], 0, 16 ) . ': ' . ( $x['subject'] ?? '' ) . "\n" . mb_substr( (string) ( $x['body'] ?? '' ), 0, 8000 ) . "\n";
+	}
+	$res = wp_remote_post( 'https://api.anthropic.com/v1/messages', array(
+		'timeout' => 90,
+		'headers' => array( 'x-api-key' => dwdc_ai_key(), 'anthropic-version' => '2026-10-21', 'content-type' => 'application/json' ),
+		'body'    => wp_json_encode( array(
+			'model'         => 'claude-opus-5-5',
+			'max_tokens'    => 3000,
+			'output_config' => array( 'effort' => 'low' ),
+			'system'        => 'A web designer asked a client some open questions before building their website. You are given the numbered questions and the client\'s newest emails. '
+				. 'For each question the emails actually answer, give the answer in the client\'s own meaning, complete but short, keeping names, links, dates and numbers exactly. '
+				. 'Do not answer a question the emails do not address, and never guess. Ignore quoted text from earlier emails unless the client wrote their answer inside it. '
+				. 'Reply with JSON only: {"answers":[{"n":1,"answer":"..."}]}. If none are answered, reply {"answers":[]}.',
+			'messages'      => array( array( 'role' => 'user', 'content' => $pack ) ),
+		) ),
+	) );
+	if ( is_wp_error( $res ) || 200 !== (int) wp_remote_retrieve_response_code( $res ) ) {
+		return 0; // try again on the next email sync
+	}
+	$body = json_decode( wp_remote_retrieve_body( $res ), true );
+	$text = '';
+	foreach ( (array) ( $body['content'] ?? array() ) as $b ) {
+		$text .= 'text' === ( $b['type'] ?? '' ) ? $b['text'] : '';
+	}
+	$j = preg_match( '/\{[\s\S]*\}/', $text, $mm ) ? json_decode( $mm[0], true ) : null;
+	update_post_meta( $pid, '_dwdqa_seen', array_slice( array_merge( $seen, array_map( function ( $x ) { return (string) $x['id']; }, $mails ) ), -200 ) );
+	if ( ! is_array( $j ) || empty( $j['answers'] ) ) {
+		return 0;
+	}
+	$list   = array_values( (array) $q['list'] );
+	$fields = array();
+	$done   = array();
+	foreach ( (array) $j['answers'] as $a ) {
+		$n   = (int) ( $a['n'] ?? 0 ) - 1;
+		$ans = sanitize_textarea_field( (string) ( $a['answer'] ?? '' ) );
+		if ( isset( $list[ $n ] ) && '' !== $ans && ! isset( $done[ $n ] ) ) {
+			$done[ $n ] = 1;
+			$fields[]   = array( 'id' => 'qa_' . ( $n + 1 ), 'label' => $list[ $n ], 'value' => $ans );
+		}
+	}
+	if ( ! $fields ) {
+		return 0;
+	}
+	$entries   = get_post_meta( $pid, '_dwdc_entries', true );
+	$entries   = is_array( $entries ) ? $entries : array();
+	$entries[] = array( 'form' => 'Open questions answered by email', 'date' => current_time( 'mysql' ), 'fields' => $fields );
+	update_post_meta( $pid, '_dwdc_entries', $entries );
+	$q['list'] = array_values( array_diff_key( $list, $done ) );
+	update_post_meta( $pid, '_dwdrb_q', $q );
+	update_post_meta( $pid, '_dwdqa_at', current_time( 'mysql' ) );
+	$notes   = get_post_meta( $pid, '_dwdc_notes', true );
+	$notes   = is_array( $notes ) ? $notes : array();
+	$notes[] = array( 'date' => current_time( 'mysql', true ), 'text' => count( $fields ) . ' open question' . ( 1 === count( $fields ) ? '' : 's' ) . ' answered by email and filed with the form answers. ' . count( $q['list'] ) . ' still open.' );
+	update_post_meta( $pid, '_dwdc_notes', $notes );
+	if ( function_exists( 'dwdc_add_task' ) ) {
+		$text = 'Open questions answered: download the updated AI Instructions';
+		$open = false;
+		foreach ( get_posts( array( 'post_type' => DWDC_TASK, 'post_status' => 'private', 'posts_per_page' => -1, 'meta_key' => '_dwdc_contact', 'meta_value' => $pid ) ) as $tp ) { // phpcs:ignore
+			$t    = dwdc_task( $tp );
+			$open = $open || ( is_array( $t ) && empty( $t['done'] ) && $t['text'] === $text );
+		}
+		if ( ! $open ) {
+			dwdc_add_task( $text, (int) $pid, '' );
+		}
+	}
+	return count( $fields );
+}
+add_action( 'dwdqa_run', function () {
+	if ( function_exists( 'set_time_limit' ) ) {
+		@set_time_limit( 300 );
+	}
+	foreach ( get_posts( array( 'post_type' => DWDC_CONTACT, 'post_status' => 'private', 'posts_per_page' => -1, 'fields' => 'ids', 'meta_key' => '_dwdrb_q' ) ) as $id ) { // phpcs:ignore
+		if ( ! in_array( get_post_meta( $id, '_dwdc_list', true ), array( 'complete', 'archive' ), true ) ) {
+			dwdqa_check( (int) $id );
+		}
+	}
+} );
+add_action( 'rest_api_init', function () {
+	register_rest_route( 'dwd/v1', '/crm/contact/(?P<id>\d+)/answers-check', array( 'methods' => 'POST', 'permission_callback' => function () { return current_user_can( 'manage_options' ); }, 'callback' => function ( $r ) { return array( 'answered' => dwdqa_check( (int) $r['id'] ) ); } ) );
+} );

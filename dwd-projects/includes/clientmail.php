@@ -112,6 +112,9 @@ function dwdcm_apply( $messages ) {
 		usort( $have, function ( $a, $b ) { return strcmp( $b['date'], $a['date'] ); } );
 		update_post_meta( $o, '_dwdcm_mail', array_slice( $have, 0, DWDCM_KEEP ) );
 	}
+	if ( $new && ! wp_next_scheduled( 'dwdqa_run' ) ) {
+		wp_schedule_single_event( time() + 10, 'dwdqa_run' ); // sync.php: did a client just answer open questions?
+	}
 	return $new;
 }
 
