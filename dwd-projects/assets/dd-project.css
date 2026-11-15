@@ -456,3 +456,4 @@
 
 /* Schedule & to-dos box: the whole top section reads as the header (line under it) */
 .dd-ptoday > .dd-ch { border-bottom: 1px solid var(--border); padding-bottom: 16px !important; margin-bottom: 4px; }
+.dd-ptoday > .dd-tl { padding-top: 13px !important; } /* same space above the first to-do as below the last */
