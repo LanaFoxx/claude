@@ -1031,3 +1031,5 @@ section.dd-health.warn .dd-healthb .dd-hld { background: var(--warning-text); }
 	.dd .k-stg .dwdc-markupf > p { flex: 1 1 100%; margin: 0 !important; }
 	.dd .k-stg form.dd-stgf .dd-frow { margin: 0 !important; }
 }
+/* Project page: every box title icon is the same blue as the Emails envelope */
+.dd .dd-pc2 > header h2 > .lu { color: var(--accent-text, #8da0f7) !important; }
