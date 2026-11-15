@@ -109,12 +109,19 @@ add_action( 'elementor_pro/forms/new_record', function ( $record ) {
 
 	// Clio Grow Lead Inbox: the lead lands in Clio Grow with the ad / campaign it came from.
 	if ( CT_CLIO_GROW_TOKEN ) {
-		$src = trim( $g( 'utm_source' ) . ' / ' . $g( 'utm_medium' ), ' /' );
+		// Source line Clio Grow shows on the lead: where it came from, which campaign, which ad, which landing page.
+		$src = implode( ' | ', array_filter( array(
+			trim( $g( 'utm_source' ) . ' / ' . $g( 'utm_medium' ), ' /' ) ?: 'Website',
+			$g( 'utm_campaign' ) ? 'Campaign: ' . $g( 'utm_campaign' ) : '',
+			$g( 'utm_content' ) ? 'Ad: ' . $g( 'utm_content' ) : '',
+			$g( 'lp_variant' ) ? 'Page: ' . $g( 'lp_variant' ) : '',
+		) ) );
 		$msg = implode( "\n", array_filter( array(
 			'Accident type: ' . $g( 'accident_type' ),
 			$g( 'message' ) ? 'What happened: ' . $g( 'message' ) : '',
 			'SMS consent: ' . ( $g( 'sms_consent' ) ? 'yes' : 'no' ),
 			'Form: ' . $form . ( $g( 'lp_variant' ) ? ' (' . $g( 'lp_variant' ) . ')' : '' ),
+			$g( 'landing_url' ) ? 'Landing page: ' . strtok( $g( 'landing_url' ), '?' ) : '',
 			$g( 'utm_campaign' ) ? 'Campaign: ' . $g( 'utm_campaign' ) : '',
 			$g( 'utm_content' ) ? 'Ad: ' . $g( 'utm_content' ) : '',
 			$g( 'utm_term' ) ? 'Ad set / term: ' . $g( 'utm_term' ) : '',
@@ -131,7 +138,7 @@ add_action( 'elementor_pro/forms/new_record', function ( $record ) {
 					'from_phone'    => $g( 'phone' ),
 					'from_message'  => $msg,
 					'referring_url' => $g( 'landing_url' ) ?: home_url( '/' ),
-					'from_source'   => $src ?: 'Website',
+					'from_source'   => substr( $src, 0, 250 ),
 				),
 				'inbox_lead_token' => CT_CLIO_GROW_TOKEN,
 			) ),

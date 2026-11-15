@@ -47,7 +47,9 @@ const ACCIDENT_TYPES = ['Car accident', 'Truck / 18-wheeler accident', 'Motorcyc
 /* ---------------------------------------------------------------- form */
 const fld = P.fld;
 const hidden = (id) => ({ _id: L.id(), custom_id: id, field_type: 'hidden', field_label: id, field_value: '', width: '100' });
-const DISCLOSURE = 'Free and confidential. Submitting this form does not create an attorney-client relationship. No attorney fees unless we recover compensation for you, subject to our written fee agreement. Attorney advertising.';
+// Fee wording per Angel (Nov 15): fees contingent on recovery, case expenses addressed separately in the fee agreement.
+const DISCLOSURE = 'Free and confidential. Submitting this form does not create an attorney-client relationship. Attorney fees are contingent on recovery; case expenses are addressed separately under our written fee agreement. Attorney advertising.';
+const INTAKE = 'intake@cabreratorres.com, angel@cabreratorres.com';
 
 function leadForm(v, o = {}) {
   return widget('form', {
@@ -65,7 +67,7 @@ function leadForm(v, o = {}) {
       { ...hidden('lp_variant'), field_value: v.key },
     ],
     show_labels: '', mark_required: '', input_size: 'md', button_text: 'Request my free case review', button_size: 'lg', button_width: '100',
-    submit_actions: ['save-to-database', 'email', 'redirect'], // save-to-database: every lead is kept in WordPress even if an email fails
+    submit_actions: ['save-to-database', 'email', 'redirect'], email_to: INTAKE, // save-to-database: every lead is kept in WordPress even if an email fails
     email_subject: `New ad lead: [field id="accident_type"] (${v.key}) – Cabrera Torres Law Firm`,
     // Absolute URL: Elementor's redirect action silently ignores relative ones.
     redirect_to: 'https://cabreratorres.com/thank-you/?eid=[field id="event_id"]&lp=[field id="lp_variant"]',
@@ -124,7 +126,7 @@ function hero(m, v) {
       image(m.jenHeadshot, { settings: { _element_width: 'auto', _flex_size: 'none', custom_css: `selector img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid ${C.rose}; display: block; }` } }),
       text(`<strong style="color:${C.ivory};font-weight:700">Jennifer Cabrera-Torres, Esq.</strong><br>Founder &amp; Managing Attorney`, { color: C.rose, size: 14, lh: 1.5, settings: { _element_width: 'auto' } }),
     ], { gap: 14, settings: { flex_wrap: 'nowrap' } }),
-    text(`<p>${check('Free, confidential case review')}${check('No fee unless we recover')}${check('Hablamos español')}</p>`, { color: C.ivory, size: 14, weight: 600, lh: 1.4 }),
+    text(`<p>${check('Free, confidential case review')}${check('No attorney fee unless we recover')}${check('Hablamos español')}</p>`, { color: C.ivory, size: 14, weight: 600, lh: 1.4 }),
     row([
       button('Get my free case evaluation', `#${FORM_ID}`, 'gold', { size: 13, ls: 0.1, pad: box(18, 24, 18, 24), settings: { hide_desktop: 'hidden-desktop' } }),
       button(`Call ${L.PHONE}`, L.TEL, 'outlineDark', { size: 13, ls: 0.1, pad: box(18, 24, 18, 24) }),
@@ -154,7 +156,7 @@ const WHY = [
   ['chat', 'Personal attention', 'You will know who is handling your case and how to reach her. We keep you informed at every step.'],
   ['integrity', 'Experienced advocacy', 'Two decades in personal injury law, with every case prepared as if it could go to trial.'],
   ['shield', 'We handle the insurers', 'We deal with the adjusters, the paperwork and the negotiations so you can focus on getting better.'],
-  ['fee', 'No fee unless we recover', 'You pay no attorney fees unless we recover compensation for you, subject to our written fee agreement.'],
+  ['fee', 'No attorney fee unless we recover', 'Attorney fees are contingent on recovery. Case expenses are addressed separately under our written fee agreement.'],
   ['lang', 'Hablamos español', 'Bilingual help in English and Spanish, from your first call to the end of your case.'],
 ];
 const why = () => band(C.ivory, [
@@ -208,7 +210,7 @@ const proof = () => band(C.ivory, [
 ], { pad: [88, 40], width: 1240, align: 'center', settings: { padding_mobile: box(56, 16, 32, 16) } });
 
 const FAQS = [
-  { q: 'How much does it cost to talk to you?', a: 'Nothing. Your case review is free and confidential. We work on a contingency fee: you pay no attorney fees unless we recover compensation for you, as set out in our written fee agreement.' },
+  { q: 'How much does it cost to talk to you?', a: 'Your case review is free and confidential. Attorney fees are contingent on recovery: we are paid only if we recover compensation for you. Case expenses are addressed separately under our written fee agreement, which we go over with you before you decide.' },
   { q: 'Should I talk to the other driver’s insurance company?', a: 'You are not required to give the other driver’s insurer a recorded statement. Adjusters work for the insurance company, and what you say can be used to lower the value of your claim. Let us handle those conversations.' },
   { q: 'Who pays my medical bills while my case is open?', a: 'In Georgia, the at-fault driver’s insurer usually pays at the end of the claim, not as bills arrive. In the meantime, your own health insurance or medical payments (MedPay) coverage may help, and some providers will wait for payment until the case resolves. We help you understand your options.' },
   { q: 'How does the claims process work?', a: 'We investigate the accident, document your injuries and losses, present a demand to the insurance company and negotiate. Most cases resolve by settlement. If the insurer will not be fair, we are prepared to file a lawsuit.' },
