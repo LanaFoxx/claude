@@ -2033,9 +2033,20 @@ function dwdx_build( $pid ) {
 			$todos[] = '- ' . $t['text'] . ( ! empty( $t['due'] ) ? ' (due ' . $t['due'] . ')' : '' );
 		}
 	}
+	// Michael's own notes from the Notes box (marked 'by' => 'me'; older ones are every note that isn't one of
+	// Dream Desk's automatic log lines). These are his instructions for the build, oldest first.
 	$notes = array();
-	foreach ( (array) ( $c['notes'] ?? array() ) as $n ) {
-		$notes[] = '- ' . substr( (string) ( $n['date'] ?? '' ), 0, 10 ) . ': ' . trim( (string) ( $n['text'] ?? ( is_string( $n ) ? $n : '' ) ) );
+	$auto  = '/^(payment of|payment link|stripe payment|upwork payment|removed the \$|google drive folder|drive upload link|onboarding form (emailed|sent|link)|call booked|email check|undid |client replied to open|\d+ open questions? answered|hosting (renew|payment)|marked (paid|complete|done)|markup review|quote (sent|emailed)|invoice|zoom (meeting|invite)|email sent|review request|re-hired|duplicate client|ai instructions|exported|reminder sent|contract (ended|started))|(emailed|sent) to [^\s@]+@|link emailed/i';
+	foreach ( array_reverse( (array) ( $c['notes'] ?? array() ) ) as $n ) {
+		$tx = trim( (string) ( is_array( $n ) ? ( $n['text'] ?? '' ) : $n ) );
+		if ( '' === $tx || ( 'me' !== ( is_array( $n ) ? ( $n['by'] ?? '' ) : '' ) && preg_match( $auto, $tx ) ) ) {
+			continue;
+		}
+		$notes[] = '- ' . substr( (string) ( is_array( $n ) ? ( $n['date'] ?? '' ) : '' ), 0, 10 ) . ': ' . $tx;
+	}
+	if ( $notes ) {
+		$zip->addFromString( $R . '00-michaels-notes.md', "# Michael's notes for this build\n\nWritten by Michael in Dream Desk, oldest first. These are his instructions and decisions: follow them. Where a note conflicts with the client material, Michael's note wins unless the client said otherwise later.\n\n" . implode( "\n", $notes ) . "\n" );
+		$has[] = '`00-michaels-notes.md`: Michael\'s own notes on this project, his instructions and decisions for the build. Read these first and follow them.';
 	}
 	$row   = function ( $k, $v ) { return '' !== trim( (string) $v ) ? '- **' . $k . ':** ' . trim( (string) $v ) . "\n" : ''; };
 	$brief = '# ' . $c['name'] . "\n\n"
@@ -2046,7 +2057,7 @@ function dwdx_build( $pid ) {
 		. ( '' !== $insp ? "\n## Websites they like\n\n" . $insp : '' )
 		. ( $meet ? "\n## Calls so far\n\n" . $mlist : '' )
 		. ( $todos ? "\n## Open to-dos\n\n" . implode( "\n", $todos ) . "\n" : '' )
-		. ( $notes ? "\n## My notes\n\n" . implode( "\n", $notes ) . "\n" : '' );
+		. ( $notes ? "\n## Michael's notes (his instructions for the build: follow these)\n\n" . implode( "\n", $notes ) . "\n" : '' );
 	$zip->addFromString( $R . '01-project-brief.md', $brief );
 	array_unshift( $has, '`01-project-brief.md`: who the client is, their current site, the staging site, deadline, a short summary of what they want, my notes and open to-dos.' );
 
@@ -2064,7 +2075,7 @@ function dwdx_build( $pid ) {
 				'output_config' => array( 'effort' => 'medium' ),
 				'system'        => 'You write the design brief that a freelance web designer hands to Claude Design (an AI design tool that produces website page designs) for a website project. You are given everything known about the project: the brief, the form answers, call transcripts, emails, texts and the list of files supplied. '
 					. 'Write the brief in Markdown, addressed directly to Claude Design, telling it exactly what to design. Use these sections: "The business" (who they are, what they sell, who their customers are); "Goal of the site" (new build or redesign, what it must achieve, the main action a visitor should take); "Pages to design" (each page, and for each the sections in order with what each section says and shows, using the real wording from the material where it exists); "Look and feel" (colours, fonts, mood, the websites they like and what to take from each, what they dislike); "Content and assets" (which supplied logos, photos and documents to use and where, and what is missing); "Must-haves and constraints" (features, integrations, things they insisted on, deadline); "Open questions" (what is unclear or contradictory, to settle before designing). '
-					. 'Rules: use only what the material says and never invent facts about the business; where sources disagree the most recent call or message wins, and say so; be specific enough that a designer could start without reading anything else; design mobile first; the site will be built in WordPress with Elementor, so keep layouts buildable with standard sections; in side-by-side layouts keep headings to the same number of lines on both sides. No preamble and no closing remarks.',
+					. 'Rules: the "Michael\'s notes" section of the project brief is the designer\'s own instructions and decisions, so follow them and reflect them in the brief; use only what the material says and never invent facts about the business; where sources disagree the most recent call or message wins, and say so; be specific enough that a designer could start without reading anything else; design mobile first; the site will be built in WordPress with Elementor, so keep layouts buildable with standard sections; in side-by-side layouts keep headings to the same number of lines on both sides. No preamble and no closing remarks.',
 				'messages'      => array( array( 'role' => 'user', 'content' => $pack ) ),
 			) ),
 		) );
@@ -2092,7 +2103,7 @@ function dwdx_build( $pid ) {
 		. 'You are helping Michael Tarr of Dream Web Digital build this client\'s website. Everything known about the project is in this folder. Read it all before writing anything.' . "\n\n"
 		. "## What is in this folder\n\n- " . implode( "\n- ", $has ) . "\n\n"
 		. "## How to start\n\n"
-		. "1. Read `01-project-brief.md`, then the onboarding answers, then the meetings in date order, then the emails and texts.\n"
+		. ( $notes ? "1. Read `00-michaels-notes.md` first: Michael's own instructions for this build. Then `01-project-brief.md`, the onboarding answers, the meetings in date order, and the emails and texts.\n" : "1. Read `01-project-brief.md`, then the onboarding answers, then the meetings in date order, then the emails and texts.\n" )
 		. "2. Look through `assets/` so you know which logos, photos and documents exist.\n"
 		. "3. Write a short plan first: sitemap, the sections on each page, what content is still missing, and questions for the client. Show Michael the plan before building.\n"
 		. "4. Build the homepage first and show it before the inner pages.\n\n"

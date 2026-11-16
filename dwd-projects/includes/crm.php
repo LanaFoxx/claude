@@ -953,7 +953,7 @@ add_action( 'rest_api_init', function () {
 		$id    = (int) $r['id'];
 		$notes = get_post_meta( $id, '_dwdc_notes', true );
 		$notes = is_array( $notes ) ? $notes : array();
-		$notes[] = array( 'date' => current_time( 'mysql', true ), 'text' => sanitize_textarea_field( (string) $r->get_param( 'text' ) ) );
+		$notes[] = array( 'date' => current_time( 'mysql', true ), 'text' => sanitize_textarea_field( (string) $r->get_param( 'text' ) ), 'by' => 'me' ); // written by Mike in the Notes box
 		update_post_meta( $id, '_dwdc_notes', $notes );
 		wp_update_post( array( 'ID' => $id ) );
 		return dwdc_contact( $id, true );
