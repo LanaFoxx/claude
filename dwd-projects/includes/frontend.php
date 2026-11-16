@@ -84,14 +84,7 @@ add_action( 'wp_head', function () {
 	echo '<style id="dwdp-glow">.dw-glow{position:relative;overflow:hidden}.dw-glow::before{content:"";position:absolute;top:-180px;left:50%;transform:translateX(-50%);width:820px;max-width:120%;height:620px;background:radial-gradient(circle,rgba(27,126,195,.32),transparent 65%);pointer-events:none}.dw-glow>*{position:relative;z-index:1}</style>' . "\n";
 }, 99 );
 
-/** The About page was retired; its content lives in the homepage "Why Dream Web" section. */
-add_action( 'template_redirect', function () {
-	$path = trim( (string) wp_parse_url( isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '', PHP_URL_PATH ), '/' ); // phpcs:ignore
-	if ( 'about' === $path ) {
-		wp_safe_redirect( home_url( '/#about' ), 301 );
-		exit;
-	}
-}, 1 );
+// The About page is back (templates/redesign/about.html, Nov 2026); the old redirect to /#about is gone.
 
 /**
  * Buttons: all caps with wide letter spacing, for a more upscale feel. Covers Elementor

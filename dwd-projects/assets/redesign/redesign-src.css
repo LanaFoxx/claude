@@ -78,7 +78,7 @@ a{color:#13A6EE}a:hover{color:#3FB5F1}
 #dw-hero-row,#dw-laptop-stage,#dw-phone-stage,#dw-work-grid-a,#dw-work-grid-b,#dw-process-grid,#dw-quotes-grid,#dw-contact-grid,#dw-foot-grid{grid-template-columns:1fr !important}
 #dw-hero-row p{white-space:normal !important}
 #dw-intro-grid{grid-template-columns:1fr !important}
-#dw-intro-photo{min-height:0 !important;aspect-ratio:16/10}
+#dw-intro-photo{min-height:0 !important;aspect-ratio:1/1}
 #dw-hero-cta{align-items:flex-start !important}
 #dw-hero-cta>div{justify-content:flex-start !important}
 #dw-process-sticky{position:static !important}
@@ -114,7 +114,7 @@ a{color:#13A6EE}a:hover{color:#3FB5F1}
 #dw-hero-row p{white-space:normal !important}
 #dw-hero-media{margin-top:28px !important;padding-top:48px !important}
 #dw-intro-grid{gap:28px !important;margin-top:40px !important}
-#dw-intro-photo{aspect-ratio:4/3}
+#dw-intro-photo{aspect-ratio:4/5}
 #dw-intro-photo>div{padding:80px 20px 20px !important}
 #dw-intro-photo>div>span:first-child{font-size:24px !important}
 #dw-skills{gap:12px 20px !important;margin-top:32px !important}
@@ -266,3 +266,6 @@ footer{padding-left:18px !important;padding-right:18px !important}
 .dwh15:hover{padding-left:14px !important;color:#13A6EE !important}
 .dwf16:focus{border-bottom-color:#13A6EE !important}
 .dwh17:hover{background:#2A8FD6 !important;transform:translateY(-2px) !important}
+
+/* About page */
+@media (max-width:900px){#ab-grid,#ab-story{grid-template-columns:1fr !important}#ab-photo{max-width:520px}#ab-gets{grid-template-columns:repeat(2,minmax(0,1fr)) !important}}@media (max-width:560px){#ab-gets{grid-template-columns:1fr !important}}
