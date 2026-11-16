@@ -61,6 +61,12 @@ Exports in `wordpress/elementor-templates/` (`glec-homepage.json`, `glec-header.
 - Content lives in `glec-child/inc/mega-nav.php` → `glec_mega_config()` (filterable via `glec_mega_config`). Card prices come live from WooCommerce by SKU. Thumbnails are `thumb-*.webp` in the media library (720 × 450).
 - Hello Elementor's default `<button>` styles (pink hover/focus) are neutralised in `assets/buttons-reset.css`.
 
+## Contact page (page 545)
+
+- Built in Elementor: intro + contact rows (email, phone placeholder, mailing address) beside a photo of Claire (`claire.webp`, 4:5) with a name chip; "Send us a message" card on Mist with an Elementor Pro form (name, email, phone optional, topic, message).
+- Form submissions are saved to Elementor → Submissions and emailed to the site admin address. **[CONFIRM] who should receive them** (e.g. Info@GeorgiaLicenseExam.com) before launch.
+- **[CONFIRM] Claire's title** for the name chip.
+
 ## Deviations from the brief (and why)
 
 1. **Mobile menu**: built as a `[glec_mobile_menu]` shortcode (button + full-screen dialog, focus trap and Escape in `glec.js`) instead of an Elementor Off-Canvas/Popup. That gave reliable focus trapping, Escape handling and a pinned "Start here" footer. Links come from the WP "Primary" menu, so they stay editable. "My courses" appears only when logged in (`[glec_account_links]`).

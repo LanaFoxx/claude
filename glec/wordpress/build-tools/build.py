@@ -2,6 +2,9 @@ import json, random, sys, urllib.parse, os
 random.seed(1440)
 BASE = sys.argv[1]
 M = json.load(open(os.path.join(BASE, 'build/media.json')))
+for _extra in ['build/claire.json']:
+    _f=os.path.join(BASE,_extra)
+    if os.path.exists(_f): M.update(json.load(open(_f)))
 P = {"R":538,"C":539,"OL":540,"TABS":541,"SOS":542}
 SITE = 'https://staging158.dreamweb.digital'
 def rid(): return '%07x' % random.getrandbits(28)
@@ -273,6 +276,42 @@ footer = [C([
       extra={"margin":dims(32,0,0,0),"margin_mobile":dims(28,0,0,0),"padding":dims(24,0,0,0)}),
 ], 'g-footer g-on-navy', boxed=True, bg='navy', pad=(48,64,28,64), pad_t=(40,40,28,40), pad_m=(36,20,28,20), html_tag='div')]
 
-out = {"home":home,"header":header,"footer":footer}
+
+# ---------------- CONTACT PAGE ----------------
+I['map']='<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/>'
+def crow(icon, label, value_html):
+    return HTML('<div class="g-crow"><span class="g-crow__ico">%s</span><span class="g-crow__txt"><span class="g-crow__lbl">%s</span>%s</span></div>' % (ic(I[icon],24), label, value_html))
+contact_left = C([
+    H('Contact','div','eyebrow','blue','g-eyebrow'),
+    H('Questions? Ask us directly.','h1','h1','navy', size=56, size_m=36),
+    TX('<p>Not sure which license fits, where you are in the Board process, or how to get into your class? Send us a note or reach out below.</p>','lead','slate','g-contact-lead'),
+    C([crow('mail','Email','<a class="g-crow__val" href="mailto:Info@GeorgiaLicenseExam.com">Info@GeorgiaLicenseExam.com</a>'),
+       crow('phone','Phone','<span class="g-crow__val">%s</span>' % PHONE),
+       crow('map','Mailing address','<span class="g-crow__val">2625 Piedmont Road NE<br>UPS Store, Ste 56, PMB-320<br>Atlanta, Georgia 30324-3086</span><span class="g-crow__note">Mailing address only, no walk-ins</span>')],
+      'g-crows', gap=0, extra={"margin":dims(12,0,0,0)}),
+], 'g-contact-copy', gap=20, gap_m=16)
+contact_photo = C([IMG('claire.webp','g-img'),
+    HTML('<div class="g-namechip"><b>Claire</b><span>[CONFIRM: Claire&rsquo;s title]</span></div>','g-media-deco')], 'g-claire')
+contact = [C([C([contact_left, contact_photo], 'g-contact-top', gap=80, gap_t=48, gap_m=40)], '', boxed=True, pad=(96,64,104,64), pad_t=(72,40,80,40), pad_m=(48,20,64,20), html_tag='section')]
+form_fields = [
+  {"_id":"name","field_type":"text","field_label":"Name","placeholder":"Your full name","required":"true","width":"50","width_mobile":"100"},
+  {"_id":"email","field_type":"email","field_label":"Email","placeholder":"you@example.com","required":"true","width":"50","width_mobile":"100"},
+  {"_id":"phone","field_type":"tel","field_label":"Phone (optional)","placeholder":"","width":"50","width_mobile":"100"},
+  {"_id":"topic","field_type":"select","field_label":"What is it about?","field_options":"License classes\nCEU classes\nBoard application\nAccess to my class\nSomething else","width":"50","width_mobile":"100"},
+  {"_id":"message","field_type":"textarea","field_label":"Message","placeholder":"How can we help?","required":"true","rows":"5","width":"100"},
+]
+form = W('form', {"form_name":"Contact","form_fields":form_fields,"show_labels":"yes","mark_required":"yes","input_size":"md",
+   "button_text":"Send message","button_size":"md","button_width":"100","button_width_mobile":"100",
+   "submit_actions":["save-to-database","email"],
+   "email_subject":"New message from the GLEC website","email_content":"[all-fields]","email_from_name":"GLEC website",
+   "success_message":"Thanks. Your message is on its way and we will get back to you soon.",
+   "error_message":"Something went wrong. Please email Info@GeorgiaLicenseExam.com instead.",
+   "required_field_message":"This field is required.","invalid_message":"Please check this field."}, 'g-form')
+contact.append(C([C([
+    C([H('Send us a message','h2','h2','navy', size=36, size_m=28), TX('<p>Fill in the form and we will reply by email. Please include your class code if your question is about a class you are taking.</p>','body','slate')], 'g-form-intro', gap=12),
+    form], 'g-formcard', gap=48, gap_t=32, gap_m=24, pad=(48,48,48,48), pad_t=(40,36,40,36), pad_m=(28,20,28,20))],
+  '', boxed=True, bg='mist', pad=(96,64,104,64), pad_t=(72,40,80,40), pad_m=(56,20,64,20), html_tag='section'))
+
+out = {"home":home,"header":header,"footer":footer,"contact":contact}
 json.dump(out, open(os.path.join(BASE,'build/elementor.json'),'w'))
 print({k:len(json.dumps(v)) for k,v in out.items()})
