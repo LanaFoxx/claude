@@ -325,3 +325,4 @@ Container `Seasonal Offer`: change the H2 to **Talk to us about your project** a
      - The Request an Estimate page keeps the estimate form.
   7. **Top bar:** "Areas We Serve" now reads "Service Area".
   8. **Why order:** Your home, protected · Preparation is the job · One point of contact · Premium products · Builders first · Backed in writing.
+- **Font review page:** `https://staging197.dreamwebdigital.com/font-options/` (page ID 2150, Elementor Canvas, one HTML widget) shows the five headline-font candidates for the client to comment on in Markup.io. Delete it before launch.
