@@ -243,12 +243,20 @@ home.append(C([
        quote('I would have never passed the CA License Exam without your help. Your classes even helped me tremendously in passing the Tennessee exams. I have been doing HVAC for over 40 years and I learned a lot. Thanks so much.','MS','Marroll S.')], 'g-g3', gap=24, gap_m=16),
 ], 'g-testi g-on-navy', boxed=True, bgimg='classroom.webp', pad=SECT, pad_t=SECT_T, pad_m=SECT_M, el_id='testimonials', html_tag='section'))
 
-# CTA
-contact_row = '<div class="g-contactrow"><a href="mailto:Info@GeorgiaLicenseExam.com">%sInfo@GeorgiaLicenseExam.com</a><span>%s%s</span></div>' % (ic(I['mail'],20), ic(I['phone'],20), PHONE)
-home.append(C([C([
-    C([H('Not sure where to start?','h2','h2','navy'), TX('<p>The 10-step guide walks you from your first question to your license. Or ask us directly.</p>','lead','slate'), HTML(contact_row)], 'g-cta-copy', gap=16, extra={"_flex_size":"grow"}),
-    C([BTN('Start here', START, 'g-btn g-btn-56'), BTN('Contact us', SITE+'/contact/', 'g-btn-sec g-btn-56')], 'g-cta-btns', gap=12),
-], 'g-cta', gap=48, gap_m=24, pad=(64,72,64,72), pad_t=(48,48,48,48), pad_m=(32,24,32,28))], 'g-tex-mist', boxed=True, pad=SECT, pad_t=SECT_T, pad_m=SECT_M, html_tag='section'))
+# CTA: course support with Claire (Prempt)
+I['msg'] = '<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>'
+support_photo = C([IMG('claire.webp','g-img'),
+    HTML('<span class="g-live"><i aria-hidden="true"></i>Available now</span>','g-media-deco')], 'g-support-photo')
+support_copy = C([
+    H('Course support','div','eyebrow','blue','g-eyebrow'),
+    H('Questions? Claire is here to help, right now.','h2','h2','navy'),
+    TX('<p>Stuck on a lesson, your Board application, or which license fits? Reach Claire, our course support agent, any time. No waiting for office hours.</p>','lead','slate'),
+    C([BTN('Call 404-590-5101', 'tel:+14045905101', 'g-btn g-btn-ico-phone'), BTN('Email Claire', 'mailto:Info@GeorgiaLicenseExam.com', 'g-btn-sec')], 'g-support-btns', direction='row', gap=12, dir_m='column', gap_m=10, wrap=True),
+    HTML('<p class="g-support-more">Just getting started? <a href="%s">Follow the step-by-step guide %s</a></p>' % (START, ic(I['arrow'],18))),
+    HTML('<a class="g-poweredby" href="https://prempt.ai" target="_blank" rel="noopener">Powered by <b>Prempt</b><span class="screen-reader-text"> (opens in a new tab)</span></a>'),
+], 'g-support-copy', gap=18, gap_m=16)
+home.append(C([C([support_photo, support_copy], 'g-cta g-support', gap=56, gap_t=40, gap_m=28, pad=(48,64,48,48), pad_t=(40,40,40,40), pad_m=(20,20,28,20))],
+    'g-tex-mist', boxed=True, pad=SECT, pad_t=SECT_T, pad_m=SECT_M, el_id='support', html_tag='section'))
 
 # ---------------- HEADER ----------------
 header = [C([

@@ -623,3 +623,22 @@ a.g-crow__val:hover{color:var(--g-navy)}
 @media (max-width:600px){.elementor .g-masonry{columns:1}.elementor .g-list--cols{columns:1}.elementor .g-timeline::before{left:6px}.elementor .g-timeline li{grid-template-columns:minmax(0,1fr);gap:4px;padding-left:32px}.elementor .g-timeline li::after{left:1px}
   .elementor .g-facts{gap:14px}.elementor .g-band{padding:24px 20px}.elementor .g-bigquote{padding:28px 24px}.elementor .g-bigquote blockquote{font-size:19px}.elementor .g-about-photo{height:360px}}
 .elementor .g-prose ul,.elementor .g-prose ol{margin:0 0 1em}.elementor .g-prose ul:last-child,.elementor .g-prose ol:last-child{margin-bottom:0}
+
+/* ---------- Course support CTA (Claire, powered by Prempt) ---------- */
+.elementor .g-support{grid-template-columns:320px minmax(0,1fr)!important;align-items:center}
+.elementor .g-support-photo{position:relative;height:380px;width:100%!important}
+.elementor .g-support-photo .g-img{position:absolute!important;inset:0;width:auto!important;border-radius:14px;overflow:hidden;box-shadow:0 20px 50px rgba(11,42,66,.18)}
+.elementor .g-support-photo .g-img img{object-position:50% 25%}
+.elementor .g-live{position:absolute;left:16px;bottom:16px;z-index:2;display:inline-flex;align-items:center;gap:8px;background:#fff;border-radius:999px;padding:8px 14px 8px 12px;font:600 14px/1 Inter,sans-serif;color:var(--g-navy);box-shadow:0 8px 24px rgba(11,42,66,.22)}
+.elementor .g-live i{width:10px;height:10px;border-radius:50%;background:var(--g-success);box-shadow:0 0 0 0 rgba(21,128,61,.5);animation:g-live 2s ease-out infinite}
+@keyframes g-live{0%{box-shadow:0 0 0 0 rgba(21,128,61,.45)}.elementor 70%{box-shadow:0 0 0 10px rgba(21,128,61,0)}.elementor 100%{box-shadow:0 0 0 0 rgba(21,128,61,0)}.elementor }
+.g-support-copy{max-width:640px}
+.elementor .g-support-btns .elementor-button{height:56px}
+.elementor .g-support-more{margin:0;font-size:16px;color:var(--g-slate)}
+.elementor .g-support-more a{display:inline-flex;align-items:center;gap:6px;min-height:44px;font-weight:600;color:var(--g-blue);text-underline-offset:3px}
+.elementor .g-poweredby{display:inline-flex;align-items:center;gap:6px;min-height:44px;margin-top:4px;padding-top:14px;border-top:1px solid var(--g-line);width:100%;font-size:14px;color:var(--g-slate);text-decoration:none}
+.elementor .g-poweredby b{font-weight:700;color:var(--g-navy);letter-spacing:-.01em}
+.elementor .g-poweredby:hover b{color:var(--g-blue);text-decoration:underline;text-underline-offset:3px}
+@media (max-width:980px){.elementor .g-support{grid-template-columns:240px minmax(0,1fr)!important}.elementor .g-support-photo{height:300px}}
+@media (max-width:600px){.elementor .g-support{grid-template-columns:minmax(0,1fr)!important}.elementor .g-support-photo{height:320px}.elementor .g-support-btns,.elementor .g-support-btns .elementor-widget-button,.elementor .g-support-btns .elementor-button{width:100%}}
+@media (prefers-reduced-motion:reduce){.elementor .g-live i{animation:none}}
