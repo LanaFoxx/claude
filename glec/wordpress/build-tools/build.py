@@ -249,7 +249,7 @@ home.append(C([C([
 # ---------------- HEADER ----------------
 header = [C([
     IMG('glec-logo.png','g-logo', link=SITE+'/'),
-    W('nav-menu', {"menu":"primary","layout":"horizontal","pointer":"none","align_items":"center","dropdown":"none","toggle":"","full_width":""}, 'g-nav'),
+    SC('[glec_mega_nav]','g-nav'),
     C([H('<a href="%s/my-account/">Log in</a>' % SITE,'div',None,None,'g-loginlink g-hdr-login'), SC('[glec_cart]','g-cartwrap'),
        BTN('Start here', START, 'g-btn g-hdr-btn'), SC('[glec_mobile_menu]','g-burger')], 'g-hdr-right g-auto', direction='row', align='center', gap=24, gap_m=4, extra={"width":{"unit":"%","size":""},"_flex_size":"none"}),
 ], 'g-header', direction='row', align='center', justify='space-between', gap=32, gap_m=8, boxed=True, bg='white', pad=(0,64,0,64), pad_t=(0,40,0,40), pad_m=(0,20,0,12), extra={"min_height":px(76),"min_height_mobile":px(64)}, html_tag='div')]

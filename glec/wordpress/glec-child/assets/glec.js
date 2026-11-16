@@ -2,7 +2,9 @@
   /* Mobile menu: open/close, focus trap, Escape */
   var panel=document.getElementById('glec-mm');
   var opener=null;
-  function focusables(){return panel?[].slice.call(panel.querySelectorAll('a[href],button:not([disabled])')).filter(function(e){return e.offsetParent!==null;}):[];}
+  function focusables(){ if(!panel) return []; var scope=panel.classList.contains('is-drilled')?panel.querySelector('.glec-mm__sub.is-active'):panel.querySelector('.glec-mm__root')||panel;
+    var close=panel.querySelector('.glec-mm__close'); var els=[close].concat([].slice.call((scope||panel).querySelectorAll('a[href],button:not([disabled])')));
+    return els.filter(function(e){return e && e.offsetParent!==null && getComputedStyle(e).visibility!=='hidden' && !e.closest('[hidden]');}); }
   function open(btn){ if(!panel)return; opener=btn; panel.classList.add('is-open'); panel.setAttribute('aria-hidden','false'); document.body.classList.add('glec-mm-open');
     document.querySelectorAll('.glec-burger').forEach(function(b){b.setAttribute('aria-expanded','true');});
     var f=focusables(); if(f[0]) f[0].focus(); }

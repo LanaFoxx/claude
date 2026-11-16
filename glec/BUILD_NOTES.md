@@ -52,6 +52,15 @@ Exports in `wordpress/elementor-templates/` (`glec-homepage.json`, `glec-header.
 - Standard pages + WooCommerce: `assets/pages.css` (page padding/titles, orange buttons, notices, forms, cart/checkout type scale at 18 px, faint outlined totals/summary boxes, no inner borders). WooCommerce "coming soon" mode switched off on staging so visitors can reach cart/checkout.
 - Fixed: Elementor forces `width/height:100%` on container `::before`, which stretched the steps connector line; all decorative pseudo-elements are now pinned explicitly.
 
+## Mega navigation (requested by Dream Web Digital)
+
+**This overrides the brief's "no mega menu" rule; confirm with the client approver.**
+- Desktop (> 1180 px): License classes, CEU classes, How to get licensed and About open a full-width white panel under the sticky header with image cards (16:10, hover zoom) and a quick-links column. Contact stays a plain link. Hover intent (90 ms open, 220 ms close), animated panel height when switching, blurred navy backdrop over the page.
+- Keyboard: top items are buttons with `aria-expanded`/`aria-controls`. Enter/Space toggles, ArrowDown opens and focuses the first card, Escape closes and returns focus, tabbing out closes. Panels opened by keyboard don't close on mouse-out.
+- Mobile: the full-screen menu drills down (item → sub-panel with card rows + links, Back button, Escape steps back, focus trapped in the visible panel). Burger is three orange lines, no background.
+- Content lives in `glec-child/inc/mega-nav.php` → `glec_mega_config()` (filterable via `glec_mega_config`). Card prices come live from WooCommerce by SKU. Thumbnails are `thumb-*.webp` in the media library (720 × 450).
+- Hello Elementor's default `<button>` styles (pink hover/focus) are neutralised in `assets/buttons-reset.css`.
+
 ## Deviations from the brief (and why)
 
 1. **Mobile menu**: built as a `[glec_mobile_menu]` shortcode (button + full-screen dialog, focus trap and Escape in `glec.js`) instead of an Elementor Off-Canvas/Popup. That gave reliable focus trapping, Escape handling and a pinned "Start here" footer. Links come from the WP "Primary" menu, so they stay editable. "My courses" appears only when logged in (`[glec_account_links]`).

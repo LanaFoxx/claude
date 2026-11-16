@@ -474,3 +474,4 @@ html,body{overflow-x:clip}
 .g-footer .g-fine{width:100%!important;align-self:stretch}
 @media (max-width:1180px){.g-fnav{flex-wrap:wrap}}
 @media (max-width:600px){.g-fnav{column-gap:16px}}
+.g-nav .gm{display:block}

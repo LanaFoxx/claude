@@ -1,0 +1,16 @@
+/* Neutralise Hello Elementor's default <button> styling (pink border / pink hover+focus background) on our custom controls */
+.glec-burger,.glec-burger-x,.glec-mm__close,.glec-mm__item,.glec-mm__back,.gm__top,.g-sl__btn,.g-sl__dots button,
+.glec-burger:hover,.glec-burger:focus,.glec-burger:active,.glec-burger-x:hover,.glec-burger-x:focus,.glec-mm__close:hover,.glec-mm__close:focus,
+.glec-mm__item:hover,.glec-mm__item:focus,.glec-mm__back:hover,.glec-mm__back:focus,.g-sl__dots button:hover,.g-sl__dots button:focus{
+  background-color:transparent!important;border:0!important;box-shadow:none!important;border-radius:8px}
+.glec-burger,.glec-burger:hover,.glec-burger:focus,.glec-burger:active{color:var(--g-hi)!important;padding:0!important}
+.glec-burger-x,.glec-burger-x:hover,.glec-burger-x:focus,.glec-mm__close,.glec-mm__close:hover,.glec-mm__close:focus{color:var(--g-navy)!important;padding:0!important}
+.glec-mm__item,.glec-mm__item:hover,.glec-mm__item:focus{color:var(--g-navy)!important;padding:0!important;border-radius:0}
+.glec-mm__back,.glec-mm__back:hover,.glec-mm__back:focus{color:var(--g-blue)!important;padding:0!important}
+.gm__top{color:var(--g-ink)!important;padding:0 14px!important}
+.gm__top:hover,.gm__top:focus,.gm__top[aria-expanded="true"]{background-color:var(--g-mist)!important;color:var(--g-navy)!important;border:0!important}
+.g-sl__btn,.g-sl__btn:hover,.g-sl__btn:focus{background-color:rgba(11,42,66,.6)!important;border:1px solid rgba(255,255,255,.3)!important;color:#fff!important;border-radius:50%!important;padding:0!important}
+.g-sl__dots button{padding:0!important}
+.glec-burger:focus:not(:focus-visible),.gm__top:focus:not(:focus-visible),.glec-mm__item:focus:not(:focus-visible){outline:0}
+.glec-burger:focus-visible,.gm__top:focus-visible,.glec-mm__item:focus-visible,.glec-mm__back:focus-visible,.glec-mm__close:focus-visible{outline:2px solid var(--g-blue)!important;outline-offset:2px}
+@media (max-width:1300px){.gm__top{padding:0 10px!important}}
