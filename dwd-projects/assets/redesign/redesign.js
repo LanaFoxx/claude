@@ -229,7 +229,9 @@ class HomeFx extends SiteFx {
     super.onFrame();
     if (this._stopped) return;
     const vh = window.innerHeight;
-    const stacked = window.innerWidth <= 980;
+    // Scroll-driven laptop / phone (pinned runway, site scrolling inside the screen) is switched off everywhere:
+    // they show as still mockups, lid open, page at the top. (Was: window.innerWidth <= 980.)
+    const stacked = true;
     const play = (v, on) => { if (!v) return; if (on && v.paused) v.play().catch(() => {}); else if (!on && !v.paused) v.pause(); };
     const ph = document.getElementById('dw-phone-scroll');
     const phPage = document.getElementById('dw-phone-page');
