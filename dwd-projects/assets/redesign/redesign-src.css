@@ -332,3 +332,7 @@ section.dwr-doall-sec .dwr-doall{margin:0!important;border:0!important;border-ra
 #dw-hero-row p{margin-left:auto !important;margin-right:auto !important}
 #dw-hero-cta{align-items:center !important}
 #dw-hero-cta>*{justify-content:center}
+
+/* Review: source logo and stars side by side */
+.dwr-qtop{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap}
+.dwr-qtop .dwr-qsrc{margin:0 !important}
