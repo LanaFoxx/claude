@@ -285,6 +285,51 @@ function employment(m) {
   ];
 }
 
+// Weddings & events: quote request form (emails info@, also saved under Elementor › Submissions).
+function planEvent(m) {
+  const field = (custom_id, field_type, field_label, extra = {}) => ({ _id: id(), custom_id, field_type, field_label, placeholder: '', width: '50', width_tablet: '50', width_mobile: '100', ...extra });
+  const form = widget('form', {
+    form_name: 'Event quote request',
+    form_fields: [
+      field('name', 'text', 'Name', { required: 'true' }), field('email', 'email', 'Email', { required: 'true' }),
+      field('phone', 'tel', 'Phone'),
+      field('event_type', 'select', 'Type of event', { field_options: 'Wedding\nRehearsal dinner\nReception\nFamily reunion\nCorporate event or retreat\nChair rental only\nOther' }),
+      field('event_date', 'date', 'Event date', { use_native_date: 'yes' }),
+      field('guests', 'number', 'Number of guests', { field_min: '1', field_max: '1000' }),
+      field('chairs', 'number', 'How many chairs do you need? (max 275)', { field_min: '0', field_max: '275', placeholder: '0–275' }),
+      field('location', 'select', 'Where is the event?', { field_options: 'At the Bayfield Inn\nElsewhere in or near Bayfield\nNot sure yet' }),
+      field('message', 'textarea', 'Tell us about your event', { width: '100', width_tablet: '100', rows: 5, placeholder: 'Timing, food and drinks, rooms for guests, anything else we should know.' }),
+    ],
+    show_labels: 'true', input_size: 'md', button_text: 'Request a quote', button_size: 'md', button_width: '100', button_align: 'start',
+    submit_actions: ['email', 'save-to-database'], email_to: 'info@thebayfieldinn.com', email_subject: 'Event quote request from [field id="name"]',
+    email_reply_to: '[field id="email"]', email_content: '[all-fields]', email_from_name: 'Bayfield Inn website',
+    custom_messages: 'yes',
+    success_message: 'Thank you! Your request is on its way to our events team. We’ll be in touch soon with a quote.',
+    error_message: 'Something went wrong. Please call us at (715) 779-3363 or email info@thebayfieldinn.com.',
+    column_gap: px(16), row_gap: px(18), label_spacing: px(6),
+    label_color: C.green, ...typo('label_typography', SANS, 11, 500, { lh: 1.2, ls: 1.8, transform: 'uppercase' }),
+    field_text_color: C.ink, field_background_color: C.white, field_border_color: C.line, field_border_width: box(1), field_border_radius: box(2),
+    ...typo('field_typography', SANS, 15, 300, { lh: 1.4 }),
+    button_background_color: C.green, button_text_color: C.cream, button_background_hover_color: '#0F2113', button_hover_color: C.cream,
+    button_border_radius: box(2), ...typo('button_typography', SANS, 12.5, 500, { lh: 1.2, ls: 1.2, transform: 'uppercase' }), button_text_padding: box(17, 30, 17, 30),
+    custom_css: 'selector .elementor-field-group .elementor-field { min-height: 46px; }\nselector select.elementor-field { padding-right: 32px; }',
+  });
+  return [
+    pageHero('Weddings & Events', 'Celebrate on the shores of Lake Superior.', 'From intimate weddings to family reunions and company retreats, our team will help you plan an event your guests will remember.', m.file('bayfield-events-lawn.jpg')),
+    section({ background_background: 'classic', background_color: C.cream, ...pad, ...boxed, flex_direction: 'column' }, [
+      container({ ...gridSettings(['5fr 6fr', 1, 1]), content_width: 'full', padding: box(0), grid_gaps: gap(72, 40), grid_align_items: 'start' }, [
+        stack([
+          eyebrow('Request a quote', C.green),
+          heading('Tell us about your event.', 'h2', [44, 38, 30], C.green, { ls: -0.9 }),
+          text('<p>Share a few details and our events team will get back to you with ideas and a quote.</p><p><strong>Chair rental:</strong> we rent up to 275 chairs for weddings and events around Bayfield, whether or not your event is at the Inn.</p><p>Prefer to talk? Call (715) 779-3363 or email <a href="mailto:info@thebayfieldinn.com">info@thebayfieldinn.com</a>.</p>', { size: 16, lh: 1.75, settings: { paragraph_spacing: px(16) } }),
+        ], { gap: 20 }),
+        container({ content_width: 'full', padding: box(36), padding_mobile: box(24), background_background: 'classic', background_color: C.white, border_radius: box(4),
+          box_shadow_box_shadow_type: 'yes', box_shadow_box_shadow: { horizontal: 0, vertical: 30, blur: 60, spread: -40, color: 'rgba(23,48,27,0.35)' } }, [form]),
+      ]),
+    ]),
+  ];
+}
+
 // Menus (dishes, prices, PDFs) are managed under Bayfield Inn › Restaurant Menus.
 const MENUS = require('./menus.cjs');
 function menuSection(m, r) {
@@ -351,6 +396,7 @@ const PAGES = [
   { slug: 'book', title: 'Book Your Stay', build: book },
   { slug: 'merchandise', title: 'Merchandise', build: merchandise },
   { slug: 'employment', title: 'Employment', build: employment },
+  { slug: 'plan-an-event', title: 'Weddings & Events', build: planEvent },
   ...RESTAURANTS.map((r) => ({ slug: r.slug, title: r.name, build: (m) => restaurant(m, r) })),
   ...SHOP_PAGES,
 ];
