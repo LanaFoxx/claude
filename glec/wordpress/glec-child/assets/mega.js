@@ -31,10 +31,10 @@
       t.addEventListener('mouseenter', function(){ if (!desktop.matches) return; clearTimeout(closeT); clearTimeout(openT);
         openT = setTimeout(function(){ if (!nav.classList.contains('is-open')) byHover = true; show(t.dataset.gm); }, nav.classList.contains('is-open') ? 0 : 90); });
       t.addEventListener('mouseleave', function(){ clearTimeout(openT); });
-      t.addEventListener('click', function(e){ var kb = e.detail === 0; if (current && current.id === t.dataset.gm && (kb || !byHover)) hide(); else { if (kb || !current) byHover = !kb && byHover; if (kb) byHover = false; show(t.dataset.gm); } });
+      /* Top items are real links: clicking goes to the page. Hover (or ArrowDown on the keyboard) opens the picture panel. */
       t.addEventListener('keydown', function(e){ if (e.key === 'ArrowDown') { e.preventDefault(); byHover = false; show(t.dataset.gm); var f = current && current.querySelector('a'); if (f) f.focus(); } });
     });
-    nav.querySelectorAll('a.gm__top').forEach(function(a){ a.addEventListener('mouseenter', function(){ if (!desktop.matches || !byHover) return; closeT = setTimeout(hide, 120); }); });
+    nav.querySelectorAll('a.gm__top:not(.gm__trigger)').forEach(function(a){ a.addEventListener('mouseenter', function(){ if (!desktop.matches || !byHover) return; closeT = setTimeout(hide, 120); }); });
     nav.addEventListener('mouseleave', function(){ clearTimeout(openT); if (byHover) closeT = setTimeout(hide, 220); });
     nav.addEventListener('mouseenter', function(){ clearTimeout(closeT); });
     panel.addEventListener('mouseenter', function(){ clearTimeout(closeT); });

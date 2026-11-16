@@ -23,7 +23,7 @@ function glec_mega_config() {
 	$h = home_url( '/' );
 	$cfg = [
 		[
-			'id' => 'license', 'label' => 'License classes',
+			'id' => 'license', 'label' => 'License classes', 'url' => $h . 'license-classes/',
 			'cards' => [
 				[ 'title' => 'Residential Design Class', 'meta' => 'Required for every license', 'sku' => 'HLG-DD-R-OL', 'img' => 'thumb-study', 'url' => $h . 'license-classes/residential-design/' ],
 				[ 'title' => 'Commercial Design Class', 'meta' => 'Non-Restricted only', 'sku' => 'HLG-DD-C-OL', 'img' => 'thumb-mentor', 'url' => $h . 'license-classes/commercial-design/' ],
@@ -37,7 +37,7 @@ function glec_mega_config() {
 			],
 		],
 		[
-			'id' => 'ceu', 'label' => 'CEU classes',
+			'id' => 'ceu', 'label' => 'CEU classes', 'url' => $h . 'ceu-classes/',
 			'cards' => [
 				[ 'title' => 'Board-approved CEUs', 'meta' => '4 hours a year, all online', 'img' => 'thumb-workshop', 'url' => $h . 'ceu-classes/' ],
 				[ 'title' => 'Code Changes, IFGC & IMC', 'meta' => '2018, 2021 or 2024 · 4 hours · $50', 'img' => 'thumb-classroom', 'url' => $h . 'ceu-classes/' ],
@@ -53,7 +53,7 @@ function glec_mega_config() {
 			],
 		],
 		[
-			'id' => 'steps', 'label' => 'How to get licensed',
+			'id' => 'steps', 'label' => 'How to get licensed', 'url' => $h . 'how-to-get-licensed/',
 			'cards' => [
 				[ 'title' => 'Check which license fits', 'meta' => 'Restricted or Non-Restricted', 'num' => '01', 'icon' => 'clip', 'url' => $h . 'how-to-get-licensed/' ],
 				[ 'title' => 'Take the design classes', 'meta' => 'Then apply to the Board in GOALS', 'num' => '02', 'icon' => 'play', 'url' => $h . 'how-to-get-licensed/' ],
@@ -66,7 +66,7 @@ function glec_mega_config() {
 			],
 		],
 		[
-			'id' => 'about', 'label' => 'About',
+			'id' => 'about', 'label' => 'About', 'url' => $h . 'about/',
 			'cards' => [
 				[ 'title' => 'Garrison Michael', 'meta' => 'Owner and instructor since 2006', 'img' => 'thumb-garrison', 'url' => $h . 'about/' ],
 				[ 'title' => 'Student stories', 'meta' => '82% exam pass rate', 'img' => 'thumb-classroom', 'url' => $h . 'testimonials/' ],
@@ -132,7 +132,7 @@ add_shortcode( 'glec_mega_nav', function () {
 			continue;
 		}
 		$id    = 'gm-' . sanitize_key( $item['id'] );
-		$bar  .= '<li><button type="button" class="gm__top gm__trigger" aria-expanded="false" aria-controls="' . esc_attr( $id ) . '" data-gm="' . esc_attr( $id ) . '">' . esc_html( $item['label'] ) . '</button></li>';
+		$bar  .= '<li><a class="gm__top gm__trigger" href="' . esc_url( $item['url'] ) . '" aria-expanded="false" aria-controls="' . esc_attr( $id ) . '" data-gm="' . esc_attr( $id ) . '">' . esc_html( $item['label'] ) . '</a></li>';
 		$cards = '';
 		foreach ( $item['cards'] as $c ) { $cards .= glec_mega_card( $c ); }
 		$panes .= '<section class="gm__pane" id="' . esc_attr( $id ) . '" aria-label="' . esc_attr( $item['label'] ) . '" hidden>'
