@@ -1,0 +1,107 @@
+<title>Top Notch Headline Fonts</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700&family=Cormorant+Garamond:wght@500&family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Gloock&family=Manrope:wght@400;500;600&family=Young+Serif&family=Zilla+Slab:wght@500;600&display=swap">
+<style>
+/* Layout: one dark band per font option, each showing the same three real site moments (hero, giant words, section heading). */
+:root{
+  color-scheme: dark;
+  --charred:#14110E; --night:#0F0D0B; --spruce:#24302A; --bone:#F2ECE3;
+  --amber:#C68B4E; --drift:#B3A99C; --hair:rgba(242,236,227,0.12);
+  --body:"Manrope","Helvetica Neue",Arial,sans-serif;
+}
+body{background:var(--charred);color:var(--bone);font-family:var(--body);-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.intro{padding-block:56px 40px;border-bottom:1px solid var(--hair)}
+header.intro h1{font-family:var(--body);font-weight:600;font-size:15px;color:var(--amber);margin:0 0 14px}
+header.intro p{margin:0;max-width:640px;font-size:17px;line-height:1.7;color:var(--drift);text-wrap:pretty}
+header.intro p + p{margin-top:12px}
+.opt{padding-block:56px;border-bottom:1px solid var(--hair)}
+.opt:nth-of-type(even){background:var(--night)}
+.meta{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 24px;margin-bottom:32px}
+.meta h2{margin:0;font-family:var(--body);font-weight:600;font-size:15px;color:var(--bone)}
+.meta h2 span{color:var(--amber)}
+.meta p{margin:0;font-size:14px;color:var(--drift);max-width:620px;line-height:1.6}
+.hero{font-size:clamp(38px,6vw,76px);line-height:1.02;letter-spacing:-0.012em;margin:0;max-width:900px;text-wrap:balance}
+.sub{margin:22px 0 0;max-width:540px;font-size:17px;line-height:1.65;color:#D7CFC4}
+.giants{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 64px;margin-top:44px;padding-top:36px;border-top:1px solid var(--hair)}
+.giant{font-size:clamp(56px,9vw,128px);line-height:1;letter-spacing:-0.02em;margin:0;white-space:nowrap}
+.giant + .t{margin:14px 0 0;font-size:16px;font-weight:600;color:var(--amber)}
+.h2s{margin:40px 0 0;font-size:clamp(30px,3.6vw,48px);line-height:1.06;letter-spacing:-0.008em;text-wrap:balance}
+.f-cormorant{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500}
+.f-fraunces{font-family:"Fraunces",Georgia,serif;font-weight:500;font-variation-settings:"opsz" 144}
+.f-gloock{font-family:"Gloock",Georgia,serif;font-weight:400}
+.f-young{font-family:"Young Serif",Georgia,serif;font-weight:400}
+.f-zilla{font-family:"Zilla Slab",Rockwell,serif;font-weight:600}
+.f-shoulders{font-family:"Big Shoulders Display","Arial Narrow",sans-serif;font-weight:700;text-transform:none;letter-spacing:0}
+.f-shoulders.giant{letter-spacing:0}
+footer.end{padding-block:40px 64px;font-size:14px;color:var(--drift);line-height:1.7}
+@media (max-width:640px){.giants{grid-template-columns:1fr}.opt{padding-block:40px}}
+</style>
+
+<header class="intro wrap">
+  <h1>Top Notch Painting · headline font options</h1>
+  <p>Tela and Matt both felt the big type looks too default. Below are five candidates and the current font, each set in the site's real headline, the two giant words from What We Do, and a section heading. Body text stays in Manrope throughout.</p>
+  <p>All six are free Google Fonts, licensed for commercial sites. Leave a comment on the one you like, or on what you'd change. The same font would carry over to the Logworks site.</p>
+</header>
+
+<section class="opt">
+  <div class="wrap">
+    <div class="meta"><h2><span>Current</span> · Cormorant Garamond</h2><p>Thin, high-contrast classic serif. Elegant, but it's the one the team called boilerplate.</p></div>
+    <p class="hero f-cormorant">Fine painting and log home staining for exceptional mountain homes.</p>
+    <p class="sub">High-end interior and exterior painting, plus log and timber home staining, from Vail to Aspen.</p>
+    <div class="giants"><div><p class="giant f-cormorant">Painting</p><p class="t">Fine Interior &amp; Exterior Painting</p></div><div><p class="giant f-cormorant">Staining</p><p class="t">Log &amp; Timber Staining</p></div></div>
+    <p class="h2s f-cormorant">Away for the season? We'll take care of it.</p>
+  </div>
+</section>
+
+<section class="opt">
+  <div class="wrap">
+    <div class="meta"><h2><span>A</span> · Fraunces</h2><p>Warm, slightly soft old-style serif with real character in the curves. Feels handmade and premium at once.</p></div>
+    <p class="hero f-fraunces">Fine painting and log home staining for exceptional mountain homes.</p>
+    <p class="sub">High-end interior and exterior painting, plus log and timber home staining, from Vail to Aspen.</p>
+    <div class="giants"><div><p class="giant f-fraunces">Painting</p><p class="t">Fine Interior &amp; Exterior Painting</p></div><div><p class="giant f-fraunces">Staining</p><p class="t">Log &amp; Timber Staining</p></div></div>
+    <p class="h2s f-fraunces">Away for the season? We'll take care of it.</p>
+  </div>
+</section>
+
+<section class="opt">
+  <div class="wrap">
+    <div class="meta"><h2><span>B</span> · Gloock</h2><p>Bold, high-contrast editorial serif. Confident and magazine-like, with heavy strokes that read well over photos.</p></div>
+    <p class="hero f-gloock">Fine painting and log home staining for exceptional mountain homes.</p>
+    <p class="sub">High-end interior and exterior painting, plus log and timber home staining, from Vail to Aspen.</p>
+    <div class="giants"><div><p class="giant f-gloock">Painting</p><p class="t">Fine Interior &amp; Exterior Painting</p></div><div><p class="giant f-gloock">Staining</p><p class="t">Log &amp; Timber Staining</p></div></div>
+    <p class="h2s f-gloock">Away for the season? We'll take care of it.</p>
+  </div>
+</section>
+
+<section class="opt">
+  <div class="wrap">
+    <div class="meta"><h2><span>C</span> · Young Serif</h2><p>Sturdy old-style serif with a crafted, slightly vintage feel. Friendly rather than formal.</p></div>
+    <p class="hero f-young">Fine painting and log home staining for exceptional mountain homes.</p>
+    <p class="sub">High-end interior and exterior painting, plus log and timber home staining, from Vail to Aspen.</p>
+    <div class="giants"><div><p class="giant f-young">Painting</p><p class="t">Fine Interior &amp; Exterior Painting</p></div><div><p class="giant f-young">Staining</p><p class="t">Log &amp; Timber Staining</p></div></div>
+    <p class="h2s f-young">Away for the season? We'll take care of it.</p>
+  </div>
+</section>
+
+<section class="opt">
+  <div class="wrap">
+    <div class="meta"><h2><span>D</span> · Zilla Slab</h2><p>Slab serif with solid, timber-like serifs. The most rugged of the serifs; a natural bridge to Logworks.</p></div>
+    <p class="hero f-zilla">Fine painting and log home staining for exceptional mountain homes.</p>
+    <p class="sub">High-end interior and exterior painting, plus log and timber home staining, from Vail to Aspen.</p>
+    <div class="giants"><div><p class="giant f-zilla">Painting</p><p class="t">Fine Interior &amp; Exterior Painting</p></div><div><p class="giant f-zilla">Staining</p><p class="t">Log &amp; Timber Staining</p></div></div>
+    <p class="h2s f-zilla">Away for the season? We'll take care of it.</p>
+  </div>
+</section>
+
+<section class="opt">
+  <div class="wrap">
+    <div class="meta"><h2><span>E</span> · Big Shoulders Display</h2><p>Tall, condensed sans in the spirit of trail and park signage. Bold and outdoorsy; the biggest departure from the current look.</p></div>
+    <p class="hero f-shoulders">Fine painting and log home staining for exceptional mountain homes.</p>
+    <p class="sub">High-end interior and exterior painting, plus log and timber home staining, from Vail to Aspen.</p>
+    <div class="giants"><div><p class="giant f-shoulders">Painting</p><p class="t">Fine Interior &amp; Exterior Painting</p></div><div><p class="giant f-shoulders">Staining</p><p class="t">Log &amp; Timber Staining</p></div></div>
+    <p class="h2s f-shoulders">Away for the season? We'll take care of it.</p>
+  </div>
+</section>
+
+<footer class="end wrap">Once the team picks one, it gets applied to every headline, the giant words and the wordmark-adjacent type on the staging site, and to the Elementor templates. The final logo files may also steer the choice, so if Blake has them, share them alongside your pick.</footer>
