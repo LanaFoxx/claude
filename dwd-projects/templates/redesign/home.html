@@ -240,22 +240,22 @@
 
 <section data-nocta="1" id="about" data-theme="dark" style="position:relative;isolation:isolate;overflow:hidden;background:#121212;color:#fff;padding:clamp(80px,10vw,160px) clamp(20px,4vw,56px)">
   <canvas id="dw-about-canvas" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none;opacity:.85;-webkit-mask-image:linear-gradient(90deg,rgba(0,0,0,.35) 0%,rgba(0,0,0,.5) 45%,#000 75%);mask-image:linear-gradient(90deg,rgba(0,0,0,.35) 0%,rgba(0,0,0,.5) 45%,#000 75%)"></canvas>
-  <div style="display:flex;flex-direction:column;gap:24px">
+  <div id="dw-intro-grid" style="display:grid;grid-template-columns:minmax(0,540px) minmax(0,1fr);grid-template-rows:1fr 1fr;grid-template-areas:'photo head' 'photo text';column-gap:clamp(32px,5vw,64px);row-gap:0;align-items:stretch">
+  <div id="dw-intro-head" style="grid-area:head;align-self:end;display:flex;flex-direction:column;gap:20px;padding-bottom:clamp(24px,2.6vw,36px)">
     <span style="display:inline-flex;align-items:center;gap:10px;font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#13A6EE"><span style="width:24px;height:2px;background:#13A6EE;flex:0 0 auto"></span>Why I’m not your average web developer</span>
-    <h2 data-dw-reveal="1" data-dw-kind="lines" style="margin:0;max-width:1400px;font-size:clamp(34px,4.8vw,88px);line-height:1;letter-spacing:-.035em;font-weight:500;color:#fff">
+    <h2 data-dw-reveal="1" data-dw-kind="lines" style="margin:0;max-width:1400px;font-size:clamp(34px,4vw,72px);line-height:1;letter-spacing:-.035em;font-weight:500;color:#fff">
       <span style="display:block;overflow:hidden;padding-bottom:.1em;margin-bottom:-.1em"><span data-dw-line="1" style="font-weight:700">There’s a reason</span></span>
       <span style="display:block;overflow:hidden;padding-bottom:.1em;margin-bottom:-.1em"><span data-dw-line="1" style="color:#fff;font-weight:100;transition-delay:.1s">my reviews are high…</span></span>
     </h2>
   </div>
-  <div id="dw-intro-grid" style="display:grid;grid-template-columns:minmax(0,540px) minmax(0,1fr);gap:clamp(32px,5vw,64px);align-items:stretch;margin-top:clamp(40px,6vw,88px)">
-    <div id="dw-intro-photo" data-dw-reveal="1" style="position:relative;border-radius:10px;overflow:hidden;background:#1C1C1C;min-height:680px">
+    <div id="dw-intro-photo" data-dw-reveal="1" style="grid-area:photo;position:relative;border-radius:10px;overflow:hidden;background:#1C1C1C;min-height:680px">
       <img data-dw-zoom="1" src="https://dreamwebdigital.com/wp-content/uploads/2026/11/michael-tarr-photo-768x1152.jpg" srcset="https://dreamwebdigital.com/wp-content/uploads/2026/11/michael-tarr-photo-768x1152.jpg 768w, https://dreamwebdigital.com/wp-content/uploads/2026/11/michael-tarr-photo.jpg 1080w" sizes="(max-width: 700px) 100vw, 540px" alt="Michael Tarr, founder of Dream Web Digital" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 22%;display:block">
       <div style="position:absolute;left:0;right:0;bottom:0;padding:120px 28px 28px;background:linear-gradient(180deg,rgba(18,18,18,0) 0%,rgba(18,18,18,.92) 100%);display:flex;flex-direction:column;gap:6px">
         <span style="font-size:28px;font-weight:600;letter-spacing:-.02em;color:#fff">Michael Tarr</span>
         <span style="font-size:15px;color:#C9C9C9">Founder · 500+ websites · <span style="color:#F5B301">★</span> 4.9 on Google</span>
       </div>
     </div>
-    <div id="dw-intro-promises" data-dw-reveal="1" style="display:flex;flex-direction:column;justify-content:center;transition-delay:.1s">
+    <div id="dw-intro-promises" data-dw-reveal="1" style="grid-area:text;align-self:start;display:flex;flex-direction:column;transition-delay:.1s">
     <div style="padding:clamp(26px,3vw,40px) 0;border-top:1px solid #333;border-bottom:1px solid #333">
       <p style="margin:0;font-size:clamp(20px,1.75vw,26px);line-height:1.55;letter-spacing:-.01em;color:#C9C9C9;text-wrap:pretty"><span style="color:#fff;font-weight:600">I’m Michael, and I’ve personally designed and built more than 500 websites.</span> When you hire me, you get unlimited revisions, a quick turnaround and fast responses, every time. Your site is custom-designed for your business with no pre-made templates, and it comes with 2 months of support after launch and a lifetime workmanship guarantee. <span style="color:#fff;font-weight:600">That’s why my clients keep coming back, and why I should be your first call.</span></p>
     </div>

@@ -269,3 +269,6 @@ footer{padding-left:18px !important;padding-right:18px !important}
 
 /* About page */
 @media (max-width:900px){#ab-grid,#ab-story{grid-template-columns:1fr !important}#ab-photo{max-width:520px}#ab-gets{grid-template-columns:repeat(2,minmax(0,1fr)) !important}}@media (max-width:560px){#ab-gets{grid-template-columns:1fr !important}}
+
+/* Homepage intro: title above the photo on phones and tablets */
+@media (max-width:980px){#dw-intro-grid{grid-template-columns:1fr !important;grid-template-rows:auto !important;grid-template-areas:'head' 'photo' 'text' !important;row-gap:28px !important}#dw-intro-head{padding-bottom:0 !important}}
