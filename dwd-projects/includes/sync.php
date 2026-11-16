@@ -2449,9 +2449,11 @@ function dwdqa_check( $pid ) {
 			'max_tokens'    => 3000,
 			'output_config' => array( 'effort' => 'low' ),
 			'system'        => 'A web designer asked a client some open questions before building their website. You are given the numbered questions and the client\'s newest emails. '
-				. 'For each question the emails actually answer, give the answer in the client\'s own meaning, complete but short, keeping names, links, dates and numbers exactly. '
-				. 'Do not answer a question the emails do not address, and never guess. Ignore quoted text from earlier emails unless the client wrote their answer inside it. '
-				. 'Reply with JSON only: {"answers":[{"n":1,"answer":"..."}]}. If none are answered, reply {"answers":[]}.',
+				. 'For each question the emails address, give the answer in the client\'s own meaning, complete but short, keeping names, links, dates and numbers exactly, '
+				. 'and say whether it is a FULL answer: "full": true only when the client clearly and completely answers everything the question asks (a yes/no, a confirmation, a choice, the requested details). '
+				. 'Use "full": false when the reply only covers part of the question, says it is not confirmed or decided yet, asks a question back, defers (I will check, later), or is unclear. '
+				. 'Do not include a question the emails do not address, and never guess. Ignore quoted text from earlier emails unless the client wrote their answer inside it. '
+				. 'Reply with JSON only: {"answers":[{"n":1,"answer":"...","full":true}]}. If none are addressed, reply {"answers":[]}.',
 			'messages'      => array( array( 'role' => 'user', 'content' => $pack ) ),
 		) ),
 	) );
@@ -2471,13 +2473,25 @@ function dwdqa_check( $pid ) {
 	$list   = array_values( (array) $q['list'] );
 	$fields = array();
 	$done   = array();
+	$partial = array();
 	foreach ( (array) $j['answers'] as $a ) {
 		$n   = (int) ( $a['n'] ?? 0 ) - 1;
 		$ans = sanitize_textarea_field( (string) ( $a['answer'] ?? '' ) );
-		if ( isset( $list[ $n ] ) && '' !== $ans && ! isset( $done[ $n ] ) ) {
-			$done[ $n ] = 1;
-			$fields[]   = array( 'id' => 'qa_' . ( $n + 1 ), 'label' => $list[ $n ], 'value' => $ans );
+		if ( ! isset( $list[ $n ] ) || '' === $ans || isset( $done[ $n ] ) ) {
+			continue;
 		}
+		if ( true !== ( $a['full'] ?? false ) ) { // not fully answered: the question stays open
+			$partial[] = 'Q' . ( $n + 1 ) . ' (' . mb_substr( $list[ $n ], 0, 80 ) . '): ' . $ans;
+			continue;
+		}
+		$done[ $n ] = 1;
+		$fields[]   = array( 'id' => 'qa_' . ( $n + 1 ), 'label' => $list[ $n ], 'value' => $ans );
+	}
+	if ( $partial ) {
+		$pn   = get_post_meta( $pid, '_dwdc_notes', true );
+		$pn   = is_array( $pn ) ? $pn : array();
+		$pn[] = array( 'date' => current_time( 'mysql', true ), 'text' => 'Client replied to open questions but did not fully answer (still open): ' . implode( ' | ', $partial ) );
+		update_post_meta( $pid, '_dwdc_notes', $pn );
 	}
 	if ( ! $fields ) {
 		return 0;
@@ -2517,5 +2531,44 @@ add_action( 'dwdqa_run', function () {
 	}
 } );
 add_action( 'rest_api_init', function () {
+	// Undo the latest "Open questions answered by email" filing (a reply that didn't really answer):
+	// its questions go back on the open list, the filed answers are removed, and its to-do is closed.
+	register_rest_route( 'dwd/v1', '/crm/contact/(?P<id>\d+)/answers-undo', array( 'methods' => 'POST', 'permission_callback' => function () { return current_user_can( 'manage_options' ); }, 'callback' => function ( $r ) {
+		$pid     = (int) $r['id'];
+		$entries = get_post_meta( $pid, '_dwdc_entries', true );
+		$entries = is_array( $entries ) ? $entries : array();
+		$at      = -1;
+		foreach ( $entries as $i => $e ) {
+			if ( 'Open questions answered by email' === ( $e['form'] ?? '' ) ) {
+				$at = $i;
+			}
+		}
+		if ( $at < 0 ) {
+			return new WP_Error( 'dwdqa_none', 'No email answers to undo on this project.', array( 'status' => 404 ) );
+		}
+		$back = array();
+		foreach ( (array) ( $entries[ $at ]['fields'] ?? array() ) as $f ) {
+			$back[] = (string) ( $f['label'] ?? '' );
+		}
+		array_splice( $entries, $at, 1 );
+		update_post_meta( $pid, '_dwdc_entries', $entries );
+		$q         = get_post_meta( $pid, '_dwdrb_q', true );
+		$q         = is_array( $q ) ? $q : array( 'list' => array() );
+		$q['list'] = array_values( array_unique( array_merge( array_filter( $back ), (array) ( $q['list'] ?? array() ) ) ) );
+		update_post_meta( $pid, '_dwdrb_q', $q );
+		$closed = 0;
+		foreach ( get_posts( array( 'post_type' => DWDC_TASK, 'post_status' => 'private', 'posts_per_page' => -1, 'meta_key' => '_dwdc_contact', 'meta_value' => $pid ) ) as $tp ) { // phpcs:ignore
+			$t = function_exists( 'dwdc_task' ) ? dwdc_task( $tp ) : null;
+			if ( is_array( $t ) && empty( $t['done'] ) && 0 === strpos( (string) $t['text'], 'Open questions answered' ) ) {
+				wp_delete_post( $tp->ID, true );
+				$closed++;
+			}
+		}
+		$notes   = get_post_meta( $pid, '_dwdc_notes', true );
+		$notes   = is_array( $notes ) ? $notes : array();
+		$notes[] = array( 'date' => current_time( 'mysql', true ), 'text' => 'Undid "Open questions answered by email": the client had not fully answered. ' . count( $back ) . ' question' . ( 1 === count( $back ) ? '' : 's' ) . ' back on the open list.' );
+		update_post_meta( $pid, '_dwdc_notes', $notes );
+		return array( 'restored' => $back, 'open' => count( $q['list'] ), 'tasks_removed' => $closed );
+	} ) );
 	register_rest_route( 'dwd/v1', '/crm/contact/(?P<id>\d+)/answers-check', array( 'methods' => 'POST', 'permission_callback' => function () { return current_user_can( 'manage_options' ); }, 'callback' => function ( $r ) { return array( 'answered' => dwdqa_check( (int) $r['id'] ) ); } ) );
 } );
