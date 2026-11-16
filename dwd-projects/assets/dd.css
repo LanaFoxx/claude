@@ -139,6 +139,10 @@ html[data-theme], html[data-theme] body, html[data-theme] #wpwrap, html[data-the
 .dd-ghostadd { display: flex; align-items: center; gap: 8px; width: 100%; height: 36px; margin-top: 6px; padding: 0 8px; border: 0; background: none; border-radius: var(--radius-sm); color: var(--text-3); font: 500 var(--fs-sm) var(--font); cursor: pointer; }
 .dd-ghostadd:hover { background: var(--hover); color: var(--text-2); }
 .dd-tl-add { display: flex; gap: 8px; margin-top: 10px; }
+.dd-tl-add .dd-tl-lane { flex: none; height: var(--control-h); border: 1px solid var(--border-strong); border-radius: var(--radius-md); background: var(--surface); color: var(--text); padding: 0 28px 0 10px; font: inherit; font-size: var(--fs-sm); cursor: pointer; }
+/* Project lists: client name (and website) under the company title */
+.dd-psub { display: block; font-size: var(--fs-xs, 12px); color: var(--text-3); margin-top: 2px; }
+.dd-psub .dd-pper { color: var(--text-2); }
 .dd-tl-add input { flex: 1; height: var(--control-h); border: 1px solid var(--border-strong) !important; border-radius: var(--radius-md) !important; background: var(--surface) !important; color: var(--text) !important; padding: 0 10px !important; font-size: var(--fs-sm) !important; }
 .dd-act { padding: 0 8px 8px; }
 .dd-act-r { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: var(--radius-lg); color: var(--text) !important; }

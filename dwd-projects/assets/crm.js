@@ -53,6 +53,12 @@
 		return w ? '<a class="dwdc-url" href="https://' + esc(w) + '" target="_blank" rel="noopener">' + esc(w) + '</a>' : (c.job ? '<small>' + esc(c.job) + '</small>' : '');
 	}
 	function site(c) { return String(c.website || '').replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, ''); }
+	// Project lists: the title is the company; with no company, the website; only then the project's own name.
+	// The client's (person's) name goes underneath. "(on behalf of …)" notes are left off for a clean title.
+	function cleanNm(s) { return String(s || '').split(/\s*\((?:on behalf of|for)\b/i)[0].replace(/\s+/g, ' ').trim(); }
+	function projTitle(c) { return cleanNm(c.company) || site(c) || c.name; }
+	function projPerson(c) { var k = clientOf(c); return cleanNm(c.person) || (k && k.name) || ''; }
+	function projSite(c) { return projTitle(c) === site(c) ? '' : site(c); } // website under the title, unless it already is the title
 	function toast(msg, bad) {
 		var t = document.createElement('div'); t.className = 'dwdc-toast' + (bad ? ' bad' : ''); t.textContent = msg;
 		document.body.appendChild(t); setTimeout(function () { t.classList.add('out'); }, 2200); setTimeout(function () { t.remove(); }, 2700);
@@ -1357,7 +1363,9 @@
 				return '<div class="dd-tl-r ev' + (it.ended || evD ? ' past' : '') + (evD ? ' evdone' : '') + '"><span class="dd-tl-t">' + esc(it.time) + '</span><button type="button" class="dd-tl-chk dd-evchk ' + (it.biz ? 'biz' : 'pers') + (evD ? ' on' : '') + '" data-evdone="' + esc(evK) + '" aria-label="' + (evD ? 'Mark not done' : 'Mark done') + '" aria-pressed="' + evD + '">' + (evD ? lu('check', 12) : '') + '</button><div class="dd-tl-c"' + (it.id ? ' data-ptask="' + it.id + '" role="button" tabindex="0"' : '') + '>' + (it.link ? '<a href="' + esc(it.link) + '" target="_blank" rel="noopener">' + esc(it.title) + '</a>' : '<b>' + esc(it.title) + '</b>') + '<small>' + esc(it.sub) + '</small></div>'
 					+ (it.link && !it.ended ? '<a class="dd-btn primary sm dd-join" href="' + esc(it.link) + '" target="_blank" rel="noopener">Join</a>' : '') + '</div>';
 			}).join('') : '<p class="dd-empty-l">Nothing scheduled today.</p>')
-			+ (S.schedAdd ? '<form class="dd-tl-add" data-pform="pdayadd"><input type="hidden" name="due" value="' + T + '"><input name="text" placeholder="Add a to-do for ' + dObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + '…" autocomplete="off" required><button class="dd-btn primary sm">Add</button></form>'
+			+ (S.schedAdd ? '<form class="dd-tl-add" data-pform="pdayadd"><input type="hidden" name="due" value="' + T + '"><input name="text" placeholder="Add a to-do for ' + dObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + '…" autocomplete="off" required>'
+				+ '<select name="lane" class="dd-tl-lane" aria-label="Work or personal">' + ['work', 'personal'].map(function (l) { return '<option value="' + l + '"' + (ddGet('dreamdesk-add-lane', 'work') === l ? ' selected' : '') + '>' + (l === 'work' ? 'Work' : 'Personal') + '</option>'; }).join('') + '</select>'
+				+ '<button class="dd-btn primary sm">Add</button></form>'
 				: '<button type="button" class="dd-ghostadd" data-schedadd>' + lu('plus') + 'Add a to-do for ' + dObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + '</button>') + '</div></section>';
 		// Active projects: every active project, in your order (drag to arrange) or a chosen sort.
 		var apG = sortMine('active') ? actSegs() : null;
@@ -1367,7 +1375,7 @@
 			+ '<div class="dd-aplist"' + sortAttr('active') + '>' + (ap.length ? ap.map(function (c) {
 				if (c.div) { return '<div class="dd-divrow dd-agh dd-aphd" data-sid="' + DIVID + '" title="Drag to move projects between Working on now and Waiting"><i></i>Waiting<em>' + (apG ? apG.wait.length : 0) + '</em></div>'; }
 				var k = clientOf(c), ow = num(c.balance), late = c.deadline && c.deadline < DWDC.today;
-				return '<a class="dd-ap-r" href="#client/' + c.id + '" data-sid="' + c.id + '">' + '<span class="dd-grip dd-apg" aria-hidden="true">' + (sortMine('active') ? lu('grip', 16) : '') + '</span><span class="dd-act-n"><b>' + esc(c.name) + (c.markup ? '<span class="dd-mtag" role="link" data-ext="' + esc(url(c.markup)) + '">Markup</span>' : '') + mailPill(c.client || c.id) + newPill(c) + waitPill(c) + '</b>' + (site(c) ? '<small><span class="dd-dom" role="link" data-ext="' + esc(url(c.website)) + '">' + esc(site(c)) + '</span></small>' : '') + '</span>'
+				return '<a class="dd-ap-r" href="#client/' + c.id + '" data-sid="' + c.id + '">' + '<span class="dd-grip dd-apg" aria-hidden="true">' + (sortMine('active') ? lu('grip', 16) : '') + '</span><span class="dd-act-n"><b>' + esc(projTitle(c)) + (c.markup ? '<span class="dd-mtag" role="link" data-ext="' + esc(url(c.markup)) + '">Markup</span>' : '') + mailPill(c.client || c.id) + newPill(c) + waitPill(c) + '</b>' + (projPerson(c) || projSite(c) ? '<small>' + esc(projPerson(c)) + (projPerson(c) && projSite(c) ? ' · ' : '') + (projSite(c) ? '<span class="dd-dom" role="link" data-ext="' + esc(url(c.website)) + '">' + esc(projSite(c)) + '</span>' : '') + '</small>' : '') + '</span>'
 					+ '<span class="dd-ap-m"><b class="' + (ow ? 'owe' : '') + '">' + (ow ? money(ow) : paidWord(c)) + '</b><small class="' + (late ? 'late' : '') + '">' + (c.deadline ? 'Due ' + fmt(c.deadline) : 'No due date') + '</small></span></a>';
 			}).join('') : '<p class="dd-empty-l">No active projects right now.</p>') + '</div></section>';
 		var statsOpen = ddGet('dreamdesk-stats-open', '') === '1';
@@ -1772,8 +1780,8 @@
 		var em = (k && k.email) || c.email;
 		return '<div class="dd-prow" data-go="client/' + c.id + '" data-sid="' + c.id + '">'
 			+ '<span class="dd-pgrip" title="' + (mine ? 'Drag to move' : 'Switch to My order to drag') + '">' + lu('grip', 16) + '</span>'
-			+ '<span class="dd-pc nm">' + flagDot(c) + '<span class="dd-st"><span class="dd-l1"><a href="#client/' + c.id + '"><b>' + esc(c.name) + '</b></a>' + mailPill(c.client || c.id) + newPill(c) + (c.markup ? '<a class="dd-mtag" href="' + esc(url(c.markup)) + '" target="_blank" rel="noopener">Markup</a>' : '') + '<span class="dd-mob-pill">' + ddPill('Active', 'success') + waitPill(c) + '</span></span>'
-			+ (site(c) ? '<a class="dd-dom" href="' + esc(url(c.website)) + '" target="_blank" rel="noopener">' + esc(site(c)) + '</a>' : '')
+			+ '<span class="dd-pc nm">' + flagDot(c) + '<span class="dd-st"><span class="dd-l1"><a href="#client/' + c.id + '"><b>' + esc(projTitle(c)) + '</b></a>' + mailPill(c.client || c.id) + newPill(c) + (c.markup ? '<a class="dd-mtag" href="' + esc(url(c.markup)) + '" target="_blank" rel="noopener">Markup</a>' : '') + '<span class="dd-mob-pill">' + ddPill('Active', 'success') + waitPill(c) + '</span></span>'
+			+ (projPerson(c) || projSite(c) ? '<span class="dd-psub">' + (projPerson(c) ? '<span class="dd-pper">' + esc(projPerson(c)) + '</span>' : '') + (projPerson(c) && projSite(c) ? ' · ' : '') + (projSite(c) ? '<a class="dd-dom" href="' + esc(url(c.website)) + '" target="_blank" rel="noopener">' + esc(projSite(c)) + '</a>' : '') + '</span>' : '')
 			+ '<span class="dd-mob-meta">' + esc([k ? k.name : (c.person || ''), ow ? 'Owed ' + money(ow) : paidWord(c), num(upOf(c).pend) ? money(upOf(c).pend) + ' pending in Upwork' : '', num(upOf(c).avail) ? money(upOf(c).avail) + ' ready to withdraw' : '', dd ? 'Due ' + fmt(dd) : '', c.next ? 'Next: ' + c.next : ''].filter(Boolean).join(' · ')) + '</span></span></span>'
 			+ '<span class="dd-pc cl"><span>' + (k ? '<a href="#cl/' + k.id + '">' + esc(k.name) + '</a>' : esc(c.person || '—')) + '</span><small>' + (em ? '<a href="mailto:' + esc(em) + '" data-emailp="' + c.id + '">' + esc(em) + '</a>' : 'No email on file') + '</small></span>'
 			+ '<span class="dd-pc num">' + (num(c.price) ? money(c.price) : '<i>—</i>') + '</span>'
@@ -5250,6 +5258,18 @@
 				.then(function (x) { upsert(x); S.full[x.id] = x; S.plog = null; return reload(); })
 				.then(function () { render(); toast(money(data.amount) + ' payment saved'); }).catch(function (er) { lb.disabled = false; fail(er); });
 			return;
+		}
+		// Today's schedule "Add a to-do": Work goes on the business to-do list, Personal on the personal one.
+		if (f.classList.contains('dd-tl-add') && data.lane) {
+			var lane = data.lane; delete data.lane; ddSet('dreamdesk-add-lane', lane);
+			if (lane === 'work') {
+				if (!String(data.text || '').trim()) { return; }
+				api('/task', 'POST', { text: data.text, contact: 0, due: data.due || DWDC.today, time: data.time || '' }).then(function (x) {
+					S.tasks.unshift(x); render(); toast('Work to-do added for ' + (x.due && x.due !== DWDC.today ? fmt(x.due) : 'today'));
+					var ti = app.querySelector('.dd-tl-add [name=text]'); if (ti) { ti.focus(); }
+				}).catch(fail);
+				return;
+			}
 		}
 		if (f.hasAttribute('data-pform')) {
 			var pk = f.getAttribute('data-pform');
