@@ -272,3 +272,22 @@ footer{padding-left:18px !important;padding-right:18px !important}
 
 /* Homepage intro: title above the photo on phones and tablets */
 @media (max-width:980px){#dw-intro-grid{grid-template-columns:1fr !important;grid-template-rows:auto !important;grid-template-areas:'head' 'photo' 'text' !important;row-gap:28px !important}#dw-intro-head{padding-bottom:0 !important}}
+
+/* Homepage: Google review quotes in their own white section (replaces the "people rave about" band) */
+.dwr-qband{background:#fff;color:#121212;padding:clamp(72px,9vw,140px) clamp(20px,4vw,56px)}
+.dwr-qband-in{max-width:1120px;margin:0 auto;display:flex;flex-direction:column;align-items:center}
+.dwr-qband .dwr-qwrap{width:100%;margin-top:clamp(24px,3vw,40px)!important}
+.dwr-qband .dwr-qslider{width:100%!important}
+.dwr-qband .dwr-qslider>figure{border-color:#E4E6EA!important;background:#fff!important;box-shadow:0 20px 50px -24px rgba(18,18,18,.18)}
+.dwr-qband .dwr-qslider blockquote{color:#121212!important}
+.dwr-qband .dwr-qsrc{color:#5B6370}
+.dwr-qband .dwr-qwho{color:#5B6370}
+.dwr-qband .dwr-qwho b{color:#121212}
+.dwr-qband .dwr-qall,.dwr-qband .dwr-qlinks .dwr-qall{color:#121212!important}
+.dwr-qband .dwr-qlinks .dwr-qall:hover{color:#13A6EE!important;border-color:#13A6EE}
+.dwr-qband .dwr-qbtn{border-color:#D4D7DD;color:#121212}
+.dwr-qband .dwr-qbtn:hover{color:#fff}
+.dwr-qband .dwr-qcount{color:#7A808C}
+.dwr-qband .dwr-qcount b{color:#121212}
+.dwr-qband .dwr-qdot:before{background:#C9CDD4}
+.dwr-qband .dwr-qdot.on:before{background:#13A6EE}
