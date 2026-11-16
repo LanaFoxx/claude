@@ -324,3 +324,11 @@ section.dwr-doall-sec .dwr-doall{margin:0!important;border:0!important;border-ra
 
 /* Review quotes: a soft fade between quotes (no slide) */
 .dwr-qband .dwr-qslider>figure{transform:none !important;transition:opacity .7s ease,visibility .7s !important}
+
+/* Homepage hero: everything centred (headline, intro, buttons under the intro) */
+#top h1{text-align:center}
+#top h1>span{margin-left:auto;margin-right:auto}
+#dw-hero-row{grid-template-columns:1fr !important;justify-items:center;text-align:center}
+#dw-hero-row p{margin-left:auto !important;margin-right:auto !important}
+#dw-hero-cta{align-items:center !important}
+#dw-hero-cta>*{justify-content:center}
