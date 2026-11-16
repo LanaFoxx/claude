@@ -1,0 +1,10 @@
+// GLEC tokens (match the website)
+$glec-navy: #0B2A42; $glec-blue: #10476E; $glec-orange: #C2410C; $glec-orange-hover: #9A3412; $glec-highlight: #E46312;
+$glec-tint: #FDEBDD; $glec-ink: #0F172A; $glec-slate: #475569; $glec-mist: #F5F7FA; $glec-line: #E2E8F0; $glec-success: #15803D; $glec-lslate: #CBD5E1;
+$primary: $glec-blue; $success: $glec-success; $info: $glec-blue; $warning: $glec-orange; $danger: #B91C1C;
+$body-color: $glec-ink; $body-bg: #fff; $link-color: $glec-blue; $link-hover-color: $glec-navy;
+$font-family-sans-serif: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+$headings-font-family: "Inter Tight", "Inter", system-ui, sans-serif; $headings-font-weight: 600; $headings-color: $glec-navy;
+$font-size-base: 1.0625rem; $line-height-base: 1.6;
+$border-radius: .625rem; $border-color: $glec-line; $card-border-color: $glec-line;
+$navbar-height: 72px;

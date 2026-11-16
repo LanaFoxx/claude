@@ -93,3 +93,39 @@ Exports in `wordpress/elementor-templates/` (`glec-homepage.json`, `glec-header.
 - **Elementor Pro license shows "Mismatch" on staging158** (license is tied to another domain), so Pro could not update from 4.3.3 → 4.4.0 here. Reconnect under Elementor → License (Disconnect, then Connect) and update.
 - The WooCommerce store isn't configured beyond prices: **no payment gateway** (checkout shows "no payment methods" and a "Missing parameter(s): billing_address" banner, which goes away as soon as any gateway is enabled; verified), and no shipping, tax or store address yet (CA-TABs needs shipping; the license classes are virtual).
 - Next stage (Moodle course page theme) waits on Moodle admin access.
+
+## Round 3: client copy doc, interior pages, Moodle theme (Nov 16)
+
+Source of truth for copy: `1_Website_Home_Page_Verbiage_Content.docx` (Nov 1, 2026). Garrison's green-text notes
+are treated as instructions and never appear on the site.
+
+**WordPress (staging158)**
+- Homepage: "How to get licensed" (no "in three steps"), link "See the step-by-step process", Why GLEC headline
+  "The leading HVAC license exam prep company in Georgia", "Focused on Georgia only", class cards fully clickable
+  to their class pages, real phone 404-590-5101 everywhere.
+- New pages (Elementor, exports in `wordpress/elementor-templates/pages/`): License classes + 5 class pages
+  (Residential Design, Commercial Design, Exam Prep Review, Reference tabs, Application Overview), CEU classes
+  (7 new 2027 CEU products, hidden from the shop, each with Add to cart), How to get licensed (step-by-step guide +
+  Applications Considerations Chart with the audio help links), About (mission, history timeline, bio, quote,
+  licenses, education, Trane training), Testimonials (all 14, verbatim), Policies (cancellation + hold harmless as
+  fine print), Technician certifications, Board application and meeting dates. Contact form fields per the doc.
+- Step-by-step guide (`inc/steps.php`, `assets/steps.js`): one step at a time, "I have this" / "I need this",
+  step 1 picks Restricted / Non-Restricted / Not sure (opens the chart), Commercial Design auto-skipped for
+  Restricted, to-do list summary, progress saved in the browser, keyboard accessible, no-JS fallback list.
+- Checkout (`inc/checkout.php`): billing address warning, required acknowledgement checkbox (WooCommerce
+  additional checkout field), cancellation policy. WooCommerce product URLs redirect to the class pages.
+- Mega menu and footer link to the new pages.
+
+**Moodle**: see `moodle/README.md`. Built and tested on a local restored copy; needs a staging Moodle to deploy.
+
+**Questions from the copy doc ([CONFIRM])**
+- CA-TABs count: pricing says 328 tabs, the tab details say about 317 pre-printed + 33 blank. Site uses the detail
+  numbers on the tabs page and no number elsewhere.
+- Board meeting dates for 2026 are listed as Wednesdays, but Sep 21, 2026 is a Monday; all 2026 dates have also
+  passed. Need the 2027 dates.
+- SOS-APP copy says "21 years of experience"; the rest of the site says 20 years (since 2006). Left out.
+- Hold Harmless: Garrison asked "Do we all agree we should keep this policy?" Kept as fine print pending an answer.
+- The billing warning says "As of November 11, 2026"; confirm that wording.
+- Still open: payment gateway (live uses Authorize.net), Claire's title, form recipient, new-user registration
+  fields (first/middle/last/suffix, phone, zip: on live via Pie Register), and Garrison's note about upgrading the
+  live site to Wordfence Premium.

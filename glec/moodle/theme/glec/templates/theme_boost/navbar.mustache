@@ -1,0 +1,27 @@
+{{!
+    @template theme_boost/navbar (overridden by theme_glec)
+    GLEC header: logo back to the main website, My courses, Log out. Staff keep the drawer toggle and user menu.
+}}
+<nav class="fixed-top navbar navbar-light bg-white navbar-expand moodle-has-zindex glec-header" aria-label="{{#str}}sitemenubar, admin{{/str}}">
+    {{#output.glec_is_staff}}
+    <div data-region="drawer-toggle" class="d-inline-block mr-3">
+        <button aria-expanded="{{#navdraweropen}}true{{/navdraweropen}}{{^navdraweropen}}false{{/navdraweropen}}" aria-controls="nav-drawer" type="button" class="btn nav-link float-sm-left mr-1 btn-light bg-gray" data-action="toggle-drawer" data-side="left" data-preference="drawer-open-nav">{{#pix}}i/menubars{{/pix}}<span class="sr-only">{{#str}}sidepanel, core{{/str}}</span></button>
+    </div>
+    {{/output.glec_is_staff}}
+    <a href="{{output.glec_site_url}}" class="glec-header__logo"><img src="{{output.glec_logo_url}}" alt="GLEC, Georgia License Exam Company" width="155" height="46"></a>
+    <ul class="glec-header__nav ml-auto">
+        {{#output.glec_isloggedin}}
+        <li><a class="glec-header__link {{#output.glec_is_mycourses}}is-active{{/output.glec_is_mycourses}}" href="{{output.glec_mycourses_url}}" {{#output.glec_is_mycourses}}aria-current="page"{{/output.glec_is_mycourses}}>{{#str}}mycourses, theme_glec{{/str}}</a></li>
+        {{^output.glec_is_staff}}<li><a class="glec-header__link" href="{{output.glec_logout_url}}">{{#str}}logout{{/str}}</a></li>{{/output.glec_is_staff}}
+        {{/output.glec_isloggedin}}
+        {{^output.glec_isloggedin}}
+        <li><a class="glec-header__link" href="{{output.glec_login_url}}">{{#str}}login{{/str}}</a></li>
+        {{/output.glec_isloggedin}}
+    </ul>
+    {{#output.glec_is_staff}}
+    <ul class="nav navbar-nav usernav">
+        <li class="nav-item">{{{ output.navbar_plugin_output }}}</li>
+        <li class="nav-item align-items-center pl-2">{{{ output.user_menu }}}</li>
+    </ul>
+    {{/output.glec_is_staff}}
+</nav>

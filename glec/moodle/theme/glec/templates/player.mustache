@@ -1,0 +1,85 @@
+{{!
+    @template theme_glec/player
+    Lesson page with playlist: video and lesson navigation on the left, the whole class as a playlist on the right.
+}}
+{{> theme_boost/head }}
+<body {{{ bodyattributes }}}>
+{{> core/local/toast/wrapper}}
+<div id="page-wrapper" class="d-print-block">
+    {{{ output.standard_top_of_body_html }}}
+    {{> theme_boost/navbar }}
+    <div id="page" class="glec-page">
+        {{#c}}
+        <div class="gp-wrap">
+            <nav class="gc-crumbs" aria-label="Breadcrumb"><a href="{{mycoursesurl}}">{{#str}}mycourses, theme_glec{{/str}}</a><span aria-hidden="true">›</span><a href="{{courseurl}}">{{code}}</a><span aria-hidden="true">›</span><span aria-current="page">{{title}}</span></nav>
+            <div class="gp-grid">
+                <section id="region-main" class="gp-main" aria-label="{{#str}}content{{/str}}">
+                    <div class="gp-titlebar">
+                        <div>
+                            {{#position}}<p class="gp-pos">Lesson {{position}} of {{lessontotal}}</p>{{/position}}
+                            <h1 class="gp-h1">{{title}}</h1>
+                        </div>
+                        {{#currentitem}}{{#complete}}<span class="gc-st gc-st--done"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>Complete</span>{{/complete}}{{/currentitem}}
+                    </div>
+                    <div class="gp-content">
+                        {{{ output.course_content_header }}}
+                        {{{ output.main_content }}}
+                        {{{ output.course_content_footer }}}
+                    </div>
+                    <div class="gp-nav">
+                        {{#prev}}<a class="gc-btn gc-btn--sec" href="{{url}}" rel="prev"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>Previous<span class="sr-only">: {{{name}}}</span></a>{{/prev}}
+                        {{#nextitem}}{{^locked}}<a class="gc-btn gc-btn--primary gp-nextbtn" href="{{url}}" rel="next" data-next-url="{{url}}" data-next-name="{{name}}">Next: {{{name}}}<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>{{/locked}}{{#locked}}<span class="gp-lockednext">Next: {{{name}}} (locked)</span>{{/locked}}{{/nextitem}}
+                        {{^nextitem}}<a class="gc-btn gc-btn--sec" href="{{courseurl}}">Back to the class overview</a>{{/nextitem}}
+                    </div>
+                    {{#isvideo}}{{#nextitem}}{{^locked}}
+                    <div class="gp-upnext" hidden role="status" aria-live="polite">
+                        <div class="gp-upnext__in">
+                            <p class="gp-upnext__k">Up next</p>
+                            <p class="gp-upnext__t">{{{name}}}</p>
+                            <p class="gp-upnext__count">Playing in <span data-count>6</span> seconds</p>
+                            <div class="gp-upnext__btns"><a class="gc-btn gc-btn--primary" href="{{url}}" data-autonext>Play now</a><button type="button" class="gc-btn gc-btn--sec" data-cancel>Stay on this video</button></div>
+                        </div>
+                    </div>
+                    {{/locked}}{{/nextitem}}{{/isvideo}}
+                </section>
+
+                <aside class="gp-side" aria-label="Class playlist">
+                    <div class="gp-list">
+                        <div class="gp-list__head">
+                            <a class="gp-list__course" href="{{courseurl}}">{{fullname}}</a>
+                            <p class="gp-list__prog">{{done}} of {{tracked}} complete · {{percent}}%</p>
+                            <div class="gc-bar gc-bar--sm" role="progressbar" aria-label="Class progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{percent}}"><span style="width:{{percent}}%"></span></div>
+                        </div>
+                        <div class="gp-list__scroll" data-playlist>
+                            {{#sections}}
+                            {{#hasplaylistitems}}<p class="gp-list__sec">{{{name}}}</p>{{/hasplaylistitems}}
+                            <ol class="gp-items">
+                                {{#items}}{{^isforum}}
+                                <li class="gp-item {{#current}}is-current{{/current}} {{#complete}}is-complete{{/complete}} {{#locked}}is-locked{{/locked}}">
+                                    {{^locked}}<a href="{{url}}" {{#current}}aria-current="page"{{/current}}>{{/locked}}{{#locked}}<span>{{/locked}}
+                                        <span class="gp-item__st" aria-hidden="true">
+                                            {{#current}}<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.14v13.72a1 1 0 0 0 1.5.86l11-6.86a1 1 0 0 0 0-1.72l-11-6.86A1 1 0 0 0 8 5.14Z"/></svg>{{/current}}
+                                            {{^current}}{{#complete}}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>{{/complete}}{{^complete}}{{#locked}}<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>{{/locked}}{{^locked}}<span class="gp-item__num">{{#number}}{{number}}{{/number}}{{^number}}•{{/number}}</span>{{/locked}}{{/complete}}{{/current}}
+                                        </span>
+                                        <span class="gp-item__name">{{{name}}}<span class="sr-only">{{#current}}, now playing{{/current}}{{^current}}{{#complete}}, complete{{/complete}}{{#locked}}, locked{{/locked}}{{/current}}</span></span>
+                                    {{^locked}}</a>{{/locked}}{{#locked}}</span>{{/locked}}
+                                </li>
+                                {{/isforum}}{{/items}}
+                            </ol>
+                            {{/sections}}
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+        {{/c}}
+    </div>
+    {{> theme_boost/footer }}
+</div>
+<script src="{{playerjs}}" defer></script>
+</body>
+</html>
+{{#js}}
+M.util.js_pending('theme_boost/loader');
+require(['theme_boost/loader'], function() { M.util.js_complete('theme_boost/loader'); });
+{{/js}}

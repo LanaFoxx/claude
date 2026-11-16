@@ -1,0 +1,103 @@
+{{!
+    @template theme_glec/course_page
+    Student course overview: header with progress and next step, sections of lessons with status, side cards.
+}}
+{{> theme_boost/head }}
+<body {{{ bodyattributes }}}>
+{{> core/local/toast/wrapper}}
+<div id="page-wrapper" class="d-print-block">
+    {{{ output.standard_top_of_body_html }}}
+    {{> theme_boost/navbar }}
+    <div id="page" class="glec-page">
+        {{#c}}
+        <header class="gc-head">
+            <div class="gc-wrap">
+                <nav class="gc-crumbs" aria-label="Breadcrumb"><a href="{{mycoursesurl}}">{{#str}}mycourses, theme_glec{{/str}}</a><span aria-hidden="true">›</span><span aria-current="page">{{code}}</span></nav>
+                <div class="gc-head__row">
+                    <div class="gc-head__main">
+                        <span class="gc-pill">{{code}}</span>
+                        <h1 class="gc-h1">{{fullname}}</h1>
+                        <ul class="gc-facts">
+                            <li class="gc-facts__progress"><span class="gc-ico gc-ico--ok" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg></span>{{done}} of {{tracked}} lessons · {{percent}}%</li>
+                            {{#accessend}}<li><span class="gc-ico" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>Access until {{accessend}}</li>{{/accessend}}
+                            <li><span class="gc-ico" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg></span>{{typelabel}}</li>
+                        </ul>
+                    </div>
+                    {{#hascta}}{{#cta}}<a class="gc-btn gc-btn--primary gc-head__cta" href="{{url}}">{{label}}<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>{{/cta}}{{/hascta}}
+                </div>
+                <div class="gc-bar" role="progressbar" aria-label="Class progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{percent}}"><span style="width:{{percent}}%"></span></div>
+            </div>
+        </header>
+
+        <div class="gc-wrap gc-body">
+            <section id="region-main" class="gc-main" aria-label="{{#str}}content{{/str}}">
+                {{{ output.course_content_header }}}
+                {{#isceu}}
+                <div class="gc-info"><span class="gc-ico" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span><p>Watch every video to the end. Your certificate unlocks after the last video.</p></div>
+                {{/isceu}}
+                {{#sections}}
+                <details class="gc-sec" {{#open}}open{{/open}}>
+                    <summary class="gc-sec__head">
+                        <h2 class="gc-sec__title">{{{name}}}</h2>
+                        <span class="gc-sec__meta">{{#lessoncount}}{{lessoncount}} {{lessonword}} · {{#allcomplete}}complete{{/allcomplete}}{{^allcomplete}}{{lessondone}} of {{lessoncount}} complete{{/allcomplete}}{{/lessoncount}}</span>
+                        <span class="gc-sec__chev" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+                    </summary>
+                    {{#hassummary}}<div class="gc-sec__summary">{{{summary}}}</div>{{/hassummary}}
+                    {{#notes}}<div class="gc-sec__summary">{{{html}}}</div>{{/notes}}
+                    <ol class="gc-rows">
+                        {{#items}}
+                        <li class="gc-row {{#complete}}is-complete{{/complete}} {{#locked}}is-locked{{/locked}} {{#iscert}}is-cert{{/iscert}}">
+                            {{^locked}}<a class="gc-row__link" href="{{url}}">{{/locked}}{{#locked}}<span class="gc-row__link">{{/locked}}
+                                <span class="gc-row__num">{{#number}}{{number}}{{/number}}{{^number}}{{#iscert}}<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>{{/iscert}}{{^iscert}}<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>{{/iscert}}{{/number}}</span>
+                                <span class="gc-row__title">{{{name}}}{{#lockinfo}}<span class="gc-row__lock">{{lockinfo}}</span>{{/lockinfo}}</span>
+                                <span class="gc-row__status">
+                                    {{#complete}}<span class="gc-st gc-st--done"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>Complete</span>{{/complete}}
+                                    {{#notstarted}}{{^locked}}<span class="gc-st gc-st--todo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/></svg>Not started</span>{{/locked}}{{/notstarted}}
+                                    {{#ready}}<span class="gc-st gc-st--done"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>Ready to print</span>{{/ready}}
+                                    {{#locked}}<span class="gc-st gc-st--lock"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Locked</span>{{/locked}}
+                                </span>
+                            {{^locked}}</a>{{/locked}}{{#locked}}</span>{{/locked}}
+                        </li>
+                        {{/items}}
+                    </ol>
+                </details>
+                {{/sections}}
+                {{{ output.course_content_footer }}}
+                <div class="gc-defaultcontent" hidden>{{{ output.main_content }}}</div>
+            </section>
+
+            <aside class="gc-side" aria-label="Class tools">
+                {{#hascert}}
+                <div class="gc-card">
+                    <h2 class="gc-card__t">Certificate of completion</h2>
+                    {{#certunlocked}}
+                    <p class="gc-card__p">Your certificate is ready.</p>
+                    {{#cert}}<a class="gc-btn gc-btn--primary gc-btn--block" href="{{url}}">Print your certificate</a>{{/cert}}
+                    <p class="gc-card__small">Keep your certificates on file for 7 years. Also save one as a PDF to upload with your application to the Board.</p>
+                    {{/certunlocked}}
+                    {{^certunlocked}}
+                    <div class="gc-locked"><span class="gc-ico" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><div><b>{{remaining}} lessons to go</b><span>Unlocks after the last lesson.</span></div></div>
+                    {{/certunlocked}}
+                    <p class="gc-card__name">Name that will print: <b>{{legalname}}</b><br><a href="{{editprofileurl}}">Not right? Correct it before printing</a></p>
+                </div>
+                {{/hascert}}
+                <div class="gc-card">
+                    <h2 class="gc-card__t">Questions about this class?</h2>
+                    <ul class="gc-contact">
+                        <li><a href="mailto:Info@GeorgiaLicenseExam.com">Info@GeorgiaLicenseExam.com</a></li>
+                        <li><a href="tel:+14045905101">404-590-5101</a></li>
+                    </ul>
+                </div>
+            </aside>
+        </div>
+        {{/c}}
+        {{{ output.activity_navigation }}}
+    </div>
+    {{> theme_boost/footer }}
+</div>
+</body>
+</html>
+{{#js}}
+M.util.js_pending('theme_boost/loader');
+require(['theme_boost/loader'], function() { M.util.js_complete('theme_boost/loader'); });
+{{/js}}
