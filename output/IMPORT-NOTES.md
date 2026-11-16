@@ -308,3 +308,7 @@ Container `Seasonal Offer`: change the H2 to **Talk to us about your project** a
   - **Photos:** the Staining photo is the fence. The Painting slot keeps "Photo: finished interior".
 - **Brief updated** (`TOP-NOTCH-HOMEPAGE-BUILD.md`, `top-notch-homepage-reference.html`). Later client requests listed in this file still override the brief where they conflict: header and nav, stats strip, footer, Why grid, placeholders, and the hero and Away backgrounds.
 - **What We Do (client request):** the "What we do" H2 is removed, and section top padding is reduced to 64 / 56 / 48 / 40px, so the photos start about 144px below the hero credentials at 1440.
+- **Team feedback round 1 (Tela, Matt):**
+  - **Hero subline:** now ends "…Part of the Top Notch team you've trusted to maintain your log home and deck since 1999." (Matt's wording; it replaces "Backed by a company…").
+  - **Hero credential:** now the value statement "Building something better since 1999" instead of "Building mountain homes since 1999".
+  - **Footer fine print:** now "© [year] Top Notch Painting · A Top Notch Logworks company · Employee owned & operated".

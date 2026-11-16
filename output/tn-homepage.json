@@ -293,7 +293,7 @@
        "widgetType": "text-editor",
        "isInner": false,
        "settings": {
-        "editor": "<p>High-end interior and exterior painting, plus log and timber home staining, restoration and chinking, from Vail to Aspen. Backed by a company that has been building log homes in these valleys since 1999.</p>",
+        "editor": "<p>High-end interior and exterior painting, plus log and timber home staining, restoration and chinking, from Vail to Aspen. Part of the Top Notch team you've trusted to maintain your log home and deck since 1999.</p>",
         "text_color": "#D7CFC4",
         "paragraph_spacing": {
          "unit": "px",
@@ -758,7 +758,7 @@
        "widgetType": "text-editor",
        "isInner": false,
        "settings": {
-        "editor": "<p>Building mountain homes <strong>since 1999</strong></p>",
+        "editor": "<p>Building something better <strong>since 1999</strong></p>",
         "text_color": "#B3A99C",
         "paragraph_spacing": {
          "unit": "px",

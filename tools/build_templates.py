@@ -611,11 +611,11 @@ def build_footer():
                    grid_align_items="center", grid_justify_items="stretch", flex_align_items="center",
                    padding=dims(56, 0, 40, 0))
 
-    year = heading("Footer / Copyright (auto year)", "© 2026 Top Notch Painting · A Top Notch Logworks company",
+    year = heading("Footer / Copyright (auto year)", "© 2026 Top Notch Painting · A Top Notch Logworks company · Employee owned &amp; operated",
                    tag="p", color=DRIFT, typ=typo(size=13, weight=400, lh=1.6))
     tag_settings = ("%7B%22date_format%22%3A%22custom%22%2C%22custom_format%22%3A%22Y%22%2C"
                     "%22before%22%3A%22%C2%A9%20%22%2C%22after%22%3A%22%20Top%20Notch%20Painting%20%C2%B7"
-                    "%20A%20Top%20Notch%20Logworks%20company%22%7D")
+                    "%20A%20Top%20Notch%20Logworks%20company%20%C2%B7%20Employee%20owned%20%26%20operated%22%7D")
     year["settings"]["__dynamic__"] = {
         "title": '[elementor-tag id="%s" name="current-date-time" settings="%s"]' % (eid(), tag_settings)}
     bottom = container("Footer / Fine Print", [
@@ -692,7 +692,7 @@ def build_hero():
                    direction="row", gap=10, flex_align_items="center", auto_width=True),
          text("Hero / Credentials / BBB", "<p><strong>BBB A+</strong> accredited</p>",
               size=(16, 16, 16, 14), lh=1.5, pretty=False),
-         text("Hero / Credentials / Since", "<p>Building mountain homes <strong>since 1999</strong></p>",
+         text("Hero / Credentials / Since", "<p>Building something better <strong>since 1999</strong></p>",
               size=(16, 16, 16, 14), lh=1.5, pretty=False),
          text("Hero / Credentials / Insured", "<p>Fully insured</p>", size=(16, 16, 16, 14), lh=1.5, pretty=False),
          text("Hero / Credentials / Partners", "<p>Sashco &amp; Perma-Chink partners</p>",
@@ -712,8 +712,8 @@ def build_hero():
          grid("Hero / Intro Row", [
              text("Hero / Subline",
                   "<p>High-end interior and exterior painting, plus log and timber home staining, "
-                  "restoration and chinking, from Vail to Aspen. Backed by a company that has been "
-                  "building log homes in these valleys since 1999.</p>",
+                  "restoration and chinking, from Vail to Aspen. Part of the Top Notch team you've "
+                  "trusted to maintain your log home and deck since 1999.</p>",
                   color=HERO_TEXT, size=18, lh=1.65, max_w=560, pretty=False,
                   custom_css="selector p{text-wrap:balance;}"),
              container("Hero / Actions",

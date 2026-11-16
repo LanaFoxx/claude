@@ -773,7 +773,7 @@
        "widgetType": "heading",
        "isInner": false,
        "settings": {
-        "title": "© 2026 Top Notch Painting · A Top Notch Logworks company",
+        "title": "© 2026 Top Notch Painting · A Top Notch Logworks company · Employee owned &amp; operated",
         "header_size": "p",
         "title_color": "#B3A99C",
         "typography_typography": "custom",
@@ -791,7 +791,7 @@
         },
         "_title": "Footer / Copyright (auto year)",
         "__dynamic__": {
-         "title": "[elementor-tag id=\"bdec6f1\" name=\"current-date-time\" settings=\"%7B%22date_format%22%3A%22custom%22%2C%22custom_format%22%3A%22Y%22%2C%22before%22%3A%22%C2%A9%20%22%2C%22after%22%3A%22%20Top%20Notch%20Painting%20%C2%B7%20A%20Top%20Notch%20Logworks%20company%22%7D\"]"
+         "title": "[elementor-tag id=\"bdec6f1\" name=\"current-date-time\" settings=\"%7B%22date_format%22%3A%22custom%22%2C%22custom_format%22%3A%22Y%22%2C%22before%22%3A%22%C2%A9%20%22%2C%22after%22%3A%22%20Top%20Notch%20Painting%20%C2%B7%20A%20Top%20Notch%20Logworks%20company%20%C2%B7%20Employee%20owned%20%26%20operated%22%7D\"]"
         }
        },
        "elements": []
