@@ -283,7 +283,7 @@ while ( have_posts() ) :
 					<a href="<?php echo esc_url( home_url( '/contact/' ) ); ?>"><b>Contact</b><span>Tell me about your project and I’ll respond the same day.</span><i>Get in touch →</i></a>
 				</div>
 				<aside class="dwbp-author">
-					<img src="<?php echo esc_url( content_url( '/uploads/2026/08/photo-michael.jpg' ) ); ?>" alt="Michael Tarr, founder of Dream Web Digital" loading="lazy" width="72" height="72">
+					<img src="<?php echo esc_url( content_url( '/uploads/2026/11/michael-tarr-avatar.jpg' ) ); ?>" alt="Michael Tarr, founder of Dream Web Digital" loading="lazy" width="72" height="72">
 					<p><strong>Written by Michael Tarr, founder of Dream Web Digital.</strong> I’ve designed and built websites for more than 12 years, and I work with every client directly, from the first call through launch and beyond. <a href="<?php echo esc_url( home_url( '/#about' ) ); ?>">More about Michael →</a></p>
 				</aside>
 			</div>

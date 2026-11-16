@@ -30,7 +30,7 @@ function dwdp_business() {
 		'lat'        => 27.1975,
 		'lng'        => -80.2528,
 		'sameas'     => array( 'https://www.upwork.com/freelancers/dreamwebdigital', 'https://maps.app.goo.gl/z4HfYnTZaqccWhhy9' ),
-		'photo'      => content_url( '/uploads/2026/08/photo-michael.jpg' ),
+		'photo'      => content_url( '/uploads/2026/11/michael-tarr-bio.jpg' ),
 	);
 }
 
