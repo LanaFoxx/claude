@@ -299,3 +299,28 @@ footer{padding-left:18px !important;padding-right:18px !important}
 /* Footer without the big headline: no empty space above the logo row */
 footer.dwr-ft[data-theme]{padding-top:clamp(20px,3vw,40px)!important}
 .dwr-ft .dwr-ft-strip{margin-top:0!important;border-top:0!important}
+
+/* "I do it all" strip: its own full-width band (no rounded card) */
+.dwr-doall-sec{background:#1A1A1A;color:#fff;border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08)}
+section.dwr-doall-sec .dwr-doall{margin:0!important;border:0!important;border-radius:0!important;background:transparent!important;padding:clamp(28px,3vw,44px) clamp(20px,4vw,56px)!important}
+
+/* White quote section: just the quote, centred, no box or lines */
+.dwr-qband .dwr-qwrap{margin-top:0!important}
+.dwr-qband .dwr-qslider>figure{border:0!important;background:transparent!important;box-shadow:none!important;padding:0!important;align-items:center!important;text-align:center}
+.dwr-qband .dwr-qslider>figure *{text-align:center}
+.dwr-qband .dwr-qslider>figure>*{border-top:0!important;border-bottom:0!important}
+.dwr-qband .dwr-qslider>figure figcaption,.dwr-qband .dwr-qslider>figure footer{border-top:0!important;padding-top:0!important;display:flex;flex-direction:column;align-items:center}
+.dwr-qband .dwr-qsrc{justify-content:center}
+.dwr-qband .dwr-qlinks{justify-content:center!important}
+.dwr-qband .dwr-qall{margin-left:auto!important;margin-right:auto!important}
+.dwr-qband .dwr-qslider blockquote{max-width:960px;margin-left:auto!important;margin-right:auto!important}
+/* Dark stats section: tighter now it has no label */
+#reviews #dw-rating{margin-top:0!important}
+
+/* Laptop project copy: right-aligned next to the laptop (desktop) */
+@media (min-width:981px){#dw-work-copy{align-items:flex-end !important;text-align:right}#dw-work-copy #dw-work-ctas,#dw-work-copy .dwr-proof{justify-content:flex-end}#dw-work-copy p{margin-left:auto !important}}
+/* Quote section: centre "Read all Google reviews" on phones too */
+.dwr-qband .dwr-qlinks .dwr-qall{margin:6px auto 0 !important}
+
+/* Review quotes: a soft fade between quotes (no slide) */
+.dwr-qband .dwr-qslider>figure{transform:none !important;transition:opacity .7s ease,visibility .7s !important}
