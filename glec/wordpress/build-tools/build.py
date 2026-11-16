@@ -98,7 +98,7 @@ def LINK(text, url, icon='arrow', cls='g-link', ext=False):
     lbl = '<span class="screen-reader-text"> (opens in a new tab)</span>' if ext else ''
     return HTML('<a href="%s"%s>%s%s %s</a>' % (url, t, text, lbl, ic(I[icon],20)), cls)
 
-PHONE = '[CONFIRM: phone number]'
+PHONE = '<a href="tel:+14045905101">404-590-5101</a>'
 START = SITE + '/how-to-get-licensed/'
 SECT = (104,64,104,64); SECT_T=(80,40,80,40); SECT_M=(64,20,64,20)
 
@@ -142,23 +142,24 @@ def step(n, icon, h3, body):
     return C([C([H(n,'span',None,None,'g-num'), HTML('<span class="g-ico g-ico--navy">%s</span>' % ic(I[icon],26))], direction='row', justify='space-between', align='center'),
               H(h3,'h3','h3','navy'), TX('<p>%s</p>' % body,'body','slate')], 'g-step', gap=16, pad=(32,32,36,32), pad_m=(24,20,28,20))
 home.append(C([
-    head_row('Start here','How to get licensed, in three steps', LINK('See all 10 steps', SITE+'/how-to-get-licensed/')),
+    head_row('Start here','How to get licensed', LINK('See the step-by-step process', SITE+'/how-to-get-licensed/')),
     C([step('01','clip','Check which license fits','Restricted (Class 1) for units up to 5 tons, or Non-Restricted (Class 2) for all sizes. Our chart shows which one matches your experience.'),
        step('02','play','Take the design classes','Residential Design is required for every license. Non-Restricted adds Commercial Design. Then apply to the Board online through GOALS.'),
        step('03','award','Prep for the exam and pass','After Board approval, take the Exam Prep Review Class, tab your books and schedule your PSI exam.')], 'g-g3 g-steps-grid', gap=24, gap_m=16),
 ], 'g-steps', boxed=True, bg='mist', pad=(304,64,104,64), pad_t=(272,40,80,40), pad_m=(240,20,64,20), extra={"margin":dims(-200,0,0,0),"margin_tablet":dims(-200,0,0,0),"margin_mobile":dims(-200,0,0,0)}, html_tag='section'))
 
 # Classes
+CLASS_URL = {'HLG-DD-R-OL':SITE+'/license-classes/residential-design/','HLG-DD-C-OL':SITE+'/license-classes/commercial-design/','CA-OL':SITE+'/license-classes/exam-prep-review/','CA-TABs':SITE+'/license-classes/reference-tabs/','SOS-APP':SITE+'/license-classes/application-overview/'}
 def pcard(code, qual, h3, body, pid, free=False):
     q = '<span class="g-qual%s">%s</span>' % (' g-qual--free' if free else '', qual)
     return C([HTML('<div class="g-pills"><span class="g-code">%s</span>%s</div>' % (code,q)),
-              H(h3,'h3','h3_card','navy'), TX('<p>%s</p>' % body, None, None, 'g-grow'),
+              H(h3,'h3','h3_card','navy','g-cardlink', link=CLASS_URL[code]), TX('<p>%s</p>' % body, None, None, 'g-grow'),
               C([PRICE(pid,'g-price'), ATC(pid,'g-atc-sec')], direction='row', justify='space-between', align='center', gap=16, extra={"padding":dims(8,0,0,0)})],
              'g-card', gap=12, pad=(28,28,28,28), pad_m=(22,20,22,20))
 checks = '<ul class="g-checks">' + ''.join('<li>%s%s</li>' % (ic(I['check'],20), t) for t in ['Residential Design Study Guide included','SOS-APP application videos included free','Certificate prints when you finish the videos']) + '</ul>'
 feature = C([
     HTML('<div class="g-pills"><span class="g-code g-code--dark">HLG-DD-R-OL</span><span class="g-badge">Required for every CA license</span></div>'),
-    H('Residential Design Class','h3',None,'white', size=32, size_m=26),
+    H('Residential Design Class','h3',None,'white','g-cardlink', size=32, size_m=26, link=CLASS_URL['HLG-DD-R-OL']),
     TX('<p>ACCA Manual J &amp; D: heat loss and gain, duct design. About 16 hours online.</p>', None, 'light_slate'),
     HTML(checks),
     C([C([TX('<p class="g-small-light">Restricted and Non-Restricted</p>',None,None), PRICE(P['R'],'g-pricebig')], 'g-auto'),
@@ -172,7 +173,7 @@ home.append(C([
     C([feature,
        pcard('HLG-DD-C-OL','Non-Restricted only','Commercial Design Class','Carrier System Design Manuals 1, 2 and 3. About 8 hours online.',P['C']),
        pcard('CA-OL','After Board approval','Exam Prep Review Class','Every reference book except Manuals J &amp; D, plus quizzes. Ships a printed study guide.',P['OL']),
-       pcard('CA-TABs','Shipped','Permanent reference tabs','317+ laser-printed tabs with placement charts. Best bought with CA-OL. [CONFIRM: 317 or 328]',P['TABS']),
+       pcard('CA-TABs','Shipped','Permanent reference tabs','Permanent tabs for every reference book, Restricted and Non-Restricted, with placement charts. Best bought with CA-OL.',P['TABS']),
        pcard('SOS-APP','Free with design classes','Application Overview videos','How to complete the Board application in GOALS, with checklists.',P['SOS'],free=True)],
       'g-classgrid', gap=24, gap_m=16),
 ], '', boxed=True, pad=SECT, pad_t=SECT_T, pad_m=SECT_M, el_id='classes', html_tag='section'))
@@ -183,9 +184,9 @@ def wcard(icon, h3, body):
               C([H(h3,'h3',None,'navy', size=21, size_m=19), TX('<p>%s</p>' % body, None, None)], 'g-wtext', gap=12)], 'g-wcard', gap=12, pad=(24,24,24,24))
 for w in []: pass
 why_left = C([
-    C([H('Why GLEC','div','eyebrow','blue','g-eyebrow'), H('Taught the way the exam is written','h2','h2','navy')], gap=14),
+    C([H('Why GLEC','div','eyebrow','blue','g-eyebrow'), H('The leading HVAC license exam prep company in Georgia','h2','h2','navy')], gap=14),
     C([wcard('listc','Solutions, not answers','Every example shows the chart lookup, the equation and the calculator keys.'),
-       wcard('target','Only the Georgia CA exam','One exam, one Board, one application. We know exactly what is on the test.'),
+       wcard('target','Focused on Georgia only','One exam, one Board, one application. We know exactly what is on the test.'),
        wcard('clock','24/7 for up to a year','Watch from home or the job, as many times as you need, until you pass.'),
        wcard('pkg','Tabs, guide, application','Permanent tabs, a printed study guide and application help, ready before exam day.')], 'g-g2', gap=20, gap_m=12),
 ], gap=36, gap_m=28)
@@ -228,7 +229,7 @@ ptable = '<div class="g-ptable" role="table" aria-label="CEU classes and prices"
 ceu_media = C([IMG('workshop-mentorship.webp'), HTML('<div class="g-approved"><i>%s</i><span><strong>Board-approved</strong><span>Georgia Conditioned Air Licensing Board</span></span></div>' % ic(I['award'],22),'g-media-deco')], 'g-ceu-media')
 ceu_txt = C([H('License renewal','div','eyebrow','blue','g-eyebrow'), H('Renewing your license? Board-approved CEU classes.','h2','h2','navy'),
     TX('<p>Licensed CA contractors need 4 CEU hours a year. All online, 4 months of access, certificate prints the moment you finish the videos.</p>','lead','slate'),
-    HTML(ptable), BTN('See CEU classes', SITE+'/#ceu', 'g-btn')], gap=20)
+    HTML(ptable), BTN('See CEU classes', SITE+'/ceu-classes/', 'g-btn')], gap=20)
 home.append(C([C([ceu_media, ceu_txt], 'g-ceu', gap=80, gap_t=48, gap_m=32)], '', boxed=True, pad=SECT, pad_t=SECT_T, pad_m=SECT_M, el_id='ceu', html_tag='section'))
 
 # Testimonials
@@ -236,7 +237,7 @@ def quote(q, ini, name):
     return C([HTML('<span class="g-qmark" aria-hidden="true">“</span>'), TX('<blockquote>%s</blockquote>' % q, None, None, 'g-qtext'),
               HTML('<div class="g-who"><i aria-hidden="true">%s</i><span><b>%s</b>Student</span></div>' % (ini,name))], 'g-quote', gap=18, pad=(32,32,32,32), pad_m=(24,20,24,20), html_tag='figure')
 home.append(C([
-    head_row('Student stories','What students say', LINK('Read more student stories', SITE+'/#testimonials', cls='g-link g-link-white'), light=True),
+    head_row('Student stories','What students say', LINK('Read more student stories', SITE+'/testimonials/', cls='g-link g-link-white'), light=True),
     C([quote('I passed my exam with an adjusted score of 93. I could not have done this without your courses. With 21 years of experience I still could not have passed this exam without your exam prep review course.','JO','James O.'),
        quote('I just got an email confirmation that I passed my exam and was approved by the board. Thanks for all your help. I don’t think that your classes could have been any better. Your Manual J &amp; D, and the exam prep review class had me way over prepared to the point that the test was no sweat. Thanks again.','BR','Brett R.'),
        quote('I would have never passed the CA License Exam without your help. Your classes even helped me tremendously in passing the Tennessee exams. I have been doing HVAC for over 40 years and I learned a lot. Thanks so much.','MS','Marroll S.')], 'g-g3', gap=24, gap_m=16),
@@ -264,8 +265,8 @@ def fcol(title, items):
 L = lambda t,u,c='': '<a href="%s"%s>%s</a>' % (u, (' class="%s"' % c) if c else '', t)
 L = lambda t,u,c='': '<a href="%s"%s>%s</a>' % (u, (' class="%s"' % c) if c else '', t)
 fnav = '<nav aria-label="Footer"><ul class="g-fnav">' + ''.join('<li>%s</li>' % L(t,u) for t,u in [
-    ('License classes',SITE+'/#classes'),('CEU classes',SITE+'/#ceu'),('How to get licensed',SITE+'/how-to-get-licensed/'),
-    ('Board dates','#'),('About',SITE+'/about/'),('Testimonials',SITE+'/#testimonials'),('Contact',SITE+'/contact/')]) + '</ul></nav>'
+    ('License classes',SITE+'/license-classes/'),('CEU classes',SITE+'/ceu-classes/'),('How to get licensed',SITE+'/how-to-get-licensed/'),
+    ('Board dates',SITE+'/board-application/'),('About',SITE+'/about/'),('Testimonials',SITE+'/testimonials/'),('Contact',SITE+'/contact/')]) + '</ul></nav>'
 fcontact = '<div class="g-fcontact"><a href="mailto:Info@GeorgiaLicenseExam.com">%sInfo@GeorgiaLicenseExam.com</a><span>%s%s</span></div>' % (ic(I['mail'],18), ic(I['phone'],18), PHONE)
 flegal = '<ul class="g-flegal">' + ''.join('<li>%s</li>' % x for x in [L('Policies',SITE+'/policies/'), L('Hold Harmless policy',SITE+'/policies/#hold-harmless')]) + '</ul>'
 footer = [C([
@@ -287,18 +288,18 @@ contact_left = C([
     TX('<p>Not sure which license fits, where you are in the Board process, or how to get into your class? Send us a note or reach out below.</p>','lead','slate','g-contact-lead'),
     C([crow('mail','Email','<a class="g-crow__val" href="mailto:Info@GeorgiaLicenseExam.com">Info@GeorgiaLicenseExam.com</a>'),
        crow('phone','Phone','<span class="g-crow__val">%s</span>' % PHONE),
-       crow('map','Mailing address','<span class="g-crow__val">2625 Piedmont Road NE<br>UPS Store, Ste 56, PMB-320<br>Atlanta, Georgia 30324-3086</span><span class="g-crow__note">Mailing address only, no walk-ins</span>')],
+       crow('map','Mailing address only','<span class="g-crow__val">2625 Piedmont Road NE<br>UPS Store, Ste 56, PMB-320<br>Atlanta, Georgia 30324-3086</span><span class="g-crow__note">We do not have an office.</span>')],
       'g-crows', gap=0, extra={"margin":dims(12,0,0,0)}),
 ], 'g-contact-copy', gap=20, gap_m=16)
 contact_photo = C([IMG('claire.webp','g-img'),
     HTML('<div class="g-namechip"><b>Claire</b><span>[CONFIRM: Claire&rsquo;s title]</span></div>','g-media-deco')], 'g-claire')
 contact = [C([C([contact_left, contact_photo], 'g-contact-top', gap=80, gap_t=48, gap_m=40)], '', boxed=True, pad=(96,64,104,64), pad_t=(72,40,80,40), pad_m=(48,20,64,20), html_tag='section')]
 form_fields = [
-  {"_id":"name","field_type":"text","field_label":"Name","placeholder":"Your full name","required":"true","width":"50","width_mobile":"100"},
-  {"_id":"email","field_type":"email","field_label":"Email","placeholder":"you@example.com","required":"true","width":"50","width_mobile":"100"},
-  {"_id":"phone","field_type":"tel","field_label":"Phone (optional)","placeholder":"","width":"50","width_mobile":"100"},
-  {"_id":"topic","field_type":"select","field_label":"What is it about?","field_options":"License classes\nCEU classes\nBoard application\nAccess to my class\nSomething else","width":"50","width_mobile":"100"},
-  {"_id":"message","field_type":"textarea","field_label":"Message","placeholder":"How can we help?","required":"true","rows":"5","width":"100"},
+  {"_id":"name","field_type":"text","field_label":"Your full legal name","placeholder":"","required":"true","width":"50","width_mobile":"100"},
+  {"_id":"email","field_type":"email","field_label":"Your email address","placeholder":"you@example.com","required":"true","width":"50","width_mobile":"100"},
+  {"_id":"phone","field_type":"tel","field_label":"Your telephone number","placeholder":"","width":"50","width_mobile":"100"},
+  {"_id":"subject","field_type":"text","field_label":"Subject","placeholder":"","width":"50","width_mobile":"100"},
+  {"_id":"message","field_type":"textarea","field_label":"Your message","placeholder":"How can we help?","required":"true","rows":"5","width":"100"},
 ]
 form = W('form', {"form_name":"Contact","form_fields":form_fields,"show_labels":"yes","mark_required":"yes","input_size":"md",
    "button_text":"Send message","button_size":"md","button_width":"100","button_width_mobile":"100",

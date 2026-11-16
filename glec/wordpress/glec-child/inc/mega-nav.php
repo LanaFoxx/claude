@@ -25,30 +25,31 @@ function glec_mega_config() {
 		[
 			'id' => 'license', 'label' => 'License classes',
 			'cards' => [
-				[ 'title' => 'Residential Design Class', 'meta' => 'Required for every license', 'sku' => 'HLG-DD-R-OL', 'img' => 'thumb-study', 'url' => $h . '#classes' ],
-				[ 'title' => 'Commercial Design Class', 'meta' => 'Non-Restricted only', 'sku' => 'HLG-DD-C-OL', 'img' => 'thumb-mentor', 'url' => $h . '#classes' ],
-				[ 'title' => 'Exam Prep Review Class', 'meta' => 'After Board approval', 'sku' => 'CA-OL', 'img' => 'thumb-exam', 'url' => $h . '#classes' ],
+				[ 'title' => 'Residential Design Class', 'meta' => 'Required for every license', 'sku' => 'HLG-DD-R-OL', 'img' => 'thumb-study', 'url' => $h . 'license-classes/residential-design/' ],
+				[ 'title' => 'Commercial Design Class', 'meta' => 'Non-Restricted only', 'sku' => 'HLG-DD-C-OL', 'img' => 'thumb-mentor', 'url' => $h . 'license-classes/commercial-design/' ],
+				[ 'title' => 'Exam Prep Review Class', 'meta' => 'After Board approval', 'sku' => 'CA-OL', 'img' => 'thumb-exam', 'url' => $h . 'license-classes/exam-prep-review/' ],
 			],
 			'links' => [
-				[ 'label' => 'Permanent reference tabs', 'url' => $h . '#classes' ],
-				[ 'label' => 'Application Overview videos', 'url' => $h . '#classes' ],
+				[ 'label' => 'Permanent reference tabs', 'url' => $h . 'license-classes/reference-tabs/' ],
+				[ 'label' => 'Application Overview videos', 'url' => $h . 'license-classes/application-overview/' ],
 				[ 'label' => 'Order the reference books', 'url' => 'https://sebookstore.com/glec.html', 'ext' => true ],
-				[ 'label' => 'All license classes', 'url' => $h . '#classes' ],
+				[ 'label' => 'All license classes', 'url' => $h . 'license-classes/' ],
 			],
 		],
 		[
 			'id' => 'ceu', 'label' => 'CEU classes',
 			'cards' => [
-				[ 'title' => 'Board-approved CEUs', 'meta' => '4 hours a year, all online', 'img' => 'thumb-workshop', 'url' => $h . '#ceu' ],
-				[ 'title' => 'Code Changes, IFGC & IMC', 'meta' => '2018, 2021 or 2024 · 4 hours · $50', 'img' => 'thumb-classroom', 'url' => $h . '#ceu' ],
-				[ 'title' => 'CEU hours needed each year', 'meta' => 'Certificate prints when you finish', 'num' => '4', 'icon' => 'award', 'navy' => true, 'url' => $h . '#ceu' ],
+				[ 'title' => 'Board-approved CEUs', 'meta' => '4 hours a year, all online', 'img' => 'thumb-workshop', 'url' => $h . 'ceu-classes/' ],
+				[ 'title' => 'Code Changes, IFGC & IMC', 'meta' => '2018, 2021 or 2024 · 4 hours · $50', 'img' => 'thumb-classroom', 'url' => $h . 'ceu-classes/' ],
+				[ 'title' => 'CEU hours needed each year', 'meta' => 'Certificate prints when you finish', 'num' => '4', 'icon' => 'award', 'navy' => true, 'url' => $h . 'ceu-classes/' ],
 			],
 			'links' => [
-				[ 'label' => 'Carrier System Design Manuals 1, 2, 3', 'url' => $h . '#ceu' ],
-				[ 'label' => 'EPA Mold Remediation', 'url' => $h . '#ceu' ],
-				[ 'label' => 'Wire Helix Trunk & Branch Duct Sizing', 'url' => $h . '#ceu' ],
-				[ 'label' => 'ADC Flex Duct Installation Standards', 'url' => $h . '#ceu' ],
-				[ 'label' => 'All CEU classes', 'url' => $h . '#ceu' ],
+				[ 'label' => 'Carrier System Design Manuals 1, 2, 3', 'url' => $h . 'ceu-classes/' ],
+				[ 'label' => 'EPA Mold Remediation', 'url' => $h . 'ceu-classes/' ],
+				[ 'label' => 'Wire Helix Trunk & Branch Duct Sizing', 'url' => $h . 'ceu-classes/' ],
+				[ 'label' => 'Code changes: 2018, 2021, 2024', 'url' => $h . 'ceu-classes/' ],
+				[ 'label' => 'Technician certifications', 'url' => $h . 'technician-certifications/' ],
+				[ 'label' => 'All CEU classes', 'url' => $h . 'ceu-classes/' ],
 			],
 		],
 		[
@@ -59,8 +60,8 @@ function glec_mega_config() {
 				[ 'title' => 'Prep for the exam and pass', 'meta' => 'Tab your books, schedule PSI', 'num' => '03', 'icon' => 'award', 'url' => $h . 'how-to-get-licensed/' ],
 			],
 			'links' => [
-				[ 'label' => 'See all 10 steps', 'url' => $h . 'how-to-get-licensed/' ],
-				[ 'label' => 'Board application and meeting dates', 'url' => '#' ],
+				[ 'label' => 'See the step-by-step process', 'url' => $h . 'how-to-get-licensed/' ],
+				[ 'label' => 'Board application and meeting dates', 'url' => $h . 'board-application/' ],
 				[ 'label' => 'Ask us a question', 'url' => $h . 'contact/' ],
 			],
 		],
@@ -68,7 +69,7 @@ function glec_mega_config() {
 			'id' => 'about', 'label' => 'About',
 			'cards' => [
 				[ 'title' => 'Garrison Michael', 'meta' => 'Owner and instructor since 2006', 'img' => 'thumb-garrison', 'url' => $h . 'about/' ],
-				[ 'title' => 'Student stories', 'meta' => '82% exam pass rate', 'img' => 'thumb-classroom', 'url' => $h . '#testimonials' ],
+				[ 'title' => 'Student stories', 'meta' => '82% exam pass rate', 'img' => 'thumb-classroom', 'url' => $h . 'testimonials/' ],
 				[ 'title' => 'Years in business', 'meta' => 'Founded 2006 · 5,400+ student members', 'num' => '20', 'icon' => 'award', 'navy' => true, 'url' => $h . 'about/' ],
 			],
 			'links' => [
@@ -147,7 +148,7 @@ remove_shortcode( 'glec_mobile_menu' );
 add_shortcode( 'glec_mobile_menu', function () {
 	$cfg   = glec_mega_config();
 	$logo  = get_stylesheet_directory_uri() . '/assets/glec-logo.png';
-	$phone = esc_html( get_option( 'glec_phone', '[CONFIRM: phone number]' ) );
+	$phone = esc_html( get_option( 'glec_phone', '404-590-5101' ) );
 	$start = esc_url( home_url( '/how-to-get-licensed/' ) );
 	$root  = '';
 	$subs  = '';

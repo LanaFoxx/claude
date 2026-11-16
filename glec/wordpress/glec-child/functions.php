@@ -1,6 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) { exit; }
-define( 'GLEC_CHILD_VER', '1.4.1' );
+define( 'GLEC_CHILD_VER', '1.5.3' );
 
 /* Fonts are self-hosted: tell Elementor that Inter / Inter Tight are local so it never loads Google Fonts. */
 add_filter( 'elementor/fonts/additional_fonts', function ( $fonts ) {
@@ -19,6 +19,8 @@ add_action( 'wp_enqueue_scripts', function () {
 	wp_enqueue_style( 'glec-buttons', $uri . '/assets/buttons-reset.css', [ 'glec-mega', 'glec-pages' ], GLEC_CHILD_VER );
 	wp_enqueue_script( 'glec-child', $uri . '/assets/glec.js', [], GLEC_CHILD_VER, true );
 	wp_enqueue_script( 'glec-mega', $uri . '/assets/mega.js', [ 'glec-child' ], GLEC_CHILD_VER, true );
+	wp_enqueue_style( 'glec-steps', $uri . '/assets/steps.css', [ 'glec-buttons' ], GLEC_CHILD_VER );
+	wp_enqueue_script( 'glec-steps', $uri . '/assets/steps.js', [], GLEC_CHILD_VER, true );
 }, 20 );
 
 add_action( 'elementor/editor/after_enqueue_styles', function () {
@@ -62,3 +64,17 @@ add_shortcode( 'glec_account_links', function () {
 } );
 
 require_once get_stylesheet_directory() . '/inc/mega-nav.php';
+require_once get_stylesheet_directory() . '/inc/steps.php';
+require_once get_stylesheet_directory() . '/inc/checkout.php';
+
+/* License class products live on designed pages: send the bare WooCommerce product URLs there. */
+add_action( 'template_redirect', function () {
+	if ( ! function_exists( 'is_product' ) || ! is_product() ) { return; }
+	$map = [ 'HLG-DD-R-OL' => 'residential-design', 'HLG-DD-C-OL' => 'commercial-design', 'CA-OL' => 'exam-prep-review', 'CA-TABs' => 'reference-tabs', 'SOS-APP' => 'application-overview' ];
+	$p   = wc_get_product( get_the_ID() );
+	if ( $p ) {
+		$sku = $p->get_sku();
+		if ( isset( $map[ $sku ] ) ) { wp_safe_redirect( home_url( '/license-classes/' . $map[ $sku ] . '/' ), 301 ); exit; }
+		if ( false !== strpos( $sku, '-CEU' ) ) { wp_safe_redirect( home_url( '/ceu-classes/' ), 301 ); exit; }
+	}
+} );
