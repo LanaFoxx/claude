@@ -462,7 +462,7 @@ def build_header():
         "Header / Utility Links",
         [widget("icon-list", "Utility / Links", view="inline", space_between=px(32),
                 text_color=HERO_TEXT, text_color_hover=BONE,
-                icon_list=[{"_id": eid(), "text": "Areas We Serve", "link": link("/areas-we-serve/"),
+                icon_list=[{"_id": eid(), "text": "Service Area", "link": link("/areas-we-serve/"),
                             "selected_icon": {"value": "", "library": ""}},
                            {"_id": eid(), "text": "Financing", "link": link("/financing/"),
                             "selected_icon": {"value": "", "library": ""}}],
@@ -681,27 +681,40 @@ def build_hero():
                "rgba(20,17,14,0.05) 28%, rgba(20,17,14,0.3) 55%, rgba(20,17,14,0.95) 100%) !important;"
                "opacity:1 !important;}"
                "selector > .e-con-inner{position:relative;z-index:1;}")
+    def point_text(title, html):
+        return text(title, html, color=BONE, size=(18, 17, 17, 15), lh=1.4, weight=600, pretty=False,
+                    _css_classes="tn-cred-value")
+
+    def badge_text(title, html):
+        return text(title, html, size=(15, 15, 15, 14), lh=1.5, pretty=False)
+
     creds = container(
         "Hero / Credentials",
-        [container("Hero / Credentials / HomeAdvisor",
-                   [_with(stars("Hero / Credentials / Stars", AMBER, 16, 3),
-                                               icon_size_mobile=px(13), icon_gap_mobile=px(2)),
-                    text("Hero / Credentials / HomeAdvisor text",
-                         "<p><strong>4.9</strong> from 19 reviews on HomeAdvisor</p>",
-                         size=(16, 16, 16, 14), lh=1.5, pretty=False)],
-                   direction="row", gap=10, flex_align_items="center", auto_width=True),
-         text("Hero / Credentials / BBB", "<p><strong>BBB A+</strong> accredited</p>",
-              size=(16, 16, 16, 14), lh=1.5, pretty=False),
-         text("Hero / Credentials / Since", "<p>Building something better <strong>since 1999</strong></p>",
-              size=(16, 16, 16, 14), lh=1.5, pretty=False),
-         text("Hero / Credentials / Insured", "<p>Fully insured</p>", size=(16, 16, 16, 14), lh=1.5, pretty=False),
-         text("Hero / Credentials / Partners", "<p>Sashco &amp; Perma-Chink partners</p>",
-              size=(16, 16, 16, 14), lh=1.5, pretty=False)],
-        direction="row", gap=((36, 12), (32, 12), (40, 12), (40, 12)), flex_wrap="wrap", flex_align_items="center",
-        padding=dims(28, 0, 36, 0), margin=dims(16, 0, 0, 0),
+        [container("Hero / Credentials / Brand Points", [
+            point_text("Hero / Credentials / Value statement", "<p>Building Something Better Since 1999</p>"),
+            point_text("Hero / Credentials / Employee owned", "<p>Employee-Owned &amp; Operated</p>"),
+            point_text("Hero / Credentials / Insured", "<p>Fully Insured</p>")],
+            direction="row", gap=((30, 8), (28, 8), (28, 8), (24, 6)), flex_wrap="wrap",
+            flex_align_items="center", css_classes="tn-cred-line"),
+         container("Hero / Credentials / Accreditations", [
+            container("Hero / Credentials / HomeAdvisor",
+                      [_with(stars("Hero / Credentials / Stars", AMBER, 14, 2),
+                             icon_size_mobile=px(12), icon_gap_mobile=px(2)),
+                       badge_text("Hero / Credentials / HomeAdvisor text",
+                                  "<p><strong>4.9</strong> on HomeAdvisor</p>")],
+                      direction="row", gap=8, flex_align_items="center", auto_width=True),
+            badge_text("Hero / Credentials / BBB", "<p><strong>BBB A+</strong> accredited</p>"),
+            badge_text("Hero / Credentials / Sashco", "<p><strong>Sashco</strong> partner</p>"),
+            badge_text("Hero / Credentials / Perma-Chink", "<p><strong>Perma-Chink</strong> partner</p>")],
+            direction="row", gap=((32, 8), (28, 8), (28, 8), (24, 6)), flex_wrap="wrap",
+            flex_align_items="center")],
+        gap=(14, 14, 14, 12), padding=dims(28, 0, 36, 0), margin=dims(16, 0, 0, 0),
         border_border="solid", border_width=dims(1, 0, 0, 0), border_color=HAIR_16,
         _attributes="aria-label|Credentials",
-        css="selector strong{color:#F2ECE3;font-weight:600;}")
+        css="selector strong{color:#F2ECE3;font-weight:600;}"
+            "selector .tn-cred-line > .tn-cred-value + .tn-cred-value p::before{content:'';display:inline-block;"
+            "width:5px;height:5px;border-radius:50%;background:#C68B4E;margin:0 14px 0 0;vertical-align:middle;"
+            "position:relative;top:-2px;}")
     return section(
         "Hero",
         [heading("Hero / Title (H1)",
@@ -886,7 +899,8 @@ WWD = [
      "premium stains and sealers. We build log homes, so we know what makes a finish last.",
      [("Log Home Staining &amp; Restoration", "/log-home-staining-restoration/"),
       ("Chinking &amp; Check Sealing", "/chinking-check-sealing/"),
-      ("Rot Repair &amp; Prevention", "/rot-repair-prevention/"), ("Deck Staining", "/deck-staining/")]),
+      ("Rot Repair &amp; Prevention", "/rot-repair-prevention/"), ("Deck Staining", "/deck-staining/"),
+      ("Media Blasting", "/media-blasting/")]),
 ]
 
 WWD_CSS = """
@@ -899,7 +913,7 @@ WWD_CSS = """
 #what-we-do .tn-wwd-title{margin-top:26px !important;}
 #what-we-do .tn-wwd-title .elementor-heading-title{white-space:nowrap;}
 #what-we-do .tn-wwd-text{margin-top:14px !important;max-width:500px;}
-#what-we-do .tn-wwd-links{margin-top:auto !important;padding-top:20px;}
+#what-we-do .tn-wwd-links{margin-top:0 !important;padding-top:20px;}
 #what-we-do .tn-wwd-links .elementor-icon-list-items{display:grid !important;
   grid-template-columns:repeat(auto-fill, minmax(min(100%, max(250px, calc((100% - 24px) / 2))), 1fr));column-gap:24px;}
 #what-we-do .tn-wwd-links .elementor-icon-list-item{margin:0 !important;padding:0 !important;}
@@ -974,21 +988,21 @@ def build_home():
 
     why = section("Why Top Notch", [
         grid("Why / Points", [
-            point("hammer-light", "Builders first",
-                  "Our parent company has been building log and timber homes in these valleys since "
-                  "1999. We understand your home from the framing out."),
-            point("paint-roller-light", "Preparation is the job",
-                  "Patching, sanding, caulking, priming, and masking done right is what makes a finish "
-                  "look flawless and last. We never rush it."),
             point("shield-check-light", "Your home, protected",
                   "Floors, furnishings, fixtures, and landscaping are covered and protected. Work areas "
                   "are cleaned at the end of every day."),
+            point("paint-roller-light", "Preparation is the job",
+                  "Patching, sanding, caulking, priming, and masking done right is what makes a finish "
+                  "look flawless and last. We never rush it."),
             point("user-circle-check-light", "One point of contact",
                   "A dedicated project lead manages your job from your first call to your final "
                   "walkthrough, with regular updates and photos if you're away."),
             point("paint-bucket-light", "Premium products",
                   "We use top-tier coatings, including Benjamin Moore and Sherwin-Williams, and Sashco and Perma-Chink "
                   "systems on log and timber homes."),
+            point("hammer-light", "Builders first",
+                  "Our parent company has been building log and timber homes in these valleys since "
+                  "1999. We understand your home from the framing out."),
             point("certificate-light", "Backed in writing",
                   "Detailed written estimates, clear schedules, and a two-year written warranty on our "
                   "work."),
@@ -1123,12 +1137,16 @@ def estimate_section(page="home"):
          "required": "true", "width": "50", "width_mobile": "50",
          "field_options": "Select a town|\nAspen\nSnowmass\nBasalt\nCarbondale\nGlenwood Springs\n"
                           "Vail\nBeaver Creek\nAvon\nEdwards\nEagle\nGypsum\nBreckenridge\nOther"},
-        {"_id": eid(), "custom_id": "need", "field_type": "select", "field_label": "What do you need?",
+        {"_id": eid(), "custom_id": "need", "field_type": "select",
+         "field_label": "How can we help?" if is_home else "What do you need?",
          "required": "true", "width": "100",
-         "field_options": "Choose a service|\nInterior painting\nExterior painting\n"
+         "field_options": ("Choose one|\nRequest an estimate\nGeneral question\nExisting project\n"
+                           if is_home else "Choose a service|\n") +
+                          "Interior painting\nExterior painting\n"
                           "Cabinets / trim / specialty finish\nLog home staining / restoration\n"
-                          "Chinking / check sealing\nRot repair\nDeck staining\nCommercial / HOA"},
-    ]
+                          "Chinking / check sealing\nRot repair\nDeck staining\nMedia blasting\nCommercial / HOA"},
+    ] + ([{"_id": eid(), "custom_id": "message", "field_type": "textarea", "field_label": "Message",
+           "required": "", "width": "100", "rows": 4}] if is_home else [])
     chevron = ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' "
                "viewBox='0 0 24 24' fill='none' stroke='%235B5046' stroke-width='1.8'%3E%3Cpath "
                "d='M6 9l6 6 6-6'/%3E%3C/svg%3E")
@@ -1146,6 +1164,7 @@ def estimate_section(page="home"):
         "appearance:none;-webkit-appearance:none;padding:26px 44px 6px 18px;color-scheme:light;cursor:pointer;"
         "background-color:#E8E0D4;background-image:url(\"" + chevron + "\");background-repeat:no-repeat;"
         "background-position:right 18px center;background-size:14px 14px;}"
+        "selector .elementor-field-group textarea.elementor-field-textual{height:auto;min-height:132px;resize:vertical;}"
         "selector .elementor-mark-required .elementor-field-label:after{color:#5B5046;}"
         "selector .e-form__buttons{margin-top:12px;}"
         "selector .e-form__buttons .elementor-button{min-height:60px;}"
@@ -1154,14 +1173,15 @@ def estimate_section(page="home"):
     )
     form = widget(
         "form", "Estimate / Form",
-        form_name="Homeowner Estimate - Homepage" if is_home else
+        form_name="Contact - Homepage" if is_home else
         "Homeowner Estimate - Request an Estimate page",
         form_id="tn-estimate-form", form_fields=form_fields, input_size="md",
         show_labels="true", mark_required="true", label_position="above",
-        button_text="Request My Estimate", button_size="md", button_width="",
+        button_text="Send Message" if is_home else "Request My Estimate", button_size="md", button_width="",
         button_align="start", submit_actions=["email", "redirect"],
         email_to="info@topnotch-painting.com",
-        email_subject="New estimate request (%s)" % ("Homepage" if is_home else "Request an Estimate page"),
+        email_subject=("New message from the homepage contact form" if is_home
+                       else "New estimate request (Request an Estimate page)"),
         email_content="[all-fields]", redirect_to="/thank-you/",
         column_gap=px(16), row_gap=px(16), label_spacing=px(0),
         label_color=BARK, mark_required_color=BARK,
@@ -1184,10 +1204,13 @@ def estimate_section(page="home"):
 
     right = container("Estimate / Form Half", [
         container("Estimate / Form Half / Heading", [
-            heading("Estimate / Form title", "Request your free estimate",
+            heading("Estimate / Form title", "Contact us" if is_home else "Request your free estimate",
                     tag="h3" if is_home else "h2", color=CHARRED,
                     typ=typo(family=SERIF, size=34, weight=500, lh=1.1)),
-            text("Estimate / Form intro", "<p>We'll call within one business day to set up a walkthrough.</p>",
+            text("Estimate / Form intro",
+                 "<p>Request an estimate, ask a question or check on a project. We'll get back to you "
+                 "within one business day.</p>" if is_home else
+                 "<p>We'll call within one business day to set up a walkthrough.</p>",
                  color=BARK, size=14, lh=1.6, pretty=False)], gap=8),
         container("Estimate / Form Half / Body", [form, note], gap=16, css_classes="tn-est-body")],
         gap=28, background_background="classic", background_color=BONE,

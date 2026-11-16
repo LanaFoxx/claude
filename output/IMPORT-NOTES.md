@@ -312,3 +312,16 @@ Container `Seasonal Offer`: change the H2 to **Talk to us about your project** a
   - **Hero subline:** now ends "…Part of the Top Notch team you've trusted to maintain your log home and deck since 1999." (Matt's wording; it replaces "Backed by a company…").
   - **Hero credential:** now the value statement "Building something better since 1999" instead of "Building mountain homes since 1999".
   - **Footer fine print:** now "© [year] Top Notch Painting · A Top Notch Logworks company · Employee owned & operated".
+- **Markup.io notes (Blake and Tela), all applied:**
+  1. **Nav:** Fine Painting ▾ · Log & Timber Staining ▾ · Our Work ▾ (Gallery, Project Stories) · About ▾ (Our Story, Core Values, Reviews). The Mobile Menu adds For Builders, Service Area and Financing.
+  2. **Media Blasting:** added to the Log & Timber Staining menu and the What We Do staining links (`/media-blasting/`, page still to be written). It's also in the form's service list. Side by side, the two link lists start level (5 staining links vs 4 painting).
+  3. & 5. **Hero credentials, two lines:**
+     - Line 1: brand and personal points, larger, in Bone with amber dots: "Building Something Better Since 1999 · Employee-Owned & Operated · Fully Insured".
+     - Line 2: accreditations and partners (4.9 on HomeAdvisor, BBB A+, Sashco, Perma-Chink), to be swapped for logos when the files and permission arrive.
+  4. **Photos:** waiting on Blake's uploads. The shared Drive folder "Top Notch Painting" is still empty.
+  6. **Homepage form is now a Contact Us zone** (form name "Contact - Homepage", ID `tn-estimate-form` kept for tracking):
+     - "How can we help?": Request an estimate, General question, Existing project, plus the services.
+     - An optional Message field, and a "Send Message" button.
+     - The Request an Estimate page keeps the estimate form.
+  7. **Top bar:** "Areas We Serve" now reads "Service Area".
+  8. **Why order:** Your home, protected · Preparation is the job · One point of contact · Premium products · Builders first · Backed in writing.
