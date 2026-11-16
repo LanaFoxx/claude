@@ -249,7 +249,7 @@ support_photo = C([IMG('claire.webp','g-img'),
     HTML('<span class="g-live"><i aria-hidden="true"></i>Available now</span>','g-media-deco')], 'g-support-photo')
 support_copy = C([
     H('Course support','div','eyebrow','blue','g-eyebrow'),
-    H('Questions? Claire is here to help, right now.','h2','h2','navy'),
+    H('Questions? Claire is here to help.','h2','h2','navy'),
     TX('<p>Stuck on a lesson, your Board application, or which license fits? Reach Claire, our course support agent, any time. No waiting for office hours.</p>','lead','slate'),
     C([BTN('Call 404-590-5101', 'tel:+14045905101', 'g-btn g-btn-ico-phone'), BTN('Email Claire', 'mailto:Info@GeorgiaLicenseExam.com', 'g-btn-sec')], 'g-support-btns', direction='row', gap=12, dir_m='column', gap_m=10, wrap=True),
     HTML('<p class="g-support-more">Just getting started? <a href="%s">Follow the step-by-step guide %s</a></p>' % (START, ic(I['arrow'],18))),
