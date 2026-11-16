@@ -1049,3 +1049,9 @@ section.dd-health.warn .dd-healthb .dd-hld { background: var(--warning-text); }
 [data-theme="dark"] .dd-tl-r.grp, .dd-dark .dd-tl-r.grp { background: rgba(255,255,255,.055); }
 .dd-tl-r.grp:hover { background: var(--hover, rgba(255,255,255,.07)); }
 .dd-tl-r.grp + .dd-tl-kids { margin-top: 2px !important; }
+
+/* Work / Personal dropdown in Today's schedule: readable in light and dark (WordPress select styles were overriding it) */
+.dd .dd-tl-add select.dd-tl-lane { color: var(--text) !important; background-color: var(--surface) !important; border-color: var(--border-strong) !important; min-height: 0 !important; line-height: normal !important; color-scheme: light; }
+.dd .dd-tl-add select.dd-tl-lane option { color: #111 !important; background: #fff !important; }
+[data-theme="dark"] .dd .dd-tl-add select.dd-tl-lane, .dd.dd-dark .dd-tl-add select.dd-tl-lane, .dd-dark .dd-tl-add select.dd-tl-lane { color-scheme: dark; }
+[data-theme="dark"] .dd .dd-tl-add select.dd-tl-lane option, .dd-dark .dd-tl-add select.dd-tl-lane option { color: #F3F4F6 !important; background: #1F2430 !important; }
