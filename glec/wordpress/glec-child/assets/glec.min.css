@@ -642,3 +642,5 @@ a.g-crow__val:hover{color:var(--g-navy)}
 @media (max-width:980px){.elementor .g-support{grid-template-columns:240px minmax(0,1fr)!important}.elementor .g-support-photo{height:300px}}
 @media (max-width:600px){.elementor .g-support{grid-template-columns:minmax(0,1fr)!important}.elementor .g-support-photo{height:320px}.elementor .g-support-btns,.elementor .g-support-btns .elementor-widget-button,.elementor .g-support-btns .elementor-button{width:100%}}
 @media (prefers-reduced-motion:reduce){.elementor .g-live i{animation:none}}
+/* Homepage CEU section shares the .g-ceu class with the CEU-page accordion; the card look belongs to the accordion only */
+.elementor .g-ceu:not(details){background:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;overflow:visible!important}
