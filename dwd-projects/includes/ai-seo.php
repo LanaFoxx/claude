@@ -78,7 +78,7 @@ function dwdp_enrich_person( $data ) {
 	$data['description'] = 'Michael is the founder of Dream Web Digital. He personally designs, builds and hosts custom WordPress websites for small businesses, working one-on-one with every client from the first call through launch and aftercare.';
 	$data['knowsAbout']  = array( 'Web design', 'WordPress', 'Elementor', 'Custom CSS and code', 'SEO', 'Website hosting', 'Small business websites' );
 	$data['homeLocation'] = array( '@type' => 'Place', 'name' => $b['city'] . ', North Carolina' );
-	$data['url']         = home_url( '/about/' );
+	$data['url']         = home_url( '/#about' );
 	$data['image']       = array( '@type' => 'ImageObject', 'url' => $b['photo'] );
 	$data['sameAs']      = array( 'https://www.upwork.com/freelancers/dreamwebdigital' );
 	return $data;
