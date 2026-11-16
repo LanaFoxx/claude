@@ -56,9 +56,43 @@
 	// Project lists: the title is the company; with no company, the website; only then the project's own name.
 	// The client's (person's) name goes underneath. "(on behalf of …)" notes are left off for a clean title.
 	function cleanNm(s) { return String(s || '').split(/\s*\((?:on behalf of|for)\b/i)[0].replace(/\s+/g, ' ').trim(); }
-	function projTitle(c) { return cleanNm(c.company) || site(c) || c.name; }
+	// Project title = the website's domain as words: brightside.now → "Bright Side", junkninjallc.com → "Junk Ninja LLC".
+	// Run-together domains are split using the project's own names (company, client, project) plus common words.
+	// No website: the company, then the project name.
+	var DOMW = ('the a an and of for to in on at by my our your we us it all one new best pro top real true first prime big blue green red gold golden black white bright side light star sun sky moon sea bay lake river ocean coast north south east west city town country home homes house land solution solutions service services group company co studio studios design designs digital media marketing web site sites tech labs lab works shop store market supply care health fitness life living wellness spa beauty salon law legal firm attorney attorneys tax taxes course courses school academy learning finder find exam license realty real estate property properties capital finance financial consulting consultants partners agency foundation alliance center institute inn hotel cafe kitchen food farm farms garden gardens pet pets dog dogs auto car cars truck trucks clean cleaning painting paint roof roofing build builders construction plumbing electric energy solar power fossil free cyber buyers smart spun laundry junk ninja notch rapid pro quick fast easy simple modern classic vintage urban family kids art arts music sound photo photography video film travel tours event events wedding weddings growth soar block management therapy dream vending goods street chapman wealth horizon ria fashion team weave factory bagel ny parking college advice support inspect inspects inspection maintenance advisors advisor venture joint roasters coffee security fractional mall elegance point owner owners preferred great charter hill focus building buildings provident bio health pasadena mentor money invest investing investment investments insurance mortgage loans loan bank trust wealth planning plan tutor tutoring test prep training coach coaching yoga gym sport sports golf boat boats marine yacht dental dentist medical clinic doctor vet animal hair nail nails skin glow body mind soul spirit faith church ministry nonprofit global world national american local community').split(' ');
+	function domWords(c) {
+		var host = String(c.website || '').toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').split(/[\/?#]/)[0];
+		var parts = host.split('.'); if (parts.length < 2) { return ''; }
+		var stem = parts.length > 2 && /^(co|com|org|net|gov|edu)$/.test(parts[parts.length - 2]) ? parts[parts.length - 3] : parts[parts.length - 2];
+		if (!stem) { return ''; }
+		var k = clientOf(c), vocab = {};
+		DOMW.forEach(function (w) { vocab[w] = 1; });
+		var caps = {}; // words the project already writes in capitals (CIS, OCM, VDS…)
+		[c.company, c.person, c.name, k && k.name, k && k.company].join(' ').split(/[^A-Za-z0-9]+/).forEach(function (w) { if (w.length > 1) { vocab[w.toLowerCase()] = 2; if (w.length <= 5 && w === w.toUpperCase() && /[A-Z]/.test(w)) { caps[w.toLowerCase()] = w; } } });
+		var kw = function (w) { return !!(vocab[w] || /^\d+$/.test(w) || /^(llc|inc)$/.test(w) || (w.length > 4 && vocab[w.replace(/(ings|ing|ers|er|es|s|ed)$/, '')])); };
+		var seg = function (s) { // fewest pieces, known words preferred; unknown runs stay together
+			var n = s.length, best = [[0, []]];
+			for (var i = 1; i <= n; i++) {
+				best[i] = null;
+				for (var j = Math.max(0, i - 24); j < i; j++) {
+					if (!best[j]) { continue; }
+					var w = s.slice(j, i), known = kw(w);
+					var cost = best[j][0] + (known ? (vocab[w] === 2 ? 0.8 : w.length <= 2 ? 1.7 : 1) : 3 + w.length * 0.6);
+					if (!best[i] || cost < best[i][0]) { best[i] = [cost, best[j][1].concat([w])]; }
+				}
+			}
+			// join neighbouring unknown pieces back into one word
+			var out = [];
+			best[n][1].forEach(function (w) { var kn = kw(w); if (!kn && out.length && !out[out.length - 1].k) { out[out.length - 1].w += w; } else { out.push({ w: w, k: !!kn }); } });
+			return out.map(function (o) { return o.w; });
+		};
+		var words = [];
+		stem.split(/[-_]+/).forEach(function (p) { if (p) { words = words.concat(seg(p)); } });
+		return words.map(function (w, i) { return caps[w] ? caps[w] : i > 0 && /^(of|and|by|for|the|a|an|in|on|at|to)$/.test(w) ? w : /^(llc|inc|pc|pllc|usa|ai|it|hvac|ny|ria|ca|la)$/.test(w) || (w.length <= 3 && !kw(w)) ? w.toUpperCase() : w.charAt(0).toUpperCase() + w.slice(1); }).join(' ');
+	}
+	function projTitle(c) { return domWords(c) || cleanNm(c.company) || c.name; }
 	function projPerson(c) { var k = clientOf(c); return cleanNm(c.person) || (k && k.name) || ''; }
-	function projSite(c) { return projTitle(c) === site(c) ? '' : site(c); } // website under the title, unless it already is the title
+	function projSite(c) { return site(c); } // the website still shows under the title, next to the client's name
 	function toast(msg, bad) {
 		var t = document.createElement('div'); t.className = 'dwdc-toast' + (bad ? ' bad' : ''); t.textContent = msg;
 		document.body.appendChild(t); setTimeout(function () { t.classList.add('out'); }, 2200); setTimeout(function () { t.remove(); }, 2700);
@@ -3613,7 +3647,7 @@
 		}
 		var started = imported(c) || !c.created ? '' : String(c.created).slice(0, 10);
 		var sub = [c.job ? esc(c.job) : '', site(c) ? '<a href="https://' + esc(site(c)) + '" target="_blank" rel="noopener">' + esc(site(c)) + '</a>' : '', c.lead_source ? 'Lead from ' + esc(c.lead_source) : '', started ? 'Started ' + fmt(started) : ''].filter(Boolean).join(' · ');
-		var head = '<div class="dd-pp-head"><span class="dd-pp-av">' + esc(ddInitials(c.company || c.name)) + '</span><div class="dd-pp-t"><div class="dd-pp-h1"><h1>' + esc(c.name) + '</h1>' + ddPill(stLabel, stTone) + (payState ? ddPill(payState, payTone) : '') + (num(c.hosting) ? ddPill('Hosting', 'neutral') : '')
+		var head = '<div class="dd-pp-head"><span class="dd-pp-av">' + esc(ddInitials(projTitle(c))) + '</span><div class="dd-pp-t"><div class="dd-pp-h1"><h1>' + esc(projTitle(c)) + '</h1>' + ddPill(stLabel, stTone) + (payState ? ddPill(payState, payTone) : '') + (num(c.hosting) ? ddPill('Hosting', 'neutral') : '')
 			+ (c.wait && c.wait.who === 'you' ? '<span class="dd-pp-wait">' + waitPill(c) + '<button type="button" class="dd-lnk sm" data-waitclear="' + c.id + '">No reply needed</button></span>'
 				: c.wait && c.wait.who === 'client' ? '<span class="dd-pp-wait">' + ddPill('Waiting on client · ' + waitAge(c.wait), isQuiet(c) ? 'warning' : 'neutral') + (isQuiet(c) && em ? '<button type="button" class="dd-lnk sm" data-followup="' + c.id + '">Follow up</button>' : '') + '</span>' : '') + '</div>'
 			+ (sub ? '<p>' + sub + '</p>' : '') + '</div><div class="dd-pp-acts">' + meetBtn(c) + main
