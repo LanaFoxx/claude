@@ -109,7 +109,7 @@ function form(live, fields, o = {}) {
   const keep = ['email_to', 'email_subject', 'email_from', 'email_from_name', 'email_to_2', 'email_subject_2', 'email_from_2', 'email_from_name_2', 'email_reply_to_2',
     'success_message', 'error_message', 'required_field_message', 'invalid_message', 'custom_messages', 'submit_actions', 'redirect_to', 'email_content', 'email_content_2'];
   const s = {};
-  for (const k of keep) if (live && live[k] !== undefined) s[k] = live[k];
+  for (const k of Object.keys(live || {})) if (keep.includes(k) || /^email_/.test(k)) s[k] = live[k];
   return widget('form', {
     form_name: o.name || 'Form', form_fields: fields.map((f) => ({ _id: id(), width: '100', ...f })), button_text: o.button || 'Send', ...s,
     show_labels: o.labels === false ? '' : 'yes', mark_required: '', input_size: 'md', button_size: 'md', button_width: o.btnWidth || '100',
@@ -349,4 +349,184 @@ function town(m) {
   ];
 }
 
-module.exports = { town, tag, U, header, footer: (m) => fixFooterIcons(footer(m)), home: (m, f) => fixContactIcons(home(m, f)), pageSettings, form, btn, lbl, title, card, img };
+// Buyer / Seller guide pages ----------------------------------------------------------------------
+const GUIDES = {
+  buyer: { name: 'Buyer', lede: 'Ready to start your home buying journey and have some questions? Let the buyer guide lead the way.',
+    intro: "If you're in the market for a new home, download Nick's free buyer guide. Learn about the costs of buying, inspections, appraisals, the under-contract process, what to expect on closing day and more.",
+    inside: ['Costs associated with buying a home in NH', 'How to evaluate and make competitive offers', 'Inspection and appraisal walkthrough', 'Understanding the under-contract process', 'What to expect on closing day', 'Post-closing checklist'],
+    cover: '/wp-content/uploads/2026/03/CG_Buying-Guide-2023-R1_PREP_3_1_page-0001.webp', photo: 'npc-buyer-hero', button: 'Send me the Buyer Guide', other: ['Seller Guide', U.sellers] },
+  seller: { name: 'Seller', lede: 'Everything you need to sell your home for maximum value, from pricing strategy and staging to closing day.',
+    intro: "If you're getting ready to sell, download Nick's free seller guide. It draws on years of experience on the Seacoast to walk you through the process.",
+    inside: ['Hiring the right real estate agent', 'Pricing your property', 'Staging and photography', 'Marketing your home', 'Receiving and negotiating offers', 'Home inspections and appraisals', 'What to expect on closing day'],
+    cover: '/wp-content/uploads/2026/03/CG_Sellers_Guide_2023-R5_2.48.08_PM_PREP_3-1_1_page-0001.webp', photo: 'npc-seller-hero', button: 'Send me the Seller Guide', other: ['Buyer Guide', U.buyers] },
+};
+const SITE_URL = 'https://nickponterealty.com';
+// Split page hero used by guides and content pages: crumbs, eyebrow, H1 (light + bold), lede, buttons, contained photo.
+function splitHero({ crumbs, eyebrow: eb, h1, lede, buttons, photo, alt }) {
+  return container({ content_width: 'boxed', boxed_width: px(1180), padding: box(48, 32, 8, 32), padding_mobile: box(28, 20, 8, 20), flex_direction: 'column' }, [grid([
+    stack([
+      iconList(crumbs, { inline: true, color: C.slate, hover: C.blue, size: 13, weight: 400, space: 6,
+        settings: { custom_css: 'selector .elementor-icon-list-item:not(:last-child)::after { content: "/"; position: static; border: 0; width: auto; height: auto; margin-left: 6px; color: #5A6B7D; }' } }),
+      lbl(eb),
+      title(h1, 'h1', [64, 52, 40], C.navy, 'left', { lh: 1.04, ls: -1.2 }),
+      text(lede, { size: 17, color: C.text, lh: 1.65, maxW: 560 }),
+      row(buttons, { gap: 12, settings: { _margin: box(10, 0, 0, 0) } }),
+    ], { gap: 14 }),
+    image(photo, { settings: { image_size: 'large', width: px(100, '%'), height: px(480), height_tablet: px(420), height_mobile: px(260), 'object-fit': 'cover', alt,
+      image_border_radius: box(22), image_box_shadow_box_shadow_type: 'yes', image_box_shadow_box_shadow: { horizontal: 0, vertical: 30, blur: 70, spread: -40, color: 'rgba(31,58,95,0.5)' } } }),
+  ], { cols: [2, 1, 1], gap: 56, gapM: 28, align: 'center' })], false);
+}
+// Contact call-to-action card used at the bottom of guides and content pages.
+function talkBand(buttons) {
+  return container({ content_width: 'boxed', boxed_width: px(1180), padding: box(24, 32, 96, 32), padding_mobile: box(16, 20, 64, 20), flex_direction: 'column' }, [
+    card([
+      heading('We look forward to connecting.', 'h2', [28, 26, 24], C.navy, 'left', { weight: 700, lh: 1.2, ls: -0.2 }),
+      text("Whether you're looking to buy, sell, or relocate, Nick Ponte is here to deliver tailored support and professional expertise.", { size: 16, color: C.text, maxW: 560 }),
+      row(buttons, { gap: 12, settings: { _margin: box(8, 0, 0, 0) } }),
+    ], { bg: C.panel, pad: 44 }),
+  ], false);
+}
+function guide(m, kind, live) {
+  const g = GUIDES[kind];
+  const fields = live.form_fields.map((f) => ({ ...f, field_label: f.field_label || (f.placeholder || '').replace(/\s*\*$/, '') }));
+  return [
+    splitHero({ crumbs: [['Home', U.home], ['Resources', '/#resources'], [`${g.name} Guide`]], eyebrow: 'Free download', h1: `<b>${g.name}</b> Guide`, lede: g.lede,
+      buttons: [btn('Get the free guide', '#get-guide'), btn('Call Nick', TEL, 'ghost', { icon: 'fas fa-phone', border: C.navy })], photo: img(m, g.photo), alt: 'Oceanfront homes on the New Hampshire Seacoast' }),
+    container({ content_width: 'boxed', boxed_width: px(1180), padding: box(72, 32, 48, 32), padding_mobile: box(48, 20, 32, 20), flex_direction: 'column', _element_id: 'get-guide' }, [grid([
+      container({ content_width: 'full', padding: box(40), padding_mobile: box(24), background_background: 'classic', background_color: C.plate, border_radius: box(24), flex_align_items: 'center', flex_justify_content: 'center' }, [
+        image({ id: '', url: SITE_URL + g.cover, alt: `Cover of the ${g.name} Guide` }, { settings: { width: px(100, '%'), space: px(420), image_box_shadow_box_shadow_type: 'yes', image_box_shadow_box_shadow: { horizontal: 0, vertical: 30, blur: 60, spread: -20, color: 'rgba(31,58,95,0.45)' } } }),
+      ]),
+      card([
+        lbl('Download your free'),
+        title(`<b>${g.name}</b> Guide`, 'h2', [42, 36, 30], C.navy),
+        text(g.intro, { size: 16, color: C.text }),
+        heading("What's inside", 'h3', 18, C.navy, 'left', { weight: 700, lh: 1.3, ls: 0, settings: { _margin: box(6, 0, 0, 0) } }),
+        L.checkList(g.inside, [2, 2, 1]),
+        form(live, fields, { name: live.form_name || `${g.name} Guide`, button: g.button, labels: false, btnWidth: '100',
+          settings: { form_fields: fields, button_text: g.button, acceptance_typography_typography: 'custom' } }),
+      ], { pad: 40, gap: 14 }),
+    ], { cols: ['minmax(0,0.85fr) minmax(0,1.15fr)', '1fr', '1fr'], gap: 48, gapM: 28, align: 'start' })], false),
+    talkBand([btn('Call 603-918-7593', TEL), btn(`Get the ${g.other[0]}`, g.other[1], 'ghost', { border: C.navy }), btn('Free home valuation', U.valuation, 'link', { icon: 'fas fa-arrow-right' })]),
+  ];
+}
+
+// Content pages (About, Contact, FAQ, market report, Hampton Beach, cost to sell, privacy) -------------
+const CONTENT = {
+  25: ['about', 'About', '<b>Nick Ponte,</b> Managing Broker', 'npc-nick-ponte'],
+  31: ['contact', 'Contact', 'We look forward <b>to connecting.</b>', ''],
+  6103: ['article', 'Knowledge center', 'Seacoast NH real estate <b>FAQ</b>', 'npc-contact-seawall'],
+  6082: ['article', 'Q1 2026 market report', 'Seacoast NH <b>market data &amp; trends</b>', 'npc-hero-hampton'],
+  7513: ['article', 'NH Seacoast communities', '<b>Hampton Beach,</b> NH real estate', 'p7581'],
+  6182: ['article', 'Seller resources', 'How much does it cost <b>to sell a home?</b>', 'npc-estate-dusk'],
+  1145: ['legal', 'Legal', '<b>Privacy</b> Policy', ''],
+};
+const plain = (h) => h.replace(/<[^>]+>/g, '').replace(/&amp;/g, '&');
+const crumbsFor = (t) => [['Home', U.home], [plain(t)]];
+const crumbCss = { custom_css: 'selector .elementor-icon-list-item:not(:last-child)::after { content: "/"; position: static; border: 0; width: auto; height: auto; margin-left: 6px; color: #5A6B7D; }' };
+const crumbs = (items) => iconList(items, { inline: true, color: C.slate, hover: C.blue, size: 13, weight: 400, space: 6, settings: crumbCss });
+// Page text as Elementor Text Editor widgets (styled like the design's article body). [npc_netsheet] becomes the calculator widget.
+function bodyWidgets(html) {
+  return html.split(/(?:<p>)?\[npc_netsheet\](?:<\/p>)?/).flatMap((part, i) => [
+    ...(i ? [widget('npc-net-sheet', {})] : []),
+    ...(part.trim() ? [widget('text-editor', { editor: part.trim(), _css_classes: 'npc-article__body', text_color: C.text, ...typo('typography', BODY, 16, 400, { lh: 1.7 }) })] : []),
+  ]);
+}
+function aside() {
+  return stack([
+    card([
+      lbl('Talk to Nick'),
+      heading('Questions about buying or selling on the Seacoast?', 'p', 19, C.navy, 'left', { weight: 700, lh: 1.3, ls: 0 }),
+      iconList([['603-918-7593', TEL], ['Text Nick', SMS], ['nponte@careyandgiampa.com', 'mailto:nponte@careyandgiampa.com']], { icon: 'fas fa-phone', color: C.navy, hover: C.blue, size: 14, weight: 500, space: 10, iconSize: 14 }),
+      btn('Free home valuation', U.valuation, 'primary', { settings: { align: 'justify' } }),
+    ], { pad: 26, gap: 14 }),
+    card([
+      lbl('Resources'),
+      iconList([['Buyer Guide →', U.buyers], ['Seller Guide →', U.sellers], ['Cost to sell a home →', U.cost], ['Market data &amp; trends →', '/seacoast-nh-real-estate-market-data-trends/'], ['Seacoast real estate FAQ →', U.faq], ['Market news →', U.blog]],
+        { color: C.navy, hover: C.blue, size: 15, weight: 500, space: 12, settings: { divider: 'yes', divider_color: C.div, divider_weight: px(1) } }),
+    ], { pad: 26, gap: 12 }),
+  ], { gap: 16, settings: { custom_css: '@media (min-width: 1025px) { selector { position: sticky; top: 100px; } }' } });
+}
+function fixAsideIcons(w) { ['fas fa-phone', 'far fa-comment', 'far fa-envelope'].forEach((v, i) => { w.settings.icon_list[i].selected_icon = fa(v); }); return w; }
+function content(m, pid, page, live) {
+  const [layout, eb, h1, photo] = CONTENT[pid];
+  const intro = page.intro || '';
+  const out = [];
+  if (layout === 'about') {
+    out.push(container({ content_width: 'boxed', boxed_width: px(1180), padding: box(56, 32, 72, 32), padding_mobile: box(28, 20, 48, 20), flex_direction: 'column',
+      background_background: 'classic', background_color: C.panel, border_border: 'solid', border_width: box(0, 0, 1, 0), border_color: C.border }, [grid([
+      image(img(m, 'npc-nick-ponte'), { settings: { width: px(100, '%'), image_border_radius: box(24), alt: 'Nick Ponte',
+        image_box_shadow_box_shadow_type: 'yes', image_box_shadow_box_shadow: { horizontal: 0, vertical: 40, blur: 80, spread: -40, color: 'rgba(31,58,95,0.55)' }, custom_css: 'selector img { aspect-ratio: 4/5; object-fit: cover; }' } }),
+      stack([
+        crumbs(crumbsFor('About')), lbl(eb), title(h1, 'h1', [56, 46, 38], C.navy, 'left', { lh: 1.05 }),
+        text(intro, { size: 17, color: C.text, lh: 1.65 }),
+        row([['12+', 'Years at the firm'], ['$10M+', 'Annual sales volume'], ['$3B+', 'Firm career volume']].map(([v, c]) => stack([heading(v, 'p', [34, 30, 26], C.navy, 'left', { weight: 800, lh: 1.1 }), text(c, { size: 13, color: C.slate })], { gap: 2, settings: { width: auto } })), { gap: 40, settings: { flex_wrap: 'nowrap', flex_gap_mobile: gap(24) } }),
+        row([btn('Call Nick', TEL, 'primary', { icon: 'fas fa-phone' }), btn('Featured sales', U.featured, 'ghost', { border: C.navy })], { gap: 12 }),
+      ], { gap: 16 }),
+    ], { cols: ['minmax(0,0.8fr) minmax(0,1.2fr)', '1fr', '1fr'], gap: 64, gapM: 32, align: 'center' })], false));
+  } else if (layout === 'contact' || layout === 'legal') {
+    out.push(container({ content_width: 'boxed', boxed_width: px(1180), padding: box(56, 32, 48, 32), padding_mobile: box(28, 20, 32, 20), flex_direction: 'column', flex_gap: gap(14),
+      background_background: 'classic', background_color: C.panel, border_border: 'solid', border_width: box(0, 0, 1, 0), border_color: C.border }, [
+      crumbs(crumbsFor(layout === 'contact' ? 'Contact' : h1)), lbl(eb), title(h1, 'h1', [56, 46, 38], C.navy, 'left', { lh: 1.05 }),
+      ...(layout === 'contact' ? [text(intro || "Whether you're looking to buy, sell, or relocate, Nick Ponte is here to deliver tailored support and professional expertise.", { size: 17, color: C.text, maxW: 620 })] : intro ? [text(intro, { size: 17, color: C.text, maxW: 620 })] : []),
+    ], false));
+  } else {
+    out.push(splitHero({ crumbs: crumbsFor(h1), eyebrow: eb, h1, lede: intro, photo: img(m, photo), alt: '',
+      buttons: [btn('Call Nick', TEL, 'primary', { icon: 'fas fa-phone' }), btn('Free home valuation', U.valuation, 'ghost', { border: C.navy })] }));
+  }
+  if (layout === 'contact') {
+    const it = (ic, k, v, url) => card([row([widget('icon', { selected_icon: fa(ic), view: 'stacked', shape: 'circle', primary_color: C.panel, secondary_color: C.blue, icon_size: px(20), icon_padding: px(14), _element_width: 'auto' }),
+      stack([lbl(k, C.slate), heading(v, 'p', 18, C.navy, 'left', { weight: 600, lh: 1.3, ls: 0, ...(url ? { link: url } : {}) })], { gap: 4, settings: { width: auto, _flex_size: 'grow' } })], { gap: 16, settings: { flex_wrap: 'nowrap' } })], { pad: 24 });
+    out.push(container({ content_width: 'boxed', boxed_width: px(1180), padding: box(56, 32, 96, 32), padding_mobile: box(36, 20, 64, 20), flex_direction: 'column' }, [grid([
+      stack([it('fas fa-phone', 'Phone', '603-918-7593', TEL), it('far fa-envelope', 'Email', 'nponte@careyandgiampa.com', 'mailto:nponte@careyandgiampa.com'), it('fas fa-map-marker-alt', 'Office', '655 Wallis Road, Rye, NH 03870', 'https://maps.google.com/?q=655+Wallis+Road+Rye+NH+03870')], { gap: 14 }),
+      card([heading('Send a message', 'h2', 24, C.navy, 'left', { weight: 700, lh: 1.2, ls: 0 }), text('Nick usually replies the same day.', { size: 15, color: C.slate }),
+        form(live, live.form_fields, { name: live.form_name || 'Contact', button: 'Send message', settings: { form_fields: live.form_fields } })], { pad: 36, gap: 12 }),
+    ], { cols: ['minmax(0,0.8fr) minmax(0,1.2fr)', '1fr', '1fr'], gap: 40, gapM: 28, align: 'start' })], false));
+    return out;
+  }
+  const body = stack(bodyWidgets(page.body || ''), { gap: 24 });
+  out.push(container({ content_width: 'boxed', boxed_width: px(1180), padding: box(64, 32, layout === 'legal' ? 96 : 24, 32), padding_mobile: box(40, 20, layout === 'legal' ? 64 : 16, 20), flex_direction: 'column' },
+    layout === 'legal' ? [stack([body], { maxW: 820 })] : [grid([body, fixAsideIcons2(aside())], { cols: ['minmax(0,1fr) 320px', '1fr', '1fr'], gap: 64, gapM: 40, align: 'start' })], false));
+  if (layout !== 'legal') out.push(talkBand([btn('Call 603-918-7593', TEL), btn('Send a message', U.contact, 'ghost', { border: C.navy })]));
+  return out;
+}
+function fixAsideIcons2(a) { const walk = (e) => { if (e.widgetType === 'icon-list' && /603-918/.test(e.settings.icon_list?.[0]?.text || '') && e.settings.icon_list.length === 3) fixAsideIcons(e); (e.elements || []).forEach(walk); }; walk(a); return a; }
+
+// Featured sales -----------------------------------------------------------------------------------
+const SALES = [
+  ['98 Beach Hill Road', 'New Castle, NH', '$6,495,000', 'Sold', 'npc-sale-98-beach-hill', 'rmgyQWi17uk', ''],
+  ['805 Central Road', 'Rye Beach, NH', '$6,400,000', 'Sold', 'npc-sale-805-central', '2-t3YoOq3Rk', ''],
+  ['1026 Ocean Blvd', 'Hampton, NH', '$5,500,000', 'Sold', 'p7583', '', ''],
+  ['1 Franklin Street', 'Exeter, NH', '$3,400,000', 'Sold', 'npc-sale-1-franklin', 'FptW7er7H_E', ''],
+  ['82 Kings Highway', 'Hampton, NH', '$2,500,000', 'Featured listing', 'p7540', '', '/wp-content/uploads/2026/07/video-tour-1-2_wXSUUqoE.mp4'],
+  ['39 Chapel Road', 'North Hampton, NH', '$2,150,000', 'Sold', 'npc-sale-39-chapel', 'Tyc0Is1i2I4', ''],
+];
+function featured(m) {
+  const media = ([addr, town, , , pic, yt, mp4]) => (yt || mp4)
+    ? widget('video', { video_type: yt ? 'youtube' : 'hosted', ...(yt ? { youtube_url: `https://www.youtube.com/watch?v=${yt}` } : { hosted_url: { url: SITE_URL + mp4, id: '' } }),
+      show_image_overlay: 'yes', image_overlay: img(m, pic), image_overlay_size: 'large', lazy_load: 'yes', aspect_ratio: '43', controls: 'yes', modestbranding: 'yes', yt_privacy: 'yes', rel: '',
+      play_icon_color: C.white, play_icon_size: px(64), custom_css: 'selector .elementor-wrapper { border-radius: 16px 16px 0 0; overflow: hidden; }' })
+    : image(img(m, pic), { settings: { image_size: 'large', width: px(100, '%'), alt: `${addr}, ${town}`, custom_css: 'selector img { aspect-ratio: 4/3; object-fit: cover; border-radius: 16px 16px 0 0; }' } });
+  const cardFor = (s) => container({ content_width: 'full', flex_direction: 'column', padding: box(0), flex_gap: gap(0), background_background: 'classic', background_color: C.white,
+    border_border: 'solid', border_width: box(1), border_color: C.border, border_radius: box(18), overflow: 'hidden',
+    box_shadow_box_shadow_type: 'yes', box_shadow_box_shadow: { horizontal: 0, vertical: 24, blur: 50, spread: -40, color: 'rgba(31,58,95,0.4)' } }, [
+    media(s),
+    stack([lbl(s[3], s[3] === 'Sold' ? C.slate : C.blue), heading(s[0], 'h2', 21, C.navy, 'left', { weight: 700, lh: 1.25, ls: 0 }), text(s[1], { size: 14, color: C.slate }),
+      heading(s[2], 'p', 24, C.navy, 'left', { weight: 800, lh: 1.2, ls: -0.2, settings: { _margin: box(6, 0, 0, 0) } })], { gap: 4, settings: { padding: box(22, 24, 24, 24) } }),
+  ]);
+  return [
+    splitHero({ crumbs: [['Home', U.home], ['Featured sales']], eyebrow: 'Featured sales', h1: '<b>Recent sales</b> and listings',
+      lede: 'A selection of homes Nick has represented on the New Hampshire Seacoast, from Rye Beach to New Castle. More than $110 million in total sales.',
+      buttons: [btn('Call Nick', TEL, 'primary', { icon: 'fas fa-phone' }), btn("What's my home worth?", U.valuation, 'ghost', { border: C.navy })], photo: img(m, 'npc-seller-hero'), alt: 'Oceanfront homes on the New Hampshire Seacoast' }),
+    container({ content_width: 'boxed', boxed_width: px(1180), padding: box(64, 32, 32, 32), padding_mobile: box(40, 20, 24, 20), flex_direction: 'column' }, [grid(SALES.map(cardFor), { cols: [3, 2, 1], gap: 24, align: 'stretch' })], false),
+    sellCta(),
+  ];
+}
+function sellCta() {
+  return container({ content_width: 'boxed', boxed_width: px(1180), padding: box(24, 32, 96, 32), padding_mobile: box(16, 20, 64, 20), flex_direction: 'column' }, [
+    card([heading('Thinking about selling?', 'h2', [28, 26, 24], C.navy, 'left', { weight: 700, lh: 1.2, ls: -0.2 }),
+      text("Nick prepares a confidential valuation from recent comparable sales and your home's specifics, at no cost.", { size: 16, color: C.text, maxW: 560 }),
+      row([btn('Get a free valuation', U.valuation), btn('Get the Seller Guide', U.sellers, 'ghost', { border: C.navy })], { gap: 12, settings: { _margin: box(8, 0, 0, 0) } })], { bg: C.panel, pad: 44 }),
+  ], false);
+}
+
+module.exports = { CONTENT, content, featured, town, tag, guide, splitHero, talkBand, U, header, footer: (m) => fixFooterIcons(footer(m)), home: (m, f) => fixContactIcons(home(m, f)), pageSettings, form, btn, lbl, title, card, img };

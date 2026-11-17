@@ -2,14 +2,14 @@
 /**
  * Plugin Name: Nick Ponte Coastal Light (preview)
  * Description: "Coastal Light" redesign preview: a homepage template (/home-preview/) and a Town post type (/town-preview/<town>/) with monthly market fields, FAQ and JSON-LD. Preview pages are noindex and use their own header and footer, so live pages are not affected. Deactivate to remove everything from the front end.
- * Version: 1.15.4
+ * Version: 1.15.6
  * Author: Dream Web Digital
  * Requires PHP: 7.4
  */
 
 if (!defined('ABSPATH')) exit;
 
-define('NPC_VER', '1.15.4');
+define('NPC_VER', '1.15.6');
 define('NPC_DIR', plugin_dir_path(__FILE__));
 define('NPC_URL', plugin_dir_url(__FILE__));
 const NPC_HOME_TEMPLATE = 'npc-home';
@@ -535,6 +535,11 @@ add_filter('get_post_metadata', function ($v, $id, $key) {
 add_action('wp_head', function () {
 	if (!npc_live() || !is_page(6103)) return;
 	$html = (string) get_post_meta(6103, '_npc_page_body', true);
+	if (function_exists('npc_el_on') && npc_el_on(6103)) { // edited in Elementor: read the Text Editor widgets
+		$html = '';
+		$walk = function ($els) use (&$walk, &$html) { foreach ((array) $els as $e) { if (($e['widgetType'] ?? '') === 'text-editor') $html .= $e['settings']['editor'] ?? ''; if (!empty($e['elements'])) $walk($e['elements']); } };
+		$walk(json_decode((string) get_post_meta(6103, '_elementor_data', true), true));
+	}
 	if (!preg_match_all('#<details>\s*<summary>(.*?)</summary>(.*?)</details>#s', $html, $m, PREG_SET_ORDER)) return;
 	$q = array_map(function ($x) { return ['@type' => 'Question', 'name' => wp_strip_all_tags($x[1]), 'acceptedAnswer' => ['@type' => 'Answer', 'text' => trim(preg_replace('/\s+/', ' ', wp_strip_all_tags($x[2])))]]; }, $m);
 	echo '<script type="application/ld+json">' . wp_json_encode(['@context' => 'https://schema.org', '@type' => 'FAQPage', 'mainEntity' => $q], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "</script>\n";

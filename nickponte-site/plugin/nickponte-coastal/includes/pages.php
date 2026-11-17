@@ -75,6 +75,7 @@ add_action('save_post_page', function ($id) {
 // Which new-design layout (if any) applies to this request.
 function npc_content_kind() {
 	if (!npc_live()) return false;
+	if (isset($_GET['elementor-preview']) || (isset($_GET['npc_el']) && current_user_can('edit_pages'))) return false; // Elementor editor / admin preview
 	if (is_page() && function_exists('npc_el_on') && npc_el_on(get_queried_object_id())) return false;
 	if (function_exists('npc_el_on') && npc_el_on('posts') && (is_singular('post') || is_home() || is_page(627))) return false;
 	if (is_singular('post')) return (get_post_meta(627, '_npc_page_enabled', true) || (isset($_GET['npc_preview']) && current_user_can('edit_posts'))) ? 'post' : false; // posts follow the blog page's switch

@@ -11,8 +11,14 @@ const args = process.argv.slice(2);
 const steps = args.filter((a) => !a.startsWith('--'));
 const want = (s) => steps.length === 0 || steps.includes(s);
 const HOME = 2579;
+const GUIDE_PAGES = { buyer: 5725, seller: 5742 };
+const FEATURED = 590;
+const PAGES = require('./pages-meta.json');
+const only = (args.find((a) => a.startsWith('--only=')) || '').slice(7).split(',').filter(Boolean).map(Number);
+const CONTENT_IDS = Object.keys(S.CONTENT).map(Number).filter((id) => !only.length || only.includes(id));
 const TOWN_PAGES = [4753, 4300, 4302, 4459, 4304, 4927, 4325, 4952, 4706, 4936, 432];
-const MEDIA = ['npc-logo-navy', 'npc-hero', 'npc-nick-ponte', 'npc-press-seacoastonline', 'npc-press-bostoncom', 'npc-press-unionleader', 'npc-387-ocean', 'npc-estate-dusk'];
+const MEDIA = ['npc-logo-navy', 'npc-hero', 'npc-nick-ponte', 'npc-press-seacoastonline', 'npc-press-bostoncom', 'npc-press-unionleader', 'npc-387-ocean', 'npc-estate-dusk', 'npc-buyer-hero', 'npc-seller-hero', 'npc-contact-seawall', 'npc-hero-hampton',
+  'npc-sale-98-beach-hill', 'npc-sale-805-central', 'npc-sale-1-franklin', 'npc-sale-39-chapel', 'p7581', 'p7583', 'p7540'];
 const MENU = [['Towns', S.U.rye], ['Featured sales', S.U.featured], ['Buyers', S.U.buyers], ['Sellers', S.U.sellers], ['Market news', S.U.blog], ['About', S.U.about], ['Contact', S.U.contact]];
 
 async function login(p) {
@@ -40,7 +46,7 @@ const api = async (p, nonce, method, route, body) => {
 async function media(p, nonce) {
   const m = {};
   for (const slug of MEDIA) {
-    const f = await api(p, nonce, 'GET', `/wp/v2/media?slug=${slug}&_fields=id,source_url`);
+    const f = /^p\d+$/.test(slug) ? [await api(p, nonce, 'GET', `/wp/v2/media/${slug.slice(1)}?_fields=id,source_url`)] : await api(p, nonce, 'GET', `/wp/v2/media?slug=${slug}&_fields=id,source_url`);
     if (!f.length) throw new Error('missing media ' + slug);
     m[slug] = { id: f[0].id, url: f[0].source_url };
   }
@@ -69,19 +75,29 @@ async function findOrCreateTemplate(p, type, title, wpNonce) {
   return Number(new URL(p.url()).searchParams.get('post'));
 }
 async function openEditor(p, postId) {
-  await p.goto(`${SITE}/wp-admin/post.php?post=${postId}&action=elementor`, { waitUntil: 'load', timeout: 180000 });
-  await p.waitForFunction(() => window.elementor && window.$e && elementor.documents?.getCurrent?.()?.container, null, { timeout: 180000 });
-  await p.waitForTimeout(3000);
+  for (let i = 1; ; i++) {
+    try {
+      await p.goto(`${SITE}/wp-admin/post.php?post=${postId}&action=elementor`, { waitUntil: 'load', timeout: 180000 });
+      await p.waitForFunction(() => window.elementor && window.$e && elementor.documents?.getCurrent?.()?.container, null, { timeout: 150000 });
+      await p.waitForTimeout(3000);
+      return;
+    } catch (e) { if (i >= 3) throw e; console.log('editor retry', postId, i); }
+  }
 }
 async function replaceContent(p, elements, pageSettings) {
   return p.evaluate(async ([elements, pageSettings]) => {
     const doc = elementor.documents.getCurrent();
     if (pageSettings) $e.run('document/elements/settings', { container: doc.container, settings: pageSettings, options: { external: true } });
     $e.run('document/elements/empty', { force: true });
-    elements.forEach((model, at) => $e.run('document/elements/create', { container: doc.container, model, options: { at, edit: false } }));
+    elements.forEach((model, at) => {
+      try { $e.run('document/elements/create', { container: doc.container, model, options: { at, edit: false } }); }
+      catch (e) { throw new Error(`section ${at}: ${e.message} | ${JSON.stringify(model).slice(0, 300)}`); }
+    });
     await $e.run('document/save/publish');
     const count = (els) => els.reduce((n, e) => n + 1 + count(e.elements || []), 0);
-    return count(doc.container.model.get('elements').toJSON());
+    const cur = elementor.documents.getCurrent();
+    const els = cur?.container?.model?.get('elements');
+    return els ? count(els.toJSON()) : `saved (${elementor.elements?.length ?? '?'} sections)`;
   }, [elements, pageSettings]);
 }
 async function setConditions(p, conditions) {
@@ -126,6 +142,22 @@ async function setConditionsRaw(p, conditions) {
     await openEditor(p, tid);
     console.log('town template', tid, 'elements:', await replaceContent(p, S.town(m)), '| conditions:', await setConditions(p, townConds));
   }
+  if (want('guides') && !args.includes('--handover-only')) {
+    for (const [kind, pid] of Object.entries(GUIDE_PAGES)) {
+      await openEditor(p, pid);
+      console.log(kind + ' guide', pid, 'elements:', await replaceContent(p, S.guide(m, kind, kind === 'buyer' ? forms.buyerGuide[0] : forms.sellerGuide[0]), S.pageSettings));
+    }
+  }
+  if (want('featured') && !args.includes('--handover-only')) {
+    await openEditor(p, FEATURED);
+    console.log('featured', FEATURED, 'elements:', await replaceContent(p, S.featured(m), S.pageSettings));
+  }
+  if (want('content') && !args.includes('--handover-only')) {
+    for (const pid of CONTENT_IDS) {
+      await openEditor(p, pid);
+      console.log('content', pid, 'elements:', await replaceContent(p, S.content(m, pid, PAGES[pid], forms.contact[0]), S.pageSettings));
+    }
+  }
   if (want('home') && !args.includes('--handover-only')) {
     await openEditor(p, HOME);
     console.log('home', HOME, 'elements:', await replaceContent(p, S.home(m, { valuation: forms.valuation[0], offmarket: forms.offmarket[0] }), S.pageSettings));
@@ -133,7 +165,7 @@ async function setConditionsRaw(p, conditions) {
   if (args.includes('--handover')) {
     await p.goto(`${SITE}/wp-admin/`, { waitUntil: 'domcontentloaded' });
     nonce = await p.evaluate(() => wpApiSettings.nonce);
-    const keys = steps.map((s) => ({ home: String(HOME), town: 'towns' })[s]).filter(Boolean);
+    const keys = steps.flatMap((s) => ({ home: [String(HOME)], town: ['towns'], guides: Object.values(GUIDE_PAGES).map(String), featured: [String(FEATURED)], content: CONTENT_IDS.map(String) })[s] || []).flat();
     const next = [...new Set([...handed, ...keys])];
     const r = await api(p, nonce, 'POST', '/wp/v2/settings', { npc_elementor: next });
     console.log('npc_elementor =', JSON.stringify(r.npc_elementor));
