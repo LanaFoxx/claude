@@ -1101,9 +1101,16 @@
 	function upSnap() {
 		if (!S.upsnap && !S.upsnapBusy) {
 			S.upsnapBusy = 1;
-			api('/upwork-snap').then(function (x) { S.upsnap = x || { none: true }; S.upsnapBusy = 0; if (!S.upsnap.none) { render(); } }).catch(function () { S.upsnap = { none: true }; S.upsnapBusy = 0; });
+			api('/upwork-snap').then(function (x) { S.upsnap = x || { none: true }; S.upsnapBusy = 0; if (!S.upsnap.none) { upBalSync(); render(); } }).catch(function () { S.upsnap = { none: true }; S.upsnapBusy = 0; });
 		}
 		return S.upsnap && !S.upsnap.none ? S.upsnap : null;
+	}
+	// A separate site snippet (window.dwdSetUpworkBalance) keeps its own copy of the two Upwork balances and repaints the
+	// Home tiles with it. Keep that copy equal to Dream Desk's numbers (withdrawn items already taken off).
+	function upBalSync() {
+		var s = S.upsnap;
+		if (!s || s.none || typeof window.dwdSetUpworkBalance !== 'function') { return; }
+		try { window.dwdSetUpworkBalance(num(s.pending), num(s.available)); } catch (e) {}
 	}
 	// Home tiles: Upwork's own numbers when there is a snapshot (otherwise the old per-project sums).
 	function upHome() {
@@ -1124,7 +1131,7 @@
 	window.dwdSetUpwork = function (pending, available, items) {
 		return api('/upwork-snap', 'POST', { pending: pending, available: available, items: items || [] }).then(function (x) {
 			S.upsnap = x; render();
-			return typeof window.dwdSetUpworkBalance === 'function' ? window.dwdSetUpworkBalance(pending, available) : 'saved';
+			return typeof window.dwdSetUpworkBalance === 'function' ? window.dwdSetUpworkBalance(num(x.pending), num(x.available)) : 'saved'; // x already has withdrawn items taken off
 		}).catch(function () { return 'failed'; });
 	};
 	// Red "New email" pill on the lists: which clients / projects have unread client emails (clientmail.php: /mail-new).
@@ -4572,7 +4579,7 @@
 			S.upWdBusy = wix; render();
 			var wHeld = wh ? api('/contact/' + wh.split(':')[0] + '/payment/' + wh.split(':')[1] + '/bank', 'POST', { bank: 1, date: DWDC.today }).then(function (x) { upsert(x); S.full[x.id] = x; }) : Promise.resolve();
 			wHeld.then(function () { return api('/upwork-snap/withdraw', 'POST', { client: wx.client, amount: wx.amount, date: wx.date }); })
-				.then(function (s) { S.upsnap = s || { none: true }; S.upWdBusy = null; return wh ? reload() : null; })
+				.then(function (s) { S.upsnap = s || { none: true }; S.upWdBusy = null; upBalSync(); return wh ? reload() : null; })
 				.then(function () { render(); toast(wx.client + ' · ' + money2(wx.amount).replace('.00', '') + ' marked withdrawn'); })
 				.catch(function (er) { S.upWdBusy = null; render(); fail(er); });
 			return;
