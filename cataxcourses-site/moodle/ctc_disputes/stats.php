@@ -24,7 +24,11 @@ $periods = [
     'month' => $start('first day of this month 00:00'),
     'year'  => $start('first day of january this year 00:00'),
 ];
-$lastyear = $periods['year'] - 1; // anything older than this year is not needed below
+// The store passes its own period starts (its week may start on Sunday) so both sides count the same days.
+foreach (array_keys($periods) as $k) {
+    $v = optional_param($k, 0, PARAM_INT);
+    if ($v > 0 && $v <= $now) { $periods[$k] = $v; }
+}
 
 // Course kind from the name: 20 Hour, 60 Hour, or other (15 Hour, Ethics, ...). Year = newest year in the name.
 $kind = function ($name) {
@@ -39,13 +43,18 @@ $courses = [];
 foreach ($DB->get_records_select('course', 'id <> ?', [SITEID], '', 'id, fullname, visible') as $c) {
     $courses[(int) $c->id] = ['kind' => $kind($c->fullname), 'year' => $yearof($c->fullname), 'name' => format_string($c->fullname), 'visible' => (int) $c->visible];
 }
-// The current course of each kind: the visible one with the newest year in its name.
+// The current course of each kind: among visible courses with the newest year in the name, the one most students
+// are enrolled in (staff copies such as "... (2)" have only a few).
+$newest = [];
+foreach ($courses as $c) {
+    if ($c['kind'] !== 'other' && $c['visible']) { $newest[$c['kind']] = max($newest[$c['kind']] ?? 0, $c['year']); }
+}
 $current = [];
+$best = [];
 foreach ($courses as $id => $c) {
-    if ($c['kind'] === 'other' || !$c['visible']) { continue; }
-    if (!isset($current[$c['kind']]) || $c['year'] > $courses[$current[$c['kind']]]['year'] || ($c['year'] === $courses[$current[$c['kind']]]['year'] && $id > $current[$c['kind']])) {
-        $current[$c['kind']] = $id;
-    }
+    if ($c['kind'] === 'other' || !$c['visible'] || $c['year'] !== $newest[$c['kind']]) { continue; }
+    $n = (int) $DB->count_records_sql('SELECT COUNT(1) FROM {user_enrolments} ue JOIN {enrol} e ON e.id = ue.enrolid WHERE e.courseid = ?', [$id]);
+    if (!isset($best[$c['kind']]) || $n > $best[$c['kind']]) { $best[$c['kind']] = $n; $current[$c['kind']] = $id; }
 }
 
 $blank = function () use ($periods) { return array_fill_keys(array_keys($periods), ['20' => 0, '60' => 0, 'other' => 0, 'all' => 0]); };

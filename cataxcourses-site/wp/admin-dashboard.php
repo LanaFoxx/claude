@@ -112,7 +112,7 @@ function ctc_db_subs() {
 				if ( $next && $next <= $now + 30 * DAY_IN_SECONDS ) { $due30++; $due_amt += (float) $s->get_total(); }
 			}
 			$end = $s->get_time( 'cancelled' ) ?: $s->get_time( 'end' );
-			if ( in_array( $st, array( 'cancelled', 'pending-cancel' ), true ) && $end && $end >= $per['year'][1]->getTimestamp() ) $cancel_year++;
+			if ( 'cancelled' === $st && $end && $end >= $per['year'][1]->getTimestamp() ) $cancel_year++;
 		}
 		return array( 'status' => $status, 'new' => $new, 'due30' => $due30, 'due_amt' => $due_amt, 'cancel_year' => $cancel_year, 'total' => count( $subs ) );
 	} );
@@ -125,7 +125,9 @@ function ctc_db_moodle() {
 		$mdl = $wpdb->get_row( "SELECT moodleurl FROM {$wpdb->prefix}moodledetail WHERE id = 1" );
 		$tok = (string) get_option( 'ctc_dp_token' );
 		if ( ! $mdl || ! $mdl->moodleurl || ! $tok ) return array( 'error' => 'Moodle address or shared token missing' );
-		$r = wp_remote_get( add_query_arg( 'token', rawurlencode( $tok ), rtrim( $mdl->moodleurl, '/' ) . '/blocks/ctc_disputes/stats.php' ), array( 'timeout' => 25 ) );
+		$args = array( 'token' => rawurlencode( $tok ) );
+		foreach ( ctc_db_periods() as $k => $p ) $args[ $k ] = $p[1]->getTimestamp(); // same period starts as the sales numbers
+		$r = wp_remote_get( add_query_arg( $args, rtrim( $mdl->moodleurl, '/' ) . '/blocks/ctc_disputes/stats.php' ), array( 'timeout' => 25 ) );
 		if ( is_wp_error( $r ) ) return array( 'error' => $r->get_error_message() );
 		$j = json_decode( wp_remote_retrieve_body( $r ), true );
 		return ( 200 === (int) wp_remote_retrieve_response_code( $r ) && is_array( $j ) ) ? $j : array( 'error' => 'Moodle returned ' . wp_remote_retrieve_response_code( $r ) );
@@ -230,7 +232,7 @@ add_action( 'admin_head-index.php', function () {
 .ctcd-card{background:#fff;border:1px solid #e6e3da;border-radius:12px;padding:6px 16px 10px;overflow-x:auto}
 .ctcd table{width:100%;border-collapse:collapse}.ctcd th,.ctcd td{padding:9px 10px;text-align:right;border-bottom:1px solid #f0eee8;white-space:nowrap}.ctcd th:first-child,.ctcd td:first-child{text-align:left}.ctcd thead th{font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:#646970;font-weight:600}.ctcd tr:last-child td{border-bottom:0}
 .ctcd td b{font-size:15px}.ctcd .up{color:#1a7f4b;font-size:12px;display:block}.ctcd .dn{color:#b42318;font-size:12px;display:block}.ctcd .mut{color:#8c8f94;font-size:12px;display:block}
-.ctcd-grid2{display:grid;grid-template-columns:2fr 1fr;gap:12px}@media(max-width:1100px){.ctcd-grid2{grid-template-columns:1fr}}
+.ctcd-grid2{display:grid;grid-template-columns:2fr 1fr;gap:12px;align-items:start}@media(max-width:1100px){.ctcd-grid2{grid-template-columns:1fr}}
 .ctcd-bars{display:flex;align-items:flex-end;gap:3px;height:120px;padding:12px 0 4px}.ctcd-bars span{flex:1;background:#d4a93a;border-radius:3px 3px 0 0;min-height:2px;position:relative}.ctcd-bars span:hover{background:#1c2333}
 .ctcd-axis{display:flex;justify-content:space-between;font-size:11px;color:#8c8f94}
 .ctcd-course{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}.ctcd-course .ctcd-card{padding:14px 16px}.ctcd-course h3{margin:0 0 8px;font-size:15px}
