@@ -52,7 +52,9 @@ function ctc_db_sales_range( $from, $to ) {
 		        COALESCE(SUM(net_total), 0) AS net,
 		        COALESCE(SUM(CASE WHEN parent_id = 0 THEN total_sales ELSE 0 END), 0) AS gross_total,
 		        COALESCE(-SUM(CASE WHEN parent_id > 0 THEN total_sales ELSE 0 END), 0) AS refunds,
-		        SUM(CASE WHEN parent_id > 0 THEN 1 ELSE 0 END) AS refund_count
+		        SUM(CASE WHEN parent_id > 0 THEN 1 ELSE 0 END) AS refund_count,
+		        COUNT(DISTINCT CASE WHEN parent_id = 0 THEN customer_id END) AS customers,
+		        COUNT(DISTINCT CASE WHEN parent_id = 0 AND returning_customer = 0 THEN customer_id END) AS new_customers
 		 FROM $t WHERE " . ctc_db_status_sql() . ' AND date_created >= %s AND date_created < %s',
 		$from->format( 'Y-m-d H:i:s' ), $to->format( 'Y-m-d H:i:s' ) ), ARRAY_A );
 	$c = $wpdb->get_var( $wpdb->prepare(
@@ -60,12 +62,32 @@ function ctc_db_sales_range( $from, $to ) {
 		 WHERE s." . ctc_db_status_sql() . ' AND s.date_created >= %s AND s.date_created < %s', $from->format( 'Y-m-d H:i:s' ), $to->format( 'Y-m-d H:i:s' ) ) );
 	$o = (int) $r['orders'];
 	return array( 'orders' => $o, 'net' => (float) $r['net'], 'refunds' => (float) $r['refunds'], 'refund_count' => (int) $r['refund_count'],
+		'customers' => (int) $r['customers'], 'new_customers' => (int) $r['new_customers'],
 		'coupons' => (float) $c, 'aov' => $o ? ( (float) $r['net'] + (float) $r['refunds'] ) / $o : 0 );
+}
+/** 20 Hour / 60 Hour courses sold (quantity, refunds netted) in a range, by product name; books and add-ons excluded. */
+function ctc_db_course_sales( $from, $to ) {
+	global $wpdb;
+	$rows = $wpdb->get_results( $wpdb->prepare( "SELECT l.product_id, SUM(l.product_qty) qty FROM {$wpdb->prefix}wc_order_product_lookup l
+		JOIN {$wpdb->prefix}wc_order_stats s ON s.order_id = l.order_id WHERE s." . ctc_db_status_sql() . ' AND s.date_created >= %s AND s.date_created < %s GROUP BY l.product_id',
+		$from->format( 'Y-m-d H:i:s' ), $to->format( 'Y-m-d H:i:s' ) ) );
+	$out = array( '20' => 0, '60' => 0 );
+	foreach ( $rows as $r ) {
+		$name = get_the_title( $r->product_id );
+		if ( preg_match( '/book|addon|add-on|mug/i', $name ) ) continue;
+		if ( preg_match( '/\b20\s*hour/i', $name ) ) $out['20'] += (int) $r->qty;
+		elseif ( preg_match( '/\b60\s*hour/i', $name ) ) $out['60'] += (int) $r->qty;
+	}
+	return $out;
 }
 function ctc_db_sales() {
 	return ctc_db_cache( 'sales', function () {
 		$out = array();
-		foreach ( ctc_db_periods() as $k => $p ) $out[ $k ] = array( 'cur' => ctc_db_sales_range( $p[1], $p[2] ), 'ly' => ctc_db_sales_range( $p[3], $p[4] ) );
+		foreach ( ctc_db_periods() as $k => $p ) {
+			$out[ $k ] = array( 'cur' => ctc_db_sales_range( $p[1], $p[2] ), 'ly' => ctc_db_sales_range( $p[3], $p[4] ) );
+			$out[ $k ]['cur']['courses'] = ctc_db_course_sales( $p[1], $p[2] );
+			$out[ $k ]['ly']['courses']  = ctc_db_course_sales( $p[3], $p[4] );
+		}
 		return $out;
 	} );
 }
@@ -126,7 +148,7 @@ function ctc_db_moodle() {
 		$tok = (string) get_option( 'ctc_dp_token' );
 		if ( ! $mdl || ! $mdl->moodleurl || ! $tok ) return array( 'error' => 'Moodle address or shared token missing' );
 		$args = array( 'token' => rawurlencode( $tok ) );
-		foreach ( ctc_db_periods() as $k => $p ) $args[ $k ] = $p[1]->getTimestamp(); // same period starts as the sales numbers
+		foreach ( ctc_db_periods() as $k => $p ) { $args[ $k ] = $p[1]->getTimestamp(); $args[ 'ly_' . $k ] = $p[3]->getTimestamp(); $args['ly_to'] = $p[4]->getTimestamp(); } // same periods as the sales numbers
 		$r = wp_remote_get( add_query_arg( $args, rtrim( $mdl->moodleurl, '/' ) . '/blocks/ctc_disputes/stats.php' ), array( 'timeout' => 25 ) );
 		if ( is_wp_error( $r ) ) return array( 'error' => $r->get_error_message() );
 		$j = json_decode( wp_remote_retrieve_body( $r ), true );
@@ -238,6 +260,7 @@ add_action( 'admin_head-index.php', function () {
 .ctcd-course{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}.ctcd-course .ctcd-card{padding:14px 16px}.ctcd-course h3{margin:0 0 8px;font-size:15px}
 .ctcd-meter{height:8px;background:#f0eee8;border-radius:6px;overflow:hidden;margin:8px 0}.ctcd-meter i{display:block;height:100%;background:#2fbf71}
 .ctcd-note{color:#646970;font-size:12px;margin-top:8px}.ctcd-err{color:#b42318}
+.ctcd-hl h3{margin:10px 0 6px;font-size:15px}.ctcd-hl.good h3{color:#1a7f4b}.ctcd-hl.bad h3{color:#b42318}.ctcd-hl ul{margin:0 0 6px 18px;list-style:disc}.ctcd-hl li{margin:6px 0;line-height:1.45}.ctcd-hl .mut{display:inline}
 .ctcd details summary{cursor:pointer;color:#2271b1}.ctcd textarea{width:100%;min-height:90px;font-family:monospace;font-size:12px}
 </style>';
 } );
@@ -247,6 +270,101 @@ function ctc_db_cmp( $cur, $ly ) {
 	if ( $ly <= 0 ) return $cur > 0 ? '<span class="mut">no data last year</span>' : '';
 	$pct = ( $cur - $ly ) / $ly * 100;
 	return '<span class="' . ( $pct >= 0 ? 'up' : 'dn' ) . '">' . ( $pct >= 0 ? '▲ ' : '▼ ' ) . number_format( abs( $pct ), 1 ) . '% vs last year</span>';
+}
+
+/**
+ * Now-vs-last-year metrics per period: [period => [[label, group, cur, ly, good (+1 = up is good, -1 = down is good), fmt, floor]]].
+ * floor = smallest last-year value worth calling out in Highlights (keeps tiny numbers out).
+ */
+function ctc_db_metrics( $S, $mdl ) {
+	$out = array();
+	foreach ( array_keys( ctc_db_periods() ) as $k ) {
+		$m = array();
+		if ( $S ) {
+			$c = $S[ $k ]['cur']; $l = $S[ $k ]['ly'];
+			$rate = function ( $x ) { return $x['orders'] ? $x['refund_count'] / $x['orders'] * 100 : 0; };
+			$m[] = array( 'Net sales', 'Sales', $c['net'], $l['net'], 1, 'money', 2000 );
+			$m[] = array( 'Orders', 'Sales', $c['orders'], $l['orders'], 1, 'int', 25 );
+			$m[] = array( 'Paying customers', 'Sales', $c['customers'], $l['customers'], 1, 'int', 25 );
+			$m[] = array( 'Average order', 'Sales', $c['aov'], $l['aov'], 1, 'money2', 50 );
+			$m[] = array( 'Coupon discounts', 'Sales', $c['coupons'], $l['coupons'], -1, 'money', 300 );
+			$m[] = array( 'Refunds (count)', 'Refunds', $c['refund_count'], $l['refund_count'], -1, 'int', 5 );
+			$m[] = array( 'Refunds ($)', 'Refunds', $c['refunds'], $l['refunds'], -1, 'money', 300 );
+			$m[] = array( 'Refund rate (refunds per 100 orders)', 'Refunds', $rate( $c ), $rate( $l ), -1, 'pct', 0.5 );
+			$m[] = array( 'New customers (first-ever order)', 'Students', $c['new_customers'], $l['new_customers'], 1, 'int', 25 );
+		}
+		if ( isset( $mdl['compare'][ $k ] ) ) {
+			$m[] = array( 'Brand-new students (new Moodle accounts)', 'Students', $mdl['compare'][ $k ]['cur']['accounts'], $mdl['compare'][ $k ]['ly']['accounts'], 1, 'int', 25 );
+		}
+		if ( $S ) {
+			$c = $S[ $k ]['cur']; $l = $S[ $k ]['ly'];
+			$m[] = array( '20 Hour courses sold', 'Students', $c['courses']['20'], $l['courses']['20'], 1, 'int', 20 );
+			$m[] = array( '60 Hour courses sold', 'Students', $c['courses']['60'], $l['courses']['60'], 1, 'int', 20 );
+			$m[] = array( 'All 20 + 60 Hour courses sold', 'Students', $c['courses']['20'] + $c['courses']['60'], $l['courses']['20'] + $l['courses']['60'], 1, 'int', 20 );
+		}
+		$out[ $k ] = $m;
+	}
+	return $out;
+}
+function ctc_db_fmt( $v, $fmt ) {
+	if ( 'money' === $fmt ) return ctc_db_money( $v );
+	if ( 'money2' === $fmt ) return ctc_db_money( $v, 2 );
+	if ( 'pct' === $fmt ) return number_format( $v, 1 );
+	return number_format( $v );
+}
+/** "+123 (+4.5%)" coloured green when the change is good, red when bad. */
+function ctc_db_diff( $cur, $ly, $good, $fmt ) {
+	$d = $cur - $ly;
+	if ( abs( $d ) < 0.005 ) return '<span class="mut">no change</span>';
+	$ok   = ( $d > 0 ) === ( $good > 0 );
+	$abs  = 'pct' === $fmt ? number_format( abs( $d ), 1 ) . ' pts' : ctc_db_fmt( abs( $d ), $fmt );
+	$pct  = $ly > 0 ? ' (' . ( $d > 0 ? '+' : '−' ) . number_format( abs( $d ) / $ly * 100, 1 ) . '%)' : '';
+	return '<span class="' . ( $ok ? 'up' : 'dn' ) . '">' . ( $d > 0 ? '▲ +' : '▼ −' ) . $abs . ( 'pct' === $fmt ? '' : $pct ) . '</span>';
+}
+function ctc_db_highlights( $M ) {
+	$labels = array( 'week' => 'this week', 'month' => 'this month', 'year' => 'this year' );
+	$good = array(); $bad = array();
+	foreach ( array( 'year', 'month', 'week' ) as $k ) {
+		foreach ( $M[ $k ] ?? array() as $x ) {
+			list( $label, , $cur, $ly, $dir, $fmt, $floor ) = $x;
+			if ( $ly < $floor && $cur < $floor ) continue;
+			$pct = $ly > 0 ? ( $cur - $ly ) / $ly * 100 : 100;
+			$min = 'week' === $k ? 25 : 10; // weeks are noisy: only big swings
+			if ( abs( $pct ) < $min ) continue;
+			$item = array( 'score' => abs( $pct ) * ( 'year' === $k ? 1.5 : ( 'month' === $k ? 1.2 : 1 ) ), 'html' =>
+				'<b>' . esc_html( $label ) . '</b> ' . ( $cur > $ly ? 'up' : 'down' ) . ' <b>' . number_format( abs( $pct ), 0 ) . '%</b> ' . $labels[ $k ] .
+				' <span class="mut" style="display:inline">(' . ctc_db_fmt( $cur, $fmt ) . ' vs ' . ctc_db_fmt( $ly, $fmt ) . ' last year)</span>' );
+			if ( ( $cur > $ly ) === ( $dir > 0 ) ) $good[] = $item; else $bad[] = $item;
+		}
+	}
+	$sort = function ( $a, $b ) { return $b['score'] <=> $a['score']; };
+	usort( $good, $sort ); usort( $bad, $sort );
+	echo '<h2 class="ctcd-h">Highlights</h2><div class="ctcd-grid2" style="grid-template-columns:1fr 1fr">';
+	echo '<div class="ctcd-card ctcd-hl good"><h3>▲ Significant improvements</h3><ul>';
+	foreach ( array_slice( $good, 0, 8 ) as $i ) echo '<li>' . $i['html'] . '</li>'; // phpcs:ignore
+	if ( ! $good ) echo '<li class="mut">Nothing up 10% or more vs last year.</li>';
+	echo '</ul></div><div class="ctcd-card ctcd-hl bad"><h3>▼ Needs attention</h3><ul>';
+	foreach ( array_slice( $bad, 0, 6 ) as $i ) echo '<li>' . $i['html'] . '</li>'; // phpcs:ignore
+	if ( ! $bad ) echo '<li class="mut">Nothing down 10% or more vs last year.</li>';
+	echo '</ul></div></div><div class="ctcd-note">Compared with the same days last year. "Up" for refunds and coupons counts as needing attention; "down" counts as an improvement.</div>';
+}
+function ctc_db_yoy_table( $M ) {
+	$per = ctc_db_periods();
+	echo '<h2 class="ctcd-h">This year vs last year</h2><div class="ctcd-card"><table><thead><tr><th></th>';
+	foreach ( array( 'week', 'month', 'year' ) as $k ) echo '<th>' . esc_html( $per[ $k ][0] ) . ' <span class="mut" style="display:inline">vs same days last year</span></th>';
+	echo '</tr></thead><tbody>';
+	$group = '';
+	foreach ( $M['year'] as $i => $x ) {
+		if ( $x[1] !== $group ) { $group = $x[1]; echo '<tr><td colspan="4" style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#8f6f14;padding-top:14px"><b>' . esc_html( $group ) . '</b></td></tr>'; }
+		echo '<tr><td>' . esc_html( $x[0] ) . '</td>';
+		foreach ( array( 'week', 'month', 'year' ) as $k ) {
+			$y = $M[ $k ][ $i ] ?? null;
+			if ( ! $y ) { echo '<td>—</td>'; continue; }
+			echo '<td><b>' . ctc_db_fmt( $y[2], $y[5] ) . ( 'pct' === $y[5] ? '%' : '' ) . '</b> <span class="mut" style="display:inline">vs ' . ctc_db_fmt( $y[3], $y[5] ) . ( 'pct' === $y[5] ? '%' : '' ) . '</span>' . ctc_db_diff( $y[2], $y[3], $y[4], $y[5] ) . '</td>';
+		}
+		echo '</tr>';
+	}
+	echo '</tbody></table><div class="ctcd-note">Brand-new students = Moodle accounts created in the period. New customers = people whose first-ever order falls in the period. Courses sold come from store orders (refunds netted out): Moodle no longer keeps last year\'s 20 Hour enrollments, so its enrollment counts can\'t be compared year to year.</div></div>';
 }
 
 function ctc_db_render() {
@@ -271,6 +389,9 @@ function ctc_db_render() {
 	}
 	if ( isset( $mdl['completions'] ) ) echo '<div class="ctcd-tile"><div class="l">Course completions today</div><div class="v">' . number_format( $mdl['completions']['today']['all'] ) . '</div><div class="s">' . number_format( $mdl['completions']['year']['all'] ) . ' this year</div></div>';
 	echo '</div>';
+	$M = ctc_db_metrics( $S, isset( $mdl['compare'] ) ? $mdl : null );
+	ctc_db_highlights( $M );
+	ctc_db_yoy_table( $M );
 
 	// Sales.
 	if ( $sales ) {

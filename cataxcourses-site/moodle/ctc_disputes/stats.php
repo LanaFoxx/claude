@@ -113,7 +113,33 @@ $online = [
     'week'  => (int) $DB->count_records_select('user', 'deleted = 0 AND lastaccess >= ?', [$now - 7 * 86400]),
 ];
 
+// Same stretch of time last year (the store passes ly_today, ly_week, ly_month, ly_year and ly_to):
+// new student accounts, enrollments and completions, now vs then.
+$window = function ($from, $to) use ($DB, $courses) {
+    $sum = function ($rows) use ($courses) {
+        $o = ['20' => 0, '60' => 0, 'other' => 0, 'all' => 0];
+        foreach ($rows as $r) { $k = $courses[(int) $r->cid]['kind'] ?? 'other'; $o[$k] += (int) $r->n; $o['all'] += (int) $r->n; }
+        return $o;
+    };
+    return [
+        'accounts' => (int) $DB->count_records_select('user', 'deleted = 0 AND id > 2 AND timecreated >= ? AND timecreated < ?', [$from, $to]),
+        'enrollments' => $sum($DB->get_records_sql('SELECT e.courseid AS cid, COUNT(1) AS n FROM {user_enrolments} ue JOIN {enrol} e ON e.id = ue.enrolid
+            WHERE ue.timecreated >= ? AND ue.timecreated < ? GROUP BY e.courseid', [$from, $to])),
+        'completions' => $sum($DB->get_records_sql('SELECT course AS cid, COUNT(1) AS n FROM {course_completions}
+            WHERE timecompleted >= ? AND timecompleted < ? GROUP BY course', [$from, $to])),
+    ];
+};
+$compare = [];
+$lyto = optional_param('ly_to', 0, PARAM_INT);
+foreach (array_keys($periods) as $k) {
+    $lyfrom = optional_param('ly_' . $k, 0, PARAM_INT);
+    if ($lyfrom > 0 && $lyto > $lyfrom) {
+        $compare[$k] = ['cur' => $window($periods[$k], $now + 1), 'ly' => $window($lyfrom, $lyto)];
+    }
+}
+
 echo json_encode([
+    'compare' => $compare,
     'generated' => $now,
     'periods' => $periods,
     'enrollments' => $enrol,
