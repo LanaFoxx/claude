@@ -529,4 +529,54 @@ function sellCta() {
   ], false);
 }
 
-module.exports = { CONTENT, content, featured, town, tag, guide, splitHero, talkBand, U, header, footer: (m) => fixFooterIcons(footer(m)), home: (m, f) => fixContactIcons(home(m, f)), pageSettings, form, btn, lbl, title, card, img };
+// Blog: single post + Market news archive (Theme Builder) --------------------------------------------
+const cardsSkin = (prefix, cols = 3) => ({
+  _skin: 'cards', [`${prefix}cards_columns`]: String(cols), [`${prefix}cards_columns_tablet`]: '2', [`${prefix}cards_columns_mobile`]: '1',
+  [`${prefix}cards_thumbnail_size_size`]: 'medium_large', [`${prefix}cards_show_excerpt`]: '', [`${prefix}cards_meta_data`]: ['date'],
+  [`${prefix}cards_show_read_more`]: 'yes', [`${prefix}cards_read_more_text`]: 'Read article →', [`${prefix}cards_show_avatar`]: '', [`${prefix}cards_show_badge`]: '',
+  [`${prefix}cards_title_tag`]: 'h3', [`${prefix}cards_item_ratio`]: px(0.62), [`${prefix}cards_column_gap`]: px(20), [`${prefix}cards_row_gap`]: px(20),
+  [`${prefix}cards_card_bg_color`]: C.white, [`${prefix}cards_card_border_color`]: C.border, [`${prefix}cards_card_border_radius`]: px(18),
+  [`${prefix}cards_title_color`]: C.navy, ...typo(`${prefix}cards_title_typography`, HEAD, 18, 700, { lh: 1.3 }),
+  [`${prefix}cards_meta_color`]: C.slate, ...typo(`${prefix}cards_meta_typography`, BODY, 13, 400),
+  [`${prefix}cards_read_more_color`]: C.blue, ...typo(`${prefix}cards_read_more_typography`, BODY, 13, 600),
+});
+const plainHero = (children) => container({ content_width: 'boxed', boxed_width: px(1180), padding: box(56, 32, 48, 32), padding_mobile: box(28, 20, 32, 20), flex_direction: 'column', flex_gap: gap(14),
+  background_background: 'classic', background_color: C.panel, border_border: 'solid', border_width: box(0, 0, 1, 0), border_color: C.border }, children, false);
+function post() {
+  return [
+    plainHero([
+      crumbs([['Home', U.home], ['Market news', U.blog]]),
+      widget('post-info', { layout: 'inline', icon_list: [{ _id: id(), type: 'date', date_format: 'custom', custom_date_format: 'F j, Y', show_icon: 'none', selected_icon: { value: '', library: '' } }], text_color: C.blue,
+        ...typo('text_typography', BODY, 12, 700, { ls: 1.9, transform: 'uppercase' }) }),
+      widget('theme-post-title', { header_size: 'h1', title_color: C.navy, ...typo('typography', HEAD, [46, 40, 32], 700, { lh: 1.12, ls: -0.6 }), _element_width: 'initial', _element_custom_width: px(900), _element_custom_width_tablet: px(100, '%'), __dynamic__: { title: tag('post-title') } }),
+      text('By Nick Ponte · Managing Broker, Carey &amp; Giampa Realtors', { size: 15, color: C.slate }),
+    ]),
+    container({ content_width: 'boxed', boxed_width: px(1180), padding: box(40, 32, 0, 32), padding_mobile: box(24, 20, 0, 20), flex_direction: 'column' }, [
+      widget('theme-post-featured-image', { image_size: 'full', width: px(100, '%'), height: px(520), height_tablet: px(420), height_mobile: px(240), 'object-fit': 'cover', image_border_radius: box(22), __dynamic__: { image: tag('post-featured-image') } }),
+    ], false),
+    container({ content_width: 'boxed', boxed_width: px(1180), padding: box(56, 32, 24, 32), padding_mobile: box(36, 20, 16, 20), flex_direction: 'column' }, [grid([
+      widget('theme-post-content', { _css_classes: 'npc-article__body', text_color: C.text, ...typo('typography', BODY, 17, 400, { lh: 1.75 }) }),
+      fixAsideIcons2(aside()),
+    ], { cols: ['minmax(0,1fr) 320px', '1fr', '1fr'], gap: 64, gapM: 40, align: 'start' })], false),
+    band(C.bg, [
+      stack([lbl('Keep reading', C.blue, 'center'), title('More <b>market news</b>', 'h2', [42, 36, 30], C.navy, 'center')], { gap: 12, align: 'center' }),
+      widget('posts', { ...cardsSkin(''), posts_post_type: 'related', posts_include: ['terms'], posts_related_fallback: 'fallback_recent', posts_per_page: 3, cards_posts_per_page: 3 }),
+    ], { pad: [72, 96], gap: 28, width: 1180 }),
+  ];
+}
+function blog(page, onPage) {
+  return [
+    plainHero([
+      crumbs([['Home', U.home], ['Market news']]), lbl('Market news'),
+      title('Seacoast NH <b>real estate blog</b>', 'h1', [56, 46, 38], C.navy, 'left', { lh: 1.05 }),
+      text((page && page.intro) || 'Market updates, home buying and selling tips, new listings and local news from the New Hampshire Seacoast.', { size: 17, color: C.text, maxW: 620 }),
+    ]),
+    container({ content_width: 'boxed', boxed_width: px(1180), padding: box(56, 32, 96, 32), padding_mobile: box(36, 20, 64, 20), flex_direction: 'column' }, [
+      widget(onPage ? 'posts' : 'archive-posts', { ...(onPage ? { ...cardsSkin(''), posts_post_type: 'post', cards_posts_per_page: 12, posts_per_page: 12 } : { ...cardsSkin('archive_'), archive_cards_posts_per_page: 12 }), pagination_type: 'numbers_and_prev_next', pagination_prev_label: '← Newer', pagination_next_label: 'Older →',
+        pagination_align: 'center', pagination_color: C.navy, pagination_hover_color: C.blue, pagination_active_color: C.blue, ...typo('pagination_typography', BODY, 15, 600),
+        nothing_found_message: 'No articles yet.' }),
+    ], false),
+  ];
+}
+
+module.exports = { post, blog, CONTENT, content, featured, town, tag, guide, splitHero, talkBand, U, header, footer: (m) => fixFooterIcons(footer(m)), home: (m, f) => fixContactIcons(home(m, f)), pageSettings, form, btn, lbl, title, card, img };

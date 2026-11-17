@@ -48,3 +48,22 @@ add_action('elementor/dynamic_tags/register', function ($dt) {
 	$dt->register_group('nick-ponte', ['title' => 'Nick Ponte']);
 	foreach (['NPC_Tag_Town_Name', 'NPC_Tag_Town_Intro', 'NPC_Tag_Town_Updated', 'NPC_Tag_Town_Photo'] as $c) $dt->register(new $c());
 });
+
+// Blog posts drawn by Elementor: one H1 per page (headings typed as H1 in an article become H2), and the article's
+// own "By Nick Ponte ..." line is dropped because the template header already shows it.
+add_filter('the_content', function ($c) {
+	if (!npc_live() || !npc_el_on('posts') || !is_singular('post') || !in_the_loop() || is_admin()) return $c;
+	$c = preg_replace(['#<h1(\s|>)#i', '#</h1>#i'], ['<h2$1', '</h2>'], $c);
+	return preg_replace('#^\s*<p[^>]*>\s*<strong>\s*By Nick Ponte[^<]*</strong>\s*</p>\s*(<hr[^>]*>)?#i', '', $c, 1);
+}, 20);
+
+// Posts without a featured image show one of Nick's photos in the blog cards and post header.
+add_filter('get_post_metadata', function ($v, $id, $key) {
+	if ($key !== '_thumbnail_id' || is_admin() || !npc_live() || !npc_el_on('posts') || get_post_type($id) !== 'post') return $v;
+	static $busy = false; if ($busy) return $v;
+	$busy = true; $real = get_post_meta($id, '_thumbnail_id', true); $busy = false;
+	if ($real) return $v;
+	$pool = ['npc-hero-hampton', 'npc-town-new-castle', 'npc-town-seabrook', 'npc-estate-dusk', 'npc-town-hampton', 'npc-town-newington', 'npc-exeter-downtown', 'npc-contact-seawall', 'npc-town-hampton-falls', 'npc-portsmouth'];
+	$m = npc_media_id($pool[$id % count($pool)]);
+	return $m ? [$m] : $v;
+}, 10, 3);

@@ -55,7 +55,7 @@ function npc_dashboard_widget() {
 	echo $q('dashicons-location-alt', 'Update town numbers', 'Monthly market snapshot', admin_url('edit.php?post_type=np_town'));
 	echo $q('dashicons-format-image', 'Photos', 'Upload and manage images', admin_url('upload.php'));
 	echo $q('dashicons-email-alt', 'Form submissions', 'Leads from the website', admin_url('admin.php?page=e-form-submissions'));
-	echo $q('dashicons-admin-page', 'Pages', 'About, FAQ, guides, contact', admin_url('edit.php?post_type=page'));
+	echo $q('dashicons-admin-page', 'Pages', 'Edit any page with Elementor', admin_url('edit.php?post_type=page'));
 	echo '</div>';
 	if ($towns) {
 		echo '<h3 class="npc-dash__h">Town pages</h3><p class="npc-dash__p">Click a town to update its numbers, photo or text.</p><div class="npc-dash__towns">';
@@ -135,5 +135,5 @@ add_action('admin_menu', function () {
 // Admin bar: drop plugin clutter
 add_action('admin_bar_menu', function ($bar) {
 	if (!npc_simple_admin()) return;
-	foreach (['wp-logo', 'comments', 'new-content', 'rank-math', 'elementor_inspector', 'elementor_edit_page', 'google-site-kit', 'wpseo-menu', 'litespeed-menu', 'simply-static', 'wpcode-admin-bar-info', 'wpcode', 'updates', 'search'] as $id) $bar->remove_node($id);
+	foreach (['wp-logo', 'comments', 'new-content', 'rank-math', 'elementor_inspector', 'google-site-kit', 'wpseo-menu', 'litespeed-menu', 'simply-static', 'wpcode-admin-bar-info', 'wpcode', 'updates', 'search'] as $id) $bar->remove_node($id);
 }, 999);

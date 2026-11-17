@@ -44,6 +44,7 @@ add_action('init', function () {
 
 add_action('add_meta_boxes_page', function ($post) {
 	if (!isset(NPC_CONTENT_PAGES[$post->ID])) return;
+	if (function_exists('npc_el_on') && npc_el_on($post->ID)) return; // edited in Elementor now
 	add_meta_box('npc_page_fields', 'Coastal Light page (new design)', function ($post) {
 		wp_nonce_field('npc_page_save', 'npc_page_nonce');
 		echo '<p style="margin-top:0">This text is what visitors see in the new design. The Elementor layout above is the old page, kept as a backup.</p><table class="form-table" role="presentation">';

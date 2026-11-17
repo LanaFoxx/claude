@@ -37,6 +37,12 @@ async function login(p) {
   throw new Error('login failed');
 }
 const api = async (p, nonce, method, route, body) => {
+  for (let i = 1; method === 'GET' && i < 4; i++) { // the host returns the odd 502; retry reads
+    const r = await p.request.fetch(`${SITE}/wp-json${route}`, { headers: { 'X-WP-Nonce': nonce } });
+    if (r.ok()) return r.json();
+    if (r.status() < 500) break;
+    await p.waitForTimeout(5000 * i);
+  }
   const r = await p.request.fetch(`${SITE}/wp-json${route}`, { method, headers: { 'X-WP-Nonce': nonce, ...(body ? { 'Content-Type': 'application/json' } : {}) }, data: body ? JSON.stringify(body) : undefined });
   const j = await r.json().catch(() => ({}));
   if (!r.ok()) throw new Error(`${method} ${route} -> ${r.status()} ${JSON.stringify(j).slice(0, 300)}`);
@@ -158,6 +164,18 @@ async function setConditionsRaw(p, conditions) {
       console.log('content', pid, 'elements:', await replaceContent(p, S.content(m, pid, PAGES[pid], forms.contact[0]), S.pageSettings));
     }
   }
+  if (want('blog') && !args.includes('--handover-only')) {
+    for (const [type, name, els, conds] of [
+      ['single-post', 'Nick Ponte Post', S.post(), [{ type: 'include', name: 'singular', sub_name: 'post', sub_id: '' }]],
+      ['archive', 'Nick Ponte Market News', S.blog(PAGES[627]), [{ type: 'include', name: 'archive', sub_name: '', sub_id: '' }]],
+    ]) {
+      const tid = await findOrCreateTemplate(p, type, name, nonce);
+      await openEditor(p, tid);
+      console.log(name, tid, 'elements:', await replaceContent(p, els), '| conditions:', await setConditions(p, conds));
+    }
+    await openEditor(p, 627); // the Market News page itself
+    console.log('blog page 627 elements:', await replaceContent(p, S.blog(PAGES[627], true), S.pageSettings));
+  }
   if (want('home') && !args.includes('--handover-only')) {
     await openEditor(p, HOME);
     console.log('home', HOME, 'elements:', await replaceContent(p, S.home(m, { valuation: forms.valuation[0], offmarket: forms.offmarket[0] }), S.pageSettings));
@@ -165,7 +183,7 @@ async function setConditionsRaw(p, conditions) {
   if (args.includes('--handover')) {
     await p.goto(`${SITE}/wp-admin/`, { waitUntil: 'domcontentloaded' });
     nonce = await p.evaluate(() => wpApiSettings.nonce);
-    const keys = steps.flatMap((s) => ({ home: [String(HOME)], town: ['towns'], guides: Object.values(GUIDE_PAGES).map(String), featured: [String(FEATURED)], content: CONTENT_IDS.map(String) })[s] || []).flat();
+    const keys = steps.flatMap((s) => ({ home: [String(HOME)], town: ['towns'], guides: Object.values(GUIDE_PAGES).map(String), featured: [String(FEATURED)], blog: ['posts', '627'], content: CONTENT_IDS.map(String) })[s] || []).flat();
     const next = [...new Set([...handed, ...keys])];
     const r = await api(p, nonce, 'POST', '/wp/v2/settings', { npc_elementor: next });
     console.log('npc_elementor =', JSON.stringify(r.npc_elementor));
