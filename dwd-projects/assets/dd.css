@@ -1076,3 +1076,8 @@ section.dd-health.warn .dd-healthb .dd-hld { background: var(--warning-text); }
 .dd .dd-boxshut .dd-boxtog svg { transform: rotate(-90deg); }
 .dd section.dd-boxshut > :not(header) { display: none !important; }
 .dd section.dd-boxshut > header { margin-bottom: 0 !important; padding-bottom: 0 !important; border-bottom: 0 !important; }
+
+/* Home: refresh icon on the Pending in Upwork tile (same as Bank balance) */
+.dd-stats > a[data-upmoney] { align-items: center; }
+.dd-stats > a[data-upmoney] > span { flex: 1; }
+.dd-stats > a[data-upmoney] .dd-ibtn { margin-left: 4px; color: var(--text-3); flex: none; }

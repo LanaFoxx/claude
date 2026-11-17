@@ -1127,13 +1127,25 @@
 	function upBalSync() {
 		var s = S.upsnap;
 		if (!s || s.none || typeof window.dwdSetUpworkBalance !== 'function') { return; }
-		try { window.dwdSetUpworkBalance(num(s.pending), num(s.available)); } catch (e) {}
+		try { var uh = upHome(); window.dwdSetUpworkBalance(uh.pend, uh.avail); } catch (e) {}
 	}
 	// Home tiles: Upwork's own numbers when there is a snapshot (otherwise the old per-project sums).
 	function upHome() {
 		var t = upTotals(), s = upSnap();
-		if (s) { t.pend = num(s.pending); t.avail = num(s.available); t.pnext = (s.items || []).map(function (x) { return x.date; }).filter(Boolean).sort()[0] || ''; }
+		if (s) {
+			var ex = upExtra(s);
+			t.pend = num(s.pending) + ex.reduce(function (a, o) { return a + num(o.x.amount); }, 0); t.avail = num(s.available);
+			t.pnext = (s.items || []).map(function (x) { return x.date; }).concat(ex.map(function (o) { return o.x.free; })).filter(Boolean).sort()[0] || '';
+		}
 		return t;
+	}
+	// Payments logged in Dream Desk as "in Upwork" after the last Upwork check: Upwork's list doesn't have them yet,
+	// so they're added to Pending until the next check picks them up (same amount on Upwork's list = already there).
+	function upExtra(s) {
+		var day = String(s && s.checked || '').slice(0, 10), items = (s && s.items) || [];
+		return upTotals().items.filter(function (o) {
+			return day && String(o.x.date || '') >= day && !items.some(function (y) { return Math.abs(num(y.amount) - num(o.x.amount)) < 1; });
+		});
 	}
 	// Called by the Upwork check: dwdSetUpwork(pending, available, [{ date: 'YYYY-MM-DD', client: '', job: '', amount: 0 }, …]).
 	// Called by the morning Upwork check: dwdUpworkFeed([{ date, type, client, desc, amount }], [{ date, type, qty, amount }]).
@@ -1455,7 +1467,7 @@
 				var bankM = MYh[yh] && MYh[yh].m ? Math.max(0, +MYh[yh].m[mh] || 0) : 0;
 				var usn = upSnap(), uchk = usn && usn.checked ? 'checked ' + agoShort(usn.checked) : '';
 				return '<a href="#money" data-owed><span>Owed<small>Not paid yet by clients</small></span><b>' + money(owed(owingList())) + '</b></a>'
-					+ '<a href="#money" data-upmoney><span>Pending in Upwork<small>' + (UT.pnext ? 'Next frees up ' + fmt(UT.pnext) : 'Nothing on hold') + (uchk ? ' · ' + uchk : '') + '</small></span><b>' + money(UT.pend) + '</b></a>'
+					+ '<a href="#money" data-upmoney><span>Pending in Upwork<small>' + (UT.pnext ? 'Next frees up ' + fmt(UT.pnext) : 'Nothing on hold') + (uchk ? ' · ' + uchk : '') + '</small></span><b>' + money(UT.pend) + '</b><button type="button" class="dd-ibtn sm" data-uprefresh aria-label="Refresh Upwork numbers" title="Reload the Upwork numbers">' + lu('repeat', 14) + '</button></a>'
 					+ '<a href="#money" data-upmoney><span>Ready to withdraw<small>' + (uchk ? 'Upwork ' + uchk : 'Available in Upwork now') + '</small></span><b>' + money(UT.avail) + '</b></a>'
 					;
 			})()
@@ -4195,10 +4207,17 @@
 					return '<div class="dwdc-mo-r dd-upr dd-upr-s"><span class="d"><em class="dd-schip p">' + (x.date ? fmt(x.date) : 'Pending') + '</em></span><span class="w"><b>' + esc(x.client) + '</b><small>' + esc(x.job) + '</small></span><b class="a">' + money2(x.amount).replace('.00', '') + '</b><span class="dd-upact">' + act + '</span></div>';
 				}).join('');
 				S.upSnapRows = usI;
-				return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide">' + head('Money', 'In Upwork', money(num(US.pending) + num(US.available)))
-					+ '<div class="dwdc-mo-sum"><span>Pending in Upwork<b>' + money(num(US.pending)) + '</b></span><span>Ready to withdraw<b>' + money(num(US.available)) + '</b></span>' + (usI.length && usI[0].date ? '<span>Next frees up<b>' + fmt(usI[0].date) + '</b></span>' : '') + '</div>'
-					+ (usL ? '<div class="dd-uplist">' + usL + '</div>' : emptyRow('Nothing is pending in Upwork.'))
-					+ '<p class="dwdc-mutp">Straight from Upwork’s Financial overview' + (usC && !isNaN(usC) ? ' · checked ' + usC.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ', ' + usC.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : '') + '. Each date is when Upwork releases that payment.</p></div>';
+				// Logged in Dream Desk since the last Upwork check (Upwork's list doesn't have them yet).
+				var usX = upExtra(US), usXL = usX.map(function (o) {
+					var k4 = o.c.id + ':' + o.x.i;
+					var act = S.upXBusy === k4 ? '<em class="dd-schip b">Saving…</em>' : '<button type="button" class="dd-btn primary sm" data-upxwd="' + esc(k4) + '">' + lu('check', 13) + 'Mark withdrawn</button>';
+					return '<div class="dwdc-mo-r dd-upr dd-upr-s"><span class="d"><em class="dd-schip p">' + (o.x.free ? fmt(o.x.free) : 'Pending') + '</em></span><span class="w"><b>' + esc(clientName(o.c) || o.c.name) + '</b><small>' + esc(o.c.name + ' · logged in Dream Desk ' + fmt(o.x.date) + ', not on Upwork’s list yet') + '</small></span><b class="a">' + money2(o.x.amount).replace('.00', '') + '</b><span class="dd-upact">' + act + '</span></div>';
+				}).join('');
+				var usPend = num(US.pending) + usX.reduce(function (a, o) { return a + num(o.x.amount); }, 0), usNext = usI.map(function (x) { return x.date; }).concat(usX.map(function (o) { return o.x.free; })).filter(Boolean).sort()[0];
+				return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide">' + head('Money', 'In Upwork', money(usPend + num(US.available)))
+					+ '<div class="dwdc-mo-sum"><span>Pending in Upwork<b>' + money(usPend) + '</b></span><span>Ready to withdraw<b>' + money(num(US.available)) + '</b></span>' + (usNext ? '<span>Next frees up<b>' + fmt(usNext) + '</b></span>' : '') + '<button type="button" class="dd-btn secondary sm" data-uprefresh style="margin-left:auto">' + lu('repeat', 14) + 'Refresh</button></div>'
+					+ (usL || usXL ? '<div class="dd-uplist">' + usL + usXL + '</div>' : emptyRow('Nothing is pending in Upwork.'))
+					+ '<p class="dwdc-mutp">Straight from Upwork’s Financial overview' + (usC && !isNaN(usC) ? ' · checked ' + usC.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ', ' + usC.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : '') + '. Each date is when Upwork releases that payment.' + (usX.length ? ' Payments you logged after that check are added until the next one.' : '') + '</p></div>';
 			}
 			var UT = upTotals(), its = UT.items.slice().sort(function (a, b) { return a.x.free < b.x.free ? -1 : 1; });
 			var urow = function (o) {
@@ -4643,6 +4662,26 @@
 		if ((el = t.closest('[data-upfdis]')) || (el = t.closest('[data-upfdone]'))) {
 			el.disabled = true;
 			upfSet(el.getAttribute('data-upfdis') || el.getAttribute('data-upfdone'), el.hasAttribute('data-upfdone') ? 'logged' : 'dismissed').catch(function (er) { el.disabled = false; fail(er); });
+			return;
+		}
+		// Mark withdrawn on a payment logged after the last Upwork check: just moves that Dream Desk payment to In bank.
+		if ((el = t.closest('[data-upxwd]'))) {
+			var xk = el.getAttribute('data-upxwd'); if (S.upXBusy) { return; }
+			S.upXBusy = xk; render();
+			api('/contact/' + xk.split(':')[0] + '/payment/' + xk.split(':')[1] + '/bank', 'POST', { bank: 1, date: DWDC.today })
+				.then(function (x) { upsert(x); S.full[x.id] = x; S.upXBusy = null; return reload(); })
+				.then(function () { upBalSync(); render(); toast('Marked withdrawn · in your bank'); })
+				.catch(function (er) { S.upXBusy = null; render(); fail(er); });
+			return;
+		}
+		// Refresh on the Pending in Upwork tile: re-read the saved Upwork numbers (new ones come from the Upwork check on Mike's computer).
+		if ((el = t.closest('[data-uprefresh]'))) {
+			e.preventDefault(); e.stopPropagation(); el.disabled = true; el.classList.add('spin');
+			api('/upwork-snap').then(function (x) {
+				S.upsnap = x || { none: true }; upBalSync(); render();
+				var ck = x && x.checked ? agoShort(x.checked) : '';
+				toast(ck ? 'Upwork numbers reloaded · Upwork last checked ' + ck + '. To get newer numbers, run the Upwork check in the Claude app on your computer.' : 'Upwork numbers reloaded');
+			}).catch(function (er) { el.disabled = false; el.classList.remove('spin'); fail(er); });
 			return;
 		}
 		if (t.closest('[data-upmoney]')) { e.preventDefault(); S.modal = { type: 'upmoney' }; render(); return; }
