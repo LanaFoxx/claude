@@ -335,3 +335,5 @@ Container `Seasonal Offer`: change the H2 to **Talk to us about your project** a
 - Headings now use **Fraunces** (option A from the font review) site-wide as a test. Sizes are scaled by `SERIF_SCALE = 0.86` because Fraunces sets larger than Cormorant at the same px size. The giant words use clamp(76px, 8.8vw, 128px), or clamp(62px, 14.6vw, 114px) on small screens. The TOP NOTCH stand-in wordmark keeps Cormorant Garamond until the real logo files arrive.
 - Main titles mix weights: the `<b>` part sets at 700, the rest at 300 (`CONTRAST` map and the `.tn-contrast` CSS in the header's HTML widget). The giant words "Painting" and "Staining" are fully bold. To go back to one weight, empty the `CONTRAST` dict.
 - Hero: the buttons now sit under the subline, left-aligned. The partner logos sit left under the HomeAdvisor stars, at 50px tall (44px at 980px and below, 34px at 600px and below). Top padding is 270px on desktop and laptop (200px on tablet and mobile), which puts the hero content 70px lower than before.
+
+- Why section: added the H2 "**Why homeowners** choose Top Notch" (bold/thin) above the grid; the gap between title and grid is 64px on desktop.

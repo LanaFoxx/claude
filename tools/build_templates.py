@@ -209,6 +209,7 @@ CONTRAST = {
     "Craftsmanship rooted in how mountain homes are built":
         "<b>Craftsmanship</b> rooted in how mountain homes are built",
     "Featured projects": "<b>Featured</b> projects",
+    "Why homeowners choose Top Notch": "<b>Why homeowners</b> choose Top Notch",
     "Away for the season? We'll take care of it.": "<b>Away for the season?</b> We'll take care of it.",
     "What our clients say": "What our <b>clients</b> say",
     "Now scheduling winter interior projects": "<b>Now scheduling</b> winter interior projects",
@@ -1032,6 +1033,7 @@ def build_home():
                  max_w=360, pretty=False)], gap=18)
 
     why = section("Why Top Notch", [
+        h2("Why / Title (H2)", "Why homeowners choose Top Notch", max_w=720),
         grid("Why / Points", [
             point("shield-check-light", "Your home, protected",
                   "Floors, furnishings, fixtures, and landscaping are covered and protected. Work areas "
@@ -1052,7 +1054,7 @@ def build_home():
                   "Detailed written estimates, clear schedules, and a two-year written warranty on our "
                   "work."),
         ], cols=(3, 3, 2, 1), gap_col=0, gap_row=0, css=WHY_GRID_LINES)],
-        bg=SPRUCE, pad_top=SECV_TALL, pad_bottom=SECV_TALL, gap=(112, 104, 78, 72), overflow="hidden")
+        bg=SPRUCE, pad_top=SECV_TALL, pad_bottom=SECV_TALL, gap=(64, 60, 52, 44), overflow="hidden")
 
     projects = build_featured_projects()
 
