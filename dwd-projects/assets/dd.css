@@ -1057,4 +1057,5 @@ section.dd-health.warn .dd-healthb .dd-hld { background: var(--warning-text); }
 [data-theme="dark"] .dd .dd-tl-add select.dd-tl-lane option, .dd-dark .dd-tl-add select.dd-tl-lane option { color: #F3F4F6 !important; background: #1F2430 !important; }
 
 /* Today's schedule: thin divider between the personal half and the business half */
-.dd-tl-sep { height: 0; border-top: 2px solid var(--border-strong); margin: 6px 0 2px; }
+.dd-tl-sep { height: 0; border-top: 1px solid var(--border-strong); margin: -1px -20px 0; position: relative; } /* one line, full width, sits on the row line above */
+@media (max-width: 767px) { .dd-tl-sep { margin: -1px -16px 0; } }
