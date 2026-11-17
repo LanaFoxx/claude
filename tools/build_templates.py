@@ -896,8 +896,7 @@ def paint_bg(title, color, mode="cols", bands=4):
 WHY_GRID_LINES = (
     "selector{position:relative;}"
     "selector > .e-con{position:relative;padding:56px 48px 60px !important;"
-    "background-color:rgba(42,54,47,0.8);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);"
-    "transition:background-color .35s ease;}"
+    "background-color:rgba(42,54,47,0.8);transition:background-color .35s ease;}"
     "selector > .e-con:hover{background-color:rgba(32,42,37,0.86);}"
     "selector > .e-con::before{content:'' !important;display:block;position:absolute;top:0;bottom:0;"
     "left:0;right:auto;width:1px;height:auto;background:" + _LINE + ";opacity:1;pointer-events:none;border:0;}"
@@ -1121,7 +1120,7 @@ def build_home():
         '<img class="tn-spin" src="%s" alt="" aria-hidden="true" width="800" height="800">'
         "<style>"
         ".tn-spin-host > .e-con-inner{position:relative;}"
-        ".tn-spin-wrap{position:absolute !important;top:70px;right:calc(20%% - 90px);width:auto !important;margin:0 !important;"
+        ".tn-spin-wrap{position:absolute !important;top:70px;right:calc(20%% - 130px);width:auto !important;margin:0 !important;"
         "z-index:0;pointer-events:none;}"
         ".tn-spin{display:block;width:576px;height:576px;opacity:.08;will-change:transform;}"
         ".tn-spin-host > .e-con-inner > *:not(.tn-spin-wrap){position:relative;z-index:1;}"
