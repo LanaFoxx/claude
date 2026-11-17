@@ -46,7 +46,7 @@
     },
     "padding": {
      "unit": "px",
-     "top": "320",
+     "top": "270",
      "right": "48",
      "bottom": "80",
      "left": "48",
@@ -54,7 +54,7 @@
     },
     "padding_laptop": {
      "unit": "px",
-     "top": "320",
+     "top": "270",
      "right": "48",
      "bottom": "80",
      "left": "48",
