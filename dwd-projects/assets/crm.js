@@ -90,7 +90,9 @@
 		stem.split(/[-_]+/).forEach(function (p) { if (p) { words = words.concat(seg(p)); } });
 		return words.map(function (w, i) { return caps[w] ? caps[w] : i > 0 && /^(of|and|by|for|the|a|an|in|on|at|to)$/.test(w) ? w : /^(llc|inc|pc|pllc|usa|ai|it|hvac|ny|ria|ca|la)$/.test(w) || (w.length <= 3 && !kw(w)) ? w.toUpperCase() : w.charAt(0).toUpperCase() + w.slice(1); }).join(' ');
 	}
-	function projTitle(c) { return domWords(c) || cleanNm(c.company) || c.name; }
+	function projTitleAuto(c) { return domWords(c) || cleanNm(c.company) || c.name; }
+	// A title typed in Edit ("Project title") wins; blank = the automatic one from the website.
+	function projTitle(c) { return String(c.ptitle || '').trim() || projTitleAuto(c); }
 	function projPerson(c) { var k = clientOf(c); return cleanNm(c.person) || (k && k.name) || ''; }
 	function projSite(c) { return site(c); } // the website still shows under the title, next to the client's name
 	function toast(msg, bad) {
@@ -3953,6 +3955,7 @@
 	function editCard(c) {
 		var f = function (k, label, type, ph) { return '<label><span>' + label + '</span><input name="' + k + '" type="' + (type || 'text') + '" value="' + esc(c[k]) + '" placeholder="' + esc(ph || '') + '"></label>'; };
 		return '<form class="dwdc-card pad dwdc-editf"><div class="dwdc-cardh"><h2>Edit details</h2></div><div class="dwdc-fgrid">'
+			+ '<label class="wide"><span>Project title</span><input name="ptitle" value="' + esc(c.ptitle || '') + '" placeholder="' + esc(projTitleAuto(c)) + ' (automatic, from the website)"></label>'
 			+ (clientOf(c) ? '<label><span>Client name</span><input name="client_name" value="' + esc(clientOf(c).name) + '" placeholder="The client this project belongs to"></label>' : '')
 			+ f('name', 'Project / business name') + f('person', 'Contact person') + f('email', 'Email', 'email') + f('phone', 'Phone') + f('company', 'Company') + f('website', 'Website')
 			+ '<label class="wide"><span>Project (current job)</span><input name="job" value="' + esc(c.job) + '" placeholder="e.g. Booking site redesign"></label>'
