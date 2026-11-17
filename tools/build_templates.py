@@ -813,44 +813,22 @@ def path_column(title, color, label, h2_text, body, items, image=None):
 _LINE = "rgba(242,236,227,0.07)"
 # Paint-on-scroll backgrounds: four bands that "paint" a darker shade over a section as you scroll.
 # mode "cols": columns, alternating top-down / bottom-up. mode "rows": rows, alternating left-right / right-left.
-def _brush_edge(vertical=False):
-    # Ragged brush edge used as a CSS mask on the leading edge of each band.
-    offs = [12, 18, 9, 15, 24, 16, 8, 17, 26, 15, 9, 18, 24, 14, 8, 17, 26, 16, 9, 18, 25, 15, 8, 17, 24, 14, 18]
-    step = 400 / (len(offs) - 1)
-    pts = [(round(400 - i * step, 1), o) for i, o in enumerate(offs)]
-    if vertical:
-        d = "M0 0V400H12" + "".join("L%s %s" % (o, x) for x, o in pts) + "Z"
-        box = "0 0 28 400"
-    else:
-        d = "M0 0H400V12" + "".join("L%s %s" % (x, o) for x, o in pts) + "Z"
-        box = "0 0 400 28"
-    svg = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='%s' preserveAspectRatio='none'><path d='%s'/></svg>" % (box, d)
-    return "data:image/svg+xml," + svg.replace("<", "%3C").replace(">", "%3E").replace("#", "%23")
-
-
 PAINT_CSS = """<style>
 .tn-paint-wrap{position:absolute !important;inset:0;width:100% !important;max-width:none !important;margin:0 !important;z-index:0;pointer-events:none;}
 .tn-paint-wrap .elementor-widget-container{position:absolute;inset:0;}
 .tn-paint-host > .e-con-inner > *:not(.tn-paint-wrap),.tn-paint-host > *:not(.tn-paint-wrap):not(.e-con-inner){position:relative;z-index:1;}
 .tn-paint{position:absolute;inset:0;display:grid;overflow:hidden;}
 .tn-paint i{position:relative;display:block;}
-.tn-paint i::before,.tn-paint i::after{content:'';position:absolute;background:var(--paint);}
-.tn-paint i::after{opacity:var(--o,0);-webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;}
+.tn-paint i::before{content:'';position:absolute;background:var(--paint);}
 .tn-paint.cols{grid-template-columns:repeat(4,1fr);}
 .tn-paint.cols i::before{left:0;right:0;height:var(--p,0%);}
-.tn-paint.cols i::after{left:0;right:0;height:22px;-webkit-mask-image:url("__H__");mask-image:url("__H__");}
 .tn-paint.cols i.a::before{top:0;}
-.tn-paint.cols i.a::after{top:calc(var(--p,0%) - 1px);}
 .tn-paint.cols i.b::before{bottom:0;}
-.tn-paint.cols i.b::after{bottom:calc(var(--p,0%) - 1px);transform:scaleY(-1);}
 .tn-paint.rows{grid-template-rows:repeat(4,1fr);}
 .tn-paint.rows i::before{top:0;bottom:0;width:var(--p,0%);}
-.tn-paint.rows i::after{top:0;bottom:0;width:22px;-webkit-mask-image:url("__V__");mask-image:url("__V__");}
 .tn-paint.rows i.a::before{left:0;}
-.tn-paint.rows i.a::after{left:calc(var(--p,0%) - 1px);}
 .tn-paint.rows i.b::before{right:0;}
-.tn-paint.rows i.b::after{right:calc(var(--p,0%) - 1px);transform:scaleX(-1);}
-@media (prefers-reduced-motion:reduce){.tn-paint i{--p:100% !important;--o:0 !important;}}
+@media (prefers-reduced-motion:reduce){.tn-paint i{--p:100% !important;}}
 </style>
 <script>
 (function(){
@@ -869,7 +847,6 @@ PAINT_CSS = """<style>
         w.querySelectorAll('i').forEach(function(c, i){
           var p = Math.max(0, Math.min(1, t * 1.25 - i * 0.07));
           c.style.setProperty('--p', (p * 100).toFixed(2) + '%');
-          c.style.setProperty('--o', p > 0.002 && p < 0.998 ? 1 : 0);
         });
       });
     }
@@ -880,12 +857,14 @@ PAINT_CSS = """<style>
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
 })();
-</script>""".replace("__H__", _brush_edge()).replace("__V__", _brush_edge(True))
+</script>"""
 
 
-def paint_bg(title, color, mode="cols"):
-    html = ('<div class="tn-paint %s" style="--paint:%s" aria-hidden="true">'
-            '<i class="a"></i><i class="b"></i><i class="a"></i><i class="b"></i></div>' % (mode, color))
+def paint_bg(title, color, mode="cols", bands=4):
+    track = "grid-template-%s:repeat(%d,1fr)" % ("columns" if mode == "cols" else "rows", bands)
+    inner = "".join('<i class="%s"></i>' % ("a" if i % 2 == 0 else "b") for i in range(bands))
+    html = ('<div class="tn-paint %s" style="--paint:%s;%s" aria-hidden="true">%s</div>'
+            % (mode, color, track, inner))
     return widget("html", title, html=html + PAINT_CSS, _css_classes="tn-paint-wrap")
 
 
@@ -1074,7 +1053,7 @@ def build_what_we_do():
                    **typo(prefix="icon_typography", size=15, weight=600, lh=1.4))],
             html_tag="article", gap=0, css="selector{min-width:0;}"))
     return section("What We Do", [
-        paint_bg("What We Do / Paint-on-scroll background", "#0A0806", "rows"),
+        paint_bg("What We Do / Paint-on-scroll background", "#0A0806", "rows", bands=3),
         grid("What We Do / Columns", cols, cols=(2, 2, 1, 1), gap_col=(79, 72, 56, 56), gap_row=56,
              grid_align_items="stretch", css_classes="tn-wwd-grid tn-match-lines")],
         bg=CHARRED, pad_top=(64, 56, 48, 40), _element_id="what-we-do", custom_css=WWD_CSS,
