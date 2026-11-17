@@ -25,7 +25,7 @@ function npc_el_town($id = 0) {
 // Brand styles + fonts on Elementor pages too (the widgets use the same classes as the design).
 add_action('wp_enqueue_scripts', function () {
 	if (!npc_live() || npc_is_preview()) return;
-	wp_enqueue_style('npc-fonts', 'https://fonts.googleapis.com/css2?family=Manrope:wght@300;600;700;800&family=EB+Garamond:ital,wght@1,500&family=Figtree:wght@400;500;600;700;800&display=swap', [], null);
+	wp_enqueue_style('npc-fonts', 'https://fonts.googleapis.com/css2?family=Manrope:wght@300;600;700;800&family=Figtree:wght@400;500;600;700&display=swap', [], null);
 	wp_enqueue_style('npc', NPC_URL . 'assets/coastal.css', [], NPC_VER);
 	wp_enqueue_script('npc', NPC_URL . 'assets/coastal.js', [], NPC_VER, true);
 	wp_localize_script('npc', 'npcForm', ['ajax' => admin_url('admin-ajax.php')]);
@@ -67,3 +67,24 @@ add_filter('get_post_metadata', function ($v, $id, $key) {
 	$m = npc_media_id($pool[$id % count($pool)]);
 	return $m ? [$m] : $v;
 }, 10, 3);
+
+// Speed: the brand fonts are loaded once above (Elementor would load them again with every weight),
+// Real Estate Manager's listing styles are not used on these pages, and offscreen background photos load lazily.
+add_filter('elementor/frontend/print_google_fonts', '__return_false');
+add_action('wp_enqueue_scripts', function () {
+	if (!npc_live() || npc_is_preview() || is_singular('rem_property') || is_post_type_archive('rem_property')) return;
+	global $wp_styles;
+	foreach ((array) $wp_styles->queue as $h) {
+		$src = isset($wp_styles->registered[$h]) ? (string) $wp_styles->registered[$h]->src : '';
+		if (preg_match('#/(real-estate-manager-pro|rem-[a-z-]+)/#', $src) || preg_match('/^(property-compare|iziModal)/', $h)) wp_dequeue_style($h);
+	}
+}, 99);
+add_action('admin_init', function () {
+	foreach (['e_lazyload', 'e_font_icon_svg'] as $x) if (get_option("elementor_experiment-$x") !== 'active') update_option("elementor_experiment-$x", 'active');
+});
+// The homepage hero photo is a container background, so the browser finds it late: preload it.
+add_action('wp_head', function () {
+	if (!npc_live() || npc_is_preview() || !is_front_page()) return;
+	$id = npc_media_id('npc-hero');
+	if ($id) echo '<link rel="preload" as="image" href="' . esc_url(wp_get_attachment_image_url($id, 'full')) . '" fetchpriority="high">' . "\n";
+}, 1);
