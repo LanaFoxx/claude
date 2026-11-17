@@ -215,12 +215,9 @@
   }
 
   function init() {
-    const home = !!document.getElementById('dw-home');
+    // Only the hero gets the mosaic (the 4-piece look first made for the About section); every other dark section stays plain.
     const hc = document.getElementById('dw-hero-canvas');
-    if (hc) mount(hc.parentElement, home ? 'hero' : 'page');
-    [['#reviews', 'reviews'], ['#about', 'about'], ['.dwr-band-dark', 'band']]
-      .forEach(([sel, name]) => document.querySelectorAll(sel).forEach(el => mount(el, name)));
-    document.querySelectorAll('section[data-theme="dark"]:not(.dwr-obhero):not(#skills)').forEach(el => mount(el, 'generic'));
+    if (hc) mount(hc.parentElement, 'about');
   }
 
   window.DWHeroMosaic = { init, start, mount, PRESETS };
