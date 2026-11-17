@@ -652,3 +652,39 @@ a.g-crow__val:hover{color:var(--g-navy)}
 /* Logo: centre vertically (remove inline line-box space under the image) */
 .elementor .g-header .g-logo,.elementor .g-header .g-logo .elementor-widget-container{display:flex!important;align-items:center;align-self:center!important;line-height:0}
 .elementor .g-header .g-logo a{display:flex!important;align-items:center;min-height:0!important}
+
+/* ---------- Hero with Garrison's welcome video (replaces the background photo) ---------- */
+.elementor .g-hero{flex-direction:row!important;align-items:center!important;justify-content:space-between;padding-bottom:72px!important}
+.elementor .g-hero-decor .s1,.elementor .g-hero-decor .s2{display:none!important}
+.elementor .g-hero-decor .gr{width:100%!important;-webkit-mask-image:linear-gradient(90deg,#000 30%,rgba(0,0,0,.4) 100%);mask-image:linear-gradient(90deg,#000 30%,rgba(0,0,0,.4) 100%)}
+.elementor .g-hero-content{order:1;width:600px!important;max-width:600px;padding:56px 0 40px 64px!important;flex:none!important;box-sizing:content-box}
+.elementor .g-hero-video{order:2;position:relative;z-index:2;flex:1 1 0!important;min-width:0;width:auto!important;padding:56px 64px 40px 56px;box-sizing:border-box}
+.elementor .g-hvid{margin:0;position:relative}
+.elementor .g-hvid::before{content:"";position:absolute;right:-18px;top:-18px;width:55%;height:60%;border-radius:16px;background:repeating-linear-gradient(135deg,var(--g-hi) 0 12px,var(--g-orange) 12px 24px);opacity:.9}
+.elementor .g-hvid__frame{position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#000;box-shadow:0 30px 70px rgba(0,0,0,.45)}
+.elementor .g-hvid video{display:block;width:100%;height:100%;object-fit:cover}
+.elementor .g-hvid__play{position:absolute;inset:0;display:flex!important;align-items:flex-end;justify-content:flex-start;gap:14px;padding:24px!important;border:0!important;border-radius:0!important;background:linear-gradient(180deg,rgba(11,42,66,0) 45%,rgba(11,42,66,.75) 100%)!important;cursor:pointer;text-align:left;color:#fff!important}
+.elementor .g-hvid__btn{width:72px;height:72px;border-radius:50%;background:var(--g-orange);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 30px rgba(0,0,0,.35);transition:transform .2s,background-color .2s;flex:none}
+.elementor .g-hvid__btn svg{margin-left:4px}
+.elementor .g-hvid__play:hover .g-hvid__btn{background:var(--g-orange-h);transform:scale(1.06)}
+.elementor .g-hvid__play:focus-visible{outline:3px solid #fff!important;outline-offset:-3px}
+.elementor .g-hvid__label{display:flex;flex-direction:column;gap:2px;padding-bottom:6px}
+.elementor .g-hvid__label b{font:600 20px/1.2 "Inter Tight",sans-serif;color:#fff}
+.elementor .g-hvid__label small{font:500 14px/1 Inter,sans-serif;color:var(--g-line)}
+.elementor .g-hvid.is-playing .g-hvid__play{display:none!important}
+.elementor .g-hvid figcaption{position:relative;margin-top:14px;font-size:15px;color:var(--g-lslate)}
+@media (min-width:1441px){.elementor .g-hero-content{margin-left:calc((100% - 1440px) / 2)!important}.elementor .g-hero-video{margin-right:calc((100% - 1440px) / 2)}}
+@media (max-width:1180px) and (min-width:981px){.elementor .g-hero-content{width:460px!important}.elementor .g-hero-video{padding-left:40px;padding-right:40px}}
+@media (max-width:980px){
+  .elementor .g-hero{flex-direction:column!important;align-items:stretch!important;padding-bottom:64px!important}
+  .elementor .g-hero-content{width:auto!important;max-width:none;padding:56px 40px 8px!important}
+  .elementor .g-hero-video{padding:24px 40px 24px;width:100%!important}
+  .elementor .g-hero-decor{bottom:0!important}
+}
+@media (max-width:600px){
+  .elementor .g-hero{padding-bottom:48px!important}
+  .elementor .g-hero-content{padding:36px 20px 0!important}
+  .elementor .g-hero-video{padding:24px 20px 12px}
+  .elementor .g-hvid::before{right:-8px;top:-8px}
+  .elementor .g-hvid__btn{width:60px;height:60px}.elementor .g-hvid__label b{font-size:17px}.elementor .g-hvid__play{padding:16px!important}
+}

@@ -38,3 +38,11 @@
     var c=document.querySelector('.glec-cart-count'); var n=c?parseInt(c.getAttribute('data-count')||c.textContent,10):0;
     document.body.classList.toggle('glec-has-cart', n>0); }); }
 })();
+/* Hero welcome video: poster + play button, plays with sound and native controls on click */
+(function(){
+  document.querySelectorAll('.g-hvid').forEach(function(f){
+    var v=f.querySelector('video'), b=f.querySelector('.g-hvid__play'); if(!v||!b) return;
+    b.addEventListener('click',function(){ f.classList.add('is-playing'); v.controls=true; v.play().catch(function(){}); v.focus(); });
+    v.addEventListener('ended',function(){ v.controls=false; v.load(); f.classList.remove('is-playing'); b.focus(); });
+  });
+})();
