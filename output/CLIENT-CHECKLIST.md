@@ -17,6 +17,6 @@ The site has no visible placeholders. Every item below is **temporary copy we wr
 | 11 | Footer address | 4722 Hwy US-6, Gypsum, CO 81637 | Confirm that this is the right public address for the painting division. |
 | 12 | Phone (everywhere) | (970) 524-7323 | Confirm this is the right number for painting leads. |
 | 13 | Business hours | Not shown (removed with the old footer) | Hours, if they want them on the site or the contact page. |
-| 14 | Logo | Text wordmark "TOP NOTCH / PAINTING & STAINING" | Logo files (SVG preferred, plus a PNG). |
+| 14 | Logo | Badge logo in use, rebuilt from a small 107×88 image (edges slightly soft) | Original logo file (SVG, AI or EPS preferred, or a large PNG) so it stays sharp. |
 | 15 | Linked pages | Nav and footer link to pages not built yet (service pages, Our Work, Our Story, Core Values, Reviews, Areas We Serve, Financing, For Builders with its #bid form) | Content for each page, plus financing details (provider and terms). |
 | 16 | Google Ads tag | Not installed (per the brief) | Confirmation to add `AW-18542572239` and the conversion event on /thank-you/. |

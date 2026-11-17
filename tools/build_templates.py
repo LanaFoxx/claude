@@ -363,15 +363,19 @@ def stars(title, color, size, gap_):
                   icon_unmarked_color=color)
 
 
+LOGO = {"id": 2280, "url": SITE + "/wp-content/uploads/2026/11/top-notch-painting-logo-light.png"}
+
+
 def wordmark(title, size=28):
-    return container(
-        title,
-        [heading(title + " / Name", "TOP NOTCH", tag="div", color=BONE,
-                 typ=typo(family=WORDMARK_SERIF, size=size, weight=600, lh=1, ls=round(size * 0.08, 2))),
-         heading(title + " / Descriptor", "PAINTING &amp; STAINING", tag="div", color=AMBER,
-                 typ=typo(size=10, weight=700, lh=1.2, ls=3.6))],
-        gap=5, html_tag="a", link=link("/"), _attributes="aria-label|Top Notch Painting home",
-        flex_align_items="flex-start", auto_width=True)
+    """Company badge logo (light version for dark backgrounds), linked home. size = desktop height / 0.4."""
+    h = round(size / 0.4)                     # header 70px, footer 60px
+    return widget("image", title, image=dict(LOGO, alt="Top Notch Painting", source="library"),
+                  image_size="full", link_to="custom", link=link("/"), align="left",
+                  custom_css="selector{line-height:0;}"
+                             "selector img{height:%dpx !important;width:auto !important;max-width:none !important;display:block;}"
+                             "@media (max-width:980px){selector img{height:%dpx !important;}}"
+                             "@media (max-width:600px){selector img{height:%dpx !important;}}"
+                             % (h, round(h * 0.86), round(h * 0.78)))
 
 
 def section(title, children, bg, pad_top=SECV, pad_bottom=SECV, gap=0, **s):

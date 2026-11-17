@@ -342,3 +342,6 @@ Container `Seasonal Offer`: change the H2 to **Talk to us about your project** a
 - `paint_bg(title, color, mode)` adds an absolutely positioned HTML widget with four bands that paint a darker shade over the section as you scroll (straight edges, staggered start per band). The host section needs `css_classes="tn-paint-host"`. Users who ask for reduced motion see it fully painted, with no animation.
 - Why section: 4 columns in #1A231E (columns 1 and 3 paint down, 2 and 4 paint up).
 - What We Do: 3 rows in #0A0806 (rows 1 and 3 paint left to right, row 2 paints right to left).
+
+## Company logo
+- The badge logo replaces the text wordmark in the header (70px tall, 60px at 980px and below, 55px at 600px and below) and footer (60px). The source was a 107x88 image, upscaled 8x and smoothed: `output/logo/top-notch-painting-logo-light.png` (media 2280, for dark backgrounds) and `-dark.png` (media 2281). Swap in a vector file when the client sends one.

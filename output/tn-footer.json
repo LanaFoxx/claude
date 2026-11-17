@@ -4,7 +4,7 @@
  "type": "footer",
  "content": [
   {
-   "id": "75b00a2",
+   "id": "8d836e7",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -84,7 +84,7 @@
    },
    "elements": [
     {
-     "id": "bf67d46",
+     "id": "831c945",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -193,131 +193,32 @@
      },
      "elements": [
       {
-       "id": "f416320",
-       "elType": "container",
-       "isInner": true,
+       "id": "2919e93",
+       "elType": "widget",
+       "widgetType": "image",
+       "isInner": false,
        "settings": {
-        "_title": "Footer / Wordmark",
-        "content_width": "full",
-        "flex_direction": "column",
-        "flex_gap": {
-         "column": "5",
-         "row": "5",
-         "isLinked": true,
-         "unit": "px",
-         "size": 5
+        "image": {
+         "id": 2280,
+         "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/top-notch-painting-logo-light.png",
+         "alt": "Top Notch Painting",
+         "source": "library"
         },
-        "flex_gap_laptop": {
-         "column": "5",
-         "row": "5",
-         "isLinked": true,
-         "unit": "px",
-         "size": 5
-        },
-        "flex_gap_tablet": {
-         "column": "5",
-         "row": "5",
-         "isLinked": true,
-         "unit": "px",
-         "size": 5
-        },
-        "flex_gap_mobile": {
-         "column": "5",
-         "row": "5",
-         "isLinked": true,
-         "unit": "px",
-         "size": 5
-        },
-        "width": {
-         "unit": "%",
-         "size": 100,
-         "sizes": []
-        },
-        "padding": {
-         "unit": "px",
-         "top": "0",
-         "right": "0",
-         "bottom": "0",
-         "left": "0",
-         "isLinked": true
-        },
-        "html_tag": "a",
+        "image_size": "full",
+        "link_to": "custom",
         "link": {
          "url": "/",
          "is_external": "",
          "nofollow": ""
         },
-        "_attributes": "aria-label|Top Notch Painting home",
-        "flex_align_items": "flex-start",
-        "custom_css": "selector{--width:auto;width:auto;min-width:0;}"
+        "align": "left",
+        "custom_css": "selector{line-height:0;}selector img{height:60px !important;width:auto !important;max-width:none !important;display:block;}@media (max-width:980px){selector img{height:52px !important;}}@media (max-width:600px){selector img{height:47px !important;}}",
+        "_title": "Footer / Wordmark"
        },
-       "elements": [
-        {
-         "id": "12f0ee9",
-         "elType": "widget",
-         "widgetType": "heading",
-         "isInner": false,
-         "settings": {
-          "title": "TOP NOTCH",
-          "header_size": "div",
-          "title_color": "#F2ECE3",
-          "typography_typography": "custom",
-          "typography_font_family": "Cormorant Garamond",
-          "typography_font_size": {
-           "unit": "px",
-           "size": 24,
-           "sizes": []
-          },
-          "typography_font_weight": "600",
-          "typography_line_height": {
-           "unit": "em",
-           "size": 1,
-           "sizes": []
-          },
-          "typography_letter_spacing": {
-           "unit": "px",
-           "size": 1.92,
-           "sizes": []
-          },
-          "_title": "Footer / Wordmark / Name"
-         },
-         "elements": []
-        },
-        {
-         "id": "e094499",
-         "elType": "widget",
-         "widgetType": "heading",
-         "isInner": false,
-         "settings": {
-          "title": "PAINTING &amp; STAINING",
-          "header_size": "div",
-          "title_color": "#C68B4E",
-          "typography_typography": "custom",
-          "typography_font_family": "Manrope",
-          "typography_font_size": {
-           "unit": "px",
-           "size": 10,
-           "sizes": []
-          },
-          "typography_font_weight": "700",
-          "typography_line_height": {
-           "unit": "em",
-           "size": 1.2,
-           "sizes": []
-          },
-          "typography_letter_spacing": {
-           "unit": "px",
-           "size": 3.6,
-           "sizes": []
-          },
-          "_title": "Footer / Wordmark / Descriptor"
-         },
-         "elements": []
-        }
-       ]
+       "elements": []
       },
       {
-       "id": "24aa4e7",
+       "id": "10a61f9",
        "elType": "widget",
        "widgetType": "icon-list",
        "isInner": false,
@@ -332,7 +233,7 @@
         "text_color_hover": "#F2ECE3",
         "icon_list": [
          {
-          "_id": "d5e818f",
+          "_id": "8dabe92",
           "text": "Fine Painting",
           "link": {
            "url": "/interior-painting/",
@@ -345,7 +246,7 @@
           }
          },
          {
-          "_id": "a6263ae",
+          "_id": "d0433cb",
           "text": "Log &amp; Timber Staining",
           "link": {
            "url": "/log-home-staining-restoration/",
@@ -358,7 +259,7 @@
           }
          },
          {
-          "_id": "80eb9a0",
+          "_id": "d5e818f",
           "text": "Our Work",
           "link": {
            "url": "/our-work/",
@@ -371,7 +272,7 @@
           }
          },
          {
-          "_id": "4d6c51e",
+          "_id": "a6263ae",
           "text": "For Builders",
           "link": {
            "url": "/for-builders/",
@@ -384,7 +285,7 @@
           }
          },
          {
-          "_id": "10a61f9",
+          "_id": "80eb9a0",
           "text": "About",
           "link": {
            "url": "/our-story/",
@@ -397,7 +298,7 @@
           }
          },
          {
-          "_id": "ad3c7de",
+          "_id": "4d6c51e",
           "text": "Reviews",
           "link": {
            "url": "/reviews/",
@@ -429,7 +330,7 @@
        "elements": []
       },
       {
-       "id": "831c945",
+       "id": "e11745a",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -482,7 +383,7 @@
        },
        "elements": [
         {
-         "id": "2c593af",
+         "id": "ad3c7de",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -515,7 +416,7 @@
          "elements": []
         },
         {
-         "id": "2919e93",
+         "id": "5988931",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -568,7 +469,7 @@
          },
          "elements": [
           {
-           "id": "5988931",
+           "id": "24aa4e7",
            "elType": "widget",
            "widgetType": "button",
            "isInner": false,
@@ -633,7 +534,7 @@
            "elements": []
           },
           {
-           "id": "e11745a",
+           "id": "2c593af",
            "elType": "widget",
            "widgetType": "button",
            "isInner": false,
@@ -704,7 +605,7 @@
      ]
     },
     {
-     "id": "45d1488",
+     "id": "bf67d46",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -768,7 +669,7 @@
      },
      "elements": [
       {
-       "id": "8d836e7",
+       "id": "12f0ee9",
        "elType": "widget",
        "widgetType": "heading",
        "isInner": false,
@@ -791,13 +692,13 @@
         },
         "_title": "Footer / Copyright (auto year)",
         "__dynamic__": {
-         "title": "[elementor-tag id=\"bdec6f1\" name=\"current-date-time\" settings=\"%7B%22date_format%22%3A%22custom%22%2C%22custom_format%22%3A%22Y%22%2C%22before%22%3A%22%C2%A9%20%22%2C%22after%22%3A%22%20Top%20Notch%20Painting%20%C2%B7%20A%20Top%20Notch%20Logworks%20company%20%C2%B7%20Employee%20owned%20%26%20operated%22%7D\"]"
+         "title": "[elementor-tag id=\"e094499\" name=\"current-date-time\" settings=\"%7B%22date_format%22%3A%22custom%22%2C%22custom_format%22%3A%22Y%22%2C%22before%22%3A%22%C2%A9%20%22%2C%22after%22%3A%22%20Top%20Notch%20Painting%20%C2%B7%20A%20Top%20Notch%20Logworks%20company%20%C2%B7%20Employee%20owned%20%26%20operated%22%7D\"]"
         }
        },
        "elements": []
       },
       {
-       "id": "6071950",
+       "id": "f416320",
        "elType": "widget",
        "widgetType": "heading",
        "isInner": false,
@@ -827,7 +728,7 @@
    ]
   },
   {
-   "id": "fde7bd0",
+   "id": "45d1488",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -899,7 +800,7 @@
    },
    "elements": [
     {
-     "id": "506329b",
+     "id": "bdec6f1",
      "elType": "widget",
      "widgetType": "button",
      "isInner": false,
@@ -966,7 +867,7 @@
      "elements": []
     },
     {
-     "id": "69001ac",
+     "id": "6071950",
      "elType": "widget",
      "widgetType": "button",
      "isInner": false,

@@ -4,7 +4,7 @@
  "type": "header",
  "content": [
   {
-   "id": "d0433cb",
+   "id": "d4a334b",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -58,7 +58,7 @@
    },
    "elements": [
     {
-     "id": "8dabe92",
+     "id": "d6cd75e",
      "elType": "widget",
      "widgetType": "html",
      "isInner": false,
@@ -553,7 +553,7 @@
      ]
     },
     {
-     "id": "d4a334b",
+     "id": "cb049a7",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -653,7 +653,7 @@
      },
      "elements": [
       {
-       "id": "d6cd75e",
+       "id": "e7a7a3c",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -768,128 +768,29 @@
        },
        "elements": [
         {
-         "id": "cb049a7",
-         "elType": "container",
-         "isInner": true,
+         "id": "9c3d5f1",
+         "elType": "widget",
+         "widgetType": "image",
+         "isInner": false,
          "settings": {
-          "_title": "Header / Wordmark",
-          "content_width": "full",
-          "flex_direction": "column",
-          "flex_gap": {
-           "column": "5",
-           "row": "5",
-           "isLinked": true,
-           "unit": "px",
-           "size": 5
+          "image": {
+           "id": 2280,
+           "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/top-notch-painting-logo-light.png",
+           "alt": "Top Notch Painting",
+           "source": "library"
           },
-          "flex_gap_laptop": {
-           "column": "5",
-           "row": "5",
-           "isLinked": true,
-           "unit": "px",
-           "size": 5
-          },
-          "flex_gap_tablet": {
-           "column": "5",
-           "row": "5",
-           "isLinked": true,
-           "unit": "px",
-           "size": 5
-          },
-          "flex_gap_mobile": {
-           "column": "5",
-           "row": "5",
-           "isLinked": true,
-           "unit": "px",
-           "size": 5
-          },
-          "width": {
-           "unit": "%",
-           "size": 100,
-           "sizes": []
-          },
-          "padding": {
-           "unit": "px",
-           "top": "0",
-           "right": "0",
-           "bottom": "0",
-           "left": "0",
-           "isLinked": true
-          },
-          "html_tag": "a",
+          "image_size": "full",
+          "link_to": "custom",
           "link": {
            "url": "/",
            "is_external": "",
            "nofollow": ""
           },
-          "_attributes": "aria-label|Top Notch Painting home",
-          "flex_align_items": "flex-start",
-          "custom_css": "selector{--width:auto;width:auto;min-width:0;}"
+          "align": "left",
+          "custom_css": "selector{line-height:0;}selector img{height:70px !important;width:auto !important;max-width:none !important;display:block;}@media (max-width:980px){selector img{height:60px !important;}}@media (max-width:600px){selector img{height:55px !important;}}",
+          "_title": "Header / Wordmark"
          },
-         "elements": [
-          {
-           "id": "9c3d5f1",
-           "elType": "widget",
-           "widgetType": "heading",
-           "isInner": false,
-           "settings": {
-            "title": "TOP NOTCH",
-            "header_size": "div",
-            "title_color": "#F2ECE3",
-            "typography_typography": "custom",
-            "typography_font_family": "Cormorant Garamond",
-            "typography_font_size": {
-             "unit": "px",
-             "size": 28,
-             "sizes": []
-            },
-            "typography_font_weight": "600",
-            "typography_line_height": {
-             "unit": "em",
-             "size": 1,
-             "sizes": []
-            },
-            "typography_letter_spacing": {
-             "unit": "px",
-             "size": 2.24,
-             "sizes": []
-            },
-            "_title": "Header / Wordmark / Name"
-           },
-           "elements": []
-          },
-          {
-           "id": "e7a7a3c",
-           "elType": "widget",
-           "widgetType": "heading",
-           "isInner": false,
-           "settings": {
-            "title": "PAINTING &amp; STAINING",
-            "header_size": "div",
-            "title_color": "#C68B4E",
-            "typography_typography": "custom",
-            "typography_font_family": "Manrope",
-            "typography_font_size": {
-             "unit": "px",
-             "size": 10,
-             "sizes": []
-            },
-            "typography_font_weight": "700",
-            "typography_line_height": {
-             "unit": "em",
-             "size": 1.2,
-             "sizes": []
-            },
-            "typography_letter_spacing": {
-             "unit": "px",
-             "size": 3.6,
-             "sizes": []
-            },
-            "_title": "Header / Wordmark / Descriptor"
-           },
-           "elements": []
-          }
-         ]
+         "elements": []
         },
         {
          "id": "a9dd251",
