@@ -2282,7 +2282,7 @@
            "sizes": []
           },
           "custom_css": "selector .elementor-heading-title{text-wrap:balance;}",
-          "_css_classes": "tn-contrast",
+          "_css_classes": "tn-teeth tn-contrast",
           "_title": "Who We Are / Title (H2)"
          },
          "elements": []
@@ -2581,7 +2581,7 @@
        "sizes": []
       },
       "custom_css": "selector .elementor-heading-title{text-wrap:balance;}selector{max-width:720px !important;}",
-      "_css_classes": "tn-contrast",
+      "_css_classes": "tn-teeth tn-contrast",
       "_title": "Why / Title (H2)"
      },
      "elements": []
@@ -3687,7 +3687,7 @@
          "size": -0.6,
          "sizes": []
         },
-        "_css_classes": "tn-f-head tn-contrast",
+        "_css_classes": "tn-f-head tn-teeth tn-contrast",
         "_title": "Featured / Title (H2)"
        },
        "elements": []
@@ -5211,7 +5211,7 @@
            "sizes": []
           },
           "custom_css": "selector .elementor-heading-title{text-wrap:balance;}selector{max-width:560px !important;}",
-          "_css_classes": "tn-contrast",
+          "_css_classes": "tn-teeth tn-contrast",
           "_title": "Away / Title (H2)"
          },
          "elements": []
@@ -5536,7 +5536,7 @@
        "sizes": []
       },
       "align": "center",
-      "_css_classes": "tn-contrast",
+      "_css_classes": "tn-teeth tn-teeth-c tn-contrast",
       "_title": "Reviews / Title (H2)"
      },
      "elements": []
@@ -6731,7 +6731,7 @@
              "sizes": []
             },
             "custom_css": "selector .elementor-heading-title{text-wrap:balance;}",
-            "_css_classes": "tn-contrast",
+            "_css_classes": "tn-teeth tn-contrast",
             "_title": "Seasonal Offer / Title (H2)"
            },
            "elements": []

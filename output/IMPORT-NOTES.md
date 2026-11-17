@@ -354,3 +354,5 @@ Container `Seasonal Offer`: change the H2 to **Talk to us about your project** a
 - Logo: the source image was slightly oval, so it was corrected to a true circle (800x800): `output/logo/top-notch-painting-logo-round-light.png` (media 2364) for the header, footer and watermark, and `-round-dark.png` (media 2365), which is also the site icon (favicon).
 - Why watermark (latest): 576px (500px at 1359px and below, 404px at 980px, 288px on phones), 70px from the section top, and right: calc(20% - 130px) on desktop. It sits behind the boxes.
 - Why boxes: rgba(42,54,47,0.8) with no blur (the frosted effect was removed; hover is rgba(32,42,37,0.86)), so the spinning logo shows faintly through them.
+- Section titles: every `h2()` gets a flat row of the logo's sawtooth points above it (amber #C68B4E, 140x10px, 24px gap; 112x8px on phones), via `.tn-teeth` in CONTRAST_CSS. It is centred when the title is centred.
+- Why watermark: right: calc(20% - 130px) on desktop.

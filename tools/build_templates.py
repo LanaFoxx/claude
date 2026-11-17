@@ -240,6 +240,9 @@ def h2(title, text_, color=BONE, sizes=H2, balance=True, max_w=None, **s):
     st = dict(s)
     if css:
         st["custom_css"] = css + st.get("custom_css", "")
+    # Flat row of the logo's sawtooth points above every section title (see .tn-teeth in CONTRAST_CSS)
+    teeth = "tn-teeth tn-teeth-c" if st.get("align") == "center" else "tn-teeth"
+    st["_css_classes"] = (st.get("_css_classes", "") + " " + teeth).strip()
     return heading(title, text_, tag="h2", color=color,
                    typ=typo(family=SERIF, size=sizes, weight=500, lh=1.04, ls=-0.6), **st)
 
@@ -419,8 +422,15 @@ def index_list(title, items):
 # Glues the last three words of every paragraph (and review quote) with non-breaking spaces,
 # so a line never ends with just one or two words. Complements CSS text-wrap:balance, which
 # browsers skip on paragraphs longer than ~6 lines. Runs on the rendered page only.
+_TEETH_SVG = ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 10'%3E"
+              "%3Cpath fill='%23C68B4E' d='M0 10L7 0L14 10Z'/%3E%3C/svg%3E")
 CONTRAST_CSS = ("<style>.tn-contrast .elementor-heading-title{font-weight:%d;}"
-                ".tn-contrast .elementor-heading-title b{font-weight:%d;}</style>" % CONTRAST_WEIGHTS)
+                ".tn-contrast .elementor-heading-title b{font-weight:%d;}" % CONTRAST_WEIGHTS
+                + ".tn-teeth .elementor-heading-title::before{content:'';display:block;width:140px;height:10px;"
+                  "margin:0 0 24px;background:url(\"" + _TEETH_SVG + "\") repeat-x left bottom/14px 10px;}"
+                  ".tn-teeth-c .elementor-heading-title::before{margin-left:auto;margin-right:auto;}"
+                  "@media (max-width:600px){.tn-teeth .elementor-heading-title::before{width:112px;height:8px;"
+                  "background-size:11.2px 8px;margin-bottom:18px;}}</style>")
 
 NO_WIDOWS_JS = """<script>
 (function(){
