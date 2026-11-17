@@ -359,7 +359,7 @@ window.addEventListener('resize', pinLeft);
 window.addEventListener('load', pinLeft);
 
 function boot() {
-  const canvases = Array.from(document.querySelectorAll('canvas[id^="dw-"]')).map(c => c.id).filter(id => !(id === 'dw-hero-canvas' && document.getElementById('dw-home'))); // homepage hero is drawn by hero-mosaic.js
+  const canvases = []; // every dark section's triangles are drawn by hero-mosaic.js now
   const fx = document.getElementById('dw-home') ? new HomeFx({ canvases }) : new SiteFx({ canvases });
   fx.start();
   window.__dwFx = fx;

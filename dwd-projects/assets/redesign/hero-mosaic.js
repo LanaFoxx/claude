@@ -1,5 +1,5 @@
 /*!
- * Dream Web Digital: homepage hero triangle mosaic background
+ * Dream Web Digital: triangle mosaic backgrounds (homepage hero, plus a variation in every dark section)
  *
  * A loose mosaic of triangles filling the hero. Every triangle is already broken into 6 pieces
  * (lines from its centre to each corner and each edge midpoint). Each triangle wobbles as one unit
@@ -19,6 +19,18 @@
   const BLUE = [19, 166, 238];   // #13A6EE brand blue
   const SKY = [140, 215, 250];   // hover tint
   const FADE = 'linear-gradient(90deg,#121212 0%,rgba(18,18,18,.94) 14%,rgba(18,18,18,.72) 32%,rgba(18,18,18,.36) 52%,rgba(18,18,18,.08) 72%,rgba(18,18,18,0) 85%)';
+
+  // Variations: one look per kind of dark section. size = [fraction of width, min px, max px]; split = pieces per triangle.
+  const PRESETS = {
+    hero:    { seed: 20261116, size: [.066, 64, 132], split: 6, k: 1,   fade: FADE },
+    page:    { seed: 7341,     size: [.05, 52, 108],  split: 6, k: .9,  fade: 'linear-gradient(90deg,#121212 0%,rgba(18,18,18,.92) 18%,rgba(18,18,18,.6) 40%,rgba(18,18,18,.18) 66%,rgba(18,18,18,0) 88%)' },
+    reviews: { seed: 5150,     size: [.045, 44, 90],  split: 3, k: .85, fade: 'linear-gradient(90deg,rgba(18,18,18,0) 0%,rgba(18,18,18,.5) 16%,#121212 34%,#121212 66%,rgba(18,18,18,.5) 84%,rgba(18,18,18,0) 100%)' },
+    about:   { seed: 4242,     size: [.075, 80, 150], split: 4, k: .9,  fade: 'linear-gradient(270deg,#121212 0%,rgba(18,18,18,.95) 30%,rgba(18,18,18,.6) 50%,rgba(18,18,18,.15) 75%,rgba(18,18,18,0) 100%)' },
+    skills:  { seed: 9001,     size: [.04, 40, 84],   split: 6, k: .8,  fade: 'linear-gradient(180deg,#121212 0%,rgba(18,18,18,.9) 30%,rgba(18,18,18,.45) 65%,rgba(18,18,18,0) 100%)' },
+    band:    { seed: 3131,     size: [.055, 56, 112], split: 4, k: .85, fade: 'linear-gradient(90deg,#121212 0%,rgba(18,18,18,.9) 35%,rgba(18,18,18,.4) 70%,rgba(18,18,18,0) 100%)' },
+    footer:  { seed: 8080,     size: [.05, 48, 100],  split: 3, k: .95, fade: 'radial-gradient(ellipse 85% 140% at 100% 100%,rgba(18,18,18,0) 0%,rgba(18,18,18,.45) 50%,#121212 90%)' },
+    generic: { seed: 2718,     size: [.05, 52, 104],  split: 6, k: .75, fade: 'radial-gradient(ellipse 70% 90% at 100% 0%,rgba(18,18,18,0) 0%,rgba(18,18,18,.55) 45%,#121212 85%)' }
+  };
 
   const reducedMotion = () => !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
@@ -48,9 +60,9 @@
     return tri;
   }
 
-  function build(w, h) {
-    const rnd = rng(20261116);
-    const L = Math.max(64, Math.min(132, w * .066));   // triangle side length
+  function build(w, h, cfg) {
+    const rnd = rng(cfg.seed);
+    const L = Math.max(cfg.size[1], Math.min(cfg.size[2], w * cfg.size[0]));   // triangle side length
     const rowH = L * .866, x0 = -L * 2;
     const cols = Math.ceil((w - x0) / L) + 3, rows = Math.ceil(h / rowH) + 3;
 
@@ -79,8 +91,11 @@
     for (const T of parents) {
       const P = T.rel.map(p => [T.cx + p[0], T.cy + p[1]]), G = [T.cx, T.cy];
       const M = [mid(P[0], P[1]), mid(P[1], P[2]), mid(P[2], P[0])];
-      for (const [a, b] of [[P[0], M[0]], [M[0], P[1]], [P[1], M[1]], [M[1], P[2]], [P[2], M[2]], [M[2], P[0]]]) {
-        const k = makeTri([a, b, G], rnd, true);
+      const parts = cfg.split === 3 ? [[P[0], P[1], G], [P[1], P[2], G], [P[2], P[0], G]]
+        : cfg.split === 4 ? [[P[0], M[0], M[2]], [M[0], P[1], M[1]], [M[2], M[1], P[2]], [M[0], M[1], M[2]]]
+        : [[P[0], M[0], G], [M[0], P[1], G], [P[1], M[1], G], [M[1], P[2], G], [P[2], M[2], G], [M[2], P[0], G]];
+      for (const tri of parts) {
+        const k = makeTri(tri, rnd, true);
         // hairline push outward and almost no twist, so the 6 pieces still read as one triangle
         const dx = k.cx - G[0], dy = k.cy - G[1], len = Math.hypot(dx, dy) || 1, push = L * (.015 + rnd() * .02);
         k.out = [dx / len * push, dy / len * push];
@@ -93,7 +108,8 @@
     return { w, h, L, pieces };
   }
 
-  function start(canvas) {
+  function start(canvas, cfg) {
+    cfg = cfg || PRESETS.hero;
     const host = canvas.parentElement;
     let m = null, pm = null, dirty = true, raf = 0;
 
@@ -116,7 +132,7 @@
       if (canvas.width !== Math.round(w * dpr) || canvas.height !== Math.round(h * dpr)) {
         canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr); dirty = true;
       }
-      if (!m || m.w !== w || h > m.h + 40) { m = build(w, h); dirty = true; }
+      if (!m || m.w !== w || h > m.h + 40) { m = build(w, h, cfg); dirty = true; }
       const moving = !reducedMotion();
 
       // hover: the triangle under the pointer (all 6 of its pieces) wobbles harder and brightens; quick in, slow out
@@ -139,7 +155,7 @@
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.clearRect(0, 0, w, h);
       ctx.lineJoin = 'round';
-      const t = now / 1000, k = w < 768 ? .75 : 1;   // a little dimmer on phones
+      const t = now / 1000, k = (w < 768 ? .75 : 1) * cfg.k;   // a little dimmer on phones
       for (const p of m.pieces) {
         const hv = p.hv, boost = 1 + 1.6 * hv;
         const wa = moving ? Math.sin(t * p.sp + p.ph) : 0;
@@ -179,33 +195,35 @@
     };
   }
 
-  // Creates the canvas + fade layer inside a hero element that doesn't already have them.
-  function inject(hero) {
-    if (getComputedStyle(hero).position === 'static') hero.style.position = 'relative';
-    hero.style.isolation = 'isolate';
-    hero.style.overflow = 'hidden';
+  // Gives a section its canvas + fade layer (reusing a canvas already in it) and starts the mosaic.
+  function mount(sec, name) {
+    if (!sec || sec.__dwMosaic) return;
+    const cfg = PRESETS[name] || PRESETS.generic;
+    if (getComputedStyle(sec).position === 'static') sec.style.position = 'relative';
+    sec.style.isolation = 'isolate';
+    sec.style.overflow = 'hidden';
     const layer = 'position:absolute;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none';
-    const fade = document.createElement('div');
-    fade.id = 'dw-hero-fade'; fade.setAttribute('aria-hidden', 'true');
-    fade.style.cssText = layer + ';background:' + FADE;
-    const canvas = document.createElement('canvas');
-    canvas.id = 'dw-hero-canvas'; canvas.setAttribute('aria-hidden', 'true');
-    canvas.style.cssText = layer;
-    hero.prepend(canvas, fade);   // canvas first, fade layer on top of it
-    return canvas;
+    let canvas = sec.querySelector(':scope > canvas[id^="dw-"]');
+    if (!canvas) { canvas = document.createElement('canvas'); canvas.setAttribute('aria-hidden', 'true'); sec.prepend(canvas); }
+    canvas.style.cssText = layer;   // drops the old radial mask
+    let fade = canvas.nextElementSibling;
+    if (!fade || fade.id !== 'dw-hero-fade') { fade = document.createElement('div'); fade.setAttribute('aria-hidden', 'true'); canvas.after(fade); }
+    fade.className = 'dw-mosaic-fade';
+    fade.style.cssText = layer + ';background:' + cfg.fade;
+    canvas.setAttribute('data-mosaic', name);
+    sec.__dwMosaic = start(canvas, cfg);
   }
 
   function init() {
-    let canvas = document.getElementById('dw-hero-canvas');
-    if (!canvas) {
-      const hero = document.querySelector('.dw-hero');
-      if (!hero) return;
-      canvas = inject(hero);
-    }
-    if (!canvas.__dwMosaicStop) canvas.__dwMosaicStop = start(canvas);
+    const home = !!document.getElementById('dw-home');
+    const hc = document.getElementById('dw-hero-canvas');
+    if (hc) mount(hc.parentElement, home ? 'hero' : 'page');
+    [['#reviews', 'reviews'], ['#about', 'about'], ['#skills', 'skills'], ['.dwr-band-dark', 'band'], ['footer.dwr-ft', 'footer']]
+      .forEach(([sel, name]) => document.querySelectorAll(sel).forEach(el => mount(el, name)));
+    document.querySelectorAll('section[data-theme="dark"]:not(.dwr-obhero)').forEach(el => mount(el, 'generic'));
   }
 
-  window.DWHeroMosaic = { init, start };
+  window.DWHeroMosaic = { init, start, mount, PRESETS };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
 })();

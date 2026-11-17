@@ -630,7 +630,7 @@ add_action( 'wp_enqueue_scripts', function () {
 		. '.dwr-play{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;border:0;background:rgba(0,0,0,.18);color:#fff;font:inherit;cursor:pointer;transition:background .3s ease}.dwr-play:hover{background:rgba(0,0,0,.05)}.dwr-play span{width:84px;height:84px;border-radius:50%;background:#13A6EE;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 0 0 10px rgba(19,166,238,.25);transition:transform .3s ease}.dwr-play:hover span{transform:scale(1.08)}.dwr-play b{font-size:16px;font-weight:600;text-shadow:0 2px 12px rgba(0,0,0,.6)}.dwr-vid{position:absolute;inset:0;z-index:3;width:100%;height:100%;border:0;background:#000;object-fit:contain}.dwr-playing .dwr-play{display:none}' // intro video on the founder photo
 		);
 	wp_enqueue_script( 'dwdr', DWDP_URL . 'assets/redesign/redesign.js', array(), DWDP_VERSION, true );
-	if ( 'home' === dwdr_page() ) { wp_enqueue_script( 'dwdr-mosaic', DWDP_URL . 'assets/redesign/hero-mosaic.js', array(), DWDP_VERSION, true ); } // homepage hero triangle mosaic
+	if ( 'onboarding' !== dwdr_page() ) { wp_enqueue_script( 'dwdr-mosaic', DWDP_URL . 'assets/redesign/hero-mosaic.js', array(), DWDP_VERSION, true ); } // triangle mosaics in every dark section
 	// Theme, Elementor and the old page scripts have nothing to do on these pages.
 	foreach ( 'onboarding' === dwdr_page() ? array() : wp_scripts()->queue as $h ) {
 		if ( preg_match( '/^(elementor|hello|swiper|dwdp-front|dwdp-onboarding|e-sticky|imagesloaded|jquery|smartmenus)/', $h ) ) {
