@@ -677,3 +677,7 @@ html:has(body.npc), body.npc { overflow-x: clip; }
 	.npc-stats__cell { padding: 22px 18px; }
 	.npc-stats__v { font-size: clamp(22px, 2.9vw, 32px) !important; }
 }
+
+/* Elementor pages: Hello theme's button styles must not reach the design's buttons (FAQ, tabs, read-more). */
+.npc .npc-faq__item button { white-space: normal; text-align: left; border-radius: 0; }
+.npc .npc-faq__item button { background: none; border: 0; color: inherit; padding-left: 0; padding-right: 0; width: 100%; }

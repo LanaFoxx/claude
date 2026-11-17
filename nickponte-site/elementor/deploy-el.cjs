@@ -11,6 +11,7 @@ const args = process.argv.slice(2);
 const steps = args.filter((a) => !a.startsWith('--'));
 const want = (s) => steps.length === 0 || steps.includes(s);
 const HOME = 2579;
+const TOWN_PAGES = [4753, 4300, 4302, 4459, 4304, 4927, 4325, 4952, 4706, 4936, 432];
 const MEDIA = ['npc-logo-navy', 'npc-hero', 'npc-nick-ponte', 'npc-press-seacoastonline', 'npc-press-bostoncom', 'npc-press-unionleader', 'npc-387-ocean', 'npc-estate-dusk'];
 const MENU = [['Towns', S.U.rye], ['Featured sales', S.U.featured], ['Buyers', S.U.buyers], ['Sellers', S.U.sellers], ['Market news', S.U.blog], ['About', S.U.about], ['Contact', S.U.contact]];
 
@@ -102,12 +103,9 @@ async function setConditionsRaw(p, conditions) {
   let nonce = await login(p);
   const m = await media(p, nonce);
   const handed = (await api(p, nonce, 'GET', '/wp/v2/settings')).npc_elementor || [];
-  // Header/footer apply to the pages being built/handed over (more specific than the old site-wide header 23 / footer 295).
-  const pagesForChrome = [...new Set([HOME, ...handed.filter((x) => Number(x))].map(Number))];
-  const conds = [
-    { type: 'include', name: 'singular', sub_name: 'front_page', sub_id: '' },
-    ...pagesForChrome.map((id) => ({ type: 'include', name: 'singular', sub_name: 'page', sub_id: String(id) })),
-  ];
+  const entireSite = [{ type: 'include', name: 'general', sub_name: '', sub_id: '' }];
+  const townConds = [{ type: 'include', name: 'singular', sub_name: 'np_town', sub_id: '' },
+    ...TOWN_PAGES.map((id) => ({ type: 'include', name: 'singular', sub_name: 'page', sub_id: String(id) }))];
 
   let menuId;
   if (want('menu') || want('chrome')) menuId = await menu(p, nonce);
@@ -116,8 +114,17 @@ async function setConditionsRaw(p, conditions) {
       const tid = await findOrCreateTemplate(p, type, title, nonce);
       console.log(type, 'template', tid, p.url());
       await openEditor(p, tid);
-      console.log(type, tid, 'elements:', await replaceContent(p, els), '| conditions:', await setConditions(p, conds));
+      console.log(type, tid, 'elements:', await replaceContent(p, els), '| conditions:', await setConditions(p, entireSite));
     }
+  }
+  if (want('chrome')) {
+    // The old site's header/footer stop applying (they were "entire site" too).
+    for (const old of [23, 295]) { await openEditor(p, old); console.log('old template', old, 'conditions cleared:', await setConditions(p, [])); }
+  }
+  if (want('town') && !args.includes('--handover-only')) {
+    const tid = await findOrCreateTemplate(p, 'single-page', 'Nick Ponte Town', nonce);
+    await openEditor(p, tid);
+    console.log('town template', tid, 'elements:', await replaceContent(p, S.town(m)), '| conditions:', await setConditions(p, townConds));
   }
   if (want('home') && !args.includes('--handover-only')) {
     await openEditor(p, HOME);
@@ -126,7 +133,7 @@ async function setConditionsRaw(p, conditions) {
   if (args.includes('--handover')) {
     await p.goto(`${SITE}/wp-admin/`, { waitUntil: 'domcontentloaded' });
     nonce = await p.evaluate(() => wpApiSettings.nonce);
-    const keys = steps.filter((s) => s === 'home').map(() => String(HOME));
+    const keys = steps.map((s) => ({ home: String(HOME), town: 'towns' })[s]).filter(Boolean);
     const next = [...new Set([...handed, ...keys])];
     const r = await api(p, nonce, 'POST', '/wp/v2/settings', { npc_elementor: next });
     console.log('npc_elementor =', JSON.stringify(r.npc_elementor));

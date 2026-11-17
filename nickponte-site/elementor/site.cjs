@@ -296,4 +296,57 @@ function fixContactIcons(els) {
   els.forEach(walk); return els;
 }
 
-module.exports = { U, header, footer: (m) => fixFooterIcons(footer(m)), home: (m, f) => fixContactIcons(home(m, f)), pageSettings, form, btn, lbl, title, card, img };
+// Town template (Theme Builder single) ------------------------------------------------------------
+// Dynamic tag string for a Nick Ponte town tag. o: { bold, before, after }
+const tag = (name, o = {}) => `[elementor-tag id="${id()}" name="${name}" settings="${encodeURIComponent(JSON.stringify(o))}"]`;
+const dynLast = (w) => { const l = w.settings.icon_list; l[l.length - 1].__dynamic__ = { text: tag('npc-town-name') }; return w; };
+function town(m) {
+  const wrap = (children, o = {}) => container({ content_width: 'boxed', boxed_width: px(1180), flex_direction: 'column', flex_gap: gap(o.gap ?? 20),
+    padding: box(o.pt ?? 0, 32, o.pb ?? 0, 32), padding_mobile: box(o.ptM ?? o.pt ?? 0, 20, o.pbM ?? o.pb ?? 0, 20), ...(o.settings || {}) }, children, false);
+  return [
+    // Split hero: text left, contained photo right
+    wrap([grid([
+      stack([
+        dynLast(iconList([['Home', U.home], ['Towns', U.rye], ['Town']], { inline: true, color: C.slate, hover: C.blue, size: 13, weight: 400, space: 6,
+          settings: { custom_css: 'selector .elementor-icon-list-item:not(:last-child)::after { content: "/"; position: static; border: 0; width: auto; height: auto; margin-left: 6px; color: #5A6B7D; }' } })),
+        lbl('Seacoast New Hampshire'),
+        widget('heading', { title: 'Town', header_size: 'h1', title_color: C.navy, align: 'left', ...typo('typography', HEAD, [68, 54, 40], 800, { lh: 1.04, ls: -1.2 }),
+          __dynamic__: { title: tag('npc-town-name', { bold: '', after: '' }) } }),
+        widget('text-editor', { editor: '<p>Town intro</p>', text_color: C.text, ...typo('typography', BODY, 17, 400, { lh: 1.65 }), _element_width: 'initial', _element_custom_width: px(560), _element_custom_width_tablet: px(100, '%'),
+          __dynamic__: { editor: tag('npc-town-intro') } }),
+        row([btn('Call Nick', TEL, 'primary', { icon: 'fas fa-phone', bg: C.navy }), btn('Text me', SMS, 'ghost', { icon: 'far fa-comment', border: C.navy })], { gap: 12, settings: { _margin: box(10, 0, 0, 0) } }),
+      ], { gap: 14 }),
+      widget('image', { image: { id: '', url: '' }, image_size: 'large', align: 'center', width: px(100, '%'), height: px(480), height_tablet: px(420), height_mobile: px(260), 'object-fit': 'cover',
+        image_border_radius: box(22), image_box_shadow_box_shadow_type: 'yes', image_box_shadow_box_shadow: { horizontal: 0, vertical: 30, blur: 70, spread: -40, color: 'rgba(31,58,95,0.5)' },
+        __dynamic__: { image: tag('npc-town-photo') } }),
+    ], { cols: [2, 1, 1], gap: 56, gapM: 28, align: 'center' })], { pt: 48, pb: 8, ptM: 28 }),
+    // Town buttons
+    wrap([widget('npc-town-pills', { town: '0' })], { pt: 28 }),
+    // Snapshot | neighborhoods + talk
+    wrap([grid([
+      widget('npc-town-snapshot', { town: '0', title: 'Market snapshot', sub: 'Last 90 days of closed sales' }),
+      stack([
+        widget('npc-town-areas', { town: '0', title: 'Neighborhoods', sub: 'Where people buy in' }),
+        card([
+          heading('Talk to Nick', 'h2', 22, C.navy, 'left', { weight: 700, lh: 1.2, ls: 0 }),
+          widget('text-editor', { editor: '<p>Questions?</p>', text_color: C.text, ...typo('typography', BODY, 15, 400, { lh: 1.6 }),
+            __dynamic__: { editor: tag('npc-town-name', { before: 'Questions about ', after: '? A candid read on the market, a valuation of your home, or an off-market introduction.' }) } }),
+          row([btn('Call', TEL), btn('Text me', SMS, 'ghost', { border: C.navy })], { gap: 10, settings: { _margin: box(6, 0, 0, 0) } }),
+        ], { bg: C.panel, pad: 28 }),
+      ], { gap: 20 }),
+    ], { cols: [2, 1, 1], gap: 20, align: 'start' })], { pt: 28 }),
+    // Recent sales + long guide
+    wrap([widget('npc-town-sales', { town: '0', title: 'Recent sales', sub: 'Closed transactions where Nick represented the buyer, the seller, or both', link: 'All featured sales →' }),
+      widget('npc-town-guide', { town: '0' })], { pt: 20 }),
+    // FAQ
+    wrap([grid([
+      stack([lbl('Questions'),
+        widget('heading', { title: 'Buying and selling', header_size: 'h2', title_color: C.navy, align: 'left', ...typo('typography', HEAD, [42, 36, 30], 300, { lh: 1.08, ls: -0.6 }),
+          custom_css: 'selector .elementor-heading-title b { font-weight: 800; }',
+          __dynamic__: { title: tag('npc-town-name', { bold: 'yes', before: 'Buying and selling in ' }) } })], { gap: 12 }),
+      widget('npc-town-faq', { town: '0' }),
+    ], { cols: ['minmax(0,0.8fr) minmax(0,1.2fr)', '1fr', '1fr'], gap: 64, gapM: 24, align: 'start' })], { pt: 72, pb: 96, ptM: 48, pbM: 64 }),
+  ];
+}
+
+module.exports = { town, tag, U, header, footer: (m) => fixFooterIcons(footer(m)), home: (m, f) => fixContactIcons(home(m, f)), pageSettings, form, btn, lbl, title, card, img };
