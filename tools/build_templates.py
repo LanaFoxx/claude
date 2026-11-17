@@ -426,10 +426,10 @@ _TEETH_SVG = ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' view
               "%3Cpath fill='%23C68B4E' d='M0 10L7 0L14 10Z'/%3E%3C/svg%3E")
 CONTRAST_CSS = ("<style>.tn-contrast .elementor-heading-title{font-weight:%d;}"
                 ".tn-contrast .elementor-heading-title b{font-weight:%d;}" % CONTRAST_WEIGHTS
-                + ".tn-teeth .elementor-heading-title::before{content:'';display:block;width:128px;height:22px;"
+                + ".tn-teeth .elementor-heading-title::before{content:'';display:block;width:192px;height:22px;"
                   "margin:0 0 24px;background:url(\"" + _TEETH_SVG + "\") repeat-x left bottom/32px 22px;}"
                   ".tn-teeth-c .elementor-heading-title::before{margin-left:auto;margin-right:auto;}"
-                  "@media (max-width:600px){.tn-teeth .elementor-heading-title::before{width:100px;height:17px;"
+                  "@media (max-width:600px){.tn-teeth .elementor-heading-title::before{width:150px;height:17px;"
                   "background-size:25px 17px;margin-bottom:18px;}}</style>")
 
 NO_WIDOWS_JS = """<script>
