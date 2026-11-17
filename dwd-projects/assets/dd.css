@@ -1068,3 +1068,11 @@ section.dd-health.warn .dd-healthb .dd-hld { background: var(--warning-text); }
 .dd-upr .dd-upact .dd-bankf{margin:0;flex-wrap:nowrap}
 .dd-upr-s .dd-upact .dd-bankf>span{white-space:nowrap}
 @media (max-width:767px){.dwdc-mo-r.dd-upr-s{grid-template-columns:52px 1fr auto}.dd-upr-s .dd-upact{grid-column:2/-1;justify-content:flex-start}.dd-upr .dd-upact .dd-bankf{flex-wrap:wrap}}
+
+/* Project page: close button on every box; a closed box shows only its heading (kept per project) */
+.dd .dd-boxtog { margin-left: auto; flex: none; display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; padding: 0; border: 0; border-radius: 8px; background: none; color: var(--text-3); cursor: pointer; }
+.dd .dd-boxtog:hover { background: var(--hover); color: var(--text); }
+.dd .dd-boxtog svg { transition: transform .2s ease; }
+.dd .dd-boxshut .dd-boxtog svg { transform: rotate(-90deg); }
+.dd section.dd-boxshut > :not(header) { display: none !important; }
+.dd section.dd-boxshut > header { margin-bottom: 0 !important; padding-bottom: 0 !important; border-bottom: 0 !important; }

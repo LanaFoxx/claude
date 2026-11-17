@@ -772,6 +772,23 @@
 	function lu(n, s) { return '<svg class="lu" width="' + (s || 16) + '" height="' + (s || 16) + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (LU[n] || '') + '</svg>'; }
 	function ddGet(k, d) { try { var v = localStorage.getItem(k); return v === null ? d : v; } catch (e) { return d; } }
 	function ddSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+	// Project page boxes, open or closed per project, kept in this browser until changed (survives refresh).
+	// { projectId: { boxKey: 1 = closed, 0 = open } }. null = never touched, so the box uses its usual default.
+	function pboxAll() { try { return JSON.parse(ddGet('dreamdesk-pbox', '{}')) || {}; } catch (e) { return {}; } }
+	function pboxGet(pid, key) { var a = pboxAll()[pid]; return a && a[key] != null ? !!a[key] : null; }
+	function pboxSet(pid, key, closed) { var a = pboxAll(); a[pid] = a[pid] || {}; a[pid][key] = closed ? 1 : 0; ddSet('dreamdesk-pbox', JSON.stringify(a)); }
+	// Every project box without its own open/close heading gets a close button; closed boxes show just their heading.
+	function pboxDecorate(pid) {
+		[].forEach.call(app.querySelectorAll('.dwdc-screen section.dd-card'), function (sec) {
+			var hd = sec.querySelector(':scope > header');
+			if (!hd || hd.classList.contains('dd-ntog') || sec.classList.contains('k-assets') || hd.querySelector('.dd-boxtog')) { return; }
+			var km = String(sec.className).match(/\bk-([a-z0-9]+)/), key = km ? km[1] : sec.classList.contains('dd-ptoday') ? 'today' : sec.classList.contains('dd-zoom') ? 'zoom' : '';
+			if (!key) { return; }
+			var shut = pboxGet(pid, key) === true;
+			sec.classList.toggle('dd-boxshut', shut);
+			hd.insertAdjacentHTML('beforeend', '<button type="button" class="dd-boxtog" data-boxtog="' + key + '" aria-expanded="' + !shut + '" aria-label="' + (shut ? 'Open' : 'Close') + ' this box" title="' + (shut ? 'Open' : 'Close') + '">' + lu('chevron-down', 16) + '</button>');
+		});
+	}
 	function ddTheme() { return ddGet('dreamdesk-theme', 'dark') === 'light' ? 'light' : 'dark'; }
 	function ddInitials(n) { var p = String(n || '?').trim().split(/\s+/); return ((p[0] || '?')[0] + (p.length > 1 ? p[p.length - 1][0] : '')).toUpperCase(); }
 	function ddAgo(iso) {
@@ -1054,7 +1071,7 @@
 			return '<div class="dd-arow"><span class="dd-aic">' + lu(x.img ? 'image' : 'file', 16) + '</span><a class="dd-anm" href="' + esc(x.url) + '" target="_blank" rel="noopener">' + esc(x.name) + '</a><small>' + esc(x.label || '') + (x.size ? ' · ' + fileSize(x.size) : '') + '</small><a class="dd-adl" href="' + esc(x.url) + '" download title="Download" aria-label="Download ' + esc(x.name) + '">' + lu('download', 15) + '</a></div>';
 		}).join('') + '</div></div>' : '';
 		var empty = A.length || c.drive ? '' : '<p class="dd-help dd-aempty">No files yet. Drop photos, logos, fonts or zips here.</p>';
-		var aOpen = !!(S.assetOpen || {})[c.id];
+		var aSet = (S.assetOpen || {})[c.id], aOpen = aSet !== undefined ? !!aSet : pboxGet(c.id, 'assets') === false;
 		return '<section class="dd-card dd-pc2 k-assets' + (aOpen ? ' aopen' : '') + '" data-adrop="' + c.id + '"><header><h2 data-atog="' + c.id + '" role="button" tabindex="0" aria-expanded="' + aOpen + '">' + lu('paperclip', 16) + 'Assets<span class="dd-atogi">' + lu('chevron-down', 14) + '</span></h2><span class="sum" data-atog="' + c.id + '">' + (A.length + nDrv ? (A.length + nDrv) + ' file' + (A.length + nDrv === 1 ? '' : 's') : 'None yet') + '</span><span class="dd-sp"></span>'
 			+ (c.drive ? '<a class="dd-btn ghost sm" href="' + esc(c.drive) + '" target="_blank" rel="noopener">' + lu('external-link', 14) + 'Drive folder</a>' : '')
 			+ ((c.new_assets || []).length ? '<button type="button" class="dd-btn primary sm" data-azip="' + c.id + '" data-new="1"' + ((S.azBusy || {})[c.id] ? ' disabled' : '') + ' title="' + esc((c.new_assets || []).map(function (x) { return x.name; }).join(', ')) + '">' + lu('download', 14) + (c.new_assets.length + ' new since export') + '</button>' : '')
@@ -2341,6 +2358,7 @@
 		app.innerHTML = ddSide(r) + '<div class="dd-shade" data-ddmenu></div><div class="dd-col">' + ddTop(r, t) + '<main class="dwdc-main dd-main"><div class="dwdc-screen' + (anim ? ' in' : '') + '">' + appBanner() + ddHead(r, t) + body + '</div></main></div>' + modal();
 		S.prev = r.view + r.arg;
 		syncWpMenu(r);
+		if (r.view === 'client') { pboxDecorate(r.id); }
 		fitProjects();
 		labelTables();
 		calScroll();
@@ -3688,7 +3706,8 @@
 			var n = dn(t.due); return n < 0 ? '<span class="dd-due late">' + -n + 'd overdue</span>' : n === 0 ? '<span class="dd-due today">Today</span>' : '<span class="dd-due">' + fmt(t.due) + '</span>';
 		};
 		var pDate = (S.ppDate || {})[c.id] || '';
-		var tSet = (S.ptodoOpen || {})[c.id], tOpen = tSet === undefined ? tasks.some(function (t) { return !t.done; }) : !!tSet, lateT = tasks.filter(function (t) { return !t.done && t.due && t.due < T; }).length;
+		var tSet = (S.ptodoOpen || {})[c.id]; if (tSet === undefined && pboxGet(c.id, 'todos') !== null) { tSet = !pboxGet(c.id, 'todos'); }
+		var tOpen = tSet === undefined ? tasks.some(function (t) { return !t.done; }) : !!tSet, lateT = tasks.filter(function (t) { return !t.done && t.due && t.due < T; }).length;
 		var todos = '<section class="dd-card dd-pc2 k-todos' + (tOpen ? ' open' : ' shut') + '"><header class="dd-ntog" data-ptodotog="' + c.id + '" role="button" tabindex="0" aria-expanded="' + tOpen + '"><h2>' + lu('list-checks', 16) + 'To-dos</h2><span class="sum">' + openN + ' open' + (lateT ? ' · <b class="late">' + lateT + ' overdue</b>' : '') + ' · ' + doneN + ' done</span><span class="dd-sp"></span><a class="dd-hlink" href="#todos" data-tgopen="' + c.id + '">All to-dos</a><span class="dd-tchev">' + lu('chevron-down', 16) + '</span></header>'
 			+ (!tOpen ? '' : (tasks.length ? tasks.map(function (t) {
 				return '<div class="dd-pt' + (t.done ? ' done' : '') + '" data-task="' + t.id + '"><button type="button" class="dd-tchk' + (t.done ? ' on' : '') + '" data-toggle="' + t.id + '" aria-label="' + (t.done ? 'Mark not done' : 'Mark done') + '">' + TD_CHECK + '</button><span class="tx">' + esc(t.text) + '</span>' + dueOf(t) + '<button type="button" class="dd-ibtn sm dd-ptx" data-del-task="' + t.id + '" aria-label="Delete to-do" title="Delete">' + lu('x', 14) + '</button></div>';
@@ -3703,7 +3722,7 @@
 			+ (st === 'leads' || !obl.length ? '<div class="dd-pbtns">' + btn('data-leadinvite="' + c.id + '"', lu('mail') + (c.stage === 'onboarding' ? 'Resend onboarding form' : 'Send onboarding form'), 'primary') + obCopy() + '</div>' : '')) : '';
 		// notes
 		var notes = full ? (c.notes || []).slice().sort(function (a, b) { return (d(a.date) || 0) < (d(b.date) || 0) ? 1 : -1; }) : [];
-		var nOpen = !!(S.notesOpen || {})[c.id];
+		var nSet = (S.notesOpen || {})[c.id], nOpen = nSet !== undefined ? !!nSet : pboxGet(c.id, 'notes') === false;
 		var notesBox = '<section class="dd-card dd-pc2 k-notes' + (nOpen ? ' open' : ' shut') + '"><header class="dd-ntog" data-notestog="' + c.id + '" role="button" tabindex="0" aria-expanded="' + nOpen + '"><h2>' + lu('sticky-note', 16) + 'Notes</h2><span class="sum">' + (full ? (notes.length ? notes.length + ' note' + (notes.length === 1 ? '' : 's') : 'No notes yet') : '') + '</span><span class="dd-sp"></span><span class="dd-tchev">' + lu('chevron-down', 16) + '</span></header>'
 			+ (!nOpen ? '' : '<div class="dd-pnotes">' + (full ? notes.map(function (n) { var dt = d(n.date); return '<div class="dd-note"><p>' + esc(n.text).replace(/\n/g, '<br>') + '</p><small>Michael' + (dt ? ' · ' + dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ', ' + dt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : '') + '</small></div>'; }).join('') : '<p class="dd-pempty">Loading…</p>')
 			+ '<form class="dwdc-notef dd-notef"><textarea name="text" rows="3" placeholder="Add a note: what they need, call recap, budget, next step…" required></textarea><div class="dd-pbtns end"><button class="dd-btn secondary">Add note</button></div></form></div>') + '</section>';
@@ -3792,7 +3811,8 @@
 		if (!R || !R.items) { return ''; }
 		var I = R.items, miss = I.filter(function (x) { return x.state === 'missing'; }), have = I.length - miss.length;
 		var Q = (R.questions && R.questions.list) || [], busy = (S.rdyBusy || {})[c.id];
-		var op = (S.rdyOpen || {})[c.id], open = op == null ? !!(miss.length || Q.length) : op;
+		var op = (S.rdyOpen || {})[c.id]; if (op == null && pboxGet(c.id, 'ready') !== null) { op = !pboxGet(c.id, 'ready'); }
+		var open =op == null ? !!(miss.length || Q.length) : op;
 		var icon = { ok: lu('check', 14), missing: lu('alert-circle', 14), you: lu('user', 14) };
 		var sum = miss.length ? '<b class="late">' + miss.length + ' missing</b>' : Q.length ? Q.length + ' question' + (Q.length === 1 ? '' : 's') : 'Everything’s in';
 		return '<section class="dd-card dd-pc2 k-ready' + (open ? ' open' : ' shut') + '"><header class="dd-ntog" data-rdytog="' + c.id + '" role="button" tabindex="0" aria-expanded="' + open + '"><h2 class="dd-rdyh">' + (miss.length || Q.length ? '<i class="no">' + lu('x', 13) + '</i>Not ready to build' : '<i class="ok">' + lu('check', 13) + '</i>Ready to build') + '</h2><span class="sum">' + (miss.length || Q.length ? sum : 'Everything’s in') + '</span><span class="dd-sp"></span><span class="dd-tchev">' + lu('chevron-down', 16) + '</span></header>'
@@ -4461,7 +4481,7 @@
 			return;
 		}
 		if ((el = t.closest('[data-followup]'))) { e.preventDefault(); e.stopPropagation(); openFollowUp(+el.getAttribute('data-followup')); return; }
-		if ((el = t.closest('[data-rdytog]'))) { var rtid = el.getAttribute('data-rdytog'), rc = S.full[rtid] || {}, rmiss = ((rc.ready && rc.ready.items) || []).some(function (x) { return x.state === 'missing'; }) || !!(rc.ready && rc.ready.questions && rc.ready.questions.list && rc.ready.questions.list.length); S.rdyOpen = S.rdyOpen || {}; S.rdyOpen[rtid] = !(S.rdyOpen[rtid] == null ? rmiss : S.rdyOpen[rtid]); render(); return; }
+		if ((el = t.closest('[data-rdytog]'))) { var rtid = el.getAttribute('data-rdytog'), rc = S.full[rtid] || {}, rmiss = ((rc.ready && rc.ready.items) || []).some(function (x) { return x.state === 'missing'; }) || !!(rc.ready && rc.ready.questions && rc.ready.questions.list && rc.ready.questions.list.length); S.rdyOpen = S.rdyOpen || {}; S.rdyOpen[rtid] = el.getAttribute('aria-expanded') !== 'true'; pboxSet(rtid, 'ready', !S.rdyOpen[rtid]); render(); return; }
 		if ((el = t.closest('[data-rdytick]'))) { var rk = el.getAttribute('data-rdytick').split(':'); el.disabled = true; readySet(+rk[0], { act: 'tick', key: rk[1], on: rk[2] === '1' }).catch(function (er) { el.disabled = false; fail(er); }); return; }
 		if ((el = t.closest('[data-rdydrop]'))) { var rd = el.getAttribute('data-rdydrop').split(':'), rq = ((S.full[rd[0]] || {}).ready || {}).questions; if (rq && rq.list) { readySet(+rd[0], { act: 'dropq', q: rq.list[+rd[1]] }).catch(fail); } return; }
 		if ((el = t.closest('[data-rdyq]'))) { var rqid = +el.getAttribute('data-rdyq'); S.rdyBusy = S.rdyBusy || {}; S.rdyBusy[rqid] = 1; S.rdyOpen = S.rdyOpen || {}; S.rdyOpen[rqid] = true; render(); readySet(rqid, { act: 'questions' }).then(function (x) { S.rdyBusy[rqid] = 0; render(); toast(x.questions && x.questions.list && x.questions.list.length ? x.questions.list.length + ' open question' + (x.questions.list.length === 1 ? '' : 's') + ' found' : 'Nothing important left open'); }).catch(function (er) { S.rdyBusy[rqid] = 0; render(); fail(er); }); return; }
@@ -4469,7 +4489,7 @@
 		if ((el = t.closest('[data-healthtog]'))) { S.healthOpen = !S.healthOpen; render(); return; }
 		if ((el = t.closest('[data-mbtog]')) && window.innerWidth < 768) { var mbk = el.getAttribute('data-mbtog'); S.mailBoxOpen = S.mailBoxOpen || {}; S.mailBoxOpen[mbk] = !S.mailBoxOpen[mbk]; render(); return; }
 		if ((el = t.closest('[data-ptog]')) && window.innerWidth < 768) { var ptid = el.getAttribute('data-ptog'); S.payOpen = S.payOpen || {}; S.payOpen[ptid] = !S.payOpen[ptid]; if (!S.payOpen[ptid] && String(S.plog) === ptid) { S.plog = 0; } render(); return; }
-		if ((el = t.closest('[data-atog]'))) { var atid = el.getAttribute('data-atog'); S.assetOpen = S.assetOpen || {}; S.assetOpen[atid] = !S.assetOpen[atid]; render(); return; }
+		if ((el = t.closest('[data-atog]'))) { var atid = el.getAttribute('data-atog'), aWas = el.getAttribute('aria-expanded') === 'true'; S.assetOpen = S.assetOpen || {}; S.assetOpen[atid] = !aWas; pboxSet(atid, 'assets', aWas); render(); return; }
 		if ((el = t.closest('[data-sumtog]'))) { var stid = el.getAttribute('data-sumtog'); S.sumOpen = S.sumOpen || {}; S.sumOpen[stid] = !S.sumOpen[stid]; render(); return; }
 		if ((el = t.closest('[data-dettog]'))) { var dtid = el.getAttribute('data-dettog'); S.detOpen = S.detOpen || {}; S.detOpen[dtid] = !S.detOpen[dtid]; render(); return; }
 		if ((el = t.closest('[data-taxsave]'))) {
@@ -4503,8 +4523,14 @@
 			}).catch(function (er) { el.disabled = false; fail(er); });
 			return;
 		}
-		if ((el = t.closest('[data-ptodotog]')) && !t.closest('a')) { var ptid = el.getAttribute('data-ptodotog'); S.ptodoOpen = S.ptodoOpen || {}; S.ptodoOpen[ptid] = el.getAttribute('aria-expanded') !== 'true'; render(); return; }
-		if ((el = t.closest('[data-notestog]'))) { var nid = el.getAttribute('data-notestog'); S.notesOpen = S.notesOpen || {}; S.notesOpen[nid] = !S.notesOpen[nid]; render(); return; }
+		if ((el = t.closest('[data-ptodotog]')) && !t.closest('a')) { var ptid = el.getAttribute('data-ptodotog'); S.ptodoOpen = S.ptodoOpen || {}; S.ptodoOpen[ptid] = el.getAttribute('aria-expanded') !== 'true'; pboxSet(ptid, 'todos', !S.ptodoOpen[ptid]); render(); return; }
+		if ((el = t.closest('[data-boxtog]'))) {
+			var bsec = el.closest('section'), bshut = !bsec.classList.contains('dd-boxshut');
+			pboxSet(route().id, el.getAttribute('data-boxtog'), bshut);
+			bsec.classList.toggle('dd-boxshut', bshut); el.setAttribute('aria-expanded', String(!bshut)); el.setAttribute('aria-label', (bshut ? 'Open' : 'Close') + ' this box'); el.title = bshut ? 'Open' : 'Close';
+			return;
+		}
+		if ((el = t.closest('[data-notestog]'))) { var nid = el.getAttribute('data-notestog'), nWas = el.getAttribute('aria-expanded') === 'true'; S.notesOpen = S.notesOpen || {}; S.notesOpen[nid] = !nWas; pboxSet(nid, 'notes', nWas); render(); return; }
 		// project page: ⋯ menu, payment log form, remove a payment
 		if ((el = t.closest('[data-pmore]'))) { var mw = el.closest('.pv3-more'); mw.classList.toggle('open'); return; }
 		if (!t.closest('.pv3-more')) { app.querySelectorAll('.pv3-more.open').forEach(function (m) { m.classList.remove('open'); }); }
