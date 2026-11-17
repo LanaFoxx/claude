@@ -2,14 +2,14 @@
 /**
  * Plugin Name: Nick Ponte Coastal Light (preview)
  * Description: "Coastal Light" redesign preview: a homepage template (/home-preview/) and a Town post type (/town-preview/<town>/) with monthly market fields, FAQ and JSON-LD. Preview pages are noindex and use their own header and footer, so live pages are not affected. Deactivate to remove everything from the front end.
- * Version: 1.14.2
+ * Version: 1.15.2
  * Author: Dream Web Digital
  * Requires PHP: 7.4
  */
 
 if (!defined('ABSPATH')) exit;
 
-define('NPC_VER', '1.14.2');
+define('NPC_VER', '1.15.2');
 define('NPC_DIR', plugin_dir_path(__FILE__));
 define('NPC_URL', plugin_dir_url(__FILE__));
 const NPC_HOME_TEMPLATE = 'npc-home';
@@ -31,6 +31,7 @@ const NPC_LIVE_TOWNS = ['newmarket' => 4753, 'rye' => 4300, 'portsmouth' => 4302
 function npc_live() { return (bool) get_option('npc_live', false); }
 
 add_action('init', function () {
+	register_setting('reading', 'npc_elementor', ['type' => 'array', 'default' => [], 'show_in_rest' => ['schema' => ['type' => 'array', 'items' => ['type' => 'string']]]]);
 	register_setting('reading', 'npc_live', ['type' => 'boolean', 'default' => false, 'show_in_rest' => true, 'sanitize_callback' => 'rest_sanitize_boolean']);
 });
 add_action('admin_init', function () {
@@ -97,6 +98,7 @@ add_action('init', 'npc_register');
 require_once NPC_DIR . 'includes/pages.php';
 require_once NPC_DIR . 'includes/town-guide.php';
 require_once NPC_DIR . 'includes/admin.php';
+require_once NPC_DIR . 'includes/elementor.php';
 
 register_activation_hook(__FILE__, function () {
 	npc_register();
@@ -304,6 +306,14 @@ add_filter('theme_page_templates', function ($templates) {
 });
 
 function npc_is_preview() {
+	// Pages handed over to Elementor are drawn by Elementor, not by this plugin.
+	if (isset($_GET['elementor-preview'])) return false;
+	if (isset($_GET['npc_el']) && current_user_can('edit_pages')) return false; // admin preview of the Elementor version before hand-over // the Elementor editor always shows Elementor's own content
+	if (function_exists('npc_el_on') && npc_live()) {
+		if (is_page() && (npc_el_on(get_queried_object_id()) || (is_front_page() && npc_el_on(NPC_LIVE_PAGES['home'])))) return false;
+		if (npc_el_on('towns') && (is_singular('np_town') || (is_page() && in_array(get_queried_object_id(), NPC_LIVE_TOWNS, true)))) return false;
+		if (npc_el_on('posts') && (is_singular('post') || is_home() || is_archive() || is_page(627))) return false;
+	}
 	if (function_exists('npc_content_kind') && npc_content_kind()) return 'content';
 	if (is_singular('np_town')) return 'town';
 	if (npc_live() && is_page()) {
