@@ -2888,8 +2888,10 @@
 			return reload();
 		}).then(render).catch(function (e) { if (S.modal) { S.modal.busy = false; } fail(e); });
 	}
-	// Twice a month (1st and 15th) remind Mike to upload a fresh Upwork CSV, until he does.
+	// Switched off for good: the morning Upwork check brings in payments, withdrawals and Connects charges by itself,
+	// so Mike is never asked to upload an Upwork CSV. (The CSV upload stays available in Connections.)
 	function csvRemind() {
+		return;
 		var d = DWDC.today || new Date().toISOString().slice(0, 10), start = d.slice(0, 8) + (+d.slice(8, 10) >= 15 ? '15' : '01');
 		var snooze = ''; try { snooze = localStorage.getItem('dwdcCsvSnooze') || ''; } catch (e) {}
 		if ((DWDC.upLast || '') >= start || snooze >= d || S.modal) { return; }
