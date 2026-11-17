@@ -160,7 +160,9 @@ async function setConditions(p, postId, conditions) {
     console.log('plugin:', active ? 'active' : 'NOT active');
   }
 
-  const md = (f) => ({ id: prep.media[f].id, url: prep.media[f].url, alt: '', source: 'library' });
+  // Missing photos (e.g. replaced on the live site) fall back to an empty image instead of stopping the deploy.
+  const md = (f) => (prep.media[f] ? { id: prep.media[f].id, url: prep.media[f].url, alt: '', source: 'library' }
+    : (console.log('note: no media for', f), { id: '', url: '', alt: '', source: 'library' }));
   const m = {
     logo: md('bayfield-inn-logo-green-trim.png'), logoWhite: md('bayfield-inn-logo-white-trim.png'),
     heroDeck: md('bayfield-hero-the-deck.jpg'), lakeview: md('bayfield-lake-view-room.jpg'), suite: md('bayfield-suite-jacuzzi.jpg'),
@@ -204,6 +206,17 @@ async function setConditions(p, postId, conditions) {
       await openEditor(p, prep[type]);
       console.log(type, 'conditions:', await setConditions(p, prep[type], entireSite));
     }
+  }
+
+  // 404 page: Elementor Pro Theme Builder "404" template shown for every not-found address.
+  if (want('404')) {
+    const { notFound } = require('./pages.cjs');
+    const tid = await findOrCreateTemplate(p, 'error-404', 'Bayfield Inn 404');
+    await openEditor(p, tid);
+    console.log('404', tid, 'elements saved:', await replaceContent(p, notFound(m), B.pageSettings));
+    await openEditor(p, tid);
+    console.log('404 conditions:', await setConditions(p, tid, [{ type: 'include', name: 'singular', sub_name: 'not_found404', sub_id: '' }]));
+    prep.notFound = tid;
   }
 
   if (want('home')) {

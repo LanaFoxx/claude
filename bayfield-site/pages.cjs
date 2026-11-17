@@ -330,6 +330,34 @@ function planEvent(m) {
   ];
 }
 
+// 404 (Elementor Theme Builder "404 page" template): friendly message, the webcam view, and
+// one-click ways back into the site.
+function notFound(m) {
+  const card = (title, body, url) => container({
+    ...linked(url), content_width: 'full', flex_direction: 'column', flex_gap: gap(8), padding: box(26, 26, 24, 26),
+    background_background: 'classic', background_color: C.white, border_border: 'solid', border_width: box(1), border_color: C.line, border_radius: box(4),
+    css_classes: 'bi-404-card',
+    custom_css: 'selector { transition: transform .25s ease, box-shadow .25s ease; text-decoration: none; }\nselector:hover { transform: translateY(-3px); box-shadow: 0 24px 44px -30px rgba(23,48,27,.55); }',
+  }, [
+    heading(title + ' →', 'h3', [24, 22, 21], C.green, { lh: 1.15 }),
+    text(body, { size: 14.5, color: C.muted, lh: 1.55 }),
+  ]);
+  return [
+    pageHero('404 · Page not found', 'This page drifted out onto the lake.', 'The page you were looking for has moved or no longer exists. Here are some good places to drop anchor instead.',
+      m.file('bayfield-marina-webcam.jpg'), { buttons: [light('Back to home', '/'), outline('Book a Room', EXT.book)] }),
+    section({ background_background: 'classic', background_color: C.cream, ...pad, ...boxed, flex_direction: 'column', flex_gap: gap(28) }, [
+      eyebrow('Popular pages', C.green),
+      container({ ...gridSettings([4, 2, 1]), content_width: 'full', padding: box(0), grid_gaps: gap(20, 20) }, [
+        card('Stay with us', 'Rooms, suites and condos on Lake Superior. Check live availability.', EXT.book),
+        card('Restaurants & bars', 'The Deck, the Lakeside Dining Room, The Lounge and The Creamery.', '/#dining'),
+        card('Live webcam', 'The marina, the ferry dock and Madeline Island, right now.', PAGE.webcam),
+        card('Gift cards & gear', 'Gift cards for rooms or dining, and Bayfield Inn merchandise.', PAGE.giftCards),
+      ]),
+      text('Still can’t find it? Call us at <a href="tel:+17157793363">(715) 779-3363</a> or email <a href="mailto:info@thebayfieldinn.com">info@thebayfieldinn.com</a>.', { size: 15, color: C.muted, align: 'center' }),
+    ]),
+  ];
+}
+
 // Menus (dishes, prices, PDFs) are managed under Bayfield Inn › Restaurant Menus.
 const MENUS = require('./menus.cjs');
 function menuSection(m, r) {
@@ -401,4 +429,4 @@ const PAGES = [
   ...SHOP_PAGES,
 ];
 
-module.exports = { PAGES };
+module.exports = { PAGES, notFound };
