@@ -109,7 +109,7 @@ add_action('admin_head', function () {
 // Short menu: keep what Nick uses, tuck the rest away (still reachable by URL or "Show all menus").
 add_action('admin_menu', function () {
 	if (!npc_simple_admin()) return;
-	foreach (['googlesitekit-dashboard', 'elementor-home', 'edit-comments.php', 'edit.php?post_type=rem_property', 'wpcf7', 'wpcf7-dashboard',
+	foreach (['googlesitekit-dashboard', 'edit-comments.php', 'edit.php?post_type=rem_property', 'wpcf7', 'wpcf7-dashboard',
 		'rank-math', 'astra', 'themes.php', 'plugins.php', 'tools.php', 'ai1wm_export', 'options-general.php', 'wpcode', 'qligg_backend',
 		'simply-static-generate', 'simply-static', 'wp_file_manager', 'crisp/crisp.php', 'smush', 'sb-instagram-feed', 'sbi-feed-builder', 'users.php'] as $slug) {
 		remove_menu_page($slug);
