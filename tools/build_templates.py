@@ -37,7 +37,9 @@ HAIR_16 = "#F2ECE329"      # rgba(242,236,227,0.16)
 FILL_12 = "#F2ECE31F"      # rgba(242,236,227,0.12)
 LABEL_60 = "#F2ECE399"     # rgba(242,236,227,0.6)
 TRANSPARENT = "#00000000"
-SERIF = "Cormorant Garamond"
+SERIF = "Fraunces"                       # test: option A from the font review (was Cormorant Garamond)
+WORDMARK_SERIF = "Cormorant Garamond"    # stand-in logo keeps its own face until the real logo files arrive
+SERIF_SCALE = 0.86                       # Fraunces sets larger than Cormorant at the same px size
 SANS = "Manrope"
 
 TEL = "tel:+19705247323"
@@ -107,6 +109,8 @@ def typo(prefix="typography", family=SANS, size=None, weight=None, lh=None,
          ls=None, transform=None):
     s = {prefix + "_typography": "custom", prefix + "_font_family": family}
     if size is not None:
+        if family == SERIF:
+            size = tuple(round(v * SERIF_SCALE) for v in size) if isinstance(size, tuple) else round(size * SERIF_SCALE)
         s.update(resp(prefix + "_font_size", size, px))
     if weight is not None:
         s[prefix + "_font_weight"] = str(weight)
@@ -195,10 +199,34 @@ def widget(wtype, nav_title, /, **s):
             "settings": s, "elements": []}
 
 
+# Bold + thin contrast titles: the <b> part sets heavy, the rest hairline (see .tn-contrast in SITE_CSS).
+CONTRAST_WEIGHTS = (300, 700)
+CONTRAST = {
+    "Fine painting and log home staining for exceptional mountain homes.":
+        "<b>Fine painting</b> and log home staining for exceptional mountain homes.",
+    "Painting": "<b>Painting</b>",
+    "Staining": "<b>Staining</b>",
+    "Craftsmanship rooted in how mountain homes are built":
+        "<b>Craftsmanship</b> rooted in how mountain homes are built",
+    "Featured projects": "<b>Featured</b> projects",
+    "Away for the season? We'll take care of it.": "<b>Away for the season?</b> We'll take care of it.",
+    "What our clients say": "What our <b>clients</b> say",
+    "Now scheduling winter interior projects": "<b>Now scheduling</b> winter interior projects",
+    "Contact us": "<b>Contact</b> us",
+    "Talk to us about your project": "<b>Talk to us</b> about your project",
+    "Request your free estimate": "<b>Request</b> your free estimate",
+    "We've received your request": "<b>We've received</b> your request",
+}
+
+
 def heading(title, text_, /, tag="h2", color=BONE, typ=None, **s):
     st = {"title": text_, "header_size": tag, "title_color": color}
     st.update(typ or {})
     st.update(s)
+    if st.get("typography_font_family") == SERIF and text_ in CONTRAST:
+        st["title"] = CONTRAST[text_]
+        st["typography_font_weight"] = str(CONTRAST_WEIGHTS[0])
+        st["_css_classes"] = (st.get("_css_classes", "") + " tn-contrast").strip()
     return widget("heading", title, **st)
 
 
@@ -338,7 +366,7 @@ def wordmark(title, size=28):
     return container(
         title,
         [heading(title + " / Name", "TOP NOTCH", tag="div", color=BONE,
-                 typ=typo(family=SERIF, size=size, weight=600, lh=1, ls=round(size * 0.08, 2))),
+                 typ=typo(family=WORDMARK_SERIF, size=size, weight=600, lh=1, ls=round(size * 0.08, 2))),
          heading(title + " / Descriptor", "PAINTING &amp; STAINING", tag="div", color=AMBER,
                  typ=typo(size=10, weight=700, lh=1.2, ls=3.6))],
         gap=5, html_tag="a", link=link("/"), _attributes="aria-label|Top Notch Painting home",
@@ -386,6 +414,9 @@ def index_list(title, items):
 # Glues the last three words of every paragraph (and review quote) with non-breaking spaces,
 # so a line never ends with just one or two words. Complements CSS text-wrap:balance, which
 # browsers skip on paragraphs longer than ~6 lines. Runs on the rendered page only.
+CONTRAST_CSS = ("<style>.tn-contrast .elementor-heading-title{font-weight:%d;}"
+                ".tn-contrast .elementor-heading-title b{font-weight:%d;}</style>" % CONTRAST_WEIGHTS)
+
 NO_WIDOWS_JS = """<script>
 (function(){
   function glue(el){
@@ -576,7 +607,7 @@ def build_header():
   #tn-header .elementor-widget.tn-show-sm{display:block !important;}
 }
 """
-    no_widows = widget("html", "Header / Typography helper (no short last lines)", html=NO_WIDOWS_JS)
+    no_widows = widget("html", "Header / Typography helper (no short last lines)", html=CONTRAST_CSS + NO_WIDOWS_JS)
     header = container("Header", [no_widows, top_bar, main_row], top=True, html_tag="header",
                        _element_id="tn-header", custom_css=header_css.strip())
     return {"version": "0.4", "title": "TN Header", "type": "header",
@@ -693,10 +724,10 @@ def build_hero():
         return widget("image", title, image={
             "id": media_id, "url": SITE + "/wp-content/uploads/2026/11/" + filename,
             "alt": alt, "source": "library"}, image_size="full",
-            custom_css="selector img{height:42px !important;width:auto !important;max-width:none !important;"
+            custom_css="selector img{height:50px !important;width:auto !important;max-width:none !important;"
                        "opacity:.85;display:block;}"
-                       "@media (max-width:980px){selector img{height:38px !important;}}"
-                       "@media (max-width:600px){selector img{height:30px !important;}}")
+                       "@media (max-width:980px){selector img{height:44px !important;}}"
+                       "@media (max-width:600px){selector img{height:34px !important;}}")
 
     creds = container(
         "Hero / Credentials",
@@ -720,10 +751,9 @@ def build_hero():
                      "Sashco partner"),
                 logo("Hero / Credentials / Perma-Chink logo", 2158, "topnotch-logo-perma-chink-white.png",
                      "Perma-Chink Systems partner")],
-                direction="row", gap=((40, 12), (36, 12), (32, 12), (24, 10)), flex_wrap="wrap",
+                direction="row", gap=((44, 14), (40, 14), (36, 14), (24, 12)), flex_wrap="wrap",
                 flex_align_items="center", auto_width=True)],
-            direction="row", gap=((32, 16), (28, 16), (28, 16), (24, 14)), flex_wrap="wrap",
-            flex_align_items="center", flex_justify_content="space-between")],
+            gap=((18, 18), (18, 18), (16, 16), (14, 14)), flex_align_items="flex-start")],
         gap=(14, 14, 14, 12), padding=dims(28, 0, 36, 0), margin=dims(16, 0, 0, 0),
         border_border="solid", border_width=dims(1, 0, 0, 0), border_color=HAIR_16,
         _attributes="aria-label|Credentials",
@@ -750,11 +780,10 @@ def build_hero():
                         text_link("Hero / Call", "Call " + PHONE, TEL, icon="phone", classes="tn-call")],
                        direction="row", gap=(28, 12), flex_wrap="wrap", flex_align_items="center",
                        auto_width=True)],
-             cols=("minmax(0, 560px) auto", "minmax(0, 560px) auto", "1fr", "1fr"),
-             gap_col=64, gap_row=32, grid_align_items="end", grid_justify_items="start",
-             grid_justify_content="space-between", flex_align_items="flex-end"),
+             cols=("1fr", "1fr", "1fr", "1fr"),
+             gap_col=0, gap_row=(32, 32, 32, 28), grid_justify_items="start"),
          creds],
-        bg="#2E231A", pad_top=200, pad_bottom=80, gap=40, min_height=px(800),
+        bg="#2E231A", pad_top=(320, 320, 200, 200), pad_bottom=80, gap=40, min_height=px(800),
         flex_justify_content="flex-end", overflow="hidden",
         **hero_slideshow(),
         background_overlay_background="gradient",
@@ -924,7 +953,7 @@ WWD_CSS = """
 #what-we-do .tn-wwd-photo::before{content:'' !important;display:block;position:absolute;inset:0;z-index:0;
   background:linear-gradient(180deg, rgba(20,17,14,0) 55%, rgba(20,17,14,0.7) 100%) !important;opacity:1 !important;}
 #what-we-do .tn-wwd-photo > .elementor-widget{position:relative;z-index:1;}
-#what-we-do .tn-wwd-giant{position:relative;z-index:2;margin:-0.57em 0 0 -0.04em !important;font-size:clamp(88px, 10.2vw, 148px);}
+#what-we-do .tn-wwd-giant{position:relative;z-index:2;margin:-0.57em 0 0 -0.04em !important;font-size:clamp(76px, 8.8vw, 128px);}
 #what-we-do .tn-wwd-giant .elementor-heading-title{font-size:inherit !important;line-height:1 !important;letter-spacing:-0.025em;text-wrap:nowrap;}
 #what-we-do .tn-wwd-title{margin-top:26px !important;}
 #what-we-do .tn-wwd-title .elementor-heading-title{white-space:nowrap;}
@@ -938,7 +967,7 @@ WWD_CSS = """
 #what-we-do .tn-wwd-links .elementor-icon-list-item > a::before{content:'→';color:#C68B4E;font-weight:400;}
 @media (max-width:980px){
   #what-we-do .tn-wwd-grid{grid-template-columns:minmax(0,1fr) !important;}
-  #what-we-do .tn-wwd-giant{font-size:clamp(72px, 17vw, 132px);}
+  #what-we-do .tn-wwd-giant{font-size:clamp(62px, 14.6vw, 114px);}
 }
 @media (max-width:760px){#what-we-do .tn-wwd-title .elementor-heading-title{white-space:normal;}}
 """.strip()
@@ -1062,7 +1091,7 @@ def build_home():
         "selector .elementor-testimonial__content::before{content:'';display:block;width:106px;height:18px;"
         "margin-bottom:32px;background:url(\"" + star_svg + "\") repeat-x 0 0/22px 18px;}"
         "selector .elementor-testimonial__text{text-wrap:balance;font-style:normal !important;color:#14110E !important;"
-        "font-family:'Cormorant Garamond', Georgia, serif;font-weight:400 !important;}"
+        "font-family:'" + SERIF + "', Georgia, serif;font-weight:400 !important;}"
         "selector .elementor-testimonial__name{color:#14110E !important;font-style:normal;}"
         "selector .elementor-testimonial__title{color:#5B5046 !important;font-style:normal;}"
         "selector .elementor-testimonial__footer{margin:0;}"

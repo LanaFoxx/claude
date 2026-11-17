@@ -342,32 +342,32 @@
            "widgetType": "heading",
            "isInner": false,
            "settings": {
-            "title": "Talk to us about your project",
+            "title": "<b>Talk to us</b> about your project",
             "header_size": "h1",
             "title_color": "#F2ECE3",
             "typography_typography": "custom",
-            "typography_font_family": "Cormorant Garamond",
+            "typography_font_family": "Fraunces",
             "typography_font_size": {
              "unit": "px",
-             "size": 56,
+             "size": 48,
              "sizes": []
             },
             "typography_font_size_laptop": {
              "unit": "px",
-             "size": 51,
+             "size": 44,
              "sizes": []
             },
             "typography_font_size_tablet": {
              "unit": "px",
-             "size": 38,
+             "size": 33,
              "sizes": []
             },
             "typography_font_size_mobile": {
              "unit": "px",
-             "size": 34,
+             "size": 29,
              "sizes": []
             },
-            "typography_font_weight": "500",
+            "typography_font_weight": "300",
             "typography_line_height": {
              "unit": "em",
              "size": 1.04,
@@ -379,6 +379,7 @@
              "sizes": []
             },
             "custom_css": "selector .elementor-heading-title{text-wrap:balance;}",
+            "_css_classes": "tn-contrast",
             "_title": "Estimate Intro / Title (H1)"
            },
            "elements": []
@@ -512,10 +513,10 @@
             "header_size": "div",
             "title_color": "#F2ECE3",
             "typography_typography": "custom",
-            "typography_font_family": "Cormorant Garamond",
+            "typography_font_family": "Fraunces",
             "typography_font_size": {
              "unit": "px",
-             "size": 40,
+             "size": 34,
              "sizes": []
             },
             "typography_font_weight": "500",
@@ -673,22 +674,23 @@
            "widgetType": "heading",
            "isInner": false,
            "settings": {
-            "title": "Request your free estimate",
+            "title": "<b>Request</b> your free estimate",
             "header_size": "h2",
             "title_color": "#14110E",
             "typography_typography": "custom",
-            "typography_font_family": "Cormorant Garamond",
+            "typography_font_family": "Fraunces",
             "typography_font_size": {
              "unit": "px",
-             "size": 34,
+             "size": 29,
              "sizes": []
             },
-            "typography_font_weight": "500",
+            "typography_font_weight": "300",
             "typography_line_height": {
              "unit": "em",
              "size": 1.1,
              "sizes": []
             },
+            "_css_classes": "tn-contrast",
             "_title": "Estimate / Form title"
            },
            "elements": []

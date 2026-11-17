@@ -46,7 +46,7 @@
     },
     "padding": {
      "unit": "px",
-     "top": "200",
+     "top": "320",
      "right": "48",
      "bottom": "80",
      "left": "48",
@@ -54,7 +54,7 @@
     },
     "padding_laptop": {
      "unit": "px",
-     "top": "200",
+     "top": "320",
      "right": "48",
      "bottom": "80",
      "left": "48",
@@ -141,38 +141,39 @@
      "widgetType": "heading",
      "isInner": false,
      "settings": {
-      "title": "Fine painting and log home staining for exceptional mountain homes.",
+      "title": "<b>Fine painting</b> and log home staining for exceptional mountain homes.",
       "header_size": "h1",
       "title_color": "#F2ECE3",
       "typography_typography": "custom",
-      "typography_font_family": "Cormorant Garamond",
+      "typography_font_family": "Fraunces",
       "typography_font_size": {
        "unit": "px",
-       "size": 86,
+       "size": 74,
        "sizes": []
       },
       "typography_font_size_laptop": {
        "unit": "px",
-       "size": 78,
+       "size": 67,
        "sizes": []
       },
       "typography_font_size_tablet": {
        "unit": "px",
-       "size": 59,
+       "size": 51,
        "sizes": []
       },
       "typography_font_size_mobile": {
        "unit": "px",
-       "size": 44,
+       "size": 38,
        "sizes": []
       },
-      "typography_font_weight": "500",
+      "typography_font_weight": "300",
       "typography_line_height": {
        "unit": "em",
        "size": 1,
        "sizes": []
       },
       "custom_css": "selector{max-width:1000px !important;}selector .elementor-heading-title{text-wrap:balance;letter-spacing:-0.015em;}",
+      "_css_classes": "tn-contrast",
       "_title": "Hero / Title (H1)"
      },
      "elements": []
@@ -186,32 +187,32 @@
       "content_width": "full",
       "flex_direction": "column",
       "flex_gap": {
-       "column": "64",
+       "column": "0",
        "row": "32",
        "isLinked": false,
        "unit": "px",
-       "size": 64
+       "size": 0
       },
       "flex_gap_laptop": {
-       "column": "64",
+       "column": "0",
        "row": "32",
        "isLinked": false,
        "unit": "px",
-       "size": 64
+       "size": 0
       },
       "flex_gap_tablet": {
-       "column": "64",
+       "column": "0",
        "row": "32",
        "isLinked": false,
        "unit": "px",
-       "size": 64
+       "size": 0
       },
       "flex_gap_mobile": {
-       "column": "64",
-       "row": "32",
+       "column": "0",
+       "row": "28",
        "isLinked": false,
        "unit": "px",
-       "size": 64
+       "size": 0
       },
       "width": {
        "unit": "%",
@@ -235,12 +236,12 @@
       },
       "grid_columns_grid": {
        "unit": "custom",
-       "size": "minmax(0, 560px) auto",
+       "size": "1fr",
        "sizes": []
       },
       "grid_columns_grid_laptop": {
        "unit": "custom",
-       "size": "minmax(0, 560px) auto",
+       "size": "1fr",
        "sizes": []
       },
       "grid_columns_grid_tablet": {
@@ -254,37 +255,34 @@
        "sizes": []
       },
       "grid_gaps": {
-       "column": "64",
+       "column": "0",
        "row": "32",
        "isLinked": false,
        "unit": "px",
-       "size": 64
+       "size": 0
       },
       "grid_gaps_laptop": {
-       "column": "64",
+       "column": "0",
        "row": "32",
        "isLinked": false,
        "unit": "px",
-       "size": 64
+       "size": 0
       },
       "grid_gaps_tablet": {
-       "column": "64",
+       "column": "0",
        "row": "32",
        "isLinked": false,
        "unit": "px",
-       "size": 64
+       "size": 0
       },
       "grid_gaps_mobile": {
-       "column": "64",
-       "row": "32",
+       "column": "0",
+       "row": "28",
        "isLinked": false,
        "unit": "px",
-       "size": 64
+       "size": 0
       },
-      "grid_align_items": "end",
-      "grid_justify_items": "start",
-      "grid_justify_content": "space-between",
-      "flex_align_items": "flex-end"
+      "grid_justify_items": "start"
      },
      "elements": [
       {
@@ -767,34 +765,34 @@
        "settings": {
         "_title": "Hero / Credentials / Accreditations",
         "content_width": "full",
-        "flex_direction": "row",
+        "flex_direction": "column",
         "flex_gap": {
-         "column": "32",
-         "row": "16",
-         "isLinked": false,
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
          "unit": "px",
-         "size": 32
+         "size": 18
         },
         "flex_gap_laptop": {
-         "column": "28",
-         "row": "16",
-         "isLinked": false,
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
          "unit": "px",
-         "size": 28
+         "size": 18
         },
         "flex_gap_tablet": {
-         "column": "28",
+         "column": "16",
          "row": "16",
-         "isLinked": false,
+         "isLinked": true,
          "unit": "px",
-         "size": 28
+         "size": 16
         },
         "flex_gap_mobile": {
-         "column": "24",
+         "column": "14",
          "row": "14",
-         "isLinked": false,
+         "isLinked": true,
          "unit": "px",
-         "size": 24
+         "size": 14
         },
         "width": {
          "unit": "%",
@@ -809,9 +807,7 @@
          "left": "0",
          "isLinked": true
         },
-        "flex_wrap": "wrap",
-        "flex_align_items": "center",
-        "flex_justify_content": "space-between"
+        "flex_align_items": "flex-start"
        },
        "elements": [
         {
@@ -965,29 +961,29 @@
           "content_width": "full",
           "flex_direction": "row",
           "flex_gap": {
+           "column": "44",
+           "row": "14",
+           "isLinked": false,
+           "unit": "px",
+           "size": 44
+          },
+          "flex_gap_laptop": {
            "column": "40",
-           "row": "12",
+           "row": "14",
            "isLinked": false,
            "unit": "px",
            "size": 40
           },
-          "flex_gap_laptop": {
+          "flex_gap_tablet": {
            "column": "36",
-           "row": "12",
+           "row": "14",
            "isLinked": false,
            "unit": "px",
            "size": 36
           },
-          "flex_gap_tablet": {
-           "column": "32",
-           "row": "12",
-           "isLinked": false,
-           "unit": "px",
-           "size": 32
-          },
           "flex_gap_mobile": {
            "column": "24",
-           "row": "10",
+           "row": "12",
            "isLinked": false,
            "unit": "px",
            "size": 24
@@ -1023,7 +1019,7 @@
              "source": "library"
             },
             "image_size": "full",
-            "custom_css": "selector img{height:42px !important;width:auto !important;max-width:none !important;opacity:.85;display:block;}@media (max-width:980px){selector img{height:38px !important;}}@media (max-width:600px){selector img{height:30px !important;}}",
+            "custom_css": "selector img{height:50px !important;width:auto !important;max-width:none !important;opacity:.85;display:block;}@media (max-width:980px){selector img{height:44px !important;}}@media (max-width:600px){selector img{height:34px !important;}}",
             "_title": "Hero / Credentials / BBB logo"
            },
            "elements": []
@@ -1041,7 +1037,7 @@
              "source": "library"
             },
             "image_size": "full",
-            "custom_css": "selector img{height:42px !important;width:auto !important;max-width:none !important;opacity:.85;display:block;}@media (max-width:980px){selector img{height:38px !important;}}@media (max-width:600px){selector img{height:30px !important;}}",
+            "custom_css": "selector img{height:50px !important;width:auto !important;max-width:none !important;opacity:.85;display:block;}@media (max-width:980px){selector img{height:44px !important;}}@media (max-width:600px){selector img{height:34px !important;}}",
             "_title": "Hero / Credentials / Sashco logo"
            },
            "elements": []
@@ -1059,7 +1055,7 @@
              "source": "library"
             },
             "image_size": "full",
-            "custom_css": "selector img{height:42px !important;width:auto !important;max-width:none !important;opacity:.85;display:block;}@media (max-width:980px){selector img{height:38px !important;}}@media (max-width:600px){selector img{height:30px !important;}}",
+            "custom_css": "selector img{height:50px !important;width:auto !important;max-width:none !important;opacity:.85;display:block;}@media (max-width:980px){selector img{height:44px !important;}}@media (max-width:600px){selector img{height:34px !important;}}",
             "_title": "Hero / Credentials / Perma-Chink logo"
            },
            "elements": []
@@ -1149,7 +1145,7 @@
     "background_color": "#14110E",
     "html_tag": "section",
     "_element_id": "what-we-do",
-    "custom_css": "#what-we-do .tn-wwd-photo{position:relative;overflow:hidden;}\n#what-we-do .tn-wwd-photo::before{content:'' !important;display:block;position:absolute;inset:0;z-index:0;\n  background:linear-gradient(180deg, rgba(20,17,14,0) 55%, rgba(20,17,14,0.7) 100%) !important;opacity:1 !important;}\n#what-we-do .tn-wwd-photo > .elementor-widget{position:relative;z-index:1;}\n#what-we-do .tn-wwd-giant{position:relative;z-index:2;margin:-0.57em 0 0 -0.04em !important;font-size:clamp(88px, 10.2vw, 148px);}\n#what-we-do .tn-wwd-giant .elementor-heading-title{font-size:inherit !important;line-height:1 !important;letter-spacing:-0.025em;text-wrap:nowrap;}\n#what-we-do .tn-wwd-title{margin-top:26px !important;}\n#what-we-do .tn-wwd-title .elementor-heading-title{white-space:nowrap;}\n#what-we-do .tn-wwd-text{margin-top:14px !important;max-width:500px;}\n#what-we-do .tn-wwd-links{margin-top:0 !important;padding-top:20px;}\n#what-we-do .tn-wwd-links .elementor-icon-list-items{display:grid !important;\n  grid-template-columns:repeat(auto-fill, minmax(min(100%, max(250px, calc((100% - 24px) / 2))), 1fr));column-gap:24px;}\n#what-we-do .tn-wwd-links .elementor-icon-list-item{margin:0 !important;padding:0 !important;}\n#what-we-do .tn-wwd-links .elementor-icon-list-item::after{display:none !important;}\n#what-we-do .tn-wwd-links .elementor-icon-list-item > a{display:inline-flex;align-items:center;gap:10px;min-height:44px;white-space:nowrap;}\n#what-we-do .tn-wwd-links .elementor-icon-list-item > a::before{content:'→';color:#C68B4E;font-weight:400;}\n@media (max-width:980px){\n  #what-we-do .tn-wwd-grid{grid-template-columns:minmax(0,1fr) !important;}\n  #what-we-do .tn-wwd-giant{font-size:clamp(72px, 17vw, 132px);}\n}\n@media (max-width:760px){#what-we-do .tn-wwd-title .elementor-heading-title{white-space:normal;}}"
+    "custom_css": "#what-we-do .tn-wwd-photo{position:relative;overflow:hidden;}\n#what-we-do .tn-wwd-photo::before{content:'' !important;display:block;position:absolute;inset:0;z-index:0;\n  background:linear-gradient(180deg, rgba(20,17,14,0) 55%, rgba(20,17,14,0.7) 100%) !important;opacity:1 !important;}\n#what-we-do .tn-wwd-photo > .elementor-widget{position:relative;z-index:1;}\n#what-we-do .tn-wwd-giant{position:relative;z-index:2;margin:-0.57em 0 0 -0.04em !important;font-size:clamp(76px, 8.8vw, 128px);}\n#what-we-do .tn-wwd-giant .elementor-heading-title{font-size:inherit !important;line-height:1 !important;letter-spacing:-0.025em;text-wrap:nowrap;}\n#what-we-do .tn-wwd-title{margin-top:26px !important;}\n#what-we-do .tn-wwd-title .elementor-heading-title{white-space:nowrap;}\n#what-we-do .tn-wwd-text{margin-top:14px !important;max-width:500px;}\n#what-we-do .tn-wwd-links{margin-top:0 !important;padding-top:20px;}\n#what-we-do .tn-wwd-links .elementor-icon-list-items{display:grid !important;\n  grid-template-columns:repeat(auto-fill, minmax(min(100%, max(250px, calc((100% - 24px) / 2))), 1fr));column-gap:24px;}\n#what-we-do .tn-wwd-links .elementor-icon-list-item{margin:0 !important;padding:0 !important;}\n#what-we-do .tn-wwd-links .elementor-icon-list-item::after{display:none !important;}\n#what-we-do .tn-wwd-links .elementor-icon-list-item > a{display:inline-flex;align-items:center;gap:10px;min-height:44px;white-space:nowrap;}\n#what-we-do .tn-wwd-links .elementor-icon-list-item > a::before{content:'→';color:#C68B4E;font-weight:400;}\n@media (max-width:980px){\n  #what-we-do .tn-wwd-grid{grid-template-columns:minmax(0,1fr) !important;}\n  #what-we-do .tn-wwd-giant{font-size:clamp(62px, 14.6vw, 114px);}\n}\n@media (max-width:760px){#what-we-do .tn-wwd-title .elementor-heading-title{white-space:normal;}}"
    },
    "elements": [
     {
@@ -1452,38 +1448,38 @@
          "widgetType": "heading",
          "isInner": false,
          "settings": {
-          "title": "Painting",
+          "title": "<b>Painting</b>",
           "header_size": "div",
           "title_color": "#F2ECE3",
           "typography_typography": "custom",
-          "typography_font_family": "Cormorant Garamond",
+          "typography_font_family": "Fraunces",
           "typography_font_size": {
            "unit": "px",
-           "size": 148,
+           "size": 127,
            "sizes": []
           },
           "typography_font_size_laptop": {
            "unit": "px",
-           "size": 133,
+           "size": 114,
            "sizes": []
           },
           "typography_font_size_tablet": {
            "unit": "px",
-           "size": 132,
+           "size": 114,
            "sizes": []
           },
           "typography_font_size_mobile": {
            "unit": "px",
-           "size": 72,
+           "size": 62,
            "sizes": []
           },
-          "typography_font_weight": "500",
+          "typography_font_weight": "300",
           "typography_line_height": {
            "unit": "em",
            "size": 1,
            "sizes": []
           },
-          "_css_classes": "tn-wwd-giant",
+          "_css_classes": "tn-wwd-giant tn-contrast",
           "_attributes": "aria-hidden|true",
           "_title": "What We Do / Painting / Giant word"
          },
@@ -1779,38 +1775,38 @@
          "widgetType": "heading",
          "isInner": false,
          "settings": {
-          "title": "Staining",
+          "title": "<b>Staining</b>",
           "header_size": "div",
           "title_color": "#F2ECE3",
           "typography_typography": "custom",
-          "typography_font_family": "Cormorant Garamond",
+          "typography_font_family": "Fraunces",
           "typography_font_size": {
            "unit": "px",
-           "size": 148,
+           "size": 127,
            "sizes": []
           },
           "typography_font_size_laptop": {
            "unit": "px",
-           "size": 133,
+           "size": 114,
            "sizes": []
           },
           "typography_font_size_tablet": {
            "unit": "px",
-           "size": 132,
+           "size": 114,
            "sizes": []
           },
           "typography_font_size_mobile": {
            "unit": "px",
-           "size": 72,
+           "size": 62,
            "sizes": []
           },
-          "typography_font_weight": "500",
+          "typography_font_weight": "300",
           "typography_line_height": {
            "unit": "em",
            "size": 1,
            "sizes": []
           },
-          "_css_classes": "tn-wwd-giant",
+          "_css_classes": "tn-wwd-giant tn-contrast",
           "_attributes": "aria-hidden|true",
           "_title": "What We Do / Staining / Giant word"
          },
@@ -2221,32 +2217,32 @@
          "widgetType": "heading",
          "isInner": false,
          "settings": {
-          "title": "Craftsmanship rooted in how mountain homes are built",
+          "title": "<b>Craftsmanship</b> rooted in how mountain homes are built",
           "header_size": "h2",
           "title_color": "#14110E",
           "typography_typography": "custom",
-          "typography_font_family": "Cormorant Garamond",
+          "typography_font_family": "Fraunces",
           "typography_font_size": {
            "unit": "px",
-           "size": 60,
+           "size": 52,
            "sizes": []
           },
           "typography_font_size_laptop": {
            "unit": "px",
-           "size": 55,
+           "size": 47,
            "sizes": []
           },
           "typography_font_size_tablet": {
            "unit": "px",
-           "size": 41,
+           "size": 35,
            "sizes": []
           },
           "typography_font_size_mobile": {
            "unit": "px",
-           "size": 36,
+           "size": 31,
            "sizes": []
           },
-          "typography_font_weight": "500",
+          "typography_font_weight": "300",
           "typography_line_height": {
            "unit": "em",
            "size": 1.04,
@@ -2258,6 +2254,7 @@
            "sizes": []
           },
           "custom_css": "selector .elementor-heading-title{text-wrap:balance;}",
+          "_css_classes": "tn-contrast",
           "_title": "Who We Are / Title (H2)"
          },
          "elements": []
@@ -2693,10 +2690,10 @@
           "header_size": "h3",
           "title_color": "#F2ECE3",
           "typography_typography": "custom",
-          "typography_font_family": "Cormorant Garamond",
+          "typography_font_family": "Fraunces",
           "typography_font_size": {
            "unit": "px",
-           "size": 28,
+           "size": 24,
            "sizes": []
           },
           "typography_font_weight": "500",
@@ -2827,10 +2824,10 @@
           "header_size": "h3",
           "title_color": "#F2ECE3",
           "typography_typography": "custom",
-          "typography_font_family": "Cormorant Garamond",
+          "typography_font_family": "Fraunces",
           "typography_font_size": {
            "unit": "px",
-           "size": 28,
+           "size": 24,
            "sizes": []
           },
           "typography_font_weight": "500",
@@ -2961,10 +2958,10 @@
           "header_size": "h3",
           "title_color": "#F2ECE3",
           "typography_typography": "custom",
-          "typography_font_family": "Cormorant Garamond",
+          "typography_font_family": "Fraunces",
           "typography_font_size": {
            "unit": "px",
-           "size": 28,
+           "size": 24,
            "sizes": []
           },
           "typography_font_weight": "500",
@@ -3095,10 +3092,10 @@
           "header_size": "h3",
           "title_color": "#F2ECE3",
           "typography_typography": "custom",
-          "typography_font_family": "Cormorant Garamond",
+          "typography_font_family": "Fraunces",
           "typography_font_size": {
            "unit": "px",
-           "size": 28,
+           "size": 24,
            "sizes": []
           },
           "typography_font_weight": "500",
@@ -3229,10 +3226,10 @@
           "header_size": "h3",
           "title_color": "#F2ECE3",
           "typography_typography": "custom",
-          "typography_font_family": "Cormorant Garamond",
+          "typography_font_family": "Fraunces",
           "typography_font_size": {
            "unit": "px",
-           "size": 28,
+           "size": 24,
            "sizes": []
           },
           "typography_font_weight": "500",
@@ -3363,10 +3360,10 @@
           "header_size": "h3",
           "title_color": "#F2ECE3",
           "typography_typography": "custom",
-          "typography_font_family": "Cormorant Garamond",
+          "typography_font_family": "Fraunces",
           "typography_font_size": {
            "unit": "px",
-           "size": 28,
+           "size": 24,
            "sizes": []
           },
           "typography_font_weight": "500",
@@ -3565,32 +3562,32 @@
        "widgetType": "heading",
        "isInner": false,
        "settings": {
-        "title": "Featured projects",
+        "title": "<b>Featured</b> projects",
         "header_size": "h2",
         "title_color": "#F2ECE3",
         "typography_typography": "custom",
-        "typography_font_family": "Cormorant Garamond",
+        "typography_font_family": "Fraunces",
         "typography_font_size": {
          "unit": "px",
-         "size": 60,
+         "size": 52,
          "sizes": []
         },
         "typography_font_size_laptop": {
          "unit": "px",
-         "size": 55,
+         "size": 47,
          "sizes": []
         },
         "typography_font_size_tablet": {
          "unit": "px",
-         "size": 41,
+         "size": 35,
          "sizes": []
         },
         "typography_font_size_mobile": {
          "unit": "px",
-         "size": 36,
+         "size": 31,
          "sizes": []
         },
-        "typography_font_weight": "500",
+        "typography_font_weight": "300",
         "typography_line_height": {
          "unit": "em",
          "size": 1.04,
@@ -3601,7 +3598,7 @@
          "size": -0.6,
          "sizes": []
         },
-        "_css_classes": "tn-f-head",
+        "_css_classes": "tn-f-head tn-contrast",
         "_title": "Featured / Title (H2)"
        },
        "elements": []
@@ -3776,25 +3773,25 @@
               "header_size": "div",
               "title_color": "#8F867B",
               "typography_typography": "custom",
-              "typography_font_family": "Cormorant Garamond",
+              "typography_font_family": "Fraunces",
               "typography_font_size": {
                "unit": "px",
-               "size": 34,
+               "size": 29,
                "sizes": []
               },
               "typography_font_size_laptop": {
                "unit": "px",
-               "size": 34,
+               "size": 29,
                "sizes": []
               },
               "typography_font_size_tablet": {
                "unit": "px",
-               "size": 34,
+               "size": 29,
                "sizes": []
               },
               "typography_font_size_mobile": {
                "unit": "px",
-               "size": 28,
+               "size": 24,
                "sizes": []
               },
               "typography_font_weight": "500",
@@ -3985,25 +3982,25 @@
               "header_size": "div",
               "title_color": "#8F867B",
               "typography_typography": "custom",
-              "typography_font_family": "Cormorant Garamond",
+              "typography_font_family": "Fraunces",
               "typography_font_size": {
                "unit": "px",
-               "size": 34,
+               "size": 29,
                "sizes": []
               },
               "typography_font_size_laptop": {
                "unit": "px",
-               "size": 34,
+               "size": 29,
                "sizes": []
               },
               "typography_font_size_tablet": {
                "unit": "px",
-               "size": 34,
+               "size": 29,
                "sizes": []
               },
               "typography_font_size_mobile": {
                "unit": "px",
-               "size": 28,
+               "size": 24,
                "sizes": []
               },
               "typography_font_weight": "500",
@@ -4194,25 +4191,25 @@
               "header_size": "div",
               "title_color": "#8F867B",
               "typography_typography": "custom",
-              "typography_font_family": "Cormorant Garamond",
+              "typography_font_family": "Fraunces",
               "typography_font_size": {
                "unit": "px",
-               "size": 34,
+               "size": 29,
                "sizes": []
               },
               "typography_font_size_laptop": {
                "unit": "px",
-               "size": 34,
+               "size": 29,
                "sizes": []
               },
               "typography_font_size_tablet": {
                "unit": "px",
-               "size": 34,
+               "size": 29,
                "sizes": []
               },
               "typography_font_size_mobile": {
                "unit": "px",
-               "size": 28,
+               "size": 24,
                "sizes": []
               },
               "typography_font_weight": "500",
@@ -5088,32 +5085,32 @@
          "widgetType": "heading",
          "isInner": false,
          "settings": {
-          "title": "Away for the season? We'll take care of it.",
+          "title": "<b>Away for the season?</b> We'll take care of it.",
           "header_size": "h2",
           "title_color": "#F2ECE3",
           "typography_typography": "custom",
-          "typography_font_family": "Cormorant Garamond",
+          "typography_font_family": "Fraunces",
           "typography_font_size": {
            "unit": "px",
-           "size": 60,
+           "size": 52,
            "sizes": []
           },
           "typography_font_size_laptop": {
            "unit": "px",
-           "size": 55,
+           "size": 47,
            "sizes": []
           },
           "typography_font_size_tablet": {
            "unit": "px",
-           "size": 41,
+           "size": 35,
            "sizes": []
           },
           "typography_font_size_mobile": {
            "unit": "px",
-           "size": 36,
+           "size": 31,
            "sizes": []
           },
-          "typography_font_weight": "500",
+          "typography_font_weight": "300",
           "typography_line_height": {
            "unit": "em",
            "size": 1.04,
@@ -5125,6 +5122,7 @@
            "sizes": []
           },
           "custom_css": "selector .elementor-heading-title{text-wrap:balance;}selector{max-width:560px !important;}",
+          "_css_classes": "tn-contrast",
           "_title": "Away / Title (H2)"
          },
          "elements": []
@@ -5412,32 +5410,32 @@
      "widgetType": "heading",
      "isInner": false,
      "settings": {
-      "title": "What our clients say",
+      "title": "What our <b>clients</b> say",
       "header_size": "h2",
       "title_color": "#14110E",
       "typography_typography": "custom",
-      "typography_font_family": "Cormorant Garamond",
+      "typography_font_family": "Fraunces",
       "typography_font_size": {
        "unit": "px",
-       "size": 60,
+       "size": 52,
        "sizes": []
       },
       "typography_font_size_laptop": {
        "unit": "px",
-       "size": 55,
+       "size": 47,
        "sizes": []
       },
       "typography_font_size_tablet": {
        "unit": "px",
-       "size": 41,
+       "size": 35,
        "sizes": []
       },
       "typography_font_size_mobile": {
        "unit": "px",
-       "size": 36,
+       "size": 31,
        "sizes": []
       },
-      "typography_font_weight": "500",
+      "typography_font_weight": "300",
       "typography_line_height": {
        "unit": "em",
        "size": 1.04,
@@ -5449,6 +5447,7 @@
        "sizes": []
       },
       "align": "center",
+      "_css_classes": "tn-contrast",
       "_title": "Reviews / Title (H2)"
      },
      "elements": []
@@ -5516,27 +5515,27 @@
       "content_text_color": "#14110E",
       "name_text_color": "#14110E",
       "title_text_color": "#5B5046",
-      "custom_css": "selector{max-width:1140px !important;width:100%;margin:0 auto;}selector{position:relative;}selector .swiper-slide{padding:0 !important;background:transparent;}selector .elementor-main-swiper{width:auto !important;max-width:900px;margin:0 auto;padding-bottom:0;overflow:hidden;}selector .elementor-testimonial{display:flex;flex-direction:column;align-items:center;gap:32px;}selector .elementor-testimonial__content{display:flex;flex-direction:column;align-items:center;}selector .elementor-testimonial__content::before{content:'';display:block;width:106px;height:18px;margin-bottom:32px;background:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='18' viewBox='0 0 22 18'%3E%3Cpath transform='scale(0.75)' fill='%238A5A2B' d='M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6L2.5 9.4l6.6-.8z'/%3E%3C/svg%3E\") repeat-x 0 0/22px 18px;}selector .elementor-testimonial__text{text-wrap:balance;font-style:normal !important;color:#14110E !important;font-family:'Cormorant Garamond', Georgia, serif;font-weight:400 !important;}selector .elementor-testimonial__name{color:#14110E !important;font-style:normal;}selector .elementor-testimonial__title{color:#5B5046 !important;font-style:normal;}selector .elementor-testimonial__footer{margin:0;}selector .elementor-testimonial__cite{display:block;}selector .elementor-testimonial__name,selector .elementor-testimonial__title{display:inline;}selector .elementor-testimonial__title::before{content:' · ';}selector .swiper-pagination{position:static;margin-top:32px;font-size:14px;line-height:1.4;color:#5B5046;font-family:Manrope, 'Helvetica Neue', Arial, sans-serif;}selector .elementor-swiper-button{width:56px;height:56px;border:1px solid #8C8174;border-radius:999px;display:flex;align-items:center;justify-content:center;color:#14110E;font-size:20px;}selector .elementor-swiper-button svg{width:20px;height:20px;fill:#14110E;}selector .elementor-swiper-button-prev{left:0;}selector .elementor-swiper-button-next{right:0;}@media (max-width:1359px){selector .elementor-main-swiper{margin:0 120px;max-width:none;}}@media (max-width:980px){selector .elementor-main-swiper{margin:0 95px;}}@media (max-width:760px){selector .elementor-main-swiper{display:flex;flex-wrap:wrap;justify-content:center;column-gap:16px;margin:0;max-width:100%;height:auto !important;overflow-x:clip;overflow-y:visible;}selector .swiper-wrapper{flex:0 0 100%;}selector .swiper-pagination{order:2;flex:0 0 100%;}selector .elementor-swiper-button{order:3;position:static;transform:none;margin:56px 0 0;width:48px;height:48px;}selector .elementor-swiper-button svg{width:18px;height:18px;}}",
+      "custom_css": "selector{max-width:1140px !important;width:100%;margin:0 auto;}selector{position:relative;}selector .swiper-slide{padding:0 !important;background:transparent;}selector .elementor-main-swiper{width:auto !important;max-width:900px;margin:0 auto;padding-bottom:0;overflow:hidden;}selector .elementor-testimonial{display:flex;flex-direction:column;align-items:center;gap:32px;}selector .elementor-testimonial__content{display:flex;flex-direction:column;align-items:center;}selector .elementor-testimonial__content::before{content:'';display:block;width:106px;height:18px;margin-bottom:32px;background:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='18' viewBox='0 0 22 18'%3E%3Cpath transform='scale(0.75)' fill='%238A5A2B' d='M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6L2.5 9.4l6.6-.8z'/%3E%3C/svg%3E\") repeat-x 0 0/22px 18px;}selector .elementor-testimonial__text{text-wrap:balance;font-style:normal !important;color:#14110E !important;font-family:'Fraunces', Georgia, serif;font-weight:400 !important;}selector .elementor-testimonial__name{color:#14110E !important;font-style:normal;}selector .elementor-testimonial__title{color:#5B5046 !important;font-style:normal;}selector .elementor-testimonial__footer{margin:0;}selector .elementor-testimonial__cite{display:block;}selector .elementor-testimonial__name,selector .elementor-testimonial__title{display:inline;}selector .elementor-testimonial__title::before{content:' · ';}selector .swiper-pagination{position:static;margin-top:32px;font-size:14px;line-height:1.4;color:#5B5046;font-family:Manrope, 'Helvetica Neue', Arial, sans-serif;}selector .elementor-swiper-button{width:56px;height:56px;border:1px solid #8C8174;border-radius:999px;display:flex;align-items:center;justify-content:center;color:#14110E;font-size:20px;}selector .elementor-swiper-button svg{width:20px;height:20px;fill:#14110E;}selector .elementor-swiper-button-prev{left:0;}selector .elementor-swiper-button-next{right:0;}@media (max-width:1359px){selector .elementor-main-swiper{margin:0 120px;max-width:none;}}@media (max-width:980px){selector .elementor-main-swiper{margin:0 95px;}}@media (max-width:760px){selector .elementor-main-swiper{display:flex;flex-wrap:wrap;justify-content:center;column-gap:16px;margin:0;max-width:100%;height:auto !important;overflow-x:clip;overflow-y:visible;}selector .swiper-wrapper{flex:0 0 100%;}selector .swiper-pagination{order:2;flex:0 0 100%;}selector .elementor-swiper-button{order:3;position:static;transform:none;margin:56px 0 0;width:48px;height:48px;}selector .elementor-swiper-button svg{width:18px;height:18px;}}",
       "content_typography_typography": "custom",
-      "content_typography_font_family": "Cormorant Garamond",
+      "content_typography_font_family": "Fraunces",
       "content_typography_font_size": {
        "unit": "px",
-       "size": 40,
+       "size": 34,
        "sizes": []
       },
       "content_typography_font_size_laptop": {
        "unit": "px",
-       "size": 36,
+       "size": 31,
        "sizes": []
       },
       "content_typography_font_size_tablet": {
        "unit": "px",
-       "size": 30,
+       "size": 26,
        "sizes": []
       },
       "content_typography_font_size_mobile": {
        "unit": "px",
-       "size": 26,
+       "size": 22,
        "sizes": []
       },
       "content_typography_font_weight": "400",
@@ -5776,10 +5775,10 @@
           "header_size": "div",
           "title_color": "#F2ECE3",
           "typography_typography": "custom",
-          "typography_font_family": "Cormorant Garamond",
+          "typography_font_family": "Fraunces",
           "typography_font_size": {
            "unit": "px",
-           "size": 60,
+           "size": 52,
            "sizes": []
           },
           "typography_font_weight": "500",
@@ -5970,10 +5969,10 @@
           "header_size": "div",
           "title_color": "#F2ECE3",
           "typography_typography": "custom",
-          "typography_font_family": "Cormorant Garamond",
+          "typography_font_family": "Fraunces",
           "typography_font_size": {
            "unit": "px",
-           "size": 60,
+           "size": 52,
            "sizes": []
           },
           "typography_font_weight": "500",
@@ -6132,10 +6131,10 @@
           "header_size": "div",
           "title_color": "#F2ECE3",
           "typography_typography": "custom",
-          "typography_font_family": "Cormorant Garamond",
+          "typography_font_family": "Fraunces",
           "typography_font_size": {
            "unit": "px",
-           "size": 60,
+           "size": 52,
            "sizes": []
           },
           "typography_font_weight": "500",
@@ -6606,32 +6605,32 @@
            "widgetType": "heading",
            "isInner": false,
            "settings": {
-            "title": "Now scheduling winter interior projects",
+            "title": "<b>Now scheduling</b> winter interior projects",
             "header_size": "h2",
             "title_color": "#F2ECE3",
             "typography_typography": "custom",
-            "typography_font_family": "Cormorant Garamond",
+            "typography_font_family": "Fraunces",
             "typography_font_size": {
              "unit": "px",
-             "size": 56,
+             "size": 48,
              "sizes": []
             },
             "typography_font_size_laptop": {
              "unit": "px",
-             "size": 51,
+             "size": 44,
              "sizes": []
             },
             "typography_font_size_tablet": {
              "unit": "px",
-             "size": 38,
+             "size": 33,
              "sizes": []
             },
             "typography_font_size_mobile": {
              "unit": "px",
-             "size": 30,
+             "size": 26,
              "sizes": []
             },
-            "typography_font_weight": "500",
+            "typography_font_weight": "300",
             "typography_line_height": {
              "unit": "em",
              "size": 1.04,
@@ -6643,6 +6642,7 @@
              "sizes": []
             },
             "custom_css": "selector .elementor-heading-title{text-wrap:balance;}",
+            "_css_classes": "tn-contrast",
             "_title": "Seasonal Offer / Title (H2)"
            },
            "elements": []
@@ -6776,10 +6776,10 @@
             "header_size": "div",
             "title_color": "#F2ECE3",
             "typography_typography": "custom",
-            "typography_font_family": "Cormorant Garamond",
+            "typography_font_family": "Fraunces",
             "typography_font_size": {
              "unit": "px",
-             "size": 40,
+             "size": 34,
              "sizes": []
             },
             "typography_font_weight": "500",
@@ -6937,22 +6937,23 @@
            "widgetType": "heading",
            "isInner": false,
            "settings": {
-            "title": "Contact us",
+            "title": "<b>Contact</b> us",
             "header_size": "h3",
             "title_color": "#14110E",
             "typography_typography": "custom",
-            "typography_font_family": "Cormorant Garamond",
+            "typography_font_family": "Fraunces",
             "typography_font_size": {
              "unit": "px",
-             "size": 34,
+             "size": 29,
              "sizes": []
             },
-            "typography_font_weight": "500",
+            "typography_font_weight": "300",
             "typography_line_height": {
              "unit": "em",
              "size": 1.1,
              "sizes": []
             },
+            "_css_classes": "tn-contrast",
             "_title": "Estimate / Form title"
            },
            "elements": []
