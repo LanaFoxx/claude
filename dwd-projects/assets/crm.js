@@ -1139,12 +1139,13 @@
 		}
 		return t;
 	}
-	// Payments Mike put "in Upwork" by hand in Dream Desk that aren't on Upwork's own list: added to Pending until he
-	// marks them withdrawn (same amount on Upwork's list = already counted there).
+	// Upwork's own list is the truth. The only payments added on top are ones put "in Upwork" in Dream Desk on or after
+	// the day of that list (Upwork hadn't listed them yet). Older ones Upwork no longer lists were already withdrawn,
+	// so they never count (that is what wrongly added Bayfield Inn's $1,800 from Nov 14).
 	function upExtra(s) {
-		var items = (s && s.items) || [];
+		var day = String(s && s.checked || '').slice(0, 10), items = (s && s.items) || [];
 		return upTotals().items.filter(function (o) {
-			return !items.some(function (y) { return Math.abs(num(y.amount) - num(o.x.amount)) < 1; });
+			return day && String(o.x.date || '') >= day && !items.some(function (y) { return Math.abs(num(y.amount) - num(o.x.amount)) < 1; });
 		});
 	}
 	// Called by the Upwork check: dwdSetUpwork(pending, available, [{ date: 'YYYY-MM-DD', client: '', job: '', amount: 0 }, …]).
@@ -4203,19 +4204,21 @@
 				var usL = usI.map(function (x, ix) {
 					var h = matchH(x), k3 = h ? h.c.id + ':' + h.x.i : '';
 					var act = S.upWdBusy === ix ? '<em class="dd-schip b">Saving…</em>' // one click: off this list for good (saved on the server); a matching Dream Desk payment waiting in Upwork moves to In bank
-						: '<button type="button" class="dd-btn primary sm" data-upwd="' + ix + '" data-upheld="' + esc(k3) + '">' + lu('check', 13) + 'Mark withdrawn</button>';
+						: '<button type="button" class="dd-btn primary sm" data-upwd="' + ix + '" data-upheld="' + esc(k3) + '">' + lu('check', 13) + 'Mark withdrawn</button>'
+						+ '<button type="button" class="dd-btn secondary sm" data-upnp="' + ix + '" data-upheld="' + esc(k3) + '" title="Take it off this list; if it’s logged on a project, it goes back to owed">Not pending</button>';
 					return '<div class="dwdc-mo-r dd-upr dd-upr-s"><span class="d"><em class="dd-schip p">' + (x.date ? fmt(x.date) : 'Pending') + '</em></span><span class="w"><b>' + esc(x.client) + '</b><small>' + esc(x.job) + '</small></span><b class="a">' + money2(x.amount).replace('.00', '') + '</b><span class="dd-upact">' + act + '</span></div>';
 				}).join('');
 				S.upSnapRows = usI;
 				// Logged in Dream Desk since the last Upwork check (Upwork's list doesn't have them yet).
 				var usX = upExtra(US), usXL = usX.map(function (o) {
 					var k4 = o.c.id + ':' + o.x.i;
-					var act = S.upXBusy === k4 ? '<em class="dd-schip b">Saving…</em>' : '<button type="button" class="dd-btn primary sm" data-upxwd="' + esc(k4) + '">' + lu('check', 13) + 'Mark withdrawn</button>';
+					var act = S.upXBusy === k4 ? '<em class="dd-schip b">Saving…</em>' : '<button type="button" class="dd-btn primary sm" data-upxwd="' + esc(k4) + '">' + lu('check', 13) + 'Mark withdrawn</button>'
+						+ '<button type="button" class="dd-btn secondary sm" data-upnp="x" data-upheld="' + esc(k4) + '" title="Remove this payment; the amount goes back to owed on the project">Not pending</button>';
 					return '<div class="dwdc-mo-r dd-upr dd-upr-s"><span class="d"><em class="dd-schip p">' + (o.x.free ? fmt(o.x.free) : 'Pending') + '</em></span><span class="w"><b>' + esc(clientName(o.c) || o.c.name) + '</b><small>' + esc(o.c.name + ' · added in Dream Desk ' + fmt(o.x.date)) + '</small></span><b class="a">' + money2(o.x.amount).replace('.00', '') + '</b><span class="dd-upact">' + act + '</span></div>';
 				}).join('');
 				var usPend = num(US.pending) + usX.reduce(function (a, o) { return a + num(o.x.amount); }, 0), usNext = usI.map(function (x) { return x.date; }).concat(usX.map(function (o) { return o.x.free; })).filter(Boolean).sort()[0];
 				return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide">' + head('Money', 'In Upwork', money(usPend + num(US.available)))
-					+ '<div class="dwdc-mo-sum"><span>Pending in Upwork<b>' + money(usPend) + '</b></span><span>Ready to withdraw<b>' + money(num(US.available)) + '</b></span>' + (usNext ? '<span>Next frees up<b>' + fmt(usNext) + '</b></span>' : '') + '<button type="button" class="dd-btn primary sm" data-upadd style="margin-left:auto">' + lu('plus', 14) + 'Add payment</button></div>'
+					+ '<div class="dwdc-mo-sum"><span>Pending in Upwork<b>' + money(usPend) + '</b></span><span>Ready to withdraw<b>' + money(num(US.available)) + '</b></span>' + (usNext ? '<span>Next frees up<b>' + fmt(usNext) + '</b></span>' : '') + '<button type="button" class="dd-btn secondary sm dd-upaddb" data-upadd style="margin-left:auto">' + lu('plus', 14) + 'Add payment</button></div>'
 					+ (usL || usXL ? '<div class="dd-uplist">' + usL + usXL + '</div>' : emptyRow('Nothing is pending in Upwork.'))
 					+ '<p class="dwdc-mutp">Straight from Upwork’s Financial overview' + (usC && !isNaN(usC) ? ' · checked ' + usC.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ', ' + usC.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : '') + '. Each date is when Upwork releases that payment. Payments you add here stay until you mark them withdrawn.</p></div>';
 			}
@@ -4662,6 +4665,20 @@
 		if ((el = t.closest('[data-upfdis]')) || (el = t.closest('[data-upfdone]'))) {
 			el.disabled = true;
 			upfSet(el.getAttribute('data-upfdis') || el.getAttribute('data-upfdone'), el.hasAttribute('data-upfdone') ? 'logged' : 'dismissed').catch(function (er) { el.disabled = false; fail(er); });
+			return;
+		}
+		// Not pending (In Upwork pop-up): off the list. If a Dream Desk payment backs the row, it's removed and the amount
+		// goes back to owed on that project (not paid). Asks first.
+		if ((el = t.closest('[data-upnp]'))) {
+			var npi = el.getAttribute('data-upnp'), npx = npi === 'x' ? null : (S.upSnapRows || [])[+npi], nph = el.getAttribute('data-upheld') || '';
+			var npc = nph ? contact(+nph.split(':')[0]) : null, npw = npx ? npx.client + ' ' + money2(npx.amount).replace('.00', '') : (npc ? (clientName(npc) || npc.name) : 'this payment');
+			if (!confirm('Take ' + npw + ' off the In Upwork list?' + (npc ? '\n\nThe payment is also removed from ' + npc.name + ', so the amount goes back to owed (not paid).' : ''))) { return; }
+			if (S.upXBusy) { return; } S.upXBusy = nph || ('s' + npi); render();
+			var npDel = nph ? api('/contact/' + nph.split(':')[0] + '/payment/' + nph.split(':')[1], 'DELETE').then(function (x) { if (x && x.id) { upsert(x); S.full[x.id] = x; } }) : Promise.resolve();
+			npDel.then(function () { return npx ? api('/upwork-snap/withdraw', 'POST', { client: npx.client, amount: npx.amount, date: npx.date }).then(function (s) { S.upsnap = s || { none: true }; }) : null; })
+				.then(function () { S.upXBusy = null; return reload(); })
+				.then(function () { upBalSync(); render(); toast('Taken off the In Upwork list' + (npc ? ' · back to owed on ' + npc.name : '')); })
+				.catch(function (er) { S.upXBusy = null; render(); fail(er); });
 			return;
 		}
 		// Add payment (In Upwork pop-up): log a client payment straight into "pending in Upwork".

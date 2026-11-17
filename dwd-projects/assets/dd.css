@@ -1061,8 +1061,8 @@ section.dd-health.warn .dd-healthb .dd-hld { background: var(--warning-text); }
 @media (max-width: 767px) { .dd-tl-sep { margin: -1px -16px 0; } }
 
 /* Upwork pop-up: action at the end of each row */
-.dwdc-mo-r.dd-upr-s{grid-template-columns:64px 1fr auto 150px}
-.dd-upr-s .dd-upact{display:flex;justify-content:flex-end;align-items:center}
+.dwdc-mo-r.dd-upr-s{grid-template-columns:64px 1fr auto auto}
+.dd-upr-s .dd-upact{display:flex;justify-content:flex-end;align-items:center;gap:6px}
 .dd-upr-s .dd-upact .dd-btn{white-space:nowrap}
 .dd-upr-s .dd-upact:has(.dd-bankf){grid-column:1/-1}
 .dd-upr .dd-upact .dd-bankf{margin:0;flex-wrap:nowrap}
@@ -1081,3 +1081,8 @@ section.dd-health.warn .dd-healthb .dd-hld { background: var(--warning-text); }
 .dd-stats > a[data-upmoney] { align-items: center; }
 .dd-stats > a[data-upmoney] > span { flex: 1; }
 .dd-stats > a[data-upmoney] .dd-ibtn { margin-left: 4px; color: var(--text-3); flex: none; }
+
+/* In Upwork pop-up: white Add payment button */
+.dd .dd-btn.dd-upaddb, .dd-btn.dd-upaddb { background: #fff !important; color: #111 !important; border-color: #fff !important; }
+.dd .dd-btn.dd-upaddb:hover, .dd-btn.dd-upaddb:hover { background: #E9ECF1 !important; border-color: #E9ECF1 !important; }
+.dd-btn.dd-upaddb svg { stroke: #111; }
