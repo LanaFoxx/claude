@@ -346,3 +346,4 @@ Container `Seasonal Offer`: change the H2 to **Talk to us about your project** a
 ## Company logo
 - The badge logo replaces the text wordmark in the header (70px tall, 60px at 980px and below, 55px at 600px and below) and footer (60px). The source was a 107x88 image, upscaled 8x and smoothed: `output/logo/top-notch-painting-logo-light.png` (media 2280, for dark backgrounds) and `-dark.png` (media 2281). Swap in a vector file when the client sends one.
 - Sticky header: the logo shrinks to 52px (44px at 600px and below) so it keeps 12px above and below it in the 76px bar.
+- Why section: the background column paint is replaced by **stain-on-scroll boxes**. Each box in `.tn-stain-grid` fills with rgba(0,0,0,0.2) as it scrolls into view, alternating top-down and bottom-up (checkerboard on 3 columns). The fill layer is injected by the paint script, and the hover effect still works underneath.

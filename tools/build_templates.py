@@ -836,13 +836,24 @@ PAINT_CSS = """<style>
 .tn-paint.rows i::before{top:0;bottom:0;width:var(--p,0%);}
 .tn-paint.rows i.a::before{left:0;}
 .tn-paint.rows i.b::before{right:0;}
-@media (prefers-reduced-motion:reduce){.tn-paint i{--p:100% !important;}}
+/* Stain-on-scroll boxes: each box in a .tn-stain-grid fills with a darker stain, alternating down/up */
+.tn-stain-grid > .e-con > .tn-stain{position:absolute;left:0;right:0;height:var(--p,0%);background:rgba(0,0,0,0.2);pointer-events:none;z-index:0;}
+.tn-stain-grid > .e-con > .tn-stain.a{top:0;}
+.tn-stain-grid > .e-con > .tn-stain.b{bottom:0;}
+.tn-stain-grid > .e-con > *:not(.tn-stain){position:relative;z-index:1;}
+.tn-stain-grid > .e-con::before,.tn-stain-grid > .e-con::after{z-index:2;}
+@media (prefers-reduced-motion:reduce){.tn-paint i,.tn-stain{--p:100% !important;}}
 </style>
 <script>
 (function(){
   if (window.__tnPaint) return; window.__tnPaint = 1;
   var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   function run(){
+    document.querySelectorAll('.tn-stain-grid > .e-con').forEach(function(box, i){
+      if (box.querySelector(':scope > .tn-stain')) return;
+      var f = document.createElement('i'); f.className = 'tn-stain ' + (i % 2 ? 'b' : 'a');
+      f.setAttribute('aria-hidden', 'true'); box.insertBefore(f, box.firstChild);
+    });
     if (reduce) return;
     var ticking = false;
     function update(){
@@ -856,6 +867,12 @@ PAINT_CSS = """<style>
           var p = Math.max(0, Math.min(1, t * 1.25 - i * 0.07));
           c.style.setProperty('--p', (p * 100).toFixed(2) + '%');
         });
+      });
+      document.querySelectorAll('.tn-stain-grid > .e-con > .tn-stain').forEach(function(f){
+        var r = f.parentNode.getBoundingClientRect();
+        // starts as the box enters the bottom of the screen, full by the time it is a third of the way up
+        var p = Math.max(0, Math.min(1, (vh - r.top) / (r.height + vh * 0.35)));
+        f.style.setProperty('--p', (p * 100).toFixed(2) + '%');
       });
     }
     function onScroll(){ if (!ticking){ ticking = true; requestAnimationFrame(update); } }
@@ -1100,7 +1117,7 @@ def build_home():
                  max_w=360, pretty=False)], gap=18)
 
     why = section("Why Top Notch", [
-        paint_bg("Why / Paint-on-scroll background", "#1A231E", "cols"),
+        widget("html", "Why / Stain-on-scroll script", html=PAINT_CSS, _css_classes="tn-paint-wrap"),
         h2("Why / Title (H2)", "Why homeowners choose Top Notch", max_w=720),
         grid("Why / Points", [
             point("shield-check-light", "Your home, protected",
@@ -1121,7 +1138,7 @@ def build_home():
             point("certificate-light", "Backed in writing",
                   "Detailed written estimates, clear schedules, and a two-year written warranty on our "
                   "work."),
-        ], cols=(3, 3, 2, 1), gap_col=0, gap_row=0, css=WHY_GRID_LINES)],
+        ], cols=(3, 3, 2, 1), gap_col=0, gap_row=0, css=WHY_GRID_LINES, css_classes="tn-stain-grid")],
         bg=SPRUCE, pad_top=SECV_TALL, pad_bottom=SECV_TALL, gap=(64, 60, 52, 44), overflow="hidden", css_classes="tn-paint-host")
 
     projects = build_featured_projects()
