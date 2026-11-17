@@ -1294,7 +1294,7 @@
 	function bankSet(key, bank, date) {
 		var pid = +key.split(':')[0], i = +key.split(':')[1];
 		api('/contact/' + pid + '/payment/' + i + '/bank', 'POST', { bank: bank ? 1 : 0, date: date || DWDC.today })
-			.then(function (x) { upsert(x); S.full[x.id] = x; S.pbank = null; return reload(); })
+			.then(function (x) { upsert(x); S.full[x.id] = x; S.pbank = null; if (bank && S.upPendKey) { S.upDone = S.upDone || {}; S.upDone[S.upPendKey] = 1; } S.upPendKey = null; return reload(); })
 			.then(function () { render(); toast(bank ? 'Marked in bank' + (date && date !== DWDC.today ? ' on ' + fmt(date) : '') + ' · counts in Made in ' + new Date((date || DWDC.today) + 'T12:00:00').toLocaleDateString('en-US', { month: 'long' }) : 'Moved back to “in Upwork”'); })
 			.catch(function (er) { S.pbank = null; render(); fail(er); });
 	}
@@ -4145,7 +4145,24 @@
 			if (US) { // straight from Upwork: no project matching, nothing to tick
 				var usI = (US.items || []).slice().sort(function (a, b) { return a.date < b.date ? -1 : a.date > b.date ? 1 : 0; });
 				var usC = US.checked ? new Date(US.checked) : null;
-				var usL = usI.map(function (x) { return '<div class="dwdc-mo-r dd-upr dd-upr-s"><span class="d"><em class="dd-schip p">' + (x.date ? fmt(x.date) : 'Pending') + '</em></span><span class="w"><b>' + esc(x.client) + '</b><small>' + esc(x.job) + '</small></span><b class="a">' + money2(x.amount).replace('.00', '') + '</b></div>'; }).join('');
+				// Each Upwork row is matched to the Dream Desk payment waiting in Upwork with the same amount (same client
+				// name preferred), so "Mark withdrawn" can move it to In bank. No match: log it as a payment instead.
+				var heldAll = upTotals().items.slice(), usedH = {};
+				var nm = function (s) { return String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim(); };
+				var matchH = function (x) {
+					var cand = heldAll.filter(function (o) { var k = o.c.id + ':' + o.x.i; return !usedH[k] && Math.abs(num(o.x.amount) - num(x.amount)) < 1; });
+					var cn = nm(x.client), best = cand.filter(function (o) { var t = nm([o.c.name, o.c.person, o.c.company, (clientOf(o.c) || {}).name].join(' ')); return cn && cn.split(' ').some(function (w) { return w.length > 2 && t.indexOf(w) > -1; }); })[0] || cand[0];
+					if (best) { usedH[best.c.id + ':' + best.x.i] = 1; }
+					return best;
+				};
+				var usL = usI.map(function (x, ix) {
+					var h = matchH(x), k3 = h ? h.c.id + ':' + h.x.i : '', done = (S.upDone || {})[x.client + '|' + x.amount + '|' + x.date];
+					var act = done ? '<em class="dd-schip b">In bank</em>'
+						: h ? (S.pbank === k3 ? bankChk(h.c.id, h.x.i, { source: 'Upwork', status: 'held' }) : '<button type="button" class="dd-btn primary sm" data-upwd="' + esc(k3) + '" data-upkey="' + esc(x.client + '|' + x.amount + '|' + x.date) + '">' + lu('check', 13) + 'Mark withdrawn</button>')
+						: '<button type="button" class="dd-btn secondary sm" data-uplog="' + ix + '" title="This payment isn’t logged in Dream Desk yet">Log payment</button>';
+					return '<div class="dwdc-mo-r dd-upr dd-upr-s"><span class="d"><em class="dd-schip p">' + (x.date ? fmt(x.date) : 'Pending') + '</em></span><span class="w"><b>' + esc(x.client) + '</b><small>' + esc(x.job) + '</small></span><b class="a">' + money2(x.amount).replace('.00', '') + '</b><span class="dd-upact">' + act + '</span></div>';
+				}).join('');
+				S.upSnapRows = usI;
 				return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide">' + head('Money', 'In Upwork', money(num(US.pending) + num(US.available)))
 					+ '<div class="dwdc-mo-sum"><span>Pending in Upwork<b>' + money(num(US.pending)) + '</b></span><span>Ready to withdraw<b>' + money(num(US.available)) + '</b></span>' + (usI.length && usI[0].date ? '<span>Next frees up<b>' + fmt(usI[0].date) + '</b></span>' : '') + '</div>'
 					+ (usL ? '<div class="dd-uplist">' + usL + '</div>' : emptyRow('Nothing is pending in Upwork.'))
@@ -4293,8 +4310,8 @@
 			body = '<form class="dwdc-modal dwdc-payform">' + head('Money', 'Log', 'payment') + '<div class="dwdc-fgrid">'
 				+ '<label class="wide"><span>Project</span><select name="project" class="dwdc-sel" required><option value="">Choose a project…</option>' + opts.map(function (c) { return '<option value="' + c.id + '"' + (c.id === m.project ? ' selected' : '') + '>' + esc(c.name + (clientName(c) && clientName(c) !== c.name ? ' · ' + clientName(c) : '') + (num(c.balance) ? ' · ' + money(c.balance) + ' owed' : '')) + '</option>'; }).join('') + '</select></label>'
 				+ inp('amount', 'Amount ($)', 'e.g. 1500') + '<label><span>Date</span><input name="date" type="date" value="' + esc(v.date || DWDC.today) + '"></label>'
-				+ '<label><span>Paid by</span><select name="method" class="dwdc-sel">' + ['Stripe', 'PayPal', 'Zelle', 'Upwork', 'Check', 'Cash', 'Bank transfer', 'Venmo', 'Other'].map(function (o) { return '<option>' + o + '</option>'; }).join('') + '</select></label>'
-				+ '<label class="wide dd-upst" hidden><span>Where’s the money?</span><select name="stage" class="dwdc-sel"><option value="upwork">Client paid · in Upwork (5-day hold)</option><option value="bank">Already transferred to my bank</option></select></label>'
+				+ '<label><span>Paid by</span><select name="method" class="dwdc-sel">' + ['Stripe', 'PayPal', 'Zelle', 'Upwork', 'Check', 'Cash', 'Bank transfer', 'Venmo', 'Other'].map(function (o) { return '<option' + (/^Upwork/.test(String(v.note || '')) && o === 'Upwork' ? ' selected' : '') + '>' + o + '</option>'; }).join('') + '</select></label>'
+				+ (function () { var upPre = /^Upwork/.test(String(v.note || '')); return '<label class="wide dd-upst"' + (upPre ? '' : ' hidden') + '><span>Where’s the money?</span><select name="stage" class="dwdc-sel"><option value="upwork">Client paid · in Upwork (5-day hold)</option><option value="bank"' + (upPre ? ' selected' : '') + '>Already transferred to my bank</option></select></label>'; })()
 				+ inp('note', 'Note', 'e.g. Deposit, final payment, hosting', '', false)
 				+ '<label class="wide dwdc-chkl"><input type="checkbox" name="renew" value="1"' + (m.renew ? ' checked' : '') + '> This is a hosting renewal (moves the renewal date a year ahead)</label>'
 				+ '</div><p class="dwdc-mutp">It’s added to the project’s payment history and taken off what they owe.</p><div class="dwdc-farow end"><button type="button" class="dwdc-btn2" data-close-modal>Cancel</button><button class="dwdc-btn">Log payment</button></div></form>';
@@ -4547,6 +4564,15 @@
 		if ((el = t.closest('[data-ddrefresh]'))) { el.classList.add('spin'); el.disabled = true; location.reload(); return; }
 		if ((el = t.closest('[data-pbanksave]'))) { var bdi = el.parentNode.querySelector('[data-pbankdate]'); el.disabled = true; bankSet(el.getAttribute('data-pbanksave'), true, bdi && bdi.value); return; }
 		if (t.closest('[data-pbankx]')) { S.pbank = null; render(); return; }
+		// Upwork pop-up: "Mark withdrawn" asks the bank date (same as ticking In bank); "Log payment" for unlogged money.
+		if ((el = t.closest('[data-upwd]'))) { S.pbank = el.getAttribute('data-upwd'); S.upPendKey = el.getAttribute('data-upkey'); render(); return; }
+		if ((el = t.closest('[data-uplog]'))) {
+			var ulx = (S.upSnapRows || [])[+el.getAttribute('data-uplog')];
+			var uln = String(ulx && ulx.client || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim().split(' ').filter(function (w) { return w.length > 2; });
+			var ulc = ulx && uln.length ? S.contacts.filter(function (c) { return c.list !== 'archive'; }).map(function (c) { var tx = [c.name, c.person, c.company, (clientOf(c) || {}).name].join(' ').toLowerCase(); return { c: c, n: uln.filter(function (w) { return tx.indexOf(w) > -1; }).length }; }).filter(function (o) { return o.n; }).sort(function (a, b) { return (b.n - a.n) || (isOpen(b.c) - isOpen(a.c)); })[0] : null;
+			if (ulx) { S.modal = { type: 'pay', project: ulc ? ulc.c.id : undefined, vals: { amount: String(num(ulx.amount)), note: 'Upwork · ' + ulx.client + ' · ' + ulx.job, date: DWDC.today } }; render(); }
+			return;
+		}
 		if ((el = t.closest('[data-upfsend]'))) {
 			var uin = app.querySelector('#dd-upfeed-in'), utx = uin ? uin.value.trim() : '', urows;
 			try { urows = JSON.parse(utx.replace(/^```(json)?|```$/g, '').trim()); } catch (er) { toast('That isn’t valid Upwork data (a JSON list)', true); return; }

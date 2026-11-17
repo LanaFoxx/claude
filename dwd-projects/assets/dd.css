@@ -1059,3 +1059,12 @@ section.dd-health.warn .dd-healthb .dd-hld { background: var(--warning-text); }
 /* Today's schedule: thin divider between the personal half and the business half */
 .dd-tl-sep { height: 0; border-top: 1px solid var(--border-strong); margin: -1px -20px 0; position: relative; } /* one line, full width, sits on the row line above */
 @media (max-width: 767px) { .dd-tl-sep { margin: -1px -16px 0; } }
+
+/* Upwork pop-up: action at the end of each row */
+.dwdc-mo-r.dd-upr-s{grid-template-columns:64px 1fr auto 150px}
+.dd-upr-s .dd-upact{display:flex;justify-content:flex-end;align-items:center}
+.dd-upr-s .dd-upact .dd-btn{white-space:nowrap}
+.dd-upr-s .dd-upact:has(.dd-bankf){grid-column:1/-1}
+.dd-upr .dd-upact .dd-bankf{margin:0;flex-wrap:nowrap}
+.dd-upr-s .dd-upact .dd-bankf>span{white-space:nowrap}
+@media (max-width:767px){.dwdc-mo-r.dd-upr-s{grid-template-columns:52px 1fr auto}.dd-upr-s .dd-upact{grid-column:2/-1;justify-content:flex-start}.dd-upr .dd-upact .dd-bankf{flex-wrap:wrap}}
