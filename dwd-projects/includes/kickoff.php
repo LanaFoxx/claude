@@ -137,6 +137,12 @@ function dwdko_field( $q, $tpl ) {
 	$base['field_type']  = $type;
 	$base['field_label'] = $label;
 	$base['required']    = $req ? 'true' : '';
+	// Side by side only in pairs; every other question takes the full width (no half-empty rows).
+	$half = array( 'full_name', 'email', 'phone', 'company', 'existing_url', 'staging_url', 'target_date', 'deadline_type' );
+	if ( ! in_array( $type, array( 'step', 'html' ), true ) ) {
+		$base['width']        = in_array( $id, $half, true ) ? '50' : '100';
+		$base['width_mobile'] = '100';
+	}
 	if ( in_array( $type, array( 'select', 'checkbox', 'radio' ), true ) ) {
 		$base['field_options'] = 'select' === $type ? "Choose one…|\n" . $x : $x; // nothing picked until the client chooses
 	} elseif ( 'html' === $type ) {
@@ -179,6 +185,7 @@ function dwdko_setup() {
 				}
 				$st['form_fields'] = array_map( function ( $q ) use ( $tpl ) { return dwdko_field( $q, $tpl ); }, dwdko_fields() );
 				$st['form_name']   = DWDKO_FORM;
+				$st['button_text'] = 'Submit Project Kickoff form';
 				foreach ( array( 'email_subject', 'email_subject_2' ) as $k ) {
 					if ( ! empty( $st[ $k ] ) ) {
 						$st[ $k ] = 'New Project Kickoff form from [field id="full_name"]';
