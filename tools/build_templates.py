@@ -576,7 +576,11 @@ def build_header():
                    "-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);"
                    "box-shadow:0 1px 0 rgba(242,236,227,0.08);}"
                    "selector > .e-con{transition:min-height .3s ease;}"
-                   "selector.elementor-sticky--effects > .e-con{--min-height:76px;min-height:76px;}")
+                   "selector.elementor-sticky--effects > .e-con{--min-height:76px;min-height:76px;}"
+                   # Logo shrinks with the sticky bar so it keeps 12px above and below
+                   "selector .elementor-widget-image img{transition:height .3s ease;}"
+                   "selector.elementor-sticky--effects .elementor-widget-image img{height:52px !important;}"
+                   "@media (max-width:600px){selector.elementor-sticky--effects .elementor-widget-image img{height:44px !important;}}")
 
     header_css = """
 #tn-header{position:relative;z-index:20;}
