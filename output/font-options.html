@@ -1,6 +1,6 @@
 <title>Top Notch Headline Fonts</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700&family=Cormorant+Garamond:wght@500&family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Gloock&family=Manrope:wght@400;500;600&family=Young+Serif&family=Zilla+Slab:wght@500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700&family=Cormorant+Garamond:wght@500&family=Fraunces:opsz,wght,SOFT@9..144,100..900,0..100&family=Gloock&family=Manrope:wght@400;500;600&family=Young+Serif&family=Zilla+Slab:wght@500;600&display=swap">
 <style>
 /* Layout: one dark band per font option, each showing the same three real site moments (hero, giant words, section heading). */
 :root{
@@ -34,13 +34,17 @@ header.intro p + p{margin-top:12px}
 .f-zilla{font-family:"Zilla Slab",Rockwell,serif;font-weight:600}
 .f-shoulders{font-family:"Big Shoulders Display","Arial Narrow",sans-serif;font-weight:700;text-transform:none;letter-spacing:0}
 .f-shoulders.giant{letter-spacing:0}
+.f-contrast{font-family:"Fraunces",Georgia,serif;font-variation-settings:"opsz" 144,"SOFT" 100;font-weight:200}
+.f-contrast b{font-weight:700;font-variation-settings:"opsz" 144,"SOFT" 100}
+.f-contrast.giant b{display:inline}
+.note{margin:28px 0 0;max-width:720px;font-size:14px;line-height:1.7;color:var(--drift)}
 footer.end{padding-block:40px 64px;font-size:14px;color:var(--drift);line-height:1.7}
 @media (max-width:640px){.giants{grid-template-columns:1fr}.opt{padding-block:40px}}
 </style>
 
 <header class="intro wrap">
   <h1>Top Notch Painting · headline font options</h1>
-  <p>Tela and Matt both felt the big type looks too default. Below are five candidates and the current font, each set in the site's real headline, the two giant words from What We Do, and a section heading. Body text stays in Manrope throughout.</p>
+  <p>Tela and Matt both felt the big type looks too default. Below are six candidates and the current font, each set in the site's real headline, the two giant words from What We Do, and a section heading. Body text stays in Manrope throughout.</p>
   <p>All six are free Google Fonts, licensed for commercial sites. Leave a comment on the one you like, or on what you'd change. The same font would carry over to the Logworks site.</p>
 </header>
 
@@ -101,6 +105,17 @@ footer.end{padding-block:40px 64px;font-size:14px;color:var(--drift);line-height
     <p class="sub">High-end interior and exterior painting, plus log and timber home staining, from Vail to Aspen.</p>
     <div class="giants"><div><p class="giant f-shoulders">Painting</p><p class="t">Fine Interior &amp; Exterior Painting</p></div><div><p class="giant f-shoulders">Staining</p><p class="t">Log &amp; Timber Staining</p></div></div>
     <p class="h2s f-shoulders">Away for the season? We'll take care of it.</p>
+  </div>
+</section>
+
+<section class="opt">
+  <div class="wrap">
+    <div class="meta"><h2><span>F</span> · Canela-style bold + thin contrast</h2><p>Heavy and hairline weights side by side in one title, the editorial look Canela is known for. Set here in Fraunces (soft, free) as a stand-in.</p></div>
+    <p class="hero f-contrast"><b>Fine painting</b> and log home staining for exceptional mountain homes.</p>
+    <p class="sub">High-end interior and exterior painting, plus log and timber home staining, from Vail to Aspen.</p>
+    <div class="giants"><div><p class="giant f-contrast"><b>Paint</b>ing</p><p class="t">Fine Interior &amp; Exterior Painting</p></div><div><p class="giant f-contrast"><b>Stain</b>ing</p><p class="t">Log &amp; Timber Staining</p></div></div>
+    <p class="h2s f-contrast"><b>Away for the season?</b> We'll take care of it.</p>
+    <p class="note">Canela itself is a paid font from Commercial Type: a web license is needed before it can go on the live site. If the team likes this direction, we can license Canela for the final build, or keep the free Fraunces version shown here.</p>
   </div>
 </section>
 
