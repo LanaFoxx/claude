@@ -24,7 +24,7 @@
   const PRESETS = {
     hero:    { seed: 20261116, size: [.066, 64, 132], split: 6, k: 1,   fade: FADE },
     page:    { seed: 7341,     size: [.05, 52, 108],  split: 6, k: .9,  fade: 'linear-gradient(90deg,rgba(18,18,18,.78) 0%,rgba(18,18,18,.62) 30%,rgba(18,18,18,.3) 60%,rgba(18,18,18,0) 88%)' },
-    reviews: { seed: 5150,     size: [.045, 44, 90],  split: 3, k: .85, fade: 'linear-gradient(90deg,rgba(18,18,18,0) 0%,rgba(18,18,18,.45) 22%,rgba(18,18,18,.7) 50%,rgba(18,18,18,.45) 78%,rgba(18,18,18,0) 100%)' },
+    reviews: { seed: 5150,     size: [.045, 44, 90],  split: 3, k: .85, fade: 'none' },
     about:   { seed: 4242,     size: [.075, 80, 150], split: 4, k: .9,  fade: 'linear-gradient(270deg,rgba(18,18,18,.78) 0%,rgba(18,18,18,.65) 35%,rgba(18,18,18,.3) 65%,rgba(18,18,18,0) 100%)' },
     skills:  { seed: 9001,     size: [.04, 40, 84],   split: 6, k: .8,  fade: 'linear-gradient(180deg,rgba(18,18,18,.75) 0%,rgba(18,18,18,.4) 60%,rgba(18,18,18,0) 100%)' },
     band:    { seed: 3131,     size: [.055, 56, 112], split: 4, k: .85, fade: 'linear-gradient(90deg,rgba(18,18,18,.78) 0%,rgba(18,18,18,.55) 40%,rgba(18,18,18,.2) 75%,rgba(18,18,18,0) 100%)' },
