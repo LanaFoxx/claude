@@ -352,5 +352,5 @@ Container `Seasonal Offer`: change the H2 to **Talk to us about your project** a
 - Why section: the large light badge logo sits in the background top right (440px, 8% opacity; 340px at 980px and below, 230px on phones) and rotates as you scroll (0.12deg per px). It stays still for users who ask for reduced motion.
 - Hero (latest): the title reads "Fine **painting** and log home **staining** for exceptional mountain homes." It is capped at 900px wide and runs 3 lines on desktop. The subline is capped at 760px with text-wrap pretty.
 - Logo: the source image was slightly oval, so it was corrected to a true circle (800x800): `output/logo/top-notch-painting-logo-round-light.png` (media 2364) for the header, footer and watermark, and `-round-dark.png` (media 2365), which is also the site icon (favicon).
-- Why watermark (latest): 576px (500px at 1359px and below, 404px at 980px, 288px on phones), 70px from the section top, and right: calc(20% - 40px) on desktop. It sits behind the boxes.
+- Why watermark (latest): 576px (500px at 1359px and below, 404px at 980px, 288px on phones), 70px from the section top, and right: calc(20% - 70px) on desktop. It sits behind the boxes.
 - Why boxes: frosted glass, rgba(42,54,47,0.8) with an 8px backdrop blur (hover rgba(32,42,37,0.86)), so the spinning logo shows faintly through them.
