@@ -18,18 +18,18 @@
 
   const BLUE = [19, 166, 238];   // #13A6EE brand blue
   const SKY = [140, 215, 250];   // hover tint
-  const FADE = 'linear-gradient(90deg,#121212 0%,rgba(18,18,18,.94) 14%,rgba(18,18,18,.72) 32%,rgba(18,18,18,.36) 52%,rgba(18,18,18,.08) 72%,rgba(18,18,18,0) 85%)';
+  const FADE = 'linear-gradient(90deg,rgba(18,18,18,.88) 0%,rgba(18,18,18,.84) 14%,rgba(18,18,18,.72) 32%,rgba(18,18,18,.36) 52%,rgba(18,18,18,.08) 72%,rgba(18,18,18,0) 85%)';
 
   // Variations: one look per kind of dark section. size = [fraction of width, min px, max px]; split = pieces per triangle.
   const PRESETS = {
     hero:    { seed: 20261116, size: [.066, 64, 132], split: 6, k: 1,   fade: FADE },
-    page:    { seed: 7341,     size: [.05, 52, 108],  split: 6, k: .9,  fade: 'linear-gradient(90deg,#121212 0%,rgba(18,18,18,.92) 18%,rgba(18,18,18,.6) 40%,rgba(18,18,18,.18) 66%,rgba(18,18,18,0) 88%)' },
-    reviews: { seed: 5150,     size: [.045, 44, 90],  split: 3, k: .85, fade: 'linear-gradient(90deg,rgba(18,18,18,0) 0%,rgba(18,18,18,.5) 16%,#121212 34%,#121212 66%,rgba(18,18,18,.5) 84%,rgba(18,18,18,0) 100%)' },
-    about:   { seed: 4242,     size: [.075, 80, 150], split: 4, k: .9,  fade: 'linear-gradient(270deg,#121212 0%,rgba(18,18,18,.95) 30%,rgba(18,18,18,.6) 50%,rgba(18,18,18,.15) 75%,rgba(18,18,18,0) 100%)' },
-    skills:  { seed: 9001,     size: [.04, 40, 84],   split: 6, k: .8,  fade: 'linear-gradient(180deg,#121212 0%,rgba(18,18,18,.9) 30%,rgba(18,18,18,.45) 65%,rgba(18,18,18,0) 100%)' },
-    band:    { seed: 3131,     size: [.055, 56, 112], split: 4, k: .85, fade: 'linear-gradient(90deg,#121212 0%,rgba(18,18,18,.9) 35%,rgba(18,18,18,.4) 70%,rgba(18,18,18,0) 100%)' },
+    page:    { seed: 7341,     size: [.05, 52, 108],  split: 6, k: .9,  fade: 'linear-gradient(90deg,rgba(18,18,18,.78) 0%,rgba(18,18,18,.62) 30%,rgba(18,18,18,.3) 60%,rgba(18,18,18,0) 88%)' },
+    reviews: { seed: 5150,     size: [.045, 44, 90],  split: 3, k: .85, fade: 'linear-gradient(90deg,rgba(18,18,18,0) 0%,rgba(18,18,18,.45) 22%,rgba(18,18,18,.7) 50%,rgba(18,18,18,.45) 78%,rgba(18,18,18,0) 100%)' },
+    about:   { seed: 4242,     size: [.075, 80, 150], split: 4, k: .9,  fade: 'linear-gradient(270deg,rgba(18,18,18,.78) 0%,rgba(18,18,18,.65) 35%,rgba(18,18,18,.3) 65%,rgba(18,18,18,0) 100%)' },
+    skills:  { seed: 9001,     size: [.04, 40, 84],   split: 6, k: .8,  fade: 'linear-gradient(180deg,rgba(18,18,18,.75) 0%,rgba(18,18,18,.4) 60%,rgba(18,18,18,0) 100%)' },
+    band:    { seed: 3131,     size: [.055, 56, 112], split: 4, k: .85, fade: 'linear-gradient(90deg,rgba(18,18,18,.78) 0%,rgba(18,18,18,.55) 40%,rgba(18,18,18,.2) 75%,rgba(18,18,18,0) 100%)' },
     footer:  { seed: 8080,     size: [.05, 48, 100],  split: 3, k: .95, fade: 'radial-gradient(ellipse 85% 140% at 100% 100%,rgba(18,18,18,0) 0%,rgba(18,18,18,.45) 50%,#121212 90%)' },
-    generic: { seed: 2718,     size: [.05, 52, 104],  split: 6, k: .75, fade: 'radial-gradient(ellipse 70% 90% at 100% 0%,rgba(18,18,18,0) 0%,rgba(18,18,18,.55) 45%,#121212 85%)' }
+    generic: { seed: 2718,     size: [.05, 52, 104],  split: 6, k: .75, fade: 'radial-gradient(ellipse 80% 100% at 100% 0%,rgba(18,18,18,0) 0%,rgba(18,18,18,.4) 50%,rgba(18,18,18,.75) 100%)' }
   };
 
   const reducedMotion = () => !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
@@ -218,9 +218,9 @@
     const home = !!document.getElementById('dw-home');
     const hc = document.getElementById('dw-hero-canvas');
     if (hc) mount(hc.parentElement, home ? 'hero' : 'page');
-    [['#reviews', 'reviews'], ['#about', 'about'], ['#skills', 'skills'], ['.dwr-band-dark', 'band'], ['footer.dwr-ft', 'footer']]
+    [['#reviews', 'reviews'], ['#about', 'about'], ['.dwr-band-dark', 'band']]
       .forEach(([sel, name]) => document.querySelectorAll(sel).forEach(el => mount(el, name)));
-    document.querySelectorAll('section[data-theme="dark"]:not(.dwr-obhero)').forEach(el => mount(el, 'generic'));
+    document.querySelectorAll('section[data-theme="dark"]:not(.dwr-obhero):not(#skills)').forEach(el => mount(el, 'generic'));
   }
 
   window.DWHeroMosaic = { init, start, mount, PRESETS };
