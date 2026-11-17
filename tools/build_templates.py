@@ -41,6 +41,7 @@ SERIF = "Cormorant Garamond"
 SANS = "Manrope"
 
 TEL = "tel:+19705247323"
+SITE = "https://staging197.dreamwebdigital.com"
 PHONE = "(970) 524-7323"
 
 DEVICES = ("", "_laptop", "_tablet", "_mobile")
@@ -688,6 +689,15 @@ def build_hero():
     def badge_text(title, html):
         return text(title, html, size=(15, 15, 15, 14), lh=1.5, pretty=False)
 
+    def logo(title, media_id, filename, alt):
+        return widget("image", title, image={
+            "id": media_id, "url": SITE + "/wp-content/uploads/2026/11/" + filename,
+            "alt": alt, "source": "library"}, image_size="full",
+            custom_css="selector img{height:42px !important;width:auto !important;max-width:none !important;"
+                       "opacity:.85;display:block;}"
+                       "@media (max-width:980px){selector img{height:38px !important;}}"
+                       "@media (max-width:600px){selector img{height:30px !important;}}")
+
     creds = container(
         "Hero / Credentials",
         [container("Hero / Credentials / Brand Points", [
@@ -703,11 +713,17 @@ def build_hero():
                        badge_text("Hero / Credentials / HomeAdvisor text",
                                   "<p><strong>4.9</strong> on HomeAdvisor</p>")],
                       direction="row", gap=8, flex_align_items="center", auto_width=True),
-            badge_text("Hero / Credentials / BBB", "<p><strong>BBB A+</strong> accredited</p>"),
-            badge_text("Hero / Credentials / Sashco", "<p><strong>Sashco</strong> partner</p>"),
-            badge_text("Hero / Credentials / Perma-Chink", "<p><strong>Perma-Chink</strong> partner</p>")],
-            direction="row", gap=((32, 8), (28, 8), (28, 8), (24, 6)), flex_wrap="wrap",
-            flex_align_items="center")],
+            container("Hero / Credentials / Logos", [
+                logo("Hero / Credentials / BBB logo", 2157, "topnotch-logo-bbb-a-plus-white.png",
+                     "BBB A+ Accredited Business"),
+                logo("Hero / Credentials / Sashco logo", 2155, "topnotch-logo-sashco-white.png",
+                     "Sashco partner"),
+                logo("Hero / Credentials / Perma-Chink logo", 2158, "topnotch-logo-perma-chink-white.png",
+                     "Perma-Chink Systems partner")],
+                direction="row", gap=((40, 12), (36, 12), (32, 12), (24, 10)), flex_wrap="wrap",
+                flex_align_items="center", auto_width=True)],
+            direction="row", gap=((32, 16), (28, 16), (28, 16), (24, 14)), flex_wrap="wrap",
+            flex_align_items="center", flex_justify_content="space-between")],
         gap=(14, 14, 14, 12), padding=dims(28, 0, 36, 0), margin=dims(16, 0, 0, 0),
         border_border="solid", border_width=dims(1, 0, 0, 0), border_color=HAIR_16,
         _attributes="aria-label|Credentials",

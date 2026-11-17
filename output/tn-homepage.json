@@ -4,7 +4,7 @@
  "type": "page",
  "content": [
   {
-   "id": "611070a",
+   "id": "8528ea7",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -136,7 +136,7 @@
    },
    "elements": [
     {
-     "id": "9ece78b",
+     "id": "b9f5307",
      "elType": "widget",
      "widgetType": "heading",
      "isInner": false,
@@ -178,7 +178,7 @@
      "elements": []
     },
     {
-     "id": "5a41f8e",
+     "id": "611070a",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -288,7 +288,7 @@
      },
      "elements": [
       {
-       "id": "b9f5307",
+       "id": "f842997",
        "elType": "widget",
        "widgetType": "text-editor",
        "isInner": false,
@@ -318,7 +318,7 @@
        "elements": []
       },
       {
-       "id": "e4d6d27",
+       "id": "5a41f8e",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -372,7 +372,7 @@
        },
        "elements": [
         {
-         "id": "f842997",
+         "id": "189b512",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,
@@ -424,7 +424,7 @@
          "elements": []
         },
         {
-         "id": "189b512",
+         "id": "e4d6d27",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,
@@ -493,7 +493,7 @@
      ]
     },
     {
-     "id": "7f29a9f",
+     "id": "9ece78b",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -761,7 +761,7 @@
        ]
       },
       {
-       "id": "ded66b4",
+       "id": "7f29a9f",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -770,28 +770,28 @@
         "flex_direction": "row",
         "flex_gap": {
          "column": "32",
-         "row": "8",
+         "row": "16",
          "isLinked": false,
          "unit": "px",
          "size": 32
         },
         "flex_gap_laptop": {
          "column": "28",
-         "row": "8",
+         "row": "16",
          "isLinked": false,
          "unit": "px",
          "size": 28
         },
         "flex_gap_tablet": {
          "column": "28",
-         "row": "8",
+         "row": "16",
          "isLinked": false,
          "unit": "px",
          "size": 28
         },
         "flex_gap_mobile": {
          "column": "24",
-         "row": "6",
+         "row": "14",
          "isLinked": false,
          "unit": "px",
          "size": 24
@@ -810,7 +810,8 @@
          "isLinked": true
         },
         "flex_wrap": "wrap",
-        "flex_align_items": "center"
+        "flex_align_items": "center",
+        "flex_justify_content": "space-between"
        },
        "elements": [
         {
@@ -956,139 +957,114 @@
          ]
         },
         {
-         "id": "d446ab8",
-         "elType": "widget",
-         "widgetType": "text-editor",
-         "isInner": false,
+         "id": "ded66b4",
+         "elType": "container",
+         "isInner": true,
          "settings": {
-          "editor": "<p><strong>BBB A+</strong> accredited</p>",
-          "text_color": "#B3A99C",
-          "paragraph_spacing": {
+          "_title": "Hero / Credentials / Logos",
+          "content_width": "full",
+          "flex_direction": "row",
+          "flex_gap": {
+           "column": "40",
+           "row": "12",
+           "isLinked": false,
            "unit": "px",
-           "size": 0,
-           "sizes": []
+           "size": 40
           },
-          "typography_typography": "custom",
-          "typography_font_family": "Manrope",
-          "typography_font_size": {
+          "flex_gap_laptop": {
+           "column": "36",
+           "row": "12",
+           "isLinked": false,
            "unit": "px",
-           "size": 15,
-           "sizes": []
+           "size": 36
           },
-          "typography_font_size_laptop": {
+          "flex_gap_tablet": {
+           "column": "32",
+           "row": "12",
+           "isLinked": false,
            "unit": "px",
-           "size": 15,
-           "sizes": []
+           "size": 32
           },
-          "typography_font_size_tablet": {
+          "flex_gap_mobile": {
+           "column": "24",
+           "row": "10",
+           "isLinked": false,
            "unit": "px",
-           "size": 15,
+           "size": 24
+          },
+          "width": {
+           "unit": "%",
+           "size": 100,
            "sizes": []
           },
-          "typography_font_size_mobile": {
+          "padding": {
            "unit": "px",
-           "size": 14,
-           "sizes": []
+           "top": "0",
+           "right": "0",
+           "bottom": "0",
+           "left": "0",
+           "isLinked": true
           },
-          "typography_line_height": {
-           "unit": "em",
-           "size": 1.5,
-           "sizes": []
-          },
-          "custom_css": "selector p:last-child{margin-block-end:0;}",
-          "_title": "Hero / Credentials / BBB"
+          "flex_wrap": "wrap",
+          "flex_align_items": "center",
+          "custom_css": "selector{--width:auto;width:auto;min-width:0;}"
          },
-         "elements": []
-        },
-        {
-         "id": "e3801b7",
-         "elType": "widget",
-         "widgetType": "text-editor",
-         "isInner": false,
-         "settings": {
-          "editor": "<p><strong>Sashco</strong> partner</p>",
-          "text_color": "#B3A99C",
-          "paragraph_spacing": {
-           "unit": "px",
-           "size": 0,
-           "sizes": []
+         "elements": [
+          {
+           "id": "d446ab8",
+           "elType": "widget",
+           "widgetType": "image",
+           "isInner": false,
+           "settings": {
+            "image": {
+             "id": 2157,
+             "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/topnotch-logo-bbb-a-plus-white.png",
+             "alt": "BBB A+ Accredited Business",
+             "source": "library"
+            },
+            "image_size": "full",
+            "custom_css": "selector img{height:42px !important;width:auto !important;max-width:none !important;opacity:.85;display:block;}@media (max-width:980px){selector img{height:38px !important;}}@media (max-width:600px){selector img{height:30px !important;}}",
+            "_title": "Hero / Credentials / BBB logo"
+           },
+           "elements": []
           },
-          "typography_typography": "custom",
-          "typography_font_family": "Manrope",
-          "typography_font_size": {
-           "unit": "px",
-           "size": 15,
-           "sizes": []
+          {
+           "id": "e3801b7",
+           "elType": "widget",
+           "widgetType": "image",
+           "isInner": false,
+           "settings": {
+            "image": {
+             "id": 2155,
+             "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/topnotch-logo-sashco-white.png",
+             "alt": "Sashco partner",
+             "source": "library"
+            },
+            "image_size": "full",
+            "custom_css": "selector img{height:42px !important;width:auto !important;max-width:none !important;opacity:.85;display:block;}@media (max-width:980px){selector img{height:38px !important;}}@media (max-width:600px){selector img{height:30px !important;}}",
+            "_title": "Hero / Credentials / Sashco logo"
+           },
+           "elements": []
           },
-          "typography_font_size_laptop": {
-           "unit": "px",
-           "size": 15,
-           "sizes": []
-          },
-          "typography_font_size_tablet": {
-           "unit": "px",
-           "size": 15,
-           "sizes": []
-          },
-          "typography_font_size_mobile": {
-           "unit": "px",
-           "size": 14,
-           "sizes": []
-          },
-          "typography_line_height": {
-           "unit": "em",
-           "size": 1.5,
-           "sizes": []
-          },
-          "custom_css": "selector p:last-child{margin-block-end:0;}",
-          "_title": "Hero / Credentials / Sashco"
-         },
-         "elements": []
-        },
-        {
-         "id": "8f45b09",
-         "elType": "widget",
-         "widgetType": "text-editor",
-         "isInner": false,
-         "settings": {
-          "editor": "<p><strong>Perma-Chink</strong> partner</p>",
-          "text_color": "#B3A99C",
-          "paragraph_spacing": {
-           "unit": "px",
-           "size": 0,
-           "sizes": []
-          },
-          "typography_typography": "custom",
-          "typography_font_family": "Manrope",
-          "typography_font_size": {
-           "unit": "px",
-           "size": 15,
-           "sizes": []
-          },
-          "typography_font_size_laptop": {
-           "unit": "px",
-           "size": 15,
-           "sizes": []
-          },
-          "typography_font_size_tablet": {
-           "unit": "px",
-           "size": 15,
-           "sizes": []
-          },
-          "typography_font_size_mobile": {
-           "unit": "px",
-           "size": 14,
-           "sizes": []
-          },
-          "typography_line_height": {
-           "unit": "em",
-           "size": 1.5,
-           "sizes": []
-          },
-          "custom_css": "selector p:last-child{margin-block-end:0;}",
-          "_title": "Hero / Credentials / Perma-Chink"
-         },
-         "elements": []
+          {
+           "id": "8f45b09",
+           "elType": "widget",
+           "widgetType": "image",
+           "isInner": false,
+           "settings": {
+            "image": {
+             "id": 2158,
+             "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/topnotch-logo-perma-chink-white.png",
+             "alt": "Perma-Chink Systems partner",
+             "source": "library"
+            },
+            "image_size": "full",
+            "custom_css": "selector img{height:42px !important;width:auto !important;max-width:none !important;opacity:.85;display:block;}@media (max-width:980px){selector img{height:38px !important;}}@media (max-width:600px){selector img{height:30px !important;}}",
+            "_title": "Hero / Credentials / Perma-Chink logo"
+           },
+           "elements": []
+          }
+         ]
         }
        ]
       }
@@ -6292,7 +6268,7 @@
    ]
   },
   {
-   "id": "8f9880a",
+   "id": "6ec0c26",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -6389,7 +6365,7 @@
    },
    "elements": [
     {
-     "id": "f73c49e",
+     "id": "8f9880a",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -6496,7 +6472,7 @@
      },
      "elements": [
       {
-       "id": "54371ff",
+       "id": "f73c49e",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -6574,7 +6550,7 @@
        },
        "elements": [
         {
-         "id": "ca5c875",
+         "id": "8aa9541",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -6625,7 +6601,7 @@
          },
          "elements": [
           {
-           "id": "7cffb0f",
+           "id": "e7aa220",
            "elType": "widget",
            "widgetType": "heading",
            "isInner": false,
@@ -6672,7 +6648,7 @@
            "elements": []
           },
           {
-           "id": "e7aa220",
+           "id": "ca5c875",
            "elType": "widget",
            "widgetType": "text-editor",
            "isInner": false,
@@ -6704,7 +6680,7 @@
          ]
         },
         {
-         "id": "b60741f",
+         "id": "54371ff",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -6765,7 +6741,7 @@
          },
          "elements": [
           {
-           "id": "8aa9541",
+           "id": "2075a5b",
            "elType": "widget",
            "widgetType": "heading",
            "isInner": false,
@@ -6791,7 +6767,7 @@
            "elements": []
           },
           {
-           "id": "2075a5b",
+           "id": "b60741f",
            "elType": "widget",
            "widgetType": "heading",
            "isInner": false,
@@ -6828,7 +6804,7 @@
        ]
       },
       {
-       "id": "3edc49c",
+       "id": "7cffb0f",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -6905,7 +6881,7 @@
        },
        "elements": [
         {
-         "id": "83f29c6",
+         "id": "fc0643b",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -6956,7 +6932,7 @@
          },
          "elements": [
           {
-           "id": "93e2665",
+           "id": "5242c22",
            "elType": "widget",
            "widgetType": "heading",
            "isInner": false,
@@ -6982,7 +6958,7 @@
            "elements": []
           },
           {
-           "id": "5242c22",
+           "id": "83f29c6",
            "elType": "widget",
            "widgetType": "text-editor",
            "isInner": false,
@@ -7014,7 +6990,7 @@
          ]
         },
         {
-         "id": "fc0643b",
+         "id": "3edc49c",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -7066,7 +7042,7 @@
          },
          "elements": [
           {
-           "id": "c76dc0c",
+           "id": "d8fb445",
            "elType": "widget",
            "widgetType": "form",
            "isInner": false,
@@ -7075,7 +7051,7 @@
             "form_id": "tn-estimate-form",
             "form_fields": [
              {
-              "_id": "8528ea7",
+              "_id": "fab42bd",
               "custom_id": "name",
               "field_type": "text",
               "field_label": "Name",
@@ -7084,7 +7060,7 @@
               "width_mobile": "50"
              },
              {
-              "_id": "fab42bd",
+              "_id": "dfd8c36",
               "custom_id": "phone",
               "field_type": "tel",
               "field_label": "Phone",
@@ -7093,7 +7069,7 @@
               "width_mobile": "50"
              },
              {
-              "_id": "dfd8c36",
+              "_id": "292f09a",
               "custom_id": "email",
               "field_type": "email",
               "field_label": "Email",
@@ -7102,7 +7078,7 @@
               "width_mobile": "50"
              },
              {
-              "_id": "292f09a",
+              "_id": "803e53c",
               "custom_id": "town",
               "field_type": "select",
               "field_label": "Town",
@@ -7112,7 +7088,7 @@
               "field_options": "Select a town|\nAspen\nSnowmass\nBasalt\nCarbondale\nGlenwood Springs\nVail\nBeaver Creek\nAvon\nEdwards\nEagle\nGypsum\nBreckenridge\nOther"
              },
              {
-              "_id": "803e53c",
+              "_id": "c07822d",
               "custom_id": "need",
               "field_type": "select",
               "field_label": "How can we help?",
@@ -7121,7 +7097,7 @@
               "field_options": "Choose one|\nRequest an estimate\nGeneral question\nExisting project\nInterior painting\nExterior painting\nCabinets / trim / specialty finish\nLog home staining / restoration\nChinking / check sealing\nRot repair\nDeck staining\nMedia blasting\nCommercial / HOA"
              },
              {
-              "_id": "c07822d",
+              "_id": "c76dc0c",
               "custom_id": "message",
               "field_type": "textarea",
               "field_label": "Message",
@@ -7247,7 +7223,7 @@
            "elements": []
           },
           {
-           "id": "d8fb445",
+           "id": "93e2665",
            "elType": "widget",
            "widgetType": "text-editor",
            "isInner": false,

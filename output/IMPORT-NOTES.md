@@ -326,3 +326,7 @@ Container `Seasonal Offer`: change the H2 to **Talk to us about your project** a
   7. **Top bar:** "Areas We Serve" now reads "Service Area".
   8. **Why order:** Your home, protected · Preparation is the job · One point of contact · Premium products · Builders first · Backed in writing.
 - **Font review page:** `https://staging197.dreamwebdigital.com/font-options/` (page ID 2150, Elementor Canvas, one HTML widget) shows the five headline-font candidates for the client to comment on in Markup.io. Delete it before launch.
+
+## Hero credentials: partner logos right-aligned
+- The BBB A+, Sashco and Perma-Chink logo images (media 2157, 2155, 2158; first added directly in Elementor) now live in the generator as "Hero / Credentials / Logos", an auto-width row pushed right with space-between. HomeAdvisor stars stay on the left.
+- Logo height is 42px on desktop, 38px at 980px and below, and 30px at 600px and below. On mobile the group wraps under the stars, left-aligned.
