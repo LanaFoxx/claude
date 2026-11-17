@@ -337,3 +337,8 @@ Container `Seasonal Offer`: change the H2 to **Talk to us about your project** a
 - Hero: the buttons now sit under the subline, left-aligned. The partner logos sit left under the HomeAdvisor stars, at 50px tall (44px at 980px and below, 34px at 600px and below). Top padding is 270px on desktop and laptop (200px on tablet and mobile), which puts the hero content 70px lower than before.
 
 - Why section: added the H2 "**Why homeowners** choose Top Notch" (bold/thin) above the grid; the gap between title and grid is 64px on desktop.
+
+## Paint-on-scroll backgrounds
+- `paint_bg(title, color, mode)` adds an absolutely positioned HTML widget with four bands that paint a darker shade over the section as you scroll (brush-edged leading edge, staggered start per band). The host section needs `css_classes="tn-paint-host"`. Users who ask for reduced motion see it fully painted, with no animation.
+- Why section: 4 columns in #1A231E (columns 1 and 3 paint down, 2 and 4 paint up).
+- What We Do: 4 rows in #0A0806 (rows 1 and 3 paint left to right, 2 and 4 paint right to left).

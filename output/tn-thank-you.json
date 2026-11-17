@@ -4,7 +4,7 @@
  "type": "page",
  "content": [
   {
-   "id": "d1f6192",
+   "id": "6b74c71",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -88,7 +88,7 @@
    },
    "elements": [
     {
-     "id": "bb21512",
+     "id": "b2aa216",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -139,7 +139,7 @@
      },
      "elements": [
       {
-       "id": "aefebfd",
+       "id": "d07991d",
        "elType": "widget",
        "widgetType": "heading",
        "isInner": false,
@@ -186,7 +186,7 @@
        "elements": []
       },
       {
-       "id": "1b6ec6f",
+       "id": "9be40e7",
        "elType": "widget",
        "widgetType": "text-editor",
        "isInner": false,
@@ -216,7 +216,7 @@
        "elements": []
       },
       {
-       "id": "54becdc",
+       "id": "d1f6192",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -269,7 +269,7 @@
        },
        "elements": [
         {
-         "id": "d07991d",
+         "id": "54becdc",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,
@@ -334,7 +334,7 @@
          "elements": []
         },
         {
-         "id": "9be40e7",
+         "id": "bb21512",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,
