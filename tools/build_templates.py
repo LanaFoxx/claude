@@ -203,7 +203,7 @@ def widget(wtype, nav_title, /, **s):
 CONTRAST_WEIGHTS = (300, 700)
 CONTRAST = {
     "Fine painting and log home staining for exceptional mountain homes.":
-        "<b>Fine painting</b> and log home staining for exceptional mountain homes.",
+        "Fine <b>painting</b> and log home <b>staining</b> for exceptional mountain homes.",
     "Painting": "<b>Painting</b>",
     "Staining": "<b>Staining</b>",
     "Craftsmanship rooted in how mountain homes are built":
@@ -363,7 +363,7 @@ def stars(title, color, size, gap_):
                   icon_unmarked_color=color)
 
 
-LOGO = {"id": 2280, "url": SITE + "/wp-content/uploads/2026/11/top-notch-painting-logo-light.png"}
+LOGO = {"id": 2364, "url": SITE + "/wp-content/uploads/2026/11/top-notch-painting-logo-round-light.png"}
 
 
 def wordmark(title, size=28):
@@ -775,15 +775,15 @@ def build_hero():
         [heading("Hero / Title (H1)",
                  "Fine painting and log home staining for exceptional mountain homes.", tag="h1",
                  color=BONE, typ=typo(family=SERIF, size=(74, 70, 56, 44), weight=500, lh=1.02),  # 64/60/48/38px after SERIF_SCALE
-                 custom_css="selector{max-width:680px !important;}"
+                 custom_css="selector{max-width:900px !important;}"
                             "selector .elementor-heading-title{text-wrap:balance;letter-spacing:-0.015em;}"),
          grid("Hero / Intro Row", [
              text("Hero / Subline",
                   "<p>High-end interior and exterior painting, plus log and timber home staining, "
                   "restoration and chinking, from Vail to Aspen. Part of the Top Notch team you've "
                   "trusted to maintain your log home and deck since 1999.</p>",
-                  color=HERO_TEXT, size=(19, 18, 18, 17), lh=1.65, max_w=640, pretty=False,
-                  custom_css="selector p{text-wrap:balance;}"),
+                  color=HERO_TEXT, size=(19, 18, 18, 17), lh=1.65, max_w=760, pretty=False,
+                  custom_css="selector p{text-wrap:pretty;}"),
              container("Hero / Actions",
                        [pill("Hero / Request an Estimate", "Request an Estimate", "#estimate"),
                         text_link("Hero / Call", "Call " + PHONE, TEL, icon="phone", classes="tn-call")],
@@ -896,8 +896,9 @@ def paint_bg(title, color, mode="cols", bands=4):
 WHY_GRID_LINES = (
     "selector{position:relative;}"
     "selector > .e-con{position:relative;padding:56px 48px 60px !important;"
-    "background-color:rgba(242,236,227,0.03);transition:background-color .35s ease;}"
-    "selector > .e-con:hover{background-color:rgba(0,0,0,0.12);}"
+    "background-color:rgba(42,54,47,0.8);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);"
+    "transition:background-color .35s ease;}"
+    "selector > .e-con:hover{background-color:rgba(32,42,37,0.86);}"
     "selector > .e-con::before{content:'' !important;display:block;position:absolute;top:0;bottom:0;"
     "left:0;right:auto;width:1px;height:auto;background:" + _LINE + ";opacity:1;pointer-events:none;border:0;}"
     "selector > .e-con::after{content:'';position:absolute;left:0;right:0;top:0;height:1px;"
@@ -1117,14 +1118,16 @@ def build_home():
                  max_w=360, pretty=False)], gap=18)
 
     spin_logo = widget("html", "Why / Rotating logo (background)", _css_classes="tn-spin-wrap", html=(
-        '<img class="tn-spin" src="%s" alt="" aria-hidden="true" width="848" height="699">'
+        '<img class="tn-spin" src="%s" alt="" aria-hidden="true" width="800" height="800">'
         "<style>"
-        ".tn-spin-wrap{position:absolute !important;top:56px;right:-40px;width:auto !important;margin:0 !important;"
+        ".tn-spin-host > .e-con-inner{position:relative;}"
+        ".tn-spin-wrap{position:absolute !important;top:70px;right:calc(20%% - 40px);width:auto !important;margin:0 !important;"
         "z-index:0;pointer-events:none;}"
-        ".tn-spin{display:block;width:440px;height:auto;opacity:.08;will-change:transform;}"
+        ".tn-spin{display:block;width:576px;height:576px;opacity:.08;will-change:transform;}"
         ".tn-spin-host > .e-con-inner > *:not(.tn-spin-wrap){position:relative;z-index:1;}"
-        "@media (max-width:980px){.tn-spin{width:340px;}}"
-        "@media (max-width:600px){.tn-spin-wrap{top:24px;right:-70px;}.tn-spin{width:230px;}}"
+        "@media (max-width:1359px){.tn-spin{width:500px;height:500px;}}"
+        "@media (max-width:980px){.tn-spin{width:404px;height:404px;}}"
+        "@media (max-width:600px){.tn-spin-wrap{top:70px;right:-40px;}.tn-spin{width:288px;height:288px;}}"
         "</style>"
         "<script>(function(){var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;"
         "if(reduce)return;var t=false;function u(){t=false;document.querySelectorAll('.tn-spin').forEach(function(i){"
