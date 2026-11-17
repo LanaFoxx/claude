@@ -348,3 +348,5 @@ Container `Seasonal Offer`: change the H2 to **Talk to us about your project** a
 - Sticky header: the logo shrinks to 52px (44px at 600px and below) so it keeps 12px above and below it in the 76px bar.
 - Why section: the background column paint is replaced by **stain-on-scroll boxes**. Each box in `.tn-stain-grid` fills with rgba(0,0,0,0.2) as it scrolls into view, alternating top-down and bottom-up (checkerboard on 3 columns). The fill layer is injected by the paint script, and the hover effect still works underneath.
 - Why section: the stain effect is removed at Mike's request, so the boxes are static again. The `.tn-stain-grid` support stays in PAINT_CSS but is unused.
+- Hero: the title is capped at 680px and set at 64/60/48/38px, giving four lines on desktop. The subline is 19px with a max width of 640px, so the two blocks run about the same width.
+- Why section: the large light badge logo sits in the background top right (440px, 8% opacity; 340px at 980px and below, 230px on phones) and rotates as you scroll (0.12deg per px). It stays still for users who ask for reduced motion.

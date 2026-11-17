@@ -774,15 +774,15 @@ def build_hero():
         "Hero",
         [heading("Hero / Title (H1)",
                  "Fine painting and log home staining for exceptional mountain homes.", tag="h1",
-                 color=BONE, typ=typo(family=SERIF, size=H1, weight=500, lh=1),
-                 custom_css="selector{max-width:1000px !important;}"
+                 color=BONE, typ=typo(family=SERIF, size=(74, 70, 56, 44), weight=500, lh=1.02),  # 64/60/48/38px after SERIF_SCALE
+                 custom_css="selector{max-width:680px !important;}"
                             "selector .elementor-heading-title{text-wrap:balance;letter-spacing:-0.015em;}"),
          grid("Hero / Intro Row", [
              text("Hero / Subline",
                   "<p>High-end interior and exterior painting, plus log and timber home staining, "
                   "restoration and chinking, from Vail to Aspen. Part of the Top Notch team you've "
                   "trusted to maintain your log home and deck since 1999.</p>",
-                  color=HERO_TEXT, size=18, lh=1.65, max_w=560, pretty=False,
+                  color=HERO_TEXT, size=(19, 18, 18, 17), lh=1.65, max_w=640, pretty=False,
                   custom_css="selector p{text-wrap:balance;}"),
              container("Hero / Actions",
                        [pill("Hero / Request an Estimate", "Request an Estimate", "#estimate"),
@@ -1116,7 +1116,26 @@ def build_home():
             text("Why / %s / Text" % h3, "<p>%s</p>" % body, color=SPRUCE_TEXT, size=15, lh=1.75,
                  max_w=360, pretty=False)], gap=18)
 
+    spin_logo = widget("html", "Why / Rotating logo (background)", _css_classes="tn-spin-wrap", html=(
+        '<img class="tn-spin" src="%s" alt="" aria-hidden="true" width="848" height="699">'
+        "<style>"
+        ".tn-spin-wrap{position:absolute !important;top:56px;right:-40px;width:auto !important;margin:0 !important;"
+        "z-index:0;pointer-events:none;}"
+        ".tn-spin{display:block;width:440px;height:auto;opacity:.08;will-change:transform;}"
+        ".tn-spin-host > .e-con-inner > *:not(.tn-spin-wrap){position:relative;z-index:1;}"
+        "@media (max-width:980px){.tn-spin{width:340px;}}"
+        "@media (max-width:600px){.tn-spin-wrap{top:24px;right:-70px;}.tn-spin{width:230px;}}"
+        "</style>"
+        "<script>(function(){var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;"
+        "if(reduce)return;var t=false;function u(){t=false;document.querySelectorAll('.tn-spin').forEach(function(i){"
+        "var r=i.closest('section').getBoundingClientRect();"
+        "i.style.transform='rotate('+((innerHeight-r.top)*0.12).toFixed(2)+'deg)';});}"
+        "addEventListener('scroll',function(){if(!t){t=true;requestAnimationFrame(u);}},{passive:true});"
+        "if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',u);else u();})();</script>"
+        % LOGO["url"]))
+
     why = section("Why Top Notch", [
+        spin_logo,
         h2("Why / Title (H2)", "Why homeowners choose Top Notch", max_w=720),
         grid("Why / Points", [
             point("shield-check-light", "Your home, protected",
@@ -1138,7 +1157,7 @@ def build_home():
                   "Detailed written estimates, clear schedules, and a two-year written warranty on our "
                   "work."),
         ], cols=(3, 3, 2, 1), gap_col=0, gap_row=0, css=WHY_GRID_LINES)],
-        bg=SPRUCE, pad_top=SECV_TALL, pad_bottom=SECV_TALL, gap=(64, 60, 52, 44), overflow="hidden")
+        bg=SPRUCE, pad_top=SECV_TALL, pad_bottom=SECV_TALL, gap=(64, 60, 52, 44), overflow="hidden", css_classes="tn-spin-host")
 
     projects = build_featured_projects()
 
