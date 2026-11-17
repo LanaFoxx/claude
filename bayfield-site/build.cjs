@@ -14,7 +14,7 @@ const EXT = {
   // Booking happens on our /book/ page, which shows eviivo's live availability inside the site.
   book: '/book/', eviivo: 'https://partners.eviivo.com/en-US/bayfieldinn/s', rooms: 'https://bayfieldinn.com/stay/the-inn/',
   dine: 'https://bayfieldinn.com/dine/', events: '/plan-an-event/', // our own Weddings & Events page (same address as the old site)
-  gallery: 'https://bayfieldinn.com/relax/lobby-gallery/', facebook: 'http://facebook.com/BayfieldInn',
+  gallery: 'https://bayfieldinn.com/relax/lobby-gallery/', facebook: 'https://www.facebook.com/BayfieldInn',
   instagram: 'https://www.instagram.com/thebayfieldinn/', tripadvisor: 'https://www.tripadvisor.com/',
   privacy: 'https://bayfieldinn.com/privacy-policy', terms: 'https://bayfieldinn.com/terms-of-use',
   giftCards: '/gift-card/', webcam: 'https://bayfieldlive.com',
