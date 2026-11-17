@@ -12,7 +12,7 @@ a:focus-visible, button:focus-visible, .btn:focus-visible, summary:focus-visible
 
 // ---------- Header ----------
 .glec-header { height: $navbar-height; padding: 0 64px; border-bottom: 1px solid $glec-line; box-shadow: none; gap: 16px;
-  .glec-header__logo img { height: 46px; width: auto; display: block; }
+  .glec-header__logo img { height: 48px; width: auto; display: block; }
   .glec-header__nav { list-style: none; margin: 0 0 0 auto; padding: 0; display: flex; align-items: stretch; gap: 28px; height: 100%; }
   .glec-header__nav li { display: flex; }
   .glec-header__link { display: flex; align-items: center; min-height: 44px; font: 500 17px/1 Inter, sans-serif; color: $glec-ink; text-decoration: none; border-bottom: 2px solid transparent;

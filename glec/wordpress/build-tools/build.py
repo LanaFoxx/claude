@@ -260,7 +260,7 @@ home.append(C([C([support_photo, support_copy], 'g-cta g-support', gap=56, gap_t
 
 # ---------------- HEADER ----------------
 header = [C([
-    IMG('glec-logo.png','g-logo', link=SITE+'/'),
+    IMG('glec-logo-dark.png','g-logo', link=SITE+'/'),
     SC('[glec_mega_nav]','g-nav'),
     C([H('<a href="%s/my-account/">Log in</a>' % SITE,'div',None,None,'g-loginlink g-hdr-login'), SC('[glec_cart]','g-cartwrap'),
        BTN('Start here', START, 'g-btn g-hdr-btn'), SC('[glec_mobile_menu]','g-burger')], 'g-hdr-right g-auto', direction='row', align='center', gap=24, gap_m=4, extra={"width":{"unit":"%","size":""},"_flex_size":"none"}),
@@ -278,7 +278,7 @@ fnav = '<nav aria-label="Footer"><ul class="g-fnav">' + ''.join('<li>%s</li>' % 
 fcontact = '<div class="g-fcontact"><a href="mailto:Info@GeorgiaLicenseExam.com">%sInfo@GeorgiaLicenseExam.com</a><span>%s%s</span></div>' % (ic(I['mail'],18), ic(I['phone'],18), PHONE)
 flegal = '<ul class="g-flegal">' + ''.join('<li>%s</li>' % x for x in [L('Policies',SITE+'/policies/'), L('Hold Harmless policy',SITE+'/policies/#hold-harmless')]) + '</ul>'
 footer = [C([
-    C([IMG('glec-logo.png','g-logo', link=SITE+'/'), HTML(fnav,'g-fnav-w'), HTML(fcontact,'g-fcontact-w')],
+    C([IMG('glec-logo-white.png','g-logo', link=SITE+'/'), HTML(fnav,'g-fnav-w'), HTML(fcontact,'g-fcontact-w')],
       'g-frow', direction='row', justify='space-between', align='center', gap=40, gap_t=24, gap_m=24, dir_t='column', wrap=False),
     C([TX('<p>© 2026 Georgia License Exam Company <span class="g-dot">·</span> 2625 Piedmont Road NE, UPS Store Ste 56, PMB-320, Atlanta, GA 30324-3086 <span class="g-muted">(mailing address only)</span></p>',None,None),
        HTML(flegal)], 'g-fine', direction='row', justify='space-between', align='center', gap=24, gap_m=12, dir_t='column',

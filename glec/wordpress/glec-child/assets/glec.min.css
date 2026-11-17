@@ -644,3 +644,11 @@ a.g-crow__val:hover{color:var(--g-navy)}
 @media (prefers-reduced-motion:reduce){.elementor .g-live i{animation:none}}
 /* Homepage CEU section shares the .g-ceu class with the CEU-page accordion; the card look belongs to the accordion only */
 .elementor .g-ceu:not(details){background:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;overflow:visible!important}
+/* New logo (Nov 2026): transparent, no plate in the footer */
+.elementor .g-header .g-logo img{height:48px!important;width:auto!important}
+.elementor .g-footer .g-logo img{background:none!important;padding:0!important;border-radius:0!important;height:56px!important;width:auto!important}
+.glec-mm__top img{height:38px!important;width:auto}
+@media (max-width:600px){.elementor .g-header .g-logo img{height:40px!important}}
+/* Logo: centre vertically (remove inline line-box space under the image) */
+.elementor .g-header .g-logo,.elementor .g-header .g-logo .elementor-widget-container{display:flex!important;align-items:center;align-self:center!important;line-height:0}
+.elementor .g-header .g-logo a{display:flex!important;align-items:center;min-height:0!important}
