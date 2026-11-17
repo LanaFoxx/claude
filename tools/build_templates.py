@@ -1117,7 +1117,6 @@ def build_home():
                  max_w=360, pretty=False)], gap=18)
 
     why = section("Why Top Notch", [
-        widget("html", "Why / Stain-on-scroll script", html=PAINT_CSS, _css_classes="tn-paint-wrap"),
         h2("Why / Title (H2)", "Why homeowners choose Top Notch", max_w=720),
         grid("Why / Points", [
             point("shield-check-light", "Your home, protected",
@@ -1138,8 +1137,8 @@ def build_home():
             point("certificate-light", "Backed in writing",
                   "Detailed written estimates, clear schedules, and a two-year written warranty on our "
                   "work."),
-        ], cols=(3, 3, 2, 1), gap_col=0, gap_row=0, css=WHY_GRID_LINES, css_classes="tn-stain-grid")],
-        bg=SPRUCE, pad_top=SECV_TALL, pad_bottom=SECV_TALL, gap=(64, 60, 52, 44), overflow="hidden", css_classes="tn-paint-host")
+        ], cols=(3, 3, 2, 1), gap_col=0, gap_row=0, css=WHY_GRID_LINES)],
+        bg=SPRUCE, pad_top=SECV_TALL, pad_bottom=SECV_TALL, gap=(64, 60, 52, 44), overflow="hidden")
 
     projects = build_featured_projects()
 
