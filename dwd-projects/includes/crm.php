@@ -474,7 +474,7 @@ function dwdc_file_entry( $form, $fields, $date = '', $source = 'Website form', 
 		return '';
 	};
 	$email = $get( array( 'email' ) );
-	if ( ! $email ) {
+	if ( ! $email || ( function_exists( 'dwdp_blocked' ) && dwdp_blocked( $email ) ) ) {
 		return 0;
 	}
 	$id         = $match ? dwdc_find( $email, $match ) : dwdc_find_by_email( $email );
@@ -939,6 +939,9 @@ add_action( 'rest_api_init', function () {
 	) );
 
 	register_rest_route( $ns, '/crm/lead/(?P<id>\d+)', array( 'methods' => 'DELETE', 'permission_callback' => $can, 'callback' => function ( $r ) {
+		if ( $r->get_param( 'block' ) && function_exists( 'dwdp_block_email' ) ) { // spam: their email can never send a form again
+			dwdp_block_email( get_post_meta( (int) $r['id'], '_dwdc_email', true ) );
+		}
 		return dwdc_purge_lead( (int) $r['id'] );
 	} ) );
 	register_rest_route( $ns, '/crm/contact', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {

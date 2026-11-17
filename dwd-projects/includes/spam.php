@@ -20,6 +20,20 @@ defined( 'ABSPATH' ) || exit;
 const DWDP_SPAM_MIN_SECONDS = 3;
 const DWDP_CONTACT_TO       = 'mike@dreamwebdigital.com';
 
+/** Email addresses Michael blocked (Delete & block on a spam lead). Their forms are dropped silently: no email, no lead. */
+function dwdp_blocked( $email ) {
+	$email = strtolower( trim( (string) $email ) );
+	return '' !== $email && in_array( $email, (array) get_option( 'dwdp_blocked_emails', array() ), true );
+}
+function dwdp_block_email( $email ) {
+	$email = strtolower( trim( (string) $email ) );
+	if ( is_email( $email ) && ! dwdp_blocked( $email ) ) {
+		$list   = (array) get_option( 'dwdp_blocked_emails', array() );
+		$list[] = $email;
+		update_option( 'dwdp_blocked_emails', array_values( array_unique( $list ) ), false );
+	}
+}
+
 /** True when the posted form passed the checks. */
 function dwdp_spam_ok( $src = null ) {
 	$src = null === $src ? $_POST : $src; // phpcs:ignore WordPress.Security.NonceVerification
@@ -153,6 +167,12 @@ else{if(n){n.textContent=(r&&r.data)||'Sorry, that didn’t send. Please call (7
 /* ---------- Elementor forms (Contact, Onboarding) ---------- */
 
 add_action( 'elementor_pro/forms/validation', function ( $record, $ajax_handler ) {
+	foreach ( (array) $record->get( 'fields' ) as $f ) {
+		if ( is_array( $f ) && dwdp_blocked( $f['value'] ?? '' ) ) {
+			$ajax_handler->add_error( (string) ( $f['id'] ?? 'email' ), 'Sorry, that didn’t send.' );
+			return;
+		}
+	}
 	if ( dwdp_spam_ok() ) {
 		return;
 	}
@@ -189,6 +209,10 @@ function dwdp_ajax_contact() {
 	$message = sanitize_textarea_field( wp_unslash( $_POST['message'] ?? '' ) );
 	if ( '' === $name || ! is_email( $email ) || '' === $message ) {
 		wp_send_json_error( 'Please fill in your name, a valid email and a message.' );
+	}
+	// Blocked sender: pretend it went through, but send and save nothing.
+	if ( dwdp_blocked( $email ) ) {
+		wp_send_json_success();
 	}
 	// Links-heavy messages are almost always spam.
 	if ( preg_match_all( '#https?://#i', $message ) > 2 ) {
