@@ -357,3 +357,4 @@ Container `Seasonal Offer`: change the H2 to **Talk to us about your project** a
 - Section titles: every `h2()` gets a flat row of the logo's sawtooth points above it (amber #C68B4E, 6 points at 192x22px, 24px gap; 150x17px on phones), via `.tn-teeth` in CONTRAST_CSS. It is centred when the title is centred.
 - Why watermark: right: calc(20% - 130px) on desktop.
 - Footer: a full-width amber sawtooth strip (32x22px points; 25x17px at 760px and below) runs along the very bottom ("Footer / Sawtooth" container). At 760px and below it also carries the 70px clearance for the fixed mobile call bar, which moved off the footer container.
+- Footer sawtooth strip removed at Mike's request (the mobile call-bar clearance is back on the footer container).
