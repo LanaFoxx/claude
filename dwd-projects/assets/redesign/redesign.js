@@ -359,7 +359,7 @@ window.addEventListener('resize', pinLeft);
 window.addEventListener('load', pinLeft);
 
 function boot() {
-  const canvases = []; // every dark section's triangles are drawn by hero-mosaic.js now
+  const canvases = Array.from(document.querySelectorAll('canvas[id^="dw-"]')).map(c => c.id);
   const fx = document.getElementById('dw-home') ? new HomeFx({ canvases }) : new SiteFx({ canvases });
   fx.start();
   window.__dwFx = fx;
