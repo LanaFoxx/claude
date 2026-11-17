@@ -171,12 +171,48 @@ add_action( 'rest_api_init', function () {
  * exactly as Upwork's Financial overview lists them. Set by the Upwork check (window.dwdSetUpwork in crm.js).
  * Stored in the option dwd_upwork_snap. Nothing here is matched to projects.
  */
+function dwduf_wd_key( $x ) {
+	return strtolower( trim( (string) ( $x['client'] ?? '' ) ) ) . '|' . number_format( (float) ( $x['amount'] ?? 0 ), 2, '.', '' ) . '|' . (string) ( $x['date'] ?? '' );
+}
+/**
+ * The snapshot as Dream Desk shows it: items Michael marked withdrawn (option dwd_upwork_wd, kept until Upwork stops
+ * listing them) are taken out, and their amounts come off the pending balance, so a stale or repeated Upwork check
+ * never brings them back.
+ */
+function dwduf_snap() {
+	$s = get_option( 'dwd_upwork_snap', array() );
+	if ( ! is_array( $s ) || ! $s ) {
+		return array();
+	}
+	$wd = (array) get_option( 'dwd_upwork_wd', array() );
+	$keep = array();
+	$off  = 0;
+	foreach ( (array) ( $s['items'] ?? array() ) as $x ) {
+		if ( isset( $wd[ dwduf_wd_key( $x ) ] ) ) {
+			$off += (float) ( $x['amount'] ?? 0 );
+			continue;
+		}
+		$keep[] = $x;
+	}
+	$s['items']   = $keep;
+	$s['pending'] = round( max( 0, (float) ( $s['pending'] ?? 0 ) - $off ), 2 );
+	return $s;
+}
+
 add_action( 'rest_api_init', function () {
 	$can = function () { return current_user_can( 'manage_options' ); };
+	// Mark one Upwork item withdrawn (it's in the bank): it leaves the In Upwork list for good.
+	register_rest_route( 'dwd/v1', '/crm/upwork-snap/withdraw', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
+		$wd = (array) get_option( 'dwd_upwork_wd', array() );
+		$wd[ dwduf_wd_key( array( 'client' => sanitize_text_field( (string) $r->get_param( 'client' ) ), 'amount' => (float) $r->get_param( 'amount' ), 'date' => (string) $r->get_param( 'date' ) ) ) ] = current_time( 'Y-m-d' );
+		update_option( 'dwd_upwork_wd', $wd, false );
+		$s = dwduf_snap();
+		return $s ? $s : array( 'none' => true );
+	} ) );
 	register_rest_route( 'dwd/v1', '/crm/upwork-snap', array(
 		array( 'methods' => 'GET', 'permission_callback' => $can, 'callback' => function () {
-			$s = get_option( 'dwd_upwork_snap', array() );
-			return is_array( $s ) && $s ? $s : array( 'none' => true );
+			$s = dwduf_snap();
+			return $s ? $s : array( 'none' => true );
 		} ),
 		array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
 			$items = array();
@@ -199,7 +235,14 @@ add_action( 'rest_api_init', function () {
 				'checked'   => gmdate( 'c' ),
 			);
 			update_option( 'dwd_upwork_snap', $s, false );
-			return $s;
+			// Forget withdrawn marks for items Upwork no longer lists.
+			$wd = (array) get_option( 'dwd_upwork_wd', array() );
+			$live = array();
+			foreach ( $items as $x ) {
+				$live[ dwduf_wd_key( $x ) ] = 1;
+			}
+			update_option( 'dwd_upwork_wd', array_intersect_key( $wd, $live ), false );
+			return dwduf_snap();
 		} ),
 	) );
 } );

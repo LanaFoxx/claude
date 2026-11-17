@@ -4156,10 +4156,9 @@
 					return best;
 				};
 				var usL = usI.map(function (x, ix) {
-					var h = matchH(x), k3 = h ? h.c.id + ':' + h.x.i : '', done = (S.upDone || {})[x.client + '|' + x.amount + '|' + x.date];
-					var act = done ? '<em class="dd-schip b">In bank</em>'
-						: h ? (S.pbank === k3 ? bankChk(h.c.id, h.x.i, { source: 'Upwork', status: 'held' }) : '<button type="button" class="dd-btn primary sm" data-upwd="' + esc(k3) + '" data-upkey="' + esc(x.client + '|' + x.amount + '|' + x.date) + '">' + lu('check', 13) + 'Mark withdrawn</button>')
-						: '<button type="button" class="dd-btn secondary sm" data-uplog="' + ix + '" title="This payment isn’t logged in Dream Desk yet">Log payment</button>';
+					var h = matchH(x), k3 = h ? h.c.id + ':' + h.x.i : '';
+					var act = S.upWdBusy === ix ? '<em class="dd-schip b">Saving…</em>' // one click: off this list for good (saved on the server); a matching Dream Desk payment waiting in Upwork moves to In bank
+						: '<button type="button" class="dd-btn primary sm" data-upwd="' + ix + '" data-upheld="' + esc(k3) + '">' + lu('check', 13) + 'Mark withdrawn</button>';
 					return '<div class="dwdc-mo-r dd-upr dd-upr-s"><span class="d"><em class="dd-schip p">' + (x.date ? fmt(x.date) : 'Pending') + '</em></span><span class="w"><b>' + esc(x.client) + '</b><small>' + esc(x.job) + '</small></span><b class="a">' + money2(x.amount).replace('.00', '') + '</b><span class="dd-upact">' + act + '</span></div>';
 				}).join('');
 				S.upSnapRows = usI;
@@ -4565,7 +4564,17 @@
 		if ((el = t.closest('[data-pbanksave]'))) { var bdi = el.parentNode.querySelector('[data-pbankdate]'); el.disabled = true; bankSet(el.getAttribute('data-pbanksave'), true, bdi && bdi.value); return; }
 		if (t.closest('[data-pbankx]')) { S.pbank = null; render(); return; }
 		// Upwork pop-up: "Mark withdrawn" asks the bank date (same as ticking In bank); "Log payment" for unlogged money.
-		if ((el = t.closest('[data-upwd]'))) { S.pbank = el.getAttribute('data-upwd'); S.upPendKey = el.getAttribute('data-upkey'); render(); return; }
+		if ((el = t.closest('[data-upwd]'))) {
+			var wix = +el.getAttribute('data-upwd'), wx = (S.upSnapRows || [])[wix], wh = el.getAttribute('data-upheld');
+			if (!wx || S.upWdBusy != null) { return; }
+			S.upWdBusy = wix; render();
+			var wHeld = wh ? api('/contact/' + wh.split(':')[0] + '/payment/' + wh.split(':')[1] + '/bank', 'POST', { bank: 1, date: DWDC.today }).then(function (x) { upsert(x); S.full[x.id] = x; }) : Promise.resolve();
+			wHeld.then(function () { return api('/upwork-snap/withdraw', 'POST', { client: wx.client, amount: wx.amount, date: wx.date }); })
+				.then(function (s) { S.upsnap = s || { none: true }; S.upWdBusy = null; return wh ? reload() : null; })
+				.then(function () { render(); toast(wx.client + ' · ' + money2(wx.amount).replace('.00', '') + ' marked withdrawn'); })
+				.catch(function (er) { S.upWdBusy = null; render(); fail(er); });
+			return;
+		}
 		if ((el = t.closest('[data-uplog]'))) {
 			var ulx = (S.upSnapRows || [])[+el.getAttribute('data-uplog')];
 			var uln = String(ulx && ulx.client || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim().split(' ').filter(function (w) { return w.length > 2; });

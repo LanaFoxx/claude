@@ -399,7 +399,7 @@ function dwdc_ai_read( $name, $in ) {
 		case 'get_dashboard_data':
 			switch ( (string) ( $in['section'] ?? '' ) ) {
 				case 'upwork_balances':
-					$u = get_option( 'dwd_upwork_snap', array() );
+					$u = function_exists( 'dwduf_snap' ) ? dwduf_snap() : get_option( 'dwd_upwork_snap', array() );
 					return is_array( $u ) && $u ? dwdc_ai_data( $u ) : 'DATA: {"note":"No Upwork balances have been saved yet."}';
 				case 'google_ads':
 					$g = get_option( 'dwdads_data', array() );
