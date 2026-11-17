@@ -80,7 +80,7 @@
     "_element_id": "tn-footer",
     "background_background": "classic",
     "background_color": "#0F0D0B",
-    "custom_css": "#tn-footer a{text-decoration:none;}@media (max-width:760px){ #tn-footer{--padding-bottom:70px !important;} }"
+    "custom_css": "#tn-footer a{text-decoration:none;}"
    },
    "elements": [
     {
@@ -728,7 +728,87 @@
    ]
   },
   {
-   "id": "45d1488",
+   "id": "bdec6f1",
+   "elType": "container",
+   "isInner": false,
+   "settings": {
+    "_title": "Footer / Sawtooth",
+    "content_width": "full",
+    "flex_direction": "column",
+    "flex_gap": {
+     "column": "0",
+     "row": "0",
+     "isLinked": true,
+     "unit": "px",
+     "size": 0
+    },
+    "flex_gap_laptop": {
+     "column": "0",
+     "row": "0",
+     "isLinked": true,
+     "unit": "px",
+     "size": 0
+    },
+    "flex_gap_tablet": {
+     "column": "0",
+     "row": "0",
+     "isLinked": true,
+     "unit": "px",
+     "size": 0
+    },
+    "flex_gap_mobile": {
+     "column": "0",
+     "row": "0",
+     "isLinked": true,
+     "unit": "px",
+     "size": 0
+    },
+    "width": {
+     "unit": "%",
+     "size": 100,
+     "sizes": []
+    },
+    "padding": {
+     "unit": "px",
+     "top": "0",
+     "right": "0",
+     "bottom": "0",
+     "left": "0",
+     "isLinked": true
+    },
+    "padding_laptop": {
+     "unit": "px",
+     "top": "0",
+     "right": "0",
+     "bottom": "0",
+     "left": "0",
+     "isLinked": true
+    },
+    "padding_tablet": {
+     "unit": "px",
+     "top": "0",
+     "right": "0",
+     "bottom": "0",
+     "left": "0",
+     "isLinked": true
+    },
+    "padding_mobile": {
+     "unit": "px",
+     "top": "0",
+     "right": "0",
+     "bottom": "0",
+     "left": "0",
+     "isLinked": true
+    },
+    "background_background": "classic",
+    "background_color": "#0F0D0B",
+    "_attributes": "aria-hidden|true",
+    "custom_css": "selector{min-height:22px;background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 10'%3E%3Cpath fill='%23C68B4E' d='M0 10L7 0L14 10Z'/%3E%3C/svg%3E\") !important;background-repeat:repeat-x !important;background-position:left bottom !important;background-size:32px 22px !important;}@media (max-width:760px){selector{background-position:left calc(100% - 70px) !important;min-height:92px;background-size:25px 17px !important;}}"
+   },
+   "elements": []
+  },
+  {
+   "id": "75b00a2",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -800,7 +880,7 @@
    },
    "elements": [
     {
-     "id": "bdec6f1",
+     "id": "6071950",
      "elType": "widget",
      "widgetType": "button",
      "isInner": false,
@@ -867,7 +947,7 @@
      "elements": []
     },
     {
-     "id": "6071950",
+     "id": "45d1488",
      "elType": "widget",
      "widgetType": "button",
      "isInner": false,

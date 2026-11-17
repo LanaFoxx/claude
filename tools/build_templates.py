@@ -682,8 +682,19 @@ def build_footer():
         padding=pads(0, SIDE, (0, 0, 0, 70), SIDE),
         html_tag="footer", _element_id="tn-footer",
         background_background="classic", background_color=NIGHT,
-        custom_css="#tn-footer a{text-decoration:none;}"
-                   "@media (max-width:760px){ #tn-footer{--padding-bottom:70px !important;} }")
+        custom_css="#tn-footer a{text-decoration:none;}")
+
+    # Full-width row of the logo's sawtooth points along the very bottom of the page.
+    # On small screens it carries the 70px clearance for the fixed mobile call bar.
+    sawtooth = container(
+        "Footer / Sawtooth", [], top=True, gap=0, padding=pads(0, 0, 0, 0),
+        background_background="classic", background_color=NIGHT,
+        _attributes="aria-hidden|true",
+        custom_css="selector{min-height:22px;background-image:url(\"" + _TEETH_SVG + "\") !important;"
+                   "background-repeat:repeat-x !important;background-position:left bottom !important;"
+                   "background-size:32px 22px !important;}"
+                   "@media (max-width:760px){selector{background-position:left calc(100% - 70px) !important;"
+                   "min-height:92px;background-size:25px 17px !important;}}")
 
     mobile_bar = container(
         "Mobile Call Bar",
@@ -702,7 +713,7 @@ def build_footer():
         custom_css="selector{-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);}"
                    "@media (min-width:601px) and (max-width:760px){selector.tn-show-sm{display:flex !important;}}")
     return {"version": "0.4", "title": "TN Footer", "type": "footer",
-            "content": [footer, mobile_bar], "page_settings": []}
+            "content": [footer, sawtooth, mobile_bar], "page_settings": []}
 
 
 # =================================================================== HOMEPAGE

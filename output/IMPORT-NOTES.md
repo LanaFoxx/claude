@@ -356,3 +356,4 @@ Container `Seasonal Offer`: change the H2 to **Talk to us about your project** a
 - Why boxes: rgba(42,54,47,0.8) with no blur (the frosted effect was removed; hover is rgba(32,42,37,0.86)), so the spinning logo shows faintly through them.
 - Section titles: every `h2()` gets a flat row of the logo's sawtooth points above it (amber #C68B4E, 6 points at 192x22px, 24px gap; 150x17px on phones), via `.tn-teeth` in CONTRAST_CSS. It is centred when the title is centred.
 - Why watermark: right: calc(20% - 130px) on desktop.
+- Footer: a full-width amber sawtooth strip (32x22px points; 25x17px at 760px and below) runs along the very bottom ("Footer / Sawtooth" container). At 760px and below it also carries the 70px clearance for the fixed mobile call bar, which moved off the footer container.
