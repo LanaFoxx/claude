@@ -1121,7 +1121,7 @@ def build_home():
         '<img class="tn-spin" src="%s" alt="" aria-hidden="true" width="800" height="800">'
         "<style>"
         ".tn-spin-host > .e-con-inner{position:relative;}"
-        ".tn-spin-wrap{position:absolute !important;top:70px;right:calc(20%% - 70px);width:auto !important;margin:0 !important;"
+        ".tn-spin-wrap{position:absolute !important;top:70px;right:calc(20%% - 90px);width:auto !important;margin:0 !important;"
         "z-index:0;pointer-events:none;}"
         ".tn-spin{display:block;width:576px;height:576px;opacity:.08;will-change:transform;}"
         ".tn-spin-host > .e-con-inner > *:not(.tn-spin-wrap){position:relative;z-index:1;}"
