@@ -7,7 +7,7 @@ add_action( 'wp_enqueue_scripts', function () {
 	wp_register_style( 'dwdp-fonts', false, array(), null );
 	wp_add_inline_style( 'dwdp-fonts', "@font-face{font-family:'Urbanist';font-style:normal;font-weight:100 900;font-display:swap;src:url(" . DWDP_URL . "assets/fonts/urbanist-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}@font-face{font-family:'Urbanist Fallback';src:local('Arial'),local('Helvetica'),local('Roboto');size-adjust:102.7%;ascent-override:92.5%;descent-override:24.3%;line-gap-override:0%}" );
 	wp_enqueue_style( 'dwdp-pages', DWDP_URL . 'assets/dw-pages.css', array(), DWDP_VERSION );
-	if ( is_page( 'onboarding' ) ) {
+	if ( is_page( 'onboarding' ) || is_page( 'kickoff' ) ) {
 		wp_enqueue_script( 'dwdp-onboarding', DWDP_URL . 'assets/onboarding.js', array( 'jquery' ), DWDP_VERSION, true );
 	}
 	wp_enqueue_style( 'dwdp-fonts' );

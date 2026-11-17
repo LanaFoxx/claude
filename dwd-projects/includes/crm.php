@@ -55,7 +55,7 @@ function dwdc_is_upwork( $id, $data = array() ) {
 
 /** Contact fields kept on every contact. */
 function dwdc_fields() {
-	return array( 'ptitle', 'job', 'manual', 'followup', 'markup', 'markup_sent', 'lead_source', 'pay_method', 'stage', 'completed', 'billed', 'stripe', 'paypal', 'person', 'email', 'phone', 'company', 'website', 'list', 'price', 'balance', 'deadline', 'hosting', 'renewal', 'source', 'next', 'pending', 'paymark', 'owedopen', 'flag', 'drive', 'drive_sent', 'zoom', 'staging' );
+	return array( 'ptitle', 'ptype', 'job', 'manual', 'followup', 'markup', 'markup_sent', 'lead_source', 'pay_method', 'stage', 'completed', 'billed', 'stripe', 'paypal', 'person', 'email', 'phone', 'company', 'website', 'list', 'price', 'balance', 'deadline', 'hosting', 'renewal', 'source', 'next', 'pending', 'paymark', 'owedopen', 'flag', 'drive', 'drive_sent', 'zoom', 'staging' );
 }
 
 function dwdc_contact( $post, $full = false ) {
@@ -1168,7 +1168,8 @@ add_action( 'rest_api_init', function () {
 		if ( ! $email && ! $phone ) {
 			return new WP_Error( 'dwdc_to', 'Enter an email address or phone number.', array( 'status' => 400 ) );
 		}
-		$link = get_permalink( 2993 ) ?: home_url( '/onboarding/' );
+		$ko   = 'kickoff' === (string) $r->get_param( 'form' ) && function_exists( 'dwdko_url' ); // Project Kickoff form (kickoff.php) for one-off and custom jobs
+		$link = $ko ? dwdko_url() : ( get_permalink( 2993 ) ?: home_url( '/onboarding/' ) );
 		$pid  = $email ? dwdc_find_by_email( $email ) : 0;
 		// Sent from a lead's own page: that lead gets the form (and the email / phone if it had none).
 		$lead = (int) $r->get_param( 'project' );
@@ -1196,11 +1197,22 @@ add_action( 'rest_api_init', function () {
 			$pid = dwdc_save_contact( 0, array( 'name' => $to, 'email' => $email, 'phone' => $phone, 'list' => 'leads', 'stage' => 'contacted', 'source' => 'Invited to onboarding', 'client' => $cid, 'next' => 'Waiting on their onboarding form' ) );
 			update_post_meta( $pid, '_dwdc_invited', 1 );
 		}
+		if ( $ko && '' === (string) get_post_meta( $pid, '_dwdc_ptype', true ) ) {
+			update_post_meta( $pid, '_dwdc_ptype', 'custom' );
+		}
 		$notes   = get_post_meta( $pid, '_dwdc_notes', true );
 		$notes   = is_array( $notes ) ? $notes : array();
 		$sent    = false;
 		if ( $email ) {
-			$html = dwdp_email_html( array(
+			$html = $ko ? dwdp_email_html( array(
+				'eyebrow' => 'Welcome',
+				'title'   => 'Let’s get your project started',
+				'intro'   => 'Hi there,<br><br>Thank you for choosing Dream Web Digital. To get started, please fill out my short Project Kickoff form. It tells me exactly what needs to be done and in what order, links to your live and staging sites, any handoff notes, who else is involved, and the files I’ll need.<br><br>'
+					. 'It also shows you how to add me as a user on your website, so you never have to send me a password. It takes about 10 minutes and saves as you go, so you can come back to finish.',
+				'buttons' => array( array( 'Start my Project Kickoff form', $link ) ),
+				'outro'   => 'Questions? Just reply to this email.<br>Michael Tarr, Dream Web Digital',
+				'footer'  => 'Dream Web Digital ·',
+			) ) : dwdp_email_html( array(
 				'eyebrow' => 'Welcome',
 				'title'   => 'Let’s get your website started',
 				'intro'   => 'Hi there,<br><br>Thank you for choosing Dream Web Digital. The first step is a short onboarding form that tells me everything I need to plan your website: your business, your goals, the pages you need, and the look you have in mind.<br><br>'
@@ -1210,15 +1222,15 @@ add_action( 'rest_api_init', function () {
 				'footer'  => 'Dream Web Digital ·',
 			) );
 			$html = str_replace( 'padding:14px 26px;border-radius:8px;font-size:13px', 'padding:20px 44px;border-radius:10px;font-size:16px', $html );
-			$sent = wp_mail( $email, 'Your onboarding form from Dream Web Digital', $html, array( 'Content-Type: text/html; charset=UTF-8', 'Reply-To: Michael Tarr <mike@dreamwebdigital.com>' ) );
+			$sent = wp_mail( $email, $ko ? 'Your Project Kickoff form from Dream Web Digital' : 'Your onboarding form from Dream Web Digital', $html, array( 'Content-Type: text/html; charset=UTF-8', 'Reply-To: Michael Tarr <mike@dreamwebdigital.com>' ) );
 		}
-		$notes[] = array( 'date' => current_time( 'mysql', true ), 'text' => $email ? ( $sent ? 'Onboarding form emailed to ' . $email . '.' : 'Tried to email the onboarding form to ' . $email . ', but it didn’t send.' ) : 'Onboarding form link shared by text with ' . $phone . '.' );
+		$notes[] = array( 'date' => current_time( 'mysql', true ), 'text' => ( $ko ? 'Project Kickoff' : 'Onboarding' ) . ( $email ? ( $sent ? ' form emailed to ' . $email . '.' : ' form: tried to email it to ' . $email . ', but it didn’t send.' ) : ' form link shared by text with ' . $phone . '.' ) );
 		update_post_meta( $pid, '_dwdc_notes', $notes );
 		return array(
 			'project' => dwdc_contact( $pid, true ),
 			'sent'    => $sent,
 			'link'    => $link,
-			'text'    => 'Hi! This is Michael from Dream Web Digital. Here’s your onboarding form to get your website started. It takes about 10–15 minutes and saves as you go: ' . $link,
+			'text'    => $ko ? 'Hi! This is Michael from Dream Web Digital. Here’s my Project Kickoff form so I can get started on your project. It takes about 10 minutes and saves as you go: ' . $link : 'Hi! This is Michael from Dream Web Digital. Here’s your onboarding form to get your website started. It takes about 10–15 minutes and saves as you go: ' . $link,
 		);
 	} ) );
 
@@ -1579,6 +1591,7 @@ function dwdc_vars( $mode = 'admin' ) {
 	$v['zoomLink']   = function_exists( 'dwdz_personal_link' ) && dwdz_ready() ? dwdz_personal_link() : ''; // empty until made on the first Copy click
 	$v['zoomApi']    = function_exists( 'dwdz_api_ready' ) && dwdz_api_ready(); // copy-to-send links in the Zoom box
 	$v['obLink']     = get_permalink( 2993 ) ?: home_url( '/onboarding/' ); // the onboarding form, for Copy onboarding link
+	$v['koLink']     = function_exists( 'dwdko_url' ) ? dwdko_url() : home_url( '/kickoff/' ); // the Project Kickoff form (kickoff.php)
 	$v['calendly']   = (string) get_option( 'dwdc_calendly', 'https://calendly.com/dreamwebdigital/dream-web-digital-consultation-call' );
 	$v['ver']        = DWDP_VERSION; // the app reloads itself when a newer version is live
 	$v['upLast']  = '';

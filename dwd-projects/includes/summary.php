@@ -165,7 +165,7 @@ function dwdrb_items() {
 /** Onboarding answers as label => value (latest onboarding form), lower-cased labels. */
 function dwdrb_answers( $pid ) {
 	$entries = (array) get_post_meta( $pid, '_dwdc_entries', true );
-	$ob      = array_values( array_filter( $entries, function ( $e ) { return is_array( $e ) && false !== stripos( (string) ( $e['form'] ?? '' ), 'onboard' ); } ) );
+	$ob      = array_values( array_filter( $entries, function ( $e ) { return is_array( $e ) && false !== stripos( (string) ( $e['form'] ?? '' ), 'onboard' ) && false === stripos( (string) ( $e['form'] ?? '' ), 'kickoff' ); } ) ); // the website checklist reads the Website Onboarding form only
 	if ( ! $ob ) {
 		return null;
 	}
@@ -201,6 +201,9 @@ function dwdrb_yes( $v ) {
  * "you" = nothing to get from the client (e.g. they asked you to design the logo).
  */
 function dwdrb_check( $pid ) {
+	if ( function_exists( 'dwdc_ptype' ) && 'custom' === dwdc_ptype( $pid ) ) {
+		return null; // custom jobs: no website checklist (logo, page list…)
+	}
 	$a = dwdrb_answers( $pid );
 	if ( null === $a ) {
 		return null;

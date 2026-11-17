@@ -79,7 +79,7 @@ function dwdr_page() {
 	if ( function_exists( 'is_account_page' ) && is_account_page() ) {
 		return 'account';
 	}
-	foreach ( array( 'process', 'about', 'hosting', 'contact', 'quote', 'thank-you', 'onboarding' ) as $slug ) {
+	foreach ( array( 'process', 'about', 'hosting', 'contact', 'quote', 'thank-you', 'onboarding', 'kickoff' ) as $slug ) {
 		if ( is_page( $slug ) ) {
 			return $slug;
 		}
@@ -333,7 +333,7 @@ function dwdr_body( $page ) {
 		// The hero image spans the content column (up to 1500px): let the browser pick a size that is sharp at that width.
 		return preg_replace( '#(<img data-dw-zoom="1" src="' . preg_quote( esc_attr( $v['image'] ), '#' ) . '"[^>]*?)sizes="[^"]*"#', '$1sizes="(max-width: 1500px) 100vw, 1500px"', $html_out, 1 );
 	}
-	if ( 'onboarding' === $page ) {
+	if ( 'onboarding' === $page || 'kickoff' === $page ) {
 		return dwdr_onboarding();
 	}
 	$html = dwdr_render( $page );
@@ -631,7 +631,7 @@ add_action( 'wp_enqueue_scripts', function () {
 		);
 	wp_enqueue_script( 'dwdr', DWDP_URL . 'assets/redesign/redesign.js', array(), DWDP_VERSION, true );
 	// Theme, Elementor and the old page scripts have nothing to do on these pages.
-	foreach ( 'onboarding' === dwdr_page() ? array() : wp_scripts()->queue as $h ) {
+	foreach ( in_array( dwdr_page(), array( 'onboarding', 'kickoff' ), true ) ? array() : wp_scripts()->queue as $h ) {
 		if ( preg_match( '/^(elementor|hello|swiper|dwdp-front|dwdp-onboarding|e-sticky|imagesloaded|jquery|smartmenus)/', $h ) ) {
 			wp_dequeue_script( $h );
 		}
@@ -738,10 +738,15 @@ function dwdr_onboarding() {
 	return '<section id="ob-hero" data-theme="dark" data-nocta="1" class="dwr-obhero dwr-obq">'
 		. '<canvas id="dw-hero-canvas" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none;-webkit-mask-image:radial-gradient(ellipse 60% 55% at 22% 30%,transparent 0%,rgba(0,0,0,.3) 45%,#000 80%);mask-image:radial-gradient(ellipse 60% 55% at 22% 30%,transparent 0%,rgba(0,0,0,.3) 45%,#000 80%)"></canvas>'
 		. '<div class="dwr-obq-in">'
-		. '<div class="dwr-obq-head"><span class="dwr-eyebrow"><i></i>Client onboarding</span>'
-		. '<h1>Let’s plan your website<span>.</span></h1>'
-		. '<p>Seven short steps tell me everything I need: your business, your goals, the pages you need and the look you have in mind.</p>'
-		. '<ul class="dwr-obnotes"><li>' . $check . 'About 10 to 15 minutes</li><li>' . $check . 'Saves as you go, so you can finish later</li><li>' . $check . 'Skip anything you don’t have yet</li></ul></div>'
+		. ( 'kickoff' === dwdr_page()
+			? '<div class="dwr-obq-head"><span class="dwr-eyebrow"><i></i>Project kickoff</span>'
+				. '<h1>Let’s get your project started<span>.</span></h1>'
+				. '<p>For fixes, finishing or taking over a site, new features and custom work: tell me what needs doing, how to get access, who’s involved, and send any files I’ll need.</p>'
+				. '<ul class="dwr-obnotes"><li>' . $check . 'About 10 minutes</li><li>' . $check . 'Saves as you go, so you can finish later</li><li>' . $check . 'No passwords needed</li></ul></div>'
+			: '<div class="dwr-obq-head"><span class="dwr-eyebrow"><i></i>Client onboarding</span>'
+				. '<h1>Let’s plan your website<span>.</span></h1>'
+				. '<p>Seven short steps tell me everything I need: your business, your goals, the pages you need and the look you have in mind.</p>'
+				. '<ul class="dwr-obnotes"><li>' . $check . 'About 10 to 15 minutes</li><li>' . $check . 'Saves as you go, so you can finish later</li><li>' . $check . 'Skip anything you don’t have yet</li></ul></div>' )
 		. '<div class="dwr-obcard dwo-form-wrap">' . $form . '</div>'
 		. '<p class="dwr-obhelp">Stuck on something? Call or text <a href="tel:+17722101728">(772) 210-1728</a> or email <a href="mailto:mike@dreamwebdigital.com">mike@dreamwebdigital.com</a>.</p>'
 		. '</div></section>';
@@ -770,7 +775,7 @@ function dwdr_div_end( $h, $start ) {
 }
 
 add_action( 'wp_enqueue_scripts', function () {
-	if ( 'onboarding' !== dwdr_page() ) {
+	if ( ! in_array( dwdr_page(), array( 'onboarding', 'kickoff' ), true ) ) {
 		return;
 	}
 	// Elementor's form scripts (steps, uploads, sending) with their config, as on an Elementor page.
@@ -788,6 +793,7 @@ add_action( 'wp_enqueue_scripts', function () {
 		. '.dwr-obcard .elementor-upload-field{padding:12px!important;background:#fff!important;border-style:dashed!important;cursor:pointer}.dwr-obcard .elementor-field-subgroup{display:flex;flex-wrap:wrap;gap:10px}.dwr-obcard .elementor-field-option{display:inline-flex}.dwr-obcard .elementor-field-option input{position:absolute;opacity:0;pointer-events:none}.dwr-obcard .elementor-field-option label{display:inline-flex;align-items:center;min-height:44px;padding:0 18px;border:1px solid #DADDE2;border-radius:999px;background:#F6F7F9;font-size:15px;font-weight:500;cursor:pointer;transition:all .2s}.dwr-obcard .elementor-field-option label:hover{border-color:#13A6EE}.dwr-obcard .elementor-field-option input:checked+label{background:#13A6EE;border-color:#13A6EE;color:#fff}.dwr-obcard .elementor-field-option input:focus-visible+label{box-shadow:0 0 0 4px rgba(19,166,238,.25)}'
 		. '.dwr-obcard .dwo-sec{display:flex;flex-direction:column;gap:6px;padding-bottom:6px;margin-bottom:4px;border-bottom:1px solid #EDEFF2}.dwr-obcard .dwo-k{font-size:13px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#0B76B8}.dwr-obcard .dwo-sec h2,.dwr-obcard .dwo-sec h3{margin:0;font-size:clamp(26px,2.6vw,38px);line-height:1.05;letter-spacing:-.03em;font-weight:600}.dwr-obcard .dwo-sec p{margin:0;font-size:16px;color:#555}'
 		. '.dwr-obcard .e-form__indicators{display:flex;align-items:center;gap:6px;margin:0 0 32px;flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}.dwr-obcard .e-form__indicators__indicator{display:flex;flex-direction:column;align-items:center;gap:6px;flex:0 0 auto;cursor:pointer;font-size:12px;font-weight:600;color:#9AA0A8}.dwr-obcard .e-form__indicators__indicator__number{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1.5px solid #DADDE2;background:#fff;font-size:14px;color:#6B6B6B}.dwr-obcard .e-form__indicators__indicator--state-active{color:#121212}.dwr-obcard .e-form__indicators__indicator--state-active .e-form__indicators__indicator__number{background:#13A6EE;border-color:#13A6EE;color:#fff}.dwr-obcard .e-form__indicators__indicator--state-completed .e-form__indicators__indicator__number{background:#121212;border-color:#121212;color:#fff}.dwr-obcard .e-form__indicators__indicator__separator{flex:1 1 16px;min-width:12px;height:1.5px;background:#DADDE2;align-self:flex-start;margin-top:17px}.dwr-obcard .e-form__indicators__indicator--state-completed+.e-form__indicators__indicator__separator{background:#121212}@media(max-width:600px){.dwr-obcard .e-form__indicators__indicator__label{display:none}.dwr-obcard .e-form__indicators__indicator__number{width:30px;height:30px}.dwr-obcard .e-form__indicators__indicator__separator{margin-top:15px}}'
+		. '.dwr-obcard .e-form__buttons button,.dwr-obcard .e-form__buttons__wrapper__button{white-space:nowrap!important;min-width:max-content}' // Back / Next step on one line
 		. '.dwr-obcard .e-form__buttons{display:flex;flex-direction:row;gap:12px;margin-top:8px}.dwr-obcard .elementor-button{flex:1;display:inline-flex;align-items:center;justify-content:center;min-height:56px;padding:0 28px;border:0;border-radius:999px;background:#13A6EE;color:#fff;font:inherit;font-size:16px;font-weight:600;cursor:pointer;transition:background .3s,transform .3s}.dwr-obcard .elementor-button:hover{background:#2A8FD6;transform:translateY(-2px)}.dwr-obcard .e-form__buttons__wrapper{flex:1;display:flex}.dwr-obcard .e-form__buttons__wrapper__button-previous{background:#fff;color:#121212;border:1px solid #DADDE2}.dwr-obcard .e-form__buttons__wrapper__button-previous:hover{background:#F6F7F9}'
 		. '.dwr-obcard .dw-ob-note{display:flex;align-items:center;flex-wrap:wrap;gap:10px 16px;margin:0 0 28px;padding:14px 18px;border-radius:12px;background:#EEF7FD;color:#21415E;font-size:15px;line-height:1.45}.dwr-obcard .dw-ob-ic{display:none}.dwr-obcard .dw-ob-t{flex:1 1 300px}.dwr-obcard .dw-ob-clear{border:1px solid #B8D9EE;background:#fff;color:#0B76B8;border-radius:999px;padding:6px 14px;font:inherit;font-size:14px;font-weight:600;cursor:pointer}.dwr-obcard .dw-ob-clear:hover{border-color:#13A6EE}'
 		. '.dwr-obcard .elementor-message{margin:12px 0 0;padding:14px 16px;border-radius:10px;font-size:15px}.dwr-obcard .elementor-message-success{background:#E9F7EF;color:#1B6B3A}.dwr-obcard .elementor-message-danger,.dwr-obcard .elementor-error .elementor-field{border-color:#E8573B!important}.dwr-obcard .elementor-help-inline{font-size:13px;color:#E8573B}.dwr-obcard .elementor-message:before{display:none}' );

@@ -2061,11 +2061,14 @@ function dwdx_build( $pid ) {
 	$zip->addFromString( $R . '01-project-brief.md', $brief );
 	array_unshift( $has, '`01-project-brief.md`: who the client is, their current site, the staging site, deadline, a short summary of what they want, my notes and open to-dos.' );
 
+	// Custom job (not a new website or a redesign, see kickoff.php): the brief and CLAUDE.md are written around the work and its phases.
+	$custom = function_exists( 'dwdc_ptype' ) && 'custom' === dwdc_ptype( $pid );
+
 	// 6. Design brief for Claude Design, written by Claude from everything above.
 	$design = '';
 	$derr   = '';
 	if ( function_exists( 'dwdc_ai_key' ) && dwdc_ai_key() ) {
-		$pack = "MICHAEL'S HOUSE RULES (the design must follow these)\n" . dwdrb_rules() . "\n\n" . dwdrb_export_status( $pid ) . "PROJECT BRIEF\n" . $brief . "\n\nFORM ANSWERS\n" . mb_substr( $forms, 0, 40000 ) . "\n\nCALLS (oldest first)" . mb_substr( $mtext, 0, 150000 ) . "\n\nEMAILS\n" . mb_substr( $etext, 0, 40000 ) . "\n\nTEXTS\n" . mb_substr( $ttext, 0, 10000 ) . "\n\nFILES SUPPLIED\n" . $files;
+		$pack = ( $custom ? "PROJECT TYPE: a custom job, NOT a new website or a redesign (fixing, finishing or taking over an existing site, adding features or integrations). Write the brief around the work requested: add a \"Scope and phases\" section near the top that lists every task from the Project Kickoff answers, Michael's notes, calls and emails, grouped by phase in the order to do them, each with what done looks like. Only give design direction for the parts that need new design, and keep it consistent with the existing site's look. Note the live site, the staging site, and any access, handoff notes or people to contact.\n\n" : '' ) . "MICHAEL'S HOUSE RULES (the design must follow these)\n" . dwdrb_rules() . "\n\n" . dwdrb_export_status( $pid ) . "PROJECT BRIEF\n" . $brief . "\n\nFORM ANSWERS\n" . mb_substr( $forms, 0, 40000 ) . "\n\nCALLS (oldest first)" . mb_substr( $mtext, 0, 150000 ) . "\n\nEMAILS\n" . mb_substr( $etext, 0, 40000 ) . "\n\nTEXTS\n" . mb_substr( $ttext, 0, 10000 ) . "\n\nFILES SUPPLIED\n" . $files;
 		$res  = wp_remote_post( 'https://api.anthropic.com/v1/messages', array(
 			'timeout' => 180,
 			'headers' => array( 'x-api-key' => dwdc_ai_key(), 'anthropic-version' => '2026-10-21', 'content-type' => 'application/json' ),
@@ -2099,14 +2102,22 @@ function dwdx_build( $pid ) {
 	}
 
 	// 7. Instructions for Claude Code.
-	$claude = '# ' . $c['name'] . ": website build\n\n"
+	$claude = ( $custom ? ( '# ' . $c['name'] . ": project\n\n"
+		. 'You are helping Michael Tarr of Dream Web Digital with this client project. It is a custom job, not a new website or a redesign: fixing, finishing or taking over an existing site, or adding features. Everything known about the project is in this folder. Read it all before changing anything.' . "\n\n"
+		. "## What is in this folder\n\n- " . implode( "\n- ", $has ) . "\n\n"
+		. "## How to start\n\n"
+		. ( $notes ? "1. Read `00-michaels-notes.md` first: Michael's own instructions for this job. Then `01-project-brief.md`, the Project Kickoff answers in `02-onboarding-answers.md` (scope, phases, handoff notes, access, people), the meetings in date order, and the emails and texts.\n" : "1. Read `01-project-brief.md`, then the Project Kickoff answers in `02-onboarding-answers.md` (scope, phases, handoff notes, access, people), then the meetings in date order, and the emails and texts.\n" )
+		. "2. Look through `assets/` so you know which documents, designs and screenshots exist.\n"
+		. "3. Write a plan first: every task in the scope, grouped by phase in the order to do them, what done looks like for each, what access or files are still needed, and anything that could break the live site. Show Michael the plan before changing anything.\n"
+		. "4. Work on the staging site (or a copy) first and take a backup before changes. Never change the live site without Michael's go-ahead.\n\n"
+		) : ( '# ' . $c['name'] . ": website build\n\n"
 		. 'You are helping Michael Tarr of Dream Web Digital build this client\'s website. Everything known about the project is in this folder. Read it all before writing anything.' . "\n\n"
 		. "## What is in this folder\n\n- " . implode( "\n- ", $has ) . "\n\n"
 		. "## How to start\n\n"
 		. ( $notes ? "1. Read `00-michaels-notes.md` first: Michael's own instructions for this build. Then `01-project-brief.md`, the onboarding answers, the meetings in date order, and the emails and texts.\n" : "1. Read `01-project-brief.md`, then the onboarding answers, then the meetings in date order, then the emails and texts.\n" )
 		. "2. Look through `assets/` so you know which logos, photos and documents exist.\n"
 		. "3. Write a short plan first: sitemap, the sections on each page, what content is still missing, and questions for the client. Show Michael the plan before building.\n"
-		. "4. Build the homepage first and show it before the inner pages.\n\n"
+		. "4. Build the homepage first and show it before the inner pages.\n\n" ) )
 		. "## How Michael builds (his house rules)\n\n" . dwdrb_rules() . "\n\n"
 		. dwdrb_export_status( $pid )
 		. "## Rules\n\n"

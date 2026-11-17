@@ -24,7 +24,7 @@ function dwdob_pages() {
 /** Walk the Elementor tree; $fn gets each form widget's settings by reference. */
 function dwdob_walk( &$els, $fn ) {
 	foreach ( $els as &$el ) {
-		if ( 'widget' === ( $el['elType'] ?? '' ) && 'form' === ( $el['widgetType'] ?? '' ) && false !== stripos( (string) ( $el['settings']['form_name'] ?? '' ), 'onboard' ) ) {
+		if ( 'widget' === ( $el['elType'] ?? '' ) && 'form' === ( $el['widgetType'] ?? '' ) && false !== stripos( (string) ( $el['settings']['form_name'] ?? '' ), 'onboard' ) && false === stripos( (string) ( $el['settings']['form_name'] ?? '' ), 'kickoff' ) ) { // the Project Kickoff form (kickoff.php) is left alone
 			$fn( $el['settings'] );
 		}
 		if ( ! empty( $el['elements'] ) ) {

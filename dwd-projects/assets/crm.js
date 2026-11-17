@@ -2153,7 +2153,9 @@
 	/* ================= Zoom invite box (Home, project and client pages) ================= */
 	// ids: limit the picker to these projects (client page) or a single fixed project (project page).
 	// "Copy onboarding link": sits on its own line under each Send onboarding form button.
-	function obCopy() { return DWDC.obLink ? '<span class="dd-obcopy"><button type="button" class="dd-btn secondary sm" data-copy="' + esc(DWDC.obLink) + '" title="' + esc(DWDC.obLink) + '">' + lu('link', 14) + 'Copy onboarding link</button></span>' : ''; }
+	function obCopy() { return DWDC.obLink ? '<span class="dd-obcopy"><button type="button" class="dd-btn secondary sm" data-copy="' + esc(DWDC.obLink) + '" title="' + esc(DWDC.obLink) + '">' + lu('link', 14) + 'Copy onboarding link</button>' + (DWDC.koLink ? '<button type="button" class="dd-btn secondary sm" data-copy="' + esc(DWDC.koLink) + '" title="' + esc(DWDC.koLink) + '">' + lu('link', 14) + 'Copy Kickoff link</button>' : '') + '</span>' : ''; }
+	// Project Kickoff form (kickoff.php): for one-off and custom jobs that aren't a new website or a redesign.
+	function koBtn(c, cls) { return '<button type="button" class="dd-btn ' + (cls || 'secondary') + '" data-leadinvite="' + c.id + '" data-form="kickoff">' + lu('mail', 14) + 'Send Project Kickoff form</button>'; }
 	function zoomBox(key, ids) {
 		var title = '<header class="dd-ch2"><span class="dd-lt z">' + lu('video', 16) + '</span><div><h2>Zoom meeting</h2></div></header>'
 			// Quick links to paste into a message: your Zoom room and your Calendly booking page.
@@ -3628,7 +3630,7 @@
 			acts = (ow ? btn('', 'data-paid', 'Mark paid') : '') + (st !== 'active' ? btn('', 'data-set="active"', 'Back to active') : '')
 				+ (st !== 'hold' ? btn('greenl', 'data-set="hold"', 'Put on hold') : '') + (st !== 'limbo' ? btn('', 'data-set="limbo"', 'Move to limbo') : '') + btn('solid green', 'data-complete', 'Mark complete');
 		} else if (st === 'leads') {
-			acts = btn('red', 'data-purge="' + c.id + '"', 'Delete lead') + btn('red', 'data-purge="' + c.id + '" data-block="1"', 'Spam: delete & block') +btn('', 'data-set="archive"', 'Archive') + btn('', 'data-leadinvite="' + c.id + '"', ic('mail', 14) + 'Send onboarding form') + btn('solid blue', 'data-set="active"', 'Start the job');
+			acts = btn('red', 'data-purge="' + c.id + '"', 'Delete lead') + btn('red', 'data-purge="' + c.id + '" data-block="1"', 'Spam: delete & block') +btn('', 'data-set="archive"', 'Archive') + btn('', 'data-leadinvite="' + c.id + '"', ic('mail', 14) + 'Send Website Onboarding form') + btn('', 'data-leadinvite="' + c.id + '" data-form="kickoff"', ic('mail', 14) + 'Send Project Kickoff form') + btn('solid blue', 'data-set="active"', 'Start the job');
 		} else if (st === 'archive') {
 			acts = btn('', 'data-set="leads"', 'Restore to leads') + btn('red', 'data-trash="' + c.id + '"', 'Delete');
 		} else {
@@ -3662,14 +3664,15 @@
 		var main = '', menu = mi('data-edit', S.edit ? 'Close edit' : 'Edit project');
 		var xb = (S.xBusy || {})[c.id], xbtn = function (cls) { return btn('data-xport="' + c.id + '"' + (xb ? ' disabled' : '') + ' title="One zip for Claude Code: design brief, instructions, onboarding answers, meeting transcripts, emails, texts and files"', lu('download') + (xb ? 'Building the zip…' : 'AI Instructions'), cls); };
 		if (st === 'active' || st === 'hold' || st === 'limbo') {
-			main = (ow ? btn('data-paid', 'Mark paid') : '') + btn('data-plog="' + c.id + '"', lu('credit-card') + 'Log payment');
-			menu += mi('data-leadinvite="' + c.id + '"', c.onboarded ? 'Send onboarding form again' : (c.stage === 'onboarding' ? 'Resend onboarding form' : 'Send onboarding form')) + (rvAttr ? mi(rvAttr, 'Ask for a review') : '') + mi('data-complete', 'Mark complete')
+			main = (ow ? btn('data-paid', 'Mark paid') : '') + btn('data-plog="' + c.id + '"', lu('credit-card') + 'Log payment') + (c.ready && c.ready.items ? '' : xbtn('secondary')); // no "Ready to build" box (custom job, or no Website Onboarding): AI Instructions up here
+			menu += mi('data-leadinvite="' + c.id + '"', c.onboarded ? 'Send Website Onboarding form again' : (c.stage === 'onboarding' ? 'Resend Website Onboarding form' : 'Send Website Onboarding form')) + mi('data-leadinvite="' + c.id + '" data-form="kickoff"', 'Send Project Kickoff form') + mi('data-xport="' + c.id + '"', 'Download AI Instructions') + (rvAttr ? mi(rvAttr, 'Ask for a review') : '') + mi('data-complete', 'Mark complete')
 				+ mi(st === 'hold' ? 'data-set="active"' : 'data-set="hold"', st === 'hold' ? 'Resume project' : 'Pause (on hold)') + mi(st === 'limbo' ? 'data-set="active"' : 'data-set="limbo"', st === 'limbo' ? 'Take out of limbo' : 'Move to limbo') + mi('data-act="job" data-client="' + (c.client || 0) + '"', 'New project for this client') + mi('data-set="archive"', 'Archive');
 		} else if (st === 'complete') {
 			main = (ow ? btn('data-paid', 'Mark paid') : '') + btn('data-set="active"', 'Reopen');
 			menu += (rvAttr ? mi(rvAttr, 'Ask for a review') : '') + mi('data-plog="' + c.id + '"', 'Log payment') + mi('data-act="job" data-client="' + (c.client || 0) + '"', 'New project for this client');
 		} else if (st === 'leads') {
 			main = btn('data-leadinvite="' + c.id + '"', lu('mail') + (c.stage === 'onboarding' ? 'Resend onboarding form' : 'Send onboarding form')) + btn('data-set="active"', 'Start the job', 'primary');
+			menu += mi('data-leadinvite="' + c.id + '" data-form="kickoff"', 'Send Project Kickoff form');
 			menu += mi('data-set="archive"', 'Archive lead') + mi('data-purge="' + c.id + '"', 'Delete lead', 'danger') + mi('data-purge="' + c.id + '" data-block="1"', 'Spam: delete & block email', 'danger');
 		} else {
 			main = btn('data-set="leads"', 'Restore to leads', 'primary');
@@ -3731,13 +3734,13 @@
 			+ (c.drive ? '<a class="dd-btn secondary" href="' + esc(c.drive) + '" target="_blank" rel="noopener">' + lu('external-link', 14) + '<span class="dd-nomob">Open folder</span><span class="dd-mobonly">Open</span></a><button type="button" class="dd-btn ghost" data-drivemk="' + c.id + ':email">' + lu('mail', 14) + (c.drive_sent ? 'Email again' : '<span class="dd-nomob">Email to client</span><span class="dd-mobonly">Email</span>') + '</button>'
 				: DWDC.driveReady ? '<button type="button" class="dd-btn secondary" data-drivemk="' + c.id + ':email">' + lu('plus', 14) + 'Create &amp; email client</button><button type="button" class="dd-btn ghost" data-drivemk="' + c.id + '">Create only</button>' : '<a class="dd-btn secondary" href="#connections">Set up Google Drive</a>') + '</div></div>';
 		var obRow = obl.length ? '<div class="dd-detob"><div><b>Onboarding</b> ' + ddPill(obn + ' answers', 'info') + '<small>' + esc(obl[0].form || 'Form') + ' · submitted ' + fmt(obl[0].date) + '</small></div><div class="dd-pbtns">' + btn('data-viewob', lu('clipboard-list') + 'View answers', 'primary') + '<button type="button" class="dd-btn secondary" data-copyob>Copy answers</button></div></div>'
-			: '<div class="dd-detob"><div><b>Onboarding</b><small>Not submitted yet</small></div><div class="dd-pbtns">' + btn('data-leadinvite="' + c.id + '"', lu('mail') + (c.stage === 'onboarding' ? 'Resend onboarding form' : 'Send onboarding form'), 'primary') + obCopy() + '</div></div>';
+			: '<div class="dd-detob"><div><b>Onboarding</b><small>Not submitted yet</small></div><div class="dd-pbtns">' + btn('data-leadinvite="' + c.id + '"', lu('mail') + (c.stage === 'onboarding' ? 'Resend onboarding form' : 'Send onboarding form'), 'primary') + koBtn(c) + obCopy() + '</div></div>';
 		var obBox = '' && card('ob', 'Onboarding' + (obl.length ? ' ' + ddPill(obn + ' answers', 'info') : ''), '', obl.length ? '<span class="dd-hmeta">' + esc(obl[0].form || 'Form') + ' · submitted ' + fmt(obl[0].date) + '</span>' : '<span class="dd-hmeta">Not submitted</span>',
 			'<div class="dd-pbtns">' + (obl.length ? btn('data-viewob', lu('clipboard-list') + 'View answers', 'primary') + '<button type="button" class="dd-btn secondary" data-copyob>Copy answers</button>' : btn('data-leadinvite="' + c.id + '"', lu('mail') + (c.stage === 'onboarding' ? 'Resend onboarding form' : 'Send onboarding form'))) + '</div>');
 		// markup review
 		var SM = full ? c.ai_summary : null, sumBox = '';
 		if (full && !SM && !c.has_form) {
-			sumBox = card('k-sum', lu('zap', 16) + 'Project summary', 'No onboarding answers yet', '', '<div class="dd-sumb"><p class="dd-help">A summary of what the client wants appears here once they fill out the onboarding form.</p><div class="dd-pbtns"><button type="button" class="dd-btn secondary" data-leadinvite="' + c.id + '">' + lu('mail', 14) + (c.stage === 'onboarding' ? 'Resend onboarding form' : 'Send onboarding form') + '</button>' + obCopy() + '</div></div>');
+			sumBox = card('k-sum', lu('zap', 16) + 'Project summary', 'No onboarding answers yet', '', '<div class="dd-sumb"><p class="dd-help">A summary of what the client wants appears here once they fill out the Website Onboarding form (new sites and redesigns) or the Project Kickoff form (fixes, takeovers, custom jobs). You can download AI Instructions any time: without a form they’re built from your notes, assets, calls and emails.</p><div class="dd-pbtns"><button type="button" class="dd-btn secondary" data-leadinvite="' + c.id + '">' + lu('mail', 14) + (c.stage === 'onboarding' ? 'Resend onboarding form' : 'Send onboarding form') + '</button>' + koBtn(c) + '<button type="button" class="dd-btn primary" data-xport="' + c.id + '"' + ((S.xBusy || {})[c.id] ? ' disabled' : '') + '>' + lu('download', 14) + ((S.xBusy || {})[c.id] ? 'Building the zip…' : 'AI Instructions') + '</button>' + obCopy() + '</div></div>');
 		}
 		if (full && (SM || c.has_form)) {
 			if (!SM && c.has_form && !(S.sumTried || {})[c.id]) { S.sumTried = S.sumTried || {}; S.sumTried[c.id] = 1; S.sumBusy = c.id; api('/contact/' + c.id + '/summary', 'POST', {}).then(function (x) { if (S.full[c.id]) { S.full[c.id].ai_summary = x; } S.sumBusy = 0; render(); }).catch(function (er) { S.sumBusy = 0; S.sumErr = er && er.message; render(); }); }
@@ -3985,6 +3988,7 @@
 		var f = function (k, label, type, ph) { return '<label><span>' + label + '</span><input name="' + k + '" type="' + (type || 'text') + '" value="' + esc(c[k]) + '" placeholder="' + esc(ph || '') + '"></label>'; };
 		return '<form class="dwdc-card pad dwdc-editf"><div class="dwdc-cardh"><h2>Edit details</h2></div><div class="dwdc-fgrid">'
 			+ '<label class="wide"><span>Project title</span><input name="ptitle" value="' + esc(c.ptitle || '') + '" placeholder="' + esc(projTitleAuto(c)) + ' (automatic, from the website)"></label>'
+			+ '<label class="wide"><span>Project type</span><select name="ptype" class="dwdc-sel">' + [['', 'Automatic (' + (c.ptype_now === 'custom' ? 'custom job' : 'website build') + ', from the form they filled out)'], ['build', 'Website build or redesign'], ['custom', 'Custom job: fixes, finishing, takeover, features']].map(function (o) { return '<option value="' + o[0] + '"' + ((c.ptype || '') === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select></label>'
 			+ (clientOf(c) ? '<label><span>Client name</span><input name="client_name" value="' + esc(clientOf(c).name) + '" placeholder="The client this project belongs to"></label>' : '')
 			+ f('name', 'Project / business name') + f('person', 'Contact person') + f('email', 'Email', 'email') + f('phone', 'Phone') + f('company', 'Company') + f('website', 'Website')
 			+ '<label class="wide"><span>Project (current job)</span><input name="job" value="' + esc(c.job) + '" placeholder="e.g. Booking site redesign"></label>'
@@ -4700,13 +4704,13 @@
 		if (t.closest('[data-oldc]')) { keepVals(); S.modal.newc = false; S.modal.invite = false; S.modal.textMsg = ''; render(); focusIn('.dwdc-pick'); return; }
 		if (t.closest('[data-newinvite]')) { keepVals(); S.modal.invite = true; S.modal.newc = false; var qq = S.modal.q || ''; if (/@|\d{3}/.test(qq)) { S.modal.vals.invite_to = qq; } render(); focusIn('[name=invite_to]'); return; }
 		if ((el = t.closest('[data-leadinvite]'))) {
-			var lc = S.full[+el.getAttribute('data-leadinvite')] || contact(+el.getAttribute('data-leadinvite'));
-			var lto = lc.email || window.prompt('Email or phone number to send ' + (lc.person || lc.name) + ' the onboarding form:', lc.phone || '');
+			var lc = S.full[+el.getAttribute('data-leadinvite')] || contact(+el.getAttribute('data-leadinvite')), lko = el.getAttribute('data-form') === 'kickoff', lfn = lko ? 'Project Kickoff form' : 'onboarding form';
+			var lto = lc.email || window.prompt('Email or phone number to send ' + (lc.person || lc.name) + ' the ' + lfn + ':', lc.phone || '');
 			if (!lto || !String(lto).trim()) { return; }
 			lto = String(lto).trim(); el.disabled = true;
-			api('/invite', 'POST', { to: lto, project: lc.id }).then(function (x) {
+			api('/invite', 'POST', { to: lto, project: lc.id, form: lko ? 'kickoff' : '' }).then(function (x) {
 				upsert(x.project); S.full[lc.id] = x.project; el.disabled = false; render();
-				if (x.sent) { toast('Onboarding form emailed to ' + lto); }
+				if (x.sent) { toast((lko ? 'Project Kickoff' : 'Onboarding') + ' form emailed to ' + lto); }
 				else if (/@/.test(lto)) { toast('The email didn’t send. Try again, or text them the link.', true); }
 				else {
 					var done = function () { toast('Text copied: paste it into a message to ' + lto); };

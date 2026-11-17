@@ -138,7 +138,7 @@
 
 	var box = document.createElement('div');
 	box.className = 'dw-ob-note';
-	box.innerHTML = '<span class="dw-ob-ic" aria-hidden="true"></span><span class="dw-ob-t">Your answers save automatically on this device, so you can come back later to finish. Every question needs an answer: if one doesn’t apply, just write N/A. File uploads are optional.</span><button type="button" class="dw-ob-clear" hidden>Start over</button>';
+	box.innerHTML = '<span class="dw-ob-ic" aria-hidden="true"></span><span class="dw-ob-t">Your answers save automatically on this device, so you can come back later to finish. ' + (/kickoff/i.test(location.pathname) ? 'Questions marked * are the ones I need; skip anything that doesn’t apply.' : 'Every question needs an answer: if one doesn’t apply, just write N/A. File uploads are optional.') + '</span><button type="button" class="dw-ob-clear" hidden>Start over</button>';
 	form.parentNode.insertBefore(box, form);
 	var clearBtn = box.querySelector('.dw-ob-clear');
 	function note(saved) { clearBtn.hidden = !saved; }
