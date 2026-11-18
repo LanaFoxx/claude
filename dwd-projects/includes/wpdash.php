@@ -314,19 +314,21 @@ add_action( 'admin_footer-index.php', function () {
  */
 function dwdmm_made_month() {
 	$month = current_time( 'Y-m' );
-	$out   = array( 'total' => 0, 'Upwork' => 0, 'PayPal' => 0, 'Stripe' => 0, 'count' => 0 );
+	$out   = array( 'total' => 0, 'Upwork' => 0, 'PayPal' => 0, 'Stripe' => 0, 'count' => 0, 'items' => array() );
 	foreach ( get_posts( array( 'post_type' => DWDC_CONTACT, 'post_status' => 'private', 'posts_per_page' => -1, 'fields' => 'ids' ) ) as $id ) {
 		foreach ( (array) get_post_meta( $id, '_dwdc_payments', true ) as $x ) {
 			$src = is_array( $x ) ? (string) ( $x['source'] ?? '' ) : '';
-			if ( ! isset( $out[ $src ] ) || 'total' === $src || 'count' === $src || 'held' === ( $x['status'] ?? 'paid' ) || 0 !== strpos( (string) ( $x['date'] ?? '' ), $month ) ) {
+			if ( ! in_array( $src, array( 'Upwork', 'PayPal', 'Stripe' ), true ) || 'held' === ( $x['status'] ?? 'paid' ) || 0 !== strpos( (string) ( $x['date'] ?? '' ), $month ) ) {
 				continue;
 			}
 			$amt          = (float) preg_replace( '/[^\d.\-]/', '', (string) ( $x['amount'] ?? 0 ) );
 			$out[ $src ] += $amt;
 			$out['total'] += $amt;
 			$out['count']++;
+			$out['items'][] = array( 'id' => (int) $id, 'name' => html_entity_decode( get_the_title( $id ), ENT_QUOTES, 'UTF-8' ), 'date' => (string) $x['date'], 'earned' => (string) ( $x['earned'] ?? '' ), 'amount' => $amt, 'source' => $src, 'note' => trim( preg_replace( '/^From Upwork · |\s*\(Pending\)$/', '', (string) ( $x['note'] ?? '' ) ) ) ); // the note without the old "pending" label
 		}
 	}
+	usort( $out['items'], function ( $a, $b ) { return strcmp( $b['date'], $a['date'] ); } );
 	return $out;
 }
 add_filter( 'dwdc_crm_payload', function ( $p ) {

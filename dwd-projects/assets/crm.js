@@ -1495,7 +1495,7 @@
 				var A = S.ads || {}, G = A.google, K = A.connects || {}, mn = new Date(DWDC.today + 'T12:00:00').toLocaleDateString('en-US', { month: 'long' });
 				// Made this month: Upwork money that reached the bank, plus PayPal and Stripe (wpdash.php: dwdmm_made_month).
 				var MM = S.madeM || { total: 0 }, mmParts = ['Upwork', 'PayPal', 'Stripe'].filter(function (k) { return num(MM[k]); }).map(function (k) { return k + ' ' + money(MM[k]); }).join(' · ');
-				return '<a class="more dd-made" href="#money"><span>Made this month<small>' + mn + (mmParts ? ' · ' + mmParts : ' · in your bank') + '</small></span><b>' + money(MM.total || 0) + '</b></a>'
+				return '<a class="more dd-made" href="#money" data-mademodal><span>Made this month<small>' + mn + (mmParts ? ' · ' + mmParts : ' · in your bank') + '</small></span><b>' + money(MM.total || 0) + '</b></a>'
 					+ '<a class="more" href="#money" data-connmodal><span>Connects spent<small>' + mn + ' · last month ' + money(K.lastmonth || 0) + '</small></span><b>' + money(K.month || 0) + '</b></a>'
 					+ '<a class="more" href="#money" data-adsmodal><span>Google Ads spent<small>' + (G ? mn + ' · ' + money(G.week.cost) + ' this week' : 'Not connected') + '</small></span><b>' + (G ? money(G.month.cost) : '—') + '</b></a>'
 					+ (S.tax ? '<a class="more" href="#money"><span>Tax set-aside<small>' + (S.tax.held == null ? S.tax.pct + '% of Q' + S.tax.quarter + ' income' + (S.tax.next ? ' · due ' + fmt(S.tax.next.date) : '') : S.tax.held >= S.tax.need ? 'Covered · ' + money(S.tax.held) + ' set aside' : 'Short ' + money(S.tax.need - S.tax.held)) + '</small></span><b>' + money(S.tax.need) + '</b></a>' : '');
@@ -4216,6 +4216,19 @@
 				+ (SX.count > SX.tx.length ? '<p class="dwdc-mutp sm">Showing the latest ' + SX.tx.length + ' of ' + SX.count + '.</p>' : '') : emptyRow('No payments found.');
 			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide dd-sg-mod">' + head(esc(sxp[0]), esc(sxp.slice(1).join(' · ')), '') + sxb + '</div>';
 		}
+		// Made this month: every payment behind the total (Upwork money that reached the bank, PayPal, Stripe).
+		if (m.type === 'made') {
+			var MD = S.madeM || { total: 0, items: [] }, mdIt = MD.items || [], mdMon = new Date(DWDC.today + 'T12:00:00').toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+			var mdSum = ['Upwork', 'PayPal', 'Stripe'].map(function (k) { return '<span>' + k + '<b>' + money(MD[k] || 0) + '</b></span>'; }).join('');
+			var mdRows = mdIt.map(function (x) {
+				var pc = contact(x.id), who = pc ? (clientName(pc) || '') : '';
+				return '<a class="dwdc-mo-r dd-mdr" href="#client/' + x.id + '" data-close-modal><span class="d">' + fmt(x.date) + '</span><span class="w"><b>' + esc(x.name) + '</b><small>' + esc([x.source + (x.source === 'Upwork' ? ' · in bank' : ''), who && who !== x.name ? who : '', x.note].filter(Boolean).join(' · ')) + '</small></span><b class="a">' + money2(x.amount).replace('.00', '') + '</b></a>';
+			}).join('');
+			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide">' + head('Money', 'Made in', mdMon)
+				+ '<div class="dwdc-mo-sum"><span>Total<b>' + money(MD.total || 0) + '</b></span>' + mdSum + '</div>'
+				+ (mdRows ? '<div class="dd-uplist">' + mdRows + '</div>' : emptyRow('Nothing in the bank yet this month.'))
+				+ '<p class="dwdc-mutp">' + mdIt.length + ' payment' + (mdIt.length === 1 ? '' : 's') + '. Upwork counts once the money is in your bank (marked withdrawn), on the day it landed. PayPal and Stripe count on the day they were paid.</p></div>';
+		}
 		if (m.type === 'connects') {
 			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide">' + head('Upwork', 'Connects', 'spending') + connSpend() + '<div class="dwdc-farow end"><a class="dwdc-btn2" href="#money" data-close-modal>Open in Money Stats</a></div></div>';
 		}
@@ -5069,6 +5082,7 @@
 		if (t.closest('[data-adsmodal]')) { e.preventDefault(); S.modal = { type: 'ads' }; render(); return; }
 		if (t.closest('[data-spendmodal]')) { e.preventDefault(); S.modal = { type: 'spend' }; render(); return; }
 		if (t.closest('[data-adscopy]')) { var ta = app.querySelector('.dwdc-adscript'); if (ta) { ta.select(); (navigator.clipboard ? navigator.clipboard.writeText(ta.value) : Promise.reject()).then(function () { toast('Script copied'); }, function () { document.execCommand('copy'); toast('Script copied'); }); } return; }
+		if (t.closest('[data-mademodal]')) { e.preventDefault(); S.modal = { type: 'made' }; render(); return; }
 		if (t.closest('[data-connmodal]')) { e.preventDefault(); S.modal = { type: 'connects' }; render(); return; }
 		if (t.closest('[data-owed]')) { e.preventDefault(); S.modal = { type: 'owed' }; render(); return; } // pop-up only, stay on this page
 		if ((el = t.closest('[data-month]'))) {

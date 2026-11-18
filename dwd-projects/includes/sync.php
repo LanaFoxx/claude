@@ -98,6 +98,15 @@ function dwds_invoice_paid( $pid, $via, $id = '', $number = '' ) {
  *
  * @return string 'added', 'duplicate' or 'unmatched'.
  */
+function dwds_same_payment( $p, $source, $amount, $date ) {
+	if ( ! is_array( $p ) || (string) ( $p['source'] ?? '' ) !== (string) $source || 'Upwork' === $source ) {
+		return false;
+	}
+	$a = round( (float) preg_replace( '/[^\d.]/', '', (string) ( $p['amount'] ?? 0 ) ), 2 );
+	$d = strtotime( (string) ( $p['date'] ?? '' ) );
+	return abs( $a - round( (float) $amount, 2 ) ) < 0.01 && $d && abs( $d - strtotime( (string) $date ) ) <= 3 * DAY_IN_SECONDS;
+}
+
 function dwds_log_payment( $source, $email, $who, $amount, $date, $ref, $note = '', $pid = 0 ) {
 	$amount = round( (float) $amount, 2 );
 	if ( $amount <= 0 || ! $ref ) {
@@ -120,6 +129,15 @@ function dwds_log_payment( $source, $email, $who, $amount, $date, $ref, $note = 
 	$pays = is_array( $pays ) ? $pays : array();
 	foreach ( $pays as $p ) {
 		if ( (string) ( $p['ref'] ?? '' ) === (string) $ref ) {
+			$seen[ $source . ':' . $ref ] = $pid;
+			update_option( 'dwds_seen_refs', $seen, false );
+			return 'duplicate';
+		}
+	}
+	// The same payment can arrive twice (the invoice email and the PayPal/Stripe feed use different refs):
+	// same source, same amount, within 3 days = already logged.
+	foreach ( $pays as $p ) {
+		if ( dwds_same_payment( $p, $source, $amount, $date ) ) {
 			$seen[ $source . ':' . $ref ] = $pid;
 			update_option( 'dwds_seen_refs', $seen, false );
 			return 'duplicate';
