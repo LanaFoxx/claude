@@ -698,3 +698,13 @@ a.g-crow__val:hover{color:var(--g-navy)}
 .g-hvid__sound:focus-visible,.g-hvid__pause:focus-visible{outline:3px solid #fff!important;outline-offset:2px}
 .g-hvid.has-sound .g-hvid__sound,.g-hvid.has-sound .g-hvid__pause{display:none!important}
 @media (max-width:600px){.g-hvid__sound{left:12px;bottom:12px;min-height:48px;padding:6px 16px 6px 6px!important}.g-hvid__soundico{width:36px;height:36px}.g-hvid__soundtxt small{display:none}.g-hvid__pause{right:10px;bottom:10px}}
+/* MarkUp #13: no sub-line under a proof stat when empty */
+.g-proof__lbl strong:empty{display:none}
+/* MarkUp #15: bigger "See the step-by-step process" (button, not a small link) */
+.g-btn-big .elementor-button{height:60px!important;padding:0 30px!important;font-size:19px!important;border-width:2px!important;gap:10px}
+.g-btn-arrow .elementor-button-text::after{content:"→";margin-left:10px;font-weight:600;display:inline-block;transition:transform .2s}
+.g-btn-arrow .elementor-button:hover .elementor-button-text::after{transform:translateX(3px)}
+.g-head .g-btn-sec{flex:none!important;width:auto!important}
+@media (max-width:600px){.g-head .g-btn-sec,.g-head .g-btn-sec .elementor-button{width:100%!important}}
+/* MarkUp #2: GOALS link inside step text */
+.g-step p a{color:var(--g-blue);font-weight:600;text-underline-offset:3px}

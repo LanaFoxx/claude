@@ -135,16 +135,16 @@ I['users']='<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" 
 def proof(icon, num, suf, a, b):
     title = num + ('<span class="g-suf">%s</span>' % suf if suf else '')
     return C([HTML('<span class="g-proof__ico" aria-hidden="true">%s</span>' % ic(I[icon],24)), H(title,'span',None,None,'g-num'), TX('<p class="g-proof__lbl">%s<strong>%s</strong></p>' % (a,b), None, None)], 'g-proof__cell', direction='row', gap=16, align='center', pad=(32,36,32,36), pad_t=(24,24,24,24))
-home.append(C([proof('award','20','','years in business','since 2006'), proof('target','82','%','exam pass rate','Georgia CA exam'), proof('users','5,400','+','student members','GA, SC, AL, TN and beyond')], 'g-proof', direction='row'))
+home.append(C([proof('award','20','','years in business','since 2006'), proof('target','82','%','exam pass rate','Georgia CA exam'), proof('users','5,400','+','student members','')], 'g-proof', direction='row'))
 
 # Steps
 def step(n, icon, h3, body):
     return C([C([H(n,'span',None,None,'g-num'), HTML('<span class="g-ico g-ico--navy">%s</span>' % ic(I[icon],26))], direction='row', justify='space-between', align='center'),
               H(h3,'h3','h3','navy'), TX('<p>%s</p>' % body,'body','slate')], 'g-step', gap=16, pad=(32,32,36,32), pad_m=(24,20,28,20))
 home.append(C([
-    head_row('Start here','How to get licensed', LINK('See the step-by-step process', SITE+'/how-to-get-licensed/')),
+    head_row('Start here','How to get licensed', BTN('See the step-by-step process', SITE+'/how-to-get-licensed/', 'g-btn-sec g-btn-big g-btn-arrow')),
     C([step('01','clip','Check which license fits','Restricted (Class 1) for units up to 5 tons, or Non-Restricted (Class 2) for all sizes. Our chart shows which one matches your experience.'),
-       step('02','play','Take the design classes','Residential Design is required for every license. Non-Restricted adds Commercial Design. Then apply to the Board online through GOALS.'),
+       step('02','play','Take the design classes','Residential Design is required for every license. Non-Restricted adds Commercial Design. Then apply to the Board online through <a href="https://sos.ga.gov/goals" target="_blank" rel="noopener">GOALS<span class="screen-reader-text"> (opens in a new tab)</span></a>.'),
        step('03','award','Prep for the exam and pass','After Board approval, take the Exam Prep Review Class, tab your books and schedule your PSI exam.')], 'g-g3 g-steps-grid', gap=24, gap_m=16),
 ], 'g-steps', boxed=True, bg='mist', pad=(304,64,104,64), pad_t=(272,40,80,40), pad_m=(240,20,64,20), extra={"margin":dims(-200,0,0,0),"margin_tablet":dims(-200,0,0,0),"margin_mobile":dims(-200,0,0,0)}, html_tag='section'))
 
