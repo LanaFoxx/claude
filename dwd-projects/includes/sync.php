@@ -98,8 +98,21 @@ function dwds_invoice_paid( $pid, $via, $id = '', $number = '' ) {
  *
  * @return string 'added', 'duplicate' or 'unmatched'.
  */
-function dwds_same_payment( $p, $source, $amount, $date ) {
+// A payment reference that isn't a real transaction/invoice number ("Express Checkout", "PayPal invoice",
+// "Logged in Dream Desk"...): these come from emails, old CSV imports or manual logging, and the same money
+// later arrives again from the PayPal/Stripe feed under its real transaction ID.
+function dwds_generic_ref( $ref ) {
+	$ref = trim( (string) $ref );
+	return '' === $ref || preg_match( '/\s/', $ref ) || ! preg_match( '/\d/', $ref );
+}
+
+// Same source, same amount, within 3 days, and at least one side without a real transaction ID.
+// (Two different real IDs = two real payments, e.g. both halves of a job paid the same day.)
+function dwds_same_payment( $p, $source, $amount, $date, $ref = '' ) {
 	if ( ! is_array( $p ) || (string) ( $p['source'] ?? '' ) !== (string) $source || 'Upwork' === $source ) {
+		return false;
+	}
+	if ( ! dwds_generic_ref( $p['ref'] ?? '' ) && ! dwds_generic_ref( $ref ) ) {
 		return false;
 	}
 	$a = round( (float) preg_replace( '/[^\d.]/', '', (string) ( $p['amount'] ?? 0 ) ), 2 );
@@ -137,10 +150,25 @@ function dwds_log_payment( $source, $email, $who, $amount, $date, $ref, $note = 
 	// The same payment can arrive twice (the invoice email and the PayPal/Stripe feed use different refs):
 	// same source, same amount, within 3 days = already logged.
 	foreach ( $pays as $p ) {
-		if ( dwds_same_payment( $p, $source, $amount, $date ) ) {
+		if ( dwds_same_payment( $p, $source, $amount, $date, $ref ) ) {
 			$seen[ $source . ':' . $ref ] = $pid;
 			update_option( 'dwds_seen_refs', $seen, false );
 			return 'duplicate';
+		}
+	}
+	// Already marked paid by hand (owed is 0) within the last 2 weeks, and now the feed brings more money from
+	// the same source: it's most likely the same money, so don't count it twice; ask Mike to check instead.
+	if ( (float) get_post_meta( $pid, '_dwdc_balance', true ) <= 0 && '' !== (string) get_post_meta( $pid, '_dwdc_balance', true ) ) {
+		foreach ( $pays as $p ) {
+			$pd = strtotime( (string) ( $p['date'] ?? '' ) );
+			if ( 'Logged in Dream Desk' === ( $p['ref'] ?? '' ) && (string) ( $p['source'] ?? '' ) === (string) $source && $pd && abs( $pd - strtotime( (string) $date ) ) <= 14 * DAY_IN_SECONDS ) {
+				if ( function_exists( 'dwdc_add_task' ) ) {
+					dwdc_add_task( sprintf( 'Check payment: %s $%s from %s (%s) came in for %s, but it was already marked paid on %s. If it is new money, log it on the project; if not, ignore this.', $source, number_format( $amount, 2 ), $who ?: $email ?: 'payer', $date, get_the_title( $pid ), $p['date'] ), $pid, current_time( 'Y-m-d' ) );
+				}
+				$seen[ $source . ':' . $ref ] = 'check';
+				update_option( 'dwds_seen_refs', $seen, false );
+				return 'check';
+			}
 		}
 	}
 	$pays[] = array( 'date' => $date, 'amount' => (string) $amount, 'source' => $source, 'ref' => $ref, 'status' => 'paid', 'note' => $note );
