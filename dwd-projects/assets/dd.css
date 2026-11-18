@@ -1124,3 +1124,7 @@ section.dd-health.warn .dd-healthb .dd-hld { background: var(--warning-text); }
 /* the floating Ask button would sit on top of the send button */
 body:has(.dwdc-addm) #dwdc-askfab { display: none !important; }
 @media (max-width: 767px) { .dwdc .dwdc-modal.dwdc-addm { padding: 26px 20px 22px !important; } }
+
+/* Toast with Undo */
+.dwdc-toast.dd-toastu { display: flex; align-items: center; gap: 14px; }
+.dwdc-toast.dd-toastu button { border: 0; background: none; color: #7DB4FF; font: inherit; font-weight: 700; cursor: pointer; padding: 4px 2px; }

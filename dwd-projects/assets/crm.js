@@ -95,6 +95,12 @@
 	function projTitle(c) { return String(c.ptitle || '').trim() || projTitleAuto(c); }
 	function projPerson(c) { var k = clientOf(c); return cleanNm(c.person) || (k && k.name) || ''; }
 	function projSite(c) { return site(c); } // the website still shows under the title, next to the client's name
+	// A toast with an Undo button (stays a little longer).
+	function toastUndo(msg, undo) {
+		var t = document.createElement('div'); t.className = 'dwdc-toast dd-toastu'; t.innerHTML = '<span></span><button type="button">Undo</button>'; t.firstChild.textContent = msg;
+		t.querySelector('button').addEventListener('click', function () { t.remove(); undo(); });
+		document.body.appendChild(t); setTimeout(function () { t.classList.add('out'); }, 5000); setTimeout(function () { t.remove(); }, 5500);
+	}
 	function toast(msg, bad) {
 		var t = document.createElement('div'); t.className = 'dwdc-toast' + (bad ? ' bad' : ''); t.textContent = msg;
 		document.body.appendChild(t); setTimeout(function () { t.classList.add('out'); }, 2200); setTimeout(function () { t.remove(); }, 2700);
@@ -1443,7 +1449,8 @@
 				}
 				if (it.todo) { return '<div class="dd-tl-r td"><span class="dd-tl-t">' + esc(it.time) + '</span><button type="button" class="dd-tl-chk" ' + (it.todo === 'w' ? 'data-toggle' : 'data-ptoggle') + '="' + it.tid + '" aria-label="Mark done"></button><div class="dd-tl-c" data-schedtask="' + it.todo + ':' + it.tid + '" role="button" tabindex="0"><b>' + esc(it.title) + '</b><small>' + esc(it.sub) + '</small></div>' + (it.late ? resetBtn(it.todo + ':' + it.tid, 'sm') : '') + '</div>'; }
 				var evK = T + '|' + (it.id || (it.title + '|' + it.time)), evD = !!evDone()[evK];
-				return '<div class="dd-tl-r ev' + (it.ended || evD ? ' past' : '') + (evD ? ' evdone' : '') + '"><span class="dd-tl-t">' + esc(it.time) + '</span><button type="button" class="dd-tl-chk dd-evchk ' + (it.biz ? 'biz' : 'pers') + (evD ? ' on' : '') + '" data-evdone="' + esc(evK) + '" aria-label="' + (evD ? 'Mark not done' : 'Mark done') + '" aria-pressed="' + evD + '">' + (evD ? lu('check', 12) : '') + '</button><div class="dd-tl-c"' + (it.id ? ' data-ptask="' + it.id + '" role="button" tabindex="0"' : '') + '>' + (it.link ? '<a href="' + esc(it.link) + '" target="_blank" rel="noopener">' + esc(it.title) + '</a>' : '<b>' + esc(it.title) + '</b>') + '<small>' + esc(it.sub) + '</small></div>'
+				if (evD) { return ''; } // ticked off: gone from the schedule (Undo is in the toast)
+				return '<div class="dd-tl-r ev' + (it.ended || evD ? ' past' : '') + (evD ? ' evdone' : '') + '"><span class="dd-tl-t">' + esc(it.time) + '</span><button type="button" class="dd-tl-chk dd-evchk ' + (it.biz ? 'biz' : 'pers') + (evD ? ' on' : '') + '" data-evdone="' + esc(evK) + '"' + (it.id ? ' data-evpid="' + esc(it.id) + '"' : '') + ' aria-label="' + (evD ? 'Mark not done' : 'Mark done') + '" aria-pressed="' + evD + '">' + (evD ? lu('check', 12) : '') + '</button><div class="dd-tl-c"' + (it.id ? ' data-ptask="' + it.id + '" role="button" tabindex="0"' : '') + '>' + (it.link ? '<a href="' + esc(it.link) + '" target="_blank" rel="noopener">' + esc(it.title) + '</a>' : '<b>' + esc(it.title) + '</b>') + '<small>' + esc(it.sub) + '</small></div>'
 					+ (it.link && !it.ended ? '<a class="dd-btn primary sm dd-join" href="' + esc(it.link) + '" target="_blank" rel="noopener">Join</a>' : '') + '</div>';
 			}).join('') : '<p class="dd-empty-l">Nothing scheduled today.</p>')
 			+ (S.schedAdd ? '<form class="dd-tl-add" data-pform="pdayadd"><input type="hidden" name="due" value="' + T + '"><input name="text" placeholder="Add a to-do for ' + dObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + '…" autocomplete="off" required>'
@@ -5129,7 +5136,17 @@
 		if ((el = t.closest('[data-billmove]'))) { var bmv = (pData().bills || []).find(function (x) { return x.id === el.getAttribute('data-billmove'); }); S.billMenu = 0; if (bmv) { var nb = JSON.parse(JSON.stringify(bmv)); nb.scope = bmv.scope === 'business' ? 'personal' : 'business'; pSave('bills', nb, 'Moved to ' + (nb.scope === 'business' ? 'Business' : 'Personal')); } return; }
 		if ((el = t.closest('[data-billmenu]'))) { e.stopPropagation(); var bmid = el.getAttribute('data-billmenu'); S.billMenu = S.billMenu === bmid ? 0 : bmid; S.subLabel = 0; render(); return; }
 		if ((el = t.closest('[data-sublabel]'))) { e.stopPropagation(); var slm = el.getAttribute('data-sublabel'); S.subLabel = S.subLabel === slm ? 0 : slm; S.billMenu = 0; render(); return; }
-		if ((el = t.closest('[data-evdone]'))) { var ek = el.getAttribute('data-evdone'), ed0 = evDone(), ed1 = {}; Object.keys(ed0).forEach(function (k) { if (k.slice(0, 10) >= DWDC.today) { ed1[k] = 1; } }); if (ed1[ek]) { delete ed1[ek]; } else { ed1[ek] = 1; } ddSet('dreamdesk-ev-done', JSON.stringify(ed1)); render(); return; }
+		if ((el = t.closest('[data-evdone]'))) {
+			var ek = el.getAttribute('data-evdone'), epid = el.getAttribute('data-evpid'), ed0 = evDone(), ed1 = {}; Object.keys(ed0).forEach(function (k) { if (k.slice(0, 10) >= DWDC.today) { ed1[k] = 1; } });
+			var setEv = function (on) { if (on) { ed1[ek] = 1; } else { delete ed1[ek]; } ddSet('dreamdesk-ev-done', JSON.stringify(ed1)); };
+			var was = !!ed1[ek]; setEv(!was);
+			// A Google Calendar item is also marked done in Dream Desk, so it's gone on every device.
+			var ePD = epid ? pData() : null, eIt = ePD && (ePD.todos || []).find(function (x) { return String(x.id) === epid; });
+			if (eIt) { eIt.done = !was; pSave('todos', eIt); }
+			render();
+			if (!was) { toastUndo('Done · taken off today’s schedule', function () { setEv(false); if (eIt) { eIt.done = false; pSave('todos', eIt); } render(); }); }
+			return;
+		}
 		if ((el = t.closest('[data-attign]'))) { var ig = {}; try { ig = JSON.parse(ddGet('dreamdesk-att-ignored', '{}')) || {}; } catch (e2) { ig = {}; } var fv = !!el.getAttribute('data-forever'); ig[el.getAttribute('data-attign')] = fv ? -1 : Date.now() + 864e5; ddSet('dreamdesk-att-ignored', JSON.stringify(ig)); render(); toast(fv ? 'Dismissed for good' : 'Hidden for 24 hours'); return; }
 		if ((el = t.closest('[data-azip]'))) {
 			var zid = +el.getAttribute('data-azip'); S.azBusy = S.azBusy || {}; if (S.azBusy[zid]) { return; }
