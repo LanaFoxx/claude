@@ -314,15 +314,22 @@ add_action( 'admin_footer-index.php', function () {
  */
 function dwdmm_made_month() {
 	$month = current_time( 'Y-m' );
-	$out   = array( 'total' => 0, 'Upwork' => 0, 'PayPal' => 0, 'Stripe' => 0, 'count' => 0, 'items' => array() );
+	// Same rules as the Money page's "Made in <month>" (dwdc_money_by_year), so the two always agree.
+	$out   = array( 'total' => 0, 'Upwork' => 0, 'PayPal' => 0, 'Stripe' => 0, 'Other' => 0, 'count' => 0, 'items' => array() );
 	foreach ( get_posts( array( 'post_type' => DWDC_CONTACT, 'post_status' => 'private', 'posts_per_page' => -1, 'fields' => 'ids' ) ) as $id ) {
 		foreach ( (array) get_post_meta( $id, '_dwdc_payments', true ) as $x ) {
-			$src = is_array( $x ) ? (string) ( $x['source'] ?? '' ) : '';
-			if ( ! in_array( $src, array( 'Upwork', 'PayPal', 'Stripe' ), true ) || 'held' === ( $x['status'] ?? 'paid' ) || 0 !== strpos( (string) ( $x['date'] ?? '' ), $month ) ) {
+			if ( ! is_array( $x ) ) {
 				continue;
 			}
-			$amt          = (float) preg_replace( '/[^\d.\-]/', '', (string) ( $x['amount'] ?? 0 ) );
-			$out[ $src ] += $amt;
+			$st  = strtolower( (string) ( $x['status'] ?? 'paid' ) );
+			$amt = (float) preg_replace( '/[^\d.]/', '', (string) ( $x['amount'] ?? 0 ) );
+			if ( in_array( $st, array( 'open', 'void', 'draft', 'failed', 'uncollectible', 'held' ), true ) || $amt <= 0 || 0 !== strpos( (string) ( $x['date'] ?? '' ), $month ) ) {
+				continue;
+			}
+			$amt *= 'refunded' === $st ? -1 : 1;
+			$src  = (string) ( $x['source'] ?? '' );
+			$out[ in_array( $src, array( 'Upwork', 'PayPal', 'Stripe' ), true ) ? $src : 'Other' ] += $amt;
+			$src  = $src ?: 'Other';
 			$out['total'] += $amt;
 			$out['count']++;
 			$out['items'][] = array( 'id' => (int) $id, 'name' => html_entity_decode( get_the_title( $id ), ENT_QUOTES, 'UTF-8' ), 'date' => (string) $x['date'], 'earned' => (string) ( $x['earned'] ?? '' ), 'amount' => $amt, 'source' => $src, 'note' => trim( preg_replace( '/^From Upwork · |\s*\(Pending\)$/', '', (string) ( $x['note'] ?? '' ) ) ) ); // the note without the old "pending" label

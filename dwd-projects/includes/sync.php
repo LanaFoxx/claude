@@ -157,11 +157,11 @@ function dwds_log_payment( $source, $email, $who, $amount, $date, $ref, $note = 
 		}
 	}
 	// Already marked paid by hand (owed is 0) within the last 2 weeks, and now the feed brings more money from
-	// the same source: it's most likely the same money, so don't count it twice; ask Mike to check instead.
+	// the same source (or the hand entry was "Other", e.g. marked paid before the PayPal money showed up): it's most likely the same money, so don't count it twice; ask Mike to check instead.
 	if ( (float) get_post_meta( $pid, '_dwdc_balance', true ) <= 0 && '' !== (string) get_post_meta( $pid, '_dwdc_balance', true ) ) {
 		foreach ( $pays as $p ) {
 			$pd = strtotime( (string) ( $p['date'] ?? '' ) );
-			if ( 'Logged in Dream Desk' === ( $p['ref'] ?? '' ) && (string) ( $p['source'] ?? '' ) === (string) $source && $pd && abs( $pd - strtotime( (string) $date ) ) <= 14 * DAY_IN_SECONDS ) {
+			if ( 'Logged in Dream Desk' === ( $p['ref'] ?? '' ) && ( (string) ( $p['source'] ?? '' ) === (string) $source || ! in_array( (string) ( $p['source'] ?? '' ), array( 'PayPal', 'Stripe', 'Upwork' ), true ) ) && $pd && abs( $pd - strtotime( (string) $date ) ) <= 14 * DAY_IN_SECONDS ) {
 				if ( function_exists( 'dwdc_add_task' ) ) {
 					dwdc_add_task( sprintf( 'Check payment: %s $%s from %s (%s) came in for %s, but it was already marked paid on %s. If it is new money, log it on the project; if not, ignore this.', $source, number_format( $amount, 2 ), $who ?: $email ?: 'payer', $date, get_the_title( $pid ), $p['date'] ), $pid, current_time( 'Y-m-d' ) );
 				}
