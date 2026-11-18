@@ -1136,3 +1136,8 @@ body:has(.dwdc-addm) #dwdc-askfab { display: none !important; }
 .dd-payrm-b{display:grid;gap:10px;margin-top:14px}
 .dwdc-modal .dd-payrm-b button{display:flex !important;flex-direction:column;align-items:flex-start !important;justify-content:center;width:100%;gap:3px;text-align:left !important;padding:12px 14px;height:auto;white-space:normal}
 .dwdc-modal .dd-payrm-b button small{font-weight:400;opacity:.8;font-size:12.5px}
+
+/* Month payments pop-up: Total pill and ‹ Oct / Dec › buttons readable in the dark theme */
+.dd .dwdc-mo-sum span.all { background: var(--accent) !important; border-color: var(--accent) !important; color: rgba(255,255,255,.85) !important; }
+.dd .dwdc-mo-sum span.all b { color: #fff !important; }
+.dd .dwdc-modal .dwdc-btn2:hover { background: var(--accent) !important; border-color: var(--accent) !important; color: #fff !important; }
