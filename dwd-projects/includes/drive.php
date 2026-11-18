@@ -36,6 +36,7 @@ function doPost(e) {
   var b = {};
   try { b = JSON.parse(e.postData.contents || '{}'); } catch (err) { return out({ error: 'Bad request' }); }
   if (b.token !== TOKEN) { return out({ error: 'Wrong token' }); }
+  if (b.ga) { return out(ga_(String(b.ga))); }
   if (b.list) { return out(list_(String(b.list))); }
   if (b.get) { return out(get_(String(b.get))); }
   if (b.ping) { return out({ ok: true, parent: parent_().getUrl() }); }
@@ -73,6 +74,40 @@ function get_(id) {
   var mt = f.getMimeType(), google = mt.indexOf('application/vnd.google-apps.') === 0, blob;
   try { blob = google ? f.getAs('application/pdf') : f.getBlob(); } catch (err) { return { error: 'This kind of file can\\'t be downloaded' }; }
   return { name: f.getName() + (google ? '.pdf' : ''), mime: blob.getContentType(), b64: Utilities.base64Encode(blob.getBytes()), version: 3 };
+}
+/**
+ * Google Analytics for the WordPress Dashboard (version 4). Needs the "Google Analytics Data API" service:
+ * in this editor, Services (+) → Google Analytics Data API → Add.
+ */
+function ga_(id) {
+  if (typeof AnalyticsData === 'undefined') { return { error: 'Add the Google Analytics Data API service to the script (Services +), then deploy a new version', version: 4 }; }
+  var prop = 'properties/' + id.replace(/[^0-9]/g, ''), M = function (n) { return { name: n }; };
+  var totals = function (start, end) {
+    var r = AnalyticsData.Properties.runReport({ dateRanges: [{ startDate: start, endDate: end }], metrics: [M('activeUsers'), M('sessions'), M('screenPageViews'), M('newUsers'), M('averageSessionDuration')] }, prop);
+    var v = r.rows && r.rows[0] ? r.rows[0].metricValues.map(function (x) { return Number(x.value); }) : [0, 0, 0, 0, 0];
+    return { users: v[0], sessions: v[1], views: v[2], newUsers: v[3], avgSec: Math.round(v[4]) };
+  };
+  var top = function (dim, metric, start, n) {
+    var r = AnalyticsData.Properties.runReport({ dateRanges: [{ startDate: start, endDate: 'today' }], dimensions: [{ name: dim }], metrics: [M(metric)], orderBys: [{ metric: { metricName: metric }, desc: true }], limit: n }, prop);
+    return (r.rows || []).map(function (x) { return { k: x.dimensionValues[0].value, v: Number(x.metricValues[0].value) }; });
+  };
+  var now = 0;
+  try { var rt = AnalyticsData.Properties.runRealtimeReport({ metrics: [M('activeUsers')] }, prop); now = rt.rows && rt.rows[0] ? Number(rt.rows[0].metricValues[0].value) : 0; } catch (e) {}
+  var ev = top('eventName', 'eventCount', '30daysAgo', 50), evs = {};
+  ev.forEach(function (x) { evs[x.k] = x.v; });
+  var ev7 = top('eventName', 'eventCount', '7daysAgo', 50), evs7 = {};
+  ev7.forEach(function (x) { evs7[x.k] = x.v; });
+  return {
+    version: 4, now: now,
+    today: totals('today', 'today'), yesterday: totals('yesterday', 'yesterday'),
+    d7: totals('7daysAgo', 'today'), p7: totals('14daysAgo', '8daysAgo'),
+    d30: totals('30daysAgo', 'today'), p30: totals('60daysAgo', '31daysAgo'),
+    pages: top('pagePath', 'screenPageViews', '7daysAgo', 8),
+    sources: top('sessionDefaultChannelGroup', 'sessions', '7daysAgo', 6),
+    cities: top('city', 'activeUsers', '7daysAgo', 6),
+    leads7: evs7.generate_lead || 0, calls7: evs7.phone_call_click || 0,
+    leads30: evs.generate_lead || 0, calls30: evs.phone_call_click || 0
+  };
 }
 /** Run once from the editor so Google asks for Drive access. */
 function setup() { Logger.log(parent_().getUrl()); }

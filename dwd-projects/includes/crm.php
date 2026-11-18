@@ -1589,7 +1589,7 @@ function dwdc_vars( $mode = 'admin' ) {
 		'mark'       => DWDP_URL . 'assets/db-mark.png',
 		'logout' => html_entity_decode( wp_logout_url( admin_url( 'admin.php?page=client-desk' ) ) ),
 		'wp'     => admin_url(),
-		'wpadmin' => admin_url( 'edit.php?post_type=page' ), // WordPress admin (the Dashboard itself redirects back to Dream Desk)
+		'wpadmin' => admin_url( 'index.php' ), // WordPress admin: the Dashboard (wpdash.php); only the bare /wp-admin/ opens Dream Desk
 		'home'   => home_url( '/' ),
 		'user'   => wp_get_current_user()->display_name,
 	);
