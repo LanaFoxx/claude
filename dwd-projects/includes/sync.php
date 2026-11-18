@@ -1630,6 +1630,108 @@ add_action( 'rest_api_init', function () {
 } );
 
 
+/* ---------- New lead -> Quo contact, automatically ----------
+ * Every new lead in Dream Desk that has a phone number becomes a contact in Quo, so their calls and texts show
+ * with a name. Runs 5 minutes after the lead is created (spam is weeded out first), only once per lead, and never
+ * adds a number that is already a Quo contact.
+ */
+function dwdq_contact_numbers( $fresh = false ) {
+	$have = $fresh ? false : get_transient( 'dwdq_have_numbers' );
+	if ( is_array( $have ) ) {
+		return $have;
+	}
+	$have = array();
+	$tok  = '';
+	for ( $i = 0; $i < 60; $i++ ) {
+		$j = dwdq_call( 'GET', '/contacts?maxResults=50' . ( $tok ? '&pageToken=' . rawurlencode( $tok ) : '' ) );
+		if ( is_wp_error( $j ) ) {
+			return $j; // can't tell who is already a contact: add nobody
+		}
+		foreach ( (array) ( $j['data'] ?? array() ) as $c ) {
+			foreach ( (array) ( $c['defaultFields']['phoneNumbers'] ?? array() ) as $ph ) {
+				$n = dwdq_e164( (string) ( $ph['value'] ?? '' ) );
+				if ( '' !== $n ) {
+					$have[ $n ] = 1;
+				}
+			}
+		}
+		$tok = (string) ( $j['nextPageToken'] ?? '' );
+		if ( '' === $tok ) {
+			break;
+		}
+	}
+	set_transient( 'dwdq_have_numbers', $have, HOUR_IN_SECONDS );
+	return $have;
+}
+
+function dwdq_lead_to_quo( $id, $dry = false ) {
+	$id = (int) $id;
+	if ( ! get_option( 'dwds_quo_key', '' ) || DWDC_CONTACT !== get_post_type( $id ) || 'trash' === get_post_status( $id ) || get_post_meta( $id, '_dwdq_contact', true ) ) {
+		return 'skipped';
+	}
+	if ( 'leads' !== get_post_meta( $id, '_dwdc_list', true ) ) {
+		return 'not a lead';
+	}
+	$phone = dwdq_e164( (string) get_post_meta( $id, '_dwdc_phone', true ) );
+	if ( '' === $phone ) {
+		$dry || update_post_meta( $id, '_dwdq_contact', 'no phone' );
+		return 'no phone';
+	}
+	$have = dwdq_contact_numbers();
+	if ( is_wp_error( $have ) ) {
+		$dry || wp_schedule_single_event( time() + HOUR_IN_SECONDS, 'dwdq_lead_contact', array( $id ) ); // Quo didn't answer: try again later
+		return 'retry';
+	}
+	if ( isset( $have[ $phone ] ) ) {
+		$dry || update_post_meta( $id, '_dwdq_contact', 'already in Quo' );
+		return 'already in Quo';
+	}
+	$title  = html_entity_decode( (string) get_the_title( $id ), ENT_QUOTES, 'UTF-8' );
+	$person = trim( (string) get_post_meta( $id, '_dwdc_person', true ) );
+	$name   = '' !== $person ? $person : $title;
+	$parts  = preg_split( '/\s+/', $name, 2 );
+	$fields = array( 'firstName' => (string) $parts[0], 'phoneNumbers' => array( array( 'name' => 'mobile', 'value' => $phone ) ) );
+	if ( ! empty( $parts[1] ) ) {
+		$fields['lastName'] = (string) $parts[1];
+	}
+	$company = trim( (string) get_post_meta( $id, '_dwdc_company', true ) ) ?: ( '' !== $person && $title !== $person ? $title : '' );
+	if ( '' !== $company ) {
+		$fields['company'] = $company;
+	}
+	$email = strtolower( trim( (string) get_post_meta( $id, '_dwdc_email', true ) ) );
+	if ( is_email( $email ) ) {
+		$fields['emails'] = array( array( 'name' => 'email', 'value' => $email ) );
+	}
+	if ( $dry ) {
+		return array( 'would_add' => $fields );
+	}
+	$r = dwdq_call( 'POST', '/contacts', array( 'defaultFields' => $fields, 'source' => 'dream-desk', 'externalId' => 'dreamdesk-' . $id . '-' . preg_replace( '/\D/', '', $phone ) ) );
+	if ( is_wp_error( $r ) ) {
+		update_post_meta( $id, '_dwdq_contact', 'failed: ' . $r->get_error_message() );
+		return 'failed';
+	}
+	$have[ $phone ] = 1;
+	set_transient( 'dwdq_have_numbers', $have, HOUR_IN_SECONDS );
+	update_post_meta( $id, '_dwdq_contact', current_time( 'mysql' ) );
+	$notes   = (array) get_post_meta( $id, '_dwdc_notes', true );
+	$notes[] = array( 'date' => current_time( 'mysql', true ), 'text' => 'Added to Quo contacts as ' . $name . ' (' . $phone . ').' );
+	update_post_meta( $id, '_dwdc_notes', array_values( array_filter( $notes ) ) );
+	return 'added';
+}
+add_action( 'dwdq_lead_contact', 'dwdq_lead_to_quo' );
+add_action( 'rest_api_init', function () {
+	// What the rule would do for one lead, without adding anything (GET ?id=).
+	register_rest_route( 'dwd/v1', '/crm/quo/lead-check', array( 'methods' => 'GET', 'permission_callback' => function () { return current_user_can( 'manage_options' ); }, 'callback' => function ( $r ) {
+		return array( 'result' => dwdq_lead_to_quo( (int) $r->get_param( 'id' ), true ), 'marked' => get_post_meta( (int) $r->get_param( 'id' ), '_dwdq_contact', true ) );
+	} ) );
+} );
+// A new project/lead post: check it in 5 minutes (by then the form's fields are saved and spam is filtered out).
+add_action( 'wp_insert_post', function ( $id, $post, $update ) {
+	if ( ! $update && DWDC_CONTACT === $post->post_type && ! wp_next_scheduled( 'dwdq_lead_contact', array( (int) $id ) ) ) {
+		wp_schedule_single_event( time() + 5 * MINUTE_IN_SECONDS, 'dwdq_lead_contact', array( (int) $id ) );
+	}
+}, 10, 3 );
+
 /* ---------------------------------------------------------------- Meeting transcripts (Fireflies)
  * Fireflies records the Zoom / Meet calls. With your Fireflies API key (Connections) Dream Desk pulls each
  * meeting's summary and action items every hour, files it on the client's project (matched by the guest's
