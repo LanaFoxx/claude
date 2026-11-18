@@ -1177,7 +1177,9 @@
 	function evDone() { var d = {}; try { d = JSON.parse(ddGet('dreamdesk-ev-done', '{}')) || {}; } catch (e) { d = {}; } return d; }
 	// Files the client added since the last export (count kept by sync.php).
 	function newPill(c) { var n = +(c && c.new_assets_n) || 0; return n ? '<span class="dd-newf" title="Added by the client since your last export">' + n + ' new file' + (n === 1 ? '' : 's') + '</span>' : ''; }
+	// "New email" / "Waiting on you" pills next to project titles: switched off (Mike doesn't want them).
 	function mailPill(owner) {
+		return '';
 		var n = +mailNewMap()[owner] || 0;
 		return n ? '<span class="dd-pill danger dd-mnew">' + (n > 1 ? n + ' new emails' : 'New email') + '</span>' : '';
 	}
@@ -1186,6 +1188,7 @@
 	function waitHow(w) { return w.via === 'Upwork' ? 'Upwork message' : w.via === 'text' ? 'Text' : 'Email'; }
 	function isQuiet(c) { return !!(c.wait && c.wait.who === 'client' && c.wait.days >= 7 && (c.list === 'active' || c.list === 'leads')); }
 	function waitPill(c) {
+		return '';
 		var w = c && c.wait;
 		if (!w || !w.who) { return ''; }
 		if (w.who === 'you') { return '<span class="dd-pill warning dd-wpill" title="' + waitHow(w) + ' from the client, not answered yet">Waiting on you · ' + waitAge(w) + '</span>'; }
@@ -3694,8 +3697,7 @@
 		var started = imported(c) || !c.created ? '' : String(c.created).slice(0, 10);
 		var sub = [c.job ? esc(c.job) : '', site(c) ? '<a href="https://' + esc(site(c)) + '" target="_blank" rel="noopener">' + esc(site(c)) + '</a>' : '', c.lead_source ? 'Lead from ' + esc(c.lead_source) : '', started ? 'Started ' + fmt(started) : ''].filter(Boolean).join(' · ');
 		var head = '<div class="dd-pp-head"><span class="dd-pp-av">' + esc(ddInitials(projTitle(c))) + '</span><div class="dd-pp-t"><div class="dd-pp-h1"><h1>' + esc(projTitle(c)) + '</h1>' + ddPill(stLabel, stTone) + (payState ? ddPill(payState, payTone) : '') + (num(c.hosting) ? ddPill('Hosting', 'neutral') : '')
-			+ (c.wait && c.wait.who === 'you' ? '<span class="dd-pp-wait">' + waitPill(c) + '<button type="button" class="dd-lnk sm" data-waitclear="' + c.id + '">No reply needed</button></span>'
-				: c.wait && c.wait.who === 'client' ? '<span class="dd-pp-wait">' + ddPill('Waiting on client · ' + waitAge(c.wait), isQuiet(c) ? 'warning' : 'neutral') + (isQuiet(c) && em ? '<button type="button" class="dd-lnk sm" data-followup="' + c.id + '">Follow up</button>' : '') + '</span>' : '') + '</div>'
+			+ '</div>' // no reply / new email notices next to the title
 			+ (sub ? '<p>' + sub + '</p>' : '') + '</div><div class="dd-pp-acts">' + meetBtn(c) + main
 			+ '<div class="pv3-more dd-pp-more"><button type="button" class="dd-btn secondary icon" data-pmore aria-haspopup="menu" aria-label="More actions">' + lu('more-horizontal') + '</button><div class="pv3-menu dd-menu2" role="menu">' + menu + '</div></div></div></div>';
 		// money strip
