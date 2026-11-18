@@ -1,6 +1,6 @@
 import { chromium } from '/opt/node-tools/node_modules/playwright/index.mjs';
 const S = process.argv[2];
-const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', proxy: { server: process.env.HTTPS_PROXY } });
+const b = await chromium.launch({ proxy: { server: process.env.HTTPS_PROXY } });
 const p = await b.newPage({ viewport: { width: 1440, height: 900 } });
 await p.goto('https://taxcoursefinder.com/?v=' + Date.now(), { waitUntil: 'networkidle' });
 await p.locator('input[placeholder^="Search"]').first().fill('Preparer'); await p.waitForTimeout(800);

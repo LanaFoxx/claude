@@ -1,7 +1,7 @@
 import { chromium } from '/opt/node-tools/node_modules/playwright/index.mjs';
 const base = process.argv[2] || 'http://127.0.0.1:8765/__';
 const sfx = process.argv[3] ?? '.html';
-const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' });
+const b = await chromium.launch({});
 const p = await b.newPage({ viewport: { width: 1440, height: 900 } });
 p.on('pageerror', e => console.log('ERR', e.message));
 await p.goto(base + (sfx === '' ? '' : 'home' + sfx), { waitUntil: 'networkidle' });

@@ -4,7 +4,7 @@ const S = process.argv[2];
 const hf = JSON.parse(fs.readFileSync(S + '/build/hf.json'));
 const hover = JSON.parse(fs.readFileSync(S + '/build/hover.json')).hover_css;
 const media = s => s.replace(/@@MEDIA:([^@]+)@@/g, '/assets/$1');
-const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' });
+const b = await chromium.launch({});
 for (const slug of process.argv.slice(3)) {
   const pg = JSON.parse(fs.readFileSync(`${S}/build/pages/${slug}.json`));
   fs.writeFileSync(`${S}/pre/__${slug}.html`, `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=Source+Serif+4:opsz,wght@8..60,200;8..60,300;8..60,400&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/site.css"><style>${hover}</style></head><body>${media(hf.header)}<main>${media(pg.widget.replace('@@SSR@@', pg.ssr))}</main>${media(hf.footer)}</body></html>`);

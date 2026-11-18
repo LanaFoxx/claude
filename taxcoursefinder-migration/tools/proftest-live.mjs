@@ -1,0 +1,37 @@
+import { chromium } from '/opt/node-tools/node_modules/playwright/index.mjs';
+import fs from 'fs';
+const S = process.argv[2], W = +(process.argv[3] || 1350);
+const b = await chromium.launch({ proxy: { server: process.env.HTTPS_PROXY } });
+const ctx = await b.newContext({ viewport: { width: W, height: 900 }, isMobile: W < 500, hasTouch: W < 500 });
+let posted = '';
+await ctx.route('**/wp-admin/admin-ajax.php', async r => {
+  const body = r.request().postData() || '';
+  if (body.includes('tcfd_listing_submit')) { posted = body; return r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ success: true, data: { receipt: 'test', part: 'profile' } }) }); }
+  return r.continue();
+});
+const p = await ctx.newPage(); const errs = []; p.on('pageerror', e => errs.push(e.message));
+const out = (...a) => console.log(...a);
+await p.goto('https://taxcoursefinder.com/create-your-school-profile/', { waitUntil: 'networkidle' }); await p.evaluate(() => localStorage.clear()); await p.reload({ waitUntil: 'networkidle' }); await p.waitForTimeout(800);
+const vis = () => p.evaluate(() => [...document.querySelectorAll('[data-tcf-step]')].filter(s => s.offsetParent).map(s => s.getAttribute('data-tcf-step')).join(','));
+const next = async () => { await p.locator('.tcf-step-on .tcf-next').click(); await p.waitForTimeout(400); };
+out('start', await vis(), await p.locator('.tcf-form-intro').innerText());
+await p.fill('[name=school_name]', 'Test School'); await p.fill('[name=contact_name]', 'Pat'); await p.fill('[name=contact_email]', 'pat@example.com'); await next();
+out('->', await vis());
+await p.fill('[name=intro]', 'We teach tax.'); await p.screenshot({ path: `${S}/shots/pf-${W}-2.png` }); await next();
+out('->', await vis(), 'option rows visible before tick:', await p.locator('[name=ce_opt1_label]').isVisible());
+await p.locator('[data-tcf-toggle=ce_sold]').check(); await p.waitForTimeout(200);
+out('after tick:', await p.locator('[name=ce_opt1_label]').isVisible(), 'qe:', await p.locator('[name=qe_opt1_label]').isVisible());
+await p.fill('[name=ce_opt1_price]', '49'); await next();
+out('missing label ->', await vis(), await p.locator('[data-tcf-err]:visible').allInnerTexts());
+await p.fill('[name=ce_opt1_label]', 'Online video'); await p.selectOption('[name=ce_attempts]', 'Unlimited');
+await p.screenshot({ path: `${S}/shots/pf-${W}-3.png` }); await next();
+out('->', await vis());
+await p.locator('[value=email_support]').check(); await p.fill('[name=support_email]', 'help@example.com'); await next();
+out('->', await vis(), 'review:', (await p.locator('[data-tcf-review]').innerText()).replace(/\n+/g, ' | ').slice(0, 500));
+await p.screenshot({ path: `${S}/shots/pf-${W}-5.png`, fullPage: true });
+await p.waitForTimeout(600); await p.reload({ waitUntil: 'networkidle' }); await p.waitForTimeout(900);
+out('reload:', await vis(), '| toggle restored:', await p.locator('[data-tcf-toggle=ce_sold]').isChecked(), 'opt:', await p.inputValue('[name=ce_opt1_label]'), '| note:', (await p.locator('.tcf-draft-note').innerText()).replace(/\n/g, ' '));
+await p.locator('[name=confirm]').check(); await p.locator('.tcf-step-on [type=submit]').click(); await p.waitForTimeout(1500);
+out('submitted text:', (await p.locator('[role=status]').first().innerText().catch(() => '')).slice(0, 80), '| sent opt:', posted.includes('Online video'), 'qe opt sent:', /name="qe_opt1_label"/.test(posted));
+out('draft:', await p.evaluate(() => localStorage.getItem('tcf_form_draft_profile')), 'errors', errs);
+await b.close();

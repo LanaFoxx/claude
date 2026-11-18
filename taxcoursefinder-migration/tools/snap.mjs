@@ -1,7 +1,7 @@
 import { chromium } from '/opt/node-tools/node_modules/playwright/index.mjs';
 import fs from 'fs';
 const out = process.argv[2]; const files = process.argv.slice(3);
-const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' });
+const b = await chromium.launch({});
 for (const f of files) {
   const w = f.includes('Mobile') ? 390 : 1440;
   const p = await b.newPage({ viewport: { width: w, height: 900 } });

@@ -5,7 +5,7 @@ const hf = JSON.parse(fs.readFileSync(S + '/build/hf.json'));
 const hover = JSON.parse(fs.readFileSync(S + '/build/hover.json')).hover_css;
 // Render with the same runtime and stylesheet that get published.
 for (const f of ['tcf-runtime.js', 'site.css']) fs.copyFileSync(S + '/build/' + f, S + '/pre/' + f);
-const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' });
+const b = await chromium.launch({});
 fs.mkdirSync(S + '/shots', { recursive: true });
 const media = s => s.replace(/@@MEDIA:([^@]+)@@/g, '/assets/$1');
 for (const f of fs.readdirSync(S + '/build/pages')) {
@@ -33,10 +33,10 @@ ${media(hf.header)}<main>${media(pg.widget.replace('@@SSR@@', ssr))}</main>${med
   await m.waitForTimeout(800);
   const ov = await m.evaluate(() => document.documentElement.scrollWidth);
   // Pages with a separate phone template (home): keep the phone render too, so phones never flash the desktop layout.
-  if (pg.widget.includes(pg.rid + '-mtpl')) {
+  if (pg.widget.includes('<template id="' + pg.rid + '-mtpl"')) {  // only pages with a real phone template (the home page)
     pg.ssr_m = await m.evaluate((rid) => document.getElementById(rid + '-root').innerHTML, pg.rid);
     fs.writeFileSync(S + '/build/pages/' + f, JSON.stringify(pg, null, 1));
-  }
+  } else if (pg.ssr_m) { delete pg.ssr_m; fs.writeFileSync(S + '/build/pages/' + f, JSON.stringify(pg, null, 1)); }
   await m.screenshot({ path: `${S}/shots/${pg.slug}-m.png`, fullPage: true });
   await m.close();
   console.log('ok', pg.slug, ssr.length, 'mobile scrollWidth', ov);

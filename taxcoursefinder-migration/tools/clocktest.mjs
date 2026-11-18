@@ -1,7 +1,7 @@
 import { chromium } from '/opt/node-tools/node_modules/playwright/index.mjs';
 import fs from 'fs';
 const S = process.argv[2];
-const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', proxy: { server: process.env.HTTPS_PROXY } });
+const b = await chromium.launch({ proxy: { server: process.env.HTTPS_PROXY } });
 for (const [label, iso, tz] of [['Oct 31 11:58 PM PT (viewer in New York)', '2026-11-01T06:58:00Z', 'America/New_York'], ['Nov 1 12:01 AM PT (viewer in LA)', '2026-11-01T07:01:00Z', 'America/Los_Angeles'], ['Jan 10 2027', '2027-01-10T18:00:00Z', 'America/Los_Angeles']]) {
   for (const w of [1440, 390]) {
     const ctx = await b.newContext({ viewport: { width: w, height: 900 }, timezoneId: tz, isMobile: w < 500 });

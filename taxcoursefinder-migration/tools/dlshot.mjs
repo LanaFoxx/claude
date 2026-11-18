@@ -1,7 +1,7 @@
 import { chromium } from '/opt/node-tools/node_modules/playwright/index.mjs';
 import fs from 'fs';
 const S = process.argv[2], live = process.argv[3]==='live';
-const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', proxy: { server: process.env.HTTPS_PROXY } });
+const b = await chromium.launch({ proxy: { server: process.env.HTTPS_PROXY } });
 for (const [slug,w,sel] of [['home',1280,'text=Final CTEC renewal deadline, text=CTEC renewal deadline'],['home',390,'[data-cdm-note]'],['ctec-20-hour-course',390,'[data-cdm-note]']]) {
   const ctx = await b.newContext({ viewport: { width: w, height: 900 }, isMobile: w<500, hasTouch: w<500 });
   if(!live) await ctx.route(u => u.href.includes('?pv='), r => r.fulfill({ status: 200, contentType: 'text/html; charset=utf-8', body: fs.readFileSync(`${S}/pv/${slug}.html`, 'utf8') }));

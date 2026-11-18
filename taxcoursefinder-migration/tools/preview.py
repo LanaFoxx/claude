@@ -12,7 +12,9 @@ for slug in slugs:
     head = live[:live.index('<body')]
     body_tag = re.search(r'<body[^>]*>', live).group(0)
     tail = live[live.rindex('<script type="speculationrules"') if '<script type="speculationrules"' in live else live.rindex('</body>'):]
-    doc = (head + body_tag + '<div class="elementor-location-header">' + hdr + '</div>' + page_html(pg) +
+    body = page_html(pg)
+    if slug in ('provider-application', 'create-your-school-profile'): body += '<script>' + open(B + '/listing-submit.js').read() + '</script>'
+    doc = (head + body_tag + '<div class="elementor-location-header">' + hdr + '</div>' + body +
            '<div class="elementor-location-footer">' + ftr + '</div>' + tail)
     open(S + '/pv/%s.html' % slug, 'w').write(doc)
     print('preview', slug, len(doc))

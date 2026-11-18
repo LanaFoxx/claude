@@ -1,7 +1,7 @@
 import { chromium } from '/opt/node-tools/node_modules/playwright/index.mjs';
 import fs from 'fs';
 const S = process.argv[2];
-const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', proxy: { server: process.env.HTTPS_PROXY } });
+const b = await chromium.launch({ proxy: { server: process.env.HTTPS_PROXY } });
 const c = await b.newContext({ viewport: { width: 1440, height: 1000 } }); await c.addCookies(JSON.parse(fs.readFileSync(S + '/pw_cookies.json', 'utf8')));
 const p = await c.newPage(); const errs = []; p.on('pageerror', e => errs.push(e.message));
 await p.goto('https://taxcoursefinder.com/schools/california-tax-courses/?v=' + Date.now(), { waitUntil: 'networkidle' });

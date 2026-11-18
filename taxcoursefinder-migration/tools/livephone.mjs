@@ -1,6 +1,6 @@
 import { chromium } from '/opt/node-tools/node_modules/playwright/index.mjs';
 const S = process.argv[2];
-const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', proxy: { server: process.env.HTTPS_PROXY } });
+const b = await chromium.launch({ proxy: { server: process.env.HTTPS_PROXY } });
 const ctx = await b.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
 const p = await ctx.newPage(); const errs = []; p.on('pageerror', e => errs.push(e.message));
 await p.goto('https://taxcoursefinder.com/schools/1-0-4-0-and-more-continuing-education/?nc=' + Date.now(), { waitUntil: 'networkidle' }); await p.waitForTimeout(800);

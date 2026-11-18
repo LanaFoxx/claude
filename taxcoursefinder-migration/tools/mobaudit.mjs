@@ -3,7 +3,7 @@ import fs from 'fs';
 const S = process.argv[2], mode = process.argv[3] || 'live';
 const pages = (process.argv[4] || '/,/ctec-20-hour-course/,/ctec-60-hour-course/,/ctec-requirements/,/how-to-become-a-ctec-registered-tax-preparer/,/how-to-renew-ctec-registration/,/how-to-choose-a-ctec-course/,/how-we-compare-providers/,/faqs/,/about/,/provider-rights/,/provider-application/,/privacy-policy/,/terms-of-use/,/ctec-live-scan-background-check/,/ctec-experience-in-lieu-15-hour-course/').split(',');
 const widths = (process.argv[5] || '360,390,430,600,768,820,1024,1180').split(',').map(Number);
-const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', proxy: { server: process.env.HTTPS_PROXY } });
+const b = await chromium.launch({ proxy: { server: process.env.HTTPS_PROXY } });
 const out = {};
 for (const u of pages) for (const w of widths) {
   const ctx = await b.newContext({ viewport: { width: w, height: 900 }, isMobile: w < 900, hasTouch: w < 1100, deviceScaleFactor: 1 });

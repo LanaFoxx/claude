@@ -2,7 +2,7 @@ import { chromium } from '/opt/node-tools/node_modules/playwright/index.mjs';
 import fs from 'fs';
 const [S] = process.argv.slice(2);
 const jobs = [[44, { ce: 'next_day' }], [63, { ce: '24h', qe: '24h' }]];
-const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', proxy: { server: process.env.HTTPS_PROXY } });
+const b = await chromium.launch({ proxy: { server: process.env.HTTPS_PROXY } });
 const ctx = await b.newContext({ viewport: { width: 1440, height: 1000 } });
 await ctx.addCookies(JSON.parse(fs.readFileSync(S + '/pw_cookies.json')).map(c => ({ ...c, domain: c.domain.replace(/^\./, ''), secure: true })));
 const p = await ctx.newPage();

@@ -2,7 +2,7 @@ import { chromium } from '/opt/node-tools/node_modules/playwright/index.mjs';
 import fs from 'fs';
 const S = process.argv[2];
 const feed = JSON.parse(fs.readFileSync(S + '/pre/api.json'));
-const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', proxy: { server: process.env.HTTPS_PROXY } });
+const b = await chromium.launch({ proxy: { server: process.env.HTTPS_PROXY } });
 const ctx = await b.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
 let n = 0;
 for (const pr of feed.providers) for (const [c, flag] of [['20-hour', 'offers_20_hour_ce'], ['60-hour', 'offers_60_hour_qe']]) {

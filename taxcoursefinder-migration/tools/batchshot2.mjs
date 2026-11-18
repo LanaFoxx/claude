@@ -1,7 +1,7 @@
 import { chromium } from '/opt/node-tools/node_modules/playwright/index.mjs';
 import fs from 'fs';
 const S = process.argv[2];
-const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', proxy: { server: process.env.HTTPS_PROXY } });
+const b = await chromium.launch({ proxy: { server: process.env.HTTPS_PROXY } });
 const jobs = [['ctec-20-hour-course','/ctec-20-hour-course/',['[style*="grid-template-columns:1.2fr 90px 2fr"]','[data-cdm-note]']],
  ['home','/',['.tcf-m-br','footer p']],
  ['ctec-live-scan-background-check','/ctec-live-scan-background-check/',['[style*="font:300 52px/1 Manrope"]']]];

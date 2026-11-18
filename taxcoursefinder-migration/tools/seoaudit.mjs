@@ -1,6 +1,6 @@
 import { chromium } from '/opt/node-tools/node_modules/playwright/index.mjs';
 const slugs = ['', 'ctec-20-hour-course/', 'ctec-60-hour-course/', 'ctec-requirements/', 'how-to-become-a-ctec-registered-tax-preparer/', 'how-to-renew-ctec-registration/', 'how-to-choose-a-ctec-course/', 'how-we-compare-providers/', 'faqs/', 'about/', 'provider-rights/', 'provider-application/', 'privacy-policy/', 'terms-of-use/', 'ctec-live-scan-background-check/', 'ctec-experience-in-lieu-15-hour-course/'];
-const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', proxy: { server: process.env.HTTPS_PROXY } });
+const b = await chromium.launch({ proxy: { server: process.env.HTTPS_PROXY } });
 const p = await b.newPage({ viewport: { width: 1440, height: 900 }, ignoreHTTPSErrors: true });
 for (const s of slugs) {
   await p.goto('https://taxcoursefinder.com/' + s + '?audit=' + Date.now(), { waitUntil: 'networkidle' });

@@ -1,7 +1,7 @@
 import { chromium } from '/opt/node-tools/node_modules/playwright/index.mjs';
 import { execFileSync } from 'child_process';
 const S = process.argv[2], pages = process.argv[3].split(','), widths = (process.argv[4] || '1440').split(',').map(Number), full = process.argv[5] === 'full';
-const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', proxy: { server: process.env.HTTPS_PROXY } });
+const b = await chromium.launch({ proxy: { server: process.env.HTTPS_PROXY } });
 for (const w of widths) for (const u of pages) {
   const ctx = await b.newContext({ viewport: { width: w, height: 900 } });
   await ctx.route(/taxcoursefinder\.com\/[^.]*(\?.*)?$/, async (route) => {

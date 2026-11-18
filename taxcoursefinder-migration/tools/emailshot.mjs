@@ -1,5 +1,5 @@
 import { chromium } from '/opt/node-tools/node_modules/playwright/index.mjs';
-const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', proxy: { server: process.env.HTTPS_PROXY } });
+const b = await chromium.launch({ proxy: { server: process.env.HTTPS_PROXY } });
 for (const [w, n] of [[800, 'd'], [390, 'm']]) {
   const p = await b.newPage({ viewport: { width: w, height: 900 } });
   await p.goto('file:///home/user/claude/taxcoursefinder-migration/email/provider-verification-email.html', { waitUntil: 'networkidle' });

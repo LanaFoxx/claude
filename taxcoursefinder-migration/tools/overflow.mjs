@@ -1,5 +1,5 @@
 import { chromium } from '/opt/node-tools/node_modules/playwright/index.mjs';
-const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' });
+const b = await chromium.launch({});
 for (const s of process.argv.slice(2)) {
   const m = await b.newPage({ viewport: { width: 390, height: 844 }, isMobile: true });
   await m.goto('http://127.0.0.1:8765/__' + s + '.html', { waitUntil: 'networkidle' });

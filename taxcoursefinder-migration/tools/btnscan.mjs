@@ -1,5 +1,5 @@
 import { chromium } from '/opt/node-tools/node_modules/playwright/index.mjs';
-const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', proxy: { server: process.env.HTTPS_PROXY } });
+const b = await chromium.launch({ proxy: { server: process.env.HTTPS_PROXY } });
 const pages = ['/about/','/ctec-experience-in-lieu-15-hour-course/','/ctec-live-scan-background-check/','/faqs/','/how-to-become-a-ctec-registered-tax-preparer/','/how-to-choose-a-ctec-course/','/privacy-policy/','/provider-application/','/provider-rights/','/terms-of-use/','/schools/'];
 for (const u of pages) {
   const p = await b.newPage({ viewport: { width: 1440, height: 900 } });

@@ -15,9 +15,11 @@ FEATURES = [  # same groups, keys and labels as the directory filters (TCFD_Fiel
 ]
 REPORTING = [('same_day', 'Same day'), ('24h', 'Within 24 hours'), ('next_day', 'Next business day'), ('1_2_days', '1–2 business days'),
              ('3_5_days', '3–5 business days'), ('weekly', 'Weekly'), ('longer', 'More than a week')]
-SECTIONS = [('school', 'School & contact'), ('courses', 'Courses & prices'), ('features', 'Format & materials'),
-            ('reporting', 'Reporting to CTEC'), ('coupon', 'Current coupons'), ('logo', 'Logo'), ('confirm', 'Confirm & submit')]
-PROFILE_SECTIONS = [('school', 'Your school'), ('profile', 'About your school'), ('options', 'Packages & exams'), ('support', 'Student support'), ('confirm', 'Confirm & submit')]
+# Each form is shown one short step at a time (listing-submit.js); without script all steps show in order.
+SECTIONS = [('step-1', 'School & contact'), ('step-2', 'Your courses'), ('step-3', 'How you teach'),
+            ('step-4', 'Coupons & logo'), ('step-5', 'Review & submit')]
+PROFILE_SECTIONS = [('step-1', 'Your school'), ('step-2', 'About your school'), ('step-3', 'Packages & exams'), ('step-4', 'Student support'), ('step-5', 'Review & submit')]
+MINUTES = {'verify': 5, 'profile': 10}
 
 CARD = 'background:#fff;border:1px solid #D7DFE2;border-radius:16px;padding:36px;display:flex;flex-direction:column;gap:22px;scroll-margin-top:calc(var(--tcf-head,108px) + 50px);box-shadow:0 2px 8px rgba(11,46,64,.06)'
 LABEL = 'display:flex;flex-direction:column;gap:6px;font:700 19px Manrope,sans-serif'
@@ -29,8 +31,32 @@ GRP = 'font:700 15px Manrope,sans-serif;letter-spacing:.12em;text-transform:uppe
 
 
 def head(n, title):
+    if n is None:  # second card in the same step
+        return '<h3 style="margin:0;font:700 22px Manrope,sans-serif;color:#0B2E40">%s</h3>' % e(title)
     return ('<div style="display:flex;gap:14px;align-items:center"><span style="width:36px;height:36px;border-radius:10px;background:#0B2E40;color:#fff;display:grid;place-items:center;font:800 22px Manrope,sans-serif">%d</span>'
-            '<h2 style="margin:0;font:300 26px \'Source Serif 4\',Georgia,serif;">%s</h2></div>' % (n, e(title)))
+            '<h2 tabindex="-1" data-tcf-step-title="" style="margin:0;font:300 26px \'Source Serif 4\',Georgia,serif;outline:none">%s</h2></div>' % (n, e(title)))
+
+
+def step(n, title, cards):
+    return ('<section id="step-%d" data-tcf-step="%d" data-step-title="%s" style="display:flex;flex-direction:column;gap:24px;scroll-margin-top:calc(var(--tcf-head,108px) + 50px)">%s</section>'
+            % (n, n, e(title), ''.join(cards)))
+
+
+CLOCK = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;color:#FF6B57"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>'
+
+
+def intro(kind):
+    """Top of the form: how long it takes, and that progress is saved."""
+    return ('<div class="tcf-form-intro" style="background:#fff;border:1px solid #D7DFE2;border-radius:16px;padding:22px 26px;display:flex;flex-direction:column;gap:8px;box-shadow:0 2px 8px rgba(11,46,64,.06)">'
+            '<div style="display:flex;gap:10px;align-items:center;font:700 19px Manrope,sans-serif;color:#0B2E40">' + CLOCK +
+            'Takes about %d minutes &middot; 5 short steps</div>'
+            '<p style="margin:0;font-size:18px;line-height:1.5;color:#5A6E78">Your answers are saved on this device as you go, so you can close this page and come back to finish later. '
+            'Switching devices? Use <strong style="color:#0B2E40">Save and finish later</strong> to get a link that opens your saved answers anywhere.</p></div>') % MINUTES[kind]
+
+
+def shown_if(key, inner):
+    """Fields that only apply once a box is ticked (the script hides them until then; all show without script)."""
+    return '<div data-tcf-shown-if="%s" style="display:flex;flex-direction:column;gap:16px">%s</div>' % (key, inner)
 
 
 def field(label, name, kind='text', required=False, placeholder='', hint='', extra=''):
@@ -80,77 +106,81 @@ def start():
 
 
 def form():
-    """Short verify form: only what the directory table shows (name, link, price, format, reporting, coupon, logo)."""
-    out = start()
-    out.append(card('school', 1, 'School & contact',
+    """Short verify form, 5 steps: only what the directory listing shows (name, link, price, format, reporting, coupon, logo)."""
+    out = start() + [intro('verify')]
+    out.append(step(1, 'School & contact', [card('school', 1, 'School & contact',
         '<div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">'
         + field('School name', 'school_name', required=True) + field('Website', 'website', 'url', placeholder='https://')
         + field('CTEC provider number', 'ctec_number', placeholder='e.g. 6258') + field('Your name', 'contact_name', required=True)
         + field('Email address', 'contact_email', 'email', required=True) + '</div>'
-        + '<p style="%s">Your contact details are only used to confirm the listing with you. They are not published.</p>' % HINT))
+        + '<p style="%s">Your contact details are only used to confirm the listing with you. They are not published.</p>' % HINT)]))
     courses = ''.join('<div style="border:1px solid #E3E9EB;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:16px">'
                       + check(c + '_offered', '1', 'We offer the ' + name, big=True)
-                      + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">'
+                      + shown_if(c + '_offered', '<div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">'
                       + field('Price ($)', c + '_price', 'price', placeholder='e.g. 69.95') + field('Regular price ($)', c + '_regular', 'price', placeholder='Only if on sale')
-                      + '</div>' + field('Course page URL', c + '_url', 'url', placeholder='https://', hint='Where the View Course button sends students.') + '</div>'
+                      + '</div>' + field('Course page URL', c + '_url', 'url', placeholder='https://', hint='Where the View Course button sends students.')) + '</div>'
                       for c, name in COURSES)
-    out.append(card('courses', 2, 'Courses & prices', '<p style="%s">Tick each course you offer.</p>' % HINT + courses))
-    out.append(card('features', 3, 'Format & materials', '<p style="%s">Tick everything your course includes. Anything you leave unticked stays &ldquo;not confirmed&rdquo; on your listing.</p>' % HINT
-        + boxes([g for g in FEATURES[0][3] if g[0] != 'Learning Format'])
-        + check('features_complete', '1', 'These are all the formats and materials we offer (mark the unticked ones as not offered)')))
-    out.append(card('reporting', 4, 'Reporting to CTEC',
-        '<label style="%s">How quickly are completions reported to CTEC?<select name="reporting" style="%s"><option value="">Select</option>%s</select></label>'
-        % (LABEL, INPUT, ''.join('<option value="%s">%s</option>' % (k, e(l)) for k, l in REPORTING))))
-    out.append(card('coupon', 5, 'Current coupons (optional)',
-        '<p style="%s">Running a coupon code now? Add it here.</p>' % HINT
-        + ''.join('<div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">' + field(name.split(' (')[0] + ' coupon code', c + '_coupon_code', placeholder='e.g. SAVE10')
-                  + field('What it gives', c + '_coupon_details', placeholder='e.g. 10% off')
-                  + field('Expires (optional)', c + '_coupon_expires', 'date', hint='Leave empty if it has no end date.')
-                  + field('Applies to (optional)', c + '_coupon_applies', placeholder='e.g. Online package only, new students', hint='Package, format or other restrictions.') + '</div>' for c, name in COURSES)))
-    out.append(card('logo', 6, 'Logo (optional)', IMG % (LABEL, 'School logo', 'PNG, JPG or WebP, up to 5 MB. A transparent background works best.', 'logo', '')
-        + '<label style="%s"><input type="checkbox" name="logo_ok" value="1" style="%s">I give Tax Course Finder permission to show our school&rsquo;s logo on our directory listing and school profile page so students can identify our school.</label>' % (CHECK, BOX)))
-    out.append(card('confirm', 7, 'Confirm & submit', CONFIRM
+    out.append(step(2, 'Your courses', [card('courses', 2, 'Your courses', '<p style="%s">Tick each course you offer, then add its price and link.</p>' % HINT + courses)]))
+    out.append(step(3, 'How you teach', [
+        card('features', 3, 'How you teach', '<p style="%s">Tick everything your course includes. Anything you leave unticked stays &ldquo;not confirmed&rdquo; on your listing.</p>' % HINT
+            + boxes([g for g in FEATURES[0][3] if g[0] != 'Learning Format'])
+            + check('features_complete', '1', 'These are all the formats and materials we offer (mark the unticked ones as not offered)')),
+        card('reporting', None, 'Reporting to CTEC',
+            '<label style="%s">How quickly are completions reported to CTEC?<select name="reporting" style="%s"><option value="">Select</option>%s</select></label>'
+            % (LABEL, INPUT, ''.join('<option value="%s">%s</option>' % (k, e(l)) for k, l in REPORTING)))]))
+    out.append(step(4, 'Coupons & logo', [
+        card('coupon', 4, 'Coupons & logo (optional)',
+            '<p style="%s">Running a coupon code now? Add it here. You can skip this step.</p>' % HINT
+            + ''.join(shown_if(c + '_offered', '<div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">' + field(name.split(' (')[0] + ' coupon code', c + '_coupon_code', placeholder='e.g. SAVE10')
+                      + field('What it gives', c + '_coupon_details', placeholder='e.g. 10% off')
+                      + field('Expires (optional)', c + '_coupon_expires', 'date', hint='Leave empty if it has no end date.')
+                      + field('Applies to (optional)', c + '_coupon_applies', placeholder='e.g. Online package only, new students', hint='Package, format or other restrictions.') + '</div>') for c, name in COURSES)),
+        card('logo', None, 'Logo (optional)', IMG % (LABEL, 'School logo', 'PNG, JPG or WebP, up to 5 MB. A transparent background works best.', 'logo', '')
+            + '<label style="%s"><input type="checkbox" name="logo_ok" value="1" style="%s">I give Tax Course Finder permission to show our school&rsquo;s logo on our directory listing and school profile page so students can identify our school.</label>' % (CHECK, BOX))]))
+    out.append(step(5, 'Review & submit', [card('confirm', 5, 'Review & submit', '<div data-tcf-review=""></div>' + CONFIRM
         + '<p style="%s">We review every submission before it changes your listing. Listing your school is free.</p>' % HINT
-        + SUBMIT % 'Submit listing details'))
+        + SUBMIT % 'Submit listing details')]))
     out.append('</form>')
     return ''.join(out)
 
 
 def profile_form():
-    """Longer, optional form: everything the school's profile page shows beyond the directory listing."""
-    out = start()
+    """Longer, optional form, 5 steps: everything the school's profile page shows beyond the directory listing."""
+    out = start() + [intro('profile')]
     out.append('<input type="hidden" name="part" value="profile">')
-    out.append(card('school', 1, 'Your school',
+    out.append(step(1, 'Your school', [card('school', 1, 'Your school',
         '<div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">'
         + field('School name', 'school_name', required=True) + field('CTEC provider number', 'ctec_number', placeholder='e.g. 6258')
         + field('Your name', 'contact_name', required=True) + field('Email address', 'contact_email', 'email', required=True) + '</div>'
-        + '<p style="%s">Used to match this to your listing. Your contact details are not published.</p>' % HINT))
-    out.append(card('profile', 2, 'About your school',
+        + '<p style="%s">Used to match this to your listing. Your contact details are not published.</p>' % HINT)]))
+    out.append(step(2, 'About your school', [card('profile', 2, 'About your school',
         area('Short intro', 'intro', 'One or two sentences about your school. Shown under your school name.', rows=3)
         + area('About your school', 'about', 'Who you are, how long you have taught tax courses, and what makes your courses different.', rows=5)
         + IMG % (LABEL, 'School photo (optional)', 'Shown next to your About section. PNG, JPG or WebP, up to 5 MB.', 'photo', '')
-        + IMG % (LABEL, 'Course screenshots (optional, up to 3)', 'Shown under &ldquo;How will I learn?&rdquo;. PNG, JPG or WebP, up to 5 MB each.', 'screenshots[]', ' multiple=""')))
+        + IMG % (LABEL, 'Course screenshots (optional, up to 3)', 'Shown under &ldquo;How will I learn?&rdquo;. PNG, JPG or WebP, up to 5 MB each.', 'screenshots[]', ' multiple=""'))]))
     opts = ''
     for c, name in COURSES:
-        opts += ('<div style="border:1px solid #E3E9EB;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:16px"><div style="%s">%s</div>' % (GRP, e(name))
-                 + '<p style="%s">Sell this course more than one way (for example video only, or video + printed book)? List each option and its price.</p>' % HINT
+        # an unnamed box (not sent): only opens this course's questions
+        opts += ('<div style="border:1px solid #E3E9EB;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:16px">'
+                 + '<label style="%s"><input type="checkbox" data-tcf-toggle="%s_sold" style="%s">We sell the %s</label>' % (CHECK + ';font-weight:700', c, BOX, e(name))
+                 + shown_if(c + '_sold', '<p style="%s">Sell it more than one way (for example video only, or video + printed book)? List each option and its price.</p>' % HINT
                  + ''.join('<div class="tcf-optrow" style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr);gap:10px">'
                            '<input type="text" name="%s_opt%d_label" placeholder="%s" aria-label="Option %d name" maxlength="120" style="%s">'
                            '<input type="text" name="%s_opt%d_price" placeholder="Price ($)" aria-label="Option %d price" inputmode="decimal" data-tcf-price="" maxlength="12" style="%s">'
                            '<input type="text" name="%s_opt%d_regular" placeholder="Regular (if on sale)" aria-label="Option %d regular price" inputmode="decimal" data-tcf-price="" maxlength="12" style="%s"></div>'
                            % (c, i, ['e.g. Online video course', 'e.g. Video + printed book', 'e.g. Printed book only'][i - 1], i, INPUT, c, i, i, INPUT, c, i, i, INPUT) for i in (1, 2, 3))
-                 + '<label style="%s"><span>Unlimited exam attempts?</span><select name="%s_attempts" style="%s"><option value="">Select</option><option value="Unlimited">Yes</option><option value="Limited">No</option></select></label>' % (LABEL, c, INPUT)
+                 + '<label style="%s"><span>Unlimited exam attempts?</span><select name="%s_attempts" style="%s"><option value="">Select</option><option value="Unlimited">Yes</option><option value="Limited">No</option></select></label>' % (LABEL, c, INPUT))
                  + '</div>')
-    out.append(card('options', 3, 'Packages & exams', '<p style="%s">Fill in the course(s) you offer. Leave the other one empty.</p>' % HINT + opts))
-    out.append(card('support', 4, 'Student support',
+    out.append(step(3, 'Packages & exams', [card('options', 3, 'Packages & exams', '<p style="%s">Tick the course(s) you sell, then list the packages.</p>' % HINT + opts)]))
+    out.append(step(4, 'Student support', [card('support', 4, 'Student support',
         '<p style="%s">How students can reach you. Shown under &ldquo;Can I get help?&rdquo;.</p>' % HINT + boxes(FEATURES[1][3])
         + check('features_complete', '1', 'These are all the ways students can reach us (mark the unticked ones as not offered)')
         + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">'
         + field('Student support phone', 'phone', 'tel') + field('Student support email', 'support_email', 'email')
-        + field('Support hours', 'hours', placeholder='e.g. Mon–Fri 8am–5pm Pacific') + '</div>'))
-    out.append(card('confirm', 5, 'Confirm & submit', CONFIRM
+        + field('Support hours', 'hours', placeholder='e.g. Mon–Fri 8am–5pm Pacific') + '</div>')]))
+    out.append(step(5, 'Review & submit', [card('confirm', 5, 'Review & submit', '<div data-tcf-review=""></div>' + CONFIRM
         + '<p style="%s">We review every submission. Once approved, your school profile page goes live.</p>' % HINT
-        + SUBMIT % 'Submit profile page details'))
+        + SUBMIT % 'Submit profile page details')]))
     out.append('</form>')
     return ''.join(out)
 
