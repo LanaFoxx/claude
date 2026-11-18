@@ -709,6 +709,7 @@
 	}
 	/* ================= Dream Desk 1c shell (design handoff): tokens, sidebar, top bar, Home ================= */
 	var LU = {
+		trash: '<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
 		'dollar-sign': '<line x1="12" x2="12" y1="2" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>',
 		smartphone: '<rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/>',
 		image: '<rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>',
@@ -3499,7 +3500,7 @@
 					+ clientCell(c)
 					+ '<span>' + (on ? '<b class="green">Active</b>' + (c.sub.method ? '<small class="dwdc-sm">&nbsp;· ' + esc(c.sub.method) + '</small>' : '') : (c.sub ? '<span class="mut">' + esc(c.sub.status) + '</span>' : '<span class="mut">None</span>')) + '</span>'
 					+ '<span class="b">' + money(on && num(c.sub.amount) ? c.sub.amount : c.hosting) + '</span>'
-					+ '<span class="b ' + (on ? '' : n === null ? 'mut' : n < 0 ? 'red' : n <= 30 ? 'orange' : '') + '">' + (when ? fmt(when, true) : '—') + '</span><span>' + pill(st[0], st[1]) + '</span></div>';
+					+ '<span class="b ' + (on ? '' : n === null ? 'mut' : n < 0 ? 'red' : n <= 30 ? 'orange' : '') + '">' + (when ? fmt(when, true) : '—') + '</span><span class="dd-hostst">' + pill(st[0], st[1]) + '<button type="button" class="dd-ibtn sm dd-hostdel" data-hostdel="' + c.id + '" aria-label="Delete hosting account" title="Delete this hosting account (the client and project stay)">' + lu('trash', 14) + '</button></span></div>';
 			}).join('') + '</div>' : emptyRow('No hosting clients match.')) + moreFoot('hosting', cap, list.length) + '</div>';
 	}
 
@@ -4071,7 +4072,7 @@
 		return '<a class="dwdc-back" href="#hosting">' + ic('left', 14) + 'Back to hosting</a>'
 			+ '<div class="dwdc-card dwdc-chead"><div class="dwdc-chead-t"><h2>' + esc(dom) + ' ' + pill(st[0], st[1]) + '</h2><p>'
 			+ [k ? 'Client: <a href="#cl/' + k.id + '"><b>' + esc(k.name) + '</b></a>' : esc(c.person || ''), c.website ? '<a href="' + esc(url(c.website)) + '" target="_blank" rel="noopener">Visit site</a>' : '', '<a href="#client/' + c.id + '">Project: ' + esc(c.name) + '</a>'].filter(Boolean).join('<i>·</i>') + '</p></div>'
-			+ '<div class="dwdc-chead-a">' + btn('', 'data-edit', S.edit ? 'Close edit' : 'Edit') + btn('solid navy', 'data-act="pay" data-project="' + c.id + '" data-renew="1"', 'Log renewal payment') + '</div></div>'
+			+ '<div class="dwdc-chead-a">' + btn('', 'data-edit', S.edit ? 'Close edit' : 'Edit') + btn('solid navy', 'data-act="pay" data-project="' + c.id + '" data-renew="1"', 'Log renewal payment') + btn('danger', 'data-hostdel="' + c.id + '"', 'Delete hosting account') + '</div></div>'
 			+ '<div class="dwdc-minis">' + mini('navy', 'Price', money(c.hosting) + ' / year')
 			+ mini('deep', 'Years paid', pays.length || (on ? 1 : 0))
 			+ '<div class="dwdc-mini"><small>Status</small><strong class="' + (n !== null && n < 0 && !on ? 'deep' : '') + '">' + esc(st[0]) + '</strong><span class="dwdc-mini-sub">' + esc(st[2]) + '</span></div></div>'
@@ -5286,6 +5287,19 @@
 		if (t.closest('[data-copy]')) {
 			var link = (S.full[r.id] && S.full[r.id].paylink) || DWDC.pay;
 			(navigator.clipboard ? navigator.clipboard.writeText(link) : Promise.reject()).then(function () { toast('Payment link copied'); }, function () { prompt('Copy this payment link:', link); });
+			return;
+		}
+		// Delete a hosting account: the site leaves the Hosting list (no yearly price, no renewal date). The client,
+		// the project and its payment history stay. An automatic subscription has to be cancelled where it bills.
+		if ((el = t.closest('[data-hostdel]'))) {
+			e.preventDefault(); e.stopPropagation();
+			var hid = +el.getAttribute('data-hostdel'), hc = S.full[hid] || contact(hid); if (!hc) { return; }
+			var hsub = subActive(hc) ? '\n\nIt’s still on automatic renewal' + (hc.sub && hc.sub.method ? ' (' + hc.sub.method + ')' : '') + ': cancel that subscription too, or they’ll keep being charged.' : '';
+			if (!confirm('Delete the hosting account for ' + (site(hc) || hc.name) + '?\n\nIt comes off the Hosting list. ' + (clientName(hc) || 'The client') + ', the project and its payment history stay.' + hsub)) { return; }
+			el.disabled = true;
+			api('/contact/' + hid, 'POST', { hosting: '0', renewal: '' }).then(function (x) { upsert(x); S.full[x.id] = x; return reload(); })
+				.then(function () { if (route().view === 'host') { go('hosting'); } else { render(); } toast('Hosting account deleted · ' + (site(hc) || hc.name)); })
+				.catch(function (er) { el.disabled = false; fail(er); });
 			return;
 		}
 		if ((el = t.closest('[data-go]')) && !t.closest('a, button, input, select, textarea, label')) { go(el.getAttribute('data-go')); }

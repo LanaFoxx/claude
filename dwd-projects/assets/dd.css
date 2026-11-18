@@ -1092,3 +1092,8 @@ section.dd-health.warn .dd-healthb .dd-hld { background: var(--warning-text); }
 .dd-treset svg { margin-right: 4px; }
 .dd-tl-r.td .dd-treset { margin-left: 10px; flex: none; align-self: center; }
 .dd-trc .dd-treset { margin-right: 8px; }
+
+/* Hosting list: delete-account icon next to the status */
+.dd-hostst { display: inline-flex; align-items: center; gap: 6px; }
+.dd-hostdel { color: var(--text-3); }
+.dd-hostdel:hover { color: var(--danger-text, #ef4444); }
