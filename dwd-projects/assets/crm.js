@@ -191,6 +191,8 @@
 		if (!gross) { save(id, { balance: '0', paymark: '' }, 'Marked paid'); return; }
 		var pm = ['Upwork', 'Stripe', 'PayPal'].indexOf(c.pay_method) > -1 ? c.pay_method : 'Other', up = pm === 'Upwork';
 		var amt = up ? Math.round(gross * 90) / 100 : gross;
+		// Upwork: the fee isn't always 10%, so the payment form opens (Upwork, pending in Upwork) for the real amount.
+		if (up) { S.modal = { type: 'pay', project: id, markpaid: 1, vals: { amount: String(amt), date: DWDC.today, upstage: 1, note: 'Upwork · final payment' } }; render(); return; }
 		if (btn) { btn.disabled = true; }
 		api('/contact/' + id + '/payment', 'POST', { amount: amt, method: pm, date: DWDC.today, note: 'Marked paid' + (up ? ' · after Upwork fee (' + money(gross) + ' gross)' : '') })
 			.then(function () { return api('/contact/' + id, 'POST', { balance: '0', paymark: '' }); })
@@ -5501,7 +5503,10 @@
 			if (!data.project) { toast('Choose the project', true); return; }
 			if (!num(data.amount)) { toast('Enter the amount', true); return; }
 			var pb = f.querySelector('.dwdc-farow .dwdc-btn'); pb.disabled = true;
-			api('/contact/' + data.project + '/payment', 'POST', data).then(function (x) { upsert(x); if (S.full[x.id]) { S.full[x.id] = x; } S.modal = null; render(); toast('Payment of ' + money(data.amount) + ' logged'); }).catch(function (er) { pb.disabled = false; fail(er); });
+			var pMark = S.modal && S.modal.markpaid; // opened from "Paid": nothing left owed afterwards
+				api('/contact/' + data.project + '/payment', 'POST', data)
+					.then(function (x) { return pMark ? api('/contact/' + data.project, 'POST', { balance: '0', paymark: '' }) : x; })
+					.then(function (x) { upsert(x); if (S.full[x.id]) { S.full[x.id] = x; } S.modal = null; render(); toast(pMark ? 'Marked paid · ' + money(data.amount) + (data.method === 'Upwork' && data.stage !== 'bank' ? ' pending in Upwork' : '') : 'Payment of ' + money(data.amount) + ' logged'); }).catch(function (er) { pb.disabled = false; fail(er); });
 		} else if (f.classList.contains('dwdc-moveform')) {
 			var mm = S.modal;
 			if (!mm.client && !(mm.newc && String(data.client_name || '').trim())) { toast('Pick a client or add a new one', true); return; }
