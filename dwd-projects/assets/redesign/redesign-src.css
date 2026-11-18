@@ -367,3 +367,32 @@ section.dwr-doall-sec .dwr-doall{margin:0!important;border:0!important;border-ra
 .dwr section form,.dwr section form *{text-align:left!important}
 .dwr section form [style*="justify-content"]{justify-content:flex-start!important}
 }
+
+/* Phones: the footer centred too */
+@media (max-width:767px){
+.dwr-ft,.dwr-ft *{text-align:center!important}
+.dwr-ft .dwr-ft-strip,.dwr-ft .dwr-ft-brand,.dwr-ft .dwr-ft-bottom,.dwr-ft .dwr-ft-nav,.dwr-ft .dwr-ft-cta{flex-direction:column!important;align-items:center!important;justify-content:center!important;margin-left:auto!important;margin-right:auto!important}
+.dwr-ft .dwr-ft-nav,.dwr-ft nav,.dwr-ft .dwr-ft-bottom>*{display:flex!important;flex-wrap:wrap!important;justify-content:center!important;align-items:center!important}
+.dwr-ft .dwr-ft-logo,.dwr-ft img{margin-left:auto!important;margin-right:auto!important}
+.dwr-ft p{margin-left:auto!important;margin-right:auto!important}
+}
+
+/* Phones: the rest centred (project scores, review links, quote cards, rating rows, process steps) */
+@media (max-width:767px){
+.dwr-proof{display:flex!important;flex-wrap:wrap!important;justify-content:center!important;width:auto!important;margin-left:auto!important;margin-right:auto!important}
+.dwr-proof>*,.dwr-proof>* *{align-items:center!important;justify-content:center!important;text-align:center!important}
+.dwr-qall,.dwr-qlinks .dwr-qall,.dwr-qband .dwr-qlinks .dwr-qall{justify-content:center!important;text-align:center!important;width:auto!important;margin-left:auto!important;margin-right:auto!important}
+.dwr-qlinks{flex-wrap:wrap!important;justify-content:center!important}
+.dwr-bigcta{width:100%;justify-content:center!important}
+.dwr-bc{flex-direction:column!important;align-items:center!important;justify-content:center!important;text-align:center!important;gap:14px!important}
+.dwr-bc>*{align-items:center!important;text-align:center!important}
+.dwr-results>div,.dwr-ratings>div{justify-content:center!important;align-items:center!important;text-align:center!important}
+.dwr-results>div *,.dwr-ratings>div *{justify-content:center!important;text-align:center!important}
+.dwr section ol>li[style*="grid-template-columns"]{grid-template-columns:1fr!important;justify-items:center!important;text-align:center!important;gap:8px!important}
+.dwr section ol>li[style*="grid-template-columns"]>*{padding-top:0!important}
+}
+@media (max-width:767px){
+.dwr #pr-steps>li{grid-template-columns:1fr!important;justify-items:center!important;text-align:center!important;gap:8px!important}
+.dwr #pr-steps>li>*{padding-top:0!important;align-items:center!important;text-align:center!important}
+}
+@media (max-width:767px){.dwr-qband .dwr-qlinks .dwr-qall,.dwr-qall{display:inline-flex!important;flex:0 0 auto!important;align-self:center!important}}
