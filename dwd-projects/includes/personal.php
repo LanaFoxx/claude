@@ -84,6 +84,20 @@ function dwdpe_dedupe( $d ) {
 }
 
 /** Clean one item of a given kind. */
+/**
+ * A deleted calendar item must stay deleted, even when the calendar sends it again with a new event ID (ClickUp
+ * re-creates its events). Signatures of deleted items: the title and date, or for ClickUp items ("… :: …") the
+ * title alone.
+ */
+function dwdpe_sig( $text, $due ) {
+	$t = strtolower( trim( preg_replace( '/[^\p{L}\p{N}]+/u', ' ', (string) $text ) ) );
+	return false !== strpos( (string) $text, ' :: ' ) ? 't:' . $t : 'd:' . $t . '|' . substr( (string) $due, 0, 10 );
+}
+function dwdpe_gone_sig( $text, $due ) {
+	$l = (array) get_option( 'dwdpe_gone_sig', array() );
+	return in_array( dwdpe_sig( $text, $due ), $l, true );
+}
+
 function dwdpe_clean( $kind, $x, $old = array() ) {
 	$x   = array_merge( (array) $old, (array) $x );
 	$txt = function ( $v, $n = 200 ) { return mb_substr( sanitize_text_field( (string) $v ), 0, $n ); };
@@ -162,6 +176,9 @@ add_action( 'rest_api_init', function () {
 							$ge   = (array) get_option( 'dwdpe_gone_ev', array() );
 							$ge[] = $x['gevent'];
 							update_option( 'dwdpe_gone_ev', array_slice( $ge, -200 ), false );
+							$gs   = (array) get_option( 'dwdpe_gone_sig', array() ); // and its title (and date), so a re-created copy stays gone too
+							$gs[] = dwdpe_sig( $x['text'] ?? '', $x['due'] ?? '' );
+							update_option( 'dwdpe_gone_sig', array_slice( array_values( array_unique( $gs ) ), -300 ), false );
 						}
 						if ( 'todos' === $kind && ( $x['id'] ?? '' ) === (string) $d['delete'] && ! empty( $x['gtask'] ) ) {
 							$gone   = (array) get_option( 'dwdpe_gone', array() );
@@ -316,7 +333,7 @@ function dwdpe_sync( $d ) {
 		}
 		$seen_e[ $eid ] = 1;
 		$fields = array( 'text' => $e['title'] ?? '', 'due' => substr( (string) ( $e['date'] ?? '' ), 0, 10 ), 'time' => $e['time'] ?? '', 'note' => $e['notes'] ?? '' );
-		if ( in_array( $eid, (array) get_option( 'dwdpe_gone_ev', array() ), true ) || in_array( $eid, (array) get_option( 'dwdpe_hide_ev', array() ), true ) ) {
+		if ( in_array( $eid, (array) get_option( 'dwdpe_gone_ev', array() ), true ) || in_array( $eid, (array) get_option( 'dwdpe_hide_ev', array() ), true ) || dwdpe_gone_sig( $fields['text'], $fields['due'] ) ) {
 			continue;
 		}
 		$idx    = array_search( $eid, array_column( $todos, 'gevent' ), true );
@@ -600,7 +617,7 @@ add_action( 'rest_api_init', function () {
 			$e   = (array) $r->get_json_params();
 			$eid = sanitize_text_field( (string) ( $e['id'] ?? '' ) );
 			$all = dwdpe_get();
-			if ( '' === $eid || in_array( $eid, array_column( $all['todos'], 'gevent' ), true ) ) {
+			if ( '' === $eid || in_array( $eid, array_column( $all['todos'], 'gevent' ), true ) || dwdpe_gone_sig( (string) ( $e['title'] ?? '' ), (string) ( $e['date'] ?? '' ) ) ) {
 				return array( 'ok' => true, 'added' => false );
 			}
 			$all['todos'][] = dwdpe_clean( 'todos', array( 'id' => strtolower( wp_generate_password( 10, false ) ), 'text' => $e['title'] ?? '', 'due' => substr( (string) ( $e['date'] ?? '' ), 0, 10 ), 'time' => $e['time'] ?? '', 'note' => $e['notes'] ?? '', 'done' => false, 'gevent' => $eid, 'source' => 'Google Calendar', 'dirty' => false ) );
@@ -631,7 +648,7 @@ add_action( 'rest_api_init', function () {
 			foreach ( (array) ( $r->get_json_params()['items'] ?? array() ) as $x ) {
 				$k1 = 'e:' . ( $x['gevent'] ?? '' );
 				$k2 = 't:' . strtolower( trim( (string) ( $x['text'] ?? '' ) ) ) . '|' . ( $x['due'] ?? '' );
-				if ( isset( $have[ $k1 ] ) || isset( $have[ $k2 ] ) ) {
+				if ( isset( $have[ $k1 ] ) || isset( $have[ $k2 ] ) || in_array( (string) ( $x['gevent'] ?? '' ), (array) get_option( 'dwdpe_gone_ev', array() ), true ) || dwdpe_gone_sig( (string) ( $x['text'] ?? '' ), (string) ( $x['due'] ?? '' ) ) ) {
 					continue;
 				}
 				$have[ $k1 ] = $have[ $k2 ] = 1;

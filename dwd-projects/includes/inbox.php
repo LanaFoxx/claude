@@ -223,7 +223,7 @@ function dwdin_apply_meetings( $meetings ) {
 				$found              = true;
 			}
 		}
-		if ( ! $found ) {
+		if ( ! $found && ! ( function_exists( 'dwdpe_gone_sig' ) && ( in_array( $gev, (array) get_option( 'dwdpe_gone_ev', array() ), true ) || dwdpe_gone_sig( $label, $day ) ) ) ) { // deleted in Dream Desk: stays deleted
 			$all['todos'][] = dwdpe_clean( 'todos', array( 'id' => $ptid, 'text' => $label, 'due' => $day, 'time' => $time, 'tag' => 'work', 'source' => 'Google Calendar', 'gevent' => $gev, 'note' => $m['link'], 'dirty' => false ) );
 		}
 		update_option( 'dwdpe_data', $all, false );
