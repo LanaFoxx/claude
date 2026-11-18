@@ -100,6 +100,18 @@ function dwdc_contact( $post, $full = false ) {
 	foreach ( array( 'stripe', 'paypal', 'manual' ) as $f ) {
 		$c[ $f ] = dwdc_paid_by( $p->ID, $f );
 	}
+	// Payment numbers for the labels (#1, #2...): each real payment (paid or waiting in Upwork, not refunds)
+	// numbered in date order; pay_n = how many so far, so what's owed now is payment #(pay_n + 1). Display only.
+	$seqp = get_post_meta( $p->ID, '_dwdc_payments', true );
+	$seq  = array();
+	foreach ( is_array( $seqp ) ? $seqp : array() as $si => $sp ) {
+		if ( is_array( $sp ) && in_array( strtolower( (string) ( $sp['status'] ?? 'paid' ) ), array( 'paid', 'held' ), true ) && (float) preg_replace( '/[^\d.]/', '', (string) ( $sp['amount'] ?? 0 ) ) > 0 ) {
+			$seq[ $si ] = (string) ( $sp['date'] ?? '' );
+		}
+	}
+	asort( $seq );
+	$c['pay_seq'] = (object) array_combine( array_map( 'strval', array_keys( $seq ) ), $seq ? range( 1, count( $seq ) ) : array() );
+	$c['pay_n']   = count( $seq );
 	$entries          = get_post_meta( $p->ID, '_dwdc_entries', true );
 	$entries          = is_array( $entries ) ? $entries : array();
 	$c['entry_count'] = count( $entries );

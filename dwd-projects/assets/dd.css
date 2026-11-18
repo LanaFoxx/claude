@@ -1141,3 +1141,6 @@ body:has(.dwdc-addm) #dwdc-askfab { display: none !important; }
 .dd .dwdc-mo-sum span.all { background: var(--accent) !important; border-color: var(--accent) !important; color: rgba(255,255,255,.85) !important; }
 .dd .dwdc-mo-sum span.all b { color: #fff !important; }
 .dd .dwdc-modal .dwdc-btn2:hover { background: var(--accent) !important; border-color: var(--accent) !important; color: #fff !important; }
+
+/* "#2" next to an amount: which payment of the project it is */
+.dd .dd-payno { display: inline-block; margin-left: 6px; padding: 1px 6px; border-radius: 6px; font: 600 11px/1.5 var(--font); font-style: normal; color: var(--text-2, #aab); background: var(--hover, rgba(255,255,255,.08)); vertical-align: 2px; }

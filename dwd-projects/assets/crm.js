@@ -229,6 +229,9 @@
 		var words = [pe ? money(pe) + ' pending' + (u.pnext ? ' · ' + fmt(u.pnext) : '') : '', av ? money(av) + ' ready to withdraw' : ''].filter(Boolean).join(' · ');
 		return '<span class="dd-sbar">' + seg(bank, 'b', 'In bank') + seg(av, 'a', 'Ready to withdraw') + seg(pe, 'p', 'Pending in Upwork') + seg(ow, 'o', 'Owed') + '</span>' + (words ? '<small class="dd-swords">' + words + '</small>' : '');
 	}
+	function payNo(n) { return n ? ' <em class="dd-payno" title="Payment #' + n + ' on this project">#' + n + '</em>' : ''; } // which payment of the project (display only)
+	function paySeq(c, i) { var s = c && c.pay_seq; return s && s[String(i)] ? payNo(+s[String(i)]) : ''; }
+	function payNext(c) { return c ? payNo((+c.pay_n || 0) + 1) : ''; }
 	function upChip(x) {
 		if ((x.source || '') !== 'Upwork' && x.status !== 'held') { return x.status === 'paid' || !x.status ? '<em class="dd-schip b">In bank</em>' : ''; }
 		if (x.status === 'held') {
@@ -4261,7 +4264,7 @@
 					var act = S.upWdBusy === ix ? '<em class="dd-schip b">Saving…</em>' // one click: off this list for good (saved on the server); a matching Dream Desk payment waiting in Upwork moves to In bank
 						: '<button type="button" class="dd-btn primary sm" data-upwd="' + ix + '" data-upheld="' + esc(k3) + '">' + lu('check', 13) + 'Mark withdrawn</button>'
 						+ '<button type="button" class="dd-btn secondary sm" data-upnp="' + ix + '" data-upheld="' + esc(k3) + '" title="Take it off this list; if it’s logged on a project, it goes back to owed">Not pending</button>';
-					return '<div class="dwdc-mo-r dd-upr dd-upr-s"><span class="d"><em class="dd-schip p">' + (x.date ? fmt(x.date) : 'Pending') + '</em></span><span class="w"><b>' + esc(x.client) + '</b><small>' + esc(x.job) + '</small></span><b class="a">' + money2(x.amount).replace('.00', '') + '</b><span class="dd-upact">' + act + '</span></div>';
+					return '<div class="dwdc-mo-r dd-upr dd-upr-s"><span class="d"><em class="dd-schip p">' + (x.date ? fmt(x.date) : 'Pending') + '</em></span><span class="w"><b>' + esc(x.client) + '</b><small>' + esc(x.job) + '</small></span><b class="a">' + money2(x.amount).replace('.00', '') + (h && paySeq(h.c, h.x.i) ? paySeq(h.c, h.x.i) : (/milestone\s*(\d+)/i.test(x.job || '') ? payNo(+(/milestone\s*(\d+)/i.exec(x.job)[1])) : '')) + '</b><span class="dd-upact">' + act + '</span></div>';
 				}).join('');
 				S.upSnapRows = usI;
 				// Logged in Dream Desk since the last Upwork check (Upwork's list doesn't have them yet).
@@ -4269,7 +4272,7 @@
 					var k4 = o.c.id + ':' + o.x.i;
 					var act = S.upXBusy === k4 ? '<em class="dd-schip b">Saving…</em>' : '<button type="button" class="dd-btn primary sm" data-upxwd="' + esc(k4) + '">' + lu('check', 13) + 'Mark withdrawn</button>'
 						+ '<button type="button" class="dd-btn secondary sm" data-upnp="x" data-upheld="' + esc(k4) + '" title="Remove this payment; the amount goes back to owed on the project">Not pending</button>';
-					return '<div class="dwdc-mo-r dd-upr dd-upr-s"><span class="d"><em class="dd-schip p">' + (o.x.free ? fmt(o.x.free) : 'Pending') + '</em></span><span class="w"><b>' + esc(o.c.name) + '</b><small>' + esc((clientName(o.c) && clientName(o.c) !== o.c.name ? clientName(o.c) + ' · ' : '') + 'added in Dream Desk ' + fmt(o.x.date)) + '</small></span><b class="a">' + money2(o.x.amount).replace('.00', '') + '</b><span class="dd-upact">' + act + '</span></div>';
+					return '<div class="dwdc-mo-r dd-upr dd-upr-s"><span class="d"><em class="dd-schip p">' + (o.x.free ? fmt(o.x.free) : 'Pending') + '</em></span><span class="w"><b>' + esc(o.c.name) + '</b><small>' + esc((clientName(o.c) && clientName(o.c) !== o.c.name ? clientName(o.c) + ' · ' : '') + 'added in Dream Desk ' + fmt(o.x.date)) + '</small></span><b class="a">' + money2(o.x.amount).replace('.00', '') + paySeq(o.c, o.x.i) + '</b><span class="dd-upact">' + act + '</span></div>';
 				}).join('');
 				var usPend = num(US.pending) + usX.reduce(function (a, o) { return a + num(o.x.amount); }, 0), usNext = usI.map(function (x) { return x.date; }).concat(usX.map(function (o) { return o.x.free; })).filter(Boolean).sort()[0];
 				return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide">' + head('Money', 'In Upwork', money(usPend + num(US.available)))
@@ -4280,7 +4283,7 @@
 			var UT = upTotals(), its = UT.items.slice().sort(function (a, b) { return a.x.free < b.x.free ? -1 : 1; });
 			var urow = function (o) {
 				var k2 = o.c.id + ':' + o.x.i, ready = o.x.free <= DWDC.today;
-				return '<div class="dwdc-mo-r dd-upr"><span class="d">' + (ready ? '<em class="dd-schip a">Ready</em>' : '<em class="dd-schip p">' + fmt(o.x.free) + '</em>') + '</span><span class="w"><b><a href="#client/' + o.c.id + '" data-close-modal>' + esc(o.c.name) + '</a></b><small>Client paid ' + fmt(o.x.date) + (o.x.note ? ' · ' + esc(o.x.note) : '') + '</small></span><b class="a">' + money2(o.x.amount).replace('.00', '') + '</b>'
+				return '<div class="dwdc-mo-r dd-upr"><span class="d">' + (ready ? '<em class="dd-schip a">Ready</em>' : '<em class="dd-schip p">' + fmt(o.x.free) + '</em>') + '</span><span class="w"><b><a href="#client/' + o.c.id + '" data-close-modal>' + esc(o.c.name) + '</a></b><small>Client paid ' + fmt(o.x.date) + (o.x.note ? ' · ' + esc(o.x.note) : '') + '</small></span><b class="a">' + money2(o.x.amount).replace('.00', '') + paySeq(o.c, o.x.i) + '</b>'
 					+ (S.pbank === k2 ? bankChk(o.c.id, o.x.i, { source: 'Upwork', status: 'held' }) : '<label class="dd-bankchk"><input type="checkbox" data-pbank="' + k2 + '">In bank</label>') + '</div>';
 			};
 			var ubody = its.length ? '<div class="dwdc-mo-sum"><span>Pending in Upwork<b>' + money(UT.pend) + '</b></span><span>Ready to withdraw<b>' + money(UT.avail) + '</b></span>' + (UT.pnext ? '<span>Next frees up<b>' + fmt(UT.pnext) + '</b></span>' : '') + '</div>'
@@ -4295,7 +4298,7 @@
 				+ '<div class="dd-owbar">' + sortSel('owed') + (sortMine('owed') ? '<small>Drag rows to put them in your order</small>' : '') + '</div><div class="dd-owlist"' + sortAttr('owed') + '>' + ol.map(function (c) {
 					var k = clientOf(c), pm = c.paymark || '';
 					var tb = function (v, label) { return '<button type="button" class="dwdc-btn2 sm' + (pm === v ? ' on-' + v : '') + '" data-owmark="' + c.id + '" data-v="' + (pm === v ? '' : v) + '">' + label + '</button>'; };
-					return '<div class="dwdc-mo-r dwdc-owr" data-owgo="client/' + c.id + '" data-sid="' + c.id + '"><span class="d">' + (c.deadline ? 'Due ' + fmt(c.deadline) : '') + '</span><span class="w"><b>' + esc(c.name) + (pm === 'pending' ? ' <em class="dwdc-pendtag pending">Pending</em>' : '') + '</b><small>' + esc([k ? k.name : c.person, num(c.price) ? 'Price ' + money(c.price) : '', c.list === 'complete' ? 'Completed' : ''].filter(Boolean).join(' · ')) + '</small></span><strong>' + money(c.balance) + '</strong>'
+					return '<div class="dwdc-mo-r dwdc-owr" data-owgo="client/' + c.id + '" data-sid="' + c.id + '"><span class="d">' + (c.deadline ? 'Due ' + fmt(c.deadline) : '') + '</span><span class="w"><b>' + esc(c.name) + (pm === 'pending' ? ' <em class="dwdc-pendtag pending">Pending</em>' : '') + '</b><small>' + esc([k ? k.name : c.person, num(c.price) ? 'Price ' + money(c.price) : '', c.list === 'complete' ? 'Completed' : ''].filter(Boolean).join(' · ')) + '</small></span><strong>' + money(c.balance) + payNext(c) + '</strong>'
 						+ '<span class="dwdc-owacts">' + tb('pending', 'Pending') + '<button type="button" class="dwdc-btn sm" data-owpaid="' + c.id + '">Paid</button></span></div>';
 				}).join('') + '</div>' : emptyRow('Nothing is owed on open projects.');
 			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide">' + head('Projects', 'Owed', money(owed(ol))) + obody + '</div>';

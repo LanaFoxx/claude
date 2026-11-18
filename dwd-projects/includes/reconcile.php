@@ -28,7 +28,7 @@ function dwdrc_paypal() {
 				$ev  = (string) ( $ti['transaction_event_code'] ?? '' );
 				$st  = (string) ( $ti['transaction_status'] ?? 'S' );
 				$in  = $amt > 0 && 'S' === $st && preg_match( '/^T0(0|1)/', $ev );
-				$ref = $amt < 0 && preg_match( '/^T11/', $ev ); // refund sent back to a buyer
+				$ref = $amt < 0 && in_array( $ev, array( 'T1106', 'T1107' ), true ); // a client refund or chargeback (T1104 etc. are bank-funding reversals for your own purchases, not client money)
 				if ( ! $in && ! $ref ) {
 					continue;
 				}
@@ -40,6 +40,9 @@ function dwdrc_paypal() {
 					'who'    => (string) ( $t['payer_info']['payer_name']['alternate_full_name'] ?? '' ),
 					'email'  => strtolower( (string) ( $t['payer_info']['email_address'] ?? '' ) ),
 					'invoice'=> (string) ( $ti['invoice_id'] ?? '' ),
+					'orig'   => (string) ( $ti['paypal_reference_id'] ?? '' ), // a refund: the payment it sent money back on
+					'event'  => $ev,
+					'subject'=> (string) ( $ti['transaction_subject'] ?? ( $ti['transaction_note'] ?? '' ) ),
 					'kind'   => $in ? 'payment' : 'refund',
 				);
 			}
@@ -317,6 +320,21 @@ add_action( 'rest_api_init', function () {
 		update_post_meta( $id, '_dwdc_notes', array_values( array_filter( $notes ) ) );
 		wp_update_post( array( 'ID' => $id ) );
 		return dwdc_contact( $id, true );
+	} ) );
+	// Look up PayPal transactions by id around a date (read-only), e.g. the payment a refund points back to.
+	register_rest_route( 'dwd/v1', '/crm/reconcile/paypal-tx', array( 'methods' => 'GET', 'permission_callback' => $can, 'callback' => function ( $r ) {
+		$token = dwds_paypal_token();
+		$d     = strtotime( (string) $r->get_param( 'date' ) ) ?: time();
+		$out   = array();
+		foreach ( array( -31, 0 ) as $o ) { // the 31 days before the date, then the 31 days after
+			$st  = $d + $o * DAY_IN_SECONDS;
+			$res = wp_remote_get( 'https://api-m.paypal.com/v1/reporting/transactions?fields=transaction_info,payer_info,cart_info&transaction_id=' . rawurlencode( (string) $r->get_param( 'id' ) ) . '&start_date=' . rawurlencode( gmdate( 'Y-m-d\TH:i:s\Z', $st ) ) . '&end_date=' . rawurlencode( gmdate( 'Y-m-d\TH:i:s\Z', $st + 31 * DAY_IN_SECONDS - 1 ) ), array( 'timeout' => 30, 'headers' => array( 'Authorization' => 'Bearer ' . $token ) ) );
+			$j   = json_decode( wp_remote_retrieve_body( $res ), true );
+			foreach ( (array) ( $j['transaction_details'] ?? array() ) as $t ) {
+				$out[] = $t;
+			}
+		}
+		return $out;
 	} ) );
 	register_rest_route( 'dwd/v1', '/crm/reconcile/paypal-missing', array( 'methods' => array( 'GET', 'POST' ), 'permission_callback' => function () { return current_user_can( 'manage_options' ); }, 'callback' => function ( $r ) {
 		@set_time_limit( 300 );
