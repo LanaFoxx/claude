@@ -274,5 +274,30 @@ add_action( 'admin_head-index.php', function () {
 		. '.dwdwd-amt{font-weight:600}.dwdwd-mut{color:#646970}.dwdwd-sum{margin:0 0 8px}.dwdwd-foot{margin:10px 0 0;color:#646970}.dwdwd-steps{margin-left:18px}'
 		. '.dwdwd-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:7px;background:#00a32a}.dwdwd-dot.bad{background:#d63638}.dwdwd-dot.setup{background:#dba617}'
 		. '@media(max-width:782px){.dwdwd-tiles,.dwdwd-cols{grid-template-columns:repeat(2,minmax(0,1fr))}}'
+		// Website visitors box twice as wide as the others: its own full row when there are 2 columns, and a double-width
+		// first column when there are 3 or 4.
+		. '#dwdwd-wide{padding:0 8px;box-sizing:border-box}#dwdwd-wide .postbox{margin-bottom:20px}#dwdwd-wide .handle-order-higher,#dwdwd-wide .handle-order-lower{display:none}'
+		. '#dashboard-widgets.columns-3 #postbox-container-1{width:50%!important}#dashboard-widgets.columns-3 #postbox-container-2,#dashboard-widgets.columns-3 #postbox-container-3{width:25%!important}'
+		. '#dashboard-widgets.columns-4 #postbox-container-1{width:40%!important}#dashboard-widgets.columns-4 .postbox-container:not(#postbox-container-1){width:20%!important}'
 		. '</style>';
+} );
+
+add_action( 'admin_footer-index.php', function () {
+	?>
+<script>
+(function () {
+	var dw = document.getElementById('dashboard-widgets');
+	if (!dw || !document.getElementById('dwdwd_ga')) { return; }
+	var wide = document.createElement('div'); wide.id = 'dwdwd-wide'; dw.parentNode.insertBefore(wide, dw);
+	function lay() {
+		var ga = document.getElementById('dwdwd_ga'), m = (dw.className.match(/columns-(\d)/) || [])[1], n = m ? +m : 1;
+		var col = document.getElementById('normal-sortables');
+		if (n <= 2) { if (ga.parentNode !== wide) { wide.appendChild(ga); } }
+		else if (ga.parentNode === wide && col) { col.insertBefore(ga, col.firstChild); }
+	}
+	lay();
+	new MutationObserver(lay).observe(dw, { attributes: true, attributeFilter: ['class'] });
+})();
+</script>
+	<?php
 } );
