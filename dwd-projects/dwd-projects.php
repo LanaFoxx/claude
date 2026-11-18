@@ -11,7 +11,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'DWDP_VERSION', '4.59.6' );
+define( 'DWDP_VERSION', '4.59.7' );
 define( 'DWDP_FILE', __FILE__ );
 define( 'DWDP_DIR', plugin_dir_path( __FILE__ ) );
 define( 'DWDP_URL', plugin_dir_url( __FILE__ ) );

@@ -277,8 +277,8 @@ add_action( 'admin_head-index.php', function () {
 		// Website visitors box twice as wide as the others: its own full row when there are 2 columns, and a double-width
 		// first column when there are 3 or 4.
 		. '#dwdwd-wide{padding:0 8px;box-sizing:border-box}#dwdwd-wide .postbox{margin-bottom:20px}#dwdwd-wide .handle-order-higher,#dwdwd-wide .handle-order-lower{display:none}'
-		. '#dashboard-widgets.columns-3 #postbox-container-1{width:50%!important}#dashboard-widgets.columns-3 #postbox-container-2,#dashboard-widgets.columns-3 #postbox-container-3{width:25%!important}'
-		. '#dashboard-widgets.columns-4 #postbox-container-1{width:40%!important}#dashboard-widgets.columns-4 .postbox-container:not(#postbox-container-1){width:20%!important}'
+		. '#dashboard-widgets.dwdwd-c3 #postbox-container-1{width:50%!important}#dashboard-widgets.dwdwd-c3 #postbox-container-2,#dashboard-widgets.dwdwd-c3 #postbox-container-3{width:25%!important}'
+		. '#dashboard-widgets.dwdwd-c4 #postbox-container-1{width:40%!important}#dashboard-widgets.dwdwd-c4 .postbox-container:not(#postbox-container-1){width:20%!important}'
 		. '</style>';
 } );
 
@@ -290,13 +290,17 @@ add_action( 'admin_footer-index.php', function () {
 	if (!dw || !document.getElementById('dwdwd_ga')) { return; }
 	var wide = document.createElement('div'); wide.id = 'dwdwd-wide'; dw.parentNode.insertBefore(wide, dw);
 	function lay() {
-		var ga = document.getElementById('dwdwd_ga'), m = (dw.className.match(/columns-(\d)/) || [])[1], n = m ? +m : 1;
+		// How many columns WordPress is showing right now (it picks 1 to 4 from the screen width).
+		dw.classList.remove('dwdwd-c3', 'dwdwd-c4');
+		var ga = document.getElementById('dwdwd_ga'), cs = dw.querySelectorAll('.postbox-container'), top0 = cs[0] ? cs[0].getBoundingClientRect().top : 0, n = 0;
+		cs.forEach(function (c) { var r = c.getBoundingClientRect(); if (r.width > 0 && Math.abs(r.top - top0) < 2) { n++; } });
+		if (n >= 3) { dw.classList.add(n >= 4 ? 'dwdwd-c4' : 'dwdwd-c3'); }
 		var col = document.getElementById('normal-sortables');
 		if (n <= 2) { if (ga.parentNode !== wide) { wide.appendChild(ga); } }
 		else if (ga.parentNode === wide && col) { col.insertBefore(ga, col.firstChild); }
 	}
 	lay();
-	new MutationObserver(lay).observe(dw, { attributes: true, attributeFilter: ['class'] });
+	var t; addEventListener('resize', function () { clearTimeout(t); t = setTimeout(lay, 150); });
 })();
 </script>
 	<?php
