@@ -78,6 +78,7 @@
         tabHint: p.ce && p.qe ? (qe ? 'Qualifying education: required before your first CTEC registration.' : 'Continuing education: required every year to renew an existing registration.') : (p.qe ? 'This school offers the 60-hour qualifying course only.' : 'This school offers the 20-hour continuing education course only.'),
         courseLabel: qe ? '60-Hour QE Course' : '20-Hour CE Course', packageKind: kind,
         packageExplain: kind === 'Complete package' ? 'A complete ' + label + ' education package. One price covers all required hours for ' + (qe ? 'first-time CTEC registration' : 'annual renewal') + '.' : (dec.priceCaptured ? dec.priceText + '. ' + (dec.priceNote || '') : 'Price not published. Confirm package scope on the school website.'),
+        priceCls: /^\$?[\d,]+(\.\d{1,2})?$/.test(String(dec.priceText || '').trim()) ? '' : 'tcfd-h4-price--long',
         priceText: dec.priceText || 'Price not published', priceNote: dec.priceNote || (dec.priceCaptured ? 'Published price' : 'Check provider site'), priceWeight: dec.priceMuted ? 500 : 800, priceColor: dec.priceMuted ? '#4B4F54' : '#23272A',
         priceChecked: fmt(C.price_last_checked || p.lastChecked),
         hasCoupon: !!dec.hasCoupon, coupon: dec.coupon, couponLabel: dec.couponLabel,
