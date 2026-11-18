@@ -4233,7 +4233,7 @@
 					var k4 = o.c.id + ':' + o.x.i;
 					var act = S.upXBusy === k4 ? '<em class="dd-schip b">Saving…</em>' : '<button type="button" class="dd-btn primary sm" data-upxwd="' + esc(k4) + '">' + lu('check', 13) + 'Mark withdrawn</button>'
 						+ '<button type="button" class="dd-btn secondary sm" data-upnp="x" data-upheld="' + esc(k4) + '" title="Remove this payment; the amount goes back to owed on the project">Not pending</button>';
-					return '<div class="dwdc-mo-r dd-upr dd-upr-s"><span class="d"><em class="dd-schip p">' + (o.x.free ? fmt(o.x.free) : 'Pending') + '</em></span><span class="w"><b>' + esc(clientName(o.c) || o.c.name) + '</b><small>' + esc(o.c.name + ' · added in Dream Desk ' + fmt(o.x.date)) + '</small></span><b class="a">' + money2(o.x.amount).replace('.00', '') + '</b><span class="dd-upact">' + act + '</span></div>';
+					return '<div class="dwdc-mo-r dd-upr dd-upr-s"><span class="d"><em class="dd-schip p">' + (o.x.free ? fmt(o.x.free) : 'Pending') + '</em></span><span class="w"><b>' + esc(o.c.name) + '</b><small>' + esc((clientName(o.c) && clientName(o.c) !== o.c.name ? clientName(o.c) + ' · ' : '') + 'added in Dream Desk ' + fmt(o.x.date)) + '</small></span><b class="a">' + money2(o.x.amount).replace('.00', '') + '</b><span class="dd-upact">' + act + '</span></div>';
 				}).join('');
 				var usPend = num(US.pending) + usX.reduce(function (a, o) { return a + num(o.x.amount); }, 0), usNext = usI.map(function (x) { return x.date; }).concat(usX.map(function (o) { return o.x.free; })).filter(Boolean).sort()[0];
 				return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide">' + head('Money', 'In Upwork', money(usPend + num(US.available)))
