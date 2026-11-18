@@ -337,6 +337,5 @@ section.dwr-doall-sec .dwr-doall{margin:0!important;border:0!important;border-ra
 .dwr-qtop{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap}
 .dwr-qtop .dwr-qsrc{margin:0 !important}
 
-/* Reviews: stars sit closer to the quote */
-.dwr-qband .dwr-qslider>figure{gap:10px!important}
-.dwr-qband .dwr-qslider>figure figcaption{margin-top:12px!important}
+/* Reviews: the name and links sit right under the quote (a short quote no longer leaves a gap above them) */
+.dwr-qband #dw-quotes-grid.dwr-qslider>figure figcaption{margin-top:0!important}
