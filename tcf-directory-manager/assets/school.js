@@ -101,6 +101,7 @@ pace: or(pace), access: access || NC, afterCompletion: has(C.after_completion) ?
         exams: has(C.exam_structure) ? L.exams[C.exam_structure] + '.' : NC, passing: passing || NC, timers: has(C.timers) ? L.timers[C.timers] + '.' : NC,
         whoReports: has(C.who_reports) ? L.who[C.who_reports] : NC, certificate: has(C.certificate) ? L.cert[C.certificate] + '.' : NC,
         aboutKnown: has(S.about), aboutMissing: !has(S.about),
+        ctecKnown: has(D.provider.ctec_number), ctecMissing: !has(D.provider.ctec_number), reportingKnown: !!rep, reportingMissing: !rep,
         about: has(S.about) ? S.about : 'No school description on file yet. Schools can add one by verifying their profile.',
         faqs: (S.faqs && S.faqs.length) ? S.faqs : [{ q: 'School-specific FAQs', a: 'Not confirmed. Schools can supply these when they verify their profile.' }],
         shots: S.screenshots || [], hasShots: !!(S.screenshots && S.screenshots.length),
