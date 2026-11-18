@@ -681,6 +681,16 @@ add_action( 'rest_api_init', function () {
 			}
 			$now    = current_time( 'l, F j, Y g:i A' );
 			$system = "You turn Michael's spoken or typed requests into to-do items for his personal Dream Desk list. Today is {$now} (" . wp_timezone_string() . "). Resolve relative dates ('tomorrow', 'next Tuesday', 'the 15th', 'in two weeks') to real dates. Split separate things into separate tasks. Keep titles short and clear (start with a verb when natural, fix speech-to-text slips), put extra details in notes. Only set a time if he gave one. If something essential is genuinely ambiguous, ask one short question instead of guessing. Respond with ONLY a JSON object, no prose around it: {\"reply\": \"one short friendly sentence summarising what you'll add or asking your question\", \"tasks\": [{\"text\": \"...\", \"due\": \"YYYY-MM-DD or empty\", \"time\": \"h:mm AM/PM or empty\", \"note\": \"... or empty\"}]}. Use an empty tasks list when you're asking a question.";
+			// From Home ("Add task or reminder"): Claude also decides which list each item goes on, and which project.
+			$smart = (bool) $r->get_param( 'smart' );
+			$plist = array();
+			if ( $smart && defined( 'DWDC_CONTACT' ) ) {
+				foreach ( get_posts( array( 'post_type' => DWDC_CONTACT, 'post_status' => 'private', 'posts_per_page' => 120, 'orderby' => 'modified', 'order' => 'DESC', 'meta_query' => array( array( 'key' => '_dwdc_list', 'value' => array( 'active', 'leads', 'hold', 'limbo' ), 'compare' => 'IN' ) ) ) ) as $pp ) {
+					$who     = trim( (string) get_post_meta( $pp->ID, '_dwdc_person', true ) . ' ' . (string) get_post_meta( $pp->ID, '_dwdc_company', true ) );
+					$plist[] = $pp->ID . ': ' . $pp->post_title . ( '' !== $who ? ' (' . $who . ')' : '' );
+				}
+				$system .= "\n\nAlso decide which list each task goes on. \"lane\": \"work\" for his web design business (clients, projects, leads, quotes, invoices, Upwork, calls or emails with clients, his own website and marketing) or \"personal\" for everything else (errands, family, health, home, bills, personal appointments). For a work task about one of these current projects or leads, set \"project\" to its number, otherwise 0:\n" . implode( "\n", $plist ) . "\nSo each task is {\"text\", \"due\", \"time\", \"note\", \"lane\", \"project\"}. In your reply, say where each one is going (for example: \"Work, Identity Zilla: Call Sonia on Tuesday at 2 PM\").";
+			}
 			$res = wp_remote_post( 'https://api.anthropic.com/v1/messages', array(
 				'timeout' => 60,
 				'headers' => array( 'x-api-key' => $key, 'anthropic-version' => '2026-10-21', 'anthropic-beta' => 'server-side-fallback-2026-07-01', 'content-type' => 'application/json' ),
@@ -710,7 +720,13 @@ add_action( 'rest_api_init', function () {
 			foreach ( (array) ( $j['tasks'] ?? array() ) as $t ) {
 				$c = dwdpe_clean( 'todos', array( 'text' => $t['text'] ?? '', 'due' => $t['due'] ?? '', 'time' => $t['time'] ?? '', 'note' => $t['note'] ?? '' ) );
 				if ( '' !== $c['text'] ) {
-					$tasks[] = array( 'text' => $c['text'], 'due' => $c['due'], 'time' => $c['time'], 'note' => $c['note'] );
+					$row = array( 'text' => $c['text'], 'due' => $c['due'], 'time' => $c['time'], 'note' => $c['note'] );
+					if ( $smart ) {
+						$pid         = (int) ( $t['project'] ?? 0 );
+						$row['lane']    = 'work' === ( $t['lane'] ?? '' ) ? 'work' : 'personal';
+						$row['project'] = 'work' === $row['lane'] && $pid && defined( 'DWDC_CONTACT' ) && DWDC_CONTACT === get_post_type( $pid ) ? $pid : 0;
+					}
+					$tasks[] = $row;
 				}
 			}
 			return array( 'reply' => sanitize_text_field( (string) ( $j['reply'] ?? '' ) ), 'tasks' => array_slice( $tasks, 0, 20 ) );

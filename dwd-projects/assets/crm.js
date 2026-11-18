@@ -461,7 +461,7 @@
 		var m = S.modal; if (!m || m.type !== 'paddtask' || m.busy) { return; }
 		var q = String(m.draft || '').trim(); if (!q) { return; }
 		m.msgs.push({ role: 'user', content: q }); m.draft = ''; m.busy = true; render();
-		api('/personal/plan', 'POST', { messages: m.msgs.concat(m.tasks && m.tasks.length ? [] : []) }).then(function (r) {
+		api('/personal/plan', 'POST', { messages: m.msgs.concat(m.tasks && m.tasks.length ? [] : []), smart: m.smart ? 1 : 0 }).then(function (r) {
 			if (S.modal !== m) { return; }
 			m.msgs.push({ role: 'assistant', content: r.reply || (r.tasks.length ? 'Here’s what I’ll add.' : 'Got it.') });
 			if (r.tasks && r.tasks.length) { m.tasks = r.tasks; }
@@ -709,6 +709,7 @@
 	}
 	/* ================= Dream Desk 1c shell (design handoff): tokens, sidebar, top bar, Home ================= */
 	var LU = {
+		mic: '<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>',
 		trash: '<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
 		'dollar-sign': '<line x1="12" x2="12" y1="2" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>',
 		smartphone: '<rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/>',
@@ -841,7 +842,9 @@
 			var q = quoteBar(), qm = /dwdc-quote-q">(.*?)<\/span><span class="dwdc-quote-a">— (.*?)<\/span>/.exec(q);
 			var hOk = S.health && S.health.items && S.health.ok && !S.health.setup; // all syncing: the small notice sits next to the date
 			return '<div class="dd-ph home"><div><div class="dd-ph-t"><h1>' + new Date(DWDC.today + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }) + '</h1>' + (hOk ? healthStrip() : '') + '</div><p>' + greet + ', ' + esc(String(DWDC.user || 'Michael').split(' ')[0]) + '</p></div>'
-				+ (qm ? '<div class="dd-quote"><span>' + qm[1] + ' <i>— ' + qm[2] + '</i></span><button type="button" class="dd-ibtn sm" data-quotex aria-label="Hide for today">' + lu('x', 14) + '</button></div>' : '') + '</div>';
+				+ (qm ? '<div class="dd-quote"><span>' + qm[1] + ' <i>— ' + qm[2] + '</i></span><button type="button" class="dd-ibtn sm" data-quotex aria-label="Hide for today">' + lu('x', 14) + '</button></div>' : '')
+				// Talk (or type) a to-do or reminder: Claude puts it on the work or personal list with its date and time.
+				+ '<button type="button" class="dd-btn primary dd-qadd" data-addtask="smart">' + lu('mic', 16) + 'Add task or reminder</button></div>';
 		}
 		if (r.view === 'client' || r.view === 'cl' || r.view === 'host' || r.view === 'todos' || r.view === 'reviews' || (r.view === 'projects' && (!r.arg || r.arg === 'active' || r.arg === 'all')) || (r.view === 'personal' && (r.arg === 'calendar' || r.arg === 'bills' || r.arg === 'suggestions'))) { return ''; }
 		return '<div class="dd-ph"><h1>' + esc(ddTitle(r, t)) + '</h1></div>';
@@ -4315,11 +4318,12 @@
 		if (m.type === 'paddtask') {
 			var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 			var dfmt = function (t) { return t.due ? new Date(t.due + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) + (t.time ? ' · ' + t.time : '') : 'No date'; };
-			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal dwdc-addm">' + head('Personal', 'Add a', 'task')
-				+ '<div class="dwdc-addlog">' + (m.msgs.length ? '' : '<p class="dwdc-addhi">Just say what you need to do and when. For example: <i>“Dentist next Tuesday at 3pm, bring the insurance card”</i> or <i>“Pay rent on the 1st and call Mom Sunday evening.”</i></p>')
+			var laneOf = function (t) { if (!m.smart) { return ''; } if (t.lane !== 'work') { return '<em class="dd-lane p">Personal</em>'; } var pc = t.project ? contact(+t.project) : null; return '<em class="dd-lane w">Work' + (pc ? ' · ' + esc(pc.name) : '') + '</em>'; };
+			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal dwdc-addm">' + (m.smart ? head('To-dos', 'Add a task or', 'reminder') : head('Personal', 'Add a', 'task'))
+				+ '<div class="dwdc-addlog">' + (m.msgs.length ? '' : '<p class="dwdc-addhi">' + (m.smart ? (m.listening ? '<b>Listening…</b> ' : '') + 'Just say what you need and when. I’ll put it on your work or personal list. For example: <i>“Remind me next Tuesday at 2 to call Sonia about the staging site”</i> or <i>“Oil change Saturday morning.”</i>' : 'Just say what you need to do and when. For example: <i>“Dentist next Tuesday at 3pm, bring the insurance card”</i> or <i>“Pay rent on the 1st and call Mom Sunday evening.”</i>') + '</p>')
 				+ m.msgs.map(function (x) { return '<div class="dwdc-chat-m ' + x.role + '">' + esc(x.content) + '</div>'; }).join('')
 				+ (m.busy ? '<div class="dwdc-chat-m assistant typing"><i></i><i></i><i></i></div>' : '') + '</div>'
-				+ (m.tasks && m.tasks.length ? '<div class="dwdc-addprop"><p class="dwdc-lbl">Ready to add</p>' + m.tasks.map(function (t, i) { return '<div class="dwdc-addcard"><span class="dwdc-chk on">' + ic('check', 11) + '</span><div><b>' + esc(t.text) + '</b><small>' + esc(dfmt(t)) + (t.note ? ' · ' + esc(t.note) : '') + '</small></div><button type="button" data-ptrm="' + i + '" aria-label="Remove">' + ic('x', 13) + '</button></div>'; }).join('')
+				+ (m.tasks && m.tasks.length ? '<div class="dwdc-addprop"><p class="dwdc-lbl">Ready to add</p>' + m.tasks.map(function (t, i) { return '<div class="dwdc-addcard"><span class="dwdc-chk on">' + ic('check', 11) + '</span><div><b>' + esc(t.text) + '</b><small>' + laneOf(t) + esc(dfmt(t)) + (t.note ? ' · ' + esc(t.note) : '') + '</small></div><button type="button" data-ptrm="' + i + '" aria-label="Remove">' + ic('x', 13) + '</button></div>'; }).join('')
 					+ '<button type="button" class="dwdc-btn coral full" data-ptconfirm>' + ic('check', 14) + 'Add ' + (m.tasks.length === 1 ? 'task' : m.tasks.length + ' tasks') + '</button><p class="dwdc-mutp sm">Want to change something? Just say it below.</p></div>' : '')
 				+ '<div class="dwdc-addin">' + (SR ? '<button type="button" class="dwdc-mic' + (m.listening ? ' on' : '') + '" data-ptmic aria-label="Talk">' + ic('mic', 18) + '</button>' : '')
 				+ '<textarea rows="1" data-ptdraft placeholder="' + (m.listening ? 'Listening…' : 'Type or tap the mic…') + '">' + esc(m.draft || '') + '</textarea><button type="button" class="dwdc-btn" data-ptsend aria-label="Send"' + (m.busy ? ' disabled' : '') + '>' + ic('right', 16) + '</button></div></div>';
@@ -4911,14 +4915,25 @@
 		if (t.closest('[data-gobills]') && !t.closest('[data-ptask]')) { location.hash = 'personal/bills'; return; }
 		if ((el = t.closest('.dwdc-phcal [data-psel]')) && !t.closest('[data-ptask], [data-gobills], a')) { S.modal = { type: 'pday', day: el.getAttribute('data-psel'), vals: {} }; render(); return; }
 		if ((el = t.closest('[data-psel]')) && !t.closest('[data-ptask], [data-task], [data-gobills], a, button')) { S.calFocus = true; S.pSel = el.getAttribute('data-psel'); var pm = S.pSel.slice(0, 7); if (pm !== (S.pCal || DWDC.today.slice(0, 7))) { S.pCal = pm; } render(); if (window.innerWidth <= 1100) { setTimeout(function () { var dd = document.querySelector('.dd-today'); if (dd) { dd.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }, 50); } return; }
-		if (t.closest('[data-addtask]')) { S.modal = { type: 'paddtask', msgs: [], tasks: [], draft: '', vals: {} }; render(); setTimeout(function () { var ta = document.querySelector('[data-ptdraft]'); if (ta) { ta.focus(); } }, 60); return; }
+		if ((el = t.closest('[data-addtask]'))) {
+			var smart = el.getAttribute('data-addtask') === 'smart';
+			S.modal = { type: 'paddtask', msgs: [], tasks: [], draft: '', vals: {}, smart: smart }; render();
+			// From Home: start listening right away (the browser asks for the microphone the first time).
+			if (smart && (window.SpeechRecognition || window.webkitSpeechRecognition)) { ptMic(); }
+			else { setTimeout(function () { var ta = document.querySelector('[data-ptdraft]'); if (ta) { ta.focus(); } }, 60); }
+			return;
+		}
 		if (t.closest('[data-ptsend]')) { var ta0 = document.querySelector('[data-ptdraft]'); if (ta0 && S.modal) { S.modal.draft = ta0.value; } ptSend(); return; }
 		if (t.closest('[data-ptmic]')) { var ta1 = document.querySelector('[data-ptdraft]'); if (ta1 && S.modal) { S.modal.draft = ta1.value; } ptMic(); return; }
 		if ((el = t.closest('[data-ptrm]'))) { S.modal.tasks.splice(+el.getAttribute('data-ptrm'), 1); render(); return; }
 		if (t.closest('[data-ptconfirm]')) {
 			var list = (S.modal.tasks || []).slice(); S.modal = null; render();
-			list.reduce(function (pr, x) { return pr.then(function () { return api('/personal', 'POST', { kind: 'todos', item: x }).then(function (d) { S.pers = d; }); }); }, Promise.resolve())
-				.then(function () { render(); toast(list.length === 1 ? 'Task added' : list.length + ' tasks added'); }).catch(fail);
+			// Work items go on the work to-do list (on their project when Claude matched one); everything else is personal.
+			list.reduce(function (pr, x) { return pr.then(function () {
+				if (x.lane === 'work') { return api('/task', 'POST', { text: x.text + (x.note ? ' (' + x.note + ')' : ''), contact: +x.project || 0, due: x.due || '', time: x.time || '' }).then(function (tk) { if (tk && tk.id) { S.tasks = (S.tasks || []).concat([tk]); } }); }
+				return api('/personal', 'POST', { kind: 'todos', item: { text: x.text, due: x.due, time: x.time, note: x.note } }).then(function (d) { S.pers = d; });
+			}); }, Promise.resolve())
+				.then(function () { return reload(); }).then(function () { render(); toast(list.length === 1 ? (list[0].lane === 'work' ? 'Added to your work to-dos' : 'Added to your to-dos') : list.length + ' added to your to-dos'); }).catch(fail);
 			return;
 		}
 		if ((el = t.closest('[data-pday]')) && !t.closest('[data-ptask], a')) { S.modal = { type: 'pday', day: el.getAttribute('data-pday'), vals: {} }; render(); setTimeout(function () { var x = document.querySelector('.dwdc-daym input[name=text]'); if (x) { x.focus(); } }, 50); return; }
