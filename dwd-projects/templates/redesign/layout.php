@@ -24,7 +24,7 @@ if ( 'article' === $dwdr && preg_match( '#<img data-dw-zoom="1" src="([^"]+)"([^
 <body <?php body_class( 'dwr dwr-' . $dwdr ); ?>>
 <?php
 wp_body_open();
-if ( 'home' === $dwdr ) {
+if ( 'home' === $dwdr || 'city' === $dwdr ) { // the homepage template (city pages too) has its own nav and footer
 	echo $body; // phpcs:ignore
 } else {
 	echo dwdr_render( 'chrome-top' ) . $body . dwdr_render( 'chrome-bottom' ); // phpcs:ignore

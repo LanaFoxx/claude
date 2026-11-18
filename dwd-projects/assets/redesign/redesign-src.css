@@ -352,3 +352,18 @@ section.dwr-doall-sec .dwr-doall{margin:0!important;border:0!important;border-ra
 .dwr-local-l{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:10px}
 .dwr-local-l li{padding:10px 16px;border:1px solid #E4E6EA;border-radius:999px;font-size:15px;font-weight:500;color:#121212;background:#F6F7F9}
 .dwr-local-l li:first-child{background:#13A6EE;border-color:#13A6EE;color:#0B1626}
+
+/* Phones: everything centred (forms keep their labels on the left) */
+@media (max-width:767px){
+.dwr section{text-align:center}
+.dwr section h1,.dwr section h2,.dwr section h3,.dwr section p,.dwr section blockquote{text-align:center!important;margin-left:auto!important;margin-right:auto!important}
+.dwr section [style*="align-items:flex-start"],.dwr section [style*="align-items:start"]{align-items:center!important}
+.dwr section [style*="justify-content:flex-start"],.dwr section [style*="justify-content:space-between"]:not(a),.dwr section [style*="flex-wrap:wrap"]{justify-content:center!important}
+#dw-work-copy,#dw-phone-copy,#dw-work-copy #dw-work-ctas,#dw-work-copy .dwr-proof,#dw-phone-copy .dwr-proof,.dwr-proof{align-items:center!important;justify-content:center!important;text-align:center!important}
+.dwr-doall-l,.dwr-doall-r{align-items:center!important;justify-content:center!important;text-align:center!important}
+.dwr-doall-r{display:flex;flex-direction:column}
+.dwr-band-in,.dwr-band-in>div:first-child,.dwr-band-b,.dwr-local-in,.dwr-local-l{align-items:center!important;justify-content:center!important;text-align:center!important}
+.dwr section ul,.dwr section ol{justify-content:center}
+.dwr section form,.dwr section form *{text-align:left!important}
+.dwr section form [style*="justify-content"]{justify-content:flex-start!important}
+}

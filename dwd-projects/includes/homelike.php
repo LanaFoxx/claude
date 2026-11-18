@@ -138,12 +138,13 @@ function dwdhl_hero( $l1, $l2, $lead, $sub, $media = true ) {
 	$b  = strpos( $h, '</h1>', (int) $a );
 	if ( false !== $a && false !== $b ) {
 		$a  = strpos( $h, '>', $a ) + 1;
-		$h1 = "\n    " . '<span style="display:block;overflow:hidden;padding-bottom:.08em;margin-bottom:-.08em"><span data-dw-line="1" data-dw-slide="left" style="font-size:.74em;font-weight:300">' . $l1 . '</span></span>'
-			. "\n    " . '<span style="display:block;overflow:hidden;padding-bottom:.08em;margin-bottom:-.08em"><span data-dw-line="1" data-dw-slide="right" style="color:#13A6EE;transition-delay:.12s">' . $l2 . '</span></span>' . "\n  ";
+		$h1 = "\n    " . '<span style="display:block;overflow:hidden;padding-bottom:.08em;margin-bottom:-.08em"><span data-dw-line="1" data-dw-slide="left" data-dw-fit=".74" style="font-size:.74em;font-weight:300;white-space:nowrap">' . $l1 . '</span></span>'
+			. "\n    " . '<span style="display:block;overflow:hidden;padding-bottom:.08em;margin-bottom:-.08em"><span data-dw-line="1" data-dw-slide="right" data-dw-fit="1" style="color:#13A6EE;transition-delay:.12s;white-space:nowrap">' . $l2 . '</span></span>' . "\n  ";
 		$h  = substr( $h, 0, $a ) . $h1 . substr( $h, $b );
 	}
 	$h = dwdhl_set_p( $h, '<div id="dw-hero-row"', 1, $lead );
 	$h = dwdhl_set_p( $h, '<div id="dw-hero-row"', 2, $sub );
+
 	if ( ! $media ) {
 		$m = strpos( $h, '<div id="dw-hero-media"' );
 		if ( false !== $m ) {
@@ -151,6 +152,11 @@ function dwdhl_hero( $l1, $l2, $lead, $sub, $media = true ) {
 		}
 	}
 	return $h;
+}
+
+/** Each headline line marked data-dw-fit stays on one line: the font shrinks until it fits the width (never wraps). */
+function dwdhl_fit_js() {
+	return '<script>(function(){function fit(){document.querySelectorAll("[data-dw-fit]").forEach(function(s){var h=s.closest("h1");if(!h)return;s.style.fontSize=s.getAttribute("data-dw-fit")+"em";var c=h.parentElement,cs=getComputedStyle(c),w=c.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight),sw=s.getBoundingClientRect().width;if(sw>w&&w>0){s.style.fontSize=(parseFloat(getComputedStyle(s).fontSize)*w/sw*0.97)+"px";}});}fit();window.addEventListener("resize",fit);window.addEventListener("load",fit);if(document.fonts&&document.fonts.ready){document.fonts.ready.then(fit);}})();</script>';
 }
 
 /** The homepage sections shown after an interior page's own content. */
@@ -187,7 +193,7 @@ function dwdhl_apply( $page, $html ) {
 		}
 	}
 	// The homepage sections go before the page's closing call to action band, or at the end.
-	$add = dwdhl_tail( $tail ) . dwdr_quotes_js();
+	$add = dwdhl_tail( $tail ) . dwdr_quotes_js() . dwdhl_fit_js();
 	$j   = strrpos( $html, '<section data-theme="light" class="dwr-band dwr-band-light' );
 	return false !== $j ? substr_replace( $html, $add, $j, 0 ) : $html . $add;
 }
@@ -199,8 +205,8 @@ function dwdhl_city_page() {
 		return '';
 	}
 	list( $slug, $city, $near ) = $c;
-	$e    = esc_html( $city );
-	$html = dwdhl_home() . dwdr_quotes_js();
+	$e    = '<span style="white-space:nowrap">' . esc_html( $city ) . '</span>'; // the city name never breaks across two lines
+	$html = dwdhl_home() . dwdr_quotes_js() . dwdhl_fit_js();
 	$r    = dwdhl_section_at( $html, '<section id="top"' );
 	if ( $r ) {
 		$hero = dwdhl_hero( 'Web design in ' . $e . '.', 'Built by hand.', 'Custom Website Designer &amp; Developer in ' . $e . ', FL.', 'I personally design, build and optimize every website for ' . $e . ' businesses, from the first call to launch day and beyond. Based in Stuart on the Treasure Coast, with 500+ websites, 12+ years and a 100% Job Success Score on Upwork.', true );
