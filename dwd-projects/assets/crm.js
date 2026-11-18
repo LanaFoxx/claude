@@ -261,7 +261,7 @@
 		return '<span class="dwdc-nm"><span>' + (k ? '<a class="dwdc-clink" href="#cl/' + k.id + '">' + esc(k.name) + '</a>' : '<b class="nm2">' + esc(c.person || '—') + '</b>') + (em ? '<small>' + esc(em) + '</small>' : '') + '</span></span>';
 	}
 	function reload() {
-		return api('').then(function (r) { S.health = r.health || null; S.tax = r.tax || null; S.contacts = r.contacts.filter(Boolean); S.tasks = r.tasks.filter(Boolean); S.clients = (r.clients || []).filter(Boolean); S.money = r.money || {}; S.upfeed = r.upfeed || null; S.costs = r.costs || {}; S.trends = r.trends || null; S.wins = r.wins || { list: [], undated: 0 }; S.ads = r.ads || null; S.meet = r.meetings || null; S.order = r.order || {}; });
+		return api('').then(function (r) { S.health = r.health || null; S.tax = r.tax || null; S.madeM = r.made_month || null; S.contacts = r.contacts.filter(Boolean); S.tasks = r.tasks.filter(Boolean); S.clients = (r.clients || []).filter(Boolean); S.money = r.money || {}; S.upfeed = r.upfeed || null; S.costs = r.costs || {}; S.trends = r.trends || null; S.wins = r.wins || { list: [], undated: 0 }; S.ads = r.ads || null; S.meet = r.meetings || null; S.order = r.order || {}; });
 	}
 
 	/* ---------- routing ---------- */
@@ -1493,7 +1493,10 @@
 			+ '<a class="more dd-half" href="#hosting"><span>Hosting clients</span><b>' + hosting().length + '</b></a>'
 			+ (function () {
 				var A = S.ads || {}, G = A.google, K = A.connects || {}, mn = new Date(DWDC.today + 'T12:00:00').toLocaleDateString('en-US', { month: 'long' });
-				return '<a class="more" href="#money" data-connmodal><span>Connects spent<small>' + mn + ' · last month ' + money(K.lastmonth || 0) + '</small></span><b>' + money(K.month || 0) + '</b></a>'
+				// Made this month: Upwork money that reached the bank, plus PayPal and Stripe (wpdash.php: dwdmm_made_month).
+				var MM = S.madeM || { total: 0 }, mmParts = ['Upwork', 'PayPal', 'Stripe'].filter(function (k) { return num(MM[k]); }).map(function (k) { return k + ' ' + money(MM[k]); }).join(' · ');
+				return '<a class="more dd-made" href="#money"><span>Made this month<small>' + mn + (mmParts ? ' · ' + mmParts : ' · in your bank') + '</small></span><b>' + money(MM.total || 0) + '</b></a>'
+					+ '<a class="more" href="#money" data-connmodal><span>Connects spent<small>' + mn + ' · last month ' + money(K.lastmonth || 0) + '</small></span><b>' + money(K.month || 0) + '</b></a>'
 					+ '<a class="more" href="#money" data-adsmodal><span>Google Ads spent<small>' + (G ? mn + ' · ' + money(G.week.cost) + ' this week' : 'Not connected') + '</small></span><b>' + (G ? money(G.month.cost) : '—') + '</b></a>'
 					+ (S.tax ? '<a class="more" href="#money"><span>Tax set-aside<small>' + (S.tax.held == null ? S.tax.pct + '% of Q' + S.tax.quarter + ' income' + (S.tax.next ? ' · due ' + fmt(S.tax.next.date) : '') : S.tax.held >= S.tax.need ? 'Covered · ' + money(S.tax.held) + ' set aside' : 'Short ' + money(S.tax.need - S.tax.held)) + '</small></span><b>' + money(S.tax.need) + '</b></a>' : '');
 			})() + '</section>';
@@ -5636,7 +5639,7 @@
 	/* ---------- start ---------- */
 	document.body.classList.add('dwdc-app-on');
 	api('').then(function (r) {
-		S.health = r.health || null; S.tax = r.tax || null;
+		S.health = r.health || null; S.tax = r.tax || null; S.madeM = r.made_month || null;
 		S.contacts = r.contacts.filter(Boolean); S.tasks = r.tasks.filter(Boolean); S.clients = (r.clients || []).filter(Boolean); S.money = r.money || {}; S.upfeed = r.upfeed || null; S.costs = r.costs || {}; S.trends = r.trends || null; S.wins = r.wins || { list: [], undated: 0 }; S.ads = r.ads || null; S.meet = r.meetings || null; S.order = r.order || {};
 		var m = /[?&]contact=(\d+)/.exec(location.search), em = /[?&]email=([^&]+)/.exec(location.search);
 		var who = m ? contact(+m[1]) : em ? S.contacts.find(function (c) { return c.email && c.email.toLowerCase() === decodeURIComponent(em[1]).toLowerCase(); }) : null;

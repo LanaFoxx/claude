@@ -276,3 +276,29 @@ add_action( 'admin_head-index.php', function () {
 		. '@media(max-width:782px){.dwdwd-tiles,.dwdwd-cols{grid-template-columns:repeat(2,minmax(0,1fr))}}'
 		. '</style>';
 } );
+
+/**
+ * Made this month (Dream Desk Home): every payment that reached the bank this month from Upwork (moved to "in bank";
+ * its date is the day it landed), PayPal and Stripe. Money still in Upwork doesn't count yet.
+ */
+function dwdmm_made_month() {
+	$month = current_time( 'Y-m' );
+	$out   = array( 'total' => 0, 'Upwork' => 0, 'PayPal' => 0, 'Stripe' => 0, 'count' => 0 );
+	foreach ( get_posts( array( 'post_type' => DWDC_CONTACT, 'post_status' => 'private', 'posts_per_page' => -1, 'fields' => 'ids' ) ) as $id ) {
+		foreach ( (array) get_post_meta( $id, '_dwdc_payments', true ) as $x ) {
+			$src = is_array( $x ) ? (string) ( $x['source'] ?? '' ) : '';
+			if ( ! isset( $out[ $src ] ) || 'total' === $src || 'count' === $src || 'held' === ( $x['status'] ?? 'paid' ) || 0 !== strpos( (string) ( $x['date'] ?? '' ), $month ) ) {
+				continue;
+			}
+			$amt          = (float) preg_replace( '/[^\d.\-]/', '', (string) ( $x['amount'] ?? 0 ) );
+			$out[ $src ] += $amt;
+			$out['total'] += $amt;
+			$out['count']++;
+		}
+	}
+	return $out;
+}
+add_filter( 'dwdc_crm_payload', function ( $p ) {
+	$p['made_month'] = dwdmm_made_month();
+	return $p;
+} );
