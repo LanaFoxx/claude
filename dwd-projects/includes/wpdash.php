@@ -42,8 +42,11 @@ function dwdga_data( $force = false ) {
 	return $res;
 }
 
-/** Save the property ID / refresh (from the Analytics box). */
-add_action( 'admin_post_dwdga_save', function () {
+/** Save the property ID / refresh (from the Analytics box). The form posts to the Dashboard itself: this server answers admin-post.php with a 404. */
+add_action( 'admin_init', function () {
+	if ( 'POST' !== ( $_SERVER['REQUEST_METHOD'] ?? '' ) || 'dwdga_save' !== ( $_POST['action'] ?? '' ) ) { // phpcs:ignore WordPress.Security
+		return;
+	}
 	if ( ! current_user_can( 'manage_options' ) || ! check_admin_referer( 'dwdga' ) ) {
 		wp_die( 'Not allowed.' );
 	}
@@ -112,7 +115,7 @@ function dwdwd_upwork_pending() {
 
 function dwdwd_box_ga() {
 	$r    = dwdga_data( isset( $_GET['dwdga_refresh'] ) ); // phpcs:ignore WordPress.Security.NonceVerification
-	$form = '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" class="dwdwd-gaf">' . wp_nonce_field( 'dwdga', '_wpnonce', true, false ) . '<input type="hidden" name="action" value="dwdga_save">';
+	$form = '<form method="post" action="' . esc_url( admin_url( 'index.php' ) ) . '" class="dwdwd-gaf">' . wp_nonce_field( 'dwdga', '_wpnonce', true, false ) . '<input type="hidden" name="action" value="dwdga_save">';
 	if ( 'setup' === $r['state'] ) {
 		echo '<p>Connect Google Analytics to see your website visitors here.</p><ol class="dwdwd-steps">'
 			. '<li>In Google Analytics, open <b>Admin → Property settings</b> and copy the <b>Property ID</b> (numbers only).</li>'
