@@ -38,6 +38,7 @@ function dwdrc_paypal() {
 					'amount' => round( $amt, 2 ),
 					'fee'    => round( (float) ( $ti['fee_amount']['value'] ?? 0 ), 2 ),
 					'who'    => (string) ( $t['payer_info']['payer_name']['alternate_full_name'] ?? '' ),
+					'email'  => strtolower( (string) ( $t['payer_info']['email_address'] ?? '' ) ),
 					'invoice'=> (string) ( $ti['invoice_id'] ?? '' ),
 					'kind'   => $in ? 'payment' : 'refund',
 				);
@@ -208,7 +209,119 @@ function dwdrc_run() {
 	return $res;
 }
 
+/** The project a PayPal payer belongs to: by email first, then an exact name match on the project or its client. */
+function dwdrc_project_for( $email, $who ) {
+	$pid = function_exists( 'dwds_project_for' ) ? dwds_project_for( $email, $who ) : 0;
+	if ( $pid ) {
+		return array( $pid, 'email' );
+	}
+	$n = strtolower( trim( preg_replace( '/[,.]|\b(llc|inc)\b/i', '', (string) $who ) ) );
+	$n = trim( preg_replace( '/\s+/', ' ', $n ) );
+	if ( strlen( $n ) < 4 ) {
+		return array( 0, '' );
+	}
+	$hits = array();
+	foreach ( get_posts( array( 'post_type' => DWDC_CONTACT, 'post_status' => 'private', 'numberposts' => -1, 'fields' => 'ids' ) ) as $id ) {
+		$k     = (int) get_post_meta( $id, '_dwdc_client', true );
+		$names = array( get_the_title( $id ), get_post_meta( $id, '_dwdc_person', true ), get_post_meta( $id, '_dwdc_company', true ), $k ? get_the_title( $k ) : '' );
+		foreach ( $names as $x ) {
+			$x = strtolower( trim( preg_replace( '/\s+/', ' ', preg_replace( '/[,.]|\b(llc|inc)\b/i', '', html_entity_decode( (string) $x, ENT_QUOTES, 'UTF-8' ) ) ) ) );
+			if ( $x && $x === $n ) {
+				$hits[ $id ] = 1;
+			}
+		}
+	}
+	return 1 === count( $hits ) ? array( (int) key( $hits ), 'name' ) : array( 0, count( $hits ) > 1 ? 'several projects with that name' : '' );
+}
+
+/** PayPal payments missing from Dream Desk: which project each belongs to, and whether it would be a duplicate. */
+function dwdrc_paypal_missing( $apply = false ) {
+	$rc  = get_transient( 'dwdrc_last' ) ?: dwdrc_run();
+	$out = array();
+	foreach ( (array) ( $rc['PayPal']['not_in_crm'] ?? array() ) as $x ) {
+		if ( 'payment' !== ( $x['kind'] ?? '' ) ) {
+			continue;
+		}
+		list( $pid, $how ) = dwdrc_project_for( $x['email'] ?? '', $x['who'] );
+		$row = array( 'date' => $x['date'], 'amount' => $x['amount'], 'who' => $x['who'], 'ref' => $x['ref'], 'project' => $pid ? html_entity_decode( get_the_title( $pid ), ENT_QUOTES, 'UTF-8' ) : '', 'pid' => $pid, 'matched_by' => $how, 'result' => '' );
+		if ( ! $pid ) {
+			$row['result'] = 'no project';
+		} else {
+			// Same money already on the project under any source (Upwork, Other...) within 14 days: don't add it again.
+			foreach ( (array) get_post_meta( $pid, '_dwdc_payments', true ) as $p ) {
+				if ( is_array( $p ) && abs( (float) preg_replace( '/[^\d.]/', '', (string) ( $p['amount'] ?? 0 ) ) - $x['amount'] ) < 0.01 && abs( strtotime( (string) $p['date'] ) - strtotime( $x['date'] ) ) <= 14 * DAY_IN_SECONDS ) {
+					$row['result'] = 'already there (' . ( $p['source'] ?? '' ) . ' ' . $p['date'] . ')';
+				}
+			}
+			if ( ! $row['result'] ) {
+				$row['result'] = 'to add';
+				if ( $apply ) {
+					$bal  = get_post_meta( $pid, '_dwdc_balance', true ); // an old payment: what's owed today stays as it is
+					$seen = (array) get_option( 'dwds_seen_refs', array() );
+					unset( $seen[ 'PayPal:' . $x['ref'] ] ); // it was set aside as "unmatched" by the old sync
+					update_option( 'dwds_seen_refs', $seen, false );
+					$r = dwds_log_payment( 'PayPal', $x['email'] ?? '', $x['who'], $x['amount'], $x['date'], $x['ref'], 'PayPal payment (added from PayPal history)', $pid );
+					update_post_meta( $pid, '_dwdc_balance', $bal );
+					$row['result'] = 'added' === $r ? 'added' : $r;
+				}
+			}
+		}
+		$out[] = $row;
+	}
+	if ( $apply ) {
+		delete_transient( 'dwdrc_last' );
+	}
+	return $out;
+}
+
 add_action( 'rest_api_init', function () {
+	$can = function () { return current_user_can( 'manage_options' ); };
+	// Log a refund on a project: money sent back to the client. It comes off income; what's owed is left alone.
+	register_rest_route( 'dwd/v1', '/crm/contact/(?P<id>\d+)/refund', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
+		$id  = (int) $r['id'];
+		$amt = round( (float) preg_replace( '/[^\d.]/', '', (string) $r->get_param( 'amount' ) ), 2 );
+		if ( $amt <= 0 || DWDC_CONTACT !== get_post_type( $id ) ) {
+			return new WP_Error( 'dwdc_amt', 'Enter the amount refunded.', array( 'status' => 400 ) );
+		}
+		$src  = sanitize_text_field( (string) $r->get_param( 'source' ) ) ?: 'Other';
+		$date = sanitize_text_field( (string) $r->get_param( 'date' ) ) ?: current_time( 'Y-m-d' );
+		$pays = get_post_meta( $id, '_dwdc_payments', true );
+		$pays = is_array( $pays ) ? $pays : array();
+		$pays[] = array( 'date' => $date, 'amount' => (string) $amt, 'source' => $src, 'ref' => sanitize_text_field( (string) $r->get_param( 'ref' ) ) ?: 'Refund logged in Dream Desk', 'status' => 'refunded', 'note' => sanitize_text_field( (string) $r->get_param( 'note' ) ) ?: 'Refund' );
+		usort( $pays, function ( $a, $b ) { return strcmp( (string) ( $b['date'] ?? '' ), (string) ( $a['date'] ?? '' ) ); } );
+		update_post_meta( $id, '_dwdc_payments', $pays );
+		$notes   = (array) get_post_meta( $id, '_dwdc_notes', true );
+		$notes[] = array( 'date' => current_time( 'mysql', true ), 'text' => 'Refund of $' . number_format( $amt, 2 ) . ' (' . $src . ', ' . $date . ') logged.' );
+		update_post_meta( $id, '_dwdc_notes', array_values( array_filter( $notes ) ) );
+		wp_update_post( array( 'ID' => $id ) );
+		return dwdc_contact( $id, true );
+	} ) );
+	// Correct how a logged payment was paid (e.g. it came by check, not Stripe). Amount, date and owed stay the same.
+	register_rest_route( 'dwd/v1', '/crm/contact/(?P<id>\d+)/payment/(?P<i>\d+)/source', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
+		$id   = (int) $r['id'];
+		$i    = (int) $r['i'];
+		$pays = get_post_meta( $id, '_dwdc_payments', true );
+		$src  = sanitize_text_field( (string) $r->get_param( 'source' ) );
+		if ( ! $src || ! is_array( $pays ) || ! isset( $pays[ $i ] ) ) {
+			return new WP_Error( 'dwdc_nf', 'Payment not found.', array( 'status' => 404 ) );
+		}
+		$old              = (string) ( $pays[ $i ]['source'] ?? '' );
+		$pays[ $i ]['source'] = $src;
+		$pays[ $i ]['ref']    = 'Logged in Dream Desk';
+		if ( null !== $r->get_param( 'note' ) ) {
+			$pays[ $i ]['note'] = sanitize_text_field( (string) $r->get_param( 'note' ) );
+		}
+		update_post_meta( $id, '_dwdc_payments', $pays );
+		$notes   = (array) get_post_meta( $id, '_dwdc_notes', true );
+		$notes[] = array( 'date' => current_time( 'mysql', true ), 'text' => 'Payment of $' . $pays[ $i ]['amount'] . ' (' . $pays[ $i ]['date'] . ') changed from ' . $old . ' to ' . $src . '.' );
+		update_post_meta( $id, '_dwdc_notes', array_values( array_filter( $notes ) ) );
+		wp_update_post( array( 'ID' => $id ) );
+		return dwdc_contact( $id, true );
+	} ) );
+	register_rest_route( 'dwd/v1', '/crm/reconcile/paypal-missing', array( 'methods' => array( 'GET', 'POST' ), 'permission_callback' => function () { return current_user_can( 'manage_options' ); }, 'callback' => function ( $r ) {
+		@set_time_limit( 300 );
+		return dwdrc_paypal_missing( 'POST' === $r->get_method() && $r->get_param( 'apply' ) );
+	} ) );
 	register_rest_route( 'dwd/v1', '/crm/reconcile', array( 'methods' => 'GET', 'permission_callback' => function () { return current_user_can( 'manage_options' ); }, 'callback' => function ( $r ) {
 		@set_time_limit( 300 );
 		$c = get_transient( 'dwdrc_last' );
