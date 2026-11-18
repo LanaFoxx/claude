@@ -1088,7 +1088,7 @@ def build_what_we_do():
                    **typo(prefix="icon_typography", size=15, weight=600, lh=1.4))],
             html_tag="article", gap=0, css="selector{min-width:0;}"))
     return section("What We Do", [
-        paint_bg("What We Do / Paint-on-scroll background", "#0A0806", "rows", bands=3),
+        paint_bg("What We Do / Paint-on-scroll background", "#241A12", "rows", bands=3),
         grid("What We Do / Columns", cols, cols=(2, 2, 1, 1), gap_col=(79, 72, 56, 56), gap_row=56,
              grid_align_items="stretch", css_classes="tn-wwd-grid tn-match-lines")],
         bg=CHARRED, pad_top=(64, 56, 48, 40), _element_id="what-we-do", custom_css=WWD_CSS,
