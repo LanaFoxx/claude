@@ -1,0 +1,222 @@
+[
+ {
+  "school": "@ 1st Attempt (At Your Pace Online)",
+  "email": "aypohelp@certus.com",
+  "route": "email",
+  "greeting": "At Your Pace Online",
+  "profile": "https://taxcoursefinder.com/schools/1st-attempt-at-your-pace-online/",
+  "courses": "20-hour CE",
+  "website": "https://www.taxce.com/",
+  "contact_url": "https://www.taxce.com/contact",
+  "notes": "Published contact; delivery not tested."
+ },
+ {
+  "school": "1 0 4 0 and More Continuing Education",
+  "email": "support@taxcoursesonline.com",
+  "route": "email",
+  "greeting": "Tax Courses Online",
+  "profile": "https://taxcoursefinder.com/schools/1-0-4-0-and-more-continuing-education/",
+  "courses": "20-hour CE",
+  "website": "https://www.taxcoursesonline.com/",
+  "contact_url": "https://www.taxcoursesonline.com/contact",
+  "notes": "Published contact; delivery not tested."
+ },
+ {
+  "school": "My Tax Courses Online",
+  "email": "info@mytaxcoursesonline.com",
+  "route": "email",
+  "greeting": "My Tax Courses Online",
+  "profile": "https://taxcoursefinder.com/schools/1-1-1-accelerated-continuing-education-dba-my-tax-courses-online/",
+  "courses": "20-hour CE",
+  "website": "https://mytaxcoursesonline.com/",
+  "contact_url": "https://mytaxcoursesonline.com/contact-us",
+  "notes": "Published contact; delivery not tested."
+ },
+ {
+  "school": "101 Education Services Inc.",
+  "email": "support@irstaxtraining.com",
+  "route": "email",
+  "greeting": "101 Education Services",
+  "profile": "https://taxcoursefinder.com/schools/101-education-services-inc/",
+  "courses": "20-hour CE / 60-hour QE",
+  "website": "https://www.irstaxtraining.com/",
+  "contact_url": "https://www.irstaxtraining.com/",
+  "notes": "Published contact; delivery not tested."
+ },
+ {
+  "school": "A & B Office, Income Tax Training School",
+  "email": "info@abeducate.com",
+  "route": "email",
+  "greeting": "A & B Office",
+  "profile": "https://taxcoursefinder.com/schools/a-b-office-income-tax-training-school/",
+  "courses": "20-hour CE / 60-hour QE",
+  "website": "https://abeducate.com/",
+  "contact_url": "https://abeducate.com/",
+  "notes": "Published contact; delivery not tested."
+ },
+ {
+  "school": "Aardvark Tax Online",
+  "email": "",
+  "route": "form",
+  "greeting": "Aardvark Tax Online",
+  "profile": "https://taxcoursefinder.com/schools/aardvark-tax-online/",
+  "courses": "20-hour CE",
+  "website": "https://www.aardvarktax.com/",
+  "contact_url": "https://www.aardvarktax.com/index.php/reach_us_bd456",
+  "notes": "No public email located. Use this school’s own contact form. Do not substitute aardvark.tax, a different business."
+ },
+ {
+  "school": "Cal Tax School",
+  "email": "support@caltaxschool.net",
+  "route": "email",
+  "greeting": "Cal Tax School",
+  "profile": "https://taxcoursefinder.com/schools/cal-tax-school/",
+  "courses": "20-hour CE",
+  "website": "https://www.caltaxschool.org",
+  "contact_url": "https://www.caltaxschool.org",
+  "notes": "Published support email ends in .net although the website ends in .org."
+ },
+ {
+  "school": "California Tax Courses",
+  "email": "help@cataxcourses.com",
+  "route": "email",
+  "greeting": "California Tax Courses",
+  "profile": "https://taxcoursefinder.com/schools/california-tax-courses/",
+  "courses": "20-hour CE / 60-hour QE",
+  "website": "https://cataxcourses.com",
+  "contact_url": "https://cataxcourses.com/contact-us/",
+  "notes": "Published contact; delivery not tested."
+ },
+ {
+  "school": "California Tax Institute",
+  "email": "caltaxinstitute@aol.com",
+  "route": "email",
+  "greeting": "California Tax Institute",
+  "profile": "https://taxcoursefinder.com/schools/california-tax-institute/",
+  "courses": "20-hour CE / 60-hour QE",
+  "website": "https://www.californiataxinstitute.com",
+  "contact_url": "https://www.californiataxinstitute.com",
+  "notes": "Published contact; delivery not tested."
+ },
+ {
+  "school": "CountingWorks, Inc.",
+  "email": "cpe@countingworkspro.com",
+  "route": "email",
+  "greeting": "CountingWorks",
+  "profile": "https://taxcoursefinder.com/schools/countingworks-inc/",
+  "courses": "20-hour CE",
+  "website": "https://www.taxcpe.com",
+  "contact_url": "https://www.taxcpe.com",
+  "notes": "CountingWorks support page explicitly connects this inbox to TaxCPE."
+ },
+ {
+  "school": "Fast Forward Academy",
+  "email": "support@fastforwardacademy.com",
+  "route": "email",
+  "greeting": "Fast Forward Academy",
+  "profile": "https://taxcoursefinder.com/schools/fast-forward-academy/",
+  "courses": "20-hour CE",
+  "website": "https://fastforwardacademy.com",
+  "contact_url": "https://fastforwardacademy.com/contact-us",
+  "notes": "Published contact; delivery not tested."
+ },
+ {
+  "school": "Preparer Training",
+  "email": "support@preparertraining.com",
+  "route": "email",
+  "greeting": "Preparer Training",
+  "profile": "https://taxcoursefinder.com/schools/federal-direct-tax-services/",
+  "courses": "20-hour CE / 60-hour QE",
+  "website": "https://www.preparertraining.com",
+  "contact_url": "https://www.preparertraining.com/contact-us/",
+  "notes": "Published contact; delivery not tested."
+ },
+ {
+  "school": "Golden State Tax Training Institute, Inc.",
+  "email": "support@gstti.com",
+  "route": "email",
+  "greeting": "Golden State Tax Training Institute",
+  "profile": "https://taxcoursefinder.com/schools/golden-state-tax-training-institute-inc/",
+  "courses": "20-hour CE / 60-hour QE",
+  "website": "https://www.gstti.com",
+  "contact_url": "https://www.gstti.com/support.aspx",
+  "notes": "Published contact; delivery not tested."
+ },
+ {
+  "school": "Hera's Income Tax School",
+  "email": "info@herasincometaxschool.com",
+  "route": "email",
+  "greeting": "Hera’s Income Tax School",
+  "profile": "https://taxcoursefinder.com/schools/heras-income-tax-school/",
+  "courses": "20-hour CE",
+  "website": "https://herasincometaxschool.com",
+  "contact_url": "https://herasincometaxschool.com/contact-tax-school.htm",
+  "notes": "Published contact; delivery not tested."
+ },
+ {
+  "school": "Latin American Business Institute",
+  "email": "info@labitax.com",
+  "route": "email",
+  "greeting": "Latin American Business Institute",
+  "profile": "https://taxcoursefinder.com/schools/latin-american-business-institute/",
+  "courses": "20-hour CE",
+  "website": "https://www.labitax.com",
+  "contact_url": "https://labitax.com/contacto",
+  "notes": "Published contact; delivery not tested."
+ },
+ {
+  "school": "Latino Tax Professionals Association",
+  "email": "info@latinotaxpro.com",
+  "route": "email",
+  "greeting": "Latino Tax Professionals",
+  "profile": "https://taxcoursefinder.com/schools/latino-tax-professionals-association/",
+  "courses": "60-hour QE",
+  "website": "https://latinotaxpro.com",
+  "contact_url": "https://latinotaxpro.com/pages/contact",
+  "notes": "Directory currently lists 60-hour QE only. Ask the school to confirm its current offerings."
+ },
+ {
+  "school": "Platinum Professional Services, Inc.",
+  "email": "info@platinumprostudies.com",
+  "route": "email",
+  "greeting": "Platinum Professional Services",
+  "profile": "https://taxcoursefinder.com/schools/platinum-professional-services-inc/",
+  "courses": "20-hour CE / 60-hour QE",
+  "website": "https://www.platinumprostudies.com",
+  "contact_url": "https://www.platinumprostudies.com/contact-us",
+  "notes": "Published contact; delivery not tested."
+ },
+ {
+  "school": "Pronto Tax School, Inc.",
+  "email": "support@prontotaxschool.com",
+  "route": "email",
+  "greeting": "Pronto Tax School",
+  "profile": "https://taxcoursefinder.com/schools/pronto-tax-school-inc/",
+  "courses": "20-hour CE / 60-hour QE",
+  "website": "https://prontotaxschool.com",
+  "contact_url": "https://prontotaxschool.com",
+  "notes": "Published contact; delivery not tested."
+ },
+ {
+  "school": "The Income Tax School",
+  "email": "info@theincometaxschool.com",
+  "route": "email",
+  "greeting": "Surgent Income Tax School",
+  "profile": "https://taxcoursefinder.com/schools/the-income-tax-school/",
+  "courses": "20-hour CE / 60-hour QE",
+  "website": "https://www.theincometaxschool.com",
+  "contact_url": "https://www.surgent.com/contact-us/",
+  "notes": "The Income Tax School website redirects to Surgent. Inbox is published on its current course page."
+ },
+ {
+  "school": "WebCE",
+  "email": "customerservice@webce.com",
+  "route": "email",
+  "greeting": "WebCE",
+  "profile": "https://taxcoursefinder.com/schools/webce/",
+  "courses": "20-hour CE",
+  "website": "https://www.webce.com",
+  "contact_url": "https://www.webce.com/contact-us",
+  "notes": "Published contact; delivery not tested."
+ }
+]

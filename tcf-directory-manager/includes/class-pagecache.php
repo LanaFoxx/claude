@@ -80,7 +80,7 @@ class TCFD_Page_Cache {
         }
         add_action('updated_option', function ($name) {
             if (in_array($name, ['blogname', 'blogdescription', 'permalink_structure', 'show_on_front', 'page_on_front', 'wpseo', 'wpseo_titles'], true)
-                || (strpos($name, 'tcfd_') === 0 && strpos($name, 'tcfd_sk_') !== 0 && strpos($name, 'tcfd_draft_') !== 0 && $name !== self::VER)) self::clear();
+                || (strpos($name, 'tcfd_') === 0 && strpos($name, 'tcfd_sk_') !== 0 && strpos($name, 'tcfd_draft_') !== 0 && strpos($name, 'tcfd_outreach') !== 0 && strpos($name, 'tcfd_ops_') !== 0 && $name !== self::VER)) self::clear();
         });
     }
 
