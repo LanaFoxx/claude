@@ -38,6 +38,9 @@ function dwdp_block_email( $email ) {
 function dwdp_spam_ok( $src = null ) {
 	$src = null === $src ? $_POST : $src; // phpcs:ignore WordPress.Security.NonceVerification
 	if ( ! empty( $src['dwdp_hp'] ) ) {
+		if ( function_exists( 'dwdgb_ban_ip' ) ) {
+			dwdgb_ban_ip( dwdgb_ip(), 'Filled the hidden spam trap on a form' ); // only bots see that field
+		}
 		return false;
 	}
 	if ( empty( $src['dwdp_h'] ) || '1' !== (string) $src['dwdp_h'] ) {

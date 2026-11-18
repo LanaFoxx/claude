@@ -477,6 +477,9 @@ function dwdc_file_entry( $form, $fields, $date = '', $source = 'Website form', 
 	if ( ! $email || ( function_exists( 'dwdp_blocked' ) && dwdp_blocked( $email ) ) ) {
 		return 0;
 	}
+	if ( function_exists( 'dwdgb_note_form_ip' ) && ! current_user_can( 'manage_options' ) ) {
+		dwdgb_note_form_ip( $email ); // the sender's IP, so a spam lead's IP can be banned too
+	}
 	$id         = $match ? dwdc_find( $email, $match ) : dwdc_find_by_email( $email );
 	$onboarding = false !== stripos( $form, 'onboard' );
 	// Someone invited by phone: match their waiting lead by phone number.
@@ -940,7 +943,19 @@ add_action( 'rest_api_init', function () {
 
 	register_rest_route( $ns, '/crm/lead/(?P<id>\d+)', array( 'methods' => 'DELETE', 'permission_callback' => $can, 'callback' => function ( $r ) {
 		if ( $r->get_param( 'block' ) && function_exists( 'dwdp_block_email' ) ) { // spam: their email can never send a form again
-			dwdp_block_email( get_post_meta( (int) $r['id'], '_dwdc_email', true ) );
+			$sem = strtolower( (string) get_post_meta( (int) $r['id'], '_dwdc_email', true ) );
+			dwdp_block_email( $sem );
+			if ( function_exists( 'dwdgb_ban_ip' ) && $sem ) { // and the IP it came from (form log, or the Elementor submission)
+				global $wpdb;
+				$ips = array( (string) ( get_option( 'dwdgb_form_ips', array() )[ $sem ] ?? '' ) );
+				$st  = $wpdb->prefix . 'e_submissions';
+				if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $st ) ) === $st ) {
+					$ips = array_merge( $ips, (array) $wpdb->get_col( $wpdb->prepare( "SELECT DISTINCT s.user_ip FROM {$st} s JOIN {$wpdb->prefix}e_submissions_values v ON v.submission_id = s.id WHERE LOWER(v.`value`) = %s", $sem ) ) ); // phpcs:ignore
+				}
+				foreach ( array_filter( array_unique( $ips ) ) as $sip ) {
+					dwdgb_ban_ip( $sip, 'Spam lead: ' . $sem );
+				}
+			}
 		}
 		return dwdc_purge_lead( (int) $r['id'] );
 	} ) );
