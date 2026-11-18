@@ -336,3 +336,7 @@ section.dwr-doall-sec .dwr-doall{margin:0!important;border:0!important;border-ra
 /* Review: source logo and stars side by side */
 .dwr-qtop{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap}
 .dwr-qtop .dwr-qsrc{margin:0 !important}
+
+/* Reviews: stars sit closer to the quote */
+.dwr-qband .dwr-qslider>figure{gap:10px!important}
+.dwr-qband .dwr-qslider>figure figcaption{margin-top:12px!important}
