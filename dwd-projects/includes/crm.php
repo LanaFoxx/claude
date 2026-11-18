@@ -58,6 +58,36 @@ function dwdc_fields() {
 	return array( 'ptitle', 'ptype', 'job', 'manual', 'followup', 'markup', 'markup_sent', 'lead_source', 'pay_method', 'stage', 'completed', 'billed', 'stripe', 'paypal', 'person', 'email', 'phone', 'company', 'website', 'list', 'price', 'balance', 'deadline', 'hosting', 'renewal', 'source', 'next', 'pending', 'paymark', 'owedopen', 'flag', 'drive', 'drive_sent', 'zoom', 'staging' );
 }
 
+/**
+ * Received via Stripe / PayPal / other (Zelle, check...), added up from the project's payment list, so these
+ * totals can never drift from the payments you see. Only when a project has no payments of that kind at all
+ * does the old stored number count (very old projects where the total was typed in by hand).
+ * Upwork ("billed") keeps its own Upwork-file logic.
+ */
+function dwdc_paid_by( $id, $f ) {
+	$stored = (string) get_post_meta( $id, '_dwdc_' . $f, true );
+	if ( ! in_array( $f, array( 'stripe', 'paypal', 'manual' ), true ) ) {
+		return $stored;
+	}
+	$pays = get_post_meta( $id, '_dwdc_payments', true );
+	$sum  = 0;
+	$any  = false;
+	foreach ( is_array( $pays ) ? $pays : array() as $p ) {
+		if ( ! is_array( $p ) ) {
+			continue;
+		}
+		$src = (string) ( $p['source'] ?? '' );
+		$key = array( 'Stripe' => 'stripe', 'PayPal' => 'paypal', 'Upwork' => 'billed' )[ $src ] ?? 'manual';
+		$st  = strtolower( (string) ( $p['status'] ?? 'paid' ) );
+		if ( $key !== $f || in_array( $st, array( 'open', 'void', 'draft', 'failed', 'uncollectible', 'held' ), true ) ) {
+			continue;
+		}
+		$any  = true;
+		$sum += ( 'refunded' === $st ? -1 : 1 ) * (float) preg_replace( '/[^\d.]/', '', (string) ( $p['amount'] ?? 0 ) );
+	}
+	return $any ? ( $sum > 0.004 ? (string) round( $sum, 2 ) : '' ) : $stored;
+}
+
 function dwdc_contact( $post, $full = false ) {
 	$p = get_post( $post );
 	if ( ! $p || DWDC_CONTACT !== $p->post_type ) {
@@ -66,6 +96,9 @@ function dwdc_contact( $post, $full = false ) {
 	$c = array( 'id' => $p->ID, 'name' => $p->post_title, 'created' => get_post_time( 'c', true, $p ), 'updated' => get_post_modified_time( 'c', true, $p ) );
 	foreach ( dwdc_fields() as $f ) {
 		$c[ $f ] = (string) get_post_meta( $p->ID, '_dwdc_' . $f, true );
+	}
+	foreach ( array( 'stripe', 'paypal', 'manual' ) as $f ) {
+		$c[ $f ] = dwdc_paid_by( $p->ID, $f );
 	}
 	$entries          = get_post_meta( $p->ID, '_dwdc_entries', true );
 	$entries          = is_array( $entries ) ? $entries : array();
@@ -193,7 +226,7 @@ function dwdc_save_contact( $id, $data ) {
 	$paidNow = function () use ( $id, $num ) {
 		$p = 0;
 		foreach ( array( 'billed', 'stripe', 'paypal', 'manual' ) as $f ) {
-			$p += $id ? $num( get_post_meta( $id, '_dwdc_' . $f, true ) ) : 0;
+			$p += $id ? $num( dwdc_paid_by( $id, $f ) ) : 0;
 		}
 		if ( $id && function_exists( 'dwdc_upwork_stages' ) ) { // client money already paid into Upwork isn't owed either
 			$u  = dwdc_upwork_stages( $id );
@@ -1369,11 +1402,14 @@ add_action( 'rest_api_init', function () {
 		}
 		$price = (float) preg_replace( '/[^\d.]/', '', (string) get_post_meta( $id, '_dwdc_price', true ) );
 		$bal   = (float) preg_replace( '/[^\d.]/', '', (string) get_post_meta( $id, '_dwdc_balance', true ) );
-		if ( $price > 0 && in_array( $p['status'] ?? 'paid', array( 'paid', 'held' ), true ) ) {
+		// "It's a duplicate" (dup=1): the money was counted twice, so what's owed stays as it is.
+		// Otherwise the money didn't come in after all, so it goes back into what's owed.
+		$dup = (bool) $r->get_param( 'dup' );
+		if ( ! $dup && $price > 0 && in_array( $p['status'] ?? 'paid', array( 'paid', 'held' ), true ) ) {
 			update_post_meta( $id, '_dwdc_balance', (string) min( $price, round( $bal + $amt, 2 ) ) );
 		}
 		$notes   = (array) get_post_meta( $id, '_dwdc_notes', true );
-		$notes[] = array( 'date' => current_time( 'mysql', true ), 'text' => 'Payment of $' . number_format( $amt, $amt == (int) $amt ? 0 : 2 ) . ' (' . ( $p['source'] ?? '' ) . ', ' . ( $p['date'] ?? '' ) . ') removed.' );
+		$notes[] = array( 'date' => current_time( 'mysql', true ), 'text' => 'Payment of $' . number_format( $amt, $amt == (int) $amt ? 0 : 2 ) . ' (' . ( $p['source'] ?? '' ) . ', ' . ( $p['date'] ?? '' ) . ') removed' . ( $dup ? ' as a duplicate (owed unchanged)' : ', back into what\'s owed' ) . ( is_user_logged_in() ? ' by ' . wp_get_current_user()->display_name : '' ) . '.' );
 		update_post_meta( $id, '_dwdc_notes', array_values( array_filter( $notes ) ) );
 		wp_update_post( array( 'ID' => $id ) );
 		return dwdc_contact( $id, true );

@@ -4216,7 +4216,16 @@
 				+ (SX.count > SX.tx.length ? '<p class="dwdc-mutp sm">Showing the latest ' + SX.tx.length + ' of ' + SX.count + '.</p>' : '') : emptyRow('No payments found.');
 			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide dd-sg-mod">' + head(esc(sxp[0]), esc(sxp.slice(1).join(' · ')), '') + sxb + '</div>';
 		}
-		// Made this month: every payment behind the total (Upwork money that reached the bank, PayPal, Stripe).
+		// Remove a payment: was it a duplicate (owed stays) or money that didn't come through (back to owed)?
+			if (m.type === 'payrm') {
+				var rmc = S.full[m.id], rmp = rmc && (rmc.payments || [])[m.i];
+				if (!rmp) { return ''; }
+				return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal dd-payrm">' + head('Remove payment', money2(rmp.amount).replace('.00', '') + ' · ' + esc(rmp.source || '') + ' · ' + fmt(String(rmp.date).slice(0, 10)), '')
+					+ '<p class="dwdc-mutp">Why are you removing it? This decides whether ' + esc(rmc.name) + ' owes the money again.</p>'
+					+ '<div class="dd-payrm-b"><button class="dwdc-btn" data-payrmgo="dup"><b>It’s a duplicate</b><small>Logged twice. What’s owed stays ' + money(rmc.balance || 0) + '.</small></button>'
+					+ '<button class="dwdc-btn2" data-payrmgo="owed"><b>The money didn’t come in</b><small>Refunded, failed or logged by mistake. It goes back into what’s owed.</small></button></div></div>';
+			}
+			// Made this month: every payment behind the total (Upwork money that reached the bank, PayPal, Stripe).
 		if (m.type === 'made') {
 			var MD = S.madeM || { total: 0, items: [] }, mdIt = MD.items || [], mdMon = new Date(DWDC.today + 'T12:00:00').toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 			var mdSum = ['Upwork', 'PayPal', 'Stripe', 'Other'].filter(function (k) { return k !== 'Other' || num(MD[k]); }).map(function (k) { return '<span>' + k + '<b>' + money(MD[k] || 0) + '</b></span>'; }).join('');
@@ -4613,8 +4622,16 @@
 		if (t.closest('[data-plogx]')) { S.plog = null; render(); return; }
 		if ((el = t.closest('[data-payrm]'))) {
 			var prid = route().id, pidx = +el.getAttribute('data-payrm'), pc2 = S.full[prid], px = pc2 && (pc2.payments || [])[pidx];
-			if (!px || !confirm('Remove the ' + money(px.amount) + ' payment from ' + fmt(String(px.date).slice(0, 10)) + '? It goes back into what’s owed.')) { return; }
-			api('/contact/' + prid + '/payment/' + pidx, 'DELETE').then(function (x) { upsert(x); S.full[x.id] = x; return reload(); }).then(function () { render(); toast('Payment removed'); }).catch(fail);
+			if (px) { S.modal = { type: 'payrm', id: prid, i: pidx }; render(); }
+			return;
+		}
+		if ((el = t.closest('[data-payrmgo]'))) {
+			var rm = S.modal || {}, rmDup = el.getAttribute('data-payrmgo') === 'dup';
+			if (rm.type !== 'payrm' || S.payrmBusy) { return; }
+			S.payrmBusy = true; el.disabled = true;
+			api('/contact/' + rm.id + '/payment/' + rm.i + (rmDup ? '?dup=1' : ''), 'DELETE').then(function (x) { upsert(x); S.full[x.id] = x; S.modal = null; S.payrmBusy = false; return reload(); })
+				.then(function () { render(); toast(rmDup ? 'Duplicate removed · owed unchanged' : 'Payment removed · back into what’s owed'); })
+				.catch(function (er) { S.payrmBusy = false; el.disabled = false; fail(er); });
 			return;
 		}
 		if ((el = t.closest('[data-ppltoggle]'))) { var pid = el.getAttribute('data-ppltoggle'); S.pplOpen = S.pplOpen || {}; S.pplOpen[pid] = !S.pplOpen[pid]; el.closest('.dwdc-pplin').classList.toggle('open', !!S.pplOpen[pid]); return; }
