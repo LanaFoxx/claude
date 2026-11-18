@@ -688,3 +688,13 @@ a.g-crow__val:hover{color:var(--g-navy)}
   .elementor .g-hvid::before{right:-8px;top:-8px}
   .elementor .g-hvid__btn{width:60px;height:60px}.elementor .g-hvid__label b{font-size:17px}.elementor .g-hvid__play{padding:16px!important}
 }
+/* Hero video v3: autoplays muted on load, "Tap for sound" restarts with audio */
+.elementor .g-hvid__sound{position:absolute;left:20px;bottom:20px;display:inline-flex!important;align-items:center;gap:12px;padding:10px 20px 10px 10px!important;min-height:56px;border:0!important;border-radius:999px!important;background:rgba(11,42,66,.82)!important;color:#fff!important;cursor:pointer;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);box-shadow:0 10px 30px rgba(0,0,0,.35);text-align:left;transition:background-color .2s}
+.elementor .g-hvid__sound:hover{background:rgba(11,42,66,.95)!important}
+.elementor .g-hvid__soundico{width:40px;height:40px;border-radius:50%;background:var(--g-orange);display:flex;align-items:center;justify-content:center;flex:none}
+.elementor .g-hvid__soundtxt{display:flex;flex-direction:column;gap:2px}.elementor .g-hvid__soundtxt b{font:600 16px/1.2 Inter,sans-serif}.elementor .g-hvid__soundtxt small{font:500 13px/1.2 Inter,sans-serif;color:var(--g-line)}
+.elementor .g-hvid__pause{position:absolute;right:16px;bottom:16px;width:44px;height:44px;border-radius:50%!important;border:0!important;padding:0!important;display:flex!important;align-items:center;justify-content:center;background:rgba(11,42,66,.7)!important;color:#fff!important;cursor:pointer}
+.elementor .g-hvid__pause.is-paused svg{display:none}.elementor .g-hvid__pause.is-paused::before{content:"";border-style:solid;border-width:8px 0 8px 13px;border-color:transparent transparent transparent #fff;margin-left:3px}
+.elementor .g-hvid__sound:focus-visible,.elementor .g-hvid__pause:focus-visible{outline:3px solid #fff!important;outline-offset:2px}
+.elementor .g-hvid.has-sound .g-hvid__sound,.elementor .g-hvid.has-sound .g-hvid__pause{display:none!important}
+@media (max-width:600px){.elementor .g-hvid__sound{left:12px;bottom:12px;min-height:48px;padding:6px 16px 6px 6px!important}.elementor .g-hvid__soundico{width:36px;height:36px}.elementor .g-hvid__soundtxt small{display:none}.elementor .g-hvid__pause{right:10px;bottom:10px}}

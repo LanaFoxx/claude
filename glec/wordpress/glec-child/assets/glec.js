@@ -46,3 +46,16 @@
     v.addEventListener('ended',function(){ v.controls=false; v.load(); f.classList.remove('is-playing'); b.focus(); });
   });
 })();
+/* Hero video (autoplay variant): muted autoplay loop; Tap for sound restarts with audio + controls; pause button; reduced-motion = no autoplay */
+(function(){
+  document.querySelectorAll('.g-hvid[data-autoplay]').forEach(function(f){
+    var v=f.querySelector('video'), snd=f.querySelector('.g-hvid__sound'), pz=f.querySelector('.g-hvid__pause'); if(!v) return;
+    var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function setPaused(p){ pz.classList.toggle('is-paused',p); pz.setAttribute('aria-label', p?'Play video':'Pause video'); }
+    if(!reduce){ v.muted=true; var pr=v.play(); if(pr&&pr.catch) pr.catch(function(){ setPaused(true); }); } else { setPaused(true); }
+    if('IntersectionObserver' in window){ new IntersectionObserver(function(es){ es.forEach(function(e){ if(f.classList.contains('has-sound')) return; if(!e.isIntersecting){ v.pause(); } else if(!pz.classList.contains('is-paused')){ v.play().catch(function(){}); } }); },{threshold:.25}).observe(f); }
+    pz.addEventListener('click',function(){ if(v.paused){ v.play().catch(function(){}); setPaused(false);} else { v.pause(); setPaused(true);} });
+    snd.addEventListener('click',function(){ f.classList.add('has-sound'); v.loop=false; v.muted=false; v.currentTime=0; v.controls=true; v.play().catch(function(){}); v.focus(); });
+    v.addEventListener('ended',function(){ if(!f.classList.contains('has-sound')) return; f.classList.remove('has-sound'); v.controls=false; v.muted=true; v.loop=true; v.currentTime=0; v.play().catch(function(){}); setPaused(false); snd.focus(); });
+  });
+})();
