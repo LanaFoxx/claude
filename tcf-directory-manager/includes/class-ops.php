@@ -29,7 +29,7 @@ class TCFD_Ops {
     public static function boot(): void {
         add_action('admin_menu', [__CLASS__, 'menu'], 5);
         add_filter('login_redirect', [__CLASS__, 'login_redirect'], 20, 3);
-        foreach (['send', 'test', 'mark', 'queue', 'replies', 'save', 'mailtest', 'garefresh'] as $a) add_action('admin_post_tcfd_ops_' . $a, [__CLASS__, 'act_' . $a]);
+        foreach (['send', 'test', 'mark', 'edit', 'queue', 'replies', 'save', 'mailtest', 'garefresh'] as $a) add_action('admin_post_tcfd_ops_' . $a, [__CLASS__, 'act_' . $a]);
         add_action('wp_ajax_nopriv_tcfd_px', [__CLASS__, 'pixel']);
         add_action('wp_ajax_tcfd_px', [__CLASS__, 'pixel']);
         add_action('phpmailer_init', [__CLASS__, 'phpmailer'], 20);
@@ -379,6 +379,26 @@ class TCFD_Ops {
         $list[$slug] = $r; self::save_schools($list);
         self::back($msg);
     }
+    public static function act_edit(): void {
+        self::guard('tcfd_ops_edit');
+        $slug = self::slug_in(); $list = self::schools();
+        if (empty($list[$slug])) self::back('School not found.', false, 'outreach');
+        $r = $list[$slug];
+        $email = sanitize_email(wp_unslash((string) ($_POST['email'] ?? '')));
+        $raw = trim((string) wp_unslash($_POST['email'] ?? ''));
+        if ($raw !== '' && !is_email($email)) self::back('"' . $raw . '" is not a valid email address. Nothing was changed.', false, 'outreach');
+        if ($email === '' && $r['contact_url'] === '') self::back('Please enter an email address for ' . $r['school'] . '.', false, 'outreach');
+        $old = $r['email'];
+        $r['email'] = $email; $r['route'] = $email !== '' ? 'email' : 'form';
+        if (strtolower($old) !== strtolower($email)) {
+            $r['bounced'] = 0;  // a new address gets a fresh start
+            self::log($r, 'Email changed from ' . ($old ?: 'none') . ' to ' . ($email ?: 'none (contact form)'));
+        }
+        $list[$slug] = $r; self::save_schools($list);
+        self::back($old === $email ? 'No change for ' . $r['school'] . '.' : $r['school'] . ($email ? ' will now be emailed at ' . $email . '.' : ' now uses its contact form.')
+            . ($r['sent'] && $email && strtolower($old) !== strtolower($email) ? ' The first email already went to ' . $old . '; the follow-up will go to the new address.' : ''), true, 'outreach');
+    }
+
     public static function act_queue(): void {
         self::guard('tcfd_ops_queue');
         if (!self::mail_ready()) self::back('Email is not set up yet. Add the App Password under Email settings first.', false);
@@ -564,7 +584,13 @@ class TCFD_Ops {
             if ($r['removed']) { $removed[$slug] = $r; continue; }
             $x = $st[$slug];
             echo '<tr><td><strong>' . esc_html($r['school']) . '</strong><br><a href="' . esc_url($r['profile']) . '" target="_blank">listing</a>' . ($r['notes'] && stripos($r['notes'], 'delivery not tested') === false ? '<div class="tcf-ops-note">' . esc_html($r['notes']) . '</div>' : '') . '</td>';
-            echo '<td>' . ($r['route'] === 'email' ? esc_html($r['email']) : '<a href="' . esc_url($r['contact_url']) . '" target="_blank">Contact form</a>') . '</td>';
+            echo '<td>' . ($r['route'] === 'email' ? esc_html($r['email']) : '<a href="' . esc_url($r['contact_url']) . '" target="_blank">Contact form</a>')
+               . '<details class="tcf-ops-edit"><summary>Edit</summary><form method="post" action="' . esc_url(admin_url('admin-post.php')) . '">'
+               . '<input type="hidden" name="action" value="tcfd_ops_edit">' . wp_nonce_field('tcfd_ops_edit', '_wpnonce', true, false)
+               . '<input type="hidden" name="school" value="' . esc_attr($slug) . '">'
+               . '<input type="email" name="email" value="' . esc_attr($r['email']) . '" placeholder="name@school.com" aria-label="Email address for ' . esc_attr($r['school']) . '">'
+               . '<button type="submit" class="button button-small button-primary">Save</button>'
+               . ($r['contact_url'] ? '<span class="tcf-ops-note">Leave empty to use the school&rsquo;s contact form instead.</span>' : '') . '</form></details></td>';
             echo '<td><span class="tcf-ops-pill tcf-ops-' . esc_attr($x[0]) . '">' . esc_html($x[1]) . '</span>' . ($x[2] ? '<div class="tcf-ops-note">' . esc_html($x[2]) . '</div>' : '') . '</td>';
             echo '<td>' . esc_html(self::day($r['sent'])) . ($r['fu'] ? '<br><span class="tcf-ops-muted">follow-up ' . esc_html(self::day($r['fu'])) . '</span>' : '') . '</td>';
             echo '<td>' . (!empty($r['opens']) ? esc_html(self::day((int) $r['opens'][0])) . (count($r['opens']) > 1 ? ' <span class="tcf-ops-muted">(' . count($r['opens']) . '&times;)</span>' : '') : '&ndash;') . '</td>';
@@ -658,6 +684,6 @@ class TCFD_Ops {
            . '.tcf-ops-todo{margin:0}.tcf-ops-todo li{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:6px 0;border-bottom:1px solid #f0f0f1}'
            . '.tcf-ops-mini{width:100%;border-collapse:collapse}.tcf-ops-mini td{padding:5px 0;border-bottom:1px solid #f0f0f1}.tcf-ops-mini td:last-child{text-align:right;white-space:nowrap;padding-left:12px}'
            . '.tcf-ops-spark{display:block;background:#fafafa;border-radius:6px}.tcf-ops-spark-x{display:flex;justify-content:space-between;color:#646970;font-size:12px;margin-top:4px}'
-           . '.tcf-ops-list{margin:0;columns:2}.tcf-ops-removed{margin-top:12px}.tcf-ops-mail{border:1px solid #dcdcde;border-radius:8px;padding:18px;background:#fff;margin:10px 0}</style>';
+           . '.tcf-ops-list{margin:0;columns:2}.tcf-ops-removed{margin-top:12px}.tcf-ops-edit summary{cursor:pointer;color:#2271b1;font-size:12px;margin-top:4px;list-style:none}.tcf-ops-edit summary::-webkit-details-marker{display:none}.tcf-ops-edit[open] summary{color:#646970}.tcf-ops-edit form{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:6px}.tcf-ops-edit input[type=email]{width:230px;max-width:100%}.tcf-ops-edit .tcf-ops-note{flex-basis:100%;margin:0}.tcf-ops-mail{border:1px solid #dcdcde;border-radius:8px;padding:18px;background:#fff;margin:10px 0}</style>';
     }
 }
