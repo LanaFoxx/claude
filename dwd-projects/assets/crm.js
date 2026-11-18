@@ -1767,14 +1767,14 @@
 		var dates = [t.due ? 'Due ' + fmt(t.due) + (t.time ? ' at ' + t.time : '') : '', 'Added by Michael'].filter(Boolean).join(' · ');
 		return '<div class="dd-trow' + (t.done ? ' done' : '') + '" data-task="' + t.id + '"><button type="button" class="dd-tchk' + (t.done ? ' on' : '') + '" data-toggle="' + t.id + '" aria-label="' + (t.done ? 'Mark not done' : 'Mark done') + '">' + TD_CHECK + '</button>'
 			+ '<div class="dd-ttx"><b title="' + esc(t.text) + '">' + esc(t.text) + '</b><div class="dd-tmeta">' + chip + '<span>' + esc(dates) + '</span></div></div>'
-			+ '<div class="dd-trc">' + tdDue(t) + '<span class="dd-tacts"><button type="button" class="dd-ibtn sm" data-del-task="' + t.id + '" aria-label="Delete to-do" title="Delete">' + lu('x', 14) + '</button></span></div></div>';
+			+ '<div class="dd-trc">' + (!t.done && t.due && t.due < DWDC.today ? resetBtn('w:' + t.id, 'sm') : '') + tdDue(t) + '<span class="dd-tacts"><button type="button" class="dd-ibtn sm" data-del-task="' + t.id + '" aria-label="Delete to-do" title="Delete">' + lu('x', 14) + '</button></span></div></div>';
 	}
 	function tdPersRow(t) {
 		var src = t.source === 'Google Tasks' ? '<span class="dd-tchip">Google Tasks</span>' : '';
 		var dates = t.due ? fmt(t.due) + (t.time ? ' · ' + t.time : '') : (t.note ? 'Has notes' : '');
 		return '<div class="dd-trow' + (t.done ? ' done' : '') + '" data-ptask="' + t.id + '"><button type="button" class="dd-tchk' + (t.done ? ' on' : '') + '" data-ptoggle="' + t.id + '" aria-label="' + (t.done ? 'Mark not done' : 'Mark done') + '">' + TD_CHECK + '</button>'
 			+ '<div class="dd-ttx"><b title="' + esc(ptx(t.text)) + '">' + esc(ptx(t.text)) + '</b>' + (src || dates ? '<div class="dd-tmeta">' + src + (dates ? '<span>' + esc(dates) + '</span>' : '') + '</div>' : '') + '</div>'
-			+ '<div class="dd-trc">' + tdDue(t) + '<span class="dd-tacts"><button type="button" class="dd-ibtn sm" data-pdel="todos:' + t.id + '" aria-label="Delete to-do" title="Delete">' + lu('x', 14) + '</button></span></div></div>';
+			+ '<div class="dd-trc">' + (!t.done && !t.gevent && t.due && t.due < DWDC.today ? resetBtn('p:' + t.id, 'sm') : '') + tdDue(t) + '<span class="dd-tacts"><button type="button" class="dd-ibtn sm" data-pdel="todos:' + t.id + '" aria-label="Delete to-do" title="Delete">' + lu('x', 14) + '</button></span></div></div>';
 	}
 	function tdGroupRow(it) {
 		var c = contact(it.id), open = !!tdExp()[it.id], first = it.tasks[0], late = it.tasks.filter(function (t) { return t.due && t.due < DWDC.today; }).length;
