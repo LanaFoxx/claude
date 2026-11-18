@@ -1383,7 +1383,7 @@
 		return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal dd-drawer dd-stm"><button type="button" class="dwdc-mx" data-close-modal>' + ic('x', 20) + '</button>'
 			+ '<p class="dd-stm-k">' + (w ? 'Work to-do' : 'Personal to-do') + (t.done ? ' · Done' : '') + '</p><h2 class="dd-dh">' + esc(w ? t.text : ptx(t.text)) + '</h2>'
 			+ '<dl class="dd-stm-d">' + (c ? '<dt>Project</dt><dd><a href="#client/' + c.id + '">' + esc(c.name) + '</a></dd>' : '') + '<dt>Due</dt><dd>' + (t.due ? (t.due === DWDC.today ? 'Today' : fmt(t.due)) + (t.time ? ' at ' + esc(t.time) : '') : 'No date') + '</dd>' + (!w && t.source ? '<dt>From</dt><dd>' + esc(t.source) + '</dd>' : '') + (t.note ? '<dt>Notes</dt><dd>' + esc(t.note) + '</dd>' : '') + '</dl>'
-			+ '<div class="dd-stm-b"><button type="button" class="dd-btn primary" data-stdone="' + esc(m.key) + '">' + lu('check', 14) + (t.done ? 'Mark not done' : 'Complete') + '</button><button type="button" class="dd-btn secondary" data-sthide="' + esc(m.key) + '">Remove from today’s schedule</button><button type="button" class="dd-btn ghost" data-stedit="' + esc(m.key) + '">Open / edit</button></div>'
+			+ '<div class="dd-stm-b">' + (!t.done && t.due && t.due < DWDC.today ? resetBtn(m.key) : '') + '<button type="button" class="dd-btn primary" data-stdone="' + esc(m.key) + '">' + lu('check', 14) + (t.done ? 'Mark not done' : 'Complete') + '</button><button type="button" class="dd-btn secondary" data-sthide="' + esc(m.key) + '">Remove from today’s schedule</button><button type="button" class="dd-btn ghost" data-stedit="' + esc(m.key) + '">Open / edit</button></div>'
 			+ '<p class="dd-stm-n">Removing only hides it from Today’s schedule. It stays on your to-do list with the same date.</p></div>';
 	}
 	function ddHome() {
@@ -1418,8 +1418,8 @@
 		// One list, no group headers: personal first (to-dos, then personal calendar events by time), then business
 		// (to-dos, then meetings by time). Untimed to-dos come before timed items in each half.
 		items.forEach(function (it) { it.sec = 1; }); // business meetings and business calendar events
-		tdW.forEach(function (t) { var c = t.contact ? contact(t.contact) : null; items.push({ sec: 1, time: t.time || 'To-do', min: t.time ? mins(t.time) : -2, title: t.text, sub: (t.due && t.due < T ? 'Overdue · ' : '') + (c ? c.name : 'Business'), todo: 'w', tid: t.id }); });
-		tdP.forEach(function (t) { if (t.ev) { items.push({ sec: 0, time: t.time || 'All day', min: mins(t.time), title: ptx(t.text), sub: 'Google Calendar', id: t.id, biz: false }); return; } items.push({ sec: 0, time: t.time || 'To-do', min: t.time ? mins(t.time) : -2, title: ptx(t.text), sub: (t.due < T ? 'Overdue · ' : '') + 'Personal' + (t.source === 'Google Tasks' ? ' · Google Tasks' : ''), todo: 'p', tid: t.id }); });
+		tdW.forEach(function (t) { var c = t.contact ? contact(t.contact) : null; items.push({ sec: 1, time: t.time || 'To-do', min: t.time ? mins(t.time) : -2, title: t.text, sub: (t.due && t.due < T ? 'Overdue · ' : '') + (c ? c.name : 'Business'), todo: 'w', tid: t.id, late: !!(t.due && t.due < T) }); });
+		tdP.forEach(function (t) { if (t.ev) { items.push({ sec: 0, time: t.time || 'All day', min: mins(t.time), title: ptx(t.text), sub: 'Google Calendar', id: t.id, biz: false }); return; } items.push({ sec: 0, time: t.time || 'To-do', min: t.time ? mins(t.time) : -2, title: ptx(t.text), sub: (t.due < T ? 'Overdue · ' : '') + 'Personal' + (t.source === 'Google Tasks' ? ' · Google Tasks' : ''), todo: 'p', tid: t.id, late: !!(t.due && t.due < T) }); });
 		items.sort(function (x, y) { return (x.sec - y.sec) || (x.min - y.min); });
 		var TM = calAdd(T, 1), tmr = meet.filter(function (m) { return m.ts && nyD(m.ts) === TM; }).sort(function (x, y) { return x.ts - y.ts; });
 		var tmrHtml = tmr.length ? '<div class="dd-tl-tm"><h3>Tomorrow</h3>' + tmr.map(function (m) { var tm = nyT(m.ts); return '<div class="dd-tl-r"><span class="dd-tl-t">' + esc(tm) + '</span><span class="dd-tl-dot biz"></span><div class="dd-tl-c">' + (m.link ? '<a href="' + esc(m.link) + '" target="_blank" rel="noopener">' + esc(m.title || m.who) + '</a>' : '<b>' + esc(m.title || m.who) + '</b>') + '<small>Business' + (m.kind ? ' · ' + esc(m.kind) : '') + '</small></div>' + (m.link ? '<a class="dd-btn secondary sm dd-join" href="' + esc(m.link) + '" target="_blank" rel="noopener">Join</a>' : '') + '</div>'; }).join('') + '</div>' : '';
@@ -1435,7 +1435,7 @@
 							return '<div class="dd-tl-r td kid"><span class="dd-tl-t">' + (t.time ? esc(t.time) : '') + '</span><button type="button" class="dd-tl-chk" ' + (gw ? 'data-toggle' : 'data-ptoggle') + '="' + t.id + '" aria-label="Mark done"></button><div class="dd-tl-c" data-schedtask="' + gk + ':' + t.id + '" role="button" tabindex="0"><b>' + esc(gw ? t.text : ptx(t.text)) + '</b>' + (sub ? '<small>' + sub + '</small>' : '') + '</div></div>';
 						}).join('') + '<a class="dd-tl-go" href="#' + (gw ? 'todos' : 'personal') + '">' + (gw ? 'All business to-dos' : 'Personal to-do list') + ' ' + lu('chevron-right', 12) + '</a></div>' : '');
 				}
-				if (it.todo) { return '<div class="dd-tl-r td"><span class="dd-tl-t">' + esc(it.time) + '</span><button type="button" class="dd-tl-chk" ' + (it.todo === 'w' ? 'data-toggle' : 'data-ptoggle') + '="' + it.tid + '" aria-label="Mark done"></button><div class="dd-tl-c" data-schedtask="' + it.todo + ':' + it.tid + '" role="button" tabindex="0"><b>' + esc(it.title) + '</b><small>' + esc(it.sub) + '</small></div></div>'; }
+				if (it.todo) { return '<div class="dd-tl-r td"><span class="dd-tl-t">' + esc(it.time) + '</span><button type="button" class="dd-tl-chk" ' + (it.todo === 'w' ? 'data-toggle' : 'data-ptoggle') + '="' + it.tid + '" aria-label="Mark done"></button><div class="dd-tl-c" data-schedtask="' + it.todo + ':' + it.tid + '" role="button" tabindex="0"><b>' + esc(it.title) + '</b><small>' + esc(it.sub) + '</small></div>' + (it.late ? resetBtn(it.todo + ':' + it.tid, 'sm') : '') + '</div>'; }
 				var evK = T + '|' + (it.id || (it.title + '|' + it.time)), evD = !!evDone()[evK];
 				return '<div class="dd-tl-r ev' + (it.ended || evD ? ' past' : '') + (evD ? ' evdone' : '') + '"><span class="dd-tl-t">' + esc(it.time) + '</span><button type="button" class="dd-tl-chk dd-evchk ' + (it.biz ? 'biz' : 'pers') + (evD ? ' on' : '') + '" data-evdone="' + esc(evK) + '" aria-label="' + (evD ? 'Mark not done' : 'Mark done') + '" aria-pressed="' + evD + '">' + (evD ? lu('check', 12) : '') + '</button><div class="dd-tl-c"' + (it.id ? ' data-ptask="' + it.id + '" role="button" tabindex="0"' : '') + '>' + (it.link ? '<a href="' + esc(it.link) + '" target="_blank" rel="noopener">' + esc(it.title) + '</a>' : '<b>' + esc(it.title) + '</b>') + '<small>' + esc(it.sub) + '</small></div>'
 					+ (it.link && !it.ended ? '<a class="dd-btn primary sm dd-join" href="' + esc(it.link) + '" target="_blank" rel="noopener">Join</a>' : '') + '</div>';
@@ -1704,6 +1704,21 @@
 		if (v === 'month' || v === 'list') { var cm = S.pCal || DWDC.today.slice(0, 7), d = new Date(+cm.slice(0, 4), +cm.slice(5, 7) - 1 + n, 1); S.pCal = calIso(d).slice(0, 7); if ((S.pSel || '').slice(0, 7) !== S.pCal) { S.pSel = S.pCal === DWDC.today.slice(0, 7) ? DWDC.today : S.pCal + '-01'; } }
 		else { S.pSel = calAdd(sel, n * (v === 'day' ? 1 : window.innerWidth < 768 ? 3 : 7)); S.pCal = S.pSel.slice(0, 7); }
 		S.calMore = ''; S.calListDone = 0; render();
+	}
+	// Reset an overdue to-do: new due date 4 days from today. key: "w:<task id>" (work) or "p:<id>" (personal).
+	var RESET_DAYS = 4;
+	function resetDate() { var d = new Date(DWDC.today + 'T12:00:00'); d.setDate(d.getDate() + RESET_DAYS); return d.toISOString().slice(0, 10); }
+	function resetBtn(key, size) { return '<button type="button" class="dd-btn secondary ' + (size || '') + ' dd-treset" data-treset="' + esc(key) + '" title="New due date: ' + esc(fmt(resetDate())) + '">' + lu('repeat', 13) + 'Reset</button>'; }
+	function resetDue(key) {
+		var w = key.slice(0, 1) === 'w', id = key.slice(2), ds = resetDate();
+		if (w) {
+			var t = S.tasks.find(function (x) { return String(x.id) === id; }); if (!t) { return; }
+			t.due = ds; t.due_set = true; render();
+			api('/task/' + t.id, 'POST', { due: ds }).then(function () { toast('Reset · now due ' + fmt(ds)); }).catch(fail);
+			return;
+		}
+		var P = pData(), it = P && P.todos.find(function (x) { return String(x.id) === id; }); if (!it) { return; }
+		it.due = ds; render(); pSave('todos', it, 'Reset · now due ' + fmt(ds));
 	}
 	function calSetView(v, ds) { S.calView = v; ddSet('dreamdesk-cal-view', v); if (ds) { S.pSel = ds; S.pCal = ds.slice(0, 7); } S.calMore = ''; render(); }
 	function calMove(key, ds) {
@@ -4284,6 +4299,7 @@
 				+ '<label class="dwdc-tel">To-do</label><textarea name="text" rows="2" required>' + esc(tk.text) + '</textarea>'
 				+ '<div class="dwdc-terow"><div><label class="dwdc-tel">Due date</label><input type="date" name="due" value="' + esc(tk.due || '') + '"></div>'
 				+ '<div><label class="dwdc-tel">Project</label><select name="contact"><option value="0">No project</option>' + S.contacts.filter(function (c) { return c && (['leads', 'active', 'hold', 'limbo'].indexOf(c.list) > -1 || c.id === tk.contact); }).sort(function (a, b) { return a.name.localeCompare(b.name); }).map(function (c) { return '<option value="' + c.id + '"' + (c.id === tk.contact ? ' selected' : '') + '>' + esc(c.name) + '</option>'; }).join('') + '</select></div></div>'
+				+ (!tk.done && tk.due && tk.due < DWDC.today ? '<div class="dd-treset-row"><span>Overdue since ' + esc(fmt(tk.due)) + '</span>' + resetBtn('w:' + tk.id, 'sm') + '</div>' : '')
 				+ '<div class="dwdc-tequick"><button type="button" data-tdue="0">Today</button><button type="button" data-tdue="1">Tomorrow</button><button type="button" data-tdue="7">Next week</button><button type="button" data-tdue="">No date</button></div>'
 				+ '<div class="dwdc-farow end"><button class="dwdc-btn">Save changes</button></div></form>'
 				+ '<dl class="dwdc-taskm-d">'
@@ -4330,6 +4346,7 @@
 				+ (pt.gevent ? '<label><span>Time</span><input name="time" value="' + esc(pt.time || '') + '" placeholder="All day, or e.g. 7:00 PM"></label>' : '')
 				+ (pt.gevent ? '' : '<div class="wide dwdc-tagpick"><span>Category</span><input type="hidden" name="tag" value="' + esc(pt.tag || '') + '"><div>' + Object.keys(PTAGS).map(function (k) { return '<button type="button" class="t-' + k + (pt.tag === k ? ' on' : '') + '" data-tagpick="' + k + '">' + PTAGS[k] + '</button>'; }).join('') + '</div></div>')
 				+ '<label class="wide"><span>Notes</span><textarea name="note" rows="4" placeholder="Anything to remember…">' + esc(pt.note || '') + '</textarea></label>'
+				+ (!pt.done && !pt.gevent && pt.due && pt.due < DWDC.today ? '<div class="wide dd-treset-row"><span>Overdue since ' + esc(fmt(pt.due)) + '</span>' + resetBtn('p:' + pt.id, 'sm') + '</div>' : '')
 				+ '<div class="dwdc-farow end wide"><button type="button" class="dwdc-btn2 danger" data-pdel="todos:' + pt.id + '">Delete</button><button type="button" class="dwdc-btn2" data-ptoggle="' + pt.id + '">' + (pt.done ? 'Mark not done' : 'Mark done') + '</button><button class="dwdc-btn">Save</button></div></form></div>';
 		}
 		if (m.type === 'csvremind') {
@@ -5080,6 +5097,7 @@
 		if ((el = t.closest('[data-stgclear]'))) { var sgc = +el.getAttribute('data-stgclear'); el.disabled = true; api('/contact/' + sgc, 'POST', { staging: '' }).then(function (x) { upsert(x); S.full[sgc] = x; S.stgEdit = 0; render(); toast('Staging URL removed'); }).catch(function (e) { el.disabled = false; fail(e); }); return; }
 		if ((el = t.closest('[data-stgmk]'))) { var mu = app.querySelector('[data-mkurl]'); if (mu) { mu.scrollIntoView({ behavior: 'smooth', block: 'center' }); mu.focus(); } return; }
 		if ((el = t.closest('[data-schedtask]')) && !t.closest('a')) { S.modal = { type: 'schedtask', key: el.getAttribute('data-schedtask') }; render(); return; }
+		if ((el = t.closest('[data-treset]'))) { e.preventDefault(); e.stopPropagation(); S.modal = null; resetDue(el.getAttribute('data-treset')); return; }
 		if ((el = t.closest('[data-stdone]'))) {
 			var sk = el.getAttribute('data-stdone'), sid = sk.slice(2); S.modal = null;
 			if (sk.slice(0, 1) === 'w') { setDone(+sid); } else { var sp = (pData().todos || []).find(function (x) { return String(x.id) === sid; }); if (sp) { sp.done = !sp.done; render(); pSave('todos', { id: sp.id, done: sp.done }, sp.done ? 'Done' : 'Not done'); } }
