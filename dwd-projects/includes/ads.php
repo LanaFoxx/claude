@@ -32,6 +32,9 @@ add_action( 'wp_head', function () {
 	if ( $id && 0 !== stripos( $id, 'AW-' ) ) {
 		$id = 'AW-' . $id;
 	}
+	// Google Analytics (GA4): every visitor except signed-in site admins, so Michael's own visits don't count.
+	$ga  = current_user_can( 'manage_options' ) ? '' : preg_replace( '/[^A-Za-z0-9\-]/', '', (string) get_option( 'dwdp_ga4_id', 'G-KDKHR6NWRL' ) );
+	$tag = $id ? $id : $ga;
 	?>
 <script>
 (function(){
@@ -45,7 +48,7 @@ add_action( 'wp_head', function () {
 	} catch (e) {}
 })();
 </script>
-	<?php if ( $id ) : ?>
+	<?php if ( $tag ) : ?>
 <script>
 // Speed: the Google Ads tag loads on the visitor's first scroll, tap, click or keypress (right away for ad clicks).
 // Everything below queues in dataLayer until then, so no conversion is lost.
@@ -54,18 +57,24 @@ add_action( 'wp_head', function () {
 	function load() {
 		if (done) { return; } done = true;
 		ev.forEach(function (n) { removeEventListener(n, load, { passive: true }); });
-		var s = document.createElement('script'); s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=<?php echo esc_js( $id ); ?>'; document.head.appendChild(s);
+		var s = document.createElement('script'); s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=<?php echo esc_js( $tag ); ?>'; document.head.appendChild(s);
 	}
+	<?php if ( $ga ) : ?>
+	// Analytics: visitors who never scroll or tap still count (that is what bounce rate measures), so load 4 seconds after the page finishes.
+	if (document.readyState === 'complete') { setTimeout(load, 4000); } else { addEventListener('load', function () { setTimeout(load, 4000); }); }
+	<?php endif; ?>
 	if (/[?&](gclid|gbraid|wbraid)=/.test(location.search)) { load(); return; }
 	ev.forEach(function (n) { addEventListener(n, load, { passive: true, once: true }); });
 })();
 </script>
 <script>
 window.dataLayer = window.dataLayer || []; function gtag(){ dataLayer.push(arguments); }
-gtag('js', new Date()); gtag('config', '<?php echo esc_js( $id ); ?>');
+gtag('js', new Date());<?php if ( $id ) : ?> gtag('config', '<?php echo esc_js( $id ); ?>');<?php endif; ?><?php if ( $ga ) : ?> gtag('config', '<?php echo esc_js( $ga ); ?>');<?php endif; ?>
+
 (function(){
-	var ID = '<?php echo esc_js( $id ); ?>', LEAD = '<?php echo esc_js( $lead ); ?>', CALL = '<?php echo esc_js( $call ); ?>', sent = {};
-	function conv(label, key) { if (!label || sent[key]) { return; } sent[key] = 1; gtag('event', 'conversion', { send_to: ID + '/' + label }); }
+	var ID = '<?php echo esc_js( $id ); ?>', GA = '<?php echo esc_js( $ga ); ?>', LEAD = '<?php echo esc_js( $lead ); ?>', CALL = '<?php echo esc_js( $call ); ?>', sent = {};
+	// Google Ads conversion, plus the matching Analytics event (generate_lead for forms and bookings, phone_call_click for phone taps).
+	function conv(label, key) { if (sent[key]) { return; } sent[key] = 1; if (ID && label) { gtag('event', 'conversion', { send_to: ID + '/' + label }); } if (GA) { gtag('event', key === 'call' ? 'phone_call_click' : 'generate_lead', { send_to: GA }); } }
 	// Phone taps
 	document.addEventListener('click', function (e) { var a = e.target.closest && e.target.closest('a[href^="tel:"]'); if (a) { conv(CALL, 'call'); } }, true);
 	// Elementor forms (contact form)
