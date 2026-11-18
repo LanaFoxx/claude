@@ -276,7 +276,7 @@ add_action( 'admin_head-index.php', function () {
 		. '@media(max-width:782px){.dwdwd-tiles,.dwdwd-cols{grid-template-columns:repeat(2,minmax(0,1fr))}}'
 		// Website visitors box twice as wide as the others: its own full row when there are 2 columns, and a double-width
 		// first column when there are 3 or 4.
-		. '#dwdwd-wide{padding:0 8px;box-sizing:border-box}#dwdwd-wide .postbox{margin-bottom:20px}#dwdwd-wide .handle-order-higher,#dwdwd-wide .handle-order-lower{display:none}'
+		. '#dwdwd-wide{padding:0 8px;box-sizing:border-box}#dwdwd-wide .postbox{margin-bottom:20px}#dwdwd-wide .handle-order-higher,#dwdwd-wide .handle-order-lower,#dwdwd_ga .handle-order-higher,#dwdwd_ga .handle-order-lower,#dwdwd_sales .handle-order-higher,#dwdwd_sales .handle-order-lower{display:none}'
 		. '#dashboard-widgets.dwdwd-c3 #postbox-container-1{width:50%!important}#dashboard-widgets.dwdwd-c3 #postbox-container-2,#dashboard-widgets.dwdwd-c3 #postbox-container-3{width:25%!important}'
 		. '#dashboard-widgets.dwdwd-c4 #postbox-container-1{width:40%!important}#dashboard-widgets.dwdwd-c4 .postbox-container:not(#postbox-container-1){width:20%!important}'
 		. '</style>';
@@ -295,9 +295,11 @@ add_action( 'admin_footer-index.php', function () {
 		var ga = document.getElementById('dwdwd_ga'), cs = dw.querySelectorAll('.postbox-container'), top0 = cs[0] ? cs[0].getBoundingClientRect().top : 0, n = 0;
 		cs.forEach(function (c) { var r = c.getBoundingClientRect(); if (r.width > 0 && Math.abs(r.top - top0) < 2) { n++; } });
 		if (n >= 3) { dw.classList.add(n >= 4 ? 'dwdwd-c4' : 'dwdwd-c3'); }
-		var col = document.getElementById('normal-sortables');
-		if (n <= 2) { if (ga.parentNode !== wide) { wide.appendChild(ga); } }
-		else if (ga.parentNode === wide && col) { col.insertBefore(ga, col.firstChild); }
+		// The double-wide boxes: Website visitors, then Recent sales. Their own full row with 2 columns or fewer,
+		// the top of the double-width first column with 3 or 4.
+		var col = document.getElementById('normal-sortables'), sales = document.getElementById('dwdwd_sales');
+		if (n <= 2) { wide.appendChild(ga); if (sales) { wide.appendChild(sales); } }
+		else if (col) { col.insertBefore(ga, col.firstChild); if (sales) { col.insertBefore(sales, ga.nextSibling); } }
 	}
 	lay();
 	var t; addEventListener('resize', function () { clearTimeout(t); t = setTimeout(lay, 150); });
