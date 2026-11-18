@@ -136,7 +136,14 @@ function dwdp_llms_txt( $full = false ) {
 	foreach ( $b['industries'] as $i ) {
 		$o .= '- ' . $i . "\n";
 	}
-	$o .= "\n## Location and service area\n\nBased in " . $b['city'] . ', North Carolina. Works with clients nationwide across the United States, by Zoom and phone.' . "\n\n";
+	$o .= "\n## Location and service area\n\nBased in Stuart, Florida, on the Treasure Coast (789 SW Federal Hwy, Suite 201, Stuart, FL 34994). Serves businesses across the Treasure Coast and works with clients nationwide across the United States, by Zoom and phone.\n\n";
+	if ( function_exists( 'dwdhl_cities' ) ) {
+		$o .= "## Service areas\n\n";
+		foreach ( dwdhl_cities() as $cs => $cc ) {
+			$o .= $link( $cc[0] . ' web design', home_url( '/' . $cs . '/' ), 'Custom websites for ' . $cc[0] . ', FL businesses; also serving ' . implode( ', ', array_slice( $cc[1], 0, 4 ) ) );
+		}
+		$o .= "\n";
+	}
 	$o .= "## Reputation\n\n- 4.9-star Google reviews\n- 100% Job Success on Upwork: https://www.upwork.com/freelancers/dreamwebdigital\n- Google Business Profile: https://maps.app.goo.gl/z4HfYnTZaqccWhhy9\n\n";
 	$o .= "## How to hire\n\n- Schedule a Zoom call: https://calendly.com/dreamwebdigital/dream-web-digital-consultation-call\n- Call or text: " . $b['phone'] . "\n- Contact form: " . home_url( '/contact/' ) . "\n\n";
 	$o .= "## Key pages\n\n";
@@ -167,7 +174,7 @@ function dwdp_llms_txt( $full = false ) {
 			'How many revisions are included?'       => 'Unlimited. The home page is designed first and refined until the client loves it, then every other page is approved before the next is built.',
 			'Will the price change in the middle of the project?' => 'No. The project is finished as agreed. Michael does not stop partway through and ask for more money.',
 			'What happens after launch?'             => 'Two months of free aftercare for changes and questions, a lifetime workmanship warranty, and 1-on-1 training. Many clients continue working with Michael long term.',
-			'Do you only work with local businesses?' => 'No. Dream Web Digital is based in Stuart, Florida on the Treasure Coast, also serves Charlotte, North Carolina, and works with clients across the United States.',
+			'Do you only work with local businesses?' => 'No. Dream Web Digital is based in Stuart, Florida on the Treasure Coast, serves Stuart, Port St. Lucie, Jupiter, Palm City, Vero Beach and Fort Pierce, and works with clients across the United States by Zoom and phone.',
 			'What industries do you build for?'      => 'Any industry, including attorneys and law firms, doctors and medical practices, construction companies, roofing companies, remodeling contractors, accounting firms, financial advisors, fitness brands, retail and more.',
 			'Do I have to host with you?'            => 'No. Managed WordPress hosting is available, but Michael is happy to launch on the client\'s existing host.',
 		);

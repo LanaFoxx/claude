@@ -5,7 +5,8 @@
  */
 defined( 'ABSPATH' ) || exit;
 $dwdr = dwdr_page();
-$body = dwdr_webp_html( dwdr_add_ctas( dwdr_body( $dwdr ) ) ); // WebP images for speed // sections without a button get Get a Quote + Call
+$body = dwdr_webp_html( dwdr_add_ctas( dwdr_body( $dwdr ) ) );
+$body = function_exists( 'dwdhl_google_links' ) ? dwdhl_google_links( $body ) : $body; // every Google reviews mention links to the reviews // WebP images for speed // sections without a button get Get a Quote + Call
 ?><!doctype html>
 <html <?php language_attributes(); ?>>
 <head>

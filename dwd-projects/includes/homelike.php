@@ -220,6 +220,9 @@ function dwdhl_city_page() {
 		. '<p class="dwr-local-k">Serving ' . $e . ' and nearby</p><ul class="dwr-local-l">' . $chips . '</ul></div></section>';
 	$s = strpos( $html, '<section data-nocta="1" id="services"' );
 	$html = false !== $s ? substr_replace( $html, $local, $s, 0 ) : $html . $local;
+	$ct = strpos( $html, '<section id="contact"' );
+	$faq = dwdhl_city_extra( $slug, $city );
+	$html = false !== $ct ? substr_replace( $html, $faq, $ct, 0 ) : $html . $faq;
 	// Search engines: this page is a web design service for this city.
 	$ld = array(
 		'@context'   => 'https://schema.org',
@@ -228,7 +231,79 @@ function dwdhl_city_page() {
 		'serviceType' => 'Website design and development',
 		'url'        => get_permalink(),
 		'areaServed' => array_map( function ( $n ) { return array( '@type' => 'City', 'name' => $n . ', FL' ); }, array_merge( array( $city ), $near ) ),
-		'provider'   => array( '@type' => 'ProfessionalService', 'name' => 'Dream Web Digital', 'url' => home_url( '/' ), 'telephone' => '+1-772-210-1728', 'address' => array( '@type' => 'PostalAddress', 'streetAddress' => '789 SW Federal Hwy, Suite 201', 'addressLocality' => 'Stuart', 'addressRegion' => 'FL', 'postalCode' => '34994', 'addressCountry' => 'US' ) ),
+		'description' => 'Custom website design and development for ' . $city . ', FL businesses by Michael Tarr of Dream Web Digital: unlimited revisions, no templates, on-page SEO, 2 months of support and a lifetime workmanship warranty.',
+		'offers'     => array( '@type' => 'Offer', 'priceCurrency' => 'USD', 'priceSpecification' => array( '@type' => 'PriceSpecification', 'minPrice' => 1500, 'maxPrice' => 7000, 'priceCurrency' => 'USD' ) ),
+		'provider'   => array( '@type' => 'ProfessionalService', 'name' => 'Dream Web Digital', 'founder' => array( '@type' => 'Person', 'name' => 'Michael Tarr' ), 'sameAs' => array( dwdhl_greviews_url(), 'https://www.upwork.com/freelancers/dreamwebdigital' ), 'url' => home_url( '/' ), 'telephone' => '+1-772-210-1728', 'address' => array( '@type' => 'PostalAddress', 'streetAddress' => '789 SW Federal Hwy, Suite 201', 'addressLocality' => 'Stuart', 'addressRegion' => 'FL', 'postalCode' => '34994', 'addressCountry' => 'US' ) ),
+	);
+	return $html . '<script type="application/ld+json">' . wp_json_encode( $ld ) . '</script>';
+}
+
+/** Your Google reviews (Google Business Profile). */
+function dwdhl_greviews_url() {
+	return 'https://maps.app.goo.gl/z4HfYnTZaqccWhhy9';
+}
+
+/**
+ * Every mention of the Google reviews on a page links to them: the hero rating bar, the stats, the project scores,
+ * the review cards, the About photo caption and the bio. Applied to each page as it renders (layout.php).
+ */
+function dwdhl_google_links( $html ) {
+	$g = esc_url( dwdhl_greviews_url() );
+	$a = '<a href="' . $g . '" target="_blank" rel="noopener" title="Read my Google reviews"';
+	$rules = array(
+		// hero rating bar: "★★★★★ 4.9 on Google"
+		'#<div class="dwr-tstat">((?:(?!</div>).)*?on Google)</div>#s' => $a . ' class="dwr-tstat dwr-glink">$1</a>',
+		// stats: "4.9 · average rating on Google"
+		'#<div>(<b>4\.9</b>(?:(?!</div>).)*?(?:A|a)verage rating on Google</span>)</div>#s' => $a . ' class="dwr-glink">$1</a>',
+		// project scores: "★ 5.0 · Google review" / "Stars on Google"
+		'#<span>(<b><i>★</i>5\.0</b><small>(?:Google review|Stars on Google)</small>)</span>#' => '<span>' . $a . ' class="dwr-glink" style="display:contents;color:inherit;text-decoration:none">$1</a></span>',
+		// review cards: the Google logo label, and "· Google review" after the name
+		'#<span class="dwr-qsrc">(<svg[^>]*viewBox="0 0 48 48"(?:(?!</span>).)*?Google)</span>#s' => $a . ' class="dwr-qsrc dwr-glink">$1</a>',
+		'#, Google review(?=\s*<)#' => ', ' . $a . ' class="dwr-glink">Google review</a>', // project page quote: "— The Goods Vending, Google review"
+		'# · Google review</span>#' => ' · ' . $a . ' class="dwr-glink">Google review</a></span>',
+		// About photo caption and the bio
+		'#(<span style="color:\#F5B301">★</span> 5\.0 on Google)#' => $a . ' class="dwr-glink">$1</a>',
+		'#5 stars on Google#' => $a . ' class="dwr-glink">5 stars on Google</a>',
+	);
+	foreach ( $rules as $re => $to ) {
+		$html = preg_replace( $re, $to, $html );
+	}
+	return $html;
+}
+
+/** Questions people (and AI search) ask about web design in a city: shown on the page and marked up as an FAQ. */
+function dwdhl_city_faq( $city ) {
+	return array(
+		'How much does a website cost in ' . $city . '?' => 'Most websites run $1,500 to $7,000, depending on the pages and features you need. You get one flat quote up front, so the price never creeps.',
+		'Do you work with ' . $city . ' businesses?'      => 'Yes. I’m based in Stuart on the Treasure Coast and work with ' . $city . ' businesses by Zoom and phone. You work with me directly, and you can call or text me at (772) 210-1728.',
+		'What’s included with every website?'            => 'Unlimited revisions, a custom design with no templates, a fully responsive build for every device, on-page SEO, WordPress security setup, 1-on-1 training, 2 months of support after launch and a lifetime workmanship warranty.',
+		'Will my website show up on Google and in AI search?' => 'Every page is built for search: one clear headline, a title and description, image alt text, structured data, and fast load times, with a 95+ Google PageSpeed score on every site I build.',
+		'Do you offer website hosting?'                   => 'Yes. Managed WordPress hosting for the sites I build, at one flat annual rate with no long-term contract. You can also launch on your existing host.',
+	);
+}
+
+/** The FAQ section and the links to the other city pages, for a city page. */
+function dwdhl_city_extra( $slug, $city ) {
+	$e   = esc_html( $city );
+	$faq = dwdhl_city_faq( $city );
+	$qa  = '';
+	foreach ( $faq as $q => $an ) {
+		$qa .= '<details class="dwr-faq-i"><summary>' . esc_html( $q ) . '</summary><p>' . esc_html( $an ) . '</p></details>';
+	}
+	$others = '';
+	foreach ( dwdhl_cities() as $s => $c ) {
+		if ( $s !== $slug ) {
+			$others .= '<li><a href="' . esc_url( home_url( '/' . $s . '/' ) ) . '">' . esc_html( $c[0] ) . ' web design</a></li>';
+		}
+	}
+	$html = '<section data-theme="light" data-nocta="1" class="dwr-faq" style="background:#F6F7F9;color:#121212;padding:clamp(72px,9vw,140px) clamp(20px,4vw,56px)">'
+		. '<div class="dwr-faq-in" data-dw-reveal="1"><span class="dwr-eyebrow"><i></i>Questions</span><h2 class="dwr-band-h">' . $e . ' web design <span>questions.</span></h2>'
+		. '<div class="dwr-faq-l">' . $qa . '</div>'
+		. '<p class="dwr-local-k">Also serving the Treasure Coast</p><ul class="dwr-local-l dwr-cities">' . $others . '</ul></div></section>';
+	$ld = array(
+		'@context'   => 'https://schema.org',
+		'@type'      => 'FAQPage',
+		'mainEntity' => array_map( function ( $q, $an ) { return array( '@type' => 'Question', 'name' => $q, 'acceptedAnswer' => array( '@type' => 'Answer', 'text' => $an ) ); }, array_keys( $faq ), array_values( $faq ) ),
 	);
 	return $html . '<script type="application/ld+json">' . wp_json_encode( $ld ) . '</script>';
 }
