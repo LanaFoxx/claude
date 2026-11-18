@@ -79,6 +79,9 @@ function dwdr_page() {
 	if ( function_exists( 'is_account_page' ) && is_account_page() ) {
 		return 'account';
 	}
+	if ( function_exists( 'dwdhl_city_now' ) && dwdhl_city_now() ) {
+		return 'city'; // homelike.php
+	}
 	foreach ( array( 'process', 'about', 'hosting', 'contact', 'quote', 'thank-you', 'onboarding', 'kickoff' ) as $slug ) {
 		if ( is_page( $slug ) ) {
 			return $slug;
@@ -90,6 +93,11 @@ function dwdr_page() {
 add_filter( 'template_include', function ( $t ) {
 	return dwdr_page() ? DWDP_DIR . 'templates/redesign/layout.php' : $t;
 }, 100 );
+
+/** The reviews slider (one quote at a time, arrows, dots, swipe on phones), for any page that shows the quotes band. */
+function dwdr_quotes_js() {
+	return '<script>document.querySelectorAll(".dwr-qwrap").forEach(function(w){var g=w.querySelector(".dwr-qslider"),fs=[].slice.call(g.querySelectorAll("figure")),i=0,nav=w.nextElementSibling;function show(n){i=(n+fs.length)%fs.length;fs.forEach(function(f,k){f.classList.toggle("on",k===i);f.setAttribute("aria-hidden",k===i?"false":"true");});if(nav&&nav.classList.contains("dwr-qnav")){nav.querySelector(".dwr-qcount b").textContent=i+1;[].forEach.call(nav.querySelectorAll(".dwr-qdot"),function(d,k){d.classList.toggle("on",k===i);});}}w.addEventListener("click",function(e){var b=e.target.closest("[data-q]");if(b){show(i+(+b.getAttribute("data-q")));}});if(nav){nav.addEventListener("click",function(e){var d=e.target.closest("[data-qgo]");if(d){show(+d.getAttribute("data-qgo"));}var q=e.target.closest("[data-q]");if(q){show(i+(+q.getAttribute("data-q")));}});}var x0=null;g.addEventListener("touchstart",function(e){x0=e.touches[0].clientX;},{passive:true});g.addEventListener("touchend",function(e){if(x0===null){return;}var dx=e.changedTouches[0].clientX-x0;if(Math.abs(dx)>40){show(i+(dx<0?1:-1));}x0=null;});show(0);});</script>';
+}
 
 /** Read a partial and fill its placeholders. {{ key }} values are escaped; {{{ key }}} are trusted HTML. */
 function dwdr_render( $name, $vars = array() ) {
@@ -245,7 +253,8 @@ function dwdr_body( $page ) {
 			}
 		}
 		$v['catTags'] = $tags;
-		return dwdr_render( 'portfolio', $v );
+		$html = dwdr_render( 'portfolio', $v );
+		return function_exists( 'dwdhl_apply' ) ? dwdhl_apply( 'portfolio', $html ) : $html;
 	}
 	if ( 'project' === $page ) {
 		$all = dwdp_projects();
@@ -333,6 +342,9 @@ function dwdr_body( $page ) {
 		// The hero image spans the content column (up to 1500px): let the browser pick a size that is sharp at that width.
 		return preg_replace( '#(<img data-dw-zoom="1" src="' . preg_quote( esc_attr( $v['image'] ), '#' ) . '"[^>]*?)sizes="[^"]*"#', '$1sizes="(max-width: 1500px) 100vw, 1500px"', $html_out, 1 );
 	}
+	if ( 'city' === $page ) {
+		return dwdhl_city_page();
+	}
 	if ( 'onboarding' === $page || 'kickoff' === $page ) {
 		return dwdr_onboarding();
 	}
@@ -358,7 +370,7 @@ function dwdr_body( $page ) {
 		$html = str_replace( '%SHOTPLANE%', dwdr_shotplane(), $html );
 		$html = dwdr_hero_track( $html );
 		// Reviews slider: one quote at a time, arrows, dots, swipe on phones.
-		$html .= '<script>document.querySelectorAll(".dwr-qwrap").forEach(function(w){var g=w.querySelector(".dwr-qslider"),fs=[].slice.call(g.querySelectorAll("figure")),i=0,nav=w.nextElementSibling;function show(n){i=(n+fs.length)%fs.length;fs.forEach(function(f,k){f.classList.toggle("on",k===i);f.setAttribute("aria-hidden",k===i?"false":"true");});if(nav&&nav.classList.contains("dwr-qnav")){nav.querySelector(".dwr-qcount b").textContent=i+1;[].forEach.call(nav.querySelectorAll(".dwr-qdot"),function(d,k){d.classList.toggle("on",k===i);});}}w.addEventListener("click",function(e){var b=e.target.closest("[data-q]");if(b){show(i+(+b.getAttribute("data-q")));}});if(nav){nav.addEventListener("click",function(e){var d=e.target.closest("[data-qgo]");if(d){show(+d.getAttribute("data-qgo"));}var q=e.target.closest("[data-q]");if(q){show(i+(+q.getAttribute("data-q")));}});}var x0=null;g.addEventListener("touchstart",function(e){x0=e.touches[0].clientX;},{passive:true});g.addEventListener("touchend",function(e){if(x0===null){return;}var dx=e.changedTouches[0].clientX-x0;if(Math.abs(dx)>40){show(i+(dx<0?1:-1));}x0=null;});show(0);});</script>';
+		$html .= dwdr_quotes_js();
 	}
 	if ( 'process' === $page ) {
 		$j = strrpos( $html, '<section' );
@@ -367,7 +379,7 @@ function dwdr_body( $page ) {
 			$html = substr_replace( $html, $band, $j, 0 );
 		}
 	}
-	return $html;
+	return function_exists( 'dwdhl_apply' ) ? dwdhl_apply( $page, $html ) : $html; // homepage hero and sections (homelike.php)
 }
 
 /**

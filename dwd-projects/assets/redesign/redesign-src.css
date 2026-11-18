@@ -339,3 +339,16 @@ section.dwr-doall-sec .dwr-doall{margin:0!important;border:0!important;border-ra
 
 /* Reviews: the name and links sit right under the quote (a short quote no longer leaves a gap above them) */
 .dwr-qband #dw-quotes-grid.dwr-qslider>figure figcaption{margin-top:0!important}
+
+/* Contact and Quote: centred headline like the homepage */
+#ct-hero>span:first-of-type{display:flex!important;justify-content:center}
+#qt-hero>div>div:first-child{align-items:center;text-align:center}
+#qt-hero>div>div:first-child>p{margin-left:auto!important;margin-right:auto!important}
+/* City pages: local section */
+.dwr-local-in{max-width:1120px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+.dwr-local .dwr-band-h span{color:#13A6EE}
+.dwr-local .dwr-band-p{color:#333;max-width:760px}
+.dwr-local-k{margin:14px 0 0;font-size:13px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#6B6B6B}
+.dwr-local-l{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:10px}
+.dwr-local-l li{padding:10px 16px;border:1px solid #E4E6EA;border-radius:999px;font-size:15px;font-weight:500;color:#121212;background:#F6F7F9}
+.dwr-local-l li:first-child{background:#13A6EE;border-color:#13A6EE;color:#0B1626}
