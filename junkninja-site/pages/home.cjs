@@ -23,7 +23,7 @@ const hero = (m) => container({
   background_position: 'center center', background_size: 'cover', background_repeat: 'no-repeat',
   background_overlay_background: 'gradient', background_overlay_color: 'rgba(0,38,75,.97)', background_overlay_color_b: 'rgba(0,38,75,.55)',
   background_overlay_gradient_type: 'linear', background_overlay_opacity: { unit: 'px', size: 1, sizes: [] }, background_overlay_gradient_angle: { unit: 'deg', size: 90 },
-  _element_id: 'top', _title: 'Hero',
+  _title: 'Hero', html_tag: 'section',
   custom_css: 'selector::before { background-image: linear-gradient(90deg, rgba(0,38,75,.97) 0%, rgba(0,38,75,.88) 50%, rgba(0,38,75,.55) 100%) !important; }',
 }, [
   stack([
@@ -55,7 +55,6 @@ const ticker = () => container({
   content_width: 'full', padding: box(18, 0, 18, 0), flex_direction: 'row', flex_gap: gap(0), overflow: 'hidden',
   background_background: 'classic', background_color: C.cyan,
   border_border: 'solid', border_width: box(4, 0, 4, 0), border_color: C.navy, _title: 'Trust ticker',
-  _attributes: 'aria-label|Licensed and Insured. Serving the Treasure Coast. Open 6am–9pm Every Day. Real Quotes from Your Photos.',
 }, [container({
   content_width: 'full', flex_direction: 'row', flex_wrap: 'nowrap', padding: box(0), flex_gap: gap(0), _css_classes: 'jn-track',
   custom_css: 'selector { width: max-content !important; max-width: none !important; animation: jnmarq 28s linear infinite; }',
@@ -97,7 +96,7 @@ const svcPanel = (m, [title, desc, key], i) => container({
   background_background: 'classic', background_color: C.navy, border_radius: box(18), overflow: 'hidden',
   box_shadow_box_shadow_type: 'yes', box_shadow_box_shadow: shadow(-12, 12), _css_classes: 'jn-svc-panel',
 }, [
-  image(m[key], { ratio: '16/9', settings: { _css_classes: 'jn-svc-img' } }),
+  image(m[key], { ratio: '16/9', size: 'large', settings: { _css_classes: 'jn-svc-img' } }),
   stack([
     heading(`${String(i + 1).padStart(2, '0')} / 08`, 'span', { size: 16, color: C.cyan, lh: 1.2, cls: 'jn-svc-count' }),
     heading(title, 'h3', { size: 'clamp(24px,2.8vw,30px)', ls: 0.05, upper: true, lh: 1.1, color: C.white, cls: 'jn-svc-title' }),
@@ -119,8 +118,8 @@ selector .e-n-tab-title { justify-content: flex-start; background: transparent !
 selector .e-n-tab-title-text { font-family: "${HEAD}", sans-serif; font-weight: 400; font-size: clamp(20px,2.6vw,30px); letter-spacing: .05em; text-transform: uppercase; line-height: 1.2; color: ${C.idle}; text-align: left; }
 selector .e-n-tab-title[aria-selected="true"] .e-n-tab-title-text { color: ${C.navy}; text-shadow: -.07em .07em 0 ${C.cyan}; }
 selector .e-n-tab-title[aria-selected="false"] .e-n-tab-icon { display: none; }
-selector .e-n-tab-icon i { color: ${C.pink}; font-size: 20px; }
-selector .e-n-tab-icon svg { fill: ${C.pink}; width: 20px; height: 20px; }
+selector .e-n-tab-icon i { color: ${C.pink} !important; font-size: 20px; }
+selector .e-n-tab-icon svg { fill: ${C.pink} !important; width: 20px; height: 20px; }
 /* ≤760px: accordion – active row opens in place, no photo, light background */
 @media (max-width: 760px) {
   selector .jn-svc-panel { background: transparent !important; box-shadow: none !important; border-radius: 0 !important; }
@@ -130,16 +129,7 @@ selector .e-n-tab-icon svg { fill: ${C.pink}; width: 20px; height: 20px; }
   selector .jn-svc-quote .elementor-button { background: ${C.navy} !important; border-color: ${C.navy} !important; }
 }`;
 
-// Hover selects a service on desktop, like the design (tap/click still works everywhere).
-const SERVICES_JS = `<script>
-document.addEventListener('DOMContentLoaded', function () {
-  document.querySelectorAll('.jn-services .e-n-tab-title').forEach(function (t) {
-    t.addEventListener('mouseenter', function () {
-      if (window.matchMedia('(min-width: 761px) and (hover: hover)').matches && t.getAttribute('aria-selected') !== 'true') t.click();
-    });
-  });
-});
-</script>`;
+// Hover-to-select on desktop lives in the Junk Ninja Site plugin (no HTML widget).
 
 const services = (m) => band(C.surface, [
   stack([eyebrow('Services'), H2('What We Remove')], { gap: 12 }),
@@ -152,7 +142,6 @@ const services = (m) => band(C.surface, [
     },
     elements: SERVICES.map((s, i) => svcPanel(m, s, i)),
   },
-  widget('html', { html: SERVICES_JS, _title: 'Services hover script' }),
 ], { anchor: 'services' });
 
 /* 5. ABOUT ------------------------------------------------------------ */
@@ -214,7 +203,7 @@ const reviewCard = (n) => container({
   background_background: 'classic', background_color: C.navy, border_radius: box(8),
   box_shadow_box_shadow_type: 'yes', box_shadow_box_shadow: shadow(-6, 6),
 }, [
-  heading('★★★★★', 'p', { family: BODY, size: 36, lh: 1, ls: 0.11, color: C.cyan, settings: { _attributes: 'aria-label|5 out of 5 stars' } }),
+  heading('★★★★★', 'p', { family: BODY, size: 36, lh: 1, ls: 0.11, color: C.cyan }),
   text(`[PLACEHOLDER] Real Google review ${n} goes here.`, { color: C.white, settings: { _flex_size: 'grow' } }),
   heading('[First name]', 'p', { family: BODY, size: 17, weight: 800, lh: 1.4, color: C.white }),
 ]);
@@ -231,7 +220,7 @@ const town = (name) => button(name, '#areas', 'ghostLight', {
     typography_font_weight: '700', typography_text_transform: 'none', typography_letter_spacing: sz(0, 'em'),
     border_width: box(1), border_color: C.border, button_hover_border_color: C.cyan, button_background_hover_color: C.cyanTint,
     background_color: C.white, hover_color: C.navy,
-    custom_css: `selector .elementor-button-content-wrapper { justify-content: flex-start; } selector .elementor-button-icon svg { fill: ${C.pink}; width: 13px; height: 13px; } selector .elementor-button-icon i { color: ${C.pink}; font-size: 13px; }`,
+    custom_css: `selector .elementor-button-content-wrapper { justify-content: flex-start; align-items: center; } selector .elementor-button-text { text-align: left; white-space: normal; flex: 1; } @media (max-width: 760px) { selector .elementor-button { font-size: 15px; padding: 13px 12px; } } selector .elementor-button-icon svg { fill: ${C.pink}; width: 13px; height: 13px; } selector .elementor-button-icon i { color: ${C.pink}; font-size: 13px; }`,
   },
 });
 const areas = (m) => band(C.white, [grid([
@@ -286,18 +275,17 @@ selector .elementor-mark-required .elementor-field-label:after { color: ${C.pink
 selector .elementor-field-textual, selector .elementor-select-wrapper select { font-family: "${BODY}", sans-serif; font-size: 17px !important; color: ${C.navy}; padding: 14px 15px !important; min-height: 0; line-height: 1.4; border: 2px solid ${C.border} !important; background: ${C.surface} !important; border-radius: 8px !important; box-shadow: none !important; }
 selector .elementor-field-textual:focus, selector .elementor-select-wrapper select:focus { border-color: ${C.cyan} !important; background: #fff !important; outline: none; }
 selector textarea.elementor-field-textual { resize: vertical; }
-/* Photo drop area: the visible label opens the hidden file input below it */
-selector .elementor-field-type-upload { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); padding: 0 !important; }
-selector .jn-drop { line-height: 1.4 !important; padding: 20px 16px !important; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; cursor: pointer; border: 2px dashed ${C.cyan}; background: ${C.cyanTint}; border-radius: 8px; font-weight: 800; font-size: 16px; color: ${C.navy}; }
-selector .jn-drop-plus { width: 40px; height: 40px; border-radius: 50%; background: ${C.navy}; color: #fff; box-shadow: -3px 3px 0 ${C.cyan}; display: flex; align-items: center; justify-content: center; font-size: 26px; line-height: 1; font-weight: 400; }
-selector .jn-drop small { font-weight: 400; font-size: 14px; color: ${C.slate}; }
-selector .jn-drop-label { display: block; font-weight: 800; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: ${C.navy}; padding-bottom: 6px; }
+/* Photo upload: the native file input styled as the design's drop area (no HTML field) */
+selector .elementor-field-type-upload { position: relative; }
+selector .elementor-field-type-upload input[type="file"] { width: 100%; box-sizing: border-box; cursor: pointer; border: 2px dashed ${C.cyan} !important; background: ${C.cyanTint} url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 46 46'%3E%3Ccircle cx='20' cy='26' r='20' fill='%2326CCDD'/%3E%3Ccircle cx='23' cy='23' r='20' fill='%2300264B'/%3E%3Cpath d='M23 15v16M15 23h16' stroke='%23fff' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E") center 18px / 46px 46px no-repeat !important; border-radius: 8px; padding: 112px 16px 16px !important; text-align: center; font-family: "${BODY}", sans-serif; font-size: 13px; color: ${C.slate}; }
+selector .elementor-field-type-upload input[type="file"]::file-selector-button { width: 0; padding: 0; margin: 0; border: 0; font-size: 0; visibility: hidden; }
+selector .elementor-field-type-upload input[type="file"]::-webkit-file-upload-button { width: 0; padding: 0; margin: 0; border: 0; font-size: 0; visibility: hidden; }
+selector .elementor-field-type-upload::before { content: "Tap to add photos"; position: absolute; left: 0; right: 0; top: 92px; text-align: center; font-weight: 800; font-size: 16px; color: ${C.navy}; pointer-events: none; }
+selector .elementor-field-type-upload::after { content: "A few photos of the junk gets you a faster quote"; position: absolute; left: 16px; right: 16px; top: 116px; text-align: center; font-size: 14px; color: ${C.slate}; pointer-events: none; }
+selector .elementor-field-type-upload input[type="file"] { padding-top: 146px !important; padding-left: calc(50% - 46px) !important; }
 selector .elementor-field-type-submit { padding-left: 4px !important; }
 selector .elementor-button[type="submit"] { box-shadow: -4px 4px 0 ${C.cyan}; }
 selector .elementor-message { font-weight: 700; }`;
-const DROP_HTML = `<label class="jn-drop-label" for="form-field-photos">Photos (if you can)</label>
-<label class="jn-drop" for="form-field-photos"><span class="jn-drop-plus">+</span><span class="jn-drop-text">Tap to add photos</span><small>A few photos of the junk gets you a faster quote</small></label>
-<script>document.addEventListener('change',function(e){if(e.target&&e.target.id==='form-field-photos'){var n=e.target.files.length,t=document.querySelector('.jn-drop-text');if(t)t.textContent=n?n+(n>1?' photos':' photo')+' added':'Tap to add photos';}});</script>`;
 const field = (o) => ({ _id: id(), width: o.width || '100', width_tablet: o.width || '100', width_mobile: '100', ...o });
 const quoteForm = () => widget('form', {
   form_name: 'Free Quote',
@@ -307,8 +295,7 @@ const quoteForm = () => widget('form', {
     field({ custom_id: 'email', field_type: 'email', field_label: 'Email', width: '50' }),
     field({ custom_id: 'town', field_type: 'select', field_label: 'Town', width: '50', field_options: [...TOWNS, 'Somewhere else'].join('\n') }),
     field({ custom_id: 'message', field_type: 'textarea', field_label: 'What needs to go?', rows: 3 }),
-    field({ custom_id: 'photos_ui', field_type: 'html', field_label: 'Photo upload area', field_html: DROP_HTML }),
-    field({ custom_id: 'photos', field_type: 'upload', field_label: 'Photos', allow_multiple_upload: 'yes', max_files: 10, file_sizes: '10', file_types: 'jpg,jpeg,png,gif,webp,heic,heif' }),
+    field({ custom_id: 'photos', field_type: 'upload', field_label: 'Photos (if you can)', allow_multiple_upload: 'yes', max_files: 10, file_sizes: '10', file_types: 'jpg,jpeg,png,gif,webp,heic,heif' }),
   ],
   show_labels: 'true', mark_required: 'true', input_size: 'md',
   button_text: 'Request My Free Quote', button_size: 'md', button_width: '100', button_width_tablet: '100', button_width_mobile: '100',
@@ -354,5 +341,7 @@ const quote = (m) => band(C.navy, [grid([
 
 module.exports = {
   slug: 'home', title: 'Home',
-  build: (m) => [hero(m), ticker(), photos(), services(m), about(m), realtors(m), gallery(m), reviews(), areas(m), faq(), quote(m)],
+  build: (m) => [container({
+    content_width: 'full', flex_direction: 'column', padding: box(0), flex_gap: gap(0), html_tag: 'main', _element_id: 'content', _title: 'Main',
+  }, [hero(m), ticker(), photos(), services(m), about(m), realtors(m), gallery(m), reviews(), areas(m), faq(), quote(m)].map((s) => ({ ...s, isInner: true })), false)],
 };

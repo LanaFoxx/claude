@@ -6,7 +6,8 @@ const crypto = require('crypto');
 const C = {
   navy: '#00264B', navyMid: '#0A3A6B', navyDeep: '#001B36',
   cyan: '#26CCDD', cyanLight: '#5FDCE8', cyanDark: '#0E8A99', cyanTint: '#F1FBFC', cyanTint2: '#E6F8FA',
-  pink: '#F5398F', slate: '#3F556B', idle: '#5E7388', surface: '#F1F5F8',
+  pink: '#F5398F', slate: '#3F556B', idle: '#566B80', eyebrow: '#0B7785', // idle + eyebrow darkened from #5E7388 / #0E8A99 for WCAG AA contrast
+  surface: '#F1F5F8',
   border: '#D9E0E7', border2: '#D0D9E2', border3: '#E3E8EE', white: '#FFFFFF',
 };
 const HEAD = 'Russo One', BODY = 'Archivo';
@@ -49,7 +50,7 @@ const SECTION_PAD = box('clamp(56px,8vw,104px)', 'clamp(20px,5vw,64px)', 'clamp(
 // Full-width page section, content boxed at 1200px.
 function band(bg, children, o = {}) {
   return container({
-    content_width: 'boxed', boxed_width: sz(o.width || 1200), flex_direction: 'column', flex_gap: gap(o.gap ?? 32),
+    content_width: 'boxed', boxed_width: sz(o.width || 1200), flex_direction: 'column', flex_gap: gap(o.gap ?? 32), html_tag: 'section',
     padding: o.pad || SECTION_PAD, background_background: 'classic', background_color: bg,
     ...(o.anchor ? { _element_id: o.anchor } : {}),
     ...(o.dark ? { _css_classes: 'jn-dark' } : {}),
@@ -102,7 +103,7 @@ function heading(title, tag, o = {}) {
 // Russo One display heading with the hard cyan offset text shadow
 const display = (title, tag, size, o = {}) => heading(title, tag, { size, lh: o.lh || 1.12, ls: o.ls ?? 0.06, upper: true, cls: `jn-shadow ${o.cls || ''}`.trim(), ...o });
 const H2 = (title, o = {}) => display(title, 'h2', o.size || 'clamp(26px,3.8vw,44px)', { color: o.dark ? C.white : C.navy, ...o });
-const eyebrow = (title, o = {}) => heading(title, 'p', { family: BODY, size: 14, weight: 800, ls: 0.2, upper: true, lh: 1.3, color: o.dark ? C.cyan : C.cyanDark, ...o });
+const eyebrow = (title, o = {}) => heading(title, 'p', { family: BODY, size: 14, weight: 800, ls: 0.2, upper: true, lh: 1.3, color: o.dark ? C.cyan : C.eyebrow, ...o });
 
 function text(html, o = {}) {
   const body = /^\s*</.test(html) ? html : `<p>${html}</p>`;
@@ -152,7 +153,7 @@ function image(media, o = {}) {
   if (o.ratio) css.push(`selector img { width: 100%; aspect-ratio: ${o.ratio}; object-fit: cover; display: block; }`);
   if (o.css) css.push(o.css);
   return widget('image', {
-    image: media, image_size: 'full', align: o.align || 'center',
+    image: media, image_size: o.size || 'full', align: o.align || 'center',
     ...(o.width !== undefined ? { width: sz(o.width, o.widthUnit || 'px') } : {}),
     ...(o.height !== undefined ? { height: sz(o.height) } : {}),
     ...(o.radius ? { image_border_radius: box(o.radius) } : {}),
@@ -262,10 +263,15 @@ selector .elementor-nav-menu__container.elementor-nav-menu--dropdown .jn-menu-qu
         custom_css: `selector .elementor-button-icon svg { fill: ${C.cyan}; width: 18px; height: 18px; }`,
       },
     }),
-    widget('icon', {
-      selected_icon: phoneIcon, view: 'stacked', shape: 'square', link: link(TEL), size: sz(22), icon_padding: sz(12), border_radius: box(6),
-      primary_color: C.cyan, secondary_color: C.navy, ...hide.desktop, _flex_size: 'none', custom_css: 'selector { margin-left: auto !important; } selector .elementor-icon { width: 46px; height: 46px; padding: 0; display: flex; align-items: center; justify-content: center; box-sizing: border-box; }',
-      _title: 'Mobile call button', _attributes: 'aria-label|Call 772-882-5955',
+    button(`Call ${PHONE}`, TEL, 'cyan', {
+      size: 15, padY: 0, padX: 0, icon: phoneIcon, iconGap: 0,
+      settings: {
+        ...hide.desktop, _flex_size: 'none', _title: 'Mobile call button',
+        custom_css: `selector { margin-left: auto !important; }
+selector .elementor-button { width: 46px; height: 46px; padding: 0; display: flex; align-items: center; justify-content: center; }
+selector .elementor-button-text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+selector .elementor-button-icon { margin: 0; } selector .elementor-button-icon svg { width: 22px; height: 22px; fill: ${C.navy}; }`,
+      },
     }),
   ])], false)];
 }

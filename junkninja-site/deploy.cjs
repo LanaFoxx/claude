@@ -16,7 +16,7 @@ const md = (f) => {
 };
 const wide = md('placeholder-wide.webp'), tall = md('placeholder-tall.webp');
 const m = {
-  logo: md('junk-ninja-logo.png'), logoWhite: md('junk-ninja-logo-white.png'), ninja: md('junk-ninja-mascot.png'),
+  logo: md('junk-ninja-logo-300.png'), logoWhite: md('junk-ninja-logo-white-424.png'), ninja: md('junk-ninja-mascot.webp'),
   heroBg: md('job-trailer-load.webp'), aboutImg: md('job-trailer-branded.webp'),
   svcGarage: md('svc-garage.webp'), svcRental: md('svc-rental.webp'), svcFurniture: md('svc-furniture.webp'),
   // Not supplied as files yet: striped "Photo to come" placeholders, replace in Elementor.
