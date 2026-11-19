@@ -2,14 +2,14 @@
 /**
  * Plugin Name: Nick Ponte Coastal Light (preview)
  * Description: "Coastal Light" redesign preview: a homepage template (/home-preview/) and a Town post type (/town-preview/<town>/) with monthly market fields, FAQ and JSON-LD. Preview pages are noindex and use their own header and footer, so live pages are not affected. Deactivate to remove everything from the front end.
- * Version: 1.16.2
+ * Version: 1.16.3
  * Author: Dream Web Digital
  * Requires PHP: 7.4
  */
 
 if (!defined('ABSPATH')) exit;
 
-define('NPC_VER', '1.16.2');
+define('NPC_VER', '1.16.3');
 define('NPC_DIR', plugin_dir_path(__FILE__));
 define('NPC_URL', plugin_dir_url(__FILE__));
 const NPC_HOME_TEMPLATE = 'npc-home';
@@ -470,8 +470,28 @@ add_filter('option_rank-math-options-sitemap', function ($o) {
 	return $o;
 });
 
+// The SEO title / description typed in Rank Math for this URL ('' if none). Town pages read the Town entry first
+// (Dashboard › Towns, where Nick edits towns), then the town page itself. Rank Math variables (%sep% etc.) are filled in.
+function npc_seo_custom($key) {
+	if (!is_singular()) return '';
+	$id = get_queried_object_id();
+	$ids = [];
+	if (is_singular('np_town')) $ids[] = $id;
+	elseif (is_page() && in_array($id, NPC_LIVE_TOWNS, true) && ($t = npc_current_town())) $ids[] = $t->ID;
+	$ids[] = $id;
+	foreach (array_unique($ids) as $pid) {
+		$v = trim((string) get_post_meta($pid, 'rank_math_' . $key, true));
+		if ($v === '') continue;
+		if (class_exists('\RankMath\Helper') && method_exists('\RankMath\Helper', 'replace_vars')) $v = \RankMath\Helper::replace_vars($v, get_post($pid));
+		return trim(wp_strip_all_tags(html_entity_decode($v, ENT_QUOTES)));
+	}
+	return '';
+}
+
 // Search titles and descriptions: short, consistent, not cut off by Google (~60 / ~160 characters).
+// Anything typed in Rank Math wins and is left exactly as written.
 function npc_short_title($t) {
+	if ($c = npc_seo_custom('title')) return $c;
 	if (is_front_page()) return 'Seacoast NH Real Estate | Nick Ponte, Realtor';
 	$t = trim(preg_replace('/\s+/', ' ', html_entity_decode((string) $t, ENT_QUOTES)));
 	$t = preg_replace('/\s*[-|–]\s*Nick Ponte Realty\s*\|\s*Seacoast NH Realtor &(amp;)? Real Estate Expert.*$/i', ' | Nick Ponte', $t);
@@ -483,7 +503,9 @@ function npc_short_title($t) {
 }
 add_filter('rank_math/frontend/title', 'npc_short_title', 99);
 add_filter('rank_math/opengraph/facebook/og_title', 'npc_short_title', 99);
+add_filter('rank_math/opengraph/facebook/og_description', function ($d) { return npc_seo_custom('description') ?: $d; }, 99);
 add_filter('rank_math/frontend/description', function ($d) {
+	if ($c = npc_seo_custom('description')) return $c;
 	$d = trim(preg_replace('/\s+/', ' ', (string) $d));
 	if (mb_strlen($d) > 158) $d = rtrim(mb_substr($d, 0, mb_strrpos(mb_substr($d, 0, 155), ' ') ?: 155), ' ,:;-–—') . '…';
 	return $d;
@@ -548,15 +570,15 @@ add_action('wp_head', function () {
 add_filter('wp_sitemaps_post_types', function ($types) { if (!npc_live()) unset($types['np_town']); return $types; });
 
 add_filter('rank_math/frontend/title', function ($title) {
-	if (is_singular('np_town')) return 'Top Realtor in ' . get_the_title() . ' NH | Nick Ponte';
+	if (is_singular('np_town') && !npc_seo_custom('title')) return 'Top Realtor in ' . get_the_title() . ' NH | Nick Ponte';
 	return $title;
 });
 add_filter('rank_math/frontend/description', function ($d) {
-	if (is_singular('np_town')) return wp_trim_words(npc_meta(get_queried_object_id(), 'intro'), 28, '…');
+	if (is_singular('np_town') && !npc_seo_custom('description')) return wp_trim_words(npc_meta(get_queried_object_id(), 'intro'), 28, '…');
 	return $d;
 });
 add_filter('pre_get_document_title', function ($t) {
-	if (is_singular('np_town')) return 'Top Realtor in ' . get_the_title() . ' NH | Nick Ponte';
+	if (is_singular('np_town') && !npc_seo_custom('title')) return 'Top Realtor in ' . get_the_title() . ' NH | Nick Ponte';
 	return $t;
 }, 20);
 
