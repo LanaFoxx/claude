@@ -341,6 +341,27 @@ add_action( 'rest_api_init', function () {
 		$j = dwdi_paypal( 'GET', '/v2/invoicing/invoices/' . rawurlencode( (string) $r->get_param( 'id' ) ) );
 		return is_wp_error( $j ) ? $j : array( 'status' => $j['status'] ?? '', 'payments' => $j['payments'] ?? null, 'amount' => $j['amount']['value'] ?? '', 'due_amount' => $j['due_amount']['value'] ?? '' );
 	} ) );
+	// Upwork Connects / membership costs: GET lists them; POST adds rows (by Upwork transaction id, never twice).
+	register_rest_route( 'dwd/v1', '/crm/costs/add', array(
+		array( 'methods' => 'GET', 'permission_callback' => $can, 'callback' => function () { return array_values( (array) get_option( 'dwdc_upwork_costs', array() ) ); } ),
+		array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => function ( $r ) {
+			$costs = (array) get_option( 'dwdc_upwork_costs', array() );
+			$have  = array_flip( array_filter( array_map( function ( $x ) { return (string) ( $x['ref'] ?? '' ); }, $costs ) ) );
+			$added = 0;
+			foreach ( (array) $r->get_param( 'rows' ) as $x ) {
+				$x   = (array) $x;
+				$ref = sanitize_text_field( (string) ( $x['ref'] ?? '' ) );
+				if ( '' === $ref || isset( $have[ $ref ] ) || ! preg_match( '/^\d{4}-\d{2}-\d{2}$/', (string) ( $x['date'] ?? '' ) ) ) {
+					continue;
+				}
+				$costs[]      = array( 'date' => $x['date'], 'amount' => round( (float) ( $x['amount'] ?? 0 ), 2 ), 'type' => 'membership' === ( $x['type'] ?? '' ) ? 'membership' : 'connects', 'qty' => absint( $x['qty'] ?? 0 ), 'ref' => $ref );
+				$have[ $ref ] = 1;
+				$added++;
+			}
+			update_option( 'dwdc_upwork_costs', $costs, false );
+			return array( 'added' => $added );
+		} ),
+	) );
 	register_rest_route( 'dwd/v1', '/crm/reconcile/paypal-missing', array( 'methods' => array( 'GET', 'POST' ), 'permission_callback' => function () { return current_user_can( 'manage_options' ); }, 'callback' => function ( $r ) {
 		@set_time_limit( 300 );
 		return dwdrc_paypal_missing( 'POST' === $r->get_method() && $r->get_param( 'apply' ) );
