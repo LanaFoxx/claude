@@ -336,6 +336,11 @@ add_action( 'rest_api_init', function () {
 		}
 		return $out;
 	} ) );
+	// One PayPal invoice's status and recorded payments, straight from PayPal (read-only).
+	register_rest_route( 'dwd/v1', '/crm/reconcile/paypal-invoice', array( 'methods' => 'GET', 'permission_callback' => $can, 'callback' => function ( $r ) {
+		$j = dwdi_paypal( 'GET', '/v2/invoicing/invoices/' . rawurlencode( (string) $r->get_param( 'id' ) ) );
+		return is_wp_error( $j ) ? $j : array( 'status' => $j['status'] ?? '', 'payments' => $j['payments'] ?? null, 'amount' => $j['amount']['value'] ?? '', 'due_amount' => $j['due_amount']['value'] ?? '' );
+	} ) );
 	register_rest_route( 'dwd/v1', '/crm/reconcile/paypal-missing', array( 'methods' => array( 'GET', 'POST' ), 'permission_callback' => function () { return current_user_can( 'manage_options' ); }, 'callback' => function ( $r ) {
 		@set_time_limit( 300 );
 		return dwdrc_paypal_missing( 'POST' === $r->get_method() && $r->get_param( 'apply' ) );
