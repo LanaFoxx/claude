@@ -23,7 +23,7 @@ const photo = (name, fallback) => {
 const m = {
   logo: md('junk-ninja-logo-300.png'), logoWhite: md('junk-ninja-logo-white-424.png'), ninja: md('junk-ninja-mascot.webp'),
   heroBg: photo('svc-residential', md('job-trailer-load.webp')), aboutImg: md('job-trailer-branded.webp'),
-  svcResidential: photo('svc-residential', wide), svcFurniture: photo('svc-furniture', wide), svcAppliance: photo('svc-appliance', wide),
+  svcResidential: photo('svc-residential', photo('svc-household', wide)), svcFurniture: photo('svc-furniture', wide), svcAppliance: photo('svc-appliance', wide),
   svcGarage: photo('svc-garage', wide), svcEstate: photo('svc-estate', wide), svcRental: photo('svc-rental', wide),
   svcYard: photo('svc-yard', wide), svcConstruction: photo('svc-construction', wide),
   baGarage1Before: photo('ba-garage-1-before', tall), baGarage1After: photo('ba-garage-1-after', md('ba-garage-after.webp')),
