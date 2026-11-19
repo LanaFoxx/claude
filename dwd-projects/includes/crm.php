@@ -106,7 +106,7 @@ function dwdc_contact( $post, $full = false ) {
 	$seq  = array();
 	foreach ( is_array( $seqp ) ? $seqp : array() as $si => $sp ) {
 		if ( is_array( $sp ) && in_array( strtolower( (string) ( $sp['status'] ?? 'paid' ) ), array( 'paid', 'held' ), true ) && (float) preg_replace( '/[^\d.]/', '', (string) ( $sp['amount'] ?? 0 ) ) > 0 ) {
-			$seq[ $si ] = (string) ( $sp['date'] ?? '' );
+			$seq[ $si ] = (string) ( $sp['date'] ?? '' ) . ( 'held' === strtolower( (string) ( $sp['status'] ?? '' ) ) ? '1' : '0' ) . str_pad( (string) ( 999 - (int) $si ), 3, '0', STR_PAD_LEFT ); // same day: money already in counts first
 		}
 	}
 	asort( $seq );
