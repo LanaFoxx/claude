@@ -178,7 +178,11 @@ html.bs-menu-open,html.bs-menu-open body{overflow:hidden}
 .bs-scroll{display:inline-flex;align-items:center;gap:8px;font-family:var(--bs-disp);font-weight:700;font-size:16px;letter-spacing:.12em;text-transform:uppercase;color:#FFFFFF}
 .bs-scroll svg{width:12px;height:14px;fill:currentColor;animation:bsBob 1.8s ease-in-out infinite}
 @keyframes bsBob{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
-.bs-hero__join{position:absolute!important;top:55%;right:calc(var(--bs-hero-inset) + 48px);width:468px!important;max-width:100%!important;padding:0 var(--bs-gutter)!important;margin:0!important;z-index:3}
+/* Desktop join card: grows with the viewport (420-640px card) and sits further in from the right edge;
+   on screens wider than 1440 it tracks a 1440 frame so it never drifts to the far edge. */
+.bs-hero__join{position:absolute!important;top:55%;right:calc(var(--bs-hero-inset) + 3vw + max(0px,(100vw - 1440px) / 2));width:calc(clamp(420px,37.5vw,640px) + 2 * var(--bs-gutter))!important;max-width:100%!important;padding:0 var(--bs-gutter)!important;margin:0!important;z-index:3}
+/* Small desktops: keep the headline and subline clear of the card */
+@media (min-width:981px) and (max-width:1180px){.bs-h1__display{font-size:10.5vw}.bs-h1__lead{max-width:420px}}
 @media (max-width:980px){
   .bs-hero__join{position:relative!important;top:auto;right:auto;width:min(100%,560px)!important;margin:32px auto 0!important}
   .bs-standin{display:none}
