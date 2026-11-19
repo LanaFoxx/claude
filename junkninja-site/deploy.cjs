@@ -15,14 +15,21 @@ const md = (f) => {
   return { id: x.id, url: x.source_url, alt: '', source: 'library' };
 };
 const wide = md('placeholder-wide.webp'), tall = md('placeholder-tall.webp');
+// Real photo when it is in the Media Library under the design's file name (any extension), else the striped placeholder.
+const photo = (name, fallback) => {
+  const key = Object.keys(prep.media).find((f) => f.replace(/\.(png|jpe?g|webp|avif)$/i, '') === name && prep.media[f].id);
+  return key ? md(key) : fallback;
+};
 const m = {
   logo: md('junk-ninja-logo-300.png'), logoWhite: md('junk-ninja-logo-white-424.png'), ninja: md('junk-ninja-mascot.webp'),
-  heroBg: md('job-trailer-load.webp'), aboutImg: md('job-trailer-branded.webp'),
-  svcGarage: md('svc-garage.webp'), svcRental: md('svc-rental.webp'), svcFurniture: md('svc-furniture.webp'),
-  // Not supplied as files yet: striped "Photo to come" placeholders, replace in Elementor.
-  svcResidential: wide, svcAppliance: wide, svcEstate: wide, svcYard: wide, svcConstruction: wide,
-  baGarage1Before: tall, baGarage1After: md('ba-garage-after.webp'), baGarage2Before: tall, baGarage2After: tall,
-  baHottub1Before: tall, baHottub1After: tall, baHottub2Before: tall, baHottub2After: tall,
+  heroBg: photo('svc-residential', md('job-trailer-load.webp')), aboutImg: md('job-trailer-branded.webp'),
+  svcResidential: photo('svc-residential', wide), svcFurniture: photo('svc-furniture', wide), svcAppliance: photo('svc-appliance', wide),
+  svcGarage: photo('svc-garage', wide), svcEstate: photo('svc-estate', wide), svcRental: photo('svc-rental', wide),
+  svcYard: photo('svc-yard', wide), svcConstruction: photo('svc-construction', wide),
+  baGarage1Before: photo('ba-garage-1-before', tall), baGarage1After: photo('ba-garage-1-after', md('ba-garage-after.webp')),
+  baGarage2Before: photo('ba-garage-2-before', tall), baGarage2After: photo('ba-garage-2-after', tall),
+  baHottub1Before: photo('ba-hottub-1-before', tall), baHottub1After: photo('ba-hottub-1-after', tall),
+  baHottub2Before: photo('ba-hottub-2-before', tall), baHottub2After: photo('ba-hottub-2-after', tall),
 };
 const PAGES = ['home'].map((s) => require(`./pages/${s}.cjs`));
 const args = process.argv.slice(2);

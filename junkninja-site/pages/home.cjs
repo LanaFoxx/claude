@@ -20,11 +20,11 @@ const hero = (m) => container({
   flex_justify_content: 'space-between', flex_align_items: 'center', flex_gap: gap(48),
   padding: box('clamp(56px,9vw,120px)', 'clamp(20px,5vw,64px)', 'clamp(56px,9vw,120px)', 'clamp(20px,5vw,64px)'),
   background_background: 'classic', background_color: C.navy, background_image: m.heroBg,
-  background_position: 'center center', background_size: 'cover', background_repeat: 'no-repeat',
-  background_overlay_background: 'gradient', background_overlay_color: 'rgba(0,38,75,.97)', background_overlay_color_b: 'rgba(0,38,75,.55)',
+  background_position: 'center right', background_size: 'cover', background_repeat: 'no-repeat',
+  background_overlay_background: 'gradient', background_overlay_color: 'rgba(0,38,75,.97)', background_overlay_color_b: 'rgba(0,38,75,.35)',
   background_overlay_gradient_type: 'linear', background_overlay_opacity: { unit: 'px', size: 1, sizes: [] }, background_overlay_gradient_angle: { unit: 'deg', size: 90 },
   _title: 'Hero', html_tag: 'section',
-  custom_css: 'selector::before { background-image: linear-gradient(90deg, rgba(0,38,75,.97) 0%, rgba(0,38,75,.88) 50%, rgba(0,38,75,.55) 100%) !important; }',
+  custom_css: 'selector::before { background-image: linear-gradient(90deg, rgba(0,38,75,.97) 0%, rgba(0,38,75,.86) 45%, rgba(0,38,75,.35) 100%) !important; }\n@media (max-width: 760px) { selector::before { background-image: linear-gradient(90deg, rgba(0,38,75,.97) 0%, rgba(0,38,75,.86) 45%, rgba(0,38,75,.6) 100%) !important; } }',
 }, [
   stack([
     eyebrow('Port St. Lucie &amp; the Treasure Coast', { dark: true }),
@@ -37,8 +37,7 @@ const hero = (m) => container({
       button('Get a Free Quote', '#quote', 'ghostDark', { grow: 200, padX: 24 }),
     ], { settings: { margin: box(6, 0, 0, 0) } }),
     plusList(['Licensed and Insured', 'Open 6am–9pm, 7 days'], { inline: true, settings: { icon_list_items_gap: sz(8) } }),
-  ], { gap: 22, maxW: 760, settings: { _flex_size: 'grow' } }),
-  circle(300, C.white, [image(m.ninja, { width: 190 })], { shadow: shadow(-12, 12), settings: { ...hide.tablet, _title: 'Ninja badge' } }),
+  ], { gap: 22, settings: { _title: 'Hero text', custom_css: 'selector { max-width: 760px; }' } }),
 ], false);
 
 /* 2. TRUST TICKER ----------------------------------------------------- */
@@ -48,7 +47,7 @@ const tickerRun = (hidden) => plusList(TICKER, {
   iconSize: 'clamp(16px,2.2vw,24px)', indent: 28, space: 28,
   settings: {
     _element_width: 'auto', _flex_size: 'none', _margin: box(0, 28, 0, 0), ...(hidden ? { _attributes: 'aria-hidden|true' } : {}),
-    custom_css: 'selector .elementor-icon-list-items { flex-wrap: nowrap; white-space: nowrap; } selector .elementor-icon-list-item { margin: 0 28px 0 0 !important; padding: 0 !important; } selector .elementor-icon-list-item:after { display: none !important; }',
+    custom_css: 'selector { flex: none !important; width: max-content !important; max-width: none !important; } selector .elementor-widget-container, selector .elementor-icon-list-items { width: max-content; max-width: none; } selector .elementor-icon-list-items { flex-wrap: nowrap; white-space: nowrap; } selector .elementor-icon-list-item { margin: 0 28px 0 0 !important; padding: 0 !important; } selector .elementor-icon-list-item:after { display: none !important; }',
   },
 });
 const ticker = () => container({
@@ -112,7 +111,13 @@ const SERVICES_CSS = `/* Tab list: 8 rows, Russo One; idle slate, active navy + 
 @media (min-width: 761px) {
   selector .e-n-tabs { gap: clamp(28px,5vw,56px); }
   selector .e-n-tabs-heading { flex: 1 1 0; display: flex; flex-direction: column; gap: 0; }
-  selector .e-n-tabs-content { flex: 1 1 0; position: sticky; top: 110px; align-self: flex-start; margin-left: 12px; }
+  /* Panel matches the list: same top, same bottom; the photo takes the leftover height */
+  selector .e-n-tabs { align-items: stretch; }
+  selector .e-n-tabs-content { flex: 1 1 0; align-self: stretch; display: flex; flex-direction: column; margin-left: 12px; }
+  selector .e-n-tabs-content > .e-con.e-active { flex: 1 1 auto; height: 100%; }
+  selector .jn-svc-img { flex: 1 1 auto; position: relative; min-height: 150px; }
+  selector .jn-svc-img .elementor-widget-container, selector .jn-svc-img a { position: absolute; inset: 0; }
+  selector .jn-svc-img img { position: absolute; inset: 0; width: 100%; height: 100% !important; aspect-ratio: auto !important; object-fit: cover; }
 }
 selector .e-n-tab-title { justify-content: flex-start; background: transparent !important; border: 0 !important; border-bottom: 1px solid ${C.border2} !important; border-radius: 0 !important; padding: 11px 0 !important; min-height: 44px; gap: 14px; cursor: pointer; }
 selector .e-n-tab-title-text { font-family: "${HEAD}", sans-serif; font-weight: 400; font-size: clamp(20px,2.6vw,30px); letter-spacing: .05em; text-transform: uppercase; line-height: 1.2; color: ${C.idle}; text-align: left; }
@@ -327,13 +332,12 @@ const quote = (m) => band(C.navy, [grid([
   }, [
     container({
       content_width: 'full', flex_direction: 'row', flex_wrap: 'nowrap', flex_justify_content: 'space-between', flex_align_items: 'center', flex_gap: gap(16),
-      padding: box(18, 'clamp(20px,3vw,32px)', 18, 'clamp(20px,3vw,32px)'), background_background: 'classic', background_color: C.navyMid,
+      padding: box(24, 'clamp(20px,3vw,32px)', 24, 'clamp(20px,3vw,32px)'), background_background: 'classic', background_color: C.navyMid,
     }, [
       stack([
         heading('Tell Us About the Job', 'p', { size: 22, ls: 0.05, upper: true, lh: 1.15, color: C.white }),
         heading('Free estimate. Photos get you a faster quote.', 'p', { family: BODY, size: 15, weight: 600, lh: 1.4, color: C.white }),
       ], { gap: 2 }),
-      circle(64, C.white, [image(m.ninja, { height: 42, width: 'auto' })]),
     ]),
     container({ content_width: 'full', flex_direction: 'column', padding: box('clamp(20px,3vw,32px)') }, [quoteForm()]),
   ]),

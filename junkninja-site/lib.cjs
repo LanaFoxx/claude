@@ -20,8 +20,10 @@ const id = () => crypto.randomBytes(4).toString('hex').slice(0, 7);
 // number → px, string → custom CSS value (clamp(), auto, …)
 const sz = (v, unit = 'px') => (typeof v === 'string' ? { unit: 'custom', size: v, sizes: [] } : { unit, size: v, sizes: [] });
 const box = (t, r = t, b = t, l = r, unit = 'px') => {
+  // Mixed numbers + CSS strings use the custom unit, so numbers need their own "px".
   const custom = [t, r, b, l].some((v) => typeof v === 'string');
-  return { unit: custom ? 'custom' : unit, top: String(t), right: String(r), bottom: String(b), left: String(l), isLinked: false };
+  const v = (x) => (custom && typeof x === 'number' ? `${x}${unit}` : String(x));
+  return { unit: custom ? 'custom' : unit, top: v(t), right: v(r), bottom: v(b), left: v(l), isLinked: false };
 };
 const gap = (c, r = c) => ({ unit: 'px', size: c, column: String(c), row: String(r), isLinked: c === r });
 const link = (url) => ({ url, is_external: /^https?:/.test(url) ? 'on' : '', nofollow: '' });
@@ -224,7 +226,7 @@ function header(m, menuId) {
     custom_css: 'selector { -webkit-backdrop-filter: blur(16px) saturate(160%); backdrop-filter: blur(16px) saturate(160%); }',
   }, [container({
     content_width: 'boxed', boxed_width: sz(1240), flex_direction: 'row', flex_wrap: 'nowrap', flex_align_items: 'center',
-    flex_gap: gap(26), flex_gap_tablet: gap(10), padding: box(10, 'clamp(16px,4vw,32px)', 10, 'clamp(16px,4vw,32px)'),
+    flex_gap: gap(26), flex_gap_tablet: gap(10), padding: box(12, 'clamp(16px,4vw,32px)', 12, 'clamp(16px,4vw,32px)'),
   }, [
     image(m.logo, { height: 68, width: 'auto', link: '/', align: 'left', settings: { _flex_size: 'none', _element_width: 'auto' } }),
     widget('nav-menu', {
@@ -287,7 +289,7 @@ function footer(m) {
     container({
       content_width: 'boxed', boxed_width: sz(1200), flex_direction: 'row', flex_wrap: 'wrap',
       flex_justify_content: 'space-between', flex_align_items: 'center', flex_gap: gap(40, 24),
-      padding: box('clamp(32px,5vw,48px)', 'clamp(20px,5vw,64px)', 24, 'clamp(20px,5vw,64px)'),
+      padding: box('clamp(32px,5vw,48px)', 'clamp(20px,5vw,64px)', 'clamp(32px,5vw,48px)', 'clamp(20px,5vw,64px)'),
       background_background: 'classic', background_color: C.navyDeep,
     }, [
       image(m.logoWhite, { height: 84, width: 'auto', link: '/', align: 'left', settings: { _element_width: 'auto' } }),

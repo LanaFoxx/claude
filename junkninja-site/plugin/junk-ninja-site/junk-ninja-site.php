@@ -109,7 +109,7 @@ add_action( 'wp_default_scripts', function ( $scripts ) {
 // Preload the hero photo (LCP on the home page) and the two font files used above the fold.
 add_action( 'wp_head', function () {
 	if ( is_front_page() ) {
-		$hero = jn_attachment_url( 'job-trailer-load' );
+		$hero = jn_attachment_url( 'svc-residential' ) ?: jn_attachment_url( 'job-trailer-load' );
 		if ( $hero ) {
 			printf( "<link rel=\"preload\" as=\"image\" href=\"%s\" fetchpriority=\"high\">\n", esc_url( $hero ) );
 		}

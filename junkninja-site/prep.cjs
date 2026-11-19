@@ -32,6 +32,17 @@ const MENU = [
   const p = await ctx.newPage();
   await p.goto(`${SITE}/wp-admin/`, { timeout: 120000 });
   const nonce = await p.evaluate(async () => (await fetch('/wp-admin/admin-ajax.php?action=rest-nonce')).text());
+  // Photos uploaded by hand to the Media Library are picked up by file name.
+  for (let page = 1; ; page++) {
+    const r = await p.request.get(`${SITE}/wp-json/wp/v2/media?per_page=100&page=${page}&_fields=id,source_url`, { headers: { 'X-WP-Nonce': nonce } });
+    if (!r.ok()) break;
+    const items = await r.json();
+    for (const it of items) {
+      const f = it.source_url.split('/').pop().replace(/-scaled(?=\.)/, '');
+      if (!prep.media[f]) prep.media[f] = { id: it.id, source_url: it.source_url };
+    }
+    if (items.length < 100) break;
+  }
   for (const f of fs.readdirSync(path.join(__dirname, 'assets'))) {
     if (prep.media[f]?.id) continue;
     const buf = fs.readFileSync(path.join(__dirname, 'assets', f));
