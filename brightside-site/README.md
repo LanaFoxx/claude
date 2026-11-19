@@ -54,7 +54,7 @@ Builds the Claude Design handoff "Brightside Home" (Fossil Free Media) on the Wo
 
 Hero video + poster (mural photo with slow drift is the stand-in, labelled), Brightsiders clips (play
 buttons do nothing yet), stat figures, petition details (Take Action panel), event bar, Privacy Policy
-page (`/privacy-policy/` links 404 until it exists), About/Contact pages (nav uses on-page anchors),
+page (`/privacy-policy/` links 404 until it exists), real actions/petitions for the Take Action pages,
 SMS consent wording, meta description (needs an SEO plugin), GA4 `G-ECR8VQVK3G` (not added to staging
 on purpose), Elementor Pro license reactivation for this domain.
 
