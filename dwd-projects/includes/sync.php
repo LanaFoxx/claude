@@ -662,7 +662,7 @@ function dwds_upwork_release( $pid ) {
 		if ( 'held' === ( $x['status'] ?? '' ) ) {
 			$on[ (string) $x['ref'] ] = $today;
 			$pays[ $i ]['status']     = 'paid';
-			$pays[ $i ]['note']       = mb_substr( 'Withdrawn from Upwork · earned ' . $x['date'] . ' · ' . ( $x['note'] ?? '' ), 0, 160 );
+			$pays[ $i ]['earned']     = (string) ( $x['date'] ?? '' ); // the client paid date, so "back to in Upwork" can restore it
 			$pays[ $i ]['date']       = $today;
 			$sum                     += (float) $x['amount'];
 		}

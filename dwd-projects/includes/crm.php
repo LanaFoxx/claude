@@ -1378,6 +1378,11 @@ add_action( 'rest_api_init', function () {
 				return dwdc_contact( $id, true );
 			}
 			$pays[ $i ]['status'] = 'held';
+			// Released by "Paid" (older releases kept the original date only in the note): put date and note back.
+			if ( empty( $x['earned'] ) && preg_match( '/^Withdrawn from Upwork · earned (\d{4}-\d{2}-\d{2}) · (.*)$/u', (string) ( $x['note'] ?? '' ), $wm ) ) {
+				$x['earned']          = $wm[1];
+				$pays[ $i ]['note']   = $wm[2];
+			}
 			if ( ! empty( $x['earned'] ) ) {
 				$pays[ $i ]['date'] = (string) $x['earned'];
 			}
