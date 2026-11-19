@@ -1183,7 +1183,12 @@ function dwdi_create( $pid, $p ) {
 	if ( ! $items ) {
 		return new WP_Error( 'dwdi', 'Add at least one line with an amount.', array( 'status' => 400 ) );
 	}
-	$rec = array( 'id' => '', 'via' => $via, 'number' => '', 'amount' => round( $total, 2 ), 'status' => 'draft', 'url' => '', 'email' => $email, 'name' => $name, 'items' => $items, 'memo' => $memo, 'due' => gmdate( 'Y-m-d', time() + $days * DAY_IN_SECONDS ), 'created' => current_time( 'Y-m-d' ), 'sent' => '' );
+	$rec = array( 'id' => '', 'via' => $via, 'number' => '', 'amount' => round( $total, 2 ), 'status' => 'draft', 'url' => '', 'email' => $email, 'name' => $name, 'items' => $items, 'memo' => $memo, 'due' => gmdate( 'Y-m-d', time() + $days * DAY_IN_SECONDS ), 'created' => current_time( 'Y-m-d' ), 'sent' => '', 'days' => $days );
+	// Repeats every year: Dream Desk makes and sends a fresh copy of this invoice a year from today (see dwdi_repeat_run).
+	if ( 'yearly' === ( $p['repeat'] ?? '' ) ) {
+		$rec['repeat'] = 'yearly';
+		$rec['next']   = gmdate( 'Y-m-d', strtotime( '+1 year', strtotime( current_time( 'Y-m-d' ) ) ) );
+	}
 	if ( 'stripe' === $via ) {
 		$c = dwdi_stripe( 'GET', 'customers?limit=1&email=' . rawurlencode( $email ) );
 		if ( is_wp_error( $c ) ) {
@@ -1275,6 +1280,11 @@ function dwdi_act( $pid, $iid, $act ) {
 		}
 		$list[ $k ]['status'] = 'sent';
 		$list[ $k ]['sent']   = current_time( 'Y-m-d' );
+	} elseif ( 'stop' === $act ) { // stop repeating: this invoice stays as it is, no more yearly copies
+		unset( $list[ $k ]['repeat'], $list[ $k ]['next'] );
+		update_post_meta( (int) $pid, '_dwdc_invoices', array_values( $list ) );
+		dwdi_note( $pid, 'Yearly invoice for $' . number_format( (float) $v['amount'], 2 ) . ' stopped: no more yearly copies will be sent.' );
+		return dwdi_list( $pid );
 	} elseif ( 'cancel' === $act ) {
 		if ( in_array( $v['status'], array( 'paid', 'part paid', 'refunded' ), true ) ) {
 			return new WP_Error( 'dwdi', 'That invoice has money on it, so it can’t be cancelled here. Refund it in ' . ( 'stripe' === $v['via'] ? 'Stripe' : 'PayPal' ) . ' instead.', array( 'status' => 400 ) );
@@ -1291,6 +1301,7 @@ function dwdi_act( $pid, $iid, $act ) {
 			unset( $list[ $k ] ); // a draft nobody saw: just gone
 		} else {
 			$list[ $k ]['status'] = 'cancelled';
+			unset( $list[ $k ]['repeat'], $list[ $k ]['next'] ); // a cancelled invoice doesn't come back next year
 		}
 	} else {
 		return new WP_Error( 'dwdi', 'Unknown action', array( 'status' => 400 ) );
@@ -1298,6 +1309,57 @@ function dwdi_act( $pid, $iid, $act ) {
 	update_post_meta( (int) $pid, '_dwdc_invoices', array_values( $list ) );
 	return dwdi_list( $pid );
 }
+
+function dwdi_note( $pid, $text ) {
+	$notes   = (array) get_post_meta( (int) $pid, '_dwdc_notes', true );
+	$notes[] = array( 'date' => current_time( 'mysql', true ), 'text' => $text );
+	update_post_meta( (int) $pid, '_dwdc_notes', array_values( array_filter( $notes ) ) );
+}
+
+/**
+ * Yearly invoices: once a day, any invoice marked "Every year" whose date has come round is copied (same client,
+ * lines, note and payment terms), sent from the same service, and the yearly schedule moves to the new copy.
+ * Each copy is logged on the project and added as a to-do so Mike knows it went out.
+ */
+function dwdi_repeat_run() {
+	$today = current_time( 'Y-m-d' );
+	$done  = array();
+	foreach ( get_posts( array( 'post_type' => DWDC_CONTACT, 'post_status' => 'any', 'numberposts' => -1, 'fields' => 'ids', 'meta_key' => '_dwdc_invoices' ) ) as $pid ) {
+		foreach ( dwdi_list( $pid ) as $v ) {
+			if ( 'yearly' !== ( $v['repeat'] ?? '' ) || empty( $v['next'] ) || $v['next'] > $today || 'cancelled' === ( $v['status'] ?? '' ) ) {
+				continue;
+			}
+			$new = dwdi_create( $pid, array( 'via' => $v['via'], 'email' => $v['email'], 'name' => $v['name'], 'items' => $v['items'], 'memo' => $v['memo'], 'due' => $v['days'] ?? 14, 'send' => true, 'repeat' => 'yearly' ) );
+			$amt = '$' . number_format( (float) $v['amount'], 2 );
+			if ( is_wp_error( $new ) ) {
+				if ( function_exists( 'dwdc_add_task' ) ) {
+					dwdc_add_task( 'Yearly invoice for ' . get_the_title( $pid ) . ' (' . $amt . ') could not be sent: ' . $new->get_error_message(), $pid, $today );
+				}
+				continue; // tried again tomorrow
+			}
+			// The schedule now lives on the new copy: take it off the old invoice.
+			$list = dwdi_list( $pid );
+			foreach ( $list as $i => $x ) {
+				if ( (string) $x['id'] === (string) $v['id'] ) {
+					unset( $list[ $i ]['repeat'], $list[ $i ]['next'] );
+				}
+			}
+			update_post_meta( (int) $pid, '_dwdc_invoices', array_values( $list ) );
+			dwdi_note( $pid, 'Yearly invoice sent: ' . $amt . ' to ' . $v['email'] . ' (' . ( 'paypal' === $v['via'] ? 'PayPal' : 'Stripe' ) . '). The next one goes out in a year.' );
+			if ( function_exists( 'dwdc_add_task' ) ) {
+				dwdc_add_task( 'Yearly invoice sent to ' . ( $v['name'] ?: $v['email'] ) . ' for ' . $amt . ' (' . get_the_title( $pid ) . '): watch for the payment', $pid, $today );
+			}
+			$done[] = $pid;
+		}
+	}
+	return $done;
+}
+add_action( 'dwdi_daily', 'dwdi_repeat_run' );
+add_action( 'init', function () {
+	if ( ! wp_next_scheduled( 'dwdi_daily' ) ) {
+		wp_schedule_event( strtotime( 'tomorrow 14:00:00' ), 'daily', 'dwdi_daily' );
+	}
+} );
 
 add_filter( 'dwdc_contact_full', function ( $c, $pid ) {
 	$c['invoices'] = dwdi_refresh( $pid );

@@ -3845,7 +3845,7 @@
 		var invs = c.invoices || [], invTone = { paid: 'success', sent: 'info', draft: 'neutral', cancelled: 'neutral', refunded: 'warning', 'part paid': 'warning' };
 		var invBox = invs.length ? '<div class="dd-invs"><p class="dd-invh">Invoices</p>' + invs.slice().reverse().map(function (x) {
 			var live = x.status === 'draft' || x.status === 'sent';
-			return '<div class="dd-py dd-inv"><span class="dt">' + fmt(String(x.sent || x.created).slice(0, 10)) + '</span><span class="mt">' + (x.via === 'paypal' ? 'PayPal' : 'Stripe') + (x.number ? ' · #' + esc(x.number) : '') + '<span class="dd-schips">' + ddPill(x.status === 'sent' ? 'Sent · due ' + fmt(x.due) : x.status.charAt(0).toUpperCase() + x.status.slice(1), invTone[x.status] || 'neutral') + '</span><small>' + esc((x.items || []).map(function (i) { return i.d; }).join(', ')) + ' · to ' + esc(x.email) + '</small><span class="dd-inva">' + (x.url ? '<a class="dd-hlink" href="' + esc(x.url) + '" target="_blank" rel="noopener">View</a>' : '') + (x.url ? '<button type="button" class="dd-hlink" data-copy="' + esc(x.url) + '">Copy link</button>' : '') + (x.status === 'draft' ? '<button type="button" class="dd-hlink" data-invact="send" data-inv="' + esc(x.id) + '">Send now</button>' : '') + (live ? '<button type="button" class="dd-hlink" data-invact="cancel" data-inv="' + esc(x.id) + '">' + (x.status === 'draft' ? 'Delete draft' : 'Cancel invoice') + '</button>' : '') + '</span></span><b>' + money2(x.amount).replace('.00', '') + '</b></div>';
+			return '<div class="dd-py dd-inv"><span class="dt">' + fmt(String(x.sent || x.created).slice(0, 10)) + '</span><span class="mt">' + (x.via === 'paypal' ? 'PayPal' : 'Stripe') + (x.number ? ' · #' + esc(x.number) : '') + '<span class="dd-schips">' + ddPill(x.status === 'sent' ? 'Sent · due ' + fmt(x.due) : x.status.charAt(0).toUpperCase() + x.status.slice(1), invTone[x.status] || 'neutral') + (x.repeat === 'yearly' ? ddPill('Repeats yearly · next ' + fmt(x.next), 'info') : '') + '</span><small>' + esc((x.items || []).map(function (i) { return i.d; }).join(', ')) + ' · to ' + esc(x.email) + '</small><span class="dd-inva">' + (x.url ? '<a class="dd-hlink" href="' + esc(x.url) + '" target="_blank" rel="noopener">View</a>' : '') + (x.url ? '<button type="button" class="dd-hlink" data-copy="' + esc(x.url) + '">Copy link</button>' : '') + (x.status === 'draft' ? '<button type="button" class="dd-hlink" data-invact="send" data-inv="' + esc(x.id) + '">Send now</button>' : '') + (x.repeat === 'yearly' ? '<button type="button" class="dd-hlink" data-invact="stop" data-inv="' + esc(x.id) + '">Stop repeating</button>' : '') + (live ? '<button type="button" class="dd-hlink" data-invact="cancel" data-inv="' + esc(x.id) + '">' + (x.status === 'draft' ? 'Delete draft' : 'Cancel invoice') + '</button>' : '') + '</span></span><b>' + money2(x.amount).replace('.00', '') + '</b></div>';
 		}).join('') + '</div>' : '';
 		var pOpen = !!((S.payOpen || {})[c.id] || S.plog === c.id);
 		var paysBox = card('k-pay' + (pOpen ? ' popen' : ''), '<span data-ptog="' + c.id + '" role="button" tabindex="0" aria-expanded="' + pOpen + '">Payments<span class="dd-atogi">' + lu('chevron-down', 14) + '</span></span>', pays.length ? String(pays.length) : '','<button type="button" class="dd-hlink" data-invnew="' + c.id + '">+ Invoice</button><button type="button" class="dd-hlink" data-plog="' + c.id + '">+ Log payment</button>',
@@ -4201,6 +4201,7 @@
 			return '<div class="dwdc-overlay" data-close-modal></div><form class="dwdc-modal wide dd-invf" data-invform novalidate>' + head('Money', 'New', 'invoice')
 				+ '<div class="dwdc-fgrid"><label><span>Send with</span><select name="via" class="dwdc-sel"><option value="stripe"' + (iv.via !== 'paypal' ? ' selected' : '') + '>Stripe</option><option value="paypal"' + (iv.via === 'paypal' ? ' selected' : '') + '>PayPal</option></select></label>'
 				+ '<label><span>Due</span><select name="due" class="dwdc-sel">' + [['1', 'On receipt'], ['7', 'In 7 days'], ['14', 'In 14 days'], ['30', 'In 30 days']].map(function (o) { return '<option value="' + o[0] + '"' + (String(iv.due || '7') === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select></label>'
+				+ '<label class="wide"><span>Repeat</span><select name="repeat" class="dwdc-sel"><option value=""' + (iv.repeat !== 'yearly' ? ' selected' : '') + '>Just once</option><option value="yearly"' + (iv.repeat === 'yearly' ? ' selected' : '') + '>Every year (e.g. hosting at a custom price)</option></select></label>'
 				+ inp('email', 'Client email', 'name@example.com', 'email') + inp('name', 'Client name', 'Who it is addressed to')
 				+ '<div class="wide dd-inv-items">' + its.map(function (x, i) { return '<div class="dd-inv-it"><label><span>' + (i ? 'Line ' + (i + 1) : 'What it is for') + '</span><input name="d" value="' + esc(x.d || '') + '" placeholder="e.g. Website design, 50% deposit"></label><label><span>Amount ($)</span><input name="a" type="number" min="0" step="0.01" inputmode="decimal" value="' + esc(x.a || '') + '" placeholder="0.00"></label>' + (its.length > 1 ? '<button type="button" class="dwdc-mx dd-inv-x" data-invdel="' + i + '" title="Remove this line" aria-label="Remove this line">' + ic('x', 16) + '</button>' : '<span></span>') + '</div>'; }).join('')
 				+ '<div class="dd-inv-ft"><button type="button" class="dwdc-lnk" data-invadd>+ Add a line</button><span>Total <b data-invtot>' + money2(itot) + '</b></span></div></div>'
@@ -5231,7 +5232,7 @@
 		if (S.modal && S.modal.type === 'invoice' && (t.closest('[data-invadd]') || t.closest('[data-invdel]') || t.closest('[data-invsave]'))) {
 			var ivm = S.modal, ivf = app.querySelector('[data-invform]'), ivd = [].slice.call(ivf.querySelectorAll('[name=d]')), iva = [].slice.call(ivf.querySelectorAll('[name=a]'));
 			ivm.items = ivd.map(function (x, i) { return { d: x.value.trim(), a: iva[i].value }; });
-			['via', 'due', 'email', 'name', 'memo'].forEach(function (k) { ivm.vals[k] = ivf.querySelector('[name=' + k + ']').value.trim(); });
+			['via', 'due', 'email', 'name', 'memo', 'repeat'].forEach(function (k) { ivm.vals[k] = ivf.querySelector('[name=' + k + ']').value.trim(); });
 			ivm.err = '';
 			if (t.closest('[data-invadd]')) { ivm.items.push({ d: '', a: '' }); render(); var ivl = app.querySelectorAll('[data-invform] [name=d]'); if (ivl.length) { ivl[ivl.length - 1].focus(); } return; }
 			if ((el = t.closest('[data-invdel]'))) { ivm.items.splice(+el.getAttribute('data-invdel'), 1); render(); return; }
@@ -5239,9 +5240,9 @@
 			if (!/^\S+@\S+\.\S+$/.test(ivm.vals.email)) { ivm.err = 'Add the client’s email address so the invoice has somewhere to go.'; render(); focusIn('[name=email]'); return; }
 			if (!ivok.length) { ivm.err = 'Add at least one line with an amount.'; render(); focusIn('[name=a]'); return; }
 			ivm.busy = true; render();
-			api('/contact/' + ivm.project + '/invoices', 'POST', { via: ivm.vals.via, due: ivm.vals.due, email: ivm.vals.email, name: ivm.vals.name, memo: ivm.vals.memo, items: ivok, send: ivsend }).then(function (x) {
+			api('/contact/' + ivm.project + '/invoices', 'POST', { via: ivm.vals.via, due: ivm.vals.due, email: ivm.vals.email, name: ivm.vals.name, memo: ivm.vals.memo, items: ivok, send: ivsend, repeat: ivm.vals.repeat }).then(function (x) {
 				if (S.full[ivm.project]) { S.full[ivm.project].invoices = x.invoices; }
-				if (S.modal === ivm) { S.modal = null; } render(); toast(ivsend ? 'Invoice sent to ' + ivm.vals.email : 'Draft invoice saved');
+				if (S.modal === ivm) { S.modal = null; } render(); toast((ivsend ? 'Invoice sent to ' + ivm.vals.email : 'Draft invoice saved') + (ivm.vals.repeat === 'yearly' ? ' · repeats every year' : ''));
 			}).catch(function (e) { ivm.busy = false; ivm.err = (e && e.message) || 'Something went wrong.'; api('/contact/' + ivm.project + '/invoices').then(function (x) { if (S.full[ivm.project]) { S.full[ivm.project].invoices = x.invoices; } render(); }).catch(function () { render(); }); });
 			return;
 		}
@@ -5249,7 +5250,7 @@
 			var iact = el.getAttribute('data-invact'), ipid = route().id, iid = el.getAttribute('data-inv');
 			if (iact === 'cancel' && !confirm(el.textContent.indexOf('Delete') === 0 ? 'Delete this draft invoice?' : 'Cancel this invoice? The client is told it no longer needs paying.')) { return; }
 			el.disabled = true;
-			api('/contact/' + ipid + '/invoices', 'POST', { act: iact, invoice: iid }).then(function (x) { if (S.full[ipid]) { S.full[ipid].invoices = x.invoices; } render(); toast(iact === 'send' ? 'Invoice sent' : 'Invoice cancelled'); }).catch(function (e) { el.disabled = false; fail(e); });
+			api('/contact/' + ipid + '/invoices', 'POST', { act: iact, invoice: iid }).then(function (x) { if (S.full[ipid]) { S.full[ipid].invoices = x.invoices; } render(); toast(iact === 'send' ? 'Invoice sent' : iact === 'stop' ? 'Stopped: no more yearly invoices' : 'Invoice cancelled'); }).catch(function (e) { el.disabled = false; fail(e); });
 			return;
 		}
 		if ((el = t.closest('[data-subamt]'))) { S.subAmt = el.getAttribute('data-subamt'); render(); var sai = app.querySelector('[data-subamtv]'); if (sai) { sai.focus(); sai.select(); } return; }
