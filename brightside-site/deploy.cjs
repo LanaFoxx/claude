@@ -37,6 +37,13 @@ const KIT = {
   site_name: 'Brightside', site_description: 'The Movement for People Who Love Clean Energy',
 };
 
+const PAGES = [
+  { key: 'about', slug: 'about', title: 'About', build: 'about' },
+  { key: 'take-action', slug: 'take-action', title: 'Take Action', build: 'takeAction' },
+  { key: 'petition', slug: 'petition-template', title: '[Petition title] – petition template', build: 'petition', parent: 'take-action' },
+  { key: 'contact', slug: 'contact', title: 'Contact', build: 'contact' },
+];
+
 async function openEditor(p, postId) {
   await p.goto(`${SITE}/wp-admin/post.php?post=${postId}&action=elementor`, { waitUntil: 'load', timeout: 180000 });
   await p.waitForFunction(() => window.elementor && window.$e && elementor.documents?.getCurrent?.()?.container, null, { timeout: 180000 });
@@ -123,6 +130,24 @@ async function setConditions(p, postId, conditions) {
   if (want('home')) {
     await openEditor(p, homeId);
     console.log('home', homeId, 'elements:', await replaceContent(p, L.home(m), { hide_title: 'yes', template: 'elementor_header_footer' }));
+  }
+
+  // Inner pages. parent = slug of the parent page (petition pages live under /take-action/).
+  const ids = {};
+  for (const def of PAGES) {
+    if (!want(def.key)) continue;
+    await p.goto(`${SITE}/wp-admin/`, { waitUntil: 'domcontentloaded' });
+    const pid = await p.evaluate(async ([def, parentId, nonceFn]) => {
+      const h = { 'X-WP-Nonce': eval(`(${nonceFn})`)(), 'Content-Type': 'application/json' };
+      const ex = (await (await fetch(`/wp-json/wp/v2/pages?slug=${def.slug}&status=publish,draft,private&_fields=id,parent`, { headers: h })).json())
+        .find((x) => x.parent === (parentId || 0));
+      const body = { title: def.title, slug: def.slug, status: 'publish', template: 'elementor_header_footer', parent: parentId || 0 };
+      const r = await (await fetch(`/wp-json/wp/v2/pages${ex ? `/${ex.id}` : ''}`, { method: 'POST', headers: h, body: JSON.stringify(body) })).json();
+      return r.id;
+    }, [def, def.parent ? ids[def.parent] || (await p.evaluate(async ([slug, nonceFn]) => (await (await fetch(`/wp-json/wp/v2/pages?slug=${slug}&_fields=id`, { headers: { 'X-WP-Nonce': eval(`(${nonceFn})`)() } })).json())[0]?.id, [def.parent, nonce.toString()])) : 0, nonce.toString()]);
+    ids[def.key] = pid;
+    await openEditor(p, pid);
+    console.log(def.key, pid, 'elements:', await replaceContent(p, L[def.build](m), { hide_title: 'yes', template: 'elementor_header_footer' }));
   }
   await b.close();
 })().catch((e) => { console.error(e); process.exit(1); });

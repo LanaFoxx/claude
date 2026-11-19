@@ -27,8 +27,14 @@
     $$('.bs-badge img,.bs-hero__poster img').forEach(function (i) { i.setAttribute('alt', ''); i.setAttribute('aria-hidden', 'true'); });
     // Mark the current page in the nav.
     $$('.bs-nav-link a,.bs-flink a').forEach(function (a) {
-      try { var u = new URL(a.href, location.href); if (!u.hash && u.pathname === location.pathname) a.setAttribute('aria-current', 'page'); } catch (e) {}
+      try {
+        var u = new URL(a.href, location.href), here = location.pathname;
+        if (!u.hash && u.pathname !== '/' && here.indexOf(u.pathname) === 0) a.setAttribute('aria-current', 'page');
+      } catch (e) {}
     });
+    // "Join" links point at the homepage card; on a page with its own join form, stay on the page.
+    var localJoin = document.getElementById('join-hero') ? '#join-hero' : document.getElementById('join') ? '#join' : null;
+    if (localJoin) $$('a[href="/#join-hero"]').forEach(function (a) { a.setAttribute('href', localJoin); });
 
     [initStage, initHeader, initHero, initMarquee, initSwipe, initMenu, initGlints].concat(editor ? [] : [initReveals])
       .forEach(function (fn) { try { fn(); } catch (e) { if (window.console) console.warn('Brightside:', fn.name, e); } });

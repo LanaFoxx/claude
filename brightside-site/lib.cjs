@@ -1,5 +1,5 @@
-// Brightside homepage (Phase 1): Elementor element trees for the header template, footer template and
-// homepage. Editable content (headings, copy, buttons, images, icons, social links) uses native
+// Brightside site: Elementor element trees for the header template, footer template and the pages
+// (Home, About, Take Action + petition page, Contact). Editable content (headings, copy, buttons, images, icons, social links) uses native
 // widgets; HTML widgets hold only the stage/global CSS+JS, glint grids, the hero arc badge and
 // controls, the marquee, the clip play buttons and the Solidarity Tech embeds (as the handoff specifies).
 // Styling lives in assets/bs-site.css (classes below), scoped to #bs-header / #bs-home / #bs-footer.
@@ -21,7 +21,8 @@ const SOCIAL = [
   { key: 'tiktok', label: 'Brightside on TikTok', url: 'https://www.tiktok.com/@brightside.now', color: 'purple' },
   { key: 'bluesky', label: 'Brightside on Bluesky', url: 'https://bsky.app/profile/brightside.now', color: 'white' },
 ];
-const NAV = [['About', '/#about'], ['Take Action', '/#take-action'], ['Contact', '/#contact']];
+const URL = { about: '/about/', action: '/take-action/', petition: '/take-action/petition-template/', contact: '/contact/' };
+const NAV = [['About', URL.about], ['Take Action', URL.action], ['Contact', URL.contact]];
 const EMBED = 'https://www.brightside.now'; // switch to https://act.brightside.now once that host is live
 const PRIVACY = '/privacy-policy/';
 
@@ -72,12 +73,12 @@ function socials(m, cls = '', colored = false) {
   })), { dir: 'row' });
 }
 
-function joinCard(m, anchorId, campaign, first) {
-  const src = `${EMBED}/join/embed?breakout=true&utm_source=website&utm_medium=embed&utm_campaign=${campaign}`;
+function joinCard(m, anchorId, campaign, first, o = {}) {
+  const src = `${EMBED}/${o.path || 'join'}/embed?breakout=true&utm_source=website&utm_medium=embed&utm_campaign=${campaign}`;
   return con('bs-join', [
-    heading('Join the Brightside', 'h3', 'bs-join__h'),
-    text('Sign up here to join us:', 'bs-join__copy'),
-    html(`<iframe data-st-embed src="${src}" allow="payment *" title="Join Brightside"${first ? '' : ' loading="lazy"'} style="width:100%;border:none;min-height:520px;"></iframe>${first ? `\n<script src="${EMBED}/embed/v1.js" async></script>` : ''}`, 'bs-join__embed'),
+    heading(o.title || 'Join the Brightside', 'h3', 'bs-join__h'),
+    text(o.copy || 'Sign up here to join us:', 'bs-join__copy'),
+    html(`<iframe data-st-embed src="${src}" allow="payment *" title="${o.frameTitle || 'Join Brightside'}"${first ? '' : ' loading="lazy"'} style="width:100%;border:none;min-height:520px;"></iframe>${first ? `\n<script src="${EMBED}/embed/v1.js" async></script>` : ''}`, 'bs-join__embed'),
     text(`<p>By joining you agree to our <a href="${PRIVACY}">Privacy Policy</a>. <span>(draft, for client approval)</span></p><p class="bs-sms">[SMS CONSENT WORDING — client to confirm with Solidarity Tech or counsel]</p>`, 'bs-join__legal'),
   ], { id: anchorId });
 }
@@ -114,7 +115,6 @@ function footer(m) {
     parentOrganization: { '@type': 'Organization', name: 'Fossil Free Media' }, sameAs: SOCIAL.map((s) => s.url),
   };
   return [con('', [
-    anchor('contact'),
     con('bs-foot1', [
       image(m['brightside-logo-centered-gradient-orange-purple.png'], 'bs-foot-logo'),
       con('bs-foot-cta', [
@@ -214,7 +214,7 @@ function home(m) {
         wcard('hand-fist', 'white', 'Show up', 'Show up to support clean energy when it\'s under attack', 3),
       ]),
     ]),
-    button('More about Brightside', '/#about', 'bs-textlink', { icon: m['bs-icon-arrow-right.svg'] || null, iconAlign: 'right' }),
+    button('More about Brightside', URL.about, 'bs-textlink', { icon: m['bs-icon-arrow-right.svg'] || null, iconAlign: 'right' }),
   ], { tag: 'section', settings: { _title: 'What we do' } });
 
   const action = con(`bs-panel bs-action${reveal()}`, [
@@ -224,23 +224,16 @@ function home(m) {
       heading('[Petition title]', 'h3', 'bs-h3'),
       text('[ONE-LINE SUMMARY — client to supply]', 'bs-small'),
       text('[SIGNATURE COUNT] signed', 'bs-count'),
-      button('Sign the petition', '#take-action', 'bs-btn bs-btn--dark'),
+      button('Sign the petition', URL.petition, 'bs-btn bs-btn--dark'),
     ]),
+    button('See all actions', URL.action, 'bs-textlink bs-textlink--dark', { icon: m['bs-icon-arrow-right.svg'], iconAlign: 'right' }),
   ], { id: 'take-action', tag: 'section' });
 
-  const join = con(`bs-panel bs-joinpanel${reveal()}`, [
-    con('bs-joinpanel__left', [
-      heading('Ready to join the Brightside?', 'h2', 'bs-h2'),
-      text('Join the movement to save money, end our dependence on dirty energy, and build a brighter future.', 'bs-join-copy'),
-      text('Sign up here to join us:', 'bs-join-cta'),
-      con('bs-sticker bs-sticker--join', [
-        image(m['brightside-photo-1.webp'], 'bs-photo bs-pos-30'),
-        image(m['brightside-badge-lightning-black.png'], 'bs-badge bs-badge--l5'),
-        html(`<div class="bs-glints" aria-hidden="true">${glints()}</div>`, 'bs-sticker-glints'),
-      ]),
-    ]),
-    joinCard(m, 'join-footer', 'home-footer', false),
-  ], { id: 'join', tag: 'section' });
+  const join = joinPanel(m, {
+    title: 'Ready to join the Brightside?',
+    copy: 'Join the movement to save money, end our dependence on dirty energy, and build a brighter future.',
+    photo: 'brightside-photo-1.webp', pos: 'bs-pos-30', badge: 'brightside-badge-lightning-black.png', campaign: 'home-footer',
+  });
 
   return [con('', [
     hero,
@@ -248,4 +241,174 @@ function home(m) {
   ], { id: 'bs-home', tag: 'main', inner: false })];
 }
 
-module.exports = { header, footer, home };
+/* ------------------------------------------------------------------ inner pages */
+// Shorter version of the homepage "screen": still photo (no drift, so no pause control needed), scrim,
+// glint grid, eyebrow + H1 + lead bottom-left.
+function pageHero(m, o) {
+  return con('bs-hero bs-hero--page', [
+    con('bs-hero__screen', [
+      image(m[o.photo], `bs-hero__poster ${o.pos || ''}`),
+      html(`<div aria-hidden="true"><div class="bs-hero__scrim bs-hero__scrim--page"></div><div class="bs-glints bs-hero__glints">${glints()}</div></div>`, 'bs-hero__deco'),
+      con('bs-hero__stack', [
+        ...(o.back ? [button(o.back[0], o.back[1], 'bs-textlink bs-textlink--back', { icon: m['bs-icon-arrow-right.svg'], iconAlign: 'left' })] : []),
+        heading(o.eyebrow, 'p', 'bs-eyebrow bs-hero__eyebrow'),
+        heading(o.title, 'h1', 'bs-hero__h1 bs-page-h1'),
+        ...(o.lead ? [heading(o.lead, 'p', 'bs-lead bs-hero__lead')] : []),
+      ]),
+    ], { settings: { min_height: { unit: 'px', size: 0 } } }),
+  ], { tag: 'section', settings: { _title: 'Page hero' } });
+}
+
+// Orange "Ready to join" split panel: copy + sticker photo on the left, join card on the right.
+function joinPanel(m, o) {
+  return con(`bs-panel bs-joinpanel${reveal()}`, [
+    con('bs-joinpanel__left', [
+      heading(o.title, 'h2', 'bs-h2'),
+      text(o.copy, 'bs-join-copy'),
+      text(o.cta || 'Sign up here to join us:', 'bs-join-cta'),
+      con('bs-sticker bs-sticker--join', [
+        image(m[o.photo], `bs-photo ${o.pos || ''}`),
+        image(m[o.badge], 'bs-badge bs-badge--l5'),
+        html(`<div class="bs-glints" aria-hidden="true">${glints()}</div>`, 'bs-sticker-glints'),
+      ]),
+    ]),
+    joinCard(m, o.anchor || 'join-footer', o.campaign, o.first || false),
+  ], { id: 'join', tag: 'section' });
+}
+
+const page = (children) => [con('bs-page', children, { id: 'bs-home', tag: 'main', inner: false })];
+
+function about(m) {
+  const steps = [
+    ['bullhorn', '', 'Tell our stories', 'Beat disinformation to the punch by telling our stories'],
+    ['people-group', 'orange', 'Build community', 'Build community for people who love clean energy'],
+    ['landmark', 'white', 'Pass new policies', 'Pass new policies by adding our voices when decisions are made'],
+    ['hand-fist', 'yellow', 'Show up', 'Show up to support clean energy when it\'s under attack'],
+  ];
+  return page([
+    pageHero(m, { photo: 'brightside-about-hero.webp', pos: 'bs-pos-40', eyebrow: 'About Brightside', title: 'A voice for the clean energy majority.', lead: 'We fight for clean energy to build a brighter future.' }),
+    con('bs-wrap', [
+      con(`bs-panel bs-majority bs-panel--first${reveal()}`, [
+        con('bs-textcol', [
+          heading('Brightside provides a voice for the majority who love clean energy.', 'h2', 'bs-h2-long'),
+          text('<p>When politicians think about energy, they’re usually listening to the dark side: the fossil fuel companies and billionaires who make their money by selling us old ideas and old technology. We believe that when we come together to make the bright side more visible, more active, and more involved, we can make change.</p><p>The future is bright. Clean energy works. It’s more affordable than fossil fuels basically everywhere, and once it’s built it keeps working for decades — no oligarchs, wars, or pollution required.</p><p>But the real hope is us. We are the majority — an overwhelming majority, in fact. At Brightside, we work together online to share stories that inspire and make the case for clean energy — and we come together offline to build community and advocate for change.</p>'),
+          heading('Because when everyone realizes that everyone else is thinking the same thing, we’re not just a majority — we’re a movement.', 'p', 'bs-h3 bs-signoff'),
+        ]),
+        con('bs-sticker', [
+          image(m['brightside-photo-2.webp'], 'bs-photo bs-pos-40'),
+          image(m['brightside-badge-smiley-location-black.png'], 'bs-badge bs-badge--r5'),
+          html(`<div class="bs-glints" aria-hidden="true">${glints()}</div>`, 'bs-sticker-glints'),
+        ]),
+      ], { id: 'about', tag: 'section' }),
+      con(`bs-panel bs-movement bs-steps${reveal()}`, [
+        heading('What we do', 'h2', 'bs-h2'),
+        con('bs-cards2', steps.map(([ic, color, h, p], i) => con(`bs-mcard${reveal(i)}`, [
+          con('bs-step__top', [chip(m[`bs-icon-${ic}.svg`], color), heading(`0${i + 1}`, 'div', 'bs-step__num')], { dir: 'row' }),
+          heading(h, 'h3', 'bs-h3'), text(p),
+        ]))),
+      ], { id: 'what-we-do', tag: 'section' }),
+      joinPanel(m, {
+        title: 'Join the Brightside',
+        copy: 'If you want to join our community and help build clean energy everywhere it’s needed, sign up now:',
+        cta: 'Together we’re the clean energy majority.',
+        photo: 'brightside-photo-3.webp', pos: 'bs-pos-30', badge: 'brightside-badge-thumb-black.png', campaign: 'about-page', first: true,
+      }),
+    ]),
+  ]);
+}
+
+function actionCard(m, o, i) {
+  return con(`bs-acard${reveal(i)}`, [
+    image(m[o.photo], `bs-acard__img ${o.pos || ''}`),
+    con('bs-acard__body', [
+      heading(o.eyebrow, 'p', 'bs-eyebrow'),
+      heading(o.title, 'h3', 'bs-h3'),
+      text(o.copy, 'bs-small'),
+      button(o.cta, o.url, 'bs-btn'),
+    ]),
+  ], { tag: 'article' });
+}
+
+function takeAction(m) {
+  return page([
+    pageHero(m, { photo: 'brightside-photo-1.webp', pos: 'bs-pos-30', eyebrow: 'Take action', title: 'Don’t get mad. Get solar.', lead: 'Add your voice when decisions are made, and show up when clean energy is under attack.' }),
+    con('bs-wrap', [
+      con(`bs-panel bs-action bs-panel--first${reveal()}`, [
+        con('bs-action__left', [heading('Featured action', 'h2', 'bs-h2'), heading('Sign on and we’ll keep you posted on what happens next.', 'p', 'bs-lead')]),
+        con('bs-petition', [
+          heading('Featured petition', 'p', 'bs-eyebrow'),
+          heading('[Petition title]', 'h3', 'bs-h3'),
+          text('[ONE-LINE SUMMARY — client to supply]', 'bs-small'),
+          text('[SIGNATURE COUNT] signed', 'bs-count'),
+          button('Sign the petition', URL.petition, 'bs-btn bs-btn--dark'),
+        ]),
+      ], { id: 'featured', tag: 'section' }),
+      con('bs-wwd bs-actions', [
+        heading('More ways to act', 'h2', `bs-h2${reveal()}`),
+        text('[ACTIONS — client to supply. Each petition or action gets its own page: duplicate the petition page template in Elementor and add a card here.]', 'bs-note bs-actions__note'),
+        con('bs-agrid', [
+          actionCard(m, { photo: 'brightside-photo-5.webp', pos: 'bs-pos-55', eyebrow: 'Petition', title: '[Petition title]', copy: '[ONE-LINE SUMMARY — client to supply]', cta: 'Sign the petition', url: URL.petition }, 0),
+          actionCard(m, { photo: 'brightside-photo-2.webp', pos: 'bs-pos-40', eyebrow: '[Action type]', title: '[Action title]', copy: '[ONE-LINE SUMMARY — client to supply]', cta: 'Take action', url: URL.petition }, 1),
+          actionCard(m, { photo: 'brightside-photo-4.webp', pos: 'bs-pos-40', eyebrow: '[Action type]', title: '[Action title]', copy: '[ONE-LINE SUMMARY — client to supply]', cta: 'Take action', url: URL.petition }, 2),
+        ]),
+      ], { tag: 'section', settings: { _title: 'More ways to act' } }),
+      joinPanel(m, {
+        title: 'Ready to join the Brightside?',
+        copy: 'Join the movement to save money, end our dependence on dirty energy, and build a brighter future.',
+        photo: 'brightside-photo-3.webp', pos: 'bs-pos-30', badge: 'brightside-badge-lightning-black.png', campaign: 'take-action',
+      }),
+    ]),
+  ]);
+}
+
+// Template for one petition/action. Duplicate the page in Elementor for each new petition.
+function petition(m) {
+  return page([
+    pageHero(m, { photo: 'brightside-photo-5.webp', pos: 'bs-pos-55', eyebrow: 'Petition', title: '[Petition title]', lead: '[ONE-LINE SUMMARY — client to supply]', back: ['All actions', URL.action] }),
+    con('bs-wrap', [
+      con(`bs-panel bs-sign bs-panel--first${reveal()}`, [
+        con('bs-sign__left', [
+          heading('Why this matters', 'h2', 'bs-h2'),
+          text('<p>[PETITION BODY — client to supply: what we are asking for, who decides, and why it matters to people who love clean energy.]</p><p>[SECOND PARAGRAPH — optional]</p>'),
+          con('bs-sign__count', [heading('[#]', 'div', 'bs-stat__num'), heading('[SIGNATURE COUNT] signed', 'div', 'bs-stat__label'), heading('[GOAL — optional]', 'div', 'bs-stat__note')]),
+          con('bs-sticker bs-sticker--join', [
+            image(m['brightside-photo-1.webp'], 'bs-photo bs-pos-30'),
+            image(m['brightside-badge-arrow-black.png'], 'bs-badge bs-badge--l5'),
+            html(`<div class="bs-glints" aria-hidden="true">${glints()}</div>`, 'bs-sticker-glints'),
+          ]),
+        ]),
+        con('bs-join', [
+          heading('Sign the petition', 'h3', 'bs-join__h'),
+          text('Add your name:', 'bs-join__copy'),
+          html('<div class="bs-embed-slot" role="note"><strong>Solidarity Tech petition embed goes here.</strong><span>Create the petition in Solidarity Tech, then paste its iframe (the page URL ending in <code>/embed</code>) into this HTML widget. The script tag is only needed once per page.</span></div>', 'bs-join__embed'),
+          text(`<p>By signing you agree to our <a href="${PRIVACY}">Privacy Policy</a>. <span>(draft, for client approval)</span></p><p class="bs-sms">[SMS CONSENT WORDING — client to confirm with Solidarity Tech or counsel]</p>`, 'bs-join__legal'),
+        ], { id: 'sign' }),
+      ], { id: 'petition', tag: 'section' }),
+      con('bs-share', [
+        heading('Spread the word', 'h2', 'bs-h3'),
+        text('Share this petition with the people who love clean energy as much as you do.'),
+        socials(m, 'bs-socials--lg bs-socials--dark'),
+        button('See all actions', URL.action, 'bs-textlink', { icon: m['bs-icon-arrow-right.svg'], iconAlign: 'right' }),
+      ], { tag: 'section', settings: { _title: 'Share' } }),
+    ]),
+  ]);
+}
+
+function contact(m) {
+  return page([
+    pageHero(m, { photo: 'brightside-photo-4.webp', pos: 'bs-pos-40', eyebrow: 'Contact Brightside', title: 'We’d love to hear from you.', lead: 'Brightside is a small team of experienced movement builders, creatives, and communicators.' }),
+    con('bs-wrap', [
+      con(`bs-panel bs-contact bs-panel--first${reveal()}`, [
+        con('bs-contact__left', [
+          heading('Get in touch', 'h2', 'bs-h2'),
+          text('Brightside is a small team of experienced movement builders, creatives, and communicators. We’d love to hear from you. Use this form to contact our team.'),
+          heading('Follow along', 'p', 'bs-eyebrow bs-contact__follow'),
+          socials(m, 'bs-socials--lg bs-socials--dark'),
+        ]),
+        joinCard(m, 'contact-form', 'contact-page', true, { title: 'Contact our team', copy: 'Leave your details and we’ll be in touch:', frameTitle: 'Contact Brightside' }),
+      ], { id: 'contact', tag: 'section' }),
+    ]),
+  ]);
+}
+
+module.exports = { header, footer, home, about, takeAction, petition, contact, URL };

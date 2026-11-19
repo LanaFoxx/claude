@@ -11,6 +11,7 @@ const ALT = {
   'brightside-photo-3.webp': 'Three women laughing together in front of an electric school bus with its hood open',
   'brightside-photo-4.webp': 'Neighbors gather around a home battery system during a community tour',
   'brightside-photo-5.webp': 'Folk dancers in bright, flowing traditional dresses pose in front of a community solar array',
+  'brightside-about-hero.webp': 'A gloved hand drives a screw into a solar panel mounting rail with a power drill',
   'brightside-logo-primary-yellow.png': 'Brightside', 'brightside-logo-centered-gradient-orange-purple.png': 'Brightside',
 };
 const TYPES = { '.webp': 'image/webp', '.png': 'image/png', '.svg': 'image/svg+xml', '.jpg': 'image/jpeg' };

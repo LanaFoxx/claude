@@ -1,4 +1,4 @@
-# Brightside homepage (Phase 1) – Elementor build
+# Brightside site – Elementor build
 
 Builds the Claude Design handoff "Brightside Home" (Fossil Free Media) on the WordPress staging site
 **staging161.dreamweb.digital** (Hello Elementor + Elementor/Elementor Pro 4.4, Flexbox Containers).
@@ -6,6 +6,10 @@ Builds the Claude Design handoff "Brightside Home" (Fossil Free Media) on the Wo
 | Document | ID | Notes |
 | --- | --- | --- |
 | Home (front page) | 532 | `elementor_header_footer` template |
+| About `/about/` | 581 | Copy from the current brightside.now/about |
+| Take Action `/take-action/` | 585 | Featured action + action cards (placeholders) |
+| Petition template `/take-action/petition-template/` | 589 | Duplicate per petition; paste the Solidarity Tech petition iframe into the dashed slot |
+| Contact `/contact/` | 593 | Join form embed tagged `utm_campaign=contact-page` |
 | Brightside Header (Theme Builder) | 557 | Entire Site. Also carries the site-wide CSS/JS, stage and mobile menu |
 | Brightside Footer (Theme Builder) | 560 | Entire Site |
 | Site Settings (kit) | 8 | Breakpoints tablet ≤980 / mobile ≤600, global colours + fonts |
@@ -24,7 +28,7 @@ Builds the Claude Design handoff "Brightside Home" (Fossil Free Media) on the Wo
 * Both files are inlined into the header template's first HTML widget at deploy time. They sit in a
   zero-height container *outside* `#bs-header`: the pill's `backdrop-filter` would otherwise become the
   containing block of the fixed stage and menu.
-* `deploy.cjs` – `node deploy.cjs [kit] [chrome] [home]`, needs `STATE` (Playwright login state) and
+* `deploy.cjs` – `node deploy.cjs [kit] [chrome] [home] [about] [take-action] [petition] [contact]`, needs `STATE` (Playwright login state) and
   `PREP` (media IDs from `tools/prep.cjs` + `tools/prep-svg.cjs`). Redeploying `home` replaces the page
   content, so check for client edits first.
 
@@ -53,3 +57,14 @@ buttons do nothing yet), stat figures, petition details (Take Action panel), eve
 page (`/privacy-policy/` links 404 until it exists), About/Contact pages (nav uses on-page anchors),
 SMS consent wording, meta description (needs an SEO plugin), GA4 `G-ECR8VQVK3G` (not added to staging
 on purpose), Elementor Pro license reactivation for this domain.
+
+## Multi-page structure (round 2)
+
+* Nav and footer link to real pages (About · Take Action · Contact), matching the current site's URLs.
+  Header/menu "Join" jumps to the page's own join form when it has one, otherwise the homepage card.
+* Inner pages share a shorter page hero (still photo, no drift, so no pause control) and the orange
+  "join" split panel.
+* Contact: Solidarity Tech's `/contact/embed` renders their whole page chrome inside the iframe, so the
+  Contact page uses the join form (same fields the current Contact page has). For a real message field,
+  create a contact form in Solidarity Tech and swap the iframe URL.
+* Photo stickers and clip cards no longer move on hover (client request); their resting tilt stays.
