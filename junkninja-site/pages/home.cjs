@@ -1,0 +1,358 @@
+// Home page, section by section, following Junk Ninja Home.dc.html.
+const L = require('../lib.cjs');
+const { C, HEAD, BODY, PHONE, TEL, SMS, TOWNS, id, sz, box, gap, link, shadow, hide, typo, container, widget, fa,
+  band, stack, row, grid, autoFit, circle, heading, display, H2, eyebrow, text, button, image, plusList } = L;
+
+const SERVICES = [
+  ['Residential Junk', 'Unwanted household items and general clutter.', 'svcResidential'],
+  ['Furniture', 'Couches, mattresses, tables, dressers, and more.', 'svcFurniture'],
+  ['Appliances', 'Refrigerators, washers, dryers, stoves, and other appliances.', 'svcAppliance'],
+  ['Garage Cleanouts', 'Clearing unwanted items from garages.', 'svcGarage'],
+  ['House & Estate', 'Partial or complete home cleanouts, inherited properties and estates.', 'svcEstate'],
+  ['Realtor & Rental', 'Preparing properties for sale, rental, or turnover.', 'svcRental'],
+  ['Yard Waste', 'Branches, vegetation, and landscaping debris.', 'svcYard'],
+  ['Construction Debris', 'Hauling renovation and remodeling debris.', 'svcConstruction'],
+];
+
+/* 1. HERO ------------------------------------------------------------- */
+const hero = (m) => container({
+  content_width: 'boxed', boxed_width: sz(1200), flex_direction: 'row', flex_wrap: 'nowrap',
+  flex_justify_content: 'space-between', flex_align_items: 'center', flex_gap: gap(48),
+  padding: box('clamp(56px,9vw,120px)', 'clamp(20px,5vw,64px)', 'clamp(56px,9vw,120px)', 'clamp(20px,5vw,64px)'),
+  background_background: 'classic', background_color: C.navy, background_image: m.heroBg,
+  background_position: 'center center', background_size: 'cover', background_repeat: 'no-repeat',
+  background_overlay_background: 'gradient', background_overlay_color: 'rgba(0,38,75,.97)', background_overlay_color_b: 'rgba(0,38,75,.55)',
+  background_overlay_gradient_type: 'linear', background_overlay_opacity: { unit: 'px', size: 1, sizes: [] }, background_overlay_gradient_angle: { unit: 'deg', size: 90 },
+  _element_id: 'top', _title: 'Hero',
+  custom_css: 'selector::before { background-image: linear-gradient(90deg, rgba(0,38,75,.97) 0%, rgba(0,38,75,.88) 50%, rgba(0,38,75,.55) 100%) !important; }',
+}, [
+  stack([
+    eyebrow('Port St. Lucie &amp; the Treasure Coast', { dark: true }),
+    display('Junk Removal on Florida\'s <span class="jn-cyan">Treasure Coast</span>', 'h1', 'clamp(32px,5.4vw,66px)', { lh: 1.06, color: C.white }),
+    text('Proudly serving Florida\'s Treasure Coast, we tackle the clutter so you can enjoy a fresh start.',
+      { color: C.white, size: 'clamp(18px,2vw,21px)', maxW: 620 }),
+    row([
+      button(`Call ${PHONE}`, TEL, 'cyan', { grow: 220, padX: 24 }),
+      button('Text Us Photos', SMS, 'white', { grow: 180, padX: 24 }),
+      button('Get a Free Quote', '#quote', 'ghostDark', { grow: 200, padX: 24 }),
+    ], { settings: { margin: box(6, 0, 0, 0) } }),
+    plusList(['Licensed and Insured', 'Open 6am–9pm, 7 days'], { inline: true, settings: { icon_list_items_gap: sz(8) } }),
+  ], { gap: 22, maxW: 760, settings: { _flex_size: 'grow' } }),
+  circle(300, C.white, [image(m.ninja, { width: 190 })], { shadow: shadow(-12, 12), settings: { ...hide.tablet, _title: 'Ninja badge' } }),
+], false);
+
+/* 2. TRUST TICKER ----------------------------------------------------- */
+const TICKER = ['Licensed and Insured', 'Serving the Treasure Coast', 'Open 6am–9pm Every Day', 'Real Quotes from Your Photos', 'Clutter Removed, Serenity Restored'];
+const tickerRun = (hidden) => plusList(TICKER, {
+  inline: true, family: HEAD, size: 'clamp(16px,2.2vw,24px)', weight: 400, ls: 0.08, upper: true, color: C.navy,
+  iconSize: 'clamp(16px,2.2vw,24px)', indent: 28, space: 28,
+  settings: {
+    _element_width: 'auto', _flex_size: 'none', _margin: box(0, 28, 0, 0), ...(hidden ? { _attributes: 'aria-hidden|true' } : {}),
+    custom_css: 'selector .elementor-icon-list-items { flex-wrap: nowrap; white-space: nowrap; } selector .elementor-icon-list-item { margin: 0 28px 0 0 !important; padding: 0 !important; } selector .elementor-icon-list-item:after { display: none !important; }',
+  },
+});
+const ticker = () => container({
+  content_width: 'full', padding: box(18, 0, 18, 0), flex_direction: 'row', flex_gap: gap(0), overflow: 'hidden',
+  background_background: 'classic', background_color: C.cyan,
+  border_border: 'solid', border_width: box(4, 0, 4, 0), border_color: C.navy, _title: 'Trust ticker',
+  _attributes: 'aria-label|Licensed and Insured. Serving the Treasure Coast. Open 6am–9pm Every Day. Real Quotes from Your Photos.',
+}, [container({
+  content_width: 'full', flex_direction: 'row', flex_wrap: 'nowrap', padding: box(0), flex_gap: gap(0), _css_classes: 'jn-track',
+  custom_css: 'selector { width: max-content !important; max-width: none !important; animation: jnmarq 28s linear infinite; }',
+}, [tickerRun(false), tickerRun(true)])], false);
+
+/* 3. SEND PHOTOS ------------------------------------------------------ */
+const STEPS = [
+  ['1', C.navy, C.white, C.cyan, 'Send Photos', `Text them to ${PHONE} or upload them with the quote form.`],
+  ['2', C.cyan, C.navy, C.navy, 'Get Your Quote', 'We look at what needs to go and send you a quote for the job.'],
+  ['3', C.navy, C.white, C.pink, 'We Haul It Away', 'We load it up and take it away. You get your space back.'],
+];
+const photos = () => band(C.white, [
+  stack([
+    eyebrow('The Ninja Way', { align: 'center' }),
+    H2('Send Us Photos for a Faster Quote', { align: 'center' }),
+    text('Every job is different. Text or upload a few photos of what needs to go and we\'ll get back to you with a quote. No photos? We\'ll come and take a look.', { size: 19, align: 'center' }),
+  ], { maxW: 720, align: 'center', settings: { _flex_align_self: 'center' } }),
+  grid(STEPS.map(([n, bg, fg, sh, title, body]) => stack([
+    circle(160, bg, [heading(n, 'span', { size: 76, color: fg, lh: 1, align: 'center' })], { shadow: shadow(-9, 9, sh), settings: { z_index: 1 } }),
+    heading(title, 'h3', { size: 24, ls: 0.05, upper: true, lh: 1.2, align: 'center', settings: { _margin: box(12, 0, 0, 0) } }),
+    text(body, { color: C.slate, align: 'center', maxW: 300 }),
+  ], { align: 'center' })), autoFit(220).replace('min(100%,220px)', '220px'), {
+    gaps: gap(24, 36),
+    settings: {
+      padding: box(8, 0, 0, 0), _title: 'Steps',
+      custom_css: `selector::before { content: ""; position: absolute; inset: 86px 16.67% auto 16.67%; width: auto; height: 0; border-top: 5px dashed ${C.cyan}; }
+@media (max-width: 1180px) { selector::before { display: none; } }`,
+    },
+  }),
+  row([
+    button(`Text Photos to ${PHONE}`, SMS, 'navy'),
+    button('Upload Photos Online', '#quote', 'ghostLight'),
+  ], { justify: 'center' }),
+], { gap: 36, anchor: 'photos' });
+
+/* 4. SERVICES (nested tabs → accordion on mobile) ---------------------- */
+const svcPanel = (m, [title, desc, key], i) => container({
+  content_width: 'full', flex_direction: 'column', padding: box(0), flex_gap: gap(0), _title: title,
+  background_background: 'classic', background_color: C.navy, border_radius: box(18), overflow: 'hidden',
+  box_shadow_box_shadow_type: 'yes', box_shadow_box_shadow: shadow(-12, 12), _css_classes: 'jn-svc-panel',
+}, [
+  image(m[key], { ratio: '16/9', settings: { _css_classes: 'jn-svc-img' } }),
+  stack([
+    heading(`${String(i + 1).padStart(2, '0')} / 08`, 'span', { size: 16, color: C.cyan, lh: 1.2, cls: 'jn-svc-count' }),
+    heading(title, 'h3', { size: 'clamp(24px,2.8vw,30px)', ls: 0.05, upper: true, lh: 1.1, color: C.white, cls: 'jn-svc-title' }),
+    text(desc, { size: 19, color: C.white, settings: { _css_classes: 'jn-svc-desc', custom_css: 'selector { min-height: 58px; }' } }),
+    row([
+      button('Text Us a Photo', SMS, 'cyan', { size: 15, padY: 16, padX: 10, grow: 170, nowrap: true }),
+      button('Get a Free Quote', '#quote', 'ghostDark', { size: 15, padY: 16, padX: 10, grow: 170, nowrap: true, settings: { _css_classes: 'jn-svc-quote' } }),
+    ], { settings: { margin: box(6, 0, 0, 0) } }),
+  ], { settings: { padding: box('clamp(20px,3vw,30px)'), _css_classes: 'jn-svc-body' } }),
+]);
+
+const SERVICES_CSS = `/* Tab list: 8 rows, Russo One; idle slate, active navy + cyan shadow + pink plus */
+@media (min-width: 761px) {
+  selector .e-n-tabs { gap: clamp(28px,5vw,56px); }
+  selector .e-n-tabs-heading { flex: 1 1 0; display: flex; flex-direction: column; gap: 0; }
+  selector .e-n-tabs-content { flex: 1 1 0; position: sticky; top: 110px; align-self: flex-start; margin-left: 12px; }
+}
+selector .e-n-tab-title { justify-content: flex-start; background: transparent !important; border: 0 !important; border-bottom: 1px solid ${C.border2} !important; border-radius: 0 !important; padding: 11px 0 !important; min-height: 44px; gap: 14px; cursor: pointer; }
+selector .e-n-tab-title-text { font-family: "${HEAD}", sans-serif; font-weight: 400; font-size: clamp(20px,2.6vw,30px); letter-spacing: .05em; text-transform: uppercase; line-height: 1.2; color: ${C.idle}; text-align: left; }
+selector .e-n-tab-title[aria-selected="true"] .e-n-tab-title-text { color: ${C.navy}; text-shadow: -.07em .07em 0 ${C.cyan}; }
+selector .e-n-tab-title[aria-selected="false"] .e-n-tab-icon { display: none; }
+selector .e-n-tab-icon i { color: ${C.pink}; font-size: 20px; }
+selector .e-n-tab-icon svg { fill: ${C.pink}; width: 20px; height: 20px; }
+/* ≤760px: accordion – active row opens in place, no photo, light background */
+@media (max-width: 760px) {
+  selector .jn-svc-panel { background: transparent !important; box-shadow: none !important; border-radius: 0 !important; }
+  selector .jn-svc-img, selector .jn-svc-count, selector .jn-svc-title { display: none; }
+  selector .jn-svc-body { padding: 4px 0 20px !important; border-bottom: 1px solid ${C.border2}; }
+  selector .jn-svc-desc, selector .jn-svc-desc p { color: ${C.slate} !important; font-size: 18px !important; min-height: 0 !important; }
+  selector .jn-svc-quote .elementor-button { background: ${C.navy} !important; border-color: ${C.navy} !important; }
+}`;
+
+// Hover selects a service on desktop, like the design (tap/click still works everywhere).
+const SERVICES_JS = `<script>
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('.jn-services .e-n-tab-title').forEach(function (t) {
+    t.addEventListener('mouseenter', function () {
+      if (window.matchMedia('(min-width: 761px) and (hover: hover)').matches && t.getAttribute('aria-selected') !== 'true') t.click();
+    });
+  });
+});
+</script>`;
+
+const services = (m) => band(C.surface, [
+  stack([eyebrow('Services'), H2('What We Remove')], { gap: 12 }),
+  {
+    id: id(), elType: 'widget', widgetType: 'nested-tabs',
+    settings: {
+      tabs: SERVICES.map(([title]) => ({ _id: id(), tab_title: title, tab_icon: fa('fas fa-plus'), tab_icon_active: fa('fas fa-plus') })),
+      tabs_direction: 'inline-start', tabs_justify_vertical: 'start', breakpoint_selector: 'mobile',
+      icon_position: 'inline-start', _css_classes: 'jn-services', custom_css: SERVICES_CSS,
+    },
+    elements: SERVICES.map((s, i) => svcPanel(m, s, i)),
+  },
+  widget('html', { html: SERVICES_JS, _title: 'Services hover script' }),
+], { anchor: 'services' });
+
+/* 5. ABOUT ------------------------------------------------------------ */
+const about = (m) => band(C.white, [grid([
+  image(m.aboutImg, { ratio: '4/3', radius: 8, shadow: shadow(-12, 12), settings: { _margin: box(0, 0, 0, 12) } }),
+  stack([
+    eyebrow('Why Junk Ninja'),
+    H2('Reclaim Your Space and Peace of Mind'),
+    text('At Junk Ninja LLC, we don\'t just haul away junk — we help homeowners, realtors, and businesses reclaim their space and peace of mind. Proudly serving Florida\'s Treasure Coast, we tackle the clutter so you can enjoy a fresh start.', { size: 19 }),
+    text('Licensed and insured. Working for homeowners, realtors and businesses, 6am–9pm every day.', { color: C.slate }),
+    button('Get a Free Quote', '#quote', 'navy'),
+  ], { gap: 18, align: 'flex-start' }),
+], autoFit(340), { gap: 64, align: 'center', settings: { grid_gaps_tablet: gap(40), grid_gaps_mobile: gap(28) } })], { anchor: 'about' });
+
+/* 6. REALTORS --------------------------------------------------------- */
+const realtors = (m) => band(C.navy, [
+  image(m.ninja, { settings: {
+    _position: 'absolute', _z_index: 0, _title: 'Ninja watermark', _element_width: 'auto',
+    custom_css: 'selector { inset: auto !important; left: 58% !important; top: 50% !important; height: 150%; transform: translate(-50%,-50%); pointer-events: none; } selector .elementor-widget-container, selector img { height: 100%; } selector img { width: auto; max-width: none; filter: brightness(0) invert(1); opacity: .07; }',
+  } }),
+  row([
+    stack([
+      eyebrow('Home &amp; rental cleanouts', { dark: true }),
+      H2('Working with Realtors and Property Managers', { dark: true, size: 'clamp(24px,3.4vw,38px)', lh: 1.14 }),
+      text('Preparing properties for sale, rental, or turnover. We clear abandoned furniture and belongings so the property is ready for what comes next.', { size: 19, color: C.white, maxW: 640 }),
+    ], { settings: { custom_css: 'selector { flex: 1 1 420px; }' } }),
+    row([button(`Call ${PHONE}`, TEL, 'cyan'), button('Text Photos', SMS, 'ghostDark')]),
+  ], { gap: 48, rowGap: 28, justify: 'space-between', settings: { z_index: 1 } }),
+], { anchor: 'realtors', pad: box('clamp(48px,7vw,84px)', 'clamp(20px,5vw,64px)', 'clamp(48px,7vw,84px)', 'clamp(20px,5vw,64px)'), settings: { overflow: 'hidden' } });
+
+/* 7. BEFORE & AFTER --------------------------------------------------- */
+const tag = (label, before) => heading(label, 'span', {
+  family: BODY, size: 12, weight: 800, ls: 0.1, lh: 1.2, color: before ? C.white : C.navy,
+  settings: {
+    _position: 'absolute', _offset_orientation_h: 'start', _offset_x: sz(10), _offset_orientation_v: 'end', _offset_y_end: sz(10), _element_width: 'auto',
+    _background_background: 'classic', _background_color: before ? C.navy : C.cyan, _border_radius: box(4), _padding: box(5, 9, 5, 9),
+  },
+});
+const photoCell = (media, label, before) => container({ content_width: 'full', padding: box(0), flex_gap: gap(0) }, [
+  image(media, { ratio: '3/4' }), tag(label, before),
+]);
+const pair = (m, [b, a, caption]) => stack([
+  grid([photoCell(m[b], 'BEFORE', true), photoCell(m[a], 'AFTER', false)], '1fr 1fr', {
+    gap: 3, settings: { border_radius: box(8), overflow: 'hidden', grid_columns_grid_mobile: { unit: 'custom', size: '1fr 1fr' } },
+  }),
+  heading(caption, 'p', { family: BODY, size: 17, weight: 800, lh: 1.3 }),
+], { gap: 10 });
+const gallery = (m) => band(C.white, [
+  stack([eyebrow('Our work'), H2('Before &amp; After')], { gap: 12 }),
+  grid([
+    ['baGarage1Before', 'baGarage1After', 'Garage cleanout'], ['baHottub1Before', 'baHottub1After', 'Hot tub removal'],
+    ['baGarage2Before', 'baGarage2After', 'Garage cleanout'], ['baHottub2Before', 'baHottub2After', 'Hot tub removal'],
+  ].map((p) => pair(m, p)), autoFit(420), { gap: 24, rowGap: 28 }),
+], { anchor: 'gallery' });
+
+/* 8. REVIEWS ---------------------------------------------------------- */
+const reviewCard = (n) => container({
+  content_width: 'full', flex_direction: 'column', flex_gap: gap(14), padding: box(26),
+  background_background: 'classic', background_color: C.navy, border_radius: box(8),
+  box_shadow_box_shadow_type: 'yes', box_shadow_box_shadow: shadow(-6, 6),
+}, [
+  heading('★★★★★', 'p', { family: BODY, size: 36, lh: 1, ls: 0.11, color: C.cyan, settings: { _attributes: 'aria-label|5 out of 5 stars' } }),
+  text(`[PLACEHOLDER] Real Google review ${n} goes here.`, { color: C.white, settings: { _flex_size: 'grow' } }),
+  heading('[First name]', 'p', { family: BODY, size: 17, weight: 800, lh: 1.4, color: C.white }),
+]);
+const reviews = () => band(C.surface, [
+  stack([eyebrow('Google reviews', { align: 'center' }), H2('What Our Customers Say', { align: 'center' })], { gap: 12, align: 'center' }),
+  grid([1, 2, 3].map(reviewCard), autoFit(280), { gap: 16, align: 'stretch' }),
+  heading('Read our reviews on Google →', 'p', { family: BODY, size: 17, weight: 700, align: 'center', link: '#reviews', settings: { custom_css: 'selector a { text-decoration: underline; } selector a:hover { color: #0E8A99; }' } }),
+], { anchor: 'reviews' });
+
+/* 9. SERVICE AREAS ---------------------------------------------------- */
+const town = (name) => button(name, '#areas', 'ghostLight', {
+  size: 17, padY: 15, padX: 16, icon: fa('fas fa-plus'), iconGap: 10, full: true,
+  settings: {
+    typography_font_weight: '700', typography_text_transform: 'none', typography_letter_spacing: sz(0, 'em'),
+    border_width: box(1), border_color: C.border, button_hover_border_color: C.cyan, button_background_hover_color: C.cyanTint,
+    background_color: C.white, hover_color: C.navy,
+    custom_css: `selector .elementor-button-content-wrapper { justify-content: flex-start; } selector .elementor-button-icon svg { fill: ${C.pink}; width: 13px; height: 13px; } selector .elementor-button-icon i { color: ${C.pink}; font-size: 13px; }`,
+  },
+});
+const areas = (m) => band(C.white, [grid([
+  stack([
+    eyebrow('Service areas'),
+    H2('Serving the Treasure Coast'),
+    text('Junk removal in Port Saint Lucie and the towns around it.', { size: 19, color: C.slate }),
+    row([
+      image(m.ninja, { height: 120, width: 'auto', settings: { ...hide.tablet, _element_width: 'auto' } }),
+      button('See All Service Areas', '#areas', 'navy'),
+    ], { gap: 24, settings: { margin: box(16, 0, 0, 0) } }),
+  ], { align: 'flex-start' }),
+  grid(TOWNS.map(town), 'repeat(2,minmax(0,1fr))', { gap: 10 }),
+], autoFit(340), { gap: 64, settings: { grid_gaps_tablet: gap(40), grid_gaps_mobile: gap(24) } })], { anchor: 'areas' });
+
+/* 10. FAQ ------------------------------------------------------------- */
+const FAQ = [
+  ['How much does it cost?', `<p>Every job is different, so we quote from your photos or a quick visit. <a href="${SMS}">Text photos to ${PHONE}</a> or upload them with our <a href="#quote">quote form</a>.</p>`],
+  ['What do you remove?', '<p>Household junk, furniture, appliances, yard waste, construction debris, electronics and storm debris. We also do garage, house, estate, rental and storage unit cleanouts. <a href="#services">See our services</a>.</p>'],
+  ['How soon can you do it?', `<p>It depends on the job and our schedule. <a href="${SMS}">Text photos to ${PHONE}</a> and we'll let you know when we can get to you.</p>`],
+];
+const FAQ_CSS = `selector .e-n-accordion { display: flex; flex-direction: column; gap: 10px; }
+selector .e-n-accordion-item { background: #fff; border: 1px solid ${C.border}; border-radius: 8px; overflow: hidden; }
+selector .e-n-accordion-item-title { padding: 20px 24px; border: 0 !important; background: transparent !important; justify-content: space-between; gap: 16px; }
+selector .e-n-accordion-item-title-text { font-family: "${BODY}", sans-serif; font-weight: 800; font-size: 20px; color: ${C.navy}; line-height: 1.3; }
+selector .e-n-accordion-item-title-icon svg, selector .e-n-accordion-item-title-icon i { color: ${C.cyanDark} !important; fill: ${C.cyanDark} !important; font-size: 22px; width: 22px; height: 22px; }
+selector .e-n-accordion-item-title-icon .e-opened svg, selector .e-n-accordion-item-title-icon .e-opened i { transform: rotate(45deg); }
+selector .e-n-accordion-item > .e-con { padding: 0 24px 22px !important; border: 0 !important; }
+selector .e-n-accordion-item a { color: ${C.slate}; text-decoration: underline; }
+selector .e-n-accordion-item a:hover { color: ${C.cyanDark}; }`;
+const faq = () => band(C.surface, [
+  stack([eyebrow('FAQ', { align: 'center' }), H2('Common Questions', { align: 'center' })], { gap: 12, align: 'center' }),
+  {
+    id: id(), elType: 'widget', widgetType: 'nested-accordion',
+    settings: {
+      items: FAQ.map(([q]) => ({ _id: id(), item_title: q })),
+      accordion_item_title_icon: fa('fas fa-plus'), accordion_item_title_icon_active: fa('fas fa-plus'),
+      accordion_item_title_icon_position: 'end', default_state: 'expanded', max_items_expended: 'multiple',
+      custom_css: FAQ_CSS,
+    },
+    elements: FAQ.map(([, a]) => container({ content_width: 'full', flex_direction: 'column', padding: box(0, 24, 22, 24) }, [
+      text(a, { color: C.slate, linkColor: C.slate }),
+    ])),
+  },
+], { width: 820, gap: 28, anchor: 'faq' });
+
+/* 11. QUOTE FORM ------------------------------------------------------ */
+const FIELD_CSS = `selector .elementor-field-group { margin-bottom: 0; }
+selector .elementor-form-fields-wrapper { row-gap: 18px; }
+selector .elementor-field-label { font-family: "${BODY}", sans-serif; font-weight: 800; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: ${C.navy}; padding-bottom: 6px; }
+selector .elementor-mark-required .elementor-field-label:after { color: ${C.pink}; }
+selector .elementor-field-textual, selector .elementor-select-wrapper select { font-family: "${BODY}", sans-serif; font-size: 17px !important; color: ${C.navy}; padding: 14px 15px !important; min-height: 0; line-height: 1.4; border: 2px solid ${C.border} !important; background: ${C.surface} !important; border-radius: 8px !important; box-shadow: none !important; }
+selector .elementor-field-textual:focus, selector .elementor-select-wrapper select:focus { border-color: ${C.cyan} !important; background: #fff !important; outline: none; }
+selector textarea.elementor-field-textual { resize: vertical; }
+/* Photo drop area: the visible label opens the hidden file input below it */
+selector .elementor-field-type-upload { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); padding: 0 !important; }
+selector .jn-drop { line-height: 1.4 !important; padding: 20px 16px !important; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; cursor: pointer; border: 2px dashed ${C.cyan}; background: ${C.cyanTint}; border-radius: 8px; font-weight: 800; font-size: 16px; color: ${C.navy}; }
+selector .jn-drop-plus { width: 40px; height: 40px; border-radius: 50%; background: ${C.navy}; color: #fff; box-shadow: -3px 3px 0 ${C.cyan}; display: flex; align-items: center; justify-content: center; font-size: 26px; line-height: 1; font-weight: 400; }
+selector .jn-drop small { font-weight: 400; font-size: 14px; color: ${C.slate}; }
+selector .jn-drop-label { display: block; font-weight: 800; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: ${C.navy}; padding-bottom: 6px; }
+selector .elementor-field-type-submit { padding-left: 4px !important; }
+selector .elementor-button[type="submit"] { box-shadow: -4px 4px 0 ${C.cyan}; }
+selector .elementor-message { font-weight: 700; }`;
+const DROP_HTML = `<label class="jn-drop-label" for="form-field-photos">Photos (if you can)</label>
+<label class="jn-drop" for="form-field-photos"><span class="jn-drop-plus">+</span><span class="jn-drop-text">Tap to add photos</span><small>A few photos of the junk gets you a faster quote</small></label>
+<script>document.addEventListener('change',function(e){if(e.target&&e.target.id==='form-field-photos'){var n=e.target.files.length,t=document.querySelector('.jn-drop-text');if(t)t.textContent=n?n+(n>1?' photos':' photo')+' added':'Tap to add photos';}});</script>`;
+const field = (o) => ({ _id: id(), width: o.width || '100', width_tablet: o.width || '100', width_mobile: '100', ...o });
+const quoteForm = () => widget('form', {
+  form_name: 'Free Quote',
+  form_fields: [
+    field({ custom_id: 'name', field_type: 'text', field_label: 'Name', required: 'true', width: '50', autocomplete: 'name' }),
+    field({ custom_id: 'phone', field_type: 'tel', field_label: 'Phone', required: 'true', width: '50' }),
+    field({ custom_id: 'email', field_type: 'email', field_label: 'Email', width: '50' }),
+    field({ custom_id: 'town', field_type: 'select', field_label: 'Town', width: '50', field_options: [...TOWNS, 'Somewhere else'].join('\n') }),
+    field({ custom_id: 'message', field_type: 'textarea', field_label: 'What needs to go?', rows: 3 }),
+    field({ custom_id: 'photos_ui', field_type: 'html', field_label: 'Photo upload area', field_html: DROP_HTML }),
+    field({ custom_id: 'photos', field_type: 'upload', field_label: 'Photos', allow_multiple_upload: 'yes', max_files: 10, file_sizes: '10', file_types: 'jpg,jpeg,png,gif,webp,heic,heif' }),
+  ],
+  show_labels: 'true', mark_required: 'true', input_size: 'md',
+  button_text: 'Request My Free Quote', button_size: 'md', button_width: '100', button_width_tablet: '100', button_width_mobile: '100',
+  submit_actions: ['save-to-database', 'email'], email_subject: 'New Junk Ninja quote request', email_from_name: 'Junk Ninja Website',
+  success_message: 'Thanks — we\'ll be in touch', error_message: 'Something went wrong. Please call or text 772-882-5955.',
+  required_field: 'Please fill in this field.',
+  column_gap: sz(16), row_gap: sz(18),
+  ...typo('button_typography', BODY, 18, 800, { lh: 1.2, ls: 0.03, upper: true }),
+  button_background_color: C.navy, button_text_color: C.white, button_background_hover_color: C.navyMid, button_hover_color: C.white,
+  button_border_radius: box(8), button_text_padding: box(20),
+  custom_css: FIELD_CSS,
+});
+const quote = (m) => band(C.navy, [grid([
+  stack([
+    circle(92, C.white, [image(m.ninja, { height: 60, width: 'auto' })], { shadow: shadow(-5, 5) }),
+    eyebrow('Free estimates', { dark: true }),
+    H2('Get Your<br><span style="white-space:nowrap">Free Quote</span>', { dark: true, size: 'clamp(28px,4.4vw,52px)', lh: 1.08 }),
+    text('Send photos if you can — it\'s the fastest way to get a quote.', { size: 20, color: C.white, maxW: 460 }),
+    stack([
+      button(`Call ${PHONE}`, TEL, 'cyan', { full: true, padX: 24 }),
+      button(`Text Photos to ${PHONE}`, SMS, 'white', { full: true, padX: 24 }),
+    ], { gap: 12, maxW: 420 }),
+    text('Open 6am–9pm, 7 days a week · Licensed and Insured', { size: 15, color: C.white }),
+  ], { gap: 18 }),
+  container({
+    content_width: 'full', flex_direction: 'column', padding: box(0), flex_gap: gap(0),
+    background_background: 'classic', background_color: C.white, border_radius: box(16), overflow: 'hidden',
+    box_shadow_box_shadow_type: 'yes', box_shadow_box_shadow: shadow(-12, 12), margin: box(0, 0, 0, 12), _title: 'Form card',
+  }, [
+    container({
+      content_width: 'full', flex_direction: 'row', flex_wrap: 'nowrap', flex_justify_content: 'space-between', flex_align_items: 'center', flex_gap: gap(16),
+      padding: box(18, 'clamp(20px,3vw,32px)', 18, 'clamp(20px,3vw,32px)'), background_background: 'classic', background_color: C.navyMid,
+    }, [
+      stack([
+        heading('Tell Us About the Job', 'p', { size: 22, ls: 0.05, upper: true, lh: 1.15, color: C.white }),
+        heading('Free estimate. Photos get you a faster quote.', 'p', { family: BODY, size: 15, weight: 600, lh: 1.4, color: C.white }),
+      ], { gap: 2 }),
+      circle(64, C.white, [image(m.ninja, { height: 42, width: 'auto' })]),
+    ]),
+    container({ content_width: 'full', flex_direction: 'column', padding: box('clamp(20px,3vw,32px)') }, [quoteForm()]),
+  ]),
+], autoFit(340), { gap: 64, settings: { grid_gaps_tablet: gap(40), grid_gaps_mobile: gap(28) } })], { anchor: 'quote' });
+
+module.exports = {
+  slug: 'home', title: 'Home',
+  build: (m) => [hero(m), ticker(), photos(), services(m), about(m), realtors(m), gallery(m), reviews(), areas(m), faq(), quote(m)],
+};
