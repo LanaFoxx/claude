@@ -111,13 +111,12 @@ const SERVICES_CSS = `/* Tab list: 8 rows, Russo One; idle slate, active navy + 
 @media (min-width: 761px) {
   selector .e-n-tabs { gap: clamp(28px,5vw,56px); }
   selector .e-n-tabs-heading { flex: 1 1 0; display: flex; flex-direction: column; gap: 0; }
-  /* Panel matches the list: same top, same bottom; the photo takes the leftover height */
+  /* Photo shown at its full 3:2 shape; the list rows grow so list and panel stay level */
   selector .e-n-tabs { align-items: stretch; }
-  selector .e-n-tabs-content { flex: 1 1 0; align-self: stretch; display: flex; flex-direction: column; margin-left: 12px; }
-  selector .e-n-tabs-content > .e-con.e-active { flex: 1 1 auto; height: 100%; }
-  selector .jn-svc-img { flex: 1 1 auto; position: relative; min-height: 150px; }
-  selector .jn-svc-img .elementor-widget-container, selector .jn-svc-img a { position: absolute; inset: 0; }
-  selector .jn-svc-img img { position: absolute; inset: 0; width: 100%; height: 100% !important; aspect-ratio: auto !important; object-fit: cover; }
+  selector .e-n-tabs-content { flex: 1 1 0; align-self: flex-start; margin-left: 12px; }
+  selector .e-n-tabs-heading { justify-content: stretch; }
+  selector .e-n-tabs-heading .e-n-tab-title { flex: 1 1 auto; }
+  selector .jn-svc-img img { aspect-ratio: 3 / 2 !important; height: auto !important; object-fit: cover; object-position: center 30%; }
 }
 selector .e-n-tab-title { justify-content: flex-start; background: transparent !important; border: 0 !important; border-bottom: 1px solid ${C.border2} !important; border-radius: 0 !important; padding: 11px 0 !important; min-height: 44px; gap: 14px; cursor: pointer; }
 selector .e-n-tab-title-text { font-family: "${HEAD}", sans-serif; font-weight: 400; font-size: clamp(20px,2.6vw,30px); letter-spacing: .05em; text-transform: uppercase; line-height: 1.2; color: ${C.idle}; text-align: left; }
