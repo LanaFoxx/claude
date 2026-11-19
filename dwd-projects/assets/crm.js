@@ -5103,7 +5103,11 @@
 		if (t.closest('[data-adsmodal]')) { e.preventDefault(); S.modal = { type: 'ads' }; render(); return; }
 		if (t.closest('[data-spendmodal]')) { e.preventDefault(); S.modal = { type: 'spend' }; render(); return; }
 		if (t.closest('[data-adscopy]')) { var ta = app.querySelector('.dwdc-adscript'); if (ta) { ta.select(); (navigator.clipboard ? navigator.clipboard.writeText(ta.value) : Promise.reject()).then(function () { toast('Script copied'); }, function () { document.execCommand('copy'); toast('Script copied'); }); } return; }
-		if (t.closest('[data-mademodal]')) { e.preventDefault(); S.modal = { type: 'made' }; render(); return; }
+		if (t.closest('[data-mademodal]')) {
+			e.preventDefault(); S.modal = { type: 'made' }; render();
+			api('/made-month').then(function (x) { if (x && x.items) { S.madeM = x; render(); } }).catch(function () {}); // payments may have come in since the page loaded
+			return;
+		}
 		if (t.closest('[data-connmodal]')) { e.preventDefault(); S.modal = { type: 'connects' }; render(); return; }
 		if (t.closest('[data-owed]')) { e.preventDefault(); S.modal = { type: 'owed' }; render(); return; } // pop-up only, stay on this page
 		if ((el = t.closest('[data-month]'))) {

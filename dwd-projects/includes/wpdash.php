@@ -338,6 +338,10 @@ function dwdmm_made_month() {
 	usort( $out['items'], function ( $a, $b ) { return strcmp( $b['date'], $a['date'] ); } );
 	return $out;
 }
+add_action( 'rest_api_init', function () {
+	// Fresh numbers each time the "Made this month" pop-up opens (payments can arrive while Dream Desk is open).
+	register_rest_route( 'dwd/v1', '/crm/made-month', array( 'methods' => 'GET', 'permission_callback' => function () { return current_user_can( 'manage_options' ); }, 'callback' => function () { return dwdmm_made_month(); } ) );
+} );
 add_filter( 'dwdc_crm_payload', function ( $p ) {
 	$p['made_month'] = dwdmm_made_month();
 	return $p;
