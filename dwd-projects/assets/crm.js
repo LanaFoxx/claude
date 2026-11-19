@@ -194,17 +194,24 @@
 				.then(function () { render(); toast('Marked paid · Upwork money added to this month'); }).catch(function (er) { if (btn) { btn.disabled = false; } fail(er); });
 			return;
 		}
-		if (!gross) { save(id, { balance: '0', paymark: '' }, 'Marked paid'); return; }
+		if (!gross) { if (btn) { btn.disabled = true; } allPaid(id).then(function (x) { upsert(x); S.full[x.id] = x; return reload(); }).then(function () { render(); toast('Marked paid'); }).catch(function (er) { if (btn) { btn.disabled = false; } fail(er); }); return; }
 		var pm = ['Upwork', 'Stripe', 'PayPal'].indexOf(c.pay_method) > -1 ? c.pay_method : 'Other', up = pm === 'Upwork';
 		var amt = up ? Math.round(gross * 90) / 100 : gross;
 		// Upwork: the fee isn't always 10%, so the payment form opens (Upwork, pending in Upwork) for the real amount.
-		if (up) { S.modal = { type: 'pay', project: id, markpaid: 1, vals: { amount: String(amt), date: DWDC.today, upstage: 1, note: 'Upwork · final payment' } }; render(); return; }
+		if (up) { S.modal = { type: 'pay', project: id, markpaid: 1, vals: { amount: String(amt), date: DWDC.today, upstage: 0, note: 'Upwork · final payment' } }; render(); return; } // Paid = all paid: defaults to "in my bank"
 		if (btn) { btn.disabled = true; }
 		api('/contact/' + id + '/payment', 'POST', { amount: amt, method: pm, date: DWDC.today, note: 'Marked paid' + (up ? ' · after Upwork fee (' + money(gross) + ' gross)' : '') })
-			.then(function () { return api('/contact/' + id, 'POST', { balance: '0', paymark: '' }); })
+			.then(function () { return allPaid(id); })
 			.then(function (x) { upsert(x); S.full[x.id] = x; return reload(); })
-			.then(function () { render(); toast(up ? money(amt) + ' client paid · in Upwork until you tick In bank' : money(amt) + ' paid · added to this month'); })
+			.then(function () { render(); toast(money(amt) + ' paid · added to this month'); })
 			.catch(function (er) { if (btn) { btn.disabled = false; } fail(er); });
+	}
+	// "Paid" means the whole project is paid (Mike's rule): any of its payments still marked "in Upwork" move to
+	// In bank (counted today), nothing is left owed and the Pending mark comes off. Resolves with the saved project.
+	function allPaid(id) {
+		var c = S.full[id] || contact(id), held = c && (c.payments || []).some(function (p) { return p.status === 'held'; });
+		var rel = (held || (c && c.upwork_hold) || num(upOf(c).pend) || num(upOf(c).avail)) ? api('/contact/' + id + '/upwork-release', 'POST', {}) : Promise.resolve();
+		return rel.then(function () { return api('/contact/' + id, 'POST', { balance: '0', paymark: '' }); });
 	}
 	// What a project will actually deposit: Upwork money arrives after Upwork's 10% fee.
 	function netOf(c) { var b = num(c.balance); return c.pay_method === 'Upwork' ? Math.round(b * 90) / 100 : b; }
@@ -5593,8 +5600,8 @@
 			var pb = f.querySelector('.dwdc-farow .dwdc-btn'); pb.disabled = true;
 			var pMark = S.modal && S.modal.markpaid; // opened from "Paid": nothing left owed afterwards
 				api('/contact/' + data.project + '/payment', 'POST', data)
-					.then(function (x) { return pMark ? api('/contact/' + data.project, 'POST', { balance: '0', paymark: '' }) : x; })
-					.then(function (x) { upsert(x); if (S.full[x.id]) { S.full[x.id] = x; } S.modal = null; render(); toast(pMark ? 'Marked paid · ' + money(data.amount) + (data.method === 'Upwork' && data.stage !== 'bank' ? ' pending in Upwork' : '') : 'Payment of ' + money(data.amount) + ' logged'); }).catch(function (er) { pb.disabled = false; fail(er); });
+					.then(function (x) { if (pMark) { S.full[+data.project] = x; return allPaid(+data.project); } return x; })
+					.then(function (x) { upsert(x); if (S.full[x.id]) { S.full[x.id] = x; } S.modal = null; render(); toast(pMark ? 'Marked paid · everything on this project counts as paid' : 'Payment of ' + money(data.amount) + ' logged'); return pMark ? reload().then(render) : null; }).catch(function (er) { pb.disabled = false; fail(er); });
 		} else if (f.classList.contains('dwdc-moveform')) {
 			var mm = S.modal;
 			if (!mm.client && !(mm.newc && String(data.client_name || '').trim())) { toast('Pick a client or add a new one', true); return; }
