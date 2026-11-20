@@ -4396,7 +4396,7 @@
 				+ '<div class="dd-owbar">' + sortSel('owed') + (sortMine('owed') ? '<small>Drag rows to put them in your order</small>' : '') + '</div><div class="dd-owlist"' + sortAttr('owed') + '>' + ol.map(function (c) {
 					var k = clientOf(c), pm = c.paymark || '';
 					var tb = function (v, label) { return '<button type="button" class="dwdc-btn2 sm' + (pm === v ? ' on-' + v : '') + '" data-owmark="' + c.id + '" data-v="' + (pm === v ? '' : v) + '">' + label + '</button>'; };
-					return '<div class="dwdc-mo-r dwdc-owr" data-owgo="client/' + c.id + '" data-sid="' + c.id + '"><span class="d dd-owd">' + flagDot(c) + (c.deadline ? '<span>Due ' + fmt(c.deadline) + '</span>' : '') + '</span><span class="w"><b>' + esc(c.name) + (pm === 'pending' ? ' <em class="dwdc-pendtag pending">Pending</em>' : '') + '</b><small>' + esc([k ? k.name : c.person, num(c.price) ? 'Price ' + money(c.price) : '', c.list === 'complete' ? 'Completed' : ''].filter(Boolean).join(' · ')) + '</small></span><strong>' + money(c.balance) + payNext(c) + '</strong>'
+					return '<div class="dwdc-mo-r dwdc-owr" data-owgo="client/' + c.id + '" data-sid="' + c.id + '"><span class="d dd-owd"><span class="dd-flagw"><button type="button" class="dd-flag f-' + (c.flag || 'none') + '" data-owcycle="' + c.id + '" title="Click to change colour: green, yellow, red, none" aria-label="Colour mark: ' + (c.flag || 'none') + '"></button></span>' +(c.deadline ? '<span>Due ' + fmt(c.deadline) + '</span>' : '') + '</span><span class="w"><b>' + esc(c.name) + (pm === 'pending' ? ' <em class="dwdc-pendtag pending">Pending</em>' : '') + '</b><small>' + esc([k ? k.name : c.person, num(c.price) ? 'Price ' + money(c.price) : '', c.list === 'complete' ? 'Completed' : ''].filter(Boolean).join(' · ')) + '</small></span><strong>' + money(c.balance) + payNext(c) + '</strong>'
 						+ '<span class="dwdc-owacts">' + tb('pending', 'Pending') + '<button type="button" class="dwdc-btn sm" data-owpaid="' + c.id + '">Paid</button></span></div>';
 				}).join('') + '</div>' : emptyRow('Nothing is owed on open projects.');
 			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide">' + head('Projects', 'Owed', money(owed(ol))) + obody + '</div>';
@@ -5103,6 +5103,15 @@
 		if (t.closest('[data-moremoney]')) { S.moreMoney = !S.moreMoney; render(); return; }
 		if (t.closest('[data-winsmore]')) { S.winsMore = !S.winsMore; render(); return; }
 		if (t.closest('[data-connmore]')) { S.connMore = !S.connMore; render(); if (S.connMore) { setTimeout(function () { var c = document.querySelector('.dwdc-conn'); if (c) { c.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }, 50); } return; }
+		if ((el = t.closest('[data-owcycle]'))) { // Owed list: each click moves to the next colour (none → green → yellow → red → none)
+			e.preventDefault(); e.stopPropagation();
+			var ocid = +el.getAttribute('data-owcycle'), occ = contact(ocid), ORD = ['', 'green', 'yellow', 'red'], onx = ORD[(ORD.indexOf((occ && occ.flag) || '') + 1) % ORD.length];
+			if (occ) { occ.flag = onx; } if (S.full[ocid]) { S.full[ocid].flag = onx; }
+			el.className = 'dd-flag f-' + (onx || 'none'); el.setAttribute('aria-label', 'Colour mark: ' + (onx || 'none'));
+			clearTimeout(S.owcT && S.owcT[ocid]); S.owcT = S.owcT || {};
+			S.owcT[ocid] = setTimeout(function () { api('/contact/' + ocid, 'POST', { flag: (contact(ocid) || {}).flag || '' }).then(function (x) { upsert(x); }).catch(fail); }, 600); // saves once you stop clicking
+			return;
+		}
 		if ((el = t.closest('[data-flagset]'))) { e.preventDefault(); e.stopPropagation(); var fp = el.getAttribute('data-flagset').split(':'), fc = contact(+fp[0]); S.flagOpen = 0; if (fc) { fc.flag = fp[1]; } render(); api('/contact/' + fp[0], 'POST', { flag: fp[1] }).then(function (x) { upsert(x); }).catch(fail); return; }
 		if ((el = t.closest('[data-flag]'))) { e.preventDefault(); e.stopPropagation(); var fid = +el.getAttribute('data-flag'); S.flagOpen = S.flagOpen === fid ? 0 : fid; render(); placeFlagMenu(); return; }
 		if (S.flagOpen && !t.closest('.dd-flagm')) { S.flagOpen = 0; render(); }
