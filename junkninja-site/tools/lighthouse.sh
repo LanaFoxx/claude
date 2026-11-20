@@ -1,8 +1,8 @@
 #!/bin/bash
 # Lighthouse (mobile + desktop) for one page of the site; prints category scores and core metrics.
-# usage: SITE=https://71e1952e3c.nxcli.io tools/lighthouse.sh /about-us/ [tag]
+# usage: SITE=https://junkninjallc.com tools/lighthouse.sh /about-us/ [tag]
 # Needs `npm i lighthouse@12` (run from a folder where it is installed) and a Chromium at CHROME_PATH.
-SITE="${SITE:-https://71e1952e3c.nxcli.io}"; P="${1:-/}"; T="${2:-lh}"
+SITE="${SITE:-https://junkninjallc.com}"; P="${1:-/}"; T="${2:-lh}"
 CHROME_PATH="${CHROME_PATH:-/opt/pw-browsers/chromium}"
 FLAGS="--headless=new --no-sandbox${HTTPS_PROXY:+ --proxy-server=$HTTPS_PROXY}"
 # Test the clean URL (as PageSpeed Insights does) so the host cache serves it from its page cache; warm it first.

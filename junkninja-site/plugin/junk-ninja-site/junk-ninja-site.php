@@ -121,7 +121,7 @@ add_action( 'wp_head', function () {
 
 // Latin, normal-style woff2 files of the locally hosted Google Fonts (written by Elementor).
 function jn_font_preloads() {
-	$found = get_transient( 'jn_font_preloads' );
+	$found = get_transient( 'jn_font_preloads_' . md5( home_url() ) );
 	if ( is_array( $found ) ) {
 		return $found;
 	}
@@ -142,7 +142,7 @@ function jn_font_preloads() {
 			}
 		}
 	}
-	set_transient( 'jn_font_preloads', $found, DAY_IN_SECONDS );
+	set_transient( 'jn_font_preloads_' . md5( home_url() ), $found, DAY_IN_SECONDS );
 	return $found;
 }
 

@@ -202,6 +202,32 @@ const gallery = (m) => band(C.white, [
 ], { anchor: 'gallery' });
 
 /* 8. REVIEWS ---------------------------------------------------------- */
+
+// Restyles the Trustindex Google reviews grid as the design's navy review cards.
+const REVIEWS_CSS = `selector .ti-widget { opacity: 1 !important; height: auto !important; overflow: visible !important; font-family: "${BODY}", sans-serif !important; }
+selector .ti-widget-container { margin: 0 !important; padding: 0 !important; }
+selector .ti-reviews-container-wrapper { display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 22px 16px !important; margin: 0 !important; padding: 0 0 6px 6px !important; }
+selector .ti-review-item { width: auto !important; max-width: none !important; flex: none !important; padding: 0 !important; margin: 0 !important; display: flex !important; }
+selector .ti-review-item > .ti-inner { flex: 1; display: flex !important; flex-direction: column; gap: 14px; margin: 0 !important; padding: 26px !important; background: ${C.navy} !important; border: 0 !important; border-radius: 8px !important; box-shadow: -6px 6px 0 ${C.cyan} !important; color: #fff !important; }
+selector .ti-review-header { order: 3; display: flex !important; align-items: center; gap: 10px; margin: 0 !important; padding: 0 !important; }
+selector .ti-platform-icon, selector .ti-verified-review, selector .ti-date { display: none !important; }
+selector .ti-profile-img img { width: 36px !important; height: 36px !important; border-radius: 50%; }
+selector .ti-profile-details { padding: 0 !important; }
+selector .ti-name { font-family: "${BODY}", sans-serif !important; font-weight: 800 !important; font-size: 17px !important; color: #fff !important; }
+selector .ti-stars { order: 1; display: flex !important; gap: 4px; height: auto !important; margin: 0 !important; position: static !important; }
+selector .ti-review-item:nth-child(n+7) { display: none !important; }
+selector .ti-load-more-reviews-container { display: none !important; }
+@media (max-width: 1180px) { selector .ti-reviews-container-wrapper { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; } }
+@media (max-width: 760px) { selector .ti-reviews-container-wrapper { grid-template-columns: 1fr !important; } selector .ti-review-item:nth-child(n+4) { display: none !important; } }
+selector .ti-stars .ti-star { width: 28px !important; height: 28px !important; filter: brightness(0) saturate(100%) invert(72%) sepia(52%) saturate(1056%) hue-rotate(137deg) brightness(93%) contrast(87%); }
+selector .ti-review-content { order: 2; flex: 1; margin: 0 !important; font-family: "${BODY}", sans-serif !important; font-size: 17px !important; line-height: 1.55 !important; color: #fff !important; height: auto !important; -webkit-line-clamp: 6; }
+selector .ti-read-more { order: 2; margin: -6px 0 0 !important; font-family: "${BODY}", sans-serif !important; font-size: 15px !important; font-weight: 700 !important; }
+selector .ti-widget .ti-read-more, selector .ti-widget .ti-read-more *, selector .ti-widget .ti-read-more span { color: ${C.cyan} !important; }
+selector .ti-stars { margin-bottom: 4px !important; }
+selector .ti-read-more span { color: ${C.cyan} !important; }
+selector .ti-load-more-reviews-container { display: flex; justify-content: center; margin-top: 28px !important; }
+selector .ti-load-more-reviews-button { font-family: "${BODY}", sans-serif !important; font-weight: 800 !important; font-size: 15px !important; letter-spacing: .03em; text-transform: uppercase; color: ${C.navy} !important; background: transparent !important; border: 2px solid ${C.navy} !important; border-radius: 6px !important; padding: 14px 26px !important; }
+selector .ti-load-more-reviews-button:hover { background: #fff !important; }`;
 const reviewCard = (n) => container({
   content_width: 'full', flex_direction: 'column', flex_gap: gap(14), padding: box(26),
   background_background: 'classic', background_color: C.navy, border_radius: box(8),
@@ -213,8 +239,8 @@ const reviewCard = (n) => container({
 ]);
 const reviews = () => band(C.surface, [
   stack([eyebrow('Google reviews', { align: 'center' }), H2('What Our Customers Say', { align: 'center' })], { gap: 12, align: 'center' }),
-  grid([1, 2, 3].map(reviewCard), autoFit(280), { gap: 16, align: 'stretch' }),
-  heading('Read our reviews on Google →', 'p', { family: BODY, size: 17, weight: 700, align: 'center', link: '#reviews', settings: { custom_css: 'selector a { text-decoration: underline; } selector a:hover { color: #0E8A99; }' } }),
+  widget('shortcode', { shortcode: '[trustindex no-registration=google]', _title: 'Google reviews (Trustindex)', _css_classes: 'jn-reviews', custom_css: REVIEWS_CSS }),
+  heading('Read our reviews on Google →', 'p', { family: BODY, size: 17, weight: 700, align: 'center', link: 'https://www.google.com/maps?cid=4838006495923928912', settings: { custom_css: 'selector a { text-decoration: underline; } selector a:hover { color: #0E8A99; }' } }),
 ], { anchor: 'reviews' });
 
 /* 9. SERVICE AREAS ---------------------------------------------------- */
