@@ -1144,3 +1144,10 @@ body:has(.dwdc-addm) #dwdc-askfab { display: none !important; }
 
 /* "#2" next to an amount: which payment of the project it is */
 .dd .dd-payno { display: inline-block; margin-left: 6px; padding: 1px 6px; border-radius: 6px; font: 600 11px/1.5 var(--font); font-style: normal; color: var(--text-2, #aab); background: var(--hover, rgba(255,255,255,.08)); vertical-align: 2px; }
+
+/* Made this month / this year: side by side, one line each */
+.dd-stats > a.dd-made.dd-half span, .dd-stats > a.dd-made.dd-half b { white-space: nowrap; }
+.dd-stats > a.dd-made.dd-half { outline: none; }
+.dd-stats > a.dd-made.dd-half { min-width: 0; flex: 0 0 50%; max-width: 50%; gap: 8px; }
+.dd-stats > a.dd-made.dd-half > b { font-size: 17px; }
+.dd-stats > a.dd-half:not(.dd-made) + a.dd-made.dd-half { border-left: 0; } /* first of the Made pair starts a new row */

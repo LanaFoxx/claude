@@ -1505,7 +1505,10 @@
 				var A = S.ads || {}, G = A.google, K = A.connects || {}, mn = new Date(DWDC.today + 'T12:00:00').toLocaleDateString('en-US', { month: 'long' });
 				// Made this month: Upwork money that reached the bank, plus PayPal and Stripe (wpdash.php: dwdmm_made_month).
 				var MM = S.madeM || { total: 0 }, mmParts = ['Upwork', 'PayPal', 'Stripe', 'Other'].filter(function (k) { return num(MM[k]); }).map(function (k) { return k + ' ' + money(MM[k]); }).join(' · ');
-				return '<a class="more dd-made" href="#money" data-mademodal><span>Made this month<small>' + mn + (mmParts ? ' · ' + mmParts : ' · in your bank') + '</small></span><b>' + money(MM.total || 0) + '</b></a>'
+				// Left: this month (opens the line items). Right: this year so far, same rules (Money page totals).
+				var yr = DWDC.today.slice(0, 4), YO = (S.money || {})[yr] || {}, ytot = ['Stripe', 'PayPal', 'Upwork', 'Other'].reduce(function (a, k) { return a + (+YO[k] || 0); }, 0);
+				return '<a class="more dd-made dd-half" href="#money" data-mademodal title="' + esc(mmParts) + '"><span>Made in ' + mn.slice(0, 3) + '</span><b>' + money(MM.total || 0) + '</b></a>'
+					+ '<a class="more dd-made dd-half" href="#money"><span>Made in ' + yr + '</span><b>' + money(ytot) + '</b></a>'
 					+ '<a class="more" href="#money" data-connmodal><span>Connects spent<small>' + mn + ' · last month ' + money(K.lastmonth || 0) + '</small></span><b>' + money(K.month || 0) + '</b></a>'
 					+ '<a class="more" href="#money" data-adsmodal><span>Google Ads spent<small>' + (G ? mn + ' · ' + money(G.week.cost) + ' this week' : 'Not connected') + '</small></span><b>' + (G ? money(G.month.cost) : '—') + '</b></a>'
 					+ (S.tax ? '<a class="more" href="#money"><span>Tax set-aside<small>' + (S.tax.held == null ? S.tax.pct + '% of Q' + S.tax.quarter + ' income' + (S.tax.next ? ' · due ' + fmt(S.tax.next.date) : '') : S.tax.held >= S.tax.need ? 'Covered · ' + money(S.tax.held) + ' set aside' : 'Short ' + money(S.tax.need - S.tax.held)) + '</small></span><b>' + money(S.tax.need) + '</b></a>' : '');
