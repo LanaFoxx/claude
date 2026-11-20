@@ -60,17 +60,26 @@ function dwdio_overview( $year ) {
 	// 2. CA Tax Courses management: Zelle transfers from SD TAX SERVICE in the bank feed.
 	// One paycheck ($3,500) sometimes arrives in two transfers (e.g. $2,500 + $1,000), so transfers are grouped by
 	// pay date and Mom's $750 comes off once per paycheck. Bonuses have no share taken; reimbursements are not income.
-	$bankMin = '';
-	$tr      = array();
+	$bankMin    = '';
+	$bankMonths = array();
+	$tr         = array();
 	$tx      = function_exists( 'dwdbk_get' ) ? (array) ( dwdbk_get()['tx'] ?? array() ) : array();
 	foreach ( $tx as $t ) {
 		$d = (string) ( $t['date'] ?? '' );
 		if ( $d && ( '' === $bankMin || $d < $bankMin ) ) {
 			$bankMin = $d;
 		}
+		if ( $d ) {
+			$bankMonths[ substr( $d, 0, 7 ) ] = ( $bankMonths[ substr( $d, 0, 7 ) ] ?? 0 ) + 1; // how many bank transactions each month has (shows gaps in the feed)
+		}
 		$desc = (string) ( $t['desc'] ?? '' );
 		$amt  = (float) ( $t['amt'] ?? 0 );
-		if ( $amt <= 0 || false === stripos( $desc, (string) $set['match'] ) || preg_match( '/web\s*design|website/i', $desc ) || ! preg_match( '/^(\d{4})-(\d{2})-(\d{2})/', $d, $dm ) ) {
+		// SD TAX SERVICE by name, or (the bank often drops the sender's name) a Zelle with a "Pay Date / Pay Day" memo,
+		// or a nameless, memo-less Zelle of exactly one paycheck ($3,500).
+		$nameless = (bool) preg_match( '/Zelle payment from\s+(for "|Conf#)/i', $desc );
+		$payMemo  = (bool) preg_match( '/for "\s*pa\w*\s*da(te|y|tw)?\b/i', $desc );
+		$isSd     = false !== stripos( $desc, (string) $set['match'] ) || ( $nameless && $payMemo ) || ( $nameless && ! preg_match( '/for "/', $desc ) && abs( $amt - 3500 ) < 0.01 );
+		if ( $amt <= 0 || ! $isSd || preg_match( '/web\s*design|website/i', $desc ) || ! preg_match( '/^(\d{4})-(\d{2})-(\d{2})/', $d, $dm ) ) {
 			continue;
 		}
 		$years[ $dm[1] ] = 1;
@@ -106,9 +115,10 @@ function dwdio_overview( $year ) {
 			continue;
 		}
 		$mom = 0;
-		if ( 'pay' === $x['kind'] && ! isset( $momTaken[ $x['key'] ] ) ) {
-			$mom                    = min( $x['amt'], (float) $set['mom'] );
-			$momTaken[ $x['key'] ] = 1;
+		if ( 'pay' === $x['kind'] ) { // Mom's $750 per paycheck, taken from its parts in date order until it's covered
+			$left                   = (float) $set['mom'] - ( $momTaken[ $x['key'] ] ?? 0 );
+			$mom                    = max( 0, min( $x['amt'], $left ) );
+			$momTaken[ $x['key'] ] = ( $momTaken[ $x['key'] ] ?? 0 ) + $mom;
 		}
 		$m = (int) substr( $x['date'], 5, 2 );
 		$mg[ $m ]['gross'] += $x['amt'];
@@ -142,11 +152,24 @@ function dwdio_overview( $year ) {
 		'total'     => round( $tot['web']['total'] + $tot['mgmt']['net'], 2 ),
 		'mgmt'      => $items,
 		'bank_from' => $bankMin,
+		'bank_months' => (object) $bankMonths,
 		'mom'       => (float) $set['mom'],
 	);
 }
 
 add_action( 'rest_api_init', function () {
+	// Read-only: bank-feed money coming in whose description matches a word (e.g. who sent a Zelle).
+	register_rest_route( 'dwd/v1', '/crm/income/search', array( 'methods' => 'GET', 'permission_callback' => function () { return current_user_can( 'manage_options' ); }, 'callback' => function ( $r ) {
+		$q   = (string) $r->get_param( 'q' );
+		$out = array();
+		foreach ( (array) ( function_exists( 'dwdbk_get' ) ? dwdbk_get()['tx'] ?? array() : array() ) as $t ) {
+			if ( (float) ( $t['amt'] ?? 0 ) > 0 && '' !== $q && preg_match( '/' . preg_quote( $q, '/' ) . '/i', (string) ( $t['desc'] ?? '' ) ) ) {
+				$out[] = array( 'date' => $t['date'], 'amt' => $t['amt'], 'desc' => $t['desc'] );
+			}
+		}
+		usort( $out, function ( $a, $b ) { return strcmp( $a['date'], $b['date'] ); } );
+		return $out;
+	} ) );
 	register_rest_route( 'dwd/v1', '/crm/income', array( 'methods' => 'GET', 'permission_callback' => function () { return current_user_can( 'manage_options' ); }, 'callback' => function ( $r ) {
 		return dwdio_overview( (string) $r->get_param( 'year' ) );
 	} ) );

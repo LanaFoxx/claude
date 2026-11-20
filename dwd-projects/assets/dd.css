@@ -1208,3 +1208,6 @@ body:has(.dwdc-addm) #dwdc-askfab { display: none !important; }
 .dd-hinc-s span { font-size: 11.5px; color: var(--text-2, var(--muted)); line-height: 1.4; }
 .dd-hinc .dd-inc-tr.h { border-top: 1px solid var(--border); }
 @media (max-width: 700px) { .dd-hinc-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } .dd-hinc-s:nth-child(3) { border-left: 0; } .dd-hinc-s:nth-child(n+3) { border-top: 1px solid var(--border); } }
+.dd-hinc .dd-ch { gap: 10px; }
+.dd-hinc-yr { display: inline-flex; align-items: center; gap: 2px; margin-left: auto; }
+.dd-hinc-yr b { font-size: 13px; min-width: 38px; text-align: center; }

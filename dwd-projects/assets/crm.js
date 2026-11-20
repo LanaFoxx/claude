@@ -2663,20 +2663,25 @@
 	// CA Tax Courses management = SD TAX SERVICE pay transfers, minus Mom's $750 share of each paycheck.
 	// Home: the Income Overview stats and month table in one box (same numbers as the Income overview page).
 	function homeIncomeBox() {
-		var yr = DWDC.today.slice(0, 4), D = S.income && S.income[yr];
+		var thisYr = DWDC.today.slice(0, 4), yr = S.hincYear || thisYr, D = S.income && S.income[yr];
 		if (!D) {
 			if (!S.incLoading) { S.incLoading = true; api('/income?year=' + yr).then(function (x) { S.income = S.income || {}; S.income[yr] = x; S.incLoading = false; render(); }).catch(function () { S.incLoading = false; }); }
 			return '<section class="dd-card dd-hinc"><header class="dd-ch"><div class="dd-ch-t"><h2>Income overview</h2><span>Loading…</span></div></header></section>';
 		}
 		var MN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], W = D.totals.web, G = D.totals.mgmt;
-		var curM = +DWDC.today.slice(5, 7), months = D.months.slice(0, curM), avg = months.length ? D.total / months.length : 0, now = D.months[curM - 1] || { total: 0 };
+		var past = yr !== thisYr, firstM = 0;
+		D.months.forEach(function (m, i) { if (!firstM && m.total) { firstM = i + 1; } });
+		var curM = past ? 12 : +DWDC.today.slice(5, 7), months = D.months.slice(past ? Math.max(0, firstM - 1) : 0, curM), avg = months.length ? D.total / months.length : 0, now = D.months[curM - 1] || { total: 0 };
+		var yrs = D.years || [yr], yi = yrs.indexOf(yr);
+		var ysel = '<span class="dd-hinc-yr">' + (yi < yrs.length - 1 ? '<button type="button" class="dd-ibtn" data-hincyear="' + yrs[yi + 1] + '" title="' + yrs[yi + 1] + '" aria-label="Show ' + yrs[yi + 1] + '">' + lu('chevron-left', 15) + '</button>' : '') + '<b>' + yr + '</b>' + (yi > 0 ? '<button type="button" class="dd-ibtn" data-hincyear="' + yrs[yi - 1] + '" title="' + yrs[yi - 1] + '" aria-label="Show ' + yrs[yi - 1] + '">' + lu('chevron-right', 15) + '</button>' : '') + '</span>';
 		var pc = function (v) { return D.total ? Math.round(v / D.total * 100) + '%' : ''; };
 		var st = function (label, val, sub) { return '<div class="dd-hinc-s"><small>' + label + '</small><b>' + val + '</b><span>' + sub + '</span></div>'; };
-		return '<section class="dd-card dd-hinc"><header class="dd-ch"><div class="dd-ch-t"><h2>Income overview</h2><span>' + yr + ' · what you keep</span></div><a href="#income">Open</a></header>'
+		return '<section class="dd-card dd-hinc"><header class="dd-ch"><div class="dd-ch-t"><h2>Income overview</h2><span>What you keep</span></div>' + ysel + '<a href="#income" data-incopen="' + yr + '">Open</a></header>'
 			+ '<div class="dd-hinc-stats">' + st('Total ' + yr, money(D.total), 'Average month ' + money(avg))
 			+ st('<i class="dd-inc-k web"></i>Web design', money(W.total), pc(W.total) + ' of income')
 			+ st('<i class="dd-inc-k tax"></i>CA Tax Courses', money(G.net), money(G.gross) + ' paid · ' + money(G.mom) + ' to Mom')
-			+ st(MN[curM - 1] + ' so far', money(now.total), 'Web ' + money((now.web || {}).total) + ' · Tax ' + money((now.mgmt || {}).net)) + '</div>'
+			+ (past ? st('Best month', money(Math.max.apply(null, months.map(function (m) { return m.total; }).concat([0]))), (function () { var b = months.slice().sort(function (a, c) { return c.total - a.total; })[0]; return b ? MN[b.m - 1] + ' ' + yr : ''; })())
+				: st(MN[curM - 1] + ' so far', money(now.total), 'Web ' + money((now.web || {}).total) + ' · Tax ' + money((now.mgmt || {}).net))) + '</div>'
 			+ '<div class="dd-inc-tr h"><span>Month</span><span>Web design</span><span>CA Tax Courses</span><span>Total</span></div>'
 			+ months.slice().reverse().map(function (m) { return '<div class="dd-inc-tr"><span>' + MN[m.m - 1] + '</span><span>' + money(m.web.total) + '</span><span>' + money(m.mgmt.net) + '</span><span><b>' + money(m.total) + '</b></span></div>'; }).join('')
 			+ '<div class="dd-inc-tr f"><span>' + yr + '</span><span>' + money(W.total) + '</span><span>' + money(G.net) + '</span><span><b>' + money(D.total) + '</b></span></div></section>';
@@ -5181,6 +5186,8 @@
 		if (t.closest('[data-spendmodal]')) { e.preventDefault(); S.modal = { type: 'spend' }; render(); return; }
 		if (t.closest('[data-adscopy]')) { var ta = app.querySelector('.dwdc-adscript'); if (ta) { ta.select(); (navigator.clipboard ? navigator.clipboard.writeText(ta.value) : Promise.reject()).then(function () { toast('Script copied'); }, function () { document.execCommand('copy'); toast('Script copied'); }); } return; }
 		if ((el = t.closest('[data-incyear]'))) { S.incYear = el.getAttribute('data-incyear'); render(); return; }
+		if ((el = t.closest('[data-hincyear]'))) { S.hincYear = el.getAttribute('data-hincyear'); render(); return; }
+		if ((el = t.closest('[data-incopen]'))) { S.incYear = el.getAttribute('data-incopen'); } // the page opens on the year the box shows
 		if (t.closest('[data-mademodal]')) {
 			e.preventDefault(); S.modal = { type: 'made' }; render();
 			api('/made-month').then(function (x) { if (x && x.items) { S.madeM = x; render(); } }).catch(function () {}); // payments may have come in since the page loaded
