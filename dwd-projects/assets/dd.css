@@ -1195,3 +1195,16 @@ body:has(.dwdc-addm) #dwdc-askfab { display: none !important; }
 .dd-inc-col { padding-bottom: 22px; box-sizing: border-box; }
 .dd-inc-col b { order: -1; }
 .dd-inc-grid { margin-bottom: 0; }
+
+/* Home: Income overview box */
+.dd-hinc { --inc-web: #4F6BF0; --inc-tax: #28A06D; overflow: hidden; }
+.dd-hinc .dd-inc-k.web { background: var(--inc-web); }
+.dd-hinc .dd-inc-k.tax { background: var(--inc-tax); }
+.dd-hinc-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--border); }
+.dd-hinc-s { padding: 14px 16px; display: grid; gap: 3px; align-content: start; min-width: 0; }
+.dd-hinc-s + .dd-hinc-s { border-left: 1px solid var(--border); }
+.dd-hinc-s small { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-2, var(--muted)); }
+.dd-hinc-s b { font-size: 20px; font-weight: 600; }
+.dd-hinc-s span { font-size: 11.5px; color: var(--text-2, var(--muted)); line-height: 1.4; }
+.dd-hinc .dd-inc-tr.h { border-top: 1px solid var(--border); }
+@media (max-width: 700px) { .dd-hinc-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } .dd-hinc-s:nth-child(3) { border-left: 0; } .dd-hinc-s:nth-child(n+3) { border-top: 1px solid var(--border); } }

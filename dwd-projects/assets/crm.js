@@ -1522,7 +1522,7 @@
 		};
 		var todos = '<section class="dd-card"><header class="dd-ch"><div class="dd-ch-t"><h2>To-dos</h2></div><div class="dd-ch-a"><button type="button" class="dd-hadd-btn" data-haddtog>' + lu('plus', 14) + 'Add</button><a href="#todos">All ' + all.length + '</a></div></header>'
 			+ (S.homeAdd ? '<form class="dd-hadd"><input name="text" placeholder="New to-do… e.g. Call Shane next Thursday at 4" autocomplete="off" required data-lpignore="true" data-1p-ignore><button class="dd-btn primary">Add</button></form>' : '') + (rows.length ? rows.map(trow).join('') : '<p class="dd-empty-l">Nothing overdue or due today.</p>') + '</section>';
-		return '<div class="dd-home"><div class="dd-home-l">' + waitBox() + sched + act + '</div><div class="dd-home-r">' + (S.health && S.health.ok && !S.health.setup ? '' : healthStrip()) + stats + homeMailBox() + zoomBox('home') + '</div></div>';
+		return '<div class="dd-home"><div class="dd-home-l">' + waitBox() + sched + act + homeIncomeBox() + '</div><div class="dd-home-r">' + (S.health && S.health.ok && !S.health.setup ? '' : healthStrip()) + stats + homeMailBox() + zoomBox('home') + '</div></div>';
 	}
 	// All clients (design 4.2): toolbar, chips, grouped table; rows stack on phones.
 	var DD_TONE = { Project: 'info', Hosting: 'success', Lead: 'warning', 'Past client': 'neutral' };
@@ -2661,6 +2661,26 @@
 	// Income Overview: all business income for a year, in two lines of business (includes/income.php).
 	// Web design = every project payment (Upwork after fees, Stripe, PayPal, Zelle/check for web work).
 	// CA Tax Courses management = SD TAX SERVICE pay transfers, minus Mom's $750 share of each paycheck.
+	// Home: the Income Overview stats and month table in one box (same numbers as the Income overview page).
+	function homeIncomeBox() {
+		var yr = DWDC.today.slice(0, 4), D = S.income && S.income[yr];
+		if (!D) {
+			if (!S.incLoading) { S.incLoading = true; api('/income?year=' + yr).then(function (x) { S.income = S.income || {}; S.income[yr] = x; S.incLoading = false; render(); }).catch(function () { S.incLoading = false; }); }
+			return '<section class="dd-card dd-hinc"><header class="dd-ch"><div class="dd-ch-t"><h2>Income overview</h2><span>Loading…</span></div></header></section>';
+		}
+		var MN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], W = D.totals.web, G = D.totals.mgmt;
+		var curM = +DWDC.today.slice(5, 7), months = D.months.slice(0, curM), avg = months.length ? D.total / months.length : 0, now = D.months[curM - 1] || { total: 0 };
+		var pc = function (v) { return D.total ? Math.round(v / D.total * 100) + '%' : ''; };
+		var st = function (label, val, sub) { return '<div class="dd-hinc-s"><small>' + label + '</small><b>' + val + '</b><span>' + sub + '</span></div>'; };
+		return '<section class="dd-card dd-hinc"><header class="dd-ch"><div class="dd-ch-t"><h2>Income overview</h2><span>' + yr + ' · what you keep</span></div><a href="#income">Open</a></header>'
+			+ '<div class="dd-hinc-stats">' + st('Total ' + yr, money(D.total), 'Average month ' + money(avg))
+			+ st('<i class="dd-inc-k web"></i>Web design', money(W.total), pc(W.total) + ' of income')
+			+ st('<i class="dd-inc-k tax"></i>CA Tax Courses', money(G.net), money(G.gross) + ' paid · ' + money(G.mom) + ' to Mom')
+			+ st(MN[curM - 1] + ' so far', money(now.total), 'Web ' + money((now.web || {}).total) + ' · Tax ' + money((now.mgmt || {}).net)) + '</div>'
+			+ '<div class="dd-inc-tr h"><span>Month</span><span>Web design</span><span>CA Tax Courses</span><span>Total</span></div>'
+			+ months.slice().reverse().map(function (m) { return '<div class="dd-inc-tr"><span>' + MN[m.m - 1] + '</span><span>' + money(m.web.total) + '</span><span>' + money(m.mgmt.net) + '</span><span><b>' + money(m.total) + '</b></span></div>'; }).join('')
+			+ '<div class="dd-inc-tr f"><span>' + yr + '</span><span>' + money(W.total) + '</span><span>' + money(G.net) + '</span><span><b>' + money(D.total) + '</b></span></div></section>';
+	}
 	function incomeView() {
 		var yr = S.incYear || DWDC.today.slice(0, 4), D = S.income && S.income[yr];
 		if (!D) {
