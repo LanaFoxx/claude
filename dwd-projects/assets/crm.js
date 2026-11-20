@@ -1219,7 +1219,7 @@
 	function waitCell(c) {
 		var w = c.wait;
 		if (!w || !w.who) { return '<i>—</i>'; }
-		if (w.who === 'you') { return '<span class="dd-wcell you"><b>Waiting on you</b><small>' + waitHow(w) + ' · ' + waitAge(w) + '</small></span>'; }
+		if (w.who === 'you') { return '<i>—</i>'; } // "client emailed you" isn't flagged (Mike reads his email all day)
 		return '<span class="dd-wcell' + (isQuiet(c) ? ' quiet' : '') + '"><b>Waiting on client</b><small>' + waitAge(w) + (isQuiet(c) ? ' · follow up' : '') + '</small></span>';
 	}
 	function waitSet(id, act) {
@@ -1255,7 +1255,8 @@
 	function waitBox() {
 		var open = S.contacts.filter(function (c) { return c.wait && c.wait.who; });
 		var old = function (a, b) { return a.wait.since < b.wait.since ? -1 : 1; };
-		var you = open.filter(function (c) { return c.wait.who === 'you'; }).sort(old), quiet = open.filter(isQuiet).sort(old);
+		// "Waiting on your reply" (a client emailed you) is not shown: Mike reads his email all day (Nov 20).
+		var you = [], quiet = open.filter(isQuiet).sort(old);
 		var row = function (c, quietRow) {
 			var w = c.wait, k = clientOf(c), em = c.email || (k && k.email);
 			var sub = [quietRow ? 'You wrote ' + w.days + ' days ago' : waitHow(w) + ' ' + waitAge(w) + ' ago', k ? k.name : (c.person || '')].filter(Boolean).map(esc).join(' · ');
