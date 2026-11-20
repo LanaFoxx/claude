@@ -129,8 +129,24 @@ function dwdio_overview( $year ) {
 	}
 	usort( $items, function ( $a, $b ) { return strcmp( $b['date'], $a['date'] ); } );
 
+	// 3. Mojo's Flight School: Mike's share as part owner (paid by check, usually each quarter), logged by hand.
+	$mj      = array_fill( 1, 12, 0 );
+	$mjItems = array();
+	foreach ( (array) get_option( 'dwdio_manual', array() ) as $id => $x ) {
+		if ( ! is_array( $x ) || 'mojos' !== ( $x['line'] ?? '' ) || ! preg_match( '/^(\d{4})-(\d{2})/', (string) ( $x['date'] ?? '' ), $dm ) ) {
+			continue;
+		}
+		$years[ $dm[1] ] = 1;
+		if ( $dm[1] !== $year ) {
+			continue;
+		}
+		$mj[ (int) $dm[2] ] += (float) $x['amount'];
+		$mjItems[]           = array( 'id' => (string) $id, 'date' => $x['date'], 'amount' => round( (float) $x['amount'], 2 ), 'note' => (string) ( $x['note'] ?? '' ) );
+	}
+	usort( $mjItems, function ( $a, $b ) { return strcmp( $b['date'], $a['date'] ); } );
+
 	$months = array();
-	$tot    = array( 'web' => $blank(), 'mgmt' => array( 'gross' => 0, 'mom' => 0, 'net' => 0, 'count' => 0 ) );
+	$tot    = array( 'web' => $blank(), 'mgmt' => array( 'gross' => 0, 'mom' => 0, 'net' => 0, 'count' => 0 ), 'mojos' => 0 );
 	for ( $m = 1; $m <= 12; $m++ ) {
 		foreach ( $web[ $m ] as $k => $v ) {
 			$web[ $m ][ $k ]   = round( $v, 2 );
@@ -140,7 +156,8 @@ function dwdio_overview( $year ) {
 			$mg[ $m ][ $k ]     = round( $v, 2 );
 			$tot['mgmt'][ $k ] += $v;
 		}
-		$months[] = array( 'm' => $m, 'web' => $web[ $m ], 'mgmt' => $mg[ $m ], 'total' => round( $web[ $m ]['total'] + $mg[ $m ]['net'], 2 ) );
+		$tot['mojos'] += $mj[ $m ];
+		$months[]      = array( 'm' => $m, 'web' => $web[ $m ], 'mgmt' => $mg[ $m ], 'mojos' => round( $mj[ $m ], 2 ), 'total' => round( $web[ $m ]['total'] + $mg[ $m ]['net'] + $mj[ $m ], 2 ) );
 	}
 	array_walk_recursive( $tot, function ( &$v ) { $v = round( $v, 2 ); } );
 	krsort( $years );
@@ -149,8 +166,9 @@ function dwdio_overview( $year ) {
 		'years'     => array_map( 'strval', array_keys( $years ) ),
 		'months'    => $months,
 		'totals'    => $tot,
-		'total'     => round( $tot['web']['total'] + $tot['mgmt']['net'], 2 ),
+		'total'     => round( $tot['web']['total'] + $tot['mgmt']['net'] + $tot['mojos'], 2 ),
 		'mgmt'      => $items,
+		'mojos'     => $mjItems,
 		'bank_from' => $bankMin,
 		'bank_months' => (object) $bankMonths,
 		'mom'       => (float) $set['mom'],
@@ -170,6 +188,29 @@ add_action( 'rest_api_init', function () {
 		usort( $out, function ( $a, $b ) { return strcmp( $a['date'], $b['date'] ); } );
 		return $out;
 	} ) );
+	// Log or remove a Mojo's Flight School payment (POST {date, amount, note}; DELETE ?id=).
+	register_rest_route( 'dwd/v1', '/crm/income/mojos', array(
+		array( 'methods' => 'POST', 'permission_callback' => function () { return current_user_can( 'manage_options' ); }, 'callback' => function ( $r ) {
+			$amt  = round( (float) preg_replace( '/[^\d.]/', '', (string) $r->get_param( 'amount' ) ), 2 );
+			$date = (string) $r->get_param( 'date' );
+			if ( $amt <= 0 || ! preg_match( '/^\d{4}-\d{2}-\d{2}$/', $date ) ) {
+				return new WP_Error( 'dwdio', 'Enter the date and the amount.', array( 'status' => 400 ) );
+			}
+			$all = (array) get_option( 'dwdio_manual', array() );
+			$id  = 'm' . substr( md5( uniqid( '', true ) ), 0, 8 );
+			$all[ $id ] = array( 'line' => 'mojos', 'date' => $date, 'amount' => $amt, 'note' => sanitize_text_field( (string) $r->get_param( 'note' ) ), 'added' => current_time( 'mysql' ) );
+			update_option( 'dwdio_manual', $all, false );
+			return dwdio_overview( substr( $date, 0, 4 ) );
+		} ),
+		array( 'methods' => 'DELETE', 'permission_callback' => function () { return current_user_can( 'manage_options' ); }, 'callback' => function ( $r ) {
+			$all = (array) get_option( 'dwdio_manual', array() );
+			$id  = (string) $r->get_param( 'id' );
+			$yr  = isset( $all[ $id ] ) ? substr( (string) $all[ $id ]['date'], 0, 4 ) : current_time( 'Y' );
+			unset( $all[ $id ] );
+			update_option( 'dwdio_manual', $all, false );
+			return dwdio_overview( $yr );
+		} ),
+	) );
 	register_rest_route( 'dwd/v1', '/crm/income', array( 'methods' => 'GET', 'permission_callback' => function () { return current_user_can( 'manage_options' ); }, 'callback' => function ( $r ) {
 		return dwdio_overview( (string) $r->get_param( 'year' ) );
 	} ) );
