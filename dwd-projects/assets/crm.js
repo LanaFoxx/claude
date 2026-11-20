@@ -2662,6 +2662,7 @@
 	// Web design = every project payment (Upwork after fees, Stripe, PayPal, Zelle/check for web work).
 	// CA Tax Courses management = SD TAX SERVICE pay transfers, minus Mom's $750 share of each paycheck.
 	// Home: the Income Overview stats and month table in one box (same numbers as the Income overview page).
+	try { S.hincOpen = localStorage.getItem('dwdHincOpen') === '1'; } catch (er) {}
 	function homeIncomeBox() {
 		var thisYr = DWDC.today.slice(0, 4), yr = S.hincYear || thisYr, D = S.income && S.income[yr];
 		if (!D) {
@@ -2682,9 +2683,11 @@
 			+ st('<i class="dd-inc-k tax"></i>CA Tax Courses', money(G.net), money(G.gross) + ' paid · ' + money(G.mom) + ' to Mom')
 			+ (past ? st('Best month', money(Math.max.apply(null, months.map(function (m) { return m.total; }).concat([0]))), (function () { var b = months.slice().sort(function (a, c) { return c.total - a.total; })[0]; return b ? MN[b.m - 1] + ' ' + yr : ''; })())
 				: st(MN[curM - 1] + ' so far', money(now.total), 'Web ' + money((now.web || {}).total) + ' · Tax ' + money((now.mgmt || {}).net))) + '</div>'
-			+ '<div class="dd-inc-tr h"><span>Month</span><span>Web design</span><span>CA Tax Courses</span><span>Total</span></div>'
-			+ months.slice().reverse().map(function (m) { return '<div class="dd-inc-tr"><span>' + MN[m.m - 1] + '</span><span>' + money(m.web.total) + '</span><span>' + money(m.mgmt.net) + '</span><span><b>' + money(m.total) + '</b></span></div>'; }).join('')
-			+ '<div class="dd-inc-tr f"><span>' + yr + '</span><span>' + money(W.total) + '</span><span>' + money(G.net) + '</span><span><b>' + money(D.total) + '</b></span></div></section>';
+			// Month table: closed by default, click to open (remembered on this device).
+			+ '<button type="button" class="dd-hinc-tog" data-hinctog aria-expanded="' + !!S.hincOpen + '"><span>' + (S.hincOpen ? 'Hide months' : 'Show months') + '</span>' + lu('chevron-down', 14) + '</button>'
+			+ (S.hincOpen ? '<div class="dd-inc-tr h"><span>Month</span><span>Web design</span><span>CA Tax Courses</span><span>Total</span></div>'
+				+ months.slice().reverse().map(function (m) { return '<div class="dd-inc-tr"><span>' + MN[m.m - 1] + '</span><span>' + money(m.web.total) + '</span><span>' + money(m.mgmt.net) + '</span><span><b>' + money(m.total) + '</b></span></div>'; }).join('')
+				+ '<div class="dd-inc-tr f"><span>' + yr + '</span><span>' + money(W.total) + '</span><span>' + money(G.net) + '</span><span><b>' + money(D.total) + '</b></span></div>' : '') + '</section>';
 	}
 	function incomeView() {
 		var yr = S.incYear || DWDC.today.slice(0, 4), D = S.income && S.income[yr];
@@ -5186,6 +5189,7 @@
 		if (t.closest('[data-spendmodal]')) { e.preventDefault(); S.modal = { type: 'spend' }; render(); return; }
 		if (t.closest('[data-adscopy]')) { var ta = app.querySelector('.dwdc-adscript'); if (ta) { ta.select(); (navigator.clipboard ? navigator.clipboard.writeText(ta.value) : Promise.reject()).then(function () { toast('Script copied'); }, function () { document.execCommand('copy'); toast('Script copied'); }); } return; }
 		if ((el = t.closest('[data-incyear]'))) { S.incYear = el.getAttribute('data-incyear'); render(); return; }
+		if (t.closest('[data-hinctog]')) { S.hincOpen = !S.hincOpen; try { localStorage.setItem('dwdHincOpen', S.hincOpen ? '1' : ''); } catch (er) {} render(); return; }
 		if ((el = t.closest('[data-hincyear]'))) { S.hincYear = el.getAttribute('data-hincyear'); render(); return; }
 		if ((el = t.closest('[data-incopen]'))) { S.incYear = el.getAttribute('data-incopen'); } // the page opens on the year the box shows
 		if (t.closest('[data-mademodal]')) {
