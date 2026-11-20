@@ -1231,3 +1231,8 @@ body:has(.dwdc-addm) #dwdc-askfab { display: none !important; }
 .dd-inc-add input[name=note] { flex: 1 1 200px; }
 @media (max-width: 900px) { .dd-hinc-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } .dd-hinc-s { border-left: 0 !important; border-top: 1px solid var(--border); } .dd-hinc-s:nth-child(even) { border-left: 1px solid var(--border) !important; } .dd-hinc-s:nth-child(-n+2) { border-top: 0; } }
 @media (max-width: 560px) { .dd-inc-tr.c5 { grid-template-columns: .7fr 1fr 1fr .9fr 1fr; font-size: 12px; gap: 6px; } }
+/* Owed list: colour dot at the far left of each row (your own "who pays sooner" mark) */
+.dwdc-owr .dd-owd { display: flex; align-items: center; gap: 8px; }
+.dwdc-owr .dd-owd .dd-flagw { flex: none; }
+.dd-flagm { z-index: 100001; }
+.dwdc-owr .dd-flagw { display: inline-flex !important; } /* shown only in the Owed list */
