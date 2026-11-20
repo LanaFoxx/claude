@@ -1151,3 +1151,47 @@ body:has(.dwdc-addm) #dwdc-askfab { display: none !important; }
 .dd-stats > a.dd-made.dd-half { min-width: 0; flex: 0 0 50%; max-width: 50%; gap: 8px; }
 .dd-stats > a.dd-made.dd-half > b { font-size: 17px; }
 .dd-stats > a.dd-half:not(.dd-made) + a.dd-made.dd-half { border-left: 0; } /* first of the Made pair starts a new row */
+
+/* Income Overview (web design vs CA Tax Courses management) */
+.dd-inc { --inc-web: #4F6BF0; --inc-tax: #28A06D; display: grid; gap: 16px; }
+.dd-inc-yr { display: flex; align-items: center; gap: 10px; justify-content: flex-end; }
+.dd-inc-yr b { font-size: 16px; min-width: 44px; text-align: center; }
+.dd-inc-tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.dd-inc-t { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; display: grid; gap: 4px; align-content: start; }
+.dd-inc-t small { color: var(--text-2, var(--muted)); font-size: 12.5px; display: flex; align-items: center; gap: 6px; }
+.dd-inc-t strong { font-size: 26px; font-weight: 600; letter-spacing: -.01em; }
+.dd-inc-t span { color: var(--text-2, var(--muted)); font-size: 12px; line-height: 1.45; }
+.dd-inc-k { display: inline-block; width: 10px; height: 10px; border-radius: 3px; flex: none; }
+.dd-inc-k.web, .dd-inc i.web { background: var(--inc-web); }
+.dd-inc-k.tax, .dd-inc i.tax { background: var(--inc-tax); }
+.dd-inc-h { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+.dd-inc-h h2 { margin: 0; font-size: 15px; }
+.dd-inc-h span { color: var(--text-2, var(--muted)); font-size: 12.5px; }
+.dd-inc-split { display: flex; gap: 2px; height: 14px; border-radius: 4px; overflow: hidden; }
+.dd-inc-split i { display: block; min-width: 2px; }
+.dd-inc-chart { display: grid; grid-template-columns: auto 1fr; gap: 10px; height: 260px; }
+.dd-inc-ax { display: flex; flex-direction: column; justify-content: space-between; padding-bottom: 22px; color: var(--text-2, var(--muted)); font-size: 11px; text-align: right; }
+.dd-inc-plot { position: relative; display: flex; align-items: flex-end; gap: 8px; padding-bottom: 22px; }
+.dd-inc-grid { position: absolute; left: 0; right: 0; height: 1px; background: var(--border); margin-bottom: 22px; pointer-events: none; }
+.dd-inc-col { position: relative; flex: 1 1 0; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; min-width: 0; outline: none; cursor: default; }
+.dd-inc-stack { width: min(100%, 44px); display: flex; flex-direction: column; gap: 2px; }
+.dd-inc-stack i { display: block; min-height: 2px; }
+.dd-inc-stack i:first-child { border-radius: 4px 4px 0 0; }
+.dd-inc-col em { position: absolute; bottom: 0; font-style: normal; font-size: 11.5px; color: var(--text-2, var(--muted)); }
+.dd-inc-col b { display: none; font-size: 11px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.dd-inc-col:hover b, .dd-inc-col:focus b { display: block; }
+.dd-inc-col:hover .dd-inc-stack, .dd-inc-col:focus .dd-inc-stack { filter: brightness(1.15); }
+.dd-inc-leg { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 12px; font-size: 12.5px; color: var(--text-2, var(--muted)); }
+.dd-inc-leg span { display: inline-flex; align-items: center; gap: 6px; }
+.dd-inc-tbl { padding: 0; overflow: hidden; }
+.dd-inc-tr { display: grid; grid-template-columns: 1fr 1fr 1.4fr 1fr; gap: 12px; padding: 11px 16px; border-top: 1px solid var(--border); align-items: center; font-size: 13.5px; }
+.dd-inc-tr span:not(:first-child) { text-align: right; }
+.dd-inc-tr small { display: block; color: var(--text-2, var(--muted)); font-size: 11.5px; }
+.dd-inc-tr.h { border-top: 0; font-size: 12px; color: var(--text-2, var(--muted)); font-weight: 600; }
+.dd-inc-tr.f { font-weight: 600; background: var(--hover); }
+@media (max-width: 900px) { .dd-inc-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .dd-inc-tiles { grid-template-columns: 1fr; } .dd-inc-tr { grid-template-columns: .8fr 1fr 1.3fr 1fr; padding: 10px 12px; gap: 8px; font-size: 12.5px; } .dd-inc-plot { gap: 4px; } }
+.dd-inc-plot { padding-bottom: 0; }
+.dd-inc-col { padding-bottom: 22px; box-sizing: border-box; }
+.dd-inc-col b { order: -1; }
+.dd-inc-grid { margin-bottom: 0; }

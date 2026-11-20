@@ -278,7 +278,7 @@
 	var TITLES = {
 		home: ['', '', 'Dream Web Digital'], leads: ['Clients', 'All', 'Leads'], onboarding: ['Clients', 'Onboarding', 'Forms'],
 		todos: ['Plan', '', 'To-Dos'], connections: ['Settings', 'Connections', ''], hosting: ['Clients', 'Hosting', 'Clients'], archive: ['More', 'Archive', ''],
-		search: ['Search', 'Search', 'Results'], personal: ['Personal', 'To-Do', 'List'], money: ['Money', 'Business', 'Revenue'], reviews: ['Clients', 'Get', 'Reviews'], claude: ['', 'Claude', ''], clients: ['Clients', 'All', 'Clients'], projects: ['Projects', 'All', 'Projects']
+		search: ['Search', 'Search', 'Results'], personal: ['Personal', 'To-Do', 'List'], money: ['Money', 'Business', 'Revenue'], income: ['Money', 'Income', 'Overview'], reviews: ['Clients', 'Get', 'Reviews'], claude: ['', 'Claude', ''], clients: ['Clients', 'All', 'Clients'], projects: ['Projects', 'All', 'Projects']
 	};
 	var OLD = { dashboard: 'home', jobs: 'projects/active', completed: 'projects/complete', forms: 'leads' };
 	function route() {
@@ -830,7 +830,7 @@
 			+ group('plan', 'Plan', item('personal/calendar', 'calendar', 'Calendar') + item('todos', 'circle-check', 'To-dos', openTasks().length + pOpen))
 			+ group('projects', 'Projects', item('projects/active', 'play', 'Active', by('active').length) + item('leads', 'user-plus', 'Leads', leadList().length) + item('onboarding', 'clipboard-list', 'Onboarding', onboardList().length) + item('projects/paused', 'pause', 'Paused', by('hold').length + by('limbo').length) + item('projects/complete', 'check', 'Completed', by('complete').length))
 			+ group('clients', 'Clients', item('clients', 'users', 'All clients', S.clients.length) + item('hosting', 'cloud', 'Hosting', hosting().length) + item('reviews', 'star', 'Get reviews'))
-			+ group('money', 'Money', item('money', 'bar-chart-3', 'Business revenue') + item('personal/spending', 'pie-chart', 'Spending') + item('personal/bills', 'repeat', 'Bills & subscriptions') + item('personal/suggestions', 'zap', 'Suggestions'))
+			+ group('money', 'Money', item('income', 'dollar-sign', 'Income overview') + item('money', 'bar-chart-3', 'Business revenue') + item('personal/spending', 'pie-chart', 'Spending') + item('personal/bills', 'repeat', 'Bills & subscriptions') + item('personal/suggestions', 'zap', 'Suggestions'))
 			+ group('settings', 'Settings', item('connections', 'link', 'Connections'))
 			+ '</nav><div class="dd-side-f">' + item('claude', 'sparkles', 'Claude') + '<a class="dd-nav" href="' + esc(DWDC.wpadmin || DWDC.wp) + '" data-tip="WordPress admin">' + lu('layout-dashboard') + '<span class="dd-nav-l">WordPress admin</span></a>'
 				+ '<a class="dd-nav" href="' + esc(DWDC.home || '/') + '" target="_blank" rel="noopener" data-tip="Website">' + lu('globe') + '<span class="dd-nav-l">Website</span><i class="dd-ext">' + lu('external-link', 14) + '</i></a>'
@@ -2292,7 +2292,7 @@
 	function tabBar(r) {
 		var pers = r.view === 'personal', a = r.arg || '';
 		var a2 = r.view + (r.arg ? '/' + r.arg : '');
-		var tabs = [['home', 'home', 'Home', 'c1', r.view === 'home'], ['todos', 'todo', 'To-Dos', 'c4', r.view === 'todos' || a2 === 'personal/todo' || a2 === 'personal/calendar'], ['projects/active', 'brief', 'Projects', 'c0', ['projects', 'client', 'leads', 'onboarding', 'clients', 'cl', 'hosting'].indexOf(r.view) > -1], ['money', 'dollar', 'Money', 'c3', r.view === 'money' || (pers && a !== 'todo' && a !== 'calendar')]];
+		var tabs = [['home', 'home', 'Home', 'c1', r.view === 'home'], ['todos', 'todo', 'To-Dos', 'c4', r.view === 'todos' || a2 === 'personal/todo' || a2 === 'personal/calendar'], ['projects/active', 'brief', 'Projects', 'c0', ['projects', 'client', 'leads', 'onboarding', 'clients', 'cl', 'hosting'].indexOf(r.view) > -1], ['money', 'dollar', 'Money', 'c3', r.view === 'money' || r.view === 'income' || (pers && a !== 'todo' && a !== 'calendar')]];
 		if (window.innerWidth > 768) { return ''; }
 		return '<nav class="dwdc-tabbar t4" aria-label="Quick menu" style="position:fixed;left:0;right:0;bottom:0;z-index:9990">' + tabs.map(function (x) { return '<a class="' + x[3] + (x[4] ? ' on' : '') + '" href="#' + x[0] + '">' + ic(x[1], 20) + '<span>' + x[2] + '</span></a>'; }).join('') + '</nav>';
 	}
@@ -2313,7 +2313,7 @@
 			+ nav('projects/paused', 'pause', 'Paused', by('hold').length + by('limbo').length) + nav('projects/complete', 'done', 'Completed', by('complete').length)
 			+ '<div class="dwdc-navh"><i class="b2"></i>Clients</div>'
 			+ nav('clients', 'users', 'All Clients', S.clients.length) + nav('hosting', 'server', 'Hosting', hosting().length) + nav('reviews', 'mail', 'Get Reviews')
-			+ '<div class="dwdc-navh fin"><i class="b4"></i>Money</div>' + nav('money', 'dollar', 'Business Revenue') + nav('personal/spending', 'card', 'Spending') + nav('personal/bills', 'refresh', 'Bills &amp; Subscriptions') + nav('personal/suggestions', 'bolt', 'Suggestions')
+			+ '<div class="dwdc-navh fin"><i class="b4"></i>Money</div>' + nav('income', 'dollar', 'Income Overview') + nav('money', 'dollar', 'Business Revenue') + nav('personal/spending', 'card', 'Spending') + nav('personal/bills', 'refresh', 'Bills &amp; Subscriptions') + nav('personal/suggestions', 'bolt', 'Suggestions')
 			+ '<div class="dwdc-navh"><i class="b3"></i>Settings</div>' + nav('connections', 'link', 'Connections')
 			+ '<a class="dwdc-nav" href="' + esc(DWDC.wp) + '">' + ic('wp') + '<span>Website (WordPress)</span></a>'
 			+ '</nav><a class="dwdc-me" href="' + esc(DWDC.logout) + '" title="Sign out"><span class="dwdc-me-av">MT</span><span><strong>' + esc(DWDC.user || 'Michael Tarr') + '</strong><small>Owner · Sign out</small></span>' + ic('logout', 17) + '</a></aside>';
@@ -2411,7 +2411,7 @@
 			t = ['Client', kw[0], kw.slice(1).join(' ')];
 			body = personView(r.id);
 		} else {
-			body = r.view === 'personal' ? (r.arg === 'spending' ? personalView(r) + '<h2 class="dwdc-sech">Money in &amp; out (logged by hand)</h2>' + personalView({ view: 'personal', arg: 'finances' }) : r.arg === 'bills' ? ddBills() : r.arg === 'suggestions' ? ddSuggest() : personalView(r)) : ({ home: ddHome, clients: ddClients, projects: projectsView, leads: leadsList, onboarding: onboardView, todos: ddTodos, connections: connectionsView, hosting: hostingView, money: moneyView, reviews: ddReviews, claude: ddClaude, archive: archiveView, search: searchView }[r.view] || home)();
+			body = r.view === 'personal' ? (r.arg === 'spending' ? personalView(r) + '<h2 class="dwdc-sech">Money in &amp; out (logged by hand)</h2>' + personalView({ view: 'personal', arg: 'finances' }) : r.arg === 'bills' ? ddBills() : r.arg === 'suggestions' ? ddSuggest() : personalView(r)) : ({ home: ddHome, clients: ddClients, projects: projectsView, leads: leadsList, onboarding: onboardView, todos: ddTodos, connections: connectionsView, hosting: hostingView, money: moneyView, income: incomeView, reviews: ddReviews, claude: ddClaude, archive: archiveView, search: searchView }[r.view] || home)();
 		}
 		app.setAttribute('data-view', r.view);
 		app.classList.add('dd');
@@ -2657,6 +2657,53 @@
 			+ tile('data-wins="' + dIso(ws) + '|' + dIso(we) + '|This week"', 'jobs', 'Jobs this week', wl.length + '', winVal(wl) ? money(winVal(wl)) : 'None yet')
 			+ tile('data-connmore', 'conn', 'Connects in ' + MNf[mo].slice(0, 3), money(cm.v), cm.q ? cm.q.toLocaleString() + ' Connects' : 'Upwork spend')
 			+ '</div>';
+	}
+	// Income Overview: all business income for a year, in two lines of business (includes/income.php).
+	// Web design = every project payment (Upwork after fees, Stripe, PayPal, Zelle/check for web work).
+	// CA Tax Courses management = SD TAX SERVICE pay transfers, minus Mom's $750 share of each paycheck.
+	function incomeView() {
+		var yr = S.incYear || DWDC.today.slice(0, 4), D = S.income && S.income[yr];
+		if (!D) {
+			if (!S.incLoading) { S.incLoading = true; api('/income?year=' + yr).then(function (x) { S.income = S.income || {}; S.income[yr] = x; S.incLoading = false; if (route().view === 'income') { render(); } }).catch(function (e) { S.incLoading = false; fail(e); }); }
+			return '<div class="dd-inc">' + emptyRow('Loading income…') + '</div>';
+		}
+		var MN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], T = D.totals, W = T.web, G = T.mgmt;
+		var curM = yr === DWDC.today.slice(0, 4) ? +DWDC.today.slice(5, 7) : 12, months = D.months.slice(0, curM);
+		var top = Math.max.apply(null, months.map(function (m) { return m.total; }).concat([1]));
+		var nice = Math.ceil(top / 10000) * 10000, ticks = [0, nice / 2, nice];
+		var pct = function (v) { return D.total ? Math.round(v / D.total * 100) : 0; };
+		var k = function (v) { return v >= 1000 ? '$' + (Math.round(v / 100) / 10) + 'k' : money(v); };
+		var nowM = D.months[curM - 1] || { total: 0, web: { total: 0 }, mgmt: { net: 0 } };
+		var avg = months.length ? D.total / months.length : 0;
+		var yrs = D.years || [yr], yi = yrs.indexOf(yr);
+		var nav = '<div class="dd-inc-yr">' + (yi < yrs.length - 1 ? '<button type="button" class="dwdc-btn2 sm" data-incyear="' + yrs[yi + 1] + '">‹ ' + yrs[yi + 1] + '</button>' : '') + '<b>' + yr + '</b>' + (yi > 0 ? '<button type="button" class="dwdc-btn2 sm" data-incyear="' + yrs[yi - 1] + '">' + yrs[yi - 1] + ' ›</button>' : '') + '</div>';
+		var tile = function (label, val, sub, cls) { return '<div class="dd-inc-t' + (cls ? ' ' + cls : '') + '"><small>' + label + '</small><strong>' + val + '</strong>' + (sub ? '<span>' + sub + '</span>' : '') + '</div>'; };
+		var tiles = '<div class="dd-inc-tiles">'
+			+ tile('Total income · ' + yr, money(D.total), 'What you keep, both businesses')
+			+ tile('<i class="dd-inc-k web"></i>Web design', money(W.total), pct(W.total) + '% · Upwork ' + money(W.Upwork) + ' · Stripe ' + money(W.Stripe) + ' · PayPal ' + money(W.PayPal) + (W.Other ? ' · Zelle/check ' + money(W.Other) : ''))
+			+ tile('<i class="dd-inc-k tax"></i>CA Tax Courses management', money(G.net), pct(G.net) + '% · ' + money(G.gross) + ' paid, ' + money(G.mom) + ' to Mom')
+			+ tile(yr === DWDC.today.slice(0, 4) ? MN[curM - 1] + ' so far' : 'Monthly average', money(yr === DWDC.today.slice(0, 4) ? nowM.total : avg), yr === DWDC.today.slice(0, 4) ? 'Average month ' + money(avg) : '') + '</div>';
+		// Share of the year: one bar split in two.
+		var split = D.total ? '<div class="dd-inc-split" role="img" aria-label="Web design ' + pct(W.total) + ' percent, CA Tax Courses ' + pct(G.net) + ' percent"><i class="web" style="flex:' + W.total + '"></i><i class="tax" style="flex:' + Math.max(0, G.net) + '"></i></div>' : '';
+		// Month by month: stacked bars (web design at the base, management on top), hover for the numbers.
+		var bars = '<div class="dd-inc-chart"><div class="dd-inc-ax">' + ticks.slice().reverse().map(function (t) { return '<span>' + k(t) + '</span>'; }).join('') + '</div><div class="dd-inc-plot">'
+			+ ticks.map(function (t) { return '<i class="dd-inc-grid" style="bottom:calc(22px + (100% - 22px) * ' + (t / nice) + ')"></i>'; }).join('')
+			+ months.map(function (m) {
+				var wh = Math.max(0, m.web.total) / nice * 100, th = Math.max(0, m.mgmt.net) / nice * 100;
+				var tip = MN[m.m - 1] + ' ' + yr + ': ' + money(m.total) + ' · Web design ' + money(m.web.total) + ' · CA Tax Courses ' + money(m.mgmt.net);
+				return '<div class="dd-inc-col" title="' + esc(tip) + '" tabindex="0"><div class="dd-inc-stack" style="height:' + (wh + th) + '%">' + (th ? '<i class="tax" style="flex:' + th + '"></i>' : '') + (wh ? '<i class="web" style="flex:' + wh + '"></i>' : '') + '</div><b>' + (m.total ? k(m.total) : '') + '</b><em>' + MN[m.m - 1] + '</em></div>';
+			}).join('') + '</div></div>'
+			+ '<div class="dd-inc-leg"><span><i class="dd-inc-k web"></i>Web design</span><span><i class="dd-inc-k tax"></i>CA Tax Courses management (after Mom’s share)</span></div>';
+		var table = '<div class="dwdc-card dd-inc-tbl"><div class="dd-inc-tr h"><span>Month</span><span>Web design</span><span>CA Tax Courses</span><span>Total</span></div>'
+			+ months.slice().reverse().map(function (m) { return '<div class="dd-inc-tr"><span>' + MN[m.m - 1] + '</span><span>' + money(m.web.total) + '</span><span>' + money(m.mgmt.net) + (m.mgmt.mom ? '<small>' + money(m.mgmt.gross) + ' − ' + money(m.mgmt.mom) + ' Mom</small>' : '') + '</span><span><b>' + money(m.total) + '</b></span></div>'; }).join('')
+			+ '<div class="dd-inc-tr f"><span>' + yr + '</span><span>' + money(W.total) + '</span><span>' + money(G.net) + '</span><span><b>' + money(D.total) + '</b></span></div></div>';
+		var tx = (D.mgmt || []).length ? '<div class="dwdc-card dd-inc-tbl"><div class="dd-inc-tr h"><span>Date</span><span>Transfer</span><span>Mom’s share</span><span>You keep</span></div>' + D.mgmt.map(function (x) { return '<div class="dd-inc-tr"><span>' + fmt(x.date) + '</span><span>' + money2(x.gross).replace('.00', '') + '<small>' + esc(x.kind === 'bonus' ? (x.memo || 'Bonus') + ' · no share taken' : (x.paydate ? 'Paycheck ' + fmt(x.paydate) : 'Paycheck')) + '</small></span><span>' + (x.mom ? '−' + money(x.mom) : '—') + '</span><span><b>' + money2(x.net).replace('.00', '') + '</b></span></div>'; }).join('') + '</div>' : emptyRow('No SD TAX SERVICE transfers found in the bank feed for ' + yr + '.');
+		return '<div class="dd-inc">' + nav + tiles
+			+ '<section class="dwdc-card pad dd-inc-card"><div class="dd-inc-h"><h2>Where it comes from</h2><span>' + pct(W.total) + '% web design · ' + pct(G.net) + '% CA Tax Courses</span></div>' + split + '</section>'
+			+ '<section class="dwdc-card pad dd-inc-card"><div class="dd-inc-h"><h2>Month by month</h2><span>Hover a month for the numbers</span></div>' + bars + '</section>'
+			+ '<h2 class="dwdc-sech">By month</h2>' + table
+			+ '<h2 class="dwdc-sech">CA Tax Courses transfers</h2>' + tx
+			+ '<p class="dwdc-mutp">Web design counts every project payment (Upwork once it reaches your bank, after fees). CA Tax Courses counts the Zelle pay transfers from SD TAX SERVICE in your bank feed (from ' + fmt(D.bank_from) + '); Mom’s ' + money(D.mom) + ' comes off once per paycheck, even when it arrives in two transfers. Bonuses keep their full amount; reimbursements are not counted as income. Website payments from SD TAX SERVICE are counted under web design.</p></div>';
 	}
 	function moneyView() {
 		var projs = S.contacts.filter(function (c) { return ['active', 'hold', 'limbo', 'complete'].indexOf(c.list) > -1; });
@@ -5113,6 +5160,7 @@
 		if (t.closest('[data-adsmodal]')) { e.preventDefault(); S.modal = { type: 'ads' }; render(); return; }
 		if (t.closest('[data-spendmodal]')) { e.preventDefault(); S.modal = { type: 'spend' }; render(); return; }
 		if (t.closest('[data-adscopy]')) { var ta = app.querySelector('.dwdc-adscript'); if (ta) { ta.select(); (navigator.clipboard ? navigator.clipboard.writeText(ta.value) : Promise.reject()).then(function () { toast('Script copied'); }, function () { document.execCommand('copy'); toast('Script copied'); }); } return; }
+		if ((el = t.closest('[data-incyear]'))) { S.incYear = el.getAttribute('data-incyear'); render(); return; }
 		if (t.closest('[data-mademodal]')) {
 			e.preventDefault(); S.modal = { type: 'made' }; render();
 			api('/made-month').then(function (x) { if (x && x.items) { S.madeM = x; render(); } }).catch(function () {}); // payments may have come in since the page loaded
