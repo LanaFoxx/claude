@@ -198,8 +198,12 @@ const gallery = (m) => band(C.white, [
   grid([
     ['baGarage1Before', 'baGarage1After', 'Garage cleanout'], ['baHottub1Before', 'baHottub1After', 'Hot tub removal'],
     ['baGarage2Before', 'baGarage2After', 'Garage cleanout'], ['baHottub2Before', 'baHottub2After', 'Hot tub removal'],
-  ].map((p) => pair(m, p)), autoFit(420), { gap: 24, rowGap: 28 }),
+  ].filter((p) => !isPlaceholder(m[p[0]]) && !isPlaceholder(m[p[1]])).map((p) => pair(m, p)), autoFit(420), { gap: 24, rowGap: 28 }),
 ], { anchor: 'gallery' });
+// A pair shows only when both real photos are in the Media Library; with none, the section is left out.
+const isPlaceholder = (img) => !img || /placeholder/.test(img.url);
+const galleryIfReady = (m) => ([['baGarage1Before', 'baGarage1After'], ['baHottub1Before', 'baHottub1After'], ['baGarage2Before', 'baGarage2After'], ['baHottub2Before', 'baHottub2After']]
+  .some(([b, a]) => !isPlaceholder(m[b]) && !isPlaceholder(m[a])) ? [gallery(m)] : []);
 
 /* 8. REVIEWS ---------------------------------------------------------- */
 
@@ -329,7 +333,7 @@ const quoteForm = () => widget('form', {
   ],
   show_labels: 'true', mark_required: 'true', input_size: 'md',
   button_text: 'Request My Free Quote', button_size: 'md', button_width: '100', button_width_tablet: '100', button_width_mobile: '100',
-  submit_actions: ['save-to-database', 'email'], email_subject: 'New Junk Ninja quote request', email_from_name: 'Junk Ninja Website',
+  submit_actions: ['save-to-database', 'email'], email_to: 'junkninjallc@gmail.com', email_subject: 'New Junk Ninja quote request from [field id="name"]', email_from: 'website@junkninjallc.com', email_from_name: 'Junk Ninja Website', email_reply_to: '[field id="email"]', email_content: '[all-fields]', email_content_type: 'html',
   success_message: 'Thanks — we\'ll be in touch', error_message: 'Something went wrong. Please call or text 772-882-5955.',
   required_field: 'Please fill in this field.',
   column_gap: sz(16), row_gap: sz(18),
@@ -372,5 +376,5 @@ module.exports = {
   slug: 'home', title: 'Home',
   build: (m) => [container({
     content_width: 'full', flex_direction: 'column', padding: box(0), flex_gap: gap(0), html_tag: 'main', _element_id: 'content', _title: 'Main',
-  }, [hero(m), ticker(), photos(), services(m), about(m), realtors(m), gallery(m), reviews(), areas(m), faq(), quote(m)].map((s) => ({ ...s, isInner: true })), false)],
+  }, [hero(m), ticker(), photos(), services(m), about(m), realtors(m), ...galleryIfReady(m), reviews(), areas(m), faq(), quote(m)].map((s) => ({ ...s, isInner: true })), false)],
 };
