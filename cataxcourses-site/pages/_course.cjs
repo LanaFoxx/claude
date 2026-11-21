@@ -104,19 +104,18 @@ function hero(m, d) {
 }
 
 /* ---------------------------------------------------------------- enroll */
-// "3 or more people?" strip under the packages (20 and 60 Hour pages): sand card, people icon, phone button.
+// "3 or more people?" group discount (20 and 60 Hour pages): its own full-width sand section right after Enroll,
+// people icon, line, phone button.
 function groupDiscount() {
-  return container({
-    content_width: 'full', width: px(1060), width_tablet: px(100, '%'), width_mobile: px(100, '%'), flex_direction: 'row', flex_wrap: 'nowrap', flex_wrap_tablet: 'wrap', flex_wrap_mobile: 'wrap',
-    _flex_align_self: 'center',
-    flex_justify_content: 'center', flex_align_items: 'center', flex_gap: gap(18), padding: box(20, 28, 20, 28), padding_mobile: box(20, 18, 20, 18),
-    margin: box(48, 'auto', 0, 'auto'), _margin: box(48, 0, 0, 0), background_background: 'classic', background_color: C.sand, border_radius: box(14),
+  return band(C.sand, [container({
+    content_width: 'full', flex_direction: 'row', flex_wrap: 'nowrap', flex_wrap_tablet: 'wrap', flex_wrap_mobile: 'wrap',
+    flex_justify_content: 'center', flex_align_items: 'center', flex_gap: gap(22), flex_gap_mobile: gap(16), padding: box(0),
   }, [
     widget('icon', { selected_icon: fa('fas fa-users'), view: 'stacked', shape: 'circle', primary_color: C.gold, secondary_color: C.white, size: px(20), icon_padding: px(14), _flex_size: 'none' }),
     widget('heading', { title: 'Have 3 or more people enrolling? <span class="ctc-thin">Call us for a group discount!</span>', header_size: 'h3', title_color: C.navy, align: 'center',
       ...typo('typography', HEAD, [22, 21, 19], 700, { lh: 1.3, ls: 0 }), _element_width: 'auto' }),
     button(PHONE.label + ' →', PHONE.tel, { size: [18, 18, 17], pad: box(12, 22, 12, 22) }),
-  ]);
+  ])], { pad: [56, 56], settings: { padding_mobile: box(40, 20, 40, 20) } });
 }
 function pkg(p) {
   const ic = (v, s) => widget('icon', { selected_icon: fa(v), primary_color: C.gold, size: px(s), align: 'center' });
@@ -190,7 +189,6 @@ function enroll(d) {
     ], { settings: { margin: box(0, 0, 56, 0), _margin: box(0, 0, 56, 0) } }),
     body,
     ...(d.autoRenew ? [autoRenewOffer(d.autoRenew)] : []),
-    ...(d.groupDiscount ? [groupDiscount()] : []),
   ], { settings: { _element_id: 'enroll' } });
 }
 
@@ -325,7 +323,7 @@ function coursePage(data) {
   return {
     slug: d.slug, title: d.title, liveId: d.liveId, kind: 'product',
     build: (m) => [container({ content_width: 'full', padding: box(0), flex_gap: gap(0), ...cls('ctc-page') }, [
-      hero(m, d), enroll(d), features(d), credentials(m), articles(d), faq(), finalCta(d),
+      hero(m, d), enroll(d), ...(d.groupDiscount ? [groupDiscount()] : []), features(d), credentials(m), articles(d), faq(), finalCta(d),
     ], false)],
   };
 }
