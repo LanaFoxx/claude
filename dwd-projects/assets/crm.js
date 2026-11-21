@@ -317,6 +317,18 @@
 	/* ---------- Personal: bank spending, subscriptions, connections ---------- */
 	var PTAGS = { urgent: 'Urgent', important: 'Important', errand: 'Errand', birthday: 'Birthday', home: 'Home', work: 'Work', health: 'Health', bills: 'Bills' };
 	function isFlight(t) { return /\bflights?\b|✈|\bairlines?\b|\bairways\b|\b(AA|DL|UA|WN|B6|AS|NK|F9|G4)\s?\d{2,4}\b/.test(String(t || '')); }
+	// A flight on the calendar: buttons that open the booking email in Gmail (boarding pass, confirmation), searched by
+	// flight number, in the Google account the event came from (gacct: '' = work, 'personal'), plus the other account.
+	function flightMail(pt) {
+		var t = String(pt.text || ''), fn = /\b([A-Z][A-Z0-9]|[A-Z0-9][A-Z])\s?(\d{1,4})\b/.exec(t), dest = /flight (?:to|from) ([^()]+?)\s*(?:\(|$)/i.exec(t);
+		var q = fn ? '"' + fn[1] + ' ' + fn[2] + '" OR "' + fn[1] + fn[2] + '"' : '(flight OR itinerary OR "boarding pass" OR confirmation)' + (dest ? ' "' + dest[1].trim() + '"' : '');
+		var G = DWDC.gmail || {}, mine = pt.gacct === 'personal' ? G.personal : G.work, other = pt.gacct === 'personal' ? G.work : G.personal;
+		var url = function (acct, extra) { return 'https://mail.google.com/mail/' + (acct ? '?authuser=' + encodeURIComponent(acct) : '') + '#search/' + encodeURIComponent(q + (extra || '')); };
+		return '<div class="dd-flm"><a class="dwdc-btn sm" href="' + esc(url(mine)) + '" target="_blank" rel="noopener">' + lu('mail', 14) + 'Find the booking email</a>'
+			+ '<a class="dwdc-btn2 sm" href="' + esc(url(mine, ' "boarding pass"')) + '" target="_blank" rel="noopener">Boarding pass</a>'
+			+ (other ? '<a class="dd-hlink" href="' + esc(url(other)) + '" target="_blank" rel="noopener">Search ' + (pt.gacct === 'personal' ? 'work' : 'personal') + ' Gmail</a>' : '')
+			+ '<small>Searches Gmail for ' + esc(fn ? 'flight ' + fn[1] + ' ' + fn[2] : 'this flight') + '</small></div>';
+	}
 	function tagOf(x) { return x.tag || (/birthday|bday/i.test(x.text || '') ? 'birthday' : ''); }
 	function money2(v) { return '$' + (+v || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
 	function bData() {
@@ -4483,6 +4495,7 @@
 			if (!pt) { S.modal = null; return ''; }
 			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal dwdc-taskm">' + head(pt.gevent ? 'Google Calendar' : pt.done ? 'Completed · Personal' : 'Personal to-do', pt.gevent ? 'Event' : 'Task', 'details')
 				+ (pt.source ? '<p class="dwdc-mutp">From ' + esc(pt.source) + (pt.gevent ? ' · edits and deletes also update your Google Calendar' : pt.gtask ? ' · changes also update Google Tasks' : '') + '</p>' : '')
+				+ (pt.gevent && isFlight(pt.text) ? flightMail(pt) : '')
 				+ '<form class="dwdc-fgrid dwdc-pedit" data-pform="ptask"><input type="hidden" name="id" value="' + esc(pt.id) + '"><label class="wide"><span>' + (pt.gevent ? 'Event' : 'To-do') + '</span><input name="text" value="' + esc(pt.text) + '" required></label><label><span>' + (pt.gevent ? 'Date' : 'Due') + '</span><input type="date" name="due" value="' + esc(pt.due || '') + '"></label>'
 				+ (pt.gevent ? '<label><span>Time</span><input name="time" value="' + esc(pt.time || '') + '" placeholder="All day, or e.g. 7:00 PM"></label>' : '')
 				+ (pt.gevent ? '' : '<div class="wide dwdc-tagpick"><span>Category</span><input type="hidden" name="tag" value="' + esc(pt.tag || '') + '"><div>' + Object.keys(PTAGS).map(function (k) { return '<button type="button" class="t-' + k + (pt.tag === k ? ' on' : '') + '" data-tagpick="' + k + '">' + PTAGS[k] + '</button>'; }).join('') + '</div></div>')

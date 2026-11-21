@@ -1636,6 +1636,8 @@ function dwdc_vars( $mode = 'admin' ) {
 		'nonce' => wp_create_nonce( 'wp_rest' ),
 		'logo'  => content_url( '/uploads/2026/11/dreamweb-white-blue-transparent.png' ),
 		'today' => wp_date( 'Y-m-d', null, new DateTimeZone( 'America/New_York' ) ), // Mike's day (the server runs on UTC)
+		// The Gmail accounts behind calendar events (work, personal), for "Find the booking email" links on flights.
+		'gmail' => array( 'work' => (string) wp_get_current_user()->user_email, 'personal' => (string) ( array_values( (array) get_option( 'dwdpe_extra_cals', array( 'mptarr33@gmail.com' ) ) )[0] ?? '' ) ),
 		'orders' => admin_url( class_exists( '\\Automattic\\WooCommerce\\Utilities\\OrderUtil' ) && \Automattic\WooCommerce\Utilities\OrderUtil::custom_orders_table_usage_is_enabled() ? 'admin.php?page=wc-orders&s=' : 'edit.php?post_type=shop_order&s=' ),
 		'pay'   => home_url( '/checkout/?dwd-order=hosting' ),
 		'markupHome' => 'https://app.markup.io/w/o7nvlGWC',
