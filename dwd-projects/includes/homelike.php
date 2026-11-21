@@ -21,7 +21,16 @@ function dwdhl_cities() {
 		'palm-city-web-design'     => array( 'Palm City', array( 'Stuart', 'Martin Downs', 'Jensen Beach', 'Port St. Lucie' ) ),
 		'vero-beach-web-design'    => array( 'Vero Beach', array( 'Sebastian', 'Indian River Shores', 'Fellsmere', 'Fort Pierce' ) ),
 		'fort-pierce-web-design'   => array( 'Fort Pierce', array( 'Port St. Lucie', 'Hutchinson Island', 'Vero Beach', 'Stuart' ) ),
+		'west-palm-beach-web-design' => array( 'West Palm Beach', array( 'Palm Beach', 'Riviera Beach', 'Lake Worth Beach', 'Palm Beach Gardens', 'Wellington', 'Jupiter' ) ),
+		// The whole region: for "near me" and general Treasure Coast searches.
+		'treasure-coast-web-design' => array( 'Treasure Coast', array( 'Stuart', 'Port St. Lucie', 'Jensen Beach', 'Palm City', 'Hobe Sound', 'Fort Pierce', 'Vero Beach', 'Sebastian', 'Jupiter' ) ),
 	);
+}
+
+/** "in Stuart" for a city, "on the Treasure Coast" for the region. */
+function dwdhl_in( $city, $html = true ) {
+	$n = $html ? '<span style="white-space:nowrap">' . esc_html( $city ) . '</span>' : $city;
+	return 'Treasure Coast' === $city ? 'on the ' . $n : 'in ' . $n;
 }
 
 /** The city page being viewed: [ slug, city, nearby ] or null. */
@@ -48,7 +57,9 @@ add_action( 'init', function () {
 		if ( $id ) {
 			update_post_meta( $id, '_yoast_wpseo_title', $c[0] . ' Web Design | Custom Websites | Dream Web Digital' );
 			delete_post_meta( $id, '_yoast_wpseo_meta-robots-noindex' ); // findable on Google
-			update_post_meta( $id, '_yoast_wpseo_metadesc', $c[0] . ', FL web designer building custom websites for local businesses. 5.0★ on Google, 100% Job Success on Upwork, 500+ sites built. Free quote, same-day replies.' );
+			update_post_meta( $id, '_yoast_wpseo_metadesc', 'Treasure Coast' === $c[0]
+				? 'Web designer on Florida’s Treasure Coast (Stuart, Port St. Lucie, Jensen Beach, Vero Beach) building custom websites for local businesses. 5.0★ on Google, 500+ sites built. Free quote, same-day replies.'
+				: $c[0] . ', FL web designer building custom websites for local businesses. 5.0★ on Google, 100% Job Success on Upwork, 500+ sites built. Free quote, same-day replies.' );
 		}
 	}
 	update_option( 'dwdhl_pages_v', DWDP_VERSION, false );
@@ -156,7 +167,7 @@ function dwdhl_hero( $l1, $l2, $lead, $sub, $media = true ) {
 
 /** Each headline line marked data-dw-fit stays on one line: the font shrinks until it fits the width (never wraps). */
 function dwdhl_fit_js() {
-	return '<script>(function(){function fit(){document.querySelectorAll("[data-dw-fit]").forEach(function(s){var h=s.closest("h1");if(!h)return;s.style.fontSize=s.getAttribute("data-dw-fit")+"em";var c=h.parentElement,cs=getComputedStyle(c),w=c.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight),sw=s.getBoundingClientRect().width;if(sw>w&&w>0){s.style.fontSize=(parseFloat(getComputedStyle(s).fontSize)*w/sw*0.97)+"px";}});}fit();window.addEventListener("resize",fit);window.addEventListener("load",fit);if(document.fonts&&document.fonts.ready){document.fonts.ready.then(fit);}})();</script>';
+	return '<script>(function(){function fit(){document.querySelectorAll("[data-dw-fit]").forEach(function(s){var h=s.closest("h1");if(!h)return;s.style.fontSize=s.getAttribute("data-dw-fit")+"em";var c=h.parentElement,cs=getComputedStyle(c),w=c.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight),sw=Math.max(s.getBoundingClientRect().width,s.scrollWidth,(s.firstElementChild&&s.firstElementChild.scrollWidth)||0);if(sw>w&&w>0){s.style.fontSize=(parseFloat(getComputedStyle(s).fontSize)*w/sw*0.97)+"px";}});}fit();window.addEventListener("resize",fit);window.addEventListener("load",fit);if(document.fonts&&document.fonts.ready){document.fonts.ready.then(fit);}})();</script>';
 }
 
 /** The homepage sections shown after an interior page's own content. */
@@ -209,7 +220,8 @@ function dwdhl_city_page() {
 	$html = dwdhl_home() . dwdr_quotes_js() . dwdhl_fit_js();
 	$r    = dwdhl_section_at( $html, '<section id="top"' );
 	if ( $r ) {
-		$hero = dwdhl_hero( 'Web design in ' . $e . '.', 'Built by hand.', 'Custom Website Designer &amp; Developer in ' . $e . ', FL.', 'I personally design, build and optimize every website for ' . $e . ' businesses, from the first call to launch day and beyond. Based in Stuart on the Treasure Coast, with 500+ websites, 12+ years and a 100% Job Success Score on Upwork.', true );
+		$region = 'Treasure Coast' === $city;
+		$hero = dwdhl_hero( '<span style="white-space:nowrap">Web design ' . esc_html( dwdhl_in( $city, false ) ) . '.</span>', 'Built by hand.', 'Custom Website Designer &amp; Developer ' . ( $region ? 'on Florida’s ' . $e : 'in ' . $e . ', FL' ) . '.', 'I personally design, build and optimize every website for ' . $e . ' businesses, from the first call to launch day and beyond. Based in Stuart on the Treasure Coast, with 500+ websites, 12+ years and a 100% Job Success Score on Upwork.', true );
 		$html = substr( $html, 0, $r[0] ) . $hero . substr( $html, $r[1] );
 	}
 	$chips = implode( '', array_map( function ( $n ) { return '<li>' . esc_html( $n ) . '</li>'; }, array_merge( array( $city ), $near ) ) );
@@ -230,7 +242,7 @@ function dwdhl_city_page() {
 		'name'       => $city . ' Web Design',
 		'serviceType' => 'Website design and development',
 		'url'        => get_permalink(),
-		'areaServed' => array_map( function ( $n ) { return array( '@type' => 'City', 'name' => $n . ', FL' ); }, array_merge( array( $city ), $near ) ),
+		'areaServed' => array_map( function ( $n ) { return 'Treasure Coast' === $n ? array( '@type' => 'Place', 'name' => 'Treasure Coast, Florida' ) : array( '@type' => 'City', 'name' => $n . ', FL' ); }, array_merge( array( $city ), $near ) ),
 		'description' => 'Custom website design and development for ' . $city . ', FL businesses by Michael Tarr of Dream Web Digital: unlimited revisions, no templates, on-page SEO, 2 months of support and a lifetime workmanship warranty.',
 		'offers'     => array( '@type' => 'Offer', 'priceCurrency' => 'USD', 'priceSpecification' => array( '@type' => 'PriceSpecification', 'minPrice' => 1500, 'maxPrice' => 7000, 'priceCurrency' => 'USD' ) ),
 		'provider'   => array( '@type' => 'ProfessionalService', 'name' => 'Dream Web Digital', 'founder' => array( '@type' => 'Person', 'name' => 'Michael Tarr' ), 'sameAs' => array( dwdhl_greviews_url(), 'https://www.upwork.com/freelancers/dreamwebdigital' ), 'url' => home_url( '/' ), 'telephone' => '+1-772-210-1728', 'address' => array( '@type' => 'PostalAddress', 'streetAddress' => '789 SW Federal Hwy, Suite 201', 'addressLocality' => 'Stuart', 'addressRegion' => 'FL', 'postalCode' => '34994', 'addressCountry' => 'US' ) ),
@@ -274,7 +286,7 @@ function dwdhl_google_links( $html ) {
 /** Questions people (and AI search) ask about web design in a city: shown on the page and marked up as an FAQ. */
 function dwdhl_city_faq( $city ) {
 	return array(
-		'How much does a website cost in ' . $city . '?' => 'Most websites run $1,500 to $7,000, depending on the pages and features you need. You get one flat quote up front, so the price never creeps.',
+		'How much does a website cost ' . dwdhl_in( $city, false ) . '?' => 'Most websites run $1,500 to $7,000, depending on the pages and features you need. You get one flat quote up front, so the price never creeps.',
 		'Do you work with ' . $city . ' businesses?'      => 'Yes. I’m based in Stuart on the Treasure Coast and work with ' . $city . ' businesses by Zoom and phone. You work with me directly, and you can call or text me at (772) 210-1728.',
 		'What’s included with every website?'            => 'Unlimited revisions, a custom design with no templates, a fully responsive build for every device, on-page SEO, WordPress security setup, 1-on-1 training, 2 months of support after launch and a lifetime workmanship warranty.',
 		'Will my website show up on Google and in AI search?' => 'Every page is built for search: one clear headline, a title and description, image alt text, structured data, and fast load times, with a 95+ Google PageSpeed score on every site I build.',
