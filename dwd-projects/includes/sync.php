@@ -1159,6 +1159,38 @@ function dwdi_refresh( $pid, $force = false ) {
 	return $list;
 }
 
+/**
+ * Michael's standing rule for every build (Nov 21): where website form entries are sent. Lists the emails Dream Desk
+ * has for the client, in the order to use them, so the AI can apply it without guessing.
+ */
+function dwdrb_form_rule( $pid ) {
+	$pid   = (int) $pid;
+	$mails = array();
+	$add   = function ( $e, $why ) use ( &$mails ) {
+		$e = strtolower( trim( (string) $e ) );
+		if ( is_email( $e ) && ! isset( $mails[ $e ] ) && false === strpos( $e, 'dreamwebdigital.com' ) ) {
+			$mails[ $e ] = $why;
+		}
+	};
+	$add( get_post_meta( $pid, '_dwdc_email', true ), 'the project / contract email' );
+	$k = (int) get_post_meta( $pid, '_dwdc_client', true );
+	if ( $k ) {
+		$add( get_post_meta( $k, '_dwdcl_email', true ), 'the client record' );
+	}
+	foreach ( (array) get_post_meta( $pid, '_dwdc_contacts', true ) as $x ) {
+		if ( is_array( $x ) ) {
+			$add( $x['email'] ?? '', 'other contact' . ( ! empty( $x['name'] ) ? ' (' . $x['name'] . ')' : '' ) );
+		}
+	}
+	$list = '';
+	foreach ( $mails as $e => $why ) {
+		$list .= '  - ' . $e . ' (' . $why . ")\n";
+	}
+	return "- **Form entries (always):** send every form entry on the site (contact, quote, booking and any other forms) to the email the client gave for form entries. Look for it in the onboarding / kickoff answers, emails, calls and Michael's notes. If they never said which email to use, use the email on their contract / project info; if that is missing, use any email we have for them:\n"
+		. ( $list ? $list : "  - (no client email is saved in Dream Desk yet: ask Michael)\n" )
+		. "  Set this on every form and test that a submission arrives. Never send form entries to a Dream Web Digital address unless Michael says so.\n";
+}
+
 /** Make an invoice in Stripe or PayPal; $p: via, email, name, items [{d, a}], due (days), memo, send. */
 function dwdi_create( $pid, $p ) {
 	$via   = 'paypal' === ( $p['via'] ?? '' ) ? 'paypal' : 'stripe';
@@ -2331,6 +2363,7 @@ function dwdx_build( $pid ) {
 		. "## How Michael builds (his house rules)\n\n" . dwdrb_rules() . "\n\n"
 		. dwdrb_export_status( $pid )
 		. "## Rules\n\n"
+		. dwdrb_form_rule( $pid )
 		. "- Where sources disagree, the most recent call or message wins. Say so when it happens.\n"
 		. "- Do not guess facts about the business (prices, addresses, licence numbers, claims). List them as questions instead.\n"
 		. "- This folder contains private client information. Keep it out of any public repository.\n\n"
