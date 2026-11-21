@@ -114,7 +114,13 @@ function groupDiscount() {
     widget('icon', { selected_icon: fa('fas fa-users'), view: 'stacked', shape: 'circle', primary_color: C.gold, secondary_color: C.white, size: px(20), icon_padding: px(14), _flex_size: 'none' }),
     widget('heading', { title: 'Have 3 or more people enrolling? <span class="ctc-thin">Call us for a group discount!</span>', header_size: 'h3', title_color: C.navy, align: 'center',
       ...typo('typography', HEAD, [22, 21, 19], 700, { lh: 1.3, ls: 0 }), _element_width: 'auto' }),
-    button(PHONE.label + ' →', PHONE.tel, { size: [18, 18, 17], pad: box(12, 22, 12, 22) }),
+    // Phone number as a plain tap-to-call link with a phone icon (no button).
+    widget('icon-list', {
+      view: 'traditional', _element_width: 'auto',
+      icon_list: [{ _id: 'ctcgrpph', text: PHONE.label, selected_icon: fa('fas fa-phone-alt'), link: link(PHONE.tel) }],
+      icon_size: px(20), text_indent: px(10), icon_color: C.gold, icon_color_hover: C.goldHover, text_color: C.navy, text_color_hover: C.goldText,
+      ...typo('icon_typography', HEAD, [22, 21, 20], 700, { lh: 1.3 }),
+    }),
   ])], { pad: [56, 56], settings: { padding_mobile: box(40, 20, 40, 20) } });
 }
 function pkg(p) {
