@@ -1,0 +1,438 @@
+/* DWD Projects — front end. Mirrors the Dream Web Digital site styles so the
+   plugin output matches the hand-built project pages exactly. */
+
+/* ---------- case-study page ---------- */
+.dwdp-single{display:block;margin:0;padding:0;max-width:none}
+.dwdp-case{background-color:#F4F9FE;padding:80px 32px 100px}
+.dw-dots-light.dwdp-case{background-image:radial-gradient(rgba(18,41,62,0.14) 1px,transparent 1px);background-size:22px 22px}
+.dwdp-case-inner{max-width:1280px;margin:0 auto;display:flex;gap:60px;align-items:flex-start}
+.dwdp-left{width:42%;flex:none;display:flex;flex-direction:column;gap:18px}
+.dwdp-left.dw-sticky{position:sticky;top:110px;align-self:flex-start}
+.dwdp-right{flex:1;min-width:0;display:flex;flex-direction:column;gap:28px;align-items:center}
+.dwdp-eyebrow{font:600 15px/1.4 Urbanist,"Urbanist Fallback",sans-serif;letter-spacing:2px;text-transform:uppercase;color:#1B7EC3}
+.dwdp-title{margin:0;font:900 41px/1.12 Urbanist,"Urbanist Fallback",sans-serif;text-transform:uppercase;color:#0E1526}
+.dwdp-summary p{margin:0;font:300 18.5px/1.75 Urbanist,"Urbanist Fallback",sans-serif;color:#4A5470}
+.dwdp-btn{display:inline-block;align-self:flex-start;background:#1B7EC3;color:#fff!important;font:600 17px/1 Urbanist,"Urbanist Fallback",sans-serif;padding:16px 30px;border-radius:8px;text-decoration:none!important;transition:background .2s}
+.dwdp-btn:hover{background:#166AA6}
+
+.dw-wt{border-left:3px solid #1B7EC3;padding:2px 0 2px 18px}
+.dw-wt span{display:block;font:600 14px Urbanist,"Urbanist Fallback",sans-serif;letter-spacing:.12em;color:#7A86A0;margin-bottom:6px}
+.dw-wt p{margin:0;font:300 17px/1.75 Urbanist,"Urbanist Fallback",sans-serif;color:#4A5470}
+.dw-notes{width:100%;box-sizing:border-box;background:#fff;border:1px solid #E4E9F5;border-radius:12px;padding:8px 22px 6px;box-shadow:0 10px 30px rgba(18,41,62,.07)}
+.dw-notes>div{display:grid;grid-template-columns:110px 1fr;gap:14px;padding:13px 0;border-bottom:1px solid #E9EDF7}
+.dw-notes>div:last-child{border-bottom:0}
+.dw-notes span:first-child{font:600 14px Urbanist,"Urbanist Fallback",sans-serif;letter-spacing:.1em;color:#7A86A0;text-transform:uppercase;padding-top:2px}
+.dw-notes span:last-child{font:300 16.5px/1.6 Urbanist,"Urbanist Fallback",sans-serif;color:#303B58}
+/* Project details box: dark blue with white values and bright blue labels. */
+.dwdp-single .dw-notes{background:linear-gradient(160deg,#1B3A57 0%,#12293E 60%,#0F2235 100%);border:0;box-shadow:0 18px 44px rgba(18,41,62,.22);margin:26px 0!important}
+.dwdp-single .dw-notes>div{border-bottom-color:rgba(255,255,255,.1)}
+.dwdp-single .dw-notes span:first-child{color:#4BA3DC}
+.dwdp-single .dw-notes span:last-child{color:#fff}
+.dw-review{width:100%;box-sizing:border-box;background:#fff;border:1px solid #E4E9F5;border-radius:12px;padding:20px 22px;box-shadow:0 10px 30px rgba(18,41,62,.07);display:flex;flex-direction:column;gap:10px}
+.dw-review .dw-rl{font:600 14px Urbanist,"Urbanist Fallback",sans-serif;letter-spacing:.12em;color:#7A86A0}
+.dw-stars{display:flex;gap:3px}
+.dw-stars i{width:17px;height:17px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23F5B942' d='M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z'/%3E%3C/svg%3E") no-repeat center/contain}
+.dw-review p{margin:0;font:italic 300 17px/1.75 Urbanist,"Urbanist Fallback",sans-serif;color:#303B58}
+.dw-review .dw-rby{font:600 15.5px Urbanist,"Urbanist Fallback",sans-serif;color:#7A86A0}
+.dw-shot{width:100%}
+.dw-shot img{display:block;width:100%;height:auto;border-radius:12px;box-shadow:0 14px 40px rgba(18,41,62,.12)}
+.dw-mob{width:100%;text-align:center}
+.dw-mob img{max-width:360px;width:100%;height:auto;margin-top:12px}
+
+/* ---------- CTA band ---------- */
+.dwdp-cta{background-color:#12293E;padding:100px 32px;text-align:center;border-top:1px solid rgba(255,255,255,.07)}
+.dw-dots-dark.dwdp-cta{background-image:radial-gradient(rgba(255,255,255,0.12) 1px,transparent 1px);background-size:22px 22px}
+.dwdp-cta-inner{max-width:1280px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:0}
+.dwdp-cta-title{margin-bottom:16px!important}.dwdp-cta-text{margin-bottom:32px!important}
+.dwdp-cta-title{margin:0;font:900 35px/1.2 Urbanist,"Urbanist Fallback",sans-serif;text-transform:uppercase;color:#fff}
+.dwdp-cta-text{margin:0;font:300 18.5px/1.75 Urbanist,"Urbanist Fallback",sans-serif;color:#AFC6D8}
+.dwdp-cta-row{display:flex;gap:20px;align-items:center;justify-content:center;flex-wrap:wrap}
+
+.dwdp-cta-call{font:300 18px/1.75 Urbanist,"Urbanist Fallback",sans-serif;color:#C9DAE8}
+.dwdp-cta-call a{font-weight:600;color:#fff!important;text-decoration:none}
+
+/* ---------- portfolio grid ---------- */
+.dw-pgrid{display:grid;grid-template-columns:1fr 1fr;gap:30px;width:100%}
+.dwdp-grid .dw-pcard{display:flex}
+/* Portfolio carousel: native horizontal scrolling with snap, driven by the buttons (and swipe). */
+.dwdp-pcarousel{width:100%}
+.dwdp-pnav{display:flex;justify-content:flex-end;gap:12px;margin:0 0 22px}
+.dwdp-pbtn{width:52px;height:52px;border-radius:50%;background:#fff!important;border:1.5px solid #CDDBEA!important;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;box-shadow:0 8px 20px rgba(18,41,62,.12)!important;transition:background .2s,border-color .2s,transform .2s}
+.dwdp-pbtn svg{width:20px;height:20px;stroke:#12293E;stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round;transition:stroke .2s}
+.dwdp-pbtn:hover,.dwdp-pbtn:focus-visible{background:#1B7EC3!important;border-color:#1B7EC3!important}
+.dwdp-pbtn:hover svg,.dwdp-pbtn:focus-visible svg{stroke:#fff}
+.dwdp-ptrack{display:grid;grid-auto-flow:column;grid-auto-columns:calc((100% - 56px) / 3);gap:28px;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scroll-behavior:smooth;scrollbar-width:none;padding:6px 4px 46px;margin:0 -4px -40px}
+.dwdp-ptrack::-webkit-scrollbar{display:none}
+.dwdp-ptrack .dw-pcard{display:flex;scroll-snap-align:start;min-width:0}
+.dwdp-ptrack .dw-pfoot{flex-wrap:wrap;margin-top:auto}
+@media(max-width:1100px){.dwdp-ptrack{grid-auto-columns:calc((100% - 28px) / 2)}}
+@media(max-width:767px){.dwdp-ptrack{grid-auto-columns:88%;gap:16px}.dwdp-pbtn{width:46px;height:46px}}
+@media (prefers-reduced-motion:reduce){.dwdp-ptrack{scroll-behavior:auto}}
+.dw-pcard{flex-direction:column;border:1px solid #D3DEEC;border-radius:12px;overflow:hidden;box-shadow:0 26px 60px rgba(18,41,62,.26);background:#fff;text-decoration:none}
+.dw-pbar{background:#EEF3F9;display:flex;align-items:center;gap:10px;padding:9px 13px}
+.dw-bdots{display:flex;gap:6px}
+.dw-bdots i{width:9px;height:9px;border-radius:50%;display:block}
+.dw-bdots i:nth-child(1){background:#FF5F57}.dw-bdots i:nth-child(2){background:#FEBC2E}.dw-bdots i:nth-child(3){background:#28C840}
+.dw-pbar .dw-bdots i{width:8px;height:8px}
+.dw-pburl{flex:1;background:#fff;border-radius:100px;padding:4px 12px;font:300 14px Urbanist,"Urbanist Fallback",sans-serif;color:#4A5470}
+.dw-pshot{position:relative;display:flex;justify-content:flex-start;padding:34px 0 30px 6%;background:none;overflow:hidden}
+/* Laptop in the card: 16:10 screen, the shape of every project cover, so the whole hero shows. */
+.dw-pshot .dwdp-laptop,.dw-pshot .dwdp-lid,.dw-pshot .dwdp-base{display:block}
+.dw-pshot .dwdp-laptop{width:74%;filter:drop-shadow(0 8px 10px rgba(18,41,62,.16));transition:transform .3s ease}
+.dw-pshot .dwdp-lid{border-radius:10px 10px 0 0;padding:1.5% 1.4% 1.3%}
+.dw-pshot .dwdp-cam{width:3px;height:3px;margin-left:-1.5px;margin-top:calc(.75% - 1.5px)}
+.dw-pphone{position:absolute;right:5%;bottom:30px;width:19%;filter:drop-shadow(0 8px 10px rgba(18,41,62,.2));transition:transform .3s ease}
+.dw-pphone img{display:block;width:100%!important;height:auto!important;max-height:none;aspect-ratio:auto 1 / 2!important;object-fit:contain!important;contain-intrinsic-size:none}
+.dw-pcard:hover .dw-pphone{transform:translateY(-6px)}
+.dwdp-lscreen{display:block;overflow:hidden;border-radius:2px;background:#fff}
+.dwdp-lscreen img{width:100%;height:auto;display:block;aspect-ratio:1.6/1;object-fit:cover;object-position:center top}
+.dw-pcard:hover .dwdp-laptop{transform:translateY(-4px)}
+@media(max-width:767px){.dw-pshot{padding:22px 0 20px 5%}.dw-pshot .dwdp-laptop{width:76%}.dw-pphone{bottom:20px;width:20%}}
+.dw-pfoot{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:18px 22px}
+.dw-pmeta b{display:block;font:900 18px Urbanist,"Urbanist Fallback",sans-serif;color:#0E1526;letter-spacing:.02em;text-transform:uppercase}
+.dw-pmeta em{font:300 15px Urbanist,"Urbanist Fallback",sans-serif;font-style:normal;color:#7A86A0}
+.dw-pbtn{background:#1B7EC3;color:#fff;font:600 15.5px Urbanist,"Urbanist Fallback",sans-serif;padding:12px 19px;border-radius:8px;white-space:nowrap}
+.dw-pcard:hover .dw-pbtn{background:#166AA6}
+.dw-pcard,.dw-pcard *,.dwdp-slider a{text-decoration:none!important}
+
+/* ---------- homepage browser carousel ---------- */
+.dw-slider{display:flex;gap:18px;align-items:center}
+.dw-snavcol{display:flex;flex-direction:column;gap:14px}
+.dw-snav{width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,0.08)!important;border:1.5px solid rgba(255,255,255,0.3)!important;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;transition:background .2s,border-color .2s;box-shadow:none!important}
+.dw-snav:hover{background:#1B7EC3!important;border-color:#1B7EC3!important}
+.dw-snav svg{stroke:#fff;stroke-width:3.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.dw-browser{flex:1;border-radius:12px;overflow:hidden;box-shadow:0 40px 90px rgba(0,0,0,0.55)}
+.dw-bscreen{position:relative;aspect-ratio:607/330;background:#0A1622}
+.dwdp-slider .dw-bscreen>a{position:absolute;inset:0;opacity:0;transition:opacity .5s ease;display:block}
+.dwdp-slider .dw-bscreen>a.on{opacity:1;z-index:1}
+.dwdp-slider .dw-bscreen img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;opacity:1;display:block}
+
+@media(max-width:1024px){
+	.dwdp-title{font-size:35px}
+}
+@media(max-width:767px){
+	.dwdp-case{padding:48px 20px 64px}
+	.dwdp-case-inner{flex-direction:column;gap:40px}
+	.dwdp-left{width:100%}
+	.dwdp-left.dw-sticky{position:static}
+	.dwdp-title{font-size:30px}
+	.dwdp-summary p{font-size:16px}
+	.dwdp-btn{align-self:stretch;text-align:center}
+	.dwdp-cta{padding:56px 20px}
+	.dwdp-cta-title{font-size:26px}
+	.dwdp-cta-text{font-size:15px}
+	.dwdp-cta .dwdp-btn{width:100%}
+	.dw-pgrid{grid-template-columns:1fr}
+	.dw-slider{flex-direction:column-reverse}
+	.dw-snavcol{flex-direction:row}
+	.dwdp-slider .dw-browser{flex:none;align-self:stretch;width:calc(100% + 40px);max-width:none;margin:0 -20px}
+}
+
+/* ---------- blog ---------- */
+.dwb-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;width:100%}
+.dwb-card{display:flex;flex-direction:column;background:#fff;border:1px solid #E4E9F5;border-radius:14px;overflow:hidden;box-shadow:0 12px 34px rgba(18,41,62,.08);text-decoration:none!important;transition:transform .2s,box-shadow .2s}
+.dwb-card:hover{transform:translateY(-3px);box-shadow:0 18px 44px rgba(18,41,62,.14)}
+.dwb-card-img{display:block;aspect-ratio:16/9;overflow:hidden;background:#EEF3F9}
+.dwb-card-img img{width:100%;height:100%;object-fit:cover;object-position:center;display:block}
+.dwb-card-body{display:flex;flex-direction:column;gap:8px;padding:20px 22px 24px;flex:1}
+.dwb-card-cat{font:600 13px Urbanist,"Urbanist Fallback",sans-serif;letter-spacing:1.5px;text-transform:uppercase;color:#1B7EC3}
+.dwb-card-title{font:900 20px/1.25 Urbanist,"Urbanist Fallback",sans-serif;color:#0E1526}
+.dwb-card-ex{font:300 15.5px/1.7 Urbanist,"Urbanist Fallback",sans-serif;color:#4A5470}
+.dwb-card-more{margin-top:auto;padding-top:6px;font:600 15px Urbanist,"Urbanist Fallback",sans-serif;color:#1B7EC3}
+.dwb-empty{font:300 17px Urbanist,"Urbanist Fallback",sans-serif;color:#4A5470;text-align:center}
+.dwb-single{display:block;margin:0;padding:0;max-width:none}
+.dwb-hero{background-color:#12293E;padding:90px 32px 90px;text-align:center}
+.dw-dots-dark.dwb-hero{background-image:radial-gradient(rgba(255,255,255,0.12) 1px,transparent 1px);background-size:22px 22px}
+.dwb-hero-inner{max-width:920px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:18px}
+.dwb-crumbs{font:600 14px Urbanist,"Urbanist Fallback",sans-serif;letter-spacing:1.5px;text-transform:uppercase;color:#7FBEEA;display:flex;gap:8px}
+.dwb-crumbs a{color:#7FBEEA!important;text-decoration:none!important}
+.dwb-title{margin:0;font:900 44px/1.15 Urbanist,"Urbanist Fallback",sans-serif;color:#fff}
+.dwb-meta{font:300 16px Urbanist,"Urbanist Fallback",sans-serif;color:#AFC6D8;display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.dwb-meta a{color:#fff!important;font-weight:600;text-decoration:none!important}
+.dwb-body{background-color:#F4F9FE;padding:56px 32px 90px}
+.dw-dots-light.dwb-body{background-image:radial-gradient(rgba(18,41,62,0.14) 1px,transparent 1px);background-size:22px 22px}
+.dwb-feature{position:relative;z-index:2;max-width:1040px;margin:0 auto;border-radius:16px;overflow:hidden;box-shadow:0 30px 70px rgba(18,41,62,.25);background:#fff}
+.dwb-feature img{display:block;width:100%;height:auto;max-height:560px;object-fit:cover;object-position:top}
+.dwb-article{max-width:780px;margin:48px auto 0;background:#fff;border:1px solid #E4E9F5;border-radius:16px;padding:56px 60px;box-shadow:0 12px 34px rgba(18,41,62,.06);font:300 18px/1.85 Urbanist,"Urbanist Fallback",sans-serif;color:#303B58}
+.dwb-article>*:first-child{margin-top:0}
+.dwb-article p{margin:0 0 1.2em}
+.dwb-article h2{margin:1.8em 0 .6em;font:900 28px/1.25 Urbanist,"Urbanist Fallback",sans-serif;text-transform:uppercase;color:#0E1526}
+.dwb-article h3{margin:1.5em 0 .5em;font:700 21px/1.35 Urbanist,"Urbanist Fallback",sans-serif;color:#0E1526}
+.dwb-article a{color:#1B7EC3;font-weight:600;text-decoration:underline;text-underline-offset:3px}
+.dwb-article ul,.dwb-article ol{margin:0 0 1.3em;padding-left:1.3em}
+.dwb-article li{margin:0 0 .5em}
+.dwb-article li::marker{color:#1B7EC3;font-weight:700}
+.dwb-article strong{color:#0E1526}
+.dwb-article blockquote{margin:1.6em 0;padding:4px 0 4px 22px;border-left:3px solid #1B7EC3;font-style:italic;color:#12293E}
+.dwb-article table{width:100%;border-collapse:collapse;margin:0 0 1.4em;font-size:16px}
+.dwb-article th,.dwb-article td{border:1px solid #E4E9F5;padding:10px 12px;text-align:left;vertical-align:top}
+.dwb-article th{background:#F4F9FE;color:#0E1526}
+.dwb-article .wp-block-table{margin:0 0 1.4em;overflow-x:auto}
+.dwb-author{display:flex;gap:20px;align-items:flex-start;margin-top:48px;padding-top:32px;border-top:1px solid #E4E9F5}
+.dwb-author img{width:96px;height:96px;border-radius:50%;object-fit:cover;flex:none}
+.dwb-author-k{display:block;font:600 13px Urbanist,"Urbanist Fallback",sans-serif;letter-spacing:1.5px;text-transform:uppercase;color:#7A86A0}
+.dwb-author strong{display:block;font:900 19px/1.3 Urbanist,"Urbanist Fallback",sans-serif;color:#0E1526;margin:2px 0 6px}
+.dwb-author p{margin:0 0 6px;font-size:16px;line-height:1.7;color:#4A5470}
+.dwb-author a{font-size:15.5px;text-decoration:none}
+.dwb-related{background-color:#F4F9FE;padding:90px 32px 100px}
+.dw-dots-light.dwb-related{background-image:radial-gradient(rgba(18,41,62,0.14) 1px,transparent 1px);background-size:22px 22px}
+.dwb-related-inner{max-width:1280px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:14px}
+.dwb-eyebrow{font:600 15px Urbanist,"Urbanist Fallback",sans-serif;letter-spacing:2px;text-transform:uppercase;color:#1B7EC3}
+.dwb-related-title{margin:0 0 20px;font:900 35px/1.2 Urbanist,"Urbanist Fallback",sans-serif;text-transform:uppercase;color:#0E1526}
+@media(max-width:1024px){.dwb-grid{grid-template-columns:repeat(2,1fr)}.dwb-title{font-size:36px}}
+@media(max-width:767px){
+	.dwb-grid{grid-template-columns:1fr}
+	.dwb-hero{padding:56px 20px 56px}
+	.dw-pfoot{flex-direction:column;align-items:stretch;text-align:center;gap:16px;padding:20px 20px 22px}
+	.dw-pfoot .dw-pbtn{width:100%;height:48px!important;padding:0 16px!important;font-size:13px!important;letter-spacing:.12em!important}
+	.dwb-title{font-size:28px}
+	.dwb-body{padding:32px 16px 56px}
+	.dwb-feature{margin-top:0;border-radius:12px}
+	.dwb-article{margin-top:28px;padding:30px 22px;font-size:16.5px}
+	.dwb-article h2{font-size:22px}
+	.dwb-author{flex-direction:column}
+	.dwb-related{padding:56px 20px 64px}
+	.dwb-related-title{font-size:25px}
+}
+
+/* ---------- homepage hero slider (up/down) ---------- */
+.dwdp-vslider{display:flex;gap:18px;align-items:center;width:100%}
+.dwdp-vnav{display:flex;flex-direction:column;gap:14px;flex:none}
+.dwdp-vbtn{width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.08)!important;border:1.5px solid rgba(255,255,255,.3)!important;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;box-shadow:none!important;transition:background .2s,border-color .2s}
+.dwdp-vbtn:hover,.dwdp-vbtn:focus-visible{background:#1B7EC3!important;border-color:#1B7EC3!important}
+.dwdp-vbtn svg{width:20px;height:20px;stroke:#fff;stroke-width:3.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.dwdp-vview{flex:1;min-width:0;overflow:hidden;border-radius:12px;background:#fff;box-shadow:0 40px 90px rgba(0,0,0,.55);transition:height .7s cubic-bezier(.65,0,.35,1)}
+.dwdp-vtrack{display:flex;flex-direction:column;transition:transform .7s cubic-bezier(.65,0,.35,1);will-change:transform}
+.dwdp-vitem{display:block;text-decoration:none!important;aspect-ratio:1/.58;overflow:hidden;background:#fff}
+.dwdp-vitem img{display:block;width:100%;height:100%;object-fit:cover;object-position:center top}
+/* Laptop frame: about 1.55x the slider wide, so roughly a third runs off the page; the section clips it. */
+.elementor>.e-con:has(.dwdp-laptop),.elementor>.elementor-section:has(.dwdp-laptop){overflow:hidden}
+.dwdp-vslider.is-laptop{gap:26px}
+.dwdp-laptop{flex:none;width:155%;min-width:0;position:relative;filter:drop-shadow(0 50px 70px rgba(0,0,0,.5))}
+.dwdp-lid{position:relative;background:#0b0d10;border-radius:18px 18px 0 0;padding:1.3% 1.2% 1.1%;box-shadow:inset 0 0 0 1.5px #3a4049,inset 0 0 0 3px #15181c}
+/* Centred in the top bezel (margin % is measured on the width, like the padding). */
+.dwdp-cam{position:absolute;top:0;margin-top:calc(.65% - 2.5px);left:50%;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:#1d2228;box-shadow:inset 0 0 0 1px #2c333b}
+.dwdp-laptop .dwdp-vview{border-radius:3px;box-shadow:none}
+.dwdp-base{position:relative;width:112%;margin-left:-6%;height:0;padding-bottom:3.2%;background:linear-gradient(#e3e7ec 0%,#c4cad2 45%,#8f96a0 100%);border-radius:2px 2px 26px 26px / 2px 2px 70% 70%;box-shadow:inset 0 1px 0 #fff}
+.dwdp-base:before{content:"";position:absolute;top:0;left:50%;width:15%;height:38%;transform:translateX(-50%);background:linear-gradient(#a8afb8,#c9ced5);border-radius:0 0 10px 10px}
+@media (prefers-reduced-motion:reduce){.dwdp-vview,.dwdp-vtrack{transition:none}}
+@media(max-width:767px){.dwdp-vslider{flex-direction:column-reverse}.dwdp-vnav{flex-direction:row}.dwdp-vview{flex:none;width:100%;align-self:stretch}.dwdp-vslider.is-laptop{align-items:flex-start}.dwdp-laptop{width:125%}.dwdp-lid{border-radius:12px 12px 0 0}.dwdp-laptop .dwdp-vview{width:100%}}
+/* Portfolio cards on the dark page: frosted, faintly blue glass instead of solid white. */
+.dwdp-grid .dw-pcard{background:rgba(255,255,255,.07)!important;border:1px solid rgba(255,255,255,.14)!important;box-shadow:0 18px 44px rgba(0,0,0,.22)!important;backdrop-filter:blur(2px)}
+.dwdp-grid .dw-pcard:hover{background:rgba(255,255,255,.1)!important}
+.dwdp-grid .dw-pfoot{background:#fff;border-top:0}
+.dwdp-grid .dw-pmeta b{color:#0E1526}
+.dwdp-grid .dw-pmeta em{color:#7A86A0}
+.dwdp-grid .dw-pshot .dwdp-laptop{filter:drop-shadow(0 10px 14px rgba(0,0,0,.35))}
+.dwdp-grid .dw-pphone{filter:drop-shadow(0 10px 14px rgba(0,0,0,.4))}
+
+.dw-video{margin:28px 0 0;width:100%;align-self:stretch}.dw-video-k{display:block;margin:0 0 12px;font:600 13px Urbanist,"Urbanist Fallback",sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#1B7EC3}.dw-video-frame{position:relative;width:100%;aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:#0E1526;box-shadow:0 24px 50px rgba(18,41,62,.18)}.dw-video-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}.dw-video-frame.is-yt iframe{inset:auto;top:0;height:100%;left:50%;transform:translateX(-50%)}
+.dw-video .dw-yt{display:block!important;position:relative!important;padding:0!important;margin:0!important;border:0!important;border-radius:16px!important;cursor:pointer;width:100%!important;height:auto!important;min-width:0!important;background:#0E1526!important;overflow:hidden}.dw-yt img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .4s ease}.dw-yt:hover img{transform:scale(1.03)}.dw-yt-play{position:absolute;left:50%;top:50%;width:84px;height:84px;margin:-42px 0 0 -42px;border-radius:50%;background:#1B7EC3;box-shadow:0 0 0 10px rgba(27,126,195,.25),0 14px 30px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;transition:transform .2s ease,background .2s ease}.dw-yt:hover .dw-yt-play{transform:scale(1.08);background:#166AA6}.dw-yt-play svg{width:34px;height:34px;fill:#fff;margin-left:4px}@media(max-width:767px){.dw-yt-play{width:66px;height:66px;margin:-33px 0 0 -33px}.dw-yt-play svg{width:26px;height:26px}}
+@media(max-width:1199px){.dw-pfoot{flex-direction:column;align-items:stretch;text-align:center;gap:16px;padding:20px 22px 22px}.dw-pfoot .dw-pbtn{width:100%;height:48px!important;padding:0 16px!important;font-size:13px!important;letter-spacing:.12em!important}.dw-pmeta b{font-size:20px!important}}
+/* ---- Blog posts laid out as site pages ---- */
+.dwbp{background:#fff}
+.dwbp-in{max-width:1180px;margin:0 auto;padding:0 32px}
+.dwbp-eyebrow{font:600 13px Urbanist,"Urbanist Fallback",sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#1B7EC3;margin:0 0 18px}
+.dwbp-eyebrow.is-light{color:#4BA3DC}
+.dwbp-hero{background-color:#12293E;padding:96px 32px 100px;position:relative;overflow:hidden}
+.dwbp-hero::before{content:"";position:absolute;top:-180px;left:-140px;width:680px;height:680px;background:radial-gradient(circle,rgba(27,126,195,.33),transparent 65%);pointer-events:none}
+.dwbp-hero-in{position:relative;max-width:1180px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:56px;align-items:center}
+.dwbp-crumbs{margin-bottom:22px}.dwbp-crumbs a{color:inherit!important;text-decoration:none!important}
+.dwbp-title{margin:0;font:900 46px/1.08 Urbanist,"Urbanist Fallback",sans-serif;letter-spacing:.01em;text-transform:uppercase;color:#fff}
+.dwbp-lead{margin:22px 0 30px;font:400 20px/1.7 Urbanist,"Urbanist Fallback",sans-serif;color:#C9DAE8}
+.dwbp-btns{display:flex;flex-wrap:wrap;align-items:center;gap:18px 28px}
+.dwbp-ghost{font:600 16px Urbanist,"Urbanist Fallback",sans-serif;color:#fff!important;text-decoration:none!important;border-bottom:1px solid rgba(255,255,255,.35);padding-bottom:2px}
+.dwbp-ghost:hover{border-color:#4BA3DC;color:#4BA3DC!important}
+.dwbp-meta{margin-top:26px;font:400 15px Urbanist,"Urbanist Fallback",sans-serif;color:#8FA7BC}.dwbp-meta a{color:#fff!important;font-weight:600;text-decoration:none!important}
+.dwbp-hero-img{margin:0;border-radius:16px;overflow:hidden;box-shadow:0 30px 70px rgba(0,0,0,.4);border:6px solid rgba(255,255,255,.08)}
+.dwbp-hero-img img{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover}
+.dwbp-toc{padding:64px 0 24px}
+.dwbp-toc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.dwbp-toc-grid a{display:flex;align-items:center;gap:14px;padding:18px 20px;border:1px solid #E4E9F5;border-radius:12px;background:#fff;text-decoration:none!important;color:#0E1526;font:600 16px/1.35 Urbanist,"Urbanist Fallback",sans-serif;transition:border-color .2s,box-shadow .2s,transform .2s}
+.dwbp-toc-grid a:hover{border-color:#1B7EC3;box-shadow:0 10px 26px rgba(18,41,62,.08);transform:translateY(-2px)}
+.dwbp-toc-grid b{flex:none;display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:#E8F2FB;color:#1B7EC3;font:900 15px Urbanist,"Urbanist Fallback",sans-serif}
+.dwbp-intro{max-width:820px;margin:44px auto 0;text-align:center}.dwbp-intro p{font:400 20px/1.75 Urbanist,"Urbanist Fallback",sans-serif;color:#303B58;margin:0 0 14px}
+.dwbp-sec{padding:80px 0}
+.dwbp-sec.is-alt{background-color:#F4F9FE}
+.dwbp-split{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:56px;align-items:start}
+.dwbp-head{position:sticky;top:120px}
+.dwbp-num{display:block;font:900 64px/1 Urbanist,"Urbanist Fallback",sans-serif;color:#E1EDF8;margin-bottom:10px}
+.dwbp-sec.is-alt .dwbp-num{color:#D6E6F5}
+.dwbp-head h2{margin:0;font:900 34px/1.12 Urbanist,"Urbanist Fallback",sans-serif;letter-spacing:.01em;text-transform:uppercase;color:#0E1526}
+.dwbp-body>p{margin:0 0 18px;font:400 20px/1.75 Urbanist,"Urbanist Fallback",sans-serif;color:#303B58}
+.dwbp-body a{color:#1B7EC3;font-weight:600}
+.dwbp-checks{list-style:none;margin:8px 0 24px;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.dwbp-checks li{display:flex;gap:12px;align-items:flex-start;background:#fff;border:1px solid #E4E9F5;border-radius:12px;padding:16px 18px;font:400 18px/1.5 Urbanist,"Urbanist Fallback",sans-serif;color:#0E1526}
+.dwbp-checks svg{flex:none;width:22px;height:22px;margin-top:2px}.dwbp-checks circle{fill:#1B7EC3}.dwbp-checks path{fill:none;stroke:#fff;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.dwbp-steps{list-style:none;margin:8px 0 24px;padding:0;display:flex;flex-direction:column;gap:12px}
+.dwbp-steps li{display:flex;gap:16px;align-items:flex-start;background:#fff;border:1px solid #E4E9F5;border-radius:12px;padding:16px 20px;font:400 18px/1.55 Urbanist,"Urbanist Fallback",sans-serif;color:#0E1526}
+.dwbp-steps b{flex:none;font:900 18px Urbanist,"Urbanist Fallback",sans-serif;color:#1B7EC3}
+.dwbp-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:8px 0 24px}
+.dwbp-card{background:#fff;border:1px solid #E4E9F5;border-radius:14px;padding:24px 24px 8px;box-shadow:0 10px 26px rgba(18,41,62,.05)}
+.dwbp-card h3{margin:0 0 10px;font:900 19px/1.25 Urbanist,"Urbanist Fallback",sans-serif;text-transform:uppercase;color:#0E1526}
+.dwbp-card p{margin:0 0 14px;font:400 17px/1.65 Urbanist,"Urbanist Fallback",sans-serif;color:#303B58}
+.dwbp-card .dwbp-checks{grid-template-columns:1fr}
+.dwbp-band{background-color:#12293E;padding:84px 32px;text-align:center}
+.dwbp-band-in{max-width:760px;margin:0 auto}
+.dwbp-band p{margin:18px auto 30px;max-width:620px;font:400 20px/1.7 Urbanist,"Urbanist Fallback",sans-serif;color:#C9DAE8}
+.dwbp-band .dwbp-btns,.dwbp-work .dwbp-btns{justify-content:center}
+.dwbp-work{background-color:#12293E;padding:84px 0;text-align:center}
+.dwbp-work .dwdp-cta-title{margin-bottom:36px!important}
+.dwbp-work-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;text-align:left}
+.dwbp-explore{padding:80px 0}
+.dwbp-links{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.dwbp-links a{display:flex;flex-direction:column;gap:8px;padding:24px;border:1px solid #E4E9F5;border-radius:14px;background:#fff;text-decoration:none!important;transition:border-color .2s,box-shadow .2s,transform .2s}
+.dwbp-links a:hover{border-color:#1B7EC3;box-shadow:0 12px 30px rgba(18,41,62,.08);transform:translateY(-3px)}
+.dwbp-links b{font:900 20px Urbanist,"Urbanist Fallback",sans-serif;text-transform:uppercase;color:#0E1526}
+.dwbp-links span{font:400 16px/1.55 Urbanist,"Urbanist Fallback",sans-serif;color:#4A5470}
+.dwbp-links i{margin-top:auto;font:600 15px Urbanist,"Urbanist Fallback",sans-serif;font-style:normal;color:#1B7EC3}
+.dwbp-author{display:flex;gap:18px;align-items:center;margin-top:40px;padding:22px 26px;border-radius:14px;background:#F4F9FE}
+.dwbp-author img{flex:none;width:72px;height:72px;border-radius:50%;object-fit:cover}
+.dwbp-author p{margin:0;font:400 17px/1.6 Urbanist,"Urbanist Fallback",sans-serif;color:#303B58}.dwbp-author a{color:#1B7EC3;font-weight:600}
+@media(max-width:1024px){
+	.dwbp-hero-in,.dwbp-split{grid-template-columns:1fr;gap:36px}
+	.dwbp-hero-text{text-align:center}.dwbp-hero .dwbp-btns{justify-content:center}
+	.dwbp-hero-img{max-width:620px;margin:0 auto}
+	.dwbp-head{position:static;text-align:center}
+	.dwbp-work-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+	.dwbp-links{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:767px){
+	.dwbp-in{padding:0 20px}
+	.dwbp-hero{padding:56px 20px 64px}
+	.dwbp-title{font-size:30px}
+	.dwbp-lead,.dwbp-body>p,.dwbp-intro p,.dwbp-band p{font-size:17px}
+	.dwbp-num{font-size:48px}.dwbp-head h2{font-size:26px}
+	.dwbp-sec{padding:56px 0}
+	.dwbp-checks,.dwbp-cards,.dwbp-work-grid,.dwbp-links{grid-template-columns:1fr}
+	.dwbp-band,.dwbp-work,.dwbp-explore{padding-top:56px;padding-bottom:56px}
+	.dwbp-author{flex-direction:column;text-align:center}
+}
+/* Blog page sections: heading above the content, content uses the full width */
+.dwbp-split{grid-template-columns:1fr;gap:28px}
+.dwbp-head{position:static;display:flex;align-items:center;gap:22px}
+.dwbp-num{margin:0;font-size:72px}
+.dwbp-head h2{font-size:40px}
+.dwbp-body>p{max-width:860px}
+.dwbp-cards{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.dwbp-checks{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.dwbp-steps{max-width:860px}
+.dwbp-work .dw-pfoot{flex-direction:column;align-items:stretch;text-align:center;gap:14px;padding:20px 20px 22px}
+.dwbp-work .dw-pfoot .dw-pbtn{width:100%;height:48px!important;padding:0 16px!important;font-size:13px!important;letter-spacing:.12em!important}
+.dwbp-work .dw-pmeta b{font-size:20px!important}
+@media(max-width:1024px){.dwbp-head{justify-content:center;text-align:center}}
+@media(max-width:767px){.dwbp-head{flex-direction:column;gap:6px}.dwbp-num{font-size:48px}.dwbp-head h2{font-size:26px}.dwbp-cards,.dwbp-checks{grid-template-columns:1fr}}
+/* "In this guide": a clean two-column list, no boxes */
+.dwbp-toc{padding:56px 0 8px}
+.dwbp-toc .dwbp-in{max-width:960px}
+.dwbp-toc-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:48px;row-gap:0;border-top:1px solid #E4E9F5}
+.dwbp-toc-grid a{display:flex;align-items:baseline;gap:14px;padding:14px 0;border:0;border-bottom:1px solid #E4E9F5;border-radius:0;background:none;box-shadow:none!important;transform:none!important;font:500 17px/1.4 Urbanist,"Urbanist Fallback",sans-serif;color:#0E1526}
+.dwbp-toc-grid a:hover{color:#1B7EC3}
+.dwbp-toc-grid b{width:auto;height:auto;background:none;border-radius:0;font:600 13px Urbanist,"Urbanist Fallback",sans-serif;letter-spacing:.08em;color:#1B7EC3}
+@media(max-width:767px){.dwbp-toc-grid{grid-template-columns:1fr}}
+/* Check lists: one clean column with dividers, no boxes (even for any number of items) */
+.dwbp-checks,.dwbp-card .dwbp-checks{display:flex!important;flex-direction:column;gap:0;max-width:860px;margin:6px 0 26px;border-top:1px solid #E4E9F5}
+.dwbp-checks li{background:none;border:0;border-bottom:1px solid #E4E9F5;border-radius:0;padding:14px 2px;font:400 19px/1.5 Urbanist,"Urbanist Fallback",sans-serif}
+.dwbp-card .dwbp-checks li{font-size:17px;padding:11px 0}
+.dwbp-sec.is-alt .dwbp-checks,.dwbp-sec.is-alt .dwbp-checks li{border-color:#D9E6F3}
+@media(max-width:767px){.dwbp-checks li{font-size:17px}}
+/* Blog sections: paragraphs as wide as the heading, straight edges */
+.dwbp-body>p,.dwbp-steps{max-width:none!important;text-align:justify;text-justify:inter-word;hyphens:manual}
+.dwbp-checks{max-width:none}
+@media(max-width:767px){.dwbp-body>p{text-align:left}}
+/* "In this guide" lines up with the sections below (same left edge), intro left-aligned */
+.dwbp-toc .dwbp-in{max-width:1180px}
+.dwbp-toc-grid b{flex:none;width:26px}
+.dwbp-intro{max-width:none;margin:36px 0 0;text-align:left}
+.dwbp-intro p{text-align:left}
+/* "In this guide": compact panel, three columns, light tint and border */
+.dwbp-toc{padding:48px 0 0}
+.dwbp-toc .dwbp-eyebrow{margin:0 0 10px}
+.dwbp-toc-grid{background:#F4F9FE;border:1px solid #DCEAF6;border-radius:14px;padding:18px 26px;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:32px;row-gap:2px;border-top:1px solid #DCEAF6}
+.dwbp-toc-grid a{border:0;padding:7px 0;font-size:16px}
+.dwbp-intro{margin-top:28px}
+@media(max-width:1024px){.dwbp-toc-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:767px){.dwbp-toc-grid{grid-template-columns:1fr;padding:14px 18px}}
+@media(min-width:1025px){.dwbp-toc-grid.cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* Blog: links blue everywhere in the content; richer cards */
+.dwbp-intro a,.dwbp-body a,.dwbp-card a,.dwbp-steps a,.dwbp-checks a{color:#1B7EC3!important;font-weight:600;text-decoration:none}
+.dwbp-intro a:hover,.dwbp-body a:hover{text-decoration:underline}
+.dwbp-cards{gap:22px}
+.dwbp-card{padding:34px 34px 20px;border-color:#E4E9F5;border-radius:18px;box-shadow:0 18px 40px rgba(18,41,62,.07);transition:transform .25s,box-shadow .25s}
+.dwbp-card:hover{transform:translateY(-4px);box-shadow:0 24px 50px rgba(18,41,62,.1)}
+.dwbp-ic{display:inline-flex;align-items:center;justify-content:center;width:60px;height:60px;border-radius:16px;background:linear-gradient(145deg,#E8F2FB,#D6E8F8);margin-bottom:20px}
+.dwbp-ic svg{width:30px;height:30px;fill:none;stroke:#1B7EC3;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.dwbp-card h3{font-size:20px;margin-bottom:12px}
+.dwbp-card p{font-size:18px}
+@media(max-width:767px){.dwbp-card{padding:26px 22px 14px}.dwbp-ic{width:52px;height:52px}}
+@media(min-width:768px){.dwbp-toc-grid.cols-1{grid-template-columns:1fr}}
+/* Intro and "In this guide" as separate sections */
+.dwbp-introsec{background-color:#F4F9FE;padding:56px 0;border-bottom:1px solid #E4E9F5}
+.dwbp-introsec .dwbp-intro{margin:0;max-width:none}
+.dwbp-introsec .dwbp-intro p{font-size:21px;line-height:1.7;color:#303B58;margin:0 0 14px}
+.dwbp-introsec .dwbp-intro p:last-child{margin-bottom:0}
+.dwbp-toc{padding:56px 0 8px}
+@media(max-width:767px){.dwbp-introsec{padding:40px 0}.dwbp-introsec .dwbp-intro p{font-size:17px}}
+.dw-upwork-link{display:flex;align-items:center;justify-content:center;gap:10px;margin:0 0 14px;padding:14px 20px;border:1.5px solid #14A800;border-radius:8px;background:#fff;color:#108A00!important;font:600 15px Urbanist,"Urbanist Fallback",sans-serif;text-decoration:none!important;transition:background .2s,color .2s}.dw-upwork-link:hover{background:#14A800;color:#fff!important}.dw-upwork-ic{width:22px;height:22px;background:currentColor;-webkit-mask:url(https://dreamwebdigital.com/wp-content/uploads/2026/10/upwork-icon.svg) center/contain no-repeat;mask:url(https://dreamwebdigital.com/wp-content/uploads/2026/10/upwork-icon.svg) center/contain no-repeat}
+/* Project page: tappable phone with app screens */
+.dw-app{background-color:#12293E;padding:96px 32px}
+.dw-app-in{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:64px;align-items:center}
+.dw-app-k{font:600 13px Urbanist,"Urbanist Fallback",sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#4BA3DC;margin-bottom:14px}
+.dw-app .dwdp-cta-title{text-align:left!important}
+.dw-app-p{margin:16px 0 26px;font:400 19px/1.6 Urbanist,"Urbanist Fallback",sans-serif;color:#C9DAE8}
+.dw-app-tabs{display:flex;flex-wrap:wrap;gap:10px}
+.dw-app-tab{border:1px solid rgba(255,255,255,.22)!important;background:transparent!important;color:#C9DAE8!important;border-radius:100px!important;padding:9px 16px!important;font:500 15px Urbanist,"Urbanist Fallback",sans-serif!important;letter-spacing:0!important;text-transform:none!important;cursor:pointer;height:auto!important;min-width:0!important;transition:background .2s,color .2s,border-color .2s}
+.dw-app-tab:hover{border-color:#4BA3DC!important;color:#fff!important}
+.dw-app-tab.is-on{background:#1B7EC3!important;border-color:#1B7EC3!important;color:#fff!important}
+.dw-app-phone{display:flex;align-items:center;gap:18px}
+.dw-app-device{position:relative;width:330px;aspect-ratio:390/844;border-radius:52px;background:#0b0c0e;padding:12px;box-shadow:0 0 0 2px #3a3c42,0 40px 80px rgba(0,0,0,.45)}
+.dw-app-island{position:absolute;top:22px;left:50%;width:92px;height:26px;margin-left:-46px;border-radius:20px;background:#000;z-index:3}
+.dw-app-screen{position:relative;width:100%;height:100%;border-radius:40px;overflow:hidden;background:#fff}
+.dw-app-screen img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;opacity:0;transition:opacity .35s ease}
+.dw-app-screen img.is-on{opacity:1}
+.dw-app-nav{width:44px;height:44px;border-radius:50%!important;border:1px solid rgba(255,255,255,.25)!important;background:transparent!important;color:#fff!important;font:400 26px/1 Urbanist,"Urbanist Fallback",sans-serif!important;padding:0!important;min-width:0!important;cursor:pointer}
+.dw-app-nav:hover{background:#1B7EC3!important;border-color:#1B7EC3!important}
+.dw-site-link{display:block!important;align-self:stretch!important;width:100%;box-sizing:border-box;text-align:center;margin:28px 0 -10px!important}
+@media(max-width:1024px){.dw-app-in{grid-template-columns:1fr;gap:40px;justify-items:center;text-align:center}.dw-app .dwdp-cta-title{text-align:center!important}.dw-app-tabs{justify-content:center}}
+@media(max-width:767px){.dw-app{padding:64px 16px}.dw-app-device{width:260px;border-radius:42px;padding:10px}.dw-app-screen{border-radius:32px}.dw-app-island{top:18px;width:74px;height:22px;margin-left:-37px}.dw-app-phone{gap:8px}.dw-app-nav{width:38px;height:38px}.dw-app-tab{font-size:14px!important;padding:8px 13px!important}}
+/* phone viewer: status bar strip so the notch never covers the app, round arrows, one-row tabs on phones */
+.dw-app-screen{background:#13262f}
+.dw-app-screen::before{content:"9:41";position:absolute;left:0;right:0;top:0;height:44px;z-index:2;display:flex;align-items:center;padding:0 0 0 30px;font:600 14px Urbanist,"Urbanist Fallback",sans-serif;color:#fff;background:#13262f}
+.dw-app-screen img{top:44px!important;height:calc(100% - 44px)!important}
+.dw-app button.dw-app-nav{width:44px!important;height:44px!important;min-width:44px!important;max-width:44px!important;padding:0!important;border-radius:50%!important;display:inline-flex!important;align-items:center;justify-content:center;flex:none}
+@media(max-width:767px){
+	.dw-app-screen::before{height:36px;font-size:12px;padding-left:24px}
+	.dw-app-screen img{top:36px!important;height:calc(100% - 36px)!important}
+	.dw-app-tabs{flex-wrap:nowrap;justify-content:flex-start;overflow-x:auto;margin:0 -16px;padding:2px 16px 8px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+	.dw-app-tabs::-webkit-scrollbar{display:none}
+	.dw-app-tab{flex:none}
+	.dw-app button.dw-app-nav{width:38px!important;height:38px!important;min-width:38px!important;max-width:38px!important}
+}
+.dw-app-in>*{min-width:0;max-width:100%}.dw-app-text{width:100%}
+/* Portfolio: WordPress / Webflow toggle */
+.dw-ptoggle-wrap{display:flex;justify-content:center;margin:0 0 40px}
+.dw-ptoggle{display:inline-flex;gap:4px;padding:5px;border-radius:100px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16)}
+.dw-ptoggle button{display:inline-flex!important;align-items:center;gap:10px;border:0!important;border-radius:100px!important;background:transparent!important;color:#C9DAE8!important;font:600 16px Urbanist,"Urbanist Fallback",sans-serif!important;letter-spacing:.02em!important;text-transform:none!important;padding:12px 26px!important;height:auto!important;min-width:0!important;cursor:pointer;transition:background .2s,color .2s}
+.dw-ptoggle button:hover{color:#fff!important}
+.dw-ptoggle button.is-on{background:#fff!important;color:#0E1526!important;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+.dw-ptoggle-ic{width:20px;height:20px;background:currentColor;-webkit-mask:center/contain no-repeat;mask:center/contain no-repeat}
+.dw-ic-wp{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-8.5 10c0-1.2.26-2.35.72-3.39l3.98 10.9A8.5 8.5 0 0 1 3.5 12zm8.5 8.5c-.83 0-1.64-.12-2.4-.35l2.55-7.41 2.61 7.15.06.12c-.88.32-1.82.49-2.82.49zm1.17-12.48c.51-.03.97-.08.97-.08.46-.05.4-.73-.06-.7 0 0-1.38.11-2.27.11-.84 0-2.25-.11-2.25-.11-.46-.03-.52.68-.06.7 0 0 .44.05.9.08l1.34 3.67-1.88 5.64-3.13-9.31c.51-.03.97-.08.97-.08.46-.05.4-.73-.06-.7 0 0-1.38.11-2.27.11h-.55A8.5 8.5 0 0 1 17.9 5.9h-.11c-.84 0-1.43.73-1.43 1.51 0 .7.4 1.3.84 2 .33.58.71 1.32.71 2.39 0 .74-.28 1.6-.66 2.8l-.86 2.88-3.12-9.46zm3.1 11.33 2.6-7.52c.49-1.22.65-2.19.65-3.06 0-.31-.02-.6-.06-.88A8.47 8.47 0 0 1 20.5 12a8.5 8.5 0 0 1-4.23 7.35z'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-8.5 10c0-1.2.26-2.35.72-3.39l3.98 10.9A8.5 8.5 0 0 1 3.5 12zm8.5 8.5c-.83 0-1.64-.12-2.4-.35l2.55-7.41 2.61 7.15.06.12c-.88.32-1.82.49-2.82.49zm1.17-12.48c.51-.03.97-.08.97-.08.46-.05.4-.73-.06-.7 0 0-1.38.11-2.27.11-.84 0-2.25-.11-2.25-.11-.46-.03-.52.68-.06.7 0 0 .44.05.9.08l1.34 3.67-1.88 5.64-3.13-9.31c.51-.03.97-.08.97-.08.46-.05.4-.73-.06-.7 0 0-1.38.11-2.27.11h-.55A8.5 8.5 0 0 1 17.9 5.9h-.11c-.84 0-1.43.73-1.43 1.51 0 .7.4 1.3.84 2 .33.58.71 1.32.71 2.39 0 .74-.28 1.6-.66 2.8l-.86 2.88-3.12-9.46zm3.1 11.33 2.6-7.52c.49-1.22.65-2.19.65-3.06 0-.31-.02-.6-.06-.88A8.47 8.47 0 0 1 20.5 12a8.5 8.5 0 0 1-4.23 7.35z'/%3E%3C/svg%3E")}
+.dw-ic-wf{width:26px;height:17px;-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1080 674'%3E%3Cpath fill-rule='evenodd' d='M1080 0L735.386 673.684H411.696L555.916 394.481H549.445C430.464 548.934 252.942 650.61 0 673.684V398.344C0 398.344 161.813 388.787 256.939 288.776H0V0.0053214H288.771V237.515L295.253 237.489L413.255 0.0053214H631.645V236.009L638.126 235.999L760.556 0H1080Z'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1080 674'%3E%3Cpath fill-rule='evenodd' d='M1080 0L735.386 673.684H411.696L555.916 394.481H549.445C430.464 548.934 252.942 650.61 0 673.684V398.344C0 398.344 161.813 388.787 256.939 288.776H0V0.0053214H288.771V237.515L295.253 237.489L413.255 0.0053214H631.645V236.009L638.126 235.999L760.556 0H1080Z'/%3E%3C/svg%3E")}
+.dw-pgrid[data-show="wordpress"] .dw-pcard:not([data-builder="wordpress"]),.dw-pgrid[data-show="webflow"] .dw-pcard:not([data-builder="webflow"]){display:none!important}
+@media(max-width:767px){.dw-ptoggle-wrap{margin-bottom:28px}.dw-ptoggle button{padding:11px 20px!important;font-size:15px!important}}
+/* Local landing page */
+.dwlp-proof{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.dwlp-proof span{display:inline-block;padding:7px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#DCE8F3;font:600 14px/1.2 Urbanist,"Urbanist Fallback",sans-serif}
+.dwlp-hero-img img{aspect-ratio:4/3;object-fit:contain;background:#fff}
+.dwlp-areas{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:10px}
+.dwlp-areas li{background:#fff;border:1px solid #E4E9F5;border-radius:999px;padding:8px 16px;font:600 15.5px/1.3 Urbanist,"Urbanist Fallback",sans-serif;color:#12293E}
+.dwlp-faq details{background:#fff;border:1px solid #E4E9F5;border-radius:12px;margin:0 0 12px;padding:0 22px;box-shadow:0 8px 22px rgba(18,41,62,.04)}
+.dwlp-faq summary{cursor:pointer;list-style:none;padding:20px 30px 20px 0;position:relative;font:700 18px/1.4 Urbanist,"Urbanist Fallback",sans-serif;color:#0E1526}
+.dwlp-faq summary::-webkit-details-marker{display:none}
+.dwlp-faq summary::after{content:"+";position:absolute;right:0;top:16px;font:400 26px/1 Urbanist,"Urbanist Fallback",sans-serif;color:#1B7EC3}
+.dwlp-faq details[open] summary::after{content:"−"}
+.dwlp-faq details p{margin:0 0 20px;font:400 17px/1.7 Urbanist,"Urbanist Fallback",sans-serif;color:#303B58}
+.dwlp-faq a{color:#1B7EC3}
+.dwlp .dwbp-work-title{margin:6px 0 30px;font:900 34px/1.15 Urbanist,"Urbanist Fallback",sans-serif;text-transform:uppercase;color:#fff;text-align:center}
+.dwlp .dwbp-work .dwbp-btns{margin-top:34px}
+.dwlp .dwbp-band .dwbp-btns{gap:16px 26px}
