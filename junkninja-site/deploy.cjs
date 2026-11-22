@@ -26,7 +26,7 @@ const m = {
   svcResidential: photo('svc-residential', photo('svc-household', wide)), svcFurniture: photo('svc-furniture', wide), svcAppliance: photo('svc-appliance', wide),
   svcGarage: photo('svc-garage', wide), svcEstate: photo('svc-estate', wide), svcRental: photo('svc-rental', wide),
   svcYard: photo('svc-yard', wide), svcConstruction: photo('svc-construction', wide),
-  baGarage1Before: photo('ba-garage-1-before', tall), baGarage1After: photo('ba-garage-1-after', md('ba-garage-after.webp')),
+  baGarage1Before: photo('ba-garage-1-before-tall', photo('ba-garage-1-before', tall)), baGarage1After: photo('ba-garage-1-after', md('ba-garage-after.webp')),
   baGarage2Before: photo('ba-garage-2-before', tall), baGarage2After: photo('ba-garage-2-after', tall),
   baHottub1Before: photo('ba-hottub-1-before', tall), baHottub1After: photo('ba-hottub-1-after', tall),
   baHottub2Before: photo('ba-hottub-2-before', tall), baHottub2After: photo('ba-hottub-2-after', tall),
