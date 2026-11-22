@@ -1,0 +1,45 @@
+<script>
+/* Pacific Tax Academy – home hero slider (dots + autoplay) */
+(function(){
+  function init(){
+    var slides=[document.querySelector('.elementor-element-4d7801e'),document.querySelector('.elementor-element-445b071')];
+    var dots=[document.querySelector('.elementor-element-ce2672d button'),document.querySelector('.elementor-element-ba9b3c1 button')];
+    if(!slides[0]||!slides[1]||!dots[0]||!dots[1])return;
+    var cur=0,timer=null,hero=slides[0].closest('section')||document.body;
+    function show(i){
+      cur=i;
+      slides.forEach(function(s,k){s.classList.toggle('is-on',k===i);s.classList.toggle('is-off',k!==i);s.setAttribute('aria-hidden',k===i?'false':'true');});
+      dots.forEach(function(d,k){var bar=d.querySelector('[data-dot]');if(bar)bar.style.background=k===i?'rgb(4, 36, 63)':'rgb(195, 208, 219)';d.setAttribute('aria-current',k===i?'true':'false');});
+    }
+    function start(){stop();if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;timer=setInterval(function(){show((cur+1)%slides.length);},7000);}
+    function stop(){if(timer)clearInterval(timer);timer=null;}
+    dots.forEach(function(d,k){d.addEventListener('click',function(){show(k);start();});});
+    hero.addEventListener('mouseenter',stop);hero.addEventListener('mouseleave',start);
+    hero.addEventListener('focusin',stop);
+    show(0);start();
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+
+/* Small "30-day money-back guarantee" line under Enroll / Add to cart buttons */
+(function(){
+  var SHIELD='<svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>';
+  function fixedAncestor(el){for(var a=el;a&&a!==document.body;a=a.parentElement){var p=getComputedStyle(a).position;if(p==='fixed'||p==='sticky')return true;}return false;}
+  function isDark(el){for(var a=el.parentElement;a;a=a.parentElement){var m=getComputedStyle(a).backgroundColor.match(/[0-9.]+/g);if(m&&(m.length<4||+m[3]>0.5)){return (0.299*m[0]+0.587*m[1]+0.114*m[2])<128;}}return false;}
+  function run(){
+    var btns=document.querySelectorAll('a,button');
+    for(var i=0;i<btns.length;i++){
+      var b=btns[i],t=(b.textContent||'').trim();
+      if(!/^(Enroll( Now)? ·|Add to cart)/i.test(t))continue;
+      if(fixedAncestor(b))continue;
+      var host=b.closest('.elementor-widget')||b;
+      if(host.nextElementSibling&&host.nextElementSibling.classList.contains('pta-guarantee'))continue;
+      var line=document.createElement('div');line.className='pta-guarantee';
+      line.innerHTML=SHIELD+'<span>30-day money-back guarantee</span>';
+      host.parentNode.insertBefore(line,host.nextSibling);
+      if(isDark(line))line.classList.add('on-dark');
+    }
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run);else run();
+})();
+</script>

@@ -1,0 +1,104 @@
+/* ==== Pacific Tax Academy – site fixes (Elementor Site Settings > Custom CSS) ==== */
+
+/* ---------- Home hero: badges kept off the student ---------- */
+.elementor-19 .elementor-element.elementor-element-b93f9c7,.elementor-19 .elementor-element.elementor-element-91c39ce,.elementor-19 .elementor-element.elementor-element-ff786e3{z-index:3;padding:8px 12px !important;top:auto !important;bottom:auto !important;left:auto !important;right:auto !important}
+.elementor-19 .elementor-element-b24131d div[style*="font-size: 15px"]{font-size:14px !important}
+.elementor-19 .elementor-element-b24131d div[style*="font-size: 13px"]{font-size:12px !important}
+.elementor-19 .elementor-element-b24131d .elementor-widget-image:not(.elementor-element-c4292e4) img{width:20px !important;height:auto !important}
+.elementor-19 .elementor-element.elementor-element-b93f9c7{right:calc(50% + 62px) !important;top:0 !important}
+.elementor-19 .elementor-element.elementor-element-91c39ce{left:calc(50% + 105px) !important;top:34% !important}
+.elementor-19 .elementor-element.elementor-element-ff786e3{right:calc(50% + 115px) !important;bottom:6% !important}
+@media (min-width:761px) and (max-width:1199px){
+ .elementor-19 .elementor-element.elementor-element-b93f9c7,.elementor-19 .elementor-element.elementor-element-91c39ce,.elementor-19 .elementor-element.elementor-element-ff786e3{left:auto !important;right:calc(50% + 60px) !important;bottom:auto !important}
+ .elementor-19 .elementor-element-b24131d div[style*="font-size: 15px"]{font-size:13px !important}
+ .elementor-19 .elementor-element-b24131d div[style*="font-size: 13px"]{font-size:11px !important}
+ .elementor-19 .elementor-element.elementor-element-b93f9c7{top:28% !important}
+ .elementor-19 .elementor-element.elementor-element-91c39ce{top:52% !important}
+ .elementor-19 .elementor-element.elementor-element-ff786e3{top:76% !important}
+}
+@media (max-width:760px){
+ .elementor-19 .elementor-element.elementor-element-b93f9c7,.elementor-19 .elementor-element.elementor-element-91c39ce,.elementor-19 .elementor-element.elementor-element-ff786e3{padding:6px 9px !important;border-radius:9px !important}
+ .elementor-19 .elementor-element-b24131d div[style*="font-size: 15px"]{font-size:12px !important}
+ .elementor-19 .elementor-element-b24131d div[style*="font-size: 13px"]{font-size:10px !important;margin-top:1px !important}
+ .elementor-19 .elementor-element-b24131d .elementor-widget-image:not(.elementor-element-c4292e4) img{width:16px !important}
+ .elementor-19 .elementor-element.elementor-element-b93f9c7{right:auto !important;left:0 !important;top:4% !important}
+ .elementor-19 .elementor-element.elementor-element-91c39ce{left:auto !important;right:0 !important;top:38% !important}
+ .elementor-19 .elementor-element.elementor-element-ff786e3{right:auto !important;left:0 !important;bottom:6% !important}
+}
+/* hero slider: make the inactive slide unclickable, dots clickable */
+.elementor-19 .elementor-element-4d7801e.is-off,.elementor-19 .elementor-element-445b071.is-off{opacity:0 !important;visibility:hidden !important}
+.elementor-19 .elementor-element-4d7801e.is-on,.elementor-19 .elementor-element-445b071.is-on{opacity:1 !important;visibility:visible !important}
+
+/* ---------- Home stats bar: divider right of last column ---------- */
+.elementor-19 .elementor-element.elementor-element-1fdbd7e{box-shadow:rgba(255,255,255,.15) -1px 0 0,rgba(255,255,255,.15) 0 -1px 0,rgba(255,255,255,.15) 1px 0 0 !important}
+
+/* ---------- Home pricing cards: smaller Add to cart with breathing room ---------- */
+.elementor-19 button.phhome-5{width:auto !important;min-height:0 !important;font-size:15px !important;padding:11px 26px !important;margin:6px auto 22px !important;display:block}
+
+/* ---------- Header-style background (circle lines + glows) on dark bands ---------- */
+.elementor-19 .elementor-element-4f8657c,.elementor-19 .elementor-element-ee24210,
+.elementor-22 .elementor-element-1ddb0f4,.elementor-24 .elementor-element-9b9c1c8{position:relative;overflow:hidden;isolation:isolate}
+.elementor-19 .elementor-element-4f8657c::before,.elementor-19 .elementor-element-7ca32b5::before,.elementor-19 .elementor-element-ee24210::before,
+.elementor-22 .elementor-element-1ddb0f4::before,.elementor-24 .elementor-element-9b9c1c8::before{content:"";position:absolute;inset:0;pointer-events:none;z-index:-1;background-image:repeating-radial-gradient(circle at 92% 8%,rgba(255,255,255,.03) 0,rgba(255,255,255,.03) 1px,transparent 1px,transparent 34px)}
+.elementor-19 .elementor-element-4f8657c::after,.elementor-19 .elementor-element-7ca32b5::after,.elementor-19 .elementor-element-ee24210::after,
+.elementor-22 .elementor-element-1ddb0f4::after,.elementor-24 .elementor-element-9b9c1c8::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:-1;background:radial-gradient(40% 60% at 80% 30%,rgba(18,163,180,.22),transparent 70%),radial-gradient(35% 55% at 95% 95%,rgba(251,90,53,.16),transparent 70%),radial-gradient(38% 60% at 8% 15%,rgba(11,74,110,.75),transparent 70%),radial-gradient(32% 50% at 2% 100%,rgba(251,90,53,.12),transparent 70%),radial-gradient(30% 50% at 25% 60%,rgba(18,163,180,.1),transparent 70%)}
+.elementor-19 .elementor-element-947adf7{display:none !important}
+.elementor-22 .elementor-element-1ddb0f4 .elementor-widget-image img[style*="opacity"],.elementor-22 .elementor-element-1ddb0f4 .elementor-widget-image:first-child,
+.elementor-24 .elementor-element-9b9c1c8 .elementor-widget-image:first-child{display:none !important}
+
+/* ---------- Home dashboard mock: no horizontal scroll, tidy mobile ---------- */
+@media (max-width:760px){
+ .elementor-19 .elementor-element.elementor-element-3f9b649{flex-direction:column !important;align-items:flex-start !important;gap:10px !important}
+ .elementor-19 .elementor-element-7d9a136 > div{flex-wrap:wrap;gap:4px 14px !important}
+ .elementor-19 .elementor-element.elementor-element-5f3382c{grid-template-columns:1fr !important}
+ .elementor-19 .elementor-element.elementor-element-5f3382c > *{grid-column:1 / -1 !important;grid-row:auto !important}
+ .elementor-19 .elementor-element.elementor-element-5f3382c{grid-template-areas:none !important;row-gap:14px !important}
+ .elementor-19 .elementor-element.elementor-element-058843b{grid-row:1 !important}
+ .elementor-19 .elementor-element.elementor-element-6bb5d5e{grid-row:2 !important;justify-content:flex-start !important}
+ .elementor-19 .elementor-element.elementor-element-8901e70{grid-row:3 !important}
+}
+
+/* ---------- Team photo bands (20-hour, 60-hour): taller, heads not cropped ---------- */
+.elementor-20 .elementor-element-80f46a8,.elementor-21 .elementor-element-80f46a8,
+.elementor-20 .elementor-element-3488976 .e-con:has(> .elementor-element-4449f52),
+.elementor-21 .elementor-element-11800e4 > .e-con > .e-con{min-height:440px}
+.elementor-20 .elementor-element-3488976 [style*="team.webp"],.elementor-21 .elementor-element-11800e4 [style*="team.webp"]{background-position:center 18% !important;background-size:cover !important}
+
+/* ---------- Team seats: tables fit on phones ---------- */
+@media (max-width:760px){
+ .elementor-23 .elementor-element-04db52a,.elementor-23 .elementor-element-6a488e4,
+ .elementor-23 .elementor-element-0713c71,.elementor-23 .elementor-element-837b241{overflow-x:auto !important;-webkit-overflow-scrolling:touch}
+ .elementor-23 .elementor-element-b52cf00{min-width:560px}
+ /* seat pricing: fit 4 columns, drop the "/ seat" suffix */
+ .elementor-23 .elementor-element-4dc2020{min-width:0 !important;width:100% !important}
+ .elementor-23 .elementor-element-4dc2020 div[style*="grid-template-columns"]{grid-template-columns:52px 66px 1fr 1fr !important;gap:6px !important;padding-left:12px !important;padding-right:12px !important}
+ .elementor-23 .elementor-element-4dc2020 div[style*="grid-template-columns"] > *{min-width:0}
+ .elementor-23 .elementor-element-4dc2020 div[style*="grid-template-columns"] > :nth-child(2) *{white-space:nowrap;font-size:12px !important;padding:3px 7px !important}
+ .elementor-23 .elementor-element-4dc2020 div[style*="uppercase"],.elementor-23 .elementor-element-4dc2020 div[style*="uppercase"] *{font-size:11px !important;letter-spacing:.03em !important}
+ .elementor-23 .elementor-element-4dc2020 span[style*="font-size: 14px"]{display:none !important}
+}
+
+/* ---------- Contact: "Still need help" band fits on phones ---------- */
+@media (max-width:760px){
+ .elementor-25 .elementor-element-0f9a385{flex-wrap:wrap !important}
+ .elementor-25 .elementor-element-0f9a385 div[style*="nowrap"]{white-space:normal !important;flex:1 1 100% !important}
+}
+
+/* ---------- Site-wide small things ---------- */
+a[href^="tel:"]{white-space:nowrap}
+@media (max-width:760px){
+ .elementor-element-a8b6414{justify-content:center !important;text-align:center !important;flex-wrap:wrap}
+}
+
+/* ---------- 30-day guarantee line under buy buttons ---------- */
+.pta-guarantee{display:flex;align-items:center;justify-content:center;gap:6px;margin:8px 0 0;font-size:13px;font-weight:500;line-height:1.3;color:rgb(74,96,118)}
+.pta-guarantee svg{flex:0 0 auto;color:rgb(18,163,180)}
+.elementor-19 .pta-guarantee{margin:-12px 0 20px}
+.pta-guarantee.on-dark{color:rgba(255,255,255,.8)}.pta-guarantee.on-dark svg{color:rgb(251,90,53)}
+.elementor-19 .elementor-element-7ca32b5{position:relative;overflow:hidden;isolation:isolate}
+
+/* ---------- Home "Renew your whole team" band: keep text off faces on tablets ---------- */
+@media (min-width:761px) and (max-width:1199px){
+ .elementor-19 .elementor-element.elementor-element-f2af561 img{object-position:95% 30% !important;left:22% !important;width:78% !important}
+ .elementor-19 .elementor-element-f435d4b > div{background:linear-gradient(90deg,rgba(4,36,63,1) 0%,rgba(4,36,63,1) 28%,rgba(4,36,63,.9) 48%,rgba(4,36,63,0) 78%) !important}
+}
