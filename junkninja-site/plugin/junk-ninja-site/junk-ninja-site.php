@@ -22,7 +22,7 @@ function jn_business() {
 		'hours'       => '6am–9pm, 7 days a week',
 		'title'       => 'Junk Removal Port St. Lucie & Treasure Coast FL | Junk Ninja LLC',
 		'description' => 'Licensed and insured junk removal in Port St. Lucie, Stuart, Fort Pierce and the Treasure Coast. Text us photos for a fast estimate. Call 772-882-5955.',
-		'about'       => 'Junk Ninja LLC is a licensed and insured junk removal company in Port St. Lucie, Florida, serving homeowners, realtors, property managers and businesses across the Treasure Coast. Customers text photos of what needs to go to 772-882-5955 (or upload them with the online quote form) and get a quote; no photos, and the crew comes to take a look. Open 6am–9pm, 7 days a week.',
+		'about'       => 'Junk Ninja LLC is a licensed and insured junk removal company in Port St. Lucie, Florida, serving homeowners, realtors, property managers and businesses across the Treasure Coast. Customers text photos of what needs to go to 772-882-5955 (or book online) and get a quote; no photos, and the crew comes to take a look. Open 6am–9pm, 7 days a week.',
 		'towns'       => array( 'Port Saint Lucie', 'Palm City', 'Jensen Beach', 'Stuart', 'Fort Pierce', 'Hobe Sound', 'Jupiter', 'Okeechobee' ),
 		'services'    => array(
 			'Residential Junk Removal'    => 'Unwanted household items and general clutter.',
@@ -38,7 +38,7 @@ function jn_business() {
 		),
 		// Must match the FAQ shown on the home page.
 		'faq'         => array(
-			'How much does it cost?'  => 'Every job is different, so we quote from your photos or a quick visit. Text photos to 772-882-5955 or upload them with our quote form.',
+			'How much does it cost?'  => 'Every job is different, so we quote from your photos or a quick visit. Text photos to 772-882-5955 or book online.',
 			'What do you remove?'     => 'Household junk, furniture, appliances, yard waste, construction debris, electronics and storm debris. We also do garage, house, estate, rental and storage unit cleanouts.',
 			'How soon can you do it?' => "It depends on the job and our schedule. Text photos to 772-882-5955 and we'll let you know when we can get to you.",
 		),
@@ -236,6 +236,25 @@ add_action( 'wp_footer', function () {
 	echo "<script>document.querySelectorAll('.jn-services .e-n-tab-title').forEach(function(t){t.addEventListener('mouseenter',function(){if(matchMedia('(min-width:761px) and (hover:hover)').matches&&t.getAttribute('aria-selected')!=='true')t.click();});});</script>\n";
 }, 99 );
 
+
+/* ------------------------------------------------- Housecall Pro booking */
+// Every link to the Housecall Pro booking page opens Housecall Pro's own booking pop-up instead of leaving the site.
+// Their script (about 5 KB) loads only when a visitor reaches for a booking button, so it costs nothing on page load.
+// Without JavaScript the link still opens the booking page.
+add_action( 'wp_footer', function () {
+	if ( is_admin() || isset( $_GET['elementor-preview'] ) ) {
+		return;
+	}
+	?>
+<script>(function(){var S='https://online-booking.housecallpro.com/script.js?token=90b3127fc3b54f7d9afbc351b82f231e&orgName=Junk-Ninja-LLC',p=null;
+function load(){if(!p){p=new Promise(function(ok,no){var s=document.createElement('script');s.src=S;s.async=true;s.onload=ok;s.onerror=no;document.head.appendChild(s);});}return p;}
+function isBook(e){var a=e.target.closest&&e.target.closest('a[href*="book.housecallpro.com"]');return a;}
+['pointerover','touchstart','focusin'].forEach(function(t){document.addEventListener(t,function(e){if(isBook(e))load();},{passive:true});});
+document.addEventListener('click',function(e){var a=isBook(e);if(!a||e.ctrlKey||e.metaKey||e.shiftKey)return;e.preventDefault();
+load().then(function(){if(window.HCPWidget)HCPWidget.openModal();else location.href=a.href;}).catch(function(){location.href=a.href;});});})();</script>
+	<?php
+}, 100 );
+
 /* ------------------------------------------------------------------- SEO */
 
 add_filter( 'pre_get_document_title', function ( $title ) {
@@ -361,12 +380,12 @@ add_action( 'parse_request', function () {
 	$b    = jn_business();
 	$home = home_url( '/' );
 	$t    = "# {$b['name']}\n\n> {$b['about']}\n\n";
-	$t   .= "## Contact\n\n- Phone and text: {$b['phone_human']} (text photos of the junk for a faster quote)\n- Email: {$b['email']}\n- Hours: {$b['hours']}\n- Licensed and insured\n- Website: {$home}\n- Free quote form: {$home}#quote\n- Facebook: {$b['facebook']}\n\n";
+	$t   .= "## Contact\n\n- Phone and text: {$b['phone_human']} (text photos of the junk for a faster quote)\n- Email: {$b['email']}\n- Hours: {$b['hours']}\n- Licensed and insured\n- Website: {$home}\n- Book online (free estimate): https://book.housecallpro.com/book/Junk-Ninja-LLC/90b3127fc3b54f7d9afbc351b82f231e?v2=true\n- Facebook: {$b['facebook']}\n\n";
 	$t   .= "## Services\n\n";
 	foreach ( $b['services'] as $name => $desc ) {
 		$t .= "- {$name}: {$desc}\n";
 	}
-	$t .= "\n## Service area (Treasure Coast, Florida)\n\n- " . implode( "\n- ", $b['towns'] ) . "\n\n## How it works\n\n1. Send photos: text them to {$b['phone_human']} or upload them with the quote form.\n2. Get your quote: we look at what needs to go and send you a quote for the job.\n3. We haul it away: we load it up and take it away.\n\n## FAQ\n\n";
+	$t .= "\n## Service area (Treasure Coast, Florida)\n\n- " . implode( "\n- ", $b['towns'] ) . "\n\n## How it works\n\n1. Send photos: text them to {$b['phone_human']} or book online.\n2. Get your quote: we look at what needs to go and send you a quote for the job.\n3. We haul it away: we load it up and take it away.\n\n## FAQ\n\n";
 	foreach ( $b['faq'] as $q => $a ) {
 		$t .= "### {$q}\n\n{$a}\n\n";
 	}

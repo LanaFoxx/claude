@@ -62,3 +62,9 @@ Lighthouse on the staging URL: mobile 97 / 100 / 100 / 69, desktop 99 / 100 / 10
 * FAQ "How soon can you do it?" has a neutral holding answer pending the client.
 * Form email goes to the admin email; switch to junkninjallc@gmail.com at launch. Housecall Pro not wired.
 * Add the street address (if the client wants it public) and Google Business Profile link to `jn_business()` / schema.
+
+## Housecall Pro booking (Nov 2026)
+All quote buttons (header, menu, hero, steps, services panel, about, mobile bar, quote card) link to the client's
+Housecall Pro online booking: `BOOK` in `lib.cjs`. The Junk Ninja Site plugin opens it as Housecall Pro's pop-up and
+loads their script only when a visitor hovers, taps or clicks a booking link. Without JavaScript the link opens the
+booking page. The Elementor quote form was replaced by a booking card, so every request lands in Housecall Pro.

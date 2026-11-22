@@ -13,6 +13,8 @@ const C = {
 const HEAD = 'Russo One', BODY = 'Archivo';
 const PHONE = '772-882-5955', TEL = 'tel:7728825955', SMS = 'sms:7728825955';
 const EMAIL = 'junkninjallc@gmail.com';
+// Housecall Pro online booking (the client's CRM). The Junk Ninja Site plugin opens it as Housecall Pro's pop-up.
+const BOOK = 'https://book.housecallpro.com/book/Junk-Ninja-LLC/90b3127fc3b54f7d9afbc351b82f231e?v2=true';
 const FACEBOOK = 'https://www.facebook.com/profile.php?id=61569525440522';
 const TOWNS = ['Port Saint Lucie', 'Palm City', 'Jensen Beach', 'Stuart', 'Fort Pierce', 'Hobe Sound', 'Jupiter', 'Okeechobee'];
 
@@ -256,7 +258,7 @@ selector .elementor-nav-menu__container.elementor-nav-menu--dropdown a { padding
 selector .elementor-nav-menu__container.elementor-nav-menu--dropdown .sub-menu a { padding-left: 36px !important; }
 selector .elementor-nav-menu__container.elementor-nav-menu--dropdown .jn-menu-quote > a { background: ${C.navy} !important; color: #fff !important; }`,
     }),
-    button('Get a Free Quote', '/#quote', 'navyFlat', { size: 15, padY: 12, padX: 18, settings: { ...hide.tablet, _flex_size: 'none', typography_letter_spacing: sz(0.04, 'em') } }),
+    button('Get a Free Quote', BOOK, 'navyFlat', { size: 15, padY: 12, padX: 18, settings: { ...hide.tablet, _flex_size: 'none', typography_letter_spacing: sz(0.04, 'em') } }),
     button(PHONE, TEL, 'ghostLight', {
       size: 18, padY: 4, padX: 0, icon: phoneIcon, iconGap: 8,
       settings: {
@@ -308,11 +310,11 @@ function footer(m) {
       content_width: 'full', flex_direction: 'row', flex_wrap: 'nowrap', padding: box(0), flex_gap: gap(0), flex_align_items: 'stretch',
       min_height: sz(64), ...hide.desktop, _title: 'Mobile action bar',
       custom_css: 'selector { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; height: 64px; box-shadow: 0 -4px 16px rgba(0,38,75,.25); }',
-    }, [barBtn('Call', TEL, 'cyan'), barBtn('Text Photos', SMS, 'white'), barBtn('Free Quote', '/#quote', 'navyFlat')], false),
+    }, [barBtn('Call', TEL, 'cyan'), barBtn('Text Photos', SMS, 'white'), barBtn('Free Quote', BOOK, 'navyFlat')], false),
   ];
 }
 
 module.exports = {
-  C, HEAD, BODY, PHONE, TEL, SMS, EMAIL, TOWNS, id, sz, box, gap, link, shadow, hide, typo, container, widget, fa,
+  C, HEAD, BODY, PHONE, TEL, SMS, EMAIL, BOOK, TOWNS, id, sz, box, gap, link, shadow, hide, typo, container, widget, fa,
   band, stack, row, grid, autoFit, circle, heading, display, H2, eyebrow, text, button, image, plusList, KIT, header, footer,
 };
