@@ -333,7 +333,7 @@ const quoteForm = () => widget('form', {
   ],
   show_labels: 'true', mark_required: 'true', input_size: 'md',
   button_text: 'Request My Free Quote', button_size: 'md', button_width: '100', button_width_tablet: '100', button_width_mobile: '100',
-  submit_actions: ['save-to-database', 'email'], email_to: 'junkninjallc@gmail.com', email_subject: 'New Junk Ninja quote request from [field id="name"]', email_from: 'website@junkninjallc.com', email_from_name: 'Junk Ninja Website', email_reply_to: '[field id="email"]', email_content: '[all-fields]', email_content_type: 'html',
+  submit_actions: ['save-to-database', 'email'], email_to: 'junkninjallc@gmail.com', email_subject: 'New Junk Ninja quote request from [field id="name"]', email_from: 'junkninjallc@gmail.com', email_from_name: 'Junk Ninja Website', email_reply_to: '[field id="email"]', email_content: '[all-fields]', email_content_type: 'html',
   success_message: 'Thanks — we\'ll be in touch', error_message: 'Something went wrong. Please call or text 772-882-5955.',
   required_field: 'Please fill in this field.',
   column_gap: sz(16), row_gap: sz(18),
