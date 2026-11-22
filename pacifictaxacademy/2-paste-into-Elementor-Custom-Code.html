@@ -1,4 +1,7 @@
 <script>
+
+/* helper: if a text node sits directly in a flex/grid box, wrap it so injected spans stay inline */
+window.ptaInline=function(n){var p=n.parentNode;if(!p||p.nodeType!==1)return n;var d=getComputedStyle(p).display;if(/flex|grid/.test(d)){var w=document.createElement('span');w.className='pta-txt';p.replaceChild(w,n);w.appendChild(n);}return n;};
 /* Pacific Tax Academy – home hero slider (dots + autoplay) */
 (function(){
   function init(){
@@ -41,5 +44,139 @@
     }
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run);else run();
+})();
+
+/* Keep each heading line on one line (shrink to fit), eyebrows on one line */
+(function(){
+  function fit(el,minPx){
+    el.style.fontSize='';
+    var cs=getComputedStyle(el),size=parseFloat(cs.fontSize),w=el.clientWidth; if(!w)return;
+    el.classList.remove('pta-wrap');
+    var guard=0; while(el.scrollWidth>w+1&&size>minPx&&guard++<40){size-=1;el.style.fontSize=size+'px';}
+    if(el.scrollWidth>w+1){el.style.fontSize='';el.classList.add('pta-wrap');}
+  }
+  function prep(){
+    document.querySelectorAll('.elementor h1.elementor-heading-title,.elementor h2.elementor-heading-title').forEach(function(h){
+      if(h.dataset.ptaFit)return; if(!h.querySelector('br'))return;
+      var parts=h.innerHTML.split(/<br\s*\/?>/i); h.innerHTML=parts.map(function(p){return '<span class="pta-line">'+p+'</span>';}).join(''); h.dataset.ptaFit='h';
+    });
+    document.querySelectorAll('.elementor-widget-text-editor').forEach(function(w){
+      var next=w.nextElementSibling, d=w.firstElementChild;
+      if(!d||!next||!next.classList.contains('elementor-widget-heading'))return;
+      var t=(d.textContent||'').trim(); if(t.length>60||d.querySelector('br'))return;
+      d.style.whiteSpace='nowrap'; d.dataset.ptaFit='e';
+    });
+  }
+  function run(){prep();
+    document.querySelectorAll('[data-pta-fit="h"]').forEach(function(h){fit(h,20);});
+    document.querySelectorAll('[data-pta-fit="e"]').forEach(function(d){fit(d,12);});
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run);else run();
+  window.addEventListener('load',run); var t; window.addEventListener('resize',function(){clearTimeout(t);t=setTimeout(run,150);});
+})();
+
+/* Full-screen mobile menu: logo top, links middle, contact bottom */
+(function(){
+  function build(){
+    document.querySelectorAll('details.m-det').forEach(function(d){
+      var nav=d.querySelector('nav'); if(!nav||nav.dataset.ptaMenu)return; nav.dataset.ptaMenu='1';
+      var top=document.createElement('div');top.className='pta-menu-top';
+      top.innerHTML='<a class="pta-logo" href="/" aria-label="Pacific Tax Academy home"><img src="/wp-content/uploads/2026/11/pta-logo.webp" alt="Pacific Tax Academy"></a><button type="button" class="pta-menu-close" aria-label="Close menu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>';
+      nav.insertBefore(top,nav.firstChild);
+      var firstLink=nav.querySelector('a:not(.pta-logo)'); if(firstLink)firstLink.classList.add('pta-menu-items-start');
+      var c=document.createElement('div');c.className='pta-menu-contact';
+      c.innerHTML='<a class="call" href="tel:+18444434797"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/></svg>Call (844) 443-4797</a><a class="mail" href="mailto:info@pacifictaxacademy.com">info@pacifictaxacademy.com</a><small>Mon–Fri, 9am–6pm PT</small>';
+      nav.appendChild(c);
+      var ov=document.createElement('div');ov.className='pta-menu-overlay';ov.setAttribute('role','dialog');ov.setAttribute('aria-modal','true');ov.setAttribute('aria-label','Menu');
+      document.body.appendChild(ov);ov.appendChild(nav);
+      function close(){d.open=false;}
+      top.querySelector('.pta-menu-close').addEventListener('click',close);
+      nav.querySelectorAll('a').forEach(function(a){a.addEventListener('click',close);});
+      document.addEventListener('keydown',function(e){if(e.key==='Escape'&&d.open)close();});
+      d.addEventListener('toggle',function(){ov.classList.toggle('open',d.open);document.body.classList.toggle('pta-menu-open',d.open);if(d.open){var b=ov.querySelector('.pta-menu-close');if(b)b.focus();}});
+    });
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',build);else build();
+})();
+
+/* Never split phone numbers, prices-with-words or hours across lines */
+(function(){
+  var RE=/(\(\d{3}\)\s\d{3}-\d{4}|save \$[\d.,]+|Mon[–-]Fri,?|(January|February|March|April|May|June|July|August|September|October|November|December) \d{1,2}|Live Scan|No hidden fees|the IRS|\d{4}-\d{2}|\d+ (hours?|update|ethics|federal|California|months|steps|seats?|business days)|\d{1,2}(am|pm)[–-]\d{1,2}(am|pm)( PT)?)/;
+  function run(){
+    var w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT,{acceptNode:function(n){var p=n.parentNode;if(!p||/SCRIPT|STYLE|TEXTAREA/.test(p.nodeName)||p.classList&&p.classList.contains('pta-nw'))return 2;return RE.test(n.nodeValue)?1:2;}});
+    var nodes=[];while(w.nextNode())nodes.push(w.currentNode);
+    nodes.forEach(function(n){window.ptaInline(n);var cur=n,g=0;while(cur&&g++<20){var m=cur.nodeValue.match(RE);if(!m)break;var after=cur.splitText(m.index);after.nodeValue=after.nodeValue.slice(m[0].length);var s=document.createElement('span');s.className='pta-nw';s.textContent=m[0];after.parentNode.insertBefore(s,after);cur=after;}});
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run);else run();
+})();
+
+/* Mobile hero: guarantee the badges never sit on the photo (any phone width) */
+(function(){
+  var ids=['b93f9c7','91c39ce','ff786e3'];
+  function layout(){
+    var box=document.querySelector('.elementor-element-b24131d'),img=document.querySelector('.elementor-element-c4292e4 img');
+    if(!box||!img)return;
+    img.style.height='';img.style.width='';
+    var badges=ids.map(function(id){return document.querySelector('.elementor-element-'+id);}).filter(Boolean);
+    badges.forEach(function(b){b.style.display='';});
+    if(window.innerWidth>760)return;
+    var bw=0;badges.forEach(function(b){bw=Math.max(bw,b.getBoundingClientRect().width);});
+    var cr=box.getBoundingClientRect(),ir=img.getBoundingClientRect();
+    var ratio=(img.naturalHeight&&img.naturalWidth)?img.naturalHeight/img.naturalWidth:1.5;
+    var free=ir.left-cr.left;              // space left of the photo
+    if(free>=bw+8)return;                  // already clear
+    var newW=Math.max(140,ir.width-(bw+8-free));
+    img.style.width=newW+'px';img.style.height=(newW*ratio)+'px';
+    ir=img.getBoundingClientRect();
+    if(ir.left-cr.left<bw+4)badges.forEach(function(b){b.style.display='none';}); // last resort: never overlap
+  }
+  function go(){var img=document.querySelector('.elementor-element-c4292e4 img');if(img&&!img.complete){img.addEventListener('load',layout,{once:true});}layout();}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',go);else go();
+  window.addEventListener('load',layout);var t;window.addEventListener('resize',function(){clearTimeout(t);t=setTimeout(layout,120);});
+})();
+
+/* Mobile polish: equal button pairs, smart " · " separators, short-text balance, short links unbroken */
+(function(){
+  var mobile=function(){return window.innerWidth<=760;};
+  function isBtn(a){var cs=getComputedStyle(a);return (cs.backgroundColor!=='rgba(0, 0, 0, 0)'&&cs.backgroundColor!=='transparent')||parseFloat(cs.borderTopWidth)>0||cs.boxShadow!=='none'||(parseFloat(cs.paddingLeft)>=12&&parseFloat(cs.paddingTop)>=8)||a.classList.contains('elementor-button');}
+  function shrink(el,min){el.style.fontSize='';var s=parseFloat(getComputedStyle(el).fontSize),g=0;while(el.scrollWidth>el.clientWidth+1&&s>min&&g++<20){s-=0.5;el.style.fontSize=s+'px';}}
+  function buttons(){
+    // HTML button pairs inside one flex row
+    document.querySelectorAll('.elementor div').forEach(function(d){
+      if(d.closest('.pta-menu-overlay')||d.closest('header'))return;
+      var kids=[].slice.call(d.children);if(kids.length<2||kids.length>3)return;
+      if(!kids.every(function(k){return k.tagName==='A'&&isBtn(k);}))return;
+      d.classList.toggle('pta-btn-stack',mobile());
+      kids.forEach(function(k){if(mobile()){k.classList.add('pta-btn-eq');shrink(k,13);}else{k.classList.remove('pta-btn-eq');k.style.fontSize='';}});
+    });
+    document.querySelectorAll('.elementor a').forEach(function(a){if(!mobile()||a.closest('.pta-menu-overlay')||a.closest('header'))return;var t=(a.textContent||'').trim();var cs2=getComputedStyle(a);var solid=(cs2.backgroundColor!=='rgba(0, 0, 0, 0)'&&cs2.backgroundColor!=='transparent')||parseFloat(cs2.borderTopWidth)>0;if(t.length>50||!solid||a.classList.contains('pta-btn-eq'))return;a.style.whiteSpace='nowrap';var par=a.parentElement.getBoundingClientRect().width;if(a.getBoundingClientRect().width>par){a.style.maxWidth='100%';a.style.boxSizing='border-box';}if(a.scrollWidth>a.clientWidth+1)shrink(a,13);});
+    // Elementor button widgets stacked in the same container
+    document.querySelectorAll('.e-con').forEach(function(c){
+      var bw=[].slice.call(c.children).filter(function(k){return k.classList.contains('elementor-widget-button');});
+      if(bw.length<2)return; bw.forEach(function(w){w.classList.toggle('pta-btnw-eq',mobile());});
+    });
+  }
+  function wrapSeps(){
+    var tw=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT,{acceptNode:function(n){var p=n.parentNode;if(!p||/SCRIPT|STYLE/.test(p.nodeName)||p.classList.contains('pta-sep'))return 2;return / · /.test(n.nodeValue)?1:2;}});
+    var ns=[];while(tw.nextNode())ns.push(tw.currentNode);
+    ns.forEach(function(n){var parts=n.nodeValue.split(' · ');if(parts.length<2)return;window.ptaInline(n);var f=document.createDocumentFragment();parts.forEach(function(t,i){if(i){var s=document.createElement('span');s.className='pta-sep';s.textContent=' · ';f.appendChild(s);}if(t)f.appendChild(document.createTextNode(t));});n.parentNode.replaceChild(f,n);});
+  }
+  function fixSeps(){
+    document.querySelectorAll('.pta-sep').forEach(function(s){
+      s.classList.remove('pta-sep-br');
+      var prev=s.previousSibling,next=s.nextSibling;while(prev&&prev.nodeType===3&&!prev.nodeValue.trim())prev=prev.previousSibling;while(next&&next.nodeType===3&&!next.nodeValue.trim())next=next.nextSibling;if(!prev||!next)return;
+      function rects(node,last){var r=document.createRange();if(node.nodeType===3){var L=node.nodeValue.length;if(!L)return null;if(last){r.setStart(node,Math.max(0,L-1));r.setEnd(node,L);}else{r.setStart(node,0);r.setEnd(node,1);}}else{r.selectNodeContents(node);}var a=r.getClientRects();return a.length?(last?a[a.length-1]:a[0]):null;}
+      var a=rects(prev,true),b=rects(next,false);if(!a||!b)return;
+      if(Math.abs(a.top-b.top)>4)s.classList.add('pta-sep-br');
+    });
+  }
+  function shortText(){
+    document.querySelectorAll('.elementor-widget-text-editor div, .elementor-widget-text-editor p, .elementor li').forEach(function(el){var t=(el.textContent||'').trim();if(t.length&&t.length<160)el.classList.add('pta-bal');});
+    document.querySelectorAll('.elementor a').forEach(function(a){var t=(a.textContent||'').trim();if(t.length&&t.length<=34&&!a.closest('nav')&&!a.querySelector('div,p,h1,h2,h3,h4,img'))a.classList.add('pta-nw');});
+  }
+  function run(){shortText();buttons();fixSeps();}
+  function init(){wrapSeps();run();}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+  window.addEventListener('load',run);var t;window.addEventListener('resize',function(){clearTimeout(t);t=setTimeout(run,150);});
 })();
 </script>
