@@ -228,7 +228,15 @@ function header(m, menuId) {
     custom_css: 'selector { -webkit-backdrop-filter: blur(16px) saturate(160%); backdrop-filter: blur(16px) saturate(160%); }',
   }, [container({
     content_width: 'boxed', boxed_width: sz(1240), flex_direction: 'row', flex_wrap: 'nowrap', flex_align_items: 'center',
-    flex_gap: gap(26), flex_gap_tablet: gap(10), padding: box(12, 'clamp(16px,4vw,32px)', 12, 'clamp(16px,4vw,32px)'),
+    flex_gap: gap(22), flex_gap_tablet: gap(10), custom_css: `/* Smaller desktops: tighter spacing so the phone number stays in view */
+@media (min-width: 1181px) and (max-width: 1400px) {
+  selector { --gap: 14px 14px; --column-gap: 14px; }
+  selector .elementor-nav-menu--main .elementor-item { padding-left: 7px !important; padding-right: 7px !important; font-size: 14px !important; }
+  selector .elementor-widget-button .elementor-button { padding-left: 14px !important; padding-right: 14px !important; font-size: 14px !important; }
+  selector .elementor-widget-button:last-child .elementor-button { padding: 4px 0 !important; font-size: 16px !important; }
+}
+/* Narrowest desktops: the logo already links home */
+@media (min-width: 1181px) and (max-width: 1260px) { selector .elementor-nav-menu--main > .elementor-nav-menu > li:first-child { display: none; } }`, padding: box(12, 'clamp(16px,4vw,32px)', 12, 'clamp(16px,4vw,32px)'),
   }, [
     image(m.logo, { height: 68, width: 'auto', link: '/', align: 'left', settings: { _flex_size: 'none', _element_width: 'auto' } }),
     widget('nav-menu', {
@@ -258,7 +266,8 @@ selector .elementor-nav-menu__container.elementor-nav-menu--dropdown a { padding
 selector .elementor-nav-menu__container.elementor-nav-menu--dropdown .sub-menu a { padding-left: 36px !important; }
 selector .elementor-nav-menu__container.elementor-nav-menu--dropdown .jn-menu-quote > a { background: ${C.navy} !important; color: #fff !important; }`,
     }),
-    button('Get a Free Quote', BOOK, 'navyFlat', { size: 15, padY: 12, padX: 18, settings: { ...hide.tablet, _flex_size: 'none', typography_letter_spacing: sz(0.04, 'em') } }),
+    button('Book Online', BOOK, 'cyan', { size: 15, padY: 12, padX: 18, settings: { ...hide.tablet, _flex_size: 'none', typography_letter_spacing: sz(0.04, 'em'), _title: 'Housecall Pro booking' } }),
+    button('Get a Free Quote', '/#quote', 'navyFlat', { size: 15, padY: 12, padX: 18, settings: { ...hide.tablet, _flex_size: 'none', typography_letter_spacing: sz(0.04, 'em') } }),
     button(PHONE, TEL, 'ghostLight', {
       size: 18, padY: 4, padX: 0, icon: phoneIcon, iconGap: 8,
       settings: {
@@ -310,7 +319,7 @@ function footer(m) {
       content_width: 'full', flex_direction: 'row', flex_wrap: 'nowrap', padding: box(0), flex_gap: gap(0), flex_align_items: 'stretch',
       min_height: sz(64), ...hide.desktop, _title: 'Mobile action bar',
       custom_css: 'selector { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; height: 64px; box-shadow: 0 -4px 16px rgba(0,38,75,.25); }',
-    }, [barBtn('Call', TEL, 'cyan'), barBtn('Text Photos', SMS, 'white'), barBtn('Free Quote', BOOK, 'navyFlat')], false),
+    }, [barBtn('Call', TEL, 'cyan'), barBtn('Text Photos', SMS, 'white'), barBtn('Free Quote', '/#quote', 'navyFlat')], false),
   ];
 }
 

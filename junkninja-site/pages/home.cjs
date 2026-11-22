@@ -34,7 +34,7 @@ const hero = (m) => container({
     row([
       button(`Call ${PHONE}`, TEL, 'cyan', { grow: 220, padX: 24 }),
       button('Text Us Photos', SMS, 'white', { grow: 180, padX: 24 }),
-      button('Get a Free Quote', BOOK, 'ghostDark', { grow: 200, padX: 24 }),
+      button('Get a Free Quote', '#quote', 'ghostDark', { grow: 200, padX: 24 }),
     ], { settings: { margin: box(6, 0, 0, 0) } }),
     plusList(['Licensed and Insured', 'Open 6am–9pm, 7 days'], { inline: true, settings: { icon_list_items_gap: sz(8) } }),
   ], { gap: 22, settings: { _title: 'Hero text', custom_css: 'selector { max-width: 760px; }' } }),
@@ -61,7 +61,7 @@ const ticker = () => container({
 
 /* 3. SEND PHOTOS ------------------------------------------------------ */
 const STEPS = [
-  ['1', C.navy, C.white, C.cyan, 'Send Photos', `Text them to ${PHONE}, or book online and tell us what needs to go.`],
+  ['1', C.navy, C.white, C.cyan, 'Send Photos', `Text them to ${PHONE} or upload them with the quote form.`],
   ['2', C.cyan, C.navy, C.navy, 'Get Your Quote', 'We look at what needs to go and send you a quote for the job.'],
   ['3', C.navy, C.white, C.pink, 'We Haul It Away', 'We load it up and take it away. You get your space back.'],
 ];
@@ -85,7 +85,7 @@ const photos = () => band(C.white, [
   }),
   row([
     button(`Text Photos to ${PHONE}`, SMS, 'navy'),
-    button('Book Online', BOOK, 'ghostLight'),
+    button('Upload Photos Online', '#quote', 'ghostLight'),
   ], { justify: 'center' }),
 ], { gap: 36, anchor: 'photos' });
 
@@ -102,7 +102,7 @@ const svcPanel = (m, [title, desc, key], i) => container({
     text(desc, { size: 19, color: C.white, settings: { _css_classes: 'jn-svc-desc', custom_css: 'selector { min-height: 58px; }' } }),
     row([
       button('Text Us a Photo', SMS, 'cyan', { size: 15, padY: 16, padX: 10, grow: 170, nowrap: true }),
-      button('Get a Free Quote', BOOK, 'ghostDark', { size: 15, padY: 16, padX: 10, grow: 170, nowrap: true, settings: { _css_classes: 'jn-svc-quote' } }),
+      button('Get a Free Quote', '#quote', 'ghostDark', { size: 15, padY: 16, padX: 10, grow: 170, nowrap: true, settings: { _css_classes: 'jn-svc-quote' } }),
     ], { settings: { margin: box(6, 0, 0, 0) } }),
   ], { settings: { padding: box('clamp(20px,3vw,30px)'), _css_classes: 'jn-svc-body' } }),
 ]);
@@ -156,7 +156,7 @@ const about = (m) => band(C.white, [grid([
     H2('Reclaim Your Space and Peace of Mind'),
     text('At Junk Ninja LLC, we don\'t just haul away junk — we help homeowners, realtors, and businesses reclaim their space and peace of mind. Proudly serving Florida\'s Treasure Coast, we tackle the clutter so you can enjoy a fresh start.', { size: 19 }),
     text('Licensed and insured. Working for homeowners, realtors and businesses, 6am–9pm every day.', { color: C.slate }),
-    button('Get a Free Quote', BOOK, 'navy'),
+    button('Get a Free Quote', '#quote', 'navy'),
   ], { gap: 18, align: 'flex-start' }),
 ], autoFit(340), { gap: 64, align: 'center', settings: { grid_gaps_tablet: gap(40), grid_gaps_mobile: gap(28) } })], { anchor: 'about' });
 
@@ -272,7 +272,7 @@ const areas = (m) => band(C.white, [grid([
 
 /* 10. FAQ ------------------------------------------------------------- */
 const FAQ = [
-  ['How much does it cost?', `<p>Every job is different, so we quote from your photos or a quick visit. <a href="${SMS}">Text photos to ${PHONE}</a> or <a href="${BOOK}">book online</a>.</p>`],
+  ['How much does it cost?', `<p>Every job is different, so we quote from your photos or a quick visit. <a href="${SMS}">Text photos to ${PHONE}</a> or upload them with our <a href="#quote">quote form</a>.</p>`],
   ['What do you remove?', '<p>Household junk, furniture, appliances, yard waste, construction debris, electronics and storm debris. We also do garage, house, estate, rental and storage unit cleanouts. <a href="#services">See our services</a>.</p>'],
   ['How soon can you do it?', `<p>It depends on the job and our schedule. <a href="${SMS}">Text photos to ${PHONE}</a> and we'll let you know when we can get to you.</p>`],
 ];
@@ -347,7 +347,7 @@ const quote = (m) => band(C.navy, [grid([
     circle(92, C.white, [image(m.ninja, { height: 60, width: 'auto' })], { shadow: shadow(-5, 5) }),
     eyebrow('Free estimates', { dark: true }),
     H2('Get Your<br><span style="white-space:nowrap">Free Quote</span>', { dark: true, size: 'clamp(28px,4.4vw,52px)', lh: 1.08 }),
-    text('Book online and your request goes straight to our schedule. New and returning customers welcome.', { size: 20, color: C.white, maxW: 460 }),
+    text('Send photos if you can — it\'s the fastest way to get a quote.', { size: 20, color: C.white, maxW: 460 }),
     stack([
       button(`Call ${PHONE}`, TEL, 'cyan', { full: true, padX: 24 }),
       button(`Text Photos to ${PHONE}`, SMS, 'white', { full: true, padX: 24 }),
@@ -357,22 +357,21 @@ const quote = (m) => band(C.navy, [grid([
   container({
     content_width: 'full', flex_direction: 'column', padding: box(0), flex_gap: gap(0),
     background_background: 'classic', background_color: C.white, border_radius: box(16), overflow: 'hidden',
-    box_shadow_box_shadow_type: 'yes', box_shadow_box_shadow: shadow(-12, 12), margin: box(0, 0, 0, 12), _title: 'Booking card',
+    box_shadow_box_shadow_type: 'yes', box_shadow_box_shadow: shadow(-12, 12), margin: box(0, 0, 0, 12), _title: 'Form card',
   }, [
     container({
       content_width: 'full', flex_direction: 'row', flex_wrap: 'nowrap', flex_justify_content: 'space-between', flex_align_items: 'center', flex_gap: gap(16),
       padding: box(24, 'clamp(20px,3vw,32px)', 24, 'clamp(20px,3vw,32px)'), background_background: 'classic', background_color: C.navyMid,
     }, [
       stack([
-        heading('Book Your Free Estimate', 'p', { size: 22, ls: 0.05, upper: true, lh: 1.15, color: C.white }),
-        heading('Goes straight to our scheduling system.', 'p', { family: BODY, size: 15, weight: 600, lh: 1.4, color: C.white }),
+        heading('Tell Us About the Job', 'p', { size: 22, ls: 0.05, upper: true, lh: 1.15, color: C.white }),
+        heading('Free estimate. Photos get you a faster quote.', 'p', { family: BODY, size: 15, weight: 600, lh: 1.4, color: C.white }),
       ], { gap: 2 }),
     ]),
-    stack([
-      plusList(['Pick a day and time that works for you', 'Tell us what needs to go', 'We confirm and show up ready to haul'], { color: C.navy, size: 17, weight: 600, space: 14, iconSize: 14, indent: 12 }),
-      button('Book Online', BOOK, 'navy', { full: true, size: 18, padY: 20, settings: { _title: 'Housecall Pro booking' } }),
-      text(`Returning customer? Book your next pickup the same way. Prefer to text? <a href="${SMS}">Send photos to ${PHONE}</a>.`, { color: C.slate, size: 15, linkColor: C.navy, settings: { custom_css: 'selector a { text-decoration: underline; font-weight: 700; }' } }),
-    ], { gap: 22, settings: { padding: box('clamp(24px,3vw,32px)'), _title: 'Booking card body' } }),
+    container({ content_width: 'full', flex_direction: 'column', padding: box('clamp(20px,3vw,32px)'), flex_gap: gap(26) }, [
+      quoteForm(),
+      text(`Rather pick a day and time yourself? <a href="${BOOK}">Book online →</a>`, { color: C.slate, size: 15, align: 'center', linkColor: C.navy, settings: { custom_css: 'selector a { text-decoration: underline; font-weight: 800; }' } }),
+    ]),
   ]),
 ], autoFit(340), { gap: 64, settings: { grid_gaps_tablet: gap(40), grid_gaps_mobile: gap(28) } })], { anchor: 'quote' });
 
