@@ -270,47 +270,6 @@
 		var k = clientOf(c), em = (k && k.email) || c.email;
 		return '<span class="dwdc-nm"><span>' + (k ? '<a class="dwdc-clink" href="#cl/' + k.id + '">' + esc(k.name) + '</a>' : '<b class="nm2">' + esc(c.person || '—') + '</b>') + (em ? '<small>' + esc(em) + '</small>' : '') + '</span></span>';
 	}
-	// "Send to Dream Desk" bookmark: runs on Upwork's Financial overview page (where Mike is logged in), reads the
-	// Pending / Available totals and the pending milestones, and opens Dream Desk with them in the address
-	// (#upimport=...), which saves them as the Upwork balances. Never refers to anything outside itself.
-	function upworkGrab() {
-		var T = document.body.innerText, money = function (s) { return parseFloat(String(s).replace(/[^0-9.]/g, '')) || 0; };
-		var grab = function (label) { var m = new RegExp('(?:^|\\n)\\s*' + label + '[^\\n$]*\\n?\\s*\\$\\s?([\\d,]+\\.\\d{2})').exec(T); return m ? money(m[1]) : null; };
-		var pending = grab('Pending'), avail = grab('Available');
-		if (!/upwork\.com/.test(location.host) || pending === null) { alert('Open Upwork > Manage finances > Financial overview first, then click "Send to Dream Desk" again.'); return; }
-		var MO = { Jan: 1, Feb: 2, Mar: 3, Apr: 4, May: 5, Jun: 6, Jul: 7, Aug: 8, Sep: 9, Oct: 10, Nov: 11, Dec: 12 };
-		var iso = function (s) { var m = /^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\w* (\d{1,2}), (\d{4})$/.exec(String(s).trim()); return m ? m[3] + '-' + ('0' + MO[m[1]]).slice(-2) + '-' + ('0' + m[2]).slice(-2) : ''; };
-		var rows = [], fees = [];
-		document.querySelectorAll('tr').forEach(function (tr) {
-			var c = [].map.call(tr.querySelectorAll('td,th'), function (x) { return x.innerText.trim(); }).filter(Boolean);
-			if (c.length < 3 || !iso(c[0])) { return; }
-			var at = c[c.length - 1], job = c.slice(1, -1).join(' ').replace(/\s+/g, ' ');
-			if (/service fee/i.test(job) || /^\(|^-|^−/.test(at)) { fees.push({ job: job, amt: money(at) }); } else { rows.push({ date: iso(c[0]), job: job, gross: money(at) }); }
-		});
-		var key = function (j) { var t = j.split(':')[0], p = t.split(' - '); return (p.length > 1 ? p.slice(1).join(' - ') : t).slice(0, 25).toLowerCase(); }; // the contract title
-		var known = 0, open = [];
-		rows.forEach(function (r) { var f = fees.filter(function (x) { return x.job.toLowerCase().indexOf(key(r.job)) > -1; })[0]; if (f) { r.net = Math.round((r.gross - f.amt) * 100) / 100; known += r.net; fees.splice(fees.indexOf(f), 1); } else { open.push(r); } });
-		var og = open.reduce(function (a, r) { return a + r.gross; }, 0), left = Math.max(0, pending - known), RATES = [0.1, 0.15, 0.2, 0.05, 0], fit = null;
-		// Fees not shown: find Upwork's usual fee rates that add up exactly to the Pending total.
-		if (open.length && open.length <= 6) {
-			var tryAt = function (i, acc, picks) { if (fit) { return; } if (i === open.length) { if (Math.abs(acc - left) < 0.015) { fit = picks.slice(); } return; } RATES.forEach(function (rt) { var n = Math.round(open[i].gross * (1 - rt) * 100) / 100; picks.push(n); tryAt(i + 1, acc + n, picks); picks.pop(); }); };
-			tryAt(0, 0, []);
-		}
-		open.forEach(function (r, i) { r.net = fit ? fit[i] : (og ? Math.round(r.gross * left / og * 100) / 100 : 0); }); // otherwise split what's left so the total still matches Upwork
-		var items = rows.map(function (r) { var p = r.job.split(' - '); return { date: r.date, client: p.length > 1 ? p[0] : '', job: (p.length > 1 ? p.slice(1).join(' - ') : r.job) + ' · $' + r.gross.toFixed(2) + ' gross', amount: r.net }; });
-		window.open('__DD__#upimport=' + encodeURIComponent(JSON.stringify({ pending: pending, available: avail || 0, items: items, src: 'bookmark' })), 'dreamdesk');
-	}
-	function upworkBookmark() { return 'javascript:' + encodeURIComponent('(' + upworkGrab.toString().replace('__DD__', location.origin + location.pathname + '?page=client-desk') + ')()'); }
-	// Arriving from the bookmark: take the numbers out of the address and save them.
-	var UPIMP = (function () { var m = /^#upimport=(.+)$/.exec(location.hash); if (!m) { return null; } try { var d = JSON.parse(decodeURIComponent(m[1])); history.replaceState(null, '', location.pathname + location.search + '#home'); return d; } catch (e) { return null; } })();
-	if (UPIMP) {
-		setTimeout(function () {
-			api('/upwork-snap', 'POST', { pending: +UPIMP.pending || 0, available: +UPIMP.available || 0, items: (UPIMP.items || []).slice(0, 50) }).then(function (x) {
-				S.upsnap = x || { none: true }; if (typeof upBalSync === 'function') { upBalSync(); } render();
-				toast('Upwork updated: ' + money2(+UPIMP.pending || 0) + ' pending · ' + money2(+UPIMP.available || 0) + ' available' + ((UPIMP.items || []).length ? ' · ' + UPIMP.items.length + ' payment' + (UPIMP.items.length === 1 ? '' : 's') : ''));
-			}).catch(fail);
-		}, 1500);
-	}
 	function reload() {
 		return api('').then(function (r) { S.health = r.health || null; S.tax = r.tax || null; S.madeM = r.made_month || null; S.contacts = r.contacts.filter(Boolean); S.tasks = r.tasks.filter(Boolean); S.clients = (r.clients || []).filter(Boolean); S.money = r.money || {}; S.upfeed = r.upfeed || null; S.costs = r.costs || {}; S.trends = r.trends || null; S.wins = r.wins || { list: [], undated: 0 }; S.ads = r.ads || null; S.meet = r.meetings || null; S.order = r.order || {}; });
 	}
@@ -4372,15 +4331,7 @@
 			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide dd-sg-mod">' + head(esc(sxp[0]), esc(sxp.slice(1).join(' · ')), '') + sxb + '</div>';
 		}
 		// Remove a payment: was it a duplicate (owed stays) or money that didn't come through (back to owed)?
-			// Update from Upwork: how to use the "Send to Dream Desk" bookmark (drag it to the bookmarks bar once).
-		if (m.type === 'upsync') {
-			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal dd-upsync">' + head('Money', 'Update from', 'Upwork')
-				+ '<ol class="dd-upsync-s"><li>Upwork’s <b>Financial overview</b> just opened in a new tab (<a href="https://www.upwork.com/nx/reports/overview/?tab=pending" target="upwork" rel="noopener">open it again</a>).</li>'
-				+ '<li>On that page, click <b>Send to Dream Desk</b> in your bookmarks bar. It reads Pending, Available and the pending payments, and brings them back here.</li></ol>'
-				+ '<div class="dd-upsync-b"><a class="dwdc-btn" href="' + upworkBookmark() + '" title="Drag me to your bookmarks bar" onclick="event.preventDefault();">' + lu('arrow-up', 14) + 'Send to Dream Desk</a><span><b>First time only:</b> drag this button up to your Chrome bookmarks bar (show it with Ctrl+Shift+B). Clicking it here does nothing; it works on the Upwork page.</span></div>'
-				+ '<p class="dwdc-mutp">Upwork can only be read while you’re logged in, in your own browser, so Dream Desk can’t fetch these numbers by itself. The 5 AM check does the same thing automatically once it runs on your computer.</p></div>';
-		}
-		if (m.type === 'payrm') {
+			if (m.type === 'payrm') {
 				var rmc = S.full[m.id], rmp = rmc && (rmc.payments || [])[m.i];
 				if (!rmp) { return ''; }
 				return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal dd-payrm">' + head('Remove payment', money2(rmp.amount).replace('.00', '') + ' · ' + esc(rmp.source || '') + ' · ' + fmt(String(rmp.date).slice(0, 10)), '')
@@ -4925,10 +4876,11 @@
 		}
 		// Refresh on the Pending in Upwork tile: re-read the saved Upwork numbers (new ones come from the Upwork check on Mike's computer).
 		if ((el = t.closest('[data-uprefresh]'))) {
-			// Opens Upwork's Financial overview; the "Send to Dream Desk" bookmark there brings the numbers back.
-			e.preventDefault(); e.stopPropagation();
-			window.open('https://www.upwork.com/nx/reports/overview/?tab=pending', 'upwork');
-			S.modal = { type: 'upsync' }; render();
+			e.preventDefault(); e.stopPropagation(); el.disabled = true; el.classList.add('spin');
+			api('/upwork-snap').then(function (x) {
+				S.upsnap = x || { none: true }; upBalSync(); render();
+				toast('Upwork numbers reloaded');
+			}).catch(function (er) { el.disabled = false; el.classList.remove('spin'); fail(er); });
 			return;
 		}
 		if (t.closest('[data-upmoney]')) { e.preventDefault(); S.modal = { type: 'upmoney' }; render(); return; }

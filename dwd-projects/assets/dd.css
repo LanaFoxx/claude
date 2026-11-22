@@ -1240,8 +1240,3 @@ body:has(.dwdc-addm) #dwdc-askfab { display: none !important; }
 .dd-flm { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin: 4px 0 14px; }
 .dd-flm a.dwdc-btn, .dd-flm a.dwdc-btn2 { text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
 .dd-flm small { flex-basis: 100%; color: var(--text-2, var(--muted)); font-size: 12px; }
-/* Update from Upwork (Send to Dream Desk bookmark) */
-.dd-upsync-s { margin: 6px 0 14px; padding-left: 20px; display: grid; gap: 8px; font-size: 14px; line-height: 1.5; }
-.dd-upsync-b { display: flex; align-items: center; gap: 14px; padding: 14px; border: 1px dashed var(--border-strong, var(--border)); border-radius: 10px; margin-bottom: 12px; }
-.dd-upsync-b a { flex: none; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; cursor: grab; }
-.dd-upsync-b span { font-size: 12.5px; color: var(--text-2, var(--muted)); line-height: 1.45; }
