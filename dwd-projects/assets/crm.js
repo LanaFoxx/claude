@@ -4331,7 +4331,15 @@
 			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide dd-sg-mod">' + head(esc(sxp[0]), esc(sxp.slice(1).join(' · ')), '') + sxb + '</div>';
 		}
 		// Remove a payment: was it a duplicate (owed stays) or money that didn't come through (back to owed)?
-			if (m.type === 'payrm') {
+			// One-time setup so refresh can start the Upwork check on Mike's PC (the task's API trigger).
+		if (m.type === 'upfire') {
+			return '<div class="dwdc-overlay" data-close-modal></div><form class="dwdc-modal dd-upfire" data-upfireform>' + head('Money', 'Connect the', 'Upwork check')
+				+ '<p class="dwdc-mutp">One time: this lets the refresh button start your Upwork check on your PC.</p>'
+				+ '<ol class="dd-upfire-s"><li>Open <a href="https://claude.ai/code/routines" target="_blank" rel="noopener">claude.ai/code/routines</a> and choose the <b>Upwork balance check (PC)</b> task → <b>Edit</b>.</li><li>In <b>Trigger</b>, click <b>+</b> → <b>API</b>. Copy the <b>Fire URL</b>, then click <b>Generate token</b> and copy it (it’s shown only once).</li><li>Paste both here.</li></ol>'
+				+ '<div class="dwdc-fgrid"><label class="wide"><span>Fire URL</span><input name="url" placeholder="https://api.anthropic.com/v1/claude_code/routines/trig_…/fire" required></label><label class="wide"><span>Token</span><input name="token" type="password" autocomplete="off" required></label></div>'
+				+ '<div class="dwdc-farow end"><button class="dwdc-btn">Save and check Upwork now</button></div></form>';
+		}
+		if (m.type === 'payrm') {
 				var rmc = S.full[m.id], rmp = rmc && (rmc.payments || [])[m.i];
 				if (!rmp) { return ''; }
 				return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal dd-payrm">' + head('Remove payment', money2(rmp.amount).replace('.00', '') + ' · ' + esc(rmp.source || '') + ' · ' + fmt(String(rmp.date).slice(0, 10)), '')
@@ -4876,10 +4884,19 @@
 		}
 		// Refresh on the Pending in Upwork tile: re-read the saved Upwork numbers (new ones come from the Upwork check on Mike's computer).
 		if ((el = t.closest('[data-uprefresh]'))) {
+			// Starts the Upwork check on Mike's PC (its scheduled task, via upfire.php), then waits for the new numbers.
 			e.preventDefault(); e.stopPropagation(); el.disabled = true; el.classList.add('spin');
-			api('/upwork-snap').then(function (x) {
-				S.upsnap = x || { none: true }; upBalSync(); render();
-				toast('Upwork numbers reloaded');
+			var was = (S.upsnap && S.upsnap.checked) || '';
+			api('/upwork-fire', 'POST', {}).then(function (x) {
+				if (x && x.setup) { el.disabled = false; el.classList.remove('spin'); S.modal = { type: 'upfire' }; render(); return; }
+				toast('Checking Upwork on your PC… the numbers update in a minute or two');
+				var tries = 0, poll = function () {
+					api('/upwork-snap').then(function (s) {
+						if (s && s.checked && s.checked !== was) { S.upsnap = s; upBalSync(); render(); toast('Upwork updated: ' + money2(+s.pending || 0) + ' pending'); return; }
+						if (++tries < 24) { setTimeout(poll, 15000); } else { el.disabled = false; el.classList.remove('spin'); toast('The Upwork check hasn’t reported back yet. Is the Claude app open on your PC?', true); }
+					}).catch(function () { if (++tries < 24) { setTimeout(poll, 15000); } });
+				};
+				setTimeout(poll, 20000);
 			}).catch(function (er) { el.disabled = false; el.classList.remove('spin'); fail(er); });
 			return;
 		}
@@ -5633,6 +5650,14 @@
 		new FormData(f).forEach(function (val, k) { data[k] = val; });
 		if (isTodoAdd(f) && data.text) { var pw = parseWhen(data.text); if (pw.due) { data.due = pw.due; } if (pw.time) { data.time = pw.time; } if (pw.due || pw.time) { data.text = pw.text; } }
 		if (f.classList.contains('dd-padd')) { S.ppDate = S.ppDate || {}; S.ppDate[f.getAttribute('data-contact')] = ''; }
+		if (f.hasAttribute('data-upfireform')) { // save the Upwork check's API trigger, then run it
+			var ufb = f.querySelector('button'); ufb.disabled = true;
+			api('/upwork-fire', 'POST', { url: data.url, token: data.token }).then(function (x) {
+				S.modal = null; render();
+				if (x && x.started) { toast('Saved · checking Upwork on your PC now'); var rb = app.querySelector('[data-uprefresh]'); setTimeout(function () { reload().then(render).catch(function () {}); }, 90000); if (rb) { rb.classList.add('spin'); } }
+			}).catch(function (er) { ufb.disabled = false; fail(er); });
+			return;
+		}
 		if (f.hasAttribute('data-mojform')) { // Income overview: log a Mojo's Flight School payment
 			var mjb = f.querySelector('button'); mjb.disabled = true;
 			api('/income/mojos', 'POST', data).then(function (x) { S.income = S.income || {}; S.income[x.year] = x; S.incYear = x.year; render(); toast('Mojo’s payment added'); }).catch(function (er) { mjb.disabled = false; fail(er); });

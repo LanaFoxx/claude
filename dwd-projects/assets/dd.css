@@ -1240,3 +1240,4 @@ body:has(.dwdc-addm) #dwdc-askfab { display: none !important; }
 .dd-flm { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin: 4px 0 14px; }
 .dd-flm a.dwdc-btn, .dd-flm a.dwdc-btn2 { text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
 .dd-flm small { flex-basis: 100%; color: var(--text-2, var(--muted)); font-size: 12px; }
+.dd-upfire-s { margin: 4px 0 14px; padding-left: 20px; display: grid; gap: 6px; font-size: 13.5px; line-height: 1.5; }
