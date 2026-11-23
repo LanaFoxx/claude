@@ -14,6 +14,7 @@ const HEAD = 'Russo One', BODY = 'Archivo';
 const PHONE = '772-882-5955', TEL = 'tel:7728825955', SMS = 'sms:7728825955';
 const EMAIL = 'junkninjallc@gmail.com';
 // Housecall Pro online booking (the client's CRM). The Junk Ninja Site plugin opens it as Housecall Pro's pop-up.
+const PORTAL = 'https://client.housecallpro.com/customer_portal/request-link?token=20ce497189e3464781cb8c15e7d6a5e0';
 const BOOK = 'https://book.housecallpro.com/book/Junk-Ninja-LLC/90b3127fc3b54f7d9afbc351b82f231e?v2=true';
 const FACEBOOK = 'https://www.facebook.com/profile.php?id=61569525440522';
 const TOWNS = ['Port Saint Lucie', 'Palm City', 'Jensen Beach', 'Stuart', 'Fort Pierce', 'Hobe Sound', 'Jupiter', 'Okeechobee'];
@@ -185,7 +186,8 @@ function plusList(items, o = {}) {
 // Global CSS (Site Settings > Custom CSS). Shared classes keep per-widget CSS small.
 const KIT_CSS = `/* Junk Ninja global styles */
 html { scroll-behavior: smooth; }
-[id] { scroll-margin-top: 100px; }
+[id] { scroll-margin-top: 140px; }
+@media (max-width: 1180px) { [id] { scroll-margin-top: 100px; } }
 .jn-shadow .elementor-heading-title { text-shadow: -.07em .07em 0 ${C.cyan}; text-wrap: balance; }
 .jn-shadow .elementor-heading-title .jn-cyan { color: ${C.cyan}; text-shadow: -.07em .07em 0 ${C.cyanDark}; }
 .elementor-widget-text-editor p { margin: 0; text-wrap: pretty; }
@@ -227,16 +229,29 @@ function header(m, menuId) {
     sticky: 'top', sticky_on: ['desktop', 'tablet', 'mobile'], z_index: 20,
     custom_css: 'selector { -webkit-backdrop-filter: blur(16px) saturate(160%); backdrop-filter: blur(16px) saturate(160%); }',
   }, [container({
+    content_width: 'boxed', boxed_width: sz(1240), flex_direction: 'row', flex_wrap: 'nowrap', flex_justify_content: 'space-between', flex_align_items: 'center',
+    flex_gap: gap(24), padding: box(7, 'clamp(16px,4vw,32px)', 7, 'clamp(16px,4vw,32px)'), background_background: 'classic', background_color: C.navy,
+    ...hide.tablet, _title: 'Top bar (desktop)',
+  }, [
+    heading('Open 6am–9pm, 7 days a week · Licensed &amp; Insured', 'p', { family: BODY, size: 14, weight: 600, lh: 1.3, color: C.white, settings: { _element_width: 'auto' } }),
+    button(PHONE, TEL, 'ghostDark', {
+      size: 16, padY: 2, padX: 0, icon: phoneIcon, iconGap: 8,
+      settings: {
+        _flex_size: 'none', border_border: 'none', typography_letter_spacing: sz(0, 'em'), typography_text_transform: 'none',
+        button_background_hover_color: 'rgba(0,0,0,0)', hover_color: C.cyan,
+        custom_css: `selector .elementor-button-icon svg { fill: ${C.cyan}; width: 16px; height: 16px; }`,
+      },
+    }),
+  ]), container({
     content_width: 'boxed', boxed_width: sz(1240), flex_direction: 'row', flex_wrap: 'nowrap', flex_align_items: 'center',
     flex_gap: gap(22), flex_gap_tablet: gap(10), custom_css: `/* Smaller desktops: tighter spacing so the phone number stays in view */
-@media (min-width: 1181px) and (max-width: 1400px) {
+@media (min-width: 1181px) and (max-width: 1500px) {
   selector { --gap: 14px 14px; --column-gap: 14px; }
   selector .elementor-nav-menu--main .elementor-item { padding-left: 7px !important; padding-right: 7px !important; font-size: 14px !important; }
   selector .elementor-widget-button .elementor-button { padding-left: 14px !important; padding-right: 14px !important; font-size: 14px !important; }
-  selector .elementor-widget-button:last-child .elementor-button { padding: 4px 0 !important; font-size: 16px !important; }
 }
 /* Narrowest desktops: the logo already links home */
-@media (min-width: 1181px) and (max-width: 1260px) { selector .elementor-nav-menu--main > .elementor-nav-menu > li:first-child { display: none; } }`, padding: box(12, 'clamp(16px,4vw,32px)', 12, 'clamp(16px,4vw,32px)'),
+@media (min-width: 1181px) and (max-width: 1420px) { selector .elementor-nav-menu--main > .elementor-nav-menu > li:first-child { display: none; } }`, padding: box(12, 'clamp(16px,4vw,32px)', 12, 'clamp(16px,4vw,32px)'),
   }, [
     image(m.logo, { height: 68, width: 'auto', link: '/', align: 'left', settings: { _flex_size: 'none', _element_width: 'auto' } }),
     widget('nav-menu', {
@@ -266,16 +281,9 @@ selector .elementor-nav-menu__container.elementor-nav-menu--dropdown a { padding
 selector .elementor-nav-menu__container.elementor-nav-menu--dropdown .sub-menu a { padding-left: 36px !important; }
 selector .elementor-nav-menu__container.elementor-nav-menu--dropdown .jn-menu-quote > a { background: ${C.navy} !important; color: #fff !important; }`,
     }),
+    button('Client Portal', PORTAL, 'ghostLight', { size: 15, padY: 12, padX: 16, settings: { ...hide.tablet, _flex_size: 'none', typography_letter_spacing: sz(0.04, 'em'), _title: 'Housecall Pro customer portal' } }),
     button('Book Online', BOOK, 'cyan', { size: 15, padY: 12, padX: 18, settings: { ...hide.tablet, _flex_size: 'none', typography_letter_spacing: sz(0.04, 'em'), _title: 'Housecall Pro booking' } }),
     button('Get a Free Quote', '/#quote', 'navyFlat', { size: 15, padY: 12, padX: 18, settings: { ...hide.tablet, _flex_size: 'none', typography_letter_spacing: sz(0.04, 'em') } }),
-    button(PHONE, TEL, 'ghostLight', {
-      size: 18, padY: 4, padX: 0, icon: phoneIcon, iconGap: 8,
-      settings: {
-        ...hide.tablet, _flex_size: 'none', border_border: 'none', typography_letter_spacing: sz(0, 'em'), typography_text_transform: 'none',
-        button_background_hover_color: 'rgba(0,0,0,0)', hover_color: C.cyanDark,
-        custom_css: `selector .elementor-button-icon svg { fill: ${C.cyan}; width: 18px; height: 18px; }`,
-      },
-    }),
     button(`Call ${PHONE}`, TEL, 'cyan', {
       size: 15, padY: 0, padX: 0, icon: phoneIcon, iconGap: 0,
       settings: {
@@ -324,6 +332,6 @@ function footer(m) {
 }
 
 module.exports = {
-  C, HEAD, BODY, PHONE, TEL, SMS, EMAIL, BOOK, TOWNS, id, sz, box, gap, link, shadow, hide, typo, container, widget, fa,
+  C, HEAD, BODY, PHONE, TEL, SMS, EMAIL, BOOK, PORTAL, TOWNS, id, sz, box, gap, link, shadow, hide, typo, container, widget, fa,
   band, stack, row, grid, autoFit, circle, heading, display, H2, eyebrow, text, button, image, plusList, KIT, header, footer,
 };
