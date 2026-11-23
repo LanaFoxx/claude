@@ -338,10 +338,12 @@
 		var url = function (acct, extra) { return 'https://mail.google.com/mail/' + (acct ? '?authuser=' + encodeURIComponent(acct) : '') + '#search/' + encodeURIComponent(q + (extra || '')); };
 		var direct = /^https:\/\/mail\.google\.com\//.test(pt.gsrc || '') ? pt.gsrc + (pt.gsrc.indexOf('authuser=') < 0 && mine ? (pt.gsrc.indexOf('?') < 0 ? '?' : '&') + 'authuser=' + encodeURIComponent(mine) : '') : '';
 		var label = function (a) { return a === G.personal ? 'personal' : a === G.work ? 'work' : a; };
-		return '<div class="dd-flm">' + (direct ? '<a class="dwdc-btn sm" href="' + esc(direct) + '" target="_blank" rel="noopener">' + lu('mail', 14) + 'Open the booking email</a>' : '<a class="dwdc-btn sm" href="' + esc(url(mine)) + '" target="_blank" rel="noopener">' + lu('mail', 14) + 'Find the booking email</a>')
-			+ '<a class="dwdc-btn2 sm" href="' + esc(url(mine, ' "boarding pass"')) + '" target="_blank" rel="noopener">Boarding pass</a>'
-			+ (other ? '<a class="dd-hlink" href="' + esc(url(other)) + '" target="_blank" rel="noopener">Search ' + label(other) + ' Gmail instead</a>' : '')
-			+ '<small>' + (direct ? 'Opens the email Google made this flight from, in your ' + label(mine) + ' Gmail' : 'Searches your ' + label(mine) + ' Gmail for ' + esc(fn ? 'flight ' + fn[1] + ' ' + fn[2] : 'this flight')) + '</small></div>';
+		// Each search opens BOTH Gmail accounts (one tab each): the link itself plus data-also for the other account.
+		var both = function (extra) { return 'href="' + esc(url(mine, extra)) + '"' + (other ? ' data-also="' + esc(url(other, extra)) + '"' : '') + ' target="_blank" rel="noopener"'; };
+		return '<div class="dd-flm">' + (direct ? '<a class="dwdc-btn sm" href="' + esc(direct) + '" target="_blank" rel="noopener">' + lu('mail', 14) + 'Open the booking email</a>' : '')
+			+ '<a class="' + (direct ? 'dwdc-btn2' : 'dwdc-btn') + ' sm" ' + both('') + '>' + (direct ? '' : lu('mail', 14)) + 'Find the booking email</a>'
+			+ '<a class="dwdc-btn2 sm" ' + both(' "boarding pass"') + '>Boarding pass</a>'
+			+ '<small>' + (direct ? 'Opens the email Google made this flight from. ' : '') + 'Searches open in both your personal and work Gmail (one tab each) for ' + esc(fn ? 'flight ' + fn[1] + ' ' + fn[2] : 'this flight') + '.</small></div>';
 	}
 	function tagOf(x) { return x.tag || (/birthday|bday/i.test(x.text || '') ? 'birthday' : ''); }
 	function money2(v) { return '$' + (+v || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
@@ -5273,6 +5275,7 @@
 		if (t.closest('[data-adscopy]')) { var ta = app.querySelector('.dwdc-adscript'); if (ta) { ta.select(); (navigator.clipboard ? navigator.clipboard.writeText(ta.value) : Promise.reject()).then(function () { toast('Script copied'); }, function () { document.execCommand('copy'); toast('Script copied'); }); } return; }
 		if ((el = t.closest('[data-incyear]'))) { S.incYear = el.getAttribute('data-incyear'); render(); return; }
 		if (t.closest('[data-hinctog]')) { S.hincOpen = !S.hincOpen; try { localStorage.setItem('dwdHincOpen', S.hincOpen ? '1' : ''); } catch (er) {} render(); return; }
+		if ((el = t.closest('a[data-also]'))) { window.open(el.getAttribute('data-also'), '_blank', 'noopener'); } // the link opens one Gmail account; this opens the other
 		if ((el = t.closest('[data-nlack]'))) {
 			el.disabled = true;
 			api('/new-leads/' + el.getAttribute('data-nlack') + '/ack', 'POST', {}).then(function (x) { S.newLeads = (x && x.leads) || []; S.modal = S.newLeads.length ? { type: 'newlead' } : null; render(); toast('Confirmed: lead reviewed and contacted'); }).catch(function (er) { el.disabled = false; fail(er); });
