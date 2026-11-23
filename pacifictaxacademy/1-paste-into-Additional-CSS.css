@@ -342,3 +342,7 @@ body.pta-menu-open{overflow:hidden}
 .pta-guides .pta-guides-grid{padding:0;max-width:none}
 .pta-guides-group + .pta-guides-group{margin-top:clamp(40px,5vw,64px)}
 .pta-guides-group h2{font-size:clamp(26px,3vw,34px);font-weight:900;letter-spacing:-.02em;color:rgb(4,36,63);margin:0 0 20px;text-wrap-style:balance}
+
+/* Home hero shapes: stay close to the logo navy and orange */
+.elementor-19 .elementor-element-f570d7e > div{background:linear-gradient(90deg,rgb(4,36,63),rgb(19,72,112)) !important}
+.elementor-19 .elementor-element-e278dc4 > div{background:linear-gradient(90deg,rgb(251,90,53),rgb(255,128,84)) !important}
