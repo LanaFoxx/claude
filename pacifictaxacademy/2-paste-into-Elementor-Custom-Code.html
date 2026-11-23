@@ -2,6 +2,22 @@
 
 /* helper: if a text node sits directly in a flex/grid box, wrap it so injected spans stay inline */
 window.ptaInline=function(n){var p=n.parentNode;if(!p||p.nodeType!==1)return n;var d=getComputedStyle(p).display;if(/flex|grid/.test(d)){var w=document.createElement('span');w.className='pta-txt';p.replaceChild(w,n);w.appendChild(n);}return n;};
+
+/* "Still have a question? / Call (844) 443-4797 / Mon–Fri, 9am–6pm PT." as three lines on phones */
+(function(){
+  function run(){
+    document.querySelectorAll('.elementor-widget-text-editor div, .elementor-widget-text-editor p').forEach(function(el){
+      if(el.dataset.ptaQ||el.children.length>3)return;var h=el.innerHTML;
+      if(!/^\s*Still have a question\?/.test(el.textContent))return;
+      var m=h.match(/^\s*(Still have a question\?)\s*(Call\s*<strong[^>]*>[^<]*<\/strong>)\s*·\s*([\s\S]*)$/);
+      if(!m)return;
+      el.innerHTML='<span class="pta-q">'+m[1]+'</span> <span class="pta-q pta-nw">'+m[2]+'</span><span class="pta-q-dot"> · </span><span class="pta-q pta-nw">'+m[3].trim()+'</span>';
+      el.dataset.ptaQ='1';
+    });
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run);else run();
+})();
+
 /* Pacific Tax Academy – home hero slider (dots + autoplay) */
 (function(){
   function init(){
@@ -41,6 +57,7 @@ window.ptaInline=function(n){var p=n.parentNode;if(!p||p.nodeType!==1)return n;v
       line.innerHTML=SHIELD+'<span>30-day money-back guarantee</span>';
       host.parentNode.insertBefore(line,host.nextSibling);
       if(isDark(line))line.classList.add('on-dark');
+      var par=line.parentNode,gap=par&&getComputedStyle(par).display.indexOf('flex')>-1?(parseFloat(getComputedStyle(par).rowGap)||0):0;line.style.marginTop=(8-gap)+'px';
     }
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run);else run();
@@ -51,9 +68,10 @@ window.ptaInline=function(n){var p=n.parentNode;if(!p||p.nodeType!==1)return n;v
   function fit(el,minPx){
     el.style.fontSize='';
     var cs=getComputedStyle(el),size=parseFloat(cs.fontSize),w=el.clientWidth; if(!w)return;
+    minPx=Math.max(minPx,size*0.85);
     el.classList.remove('pta-wrap');
     var guard=0; while(el.scrollWidth>w+1&&size>minPx&&guard++<40){size-=1;el.style.fontSize=size+'px';}
-    if(el.scrollWidth>w+1){el.style.fontSize='';el.classList.add('pta-wrap');}
+    if(el.scrollWidth>w+1){el.style.fontSize='';el.style.whiteSpace='';el.classList.add('pta-wrap');}
   }
   function prep(){
     document.querySelectorAll('.elementor h1.elementor-heading-title,.elementor h2.elementor-heading-title').forEach(function(h){
@@ -63,12 +81,11 @@ window.ptaInline=function(n){var p=n.parentNode;if(!p||p.nodeType!==1)return n;v
     document.querySelectorAll('.elementor-widget-text-editor').forEach(function(w){
       var next=w.nextElementSibling, d=w.firstElementChild;
       if(!d||!next||!next.classList.contains('elementor-widget-heading'))return;
-      var t=(d.textContent||'').trim(); if(t.length>60||d.querySelector('br'))return;
+      var t=(d.textContent||'').trim(); if(t.length>45||d.querySelector('br'))return;
       d.style.whiteSpace='nowrap'; d.dataset.ptaFit='e';
     });
   }
   function run(){prep();
-    document.querySelectorAll('[data-pta-fit="h"]').forEach(function(h){fit(h,20);});
     document.querySelectorAll('[data-pta-fit="e"]').forEach(function(d){fit(d,12);});
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run);else run();
@@ -145,7 +162,7 @@ window.ptaInline=function(n){var p=n.parentNode;if(!p||p.nodeType!==1)return n;v
     document.querySelectorAll('.elementor div').forEach(function(d){
       if(d.closest('.pta-menu-overlay')||d.closest('header'))return;
       var kids=[].slice.call(d.children);if(kids.length<2||kids.length>3)return;
-      if(!kids.every(function(k){return k.tagName==='A'&&isBtn(k);}))return;
+      if(!kids.every(function(k){return k.tagName==='A'&&isBtn(k)&&!k.querySelector('div,p,h1,h2,h3,h4,img,ul')&&(k.textContent||'').trim().length<=50&&k.getBoundingClientRect().height<90;}))return;
       d.classList.toggle('pta-btn-stack',mobile());
       kids.forEach(function(k){if(mobile()){k.classList.add('pta-btn-eq');shrink(k,13);}else{k.classList.remove('pta-btn-eq');k.style.fontSize='';}});
     });
@@ -178,5 +195,16 @@ window.ptaInline=function(n){var p=n.parentNode;if(!p||p.nodeType!==1)return n;v
   function init(){wrapSeps();run();}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
   window.addEventListener('load',run);var t;window.addEventListener('resize',function(){clearTimeout(t);t=setTimeout(run,150);});
+})();
+
+/* Hide the fixed bottom Enroll bar once the footer comes into view */
+(function(){
+  function init(){
+    var foot=document.querySelector('footer');if(!foot||!('IntersectionObserver' in window))return;
+    var bars=[].slice.call(document.querySelectorAll('.e-con')).filter(function(e){var cs=getComputedStyle(e);return cs.position==='fixed'&&cs.bottom==='0px';});
+    if(!bars.length)return;
+    new IntersectionObserver(function(en){var vis=en[0].isIntersecting;bars.forEach(function(b){b.classList.toggle('pta-sticky-hide',vis);});},{rootMargin:'0px 0px 40px 0px'}).observe(foot);
+  }
+  if(document.readyState==='complete')init();else window.addEventListener('load',init);
 })();
 </script>

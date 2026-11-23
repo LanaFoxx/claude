@@ -92,7 +92,7 @@ a[href^="tel:"]{white-space:nowrap}
 /* ---------- 30-day guarantee line under buy buttons ---------- */
 .pta-guarantee{display:flex;align-items:center;justify-content:center;gap:6px;margin:8px 0 0;font-size:13px;font-weight:500;line-height:1.3;color:rgb(74,96,118)}
 .pta-guarantee svg{flex:0 0 auto;color:rgb(18,163,180)}
-.elementor-19 .pta-guarantee{margin:10px 0 24px}
+.elementor-19 .pta-guarantee{margin-bottom:24px}
 .pta-guarantee.on-dark{color:rgba(255,255,255,.8)}.pta-guarantee.on-dark svg{color:rgb(251,90,53)}
 .elementor-19 .elementor-element-7ca32b5{position:relative;overflow:hidden;isolation:isolate}
 
@@ -107,9 +107,9 @@ a[href^="tel:"]{white-space:nowrap}
 /* Even line lengths everywhere */
 .elementor h1,.elementor h2,.elementor h3,.elementor h4,.elementor summary,.elementor summary *{text-wrap-style:balance}
 .elementor p,.elementor-widget-text-editor div{text-wrap-style:pretty}
-.pta-line{display:block;white-space:nowrap}
+.pta-line{display:block;text-wrap-style:balance}
 .e-con > .elementor-widget,.e-con.e-child{min-width:0}
-[data-pta-fit]{max-width:100%;overflow:hidden}
+[data-pta-fit]{max-width:100%;overflow-x:clip;overflow-y:visible}
 
 /* Home stats bar: dividers only BETWEEN items, full height / full width */
 .elementor-19 .elementor-element-1fbaddf > .e-con{box-shadow:none !important;position:relative}
@@ -237,3 +237,44 @@ body.pta-menu-open{overflow:hidden}
  .elementor-23 .elementor-element-b52cf00 .e-con > :nth-child(n+4){display:none !important}
  .elementor-23 .elementor-element-b52cf00 .e-con > :nth-child(2) *{white-space:nowrap}
 }
+
+/* ================= Pass 5 ================= */
+/* "Still have a question?" on three lines (mobile) */
+@media (max-width:760px){
+ .pta-q{display:block}
+ .pta-q-dot{display:none}
+ /* Home bundle box: centered, button same size as Add to cart */
+ .elementor-19 .elementor-element-a5de4ad > div{flex-direction:column !important;align-items:center !important;justify-content:center !important;text-align:center !important}
+ .elementor-19 .elementor-element-a5de4ad > div > *{justify-content:center !important;align-items:center !important;text-align:center !important}
+ .elementor-19 .elementor-element-a5de4ad a{display:flex !important;align-items:center;justify-content:center;min-height:44px;padding:0 28px !important;font-size:15px !important;line-height:1.2 !important;margin:4px auto 0 !important;width:auto !important}
+ .elementor-19 .elementor-element-a5de4ad .pta-sep{display:block;height:0;overflow:hidden;font-size:0}
+}
+
+/* ================= Pass 6 ================= */
+@media (max-width:760px){
+ /* Hero headlines bigger on phones; wrap evenly */
+ .elementor-19 .elementor-element-1f49a07 .elementor-heading-title{font-size:36px !important;line-height:1.1 !important}
+ .elementor-19 .elementor-element-d2493ce > div{font-size:36px !important;line-height:1.1 !important}
+ /* Pricing cards: breathing room around the hours line */
+ .elementor-19 .elementor-element-bf0217b > div,.elementor-19 .elementor-element-bf0217b .elementor-widget-text-editor > div{white-space:normal}
+ .elementor-19 .phhome-4 [style*="font-size: 19px"]{font-size:16px !important;padding:0 12px;box-sizing:border-box}
+}
+@media (max-width:760px){
+ .elementor-20 .elementor-element-a03ab34 .elementor-heading-title,.elementor-21 .elementor-element-9d80d6e .elementor-heading-title{font-size:38px !important;line-height:1.08 !important}
+ .elementor-20 .elementor-element-a03ab34 .pta-line:first-child,.elementor-21 .elementor-element-9d80d6e .pta-line:first-child{max-width:11ch;margin:0 auto}
+}
+
+/* ================= Pass 7 ================= */
+/* Sticky enroll bar slides away when the site footer is on screen */
+.elementor-20 .elementor-element-65e687a,.elementor-21 .elementor-element-44947e3,.elementor-23 .elementor-element-97d12df{transition:transform .3s ease,opacity .3s ease}
+.pta-sticky-hide{transform:translateY(110%) !important;opacity:0 !important;pointer-events:none !important}
+@media (max-width:760px){
+ /* Single courses: each course its own rounded card with space between */
+ .elementor-22 .elementor-element.elementor-element-30c1204{background:transparent !important;box-shadow:none !important;overflow:visible !important;border-radius:0 !important}
+ .elementor-22 .elementor-element.elementor-element-7099db9{gap:16px !important}
+ .elementor-22 .elementor-element-7099db9 > .e-con{background:#fff;border-radius:16px;overflow:hidden;box-shadow:rgba(4,36,63,.1) 0 6px 24px !important}
+ /* "All four separately" line: link on its own line, smaller */
+ .elementor-22 .elementor-element-f297bb5 > div{font-size:17px !important}
+ .elementor-22 .elementor-element-f297bb5 a{display:block;font-size:16px;margin-top:4px}
+}
+.pta-menu-top img{max-width:none !important;width:auto !important;height:96px !important;display:block}
