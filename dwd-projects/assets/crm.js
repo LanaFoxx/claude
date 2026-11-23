@@ -331,12 +331,17 @@
 	function flightMail(pt) {
 		var t = String(pt.text || ''), fn = /\b([A-Z][A-Z0-9]|[A-Z0-9][A-Z])\s?(\d{1,4})\b/.exec(t), dest = /flight (?:to|from) ([^()]+?)\s*(?:\(|$)/i.exec(t);
 		var q = fn ? '"' + fn[1] + ' ' + fn[2] + '" OR "' + fn[1] + fn[2] + '"' : '(flight OR itinerary OR "boarding pass" OR confirmation)' + (dest ? ' "' + dest[1].trim() + '"' : '');
-		var G = DWDC.gmail || {}, mine = pt.gacct === 'personal' ? G.personal : G.work, other = pt.gacct === 'personal' ? G.work : G.personal;
+		// Whose Gmail: the calendar's own account when the sync knows it (gowner); otherwise flights are personal by default.
+		var G = DWDC.gmail || {}, own = String(pt.gowner || '').toLowerCase();
+		var mine = own && own.indexOf('@') > 0 ? own : (pt.gacct === 'work' ? G.work : G.personal || G.work);
+		var other = [G.personal, G.work].filter(function (a) { return a && a.toLowerCase() !== String(mine).toLowerCase(); })[0];
 		var url = function (acct, extra) { return 'https://mail.google.com/mail/' + (acct ? '?authuser=' + encodeURIComponent(acct) : '') + '#search/' + encodeURIComponent(q + (extra || '')); };
-		return '<div class="dd-flm"><a class="dwdc-btn sm" href="' + esc(url(mine)) + '" target="_blank" rel="noopener">' + lu('mail', 14) + 'Find the booking email</a>'
+		var direct = /^https:\/\/mail\.google\.com\//.test(pt.gsrc || '') ? pt.gsrc + (pt.gsrc.indexOf('authuser=') < 0 && mine ? (pt.gsrc.indexOf('?') < 0 ? '?' : '&') + 'authuser=' + encodeURIComponent(mine) : '') : '';
+		var label = function (a) { return a === G.personal ? 'personal' : a === G.work ? 'work' : a; };
+		return '<div class="dd-flm">' + (direct ? '<a class="dwdc-btn sm" href="' + esc(direct) + '" target="_blank" rel="noopener">' + lu('mail', 14) + 'Open the booking email</a>' : '<a class="dwdc-btn sm" href="' + esc(url(mine)) + '" target="_blank" rel="noopener">' + lu('mail', 14) + 'Find the booking email</a>')
 			+ '<a class="dwdc-btn2 sm" href="' + esc(url(mine, ' "boarding pass"')) + '" target="_blank" rel="noopener">Boarding pass</a>'
-			+ (other ? '<a class="dd-hlink" href="' + esc(url(other)) + '" target="_blank" rel="noopener">Search ' + (pt.gacct === 'personal' ? 'work' : 'personal') + ' Gmail</a>' : '')
-			+ '<small>Searches Gmail for ' + esc(fn ? 'flight ' + fn[1] + ' ' + fn[2] : 'this flight') + '</small></div>';
+			+ (other ? '<a class="dd-hlink" href="' + esc(url(other)) + '" target="_blank" rel="noopener">Search ' + label(other) + ' Gmail instead</a>' : '')
+			+ '<small>' + (direct ? 'Opens the email Google made this flight from, in your ' + label(mine) + ' Gmail' : 'Searches your ' + label(mine) + ' Gmail for ' + esc(fn ? 'flight ' + fn[1] + ' ' + fn[2] : 'this flight')) + '</small></div>';
 	}
 	function tagOf(x) { return x.tag || (/birthday|bday/i.test(x.text || '') ? 'birthday' : ''); }
 	function money2(v) { return '$' + (+v || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }

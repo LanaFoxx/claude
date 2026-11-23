@@ -115,6 +115,8 @@ function dwdpe_clean( $kind, $x, $old = array() ) {
 			'gtask'   => $txt( $x['gtask'] ?? '', 120 ),
 			'gevent'  => $txt( $x['gevent'] ?? '', 200 ),
 			'gacct'   => preg_replace( '/[^a-z]/', '', (string) ( $x['gacct'] ?? '' ) ), // which Google account owns the link ('' = work, 'personal' = mptarr33)
+			'gowner'  => is_email( (string) ( $x['gowner'] ?? '' ) ) ? strtolower( (string) $x['gowner'] ) : '', // the calendar's account (whose Gmail has the booking)
+			'gsrc'    => preg_match( '#^https://(mail\.google\.com|www\.google\.com)/#', (string) ( $x['gsrc'] ?? '' ) ) ? esc_url_raw( (string) $x['gsrc'] ) : '', // link to the email that created the event
 			'source'  => $txt( $x['source'] ?? '', 40 ),
 			'time'    => $txt( $x['time'] ?? '', 40 ),
 			'tag'     => in_array( (string) ( $x['tag'] ?? '' ), array( 'urgent', 'important', 'errand', 'birthday', 'home', 'work', 'health', 'bills' ), true ) ? (string) $x['tag'] : '',
@@ -333,6 +335,14 @@ function dwdpe_sync( $d ) {
 		}
 		$seen_e[ $eid ] = 1;
 		$fields = array( 'text' => $e['title'] ?? '', 'due' => substr( (string) ( $e['date'] ?? '' ), 0, 10 ), 'time' => $e['time'] ?? '', 'note' => $e['notes'] ?? '' );
+		// Which Google account the event belongs to (e.g. a flight booked from the personal Gmail) and, for events Gmail
+		// created, the link to the email itself; sent by the updated script (older scripts leave these blank).
+		if ( isset( $e['owner'] ) ) {
+			$fields['gowner'] = $e['owner'];
+		}
+		if ( isset( $e['src'] ) ) {
+			$fields['gsrc'] = $e['src'];
+		}
 		if ( in_array( $eid, (array) get_option( 'dwdpe_gone_ev', array() ), true ) || in_array( $eid, (array) get_option( 'dwdpe_hide_ev', array() ), true ) || dwdpe_gone_sig( $fields['text'], $fields['due'] ) ) {
 			continue;
 		}
@@ -442,7 +452,7 @@ function syncDreamDesk() {
       if (e.status === 'cancelled' || !e.summary || seenEv[e.id]) { return; }
       seenEv[e.id] = 1;
       var allDay = !!e.start.date, s = allDay ? null : new Date(e.start.dateTime);
-      events.push({ id: e.id, title: e.summary, date: allDay ? e.start.date : Utilities.formatDate(s, tz, 'yyyy-MM-dd'), time: allDay ? '' : Utilities.formatDate(s, tz, 'h:mm a'), notes: e.location || '', link: e.hangoutLink || ((e.conferenceData && e.conferenceData.entryPoints || []).filter(function (p) { return p.entryPointType === 'video'; })[0] || {}).uri || '' });
+      events.push({ id: e.id, title: e.summary, date: allDay ? e.start.date : Utilities.formatDate(s, tz, 'yyyy-MM-dd'), time: allDay ? '' : Utilities.formatDate(s, tz, 'h:mm a'), notes: e.location || '', owner: (e.organizer && e.organizer.email) || (cal === 'primary' ? '' : cal), src: (e.source && e.source.url) || '', link: e.hangoutLink || ((e.conferenceData && e.conferenceData.entryPoints || []).filter(function (p) { return p.entryPointType === 'video'; })[0] || {}).uri || '' });
     });
     page = ev.nextPageToken;
   } while (page);
