@@ -278,3 +278,63 @@ body.pta-menu-open{overflow:hidden}
  .elementor-22 .elementor-element-f297bb5 a{display:block;font-size:16px;margin-top:4px}
 }
 .pta-menu-top img{max-width:none !important;width:auto !important;height:96px !important;display:block}
+
+/* ================= Guides hub ================= */
+.pta-guides-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;max-width:1150px;margin:0 auto;padding:clamp(40px,6vw,72px) clamp(16px,4vw,48px)}
+@media (max-width:760px){.pta-guides-grid{grid-template-columns:1fr;gap:16px}}
+.pta-guide-card{display:flex;flex-direction:column;gap:8px;background:#fff;border:1px solid rgb(220,229,236);border-radius:16px;padding:24px;text-decoration:none !important;color:rgb(4,36,63);box-shadow:rgba(4,36,63,.08) 0 6px 24px;transition:transform .15s ease,box-shadow .15s ease;border-top:6px solid rgb(4,36,63)}
+.pta-guide-card:nth-child(4n+2){border-top-color:rgb(251,90,53)}.pta-guide-card:nth-child(4n+3){border-top-color:rgb(7,52,79)}.pta-guide-card:nth-child(4n+4){border-top-color:rgb(201,60,26)}
+.pta-guide-card:hover{transform:translateY(-2px);box-shadow:rgba(4,36,63,.14) 0 10px 30px}
+.pta-gc-kicker{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:rgb(74,96,118)}
+.pta-gc-title{font-size:22px;font-weight:800;line-height:1.2;text-wrap-style:balance}
+.pta-gc-sum{font-size:17px;font-weight:300;line-height:1.5;flex:1}
+.pta-gc-more{font-weight:700;color:rgb(201,60,26);margin-top:6px}
+.pta-guide-card .pta-gc-title{color:rgb(4,36,63) !important}
+.pta-guide-card .pta-gc-sum{color:rgb(74,96,118) !important}
+.pta-guide-card .pta-gc-kicker{color:rgb(74,96,118) !important}
+.pta-guide-card .pta-gc-more{color:rgb(201,60,26) !important}
+.elementor-26 main.e-parent > .e-con:last-child{position:relative;overflow:hidden;isolation:isolate}
+.elementor-26 main.e-parent > .e-con:last-child .elementor-widget-image:first-child{display:none !important}
+.elementor-26 main.e-parent > .e-con:last-child::before{content:"";position:absolute;inset:0;pointer-events:none;z-index:-1;background-image:repeating-radial-gradient(circle at 92% 8%,rgba(255,255,255,.03) 0,rgba(255,255,255,.03) 1px,transparent 1px,transparent 34px)}
+.elementor-26 main.e-parent > .e-con:last-child::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:-1;background:radial-gradient(40% 60% at 80% 30%,rgba(18,163,180,.22),transparent 70%),radial-gradient(35% 55% at 95% 95%,rgba(251,90,53,.16),transparent 70%),radial-gradient(38% 60% at 8% 15%,rgba(11,74,110,.75),transparent 70%),radial-gradient(32% 50% at 2% 100%,rgba(251,90,53,.12),transparent 70%)}
+
+/* ================= Guide articles ================= */
+.pta-article{color:rgb(4,36,63)}
+.pta-article h2{font-size:clamp(26px,3vw,34px);font-weight:900;letter-spacing:-.02em;line-height:1.15;margin:48px 0 16px;scroll-margin-top:110px;text-wrap-style:balance}
+.pta-article h2:first-child{margin-top:0}
+.pta-article h3{font-size:22px;font-weight:800;margin:28px 0 10px}
+.pta-article p,.pta-article li{font-size:19px;font-weight:300;line-height:1.65;text-wrap-style:pretty}
+.pta-article p{margin:0 0 16px}
+.pta-article ul,.pta-article ol{margin:0 0 20px;padding-left:22px}
+.pta-article li{margin-bottom:10px}
+.pta-article li::marker{color:rgb(251,90,53);font-weight:700}
+.pta-article strong{font-weight:700}
+.pta-article a{color:rgb(201,60,26);font-weight:600}
+.pta-article a.pta-src{font-size:.72em;font-weight:500;color:rgb(74,96,118);text-decoration:underline;text-underline-offset:2px;white-space:nowrap}
+.pta-article .pta-table{overflow-x:auto;margin:8px 0 24px;border:1px solid rgb(220,229,236);border-radius:14px}
+.pta-article table{width:100%;border-collapse:collapse;font-size:16px;background:#fff}
+.pta-article th{background:rgb(4,36,63);color:#fff;text-align:left;font-weight:700;padding:12px 14px}
+.pta-article td{padding:12px 14px;border-top:1px solid rgb(220,229,236);font-weight:300;vertical-align:top}
+@media (max-width:760px){
+ .pta-article p,.pta-article li{font-size:17px}
+ .pta-article .pta-table{border:0;overflow:visible}
+ .pta-article table,.pta-article tbody,.pta-article tr,.pta-article td{display:block;width:100%}
+ .pta-article thead{display:none}
+ .pta-article tr{border:1px solid rgb(220,229,236);border-radius:14px;margin-bottom:12px;padding:6px 0;background:#fff}
+ .pta-article td{border:0;padding:6px 16px}
+ .pta-article td::before{content:attr(data-label);display:block;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:rgb(74,96,118)}
+}
+.pta-article .pta-faq{border-top:1px solid rgb(220,229,236);padding:4px 0}
+.pta-article .pta-faq:last-of-type{border-bottom:1px solid rgb(220,229,236)}
+.pta-article .pta-faq summary{cursor:pointer;list-style:none;font-size:19px;font-weight:700;padding:16px 40px 16px 0;position:relative;text-wrap-style:balance}
+.pta-article .pta-faq summary::-webkit-details-marker{display:none}
+.pta-article .pta-faq summary::after{content:"+";position:absolute;right:0;top:50%;transform:translateY(-50%);width:30px;height:30px;border-radius:50%;background:rgb(4,36,63);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:400}
+.pta-article .pta-faq[open] summary::after{content:"–"}
+.pta-article .pta-faq p{margin:0 0 16px}
+.pta-article .pta-course-note{background:rgb(243,247,250);border-left:4px solid rgb(251,90,53);border-radius:10px;padding:16px 18px;margin-top:28px}
+.pta-article .pta-src-h{font-size:14px;letter-spacing:.07em;text-transform:uppercase;color:rgb(74,96,118);margin-top:36px}
+.pta-article .pta-src-list li{font-size:14px;margin-bottom:4px}
+.pta-article .pta-src-list a.pta-src{font-size:14px}
+.pta-article mark.pta-verify{background:rgb(255,243,205);color:rgb(120,80,0);border-radius:4px;padding:0 4px;font-size:.85em}
+.pta-answer{font-size:clamp(18px,1.6vw,21px);font-weight:300;line-height:1.5;margin-top:16px;max-width:760px;text-wrap-style:pretty}
+.pta-answer a.pta-src{color:rgba(255,255,255,.7) !important;font-size:.72em;font-weight:500;text-decoration:underline;white-space:nowrap}

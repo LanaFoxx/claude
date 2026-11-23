@@ -57,7 +57,7 @@ window.ptaInline=function(n){var p=n.parentNode;if(!p||p.nodeType!==1)return n;v
       line.innerHTML=SHIELD+'<span>30-day money-back guarantee</span>';
       host.parentNode.insertBefore(line,host.nextSibling);
       if(isDark(line))line.classList.add('on-dark');
-      var par=line.parentNode,gap=par&&getComputedStyle(par).display.indexOf('flex')>-1?(parseFloat(getComputedStyle(par).rowGap)||0):0;line.style.marginTop=(8-gap)+'px';
+      var par=line.parentNode,gap=par&&getComputedStyle(par).display.indexOf('flex')>-1?(parseFloat(getComputedStyle(par).rowGap)||0):0;line.style.marginTop=(20-gap)+'px';
     }
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run);else run();
