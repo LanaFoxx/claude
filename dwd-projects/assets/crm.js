@@ -340,11 +340,12 @@
 		var label = function (a) { return a === G.personal ? 'personal' : a === G.work ? 'work' : a; };
 		// Each search opens BOTH Gmail accounts (one tab each): the link itself plus data-also for the other account.
 		var known = own && own.indexOf('@') > 0; // the calendar sync says which account the flight is on: open only that one
-		var both = function (extra) { return 'href="' + esc(url(mine, extra)) + '"' + (other && !known ? ' data-also="' + esc(url(other, extra)) + '"' : '') + ' target="_blank" rel="noopener"'; };
+		var both = function (extra) { return 'href="' + esc(url(mine, extra)) + '" target="_blank" rel="noopener"'; }; // one tab, the right account only (opening the other account too left the WORK tab on top)
 		return '<div class="dd-flm">' + (direct ? '<a class="dwdc-btn sm" href="' + esc(direct) + '" target="_blank" rel="noopener">' + lu('mail', 14) + 'Open the booking email</a>' : '')
 			+ '<a class="' + (direct ? 'dwdc-btn2' : 'dwdc-btn') + ' sm" ' + both('') + '>' + (direct ? '' : lu('mail', 14)) + 'Find the booking email</a>'
 			+ '<a class="dwdc-btn2 sm" ' + both(' "boarding pass"') + '>Boarding pass</a>'
-			+ '<small>' + (direct ? 'Opens the email Google made this flight from. ' : '') + (known ? 'Searches your ' + label(mine) + ' Gmail (the account this flight is on) for ' : 'Searches open in both your personal and work Gmail (one tab each) for ') + esc(fn ? 'flight ' + fn[1] + ' ' + fn[2] : 'this flight') + '.</small></div>';
+			+ (other ? '<a class="dd-hlink" href="' + esc(url(other)) + '" target="_blank" rel="noopener">Not there? Search ' + label(other) + ' Gmail</a>' : '')
+			+ '<small>' + (direct ? 'Opens the email Google made this flight from. ' : '') + 'Opens your ' + label(mine) + ' Gmail (' + esc(mine) + ') for ' + esc(fn ? 'flight ' + fn[1] + ' ' + fn[2] : 'this flight') + '.</small></div>';
 	}
 	function tagOf(x) { return x.tag || (/birthday|bday/i.test(x.text || '') ? 'birthday' : ''); }
 	function money2(v) { return '$' + (+v || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
