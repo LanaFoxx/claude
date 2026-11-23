@@ -311,7 +311,7 @@
           }
          }
         ],
-        "custom_css": "selector .elementor-icon-list-items{justify-content:center;row-gap:10px;}@media (max-width:980px){selector .elementor-icon-list-items{justify-content:flex-start;}}",
+        "custom_css": "selector .elementor-icon-list-items{justify-content:center;row-gap:0;}selector .elementor-icon-list-item > a{display:inline-flex;align-items:center;min-height:44px;}@media (max-width:980px){selector .elementor-icon-list-items{justify-content:flex-start;}}",
         "icon_typography_typography": "custom",
         "icon_typography_font_family": "Manrope",
         "icon_typography_font_size": {
@@ -411,6 +411,7 @@
           },
           "title_hover_color": "#D9A66B",
           "_css_classes": "tn-call",
+          "custom_css": "selector .elementor-heading-title a{display:inline-flex;align-items:center;min-height:44px;}",
           "_title": "Footer / Phone"
          },
          "elements": []
@@ -703,7 +704,7 @@
        "widgetType": "heading",
        "isInner": false,
        "settings": {
-        "title": "4722 Hwy US-6, Gypsum, CO 81637 · info@topnotch-painting.com",
+        "title": "4722 Hwy US-6, Gypsum, CO 81637&nbsp;· info@topnotch-painting.com",
         "header_size": "p",
         "title_color": "#B3A99C",
         "typography_typography": "custom",

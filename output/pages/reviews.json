@@ -1,0 +1,2364 @@
+{
+ "version": "0.4",
+ "title": "TN reviews",
+ "type": "page",
+ "content": [
+  {
+   "id": "1ddf3e1",
+   "elType": "container",
+   "isInner": false,
+   "settings": {
+    "_title": "Page Header",
+    "content_width": "boxed",
+    "flex_direction": "column",
+    "flex_gap": {
+     "column": "0",
+     "row": "0",
+     "isLinked": true,
+     "unit": "px",
+     "size": 0
+    },
+    "flex_gap_laptop": {
+     "column": "0",
+     "row": "0",
+     "isLinked": true,
+     "unit": "px",
+     "size": 0
+    },
+    "flex_gap_tablet": {
+     "column": "0",
+     "row": "0",
+     "isLinked": true,
+     "unit": "px",
+     "size": 0
+    },
+    "flex_gap_mobile": {
+     "column": "0",
+     "row": "0",
+     "isLinked": true,
+     "unit": "px",
+     "size": 0
+    },
+    "boxed_width": {
+     "unit": "px",
+     "size": 1280,
+     "sizes": []
+    },
+    "padding": {
+     "unit": "px",
+     "top": "200",
+     "right": "48",
+     "bottom": "104",
+     "left": "48",
+     "isLinked": false
+    },
+    "padding_laptop": {
+     "unit": "px",
+     "top": "200",
+     "right": "48",
+     "bottom": "96",
+     "left": "48",
+     "isLinked": false
+    },
+    "padding_tablet": {
+     "unit": "px",
+     "top": "176",
+     "right": "32",
+     "bottom": "80",
+     "left": "32",
+     "isLinked": false
+    },
+    "padding_mobile": {
+     "unit": "px",
+     "top": "152",
+     "right": "20",
+     "bottom": "64",
+     "left": "20",
+     "isLinked": false
+    },
+    "background_background": "classic",
+    "background_color": "#14110E",
+    "html_tag": "section"
+   },
+   "elements": [
+    {
+     "id": "a4ed1f6",
+     "elType": "container",
+     "isInner": true,
+     "settings": {
+      "_title": "Page Header / Layout",
+      "content_width": "full",
+      "flex_direction": "column",
+      "flex_gap": {
+       "column": "72",
+       "row": "48",
+       "isLinked": false,
+       "unit": "px",
+       "size": 72
+      },
+      "flex_gap_laptop": {
+       "column": "64",
+       "row": "48",
+       "isLinked": false,
+       "unit": "px",
+       "size": 64
+      },
+      "flex_gap_tablet": {
+       "column": "48",
+       "row": "48",
+       "isLinked": true,
+       "unit": "px",
+       "size": 48
+      },
+      "flex_gap_mobile": {
+       "column": "40",
+       "row": "40",
+       "isLinked": true,
+       "unit": "px",
+       "size": 40
+      },
+      "width": {
+       "unit": "%",
+       "size": 100,
+       "sizes": []
+      },
+      "padding": {
+       "unit": "px",
+       "top": "0",
+       "right": "0",
+       "bottom": "0",
+       "left": "0",
+       "isLinked": true
+      },
+      "container_type": "grid",
+      "grid_auto_flow": "row",
+      "grid_rows_grid": {
+       "unit": "custom",
+       "size": "auto",
+       "sizes": []
+      },
+      "grid_columns_grid": {
+       "unit": "fr",
+       "size": 1,
+       "sizes": []
+      },
+      "grid_columns_grid_laptop": {
+       "unit": "fr",
+       "size": 1,
+       "sizes": []
+      },
+      "grid_columns_grid_tablet": {
+       "unit": "fr",
+       "size": 1,
+       "sizes": []
+      },
+      "grid_columns_grid_mobile": {
+       "unit": "fr",
+       "size": 1,
+       "sizes": []
+      },
+      "grid_gaps": {
+       "column": "72",
+       "row": "48",
+       "isLinked": false,
+       "unit": "px",
+       "size": 72
+      },
+      "grid_gaps_laptop": {
+       "column": "64",
+       "row": "48",
+       "isLinked": false,
+       "unit": "px",
+       "size": 64
+      },
+      "grid_gaps_tablet": {
+       "column": "48",
+       "row": "48",
+       "isLinked": true,
+       "unit": "px",
+       "size": 48
+      },
+      "grid_gaps_mobile": {
+       "column": "40",
+       "row": "40",
+       "isLinked": true,
+       "unit": "px",
+       "size": 40
+      },
+      "grid_align_items": "center"
+     },
+     "elements": [
+      {
+       "id": "47e2214",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Page Header / Text",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "24",
+         "row": "24",
+         "isLinked": true,
+         "unit": "px",
+         "size": 24
+        },
+        "flex_gap_laptop": {
+         "column": "24",
+         "row": "24",
+         "isLinked": true,
+         "unit": "px",
+         "size": 24
+        },
+        "flex_gap_tablet": {
+         "column": "24",
+         "row": "24",
+         "isLinked": true,
+         "unit": "px",
+         "size": 24
+        },
+        "flex_gap_mobile": {
+         "column": "24",
+         "row": "24",
+         "isLinked": true,
+         "unit": "px",
+         "size": 24
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "0",
+         "right": "0",
+         "bottom": "0",
+         "left": "0",
+         "isLinked": true
+        },
+        "flex_justify_content": "center"
+       },
+       "elements": [
+        {
+         "id": "560cee0",
+         "elType": "widget",
+         "widgetType": "heading",
+         "isInner": false,
+         "settings": {
+          "title": "About",
+          "header_size": "div",
+          "title_color": "#C68B4E",
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 13,
+           "sizes": []
+          },
+          "typography_font_weight": "600",
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.4,
+           "sizes": []
+          },
+          "typography_letter_spacing": {
+           "unit": "px",
+           "size": 1.2,
+           "sizes": []
+          },
+          "_title": "Page Header / Eyebrow"
+         },
+         "elements": []
+        },
+        {
+         "id": "9325ae9",
+         "elType": "widget",
+         "widgetType": "heading",
+         "isInner": false,
+         "settings": {
+          "title": "<b>What our</b> clients say",
+          "header_size": "h1",
+          "title_color": "#F2ECE3",
+          "typography_typography": "custom",
+          "typography_font_family": "Fraunces",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 55,
+           "sizes": []
+          },
+          "typography_font_size_laptop": {
+           "unit": "px",
+           "size": 52,
+           "sizes": []
+          },
+          "typography_font_size_tablet": {
+           "unit": "px",
+           "size": 41,
+           "sizes": []
+          },
+          "typography_font_size_mobile": {
+           "unit": "px",
+           "size": 34,
+           "sizes": []
+          },
+          "typography_font_weight": "300",
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.04,
+           "sizes": []
+          },
+          "typography_letter_spacing": {
+           "unit": "px",
+           "size": -0.6,
+           "sizes": []
+          },
+          "custom_css": "selector{max-width:760px !important;}selector .elementor-heading-title{text-wrap:balance;}",
+          "_css_classes": "tn-contrast",
+          "_title": "Page Header / Title (H1)"
+         },
+         "elements": []
+        },
+        {
+         "id": "e79d81c",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>4.9 stars from 19 reviews on HomeAdvisor, 5.0 on Google, and an A+ with the BBB.</p>",
+          "text_color": "#D7CFC4",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 19,
+           "sizes": []
+          },
+          "typography_font_size_laptop": {
+           "unit": "px",
+           "size": 18,
+           "sizes": []
+          },
+          "typography_font_size_tablet": {
+           "unit": "px",
+           "size": 18,
+           "sizes": []
+          },
+          "typography_font_size_mobile": {
+           "unit": "px",
+           "size": 17,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.65,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}selector{max-width:600px !important;}",
+          "_title": "Page Header / Intro"
+         },
+         "elements": []
+        },
+        {
+         "id": "5dd75f6",
+         "elType": "container",
+         "isInner": true,
+         "settings": {
+          "_title": "Page Header / Actions",
+          "content_width": "full",
+          "flex_direction": "row",
+          "flex_gap": {
+           "column": "28",
+           "row": "12",
+           "isLinked": false,
+           "unit": "px",
+           "size": 28
+          },
+          "flex_gap_laptop": {
+           "column": "28",
+           "row": "12",
+           "isLinked": false,
+           "unit": "px",
+           "size": 28
+          },
+          "flex_gap_tablet": {
+           "column": "28",
+           "row": "12",
+           "isLinked": false,
+           "unit": "px",
+           "size": 28
+          },
+          "flex_gap_mobile": {
+           "column": "28",
+           "row": "12",
+           "isLinked": false,
+           "unit": "px",
+           "size": 28
+          },
+          "width": {
+           "unit": "%",
+           "size": 100,
+           "sizes": []
+          },
+          "padding": {
+           "unit": "px",
+           "top": "0",
+           "right": "0",
+           "bottom": "0",
+           "left": "0",
+           "isLinked": true
+          },
+          "flex_wrap": "wrap",
+          "flex_align_items": "center"
+         },
+         "elements": [
+          {
+           "id": "cb6de8f",
+           "elType": "widget",
+           "widgetType": "button",
+           "isInner": false,
+           "settings": {
+            "text": "Request an Estimate",
+            "link": {
+             "url": "/request-an-estimate/",
+             "is_external": "",
+             "nofollow": ""
+            },
+            "border_radius": {
+             "unit": "px",
+             "top": "999",
+             "right": "999",
+             "bottom": "999",
+             "left": "999",
+             "isLinked": true
+            },
+            "text_padding": {
+             "unit": "px",
+             "top": "19.5",
+             "right": "30",
+             "bottom": "19.5",
+             "left": "30",
+             "isLinked": false
+            },
+            "background_background": "classic",
+            "background_color": "#C68B4E",
+            "button_text_color": "#14110E",
+            "hover_color": "#14110E",
+            "button_background_hover_background": "classic",
+            "button_background_hover_color": "#D9A66B",
+            "typography_typography": "custom",
+            "typography_font_family": "Manrope",
+            "typography_font_size": {
+             "unit": "px",
+             "size": 15,
+             "sizes": []
+            },
+            "typography_font_weight": "600",
+            "typography_line_height": {
+             "unit": "em",
+             "size": 1,
+             "sizes": []
+            },
+            "custom_css": "selector .elementor-button{white-space:nowrap;}",
+            "_title": "Page Header / Request an Estimate"
+           },
+           "elements": []
+          },
+          {
+           "id": "76618c3",
+           "elType": "widget",
+           "widgetType": "button",
+           "isInner": false,
+           "settings": {
+            "text": "Call (970) 524-7323",
+            "link": {
+             "url": "tel:+19705247323",
+             "is_external": "",
+             "nofollow": ""
+            },
+            "text_padding": {
+             "unit": "px",
+             "top": "14.5",
+             "right": "0",
+             "bottom": "14.5",
+             "left": "0",
+             "isLinked": false
+            },
+            "background_background": "classic",
+            "background_color": "#00000000",
+            "button_background_hover_background": "classic",
+            "button_background_hover_color": "#00000000",
+            "button_text_color": "#F2ECE3",
+            "hover_color": "#D9A66B",
+            "border_radius": {
+             "unit": "px",
+             "top": "0",
+             "right": "0",
+             "bottom": "0",
+             "left": "0",
+             "isLinked": true
+            },
+            "typography_typography": "custom",
+            "typography_font_family": "Manrope",
+            "typography_font_size": {
+             "unit": "px",
+             "size": 15,
+             "sizes": []
+            },
+            "typography_font_weight": "600",
+            "typography_line_height": {
+             "unit": "em",
+             "size": 1,
+             "sizes": []
+            },
+            "selected_icon": {
+             "value": {
+              "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/phone.svg",
+              "id": 1444
+             },
+             "library": "svg"
+            },
+            "icon_indent": {
+             "unit": "px",
+             "size": 10,
+             "sizes": []
+            },
+            "_css_classes": "tn-call",
+            "custom_css": "selector .elementor-button{white-space:nowrap;}selector .elementor-button-text{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:7px;text-decoration-color:rgba(242,236,227,0.4);}selector .elementor-button-icon svg{width:16px;height:16px;}",
+            "_title": "Page Header / Call"
+           },
+           "elements": []
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "792e086",
+   "elType": "container",
+   "isInner": false,
+   "settings": {
+    "_title": "Reviews",
+    "content_width": "boxed",
+    "flex_direction": "column",
+    "flex_gap": {
+     "column": "0",
+     "row": "0",
+     "isLinked": true,
+     "unit": "px",
+     "size": 0
+    },
+    "flex_gap_laptop": {
+     "column": "0",
+     "row": "0",
+     "isLinked": true,
+     "unit": "px",
+     "size": 0
+    },
+    "flex_gap_tablet": {
+     "column": "0",
+     "row": "0",
+     "isLinked": true,
+     "unit": "px",
+     "size": 0
+    },
+    "flex_gap_mobile": {
+     "column": "0",
+     "row": "0",
+     "isLinked": true,
+     "unit": "px",
+     "size": 0
+    },
+    "boxed_width": {
+     "unit": "px",
+     "size": 1280,
+     "sizes": []
+    },
+    "padding": {
+     "unit": "px",
+     "top": "128",
+     "right": "48",
+     "bottom": "128",
+     "left": "48",
+     "isLinked": false
+    },
+    "padding_laptop": {
+     "unit": "px",
+     "top": "117",
+     "right": "48",
+     "bottom": "117",
+     "left": "48",
+     "isLinked": false
+    },
+    "padding_tablet": {
+     "unit": "px",
+     "top": "88",
+     "right": "32",
+     "bottom": "88",
+     "left": "32",
+     "isLinked": false
+    },
+    "padding_mobile": {
+     "unit": "px",
+     "top": "80",
+     "right": "20",
+     "bottom": "80",
+     "left": "20",
+     "isLinked": false
+    },
+    "background_background": "classic",
+    "background_color": "#F2ECE3",
+    "html_tag": "section"
+   },
+   "elements": [
+    {
+     "id": "e09fe29",
+     "elType": "container",
+     "isInner": true,
+     "settings": {
+      "_title": "Reviews / Grid",
+      "content_width": "full",
+      "flex_direction": "column",
+      "flex_gap": {
+       "column": "24",
+       "row": "24",
+       "isLinked": true,
+       "unit": "px",
+       "size": 24
+      },
+      "flex_gap_laptop": {
+       "column": "24",
+       "row": "24",
+       "isLinked": true,
+       "unit": "px",
+       "size": 24
+      },
+      "flex_gap_tablet": {
+       "column": "24",
+       "row": "24",
+       "isLinked": true,
+       "unit": "px",
+       "size": 24
+      },
+      "flex_gap_mobile": {
+       "column": "24",
+       "row": "24",
+       "isLinked": true,
+       "unit": "px",
+       "size": 24
+      },
+      "width": {
+       "unit": "%",
+       "size": 100,
+       "sizes": []
+      },
+      "padding": {
+       "unit": "px",
+       "top": "0",
+       "right": "0",
+       "bottom": "0",
+       "left": "0",
+       "isLinked": true
+      },
+      "container_type": "grid",
+      "grid_auto_flow": "row",
+      "grid_rows_grid": {
+       "unit": "custom",
+       "size": "auto",
+       "sizes": []
+      },
+      "grid_columns_grid": {
+       "unit": "fr",
+       "size": 3,
+       "sizes": []
+      },
+      "grid_columns_grid_laptop": {
+       "unit": "fr",
+       "size": 3,
+       "sizes": []
+      },
+      "grid_columns_grid_tablet": {
+       "unit": "fr",
+       "size": 2,
+       "sizes": []
+      },
+      "grid_columns_grid_mobile": {
+       "unit": "fr",
+       "size": 1,
+       "sizes": []
+      },
+      "grid_gaps": {
+       "column": "24",
+       "row": "24",
+       "isLinked": true,
+       "unit": "px",
+       "size": 24
+      },
+      "grid_gaps_laptop": {
+       "column": "24",
+       "row": "24",
+       "isLinked": true,
+       "unit": "px",
+       "size": 24
+      },
+      "grid_gaps_tablet": {
+       "column": "24",
+       "row": "24",
+       "isLinked": true,
+       "unit": "px",
+       "size": 24
+      },
+      "grid_gaps_mobile": {
+       "column": "24",
+       "row": "24",
+       "isLinked": true,
+       "unit": "px",
+       "size": 24
+      }
+     },
+     "elements": [
+      {
+       "id": "8acd1f7",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Reviews / Review 1",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "flex_gap_laptop": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "flex_gap_tablet": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "flex_gap_mobile": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "40",
+         "right": "36",
+         "bottom": "40",
+         "left": "36",
+         "isLinked": false
+        },
+        "padding_laptop": {
+         "unit": "px",
+         "top": "36",
+         "right": "32",
+         "bottom": "36",
+         "left": "32",
+         "isLinked": false
+        },
+        "padding_tablet": {
+         "unit": "px",
+         "top": "32",
+         "right": "28",
+         "bottom": "32",
+         "left": "28",
+         "isLinked": false
+        },
+        "padding_mobile": {
+         "unit": "px",
+         "top": "28",
+         "right": "24",
+         "bottom": "28",
+         "left": "24",
+         "isLinked": false
+        },
+        "background_background": "classic",
+        "background_color": "#FBF8F3",
+        "border_border": "solid",
+        "border_width": {
+         "unit": "px",
+         "top": "1",
+         "right": "1",
+         "bottom": "1",
+         "left": "1",
+         "isLinked": true
+        },
+        "border_color": "#E2D9CC",
+        "border_radius": {
+         "unit": "px",
+         "top": "6",
+         "right": "6",
+         "bottom": "6",
+         "left": "6",
+         "isLinked": true
+        }
+       },
+       "elements": [
+        {
+         "id": "68f0080",
+         "elType": "widget",
+         "widgetType": "rating",
+         "isInner": false,
+         "settings": {
+          "rating_scale": {
+           "unit": "px",
+           "size": 5,
+           "sizes": []
+          },
+          "rating_value": 5,
+          "rating_icon": {
+           "value": "fas fa-star",
+           "library": "fa-solid"
+          },
+          "icon_size": {
+           "unit": "px",
+           "size": 14,
+           "sizes": []
+          },
+          "icon_gap": {
+           "unit": "px",
+           "size": 2,
+           "sizes": []
+          },
+          "icon_marked_color": "#C68B4E",
+          "icon_unmarked_color": "#C68B4E",
+          "_title": "Reviews / Review 1 / Stars"
+         },
+         "elements": []
+        },
+        {
+         "id": "615c8a2",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>“Very reliable. They came on time and finished in the agreed time. They were very professional. The customer service was great. Hire these guys, you will not be disappointed!”</p>",
+          "text_color": "#14110E",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Fraunces",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 20,
+           "sizes": []
+          },
+          "typography_font_size_laptop": {
+           "unit": "px",
+           "size": 19,
+           "sizes": []
+          },
+          "typography_font_size_tablet": {
+           "unit": "px",
+           "size": 19,
+           "sizes": []
+          },
+          "typography_font_size_mobile": {
+           "unit": "px",
+           "size": 18,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.5,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "Reviews / Review 1 / Quote"
+         },
+         "elements": []
+        },
+        {
+         "id": "ab4a8d0",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p><strong>Kathy A.</strong> · Gypsum<br>Exterior painting</p>",
+          "text_color": "#5B5046",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 14,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.6,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}selector strong{color:#14110E;font-weight:600;}",
+          "_title": "Reviews / Review 1 / Who"
+         },
+         "elements": []
+        }
+       ]
+      },
+      {
+       "id": "63b8750",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Reviews / Review 2",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "flex_gap_laptop": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "flex_gap_tablet": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "flex_gap_mobile": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "40",
+         "right": "36",
+         "bottom": "40",
+         "left": "36",
+         "isLinked": false
+        },
+        "padding_laptop": {
+         "unit": "px",
+         "top": "36",
+         "right": "32",
+         "bottom": "36",
+         "left": "32",
+         "isLinked": false
+        },
+        "padding_tablet": {
+         "unit": "px",
+         "top": "32",
+         "right": "28",
+         "bottom": "32",
+         "left": "28",
+         "isLinked": false
+        },
+        "padding_mobile": {
+         "unit": "px",
+         "top": "28",
+         "right": "24",
+         "bottom": "28",
+         "left": "24",
+         "isLinked": false
+        },
+        "background_background": "classic",
+        "background_color": "#FBF8F3",
+        "border_border": "solid",
+        "border_width": {
+         "unit": "px",
+         "top": "1",
+         "right": "1",
+         "bottom": "1",
+         "left": "1",
+         "isLinked": true
+        },
+        "border_color": "#E2D9CC",
+        "border_radius": {
+         "unit": "px",
+         "top": "6",
+         "right": "6",
+         "bottom": "6",
+         "left": "6",
+         "isLinked": true
+        }
+       },
+       "elements": [
+        {
+         "id": "515e973",
+         "elType": "widget",
+         "widgetType": "rating",
+         "isInner": false,
+         "settings": {
+          "rating_scale": {
+           "unit": "px",
+           "size": 5,
+           "sizes": []
+          },
+          "rating_value": 5,
+          "rating_icon": {
+           "value": "fas fa-star",
+           "library": "fa-solid"
+          },
+          "icon_size": {
+           "unit": "px",
+           "size": 14,
+           "sizes": []
+          },
+          "icon_gap": {
+           "unit": "px",
+           "size": 2,
+           "sizes": []
+          },
+          "icon_marked_color": "#C68B4E",
+          "icon_unmarked_color": "#C68B4E",
+          "_title": "Reviews / Review 2 / Stars"
+         },
+         "elements": []
+        },
+        {
+         "id": "8d02487",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>“The crew did a thorough job with the entire project, from the estimate, work and follow-up. They went above my expectations and gave me great information on options and things I could do myself.”</p>",
+          "text_color": "#14110E",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Fraunces",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 20,
+           "sizes": []
+          },
+          "typography_font_size_laptop": {
+           "unit": "px",
+           "size": 19,
+           "sizes": []
+          },
+          "typography_font_size_tablet": {
+           "unit": "px",
+           "size": 19,
+           "sizes": []
+          },
+          "typography_font_size_mobile": {
+           "unit": "px",
+           "size": 18,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.5,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "Reviews / Review 2 / Quote"
+         },
+         "elements": []
+        },
+        {
+         "id": "f21d59b",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p><strong>Clifford G.</strong> · Morrison<br>Exterior painting</p>",
+          "text_color": "#5B5046",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 14,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.6,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}selector strong{color:#14110E;font-weight:600;}",
+          "_title": "Reviews / Review 2 / Who"
+         },
+         "elements": []
+        }
+       ]
+      },
+      {
+       "id": "b4c2cc1",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Reviews / Review 3",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "flex_gap_laptop": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "flex_gap_tablet": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "flex_gap_mobile": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "40",
+         "right": "36",
+         "bottom": "40",
+         "left": "36",
+         "isLinked": false
+        },
+        "padding_laptop": {
+         "unit": "px",
+         "top": "36",
+         "right": "32",
+         "bottom": "36",
+         "left": "32",
+         "isLinked": false
+        },
+        "padding_tablet": {
+         "unit": "px",
+         "top": "32",
+         "right": "28",
+         "bottom": "32",
+         "left": "28",
+         "isLinked": false
+        },
+        "padding_mobile": {
+         "unit": "px",
+         "top": "28",
+         "right": "24",
+         "bottom": "28",
+         "left": "24",
+         "isLinked": false
+        },
+        "background_background": "classic",
+        "background_color": "#FBF8F3",
+        "border_border": "solid",
+        "border_width": {
+         "unit": "px",
+         "top": "1",
+         "right": "1",
+         "bottom": "1",
+         "left": "1",
+         "isLinked": true
+        },
+        "border_color": "#E2D9CC",
+        "border_radius": {
+         "unit": "px",
+         "top": "6",
+         "right": "6",
+         "bottom": "6",
+         "left": "6",
+         "isLinked": true
+        }
+       },
+       "elements": [
+        {
+         "id": "e6c6216",
+         "elType": "widget",
+         "widgetType": "rating",
+         "isInner": false,
+         "settings": {
+          "rating_scale": {
+           "unit": "px",
+           "size": 5,
+           "sizes": []
+          },
+          "rating_value": 5,
+          "rating_icon": {
+           "value": "fas fa-star",
+           "library": "fa-solid"
+          },
+          "icon_size": {
+           "unit": "px",
+           "size": 14,
+           "sizes": []
+          },
+          "icon_gap": {
+           "unit": "px",
+           "size": 2,
+           "sizes": []
+          },
+          "icon_marked_color": "#C68B4E",
+          "icon_unmarked_color": "#C68B4E",
+          "_title": "Reviews / Review 3 / Stars"
+         },
+         "elements": []
+        },
+        {
+         "id": "5006b2b",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>“Excellent job! They were on time, professional, clean and did an excellent job on my accent wall. Very clean lines.”</p>",
+          "text_color": "#14110E",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Fraunces",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 20,
+           "sizes": []
+          },
+          "typography_font_size_laptop": {
+           "unit": "px",
+           "size": 19,
+           "sizes": []
+          },
+          "typography_font_size_tablet": {
+           "unit": "px",
+           "size": 19,
+           "sizes": []
+          },
+          "typography_font_size_mobile": {
+           "unit": "px",
+           "size": 18,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.5,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "Reviews / Review 3 / Quote"
+         },
+         "elements": []
+        },
+        {
+         "id": "19662f3",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p><strong>Karen H.</strong> · Gypsum<br>Accent wall</p>",
+          "text_color": "#5B5046",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 14,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.6,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}selector strong{color:#14110E;font-weight:600;}",
+          "_title": "Reviews / Review 3 / Who"
+         },
+         "elements": []
+        }
+       ]
+      },
+      {
+       "id": "8b0dc70",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Reviews / Review 4",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "flex_gap_laptop": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "flex_gap_tablet": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "flex_gap_mobile": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "40",
+         "right": "36",
+         "bottom": "40",
+         "left": "36",
+         "isLinked": false
+        },
+        "padding_laptop": {
+         "unit": "px",
+         "top": "36",
+         "right": "32",
+         "bottom": "36",
+         "left": "32",
+         "isLinked": false
+        },
+        "padding_tablet": {
+         "unit": "px",
+         "top": "32",
+         "right": "28",
+         "bottom": "32",
+         "left": "28",
+         "isLinked": false
+        },
+        "padding_mobile": {
+         "unit": "px",
+         "top": "28",
+         "right": "24",
+         "bottom": "28",
+         "left": "24",
+         "isLinked": false
+        },
+        "background_background": "classic",
+        "background_color": "#FBF8F3",
+        "border_border": "solid",
+        "border_width": {
+         "unit": "px",
+         "top": "1",
+         "right": "1",
+         "bottom": "1",
+         "left": "1",
+         "isLinked": true
+        },
+        "border_color": "#E2D9CC",
+        "border_radius": {
+         "unit": "px",
+         "top": "6",
+         "right": "6",
+         "bottom": "6",
+         "left": "6",
+         "isLinked": true
+        }
+       },
+       "elements": [
+        {
+         "id": "8d70f3e",
+         "elType": "widget",
+         "widgetType": "rating",
+         "isInner": false,
+         "settings": {
+          "rating_scale": {
+           "unit": "px",
+           "size": 5,
+           "sizes": []
+          },
+          "rating_value": 5,
+          "rating_icon": {
+           "value": "fas fa-star",
+           "library": "fa-solid"
+          },
+          "icon_size": {
+           "unit": "px",
+           "size": 14,
+           "sizes": []
+          },
+          "icon_gap": {
+           "unit": "px",
+           "size": 2,
+           "sizes": []
+          },
+          "icon_marked_color": "#C68B4E",
+          "icon_unmarked_color": "#C68B4E",
+          "_title": "Reviews / Review 4 / Stars"
+         },
+         "elements": []
+        },
+        {
+         "id": "321ba4c",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>“Oto and his crew were wonderful. They were efficient, professional and very conscious of our budget. We would absolutely use them again.”</p>",
+          "text_color": "#14110E",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Fraunces",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 20,
+           "sizes": []
+          },
+          "typography_font_size_laptop": {
+           "unit": "px",
+           "size": 19,
+           "sizes": []
+          },
+          "typography_font_size_tablet": {
+           "unit": "px",
+           "size": 19,
+           "sizes": []
+          },
+          "typography_font_size_mobile": {
+           "unit": "px",
+           "size": 18,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.5,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "Reviews / Review 4 / Quote"
+         },
+         "elements": []
+        },
+        {
+         "id": "1592fd5",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p><strong>Cathy D.</strong> · Eagle<br>Interior painting</p>",
+          "text_color": "#5B5046",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 14,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.6,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}selector strong{color:#14110E;font-weight:600;}",
+          "_title": "Reviews / Review 4 / Who"
+         },
+         "elements": []
+        }
+       ]
+      },
+      {
+       "id": "e625fe9",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Reviews / Review 5",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "flex_gap_laptop": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "flex_gap_tablet": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "flex_gap_mobile": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "40",
+         "right": "36",
+         "bottom": "40",
+         "left": "36",
+         "isLinked": false
+        },
+        "padding_laptop": {
+         "unit": "px",
+         "top": "36",
+         "right": "32",
+         "bottom": "36",
+         "left": "32",
+         "isLinked": false
+        },
+        "padding_tablet": {
+         "unit": "px",
+         "top": "32",
+         "right": "28",
+         "bottom": "32",
+         "left": "28",
+         "isLinked": false
+        },
+        "padding_mobile": {
+         "unit": "px",
+         "top": "28",
+         "right": "24",
+         "bottom": "28",
+         "left": "24",
+         "isLinked": false
+        },
+        "background_background": "classic",
+        "background_color": "#FBF8F3",
+        "border_border": "solid",
+        "border_width": {
+         "unit": "px",
+         "top": "1",
+         "right": "1",
+         "bottom": "1",
+         "left": "1",
+         "isLinked": true
+        },
+        "border_color": "#E2D9CC",
+        "border_radius": {
+         "unit": "px",
+         "top": "6",
+         "right": "6",
+         "bottom": "6",
+         "left": "6",
+         "isLinked": true
+        }
+       },
+       "elements": [
+        {
+         "id": "df176b3",
+         "elType": "widget",
+         "widgetType": "rating",
+         "isInner": false,
+         "settings": {
+          "rating_scale": {
+           "unit": "px",
+           "size": 5,
+           "sizes": []
+          },
+          "rating_value": 5,
+          "rating_icon": {
+           "value": "fas fa-star",
+           "library": "fa-solid"
+          },
+          "icon_size": {
+           "unit": "px",
+           "size": 14,
+           "sizes": []
+          },
+          "icon_gap": {
+           "unit": "px",
+           "size": 2,
+           "sizes": []
+          },
+          "icon_marked_color": "#C68B4E",
+          "icon_unmarked_color": "#C68B4E",
+          "_title": "Reviews / Review 5 / Stars"
+         },
+         "elements": []
+        },
+        {
+         "id": "6dbe75b",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>“As promised, the work done on our house not only met and exceeded our expectations in quality and appearance but it was completed within the time frame that was proposed.”</p>",
+          "text_color": "#14110E",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Fraunces",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 20,
+           "sizes": []
+          },
+          "typography_font_size_laptop": {
+           "unit": "px",
+           "size": 19,
+           "sizes": []
+          },
+          "typography_font_size_tablet": {
+           "unit": "px",
+           "size": 19,
+           "sizes": []
+          },
+          "typography_font_size_mobile": {
+           "unit": "px",
+           "size": 18,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.5,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "Reviews / Review 5 / Quote"
+         },
+         "elements": []
+        },
+        {
+         "id": "50fc7f1",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p><strong>Lee F.</strong> · Gypsum<br>Log home refinishing</p>",
+          "text_color": "#5B5046",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 14,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.6,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}selector strong{color:#14110E;font-weight:600;}",
+          "_title": "Reviews / Review 5 / Who"
+         },
+         "elements": []
+        }
+       ]
+      },
+      {
+       "id": "6e1736f",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Reviews / Review 6",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "flex_gap_laptop": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "flex_gap_tablet": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "flex_gap_mobile": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "40",
+         "right": "36",
+         "bottom": "40",
+         "left": "36",
+         "isLinked": false
+        },
+        "padding_laptop": {
+         "unit": "px",
+         "top": "36",
+         "right": "32",
+         "bottom": "36",
+         "left": "32",
+         "isLinked": false
+        },
+        "padding_tablet": {
+         "unit": "px",
+         "top": "32",
+         "right": "28",
+         "bottom": "32",
+         "left": "28",
+         "isLinked": false
+        },
+        "padding_mobile": {
+         "unit": "px",
+         "top": "28",
+         "right": "24",
+         "bottom": "28",
+         "left": "24",
+         "isLinked": false
+        },
+        "background_background": "classic",
+        "background_color": "#FBF8F3",
+        "border_border": "solid",
+        "border_width": {
+         "unit": "px",
+         "top": "1",
+         "right": "1",
+         "bottom": "1",
+         "left": "1",
+         "isLinked": true
+        },
+        "border_color": "#E2D9CC",
+        "border_radius": {
+         "unit": "px",
+         "top": "6",
+         "right": "6",
+         "bottom": "6",
+         "left": "6",
+         "isLinked": true
+        }
+       },
+       "elements": [
+        {
+         "id": "d1453db",
+         "elType": "widget",
+         "widgetType": "rating",
+         "isInner": false,
+         "settings": {
+          "rating_scale": {
+           "unit": "px",
+           "size": 5,
+           "sizes": []
+          },
+          "rating_value": 5,
+          "rating_icon": {
+           "value": "fas fa-star",
+           "library": "fa-solid"
+          },
+          "icon_size": {
+           "unit": "px",
+           "size": 14,
+           "sizes": []
+          },
+          "icon_gap": {
+           "unit": "px",
+           "size": 2,
+           "sizes": []
+          },
+          "icon_marked_color": "#C68B4E",
+          "icon_unmarked_color": "#C68B4E",
+          "_title": "Reviews / Review 6 / Stars"
+         },
+         "elements": []
+        },
+        {
+         "id": "875371c",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>“Reliable, honest, resourceful and efficient. The total project came in $1,300 under their original estimate!”</p>",
+          "text_color": "#14110E",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Fraunces",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 20,
+           "sizes": []
+          },
+          "typography_font_size_laptop": {
+           "unit": "px",
+           "size": 19,
+           "sizes": []
+          },
+          "typography_font_size_tablet": {
+           "unit": "px",
+           "size": 19,
+           "sizes": []
+          },
+          "typography_font_size_mobile": {
+           "unit": "px",
+           "size": 18,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.5,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "Reviews / Review 6 / Quote"
+         },
+         "elements": []
+        },
+        {
+         "id": "42e03ce",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p><strong>Hervey L., architect</strong> · Grand Lake<br>Deck restoration and rot repair</p>",
+          "text_color": "#5B5046",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 14,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.6,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}selector strong{color:#14110E;font-weight:600;}",
+          "_title": "Reviews / Review 6 / Who"
+         },
+         "elements": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "924b46c",
+   "elType": "container",
+   "isInner": false,
+   "settings": {
+    "_title": "Closing CTA",
+    "content_width": "boxed",
+    "flex_direction": "column",
+    "flex_gap": {
+     "column": "0",
+     "row": "0",
+     "isLinked": true,
+     "unit": "px",
+     "size": 0
+    },
+    "flex_gap_laptop": {
+     "column": "0",
+     "row": "0",
+     "isLinked": true,
+     "unit": "px",
+     "size": 0
+    },
+    "flex_gap_tablet": {
+     "column": "0",
+     "row": "0",
+     "isLinked": true,
+     "unit": "px",
+     "size": 0
+    },
+    "flex_gap_mobile": {
+     "column": "0",
+     "row": "0",
+     "isLinked": true,
+     "unit": "px",
+     "size": 0
+    },
+    "boxed_width": {
+     "unit": "px",
+     "size": 1280,
+     "sizes": []
+    },
+    "padding": {
+     "unit": "px",
+     "top": "128",
+     "right": "48",
+     "bottom": "128",
+     "left": "48",
+     "isLinked": false
+    },
+    "padding_laptop": {
+     "unit": "px",
+     "top": "117",
+     "right": "48",
+     "bottom": "117",
+     "left": "48",
+     "isLinked": false
+    },
+    "padding_tablet": {
+     "unit": "px",
+     "top": "88",
+     "right": "32",
+     "bottom": "88",
+     "left": "32",
+     "isLinked": false
+    },
+    "padding_mobile": {
+     "unit": "px",
+     "top": "80",
+     "right": "20",
+     "bottom": "80",
+     "left": "20",
+     "isLinked": false
+    },
+    "background_background": "classic",
+    "background_color": "#2A1F17",
+    "html_tag": "section",
+    "background_image": {
+     "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-wood-texture-client.jpg",
+     "id": 1699,
+     "size": "",
+     "alt": "",
+     "source": "library"
+    },
+    "background_position": "center center",
+    "background_size": "cover",
+    "background_repeat": "no-repeat",
+    "background_overlay_background": "classic",
+    "background_overlay_color": "#2A1F17",
+    "background_overlay_opacity": {
+     "unit": "px",
+     "size": 0.65,
+     "sizes": []
+    },
+    "background_attachment": "fixed"
+   },
+   "elements": [
+    {
+     "id": "b941c30",
+     "elType": "container",
+     "isInner": true,
+     "settings": {
+      "_title": "Closing CTA / Content",
+      "content_width": "full",
+      "flex_direction": "column",
+      "flex_gap": {
+       "column": "28",
+       "row": "28",
+       "isLinked": true,
+       "unit": "px",
+       "size": 28
+      },
+      "flex_gap_laptop": {
+       "column": "28",
+       "row": "28",
+       "isLinked": true,
+       "unit": "px",
+       "size": 28
+      },
+      "flex_gap_tablet": {
+       "column": "28",
+       "row": "28",
+       "isLinked": true,
+       "unit": "px",
+       "size": 28
+      },
+      "flex_gap_mobile": {
+       "column": "28",
+       "row": "28",
+       "isLinked": true,
+       "unit": "px",
+       "size": 28
+      },
+      "width": {
+       "unit": "%",
+       "size": 100,
+       "sizes": []
+      },
+      "padding": {
+       "unit": "px",
+       "top": "0",
+       "right": "0",
+       "bottom": "0",
+       "left": "0",
+       "isLinked": true
+      },
+      "flex_align_items": "center"
+     },
+     "elements": [
+      {
+       "id": "ece937e",
+       "elType": "widget",
+       "widgetType": "heading",
+       "isInner": false,
+       "settings": {
+        "title": "<b>Join</b> our happy clients",
+        "header_size": "h2",
+        "title_color": "#F2ECE3",
+        "typography_typography": "custom",
+        "typography_font_family": "Fraunces",
+        "typography_font_size": {
+         "unit": "px",
+         "size": 45,
+         "sizes": []
+        },
+        "typography_font_size_laptop": {
+         "unit": "px",
+         "size": 41,
+         "sizes": []
+        },
+        "typography_font_size_tablet": {
+         "unit": "px",
+         "size": 34,
+         "sizes": []
+        },
+        "typography_font_size_mobile": {
+         "unit": "px",
+         "size": 29,
+         "sizes": []
+        },
+        "typography_font_weight": "300",
+        "typography_line_height": {
+         "unit": "em",
+         "size": 1.04,
+         "sizes": []
+        },
+        "typography_letter_spacing": {
+         "unit": "px",
+         "size": -0.6,
+         "sizes": []
+        },
+        "align": "center",
+        "custom_css": "selector .elementor-heading-title{text-wrap:balance;}selector{max-width:760px !important;}",
+        "_css_classes": "tn-teeth tn-teeth-c tn-contrast",
+        "_title": "Closing CTA / Title (H2)"
+       },
+       "elements": []
+      },
+      {
+       "id": "2086a15",
+       "elType": "widget",
+       "widgetType": "text-editor",
+       "isInner": false,
+       "settings": {
+        "editor": "<p>Free written estimates across the Vail, Roaring Fork and Eagle valleys. We'll call within one business day to set up a walkthrough.</p>",
+        "text_color": "#D7CFC4",
+        "paragraph_spacing": {
+         "unit": "px",
+         "size": 0,
+         "sizes": []
+        },
+        "typography_typography": "custom",
+        "typography_font_family": "Manrope",
+        "typography_font_size": {
+         "unit": "px",
+         "size": 18,
+         "sizes": []
+        },
+        "typography_line_height": {
+         "unit": "em",
+         "size": 1.65,
+         "sizes": []
+        },
+        "align": "center",
+        "custom_css": "selector p:last-child{margin-block-end:0;}selector{max-width:600px !important;}selector{margin:0 auto;}",
+        "_title": "Closing CTA / Text"
+       },
+       "elements": []
+      },
+      {
+       "id": "b53c952",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Closing CTA / Actions",
+        "content_width": "full",
+        "flex_direction": "row",
+        "flex_gap": {
+         "column": "28",
+         "row": "12",
+         "isLinked": false,
+         "unit": "px",
+         "size": 28
+        },
+        "flex_gap_laptop": {
+         "column": "28",
+         "row": "12",
+         "isLinked": false,
+         "unit": "px",
+         "size": 28
+        },
+        "flex_gap_tablet": {
+         "column": "28",
+         "row": "12",
+         "isLinked": false,
+         "unit": "px",
+         "size": 28
+        },
+        "flex_gap_mobile": {
+         "column": "28",
+         "row": "12",
+         "isLinked": false,
+         "unit": "px",
+         "size": 28
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "0",
+         "right": "0",
+         "bottom": "0",
+         "left": "0",
+         "isLinked": true
+        },
+        "flex_wrap": "wrap",
+        "flex_align_items": "center",
+        "flex_justify_content": "center"
+       },
+       "elements": [
+        {
+         "id": "c9d3fbd",
+         "elType": "widget",
+         "widgetType": "button",
+         "isInner": false,
+         "settings": {
+          "text": "Request an Estimate",
+          "link": {
+           "url": "/request-an-estimate/",
+           "is_external": "",
+           "nofollow": ""
+          },
+          "border_radius": {
+           "unit": "px",
+           "top": "999",
+           "right": "999",
+           "bottom": "999",
+           "left": "999",
+           "isLinked": true
+          },
+          "text_padding": {
+           "unit": "px",
+           "top": "19.5",
+           "right": "30",
+           "bottom": "19.5",
+           "left": "30",
+           "isLinked": false
+          },
+          "background_background": "classic",
+          "background_color": "#C68B4E",
+          "button_text_color": "#14110E",
+          "hover_color": "#14110E",
+          "button_background_hover_background": "classic",
+          "button_background_hover_color": "#D9A66B",
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 15,
+           "sizes": []
+          },
+          "typography_font_weight": "600",
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1,
+           "sizes": []
+          },
+          "custom_css": "selector .elementor-button{white-space:nowrap;}",
+          "_title": "Closing CTA / Request an Estimate"
+         },
+         "elements": []
+        },
+        {
+         "id": "c8d92d9",
+         "elType": "widget",
+         "widgetType": "button",
+         "isInner": false,
+         "settings": {
+          "text": "Call (970) 524-7323",
+          "link": {
+           "url": "tel:+19705247323",
+           "is_external": "",
+           "nofollow": ""
+          },
+          "text_padding": {
+           "unit": "px",
+           "top": "14.5",
+           "right": "0",
+           "bottom": "14.5",
+           "left": "0",
+           "isLinked": false
+          },
+          "background_background": "classic",
+          "background_color": "#00000000",
+          "button_background_hover_background": "classic",
+          "button_background_hover_color": "#00000000",
+          "button_text_color": "#F2ECE3",
+          "hover_color": "#D9A66B",
+          "border_radius": {
+           "unit": "px",
+           "top": "0",
+           "right": "0",
+           "bottom": "0",
+           "left": "0",
+           "isLinked": true
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 15,
+           "sizes": []
+          },
+          "typography_font_weight": "600",
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1,
+           "sizes": []
+          },
+          "selected_icon": {
+           "value": {
+            "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/phone.svg",
+            "id": 1444
+           },
+           "library": "svg"
+          },
+          "icon_indent": {
+           "unit": "px",
+           "size": 10,
+           "sizes": []
+          },
+          "_css_classes": "tn-call",
+          "custom_css": "selector .elementor-button{white-space:nowrap;}selector .elementor-button-text{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:7px;text-decoration-color:rgba(242,236,227,0.4);}selector .elementor-button-icon svg{width:16px;height:16px;}",
+          "_title": "Closing CTA / Call"
+         },
+         "elements": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "page_settings": []
+}

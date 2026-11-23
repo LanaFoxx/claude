@@ -224,8 +224,8 @@ def heading(title, text_, /, tag="h2", color=BONE, typ=None, **s):
     st = {"title": text_, "header_size": tag, "title_color": color}
     st.update(typ or {})
     st.update(s)
-    if st.get("typography_font_family") == SERIF and text_ in CONTRAST:
-        st["title"] = CONTRAST[text_]
+    if st.get("typography_font_family") == SERIF and (text_ in CONTRAST or "<b>" in text_):
+        st["title"] = CONTRAST.get(text_, text_)
         st["typography_font_weight"] = str(CONTRAST_WEIGHTS[0])
         st["_css_classes"] = (st.get("_css_classes", "") + " tn-contrast").strip()
     return widget("heading", title, **st)
@@ -436,7 +436,7 @@ NO_WIDOWS_JS = """<script>
 (function(){
   function glue(el){
     if (el.dataset.tnGlued) return; el.dataset.tnGlued = '1';
-    var w = el.textContent.trim().split(/\\s+/); if (w.length < 6) return;
+    var w = el.textContent.trim().split(/\\s+/); if (w.length < (el.tagName === 'LI' ? 4 : 6)) return;
     var nodes = [], tw = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), n;
     while ((n = tw.nextNode())) nodes.push(n);
     var need = 2;
@@ -482,7 +482,7 @@ NO_WIDOWS_JS = """<script>
     });
   }
   function run(){
-    document.querySelectorAll('.elementor-widget-text-editor p, .elementor-testimonial__text').forEach(glue);
+    document.querySelectorAll('.elementor-widget-text-editor p, .elementor-widget-text-editor li, .elementor-testimonial__text').forEach(glue);
     document.querySelectorAll('.elementor-widget-text-editor p').forEach(balance);
     document.querySelectorAll('.tn-match-lines').forEach(matchLines);
   }
@@ -513,9 +513,11 @@ def build_header():
                             "selected_icon": {"value": "", "library": ""}},
                            {"_id": eid(), "text": "Financing", "link": link("/financing/"),
                             "selected_icon": {"value": "", "library": ""}}],
+                custom_css="selector .elementor-icon-list-item > a{display:inline-flex;align-items:center;min-height:44px;}",
                 **typo(prefix="icon_typography", size=13, weight=400, lh=1.4)),
          heading("Utility / Phone", PHONE, tag="div", color=BONE, typ=typo(size=13, weight=600, lh=1.4),
-                 link=link(TEL), title_hover_color=AMBER_HOVER, _css_classes="tn-call")],
+                 link=link(TEL), title_hover_color=AMBER_HOVER, _css_classes="tn-call",
+                 custom_css="selector .elementor-heading-title a{display:inline-flex;align-items:center;min-height:44px;}")],
         direction="row", gap=32, flex_align_items="center", auto_width=True)
     top_bar = container(
         "Header / Top Bar",
@@ -644,12 +646,13 @@ def build_footer():
                                 ("Log &amp; Timber Staining", "/log-home-staining-restoration/"),
                                 ("Our Work", "/our-work/"), ("For Builders", "/for-builders/"),
                                 ("About", "/our-story/"), ("Reviews", "/reviews/")]],
-        custom_css="selector .elementor-icon-list-items{justify-content:center;row-gap:10px;}"
+        custom_css="selector .elementor-icon-list-items{justify-content:center;row-gap:0;}"
+                   "selector .elementor-icon-list-item > a{display:inline-flex;align-items:center;min-height:44px;}"
                    "@media (max-width:980px){selector .elementor-icon-list-items{justify-content:flex-start;}}",
         **typo(prefix="icon_typography", size=14, weight=500, lh=1.5))
     contact = container("Footer / Contact", [
         heading("Footer / Phone", PHONE, tag="div", color=BONE, typ=typo(size=15, weight=600, lh=1.4),
-                link=link(TEL), title_hover_color=AMBER_HOVER, _css_classes="tn-call"),
+                link=link(TEL), title_hover_color=AMBER_HOVER, _css_classes="tn-call", custom_css="selector .elementor-heading-title a{display:inline-flex;align-items:center;min-height:44px;}"),
         container("Footer / Social", [
             icon_button("Footer / Facebook", "#", "facebook-logo-light", "Top Notch Painting on Facebook",
                         w=36, h=44, fill=TRANSPARENT, color=HERO_TEXT),
@@ -671,7 +674,7 @@ def build_footer():
         "title": '[elementor-tag id="%s" name="current-date-time" settings="%s"]' % (eid(), tag_settings)}
     bottom = container("Footer / Fine Print", [
         year,
-        heading("Footer / Address", "4722 Hwy US-6, Gypsum, CO 81637 · info@topnotch-painting.com", tag="p",
+        heading("Footer / Address", "4722 Hwy US-6, Gypsum, CO 81637&nbsp;· info@topnotch-painting.com", tag="p",
                 color=DRIFT, typ=typo(size=13, weight=400, lh=1.6))],
         direction="row", gap=(32, 6), flex_wrap="wrap", flex_justify_content="space-between",
         flex_align_items="center", padding=dims(20, 0, 28, 0),
@@ -746,7 +749,7 @@ def build_hero():
             custom_css="selector img{height:50px !important;width:auto !important;max-width:none !important;"
                        "opacity:.85;display:block;}"
                        "@media (max-width:980px){selector img{height:44px !important;}}"
-                       "@media (max-width:600px){selector img{height:34px !important;}}")
+                       "@media (max-width:600px){selector img{height:28px !important;}}")
 
     creds = container(
         "Hero / Credentials",
@@ -770,7 +773,7 @@ def build_hero():
                      "Sashco partner"),
                 logo("Hero / Credentials / Perma-Chink logo", 2158, "topnotch-logo-perma-chink-white.png",
                      "Perma-Chink Systems partner")],
-                direction="row", gap=((44, 14), (40, 14), (36, 14), (24, 12)), flex_wrap="wrap",
+                direction="row", gap=((44, 14), (40, 14), (36, 14), (16, 12)), flex_wrap="wrap",
                 flex_align_items="center", auto_width=True)],
             gap=((18, 18), (18, 18), (16, 16), (14, 14)), flex_align_items="flex-start")],
         gap=(14, 14, 14, 12), padding=dims(28, 0, 36, 0), margin=dims(16, 0, 0, 0),
@@ -779,7 +782,10 @@ def build_hero():
         css="selector strong{color:#F2ECE3;font-weight:600;}"
             "selector .tn-cred-line > .tn-cred-value + .tn-cred-value p::before{content:'';display:inline-block;"
             "width:5px;height:5px;border-radius:50%;background:#C68B4E;margin:0 14px 0 0;vertical-align:middle;"
-            "position:relative;top:-2px;}")
+            "position:relative;top:-2px;}"
+            "@media (max-width:600px){selector .tn-cred-line > .tn-cred-value:first-child p::before{content:'';"
+            "display:inline-block;width:5px;height:5px;border-radius:50%;background:#C68B4E;margin:0 14px 0 0;"
+            "vertical-align:middle;position:relative;top:-2px;}}")
     return section(
         "Hero",
         [heading("Hero / Title (H1)",

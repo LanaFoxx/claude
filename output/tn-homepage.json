@@ -573,7 +573,7 @@
       },
       "border_color": "#F2ECE329",
       "_attributes": "aria-label|Credentials",
-      "custom_css": "selector strong{color:#F2ECE3;font-weight:600;}selector .tn-cred-line > .tn-cred-value + .tn-cred-value p::before{content:'';display:inline-block;width:5px;height:5px;border-radius:50%;background:#C68B4E;margin:0 14px 0 0;vertical-align:middle;position:relative;top:-2px;}"
+      "custom_css": "selector strong{color:#F2ECE3;font-weight:600;}selector .tn-cred-line > .tn-cred-value + .tn-cred-value p::before{content:'';display:inline-block;width:5px;height:5px;border-radius:50%;background:#C68B4E;margin:0 14px 0 0;vertical-align:middle;position:relative;top:-2px;}@media (max-width:600px){selector .tn-cred-line > .tn-cred-value:first-child p::before{content:'';display:inline-block;width:5px;height:5px;border-radius:50%;background:#C68B4E;margin:0 14px 0 0;vertical-align:middle;position:relative;top:-2px;}}"
      },
      "elements": [
       {
@@ -997,11 +997,11 @@
            "size": 36
           },
           "flex_gap_mobile": {
-           "column": "24",
+           "column": "16",
            "row": "12",
            "isLinked": false,
            "unit": "px",
-           "size": 24
+           "size": 16
           },
           "width": {
            "unit": "%",
@@ -1034,7 +1034,7 @@
              "source": "library"
             },
             "image_size": "full",
-            "custom_css": "selector img{height:50px !important;width:auto !important;max-width:none !important;opacity:.85;display:block;}@media (max-width:980px){selector img{height:44px !important;}}@media (max-width:600px){selector img{height:34px !important;}}",
+            "custom_css": "selector img{height:50px !important;width:auto !important;max-width:none !important;opacity:.85;display:block;}@media (max-width:980px){selector img{height:44px !important;}}@media (max-width:600px){selector img{height:28px !important;}}",
             "_title": "Hero / Credentials / BBB logo"
            },
            "elements": []
@@ -1052,7 +1052,7 @@
              "source": "library"
             },
             "image_size": "full",
-            "custom_css": "selector img{height:50px !important;width:auto !important;max-width:none !important;opacity:.85;display:block;}@media (max-width:980px){selector img{height:44px !important;}}@media (max-width:600px){selector img{height:34px !important;}}",
+            "custom_css": "selector img{height:50px !important;width:auto !important;max-width:none !important;opacity:.85;display:block;}@media (max-width:980px){selector img{height:44px !important;}}@media (max-width:600px){selector img{height:28px !important;}}",
             "_title": "Hero / Credentials / Sashco logo"
            },
            "elements": []
@@ -1070,7 +1070,7 @@
              "source": "library"
             },
             "image_size": "full",
-            "custom_css": "selector img{height:50px !important;width:auto !important;max-width:none !important;opacity:.85;display:block;}@media (max-width:980px){selector img{height:44px !important;}}@media (max-width:600px){selector img{height:34px !important;}}",
+            "custom_css": "selector img{height:50px !important;width:auto !important;max-width:none !important;opacity:.85;display:block;}@media (max-width:980px){selector img{height:44px !important;}}@media (max-width:600px){selector img{height:28px !important;}}",
             "_title": "Hero / Credentials / Perma-Chink logo"
            },
            "elements": []

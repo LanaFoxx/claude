@@ -358,3 +358,10 @@ Container `Seasonal Offer`: change the H2 to **Talk to us about your project** a
 - Why watermark: right: calc(20% - 130px) on desktop.
 - Footer: a full-width amber sawtooth strip (32x22px points; 25x17px at 760px and below) runs along the very bottom ("Footer / Sawtooth" container). At 760px and below it also carries the 70px clearance for the fixed mobile call bar, which moved off the footer container.
 - Footer sawtooth strip removed at Mike's request (the mobile call-bar clearance is back on the footer container).
+
+## Inner pages (17)
+- Generator: `tools/build_pages.py` builds them into `output/pages/<slug>.json`. It reuses the build_templates helpers and runs `build_templates.main()` first so element ids never collide with the header and footer.
+- Blocks: `page_hero`, `prose` (with an automatic "What's included" column when a section has no photo), `steps`, `quote`, `related`, `cta`, plus custom layouts for Our Work, Project Stories, For Builders (bid form, #bid), Our Story, Core Values, Reviews, Service Area (/areas-we-serve/) and Financing (Hearth link from the old site).
+- Copy is adapted from topnotch-painting.com and topnotch-logworks.com. Reviews and project stories use the real client testimonials from those sites.
+- Staging page IDs: 2581–2597.
+- Mobile/tablet pass: list items now get the no-short-last-line treatment. Footer and top-bar links are 44px tap targets. On phones the hero partner logos are 28px so they fit one row, all three hero value points get dots, and the Our Work gallery shows 2 columns.
