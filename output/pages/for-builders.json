@@ -4,7 +4,7 @@
  "type": "page",
  "content": [
   {
-   "id": "64447a8",
+   "id": "81c76b6",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -82,7 +82,7 @@
    },
    "elements": [
     {
-     "id": "c76a129",
+     "id": "ede56d3",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -189,7 +189,7 @@
      },
      "elements": [
       {
-       "id": "76b7fb8",
+       "id": "5436734",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -241,7 +241,7 @@
        },
        "elements": [
         {
-         "id": "2f8c686",
+         "id": "7e69634",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -272,7 +272,7 @@
          "elements": []
         },
         {
-         "id": "5495c05",
+         "id": "5483559",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -320,7 +320,7 @@
          "elements": []
         },
         {
-         "id": "5b20cf9",
+         "id": "64379b7",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -365,7 +365,7 @@
          "elements": []
         },
         {
-         "id": "b218dd9",
+         "id": "61edc8e",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -418,7 +418,7 @@
          },
          "elements": [
           {
-           "id": "a30b1eb",
+           "id": "e5ece6d",
            "elType": "widget",
            "widgetType": "button",
            "isInner": false,
@@ -470,7 +470,7 @@
            "elements": []
           },
           {
-           "id": "8543ade",
+           "id": "2e2b293",
            "elType": "widget",
            "widgetType": "button",
            "isInner": false,
@@ -539,7 +539,7 @@
        ]
       },
       {
-       "id": "9cbb609",
+       "id": "e757944",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -613,70 +613,23 @@
          "unit": "px",
          "size": 280,
          "sizes": []
+        },
+        "background_image": {
+         "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-timber-frame-construction.jpg",
+         "id": 2750,
+         "size": "",
+         "alt": "Timber frame under construction",
+         "source": "library"
         }
        },
-       "elements": [
-        {
-         "id": "158f7eb",
-         "elType": "widget",
-         "widgetType": "icon-list",
-         "isInner": false,
-         "settings": {
-          "icon_list": [
-           {
-            "_id": "7642601",
-            "text": "Photo: new log home under construction",
-            "selected_icon": {
-             "value": {
-              "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/camera.svg",
-              "id": 1433
-             },
-             "library": "svg"
-            }
-           }
-          ],
-          "icon_color": "#F2ECE399",
-          "text_color": "#F2ECE399",
-          "icon_size": {
-           "unit": "px",
-           "size": 14,
-           "sizes": []
-          },
-          "text_indent": {
-           "unit": "px",
-           "size": 8,
-           "sizes": []
-          },
-          "space_between": {
-           "unit": "px",
-           "size": 0,
-           "sizes": []
-          },
-          "icon_typography_typography": "custom",
-          "icon_typography_font_family": "Manrope",
-          "icon_typography_font_size": {
-           "unit": "px",
-           "size": 12,
-           "sizes": []
-          },
-          "icon_typography_font_weight": "400",
-          "icon_typography_line_height": {
-           "unit": "em",
-           "size": 1.4,
-           "sizes": []
-          },
-          "_title": "Photo label (delete when photo added)"
-         },
-         "elements": []
-        }
-       ]
+       "elements": []
       }
      ]
     }
    ]
   },
   {
-   "id": "8ea3a36",
+   "id": "34ba1ce",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -754,7 +707,7 @@
    },
    "elements": [
     {
-     "id": "fc42c96",
+     "id": "64eefc4",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -861,7 +814,7 @@
      },
      "elements": [
       {
-       "id": "285251b",
+       "id": "b07affa",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -912,7 +865,7 @@
        },
        "elements": [
         {
-         "id": "bc92ece",
+         "id": "537ccaf",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -960,7 +913,7 @@
          "elements": []
         },
         {
-         "id": "78df7da",
+         "id": "353676a",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -992,7 +945,7 @@
        ]
       },
       {
-       "id": "d464352",
+       "id": "4bfa9e9",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1085,7 +1038,7 @@
        },
        "elements": [
         {
-         "id": "bdde68d",
+         "id": "54a73da",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1116,7 +1069,7 @@
          "elements": []
         },
         {
-         "id": "663af47",
+         "id": "9b8cc88",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -1153,7 +1106,7 @@
    ]
   },
   {
-   "id": "b20b643",
+   "id": "5495c05",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -1231,7 +1184,7 @@
    },
    "elements": [
     {
-     "id": "e8ec586",
+     "id": "2f8c686",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -1283,7 +1236,7 @@
      },
      "elements": [
       {
-       "id": "f896319",
+       "id": "9fb15a3",
        "elType": "widget",
        "widgetType": "heading",
        "isInner": false,
@@ -1326,7 +1279,7 @@
        "elements": []
       },
       {
-       "id": "bd9ea62",
+       "id": "d5bd74d",
        "elType": "widget",
        "widgetType": "heading",
        "isInner": false,
@@ -1357,7 +1310,7 @@
    ]
   },
   {
-   "id": "d5bd74d",
+   "id": "30a958f",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -1454,7 +1407,7 @@
    },
    "elements": [
     {
-     "id": "9fb15a3",
+     "id": "cc71bb9",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -1561,7 +1514,7 @@
      },
      "elements": [
       {
-       "id": "64eefc4",
+       "id": "a10ab84",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1638,7 +1591,7 @@
        },
        "elements": [
         {
-         "id": "353676a",
+         "id": "71b2590",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1686,7 +1639,7 @@
          "elements": []
         },
         {
-         "id": "9b8cc88",
+         "id": "467f02f",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -1716,7 +1669,7 @@
          "elements": []
         },
         {
-         "id": "4bfa9e9",
+         "id": "ce372c5",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -1767,7 +1720,7 @@
          },
          "elements": [
           {
-           "id": "b07affa",
+           "id": "37855a3",
            "elType": "widget",
            "widgetType": "heading",
            "isInner": false,
@@ -1793,7 +1746,7 @@
            "elements": []
           },
           {
-           "id": "54a73da",
+           "id": "811166c",
            "elType": "widget",
            "widgetType": "heading",
            "isInner": false,
@@ -1830,7 +1783,7 @@
        ]
       },
       {
-       "id": "34ba1ce",
+       "id": "b826c06",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1907,7 +1860,7 @@
        },
        "elements": [
         {
-         "id": "64379b7",
+         "id": "fb74268",
          "elType": "widget",
          "widgetType": "form",
          "isInner": false,
@@ -1916,7 +1869,7 @@
           "form_id": "tn-bid-form",
           "form_fields": [
            {
-            "_id": "e5ece6d",
+            "_id": "693a593",
             "custom_id": "company",
             "field_type": "text",
             "field_label": "Company",
@@ -1925,7 +1878,7 @@
             "width_mobile": "50"
            },
            {
-            "_id": "2e2b293",
+            "_id": "d2425fc",
             "custom_id": "name",
             "field_type": "text",
             "field_label": "Name",
@@ -1934,7 +1887,7 @@
             "width_mobile": "50"
            },
            {
-            "_id": "61edc8e",
+            "_id": "d984e3c",
             "custom_id": "phone",
             "field_type": "tel",
             "field_label": "Phone",
@@ -1943,7 +1896,7 @@
             "width_mobile": "50"
            },
            {
-            "_id": "5436734",
+            "_id": "69a071a",
             "custom_id": "email",
             "field_type": "email",
             "field_label": "Email",
@@ -1952,7 +1905,7 @@
             "width_mobile": "50"
            },
            {
-            "_id": "e757944",
+            "_id": "78e217f",
             "custom_id": "location",
             "field_type": "text",
             "field_label": "Project location",
@@ -1961,7 +1914,7 @@
             "width_mobile": "50"
            },
            {
-            "_id": "ede56d3",
+            "_id": "e4e5205",
             "custom_id": "start",
             "field_type": "select",
             "field_label": "Expected start",
@@ -1971,7 +1924,7 @@
             "field_options": "Choose one|\nWithin 3 months\n3 to 6 months\n6 to 12 months\nMore than a year"
            },
            {
-            "_id": "81c76b6",
+            "_id": "dda11ec",
             "custom_id": "scope",
             "field_type": "select",
             "field_label": "Scope",
@@ -1981,7 +1934,7 @@
             "field_options": "Choose one|\nInterior painting\nExterior painting and staining\nLog and timber staining\nChinking and sealing\nSpecialty finishes\nMultiple / full scope"
            },
            {
-            "_id": "537ccaf",
+            "_id": "a701477",
             "custom_id": "details",
             "field_type": "textarea",
             "field_label": "Project details or a link to plans",

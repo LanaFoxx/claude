@@ -4,7 +4,7 @@
  "type": "page",
  "content": [
   {
-   "id": "2b34733",
+   "id": "2ddfe2b",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -82,7 +82,7 @@
    },
    "elements": [
     {
-     "id": "3063e84",
+     "id": "f31f0b4",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -189,7 +189,7 @@
      },
      "elements": [
       {
-       "id": "4f87175",
+       "id": "1746681",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -241,7 +241,7 @@
        },
        "elements": [
         {
-         "id": "5d7a640",
+         "id": "178e264",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -272,7 +272,7 @@
          "elements": []
         },
         {
-         "id": "475850f",
+         "id": "3dfbc7b",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -320,7 +320,7 @@
          "elements": []
         },
         {
-         "id": "9839cef",
+         "id": "608e5b3",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -365,7 +365,7 @@
          "elements": []
         },
         {
-         "id": "ac2a2dc",
+         "id": "39f7d73",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -418,7 +418,7 @@
          },
          "elements": [
           {
-           "id": "377b5be",
+           "id": "9a02390",
            "elType": "widget",
            "widgetType": "button",
            "isInner": false,
@@ -470,7 +470,7 @@
            "elements": []
           },
           {
-           "id": "a97898f",
+           "id": "350e0c1",
            "elType": "widget",
            "widgetType": "button",
            "isInner": false,
@@ -543,7 +543,7 @@
    ]
   },
   {
-   "id": "8c0c704",
+   "id": "baee910",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -621,7 +621,7 @@
    },
    "elements": [
     {
-     "id": "6387d29",
+     "id": "93d6877",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -727,7 +727,7 @@
      },
      "elements": [
       {
-       "id": "f080049",
+       "id": "e8e93ef",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -801,66 +801,19 @@
          "unit": "px",
          "size": 190,
          "sizes": []
+        },
+        "background_image": {
+         "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-log-home-winter.jpg",
+         "id": 2752,
+         "size": "",
+         "alt": "Large stained log home in winter",
+         "source": "library"
         }
        },
-       "elements": [
-        {
-         "id": "d6c715b",
-         "elType": "widget",
-         "widgetType": "icon-list",
-         "isInner": false,
-         "settings": {
-          "icon_list": [
-           {
-            "_id": "f6f1cf5",
-            "text": "Photo: Interior great room",
-            "selected_icon": {
-             "value": {
-              "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/camera.svg",
-              "id": 1433
-             },
-             "library": "svg"
-            }
-           }
-          ],
-          "icon_color": "#F2ECE399",
-          "text_color": "#F2ECE399",
-          "icon_size": {
-           "unit": "px",
-           "size": 14,
-           "sizes": []
-          },
-          "text_indent": {
-           "unit": "px",
-           "size": 8,
-           "sizes": []
-          },
-          "space_between": {
-           "unit": "px",
-           "size": 0,
-           "sizes": []
-          },
-          "icon_typography_typography": "custom",
-          "icon_typography_font_family": "Manrope",
-          "icon_typography_font_size": {
-           "unit": "px",
-           "size": 12,
-           "sizes": []
-          },
-          "icon_typography_font_weight": "400",
-          "icon_typography_line_height": {
-           "unit": "em",
-           "size": 1.4,
-           "sizes": []
-          },
-          "_title": "Photo label (delete when photo added)"
-         },
-         "elements": []
-        }
-       ]
+       "elements": []
       },
       {
-       "id": "c8d3b18",
+       "id": "ab1f9d0",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -934,66 +887,19 @@
          "unit": "px",
          "size": 190,
          "sizes": []
+        },
+        "background_image": {
+         "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-covered-deck-log-rail.jpg",
+         "id": 2753,
+         "size": "",
+         "alt": "Covered deck with stained log railing",
+         "source": "library"
         }
        },
-       "elements": [
-        {
-         "id": "3bbf227",
-         "elType": "widget",
-         "widgetType": "icon-list",
-         "isInner": false,
-         "settings": {
-          "icon_list": [
-           {
-            "_id": "999147e",
-            "text": "Photo: Log home restain",
-            "selected_icon": {
-             "value": {
-              "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/camera.svg",
-              "id": 1433
-             },
-             "library": "svg"
-            }
-           }
-          ],
-          "icon_color": "#F2ECE399",
-          "text_color": "#F2ECE399",
-          "icon_size": {
-           "unit": "px",
-           "size": 14,
-           "sizes": []
-          },
-          "text_indent": {
-           "unit": "px",
-           "size": 8,
-           "sizes": []
-          },
-          "space_between": {
-           "unit": "px",
-           "size": 0,
-           "sizes": []
-          },
-          "icon_typography_typography": "custom",
-          "icon_typography_font_family": "Manrope",
-          "icon_typography_font_size": {
-           "unit": "px",
-           "size": 12,
-           "sizes": []
-          },
-          "icon_typography_font_weight": "400",
-          "icon_typography_line_height": {
-           "unit": "em",
-           "size": 1.4,
-           "sizes": []
-          },
-          "_title": "Photo label (delete when photo added)"
-         },
-         "elements": []
-        }
-       ]
+       "elements": []
       },
       {
-       "id": "3dfbc7b",
+       "id": "b5d50dd",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1067,66 +973,19 @@
          "unit": "px",
          "size": 190,
          "sizes": []
+        },
+        "background_image": {
+         "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-timber-ceiling-interior.jpg",
+         "id": 2749,
+         "size": "",
+         "alt": "Stained timber ceiling and log interior",
+         "source": "library"
         }
        },
-       "elements": [
-        {
-         "id": "178e264",
-         "elType": "widget",
-         "widgetType": "icon-list",
-         "isInner": false,
-         "settings": {
-          "icon_list": [
-           {
-            "_id": "94250d8",
-            "text": "Photo: Exterior repaint",
-            "selected_icon": {
-             "value": {
-              "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/camera.svg",
-              "id": 1433
-             },
-             "library": "svg"
-            }
-           }
-          ],
-          "icon_color": "#F2ECE399",
-          "text_color": "#F2ECE399",
-          "icon_size": {
-           "unit": "px",
-           "size": 14,
-           "sizes": []
-          },
-          "text_indent": {
-           "unit": "px",
-           "size": 8,
-           "sizes": []
-          },
-          "space_between": {
-           "unit": "px",
-           "size": 0,
-           "sizes": []
-          },
-          "icon_typography_typography": "custom",
-          "icon_typography_font_family": "Manrope",
-          "icon_typography_font_size": {
-           "unit": "px",
-           "size": 12,
-           "sizes": []
-          },
-          "icon_typography_font_weight": "400",
-          "icon_typography_line_height": {
-           "unit": "em",
-           "size": 1.4,
-           "sizes": []
-          },
-          "_title": "Photo label (delete when photo added)"
-         },
-         "elements": []
-        }
-       ]
+       "elements": []
       },
       {
-       "id": "350e0c1",
+       "id": "8ae212b",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1200,66 +1059,19 @@
          "unit": "px",
          "size": 190,
          "sizes": []
+        },
+        "background_image": {
+         "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-media-blasting-log-wall.jpg",
+         "id": 2748,
+         "size": "",
+         "alt": "Crew media blasting a log wall",
+         "source": "library"
         }
        },
-       "elements": [
-        {
-         "id": "9a02390",
-         "elType": "widget",
-         "widgetType": "icon-list",
-         "isInner": false,
-         "settings": {
-          "icon_list": [
-           {
-            "_id": "608e5b3",
-            "text": "Photo: Deck restoration",
-            "selected_icon": {
-             "value": {
-              "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/camera.svg",
-              "id": 1433
-             },
-             "library": "svg"
-            }
-           }
-          ],
-          "icon_color": "#F2ECE399",
-          "text_color": "#F2ECE399",
-          "icon_size": {
-           "unit": "px",
-           "size": 14,
-           "sizes": []
-          },
-          "text_indent": {
-           "unit": "px",
-           "size": 8,
-           "sizes": []
-          },
-          "space_between": {
-           "unit": "px",
-           "size": 0,
-           "sizes": []
-          },
-          "icon_typography_typography": "custom",
-          "icon_typography_font_family": "Manrope",
-          "icon_typography_font_size": {
-           "unit": "px",
-           "size": 12,
-           "sizes": []
-          },
-          "icon_typography_font_weight": "400",
-          "icon_typography_line_height": {
-           "unit": "em",
-           "size": 1.4,
-           "sizes": []
-          },
-          "_title": "Photo label (delete when photo added)"
-         },
-         "elements": []
-        }
-       ]
+       "elements": []
       },
       {
-       "id": "f31f0b4",
+       "id": "7c32fb0",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1333,66 +1145,19 @@
          "unit": "px",
          "size": 190,
          "sizes": []
+        },
+        "background_image": {
+         "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-log-stair-interior.jpg",
+         "id": 2755,
+         "size": "",
+         "alt": "Stained log staircase inside a mountain home",
+         "source": "library"
         }
        },
-       "elements": [
-        {
-         "id": "1746681",
-         "elType": "widget",
-         "widgetType": "icon-list",
-         "isInner": false,
-         "settings": {
-          "icon_list": [
-           {
-            "_id": "39f7d73",
-            "text": "Photo: Chinking detail",
-            "selected_icon": {
-             "value": {
-              "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/camera.svg",
-              "id": 1433
-             },
-             "library": "svg"
-            }
-           }
-          ],
-          "icon_color": "#F2ECE399",
-          "text_color": "#F2ECE399",
-          "icon_size": {
-           "unit": "px",
-           "size": 14,
-           "sizes": []
-          },
-          "text_indent": {
-           "unit": "px",
-           "size": 8,
-           "sizes": []
-          },
-          "space_between": {
-           "unit": "px",
-           "size": 0,
-           "sizes": []
-          },
-          "icon_typography_typography": "custom",
-          "icon_typography_font_family": "Manrope",
-          "icon_typography_font_size": {
-           "unit": "px",
-           "size": 12,
-           "sizes": []
-          },
-          "icon_typography_font_weight": "400",
-          "icon_typography_line_height": {
-           "unit": "em",
-           "size": 1.4,
-           "sizes": []
-          },
-          "_title": "Photo label (delete when photo added)"
-         },
-         "elements": []
-        }
-       ]
+       "elements": []
       },
       {
-       "id": "baee910",
+       "id": "6b0c691",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1466,66 +1231,19 @@
          "unit": "px",
          "size": 190,
          "sizes": []
+        },
+        "background_image": {
+         "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-log-wall-prep.jpg",
+         "id": 2754,
+         "size": "",
+         "alt": "Preparing a log wall for chinking and stain",
+         "source": "library"
         }
        },
-       "elements": [
-        {
-         "id": "93d6877",
-         "elType": "widget",
-         "widgetType": "icon-list",
-         "isInner": false,
-         "settings": {
-          "icon_list": [
-           {
-            "_id": "2ddfe2b",
-            "text": "Photo: Stained interior wood",
-            "selected_icon": {
-             "value": {
-              "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/camera.svg",
-              "id": 1433
-             },
-             "library": "svg"
-            }
-           }
-          ],
-          "icon_color": "#F2ECE399",
-          "text_color": "#F2ECE399",
-          "icon_size": {
-           "unit": "px",
-           "size": 14,
-           "sizes": []
-          },
-          "text_indent": {
-           "unit": "px",
-           "size": 8,
-           "sizes": []
-          },
-          "space_between": {
-           "unit": "px",
-           "size": 0,
-           "sizes": []
-          },
-          "icon_typography_typography": "custom",
-          "icon_typography_font_family": "Manrope",
-          "icon_typography_font_size": {
-           "unit": "px",
-           "size": 12,
-           "sizes": []
-          },
-          "icon_typography_font_weight": "400",
-          "icon_typography_line_height": {
-           "unit": "em",
-           "size": 1.4,
-           "sizes": []
-          },
-          "_title": "Photo label (delete when photo added)"
-         },
-         "elements": []
-        }
-       ]
+       "elements": []
       },
       {
-       "id": "b4b62e0",
+       "id": "f6f1cf5",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1603,15 +1321,15 @@
        },
        "elements": [
         {
-         "id": "c452797",
+         "id": "d5ba0cf",
          "elType": "widget",
          "widgetType": "icon-list",
          "isInner": false,
          "settings": {
           "icon_list": [
            {
-            "_id": "f1dfffe",
-            "text": "Photo: Media blasting",
+            "_id": "dfe7a42",
+            "text": "Photo: Interior great room",
             "selected_icon": {
              "value": {
               "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/camera.svg",
@@ -1658,7 +1376,7 @@
        ]
       },
       {
-       "id": "e7879ce",
+       "id": "999147e",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1736,15 +1454,15 @@
        },
        "elements": [
         {
-         "id": "108297e",
+         "id": "f080049",
          "elType": "widget",
          "widgetType": "icon-list",
          "isInner": false,
          "settings": {
           "icon_list": [
            {
-            "_id": "d44de1c",
-            "text": "Photo: Railings and stairs",
+            "_id": "d6c715b",
+            "text": "Photo: Exterior repaint",
             "selected_icon": {
              "value": {
               "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/camera.svg",
@@ -1791,7 +1509,7 @@
        ]
       },
       {
-       "id": "6e35055",
+       "id": "94250d8",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1869,14 +1587,14 @@
        },
        "elements": [
         {
-         "id": "20481df",
+         "id": "c8d3b18",
          "elType": "widget",
          "widgetType": "icon-list",
          "isInner": false,
          "settings": {
           "icon_list": [
            {
-            "_id": "6fe2fe3",
+            "_id": "3bbf227",
             "text": "Photo: Accent wall",
             "selected_icon": {
              "value": {
@@ -1928,7 +1646,7 @@
    ]
   },
   {
-   "id": "5337dda",
+   "id": "6fe2fe3",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -2006,7 +1724,7 @@
    },
    "elements": [
     {
-     "id": "71963ad",
+     "id": "e7879ce",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -2113,7 +1831,7 @@
      },
      "elements": [
       {
-       "id": "efbcfb2",
+       "id": "c452797",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -2164,7 +1882,7 @@
        },
        "elements": [
         {
-         "id": "2b7e243",
+         "id": "f1dfffe",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -2214,7 +1932,7 @@
        ]
       },
       {
-       "id": "22b8b80",
+       "id": "108297e",
        "elType": "widget",
        "widgetType": "icon-list",
        "isInner": false,
@@ -2228,7 +1946,7 @@
         "text_color_hover": "#D9A66B",
         "icon_list": [
          {
-          "_id": "e6511f5",
+          "_id": "b4b62e0",
           "text": "Read the stories behind our projects",
           "link": {
            "url": "/project-stories/",
@@ -2241,7 +1959,7 @@
           }
          },
          {
-          "_id": "ca040a9",
+          "_id": "d44de1c",
           "text": "See what clients say",
           "link": {
            "url": "/reviews/",
@@ -2285,7 +2003,7 @@
    ]
   },
   {
-   "id": "f8d4f58",
+   "id": "a97898f",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -2381,7 +2099,7 @@
    },
    "elements": [
     {
-     "id": "8971084",
+     "id": "377b5be",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -2433,7 +2151,7 @@
      },
      "elements": [
       {
-       "id": "adf0bdd",
+       "id": "20481df",
        "elType": "widget",
        "widgetType": "heading",
        "isInner": false,
@@ -2482,7 +2200,7 @@
        "elements": []
       },
       {
-       "id": "5d2ecb6",
+       "id": "6e35055",
        "elType": "widget",
        "widgetType": "text-editor",
        "isInner": false,
@@ -2513,7 +2231,7 @@
        "elements": []
       },
       {
-       "id": "69095c1",
+       "id": "9839cef",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -2567,7 +2285,7 @@
        },
        "elements": [
         {
-         "id": "b5c58c0",
+         "id": "5d7a640",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,
@@ -2619,7 +2337,7 @@
          "elements": []
         },
         {
-         "id": "2e17b08",
+         "id": "475850f",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,

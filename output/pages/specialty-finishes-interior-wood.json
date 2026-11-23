@@ -4,7 +4,7 @@
  "type": "page",
  "content": [
   {
-   "id": "73d52b1",
+   "id": "e828f12",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -82,7 +82,7 @@
    },
    "elements": [
     {
-     "id": "3f9e09c",
+     "id": "b945e7b",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -539,7 +539,7 @@
        ]
       },
       {
-       "id": "e828f12",
+       "id": "390f5d0",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -613,70 +613,23 @@
          "unit": "px",
          "size": 280,
          "sizes": []
+        },
+        "background_image": {
+         "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-timber-ceiling-interior.jpg",
+         "id": 2749,
+         "size": "",
+         "alt": "Stained timber ceiling and log interior",
+         "source": "library"
         }
        },
-       "elements": [
-        {
-         "id": "b945e7b",
-         "elType": "widget",
-         "widgetType": "icon-list",
-         "isInner": false,
-         "settings": {
-          "icon_list": [
-           {
-            "_id": "390f5d0",
-            "text": "Photo: stained interior wood",
-            "selected_icon": {
-             "value": {
-              "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/camera.svg",
-              "id": 1433
-             },
-             "library": "svg"
-            }
-           }
-          ],
-          "icon_color": "#F2ECE399",
-          "text_color": "#F2ECE399",
-          "icon_size": {
-           "unit": "px",
-           "size": 14,
-           "sizes": []
-          },
-          "text_indent": {
-           "unit": "px",
-           "size": 8,
-           "sizes": []
-          },
-          "space_between": {
-           "unit": "px",
-           "size": 0,
-           "sizes": []
-          },
-          "icon_typography_typography": "custom",
-          "icon_typography_font_family": "Manrope",
-          "icon_typography_font_size": {
-           "unit": "px",
-           "size": 12,
-           "sizes": []
-          },
-          "icon_typography_font_weight": "400",
-          "icon_typography_line_height": {
-           "unit": "em",
-           "size": 1.4,
-           "sizes": []
-          },
-          "_title": "Photo label (delete when photo added)"
-         },
-         "elements": []
-        }
-       ]
+       "elements": []
       }
      ]
     }
    ]
   },
   {
-   "id": "5e0e889",
+   "id": "2422fbe",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -754,7 +707,7 @@
    },
    "elements": [
     {
-     "id": "72186f4",
+     "id": "ee38426",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -861,7 +814,7 @@
      },
      "elements": [
       {
-       "id": "7a01977",
+       "id": "7ce4048",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -912,7 +865,7 @@
        },
        "elements": [
         {
-         "id": "55d6ac4",
+         "id": "3f9e09c",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -960,7 +913,7 @@
          "elements": []
         },
         {
-         "id": "7ce4048",
+         "id": "73d52b1",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -992,7 +945,7 @@
        ]
       },
       {
-       "id": "2422fbe",
+       "id": "7a01977",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1085,7 +1038,7 @@
        },
        "elements": [
         {
-         "id": "ee38426",
+         "id": "9873673",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1116,7 +1069,7 @@
          "elements": []
         },
         {
-         "id": "9873673",
+         "id": "55d6ac4",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -1153,7 +1106,7 @@
    ]
   },
   {
-   "id": "dbee23b",
+   "id": "2ebf3de",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -1231,7 +1184,7 @@
    },
    "elements": [
     {
-     "id": "2ebf3de",
+     "id": "8b67cfa",
      "elType": "widget",
      "widgetType": "heading",
      "isInner": false,
@@ -1279,7 +1232,7 @@
      "elements": []
     },
     {
-     "id": "96f9fa2",
+     "id": "81d02f5",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -1386,7 +1339,7 @@
      },
      "elements": [
       {
-       "id": "53710ba",
+       "id": "6814b53",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1437,7 +1390,7 @@
        },
        "elements": [
         {
-         "id": "3fec427",
+         "id": "72186f4",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1463,7 +1416,7 @@
          "elements": []
         },
         {
-         "id": "6814b53",
+         "id": "5e0e889",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1489,7 +1442,7 @@
          "elements": []
         },
         {
-         "id": "3cb8cef",
+         "id": "3fec427",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -1521,7 +1474,7 @@
        ]
       },
       {
-       "id": "e0a3727",
+       "id": "8f62df2",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1572,7 +1525,7 @@
        },
        "elements": [
         {
-         "id": "86c3266",
+         "id": "3cb8cef",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1598,7 +1551,7 @@
          "elements": []
         },
         {
-         "id": "8f62df2",
+         "id": "53710ba",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1624,7 +1577,7 @@
          "elements": []
         },
         {
-         "id": "d7be561",
+         "id": "86c3266",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -1656,7 +1609,7 @@
        ]
       },
       {
-       "id": "3d4d666",
+       "id": "59a4c22",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1707,7 +1660,7 @@
        },
        "elements": [
         {
-         "id": "7a6dc40",
+         "id": "d7be561",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1733,7 +1686,7 @@
          "elements": []
         },
         {
-         "id": "59a4c22",
+         "id": "e0a3727",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1759,7 +1712,7 @@
          "elements": []
         },
         {
-         "id": "87bb365",
+         "id": "7a6dc40",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -1791,7 +1744,7 @@
        ]
       },
       {
-       "id": "81d02f5",
+       "id": "94f3255",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1842,7 +1795,7 @@
        },
        "elements": [
         {
-         "id": "6366ece",
+         "id": "87bb365",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1868,7 +1821,7 @@
          "elements": []
         },
         {
-         "id": "94f3255",
+         "id": "3d4d666",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1894,7 +1847,7 @@
          "elements": []
         },
         {
-         "id": "8b67cfa",
+         "id": "6366ece",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -1930,7 +1883,7 @@
    ]
   },
   {
-   "id": "e0ef5c3",
+   "id": "dbf5514",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -2008,7 +1961,7 @@
    },
    "elements": [
     {
-     "id": "5619e5d",
+     "id": "9652ab6",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -2060,7 +2013,7 @@
      },
      "elements": [
       {
-       "id": "9652ab6",
+       "id": "96f9fa2",
        "elType": "widget",
        "widgetType": "heading",
        "isInner": false,
@@ -2103,7 +2056,7 @@
        "elements": []
       },
       {
-       "id": "dbf5514",
+       "id": "dbee23b",
        "elType": "widget",
        "widgetType": "heading",
        "isInner": false,
@@ -2134,7 +2087,7 @@
    ]
   },
   {
-   "id": "8440cab",
+   "id": "27d6af8",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -2212,7 +2165,7 @@
    },
    "elements": [
     {
-     "id": "f0ed4a6",
+     "id": "1141822",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -2319,7 +2272,7 @@
      },
      "elements": [
       {
-       "id": "e90e013",
+       "id": "e0ef5c3",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -2370,7 +2323,7 @@
        },
        "elements": [
         {
-         "id": "28357ae",
+         "id": "5619e5d",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -2420,7 +2373,7 @@
        ]
       },
       {
-       "id": "27d6af8",
+       "id": "4b38c23",
        "elType": "widget",
        "widgetType": "icon-list",
        "isInner": false,
@@ -2434,7 +2387,7 @@
         "text_color_hover": "#D9A66B",
         "icon_list": [
          {
-          "_id": "46de654",
+          "_id": "28357ae",
           "text": "Interior Painting",
           "link": {
            "url": "/interior-painting/",
@@ -2447,7 +2400,7 @@
           }
          },
          {
-          "_id": "4b38c23",
+          "_id": "e90e013",
           "text": "Exterior Painting",
           "link": {
            "url": "/exterior-painting/",
@@ -2460,7 +2413,7 @@
           }
          },
          {
-          "_id": "1141822",
+          "_id": "46de654",
           "text": "Commercial &amp; HOA",
           "link": {
            "url": "/commercial-hoa/",
@@ -2504,7 +2457,7 @@
    ]
   },
   {
-   "id": "e978673",
+   "id": "d887417",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -2600,7 +2553,7 @@
    },
    "elements": [
     {
-     "id": "e563d56",
+     "id": "9b890fe",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -2652,7 +2605,7 @@
      },
      "elements": [
       {
-       "id": "b54b3b8",
+       "id": "f0ed4a6",
        "elType": "widget",
        "widgetType": "heading",
        "isInner": false,
@@ -2701,7 +2654,7 @@
        "elements": []
       },
       {
-       "id": "6497db6",
+       "id": "8440cab",
        "elType": "widget",
        "widgetType": "text-editor",
        "isInner": false,
@@ -2732,7 +2685,7 @@
        "elements": []
       },
       {
-       "id": "d887417",
+       "id": "7872d96",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -2786,7 +2739,7 @@
        },
        "elements": [
         {
-         "id": "7872d96",
+         "id": "b54b3b8",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,
@@ -2838,7 +2791,7 @@
          "elements": []
         },
         {
-         "id": "9b890fe",
+         "id": "6497db6",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,

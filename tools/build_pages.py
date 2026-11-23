@@ -238,7 +238,7 @@ def pages():
     P["specialty-finishes-interior-wood"] = service(
         "specialty-finishes-interior-wood", "Fine Painting", "<b>Specialty finishes</b> &amp; interior wood",
         "Trim, doors, stairs, accent walls and interior wood, finished with the patience detailed work needs.",
-        ("#3A281B", "Photo: stained interior wood", None),
+        ("#3A281B", "Photo: stained interior wood", "tn-timber-ceiling-interior"),
         "<b>Detail</b> work, done carefully",
         ["The details are what people notice: crisp lines on an accent wall, custom colors on a staircase, "
          "an even, lasting finish on beams, ceilings and paneling. We take the same care with preparation "
@@ -270,7 +270,7 @@ def pages():
         "<b>Log home staining</b> &amp; restoration",
         "Top Notch Painting is a division of Top Notch Logworks, which has built log and timber homes and "
         "resorts here since 1999. We know what it takes to make a log finish last.",
-        ("#3A281B", "Photo: stained log home", "fence"),
+        ("#3A281B", "Photo: stained log home", "tn-log-home-stained-exterior"),
         "<b>It's all about</b> the prep",
         ["If you want your home to look its best and get the longest life from a finish, everything depends "
          "on how the logs are prepared before any stain goes on. Skipping prep cuts the life of a finish "
@@ -292,7 +292,7 @@ def pages():
         "chinking-check-sealing", "Log &amp; Timber Staining", "<b>Chinking</b> &amp; check sealing",
         "Seal out drafts, moisture and pests. Top Notch is one of the leading chinking applicators in the "
         "Vail and Aspen valleys.",
-        ("#33261C", "Photo: chinking detail", None),
+        ("#33261C", "Photo: chinking detail", "tn-log-home-stained-windows"),
         "<b>A tighter,</b> more comfortable home",
         ["Many log homes were never built tightly, or have opened up as they settled. The result is drafts "
          "and pests: bugs, bats and mice. We find where air is getting in and seal it, using rodent-proofing "
@@ -308,7 +308,7 @@ def pages():
         "rot-repair-prevention", "Log &amp; Timber Staining", "<b>Rot repair</b> &amp; prevention",
         "Left alone, rot can spread into framing and cause major structural damage. We find it, repair it "
         "and stop it coming back.",
-        ("#3A281B", "Photo: rot repair on a log end", None),
+        ("#3A281B", "Photo: rot repair on a log end", "tn-log-home-deck"),
         "<b>Stop rot</b> at the source",
         ["Wood rot is caused by decay fungi, which need oxygen, heat, food and moisture. We can't change the "
          "first two, so we take away the other two. Borate preservatives treat the wood so the fungi can't "
@@ -330,7 +330,7 @@ def pages():
         "deck-staining", "Log &amp; Timber Staining", "<b>Deck</b> staining",
         "Decks take more sun, snow and foot traffic than any other part of the house. We restore them and "
         "keep them looking good.",
-        ("#3A281B", "Photo: stained deck", "railing"),
+        ("#3A281B", "Photo: stained deck", "tn-stained-deck-rail"),
         "<b>Restore,</b> then protect",
         ["A deck finish only lasts if the wood underneath is sound and clean. We repair what needs it, take "
          "off old, failing stain, and prepare the boards so the new finish soaks in properly.",
@@ -343,7 +343,7 @@ def pages():
     P["media-blasting"] = service(
         "media-blasting", "Log &amp; Timber Staining", "<b>Media</b> blasting",
         "The best way to take a log home back to clean, bright wood before it's restained.",
-        ("#33261C", "Photo: media blasting a log wall", None),
+        ("#33261C", "Photo: media blasting a log wall", "tn-media-blasting-log-wall"),
         "<b>Back to</b> clean wood",
         ["Old, damaged finishes have to come off before a new one can last. Media blasting strips them away "
          "and opens up the wood so new stain penetrates and bonds.",
@@ -355,11 +355,14 @@ def pages():
                 "oriented in making sure the interior living space was not affected.", "Lee F. · Gypsum"))
 
     # ----- Our Work
-    labels = ["Interior great room", "Log home restain", "Exterior repaint", "Deck restoration",
-              "Chinking detail", "Stained interior wood", "Media blasting", "Railings and stairs", "Accent wall"]
+    labels = ["Log home restain", "Deck restoration", "Stained interior wood", "Media blasting",
+              "Railings and stairs", "Chinking detail", "Interior great room", "Exterior repaint", "Accent wall"]
     colors = ["#33261C", "#3A281B", "#222B25"]
+    gallery_imgs = {"Log home restain": "tn-log-home-winter", "Deck restoration": "tn-covered-deck-log-rail",
+                    "Chinking detail": "tn-log-wall-prep", "Media blasting": "tn-media-blasting-log-wall",
+                    "Railings and stairs": "tn-log-stair-interior", "Stained interior wood": "tn-timber-ceiling-interior"}
     tiles = [photo_slot("Gallery / Photo %d" % (i + 1), colors[i % 3], (340, 320, 280, 190), "Photo: " + l,
-                         padding=dims(0, 14, 14, 14))
+                        image=gallery_imgs.get(l), padding=dims(0, 14, 14, 14))
              for i, l in enumerate(labels)]
     P["our-work"] = page("TN our-work", [
         page_hero("Page Header", "Our Work", "<b>Our</b> work",
@@ -454,7 +457,7 @@ def pages():
         page_hero("Page Header", "For Builders", "<b>Built</b> by builders",
                   "Our parent company, Top Notch Logworks, builds log and timber homes. We understand construction "
                   "schedules, and we finish new work the way it should be finished.",
-                  ("#3A281B", "Photo: new log home under construction", None)),
+                  ("#3A281B", "Photo: new log home under construction", "tn-timber-frame-construction")),
         prose("Why Builders", "<b>A finishing partner</b> who speaks your language",
               ["We work in partnership with architects, builders and general contractors on new homes and "
                "remodels. Painting, staining, preservative treatment and chinking on new log and timber work "
@@ -473,7 +476,7 @@ def pages():
         page_hero("Page Header", "About", "<b>Our</b> story",
                   "Top Notch Painting is the painting and finishing division of Top Notch Logworks, employee "
                   "owned and based in Gypsum, Colorado.",
-                  ("#33261C", "Photo: the Top Notch crew", None)),
+                  ("#33261C", "Photo: the Top Notch crew", "tn-crew-staining-log-home")),
         prose("Since 1999", "<b>Builders</b> first",
               ["Top Notch Logworks has been building some of the largest log and timber homes and resorts in "
                "the Aspen and Vail valleys since 1999. That experience gave us a deep understanding of how "
@@ -489,7 +492,7 @@ def pages():
                "right.",
                "Our goal is to transform the experience of everyone who deals with us: clients, employees and "
                "vendors alike. We believe ethical practice and strong partnerships matter as much as quality "
-               "work."], bg=CHARRED, photo=("#222B25", "Photo: crew at work", None), flip=True),
+               "work."], bg=CHARRED, photo=("#222B25", "Photo: crew at work", "tn-media-blasting-log-wall"), flip=True),
         prose("Giving Back", "<b>Improving</b> where we live",
               ["We match employee donations to charities up to $500 per employee each year. Through our Dollars "
                "for Doers program, when an employee or their family gives 30 or more volunteer hours to a "

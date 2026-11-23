@@ -4,7 +4,7 @@
  "type": "page",
  "content": [
   {
-   "id": "5e8494f",
+   "id": "f74c316",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -82,7 +82,7 @@
    },
    "elements": [
     {
-     "id": "a51765d",
+     "id": "29cada6",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -189,7 +189,7 @@
      },
      "elements": [
       {
-       "id": "4795587",
+       "id": "c6f7b3d",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -241,7 +241,7 @@
        },
        "elements": [
         {
-         "id": "c6f7b3d",
+         "id": "5c8da30",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -272,7 +272,7 @@
          "elements": []
         },
         {
-         "id": "cd51301",
+         "id": "6f6f6b2",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -320,7 +320,7 @@
          "elements": []
         },
         {
-         "id": "29cada6",
+         "id": "9bf6237",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -365,7 +365,7 @@
          "elements": []
         },
         {
-         "id": "988debe",
+         "id": "3351628",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -418,7 +418,7 @@
          },
          "elements": [
           {
-           "id": "f74c316",
+           "id": "cb235be",
            "elType": "widget",
            "widgetType": "button",
            "isInner": false,
@@ -470,7 +470,7 @@
            "elements": []
           },
           {
-           "id": "14b2bee",
+           "id": "53d803a",
            "elType": "widget",
            "widgetType": "button",
            "isInner": false,
@@ -539,7 +539,7 @@
        ]
       },
       {
-       "id": "c212db5",
+       "id": "cd51301",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -613,70 +613,23 @@
          "unit": "px",
          "size": 280,
          "sizes": []
+        },
+        "background_image": {
+         "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-media-blasting-log-wall.jpg",
+         "id": 2748,
+         "size": "",
+         "alt": "Crew media blasting a log wall",
+         "source": "library"
         }
        },
-       "elements": [
-        {
-         "id": "e9452ba",
-         "elType": "widget",
-         "widgetType": "icon-list",
-         "isInner": false,
-         "settings": {
-          "icon_list": [
-           {
-            "_id": "e98d409",
-            "text": "Photo: media blasting a log wall",
-            "selected_icon": {
-             "value": {
-              "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/camera.svg",
-              "id": 1433
-             },
-             "library": "svg"
-            }
-           }
-          ],
-          "icon_color": "#F2ECE399",
-          "text_color": "#F2ECE399",
-          "icon_size": {
-           "unit": "px",
-           "size": 14,
-           "sizes": []
-          },
-          "text_indent": {
-           "unit": "px",
-           "size": 8,
-           "sizes": []
-          },
-          "space_between": {
-           "unit": "px",
-           "size": 0,
-           "sizes": []
-          },
-          "icon_typography_typography": "custom",
-          "icon_typography_font_family": "Manrope",
-          "icon_typography_font_size": {
-           "unit": "px",
-           "size": 12,
-           "sizes": []
-          },
-          "icon_typography_font_weight": "400",
-          "icon_typography_line_height": {
-           "unit": "em",
-           "size": 1.4,
-           "sizes": []
-          },
-          "_title": "Photo label (delete when photo added)"
-         },
-         "elements": []
-        }
-       ]
+       "elements": []
       }
      ]
     }
    ]
   },
   {
-   "id": "b4e03f9",
+   "id": "5e8494f",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -754,7 +707,7 @@
    },
    "elements": [
     {
-     "id": "dfe24ae",
+     "id": "a51765d",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -861,7 +814,7 @@
      },
      "elements": [
       {
-       "id": "716dd02",
+       "id": "e98d409",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -912,7 +865,7 @@
        },
        "elements": [
         {
-         "id": "a297d61",
+         "id": "14b2bee",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -960,7 +913,7 @@
          "elements": []
         },
         {
-         "id": "1b6dba4",
+         "id": "988debe",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -992,7 +945,7 @@
        ]
       },
       {
-       "id": "943fa18",
+       "id": "c212db5",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1085,7 +1038,7 @@
        },
        "elements": [
         {
-         "id": "99faa7f",
+         "id": "e9452ba",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1116,7 +1069,7 @@
          "elements": []
         },
         {
-         "id": "74adbce",
+         "id": "4795587",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -1153,7 +1106,7 @@
    ]
   },
   {
-   "id": "3986a32",
+   "id": "52edffa",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -1231,7 +1184,7 @@
    },
    "elements": [
     {
-     "id": "d988cfd",
+     "id": "6567761",
      "elType": "widget",
      "widgetType": "heading",
      "isInner": false,
@@ -1279,7 +1232,7 @@
      "elements": []
     },
     {
-     "id": "409535b",
+     "id": "9c28541",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -1386,11 +1339,281 @@
      },
      "elements": [
       {
-       "id": "2adc220",
+       "id": "716dd02",
        "elType": "container",
        "isInner": true,
        "settings": {
         "_title": "Process / Step 1",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "16",
+         "row": "16",
+         "isLinked": true,
+         "unit": "px",
+         "size": 16
+        },
+        "flex_gap_laptop": {
+         "column": "16",
+         "row": "16",
+         "isLinked": true,
+         "unit": "px",
+         "size": 16
+        },
+        "flex_gap_tablet": {
+         "column": "16",
+         "row": "16",
+         "isLinked": true,
+         "unit": "px",
+         "size": 16
+        },
+        "flex_gap_mobile": {
+         "column": "16",
+         "row": "16",
+         "isLinked": true,
+         "unit": "px",
+         "size": 16
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "0",
+         "right": "0",
+         "bottom": "0",
+         "left": "0",
+         "isLinked": true
+        }
+       },
+       "elements": [
+        {
+         "id": "a297d61",
+         "elType": "widget",
+         "widgetType": "heading",
+         "isInner": false,
+         "settings": {
+          "title": "01",
+          "header_size": "div",
+          "title_color": "#C68B4E",
+          "typography_typography": "custom",
+          "typography_font_family": "Fraunces",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 29,
+           "sizes": []
+          },
+          "typography_font_weight": "500",
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1,
+           "sizes": []
+          },
+          "_title": "Process / Step 1 / Number"
+         },
+         "elements": []
+        },
+        {
+         "id": "1b6dba4",
+         "elType": "widget",
+         "widgetType": "heading",
+         "isInner": false,
+         "settings": {
+          "title": "Walkthrough &amp; written estimate",
+          "header_size": "h3",
+          "title_color": "#F2ECE3",
+          "typography_typography": "custom",
+          "typography_font_family": "Fraunces",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 24,
+           "sizes": []
+          },
+          "typography_font_weight": "500",
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.15,
+           "sizes": []
+          },
+          "_title": "Process / Step 1 / Title (H3)"
+         },
+         "elements": []
+        },
+        {
+         "id": "74adbce",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>We look at the work in person, talk through colors and products, and give you a clear written estimate with no hidden charges.</p>",
+          "text_color": "#C9D1C4",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 15,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.75,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}selector{max-width:360px !important;}",
+          "_title": "Process / Step 1 / Text"
+         },
+         "elements": []
+        }
+       ]
+      },
+      {
+       "id": "b4e03f9",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Process / Step 2",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "16",
+         "row": "16",
+         "isLinked": true,
+         "unit": "px",
+         "size": 16
+        },
+        "flex_gap_laptop": {
+         "column": "16",
+         "row": "16",
+         "isLinked": true,
+         "unit": "px",
+         "size": 16
+        },
+        "flex_gap_tablet": {
+         "column": "16",
+         "row": "16",
+         "isLinked": true,
+         "unit": "px",
+         "size": 16
+        },
+        "flex_gap_mobile": {
+         "column": "16",
+         "row": "16",
+         "isLinked": true,
+         "unit": "px",
+         "size": 16
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "0",
+         "right": "0",
+         "bottom": "0",
+         "left": "0",
+         "isLinked": true
+        }
+       },
+       "elements": [
+        {
+         "id": "99faa7f",
+         "elType": "widget",
+         "widgetType": "heading",
+         "isInner": false,
+         "settings": {
+          "title": "02",
+          "header_size": "div",
+          "title_color": "#C68B4E",
+          "typography_typography": "custom",
+          "typography_font_family": "Fraunces",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 29,
+           "sizes": []
+          },
+          "typography_font_weight": "500",
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1,
+           "sizes": []
+          },
+          "_title": "Process / Step 2 / Number"
+         },
+         "elements": []
+        },
+        {
+         "id": "943fa18",
+         "elType": "widget",
+         "widgetType": "heading",
+         "isInner": false,
+         "settings": {
+          "title": "Protect &amp; prepare",
+          "header_size": "h3",
+          "title_color": "#F2ECE3",
+          "typography_typography": "custom",
+          "typography_font_family": "Fraunces",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 24,
+           "sizes": []
+          },
+          "typography_font_weight": "500",
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.15,
+           "sizes": []
+          },
+          "_title": "Process / Step 2 / Title (H3)"
+         },
+         "elements": []
+        },
+        {
+         "id": "dfe24ae",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>Floors, furnishings, fixtures and landscaping are covered. Surfaces are cleaned, repaired and prepped to the manufacturer's specifications.</p>",
+          "text_color": "#C9D1C4",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 15,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.75,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}selector{max-width:360px !important;}",
+          "_title": "Process / Step 2 / Text"
+         },
+         "elements": []
+        }
+       ]
+      },
+      {
+       "id": "2adc220",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Process / Step 3",
         "content_width": "full",
         "flex_direction": "column",
         "flex_gap": {
@@ -1442,7 +1665,7 @@
          "widgetType": "heading",
          "isInner": false,
          "settings": {
-          "title": "01",
+          "title": "03",
           "header_size": "div",
           "title_color": "#C68B4E",
           "typography_typography": "custom",
@@ -1458,7 +1681,7 @@
            "size": 1,
            "sizes": []
           },
-          "_title": "Process / Step 1 / Number"
+          "_title": "Process / Step 3 / Number"
          },
          "elements": []
         },
@@ -1468,7 +1691,7 @@
          "widgetType": "heading",
          "isInner": false,
          "settings": {
-          "title": "Walkthrough &amp; written estimate",
+          "title": "Apply the finish",
           "header_size": "h3",
           "title_color": "#F2ECE3",
           "typography_typography": "custom",
@@ -1484,7 +1707,7 @@
            "size": 1.15,
            "sizes": []
           },
-          "_title": "Process / Step 1 / Title (H3)"
+          "_title": "Process / Step 3 / Title (H3)"
          },
          "elements": []
         },
@@ -1494,7 +1717,7 @@
          "widgetType": "text-editor",
          "isInner": false,
          "settings": {
-          "editor": "<p>We look at the work in person, talk through colors and products, and give you a clear written estimate with no hidden charges.</p>",
+          "editor": "<p>Premium coatings applied the right way, with enough coats for our dry, high-altitude climate. When we spray, we back-brush for a proper bond.</p>",
           "text_color": "#C9D1C4",
           "paragraph_spacing": {
            "unit": "px",
@@ -1514,7 +1737,7 @@
            "sizes": []
           },
           "custom_css": "selector p:last-child{margin-block-end:0;}selector{max-width:360px !important;}",
-          "_title": "Process / Step 1 / Text"
+          "_title": "Process / Step 3 / Text"
          },
          "elements": []
         }
@@ -1525,7 +1748,7 @@
        "elType": "container",
        "isInner": true,
        "settings": {
-        "_title": "Process / Step 2",
+        "_title": "Process / Step 4",
         "content_width": "full",
         "flex_direction": "column",
         "flex_gap": {
@@ -1577,276 +1800,6 @@
          "widgetType": "heading",
          "isInner": false,
          "settings": {
-          "title": "02",
-          "header_size": "div",
-          "title_color": "#C68B4E",
-          "typography_typography": "custom",
-          "typography_font_family": "Fraunces",
-          "typography_font_size": {
-           "unit": "px",
-           "size": 29,
-           "sizes": []
-          },
-          "typography_font_weight": "500",
-          "typography_line_height": {
-           "unit": "em",
-           "size": 1,
-           "sizes": []
-          },
-          "_title": "Process / Step 2 / Number"
-         },
-         "elements": []
-        },
-        {
-         "id": "34530e4",
-         "elType": "widget",
-         "widgetType": "heading",
-         "isInner": false,
-         "settings": {
-          "title": "Protect &amp; prepare",
-          "header_size": "h3",
-          "title_color": "#F2ECE3",
-          "typography_typography": "custom",
-          "typography_font_family": "Fraunces",
-          "typography_font_size": {
-           "unit": "px",
-           "size": 24,
-           "sizes": []
-          },
-          "typography_font_weight": "500",
-          "typography_line_height": {
-           "unit": "em",
-           "size": 1.15,
-           "sizes": []
-          },
-          "_title": "Process / Step 2 / Title (H3)"
-         },
-         "elements": []
-        },
-        {
-         "id": "cb8a188",
-         "elType": "widget",
-         "widgetType": "text-editor",
-         "isInner": false,
-         "settings": {
-          "editor": "<p>Floors, furnishings, fixtures and landscaping are covered. Surfaces are cleaned, repaired and prepped to the manufacturer's specifications.</p>",
-          "text_color": "#C9D1C4",
-          "paragraph_spacing": {
-           "unit": "px",
-           "size": 0,
-           "sizes": []
-          },
-          "typography_typography": "custom",
-          "typography_font_family": "Manrope",
-          "typography_font_size": {
-           "unit": "px",
-           "size": 15,
-           "sizes": []
-          },
-          "typography_line_height": {
-           "unit": "em",
-           "size": 1.75,
-           "sizes": []
-          },
-          "custom_css": "selector p:last-child{margin-block-end:0;}selector{max-width:360px !important;}",
-          "_title": "Process / Step 2 / Text"
-         },
-         "elements": []
-        }
-       ]
-      },
-      {
-       "id": "5f77abb",
-       "elType": "container",
-       "isInner": true,
-       "settings": {
-        "_title": "Process / Step 3",
-        "content_width": "full",
-        "flex_direction": "column",
-        "flex_gap": {
-         "column": "16",
-         "row": "16",
-         "isLinked": true,
-         "unit": "px",
-         "size": 16
-        },
-        "flex_gap_laptop": {
-         "column": "16",
-         "row": "16",
-         "isLinked": true,
-         "unit": "px",
-         "size": 16
-        },
-        "flex_gap_tablet": {
-         "column": "16",
-         "row": "16",
-         "isLinked": true,
-         "unit": "px",
-         "size": 16
-        },
-        "flex_gap_mobile": {
-         "column": "16",
-         "row": "16",
-         "isLinked": true,
-         "unit": "px",
-         "size": 16
-        },
-        "width": {
-         "unit": "%",
-         "size": 100,
-         "sizes": []
-        },
-        "padding": {
-         "unit": "px",
-         "top": "0",
-         "right": "0",
-         "bottom": "0",
-         "left": "0",
-         "isLinked": true
-        }
-       },
-       "elements": [
-        {
-         "id": "6567761",
-         "elType": "widget",
-         "widgetType": "heading",
-         "isInner": false,
-         "settings": {
-          "title": "03",
-          "header_size": "div",
-          "title_color": "#C68B4E",
-          "typography_typography": "custom",
-          "typography_font_family": "Fraunces",
-          "typography_font_size": {
-           "unit": "px",
-           "size": 29,
-           "sizes": []
-          },
-          "typography_font_weight": "500",
-          "typography_line_height": {
-           "unit": "em",
-           "size": 1,
-           "sizes": []
-          },
-          "_title": "Process / Step 3 / Number"
-         },
-         "elements": []
-        },
-        {
-         "id": "9c28541",
-         "elType": "widget",
-         "widgetType": "heading",
-         "isInner": false,
-         "settings": {
-          "title": "Apply the finish",
-          "header_size": "h3",
-          "title_color": "#F2ECE3",
-          "typography_typography": "custom",
-          "typography_font_family": "Fraunces",
-          "typography_font_size": {
-           "unit": "px",
-           "size": 24,
-           "sizes": []
-          },
-          "typography_font_weight": "500",
-          "typography_line_height": {
-           "unit": "em",
-           "size": 1.15,
-           "sizes": []
-          },
-          "_title": "Process / Step 3 / Title (H3)"
-         },
-         "elements": []
-        },
-        {
-         "id": "52edffa",
-         "elType": "widget",
-         "widgetType": "text-editor",
-         "isInner": false,
-         "settings": {
-          "editor": "<p>Premium coatings applied the right way, with enough coats for our dry, high-altitude climate. When we spray, we back-brush for a proper bond.</p>",
-          "text_color": "#C9D1C4",
-          "paragraph_spacing": {
-           "unit": "px",
-           "size": 0,
-           "sizes": []
-          },
-          "typography_typography": "custom",
-          "typography_font_family": "Manrope",
-          "typography_font_size": {
-           "unit": "px",
-           "size": 15,
-           "sizes": []
-          },
-          "typography_line_height": {
-           "unit": "em",
-           "size": 1.75,
-           "sizes": []
-          },
-          "custom_css": "selector p:last-child{margin-block-end:0;}selector{max-width:360px !important;}",
-          "_title": "Process / Step 3 / Text"
-         },
-         "elements": []
-        }
-       ]
-      },
-      {
-       "id": "b98a33d",
-       "elType": "container",
-       "isInner": true,
-       "settings": {
-        "_title": "Process / Step 4",
-        "content_width": "full",
-        "flex_direction": "column",
-        "flex_gap": {
-         "column": "16",
-         "row": "16",
-         "isLinked": true,
-         "unit": "px",
-         "size": 16
-        },
-        "flex_gap_laptop": {
-         "column": "16",
-         "row": "16",
-         "isLinked": true,
-         "unit": "px",
-         "size": 16
-        },
-        "flex_gap_tablet": {
-         "column": "16",
-         "row": "16",
-         "isLinked": true,
-         "unit": "px",
-         "size": 16
-        },
-        "flex_gap_mobile": {
-         "column": "16",
-         "row": "16",
-         "isLinked": true,
-         "unit": "px",
-         "size": 16
-        },
-        "width": {
-         "unit": "%",
-         "size": 100,
-         "sizes": []
-        },
-        "padding": {
-         "unit": "px",
-         "top": "0",
-         "right": "0",
-         "bottom": "0",
-         "left": "0",
-         "isLinked": true
-        }
-       },
-       "elements": [
-        {
-         "id": "1aa58cd",
-         "elType": "widget",
-         "widgetType": "heading",
-         "isInner": false,
-         "settings": {
           "title": "04",
           "header_size": "div",
           "title_color": "#C68B4E",
@@ -1868,7 +1821,7 @@
          "elements": []
         },
         {
-         "id": "ccc1a93",
+         "id": "34530e4",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1894,7 +1847,7 @@
          "elements": []
         },
         {
-         "id": "a7bc9f3",
+         "id": "cb8a188",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -1930,7 +1883,7 @@
    ]
   },
   {
-   "id": "9a89cf7",
+   "id": "a7bc9f3",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -2008,7 +1961,7 @@
    },
    "elements": [
     {
-     "id": "5b983f0",
+     "id": "ccc1a93",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -2060,7 +2013,7 @@
      },
      "elements": [
       {
-       "id": "f61f1bf",
+       "id": "5f77abb",
        "elType": "widget",
        "widgetType": "heading",
        "isInner": false,
@@ -2103,7 +2056,7 @@
        "elements": []
       },
       {
-       "id": "5afc59d",
+       "id": "1aa58cd",
        "elType": "widget",
        "widgetType": "heading",
        "isInner": false,
@@ -2134,7 +2087,7 @@
    ]
   },
   {
-   "id": "e8e93ef",
+   "id": "591bb11",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -2212,7 +2165,7 @@
    },
    "elements": [
     {
-     "id": "126b3d0",
+     "id": "9a89cf7",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -2319,7 +2272,7 @@
      },
      "elements": [
       {
-       "id": "6b72fcc",
+       "id": "d988cfd",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -2370,7 +2323,7 @@
        },
        "elements": [
         {
-         "id": "591bb11",
+         "id": "b98a33d",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -2420,7 +2373,7 @@
        ]
       },
       {
-       "id": "b13bb87",
+       "id": "5b983f0",
        "elType": "widget",
        "widgetType": "icon-list",
        "isInner": false,
@@ -2434,7 +2387,7 @@
         "text_color_hover": "#D9A66B",
         "icon_list": [
          {
-          "_id": "324e229",
+          "_id": "409535b",
           "text": "Log Home Staining &amp; Restoration",
           "link": {
            "url": "/log-home-staining-restoration/",
@@ -2447,7 +2400,7 @@
           }
          },
          {
-          "_id": "737c119",
+          "_id": "3986a32",
           "text": "Chinking &amp; Check Sealing",
           "link": {
            "url": "/chinking-check-sealing/",
@@ -2460,7 +2413,7 @@
           }
          },
          {
-          "_id": "404e74d",
+          "_id": "f61f1bf",
           "text": "Rot Repair &amp; Prevention",
           "link": {
            "url": "/rot-repair-prevention/",
@@ -2473,7 +2426,7 @@
           }
          },
          {
-          "_id": "cf3b916",
+          "_id": "5afc59d",
           "text": "Deck Staining",
           "link": {
            "url": "/deck-staining/",
@@ -2517,7 +2470,7 @@
    ]
   },
   {
-   "id": "d5ba0cf",
+   "id": "126b3d0",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -2613,7 +2566,7 @@
    },
    "elements": [
     {
-     "id": "dfe7a42",
+     "id": "b13bb87",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -2665,7 +2618,7 @@
      },
      "elements": [
       {
-       "id": "ab1f9d0",
+       "id": "6b72fcc",
        "elType": "widget",
        "widgetType": "heading",
        "isInner": false,
@@ -2714,7 +2667,7 @@
        "elements": []
       },
       {
-       "id": "b5d50dd",
+       "id": "324e229",
        "elType": "widget",
        "widgetType": "text-editor",
        "isInner": false,
@@ -2745,7 +2698,7 @@
        "elements": []
       },
       {
-       "id": "6b0c691",
+       "id": "cf3b916",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -2799,7 +2752,7 @@
        },
        "elements": [
         {
-         "id": "8ae212b",
+         "id": "737c119",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,
@@ -2851,7 +2804,7 @@
          "elements": []
         },
         {
-         "id": "7c32fb0",
+         "id": "404e74d",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,

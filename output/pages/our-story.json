@@ -4,7 +4,7 @@
  "type": "page",
  "content": [
   {
-   "id": "fc4292b",
+   "id": "64447a8",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -82,7 +82,7 @@
    },
    "elements": [
     {
-     "id": "1f5e378",
+     "id": "c76a129",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -189,7 +189,7 @@
      },
      "elements": [
       {
-       "id": "7ca7dc2",
+       "id": "158f7eb",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -241,7 +241,7 @@
        },
        "elements": [
         {
-         "id": "e74d762",
+         "id": "5b20cf9",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -272,7 +272,7 @@
          "elements": []
         },
         {
-         "id": "bae9aee",
+         "id": "a30b1eb",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -320,7 +320,7 @@
          "elements": []
         },
         {
-         "id": "d3adb9e",
+         "id": "8543ade",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -365,7 +365,7 @@
          "elements": []
         },
         {
-         "id": "45bcdf3",
+         "id": "7642601",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -418,7 +418,7 @@
          },
          "elements": [
           {
-           "id": "9be19af",
+           "id": "b218dd9",
            "elType": "widget",
            "widgetType": "button",
            "isInner": false,
@@ -470,7 +470,7 @@
            "elements": []
           },
           {
-           "id": "9445d1a",
+           "id": "76b7fb8",
            "elType": "widget",
            "widgetType": "button",
            "isInner": false,
@@ -539,7 +539,7 @@
        ]
       },
       {
-       "id": "6498130",
+       "id": "9cbb609",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -613,70 +613,23 @@
          "unit": "px",
          "size": 280,
          "sizes": []
+        },
+        "background_image": {
+         "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-crew-staining-log-home.jpg",
+         "id": 2751,
+         "size": "",
+         "alt": "Top Notch crew working on a log home",
+         "source": "library"
         }
        },
-       "elements": [
-        {
-         "id": "b5f218e",
-         "elType": "widget",
-         "widgetType": "icon-list",
-         "isInner": false,
-         "settings": {
-          "icon_list": [
-           {
-            "_id": "6a272fc",
-            "text": "Photo: the Top Notch crew",
-            "selected_icon": {
-             "value": {
-              "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/camera.svg",
-              "id": 1433
-             },
-             "library": "svg"
-            }
-           }
-          ],
-          "icon_color": "#F2ECE399",
-          "text_color": "#F2ECE399",
-          "icon_size": {
-           "unit": "px",
-           "size": 14,
-           "sizes": []
-          },
-          "text_indent": {
-           "unit": "px",
-           "size": 8,
-           "sizes": []
-          },
-          "space_between": {
-           "unit": "px",
-           "size": 0,
-           "sizes": []
-          },
-          "icon_typography_typography": "custom",
-          "icon_typography_font_family": "Manrope",
-          "icon_typography_font_size": {
-           "unit": "px",
-           "size": 12,
-           "sizes": []
-          },
-          "icon_typography_font_weight": "400",
-          "icon_typography_line_height": {
-           "unit": "em",
-           "size": 1.4,
-           "sizes": []
-          },
-          "_title": "Photo label (delete when photo added)"
-         },
-         "elements": []
-        }
-       ]
+       "elements": []
       }
      ]
     }
    ]
   },
   {
-   "id": "508e79e",
+   "id": "8ea3a36",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -754,7 +707,7 @@
    },
    "elements": [
     {
-     "id": "c3a2159",
+     "id": "fc42c96",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -861,7 +814,7 @@
      },
      "elements": [
       {
-       "id": "3c47ba6",
+       "id": "663af47",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -912,7 +865,7 @@
        },
        "elements": [
         {
-         "id": "7656e63",
+         "id": "bc92ece",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -960,7 +913,7 @@
          "elements": []
         },
         {
-         "id": "c974a4a",
+         "id": "78df7da",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -992,7 +945,7 @@
        ]
       },
       {
-       "id": "9f1579f",
+       "id": "d464352",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1070,14 +1023,14 @@
        },
        "elements": [
         {
-         "id": "545db50",
+         "id": "bdde68d",
          "elType": "widget",
          "widgetType": "icon-list",
          "isInner": false,
          "settings": {
           "icon_list": [
            {
-            "_id": "12b1237",
+            "_id": "285251b",
             "text": "Photo: the Gypsum yard",
             "selected_icon": {
              "value": {
@@ -1129,7 +1082,7 @@
    ]
   },
   {
-   "id": "d738335",
+   "id": "bae9aee",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -1207,7 +1160,7 @@
    },
    "elements": [
     {
-     "id": "e53a5eb",
+     "id": "e74d762",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -1314,7 +1267,7 @@
      },
      "elements": [
       {
-       "id": "7a24b2c",
+       "id": "b20b643",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1388,66 +1341,19 @@
          "unit": "px",
          "size": 300,
          "sizes": []
+        },
+        "background_image": {
+         "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-media-blasting-log-wall.jpg",
+         "id": 2748,
+         "size": "",
+         "alt": "Crew media blasting a log wall",
+         "source": "library"
         }
        },
-       "elements": [
-        {
-         "id": "ac99258",
-         "elType": "widget",
-         "widgetType": "icon-list",
-         "isInner": false,
-         "settings": {
-          "icon_list": [
-           {
-            "_id": "b4f5373",
-            "text": "Photo: crew at work",
-            "selected_icon": {
-             "value": {
-              "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/camera.svg",
-              "id": 1433
-             },
-             "library": "svg"
-            }
-           }
-          ],
-          "icon_color": "#F2ECE399",
-          "text_color": "#F2ECE399",
-          "icon_size": {
-           "unit": "px",
-           "size": 14,
-           "sizes": []
-          },
-          "text_indent": {
-           "unit": "px",
-           "size": 8,
-           "sizes": []
-          },
-          "space_between": {
-           "unit": "px",
-           "size": 0,
-           "sizes": []
-          },
-          "icon_typography_typography": "custom",
-          "icon_typography_font_family": "Manrope",
-          "icon_typography_font_size": {
-           "unit": "px",
-           "size": 12,
-           "sizes": []
-          },
-          "icon_typography_font_weight": "400",
-          "icon_typography_line_height": {
-           "unit": "em",
-           "size": 1.4,
-           "sizes": []
-          },
-          "_title": "Photo label (delete when photo added)"
-         },
-         "elements": []
-        }
-       ]
+       "elements": []
       },
       {
-       "id": "a43628f",
+       "id": "e8ec586",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1498,7 +1404,7 @@
        },
        "elements": [
         {
-         "id": "316ef2d",
+         "id": "f896319",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1546,7 +1452,7 @@
          "elements": []
         },
         {
-         "id": "6581ebc",
+         "id": "bd9ea62",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -1582,7 +1488,7 @@
    ]
   },
   {
-   "id": "f3a19ce",
+   "id": "45bcdf3",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -1660,7 +1566,7 @@
    },
    "elements": [
     {
-     "id": "e9f0d7f",
+     "id": "9445d1a",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -1711,7 +1617,7 @@
      },
      "elements": [
       {
-       "id": "dd55c3d",
+       "id": "d3adb9e",
        "elType": "widget",
        "widgetType": "heading",
        "isInner": false,
@@ -1759,7 +1665,7 @@
        "elements": []
       },
       {
-       "id": "89d762c",
+       "id": "9be19af",
        "elType": "widget",
        "widgetType": "text-editor",
        "isInner": false,
@@ -1793,7 +1699,7 @@
    ]
   },
   {
-   "id": "b922190",
+   "id": "3c47ba6",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -1871,7 +1777,7 @@
    },
    "elements": [
     {
-     "id": "2eef616",
+     "id": "c974a4a",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -1978,7 +1884,7 @@
      },
      "elements": [
       {
-       "id": "66b817f",
+       "id": "6a272fc",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -2029,7 +1935,7 @@
        },
        "elements": [
         {
-         "id": "8ba07ed",
+         "id": "7ca7dc2",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -2079,7 +1985,7 @@
        ]
       },
       {
-       "id": "b2e2997",
+       "id": "7656e63",
        "elType": "widget",
        "widgetType": "icon-list",
        "isInner": false,
@@ -2093,7 +1999,7 @@
         "text_color_hover": "#D9A66B",
         "icon_list": [
          {
-          "_id": "13024fa",
+          "_id": "b5f218e",
           "text": "Core Values",
           "link": {
            "url": "/core-values/",
@@ -2106,7 +2012,7 @@
           }
          },
          {
-          "_id": "19994f4",
+          "_id": "6498130",
           "text": "Reviews",
           "link": {
            "url": "/reviews/",
@@ -2119,7 +2025,7 @@
           }
          },
          {
-          "_id": "d1dc73d",
+          "_id": "1f5e378",
           "text": "Service Area",
           "link": {
            "url": "/areas-we-serve/",
@@ -2132,7 +2038,7 @@
           }
          },
          {
-          "_id": "4849791",
+          "_id": "fc4292b",
           "text": "For Builders",
           "link": {
            "url": "/for-builders/",
@@ -2176,7 +2082,7 @@
    ]
   },
   {
-   "id": "da6e3fc",
+   "id": "6581ebc",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -2272,7 +2178,7 @@
    },
    "elements": [
     {
-     "id": "458fb7f",
+     "id": "316ef2d",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -2324,7 +2230,7 @@
      },
      "elements": [
       {
-       "id": "ea159d4",
+       "id": "12b1237",
        "elType": "widget",
        "widgetType": "heading",
        "isInner": false,
@@ -2373,7 +2279,7 @@
        "elements": []
       },
       {
-       "id": "54c5dd2",
+       "id": "545db50",
        "elType": "widget",
        "widgetType": "text-editor",
        "isInner": false,
@@ -2404,7 +2310,7 @@
        "elements": []
       },
       {
-       "id": "d79f065",
+       "id": "508e79e",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -2458,7 +2364,7 @@
        },
        "elements": [
         {
-         "id": "639cf42",
+         "id": "9f1579f",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,
@@ -2510,7 +2416,7 @@
          "elements": []
         },
         {
-         "id": "148dc23",
+         "id": "c3a2159",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,

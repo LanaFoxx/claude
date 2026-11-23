@@ -1037,7 +1037,7 @@ WWD = [
      [("Interior Painting", "/interior-painting/"), ("Exterior Painting", "/exterior-painting/"),
       ("Specialty Finishes &amp; Interior Wood", "/specialty-finishes-interior-wood/"),
       ("Commercial &amp; HOA", "/commercial-hoa/")]),
-    ("What We Do / Staining", "#3A281B", "Photo: stained log home", "fence", "Staining",
+    ("What We Do / Staining", "#3A281B", "Photo: stained log home", "tn-log-home-winter", "Staining",
      "Log &amp; Timber Staining",
      "Log home staining is where we started and what we're known for. We prepare the wood properly and apply "
      "premium stains and sealers. We build log homes, so we know what makes a finish last.",

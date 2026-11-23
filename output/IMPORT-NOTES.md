@@ -365,3 +365,8 @@ Container `Seasonal Offer`: change the H2 to **Talk to us about your project** a
 - Copy is adapted from topnotch-painting.com and topnotch-logworks.com. Reviews and project stories use the real client testimonials from those sites.
 - Staging page IDs: 2581–2597.
 - Mobile/tablet pass: list items now get the no-short-last-line treatment. Footer and top-bar links are 44px tap targets. On phones the hero partner logos are 28px so they fit one row, all three hero value points get dots, and the Our Work gallery shows 2 columns.
+
+## Real staining photos (from topnotch-logworks.com, client approved)
+- 12 photos from the Logworks NextGEN gallery, resized to max 1600px JPG and uploaded with alt text (media 2744–2755). They are listed in `tools/photos.json` under `tn-*` keys and used through `photo_slot(..., image=key)`.
+- Placements: Log Home Staining (stained exterior), Chinking (tall windows), Rot Repair (log home deck), Deck Staining (deck and rail), Media Blasting (crew blasting), Specialty Finishes (timber ceiling), For Builders (timber frame), Our Story (crew on a log home and crew blasting), homepage Staining panel (winter log home), and 6 Our Work tiles (real photos first, painting placeholders last).
+- Project Stories keep placeholders, so no photo implies it shows a specific client's home.

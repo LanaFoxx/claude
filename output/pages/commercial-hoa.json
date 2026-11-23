@@ -4,7 +4,7 @@
  "type": "page",
  "content": [
   {
-   "id": "dab39a0",
+   "id": "bfe987c",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -82,7 +82,7 @@
    },
    "elements": [
     {
-     "id": "a2845da",
+     "id": "9fdf661",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -189,7 +189,7 @@
      },
      "elements": [
       {
-       "id": "38215db",
+       "id": "6a1967d",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -241,7 +241,7 @@
        },
        "elements": [
         {
-         "id": "e8ae93f",
+         "id": "e563d56",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -272,7 +272,7 @@
          "elements": []
         },
         {
-         "id": "bb9f443",
+         "id": "e978673",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -320,7 +320,7 @@
          "elements": []
         },
         {
-         "id": "3eb5238",
+         "id": "e8ae93f",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -365,7 +365,7 @@
          "elements": []
         },
         {
-         "id": "e8b6dd5",
+         "id": "16f594c",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -418,7 +418,7 @@
          },
          "elements": [
           {
-           "id": "16f594c",
+           "id": "bb9f443",
            "elType": "widget",
            "widgetType": "button",
            "isInner": false,
@@ -470,7 +470,7 @@
            "elements": []
           },
           {
-           "id": "6a1967d",
+           "id": "3eb5238",
            "elType": "widget",
            "widgetType": "button",
            "isInner": false,
@@ -539,7 +539,7 @@
        ]
       },
       {
-       "id": "bfe987c",
+       "id": "6a091fd",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -617,14 +617,14 @@
        },
        "elements": [
         {
-         "id": "9fdf661",
+         "id": "38215db",
          "elType": "widget",
          "widgetType": "icon-list",
          "isInner": false,
          "settings": {
           "icon_list": [
            {
-            "_id": "6a091fd",
+            "_id": "e8b6dd5",
             "text": "Photo: commercial or HOA building",
             "selected_icon": {
              "value": {
@@ -676,7 +676,7 @@
    ]
   },
   {
-   "id": "d051ac7",
+   "id": "57cd07f",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -754,7 +754,7 @@
    },
    "elements": [
     {
-     "id": "9e48e48",
+     "id": "c74c990",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -861,7 +861,7 @@
      },
      "elements": [
       {
-       "id": "aeebba4",
+       "id": "476f536",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -912,7 +912,7 @@
        },
        "elements": [
         {
-         "id": "99d3307",
+         "id": "a2845da",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -960,7 +960,7 @@
          "elements": []
         },
         {
-         "id": "476f536",
+         "id": "dab39a0",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -992,7 +992,7 @@
        ]
       },
       {
-       "id": "57cd07f",
+       "id": "aeebba4",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1085,7 +1085,7 @@
        },
        "elements": [
         {
-         "id": "c74c990",
+         "id": "2c14df9",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1116,7 +1116,7 @@
          "elements": []
         },
         {
-         "id": "2c14df9",
+         "id": "99d3307",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -1153,7 +1153,7 @@
    ]
   },
   {
-   "id": "1f7815f",
+   "id": "2b25286",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -1231,7 +1231,7 @@
    },
    "elements": [
     {
-     "id": "2b25286",
+     "id": "7fa1294",
      "elType": "widget",
      "widgetType": "heading",
      "isInner": false,
@@ -1279,7 +1279,7 @@
      "elements": []
     },
     {
-     "id": "bf3e7dd",
+     "id": "3bd8af2",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -1386,7 +1386,7 @@
      },
      "elements": [
       {
-       "id": "a1e0b53",
+       "id": "cb20e1d",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1437,7 +1437,7 @@
        },
        "elements": [
         {
-         "id": "a16b2b3",
+         "id": "9e48e48",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1463,7 +1463,7 @@
          "elements": []
         },
         {
-         "id": "cb20e1d",
+         "id": "d051ac7",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1489,7 +1489,7 @@
          "elements": []
         },
         {
-         "id": "46e5372",
+         "id": "a16b2b3",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -1521,7 +1521,7 @@
        ]
       },
       {
-       "id": "bb99436",
+       "id": "a015b7c",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1572,7 +1572,7 @@
        },
        "elements": [
         {
-         "id": "5b71779",
+         "id": "46e5372",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1598,7 +1598,7 @@
          "elements": []
         },
         {
-         "id": "a015b7c",
+         "id": "a1e0b53",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1624,7 +1624,7 @@
          "elements": []
         },
         {
-         "id": "54a23f6",
+         "id": "5b71779",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -1656,7 +1656,7 @@
        ]
       },
       {
-       "id": "d813063",
+       "id": "31f3439",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1707,7 +1707,7 @@
        },
        "elements": [
         {
-         "id": "9e44980",
+         "id": "54a23f6",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1733,7 +1733,7 @@
          "elements": []
         },
         {
-         "id": "31f3439",
+         "id": "bb99436",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1759,7 +1759,7 @@
          "elements": []
         },
         {
-         "id": "29f900d",
+         "id": "9e44980",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -1791,7 +1791,7 @@
        ]
       },
       {
-       "id": "3bd8af2",
+       "id": "28afaf5",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1842,7 +1842,7 @@
        },
        "elements": [
         {
-         "id": "5382ad4",
+         "id": "29f900d",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1868,7 +1868,7 @@
          "elements": []
         },
         {
-         "id": "28afaf5",
+         "id": "d813063",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1894,7 +1894,7 @@
          "elements": []
         },
         {
-         "id": "7fa1294",
+         "id": "5382ad4",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -1930,7 +1930,7 @@
    ]
   },
   {
-   "id": "2b37ca0",
+   "id": "b55c9c8",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -2008,7 +2008,7 @@
    },
    "elements": [
     {
-     "id": "b14d59f",
+     "id": "3f7c9cc",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -2115,7 +2115,7 @@
      },
      "elements": [
       {
-       "id": "6b336bc",
+       "id": "1f7815f",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -2166,7 +2166,7 @@
        },
        "elements": [
         {
-         "id": "d255365",
+         "id": "bf3e7dd",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -2216,7 +2216,7 @@
        ]
       },
       {
-       "id": "b55c9c8",
+       "id": "dd64a75",
        "elType": "widget",
        "widgetType": "icon-list",
        "isInner": false,
@@ -2230,7 +2230,7 @@
         "text_color_hover": "#D9A66B",
         "icon_list": [
          {
-          "_id": "c8ec796",
+          "_id": "d255365",
           "text": "Interior Painting",
           "link": {
            "url": "/interior-painting/",
@@ -2243,7 +2243,7 @@
           }
          },
          {
-          "_id": "dd64a75",
+          "_id": "6b336bc",
           "text": "Exterior Painting",
           "link": {
            "url": "/exterior-painting/",
@@ -2256,7 +2256,7 @@
           }
          },
          {
-          "_id": "3f7c9cc",
+          "_id": "c8ec796",
           "text": "Specialty Finishes &amp; Interior Wood",
           "link": {
            "url": "/specialty-finishes-interior-wood/",
@@ -2300,7 +2300,7 @@
    ]
   },
   {
-   "id": "5a81585",
+   "id": "e65f45b",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -2396,7 +2396,7 @@
    },
    "elements": [
     {
-     "id": "205cbc5",
+     "id": "a68e485",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -2448,7 +2448,7 @@
      },
      "elements": [
       {
-       "id": "91b2499",
+       "id": "b14d59f",
        "elType": "widget",
        "widgetType": "heading",
        "isInner": false,
@@ -2497,7 +2497,7 @@
        "elements": []
       },
       {
-       "id": "6044df5",
+       "id": "2b37ca0",
        "elType": "widget",
        "widgetType": "text-editor",
        "isInner": false,
@@ -2528,7 +2528,7 @@
        "elements": []
       },
       {
-       "id": "e65f45b",
+       "id": "56db73a",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -2582,7 +2582,7 @@
        },
        "elements": [
         {
-         "id": "56db73a",
+         "id": "91b2499",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,
@@ -2634,7 +2634,7 @@
          "elements": []
         },
         {
-         "id": "a68e485",
+         "id": "6044df5",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,

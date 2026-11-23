@@ -4,7 +4,7 @@
  "type": "page",
  "content": [
   {
-   "id": "9fc460a",
+   "id": "ef2986b",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -82,7 +82,7 @@
    },
    "elements": [
     {
-     "id": "4b85f43",
+     "id": "f7f2936",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -189,7 +189,7 @@
      },
      "elements": [
       {
-       "id": "6c2472e",
+       "id": "fd5eeb8",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -241,7 +241,7 @@
        },
        "elements": [
         {
-         "id": "fd5eeb8",
+         "id": "1eec8bf",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -272,7 +272,7 @@
          "elements": []
         },
         {
-         "id": "cec4f31",
+         "id": "48ca6b4",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -320,7 +320,7 @@
          "elements": []
         },
         {
-         "id": "f7f2936",
+         "id": "bddc540",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -365,7 +365,7 @@
          "elements": []
         },
         {
-         "id": "c50f9e6",
+         "id": "369de5d",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -418,7 +418,7 @@
          },
          "elements": [
           {
-           "id": "ef2986b",
+           "id": "9234efd",
            "elType": "widget",
            "widgetType": "button",
            "isInner": false,
@@ -470,7 +470,7 @@
            "elements": []
           },
           {
-           "id": "7629bc2",
+           "id": "ecb30d7",
            "elType": "widget",
            "widgetType": "button",
            "isInner": false,
@@ -539,7 +539,7 @@
        ]
       },
       {
-       "id": "da482b4",
+       "id": "cec4f31",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -615,10 +615,10 @@
          "sizes": []
         },
         "background_image": {
-         "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-hero-staining-deck-railing.webp",
-         "id": 1583,
+         "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-stained-deck-rail.jpg",
+         "id": 2747,
          "size": "",
-         "alt": "Staining a deck railing with a brush",
+         "alt": "Freshly stained deck and log railing",
          "source": "library"
         }
        },
@@ -629,7 +629,7 @@
    ]
   },
   {
-   "id": "859291d",
+   "id": "569855d",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -707,7 +707,7 @@
    },
    "elements": [
     {
-     "id": "6bee8f7",
+     "id": "e43cc53",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -814,7 +814,7 @@
      },
      "elements": [
       {
-       "id": "ec78752",
+       "id": "da482b4",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -865,7 +865,7 @@
        },
        "elements": [
         {
-         "id": "e43cc53",
+         "id": "7629bc2",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -913,7 +913,7 @@
          "elements": []
         },
         {
-         "id": "569855d",
+         "id": "c50f9e6",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -945,7 +945,7 @@
        ]
       },
       {
-       "id": "6fee13c",
+       "id": "9fc460a",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1038,7 +1038,7 @@
        },
        "elements": [
         {
-         "id": "437362d",
+         "id": "4b85f43",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1069,7 +1069,7 @@
          "elements": []
         },
         {
-         "id": "67fbeee",
+         "id": "6c2472e",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -1106,7 +1106,7 @@
    ]
   },
   {
-   "id": "6abc12f",
+   "id": "b0c5b20",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -1184,7 +1184,7 @@
    },
    "elements": [
     {
-     "id": "f4cfed0",
+     "id": "401a5d1",
      "elType": "widget",
      "widgetType": "heading",
      "isInner": false,
@@ -1232,7 +1232,7 @@
      "elements": []
     },
     {
-     "id": "115c1d5",
+     "id": "3885f86",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -1339,7 +1339,7 @@
      },
      "elements": [
       {
-       "id": "dfba5e7",
+       "id": "6fee13c",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1390,7 +1390,7 @@
        },
        "elements": [
         {
-         "id": "b3132dd",
+         "id": "67fbeee",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1416,7 +1416,7 @@
          "elements": []
         },
         {
-         "id": "8522aa7",
+         "id": "ec78752",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1442,7 +1442,7 @@
          "elements": []
         },
         {
-         "id": "9c7ddcd",
+         "id": "437362d",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -1474,7 +1474,7 @@
        ]
       },
       {
-       "id": "bc642a3",
+       "id": "8522aa7",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1525,7 +1525,7 @@
        },
        "elements": [
         {
-         "id": "895c2b9",
+         "id": "6bee8f7",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1551,7 +1551,7 @@
          "elements": []
         },
         {
-         "id": "f5a3407",
+         "id": "859291d",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1577,7 +1577,7 @@
          "elements": []
         },
         {
-         "id": "d9e3965",
+         "id": "b3132dd",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -1609,7 +1609,7 @@
        ]
       },
       {
-       "id": "3885f86",
+       "id": "f5a3407",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1660,7 +1660,7 @@
        },
        "elements": [
         {
-         "id": "a4a0df0",
+         "id": "9c7ddcd",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1686,7 +1686,7 @@
          "elements": []
         },
         {
-         "id": "5febec7",
+         "id": "dfba5e7",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1712,7 +1712,7 @@
          "elements": []
         },
         {
-         "id": "401a5d1",
+         "id": "895c2b9",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -1744,7 +1744,7 @@
        ]
       },
       {
-       "id": "8c1f918",
+       "id": "5febec7",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1795,7 +1795,7 @@
        },
        "elements": [
         {
-         "id": "b0c5b20",
+         "id": "d9e3965",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1821,7 +1821,7 @@
          "elements": []
         },
         {
-         "id": "7919087",
+         "id": "bc642a3",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1847,7 +1847,7 @@
          "elements": []
         },
         {
-         "id": "375e1a3",
+         "id": "a4a0df0",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -1883,7 +1883,7 @@
    ]
   },
   {
-   "id": "3c2dba9",
+   "id": "95f23fa",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -1961,7 +1961,7 @@
    },
    "elements": [
     {
-     "id": "b39d208",
+     "id": "e5c67ee",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -2068,7 +2068,7 @@
      },
      "elements": [
       {
-       "id": "e5c67ee",
+       "id": "375e1a3",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -2119,7 +2119,7 @@
        },
        "elements": [
         {
-         "id": "e0522ff",
+         "id": "7919087",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -2169,7 +2169,7 @@
        ]
       },
       {
-       "id": "199a030",
+       "id": "e0522ff",
        "elType": "widget",
        "widgetType": "icon-list",
        "isInner": false,
@@ -2183,7 +2183,7 @@
         "text_color_hover": "#D9A66B",
         "icon_list": [
          {
-          "_id": "95f23fa",
+          "_id": "8c1f918",
           "text": "Log Home Staining &amp; Restoration",
           "link": {
            "url": "/log-home-staining-restoration/",
@@ -2196,7 +2196,7 @@
           }
          },
          {
-          "_id": "c3cd1e1",
+          "_id": "f4cfed0",
           "text": "Chinking &amp; Check Sealing",
           "link": {
            "url": "/chinking-check-sealing/",
@@ -2209,7 +2209,7 @@
           }
          },
          {
-          "_id": "78881c5",
+          "_id": "115c1d5",
           "text": "Rot Repair &amp; Prevention",
           "link": {
            "url": "/rot-repair-prevention/",
@@ -2222,7 +2222,7 @@
           }
          },
          {
-          "_id": "db9d214",
+          "_id": "6abc12f",
           "text": "Media Blasting",
           "link": {
            "url": "/media-blasting/",
@@ -2266,7 +2266,7 @@
    ]
   },
   {
-   "id": "3351628",
+   "id": "258e9c4",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -2362,7 +2362,7 @@
    },
    "elements": [
     {
-     "id": "53d803a",
+     "id": "3c2dba9",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -2414,7 +2414,7 @@
      },
      "elements": [
       {
-       "id": "258e9c4",
+       "id": "c3cd1e1",
        "elType": "widget",
        "widgetType": "heading",
        "isInner": false,
@@ -2463,7 +2463,7 @@
        "elements": []
       },
       {
-       "id": "5c8da30",
+       "id": "78881c5",
        "elType": "widget",
        "widgetType": "text-editor",
        "isInner": false,
@@ -2494,7 +2494,7 @@
        "elements": []
       },
       {
-       "id": "cb235be",
+       "id": "b39d208",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -2548,7 +2548,7 @@
        },
        "elements": [
         {
-         "id": "6f6f6b2",
+         "id": "db9d214",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,
@@ -2600,7 +2600,7 @@
          "elements": []
         },
         {
-         "id": "9bf6237",
+         "id": "199a030",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,
