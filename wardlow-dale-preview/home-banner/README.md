@@ -1,13 +1,16 @@
-# Home banner (client request, Nov 19 2026)
+# Home hero photo (client request, Nov 2026)
 
-The client chose not to use the new design. Their banner ("Injured in a car accident?") replaces only the
-hero section of the existing staging Home page (ID 457), rebuilt as live text. The rest of Home is unchanged,
-and the /new-design/ preview and all its items (page, templates, snippet, 27 media) were deleted with `../rollback.cjs`.
+Current state on staging Home (ID 457): the ORIGINAL hero is in place (same wording, button, courthouse background),
+with one addition: the photo of Sara and Torrie from the client's banner, bottom-right of the hero (media 1283,
+`wd-home-hero-partners.webp`, left/top edges faded to transparent so it blends into the background).
+Above 1180px it sits to the right of the text; at 1180px and below it moves under the text.
 
-* `deploy-banner.cjs`: builds the banner section and swaps it in (finds the original hero `32e60168` or an earlier banner by its title).
-* `upload-banner.cjs`: uploads the banner photo crop and the three gold icons (media 1267–1270, `wd-home-banner-*`).
-* `restore-hero.cjs` + `home457-before-20261119.json.gz`: full Elementor backup of Home taken before the change; the script puts the old hero back.
+* `add-hero-photo.cjs`: adds (or replaces) that one Image widget in the hero. Nothing else in the hero changes.
+* `restore-hero.cjs` + `home457-before-20261119.json.gz`: Elementor backup of Home from before any change; the script swaps
+  a "Home banner" section back to the original hero (used on Nov 23 to undo the full banner rebuild).
+* `deploy-banner.cjs`: the full-banner rebuild from Nov 19 (no longer live; kept for reference). Its media (1267–1270) was deleted.
+* `upload-banner.cjs`: media upload helper (`PATTERN=… node upload-banner.cjs <dir> <out.json>`).
 
-Notes: the photo is cropped from the client's 1644×654 banner (left edge faded into the green), so it is soft on large/retina
-screens until we get the original. Headline font is Cinzel (closest Google font to the banner's serif); tagline and labels use Poppins like the rest of the site.
-The banner's logo is left out because the site header directly above already shows it. The existing "Free case evaluation" button was kept (restyled gold; still links to `#` and is still hidden on phones, as before).
+The /new-design/ preview and all its items were deleted on Nov 19 with `../rollback.cjs`.
+The photo is cut from the client's 1644×654 banner screenshot and still carries that banner's green background;
+a full-resolution original or a cut-out of the photo would make it sharper and blend perfectly.
