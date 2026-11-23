@@ -3232,12 +3232,29 @@
 	function connectionsView() {
 		S.pConnOpen = true;
 		return (S.health && S.health.items ? '<h2 class="dwdc-sech">Sync health</h2><section class="dd-card dd-healthall">' + healthList(S.health, true) + '</section>' : '')
+			+ '<h2 class="dwdc-sech">Site email · sending through Google Workspace</h2>' + mailConn()
 			+ '<h2 class="dwdc-sech">Google, bank &amp; AI</h2>' + connPanel().replace('<button class="dwdc-cardh dwdc-colh" data-pconnopen', '<div class="dwdc-cardh" data-x').replace(/<\/button>(<div class="dwdc-conns">)/, '</div>$1')
 			+ '<h2 class="dwdc-sech">Google Drive · client upload folders</h2>' + driveConn()
 			+ '<h2 class="dwdc-sech">AI Instructions · your house rules</h2>' + rulesConn()
 			+ '<h2 class="dwdc-sech">Taxes · set-aside and CPA export</h2>' + taxConn()
 			+ '<h2 class="dwdc-sech">Zoom · meeting invites</h2>' + zoomConn()
 			+ '<h2 class="dwdc-sech">Payments &amp; Upwork</h2><section class="dwdc-card pad dwdc-mcard wide">' + connCard() + '</section>';
+	}
+	function mailConn() {
+		if (!S.smtp && !S.smtpLoading) { S.smtpLoading = true; api('/sitemail').then(function (x) { S.smtp = x; S.smtpLoading = false; render(); }).catch(function () { S.smtpLoading = false; }); }
+		var M = S.smtp;
+		if (!M) { return '<section class="dd-card dd-drvc"><p class="dd-help">Loading…</p></section>'; }
+		if (M.google) {
+			return '<section class="dd-card dd-drvc"><div class="dd-drvh">' + ddPill('Connected', 'success') + '<span>Every email the website sends (onboarding forms, client emails, invoices, new-lead alerts) goes out through your Google Workspace account as <b>' + esc(M.user) + '</b>, signed by Google, so it lands in inboxes instead of spam. A copy of each shows in your Gmail Sent folder.</span></div>'
+				+ '<div class="dd-pbtns"><button type="button" class="dd-btn ghost" data-smtptest>Send me a test email</button><button type="button" class="dd-btn ghost" data-smtpnew>Use a new app password</button></div>'
+				+ (S.smtpNew ? mailForm(M) : '') + '</section>';
+		}
+		return '<section class="dd-card dd-drvc"><div class="dd-drvh">' + ddPill('Not connected', 'warning') + '<span>Right now the website sends email from the web server without Google’s signature, so strict inboxes (like TECHNE Talent’s) can quarantine onboarding forms and client emails. Connect it once and every site email goes out through Google Workspace as <b>' + esc(M.user) + '</b>.</span></div>' + mailForm(M) + '</section>';
+	}
+	function mailForm(M) {
+		return '<ol class="dd-smtpsteps"><li>Open <a href="https://myaccount.google.com/apppasswords" target="_blank" rel="noopener">Google app passwords</a>, signed in as <b>' + esc(M.user) + '</b>. If Google asks, turn on 2-Step Verification first.</li><li>Type <b>Website</b> as the name and click <b>Create</b>.</li><li>Copy the 16-letter password Google shows, paste it below and click <b>Connect</b>.</li></ol>'
+			+ '<div class="dwdc-farow dd-smtprow"><input type="password" data-smtppass autocomplete="new-password" placeholder="abcd efgh ijkl mnop" class="dd-smtpin"><button type="button" class="dd-btn primary" data-smtpsave>Connect</button></div>'
+			+ '<p class="dd-help">Dream Desk checks the password with Google first. Nothing changes until Google accepts it, so site email keeps working either way.</p>';
 	}
 	function rulesConn() {
 		if (!S.rules && !S.rulesLoading) { S.rulesLoading = true; api('/house-rules').then(function (x) { S.rules = x; S.rulesLoading = false; render(); }).catch(function () { S.rulesLoading = false; }); }
@@ -4735,6 +4752,14 @@
 				var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([x.csv], { type: 'text/csv' })); a.download = x.name; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
 				el.disabled = false; el.innerHTML = tlab; toast('Downloaded ' + x.name);
 			}).catch(function (er) { el.disabled = false; el.innerHTML = tlab; fail(er); });
+			return;
+		}
+		if ((el = t.closest('[data-smtpnew]'))) { S.smtpNew = !S.smtpNew; render(); return; }
+		if ((el = t.closest('[data-smtpsave], [data-smtptest]'))) {
+			var spi = app.querySelector('[data-smtppass]'), sTest = el.hasAttribute('data-smtptest'), slab = el.innerHTML;
+			if (!sTest && (!spi || !spi.value.trim())) { toast('Paste the app password from Google first'); return; }
+			el.disabled = true; el.innerHTML = sTest ? 'Sending…' : 'Checking with Google…';
+			api(sTest ? '/sitemail/test' : '/sitemail', 'POST', sTest ? {} : { pass: spi.value }).then(function (x) { S.smtp = x; S.smtpNew = false; render(); toast(x.test ? (sTest ? 'Test email sent to ' + x.user : 'Connected. Test email sent to ' + x.user) : 'Saved, but the test email didn’t send'); }).catch(function (er) { el.disabled = false; el.innerHTML = slab; fail(er); });
 			return;
 		}
 		if ((el = t.closest('[data-rulessave], [data-rulesreset]'))) {

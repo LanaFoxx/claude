@@ -1270,3 +1270,6 @@ body:has(.dwdc-addm) #dwdc-askfab { display: none !important; }
 .dd-obc small { color: var(--text-2, var(--muted)); font-size: 12.5px; line-height: 1.45; }
 .dd-obc-b { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
 .dd-detob:has(.dd-obch) { display: block; }
+.dd-smtpsteps{margin:10px 0 12px 18px;line-height:1.7}
+.dd-smtpin{flex:1;min-width:220px;max-width:320px;font-family:ui-monospace,Menlo,Consolas,monospace;letter-spacing:.04em}
+.dwdc-farow.dd-smtprow{justify-content:flex-start;gap:8px;flex-wrap:wrap}
