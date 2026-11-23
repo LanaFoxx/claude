@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@300;400;500;600;700;900&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#fff;font-family:'Red Hat Display',sans-serif;color:#04243F}
+a{color:#C93C1A}a:hover{color:#04243F}input,select,textarea,button{font-family:inherit}
+.faq summary::-webkit-details-marker{display:none}.faq[open] .faq-ic{transform:rotate(45deg)}
+@media(min-width:1040px){.stick{position:sticky;top:76px}}
+.m-only{display:none!important}@media(max-width:760px){.d-nav{display:none!important}.hdr-contact{display:none!important}.m-only{display:flex!important}}.m-det summary{list-style:none}.m-det summary::-webkit-details-marker{display:none}
+.hdr-contact{order:3;flex:1 1 100%;justify-content:center}@media(min-width:820px){.hdr-contact{order:0;flex:1 1 auto;justify-content:flex-end;padding-right:12px}}
+</style>
+<script src="./login-drawer.js"></script>
+</helmet>
+<div style="font-family:'Red Hat Display',sans-serif;color:#04243F;background:#fff;min-height:100vh;display:flex;flex-direction:column">
+<header data-screen-label="Header" style="position:relative;z-index:60">
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:4px 16px;flex-wrap:wrap;padding:10px clamp(16px,4vw,48px);max-width:1150px;margin:0 auto">
+    <a href="Home v2.dc.html" style="display:block;width:190px;height:50px;overflow:hidden;flex:none"><img src="assets/pta-logo.png" alt="Pacific Tax Academy" style="height:96px;margin:-22px 0 0 -50px;mix-blend-mode:multiply"></a>
+    <div class="hdr-contact" style="display:flex;align-items:center;gap:4px">
+      <a href="tel:+18444434797" style="display:flex;align-items:center;gap:8px;color:#04243F;text-decoration:none;font-weight:600;padding:12px 14px" style-hover="color:#C93C1A"><svg style="color:#FB5A35;flex:none" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"></path></svg>Call us (844) 443-4797</a>
+      <span style="flex:none;width:1px;align-self:stretch;background:#DCE5EC"></span>
+      <a href="#" style="display:flex;align-items:center;gap:8px;color:#04243F;text-decoration:none;font-weight:600;padding:12px 14px" style-hover="color:#C93C1A"><svg style="color:#FB5A35;flex:none" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"></path></svg>Chat with us</a>
+    </div>
+  </div>
+<div class="m-only" style="position:absolute;right:clamp(16px,4vw,48px);top:50%;transform:translateY(-50%);gap:8px;align-items:center"><a href="tel:+18444434797" aria-label="Call us" style="width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#04243F;background:#F3F7FA"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"></path></svg></a><details class="m-det" style="position:relative"><summary aria-label="Menu" style="width:44px;height:44px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;background:#04243F"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"></path></svg></summary><nav style="position:absolute;right:0;top:54px;width:min(300px,calc(100vw - 32px));box-sizing:border-box;background:#04243F;border-radius:12px;padding:6px 20px;display:flex;flex-direction:column;box-shadow:0 14px 40px rgba(4,36,63,.35)"><a href="Course - 20-Hour Renewal.dc.html" style="color:#fff;text-decoration:none;font-weight:600;font-size:18px;padding:14px 0;">Renew (20 Hr)</a><a href="Course - 60-Hour Qualifying.dc.html" style="color:#fff;text-decoration:none;font-weight:600;font-size:18px;padding:14px 0;border-top:1px solid rgba(255,255,255,.15)">Get Qualified (60 Hr)</a><a href="Single Courses.dc.html" style="color:#fff;text-decoration:none;font-weight:600;font-size:18px;padding:14px 0;border-top:1px solid rgba(255,255,255,.15)">Single Courses</a><a href="FAQ.dc.html" style="color:#fff;text-decoration:none;font-weight:600;font-size:18px;padding:14px 0;border-top:1px solid rgba(255,255,255,.15)">Questions</a><a href="Contact.dc.html" style="color:#fff;text-decoration:none;font-weight:600;font-size:18px;padding:14px 0;border-top:1px solid rgba(255,255,255,.15)">Contact</a><a href="Account.dc.html" style="color:#fff;text-decoration:none;font-weight:600;font-size:18px;padding:14px 0;border-top:1px solid rgba(255,255,255,.15)">Log In</a><a href="Cart.dc.html" style="color:#fff;text-decoration:none;font-weight:600;font-size:18px;padding:14px 0;border-top:1px solid rgba(255,255,255,.15)">Cart</a></nav></details></div></header>
+<nav class="d-nav" data-screen-label="Menu bar" style="position:sticky;top:0;z-index:50;background:#04243F;overflow-x:auto;border-bottom:1px solid rgba(255,255,255,.18);box-shadow:0 2px 12px rgba(4,36,63,.18)">
+    <div style="display:flex;gap:4px;padding:0 clamp(8px,4vw,48px);max-width:1150px;margin:0 auto;white-space:nowrap">
+      <a href="Course - 20-Hour Renewal.dc.html" style="color:#fff;text-decoration:none;font-weight:500;padding:15px 14px" style-hover="color:#FFC46B">Renew (20 Hr)</a>
+      <span style="flex:none;width:1px;align-self:stretch;background:rgba(255,255,255,.22)"></span>
+      <a href="Course - 60-Hour Qualifying.dc.html" style="color:#fff;text-decoration:none;font-weight:500;padding:15px 14px" style-hover="color:#FFC46B">Get Qualified (60 Hr)</a>
+      <span style="flex:none;width:1px;align-self:stretch;background:rgba(255,255,255,.22)"></span>
+      <a href="Single Courses.dc.html" style="color:#fff;text-decoration:none;font-weight:500;padding:15px 14px" style-hover="color:#FFC46B">Single Courses</a>
+      <span style="flex:none;width:1px;align-self:stretch;background:rgba(255,255,255,.22)"></span>
+      <a href="FAQ.dc.html" style="color:#fff;text-decoration:none;font-weight:500;padding:15px 14px" style-hover="color:#FFC46B">Questions</a>
+      <span style="flex:none;width:1px;align-self:stretch;background:rgba(255,255,255,.22)"></span>
+      <a href="Contact.dc.html" style="color:#fff;text-decoration:none;font-weight:500;padding:15px 14px" style-hover="color:#FFC46B">Contact</a>
+      <a href="Account.dc.html" style="margin-left:auto;display:flex;align-items:center;gap:8px;color:#fff;text-decoration:none;font-weight:700;padding:15px 14px" style-hover="color:#FFC46B"><svg style="color:#FB5A35;flex:none" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 20c1.5-4 4.5-5.5 8-5.5s6.5 1.5 8 5.5"></path></svg>Log In</a>
+      <span style="flex:none;width:1px;align-self:stretch;background:rgba(255,255,255,.22)"></span>
+      <a href="Cart.dc.html" style="display:flex;align-items:center;gap:8px;color:#fff;text-decoration:none;font-weight:700;padding:15px 14px" style-hover="color:#FFC46B"><svg style="color:#FB5A35;flex:none" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2.5l2.2 11h10.6L20.5 7H7"></path><circle cx="9.5" cy="19" r="1.4"></circle><circle cx="17" cy="19" r="1.4"></circle></svg>Cart</a>
+    </div>
+</nav>
+<main style="flex:1">
+<section data-screen-label="Hero" style="position:relative;overflow:hidden;background:#04243F;color:#fff;padding-left:clamp(16px,4vw,48px);padding-right:clamp(16px,4vw,48px);padding-top:clamp(44px,6vw,80px);padding-bottom:clamp(44px,6vw,80px)">
+  <div style="position:absolute;inset:0;pointer-events:none;background-image:repeating-radial-gradient(circle at 92% 8%,rgba(255,255,255,.03) 0 1px,transparent 1px 34px)"></div><div style="position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 40% 60% at 80% 30%,rgba(18,163,180,.22),transparent 70%),radial-gradient(ellipse 35% 55% at 95% 95%,rgba(251,90,53,.16),transparent 70%),radial-gradient(ellipse 38% 60% at 8% 15%,rgba(11,74,110,.75),transparent 70%),radial-gradient(ellipse 32% 50% at 2% 100%,rgba(251,90,53,.12),transparent 70%),radial-gradient(ellipse 30% 50% at 25% 60%,rgba(18,163,180,.10),transparent 70%)"></div>
+  
+  
+  
+  <div style="position:relative;max-width:1150px;margin:0 auto;display:flex;flex-direction:column;gap:clamp(28px,4vw,44px)">
+    <div><h1 style="margin:0;font-size:clamp(34px,4.6vw,56px);font-weight:900;letter-spacing:-.03em;line-height:1.05">Guides to becoming<br><span style="font-weight:300">and staying a CTEC preparer</span></h1><div style="font-size:clamp(18px,1.6vw,21px);font-weight:300;line-height:1.5;margin-top:16px;max-width:720px;text-wrap:pretty">Plain answers about becoming a tax preparer, renewing with CTEC and getting credit with the IRS.</div></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));border-top:1px solid rgba(255,255,255,.2)">
+      <a href="#becoming" style="display:flex;align-items:center;gap:16px;padding:20px 20px 20px 0;color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.2)" style-hover="color:#FFC46B"><span style="font-size:44px;font-weight:900;line-height:1;letter-spacing:-.03em;color:#FB5A35;min-width:34px">5</span><span style="font-size:19px;font-weight:700;line-height:1.25;flex:1">Becoming a preparer</span><span style="font-size:22px;font-weight:300">↓</span></a><a href="#staying" style="display:flex;align-items:center;gap:16px;padding:20px 20px 20px 0;color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.2)" style-hover="color:#FFC46B"><span style="font-size:44px;font-weight:900;line-height:1;letter-spacing:-.03em;color:#FB5A35;min-width:34px">2</span><span style="font-size:19px;font-weight:700;line-height:1.25;flex:1">Staying registered</span><span style="font-size:22px;font-weight:300">↓</span></a><a href="#irs" style="display:flex;align-items:center;gap:16px;padding:20px 20px 20px 0;color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.2)" style-hover="color:#FFC46B"><span style="font-size:44px;font-weight:900;line-height:1;letter-spacing:-.03em;color:#FB5A35;min-width:34px">2</span><span style="font-size:19px;font-weight:700;line-height:1.25;flex:1">IRS credit and credentials</span><span style="font-size:22px;font-weight:300">↓</span></a>
+    </div>
+  </div>
+</section>
+<section data-screen-label="Becoming a preparer" style="background:#fff;padding-left:clamp(16px,4vw,48px);padding-right:clamp(16px,4vw,48px);padding-top:clamp(56px,7vw,96px);padding-bottom:clamp(56px,7vw,96px)"><div style="max-width:1150px;margin:0 auto;display:flex;flex-direction:column;gap:32px">
+  <div id="becoming" style="display:flex;justify-content:space-between;align-items:baseline;gap:8px 24px;flex-wrap:wrap;scroll-margin-top:90px;border-bottom:1px solid #DCE5EC;padding-bottom:18px"><h2 style="margin:0;font-size:clamp(29px,4vw,46px);font-weight:900;letter-spacing:-.02em;line-height:1.08">Becoming a preparer</h2><div style="font-size:18px;font-weight:300">5 guides</div></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:24px;align-items:stretch">
+    <a href="Guide - Become a Tax Preparer.dc.html" style="position:relative;overflow:hidden;background:#04243F;color:#fff;text-decoration:none;border-radius:20px;padding:clamp(28px,3.6vw,44px);display:flex;flex-direction:column;gap:18px;min-height:360px;box-shadow:0 6px 24px rgba(4,36,63,.1);transition:transform .2s,box-shadow .2s" style-hover="transform:translateY(-4px);box-shadow:0 18px 44px rgba(4,36,63,.3);color:#fff">
+      <div style="position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 60% 60% at 100% 0%,rgba(18,163,180,.28),transparent 70%),radial-gradient(ellipse 50% 50% at 0% 100%,rgba(251,90,53,.16),transparent 70%)"></div>
+      <img src="assets/check-white-coral.svg" alt="" style="position:absolute;right:-8%;bottom:-14%;width:62%;opacity:.07;pointer-events:none">
+      <span style="position:relative;align-self:flex-start;background:#FB5A35;color:#fff;font-size:14px;font-weight:700;border-radius:999px;padding:6px 14px">Start here</span>
+      <div style="position:relative;font-size:clamp(28px,3.2vw,40px);font-weight:900;line-height:1.08;letter-spacing:-.02em;text-wrap:balance">What it takes to become a tax preparer in California</div>
+      <div style="position:relative;font-size:20px;font-weight:300;line-height:1.5;max-width:440px">The course, PTIN, bond and CTEC registration, from start to finish.</div>
+      <div style="position:relative;margin-top:auto;padding-top:12px"><span style="display:inline-block;background:#fff;color:#04243F;font-weight:700;font-size:18px;padding:14px 22px;border-radius:8px">Read the guide ›</span></div>
+    </a>
+    <div style="background:#fff;border-radius:20px;box-shadow:0 6px 24px rgba(4,36,63,.1);overflow:hidden;display:flex;flex-direction:column">
+      <a href="#" style="flex:1;display:flex;align-items:center;gap:18px;padding:22px clamp(18px,2.4vw,28px);text-decoration:none;color:#04243F;" style-hover="background:#F3F7FA;color:#04243F"><span style="flex:none;width:52px;height:52px;border-radius:14px;background:#F3F7FA;color:#FB5A35;display:flex;align-items:center;justify-content:center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h8l4 4v14H7z"></path><path d="M15 3v4h4M10 12h6M10 16h6"></path></svg></span><span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px"><span style="font-size:20px;font-weight:700;line-height:1.25">How to register with CTEC, step by step</span><span style="font-size:17px;font-weight:300;line-height:1.45">The application, fees and approval process.</span></span><span style="flex:none;font-size:26px;font-weight:300;color:#C93C1A">›</span></a><a href="#" style="flex:1;display:flex;align-items:center;gap:18px;padding:22px clamp(18px,2.4vw,28px);text-decoration:none;color:#04243F;border-top:1px solid #DCE5EC" style-hover="background:#F3F7FA;color:#04243F"><span style="flex:none;width:52px;height:52px;border-radius:14px;background:#F3F7FA;color:#FB5A35;display:flex;align-items:center;justify-content:center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 11v5a6 6 0 0 1-2 4"></path><path d="M8 13v-2a4 4 0 0 1 8 0v4a9 9 0 0 1-1 4"></path><path d="M5 16v-5a7 7 0 0 1 14 0v3"></path></svg></span><span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px"><span style="font-size:20px;font-weight:700;line-height:1.25">Live Scan fingerprinting for California tax preparers</span><span style="font-size:17px;font-weight:300;line-height:1.45">When CTEC needs it, what it costs and how long it takes.</span></span><span style="flex:none;font-size:26px;font-weight:300;color:#C93C1A">›</span></a><a href="#" style="flex:1;display:flex;align-items:center;gap:18px;padding:22px clamp(18px,2.4vw,28px);text-decoration:none;color:#04243F;border-top:1px solid #DCE5EC" style-hover="background:#F3F7FA;color:#04243F"><span style="flex:none;width:52px;height:52px;border-radius:14px;background:#F3F7FA;color:#FB5A35;display:flex;align-items:center;justify-content:center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><circle cx="9" cy="11" r="2"></circle><path d="M6 16c.6-1.6 5.4-1.6 6 0M15 10h3M15 14h3"></path></svg></span><span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px"><span style="font-size:20px;font-weight:700;line-height:1.25">How to get a PTIN from the IRS</span><span style="font-size:17px;font-weight:300;line-height:1.45">Applying online or on paper, and renewing each year.</span></span><span style="flex:none;font-size:26px;font-weight:300;color:#C93C1A">›</span></a><a href="#" style="flex:1;display:flex;align-items:center;gap:18px;padding:22px clamp(18px,2.4vw,28px);text-decoration:none;color:#04243F;border-top:1px solid #DCE5EC" style-hover="background:#F3F7FA;color:#04243F"><span style="flex:none;width:52px;height:52px;border-radius:14px;background:#F3F7FA;color:#FB5A35;display:flex;align-items:center;justify-content:center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 7.6-8 9-4.6-1.400-8-4.500-8-9V6z"></path><path d="M9 12l2 2 4-4"></path></svg></span><span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px"><span style="font-size:20px;font-weight:700;line-height:1.25">The $5,000 tax preparer bond for CTEC</span><span style="font-size:17px;font-weight:300;line-height:1.45">What the bond covers and how to keep it current.</span></span><span style="flex:none;font-size:26px;font-weight:300;color:#C93C1A">›</span></a>
+    </div>
+  </div>
+</div></section>
+<section data-screen-label="Staying registered" style="background:#F3F7FA;padding-left:clamp(16px,4vw,48px);padding-right:clamp(16px,4vw,48px);padding-top:clamp(56px,7vw,96px);padding-bottom:clamp(56px,7vw,96px)"><div style="max-width:1150px;margin:0 auto;display:flex;flex-direction:column;gap:32px">
+  <div id="staying" style="display:flex;justify-content:space-between;align-items:baseline;gap:8px 24px;flex-wrap:wrap;scroll-margin-top:90px;border-bottom:1px solid #DCE5EC;padding-bottom:18px"><h2 style="margin:0;font-size:clamp(29px,4vw,46px);font-weight:900;letter-spacing:-.02em;line-height:1.08">Staying registered</h2><div style="font-size:18px;font-weight:300">2 guides</div></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:24px">
+    <a href="Guide - CTEC Renewal Requirements.dc.html" style="background:#fff;border-radius:20px;box-shadow:0 6px 24px rgba(4,36,63,.1);transition:transform .2s,box-shadow .2s;overflow:hidden;text-decoration:none;color:#04243F;display:flex;flex-direction:column" style-hover="transform:translateY(-4px);box-shadow:0 18px 44px rgba(4,36,63,.22);color:#04243F">
+      <div style="height:8px;background:#04243F"></div>
+      <div style="padding:clamp(24px,3vw,36px);display:flex;flex-direction:column;gap:14px;flex:1">
+        <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><span style="font-size:clamp(52px,5.4vw,72px);font-weight:900;line-height:.9;letter-spacing:-.04em">20</span><span style="font-size:20px;font-weight:300">hours each year, due October 31</span></div>
+        <div style="font-size:26px;font-weight:900;line-height:1.15;letter-spacing:-.01em">CTEC renewal requirements and deadline</div>
+        <div style="font-size:19px;font-weight:300;line-height:1.5">What CTEC needs from you each year to stay registered.</div>
+        <div style="margin-top:auto;padding-top:10px"><span style="font-weight:700;font-size:17px;color:#C93C1A;white-space:nowrap">Read the guide ›</span></div>
+      </div>
+    </a>
+    <a href="Guide - Missed the Deadline.dc.html" style="background:#fff;border-radius:20px;box-shadow:0 6px 24px rgba(4,36,63,.1);transition:transform .2s,box-shadow .2s;overflow:hidden;text-decoration:none;color:#04243F;display:flex;flex-direction:column" style-hover="transform:translateY(-4px);box-shadow:0 18px 44px rgba(4,36,63,.22);color:#04243F">
+      <div style="height:8px;background:#FB5A35"></div>
+      <div style="padding:clamp(24px,3vw,36px);display:flex;flex-direction:column;gap:14px;flex:1">
+        <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><span style="font-size:clamp(52px,5.4vw,72px);font-weight:900;line-height:.9;letter-spacing:-.04em;color:#FB5A35">Oct 31</span><span style="font-size:20px;font-weight:300">has passed</span></div>
+        <div style="font-size:26px;font-weight:900;line-height:1.15;letter-spacing:-.01em">Missed the CTEC renewal deadline?</div>
+        <div style="font-size:19px;font-weight:300;line-height:1.5">What to do if October 31 has passed.</div>
+        <div style="margin-top:auto;padding-top:10px"><span style="font-weight:700;font-size:17px;color:#C93C1A;white-space:nowrap">Read the guide ›</span></div>
+      </div>
+    </a>
+  </div>
+</div></section>
+<section data-screen-label="IRS credit and credentials" style="background:#fff;padding-left:clamp(16px,4vw,48px);padding-right:clamp(16px,4vw,48px);padding-top:clamp(56px,7vw,96px);padding-bottom:clamp(56px,7vw,96px)"><div style="max-width:1150px;margin:0 auto;display:flex;flex-direction:column;gap:32px">
+  <div id="irs" style="display:flex;justify-content:space-between;align-items:baseline;gap:8px 24px;flex-wrap:wrap;scroll-margin-top:90px;border-bottom:1px solid #DCE5EC;padding-bottom:18px"><h2 style="margin:0;font-size:clamp(29px,4vw,46px);font-weight:900;letter-spacing:-.02em;line-height:1.08">IRS credit and credentials</h2><div style="font-size:18px;font-weight:300">2 guides</div></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:24px">
+    <a href="Guide - IRS Annual Filing Season Program.dc.html" style="background:#fff;border-radius:20px;box-shadow:0 6px 24px rgba(4,36,63,.1);transition:transform .2s,box-shadow .2s;overflow:hidden;text-decoration:none;color:#04243F;display:flex;flex-direction:column" style-hover="transform:translateY(-4px);box-shadow:0 18px 44px rgba(4,36,63,.22);color:#04243F">
+      <div style="height:8px;background:#0B4A6E"></div>
+      <div style="padding:clamp(24px,3vw,36px);display:flex;flex-direction:column;gap:14px;flex:1">
+        <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><span style="font-size:clamp(52px,5.4vw,72px);font-weight:900;line-height:.9;letter-spacing:-.04em;color:#0B4A6E">15</span><span style="font-size:20px;font-weight:300">federal hours count for the IRS</span></div>
+        <div style="font-size:26px;font-weight:900;line-height:1.15;letter-spacing:-.01em">IRS Annual Filing Season Program for CTEC preparers</div>
+        <div style="font-size:19px;font-weight:300;line-height:1.5">How your CTEC hours count toward the IRS program.</div>
+        <div style="margin-top:auto;padding-top:10px"><span style="font-weight:700;font-size:17px;color:#C93C1A;white-space:nowrap">Read the guide ›</span></div>
+      </div>
+    </a>
+    <a href="#" style="background:#fff;border-radius:20px;box-shadow:0 6px 24px rgba(4,36,63,.1);transition:transform .2s,box-shadow .2s;overflow:hidden;text-decoration:none;color:#04243F;display:flex;flex-direction:column" style-hover="transform:translateY(-4px);box-shadow:0 18px 44px rgba(4,36,63,.22);color:#04243F">
+      <div style="height:8px;background:#C93C1A"></div>
+      <div style="padding:clamp(24px,3vw,36px);display:flex;flex-direction:column;gap:14px;flex:1">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;min-height:clamp(47px,4.9vw,65px)"><span style="font-size:17px;font-weight:700;border-radius:999px;padding:8px 16px;background:#04243F;color:#fff">CTEC</span><span style="font-weight:300;font-size:17px">vs.</span><span style="font-size:17px;font-weight:700;border-radius:999px;padding:8px 16px;background:#ECEEF0;color:#04243F">AFSP</span><span style="font-weight:300;font-size:17px">vs.</span><span style="font-size:17px;font-weight:700;border-radius:999px;padding:8px 16px;background:#ECEEF0;color:#04243F">Enrolled agent</span></div>
+        <div style="font-size:26px;font-weight:900;line-height:1.15;letter-spacing:-.01em">CTEC vs. AFSP vs. enrolled agent</div>
+        <div style="font-size:19px;font-weight:300;line-height:1.5">Which credential fits the work you want to do.</div>
+        <div style="margin-top:auto;padding-top:10px"><span style="font-weight:700;font-size:17px;color:#C93C1A;white-space:nowrap">Read the guide ›</span></div>
+      </div>
+    </a>
+  </div>
+</div></section>
+<section data-screen-label="Help" style="position:relative;overflow:hidden;background:#04243F;color:#fff;padding-left:clamp(16px,4vw,48px);padding-right:clamp(16px,4vw,48px);padding-top:clamp(56px,7vw,96px);padding-bottom:clamp(56px,7vw,96px)"><div style="position:absolute;inset:0;pointer-events:none;background-image:repeating-radial-gradient(circle at 92% 8%,rgba(255,255,255,.03) 0 1px,transparent 1px 34px)"></div><div style="position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 40% 60% at 80% 30%,rgba(18,163,180,.22),transparent 70%),radial-gradient(ellipse 35% 55% at 95% 95%,rgba(251,90,53,.16),transparent 70%),radial-gradient(ellipse 38% 60% at 8% 15%,rgba(11,74,110,.75),transparent 70%),radial-gradient(ellipse 32% 50% at 2% 100%,rgba(251,90,53,.12),transparent 70%),radial-gradient(ellipse 30% 50% at 25% 60%,rgba(18,163,180,.10),transparent 70%)"></div>
+  
+  
+  <div style="position:relative;max-width:1150px;margin:0 auto;display:flex;flex-direction:column;align-items:center;text-align:center;gap:24px">
+  <img src="assets/check-white-coral.svg" alt="" style="height:40px;width:auto">
+  <h2 style="margin:0;font-size:clamp(29px,4vw,46px);font-weight:900;line-height:1.08;letter-spacing:-.02em">Still have questions?<br><span style="font-weight:300">Here to help, Mon–Fri, 9am–6pm PT</span></h2>
+  <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:14px"><a href="tel:+18444434797" style="display:inline-block;background:#FB5A35;color:#fff;text-decoration:none;font-weight:700;font-size:18px;padding:16px 26px;border-radius:8px" style-hover="background:#C93C1A;color:#fff">Call (844) 443-4797 ›</a><a href="Contact.dc.html" style="display:inline-block;color:#fff;text-decoration:none;font-weight:700;font-size:18px;padding:14px 24px;border-radius:8px;box-shadow:inset 0 0 0 2px #fff" style-hover="background:#fff;color:#04243F">Contact us ›</a></div>
+</div></section>
+</main>
+<footer data-screen-label="Footer" style="background:#fff;color:#04243F;border-top:1px solid #DCE5EC;padding:44px clamp(16px,4vw,48px) 32px">
+  <div style="max-width:1150px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:22px;font-size:18px">
+    <a href="Home v2.dc.html" style="display:block;width:190px;height:50px;overflow:hidden;flex:none"><img src="assets/pta-logo.png" alt="Pacific Tax Academy" style="height:96px;margin:-22px 0 0 -50px;mix-blend-mode:multiply"></a>
+    
+    <nav style="display:flex;flex-wrap:wrap;justify-content:center;gap:6px 28px;font-weight:600;font-size:17px"><a href="Course - 20-Hour Renewal.dc.html" style="color:#04243F;text-decoration:none" style-hover="color:#C93C1A">Renew</a><a href="Course - 60-Hour Qualifying.dc.html" style="color:#04243F;text-decoration:none" style-hover="color:#C93C1A">Get Qualified</a><a href="Single Courses.dc.html" style="color:#04243F;text-decoration:none" style-hover="color:#C93C1A">Single Courses</a><a href="FAQ.dc.html" style="color:#04243F;text-decoration:none" style-hover="color:#C93C1A">Questions</a><a href="Contact.dc.html" style="color:#04243F;text-decoration:none" style-hover="color:#C93C1A">Contact</a></nav>
+    <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:6px 28px;font-weight:300">
+      <span>(844) 443-4797</span>
+      <a href="mailto:info@pacifictaxacademy.com" style="color:inherit;text-decoration:none">info@pacifictaxacademy.com</a>
+      <span>Mon–Fri, 9am–6pm PT</span>
+    </div>
+    <div style="width:100%;border-top:1px solid #DCE5EC;padding-top:18px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px 24px;font-size:15px;color:#4A6076">
+      <span><sc-if value="{{ showProviders }}" hint-placeholder-val="{{ false }}">CTEC Provider #____ · IRS Provider #____</sc-if></span>
+      <div style="display:flex;flex-wrap:wrap;gap:6px 22px">
+        <a href="Policy - Refund.dc.html" style="color:#4A6076;text-decoration:none" style-hover="color:#C93C1A">Refund Policy</a>
+        <a href="Policy - Course Policies.dc.html" style="color:#4A6076;text-decoration:none" style-hover="color:#C93C1A">Course Policies</a>
+        <a href="Policy - Terms.dc.html" style="color:#4A6076;text-decoration:none" style-hover="color:#C93C1A">Terms</a>
+        <a href="Policy - Privacy.dc.html" style="color:#4A6076;text-decoration:none" style-hover="color:#C93C1A">Privacy</a>
+      </div>
+      <span>© {{ year }} Pacific Tax Academy</span>
+    </div>
+    
+  </div>
+</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() { return { year: new Date().getFullYear(), showProviders: this.props.showProviders ?? false }; }
+}
+</script>
+</body>
+</html>
