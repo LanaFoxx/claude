@@ -279,8 +279,6 @@
 		}).catch(function () {});
 	}
 	setTimeout(nlCheck, 2500); setInterval(nlCheck, 60000);
-	// What the Claude desktop app is asked to do when refresh is clicked on "Pending in Upwork".
-	var UPCHECK = 'Check my Upwork balance and update Dream Desk. Use the browser on this computer (Claude in Chrome, or the built-in browser), where I\'m signed in to Upwork and dreamwebdigital.com. 1) Open https://www.upwork.com/nx/reports/overview/?tab=pending and read the Pending and Available figures and every pending payment (release date, client, job/milestone, gross amount; net = gross minus its Upwork fee from the fee lines, usually 10%, some 15%; the nets must add up to Pending). 2) Open https://dreamwebdigital.com/wp-admin/admin.php?page=client-desk#home and run in the page: await window.dwdSetUpwork(PENDING, AVAILABLE, [{ date: \'YYYY-MM-DD\', client: \'Client\', job: \'Job · Milestone · $gross less $fee fee\', amount: NET }]) (numbers only, net amounts). It returns saved. 3) Close the tabs and tell me the numbers in one line. Change nothing on Upwork and don\'t touch payments on Dream Desk projects.';
 	function reload() {
 		return api('').then(function (r) { S.health = r.health || null; S.tax = r.tax || null; S.madeM = r.made_month || null; S.contacts = r.contacts.filter(Boolean); S.tasks = r.tasks.filter(Boolean); S.clients = (r.clients || []).filter(Boolean); S.money = r.money || {}; S.upfeed = r.upfeed || null; S.costs = r.costs || {}; S.trends = r.trends || null; S.wins = r.wins || { list: [], undated: 0 }; S.ads = r.ads || null; S.meet = r.meetings || null; S.order = r.order || {}; });
 	}
@@ -4899,19 +4897,12 @@
 		}
 		// Refresh on the Pending in Upwork tile: re-read the saved Upwork numbers (new ones come from the Upwork check on Mike's computer).
 		if ((el = t.closest('[data-uprefresh]'))) {
-			// Opens the Claude desktop app with the Upwork check ready to run (it uses the browser on Mike's PC and saves
-			// the numbers back with dwdSetUpwork); Dream Desk then watches for the new numbers.
-			e.preventDefault(); e.stopPropagation(); el.classList.add('spin');
-			var was = (S.upsnap && S.upsnap.checked) || '';
-			window.location.href = 'claude://claude.ai/new?q=' + encodeURIComponent(UPCHECK);
-			toast('Opening the Upwork check in the Claude app… press Enter there if it doesn’t start on its own');
-			var tries = 0, poll = function () {
-				api('/upwork-snap').then(function (s) {
-					if (s && s.checked && s.checked !== was) { S.upsnap = s; upBalSync(); el.classList.remove('spin'); render(); toast('Upwork updated: ' + money2(+s.pending || 0) + ' pending'); return; }
-					if (++tries < 40) { setTimeout(poll, 15000); } else { el.classList.remove('spin'); }
-				}).catch(function () { if (++tries < 40) { setTimeout(poll, 15000); } });
-			};
-			setTimeout(poll, 20000);
+			// Shows the latest Upwork numbers saved by the Upwork check on Mike's PC (no pop-ups, nothing to confirm).
+			e.preventDefault(); e.stopPropagation(); el.disabled = true; el.classList.add('spin');
+			api('/upwork-snap').then(function (x) {
+				S.upsnap = x || { none: true }; upBalSync(); el.disabled = false; el.classList.remove('spin'); render();
+				toast('Upwork numbers as of ' + (x && x.checked ? new Date(x.checked).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : 'the last check'));
+			}).catch(function (er) { el.disabled = false; el.classList.remove('spin'); fail(er); });
 			return;
 		}
 		if (t.closest('[data-upmoney]')) { e.preventDefault(); S.modal = { type: 'upmoney' }; render(); return; }
