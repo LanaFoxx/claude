@@ -41,7 +41,7 @@ function dwdla_list() {
 			'website' => (string) get_post_meta( $id, '_dwdc_website', true ),
 			'source'  => (string) get_post_meta( $id, '_dwdc_source', true ),
 			'form'    => (string) ( $last['form'] ?? '' ),
-			'when'    => ! empty( $last['date'] ) ? get_date_from_gmt( (string) $last['date'] ) : (string) get_post_meta( $id, '_dwdc_lead_new', true ), // when they sent the form (site time)
+			'when'    => ! empty( $last['date'] ) ? wp_date( 'Y-m-d H:i:s', strtotime( (string) $last['date'] . ' UTC' ), new DateTimeZone( 'America/New_York' ) ) : (string) get_post_meta( $id, '_dwdc_lead_new', true ), // when they sent the form (Mike's time)
 			'mail'    => (string) get_post_meta( $id, '_dwdc_lead_mail', true ),
 			'answers' => $answers,
 		);
