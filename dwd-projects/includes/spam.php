@@ -257,6 +257,10 @@ function dwdp_ajax_contact() {
 		if ( $cid ) {
 			dwdc_ensure_client( $cid );
 			dwdc_add_task( 'Reply to ' . get_the_title( $cid ), $cid, current_time( 'Y-m-d' ) );
+			if ( ! $sent && function_exists( 'dwdc_notify_form' ) ) { // the plain notice didn't go out: send the "New lead" email instead
+				dwdc_notify_form( $q ? 'Quote' : 'Contact', $fields, $cid );
+			}
+			update_post_meta( $cid, '_dwdc_lead_mail', $sent ? 'sent' : 'failed' ); // so Dream Desk can tell if the email went out
 		}
 	}
 	$sent ? wp_send_json_success() : wp_send_json_error( 'Sorry, that didn’t send. Please call (772) 210-1728.' );
