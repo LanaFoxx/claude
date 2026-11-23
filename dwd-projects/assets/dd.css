@@ -1262,3 +1262,11 @@ body:has(.dwdc-addm) #dwdc-askfab { display: none !important; }
 /* WordPress admin turns hovered dropdown text near-black (.wp-core-ui select:hover): keep Dream Desk dropdowns readable */
 #dwdc-app select:hover, #dwdc-app select:focus, .dwdc select:hover, .dwdc select:focus { color: var(--text) !important; border-color: var(--border-strong, var(--border)) !important; }
 #dwdc-app select option, .dwdc select option { color: var(--text); background: var(--surface); }
+
+/* Which form to send: Website Onboarding (new site / redesign) vs Project Kickoff (fixes, updates, custom work) */
+.dd-obch { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; margin-top: 10px; }
+.dd-obc { border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; }
+.dd-obc b { font-size: 14px; }
+.dd-obc small { color: var(--text-2, var(--muted)); font-size: 12.5px; line-height: 1.45; }
+.dd-obc-b { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.dd-detob:has(.dd-obch) { display: block; }

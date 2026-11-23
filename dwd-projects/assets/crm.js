@@ -2250,6 +2250,16 @@
 	function obCopy() { return DWDC.obLink ? '<span class="dd-obcopy"><button type="button" class="dd-btn secondary sm" data-copy="' + esc(DWDC.obLink) + '" title="' + esc(DWDC.obLink) + '">' + lu('link', 14) + 'Copy onboarding link</button>' + (DWDC.koLink ? '<button type="button" class="dd-btn secondary sm" data-copy="' + esc(DWDC.koLink) + '" title="' + esc(DWDC.koLink) + '">' + lu('link', 14) + 'Copy Kickoff link</button>' : '') + '</span>' : ''; }
 	// Project Kickoff form (kickoff.php): for one-off and custom jobs that aren't a new website or a redesign.
 	function koBtn(c, cls) { return '<button type="button" class="dd-btn ' + (cls || 'secondary') + '" data-leadinvite="' + c.id + '" data-form="kickoff">' + lu('mail', 14) + 'Send Project Kickoff form</button>'; }
+	// Which form to send: two clearly labelled choices, each with its own Send and Copy link buttons.
+	function obChoice(c) {
+		var resend = c.stage === 'onboarding';
+		var copy = function (url, label) { return url ? '<button type="button" class="dd-btn secondary sm" data-copy="' + esc(url) + '" title="' + esc(url) + '">' + lu('link', 14) + label + '</button>' : ''; };
+		return '<div class="dd-obch">'
+			+ '<div class="dd-obc"><b>New website or redesign</b><small>Website Onboarding form: their business, pages, content, logo, colors and the sites they like.</small><div class="dd-obc-b">'
+			+ '<button type="button" class="dd-btn primary sm" data-leadinvite="' + c.id + '">' + lu('mail', 14) + (resend ? 'Resend' : 'Send') + ' Onboarding form</button>' + copy(DWDC.obLink, 'Copy link') + '</div></div>'
+			+ '<div class="dd-obc"><b>Fixes, updates or custom work</b><small>Project Kickoff form: for jobs on an existing site (fixes, new features, taking over or finishing a site): the scope, access and handoff notes.</small><div class="dd-obc-b">'
+			+ '<button type="button" class="dd-btn secondary sm" data-leadinvite="' + c.id + '" data-form="kickoff">' + lu('mail', 14) + 'Send Kickoff form</button>' + copy(DWDC.koLink, 'Copy link') + '</div></div></div>';
+	}
 	function zoomBox(key, ids) {
 		var title = '<header class="dd-ch2"><span class="dd-lt z">' + lu('video', 16) + '</span><div><h2>Zoom meeting</h2></div></header>'
 			// Quick links to paste into a message: your Zoom room and your Calendly booking page.
@@ -3902,7 +3912,7 @@
 		var obl = full ? (c.files || []).filter(function (e) { return /onboard/i.test(e.form || ''); }) : [], obn = obl.reduce(function (s2, e) { return s2 + (e.fields || []).length; }, 0);
 		var fe = full ? (c.files || []).filter(function (e) { return !/onboard/i.test(e.form || '') && (e.fields || []).length; })[0] : null;
 		var formBox = fe ? card('k-form', esc(fe.form || 'Website form') + ' form', 'Submitted ' + fmt(fe.date), '', '<div class="dd-kv">' + fe.fields.filter(function (f) { return String(f.value || '').trim() !== ''; }).map(function (f) { return '<span>' + esc(f.label || f.id) + '</span><div>' + fval(f.value) + '</div>'; }).join('') + '</div>'
-			+ (st === 'leads' || !obl.length ? '<div class="dd-pbtns">' + btn('data-leadinvite="' + c.id + '"', lu('mail') + (c.stage === 'onboarding' ? 'Resend onboarding form' : 'Send onboarding form'), 'primary') + obCopy() + '</div>' : '')) : '';
+			+ (st === 'leads' || !obl.length ? obChoice(c) : '')) : '';
 		// notes
 		var notes = full ? (c.notes || []).slice().sort(function (a, b) { return (d(a.date) || 0) < (d(b.date) || 0) ? 1 : -1; }) : [];
 		var nSet = (S.notesOpen || {})[c.id], nOpen = nSet !== undefined ? !!nSet : pboxGet(c.id, 'notes') === false;
@@ -3914,7 +3924,7 @@
 			+ (c.drive ? '<a class="dd-btn secondary" href="' + esc(c.drive) + '" target="_blank" rel="noopener">' + lu('external-link', 14) + '<span class="dd-nomob">Open folder</span><span class="dd-mobonly">Open</span></a><button type="button" class="dd-btn ghost" data-drivemk="' + c.id + ':email">' + lu('mail', 14) + (c.drive_sent ? 'Email again' : '<span class="dd-nomob">Email to client</span><span class="dd-mobonly">Email</span>') + '</button>'
 				: DWDC.driveReady ? '<button type="button" class="dd-btn secondary" data-drivemk="' + c.id + ':email">' + lu('plus', 14) + 'Create &amp; email client</button><button type="button" class="dd-btn ghost" data-drivemk="' + c.id + '">Create only</button>' : '<a class="dd-btn secondary" href="#connections">Set up Google Drive</a>') + '</div></div>';
 		var obRow = obl.length ? '<div class="dd-detob"><div><b>Onboarding</b> ' + ddPill(obn + ' answers', 'info') + '<small>' + esc(obl[0].form || 'Form') + ' · submitted ' + fmt(obl[0].date) + '</small></div><div class="dd-pbtns">' + btn('data-viewob', lu('clipboard-list') + 'View answers', 'primary') + '<button type="button" class="dd-btn secondary" data-copyob>Copy answers</button></div></div>'
-			: '<div class="dd-detob"><div><b>Onboarding</b><small>Not submitted yet</small></div><div class="dd-pbtns">' + btn('data-leadinvite="' + c.id + '"', lu('mail') + (c.stage === 'onboarding' ? 'Resend onboarding form' : 'Send onboarding form'), 'primary') + koBtn(c) + obCopy() + '</div></div>';
+			: '<div class="dd-detob"><div><b>Onboarding</b><small>Not submitted yet · send the form that fits the job</small></div>' + obChoice(c) + '</div>';
 		var obBox = '' && card('ob', 'Onboarding' + (obl.length ? ' ' + ddPill(obn + ' answers', 'info') : ''), '', obl.length ? '<span class="dd-hmeta">' + esc(obl[0].form || 'Form') + ' · submitted ' + fmt(obl[0].date) + '</span>' : '<span class="dd-hmeta">Not submitted</span>',
 			'<div class="dd-pbtns">' + (obl.length ? btn('data-viewob', lu('clipboard-list') + 'View answers', 'primary') + '<button type="button" class="dd-btn secondary" data-copyob>Copy answers</button>' : btn('data-leadinvite="' + c.id + '"', lu('mail') + (c.stage === 'onboarding' ? 'Resend onboarding form' : 'Send onboarding form'))) + '</div>');
 		// markup review
