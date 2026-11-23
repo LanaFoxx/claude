@@ -270,6 +270,15 @@
 		var k = clientOf(c), em = (k && k.email) || c.email;
 		return '<span class="dwdc-nm"><span>' + (k ? '<a class="dwdc-clink" href="#cl/' + k.id + '">' + esc(k.name) + '</a>' : '<b class="nm2">' + esc(c.person || '—') + '</b>') + (em ? '<small>' + esc(em) + '</small>' : '') + '</span></span>';
 	}
+	// New-lead alarm: check right away and every minute; pop the window whenever an unconfirmed lead is waiting.
+	function nlCheck() {
+		api('/new-leads').then(function (x) {
+			S.newLeads = (x && x.leads) || [];
+			if (S.newLeads.length && (!S.modal || S.modal.type === 'newlead') && !(S.nlLater && Date.now() - S.nlLater < 180000)) { S.modal = { type: 'newlead' }; render(); }
+			else if (!S.newLeads.length && S.modal && S.modal.type === 'newlead') { S.modal = null; render(); }
+		}).catch(function () {});
+	}
+	setTimeout(nlCheck, 2500); setInterval(nlCheck, 60000);
 	function reload() {
 		return api('').then(function (r) { S.health = r.health || null; S.tax = r.tax || null; S.madeM = r.made_month || null; S.contacts = r.contacts.filter(Boolean); S.tasks = r.tasks.filter(Boolean); S.clients = (r.clients || []).filter(Boolean); S.money = r.money || {}; S.upfeed = r.upfeed || null; S.costs = r.costs || {}; S.trends = r.trends || null; S.wins = r.wins || { list: [], undated: 0 }; S.ads = r.ads || null; S.meet = r.meetings || null; S.order = r.order || {}; });
 	}
@@ -4342,6 +4351,20 @@
 				+ '<div class="dwdc-fgrid"><label class="wide"><span>Fire URL</span><input name="url" placeholder="https://api.anthropic.com/v1/claude_code/routines/trig_…/fire" required></label><label class="wide"><span>Token</span><input name="token" type="password" autocomplete="off" required></label></div>'
 				+ '<div class="dwdc-farow end"><button class="dwdc-btn">Save and check Upwork now</button></div></form>';
 		}
+		// New lead alarm: stays until Mike confirms he reviewed the quote and contacted the customer (no close button).
+		if (m.type === 'newlead') {
+			var NL = S.newLeads || [], L0 = NL[0];
+			if (!L0) { S.modal = null; return ''; }
+			var tel = String(L0.phone || '').replace(/[^\d+]/g, '');
+			return '<div class="dwdc-overlay dd-nl-ov"></div><div class="dwdc-modal dd-nl" role="alertdialog" aria-labelledby="dd-nl-h">'
+				+ '<p class="dd-nl-eb">' + lu('alert-circle', 16) + 'New ' + esc((L0.form || 'quote').toLowerCase()) + ' from your website' + (NL.length > 1 ? ' · 1 of ' + NL.length : '') + '</p>'
+				+ '<h2 id="dd-nl-h">' + esc(L0.name) + (L0.company ? ' <small>' + esc(L0.company) + '</small>' : '') + '</h2>'
+				+ '<p class="dwdc-mutp">' + esc([L0.when ? 'Came in ' + fmt(String(L0.when).slice(0, 10)) + ' at ' + new Date(String(L0.when).replace(' ', 'T')).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : '', String(L0.source || '').replace(/\s*·\s*[a-z0-9-]+-[a-z0-9-]+\s*·/i, ' ·')].filter(Boolean).join(' · ')) + (L0.mail === 'failed' ? ' · <b class="dd-nl-warn">the email about this lead failed to send</b>' : '') + '</p>'
+				+ '<div class="dd-nl-act">' + (tel ? '<a class="dwdc-btn2 sm" href="tel:' + esc(tel) + '">Call ' + esc(tel.replace(/^\+?1?(\d{3})(\d{3})(\d{4})$/, '($1) $2-$3')) + '</a>' : '') + (L0.email ? '<a class="dwdc-btn2 sm" href="mailto:' + esc(L0.email) + '">Email ' + esc(L0.email) + '</a>' : '') + '<a class="dwdc-btn2 sm" href="#client/' + L0.id + '" data-nlopen>Open the lead</a></div>'
+				+ '<div class="dd-nl-ans">' + (L0.answers || []).map(function (a) { return '<div><span>' + esc(a[0]) + '</span><b>' + esc(a[1]) + '</b></div>'; }).join('') + '</div>'
+				+ '<button type="button" class="dwdc-btn dd-nl-ok" data-nlack="' + L0.id + '">' + lu('circle-check', 16) + 'I’ve reviewed this quote and contacted the customer</button>'
+				+ '<p class="dd-nl-foot">This keeps popping up until you click the button above.</p></div>';
+		}
 		if (m.type === 'payrm') {
 				var rmc = S.full[m.id], rmp = rmc && (rmc.payments || [])[m.i];
 				if (!rmp) { return ''; }
@@ -5245,6 +5268,12 @@
 		if (t.closest('[data-adscopy]')) { var ta = app.querySelector('.dwdc-adscript'); if (ta) { ta.select(); (navigator.clipboard ? navigator.clipboard.writeText(ta.value) : Promise.reject()).then(function () { toast('Script copied'); }, function () { document.execCommand('copy'); toast('Script copied'); }); } return; }
 		if ((el = t.closest('[data-incyear]'))) { S.incYear = el.getAttribute('data-incyear'); render(); return; }
 		if (t.closest('[data-hinctog]')) { S.hincOpen = !S.hincOpen; try { localStorage.setItem('dwdHincOpen', S.hincOpen ? '1' : ''); } catch (er) {} render(); return; }
+		if ((el = t.closest('[data-nlack]'))) {
+			el.disabled = true;
+			api('/new-leads/' + el.getAttribute('data-nlack') + '/ack', 'POST', {}).then(function (x) { S.newLeads = (x && x.leads) || []; S.modal = S.newLeads.length ? { type: 'newlead' } : null; render(); toast('Confirmed: lead reviewed and contacted'); }).catch(function (er) { el.disabled = false; fail(er); });
+			return;
+		}
+		if (t.closest('[data-nlopen]')) { S.modal = null; S.nlLater = Date.now(); } // look at the lead; the alarm comes back within a minute until confirmed
 		if ((el = t.closest('[data-mojdel]'))) {
 			if (!confirm('Remove this Mojo’s Flight School payment?')) { return; }
 			api('/income/mojos?id=' + encodeURIComponent(el.getAttribute('data-mojdel')), 'DELETE').then(function (x) { S.income = S.income || {}; S.income[x.year] = x; render(); toast('Removed'); }).catch(fail);

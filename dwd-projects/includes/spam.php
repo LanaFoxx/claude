@@ -239,7 +239,7 @@ function dwdp_ajax_contact() {
 		$extra .= $x[0] . ': ' . $x[1] . "\n";
 	}
 	$body  = "Name: {$name}\nEmail: {$email}\n{$extra}Message: {$message}\n\n— Sent from the form on " . esc_url_raw( wp_get_referer() ?: home_url( '/' ) );
-	$sent = wp_mail( DWDP_CONTACT_TO, ( $q ? 'Quote request from ' : 'Website inquiry from ' ) . $name, $body, array( 'Reply-To: ' . $name . ' <' . $email . '>' ) );
+	$sent = false; // the email goes out below, once the lead is filed (with a backup if the first try fails)
 	// File it in Dream Desk like the Elementor forms (contact, entry, "Reply to …" task).
 	if ( function_exists( 'dwdc_file_entry' ) ) {
 		$fields = array(
@@ -257,13 +257,20 @@ function dwdp_ajax_contact() {
 		if ( $cid ) {
 			dwdc_ensure_client( $cid );
 			dwdc_add_task( 'Reply to ' . get_the_title( $cid ), $cid, current_time( 'Y-m-d' ) );
-			if ( ! $sent && function_exists( 'dwdc_notify_form' ) ) { // the plain notice didn't go out: send the "New lead" email instead
-				dwdc_notify_form( $q ? 'Quote' : 'Contact', $fields, $cid );
+			// Email Mike: the full "New lead" email; if that fails, a plain one; if that fails too, try once more.
+			$sent = function_exists( 'dwdc_notify_form' ) && dwdc_notify_form( $q ? 'Quote' : 'Contact', $fields, $cid );
+			for ( $try = 0; ! $sent && $try < 2; $try++ ) {
+				$sent = wp_mail( DWDP_CONTACT_TO, ( $q ? 'Quote request from ' : 'Website inquiry from ' ) . $name, $body, array( 'Reply-To: ' . $name . ' <' . $email . '>' ) );
 			}
-			update_post_meta( $cid, '_dwdc_lead_mail', $sent ? 'sent' : 'failed' ); // so Dream Desk can tell if the email went out
+			if ( function_exists( 'dwdla_flag' ) ) {
+				dwdla_flag( $cid, $sent ); // pop-up in Dream Desk until Mike confirms he contacted them
+			}
 		}
 	}
-	$sent ? wp_send_json_success() : wp_send_json_error( 'Sorry, that didn’t send. Please call (772) 210-1728.' );
+	if ( ! $sent && empty( $cid ) ) { // not filed in Dream Desk: still make sure the email goes out
+		$sent = wp_mail( DWDP_CONTACT_TO, ( $q ? 'Quote request from ' : 'Website inquiry from ' ) . $name, $body, array( 'Reply-To: ' . $name . ' <' . $email . '>' ) );
+	}
+	$sent || ! empty( $cid ) ? wp_send_json_success() : wp_send_json_error( 'Sorry, that didn’t send. Please call (772) 210-1728.' );
 }
 add_action( 'wp_ajax_dwdp_contact', 'dwdp_ajax_contact' );
 add_action( 'wp_ajax_nopriv_dwdp_contact', 'dwdp_ajax_contact' );

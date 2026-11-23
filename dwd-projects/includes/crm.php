@@ -642,7 +642,10 @@ add_action( 'elementor_pro/forms/new_record', function ( $record ) {
 			dwdc_add_task( 'Review onboarding form from ' . $name, $cid, current_time( 'Y-m-d' ) );
 		}
 	}
-	dwdc_notify_form( $form, $fields, $cid );
+	$sent = dwdc_notify_form( $form, $fields, $cid );
+	if ( $cid && false === stripos( $form, 'onboard' ) && function_exists( 'dwdla_flag' ) ) {
+		dwdla_flag( $cid, $sent ); // pop-up in Dream Desk until Mike confirms he contacted them
+	}
 }, 20 );
 
 /** Email Mike every website form submission (the answers, where it came from, and a link to the lead). */
@@ -680,7 +683,7 @@ function dwdc_notify_form( $form, $fields, $cid ) {
 	if ( $email && is_email( $email ) ) {
 		$headers[] = 'Reply-To: ' . str_replace( array( "\r", "\n", '<', '>' ), '', $who ) . ' <' . $email . '>';
 	}
-	wp_mail( 'mike@dreamwebdigital.com', ( $onboard ? 'Onboarding form: ' : 'New lead: ' ) . $who . ( $form ? ' (' . $form . ')' : '' ), $html, $headers );
+	return wp_mail( 'mike@dreamwebdigital.com', ( $onboard ? 'Onboarding form: ' : 'New lead: ' ) . $who . ( $form ? ' (' . $form . ')' : '' ), $html, $headers );
 }
 
 // Hosting orders (first payment and every yearly auto-renewal from the subscription): the buyer is
