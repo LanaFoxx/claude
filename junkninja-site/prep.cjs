@@ -17,6 +17,7 @@ const ALT = {
   'svc-rental.webp': 'Realtor and rental cleanout removal',
   'svc-furniture.webp': 'Furniture removal',
   'svc-appliance.webp': 'Old refrigerator, washer and dryer ready for appliance removal',
+  'svc-estate.webp': 'Junk Ninja crew carrying an armchair out of a home during an estate cleanout',
   'svc-household.webp': 'Old sofa, dresser and bed frame on a driveway ready for junk removal',
   'ba-hottub-1-before.webp': 'Broken hot tub on a screened patio before removal',
   'ba-hottub-1-after.webp': 'Junk Ninja crew member sweeping the cleared patio after hot tub removal',
