@@ -7,6 +7,9 @@
   var KEY = 'glec-steps-v1';
   var state = { i: 0, ans: {}, license: null };
   try { var saved = JSON.parse(localStorage.getItem(KEY) || 'null'); if (saved && saved.ans) state = saved; } catch (e) {}
+  /* Deep link: ?step=N opens that step directly (for reviewing a specific step). */
+  var qs = parseInt(new URLSearchParams(location.search).get('step'), 10);
+  if (qs >= 1 && qs <= steps.length) { state.i = qs - 1; }
   function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
 
   var ICON = {

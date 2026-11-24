@@ -44,8 +44,36 @@ function glec_steps_config() {
 	return apply_filters( 'glec_steps_config', $steps );
 }
 
+/* Review mode (?review=1): every step stacked with all its wording, so each can be commented on in MarkUp. */
+function glec_steps_review_html( $steps ) {
+	$ext = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>';
+	$base = get_permalink();
+	$out  = '<div class="gwr"><div class="gwr__note"><b>Review mode.</b> All 10 steps are shown here so each one can be commented on. Students see one step at a time: <a href="' . esc_url( $base ) . '">open the live guide</a>.</div><ol class="gwr__list">';
+	foreach ( $steps as $i => $st ) {
+		$n    = $st['need'];
+		$num  = $i + 1;
+		$out .= '<li class="gwr__step" id="step-' . $num . '"><div class="gwr__head"><span class="gwr__k">Step ' . $num . ' of ' . count( $steps ) . '</span><a class="gwr__open" href="' . esc_url( add_query_arg( 'step', $num, $base ) ) . '">Open this step in the guide</a></div>';
+		$out .= '<h2 class="gwr__title">' . esc_html( html_entity_decode( $st['title'] ) ) . '</h2><p class="gwr__task">' . wp_kses_post( $st['task'] ) . '</p>';
+		if ( ! empty( $st['options'] ) ) {
+			$out .= '<p class="gwr__label">Answer options</p><ul class="gwr__opts">';
+			foreach ( $st['options'] as $o ) { $out .= '<li><b>' . esc_html( $o['label'] ) . '</b><span>' . esc_html( $o['sub'] ) . '</span></li>'; }
+			$out .= '</ul>';
+		} else {
+			$out .= '<p class="gwr__label">Answer options</p><ul class="gwr__opts"><li><b>' . esc_html( $st['have'] ?? 'I have this' ) . '</b><span>' . ( $num < count( $steps ) ? 'Go to step ' . ( $num + 1 ) : 'Finish' ) . '</span></li><li><b>' . esc_html( $st['needlabel'] ?? 'I need this' ) . '</b><span>Show me what to do</span></li></ul>';
+		}
+		if ( ! empty( $st['skipnote'] ) ) { $out .= '<p class="gwr__label">Shown instead for Restricted (Class 1)</p><div class="gwr__skip">' . wp_kses_post( $st['skipnote'] ) . '</div>'; }
+		$out .= '<p class="gwr__label">' . ( ! empty( $st['options'] ) ? 'If they choose "I am not sure yet"' : 'If they choose "' . esc_html( $st['needlabel'] ?? 'I need this' ) . '"' ) . '</p><div class="gwr__need"><p class="gwr__needt">Here is what to do</p><p>' . wp_kses_post( $n['text'] ) . '</p>';
+		if ( ! empty( $n['price'] ) ) { $out .= '<p class="gwr__price">' . esc_html( $n['price'] ) . '</p>'; }
+		$out .= '<p class="gwr__ctas"><a href="' . esc_url( $n['url'] ) . '"' . ( ! empty( $n['ext'] ) ? ' target="_blank" rel="noopener"' : '' ) . '>' . esc_html( $n['cta'] ) . ( ! empty( $n['ext'] ) ? $ext : '' ) . '</a>';
+		if ( ! empty( $n['cta2'] ) ) { $out .= '<a href="' . esc_url( $n['url2'] ) . '"' . ( ! empty( $n['ext2'] ) ? ' target="_blank" rel="noopener"' : '' ) . '>' . esc_html( $n['cta2'] ) . ( ! empty( $n['ext2'] ) ? $ext : '' ) . '</a>'; }
+		$out .= '</p></div></li>';
+	}
+	return $out . '</ol></div>';
+}
+
 add_shortcode( 'glec_steps', function () {
 	$steps  = glec_steps_config();
+	if ( isset( $_GET['review'] ) ) { return glec_steps_review_html( $steps ); } // phpcs:ignore
 	$static = '';
 	foreach ( $steps as $i => $s ) {
 		$n       = $s['need'];

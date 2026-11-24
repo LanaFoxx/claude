@@ -75,3 +75,26 @@
 .gw__choice,.gw__btn,.gw__back,.gw__list button{white-space:normal!important}
 .gw__choice{min-width:0;width:100%;box-sizing:border-box}
 .gw__eyebrow{color:var(--g-orange)!important}
+
+/* Review mode (?review=1) */
+.gwr{max-width:900px}
+.gwr__note{background:#FFF7F2;border:1px solid #F6D3BC;border-left:4px solid var(--g-orange);border-radius:10px;padding:16px 20px;font-size:16px;margin-bottom:32px}
+.gwr__note a{color:var(--g-blue);font-weight:600}
+.gwr__list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:24px}
+.gwr__step{background:#fff;border:1px solid var(--g-line);border-radius:16px;padding:32px 36px;box-shadow:0 10px 30px rgba(11,42,66,.06);scroll-margin-top:96px}
+.gwr__head{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:8px}
+.gwr__k{font:600 15px/1 Inter,sans-serif;color:var(--g-orange)}
+.gwr__open{display:inline-flex;align-items:center;min-height:44px;font-weight:600;font-size:15px;color:var(--g-blue)}
+.gwr__title{font:600 30px/1.15 "Inter Tight",sans-serif;letter-spacing:-.02em;color:var(--g-navy);margin:0 0 10px}
+.gwr__task{font-size:18px;line-height:1.6;color:var(--g-slate);margin:0 0 20px}
+.gwr__label{font:600 13px/1.3 Inter,sans-serif;letter-spacing:.02em;color:var(--g-slate);margin:20px 0 8px}
+.gwr__opts{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.gwr__opts li{border:1.5px solid var(--g-line);border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:4px}
+.gwr__opts b{font:600 18px/1.25 "Inter Tight",sans-serif;color:var(--g-navy)}.gwr__opts span{font-size:15px;color:var(--g-slate)}
+.gwr__skip{background:var(--g-mist);border-radius:10px;padding:14px 18px;font-size:17px}
+.gwr__need{background:#FFF7F2;border:1px solid #F6D3BC;border-left:4px solid var(--g-orange);border-radius:12px;padding:20px 24px}
+.gwr__need p{margin:0 0 10px;font-size:17px;line-height:1.6}.gwr__needt{font:600 18px/1.3 "Inter Tight",sans-serif!important;color:var(--g-navy)}
+.gwr__price{font:700 26px/1 "Inter Tight",sans-serif!important;color:var(--g-navy)}
+.gwr__ctas{display:flex;flex-wrap:wrap;gap:8px 20px;margin:0!important}
+.gwr__ctas a{display:inline-flex;align-items:center;gap:6px;min-height:44px;font-weight:600;color:var(--g-blue)}
+@media (max-width:600px){.gwr__step{padding:22px 18px}.gwr__title{font-size:24px}}
