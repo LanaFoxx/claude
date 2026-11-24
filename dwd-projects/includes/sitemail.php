@@ -97,3 +97,11 @@ add_action( 'rest_api_init', function () {
 		return $out;
 	} ) );
 } );
+
+// WP Mail SMTP's admin-bar menu shows a stray notification "1" on the site header (the bar itself is hidden there).
+add_action( 'wp_before_admin_bar_render', function () {
+	global $wp_admin_bar;
+	if ( $wp_admin_bar ) {
+		$wp_admin_bar->remove_node( 'wp-mail-smtp-menu' );
+	}
+}, 999 );
