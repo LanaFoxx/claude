@@ -113,11 +113,13 @@ def steps(name, h2_html, items, bg=SPRUCE):
                     typ=typo(family=SERIF, size=28, weight=500, lh=1.15)),
             text("%s / Step %d / Text" % (name, i), "<p>%s</p>" % b, color=SPRUCE_TEXT, size=15,
                  lh=1.75, max_w=360, pretty=False)], gap=16))
-    cols = 4 if len(items) == 4 else 3
+    n = len(items)
+    cols = (5, 3, 2, 1) if n == 5 else ((4, 4, 2, 1) if n == 4 else (3, 3, 2, 1))
     return section(name, [
         h2(name + " / Title (H2)", h2_html, sizes=H2_INNER, max_w=720),
-        grid(name + " / Grid", cells, cols=(cols, cols, 2, 1), gap_col=0, gap_row=0,
-             css=bt.WHY_GRID_LINES)],
+        grid(name + " / Grid", cells, cols=cols, gap_col=0, gap_row=0,
+             css=bt.WHY_GRID_LINES + ("@media (min-width:1360px){selector > .e-con{padding:48px 32px 52px !important;}}"
+                                      if n == 5 else ""))],
         bg=bg, gap=(64, 60, 52, 44))
 
 
@@ -198,42 +200,278 @@ def service(slug, crumb, title_html, intro, photo, about_h2, about, bullets, quo
     return page("TN " + slug, blocks)
 
 
+# ------------------------------------------------------------------ v2 service-page blocks
+def img(title, key, height=None, contain=False, **s):
+    """Image widget from tools/photos.json. height=None keeps the natural aspect (no crop)."""
+    ph = bt.PHOTOS[key]
+    css = "selector img{width:100%;display:block;border-radius:4px;"
+    if height:
+        css += "height:%dpx;object-fit:cover;}" % height[0]
+        css += "@media (max-width:980px){selector img{height:%dpx;}}" % height[1]
+        css += "@media (max-width:600px){selector img{height:%dpx;}}" % height[2]
+    else:
+        css += "height:auto;}"
+    return widget("image", title, image={"id": int(ph["id"]), "url": ph["url"], "alt": ph.get("alt", ""),
+                                         "source": "library"}, image_size="full", custom_css=css, **s)
+
+
+def cards(name, h2_html, items, intro=None, bg=CHARRED):
+    """Six icon cards (icon, title, one line)."""
+    dark = bg != BONE
+    cells = [container("%s / Card %d" % (name, i + 1), [
+        widget("icon", "%s / Card %d / Icon" % (name, i + 1), selected_icon=svg(ic), primary_color=AMBER,
+               size=px(40), align="left", custom_css="selector .elementor-icon{display:block;line-height:0;}"
+                                                    "selector .elementor-icon svg{width:40px;height:40px;}"),
+        heading("%s / Card %d / Title (H3)" % (name, i + 1), t, tag="h3", color=BONE if dark else CHARRED,
+                typ=typo(family=SERIF, size=26, weight=500, lh=1.15)),
+        text("%s / Card %d / Text" % (name, i + 1), "<p>%s</p>" % b, color=DRIFT if dark else BARK, size=15,
+             lh=1.7, pretty=False)],
+        gap=14, padding=pads((36, 32, 28, 24), (32, 28, 28, 24), (36, 32, 28, 24), (32, 28, 28, 24)),
+        background_background="classic", background_color="#1C1814" if dark else "#FBF8F3",
+        border_border="solid", border_width=dims(1), border_color="#F2ECE31A" if dark else "#E2D9CC",
+        border_radius=dims(6)) for i, (ic, t, b) in enumerate(items)]
+    head = [h2(name + " / Title (H2)", h2_html, color=BONE if dark else CHARRED, sizes=H2_INNER, max_w=720)]
+    if intro:
+        head.append(text(name + " / Intro", "<p>%s</p>" % intro, color=DRIFT if dark else BARK, max_w=620))
+    return section(name, [container(name + " / Heading", head, gap=20),
+                          grid(name + " / Grid", cells, cols=(3, 3, 2, 1), gap_col=20, gap_row=20,
+                               grid_align_items="stretch")], bg=bg, gap=(56, 52, 44, 36))
+
+
+def photo_strip(name, h2_html, items, bg=BONE, natural=False, cols=None):
+    """Grid of captioned photos. natural=True keeps each photo's full frame (before/after composites)."""
+    dark = bg != BONE
+    n = len(items)
+    cells = [container("%s / Photo %d" % (name, i + 1), [
+        img("%s / Photo %d / Image" % (name, i + 1), key, None if natural else (300, 280, 200 if n == 4 else 260)),
+        text("%s / Photo %d / Caption" % (name, i + 1), "<p>%s</p>" % cap, color=DRIFT if dark else BARK,
+             size=14, lh=1.5, pretty=False)], gap=12) for i, (key, cap) in enumerate(items)]
+    cols = cols or ((4, 4, 2, 2) if n == 4 else (3, 3, 2, 1) if n == 3 else (2, 2, 2, 1))
+    return section(name, [
+        h2(name + " / Title (H2)", h2_html, color=BONE if dark else CHARRED, sizes=H2_INNER, max_w=720),
+        grid(name + " / Grid", cells, cols=cols, gap_col=20, gap_row=28, grid_align_items="start")],
+        bg=bg, gap=(48, 44, 40, 32))
+
+
+def before_after(name, h2_html, before, after, note, bg=CHARRED):
+    """Two photos side by side, labelled Before and After."""
+    dark = bg != BONE
+    lab = ("selector{position:relative;}selector::after{content:attr(data-label);position:absolute;left:14px;top:14px;"
+           "background:rgba(20,17,14,.82);color:#F2ECE3;font:600 13px/1 Manrope,sans-serif;padding:8px 12px;"
+           "border-radius:999px;}")
+    cells = [img(name + " / " + lbl, key, (460, 380, 300), _attributes="data-label|" + lbl)
+             for lbl, key in (("Before", before), ("After", after))]
+    for c in cells:
+        c["settings"]["custom_css"] = lab + c["settings"]["custom_css"]
+    return section(name, [
+        container(name + " / Heading", [
+            h2(name + " / Title (H2)", h2_html, color=BONE if dark else CHARRED, sizes=H2_INNER, max_w=720),
+            text(name + " / Note", "<p>%s</p>" % note, color=DRIFT if dark else BARK, max_w=620)], gap=20),
+        grid(name + " / Grid", cells, cols=(2, 2, 2, 1), gap_col=20, gap_row=20)], bg=bg, gap=(48, 44, 40, 32))
+
+
+def reviews_pair(name, keys, bg=BONE):
+    return section(name, [
+        h2(name + " / Title (H2)", "<b>What</b> clients say", color=CHARRED if bg == BONE else BONE,
+           sizes=H2_INNER, max_w=720),
+        grid(name + " / Grid", [bt.review_card("%s / Card %d" % (name, i + 1), k, dark=bg != BONE)
+                                for i, k in enumerate(keys)],
+             cols=(2, 2, 2, 1), gap_col=24, gap_row=24, grid_align_items="stretch")], bg=bg, gap=(48, 44, 40, 32))
+
+
+FAQ_CSS = ("<style>.tn-faq{border-top:1px solid #DCD2C4;}"
+           ".tn-faq details{border-bottom:1px solid #DCD2C4;}"
+           ".tn-faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;"
+           "gap:24px;padding:24px 0;font:500 22px/1.3 Fraunces,Georgia,serif;color:#14110E;}"
+           ".tn-faq summary::-webkit-details-marker{display:none;}"
+           ".tn-faq summary::after{content:'+';flex:0 0 auto;width:36px;height:36px;border-radius:50%;border:1px solid #C9BFB1;"
+           "display:flex;align-items:center;justify-content:center;font:400 22px/1 Manrope,sans-serif;color:#8A5A2B;"
+           "transition:transform .25s ease;}"
+           ".tn-faq details[open] summary::after{transform:rotate(45deg);}"
+           ".tn-faq summary:hover{color:#8A5A2B;}"
+           ".tn-faq summary:focus-visible{outline:2px solid #C68B4E;outline-offset:4px;}"
+           ".tn-faq .a{padding:0 60px 26px 0;font:400 17px/1.75 Manrope,sans-serif;color:#5B5046;max-width:760px;}"
+           ".tn-faq .a a{color:#8A5A2B;text-decoration:underline;text-underline-offset:3px;}"
+           "@media (max-width:600px){.tn-faq summary{font-size:19px;padding:20px 0;}.tn-faq .a{padding-right:0;}}</style>")
+
+
+def faq(name, items, h2_html="<b>Common</b> questions"):
+    """Click-to-open questions (native details/summary, keyboard accessible) plus FAQPage schema."""
+    import html as _h, re as _re
+    body = "".join("<details><summary>%s</summary><div class=\"a\">%s</div></details>" % (q, a) for q, a in items)
+    schema = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
+        {"@type": "Question", "name": _h.unescape(q),
+         "acceptedAnswer": {"@type": "Answer", "text": _h.unescape(_re.sub("<[^>]+>", "", a))}} for q, a in items]}
+    html = (FAQ_CSS + '<div class="tn-faq">' + body + "</div>"
+            '<script type="application/ld+json">' + json.dumps(schema) + "</script>")
+    return section(name, [grid(name + " / Layout", [
+        container(name + " / Heading", [h2(name + " / Title (H2)", h2_html, color=CHARRED, sizes=H2_INNER,
+                                           max_w=420)]),
+        widget("html", name + " / Questions", html=html)],
+        cols=("minmax(0,1fr) minmax(0,1.8fr)",) * 2 + ("1fr", "1fr"), gap_col=(96, 72, 48, 40), gap_row=32,
+        grid_align_items="start")], bg=BONE)
+
+
+def winter_banner(name="Winter Offer"):
+    return section(name, [container(name + " / Banner", [
+        container(name + " / Text", [
+            heading(name + " / Title", "<b>Now scheduling</b> winter interior projects", tag="div", color=BONE,
+                    typ=typo(family=SERIF, size=(40, 38, 34, 30), weight=500, lh=1.1)),
+            text(name + " / Body", "<p>Book between November 1 and March 31 and receive 10% off interior "
+                 "projects.</p>", color=bt.HERO_TEXT, size=17, lh=1.6, max_w=520)], gap=10,
+                  css="selector{--width:auto;width:auto;flex:1 1 420px;}"),
+        pill(name + " / Button", "Book Your Winter Project", "/request-an-estimate/")],
+        direction="row", gap=32, flex_wrap="wrap", flex_align_items="center", flex_justify_content="space-between",
+        padding=pads((40, 36, 32, 28), (48, 44, 32, 24), (40, 36, 32, 28), (48, 44, 32, 24)),
+        background_background="classic", background_color=SPRUCE, border_radius=dims(8),
+        border_border="solid", border_width=dims(1, 1, 1, 6), border_color=AMBER)],
+        bg=BONE, pad_top=0, pad_bottom=(96, 88, 72, 64))
+
+
+def service_v2(slug, crumb, title_html, intro, photo, about_h2, about, bullets=None, about_photo=None,
+               cards_=None, steps_=None, strip=None, ba=None, ba_composites=None, reviews=None, faqs=None,
+               winter=False):
+    """Interior / exterior / log page layout requested by Blake (Markup #17–#22)."""
+    others = [x for x in (PAINTING if crumb == "Fine Painting" else STAINING) if x[1] != "/%s/" % slug]
+    blocks = [page_hero("Page Header", crumb, title_html, intro, photo),
+              prose("About", about_h2, about, bullets, photo=about_photo)]
+    if cards_:
+        blocks.append(cards(*cards_))
+    blocks.append(steps("Process", "<b>How we</b> work", steps_))
+    if ba:
+        blocks.append(before_after("Before After", *ba))
+    if ba_composites:
+        blocks.append(photo_strip("Before After", *ba_composites, bg=CHARRED, natural=True))
+    if strip:
+        blocks.append(photo_strip("Photo Strip", *strip))
+    if reviews:
+        blocks.append(reviews_pair("Reviews", reviews, bg=CHARRED))
+    if faqs:
+        blocks.append(faq("FAQ", faqs))
+    if winter:
+        blocks.append(winter_banner())
+    blocks += [related("Related Services", "<b>More</b> %s" % ("painting services" if crumb == "Fine Painting"
+                                                              else "log &amp; timber services"), others),
+               cta()]
+    return page("TN " + slug, blocks)
+
+
 # ------------------------------------------------------------------ pages
 def pages():
     P = {}
-    P["interior-painting"] = service(
+    P["interior-painting"] = service_v2(
         "interior-painting", "Fine Painting", "<b>Interior</b> painting",
         "Walls, ceilings, trim and doors painted with careful preparation, two full coats and clean lines, "
         "in homes from Vail to Aspen.",
-        ("#33261C", "Photo: finished interior", None),
+        ("#33261C", "Photo: finished interior", "tn-ceiling-smooth-2"),
         "<b>Preparation</b> before a brush is lifted",
         ["Interior painting starts long before the first coat. Furniture and floors are covered and protected. "
          "Walls and ceilings are inspected, and nail holes and cracks are filled and repaired. Baseboards, "
          "windows and frames are taped and caulked.",
          "We prime new drywall and texture, then apply two coats of high-quality paint. In our dry mountain "
          "climate, a single coat can crack, so two coats is our standard."],
-        ["Walls, ceilings, trim and doors", "Drywall and texture repair, priming new work",
-         "Two coats of premium, low-odor paint", "Rooms returned the way we found them, swept and clean",
-         "Final walkthrough with you before the job is complete"],
-        quote_=("Oto and his crew were wonderful. They were efficient, professional and very conscious of our "
-                "budget. We would absolutely use them again.", "Cathy D. · Eagle"))
+        about_photo=("#33261C", "Photo: masked room", "tn-masking-interior"),
+        cards_=("What We Paint", "<b>What</b> we paint", [
+            ("paint-roller-light", "Walls &amp; vaulted ceilings",
+             "Great rooms, high ceilings, two-story foyers and stairwells, finished with even coverage and clean lines."),
+            ("door-light", "Trim, doors &amp; millwork", "Baseboards, door casings, crown molding, sills and doors."),
+            ("tree-light", "Interior wood &amp; timber",
+             "Beams, log accent walls, tongue-and-groove ceilings and clear-coated timber."),
+            ("swatches-light", "Accent walls &amp; specialty finishes",
+             "Texture, glazes and accent walls that add depth to a room."),
+            ("dresser-light", "Cabinets &amp; built-ins",
+             "Kitchen cabinets, vanities and shelving, refinished to a smooth, durable surface."),
+            ("wall-light", "Drywall repair &amp; texture matching",
+             "Patches and settling cracks repaired and blended so they disappear under the new finish.")]),
+        steps_=[("Walkthrough &amp; estimate", "We look at the rooms with you, talk through colors and products, and give "
+                 "you a clear written estimate."),
+                ("Protect", "Floors, furniture and fixtures are covered and masked off, and work areas are sealed with "
+                 "plastic where needed."),
+                ("Prepare", "Nail holes and cracks are filled, surfaces sanded and caulked, and new drywall primed."),
+                ("Apply the finish", "Two coats of premium paint, cut in by hand for crisp lines at ceilings and trim."),
+                ("Clean up &amp; walk through", "Rooms are put back the way we found them, and we walk the finished work "
+                 "with you.")],
+        ba=("<b>Popcorn ceiling</b> to smooth finish",
+            "tn-ceiling-during", "tn-ceiling-smooth-beams",
+            "The room is fully masked while the old texture comes off. The ceiling is skimmed smooth, primed and "
+            "painted, and the beams are left crisp and clean."),
+        strip=("<b>Recent</b> interior work", [
+            ("tn-ceiling-smooth-3", "Smooth ceiling with stained beams"),
+            ("tn-accent-wall", "Deep plum accent wall"),
+            ("tn-stairwell", "Stairwell walls and trim"),
+            ("tn-stock-gray-kitchen-cabinets", "Sprayed gray cabinets")]),
+        reviews=("cathy", "karen"),
+        faqs=[
+            ("How long does an interior painting project take?",
+             "It depends on the size of the space, ceiling heights and how much repair is needed. A single room is "
+             "often a day or two, and a whole home can take a few weeks. Your written estimate includes a schedule."),
+            ("Do we need to move out while you paint?",
+             "Usually not. We work room by room, keep paths clear and clean up at the end of every day. We use low-odor "
+             "paints, and for whole-home projects some clients choose to be away for a few days."),
+            ("Do you move the furniture?",
+             "Yes. We move and cover furniture and put it back when we're done. We ask you to put away small valuables, "
+             "artwork and anything fragile before we start."),
+            ("Can you help us choose colors?",
+             "Yes. We can talk through options with you and put samples on your walls, so you see them in your own light "
+             "before you decide."),
+            ("What paint do you use?",
+             "Premium coatings from manufacturers including Sherwin-Williams and Benjamin Moore, chosen for the surface "
+             "and the room. Two full coats is our standard."),
+            ("Is the work guaranteed?",
+             "Yes. Our work is backed by a two-year written warranty."),
+            ("Do you offer financing?",
+             'Yes. We offer financing through Hearth. <a href="/financing/">See financing options</a>.'),
+            ("When is the best time for interior painting?",
+             "Any time of year works, but winter is ideal: schedules are flexible and many homes are quiet. Book between "
+             "November 1 and March 31 and receive 10% off interior projects.")],
+        winter=True)
 
-    P["exterior-painting"] = service(
+    P["exterior-painting"] = service_v2(
         "exterior-painting", "Fine Painting", "<b>Exterior</b> painting",
         "Exterior painting and staining built for intense sun, dry air and hard winters, through the Vail, "
         "Roaring Fork and Grand valleys.",
-        ("#222B25", "Photo: finished exterior", "deck"),
+        ("#222B25", "Photo: finished exterior", "tn-ext-gray-repaint"),
         "<b>A finish</b> that holds up at altitude",
         ["Mountain sun breaks down coatings faster than almost anywhere else. We don't skimp on materials or "
          "surface preparation, and we follow each manufacturer's recommendations so your finish looks good "
          "and lasts.",
          "Not sure about color? We'll help you choose, taking the light, the setting and the weather into "
          "account. A dedicated project lead oversees the work from start to finish."],
-        ["Siding, trim, fascia, doors and garage doors", "Masking and protection of everything around the work",
-         "Spraying with back-brushing for a proper bond", "Color consultation",
-         "Daily cleanup, with nothing left behind"],
-        quote_=("Very reliable. They came on time and finished in the agreed time. They were very professional. "
-                "Hire these guys, you will not be disappointed!", "Kathy A. · Gypsum"))
+        bullets=["Siding, trim, fascia, doors and garage doors", "Masking and protection of everything around the work",
+                 "Spraying with back-brushing for a proper bond", "Color consultation",
+                 "Daily cleanup, with nothing left behind"],
+        cards_=("What We Paint", "<b>What</b> we paint", [
+            ("house-line-light", "Siding &amp; trim", "Lap, board-and-batten and shingle siding, with crisp trim lines."),
+            ("garage-light", "Doors &amp; garage doors", "Entry doors, garage doors and shutters, finished to stand up to sun and snow."),
+            ("ruler-light", "Fascia, soffits &amp; eaves", "The high, hard-to-reach details that frame the whole house."),
+            ("drop-light", "Stain &amp; clear coats", "Solid and semi-transparent stains for wood siding, beams and accents."),
+            ("palette-light", "Color consultation", "Help choosing colors that suit the home, the light and the setting."),
+            ("shield-check-light", "Prep &amp; protection", "Washing, scraping, caulking and priming, with windows, roofs and plants masked off.")]),
+        steps_=[("Walkthrough &amp; estimate", "We look at the whole exterior with you and give you a clear written estimate."),
+                ("Protect", "Windows, doors, roofs, decks and landscaping are masked and covered before any spraying."),
+                ("Prepare", "Surfaces are washed, scraped, sanded, caulked and primed to the manufacturer's specifications."),
+                ("Apply the finish", "Premium coatings sprayed and back-brushed, or brushed and rolled, for a proper bond."),
+                ("Clean up &amp; walk through", "Masking comes off, the site is cleaned and we walk the finished work with you.")],
+        ba=("<b>Before</b> &amp; after", "tn-ext-before", "tn-ext-after",
+            "A dated exterior refreshed with clean white siding, navy shutters and a matching garage door."),
+        strip=("<b>Recent</b> exterior work", [
+            ("tn-ext-gray-garage", "Dark gray repaint with black garage doors"),
+            ("tn-ext-after-front", "White and navy front elevation"),
+            ("tn-masking-railing", "Railings masked before spraying")]),
+        reviews=("kathy", "clifford"),
+        faqs=[
+            ("When is the best time of year for exterior painting?",
+             "Late spring through early fall, when temperatures stay within the paint manufacturer's range. We schedule "
+             "around the weather and keep you updated if a storm moves in."),
+            ("How long will an exterior paint job last up here?",
+             "It depends on exposure. South- and west-facing walls take the most sun and wear fastest. Good preparation "
+             "and premium products make the biggest difference, and we'll tell you honestly what to expect."),
+            ("Do you protect landscaping and outdoor surfaces?",
+             "Yes. Plants, decks, roofs, windows and anything else near the work are covered and masked before we spray, "
+             "and we clean up every day."),
+            ("Do I need to be home during the work?",
+             "No. Many of our clients are away. We coordinate access with you or your property manager and send progress "
+             "photos along the way.")])
 
     P["specialty-finishes-interior-wood"] = service(
         "specialty-finishes-interior-wood", "Fine Painting", "<b>Specialty finishes</b> &amp; interior wood",
@@ -265,7 +503,7 @@ def pages():
          "Log and timber buildings and resorts", "Work phased to keep buildings open",
          "Written scope and estimate for board approval"])
 
-    P["log-home-staining-restoration"] = service(
+    P["log-home-staining-restoration"] = service_v2(
         "log-home-staining-restoration", "Log &amp; Timber Staining",
         "<b>Log home staining</b> &amp; restoration",
         "Top Notch Painting is a division of Top Notch Logworks, which has built log and timber homes and "
@@ -278,15 +516,43 @@ def pages():
          "Colorado's dry climate doesn't protect logs. Intense UV breaks down finishes and wood, letting "
          "moisture in. We use products from Sashco and Perma-Chink, made specifically for log and timber "
          "homes, and we're trained and certified to apply them."],
-        ["Media blasting to remove old, failing finishes", "Chemical cleaning and brightening",
-         "Sanding and stripping where needed", "Color samples on your own logs before you choose",
-         "Preservatives, stains and topcoats from Sashco and Perma-Chink"],
+        bullets=["Media blasting to remove old, failing finishes", "Chemical cleaning and brightening",
+                 "Sanding and stripping where needed", "Color samples on your own logs before you choose",
+                 "Preservatives, stains and topcoats from Sashco and Perma-Chink"],
+        cards_=("What We Do", "<b>What</b> we do", [
+            ("spray-bottle-light", "Media blasting", "Old, failing finishes stripped back to clean wood so new stain can soak in."),
+            ("sparkle-light", "Cleaning &amp; brightening", "Graying and mildew removed so the wood's natural color comes back."),
+            ("paint-brush-light", "Stain &amp; topcoat", "Preservative, stain and topcoat applied to the manufacturer's specifications."),
+            ("wall-light", "Chinking &amp; sealing", "Gaps and checks sealed against drafts, moisture and pests."),
+            ("hammer-light", "Rot repair", "Damaged log ends and beams cut out, replaced and treated."),
+            ("calendar-check-light", "Maintenance coats", "Regular touch-up coats that keep a finish strong, so small jobs stay small.")]),
         steps_=[("Inspect", "We look at the whole home: finish condition, checks, chinking and any signs of rot."),
+                ("Protect", "Windows, doors, roofs and landscaping are masked and covered before blasting or staining."),
                 ("Prepare", "Media blasting, cleaning, brightening and sanding take the logs back to clean wood."),
-                ("Protect", "Preservative, stain and topcoat applied to the manufacturer's specifications."),
-                ("Maintain", "We'll tell you honestly when the next maintenance coat is due, so small jobs stay small.")],
-        quote_=("We never imagined our home could look as beautiful and transformed as it does today.",
-                "Lee F. · Gypsum"))
+                ("Stain &amp; seal", "Preservative, stain and topcoat applied to the manufacturer's specifications."),
+                ("Maintain", "We tell you honestly when the next maintenance coat is due.")],
+        ba_composites=("<b>Before</b> &amp; after", [
+            ("tn-log-before-after-1", "Weathered logs brought back to a rich, even finish"),
+            ("tn-log-before-after-2", "Gray, faded logs restained and sealed"),
+            ("tn-log-before-after-3", "A small cabin restored, with fresh chinking")]),
+        strip=("<b>Recent</b> log &amp; timber work", [
+            ("tn-log-home-restained", "Large log home after restaining"),
+            ("tn-log-cabin-chinked", "Restored cabin with new chinking"),
+            ("tn-masking-log-windows", "Windows masked before staining"),
+            ("tn-crew-log-wall", "Crew staining and sealing a log wall")]),
+        reviews=("lee", "hervey"),
+        faqs=[
+            ("How often should a log home be restained?",
+             "It depends on sun exposure and the product used. South- and west-facing walls need attention first. "
+             "Regular maintenance coats extend the life of a finish and cost far less than a full restoration."),
+            ("Why do you media blast?",
+             "A new finish only lasts if it bonds to clean wood. Blasting removes old, failing stain and weathered wood "
+             "fibers without soaking the logs, so the new finish soaks in properly."),
+            ("Can you match our current color?",
+             "Yes. We apply samples on your own logs so you can see the color in place before you choose."),
+            ("Do you check on the home after the work is done?",
+             "Yes. We'll tell you when maintenance is due, and we're happy to come back and look at the home so small "
+             "problems never become big ones.")])
 
     P["chinking-check-sealing"] = service(
         "chinking-check-sealing", "Log &amp; Timber Staining", "<b>Chinking</b> &amp; check sealing",
@@ -323,6 +589,8 @@ def pages():
                 ("Repair it", "Damaged wood is cut out and replaced, from a single log end to a structural beam."),
                 ("Treat it", "Borate preservatives protect the surrounding wood from decay."),
                 ("Keep it dry", "Copper caps, flashing and a good finish keep water out, so the borates stay put.")],
+        more=before_after("Before After", "<b>Found</b> and fixed", "tn-rot-before", "tn-rot-after",
+                          "Rot hidden inside a log, cut out and replaced with sound wood before the home was restained."),
         quote_=("They took an old, rotting deck and restored it so beautifully that we will be able to enjoy it "
                 "for decades to come.", "Hervey L., architect · Grand Lake"))
 
@@ -360,7 +628,9 @@ def pages():
     colors = ["#33261C", "#3A281B", "#222B25"]
     gallery_imgs = {"Log home restain": "tn-log-home-winter", "Deck restoration": "tn-covered-deck-log-rail",
                     "Chinking detail": "tn-log-wall-prep", "Media blasting": "tn-media-blasting-log-wall",
-                    "Railings and stairs": "tn-log-stair-interior", "Stained interior wood": "tn-timber-ceiling-interior"}
+                    "Railings and stairs": "tn-log-stair-interior", "Stained interior wood": "tn-timber-ceiling-interior",
+                    "Interior great room": "tn-ceiling-smooth-2", "Exterior repaint": "tn-ext-after",
+                    "Accent wall": "tn-accent-wall"}
     tiles = [photo_slot("Gallery / Photo %d" % (i + 1), colors[i % 3], (340, 320, 280, 190), "Photo: " + l,
                         image=gallery_imgs.get(l), padding=dims(0, 14, 14, 14))
              for i, l in enumerate(labels)]

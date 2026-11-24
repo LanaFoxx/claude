@@ -370,3 +370,22 @@ Container `Seasonal Offer`: change the H2 to **Talk to us about your project** a
 - 12 photos from the Logworks NextGEN gallery, resized to max 1600px JPG and uploaded with alt text (media 2744–2755). They are listed in `tools/photos.json` under `tn-*` keys and used through `photo_slot(..., image=key)`.
 - Placements: Log Home Staining (stained exterior), Chinking (tall windows), Rot Repair (log home deck), Deck Staining (deck and rail), Media Blasting (crew blasting), Specialty Finishes (timber ceiling), For Builders (timber frame), Our Story (crew on a log home and crew blasting), homepage Staining panel (winter log home), and 6 Our Work tiles (real photos first, painting placeholders last).
 - Project Stories keep placeholders, so no photo implies it shows a specific client's home.
+
+## Blake's Markup notes (Nov 23) + new photos
+- **Photos:** Blake's Google Drive upload (screenshots cropped of black bars) plus Pexels stock (free license), uploaded as media 2820–2852 and listed in `tools/photos.json`. 14 new Phosphor Light icons (media 2864–2877) were added to `tools/icon_map.json`.
+- **Homepage:**
+  - Hero slides: stock great room with mountain views, then the Logworks stained log home.
+  - Two review cards: absolute on the right at 1200px and up, in a row under the buttons below that, one card on phones.
+  - Credentials: Google 5.0 / 24 reviews next to HomeAdvisor, and a Sherwin-Williams white wordmark.
+  - Reviews: a 4-card grid (2 painting, 2 log) using `REVIEWS` and `review_card()` in build_templates.
+  - Photos: Featured projects now use real jobs (popcorn ceiling, exterior repaint, log home restain). Who We Are uses the crew photo, and the Painting panel uses stock.
+- **Footer:** 4 columns:
+  1. About: logo, tagline, BBB badge and "Fully insured" pill.
+  2. Services: all 9, stacked.
+  3. Areas we serve.
+  4. Contact: address, phone, email, temporary hours, social.
+
+  The bottom row holds the copyright and a "Request an estimate" link.
+- **Service pages v2** (`service_v2()` in build_pages), used by interior, exterior and log home:
+  - Order: hero photo → intro with "What's included" or a photo → six icon cards → 5-step process → before/after → photo strip → two reviews → FAQ (native `<details>` plus FAQPage schema) → winter banner (interior only) → related → CTA.
+  - Other changes: the rot page gets a before/after, and the last three Our Work tiles now have real photos.

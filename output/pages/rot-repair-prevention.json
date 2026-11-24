@@ -4,7 +4,7 @@
  "type": "page",
  "content": [
   {
-   "id": "1746583",
+   "id": "64eb1e9",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -82,7 +82,7 @@
    },
    "elements": [
     {
-     "id": "9afd44a",
+     "id": "9fc3728",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -189,7 +189,7 @@
      },
      "elements": [
       {
-       "id": "300da2b",
+       "id": "7ebea6f",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -241,7 +241,7 @@
        },
        "elements": [
         {
-         "id": "4d43281",
+         "id": "53eaf67",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -272,7 +272,7 @@
          "elements": []
         },
         {
-         "id": "d6cf381",
+         "id": "d0d7c2d",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -320,7 +320,7 @@
          "elements": []
         },
         {
-         "id": "7bc5b3b",
+         "id": "b97fee9",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -365,7 +365,7 @@
          "elements": []
         },
         {
-         "id": "d6605af",
+         "id": "6333552",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -418,7 +418,7 @@
          },
          "elements": [
           {
-           "id": "b99fb26",
+           "id": "49de46d",
            "elType": "widget",
            "widgetType": "button",
            "isInner": false,
@@ -470,7 +470,7 @@
            "elements": []
           },
           {
-           "id": "48356e4",
+           "id": "3b186e1",
            "elType": "widget",
            "widgetType": "button",
            "isInner": false,
@@ -539,7 +539,7 @@
        ]
       },
       {
-       "id": "3ef7b37",
+       "id": "919b0c5",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -629,7 +629,7 @@
    ]
   },
   {
-   "id": "f39f13d",
+   "id": "772f8da",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -707,7 +707,7 @@
    },
    "elements": [
     {
-     "id": "7598837",
+     "id": "8e41fad",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -814,7 +814,7 @@
      },
      "elements": [
       {
-       "id": "9a94a6e",
+       "id": "c94e23d",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -865,7 +865,7 @@
        },
        "elements": [
         {
-         "id": "b95c2c0",
+         "id": "629c0c9",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -913,7 +913,7 @@
          "elements": []
         },
         {
-         "id": "c79ecb4",
+         "id": "f83811e",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -945,7 +945,7 @@
        ]
       },
       {
-       "id": "9e0dce0",
+       "id": "eb74d2f",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1038,7 +1038,7 @@
        },
        "elements": [
         {
-         "id": "bf0a614",
+         "id": "b8347fb",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1069,7 +1069,7 @@
          "elements": []
         },
         {
-         "id": "ff463c5",
+         "id": "f5ea919",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -1106,7 +1106,7 @@
    ]
   },
   {
-   "id": "9d903c6",
+   "id": "467f02f",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -1184,7 +1184,7 @@
    },
    "elements": [
     {
-     "id": "e6ecf6f",
+     "id": "a701477",
      "elType": "widget",
      "widgetType": "heading",
      "isInner": false,
@@ -1232,7 +1232,7 @@
      "elements": []
     },
     {
-     "id": "3de6c06",
+     "id": "71b2590",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -1339,7 +1339,7 @@
      },
      "elements": [
       {
-       "id": "4a6ef8d",
+       "id": "de6ec4a",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1390,7 +1390,7 @@
        },
        "elements": [
         {
-         "id": "5145ff0",
+         "id": "604d7d9",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1416,7 +1416,7 @@
          "elements": []
         },
         {
-         "id": "d95ef1d",
+         "id": "3d3f0bf",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1442,7 +1442,7 @@
          "elements": []
         },
         {
-         "id": "35ce93f",
+         "id": "424ce2d",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -1474,7 +1474,7 @@
        ]
       },
       {
-       "id": "9a88ce1",
+       "id": "c06cdc6",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1525,7 +1525,7 @@
        },
        "elements": [
         {
-         "id": "15fb0d5",
+         "id": "8687a07",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1551,7 +1551,7 @@
          "elements": []
         },
         {
-         "id": "143f9f5",
+         "id": "485d1c9",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1577,7 +1577,7 @@
          "elements": []
         },
         {
-         "id": "56de6ee",
+         "id": "ed8c1b6",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -1609,7 +1609,7 @@
        ]
       },
       {
-       "id": "60931ba",
+       "id": "d984e3c",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1660,7 +1660,7 @@
        },
        "elements": [
         {
-         "id": "8a95797",
+         "id": "fb74268",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1686,7 +1686,7 @@
          "elements": []
         },
         {
-         "id": "7afa2b3",
+         "id": "693a593",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1712,7 +1712,7 @@
          "elements": []
         },
         {
-         "id": "538973e",
+         "id": "d2425fc",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -1744,7 +1744,7 @@
        ]
       },
       {
-       "id": "26e5fc4",
+       "id": "dda11ec",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1795,7 +1795,7 @@
        },
        "elements": [
         {
-         "id": "337f0de",
+         "id": "69a071a",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1821,7 +1821,7 @@
          "elements": []
         },
         {
-         "id": "b07481b",
+         "id": "78e217f",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1847,7 +1847,7 @@
          "elements": []
         },
         {
-         "id": "a7f97ad",
+         "id": "e4e5205",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -1883,7 +1883,364 @@
    ]
   },
   {
-   "id": "e2e3877",
+   "id": "5fe0f36",
+   "elType": "container",
+   "isInner": false,
+   "settings": {
+    "_title": "Before After",
+    "content_width": "boxed",
+    "flex_direction": "column",
+    "flex_gap": {
+     "column": "48",
+     "row": "48",
+     "isLinked": true,
+     "unit": "px",
+     "size": 48
+    },
+    "flex_gap_laptop": {
+     "column": "44",
+     "row": "44",
+     "isLinked": true,
+     "unit": "px",
+     "size": 44
+    },
+    "flex_gap_tablet": {
+     "column": "40",
+     "row": "40",
+     "isLinked": true,
+     "unit": "px",
+     "size": 40
+    },
+    "flex_gap_mobile": {
+     "column": "32",
+     "row": "32",
+     "isLinked": true,
+     "unit": "px",
+     "size": 32
+    },
+    "boxed_width": {
+     "unit": "px",
+     "size": 1280,
+     "sizes": []
+    },
+    "padding": {
+     "unit": "px",
+     "top": "128",
+     "right": "48",
+     "bottom": "128",
+     "left": "48",
+     "isLinked": false
+    },
+    "padding_laptop": {
+     "unit": "px",
+     "top": "117",
+     "right": "48",
+     "bottom": "117",
+     "left": "48",
+     "isLinked": false
+    },
+    "padding_tablet": {
+     "unit": "px",
+     "top": "88",
+     "right": "32",
+     "bottom": "88",
+     "left": "32",
+     "isLinked": false
+    },
+    "padding_mobile": {
+     "unit": "px",
+     "top": "80",
+     "right": "20",
+     "bottom": "80",
+     "left": "20",
+     "isLinked": false
+    },
+    "background_background": "classic",
+    "background_color": "#14110E",
+    "html_tag": "section"
+   },
+   "elements": [
+    {
+     "id": "8eac0d5",
+     "elType": "container",
+     "isInner": true,
+     "settings": {
+      "_title": "Before After / Heading",
+      "content_width": "full",
+      "flex_direction": "column",
+      "flex_gap": {
+       "column": "20",
+       "row": "20",
+       "isLinked": true,
+       "unit": "px",
+       "size": 20
+      },
+      "flex_gap_laptop": {
+       "column": "20",
+       "row": "20",
+       "isLinked": true,
+       "unit": "px",
+       "size": 20
+      },
+      "flex_gap_tablet": {
+       "column": "20",
+       "row": "20",
+       "isLinked": true,
+       "unit": "px",
+       "size": 20
+      },
+      "flex_gap_mobile": {
+       "column": "20",
+       "row": "20",
+       "isLinked": true,
+       "unit": "px",
+       "size": 20
+      },
+      "width": {
+       "unit": "%",
+       "size": 100,
+       "sizes": []
+      },
+      "padding": {
+       "unit": "px",
+       "top": "0",
+       "right": "0",
+       "bottom": "0",
+       "left": "0",
+       "isLinked": true
+      }
+     },
+     "elements": [
+      {
+       "id": "267e71d",
+       "elType": "widget",
+       "widgetType": "heading",
+       "isInner": false,
+       "settings": {
+        "title": "<b>Found</b> and fixed",
+        "header_size": "h2",
+        "title_color": "#F2ECE3",
+        "typography_typography": "custom",
+        "typography_font_family": "Fraunces",
+        "typography_font_size": {
+         "unit": "px",
+         "size": 45,
+         "sizes": []
+        },
+        "typography_font_size_laptop": {
+         "unit": "px",
+         "size": 41,
+         "sizes": []
+        },
+        "typography_font_size_tablet": {
+         "unit": "px",
+         "size": 34,
+         "sizes": []
+        },
+        "typography_font_size_mobile": {
+         "unit": "px",
+         "size": 29,
+         "sizes": []
+        },
+        "typography_font_weight": "300",
+        "typography_line_height": {
+         "unit": "em",
+         "size": 1.04,
+         "sizes": []
+        },
+        "typography_letter_spacing": {
+         "unit": "px",
+         "size": -0.6,
+         "sizes": []
+        },
+        "custom_css": "selector .elementor-heading-title{text-wrap:balance;}selector{max-width:720px !important;}",
+        "_css_classes": "tn-teeth tn-contrast",
+        "_title": "Before After / Title (H2)"
+       },
+       "elements": []
+      },
+      {
+       "id": "def48cd",
+       "elType": "widget",
+       "widgetType": "text-editor",
+       "isInner": false,
+       "settings": {
+        "editor": "<p>Rot hidden inside a log, cut out and replaced with sound wood before the home was restained.</p>",
+        "text_color": "#B3A99C",
+        "paragraph_spacing": {
+         "unit": "px",
+         "size": 0,
+         "sizes": []
+        },
+        "typography_typography": "custom",
+        "typography_font_family": "Manrope",
+        "typography_font_size": {
+         "unit": "px",
+         "size": 17,
+         "sizes": []
+        },
+        "typography_line_height": {
+         "unit": "em",
+         "size": 1.75,
+         "sizes": []
+        },
+        "custom_css": "selector p:last-child{margin-block-end:0;}selector{max-width:620px !important;}",
+        "_title": "Before After / Note"
+       },
+       "elements": []
+      }
+     ]
+    },
+    {
+     "id": "d72877b",
+     "elType": "container",
+     "isInner": true,
+     "settings": {
+      "_title": "Before After / Grid",
+      "content_width": "full",
+      "flex_direction": "column",
+      "flex_gap": {
+       "column": "20",
+       "row": "20",
+       "isLinked": true,
+       "unit": "px",
+       "size": 20
+      },
+      "flex_gap_laptop": {
+       "column": "20",
+       "row": "20",
+       "isLinked": true,
+       "unit": "px",
+       "size": 20
+      },
+      "flex_gap_tablet": {
+       "column": "20",
+       "row": "20",
+       "isLinked": true,
+       "unit": "px",
+       "size": 20
+      },
+      "flex_gap_mobile": {
+       "column": "20",
+       "row": "20",
+       "isLinked": true,
+       "unit": "px",
+       "size": 20
+      },
+      "width": {
+       "unit": "%",
+       "size": 100,
+       "sizes": []
+      },
+      "padding": {
+       "unit": "px",
+       "top": "0",
+       "right": "0",
+       "bottom": "0",
+       "left": "0",
+       "isLinked": true
+      },
+      "container_type": "grid",
+      "grid_auto_flow": "row",
+      "grid_rows_grid": {
+       "unit": "custom",
+       "size": "auto",
+       "sizes": []
+      },
+      "grid_columns_grid": {
+       "unit": "fr",
+       "size": 2,
+       "sizes": []
+      },
+      "grid_columns_grid_laptop": {
+       "unit": "fr",
+       "size": 2,
+       "sizes": []
+      },
+      "grid_columns_grid_tablet": {
+       "unit": "fr",
+       "size": 2,
+       "sizes": []
+      },
+      "grid_columns_grid_mobile": {
+       "unit": "fr",
+       "size": 1,
+       "sizes": []
+      },
+      "grid_gaps": {
+       "column": "20",
+       "row": "20",
+       "isLinked": true,
+       "unit": "px",
+       "size": 20
+      },
+      "grid_gaps_laptop": {
+       "column": "20",
+       "row": "20",
+       "isLinked": true,
+       "unit": "px",
+       "size": 20
+      },
+      "grid_gaps_tablet": {
+       "column": "20",
+       "row": "20",
+       "isLinked": true,
+       "unit": "px",
+       "size": 20
+      },
+      "grid_gaps_mobile": {
+       "column": "20",
+       "row": "20",
+       "isLinked": true,
+       "unit": "px",
+       "size": 20
+      }
+     },
+     "elements": [
+      {
+       "id": "21ac44b",
+       "elType": "widget",
+       "widgetType": "image",
+       "isInner": false,
+       "settings": {
+        "image": {
+         "id": 2850,
+         "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-rot-before.jpg",
+         "alt": "Rotted log found during restoration",
+         "source": "library"
+        },
+        "image_size": "full",
+        "custom_css": "selector{position:relative;}selector::after{content:attr(data-label);position:absolute;left:14px;top:14px;background:rgba(20,17,14,.82);color:#F2ECE3;font:600 13px/1 Manrope,sans-serif;padding:8px 12px;border-radius:999px;}selector img{width:100%;display:block;border-radius:4px;height:460px;object-fit:cover;}@media (max-width:980px){selector img{height:380px;}}@media (max-width:600px){selector img{height:300px;}}",
+        "_attributes": "data-label|Before",
+        "_title": "Before After / Before"
+       },
+       "elements": []
+      },
+      {
+       "id": "d76f910",
+       "elType": "widget",
+       "widgetType": "image",
+       "isInner": false,
+       "settings": {
+        "image": {
+         "id": 2851,
+         "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-rot-after.jpg",
+         "alt": "Replacement log installed",
+         "source": "library"
+        },
+        "image_size": "full",
+        "custom_css": "selector{position:relative;}selector::after{content:attr(data-label);position:absolute;left:14px;top:14px;background:rgba(20,17,14,.82);color:#F2ECE3;font:600 13px/1 Manrope,sans-serif;padding:8px 12px;border-radius:999px;}selector img{width:100%;display:block;border-radius:4px;height:460px;object-fit:cover;}@media (max-width:980px){selector img{height:380px;}}@media (max-width:600px){selector img{height:300px;}}",
+        "_attributes": "data-label|After",
+        "_title": "Before After / After"
+       },
+       "elements": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "a10ab84",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -1961,7 +2318,7 @@
    },
    "elements": [
     {
-     "id": "edba748",
+     "id": "ce372c5",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -2013,7 +2370,7 @@
      },
      "elements": [
       {
-       "id": "19baf21",
+       "id": "37855a3",
        "elType": "widget",
        "widgetType": "heading",
        "isInner": false,
@@ -2056,7 +2413,7 @@
        "elements": []
       },
       {
-       "id": "b6745fc",
+       "id": "811166c",
        "elType": "widget",
        "widgetType": "heading",
        "isInner": false,
@@ -2087,7 +2444,7 @@
    ]
   },
   {
-   "id": "61478b9",
+   "id": "61edc8e",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -2165,7 +2522,7 @@
    },
    "elements": [
     {
-     "id": "ce3b496",
+     "id": "2e2b293",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -2272,7 +2629,7 @@
      },
      "elements": [
       {
-       "id": "e1e2903",
+       "id": "cc71bb9",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -2323,7 +2680,7 @@
        },
        "elements": [
         {
-         "id": "939890c",
+         "id": "b826c06",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -2373,7 +2730,7 @@
        ]
       },
       {
-       "id": "d129017",
+       "id": "e5ece6d",
        "elType": "widget",
        "widgetType": "icon-list",
        "isInner": false,
@@ -2387,7 +2744,7 @@
         "text_color_hover": "#D9A66B",
         "icon_list": [
          {
-          "_id": "53e5a40",
+          "_id": "30a958f",
           "text": "Log Home Staining &amp; Restoration",
           "link": {
            "url": "/log-home-staining-restoration/",
@@ -2400,7 +2757,7 @@
           }
          },
          {
-          "_id": "6738f7c",
+          "_id": "7e69634",
           "text": "Chinking &amp; Check Sealing",
           "link": {
            "url": "/chinking-check-sealing/",
@@ -2413,7 +2770,7 @@
           }
          },
          {
-          "_id": "b20cb7a",
+          "_id": "5483559",
           "text": "Deck Staining",
           "link": {
            "url": "/deck-staining/",
@@ -2426,7 +2783,7 @@
           }
          },
          {
-          "_id": "953c240",
+          "_id": "64379b7",
           "text": "Media Blasting",
           "link": {
            "url": "/media-blasting/",
@@ -2470,7 +2827,7 @@
    ]
   },
   {
-   "id": "8875a42",
+   "id": "9b8cc88",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -2566,7 +2923,7 @@
    },
    "elements": [
     {
-     "id": "4e28912",
+     "id": "353676a",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -2618,7 +2975,7 @@
      },
      "elements": [
       {
-       "id": "1e66c6b",
+       "id": "5436734",
        "elType": "widget",
        "widgetType": "heading",
        "isInner": false,
@@ -2667,7 +3024,7 @@
        "elements": []
       },
       {
-       "id": "b86a04d",
+       "id": "e757944",
        "elType": "widget",
        "widgetType": "text-editor",
        "isInner": false,
@@ -2698,7 +3055,7 @@
        "elements": []
       },
       {
-       "id": "b0bb4fc",
+       "id": "537ccaf",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -2752,7 +3109,7 @@
        },
        "elements": [
         {
-         "id": "e734fc4",
+         "id": "ede56d3",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,
@@ -2804,7 +3161,7 @@
          "elements": []
         },
         {
-         "id": "12ebb8d",
+         "id": "81c76b6",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,

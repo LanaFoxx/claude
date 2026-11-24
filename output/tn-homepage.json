@@ -4,7 +4,7 @@
  "type": "page",
  "content": [
   {
-   "id": "611070a",
+   "id": "e61b5e0",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -88,16 +88,12 @@
     "overflow": "hidden",
     "background_slideshow_gallery": [
      {
-      "id": 1583,
-      "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-hero-staining-deck-railing.webp"
+      "id": 2820,
+      "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-stock-great-room-mountain-view.jpg"
      },
      {
-      "id": 1584,
-      "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-hero-stained-cedar-fence.webp"
-     },
-     {
-      "id": 1585,
-      "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-hero-stained-wood-deck.webp"
+      "id": 2745,
+      "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-log-home-stained-windows.jpg"
      }
     ],
     "background_slideshow_loop": "yes",
@@ -136,7 +132,7 @@
    },
    "elements": [
     {
-     "id": "9ece78b",
+     "id": "28bee07",
      "elType": "widget",
      "widgetType": "heading",
      "isInner": false,
@@ -179,7 +175,7 @@
      "elements": []
     },
     {
-     "id": "5a41f8e",
+     "id": "3577c32",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -286,7 +282,7 @@
      },
      "elements": [
       {
-       "id": "b9f5307",
+       "id": "41d06d9",
        "elType": "widget",
        "widgetType": "text-editor",
        "isInner": false,
@@ -331,7 +327,7 @@
        "elements": []
       },
       {
-       "id": "e4d6d27",
+       "id": "794baad",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -385,7 +381,7 @@
        },
        "elements": [
         {
-         "id": "f842997",
+         "id": "cf5f85e",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,
@@ -437,7 +433,7 @@
          "elements": []
         },
         {
-         "id": "189b512",
+         "id": "eb4c949",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,
@@ -506,7 +502,379 @@
      ]
     },
     {
-     "id": "7f29a9f",
+     "id": "fea33d4",
+     "elType": "container",
+     "isInner": true,
+     "settings": {
+      "_title": "Hero / Reviews",
+      "content_width": "full",
+      "flex_direction": "column",
+      "flex_gap": {
+       "column": "14",
+       "row": "14",
+       "isLinked": true,
+       "unit": "px",
+       "size": 14
+      },
+      "flex_gap_laptop": {
+       "column": "14",
+       "row": "14",
+       "isLinked": true,
+       "unit": "px",
+       "size": 14
+      },
+      "flex_gap_tablet": {
+       "column": "14",
+       "row": "14",
+       "isLinked": true,
+       "unit": "px",
+       "size": 14
+      },
+      "flex_gap_mobile": {
+       "column": "14",
+       "row": "14",
+       "isLinked": true,
+       "unit": "px",
+       "size": 14
+      },
+      "width": {
+       "unit": "%",
+       "size": 100,
+       "sizes": []
+      },
+      "padding": {
+       "unit": "px",
+       "top": "0",
+       "right": "0",
+       "bottom": "0",
+       "left": "0",
+       "isLinked": true
+      },
+      "css_classes": "tn-hero-reviews",
+      "_attributes": "aria-label|Client reviews",
+      "custom_css": "selector .tn-hero-review{-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);}@media (min-width:1200px){selector{position:absolute !important;right:0;bottom:290px;width:340px !important;max-width:340px;z-index:2;}}@media (max-width:1199px){selector{flex-direction:row !important;flex-wrap:wrap;}selector > .tn-hero-review{flex:1 1 280px;max-width:420px;}}@media (max-width:600px){selector > .tn-hero-review:nth-child(2){display:none;}}"
+     },
+     "elements": [
+      {
+       "id": "27985d0",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Hero / Review 1",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_laptop": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_tablet": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_mobile": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "20",
+         "right": "22",
+         "bottom": "20",
+         "left": "22",
+         "isLinked": false
+        },
+        "css_classes": "tn-hero-review",
+        "background_background": "classic",
+        "background_color": "#14110EB8",
+        "border_border": "solid",
+        "border_width": {
+         "unit": "px",
+         "top": "1",
+         "right": "1",
+         "bottom": "1",
+         "left": "1",
+         "isLinked": true
+        },
+        "border_color": "#F2ECE324",
+        "border_radius": {
+         "unit": "px",
+         "top": "10",
+         "right": "10",
+         "bottom": "10",
+         "left": "10",
+         "isLinked": true
+        }
+       },
+       "elements": [
+        {
+         "id": "830b89d",
+         "elType": "widget",
+         "widgetType": "rating",
+         "isInner": false,
+         "settings": {
+          "rating_scale": {
+           "unit": "px",
+           "size": 5,
+           "sizes": []
+          },
+          "rating_value": 5,
+          "rating_icon": {
+           "value": "fas fa-star",
+           "library": "fa-solid"
+          },
+          "icon_size": {
+           "unit": "px",
+           "size": 13,
+           "sizes": []
+          },
+          "icon_gap": {
+           "unit": "px",
+           "size": 2,
+           "sizes": []
+          },
+          "icon_marked_color": "#C68B4E",
+          "icon_unmarked_color": "#C68B4E",
+          "_title": "Hero / Review 1 / Stars"
+         },
+         "elements": []
+        },
+        {
+         "id": "fa9e7ab",
+         "elType": "widget",
+         "widgetType": "heading",
+         "isInner": false,
+         "settings": {
+          "title": "“They came on time and finished in the agreed time. Hire these guys!”",
+          "header_size": "div",
+          "title_color": "#F2ECE3",
+          "typography_typography": "custom",
+          "typography_font_family": "Fraunces",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 18,
+           "sizes": []
+          },
+          "typography_font_weight": "400",
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.3,
+           "sizes": []
+          },
+          "_title": "Hero / Review 1 / Quote"
+         },
+         "elements": []
+        },
+        {
+         "id": "1397a31",
+         "elType": "widget",
+         "widgetType": "heading",
+         "isInner": false,
+         "settings": {
+          "title": "Kathy A. · Gypsum",
+          "header_size": "div",
+          "title_color": "#D7CFC4",
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 13,
+           "sizes": []
+          },
+          "typography_font_weight": "500",
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.4,
+           "sizes": []
+          },
+          "_title": "Hero / Review 1 / Name"
+         },
+         "elements": []
+        }
+       ]
+      },
+      {
+       "id": "9bed5b6",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Hero / Review 2",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_laptop": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_tablet": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_mobile": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "20",
+         "right": "22",
+         "bottom": "20",
+         "left": "22",
+         "isLinked": false
+        },
+        "css_classes": "tn-hero-review",
+        "background_background": "classic",
+        "background_color": "#14110EB8",
+        "border_border": "solid",
+        "border_width": {
+         "unit": "px",
+         "top": "1",
+         "right": "1",
+         "bottom": "1",
+         "left": "1",
+         "isLinked": true
+        },
+        "border_color": "#F2ECE324",
+        "border_radius": {
+         "unit": "px",
+         "top": "10",
+         "right": "10",
+         "bottom": "10",
+         "left": "10",
+         "isLinked": true
+        }
+       },
+       "elements": [
+        {
+         "id": "100e05d",
+         "elType": "widget",
+         "widgetType": "rating",
+         "isInner": false,
+         "settings": {
+          "rating_scale": {
+           "unit": "px",
+           "size": 5,
+           "sizes": []
+          },
+          "rating_value": 5,
+          "rating_icon": {
+           "value": "fas fa-star",
+           "library": "fa-solid"
+          },
+          "icon_size": {
+           "unit": "px",
+           "size": 13,
+           "sizes": []
+          },
+          "icon_gap": {
+           "unit": "px",
+           "size": 2,
+           "sizes": []
+          },
+          "icon_marked_color": "#C68B4E",
+          "icon_unmarked_color": "#C68B4E",
+          "_title": "Hero / Review 2 / Stars"
+         },
+         "elements": []
+        },
+        {
+         "id": "8383d49",
+         "elType": "widget",
+         "widgetType": "heading",
+         "isInner": false,
+         "settings": {
+          "title": "“We could not be happier with the end result.”",
+          "header_size": "div",
+          "title_color": "#F2ECE3",
+          "typography_typography": "custom",
+          "typography_font_family": "Fraunces",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 18,
+           "sizes": []
+          },
+          "typography_font_weight": "400",
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.3,
+           "sizes": []
+          },
+          "_title": "Hero / Review 2 / Quote"
+         },
+         "elements": []
+        },
+        {
+         "id": "a4a4d29",
+         "elType": "widget",
+         "widgetType": "heading",
+         "isInner": false,
+         "settings": {
+          "title": "Lee F. · Gypsum, log home refinish",
+          "header_size": "div",
+          "title_color": "#D7CFC4",
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 13,
+           "sizes": []
+          },
+          "typography_font_weight": "500",
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.4,
+           "sizes": []
+          },
+          "_title": "Hero / Review 2 / Name"
+         },
+         "elements": []
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "6ec0c26",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -577,7 +945,7 @@
      },
      "elements": [
       {
-       "id": "52969a5",
+       "id": "93e2665",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -631,7 +999,7 @@
        },
        "elements": [
         {
-         "id": "6c24c1a",
+         "id": "c07822d",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -678,7 +1046,7 @@
          "elements": []
         },
         {
-         "id": "fbe80fa",
+         "id": "c76dc0c",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -725,7 +1093,7 @@
          "elements": []
         },
         {
-         "id": "43288e1",
+         "id": "d8fb445",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -774,7 +1142,7 @@
        ]
       },
       {
-       "id": "ded66b4",
+       "id": "8f9880a",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -826,40 +1194,40 @@
        },
        "elements": [
         {
-         "id": "8776c65",
+         "id": "ca5c875",
          "elType": "container",
          "isInner": true,
          "settings": {
-          "_title": "Hero / Credentials / HomeAdvisor",
+          "_title": "Hero / Credentials / Ratings",
           "content_width": "full",
           "flex_direction": "row",
           "flex_gap": {
-           "column": "8",
-           "row": "8",
-           "isLinked": true,
+           "column": "32",
+           "row": "10",
+           "isLinked": false,
            "unit": "px",
-           "size": 8
+           "size": 32
           },
           "flex_gap_laptop": {
-           "column": "8",
-           "row": "8",
-           "isLinked": true,
+           "column": "28",
+           "row": "10",
+           "isLinked": false,
            "unit": "px",
-           "size": 8
+           "size": 28
           },
           "flex_gap_tablet": {
-           "column": "8",
-           "row": "8",
-           "isLinked": true,
+           "column": "28",
+           "row": "10",
+           "isLinked": false,
            "unit": "px",
-           "size": 8
+           "size": 28
           },
           "flex_gap_mobile": {
-           "column": "8",
+           "column": "20",
            "row": "8",
-           "isLinked": true,
+           "isLinked": false,
            "unit": "px",
-           "size": 8
+           "size": 20
           },
           "width": {
            "unit": "%",
@@ -874,101 +1242,299 @@
            "left": "0",
            "isLinked": true
           },
+          "flex_wrap": "wrap",
           "flex_align_items": "center",
           "custom_css": "selector{--width:auto;width:auto;min-width:0;}"
          },
          "elements": [
           {
-           "id": "c1515ff",
-           "elType": "widget",
-           "widgetType": "rating",
-           "isInner": false,
+           "id": "fc0643b",
+           "elType": "container",
+           "isInner": true,
            "settings": {
-            "rating_scale": {
+            "_title": "Hero / Credentials / Google",
+            "content_width": "full",
+            "flex_direction": "row",
+            "flex_gap": {
+             "column": "8",
+             "row": "8",
+             "isLinked": true,
              "unit": "px",
-             "size": 5,
+             "size": 8
+            },
+            "flex_gap_laptop": {
+             "column": "8",
+             "row": "8",
+             "isLinked": true,
+             "unit": "px",
+             "size": 8
+            },
+            "flex_gap_tablet": {
+             "column": "8",
+             "row": "8",
+             "isLinked": true,
+             "unit": "px",
+             "size": 8
+            },
+            "flex_gap_mobile": {
+             "column": "8",
+             "row": "8",
+             "isLinked": true,
+             "unit": "px",
+             "size": 8
+            },
+            "width": {
+             "unit": "%",
+             "size": 100,
              "sizes": []
             },
-            "rating_value": 5,
-            "rating_icon": {
-             "value": "fas fa-star",
-             "library": "fa-solid"
-            },
-            "icon_size": {
+            "padding": {
              "unit": "px",
-             "size": 14,
-             "sizes": []
+             "top": "0",
+             "right": "0",
+             "bottom": "0",
+             "left": "0",
+             "isLinked": true
             },
-            "icon_gap": {
-             "unit": "px",
-             "size": 2,
-             "sizes": []
-            },
-            "icon_marked_color": "#C68B4E",
-            "icon_unmarked_color": "#C68B4E",
-            "_title": "Hero / Credentials / Stars",
-            "icon_size_mobile": {
-             "unit": "px",
-             "size": 12,
-             "sizes": []
-            },
-            "icon_gap_mobile": {
-             "unit": "px",
-             "size": 2,
-             "sizes": []
-            }
+            "flex_align_items": "center",
+            "custom_css": "selector{--width:auto;width:auto;min-width:0;}"
            },
-           "elements": []
+           "elements": [
+            {
+             "id": "5242c22",
+             "elType": "widget",
+             "widgetType": "rating",
+             "isInner": false,
+             "settings": {
+              "rating_scale": {
+               "unit": "px",
+               "size": 5,
+               "sizes": []
+              },
+              "rating_value": 5,
+              "rating_icon": {
+               "value": "fas fa-star",
+               "library": "fa-solid"
+              },
+              "icon_size": {
+               "unit": "px",
+               "size": 14,
+               "sizes": []
+              },
+              "icon_gap": {
+               "unit": "px",
+               "size": 2,
+               "sizes": []
+              },
+              "icon_marked_color": "#C68B4E",
+              "icon_unmarked_color": "#C68B4E",
+              "_title": "Hero / Credentials / Google / Stars",
+              "icon_size_mobile": {
+               "unit": "px",
+               "size": 12,
+               "sizes": []
+              },
+              "icon_gap_mobile": {
+               "unit": "px",
+               "size": 2,
+               "sizes": []
+              }
+             },
+             "elements": []
+            },
+            {
+             "id": "83f29c6",
+             "elType": "widget",
+             "widgetType": "text-editor",
+             "isInner": false,
+             "settings": {
+              "editor": "<p><strong>5.0</strong> from 24 Google reviews</p>",
+              "text_color": "#B3A99C",
+              "paragraph_spacing": {
+               "unit": "px",
+               "size": 0,
+               "sizes": []
+              },
+              "typography_typography": "custom",
+              "typography_font_family": "Manrope",
+              "typography_font_size": {
+               "unit": "px",
+               "size": 15,
+               "sizes": []
+              },
+              "typography_font_size_laptop": {
+               "unit": "px",
+               "size": 15,
+               "sizes": []
+              },
+              "typography_font_size_tablet": {
+               "unit": "px",
+               "size": 15,
+               "sizes": []
+              },
+              "typography_font_size_mobile": {
+               "unit": "px",
+               "size": 14,
+               "sizes": []
+              },
+              "typography_line_height": {
+               "unit": "em",
+               "size": 1.5,
+               "sizes": []
+              },
+              "custom_css": "selector p:last-child{margin-block-end:0;}",
+              "_title": "Hero / Credentials / Google text"
+             },
+             "elements": []
+            }
+           ]
           },
           {
-           "id": "8c4e424",
-           "elType": "widget",
-           "widgetType": "text-editor",
-           "isInner": false,
+           "id": "e7aa220",
+           "elType": "container",
+           "isInner": true,
            "settings": {
-            "editor": "<p><strong>4.9</strong> on HomeAdvisor</p>",
-            "text_color": "#B3A99C",
-            "paragraph_spacing": {
+            "_title": "Hero / Credentials / HomeAdvisor",
+            "content_width": "full",
+            "flex_direction": "row",
+            "flex_gap": {
+             "column": "8",
+             "row": "8",
+             "isLinked": true,
              "unit": "px",
-             "size": 0,
-             "sizes": []
+             "size": 8
             },
-            "typography_typography": "custom",
-            "typography_font_family": "Manrope",
-            "typography_font_size": {
+            "flex_gap_laptop": {
+             "column": "8",
+             "row": "8",
+             "isLinked": true,
              "unit": "px",
-             "size": 15,
-             "sizes": []
+             "size": 8
             },
-            "typography_font_size_laptop": {
+            "flex_gap_tablet": {
+             "column": "8",
+             "row": "8",
+             "isLinked": true,
              "unit": "px",
-             "size": 15,
-             "sizes": []
+             "size": 8
             },
-            "typography_font_size_tablet": {
+            "flex_gap_mobile": {
+             "column": "8",
+             "row": "8",
+             "isLinked": true,
              "unit": "px",
-             "size": 15,
+             "size": 8
+            },
+            "width": {
+             "unit": "%",
+             "size": 100,
              "sizes": []
             },
-            "typography_font_size_mobile": {
+            "padding": {
              "unit": "px",
-             "size": 14,
-             "sizes": []
+             "top": "0",
+             "right": "0",
+             "bottom": "0",
+             "left": "0",
+             "isLinked": true
             },
-            "typography_line_height": {
-             "unit": "em",
-             "size": 1.5,
-             "sizes": []
-            },
-            "custom_css": "selector p:last-child{margin-block-end:0;}",
-            "_title": "Hero / Credentials / HomeAdvisor text"
+            "flex_align_items": "center",
+            "custom_css": "selector{--width:auto;width:auto;min-width:0;}"
            },
-           "elements": []
+           "elements": [
+            {
+             "id": "3edc49c",
+             "elType": "widget",
+             "widgetType": "rating",
+             "isInner": false,
+             "settings": {
+              "rating_scale": {
+               "unit": "px",
+               "size": 5,
+               "sizes": []
+              },
+              "rating_value": 5,
+              "rating_icon": {
+               "value": "fas fa-star",
+               "library": "fa-solid"
+              },
+              "icon_size": {
+               "unit": "px",
+               "size": 14,
+               "sizes": []
+              },
+              "icon_gap": {
+               "unit": "px",
+               "size": 2,
+               "sizes": []
+              },
+              "icon_marked_color": "#C68B4E",
+              "icon_unmarked_color": "#C68B4E",
+              "_title": "Hero / Credentials / HomeAdvisor / Stars",
+              "icon_size_mobile": {
+               "unit": "px",
+               "size": 12,
+               "sizes": []
+              },
+              "icon_gap_mobile": {
+               "unit": "px",
+               "size": 2,
+               "sizes": []
+              }
+             },
+             "elements": []
+            },
+            {
+             "id": "7cffb0f",
+             "elType": "widget",
+             "widgetType": "text-editor",
+             "isInner": false,
+             "settings": {
+              "editor": "<p><strong>4.9</strong> on HomeAdvisor</p>",
+              "text_color": "#B3A99C",
+              "paragraph_spacing": {
+               "unit": "px",
+               "size": 0,
+               "sizes": []
+              },
+              "typography_typography": "custom",
+              "typography_font_family": "Manrope",
+              "typography_font_size": {
+               "unit": "px",
+               "size": 15,
+               "sizes": []
+              },
+              "typography_font_size_laptop": {
+               "unit": "px",
+               "size": 15,
+               "sizes": []
+              },
+              "typography_font_size_tablet": {
+               "unit": "px",
+               "size": 15,
+               "sizes": []
+              },
+              "typography_font_size_mobile": {
+               "unit": "px",
+               "size": 14,
+               "sizes": []
+              },
+              "typography_line_height": {
+               "unit": "em",
+               "size": 1.5,
+               "sizes": []
+              },
+              "custom_css": "selector p:last-child{margin-block-end:0;}",
+              "_title": "Hero / Credentials / HomeAdvisor text"
+             },
+             "elements": []
+            }
+           ]
           }
          ]
         },
         {
-         "id": "8f45b09",
+         "id": "f73c49e",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -1022,7 +1588,7 @@
          },
          "elements": [
           {
-           "id": "92e2612",
+           "id": "8aa9541",
            "elType": "widget",
            "widgetType": "image",
            "isInner": false,
@@ -1040,7 +1606,7 @@
            "elements": []
           },
           {
-           "id": "d446ab8",
+           "id": "2075a5b",
            "elType": "widget",
            "widgetType": "image",
            "isInner": false,
@@ -1058,7 +1624,7 @@
            "elements": []
           },
           {
-           "id": "e3801b7",
+           "id": "b60741f",
            "elType": "widget",
            "widgetType": "image",
            "isInner": false,
@@ -1074,6 +1640,24 @@
             "_title": "Hero / Credentials / Perma-Chink logo"
            },
            "elements": []
+          },
+          {
+           "id": "54371ff",
+           "elType": "widget",
+           "widgetType": "image",
+           "isInner": false,
+           "settings": {
+            "image": {
+             "id": 2852,
+             "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/topnotch-logo-sherwin-williams-white.png",
+             "alt": "Sherwin-Williams",
+             "source": "library"
+            },
+            "image_size": "full",
+            "custom_css": "selector img{height:40px !important;width:auto !important;max-width:none !important;opacity:.85;display:block;}@media (max-width:980px){selector img{height:35px !important;}}@media (max-width:600px){selector img{height:22px !important;}}",
+            "_title": "Hero / Credentials / Sherwin-Williams logo"
+           },
+           "elements": []
           }
          ]
         }
@@ -1084,7 +1668,7 @@
    ]
   },
   {
-   "id": "5f1a8a1",
+   "id": "91a0ba0",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -1165,7 +1749,7 @@
    },
    "elements": [
     {
-     "id": "c766ff1",
+     "id": "2dcf884",
      "elType": "widget",
      "widgetType": "html",
      "isInner": false,
@@ -1177,7 +1761,7 @@
      "elements": []
     },
     {
-     "id": "a3d2047",
+     "id": "7ce9da6",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -1285,7 +1869,7 @@
      },
      "elements": [
       {
-       "id": "c91dddd",
+       "id": "c5fb12e",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1338,7 +1922,7 @@
        },
        "elements": [
         {
-         "id": "69001ac",
+         "id": "3411425",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -1412,66 +1996,19 @@
            "unit": "px",
            "size": 340,
            "sizes": []
+          },
+          "background_image": {
+           "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-stock-vaulted-room-mountains.jpg",
+           "id": 2823,
+           "size": "",
+           "alt": "Freshly painted vaulted living room with mountain views",
+           "source": "library"
           }
          },
-         "elements": [
-          {
-           "id": "506329b",
-           "elType": "widget",
-           "widgetType": "icon-list",
-           "isInner": false,
-           "settings": {
-            "icon_list": [
-             {
-              "_id": "75b00a2",
-              "text": "Photo: finished interior",
-              "selected_icon": {
-               "value": {
-                "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/camera.svg",
-                "id": 1433
-               },
-               "library": "svg"
-              }
-             }
-            ],
-            "icon_color": "#F2ECE399",
-            "text_color": "#F2ECE399",
-            "icon_size": {
-             "unit": "px",
-             "size": 14,
-             "sizes": []
-            },
-            "text_indent": {
-             "unit": "px",
-             "size": 8,
-             "sizes": []
-            },
-            "space_between": {
-             "unit": "px",
-             "size": 0,
-             "sizes": []
-            },
-            "icon_typography_typography": "custom",
-            "icon_typography_font_family": "Manrope",
-            "icon_typography_font_size": {
-             "unit": "px",
-             "size": 12,
-             "sizes": []
-            },
-            "icon_typography_font_weight": "400",
-            "icon_typography_line_height": {
-             "unit": "em",
-             "size": 1.4,
-             "sizes": []
-            },
-            "_title": "Photo label (delete when photo added)"
-           },
-           "elements": []
-          }
-         ]
+         "elements": []
         },
         {
-         "id": "fde7bd0",
+         "id": "f060a72",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1514,7 +2051,7 @@
          "elements": []
         },
         {
-         "id": "6b4c801",
+         "id": "b51149b",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1541,7 +2078,7 @@
          "elements": []
         },
         {
-         "id": "de1d62e",
+         "id": "c437bdb",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -1572,7 +2109,7 @@
          "elements": []
         },
         {
-         "id": "2389b37",
+         "id": "e9090b8",
          "elType": "widget",
          "widgetType": "icon-list",
          "isInner": false,
@@ -1587,7 +2124,7 @@
           "_css_classes": "tn-wwd-links",
           "icon_list": [
            {
-            "_id": "70581cc",
+            "_id": "c766ff1",
             "text": "Interior Painting",
             "link": {
              "url": "/interior-painting/",
@@ -1600,7 +2137,7 @@
             }
            },
            {
-            "_id": "cef7e26",
+            "_id": "a3d2047",
             "text": "Exterior Painting",
             "link": {
              "url": "/exterior-painting/",
@@ -1613,7 +2150,7 @@
             }
            },
            {
-            "_id": "937a793",
+            "_id": "5f1a8a1",
             "text": "Specialty Finishes &amp; Interior Wood",
             "link": {
              "url": "/specialty-finishes-interior-wood/",
@@ -1626,7 +2163,7 @@
             }
            },
            {
-            "_id": "b341738",
+            "_id": "1655509",
             "text": "Commercial &amp; HOA",
             "link": {
              "url": "/commercial-hoa/",
@@ -1659,7 +2196,7 @@
        ]
       },
       {
-       "id": "c437bdb",
+       "id": "ee0279e",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1712,7 +2249,7 @@
        },
        "elements": [
         {
-         "id": "6724195",
+         "id": "6e6c999",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -1798,7 +2335,7 @@
          "elements": []
         },
         {
-         "id": "26f4488",
+         "id": "6d111a9",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1841,7 +2378,7 @@
          "elements": []
         },
         {
-         "id": "9eb5140",
+         "id": "8608d94",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1868,7 +2405,7 @@
          "elements": []
         },
         {
-         "id": "99be9c1",
+         "id": "7c16722",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -1899,7 +2436,7 @@
          "elements": []
         },
         {
-         "id": "b51149b",
+         "id": "8f9ac09",
          "elType": "widget",
          "widgetType": "icon-list",
          "isInner": false,
@@ -1914,7 +2451,7 @@
           "_css_classes": "tn-wwd-links",
           "icon_list": [
            {
-            "_id": "5ac87fc",
+            "_id": "2737147",
             "text": "Log Home Staining &amp; Restoration",
             "link": {
              "url": "/log-home-staining-restoration/",
@@ -1927,7 +2464,7 @@
             }
            },
            {
-            "_id": "59a047d",
+            "_id": "7616022",
             "text": "Chinking &amp; Check Sealing",
             "link": {
              "url": "/chinking-check-sealing/",
@@ -1940,7 +2477,7 @@
             }
            },
            {
-            "_id": "851b4c8",
+            "_id": "f41686c",
             "text": "Rot Repair &amp; Prevention",
             "link": {
              "url": "/rot-repair-prevention/",
@@ -1953,7 +2490,7 @@
             }
            },
            {
-            "_id": "3411425",
+            "_id": "a5f19a5",
             "text": "Deck Staining",
             "link": {
              "url": "/deck-staining/",
@@ -1966,7 +2503,7 @@
             }
            },
            {
-            "_id": "f060a72",
+            "_id": "9df05f2",
             "text": "Media Blasting",
             "link": {
              "url": "/media-blasting/",
@@ -2003,7 +2540,7 @@
    ]
   },
   {
-   "id": "7c16722",
+   "id": "75ed0de",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -2081,7 +2618,7 @@
    },
    "elements": [
     {
-     "id": "8608d94",
+     "id": "8db4304",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -2189,7 +2726,7 @@
      },
      "elements": [
       {
-       "id": "6e6c999",
+       "id": "a9a46df",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -2240,7 +2777,7 @@
        },
        "elements": [
         {
-         "id": "1655509",
+         "id": "dd73de0",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -2288,7 +2825,7 @@
          "elements": []
         },
         {
-         "id": "e9090b8",
+         "id": "d0099eb",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -2318,7 +2855,7 @@
          "elements": []
         },
         {
-         "id": "c5fb12e",
+         "id": "ede3a36",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,
@@ -2372,7 +2909,7 @@
        ]
       },
       {
-       "id": "6d111a9",
+       "id": "f01c683",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -2433,10 +2970,10 @@
          "sizes": []
         },
         "background_image": {
-         "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-hero-staining-deck-railing.webp",
-         "id": 1583,
+         "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-crew-log-wall.jpg",
+         "id": 2848,
          "size": "",
-         "alt": "Staining a deck railing with a brush",
+         "alt": "Crew staining and sealing a log wall",
          "source": "library"
         }
        },
@@ -2447,7 +2984,7 @@
    ]
   },
   {
-   "id": "de1fd3d",
+   "id": "3475263",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -2527,7 +3064,7 @@
    },
    "elements": [
     {
-     "id": "2737147",
+     "id": "fab06e9",
      "elType": "widget",
      "widgetType": "html",
      "isInner": false,
@@ -2539,7 +3076,7 @@
      "elements": []
     },
     {
-     "id": "7616022",
+     "id": "964fa3f",
      "elType": "widget",
      "widgetType": "heading",
      "isInner": false,
@@ -2587,7 +3124,7 @@
      "elements": []
     },
     {
-     "id": "949acfb",
+     "id": "8854901",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -2694,7 +3231,7 @@
      },
      "elements": [
       {
-       "id": "8f9ac09",
+       "id": "a0624fe",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -2745,7 +3282,7 @@
        },
        "elements": [
         {
-         "id": "f41686c",
+         "id": "523674a",
          "elType": "widget",
          "widgetType": "icon",
          "isInner": false,
@@ -2770,7 +3307,7 @@
          "elements": []
         },
         {
-         "id": "a5f19a5",
+         "id": "e82fb0f",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -2796,7 +3333,7 @@
          "elements": []
         },
         {
-         "id": "9df05f2",
+         "id": "7b82e6c",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -2828,7 +3365,7 @@
        ]
       },
       {
-       "id": "91a0ba0",
+       "id": "949acfb",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -2879,7 +3416,7 @@
        },
        "elements": [
         {
-         "id": "ee0279e",
+         "id": "fd1d9d1",
          "elType": "widget",
          "widgetType": "icon",
          "isInner": false,
@@ -2904,7 +3441,7 @@
          "elements": []
         },
         {
-         "id": "2dcf884",
+         "id": "8aac319",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -2930,7 +3467,7 @@
          "elements": []
         },
         {
-         "id": "7ce9da6",
+         "id": "9350a73",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -2962,7 +3499,7 @@
        ]
       },
       {
-       "id": "a9a46df",
+       "id": "497a762",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -3013,7 +3550,7 @@
        },
        "elements": [
         {
-         "id": "dd73de0",
+         "id": "de1fd3d",
          "elType": "widget",
          "widgetType": "icon",
          "isInner": false,
@@ -3038,7 +3575,7 @@
          "elements": []
         },
         {
-         "id": "d0099eb",
+         "id": "167f0cf",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -3064,7 +3601,7 @@
          "elements": []
         },
         {
-         "id": "ede3a36",
+         "id": "a355084",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -3096,7 +3633,7 @@
        ]
       },
       {
-       "id": "fab06e9",
+       "id": "1c83e78",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -3147,7 +3684,7 @@
        },
        "elements": [
         {
-         "id": "f01c683",
+         "id": "d40d31b",
          "elType": "widget",
          "widgetType": "icon",
          "isInner": false,
@@ -3172,7 +3709,7 @@
          "elements": []
         },
         {
-         "id": "8db4304",
+         "id": "3106119",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -3198,7 +3735,7 @@
          "elements": []
         },
         {
-         "id": "75ed0de",
+         "id": "e1711cb",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -3230,7 +3767,7 @@
        ]
       },
       {
-       "id": "7b82e6c",
+       "id": "bba4c70",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -3281,7 +3818,7 @@
        },
        "elements": [
         {
-         "id": "964fa3f",
+         "id": "c464c55",
          "elType": "widget",
          "widgetType": "icon",
          "isInner": false,
@@ -3306,7 +3843,7 @@
          "elements": []
         },
         {
-         "id": "523674a",
+         "id": "95f184e",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -3332,7 +3869,7 @@
          "elements": []
         },
         {
-         "id": "e82fb0f",
+         "id": "f306f0c",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -3364,7 +3901,7 @@
        ]
       },
       {
-       "id": "9350a73",
+       "id": "7dedc86",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -3415,7 +3952,7 @@
        },
        "elements": [
         {
-         "id": "a0624fe",
+         "id": "2a42721",
          "elType": "widget",
          "widgetType": "icon",
          "isInner": false,
@@ -3440,7 +3977,7 @@
          "elements": []
         },
         {
-         "id": "fd1d9d1",
+         "id": "c7a1774",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -3466,7 +4003,7 @@
          "elements": []
         },
         {
-         "id": "8aac319",
+         "id": "af4fb02",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -3502,7 +4039,7 @@
    ]
   },
   {
-   "id": "9bae8e6",
+   "id": "8a98b9a",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -3582,7 +4119,7 @@
    },
    "elements": [
     {
-     "id": "fdf165d",
+     "id": "c2c5552",
      "elType": "widget",
      "widgetType": "html",
      "isInner": false,
@@ -3593,7 +4130,7 @@
      "elements": []
     },
     {
-     "id": "c6eafff",
+     "id": "907c7e3",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -3646,7 +4183,7 @@
      },
      "elements": [
       {
-       "id": "c3618e1",
+       "id": "5ec0a95",
        "elType": "widget",
        "widgetType": "heading",
        "isInner": false,
@@ -3693,7 +4230,7 @@
        "elements": []
       },
       {
-       "id": "84f09af",
+       "id": "9c53765",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -3745,7 +4282,7 @@
        },
        "elements": [
         {
-         "id": "3106119",
+         "id": "f2cbbb9",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -3801,7 +4338,7 @@
          },
          "elements": [
           {
-           "id": "497a762",
+           "id": "4a9afa3",
            "elType": "container",
            "isInner": true,
            "settings": {
@@ -3853,12 +4390,12 @@
            },
            "elements": [
             {
-             "id": "167f0cf",
+             "id": "8b6bc3c",
              "elType": "widget",
              "widgetType": "heading",
              "isInner": false,
              "settings": {
-              "title": "Great room walls and ceilings",
+              "title": "Popcorn ceiling to smooth finish",
               "header_size": "div",
               "title_color": "#8F867B",
               "typography_typography": "custom",
@@ -3895,12 +4432,12 @@
              "elements": []
             },
             {
-             "id": "a355084",
+             "id": "f261e34",
              "elType": "widget",
              "widgetType": "heading",
              "isInner": false,
              "settings": {
-              "title": "Interior painting · Snowmass",
+              "title": "Interior painting",
               "header_size": "div",
               "title_color": "#8F867B",
               "typography_typography": "custom",
@@ -3924,7 +4461,7 @@
            ]
           },
           {
-           "id": "d40d31b",
+           "id": "e981455",
            "elType": "widget",
            "widgetType": "heading",
            "isInner": false,
@@ -3954,7 +4491,7 @@
          ]
         },
         {
-         "id": "c7a1774",
+         "id": "882afe6",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -4010,7 +4547,7 @@
          },
          "elements": [
           {
-           "id": "bba4c70",
+           "id": "84f09af",
            "elType": "container",
            "isInner": true,
            "settings": {
@@ -4062,12 +4599,12 @@
            },
            "elements": [
             {
-             "id": "95f184e",
+             "id": "b06d7a6",
              "elType": "widget",
              "widgetType": "heading",
              "isInner": false,
              "settings": {
-              "title": "Exterior repaint for a returning client",
+              "title": "Full exterior repaint",
               "header_size": "div",
               "title_color": "#8F867B",
               "typography_typography": "custom",
@@ -4104,12 +4641,12 @@
              "elements": []
             },
             {
-             "id": "f306f0c",
+             "id": "c3618e1",
              "elType": "widget",
              "widgetType": "heading",
              "isInner": false,
              "settings": {
-              "title": "Exterior painting · Arrowhead",
+              "title": "Exterior painting",
               "header_size": "div",
               "title_color": "#8F867B",
               "typography_typography": "custom",
@@ -4133,7 +4670,7 @@
            ]
           },
           {
-           "id": "2a42721",
+           "id": "bc9f21d",
            "elType": "widget",
            "widgetType": "heading",
            "isInner": false,
@@ -4163,7 +4700,7 @@
          ]
         },
         {
-         "id": "e981455",
+         "id": "76eebc5",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -4219,7 +4756,7 @@
          },
          "elements": [
           {
-           "id": "f261e34",
+           "id": "5041f5e",
            "elType": "container",
            "isInner": true,
            "settings": {
@@ -4271,12 +4808,12 @@
            },
            "elements": [
             {
-             "id": "3475263",
+             "id": "fdf165d",
              "elType": "widget",
              "widgetType": "heading",
              "isInner": false,
              "settings": {
-              "title": "Log wash and restain",
+              "title": "Log home restain",
               "header_size": "div",
               "title_color": "#8F867B",
               "typography_typography": "custom",
@@ -4313,12 +4850,12 @@
              "elements": []
             },
             {
-             "id": "8b6bc3c",
+             "id": "9bae8e6",
              "elType": "widget",
              "widgetType": "heading",
              "isInner": false,
              "settings": {
-              "title": "Log &amp; timber staining · Edwards",
+              "title": "Log &amp; timber staining",
               "header_size": "div",
               "title_color": "#8F867B",
               "typography_typography": "custom",
@@ -4342,7 +4879,7 @@
            ]
           },
           {
-           "id": "4a9afa3",
+           "id": "9f4ecb4",
            "elType": "widget",
            "widgetType": "heading",
            "isInner": false,
@@ -4374,7 +4911,7 @@
        ]
       },
       {
-       "id": "bc9f21d",
+       "id": "dcbfd2e",
        "elType": "widget",
        "widgetType": "button",
        "isInner": false,
@@ -4427,7 +4964,7 @@
        "elements": []
       },
       {
-       "id": "882afe6",
+       "id": "b598d0d",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -4479,7 +5016,7 @@
        },
        "elements": [
         {
-         "id": "c464c55",
+         "id": "2f3c42b",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -4539,66 +5076,19 @@
            "size": 680,
            "sizes": []
           },
+          "background_image": {
+           "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-ceiling-smooth-beams.jpg",
+           "id": 2833,
+           "size": "",
+           "alt": "Smooth ceiling with dark beams after popcorn removal",
+           "source": "library"
+          },
           "_attributes": "data-project|0"
          },
-         "elements": [
-          {
-           "id": "1c83e78",
-           "elType": "widget",
-           "widgetType": "icon-list",
-           "isInner": false,
-           "settings": {
-            "icon_list": [
-             {
-              "_id": "e1711cb",
-              "text": "Our project photo: Snowmass great room",
-              "selected_icon": {
-               "value": {
-                "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/camera.svg",
-                "id": 1433
-               },
-               "library": "svg"
-              }
-             }
-            ],
-            "icon_color": "#F2ECE399",
-            "text_color": "#F2ECE399",
-            "icon_size": {
-             "unit": "px",
-             "size": 14,
-             "sizes": []
-            },
-            "text_indent": {
-             "unit": "px",
-             "size": 8,
-             "sizes": []
-            },
-            "space_between": {
-             "unit": "px",
-             "size": 0,
-             "sizes": []
-            },
-            "icon_typography_typography": "custom",
-            "icon_typography_font_family": "Manrope",
-            "icon_typography_font_size": {
-             "unit": "px",
-             "size": 12,
-             "sizes": []
-            },
-            "icon_typography_font_weight": "400",
-            "icon_typography_line_height": {
-             "unit": "em",
-             "size": 1.4,
-             "sizes": []
-            },
-            "_title": "Photo label (delete when photo added)"
-           },
-           "elements": []
-          }
-         ]
+         "elements": []
         },
         {
-         "id": "8854901",
+         "id": "c6eafff",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -4658,66 +5148,19 @@
            "size": 680,
            "sizes": []
           },
+          "background_image": {
+           "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-ext-after.jpg",
+           "id": 2827,
+           "size": "",
+           "alt": "Exterior after repaint in white with navy shutters",
+           "source": "library"
+          },
           "_attributes": "data-project|1"
          },
-         "elements": [
-          {
-           "id": "7dedc86",
-           "elType": "widget",
-           "widgetType": "icon-list",
-           "isInner": false,
-           "settings": {
-            "icon_list": [
-             {
-              "_id": "af4fb02",
-              "text": "Our project photo: Arrowhead exterior",
-              "selected_icon": {
-               "value": {
-                "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/camera.svg",
-                "id": 1433
-               },
-               "library": "svg"
-              }
-             }
-            ],
-            "icon_color": "#F2ECE399",
-            "text_color": "#F2ECE399",
-            "icon_size": {
-             "unit": "px",
-             "size": 14,
-             "sizes": []
-            },
-            "text_indent": {
-             "unit": "px",
-             "size": 8,
-             "sizes": []
-            },
-            "space_between": {
-             "unit": "px",
-             "size": 0,
-             "sizes": []
-            },
-            "icon_typography_typography": "custom",
-            "icon_typography_font_family": "Manrope",
-            "icon_typography_font_size": {
-             "unit": "px",
-             "size": 12,
-             "sizes": []
-            },
-            "icon_typography_font_weight": "400",
-            "icon_typography_line_height": {
-             "unit": "em",
-             "size": 1.4,
-             "sizes": []
-            },
-            "_title": "Photo label (delete when photo added)"
-           },
-           "elements": []
-          }
-         ]
+         "elements": []
         },
         {
-         "id": "b06d7a6",
+         "id": "bb74fe5",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -4777,63 +5220,16 @@
            "size": 680,
            "sizes": []
           },
+          "background_image": {
+           "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-log-home-restained.jpg",
+           "id": 2844,
+           "size": "",
+           "alt": "Large log home after restaining",
+           "source": "library"
+          },
           "_attributes": "data-project|2"
          },
-         "elements": [
-          {
-           "id": "2f3c42b",
-           "elType": "widget",
-           "widgetType": "icon-list",
-           "isInner": false,
-           "settings": {
-            "icon_list": [
-             {
-              "_id": "f2cbbb9",
-              "text": "Our project photo: Edwards log home",
-              "selected_icon": {
-               "value": {
-                "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/camera.svg",
-                "id": 1433
-               },
-               "library": "svg"
-              }
-             }
-            ],
-            "icon_color": "#F2ECE399",
-            "text_color": "#F2ECE399",
-            "icon_size": {
-             "unit": "px",
-             "size": 14,
-             "sizes": []
-            },
-            "text_indent": {
-             "unit": "px",
-             "size": 8,
-             "sizes": []
-            },
-            "space_between": {
-             "unit": "px",
-             "size": 0,
-             "sizes": []
-            },
-            "icon_typography_typography": "custom",
-            "icon_typography_font_family": "Manrope",
-            "icon_typography_font_size": {
-             "unit": "px",
-             "size": 12,
-             "sizes": []
-            },
-            "icon_typography_font_weight": "400",
-            "icon_typography_line_height": {
-             "unit": "em",
-             "size": 1.4,
-             "sizes": []
-            },
-            "_title": "Photo label (delete when photo added)"
-           },
-           "elements": []
-          }
-         ]
+         "elements": []
         }
        ]
       }
@@ -4842,7 +5238,7 @@
    ]
   },
   {
-   "id": "907c7e3",
+   "id": "125ff87",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -4896,7 +5292,7 @@
    },
    "elements": [
     {
-     "id": "b598d0d",
+     "id": "54df8a1",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -5002,7 +5398,7 @@
      },
      "elements": [
       {
-       "id": "dcbfd2e",
+       "id": "e4f398e",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -5073,7 +5469,7 @@
        "elements": []
       },
       {
-       "id": "9c53765",
+       "id": "5b5c1a9",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -5169,7 +5565,7 @@
        },
        "elements": [
         {
-         "id": "5041f5e",
+         "id": "de0d8d8",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -5217,7 +5613,7 @@
          "elements": []
         },
         {
-         "id": "9f4ecb4",
+         "id": "f26b524",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -5247,7 +5643,7 @@
          "elements": []
         },
         {
-         "id": "5ec0a95",
+         "id": "43d9180",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -5300,7 +5696,7 @@
          },
          "elements": [
           {
-           "id": "76eebc5",
+           "id": "76e6112",
            "elType": "widget",
            "widgetType": "button",
            "isInner": false,
@@ -5352,7 +5748,7 @@
            "elements": []
           },
           {
-           "id": "bb74fe5",
+           "id": "7edd77d",
            "elType": "widget",
            "widgetType": "button",
            "isInner": false,
@@ -5413,7 +5809,7 @@
    ]
   },
   {
-   "id": "76e6112",
+   "id": "d446ab8",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -5494,7 +5890,7 @@
    },
    "elements": [
     {
-     "id": "c2c5552",
+     "id": "1879d95",
      "elType": "widget",
      "widgetType": "heading",
      "isInner": false,
@@ -5542,45 +5938,47 @@
      "elements": []
     },
     {
-     "id": "f26b524",
-     "elType": "widget",
-     "widgetType": "testimonial-carousel",
-     "isInner": false,
+     "id": "92e2612",
+     "elType": "container",
+     "isInner": true,
      "settings": {
-      "slides": [
-       {
-        "_id": "8a98b9a",
-        "content": "“Oto and his crew were wonderful. They were efficient, professional and very conscious of our budget. We would absolutely use them again.”",
-        "image": {
-         "url": "",
-         "id": ""
-        },
-        "name": "Cathy D.",
-        "title": "Eagle"
-       },
-       {
-        "_id": "de0d8d8",
-        "content": "“Excellent job! Christian and his father were on time, professional, clean and did an excellent job on my accent wall. Very clean lines.”",
-        "image": {
-         "url": "",
-         "id": ""
-        },
-        "name": "Karen H.",
-        "title": "Gypsum"
-       }
-      ],
-      "skin": "default",
-      "layout": "image_inline",
-      "alignment": "center",
-      "slides_per_view": "1",
-      "slides_to_scroll": "1",
-      "show_arrows": "yes",
-      "pagination": "fraction",
-      "speed": 500,
-      "autoplay": "",
-      "loop": "yes",
-      "pause_on_hover": "yes",
-      "slide_padding": {
+      "_title": "Reviews / Grid",
+      "content_width": "full",
+      "flex_direction": "column",
+      "flex_gap": {
+       "column": "24",
+       "row": "24",
+       "isLinked": true,
+       "unit": "px",
+       "size": 24
+      },
+      "flex_gap_laptop": {
+       "column": "24",
+       "row": "24",
+       "isLinked": true,
+       "unit": "px",
+       "size": 24
+      },
+      "flex_gap_tablet": {
+       "column": "24",
+       "row": "24",
+       "isLinked": true,
+       "unit": "px",
+       "size": 24
+      },
+      "flex_gap_mobile": {
+       "column": "24",
+       "row": "24",
+       "isLinked": true,
+       "unit": "px",
+       "size": 24
+      },
+      "width": {
+       "unit": "%",
+       "size": 100,
+       "sizes": []
+      },
+      "padding": {
        "unit": "px",
        "top": "0",
        "right": "0",
@@ -5588,85 +5986,891 @@
        "left": "0",
        "isLinked": true
       },
-      "slide_background_color": "#00000000",
-      "space_between": {
+      "container_type": "grid",
+      "grid_auto_flow": "row",
+      "grid_rows_grid": {
+       "unit": "custom",
+       "size": "auto",
+       "sizes": []
+      },
+      "grid_columns_grid": {
+       "unit": "fr",
+       "size": 4,
+       "sizes": []
+      },
+      "grid_columns_grid_laptop": {
+       "unit": "fr",
+       "size": 2,
+       "sizes": []
+      },
+      "grid_columns_grid_tablet": {
+       "unit": "fr",
+       "size": 2,
+       "sizes": []
+      },
+      "grid_columns_grid_mobile": {
+       "unit": "fr",
+       "size": 1,
+       "sizes": []
+      },
+      "grid_gaps": {
+       "column": "24",
+       "row": "24",
+       "isLinked": true,
        "unit": "px",
-       "size": 40,
-       "sizes": []
+       "size": 24
       },
-      "arrows_size": {
+      "grid_gaps_laptop": {
+       "column": "24",
+       "row": "24",
+       "isLinked": true,
        "unit": "px",
-       "size": 20,
-       "sizes": []
+       "size": 24
       },
-      "arrows_color": "#14110E",
-      "pagination_color": "#5B5046",
-      "content_text_color": "#14110E",
-      "name_text_color": "#14110E",
-      "title_text_color": "#5B5046",
-      "custom_css": "selector{max-width:1140px !important;width:100%;margin:0 auto;}selector{position:relative;}selector .swiper-slide{padding:0 !important;background:transparent;}selector .elementor-main-swiper{width:auto !important;max-width:900px;margin:0 auto;padding-bottom:0;overflow:hidden;}selector .elementor-testimonial{display:flex;flex-direction:column;align-items:center;gap:32px;}selector .elementor-testimonial__content{display:flex;flex-direction:column;align-items:center;}selector .elementor-testimonial__content::before{content:'';display:block;width:106px;height:18px;margin-bottom:32px;background:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='18' viewBox='0 0 22 18'%3E%3Cpath transform='scale(0.75)' fill='%238A5A2B' d='M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6L2.5 9.4l6.6-.8z'/%3E%3C/svg%3E\") repeat-x 0 0/22px 18px;}selector .elementor-testimonial__text{text-wrap:balance;font-style:normal !important;color:#14110E !important;font-family:'Fraunces', Georgia, serif;font-weight:400 !important;}selector .elementor-testimonial__name{color:#14110E !important;font-style:normal;}selector .elementor-testimonial__title{color:#5B5046 !important;font-style:normal;}selector .elementor-testimonial__footer{margin:0;}selector .elementor-testimonial__cite{display:block;}selector .elementor-testimonial__name,selector .elementor-testimonial__title{display:inline;}selector .elementor-testimonial__title::before{content:' · ';}selector .swiper-pagination{position:static;margin-top:32px;font-size:14px;line-height:1.4;color:#5B5046;font-family:Manrope, 'Helvetica Neue', Arial, sans-serif;}selector .elementor-swiper-button{width:56px;height:56px;border:1px solid #8C8174;border-radius:999px;display:flex;align-items:center;justify-content:center;color:#14110E;font-size:20px;}selector .elementor-swiper-button svg{width:20px;height:20px;fill:#14110E;}selector .elementor-swiper-button-prev{left:0;}selector .elementor-swiper-button-next{right:0;}@media (max-width:1359px){selector .elementor-main-swiper{margin:0 120px;max-width:none;}}@media (max-width:980px){selector .elementor-main-swiper{margin:0 95px;}}@media (max-width:760px){selector .elementor-main-swiper{display:flex;flex-wrap:wrap;justify-content:center;column-gap:16px;margin:0;max-width:100%;height:auto !important;overflow-x:clip;overflow-y:visible;}selector .swiper-wrapper{flex:0 0 100%;}selector .swiper-pagination{order:2;flex:0 0 100%;}selector .elementor-swiper-button{order:3;position:static;transform:none;margin:56px 0 0;width:48px;height:48px;}selector .elementor-swiper-button svg{width:18px;height:18px;}}",
-      "content_typography_typography": "custom",
-      "content_typography_font_family": "Fraunces",
-      "content_typography_font_size": {
+      "grid_gaps_tablet": {
+       "column": "24",
+       "row": "24",
+       "isLinked": true,
        "unit": "px",
-       "size": 34,
-       "sizes": []
+       "size": 24
       },
-      "content_typography_font_size_laptop": {
+      "grid_gaps_mobile": {
+       "column": "24",
+       "row": "24",
+       "isLinked": true,
        "unit": "px",
-       "size": 31,
-       "sizes": []
+       "size": 24
       },
-      "content_typography_font_size_tablet": {
-       "unit": "px",
-       "size": 26,
-       "sizes": []
-      },
-      "content_typography_font_size_mobile": {
-       "unit": "px",
-       "size": 22,
-       "sizes": []
-      },
-      "content_typography_font_weight": "400",
-      "content_typography_line_height": {
-       "unit": "em",
-       "size": 1.25,
-       "sizes": []
-      },
-      "name_typography_typography": "custom",
-      "name_typography_font_family": "Manrope",
-      "name_typography_font_size": {
-       "unit": "px",
-       "size": 15,
-       "sizes": []
-      },
-      "name_typography_font_weight": "600",
-      "name_typography_line_height": {
-       "unit": "em",
-       "size": 1.5,
-       "sizes": []
-      },
-      "title_typography_typography": "custom",
-      "title_typography_font_family": "Manrope",
-      "title_typography_font_size": {
-       "unit": "px",
-       "size": 15,
-       "sizes": []
-      },
-      "title_typography_font_weight": "400",
-      "title_typography_line_height": {
-       "unit": "em",
-       "size": 1.5,
-       "sizes": []
-      },
-      "_title": "Reviews / Carousel"
+      "grid_align_items": "stretch",
+      "custom_css": "selector{text-align:left;}"
      },
-     "elements": []
+     "elements": [
+      {
+       "id": "a8e6e5b",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Reviews / Card 1",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "flex_gap_laptop": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "flex_gap_tablet": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "flex_gap_mobile": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "40",
+         "right": "36",
+         "bottom": "40",
+         "left": "36",
+         "isLinked": false
+        },
+        "padding_laptop": {
+         "unit": "px",
+         "top": "36",
+         "right": "32",
+         "bottom": "36",
+         "left": "32",
+         "isLinked": false
+        },
+        "padding_tablet": {
+         "unit": "px",
+         "top": "32",
+         "right": "28",
+         "bottom": "32",
+         "left": "28",
+         "isLinked": false
+        },
+        "padding_mobile": {
+         "unit": "px",
+         "top": "28",
+         "right": "24",
+         "bottom": "28",
+         "left": "24",
+         "isLinked": false
+        },
+        "background_background": "classic",
+        "background_color": "#FBF8F3",
+        "border_border": "solid",
+        "border_width": {
+         "unit": "px",
+         "top": "1",
+         "right": "1",
+         "bottom": "1",
+         "left": "1",
+         "isLinked": true
+        },
+        "border_color": "#E2D9CC",
+        "border_radius": {
+         "unit": "px",
+         "top": "6",
+         "right": "6",
+         "bottom": "6",
+         "left": "6",
+         "isLinked": true
+        },
+        "flex_justify_content": "space-between"
+       },
+       "elements": [
+        {
+         "id": "365c28e",
+         "elType": "widget",
+         "widgetType": "rating",
+         "isInner": false,
+         "settings": {
+          "rating_scale": {
+           "unit": "px",
+           "size": 5,
+           "sizes": []
+          },
+          "rating_value": 5,
+          "rating_icon": {
+           "value": "fas fa-star",
+           "library": "fa-solid"
+          },
+          "icon_size": {
+           "unit": "px",
+           "size": 14,
+           "sizes": []
+          },
+          "icon_gap": {
+           "unit": "px",
+           "size": 2,
+           "sizes": []
+          },
+          "icon_marked_color": "#C68B4E",
+          "icon_unmarked_color": "#C68B4E",
+          "_title": "Reviews / Card 1 / Stars"
+         },
+         "elements": []
+        },
+        {
+         "id": "b7d8335",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>“Very reliable. They came on time and finished in the agreed time. They were very professional. Hire these guys, you will not be disappointed!”</p>",
+          "text_color": "#14110E",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Fraunces",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 20,
+           "sizes": []
+          },
+          "typography_font_size_laptop": {
+           "unit": "px",
+           "size": 19,
+           "sizes": []
+          },
+          "typography_font_size_tablet": {
+           "unit": "px",
+           "size": 19,
+           "sizes": []
+          },
+          "typography_font_size_mobile": {
+           "unit": "px",
+           "size": 18,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.5,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "Reviews / Card 1 / Quote"
+         },
+         "elements": []
+        },
+        {
+         "id": "f1cd7be",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p><strong>Kathy A.</strong> · Gypsum<br>Exterior painting</p>",
+          "text_color": "#5B5046",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 14,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.6,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}selector strong{color:#14110E;font-weight:600;}",
+          "_title": "Reviews / Card 1 / Who"
+         },
+         "elements": []
+        }
+       ]
+      },
+      {
+       "id": "fd4d19b",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Reviews / Card 2",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "flex_gap_laptop": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "flex_gap_tablet": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "flex_gap_mobile": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "40",
+         "right": "36",
+         "bottom": "40",
+         "left": "36",
+         "isLinked": false
+        },
+        "padding_laptop": {
+         "unit": "px",
+         "top": "36",
+         "right": "32",
+         "bottom": "36",
+         "left": "32",
+         "isLinked": false
+        },
+        "padding_tablet": {
+         "unit": "px",
+         "top": "32",
+         "right": "28",
+         "bottom": "32",
+         "left": "28",
+         "isLinked": false
+        },
+        "padding_mobile": {
+         "unit": "px",
+         "top": "28",
+         "right": "24",
+         "bottom": "28",
+         "left": "24",
+         "isLinked": false
+        },
+        "background_background": "classic",
+        "background_color": "#FBF8F3",
+        "border_border": "solid",
+        "border_width": {
+         "unit": "px",
+         "top": "1",
+         "right": "1",
+         "bottom": "1",
+         "left": "1",
+         "isLinked": true
+        },
+        "border_color": "#E2D9CC",
+        "border_radius": {
+         "unit": "px",
+         "top": "6",
+         "right": "6",
+         "bottom": "6",
+         "left": "6",
+         "isLinked": true
+        },
+        "flex_justify_content": "space-between"
+       },
+       "elements": [
+        {
+         "id": "854e64f",
+         "elType": "widget",
+         "widgetType": "rating",
+         "isInner": false,
+         "settings": {
+          "rating_scale": {
+           "unit": "px",
+           "size": 5,
+           "sizes": []
+          },
+          "rating_value": 5,
+          "rating_icon": {
+           "value": "fas fa-star",
+           "library": "fa-solid"
+          },
+          "icon_size": {
+           "unit": "px",
+           "size": 14,
+           "sizes": []
+          },
+          "icon_gap": {
+           "unit": "px",
+           "size": 2,
+           "sizes": []
+          },
+          "icon_marked_color": "#C68B4E",
+          "icon_unmarked_color": "#C68B4E",
+          "_title": "Reviews / Card 2 / Stars"
+         },
+         "elements": []
+        },
+        {
+         "id": "ddb5408",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>“Oto and his crew were wonderful. They were efficient, professional and very conscious of our budget. We would absolutely use them again.”</p>",
+          "text_color": "#14110E",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Fraunces",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 20,
+           "sizes": []
+          },
+          "typography_font_size_laptop": {
+           "unit": "px",
+           "size": 19,
+           "sizes": []
+          },
+          "typography_font_size_tablet": {
+           "unit": "px",
+           "size": 19,
+           "sizes": []
+          },
+          "typography_font_size_mobile": {
+           "unit": "px",
+           "size": 18,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.5,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "Reviews / Card 2 / Quote"
+         },
+         "elements": []
+        },
+        {
+         "id": "95dc0a6",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p><strong>Cathy D.</strong> · Eagle<br>Interior painting</p>",
+          "text_color": "#5B5046",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 14,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.6,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}selector strong{color:#14110E;font-weight:600;}",
+          "_title": "Reviews / Card 2 / Who"
+         },
+         "elements": []
+        }
+       ]
+      },
+      {
+       "id": "43288e1",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Reviews / Card 3",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "flex_gap_laptop": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "flex_gap_tablet": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "flex_gap_mobile": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "40",
+         "right": "36",
+         "bottom": "40",
+         "left": "36",
+         "isLinked": false
+        },
+        "padding_laptop": {
+         "unit": "px",
+         "top": "36",
+         "right": "32",
+         "bottom": "36",
+         "left": "32",
+         "isLinked": false
+        },
+        "padding_tablet": {
+         "unit": "px",
+         "top": "32",
+         "right": "28",
+         "bottom": "32",
+         "left": "28",
+         "isLinked": false
+        },
+        "padding_mobile": {
+         "unit": "px",
+         "top": "28",
+         "right": "24",
+         "bottom": "28",
+         "left": "24",
+         "isLinked": false
+        },
+        "background_background": "classic",
+        "background_color": "#FBF8F3",
+        "border_border": "solid",
+        "border_width": {
+         "unit": "px",
+         "top": "1",
+         "right": "1",
+         "bottom": "1",
+         "left": "1",
+         "isLinked": true
+        },
+        "border_color": "#E2D9CC",
+        "border_radius": {
+         "unit": "px",
+         "top": "6",
+         "right": "6",
+         "bottom": "6",
+         "left": "6",
+         "isLinked": true
+        },
+        "flex_justify_content": "space-between"
+       },
+       "elements": [
+        {
+         "id": "8d51055",
+         "elType": "widget",
+         "widgetType": "rating",
+         "isInner": false,
+         "settings": {
+          "rating_scale": {
+           "unit": "px",
+           "size": 5,
+           "sizes": []
+          },
+          "rating_value": 5,
+          "rating_icon": {
+           "value": "fas fa-star",
+           "library": "fa-solid"
+          },
+          "icon_size": {
+           "unit": "px",
+           "size": 14,
+           "sizes": []
+          },
+          "icon_gap": {
+           "unit": "px",
+           "size": 2,
+           "sizes": []
+          },
+          "icon_marked_color": "#C68B4E",
+          "icon_unmarked_color": "#C68B4E",
+          "_title": "Reviews / Card 3 / Stars"
+         },
+         "elements": []
+        },
+        {
+         "id": "6c24c1a",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>“As promised, the work done on our house not only met and exceeded our expectations in quality and appearance but it was completed within the time frame that was proposed.”</p>",
+          "text_color": "#14110E",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Fraunces",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 20,
+           "sizes": []
+          },
+          "typography_font_size_laptop": {
+           "unit": "px",
+           "size": 19,
+           "sizes": []
+          },
+          "typography_font_size_tablet": {
+           "unit": "px",
+           "size": 19,
+           "sizes": []
+          },
+          "typography_font_size_mobile": {
+           "unit": "px",
+           "size": 18,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.5,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "Reviews / Card 3 / Quote"
+         },
+         "elements": []
+        },
+        {
+         "id": "fbe80fa",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p><strong>Lee F.</strong> · Gypsum<br>Log home refinishing</p>",
+          "text_color": "#5B5046",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 14,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.6,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}selector strong{color:#14110E;font-weight:600;}",
+          "_title": "Reviews / Card 3 / Who"
+         },
+         "elements": []
+        }
+       ]
+      },
+      {
+       "id": "8776c65",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Reviews / Card 4",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "flex_gap_laptop": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "flex_gap_tablet": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "flex_gap_mobile": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "40",
+         "right": "36",
+         "bottom": "40",
+         "left": "36",
+         "isLinked": false
+        },
+        "padding_laptop": {
+         "unit": "px",
+         "top": "36",
+         "right": "32",
+         "bottom": "36",
+         "left": "32",
+         "isLinked": false
+        },
+        "padding_tablet": {
+         "unit": "px",
+         "top": "32",
+         "right": "28",
+         "bottom": "32",
+         "left": "28",
+         "isLinked": false
+        },
+        "padding_mobile": {
+         "unit": "px",
+         "top": "28",
+         "right": "24",
+         "bottom": "28",
+         "left": "24",
+         "isLinked": false
+        },
+        "background_background": "classic",
+        "background_color": "#FBF8F3",
+        "border_border": "solid",
+        "border_width": {
+         "unit": "px",
+         "top": "1",
+         "right": "1",
+         "bottom": "1",
+         "left": "1",
+         "isLinked": true
+        },
+        "border_color": "#E2D9CC",
+        "border_radius": {
+         "unit": "px",
+         "top": "6",
+         "right": "6",
+         "bottom": "6",
+         "left": "6",
+         "isLinked": true
+        },
+        "flex_justify_content": "space-between"
+       },
+       "elements": [
+        {
+         "id": "52969a5",
+         "elType": "widget",
+         "widgetType": "rating",
+         "isInner": false,
+         "settings": {
+          "rating_scale": {
+           "unit": "px",
+           "size": 5,
+           "sizes": []
+          },
+          "rating_value": 5,
+          "rating_icon": {
+           "value": "fas fa-star",
+           "library": "fa-solid"
+          },
+          "icon_size": {
+           "unit": "px",
+           "size": 14,
+           "sizes": []
+          },
+          "icon_gap": {
+           "unit": "px",
+           "size": 2,
+           "sizes": []
+          },
+          "icon_marked_color": "#C68B4E",
+          "icon_unmarked_color": "#C68B4E",
+          "_title": "Reviews / Card 4 / Stars"
+         },
+         "elements": []
+        },
+        {
+         "id": "c1515ff",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>“They took an old, rotting deck and restored it so beautifully that we will be able to enjoy it for decades to come.”</p>",
+          "text_color": "#14110E",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Fraunces",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 20,
+           "sizes": []
+          },
+          "typography_font_size_laptop": {
+           "unit": "px",
+           "size": 19,
+           "sizes": []
+          },
+          "typography_font_size_tablet": {
+           "unit": "px",
+           "size": 19,
+           "sizes": []
+          },
+          "typography_font_size_mobile": {
+           "unit": "px",
+           "size": 18,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.5,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "Reviews / Card 4 / Quote"
+         },
+         "elements": []
+        },
+        {
+         "id": "8c4e424",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p><strong>Hervey L., architect</strong> · Grand Lake<br>Deck restoration &amp; rot repair</p>",
+          "text_color": "#5B5046",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 14,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.6,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}selector strong{color:#14110E;font-weight:600;}",
+          "_title": "Reviews / Card 4 / Who"
+         },
+         "elements": []
+        }
+       ]
+      }
+     ]
     }
    ]
   },
   {
-   "id": "8d51055",
+   "id": "803e53c",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -5747,7 +6951,7 @@
    },
    "elements": [
     {
-     "id": "fd4d19b",
+     "id": "292f09a",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -5802,7 +7006,7 @@
      },
      "elements": [
       {
-       "id": "54df8a1",
+       "id": "9ece78b",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -5855,7 +7059,7 @@
        },
        "elements": [
         {
-         "id": "5b5c1a9",
+         "id": "ded66b4",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -5882,7 +7086,7 @@
          "elements": []
         },
         {
-         "id": "e4f398e",
+         "id": "7f29a9f",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -5934,7 +7138,7 @@
          },
          "elements": [
           {
-           "id": "7edd77d",
+           "id": "e3801b7",
            "elType": "widget",
            "widgetType": "rating",
            "isInner": false,
@@ -5966,7 +7170,7 @@
            "elements": []
           },
           {
-           "id": "43d9180",
+           "id": "8f45b09",
            "elType": "widget",
            "widgetType": "heading",
            "isInner": false,
@@ -5996,7 +7200,7 @@
        ]
       },
       {
-       "id": "b7d8335",
+       "id": "e4d6d27",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -6049,7 +7253,7 @@
        },
        "elements": [
         {
-         "id": "1879d95",
+         "id": "f842997",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -6076,7 +7280,7 @@
          "elements": []
         },
         {
-         "id": "365c28e",
+         "id": "189b512",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -6128,7 +7332,7 @@
          },
          "elements": [
           {
-           "id": "125ff87",
+           "id": "b9f5307",
            "elType": "widget",
            "widgetType": "heading",
            "isInner": false,
@@ -6158,7 +7362,7 @@
        ]
       },
       {
-       "id": "95dc0a6",
+       "id": "dfd8c36",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -6211,7 +7415,7 @@
        },
        "elements": [
         {
-         "id": "854e64f",
+         "id": "8528ea7",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -6238,7 +7442,7 @@
          "elements": []
         },
         {
-         "id": "ddb5408",
+         "id": "fab42bd",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -6290,7 +7494,7 @@
          },
          "elements": [
           {
-           "id": "f1cd7be",
+           "id": "5a41f8e",
            "elType": "widget",
            "widgetType": "rating",
            "isInner": false,
@@ -6322,7 +7526,7 @@
            "elements": []
           },
           {
-           "id": "a8e6e5b",
+           "id": "611070a",
            "elType": "widget",
            "widgetType": "heading",
            "isInner": false,
@@ -6356,7 +7560,7 @@
    ]
   },
   {
-   "id": "8f9880a",
+   "id": "d4ffc64",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -6453,7 +7657,7 @@
    },
    "elements": [
     {
-     "id": "f73c49e",
+     "id": "a3043fc",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -6560,7 +7764,7 @@
      },
      "elements": [
       {
-       "id": "54371ff",
+       "id": "a543c6c",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -6638,7 +7842,7 @@
        },
        "elements": [
         {
-         "id": "ca5c875",
+         "id": "379e693",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -6689,7 +7893,7 @@
          },
          "elements": [
           {
-           "id": "7cffb0f",
+           "id": "b2aa216",
            "elType": "widget",
            "widgetType": "heading",
            "isInner": false,
@@ -6737,7 +7941,7 @@
            "elements": []
           },
           {
-           "id": "e7aa220",
+           "id": "6b74c71",
            "elType": "widget",
            "widgetType": "text-editor",
            "isInner": false,
@@ -6769,7 +7973,7 @@
          ]
         },
         {
-         "id": "b60741f",
+         "id": "ba22007",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -6830,7 +8034,7 @@
          },
          "elements": [
           {
-           "id": "8aa9541",
+           "id": "1150458",
            "elType": "widget",
            "widgetType": "heading",
            "isInner": false,
@@ -6856,7 +8060,7 @@
            "elements": []
           },
           {
-           "id": "2075a5b",
+           "id": "603dc86",
            "elType": "widget",
            "widgetType": "heading",
            "isInner": false,
@@ -6893,7 +8097,7 @@
        ]
       },
       {
-       "id": "3edc49c",
+       "id": "d1f6192",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -6970,7 +8174,7 @@
        },
        "elements": [
         {
-         "id": "83f29c6",
+         "id": "54becdc",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -7021,7 +8225,7 @@
          },
          "elements": [
           {
-           "id": "93e2665",
+           "id": "d07991d",
            "elType": "widget",
            "widgetType": "heading",
            "isInner": false,
@@ -7048,7 +8252,7 @@
            "elements": []
           },
           {
-           "id": "5242c22",
+           "id": "9be40e7",
            "elType": "widget",
            "widgetType": "text-editor",
            "isInner": false,
@@ -7080,7 +8284,7 @@
          ]
         },
         {
-         "id": "fc0643b",
+         "id": "bb21512",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -7132,7 +8336,7 @@
          },
          "elements": [
           {
-           "id": "c76dc0c",
+           "id": "aefebfd",
            "elType": "widget",
            "widgetType": "form",
            "isInner": false,
@@ -7141,7 +8345,7 @@
             "form_id": "tn-estimate-form",
             "form_fields": [
              {
-              "_id": "8528ea7",
+              "_id": "2543c8e",
               "custom_id": "name",
               "field_type": "text",
               "field_label": "Name",
@@ -7150,7 +8354,7 @@
               "width_mobile": "50"
              },
              {
-              "_id": "fab42bd",
+              "_id": "ac31b93",
               "custom_id": "phone",
               "field_type": "tel",
               "field_label": "Phone",
@@ -7159,7 +8363,7 @@
               "width_mobile": "50"
              },
              {
-              "_id": "dfd8c36",
+              "_id": "db348ce",
               "custom_id": "email",
               "field_type": "email",
               "field_label": "Email",
@@ -7168,7 +8372,7 @@
               "width_mobile": "50"
              },
              {
-              "_id": "292f09a",
+              "_id": "42e4034",
               "custom_id": "town",
               "field_type": "select",
               "field_label": "Town",
@@ -7178,7 +8382,7 @@
               "field_options": "Select a town|\nAspen\nSnowmass\nBasalt\nCarbondale\nGlenwood Springs\nVail\nBeaver Creek\nAvon\nEdwards\nEagle\nGypsum\nBreckenridge\nOther"
              },
              {
-              "_id": "803e53c",
+              "_id": "4f72492",
               "custom_id": "need",
               "field_type": "select",
               "field_label": "How can we help?",
@@ -7187,7 +8391,7 @@
               "field_options": "Choose one|\nRequest an estimate\nGeneral question\nExisting project\nInterior painting\nExterior painting\nCabinets / trim / specialty finish\nLog home staining / restoration\nChinking / check sealing\nRot repair\nDeck staining\nMedia blasting\nCommercial / HOA"
              },
              {
-              "_id": "c07822d",
+              "_id": "2eedfcf",
               "custom_id": "message",
               "field_type": "textarea",
               "field_label": "Message",
@@ -7313,7 +8517,7 @@
            "elements": []
           },
           {
-           "id": "d8fb445",
+           "id": "1b6ec6f",
            "elType": "widget",
            "widgetType": "text-editor",
            "isInner": false,

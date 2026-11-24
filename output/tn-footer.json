@@ -4,7 +4,7 @@
  "type": "footer",
  "content": [
   {
-   "id": "8d836e7",
+   "id": "99be9c1",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -84,7 +84,7 @@
    },
    "elements": [
     {
-     "id": "831c945",
+     "id": "2389b37",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -92,32 +92,32 @@
       "content_width": "full",
       "flex_direction": "column",
       "flex_gap": {
-       "column": "48",
-       "row": "28",
+       "column": "56",
+       "row": "40",
        "isLinked": false,
        "unit": "px",
-       "size": 48
+       "size": 56
       },
       "flex_gap_laptop": {
-       "column": "48",
-       "row": "28",
-       "isLinked": false,
+       "column": "40",
+       "row": "40",
+       "isLinked": true,
        "unit": "px",
-       "size": 48
+       "size": 40
       },
       "flex_gap_tablet": {
-       "column": "48",
-       "row": "28",
+       "column": "40",
+       "row": "44",
        "isLinked": false,
        "unit": "px",
-       "size": 48
+       "size": 40
       },
       "flex_gap_mobile": {
-       "column": "48",
-       "row": "28",
+       "column": "0",
+       "row": "40",
        "isLinked": false,
        "unit": "px",
-       "size": 48
+       "size": 0
       },
       "width": {
        "unit": "%",
@@ -126,9 +126,9 @@
       },
       "padding": {
        "unit": "px",
-       "top": "56",
+       "top": "72",
        "right": "0",
-       "bottom": "40",
+       "bottom": "48",
        "left": "0",
        "isLinked": false
       },
@@ -141,17 +141,17 @@
       },
       "grid_columns_grid": {
        "unit": "custom",
-       "size": "auto 1fr auto",
+       "size": "minmax(0,1.15fr) minmax(0,1fr) minmax(0,1fr) minmax(0,0.9fr)",
        "sizes": []
       },
       "grid_columns_grid_laptop": {
        "unit": "custom",
-       "size": "auto 1fr auto",
+       "size": "minmax(0,1.15fr) minmax(0,1fr) minmax(0,1fr) minmax(0,0.9fr)",
        "sizes": []
       },
       "grid_columns_grid_tablet": {
        "unit": "custom",
-       "size": "1fr",
+       "size": "1fr 1fr",
        "sizes": []
       },
       "grid_columns_grid_mobile": {
@@ -160,183 +160,44 @@
        "sizes": []
       },
       "grid_gaps": {
-       "column": "48",
-       "row": "28",
+       "column": "56",
+       "row": "40",
        "isLinked": false,
        "unit": "px",
-       "size": 48
+       "size": 56
       },
       "grid_gaps_laptop": {
-       "column": "48",
-       "row": "28",
-       "isLinked": false,
+       "column": "40",
+       "row": "40",
+       "isLinked": true,
        "unit": "px",
-       "size": 48
+       "size": 40
       },
       "grid_gaps_tablet": {
-       "column": "48",
-       "row": "28",
+       "column": "40",
+       "row": "44",
        "isLinked": false,
        "unit": "px",
-       "size": 48
+       "size": 40
       },
       "grid_gaps_mobile": {
-       "column": "48",
-       "row": "28",
+       "column": "0",
+       "row": "40",
        "isLinked": false,
        "unit": "px",
-       "size": 48
+       "size": 0
       },
-      "grid_align_items": "center",
-      "grid_justify_items": "stretch",
-      "flex_align_items": "center"
+      "grid_align_items": "start"
      },
      "elements": [
       {
-       "id": "2919e93",
-       "elType": "widget",
-       "widgetType": "image",
-       "isInner": false,
-       "settings": {
-        "image": {
-         "id": 2364,
-         "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/top-notch-painting-logo-round-light.png",
-         "alt": "Top Notch Painting",
-         "source": "library"
-        },
-        "image_size": "full",
-        "link_to": "custom",
-        "link": {
-         "url": "/",
-         "is_external": "",
-         "nofollow": ""
-        },
-        "align": "left",
-        "custom_css": "selector{line-height:0;}selector img{height:60px !important;width:auto !important;max-width:none !important;display:block;}@media (max-width:980px){selector img{height:52px !important;}}@media (max-width:600px){selector img{height:47px !important;}}",
-        "_title": "Footer / Wordmark"
-       },
-       "elements": []
-      },
-      {
        "id": "10a61f9",
-       "elType": "widget",
-       "widgetType": "icon-list",
-       "isInner": false,
-       "settings": {
-        "view": "inline",
-        "space_between": {
-         "unit": "px",
-         "size": 28,
-         "sizes": []
-        },
-        "text_color": "#B3A99C",
-        "text_color_hover": "#F2ECE3",
-        "icon_list": [
-         {
-          "_id": "8dabe92",
-          "text": "Fine Painting",
-          "link": {
-           "url": "/interior-painting/",
-           "is_external": "",
-           "nofollow": ""
-          },
-          "selected_icon": {
-           "value": "",
-           "library": ""
-          }
-         },
-         {
-          "_id": "d0433cb",
-          "text": "Log &amp; Timber Staining",
-          "link": {
-           "url": "/log-home-staining-restoration/",
-           "is_external": "",
-           "nofollow": ""
-          },
-          "selected_icon": {
-           "value": "",
-           "library": ""
-          }
-         },
-         {
-          "_id": "d5e818f",
-          "text": "Our Work",
-          "link": {
-           "url": "/our-work/",
-           "is_external": "",
-           "nofollow": ""
-          },
-          "selected_icon": {
-           "value": "",
-           "library": ""
-          }
-         },
-         {
-          "_id": "a6263ae",
-          "text": "For Builders",
-          "link": {
-           "url": "/for-builders/",
-           "is_external": "",
-           "nofollow": ""
-          },
-          "selected_icon": {
-           "value": "",
-           "library": ""
-          }
-         },
-         {
-          "_id": "80eb9a0",
-          "text": "About",
-          "link": {
-           "url": "/our-story/",
-           "is_external": "",
-           "nofollow": ""
-          },
-          "selected_icon": {
-           "value": "",
-           "library": ""
-          }
-         },
-         {
-          "_id": "4d6c51e",
-          "text": "Reviews",
-          "link": {
-           "url": "/reviews/",
-           "is_external": "",
-           "nofollow": ""
-          },
-          "selected_icon": {
-           "value": "",
-           "library": ""
-          }
-         }
-        ],
-        "custom_css": "selector .elementor-icon-list-items{justify-content:center;row-gap:0;}selector .elementor-icon-list-item > a{display:inline-flex;align-items:center;min-height:44px;}@media (max-width:980px){selector .elementor-icon-list-items{justify-content:flex-start;}}",
-        "icon_typography_typography": "custom",
-        "icon_typography_font_family": "Manrope",
-        "icon_typography_font_size": {
-         "unit": "px",
-         "size": 14,
-         "sizes": []
-        },
-        "icon_typography_font_weight": "500",
-        "icon_typography_line_height": {
-         "unit": "em",
-         "size": 1.5,
-         "sizes": []
-        },
-        "_title": "Footer / Links"
-       },
-       "elements": []
-      },
-      {
-       "id": "e11745a",
        "elType": "container",
        "isInner": true,
        "settings": {
-        "_title": "Footer / Contact",
+        "_title": "Footer / About",
         "content_width": "full",
-        "flex_direction": "row",
+        "flex_direction": "column",
         "flex_gap": {
          "column": "20",
          "row": "20",
@@ -377,13 +238,702 @@
          "bottom": "0",
          "left": "0",
          "isLinked": true
+        }
+       },
+       "elements": [
+        {
+         "id": "8dabe92",
+         "elType": "widget",
+         "widgetType": "image",
+         "isInner": false,
+         "settings": {
+          "image": {
+           "id": 2364,
+           "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/top-notch-painting-logo-round-light.png",
+           "alt": "Top Notch Painting",
+           "source": "library"
+          },
+          "image_size": "full",
+          "link_to": "custom",
+          "link": {
+           "url": "/",
+           "is_external": "",
+           "nofollow": ""
+          },
+          "align": "left",
+          "custom_css": "selector{line-height:0;}selector img{height:60px !important;width:auto !important;max-width:none !important;display:block;}@media (max-width:980px){selector img{height:52px !important;}}@media (max-width:600px){selector img{height:47px !important;}}",
+          "_title": "Footer / Wordmark"
+         },
+         "elements": []
         },
-        "flex_align_items": "center",
-        "custom_css": "selector{--width:auto;width:auto;min-width:0;}"
+        {
+         "id": "d0433cb",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>Fine painting and log home staining for mountain homes.</p>",
+          "text_color": "#D7CFC4",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 15,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.6,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}selector{max-width:280px !important;}",
+          "_title": "Footer / Tagline"
+         },
+         "elements": []
+        },
+        {
+         "id": "4d6c51e",
+         "elType": "container",
+         "isInner": true,
+         "settings": {
+          "_title": "Footer / Badges",
+          "content_width": "full",
+          "flex_direction": "row",
+          "flex_gap": {
+           "column": "14",
+           "row": "14",
+           "isLinked": true,
+           "unit": "px",
+           "size": 14
+          },
+          "flex_gap_laptop": {
+           "column": "14",
+           "row": "14",
+           "isLinked": true,
+           "unit": "px",
+           "size": 14
+          },
+          "flex_gap_tablet": {
+           "column": "14",
+           "row": "14",
+           "isLinked": true,
+           "unit": "px",
+           "size": 14
+          },
+          "flex_gap_mobile": {
+           "column": "14",
+           "row": "14",
+           "isLinked": true,
+           "unit": "px",
+           "size": 14
+          },
+          "width": {
+           "unit": "%",
+           "size": 100,
+           "sizes": []
+          },
+          "padding": {
+           "unit": "px",
+           "top": "0",
+           "right": "0",
+           "bottom": "0",
+           "left": "0",
+           "isLinked": true
+          },
+          "flex_wrap": "wrap",
+          "flex_align_items": "center"
+         },
+         "elements": [
+          {
+           "id": "d5e818f",
+           "elType": "widget",
+           "widgetType": "image",
+           "isInner": false,
+           "settings": {
+            "image": {
+             "id": 2157,
+             "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/topnotch-logo-bbb-a-plus-white.png",
+             "alt": "BBB A+ Accredited Business",
+             "source": "library"
+            },
+            "image_size": "full",
+            "custom_css": "selector img{height:36px !important;width:auto !important;max-width:none !important;opacity:.85;display:block;}",
+            "_title": "Footer / BBB badge"
+           },
+           "elements": []
+          },
+          {
+           "id": "80eb9a0",
+           "elType": "widget",
+           "widgetType": "icon-list",
+           "isInner": false,
+           "settings": {
+            "icon_list": [
+             {
+              "_id": "a6263ae",
+              "text": "Fully insured",
+              "selected_icon": {
+               "value": {
+                "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/shield-check-light.svg",
+                "id": 1445
+               },
+               "library": "svg"
+              }
+             }
+            ],
+            "icon_color": "#C68B4E",
+            "text_color": "#F2ECE3",
+            "icon_size": {
+             "unit": "px",
+             "size": 18,
+             "sizes": []
+            },
+            "text_indent": {
+             "unit": "px",
+             "size": 8,
+             "sizes": []
+            },
+            "custom_css": "selector .elementor-icon-list-item{border:1px solid rgba(242,236,227,0.2);border-radius:999px;padding:7px 14px 7px 12px;}",
+            "icon_typography_typography": "custom",
+            "icon_typography_font_family": "Manrope",
+            "icon_typography_font_size": {
+             "unit": "px",
+             "size": 13,
+             "sizes": []
+            },
+            "icon_typography_font_weight": "600",
+            "icon_typography_line_height": {
+             "unit": "em",
+             "size": 1.3,
+             "sizes": []
+            },
+            "_title": "Footer / Insured badge"
+           },
+           "elements": []
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "8d836e7",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Footer / Services",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "16",
+         "row": "16",
+         "isLinked": true,
+         "unit": "px",
+         "size": 16
+        },
+        "flex_gap_laptop": {
+         "column": "16",
+         "row": "16",
+         "isLinked": true,
+         "unit": "px",
+         "size": 16
+        },
+        "flex_gap_tablet": {
+         "column": "16",
+         "row": "16",
+         "isLinked": true,
+         "unit": "px",
+         "size": 16
+        },
+        "flex_gap_mobile": {
+         "column": "16",
+         "row": "16",
+         "isLinked": true,
+         "unit": "px",
+         "size": 16
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "0",
+         "right": "0",
+         "bottom": "0",
+         "left": "0",
+         "isLinked": true
+        }
        },
        "elements": [
         {
          "id": "ad3c7de",
+         "elType": "widget",
+         "widgetType": "heading",
+         "isInner": false,
+         "settings": {
+          "title": "Services",
+          "header_size": "div",
+          "title_color": "#C68B4E",
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 14,
+           "sizes": []
+          },
+          "typography_font_weight": "600",
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.4,
+           "sizes": []
+          },
+          "typography_letter_spacing": {
+           "unit": "px",
+           "size": 0.3,
+           "sizes": []
+          },
+          "_title": "Footer / Services / Title"
+         },
+         "elements": []
+        },
+        {
+         "id": "bf67d46",
+         "elType": "widget",
+         "widgetType": "icon-list",
+         "isInner": false,
+         "settings": {
+          "space_between": {
+           "unit": "px",
+           "size": 2,
+           "sizes": []
+          },
+          "text_color": "#B3A99C",
+          "text_color_hover": "#F2ECE3",
+          "icon_list": [
+           {
+            "_id": "24aa4e7",
+            "text": "Interior Painting",
+            "link": {
+             "url": "/interior-painting/",
+             "is_external": "",
+             "nofollow": ""
+            },
+            "selected_icon": {
+             "value": "",
+             "library": ""
+            }
+           },
+           {
+            "_id": "2c593af",
+            "text": "Exterior Painting",
+            "link": {
+             "url": "/exterior-painting/",
+             "is_external": "",
+             "nofollow": ""
+            },
+            "selected_icon": {
+             "value": "",
+             "library": ""
+            }
+           },
+           {
+            "_id": "5988931",
+            "text": "Specialty Finishes &amp; Interior Wood",
+            "link": {
+             "url": "/specialty-finishes-interior-wood/",
+             "is_external": "",
+             "nofollow": ""
+            },
+            "selected_icon": {
+             "value": "",
+             "library": ""
+            }
+           },
+           {
+            "_id": "e11745a",
+            "text": "Commercial &amp; HOA",
+            "link": {
+             "url": "/commercial-hoa/",
+             "is_external": "",
+             "nofollow": ""
+            },
+            "selected_icon": {
+             "value": "",
+             "library": ""
+            }
+           },
+           {
+            "_id": "2919e93",
+            "text": "Log Home Staining &amp; Restoration",
+            "link": {
+             "url": "/log-home-staining-restoration/",
+             "is_external": "",
+             "nofollow": ""
+            },
+            "selected_icon": {
+             "value": "",
+             "library": ""
+            }
+           },
+           {
+            "_id": "831c945",
+            "text": "Chinking &amp; Check Sealing",
+            "link": {
+             "url": "/chinking-check-sealing/",
+             "is_external": "",
+             "nofollow": ""
+            },
+            "selected_icon": {
+             "value": "",
+             "library": ""
+            }
+           },
+           {
+            "_id": "12f0ee9",
+            "text": "Rot Repair &amp; Prevention",
+            "link": {
+             "url": "/rot-repair-prevention/",
+             "is_external": "",
+             "nofollow": ""
+            },
+            "selected_icon": {
+             "value": "",
+             "library": ""
+            }
+           },
+           {
+            "_id": "e094499",
+            "text": "Deck Staining",
+            "link": {
+             "url": "/deck-staining/",
+             "is_external": "",
+             "nofollow": ""
+            },
+            "selected_icon": {
+             "value": "",
+             "library": ""
+            }
+           },
+           {
+            "_id": "f416320",
+            "text": "Media Blasting",
+            "link": {
+             "url": "/media-blasting/",
+             "is_external": "",
+             "nofollow": ""
+            },
+            "selected_icon": {
+             "value": "",
+             "library": ""
+            }
+           }
+          ],
+          "custom_css": "selector .elementor-icon-list-item > a{display:inline-flex;align-items:center;min-height:36px;}",
+          "icon_typography_typography": "custom",
+          "icon_typography_font_family": "Manrope",
+          "icon_typography_font_size": {
+           "unit": "px",
+           "size": 14,
+           "sizes": []
+          },
+          "icon_typography_font_weight": "400",
+          "icon_typography_line_height": {
+           "unit": "em",
+           "size": 1.5,
+           "sizes": []
+          },
+          "_title": "Footer / Services / Links"
+         },
+         "elements": []
+        }
+       ]
+      },
+      {
+       "id": "75b00a2",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Footer / Areas",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "16",
+         "row": "16",
+         "isLinked": true,
+         "unit": "px",
+         "size": 16
+        },
+        "flex_gap_laptop": {
+         "column": "16",
+         "row": "16",
+         "isLinked": true,
+         "unit": "px",
+         "size": 16
+        },
+        "flex_gap_tablet": {
+         "column": "16",
+         "row": "16",
+         "isLinked": true,
+         "unit": "px",
+         "size": 16
+        },
+        "flex_gap_mobile": {
+         "column": "16",
+         "row": "16",
+         "isLinked": true,
+         "unit": "px",
+         "size": 16
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "0",
+         "right": "0",
+         "bottom": "0",
+         "left": "0",
+         "isLinked": true
+        }
+       },
+       "elements": [
+        {
+         "id": "bdec6f1",
+         "elType": "widget",
+         "widgetType": "heading",
+         "isInner": false,
+         "settings": {
+          "title": "Areas we serve",
+          "header_size": "div",
+          "title_color": "#C68B4E",
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 14,
+           "sizes": []
+          },
+          "typography_font_weight": "600",
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.4,
+           "sizes": []
+          },
+          "typography_letter_spacing": {
+           "unit": "px",
+           "size": 0.3,
+           "sizes": []
+          },
+          "_title": "Footer / Areas / Title"
+         },
+         "elements": []
+        },
+        {
+         "id": "6071950",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>Based in Gypsum, serving Colorado's Central Mountains:</p><p>Aspen, Vail, Carbondale, Glenwood Springs, Snowmass, Beaver Creek, Edwards, Basalt, Avon, Eagle, Gypsum, Breckenridge and surrounding areas.</p>",
+          "text_color": "#B3A99C",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 12,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 14,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.7,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}selector{max-width:300px !important;}",
+          "_title": "Footer / Areas / Text"
+         },
+         "elements": []
+        },
+        {
+         "id": "45d1488",
+         "elType": "widget",
+         "widgetType": "button",
+         "isInner": false,
+         "settings": {
+          "text": "Service area →",
+          "link": {
+           "url": "/areas-we-serve/",
+           "is_external": "",
+           "nofollow": ""
+          },
+          "text_padding": {
+           "unit": "px",
+           "top": "15",
+           "right": "0",
+           "bottom": "15",
+           "left": "0",
+           "isLinked": false
+          },
+          "background_background": "classic",
+          "background_color": "#00000000",
+          "button_background_hover_background": "classic",
+          "button_background_hover_color": "#00000000",
+          "button_text_color": "#F2ECE3",
+          "hover_color": "#D9A66B",
+          "border_radius": {
+           "unit": "px",
+           "top": "0",
+           "right": "0",
+           "bottom": "0",
+           "left": "0",
+           "isLinked": true
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 14,
+           "sizes": []
+          },
+          "typography_font_weight": "600",
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1,
+           "sizes": []
+          },
+          "custom_css": "selector .elementor-button{white-space:nowrap;}selector .elementor-button-text{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:7px;text-decoration-color:rgba(242,236,227,0.4);}",
+          "_title": "Footer / Areas / Link"
+         },
+         "elements": []
+        }
+       ]
+      },
+      {
+       "id": "b341738",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Footer / Contact",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_laptop": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_tablet": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_mobile": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "0",
+         "right": "0",
+         "bottom": "0",
+         "left": "0",
+         "isLinked": true
+        }
+       },
+       "elements": [
+        {
+         "id": "506329b",
+         "elType": "widget",
+         "widgetType": "heading",
+         "isInner": false,
+         "settings": {
+          "title": "Contact us",
+          "header_size": "div",
+          "title_color": "#C68B4E",
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 14,
+           "sizes": []
+          },
+          "typography_font_weight": "600",
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.4,
+           "sizes": []
+          },
+          "typography_letter_spacing": {
+           "unit": "px",
+           "size": 0.3,
+           "sizes": []
+          },
+          "_title": "Footer / Contact / Title"
+         },
+         "elements": []
+        },
+        {
+         "id": "69001ac",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>4722 Hwy US-6<br>Gypsum, CO 81637</p>",
+          "text_color": "#B3A99C",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 14,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.7,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "Footer / Contact / Address"
+         },
+         "elements": []
+        },
+        {
+         "id": "fde7bd0",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -395,7 +945,7 @@
           "typography_font_family": "Manrope",
           "typography_font_size": {
            "unit": "px",
-           "size": 15,
+           "size": 16,
            "sizes": []
           },
           "typography_font_weight": "600",
@@ -411,13 +961,76 @@
           },
           "title_hover_color": "#D9A66B",
           "_css_classes": "tn-call",
-          "custom_css": "selector .elementor-heading-title a{display:inline-flex;align-items:center;min-height:44px;}",
+          "custom_css": "selector .elementor-heading-title a{display:inline-flex;align-items:center;min-height:36px;}",
           "_title": "Footer / Phone"
          },
          "elements": []
         },
         {
-         "id": "5988931",
+         "id": "6b4c801",
+         "elType": "widget",
+         "widgetType": "heading",
+         "isInner": false,
+         "settings": {
+          "title": "info@topnotch-painting.com",
+          "header_size": "div",
+          "title_color": "#D7CFC4",
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 14,
+           "sizes": []
+          },
+          "typography_font_weight": "500",
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.4,
+           "sizes": []
+          },
+          "link": {
+           "url": "mailto:info@topnotch-painting.com",
+           "is_external": "",
+           "nofollow": ""
+          },
+          "title_hover_color": "#F2ECE3",
+          "custom_css": "selector .elementor-heading-title a{display:inline-flex;align-items:center;min-height:36px;}",
+          "_title": "Footer / Email"
+         },
+         "elements": []
+        },
+        {
+         "id": "de1d62e",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>Monday–Friday, 7:30am–4:30pm</p>",
+          "text_color": "#B3A99C",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 14,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.6,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "Footer / Hours"
+         },
+         "elements": []
+        },
+        {
+         "id": "937a793",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -466,11 +1079,19 @@
            "isLinked": true
           },
           "flex_align_items": "center",
+          "margin": {
+           "unit": "px",
+           "top": "0",
+           "right": "0",
+           "bottom": "0",
+           "left": "-9",
+           "isLinked": false
+          },
           "custom_css": "selector{--width:auto;width:auto;min-width:0;}"
          },
          "elements": [
           {
-           "id": "24aa4e7",
+           "id": "70581cc",
            "elType": "widget",
            "widgetType": "button",
            "isInner": false,
@@ -535,7 +1156,7 @@
            "elements": []
           },
           {
-           "id": "2c593af",
+           "id": "cef7e26",
            "elType": "widget",
            "widgetType": "button",
            "isInner": false,
@@ -606,7 +1227,7 @@
      ]
     },
     {
-     "id": "bf67d46",
+     "id": "9eb5140",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -670,7 +1291,7 @@
      },
      "elements": [
       {
-       "id": "12f0ee9",
+       "id": "c91dddd",
        "elType": "widget",
        "widgetType": "heading",
        "isInner": false,
@@ -693,20 +1314,45 @@
         },
         "_title": "Footer / Copyright (auto year)",
         "__dynamic__": {
-         "title": "[elementor-tag id=\"e094499\" name=\"current-date-time\" settings=\"%7B%22date_format%22%3A%22custom%22%2C%22custom_format%22%3A%22Y%22%2C%22before%22%3A%22%C2%A9%20%22%2C%22after%22%3A%22%20Top%20Notch%20Painting%20%C2%B7%20A%20Top%20Notch%20Logworks%20company%20%C2%B7%20Employee%20owned%20%26%20operated%22%7D\"]"
+         "title": "[elementor-tag id=\"6724195\" name=\"current-date-time\" settings=\"%7B%22date_format%22%3A%22custom%22%2C%22custom_format%22%3A%22Y%22%2C%22before%22%3A%22%C2%A9%20%22%2C%22after%22%3A%22%20Top%20Notch%20Painting%20%C2%B7%20A%20Top%20Notch%20Logworks%20company%20%C2%B7%20Employee%20owned%20%26%20operated%22%7D\"]"
         }
        },
        "elements": []
       },
       {
-       "id": "f416320",
+       "id": "26f4488",
        "elType": "widget",
-       "widgetType": "heading",
+       "widgetType": "button",
        "isInner": false,
        "settings": {
-        "title": "4722 Hwy US-6, Gypsum, CO 81637&nbsp;· info@topnotch-painting.com",
-        "header_size": "p",
-        "title_color": "#B3A99C",
+        "text": "Request an estimate →",
+        "link": {
+         "url": "/request-an-estimate/",
+         "is_external": "",
+         "nofollow": ""
+        },
+        "text_padding": {
+         "unit": "px",
+         "top": "15",
+         "right": "0",
+         "bottom": "15",
+         "left": "0",
+         "isLinked": false
+        },
+        "background_background": "classic",
+        "background_color": "#00000000",
+        "button_background_hover_background": "classic",
+        "button_background_hover_color": "#00000000",
+        "button_text_color": "#F2ECE3",
+        "hover_color": "#D9A66B",
+        "border_radius": {
+         "unit": "px",
+         "top": "0",
+         "right": "0",
+         "bottom": "0",
+         "left": "0",
+         "isLinked": true
+        },
         "typography_typography": "custom",
         "typography_font_family": "Manrope",
         "typography_font_size": {
@@ -714,13 +1360,14 @@
          "size": 13,
          "sizes": []
         },
-        "typography_font_weight": "400",
+        "typography_font_weight": "600",
         "typography_line_height": {
          "unit": "em",
-         "size": 1.6,
+         "size": 1,
          "sizes": []
         },
-        "_title": "Footer / Address"
+        "custom_css": "selector .elementor-button{white-space:nowrap;}selector .elementor-button-text{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:7px;text-decoration-color:rgba(242,236,227,0.4);}",
+        "_title": "Footer / Estimate link"
        },
        "elements": []
       }
@@ -729,7 +1376,7 @@
    ]
   },
   {
-   "id": "45d1488",
+   "id": "851b4c8",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -801,7 +1448,7 @@
    },
    "elements": [
     {
-     "id": "bdec6f1",
+     "id": "5ac87fc",
      "elType": "widget",
      "widgetType": "button",
      "isInner": false,
@@ -868,7 +1515,7 @@
      "elements": []
     },
     {
-     "id": "6071950",
+     "id": "59a047d",
      "elType": "widget",
      "widgetType": "button",
      "isInner": false,

@@ -4,7 +4,7 @@
  "type": "page",
  "content": [
   {
-   "id": "2ddfe2b",
+   "id": "67f36ca",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -82,7 +82,7 @@
    },
    "elements": [
     {
-     "id": "f31f0b4",
+     "id": "675d36c",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -189,7 +189,7 @@
      },
      "elements": [
       {
-       "id": "1746681",
+       "id": "b9bdbbe",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -241,7 +241,7 @@
        },
        "elements": [
         {
-         "id": "178e264",
+         "id": "cbf7d98",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -272,7 +272,7 @@
          "elements": []
         },
         {
-         "id": "3dfbc7b",
+         "id": "936fe72",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -320,7 +320,7 @@
          "elements": []
         },
         {
-         "id": "608e5b3",
+         "id": "4b3a03b",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -365,7 +365,7 @@
          "elements": []
         },
         {
-         "id": "39f7d73",
+         "id": "b86b276",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -418,7 +418,7 @@
          },
          "elements": [
           {
-           "id": "9a02390",
+           "id": "f913f8d",
            "elType": "widget",
            "widgetType": "button",
            "isInner": false,
@@ -470,7 +470,7 @@
            "elements": []
           },
           {
-           "id": "350e0c1",
+           "id": "88845e1",
            "elType": "widget",
            "widgetType": "button",
            "isInner": false,
@@ -543,7 +543,7 @@
    ]
   },
   {
-   "id": "baee910",
+   "id": "615c8a2",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -621,7 +621,7 @@
    },
    "elements": [
     {
-     "id": "93d6877",
+     "id": "68f0080",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -727,7 +727,7 @@
      },
      "elements": [
       {
-       "id": "e8e93ef",
+       "id": "9f24f14",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -813,7 +813,7 @@
        "elements": []
       },
       {
-       "id": "ab1f9d0",
+       "id": "321cd72",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -899,7 +899,7 @@
        "elements": []
       },
       {
-       "id": "b5d50dd",
+       "id": "2ba98d0",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -985,7 +985,7 @@
        "elements": []
       },
       {
-       "id": "8ae212b",
+       "id": "173ef47",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1071,7 +1071,7 @@
        "elements": []
       },
       {
-       "id": "7c32fb0",
+       "id": "55580af",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1157,7 +1157,7 @@
        "elements": []
       },
       {
-       "id": "6b0c691",
+       "id": "7b66b0d",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1243,7 +1243,7 @@
        "elements": []
       },
       {
-       "id": "f6f1cf5",
+       "id": "1b62fb0",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1317,66 +1317,19 @@
          "unit": "px",
          "size": 190,
          "sizes": []
+        },
+        "background_image": {
+         "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-ceiling-smooth-2.jpg",
+         "id": 2834,
+         "size": "",
+         "alt": "Smooth finished ceiling and fresh walls",
+         "source": "library"
         }
        },
-       "elements": [
-        {
-         "id": "d5ba0cf",
-         "elType": "widget",
-         "widgetType": "icon-list",
-         "isInner": false,
-         "settings": {
-          "icon_list": [
-           {
-            "_id": "dfe7a42",
-            "text": "Photo: Interior great room",
-            "selected_icon": {
-             "value": {
-              "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/camera.svg",
-              "id": 1433
-             },
-             "library": "svg"
-            }
-           }
-          ],
-          "icon_color": "#F2ECE399",
-          "text_color": "#F2ECE399",
-          "icon_size": {
-           "unit": "px",
-           "size": 14,
-           "sizes": []
-          },
-          "text_indent": {
-           "unit": "px",
-           "size": 8,
-           "sizes": []
-          },
-          "space_between": {
-           "unit": "px",
-           "size": 0,
-           "sizes": []
-          },
-          "icon_typography_typography": "custom",
-          "icon_typography_font_family": "Manrope",
-          "icon_typography_font_size": {
-           "unit": "px",
-           "size": 12,
-           "sizes": []
-          },
-          "icon_typography_font_weight": "400",
-          "icon_typography_line_height": {
-           "unit": "em",
-           "size": 1.4,
-           "sizes": []
-          },
-          "_title": "Photo label (delete when photo added)"
-         },
-         "elements": []
-        }
-       ]
+       "elements": []
       },
       {
-       "id": "999147e",
+       "id": "3f6d148",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1450,66 +1403,19 @@
          "unit": "px",
          "size": 190,
          "sizes": []
+        },
+        "background_image": {
+         "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-ext-after.jpg",
+         "id": 2827,
+         "size": "",
+         "alt": "Exterior after repaint in white with navy shutters",
+         "source": "library"
         }
        },
-       "elements": [
-        {
-         "id": "f080049",
-         "elType": "widget",
-         "widgetType": "icon-list",
-         "isInner": false,
-         "settings": {
-          "icon_list": [
-           {
-            "_id": "d6c715b",
-            "text": "Photo: Exterior repaint",
-            "selected_icon": {
-             "value": {
-              "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/camera.svg",
-              "id": 1433
-             },
-             "library": "svg"
-            }
-           }
-          ],
-          "icon_color": "#F2ECE399",
-          "text_color": "#F2ECE399",
-          "icon_size": {
-           "unit": "px",
-           "size": 14,
-           "sizes": []
-          },
-          "text_indent": {
-           "unit": "px",
-           "size": 8,
-           "sizes": []
-          },
-          "space_between": {
-           "unit": "px",
-           "size": 0,
-           "sizes": []
-          },
-          "icon_typography_typography": "custom",
-          "icon_typography_font_family": "Manrope",
-          "icon_typography_font_size": {
-           "unit": "px",
-           "size": 12,
-           "sizes": []
-          },
-          "icon_typography_font_weight": "400",
-          "icon_typography_line_height": {
-           "unit": "em",
-           "size": 1.4,
-           "sizes": []
-          },
-          "_title": "Photo label (delete when photo added)"
-         },
-         "elements": []
-        }
-       ]
+       "elements": []
       },
       {
-       "id": "94250d8",
+       "id": "9cdc06e",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1583,70 +1489,23 @@
          "unit": "px",
          "size": 190,
          "sizes": []
+        },
+        "background_image": {
+         "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-accent-wall.jpg",
+         "id": 2837,
+         "size": "",
+         "alt": "Deep plum accent wall",
+         "source": "library"
         }
        },
-       "elements": [
-        {
-         "id": "c8d3b18",
-         "elType": "widget",
-         "widgetType": "icon-list",
-         "isInner": false,
-         "settings": {
-          "icon_list": [
-           {
-            "_id": "3bbf227",
-            "text": "Photo: Accent wall",
-            "selected_icon": {
-             "value": {
-              "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/camera.svg",
-              "id": 1433
-             },
-             "library": "svg"
-            }
-           }
-          ],
-          "icon_color": "#F2ECE399",
-          "text_color": "#F2ECE399",
-          "icon_size": {
-           "unit": "px",
-           "size": 14,
-           "sizes": []
-          },
-          "text_indent": {
-           "unit": "px",
-           "size": 8,
-           "sizes": []
-          },
-          "space_between": {
-           "unit": "px",
-           "size": 0,
-           "sizes": []
-          },
-          "icon_typography_typography": "custom",
-          "icon_typography_font_family": "Manrope",
-          "icon_typography_font_size": {
-           "unit": "px",
-           "size": 12,
-           "sizes": []
-          },
-          "icon_typography_font_weight": "400",
-          "icon_typography_line_height": {
-           "unit": "em",
-           "size": 1.4,
-           "sizes": []
-          },
-          "_title": "Photo label (delete when photo added)"
-         },
-         "elements": []
-        }
-       ]
+       "elements": []
       }
      ]
     }
    ]
   },
   {
-   "id": "6fe2fe3",
+   "id": "e6c6216",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -1724,7 +1583,7 @@
    },
    "elements": [
     {
-     "id": "e7879ce",
+     "id": "63b8750",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -1831,7 +1690,7 @@
      },
      "elements": [
       {
-       "id": "c452797",
+       "id": "8acd1f7",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1882,7 +1741,7 @@
        },
        "elements": [
         {
-         "id": "f1dfffe",
+         "id": "ab4a8d0",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1932,7 +1791,7 @@
        ]
       },
       {
-       "id": "108297e",
+       "id": "f21d59b",
        "elType": "widget",
        "widgetType": "icon-list",
        "isInner": false,
@@ -1946,7 +1805,7 @@
         "text_color_hover": "#D9A66B",
         "icon_list": [
          {
-          "_id": "b4b62e0",
+          "_id": "515e973",
           "text": "Read the stories behind our projects",
           "link": {
            "url": "/project-stories/",
@@ -1959,7 +1818,7 @@
           }
          },
          {
-          "_id": "d44de1c",
+          "_id": "8d02487",
           "text": "See what clients say",
           "link": {
            "url": "/reviews/",
@@ -2003,7 +1862,7 @@
    ]
   },
   {
-   "id": "a97898f",
+   "id": "8b0dc70",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -2099,7 +1958,7 @@
    },
    "elements": [
     {
-     "id": "377b5be",
+     "id": "1592fd5",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -2151,7 +2010,7 @@
      },
      "elements": [
       {
-       "id": "20481df",
+       "id": "5006b2b",
        "elType": "widget",
        "widgetType": "heading",
        "isInner": false,
@@ -2200,7 +2059,7 @@
        "elements": []
       },
       {
-       "id": "6e35055",
+       "id": "19662f3",
        "elType": "widget",
        "widgetType": "text-editor",
        "isInner": false,
@@ -2231,7 +2090,7 @@
        "elements": []
       },
       {
-       "id": "9839cef",
+       "id": "321ba4c",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -2285,7 +2144,7 @@
        },
        "elements": [
         {
-         "id": "5d7a640",
+         "id": "b4c2cc1",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,
@@ -2337,7 +2196,7 @@
          "elements": []
         },
         {
-         "id": "475850f",
+         "id": "8d70f3e",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,

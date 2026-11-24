@@ -4,7 +4,7 @@
  "type": "page",
  "content": [
   {
-   "id": "6377899",
+   "id": "3eb5238",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -82,7 +82,7 @@
    },
    "elements": [
     {
-     "id": "833c667",
+     "id": "bb9f443",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -189,7 +189,7 @@
      },
      "elements": [
       {
-       "id": "becb9e6",
+       "id": "e978673",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -241,7 +241,7 @@
        },
        "elements": [
         {
-         "id": "d50029a",
+         "id": "b54b3b8",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -272,7 +272,7 @@
          "elements": []
         },
         {
-         "id": "169a306",
+         "id": "6497db6",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -320,7 +320,7 @@
          "elements": []
         },
         {
-         "id": "168c8f9",
+         "id": "7872d96",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -365,7 +365,7 @@
          "elements": []
         },
         {
-         "id": "63e8153",
+         "id": "e563d56",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -418,7 +418,7 @@
          },
          "elements": [
           {
-           "id": "92a8c71",
+           "id": "9b890fe",
            "elType": "widget",
            "widgetType": "button",
            "isInner": false,
@@ -470,7 +470,7 @@
            "elements": []
           },
           {
-           "id": "89dcbc8",
+           "id": "d887417",
            "elType": "widget",
            "widgetType": "button",
            "isInner": false,
@@ -539,7 +539,7 @@
        ]
       },
       {
-       "id": "5dbd6e0",
+       "id": "e8ae93f",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -615,10 +615,10 @@
          "sizes": []
         },
         "background_image": {
-         "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-hero-stained-wood-deck.webp",
-         "id": 1585,
+         "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-ext-gray-repaint.jpg",
+         "id": 2824,
          "size": "",
-         "alt": "Stained wood deck outside a lit home",
+         "alt": "Exterior repaint in dark gray with white trim",
          "source": "library"
         }
        },
@@ -629,7 +629,7 @@
    ]
   },
   {
-   "id": "3bb5328",
+   "id": "a2845da",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -707,7 +707,7 @@
    },
    "elements": [
     {
-     "id": "de10750",
+     "id": "bfe987c",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -814,7 +814,7 @@
      },
      "elements": [
       {
-       "id": "8771f89",
+       "id": "38215db",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -865,7 +865,7 @@
        },
        "elements": [
         {
-         "id": "f9f9148",
+         "id": "16f594c",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -913,7 +913,7 @@
          "elements": []
         },
         {
-         "id": "2f124a7",
+         "id": "6a1967d",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -945,7 +945,7 @@
        ]
       },
       {
-       "id": "ae5cf6e",
+       "id": "9fdf661",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1038,7 +1038,7 @@
        },
        "elements": [
         {
-         "id": "a255924",
+         "id": "6a091fd",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1069,7 +1069,7 @@
          "elements": []
         },
         {
-         "id": "8f60b9f",
+         "id": "e8b6dd5",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -1106,7 +1106,1365 @@
    ]
   },
   {
-   "id": "fbe4812",
+   "id": "1f7815f",
+   "elType": "container",
+   "isInner": false,
+   "settings": {
+    "_title": "What We Paint",
+    "content_width": "boxed",
+    "flex_direction": "column",
+    "flex_gap": {
+     "column": "56",
+     "row": "56",
+     "isLinked": true,
+     "unit": "px",
+     "size": 56
+    },
+    "flex_gap_laptop": {
+     "column": "52",
+     "row": "52",
+     "isLinked": true,
+     "unit": "px",
+     "size": 52
+    },
+    "flex_gap_tablet": {
+     "column": "44",
+     "row": "44",
+     "isLinked": true,
+     "unit": "px",
+     "size": 44
+    },
+    "flex_gap_mobile": {
+     "column": "36",
+     "row": "36",
+     "isLinked": true,
+     "unit": "px",
+     "size": 36
+    },
+    "boxed_width": {
+     "unit": "px",
+     "size": 1280,
+     "sizes": []
+    },
+    "padding": {
+     "unit": "px",
+     "top": "128",
+     "right": "48",
+     "bottom": "128",
+     "left": "48",
+     "isLinked": false
+    },
+    "padding_laptop": {
+     "unit": "px",
+     "top": "117",
+     "right": "48",
+     "bottom": "117",
+     "left": "48",
+     "isLinked": false
+    },
+    "padding_tablet": {
+     "unit": "px",
+     "top": "88",
+     "right": "32",
+     "bottom": "88",
+     "left": "32",
+     "isLinked": false
+    },
+    "padding_mobile": {
+     "unit": "px",
+     "top": "80",
+     "right": "20",
+     "bottom": "80",
+     "left": "20",
+     "isLinked": false
+    },
+    "background_background": "classic",
+    "background_color": "#14110E",
+    "html_tag": "section"
+   },
+   "elements": [
+    {
+     "id": "2b25286",
+     "elType": "container",
+     "isInner": true,
+     "settings": {
+      "_title": "What We Paint / Heading",
+      "content_width": "full",
+      "flex_direction": "column",
+      "flex_gap": {
+       "column": "20",
+       "row": "20",
+       "isLinked": true,
+       "unit": "px",
+       "size": 20
+      },
+      "flex_gap_laptop": {
+       "column": "20",
+       "row": "20",
+       "isLinked": true,
+       "unit": "px",
+       "size": 20
+      },
+      "flex_gap_tablet": {
+       "column": "20",
+       "row": "20",
+       "isLinked": true,
+       "unit": "px",
+       "size": 20
+      },
+      "flex_gap_mobile": {
+       "column": "20",
+       "row": "20",
+       "isLinked": true,
+       "unit": "px",
+       "size": 20
+      },
+      "width": {
+       "unit": "%",
+       "size": 100,
+       "sizes": []
+      },
+      "padding": {
+       "unit": "px",
+       "top": "0",
+       "right": "0",
+       "bottom": "0",
+       "left": "0",
+       "isLinked": true
+      }
+     },
+     "elements": [
+      {
+       "id": "3bd8af2",
+       "elType": "widget",
+       "widgetType": "heading",
+       "isInner": false,
+       "settings": {
+        "title": "<b>What</b> we paint",
+        "header_size": "h2",
+        "title_color": "#F2ECE3",
+        "typography_typography": "custom",
+        "typography_font_family": "Fraunces",
+        "typography_font_size": {
+         "unit": "px",
+         "size": 45,
+         "sizes": []
+        },
+        "typography_font_size_laptop": {
+         "unit": "px",
+         "size": 41,
+         "sizes": []
+        },
+        "typography_font_size_tablet": {
+         "unit": "px",
+         "size": 34,
+         "sizes": []
+        },
+        "typography_font_size_mobile": {
+         "unit": "px",
+         "size": 29,
+         "sizes": []
+        },
+        "typography_font_weight": "300",
+        "typography_line_height": {
+         "unit": "em",
+         "size": 1.04,
+         "sizes": []
+        },
+        "typography_letter_spacing": {
+         "unit": "px",
+         "size": -0.6,
+         "sizes": []
+        },
+        "custom_css": "selector .elementor-heading-title{text-wrap:balance;}selector{max-width:720px !important;}",
+        "_css_classes": "tn-teeth tn-contrast",
+        "_title": "What We Paint / Title (H2)"
+       },
+       "elements": []
+      }
+     ]
+    },
+    {
+     "id": "bf3e7dd",
+     "elType": "container",
+     "isInner": true,
+     "settings": {
+      "_title": "What We Paint / Grid",
+      "content_width": "full",
+      "flex_direction": "column",
+      "flex_gap": {
+       "column": "20",
+       "row": "20",
+       "isLinked": true,
+       "unit": "px",
+       "size": 20
+      },
+      "flex_gap_laptop": {
+       "column": "20",
+       "row": "20",
+       "isLinked": true,
+       "unit": "px",
+       "size": 20
+      },
+      "flex_gap_tablet": {
+       "column": "20",
+       "row": "20",
+       "isLinked": true,
+       "unit": "px",
+       "size": 20
+      },
+      "flex_gap_mobile": {
+       "column": "20",
+       "row": "20",
+       "isLinked": true,
+       "unit": "px",
+       "size": 20
+      },
+      "width": {
+       "unit": "%",
+       "size": 100,
+       "sizes": []
+      },
+      "padding": {
+       "unit": "px",
+       "top": "0",
+       "right": "0",
+       "bottom": "0",
+       "left": "0",
+       "isLinked": true
+      },
+      "container_type": "grid",
+      "grid_auto_flow": "row",
+      "grid_rows_grid": {
+       "unit": "custom",
+       "size": "auto",
+       "sizes": []
+      },
+      "grid_columns_grid": {
+       "unit": "fr",
+       "size": 3,
+       "sizes": []
+      },
+      "grid_columns_grid_laptop": {
+       "unit": "fr",
+       "size": 3,
+       "sizes": []
+      },
+      "grid_columns_grid_tablet": {
+       "unit": "fr",
+       "size": 2,
+       "sizes": []
+      },
+      "grid_columns_grid_mobile": {
+       "unit": "fr",
+       "size": 1,
+       "sizes": []
+      },
+      "grid_gaps": {
+       "column": "20",
+       "row": "20",
+       "isLinked": true,
+       "unit": "px",
+       "size": 20
+      },
+      "grid_gaps_laptop": {
+       "column": "20",
+       "row": "20",
+       "isLinked": true,
+       "unit": "px",
+       "size": 20
+      },
+      "grid_gaps_tablet": {
+       "column": "20",
+       "row": "20",
+       "isLinked": true,
+       "unit": "px",
+       "size": 20
+      },
+      "grid_gaps_mobile": {
+       "column": "20",
+       "row": "20",
+       "isLinked": true,
+       "unit": "px",
+       "size": 20
+      },
+      "grid_align_items": "stretch"
+     },
+     "elements": [
+      {
+       "id": "2c14df9",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "What We Paint / Card 1",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "14",
+         "row": "14",
+         "isLinked": true,
+         "unit": "px",
+         "size": 14
+        },
+        "flex_gap_laptop": {
+         "column": "14",
+         "row": "14",
+         "isLinked": true,
+         "unit": "px",
+         "size": 14
+        },
+        "flex_gap_tablet": {
+         "column": "14",
+         "row": "14",
+         "isLinked": true,
+         "unit": "px",
+         "size": 14
+        },
+        "flex_gap_mobile": {
+         "column": "14",
+         "row": "14",
+         "isLinked": true,
+         "unit": "px",
+         "size": 14
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "36",
+         "right": "32",
+         "bottom": "36",
+         "left": "32",
+         "isLinked": false
+        },
+        "padding_laptop": {
+         "unit": "px",
+         "top": "32",
+         "right": "28",
+         "bottom": "32",
+         "left": "28",
+         "isLinked": false
+        },
+        "padding_tablet": {
+         "unit": "px",
+         "top": "28",
+         "right": "28",
+         "bottom": "28",
+         "left": "28",
+         "isLinked": true
+        },
+        "padding_mobile": {
+         "unit": "px",
+         "top": "24",
+         "right": "24",
+         "bottom": "24",
+         "left": "24",
+         "isLinked": true
+        },
+        "background_background": "classic",
+        "background_color": "#1C1814",
+        "border_border": "solid",
+        "border_width": {
+         "unit": "px",
+         "top": "1",
+         "right": "1",
+         "bottom": "1",
+         "left": "1",
+         "isLinked": true
+        },
+        "border_color": "#F2ECE31A",
+        "border_radius": {
+         "unit": "px",
+         "top": "6",
+         "right": "6",
+         "bottom": "6",
+         "left": "6",
+         "isLinked": true
+        }
+       },
+       "elements": [
+        {
+         "id": "dab39a0",
+         "elType": "widget",
+         "widgetType": "icon",
+         "isInner": false,
+         "settings": {
+          "selected_icon": {
+           "value": {
+            "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/house-line-light.svg",
+            "id": 2869
+           },
+           "library": "svg"
+          },
+          "primary_color": "#C68B4E",
+          "size": {
+           "unit": "px",
+           "size": 40,
+           "sizes": []
+          },
+          "align": "left",
+          "custom_css": "selector .elementor-icon{display:block;line-height:0;}selector .elementor-icon svg{width:40px;height:40px;}",
+          "_title": "What We Paint / Card 1 / Icon"
+         },
+         "elements": []
+        },
+        {
+         "id": "99d3307",
+         "elType": "widget",
+         "widgetType": "heading",
+         "isInner": false,
+         "settings": {
+          "title": "Siding &amp; trim",
+          "header_size": "h3",
+          "title_color": "#F2ECE3",
+          "typography_typography": "custom",
+          "typography_font_family": "Fraunces",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 22,
+           "sizes": []
+          },
+          "typography_font_weight": "500",
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.15,
+           "sizes": []
+          },
+          "_title": "What We Paint / Card 1 / Title (H3)"
+         },
+         "elements": []
+        },
+        {
+         "id": "476f536",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>Lap, board-and-batten and shingle siding, with crisp trim lines.</p>",
+          "text_color": "#B3A99C",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 15,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.7,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "What We Paint / Card 1 / Text"
+         },
+         "elements": []
+        }
+       ]
+      },
+      {
+       "id": "9e48e48",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "What We Paint / Card 2",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "14",
+         "row": "14",
+         "isLinked": true,
+         "unit": "px",
+         "size": 14
+        },
+        "flex_gap_laptop": {
+         "column": "14",
+         "row": "14",
+         "isLinked": true,
+         "unit": "px",
+         "size": 14
+        },
+        "flex_gap_tablet": {
+         "column": "14",
+         "row": "14",
+         "isLinked": true,
+         "unit": "px",
+         "size": 14
+        },
+        "flex_gap_mobile": {
+         "column": "14",
+         "row": "14",
+         "isLinked": true,
+         "unit": "px",
+         "size": 14
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "36",
+         "right": "32",
+         "bottom": "36",
+         "left": "32",
+         "isLinked": false
+        },
+        "padding_laptop": {
+         "unit": "px",
+         "top": "32",
+         "right": "28",
+         "bottom": "32",
+         "left": "28",
+         "isLinked": false
+        },
+        "padding_tablet": {
+         "unit": "px",
+         "top": "28",
+         "right": "28",
+         "bottom": "28",
+         "left": "28",
+         "isLinked": true
+        },
+        "padding_mobile": {
+         "unit": "px",
+         "top": "24",
+         "right": "24",
+         "bottom": "24",
+         "left": "24",
+         "isLinked": true
+        },
+        "background_background": "classic",
+        "background_color": "#1C1814",
+        "border_border": "solid",
+        "border_width": {
+         "unit": "px",
+         "top": "1",
+         "right": "1",
+         "bottom": "1",
+         "left": "1",
+         "isLinked": true
+        },
+        "border_color": "#F2ECE31A",
+        "border_radius": {
+         "unit": "px",
+         "top": "6",
+         "right": "6",
+         "bottom": "6",
+         "left": "6",
+         "isLinked": true
+        }
+       },
+       "elements": [
+        {
+         "id": "aeebba4",
+         "elType": "widget",
+         "widgetType": "icon",
+         "isInner": false,
+         "settings": {
+          "selected_icon": {
+           "value": {
+            "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/garage-light.svg",
+            "id": 2868
+           },
+           "library": "svg"
+          },
+          "primary_color": "#C68B4E",
+          "size": {
+           "unit": "px",
+           "size": 40,
+           "sizes": []
+          },
+          "align": "left",
+          "custom_css": "selector .elementor-icon{display:block;line-height:0;}selector .elementor-icon svg{width:40px;height:40px;}",
+          "_title": "What We Paint / Card 2 / Icon"
+         },
+         "elements": []
+        },
+        {
+         "id": "c74c990",
+         "elType": "widget",
+         "widgetType": "heading",
+         "isInner": false,
+         "settings": {
+          "title": "Doors &amp; garage doors",
+          "header_size": "h3",
+          "title_color": "#F2ECE3",
+          "typography_typography": "custom",
+          "typography_font_family": "Fraunces",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 22,
+           "sizes": []
+          },
+          "typography_font_weight": "500",
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.15,
+           "sizes": []
+          },
+          "_title": "What We Paint / Card 2 / Title (H3)"
+         },
+         "elements": []
+        },
+        {
+         "id": "57cd07f",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>Entry doors, garage doors and shutters, finished to stand up to sun and snow.</p>",
+          "text_color": "#B3A99C",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 15,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.7,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "What We Paint / Card 2 / Text"
+         },
+         "elements": []
+        }
+       ]
+      },
+      {
+       "id": "46e5372",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "What We Paint / Card 3",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "14",
+         "row": "14",
+         "isLinked": true,
+         "unit": "px",
+         "size": 14
+        },
+        "flex_gap_laptop": {
+         "column": "14",
+         "row": "14",
+         "isLinked": true,
+         "unit": "px",
+         "size": 14
+        },
+        "flex_gap_tablet": {
+         "column": "14",
+         "row": "14",
+         "isLinked": true,
+         "unit": "px",
+         "size": 14
+        },
+        "flex_gap_mobile": {
+         "column": "14",
+         "row": "14",
+         "isLinked": true,
+         "unit": "px",
+         "size": 14
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "36",
+         "right": "32",
+         "bottom": "36",
+         "left": "32",
+         "isLinked": false
+        },
+        "padding_laptop": {
+         "unit": "px",
+         "top": "32",
+         "right": "28",
+         "bottom": "32",
+         "left": "28",
+         "isLinked": false
+        },
+        "padding_tablet": {
+         "unit": "px",
+         "top": "28",
+         "right": "28",
+         "bottom": "28",
+         "left": "28",
+         "isLinked": true
+        },
+        "padding_mobile": {
+         "unit": "px",
+         "top": "24",
+         "right": "24",
+         "bottom": "24",
+         "left": "24",
+         "isLinked": true
+        },
+        "background_background": "classic",
+        "background_color": "#1C1814",
+        "border_border": "solid",
+        "border_width": {
+         "unit": "px",
+         "top": "1",
+         "right": "1",
+         "bottom": "1",
+         "left": "1",
+         "isLinked": true
+        },
+        "border_color": "#F2ECE31A",
+        "border_radius": {
+         "unit": "px",
+         "top": "6",
+         "right": "6",
+         "bottom": "6",
+         "left": "6",
+         "isLinked": true
+        }
+       },
+       "elements": [
+        {
+         "id": "d051ac7",
+         "elType": "widget",
+         "widgetType": "icon",
+         "isInner": false,
+         "settings": {
+          "selected_icon": {
+           "value": {
+            "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/ruler-light.svg",
+            "id": 2872
+           },
+           "library": "svg"
+          },
+          "primary_color": "#C68B4E",
+          "size": {
+           "unit": "px",
+           "size": 40,
+           "sizes": []
+          },
+          "align": "left",
+          "custom_css": "selector .elementor-icon{display:block;line-height:0;}selector .elementor-icon svg{width:40px;height:40px;}",
+          "_title": "What We Paint / Card 3 / Icon"
+         },
+         "elements": []
+        },
+        {
+         "id": "a16b2b3",
+         "elType": "widget",
+         "widgetType": "heading",
+         "isInner": false,
+         "settings": {
+          "title": "Fascia, soffits &amp; eaves",
+          "header_size": "h3",
+          "title_color": "#F2ECE3",
+          "typography_typography": "custom",
+          "typography_font_family": "Fraunces",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 22,
+           "sizes": []
+          },
+          "typography_font_weight": "500",
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.15,
+           "sizes": []
+          },
+          "_title": "What We Paint / Card 3 / Title (H3)"
+         },
+         "elements": []
+        },
+        {
+         "id": "cb20e1d",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>The high, hard-to-reach details that frame the whole house.</p>",
+          "text_color": "#B3A99C",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 15,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.7,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "What We Paint / Card 3 / Text"
+         },
+         "elements": []
+        }
+       ]
+      },
+      {
+       "id": "54a23f6",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "What We Paint / Card 4",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "14",
+         "row": "14",
+         "isLinked": true,
+         "unit": "px",
+         "size": 14
+        },
+        "flex_gap_laptop": {
+         "column": "14",
+         "row": "14",
+         "isLinked": true,
+         "unit": "px",
+         "size": 14
+        },
+        "flex_gap_tablet": {
+         "column": "14",
+         "row": "14",
+         "isLinked": true,
+         "unit": "px",
+         "size": 14
+        },
+        "flex_gap_mobile": {
+         "column": "14",
+         "row": "14",
+         "isLinked": true,
+         "unit": "px",
+         "size": 14
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "36",
+         "right": "32",
+         "bottom": "36",
+         "left": "32",
+         "isLinked": false
+        },
+        "padding_laptop": {
+         "unit": "px",
+         "top": "32",
+         "right": "28",
+         "bottom": "32",
+         "left": "28",
+         "isLinked": false
+        },
+        "padding_tablet": {
+         "unit": "px",
+         "top": "28",
+         "right": "28",
+         "bottom": "28",
+         "left": "28",
+         "isLinked": true
+        },
+        "padding_mobile": {
+         "unit": "px",
+         "top": "24",
+         "right": "24",
+         "bottom": "24",
+         "left": "24",
+         "isLinked": true
+        },
+        "background_background": "classic",
+        "background_color": "#1C1814",
+        "border_border": "solid",
+        "border_width": {
+         "unit": "px",
+         "top": "1",
+         "right": "1",
+         "bottom": "1",
+         "left": "1",
+         "isLinked": true
+        },
+        "border_color": "#F2ECE31A",
+        "border_radius": {
+         "unit": "px",
+         "top": "6",
+         "right": "6",
+         "bottom": "6",
+         "left": "6",
+         "isLinked": true
+        }
+       },
+       "elements": [
+        {
+         "id": "a1e0b53",
+         "elType": "widget",
+         "widgetType": "icon",
+         "isInner": false,
+         "settings": {
+          "selected_icon": {
+           "value": {
+            "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/drop-light.svg",
+            "id": 2867
+           },
+           "library": "svg"
+          },
+          "primary_color": "#C68B4E",
+          "size": {
+           "unit": "px",
+           "size": 40,
+           "sizes": []
+          },
+          "align": "left",
+          "custom_css": "selector .elementor-icon{display:block;line-height:0;}selector .elementor-icon svg{width:40px;height:40px;}",
+          "_title": "What We Paint / Card 4 / Icon"
+         },
+         "elements": []
+        },
+        {
+         "id": "5b71779",
+         "elType": "widget",
+         "widgetType": "heading",
+         "isInner": false,
+         "settings": {
+          "title": "Stain &amp; clear coats",
+          "header_size": "h3",
+          "title_color": "#F2ECE3",
+          "typography_typography": "custom",
+          "typography_font_family": "Fraunces",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 22,
+           "sizes": []
+          },
+          "typography_font_weight": "500",
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.15,
+           "sizes": []
+          },
+          "_title": "What We Paint / Card 4 / Title (H3)"
+         },
+         "elements": []
+        },
+        {
+         "id": "a015b7c",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>Solid and semi-transparent stains for wood siding, beams and accents.</p>",
+          "text_color": "#B3A99C",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 15,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.7,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "What We Paint / Card 4 / Text"
+         },
+         "elements": []
+        }
+       ]
+      },
+      {
+       "id": "29f900d",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "What We Paint / Card 5",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "14",
+         "row": "14",
+         "isLinked": true,
+         "unit": "px",
+         "size": 14
+        },
+        "flex_gap_laptop": {
+         "column": "14",
+         "row": "14",
+         "isLinked": true,
+         "unit": "px",
+         "size": 14
+        },
+        "flex_gap_tablet": {
+         "column": "14",
+         "row": "14",
+         "isLinked": true,
+         "unit": "px",
+         "size": 14
+        },
+        "flex_gap_mobile": {
+         "column": "14",
+         "row": "14",
+         "isLinked": true,
+         "unit": "px",
+         "size": 14
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "36",
+         "right": "32",
+         "bottom": "36",
+         "left": "32",
+         "isLinked": false
+        },
+        "padding_laptop": {
+         "unit": "px",
+         "top": "32",
+         "right": "28",
+         "bottom": "32",
+         "left": "28",
+         "isLinked": false
+        },
+        "padding_tablet": {
+         "unit": "px",
+         "top": "28",
+         "right": "28",
+         "bottom": "28",
+         "left": "28",
+         "isLinked": true
+        },
+        "padding_mobile": {
+         "unit": "px",
+         "top": "24",
+         "right": "24",
+         "bottom": "24",
+         "left": "24",
+         "isLinked": true
+        },
+        "background_background": "classic",
+        "background_color": "#1C1814",
+        "border_border": "solid",
+        "border_width": {
+         "unit": "px",
+         "top": "1",
+         "right": "1",
+         "bottom": "1",
+         "left": "1",
+         "isLinked": true
+        },
+        "border_color": "#F2ECE31A",
+        "border_radius": {
+         "unit": "px",
+         "top": "6",
+         "right": "6",
+         "bottom": "6",
+         "left": "6",
+         "isLinked": true
+        }
+       },
+       "elements": [
+        {
+         "id": "bb99436",
+         "elType": "widget",
+         "widgetType": "icon",
+         "isInner": false,
+         "settings": {
+          "selected_icon": {
+           "value": {
+            "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/palette-light.svg",
+            "id": 2871
+           },
+           "library": "svg"
+          },
+          "primary_color": "#C68B4E",
+          "size": {
+           "unit": "px",
+           "size": 40,
+           "sizes": []
+          },
+          "align": "left",
+          "custom_css": "selector .elementor-icon{display:block;line-height:0;}selector .elementor-icon svg{width:40px;height:40px;}",
+          "_title": "What We Paint / Card 5 / Icon"
+         },
+         "elements": []
+        },
+        {
+         "id": "9e44980",
+         "elType": "widget",
+         "widgetType": "heading",
+         "isInner": false,
+         "settings": {
+          "title": "Color consultation",
+          "header_size": "h3",
+          "title_color": "#F2ECE3",
+          "typography_typography": "custom",
+          "typography_font_family": "Fraunces",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 22,
+           "sizes": []
+          },
+          "typography_font_weight": "500",
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.15,
+           "sizes": []
+          },
+          "_title": "What We Paint / Card 5 / Title (H3)"
+         },
+         "elements": []
+        },
+        {
+         "id": "31f3439",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>Help choosing colors that suit the home, the light and the setting.</p>",
+          "text_color": "#B3A99C",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 15,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.7,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "What We Paint / Card 5 / Text"
+         },
+         "elements": []
+        }
+       ]
+      },
+      {
+       "id": "7fa1294",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "What We Paint / Card 6",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "14",
+         "row": "14",
+         "isLinked": true,
+         "unit": "px",
+         "size": 14
+        },
+        "flex_gap_laptop": {
+         "column": "14",
+         "row": "14",
+         "isLinked": true,
+         "unit": "px",
+         "size": 14
+        },
+        "flex_gap_tablet": {
+         "column": "14",
+         "row": "14",
+         "isLinked": true,
+         "unit": "px",
+         "size": 14
+        },
+        "flex_gap_mobile": {
+         "column": "14",
+         "row": "14",
+         "isLinked": true,
+         "unit": "px",
+         "size": 14
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "36",
+         "right": "32",
+         "bottom": "36",
+         "left": "32",
+         "isLinked": false
+        },
+        "padding_laptop": {
+         "unit": "px",
+         "top": "32",
+         "right": "28",
+         "bottom": "32",
+         "left": "28",
+         "isLinked": false
+        },
+        "padding_tablet": {
+         "unit": "px",
+         "top": "28",
+         "right": "28",
+         "bottom": "28",
+         "left": "28",
+         "isLinked": true
+        },
+        "padding_mobile": {
+         "unit": "px",
+         "top": "24",
+         "right": "24",
+         "bottom": "24",
+         "left": "24",
+         "isLinked": true
+        },
+        "background_background": "classic",
+        "background_color": "#1C1814",
+        "border_border": "solid",
+        "border_width": {
+         "unit": "px",
+         "top": "1",
+         "right": "1",
+         "bottom": "1",
+         "left": "1",
+         "isLinked": true
+        },
+        "border_color": "#F2ECE31A",
+        "border_radius": {
+         "unit": "px",
+         "top": "6",
+         "right": "6",
+         "bottom": "6",
+         "left": "6",
+         "isLinked": true
+        }
+       },
+       "elements": [
+        {
+         "id": "d813063",
+         "elType": "widget",
+         "widgetType": "icon",
+         "isInner": false,
+         "settings": {
+          "selected_icon": {
+           "value": {
+            "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/shield-check-light.svg",
+            "id": 1445
+           },
+           "library": "svg"
+          },
+          "primary_color": "#C68B4E",
+          "size": {
+           "unit": "px",
+           "size": 40,
+           "sizes": []
+          },
+          "align": "left",
+          "custom_css": "selector .elementor-icon{display:block;line-height:0;}selector .elementor-icon svg{width:40px;height:40px;}",
+          "_title": "What We Paint / Card 6 / Icon"
+         },
+         "elements": []
+        },
+        {
+         "id": "5382ad4",
+         "elType": "widget",
+         "widgetType": "heading",
+         "isInner": false,
+         "settings": {
+          "title": "Prep &amp; protection",
+          "header_size": "h3",
+          "title_color": "#F2ECE3",
+          "typography_typography": "custom",
+          "typography_font_family": "Fraunces",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 22,
+           "sizes": []
+          },
+          "typography_font_weight": "500",
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.15,
+           "sizes": []
+          },
+          "_title": "What We Paint / Card 6 / Title (H3)"
+         },
+         "elements": []
+        },
+        {
+         "id": "28afaf5",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>Washing, scraping, caulking and priming, with windows, roofs and plants masked off.</p>",
+          "text_color": "#B3A99C",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 15,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.7,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "What We Paint / Card 6 / Text"
+         },
+         "elements": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "7961645",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -1184,7 +2542,7 @@
    },
    "elements": [
     {
-     "id": "420be3f",
+     "id": "2018d7f",
      "elType": "widget",
      "widgetType": "heading",
      "isInner": false,
@@ -1232,7 +2590,7 @@
      "elements": []
     },
     {
-     "id": "b5b0e52",
+     "id": "138d04f",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -1289,12 +2647,12 @@
       },
       "grid_columns_grid": {
        "unit": "fr",
-       "size": 4,
+       "size": 5,
        "sizes": []
       },
       "grid_columns_grid_laptop": {
        "unit": "fr",
-       "size": 4,
+       "size": 3,
        "sizes": []
       },
       "grid_columns_grid_tablet": {
@@ -1335,11 +2693,11 @@
        "unit": "px",
        "size": 0
       },
-      "custom_css": "selector{position:relative;}selector > .e-con{position:relative;padding:56px 48px 60px !important;background-color:rgba(42,54,47,0.8);transition:background-color .35s ease;}selector > .e-con:hover{background-color:rgba(32,42,37,0.86);}selector > .e-con::before{content:'' !important;display:block;position:absolute;top:0;bottom:0;left:0;right:auto;width:1px;height:auto;background:rgba(242,236,227,0.07);opacity:1;pointer-events:none;border:0;}selector > .e-con::after{content:'';position:absolute;left:0;right:0;top:0;height:1px;background:rgba(242,236,227,0.07);pointer-events:none;}selector::before{content:'' !important;display:block;position:absolute;top:0;bottom:0;right:0;left:auto;width:1px;height:auto;background:rgba(242,236,227,0.07);opacity:1;pointer-events:none;border:0;}selector::after{content:'';position:absolute;left:0;right:0;bottom:0;height:1px;background:rgba(242,236,227,0.07);pointer-events:none;}@media (max-width:1359px){selector > .e-con{padding:48px 36px 52px !important;}}@media (max-width:600px){selector > .e-con{padding:40px 0 44px !important;}selector > .e-con::before,selector::before{display:none;}}"
+      "custom_css": "selector{position:relative;}selector > .e-con{position:relative;padding:56px 48px 60px !important;background-color:rgba(42,54,47,0.8);transition:background-color .35s ease;}selector > .e-con:hover{background-color:rgba(32,42,37,0.86);}selector > .e-con::before{content:'' !important;display:block;position:absolute;top:0;bottom:0;left:0;right:auto;width:1px;height:auto;background:rgba(242,236,227,0.07);opacity:1;pointer-events:none;border:0;}selector > .e-con::after{content:'';position:absolute;left:0;right:0;top:0;height:1px;background:rgba(242,236,227,0.07);pointer-events:none;}selector::before{content:'' !important;display:block;position:absolute;top:0;bottom:0;right:0;left:auto;width:1px;height:auto;background:rgba(242,236,227,0.07);opacity:1;pointer-events:none;border:0;}selector::after{content:'';position:absolute;left:0;right:0;bottom:0;height:1px;background:rgba(242,236,227,0.07);pointer-events:none;}@media (max-width:1359px){selector > .e-con{padding:48px 36px 52px !important;}}@media (max-width:600px){selector > .e-con{padding:40px 0 44px !important;}selector > .e-con::before,selector::before{display:none;}}@media (min-width:1360px){selector > .e-con{padding:48px 32px 52px !important;}}"
      },
      "elements": [
       {
-       "id": "44fd02f",
+       "id": "dd64a75",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1390,7 +2748,7 @@
        },
        "elements": [
         {
-         "id": "37655f9",
+         "id": "d255365",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1416,12 +2774,12 @@
          "elements": []
         },
         {
-         "id": "a75cef7",
+         "id": "6b336bc",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
          "settings": {
-          "title": "Walkthrough &amp; written estimate",
+          "title": "Walkthrough &amp; estimate",
           "header_size": "h3",
           "title_color": "#F2ECE3",
           "typography_typography": "custom",
@@ -1442,12 +2800,12 @@
          "elements": []
         },
         {
-         "id": "950567c",
+         "id": "c8ec796",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
          "settings": {
-          "editor": "<p>We look at the work in person, talk through colors and products, and give you a clear written estimate with no hidden charges.</p>",
+          "editor": "<p>We look at the whole exterior with you and give you a clear written estimate.</p>",
           "text_color": "#C9D1C4",
           "paragraph_spacing": {
            "unit": "px",
@@ -1474,7 +2832,7 @@
        ]
       },
       {
-       "id": "85750c2",
+       "id": "2b37ca0",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1525,7 +2883,7 @@
        },
        "elements": [
         {
-         "id": "7f00e7c",
+         "id": "3f7c9cc",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1551,12 +2909,12 @@
          "elements": []
         },
         {
-         "id": "af93693",
+         "id": "b55c9c8",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
          "settings": {
-          "title": "Protect &amp; prepare",
+          "title": "Protect",
           "header_size": "h3",
           "title_color": "#F2ECE3",
           "typography_typography": "custom",
@@ -1577,12 +2935,12 @@
          "elements": []
         },
         {
-         "id": "661f8bf",
+         "id": "b14d59f",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
          "settings": {
-          "editor": "<p>Floors, furnishings, fixtures and landscaping are covered. Surfaces are cleaned, repaired and prepped to the manufacturer's specifications.</p>",
+          "editor": "<p>Windows, doors, roofs, decks and landscaping are masked and covered before any spraying.</p>",
           "text_color": "#C9D1C4",
           "paragraph_spacing": {
            "unit": "px",
@@ -1609,7 +2967,7 @@
        ]
       },
       {
-       "id": "c5fc684",
+       "id": "a68e485",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1660,7 +3018,7 @@
        },
        "elements": [
         {
-         "id": "a924eb8",
+         "id": "91b2499",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1686,12 +3044,12 @@
          "elements": []
         },
         {
-         "id": "4bbb492",
+         "id": "6044df5",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
          "settings": {
-          "title": "Apply the finish",
+          "title": "Prepare",
           "header_size": "h3",
           "title_color": "#F2ECE3",
           "typography_typography": "custom",
@@ -1712,12 +3070,12 @@
          "elements": []
         },
         {
-         "id": "bdb2109",
+         "id": "56db73a",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
          "settings": {
-          "editor": "<p>Premium coatings applied the right way, with enough coats for our dry, high-altitude climate. When we spray, we back-brush for a proper bond.</p>",
+          "editor": "<p>Surfaces are washed, scraped, sanded, caulked and primed to the manufacturer's specifications.</p>",
           "text_color": "#C9D1C4",
           "paragraph_spacing": {
            "unit": "px",
@@ -1744,7 +3102,7 @@
        ]
       },
       {
-       "id": "18be3b0",
+       "id": "fe8b9e7",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1795,7 +3153,7 @@
        },
        "elements": [
         {
-         "id": "21cb4ea",
+         "id": "e65f45b",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1821,12 +3179,12 @@
          "elements": []
         },
         {
-         "id": "9c1f638",
+         "id": "205cbc5",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
          "settings": {
-          "title": "Clean up &amp; walk through",
+          "title": "Apply the finish",
           "header_size": "h3",
           "title_color": "#F2ECE3",
           "typography_typography": "custom",
@@ -1847,12 +3205,12 @@
          "elements": []
         },
         {
-         "id": "762f286",
+         "id": "5a81585",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
          "settings": {
-          "editor": "<p>We clean up every day, then walk the finished job with you before we call it done. Your project lead is your contact the whole way.</p>",
+          "editor": "<p>Premium coatings sprayed and back-brushed, or brushed and rolled, for a proper bond.</p>",
           "text_color": "#C9D1C4",
           "paragraph_spacing": {
            "unit": "px",
@@ -1877,17 +3235,1696 @@
          "elements": []
         }
        ]
+      },
+      {
+       "id": "5191590",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Process / Step 5",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "16",
+         "row": "16",
+         "isLinked": true,
+         "unit": "px",
+         "size": 16
+        },
+        "flex_gap_laptop": {
+         "column": "16",
+         "row": "16",
+         "isLinked": true,
+         "unit": "px",
+         "size": 16
+        },
+        "flex_gap_tablet": {
+         "column": "16",
+         "row": "16",
+         "isLinked": true,
+         "unit": "px",
+         "size": 16
+        },
+        "flex_gap_mobile": {
+         "column": "16",
+         "row": "16",
+         "isLinked": true,
+         "unit": "px",
+         "size": 16
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "0",
+         "right": "0",
+         "bottom": "0",
+         "left": "0",
+         "isLinked": true
+        }
+       },
+       "elements": [
+        {
+         "id": "6089be3",
+         "elType": "widget",
+         "widgetType": "heading",
+         "isInner": false,
+         "settings": {
+          "title": "05",
+          "header_size": "div",
+          "title_color": "#C68B4E",
+          "typography_typography": "custom",
+          "typography_font_family": "Fraunces",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 29,
+           "sizes": []
+          },
+          "typography_font_weight": "500",
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1,
+           "sizes": []
+          },
+          "_title": "Process / Step 5 / Number"
+         },
+         "elements": []
+        },
+        {
+         "id": "3950e9a",
+         "elType": "widget",
+         "widgetType": "heading",
+         "isInner": false,
+         "settings": {
+          "title": "Clean up &amp; walk through",
+          "header_size": "h3",
+          "title_color": "#F2ECE3",
+          "typography_typography": "custom",
+          "typography_font_family": "Fraunces",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 24,
+           "sizes": []
+          },
+          "typography_font_weight": "500",
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.15,
+           "sizes": []
+          },
+          "_title": "Process / Step 5 / Title (H3)"
+         },
+         "elements": []
+        },
+        {
+         "id": "52c79c1",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>Masking comes off, the site is cleaned and we walk the finished work with you.</p>",
+          "text_color": "#C9D1C4",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 15,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.75,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}selector{max-width:360px !important;}",
+          "_title": "Process / Step 5 / Text"
+         },
+         "elements": []
+        }
+       ]
       }
      ]
     }
    ]
   },
   {
-   "id": "9b75d02",
+   "id": "13f3385",
    "elType": "container",
    "isInner": false,
    "settings": {
-    "_title": "Client Quote",
+    "_title": "Before After",
+    "content_width": "boxed",
+    "flex_direction": "column",
+    "flex_gap": {
+     "column": "48",
+     "row": "48",
+     "isLinked": true,
+     "unit": "px",
+     "size": 48
+    },
+    "flex_gap_laptop": {
+     "column": "44",
+     "row": "44",
+     "isLinked": true,
+     "unit": "px",
+     "size": 44
+    },
+    "flex_gap_tablet": {
+     "column": "40",
+     "row": "40",
+     "isLinked": true,
+     "unit": "px",
+     "size": 40
+    },
+    "flex_gap_mobile": {
+     "column": "32",
+     "row": "32",
+     "isLinked": true,
+     "unit": "px",
+     "size": 32
+    },
+    "boxed_width": {
+     "unit": "px",
+     "size": 1280,
+     "sizes": []
+    },
+    "padding": {
+     "unit": "px",
+     "top": "128",
+     "right": "48",
+     "bottom": "128",
+     "left": "48",
+     "isLinked": false
+    },
+    "padding_laptop": {
+     "unit": "px",
+     "top": "117",
+     "right": "48",
+     "bottom": "117",
+     "left": "48",
+     "isLinked": false
+    },
+    "padding_tablet": {
+     "unit": "px",
+     "top": "88",
+     "right": "32",
+     "bottom": "88",
+     "left": "32",
+     "isLinked": false
+    },
+    "padding_mobile": {
+     "unit": "px",
+     "top": "80",
+     "right": "20",
+     "bottom": "80",
+     "left": "20",
+     "isLinked": false
+    },
+    "background_background": "classic",
+    "background_color": "#14110E",
+    "html_tag": "section"
+   },
+   "elements": [
+    {
+     "id": "51cd81b",
+     "elType": "container",
+     "isInner": true,
+     "settings": {
+      "_title": "Before After / Heading",
+      "content_width": "full",
+      "flex_direction": "column",
+      "flex_gap": {
+       "column": "20",
+       "row": "20",
+       "isLinked": true,
+       "unit": "px",
+       "size": 20
+      },
+      "flex_gap_laptop": {
+       "column": "20",
+       "row": "20",
+       "isLinked": true,
+       "unit": "px",
+       "size": 20
+      },
+      "flex_gap_tablet": {
+       "column": "20",
+       "row": "20",
+       "isLinked": true,
+       "unit": "px",
+       "size": 20
+      },
+      "flex_gap_mobile": {
+       "column": "20",
+       "row": "20",
+       "isLinked": true,
+       "unit": "px",
+       "size": 20
+      },
+      "width": {
+       "unit": "%",
+       "size": 100,
+       "sizes": []
+      },
+      "padding": {
+       "unit": "px",
+       "top": "0",
+       "right": "0",
+       "bottom": "0",
+       "left": "0",
+       "isLinked": true
+      }
+     },
+     "elements": [
+      {
+       "id": "f7a82c2",
+       "elType": "widget",
+       "widgetType": "heading",
+       "isInner": false,
+       "settings": {
+        "title": "<b>Before</b> &amp; after",
+        "header_size": "h2",
+        "title_color": "#F2ECE3",
+        "typography_typography": "custom",
+        "typography_font_family": "Fraunces",
+        "typography_font_size": {
+         "unit": "px",
+         "size": 45,
+         "sizes": []
+        },
+        "typography_font_size_laptop": {
+         "unit": "px",
+         "size": 41,
+         "sizes": []
+        },
+        "typography_font_size_tablet": {
+         "unit": "px",
+         "size": 34,
+         "sizes": []
+        },
+        "typography_font_size_mobile": {
+         "unit": "px",
+         "size": 29,
+         "sizes": []
+        },
+        "typography_font_weight": "300",
+        "typography_line_height": {
+         "unit": "em",
+         "size": 1.04,
+         "sizes": []
+        },
+        "typography_letter_spacing": {
+         "unit": "px",
+         "size": -0.6,
+         "sizes": []
+        },
+        "custom_css": "selector .elementor-heading-title{text-wrap:balance;}selector{max-width:720px !important;}",
+        "_css_classes": "tn-teeth tn-contrast",
+        "_title": "Before After / Title (H2)"
+       },
+       "elements": []
+      },
+      {
+       "id": "d6db021",
+       "elType": "widget",
+       "widgetType": "text-editor",
+       "isInner": false,
+       "settings": {
+        "editor": "<p>A dated exterior refreshed with clean white siding, navy shutters and a matching garage door.</p>",
+        "text_color": "#B3A99C",
+        "paragraph_spacing": {
+         "unit": "px",
+         "size": 0,
+         "sizes": []
+        },
+        "typography_typography": "custom",
+        "typography_font_family": "Manrope",
+        "typography_font_size": {
+         "unit": "px",
+         "size": 17,
+         "sizes": []
+        },
+        "typography_line_height": {
+         "unit": "em",
+         "size": 1.75,
+         "sizes": []
+        },
+        "custom_css": "selector p:last-child{margin-block-end:0;}selector{max-width:620px !important;}",
+        "_title": "Before After / Note"
+       },
+       "elements": []
+      }
+     ]
+    },
+    {
+     "id": "7a1e860",
+     "elType": "container",
+     "isInner": true,
+     "settings": {
+      "_title": "Before After / Grid",
+      "content_width": "full",
+      "flex_direction": "column",
+      "flex_gap": {
+       "column": "20",
+       "row": "20",
+       "isLinked": true,
+       "unit": "px",
+       "size": 20
+      },
+      "flex_gap_laptop": {
+       "column": "20",
+       "row": "20",
+       "isLinked": true,
+       "unit": "px",
+       "size": 20
+      },
+      "flex_gap_tablet": {
+       "column": "20",
+       "row": "20",
+       "isLinked": true,
+       "unit": "px",
+       "size": 20
+      },
+      "flex_gap_mobile": {
+       "column": "20",
+       "row": "20",
+       "isLinked": true,
+       "unit": "px",
+       "size": 20
+      },
+      "width": {
+       "unit": "%",
+       "size": 100,
+       "sizes": []
+      },
+      "padding": {
+       "unit": "px",
+       "top": "0",
+       "right": "0",
+       "bottom": "0",
+       "left": "0",
+       "isLinked": true
+      },
+      "container_type": "grid",
+      "grid_auto_flow": "row",
+      "grid_rows_grid": {
+       "unit": "custom",
+       "size": "auto",
+       "sizes": []
+      },
+      "grid_columns_grid": {
+       "unit": "fr",
+       "size": 2,
+       "sizes": []
+      },
+      "grid_columns_grid_laptop": {
+       "unit": "fr",
+       "size": 2,
+       "sizes": []
+      },
+      "grid_columns_grid_tablet": {
+       "unit": "fr",
+       "size": 2,
+       "sizes": []
+      },
+      "grid_columns_grid_mobile": {
+       "unit": "fr",
+       "size": 1,
+       "sizes": []
+      },
+      "grid_gaps": {
+       "column": "20",
+       "row": "20",
+       "isLinked": true,
+       "unit": "px",
+       "size": 20
+      },
+      "grid_gaps_laptop": {
+       "column": "20",
+       "row": "20",
+       "isLinked": true,
+       "unit": "px",
+       "size": 20
+      },
+      "grid_gaps_tablet": {
+       "column": "20",
+       "row": "20",
+       "isLinked": true,
+       "unit": "px",
+       "size": 20
+      },
+      "grid_gaps_mobile": {
+       "column": "20",
+       "row": "20",
+       "isLinked": true,
+       "unit": "px",
+       "size": 20
+      }
+     },
+     "elements": [
+      {
+       "id": "edd284e",
+       "elType": "widget",
+       "widgetType": "image",
+       "isInner": false,
+       "settings": {
+        "image": {
+         "id": 2826,
+         "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-ext-before.jpg",
+         "alt": "Exterior before repaint",
+         "source": "library"
+        },
+        "image_size": "full",
+        "custom_css": "selector{position:relative;}selector::after{content:attr(data-label);position:absolute;left:14px;top:14px;background:rgba(20,17,14,.82);color:#F2ECE3;font:600 13px/1 Manrope,sans-serif;padding:8px 12px;border-radius:999px;}selector img{width:100%;display:block;border-radius:4px;height:460px;object-fit:cover;}@media (max-width:980px){selector img{height:380px;}}@media (max-width:600px){selector img{height:300px;}}",
+        "_attributes": "data-label|Before",
+        "_title": "Before After / Before"
+       },
+       "elements": []
+      },
+      {
+       "id": "f5e6df0",
+       "elType": "widget",
+       "widgetType": "image",
+       "isInner": false,
+       "settings": {
+        "image": {
+         "id": 2827,
+         "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-ext-after.jpg",
+         "alt": "Exterior after repaint in white with navy shutters",
+         "source": "library"
+        },
+        "image_size": "full",
+        "custom_css": "selector{position:relative;}selector::after{content:attr(data-label);position:absolute;left:14px;top:14px;background:rgba(20,17,14,.82);color:#F2ECE3;font:600 13px/1 Manrope,sans-serif;padding:8px 12px;border-radius:999px;}selector img{width:100%;display:block;border-radius:4px;height:460px;object-fit:cover;}@media (max-width:980px){selector img{height:380px;}}@media (max-width:600px){selector img{height:300px;}}",
+        "_attributes": "data-label|After",
+        "_title": "Before After / After"
+       },
+       "elements": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "eb813e2",
+   "elType": "container",
+   "isInner": false,
+   "settings": {
+    "_title": "Photo Strip",
+    "content_width": "boxed",
+    "flex_direction": "column",
+    "flex_gap": {
+     "column": "48",
+     "row": "48",
+     "isLinked": true,
+     "unit": "px",
+     "size": 48
+    },
+    "flex_gap_laptop": {
+     "column": "44",
+     "row": "44",
+     "isLinked": true,
+     "unit": "px",
+     "size": 44
+    },
+    "flex_gap_tablet": {
+     "column": "40",
+     "row": "40",
+     "isLinked": true,
+     "unit": "px",
+     "size": 40
+    },
+    "flex_gap_mobile": {
+     "column": "32",
+     "row": "32",
+     "isLinked": true,
+     "unit": "px",
+     "size": 32
+    },
+    "boxed_width": {
+     "unit": "px",
+     "size": 1280,
+     "sizes": []
+    },
+    "padding": {
+     "unit": "px",
+     "top": "128",
+     "right": "48",
+     "bottom": "128",
+     "left": "48",
+     "isLinked": false
+    },
+    "padding_laptop": {
+     "unit": "px",
+     "top": "117",
+     "right": "48",
+     "bottom": "117",
+     "left": "48",
+     "isLinked": false
+    },
+    "padding_tablet": {
+     "unit": "px",
+     "top": "88",
+     "right": "32",
+     "bottom": "88",
+     "left": "32",
+     "isLinked": false
+    },
+    "padding_mobile": {
+     "unit": "px",
+     "top": "80",
+     "right": "20",
+     "bottom": "80",
+     "left": "20",
+     "isLinked": false
+    },
+    "background_background": "classic",
+    "background_color": "#F2ECE3",
+    "html_tag": "section"
+   },
+   "elements": [
+    {
+     "id": "a394431",
+     "elType": "widget",
+     "widgetType": "heading",
+     "isInner": false,
+     "settings": {
+      "title": "<b>Recent</b> exterior work",
+      "header_size": "h2",
+      "title_color": "#14110E",
+      "typography_typography": "custom",
+      "typography_font_family": "Fraunces",
+      "typography_font_size": {
+       "unit": "px",
+       "size": 45,
+       "sizes": []
+      },
+      "typography_font_size_laptop": {
+       "unit": "px",
+       "size": 41,
+       "sizes": []
+      },
+      "typography_font_size_tablet": {
+       "unit": "px",
+       "size": 34,
+       "sizes": []
+      },
+      "typography_font_size_mobile": {
+       "unit": "px",
+       "size": 29,
+       "sizes": []
+      },
+      "typography_font_weight": "300",
+      "typography_line_height": {
+       "unit": "em",
+       "size": 1.04,
+       "sizes": []
+      },
+      "typography_letter_spacing": {
+       "unit": "px",
+       "size": -0.6,
+       "sizes": []
+      },
+      "custom_css": "selector .elementor-heading-title{text-wrap:balance;}selector{max-width:720px !important;}",
+      "_css_classes": "tn-teeth tn-contrast",
+      "_title": "Photo Strip / Title (H2)"
+     },
+     "elements": []
+    },
+    {
+     "id": "ffa4f9f",
+     "elType": "container",
+     "isInner": true,
+     "settings": {
+      "_title": "Photo Strip / Grid",
+      "content_width": "full",
+      "flex_direction": "column",
+      "flex_gap": {
+       "column": "20",
+       "row": "28",
+       "isLinked": false,
+       "unit": "px",
+       "size": 20
+      },
+      "flex_gap_laptop": {
+       "column": "20",
+       "row": "28",
+       "isLinked": false,
+       "unit": "px",
+       "size": 20
+      },
+      "flex_gap_tablet": {
+       "column": "20",
+       "row": "28",
+       "isLinked": false,
+       "unit": "px",
+       "size": 20
+      },
+      "flex_gap_mobile": {
+       "column": "20",
+       "row": "28",
+       "isLinked": false,
+       "unit": "px",
+       "size": 20
+      },
+      "width": {
+       "unit": "%",
+       "size": 100,
+       "sizes": []
+      },
+      "padding": {
+       "unit": "px",
+       "top": "0",
+       "right": "0",
+       "bottom": "0",
+       "left": "0",
+       "isLinked": true
+      },
+      "container_type": "grid",
+      "grid_auto_flow": "row",
+      "grid_rows_grid": {
+       "unit": "custom",
+       "size": "auto",
+       "sizes": []
+      },
+      "grid_columns_grid": {
+       "unit": "fr",
+       "size": 3,
+       "sizes": []
+      },
+      "grid_columns_grid_laptop": {
+       "unit": "fr",
+       "size": 3,
+       "sizes": []
+      },
+      "grid_columns_grid_tablet": {
+       "unit": "fr",
+       "size": 2,
+       "sizes": []
+      },
+      "grid_columns_grid_mobile": {
+       "unit": "fr",
+       "size": 1,
+       "sizes": []
+      },
+      "grid_gaps": {
+       "column": "20",
+       "row": "28",
+       "isLinked": false,
+       "unit": "px",
+       "size": 20
+      },
+      "grid_gaps_laptop": {
+       "column": "20",
+       "row": "28",
+       "isLinked": false,
+       "unit": "px",
+       "size": 20
+      },
+      "grid_gaps_tablet": {
+       "column": "20",
+       "row": "28",
+       "isLinked": false,
+       "unit": "px",
+       "size": 20
+      },
+      "grid_gaps_mobile": {
+       "column": "20",
+       "row": "28",
+       "isLinked": false,
+       "unit": "px",
+       "size": 20
+      },
+      "grid_align_items": "start"
+     },
+     "elements": [
+      {
+       "id": "4c37bb0",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Photo Strip / Photo 1",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "12",
+         "row": "12",
+         "isLinked": true,
+         "unit": "px",
+         "size": 12
+        },
+        "flex_gap_laptop": {
+         "column": "12",
+         "row": "12",
+         "isLinked": true,
+         "unit": "px",
+         "size": 12
+        },
+        "flex_gap_tablet": {
+         "column": "12",
+         "row": "12",
+         "isLinked": true,
+         "unit": "px",
+         "size": 12
+        },
+        "flex_gap_mobile": {
+         "column": "12",
+         "row": "12",
+         "isLinked": true,
+         "unit": "px",
+         "size": 12
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "0",
+         "right": "0",
+         "bottom": "0",
+         "left": "0",
+         "isLinked": true
+        }
+       },
+       "elements": [
+        {
+         "id": "1eabf94",
+         "elType": "widget",
+         "widgetType": "image",
+         "isInner": false,
+         "settings": {
+          "image": {
+           "id": 2825,
+           "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-ext-gray-garage.jpg",
+           "alt": "Gray exterior repaint with black garage doors",
+           "source": "library"
+          },
+          "image_size": "full",
+          "custom_css": "selector img{width:100%;display:block;border-radius:4px;height:300px;object-fit:cover;}@media (max-width:980px){selector img{height:280px;}}@media (max-width:600px){selector img{height:260px;}}",
+          "_title": "Photo Strip / Photo 1 / Image"
+         },
+         "elements": []
+        },
+        {
+         "id": "28b0f10",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>Dark gray repaint with black garage doors</p>",
+          "text_color": "#5B5046",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 14,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.5,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "Photo Strip / Photo 1 / Caption"
+         },
+         "elements": []
+        }
+       ]
+      },
+      {
+       "id": "2f7e427",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Photo Strip / Photo 2",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "12",
+         "row": "12",
+         "isLinked": true,
+         "unit": "px",
+         "size": 12
+        },
+        "flex_gap_laptop": {
+         "column": "12",
+         "row": "12",
+         "isLinked": true,
+         "unit": "px",
+         "size": 12
+        },
+        "flex_gap_tablet": {
+         "column": "12",
+         "row": "12",
+         "isLinked": true,
+         "unit": "px",
+         "size": 12
+        },
+        "flex_gap_mobile": {
+         "column": "12",
+         "row": "12",
+         "isLinked": true,
+         "unit": "px",
+         "size": 12
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "0",
+         "right": "0",
+         "bottom": "0",
+         "left": "0",
+         "isLinked": true
+        }
+       },
+       "elements": [
+        {
+         "id": "15e1ddf",
+         "elType": "widget",
+         "widgetType": "image",
+         "isInner": false,
+         "settings": {
+          "image": {
+           "id": 2828,
+           "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-ext-after-front.jpg",
+           "alt": "Front of the home after exterior repaint",
+           "source": "library"
+          },
+          "image_size": "full",
+          "custom_css": "selector img{width:100%;display:block;border-radius:4px;height:300px;object-fit:cover;}@media (max-width:980px){selector img{height:280px;}}@media (max-width:600px){selector img{height:260px;}}",
+          "_title": "Photo Strip / Photo 2 / Image"
+         },
+         "elements": []
+        },
+        {
+         "id": "5f56d48",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>White and navy front elevation</p>",
+          "text_color": "#5B5046",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 14,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.5,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "Photo Strip / Photo 2 / Caption"
+         },
+         "elements": []
+        }
+       ]
+      },
+      {
+       "id": "9fa960d",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Photo Strip / Photo 3",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "12",
+         "row": "12",
+         "isLinked": true,
+         "unit": "px",
+         "size": 12
+        },
+        "flex_gap_laptop": {
+         "column": "12",
+         "row": "12",
+         "isLinked": true,
+         "unit": "px",
+         "size": 12
+        },
+        "flex_gap_tablet": {
+         "column": "12",
+         "row": "12",
+         "isLinked": true,
+         "unit": "px",
+         "size": 12
+        },
+        "flex_gap_mobile": {
+         "column": "12",
+         "row": "12",
+         "isLinked": true,
+         "unit": "px",
+         "size": 12
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "0",
+         "right": "0",
+         "bottom": "0",
+         "left": "0",
+         "isLinked": true
+        }
+       },
+       "elements": [
+        {
+         "id": "2807dfa",
+         "elType": "widget",
+         "widgetType": "image",
+         "isInner": false,
+         "settings": {
+          "image": {
+           "id": 2830,
+           "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-masking-railing.jpg",
+           "alt": "Railing and siding masked before spraying",
+           "source": "library"
+          },
+          "image_size": "full",
+          "custom_css": "selector img{width:100%;display:block;border-radius:4px;height:300px;object-fit:cover;}@media (max-width:980px){selector img{height:280px;}}@media (max-width:600px){selector img{height:260px;}}",
+          "_title": "Photo Strip / Photo 3 / Image"
+         },
+         "elements": []
+        },
+        {
+         "id": "bf92538",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>Railings masked before spraying</p>",
+          "text_color": "#5B5046",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 14,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.5,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "Photo Strip / Photo 3 / Caption"
+         },
+         "elements": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fcbc053",
+   "elType": "container",
+   "isInner": false,
+   "settings": {
+    "_title": "Reviews",
+    "content_width": "boxed",
+    "flex_direction": "column",
+    "flex_gap": {
+     "column": "48",
+     "row": "48",
+     "isLinked": true,
+     "unit": "px",
+     "size": 48
+    },
+    "flex_gap_laptop": {
+     "column": "44",
+     "row": "44",
+     "isLinked": true,
+     "unit": "px",
+     "size": 44
+    },
+    "flex_gap_tablet": {
+     "column": "40",
+     "row": "40",
+     "isLinked": true,
+     "unit": "px",
+     "size": 40
+    },
+    "flex_gap_mobile": {
+     "column": "32",
+     "row": "32",
+     "isLinked": true,
+     "unit": "px",
+     "size": 32
+    },
+    "boxed_width": {
+     "unit": "px",
+     "size": 1280,
+     "sizes": []
+    },
+    "padding": {
+     "unit": "px",
+     "top": "128",
+     "right": "48",
+     "bottom": "128",
+     "left": "48",
+     "isLinked": false
+    },
+    "padding_laptop": {
+     "unit": "px",
+     "top": "117",
+     "right": "48",
+     "bottom": "117",
+     "left": "48",
+     "isLinked": false
+    },
+    "padding_tablet": {
+     "unit": "px",
+     "top": "88",
+     "right": "32",
+     "bottom": "88",
+     "left": "32",
+     "isLinked": false
+    },
+    "padding_mobile": {
+     "unit": "px",
+     "top": "80",
+     "right": "20",
+     "bottom": "80",
+     "left": "20",
+     "isLinked": false
+    },
+    "background_background": "classic",
+    "background_color": "#14110E",
+    "html_tag": "section"
+   },
+   "elements": [
+    {
+     "id": "69adb53",
+     "elType": "widget",
+     "widgetType": "heading",
+     "isInner": false,
+     "settings": {
+      "title": "<b>What</b> clients say",
+      "header_size": "h2",
+      "title_color": "#F2ECE3",
+      "typography_typography": "custom",
+      "typography_font_family": "Fraunces",
+      "typography_font_size": {
+       "unit": "px",
+       "size": 45,
+       "sizes": []
+      },
+      "typography_font_size_laptop": {
+       "unit": "px",
+       "size": 41,
+       "sizes": []
+      },
+      "typography_font_size_tablet": {
+       "unit": "px",
+       "size": 34,
+       "sizes": []
+      },
+      "typography_font_size_mobile": {
+       "unit": "px",
+       "size": 29,
+       "sizes": []
+      },
+      "typography_font_weight": "300",
+      "typography_line_height": {
+       "unit": "em",
+       "size": 1.04,
+       "sizes": []
+      },
+      "typography_letter_spacing": {
+       "unit": "px",
+       "size": -0.6,
+       "sizes": []
+      },
+      "custom_css": "selector .elementor-heading-title{text-wrap:balance;}selector{max-width:720px !important;}",
+      "_css_classes": "tn-teeth tn-contrast",
+      "_title": "Reviews / Title (H2)"
+     },
+     "elements": []
+    },
+    {
+     "id": "19bb145",
+     "elType": "container",
+     "isInner": true,
+     "settings": {
+      "_title": "Reviews / Grid",
+      "content_width": "full",
+      "flex_direction": "column",
+      "flex_gap": {
+       "column": "24",
+       "row": "24",
+       "isLinked": true,
+       "unit": "px",
+       "size": 24
+      },
+      "flex_gap_laptop": {
+       "column": "24",
+       "row": "24",
+       "isLinked": true,
+       "unit": "px",
+       "size": 24
+      },
+      "flex_gap_tablet": {
+       "column": "24",
+       "row": "24",
+       "isLinked": true,
+       "unit": "px",
+       "size": 24
+      },
+      "flex_gap_mobile": {
+       "column": "24",
+       "row": "24",
+       "isLinked": true,
+       "unit": "px",
+       "size": 24
+      },
+      "width": {
+       "unit": "%",
+       "size": 100,
+       "sizes": []
+      },
+      "padding": {
+       "unit": "px",
+       "top": "0",
+       "right": "0",
+       "bottom": "0",
+       "left": "0",
+       "isLinked": true
+      },
+      "container_type": "grid",
+      "grid_auto_flow": "row",
+      "grid_rows_grid": {
+       "unit": "custom",
+       "size": "auto",
+       "sizes": []
+      },
+      "grid_columns_grid": {
+       "unit": "fr",
+       "size": 2,
+       "sizes": []
+      },
+      "grid_columns_grid_laptop": {
+       "unit": "fr",
+       "size": 2,
+       "sizes": []
+      },
+      "grid_columns_grid_tablet": {
+       "unit": "fr",
+       "size": 2,
+       "sizes": []
+      },
+      "grid_columns_grid_mobile": {
+       "unit": "fr",
+       "size": 1,
+       "sizes": []
+      },
+      "grid_gaps": {
+       "column": "24",
+       "row": "24",
+       "isLinked": true,
+       "unit": "px",
+       "size": 24
+      },
+      "grid_gaps_laptop": {
+       "column": "24",
+       "row": "24",
+       "isLinked": true,
+       "unit": "px",
+       "size": 24
+      },
+      "grid_gaps_tablet": {
+       "column": "24",
+       "row": "24",
+       "isLinked": true,
+       "unit": "px",
+       "size": 24
+      },
+      "grid_gaps_mobile": {
+       "column": "24",
+       "row": "24",
+       "isLinked": true,
+       "unit": "px",
+       "size": 24
+      },
+      "grid_align_items": "stretch"
+     },
+     "elements": [
+      {
+       "id": "ab75115",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Reviews / Card 1",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "flex_gap_laptop": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "flex_gap_tablet": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "flex_gap_mobile": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "40",
+         "right": "36",
+         "bottom": "40",
+         "left": "36",
+         "isLinked": false
+        },
+        "padding_laptop": {
+         "unit": "px",
+         "top": "36",
+         "right": "32",
+         "bottom": "36",
+         "left": "32",
+         "isLinked": false
+        },
+        "padding_tablet": {
+         "unit": "px",
+         "top": "32",
+         "right": "28",
+         "bottom": "32",
+         "left": "28",
+         "isLinked": false
+        },
+        "padding_mobile": {
+         "unit": "px",
+         "top": "28",
+         "right": "24",
+         "bottom": "28",
+         "left": "24",
+         "isLinked": false
+        },
+        "background_background": "classic",
+        "background_color": "#1C1814",
+        "border_border": "solid",
+        "border_width": {
+         "unit": "px",
+         "top": "1",
+         "right": "1",
+         "bottom": "1",
+         "left": "1",
+         "isLinked": true
+        },
+        "border_color": "#F2ECE31A",
+        "border_radius": {
+         "unit": "px",
+         "top": "6",
+         "right": "6",
+         "bottom": "6",
+         "left": "6",
+         "isLinked": true
+        },
+        "flex_justify_content": "space-between"
+       },
+       "elements": [
+        {
+         "id": "60a22a1",
+         "elType": "widget",
+         "widgetType": "rating",
+         "isInner": false,
+         "settings": {
+          "rating_scale": {
+           "unit": "px",
+           "size": 5,
+           "sizes": []
+          },
+          "rating_value": 5,
+          "rating_icon": {
+           "value": "fas fa-star",
+           "library": "fa-solid"
+          },
+          "icon_size": {
+           "unit": "px",
+           "size": 14,
+           "sizes": []
+          },
+          "icon_gap": {
+           "unit": "px",
+           "size": 2,
+           "sizes": []
+          },
+          "icon_marked_color": "#C68B4E",
+          "icon_unmarked_color": "#C68B4E",
+          "_title": "Reviews / Card 1 / Stars"
+         },
+         "elements": []
+        },
+        {
+         "id": "d79e23d",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>“Very reliable. They came on time and finished in the agreed time. They were very professional. Hire these guys, you will not be disappointed!”</p>",
+          "text_color": "#F2ECE3",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Fraunces",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 20,
+           "sizes": []
+          },
+          "typography_font_size_laptop": {
+           "unit": "px",
+           "size": 19,
+           "sizes": []
+          },
+          "typography_font_size_tablet": {
+           "unit": "px",
+           "size": 19,
+           "sizes": []
+          },
+          "typography_font_size_mobile": {
+           "unit": "px",
+           "size": 18,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.5,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "Reviews / Card 1 / Quote"
+         },
+         "elements": []
+        },
+        {
+         "id": "84bf589",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p><strong>Kathy A.</strong> · Gypsum<br>Exterior painting</p>",
+          "text_color": "#B3A99C",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 14,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.6,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}selector strong{color:#F2ECE3;font-weight:600;}",
+          "_title": "Reviews / Card 1 / Who"
+         },
+         "elements": []
+        }
+       ]
+      },
+      {
+       "id": "ad7a21c",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Reviews / Card 2",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "flex_gap_laptop": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "flex_gap_tablet": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "flex_gap_mobile": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "40",
+         "right": "36",
+         "bottom": "40",
+         "left": "36",
+         "isLinked": false
+        },
+        "padding_laptop": {
+         "unit": "px",
+         "top": "36",
+         "right": "32",
+         "bottom": "36",
+         "left": "32",
+         "isLinked": false
+        },
+        "padding_tablet": {
+         "unit": "px",
+         "top": "32",
+         "right": "28",
+         "bottom": "32",
+         "left": "28",
+         "isLinked": false
+        },
+        "padding_mobile": {
+         "unit": "px",
+         "top": "28",
+         "right": "24",
+         "bottom": "28",
+         "left": "24",
+         "isLinked": false
+        },
+        "background_background": "classic",
+        "background_color": "#1C1814",
+        "border_border": "solid",
+        "border_width": {
+         "unit": "px",
+         "top": "1",
+         "right": "1",
+         "bottom": "1",
+         "left": "1",
+         "isLinked": true
+        },
+        "border_color": "#F2ECE31A",
+        "border_radius": {
+         "unit": "px",
+         "top": "6",
+         "right": "6",
+         "bottom": "6",
+         "left": "6",
+         "isLinked": true
+        },
+        "flex_justify_content": "space-between"
+       },
+       "elements": [
+        {
+         "id": "b02fb00",
+         "elType": "widget",
+         "widgetType": "rating",
+         "isInner": false,
+         "settings": {
+          "rating_scale": {
+           "unit": "px",
+           "size": 5,
+           "sizes": []
+          },
+          "rating_value": 5,
+          "rating_icon": {
+           "value": "fas fa-star",
+           "library": "fa-solid"
+          },
+          "icon_size": {
+           "unit": "px",
+           "size": 14,
+           "sizes": []
+          },
+          "icon_gap": {
+           "unit": "px",
+           "size": 2,
+           "sizes": []
+          },
+          "icon_marked_color": "#C68B4E",
+          "icon_unmarked_color": "#C68B4E",
+          "_title": "Reviews / Card 2 / Stars"
+         },
+         "elements": []
+        },
+        {
+         "id": "b79b8a2",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>“The crew did a thorough job with the entire project, from the estimate, work and follow-up. They went above my expectations.”</p>",
+          "text_color": "#F2ECE3",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Fraunces",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 20,
+           "sizes": []
+          },
+          "typography_font_size_laptop": {
+           "unit": "px",
+           "size": 19,
+           "sizes": []
+          },
+          "typography_font_size_tablet": {
+           "unit": "px",
+           "size": 19,
+           "sizes": []
+          },
+          "typography_font_size_mobile": {
+           "unit": "px",
+           "size": 18,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.5,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "Reviews / Card 2 / Quote"
+         },
+         "elements": []
+        },
+        {
+         "id": "c6d6e11",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p><strong>Clifford G.</strong> · Morrison<br>Exterior painting</p>",
+          "text_color": "#B3A99C",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 14,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.6,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}selector strong{color:#F2ECE3;font-weight:600;}",
+          "_title": "Reviews / Card 2 / Who"
+         },
+         "elements": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "a814261",
+   "elType": "container",
+   "isInner": false,
+   "settings": {
+    "_title": "FAQ",
     "content_width": "boxed",
     "flex_direction": "column",
     "flex_gap": {
@@ -1961,40 +4998,40 @@
    },
    "elements": [
     {
-     "id": "b5f2741",
+     "id": "4733ef9",
      "elType": "container",
      "isInner": true,
      "settings": {
-      "_title": "Client Quote / Content",
+      "_title": "FAQ / Layout",
       "content_width": "full",
       "flex_direction": "column",
       "flex_gap": {
-       "column": "24",
-       "row": "24",
-       "isLinked": true,
+       "column": "96",
+       "row": "32",
+       "isLinked": false,
        "unit": "px",
-       "size": 24
+       "size": 96
       },
       "flex_gap_laptop": {
-       "column": "24",
-       "row": "24",
-       "isLinked": true,
+       "column": "72",
+       "row": "32",
+       "isLinked": false,
        "unit": "px",
-       "size": 24
+       "size": 72
       },
       "flex_gap_tablet": {
-       "column": "24",
-       "row": "24",
-       "isLinked": true,
+       "column": "48",
+       "row": "32",
+       "isLinked": false,
        "unit": "px",
-       "size": 24
+       "size": 48
       },
       "flex_gap_mobile": {
-       "column": "24",
-       "row": "24",
-       "isLinked": true,
+       "column": "40",
+       "row": "32",
+       "isLinked": false,
        "unit": "px",
-       "size": 24
+       "size": 40
       },
       "width": {
        "unit": "%",
@@ -2009,76 +5046,173 @@
        "left": "0",
        "isLinked": true
       },
-      "flex_align_items": "center"
+      "container_type": "grid",
+      "grid_auto_flow": "row",
+      "grid_rows_grid": {
+       "unit": "custom",
+       "size": "auto",
+       "sizes": []
+      },
+      "grid_columns_grid": {
+       "unit": "custom",
+       "size": "minmax(0,1fr) minmax(0,1.8fr)",
+       "sizes": []
+      },
+      "grid_columns_grid_laptop": {
+       "unit": "custom",
+       "size": "minmax(0,1fr) minmax(0,1.8fr)",
+       "sizes": []
+      },
+      "grid_columns_grid_tablet": {
+       "unit": "custom",
+       "size": "1fr",
+       "sizes": []
+      },
+      "grid_columns_grid_mobile": {
+       "unit": "custom",
+       "size": "1fr",
+       "sizes": []
+      },
+      "grid_gaps": {
+       "column": "96",
+       "row": "32",
+       "isLinked": false,
+       "unit": "px",
+       "size": 96
+      },
+      "grid_gaps_laptop": {
+       "column": "72",
+       "row": "32",
+       "isLinked": false,
+       "unit": "px",
+       "size": 72
+      },
+      "grid_gaps_tablet": {
+       "column": "48",
+       "row": "32",
+       "isLinked": false,
+       "unit": "px",
+       "size": 48
+      },
+      "grid_gaps_mobile": {
+       "column": "40",
+       "row": "32",
+       "isLinked": false,
+       "unit": "px",
+       "size": 40
+      },
+      "grid_align_items": "start"
      },
      "elements": [
       {
-       "id": "3c6193c",
-       "elType": "widget",
-       "widgetType": "heading",
-       "isInner": false,
+       "id": "60e98d6",
+       "elType": "container",
+       "isInner": true,
        "settings": {
-        "title": "“Very reliable. They came on time and finished in the agreed time. They were very professional. Hire these guys, you will not be disappointed!”",
-        "header_size": "blockquote",
-        "title_color": "#14110E",
-        "typography_typography": "custom",
-        "typography_font_family": "Fraunces",
-        "typography_font_size": {
+        "_title": "FAQ / Heading",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "0",
+         "row": "0",
+         "isLinked": true,
          "unit": "px",
-         "size": 29,
-         "sizes": []
+         "size": 0
         },
-        "typography_font_size_laptop": {
+        "flex_gap_laptop": {
+         "column": "0",
+         "row": "0",
+         "isLinked": true,
          "unit": "px",
-         "size": 28,
-         "sizes": []
+         "size": 0
         },
-        "typography_font_size_tablet": {
+        "flex_gap_tablet": {
+         "column": "0",
+         "row": "0",
+         "isLinked": true,
          "unit": "px",
-         "size": 24,
-         "sizes": []
+         "size": 0
         },
-        "typography_font_size_mobile": {
+        "flex_gap_mobile": {
+         "column": "0",
+         "row": "0",
+         "isLinked": true,
          "unit": "px",
-         "size": 21,
+         "size": 0
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
          "sizes": []
         },
-        "typography_font_weight": "400",
-        "typography_line_height": {
-         "unit": "em",
-         "size": 1.3,
-         "sizes": []
-        },
-        "align": "center",
-        "custom_css": "selector{max-width:880px !important;margin:0 auto;}selector .elementor-heading-title{text-wrap:balance;}",
-        "_title": "Client Quote / Quote"
+        "padding": {
+         "unit": "px",
+         "top": "0",
+         "right": "0",
+         "bottom": "0",
+         "left": "0",
+         "isLinked": true
+        }
        },
-       "elements": []
+       "elements": [
+        {
+         "id": "7779082",
+         "elType": "widget",
+         "widgetType": "heading",
+         "isInner": false,
+         "settings": {
+          "title": "<b>Common</b> questions",
+          "header_size": "h2",
+          "title_color": "#14110E",
+          "typography_typography": "custom",
+          "typography_font_family": "Fraunces",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 45,
+           "sizes": []
+          },
+          "typography_font_size_laptop": {
+           "unit": "px",
+           "size": 41,
+           "sizes": []
+          },
+          "typography_font_size_tablet": {
+           "unit": "px",
+           "size": 34,
+           "sizes": []
+          },
+          "typography_font_size_mobile": {
+           "unit": "px",
+           "size": 29,
+           "sizes": []
+          },
+          "typography_font_weight": "300",
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.04,
+           "sizes": []
+          },
+          "typography_letter_spacing": {
+           "unit": "px",
+           "size": -0.6,
+           "sizes": []
+          },
+          "custom_css": "selector .elementor-heading-title{text-wrap:balance;}selector{max-width:420px !important;}",
+          "_css_classes": "tn-teeth tn-contrast",
+          "_title": "FAQ / Title (H2)"
+         },
+         "elements": []
+        }
+       ]
       },
       {
-       "id": "1b94a01",
+       "id": "ab97d72",
        "elType": "widget",
-       "widgetType": "heading",
+       "widgetType": "html",
        "isInner": false,
        "settings": {
-        "title": "Kathy A. · Gypsum",
-        "header_size": "div",
-        "title_color": "#5B5046",
-        "typography_typography": "custom",
-        "typography_font_family": "Manrope",
-        "typography_font_size": {
-         "unit": "px",
-         "size": 14,
-         "sizes": []
-        },
-        "typography_font_weight": "600",
-        "typography_line_height": {
-         "unit": "em",
-         "size": 1.5,
-         "sizes": []
-        },
-        "align": "center",
-        "_title": "Client Quote / Cite"
+        "html": "<style>.tn-faq{border-top:1px solid #DCD2C4;}.tn-faq details{border-bottom:1px solid #DCD2C4;}.tn-faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:24px;padding:24px 0;font:500 22px/1.3 Fraunces,Georgia,serif;color:#14110E;}.tn-faq summary::-webkit-details-marker{display:none;}.tn-faq summary::after{content:'+';flex:0 0 auto;width:36px;height:36px;border-radius:50%;border:1px solid #C9BFB1;display:flex;align-items:center;justify-content:center;font:400 22px/1 Manrope,sans-serif;color:#8A5A2B;transition:transform .25s ease;}.tn-faq details[open] summary::after{transform:rotate(45deg);}.tn-faq summary:hover{color:#8A5A2B;}.tn-faq summary:focus-visible{outline:2px solid #C68B4E;outline-offset:4px;}.tn-faq .a{padding:0 60px 26px 0;font:400 17px/1.75 Manrope,sans-serif;color:#5B5046;max-width:760px;}.tn-faq .a a{color:#8A5A2B;text-decoration:underline;text-underline-offset:3px;}@media (max-width:600px){.tn-faq summary{font-size:19px;padding:20px 0;}.tn-faq .a{padding-right:0;}}</style><div class=\"tn-faq\"><details><summary>When is the best time of year for exterior painting?</summary><div class=\"a\">Late spring through early fall, when temperatures stay within the paint manufacturer's range. We schedule around the weather and keep you updated if a storm moves in.</div></details><details><summary>How long will an exterior paint job last up here?</summary><div class=\"a\">It depends on exposure. South- and west-facing walls take the most sun and wear fastest. Good preparation and premium products make the biggest difference, and we'll tell you honestly what to expect.</div></details><details><summary>Do you protect landscaping and outdoor surfaces?</summary><div class=\"a\">Yes. Plants, decks, roofs, windows and anything else near the work are covered and masked before we spray, and we clean up every day.</div></details><details><summary>Do I need to be home during the work?</summary><div class=\"a\">No. Many of our clients are away. We coordinate access with you or your property manager and send progress photos along the way.</div></details></div><script type=\"application/ld+json\">{\"@context\": \"https://schema.org\", \"@type\": \"FAQPage\", \"mainEntity\": [{\"@type\": \"Question\", \"name\": \"When is the best time of year for exterior painting?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"Late spring through early fall, when temperatures stay within the paint manufacturer's range. We schedule around the weather and keep you updated if a storm moves in.\"}}, {\"@type\": \"Question\", \"name\": \"How long will an exterior paint job last up here?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"It depends on exposure. South- and west-facing walls take the most sun and wear fastest. Good preparation and premium products make the biggest difference, and we'll tell you honestly what to expect.\"}}, {\"@type\": \"Question\", \"name\": \"Do you protect landscaping and outdoor surfaces?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"Yes. Plants, decks, roofs, windows and anything else near the work are covered and masked before we spray, and we clean up every day.\"}}, {\"@type\": \"Question\", \"name\": \"Do I need to be home during the work?\", \"acceptedAnswer\": {\"@type\": \"Answer\", \"text\": \"No. Many of our clients are away. We coordinate access with you or your property manager and send progress photos along the way.\"}}]}</script>",
+        "_title": "FAQ / Questions"
        },
        "elements": []
       }
@@ -2087,7 +5221,7 @@
    ]
   },
   {
-   "id": "404374b",
+   "id": "ec7e351",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -2165,7 +5299,7 @@
    },
    "elements": [
     {
-     "id": "b40eecb",
+     "id": "6fc816f",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -2272,7 +5406,7 @@
      },
      "elements": [
       {
-       "id": "e6c769c",
+       "id": "7d1675c",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -2323,7 +5457,7 @@
        },
        "elements": [
         {
-         "id": "fe532f0",
+         "id": "867187f",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -2373,7 +5507,7 @@
        ]
       },
       {
-       "id": "d134a79",
+       "id": "bfbc11c",
        "elType": "widget",
        "widgetType": "icon-list",
        "isInner": false,
@@ -2387,7 +5521,7 @@
         "text_color_hover": "#D9A66B",
         "icon_list": [
          {
-          "_id": "1c56037",
+          "_id": "bd090b9",
           "text": "Interior Painting",
           "link": {
            "url": "/interior-painting/",
@@ -2400,7 +5534,7 @@
           }
          },
          {
-          "_id": "83aa881",
+          "_id": "f0df084",
           "text": "Specialty Finishes &amp; Interior Wood",
           "link": {
            "url": "/specialty-finishes-interior-wood/",
@@ -2413,7 +5547,7 @@
           }
          },
          {
-          "_id": "ee3b7dd",
+          "_id": "2e93a2f",
           "text": "Commercial &amp; HOA",
           "link": {
            "url": "/commercial-hoa/",
@@ -2457,7 +5591,7 @@
    ]
   },
   {
-   "id": "b549786",
+   "id": "e11ad49",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -2553,7 +5687,7 @@
    },
    "elements": [
     {
-     "id": "310f4de",
+     "id": "5ab8bd1",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -2605,7 +5739,7 @@
      },
      "elements": [
       {
-       "id": "8bdcfd5",
+       "id": "9052b13",
        "elType": "widget",
        "widgetType": "heading",
        "isInner": false,
@@ -2654,7 +5788,7 @@
        "elements": []
       },
       {
-       "id": "c600860",
+       "id": "be7078e",
        "elType": "widget",
        "widgetType": "text-editor",
        "isInner": false,
@@ -2685,7 +5819,7 @@
        "elements": []
       },
       {
-       "id": "153d82c",
+       "id": "73989ab",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -2739,7 +5873,7 @@
        },
        "elements": [
         {
-         "id": "bdbafed",
+         "id": "fc79b3b",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,
@@ -2791,7 +5925,7 @@
          "elements": []
         },
         {
-         "id": "f0b89bc",
+         "id": "5067633",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,

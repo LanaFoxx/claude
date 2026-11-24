@@ -638,32 +638,81 @@ def build_header():
 # =================================================================== FOOTER
 def build_footer():
     """Minimal two-row footer: wordmark | main links | phone + social, then a fine-print line."""
-    links = widget(
-        "icon-list", "Footer / Links", view="inline", space_between=px(28), text_color=DRIFT,
-        text_color_hover=BONE,
-        icon_list=[{"_id": eid(), "text": t, "link": link(u), "selected_icon": {"value": "", "library": ""}}
-                   for t, u in [("Fine Painting", "/interior-painting/"),
-                                ("Log &amp; Timber Staining", "/log-home-staining-restoration/"),
-                                ("Our Work", "/our-work/"), ("For Builders", "/for-builders/"),
-                                ("About", "/our-story/"), ("Reviews", "/reviews/")]],
-        custom_css="selector .elementor-icon-list-items{justify-content:center;row-gap:0;}"
-                   "selector .elementor-icon-list-item > a{display:inline-flex;align-items:center;min-height:44px;}"
-                   "@media (max-width:980px){selector .elementor-icon-list-items{justify-content:flex-start;}}",
-        **typo(prefix="icon_typography", size=14, weight=500, lh=1.5))
+    TAP = "selector .elementor-icon-list-item > a{display:inline-flex;align-items:center;min-height:36px;}"
+
+    def col_title(title, t):
+        return heading(title, t, tag="div", color=AMBER, typ=typo(size=14, weight=600, lh=1.4, ls=0.3))
+
+    def stack(title, items):
+        return widget("icon-list", title, space_between=px(2), text_color=DRIFT, text_color_hover=BONE,
+                      icon_list=[{"_id": eid(), "text": t, "link": link(u),
+                                  "selected_icon": {"value": "", "library": ""}} for t, u in items],
+                      custom_css=TAP, **typo(prefix="icon_typography", size=14, weight=400, lh=1.5))
+
+    about = container("Footer / About", [
+        wordmark("Footer / Wordmark", size=24),
+        text("Footer / Tagline", "<p>Fine painting and log home staining for mountain homes.</p>",
+             color=HERO_TEXT, size=15, lh=1.6, max_w=280, pretty=False),
+        container("Footer / Badges", [
+            widget("image", "Footer / BBB badge", image={
+                "id": 2157, "url": SITE + "/wp-content/uploads/2026/11/topnotch-logo-bbb-a-plus-white.png",
+                "alt": "BBB A+ Accredited Business", "source": "library"}, image_size="full",
+                custom_css="selector img{height:36px !important;width:auto !important;max-width:none !important;"
+                           "opacity:.85;display:block;}"),
+            widget("icon-list", "Footer / Insured badge", icon_list=[{
+                "_id": eid(), "text": "Fully insured", "selected_icon": svg("shield-check-light")}],
+                icon_color=AMBER, text_color=BONE, icon_size=px(18), text_indent=px(8),
+                custom_css="selector .elementor-icon-list-item{border:1px solid rgba(242,236,227,0.2);"
+                           "border-radius:999px;padding:7px 14px 7px 12px;}",
+                **typo(prefix="icon_typography", size=13, weight=600, lh=1.3))],
+            direction="row", gap=14, flex_wrap="wrap", flex_align_items="center")],
+        gap=20)
+
+    services = container("Footer / Services", [
+        col_title("Footer / Services / Title", "Services"),
+        stack("Footer / Services / Links", [
+            ("Interior Painting", "/interior-painting/"), ("Exterior Painting", "/exterior-painting/"),
+            ("Specialty Finishes &amp; Interior Wood", "/specialty-finishes-interior-wood/"),
+            ("Commercial &amp; HOA", "/commercial-hoa/"),
+            ("Log Home Staining &amp; Restoration", "/log-home-staining-restoration/"),
+            ("Chinking &amp; Check Sealing", "/chinking-check-sealing/"),
+            ("Rot Repair &amp; Prevention", "/rot-repair-prevention/"), ("Deck Staining", "/deck-staining/"),
+            ("Media Blasting", "/media-blasting/")])], gap=16)
+
+    areas = container("Footer / Areas", [
+        col_title("Footer / Areas / Title", "Areas we serve"),
+        text("Footer / Areas / Text",
+             "<p>Based in Gypsum, serving Colorado's Central Mountains:</p>"
+             "<p>Aspen, Vail, Carbondale, Glenwood Springs, Snowmass, Beaver Creek, Edwards, Basalt, Avon, "
+             "Eagle, Gypsum, Breckenridge and surrounding areas.</p>",
+             color=DRIFT, size=14, lh=1.7, para_gap=12, max_w=300, pretty=False),
+        text_link("Footer / Areas / Link", "Service area →", "/areas-we-serve/", size=14)], gap=16)
+
     contact = container("Footer / Contact", [
-        heading("Footer / Phone", PHONE, tag="div", color=BONE, typ=typo(size=15, weight=600, lh=1.4),
-                link=link(TEL), title_hover_color=AMBER_HOVER, _css_classes="tn-call", custom_css="selector .elementor-heading-title a{display:inline-flex;align-items:center;min-height:44px;}"),
+        col_title("Footer / Contact / Title", "Contact us"),
+        text("Footer / Contact / Address", "<p>4722 Hwy US-6<br>Gypsum, CO 81637</p>",
+             color=DRIFT, size=14, lh=1.7, pretty=False),
+        heading("Footer / Phone", PHONE, tag="div", color=BONE, typ=typo(size=16, weight=600, lh=1.4),
+                link=link(TEL), title_hover_color=AMBER_HOVER, _css_classes="tn-call",
+                custom_css="selector .elementor-heading-title a{display:inline-flex;align-items:center;min-height:36px;}"),
+        heading("Footer / Email", "info@topnotch-painting.com", tag="div", color=HERO_TEXT,
+                typ=typo(size=14, weight=500, lh=1.4), link=link("mailto:info@topnotch-painting.com"),
+                title_hover_color=BONE,
+                custom_css="selector .elementor-heading-title a{display:inline-flex;align-items:center;min-height:36px;}"),
+        text("Footer / Hours", "<p>Monday–Friday, 7:30am–4:30pm</p>", color=DRIFT, size=14, lh=1.6,
+             pretty=False),
         container("Footer / Social", [
             icon_button("Footer / Facebook", "#", "facebook-logo-light", "Top Notch Painting on Facebook",
                         w=36, h=44, fill=TRANSPARENT, color=HERO_TEXT),
             icon_button("Footer / Instagram", "#", "instagram-logo-light", "Top Notch Painting on Instagram",
                         w=36, h=44, fill=TRANSPARENT, color=HERO_TEXT)],
-            direction="row", gap=0, flex_align_items="center", auto_width=True)],
-        direction="row", gap=20, flex_align_items="center", auto_width=True)
-    top_row = grid("Footer / Top Row", [wordmark("Footer / Wordmark", size=24), links, contact],
-                   cols=("auto 1fr auto", "auto 1fr auto", "1fr", "1fr"), gap_col=48, gap_row=28,
-                   grid_align_items="center", grid_justify_items="stretch", flex_align_items="center",
-                   padding=dims(56, 0, 40, 0))
+            direction="row", gap=0, flex_align_items="center", auto_width=True, margin=dims(0, 0, 0, -9))],
+        gap=10)
+
+    top_row = grid("Footer / Top Row", [about, services, areas, contact],
+                   cols=("minmax(0,1.15fr) minmax(0,1fr) minmax(0,1fr) minmax(0,0.9fr)",) * 2 + ("1fr 1fr", "1fr"),
+                   gap_col=(56, 40, 40, 0), gap_row=(40, 40, 44, 40), grid_align_items="start",
+                   padding=dims(72, 0, 48, 0))
 
     year = heading("Footer / Copyright (auto year)", "© 2026 Top Notch Painting · A Top Notch Logworks company · Employee owned &amp; operated",
                    tag="p", color=DRIFT, typ=typo(size=13, weight=400, lh=1.6))
@@ -674,8 +723,7 @@ def build_footer():
         "title": '[elementor-tag id="%s" name="current-date-time" settings="%s"]' % (eid(), tag_settings)}
     bottom = container("Footer / Fine Print", [
         year,
-        heading("Footer / Address", "4722 Hwy US-6, Gypsum, CO 81637&nbsp;· info@topnotch-painting.com", tag="p",
-                color=DRIFT, typ=typo(size=13, weight=400, lh=1.6))],
+        text_link("Footer / Estimate link", "Request an estimate →", "/request-an-estimate/", size=13)],
         direction="row", gap=(32, 6), flex_wrap="wrap", flex_justify_content="space-between",
         flex_align_items="center", padding=dims(20, 0, 28, 0),
         border_border="solid", border_width=dims(1, 0, 0, 0), border_color=HAIR_10)
@@ -727,6 +775,30 @@ def hero_slideshow():
             "background_slideshow_lazyload": ""}
 
 
+def hero_reviews():
+    """Two short 5-star review cards over the right side of the hero (in flow on smaller screens)."""
+    quotes = [("They came on time and finished in the agreed time. Hire these guys!", "Kathy A. · Gypsum"),
+              ("We could not be happier with the end result.", "Lee F. · Gypsum, log home refinish")]
+    cards = [container("Hero / Review %d" % (i + 1), [
+        stars("Hero / Review %d / Stars" % (i + 1), AMBER, 13, 2),
+        heading("Hero / Review %d / Quote" % (i + 1), "“%s”" % q, tag="div", color=BONE,
+                typ=typo(family=SERIF, size=21, weight=400, lh=1.3)),
+        heading("Hero / Review %d / Name" % (i + 1), who, tag="div", color=HERO_TEXT,
+                typ=typo(size=13, weight=500, lh=1.4))],
+        gap=10, padding=dims(20, 22, 20, 22), css_classes="tn-hero-review",
+        background_background="classic", background_color="#14110EB8",
+        border_border="solid", border_width=dims(1), border_color="#F2ECE324", border_radius=dims(10))
+        for i, (q, who) in enumerate(quotes)]
+    return container("Hero / Reviews", cards, gap=14, css_classes="tn-hero-reviews",
+                     _attributes="aria-label|Client reviews",
+                     css="selector .tn-hero-review{-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);}"
+                         "@media (min-width:1200px){selector{position:absolute !important;right:0;bottom:290px;"
+                         "width:340px !important;max-width:340px;z-index:2;}}"
+                         "@media (max-width:1199px){selector{flex-direction:row !important;flex-wrap:wrap;}"
+                         "selector > .tn-hero-review{flex:1 1 280px;max-width:420px;}}"
+                         "@media (max-width:600px){selector > .tn-hero-review:nth-child(2){display:none;}}")
+
+
 def build_hero():
     overlay = ("selector{background-color:#2E231A;}"
                "selector::before,selector > .elementor-background-slideshow::before{background-image:"
@@ -742,14 +814,23 @@ def build_hero():
     def badge_text(title, html):
         return text(title, html, size=(15, 15, 15, 14), lh=1.5, pretty=False)
 
-    def logo(title, media_id, filename, alt):
+    def logo(title, media_id, filename, alt, scale=1.0):
+        h = lambda v: round(v * scale)
         return widget("image", title, image={
             "id": media_id, "url": SITE + "/wp-content/uploads/2026/11/" + filename,
             "alt": alt, "source": "library"}, image_size="full",
-            custom_css="selector img{height:50px !important;width:auto !important;max-width:none !important;"
+            custom_css="selector img{height:%dpx !important;width:auto !important;max-width:none !important;"
                        "opacity:.85;display:block;}"
-                       "@media (max-width:980px){selector img{height:44px !important;}}"
-                       "@media (max-width:600px){selector img{height:28px !important;}}")
+                       "@media (max-width:980px){selector img{height:%dpx !important;}}"
+                       "@media (max-width:600px){selector img{height:%dpx !important;}}" % (h(50), h(44), h(28)))
+
+    def rating(name, score, label):
+        return container("Hero / Credentials / " + name,
+                         [_with(stars("Hero / Credentials / %s / Stars" % name, AMBER, 14, 2),
+                                icon_size_mobile=px(12), icon_gap_mobile=px(2)),
+                          badge_text("Hero / Credentials / %s text" % name,
+                                     "<p><strong>%s</strong> %s</p>" % (score, label))],
+                         direction="row", gap=8, flex_align_items="center", auto_width=True)
 
     creds = container(
         "Hero / Credentials",
@@ -760,19 +841,20 @@ def build_hero():
             direction="row", gap=((30, 8), (28, 8), (28, 8), (24, 6)), flex_wrap="wrap",
             flex_align_items="center", css_classes="tn-cred-line"),
          container("Hero / Credentials / Accreditations", [
-            container("Hero / Credentials / HomeAdvisor",
-                      [_with(stars("Hero / Credentials / Stars", AMBER, 14, 2),
-                             icon_size_mobile=px(12), icon_gap_mobile=px(2)),
-                       badge_text("Hero / Credentials / HomeAdvisor text",
-                                  "<p><strong>4.9</strong> on HomeAdvisor</p>")],
-                      direction="row", gap=8, flex_align_items="center", auto_width=True),
+            container("Hero / Credentials / Ratings", [
+                rating("Google", "5.0", "from 24 Google reviews"),
+                rating("HomeAdvisor", "4.9", "on HomeAdvisor")],
+                direction="row", gap=((32, 10), (28, 10), (28, 10), (20, 8)), flex_wrap="wrap",
+                flex_align_items="center", auto_width=True),
             container("Hero / Credentials / Logos", [
                 logo("Hero / Credentials / BBB logo", 2157, "topnotch-logo-bbb-a-plus-white.png",
                      "BBB A+ Accredited Business"),
                 logo("Hero / Credentials / Sashco logo", 2155, "topnotch-logo-sashco-white.png",
                      "Sashco partner"),
                 logo("Hero / Credentials / Perma-Chink logo", 2158, "topnotch-logo-perma-chink-white.png",
-                     "Perma-Chink Systems partner")],
+                     "Perma-Chink Systems partner"),
+                logo("Hero / Credentials / Sherwin-Williams logo", 2852,
+                     "topnotch-logo-sherwin-williams-white.png", "Sherwin-Williams", scale=0.8)],
                 direction="row", gap=((44, 14), (40, 14), (36, 14), (16, 12)), flex_wrap="wrap",
                 flex_align_items="center", auto_width=True)],
             gap=((18, 18), (18, 18), (16, 16), (14, 14)), flex_align_items="flex-start")],
@@ -807,6 +889,7 @@ def build_hero():
                        auto_width=True)],
              cols=("1fr", "1fr", "1fr", "1fr"),
              gap_col=0, gap_row=(32, 32, 32, 28), grid_justify_items="start"),
+         hero_reviews(),
          creds],
         bg="#2E231A", pad_top=(270, 270, 200, 200), pad_bottom=80, gap=40, min_height=px(800),
         flex_justify_content="flex-end", overflow="hidden",
@@ -930,12 +1013,11 @@ WHY_GRID_LINES = (
 
 # ------------------------------------------------------------------ Featured projects (Option C)
 FEATURED = [
-    ("Great room walls and ceilings", "Interior painting · Snowmass", "#33261C",
-     "Our project photo: Snowmass great room"),
-    ("Exterior repaint for a returning client", "Exterior painting · Arrowhead", "#222B25",
-     "Our project photo: Arrowhead exterior"),
-    ("Log wash and restain", "Log &amp; timber staining · Edwards", "#3A281B",
-     "Our project photo: Edwards log home"),
+    ("Popcorn ceiling to smooth finish", "Interior painting", "#33261C", "Our project photo: smooth ceiling",
+     "tn-ceiling-smooth-beams"),
+    ("Full exterior repaint", "Exterior painting", "#222B25", "Our project photo: exterior repaint", "tn-ext-after"),
+    ("Log home restain", "Log &amp; timber staining", "#3A281B", "Our project photo: log home restain",
+     "tn-log-home-restained"),
 ]
 DIM = "#8F867B"
 
@@ -999,7 +1081,7 @@ FEATURED_JS = """<script>
 def build_featured_projects():
     rows = []
     photos = []
-    for i, (title, meta, color, label) in enumerate(FEATURED):
+    for i, (title, meta, color, label, image) in enumerate(FEATURED):
         rows.append(container("Featured / Row %d" % (i + 1), [
             container("Featured / Row %d / Text" % (i + 1), [
                 heading("Featured / Row %d / Title" % (i + 1), title, tag="div", color=DIM,
@@ -1014,7 +1096,7 @@ def build_featured_projects():
             direction="row", gap=24, flex_align_items="center", flex_wrap="nowrap",
             flex_justify_content="space-between", css_classes="tn-row",
             _attributes="data-project|%d\naria-pressed|%s" % (i, "true" if i == 0 else "false")))
-        photos.append(photo_slot("Featured / Photo %d" % (i + 1), color, 680, label,
+        photos.append(photo_slot("Featured / Photo %d" % (i + 1), color, 680, label, image=image,
                                  css_classes="tn-photo tn-f-photo" + (" is-active" if i == 0 else ""),
                                  _attributes="data-project|%d" % i))
     layout = container("Featured / Layout", [
@@ -1030,7 +1112,7 @@ def build_featured_projects():
 
 # ------------------------------------------------------------------ What We Do (Option E, giant words)
 WWD = [
-    ("What We Do / Painting", "#33261C", "Photo: finished interior", None, "Painting",
+    ("What We Do / Painting", "#33261C", "Photo: finished interior", "tn-stock-vaulted-room-mountains", "Painting",
      "Fine Interior &amp; Exterior Painting",
      "Walls, ceilings, trim, doors, and specialty finishes, completed with the preparation, protection, and "
      "clean lines a high-end home demands.",
@@ -1101,6 +1183,39 @@ def build_what_we_do():
         css_classes="tn-paint-host")
 
 
+# Real client reviews (from topnotch-painting.com and topnotch-logworks.com).
+REVIEWS = {
+    "kathy": ("Very reliable. They came on time and finished in the agreed time. They were very professional. "
+              "Hire these guys, you will not be disappointed!", "Kathy A.", "Gypsum", "Exterior painting"),
+    "cathy": ("Oto and his crew were wonderful. They were efficient, professional and very conscious of our "
+              "budget. We would absolutely use them again.", "Cathy D.", "Eagle", "Interior painting"),
+    "karen": ("Excellent job! They were on time, professional, clean and did an excellent job on my accent wall. "
+              "Very clean lines.", "Karen H.", "Gypsum", "Accent wall"),
+    "clifford": ("The crew did a thorough job with the entire project, from the estimate, work and follow-up. "
+                 "They went above my expectations.", "Clifford G.", "Morrison", "Exterior painting"),
+    "lee": ("As promised, the work done on our house not only met and exceeded our expectations in quality and "
+            "appearance but it was completed within the time frame that was proposed.", "Lee F.", "Gypsum",
+            "Log home refinishing"),
+    "hervey": ("They took an old, rotting deck and restored it so beautifully that we will be able to enjoy it "
+               "for decades to come.", "Hervey L., architect", "Grand Lake", "Deck restoration &amp; rot repair"),
+}
+
+
+def review_card(title, key, dark=False):
+    q, who, town, job = REVIEWS[key]
+    return container(title, [
+        stars(title + " / Stars", AMBER, 14, 2),
+        text(title + " / Quote", "<p>“%s”</p>" % q, color=BONE if dark else CHARRED, size=(20, 19, 19, 18),
+             lh=1.5, typography_font_family=SERIF, pretty=False),
+        text(title + " / Who", "<p><strong>%s</strong> · %s<br>%s</p>" % (who, town, job),
+             color=DRIFT if dark else BARK, size=14, lh=1.6, pretty=False,
+             custom_css="selector strong{color:%s;font-weight:600;}" % (BONE if dark else CHARRED))],
+        gap=18, padding=pads((40, 36, 32, 28), (36, 32, 28, 24), (40, 36, 32, 28), (36, 32, 28, 24)),
+        background_background="classic", background_color="#1C1814" if dark else "#FBF8F3",
+        border_border="solid", border_width=dims(1), border_color="#F2ECE31A" if dark else "#E2D9CC",
+        border_radius=dims(6), flex_justify_content="space-between")
+
+
 def build_home():
     what = build_what_we_do()
 
@@ -1117,7 +1232,7 @@ def build_home():
             text_link("Who We Are / Read our story", "Read our story →", "/our-story/", color=DEEP,
                       underline=DEEP, hover=CHARRED)], gap=28),
         photo_slot("Who We Are / Photo", "#3A281B", 560, "Photo: Logworks crew on a log or timber build",
-                   image="railing"),
+                   image="tn-crew-log-wall"),
     ], cols=(2, 2, 1, 1), gap_col=(101, 91, 69, 48), grid_align_items="center",
         flex_align_items="center")], bg=BONE)
 
@@ -1240,24 +1355,10 @@ def build_home():
     )
     reviews = section("Reviews", [
         h2("Reviews / Title (H2)", "What our clients say", color=CHARRED, balance=False, align="center"),
-        widget("testimonial-carousel", "Reviews / Carousel",
-               slides=[
-                   {"_id": eid(), "content": "“Oto and his crew were wonderful. They were efficient, "
-                    "professional and very conscious of our budget. We would absolutely use them again.”",
-                    "image": {"url": "", "id": ""}, "name": "Cathy D.", "title": "Eagle"},
-                   {"_id": eid(), "content": "“Excellent job! Christian and his father were on time, "
-                    "professional, clean and did an excellent job on my accent wall. Very clean lines.”",
-                    "image": {"url": "", "id": ""}, "name": "Karen H.", "title": "Gypsum"}],
-               skin="default", layout="image_inline", alignment="center",
-               slides_per_view="1", slides_to_scroll="1", show_arrows="yes", pagination="fraction",
-               speed=500, autoplay="", loop="yes", pause_on_hover="yes", slide_padding=dims(0),
-               slide_background_color=TRANSPARENT,
-               space_between=px(40), arrows_size=px(20), arrows_color=CHARRED, pagination_color=BARK,
-               content_text_color=CHARRED, name_text_color=CHARRED, title_text_color=BARK,
-               custom_css=carousel_css,
-               **typo(prefix="content_typography", family=SERIF, size=QUOTE, weight=400, lh=1.25),
-               **typo(prefix="name_typography", size=15, weight=600, lh=1.5),
-               **typo(prefix="title_typography", size=15, weight=400, lh=1.5)),
+        grid("Reviews / Grid", [review_card("Reviews / Card %d" % (i + 1), k) for i, k in
+                                 enumerate(("kathy", "cathy", "lee", "hervey"))],
+             cols=(4, 2, 2, 1), gap_col=24, gap_row=24, grid_align_items="stretch",
+             css="selector{text-align:left;}"),
     ], bg=BONE, pad_top=(144, 130, 98, 88), pad_bottom=(115, 104, 78, 72), gap=56,
         flex_align_items="center", text_align="center", _element_id="reviews")
 
