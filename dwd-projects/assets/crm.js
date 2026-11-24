@@ -1544,7 +1544,7 @@
 					+ '<a class="more dd-half dd-half2" href="#projects/active"><span>Active projects</span><b>' + by('active').length + '</b></a>'
 					+ '<a class="more dd-half dd-half2" href="#hosting"><span>Hosting clients</span><b>' + hosting().length + '</b></a>'
 					+ '<a class="more" href="#money" data-connmodal><span>Connects spent<small>' + mn + ' · last month ' + money(K.lastmonth || 0) + '</small></span><b>' + money(K.month || 0) + '</b></a>'
-					+ '<a class="more" href="#money" data-adsmodal><span>Google Ads spent<small>' + (G ? mn + ' · ' + money(G.week.cost) + ' this week' : 'Not connected') + '</small></span><b>' + (G ? money(G.month.cost) : '—') + '</b></a>'
+					+ '<a class="more" href="#money" data-adsmodal><span>Google Ads spent<small>' + (G ? mn + ' · ' + (adsReturn().wonVal ? 'won ' + money(adsReturn().wonVal) + ' from ads' : money(G.week.cost) + ' this week') : 'Not connected') + '</small></span><b>' + (G ? money(G.month.cost) : '—') + '</b></a>'
 					+ (S.tax ? '<a class="more" href="#money"><span>Tax set-aside<small>' + (S.tax.held == null ? S.tax.pct + '% of Q' + S.tax.quarter + ' income' + (S.tax.next ? ' · due ' + fmt(S.tax.next.date) : '') : S.tax.held >= S.tax.need ? 'Covered · ' + money(S.tax.held) + ' set aside' : 'Short ' + money(S.tax.need - S.tax.held)) + '</small></span><b>' + money(S.tax.need) + '</b></a>' : '');
 			})() + '</section>';
 		var rows = overdue.sort(function (a, b) { return a.t.due < b.t.due ? -1 : 1; }).concat(today), seenP = {};
@@ -2789,6 +2789,15 @@
 			+ '<h2 class="dwdc-sech">CA Tax Courses transfers</h2>' + tx
 			+ '<p class="dwdc-mutp">Web design counts every project payment (Upwork once it reaches your bank, after fees). CA Tax Courses counts the Zelle pay transfers from SD TAX SERVICE in your bank feed (from ' + fmt(D.bank_from) + '); Mom’s ' + money(D.mom) + ' comes off once per paycheck, even when it arrives in two transfers. Bonuses keep their full amount; reimbursements are not counted as income. Website payments from SD TAX SERVICE are counted under web design. Mojo’s Flight School counts the payments you log above (your share as part owner).</p></div>';
 	}
+	// Google Ads: what was spent vs. the jobs won from ad leads (lead source "Google Ads").
+	function adsReturn() {
+		var G = (S.ads || {}).google, ads = S.contacts.filter(function (c) { return c.lead_source === 'Google Ads' || /^Google Ads\b/.test(c.source || ''); });
+		var won = ads.filter(function (c) { return ['active', 'hold', 'limbo', 'complete', 'onboarding'].indexOf(c.list) > -1 && num(c.price) > 0; });
+		var pend = ads.filter(function (c) { return c.list === 'leads'; });
+		return { spent: G ? num(G.all || (G.month && G.month.cost)) : 0, won: won, pend: pend,
+			wonVal: won.reduce(function (a, c) { return a + num(c.price); }, 0),
+			paid: won.reduce(function (a, c) { return a + Math.max(0, num(c.price) - Math.max(0, num(c.balance))); }, 0) };
+	}
 	function moneyView() {
 		var projs = S.contacts.filter(function (c) { return ['active', 'hold', 'limbo', 'complete'].indexOf(c.list) > -1; });
 		var sum = function (f) { return projs.reduce(function (s, c) { return s + num(c[f]); }, 0); };
@@ -2855,6 +2864,11 @@
 			'<div class="mv-row head"><span></span><b>' + m0.name.slice(0, 3) + '</b><em>' + m1.name.slice(0, 3) + '</em></div>'
 			+ arow('Google Ads', gNow, gPrev, G ? 'data-adsmodal' : 'data-adsconnect') + arow('Upwork Connects', cNow, cPrev, 'data-connmore') + arow('Total', gNow + cNow, gPrev + cPrev, '')
 			+ (S.connMore ? '<div class="mv-more">' + connSpend() + '</div>' : ''));
+		var AR = adsReturn(), roiBox = !G && !AR.won.length ? '' : box('mv-roi', 'Google Ads return', '<span class="mv-sub">' + (G && G.first ? 'running since ' + fmt(G.first) : '') + '</span>',
+			'<div class="mv-roi-top"><div><small>Spent on ads</small><strong>' + money(AR.spent) + '</strong></div><div><small>Jobs won from ads</small><strong>' + money(AR.wonVal) + '</strong></div><div><small>Return</small><strong class="' + (AR.wonVal >= AR.spent ? 'up' : '') + '">' + (AR.spent ? (AR.wonVal / AR.spent).toFixed(1) + '×' : '—') + '</strong></div></div>'
+			+ AR.won.map(function (c) { return '<a class="mv-row go" href="#client/' + c.id + '"><span>' + esc(c.name) + '</span><b>' + money(num(c.price)) + '</b><em>' + (num(c.balance) > 0 ? money(num(c.price) - num(c.balance)) + ' paid' : 'Paid') + '</em></a>'; }).join('')
+			+ (AR.pend.length ? '<div class="mv-row head"><span>Leads from ads, still pending</span><b></b><em></em></div>' + AR.pend.map(function (c) { return '<a class="mv-row go" href="#client/' + c.id + '"><span>' + esc(c.name) + '</span><b>' + (num(c.price) ? money(num(c.price)) : '') + '</b><em>' + esc(c.stage || 'lead') + '</em></a>'; }).join('') : '')
+			+ '<p class="mv-roi-note">' + money(AR.paid) + ' collected so far. Counts every project whose lead source is Google Ads.</p>');
 		var trendBox = box('mv-trends', 'Patterns &amp; trends', '<button class="mv-lnk" data-askai>' + ic('bolt', 14) + ' Ask AI</button>', trendsBox());
 		var more = '<button type="button" class="dwdc-more" data-moremoney>' + (S.moreMoney ? 'Hide' : 'More stats: all-time, by year, busiest months, top clients') + ' ' + ic('down', 15) + '</button>'
 			+ (S.moreMoney ? '<div class="dwdc-kpis k3 dwdc-mkpis">' + kpi('All-time income', money(total), paid.length + ' projects', '') + kpi('Average project', money(avg), 'Middle project ' + money(mid)) + kpi('Top project', top ? money(lifetime(top)) : '—', top ? esc(top.name) : '') + '</div>'
@@ -2864,7 +2878,7 @@
 				+ mcard('Top projects', rowsP || emptyRow('No payments yet.')) + mcard('Top clients', rowsC || emptyRow('No payments yet.'))
 				+ mcard('Repeat clients <span class="dwdc-cnt">' + repeat.length + '</span>', rowsR || emptyRow('No repeat clients yet.'))
 				+ '</div>' : '');
-		return top4 + taxCard() + '<div class="mv-grid mv-cols"><div class="mv-col">' + incomeBox + adsBox + '</div><div class="mv-col">' + jobsBox + trendBox + '</div></div>' + more;
+		return top4 + taxCard() + '<div class="mv-grid mv-cols"><div class="mv-col">' + incomeBox + roiBox + adsBox + '</div><div class="mv-col">' + jobsBox + trendBox + '</div></div>' + more;
 	}
 	// Taxes (tax.php): what should be set aside this year vs what's in the account(s) you keep it in.
 	function taxCard() {

@@ -1273,3 +1273,8 @@ body:has(.dwdc-addm) #dwdc-askfab { display: none !important; }
 .dd-smtpsteps{margin:10px 0 12px 18px;line-height:1.7}
 .dd-smtpin{flex:1;min-width:220px;max-width:320px;font-family:ui-monospace,Menlo,Consolas,monospace;letter-spacing:.04em}
 .dwdc-farow.dd-smtprow{justify-content:flex-start;gap:8px;flex-wrap:wrap}
+.mv-roi-top{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 0 10px}
+.mv-roi-top small{display:block;font-size:12px;color:var(--muted,#8a93a6)}
+.mv-roi-top strong{font-size:22px;font-weight:700}
+.mv-roi-top strong.up{color:#28A06D}
+.mv-roi-note{margin:10px 0 0;font-size:12px;color:var(--muted,#8a93a6)}

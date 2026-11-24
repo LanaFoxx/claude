@@ -132,6 +132,20 @@ function dwdads_summary() {
 			$x             = (array) ( $data['days'][ $d ] ?? array() );
 			$g['daily'][]  = array( 'date' => $d, 'cost' => (float) ( $x['cost'] ?? 0 ), 'clicks' => (float) ( $x['clicks'] ?? 0 ), 'impr' => (float) ( $x['impr'] ?? 0 ), 'conv' => (float) ( $x['conv'] ?? 0 ) );
 		}
+		// All ad spend on record (the script sends ~75 days) and the first day money was spent.
+		$g['all']   = 0;
+		$g['first'] = '';
+		$g['days']  = 0;
+		foreach ( (array) ( $data['days'] ?? array() ) as $d => $x ) {
+			if ( (float) ( $x['cost'] ?? 0 ) > 0 ) {
+				$g['all'] += (float) $x['cost'];
+				$g['days']++;
+				if ( ! $g['first'] || $d < $g['first'] ) {
+					$g['first'] = $d;
+				}
+			}
+		}
+		$g['all'] = round( $g['all'], 2 );
 	}
 	// Leads that came from an ad click this month and last (filed by the site's forms).
 	$leads = array( 'month' => 0, 'lastmonth' => 0 );
