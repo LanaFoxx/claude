@@ -1283,3 +1283,4 @@ body:has(.dwdc-addm) #dwdc-askfab { display: none !important; }
 .dd-lanepick button{padding:6px 14px;border-radius:999px;border:1px solid var(--line,#2a3142);background:transparent;color:var(--text,#e6e9f0);font-weight:600;font-size:13px;cursor:pointer}
 .dd-lanepick button.on{background:#4F6BF0;border-color:#4F6BF0;color:#fff;cursor:default}
 .dd-lanepick button:not(.on):hover{border-color:#4F6BF0}
+@media (max-width: 767px) { .dd-home .dd-home-l > .dd-hinc { order: 100; } }
