@@ -1278,3 +1278,8 @@ body:has(.dwdc-addm) #dwdc-askfab { display: none !important; }
 .mv-roi-top strong{font-size:22px;font-weight:700}
 .mv-roi-top strong.up{color:#28A06D}
 .mv-roi-note{margin:10px 0 0;font-size:12px;color:var(--muted,#8a93a6)}
+.dd-lanepick{display:flex;align-items:center;gap:6px;margin:4px 0 14px}
+.dd-lanepick span{font-size:12px;font-weight:600;color:var(--muted,#8a93a6);margin-right:4px}
+.dd-lanepick button{padding:6px 14px;border-radius:999px;border:1px solid var(--line,#2a3142);background:transparent;color:var(--text,#e6e9f0);font-weight:600;font-size:13px;cursor:pointer}
+.dd-lanepick button.on{background:#4F6BF0;border-color:#4F6BF0;color:#fff;cursor:default}
+.dd-lanepick button:not(.on):hover{border-color:#4F6BF0}

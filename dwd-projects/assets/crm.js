@@ -4508,6 +4508,7 @@
 			if (!tk) { S.modal = null; return ''; }
 			var tc = tk.contact ? contact(tk.contact) : null, tcl = tc ? clientOf(tc) : null;
 			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal dwdc-taskm">' + head(tk.done ? 'Completed to-do' : 'To-do', 'Edit', 'to-do')
+				+ '<div class="dd-lanepick"><span>List</span><button type="button" class="on" aria-pressed="true">Work</button><button type="button" data-lanemove="w:' + tk.id + '" aria-pressed="false">Personal</button></div>'
 				// Editable: text, due date (or none) and project.
 				+ '<form class="dwdc-taskedit" data-tid="' + tk.id + '">'
 				+ '<label class="dwdc-tel">To-do</label><textarea name="text" rows="2" required>' + esc(tk.text) + '</textarea>'
@@ -4556,6 +4557,7 @@
 			var pt = ((S.pers || {}).todos || []).find(function (x) { return x.id === m.id; });
 			if (!pt) { S.modal = null; return ''; }
 			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal dwdc-taskm">' + head(pt.gevent ? 'Google Calendar' : pt.done ? 'Completed · Personal' : 'Personal to-do', pt.gevent ? 'Event' : 'Task', 'details')
+				+ (pt.gevent ? '' : '<div class="dd-lanepick"><span>List</span><button type="button" data-lanemove="p:' + esc(pt.id) + '" aria-pressed="false">Work</button><button type="button" class="on" aria-pressed="true">Personal</button></div>')
 				+ (pt.source ? '<p class="dwdc-mutp">From ' + esc(pt.source) + (pt.gevent ? ' · edits and deletes also update your Google Calendar' : pt.gtask ? ' · changes also update Google Tasks' : '') + '</p>' : '')
 				+ (pt.gevent && isFlight(pt.text) ? flightMail(pt) : '')
 				+ '<form class="dwdc-fgrid dwdc-pedit" data-pform="ptask"><input type="hidden" name="id" value="' + esc(pt.id) + '"><label class="wide"><span>' + (pt.gevent ? 'Event' : 'To-do') + '</span><input name="text" value="' + esc(pt.text) + '" required></label><label><span>' + (pt.gevent ? 'Date' : 'Due') + '</span><input type="date" name="due" value="' + esc(pt.due || '') + '"></label>'
@@ -5053,6 +5055,28 @@
 			render(); focusIn((a === 'job' || a === 'hosting') && !S.modal.client ? '.dwdc-pick' : (a === 'hosting' ? '[name=website]' : '[name=name]')); return;
 		}
 		if (t.closest('select, input, textarea, summary, label')) { return; }
+		// Move a to-do between the Work and Personal lists (keeps what's typed in the form).
+		if ((el = t.closest('[data-lanemove]'))) {
+			var lm = el.getAttribute('data-lanemove'), lw = lm.slice(0, 1) === 'w', lid = lm.slice(2), lmod = el.closest('.dwdc-modal');
+			var lv = function (n) { var x = lmod && lmod.querySelector('[name="' + n + '"]'); return x ? x.value : ''; };
+			if (S.laneBusy) { return; }
+			S.laneBusy = 1; el.disabled = true;
+			var done = function (msg) { S.laneBusy = 0; S.modal = null; render(); toast(msg); };
+			var oops = function (er) { S.laneBusy = 0; el.disabled = false; fail(er); };
+			if (lw) {
+				var wt = S.tasks.find(function (x) { return String(x.id) === lid; }); if (!wt) { S.laneBusy = 0; return; }
+				api('/personal', 'POST', { kind: 'todos', item: { text: lv('text') || wt.text, due: lv('due') || wt.due || '', time: wt.time || '' } })
+					.then(function (d) { S.pers = d; return api('/task/' + wt.id, 'DELETE'); })
+					.then(function () { S.tasks = S.tasks.filter(function (x) { return x.id !== wt.id; }); done('Moved to Personal'); }).catch(oops);
+			} else {
+				var pt2 = ((S.pers || {}).todos || []).find(function (x) { return String(x.id) === lid; }); if (!pt2) { S.laneBusy = 0; return; }
+				var nt = lv('note') || pt2.note || '';
+				api('/task', 'POST', { text: (lv('text') || pt2.text) + (nt ? ' (' + nt + ')' : ''), contact: 0, due: lv('due') || pt2.due || '', time: pt2.time || '' })
+					.then(function (tk2) { if (tk2 && tk2.id) { S.tasks.unshift(tk2); } return api('/personal', 'POST', { kind: 'todos', 'delete': pt2.id }); })
+					.then(function (d) { S.pers = d; done('Moved to Work'); }).catch(oops);
+			}
+			return;
+		}
 		if ((el = t.closest('[data-del-task]'))) {
 			e.stopPropagation();
 			var id = +el.getAttribute('data-del-task');
