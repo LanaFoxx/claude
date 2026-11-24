@@ -516,6 +516,7 @@ function bi_role_help() {
 	$roles = array(
 		'administrator' => array( 'Administrator', 'Everything: all pages, menus, gallery and merchandise, plus adding and removing users, plugins and site settings. Give this only to owners and the web team.' ),
 		'editor'        => array( 'Editor', 'Recommended for staff. Can edit every page with Elementor, update restaurant menus, the gallery and merchandise, switch pages on or off, and upload photos. Cannot add users, change plugins or site settings.' ),
+		'bi_restaurant' => array( 'Restaurant Staff', 'For kitchen and restaurant managers. Can only update Restaurant Menus (dishes, prices, menu PDFs) and Restaurant Hours. Cannot edit pages, the gallery, the store, users or settings.' ),
 		'author'        => array( 'Author', 'Can write and publish their own blog posts and upload photos. Cannot edit pages, menus, the gallery or merchandise.' ),
 		'contributor'   => array( 'Contributor', 'Can write blog posts but not publish them (an Editor or Administrator has to approve). Cannot upload photos or edit pages.' ),
 		'subscriber'    => array( 'Subscriber', 'Can only log in and edit their own profile. No access to the website content.' ),

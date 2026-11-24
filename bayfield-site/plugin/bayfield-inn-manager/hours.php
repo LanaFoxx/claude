@@ -54,11 +54,11 @@ function bi_hours_groups( $days ) {
 
 /* ------------------------------------------------------------- admin page */
 add_action( 'admin_menu', function () {
-	add_submenu_page( 'bi-menus', 'Restaurant Hours', 'Hours', BI_MANAGER_CAP, 'bi-hours', 'bi_render_hours' );
+	add_submenu_page( 'bi-menus', 'Restaurant Hours', 'Hours', BI_MENUS_CAP, 'bi-hours', 'bi_render_hours' );
 }, 20 );
 
 add_action( 'admin_post_bi_save_hours', function () {
-	if ( ! current_user_can( BI_MANAGER_CAP ) ) {
+	if ( ! current_user_can( BI_MENUS_CAP ) ) {
 		wp_die( 'Not allowed' );
 	}
 	check_admin_referer( 'bi_save_hours' );

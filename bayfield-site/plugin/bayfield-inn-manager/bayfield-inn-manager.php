@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Bayfield Inn Manager
  * Description: Simple dashboard for the Bayfield Inn team to edit restaurant menus, the photo gallery and merchandise. The site's Elementor pages show whatever is saved here.
- * Version: 2.3.2
+ * Version: 2.3.3
  * Author: Dream Web Digital
  * Requires at least: 6.0
  * Requires PHP: 7.4
@@ -10,7 +10,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'BI_MANAGER_VERSION', '2.3.2' );
+define( 'BI_MANAGER_VERSION', '2.3.3' );
 define( 'BI_MANAGER_URL', plugin_dir_url( __FILE__ ) );
 define( 'BI_MANAGER_DIR', plugin_dir_path( __FILE__ ) );
 define( 'BI_MANAGER_CAP', 'edit_pages' ); // Administrators and Editors.
@@ -62,8 +62,8 @@ function bi_save_data( $kind, $data ) {
 /* ----------------------------------------------------------------- admin */
 
 add_action( 'admin_menu', function () {
-	add_menu_page( 'Bayfield Inn', 'Bayfield Inn', BI_MANAGER_CAP, 'bi-menus', 'bi_render_admin', 'dashicons-building', 3 );
-	add_submenu_page( 'bi-menus', 'Restaurant Menus', 'Restaurant Menus', BI_MANAGER_CAP, 'bi-menus', 'bi_render_admin' );
+	add_menu_page( 'Bayfield Inn', 'Bayfield Inn', BI_MENUS_CAP, 'bi-menus', 'bi_render_admin', 'dashicons-building', 3 );
+	add_submenu_page( 'bi-menus', 'Restaurant Menus', 'Restaurant Menus', BI_MENUS_CAP, 'bi-menus', 'bi_render_admin' );
 	add_submenu_page( 'bi-menus', 'Gallery', 'Gallery', BI_MANAGER_CAP, 'bi-gallery', 'bi_render_admin' );
 	if ( ! class_exists( 'WooCommerce' ) ) { // merchandise now lives in WooCommerce › Products
 		add_submenu_page( 'bi-menus', 'Merchandise', 'Merchandise', BI_MANAGER_CAP, 'bi-merch', 'bi_render_admin' );
@@ -127,10 +127,11 @@ add_action( 'admin_enqueue_scripts', function ( $hook ) {
 
 add_action( 'wp_ajax_bi_save', function () {
 	check_ajax_referer( 'bi_save', 'nonce' );
-	if ( ! current_user_can( BI_MANAGER_CAP ) ) {
+	$kind = isset( $_POST['kind'] ) ? sanitize_key( wp_unslash( $_POST['kind'] ) ) : '';
+	// Restaurant Staff may save menus only; everything else needs an Editor or Administrator.
+	if ( ! current_user_can( 'menus' === $kind ? BI_MENUS_CAP : BI_MANAGER_CAP ) ) {
 		wp_send_json_error( 'Not allowed', 403 );
 	}
-	$kind = isset( $_POST['kind'] ) ? sanitize_key( wp_unslash( $_POST['kind'] ) ) : '';
 	$data = isset( $_POST['data'] ) ? json_decode( wp_unslash( $_POST['data'] ), true ) : null;
 	if ( ! is_array( $data ) || ! bi_save_data( $kind, $data ) ) {
 		wp_send_json_error( 'Could not save', 400 );
@@ -190,6 +191,7 @@ require_once BI_MANAGER_DIR . 'live-viewers.php';
 require_once BI_MANAGER_DIR . 'booking.php';
 require_once BI_MANAGER_DIR . 'performance.php';
 require_once BI_MANAGER_DIR . 'visibility.php';
+require_once BI_MANAGER_DIR . 'roles.php';
 require_once BI_MANAGER_DIR . 'hours.php';
 require_once BI_MANAGER_DIR . 'store.php';
 require_once BI_MANAGER_DIR . 'store-dashboard.php';
