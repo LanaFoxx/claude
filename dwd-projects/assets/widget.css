@@ -32,3 +32,21 @@ button { font: inherit; cursor: pointer; }
 .w-row em.late { color: var(--danger-text); } .w-row em.today { color: var(--accent-text); }
 .w-empty { text-align: center; color: var(--text-3); padding: 30px 0; }
 .w-foot { padding: 6px 12px 8px; font-size: 11px; color: var(--text-3); border-top: 1px solid var(--border); }
+/* Phones: bigger, easier-to-read text and tap targets */
+@media (max-width: 700px) {
+	.w-top { padding: 12px 12px 10px; gap: 8px; }
+	.w-seg button { height: 42px; font-size: 17px; }
+	.w-ic { width: 42px; height: 42px; font-size: 18px; }
+	.w-add { padding: 0 12px; gap: 8px; }
+	.w-add input, .w-add button { height: 48px; font-size: 17px; }
+	.w-hint { font-size: 15px; }
+	.w-list { padding: 6px 12px 12px; }
+	.w-gh { margin: 16px 2px 8px; font-size: 14px; }
+	.w-row { gap: 14px; padding: 14px 12px; margin-bottom: 8px; border-radius: 10px; }
+	.w-chk { width: 26px; height: 26px; border-radius: 7px; margin-top: 0; }
+	.w-t b { font-size: 19px; font-weight: 500; line-height: 1.35; }
+	.w-t small { font-size: 15px; }
+	.w-row em { font-size: 15px; padding-top: 3px; }
+	.w-empty { font-size: 17px; }
+	.w-foot { font-size: 14px; padding: 8px 14px 10px; }
+}
