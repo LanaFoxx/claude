@@ -457,3 +457,9 @@
 /* Schedule & to-dos box: the whole top section reads as the header (line under it) */
 .dd-ptoday > .dd-ch { border-bottom: 1px solid var(--border); padding-bottom: 16px !important; margin-bottom: 4px; }
 .dd-ptoday > .dd-tl { padding-top: 13px !important; } /* same space above the first to-do as below the last */
+/* Phones: the "…" menu opens as a sheet across the bottom of the screen (it used to run off the left edge) */
+@media (max-width: 767px) {
+	.dd .dd-pp-more .dd-menu2 { position: fixed; left: 8px; right: 8px; top: auto; bottom: 8px; min-width: 0; max-height: 70vh; overflow-y: auto; padding: 8px; border-radius: 16px; z-index: 100000; box-shadow: 0 -8px 40px rgba(0,0,0,.45); }
+	.dd .dd-pp-more .dd-menu2 button { height: 46px; font-size: 16px; flex: none; }
+	body:has(.dd-pp-more.open) #dwdc-askfab { display: none; }
+}
