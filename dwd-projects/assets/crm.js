@@ -1520,15 +1520,14 @@
 				var bv = function (x) { return x.available != null ? x.available : (x.current || 0); }, tot = BA.reduce(function (a, x) { return a + bv(x); }, 0);
 				var at = BK && BK.balances && BK.balances.at ? new Date(BK.balances.at.replace(' ', 'T') + 'Z') : null;
 				var when = at ? (at.toDateString() === new Date().toDateString() ? '' : at.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ', ') + at.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : '';
-				return '<a href="#personal/spending" class="dd-bank" title="' + esc(BA.map(function (x) { return x.name + ' ••' + x.mask + ': ' + money2(bv(x)); }).join('\n')) + '"><span>Bank balance<small>' + (BK ? (BA.length ? 'Checking + savings · as of ' + when : 'No bank connected') : 'Loading…') + '</small></span><b>' + (BA.length ? money2(tot) : '—') + '</b>'
-					+ (BA.length ? '<button type="button" class="dd-ibtn sm" data-bankrefresh aria-label="Refresh balance" title="Get the latest balance">' + lu('repeat', 14) + '</button>' : '') + '</a>';
+				return '<a href="#personal/spending" class="dd-bank" title="' + esc(BA.map(function (x) { return x.name + ' ••' + x.mask + ': ' + money2(bv(x)); }).join('\n')) + '"><span>Bank balance<small>' + (BK ? (BA.length ? 'Checking + savings · as of ' + when : 'No bank connected') : 'Loading…') + '</small></span><b' + (BA.length ? ' class="dd-tapnum" data-bankrefresh role="button" tabindex="0" title="Tap to get the latest balance"' : '') + '>' + (BA.length ? money2(tot) : '—') + '</b></a>';
 			})()
 			+ (function () {
 				var UT = upHome(), MYh = S.money || {}, yh = DWDC.today.slice(0, 4), mh = +DWDC.today.slice(5, 7) - 1, mn2 = new Date(DWDC.today + 'T12:00:00').toLocaleDateString('en-US', { month: 'long' });
 				var bankM = MYh[yh] && MYh[yh].m ? Math.max(0, +MYh[yh].m[mh] || 0) : 0;
 				var usn = upSnap(), uchk = usn && usn.checked ? 'checked ' + agoShort(usn.checked) : '';
 				return '<a href="#money" data-owed><span>Owed<small>Not paid yet by clients</small></span><b>' + money(owed(owingList())) + '</b></a>'
-					+ '<a href="#money" data-upmoney><span>Pending in Upwork<small>' + (UT.pnext ? 'Next frees up ' + fmt(UT.pnext) : 'Nothing on hold') + (uchk ? ' · ' + uchk : '') + '</small></span><b>' + money(UT.pend) + '</b><button type="button" class="dd-ibtn sm" data-uprefresh aria-label="Refresh Upwork numbers" title="Reload the Upwork numbers">' + lu('repeat', 14) + '</button></a>'
+					+ '<a href="#money" data-upmoney><span>Pending in Upwork<small>' + (UT.pnext ? 'Next frees up ' + fmt(UT.pnext) : 'Nothing on hold') + (uchk ? ' · ' + uchk : '') + '</small></span><b class="dd-tapnum" data-uprefresh role="button" tabindex="0" title="Tap to reload the Upwork numbers">' + money(UT.pend) + '</b></a>'
 					+ '<a href="#money" data-upmoney><span>Ready to withdraw<small>' + (uchk ? 'Upwork ' + uchk : 'Available in Upwork now') + '</small></span><b>' + money(UT.avail) + '</b></a>'
 					;
 			})()
@@ -4949,7 +4948,7 @@
 		// Refresh on the Pending in Upwork tile: re-read the saved Upwork numbers (new ones come from the Upwork check on Mike's computer).
 		if ((el = t.closest('[data-uprefresh]'))) {
 			// Shows the latest Upwork numbers saved by the Upwork check on Mike's PC (no pop-ups, nothing to confirm).
-			e.preventDefault(); e.stopPropagation(); el.disabled = true; el.classList.add('spin');
+			e.preventDefault(); e.stopPropagation(); if (el.classList.contains('spin')) { return; } el.classList.add('spin');
 			api('/upwork-snap').then(function (x) {
 				S.upsnap = x || { none: true }; upBalSync(); el.disabled = false; el.classList.remove('spin'); render();
 				toast('Upwork numbers as of ' + (x && x.checked ? new Date(x.checked).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : 'the last check'));
@@ -5224,7 +5223,7 @@
 		if ((el = t.closest('[data-flagset]'))) { e.preventDefault(); e.stopPropagation(); var fp = el.getAttribute('data-flagset').split(':'), fc = contact(+fp[0]); S.flagOpen = 0; if (fc) { fc.flag = fp[1]; } render(); api('/contact/' + fp[0], 'POST', { flag: fp[1] }).then(function (x) { upsert(x); }).catch(fail); return; }
 		if ((el = t.closest('[data-flag]'))) { e.preventDefault(); e.stopPropagation(); var fid = +el.getAttribute('data-flag'); S.flagOpen = S.flagOpen === fid ? 0 : fid; render(); placeFlagMenu(); return; }
 		if (S.flagOpen && !t.closest('.dd-flagm')) { S.flagOpen = 0; render(); }
-		if ((el = t.closest('[data-bankrefresh]'))) { e.preventDefault(); e.stopPropagation(); el.disabled = true; el.classList.add('spin'); api('/plaid', 'POST', { action: 'balances' }).then(function (b) { if (S.bank && b && b.accounts) { S.bank.balances = b; } render(); toast(b && b.live_error ? 'Live balance not available from Plaid (' + b.live_error + '). Showing Plaid’s last stored balance.' : 'Live bank balance updated', !!(b && b.live_error)); }).catch(fail); return; }
+		if ((el = t.closest('[data-bankrefresh]'))) { e.preventDefault(); e.stopPropagation(); if (el.classList.contains('spin')) { return; } el.classList.add('spin'); toast('Getting the latest balance…'); api('/plaid', 'POST', { action: 'balances' }).then(function (b) { if (S.bank && b && b.accounts) { S.bank.balances = b; } render(); toast(b && b.live_error ? 'Live balance not available from Plaid (' + b.live_error + '). Showing Plaid’s last stored balance.' : 'Live bank balance updated', !!(b && b.live_error)); }).catch(fail); return; }
 		if ((el = t.closest('[data-tgopen]'))) { S.tgOpen = S.tgOpen || {}; S.tgOpen[+el.getAttribute('data-tgopen')] = true; }
 		if ((el = t.closest('[data-actmove]'))) { e.preventDefault(); e.stopPropagation(); var am = el.getAttribute('data-actmove').split(':'); actMove(+am[0], am[1]); return; }
 		if ((el = t.closest('[data-achip]'))) { S.achip = el.getAttribute('data-achip'); render(); return; }
