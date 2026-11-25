@@ -3376,7 +3376,7 @@
    ]
   },
   {
-   "id": "25e5bc1",
+   "id": "3875915",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -3454,7 +3454,7 @@
    },
    "elements": [
     {
-     "id": "923e312",
+     "id": "b4e03f9",
      "elType": "widget",
      "widgetType": "heading",
      "isInner": false,
@@ -3502,7 +3502,7 @@
      "elements": []
     },
     {
-     "id": "2adc220",
+     "id": "b969bd9",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -3559,12 +3559,12 @@
       },
       "grid_columns_grid": {
        "unit": "fr",
-       "size": 3,
+       "size": 2,
        "sizes": []
       },
       "grid_columns_grid_laptop": {
        "unit": "fr",
-       "size": 3,
+       "size": 2,
        "sizes": []
       },
       "grid_columns_grid_tablet": {
@@ -3809,114 +3809,13 @@
          "elements": []
         }
        ]
-      },
-      {
-       "id": "3875915",
-       "elType": "container",
-       "isInner": true,
-       "settings": {
-        "_title": "Before After / Photo 3",
-        "content_width": "full",
-        "flex_direction": "column",
-        "flex_gap": {
-         "column": "12",
-         "row": "12",
-         "isLinked": true,
-         "unit": "px",
-         "size": 12
-        },
-        "flex_gap_laptop": {
-         "column": "12",
-         "row": "12",
-         "isLinked": true,
-         "unit": "px",
-         "size": 12
-        },
-        "flex_gap_tablet": {
-         "column": "12",
-         "row": "12",
-         "isLinked": true,
-         "unit": "px",
-         "size": 12
-        },
-        "flex_gap_mobile": {
-         "column": "12",
-         "row": "12",
-         "isLinked": true,
-         "unit": "px",
-         "size": 12
-        },
-        "width": {
-         "unit": "%",
-         "size": 100,
-         "sizes": []
-        },
-        "padding": {
-         "unit": "px",
-         "top": "0",
-         "right": "0",
-         "bottom": "0",
-         "left": "0",
-         "isLinked": true
-        }
-       },
-       "elements": [
-        {
-         "id": "b4e03f9",
-         "elType": "widget",
-         "widgetType": "image",
-         "isInner": false,
-         "settings": {
-          "image": {
-           "id": 2843,
-           "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-log-before-after-3.jpg",
-           "alt": "Log cabin before and after restoration",
-           "source": "library"
-          },
-          "image_size": "full",
-          "custom_css": "selector img{width:100%;display:block;border-radius:4px;height:auto;}",
-          "_title": "Before After / Photo 3 / Image"
-         },
-         "elements": []
-        },
-        {
-         "id": "b969bd9",
-         "elType": "widget",
-         "widgetType": "text-editor",
-         "isInner": false,
-         "settings": {
-          "editor": "<p>A small cabin restored, with fresh chinking</p>",
-          "text_color": "#B3A99C",
-          "paragraph_spacing": {
-           "unit": "px",
-           "size": 0,
-           "sizes": []
-          },
-          "typography_typography": "custom",
-          "typography_font_family": "Manrope",
-          "typography_font_size": {
-           "unit": "px",
-           "size": 14,
-           "sizes": []
-          },
-          "typography_line_height": {
-           "unit": "em",
-           "size": 1.5,
-           "sizes": []
-          },
-          "custom_css": "selector p:last-child{margin-block-end:0;}",
-          "_title": "Before After / Photo 3 / Caption"
-         },
-         "elements": []
-        }
-       ]
       }
      ]
     }
    ]
   },
   {
-   "id": "f61f1bf",
+   "id": "d988cfd",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -3994,7 +3893,7 @@
    },
    "elements": [
     {
-     "id": "409535b",
+     "id": "a7bc9f3",
      "elType": "widget",
      "widgetType": "heading",
      "isInner": false,
@@ -4042,7 +3941,7 @@
      "elements": []
     },
     {
-     "id": "3986a32",
+     "id": "b98a33d",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -4149,11 +4048,112 @@
      },
      "elements": [
       {
-       "id": "73a362b",
+       "id": "25e5bc1",
        "elType": "container",
        "isInner": true,
        "settings": {
         "_title": "Photo Strip / Photo 1",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "12",
+         "row": "12",
+         "isLinked": true,
+         "unit": "px",
+         "size": 12
+        },
+        "flex_gap_laptop": {
+         "column": "12",
+         "row": "12",
+         "isLinked": true,
+         "unit": "px",
+         "size": 12
+        },
+        "flex_gap_tablet": {
+         "column": "12",
+         "row": "12",
+         "isLinked": true,
+         "unit": "px",
+         "size": 12
+        },
+        "flex_gap_mobile": {
+         "column": "12",
+         "row": "12",
+         "isLinked": true,
+         "unit": "px",
+         "size": 12
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "0",
+         "right": "0",
+         "bottom": "0",
+         "left": "0",
+         "isLinked": true
+        }
+       },
+       "elements": [
+        {
+         "id": "923e312",
+         "elType": "widget",
+         "widgetType": "image",
+         "isInner": false,
+         "settings": {
+          "image": {
+           "id": 2844,
+           "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-log-home-restained.jpg",
+           "alt": "Large log home after restaining",
+           "source": "library"
+          },
+          "image_size": "full",
+          "custom_css": "selector img{width:100%;display:block;border-radius:4px;height:300px;object-fit:cover;}@media (max-width:980px){selector img{height:280px;}}@media (max-width:600px){selector img{height:200px;}}",
+          "_title": "Photo Strip / Photo 1 / Image"
+         },
+         "elements": []
+        },
+        {
+         "id": "2adc220",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>Large log home after restaining</p>",
+          "text_color": "#5B5046",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 14,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.5,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "Photo Strip / Photo 1 / Caption"
+         },
+         "elements": []
+        }
+       ]
+      },
+      {
+       "id": "73a362b",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Photo Strip / Photo 2",
         "content_width": "full",
         "flex_direction": "column",
         "flex_gap": {
@@ -4206,14 +4206,14 @@
          "isInner": false,
          "settings": {
           "image": {
-           "id": 2844,
-           "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-log-home-restained.jpg",
-           "alt": "Large log home after restaining",
+           "id": 2845,
+           "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-log-cabin-chinked.jpg",
+           "alt": "Restored log cabin with new chinking",
            "source": "library"
           },
           "image_size": "full",
           "custom_css": "selector img{width:100%;display:block;border-radius:4px;height:300px;object-fit:cover;}@media (max-width:980px){selector img{height:280px;}}@media (max-width:600px){selector img{height:200px;}}",
-          "_title": "Photo Strip / Photo 1 / Image"
+          "_title": "Photo Strip / Photo 2 / Image"
          },
          "elements": []
         },
@@ -4223,7 +4223,7 @@
          "widgetType": "text-editor",
          "isInner": false,
          "settings": {
-          "editor": "<p>Large log home after restaining</p>",
+          "editor": "<p>Restored cabin with new chinking</p>",
           "text_color": "#5B5046",
           "paragraph_spacing": {
            "unit": "px",
@@ -4243,7 +4243,7 @@
            "sizes": []
           },
           "custom_css": "selector p:last-child{margin-block-end:0;}",
-          "_title": "Photo Strip / Photo 1 / Caption"
+          "_title": "Photo Strip / Photo 2 / Caption"
          },
          "elements": []
         }
@@ -4254,7 +4254,7 @@
        "elType": "container",
        "isInner": true,
        "settings": {
-        "_title": "Photo Strip / Photo 2",
+        "_title": "Photo Strip / Photo 3",
         "content_width": "full",
         "flex_direction": "column",
         "flex_gap": {
@@ -4307,14 +4307,14 @@
          "isInner": false,
          "settings": {
           "image": {
-           "id": 2845,
-           "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-log-cabin-chinked.jpg",
-           "alt": "Restored log cabin with new chinking",
+           "id": 2829,
+           "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-masking-log-windows.jpg",
+           "alt": "Windows masked and protected before staining a log home",
            "source": "library"
           },
           "image_size": "full",
           "custom_css": "selector img{width:100%;display:block;border-radius:4px;height:300px;object-fit:cover;}@media (max-width:980px){selector img{height:280px;}}@media (max-width:600px){selector img{height:200px;}}",
-          "_title": "Photo Strip / Photo 2 / Image"
+          "_title": "Photo Strip / Photo 3 / Image"
          },
          "elements": []
         },
@@ -4324,7 +4324,7 @@
          "widgetType": "text-editor",
          "isInner": false,
          "settings": {
-          "editor": "<p>Restored cabin with new chinking</p>",
+          "editor": "<p>Windows masked before staining</p>",
           "text_color": "#5B5046",
           "paragraph_spacing": {
            "unit": "px",
@@ -4344,7 +4344,7 @@
            "sizes": []
           },
           "custom_css": "selector p:last-child{margin-block-end:0;}",
-          "_title": "Photo Strip / Photo 2 / Caption"
+          "_title": "Photo Strip / Photo 3 / Caption"
          },
          "elements": []
         }
@@ -4355,7 +4355,7 @@
        "elType": "container",
        "isInner": true,
        "settings": {
-        "_title": "Photo Strip / Photo 3",
+        "_title": "Photo Strip / Photo 4",
         "content_width": "full",
         "flex_direction": "column",
         "flex_gap": {
@@ -4408,107 +4408,6 @@
          "isInner": false,
          "settings": {
           "image": {
-           "id": 2829,
-           "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-masking-log-windows.jpg",
-           "alt": "Windows masked and protected before staining a log home",
-           "source": "library"
-          },
-          "image_size": "full",
-          "custom_css": "selector img{width:100%;display:block;border-radius:4px;height:300px;object-fit:cover;}@media (max-width:980px){selector img{height:280px;}}@media (max-width:600px){selector img{height:200px;}}",
-          "_title": "Photo Strip / Photo 3 / Image"
-         },
-         "elements": []
-        },
-        {
-         "id": "1aa58cd",
-         "elType": "widget",
-         "widgetType": "text-editor",
-         "isInner": false,
-         "settings": {
-          "editor": "<p>Windows masked before staining</p>",
-          "text_color": "#5B5046",
-          "paragraph_spacing": {
-           "unit": "px",
-           "size": 0,
-           "sizes": []
-          },
-          "typography_typography": "custom",
-          "typography_font_family": "Manrope",
-          "typography_font_size": {
-           "unit": "px",
-           "size": 14,
-           "sizes": []
-          },
-          "typography_line_height": {
-           "unit": "em",
-           "size": 1.5,
-           "sizes": []
-          },
-          "custom_css": "selector p:last-child{margin-block-end:0;}",
-          "_title": "Photo Strip / Photo 3 / Caption"
-         },
-         "elements": []
-        }
-       ]
-      },
-      {
-       "id": "d988cfd",
-       "elType": "container",
-       "isInner": true,
-       "settings": {
-        "_title": "Photo Strip / Photo 4",
-        "content_width": "full",
-        "flex_direction": "column",
-        "flex_gap": {
-         "column": "12",
-         "row": "12",
-         "isLinked": true,
-         "unit": "px",
-         "size": 12
-        },
-        "flex_gap_laptop": {
-         "column": "12",
-         "row": "12",
-         "isLinked": true,
-         "unit": "px",
-         "size": 12
-        },
-        "flex_gap_tablet": {
-         "column": "12",
-         "row": "12",
-         "isLinked": true,
-         "unit": "px",
-         "size": 12
-        },
-        "flex_gap_mobile": {
-         "column": "12",
-         "row": "12",
-         "isLinked": true,
-         "unit": "px",
-         "size": 12
-        },
-        "width": {
-         "unit": "%",
-         "size": 100,
-         "sizes": []
-        },
-        "padding": {
-         "unit": "px",
-         "top": "0",
-         "right": "0",
-         "bottom": "0",
-         "left": "0",
-         "isLinked": true
-        }
-       },
-       "elements": [
-        {
-         "id": "a7bc9f3",
-         "elType": "widget",
-         "widgetType": "image",
-         "isInner": false,
-         "settings": {
-          "image": {
            "id": 2848,
            "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-crew-log-wall.jpg",
            "alt": "Crew staining and sealing a log wall",
@@ -4521,7 +4420,7 @@
          "elements": []
         },
         {
-         "id": "b98a33d",
+         "id": "1aa58cd",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -4557,7 +4456,7 @@
    ]
   },
   {
-   "id": "126b3d0",
+   "id": "404e74d",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -4635,7 +4534,7 @@
    },
    "elements": [
     {
-     "id": "5afc59d",
+     "id": "409535b",
      "elType": "widget",
      "widgetType": "heading",
      "isInner": false,
@@ -4683,7 +4582,7 @@
      "elements": []
     },
     {
-     "id": "b13bb87",
+     "id": "737c119",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -4790,7 +4689,7 @@
      },
      "elements": [
       {
-       "id": "6b72fcc",
+       "id": "5b983f0",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -4886,7 +4785,7 @@
        },
        "elements": [
         {
-         "id": "5b983f0",
+         "id": "3986a32",
          "elType": "widget",
          "widgetType": "rating",
          "isInner": false,
@@ -4918,7 +4817,7 @@
          "elements": []
         },
         {
-         "id": "9a89cf7",
+         "id": "f61f1bf",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -4963,7 +4862,7 @@
          "elements": []
         },
         {
-         "id": "591bb11",
+         "id": "5afc59d",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -4995,7 +4894,7 @@
        ]
       },
       {
-       "id": "cf3b916",
+       "id": "324e229",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -5091,7 +4990,7 @@
        },
        "elements": [
         {
-         "id": "324e229",
+         "id": "9a89cf7",
          "elType": "widget",
          "widgetType": "rating",
          "isInner": false,
@@ -5123,7 +5022,7 @@
          "elements": []
         },
         {
-         "id": "737c119",
+         "id": "591bb11",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -5168,7 +5067,7 @@
          "elements": []
         },
         {
-         "id": "404e74d",
+         "id": "6b72fcc",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -5204,7 +5103,7 @@
    ]
   },
   {
-   "id": "7c32fb0",
+   "id": "ab1f9d0",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -5282,7 +5181,7 @@
    },
    "elements": [
     {
-     "id": "8ae212b",
+     "id": "e8e93ef",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -5389,7 +5288,7 @@
      },
      "elements": [
       {
-       "id": "ab1f9d0",
+       "id": "b13bb87",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -5440,7 +5339,7 @@
        },
        "elements": [
         {
-         "id": "e8e93ef",
+         "id": "cf3b916",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -5490,7 +5389,7 @@
        ]
       },
       {
-       "id": "b5d50dd",
+       "id": "126b3d0",
        "elType": "widget",
        "widgetType": "html",
        "isInner": false,
@@ -5505,7 +5404,7 @@
    ]
   },
   {
-   "id": "c8d3b18",
+   "id": "f080049",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -5583,7 +5482,7 @@
    },
    "elements": [
     {
-     "id": "3bbf227",
+     "id": "d6c715b",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -5690,7 +5589,7 @@
      },
      "elements": [
       {
-       "id": "dfe7a42",
+       "id": "8ae212b",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -5741,7 +5640,7 @@
        },
        "elements": [
         {
-         "id": "6b0c691",
+         "id": "b5d50dd",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -5791,7 +5690,7 @@
        ]
       },
       {
-       "id": "999147e",
+       "id": "f6f1cf5",
        "elType": "widget",
        "widgetType": "icon-list",
        "isInner": false,
@@ -5805,7 +5704,7 @@
         "text_color_hover": "#D9A66B",
         "icon_list": [
          {
-          "_id": "d5ba0cf",
+          "_id": "7c32fb0",
           "text": "Chinking &amp; Check Sealing",
           "link": {
            "url": "/chinking-check-sealing/",
@@ -5818,7 +5717,7 @@
           }
          },
          {
-          "_id": "f6f1cf5",
+          "_id": "6b0c691",
           "text": "Rot Repair &amp; Prevention",
           "link": {
            "url": "/rot-repair-prevention/",
@@ -5831,7 +5730,7 @@
           }
          },
          {
-          "_id": "d6c715b",
+          "_id": "dfe7a42",
           "text": "Deck Staining",
           "link": {
            "url": "/deck-staining/",
@@ -5844,7 +5743,7 @@
           }
          },
          {
-          "_id": "f080049",
+          "_id": "d5ba0cf",
           "text": "Media Blasting",
           "link": {
            "url": "/media-blasting/",
@@ -5888,7 +5787,7 @@
    ]
   },
   {
-   "id": "39f7d73",
+   "id": "608e5b3",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -5984,7 +5883,7 @@
    },
    "elements": [
     {
-     "id": "350e0c1",
+     "id": "3dfbc7b",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -6036,7 +5935,7 @@
      },
      "elements": [
       {
-       "id": "94250d8",
+       "id": "999147e",
        "elType": "widget",
        "widgetType": "heading",
        "isInner": false,
@@ -6085,7 +5984,7 @@
        "elements": []
       },
       {
-       "id": "178e264",
+       "id": "3bbf227",
        "elType": "widget",
        "widgetType": "text-editor",
        "isInner": false,
@@ -6116,7 +6015,7 @@
        "elements": []
       },
       {
-       "id": "9a02390",
+       "id": "178e264",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -6170,7 +6069,7 @@
        },
        "elements": [
         {
-         "id": "3dfbc7b",
+         "id": "c8d3b18",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,
@@ -6222,7 +6121,7 @@
          "elements": []
         },
         {
-         "id": "608e5b3",
+         "id": "94250d8",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,

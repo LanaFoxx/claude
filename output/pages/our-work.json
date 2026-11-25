@@ -4,7 +4,7 @@
  "type": "page",
  "content": [
   {
-   "id": "67f36ca",
+   "id": "6c2e282",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -82,7 +82,7 @@
    },
    "elements": [
     {
-     "id": "675d36c",
+     "id": "66f0a1e",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -189,7 +189,7 @@
      },
      "elements": [
       {
-       "id": "b9bdbbe",
+       "id": "b91a562",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -241,7 +241,7 @@
        },
        "elements": [
         {
-         "id": "cbf7d98",
+         "id": "927761f",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -272,7 +272,7 @@
          "elements": []
         },
         {
-         "id": "936fe72",
+         "id": "95bed1d",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -320,7 +320,7 @@
          "elements": []
         },
         {
-         "id": "4b3a03b",
+         "id": "a8885a6",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -365,7 +365,7 @@
          "elements": []
         },
         {
-         "id": "b86b276",
+         "id": "616438f",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -418,7 +418,7 @@
          },
          "elements": [
           {
-           "id": "f913f8d",
+           "id": "633996d",
            "elType": "widget",
            "widgetType": "button",
            "isInner": false,
@@ -470,7 +470,7 @@
            "elements": []
           },
           {
-           "id": "88845e1",
+           "id": "8d3e7a2",
            "elType": "widget",
            "widgetType": "button",
            "isInner": false,
@@ -543,7 +543,7 @@
    ]
   },
   {
-   "id": "615c8a2",
+   "id": "23fc42e",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -621,7 +621,7 @@
    },
    "elements": [
     {
-     "id": "68f0080",
+     "id": "3e608e3",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -727,7 +727,7 @@
      },
      "elements": [
       {
-       "id": "9f24f14",
+       "id": "a6ccaff",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -735,32 +735,32 @@
         "content_width": "full",
         "flex_direction": "column",
         "flex_gap": {
-         "column": "0",
-         "row": "0",
+         "column": "10",
+         "row": "10",
          "isLinked": true,
          "unit": "px",
-         "size": 0
+         "size": 10
         },
         "flex_gap_laptop": {
-         "column": "0",
-         "row": "0",
+         "column": "10",
+         "row": "10",
          "isLinked": true,
          "unit": "px",
-         "size": 0
+         "size": 10
         },
         "flex_gap_tablet": {
-         "column": "0",
-         "row": "0",
+         "column": "10",
+         "row": "10",
          "isLinked": true,
          "unit": "px",
-         "size": 0
+         "size": 10
         },
         "flex_gap_mobile": {
-         "column": "0",
-         "row": "0",
+         "column": "10",
+         "row": "10",
          "isLinked": true,
          "unit": "px",
-         "size": 0
+         "size": 10
         },
         "width": {
          "unit": "%",
@@ -770,50 +770,65 @@
         "padding": {
          "unit": "px",
          "top": "0",
-         "right": "14",
-         "bottom": "14",
-         "left": "14",
-         "isLinked": false
-        },
-        "background_background": "classic",
-        "background_color": "#33261C",
-        "background_position": "center center",
-        "background_size": "cover",
-        "background_repeat": "no-repeat",
-        "flex_justify_content": "flex-end",
-        "css_classes": "tn-photo",
-        "min_height": {
-         "unit": "px",
-         "size": 340,
-         "sizes": []
-        },
-        "min_height_laptop": {
-         "unit": "px",
-         "size": 320,
-         "sizes": []
-        },
-        "min_height_tablet": {
-         "unit": "px",
-         "size": 280,
-         "sizes": []
-        },
-        "min_height_mobile": {
-         "unit": "px",
-         "size": 190,
-         "sizes": []
-        },
-        "background_image": {
-         "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-log-home-winter.jpg",
-         "id": 2752,
-         "size": "",
-         "alt": "Large stained log home in winter",
-         "source": "library"
+         "right": "0",
+         "bottom": "0",
+         "left": "0",
+         "isLinked": true
         }
        },
-       "elements": []
+       "elements": [
+        {
+         "id": "9594bce",
+         "elType": "widget",
+         "widgetType": "image",
+         "isInner": false,
+         "settings": {
+          "image": {
+           "id": 2827,
+           "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-ext-after.jpg",
+           "alt": "Exterior after repaint in white with navy shutters",
+           "source": "library"
+          },
+          "image_size": "full",
+          "custom_css": "selector img{width:100%;display:block;border-radius:4px;height:320px;object-fit:cover;}@media (max-width:980px){selector img{height:280px;}}@media (max-width:600px){selector img{height:170px;}}",
+          "_title": "Gallery / Photo 1 / Image"
+         },
+         "elements": []
+        },
+        {
+         "id": "be5f364",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>Exterior repaint, white with navy shutters</p>",
+          "text_color": "#B3A99C",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 13,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.4,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "Gallery / Photo 1 / Caption"
+         },
+         "elements": []
+        }
+       ]
       },
       {
-       "id": "321cd72",
+       "id": "2ba98d0",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -821,32 +836,32 @@
         "content_width": "full",
         "flex_direction": "column",
         "flex_gap": {
-         "column": "0",
-         "row": "0",
+         "column": "10",
+         "row": "10",
          "isLinked": true,
          "unit": "px",
-         "size": 0
+         "size": 10
         },
         "flex_gap_laptop": {
-         "column": "0",
-         "row": "0",
+         "column": "10",
+         "row": "10",
          "isLinked": true,
          "unit": "px",
-         "size": 0
+         "size": 10
         },
         "flex_gap_tablet": {
-         "column": "0",
-         "row": "0",
+         "column": "10",
+         "row": "10",
          "isLinked": true,
          "unit": "px",
-         "size": 0
+         "size": 10
         },
         "flex_gap_mobile": {
-         "column": "0",
-         "row": "0",
+         "column": "10",
+         "row": "10",
          "isLinked": true,
          "unit": "px",
-         "size": 0
+         "size": 10
         },
         "width": {
          "unit": "%",
@@ -856,50 +871,65 @@
         "padding": {
          "unit": "px",
          "top": "0",
-         "right": "14",
-         "bottom": "14",
-         "left": "14",
-         "isLinked": false
-        },
-        "background_background": "classic",
-        "background_color": "#3A281B",
-        "background_position": "center center",
-        "background_size": "cover",
-        "background_repeat": "no-repeat",
-        "flex_justify_content": "flex-end",
-        "css_classes": "tn-photo",
-        "min_height": {
-         "unit": "px",
-         "size": 340,
-         "sizes": []
-        },
-        "min_height_laptop": {
-         "unit": "px",
-         "size": 320,
-         "sizes": []
-        },
-        "min_height_tablet": {
-         "unit": "px",
-         "size": 280,
-         "sizes": []
-        },
-        "min_height_mobile": {
-         "unit": "px",
-         "size": 190,
-         "sizes": []
-        },
-        "background_image": {
-         "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-covered-deck-log-rail.jpg",
-         "id": 2753,
-         "size": "",
-         "alt": "Covered deck with stained log railing",
-         "source": "library"
+         "right": "0",
+         "bottom": "0",
+         "left": "0",
+         "isLinked": true
         }
        },
-       "elements": []
+       "elements": [
+        {
+         "id": "9f24f14",
+         "elType": "widget",
+         "widgetType": "image",
+         "isInner": false,
+         "settings": {
+          "image": {
+           "id": 2752,
+           "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-log-home-winter.jpg",
+           "alt": "Large stained log home in winter",
+           "source": "library"
+          },
+          "image_size": "full",
+          "custom_css": "selector img{width:100%;display:block;border-radius:4px;height:320px;object-fit:cover;}@media (max-width:980px){selector img{height:280px;}}@media (max-width:600px){selector img{height:170px;}}",
+          "_title": "Gallery / Photo 2 / Image"
+         },
+         "elements": []
+        },
+        {
+         "id": "321cd72",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>Log home restain</p>",
+          "text_color": "#B3A99C",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 13,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.4,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "Gallery / Photo 2 / Caption"
+         },
+         "elements": []
+        }
+       ]
       },
       {
-       "id": "2ba98d0",
+       "id": "7b66b0d",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -907,32 +937,32 @@
         "content_width": "full",
         "flex_direction": "column",
         "flex_gap": {
-         "column": "0",
-         "row": "0",
+         "column": "10",
+         "row": "10",
          "isLinked": true,
          "unit": "px",
-         "size": 0
+         "size": 10
         },
         "flex_gap_laptop": {
-         "column": "0",
-         "row": "0",
+         "column": "10",
+         "row": "10",
          "isLinked": true,
          "unit": "px",
-         "size": 0
+         "size": 10
         },
         "flex_gap_tablet": {
-         "column": "0",
-         "row": "0",
+         "column": "10",
+         "row": "10",
          "isLinked": true,
          "unit": "px",
-         "size": 0
+         "size": 10
         },
         "flex_gap_mobile": {
-         "column": "0",
-         "row": "0",
+         "column": "10",
+         "row": "10",
          "isLinked": true,
          "unit": "px",
-         "size": 0
+         "size": 10
         },
         "width": {
          "unit": "%",
@@ -942,50 +972,65 @@
         "padding": {
          "unit": "px",
          "top": "0",
-         "right": "14",
-         "bottom": "14",
-         "left": "14",
-         "isLinked": false
-        },
-        "background_background": "classic",
-        "background_color": "#222B25",
-        "background_position": "center center",
-        "background_size": "cover",
-        "background_repeat": "no-repeat",
-        "flex_justify_content": "flex-end",
-        "css_classes": "tn-photo",
-        "min_height": {
-         "unit": "px",
-         "size": 340,
-         "sizes": []
-        },
-        "min_height_laptop": {
-         "unit": "px",
-         "size": 320,
-         "sizes": []
-        },
-        "min_height_tablet": {
-         "unit": "px",
-         "size": 280,
-         "sizes": []
-        },
-        "min_height_mobile": {
-         "unit": "px",
-         "size": 190,
-         "sizes": []
-        },
-        "background_image": {
-         "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-timber-ceiling-interior.jpg",
-         "id": 2749,
-         "size": "",
-         "alt": "Stained timber ceiling and log interior",
-         "source": "library"
+         "right": "0",
+         "bottom": "0",
+         "left": "0",
+         "isLinked": true
         }
        },
-       "elements": []
+       "elements": [
+        {
+         "id": "173ef47",
+         "elType": "widget",
+         "widgetType": "image",
+         "isInner": false,
+         "settings": {
+          "image": {
+           "id": 2824,
+           "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-ext-gray-repaint.jpg",
+           "alt": "Exterior repaint in dark gray with white trim",
+           "source": "library"
+          },
+          "image_size": "full",
+          "custom_css": "selector img{width:100%;display:block;border-radius:4px;height:320px;object-fit:cover;}@media (max-width:980px){selector img{height:280px;}}@media (max-width:600px){selector img{height:170px;}}",
+          "_title": "Gallery / Photo 3 / Image"
+         },
+         "elements": []
+        },
+        {
+         "id": "55580af",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>Dark gray exterior repaint</p>",
+          "text_color": "#B3A99C",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 13,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.4,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "Gallery / Photo 3 / Caption"
+         },
+         "elements": []
+        }
+       ]
       },
       {
-       "id": "173ef47",
+       "id": "9cdc06e",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -993,32 +1038,32 @@
         "content_width": "full",
         "flex_direction": "column",
         "flex_gap": {
-         "column": "0",
-         "row": "0",
+         "column": "10",
+         "row": "10",
          "isLinked": true,
          "unit": "px",
-         "size": 0
+         "size": 10
         },
         "flex_gap_laptop": {
-         "column": "0",
-         "row": "0",
+         "column": "10",
+         "row": "10",
          "isLinked": true,
          "unit": "px",
-         "size": 0
+         "size": 10
         },
         "flex_gap_tablet": {
-         "column": "0",
-         "row": "0",
+         "column": "10",
+         "row": "10",
          "isLinked": true,
          "unit": "px",
-         "size": 0
+         "size": 10
         },
         "flex_gap_mobile": {
-         "column": "0",
-         "row": "0",
+         "column": "10",
+         "row": "10",
          "isLinked": true,
          "unit": "px",
-         "size": 0
+         "size": 10
         },
         "width": {
          "unit": "%",
@@ -1028,50 +1073,65 @@
         "padding": {
          "unit": "px",
          "top": "0",
-         "right": "14",
-         "bottom": "14",
-         "left": "14",
-         "isLinked": false
-        },
-        "background_background": "classic",
-        "background_color": "#33261C",
-        "background_position": "center center",
-        "background_size": "cover",
-        "background_repeat": "no-repeat",
-        "flex_justify_content": "flex-end",
-        "css_classes": "tn-photo",
-        "min_height": {
-         "unit": "px",
-         "size": 340,
-         "sizes": []
-        },
-        "min_height_laptop": {
-         "unit": "px",
-         "size": 320,
-         "sizes": []
-        },
-        "min_height_tablet": {
-         "unit": "px",
-         "size": 280,
-         "sizes": []
-        },
-        "min_height_mobile": {
-         "unit": "px",
-         "size": 190,
-         "sizes": []
-        },
-        "background_image": {
-         "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-media-blasting-log-wall.jpg",
-         "id": 2748,
-         "size": "",
-         "alt": "Crew media blasting a log wall",
-         "source": "library"
+         "right": "0",
+         "bottom": "0",
+         "left": "0",
+         "isLinked": true
         }
        },
-       "elements": []
+       "elements": [
+        {
+         "id": "1b62fb0",
+         "elType": "widget",
+         "widgetType": "image",
+         "isInner": false,
+         "settings": {
+          "image": {
+           "id": 2844,
+           "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-log-home-restained.jpg",
+           "alt": "Large log home after restaining",
+           "source": "library"
+          },
+          "image_size": "full",
+          "custom_css": "selector img{width:100%;display:block;border-radius:4px;height:320px;object-fit:cover;}@media (max-width:980px){selector img{height:280px;}}@media (max-width:600px){selector img{height:170px;}}",
+          "_title": "Gallery / Photo 4 / Image"
+         },
+         "elements": []
+        },
+        {
+         "id": "3f6d148",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>Large log home after restaining</p>",
+          "text_color": "#B3A99C",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 13,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.4,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "Gallery / Photo 4 / Caption"
+         },
+         "elements": []
+        }
+       ]
       },
       {
-       "id": "55580af",
+       "id": "4b3a03b",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1079,32 +1139,32 @@
         "content_width": "full",
         "flex_direction": "column",
         "flex_gap": {
-         "column": "0",
-         "row": "0",
+         "column": "10",
+         "row": "10",
          "isLinked": true,
          "unit": "px",
-         "size": 0
+         "size": 10
         },
         "flex_gap_laptop": {
-         "column": "0",
-         "row": "0",
+         "column": "10",
+         "row": "10",
          "isLinked": true,
          "unit": "px",
-         "size": 0
+         "size": 10
         },
         "flex_gap_tablet": {
-         "column": "0",
-         "row": "0",
+         "column": "10",
+         "row": "10",
          "isLinked": true,
          "unit": "px",
-         "size": 0
+         "size": 10
         },
         "flex_gap_mobile": {
-         "column": "0",
-         "row": "0",
+         "column": "10",
+         "row": "10",
          "isLinked": true,
          "unit": "px",
-         "size": 0
+         "size": 10
         },
         "width": {
          "unit": "%",
@@ -1114,50 +1174,65 @@
         "padding": {
          "unit": "px",
          "top": "0",
-         "right": "14",
-         "bottom": "14",
-         "left": "14",
-         "isLinked": false
-        },
-        "background_background": "classic",
-        "background_color": "#3A281B",
-        "background_position": "center center",
-        "background_size": "cover",
-        "background_repeat": "no-repeat",
-        "flex_justify_content": "flex-end",
-        "css_classes": "tn-photo",
-        "min_height": {
-         "unit": "px",
-         "size": 340,
-         "sizes": []
-        },
-        "min_height_laptop": {
-         "unit": "px",
-         "size": 320,
-         "sizes": []
-        },
-        "min_height_tablet": {
-         "unit": "px",
-         "size": 280,
-         "sizes": []
-        },
-        "min_height_mobile": {
-         "unit": "px",
-         "size": 190,
-         "sizes": []
-        },
-        "background_image": {
-         "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-log-stair-interior.jpg",
-         "id": 2755,
-         "size": "",
-         "alt": "Stained log staircase inside a mountain home",
-         "source": "library"
+         "right": "0",
+         "bottom": "0",
+         "left": "0",
+         "isLinked": true
         }
        },
-       "elements": []
+       "elements": [
+        {
+         "id": "cbf7d98",
+         "elType": "widget",
+         "widgetType": "image",
+         "isInner": false,
+         "settings": {
+          "image": {
+           "id": 2825,
+           "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-ext-gray-garage.jpg",
+           "alt": "Gray exterior repaint with black garage doors",
+           "source": "library"
+          },
+          "image_size": "full",
+          "custom_css": "selector img{width:100%;display:block;border-radius:4px;height:320px;object-fit:cover;}@media (max-width:980px){selector img{height:280px;}}@media (max-width:600px){selector img{height:170px;}}",
+          "_title": "Gallery / Photo 5 / Image"
+         },
+         "elements": []
+        },
+        {
+         "id": "936fe72",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>Gray repaint with black garage doors</p>",
+          "text_color": "#B3A99C",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 13,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.4,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "Gallery / Photo 5 / Caption"
+         },
+         "elements": []
+        }
+       ]
       },
       {
-       "id": "7b66b0d",
+       "id": "b86b276",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1165,32 +1240,32 @@
         "content_width": "full",
         "flex_direction": "column",
         "flex_gap": {
-         "column": "0",
-         "row": "0",
+         "column": "10",
+         "row": "10",
          "isLinked": true,
          "unit": "px",
-         "size": 0
+         "size": 10
         },
         "flex_gap_laptop": {
-         "column": "0",
-         "row": "0",
+         "column": "10",
+         "row": "10",
          "isLinked": true,
          "unit": "px",
-         "size": 0
+         "size": 10
         },
         "flex_gap_tablet": {
-         "column": "0",
-         "row": "0",
+         "column": "10",
+         "row": "10",
          "isLinked": true,
          "unit": "px",
-         "size": 0
+         "size": 10
         },
         "flex_gap_mobile": {
-         "column": "0",
-         "row": "0",
+         "column": "10",
+         "row": "10",
          "isLinked": true,
          "unit": "px",
-         "size": 0
+         "size": 10
         },
         "width": {
          "unit": "%",
@@ -1200,50 +1275,65 @@
         "padding": {
          "unit": "px",
          "top": "0",
-         "right": "14",
-         "bottom": "14",
-         "left": "14",
-         "isLinked": false
-        },
-        "background_background": "classic",
-        "background_color": "#222B25",
-        "background_position": "center center",
-        "background_size": "cover",
-        "background_repeat": "no-repeat",
-        "flex_justify_content": "flex-end",
-        "css_classes": "tn-photo",
-        "min_height": {
-         "unit": "px",
-         "size": 340,
-         "sizes": []
-        },
-        "min_height_laptop": {
-         "unit": "px",
-         "size": 320,
-         "sizes": []
-        },
-        "min_height_tablet": {
-         "unit": "px",
-         "size": 280,
-         "sizes": []
-        },
-        "min_height_mobile": {
-         "unit": "px",
-         "size": 190,
-         "sizes": []
-        },
-        "background_image": {
-         "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-log-wall-prep.jpg",
-         "id": 2754,
-         "size": "",
-         "alt": "Preparing a log wall for chinking and stain",
-         "source": "library"
+         "right": "0",
+         "bottom": "0",
+         "left": "0",
+         "isLinked": true
         }
        },
-       "elements": []
+       "elements": [
+        {
+         "id": "f913f8d",
+         "elType": "widget",
+         "widgetType": "image",
+         "isInner": false,
+         "settings": {
+          "image": {
+           "id": 2744,
+           "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-log-home-stained-exterior.jpg",
+           "alt": "Stained log home with a wraparound deck",
+           "source": "library"
+          },
+          "image_size": "full",
+          "custom_css": "selector img{width:100%;display:block;border-radius:4px;height:320px;object-fit:cover;}@media (max-width:980px){selector img{height:280px;}}@media (max-width:600px){selector img{height:170px;}}",
+          "_title": "Gallery / Photo 6 / Image"
+         },
+         "elements": []
+        },
+        {
+         "id": "88845e1",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>Log home and wraparound deck</p>",
+          "text_color": "#B3A99C",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 13,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.4,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "Gallery / Photo 6 / Caption"
+         },
+         "elements": []
+        }
+       ]
       },
       {
-       "id": "1b62fb0",
+       "id": "67f36ca",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1251,32 +1341,32 @@
         "content_width": "full",
         "flex_direction": "column",
         "flex_gap": {
-         "column": "0",
-         "row": "0",
+         "column": "10",
+         "row": "10",
          "isLinked": true,
          "unit": "px",
-         "size": 0
+         "size": 10
         },
         "flex_gap_laptop": {
-         "column": "0",
-         "row": "0",
+         "column": "10",
+         "row": "10",
          "isLinked": true,
          "unit": "px",
-         "size": 0
+         "size": 10
         },
         "flex_gap_tablet": {
-         "column": "0",
-         "row": "0",
+         "column": "10",
+         "row": "10",
          "isLinked": true,
          "unit": "px",
-         "size": 0
+         "size": 10
         },
         "flex_gap_mobile": {
-         "column": "0",
-         "row": "0",
+         "column": "10",
+         "row": "10",
          "isLinked": true,
          "unit": "px",
-         "size": 0
+         "size": 10
         },
         "width": {
          "unit": "%",
@@ -1286,50 +1376,65 @@
         "padding": {
          "unit": "px",
          "top": "0",
-         "right": "14",
-         "bottom": "14",
-         "left": "14",
-         "isLinked": false
-        },
-        "background_background": "classic",
-        "background_color": "#33261C",
-        "background_position": "center center",
-        "background_size": "cover",
-        "background_repeat": "no-repeat",
-        "flex_justify_content": "flex-end",
-        "css_classes": "tn-photo",
-        "min_height": {
-         "unit": "px",
-         "size": 340,
-         "sizes": []
-        },
-        "min_height_laptop": {
-         "unit": "px",
-         "size": 320,
-         "sizes": []
-        },
-        "min_height_tablet": {
-         "unit": "px",
-         "size": 280,
-         "sizes": []
-        },
-        "min_height_mobile": {
-         "unit": "px",
-         "size": 190,
-         "sizes": []
-        },
-        "background_image": {
-         "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-ceiling-smooth-2.jpg",
-         "id": 2834,
-         "size": "",
-         "alt": "Smooth finished ceiling and fresh walls",
-         "source": "library"
+         "right": "0",
+         "bottom": "0",
+         "left": "0",
+         "isLinked": true
         }
        },
-       "elements": []
+       "elements": [
+        {
+         "id": "b9bdbbe",
+         "elType": "widget",
+         "widgetType": "image",
+         "isInner": false,
+         "settings": {
+          "image": {
+           "id": 2828,
+           "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-ext-after-front.jpg",
+           "alt": "Front of the home after exterior repaint",
+           "source": "library"
+          },
+          "image_size": "full",
+          "custom_css": "selector img{width:100%;display:block;border-radius:4px;height:320px;object-fit:cover;}@media (max-width:980px){selector img{height:280px;}}@media (max-width:600px){selector img{height:170px;}}",
+          "_title": "Gallery / Photo 7 / Image"
+         },
+         "elements": []
+        },
+        {
+         "id": "675d36c",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>Front elevation after repaint</p>",
+          "text_color": "#B3A99C",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 13,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.4,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "Gallery / Photo 7 / Caption"
+         },
+         "elements": []
+        }
+       ]
       },
       {
-       "id": "3f6d148",
+       "id": "ab4a8d0",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1337,32 +1442,32 @@
         "content_width": "full",
         "flex_direction": "column",
         "flex_gap": {
-         "column": "0",
-         "row": "0",
+         "column": "10",
+         "row": "10",
          "isLinked": true,
          "unit": "px",
-         "size": 0
+         "size": 10
         },
         "flex_gap_laptop": {
-         "column": "0",
-         "row": "0",
+         "column": "10",
+         "row": "10",
          "isLinked": true,
          "unit": "px",
-         "size": 0
+         "size": 10
         },
         "flex_gap_tablet": {
-         "column": "0",
-         "row": "0",
+         "column": "10",
+         "row": "10",
          "isLinked": true,
          "unit": "px",
-         "size": 0
+         "size": 10
         },
         "flex_gap_mobile": {
-         "column": "0",
-         "row": "0",
+         "column": "10",
+         "row": "10",
          "isLinked": true,
          "unit": "px",
-         "size": 0
+         "size": 10
         },
         "width": {
          "unit": "%",
@@ -1372,50 +1477,65 @@
         "padding": {
          "unit": "px",
          "top": "0",
-         "right": "14",
-         "bottom": "14",
-         "left": "14",
-         "isLinked": false
-        },
-        "background_background": "classic",
-        "background_color": "#3A281B",
-        "background_position": "center center",
-        "background_size": "cover",
-        "background_repeat": "no-repeat",
-        "flex_justify_content": "flex-end",
-        "css_classes": "tn-photo",
-        "min_height": {
-         "unit": "px",
-         "size": 340,
-         "sizes": []
-        },
-        "min_height_laptop": {
-         "unit": "px",
-         "size": 320,
-         "sizes": []
-        },
-        "min_height_tablet": {
-         "unit": "px",
-         "size": 280,
-         "sizes": []
-        },
-        "min_height_mobile": {
-         "unit": "px",
-         "size": 190,
-         "sizes": []
-        },
-        "background_image": {
-         "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-ext-after.jpg",
-         "id": 2827,
-         "size": "",
-         "alt": "Exterior after repaint in white with navy shutters",
-         "source": "library"
+         "right": "0",
+         "bottom": "0",
+         "left": "0",
+         "isLinked": true
         }
        },
-       "elements": []
+       "elements": [
+        {
+         "id": "68f0080",
+         "elType": "widget",
+         "widgetType": "image",
+         "isInner": false,
+         "settings": {
+          "image": {
+           "id": 2753,
+           "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-covered-deck-log-rail.jpg",
+           "alt": "Covered deck with stained log railing",
+           "source": "library"
+          },
+          "image_size": "full",
+          "custom_css": "selector img{width:100%;display:block;border-radius:4px;height:320px;object-fit:cover;}@media (max-width:980px){selector img{height:280px;}}@media (max-width:600px){selector img{height:170px;}}",
+          "_title": "Gallery / Photo 8 / Image"
+         },
+         "elements": []
+        },
+        {
+         "id": "615c8a2",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>Covered deck and log railing</p>",
+          "text_color": "#B3A99C",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 13,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.4,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "Gallery / Photo 8 / Caption"
+         },
+         "elements": []
+        }
+       ]
       },
       {
-       "id": "9cdc06e",
+       "id": "8d02487",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1423,32 +1543,32 @@
         "content_width": "full",
         "flex_direction": "column",
         "flex_gap": {
-         "column": "0",
-         "row": "0",
+         "column": "10",
+         "row": "10",
          "isLinked": true,
          "unit": "px",
-         "size": 0
+         "size": 10
         },
         "flex_gap_laptop": {
-         "column": "0",
-         "row": "0",
+         "column": "10",
+         "row": "10",
          "isLinked": true,
          "unit": "px",
-         "size": 0
+         "size": 10
         },
         "flex_gap_tablet": {
-         "column": "0",
-         "row": "0",
+         "column": "10",
+         "row": "10",
          "isLinked": true,
          "unit": "px",
-         "size": 0
+         "size": 10
         },
         "flex_gap_mobile": {
-         "column": "0",
-         "row": "0",
+         "column": "10",
+         "row": "10",
          "isLinked": true,
          "unit": "px",
-         "size": 0
+         "size": 10
         },
         "width": {
          "unit": "%",
@@ -1458,54 +1578,1584 @@
         "padding": {
          "unit": "px",
          "top": "0",
-         "right": "14",
-         "bottom": "14",
-         "left": "14",
-         "isLinked": false
-        },
-        "background_background": "classic",
-        "background_color": "#222B25",
-        "background_position": "center center",
-        "background_size": "cover",
-        "background_repeat": "no-repeat",
-        "flex_justify_content": "flex-end",
-        "css_classes": "tn-photo",
-        "min_height": {
-         "unit": "px",
-         "size": 340,
-         "sizes": []
-        },
-        "min_height_laptop": {
-         "unit": "px",
-         "size": 320,
-         "sizes": []
-        },
-        "min_height_tablet": {
-         "unit": "px",
-         "size": 280,
-         "sizes": []
-        },
-        "min_height_mobile": {
-         "unit": "px",
-         "size": 190,
-         "sizes": []
-        },
-        "background_image": {
-         "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-accent-wall.jpg",
-         "id": 2837,
-         "size": "",
-         "alt": "Deep plum accent wall",
-         "source": "library"
+         "right": "0",
+         "bottom": "0",
+         "left": "0",
+         "isLinked": true
         }
        },
-       "elements": []
+       "elements": [
+        {
+         "id": "8acd1f7",
+         "elType": "widget",
+         "widgetType": "image",
+         "isInner": false,
+         "settings": {
+          "image": {
+           "id": 2833,
+           "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-ceiling-smooth-beams.jpg",
+           "alt": "Smooth ceiling with dark beams after popcorn removal",
+           "source": "library"
+          },
+          "image_size": "full",
+          "custom_css": "selector img{width:100%;display:block;border-radius:4px;height:320px;object-fit:cover;}@media (max-width:980px){selector img{height:280px;}}@media (max-width:600px){selector img{height:170px;}}",
+          "_title": "Gallery / Photo 9 / Image"
+         },
+         "elements": []
+        },
+        {
+         "id": "515e973",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>Popcorn ceiling to smooth finish</p>",
+          "text_color": "#B3A99C",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 13,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.4,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "Gallery / Photo 9 / Caption"
+         },
+         "elements": []
+        }
+       ]
+      },
+      {
+       "id": "e6c6216",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Gallery / Photo 10",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_laptop": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_tablet": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_mobile": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "0",
+         "right": "0",
+         "bottom": "0",
+         "left": "0",
+         "isLinked": true
+        }
+       },
+       "elements": [
+        {
+         "id": "f21d59b",
+         "elType": "widget",
+         "widgetType": "image",
+         "isInner": false,
+         "settings": {
+          "image": {
+           "id": 2745,
+           "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-log-home-stained-windows.jpg",
+           "alt": "Stained log and timber home with tall windows",
+           "source": "library"
+          },
+          "image_size": "full",
+          "custom_css": "selector img{width:100%;display:block;border-radius:4px;height:320px;object-fit:cover;}@media (max-width:980px){selector img{height:280px;}}@media (max-width:600px){selector img{height:170px;}}",
+          "_title": "Gallery / Photo 10 / Image"
+         },
+         "elements": []
+        },
+        {
+         "id": "63b8750",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>Log and timber home</p>",
+          "text_color": "#B3A99C",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 13,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.4,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "Gallery / Photo 10 / Caption"
+         },
+         "elements": []
+        }
+       ]
+      },
+      {
+       "id": "b4c2cc1",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Gallery / Photo 11",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_laptop": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_tablet": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_mobile": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "0",
+         "right": "0",
+         "bottom": "0",
+         "left": "0",
+         "isLinked": true
+        }
+       },
+       "elements": [
+        {
+         "id": "5006b2b",
+         "elType": "widget",
+         "widgetType": "image",
+         "isInner": false,
+         "settings": {
+          "image": {
+           "id": 2837,
+           "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-accent-wall.jpg",
+           "alt": "Deep plum accent wall",
+           "source": "library"
+          },
+          "image_size": "full",
+          "custom_css": "selector img{width:100%;display:block;border-radius:4px;height:320px;object-fit:cover;}@media (max-width:980px){selector img{height:280px;}}@media (max-width:600px){selector img{height:170px;}}",
+          "_title": "Gallery / Photo 11 / Image"
+         },
+         "elements": []
+        },
+        {
+         "id": "19662f3",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>Deep plum accent wall</p>",
+          "text_color": "#B3A99C",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 13,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.4,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "Gallery / Photo 11 / Caption"
+         },
+         "elements": []
+        }
+       ]
+      },
+      {
+       "id": "1592fd5",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Gallery / Photo 12",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_laptop": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_tablet": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_mobile": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "0",
+         "right": "0",
+         "bottom": "0",
+         "left": "0",
+         "isLinked": true
+        }
+       },
+       "elements": [
+        {
+         "id": "8d70f3e",
+         "elType": "widget",
+         "widgetType": "image",
+         "isInner": false,
+         "settings": {
+          "image": {
+           "id": 2749,
+           "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-timber-ceiling-interior.jpg",
+           "alt": "Stained timber ceiling and log interior",
+           "source": "library"
+          },
+          "image_size": "full",
+          "custom_css": "selector img{width:100%;display:block;border-radius:4px;height:320px;object-fit:cover;}@media (max-width:980px){selector img{height:280px;}}@media (max-width:600px){selector img{height:170px;}}",
+          "_title": "Gallery / Photo 12 / Image"
+         },
+         "elements": []
+        },
+        {
+         "id": "321ba4c",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>Stained timber ceiling</p>",
+          "text_color": "#B3A99C",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 13,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.4,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "Gallery / Photo 12 / Caption"
+         },
+         "elements": []
+        }
+       ]
+      },
+      {
+       "id": "6dbe75b",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Gallery / Photo 13",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_laptop": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_tablet": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_mobile": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "0",
+         "right": "0",
+         "bottom": "0",
+         "left": "0",
+         "isLinked": true
+        }
+       },
+       "elements": [
+        {
+         "id": "8b0dc70",
+         "elType": "widget",
+         "widgetType": "image",
+         "isInner": false,
+         "settings": {
+          "image": {
+           "id": 2838,
+           "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-stairwell.jpg",
+           "alt": "Freshly painted stairwell with clean lines",
+           "source": "library"
+          },
+          "image_size": "full",
+          "custom_css": "selector img{width:100%;display:block;border-radius:4px;height:320px;object-fit:cover;}@media (max-width:980px){selector img{height:280px;}}@media (max-width:600px){selector img{height:170px;}}",
+          "_title": "Gallery / Photo 13 / Image"
+         },
+         "elements": []
+        },
+        {
+         "id": "df176b3",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>Stairwell walls and trim</p>",
+          "text_color": "#B3A99C",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 13,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.4,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "Gallery / Photo 13 / Caption"
+         },
+         "elements": []
+        }
+       ]
+      },
+      {
+       "id": "d1453db",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Gallery / Photo 14",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_laptop": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_tablet": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_mobile": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "0",
+         "right": "0",
+         "bottom": "0",
+         "left": "0",
+         "isLinked": true
+        }
+       },
+       "elements": [
+        {
+         "id": "50fc7f1",
+         "elType": "widget",
+         "widgetType": "image",
+         "isInner": false,
+         "settings": {
+          "image": {
+           "id": 2845,
+           "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-log-cabin-chinked.jpg",
+           "alt": "Restored log cabin with new chinking",
+           "source": "library"
+          },
+          "image_size": "full",
+          "custom_css": "selector img{width:100%;display:block;border-radius:4px;height:320px;object-fit:cover;}@media (max-width:980px){selector img{height:280px;}}@media (max-width:600px){selector img{height:170px;}}",
+          "_title": "Gallery / Photo 14 / Image"
+         },
+         "elements": []
+        },
+        {
+         "id": "e625fe9",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>Restored cabin with new chinking</p>",
+          "text_color": "#B3A99C",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 13,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.4,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "Gallery / Photo 14 / Caption"
+         },
+         "elements": []
+        }
+       ]
+      },
+      {
+       "id": "6e1736f",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Gallery / Photo 15",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_laptop": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_tablet": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_mobile": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "0",
+         "right": "0",
+         "bottom": "0",
+         "left": "0",
+         "isLinked": true
+        }
+       },
+       "elements": [
+        {
+         "id": "875371c",
+         "elType": "widget",
+         "widgetType": "image",
+         "isInner": false,
+         "settings": {
+          "image": {
+           "id": 2836,
+           "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-gray-cabinets.jpg",
+           "alt": "Sprayed gray kitchen cabinets",
+           "source": "library"
+          },
+          "image_size": "full",
+          "custom_css": "selector img{width:100%;display:block;border-radius:4px;height:320px;object-fit:cover;}@media (max-width:980px){selector img{height:280px;}}@media (max-width:600px){selector img{height:170px;}}",
+          "_title": "Gallery / Photo 15 / Image"
+         },
+         "elements": []
+        },
+        {
+         "id": "42e03ce",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>Sprayed gray cabinets</p>",
+          "text_color": "#B3A99C",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 13,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.4,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "Gallery / Photo 15 / Caption"
+         },
+         "elements": []
+        }
+       ]
+      },
+      {
+       "id": "e79d81c",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Gallery / Photo 16",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_laptop": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_tablet": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_mobile": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "0",
+         "right": "0",
+         "bottom": "0",
+         "left": "0",
+         "isLinked": true
+        }
+       },
+       "elements": [
+        {
+         "id": "560cee0",
+         "elType": "widget",
+         "widgetType": "image",
+         "isInner": false,
+         "settings": {
+          "image": {
+           "id": 2755,
+           "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-log-stair-interior.jpg",
+           "alt": "Stained log staircase inside a mountain home",
+           "source": "library"
+          },
+          "image_size": "full",
+          "custom_css": "selector img{width:100%;display:block;border-radius:4px;height:320px;object-fit:cover;}@media (max-width:980px){selector img{height:280px;}}@media (max-width:600px){selector img{height:170px;}}",
+          "_title": "Gallery / Photo 16 / Image"
+         },
+         "elements": []
+        },
+        {
+         "id": "9325ae9",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>Log staircase</p>",
+          "text_color": "#B3A99C",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 13,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.4,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "Gallery / Photo 16 / Caption"
+         },
+         "elements": []
+        }
+       ]
+      },
+      {
+       "id": "5dd75f6",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Gallery / Photo 17",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_laptop": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_tablet": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_mobile": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "0",
+         "right": "0",
+         "bottom": "0",
+         "left": "0",
+         "isLinked": true
+        }
+       },
+       "elements": [
+        {
+         "id": "cb6de8f",
+         "elType": "widget",
+         "widgetType": "image",
+         "isInner": false,
+         "settings": {
+          "image": {
+           "id": 2835,
+           "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-ceiling-smooth-3.jpg",
+           "alt": "Smooth ceiling and stained beams",
+           "source": "library"
+          },
+          "image_size": "full",
+          "custom_css": "selector img{width:100%;display:block;border-radius:4px;height:320px;object-fit:cover;}@media (max-width:980px){selector img{height:280px;}}@media (max-width:600px){selector img{height:170px;}}",
+          "_title": "Gallery / Photo 17 / Image"
+         },
+         "elements": []
+        },
+        {
+         "id": "76618c3",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>Smooth ceiling with stained beams</p>",
+          "text_color": "#B3A99C",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 13,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.4,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "Gallery / Photo 17 / Caption"
+         },
+         "elements": []
+        }
+       ]
+      },
+      {
+       "id": "1ddf3e1",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Gallery / Photo 18",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_laptop": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_tablet": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_mobile": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "0",
+         "right": "0",
+         "bottom": "0",
+         "left": "0",
+         "isLinked": true
+        }
+       },
+       "elements": [
+        {
+         "id": "47e2214",
+         "elType": "widget",
+         "widgetType": "image",
+         "isInner": false,
+         "settings": {
+          "image": {
+           "id": 2747,
+           "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-stained-deck-rail.jpg",
+           "alt": "Freshly stained deck and log railing",
+           "source": "library"
+          },
+          "image_size": "full",
+          "custom_css": "selector img{width:100%;display:block;border-radius:4px;height:320px;object-fit:cover;}@media (max-width:980px){selector img{height:280px;}}@media (max-width:600px){selector img{height:170px;}}",
+          "_title": "Gallery / Photo 18 / Image"
+         },
+         "elements": []
+        },
+        {
+         "id": "a4ed1f6",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>Deck and rail restain</p>",
+          "text_color": "#B3A99C",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 13,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.4,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "Gallery / Photo 18 / Caption"
+         },
+         "elements": []
+        }
+       ]
+      },
+      {
+       "id": "ece937e",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Gallery / Photo 19",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_laptop": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_tablet": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_mobile": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "0",
+         "right": "0",
+         "bottom": "0",
+         "left": "0",
+         "isLinked": true
+        }
+       },
+       "elements": [
+        {
+         "id": "e09fe29",
+         "elType": "widget",
+         "widgetType": "image",
+         "isInner": false,
+         "settings": {
+          "image": {
+           "id": 2834,
+           "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-ceiling-smooth-2.jpg",
+           "alt": "Smooth finished ceiling and fresh walls",
+           "source": "library"
+          },
+          "image_size": "full",
+          "custom_css": "selector img{width:100%;display:block;border-radius:4px;height:320px;object-fit:cover;}@media (max-width:980px){selector img{height:280px;}}@media (max-width:600px){selector img{height:170px;}}",
+          "_title": "Gallery / Photo 19 / Image"
+         },
+         "elements": []
+        },
+        {
+         "id": "792e086",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>Smooth ceiling and fresh walls</p>",
+          "text_color": "#B3A99C",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 13,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.4,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "Gallery / Photo 19 / Caption"
+         },
+         "elements": []
+        }
+       ]
+      },
+      {
+       "id": "c8d92d9",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Gallery / Photo 20",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_laptop": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_tablet": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_mobile": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "0",
+         "right": "0",
+         "bottom": "0",
+         "left": "0",
+         "isLinked": true
+        }
+       },
+       "elements": [
+        {
+         "id": "2086a15",
+         "elType": "widget",
+         "widgetType": "image",
+         "isInner": false,
+         "settings": {
+          "image": {
+           "id": 2847,
+           "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-log-home-garage.jpg",
+           "alt": "Stained log home and garage",
+           "source": "library"
+          },
+          "image_size": "full",
+          "custom_css": "selector img{width:100%;display:block;border-radius:4px;height:320px;object-fit:cover;}@media (max-width:980px){selector img{height:280px;}}@media (max-width:600px){selector img{height:170px;}}",
+          "_title": "Gallery / Photo 20 / Image"
+         },
+         "elements": []
+        },
+        {
+         "id": "c9d3fbd",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>Stained log home and garage</p>",
+          "text_color": "#B3A99C",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 13,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.4,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "Gallery / Photo 20 / Caption"
+         },
+         "elements": []
+        }
+       ]
+      },
+      {
+       "id": "924b46c",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Gallery / Photo 21",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_laptop": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_tablet": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_mobile": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "0",
+         "right": "0",
+         "bottom": "0",
+         "left": "0",
+         "isLinked": true
+        }
+       },
+       "elements": [
+        {
+         "id": "b53c952",
+         "elType": "widget",
+         "widgetType": "image",
+         "isInner": false,
+         "settings": {
+          "image": {
+           "id": 2831,
+           "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-masking-interior.jpg",
+           "alt": "Interior fully masked with plastic before painting",
+           "source": "library"
+          },
+          "image_size": "full",
+          "custom_css": "selector img{width:100%;display:block;border-radius:4px;height:320px;object-fit:cover;}@media (max-width:980px){selector img{height:280px;}}@media (max-width:600px){selector img{height:170px;}}",
+          "_title": "Gallery / Photo 21 / Image"
+         },
+         "elements": []
+        },
+        {
+         "id": "b941c30",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>Room masked before painting</p>",
+          "text_color": "#B3A99C",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 13,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.4,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "Gallery / Photo 21 / Caption"
+         },
+         "elements": []
+        }
+       ]
+      },
+      {
+       "id": "d40e949",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Gallery / Photo 22",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_laptop": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_tablet": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_mobile": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "0",
+         "right": "0",
+         "bottom": "0",
+         "left": "0",
+         "isLinked": true
+        }
+       },
+       "elements": [
+        {
+         "id": "be9b41b",
+         "elType": "widget",
+         "widgetType": "image",
+         "isInner": false,
+         "settings": {
+          "image": {
+           "id": 2748,
+           "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-media-blasting-log-wall.jpg",
+           "alt": "Crew media blasting a log wall",
+           "source": "library"
+          },
+          "image_size": "full",
+          "custom_css": "selector img{width:100%;display:block;border-radius:4px;height:320px;object-fit:cover;}@media (max-width:980px){selector img{height:280px;}}@media (max-width:600px){selector img{height:170px;}}",
+          "_title": "Gallery / Photo 22 / Image"
+         },
+         "elements": []
+        },
+        {
+         "id": "9842f8b",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>Media blasting</p>",
+          "text_color": "#B3A99C",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 13,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.4,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "Gallery / Photo 22 / Caption"
+         },
+         "elements": []
+        }
+       ]
+      },
+      {
+       "id": "8b8b7da",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Gallery / Photo 23",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_laptop": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_tablet": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_mobile": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "0",
+         "right": "0",
+         "bottom": "0",
+         "left": "0",
+         "isLinked": true
+        }
+       },
+       "elements": [
+        {
+         "id": "eba6f47",
+         "elType": "widget",
+         "widgetType": "image",
+         "isInner": false,
+         "settings": {
+          "image": {
+           "id": 2839,
+           "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-doors.jpg",
+           "alt": "Painted interior doors",
+           "source": "library"
+          },
+          "image_size": "full",
+          "custom_css": "selector img{width:100%;display:block;border-radius:4px;height:320px;object-fit:cover;}@media (max-width:980px){selector img{height:280px;}}@media (max-width:600px){selector img{height:170px;}}",
+          "_title": "Gallery / Photo 23 / Image"
+         },
+         "elements": []
+        },
+        {
+         "id": "5c716f5",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>Painted interior doors</p>",
+          "text_color": "#B3A99C",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 13,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.4,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "Gallery / Photo 23 / Caption"
+         },
+         "elements": []
+        }
+       ]
+      },
+      {
+       "id": "ea61785",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Gallery / Photo 24",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_laptop": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_tablet": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "flex_gap_mobile": {
+         "column": "10",
+         "row": "10",
+         "isLinked": true,
+         "unit": "px",
+         "size": 10
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "0",
+         "right": "0",
+         "bottom": "0",
+         "left": "0",
+         "isLinked": true
+        }
+       },
+       "elements": [
+        {
+         "id": "adcd0c9",
+         "elType": "widget",
+         "widgetType": "image",
+         "isInner": false,
+         "settings": {
+          "image": {
+           "id": 2846,
+           "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-log-wall-long.jpg",
+           "alt": "Long log wall freshly stained",
+           "source": "library"
+          },
+          "image_size": "full",
+          "custom_css": "selector img{width:100%;display:block;border-radius:4px;height:320px;object-fit:cover;}@media (max-width:980px){selector img{height:280px;}}@media (max-width:600px){selector img{height:170px;}}",
+          "_title": "Gallery / Photo 24 / Image"
+         },
+         "elements": []
+        },
+        {
+         "id": "2739508",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>Long log wall, freshly stained</p>",
+          "text_color": "#B3A99C",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 13,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.4,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "Gallery / Photo 24 / Caption"
+         },
+         "elements": []
+        }
+       ]
       }
      ]
     }
    ]
   },
   {
-   "id": "e6c6216",
+   "id": "ef1cb9d",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -1583,7 +3233,7 @@
    },
    "elements": [
     {
-     "id": "63b8750",
+     "id": "51eadf9",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -1690,7 +3340,7 @@
      },
      "elements": [
       {
-       "id": "8acd1f7",
+       "id": "ed0e4de",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1741,7 +3391,7 @@
        },
        "elements": [
         {
-         "id": "ab4a8d0",
+         "id": "9fe20a2",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -1791,7 +3441,7 @@
        ]
       },
       {
-       "id": "f21d59b",
+       "id": "d263064",
        "elType": "widget",
        "widgetType": "icon-list",
        "isInner": false,
@@ -1805,7 +3455,7 @@
         "text_color_hover": "#D9A66B",
         "icon_list": [
          {
-          "_id": "515e973",
+          "_id": "dc451cc",
           "text": "Read the stories behind our projects",
           "link": {
            "url": "/project-stories/",
@@ -1818,7 +3468,7 @@
           }
          },
          {
-          "_id": "8d02487",
+          "_id": "3ca20ba",
           "text": "See what clients say",
           "link": {
            "url": "/reviews/",
@@ -1862,7 +3512,7 @@
    ]
   },
   {
-   "id": "8b0dc70",
+   "id": "fceddc6",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -1958,7 +3608,7 @@
    },
    "elements": [
     {
-     "id": "1592fd5",
+     "id": "2b3aafe",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -2010,7 +3660,7 @@
      },
      "elements": [
       {
-       "id": "5006b2b",
+       "id": "972a8bd",
        "elType": "widget",
        "widgetType": "heading",
        "isInner": false,
@@ -2059,7 +3709,7 @@
        "elements": []
       },
       {
-       "id": "19662f3",
+       "id": "954241c",
        "elType": "widget",
        "widgetType": "text-editor",
        "isInner": false,
@@ -2090,7 +3740,7 @@
        "elements": []
       },
       {
-       "id": "321ba4c",
+       "id": "b16b28b",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -2144,7 +3794,7 @@
        },
        "elements": [
         {
-         "id": "b4c2cc1",
+         "id": "ee49078",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,
@@ -2196,7 +3846,7 @@
          "elements": []
         },
         {
-         "id": "8d70f3e",
+         "id": "72010d6",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,

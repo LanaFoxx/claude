@@ -389,3 +389,11 @@ Container `Seasonal Offer`: change the H2 to **Talk to us about your project** a
 - **Service pages v2** (`service_v2()` in build_pages), used by interior, exterior and log home:
   - Order: hero photo → intro with "What's included" or a photo → six icon cards → 5-step process → before/after → photo strip → two reviews → FAQ (native `<details>` plus FAQPage schema) → winter banner (interior only) → related → CTA.
   - Other changes: the rot page gets a before/after, and the last three Our Work tiles now have real photos.
+
+## Blake's Markup notes (Nov 24)
+- #24 Hero slides: painted vaulted room with mountain views (stock), then the Logworks log home, then the wood great room. The homepage Painting panel now uses a stock stairwell with mountain views (media 2957).
+- #25 Contact form Message placeholder: "Tell us about your project, the more detail, the better."
+- #26 Interior hero is now a stock painted vaulted great room (media 2958). The strip swaps the duplicate beamed ceiling for painted doors. That project now appears only in the before/after (and once on the homepage).
+- #27 Log page before/after reduced to 2. The small cabin is dropped, since it's also in the photo strip.
+- #28 Our Work gallery: 24 captioned real photos (no stock), painting and staining alternating. Painting starts with finished exteriors, then interiors.
+- #29 Core values and #30 project stories: waiting on Blake's copy.

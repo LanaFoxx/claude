@@ -1112,7 +1112,7 @@ def build_featured_projects():
 
 # ------------------------------------------------------------------ What We Do (Option E, giant words)
 WWD = [
-    ("What We Do / Painting", "#33261C", "Photo: finished interior", "tn-stock-vaulted-room-mountains", "Painting",
+    ("What We Do / Painting", "#33261C", "Photo: finished interior", "tn-stock-stair-mountain-view", "Painting",
      "Fine Interior &amp; Exterior Painting",
      "Walls, ceilings, trim, doors, and specialty finishes, completed with the preparation, protection, and "
      "clean lines a high-end home demands.",
@@ -1415,7 +1415,8 @@ def estimate_section(page="home"):
                           "Cabinets / trim / specialty finish\nLog home staining / restoration\n"
                           "Chinking / check sealing\nRot repair\nDeck staining\nMedia blasting\nCommercial / HOA"},
     ] + ([{"_id": eid(), "custom_id": "message", "field_type": "textarea", "field_label": "Message",
-           "required": "", "width": "100", "rows": 4}] if is_home else [])
+           "placeholder": "Tell us about your project, the more detail, the better.",
+           "required": "", "width": "100", "rows": 5}] if is_home else [])
     chevron = ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' "
                "viewBox='0 0 24 24' fill='none' stroke='%235B5046' stroke-width='1.8'%3E%3Cpath "
                "d='M6 9l6 6 6-6'/%3E%3C/svg%3E")
@@ -1436,6 +1437,7 @@ def estimate_section(page="home"):
         "selector .elementor-field-group textarea.elementor-field-textual{height:auto;min-height:132px;resize:vertical;}"
         "selector .elementor-mark-required .elementor-field-label:after{color:#5B5046;}"
         "selector .e-form__buttons{margin-top:12px;}"
+        "selector .elementor-field::placeholder{color:#857A6E;opacity:1;}"
         "selector .e-form__buttons .elementor-button{min-height:60px;}"
         "@media (max-width:535px){selector .elementor-field-group:not(.elementor-field-type-submit){width:100% !important;"
         "flex-basis:100% !important;max-width:100% !important;}}"

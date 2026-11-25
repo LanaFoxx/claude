@@ -363,7 +363,7 @@ def pages():
         "interior-painting", "Fine Painting", "<b>Interior</b> painting",
         "Walls, ceilings, trim and doors painted with careful preparation, two full coats and clean lines, "
         "in homes from Vail to Aspen.",
-        ("#33261C", "Photo: finished interior", "tn-ceiling-smooth-2"),
+        ("#33261C", "Photo: finished interior", "tn-stock-vaulted-great-room-painted"),
         "<b>Preparation</b> before a brush is lifted",
         ["Interior painting starts long before the first coat. Furniture and floors are covered and protected. "
          "Walls and ceilings are inspected, and nail holes and cracks are filled and repaired. Baseboards, "
@@ -396,7 +396,7 @@ def pages():
             "The room is fully masked while the old texture comes off. The ceiling is skimmed smooth, primed and "
             "painted, and the beams are left crisp and clean."),
         strip=("<b>Recent</b> interior work", [
-            ("tn-ceiling-smooth-3", "Smooth ceiling with stained beams"),
+            ("tn-doors", "Painted interior doors"),
             ("tn-accent-wall", "Deep plum accent wall"),
             ("tn-stairwell", "Stairwell walls and trim"),
             ("tn-stock-gray-kitchen-cabinets", "Sprayed gray cabinets")]),
@@ -533,8 +533,7 @@ def pages():
                 ("Maintain", "We tell you honestly when the next maintenance coat is due.")],
         ba_composites=("<b>Before</b> &amp; after", [
             ("tn-log-before-after-1", "Weathered logs brought back to a rich, even finish"),
-            ("tn-log-before-after-2", "Gray, faded logs restained and sealed"),
-            ("tn-log-before-after-3", "A small cabin restored, with fresh chinking")]),
+            ("tn-log-before-after-2", "Gray, faded logs restained and sealed")]),
         strip=("<b>Recent</b> log &amp; timber work", [
             ("tn-log-home-restained", "Large log home after restaining"),
             ("tn-log-cabin-chinked", "Restored cabin with new chinking"),
@@ -623,17 +622,36 @@ def pages():
                 "oriented in making sure the interior living space was not affected.", "Lee F. · Gypsum"))
 
     # ----- Our Work
-    labels = ["Log home restain", "Deck restoration", "Stained interior wood", "Media blasting",
-              "Railings and stairs", "Chinking detail", "Interior great room", "Exterior repaint", "Accent wall"]
-    colors = ["#33261C", "#3A281B", "#222B25"]
-    gallery_imgs = {"Log home restain": "tn-log-home-winter", "Deck restoration": "tn-covered-deck-log-rail",
-                    "Chinking detail": "tn-log-wall-prep", "Media blasting": "tn-media-blasting-log-wall",
-                    "Railings and stairs": "tn-log-stair-interior", "Stained interior wood": "tn-timber-ceiling-interior",
-                    "Interior great room": "tn-ceiling-smooth-2", "Exterior repaint": "tn-ext-after",
-                    "Accent wall": "tn-accent-wall"}
-    tiles = [photo_slot("Gallery / Photo %d" % (i + 1), colors[i % 3], (340, 320, 280, 190), "Photo: " + l,
-                        image=gallery_imgs.get(l), padding=dims(0, 14, 14, 14))
-             for i, l in enumerate(labels)]
+    # Painting (finished exteriors first, then interiors) alternating with log & timber staining.
+    painting = [("tn-ext-after", "Exterior repaint, white with navy shutters"),
+                ("tn-ext-gray-repaint", "Dark gray exterior repaint"),
+                ("tn-ext-gray-garage", "Gray repaint with black garage doors"),
+                ("tn-ext-after-front", "Front elevation after repaint"),
+                ("tn-ceiling-smooth-beams", "Popcorn ceiling to smooth finish"),
+                ("tn-accent-wall", "Deep plum accent wall"),
+                ("tn-stairwell", "Stairwell walls and trim"),
+                ("tn-gray-cabinets", "Sprayed gray cabinets"),
+                ("tn-ceiling-smooth-3", "Smooth ceiling with stained beams"),
+                ("tn-ceiling-smooth-2", "Smooth ceiling and fresh walls"),
+                ("tn-masking-interior", "Room masked before painting"),
+                ("tn-doors", "Painted interior doors")]
+    staining = [("tn-log-home-winter", "Log home restain"),
+                ("tn-log-home-restained", "Large log home after restaining"),
+                ("tn-log-home-stained-exterior", "Log home and wraparound deck"),
+                ("tn-covered-deck-log-rail", "Covered deck and log railing"),
+                ("tn-log-home-stained-windows", "Log and timber home"),
+                ("tn-timber-ceiling-interior", "Stained timber ceiling"),
+                ("tn-log-cabin-chinked", "Restored cabin with new chinking"),
+                ("tn-log-stair-interior", "Log staircase"),
+                ("tn-stained-deck-rail", "Deck and rail restain"),
+                ("tn-log-home-garage", "Stained log home and garage"),
+                ("tn-media-blasting-log-wall", "Media blasting"),
+                ("tn-log-wall-long", "Long log wall, freshly stained")]
+    order = [x for pair in zip(painting, staining) for x in pair]
+    tiles = [container("Gallery / Photo %d" % (i + 1), [
+        img("Gallery / Photo %d / Image" % (i + 1), key, (320, 280, 170)),
+        text("Gallery / Photo %d / Caption" % (i + 1), "<p>%s</p>" % cap, color=DRIFT, size=13, lh=1.4,
+             pretty=False)], gap=10) for i, (key, cap) in enumerate(order)]
     P["our-work"] = page("TN our-work", [
         page_hero("Page Header", "Our Work", "<b>Our</b> work",
                   "Painting, staining and restoration on homes across the Vail and Roaring Fork valleys."),

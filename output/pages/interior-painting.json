@@ -615,10 +615,10 @@
          "sizes": []
         },
         "background_image": {
-         "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-ceiling-smooth-2.jpg",
-         "id": 2834,
+         "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-stock-vaulted-great-room-painted.jpg",
+         "id": 2958,
          "size": "",
-         "alt": "Smooth finished ceiling and fresh walls",
+         "alt": "Painted vaulted great room with a loft and fireplace",
          "source": "library"
         }
        },
@@ -3952,9 +3952,9 @@
          "isInner": false,
          "settings": {
           "image": {
-           "id": 2835,
-           "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-ceiling-smooth-3.jpg",
-           "alt": "Smooth ceiling and stained beams",
+           "id": 2839,
+           "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/tn-doors.jpg",
+           "alt": "Painted interior doors",
            "source": "library"
           },
           "image_size": "full",
@@ -3969,7 +3969,7 @@
          "widgetType": "text-editor",
          "isInner": false,
          "settings": {
-          "editor": "<p>Smooth ceiling with stained beams</p>",
+          "editor": "<p>Painted interior doors</p>",
           "text_color": "#5B5046",
           "paragraph_spacing": {
            "unit": "px",
