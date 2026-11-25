@@ -24,3 +24,6 @@ The site has no visible placeholders. Every item below is **temporary copy we wr
 | 18 | Review counts | Hero shows 5.0 from 24 Google reviews and 4.9 on HomeAdvisor | Confirm the counts, and send a Google review link if you want the stars clickable. |
 | 19 | Stock photos | Homepage hero great room, the homepage Painting panel, the gray kitchen (interior page) and a painter photo are Pexels stock (free commercial license) | Swap for your own photos as the portfolio grows. |
 | 20 | Sherwin-Williams logo | White wordmark added to the hero partner logos | Confirm you're OK to show it (you're a customer, not a certified partner, unless that's changed). |
+| 21 | Font | Young Serif applied to every heading (team pick, Nov 25) | Nothing, unless you want the bold/thin title emphasis back in another form (Young Serif has one weight). |
+| 22 | Project stories | Placeholder stories built from reviews | Blake is sending stories and photos by Friday. |
+| 23 | Launch | Staging only | Go-live target: this weekend or Monday. Need the live domain/host access and final OK. |

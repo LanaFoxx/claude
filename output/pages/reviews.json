@@ -4,7 +4,7 @@
  "type": "page",
  "content": [
   {
-   "id": "a717e79",
+   "id": "2aeb50c",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -82,7 +82,7 @@
    },
    "elements": [
     {
-     "id": "249e6f6",
+     "id": "16ce2aa",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -189,7 +189,7 @@
      },
      "elements": [
       {
-       "id": "1987ec0",
+       "id": "3262d5b",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -241,7 +241,7 @@
        },
        "elements": [
         {
-         "id": "e22acc0",
+         "id": "8a87895",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -272,7 +272,7 @@
          "elements": []
         },
         {
-         "id": "97c27a5",
+         "id": "9a70bdb",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -281,7 +281,7 @@
           "header_size": "h1",
           "title_color": "#F2ECE3",
           "typography_typography": "custom",
-          "typography_font_family": "Fraunces",
+          "typography_font_family": "Young Serif",
           "typography_font_size": {
            "unit": "px",
            "size": 55,
@@ -302,7 +302,7 @@
            "size": 34,
            "sizes": []
           },
-          "typography_font_weight": "300",
+          "typography_font_weight": "400",
           "typography_line_height": {
            "unit": "em",
            "size": 1.04,
@@ -320,7 +320,7 @@
          "elements": []
         },
         {
-         "id": "292aef4",
+         "id": "159f963",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -365,7 +365,7 @@
          "elements": []
         },
         {
-         "id": "5bf8550",
+         "id": "6183841",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -418,7 +418,7 @@
          },
          "elements": [
           {
-           "id": "e0470f5",
+           "id": "3731c6f",
            "elType": "widget",
            "widgetType": "button",
            "isInner": false,
@@ -470,7 +470,7 @@
            "elements": []
           },
           {
-           "id": "56af8c0",
+           "id": "f5eec87",
            "elType": "widget",
            "widgetType": "button",
            "isInner": false,
@@ -543,7 +543,7 @@
    ]
   },
   {
-   "id": "21fbec2",
+   "id": "27840d5",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -621,7 +621,7 @@
    },
    "elements": [
     {
-     "id": "1ab8347",
+     "id": "744f7ae",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -727,7 +727,7 @@
      },
      "elements": [
       {
-       "id": "709d6f0",
+       "id": "292aef4",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -822,7 +822,7 @@
        },
        "elements": [
         {
-         "id": "48fbc04",
+         "id": "96806ef",
          "elType": "widget",
          "widgetType": "rating",
          "isInner": false,
@@ -854,7 +854,7 @@
          "elements": []
         },
         {
-         "id": "6be713d",
+         "id": "e22acc0",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -867,7 +867,7 @@
            "sizes": []
           },
           "typography_typography": "custom",
-          "typography_font_family": "Fraunces",
+          "typography_font_family": "Young Serif",
           "typography_font_size": {
            "unit": "px",
            "size": 20,
@@ -899,7 +899,7 @@
          "elements": []
         },
         {
-         "id": "84bd84f",
+         "id": "97c27a5",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -931,7 +931,7 @@
        ]
       },
       {
-       "id": "1c59237",
+       "id": "1987ec0",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1026,7 +1026,7 @@
        },
        "elements": [
         {
-         "id": "abc95a2",
+         "id": "e0470f5",
          "elType": "widget",
          "widgetType": "rating",
          "isInner": false,
@@ -1058,7 +1058,7 @@
          "elements": []
         },
         {
-         "id": "b20f141",
+         "id": "56af8c0",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -1071,7 +1071,7 @@
            "sizes": []
           },
           "typography_typography": "custom",
-          "typography_font_family": "Fraunces",
+          "typography_font_family": "Young Serif",
           "typography_font_size": {
            "unit": "px",
            "size": 20,
@@ -1103,7 +1103,7 @@
          "elements": []
         },
         {
-         "id": "a7d1550",
+         "id": "5bf8550",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -1135,7 +1135,7 @@
        ]
       },
       {
-       "id": "9f68dc4",
+       "id": "21fbec2",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1230,7 +1230,7 @@
        },
        "elements": [
         {
-         "id": "fe44437",
+         "id": "249e6f6",
          "elType": "widget",
          "widgetType": "rating",
          "isInner": false,
@@ -1262,7 +1262,7 @@
          "elements": []
         },
         {
-         "id": "c2bc525",
+         "id": "a717e79",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -1275,7 +1275,7 @@
            "sizes": []
           },
           "typography_typography": "custom",
-          "typography_font_family": "Fraunces",
+          "typography_font_family": "Young Serif",
           "typography_font_size": {
            "unit": "px",
            "size": 20,
@@ -1307,7 +1307,7 @@
          "elements": []
         },
         {
-         "id": "bb8683d",
+         "id": "1ab8347",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -1339,7 +1339,7 @@
        ]
       },
       {
-       "id": "be99769",
+       "id": "a07b12b",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1434,7 +1434,7 @@
        },
        "elements": [
         {
-         "id": "6385390",
+         "id": "971340d",
          "elType": "widget",
          "widgetType": "rating",
          "isInner": false,
@@ -1466,7 +1466,7 @@
          "elements": []
         },
         {
-         "id": "d14182a",
+         "id": "fc2cfc1",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -1479,7 +1479,7 @@
            "sizes": []
           },
           "typography_typography": "custom",
-          "typography_font_family": "Fraunces",
+          "typography_font_family": "Young Serif",
           "typography_font_size": {
            "unit": "px",
            "size": 20,
@@ -1511,7 +1511,7 @@
          "elements": []
         },
         {
-         "id": "513e482",
+         "id": "83d2fd5",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -1543,7 +1543,7 @@
        ]
       },
       {
-       "id": "688fa9b",
+       "id": "b53d762",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1638,7 +1638,7 @@
        },
        "elements": [
         {
-         "id": "242e0f9",
+         "id": "2bda22c",
          "elType": "widget",
          "widgetType": "rating",
          "isInner": false,
@@ -1670,7 +1670,7 @@
          "elements": []
         },
         {
-         "id": "8603523",
+         "id": "72e03dd",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -1683,7 +1683,7 @@
            "sizes": []
           },
           "typography_typography": "custom",
-          "typography_font_family": "Fraunces",
+          "typography_font_family": "Young Serif",
           "typography_font_size": {
            "unit": "px",
            "size": 20,
@@ -1715,7 +1715,7 @@
          "elements": []
         },
         {
-         "id": "87f3813",
+         "id": "dc941d4",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -1747,7 +1747,7 @@
        ]
       },
       {
-       "id": "96806ef",
+       "id": "ad0413d",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -1842,7 +1842,7 @@
        },
        "elements": [
         {
-         "id": "9bcd0aa",
+         "id": "dcd9448",
          "elType": "widget",
          "widgetType": "rating",
          "isInner": false,
@@ -1874,7 +1874,7 @@
          "elements": []
         },
         {
-         "id": "e371a27",
+         "id": "a331a9f",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -1887,7 +1887,7 @@
            "sizes": []
           },
           "typography_typography": "custom",
-          "typography_font_family": "Fraunces",
+          "typography_font_family": "Young Serif",
           "typography_font_size": {
            "unit": "px",
            "size": 20,
@@ -1919,7 +1919,7 @@
          "elements": []
         },
         {
-         "id": "dbe4480",
+         "id": "84fb97c",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
@@ -1955,7 +1955,7 @@
    ]
   },
   {
-   "id": "dc941d4",
+   "id": "cfb9ec9",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -2051,7 +2051,7 @@
    },
    "elements": [
     {
-     "id": "72e03dd",
+     "id": "1bd313a",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -2103,7 +2103,7 @@
      },
      "elements": [
       {
-       "id": "971340d",
+       "id": "3b0d86d",
        "elType": "widget",
        "widgetType": "heading",
        "isInner": false,
@@ -2112,7 +2112,7 @@
         "header_size": "h2",
         "title_color": "#F2ECE3",
         "typography_typography": "custom",
-        "typography_font_family": "Fraunces",
+        "typography_font_family": "Young Serif",
         "typography_font_size": {
          "unit": "px",
          "size": 45,
@@ -2133,7 +2133,7 @@
          "size": 29,
          "sizes": []
         },
-        "typography_font_weight": "300",
+        "typography_font_weight": "400",
         "typography_line_height": {
          "unit": "em",
          "size": 1.04,
@@ -2152,7 +2152,7 @@
        "elements": []
       },
       {
-       "id": "fc2cfc1",
+       "id": "98e6823",
        "elType": "widget",
        "widgetType": "text-editor",
        "isInner": false,
@@ -2183,7 +2183,7 @@
        "elements": []
       },
       {
-       "id": "2bda22c",
+       "id": "14ab140",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -2237,7 +2237,7 @@
        },
        "elements": [
         {
-         "id": "83d2fd5",
+         "id": "ec48387",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,
@@ -2289,7 +2289,7 @@
          "elements": []
         },
         {
-         "id": "a07b12b",
+         "id": "5144498",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,

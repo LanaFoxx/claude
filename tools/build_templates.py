@@ -37,7 +37,7 @@ HAIR_16 = "#F2ECE329"      # rgba(242,236,227,0.16)
 FILL_12 = "#F2ECE31F"      # rgba(242,236,227,0.12)
 LABEL_60 = "#F2ECE399"     # rgba(242,236,227,0.6)
 TRANSPARENT = "#00000000"
-SERIF = "Fraunces"                       # test: option A from the font review (was Cormorant Garamond)
+SERIF = "Young Serif"                    # client pick (Nov 25); single weight (400)
 WORDMARK_SERIF = "Cormorant Garamond"    # stand-in logo keeps its own face until the real logo files arrive
 SERIF_SCALE = 0.86                       # Fraunces sets larger than Cormorant at the same px size
 SANS = "Manrope"
@@ -113,7 +113,7 @@ def typo(prefix="typography", family=SANS, size=None, weight=None, lh=None,
             size = tuple(round(v * SERIF_SCALE) for v in size) if isinstance(size, tuple) else round(size * SERIF_SCALE)
         s.update(resp(prefix + "_font_size", size, px))
     if weight is not None:
-        s[prefix + "_font_weight"] = str(weight)
+        s[prefix + "_font_weight"] = "400" if family == SERIF else str(weight)
     if lh is not None:
         s.update(resp(prefix + "_line_height", lh, em))
     if ls is not None:
@@ -200,7 +200,7 @@ def widget(wtype, nav_title, /, **s):
 
 
 # Bold + thin contrast titles: the <b> part sets heavy, the rest hairline (see .tn-contrast in SITE_CSS).
-CONTRAST_WEIGHTS = (300, 700)
+CONTRAST_WEIGHTS = (400, 400)              # Young Serif has one weight, so no bold/thin mix
 CONTRAST = {
     "Fine painting and log home staining for exceptional mountain homes.":
         "Fine <b>painting</b> and log home <b>staining</b> for exceptional mountain homes.",
@@ -426,6 +426,7 @@ _TEETH_SVG = ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' view
               "%3Cpath fill='%23C68B4E' d='M0 10L7 0L14 10Z'/%3E%3C/svg%3E")
 CONTRAST_CSS = ("<style>.tn-contrast .elementor-heading-title{font-weight:%d;}"
                 ".tn-contrast .elementor-heading-title b{font-weight:%d;}" % CONTRAST_WEIGHTS
+                + "h1,h2,h3,.elementor-heading-title,.elementor-testimonial__text{font-synthesis:none;}"
                 + ".tn-teeth .elementor-heading-title::before{content:'';display:block;width:192px;height:22px;"
                   "margin:0 0 24px;background:url(\"" + _TEETH_SVG + "\") repeat-x left bottom/32px 22px;}"
                   ".tn-teeth-c .elementor-heading-title::before{margin-left:auto;margin-right:auto;}"

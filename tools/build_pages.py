@@ -282,7 +282,7 @@ def reviews_pair(name, keys, bg=BONE):
 FAQ_CSS = ("<style>.tn-faq{border-top:1px solid #DCD2C4;}"
            ".tn-faq details{border-bottom:1px solid #DCD2C4;}"
            ".tn-faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;"
-           "gap:24px;padding:24px 0;font:500 22px/1.3 Fraunces,Georgia,serif;color:#14110E;}"
+           "gap:24px;padding:24px 0;font:400 21px/1.3 'Young Serif',Georgia,serif;color:#14110E;}"
            ".tn-faq summary::-webkit-details-marker{display:none;}"
            ".tn-faq summary::after{content:'+';flex:0 0 auto;width:36px;height:36px;border-radius:50%;border:1px solid #C9BFB1;"
            "display:flex;align-items:center;justify-content:center;font:400 22px/1 Manrope,sans-serif;color:#8A5A2B;"
@@ -791,40 +791,102 @@ def pages():
                                                      ("For Builders", "/for-builders/")]),
         cta()])
 
+    # Core Values: Blake's statement (Nov 25), word for word.
     values = [
-        ("Ethical practice", "We started on the principle of “do the right thing.” Paying vendors promptly, being "
-         "clear with clients about value, and treating others how we want to be treated."),
-        ("Team development", "Making each other better. Leaders lead by example, and everyone, from the office "
-         "to the crew, is a teammate whose role matters."),
-        ("Long-lasting partnerships", "We've worked with many of the same clients and vendors for decades. "
-         "A good reputation goes a long way, and we keep it by acting with integrity."),
-        ("Community enhancement", "Improve where we live. We favor local and small businesses as vendors and "
-         "support employees who give back to their communities."),
-        ("Positive outcomes", "Our goal is a good outcome for everyone. When that isn't possible, we work toward "
-         "the best result available for all parties."),
-        ("Better life quality", "We care about our people's long-term wellbeing. As an employee-owned company we "
-         "invest in retirement plans and share in the success of profitable jobs."),
+        ("shield-check-light", "Ethical Practice", "Do the Right Thing",
+         "Honest work doesn't cut corners, even when no one is watching. We'd rather stay an extra hour than leave "
+         "work we aren't proud of.",
+         ["We build to code even when no inspection requires it.",
+          "We treat every client's home and privacy with complete respect.",
+          "We only promise what we can deliver, and we deliver what we promise."]),
+        ("user-circle-check-light", "Team Development", "Making Each Other Better",
+         "Helping a coworker succeed never puts them ahead of you. It makes the whole team better.",
+         ["We train each other and share the tricks of the trade.",
+          "We correct privately and praise publicly.",
+          "Every role counts, from the office to the yard to the job site."]),
+        ("certificate-light", "Long-Lasting Partnerships", "A Good Reputation",
+         "For more than 25 years we've been known for finishing on time and doing Top Notch work. Most of our work "
+         "still comes from repeat clients, referrals, and builders who keep calling.",
+         ["We follow through on every promise, no matter who made it.",
+          "Quality comes before speed.",
+          "We leave clean, safe job sites every day."]),
+        ("house-line-light", "Community Enhancement", "Improve Where We Live",
+         "We live where we work, so we treat every job site like it's part of our home.",
+         ["We buy from local businesses whenever we can.",
+          "We match employee donations to the causes they care about.",
+          "Through Dollars for Doers, we donate to the organizations where our team volunteers."]),
+        ("sparkle-light", "Positive Outcomes", "Everyone Benefits",
+         "As an employee-owned company, we share in the outcome. We fix problems instead of assigning blame.",
+         ["Every job counts, no matter the size.",
+          "We share what we learn so mistakes aren't repeated.",
+          "We keep training and improving our craft."]),
+        ("calendar-check-light", "Better Life Quality", "Long-Term Wellbeing",
+         "People who feel supported do their best work, and they stay.",
+         ["Family first: work hard, then be present at home.",
+          "We share the workload so no one burns out.",
+          "Employee ownership helps build retirement security for everyone."]),
     ]
-    icons = ["shield-check-light", "user-circle-check-light", "certificate-light", "hammer-light",
-             "paint-roller-light", "paint-bucket-light"]
     cells = []
-    for (t, b), ic in zip(values, icons):
+    for ic, t, sub, body, pts in values:
         cells.append(container("Values / %s" % t, [
-            widget("icon", "Values / %s / Icon" % t, selected_icon=svg(ic), primary_color=AMBER, size=px(44),
+            widget("icon", "Values / %s / Icon" % t, selected_icon=svg(ic), primary_color=AMBER, size=px(40),
                    align="left", custom_css="selector .elementor-icon{display:block;line-height:0;}"
-                                            "selector .elementor-icon svg{width:44px;height:44px;}"),
-            heading("Values / %s / Title (H3)" % t, t, tag="h3", color=BONE,
-                    typ=typo(family=SERIF, size=28, weight=500, lh=1.15)),
-            text("Values / %s / Text" % t, "<p>%s</p>" % b, color=SPRUCE_TEXT, size=15, lh=1.75, max_w=360,
-                 pretty=False)], gap=18))
+                                            "selector .elementor-icon svg{width:40px;height:40px;}"),
+            container("Values / %s / Heading" % t, [
+                heading("Values / %s / Title (H3)" % t, t, tag="h3", color=BONE,
+                        typ=typo(family=SERIF, size=28, weight=400, lh=1.15)),
+                heading("Values / %s / Subtitle" % t, sub, tag="div", color=AMBER,
+                        typ=typo(size=14, weight=600, lh=1.4))], gap=6),
+            text("Values / %s / Text" % t, "<p>%s</p>" % body, color=SPRUCE_TEXT, size=15, lh=1.75, max_w=400,
+                 pretty=False),
+            text("Values / %s / Points" % t, "<ul>%s</ul>" % "".join("<li>%s</li>" % x for x in pts),
+                 color=bt.BONE, size=15, lh=1.55, pretty=False,
+                 custom_css=TICKS_CSS.replace("gap:12px", "gap:10px") + "selector li{text-wrap:balance;}")], gap=18))
+    statement = section("Value Statement", [container("Value Statement / Content", [
+        eyebrow("Value Statement", "Our value statement", bt.DEEP),
+        heading("Value Statement / Quote", "We transform others' experience by building something better.",
+                tag="p", color=CHARRED, typ=typo(family=SERIF, size=(52, 48, 40, 32), weight=400, lh=1.15),
+                align="center", custom_css="selector{max-width:900px !important;margin:0 auto;}"
+                                           "selector .elementor-heading-title{text-wrap:balance;}"),
+        grid("Value Statement / Outcomes", [
+            text("Value Statement / Outcome %d" % (i + 1), "<p>%s</p>" % o, color=BARK, size=17, lh=1.6,
+                 pretty=False, align="center")
+            for i, o in enumerate(["Customers enjoy their homes more.",
+                                   "Our team leaves better off than they arrived.",
+                                   "Our community thinks better of our industry."])],
+            cols=(3, 3, 3, 1), gap_col=32, gap_row=12,
+            css="selector{max-width:960px;margin:0 auto;border-top:1px solid #DCD2C4;padding-top:28px;}")],
+        gap=28, flex_align_items="center")], bg=BONE)
+    culture = section("Hire For Culture", [container("Hire For Culture / Content", [
+        h2("Hire For Culture / Title (H2)", "Why we hire for culture", sizes=H2_INNER, max_w=760, align="center"),
+        text("Hire For Culture / Text",
+             "<p>Skills can be taught. Character is harder. We hire people who are honest when no one is watching, "
+             "take pride in clean work, help without being asked, and treat a client's home with care. That's how "
+             "our clients get crews they can trust, and how our team gets coworkers they're glad to work "
+             "beside.</p>", color=bt.HERO_TEXT, size=18, lh=1.7, max_w=720, align="center",
+             custom_css="selector{margin:0 auto;}"),
+        container("Hire For Culture / Actions", [
+            pill("Hire For Culture / Careers", "View Careers →",
+                 "https://www.topnotch-logworks.com/career-opportunities/"),
+            pill("Hire For Culture / Contact", "Contact Us →", "/#estimate", background_color=bt.TRANSPARENT,
+                 button_text_color=BONE, hover_color=CHARRED, button_background_hover_color=BONE,
+                 border_border="solid", border_width=dims(1), border_color=BONE)],
+            direction="row", gap=(16, 12), flex_wrap="wrap", flex_justify_content="center",
+            flex_align_items="center")], gap=28, flex_align_items="center")],
+        bg=EST_BROWN, **(dict(bt.wood_texture(EST_BROWN, 0.65), background_attachment="fixed")
+                         if bt.TEXTURE else {}))
     P["core-values"] = page("TN core-values", [
-        page_hero("Page Header", "About", "<b>Core</b> values",
-                  "We hire people who already live these values. They shape how we treat clients, vendors and "
-                  "each other."),
+        page_hero("Page Header", "About", "Our core values",
+                  "How we build, how we paint, and how we treat people."),
+        prose("Intro", "Six values, one team",
+              ["Top Notch Logworks builds log and timber structures and restores log homes, including rot "
+               "mitigation. Top Notch Painting paints, stains, and finishes high-end mountain homes. Whether we're "
+               "in a client's home, on a job site, or in our Gypsum yard, these six values guide how our whole team "
+               "works. As an employee-owned company, we hold ourselves to them because they're ours."]),
+        statement,
         section("Values", [grid("Values / Grid", cells, cols=(3, 3, 2, 1), gap_col=0, gap_row=0,
                                 css=bt.WHY_GRID_LINES)], bg=SPRUCE),
-        related("About Links", "<b>Learn</b> more", [("Our Story", "/our-story/"), ("Reviews", "/reviews/")]),
-        cta()])
+        culture])
 
     reviews = [
         ("Very reliable. They came on time and finished in the agreed time. They were very professional. The "

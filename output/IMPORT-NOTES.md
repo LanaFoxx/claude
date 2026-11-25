@@ -397,3 +397,10 @@ Container `Seasonal Offer`: change the H2 to **Talk to us about your project** a
 - #27 Log page before/after reduced to 2. The small cabin is dropped, since it's also in the photo strip.
 - #28 Our Work gallery: 24 captioned real photos (no stock), painting and staining alternating. Painting starts with finished exteriors, then interiors.
 - #29 Core values and #30 project stories: waiting on Blake's copy.
+
+## Font decision + Core Values (Nov 25)
+- The team picked **Young Serif** for both sites. `SERIF = "Young Serif"`. It ships in one weight (400), so every serif heading is forced to 400. `CONTRAST_WEIGHTS = (400, 400)` turns off the bold/thin mix (the `<b>` markup stays and simply renders at the same weight). `font-synthesis:none` stops the browser from faking a bold.
+- Core Values uses Blake's statement verbatim:
+  - Page sections: intro, the value statement with its three outcomes, six value cards (title, subtitle, paragraph, three bullets), and "Why we hire for culture".
+  - Buttons: View Careers → topnotch-logworks.com/career-opportunities/, and Contact Us → /#estimate.
+  - The only heading I added is "Six values, one team" above his intro paragraph.

@@ -4,7 +4,7 @@
  "type": "page",
  "content": [
   {
-   "id": "cd37cd9",
+   "id": "242e0f9",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -82,7 +82,7 @@
    },
    "elements": [
     {
-     "id": "598079b",
+     "id": "be99769",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -189,7 +189,7 @@
      },
      "elements": [
       {
-       "id": "54cb95a",
+       "id": "513e482",
        "elType": "container",
        "isInner": true,
        "settings": {
@@ -241,7 +241,7 @@
        },
        "elements": [
         {
-         "id": "3516f92",
+         "id": "fe44437",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
@@ -272,16 +272,16 @@
          "elements": []
         },
         {
-         "id": "b5eff5d",
+         "id": "c2bc525",
          "elType": "widget",
          "widgetType": "heading",
          "isInner": false,
          "settings": {
-          "title": "<b>Core</b> values",
+          "title": "Our core values",
           "header_size": "h1",
           "title_color": "#F2ECE3",
           "typography_typography": "custom",
-          "typography_font_family": "Fraunces",
+          "typography_font_family": "Young Serif",
           "typography_font_size": {
            "unit": "px",
            "size": 55,
@@ -302,7 +302,7 @@
            "size": 34,
            "sizes": []
           },
-          "typography_font_weight": "300",
+          "typography_font_weight": "400",
           "typography_line_height": {
            "unit": "em",
            "size": 1.04,
@@ -314,18 +314,17 @@
            "sizes": []
           },
           "custom_css": "selector{max-width:760px !important;}selector .elementor-heading-title{text-wrap:balance;}",
-          "_css_classes": "tn-contrast",
           "_title": "Page Header / Title (H1)"
          },
          "elements": []
         },
         {
-         "id": "f551700",
+         "id": "bb8683d",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
          "settings": {
-          "editor": "<p>We hire people who already live these values. They shape how we treat clients, vendors and each other.</p>",
+          "editor": "<p>How we build, how we paint, and how we treat people.</p>",
           "text_color": "#D7CFC4",
           "paragraph_spacing": {
            "unit": "px",
@@ -365,7 +364,7 @@
          "elements": []
         },
         {
-         "id": "da19716",
+         "id": "d14182a",
          "elType": "container",
          "isInner": true,
          "settings": {
@@ -418,7 +417,7 @@
          },
          "elements": [
           {
-           "id": "f9e646d",
+           "id": "9f68dc4",
            "elType": "widget",
            "widgetType": "button",
            "isInner": false,
@@ -470,7 +469,7 @@
            "elements": []
           },
           {
-           "id": "b25ff7a",
+           "id": "6385390",
            "elType": "widget",
            "widgetType": "button",
            "isInner": false,
@@ -543,7 +542,628 @@
    ]
   },
   {
-   "id": "75f71bd",
+   "id": "9bcd0aa",
+   "elType": "container",
+   "isInner": false,
+   "settings": {
+    "_title": "Intro",
+    "content_width": "boxed",
+    "flex_direction": "column",
+    "flex_gap": {
+     "column": "0",
+     "row": "0",
+     "isLinked": true,
+     "unit": "px",
+     "size": 0
+    },
+    "flex_gap_laptop": {
+     "column": "0",
+     "row": "0",
+     "isLinked": true,
+     "unit": "px",
+     "size": 0
+    },
+    "flex_gap_tablet": {
+     "column": "0",
+     "row": "0",
+     "isLinked": true,
+     "unit": "px",
+     "size": 0
+    },
+    "flex_gap_mobile": {
+     "column": "0",
+     "row": "0",
+     "isLinked": true,
+     "unit": "px",
+     "size": 0
+    },
+    "boxed_width": {
+     "unit": "px",
+     "size": 1280,
+     "sizes": []
+    },
+    "padding": {
+     "unit": "px",
+     "top": "128",
+     "right": "48",
+     "bottom": "128",
+     "left": "48",
+     "isLinked": false
+    },
+    "padding_laptop": {
+     "unit": "px",
+     "top": "117",
+     "right": "48",
+     "bottom": "117",
+     "left": "48",
+     "isLinked": false
+    },
+    "padding_tablet": {
+     "unit": "px",
+     "top": "88",
+     "right": "32",
+     "bottom": "88",
+     "left": "32",
+     "isLinked": false
+    },
+    "padding_mobile": {
+     "unit": "px",
+     "top": "80",
+     "right": "20",
+     "bottom": "80",
+     "left": "20",
+     "isLinked": false
+    },
+    "background_background": "classic",
+    "background_color": "#F2ECE3",
+    "html_tag": "section"
+   },
+   "elements": [
+    {
+     "id": "688fa9b",
+     "elType": "container",
+     "isInner": true,
+     "settings": {
+      "_title": "Intro / Text column",
+      "content_width": "full",
+      "flex_direction": "column",
+      "flex_gap": {
+       "column": "24",
+       "row": "24",
+       "isLinked": true,
+       "unit": "px",
+       "size": 24
+      },
+      "flex_gap_laptop": {
+       "column": "24",
+       "row": "24",
+       "isLinked": true,
+       "unit": "px",
+       "size": 24
+      },
+      "flex_gap_tablet": {
+       "column": "24",
+       "row": "24",
+       "isLinked": true,
+       "unit": "px",
+       "size": 24
+      },
+      "flex_gap_mobile": {
+       "column": "24",
+       "row": "24",
+       "isLinked": true,
+       "unit": "px",
+       "size": 24
+      },
+      "width": {
+       "unit": "%",
+       "size": 100,
+       "sizes": []
+      },
+      "padding": {
+       "unit": "px",
+       "top": "0",
+       "right": "0",
+       "bottom": "0",
+       "left": "0",
+       "isLinked": true
+      }
+     },
+     "elements": [
+      {
+       "id": "8603523",
+       "elType": "widget",
+       "widgetType": "heading",
+       "isInner": false,
+       "settings": {
+        "title": "Six values, one team",
+        "header_size": "h2",
+        "title_color": "#14110E",
+        "typography_typography": "custom",
+        "typography_font_family": "Young Serif",
+        "typography_font_size": {
+         "unit": "px",
+         "size": 45,
+         "sizes": []
+        },
+        "typography_font_size_laptop": {
+         "unit": "px",
+         "size": 41,
+         "sizes": []
+        },
+        "typography_font_size_tablet": {
+         "unit": "px",
+         "size": 34,
+         "sizes": []
+        },
+        "typography_font_size_mobile": {
+         "unit": "px",
+         "size": 29,
+         "sizes": []
+        },
+        "typography_font_weight": "400",
+        "typography_line_height": {
+         "unit": "em",
+         "size": 1.04,
+         "sizes": []
+        },
+        "typography_letter_spacing": {
+         "unit": "px",
+         "size": -0.6,
+         "sizes": []
+        },
+        "custom_css": "selector .elementor-heading-title{text-wrap:balance;}selector{max-width:640px !important;}",
+        "_css_classes": "tn-teeth",
+        "_title": "Intro / Title (H2)"
+       },
+       "elements": []
+      },
+      {
+       "id": "87f3813",
+       "elType": "widget",
+       "widgetType": "text-editor",
+       "isInner": false,
+       "settings": {
+        "editor": "<p>Top Notch Logworks builds log and timber structures and restores log homes, including rot mitigation. Top Notch Painting paints, stains, and finishes high-end mountain homes. Whether we're in a client's home, on a job site, or in our Gypsum yard, these six values guide how our whole team works. As an employee-owned company, we hold ourselves to them because they're ours.</p>",
+        "text_color": "#5B5046",
+        "paragraph_spacing": {
+         "unit": "px",
+         "size": 18,
+         "sizes": []
+        },
+        "typography_typography": "custom",
+        "typography_font_family": "Manrope",
+        "typography_font_size": {
+         "unit": "px",
+         "size": 17,
+         "sizes": []
+        },
+        "typography_line_height": {
+         "unit": "em",
+         "size": 1.75,
+         "sizes": []
+        },
+        "custom_css": "selector p:last-child{margin-block-end:0;}selector{max-width:620px !important;}",
+        "_title": "Intro / Text"
+       },
+       "elements": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "48fbc04",
+   "elType": "container",
+   "isInner": false,
+   "settings": {
+    "_title": "Value Statement",
+    "content_width": "boxed",
+    "flex_direction": "column",
+    "flex_gap": {
+     "column": "0",
+     "row": "0",
+     "isLinked": true,
+     "unit": "px",
+     "size": 0
+    },
+    "flex_gap_laptop": {
+     "column": "0",
+     "row": "0",
+     "isLinked": true,
+     "unit": "px",
+     "size": 0
+    },
+    "flex_gap_tablet": {
+     "column": "0",
+     "row": "0",
+     "isLinked": true,
+     "unit": "px",
+     "size": 0
+    },
+    "flex_gap_mobile": {
+     "column": "0",
+     "row": "0",
+     "isLinked": true,
+     "unit": "px",
+     "size": 0
+    },
+    "boxed_width": {
+     "unit": "px",
+     "size": 1280,
+     "sizes": []
+    },
+    "padding": {
+     "unit": "px",
+     "top": "128",
+     "right": "48",
+     "bottom": "128",
+     "left": "48",
+     "isLinked": false
+    },
+    "padding_laptop": {
+     "unit": "px",
+     "top": "117",
+     "right": "48",
+     "bottom": "117",
+     "left": "48",
+     "isLinked": false
+    },
+    "padding_tablet": {
+     "unit": "px",
+     "top": "88",
+     "right": "32",
+     "bottom": "88",
+     "left": "32",
+     "isLinked": false
+    },
+    "padding_mobile": {
+     "unit": "px",
+     "top": "80",
+     "right": "20",
+     "bottom": "80",
+     "left": "20",
+     "isLinked": false
+    },
+    "background_background": "classic",
+    "background_color": "#F2ECE3",
+    "html_tag": "section"
+   },
+   "elements": [
+    {
+     "id": "9f45022",
+     "elType": "container",
+     "isInner": true,
+     "settings": {
+      "_title": "Value Statement / Content",
+      "content_width": "full",
+      "flex_direction": "column",
+      "flex_gap": {
+       "column": "28",
+       "row": "28",
+       "isLinked": true,
+       "unit": "px",
+       "size": 28
+      },
+      "flex_gap_laptop": {
+       "column": "28",
+       "row": "28",
+       "isLinked": true,
+       "unit": "px",
+       "size": 28
+      },
+      "flex_gap_tablet": {
+       "column": "28",
+       "row": "28",
+       "isLinked": true,
+       "unit": "px",
+       "size": 28
+      },
+      "flex_gap_mobile": {
+       "column": "28",
+       "row": "28",
+       "isLinked": true,
+       "unit": "px",
+       "size": 28
+      },
+      "width": {
+       "unit": "%",
+       "size": 100,
+       "sizes": []
+      },
+      "padding": {
+       "unit": "px",
+       "top": "0",
+       "right": "0",
+       "bottom": "0",
+       "left": "0",
+       "isLinked": true
+      },
+      "flex_align_items": "center"
+     },
+     "elements": [
+      {
+       "id": "6aabbce",
+       "elType": "widget",
+       "widgetType": "heading",
+       "isInner": false,
+       "settings": {
+        "title": "Our value statement",
+        "header_size": "div",
+        "title_color": "#8A5A2B",
+        "typography_typography": "custom",
+        "typography_font_family": "Manrope",
+        "typography_font_size": {
+         "unit": "px",
+         "size": 13,
+         "sizes": []
+        },
+        "typography_font_weight": "600",
+        "typography_line_height": {
+         "unit": "em",
+         "size": 1.4,
+         "sizes": []
+        },
+        "typography_letter_spacing": {
+         "unit": "px",
+         "size": 1.2,
+         "sizes": []
+        },
+        "_title": "Value Statement / Eyebrow"
+       },
+       "elements": []
+      },
+      {
+       "id": "8cf8cd4",
+       "elType": "widget",
+       "widgetType": "heading",
+       "isInner": false,
+       "settings": {
+        "title": "We transform others' experience by building something better.",
+        "header_size": "p",
+        "title_color": "#14110E",
+        "typography_typography": "custom",
+        "typography_font_family": "Young Serif",
+        "typography_font_size": {
+         "unit": "px",
+         "size": 45,
+         "sizes": []
+        },
+        "typography_font_size_laptop": {
+         "unit": "px",
+         "size": 41,
+         "sizes": []
+        },
+        "typography_font_size_tablet": {
+         "unit": "px",
+         "size": 34,
+         "sizes": []
+        },
+        "typography_font_size_mobile": {
+         "unit": "px",
+         "size": 28,
+         "sizes": []
+        },
+        "typography_font_weight": "400",
+        "typography_line_height": {
+         "unit": "em",
+         "size": 1.15,
+         "sizes": []
+        },
+        "align": "center",
+        "custom_css": "selector{max-width:900px !important;margin:0 auto;}selector .elementor-heading-title{text-wrap:balance;}",
+        "_title": "Value Statement / Quote"
+       },
+       "elements": []
+      },
+      {
+       "id": "34dcac3",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Value Statement / Outcomes",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "32",
+         "row": "12",
+         "isLinked": false,
+         "unit": "px",
+         "size": 32
+        },
+        "flex_gap_laptop": {
+         "column": "32",
+         "row": "12",
+         "isLinked": false,
+         "unit": "px",
+         "size": 32
+        },
+        "flex_gap_tablet": {
+         "column": "32",
+         "row": "12",
+         "isLinked": false,
+         "unit": "px",
+         "size": 32
+        },
+        "flex_gap_mobile": {
+         "column": "32",
+         "row": "12",
+         "isLinked": false,
+         "unit": "px",
+         "size": 32
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "0",
+         "right": "0",
+         "bottom": "0",
+         "left": "0",
+         "isLinked": true
+        },
+        "container_type": "grid",
+        "grid_auto_flow": "row",
+        "grid_rows_grid": {
+         "unit": "custom",
+         "size": "auto",
+         "sizes": []
+        },
+        "grid_columns_grid": {
+         "unit": "fr",
+         "size": 3,
+         "sizes": []
+        },
+        "grid_columns_grid_laptop": {
+         "unit": "fr",
+         "size": 3,
+         "sizes": []
+        },
+        "grid_columns_grid_tablet": {
+         "unit": "fr",
+         "size": 3,
+         "sizes": []
+        },
+        "grid_columns_grid_mobile": {
+         "unit": "fr",
+         "size": 1,
+         "sizes": []
+        },
+        "grid_gaps": {
+         "column": "32",
+         "row": "12",
+         "isLinked": false,
+         "unit": "px",
+         "size": 32
+        },
+        "grid_gaps_laptop": {
+         "column": "32",
+         "row": "12",
+         "isLinked": false,
+         "unit": "px",
+         "size": 32
+        },
+        "grid_gaps_tablet": {
+         "column": "32",
+         "row": "12",
+         "isLinked": false,
+         "unit": "px",
+         "size": 32
+        },
+        "grid_gaps_mobile": {
+         "column": "32",
+         "row": "12",
+         "isLinked": false,
+         "unit": "px",
+         "size": 32
+        },
+        "custom_css": "selector{max-width:960px;margin:0 auto;border-top:1px solid #DCD2C4;padding-top:28px;}"
+       },
+       "elements": [
+        {
+         "id": "335086b",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>Customers enjoy their homes more.</p>",
+          "text_color": "#5B5046",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 17,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.6,
+           "sizes": []
+          },
+          "align": "center",
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "Value Statement / Outcome 1"
+         },
+         "elements": []
+        },
+        {
+         "id": "2b82aef",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>Our team leaves better off than they arrived.</p>",
+          "text_color": "#5B5046",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 17,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.6,
+           "sizes": []
+          },
+          "align": "center",
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "Value Statement / Outcome 2"
+         },
+         "elements": []
+        },
+        {
+         "id": "db17c73",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>Our community thinks better of our industry.</p>",
+          "text_color": "#5B5046",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 17,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.6,
+           "sizes": []
+          },
+          "align": "center",
+          "custom_css": "selector p:last-child{margin-block-end:0;}",
+          "_title": "Value Statement / Outcome 3"
+         },
+         "elements": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "dbe4480",
    "elType": "container",
    "isInner": false,
    "settings": {
@@ -621,7 +1241,7 @@
    },
    "elements": [
     {
-     "id": "6d7f847",
+     "id": "e371a27",
      "elType": "container",
      "isInner": true,
      "settings": {
@@ -728,11 +1348,11 @@
      },
      "elements": [
       {
-       "id": "cd328e8",
+       "id": "d18caf1",
        "elType": "container",
        "isInner": true,
        "settings": {
-        "_title": "Values / Ethical practice",
+        "_title": "Values / Ethical Practice",
         "content_width": "full",
         "flex_direction": "column",
         "flex_gap": {
@@ -794,48 +1414,127 @@
           "primary_color": "#C68B4E",
           "size": {
            "unit": "px",
-           "size": 44,
+           "size": 40,
            "sizes": []
           },
           "align": "left",
-          "custom_css": "selector .elementor-icon{display:block;line-height:0;}selector .elementor-icon svg{width:44px;height:44px;}",
-          "_title": "Values / Ethical practice / Icon"
+          "custom_css": "selector .elementor-icon{display:block;line-height:0;}selector .elementor-icon svg{width:40px;height:40px;}",
+          "_title": "Values / Ethical Practice / Icon"
          },
          "elements": []
         },
         {
-         "id": "f59d756",
-         "elType": "widget",
-         "widgetType": "heading",
-         "isInner": false,
+         "id": "cd328e8",
+         "elType": "container",
+         "isInner": true,
          "settings": {
-          "title": "Ethical practice",
-          "header_size": "h3",
-          "title_color": "#F2ECE3",
-          "typography_typography": "custom",
-          "typography_font_family": "Fraunces",
-          "typography_font_size": {
+          "_title": "Values / Ethical Practice / Heading",
+          "content_width": "full",
+          "flex_direction": "column",
+          "flex_gap": {
+           "column": "6",
+           "row": "6",
+           "isLinked": true,
            "unit": "px",
-           "size": 24,
+           "size": 6
+          },
+          "flex_gap_laptop": {
+           "column": "6",
+           "row": "6",
+           "isLinked": true,
+           "unit": "px",
+           "size": 6
+          },
+          "flex_gap_tablet": {
+           "column": "6",
+           "row": "6",
+           "isLinked": true,
+           "unit": "px",
+           "size": 6
+          },
+          "flex_gap_mobile": {
+           "column": "6",
+           "row": "6",
+           "isLinked": true,
+           "unit": "px",
+           "size": 6
+          },
+          "width": {
+           "unit": "%",
+           "size": 100,
            "sizes": []
           },
-          "typography_font_weight": "500",
-          "typography_line_height": {
-           "unit": "em",
-           "size": 1.15,
-           "sizes": []
-          },
-          "_title": "Values / Ethical practice / Title (H3)"
+          "padding": {
+           "unit": "px",
+           "top": "0",
+           "right": "0",
+           "bottom": "0",
+           "left": "0",
+           "isLinked": true
+          }
          },
-         "elements": []
+         "elements": [
+          {
+           "id": "f59d756",
+           "elType": "widget",
+           "widgetType": "heading",
+           "isInner": false,
+           "settings": {
+            "title": "Ethical Practice",
+            "header_size": "h3",
+            "title_color": "#F2ECE3",
+            "typography_typography": "custom",
+            "typography_font_family": "Young Serif",
+            "typography_font_size": {
+             "unit": "px",
+             "size": 24,
+             "sizes": []
+            },
+            "typography_font_weight": "400",
+            "typography_line_height": {
+             "unit": "em",
+             "size": 1.15,
+             "sizes": []
+            },
+            "_title": "Values / Ethical Practice / Title (H3)"
+           },
+           "elements": []
+          },
+          {
+           "id": "46079a2",
+           "elType": "widget",
+           "widgetType": "heading",
+           "isInner": false,
+           "settings": {
+            "title": "Do the Right Thing",
+            "header_size": "div",
+            "title_color": "#C68B4E",
+            "typography_typography": "custom",
+            "typography_font_family": "Manrope",
+            "typography_font_size": {
+             "unit": "px",
+             "size": 14,
+             "sizes": []
+            },
+            "typography_font_weight": "600",
+            "typography_line_height": {
+             "unit": "em",
+             "size": 1.4,
+             "sizes": []
+            },
+            "_title": "Values / Ethical Practice / Subtitle"
+           },
+           "elements": []
+          }
+         ]
         },
         {
-         "id": "46079a2",
+         "id": "4208c76",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
          "settings": {
-          "editor": "<p>We started on the principle of “do the right thing.” Paying vendors promptly, being clear with clients about value, and treating others how we want to be treated.</p>",
+          "editor": "<p>Honest work doesn't cut corners, even when no one is watching. We'd rather stay an extra hour than leave work we aren't proud of.</p>",
           "text_color": "#C9D1C4",
           "paragraph_spacing": {
            "unit": "px",
@@ -854,19 +1553,49 @@
            "size": 1.75,
            "sizes": []
           },
-          "custom_css": "selector p:last-child{margin-block-end:0;}selector{max-width:360px !important;}",
-          "_title": "Values / Ethical practice / Text"
+          "custom_css": "selector p:last-child{margin-block-end:0;}selector{max-width:400px !important;}",
+          "_title": "Values / Ethical Practice / Text"
+         },
+         "elements": []
+        },
+        {
+         "id": "2da8886",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<ul><li>We build to code even when no inspection requires it.</li><li>We treat every client's home and privacy with complete respect.</li><li>We only promise what we can deliver, and we deliver what we promise.</li></ul>",
+          "text_color": "#F2ECE3",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 15,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.55,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}selector ul{list-style:none;margin:0;padding:0;display:grid;gap:10px;}selector li{position:relative;padding-left:26px;}selector li::before{content:'';position:absolute;left:0;top:.72em;width:12px;height:2px;background:#C68B4E;}selector li{text-wrap:balance;}",
+          "_title": "Values / Ethical Practice / Points"
          },
          "elements": []
         }
        ]
       },
       {
-       "id": "242d773",
+       "id": "38770c0",
        "elType": "container",
        "isInner": true,
        "settings": {
-        "_title": "Values / Team development",
+        "_title": "Values / Team Development",
         "content_width": "full",
         "flex_direction": "column",
         "flex_gap": {
@@ -913,7 +1642,7 @@
        },
        "elements": [
         {
-         "id": "4208c76",
+         "id": "242d773",
          "elType": "widget",
          "widgetType": "icon",
          "isInner": false,
@@ -928,48 +1657,127 @@
           "primary_color": "#C68B4E",
           "size": {
            "unit": "px",
-           "size": 44,
+           "size": 40,
            "sizes": []
           },
           "align": "left",
-          "custom_css": "selector .elementor-icon{display:block;line-height:0;}selector .elementor-icon svg{width:44px;height:44px;}",
-          "_title": "Values / Team development / Icon"
+          "custom_css": "selector .elementor-icon{display:block;line-height:0;}selector .elementor-icon svg{width:40px;height:40px;}",
+          "_title": "Values / Team Development / Icon"
          },
          "elements": []
         },
         {
-         "id": "2da8886",
-         "elType": "widget",
-         "widgetType": "heading",
-         "isInner": false,
+         "id": "bdd4650",
+         "elType": "container",
+         "isInner": true,
          "settings": {
-          "title": "Team development",
-          "header_size": "h3",
-          "title_color": "#F2ECE3",
-          "typography_typography": "custom",
-          "typography_font_family": "Fraunces",
-          "typography_font_size": {
+          "_title": "Values / Team Development / Heading",
+          "content_width": "full",
+          "flex_direction": "column",
+          "flex_gap": {
+           "column": "6",
+           "row": "6",
+           "isLinked": true,
            "unit": "px",
-           "size": 24,
+           "size": 6
+          },
+          "flex_gap_laptop": {
+           "column": "6",
+           "row": "6",
+           "isLinked": true,
+           "unit": "px",
+           "size": 6
+          },
+          "flex_gap_tablet": {
+           "column": "6",
+           "row": "6",
+           "isLinked": true,
+           "unit": "px",
+           "size": 6
+          },
+          "flex_gap_mobile": {
+           "column": "6",
+           "row": "6",
+           "isLinked": true,
+           "unit": "px",
+           "size": 6
+          },
+          "width": {
+           "unit": "%",
+           "size": 100,
            "sizes": []
           },
-          "typography_font_weight": "500",
-          "typography_line_height": {
-           "unit": "em",
-           "size": 1.15,
-           "sizes": []
-          },
-          "_title": "Values / Team development / Title (H3)"
+          "padding": {
+           "unit": "px",
+           "top": "0",
+           "right": "0",
+           "bottom": "0",
+           "left": "0",
+           "isLinked": true
+          }
          },
-         "elements": []
+         "elements": [
+          {
+           "id": "6a9b82c",
+           "elType": "widget",
+           "widgetType": "heading",
+           "isInner": false,
+           "settings": {
+            "title": "Team Development",
+            "header_size": "h3",
+            "title_color": "#F2ECE3",
+            "typography_typography": "custom",
+            "typography_font_family": "Young Serif",
+            "typography_font_size": {
+             "unit": "px",
+             "size": 24,
+             "sizes": []
+            },
+            "typography_font_weight": "400",
+            "typography_line_height": {
+             "unit": "em",
+             "size": 1.15,
+             "sizes": []
+            },
+            "_title": "Values / Team Development / Title (H3)"
+           },
+           "elements": []
+          },
+          {
+           "id": "c6fd8e2",
+           "elType": "widget",
+           "widgetType": "heading",
+           "isInner": false,
+           "settings": {
+            "title": "Making Each Other Better",
+            "header_size": "div",
+            "title_color": "#C68B4E",
+            "typography_typography": "custom",
+            "typography_font_family": "Manrope",
+            "typography_font_size": {
+             "unit": "px",
+             "size": 14,
+             "sizes": []
+            },
+            "typography_font_weight": "600",
+            "typography_line_height": {
+             "unit": "em",
+             "size": 1.4,
+             "sizes": []
+            },
+            "_title": "Values / Team Development / Subtitle"
+           },
+           "elements": []
+          }
+         ]
         },
         {
-         "id": "d18caf1",
+         "id": "af47892",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
          "settings": {
-          "editor": "<p>Making each other better. Leaders lead by example, and everyone, from the office to the crew, is a teammate whose role matters.</p>",
+          "editor": "<p>Helping a coworker succeed never puts them ahead of you. It makes the whole team better.</p>",
           "text_color": "#C9D1C4",
           "paragraph_spacing": {
            "unit": "px",
@@ -988,19 +1796,49 @@
            "size": 1.75,
            "sizes": []
           },
-          "custom_css": "selector p:last-child{margin-block-end:0;}selector{max-width:360px !important;}",
-          "_title": "Values / Team development / Text"
+          "custom_css": "selector p:last-child{margin-block-end:0;}selector{max-width:400px !important;}",
+          "_title": "Values / Team Development / Text"
+         },
+         "elements": []
+        },
+        {
+         "id": "c01aedf",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<ul><li>We train each other and share the tricks of the trade.</li><li>We correct privately and praise publicly.</li><li>Every role counts, from the office to the yard to the job site.</li></ul>",
+          "text_color": "#F2ECE3",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 15,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.55,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}selector ul{list-style:none;margin:0;padding:0;display:grid;gap:10px;}selector li{position:relative;padding-left:26px;}selector li::before{content:'';position:absolute;left:0;top:.72em;width:12px;height:2px;background:#C68B4E;}selector li{text-wrap:balance;}",
+          "_title": "Values / Team Development / Points"
          },
          "elements": []
         }
        ]
       },
       {
-       "id": "af47892",
+       "id": "f6445bb",
        "elType": "container",
        "isInner": true,
        "settings": {
-        "_title": "Values / Long-lasting partnerships",
+        "_title": "Values / Long-Lasting Partnerships",
         "content_width": "full",
         "flex_direction": "column",
         "flex_gap": {
@@ -1047,7 +1885,7 @@
        },
        "elements": [
         {
-         "id": "6a9b82c",
+         "id": "2d7a466",
          "elType": "widget",
          "widgetType": "icon",
          "isInner": false,
@@ -1062,308 +1900,119 @@
           "primary_color": "#C68B4E",
           "size": {
            "unit": "px",
-           "size": 44,
+           "size": 40,
            "sizes": []
           },
           "align": "left",
-          "custom_css": "selector .elementor-icon{display:block;line-height:0;}selector .elementor-icon svg{width:44px;height:44px;}",
-          "_title": "Values / Long-lasting partnerships / Icon"
-         },
-         "elements": []
-        },
-        {
-         "id": "c6fd8e2",
-         "elType": "widget",
-         "widgetType": "heading",
-         "isInner": false,
-         "settings": {
-          "title": "Long-lasting partnerships",
-          "header_size": "h3",
-          "title_color": "#F2ECE3",
-          "typography_typography": "custom",
-          "typography_font_family": "Fraunces",
-          "typography_font_size": {
-           "unit": "px",
-           "size": 24,
-           "sizes": []
-          },
-          "typography_font_weight": "500",
-          "typography_line_height": {
-           "unit": "em",
-           "size": 1.15,
-           "sizes": []
-          },
-          "_title": "Values / Long-lasting partnerships / Title (H3)"
-         },
-         "elements": []
-        },
-        {
-         "id": "bdd4650",
-         "elType": "widget",
-         "widgetType": "text-editor",
-         "isInner": false,
-         "settings": {
-          "editor": "<p>We've worked with many of the same clients and vendors for decades. A good reputation goes a long way, and we keep it by acting with integrity.</p>",
-          "text_color": "#C9D1C4",
-          "paragraph_spacing": {
-           "unit": "px",
-           "size": 0,
-           "sizes": []
-          },
-          "typography_typography": "custom",
-          "typography_font_family": "Manrope",
-          "typography_font_size": {
-           "unit": "px",
-           "size": 15,
-           "sizes": []
-          },
-          "typography_line_height": {
-           "unit": "em",
-           "size": 1.75,
-           "sizes": []
-          },
-          "custom_css": "selector p:last-child{margin-block-end:0;}selector{max-width:360px !important;}",
-          "_title": "Values / Long-lasting partnerships / Text"
-         },
-         "elements": []
-        }
-       ]
-      },
-      {
-       "id": "3c102d7",
-       "elType": "container",
-       "isInner": true,
-       "settings": {
-        "_title": "Values / Community enhancement",
-        "content_width": "full",
-        "flex_direction": "column",
-        "flex_gap": {
-         "column": "18",
-         "row": "18",
-         "isLinked": true,
-         "unit": "px",
-         "size": 18
-        },
-        "flex_gap_laptop": {
-         "column": "18",
-         "row": "18",
-         "isLinked": true,
-         "unit": "px",
-         "size": 18
-        },
-        "flex_gap_tablet": {
-         "column": "18",
-         "row": "18",
-         "isLinked": true,
-         "unit": "px",
-         "size": 18
-        },
-        "flex_gap_mobile": {
-         "column": "18",
-         "row": "18",
-         "isLinked": true,
-         "unit": "px",
-         "size": 18
-        },
-        "width": {
-         "unit": "%",
-         "size": 100,
-         "sizes": []
-        },
-        "padding": {
-         "unit": "px",
-         "top": "0",
-         "right": "0",
-         "bottom": "0",
-         "left": "0",
-         "isLinked": true
-        }
-       },
-       "elements": [
-        {
-         "id": "c01aedf",
-         "elType": "widget",
-         "widgetType": "icon",
-         "isInner": false,
-         "settings": {
-          "selected_icon": {
-           "value": {
-            "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/hammer-light.svg",
-            "id": 1439
-           },
-           "library": "svg"
-          },
-          "primary_color": "#C68B4E",
-          "size": {
-           "unit": "px",
-           "size": 44,
-           "sizes": []
-          },
-          "align": "left",
-          "custom_css": "selector .elementor-icon{display:block;line-height:0;}selector .elementor-icon svg{width:44px;height:44px;}",
-          "_title": "Values / Community enhancement / Icon"
-         },
-         "elements": []
-        },
-        {
-         "id": "38770c0",
-         "elType": "widget",
-         "widgetType": "heading",
-         "isInner": false,
-         "settings": {
-          "title": "Community enhancement",
-          "header_size": "h3",
-          "title_color": "#F2ECE3",
-          "typography_typography": "custom",
-          "typography_font_family": "Fraunces",
-          "typography_font_size": {
-           "unit": "px",
-           "size": 24,
-           "sizes": []
-          },
-          "typography_font_weight": "500",
-          "typography_line_height": {
-           "unit": "em",
-           "size": 1.15,
-           "sizes": []
-          },
-          "_title": "Values / Community enhancement / Title (H3)"
-         },
-         "elements": []
-        },
-        {
-         "id": "2d7a466",
-         "elType": "widget",
-         "widgetType": "text-editor",
-         "isInner": false,
-         "settings": {
-          "editor": "<p>Improve where we live. We favor local and small businesses as vendors and support employees who give back to their communities.</p>",
-          "text_color": "#C9D1C4",
-          "paragraph_spacing": {
-           "unit": "px",
-           "size": 0,
-           "sizes": []
-          },
-          "typography_typography": "custom",
-          "typography_font_family": "Manrope",
-          "typography_font_size": {
-           "unit": "px",
-           "size": 15,
-           "sizes": []
-          },
-          "typography_line_height": {
-           "unit": "em",
-           "size": 1.75,
-           "sizes": []
-          },
-          "custom_css": "selector p:last-child{margin-block-end:0;}selector{max-width:360px !important;}",
-          "_title": "Values / Community enhancement / Text"
-         },
-         "elements": []
-        }
-       ]
-      },
-      {
-       "id": "4075ea8",
-       "elType": "container",
-       "isInner": true,
-       "settings": {
-        "_title": "Values / Positive outcomes",
-        "content_width": "full",
-        "flex_direction": "column",
-        "flex_gap": {
-         "column": "18",
-         "row": "18",
-         "isLinked": true,
-         "unit": "px",
-         "size": 18
-        },
-        "flex_gap_laptop": {
-         "column": "18",
-         "row": "18",
-         "isLinked": true,
-         "unit": "px",
-         "size": 18
-        },
-        "flex_gap_tablet": {
-         "column": "18",
-         "row": "18",
-         "isLinked": true,
-         "unit": "px",
-         "size": 18
-        },
-        "flex_gap_mobile": {
-         "column": "18",
-         "row": "18",
-         "isLinked": true,
-         "unit": "px",
-         "size": 18
-        },
-        "width": {
-         "unit": "%",
-         "size": 100,
-         "sizes": []
-        },
-        "padding": {
-         "unit": "px",
-         "top": "0",
-         "right": "0",
-         "bottom": "0",
-         "left": "0",
-         "isLinked": true
-        }
-       },
-       "elements": [
-        {
-         "id": "441d057",
-         "elType": "widget",
-         "widgetType": "icon",
-         "isInner": false,
-         "settings": {
-          "selected_icon": {
-           "value": {
-            "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/paint-roller-light.svg",
-            "id": 1443
-           },
-           "library": "svg"
-          },
-          "primary_color": "#C68B4E",
-          "size": {
-           "unit": "px",
-           "size": 44,
-           "sizes": []
-          },
-          "align": "left",
-          "custom_css": "selector .elementor-icon{display:block;line-height:0;}selector .elementor-icon svg{width:44px;height:44px;}",
-          "_title": "Values / Positive outcomes / Icon"
+          "custom_css": "selector .elementor-icon{display:block;line-height:0;}selector .elementor-icon svg{width:40px;height:40px;}",
+          "_title": "Values / Long-Lasting Partnerships / Icon"
          },
          "elements": []
         },
         {
          "id": "b41f7aa",
-         "elType": "widget",
-         "widgetType": "heading",
-         "isInner": false,
+         "elType": "container",
+         "isInner": true,
          "settings": {
-          "title": "Positive outcomes",
-          "header_size": "h3",
-          "title_color": "#F2ECE3",
-          "typography_typography": "custom",
-          "typography_font_family": "Fraunces",
-          "typography_font_size": {
+          "_title": "Values / Long-Lasting Partnerships / Heading",
+          "content_width": "full",
+          "flex_direction": "column",
+          "flex_gap": {
+           "column": "6",
+           "row": "6",
+           "isLinked": true,
            "unit": "px",
-           "size": 24,
+           "size": 6
+          },
+          "flex_gap_laptop": {
+           "column": "6",
+           "row": "6",
+           "isLinked": true,
+           "unit": "px",
+           "size": 6
+          },
+          "flex_gap_tablet": {
+           "column": "6",
+           "row": "6",
+           "isLinked": true,
+           "unit": "px",
+           "size": 6
+          },
+          "flex_gap_mobile": {
+           "column": "6",
+           "row": "6",
+           "isLinked": true,
+           "unit": "px",
+           "size": 6
+          },
+          "width": {
+           "unit": "%",
+           "size": 100,
            "sizes": []
           },
-          "typography_font_weight": "500",
-          "typography_line_height": {
-           "unit": "em",
-           "size": 1.15,
-           "sizes": []
-          },
-          "_title": "Values / Positive outcomes / Title (H3)"
+          "padding": {
+           "unit": "px",
+           "top": "0",
+           "right": "0",
+           "bottom": "0",
+           "left": "0",
+           "isLinked": true
+          }
          },
-         "elements": []
+         "elements": [
+          {
+           "id": "3c102d7",
+           "elType": "widget",
+           "widgetType": "heading",
+           "isInner": false,
+           "settings": {
+            "title": "Long-Lasting Partnerships",
+            "header_size": "h3",
+            "title_color": "#F2ECE3",
+            "typography_typography": "custom",
+            "typography_font_family": "Young Serif",
+            "typography_font_size": {
+             "unit": "px",
+             "size": 24,
+             "sizes": []
+            },
+            "typography_font_weight": "400",
+            "typography_line_height": {
+             "unit": "em",
+             "size": 1.15,
+             "sizes": []
+            },
+            "_title": "Values / Long-Lasting Partnerships / Title (H3)"
+           },
+           "elements": []
+          },
+          {
+           "id": "441d057",
+           "elType": "widget",
+           "widgetType": "heading",
+           "isInner": false,
+           "settings": {
+            "title": "A Good Reputation",
+            "header_size": "div",
+            "title_color": "#C68B4E",
+            "typography_typography": "custom",
+            "typography_font_family": "Manrope",
+            "typography_font_size": {
+             "unit": "px",
+             "size": 14,
+             "sizes": []
+            },
+            "typography_font_weight": "600",
+            "typography_line_height": {
+             "unit": "em",
+             "size": 1.4,
+             "sizes": []
+            },
+            "_title": "Values / Long-Lasting Partnerships / Subtitle"
+           },
+           "elements": []
+          }
+         ]
         },
         {
          "id": "7eff8ce",
@@ -1371,7 +2020,7 @@
          "widgetType": "text-editor",
          "isInner": false,
          "settings": {
-          "editor": "<p>Our goal is a good outcome for everyone. When that isn't possible, we work toward the best result available for all parties.</p>",
+          "editor": "<p>For more than 25 years we've been known for finishing on time and doing Top Notch work. Most of our work still comes from repeat clients, referrals, and builders who keep calling.</p>",
           "text_color": "#C9D1C4",
           "paragraph_spacing": {
            "unit": "px",
@@ -1390,19 +2039,49 @@
            "size": 1.75,
            "sizes": []
           },
-          "custom_css": "selector p:last-child{margin-block-end:0;}selector{max-width:360px !important;}",
-          "_title": "Values / Positive outcomes / Text"
+          "custom_css": "selector p:last-child{margin-block-end:0;}selector{max-width:400px !important;}",
+          "_title": "Values / Long-Lasting Partnerships / Text"
+         },
+         "elements": []
+        },
+        {
+         "id": "4075ea8",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<ul><li>We follow through on every promise, no matter who made it.</li><li>Quality comes before speed.</li><li>We leave clean, safe job sites every day.</li></ul>",
+          "text_color": "#F2ECE3",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 15,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.55,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}selector ul{list-style:none;margin:0;padding:0;display:grid;gap:10px;}selector li{position:relative;padding-left:26px;}selector li::before{content:'';position:absolute;left:0;top:.72em;width:12px;height:2px;background:#C68B4E;}selector li{text-wrap:balance;}",
+          "_title": "Values / Long-Lasting Partnerships / Points"
          },
          "elements": []
         }
        ]
       },
       {
-       "id": "9c01dd1",
+       "id": "f9e646d",
        "elType": "container",
        "isInner": true,
        "settings": {
-        "_title": "Values / Better life quality",
+        "_title": "Values / Community Enhancement",
         "content_width": "full",
         "flex_direction": "column",
         "flex_gap": {
@@ -1449,63 +2128,142 @@
        },
        "elements": [
         {
-         "id": "f6445bb",
+         "id": "7d8aa70",
          "elType": "widget",
          "widgetType": "icon",
          "isInner": false,
          "settings": {
           "selected_icon": {
            "value": {
-            "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/paint-bucket-light.svg",
-            "id": 1442
+            "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/house-line-light.svg",
+            "id": 2869
            },
            "library": "svg"
           },
           "primary_color": "#C68B4E",
           "size": {
            "unit": "px",
-           "size": 44,
+           "size": 40,
            "sizes": []
           },
           "align": "left",
-          "custom_css": "selector .elementor-icon{display:block;line-height:0;}selector .elementor-icon svg{width:44px;height:44px;}",
-          "_title": "Values / Better life quality / Icon"
+          "custom_css": "selector .elementor-icon{display:block;line-height:0;}selector .elementor-icon svg{width:40px;height:40px;}",
+          "_title": "Values / Community Enhancement / Icon"
          },
          "elements": []
         },
         {
-         "id": "7d8aa70",
-         "elType": "widget",
-         "widgetType": "heading",
-         "isInner": false,
+         "id": "3516f92",
+         "elType": "container",
+         "isInner": true,
          "settings": {
-          "title": "Better life quality",
-          "header_size": "h3",
-          "title_color": "#F2ECE3",
-          "typography_typography": "custom",
-          "typography_font_family": "Fraunces",
-          "typography_font_size": {
+          "_title": "Values / Community Enhancement / Heading",
+          "content_width": "full",
+          "flex_direction": "column",
+          "flex_gap": {
+           "column": "6",
+           "row": "6",
+           "isLinked": true,
            "unit": "px",
-           "size": 24,
+           "size": 6
+          },
+          "flex_gap_laptop": {
+           "column": "6",
+           "row": "6",
+           "isLinked": true,
+           "unit": "px",
+           "size": 6
+          },
+          "flex_gap_tablet": {
+           "column": "6",
+           "row": "6",
+           "isLinked": true,
+           "unit": "px",
+           "size": 6
+          },
+          "flex_gap_mobile": {
+           "column": "6",
+           "row": "6",
+           "isLinked": true,
+           "unit": "px",
+           "size": 6
+          },
+          "width": {
+           "unit": "%",
+           "size": 100,
            "sizes": []
           },
-          "typography_font_weight": "500",
-          "typography_line_height": {
-           "unit": "em",
-           "size": 1.15,
-           "sizes": []
-          },
-          "_title": "Values / Better life quality / Title (H3)"
+          "padding": {
+           "unit": "px",
+           "top": "0",
+           "right": "0",
+           "bottom": "0",
+           "left": "0",
+           "isLinked": true
+          }
          },
-         "elements": []
+         "elements": [
+          {
+           "id": "17cef7b",
+           "elType": "widget",
+           "widgetType": "heading",
+           "isInner": false,
+           "settings": {
+            "title": "Community Enhancement",
+            "header_size": "h3",
+            "title_color": "#F2ECE3",
+            "typography_typography": "custom",
+            "typography_font_family": "Young Serif",
+            "typography_font_size": {
+             "unit": "px",
+             "size": 24,
+             "sizes": []
+            },
+            "typography_font_weight": "400",
+            "typography_line_height": {
+             "unit": "em",
+             "size": 1.15,
+             "sizes": []
+            },
+            "_title": "Values / Community Enhancement / Title (H3)"
+           },
+           "elements": []
+          },
+          {
+           "id": "9c01dd1",
+           "elType": "widget",
+           "widgetType": "heading",
+           "isInner": false,
+           "settings": {
+            "title": "Improve Where We Live",
+            "header_size": "div",
+            "title_color": "#C68B4E",
+            "typography_typography": "custom",
+            "typography_font_family": "Manrope",
+            "typography_font_size": {
+             "unit": "px",
+             "size": 14,
+             "sizes": []
+            },
+            "typography_font_weight": "600",
+            "typography_line_height": {
+             "unit": "em",
+             "size": 1.4,
+             "sizes": []
+            },
+            "_title": "Values / Community Enhancement / Subtitle"
+           },
+           "elements": []
+          }
+         ]
         },
         {
-         "id": "17cef7b",
+         "id": "b5eff5d",
          "elType": "widget",
          "widgetType": "text-editor",
          "isInner": false,
          "settings": {
-          "editor": "<p>We care about our people's long-term wellbeing. As an employee-owned company we invest in retirement plans and share in the success of profitable jobs.</p>",
+          "editor": "<p>We live where we work, so we treat every job site like it's part of our home.</p>",
           "text_color": "#C9D1C4",
           "paragraph_spacing": {
            "unit": "px",
@@ -1524,237 +2282,321 @@
            "size": 1.75,
            "sizes": []
           },
-          "custom_css": "selector p:last-child{margin-block-end:0;}selector{max-width:360px !important;}",
-          "_title": "Values / Better life quality / Text"
+          "custom_css": "selector p:last-child{margin-block-end:0;}selector{max-width:400px !important;}",
+          "_title": "Values / Community Enhancement / Text"
+         },
+         "elements": []
+        },
+        {
+         "id": "f551700",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<ul><li>We buy from local businesses whenever we can.</li><li>We match employee donations to the causes they care about.</li><li>Through Dollars for Doers, we donate to the organizations where our team volunteers.</li></ul>",
+          "text_color": "#F2ECE3",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 15,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.55,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}selector ul{list-style:none;margin:0;padding:0;display:grid;gap:10px;}selector li{position:relative;padding-left:26px;}selector li::before{content:'';position:absolute;left:0;top:.72em;width:12px;height:2px;background:#C68B4E;}selector li{text-wrap:balance;}",
+          "_title": "Values / Community Enhancement / Points"
          },
          "elements": []
         }
        ]
-      }
-     ]
-    }
-   ]
-  },
-  {
-   "id": "e728f6f",
-   "elType": "container",
-   "isInner": false,
-   "settings": {
-    "_title": "About Links",
-    "content_width": "boxed",
-    "flex_direction": "column",
-    "flex_gap": {
-     "column": "0",
-     "row": "0",
-     "isLinked": true,
-     "unit": "px",
-     "size": 0
-    },
-    "flex_gap_laptop": {
-     "column": "0",
-     "row": "0",
-     "isLinked": true,
-     "unit": "px",
-     "size": 0
-    },
-    "flex_gap_tablet": {
-     "column": "0",
-     "row": "0",
-     "isLinked": true,
-     "unit": "px",
-     "size": 0
-    },
-    "flex_gap_mobile": {
-     "column": "0",
-     "row": "0",
-     "isLinked": true,
-     "unit": "px",
-     "size": 0
-    },
-    "boxed_width": {
-     "unit": "px",
-     "size": 1280,
-     "sizes": []
-    },
-    "padding": {
-     "unit": "px",
-     "top": "128",
-     "right": "48",
-     "bottom": "128",
-     "left": "48",
-     "isLinked": false
-    },
-    "padding_laptop": {
-     "unit": "px",
-     "top": "117",
-     "right": "48",
-     "bottom": "117",
-     "left": "48",
-     "isLinked": false
-    },
-    "padding_tablet": {
-     "unit": "px",
-     "top": "88",
-     "right": "32",
-     "bottom": "88",
-     "left": "32",
-     "isLinked": false
-    },
-    "padding_mobile": {
-     "unit": "px",
-     "top": "80",
-     "right": "20",
-     "bottom": "80",
-     "left": "20",
-     "isLinked": false
-    },
-    "background_background": "classic",
-    "background_color": "#14110E",
-    "html_tag": "section"
-   },
-   "elements": [
-    {
-     "id": "55e8f72",
-     "elType": "container",
-     "isInner": true,
-     "settings": {
-      "_title": "About Links / Layout",
-      "content_width": "full",
-      "flex_direction": "column",
-      "flex_gap": {
-       "column": "96",
-       "row": "32",
-       "isLinked": false,
-       "unit": "px",
-       "size": 96
       },
-      "flex_gap_laptop": {
-       "column": "80",
-       "row": "32",
-       "isLinked": false,
-       "unit": "px",
-       "size": 80
-      },
-      "flex_gap_tablet": {
-       "column": "48",
-       "row": "32",
-       "isLinked": false,
-       "unit": "px",
-       "size": 48
-      },
-      "flex_gap_mobile": {
-       "column": "40",
-       "row": "32",
-       "isLinked": false,
-       "unit": "px",
-       "size": 40
-      },
-      "width": {
-       "unit": "%",
-       "size": 100,
-       "sizes": []
-      },
-      "padding": {
-       "unit": "px",
-       "top": "0",
-       "right": "0",
-       "bottom": "0",
-       "left": "0",
-       "isLinked": true
-      },
-      "container_type": "grid",
-      "grid_auto_flow": "row",
-      "grid_rows_grid": {
-       "unit": "custom",
-       "size": "auto",
-       "sizes": []
-      },
-      "grid_columns_grid": {
-       "unit": "custom",
-       "size": "minmax(0,1fr) minmax(0,1.4fr)",
-       "sizes": []
-      },
-      "grid_columns_grid_laptop": {
-       "unit": "custom",
-       "size": "minmax(0,1fr) minmax(0,1.4fr)",
-       "sizes": []
-      },
-      "grid_columns_grid_tablet": {
-       "unit": "custom",
-       "size": "1fr",
-       "sizes": []
-      },
-      "grid_columns_grid_mobile": {
-       "unit": "custom",
-       "size": "1fr",
-       "sizes": []
-      },
-      "grid_gaps": {
-       "column": "96",
-       "row": "32",
-       "isLinked": false,
-       "unit": "px",
-       "size": 96
-      },
-      "grid_gaps_laptop": {
-       "column": "80",
-       "row": "32",
-       "isLinked": false,
-       "unit": "px",
-       "size": 80
-      },
-      "grid_gaps_tablet": {
-       "column": "48",
-       "row": "32",
-       "isLinked": false,
-       "unit": "px",
-       "size": 48
-      },
-      "grid_gaps_mobile": {
-       "column": "40",
-       "row": "32",
-       "isLinked": false,
-       "unit": "px",
-       "size": 40
-      },
-      "grid_align_items": "start"
-     },
-     "elements": [
       {
-       "id": "8a00c8b",
+       "id": "75f71bd",
        "elType": "container",
        "isInner": true,
        "settings": {
-        "_title": "About Links / Heading",
+        "_title": "Values / Positive Outcomes",
         "content_width": "full",
         "flex_direction": "column",
         "flex_gap": {
-         "column": "0",
-         "row": "0",
+         "column": "18",
+         "row": "18",
          "isLinked": true,
          "unit": "px",
-         "size": 0
+         "size": 18
         },
         "flex_gap_laptop": {
-         "column": "0",
-         "row": "0",
+         "column": "18",
+         "row": "18",
          "isLinked": true,
          "unit": "px",
-         "size": 0
+         "size": 18
         },
         "flex_gap_tablet": {
-         "column": "0",
-         "row": "0",
+         "column": "18",
+         "row": "18",
          "isLinked": true,
          "unit": "px",
-         "size": 0
+         "size": 18
         },
         "flex_gap_mobile": {
-         "column": "0",
-         "row": "0",
+         "column": "18",
+         "row": "18",
          "isLinked": true,
          "unit": "px",
-         "size": 0
+         "size": 18
+        },
+        "width": {
+         "unit": "%",
+         "size": 100,
+         "sizes": []
+        },
+        "padding": {
+         "unit": "px",
+         "top": "0",
+         "right": "0",
+         "bottom": "0",
+         "left": "0",
+         "isLinked": true
+        }
+       },
+       "elements": [
+        {
+         "id": "b25ff7a",
+         "elType": "widget",
+         "widgetType": "icon",
+         "isInner": false,
+         "settings": {
+          "selected_icon": {
+           "value": {
+            "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/sparkle-light.svg",
+            "id": 2873
+           },
+           "library": "svg"
+          },
+          "primary_color": "#C68B4E",
+          "size": {
+           "unit": "px",
+           "size": 40,
+           "sizes": []
+          },
+          "align": "left",
+          "custom_css": "selector .elementor-icon{display:block;line-height:0;}selector .elementor-icon svg{width:40px;height:40px;}",
+          "_title": "Values / Positive Outcomes / Icon"
+         },
+         "elements": []
+        },
+        {
+         "id": "598079b",
+         "elType": "container",
+         "isInner": true,
+         "settings": {
+          "_title": "Values / Positive Outcomes / Heading",
+          "content_width": "full",
+          "flex_direction": "column",
+          "flex_gap": {
+           "column": "6",
+           "row": "6",
+           "isLinked": true,
+           "unit": "px",
+           "size": 6
+          },
+          "flex_gap_laptop": {
+           "column": "6",
+           "row": "6",
+           "isLinked": true,
+           "unit": "px",
+           "size": 6
+          },
+          "flex_gap_tablet": {
+           "column": "6",
+           "row": "6",
+           "isLinked": true,
+           "unit": "px",
+           "size": 6
+          },
+          "flex_gap_mobile": {
+           "column": "6",
+           "row": "6",
+           "isLinked": true,
+           "unit": "px",
+           "size": 6
+          },
+          "width": {
+           "unit": "%",
+           "size": 100,
+           "sizes": []
+          },
+          "padding": {
+           "unit": "px",
+           "top": "0",
+           "right": "0",
+           "bottom": "0",
+           "left": "0",
+           "isLinked": true
+          }
+         },
+         "elements": [
+          {
+           "id": "da19716",
+           "elType": "widget",
+           "widgetType": "heading",
+           "isInner": false,
+           "settings": {
+            "title": "Positive Outcomes",
+            "header_size": "h3",
+            "title_color": "#F2ECE3",
+            "typography_typography": "custom",
+            "typography_font_family": "Young Serif",
+            "typography_font_size": {
+             "unit": "px",
+             "size": 24,
+             "sizes": []
+            },
+            "typography_font_weight": "400",
+            "typography_line_height": {
+             "unit": "em",
+             "size": 1.15,
+             "sizes": []
+            },
+            "_title": "Values / Positive Outcomes / Title (H3)"
+           },
+           "elements": []
+          },
+          {
+           "id": "54cb95a",
+           "elType": "widget",
+           "widgetType": "heading",
+           "isInner": false,
+           "settings": {
+            "title": "Everyone Benefits",
+            "header_size": "div",
+            "title_color": "#C68B4E",
+            "typography_typography": "custom",
+            "typography_font_family": "Manrope",
+            "typography_font_size": {
+             "unit": "px",
+             "size": 14,
+             "sizes": []
+            },
+            "typography_font_weight": "600",
+            "typography_line_height": {
+             "unit": "em",
+             "size": 1.4,
+             "sizes": []
+            },
+            "_title": "Values / Positive Outcomes / Subtitle"
+           },
+           "elements": []
+          }
+         ]
+        },
+        {
+         "id": "cd37cd9",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>As an employee-owned company, we share in the outcome. We fix problems instead of assigning blame.</p>",
+          "text_color": "#C9D1C4",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 15,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.75,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}selector{max-width:400px !important;}",
+          "_title": "Values / Positive Outcomes / Text"
+         },
+         "elements": []
+        },
+        {
+         "id": "6d7f847",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<ul><li>Every job counts, no matter the size.</li><li>We share what we learn so mistakes aren't repeated.</li><li>We keep training and improving our craft.</li></ul>",
+          "text_color": "#F2ECE3",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 15,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.55,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}selector ul{list-style:none;margin:0;padding:0;display:grid;gap:10px;}selector li{position:relative;padding-left:26px;}selector li::before{content:'';position:absolute;left:0;top:.72em;width:12px;height:2px;background:#C68B4E;}selector li{text-wrap:balance;}",
+          "_title": "Values / Positive Outcomes / Points"
+         },
+         "elements": []
+        }
+       ]
+      },
+      {
+       "id": "e728f6f",
+       "elType": "container",
+       "isInner": true,
+       "settings": {
+        "_title": "Values / Better Life Quality",
+        "content_width": "full",
+        "flex_direction": "column",
+        "flex_gap": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "flex_gap_laptop": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "flex_gap_tablet": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
+        },
+        "flex_gap_mobile": {
+         "column": "18",
+         "row": "18",
+         "isLinked": true,
+         "unit": "px",
+         "size": 18
         },
         "width": {
          "unit": "%",
@@ -1774,130 +2616,205 @@
         {
          "id": "1270013",
          "elType": "widget",
-         "widgetType": "heading",
+         "widgetType": "icon",
          "isInner": false,
          "settings": {
-          "title": "<b>Learn</b> more",
-          "header_size": "h2",
-          "title_color": "#F2ECE3",
+          "selected_icon": {
+           "value": {
+            "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/calendar-check-light.svg",
+            "id": 2864
+           },
+           "library": "svg"
+          },
+          "primary_color": "#C68B4E",
+          "size": {
+           "unit": "px",
+           "size": 40,
+           "sizes": []
+          },
+          "align": "left",
+          "custom_css": "selector .elementor-icon{display:block;line-height:0;}selector .elementor-icon svg{width:40px;height:40px;}",
+          "_title": "Values / Better Life Quality / Icon"
+         },
+         "elements": []
+        },
+        {
+         "id": "85cfef7",
+         "elType": "container",
+         "isInner": true,
+         "settings": {
+          "_title": "Values / Better Life Quality / Heading",
+          "content_width": "full",
+          "flex_direction": "column",
+          "flex_gap": {
+           "column": "6",
+           "row": "6",
+           "isLinked": true,
+           "unit": "px",
+           "size": 6
+          },
+          "flex_gap_laptop": {
+           "column": "6",
+           "row": "6",
+           "isLinked": true,
+           "unit": "px",
+           "size": 6
+          },
+          "flex_gap_tablet": {
+           "column": "6",
+           "row": "6",
+           "isLinked": true,
+           "unit": "px",
+           "size": 6
+          },
+          "flex_gap_mobile": {
+           "column": "6",
+           "row": "6",
+           "isLinked": true,
+           "unit": "px",
+           "size": 6
+          },
+          "width": {
+           "unit": "%",
+           "size": 100,
+           "sizes": []
+          },
+          "padding": {
+           "unit": "px",
+           "top": "0",
+           "right": "0",
+           "bottom": "0",
+           "left": "0",
+           "isLinked": true
+          }
+         },
+         "elements": [
+          {
+           "id": "8a00c8b",
+           "elType": "widget",
+           "widgetType": "heading",
+           "isInner": false,
+           "settings": {
+            "title": "Better Life Quality",
+            "header_size": "h3",
+            "title_color": "#F2ECE3",
+            "typography_typography": "custom",
+            "typography_font_family": "Young Serif",
+            "typography_font_size": {
+             "unit": "px",
+             "size": 24,
+             "sizes": []
+            },
+            "typography_font_weight": "400",
+            "typography_line_height": {
+             "unit": "em",
+             "size": 1.15,
+             "sizes": []
+            },
+            "_title": "Values / Better Life Quality / Title (H3)"
+           },
+           "elements": []
+          },
+          {
+           "id": "9561670",
+           "elType": "widget",
+           "widgetType": "heading",
+           "isInner": false,
+           "settings": {
+            "title": "Long-Term Wellbeing",
+            "header_size": "div",
+            "title_color": "#C68B4E",
+            "typography_typography": "custom",
+            "typography_font_family": "Manrope",
+            "typography_font_size": {
+             "unit": "px",
+             "size": 14,
+             "sizes": []
+            },
+            "typography_font_weight": "600",
+            "typography_line_height": {
+             "unit": "em",
+             "size": 1.4,
+             "sizes": []
+            },
+            "_title": "Values / Better Life Quality / Subtitle"
+           },
+           "elements": []
+          }
+         ]
+        },
+        {
+         "id": "f3012e2",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<p>People who feel supported do their best work, and they stay.</p>",
+          "text_color": "#C9D1C4",
+          "paragraph_spacing": {
+           "unit": "px",
+           "size": 0,
+           "sizes": []
+          },
           "typography_typography": "custom",
-          "typography_font_family": "Fraunces",
+          "typography_font_family": "Manrope",
           "typography_font_size": {
            "unit": "px",
-           "size": 45,
+           "size": 15,
            "sizes": []
           },
-          "typography_font_size_laptop": {
-           "unit": "px",
-           "size": 41,
-           "sizes": []
-          },
-          "typography_font_size_tablet": {
-           "unit": "px",
-           "size": 34,
-           "sizes": []
-          },
-          "typography_font_size_mobile": {
-           "unit": "px",
-           "size": 29,
-           "sizes": []
-          },
-          "typography_font_weight": "300",
           "typography_line_height": {
            "unit": "em",
-           "size": 1.04,
+           "size": 1.75,
            "sizes": []
           },
-          "typography_letter_spacing": {
+          "custom_css": "selector p:last-child{margin-block-end:0;}selector{max-width:400px !important;}",
+          "_title": "Values / Better Life Quality / Text"
+         },
+         "elements": []
+        },
+        {
+         "id": "55e8f72",
+         "elType": "widget",
+         "widgetType": "text-editor",
+         "isInner": false,
+         "settings": {
+          "editor": "<ul><li>Family first: work hard, then be present at home.</li><li>We share the workload so no one burns out.</li><li>Employee ownership helps build retirement security for everyone.</li></ul>",
+          "text_color": "#F2ECE3",
+          "paragraph_spacing": {
            "unit": "px",
-           "size": -0.6,
+           "size": 0,
            "sizes": []
           },
-          "custom_css": "selector .elementor-heading-title{text-wrap:balance;}selector{max-width:480px !important;}",
-          "_css_classes": "tn-teeth tn-contrast",
-          "_title": "About Links / Title (H2)"
+          "typography_typography": "custom",
+          "typography_font_family": "Manrope",
+          "typography_font_size": {
+           "unit": "px",
+           "size": 15,
+           "sizes": []
+          },
+          "typography_line_height": {
+           "unit": "em",
+           "size": 1.55,
+           "sizes": []
+          },
+          "custom_css": "selector p:last-child{margin-block-end:0;}selector ul{list-style:none;margin:0;padding:0;display:grid;gap:10px;}selector li{position:relative;padding-left:26px;}selector li::before{content:'';position:absolute;left:0;top:.72em;width:12px;height:2px;background:#C68B4E;}selector li{text-wrap:balance;}",
+          "_title": "Values / Better Life Quality / Points"
          },
          "elements": []
         }
        ]
-      },
-      {
-       "id": "f3012e2",
-       "elType": "widget",
-       "widgetType": "icon-list",
-       "isInner": false,
-       "settings": {
-        "space_between": {
-         "unit": "px",
-         "size": 0,
-         "sizes": []
-        },
-        "text_color": "#F2ECE3",
-        "text_color_hover": "#D9A66B",
-        "icon_list": [
-         {
-          "_id": "9561670",
-          "text": "Our Story",
-          "link": {
-           "url": "/our-story/",
-           "is_external": "",
-           "nofollow": ""
-          },
-          "selected_icon": {
-           "value": "",
-           "library": ""
-          }
-         },
-         {
-          "_id": "85cfef7",
-          "text": "Reviews",
-          "link": {
-           "url": "/reviews/",
-           "is_external": "",
-           "nofollow": ""
-          },
-          "selected_icon": {
-           "value": "",
-           "library": ""
-          }
-         }
-        ],
-        "custom_css": "selector .elementor-icon-list-items{display:grid !important;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:32px;}selector .elementor-icon-list-item{margin:0 !important;padding:0 !important;}selector .elementor-icon-list-item::after{display:none !important;}selector .elementor-icon-list-item > a{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:54px;width:100%;border-bottom:1px solid rgba(242,236,227,0.1);}selector .elementor-icon-list-item > a::after{content:'→';color:#C68B4E;}@media (max-width:511px){selector .elementor-icon-list-items{grid-template-columns:1fr;}}",
-        "_margin": {
-         "unit": "px",
-         "top": "8",
-         "right": "0",
-         "bottom": "0",
-         "left": "0",
-         "isLinked": false
-        },
-        "icon_typography_typography": "custom",
-        "icon_typography_font_family": "Manrope",
-        "icon_typography_font_size": {
-         "unit": "px",
-         "size": 15,
-         "sizes": []
-        },
-        "icon_typography_font_weight": "400",
-        "icon_typography_line_height": {
-         "unit": "em",
-         "size": 1.4,
-         "sizes": []
-        },
-        "_title": "About Links / Links"
-       },
-       "elements": []
       }
      ]
     }
    ]
   },
   {
-   "id": "9f45022",
+   "id": "1c59237",
    "elType": "container",
    "isInner": false,
    "settings": {
-    "_title": "Closing CTA",
+    "_title": "Hire For Culture",
     "content_width": "boxed",
     "flex_direction": "column",
     "flex_gap": {
@@ -1989,11 +2906,11 @@
    },
    "elements": [
     {
-     "id": "34dcac3",
+     "id": "a7d1550",
      "elType": "container",
      "isInner": true,
      "settings": {
-      "_title": "Closing CTA / Content",
+      "_title": "Hire For Culture / Content",
       "content_width": "full",
       "flex_direction": "column",
       "flex_gap": {
@@ -2041,16 +2958,16 @@
      },
      "elements": [
       {
-       "id": "6aabbce",
+       "id": "6be713d",
        "elType": "widget",
        "widgetType": "heading",
        "isInner": false,
        "settings": {
-        "title": "<b>Ready to talk</b> about your project?",
+        "title": "Why we hire for culture",
         "header_size": "h2",
         "title_color": "#F2ECE3",
         "typography_typography": "custom",
-        "typography_font_family": "Fraunces",
+        "typography_font_family": "Young Serif",
         "typography_font_size": {
          "unit": "px",
          "size": 45,
@@ -2071,7 +2988,7 @@
          "size": 29,
          "sizes": []
         },
-        "typography_font_weight": "300",
+        "typography_font_weight": "400",
         "typography_line_height": {
          "unit": "em",
          "size": 1.04,
@@ -2084,18 +3001,18 @@
         },
         "align": "center",
         "custom_css": "selector .elementor-heading-title{text-wrap:balance;}selector{max-width:760px !important;}",
-        "_css_classes": "tn-teeth tn-teeth-c tn-contrast",
-        "_title": "Closing CTA / Title (H2)"
+        "_css_classes": "tn-teeth tn-teeth-c",
+        "_title": "Hire For Culture / Title (H2)"
        },
        "elements": []
       },
       {
-       "id": "8cf8cd4",
+       "id": "84bd84f",
        "elType": "widget",
        "widgetType": "text-editor",
        "isInner": false,
        "settings": {
-        "editor": "<p>Free written estimates across the Vail, Roaring Fork and Eagle valleys. We'll call within one business day to set up a walkthrough.</p>",
+        "editor": "<p>Skills can be taught. Character is harder. We hire people who are honest when no one is watching, take pride in clean work, help without being asked, and treat a client's home with care. That's how our clients get crews they can trust, and how our team gets coworkers they're glad to work beside.</p>",
         "text_color": "#D7CFC4",
         "paragraph_spacing": {
          "unit": "px",
@@ -2111,50 +3028,50 @@
         },
         "typography_line_height": {
          "unit": "em",
-         "size": 1.65,
+         "size": 1.7,
          "sizes": []
         },
         "align": "center",
-        "custom_css": "selector p:last-child{margin-block-end:0;}selector{max-width:600px !important;}selector{margin:0 auto;}",
-        "_title": "Closing CTA / Text"
+        "custom_css": "selector p:last-child{margin-block-end:0;}selector{max-width:720px !important;}selector{margin:0 auto;}",
+        "_title": "Hire For Culture / Text"
        },
        "elements": []
       },
       {
-       "id": "db17c73",
+       "id": "b20f141",
        "elType": "container",
        "isInner": true,
        "settings": {
-        "_title": "Closing CTA / Actions",
+        "_title": "Hire For Culture / Actions",
         "content_width": "full",
         "flex_direction": "row",
         "flex_gap": {
-         "column": "28",
+         "column": "16",
          "row": "12",
          "isLinked": false,
          "unit": "px",
-         "size": 28
+         "size": 16
         },
         "flex_gap_laptop": {
-         "column": "28",
+         "column": "16",
          "row": "12",
          "isLinked": false,
          "unit": "px",
-         "size": 28
+         "size": 16
         },
         "flex_gap_tablet": {
-         "column": "28",
+         "column": "16",
          "row": "12",
          "isLinked": false,
          "unit": "px",
-         "size": 28
+         "size": 16
         },
         "flex_gap_mobile": {
-         "column": "28",
+         "column": "16",
          "row": "12",
          "isLinked": false,
          "unit": "px",
-         "size": 28
+         "size": 16
         },
         "width": {
          "unit": "%",
@@ -2170,19 +3087,19 @@
          "isLinked": true
         },
         "flex_wrap": "wrap",
-        "flex_align_items": "center",
-        "flex_justify_content": "center"
+        "flex_justify_content": "center",
+        "flex_align_items": "center"
        },
        "elements": [
         {
-         "id": "335086b",
+         "id": "709d6f0",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,
          "settings": {
-          "text": "Request an Estimate",
+          "text": "View Careers →",
           "link": {
-           "url": "/request-an-estimate/",
+           "url": "https://www.topnotch-logworks.com/career-opportunities/",
            "is_external": "",
            "nofollow": ""
           },
@@ -2222,44 +3139,44 @@
            "sizes": []
           },
           "custom_css": "selector .elementor-button{white-space:nowrap;}",
-          "_title": "Closing CTA / Request an Estimate"
+          "_title": "Hire For Culture / Careers"
          },
          "elements": []
         },
         {
-         "id": "2b82aef",
+         "id": "abc95a2",
          "elType": "widget",
          "widgetType": "button",
          "isInner": false,
          "settings": {
-          "text": "Call (970) 524-7323",
+          "text": "Contact Us →",
           "link": {
-           "url": "tel:+19705247323",
+           "url": "/#estimate",
            "is_external": "",
            "nofollow": ""
           },
+          "border_radius": {
+           "unit": "px",
+           "top": "999",
+           "right": "999",
+           "bottom": "999",
+           "left": "999",
+           "isLinked": true
+          },
           "text_padding": {
            "unit": "px",
-           "top": "14.5",
-           "right": "0",
-           "bottom": "14.5",
-           "left": "0",
+           "top": "19.5",
+           "right": "30",
+           "bottom": "19.5",
+           "left": "30",
            "isLinked": false
           },
           "background_background": "classic",
           "background_color": "#00000000",
-          "button_background_hover_background": "classic",
-          "button_background_hover_color": "#00000000",
           "button_text_color": "#F2ECE3",
-          "hover_color": "#D9A66B",
-          "border_radius": {
-           "unit": "px",
-           "top": "0",
-           "right": "0",
-           "bottom": "0",
-           "left": "0",
-           "isLinked": true
-          },
+          "hover_color": "#14110E",
+          "button_background_hover_background": "classic",
+          "button_background_hover_color": "#F2ECE3",
           "typography_typography": "custom",
           "typography_font_family": "Manrope",
           "typography_font_size": {
@@ -2273,21 +3190,18 @@
            "size": 1,
            "sizes": []
           },
-          "selected_icon": {
-           "value": {
-            "url": "https://staging197.dreamwebdigital.com/wp-content/uploads/2026/11/phone.svg",
-            "id": 1444
-           },
-           "library": "svg"
-          },
-          "icon_indent": {
+          "border_border": "solid",
+          "border_width": {
            "unit": "px",
-           "size": 10,
-           "sizes": []
+           "top": "1",
+           "right": "1",
+           "bottom": "1",
+           "left": "1",
+           "isLinked": true
           },
-          "_css_classes": "tn-call",
-          "custom_css": "selector .elementor-button{white-space:nowrap;}selector .elementor-button-text{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:7px;text-decoration-color:rgba(242,236,227,0.4);}selector .elementor-button-icon svg{width:16px;height:16px;}",
-          "_title": "Closing CTA / Call"
+          "border_color": "#F2ECE3",
+          "custom_css": "selector .elementor-button{white-space:nowrap;}",
+          "_title": "Hire For Culture / Contact"
          },
          "elements": []
         }
