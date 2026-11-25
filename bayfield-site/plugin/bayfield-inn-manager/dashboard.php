@@ -158,7 +158,8 @@ add_action( 'admin_head-index.php', function () {
 	.bi-ga__top li span:last-child { font-variant-numeric: tabular-nums; color: #50575e; }
 	.bi-ga__foot { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 0; }
 	.bi-ga__err { color: #b32d2e; }
-	.bi-ga-setup summary { cursor: pointer; font-weight: 600; margin: 4px 0 8px; }
+	.bi-ga-setup summary, .bi-ga-edit summary { cursor: pointer; font-weight: 600; margin: 4px 0 8px; }
+	.bi-ga-edit { margin-top: 16px; padding-top: 12px; border-top: 1px solid #f0f0f1; } .bi-ga-edit summary { font-size: 13px; color: #2271b1; }
 	.bi-ga-steps { margin-left: 18px; } .bi-ga-steps li { margin-bottom: 6px; }
 	.bi-ga-form label, .bi-quick label { display: flex; flex-direction: column; gap: 4px; margin: 0 0 10px; font-size: 12px; color: #50575e; }
 	.bi-ga-form input, .bi-quick input[type=text], .bi-quick input[type=url], .bi-quick textarea { width: 100%; max-width: none; }
@@ -373,6 +374,12 @@ function bi_dash_ga() {
 				<a class="button button-primary" href="<?php echo esc_url( bi_ga_report_url() ); ?>" target="_blank" rel="noopener">View full reports in Google Analytics <span aria-hidden="true">&#8599;</span></a>
 				<span class="bi-dash-note" data-at></span>
 			</p>
+			<?php if ( current_user_can( 'manage_options' ) ) : ?>
+				<details class="bi-ga-edit">
+					<summary>Edit Google Analytics settings</summary>
+					<?php bi_ga_form( $s, true ); ?>
+				</details>
+			<?php endif; ?>
 		</div>
 		<?php
 	} else {
@@ -389,20 +396,28 @@ function bi_dash_ga() {
 						<li><b>Property ID:</b> Admin › Property details (a number like 123456789).</li>
 						<li><b>Read access for this dashboard:</b> in Google Cloud Console create a service account, enable the "Google Analytics Data API", create a JSON key and paste the file below. Then in Google Analytics, Admin › Property access management, add the service account's email as a <b>Viewer</b>.</li>
 					</ol>
-					<form class="bi-ga-form" data-ga-form>
-						<label>Measurement ID<input type="text" name="measurement_id" class="regular-text" placeholder="G-ABC123XYZ" value="<?php echo esc_attr( $s['measurement_id'] ); ?>"></label>
-						<label>Property ID<input type="text" name="property_id" class="regular-text" placeholder="123456789" value="<?php echo esc_attr( $s['property_id'] ); ?>"></label>
-						<label>Service-account key (JSON)
-							<?php if ( bi_ga_key() ) : ?><span class="bi-dash-note">Saved for <?php echo esc_html( bi_ga_key()['client_email'] ); ?>. Paste a new one to replace it.</span><?php endif; ?>
-							<textarea name="key" rows="4" class="large-text code" placeholder='{"type": "service_account", ...}' autocomplete="off"></textarea>
-						</label>
-						<p><button type="submit" class="button button-primary">Save &amp; connect</button> <span class="bi-dash-note" data-ga-msg></span></p>
-					</form>
+					<?php bi_ga_form( $s, false ); ?>
 				</details>
 			<?php endif; ?>
 		</div>
 		<?php
 	}
+}
+
+/** Measurement ID, Property ID and service-account key. Leaving the key box empty keeps the saved key. */
+function bi_ga_form( $s, $connected ) {
+	$key = bi_ga_key();
+	?>
+	<form class="bi-ga-form" data-ga-form>
+		<label>Measurement ID<input type="text" name="measurement_id" class="regular-text" placeholder="G-ABC123XYZ" value="<?php echo esc_attr( $s['measurement_id'] ); ?>"></label>
+		<label>Property ID<input type="text" name="property_id" class="regular-text" placeholder="123456789" value="<?php echo esc_attr( $s['property_id'] ); ?>"></label>
+		<label>Service-account key (JSON)
+			<?php if ( $key ) : ?><span class="bi-dash-note">Saved for <?php echo esc_html( $key['client_email'] ); ?>. Leave this empty to keep it, or paste a new key file to replace it.</span><?php endif; ?>
+			<textarea name="key" rows="4" class="large-text code" placeholder='{"type": "service_account", ...}' autocomplete="off"></textarea>
+		</label>
+		<p><button type="submit" class="button button-primary"><?php echo $connected ? 'Save changes' : 'Save &amp; connect'; ?></button> <span class="bi-dash-note" data-ga-msg></span></p>
+	</form>
+	<?php
 }
 
 function bi_dash_product() {
