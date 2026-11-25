@@ -25,14 +25,14 @@ function glec_mega_config() {
 		[
 			'id' => 'license', 'label' => 'License classes', 'url' => $h . 'license-classes/',
 			'cards' => [
-				[ 'title' => 'Residential Design Class', 'meta' => 'Required for every license', 'sku' => 'HLG-DD-R-OL', 'img' => 'thumb-study', 'url' => $h . 'license-classes/residential-design/' ],
+				[ 'title' => 'Residential Design Class', 'meta' => 'Required in both licenses', 'sku' => 'HLG-DD-R-OL', 'img' => 'thumb-study', 'url' => $h . 'license-classes/residential-design/' ],
 				[ 'title' => 'Commercial Design Class', 'meta' => 'Non-Restricted only', 'sku' => 'HLG-DD-C-OL', 'img' => 'thumb-mentor', 'url' => $h . 'license-classes/commercial-design/' ],
 				[ 'title' => 'Exam Prep Review Class', 'meta' => 'After Board approval', 'sku' => 'CA-OL', 'img' => 'thumb-exam', 'url' => $h . 'license-classes/exam-prep-review/' ],
 			],
 			'links' => [
-				[ 'label' => 'Permanent reference tabs', 'url' => $h . 'license-classes/reference-tabs/' ],
-				[ 'label' => 'Application Overview videos', 'url' => $h . 'license-classes/application-overview/' ],
-				[ 'label' => 'Order the reference books', 'url' => 'https://sebookstore.com/glec.html', 'ext' => true ],
+				[ 'label' => 'Permanent Reference TABs', 'url' => $h . 'license-classes/reference-tabs/' ],
+				[ 'label' => 'Application Overview Videos', 'url' => $h . 'license-classes/application-overview/' ],
+				[ 'label' => 'Order the Reference Books', 'url' => 'https://sebookstore.com/glec.html', 'ext' => true ],
 				[ 'label' => 'All license classes', 'url' => $h . 'license-classes/' ],
 			],
 		],
@@ -41,7 +41,6 @@ function glec_mega_config() {
 			'cards' => [
 				[ 'title' => 'Board-approved CEUs', 'meta' => '4 hours a year, all online', 'img' => 'thumb-workshop', 'url' => $h . 'ceu-classes/' ],
 				[ 'title' => 'Code Changes, IFGC & IMC', 'meta' => '2018, 2021 or 2024 · 4 hours · $50', 'img' => 'thumb-classroom', 'url' => $h . 'ceu-classes/' ],
-				[ 'title' => 'CEU hours needed each year', 'meta' => 'Certificate prints when you finish', 'num' => '4', 'icon' => 'award', 'navy' => true, 'url' => $h . 'ceu-classes/' ],
 			],
 			'links' => [
 				[ 'label' => 'Carrier System Design Manuals 1, 2, 3', 'url' => $h . 'ceu-classes/' ],
@@ -56,7 +55,7 @@ function glec_mega_config() {
 			'id' => 'steps', 'label' => 'How to get licensed', 'url' => $h . 'how-to-get-licensed/',
 			'cards' => [
 				[ 'title' => 'Check which license fits', 'meta' => 'Restricted or Non-Restricted', 'num' => '01', 'icon' => 'clip', 'url' => $h . 'how-to-get-licensed/' ],
-				[ 'title' => 'Take the design classes', 'meta' => 'Then apply to the Board in GOALS', 'num' => '02', 'icon' => 'play', 'url' => $h . 'how-to-get-licensed/' ],
+				[ 'title' => 'Take the Design Classes', 'meta' => 'Then apply to the Board in GOALS', 'num' => '02', 'icon' => 'play', 'url' => $h . 'how-to-get-licensed/' ],
 				[ 'title' => 'Prep for the exam and pass', 'meta' => 'Tab your books, schedule PSI', 'num' => '03', 'icon' => 'award', 'url' => $h . 'how-to-get-licensed/' ],
 			],
 			'links' => [
@@ -148,7 +147,7 @@ remove_shortcode( 'glec_mobile_menu' );
 add_shortcode( 'glec_mobile_menu', function () {
 	$cfg   = glec_mega_config();
 	$logo  = get_stylesheet_directory_uri() . '/assets/glec-logo.png';
-	$phone = esc_html( get_option( 'glec_phone', '404-590-5101' ) );
+	$phone = esc_html( get_option( 'glec_phone', '(470) 264-5134' ) );
 	$start = esc_url( home_url( '/how-to-get-licensed/' ) );
 	$root  = '';
 	$subs  = '';

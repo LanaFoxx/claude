@@ -9,37 +9,47 @@ function glec_steps_config() {
 	$h     = home_url( '/' );
 	$books = 'https://sebookstore.com/glec.html';
 	$steps = [
-		[ 'id' => 'license', 'title' => 'Which license fits you?', 'task' => 'Decide whether you want, and meet the requirements for, the Restricted (Class 1) or the Non-Restricted (Class 2) license.',
+		[ 'id' => 'license', 'rail' => 'Choose your License', 'phase' => 'Phase 1 - Application & Design Classes', 'title' => 'Which of the 2 licenses listed below are you interested in?', 'task' => 'Choose the Restricted (Class 1) or the Non-Restricted (Class 2) License. Not sure yet? Compare the two licenses first.',
 		  'type' => 'choose',
 		  'options' => [
-			[ 'value' => 'restricted', 'label' => 'Restricted (Class 1)', 'sub' => 'Units 5 tons or less cooling, 175,000 Btuh or less heating. 4+ years of experience.' ],
-			[ 'value' => 'nonrestricted', 'label' => 'Non-Restricted (Class 2)', 'sub' => 'All unit sizes. 5+ years of experience, with over 50% of your projects on units over 5 tons.' ],
-			[ 'value' => 'unsure', 'label' => 'I am not sure yet', 'sub' => 'Compare the requirements side by side first.' ],
+			[ 'value' => 'restricted', 'label' => 'Restricted (Class 1)', 'sub' => [ 'HVAC Units 5 tons or less cooling', 'HVAC Units 175,000 Btuh or less heating', '4+ years of experience' ] ],
+			[ 'value' => 'nonrestricted', 'label' => 'Non-Restricted (Class 2)', 'sub' => [ 'All HVAC Units, any size', '5+ years of experience', 'Over 50% of your projects on HVAC Units over 5 tons' ] ],
+			[ 'value' => 'unsure', 'label' => 'Compare the licenses', 'sub' => [ 'See both licenses side by side' ] ],
 		  ],
-		  'need' => [ 'text' => 'Compare the experience, reference, education and document requirements for each license in the Applications Considerations Chart, then come back and choose.', 'cta' => 'Open the comparison chart', 'url' => '#chart' ] ],
-		[ 'id' => 'epa', 'title' => 'EPA-608 technician certification', 'task' => 'You need EPA-608 technician certification, Type 2 or higher, in your application package.',
-		  'need' => [ 'text' => 'Get certified first. NATE offers remotely monitored online testing for EPA-608, and there are paper testing options in Atlanta.', 'cta' => 'See technician certifications', 'url' => $h . 'technician-certifications/' ] ],
-		[ 'id' => 'resdesign', 'title' => 'Residential Design Class', 'task' => 'The Residential Heat Loss/Gain &amp; Duct Design Class (ACCA Manuals J &amp; D). Its certificate of completion is required for every license application.',
+		  'need' => [ 'text' => 'Compare the experience, references, education and document requirements for each license in the Applications Considerations Chart, then come back and choose.', 'cta' => 'Open the Comparison Chart', 'url' => '#chart',
+			'compare' => [
+				[ 'HVAC Unit size', '5 tons or less cooling, 175,000 Btuh or less heating', 'All HVAC Unit sizes' ],
+				[ 'Experience', '4+ years under a licensed CA License Holder, 40+ hours per week', '5+ years under a licensed CA License Holder, 40+ hours per week; over 50% of projects on HVAC Units over 5 tons' ],
+				[ 'Education credit', 'Tech or trade school diploma: deduct 1 year. Mechanical or HVAC engineering degree: deduct 2 years', 'Tech or trade school diploma: deduct 1 year. Mechanical or HVAC engineering degree: deduct 2 years' ],
+				[ '3 Professional Licensed References', '1 CA License Holder plus any 2 of: CA License Holder, Registered Architect, Mechanical Engineer PE, City or County Inspector', '1 Non-Restricted CA License Holder plus any 2 of: Non-Restricted CA License Holder, Registered Architect, Mechanical Engineer PE, City or County Inspector' ],
+				[ 'Design Classes required', 'Residential Design Class (HLG-DD-R-OL)', 'Residential Design Class (HLG-DD-R-OL) and Commercial Design Class (HLG-DD-C-OL)' ],
+				[ 'Documents', 'EPA-608 Type 2 or higher, criminal background check, 2 IDs, Criminal History Consent Form, notarized Affidavit of Citizenship', 'Same as Restricted' ],
+			] ] ],
+		[ 'id' => 'epa', 'rail' => 'EPA-608 Technician Certification', 'title' => 'Do you have your EPA-608 Technician Certification?', 'task' => 'The Board requires you to have an EPA-608 Technician Certification, Type 2 or higher, for the application.',
+		  'need' => [ 'text' => 'Get certified first. NATE offers remotely monitored online testing for EPA-608, and there are paper testing options in Atlanta.', 'cta' => 'See Technician Certifications', 'url' => $h . 'technician-certifications/' ] ],
+		[ 'id' => 'resdesign', 'title' => 'Residential Design Class', 'code' => 'HLG-DD-R-OL', 'task' => 'The Residential Heat Loss/Gain &amp; Duct Design Class (ACCA Manuals J &amp; D). The Certificate of Completion is required in both of the two licenses.',
 		  'need' => [ 'text' => 'Read the full class details, add the class to your cart, accept the terms and conditions, and purchase the class.', 'cta' => 'See the Residential Design Class', 'url' => $h . 'license-classes/residential-design/', 'sku' => 'HLG-DD-R-OL' ] ],
-		[ 'id' => 'comdesign', 'title' => 'Commercial Design Class', 'task' => 'The Commercial Heat Loss/Gain &amp; Duct Design Class (Carrier System Design Manuals 1, 2 and 3). Required for the Non-Restricted license only.',
-		  'skipif' => 'restricted', 'skipnote' => 'Not required for the Restricted (Class 1) license, so you can skip this step.',
+		[ 'id' => 'comdesign', 'title' => 'Commercial Design Class', 'code' => 'HLG-DD-C-OL', 'task' => 'The Commercial Heat Loss/Gain &amp; Duct Design Class (Carrier System Design Manuals 1, 2 and 3). Required for the Non-Restricted License only.',
+		  'skipif' => 'restricted', 'skipnote' => 'Not required for the Restricted (Class 1) License, so you can skip this step.',
 		  'need' => [ 'text' => 'Read the full class details and purchase the Commercial Design Class.', 'cta' => 'See the Commercial Design Class', 'url' => $h . 'license-classes/commercial-design/', 'sku' => 'HLG-DD-C-OL' ] ],
-		[ 'id' => 'designbooks', 'title' => 'Reference books for the design classes', 'task' => 'You buy the reference books for the design classes separately.',
-		  'need' => [ 'text' => 'You can buy them anywhere, but this is a one-stop shop with the books in stock.', 'cta' => 'Order the reference books', 'url' => $books, 'ext' => true ] ],
-		[ 'id' => 'forms', 'title' => 'Complete all the required forms', 'task' => 'Application, references, transcripts, background check, certificates, IDs and payment. The application process is on the Board&rsquo;s website, called <a href="https://sos.ga.gov/goals" target="_blank" rel="noopener">GOALS</a>.',
-		  'need' => [ 'text' => 'The Application Overview videos walk you through every document and section, with two checklists. They are included free with the design classes.', 'cta' => 'See the Application Overview videos', 'url' => $h . 'license-classes/application-overview/', 'sku' => 'SOS-APP' ] ],
-		[ 'id' => 'approval', 'title' => 'Approval from the Board to take the exam', 'task' => 'Receive approval from the Conditioned Air License Board to sit for the exam.',
-		  'need' => [ 'text' => 'Once approved, PSI emails you instructions to schedule your exam. Pay PSI before the deadline to take the exam.', 'cta' => 'See the Board application process', 'url' => $h . 'board-application/', 'cta2' => 'Go to PSI Exams', 'url2' => 'https://www.psiexams.com', 'ext2' => true ] ],
-		[ 'id' => 'examprep', 'title' => 'Exam Prep Review Class', 'task' => 'The Conditioned Air license exam prep review class: the traditional license exam prep review class.',
-		  'need' => [ 'text' => 'Buy this class once you are approved by the Board. It ships a printed study guide and covers every reference book except Manuals J &amp; D.', 'cta' => 'See the Exam Prep Review Class', 'url' => $h . 'license-classes/exam-prep-review/', 'sku' => 'CA-OL' ] ],
-		[ 'id' => 'exambooks', 'title' => 'Reference books for the exam prep class', 'task' => 'You buy the reference books for the Conditioned Air exam prep class separately.',
-		  'need' => [ 'text' => 'You can buy them anywhere, but this is a one-stop shop with the books in stock. Do not forget the permanent reference tabs.', 'cta' => 'Order the reference books', 'url' => $books, 'ext' => true, 'cta2' => 'See the reference tabs', 'url2' => $h . 'license-classes/reference-tabs/' ] ],
-		[ 'id' => 'licensed', 'title' => 'Get your pass/fail document', 'task' => 'Get your pass/fail document at the PSI exam site, then check GOALS online to find your license number.',
-		  'have' => 'I have my pass/fail document', 'needlabel' => 'Not yet',
-		  'need' => [ 'text' => 'After your exam, get your pass/fail document from PSI. Then check GOALS online for your license number, and print your license on the Secretary of State website.', 'cta' => 'Go to PSI Exams', 'url' => 'https://www.psiexams.com', 'ext' => true, 'cta2' => 'Print your license at sos.ga.gov', 'url2' => 'https://sos.ga.gov', 'ext2' => true ] ],
+		[ 'id' => 'designbooks', 'title' => 'Reference Books for the Design Classes', 'task' => 'You buy the Reference Books for the Design Classes separately.',
+		  'need' => [ 'text' => 'You can buy them anywhere, but this is a one-stop shop with the books in stock.', 'cta' => 'Order the Design Reference Books', 'url' => $books, 'ext' => true ] ],
+		[ 'id' => 'forms', 'title' => 'Complete all the required Application forms', 'code' => 'SOS-APP', 'task' => 'Application, references, transcripts, background check, certificates, IDs and payment. The Application process is on the Board&rsquo;s website, called <a href="https://sos.ga.gov/goals" target="_blank" rel="noopener">GOALS</a>.',
+		  'need' => [ 'text' => 'The Application Overview Videos will assist you in filling out each page of the Application. The Videos are free and also included in the Design Classes.', 'cta' => 'See the Application Overview Videos', 'url' => $h . 'license-classes/application-overview/', 'sku' => 'SOS-APP' ] ],
+		[ 'id' => 'approval', 'rail' => 'Approval from the Board', 'phase' => 'Phase 2 - Board approval, Exam Prep Class & Tabs', 'title' => 'Approval from the Board to take the exam', 'task' => 'Receive approval from the Conditioned Air Licensing Board to sit for the exam.',
+		  'need' => [ 'text' => 'Once approved, PSI emails you instructions to schedule your exam and pick your testing location. Pay PSI to take the exam. You have a one-time option to re-schedule the exam (2 days before the scheduled exam).', 'cta' => 'See the Board Application process', 'url' => $h . 'board-application/', 'cta2' => 'Go to PSI Exams', 'url2' => 'https://www.psiexams.com', 'ext2' => true ] ],
+		[ 'id' => 'examprep', 'title' => 'Exam Prep Review Class, and also Permanent TABs', 'code' => 'CA-OL', 'task' => 'The Conditioned Air License Exam Prep Review Class: the traditional License Exam Prep Review Class. Buy the Permanent TABs with it.',
+		  'need' => [ 'text' => 'Buy this class once you are approved by the Board. It ships a printed Study Guide and covers every Reference Book except Manuals J &amp; D.', 'cta' => 'See the Exam Prep Review Class', 'url' => $h . 'license-classes/exam-prep-review/', 'sku' => 'CA-OL' ],
+		  'need2' => [ 'title' => 'Also buy the Permanent TABs', 'code' => 'CA-TABs', 'text' => 'Pre-laser printed Permanent TABs for all the Reference Books, Restricted and Non-Restricted, with placement charts. Permanent TABs are required: repositionable tabs are not acceptable.', 'cta' => 'See the Permanent Reference TABs', 'url' => $h . 'license-classes/reference-tabs/', 'sku' => 'CA-TABs' ] ],
+		[ 'id' => 'exambooks', 'title' => 'Reference Books for the Exam Prep Review Class', 'task' => 'You buy the Reference Books for the Exam Prep Review Class separately.',
+		  'need' => [ 'text' => 'You can buy them anywhere, but this is a one-stop shop with the books in stock.', 'cta' => 'Order the Exam Prep Reference Books', 'url' => $books, 'ext' => true ] ],
+		[ 'id' => 'licensed', 'rail' => 'Score Report and License Certificate', 'title' => 'Get your Score Report and License Certificate', 'task' => 'Your proctor at the PSI exam site will hand you your Score Report. Then go to the <a href="https://sos.ga.gov/goals" target="_blank" rel="noopener">GOALS</a> website to print your License Certificate.',
+		  'have' => 'I have my License Certificate', 'needlabel' => 'Not yet',
+		  'need' => [ 'text' => 'After your exam, your proctor at the PSI exam site hands you your Score Report. Then go to the GOALS website to print your License Certificate.', 'cta' => 'Go to GOALS', 'url' => 'https://sos.ga.gov/goals', 'ext' => true ] ],
 	];
 	foreach ( $steps as &$s ) {
 		if ( ! empty( $s['need']['sku'] ) && function_exists( 'glec_sku_price' ) ) { $s['need']['price'] = glec_sku_price( $s['need']['sku'] ); }
+		if ( ! empty( $s['need2']['sku'] ) && function_exists( 'glec_sku_price' ) ) { $s['need2']['price'] = glec_sku_price( $s['need2']['sku'] ); }
 	}
 	return apply_filters( 'glec_steps_config', $steps );
 }
@@ -52,21 +62,25 @@ function glec_steps_review_html( $steps ) {
 	foreach ( $steps as $i => $st ) {
 		$n    = $st['need'];
 		$num  = $i + 1;
+		if ( ! empty( $st['phase'] ) ) { $out .= '<li class="gwr__phase"><h2>' . esc_html( $st['phase'] ) . '</h2></li>'; }
 		$out .= '<li class="gwr__step" id="step-' . $num . '"><div class="gwr__head"><span class="gwr__k">Step ' . $num . ' of ' . count( $steps ) . '</span><a class="gwr__open" href="' . esc_url( add_query_arg( 'step', $num, $base ) ) . '">Open this step in the guide</a></div>';
-		$out .= '<h2 class="gwr__title">' . esc_html( html_entity_decode( $st['title'] ) ) . '</h2><p class="gwr__task">' . wp_kses_post( $st['task'] ) . '</p>';
+		$out .= '<h2 class="gwr__title">' . esc_html( html_entity_decode( $st['title'] ) ) . ( ! empty( $st['code'] ) ? ' <span class="gw__code">' . esc_html( $st['code'] ) . '</span>' : '' ) . '</h2><p class="gwr__task">' . wp_kses_post( $st['task'] ) . '</p>';
 		if ( ! empty( $st['options'] ) ) {
 			$out .= '<p class="gwr__label">Answer options</p><ul class="gwr__opts">';
-			foreach ( $st['options'] as $o ) { $out .= '<li><b>' . esc_html( $o['label'] ) . '</b><span>' . esc_html( $o['sub'] ) . '</span></li>'; }
+			foreach ( $st['options'] as $o ) { $out .= '<li><b>' . esc_html( $o['label'] ) . '</b><span>' . esc_html( implode( ' · ', (array) $o['sub'] ) ) . '</span></li>'; }
 			$out .= '</ul>';
 		} else {
 			$out .= '<p class="gwr__label">Answer options</p><ul class="gwr__opts"><li><b>' . esc_html( $st['have'] ?? 'I have this' ) . '</b><span>' . ( $num < count( $steps ) ? 'Go to step ' . ( $num + 1 ) : 'Finish' ) . '</span></li><li><b>' . esc_html( $st['needlabel'] ?? 'I need this' ) . '</b><span>Show me what to do</span></li></ul>';
 		}
 		if ( ! empty( $st['skipnote'] ) ) { $out .= '<p class="gwr__label">Shown instead for Restricted (Class 1)</p><div class="gwr__skip">' . wp_kses_post( $st['skipnote'] ) . '</div>'; }
-		$out .= '<p class="gwr__label">' . ( ! empty( $st['options'] ) ? 'If they choose "I am not sure yet"' : 'If they choose "' . esc_html( $st['needlabel'] ?? 'I need this' ) . '"' ) . '</p><div class="gwr__need"><p class="gwr__needt">Here is what to do</p><p>' . wp_kses_post( $n['text'] ) . '</p>';
+		$out .= '<p class="gwr__label">' . ( ! empty( $st['options'] ) ? 'If they choose "Compare the licenses"' : 'If they choose "' . esc_html( $st['needlabel'] ?? 'I do not have this' ) . '"' ) . '</p><div class="gwr__need"><p class="gwr__needt">Here is what to do</p><p>' . wp_kses_post( $n['text'] ) . '</p>';
 		if ( ! empty( $n['price'] ) ) { $out .= '<p class="gwr__price">' . esc_html( $n['price'] ) . '</p>'; }
 		$out .= '<p class="gwr__ctas"><a href="' . esc_url( $n['url'] ) . '"' . ( ! empty( $n['ext'] ) ? ' target="_blank" rel="noopener"' : '' ) . '>' . esc_html( $n['cta'] ) . ( ! empty( $n['ext'] ) ? $ext : '' ) . '</a>';
 		if ( ! empty( $n['cta2'] ) ) { $out .= '<a href="' . esc_url( $n['url2'] ) . '"' . ( ! empty( $n['ext2'] ) ? ' target="_blank" rel="noopener"' : '' ) . '>' . esc_html( $n['cta2'] ) . ( ! empty( $n['ext2'] ) ? $ext : '' ) . '</a>'; }
-		$out .= '</p></div></li>';
+		$out .= '</p></div>';
+		if ( ! empty( $st['need2'] ) ) { $n2 = $st['need2']; $out .= '<div class="gwr__need" style="margin-top:12px"><p class="gwr__needt">' . esc_html( $n2['title'] ) . ' <span class="gw__code">' . esc_html( $n2['code'] ) . '</span></p><p>' . wp_kses_post( $n2['text'] ) . '</p>' . ( ! empty( $n2['price'] ) ? '<p class="gwr__price">' . esc_html( $n2['price'] ) . '</p>' : '' ) . '<p class="gwr__ctas"><a href="' . esc_url( $n2['url'] ) . '">' . esc_html( $n2['cta'] ) . '</a></p></div>'; }
+		if ( ! empty( $n['compare'] ) ) { $out .= '<p class="gwr__label">Comparison shown with it</p><table class="gw__cmp"><thead><tr><th></th><th>Restricted (Class 1)</th><th>Non-Restricted (Class 2)</th></tr></thead><tbody>'; foreach ( $n['compare'] as $r ) { $out .= '<tr><th>' . esc_html( $r[0] ) . '</th><td>' . esc_html( $r[1] ) . '</td><td>' . esc_html( $r[2] ) . '</td></tr>'; } $out .= '</tbody></table>'; }
+		$out .= '</li>';
 	}
 	return $out . '</ol></div>';
 }
@@ -93,8 +107,8 @@ function glec_chart_rows() {
 		[ '3 professional licensed references', '(1) CA license holder, Restricted or Non-Restricted, plus any (2) of: CA license holder, registered architect, mechanical engineer PE, or city or county inspector. References must have held their Conditioned Air license for at least 4 years of HVAC experience, and the license must be currently active.', '(1) CA license holder, Non-Restricted, plus any (2) of: CA Non-Restricted license holder, registered architect, mechanical engineer PE, or city or county inspector. References must have held their Conditioned Air license for at least 5 years of HVAC experience, and the license must be currently active.', $a . '6-Audio-Help-CA-3-Pro-Lic-Refs-1_37.mp3' ],
 		[ 'Reciprocity with other states', 'No reciprocity from other states into Georgia', 'No reciprocity from other states into Georgia', $a . '7-Audio-Help-CA-Reciprocity-1_37.mp3' ],
 		[ 'EPA-608 technician certification', 'Type 2 certification or higher', 'Type 2 certification or higher', $a . '8-Audio-Help-CA-EPA-Tech-Cert-0_47.mp3' ],
-		[ 'Required design class: Residential Design (heat loss/gain &amp; duct design)', 'ACT-107 or AIRC-1060 at any TCSG (Technical College System of Georgia) school, though TCSG schools do not teach it as an exam prep class. Or the <a href="' . esc_url( home_url( '/license-classes/residential-design/' ) ) . '">GLEC HLG-DD-R-OL Residential Design Class</a>. Submit the certificate of completion with your application.', 'ACT-107 or AIRC-1060 at any TCSG school, though TCSG schools do not teach it as an exam prep class. Or the <a href="' . esc_url( home_url( '/license-classes/residential-design/' ) ) . '">GLEC HLG-DD-R-OL Residential Design Class</a>. Submit the certificate of completion with your application.', $a . '9-Audio-Help-CA-Res-Design-2_49.mp3' ],
-		[ 'Commercial Design (heat loss/gain &amp; duct design, online)', 'Not required', 'Required: the <a href="' . esc_url( home_url( '/license-classes/commercial-design/' ) ) . '">GLEC HLG-DD-C-OL Commercial Design Class</a>. Submit the certificate of completion with your application.', $a . '10-Audio-Help-CA-Comm-Design-0_48.mp3' ],
+		[ 'Required design class: Residential Design (heat loss/gain &amp; duct design)', 'ACT-107 or AIRC-1060 at any TCSG (Technical College System of Georgia) school, though TCSG schools do not teach it as an exam prep class. Or the <a href="' . esc_url( home_url( '/license-classes/residential-design/' ) ) . '">GLEC HLG-DD-R-OL Residential Design Class</a>. Submit the Certificate of Completion with your application.', 'ACT-107 or AIRC-1060 at any TCSG school, though TCSG schools do not teach it as an exam prep class. Or the <a href="' . esc_url( home_url( '/license-classes/residential-design/' ) ) . '">GLEC HLG-DD-R-OL Residential Design Class</a>. Submit the Certificate of Completion with your application.', $a . '9-Audio-Help-CA-Res-Design-2_49.mp3' ],
+		[ 'Commercial Design (heat loss/gain &amp; duct design, online)', 'Not required', 'Required: the <a href="' . esc_url( home_url( '/license-classes/commercial-design/' ) ) . '">GLEC HLG-DD-C-OL Commercial Design Class</a>. Submit the Certificate of Completion with your application.', $a . '10-Audio-Help-CA-Comm-Design-0_48.mp3' ],
 		[ 'Criminal background check', 'Required, current within 6 months of the date on your application', 'Required, current within 6 months of the date on your application', $a . '11-Audio-Help-CA-Crim-BG-Check-3_10.mp3' ],
 		[ 'SVD: secure and verifiable documents', 'Proof of US citizenship or legal alien status. Upload 2 IDs: driver&rsquo;s license, passport or Social Security card.', 'Proof of US citizenship or legal alien status. Upload 2 IDs: driver&rsquo;s license, passport or Social Security card.', $a . '12-Audio-Help-CA-Secure-Verify-1_01.mp3' ],
 		[ 'Criminal history consent form (for the background check)', 'Required. You do not need to be fingerprinted. Go to your local law enforcement agency (police station).', 'Required. You do not need to be fingerprinted. Go to your local law enforcement agency (police station).', $a . '13-Audio-Help-CA-Consent-Form-0_55.mp3' ],

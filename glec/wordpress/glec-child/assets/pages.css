@@ -108,7 +108,7 @@ body .woocommerce-message .button:hover{background:var(--g-mist)!important;color
 .glec-cancel p{font-size:15px!important;color:var(--g-slate)!important}
 .glec-cancel a{color:var(--g-blue);font-weight:600}
 /* the acknowledgement checkbox in block checkout */
-.wc-block-components-address-form__glec-billing-ack,.wc-block-checkout__additional-fields .wc-block-components-checkbox{background:#FFF7F2;border:1px solid #F6D3BC;border-radius:10px;padding:14px 16px}
+.wc-block-components-address-form__glec-billing-ack,.wc-block-components-address-form__glec-terms-agree,.wc-block-checkout__additional-fields .wc-block-components-checkbox{background:#FFF7F2;border:1px solid #F6D3BC;border-radius:10px;padding:14px 16px}
 .wc-block-checkout__additional-fields .wc-block-components-checkbox__label{font-weight:600;color:var(--g-navy)}
 @media (max-width:600px){.glec-billwarn{padding:20px 18px}.glec-billwarn h2{font-size:20px!important}}
 
@@ -118,3 +118,8 @@ body .woocommerce-message .button:hover{background:var(--g-mist)!important;color
 .wc-block-cart-item__image{width:140px!important;padding-right:0!important}
 @media (max-width:700px){.wc-block-cart .wc-block-cart-items__row{grid-template-columns:96px 1fr auto!important}.wc-block-cart-item__image{width:96px!important}}
 .wc-block-cart .wc-block-cart-item__product,.wc-block-cart td.wc-block-cart-item__product{padding-left:20px!important}
+.glec-agree{border:1px solid var(--g-line);border-left:5px solid var(--g-blue);background:#F5F9FF;border-radius:12px;padding:20px 28px;margin:0 0 32px}
+.glec-agree h2{font:600 20px/1.3 "Inter Tight",sans-serif!important;color:var(--g-navy)!important;margin:0 0 6px!important}
+.glec-agree p{font-size:16px!important;color:var(--g-ink)!important;margin:0 0 8px!important}
+.glec-agree ul{margin:0;padding-left:20px;display:flex;flex-wrap:wrap;gap:6px 32px}
+.glec-agree a{color:var(--g-blue);font-weight:600;font-size:16px}

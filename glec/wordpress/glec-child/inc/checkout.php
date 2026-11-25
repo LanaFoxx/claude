@@ -16,13 +16,26 @@ add_action( 'woocommerce_init', function () {
 		'required' => true,
 		'error_message' => 'Please confirm your billing address matches your credit card statement.',
 	] );
+	/* MarkUp #63: required agreement to Terms and Conditions, Cancellation Policy, Hold Harmless Policy. */
+	woocommerce_register_additional_checkout_field( [
+		'id'       => 'glec/terms-agree',
+		'label'    => 'I have read and agree to the Terms and Conditions, the Cancellation Policy and the Hold Harmless Policy.',
+		'location' => 'order',
+		'type'     => 'checkbox',
+		'required' => true,
+		'error_message' => 'Please agree to the Terms and Conditions, Cancellation Policy and Hold Harmless Policy.',
+	] );
 } );
+/* MarkUp #64: no coupon codes. */
+add_filter( 'woocommerce_coupons_enabled', '__return_false' );
 
 /* Classic checkout fallback (if the classic shortcode checkout is ever used). */
 add_action( 'woocommerce_review_order_before_submit', function () {
 	echo '<p class="form-row validate-required"><label class="woocommerce-form__label woocommerce-form__label-for-checkbox checkbox"><input type="checkbox" class="woocommerce-form__input woocommerce-form__input-checkbox input-checkbox" name="glec_billing_ack" value="1"> <span>I confirm my billing address is the mailing address on my credit card statement.</span>&nbsp;<abbr class="required" title="required">*</abbr></label></p>';
+	echo '<p class="form-row validate-required"><label class="woocommerce-form__label woocommerce-form__label-for-checkbox checkbox"><input type="checkbox" class="woocommerce-form__input woocommerce-form__input-checkbox input-checkbox" name="glec_terms_agree" value="1"> <span>I have read and agree to the Terms and Conditions, the Cancellation Policy and the Hold Harmless Policy.</span>&nbsp;<abbr class="required" title="required">*</abbr></label></p>';
 } );
 add_action( 'woocommerce_checkout_process', function () {
+	if ( isset( $_POST['woocommerce-process-checkout-nonce'] ) && empty( $_POST['glec_terms_agree'] ) ) { wc_add_notice( 'Please agree to the Terms and Conditions, Cancellation Policy and Hold Harmless Policy.', 'error' ); } // phpcs:ignore
 	if ( empty( $_POST['glec_billing_ack'] ) ) { wc_add_notice( 'Please confirm your billing address matches your credit card statement.', 'error' ); } // phpcs:ignore
 } );
 
@@ -37,10 +50,17 @@ function glec_billing_warning_html() {
 		. '<p>As of November 11, 2026, we no longer track down customers to get the correct billing address. If your payment is held, you will not have access to the class videos until you call, text or email us the correct billing address.</p>'
 		. '<p class="glec-billwarn__sig">Thank you for your understanding. Garrison Michael</p></section>';
 }
+function glec_agreement_html() {
+	$p = home_url( '/policies/' );
+	return '<section class="glec-agree"><h2>Before you buy</h2><p>At the bottom of this page you must agree to these policies. Each link opens in a new tab.</p><ul>'
+		. '<li><a href="' . esc_url( $p . '#terms' ) . '" target="_blank" rel="noopener">Terms and Conditions</a></li>'
+		. '<li><a href="' . esc_url( $p . '#cancellation' ) . '" target="_blank" rel="noopener">Cancellation Policy</a></li>'
+		. '<li><a href="' . esc_url( $p . '#hold-harmless' ) . '" target="_blank" rel="noopener">Hold Harmless Policy</a></li></ul></section>';
+}
 function glec_cancellation_html() {
 	return '<section class="glec-cancel"><h2>Cancellation policy</h2><p><b>Online classes are non-refundable.</b> Design and exam prep classes include unlimited 24/7 access for up to one year after purchase, or until you pass your exam, whichever comes first (extensions are available for a fair fee). CEU classes include unlimited 24/7 access for up to 4 months after purchase. <a href="' . esc_url( home_url( '/policies/' ) ) . '">Read our policies</a>.</p></section>';
 }
 add_filter( 'the_content', function ( $c ) {
 	if ( ! function_exists( 'is_checkout' ) || ! is_checkout() || is_wc_endpoint_url( 'order-received' ) || ! in_the_loop() ) { return $c; }
-	return glec_billing_warning_html() . $c . glec_cancellation_html();
+	return glec_billing_warning_html() . glec_agreement_html() . $c . glec_cancellation_html();
 }, 5 );

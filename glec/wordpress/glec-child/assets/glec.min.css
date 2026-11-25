@@ -708,3 +708,31 @@ a.g-crow__val:hover{color:var(--g-navy)}
 @media (max-width:600px){.elementor .g-head .g-btn-sec,.elementor .g-head .g-btn-sec .elementor-button{width:100%!important}}
 /* MarkUp #2: GOALS link inside step text */
 .elementor .g-step p a{color:var(--g-blue);font-weight:600;text-underline-offset:3px}
+/* MarkUp #16: larger hero eyebrow */
+.elementor .g-eyebrow-big .elementor-heading-title{font-size:20px!important}
+@media (max-width:600px){.elementor .g-eyebrow-big .elementor-heading-title{font-size:17px!important}}
+/* MarkUp #21: small Claire card above the fold, under the welcome video */
+.elementor .g-claire-mini{display:flex;align-items:center;gap:14px;margin-top:16px;padding:10px 14px 10px 10px;max-width:420px;background:#fff;border-radius:14px;text-decoration:none!important;box-shadow:0 14px 36px rgba(0,0,0,.28);transition:transform .2s}
+.elementor .g-claire-mini:hover{transform:translateY(-2px)}
+.elementor .g-claire-mini img{width:56px;height:56px;border-radius:50%;object-fit:cover;object-position:50% 25%;flex:none}
+.elementor .g-claire-mini__txt{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}
+.elementor .g-claire-mini__txt b{font:600 17px/1.25 "Inter Tight",sans-serif;color:var(--g-navy)}
+.elementor .g-claire-mini__txt small{font:500 14px/1.35 Inter,sans-serif;color:var(--g-slate)}
+.elementor .g-claire-mini__ico{width:44px;height:44px;border-radius:50%;background:var(--g-orange);color:#fff;display:flex;align-items:center;justify-content:center;flex:none}
+.elementor .g-claire-mini:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.elementor .g-hvid figcaption{margin-top:10px!important}
+/* MarkUp #65: CEU classes always open */
+.elementor .g-ceu--open .g-ceu__head{display:grid;grid-template-columns:230px minmax(0,1fr) 90px 70px;gap:16px;align-items:center;padding:20px 24px}
+.elementor .g-ceu--open .g-ceu__name{margin:0;font:600 19px/1.3 "Inter Tight",sans-serif;color:var(--g-navy)}
+@media (max-width:980px){.elementor .g-ceu--open .g-ceu__head{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"code price" "name name" "hrs hrs";row-gap:8px}.elementor .g-ceu--open .g-ceu__code{grid-area:code}.elementor .g-ceu--open .g-ceu__name{grid-area:name}.elementor .g-ceu--open .g-ceu__hrs{grid-area:hrs;text-align:left}.elementor .g-ceu--open .g-ceu__price{grid-area:price}}
+/* MarkUp #71/#72: See More */
+.elementor .g-more{border:1px solid var(--g-line);border-radius:12px;background:#fff}
+.elementor .g-more summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;min-height:56px;padding:0 22px;font:600 18px/1 "Inter Tight",sans-serif;color:var(--g-blue)}
+.elementor .g-more summary::-webkit-details-marker{display:none}
+.elementor .g-more summary span{font-size:24px;transition:transform .2s}.elementor .g-more[open] summary span{transform:rotate(45deg)}
+.elementor .g-more summary:focus-visible{outline:2px solid var(--g-blue);outline-offset:2px;border-radius:12px}
+.elementor .g-more__body{padding:4px 22px 22px;font-size:17px;line-height:1.65;color:var(--g-ink)}
+.elementor .g-more__body p{margin:0 0 .9em}.elementor .g-more__body ul,.elementor .g-more__body ol{margin:0 0 .9em;padding-left:22px}.elementor .g-more__body h3{font:600 20px/1.3 "Inter Tight",sans-serif;color:var(--g-navy);margin:18px 0 10px}
+.elementor .g-more__body a{color:var(--g-blue);font-weight:600}
+.elementor .g-ceu.g-ceu--open{display:block!important}
+.elementor .g-ceu.g-ceu--open{background:#fff!important;border:1px solid var(--g-line)!important;border-radius:12px!important;box-shadow:0 4px 14px rgba(11,42,66,.05)!important;overflow:hidden}.elementor .g-ceulist{gap:16px!important}

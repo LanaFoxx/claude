@@ -98,3 +98,23 @@
 .gwr__ctas{display:flex;flex-wrap:wrap;gap:8px 20px;margin:0!important}
 .gwr__ctas a{display:inline-flex;align-items:center;gap:6px;min-height:44px;font-weight:600;color:var(--g-blue)}
 @media (max-width:600px){.gwr__step{padding:22px 18px}.gwr__title{font-size:24px}}
+
+/* MarkUp round 3 */
+.gw__phase{font:700 13px/1.3 Inter,sans-serif;letter-spacing:.02em;color:var(--g-orange-h);background:var(--g-tint);border-radius:8px;padding:8px 10px;margin:14px 0 6px}
+.gw__list .gw__phase:first-child{margin-top:0}
+.gw__titlerow{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.gw__titlerow .gw__title{margin-bottom:12px}
+.gw__code{flex:none;display:inline-block;font:600 14px/1 Inter,sans-serif;letter-spacing:.02em;color:var(--g-orange-h);background:var(--g-tint);border-radius:6px;padding:9px 11px;margin-top:6px;white-space:nowrap}
+.gw__need .gw__titlerow .gw__code{margin-top:0}
+.gw__bul{margin:4px 0 0;padding:0 0 0 18px;display:flex;flex-direction:column;gap:3px;font-size:15px;line-height:1.45;color:var(--g-slate)}
+.gw__bul li::marker{color:var(--g-orange)}
+.gw__need--second{margin-top:16px;border-left-color:var(--g-blue);background:#F5F8FC;border-color:#D6E2EE}
+.gw__cmpwrap{margin:4px 0 16px;overflow-x:auto}
+.gw__cmp{width:100%;border-collapse:separate;border-spacing:0;background:#fff;border:1px solid var(--g-line);border-radius:10px;overflow:hidden;font-size:15px;line-height:1.5}
+.gw__cmp thead th{background:var(--g-navy);color:#fff;font:600 14px/1.3 Inter,sans-serif;text-align:left;padding:10px 14px}
+.gw__cmp tbody th{width:24%;text-align:left;vertical-align:top;font-weight:600;color:var(--g-navy);background:var(--g-mist);padding:10px 14px}
+.gw__cmp td{vertical-align:top;padding:10px 14px;border-left:1px solid var(--g-line)}
+.gw__cmp tbody tr+tr th,.gw__cmp tbody tr+tr td{border-top:1px solid var(--g-line)}
+.gwr__phase{list-style:none}.gwr__phase h2{font:700 15px/1.3 Inter,sans-serif;color:var(--g-orange-h);background:var(--g-tint);border-radius:8px;padding:10px 14px;margin:8px 0 0}
+@media (max-width:600px){.gw__titlerow{flex-direction:column;gap:4px}.gw__titlerow .gw__title{margin-bottom:4px}
+  .gw__cmp thead{display:none}.gw__cmp,.gw__cmp tbody,.gw__cmp tr,.gw__cmp th,.gw__cmp td{display:block;width:auto!important}.gw__cmp td{border-left:0;padding:6px 14px}.gw__cmp td::before{content:attr(data-label);display:block;font:600 12px/1.3 Inter,sans-serif;color:var(--g-orange-h)}}

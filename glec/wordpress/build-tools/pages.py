@@ -12,7 +12,7 @@ CLS = {
     'R':    dict(code='HLG-DD-R-OL', name='Residential Design Class', url=U('/license-classes/residential-design/'), pid=538),
     'C':    dict(code='HLG-DD-C-OL', name='Commercial Design Class', url=U('/license-classes/commercial-design/'), pid=539),
     'OL':   dict(code='CA-OL', name='Exam Prep Review Class', url=U('/license-classes/exam-prep-review/'), pid=540),
-    'TABS': dict(code='CA-TABs', name='Permanent reference tabs', url=U('/license-classes/reference-tabs/'), pid=541),
+    'TABS': dict(code='CA-TABs', name='Permanent Reference TABs', url=U('/license-classes/reference-tabs/'), pid=541),
     'SOS':  dict(code='SOS-APP', name='Application Overview videos', url=U('/license-classes/application-overview/'), pid=542),
 }
 I['book'] = '<path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>'
@@ -76,78 +76,80 @@ pages = {}
 pages['residential-design'] = ('Residential Design Class', class_page('R',
     'Also known as the Residential Heat Loss/Gain &amp; Duct Design Class. Required for every Conditioned Air license.',
     [('award', 'Required for', 'Restricted (Class 1) and Non-Restricted (Class 2)'), ('clock', 'About 16 hours', 'of video, plus time to highlight and calculate'), ('cal', 'Up to 1 year', 'of access, or until you pass')],
-    [C([h2('Why you need it'), prose('<p>A Board rule from 2005 requires you to submit this Residential Design Class certificate of completion with your Conditioned Air license application. The License Board will not process your application without it.</p><p>The certificate is required to apply for the Restricted (Class 1) license or the Non-Restricted (Class 2) license.</p>')], gap=16),
-     C([h2('What it covers'), prose('<p>The certificate of completion requires 16 hours of class time, covering the ACCA design manuals J and D.</p>' + ul(['<b>ACCA Manual J:</b> residential heat loss/gain load calculation', '<b>ACCA Manual D:</b> residential duct design calculation']) + '<p>This class is very important for passing the exam. When people fail, it is almost always in the design category, mostly Manual D (duct design).</p>')], gap=16),
+    [C([h2('Why you should buy this class'), prose('<p>A Board rule from 2005 requires you to submit this Residential Design Class Certificate of Completion with your Conditioned Air license application. The License Board will not process your application without it.</p><p>The certificate is required to apply for the Restricted (Class 1) license or the Non-Restricted (Class 2) license.</p>')], gap=16),
+     C([h2('What it covers'), prose('<p>The Certificate of Completion requires 16 hours of class time, covering the ACCA design manuals J and D.</p>' + ul(['<b>ACCA Manual J:</b> residential heat loss/gain load calculation', '<b>ACCA Manual D:</b> residential duct design calculation']) + '<p>This class is very important for passing the exam. When people fail, it is almost always in the design category, mostly Manual D (duct design).</p>')], gap=16),
      C([h2('How the class works'), prose(ul([
          'I do not give the answers, I give you the solutions. The videos show every step I take to solve the equations.',
          'A GLEC Residential Design Study Guide is included, with exam-type questions from each design book and full solutions, so you can follow how each equation is solved.',
          'Class length is about 16 hours of video. Add 4 to 6 hours online to highlight the books, and about 8 to 12 more hours for the calculations.',
-         'Print your certificate of completion online after watching all the videos. Print 3 copies and save one as a PDF for your application.',
+         'Print your Certificate of Completion online after watching all the videos. Print 3 copies and save one as a PDF for your application.',
          'This class has been online since April 2018. We have sold 1,740 online classes through October 2026, with an exam pass rate of about 82%.']))], gap=16),
      C([h2('Before you apply'), prose(ul([
          'EPA-608 technician certification, Type 2 or higher, is required in your application package. <a href="%s">See technician certifications</a>.' % U('/technician-certifications/'),
-         'You are responsible for buying the required reference books for the classes you purchase. <a href="%s" target="_blank" rel="noopener">Order the reference books</a>.' % BOOKS,
-         'This certificate of completion can also be used for NATE CEHs. Submit a copy to NATE at your renewal.']))], gap=16),
+         'You are responsible for buying the required Reference Books for the classes you purchase. <a href="%s" target="_blank" rel="noopener">Order the Reference Books</a>.' % BOOKS,
+         'This Certificate of Completion can also be used for NATE CEHs. Submit a copy to NATE at your renewal.']))], gap=16),
+     HTML('<details class="g-more"><summary>See More <span aria-hidden="true">+</span></summary><div class="g-more__body"><p>This class is also known as &ldquo;The Residential Heat Loss/Gain &amp; Duct Design Class&rdquo;.</p><p>Board Rule from the year 2005 requires you to submit this Residential Design Class Certificate of Completion with your &ldquo;CA&rdquo; Conditioned Air License Application. The License Board will NOT process your Application without it!</p><p>This Certificate of Completion is required to APPLY for the Restricted (Class 1) License or the Non-Restricted (Class 2) License applicants.</p><p>Certificate of Completion requires 16 hours of class time, covering ACCA Design Manuals J and D.</p><ul><li>ACCA Manual J = Residential Heat Loss/Gain Load Calculation</li><li>ACCA Manual D = Residential Duct Design Calculation</li></ul><p>EPA-608 Technician Certification of Type 2 or Higher is Required to be in your Application submittal package. If you need to get this, go to <a href="/technician-certifications/">Technician Certifications</a>.</p><p>A GLEC Residential Design Study Guide is included with Exam type questions from each design book, with solutions (not just the answers) so you can follow in solving the equation or solution.</p><p>You are responsible for Purchasing all the required Reference Books for the classes you purchased. Go to Quick Links to find the Reference Book list, and to also Purchase Order the Books.</p><p>This Residential Design class is very important in passing the Exam to get your License. When people fail, it is almost always in the &ldquo;Design&rdquo; category, mostly Manual D (Duct Design).</p><p>Note: this Certificate of Completion can be used for NATE CEH&rsquo;s. You would have to submit a copy of your Certificate of Completion to NATE at your Renewal.</p><p>Class length is about 16 hours of Videos, add 4&ndash;6 hours Online to Highlight the Books. Add about 8&ndash;12 more hours for doing the calculations.</p><p>You would Print your Certificate of Completion Online, after watching all the videos. Print 3 copies and one as a PDF for your Application.</p><h3>More Class Details</h3><ol><li>Available On-Demand 24/7 As many times, through your Exam, up to one year after your date of purchase of the class, or until you pass your Exam, whichever comes first. Can be extended if needed, for a fair fee, based on length of time from purchase date.</li><li>I do not give the answers, I give you the SOLUTIONS. The Videos show every little step I take to solve the equations.</li><li>This class has been Online since April 2018.</li><li>We have sold 1740 Online classes through October 2026.</li><li>Exam passing rate has been more successful, about 82%.</li></ol></div></details>'),
      callout('Access', '<p>%s</p>' % ACCESS)],
     'Restricted and Non-Restricted',
-    ['Residential Design Study Guide', 'SOS-APP application videos, free', 'Certificate of completion'],
-    [('Order the reference books', BOOKS), ('See the step-by-step process', U('/how-to-get-licensed/'))],
+    ['Residential Design Study Guide', 'SOS-APP application videos, free', 'Certificate of Completion'],
+    [('Order the Reference Books', BOOKS), ('See the step-by-step process', U('/how-to-get-licensed/'))],
     ('Commercial Design Class', CLS['C']['url'], 'Going for the Non-Restricted (Class 2) license? You also need the Commercial Design Class. Restricted applicants can skip ahead to the application.')))
 
 # ---------- Commercial Design ----------
 pages['commercial-design'] = ('Commercial Design Class', class_page('C',
     'Also known as the Commercial Heat Loss/Gain &amp; Duct Design Class. Required for the Non-Restricted (Class 2) license.',
     [('award', 'Required for', 'Non-Restricted (Class 2) only'), ('clock', 'About 8 hours', 'covering Carrier System Design Manuals 1, 2 and 3'), ('cal', 'Up to 1 year', 'of access, or until you pass')],
-    [C([h2('Why you need it'), prose('<p>A Board rule from 2005 requires you to submit this Commercial Design Class certificate of completion with your Conditioned Air license application. The License Board will not process your application without it.</p><p>This certificate of completion is required for Non-Restricted (Class 2) license applicants only.</p>')], gap=16),
-     C([h2('What it covers'), prose('<p>The certificate of completion requires 8 hours of class time, covering the Carrier System Design Manuals 1, 2 and 3. These books cover the commercial heat loss/gain and duct design calculations.</p>')], gap=16),
+    [C([h2('Why you should buy this class'), prose('<p>A Board rule from 2005 requires you to submit this Commercial Design Class Certificate of Completion with your Conditioned Air license application. The License Board will not process your application without it.</p><p>This Certificate of Completion is required for Non-Restricted (Class 2) license applicants only.</p>')], gap=16),
+     C([h2('What it covers'), prose('<p>The Certificate of Completion requires 8 hours of class time, covering the Carrier System Design Manuals 1, 2 and 3. These books cover the commercial heat loss/gain and duct design calculations.</p>')], gap=16),
      C([h2('Good to know'), prose(ul([
-         'You are responsible for buying the required reference books for the classes you purchase. <a href="%s" target="_blank" rel="noopener">Order the reference books</a>.' % BOOKS,
-         'Print your certificate of completion online after watching all the videos. Print 3 copies and save one as a PDF for your application.',
+         'You are responsible for buying the required Reference Books for the classes you purchase. <a href="%s" target="_blank" rel="noopener">Order the Reference Books</a>.' % BOOKS,
+         'Print your Certificate of Completion online after watching all the videos. Print 3 copies and save one as a PDF for your application.',
          'This class can be used for your NATE CEHs. Submit a copy of your certificate to NATE at your renewal.']))], gap=16),
+     HTML('<details class="g-more"><summary>See More <span aria-hidden="true">+</span></summary><div class="g-more__body"><p>This class is also known as &ldquo;The Commercial Heat Loss/Gain &amp; Duct Design Class&rdquo;.</p><p>Board Rule from the year 2005 requires you to submit this Commercial Design Class Certificate of Completion with your &ldquo;CA&rdquo; Conditioned Air License Application. The License Board will NOT process your Application without it!</p><p>This Certificate of Completion is required to APPLY for the Non-Restricted (Class 2) License applicants only.</p><p>Certificate of Completion requires 8 hours of class time, covering the Carrier System Design Manuals 1, 2, 3. These Books are to cover the Commercial Heat Loss/Gain &amp; Duct Design calculations.</p><p>You are responsible for Purchasing all the required Reference Books for the classes you purchased. Go to Quick Links to find the Reference Book list, and to also Purchase Order the Books.</p><p>You would Print your Certificate of Completion Online, after watching all the videos. Print 3 copies and one as a PDF for your Application.</p><p>NATE: This class could be used for your NATE CEH&rsquo;s. You would have to submit a copy of your Certificate to NATE at your Renewal.</p><p>Available On-Demand 24/7 As many times, through your Exam, up to one year after your date of purchase of the class, or until you pass your Exam, whichever comes first. Can be extended if needed, for a fair fee, based on length of time from purchase date.</p></div></details>'),
      callout('Access', '<p>%s</p>' % ACCESS)],
     'Non-Restricted only',
-    ['Carrier System Design Manuals 1, 2 and 3', 'SOS-APP application videos, free', 'Certificate of completion'],
-    [('Order the reference books', BOOKS), ('See the step-by-step process', U('/how-to-get-licensed/'))],
-    ('Application Overview videos', CLS['SOS']['url'], 'With your design classes done, the next step is the Board application. The SOS-APP videos walk you through it, and they are free with the design classes.')))
+    ['Carrier System Design Manuals 1, 2 and 3', 'SOS-APP application videos, free', 'Certificate of Completion'],
+    [('Order the Reference Books', BOOKS), ('See the step-by-step process', U('/how-to-get-licensed/'))],
+    ('Application Overview videos', CLS['SOS']['url'], 'With your Design Classes done, the next step is the Board application. The SOS-APP videos walk you through it, and they are free with the Design Classes.')))
 
-# ---------- Reference tabs ----------
-pages['reference-tabs'] = ('Permanent reference tabs', class_page('TABS',
-    'Pre-printed permanent tabs for the Conditioned Air reference books. Usually bought together with the Exam Prep Review Class.',
-    [('book', 'Every reference book', 'including Manuals D &amp; J and the Carrier books'), ('truck', 'Shipped', 'to the address on your order'), ('file', 'Placement charts', 'for each reference book')],
-    [C([h2('Why permanent tabs'), prose('<p>Permanent tabs are required. A permanent tab would tear the paper page if you tried to remove it. Repositionable tabs are not acceptable.</p><p>The permanent tab set covers all the reference books, including the design manuals D and J and the Carrier books. They are not sold separately; only when the Board changes reference books do we provide them separately. You can tab the design books later, once you have all the books.</p>')], gap=16),
+# ---------- Reference TABs ----------
+pages['reference-tabs'] = ('Permanent Reference TABs', class_page('TABS',
+    'Pre-printed Permanent TABs for the Conditioned Air Reference Books. Usually bought together with the Exam Prep Review Class.',
+    [('book', 'Every Reference Book', 'including Manuals D &amp; J and the Carrier books'), ('truck', 'Shipped', 'to the address on your order'), ('file', 'Placement charts', 'for each Reference Book')],
+    [C([h2('Why Permanent TABs'), prose('<p>Permanent TABs are required. A permanent tab would tear the paper page if you tried to remove it. Repositionable tabs are not acceptable.</p><p>The permanent tab set covers all the Reference Books, including the design manuals D and J and the Carrier books. They are not sold separately; only when the Board changes Reference Books do we provide them separately. You can tab the design books later, once you have all the books.</p>')], gap=16),
      C([h2('What you get'), prose(ul(['About 14 tab sheets', 'About 317 pre-printed tabs', 'About 33 blank tabs you can write on if you need to',
-         'About 14 Excel spreadsheets listing the tabs for each reference book, showing the tab name, book edition or version, book page number, code number for code books, and for some a longer description']))], gap=16)],
+         'About 14 Excel spreadsheets listing the tabs for each Reference Book, showing the tab name, book edition or version, book page number, code number for code books, and for some a longer description']))], gap=16)],
     'Restricted and Non-Restricted',
-    ['Tabs for every reference book', 'Placement charts', 'Shipped to you'],
+    ['Tabs for every Reference Book', 'Placement charts', 'Shipped to you'],
     [('Exam Prep Review Class', CLS['OL']['url'])],
     ('Exam Prep Review Class', CLS['OL']['url'], 'The tabs go hand in hand with the Exam Prep Review Class, which shows you how to tab and highlight every book.')))
 
 # ---------- Exam Prep Review ----------
 pages['exam-prep-review'] = ('Exam Prep Review Class', class_page('OL',
-    'The traditional Conditioned Air license exam prep review class, designed to help you pass the exam on your first attempt.',
-    [('award', 'After Board approval', 'buy this once you are approved to sit for the exam'), ('book', 'All reference books', 'except Manuals D &amp; J, covered in Residential Design'), ('truck', 'Printed study guide', 'shipped to you by UPS')],
-    [callout('Before you buy', '<p>You should already be approved by the Conditioned Air Licensing Board before you purchase this class. If you have not already, buy the <a href="%s">permanent reference tabs</a> for the Conditioned Air reference books.</p>' % CLS['TABS']['url'], 'warn'),
+    'The traditional Conditioned Air license Exam Prep Review Class, designed to help you pass the exam on your first attempt.',
+    [('award', 'After Board approval', 'buy this once you are approved to sit for the exam'), ('book', 'All Reference Books', 'except Manuals D &amp; J, covered in Residential Design'), ('truck', 'Printed Study Guide', 'shipped to you by UPS')],
+    [callout('Before you buy', '<p>You should already be approved by the Conditioned Air Licensing Board before you purchase this class. If you have not already, buy the <a href="%s">Permanent Reference TABs</a> for the Conditioned Air Reference Books.</p>' % CLS['TABS']['url'], 'warn'),
      C([h2('Who it is for'), prose('<p>You should already have taken the Residential Design Class, which is a good portion of the exam. If you did not, because you went to a vocational tech school (where the class is not taught as exam prep) and submitted your diploma or transcripts, consider taking the <a href="%s">Residential Design Class</a> as well.</p>' % CLS['R']['url'] +
          ul(['This class covers both Restricted and Non-Restricted applicants.', 'It is required if you fail the exam twice, and highly recommended before that:']) +
          ul(['To save personal study time by knowing what to study, and how to tab and highlight your books.', 'To be better prepared and confident, reducing the fear of taking the exam.', 'To save the expense and time of re-applying and studying again to re-take the exam.'], 'g-list g-list--sub'))], gap=16),
      C([h2('GLEC Exam Prep Study Guide'), prose('<p>When you buy this class, we ship you the complete Exam Prep Study Guide by UPS. It has 10 tabs and about 150 pages, with exam-type questions from each non-design book and full solutions, not just the answers.</p>' + ul([
-         'Sample practice test questions and working examples for gas pipe and flue vent sizing, conduit and wire sizing, psychrometrics, and accounting principles', 'Study skills, test-taking skills and question tracking', 'The significance and importance of each reference book']))], gap=16),
+         'Sample practice test questions and working examples for gas pipe and flue vent sizing, conduit and wire sizing, psychrometrics, and accounting principles', 'Study skills, test-taking skills and question tracking', 'The significance and importance of each Reference Book']))], gap=16),
      C([h2('The three parts of the class'),
         HTML('<div class="g-parts">'
-             '<div class="g-part"><span class="g-part__k">Part A</span><h3>Highlighting and tabbing videos</h3>' + ul(['12.6 hours for Non-Restricted students (you already did the Carrier books)', '15.6 hours for Restricted students (includes the Carrier design books)', 'The tabbing, overview and highlighting of the reference books, at home or work, at your own pace', 'A visual and audio explanation of the materials, charts, tables and equations', 'Optional certificate of completion once you highlight all the non-design reference books']) + '</div>'
-             '<div class="g-part"><span class="g-part__k">Part B</span><h3>Working examples, about 7.5 hours</h3>' + ul(['IFGC: gas pipe and flue vent sizing', 'IMC: book examples that calculate fresh air intake CFM', 'NEC: conduit and wire sizing, and calculating amps to size disconnects and fuses', 'Psychrometrics, with a psych chart in the back sleeve of the binder', 'NASCLA: accounting principles', 'Study skills, test-taking skills and question tracking', 'Worksheets are in the study guide']) + '<p class="g-part__note">You can print a certificate after completing all the calculations. Only print it if you have failed the exam twice: you would send it to the Board to take the exam a third time.</p></div>'
+             '<div class="g-part"><span class="g-part__k">Part A</span><h3>Highlighting and tabbing videos</h3>' + ul(['12.6 hours for Non-Restricted students (you already did the Carrier books)', '15.6 hours for Restricted students (includes the Carrier design books)', 'The tabbing, overview and highlighting of the Reference Books, at home or work, at your own pace', 'A visual and audio explanation of the materials, charts, tables and equations', 'Optional Certificate of Completion once you highlight all the non-design Reference Books']) + '</div>'
+             '<div class="g-part"><span class="g-part__k">Part B</span><h3>Working examples, about 7.5 hours</h3>' + ul(['IFGC: gas pipe and flue vent sizing', 'IMC: book examples that calculate fresh air intake CFM', 'NEC: conduit and wire sizing, and calculating amps to size disconnects and fuses', 'Psychrometrics, with a psych chart in the back sleeve of the binder', 'NASCLA: accounting principles', 'Study skills, test-taking skills and question tracking', 'Worksheets are in the Study Guide']) + '<p class="g-part__note">You can print a certificate after completing all the calculations. Only print it if you have failed the exam twice: you would send it to the Board to take the exam a third time.</p></div>'
              '<div class="g-part"><span class="g-part__k">Part C</span><h3>Online quizzes</h3>' + ul(['A quiz for each non-design book', 'Retake each quiz until you score high enough, consistently, to feel confident', 'Simple questions only, not calculation examples', 'Go through them the last week before the exam']) + '</div></div>')], gap=20),
      C([h2('Good to know'), prose(ul(['Can be used for NATE CEHs. Submit your certificate to NATE upon renewal.', 'For the online portions, print your certificate online after you finish watching all the videos.']))], gap=16),
      callout('Access', '<p>%s</p>' % ACCESS)],
     'Restricted and Non-Restricted',
     ['Printed Exam Prep Study Guide, shipped', 'Highlighting and tabbing videos', 'Working examples and online quizzes'],
-    [('Permanent reference tabs', CLS['TABS']['url']), ('Order the reference books', BOOKS)],
+    [('Permanent Reference TABs', CLS['TABS']['url']), ('Order the Reference Books', BOOKS)],
     ('Board application and meeting dates', U('/board-application/'), 'Once you pass, check GOALS online to find your license number, and print your license from the Secretary of State website.')))
 
 # ---------- SOS-APP ----------
 pages['application-overview'] = ('Application Overview videos', class_page('SOS',
     'An online video walkthrough of the whole Conditioned Air license application, from documents to approval.',
-    [('award', 'Free', 'with the Residential and Commercial Design classes'), ('file', 'Two checklists', 'for submitting and for approval'), ('clock', 'On demand', 'watch online, at your own pace')],
+    [('award', 'Free', 'with the Residential and Commercial Design Classes'), ('file', 'Two checklists', 'for submitting and for approval'), ('clock', 'On demand', 'watch online, at your own pace')],
     [C([h2('Why it helps'), prose('<p>The Secretary of State Professional Licensing Board requires you to submit an application for the Conditioned Air Contractor license, and to get approval from the Board, before you can sit for the Conditioned Air license exam.</p><p>This online video presentation will save you a lot of time and effort working out the details of the whole application process. Below are some of the things we have learned over the years about what to do and, perhaps more importantly, what not to do.</p>')], gap=16),
      C([h2('What it covers'), HTML(checks([
          'The exam schedule, deadline dates and how to pay for the exam', 'All the application documents, and what is required and what is not', 'Other documents you need that are not in the application',
@@ -155,7 +157,7 @@ pages['application-overview'] = ('Application Overview videos', class_page('SOS'
          'Checklist, part 1 (application submittal): 21 items to check off', 'Checklist, part 2 (approval process): 15 items to check off', 'The sequence of the whole application process',
          'How to check on your application status', 'Sample approval letters', 'When to pay and schedule the exam, and the preferred location']))], gap=16),
      callout('Included free', '<p>This class is included free with the <a href="%s">Residential Design</a> and <a href="%s">Commercial Design</a> classes.</p>' % (CLS['R']['url'], CLS['C']['url']), 'ok')],
-    'Free with the design classes',
+    'Free with the Design Classes',
     ['Full application walkthrough', 'Two checklists', 'Sample approval letters'],
     [('Board application and meeting dates', U('/board-application/'))],
     ('Board application and meeting dates', U('/board-application/'), 'See how the Board currently processes applications, and when it meets.')))
@@ -170,11 +172,11 @@ def lc_card(k, blurb, req):
 pages['license-classes'] = ('License classes', [
     hero('Conditioned Air (HVAC) contractor licensing', 'License classes', 'All design and exam prep classes are online only. Prices are subject to change.', crumbs=[('Home', U('/')), ('License classes', None)]),
     section([C([
-        lc_card('R', 'Required for Restricted and Non-Restricted licensing. ACCA Manuals J &amp; D, about 16 hours online.', 'Required for every license'),
+        lc_card('R', 'Required for Restricted and Non-Restricted licensing. ACCA Manuals J &amp; D, about 16 hours online.', 'Required in both licenses'),
         lc_card('C', 'Required for Non-Restricted. Carrier System Design Manuals 1, 2 and 3, about 8 hours online.', 'Non-Restricted only'),
-        lc_card('OL', 'The Conditioned Air license exam prep review class. Ships a printed study guide.', 'After Board approval'),
-        lc_card('TABS', 'Laser-printed permanent tabs with placement charts, for all the reference books, Restricted and Non-Restricted.', 'Shipped'),
-        lc_card('SOS', 'The Conditioned Air license application overview, as online videos.', 'Free with design classes')], 'g-g3 g-lcgrid', gap=24, gap_m=16),
+        lc_card('OL', 'The Conditioned Air license Exam Prep Review Class. Ships a printed Study Guide.', 'After Board approval'),
+        lc_card('TABS', 'Laser-printed Permanent TABs with placement charts, for all the Reference Books, Restricted and Non-Restricted.', 'Shipped'),
+        lc_card('SOS', 'The Conditioned Air license application overview, as online videos.', 'Free with Design Classes')], 'g-g3 g-lcgrid', gap=24, gap_m=16),
         callout('All design and exam prep classes', '<p>%s</p>' % ACCESS)]),
     section([C([C([h2('Which license is right for you?'), TX('<p>Restricted (Class 1) covers units up to 5 tons cooling. Non-Restricted (Class 2) covers all unit sizes. Compare the experience, reference and document requirements side by side.</p>', 'body', 'slate')], gap=14),
                 C([BTN('See the step-by-step process', U('/how-to-get-licensed/'), 'g-btn'), BTN('Compare the requirements', U('/how-to-get-licensed/#chart'), 'g-btn-sec')], 'g-auto', gap=12)],
@@ -195,9 +197,9 @@ CEU_IDS = json.load(open(os.path.join(BASE, 'build/ceu-products.json')))
 def ceu_row(code, name, hrs, price, items):
     pid = CEU_IDS[code]
     atc = '<a href="?add-to-cart=%d" data-quantity="1" data-product_id="%d" class="button add_to_cart_button ajax_add_to_cart g-ceu__atc" aria-label="Add %s to your cart" rel="nofollow">Add to cart</a>' % (pid, pid, code)
-    return ('<details class="g-ceu"><summary><span class="g-ceu__code">%s (2027)</span><span class="g-ceu__name">%s</span><span class="g-ceu__hrs">%s hour%s</span><span class="g-ceu__price">%s</span><span class="g-ceu__chev" aria-hidden="true">%s</span></summary>'
-        '<div class="g-ceu__body">%s<div class="g-ceu__buy">%s</div></div></details>'
-        % (code, name, hrs, '' if hrs == '1' else 's', price, ic('<path d="m6 9 6 6 6-6"/>', 22), ul(items), atc))
+    return ('<article class="g-ceu g-ceu--open"><div class="g-ceu__head"><span class="g-ceu__code">%s (2027)</span><h3 class="g-ceu__name">%s</h3><span class="g-ceu__hrs">%s hour%s</span><span class="g-ceu__price">%s</span></div>'
+        '<div class="g-ceu__body">%s<div class="g-ceu__buy">%s</div></div></article>'
+        % (code, name, hrs, '' if hrs == '1' else 's', price, ul(items), atc))
 pages['ceu-classes'] = ('CEU classes', [
     hero('Continuing education units', 'CEU classes', 'Board-approved CEU classes for Georgia Conditioned Air contractors. All CEU classes are online only.', crumbs=[('Home', U('/')), ('CEU classes', None)]),
     section([C([C([h2('What the Board requires'), prose(ul([
@@ -206,25 +208,25 @@ pages['ceu-classes'] = ('CEU classes', [
         C([h2('How every CEU class works'), HTML(checks([
             'The CEU classes GLEC offers are approved by the Conditioned Air Licensing Board.', 'Older CEU videos are about 10 to 15 minutes long; recent ones are about 3 to 8 minutes.', 'There are no formal quizzes to take and pass.',
             'You are monitored online for the required four (4) hours, to make sure you watch every minute of each video.', 'Do not fast-forward or skip any part of a video, or you will have to watch it again until you have watched every second.',
-            'You must complete the whole class to print your certificate of completion.', 'Print your certificate as soon as you finish all the class videos. We suggest printing 2 or 3 copies.',
+            'You must complete the whole class to print your Certificate of Completion.', 'Print your certificate as soon as you finish all the class videos. We suggest printing 2 or 3 copies.',
             'Also save the certificate as a PDF on your computer or a memory device: you will need to upload it with your application to the Board.']))], gap=16)],
         'g-g2 g-ceuintro', gap=64, gap_m=32),
         callout('Access', '<p>Online CEU classes are available 24/7, as many times as you like, through your completion. You have 4 months to complete each class.</p>')]),
-    section([C([h2('Choose a CEU class'), TX('<p>Select a class to see what it covers.</p>', 'body', 'slate')], gap=8),
+    section([C([h2('Choose a CEU class'), TX('<p>Every class is online only, with 4 months to complete it.</p>', 'body', 'slate')], gap=8),
              HTML('<div class="g-ceulist">%s</div>' % ''.join(ceu_row(*r) for r in CEU))], bg='mist'),
 ])
 
 # ---------- About ----------
 TIMELINE = [
-    ('2006', 'GLEC is founded', 'Garrison Michael founded Georgia License Exam Company in late 2006, starting with Conditioned Air license exam prep review classes and heat loss/gain and duct design classes. GLEC grew quickly through referrals.'),
+    ('2006', 'GLEC is founded', 'Garrison Michael founded Georgia License Exam Company in late 2006, starting with Conditioned Air license exam prep review classes and heat loss/gain and duct Design Classes. GLEC grew quickly through referrals.'),
     ('2009', 'Atlanta, Buckhead', 'Classes move to a larger hotel in Atlanta, Buckhead.'),
     ('2010', 'Middle Georgia', 'GLEC expands to Middle Georgia in February 2010 at a hotel in Warner Robins, moving to Macon a year later. We had 16 students in our first class.'),
     ('2011', 'Augusta and LaGrange', 'Classes start in Augusta in June 2011, bringing students from across the border in South Carolina, and in LaGrange, bringing students from Eastern Alabama.'),
     ('2013', 'Savannah', 'Our first Savannah class begins in January 2013, with more students from South Carolina.'),
-    ('2015', 'Hybrid and online classes', 'The Conditioned Air exam prep review class becomes a hybrid class in January 2015, and the Commercial Design class moves fully online in February 2015.'),
+    ('2015', 'Hybrid and online classes', 'The Conditioned Air Exam Prep Review Class becomes a hybrid class in January 2015, and the Commercial Design class moves fully online in February 2015.'),
     ('2016', 'CEU classes', 'In March 2016 we begin teaching continuing education (CEU) classes for HVAC licensed contractors, online only from the start.'),
     ('2018', 'Residential Design online', 'In March 2018 we start offering the Residential Design class as a hybrid class (HLG-DD-R-HY) and fully online (HLG-DD-R-OL), as more students join from other states and nationwide companies.'),
-    ('2020', 'Fully online exam prep', 'Classes keep going through Covid, with most students choosing online. The CA-OL exam prep review class goes fully online in May 2020.'),
+    ('2020', 'Fully online exam prep', 'Classes keep going through Covid, with most students choosing online. The CA-OL Exam Prep Review Class goes fully online in May 2020.'),
     ('2024', 'Online becomes the norm', 'With classroom attendance down to 2 or 3 students, we close the physical classroom classes after July 2024. Our exam pass rate is still 82%.'),
     ('2026', '20th anniversary', 'October 2026 marks our 20th anniversary.'),
 ]
@@ -245,7 +247,7 @@ pages['about'] = ('About', [
     section([C([C([H('Meet your instructor', 'div', 'eyebrow', 'blue', 'g-eyebrow'), h2('Garrison Michael'), prose(
         '<p>Garrison Michael was born and raised in Chicago, Illinois. He has over 34 years of experience in HVAC, and in the last 11 years, experience with low voltage systems for the large commercial and industrial markets.</p>'
         '<p>He graduated in 1981 from the Milwaukee School of Engineering with a B.S. in Building Construction Engineering. He started at MCC Powers (now Siemens Building Technologies) as an application engineer designing building automation system layouts. In 1986 he joined Johnson Controls as a project engineer, working on large projects like the new Fulton County Jail and the new Coca-Cola USA Tower and Reception Center. He was project manager on three new state prisons and two county jails, with fire alarm, security, card access, public address, intercom, closed circuit TV, television signal distribution, and programmable logic controller systems for the cell doors.</p>'
-        '<p>In 1992 Garrison began a 14-plus year career at Georgia Trane as a sales engineer for the service company, selling service agreements to building owners to maintain and expand their BAS and HVAC systems, and delivering turnkey HVAC systems. In 2003 he also began teaching at the Georgia Trane Training Center. He created the Low Voltage license exam prep review class, and two years later began teaching Conditioned Air (HVAC) classes, including the design classes and the Conditioned Air license exam prep review classes.</p>'
+        '<p>In 1992 Garrison began a 14-plus year career at Georgia Trane as a sales engineer for the service company, selling service agreements to building owners to maintain and expand their BAS and HVAC systems, and delivering turnkey HVAC systems. In 2003 he also began teaching at the Georgia Trane Training Center. He created the Low Voltage license Exam Prep Review Class, and two years later began teaching Conditioned Air (HVAC) classes, including the Design Classes and the Conditioned Air license exam prep review classes.</p>'
         '<p>When Garrison resigned in 2006, he started Georgia License Exam Company.</p>')], gap=16),
         HTML('<figure class="g-bigquote"><span class="g-qmark" aria-hidden="true">“</span><blockquote>I love to help others succeed in achieving their life vision, which in turn should help one attain their own dreams. I believe with my analytical engineering background, my real onsite construction experience, and my years at Trane, that I have this unique ability to take a complex analytical concept, re-shuffle it, and present it in a practical useful way, to help students feel confident about themselves and reach their goal of passing the state exams.</blockquote><figcaption>Garrison Michael</figcaption></figure>')],
         'g-twocol g-twocol--even', gap=64, gap_t=40, gap_m=32)]),
@@ -261,7 +263,7 @@ TESTI = [
     ('Hi, just wanted to thank you for the class. Really like your method of delivery. You have inspired me to further my engineering and design knowledge, I am working on the (STATE License) Application right now and (I am) looking forward to seeing you in the Exam Prep. Review Class. Thanks again!! Oh and thanks for the (car) jump by the way!', 'Kevin L.'),
     ('I’m not in the field on a daily basis and that Exam was very difficult for me, I wouldn’t have passed that Exam in a million years without these courses! Especially Manual “J” and Manual “D”. Thanks for all you did for me!', 'Denolphus E.'),
     ('WOW!! Many questions on the exam was covered and tabbed for future reference. That really made the exam a breeze. Thank you, keep up the good work.', 'Clay P.'),
-    ('I just got an email confirmation that I passed my exam and was approved by the board. Thanks for all your help. I don’t think that your classes could have been any better. Your Manual J &amp; D, and the exam prep review class had me way over prepared to the point that the test was no sweat. Thanks again.', 'Brett R.'),
+    ('I just got an email confirmation that I passed my exam and was approved by the board. Thanks for all your help. I don’t think that your classes could have been any better. Your Manual J &amp; D, and the Exam Prep Review Class had me way over prepared to the point that the test was no sweat. Thanks again.', 'Brett R.'),
     ('Thank you so much for sharing your gift of teaching and preparing me for the condition air exam. Your insight is remarkable, I have learned a lot from your class and felt very prepared while taking the test. I passed the Non-restricted portion of the test. God Bless', 'Freeman S.'),
     ('Thanks again for your patience and teaching technique. I really finally grasp the way to take this exam. Thanks again!', 'Mike C.'),
     ('Thanks, a million! I am very appreciative of your help during class, and your study guides approach to learning. Don’t think it would have been so easy without your help. Thanks again.', 'Joshua J.'),
@@ -285,6 +287,7 @@ pages['policies'] = ('Policies', [
     section([C([C([h2('Cancellation policy', 'g-anchor'), prose('<p><b>Online classes are non-refundable.</b></p>'
         '<p>The design and exam prep classes to achieve your license are available on demand, with unlimited 24/7 access. Watch as many times as you wish, up to one year after the date you buy the class, or until you pass your exam, whichever comes first. Access can be extended if needed, for a fair fee based on how long it has been since you bought it.</p>'
         '<p>The CEU classes are available on demand, with unlimited 24/7 access. Watch as many times as you wish, up to 4 months after the date you buy the CEU class.</p>')], gap=16, el_id='cancellation'),
+        C([h2('Terms and Conditions', 'g-anchor'), prose('<p>[CONFIRM: Terms and Conditions text from GLEC]</p>')], gap=16, el_id='terms'),
         C([H('Hold harmless policy', 'h2', None, 'navy', 'g-anchor', size=22), TX('<p class="g-fineprint">This policy is made upon the express condition that Georgia License Exam Company, Garrison Michael, its instructors, agents, employees, third parties shall be free from all liabilities and claims for damages and/or suits for or by reason of any injury, or death to any person or property of the Student, its agents or employees, or third parties, from any cause or causes whatsoever while in or upon said premises or any part thereof during the term of this policy or occasioned by any occupancy or use of said premises or any activity carried on by the Student in connection herewith, and the Student hereby covenants and agrees to indemnify, defend, save and hold harmless the Georgia License Exam Company, Garrison Michael, its instructors, agents, any third parties and employees from all liabilities, charges, expenses and costs on account of or by reason of any such injuries, deaths, liabilities, claims, suits or losses however occurring or damages growing out of the same.</p>', None, None)], 'g-fine-sec', gap=12, el_id='hold-harmless')],
         'g-narrow', gap=56)]),
 ])
@@ -317,7 +320,7 @@ pages['board-application'] = ('Board application and meeting dates', [
 ])
 
 pages['how-to-get-licensed'] = ('How to get licensed', [
-    hero('Step by step', 'How do I get my Conditioned Air license?', 'Answer one step at a time. Tell us what you already have, and we will show you exactly what to do next, from your first question to your license.', crumbs=[('Home', U('/')), ('How to get licensed', None)]),
+    hero('Step by step', 'How do I attain my Conditioned Air License?', 'We will guide you on the steps to properly complete your application process.', crumbs=[('Home', U('/')), ('How to get licensed', None)]),
     section([SC('[glec_steps]')]),
     section([C([H('Applications considerations chart', 'div', 'eyebrow', 'blue', 'g-eyebrow'), h2('Restricted or Non-Restricted: compare the requirements'), TX('<p>Descriptions of the requirements, classes and certificates for each license. Audio help opens in a new tab; close that tab when the audio is finished.</p>', 'body', 'slate')], gap=14), SC('[glec_license_chart]')], bg='mist', el_id='chart'),
 ])

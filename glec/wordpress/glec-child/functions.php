@@ -1,6 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) { exit; }
-define( 'GLEC_CHILD_VER', '1.6.4' );
+define( 'GLEC_CHILD_VER', '1.7.3' );
 
 /* Fonts are self-hosted: tell Elementor that Inter / Inter Tight are local so it never loads Google Fonts. */
 add_filter( 'elementor/fonts/additional_fonts', function ( $fonts ) {

@@ -46,8 +46,8 @@
       var reachable = k <= furthest();
       var icon = st === 'have' ? ICON.check : st === 'need' ? ICON.todo : st === 'skip' ? ICON.skip : '<span>' + (k + 1) + '</span>';
       var label = st === 'have' ? 'done' : st === 'need' ? 'to do' : st === 'skip' ? 'not required' : cur ? 'current step' : 'not started';
-      var inner = '<span class="gw__dot gw__dot--' + (st || (cur ? 'cur' : 'none')) + '">' + icon + '</span><span class="gw__lbl">' + s.title + '</span>';
-      return '<li class="' + (cur ? 'is-current' : '') + '">' + (reachable
+      var inner = '<span class="gw__dot gw__dot--' + (st || (cur ? 'cur' : 'none')) + '">' + icon + '</span><span class="gw__lbl">' + (s.rail || s.title) + '</span>';
+      return (s.phase ? '<li class="gw__phase" aria-hidden="true">' + s.phase + '</li>' : '') + '<li class="' + (cur ? 'is-current' : '') + '">' + (reachable
         ? '<button type="button" data-go="' + k + '"' + (cur ? ' aria-current="step"' : '') + '>' + inner + '<span class="screen-reader-text">, ' + label + '</span></button>'
         : '<span class="gw__locked">' + inner + '<span class="screen-reader-text">, ' + label + '</span></span>') + '</li>';
     }).join('');
@@ -60,33 +60,38 @@
     if (state.i >= N) { renderSummary(focus); renderRail(); return; }
     var s = steps[state.i], st = status(state.i), k = state.i;
     count.textContent = 'Step ' + (k + 1) + ' of ' + N;
-    var h = '<p class="gw__eyebrow">Step ' + (k + 1) + '</p><h2 class="gw__title">' + s.title + '</h2><p class="gw__task">' + s.task + '</p>';
+    var h = '<p class="gw__eyebrow">Step ' + (k + 1) + '</p><div class="gw__titlerow"><h2 class="gw__title">' + s.title + '</h2>' + (s.code ? '<span class="gw__code">' + s.code + '</span>' : '') + '</div><p class="gw__task">' + s.task + '</p>';
     if (isSkipped(s)) {
       h += '<div class="gw__note gw__note--skip">' + s.skipnote + '</div><div class="gw__actions"><button type="button" class="gw__btn gw__btn--primary" data-act="next">Continue to step ' + (k + 2) + ICON.arrow + '</button></div>';
     } else if (s.type === 'choose') {
       h += '<fieldset class="gw__choices"><legend class="screen-reader-text">' + s.title + '</legend>' + s.options.map(function (o) {
         var on = (o.value === 'unsure' && st === 'need') || o.value === state.license;
-        return '<button type="button" class="gw__choice' + (on ? ' is-on' : '') + '" aria-pressed="' + on + '" data-license="' + o.value + '"><b>' + o.label + '</b><span>' + o.sub + '</span></button>';
+        return '<button type="button" class="gw__choice' + (on ? ' is-on' : '') + '" aria-pressed="' + on + '" data-license="' + o.value + '"><b>' + o.label + '</b>' + (Array.isArray(o.sub) ? '<ul class="gw__bul">' + o.sub.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul>' : '<span>' + o.sub + '</span>') + '</button>';
       }).join('') + '</fieldset>';
       if (st === 'need') h += needPanel(s, true);
     } else {
       h += '<div class="gw__choices gw__choices--two">' +
         '<button type="button" class="gw__choice' + (st === 'have' ? ' is-on' : '') + '" aria-pressed="' + (st === 'have') + '" data-ans="have"><b>' + (s.have || 'I have this') + '</b><span>' + (k + 1 < N ? 'Go to step ' + (k + 2) : 'Finish') + '</span></button>' +
-        '<button type="button" class="gw__choice' + (st === 'need' ? ' is-on' : '') + '" aria-pressed="' + (st === 'need') + '" data-ans="need"><b>' + (s.needlabel || 'I need this') + '</b><span>Show me what to do</span></button></div>';
-      if (st === 'need') h += needPanel(s, false);
+        '<button type="button" class="gw__choice' + (st === 'need' ? ' is-on' : '') + '" aria-pressed="' + (st === 'need') + '" data-ans="need"><b>' + (s.needlabel || 'I do not have this') + '</b><span>Show me what to do</span></button></div>';
+      if (st === 'need') { h += needPanel(s, false); if (s.need2) h += need2Panel(s.need2); }
     }
     if (k > 0) h += '<button type="button" class="gw__back" data-act="prev">' + ICON.back + 'Back to step ' + k + '</button>';
     card.innerHTML = h;
     renderRail();
     if (focus) { var t = card.querySelector('.gw__title'); t.setAttribute('tabindex', '-1'); t.focus({ preventScroll: false }); }
   }
+  function need2Panel(n) {
+    return '<div class="gw__need gw__need--second" role="region" aria-label="' + n.title + '"><div class="gw__titlerow"><p class="gw__needt">' + n.title + '</p><span class="gw__code">' + n.code + '</span></div><p>' + n.text + '</p>' +
+      (n.price ? '<p class="gw__price">' + n.price + '</p>' : '') + '<div class="gw__links">' + link(n.url, n.cta, false, 'gw__btn gw__btn--primary') + '</div></div>';
+  }
   function needPanel(s, isChoose) {
     var n = s.need;
     return '<div class="gw__need" role="region" aria-label="What to do"><p class="gw__needt">Here is what to do</p><p>' + n.text + '</p>' +
       (n.price ? '<p class="gw__price">' + n.price + '</p>' : '') +
+      (n.compare ? '<div class="gw__cmpwrap"><table class="gw__cmp"><caption class="screen-reader-text">Restricted versus Non-Restricted License</caption><thead><tr><th scope="col"><span class="screen-reader-text">Requirement</span></th><th scope="col">Restricted (Class 1)</th><th scope="col">Non-Restricted (Class 2)</th></tr></thead><tbody>' + n.compare.map(function (r) { return '<tr><th scope="row">' + r[0] + '</th><td data-label="Restricted (Class 1)">' + r[1] + '</td><td data-label="Non-Restricted (Class 2)">' + r[2] + '</td></tr>'; }).join('') + '</tbody></table></div>' : '') +
       '<div class="gw__links">' + link(n.url, n.cta, n.ext, 'gw__btn gw__btn--primary' + (n.url === '#chart' ? ' gw__tochart' : '')) + (n.cta2 ? link(n.url2, n.cta2, n.ext2, 'gw__btn gw__btn--sec') : '') + '</div>' +
       (isChoose ? '<p class="gw__hint">When you have decided, choose your license above to continue.</p>'
-                : '<button type="button" class="gw__btn gw__btn--ghost" data-act="next">I&rsquo;ll do this. Continue to ' + (state.i + 1 < N ? 'step ' + (state.i + 2) : 'my summary') + ICON.arrow + '</button>') + '</div>';
+                : '<button type="button" class="gw__btn gw__btn--ghost" data-act="next">Skip. Continue to ' + (state.i + 1 < N ? 'step ' + (state.i + 2) : 'my summary') + ICON.arrow + '</button>') + '</div>';
   }
   function renderSummary(focus) {
     count.textContent = 'All ' + N + ' steps';

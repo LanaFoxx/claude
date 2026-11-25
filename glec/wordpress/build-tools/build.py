@@ -98,7 +98,7 @@ def LINK(text, url, icon='arrow', cls='g-link', ext=False):
     lbl = '<span class="screen-reader-text"> (opens in a new tab)</span>' if ext else ''
     return HTML('<a href="%s"%s>%s%s %s</a>' % (url, t, text, lbl, ic(I[icon],20)), cls)
 
-PHONE = '<a href="tel:+14045905101">404-590-5101</a>'
+PHONE = '<a href="tel:+14702645134">(470) 264-5134</a>'
 START = SITE + '/how-to-get-licensed/'
 SECT = (104,64,104,64); SECT_T=(80,40,80,40); SECT_M=(64,20,64,20)
 
@@ -118,12 +118,12 @@ hero_card = ('<div class="g-pcard" aria-hidden="true"><div class="g-pcard__top">
   '<div class="g-pcard__foot"><span>Lesson 9 · Gas pipe sizing</span><b>Continue →</b></div></div>'
   '<div class="g-cpill" aria-hidden="true"><i>%s</i>Certificate prints instantly</div>') % (ic(I['checkc'],14), ic('<path d="M20 6 9 17l-5-5" stroke="#fff" stroke-width="2.5"/>',16))
 home.append(C([
-    HTML('<figure class="g-hvid" data-autoplay><div class="g-hvid__frame"><video muted loop playsinline preload="metadata" poster="https://staging158.dreamweb.digital/wp-content/uploads/2026/11/garrison-welcome-v3-poster.jpg" aria-label="A welcome from Garrison Michael"><source src="https://staging158.dreamweb.digital/wp-content/uploads/2026/11/garrison-welcome-v3.mp4" type="video/mp4"></video><button type="button" class="g-hvid__sound" aria-label="Play Garrison&rsquo;s welcome with sound, 32 seconds"><span class="g-hvid__soundico" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg></span><span class="g-hvid__soundtxt" aria-hidden="true"><b>Tap for sound</b><small>A welcome from Garrison</small></span></button><button type="button" class="g-hvid__pause" aria-label="Pause video"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg></button></div><figcaption>Garrison Michael, owner and instructor</figcaption></figure>', 'g-hero-video'),
+    HTML('<figure class="g-hvid" data-autoplay><div class="g-hvid__frame"><video muted loop playsinline preload="metadata" poster="https://staging158.dreamweb.digital/wp-content/uploads/2026/11/garrison-welcome-v3-poster.jpg" aria-label="A welcome from Garrison Michael"><source src="https://staging158.dreamweb.digital/wp-content/uploads/2026/11/garrison-welcome-v3.mp4" type="video/mp4"></video><button type="button" class="g-hvid__sound" aria-label="Play Garrison&rsquo;s welcome with sound, 32 seconds"><span class="g-hvid__soundico" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg></span><span class="g-hvid__soundtxt" aria-hidden="true"><b>Tap for sound</b><small>A welcome from Garrison</small></span></button><button type="button" class="g-hvid__pause" aria-label="Pause video"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg></button></div><figcaption>Garrison Michael, owner and instructor</figcaption></figure><a class="g-claire-mini" href="tel:+14702645134"><img src="https://staging158.dreamweb.digital/wp-content/uploads/2026/11/claire.webp" alt="" width="56" height="56"><span class="g-claire-mini__txt"><b>Questions? Call Claire</b><small>GLEC Office Assistant · (470) 264-5134</small></span><span class="g-claire-mini__ico" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span></a>', 'g-hero-video'),
     HTML('<div class="s1"></div><div class="s2"></div><div class="gr"></div>', 'g-hero-decor'),
     C([
-        H('Georgia Conditioned Air (HVAC) contractor license','div',None,None,'g-eyebrow-stripe'),
-        H('Get your Georgia HVAC license. We’ll show you every step.','h1','h1','white'),
-        TX('<p>Online classes taught by Garrison Michael, with full step-by-step solutions. Unlimited 24/7 access for up to a year or until you pass.</p>', None, 'line', 'g-hero-sub'),
+        H('Conditioned Air (HVAC) Contractor License','div',None,None,'g-eyebrow-stripe g-eyebrow-big'),
+        H('Get your Georgia HVAC License. We will show you the steps.','h1','h1','white'),
+        TX('<p>Online classes taught by Garrison Michael: we will show you the solution step-by-step. Unlimited 24/7 access for up to one year from your purchase date or until you pass the exam (whichever comes first).</p>', None, 'line', 'g-hero-sub'),
         C([BTN('Start here', START, 'g-btn g-btn-shadow'), BTN('See classes and prices', '#classes', 'g-btn-ghost')], 'g-hero-btns', direction='row', gap=16, dir_m='column', gap_m=12, extra={"margin":dims(6,0,0,0)}),
     ], 'g-hero-content g-on-navy', gap=26, pad=(92,64,0,64), pad_t=(64,40,48,40), pad_m=(40,20,40,20), gap_m=20, extra={"width":px(760),"width_tablet":{"unit":"%","size":100},"_flex_size":"none"}),
 ], 'g-hero', bg='navy', extra={"min_height":px(700),"min_height_tablet":px(0),"overflow":"hidden"}, html_tag='section'))
@@ -135,7 +135,7 @@ I['users']='<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" 
 def proof(icon, num, suf, a, b):
     title = num + ('<span class="g-suf">%s</span>' % suf if suf else '')
     return C([HTML('<span class="g-proof__ico" aria-hidden="true">%s</span>' % ic(I[icon],24)), H(title,'span',None,None,'g-num'), TX('<p class="g-proof__lbl">%s<strong>%s</strong></p>' % (a,b), None, None)], 'g-proof__cell', direction='row', gap=16, align='center', pad=(32,36,32,36), pad_t=(24,24,24,24))
-home.append(C([proof('award','20','','years in business','since 2006'), proof('target','82','%','exam pass rate','Georgia CA exam'), proof('users','5,400','+','student members','')], 'g-proof', direction='row'))
+home.append(C([proof('award','20','','years in business','since 2006'), proof('target','82','%','exam pass rate','Georgia Conditioned Air “CA” exam'), proof('users','5,400','+','student members','')], 'g-proof', direction='row'))
 
 # Steps
 def step(n, icon, h3, body):
@@ -144,7 +144,7 @@ def step(n, icon, h3, body):
 home.append(C([
     head_row('Start here','How to get licensed', BTN('See the step-by-step process', SITE+'/how-to-get-licensed/', 'g-btn-sec g-btn-big g-btn-arrow')),
     C([step('01','clip','Check which license fits','Restricted (Class 1) for units up to 5 tons, or Non-Restricted (Class 2) for all sizes. Our chart shows which one matches your experience.'),
-       step('02','play','Take the design classes','Residential Design is required for every license. Non-Restricted adds Commercial Design. Then apply to the Board online through <a href="https://sos.ga.gov/goals" target="_blank" rel="noopener">GOALS<span class="screen-reader-text"> (opens in a new tab)</span></a>.'),
+       step('02','play','Take the Design Classes','Residential Design is required for every license. Non-Restricted adds Commercial Design. Then apply to the Board online through <a href="https://sos.ga.gov/goals" target="_blank" rel="noopener">GOALS<span class="screen-reader-text"> (opens in a new tab)</span></a>.'),
        step('03','award','Prep for the exam and pass','After Board approval, take the Exam Prep Review Class, tab your books and schedule your PSI exam.')], 'g-g3 g-steps-grid', gap=24, gap_m=16),
 ], 'g-steps', boxed=True, bg='mist', pad=(304,64,104,64), pad_t=(272,40,80,40), pad_m=(240,20,64,20), extra={"margin":dims(-200,0,0,0),"margin_tablet":dims(-200,0,0,0),"margin_mobile":dims(-200,0,0,0)}, html_tag='section'))
 
@@ -158,7 +158,7 @@ def pcard(code, qual, h3, body, pid, free=False):
              'g-card', gap=12, pad=(28,28,28,28), pad_m=(22,20,22,20))
 checks = '<ul class="g-checks">' + ''.join('<li>%s%s</li>' % (ic(I['check'],20), t) for t in ['Residential Design Study Guide included','SOS-APP application videos included free','Certificate prints when you finish the videos']) + '</ul>'
 feature = C([
-    HTML('<div class="g-pills"><span class="g-code g-code--dark">HLG-DD-R-OL</span><span class="g-badge">Required for every CA license</span></div>'),
+    HTML('<div class="g-pills"><span class="g-code g-code--dark">HLG-DD-R-OL</span><span class="g-badge">Required in both licenses</span></div>'),
     H('Residential Design Class','h3',None,'white','g-cardlink', size=32, size_m=26, link=CLASS_URL['HLG-DD-R-OL']),
     TX('<p>ACCA Manual J &amp; D: heat loss and gain, duct design. About 16 hours online.</p>', None, 'light_slate'),
     HTML(checks),
@@ -169,12 +169,12 @@ feature["elements"][1]["settings"].update({"typography_font_family":"Inter Tight
 feature["elements"][2]["settings"].update({"typography_typography":"custom","typography_font_size":px(17)})
 home.append(C([
     head_row('Prices up front','Conditioned Air license classes', LINK('Order the books','https://sebookstore.com/glec.html','ext',ext=True),
-             intro='All online. Unlimited 24/7 access for up to a year or until you pass. You buy the reference books separately.'),
+             intro='All online. Unlimited 24/7 access for up to a year or until you pass. You buy the Reference Books separately.'),
     C([feature,
        pcard('HLG-DD-C-OL','Non-Restricted only','Commercial Design Class','Carrier System Design Manuals 1, 2 and 3. About 8 hours online.',P['C']),
-       pcard('CA-OL','After Board approval','Exam Prep Review Class','Every reference book except Manuals J &amp; D, plus quizzes. Ships a printed study guide.',P['OL']),
-       pcard('CA-TABs','Shipped','Permanent reference tabs','Permanent tabs for every reference book, Restricted and Non-Restricted, with placement charts. Best bought with CA-OL.',P['TABS']),
-       pcard('SOS-APP','Free with design classes','Application Overview videos','How to complete the Board application in GOALS, with checklists.',P['SOS'],free=True)],
+       pcard('CA-OL','After Board approval','Exam Prep Review Class','Every Reference Book except Manuals J &amp; D, plus quizzes. Ships a printed Study Guide.',P['OL']),
+       pcard('CA-TABs','Shipped','Permanent Reference TABs','Permanent TABs for every Reference Book, Restricted and Non-Restricted, with placement charts. Best bought with CA-OL.',P['TABS']),
+       pcard('SOS-APP','Free with Design Classes','Application Overview videos','How to complete the Board application in GOALS, with checklists.',P['SOS'],free=True)],
       'g-classgrid', gap=24, gap_m=16),
 ], '', boxed=True, pad=SECT, pad_t=SECT_T, pad_m=SECT_M, el_id='classes', html_tag='section'))
 
@@ -188,18 +188,18 @@ why_left = C([
     C([wcard('listc','Solutions, not answers','Every example shows the chart lookup, the equation and the calculator keys.'),
        wcard('target','Focused on Georgia only','One exam, one Board, one application. We know exactly what is on the test.'),
        wcard('clock','24/7 for up to a year','Watch from home or the job, as many times as you need, until you pass.'),
-       wcard('pkg','Tabs, guide, application','Permanent tabs, a printed study guide and application help, ready before exam day.')], 'g-g2', gap=20, gap_m=12),
+       wcard('pkg','Tabs, guide, application','Permanent TABs, a printed Study Guide and application help, ready before exam day.')], 'g-g2', gap=20, gap_m=12),
 ], gap=36, gap_m=28)
 for c in why_left["elements"][1]["elements"]:
     h=c["elements"][1]["elements"][0]["settings"]; h.update({"typography_font_family":"Inter Tight","typography_font_weight":"600","typography_line_height":{"unit":"em","size":1.3}})
 why_media = C([HTML('<div class="g-back"></div>','g-media-deco g-under'), IMG('practice-exam.webp'),
-               HTML('<div class="g-chip"><b class="g-tab">1,740+</b><span>online design<br>classes sold</span></div>','g-media-deco')], 'g-why-media')
+               HTML('<div class="g-chip"><b class="g-tab">1,740+</b><span>online Residential<br>Design Classes sold</span></div>','g-media-deco')], 'g-why-media')
 home.append(C([C([why_left, why_media], 'g-why', gap=80, gap_t=48, gap_m=40)], '', boxed=True, pad=(40,64,104,64), pad_t=(24,40,80,40), pad_m=(24,20,64,20), html_tag='section'))
 
 # Stats
 def stat(num, lbl):
     return C([H(num,'span',None,None,'g-num'), TX('<p>%s</p>' % lbl, None, None)], 'g-stat', gap=8, pad=(0,0,0,28))
-slides = [('82%','exam pass rate','On the Georgia Conditioned Air exam.'),('5,400+','student members','From Georgia, SC, AL, TN and nationwide companies.'),('1,740+','online design classes sold','Residential and Commercial Design, online since 2018.'),('20','years in business','Founded 2006. 20th anniversary October 2026.')]
+slides = [('82%','exam pass rate','On the Georgia Conditioned Air exam.'),('5,400+','student members','From Georgia, SC, AL, TN and nationwide companies.'),('1,740+','online Residential Design Classes sold','Residential and Commercial Design, online since 2018.'),('20','years in business','Founded 2006. 20th anniversary October 2026.')]
 slider = ('<div class="g-sl" role="region" aria-roledescription="carousel" aria-label="GLEC by the numbers">'
   '<button type="button" class="g-sl__btn g-sl__btn--prev" aria-label="Previous stat">%s</button>'
   '<div class="g-sl__track">%s</div>'
@@ -207,7 +207,7 @@ slider = ('<div class="g-sl" role="region" aria-roledescription="carousel" aria-
   '<div class="g-sl__dots">%s</div><div class="g-sl__live screen-reader-text" aria-live="polite"></div></div>') % (
   ic(I['left'],22), ''.join('<div class="g-sl__slide" role="group" aria-roledescription="slide" aria-label="%d of 4"><b>%s</b><span>%s</span><small>%s</small></div>' % (i+1,a,b,c) for i,(a,b,c) in enumerate(slides)),
   ic(I['right'],22), ''.join('<button type="button" aria-label="Show stat %d"></button>' % (i+1) for i in range(4)))
-home.append(C([C([stat('82%','exam pass rate'), stat('5,400+','student members'), stat('1,740+','online design classes sold'), stat('20','years in business, since 2006')], 'g-g4', gap=40, gap_t=32),
+home.append(C([C([stat('82%','exam pass rate'), stat('5,400+','student members'), stat('1,740+','online Residential Design Classes sold'), stat('20','years in business, since 2006')], 'g-g4', gap=40, gap_t=32),
                HTML(slider,'g-slider')], 'g-stats g-tex-navy g-on-navy', boxed=True, bg='navy', pad=(72,64,72,64), pad_t=(64,40,64,40), pad_m=(48,20,40,20), html_tag='section'))
 
 # Instructor
@@ -239,7 +239,7 @@ def quote(q, ini, name):
 home.append(C([
     head_row('Student stories','What students say', LINK('Read more student stories', SITE+'/testimonials/', cls='g-link g-link-white'), light=True),
     C([quote('I passed my exam with an adjusted score of 93. I could not have done this without your courses. With 21 years of experience I still could not have passed this exam without your exam prep review course.','JO','James O.'),
-       quote('I just got an email confirmation that I passed my exam and was approved by the board. Thanks for all your help. I don’t think that your classes could have been any better. Your Manual J &amp; D, and the exam prep review class had me way over prepared to the point that the test was no sweat. Thanks again.','BR','Brett R.'),
+       quote('I just got an email confirmation that I passed my exam and was approved by the board. Thanks for all your help. I don’t think that your classes could have been any better. Your Manual J &amp; D, and the Exam Prep Review Class had me way over prepared to the point that the test was no sweat. Thanks again.','BR','Brett R.'),
        quote('I would have never passed the CA License Exam without your help. Your classes even helped me tremendously in passing the Tennessee exams. I have been doing HVAC for over 40 years and I learned a lot. Thanks so much.','MS','Marroll S.')], 'g-g3', gap=24, gap_m=16),
 ], 'g-testi g-on-navy', boxed=True, bgimg='classroom.webp', pad=SECT, pad_t=SECT_T, pad_m=SECT_M, el_id='testimonials', html_tag='section'))
 
@@ -251,7 +251,7 @@ support_copy = C([
     H('Course support','div','eyebrow','blue','g-eyebrow'),
     H('Questions? Claire is here to help.','h2','h2','navy'),
     TX('<p>Stuck on a lesson, your Board application, or which license fits? Reach Claire, our course support agent, any time. No waiting for office hours.</p>','lead','slate'),
-    C([BTN('Call 404-590-5101', 'tel:+14045905101', 'g-btn g-btn-ico-phone'), BTN('Email Claire', 'mailto:Info@GeorgiaLicenseExam.com', 'g-btn-sec')], 'g-support-btns', direction='row', gap=12, dir_m='column', gap_m=10, wrap=True),
+    C([BTN('Call (470) 264-5134', 'tel:+14702645134', 'g-btn g-btn-ico-phone'), BTN('Email Claire', 'mailto:Info@GeorgiaLicenseExam.com', 'g-btn-sec')], 'g-support-btns', direction='row', gap=12, dir_m='column', gap_m=10, wrap=True),
     HTML('<p class="g-support-more">Just getting started? <a href="%s">Follow the step-by-step guide %s</a></p>' % (START, ic(I['arrow'],18))),
     HTML('<a class="g-poweredby" href="https://prempt.ai" target="_blank" rel="noopener">Powered by <b>Prempt</b><span class="screen-reader-text"> (opens in a new tab)</span></a>'),
 ], 'g-support-copy', gap=18, gap_m=16)
@@ -300,14 +300,14 @@ contact_left = C([
       'g-crows', gap=0, extra={"margin":dims(12,0,0,0)}),
 ], 'g-contact-copy', gap=20, gap_m=16)
 contact_photo = C([IMG('claire.webp','g-img'),
-    HTML('<div class="g-namechip"><b>Claire</b><span>[CONFIRM: Claire&rsquo;s title]</span></div>','g-media-deco')], 'g-claire')
+    HTML('<div class="g-namechip"><b>Claire</b><span>GLEC Office Assistant</span></div>','g-media-deco')], 'g-claire')
 contact = [C([C([contact_left, contact_photo], 'g-contact-top', gap=80, gap_t=48, gap_m=40)], '', boxed=True, pad=(96,64,104,64), pad_t=(72,40,80,40), pad_m=(48,20,64,20), html_tag='section')]
 form_fields = [
   {"_id":"name","field_type":"text","field_label":"Your full legal name","placeholder":"","required":"true","width":"50","width_mobile":"100"},
   {"_id":"email","field_type":"email","field_label":"Your email address","placeholder":"you@example.com","required":"true","width":"50","width_mobile":"100"},
   {"_id":"phone","field_type":"tel","field_label":"Your telephone number","placeholder":"","width":"50","width_mobile":"100"},
   {"_id":"subject","field_type":"text","field_label":"Subject","placeholder":"","width":"50","width_mobile":"100"},
-  {"_id":"message","field_type":"textarea","field_label":"Your message","placeholder":"How can we help?","required":"true","rows":"5","width":"100"},
+  {"_id":"message","field_type":"textarea","field_label":"Your message","placeholder":"How can we help you?","required":"true","rows":"5","width":"100"},
 ]
 form = W('form', {"form_name":"Contact","form_fields":form_fields,"show_labels":"yes","mark_required":"yes","input_size":"md",
    "button_text":"Send message","button_size":"md","button_width":"100","button_width_mobile":"100",
@@ -317,7 +317,7 @@ form = W('form', {"form_name":"Contact","form_fields":form_fields,"show_labels":
    "error_message":"Something went wrong. Please email Info@GeorgiaLicenseExam.com instead.",
    "required_field_message":"This field is required.","invalid_message":"Please check this field."}, 'g-form')
 contact.append(C([C([
-    C([H('Send us a message','h2','h2','navy', size=36, size_m=28), TX('<p>Fill in the form and we will reply by email. Please include your class code if your question is about a class you are taking.</p>','body','slate')], 'g-form-intro', gap=12),
+    C([H('Send us a message','h2','h2','navy', size=36, size_m=28), TX('<p>Fill in the form and we will reply by email. Please include your class name if your question is about a class you are taking.</p>','body','slate')], 'g-form-intro', gap=12),
     form], 'g-formcard', gap=48, gap_t=32, gap_m=24, pad=(48,48,48,48), pad_t=(40,36,40,36), pad_m=(28,20,28,20))],
   '', boxed=True, bg='mist', pad=(96,64,104,64), pad_t=(72,40,80,40), pad_m=(56,20,64,20), html_tag='section'))
 
