@@ -12,10 +12,14 @@ const BI_PAID_STATUSES = array( 'processing', 'completed', 'on-hold' );
 const BI_SIZES         = array( 'Small', 'Medium', 'Large', 'XL', 'XXL', 'XXXL' );
 
 add_action( 'wp_dashboard_setup', function () {
+	global $wp_meta_boxes;
+	if ( bi_store_on() && ! current_user_can( 'edit_products' ) ) {
+		// No store access: drop the old Square-link "Add a product" box too.
+		unset( $wp_meta_boxes['dashboard']['side']['core']['bi_dash_product'], $wp_meta_boxes['dashboard']['normal']['core']['bi_dash_product'] );
+	}
 	if ( ! bi_store_on() || ! current_user_can( 'edit_products' ) ) {
 		return;
 	}
-	global $wp_meta_boxes;
 	// Replace the old "Add a product" box (Square links) with the WooCommerce one.
 	unset( $wp_meta_boxes['dashboard']['side']['core']['bi_dash_product'] );
 	wp_add_dashboard_widget( 'bi_dash_orders', 'Store: orders & sales', 'bi_dash_orders' );
