@@ -199,6 +199,10 @@ function dwdhl_apply( $page, $html ) {
 			if ( false !== $f && $f < $r[1] ) {
 				$filter = substr( $html, $f, dwdr_div_end( $html, $f ) - $f );
 				$filter = str_replace( 'justify-content:flex-end', 'justify-content:center', $filter );
+				// Phones: a dark copy of the pills sits in the hero, in one swipeable row (the white-area copy is hidden there).
+				$fdark = '<div class="dwr-pfdark">' . str_replace( 'id="pf-filter"', 'id="pf-filter-m"', $filter ) . '</div>';
+				$tb    = strpos( $hero, '<div id="dw-trustbar"' );
+				$hero  = false !== $tb ? substr_replace( $hero, $fdark, $tb, 0 ) : substr_replace( $hero, $fdark, strrpos( $hero, '</section>' ), 0 );
 				// Light pills: they sit in the white area, right above the projects.
 				$filter = str_replace( array( 'border:1px solid #3A3A3A;background:transparent;color:#fff', 'border:1px solid #13A6EE;background:#13A6EE;color:#fff' ), array( 'border:1px solid #D6D6D6;background:transparent;color:#121212', 'border:1px solid #13A6EE;background:#13A6EE;color:#fff' ), $filter );
 			}

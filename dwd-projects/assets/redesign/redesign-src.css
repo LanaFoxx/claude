@@ -550,3 +550,13 @@ form div:has(> button.dwh17) > button{width:100%;justify-content:center}
 /* Phones: the "Built this way" strip kept stopping because a tap left it in hover (pause) mode */
 @media (hover:none){.dwr-strip-track:hover{animation-play-state:running !important}}
 @media (max-width:767px){.dwr-workband{padding-bottom:36px !important}}
+/* Portfolio on phones: no hero buttons; category pills in the dark hero, one swipeable row */
+.dwr-pfdark{display:none}
+@media (max-width:767px){
+body.dwr-portfolio #dw-hero-cta{display:none !important}
+body.dwr-portfolio .dwr-pflight{display:none !important}
+.dwr-pfdark{display:block;margin:4px -20px 0}
+.dwr-pfdark #pf-filter-m{display:flex !important;flex-wrap:nowrap !important;justify-content:flex-start !important;gap:8px !important;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:2px 20px 6px;max-width:none !important;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 20px,#000 calc(100% - 28px),transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 20px,#000 calc(100% - 28px),transparent 100%)}
+.dwr-pfdark #pf-filter-m::-webkit-scrollbar{display:none}
+.dwr-pfdark #pf-filter-m button{flex:none;min-height:38px !important;padding:0 14px !important;font-size:13.5px !important;white-space:nowrap}
+}
