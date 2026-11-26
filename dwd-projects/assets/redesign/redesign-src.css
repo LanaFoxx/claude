@@ -564,3 +564,7 @@ body.dwr-portfolio .dwr-pflight{display:none !important}
 body.dwr-portfolio #dw-trustbar{display:none !important}
 /* Portfolio on phones: little space between the dark top area and the first laptop */
 @media (max-width:767px){body.dwr-portfolio .dwr-pfsec{padding-top:20px !important}body.dwr-portfolio #pf-grid [data-dw-card]:first-of-type{padding-top:0 !important}}
+/* Portfolio: no 01/02/... number above each project */
+#pf-grid [data-dw-num]{display:none !important}
+/* Phones: faint divider line between projects */
+@media (max-width:767px){#pf-grid [data-dw-card]{border-bottom:1px solid #E4E4E4;padding-bottom:44px !important;margin-bottom:12px}#pf-grid>div:last-child{display:none}}
