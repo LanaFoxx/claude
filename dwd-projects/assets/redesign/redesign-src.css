@@ -541,3 +541,9 @@ form div:has(> button.dwh17) > button{width:100%;justify-content:center}
 .dwr-trust .dwr-badge small{letter-spacing:0 !important;font-size:15px !important;color:#D4D4D4 !important}
 /* Phones: no Flat Pricing band on the Portfolio page */
 @media (max-width:767px){body.dwr-portfolio .dwr-band-dark,body.dwr-process .dwr-band-dark{display:none !important}}
+
+/* Icons in place of 01-06 on the Hosting "includes" list and the Process steps */
+.dwr-fico{display:inline-flex;line-height:0}
+@media (max-width:767px){.dwr-fico{justify-content:center}}
+/* Phones: contact form dropdowns one per line (they were squeezed to "Sel") */
+@media (max-width:767px){#ct-row3{grid-template-columns:1fr !important;gap:18px !important}}
