@@ -577,3 +577,6 @@ body.dwr-portfolio #dw-trustbar,body.dwr-process #dw-trustbar,body.dwr-hosting #
 /* "Why I am not your / average web developer": two lines on phones, one on computers */
 .dwr-mbr{display:none}
 @media (max-width:767px){.dwr-mbr{display:inline}.dwr-ebtxt{text-align:center}}
+/* Home: faint divider between the two featured projects (The Goods / Finesse) */
+#dw-phone-scroll{border-top:1px solid #E4E4E4;padding-top:44px !important}
+@media (max-width:767px){#dw-phone-scroll{margin-left:20px;margin-right:20px}}
