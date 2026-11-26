@@ -33,6 +33,7 @@ function dwdp_microlink( $params ) {
 	if ( $key ) {
 		$args['headers'] = array( 'x-api-key' => $key );
 	}
+	$params['force'] = 'true'; // never a cached copy: a redesigned site must be captured as it looks now
 	$res = wp_remote_get( $base . '?' . http_build_query( $params, '', '&', PHP_QUERY_RFC3986 ), $args );
 	if ( is_wp_error( $res ) ) {
 		return new WP_Error( 'dwdp_http', 'Could not reach the screenshot service: ' . $res->get_error_message() );
