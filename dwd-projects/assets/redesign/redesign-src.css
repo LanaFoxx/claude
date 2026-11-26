@@ -530,3 +530,14 @@ form div:has(> button.dwh17) > button{width:100%;justify-content:center}
 .dwr-badge span{text-align:left !important;align-items:flex-start !important}
 /* Badge boxes: icon + text centered in each box */
 .dwr-badge{justify-content:center !important}
+/* Phones: easier-to-read hero description and badge text; animation dimmer behind the text */
+@media (max-width:767px){
+#dw-hero-row>div>p+p{font-size:17.5px !important;line-height:1.6 !important;color:#E2E2E2 !important;text-shadow:0 1px 10px rgba(18,18,18,.9),0 0 2px rgba(18,18,18,.9)}
+#top #dw-hero-canvas{opacity:.32 !important}
+}
+.dwr-badge small{letter-spacing:0 !important;font-size:15px !important;color:#D4D4D4 !important}
+/* (stronger versions of the readability rules above, so older rules can't override them) */
+@media (max-width:767px){#top #dw-hero-row>div>p+p{font-size:17.5px !important;line-height:1.6 !important}}
+.dwr-trust .dwr-badge small{letter-spacing:0 !important;font-size:15px !important;color:#D4D4D4 !important}
+/* Phones: no Flat Pricing band on the Portfolio page */
+@media (max-width:767px){body.dwr-portfolio .dwr-band-dark{display:none !important}}
