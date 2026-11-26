@@ -562,3 +562,5 @@ body.dwr-portfolio .dwr-pflight{display:none !important}
 }
 /* Portfolio: no badge boxes (Google / Upwork / PageSpeed) at the top of the page */
 body.dwr-portfolio #dw-trustbar{display:none !important}
+/* Portfolio on phones: little space between the dark top area and the first laptop */
+@media (max-width:767px){body.dwr-portfolio .dwr-pfsec{padding-top:20px !important}body.dwr-portfolio #pf-grid [data-dw-card]:first-of-type{padding-top:0 !important}}

@@ -181,7 +181,7 @@ function dwdhl_apply( $page, $html ) {
 	$cfg = array(
 		'process'   => array( 'How your website', 'gets built.', 'My web design process, step by step.', 'Here is what to expect, from our first conversation through launch day and beyond. Six steps, one person handling all of them.', true, array( 'reviews', 'quotes', 'about', 'pricing' ) ),
 		'hosting'   => array( 'Reliable WordPress', 'website hosting.', 'Fast, secure hosting for the websites I build.', 'I set up, secure and monitor your hosting personally. There is no ticket system: if something needs attention, you call or text me, and I take care of it. One flat annual rate with no long-term contract. Cancel anytime.', true, array( 'reviews', 'quotes', 'about' ) ),
-		'portfolio' => array( 'Websites built', 'for real businesses.', 'Custom websites, built by hand.', 'In the past 12 years, I’ve built over 500 websites. Below is a selection of recent favorites. Every one is live; click any project to view the full site.', false, array( 'reviews', 'quotes', 'about', 'pricing' ) ),
+		'portfolio' => array( 'A portfolio of', 'my best work.', 'Custom websites, built by hand.', 'In the past 12 years, I’ve built over 500 websites. Below is a selection of recent favorites. Every one is live; click any project to view the full site.', false, array( 'reviews', 'quotes', 'about', 'pricing' ) ),
 		'contact'   => array( '', '', '', '', false, array() ), // nothing below the form (Michael)
 		'quote'     => array( '', '', '', '', false, array( 'reviews', 'quotes', 'about' ) ),
 	);
