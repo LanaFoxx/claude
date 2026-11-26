@@ -547,3 +547,6 @@ form div:has(> button.dwh17) > button{width:100%;justify-content:center}
 @media (max-width:767px){.dwr-fico{justify-content:center}}
 /* Phones: contact form dropdowns one per line (they were squeezed to "Sel") */
 @media (max-width:767px){#ct-row3{grid-template-columns:1fr !important;gap:18px !important}}
+/* Phones: the "Built this way" strip kept stopping because a tap left it in hover (pause) mode */
+@media (hover:none){.dwr-strip-track:hover{animation-play-state:running !important}}
+@media (max-width:767px){.dwr-workband{padding-bottom:36px !important}}
