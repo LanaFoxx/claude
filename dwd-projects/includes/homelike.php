@@ -149,8 +149,9 @@ function dwdhl_hero( $l1, $l2, $lead, $sub, $media = true ) {
 	$b  = strpos( $h, '</h1>', (int) $a );
 	if ( false !== $a && false !== $b ) {
 		$a  = strpos( $h, '>', $a ) + 1;
+		$f2 = mb_strlen( wp_strip_all_tags( $l2 ) ) > 14 ? '.8' : '1'; // a long second line (e.g. "for real businesses.") is set smaller so it doesn't fill the whole width
 		$h1 = "\n    " . '<span style="display:block;overflow:hidden;padding-bottom:.08em;margin-bottom:-.08em"><span data-dw-line="1" data-dw-slide="left" data-dw-fit=".74" style="font-size:.74em;font-weight:300;white-space:nowrap">' . $l1 . '</span></span>'
-			. "\n    " . '<span style="display:block;overflow:hidden;padding-bottom:.08em;margin-bottom:-.08em"><span data-dw-line="1" data-dw-slide="right" data-dw-fit="1" style="color:#13A6EE;transition-delay:.12s;white-space:nowrap">' . $l2 . '</span></span>' . "\n  ";
+			. "\n    " . '<span style="display:block;overflow:hidden;padding-bottom:.08em;margin-bottom:-.08em"><span data-dw-line="1" data-dw-slide="right" data-dw-fit="' . $f2 . '" style="font-size:' . $f2 . 'em;color:#13A6EE;transition-delay:.12s;white-space:nowrap">' . $l2 . '</span></span>' . "\n  ";
 		$h  = substr( $h, 0, $a ) . $h1 . substr( $h, $b );
 	}
 	$h = dwdhl_set_p( $h, '<div id="dw-hero-row"', 1, $lead );
