@@ -509,3 +509,16 @@ canvas.dw-cubes,#dw-about-canvas,#dw-reviews-canvas,section:not(#top)>#dw-hero-c
 @media (max-width:767px){canvas.dw-cubes,#dw-about-canvas,#dw-reviews-canvas,section:not(#top)>#dw-hero-canvas{opacity:.18 !important}}
 /* Phones: every section eyebrow ("— BEFORE WE START" etc.) centered, like the headings under them */
 @media (max-width:767px){span[style*="letter-spacing:.14em"][style*="uppercase"],.dwr-eyebrow{justify-content:center !important}}
+/* Phones: less empty space above the "Built this way" work strip */
+@media (max-width:767px){
+section:has(+ .dwr-workband){padding-bottom:28px !important}
+.dwr-workband{padding-top:36px !important}
+}
+
+/* Phones: quote / contact form button and the "No obligation" line centered */
+@media (max-width:767px){
+form div:has(> button.dwh17){flex-direction:column !important;justify-content:center !important;align-items:center !important;text-align:center}
+form div:has(> button.dwh17) > button{width:100%;justify-content:center}
+}
+/* Phones: blog cards are centered, so "Read article" is too */
+@media (max-width:767px){div[style*="flex-direction:column"][style*="border-top:1px solid #121212"]{align-items:center !important}}
