@@ -415,3 +415,6 @@ a.dwr-tstat.dwr-glink:hover,.dwr-results>a.dwr-glink:hover{text-decoration:none;
 .dwr-cities a{color:inherit;text-decoration:none}
 .dwr-local-l.dwr-cities li{background:#fff}
 @media (max-width:767px){.dwr-faq-i summary{padding-right:34px;text-align:left!important}.dwr-faq-i p{text-align:left!important}}
+
+/* Phones: the long "Why I'm not your average web developer" label wraps, so its blue line sits centered on top */
+@media (max-width: 767px){.dwr-ebtop{flex-direction:column;gap:14px !important}}
