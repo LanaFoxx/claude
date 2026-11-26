@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Bayfield Inn Manager
  * Description: Simple dashboard for the Bayfield Inn team to edit restaurant menus, the photo gallery and merchandise. The site's Elementor pages show whatever is saved here.
- * Version: 2.3.7
+ * Version: 2.3.8
  * Author: Dream Web Digital
  * Requires at least: 6.0
  * Requires PHP: 7.4
@@ -10,10 +10,12 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'BI_MANAGER_VERSION', '2.3.7' );
+define( 'BI_MANAGER_VERSION', '2.3.8' );
 define( 'BI_MANAGER_URL', plugin_dir_url( __FILE__ ) );
 define( 'BI_MANAGER_DIR', plugin_dir_path( __FILE__ ) );
 define( 'BI_MANAGER_CAP', 'edit_pages' ); // Administrators and Editors.
+
+require_once BI_MANAGER_DIR . 'domain-redirect.php'; // first, before anything else runs
 
 /* ------------------------------------------------------------------ data */
 
