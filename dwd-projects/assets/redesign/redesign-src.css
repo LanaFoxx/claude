@@ -458,3 +458,24 @@ a.dwr-tstat.dwr-glink:hover,.dwr-results>a.dwr-glink:hover{text-decoration:none;
 .dwr-htdots i{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.25);transition:background .3s}
 .dwr-htdots i.on{background:#13A6EE}
 }
+
+/* Phones: "See all work" button under the last featured project */
+.dwr-workall{display:none}
+@media (max-width:767px){.dwr-workall{display:flex;justify-content:center;margin-top:44px}.dwr-workall-btn{display:inline-flex;align-items:center;gap:10px;min-height:52px;padding:0 30px;border-radius:999px;background:#121212;color:#fff !important;font-size:16px;font-weight:600;text-decoration:none}}
+
+/* Desktop: "See all work" under the last featured project's ratings */
+.dwr-workall-d{margin-top:36px}
+.dwr-workall-d .dwr-workall-btn{display:inline-flex;align-items:center;gap:10px;min-height:52px;padding:0 30px;border-radius:999px;background:#121212;color:#fff !important;font-size:16px;font-weight:600;text-decoration:none;transition:background .3s ease}
+.dwr-workall-d .dwr-workall-btn:hover{background:#13A6EE}
+@media (max-width:767px){.dwr-workall-d{display:none}}
+/* I do it all: same space below the "or call" line as above the eyebrow */
+#skills{padding-bottom:13px !important}
+@media (max-width:767px){#skills{padding-bottom:39px !important}}
+/* Phones: "What's included" eyebrow centered like its heading */
+@media (max-width:767px){#services span[style*="letter-spacing:.14em"]{justify-content:center !important}}
+/* Phones: footer menu in two centered rows instead of one long column */
+@media (max-width:767px){
+.dwr-ft .dwr-ft-nav{flex-direction:row !important;flex-wrap:wrap !important;justify-content:center !important;gap:0 22px !important;max-width:300px}
+.dwr-ft .dwr-ft-nav a{padding:9px 0 !important}
+.dwr-ft .dwr-ft-nav .dwr-ft-cta{flex-basis:100%;text-align:center;padding-top:12px !important}
+}
