@@ -346,8 +346,8 @@ window.addEventListener('load', pinLeft);
 
 function boot() {
   // Every dark section (and dark footer) without its own background gets the cubes too.
-  document.querySelectorAll('section[data-theme="dark"], footer[data-theme="dark"]').forEach((s, n) => {
-    if (s.querySelector(':scope > canvas')) return;
+  document.querySelectorAll('section[data-theme="dark"]').forEach((s, n) => {
+    if (s.querySelector(':scope > canvas') || s.id === 'skills') return; // not behind the "I do it all" strip
     const cv = document.createElement('canvas'); cv.id = 'dw-cubes-' + n; cv.className = 'dw-cubes'; cv.setAttribute('aria-hidden', 'true');
     if (getComputedStyle(s).position === 'static') s.style.position = 'relative';
     s.style.isolation = 'isolate'; s.style.overflow = s.style.overflow || 'hidden';
