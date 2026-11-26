@@ -561,7 +561,7 @@ body.dwr-portfolio .dwr-pflight{display:none !important}
 .dwr-pfdark #pf-filter-m button{flex:none;min-height:38px !important;padding:0 14px !important;font-size:13.5px !important;white-space:nowrap}
 }
 /* Portfolio: no badge boxes (Google / Upwork / PageSpeed) at the top of the page */
-body.dwr-portfolio #dw-trustbar,body.dwr-process #dw-trustbar{display:none !important}
+body.dwr-portfolio #dw-trustbar,body.dwr-process #dw-trustbar,body.dwr-hosting #dw-trustbar{display:none !important}
 /* Portfolio on phones: little space between the dark top area and the first laptop */
 @media (max-width:767px){body.dwr-portfolio .dwr-pfsec{padding-top:20px !important}body.dwr-portfolio #pf-grid [data-dw-card]:first-of-type{padding-top:0 !important}}
 /* Portfolio: no 01/02/... number above each project */
