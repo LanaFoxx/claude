@@ -324,7 +324,7 @@ function filterTo(f) {
   let i = 0;
   document.querySelectorAll('[data-dw-card]').forEach(c => {
     const show = f === 'all' ? !c.hasAttribute('data-dup')
-      : f.indexOf('cat-') === 0 ? c.getAttribute('data-cat') === f.slice(4) && !c.hasAttribute('data-dup')
+      : f.indexOf('cat-') === 0 ? (' ' + (c.getAttribute('data-cat') || '') + ' ').indexOf(' ' + f.slice(4) + ' ') > -1 && !c.hasAttribute('data-dup')
       : c.getAttribute('data-platform') === f;
     // Only hide/show: the layout itself always comes from the stylesheet, never from this script.
     c.hidden = !show;

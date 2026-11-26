@@ -276,6 +276,12 @@ function dwdp_categories() {
 	return array( 'Software & SaaS', 'Financial', 'Tax', 'Online Learning', 'Fitness & Health', 'Real Estate', 'Hotels & Hospitality', 'Education', 'Professional Services', 'Local Business' );
 }
 
+/** Every category a project shows under: its main one plus any picked under "Also show under". */
+function dwdp_cats( $post_id ) {
+	$extra = array_filter( array_map( 'trim', explode( ',', (string) get_post_meta( $post_id, '_dwdp_cats_extra', true ) ) ) );
+	return array_values( array_unique( array_merge( array( dwdp_category( $post_id ) ), array_intersect( $extra, dwdp_categories() ) ) ) );
+}
+
 /** A project's portfolio category: the one picked in the editor, else worked out from its industry label. */
 function dwdp_category( $post_id ) {
 	$c = (string) get_post_meta( $post_id, '_dwdp_category', true );
