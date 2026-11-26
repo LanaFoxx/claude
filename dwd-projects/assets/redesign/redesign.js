@@ -127,6 +127,8 @@ class SiteFx {
       { fx: .08, fy: .96, size: .55, n: mobile ? 3 : 5, ratio: .76, twist: .35, speed: .03, dir: 1, alt: true, phase: 3.1, sierp: 1 }
     ];
   }
+  // Background: nested rotating wireframe cubes (blue + white), and in the main hero a website wireframe turning
+  // in the middle of them. Hero: cubes on the right on computers (text sits left), centered and dimmer on phones.
   drawTriangles(canvasId) {
     const c = document.getElementById(canvasId);
     if (!c) return;
@@ -137,71 +139,53 @@ class SiteFx {
     if (!w || !h) return;
     const resized = c.width !== Math.round(w * dpr) || c.height !== Math.round(h * dpr);
     if (resized) { c.width = Math.round(w * dpr); c.height = Math.round(h * dpr); }
-    // Phones get a still drawing (no per-frame work): the slow rotation is barely visible there and costs battery.
-    const moving = this.motionOn && window.innerWidth >= 768;
+    const moving = this.motionOn;
     if (!moving && !resized && this._drawn[canvasId]) return;
     this._drawn[canvasId] = true;
     const ctx = c.getContext('2d');
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, w, h);
-    const t = moving ? performance.now() / 1000 : 0;
-    const s = Math.min(w, h);
-    const mobile = w < 768;
-    const light = c.getAttribute('data-light') === '1';
-    const ink = light ? '18,18,18' : '255,255,255';
-    const tri = (cx, cy, size, rot) => { const r = size * .577; const pts = []; for (let i = 0; i < 3; i++) { const a = rot - Math.PI / 2 + i * 2 * Math.PI / 3; pts.push([cx + Math.cos(a) * r, cy + Math.sin(a) * r]); } return pts; };
-    const path = pts => { ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]); ctx.lineTo(pts[1][0], pts[1][1]); ctx.lineTo(pts[2][0], pts[2][1]); ctx.closePath(); };
-    const sierp = (pts, depth, alpha) => {
-      if (depth <= 0) return;
-      const m = (a, b) => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
-      const inner = [m(pts[0], pts[1]), m(pts[1], pts[2]), m(pts[2], pts[0])];
-      path(inner); ctx.strokeStyle = 'rgba(' + ink + ',' + alpha.toFixed(3) + ')'; ctx.stroke();
-      sierp([pts[0], inner[0], inner[2]], depth - 1, alpha * .7);
-      sierp([inner[0], pts[1], inner[1]], depth - 1, alpha * .7);
-      sierp([inner[2], inner[1], pts[2]], depth - 1, alpha * .7);
-    };
-    ctx.lineWidth = 1;
-    const shapes = [];
-    this.clusters(canvasId, mobile).forEach(cl => {
-      const cx = w * cl.fx, cy = h * cl.fy;
-      for (let k = 0; k < cl.n; k++) {
-        const f = k / Math.max(1, cl.n - 1);
-        const dir = cl.alt && k % 2 ? -cl.dir : cl.dir;
-        const size = s * cl.size * Math.pow(cl.ratio, k) * (1 + .03 * Math.sin(t * .35 + k * .7 + cl.phase));
-        const rot = cl.phase + dir * t * (cl.speed + k * .011) + k * cl.twist;
-        const pts = tri(cx, cy, size, rot);
-        shapes.push(pts);
-        path(pts);
-        if (k % 2 === 0) { ctx.fillStyle = 'rgba(19,166,238,' + (.012 + .022 * f).toFixed(3) + ')'; ctx.fill(); }
-        ctx.strokeStyle = 'rgba(' + ink + ',' + ((light ? .06 : .04) + .07 * f).toFixed(3) + ')';
-        ctx.stroke();
-        if (k === 0 && cl.sierp) sierp(pts, cl.sierp, light ? .05 : .035);
-      }
-    });
-    if (moving && !mobile) {
-      const pm = this._pm;
-      const inside = !!pm && pm.x >= rect.left && pm.x <= rect.right && pm.y >= rect.top && pm.y <= rect.bottom;
-      const tx = pm ? pm.x - rect.left : w * .5, ty = pm ? pm.y - rect.top : h * .5;
-      if (!this._lenses[canvasId]) this._lenses[canvasId] = { x: tx, y: ty, a: 0, trail: [] };
-      const g = this._lenses[canvasId];
-      g.x += (tx - g.x) * .12; g.y += (ty - g.y) * .12;
-      g.a += ((inside ? 1 : 0) - g.a) * .06;
-      g.trail.push([g.x, g.y]); if (g.trail.length > 60) g.trail.shift();
-      if (g.a > .01) {
-        [[280, .18], [160, .32]].forEach(([r, a]) => {
-          ctx.save(); ctx.beginPath(); ctx.arc(g.x, g.y, r, 0, Math.PI * 2); ctx.clip();
-          ctx.globalAlpha = g.a * a; ctx.strokeStyle = '#13A6EE'; ctx.lineWidth = 1.2;
-          for (const pts of shapes) { path(pts); ctx.stroke(); }
-          ctx.restore();
-        });
-        const grd = ctx.createRadialGradient(g.x, g.y, 0, g.x, g.y, 280);
-        grd.addColorStop(0, 'rgba(19,166,238,' + (.09 * g.a).toFixed(3) + ')'); grd.addColorStop(1, 'rgba(19,166,238,0)');
-        ctx.globalAlpha = 1; ctx.fillStyle = grd; ctx.fillRect(g.x - 280, g.y - 280, 560, 560);
-        const n = g.trail.length; ctx.lineCap = 'round'; ctx.strokeStyle = '#13A6EE';
-        for (let i = 1; i < n; i++) { ctx.beginPath(); ctx.moveTo(g.trail[i - 1][0], g.trail[i - 1][1]); ctx.lineTo(g.trail[i][0], g.trail[i][1]); ctx.globalAlpha = g.a * (i / n) * .8; ctx.lineWidth = .5 + (i / n) * 1.8; ctx.stroke(); }
-        ctx.globalAlpha = 1;
+    const s = moving ? performance.now() / 1000 : 0, F = 3.2, mobile = w < 768;
+    const hero = !!c.closest('#top');
+    let cx = hero && !mobile ? w * .72 : w * .5, cy = h * .5, base = mobile ? Math.min(h, w * 1.1) : Math.min(h, w * .5); // other dark sections: centered
+    if (hero) {
+      // Center the cubes on the headline and intro text, not on the whole section (it also holds the carousel).
+      const sec = c.parentElement, h1 = sec.querySelector('h1'), row = sec.querySelector('#dw-hero-row') || h1;
+      if (h1 && row) {
+        const top = h1.getBoundingClientRect().top - rect.top, bot = row.getBoundingClientRect().bottom - rect.top;
+        cy = (top + bot) / 2; base = Math.min(mobile ? w * 1.1 : w * .48, (bot - top) * 1.25);
       }
     }
+    const B = a => 'rgba(19,166,238,' + a + ')', W = a => 'rgba(255,255,255,' + a + ')';
+    const V = [[-1,-1,-1],[1,-1,-1],[1,1,-1],[-1,1,-1],[-1,-1,1],[1,-1,1],[1,1,1],[-1,1,1]];
+    const E = [[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]];
+    const rot = (x, y, z, ay, ax) => { let X = x * Math.cos(ay) - z * Math.sin(ay), Z = x * Math.sin(ay) + z * Math.cos(ay); const Y = y * Math.cos(ax) - Z * Math.sin(ax); Z = y * Math.sin(ax) + Z * Math.cos(ax); return [X, Y, Z]; };
+    for (let k = 1; k < 5; k++) {
+      const r = base * (.12 + k * .09), ay = s * (.18 - k * .03) * (k % 2 ? -1 : 1), ax = .5 + s * .05 * (k % 2 ? 1 : -1);
+      const P = V.map(v => { const p3 = rot(v[0], v[1], v[2], ay, ax), p = F / (F + p3[2]); return [cx + p3[0] * r * p, cy + p3[1] * r * p, p3[2]]; });
+      E.forEach(e => { const a = P[e[0]], b = P[e[1]], front = (a[2] + b[2]) / 2 < 0;
+        ctx.strokeStyle = k === 2 ? B(front ? .75 : .25) : W(front ? .2 : .07); ctx.lineWidth = front ? 1.3 : 1;
+        ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke(); });
+      if (k === 2) P.forEach(p => { ctx.fillStyle = B(p[2] < 0 ? .9 : .3); ctx.beginPath(); ctx.arc(p[0], p[1], 2, 0, 7); ctx.fill(); });
+    }
+    if (!hero) return;
+    // Website wireframe turning in the middle of the cubes (main hero only).
+    const R = [[-1.6,-1,3.2,2,0],[-1.6,-1,3.2,.22,0],[-1.48,-.93,.08,.08,1],[-1.34,-.93,.08,.08,0],[-1.2,-.93,.08,.08,0],
+      [-1.45,-.66,.42,.1,1],[.25,-.65,.22,.07,0],[.55,-.65,.22,.07,0],[.85,-.65,.22,.07,0],[1.15,-.68,.32,.13,2],
+      [-1.45,-.38,1.5,.16,0],[-1.45,-.16,1.2,.16,0],[-1.45,.07,1,.06,3],[-1.45,.17,.85,.06,3],
+      [-1.45,.34,.5,.15,2],[-.88,.34,.5,.15,0],[.25,-.4,1.22,.92,1],[.25,-.4,1.22,.92,4],
+      [-1.45,.64,.9,.26,3],[-.45,.64,.9,.26,3],[.55,.64,.92,.26,3]];
+    const sc = base * .125, way = s * .32, wax = Math.sin(s * .25) * .18 - .12;
+    const facing = Math.cos(way) * Math.cos(wax), vis = .35 + .65 * Math.abs(facing), back = facing < 0;
+    const pr = (x, y) => { const p3 = rot(back ? -x : x, y, 0, way, wax), p = F / (F + p3[2] * .6); return [cx + p3[0] * sc * p, cy + p3[1] * sc * p]; };
+    const quad = (x, y, qw, qh) => { const q = [pr(x, y), pr(x + qw, y), pr(x + qw, y + qh), pr(x, y + qh)]; ctx.beginPath(); ctx.moveTo(q[0][0], q[0][1]); for (let i = 1; i < 4; i++) ctx.lineTo(q[i][0], q[i][1]); ctx.closePath(); return q; };
+    quad(-1.6, -1, 3.2, 2); ctx.fillStyle = 'rgba(14,14,14,.86)'; ctx.fill();
+    R.forEach(o => { const q = quad(o[0], o[1], o[2], o[3]), st = o[4]; ctx.lineWidth = 1.2;
+      if (st === 0) { ctx.strokeStyle = W(.45 * vis); ctx.stroke(); }
+      else if (st === 1) { ctx.strokeStyle = B(.85 * vis); ctx.stroke(); }
+      else if (st === 2) { ctx.fillStyle = B(.55 * vis); ctx.fill(); ctx.strokeStyle = B(.9 * vis); ctx.stroke(); }
+      else if (st === 3) { ctx.fillStyle = W(.08 * vis); ctx.fill(); ctx.strokeStyle = W(.18 * vis); ctx.stroke(); }
+      else { ctx.strokeStyle = B(.3 * vis); ctx.beginPath(); ctx.moveTo(q[0][0], q[0][1]); ctx.lineTo(q[2][0], q[2][1]); ctx.moveTo(q[1][0], q[1][1]); ctx.lineTo(q[3][0], q[3][1]); ctx.stroke(); } });
   }
 }
 
@@ -361,6 +345,14 @@ window.addEventListener('resize', pinLeft);
 window.addEventListener('load', pinLeft);
 
 function boot() {
+  // Every dark section (and dark footer) without its own background gets the cubes too.
+  document.querySelectorAll('section[data-theme="dark"], footer[data-theme="dark"]').forEach((s, n) => {
+    if (s.querySelector(':scope > canvas')) return;
+    const cv = document.createElement('canvas'); cv.id = 'dw-cubes-' + n; cv.className = 'dw-cubes'; cv.setAttribute('aria-hidden', 'true');
+    if (getComputedStyle(s).position === 'static') s.style.position = 'relative';
+    s.style.isolation = 'isolate'; s.style.overflow = s.style.overflow || 'hidden';
+    s.insertBefore(cv, s.firstChild);
+  });
   const canvases = Array.from(document.querySelectorAll('canvas[id^="dw-"]')).map(c => c.id);
   const fx = document.getElementById('dw-home') ? new HomeFx({ canvases }) : new SiteFx({ canvases });
   fx.start();

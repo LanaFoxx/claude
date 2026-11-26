@@ -484,3 +484,26 @@ a.dwr-tstat.dwr-glink:hover,.dwr-results>a.dwr-glink:hover{text-decoration:none;
 .dwr-ft .dwr-ft-nav{display:grid !important;grid-template-columns:repeat(3,auto);justify-content:center !important;justify-items:center;column-gap:30px !important;max-width:none}
 .dwr-ft .dwr-ft-nav .dwr-ft-cta{grid-column:1 / -1}
 }
+/* ---- Cubes background ---- */
+#top #dw-hero-canvas{-webkit-mask-image:linear-gradient(90deg,rgba(0,0,0,.15) 0%,rgba(0,0,0,.45) 35%,#000 65%) !important;mask-image:linear-gradient(90deg,rgba(0,0,0,.15) 0%,rgba(0,0,0,.45) 35%,#000 65%) !important}
+canvas.dw-cubes{position:absolute;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none;opacity:.55}
+#dw-about-canvas,#dw-reviews-canvas,section:not(#top)>#dw-hero-canvas{-webkit-mask-image:none !important;mask-image:none !important;opacity:.55}
+@media (max-width:767px){
+#top #dw-hero-canvas{opacity:.55;-webkit-mask-image:none !important;mask-image:none !important}
+canvas.dw-cubes,#dw-about-canvas,#dw-reviews-canvas,section:not(#top)>#dw-hero-canvas{opacity:.4}
+}
+/* ---- Computers: hero text left-aligned on the left, the animation shows on the right ---- */
+@media (min-width:768px){
+#top h1{text-align:left !important;max-width:min(60%,900px)}
+#top h1>span{margin-left:0 !important;margin-right:0 !important}
+#dw-hero-row{grid-template-columns:1fr !important;justify-items:start !important;text-align:left !important;max-width:min(52%,680px)}
+#dw-hero-row p{margin-left:0 !important;margin-right:0 !important}
+#dw-hero-cta{align-items:flex-start !important}
+#dw-hero-cta>*{justify-content:flex-start !important}
+}
+/* Desktop carousel: more room between the laptops */
+@media (min-width:768px){#dw-hero-track>div{gap:56px !important;padding-right:56px !important}}
+
+/* Other dark sections: cubes centered and much fainter */
+canvas.dw-cubes,#dw-about-canvas,#dw-reviews-canvas,section:not(#top)>#dw-hero-canvas{opacity:.22 !important}
+@media (max-width:767px){canvas.dw-cubes,#dw-about-canvas,#dw-reviews-canvas,section:not(#top)>#dw-hero-canvas{opacity:.18 !important}}
