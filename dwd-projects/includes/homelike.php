@@ -198,9 +198,14 @@ function dwdhl_apply( $page, $html ) {
 			if ( false !== $f && $f < $r[1] ) {
 				$filter = substr( $html, $f, dwdr_div_end( $html, $f ) - $f );
 				$filter = str_replace( 'justify-content:flex-end', 'justify-content:center', $filter );
-				$hero   = substr_replace( $hero, '<div class="dwr-pfwrap" style="margin-top:8px">' . $filter . '</div>', strrpos( $hero, '</section>' ), 0 );
+				// Light pills: they sit in the white area, right above the projects.
+				$filter = str_replace( array( 'border:1px solid #3A3A3A;background:transparent;color:#fff', 'border:1px solid #13A6EE;background:#13A6EE;color:#fff' ), array( 'border:1px solid #D6D6D6;background:transparent;color:#121212', 'border:1px solid #13A6EE;background:#13A6EE;color:#fff' ), $filter );
 			}
-			$html = substr( $html, 0, $r[0] ) . $hero . substr( $html, $r[1] );
+			$html = substr( $html, 0, $r[0] ) . $hero . substr( $html, $r[1] ); // the old hero (and the pills in it) goes
+			$g    = isset( $filter ) ? strpos( $html, '<div id="pf-grid"' ) : false;
+			if ( false !== $g ) {
+				$html = substr_replace( $html, '<div class="dwr-pfwrap dwr-pflight" style="margin:0 0 clamp(40px,5vw,72px)">' . $filter . '</div>', $g, 0 );
+			}
 		}
 	}
 	// The homepage sections go before the page's closing call to action band, or at the end.

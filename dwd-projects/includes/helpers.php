@@ -273,7 +273,7 @@ add_filter( 'wp_check_filetype_and_ext', function ( $data, $file, $filename ) {
 
 /** Portfolio categories, in the order the filter tags show (a tag only shows when a project is in it). */
 function dwdp_categories() {
-	return array( 'Software & SaaS', 'Financial', 'Tax', 'Online Learning', 'Fitness & Health', 'Real Estate', 'Education', 'Professional Services', 'Local Business' );
+	return array( 'Software & SaaS', 'Financial', 'Tax', 'Online Learning', 'Fitness & Health', 'Real Estate', 'Hotels & Hospitality', 'Education', 'Professional Services', 'Local Business' );
 }
 
 /** A project's portfolio category: the one picked in the editor, else worked out from its industry label. */
@@ -284,6 +284,7 @@ function dwdp_category( $post_id ) {
 	}
 	$i = strtolower( (string) dwdp_get( $post_id, 'industry' ) . ' ' . get_the_title( $post_id ) );
 	$map = array(
+		'Hotels & Hospitality'  => '/hotel|\binn\b|resort|motel|hospitality|lodging|bed and breakfast/',
 		'Online Learning'       => '/moodle|online learning|e-?learning|\blms\b|learning platform/',
 		'Tax'                   => '/\btax/',
 		'Financial'             => '/account|financ|bookkeep|cpa\b|wealth|invest/',

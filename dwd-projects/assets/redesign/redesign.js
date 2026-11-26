@@ -316,8 +316,10 @@ function filterTo(f) {
   document.querySelectorAll('[data-filter]').forEach(b => {
     const on = b.getAttribute('data-filter') === f;
     b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    const light = !!b.closest('.dwr-pflight');
     b.style.background = on ? '#13A6EE' : 'transparent';
-    b.style.borderColor = on ? '#13A6EE' : '#3A3A3A';
+    b.style.borderColor = on ? '#13A6EE' : (light ? '#D6D6D6' : '#3A3A3A');
+    b.style.color = on || !light ? '#fff' : '#121212';
   });
   let i = 0;
   document.querySelectorAll('[data-dw-card]').forEach(c => {
