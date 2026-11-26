@@ -522,3 +522,9 @@ form div:has(> button.dwh17) > button{width:100%;justify-content:center}
 }
 /* Phones: blog cards are centered, so "Read article" is too */
 @media (max-width:767px){div[style*="flex-direction:column"][style*="border-top:1px solid #121212"]{align-items:center !important}}
+/* Hero ratings: the same badge boxes as on the Process page */
+#dw-trustbar.dwr-trust-hero{display:grid !important;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px !important;margin-top:clamp(8px,2vw,28px) !important;padding-top:28px !important;border-top:1px solid rgba(255,255,255,.10)}
+#dw-trustbar.dwr-trust-hero .dwr-badge{width:auto;min-width:0}
+#dw-trustbar.dwr-trust-hero .dwr-badge svg{flex:none}
+@media (max-width:900px){#dw-trustbar.dwr-trust-hero{grid-template-columns:1fr}#dw-trustbar.dwr-trust-hero .dwr-badge{width:100%}}
+.dwr-badge span{text-align:left !important;align-items:flex-start !important}
