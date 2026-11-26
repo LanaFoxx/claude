@@ -370,3 +370,30 @@ function boot() {
 }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
 })();
+
+// Homepage carousel on phones: one project at a time, fading to the next every 4.5s; swipe left/right to change.
+(function () {
+  const t = document.getElementById('dw-hero-track'); if (!t) return;
+  const half = t.firstElementChild, items = [...half.querySelectorAll('a.dwr-htdev')];
+  if (items.length < 2) return;
+  const mq = window.matchMedia('(max-width:767px)');
+  const dots = document.createElement('div'); dots.className = 'dwr-htdots'; dots.setAttribute('aria-hidden', 'true');
+  dots.innerHTML = items.map(() => '<i></i>').join(''); t.parentElement.appendChild(dots);
+  let i = 0, timer = null, x0 = null, y0 = 0, swiped = false;
+  const show = n => {
+    i = (n + items.length) % items.length;
+    items.forEach((a, k) => a.classList.toggle('is-on', k === i));
+    [...dots.children].forEach((d, k) => d.classList.toggle('on', k === i));
+    [items[i], items[(i + 1) % items.length]].forEach(a => a.querySelectorAll('img[loading="lazy"]').forEach(m => { m.loading = 'eager'; }));
+  };
+  const start = () => { clearInterval(timer); timer = mq.matches ? setInterval(() => show(i + 1), 4500) : null; };
+  half.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; swiped = false; }, { passive: true });
+  half.addEventListener('touchend', e => {
+    if (x0 === null) return;
+    const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0; x0 = null;
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) { swiped = true; show(i + (dx < 0 ? 1 : -1)); start(); }
+  }, { passive: true });
+  half.addEventListener('click', e => { if (swiped) { e.preventDefault(); swiped = false; } }, true);
+  show(0); start();
+  if (mq.addEventListener) mq.addEventListener('change', start);
+})();

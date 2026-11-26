@@ -441,3 +441,20 @@ a.dwr-tstat.dwr-glink:hover,.dwr-results>a.dwr-glink:hover{text-decoration:none;
 #dw-hero-track a.dwr-htdev img{width:100% !important;height:auto !important;object-fit:fill !important}
 #dw-hero-track a.dwr-htdev .dwr-lscreen img{aspect-ratio:1.6/1 !important;object-fit:cover !important;object-position:center top !important}
 @media (max-width:767px){#dw-hero-track>div>a.dwr-htdev{width:min(92vw,460px) !important}}
+
+/* Carousel spacing fix (percent padding was measured against the whole strip) and items a little closer */
+#dw-hero-track a.dwr-htdev{padding:0 0 16px !important}
+#dw-hero-track>div{gap:8px !important;padding-right:8px !important}
+.dwr-htdots{display:none}
+/* Phones: one large laptop + phone at a time, fading to the next; swipe to change */
+@media (max-width:767px){
+#dw-hero-media{padding-top:44px !important}
+#dw-hero-track{display:block !important;width:auto !important;animation:none !important}
+#dw-hero-track>div[aria-hidden]{display:none !important}
+#dw-hero-track>div:first-child{display:grid !important;gap:0 !important;padding:0 26px 0 30px !important;touch-action:pan-y}
+#dw-hero-track>div>a.dwr-htdev{grid-area:1/1;width:100% !important;opacity:0;visibility:hidden;transition:opacity .7s ease,visibility 0s linear .7s}
+#dw-hero-track>div>a.dwr-htdev.is-on{opacity:1;visibility:visible;transition:opacity .7s ease,visibility 0s}
+.dwr-htdots{display:flex;justify-content:center;gap:8px;padding:6px 0 4px}
+.dwr-htdots i{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.25);transition:background .3s}
+.dwr-htdots i.on{background:#13A6EE}
+}

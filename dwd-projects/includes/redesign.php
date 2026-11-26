@@ -891,7 +891,7 @@ function dwdr_hero_track( $html ) {
 	// Each project: its screenshot on a laptop with its phone mockup beside it, like the portfolio (Michael).
 	$items = '';
 	foreach ( $shown as $p ) {
-		$items .= '<a class="dwr-htdev" href="' . esc_url( $p['href'] ) . '">'
+		$items .= '<a class="dwr-htdev' . ( '' === $items ? ' is-on' : '' ) . '" href="' . esc_url( $p['href'] ) . '">'
 			. '<span class="dwr-laptop"><span class="dwr-lid"><i class="dwr-cam"></i><span class="dwr-lscreen"><img src="' . esc_url( $p['img'] ) . '" alt="' . esc_attr( $p['name'] . ' website' ) . '"></span></span><span class="dwr-base"></span></span>'
 			. ( ! empty( $p['phone'] ) ? '<span class="dwr-pphone"><img src="' . esc_url( dwdr_webp_url( $p['phone'], 420 ) ) . '" alt="' . esc_attr( $p['name'] . ' website on a phone' ) . '" loading="lazy"></span>' : '' )
 			. '</a>';
