@@ -429,3 +429,5 @@ a.dwr-tstat.dwr-glink:hover,.dwr-results>a.dwr-glink:hover{text-decoration:none;
 @keyframes dwNavIn{from{transform:translateY(-100%);opacity:0}to{transform:translateY(0);opacity:1}}
 /* Phones: portfolio cards are centered, so "View project" is too */
 @media (max-width:767px){#pf-grid .pf-copy{align-items:center !important}}
+/* Phones: 70px between the centered logo and the page content */
+@media (max-width:767px){section#top{padding-top:124px !important}section.dwr-case{padding-top:124px !important}section#ct-hero{padding-top:124px !important}}
