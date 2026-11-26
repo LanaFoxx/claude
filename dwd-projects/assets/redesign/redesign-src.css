@@ -540,4 +540,4 @@ form div:has(> button.dwh17) > button{width:100%;justify-content:center}
 @media (max-width:767px){#top #dw-hero-row>div>p+p{font-size:17.5px !important;line-height:1.6 !important}}
 .dwr-trust .dwr-badge small{letter-spacing:0 !important;font-size:15px !important;color:#D4D4D4 !important}
 /* Phones: no Flat Pricing band on the Portfolio page */
-@media (max-width:767px){body.dwr-portfolio .dwr-band-dark{display:none !important}}
+@media (max-width:767px){body.dwr-portfolio .dwr-band-dark,body.dwr-process .dwr-band-dark{display:none !important}}
