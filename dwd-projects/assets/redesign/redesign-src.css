@@ -560,3 +560,5 @@ body.dwr-portfolio .dwr-pflight{display:none !important}
 .dwr-pfdark #pf-filter-m::-webkit-scrollbar{display:none}
 .dwr-pfdark #pf-filter-m button{flex:none;min-height:38px !important;padding:0 14px !important;font-size:13.5px !important;white-space:nowrap}
 }
+/* Portfolio: no badge boxes (Google / Upwork / PageSpeed) at the top of the page */
+body.dwr-portfolio #dw-trustbar{display:none !important}
