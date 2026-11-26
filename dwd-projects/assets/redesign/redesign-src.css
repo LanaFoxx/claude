@@ -581,3 +581,15 @@ body.dwr-portfolio #dw-trustbar,body.dwr-process #dw-trustbar,body.dwr-hosting #
 #dw-phone-scroll{border-top:1px solid #E4E4E4;padding-top:44px !important}
 @media (max-width:767px){#dw-phone-scroll{margin-left:20px;margin-right:20px}}
 @media (max-width:767px){#dw-phone-scroll{margin-top:32px !important}}
+/* Phones: "Get a Free Quote" and "Call" side by side on one line (hero), same for every "Get a Quote / or call" pair */
+@media (max-width:767px){
+#dw-hero-cta{align-items:stretch !important;width:100%}
+#dw-hero-cta>div{flex-direction:row !important;flex-wrap:nowrap !important;align-items:stretch !important;justify-content:center !important;gap:10px !important;width:100%}
+#dw-hero-cta>div>a{flex:1 1 0;min-width:0;min-height:52px !important;padding:0 10px !important;font-size:14px !important;gap:6px !important;justify-content:center !important;white-space:nowrap}
+#dw-hero-cta>div>a svg{width:13px;height:13px;flex:none}
+.dwr-cta,.dwr-doall-r{flex-direction:row !important;flex-wrap:nowrap !important;align-items:center !important;justify-content:center !important;gap:18px !important}
+.dwr-cta>a,.dwr-doall-r>a{white-space:nowrap;flex:none;width:auto !important;font-size:14.5px !important}
+.dwr-cta>a:first-child,.dwr-doall-r>a:first-child{padding:0 18px !important;min-height:48px !important}
+}
+/* Very small phones: not enough room side by side, so the pairs stack again */
+@media (max-width:370px){#dw-hero-cta>div{flex-direction:column !important}#dw-hero-cta>div>a{flex:none;font-size:15px !important}.dwr-cta,.dwr-doall-r{flex-direction:column !important;gap:10px !important}}
