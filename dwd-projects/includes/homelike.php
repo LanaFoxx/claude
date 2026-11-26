@@ -204,7 +204,12 @@ function dwdhl_apply( $page, $html ) {
 			$html = substr( $html, 0, $r[0] ) . $hero . substr( $html, $r[1] ); // the old hero (and the pills in it) goes
 			$g    = isset( $filter ) ? strpos( $html, '<div id="pf-grid"' ) : false;
 			if ( false !== $g ) {
-				$html = substr_replace( $html, '<div class="dwr-pfwrap dwr-pflight" style="margin:0 0 clamp(40px,5vw,72px)">' . $filter . '</div>', $g, 0 );
+				$html = substr_replace( $html, '<div class="dwr-pfwrap dwr-pflight" style="margin:0 0 clamp(40px,5vw,72px)">' . $filter . '</div><script>(function(){var f=document.querySelector(".dwr-pflight #pf-filter");if(!f)return;function bal(){f.style.maxWidth="";f.style.margin="";var w=[].map.call(f.children,function(x){return x.getBoundingClientRect().width;}),g=parseFloat(getComputedStyle(f).columnGap)||8,tot=w.reduce(function(a,c){return a+c;},0)+g*(w.length-1),av=f.parentElement.clientWidth,best=0,s=0;if(tot<=av)return;for(var k=1;k<w.length;k++){s+=w[k-1];var m=Math.max(s+g*(k-1),tot-s-g*k);if(!best||m<best)best=m;}if(best<=av){f.style.maxWidth=Math.ceil(best)+2+"px";f.style.margin="0 auto";}}bal();addEventListener("resize",bal);if(document.fonts)document.fonts.ready.then(bal);})();</script>', $g, 0 ); // the script splits the pills evenly over two lines when they don't fit on one
+				// Same space above the pills as below the stats in the hero (56px; 72px on phones).
+				$s = strrpos( substr( $html, 0, $g ), '<section' );
+				if ( false !== $s ) {
+					$html = substr_replace( $html, '<style>.dwr-pfsec{padding-top:56px!important}@media(max-width:767px){.dwr-pfsec{padding-top:72px!important}}</style><section class="dwr-pfsec"', $s, 8 );
+				}
 			}
 		}
 	}
