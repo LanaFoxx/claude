@@ -507,3 +507,5 @@ canvas.dw-cubes,#dw-about-canvas,#dw-reviews-canvas,section:not(#top)>#dw-hero-c
 /* Other dark sections: cubes centered and much fainter */
 canvas.dw-cubes,#dw-about-canvas,#dw-reviews-canvas,section:not(#top)>#dw-hero-canvas{opacity:.22 !important}
 @media (max-width:767px){canvas.dw-cubes,#dw-about-canvas,#dw-reviews-canvas,section:not(#top)>#dw-hero-canvas{opacity:.18 !important}}
+/* Phones: every section eyebrow ("— BEFORE WE START" etc.) centered, like the headings under them */
+@media (max-width:767px){span[style*="letter-spacing:.14em"][style*="uppercase"],.dwr-eyebrow{justify-content:center !important}}

@@ -168,7 +168,7 @@ function dwdhl_hero( $l1, $l2, $lead, $sub, $media = true ) {
 
 /** Each headline line marked data-dw-fit stays on one line: the font shrinks until it fits the width (never wraps). */
 function dwdhl_fit_js() {
-	return '<script>(function(){function fit(){document.querySelectorAll("[data-dw-fit]").forEach(function(s){var h=s.closest("h1");if(!h)return;s.style.fontSize=s.getAttribute("data-dw-fit")+"em";var w=h.clientWidth,sw=Math.max(s.getBoundingClientRect().width,s.scrollWidth,(s.firstElementChild&&s.firstElementChild.scrollWidth)||0);if(sw>w&&w>0){s.style.fontSize=(parseFloat(getComputedStyle(s).fontSize)*w/sw*0.97)+"px";}});}fit();window.addEventListener("resize",fit);window.addEventListener("load",fit);if(document.fonts&&document.fonts.ready){document.fonts.ready.then(fit);}})();</script>';
+	return '<script>(function(){function fit(){document.querySelectorAll("[data-dw-fit]").forEach(function(s){var h=s.closest("h1");if(!h)return;s.style.fontSize=s.getAttribute("data-dw-fit")+"em";var c=h.parentElement,cs=getComputedStyle(c),w=Math.min(h.clientWidth,c.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight)),rg=document.createRange();rg.selectNodeContents(s);var sw=Math.max(rg.getBoundingClientRect().width,(s.firstElementChild&&s.firstElementChild.scrollWidth)||0);if(sw>w&&w>0){s.style.fontSize=(parseFloat(getComputedStyle(s).fontSize)*w/sw*(innerWidth<768?.88:.97))+"px";}});}fit();window.addEventListener("resize",fit);window.addEventListener("load",fit);if(document.fonts&&document.fonts.ready){document.fonts.ready.then(fit);}})();</script>';
 }
 
 /** The homepage sections shown after an interior page's own content. */
