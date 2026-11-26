@@ -418,3 +418,14 @@ a.dwr-tstat.dwr-glink:hover,.dwr-results>a.dwr-glink:hover{text-decoration:none;
 
 /* Phones: the long "Why I'm not your average web developer" label wraps, so its blue line sits centered on top */
 @media (max-width: 767px){.dwr-ebtop{flex-direction:column;gap:14px !important}}
+/* Phones: at the top of the page only the logo shows, centered with 40px below it. Once you scroll, the full
+   header (cart + Menu) slides in and stays put. */
+@media (max-width:767px){
+#dw-nav:not([data-floating="1"]){position:absolute !important;justify-content:center !important;padding:20px 20px 40px !important;background:transparent !important;-webkit-backdrop-filter:none !important;backdrop-filter:none !important;box-shadow:none !important}
+#dw-nav:not([data-floating="1"]) > :not(:first-child){display:none !important}
+#dw-nav[data-floating="1"]{animation:dwNavIn .35s cubic-bezier(.2,.7,.1,1)}
+#dw-nav[data-hidden="1"]{transform:none !important;opacity:1 !important;pointer-events:auto !important}
+}
+@keyframes dwNavIn{from{transform:translateY(-100%);opacity:0}to{transform:translateY(0);opacity:1}}
+/* Phones: portfolio cards are centered, so "View project" is too */
+@media (max-width:767px){#pf-grid .pf-copy{align-items:center !important}}
