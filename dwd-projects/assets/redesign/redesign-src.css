@@ -572,3 +572,8 @@ body.dwr-portfolio #dw-trustbar,body.dwr-process #dw-trustbar,body.dwr-hosting #
 .dwr-workband-h{justify-content:center !important}
 /* Review carousel: no "1 / 4" counter, just the dots */
 .dwr-qcount{display:none !important}
+/* Phones: about half the space between each project mockup and its title */
+@media (max-width:767px){#pf-grid [data-dw-card]{row-gap:8px !important}#pf-grid .pf-media{padding-bottom:4px !important}#pf-grid .pf-copy > :first-child:empty{display:none}}
+/* "Why I am not your / average web developer": two lines on phones, one on computers */
+.dwr-mbr{display:none}
+@media (max-width:767px){.dwr-mbr{display:inline}.dwr-ebtxt{text-align:center}}
