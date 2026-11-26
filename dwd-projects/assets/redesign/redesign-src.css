@@ -479,3 +479,8 @@ a.dwr-tstat.dwr-glink:hover,.dwr-results>a.dwr-glink:hover{text-decoration:none;
 .dwr-ft .dwr-ft-nav a{padding:9px 0 !important}
 .dwr-ft .dwr-ft-nav .dwr-ft-cta{flex-basis:100%;text-align:center;padding-top:12px !important}
 }
+/* Phones: footer menu 3 + 3 (Home, Portfolio, Process / Hosting, Blog, Contact), Get a quote below */
+@media (max-width:767px){
+.dwr-ft .dwr-ft-nav{display:grid !important;grid-template-columns:repeat(3,auto);justify-content:center !important;justify-items:center;column-gap:30px !important;max-width:none}
+.dwr-ft .dwr-ft-nav .dwr-ft-cta{grid-column:1 / -1}
+}
