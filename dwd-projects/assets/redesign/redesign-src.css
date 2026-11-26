@@ -568,3 +568,5 @@ body.dwr-portfolio #dw-trustbar,body.dwr-process #dw-trustbar{display:none !impo
 #pf-grid [data-dw-num]{display:none !important}
 /* Phones: faint divider line between projects */
 @media (max-width:767px){#pf-grid [data-dw-card]{border-bottom:1px solid #E4E4E4;padding-bottom:44px !important;margin-bottom:12px}#pf-grid>div:last-child{display:none}}
+/* Work strip header: just a centered "See all work" link (no eyebrow) */
+.dwr-workband-h{justify-content:center !important}

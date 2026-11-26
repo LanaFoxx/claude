@@ -376,7 +376,7 @@ function dwdr_body( $page ) {
 	if ( 'process' === $page ) {
 		$j = strrpos( $html, '<section' );
 		if ( false !== $j ) {
-			$band = '<section data-theme="light" class="dwr-workband"><div class="dwr-workband-h"><span class="dwr-eyebrow"><i></i>Built this way</span><a href="' . esc_url( home_url( '/portfolio/' ) ) . '">See all work <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12 12 2M4 2h8v8"></path></svg></a></div>' . dwdr_strip( 'light', true ) . '</section>';
+			$band = '<section data-theme="light" class="dwr-workband"><div class="dwr-workband-h"><a href="' . esc_url( home_url( '/portfolio/' ) ) . '">See all work <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12 12 2M4 2h8v8"></path></svg></a></div>' . dwdr_strip( 'light', true ) . '</section>';
 			$html = substr_replace( $html, $band, $j, 0 );
 		}
 	}
