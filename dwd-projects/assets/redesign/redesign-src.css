@@ -431,3 +431,13 @@ a.dwr-tstat.dwr-glink:hover,.dwr-results>a.dwr-glink:hover{text-decoration:none;
 @media (max-width:767px){#pf-grid .pf-copy{align-items:center !important}}
 /* Phones: 70px between the centered logo and the page content */
 @media (max-width:767px){section#top{padding-top:124px !important}section.dwr-case{padding-top:124px !important}section#ct-hero{padding-top:124px !important}}
+/* Homepage carousel: each project as a laptop with its phone beside it */
+#dw-hero-track .dwr-htdev{flex:0 0 auto;display:flex;align-items:flex-end;width:clamp(400px,58vw,900px);padding:0 1% 2%;color:#fff;text-decoration:none}
+#dw-hero-track .dwr-htdev .dwr-laptop{width:80% !important;transform:none !important;filter:drop-shadow(0 18px 28px rgba(0,0,0,.45))}
+#dw-hero-track .dwr-htdev .dwr-pphone{width:22% !important;margin-left:-6% !important;transform:none !important;filter:drop-shadow(0 16px 24px rgba(0,0,0,.5))}
+#dw-hero-track .dwr-htdev:hover .dwr-laptop{transform:translateY(-4px) !important}
+@media (max-width:767px){#dw-hero-track .dwr-htdev{width:min(92vw,460px)}}
+#dw-hero-track a.dwr-htdev{aspect-ratio:auto !important;height:auto !important;align-self:flex-end !important;overflow:visible !important;background:transparent !important;border-radius:0 !important}
+#dw-hero-track a.dwr-htdev img{width:100% !important;height:auto !important;object-fit:fill !important}
+#dw-hero-track a.dwr-htdev .dwr-lscreen img{aspect-ratio:1.6/1 !important;object-fit:cover !important;object-position:center top !important}
+@media (max-width:767px){#dw-hero-track>div>a.dwr-htdev{width:min(92vw,460px) !important}}

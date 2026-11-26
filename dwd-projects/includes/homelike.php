@@ -276,6 +276,9 @@ function dwdhl_google_links( $html ) {
 	$rules = array(
 		// hero rating bar: "★★★★★ 4.9 on Google"
 		'#<div class="dwr-tstat">((?:(?!</div>).)*?on Google)</div>#s' => $a . ' class="dwr-tstat dwr-glink">$1</a>',
+		// hero rating bar: "Top Rated Plus on Upwork" links to the Upwork profile; "100% Job Success" is marked (hidden on phones)
+		'#<div class="dwr-tstat">((?:(?!</div>).)*?Top Rated Plus on Upwork)</div>#s' => '<a href="https://www.upwork.com/freelancers/dreamwebdigital" target="_blank" rel="noopener" title="See my Upwork profile" class="dwr-tstat dwr-glink">$1</a>',
+		'#<div class="dwr-tstat">((?:(?!</div>).)*?100% Job Success)</div>#s' => '<div class="dwr-tstat dwr-tjs">$1</div>',
 		// stats: "4.9 · average rating on Google"
 		'#<div>(<b>4\.9</b>(?:(?!</div>).)*?(?:A|a)verage rating on Google</span>)</div>#s' => $a . ' class="dwr-glink">$1</a>',
 		// project scores: "★ 5.0 · Google review" / "Stars on Google"

@@ -629,7 +629,7 @@ add_action( 'wp_enqueue_scripts', function () {
 		. '@media(max-width:900px){.dwr-doall{align-items:stretch!important}.dwr-doall-l{width:100%;max-width:100%;min-width:0;overflow:hidden}.dwr-doall .dwr-marq{max-width:100%}}' // phones: the services marquee stays inside its box
 		. '.dwr-doall{padding-top:clamp(36px,3.4vw,52px)!important;padding-bottom:clamp(36px,3.4vw,52px)!important}.dwr-doall .dwr-marq{padding:12px 0}@media(max-width:900px){.dwr-doall{padding:32px 24px!important}.dwr-doall-l .dwr-marq{margin-top:18px;margin-bottom:14px}}' // I do it all: more breathing room around the moving services
 		. '[data-dw-intro]{opacity:1!important}' // speed: intro content is visible at first paint (only slides), so Google sees the page load right away
-		. '@media(max-width:600px){#dw-trustbar{justify-content:center!important;text-align:center}#dw-trustbar .dwr-tstat{justify-content:center}#dw-trustbar .dwr-tstat:nth-of-type(2){display:none!important}}' // phones: trust bar centered, no Job Success line
+		. '@media(max-width:600px){#dw-trustbar{justify-content:center!important;text-align:center}#dw-trustbar .dwr-tstat{justify-content:center}#dw-trustbar .dwr-tjs{display:none!important}}' // phones: trust bar centered, no Job Success line
 		. '.dwr-band-light .dwr-bc-k,.dwr-band-light .dwr-eyebrow,.dwr-astep-n,.dwr-asec .dwr-eyebrow,#pf-grid [data-dw-num],.dwr-eyebrow{color:#0A659F}.dwr-band-dark .dwr-eyebrow,.dwr-band-dark .dwr-bc-k,.dwr-obhero .dwr-eyebrow,.dwr-astats .dwr-eyebrow,.dwr-aclose .dwr-eyebrow,[data-theme=dark] .dwr-eyebrow,.dwr-doall .dwr-eyebrow{color:#13A6EE!important}' // readable label contrast (accessibility)
 		. '.dwr-mbar-quote,#ho-card a.dwh14,.dwr-allwork{color:#0B1626!important}.dwr-obcard .elementor-button:not(.e-form__buttons__wrapper__button-previous),.dwr-obcard .elementor-button:not(.e-form__buttons__wrapper__button-previous) *{color:#fff!important}.dwr-allwork svg{stroke:#0B1626}.dwr-pill,.dwr-pill:hover{color:#fff!important}.dwr-pill svg{stroke:#fff}.dwr-pill.dark,.dwr-pill.dark:hover{color:#fff!important}.dwr-pill.dark svg{stroke:#fff}' // blue buttons: dark text, except the project page's Visit the live site button (white, as Mike asked)
 		. '.dwr-qdot{position:relative;width:24px!important;height:24px!important;background:transparent!important;display:inline-flex;align-items:center;justify-content:center}.dwr-qdot:before{content:"";width:8px;height:8px;border-radius:99px;background:#444;transition:width .3s,background .3s}.dwr-qdot.on:before{width:24px;background:#13A6EE}.dwr-qdots{gap:2px!important}' // review dots: 24px tap targets
@@ -888,13 +888,13 @@ function dwdr_hero_track( $html ) {
 			$shown[] = $p + array( 'img' => $img );
 		}
 	}
-	// Each site's phone mockup sits right after its own screenshot, so every project reads as one group (Michael).
+	// Each project: its screenshot on a laptop with its phone mockup beside it, like the portfolio (Michael).
 	$items = '';
 	foreach ( $shown as $p ) {
-		$items .= '<a href="' . esc_url( $p['href'] ) . '" style="' . esc_attr( $st[1] ) . '"><img src="' . esc_url( $p['img'] ) . '" alt="' . esc_attr( $p['name'] . ' website' ) . '" style="' . esc_attr( $st[2] ) . '"></a>';
-		if ( ! empty( $p['phone'] ) ) {
-			$items .= '<a class="dwr-htphone" href="' . esc_url( $p['href'] ) . '" tabindex="-1"><img src="' . esc_url( dwdr_webp_url( $p['phone'], 420 ) ) . '" alt="' . esc_attr( $p['name'] . ' website on a phone' ) . '" loading="lazy"></a>';
-		}
+		$items .= '<a class="dwr-htdev" href="' . esc_url( $p['href'] ) . '">'
+			. '<span class="dwr-laptop"><span class="dwr-lid"><i class="dwr-cam"></i><span class="dwr-lscreen"><img src="' . esc_url( $p['img'] ) . '" alt="' . esc_attr( $p['name'] . ' website' ) . '"></span></span><span class="dwr-base"></span></span>'
+			. ( ! empty( $p['phone'] ) ? '<span class="dwr-pphone"><img src="' . esc_url( dwdr_webp_url( $p['phone'], 420 ) ) . '" alt="' . esc_attr( $p['name'] . ' website on a phone' ) . '" loading="lazy"></span>' : '' )
+			. '</a>';
 	}
 	if ( '' === $items ) {
 		return $html;
