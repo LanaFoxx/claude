@@ -528,3 +528,5 @@ form div:has(> button.dwh17) > button{width:100%;justify-content:center}
 #dw-trustbar.dwr-trust-hero .dwr-badge svg{flex:none}
 @media (max-width:900px){#dw-trustbar.dwr-trust-hero{grid-template-columns:1fr}#dw-trustbar.dwr-trust-hero .dwr-badge{width:100%}}
 .dwr-badge span{text-align:left !important;align-items:flex-start !important}
+/* Badge boxes: icon + text centered in each box */
+.dwr-badge{justify-content:center !important}
