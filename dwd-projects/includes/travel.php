@@ -98,6 +98,10 @@ function dwdtr_seed() {
 }
 
 
+function tm24k( $s ) {
+	return preg_match( '/(\d{1,2}):?(\d{2})?\s*([AaPp])/', (string) $s, $m ) ? sprintf( '%02d%02d', ( (int) $m[1] % 12 ) + ( 'p' === strtolower( $m[3] ) ? 12 : 0 ), (int) ( $m[2] ?? 0 ) ) : '9999';
+}
+
 /** IATA airport → time zone, so flight times show in the departure airport's local time. */
 function dwdtr_tz( $text ) {
 	$map = array(
@@ -157,10 +161,31 @@ function dwdtr_cal_flights() {
 		}
 		$seen[ $key ] = 1;
 		list( $ld, $lt, $ap ) = dwdtr_local( (string) $t['due'], (string) ( $t['time'] ?? '' ), $txt . ' ' . ( $t['note'] ?? '' ) );
-		$out[] = array( 'date' => $ld, 'time' => $lt . ( $ap ? ' ' . $ap . ' time' : '' ), 'title' => trim( $txt ), 'detail' => trim( (string) ( $t['note'] ?? '' ) ), 'source' => 'calendar' );
+		$out[] = array( 'date' => $ld, 'time' => $lt . ( $ap ? ' ' . $ap . ' time' : '' ), 'title' => trim( $txt ), 'detail' => trim( (string) ( $t['note'] ?? '' ) ), 'source' => 'calendar', 'personal' => 'personal' === ( $t['gacct'] ?? '' ) || 'personal' === ( $t['gowner'] ?? '' ) ? 1 : 0 );
 	}
-	usort( $out, function ( $a, $b ) { return strcmp( $a['date'], $b['date'] ); } );
-	return array_slice( $out, 0, 20 );
+	// One entry per flight: the same flight number within a day of itself is a copy (Gmail adds its own).
+	// Keep the work-calendar copy over the personal one, then the first seen.
+	usort( $out, function ( $a, $b ) { return ( $a['personal'] <=> $b['personal'] ) ?: strcmp( $a['date'], $b['date'] ); } );
+	$keep = array();
+	foreach ( $out as $f ) {
+		$code = preg_match( '/\b([A-Z]{2})\s?(\d{2,4})\b/', $f['title'] . ' ' . $f['detail'], $m ) ? $m[1] . $m[2] : '';
+		if ( ! $code && preg_match( '/icelandair\s*(\d{2,4})/i', $f['title'], $m ) ) {
+			$code = 'FI' . $m[1];
+		}
+		$dup = false;
+		foreach ( $keep as $k ) {
+			if ( $code && $k['code'] === $code && abs( strtotime( $k['date'] ) - strtotime( $f['date'] ) ) <= DAY_IN_SECONDS ) {
+				$dup = true;
+				break;
+			}
+		}
+		if ( ! $dup ) {
+			$f['code'] = $code;
+			$keep[]    = $f;
+		}
+	}
+	usort( $keep, function ( $a, $b ) { return strcmp( $a['date'] . tm24k( $a['time'] ), $b['date'] . tm24k( $b['time'] ) ); } );
+	return array_slice( $keep, 0, 20 );
 }
 
 /** Pasted text → itinerary items and to-dos (Claude when a key is set, else a simple line split). */
