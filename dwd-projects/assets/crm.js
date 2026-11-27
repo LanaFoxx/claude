@@ -3045,6 +3045,7 @@
 		box.classList.add('open'); chatPaint();
 		setTimeout(function () { var ta = box.querySelector('textarea'); if (ta && !CHAT.needKey) { ta.focus(); } }, 50);
 	}
+	document.addEventListener('change', function (e) { var d = e.target; if (d && d.matches && d.matches('.dd-tr-add input[type=date]')) { d.classList.toggle('has', !!d.value); d.title = d.value ? 'Due ' + d.value : 'Pick a due date'; } });
 	/* Floating "Ask" launcher, bottom-left on every Dream Desk page. */
 	(function askFab() {
 		if (!document.body) { document.addEventListener('DOMContentLoaded', askFab); return; }
