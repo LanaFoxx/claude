@@ -286,7 +286,7 @@
 	/* ---------- routing ---------- */
 	var TITLES = {
 		home: ['', '', 'Dream Web Digital'], leads: ['Clients', 'All', 'Leads'], onboarding: ['Clients', 'Onboarding', 'Forms'],
-		todos: ['Plan', '', 'To-Dos'], connections: ['Settings', 'Connections', ''], hosting: ['Clients', 'Hosting', 'Clients'], archive: ['More', 'Archive', ''],
+		todos: ['Plan', '', 'To-Dos'], travel: ['Plan', '', 'Travel'], connections: ['Settings', 'Connections', ''], hosting: ['Clients', 'Hosting', 'Clients'], archive: ['More', 'Archive', ''],
 		search: ['Search', 'Search', 'Results'], personal: ['Personal', 'To-Do', 'List'], money: ['Money', 'Business', 'Revenue'], income: ['Money', 'Income', 'Overview'], reviews: ['Clients', 'Get', 'Reviews'], claude: ['', 'Claude', ''], clients: ['Clients', 'All', 'Clients'], projects: ['Projects', 'All', 'Projects']
 	};
 	var OLD = { dashboard: 'home', jobs: 'projects/active', completed: 'projects/complete', forms: 'leads' };
@@ -774,6 +774,11 @@
 		home: '<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>',
 		calendar: '<rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
 		'circle-check': '<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',
+		plane: '<path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>',
+		bed: '<path d="M2 4v16M2 8h18a2 2 0 0 1 2 2v10M2 17h20M6 8v9"/>',
+		map: '<path d="M14.1 5.6 9.9 3.4a2 2 0 0 0-1.8 0L3.6 5.7A1 1 0 0 0 3 6.6v13.8a1 1 0 0 0 1.4.9l3.7-1.9a2 2 0 0 1 1.8 0l4.2 2.2a2 2 0 0 0 1.8 0l4.5-2.3a1 1 0 0 0 .6-.9V4.6a1 1 0 0 0-1.4-.9l-3.7 1.9a2 2 0 0 1-1.8 0zM9 3.2v15M15 5.8v15"/>',
+		train: '<rect width="16" height="16" x="4" y="3" rx="2"/><path d="M4 11h16M12 3v8M8 19l-2 3M18 22l-2-3M8 15h.01M16 15h.01"/>',
+		utensils: '<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/>',
 		play: '<polygon points="6 3 20 12 6 21 6 3"/>',
 		'user-plus': '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/>',
 		'clipboard-list': '<rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4M12 16h4M8 11h.01M8 16h.01"/>',
@@ -857,7 +862,7 @@
 		return '<aside class="dd-side">'
 			+ '<div class="dd-brand"><a href="#home" class="dd-brand-a"><img class="dd-mk-l" src="' + esc(DWDC.mark) + '" alt=""><img class="dd-mk-d" src="' + esc(String(DWDC.mark).replace('db-mark.png', 'db-mark-dark.png')) + '" alt=""><b>Dream Desk</b></a><button type="button" class="dd-ibtn dd-collapse" data-ddcollapse aria-label="Collapse sidebar">' + lu('panel-left') + '</button><button type="button" class="dd-ibtn dd-mclose" data-ddmenu aria-label="Close menu">' + lu('x', 18) + '</button></div>'
 			+ '<nav class="dd-navs">' + item('home', 'home', 'Home')
-			+ group('plan', 'Plan', item('personal/calendar', 'calendar', 'Calendar') + item('todos', 'circle-check', 'To-dos', openTasks().length + pOpen))
+			+ group('plan', 'Plan', item('personal/calendar', 'calendar', 'Calendar') + item('todos', 'circle-check', 'To-dos', openTasks().length + pOpen) + item('travel', 'plane', 'Travel'))
 			+ group('projects', 'Projects', item('projects/active', 'play', 'Active', by('active').length) + item('leads', 'user-plus', 'Leads', leadList().length) + item('onboarding', 'clipboard-list', 'Onboarding', onboardList().length) + item('projects/paused', 'pause', 'Paused', by('hold').length + by('limbo').length) + item('projects/complete', 'check', 'Completed', by('complete').length))
 			+ group('clients', 'Clients', item('clients', 'users', 'All clients', S.clients.length) + item('hosting', 'cloud', 'Hosting', hosting().length) + item('reviews', 'star', 'Get reviews'))
 			+ group('money', 'Money', item('income', 'dollar-sign', 'Income overview') + item('money', 'bar-chart-3', 'Business revenue') + item('personal/spending', 'pie-chart', 'Spending') + item('personal/bills', 'repeat', 'Bills & subscriptions') + item('personal/suggestions', 'zap', 'Suggestions'))
@@ -2350,7 +2355,7 @@
 			+ '<a class="dwdc-brand" href="#home"><span class="dwdc-mark"><img src="' + esc(DWDC.mark) + '" alt=""></span><span><strong>Dream Desk</strong><small>Dream Web Digital</small></span></a>'
 			+ (true ? '' : '<label class="dwdc-ssearch">' + ic('search', 16) + '<input type="search" placeholder="Search..." value="' + esc(S.q) + '"><kbd>Ctrl K</kbd></label>')
 			+ '<nav>' + nav('home', 'home', 'Home')
-			+ '<div class="dwdc-navh"><i class="b1"></i>Plan</div>' + nav('personal/calendar', 'clock', 'Calendar') + nav('todos', 'todo', 'To-Dos', openTasks().length + (S.pers ? S.pers.todos.filter(function (x) { return !x.done && !x.gevent; }).length : 0))
+			+ '<div class="dwdc-navh"><i class="b1"></i>Plan</div>' + nav('personal/calendar', 'clock', 'Calendar') + nav('todos', 'todo', 'To-Dos', openTasks().length + (S.pers ? S.pers.todos.filter(function (x) { return !x.done && !x.gevent; }).length : 0)) + nav('travel', 'todo', 'Travel')
 			+ '<div class="dwdc-navh"><i class="b1"></i>Projects</div>'
 			+ nav('projects/active', 'bolt', 'Active', by('active').length) + nav('leads', 'user', 'Leads', leadList().length) + nav('onboarding', 'filter', 'Onboarding', onboardList().length)
 			+ nav('projects/paused', 'pause', 'Paused', by('hold').length + by('limbo').length) + nav('projects/complete', 'done', 'Completed', by('complete').length)
@@ -2454,7 +2459,7 @@
 			t = ['Client', kw[0], kw.slice(1).join(' ')];
 			body = personView(r.id);
 		} else {
-			body = r.view === 'personal' ? (r.arg === 'spending' ? personalView(r) + '<h2 class="dwdc-sech">Money in &amp; out (logged by hand)</h2>' + personalView({ view: 'personal', arg: 'finances' }) : r.arg === 'bills' ? ddBills() : r.arg === 'suggestions' ? ddSuggest() : personalView(r)) : ({ home: ddHome, clients: ddClients, projects: projectsView, leads: leadsList, onboarding: onboardView, todos: ddTodos, connections: connectionsView, hosting: hostingView, money: moneyView, income: incomeView, reviews: ddReviews, claude: ddClaude, archive: archiveView, search: searchView }[r.view] || home)();
+			body = r.view === 'personal' ? (r.arg === 'spending' ? personalView(r) + '<h2 class="dwdc-sech">Money in &amp; out (logged by hand)</h2>' + personalView({ view: 'personal', arg: 'finances' }) : r.arg === 'bills' ? ddBills() : r.arg === 'suggestions' ? ddSuggest() : personalView(r)) : ({ home: ddHome, clients: ddClients, projects: projectsView, leads: leadsList, onboarding: onboardView, todos: ddTodos, travel: travelView, connections: connectionsView, hosting: hostingView, money: moneyView, income: incomeView, reviews: ddReviews, claude: ddClaude, archive: archiveView, search: searchView }[r.view] || home)();
 		}
 		app.setAttribute('data-view', r.view);
 		app.classList.add('dd');
@@ -3269,6 +3274,65 @@
 			+ '<div class="dwdc-farow dd-smtprow"><input type="password" data-smtppass autocomplete="new-password" placeholder="abcd efgh ijkl mnop" class="dd-smtpin"><button type="button" class="dd-btn primary" data-smtpsave>Connect</button></div>'
 			+ '<p class="dd-help">Dream Desk checks the password with Google first. Nothing changes until Google accepts it, so site email keeps working either way.</p>';
 	}
+
+	/* ---------- Travel: trips with a day-by-day itinerary, a to-do list, and a paste box ---------- */
+	function trLoad(force) {
+		if ((!S.travel || force) && !S.trLoading) { S.trLoading = true; api('/travel').then(function (x) { S.travel = x; S.trLoading = false; render(); }).catch(function (er) { S.trLoading = false; fail(er); }); }
+		return S.travel;
+	}
+	function trTrip() {
+		var T = S.travel, L = (T && T.trips) || [];
+		var pick = L.filter(function (x) { return x.id === S.trSel; })[0];
+		if (!pick) { pick = L.filter(function (x) { return (x.end || x.start || '9') >= DWDC.today; })[0] || L[L.length - 1]; }
+		return pick || null;
+	}
+	function trSave(trip, msg) {
+		return api('/travel', 'POST', { trip: trip }).then(function (x) { S.travel = x; S.trSel = x.trip; render(); if (msg) { toast(msg); } }).catch(fail);
+	}
+	function trDay(d) { return d ? new Date(d + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) : 'No date'; }
+	function travelView() {
+		var T = trLoad();
+		if (!T) { return '<section class="dd-card dd-tr"><p class="dd-help">Loading…</p></section>'; }
+		var trip = trTrip(), L = T.trips || [];
+		var KI = { flight: 'plane', hotel: 'bed', transport: 'train', activity: 'map', food: 'utensils', other: 'calendar' };
+		var chips = '<div class="dd-tr-chips">' + L.map(function (x) { return '<button type="button" class="dd-tr-chip' + (trip && x.id === trip.id ? ' on' : '') + '" data-trsel="' + esc(x.id) + '">' + esc(x.name) + (x.start ? ' <small>' + esc(trDay(x.start).replace(/^\w+, /, '')) + '</small>' : '') + '</button>'; }).join('') + '<button type="button" class="dd-tr-chip add" data-trnew>' + lu('plus', 14) + 'New trip</button></div>';
+		var fl = (T.flights || []);
+		var flights = '<section class="dd-card dd-tr-fl"><header class="dd-tr-h"><h2>' + lu('plane', 18) + 'Upcoming flights</h2><small>From your calendars · times in Eastern time</small></header>'
+			+ (fl.length ? fl.map(function (f) { return '<div class="dd-tr-flr"><span class="d"><b>' + esc(trDay(f.date)) + '</b><small>' + esc(f.time || '') + '</small></span><span class="w"><b>' + esc(f.title) + '</b>' + (f.detail ? '<small>' + esc(f.detail) + '</small>' : '') + '</span></div>'; }).join('') : '<p class="dd-help">No upcoming flights on your calendars.</p>') + '</section>';
+		if (!trip) { return chips + flights + '<section class="dd-card dd-tr"><p class="dd-help">No trips yet. Click <b>New trip</b> to start one.</p></section>'; }
+		var items = (trip.items || []).slice().sort(function (a, b) { return ((a.date || '9') + (a.time ? tm24(a.time) : '99')) < ((b.date || '9') + (b.time ? tm24(b.time) : '99')) ? -1 : 1; });
+		var days = {}, order = [];
+		items.forEach(function (x) { var k = x.date || ''; if (!days[k]) { days[k] = []; order.push(k); } days[k].push(x); });
+		var itin = order.length ? order.map(function (d) {
+			return '<div class="dd-tr-day"><h3>' + esc(trDay(d)) + '</h3>' + days[d].map(function (x) {
+				return '<div class="dd-tr-it k-' + esc(x.kind) + '"><span class="ico">' + lu(KI[x.kind] || 'calendar', 16) + '</span><span class="w"><b>' + (x.time ? '<em>' + esc(x.time) + '</em> ' : '') + esc(x.title) + '</b>' + (x.detail ? '<small>' + esc(x.detail) + '</small>' : '') + '</span><button type="button" class="dwdc-del" data-tritdel="' + esc(x.id) + '" title="Remove">' + ic('x', 14) + '</button></div>';
+			}).join('') + '</div>';
+		}).join('') : '<p class="dd-help">No itinerary yet. Paste it below.</p>';
+		var td = (trip.todos || []).slice().sort(function (a, b) { return (a.done - b.done) || ((a.due || '9') < (b.due || '9') ? -1 : 1); });
+		var open = td.filter(function (x) { return !x.done; }).length;
+		var todos = td.map(function (x) {
+			return '<div class="dd-tr-td' + (x.done ? ' done' : '') + '"><button type="button" class="dd-tr-chk" data-trtd="' + esc(x.id) + '" aria-label="' + (x.done ? 'Mark not done' : 'Mark done') + '">' + (x.done ? lu('circle-check', 18) : '') + '</button><span>' + esc(x.text) + (x.due ? ' <small>' + esc(trDay(x.due)) + '</small>' : '') + '</span><button type="button" class="dwdc-del" data-trtddel="' + esc(x.id) + '" title="Delete">' + ic('x', 14) + '</button></div>';
+		}).join('');
+		var head = S.trEdit ? '<form class="dd-tr-edit" data-trform><input name="name" value="' + esc(trip.name) + '" placeholder="Trip name" required><input type="date" name="start" value="' + esc(trip.start || '') + '"><input type="date" name="end" value="' + esc(trip.end || '') + '"><button class="dwdc-btn sm">Save</button><button type="button" class="dwdc-btn2 sm" data-trdel="' + esc(trip.id) + '">Delete trip</button></form>'
+			: '<div class="dd-tr-title"><h2>' + esc(trip.name) + '</h2><small>' + esc([trip.start ? trDay(trip.start) : '', trip.end ? trDay(trip.end) : ''].filter(Boolean).join(' → ')) + '</small><button type="button" class="dwdc-lnk" data-tredit>Edit</button></div>';
+		return chips
+			+ '<section class="dd-card dd-tr">' + head
+			+ (trip.notes ? '<p class="dd-tr-notes">' + esc(trip.notes).replace(/\n/g, '<br>') + '</p>' : '')
+			+ '<div class="dd-tr-grid"><div><h2 class="dd-tr-sub">' + lu('map', 18) + 'Itinerary</h2>' + itin + '</div>'
+			+ '<div><h2 class="dd-tr-sub">' + lu('circle-check', 18) + 'To-do list <span class="dwdc-cnt">' + open + '</span></h2>'
+			+ '<form class="dd-tr-add" data-tradd><input name="text" placeholder="Add a to-do…" autocomplete="off" required><input type="date" name="due" title="Due date (optional)"><button class="dwdc-btn sm">Add</button></form>'
+			+ (todos || '<p class="dd-help">Nothing on the list yet.</p>') + '</div></div>'
+			+ (function () {
+				var R = trip.recs || [], places = [], by = {};
+				R.forEach(function (x) { var k = x.place || 'Other'; if (!by[k]) { by[k] = []; places.push(k); } by[k].push(x); });
+				return '<div class="dd-tr-recs"><h2 class="dd-tr-sub">' + lu('map', 18) + 'Recommended things to do</h2>'
+					+ (places.length ? '<div class="dd-tr-recg">' + places.map(function (pl) { return '<div class="dd-tr-recp"><h3>' + esc(pl) + '</h3>' + by[pl].map(function (x) { return '<div class="dd-tr-td' + (x.done ? ' done' : '') + '"><button type="button" class="dd-tr-chk" data-trrec="' + esc(x.id) + '" aria-label="' + (x.done ? 'Not done' : 'Done') + '">' + (x.done ? lu('circle-check', 18) : '') + '</button><span>' + esc(x.text) + '</span><button type="button" class="dwdc-del" data-trrecdel="' + esc(x.id) + '" title="Remove">' + ic('x', 14) + '</button></div>'; }).join('') + '</div>'; }).join('') + '</div>' : '')
+					+ '<form class="dd-tr-add" data-trrecadd><input name="place" placeholder="Place (e.g. Bergen)" autocomplete="off"><input name="text" placeholder="Add a thing to do…" autocomplete="off" required><button class="dwdc-btn sm">Add</button></form></div>';
+			})()
+			+ '<form class="dd-tr-paste" data-trpaste><h2 class="dd-tr-sub">' + lu('sparkles', 18) + 'Paste your itinerary or to-do list</h2><textarea name="text" rows="6" placeholder="Paste anything: a booking email, an itinerary, a packing list…" required></textarea><div class="dwdc-farow end"><small class="dd-help">' + (T.ai ? 'Claude sorts it into the itinerary and the to-do list.' : 'Bullet lines become to-dos; the rest is saved as notes.') + '</small><button class="dwdc-btn" ' + (S.trBusy ? 'disabled' : '') + '>' + (S.trBusy ? 'Sorting it out…' : 'Add to this trip') + '</button></div></form>'
+			+ '</section>' + flights;
+	}
+	function tm24(s) { var m = String(s).match(/(\d{1,2}):?(\d{2})?\s*([ap])?/i); if (!m) { return '99'; } var h = +m[1] % 12 + (m[3] && /p/i.test(m[3]) ? 12 : (!m[3] && +m[1] === 12 ? 12 : 0)); return ('0' + h).slice(-2) + (m[2] || '00'); }
 	function rulesConn() {
 		if (!S.rules && !S.rulesLoading) { S.rulesLoading = true; api('/house-rules').then(function (x) { S.rules = x; S.rulesLoading = false; render(); }).catch(function () { S.rulesLoading = false; }); }
 		var H = S.rules;
@@ -4782,6 +4846,15 @@
 			}).catch(function (er) { el.disabled = false; el.innerHTML = tlab; fail(er); });
 			return;
 		}
+		if ((el = t.closest('[data-trsel]'))) { S.trSel = el.getAttribute('data-trsel'); S.trEdit = false; render(); return; }
+		if (t.closest('[data-trnew]')) { var nt = prompt('Trip name (e.g. Paris, March 2027)'); if (nt && nt.trim()) { trSave({ name: nt.trim(), items: [], todos: [] }, 'Trip added'); S.trEdit = true; } return; }
+		if (t.closest('[data-tredit]')) { S.trEdit = true; render(); return; }
+		if ((el = t.closest('[data-trdel]'))) { if (!confirm('Delete this trip and its itinerary and to-dos?')) { return; } api('/travel/' + el.getAttribute('data-trdel'), 'DELETE').then(function (x) { S.travel = x; S.trSel = null; S.trEdit = false; render(); toast('Trip deleted'); }).catch(fail); return; }
+		if ((el = t.closest('[data-trtd]'))) { var tp = trTrip(); if (!tp) { return; } tp.todos.forEach(function (x) { if (x.id === el.getAttribute('data-trtd')) { x.done = !x.done; } }); render(); trSave(tp); return; }
+		if ((el = t.closest('[data-trtddel]'))) { var tp2 = trTrip(); if (!tp2) { return; } tp2.todos = tp2.todos.filter(function (x) { return x.id !== el.getAttribute('data-trtddel'); }); render(); trSave(tp2, 'To-do deleted'); return; }
+		if ((el = t.closest('[data-trrec]'))) { var tq = trTrip(); if (!tq) { return; } (tq.recs || []).forEach(function (x) { if (x.id === el.getAttribute('data-trrec')) { x.done = !x.done; } }); render(); trSave(tq); return; }
+		if ((el = t.closest('[data-trrecdel]'))) { var tq2 = trTrip(); if (!tq2) { return; } tq2.recs = (tq2.recs || []).filter(function (x) { return x.id !== el.getAttribute('data-trrecdel'); }); render(); trSave(tq2, 'Removed'); return; }
+		if ((el = t.closest('[data-tritdel]'))) { var tp3 = trTrip(); if (!tp3) { return; } tp3.items = tp3.items.filter(function (x) { return x.id !== el.getAttribute('data-tritdel'); }); render(); trSave(tp3, 'Removed from the itinerary'); return; }
 		if ((el = t.closest('[data-smtpnew]'))) { S.smtpNew = !S.smtpNew; render(); return; }
 		if ((el = t.closest('[data-smtpsave], [data-smtptest]'))) {
 			var spi = app.querySelector('[data-smtppass]'), sTest = el.hasAttribute('data-smtptest'), slab = el.innerHTML;
@@ -5870,6 +5943,19 @@
 				if (!x.sent) { throw new Error('The email didn’t go out. Check WP Mail SMTP.'); }
 				S.modal = null; if (em0.pid) { delete S.full[em0.pid]; } render(); toast('Email sent to ' + data.to);
 			}).catch(function (er) { eb.disabled = false; eb.lastChild.textContent = 'Send email'; fail(er); });
+		} else if (f.hasAttribute('data-tradd') || f.hasAttribute('data-trrecadd')) {
+			var tr = trTrip(); if (!tr) { return; }
+			if (f.hasAttribute('data-tradd')) { tr.todos = (tr.todos || []).concat([{ text: data.text, due: data.due || '', done: false }]); }
+			else { tr.recs = (tr.recs || []).concat([{ place: data.place || '', text: data.text, done: false }]); }
+			trSave(tr, 'Added');
+		} else if (f.hasAttribute('data-trform')) {
+			var te = trTrip(); if (!te) { return; }
+			te.name = data.name; te.start = data.start || ''; te.end = data.end || ''; S.trEdit = false;
+			trSave(te, 'Trip saved');
+		} else if (f.hasAttribute('data-trpaste')) {
+			var tp = trTrip(); if (!tp || !String(data.text || '').trim()) { return; }
+			S.trBusy = true; render();
+			api('/travel/' + tp.id + '/paste', 'POST', { text: data.text }).then(function (x) { S.trBusy = false; S.travel = x; render(); var a2 = x.added || {}; toast('Added ' + (a2.items || 0) + ' itinerary item' + (a2.items === 1 ? '' : 's') + ' and ' + (a2.todos || 0) + ' to-do' + (a2.todos === 1 ? '' : 's')); }).catch(function (er) { S.trBusy = false; render(); fail(er); });
 		} else if (f.classList.contains('dd-hadd')) {
 			// Home to-do box: no date typed → due today, so it shows right here.
 			if (!String(data.text || '').trim()) { return; }

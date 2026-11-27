@@ -1288,3 +1288,56 @@ body:has(.dwdc-addm) #dwdc-askfab { display: none !important; }
 .dd-stats b.dd-tapnum { cursor: pointer; border-radius: 6px; transition: opacity .2s; }
 @media (hover: hover) { .dd-stats b.dd-tapnum:hover { text-decoration: underline dotted; text-underline-offset: 4px; } }
 .dd-stats b.dd-tapnum.spin { opacity: .45; }
+/* ---------- Travel ---------- */
+.dd-tr-chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px}
+.dd-tr-chip{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:500 14px var(--font);cursor:pointer}
+.dd-tr-chip small{color:var(--text-3);font-size:12px}
+.dd-tr-chip.on{background:var(--accent,#4F6BF0);border-color:var(--accent,#4F6BF0);color:#fff}
+.dd-tr-chip.on small{color:rgba(255,255,255,.8)}
+.dd-tr-chip.add{color:var(--accent-text);border-style:dashed}
+.dd-tr{padding:22px 24px !important;margin-bottom:20px}
+.dd-tr-title{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 14px;margin-bottom:8px}
+.dd-tr-title h2{margin:0;font-size:24px}
+.dd-tr-title small{color:var(--text-3);font-size:14px}
+.dd-tr-edit{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.dd-tr-edit input{height:38px}
+.dd-tr-notes{margin:6px 0 18px;padding:12px 14px;border-radius:10px;background:var(--hover);color:var(--text-2);font-size:14px;line-height:1.55}
+.dd-tr-grid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:28px}
+.dd-tr-sub{display:flex;align-items:center;gap:8px;margin:8px 0 12px;font-size:17px}
+.dd-tr-sub .lu{color:var(--accent-text)}
+.dd-tr-day{margin-bottom:14px}
+.dd-tr-day h3{margin:0 0 6px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3)}
+.dd-tr-it{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;margin-bottom:6px;background:var(--surface)}
+.dd-tr-it .ico{flex:none;width:30px;height:30px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;background:var(--hover);color:var(--accent-text)}
+.dd-tr-it.k-flight .ico{color:#4F6BF0}.dd-tr-it.k-hotel .ico{color:#28A06D}.dd-tr-it.k-transport .ico{color:#C9781F}
+.dd-tr-it .w{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.dd-tr-it b{font-weight:600;font-size:14.5px}
+.dd-tr-it b em{font-style:normal;color:var(--accent-text);margin-right:4px}
+.dd-tr-it small{color:var(--text-3);font-size:13px;line-height:1.45}
+.dd-tr-td{display:flex;align-items:center;gap:10px;padding:8px 2px;border-bottom:1px solid var(--border)}
+.dd-tr-td span{flex:1;min-width:0;font-size:14.5px}
+.dd-tr-td span small{color:var(--text-3);margin-left:6px;font-size:12px}
+.dd-tr-td.done span{text-decoration:line-through;color:var(--text-3)}
+.dd-tr-chk{flex:none;width:22px;height:22px;border-radius:50%;border:1.5px solid var(--border-strong,#888);background:none;padding:0;display:inline-flex;align-items:center;justify-content:center;color:#28A06D;cursor:pointer}
+.dd-tr-td.done .dd-tr-chk{border-color:transparent}
+.dd-tr-add{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.dd-tr-add input{flex:1;min-width:120px;height:38px}
+.dd-tr-add input[type=date],.dd-tr-add input[name=place]{flex:0 0 150px}
+.dd-tr-recs{margin-top:24px;padding-top:6px;border-top:1px solid var(--border)}
+.dd-tr-recg{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:4px 28px;margin-bottom:12px}
+.dd-tr-recp h3{margin:12px 0 2px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-text)}
+.dd-tr-paste{margin-top:24px;padding-top:6px;border-top:1px solid var(--border)}
+.dd-tr-paste textarea{width:100%;min-height:120px;margin-bottom:10px}
+.dd-tr-paste .dwdc-farow{align-items:center;gap:12px}
+.dd-tr-fl{padding:18px 22px !important}
+.dd-tr-h{display:flex;align-items:baseline;gap:12px;margin-bottom:8px}
+.dd-tr-h h2{display:flex;align-items:center;gap:8px;margin:0;font-size:17px}
+.dd-tr-h small{color:var(--text-3)}
+.dd-tr-flr{display:flex;gap:14px;padding:10px 0;border-top:1px solid var(--border)}
+.dd-tr-flr .d{flex:0 0 120px;display:flex;flex-direction:column}
+.dd-tr-flr .d small,.dd-tr-flr .w small{color:var(--text-3);font-size:13px}
+.dd-tr-flr .w{display:flex;flex-direction:column;gap:2px;min-width:0}
+@media (max-width:900px){.dd-tr-grid{grid-template-columns:1fr}.dd-tr{padding:18px 16px !important}.dd-tr-flr .d{flex-basis:96px}}
+.dd .dd-card.dd-tr,.dd .dd-card.dd-tr-fl{display:block !important;grid-template-columns:none !important;width:auto !important;max-width:none !important}
+.dd .dd-tr>*{width:auto !important;max-width:none !important}
+.dd .dd-tr .dd-tr-grid{display:grid !important}
