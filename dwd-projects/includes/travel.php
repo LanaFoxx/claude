@@ -144,6 +144,31 @@ function dwdtr_local( $date, $time, $where ) {
 	}
 }
 
+
+/**
+ * Verified flight details (from the booking emails and Michael's itinerary): depart / arrive in local time,
+ * seat, booking ref and which Gmail holds the booking. Keyed by flight number.
+ */
+function dwdtr_flight_info() {
+	$f = function ( $air, $from, $fromc, $to, $toc, $dep, $arr, $seat, $ref, $acct, $q ) {
+		return compact( 'air', 'from', 'fromc', 'to', 'toc', 'dep', 'arr', 'seat', 'ref', 'acct', 'q' );
+	};
+	$base = array(
+		'AA1920' => $f( 'American Airlines', 'ONT', 'Ontario, CA', 'CLT', 'Charlotte', 'Fri, Nov 27 · 10:30 PM', '', '', '', 'personal', '"AA 1920" OR "1920" american' ),
+		'FI820'  => $f( 'Icelandair', 'RDU', 'Raleigh-Durham', 'KEF', 'Keflavík', 'Sun, Nov 29 · 7:35 PM', 'Mon, Nov 30 · 6:40 AM', '28F', 'BPWAMF', 'work', 'BPWAMF' ),
+		'FI318'  => $f( 'Icelandair', 'KEF', 'Keflavík', 'OSL', 'Oslo', 'Mon, Nov 30 · 7:50 AM', 'Mon, Nov 30 · 11:35 AM', '34F', 'BPWAMF', 'work', 'BPWAMF' ),
+		'WF1355' => $f( 'Widerøe', 'TRD', 'Trondheim', 'TOS', 'Tromsø', 'Sun, Dec 13 · 2:50 PM', 'Sun, Dec 13 · 4:35 PM', '', '', 'personal', '"WF 1355" OR WF1355 OR widerøe OR wideroe' ),
+		'DY381'  => $f( 'Norwegian', 'TOS', 'Tromsø', 'OSL', 'Oslo', 'Tue, Dec 15 · 2:55 PM', 'Tue, Dec 15 · 4:55 PM', '', '', 'personal', '"DY 381" OR DY381 OR norwegian' ),
+		'FI319'  => $f( 'Icelandair', 'OSL', 'Oslo', 'KEF', 'Keflavík', 'Wed, Dec 16 · 1:10 PM', 'Wed, Dec 16 · 3:20 PM', '34F', 'BPWAMF', 'work', 'BPWAMF' ),
+		'FI821'  => $f( 'Icelandair', 'KEF', 'Keflavík', 'RDU', 'Raleigh-Durham', 'Sat, Dec 19 · 4:45 PM', 'Sat, Dec 19 · 6:35 PM', '28F', 'BPWAMF', 'work', 'BPWAMF' ),
+	);
+	return array_merge( $base, (array) get_option( 'dwdtr_flight_info', array() ) );
+}
+
+function dwdtr_code( $s ) {
+	return preg_match( '/\b([A-Z]{2})\s?(\d{2,4})\b/', (string) $s, $m ) ? $m[1] . $m[2] : '';
+}
+
 /** Upcoming flights from the synced calendars (anything that reads like a flight, today or later). */
 function dwdtr_cal_flights() {
 	$out   = array();
@@ -211,6 +236,11 @@ function dwdtr_cal_flights() {
 		}
 	}
 	usort( $keep, function ( $a, $b ) { return strcmp( $a['date'] . tm24k( $a['time'] ), $b['date'] . tm24k( $b['time'] ) ); } );
+	$info = dwdtr_flight_info();
+	foreach ( $keep as &$k ) {
+		$k['info'] = $k['code'] && isset( $info[ $k['code'] ] ) ? $info[ $k['code'] ] : null;
+	}
+	unset( $k );
 	return array_slice( $keep, 0, 20 );
 }
 
@@ -289,7 +319,7 @@ add_action( 'init', function () {
 
 add_action( 'rest_api_init', function () {
 	$can  = function () { return current_user_can( 'manage_options' ); };
-	$resp = function () { return array( 'trips' => dwdtr_trips(), 'flights' => dwdtr_cal_flights(), 'ai' => function_exists( 'dwdc_ai_key' ) && (bool) dwdc_ai_key() ); };
+	$resp = function () { return array( 'trips' => dwdtr_trips(), 'finfo' => dwdtr_flight_info(), 'flights' => dwdtr_cal_flights(), 'ai' => function_exists( 'dwdc_ai_key' ) && (bool) dwdc_ai_key() ); };
 	register_rest_route( 'dwd/v1', '/crm/travel', array(
 		array( 'methods' => 'GET', 'permission_callback' => $can, 'callback' => $resp ),
 		// Save a whole trip (new or edited).
