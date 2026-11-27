@@ -3320,14 +3320,14 @@
 			+ (trip.notes ? '<p class="dd-tr-notes">' + esc(trip.notes).replace(/\n/g, '<br>') + '</p>' : '')
 			+ '<div class="dd-tr-grid"><div><h2 class="dd-tr-sub">' + lu('map', 18) + 'Itinerary</h2>' + itin + '</div>'
 			+ '<div><h2 class="dd-tr-sub">' + lu('circle-check', 18) + 'To-do list <span class="dwdc-cnt">' + open + '</span></h2>'
-			+ '<form class="dd-tr-add" data-tradd><input name="text" placeholder="Add a to-do…" autocomplete="off" required><input type="date" name="due" title="Due date (optional)"><button class="dwdc-btn sm">Add</button></form>'
+			+ '<form class="dd-tr-add" data-tradd><input name="text" placeholder="New to-do" autocomplete="off" required><input type="date" name="due" title="Due date (optional)"><button class="dwdc-btn sm">Add</button></form>'
 			+ (todos || '<p class="dd-help">Nothing on the list yet.</p>') + '</div></div>'
 			+ (function () {
 				var R = trip.recs || [], places = [], by = {};
 				R.forEach(function (x) { var k = x.place || 'Other'; if (!by[k]) { by[k] = []; places.push(k); } by[k].push(x); });
 				return '<div class="dd-tr-recs"><h2 class="dd-tr-sub">' + lu('map', 18) + 'Recommended things to do</h2>'
 					+ (places.length ? '<div class="dd-tr-recg">' + places.map(function (pl) { return '<div class="dd-tr-recp"><h3>' + esc(pl) + '</h3>' + by[pl].map(function (x) { return '<div class="dd-tr-td' + (x.done ? ' done' : '') + '"><button type="button" class="dd-tr-chk" data-trrec="' + esc(x.id) + '" aria-label="' + (x.done ? 'Not done' : 'Done') + '">' + (x.done ? lu('circle-check', 18) : '') + '</button><span>' + esc(x.text) + '</span><button type="button" class="dwdc-del" data-trrecdel="' + esc(x.id) + '" title="Remove">' + ic('x', 14) + '</button></div>'; }).join('') + '</div>'; }).join('') + '</div>' : '')
-					+ '<form class="dd-tr-add" data-trrecadd><input name="place" placeholder="Place (e.g. Bergen)" autocomplete="off"><input name="text" placeholder="Add a thing to do…" autocomplete="off" required><button class="dwdc-btn sm">Add</button></form></div>';
+					+ '<form class="dd-tr-add" data-trrecadd><input name="place" placeholder="Place" autocomplete="off"><input name="text" placeholder="Thing to do" autocomplete="off" required><button class="dwdc-btn sm">Add</button></form></div>';
 			})()
 			+ '<form class="dd-tr-paste" data-trpaste><h2 class="dd-tr-sub">' + lu('sparkles', 18) + 'Paste your itinerary or to-do list</h2><textarea name="text" rows="6" placeholder="Paste anything: a booking email, an itinerary, a packing list…" required></textarea><div class="dwdc-farow end"><small class="dd-help">' + (T.ai ? 'Claude sorts it into the itinerary and the to-do list.' : 'Bullet lines become to-dos; the rest is saved as notes.') + '</small><button class="dwdc-btn" ' + (S.trBusy ? 'disabled' : '') + '>' + (S.trBusy ? 'Sorting it out…' : 'Add to this trip') + '</button></div></form>'
 			+ '</section>' + flights;
