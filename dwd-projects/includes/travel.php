@@ -127,7 +127,7 @@ function dwdtr_parse( $text, $trip ) {
 		$sys = 'You sort travel text for a personal trip planner. Today is ' . wp_date( 'Y-m-d' ) . '. The trip is "' . ( $trip['name'] ?? '' ) . '" (' . ( $trip['start'] ?? '' ) . ' to ' . ( $trip['end'] ?? '' ) . '). '
 			. 'Split the pasted text into itinerary items (things that happen at a time or on a day: flights, trains, hotel stays, tours, reservations, plans) and to-dos (things to do or pack). '
 			. 'Reply with JSON only, no prose: {"items":[{"date":"YYYY-MM-DD or empty","time":"e.g. 7:35 PM or empty","title":"short","detail":"booking refs, addresses, seats, notes","kind":"flight|hotel|transport|activity|food|other"}],"todos":[{"text":"...","due":"YYYY-MM-DD or empty"}]}. '
-			. 'Keep every useful detail (confirmation numbers, addresses, times). Use the trip dates to fill in missing years. Do not invent anything.';
+			. 'Keep it short: titles like "FI820 RDU → Keflavík", details a few words (seat, arrival time, booking ref). To-dos short too. Use the trip dates to fill in missing years. Do not invent anything.';
 		$res = wp_remote_post( 'https://api.anthropic.com/v1/messages', array(
 			'timeout' => 90,
 			'headers' => array( 'x-api-key' => $key, 'anthropic-version' => '2026-10-21', 'anthropic-beta' => 'server-side-fallback-2026-07-01', 'content-type' => 'application/json' ),
