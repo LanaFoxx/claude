@@ -1341,3 +1341,5 @@ body:has(.dwdc-addm) #dwdc-askfab { display: none !important; }
 .dd .dd-card.dd-tr,.dd .dd-card.dd-tr-fl{display:block !important;grid-template-columns:none !important;width:auto !important;max-width:none !important}
 .dd .dd-tr>*{width:auto !important;max-width:none !important}
 .dd .dd-tr .dd-tr-grid{display:grid !important}
+.dd .dd-tr .dd-tr-notes{margin-bottom:28px !important}
+.dd .dd-tr .dd-tr-grid .dd-tr-sub{margin-top:0}
