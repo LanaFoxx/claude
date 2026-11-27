@@ -303,11 +303,13 @@ function dwdtr_clean_item( $x ) {
 
 // Once: the wrong Gmail-made copies on the personal calendar (wrong times, or the dropped Bodø flight) are hidden.
 add_action( 'init', function () {
-	if ( get_option( 'dwdtr_hid1' ) || ! function_exists( 'dwdpe_get' ) ) {
+	if ( get_option( 'dwdtr_hid2' ) || ! function_exists( 'dwdpe_get' ) ) {
 		return;
 	}
 	update_option( 'dwdtr_hid1', 1, false );
-	$bad  = array( 'g5oontcegdcrbvcf9apfqeafc0', 'd7gc506e8b25l2bsmfe11v0sdg', '4ijkbtv3ecacd56hlvv82garjg', 'v57k60aaungl5s64iakuafg9ts' );
+	update_option( 'dwdtr_hid2', 1, false );
+	// hid2: the dropped Widerøe WF 1326 (Bodø → Tromsø, Dec 14) copy too.
+	$bad  = array( 'g5oontcegdcrbvcf9apfqeafc0', 'd7gc506e8b25l2bsmfe11v0sdg', '4ijkbtv3ecacd56hlvv82garjg', 'v57k60aaungl5s64iakuafg9ts', 'g3vfnmtvqppvlrqhfa82upsa2o' );
 	$hide = array_values( array_unique( array_merge( (array) get_option( 'dwdpe_hide_ev', array() ), $bad ) ) );
 	update_option( 'dwdpe_hide_ev', $hide, false );
 	$d = get_option( 'dwdpe_data', array() );

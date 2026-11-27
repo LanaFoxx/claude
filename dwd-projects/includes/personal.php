@@ -154,12 +154,37 @@ function dwdpe_clean( $kind, $x, $old = array() ) {
 	return $out;
 }
 
+/**
+ * The to-do data as Dream Desk shows it: synced flights get the departure airport's local day and time
+ * (the calendar sync stores Eastern, so a 10:30 PM flight out of Ontario landed on the next day at 1:30 AM).
+ */
+function dwdpe_get_local() {
+	$d = dwdpe_get();
+	if ( ! function_exists( 'dwdtr_local' ) ) {
+		return $d;
+	}
+	foreach ( $d['todos'] as &$t ) {
+		$txt = (string) ( $t['text'] ?? '' );
+		if ( empty( $t['gevent'] ) || empty( $t['due'] ) || empty( $t['time'] ) || ! preg_match( '/flight|✈|\b[A-Z]{2}\s?\d{2,4}\b/u', $txt ) || preg_match( '/flight school|flight desk/i', $txt ) ) {
+			continue;
+		}
+		list( $ld, $lt, $ap ) = dwdtr_local( (string) $t['due'], (string) $t['time'], $txt . ' ' . ( $t['note'] ?? '' ) );
+		if ( $ap && $ld && $lt ) {
+			$t['due']  = $ld;
+			$t['time'] = $lt;
+			$t['ltz']  = $ap;
+		}
+	}
+	unset( $t );
+	return $d;
+}
+
 add_action( 'rest_api_init', function () {
 	register_rest_route( 'dwd/v1', '/crm/personal', array(
 		array(
 			'methods'             => 'GET',
 			'permission_callback' => function () { return current_user_can( 'manage_options' ); },
-			'callback'            => 'dwdpe_get',
+			'callback'            => 'dwdpe_get_local',
 		),
 		array(
 			'methods'             => 'POST',
@@ -198,7 +223,16 @@ add_action( 'rest_api_init', function () {
 							$hit = $i;
 						}
 					}
-					unset( $item['gtask'], $item['gevent'], $item['source'] );
+					// A synced flight came back in local airport time: if its day and time weren't changed, keep the stored ones.
+					if ( ! empty( $item['ltz'] ) && $hit > -1 && function_exists( 'dwdtr_local' ) ) {
+						$sx = $list[ $hit ];
+						list( $sd, $st ) = dwdtr_local( (string) ( $sx['due'] ?? '' ), (string) ( $sx['time'] ?? '' ), ( $sx['text'] ?? '' ) . ' ' . ( $sx['note'] ?? '' ) );
+						if ( (string) ( $item['due'] ?? '' ) === $sd && (string) ( $item['time'] ?? '' ) === $st ) {
+							$item['due']  = $sx['due'] ?? '';
+							$item['time'] = $sx['time'] ?? '';
+						}
+					}
+					unset( $item['gtask'], $item['gevent'], $item['source'], $item['ltz'] );
 					$item['dirty'] = true;
 					$clean         = dwdpe_clean( $kind, $item, $hit > -1 ? $list[ $hit ] : array() );
 					if ( '' === $clean['id'] ) {
@@ -218,7 +252,7 @@ add_action( 'rest_api_init', function () {
 				}
 				$all[ $kind ] = array_values( $list );
 				update_option( 'dwdpe_data', $all, false );
-				return $all;
+				return dwdpe_get_local();
 			},
 		),
 	) );
