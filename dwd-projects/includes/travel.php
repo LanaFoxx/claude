@@ -163,6 +163,32 @@ function dwdtr_cal_flights() {
 		list( $ld, $lt, $ap ) = dwdtr_local( (string) $t['due'], (string) ( $t['time'] ?? '' ), $txt . ' ' . ( $t['note'] ?? '' ) );
 		$out[] = array( 'date' => $ld, 'time' => $lt . ( $ap ? ' ' . $ap . ' time' : '' ), 'title' => trim( $txt ), 'detail' => trim( (string) ( $t['note'] ?? '' ) ), 'source' => 'calendar', 'personal' => 'personal' === ( $t['gacct'] ?? '' ) || 'personal' === ( $t['gowner'] ?? '' ) ? 1 : 0 );
 	}
+	// During a trip, the trip's itinerary is the truth: a calendar flight only shows if that trip lists it
+	// (same flight number, or the same from → to cities). Dropped or cancelled flights never show.
+	$trips = get_option( 'dwdtr_trips', array() );
+	$out   = array_values( array_filter( $out, function ( $f ) use ( $trips ) {
+		foreach ( (array) $trips as $tr ) {
+			$s = (string) ( $tr['start'] ?? '' );
+			$e = (string) ( $tr['end'] ?? '' );
+			if ( ! $s || ! $e || $f['date'] < gmdate( 'Y-m-d', strtotime( $s ) - DAY_IN_SECONDS ) || $f['date'] > gmdate( 'Y-m-d', strtotime( $e ) + DAY_IN_SECONDS ) ) {
+				continue;
+			}
+			$hay = '';
+			foreach ( (array) ( $tr['items'] ?? array() ) as $it ) {
+				if ( 'flight' === ( $it['kind'] ?? '' ) ) {
+					$hay .= ' ' . $it['title'] . ' ' . $it['detail'];
+				}
+			}
+			$norm = function ( $s ) { return strtolower( preg_replace( '/\s+/', '', remove_accents( (string) $s ) ) ); };
+			if ( preg_match( '/\b([A-Z]{2})\s?(\d{2,4})\b/', $f['title'] . ' ' . $f['detail'], $m ) && false !== strpos( $norm( $hay ), strtolower( $m[1] . $m[2] ) ) ) {
+				return true;
+			}
+			// No flight number match: keep it only if the trip has a flight to the same place.
+			$to = preg_match( '/(?:to|→)\s*([\p{L} .-]+?)(?:\s*\(|$)/u', $f['title'], $mm ) ? trim( $mm[1] ) : '';
+			return $to && false !== strpos( $norm( $hay ), $norm( $to ) ) && ! preg_match( '/\b[A-Z]{2}\s?\d{2,4}\b/', $f['title'] );
+		}
+		return true; // not during a trip: show it
+	} ) );
 	// One entry per flight: the same flight number within a day of itself is a copy (Gmail adds its own).
 	// Keep the work-calendar copy over the personal one, then the first seen.
 	usort( $out, function ( $a, $b ) { return ( $a['personal'] <=> $b['personal'] ) ?: strcmp( $a['date'], $b['date'] ); } );
@@ -196,7 +222,7 @@ function dwdtr_parse( $text, $trip ) {
 		$sys = 'You sort travel text for a personal trip planner. Today is ' . wp_date( 'Y-m-d' ) . '. The trip is "' . ( $trip['name'] ?? '' ) . '" (' . ( $trip['start'] ?? '' ) . ' to ' . ( $trip['end'] ?? '' ) . '). '
 			. 'Split the pasted text into itinerary items (things that happen at a time or on a day: flights, trains, hotel stays, tours, reservations, plans) and to-dos (things to do or pack). '
 			. 'Reply with JSON only, no prose: {"items":[{"date":"YYYY-MM-DD or empty","time":"e.g. 7:35 PM or empty","title":"short","detail":"booking refs, addresses, seats, notes","kind":"flight|hotel|transport|activity|food|other"}],"todos":[{"text":"...","due":"YYYY-MM-DD or empty"}]}. '
-			. 'Keep it short: titles like "FI820 RDU → Keflavík", details a few words (seat, arrival time, booking ref). To-dos short too. Use the trip dates to fill in missing years. Do not invent anything.';
+			. 'Skip anything the text says was dropped, cancelled or refunded. Keep it short: titles like "FI820 RDU → Keflavík", details a few words (seat, arrival time, booking ref). To-dos short too. Use the trip dates to fill in missing years. Do not invent anything.';
 		$res = wp_remote_post( 'https://api.anthropic.com/v1/messages', array(
 			'timeout' => 90,
 			'headers' => array( 'x-api-key' => $key, 'anthropic-version' => '2026-10-21', 'anthropic-beta' => 'server-side-fallback-2026-07-01', 'content-type' => 'application/json' ),
