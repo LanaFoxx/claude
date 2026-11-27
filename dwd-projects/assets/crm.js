@@ -4392,7 +4392,20 @@
 			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal wide dd-sg-mod">' + head(esc(sxp[0]), esc(sxp.slice(1).join(' · ')), '') + sxb + '</div>';
 		}
 		// Remove a payment: was it a duplicate (owed stays) or money that didn't come through (back to owed)?
-			if (m.type === 'payrm') {
+			if (m.type === 'newlead') {
+			var NL = S.newLeads || [], L0 = NL[0];
+			if (!L0) { S.modal = null; return ''; }
+			var tel = String(L0.phone || '').replace(/[^\d+]/g, '');
+			return '<div class="dwdc-overlay dd-nl-ov"></div><div class="dwdc-modal dd-nl" role="alertdialog" aria-labelledby="dd-nl-h">'
+				+ '<p class="dd-nl-eb">' + lu('alert-circle', 16) + 'New ' + esc((L0.form || 'quote').toLowerCase()) + ' from your website' + (NL.length > 1 ? ' · 1 of ' + NL.length : '') + '</p>'
+				+ '<h2 id="dd-nl-h">' + esc(L0.name) + (L0.company ? ' <small>' + esc(L0.company) + '</small>' : '') + '</h2>'
+				+ '<p class="dwdc-mutp">' + esc([L0.when ? 'Came in ' + fmt(String(L0.when).slice(0, 10)) + ' at ' + new Date(String(L0.when).replace(' ', 'T')).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : '', String(L0.source || '').replace(/\s*·\s*[a-z0-9-]+-[a-z0-9-]+\s*·/i, ' ·')].filter(Boolean).join(' · ')) + (L0.mail === 'failed' ? ' · <b class="dd-nl-warn">the email about this lead failed to send</b>' : '') + '</p>'
+				+ '<div class="dd-nl-act">' + (tel ? '<a class="dwdc-btn2 sm" href="tel:' + esc(tel) + '">Call ' + esc(tel.replace(/^\+?1?(\d{3})(\d{3})(\d{4})$/, '($1) $2-$3')) + '</a>' : '') + (L0.email ? '<a class="dwdc-btn2 sm" href="mailto:' + esc(L0.email) + '">Email ' + esc(L0.email) + '</a>' : '') + '<a class="dwdc-btn2 sm" href="#client/' + L0.id + '" data-nlopen>Open the lead</a></div>'
+				+ '<div class="dd-nl-ans">' + (L0.answers || []).map(function (a) { return '<div><span>' + esc(a[0]) + '</span><b>' + esc(a[1]) + '</b></div>'; }).join('') + '</div>'
+				+ '<button type="button" class="dwdc-btn dd-nl-ok" data-nlack="' + L0.id + '">' + lu('circle-check', 16) + 'I’ve reviewed this quote and contacted the customer</button>'
+				+ '<p class="dd-nl-foot">This keeps popping up until you click the button above.</p></div>';
+		}
+		if (m.type === 'payrm') {
 				var rmc = S.full[m.id], rmp = rmc && (rmc.payments || [])[m.i];
 				if (!rmp) { return ''; }
 				return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal dd-payrm">' + head('Remove payment', money2(rmp.amount).replace('.00', '') + ' · ' + esc(rmp.source || '') + ' · ' + fmt(String(rmp.date).slice(0, 10)), '')
