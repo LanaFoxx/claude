@@ -3291,6 +3291,13 @@
 		return api('/travel', 'POST', { trip: trip }).then(function (x) { S.travel = x; S.trSel = x.trip; render(); if (msg) { toast(msg); } }).catch(fail);
 	}
 	function trDay(d) { return d ? new Date(d + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) : 'No date'; }
+	// Days between departure and arrival ("Sun, Nov 29 · 7:35 PM" → "Mon, Nov 30 · 6:40 AM" is 1), for the "+1" mark.
+	function trNext(dep, arr) {
+		var d = function (s) { var m = /([A-Z][a-z]{2}) (\d{1,2})/.exec(String(s || '').split('·')[0].replace(/^[A-Za-z]{3},\s*/, '')); return m ? new Date(m[1] + ' ' + m[2] + ' 2026').getTime() : NaN; };
+		var a = d(arr), b = d(dep), n = Math.round((a - b) / 864e5);
+		if (n < 0) { n += 365; }
+		return isNaN(n) ? 0 : n;
+	}
 	function travelView() {
 		var T = trLoad();
 		if (!T) { return '<section class="dd-card dd-tr"><p class="dd-help">Loading…</p></section>'; }
@@ -3307,7 +3314,7 @@
 		var itin = order.length ? order.map(function (d) {
 			return '<div class="dd-tr-day"><h3>' + esc(trDay(d)) + '</h3>' + days[d].map(function (x) {
 				var xc = x.kind === 'flight' ? (/\b([A-Z]{2})\s?(\d{2,4})\b/.exec(x.title || '') || []) : [], xk = xc[1] ? xc[1] + xc[2] : '';
-				return '<div class="dd-tr-it k-' + esc(x.kind) + (xk && (T.finfo || {})[xk] ? ' click" role="button" tabindex="0" data-trflc="' + esc(xk) : '') + '"><span class="ico">' + lu(KI[x.kind] || 'calendar', 16) + '</span><span class="w"><b>' + (x.time ? '<em>' + esc(x.time) + '</em> ' : '') + esc(x.title) + '</b>' + (x.detail ? '<small>' + esc(x.detail) + '</small>' : '') + '</span><button type="button" class="dwdc-del" data-tritdel="' + esc(x.id) + '" title="Remove">' + ic('x', 14) + '</button></div>';
+				return '<div class="dd-tr-it k-' + esc(x.kind) + (xk && (T.finfo || {})[xk] ? ' click" role="button" tabindex="0" data-trflc="' + esc(xk) : '') + '"><span class="ico">' + lu(KI[x.kind] || 'calendar', 16) + '</span><span class="w"><b>' + (x.time ? '<em>' + esc(x.time) + '</em> ' : '') + esc(x.title) + '</b>' + (x.detail ? '<small>' + (function () { var fi = xk && (T.finfo || {})[xk], nx = fi ? trNext(fi.dep, fi.arr) : 0, h = esc(x.detail); return nx > 0 ? h.replace(/(lands \d{1,2}:\d{2}\s?[AP]M)/i, '$1 <sup class="dd-tr-nx">+' + nx + '</sup>') : h; })() + '</small>' : '') + '</span><button type="button" class="dwdc-del" data-tritdel="' + esc(x.id) + '" title="Remove">' + ic('x', 14) + '</button></div>';
 			}).join('') + '</div>';
 		}).join('') : '<p class="dd-help">No itinerary yet. Paste it below.</p>';
 		var td = (trip.todos || []).slice().sort(function (a, b) { return (a.done - b.done) || ((a.due || '9') < (b.due || '9') ? -1 : 1); });
@@ -4463,11 +4470,11 @@
 			var macct = FI.acct === 'work' ? Gm.work : (Gm.personal || Gm.work), oacct = macct === Gm.work ? Gm.personal : Gm.work;
 			var mq = FI.q || (m.code ? '"' + m.code.replace(/^([A-Z]{2})/, '$1 ') + '" OR ' + m.code : 'flight');
 			var murl = function (a) { return 'https://mail.google.com/mail/' + (a ? '?authuser=' + encodeURIComponent(a) : '') + '#search/' + encodeURIComponent(mq); };
-			var leg = function (lab, code, city, when) { return '<div class="dd-trm-leg"><small>' + lab + '</small><b>' + esc(code || '—') + '</b><span>' + esc(city || '') + '</span><em>' + (when ? esc(when) : 'See booking email') + '</em></div>'; };
+			var leg = function (lab, code, city, when, nx) { return '<div class="dd-trm-leg"><small>' + lab + '</small><b>' + esc(code || '—') + '</b><span>' + esc(city || '') + '</span><em>' + (when ? esc(when) + (nx > 0 ? ' <sup class="dd-tr-nx">+' + nx + '</sup>' : '') : 'See booking email') + '</em></div>'; };
 			var rows = [['Flight', (m.code || '').replace(/^([A-Z]{2})/, '$1 ')], ['Airline', FI.air], ['Seat', FI.seat], ['Booking ref', FI.ref], ['Booked on', FI.acct ? (FI.acct === 'work' ? 'Work Gmail' : 'Personal Gmail') : '']].filter(function (r) { return r[1]; });
 			return '<div class="dwdc-overlay" data-close-modal></div><div class="dwdc-modal dd-trm" role="dialog"><button type="button" class="dwdc-mx" data-close-modal>' + ic('x', 20) + '</button>'
 				+ '<p class="dd-trm-eb">' + lu('plane', 16) + esc(FI.air || 'Flight') + '</p><h2>' + esc(FI.from && FI.to ? FI.fromc + ' → ' + FI.toc : (ff.title || m.code || 'Flight')) + '</h2>'
-				+ '<div class="dd-trm-legs">' + leg('Departs', FI.from, FI.fromc, FI.dep || (ff.date ? trDay(ff.date) + ' · ' + (ff.time || '') : '')) + '<span class="dd-trm-arr">' + lu('plane', 18) + '</span>' + leg('Arrives', FI.to, FI.toc, FI.arr) + '</div>'
+				+ '<div class="dd-trm-legs">' + leg('Departs', FI.from, FI.fromc, FI.dep || (ff.date ? trDay(ff.date) + ' · ' + (ff.time || '') : '')) + '<span class="dd-trm-arr">' + lu('plane', 18) + '</span>' + leg('Arrives', FI.to, FI.toc, FI.arr, trNext(FI.dep, FI.arr)) + '</div>'
 				+ '<dl class="dd-trm-dl">' + rows.map(function (r) { return '<div><dt>' + esc(r[0]) + '</dt><dd>' + esc(r[1]) + '</dd></div>'; }).join('') + '</dl>'
 				+ '<p class="dd-help">Times are local at each airport.</p>'
 				+ '<div class="dd-trm-act"><a class="dwdc-btn" target="_blank" rel="noopener" href="' + esc(murl(macct)) + '">' + lu('mail', 16) + 'Open booking email</a>' + (oacct ? '<a class="dd-trm-alt" target="_blank" rel="noopener" href="' + esc(murl(oacct)) + '">Not there? Search ' + (oacct === Gm.work ? 'work' : 'personal') + ' Gmail</a>' : '') + '</div></div>';

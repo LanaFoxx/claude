@@ -338,7 +338,7 @@ function dwdc_ai_read( $name, $in ) {
 			$cut  = function ( $t, $n ) { $t = trim( (string) preg_replace( '/\s+/', ' ', (string) $t ) ); return mb_strlen( $t ) > $n ? mb_substr( $t, 0, $n ) . '…' : $t; };
 			$rows = array();
 			if ( function_exists( 'dwdpe_get' ) ) {
-				$p = dwdpe_get();
+				$p = function_exists( 'dwdpe_get_local' ) ? dwdpe_get_local() : dwdpe_get();
 				foreach ( (array) ( $p['todos'] ?? array() ) as $t ) {
 					$due = (string) ( $t['due'] ?? '' );
 					if ( '' === $due || $due < $from || $due > $to || ( ! $done && ! empty( $t['done'] ) ) ) {
@@ -420,7 +420,7 @@ function dwdc_ai_read( $name, $in ) {
 				case 'meetings':
 					return function_exists( 'dwdmt_summary' ) ? dwdc_ai_data( dwdmt_summary() ) : 'Error: meetings are not set up.';
 				case 'personal':
-					return function_exists( 'dwdpe_get' ) ? dwdc_ai_data( dwdpe_get() ) : 'Error: the personal section is not set up.';
+					return function_exists( 'dwdpe_get' ) ? dwdc_ai_data( function_exists( 'dwdpe_get_local' ) ? dwdpe_get_local() : dwdpe_get() ) : 'Error: the personal section is not set up.';
 			}
 			return 'Error: section must be upwork_balances, google_ads, bank, spending_insights, meetings or personal.';
 	}
