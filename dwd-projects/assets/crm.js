@@ -3297,7 +3297,7 @@
 		var KI = { flight: 'plane', hotel: 'bed', transport: 'train', activity: 'map', food: 'utensils', other: 'calendar' };
 		var chips = '<div class="dd-tr-chips">' + L.map(function (x) { return '<button type="button" class="dd-tr-chip' + (trip && x.id === trip.id ? ' on' : '') + '" data-trsel="' + esc(x.id) + '">' + esc(x.name) + (x.start ? ' <small>' + esc(trDay(x.start).replace(/^\w+, /, '')) + '</small>' : '') + '</button>'; }).join('') + '<button type="button" class="dd-tr-chip add" data-trnew>' + lu('plus', 14) + 'New trip</button></div>';
 		var fl = (T.flights || []);
-		var flights = '<section class="dd-card dd-tr-fl"><header class="dd-tr-h"><h2>' + lu('plane', 18) + 'Upcoming flights</h2><small>From your calendars · times in Eastern time</small></header>'
+		var flights = '<section class="dd-card dd-tr-fl"><header class="dd-tr-h"><h2>' + lu('plane', 18) + 'Upcoming flights</h2><small>From your calendars · local time at each airport</small></header>'
 			+ (fl.length ? fl.map(function (f) { return '<div class="dd-tr-flr"><span class="d"><b>' + esc(trDay(f.date)) + '</b><small>' + esc(f.time || '') + '</small></span><span class="w"><b>' + esc(f.title) + '</b>' + (f.detail ? '<small>' + esc(f.detail) + '</small>' : '') + '</span></div>'; }).join('') : '<p class="dd-help">No upcoming flights on your calendars.</p>') + '</section>';
 		if (!trip) { return chips + flights + '<section class="dd-card dd-tr"><p class="dd-help">No trips yet. Click <b>New trip</b> to start one.</p></section>'; }
 		var items = (trip.items || []).slice().sort(function (a, b) { return ((a.date || '9') + (a.time ? tm24(a.time) : '99')) < ((b.date || '9') + (b.time ? tm24(b.time) : '99')) ? -1 : 1; });

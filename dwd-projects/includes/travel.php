@@ -97,6 +97,49 @@ function dwdtr_seed() {
 	);
 }
 
+
+/** IATA airport → time zone, so flight times show in the departure airport's local time. */
+function dwdtr_tz( $text ) {
+	$map = array(
+		'America/Los_Angeles' => array( 'ONT', 'LAX', 'SFO', 'SJC', 'SAN', 'OAK', 'SMF', 'BUR', 'SNA', 'LAS', 'SEA', 'PDX', 'PHX' ),
+		'America/Denver'      => array( 'DEN', 'SLC' ),
+		'America/Chicago'     => array( 'DFW', 'DAL', 'ORD', 'MDW', 'IAH', 'HOU', 'AUS', 'MSP', 'STL', 'MSY', 'BNA' ),
+		'America/New_York'    => array( 'CLT', 'RDU', 'MIA', 'PBI', 'FLL', 'MCO', 'TPA', 'ATL', 'JFK', 'LGA', 'EWR', 'BOS', 'DCA', 'IAD', 'PHL', 'DTW', 'BWI' ),
+		'Atlantic/Reykjavik'  => array( 'KEF', 'RKV' ),
+		'Europe/Oslo'         => array( 'OSL', 'TRD', 'TOS', 'BOO', 'BGO', 'AES', 'SVG', 'EVE' ),
+		'Europe/London'       => array( 'LHR', 'LGW', 'MAN', 'EDI' ),
+		'Europe/Paris'        => array( 'CDG', 'ORY' ),
+		'Europe/Copenhagen'   => array( 'CPH' ),
+		'Europe/Stockholm'    => array( 'ARN' ),
+		'Europe/Amsterdam'    => array( 'AMS' ),
+	);
+	if ( preg_match_all( '/\b([A-Z]{3})\b/', (string) $text, $m ) ) {
+		foreach ( $m[1] as $code ) {
+			foreach ( $map as $tz => $codes ) {
+				if ( in_array( $code, $codes, true ) ) {
+					return array( $tz, $code );
+				}
+			}
+		}
+	}
+	return array( '', '' );
+}
+
+/** A calendar time (stored in Eastern) → [local date, local time, airport] at the departure airport. */
+function dwdtr_local( $date, $time, $where ) {
+	list( $tz, $code ) = dwdtr_tz( $where );
+	if ( ! $tz || ! $date || ! preg_match( '/^\s*(\d{1,2})(?::(\d{2}))?\s*([AaPp])/', (string) $time ) ) {
+		return array( $date, $time, '' );
+	}
+	try {
+		$dt = new DateTime( $date . ' ' . $time, new DateTimeZone( 'America/New_York' ) );
+		$dt->setTimezone( new DateTimeZone( $tz ) );
+		return array( $dt->format( 'Y-m-d' ), $dt->format( 'g:i A' ), $code );
+	} catch ( Exception $e ) {
+		return array( $date, $time, '' );
+	}
+}
+
 /** Upcoming flights from the synced calendars (anything that reads like a flight, today or later). */
 function dwdtr_cal_flights() {
 	$out   = array();
@@ -113,7 +156,8 @@ function dwdtr_cal_flights() {
 			continue;
 		}
 		$seen[ $key ] = 1;
-		$out[]        = array( 'date' => (string) $t['due'], 'time' => (string) ( $t['time'] ?? '' ), 'title' => trim( $txt ), 'detail' => trim( (string) ( $t['note'] ?? '' ) ), 'source' => 'calendar' );
+		list( $ld, $lt, $ap ) = dwdtr_local( (string) $t['due'], (string) ( $t['time'] ?? '' ), $txt . ' ' . ( $t['note'] ?? '' ) );
+		$out[] = array( 'date' => $ld, 'time' => $lt . ( $ap ? ' ' . $ap . ' time' : '' ), 'title' => trim( $txt ), 'detail' => trim( (string) ( $t['note'] ?? '' ) ), 'source' => 'calendar' );
 	}
 	usort( $out, function ( $a, $b ) { return strcmp( $a['date'], $b['date'] ); } );
 	return array_slice( $out, 0, 20 );
@@ -175,6 +219,22 @@ function dwdtr_clean_item( $x ) {
 		'kind'   => in_array( $kind, array( 'flight', 'hotel', 'transport', 'activity', 'food', 'other' ), true ) ? $kind : 'other',
 	);
 }
+
+// Once: the wrong Gmail-made copies on the personal calendar (wrong times, or the dropped Bodø flight) are hidden.
+add_action( 'init', function () {
+	if ( get_option( 'dwdtr_hid1' ) || ! function_exists( 'dwdpe_get' ) ) {
+		return;
+	}
+	update_option( 'dwdtr_hid1', 1, false );
+	$bad  = array( 'g5oontcegdcrbvcf9apfqeafc0', 'd7gc506e8b25l2bsmfe11v0sdg', '4ijkbtv3ecacd56hlvv82garjg', 'v57k60aaungl5s64iakuafg9ts' );
+	$hide = array_values( array_unique( array_merge( (array) get_option( 'dwdpe_hide_ev', array() ), $bad ) ) );
+	update_option( 'dwdpe_hide_ev', $hide, false );
+	$d = get_option( 'dwdpe_data', array() );
+	if ( is_array( $d ) && ! empty( $d['todos'] ) ) {
+		$d['todos'] = array_values( array_filter( $d['todos'], function ( $x ) use ( $bad ) { return ! in_array( (string) ( $x['gevent'] ?? '' ), $bad, true ); } ) );
+		update_option( 'dwdpe_data', $d, false );
+	}
+}, 30 );
 
 add_action( 'rest_api_init', function () {
 	$can  = function () { return current_user_can( 'manage_options' ); };
