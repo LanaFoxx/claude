@@ -1533,7 +1533,6 @@
 				var usn = upSnap(), uchk = usn && usn.checked ? 'checked ' + agoShort(usn.checked) : '';
 				return '<a href="#money" data-owed><span>Owed<small>Not paid yet by clients</small></span><b>' + money(owed(owingList())) + '</b></a>'
 					+ '<a href="#money" data-upmoney><span>Pending in Upwork<small>' + (UT.pnext ? 'Next frees up ' + fmt(UT.pnext) : 'Nothing on hold') + (uchk ? ' · ' + uchk : '') + '</small></span><b class="dd-tapnum" data-uprefresh role="button" tabindex="0" title="Tap to reload the Upwork numbers">' + money(UT.pend) + '</b></a>'
-					+ '<a href="#money" data-upmoney><span>Ready to withdraw<small>' + (uchk ? 'Upwork ' + uchk : 'Available in Upwork now') + '</small></span><b>' + money(UT.avail) + '</b></a>'
 					;
 			})()
 			+ '<button type="button" class="dd-statsmore" data-statsmore aria-expanded="' + statsOpen + '"><span>' + (statsOpen ? 'Show less' : 'Show more') + '</span>' + lu('chevron-down', 14) + '</button>'
